@@ -150,43 +150,19 @@ ULONGLONG CPcrInputPin::GetCurrentPTS()
 
 void CPcrInputPin::OnTsPacket( byte* tsPacket )
 {
-	__int64 pcrHigh;
-	int     pcrLow;
+    if (m_pcrPid==-1) return;
+    CTsHeader header(tsPacket);
+    if (header.Pid != m_pcrPid) return;
 
-  if (m_pcrPid==-1) return;
-	CTsHeader header(tsPacket);
-	if (header.Pid != m_pcrPid) return;
-//  if (!header.PayloadUnitStart) return;
-
-	int afc, len, flags;
-	byte *p;
-	unsigned int v;
-
-	afc = (tsPacket[3] >> 4) & 3;
-	if (afc <= 1)
-	{
-		return ;
-	}
-	p = tsPacket + 4;
-	len = p[0];
-	p++;
-	if (len == 0)
-	{
-			return ;
-	}
-	flags = *p++;
-	len--;
-	if (!(flags & 0x10))
-	{
-			return ;
-	}
-	if (len < 6)
-	{
-			return ;
-	}
-	v = (p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3];
-	pcrHigh = ((__int64)v << 1) | (p[4] >> 7);			//33 bits
-	pcrLow = ((p[4] & 1) << 8) | p[5];							//9	 bits
-
-  m_currentPTS = pcrHigh;
+    if (header.PayLoadOnly()) return;
+    if (tsPacket[4]<7) return; //adaptation field length
+    if (tsPacket[5]!=0x10) return;
+    // There's a PCR.  Get it
+    UINT64 pcrBaseHigh=0LL;
+    UINT64 k=tsPacket[6]; k<<=25LL;pcrBaseHigh+=k;
+    k=tsPacket[7]; k<<=17LL;pcrBaseHigh+=k;
+    k=tsPacket[8]; k<<=9LL;pcrBaseHigh+=k;
+    k=tsPacket[9]; k<<=1LL;pcrBaseHigh+=k;
+    k=((tsPacket[10]>>7)&0x1); pcrBaseHigh +=k;
+    m_currentPTS = pcrBaseHigh;
 }
