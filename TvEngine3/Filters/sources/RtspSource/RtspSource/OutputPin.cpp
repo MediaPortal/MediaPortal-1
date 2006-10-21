@@ -22,7 +22,7 @@
 #include "OutputPin.h"
 #include "demux.h"
  
-#define BUFFER_SIZE (1316*15)
+#define BUFFER_SIZE (1316*30)
 
 COutputPin::COutputPin(LPUNKNOWN pUnk, CRtspSourceFilter *pFilter, HRESULT *phr,CCritSec* section) :
 	CSourceStream(NAME("pinOut"), phr, pFilter, L"Out"),
@@ -87,7 +87,7 @@ HRESULT COutputPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES
 
 	if (pRequest->cBuffers==0)
 	{
-		pRequest->cBuffers = 20;
+		pRequest->cBuffers = 30;
 	}
 
 	pRequest->cbBuffer = BUFFER_SIZE;

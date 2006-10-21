@@ -3,7 +3,7 @@
 #include "GroupsockHelper.hh"
 
 ////////// CMemorySink //////////
-#define SUBMIT_BUF_SIZE (1316*15)
+#define SUBMIT_BUF_SIZE (1316*30)
 
 CMemorySink::CMemorySink(UsageEnvironment& env,CMemoryBuffer& buffer, unsigned bufferSize) 
   : MediaSink(env),  
