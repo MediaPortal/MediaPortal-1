@@ -30,9 +30,9 @@
 		<description>Progress Bar</description>
 		<type>progress</type>
 		<id>1</id>
-		<posX>195</posX>
-		<posY>615</posY>
-		<width>180</width>
+		<posX>225</posX>
+		<posY>616</posY>
+		<width>133</width>
 		<height>4</height>
 		<texturebg>osd_progress_back.png</texturebg>
 		<lefttexture>osd_progress_left.png</lefttexture>
@@ -45,22 +45,22 @@
 		<description>Start Time Info</description>
 		<type>label</type>
 		<id>101</id>
-		<posX>195</posX>
-		<posY>604</posY>
+		<posX>150</posX>
+		<posY>606</posY>
 		<label>#TV.View.start</label>
-		<align>right</align>
-		<font>font12</font>
+		<align>left</align>
+		<font>font10</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
 		<description>End Time Info</description>
 		<type>label</type>
 		<id>102</id>
-		<posX>365</posX>
-		<posY>604</posY>
+		<posX>353</posX>
+		<posY>606</posY>
 		<label>#TV.View.stop</label>
 		<align>left</align>
-		<font>font12</font>
+		<font>font10</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 		<control>
@@ -83,7 +83,7 @@
 		<posY>633</posY>
 		<align>left</align>
 		<font>font13</font>
-		<textcolor>FFB2D4F5</textcolor>
+		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
 		<description>On tv NEXT</description>
@@ -94,15 +94,15 @@
 		<posX>150</posX>
 		<posY>666</posY>
 		<align>left</align>
-		<font>font12</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<font>font10</font>
+		<textcolor>FFB2D4F5</textcolor>
 	</control>
 	<control>
 		<description>Current channel</description>
 		<type>label</type>
 		<id>35</id>
 		<posX>150</posX>
-		<posY>573</posY>
+		<posY>571</posY>
 		<label>-</label>
 		<align>left</align>
 		<font>font13</font>
