@@ -477,12 +477,23 @@ namespace MediaPortal.TV.Epg
             for (int z = 0; z < languageCount; ++z)
             {
               _epgInterface.GetEPGLanguage((uint)x, (uint)i, (uint)z, out languageId, out ptrTitle, out ptrDesc);
-              title = Marshal.PtrToStringAnsi(ptrTitle);
-              description = Marshal.PtrToStringAnsi(ptrDesc);
+              //Below rem'd out to support czech subtitles see further below
+              //title = Marshal.PtrToStringAnsi(ptrTitle);
+              //description = Marshal.PtrToStringAnsi(ptrDesc);
               string language = String.Empty;
               language += (char)((languageId >> 16) & 0xff);
               language += (char)((languageId >> 8) & 0xff);
               language += (char)((languageId) & 0xff);
+              if (language.ToLower() == "cze" || language.ToLower() == "ces")
+              {
+                title = Iso6937ToUnicode.Convert( ptrTitle );
+                description = Iso6937ToUnicode.Convert( ptrDesc );
+              }
+              else
+              {
+                title = Marshal.PtrToStringAnsi( ptrTitle );
+                description = Marshal.PtrToStringAnsi( ptrDesc );
+              }
               newEvent.Languages.Add(new EPGLanguage(language, title, description));
             }
             channel.AddEvent(newEvent);

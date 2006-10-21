@@ -247,6 +247,7 @@
     <Compile Include="CommandProcessor\TvCardCollection.cs" />
     <Compile Include="CommandProcessor\Commands\ViewTvCommand.cs" />
     <Compile Include="DiskManagement\RecordingImporterWorker.cs" />
+    <Compile Include="EPG\Iso6937ToUnicode.cs" />
     <Compile Include="Graphs\Dummy\DummyGraph.cs" />
     <Compile Include="Graphs\DVB\DVBGraphBase.cs" />
     <Compile Include="Graphs\DVB\DVBGraphSkyStar2.cs" />
