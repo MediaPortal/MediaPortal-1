@@ -250,11 +250,11 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
 	  }
 		start += descriptors_length;
 		
-		LogDebug("VCT:  #%d major:%d minor:%d freq:%d tsid:%x sid:%x servicetype:%x name:%s video:%x audio:%x ac3:%x", 
+		LogDebug("VCT:  #%d major:%d minor:%d freq:%d tsid:%x sid:%x servicetype:%x name:%s video:%x audio:%x audio:%x audio:%x ac3:%x", 
 				m_vecChannels.size(),
 				info.MajorChannel,info.MinorChannel,info.Frequency,
 				info.ServiceId,info.TransportId,info.ServiceType,
-				info.ServiceName,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AC3Pid);
+				info.ServiceName,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AudioPid2,info.PidTable.AudioPid3,info.PidTable.AC3Pid);
     m_vecChannels.push_back(info);
   }
 
@@ -300,6 +300,7 @@ void CVirtualChannelTableParser::DecodeServiceLocationDescriptor( byte* buf,int 
 	if (number_of_elements==0) return;
 	
 	//LogDebug("  pcrpid:%x, nr of elements:%d",pcr_pid,number_of_elements);
+	int audioSet=0;
 	for (int i=0; i < number_of_elements;++i)
 	{
 
@@ -315,12 +316,33 @@ void CVirtualChannelTableParser::DecodeServiceLocationDescriptor( byte* buf,int 
 		//pmtData.data=ISO_639_language_code;
 		switch (streamtype)
 		{
+			case 0x1: // video
 			case 0x2: // video
 				channelInfo.PidTable.VideoPid=elementary_pid;
 				break;
-			case 0x81: // audio
+			case 0x3: // audio
+			case 0x4: // audio
+				if (audioSet==0)
+				{
+					channelInfo.PidTable.AudioPid1=elementary_pid;
+					audioSet++;
+				}
+				else if (audioSet==1)
+				{
+					channelInfo.PidTable.AudioPid2=elementary_pid;
+					audioSet++;
+				}
+				else if (audioSet==2)
+				{
+					channelInfo.PidTable.AudioPid3=elementary_pid;
+					audioSet++;
+				}
+				break;
+
+			case 0x81: // ac3
 				channelInfo.PidTable.AC3Pid=elementary_pid;
 				break;
+
 			default:
 				break;
 		}
