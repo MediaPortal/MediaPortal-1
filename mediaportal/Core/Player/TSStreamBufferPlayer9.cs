@@ -315,7 +315,7 @@ namespace MediaPortal.Player
               // 2=demux             
               // 3=audio renderer    
               settings.SetValue("clockType", clockType, RegistryValueKind.Binary);
-              settings.SetValue("enableAC3", valueZero, RegistryValueKind.Binary);
+              settings.SetValue("enableAC3", valueOne, RegistryValueKind.Binary);//prefer AC3
               settings.SetValue("enableAudio2", valueZero, RegistryValueKind.Binary);
 
               if (demuxControl == false)
@@ -330,7 +330,7 @@ namespace MediaPortal.Player
               }
               settings.SetValue("enableDelay", valueZero, RegistryValueKind.Binary);
               settings.SetValue("enableFixedAR", valueOne, RegistryValueKind.Binary);
-              settings.SetValue("enableMP2", valueOne, RegistryValueKind.Binary);
+              settings.SetValue("enableMP2", valueZero, RegistryValueKind.Binary);
               settings.SetValue("enableNPControl", valueZero, RegistryValueKind.Binary);
               settings.SetValue("enableNPSlave", valueZero, RegistryValueKind.Binary);
               settings.SetValue("enableRateControl", valueZero, RegistryValueKind.Binary);
