@@ -1190,10 +1190,10 @@ namespace TvLibrary.Implementations.DVB
         _channelInfo.network_pmt_PID = atscChannel.PmtPid;
         _channelInfo.pcr_pid = atscChannel.PcrPid;
         PidInfo audioInfo = new PidInfo();
-        audioInfo.Ac3Pid(atscChannel.AudioPid, "");
-        _channelInfo.AddPid(audioInfo);
         PidInfo videoInfo = new PidInfo();
+        audioInfo.Ac3Pid(atscChannel.AudioPid, "");
         videoInfo.VideoPid(atscChannel.VideoPid, 1);
+        _channelInfo.AddPid(audioInfo);
         _channelInfo.AddPid(videoInfo);
 
         Log.Log.Write(" video:{0:X} audio:{1:X} pcr:{2:X} pmt:{3:X}",atscChannel.VideoPid, atscChannel.AudioPid, atscChannel.PcrPid, atscChannel.PmtPid);

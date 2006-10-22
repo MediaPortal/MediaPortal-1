@@ -51,7 +51,7 @@ namespace TvLibrary.Channels
       _symbolRate = -1;
       _physicalChannel = -1;
       _audioPid = -1;
-      _videoPid = 1;
+      _videoPid = -1;
     }
 
     #region properties

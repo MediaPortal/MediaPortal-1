@@ -419,6 +419,7 @@ namespace TvDatabase
           tuningdetail.ChannelType = channelType;
           tuningdetail.VideoPid = videoPid;
           tuningdetail.AudioPid = audioPid;
+          tuningdetail.Persist();
           return tuningdetail;
         }
       }
