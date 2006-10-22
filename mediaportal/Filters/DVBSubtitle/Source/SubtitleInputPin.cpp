@@ -52,211 +52,112 @@ CSubtitleInputPin::CSubtitleInputPin( CDVBSub *pDVBSub,
 					L"In" ),				      	// Pin name
 					m_pReceiveLock( pReceiveLock ),
 					m_pDVBSub( pDVBSub ),
-					m_tLast( 0 ),
-					m_PESdata( NULL ),
 					m_pSubDecoder( pSubDecoder ),
-					m_SubtitlePID( 0 ),
-					m_PESlenght( 0 )
+					m_SubtitlePid( -1 ),
+          m_pPin( NULL )
 {
-	m_PESdata = (unsigned char*)malloc(32000); // size is just a guess...
-	Reset();
-	Log( "Subtitle: Pin created" );
+  m_pesDecoder = new CPesDecoder( this );
+  
+  Reset();
+	Log( "Subtitle: Input pin created" );
 }
 
 CSubtitleInputPin::~CSubtitleInputPin()
 {
+  delete m_pesDecoder;
 }
-//
-// CheckMediaType
-//
-// Check if the pin can support this specific proposed type and format
-//
+
 HRESULT CSubtitleInputPin::CheckMediaType( const CMediaType *pmt )
 {
-	Log("Subtitle:CheckMediaType()");
-	if( pmt->majortype == GUID_NULL )
+  Log("Subtitle: CSubtitleInputPin::CheckMediaType()");
+  if( pmt->subtype == MEDIASUBTYPE_MPEG2_TRANSPORT )
 	{
 		return S_OK;
 	}
 	return S_FALSE;
 }
 
-//
-// BreakConnect
-//
+
 HRESULT CSubtitleInputPin::BreakConnect()
 {
-    return CRenderedInputPin::BreakConnect();
+  return CRenderedInputPin::BreakConnect();
 }
 
 HRESULT CSubtitleInputPin::CompleteConnect( IPin *pPin )
 {
-	HRESULT hr=CBasePin::CompleteConnect( pPin );
-	
-	IMPEG2PIDMap	*pMap=NULL;
-	IEnumPIDMap		*pPidEnum=NULL;
-	ULONG			    pid;
-	PID_MAP			  pm;
-	ULONG			    count;
-	ULONG			    umPid;
-	
-	hr=pPin->QueryInterface( IID_IMPEG2PIDMap,(void**)&pMap );
-	if( SUCCEEDED(hr) && pMap!=NULL )
-	{
-		hr=pMap->EnumPIDMap( &pPidEnum );
-		if( SUCCEEDED(hr) && pPidEnum!=NULL )
-		{
-			while( pPidEnum->Next( 1, &pm, &count ) == S_OK )
-			{
-				if ( count != 1 ) 
-				{
-					break;
-				}
-					
-				umPid = pm.ulPID;
-				hr = pMap->UnmapPID( 1, &umPid );
-				if( FAILED(hr) )
-				{	
-					break;
-				}
-			}
-			pid = m_SubtitlePID;	// THIS IS A TEST PID ONLY
-			hr = pMap->MapPID( 1, &pid, MEDIA_TRANSPORT_PAYLOAD ); //MEDIA_ELEMENTARY_STREAM ); // 
+	HRESULT hr = CBasePin::CompleteConnect( pPin );
+  m_pPin = pPin;
+  
+  if( m_SubtitlePid == -1 )
+    return hr;  // PID is mapped later when we have it 
 
-			pPidEnum->Release();
-		}
-		pMap->Release();
-	}
-	return hr;
+  hr = MapPidToDemuxer( m_SubtitlePid, m_pPin, MEDIA_TRANSPORT_PACKET );
+
+  m_pesDecoder->SetPid( m_SubtitlePid );
+
+  return hr;
 }
 
-//
-// ReceiveCanBlock
-//
-// We don't hold up source threads on Receive
-//
+
 STDMETHODIMP CSubtitleInputPin::ReceiveCanBlock()
 {
     return S_FALSE;
 }
 
 
-//
-// Receive
-//
-// Buffers received media samples if needed 
-// (PES packet size > maximum sample size)
-//
 STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 {
-	try
+	CAutoLock lock(m_pReceiveLock);
+
+	if( m_SubtitlePid == -1 )
+    return S_OK;  // Nothing to be done yet
+
+	if ( m_bReset )
 	{
-		if ( m_bReset )
-		{
-			Log( "Subtitle: reset" );
+		Log( "Subtitle: reset" );
+		m_bReset = false;
+	}
+	CheckPointer( pSample, E_POINTER );
 
-			if( m_PESdata != NULL )
-			{	
-				delete m_PESdata;	
-				m_PESdata = NULL;
-			}
-
-			m_tLast = 0;
-			m_PESlenght = 0;
-			m_bReset = false;
-		}
-		CheckPointer( pSample, E_POINTER );
-
-		CAutoLock lock(m_pReceiveLock);
-		PBYTE pbData = NULL;
-		
-		// Has the filter been stopped yet?
-		REFERENCE_TIME tStart, tStop;
-		pSample->GetTime( &tStart, &tStop);
-
-		m_tLast = tStart;
-		long lDataLen = 0;
-
-		HRESULT hr = pSample->GetPointer( &pbData );
-		if( FAILED(hr) ) 
-		{
-			Log( "Subtitle: Receive() err" );
-			return hr;
-		}
-		lDataLen=pSample->GetActualDataLength();
-
-		if( lDataLen > 5 )
-		{
-			Log("Subtitle: Receive() -- first bytes data %d %d %d %d -- lDataLen = %d IsDiscontinuity = %d", pbData[0], pbData[1], pbData[2], pbData[3], lDataLen, pSample->IsDiscontinuity() );
-
-			unsigned __int8 endByte = pbData[lDataLen - 1];
-
-			// PES header
-			if ( pbData[0] == 0x00 && pbData[1] == 0x00 && pbData[2] == 0x01 && pbData[3]==0xbd )
-			{
-				m_PESlenght = pbData[4] * 256 + pbData[5];
-
-				Log("Subtitle: PES lenght %d", m_PESlenght);
-
-				// PES header and PES end byte in the same sample, no need for buffering
-				if( endByte == 0xFF )
-				{
-					Log("Subtitle: Receive() - all PES data in one sample");
-					
-					// Send the whole sample to decoder
-					m_pSubDecoder->ProcessPES( pbData, m_PESlenght, m_SubtitlePID );
-				}
-				else // PES continues in the next packet
-				{
-					// Free previous buffer
-					if( m_PESdata != NULL )
-						delete m_PESdata;	
+	PBYTE pbData = NULL;
 	
-					m_PESdata = (unsigned char*)malloc(32000); // size is just a guess...
+	REFERENCE_TIME tStart, tStop;
+	pSample->GetTime( &tStart, &tStop);
+	long lDataLen = 0;
+	HRESULT hr = pSample->GetPointer( &pbData );
 
-					memcpy( m_PESdata, pbData, lDataLen );
-					m_Position = lDataLen;
-
-					Log( "Subtitle: Receive() - PES data continues in the next sample" );
-				}
-			}
-			else // no PES header found
-			{
-				// PES end byte in the same sample, no need for buffering
-				if( endByte == 0xFF )
-				{
-					// beginning of PES is missing
-					if( !m_PESdata )
-					{
-						Log("Subtitle: Receive() - beginning of PES missing - last byte 0xFF");
-						return S_OK;
-					}
-					
-					Log("Subtitle: Receive() - all PES data arrived - last byte 0xFF");
-					
-					memcpy( m_PESdata + m_Position, pbData, lDataLen );
-					m_pSubDecoder->ProcessPES( m_PESdata, m_PESlenght, m_SubtitlePID );
-					
-					m_Position = 0;
-				}
-				else // Append to buffer
-				{
-					memcpy( m_PESdata + m_Position, pbData, lDataLen );
-					m_Position += lDataLen;
-
-					Log( "Subtitle: Receive() - PES data continues in the next sample" );
-				}
-			}
-		
-		}
-	}
-
-	catch(...)
+  if( FAILED( hr ) ) 
 	{
-		Log( "Subtitle: --- UNHANDLED EXCEPTION ---" );
+		Log( "Subtitle: Receive() err" );
+		return hr;
 	}
+	lDataLen = pSample->GetActualDataLength();
 
-    return S_OK;
+  OnRawData( pbData, lDataLen );
+  
+  return S_OK;
+}
+
+void CSubtitleInputPin::OnTsPacket( byte* tsPacket )
+{
+  m_pesDecoder->OnTsPacket( tsPacket );
+}
+
+int CSubtitleInputPin::OnNewPesPacket( int streamid, byte* header, int headerlen, 
+                                       byte* data, int len, bool isStart )
+{
+  byte* pesData = NULL;
+  pesData = (unsigned char*)malloc( headerlen + len ); 
+
+  memcpy( pesData, header, headerlen );
+  memcpy( pesData + headerlen, data, len );
+    
+  m_pSubDecoder->ProcessPES( pesData, headerlen + len, m_SubtitlePid );
+
+  delete pesData;
+  pesData = NULL;
+
+  return 0;
 }
 
 void CSubtitleInputPin::Reset()
@@ -264,9 +165,11 @@ void CSubtitleInputPin::Reset()
 	m_bReset = true;
 }
 
-void CSubtitleInputPin::SetSubtitlePID( ULONG pPID )
+void CSubtitleInputPin::SetSubtitlePid( LONG pPid )
 {
-	m_SubtitlePID = pPID;
+	m_SubtitlePid = pPid;
+  MapPidToDemuxer( m_SubtitlePid, m_pPin, MEDIA_TRANSPORT_PACKET );
+  m_pesDecoder->SetPid( m_SubtitlePid );
 }
 
 //
@@ -290,16 +193,12 @@ STDMETHODIMP CSubtitleInputPin::EndFlush( void )
 	return CRenderedInputPin::EndFlush();
 }
 
-
 //
 // NewSegment
 //
-// Called when we are seeked
-//
 STDMETHODIMP CSubtitleInputPin::NewSegment( REFERENCE_TIME tStart,
-											                      REFERENCE_TIME tStop,
-											                      double dRate )
+											REFERENCE_TIME tStop,
+											double dRate )
 {
-    m_tLast = 0;
     return S_OK;
-}
+} // NewSegment

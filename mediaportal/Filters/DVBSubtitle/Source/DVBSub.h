@@ -29,9 +29,13 @@
 
 #include "dvbsubs\dvbsubdecoder.h"
 #include "SubdecoderObserver.h"
+#include "PidObserver.h"
 
 class CSubtitleInputPin;
 class CSubtitleOutputPin;
+class CPcrInputPin;
+class CPMTInputPin;
+
 class CDVBSubDecoder;
 
 typedef __int64 int64_t;
@@ -45,14 +49,16 @@ DECLARE_INTERFACE_( IStreamAnalyzer, IUnknown )
    STDMETHOD(SetSubtitlePID) (THIS_ ULONG pPID ) PURE;
 };
 
-class CDVBSub : public CBaseFilter, public MSubdecoderObserver
+class CDVBSub : public CBaseFilter, public MSubdecoderObserver, MPidObserver
 {
 public:
   // Constructor & destructor
   CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock );
   ~CDVBSub();
 
-	STDMETHODIMP Run( REFERENCE_TIME tStart );
+  HRESULT CheckConnect( PIN_DIRECTION dir, IPin *pPin );
+  
+  STDMETHODIMP Run( REFERENCE_TIME tStart );
 	STDMETHODIMP Pause();
 	STDMETHODIMP Stop();
 
@@ -69,10 +75,17 @@ public:
 	// From MSubdecoderObserver
 	void Notify();
 
+  // From MPidObserver
+  void SetPcrPid( LONG pid );
+	void SetSubtitlePid( LONG pid );
+
 private:
 
   CSubtitleInputPin*  m_pSubtitleInputPin;
   CSubtitleOutputPin* m_pSubtitleOutputPin;
+	CPcrInputPin*		    m_pPcrPin;
+  CPMTInputPin*       m_pPMTPin;
+
   CDVBSubDecoder*     m_pSubDecoder;
 
   CCritSec            m_Lock;				    // Main renderer critical section
@@ -81,4 +94,6 @@ private:
   unsigned char*      m_curSubtitleData;//[720*576*3];
   ULONGLONG           m_firstPTS;
   CSubtitle*          m_pSubtitle;
+
+  int m_VideoPid;
 };

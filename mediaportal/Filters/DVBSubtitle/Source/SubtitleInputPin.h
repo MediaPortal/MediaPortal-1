@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -23,52 +23,57 @@
 #pragma warning(disable: 4511 4512 4995)
 
 #include "DVBSub.h"
+#include "DemuxPinMapper.h"
 #include "dvbsubs\dvbsubdecoder.h"
+#include "PatParser\PacketSync.h"
+#include "PatParser\PesDecoder.h"
 #include <streams.h>
 
-
-class CSubtitleInputPin : public CRenderedInputPin
+class CSubtitleInputPin : public CRenderedInputPin, public CDemuxPinMapper, public CPacketSync, public CPesCallback
 {
-private:
-  CDVBSub* const    m_pDVBSub;				// Main renderer object
-  CCritSec * const	m_pReceiveLock;	  // Sample critical section
-  REFERENCE_TIME		m_tLast;				  // Last sample receive time
-	bool				      m_bReset;
-
 public:
 
-  CSubtitleInputPin(  CDVBSub *pDump,
-                      LPUNKNOWN pUnk,
-                      CBaseFilter *pFilter,
-                      CCritSec *pLock,
-                      CCritSec *pReceiveLock,
-			                CDVBSubDecoder* pSubDecoder,
-                      HRESULT *phr );
+  CSubtitleInputPin( CDVBSub *m_pDVBSub,
+                LPUNKNOWN pUnk,
+                CBaseFilter *pFilter,
+                CCritSec *pLock,
+                CCritSec *pReceiveLock,
+			          CDVBSubDecoder* pSubDecoder,
+                HRESULT *phr );
 
-  ~CSubtitleInputPin();
+	~CSubtitleInputPin();
 
   // Do something with this media sample
-  STDMETHODIMP Receive(IMediaSample *pSample);
-  STDMETHODIMP EndOfStream(void);
+  STDMETHODIMP Receive( IMediaSample *pSample );
+  STDMETHODIMP EndOfStream( void );
   STDMETHODIMP ReceiveCanBlock();
 
-  STDMETHODIMP BeginFlush(void);
-  STDMETHODIMP EndFlush(void);
+  STDMETHODIMP BeginFlush( void );
+  STDMETHODIMP EndFlush( void );
 
-  // Check if the pin can support this specific proposed type and format
   HRESULT CheckMediaType( const CMediaType * );
   HRESULT CompleteConnect( IPin *pPin );
   HRESULT BreakConnect();
   STDMETHODIMP NewSegment( REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate );
 
 	void Reset();
-	void SetSubtitlePID( ULONG pPID );
+  void SetSubtitlePid( LONG pPID );
+
+  // From CPacketSync
+  void OnTsPacket( byte* tsPacket );
+
+  // From CPesCallback
+  int OnNewPesPacket( int streamid,byte* header, int headerlen,byte* data, int len, bool isStart );
 
 private:
 
 	CDVBSubDecoder*		m_pSubDecoder;
-	unsigned char*		m_PESdata;
-	int					      m_Position;
-	int					      m_PESlenght;
-	ULONG				      m_SubtitlePID;
+  CPesDecoder*      m_pesDecoder;
+	
+  IPin  *m_pPin;
+	LONG  m_SubtitlePid;
+
+  CDVBSub* const    m_pDVBSub;				// Main renderer object
+  CCritSec * const	m_pReceiveLock; // Sample critical section
+  bool				      m_bReset;
 };
