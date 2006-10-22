@@ -197,6 +197,7 @@ HRESULT CRtspSourceFilter::OnConnect()
   m_pDemux->set_FixedAspectRatio(TRUE);
 	m_pDemux->set_CreateSubPinOnDemux(m_pids.sub!=0);
   m_pDemux->set_MPEG2Audio2Mode(FALSE);
+	m_pDemux->set_AC3Mode(TRUE);
   m_pDemux->AOnConnect();
   m_pDemux->SetRefClock();
 	Log("Filter:connect done...");
