@@ -1087,12 +1087,14 @@ namespace TvService
           bool result = _localCards[cardId].StartTimeShifting(fileName);
           if (result == false)
           {
+            _localCards[cardId].StopTimeShifting();
             _localCards[cardId].StopGraph();
             return TvResult.UnableToStartGraph;
           }
           fileName += ".tsbuffer";
           if (!WaitForTimeShiftFile(cardId, fileName))
           {
+            _localCards[cardId].StopTimeShifting();
             _localCards[cardId].StopGraph();
             return TvResult.NoVideoAudioDetected;
           }

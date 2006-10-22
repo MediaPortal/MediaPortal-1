@@ -28,6 +28,7 @@
 
 #include "timeshifting.h"
 #include "tsheader.h"
+#include "pmtparser.h"
 
 #define PID_PAT   0
 #define TABLE_ID_PAT 0
@@ -222,7 +223,7 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
 
 	try
 	{
-		if (serviceType==3||serviceType==4||serviceType==0x81)
+		if (SERVICE_TYPE_AUDIO_MPEG1==3||SERVICE_TYPE_AUDIO_MPEG2==4||serviceType==SERVICE_TYPE_AUDIO_AC3)
     {
 			if (m_pcrPid == pid)
 			{
@@ -240,7 +241,7 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
 			FAKE_AUDIO_PID++;
 			m_multiPlexer.AddPesStream(pid,true,false);
     }
-		else if (serviceType==1||serviceType==2||serviceType==0x10||serviceType==0x1b)
+		else if (serviceType==SERVICE_TYPE_VIDEO_MPEG1||serviceType==SERVICE_TYPE_VIDEO_MPEG2||serviceType==SERVICE_TYPE_VIDEO_MPEG4||serviceType==SERVICE_TYPE_VIDEO_H264)
     {
 			//if (m_pcrPid == pid)
 			//{
@@ -258,7 +259,7 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
 			FAKE_VIDEO_PID++;
 			m_multiPlexer.AddPesStream(pid,false,true);
     }
-		else if (serviceType==5||serviceType==6)
+		else if (serviceType==SERVICE_TYPE_DVB_SUBTITLES1||serviceType==SERVICE_TYPE_DVB_SUBTITLES2)
 		{
       PidInfo info;
 			info.realPid=pid;
@@ -572,7 +573,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 		PidInfo& info=*it;
 		if (header.Pid==info.realPid)
 		{
-			if (info.serviceType==1 || info.serviceType==2||info.serviceType==0x10||info.serviceType==0x1b)
+			if (info.serviceType==SERVICE_TYPE_VIDEO_MPEG1 || info.serviceType==SERVICE_TYPE_VIDEO_MPEG2||info.serviceType==SERVICE_TYPE_VIDEO_MPEG4||info.serviceType==SERVICE_TYPE_VIDEO_H264)
 			{
 				//video
 				if (!info.seenStart) 
@@ -599,7 +600,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				return;
 			}
 
-			if (info.serviceType==3 || info.serviceType==4|| info.serviceType==0x81)
+			if (info.serviceType==SERVICE_TYPE_AUDIO_MPEG1 || info.serviceType==SERVICE_TYPE_AUDIO_MPEG2|| info.serviceType==SERVICE_TYPE_AUDIO_AC3)
 			{
 				//audio
 				if (!info.seenStart)
@@ -611,6 +612,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 					}
 				}
 				if (!info.seenStart) return;
+				
 				byte pkt[200];
 				memcpy(pkt,tsPacket,188);
 				int pid=info.fakePid;
@@ -618,6 +620,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				pkt[2]=(pid&0xff);
 				if (header.Pid==m_pcrPid) PatchPcr(pkt,header);
 				if (PayLoadUnitStart)  PatchPtsDts(pkt,header,m_startPcr);
+				
 				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				{
 					Write(pkt,188);
@@ -626,7 +629,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				return;
 			}
 
-			if (info.serviceType==5 || info.serviceType==6)
+			if (info.serviceType==SERVICE_TYPE_DVB_SUBTITLES1 || info.serviceType==SERVICE_TYPE_DVB_SUBTITLES2)
 			{
 				//subtitle pid...
 				byte pkt[200];
@@ -773,16 +776,31 @@ void CTimeShifting::WriteFakePMT()
 	while (it!=m_vecPids.end())
 	{
 		PidInfo& info=*it;
-    pmt[offset++]=info.serviceType;
+		int serviceType=info.serviceType;
+		if (serviceType==SERVICE_TYPE_AUDIO_AC3)
+		{
+			//AC3 is represented as normal audio stream type
+			serviceType=SERVICE_TYPE_AUDIO_MPEG2;
+		}
+    pmt[offset++]=serviceType;
     pmt[offset++]=(info.fakePid>>8)&0x1F; // reserved; elementary_pid (high)
     pmt[offset++]=(info.fakePid)&0xff; // elementary_pid (low)
     pmt[offset++]=0xF0;// reserved; ES_info_length (high)
 		pmtLength+=4;
-		if (info.serviceType==5||info.serviceType==6)
+		if (info.serviceType==SERVICE_TYPE_AUDIO_AC3)
+		{
+			strcpy(info.language,"");
+			int esLen=0;
+			pmt[offset++]=esLen+2;						// ES_info_length (low)
+			pmt[offset++]=DESCRIPTOR_DVB_AC3; // descriptor indicator
+			pmt[offset++]=esLen;
+			pmtLength+=3;
+		}
+		if (info.serviceType==SERVICE_TYPE_DVB_SUBTITLES1 || info.serviceType==SERVICE_TYPE_DVB_SUBTITLES2)
 		{ 
 			int esLen=strlen(info.language)+5;
 			pmt[offset++]=esLen+2;   // ES_info_length (low)
-			pmt[offset++]=0x59;   // descriptor indicator
+			pmt[offset++]=DESCRIPTOR_DVB_SUBTITLING;   // descriptor indicator
 			pmt[offset++]=esLen;
 			pmtLength+=3;
 			for (int i=0; i < 3;++i)

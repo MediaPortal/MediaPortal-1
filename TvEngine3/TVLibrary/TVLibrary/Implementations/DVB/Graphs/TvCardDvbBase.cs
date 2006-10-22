@@ -556,6 +556,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("dvb:RunGraph returns:0x{0:X}", hr);
         throw new TvException("Unable to stop graph");
       }
+      _graphState = GraphState.Created;
     }
 
     /// <summary>
