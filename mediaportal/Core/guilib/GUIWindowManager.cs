@@ -406,8 +406,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public void OnResize()
     {
-      //			GUITextureManager.Init();
-
+      GUIWaitCursor.Dispose();
       GUIWaitCursor.Init();
 
       // reload all controls from the xml file
@@ -416,10 +415,6 @@ namespace MediaPortal.GUI.Library
         _listWindows[x].Restore();
 
       }
-      // re-init current window.
-      //GUIWindow window=GetWindow(ActiveWindow);
-      //window.FreeResources();
-      //window.AllocResources();
     }
 
     /// <summary>
