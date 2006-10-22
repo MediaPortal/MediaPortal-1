@@ -42,6 +42,8 @@ namespace MediaPortal.Services
     {
       _instance = new ServiceProvider();
       _instance.Add<ILog>(new ServiceCreatorCallback<ILog>(LogServiceRequested));
+      _instance.Add<MediaPortal.Threading.IThreadPool>(
+        new ServiceCreatorCallback<MediaPortal.Threading.IThreadPool>(ThreadPoolServiceRequested));
     }
 
     /// <summary>
@@ -64,6 +66,17 @@ namespace MediaPortal.Services
       ILog log = new LogImpl();
       services.Add<ILog>(log);
       return log;
+    }
+
+    private static MediaPortal.Threading.IThreadPool ThreadPoolServiceRequested(ServiceProvider services)
+    {
+      MediaPortal.Threading.ThreadPool pool = new MediaPortal.Threading.ThreadPool();
+      pool.ErrorLog += new MediaPortal.Threading.LoggerDelegate(_instance.Get<ILog>().Error);
+      pool.WarnLog += new MediaPortal.Threading.LoggerDelegate(_instance.Get<ILog>().Warn);
+      pool.InfoLog += new MediaPortal.Threading.LoggerDelegate(_instance.Get<ILog>().Info);
+      pool.DebugLog += new MediaPortal.Threading.LoggerDelegate(_instance.Get<ILog>().Debug);
+      services.Add<MediaPortal.Threading.IThreadPool>(pool);
+      return pool;
     }
 
     public static void Replace<T>(T service)

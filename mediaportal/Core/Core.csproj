@@ -310,6 +310,15 @@
     <Compile Include="Services\ServiceProvider.cs" />
     <Compile Include="TagReader\ITag.cs" />
     <Compile Include="TagReader\Utils.cs" />
+    <Compile Include="Threading\Interfaces\IThreadPool.cs" />
+    <Compile Include="Threading\Interfaces\IWork.cs" />
+    <Compile Include="Threading\Interfaces\IWorkInterval.cs" />
+    <Compile Include="Threading\IntervalWork.cs" />
+    <Compile Include="Threading\ThreadPool.cs" />
+    <Compile Include="Threading\ThreadPoolStartInfo.cs" />
+    <Compile Include="Threading\Work.cs" />
+    <Compile Include="Threading\WorkEventArgs.cs" />
+    <Compile Include="Threading\WorkQueue.cs" />
     <Compile Include="ThumbDbLib\Thumbnail.cs" />
     <Compile Include="ThumbDbLib\ThumbnailCreator.cs" />
     <Compile Include="ThumbDbLib\ThumbnailCreatorNet.cs" />
