@@ -57,6 +57,8 @@ namespace MediaPortal.GUI.Library
 
 		public static void Init()
 		{
+			if (_animation != null)
+				return;
 			_animation = new GUIAnimation();
 
 			foreach(string filename in Directory.GetFiles(GUIGraphicsContext.Skin + @"\media\", "common.waiting.*.png"))
