@@ -585,6 +585,7 @@ namespace MediaPortal.Threading
             if (!iWrk.Running)
               RunIntervalBasedWork(iWrk);
         }
+        _lastIntervalCheck = DateTime.Now;
       }
     }
 
