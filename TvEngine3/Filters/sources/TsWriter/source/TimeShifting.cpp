@@ -38,7 +38,7 @@ int FAKE_NETWORK_ID   = 0x456;
 int FAKE_TRANSPORT_ID = 0x4;
 int FAKE_SERVICE_ID   = 0x89;
 int FAKE_PMT_PID      = 0x20;
-int FAKE_PCR_PID      = 0x21;
+int FAKE_PCR_PID      = 0x30;//0x21;
 int FAKE_VIDEO_PID    = 0x30;
 int FAKE_AUDIO_PID    = 0x40;
 int FAKE_SUBTITLE_PID = 0x50;
@@ -164,7 +164,7 @@ STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 		FAKE_TRANSPORT_ID = 0x4;
 		FAKE_SERVICE_ID   = 0x89;
 		FAKE_PMT_PID      = 0x20;
-		FAKE_PCR_PID      = 0x21;
+		FAKE_PCR_PID      = 0x30;//0x21;
 		FAKE_VIDEO_PID    = 0x30;
 		FAKE_AUDIO_PID    = 0x40;
 		FAKE_SUBTITLE_PID = 0x50;
@@ -242,10 +242,10 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
     }
 		else if (serviceType==1||serviceType==2||serviceType==0x10||serviceType==0x1b)
     {
-			if (m_pcrPid == pid)
-			{
-				FAKE_PCR_PID = FAKE_VIDEO_PID;
-			}
+			//if (m_pcrPid == pid)
+			//{
+			//	FAKE_PCR_PID = FAKE_VIDEO_PID;
+			//}
 			//LogDebug("Timeshifter:add video pes stream pid:%x",pid);
       PidInfo info;
 			info.realPid=pid;
@@ -402,7 +402,7 @@ STDMETHODIMP CTimeShifting::Reset()
 		FAKE_TRANSPORT_ID = 0x4;
 		FAKE_SERVICE_ID   = 0x89;
 		FAKE_PMT_PID      = 0x20;
-		FAKE_PCR_PID      = 0x21;
+		FAKE_PCR_PID      = 0x30;//0x21;
 		FAKE_VIDEO_PID    = 0x30;
 		FAKE_AUDIO_PID    = 0x40;
 		FAKE_SUBTITLE_PID = 0x50;
@@ -666,9 +666,12 @@ void CTimeShifting::WriteTs(byte* tsPacket)
     byte pkt[200];
     memcpy(pkt,tsPacket,188);
     int pid=FAKE_PCR_PID;
-    pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
-    pkt[2]=(pid&0xff);
 		PatchPcr(pkt,header);
+		pkt[1]=( (pid>>8) & 0x1f);
+		pkt[2]=(pid&0xff);
+		pkt[3]=(2<<4);// Adaption Field Control==adaptation field only, no payload
+		pkt[4]=0xb7;
+
     if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 		{
 			Write(pkt,188);
@@ -892,6 +895,7 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
   tsPacket[11]=0;
 //	LogDebug("pcr: org:%x new:%x start:%x", (DWORD)pcrBaseHigh,(DWORD)pcrHi,(DWORD)m_startPcr);
 	pcrLogCount++;
+
 }
 
 void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr)
