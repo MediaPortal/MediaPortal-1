@@ -227,6 +227,10 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
+				RelativePath=".\Source\DemuxPinMapper.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\dllmain.cpp"
 				>
 			</File>
@@ -243,7 +247,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Source\PcrInputPin.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\dvbsubs\pes.c"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\PMTInputPin.cpp"
 				>
 			</File>
 			<File
@@ -272,7 +284,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Source\PcrInputPin.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\dvbsubs\pes.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\PMTInputPin.h"
 				>
 			</File>
 			<File
@@ -297,96 +317,100 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="PatParser headers"
+			Name="Stream parsing"
 			>
-			<File
-				RelativePath=".\Source\PatParser\ChannelInfo.h"
+			<Filter
+				Name="headers"
 				>
-			</File>
-			<File
-				RelativePath=".\Source\PatParser\DvbUtil.h"
+				<File
+					RelativePath=".\Source\PatParser\ChannelInfo.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\DvbUtil.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\ISectionCallback.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\PacketSync.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\PatParser.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\PesDecoder.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\PidTable.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\PmtParser.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\Section.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\SectionDecoder.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\TsHeader.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="sources"
 				>
-			</File>
-			<File
-				RelativePath=".\Source\PatParser\ISectionCallback.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PatParser\PacketSync.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PatParser\PatParser.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PatParser\PesDecoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PatParser\PidTable.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PatParser\PmtParser.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PatParser\Section.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PatParser\SectionDecoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PatParser\TsHeader.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="PatParser sources"
-			>
-			<File
-				RelativePath=".\Source\PatParser\ChannelInfo.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PatParser\DvbUtil.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PatParser\PacketSync.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PatParser\PatParser.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PatParser\PesDecoder.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PatParser\PidTable.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PatParser\PmtParser.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PatParser\Section.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PatParser\SectionDecoder.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\PatParser\TsHeader.cpp"
-				>
-			</File>
+				<File
+					RelativePath=".\Source\PatParser\ChannelInfo.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\DvbUtil.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\PacketSync.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\PatParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\PesDecoder.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\PidTable.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\PmtParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\Section.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\SectionDecoder.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\TsHeader.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
