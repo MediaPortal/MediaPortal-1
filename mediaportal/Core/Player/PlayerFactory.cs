@@ -43,6 +43,14 @@ namespace MediaPortal.Player
     {
     }
 
+    public enum StreamingPlayers : int
+    {
+      BASS = 0,
+      WMP9 =1,
+      VMR7 =2,
+      RTSP = 3,
+    }
+
     private void LoadExternalPlayers()
     {
       Log.Info("Loading external players plugins");
@@ -224,9 +232,28 @@ namespace MediaPortal.Player
         }
       }
 
-      // use BASS player for Internet radio streams 
+      // choose player for Internet radio streams 
       if (fileName.IndexOf(@"/last.mp3?") > 0)
-        return BassMusicPlayer.Player;
+      {
+        int streamPlayer = 0;
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        {
+          streamPlayer = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
+        }
+        switch (streamPlayer)
+        {
+          case 0:
+            return BassMusicPlayer.Player;
+          case 1:
+            return new Player.AudioPlayerWMP9();
+          case 2:
+            return new Player.AudioPlayerVMR7();
+          case 3:
+            return new RTSPPlayer();
+          default:
+            return BassMusicPlayer.Player;
+        }        
+      }
 
 
       newPlayer = new Player.AudioPlayerWMP9();

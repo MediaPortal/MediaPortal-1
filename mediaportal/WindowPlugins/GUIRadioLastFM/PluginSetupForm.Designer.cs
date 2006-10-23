@@ -32,13 +32,15 @@
       this.panelBannerAlign = new System.Windows.Forms.Panel();
       this.pictureBoxBanner = new System.Windows.Forms.PictureBox();
       this.groupBoxSettings = new System.Windows.Forms.GroupBox();
+      this.labelListEntries = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.numericUpDownListEntries = new System.Windows.Forms.NumericUpDown();
       this.checkBoxShowBallonTips = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxSubmitToProfile = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxUseTrayIcon = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.buttonCancel = new System.Windows.Forms.Button();
       this.buttonSave = new System.Windows.Forms.Button();
-      this.numericUpDownListEntries = new System.Windows.Forms.NumericUpDown();
-      this.labelListEntries = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxStreamPlayerType = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.labelEngine = new MediaPortal.UserInterface.Controls.MPLabel();
       this.panelBannerAlign.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBanner)).BeginInit();
       this.groupBoxSettings.SuspendLayout();
@@ -65,6 +67,8 @@
       // 
       // groupBoxSettings
       // 
+      this.groupBoxSettings.Controls.Add(this.labelEngine);
+      this.groupBoxSettings.Controls.Add(this.comboBoxStreamPlayerType);
       this.groupBoxSettings.Controls.Add(this.labelListEntries);
       this.groupBoxSettings.Controls.Add(this.numericUpDownListEntries);
       this.groupBoxSettings.Controls.Add(this.checkBoxShowBallonTips);
@@ -72,10 +76,36 @@
       this.groupBoxSettings.Controls.Add(this.checkBoxUseTrayIcon);
       this.groupBoxSettings.Location = new System.Drawing.Point(12, 81);
       this.groupBoxSettings.Name = "groupBoxSettings";
-      this.groupBoxSettings.Size = new System.Drawing.Size(370, 141);
+      this.groupBoxSettings.Size = new System.Drawing.Size(370, 186);
       this.groupBoxSettings.TabIndex = 1;
       this.groupBoxSettings.TabStop = false;
       this.groupBoxSettings.Text = "Settings";
+      // 
+      // labelListEntries
+      // 
+      this.labelListEntries.AutoSize = true;
+      this.labelListEntries.Location = new System.Drawing.Point(79, 108);
+      this.labelListEntries.Name = "labelListEntries";
+      this.labelListEntries.Size = new System.Drawing.Size(260, 13);
+      this.labelListEntries.TabIndex = 4;
+      this.labelListEntries.Text = "Maximum number of menu entries (for tags, friends, ...)";
+      // 
+      // numericUpDownListEntries
+      // 
+      this.numericUpDownListEntries.Location = new System.Drawing.Point(15, 106);
+      this.numericUpDownListEntries.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownListEntries.Name = "numericUpDownListEntries";
+      this.numericUpDownListEntries.Size = new System.Drawing.Size(58, 20);
+      this.numericUpDownListEntries.TabIndex = 3;
+      this.numericUpDownListEntries.Value = new decimal(new int[] {
+            12,
+            0,
+            0,
+            0});
       // 
       // checkBoxShowBallonTips
       // 
@@ -113,7 +143,7 @@
       // 
       // buttonCancel
       // 
-      this.buttonCancel.Location = new System.Drawing.Point(307, 241);
+      this.buttonCancel.Location = new System.Drawing.Point(307, 283);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
       this.buttonCancel.TabIndex = 2;
@@ -123,7 +153,7 @@
       // 
       // buttonSave
       // 
-      this.buttonSave.Location = new System.Drawing.Point(226, 241);
+      this.buttonSave.Location = new System.Drawing.Point(226, 283);
       this.buttonSave.Name = "buttonSave";
       this.buttonSave.Size = new System.Drawing.Size(75, 23);
       this.buttonSave.TabIndex = 3;
@@ -131,37 +161,33 @@
       this.buttonSave.UseVisualStyleBackColor = true;
       this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
       // 
-      // numericUpDownListEntries
+      // comboBoxStreamPlayerType
       // 
-      this.numericUpDownListEntries.Location = new System.Drawing.Point(15, 106);
-      this.numericUpDownListEntries.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-      this.numericUpDownListEntries.Name = "numericUpDownListEntries";
-      this.numericUpDownListEntries.Size = new System.Drawing.Size(44, 20);
-      this.numericUpDownListEntries.TabIndex = 3;
-      this.numericUpDownListEntries.Value = new decimal(new int[] {
-            12,
-            0,
-            0,
-            0});
+      this.comboBoxStreamPlayerType.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxStreamPlayerType.FormattingEnabled = true;
+      this.comboBoxStreamPlayerType.Items.AddRange(new object[] {
+            "BASS",
+            "WMP"});
+      this.comboBoxStreamPlayerType.Location = new System.Drawing.Point(15, 145);
+      this.comboBoxStreamPlayerType.Name = "comboBoxStreamPlayerType";
+      this.comboBoxStreamPlayerType.Size = new System.Drawing.Size(58, 21);
+      this.comboBoxStreamPlayerType.TabIndex = 5;
+      this.comboBoxStreamPlayerType.Text = "BASS";
       // 
-      // labelListEntries
+      // labelEngine
       // 
-      this.labelListEntries.AutoSize = true;
-      this.labelListEntries.Location = new System.Drawing.Point(65, 108);
-      this.labelListEntries.Name = "labelListEntries";
-      this.labelListEntries.Size = new System.Drawing.Size(260, 13);
-      this.labelListEntries.TabIndex = 4;
-      this.labelListEntries.Text = "Maximum number of menu entries (for tags, friends, ...)";
+      this.labelEngine.AutoSize = true;
+      this.labelEngine.Location = new System.Drawing.Point(78, 148);
+      this.labelEngine.Name = "labelEngine";
+      this.labelEngine.Size = new System.Drawing.Size(142, 13);
+      this.labelEngine.TabIndex = 6;
+      this.labelEngine.Text = "Audio player type for streams";
       // 
       // PluginSetupForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(394, 276);
+      this.ClientSize = new System.Drawing.Size(394, 318);
       this.Controls.Add(this.buttonSave);
       this.Controls.Add(this.buttonCancel);
       this.Controls.Add(this.groupBoxSettings);
@@ -191,5 +217,7 @@
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowBallonTips;
     private MediaPortal.UserInterface.Controls.MPLabel labelListEntries;
     private System.Windows.Forms.NumericUpDown numericUpDownListEntries;
+    private MediaPortal.UserInterface.Controls.MPLabel labelEngine;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxStreamPlayerType;
   }
 }
