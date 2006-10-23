@@ -79,7 +79,7 @@ namespace TvService
                 }
                 catch (Exception ex)
                 {
-                  Log.WriteFile("Exception while loading IPlugin instances: {0}", t.FullName);
+                  Log.WriteFile("Exception while loading ITvServerPlugin instances: {0}", t.FullName);
                   Log.WriteFile(ex.ToString());
                   Log.WriteFile(ex.Message);
                   Log.WriteFile(ex.StackTrace);
