@@ -2129,7 +2129,7 @@ namespace TvPlugin
 
       if (_channelList.Count == 0)
       {
-        Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true);
+        Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true,"");
         for (int i = 0; i < 10; ++i)
           _channelList.Add(newChannel);
       }
