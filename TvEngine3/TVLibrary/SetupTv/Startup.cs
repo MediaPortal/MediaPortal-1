@@ -111,7 +111,11 @@ namespace SetupTv
       }
 
       int cards = 0;
-      
+
+      IList channels = Channel.ListAll();
+      Channel ch = (Channel)channels[0];
+      TvBusinessLayer l = new TvBusinessLayer();
+      l.GetPrograms(DateTime.Now.AddDays(-1), DateTime.Now.AddDays(1));
 
       try
       {

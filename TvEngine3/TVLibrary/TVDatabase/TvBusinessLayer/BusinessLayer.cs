@@ -439,7 +439,7 @@ namespace TvDatabase
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Program));
       DateTime dtYesterday = DateTime.Now.AddDays(-1);
-      sb.AddConstraint(Operator.LessThan, "endTime", dtYesterday);
+      sb.AddConstraint(Operator.LessThan, "endTime", dtYesterday.ToString("MM/dd/yyyy HH:mm:ss"));
       SqlStatement stmt = sb.GetStatement(true);
       ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
 
@@ -447,8 +447,8 @@ namespace TvDatabase
     public IList GetOnairNow()
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
-      sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", DateTime.Now);
-      sb.AddConstraint(Operator.LessThanOrEquals, "endTime",DateTime.Now);
+      sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"));
+      sb.AddConstraint(Operator.LessThanOrEquals, "endTime", DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"));
       SqlStatement stmt = sb.GetStatement(true);
       IList progs=ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
       return progs;
@@ -562,14 +562,14 @@ namespace TvDatabase
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       if (searchCriteria.Length > 0)
       {
-        sb.AddConstraint(Operator.GreaterThan, "endtime", DateTime.Now);
+        sb.AddConstraint(Operator.GreaterThan, "endtime", DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"));
         sb.AddConstraint(Operator.Like, "title", String.Format("{0}%", searchCriteria));
         sb.AddOrderByField("title");
         sb.AddOrderByField("starttime");
       }
       else
       {
-        sb.AddConstraint(Operator.GreaterThan, "endtime", DateTime.Now);
+        sb.AddConstraint(Operator.GreaterThan, "endtime", DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"));
         sb.AddOrderByField("title");
         sb.AddOrderByField("starttime");
       }
@@ -584,14 +584,14 @@ namespace TvDatabase
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       if (searchCriteria.Length > 0)
       {
-        sb.AddConstraint(Operator.GreaterThan, "endtime", DateTime.Now);
+        sb.AddConstraint(Operator.GreaterThan, "endtime", DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"));
         sb.AddConstraint(Operator.Like, "description", String.Format("{0}%", searchCriteria));
         sb.AddOrderByField("description");
         sb.AddOrderByField("starttime");
       }
       else
       {
-        sb.AddConstraint(Operator.GreaterThan, "endtime", DateTime.Now);
+        sb.AddConstraint(Operator.GreaterThan, "endtime", DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"));
         sb.AddOrderByField("description");
         sb.AddOrderByField("starttime");
       }
