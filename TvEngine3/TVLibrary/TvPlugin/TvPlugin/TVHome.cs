@@ -1003,35 +1003,75 @@ namespace TvPlugin
 
       string errorMessage;
       TvResult succeeded;
-      if (TVHome.Card.IsTimeShifting == false ||
-          TVHome.Card.ChannelName != channel)
+      if (TVHome.Card != null)
       {
-
-        if (g_Player.Playing)
+        //if we're already watching this channel, then simply return
+        if (TVHome.Card.IsTimeShifting == true && TVHome.Card.ChannelName == channel)
         {
-          SeekToEnd();
-        }
-        VirtualCard card;
-        succeeded = RemoteControl.Instance.StartTimeShifting(channel, new User(),out card);
-        TVHome.Card = card;
-        MediaPortal.GUI.Library.Log.Info("succeeded:{0} scrambled:{1}", succeeded, TVHome.Card.IsScrambled);
-        if (succeeded == TvResult.Succeeded)
-        {
-          if (g_Player.Playing && g_Player.CurrentFile != TVHome.Card.TimeShiftFileName)
-          {
-            g_Player.Stop();
-          }
-          if (!g_Player.Playing)
-            StartPlay();
           return true;
         }
-        else
+      }
+
+      if (g_Player.Playing)
+      {
+        SeekToEnd();
+      }
+
+      //check if we are currently watching a tv channel with AC3
+      IAudioStream[] audioStreams;
+      bool hadAc3 = false;
+      if (g_Player.Playing && TVHome.Card != null)
+      {
+        audioStreams = TVHome.Card.AvailableAudioStreams;
+        foreach (IAudioStream stream in audioStreams)
         {
-          g_Player.Stop();
-          TVHome.Card.StopTimeShifting();
+          if (stream.StreamType == AudioStreamType.AC3)
+          {
+            hadAc3 = true;
+          }
         }
       }
-      else return true;
+      //Start timeshifting the new tv channel
+      VirtualCard card;
+      succeeded = RemoteControl.Instance.StartTimeShifting(channel, new User(),out card);
+      TVHome.Card = card;
+      MediaPortal.GUI.Library.Log.Info("succeeded:{0} scrambled:{1}", succeeded, TVHome.Card.IsScrambled);
+      if (succeeded == TvResult.Succeeded)
+      {
+        //timeshifting succeeded
+
+        //check if we the new tvchannel has AC3
+        audioStreams = TVHome.Card.AvailableAudioStreams;
+        bool hasAc3 = false;
+        foreach (IAudioStream stream in audioStreams)
+        {
+          if (stream.StreamType == AudioStreamType.AC3)
+          {
+            hasAc3 = true;
+          }
+        }
+        // when we switch from mpeg-2 <-> ac3, then recreate the playing graph
+        if (hadAc3 != hasAc3)
+        {
+          g_Player.Stop();
+        }
+        if (g_Player.Playing && g_Player.CurrentFile != TVHome.Card.TimeShiftFileName)
+        {
+          g_Player.Stop();
+        }
+        if (!g_Player.Playing)
+        {
+          StartPlay();
+        }
+        
+        return true;
+      }
+      else
+      {
+        //timeshifting failed...
+        g_Player.Stop();
+        TVHome.Card.StopTimeShifting();
+      }
 
 
       GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
