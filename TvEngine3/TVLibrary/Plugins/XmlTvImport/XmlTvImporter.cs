@@ -10,7 +10,7 @@ using TvLibrary.Log;
 
 namespace TvEngine
 {
-  public class XmlTvImporter : PluginBase
+  public class XmlTvImporter : ITVServerPlugin
   {
     #region variables
     bool _workerThreadRunning = false;
