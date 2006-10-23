@@ -57,6 +57,7 @@
     <Compile Include="DiskManagement\EpisodeManagement.cs" />
     <Compile Include="DiskManagement\RecordingFileInfo.cs" />
     <Compile Include="DiskManagement\RecordingManagement.cs" />
+    <Compile Include="PluginLoader.cs" />
     <Compile Include="Scheduler\CardDetail.cs" />
     <Compile Include="Epg\EpgGrabber.cs" />
     <Compile Include="ProjectInstaller.cs">
@@ -89,6 +90,10 @@
     <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
       <Project>{0D1BA455-CE59-4133-8EAA-1A1E82F8AA12}</Project>
       <Name>DirectShowLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Plugins\PluginBase\PluginBase.csproj">
+      <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>
+      <Name>PluginBase</Name>
     </ProjectReference>
     <ProjectReference Include="..\TvControl\TvControl.csproj">
       <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>

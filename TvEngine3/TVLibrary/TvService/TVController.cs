@@ -37,6 +37,7 @@ using TvLibrary.Epg;
 using TvLibrary.Log;
 using TVLibrary.Streaming;
 using TvControl;
+using TvEngine;
 
 using TvDatabase;
 
@@ -82,7 +83,11 @@ namespace TvService
     /// <summary>
     /// Reference to our server
     /// </summary>
-    Server _ourServer = null;
+    Server _ourServer = null;/// <summary>
+                             /// 
+    /// Plugins
+    /// </summary>
+    PluginLoader _plugins = null;
     #endregion
 
     #region ctor
@@ -169,6 +174,8 @@ namespace TvService
         _localCards = new Dictionary<int, ITVCard>();
         _allDbscards = new Dictionary<int, Card>();
         _cardsInUse = new Dictionary<int, User>();
+        _plugins = new PluginLoader();
+        _plugins.Load();
 
 
         //log all local ip adresses, usefull for debugging problems
@@ -300,6 +307,14 @@ namespace TvService
           _scheduler = new Scheduler(this);
           _scheduler.Start();
         }
+
+        foreach (PluginBase plugin in _plugins.Plugins)
+        {
+          if (plugin.MasterOnly == false || _isMaster)
+          {
+            plugin.Start(this);
+          }
+        }
       }
       catch (Exception ex)
       {
@@ -331,6 +346,17 @@ namespace TvService
     /// </summary>
     public void DeInit()
     {
+      if (_plugins != null)
+      {
+        foreach (PluginBase plugin in _plugins.Plugins)
+        {
+          if (plugin.MasterOnly == false || _isMaster)
+          {
+            plugin.Stop();
+          }
+        }
+        _plugins = null;
+      }
       //stop the RTSP streamer server
       if (_streamer != null)
       {
