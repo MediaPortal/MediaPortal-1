@@ -38,14 +38,16 @@ namespace TvDatabase
 		[TableColumn("sortOrder", NotNull=true)]
 		private int sortOrder;
 		[TableColumn("visibleInGuide", NotNull=true)]
-		private bool visibleInGuide;
+    private bool visibleInGuide;
+    [TableColumn("externalId", NotNull = true)]
+    private string externalId;
 		#endregion
 			
 		#region Constructors
 		/// <summary> 
 		/// Create a new object by specifying all fields (except the auto-generated primary key field). 
 		/// </summary> 
-		public Channel(string name, bool isRadio, bool isTv, int timesWatched, DateTime totalTimeWatched, bool grabEpg, DateTime lastGrabTime, int sortOrder, bool visibleInGuide)
+    public Channel(string name, bool isRadio, bool isTv, int timesWatched, DateTime totalTimeWatched, bool grabEpg, DateTime lastGrabTime, int sortOrder, bool visibleInGuide, string externalId)
 		{
 			isChanged = true;
 			this.name = name;
@@ -57,13 +59,14 @@ namespace TvDatabase
 			this.lastGrabTime = lastGrabTime;
 			this.sortOrder = sortOrder;
 			this.visibleInGuide = visibleInGuide;
+      this.externalId = externalId;
 		}
 			
 		/// <summary> 
 		/// Create an object from an existing row of data. This will be used by Gentle to 
 		/// construct objects from retrieved rows. 
 		/// </summary> 
-		public Channel(int idChannel, string name, bool isRadio, bool isTv, int timesWatched, DateTime totalTimeWatched, bool grabEpg, DateTime lastGrabTime, int sortOrder, bool visibleInGuide)
+    public Channel(int idChannel, string name, bool isRadio, bool isTv, int timesWatched, DateTime totalTimeWatched, bool grabEpg, DateTime lastGrabTime, int sortOrder, bool visibleInGuide, string externalId)
 		{
 			this.idChannel = idChannel;
 			this.name = name;
@@ -75,6 +78,7 @@ namespace TvDatabase
 			this.lastGrabTime = lastGrabTime;
 			this.sortOrder = sortOrder;
 			this.visibleInGuide = visibleInGuide;
+      this.externalId = externalId;
 		}
 		#endregion
 
@@ -104,6 +108,14 @@ namespace TvDatabase
 			set { isChanged |= name != value; name = value; }
 		}
 
+    /// <summary>
+    /// Property relating to database column name
+    /// </summary>
+    public string ExternalId
+    {
+      get { return externalId; }
+      set { isChanged |= externalId != value; externalId = value; }
+    }
 		/// <summary>
 		/// Property relating to database column isRadio
 		/// </summary>

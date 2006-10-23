@@ -76,7 +76,7 @@ namespace TvDatabase
         channel.Name = name;
         return channel;
       }
-      Channel newChannel = new Channel(name, false, false, 0, new DateTime(2000, 1, 1), true, new DateTime(2000, 1, 1), -1, true);
+      Channel newChannel = new Channel(name, false, false, 0, new DateTime(2000, 1, 1), true, new DateTime(2000, 1, 1), -1, true,"");
       
       return newChannel;
     }

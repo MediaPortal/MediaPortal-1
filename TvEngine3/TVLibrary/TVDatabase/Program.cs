@@ -267,5 +267,10 @@ namespace TvDatabase
       if (tCurTime >= StartTime && tCurTime <= EndTime) bRunningAt = true;
       return bRunningAt;
     }
+
+    public Program Clone()
+    {
+      return new Program(idChannel, StartTime, EndTime, Title, Description, Genre, Notify);
+    }
 	}
 }
