@@ -75,10 +75,6 @@
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\TvService\TvService.csproj">
-      <Project>{3BE4F3AA-36EB-4956-B000-E29C74FC6AB0}</Project>
-      <Name>TvService</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PluginBase\PluginBase.csproj">
       <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>
       <Name>PluginBase</Name>
