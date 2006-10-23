@@ -8,7 +8,7 @@ namespace TvEngine
   /// <summary>
   /// base class for tv-server plugins
   /// </summary>
-  public interface ITVServerPlugin
+  public interface ITvServerPlugin
   {
     #region properties
     /// <summary>

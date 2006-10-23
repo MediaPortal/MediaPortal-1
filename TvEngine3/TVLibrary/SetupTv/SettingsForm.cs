@@ -162,7 +162,7 @@ namespace SetupTv
         AddSection(pluginsRoot);
 
         _pluginLoader.Load();
-        foreach (ITVServerPlugin plugin in _pluginLoader.Plugins)
+        foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
         {
           SectionSettings settings = plugin.Setup;
           if (settings != null)

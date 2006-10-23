@@ -8,13 +8,13 @@ namespace TvService
 {
   class PluginLoader
   {
-    List<ITVServerPlugin> _plugins = new List<ITVServerPlugin>();
+    List<ITvServerPlugin> _plugins = new List<ITvServerPlugin>();
 
     /// <summary>
     /// returns a list of all plugins loaded.
     /// </summary>
     /// <value>The plugins.</value>
-    public List<ITVServerPlugin> Plugins
+    public List<ITvServerPlugin> Plugins
     {
       get { return _plugins; }
     }
@@ -59,15 +59,15 @@ namespace TvService
                 if (t.IsAbstract) continue;
 
                 Object newObj = null;
-                ITVServerPlugin plugin = null;
+                ITvServerPlugin plugin = null;
                 TypeFilter myFilter2 = new TypeFilter(MyInterfaceFilter);
                 try
                 {
-                  foundInterfaces = t.FindInterfaces(myFilter2, "TvEngine.ITVServerPlugin");
+                  foundInterfaces = t.FindInterfaces(myFilter2, "TvEngine.ITvServerPlugin");
                   if (foundInterfaces.Length > 0)
                   {
                     newObj = (object)Activator.CreateInstance(t);
-                    plugin = (ITVServerPlugin)newObj;
+                    plugin = (ITvServerPlugin)newObj;
                     _plugins.Add(plugin);
                   }
                 }

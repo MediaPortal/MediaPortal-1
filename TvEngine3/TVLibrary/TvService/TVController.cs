@@ -308,7 +308,7 @@ namespace TvService
           _scheduler.Start();
         }
 
-        foreach (ITVServerPlugin plugin in _plugins.Plugins)
+        foreach (ITvServerPlugin plugin in _plugins.Plugins)
         {
           if (plugin.MasterOnly == false || _isMaster)
           {
@@ -348,7 +348,7 @@ namespace TvService
     {
       if (_plugins != null)
       {
-        foreach (ITVServerPlugin plugin in _plugins.Plugins)
+        foreach (ITvServerPlugin plugin in _plugins.Plugins)
         {
           if (plugin.MasterOnly == false || _isMaster)
           {
