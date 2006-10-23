@@ -50,18 +50,45 @@ namespace TvService
   public class TVController : MarshalByRefObject, IController, IDisposable
   {
     #region variables
+    /// <summary>
+    /// EPG grabber for DVB
+    /// </summary>
     EpgGrabber _epgGrabber;
+    /// <summary>
+    /// Recording scheduler
+    /// </summary>
     Scheduler _scheduler;
+    /// <summary>
+    /// RTSP Streaming Server
+    /// </summary>
     RtspStreaming _streamer;
+    /// <summary>
+    /// Indicates if we're the master server or not
+    /// </summary>
     bool _isMaster = false;
 
+    /// <summary>
+    /// List containing all database cards
+    /// </summary>
     Dictionary<int, Card> _allDbscards;
+    /// <summary>
+    /// List containing all local cards (cards in this pc)
+    /// </summary>
     Dictionary<int, ITVCard> _localCards;
+    /// <summary>
+    /// List containing which cards are in use by which user
+    /// </summary>
     Dictionary<int, User> _cardsInUse;
+    /// <summary>
+    /// Reference to our server
+    /// </summary>
     Server _ourServer = null;
     #endregion
 
     #region ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TVController"/> class.
+    /// </summary>
     public TVController()
     {
       Init();
@@ -134,20 +161,25 @@ namespace TvService
     {
       try
       {
+        //load the database connection string from the config file
         Log.WriteFile(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(DatabaseConnectionString);
+
         TvCardCollection localCardCollection = new TvCardCollection();
         _localCards = new Dictionary<int, ITVCard>();
         _allDbscards = new Dictionary<int, Card>();
         _cardsInUse = new Dictionary<int, User>();
 
 
+        //log all local ip adresses, usefull for debugging problems
         Log.Write("Controller: Started at {0}", Dns.GetHostName());
         IPHostEntry local = Dns.GetHostByName(Dns.GetHostName());
         foreach (IPAddress ipaddress in local.AddressList)
         {
           Log.Write("Controller: local ip adress:{0}", ipaddress.ToString());
         }
+
+        //get all registered servers from the database
         IList servers;
         try
         {
@@ -161,6 +193,7 @@ namespace TvService
           return;
         }
 
+        // find ourself
         foreach (Server server in servers)
         {
           if (IsLocal(server.HostName))
@@ -171,8 +204,10 @@ namespace TvService
           }
         }
 
+        //we dont exists yet?
         if (_ourServer == null)
         {
+          //then add ourselfs to the server
           Log.WriteFile("Controller: create new server in database");
           _ourServer = new Server(false, Dns.GetHostName());
           if (servers.Count == 0)
@@ -187,10 +222,11 @@ namespace TvService
         }
         _isMaster = _ourServer.IsMaster;
 
-        //enumerate all tv cards...
+        //enumerate all tv cards in this pc...
         TvBusinessLayer layer = new TvBusinessLayer();
         for (int i = 0; i < localCardCollection.Cards.Count; ++i)
         {
+          //for each card, check if its already mentioned in the database
           bool found = false;
           IList cards = _ourServer.ReferringCard();
           foreach (Card card in cards)
@@ -203,6 +239,7 @@ namespace TvService
           }
           if (!found)
           {
+            // card is not yet in the database, so add it
             Log.WriteFile("Controller: add card:{0}", localCardCollection.Cards[i].Name);
             layer.AddCard(localCardCollection.Cards[i].Name, localCardCollection.Cards[i].DevicePath, _ourServer);
           }
@@ -289,8 +326,12 @@ namespace TvService
       DeInit();
     }
 
+    /// <summary>
+    /// Cleans up the controller
+    /// </summary>
     public void DeInit()
     {
+      //stop the RTSP streamer server
       if (_streamer != null)
       {
         Log.WriteFile("Controller: stop streamer...");
@@ -298,6 +339,7 @@ namespace TvService
         _streamer = null;
         Log.WriteFile("Controller: streamer stopped...");
       }
+      //stop the recording scheduler
       if (_scheduler != null)
       {
         Log.WriteFile("Controller: stop scheduler...");
@@ -305,6 +347,7 @@ namespace TvService
         _scheduler = null;
         Log.WriteFile("Controller: scheduler stopped...");
       }
+      //stop the epg grabber
       if (_epgGrabber != null)
       {
         Log.WriteFile("Controller: stop epg grabber...");
@@ -312,6 +355,8 @@ namespace TvService
         _epgGrabber = null;
         Log.WriteFile("Controller: epg stopped...");
       }
+
+      //clean up the tv cards
       Dictionary<int, ITVCard>.Enumerator enumerator = _localCards.GetEnumerator();
       while (enumerator.MoveNext())
       {
@@ -361,15 +406,23 @@ namespace TvService
     /// Gets the type of card.
     /// </summary>
     /// <param name="cardId">id of card.</param>
-    /// <value>cardtype</value>
+    /// <value>cardtype (Analog,DvbS,DvbT,DvbC,Atsc)</value>
     public CardType Type(int cardId)
     {
       try
       {
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.Type(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.Type(cardId);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return CardType.Analog;
+          }
         }
         if ((_localCards[cardId] as TvCardAnalog) != null) return CardType.Analog;
         if ((_localCards[cardId] as TvCardATSC) != null) return CardType.Atsc;
@@ -397,8 +450,16 @@ namespace TvService
       {
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.CardName(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.CardName(cardId);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return "";
+          }
         }
         return _localCards[cardId].Name;
       }
@@ -422,8 +483,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return false;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.CanTune(cardId, channel);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.CanTune(cardId, channel);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return false;
+          }
         }
         return _localCards[cardId].CanTune(channel);
       }
@@ -445,8 +514,16 @@ namespace TvService
       {
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.CardDevice(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.CardDevice(cardId);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return "";
+          }
         }
         return _localCards[cardId].DevicePath;
       }
@@ -469,8 +546,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return null;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.CurrentChannel(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.CurrentChannel(cardId);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return null;
+          }
         }
         return _localCards[cardId].Channel;
       }
@@ -493,8 +578,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return "";
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.CurrentChannelName(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.CurrentChannelName(cardId);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return "";
+          }
         }
         if (_localCards[cardId].Channel == null) return "";
         return _localCards[cardId].Channel.Name;
@@ -519,8 +612,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return false;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.TunerLocked(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.TunerLocked(cardId);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return false;
+          }
         }
         return _localCards[cardId].IsTunerLocked;
       }
@@ -543,8 +644,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return 0;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.SignalQuality(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.SignalQuality(cardId);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return 0;
+          }
         }
         return _localCards[cardId].SignalQuality;
       }
@@ -567,8 +676,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return 0;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.SignalLevel(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.SignalLevel(cardId);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return 0;
+          }
         }
         return _localCards[cardId].SignalLevel;
       }
@@ -591,8 +708,17 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return "";
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.FileName(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.FileName(cardId);
+
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return "";
+          }
         }
         return _localCards[cardId].FileName;
       }
@@ -610,8 +736,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return "";
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.TimeShiftFileName(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.TimeShiftFileName(cardId);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return "";
+          }
         }
         return _localCards[cardId].TimeShiftFileName + ".tsbuffer";
       }
@@ -634,8 +768,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return false;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.IsTimeShifting(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.IsTimeShifting(cardId);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return false;
+          }
         }
         return _localCards[cardId].IsTimeShifting || _localCards[cardId].IsRecording;
       }
@@ -658,8 +800,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return false;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.IsRecording(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.IsRecording(cardId);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return false;
+          }
         }
         return _localCards[cardId].IsRecording;
       }
@@ -682,8 +832,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return false;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.IsScanning(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.IsScanning(cardId);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return false;
+          }
         }
         return _localCards[cardId].IsScanning;
       }
@@ -706,8 +864,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return false;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.IsGrabbingEpg(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.IsGrabbingEpg(cardId);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return false;
+          }
         }
         return _localCards[cardId].IsEpgGrabbing;
       }
@@ -730,8 +896,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return false;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.IsGrabbingTeletext(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.IsGrabbingTeletext(cardId);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return false;
+          }
         }
         return _localCards[cardId].GrabTeletext;
       }
@@ -753,8 +927,16 @@ namespace TvService
       if (_allDbscards[cardId].Enabled == false) return false;
       if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
       {
-        RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-        return RemoteControl.Instance.HasTeletext(cardId);
+        try
+        {
+          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+          return RemoteControl.Instance.HasTeletext(cardId);
+        }
+        catch (Exception)
+        {
+          Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+          return false;
+        }
       }
       return _localCards[cardId].HasTeletext;
     }
@@ -772,8 +954,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return new TimeSpan(0, 0, 0, 15);
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.TeletextRotation(cardId, pageNumber);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.TeletextRotation(cardId, pageNumber);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return new TimeSpan(0, 0, 0, 15);
+          }
         }
         return _localCards[cardId].TeletextDecoder.RotationTime(pageNumber);
       }
@@ -796,8 +986,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return DateTime.MinValue;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.TimeShiftStarted(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.TimeShiftStarted(cardId);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return DateTime.MinValue;
+          }
         }
         return _localCards[cardId].StartOfTimeShift;
       }
@@ -820,8 +1018,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return DateTime.MinValue;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.RecordingStarted(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.RecordingStarted(cardId);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return DateTime.MinValue;
+          }
         }
         return _localCards[cardId].RecordingStarted;
       }
@@ -846,8 +1052,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return true;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.IsScrambled(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.IsScrambled(cardId);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return false;
+          }
         }
         return (false == _localCards[cardId].IsReceivingAudioVideo);
       }
@@ -868,8 +1082,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return 0;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.MinChannel(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.MinChannel(cardId);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return 0;
+          }
         }
         return _localCards[cardId].MinChannel;
       }
@@ -887,8 +1109,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return 0;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.MaxChannel(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.MaxChannel(cardId);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return 0;
+          }
         }
         return _localCards[cardId].MaxChannel;
       }
@@ -915,8 +1145,16 @@ namespace TvService
         {
           if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
           {
-            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-            return RemoteControl.Instance.Tune(cardId, channel);
+            try
+            {
+              RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+              return RemoteControl.Instance.Tune(cardId, channel);
+            }
+            catch (Exception)
+            {
+              Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+              return false;
+            }
           }
           if (CurrentChannel(cardId) != null)
           {
@@ -948,8 +1186,16 @@ namespace TvService
         {
           if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
           {
-            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-            return RemoteControl.Instance.TuneScan(cardId, channel);
+            try
+            {
+              RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+              return RemoteControl.Instance.TuneScan(cardId, channel);
+            }
+            catch (Exception)
+            {
+              Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+              return false;
+            }
           }
           Card card = Card.Retrieve(cardId);
           _localCards[cardId].CamType = (CamType)card.CamType;
@@ -979,9 +1225,17 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          RemoteControl.Instance.GrabTeletext(cardId, onOff);
-          return;
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            RemoteControl.Instance.GrabTeletext(cardId, onOff);
+            return;
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return ;
+          }
         }
         _localCards[cardId].GrabTeletext = onOff;
       }
@@ -1006,8 +1260,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return new byte[] { 1 };
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.GetTeletextPage(cardId, pageNumber, subPageNumber);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.GetTeletextPage(cardId, pageNumber, subPageNumber);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return new byte[] { 1 };
+          }
         }
         if (_localCards[cardId].TeletextDecoder == null) return new byte[1] { 1 };
         return _localCards[cardId].TeletextDecoder.GetRawPage(pageNumber, subPageNumber);
@@ -1032,8 +1294,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return -1;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.SubPageCount(cardId, pageNumber);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.SubPageCount(cardId, pageNumber);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return -1;
+          }
         }
         if (_localCards[cardId].TeletextDecoder == null) return 0;
         return _localCards[cardId].TeletextDecoder.NumberOfSubpages(pageNumber) + 1;
@@ -1061,8 +1331,16 @@ namespace TvService
         {
           if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
           {
-            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-            return RemoteControl.Instance.StartTimeShifting(cardId, fileName);
+            try
+            {
+              RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+              return RemoteControl.Instance.StartTimeShifting(cardId, fileName);
+            }
+            catch (Exception)
+            {
+              Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+              return TvResult.UnknownError;
+            }
           }
 
           if (_epgGrabber != null)
@@ -1138,10 +1416,18 @@ namespace TvService
           }
           if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
           {
-            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-            result = RemoteControl.Instance.StopTimeShifting(cardId, user);
-            UnlockCard(cardId);
-            return result;
+            try
+            {
+              RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+              result = RemoteControl.Instance.StopTimeShifting(cardId, user);
+              UnlockCard(cardId);
+              return result;
+            }
+            catch (Exception)
+            {
+              Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+              return false;
+            }
           }
           result = _localCards[cardId].StopTimeShifting();
           if (result == true)
@@ -1199,8 +1485,16 @@ namespace TvService
           if (!contentRecording) recType = RecordingType.Reference;
           if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
           {
-            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-            return RemoteControl.Instance.StartRecording(cardId, ref fileName, contentRecording, startTime);
+            try
+            {
+              RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+              return RemoteControl.Instance.StartRecording(cardId, ref fileName, contentRecording, startTime);
+            }
+            catch (Exception)
+            {
+              Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+              return false;
+            }
           }
 
           if (_localCards[cardId].IsRecordingTransportStream)
@@ -1237,8 +1531,16 @@ namespace TvService
         {
           if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
           {
-            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-            return RemoteControl.Instance.StopRecording(cardId);
+            try
+            {
+              RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+              return RemoteControl.Instance.StopRecording(cardId);
+            }
+            catch (Exception)
+            {
+              Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+              return false;
+            }
           }
           Log.Write("Controller: StopRecording for card:{0}", cardId);
           if (IsRecording(cardId))
@@ -1268,8 +1570,16 @@ namespace TvService
         if (_allDbscards[cardId].Enabled == false) return new List<IChannel>().ToArray();
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.Scan(cardId, channel);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.Scan(cardId, channel);
+          }
+          catch (Exception)
+          {
+            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return null;
+          }
         }
         ITVScanning scanner = _localCards[cardId].ScanningInterface;
         if (scanner == null) return null;
@@ -1346,8 +1656,16 @@ namespace TvService
       if (_allDbscards[cardId].Enabled == false) return new List<IAudioStream>().ToArray();
       if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
       {
-        RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-        return RemoteControl.Instance.AvailableAudioStreams(cardId);
+        try
+        {
+          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+          return RemoteControl.Instance.AvailableAudioStreams(cardId);
+        }
+        catch (Exception)
+        {
+          Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+          return null;
+        }
       }
       List<IAudioStream> streams = _localCards[cardId].AvailableAudioStreams;
       return streams.ToArray();
@@ -1358,8 +1676,16 @@ namespace TvService
       if (_allDbscards[cardId].Enabled == false) return null;
       if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
       {
-        RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-        return RemoteControl.Instance.GetCurrentAudioStream(cardId);
+        try
+        {
+          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+          return RemoteControl.Instance.GetCurrentAudioStream(cardId);
+        }
+        catch (Exception)
+        {
+          Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+          return null;
+        }
       }
       return _localCards[cardId].CurrentAudioStream;
     }
@@ -1370,9 +1696,17 @@ namespace TvService
       Log.WriteFile("Controller: setaudiostream:{0} {1}", cardId, stream);
       if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
       {
-        RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-        RemoteControl.Instance.SetCurrentAudioStream(cardId, stream);
-        return;
+        try
+        {
+          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+          RemoteControl.Instance.SetCurrentAudioStream(cardId, stream);
+          return;
+        }
+        catch (Exception)
+        {
+          Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+          return;
+        }
       }
       _localCards[cardId].CurrentAudioStream = stream;
     }
@@ -1382,8 +1716,16 @@ namespace TvService
       if (_allDbscards[cardId].Enabled == false) return "";
       if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
       {
-        RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-        return RemoteControl.Instance.GetStreamingUrl(cardId);
+        try
+        {
+          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+          return RemoteControl.Instance.GetStreamingUrl(cardId);
+        }
+        catch (Exception)
+        {
+          Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+          return "";
+        }
       }
       return String.Format("rtsp://{0}/stream{1}", _ourServer.HostName, cardId);
     }
@@ -1394,8 +1736,16 @@ namespace TvService
       if (recording == null) return "";
       if (!IsLocal(recording.ReferencedServer().HostName))
       {
-        RemoteControl.HostName = recording.ReferencedServer().HostName;
-        return RemoteControl.Instance.GetRecordingUrl(idRecording);
+        try
+        {
+          RemoteControl.HostName = recording.ReferencedServer().HostName;
+          return RemoteControl.Instance.GetRecordingUrl(idRecording);
+        }
+        catch (Exception)
+        {
+          Log.WriteFile("Controller: unable to connect to slave controller at:{0}", recording.ReferencedServer().HostName);
+          return "";
+        }
       }
       _streamer.Start();
       string streamName = _streamer.AddMpegFile(recording.FileName);
@@ -2009,7 +2359,7 @@ namespace TvService
                     Log.Write("Controller: timeshifting fileSize:{0}", fileSize);
                   }
                   fileSize = newfileSize;
-                  if (fileSize >= minTimeShiftFile) 
+                  if (fileSize >= minTimeShiftFile)
                   {
                     TimeSpan ts = DateTime.Now - timeStart;
                     Log.Write("Controller: timeshifting fileSize:{0} {1}", fileSize, ts.TotalMilliseconds);

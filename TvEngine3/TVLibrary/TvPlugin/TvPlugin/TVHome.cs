@@ -1408,7 +1408,10 @@ namespace TvPlugin
         m_groups.Clear();
 
         MediaPortal.GUI.Library.Log.Info("get all groups from database");
-        IList groups = ChannelGroup.ListAll();
+        sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
+        sb.AddOrderByField(true, "groupName");
+        stmt = sb.GetStatement(true);
+        IList groups = ObjectFactory.GetCollection(typeof(ChannelGroup), stmt.Execute());
         IList allgroupMaps = GroupMap.ListAll();
         bool found = false;
         foreach (ChannelGroup group in groups)

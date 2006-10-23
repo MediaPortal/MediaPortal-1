@@ -108,6 +108,7 @@ namespace SetupTv.Sections
       this.mpListViewGroups.TabIndex = 0;
       this.mpListViewGroups.UseCompatibleStateImageBehavior = false;
       this.mpListViewGroups.View = System.Windows.Forms.View.Details;
+      this.mpListViewGroups.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListViewGroups_ColumnClick);
       // 
       // columnHeader1
       // 
