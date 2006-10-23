@@ -66,6 +66,7 @@ namespace TvPlugin
           try
           {
             int cards = RemoteControl.Instance.Cards;
+            TVHome.Navigator.ReLoad();
             GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
             if (pDlgOK != null)
             {
@@ -76,7 +77,6 @@ namespace TvPlugin
               pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
               return;
             }
-            TVHome.Navigator.ReLoad();
             return;
           }
           catch (Exception)
