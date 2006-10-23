@@ -5502,6 +5502,10 @@
     <id>34052</id>
     <value>No more content or bad connection</value>
   </string>
+  <string>
+    <id>34053</id>
+    <value>Playback of selected stream failed</value>
+  </string>
 
   <string>
     <id>100000</id>

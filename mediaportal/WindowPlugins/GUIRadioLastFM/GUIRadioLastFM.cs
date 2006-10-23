@@ -323,7 +323,15 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
         if (LastFMStation.CurrentStreamState == StreamPlaybackState.initialized)
         {
-          LastFMStation.PlayStream();
+          if (!LastFMStation.PlayStream())
+          {
+            GUIDialogOK msgdlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+            if (msgdlg == null)
+              return;
+            msgdlg.SetHeading(34050); // No stream active
+            msgdlg.SetLine(1, GUILocalizeStrings.Get(34053)); // Playback of selected stream failed
+            msgdlg.DoModal(GetID);
+          }
         }
         else
           Log.Info("GUIRadio: Didn't start LastFM radio because stream state is {0}", LastFMStation.CurrentStreamState.ToString());

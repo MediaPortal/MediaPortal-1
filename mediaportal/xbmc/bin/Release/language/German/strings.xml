@@ -5503,6 +5503,10 @@
       <id>34052</id>
       <value>Keine weiteren Lieder oder schlechte Verbindung</value>
    </string>
+  <string>
+    <id>34053</id>
+    <value>Wiedergabe dieses Streams fehlgeschlagen</value>
+  </string>
       
    <string>
       <id>100000</id>
