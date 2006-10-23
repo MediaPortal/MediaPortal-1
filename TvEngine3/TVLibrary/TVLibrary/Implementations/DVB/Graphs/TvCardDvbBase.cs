@@ -1968,7 +1968,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_conditionalAccess != null)
         {
-          _conditionalAccess.SendPids((DVBBaseChannel)_currentChannel, pids);
+        //  _conditionalAccess.SendPids((DVBBaseChannel)_currentChannel, pids);
         }
         return;
       }

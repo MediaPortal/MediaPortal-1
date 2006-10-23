@@ -54,7 +54,7 @@ namespace TvLibrary.Implementations.DVB
       if (_digitalEveryWhere.IsDigitalEverywhere)
       {
         Log.Log.WriteFile("Digital Everywhere card detected");
-        _digitalEveryWhere.ResetCAM();
+        //_digitalEveryWhere.ResetCAM();
         return;
       }
       _digitalEveryWhere = null;
