@@ -26,6 +26,7 @@
       <id>1</id>
       <posX>210</posX>
       <posY>214</posY>
+      <width>255</width>
       <label>0</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
@@ -37,6 +38,7 @@
       <posX>210</posX>
       <posY>242</posY>
       <label>0</label>
+      <width>255</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
     </control>
@@ -47,6 +49,7 @@
       <posX>210</posX>
       <posY>270</posY>
       <label>0</label>
+      <width>255</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
     </control>
@@ -57,6 +60,7 @@
       <posX>210</posX>
       <posY>290</posY>
       <label>0</label>
+      <width>255</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
     </control>
