@@ -44,6 +44,7 @@ CREATE TABLE Channel(
 	lastGrabTime datetime NOT NULL,
 	sortOrder int NOT NULL,
 	visibleInGuide bit NOT NULL,
+	externalId varchar(200) NOT NULL,
  CONSTRAINT PK_Channels PRIMARY KEY  
 (
 	idChannel ASC
@@ -392,5 +393,5 @@ GO
 GO
 delete from version
 GO
-insert into version(versionNumber) values(10)
+insert into version(versionNumber) values(11)
 GO

@@ -32,43 +32,23 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Net;
 using System.Net.Sockets;
-using SetupTv.Sections;
 using MediaPortal.UserInterface.Controls;
-
-
-using TvDatabase;
 using TvLibrary.Log;
 using TvControl;
+using TvDatabase;
+using SetupTv.Sections;
+using TvEngine;
+
 
 namespace SetupTv
 {
   /// <summary>
   /// Summary description for Settings.
   /// </summary>
-  public class SettingsForm : Form
+  public class SetupTvSettingsForm : SettingsForm
   {
-
-    private MPButton cancelButton;
-    private MPButton okButton;
-    private MPBeveledLine beveledLine1;
-    private TreeView sectionTree;
-    private Panel holderPanel;
-    private MPGradientLabel headerLabel;
-    SectionSettings _previousSection = null;
-
-    //
-    // Hashtable where we store each added tree node/section for faster access
-    //
-    public static Hashtable SettingSections
-    {
-      get { return settingSections; }
-    }
-
-    private static Hashtable settingSections = new Hashtable();
-    private MPButton applyButton;
-    //private System.ComponentModel.IContainer components;
-
-    public SettingsForm()
+    PluginLoader _pluginLoader = new PluginLoader();
+    public SetupTvSettingsForm()
     {
 
       try
@@ -94,7 +74,7 @@ namespace SetupTv
         XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
 
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(node.InnerText);
-        
+
         IList dbsServers = Server.ListAll();
 
         TvBusinessLayer layer = new TvBusinessLayer();
@@ -154,7 +134,7 @@ namespace SetupTv
                 AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard));
                 break;
               case CardType.Atsc:
-                cardName = String.Format("{0} ATSC {1}", cardNo,cardName);
+                cardName = String.Format("{0} ATSC {1}", cardNo, cardName);
                 AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard));
                 break;
             }
@@ -177,8 +157,21 @@ namespace SetupTv
         AddSection(new TvRecording());
 
         AddSection(new TestService());
-        sectionTree.SelectedNode = sectionTree.Nodes[0];
 
+        SectionSettings pluginsRoot = new SectionSettings("Plugins");
+        AddSection(pluginsRoot);
+
+        _pluginLoader.Load();
+        foreach (PluginBase plugin in _pluginLoader.Plugins)
+        {
+          SectionSettings settings = plugin.Setup;
+          if (settings != null)
+          {
+            settings.Text = plugin.Name;
+            AddChildSection(pluginsRoot, settings);
+          }
+        }
+        sectionTree.SelectedNode = sectionTree.Nodes[0];
         // make sure window is in front of mediaportal
         BringToFront();
       }
@@ -192,7 +185,7 @@ namespace SetupTv
     /// 
     /// </summary>
     /// <param name="section"></param>
-    public void AddSection(SectionSettings section)
+    public override void AddSection(SectionSettings section)
     {
       AddChildSection(null, section);
     }
@@ -202,7 +195,7 @@ namespace SetupTv
     /// </summary>
     /// <param name="parentSection"></param>
     /// <param name="section"></param>
-    public void AddChildSection(SectionSettings parentSection, SectionSettings section)
+    public override void AddChildSection(SectionSettings parentSection, SectionSettings section)
     {
       //
       // Make sure this section doesn't already exist
@@ -384,7 +377,7 @@ namespace SetupTv
 
     #endregion
 
-    private void sectionTree_BeforeSelect(object sender, TreeViewCancelEventArgs e)
+    public override void sectionTree_BeforeSelect(object sender, TreeViewCancelEventArgs e)
     {
       SectionTreeNode treeNode = e.Node as SectionTreeNode;
 
@@ -399,7 +392,7 @@ namespace SetupTv
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void sectionTree_AfterSelect(object sender, TreeViewEventArgs e)
+    public override void sectionTree_AfterSelect(object sender, TreeViewEventArgs e)
     {
       SectionTreeNode treeNode = e.Node as SectionTreeNode;
 
@@ -416,7 +409,7 @@ namespace SetupTv
     /// 
     /// </summary>
     /// <param name="section"></param>
-    private bool ActivateSection(SectionSettings section)
+    public override bool ActivateSection(SectionSettings section)
     {
       try
       {
@@ -451,7 +444,7 @@ namespace SetupTv
       return true;
     }
 
-    private void SettingsForm_Closed(object sender, EventArgs e)
+    public override void SettingsForm_Closed(object sender, EventArgs e)
     {
       try
       {
@@ -471,7 +464,7 @@ namespace SetupTv
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void SettingsForm_Load(object sender, EventArgs e)
+    public override void SettingsForm_Load(object sender, EventArgs e)
     {
       foreach (TreeNode treeNode in sectionTree.Nodes)
       {
@@ -487,7 +480,7 @@ namespace SetupTv
     /// 
     /// </summary>
     /// <param name="currentNode"></param>
-    private void LoadSectionSettings(TreeNode currentNode)
+    public override void LoadSectionSettings(TreeNode currentNode)
     {
       if (currentNode != null)
       {
@@ -515,7 +508,7 @@ namespace SetupTv
     /// 
     /// </summary>
     /// <param name="currentNode"></param>
-    private void SaveSectionSettings(TreeNode currentNode)
+    public override void SaveSectionSettings(TreeNode currentNode)
     {
       if (currentNode != null)
       {
@@ -539,7 +532,7 @@ namespace SetupTv
       }
     }
 
-    private void cancelButton_Click(object sender, EventArgs e)
+    public override void cancelButton_Click(object sender, EventArgs e)
     {
       if (null != _previousSection)
       {
@@ -549,7 +542,7 @@ namespace SetupTv
       Close();
     }
 
-    private void okButton_Click(object sender, EventArgs e)
+    public override void okButton_Click(object sender, EventArgs e)
     {
       try
       {
@@ -569,7 +562,7 @@ namespace SetupTv
 
 
 
-    private void SaveAllSettings()
+    public override void SaveAllSettings()
     {
       foreach (TreeNode treeNode in sectionTree.Nodes)
       {
@@ -580,7 +573,7 @@ namespace SetupTv
       }
     }
 
-    private void applyButton_Click(object sender, EventArgs e)
+    public override void applyButton_Click(object sender, EventArgs e)
     {
 
       SaveAllSettings();

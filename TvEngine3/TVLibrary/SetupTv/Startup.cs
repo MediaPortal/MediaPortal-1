@@ -74,7 +74,7 @@ namespace SetupTv
       switch (startupMode)
       {
         case StartupMode.Normal:
-          applicationForm = new SettingsForm();
+          applicationForm = new SetupTvSettingsForm();
           break;
 
         case StartupMode.Wizard:
