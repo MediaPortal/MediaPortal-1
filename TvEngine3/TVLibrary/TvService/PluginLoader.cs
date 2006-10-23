@@ -69,19 +69,20 @@ namespace TvService
                     newObj = (object)Activator.CreateInstance(t);
                     plugin = (ITvServerPlugin)newObj;
                     _plugins.Add(plugin);
+                    Log.WriteFile("PluginManager: Loaded {0} version:{1} author:{2}", plugin.Name, plugin.Version, plugin.Author);
                   }
                 }
-                catch (System.Reflection.TargetInvocationException ex)
+                catch (System.Reflection.TargetInvocationException)
                 {
                   Log.WriteFile("PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!", t.FullName);
                   continue;
                 }
-                catch (Exception iPluginException)
+                catch (Exception ex)
                 {
                   Log.WriteFile("Exception while loading IPlugin instances: {0}", t.FullName);
-                  Log.WriteFile(iPluginException.ToString());
-                  Log.WriteFile(iPluginException.Message);
-                  Log.WriteFile(iPluginException.StackTrace);
+                  Log.WriteFile(ex.ToString());
+                  Log.WriteFile(ex.Message);
+                  Log.WriteFile(ex.StackTrace);
                 }
               }
             }
