@@ -432,7 +432,7 @@ namespace MediaPortal.Threading
 
           Thread t = new Thread(new ThreadStart(ProcessQueue));
           t.IsBackground = true;
-          t.Name = "PoolThread" + _threads.Count;
+          t.Name = "PoolThread" + t.GetHashCode();
           t.Priority = _startInfo.DefaultThreadPriority;
           t.Start();
           LogDebug("ThreadPool.StartThreads() : Thread {0} started", t.Name);
