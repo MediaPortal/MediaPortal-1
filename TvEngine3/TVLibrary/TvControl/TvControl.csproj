@@ -39,8 +39,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Events\ITvServerEvent.cs" />
-    <Compile Include="Events\TvServerEventArgs.cs" />
     <Compile Include="RemoteControl.cs" />
     <Compile Include="TvServer.cs" />
     <Compile Include="User.cs" />

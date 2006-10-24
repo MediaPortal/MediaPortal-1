@@ -23,6 +23,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 using TvLibrary.Interfaces;
+using System.Net;
+using System.Net.Sockets;
 
 namespace TvControl
 {
@@ -43,14 +45,24 @@ namespace TvControl
 
     #region ctor
     /// <summary>
-    /// constructor
+    /// Initializes a new instance of the <see cref="VirtualCard"/> class.
     /// </summary>
-    /// <param name="cardId"></param>
-    /// <param name="server"></param>
+    /// <param name="cardId">The card id.</param>
+    /// <param name="server">The server.</param>
     public VirtualCard(int cardId, string server)
     {
       _cardId = cardId;
       _server = server;
+      _recordingFolder = System.IO.Directory.GetCurrentDirectory();
+    }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VirtualCard"/> class.
+    /// </summary>
+    /// <param name="cardId">The card id.</param>
+    public VirtualCard(int cardId)
+    {
+      _cardId = cardId;
+      _server = Dns.GetHostName();
       _recordingFolder = System.IO.Directory.GetCurrentDirectory();
     }
     #endregion
