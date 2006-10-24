@@ -86,7 +86,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_graphState != GraphState.Idle)
         {
-          Log.Log.WriteFile("Graph already build");
+          Log.Log.Error("Graph already build");
           throw new TvException("Graph already build");
         }
         Log.Log.WriteFile("BuildGraph");
@@ -329,13 +329,13 @@ namespace TvLibrary.Implementations.DVB
 
       if (_currentChannel == null)
       {
-        Log.Log.WriteFile("atsc:StartTimeShifting not tuned to a channel");
+        Log.Log.Error("atsc:StartTimeShifting not tuned to a channel");
         throw new TvException("StartTimeShifting not tuned to a channel");
       }
       ATSCChannel channel = (ATSCChannel)_currentChannel;
       if (channel.MajorChannel == -1 || channel.MinorChannel == -1)
       {
-        Log.Log.WriteFile("atsc:StartTimeShifting not tuned to a channel but to a transponder");
+        Log.Log.Error("atsc:StartTimeShifting not tuned to a channel but to a transponder");
         throw new TvException("StartTimeShifting not tuned to a channel but to a transponder");
       }
       if (_graphState == GraphState.Created)

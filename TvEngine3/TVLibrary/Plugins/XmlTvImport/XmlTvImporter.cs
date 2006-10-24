@@ -169,7 +169,7 @@ namespace TvEngine
       }
       catch (Exception)
       {
-        Log.WriteFile(@"plugin:xmltv StartImportXML - Exception " + fileName);
+        Log.Error(@"plugin:xmltv StartImportXML - Exception " + fileName);
         return;
       }
       if (!_workerThreadRunning)

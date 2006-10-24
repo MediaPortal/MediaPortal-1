@@ -142,7 +142,7 @@ namespace TvEngine
           if (xml.DocumentElement == null)
           {
             m_strErrorMessage = "Invalid XMLTV file";
-            Log.WriteFile("  {0} is not a valid xml file");
+            Log.Error("  {0} is not a valid xml file");
             xml = null;
             m_bImport = false;
             //            TVDatabase.SupressEvents = false;
@@ -152,7 +152,7 @@ namespace TvEngine
           if (channelList == null || channelList.Count == 0)
           {
             m_strErrorMessage = "No channels found";
-            Log.WriteFile("  {0} does not contain any channels");
+            Log.Error("  {0} does not contain any channels");
             xml = null;
             m_bImport = false;
             //            TVDatabase.SupressEvents = false;
@@ -264,17 +264,17 @@ namespace TvEngine
                 }
                 else
                 {
-                  Log.WriteFile("  channel#{0} doesnt contain an displayname", iChannel);
+                  Log.Error("  channel#{0} doesnt contain an displayname", iChannel);
                 }
               }
               else
               {
-                Log.WriteFile("  channel#{0} doesnt contain an id", iChannel);
+                Log.Error("  channel#{0} doesnt contain an id", iChannel);
               }
             }
             else
             {
-              Log.WriteFile("  channel#{0} doesnt contain an id", iChannel);
+              Log.Error("  channel#{0} doesnt contain an id", iChannel);
             }
             iChannel++;
           }
@@ -438,7 +438,7 @@ namespace TvEngine
                   }
                   if (iChannelId < 0)
                   {
-                    Log.WriteFile("Unknown TV channel xmlid:{0}", nodeChannel.InnerText);
+                    Log.Error("Unknown TV channel xmlid:{0}", nodeChannel.InnerText);
                     continue;
                   }
 
@@ -635,14 +635,14 @@ namespace TvEngine
         {
           m_strErrorMessage = "No xmltv file found";
           m_stats.Status = m_strErrorMessage;
-          Log.WriteFile("xmltv data file was not found");
+          Log.Error("xmltv data file was not found");
         }
       }
       catch (Exception ex)
       {
         m_strErrorMessage = String.Format("Invalid XML file:{0}", ex.Message);
         m_stats.Status = String.Format("invalid XML file:{0}", ex.Message);
-        Log.WriteFile("XML tv import error loading {0} err:{1} ", strFileName, ex.Message);
+        Log.Error("XML tv import error loading {0} err:{1} ", strFileName, ex.Message);
         //TVDatabase.RollbackTransaction();
       }
       Programs.Clear();
@@ -787,7 +787,7 @@ namespace TvEngine
       }
       catch (Exception ex)
       {
-        Log.WriteFile("XML tv import error:{1} ", ex.Message);
+        Log.Error("XML tv import error:{1} ", ex.Message);
       }
     }
 

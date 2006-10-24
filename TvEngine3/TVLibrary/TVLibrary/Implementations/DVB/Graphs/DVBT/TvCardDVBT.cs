@@ -327,14 +327,14 @@ namespace TvLibrary.Implementations.DVB
 
         if (_currentChannel == null)
         {
-          Log.Log.WriteFile("dvbt:StartTimeShifting not tuned to a channel");
+          Log.Log.Error("dvbt:StartTimeShifting not tuned to a channel");
           throw new TvException("StartTimeShifting not tuned to a channel");
         }
 
         DVBBaseChannel channel = (DVBBaseChannel)_currentChannel;
         if (channel.NetworkId == -1 || channel.TransportId == -1 || channel.ServiceId == -1)
         {
-          Log.Log.WriteFile("dvbt:StartTimeShifting not tuned to a channel but to a transponder");
+          Log.Log.Error("dvbt:StartTimeShifting not tuned to a channel but to a transponder");
           throw new TvException("StartTimeShifting not tuned to a channel but to a transponder");
         }
         if (_graphState == GraphState.Created)
