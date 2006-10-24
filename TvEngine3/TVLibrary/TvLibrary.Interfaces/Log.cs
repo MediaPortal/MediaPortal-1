@@ -30,6 +30,21 @@ namespace TvLibrary.Log
   /// </summary>
   public class Log
   {
+    enum LogType
+    {
+      /// <summary>
+      /// Debug logging
+      /// </summary>
+      Debug,
+      /// <summary>
+      /// normal logging
+      /// </summary>
+      Info,
+      /// <summary>
+      /// error logging
+      /// </summary>
+      Error
+    }
     static DateTime _previousDate;
     /// <summary>
     /// Private constructor of the GUIPropertyManager. Singleton. Do not allow any instance of this class.
@@ -70,8 +85,15 @@ namespace TvLibrary.Log
     {
       try
       {
-        string name = GetFileName();
+        string name = GetFileName(LogType.Info);
         string bakFile = name.Replace(".log", ".bak");
+        if (File.Exists(bakFile))
+          File.Delete(bakFile);
+        if (File.Exists(name))
+          File.Move(name, bakFile);
+
+        name = GetFileName(LogType.Error);
+        bakFile = name.Replace(".log", ".bak");
         if (File.Exists(bakFile))
           File.Delete(bakFile);
         if (File.Exists(name))
@@ -89,11 +111,11 @@ namespace TvLibrary.Log
     /// <param name="ex">The ex.</param>
     static public void Write(Exception ex)
     {
-      Log.WriteFile("Exception   :{0}", ex.ToString());
-      Log.WriteFile("Exception   :{0}", ex.Message);
-      Log.WriteFile("  site      :{0}", ex.TargetSite);
-      Log.WriteFile("  source    :{0}", ex.Source);
-      Log.WriteFile("  stacktrace:{0}", ex.StackTrace);
+      WriteToFile(LogType.Error, "Exception   :{0}", ex.ToString());
+      WriteToFile(LogType.Error, "Exception   :{0}", ex.Message);
+      WriteToFile(LogType.Error, "  site      :{0}", ex.TargetSite);
+      WriteToFile(LogType.Error, "  source    :{0}", ex.Source);
+      WriteToFile(LogType.Error, "  stacktrace:{0}", ex.StackTrace);
     }
 
     /// <summary>
@@ -110,7 +132,7 @@ namespace TvLibrary.Log
       //		MethodBase methodBase = stackFrame.GetMethod();
       //		WriteFile(LogType.Log, "{0}", methodBase.Name);
 
-      WriteFile(format, arg);
+      WriteToFile(LogType.Info, format, arg);
     }
 
     /// <summary>
@@ -128,20 +150,72 @@ namespace TvLibrary.Log
       //		WriteFile(LogType.Log, "{0}", methodBase.Name);
       String log = String.Format("{0:X} {1}",
           System.Threading.Thread.CurrentThread.ManagedThreadId, String.Format(format, arg));
-      WriteFile(log);
+      WriteToFile(LogType.Info, log);
     }
-    static string GetFileName()
+    static string GetFileName(LogType logType)
     {
-      string fname = String.Format(@"{0}\MediaPortal TV Server\log\tv.log", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-      return fname;
+      switch (logType)
+      {
+        case LogType.Debug:
+          return String.Format(@"{0}\MediaPortal TV Server\log\tv.log", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+
+        case LogType.Info:
+          return String.Format(@"{0}\MediaPortal TV Server\log\tv.log", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+
+        case LogType.Error:
+          return String.Format(@"{0}\MediaPortal TV Server\log\error.log", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+
+        default:
+          return String.Format(@"{0}\MediaPortal TV Server\log\tv.log", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+
+
+      }
+    }
+
+    /// <summary>
+    /// Logs the message to the error file
+    /// </summary>
+    /// <param name="format">The format.</param>
+    /// <param name="arg">The arg.</param>
+    static public void Error(string format, params object[] arg)
+    {
+      WriteToFile(LogType.Error, format, arg);
+    }
+    /// <summary>
+    /// Logs the message to the info file
+    /// </summary>
+    /// <param name="format">The format.</param>
+    /// <param name="arg">The arg.</param>
+    static public void Info(string format, params object[] arg)
+    {
+      WriteToFile(LogType.Info, format, arg);
+    }
+    /// <summary>
+    /// Logs the message to the debug file
+    /// </summary>
+    /// <param name="format">The format.</param>
+    /// <param name="arg">The arg.</param>
+    static public void Debug(string format, params object[] arg)
+    {
+      WriteToFile(LogType.Debug, format, arg);
+    }
+    /// <summary>
+    /// Logs the message to the info file
+    /// </summary>
+    /// <param name="format">The format.</param>
+    /// <param name="arg">The arg.</param>
+    static public void WriteFile(string format, params object[] arg)
+    {
+      WriteToFile(LogType.Info, format, arg);
     }
 
     /// <summary>
     /// Writes the file.
     /// </summary>
+    /// <param name="logType">the type of logging.</param>
     /// <param name="format">The format.</param>
     /// <param name="arg">The arg.</param>
-    static public void WriteFile(string format, params object[] arg)
+    static void WriteToFile(LogType logType, string format, params object[] arg)
     {
       lock (typeof(Log))
       {
@@ -153,7 +227,7 @@ namespace TvLibrary.Log
             BackupLogFiles();
           }
 
-          using (StreamWriter writer = new StreamWriter(GetFileName(), true))
+          using (StreamWriter writer = new StreamWriter(GetFileName(logType), true))
           {
             writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
             writer.Write(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " ");
@@ -165,7 +239,6 @@ namespace TvLibrary.Log
         {
         }
       }
-
       //
     }//static public void WriteFile(string format, params object[] arg)
   }
