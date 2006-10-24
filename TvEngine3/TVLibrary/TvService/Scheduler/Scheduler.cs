@@ -25,11 +25,10 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 
-
 using TvLibrary.Log;
-
 using TvDatabase;
 using TvControl;
+using TvEngine.Events;
 
 namespace TvService
 {
@@ -391,7 +390,8 @@ namespace TvService
       {
 
         _tvController.LockCard(cardInfo.Id, user);
-
+        _tvController.Fire(this,new TvServerEventArgs(TvServerEventType.StartRecording,new VirtualCard(cardInfo.Id),user,recording.Schedule,null));
+        
         if (cardInfo.Card.RecordingFolder == String.Empty)
           cardInfo.Card.RecordingFolder = System.IO.Directory.GetCurrentDirectory();
 
@@ -408,6 +408,7 @@ namespace TvService
         if (false == _controller.StartRecording(cardInfo.Id, ref fileName, false, 0)) return false;
         recording.FileName = fileName;
         _recordingsInProgressList.Add(recording);
+        _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingStarted, new VirtualCard(cardInfo.Id), user, recording.Schedule, null));
         Log.Write("recList:count:{0} add scheduleid:{1} card:{2}", _recordingsInProgressList.Count, recording.Schedule.IdSchedule, recording.CardInfo.Card.Name);
       }
       catch (Exception ex)
@@ -430,6 +431,7 @@ namespace TvService
     /// <param name="recording">Recording</param>
     void StopRecord(RecordingDetail recording)
     {
+
       Log.Write("Scheduler : stop record {0} {1}-{2} {3}", recording.Channel, DateTime.Now, recording.EndTime, recording.Schedule.ProgramName);
       _controller.StopRecording(recording.CardInfo.Id);
       _controller.StopTimeShifting(recording.CardInfo.Id, GetUser());
@@ -445,7 +447,7 @@ namespace TvService
                           recording.Program.Description, recording.Program.Genre, "", (int)recording.Schedule.KeepMethod,
                           recording.Schedule.KeepDate, 0, ourServer.IdServer);
       newRec.Persist();
-      Log.Write("recList:count:{0} DEL scheduleid:{1} card:{2}", _recordingsInProgressList.Count, recording.Schedule.IdSchedule, recording.CardInfo.Card.Name);
+      _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingEnded, new VirtualCard(recording.CardInfo.Id), GetUser(), recording.Schedule, newRec));
 
       //DatabaseManager.Instance.SaveChanges();
 

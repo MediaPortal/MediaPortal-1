@@ -38,9 +38,8 @@ using TvLibrary.Log;
 using TVLibrary.Streaming;
 using TvControl;
 using TvEngine;
-
 using TvDatabase;
-
+using TvEngine.Events;
 namespace TvService
 {
   /// <summary>
@@ -48,7 +47,7 @@ namespace TvService
   /// and if server is the master it will delegate the requests to the 
   /// correct slave servers
   /// </summary>
-  public class TVController : MarshalByRefObject, IController, IDisposable
+  public class TVController : MarshalByRefObject, IController, IDisposable, ITvServerEvent
   {
     #region variables
     /// <summary>
@@ -84,10 +83,13 @@ namespace TvService
     /// Reference to our server
     /// </summary>
     Server _ourServer = null;/// <summary>
-                             /// 
+    /// 
     /// Plugins
     /// </summary>
     PluginLoader _plugins = null;
+    #endregion
+    #region events
+    public event TvServerEventHandler OnTvServerEvent;
     #endregion
 
     #region ctor
@@ -96,6 +98,7 @@ namespace TvService
     /// </summary>
     public TVController()
     {
+      GlobalServiceProvider.Instance.Add<ITvServerEvent>(this);
       Init();
     }
 
@@ -133,6 +136,16 @@ namespace TvService
       if (false == _cardsInUse.ContainsKey(cardId)) return false;
       user = _cardsInUse[cardId];
       return true;
+    }
+    /// <summary>
+    /// Gets the user for card.
+    /// </summary>
+    /// <param name="cardId">The card id.</param>
+    /// <returns></returns>
+    public User GetUserForCard(int cardId)
+    {
+      if (false == _cardsInUse.ContainsKey(cardId)) return null;
+      return _cardsInUse[cardId];
     }
 
     /// <summary>
@@ -1166,6 +1179,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return false;
+        Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, new VirtualCard(cardId), GetUserForCard(cardId), channel));
         Log.Write("Controller:Tune {0} to {1}", cardId, channel.Name);
         lock (this)
         {
@@ -1200,6 +1214,10 @@ namespace TvService
         Log.Write(ex);
         return false;
       }
+      finally
+      {
+        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, new VirtualCard(cardId), GetUserForCard(cardId), channel));
+      }
     }
 
     public bool TuneScan(int cardId, IChannel channel)
@@ -1207,6 +1225,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return false;
+        Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, new VirtualCard(cardId), GetUserForCard(cardId), channel));
         Log.Write("Controller:TuneScan {0} to {1}", cardId, channel.Name);
         lock (this)
         {
@@ -1236,6 +1255,10 @@ namespace TvService
         Log.Write(ex);
         return false;
       }
+      finally
+      {
+        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, new VirtualCard(cardId), GetUserForCard(cardId), channel));
+      }
     }
 
 
@@ -1260,7 +1283,7 @@ namespace TvService
           catch (Exception)
           {
             Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
-            return ;
+            return;
           }
         }
         _localCards[cardId].GrabTeletext = onOff;
@@ -2409,6 +2432,11 @@ namespace TvService
         Log.Write(ex);
       }
       return false;
+    }
+    public void Fire(object sender, EventArgs args)
+    {
+      if (OnTvServerEvent != null)
+        OnTvServerEvent(sender,args);
     }
     #endregion
 
