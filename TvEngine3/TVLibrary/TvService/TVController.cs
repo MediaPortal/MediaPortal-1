@@ -1835,11 +1835,12 @@ namespace TvService
           }
         }
 
-        List<CardDetail> freeCards = GetFreeCardsForChannelName(channelName, user);
+        TvResult result;
+        List<CardDetail> freeCards = GetFreeCardsForChannelName(channelName, user, out result);
         if (freeCards.Count == 0)
         {
-          Log.Write("Controller: StartTimeShifting failed, no card available");
-          return TvResult.AllCardsBusy;
+          Log.Write("Controller: StartTimeShifting failed:{0}", result);
+          return result;
         }
         CardDetail cardInfo = freeCards[0];
         int cardId = cardInfo.Id;
@@ -1852,7 +1853,7 @@ namespace TvService
         }
         string timeshiftFileName = String.Format(@"{0}\live{1}.ts", cardInfo.Card.RecordingFolder, cardId);
 
-        TvResult result = CardTune(cardId, channel);
+        result = CardTune(cardId, channel);
         if (result != TvResult.Succeeded)
         {
           return result;
@@ -2149,7 +2150,7 @@ namespace TvService
     /// </summary>
     /// <param name="channelName">Name of the channel.</param>
     /// <returns>list containg all free cards which can receive the channel</returns>
-    public List<CardDetail> GetFreeCardsForChannelName(string channelName, User user)
+    public List<CardDetail> GetFreeCardsForChannelName(string channelName, User user, out TvResult result)
     {
       try
       {
@@ -2160,7 +2161,8 @@ namespace TvService
         Channel dbChannel = layer.GetChannelByName(channelName);
         if (dbChannel == null)
         {
-          Log.Write("Controller:  channel {0} is not found", channelName);
+          Log.Write("Controller:  channel {0} is not found in the database", channelName);
+          result = TvResult.UnknownChannel;
           return cardsAvailable;
         }
 
@@ -2168,22 +2170,29 @@ namespace TvService
         if (tuningDetails == null)
         {
           Log.Write("Controller:  No tuning details for channel:{0}", channelName);
-          return cardsAvailable;
-        }
-        if (tuningDetails.Count == 0)
-        {
-          Log.Write("Controller:  No tuning details for channel:{0}", channelName);
+          result = TvResult.NoTuningDetails;
           return cardsAvailable;
         }
 
+        if (tuningDetails.Count == 0)
+        {
+          Log.Write("Controller:  No tuning details for channel:{0}", channelName);
+          result = TvResult.NoTuningDetails;
+          return cardsAvailable;
+        }
+
+        int cardsFound = 0;
         foreach (IChannel tuningDetail in tuningDetails)
         {
-          Log.Write("Controller  Tuning detail:{0}", tuningDetail.ToString());
           Dictionary<int, Card>.Enumerator enumerator = _allDbscards.GetEnumerator();
+
+          //for each card...
           while (enumerator.MoveNext())
           {
             KeyValuePair<int, Card> keyPair = enumerator.Current;
             bool check = true;
+
+            //get the card info
             foreach (CardDetail info in cardsAvailable)
             {
               if (info.Card.DevicePath == keyPair.Value.DevicePath)
@@ -2193,12 +2202,34 @@ namespace TvService
             }
             if (check == false) continue;
 
-            //check if card can tune to this channel
+            //check if card is enabled
             if (keyPair.Value.Enabled == false)
             {
               Log.Write("Controller:    card:{0} type:{1} is disabled", keyPair.Value.IdCard, Type(keyPair.Value.IdCard));
               continue;
             }
+
+            //check if card is able to tune to the channel
+            if (CanTune(keyPair.Value.IdCard, tuningDetail) == false)
+            {
+              Log.Write("Controller:    card:{0} type:{1} cannot tune to channel", keyPair.Value.IdCard, Type(keyPair.Value.IdCard));
+              continue;
+            }
+
+            //check if channel is mapped to this card
+            ChannelMap channelMap = null;
+            foreach (ChannelMap map in dbChannel.ReferringChannelMap())
+            {
+              if (map.ReferencedCard().DevicePath == keyPair.Value.DevicePath)
+              {
+                channelMap = map;
+                break;
+              }
+            }
+            if (null == channelMap) continue;
+
+            cardsFound++;
+            //check if card is in use
             if (user.IsAdmin == false)
             {
               User cardUser;
@@ -2211,12 +2242,7 @@ namespace TvService
                 }
               }
             }
-            if (CanTune(keyPair.Value.IdCard, tuningDetail) == false)
-            {
-              Log.Write("Controller:    card:{0} type:{1} cannot tune to channel", keyPair.Value.IdCard, Type(keyPair.Value.IdCard));
-              continue;
-            }
-
+            //check if card is recording
             if (IsRecording(keyPair.Value.IdCard))
             {
               if (CurrentChannelName(keyPair.Value.IdCard) != channelName)
@@ -2226,23 +2252,24 @@ namespace TvService
               }
             }
 
-            //check if channel is mapped to this card...
-            foreach (ChannelMap map in dbChannel.ReferringChannelMap())
-            {
-              if (map.ReferencedCard().DevicePath == keyPair.Value.DevicePath)
-              {
-                Log.Write("Controller:    card:{0} type:{1} is free priority:{2}", keyPair.Value.IdCard, Type(keyPair.Value.IdCard), map.ReferencedCard().Priority);
-                cardsAvailable.Add(new CardDetail(keyPair.Value.IdCard, map.ReferencedCard(), tuningDetail));
-                break;
-              }
-            }
+            Log.Write("Controller:    card:{0} type:{1} is free priority:{2}", keyPair.Value.IdCard, Type(keyPair.Value.IdCard), channelMap.ReferencedCard().Priority);
+            cardsAvailable.Add(new CardDetail(keyPair.Value.IdCard, channelMap.ReferencedCard(), tuningDetail));
           }
         }
         cardsAvailable.Sort();
+        if (cardsAvailable.Count > 0)
+        {
+          result = TvResult.Succeeded;
+        }
+        else
+        {
+          result = TvResult.ChannelNotMappedToAnyCard;
+        }
         return cardsAvailable;
       }
       catch (Exception ex)
       {
+        result = TvResult.UnknownError;
         Log.Write(ex);
         return null;
       }
@@ -2436,7 +2463,7 @@ namespace TvService
     public void Fire(object sender, EventArgs args)
     {
       if (OnTvServerEvent != null)
-        OnTvServerEvent(sender,args);
+        OnTvServerEvent(sender, args);
     }
     #endregion
 

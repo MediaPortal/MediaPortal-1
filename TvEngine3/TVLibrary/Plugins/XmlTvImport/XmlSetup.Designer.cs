@@ -36,6 +36,9 @@ namespace SetupTv.Sections
       this.label2 = new System.Windows.Forms.Label();
       this.textBoxHours = new System.Windows.Forms.TextBox();
       this.textBoxMinutes = new System.Windows.Forms.TextBox();
+      this.label3 = new System.Windows.Forms.Label();
+      this.label4 = new System.Windows.Forms.Label();
+      this.label5 = new System.Windows.Forms.Label();
       this.SuspendLayout();
       // 
       // buttonBrowse
@@ -51,11 +54,11 @@ namespace SetupTv.Sections
       // label13
       // 
       this.label13.AutoSize = true;
-      this.label13.Location = new System.Drawing.Point(21, 24);
+      this.label13.Location = new System.Drawing.Point(21, 13);
       this.label13.Name = "label13";
-      this.label13.Size = new System.Drawing.Size(156, 13);
+      this.label13.Size = new System.Drawing.Size(200, 13);
       this.label13.TabIndex = 6;
-      this.label13.Text = "Folder where .xmltv file is stored";
+      this.label13.Text = "Folder where the tvguide.xml file is stored";
       // 
       // textBoxFolder
       // 
@@ -70,9 +73,9 @@ namespace SetupTv.Sections
       this.checkBox1.AutoSize = true;
       this.checkBox1.Location = new System.Drawing.Point(24, 92);
       this.checkBox1.Name = "checkBox1";
-      this.checkBox1.Size = new System.Drawing.Size(259, 17);
+      this.checkBox1.Size = new System.Drawing.Size(288, 17);
       this.checkBox1.TabIndex = 8;
-      this.checkBox1.Text = "Apply timezone compensation when loading xmltv";
+      this.checkBox1.Text = "Apply timezone compensation when loading tvguide.xml";
       this.checkBox1.UseVisualStyleBackColor = true;
       // 
       // label1
@@ -108,10 +111,42 @@ namespace SetupTv.Sections
       this.textBoxMinutes.TabIndex = 12;
       this.textBoxMinutes.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
       // 
+      // label3
+      // 
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(21, 169);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(304, 13);
+      this.label3.TabIndex = 13;
+      this.label3.Text = "The server will check every minute if there is a new tvguide.xml";
+      // 
+      // label4
+      // 
+      this.label4.AutoSize = true;
+      this.label4.Location = new System.Drawing.Point(21, 182);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(405, 13);
+      this.label4.TabIndex = 14;
+      this.label4.Text = "When  it detects a new file, it will be import the EPG and tv channels in the dat" +
+          "abase";
+      // 
+      // label5
+      // 
+      this.label5.AutoSize = true;
+      this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.label5.Location = new System.Drawing.Point(21, 30);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(371, 13);
+      this.label5.TabIndex = 15;
+      this.label5.Text = "Please note that this folder should also include the xmltv.dtd file";
+      // 
       // XmlSetup
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.label5);
+      this.Controls.Add(this.label4);
+      this.Controls.Add(this.label3);
       this.Controls.Add(this.textBoxMinutes);
       this.Controls.Add(this.textBoxHours);
       this.Controls.Add(this.label2);
@@ -138,6 +173,9 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.TextBox textBoxHours;
     private System.Windows.Forms.TextBox textBoxMinutes;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.Label label5;
 
   }
 }

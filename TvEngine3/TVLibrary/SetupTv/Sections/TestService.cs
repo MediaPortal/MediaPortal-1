@@ -156,6 +156,15 @@ namespace SetupTv.Sections
             case TvResult.UnableToStartGraph:
               MessageBox.Show("Unable to create/start graph");
               break;
+            case TvResult.ChannelNotMappedToAnyCard:
+              MessageBox.Show("Channel is not mapped to any card");
+              break;
+            case TvResult.NoTuningDetails:
+              MessageBox.Show("No tuning information available for this channel");
+              break;
+            case TvResult.UnknownChannel:
+              MessageBox.Show("Unknown channel");
+              break;
             case TvResult.UnknownError:
               MessageBox.Show("Unknown error occured");
               break;

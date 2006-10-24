@@ -181,7 +181,7 @@ namespace SetupTv.Sections
         if (notmapped)
         {
           if (builder.Length > 0) builder.Append(",");
-          builder.Append("unmapped");
+          builder.Append("No tuning information");
         }
         if (dvbc)
         {

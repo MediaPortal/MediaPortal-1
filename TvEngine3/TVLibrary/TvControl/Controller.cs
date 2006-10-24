@@ -78,7 +78,19 @@ namespace TvControl
     /// <summary>
     /// Operation failed since the graph could not be build or started
     /// </summary>
-    UnableToStartGraph
+    UnableToStartGraph,
+    /// <summary>
+    /// Operation failed since the channel is unknown
+    /// </summary>
+    UnknownChannel,
+    /// <summary>
+    /// Operation failed since the there is no tuning information for the channel
+    /// </summary>
+    NoTuningDetails,
+    /// <summary>
+    /// Operation failed since the channel is not mapped to any card
+    /// </summary>
+    ChannelNotMappedToAnyCard
   }
   /// <summary>
   /// interface class describing all methods available

@@ -143,9 +143,9 @@ namespace TvLibrary.Implementations.DVB
     public static extern int bdaapiGetDVBTAntPwr(uint hOpen, ref int uiAntPwrOnOff);
 
     [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiSetVideoport", CallingConvention = CallingConvention.StdCall)]
-    public static extern int bdaapiSetVideoport(uint hOpen, bool CIEnabled, ref bool ciReturnStatus);
+    public static extern int bdaapiSetVideoport(uint hOpen, byte CIEnabled, ref byte ciReturnStatus);
 
-    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiSetVideoport", CallingConvention = CallingConvention.StdCall)]
+    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiGetDrvVersion", CallingConvention = CallingConvention.StdCall)]
     public static extern int bdaapiGetDrvVersion(uint hOpen, ref byte v1, ref byte v2, ref byte v3, ref byte v4);
     #endregion
 
@@ -226,8 +226,8 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("Technotrend: card detected");
           byte v1, v2, v3, v4;
           v1 = v2 = v3 = v4 = 0;
-          bdaapiGetDrvVersion(_handle, ref v1, ref v2, ref v3, ref v4);
-          Log.Log.WriteFile("Technotrend: driver version:{0}.{1}.{2}.{3}", v1, v2, v3, v4);
+          int hr = bdaapiGetDrvVersion(_handle, ref v1, ref v2, ref v3, ref v4);
+          Log.Log.WriteFile("Technotrend: driver version:{0}.{1}.{2}.{3} {4:X}", v1, v2, v3, v4, hr);
           _isCamInitializedTable.Add(_handle, false);
           unsafe
           {
@@ -235,14 +235,14 @@ namespace TvLibrary.Implementations.DVB
             _technoTrendStructure.onCAStatusContext = _handle;
             _technoTrendStructure.onSlotStatus = new PCBFCN_CI_OnSlotStatus(OnSlotStatus);
             _technoTrendStructure.onSlotStatusContext = _handle;
-            int hr = bdaapiOpenCISlim(_handle, _technoTrendStructure);
+            hr = bdaapiOpenCISlim(_handle, _technoTrendStructure);
             if (hr == 0)
             {
               Log.Log.WriteFile("Technotrend: CI opened");
               _hasCam = true;
-              bool enabled = false;
-              hr=bdaapiSetVideoport(_handle, true, ref enabled);
-              Log.Log.WriteFile("Technotrend: CI enabled:{0} {1:X}",enabled,hr);
+              byte enabled = 1;
+              hr = bdaapiSetVideoport(_handle, 1, ref enabled);
+              Log.Log.WriteFile("Technotrend: CI enabled:{0} {1:X}", enabled, hr);
             }
             if (IsTechnoTrendUSBDVBT)
             {
@@ -262,11 +262,13 @@ namespace TvLibrary.Implementations.DVB
 
     int GetDeviceID(IBaseFilter tunerfilter)
     {
-      Log.Log.WriteFile("TechnoTrend: Looking Device ID");
+      Log.Log.WriteFile("TechnoTrend: GetDeviceID");
       IPin outputPin = DirectShowLib.DsFindPin.ByDirection(tunerfilter, PinDirection.Output, 0);
       if (outputPin == null)
+      {
+        Log.Log.WriteFile("TechnoTrend: failed to get output pin");
         return -1;
-      Log.Log.WriteFile("TechnoTrend: Got Pin");
+      }
       IKsPin iKsPin = outputPin as IKsPin;
       KSMULTIPLE_ITEM pmi;
       IntPtr pDataReturned;
@@ -278,7 +280,6 @@ namespace TvLibrary.Implementations.DVB
         return -1;  // Pin does not support mediums.
       }
       pmi = (KSMULTIPLE_ITEM)Marshal.PtrToStructure(pDataReturned, typeof(KSMULTIPLE_ITEM));
-      Log.Log.WriteFile("TechnoTrend: Got Mediums:{0}", pmi.Count);
       if (pmi.Count != 0)
       {
         // Use pointer arithmetic to reference the first medium structure.
@@ -289,11 +290,12 @@ namespace TvLibrary.Implementations.DVB
         REGPINMEDIUM medium = (REGPINMEDIUM)Marshal.PtrToStructure(ptrData, typeof(REGPINMEDIUM));
         int id = (int)medium.dw1;
         Marshal.FreeCoTaskMem(pDataReturned);
-        Log.Log.WriteFile("TechnoTrend: Device ID:{0}", id);
+        Log.Log.WriteFile("TechnoTrend: Device ID:{0} {1}", medium.dw1, medium.dw2);
         return id;
       }
       else
       {
+        Log.Log.WriteFile("TechnoTrend: no mediums detected");
         Marshal.FreeCoTaskMem(pDataReturned);
         return -1;
       }

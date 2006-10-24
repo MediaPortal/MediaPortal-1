@@ -380,7 +380,8 @@ namespace TvService
     bool StartRecord(RecordingDetail recording, User user)
     {
       Log.Write("Scheduler : time to record {0} {1}-{2} {3}", recording.Channel, DateTime.Now, recording.EndTime, recording.Schedule.ProgramName);
-      List<CardDetail> freeCards = _tvController.GetFreeCardsForChannelName(recording.Channel, user);
+      TvResult result;
+      List<CardDetail> freeCards = _tvController.GetFreeCardsForChannelName(recording.Channel, user, out result);
       if (freeCards.Count == 0) return false;
       CardDetail cardInfo = freeCards[0];
       Log.Write("Scheduler : record on card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
