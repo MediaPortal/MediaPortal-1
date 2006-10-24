@@ -87,6 +87,7 @@ namespace SetupTv.Sections
             detail.TuningSource = (int)TunerInputType.Cable;
           else
             detail.TuningSource = (int)TunerInputType.Antenna;
+          detail.Persist();
         }
 
         //ATSC tab
@@ -97,6 +98,7 @@ namespace SetupTv.Sections
           detail.MinorChannel = Int32.Parse(textBoxMinor.Text);
           detail.AudioPid = Int32.Parse(textBoxAudioPid.Text);
           detail.VideoPid = Int32.Parse(textBoxVideoPid.Text);
+          detail.Persist();
         }
 
         //DVBC tab
@@ -107,6 +109,7 @@ namespace SetupTv.Sections
           detail.TransportId = Int32.Parse(textBoxTSID.Text);
           detail.ServiceId = Int32.Parse(textBoxSID.Text);
           detail.Symbolrate = Int32.Parse(textBoxSymbolRate.Text);
+          detail.Persist();
         }
 
         //dvbs tab
@@ -126,6 +129,7 @@ namespace SetupTv.Sections
             detail.Polarisation = (int)Polarisation.LinearV;
 
           detail.Diseqc = comboBoxDisEqc.SelectedIndex;
+          detail.Persist();
         }
 
         //dvbt tab
@@ -139,6 +143,7 @@ namespace SetupTv.Sections
             detail.Bandwidth =7;
           else
             detail.Bandwidth = 8;
+          detail.Persist();
         }
       }
       this.Close();
