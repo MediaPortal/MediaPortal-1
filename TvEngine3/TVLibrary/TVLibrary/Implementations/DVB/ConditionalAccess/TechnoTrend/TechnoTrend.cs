@@ -36,16 +36,25 @@ namespace TvLibrary.Implementations.DVB
     enum TechnoTrendDeviceType
     {
       /// not set
-      eTypeUnknown = 0,
+      Unknown = 0,
       /// Budget 2
-      eDevTypeB2,
+      Budget2,
       /// Budget 3 aka TT-budget T-3000
-      eDevTypeB3,
+      Budget3,
       /// USB 2.0
-      eDevTypeUsb2,
+      Usb2,
       /// USB 2.0 Pinnacle
-      eDevTypeUsb2Pinnacle
+      Usb2Pinnacle
     } ;
+    public enum CiSlotStatusType : byte
+    {
+      Empty = 0,
+      Inserted = 1,
+      ModuleOk = 2,
+      CaOk = 3,
+      DebugMessage = 4,
+      UnknownState = 0xff
+    }
 
     #endregion
     #region structs
@@ -68,7 +77,7 @@ namespace TvLibrary.Implementations.DVB
     public struct SlotInfo
     {
       /// CI status
-      public Byte nStatus;
+      public Byte CiStatus;
       /// menu title string
       public IntPtr pMenuTitleString;
       /// cam system ID's
@@ -93,8 +102,9 @@ namespace TvLibrary.Implementations.DVB
     }
     public unsafe delegate void PCBFCN_CI_OnSlotStatus(UInt32 Context,
                                           Byte nSlot,
-                                          Byte nStatus,
+                                          CiSlotStatusType nStatus,
                                           SlotInfo* csInfo);
+
     public unsafe delegate void PCBFCN_CI_OnCAStatus(UInt32 Context,
                                                   Byte nSlot,
                                                   Byte nReplyTag,
@@ -131,12 +141,16 @@ namespace TvLibrary.Implementations.DVB
 
     [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiGetDVBTAntPwr", CallingConvention = CallingConvention.StdCall)]
     public static extern int bdaapiGetDVBTAntPwr(uint hOpen, ref int uiAntPwrOnOff);
-    //public static extern int bdaapiGetDVBTAntPwr(uint hOpen, UIntPtr uiAntPwrOnOff);
 
+    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiSetVideoport", CallingConvention = CallingConvention.StdCall)]
+    public static extern int bdaapiSetVideoport(uint hOpen, bool CIEnabled, ref bool ciReturnStatus);
+
+    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiSetVideoport", CallingConvention = CallingConvention.StdCall)]
+    public static extern int bdaapiGetDrvVersion(uint hOpen, ref byte v1, ref byte v2, ref byte v3, ref byte v4);
     #endregion
 
     #region variables
-    TechnoTrendDeviceType _deviceType = TechnoTrendDeviceType.eTypeUnknown;
+    TechnoTrendDeviceType _deviceType = TechnoTrendDeviceType.Unknown;
     CallbackFunctionsSlim _technoTrendStructure = new CallbackFunctionsSlim();
     uint _handle = 0xffffffff;
     bool _hasCam = false;
@@ -145,20 +159,20 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region constants
-    public const string BUDGET2_CAPTURE = "TechnoTrend BDA/DVB Capture";
-    public const string BUDGET2_C_TUNER = "TechnoTrend BDA/DVB-C Tuner";
-    public const string BUDGET2_S_TUNER = "TechnoTrend BDA/DVB-S Tuner";
-    public const string BUDGET2_T_TUNER = "TechnoTrend BDA/DVB-T Tuner";
-    public const string BUDGET3_CAPTURE = "TTHybridTV BDA Digital Capture";
-    public const string BUDGET3_TUNER = "TTHybridTV BDA DVBT Tuner";
-    public const string BUDGET3_ANLG_TUNER = "TTHybridTV BDA Analog TV Tuner";
-    public const string BUDGET3_ANLG_CAPTURE = "TTHybridTV BDA Analog Capture";
-    public const string USB2_CAPTURE = "USB 2.0 BDA DVB Capture";
-    public const string USB2_C_TUNER = "USB 2.0 BDA DVB-C Tuner";
-    public const string USB2_S_TUNER = "USB 2.0 BDA DVB-S Tuner";
-    public const string USB2_T_TUNER = "USB 2.0 BDA DVB-T Tuner";
-    public const string USB2_PINNACLE_CAPTURE = "Pinnacle PCTV 400e Capture";
-    public const string USB2_PINNACLE_TUNER = "Pinnacle PCTV 400e Tuner";
+    public const string Budget2Capture = "TechnoTrend BDA/DVB Capture";
+    public const string Budget2DvbcTuner = "TechnoTrend BDA/DVB-C Tuner";
+    public const string Budget2DvbsTuner = "TechnoTrend BDA/DVB-S Tuner";
+    public const string Budget2DvbtTuner = "TechnoTrend BDA/DVB-T Tuner";
+    public const string Budget3Capture = "TTHybridTV BDA Digital Capture";
+    public const string Budget3DvbtTuner = "TTHybridTV BDA DVBT Tuner";
+    public const string Budget3AnalogTuner = "TTHybridTV BDA Analog TV Tuner";
+    public const string Budget3AnalogCapture = "TTHybridTV BDA Analog Capture";
+    public const string Usb2Capture = "USB 2.0 BDA DVB Capture";
+    public const string Usb2DvbcTuner = "USB 2.0 BDA DVB-C Tuner";
+    public const string Usb2DvbsTuner = "USB 2.0 BDA DVB-S Tuner";
+    public const string UsbDvbtTuner = "USB 2.0 BDA DVB-T Tuner";
+    public const string Usb2PinnacleCapture = "Pinnacle PCTV 400e Capture";
+    public const string Usb2PinnacleTuner = "Pinnacle PCTV 400e Tuner";
     #endregion
 
     public TechnoTrend(IBaseFilter tunerFilter, IBaseFilter captureFilter)
@@ -167,44 +181,53 @@ namespace TvLibrary.Implementations.DVB
       if (_captureFilter == null) return;
       FilterInfo info;
       _captureFilter.QueryFilterInfo(out info);
-      if ((info.achName == TechnoTrend.USB2_C_TUNER) ||
-          (info.achName == TechnoTrend.USB2_T_TUNER) ||
-          (info.achName == TechnoTrend.USB2_S_TUNER))
+      if ((info.achName == TechnoTrend.Usb2DvbcTuner) ||
+          (info.achName == TechnoTrend.UsbDvbtTuner) ||
+          (info.achName == TechnoTrend.Usb2DvbsTuner))
       {
-        Log.Log.WriteFile("TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2);
-        _deviceType = TechnoTrendDeviceType.eDevTypeUsb2;
+        Log.Log.WriteFile("TechnoTrend card type:usb 2");
+        _deviceType = TechnoTrendDeviceType.Usb2;
       }
-      else if (info.achName == TechnoTrend.BUDGET3_TUNER)
+      else if (info.achName == TechnoTrend.Budget3DvbtTuner)
       {
-        Log.Log.WriteFile("TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB3);
-        _deviceType = TechnoTrendDeviceType.eDevTypeB3;
+        Log.Log.WriteFile("TechnoTrend card type:budget 3");
+        _deviceType = TechnoTrendDeviceType.Budget3;
       }
-      else if ((info.achName == TechnoTrend.BUDGET2_C_TUNER) ||
-                (info.achName == TechnoTrend.BUDGET2_S_TUNER) ||
-                (info.achName == TechnoTrend.BUDGET2_T_TUNER))
+      else if ((info.achName == TechnoTrend.Budget2DvbcTuner) ||
+                (info.achName == TechnoTrend.Budget2DvbsTuner) ||
+                (info.achName == TechnoTrend.Budget2DvbtTuner))
       {
-        Log.Log.WriteFile("TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB2);
-        _deviceType = TechnoTrendDeviceType.eDevTypeB2;
+        Log.Log.WriteFile("TechnoTrend card type:budget 2");
+        _deviceType = TechnoTrendDeviceType.Budget2;
       }
-      else if (info.achName == TechnoTrend.USB2_PINNACLE_TUNER)
+      else if (info.achName == TechnoTrend.Usb2PinnacleTuner)
       {
-        Log.Log.WriteFile("TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2Pinnacle);
-        _deviceType = TechnoTrendDeviceType.eDevTypeUsb2Pinnacle;
+        Log.Log.WriteFile("TechnoTrend card type:usb2 pinnacle");
+        _deviceType = TechnoTrendDeviceType.Usb2Pinnacle;
       }
       else
       {
         // Log.Log.WriteFile( "Technotrend Unknown card type");
-        _deviceType = TechnoTrendDeviceType.eTypeUnknown;
+        _deviceType = TechnoTrendDeviceType.Unknown;
       }
 
       if (!IsTechnoTrend) return;
       try
       {
-        uint deviceId = (uint)GetDeviceID(_captureFilter);
-        _handle = bdaapiOpenHWIdx((UInt32)_deviceType, deviceId);
+        int deviceId = GetDeviceID(_captureFilter);
+        if (deviceId < 0)
+        {
+          Log.Log.WriteFile("TechnoTrend: unable to determine device id");
+          return;
+        }
+        _handle = bdaapiOpenHWIdx((UInt32)_deviceType, (uint)deviceId);
         if (_handle != 0xffffffff)
         {
           Log.Log.WriteFile("Technotrend: card detected");
+          byte v1, v2, v3, v4;
+          v1 = v2 = v3 = v4 = 0;
+          bdaapiGetDrvVersion(_handle, ref v1, ref v2, ref v3, ref v4);
+          Log.Log.WriteFile("Technotrend: driver version:{0}.{1}.{2}.{3}", v1, v2, v3, v4);
           _isCamInitializedTable.Add(_handle, false);
           unsafe
           {
@@ -217,6 +240,13 @@ namespace TvLibrary.Implementations.DVB
             {
               Log.Log.WriteFile("Technotrend: CI opened");
               _hasCam = true;
+              bool enabled = false;
+              hr=bdaapiSetVideoport(_handle, true, ref enabled);
+              Log.Log.WriteFile("Technotrend: CI enabled:{0} {1:X}",enabled,hr);
+            }
+            if (IsTechnoTrendUSBDVBT)
+            {
+              EnableAntenna(true);
             }
             return;
           }
@@ -227,7 +257,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("Technotrend: unable to initialize (does ttBdaDrvApi_Dll.dll exists?)");
         //int x = 1;
       }
-      _deviceType = TechnoTrendDeviceType.eTypeUnknown;
+      _deviceType = TechnoTrendDeviceType.Unknown;
     }
 
     int GetDeviceID(IBaseFilter tunerfilter)
@@ -285,6 +315,7 @@ namespace TvLibrary.Implementations.DVB
       _handle = 0xffffffff;
       _hasCam = false;
     }
+
     public bool IsCamReady()
     {
       return (bool)_isCamInitializedTable[_handle];
@@ -294,7 +325,7 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return (_deviceType != TechnoTrendDeviceType.eTypeUnknown);
+        return (_deviceType != TechnoTrendDeviceType.Unknown);
       }
     }
 
@@ -302,7 +333,7 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return (_deviceType == TechnoTrendDeviceType.eDevTypeUsb2);
+        return (_deviceType == TechnoTrendDeviceType.Usb2);
       }
     }
 
@@ -311,7 +342,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("Technotrend: SendPMT serviceId:{0}", serviceId);
       if ((bool)_isCamInitializedTable[_handle] == false)
       {
-        Log.Log.WriteFile("Technotrend: service cannot be decoded because the CAM is not ready yet");
+        Log.Log.WriteFile("Technotrend: CAM is not ready yet");
         return false;
       }
       int hr = bdaapiCIReadPSIFastDrvDemux(_handle, serviceId);
@@ -455,23 +486,24 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("TechnoTrend DVB-T 5v Antennae status:{0}", Get5vAntennae);
     }
 
-    unsafe public static void OnSlotStatus(UInt32 Context, Byte nSlot, Byte nStatus, SlotInfo* csInfo)
+    unsafe public static void OnSlotStatus(UInt32 context, Byte slot, CiSlotStatusType status, SlotInfo* slotInfo)
     {
-      if ((nStatus == 2) || (nStatus == 3) || (nStatus == 4))
+      if ((status == CiSlotStatusType.ModuleOk) || (status == CiSlotStatusType.CaOk) || (status == CiSlotStatusType.DebugMessage))
       {
-        Log.Log.WriteFile("Technotrend: CAM initialized {0}", Context);
-        _isCamInitializedTable[Context] = true;
+        Log.Log.WriteFile("Technotrend: CAM initialized , status:{0} context:{1:X} slot:{2}", status, context, slot);
+        _isCamInitializedTable[context] = true;
       }
       else
       {
-        Log.Log.WriteFile("Technotrend: CAM not initialized, Card;{0} status:{1}", Context, nStatus);
-        _isCamInitializedTable[Context] = false;
+        Log.Log.WriteFile("Technotrend: CAM not initialized, status:{0} context:{1:X} slot:{2}", status, context, slot);
+        _isCamInitializedTable[context] = false;
       }
 
     }
 
-    unsafe public static void OnCAStatus(UInt32 Context, Byte nSlot, Byte nReplyTag, UInt16 wStatus)
+    unsafe public static void OnCAStatus(UInt32 context, Byte slot, Byte replyTag, UInt16 status)
     {
+      Log.Log.WriteFile("Technotrend: OnCAStatus: context:{0:X} slot:{1:X} replytag:{2:X} statud:{3:X}", context, slot, replyTag, status);
     }
   }
 }
