@@ -631,13 +631,13 @@ namespace Tag.MP4
       }
     }
 
-    #endregion
+    #endregion  
 
     #region Public Methods
     public override bool SupportsFile(string strFileName)
     {
       string ext = System.IO.Path.GetExtension(strFileName).ToLower();
-      if (ext == ".m4a" || ext == ".m4p") return true;
+      if (ext == ".m4a" || ext == ".m4p" || ext == ".mp4") return true;
       return false;
     }
 
