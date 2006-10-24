@@ -66,6 +66,11 @@ namespace SetupTv.Sections
       setting.Value = textBoxMinutes.Text;
       setting.Persist();
 
+      
+      setting = layer.GetSetting("xmlTvLastUpdate", "");
+      setting.Value = "";
+      setting.Persist();
+
       base.OnSectionDeActivated();
     }
 

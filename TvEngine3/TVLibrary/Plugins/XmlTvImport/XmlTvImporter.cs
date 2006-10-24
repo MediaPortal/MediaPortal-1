@@ -90,6 +90,7 @@ namespace TvEngine
     public void Start(IController controller)
     {
       Log.WriteFile("plugin: xmltv started");
+      CheckNewTVGuide();
       _timer1 = new System.Timers.Timer();
       _timer1.Interval = 60000;
       _timer1.Enabled = true;
@@ -134,7 +135,7 @@ namespace TvEngine
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       string folder = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
-      string lastTime = layer.GetSetting("xmlTvLastUpdate", System.IO.Directory.GetCurrentDirectory()).Value;
+      string lastTime = layer.GetSetting("xmlTvLastUpdate", "").Value;
       string fileName = folder + @"\tvguide.xml";
       bool shouldImportTvGuide = false;
 
