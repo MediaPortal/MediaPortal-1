@@ -102,7 +102,7 @@ namespace TvLibrary.Implementations.DVB
     }
     public unsafe delegate void PCBFCN_CI_OnSlotStatus(UInt32 Context,
                                           Byte nSlot,
-                                          byte nStatus,
+                                          Byte nStatus,
                                           SlotInfo* csInfo);
 
     public unsafe delegate void PCBFCN_CI_OnCAStatus(UInt32 Context,
@@ -156,6 +156,7 @@ namespace TvLibrary.Implementations.DVB
     bool _hasCam = false;
     static Hashtable _isCamInitializedTable = new Hashtable();
     IBaseFilter _captureFilter;
+    IntPtr _ptrDiseqc;
     #endregion
 
     #region constants
@@ -182,6 +183,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="captureFilter">The capture filter.</param>
     public TechnoTrend(IBaseFilter tunerFilter, IBaseFilter captureFilter)
     {
+      _ptrDiseqc = Marshal.AllocCoTaskMem(128);
       _captureFilter = tunerFilter;
       if (_captureFilter == null) return;
       FilterInfo info;
@@ -228,26 +230,28 @@ namespace TvLibrary.Implementations.DVB
         _handle = bdaapiOpenHWIdx((UInt32)_deviceType, (uint)deviceId);
         if (_handle != 0xffffffff)
         {
+          int hr;
           Log.Log.WriteFile("Technotrend: card detected");
           byte v1, v2, v3, v4;
           v1 = v2 = v3 = v4 = 0;
-          int hr = bdaapiGetDrvVersion(_handle, ref v1, ref v2, ref v3, ref v4);
+          hr = bdaapiGetDrvVersion(_handle, ref v1, ref v2, ref v3, ref v4);
           Log.Log.WriteFile("Technotrend: driver version:{0}.{1}.{2}.{3} {4:X}", v1, v2, v3, v4, hr);
           _isCamInitializedTable.Add(_handle, false);
           unsafe
           {
-            _technoTrendStructure.onCAStatus = new PCBFCN_CI_OnCAStatus(OnCAStatus);
-            _technoTrendStructure.onCAStatusContext = _handle;
-            _technoTrendStructure.onSlotStatus = new PCBFCN_CI_OnSlotStatus(OnSlotStatus);
-            _technoTrendStructure.onSlotStatusContext = _handle;
-            hr = bdaapiOpenCISlim(_handle, _technoTrendStructure);
+            //_technoTrendStructure.onCAStatus = new PCBFCN_CI_OnCAStatus(OnCAStatus);
+            //_technoTrendStructure.onCAStatusContext = _handle;
+            //_technoTrendStructure.onSlotStatus = new PCBFCN_CI_OnSlotStatus(OnSlotStatus);
+            //_technoTrendStructure.onSlotStatusContext = _handle;
+            //hr = bdaapiOpenCISlim(_handle, _technoTrendStructure);
+            hr = bdaapiOpenCIWithoutPointer(_handle);
             if (hr == 0)
             {
-              Log.Log.WriteFile("Technotrend: CI opened");
+              Log.Log.WriteFile("Technotrend: CI opened.");
               _hasCam = true;
-              byte enabled = 1;
-              hr = bdaapiSetVideoport(_handle, 1, ref enabled);
-              Log.Log.WriteFile("Technotrend: CI enabled:{0} {1:X}", enabled, hr);
+              //byte enabled = 1;
+              //hr = bdaapiSetVideoport(_handle, 1, ref enabled);
+              //Log.Log.WriteFile("Technotrend: CI enabled:{0} {1:X}", enabled, hr);
             }
             if (IsTechnoTrendUSBDVBT)
             {
@@ -378,11 +382,11 @@ namespace TvLibrary.Implementations.DVB
     public bool SendPMT(int serviceId)
     {
       Log.Log.WriteFile("Technotrend: SendPMT serviceId:{0}", serviceId);
-      if ((bool)_isCamInitializedTable[_handle] == false)
+     /* if ((bool)_isCamInitializedTable[_handle] == false)
       {
         Log.Log.WriteFile("Technotrend: CAM is not ready yet");
         return false;
-      }
+      }*/
       byte enabled = 1;
       int hr = bdaapiSetVideoport(_handle, 1, ref enabled);
       Log.Log.WriteFile("Technotrend: CI enabled:{0} {1:X}", enabled, hr);
@@ -474,45 +478,43 @@ namespace TvLibrary.Implementations.DVB
         hiBand = false;
       }
 
-      IntPtr ptrData = Marshal.AllocCoTaskMem(4);
-      try
-      {
-        uint diseqc = 0xE01038F0;
+      uint diseqc = 0xE01038F0;
 
-        if (hiBand)                 // high band
-          diseqc |= 0x00000001;
-        else                        // low band
-          diseqc &= 0xFFFFFFFE;
+      if (hiBand)                 // high band
+        diseqc |= 0x00000001;
+      else                        // low band
+        diseqc &= 0xFFFFFFFE;
 
-        if (channel.Polarisation == Polarisation.LinearV)             // vertikal
-          diseqc &= 0xFFFFFFFD;
-        else                        // horizontal
-          diseqc |= 0x00000002;
+      if (channel.Polarisation == Polarisation.LinearV)             // vertikal
+        diseqc &= 0xFFFFFFFD;
+      else                        // horizontal
+        diseqc |= 0x00000002;
 
-        if (position != 0)             // Sat B
-          diseqc |= 0x00000004;
-        else                        // Sat A
-          diseqc &= 0xFFFFFFFB;
+      if (position != 0)             // Sat B
+        diseqc |= 0x00000004;
+      else                        // Sat A
+        diseqc &= 0xFFFFFFFB;
 
-        if (option != 0)               // option B
-          diseqc |= 0x00000008;
-        else                        // option A
-          diseqc &= 0xFFFFFFF7;
+      if (option != 0)               // option B
+        diseqc |= 0x00000008;
+      else                        // option A
+        diseqc &= 0xFFFFFFF7;
 
-        Marshal.WriteByte(ptrData, 0, (byte)((diseqc >> 24) & 0xff));
-        Marshal.WriteByte(ptrData, 1, (byte)((diseqc >> 16) & 0xff));
-        Marshal.WriteByte(ptrData, 2, (byte)((diseqc >> 8) & 0xff));
-        Marshal.WriteByte(ptrData, 3, (byte)((diseqc) & 0xff));
+      Marshal.WriteByte(_ptrDiseqc, 0, (byte)((diseqc >> 24) & 0xff));
+      Marshal.WriteByte(_ptrDiseqc, 1, (byte)((diseqc >> 16) & 0xff));
+      Marshal.WriteByte(_ptrDiseqc, 2, (byte)((diseqc >> 8) & 0xff));
+      Marshal.WriteByte(_ptrDiseqc, 3, (byte)((diseqc) & 0xff));
 
-        int hr = bdaapiSetDiSEqCMsg(_handle, ptrData, length, repeat, toneburst, (int)channel.Polarisation);
-        Log.Log.WriteFile("Technotrend: Diseqc Command Send:{0:X}", hr);
-      }
-      finally
-      {
-        Marshal.FreeCoTaskMem(ptrData);
-      }
+      int hr = bdaapiSetDiSEqCMsg(_handle, _ptrDiseqc, length, repeat, toneburst, (int)channel.Polarisation);
+      Log.Log.WriteFile("Technotrend: Diseqc Command Send:{0:X} {1:X}", diseqc, hr);
     }
 
+    /// <summary>
+    /// Determines whether [is cam present].
+    /// </summary>
+    /// <returns>
+    /// 	<c>true</c> if [is cam present]; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsCamPresent()
     {
       return (_hasCam);

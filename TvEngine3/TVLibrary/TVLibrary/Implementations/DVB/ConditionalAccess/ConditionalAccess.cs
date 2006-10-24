@@ -49,33 +49,41 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="captureFilter">The capture filter.</param>
     public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter captureFilter)
     {
-      Log.Log.WriteFile("Check for Digital Everywhere");
-      _digitalEveryWhere = new DigitalEverywhere(tunerFilter, captureFilter);
-      if (_digitalEveryWhere.IsDigitalEverywhere)
+      try
       {
-        Log.Log.WriteFile("Digital Everywhere card detected");
-        //_digitalEveryWhere.ResetCAM();
-        return;
-      }
-      _digitalEveryWhere = null;
+        Log.Log.WriteFile("Check for Digital Everywhere");
+        _digitalEveryWhere = new DigitalEverywhere(tunerFilter, captureFilter);
+        if (_digitalEveryWhere.IsDigitalEverywhere)
+        {
+          Log.Log.WriteFile("Digital Everywhere card detected");
+          //_digitalEveryWhere.ResetCAM();
+          return;
+        }
+        _digitalEveryWhere = null;
 
-      Log.Log.WriteFile("Check for Twinhan");
-      _twinhan = new Twinhan(tunerFilter, captureFilter);
-      if (_twinhan.IsTwinhan)
-      {
-        Log.Log.WriteFile("Twinhan card detected");
-        return;
-      }
-      _twinhan = null;
+        Log.Log.WriteFile("Check for Twinhan");
+        _twinhan = new Twinhan(tunerFilter, captureFilter);
+        if (_twinhan.IsTwinhan)
+        {
+          Log.Log.WriteFile("Twinhan card detected");
+          return;
+        }
+        _twinhan = null;
 
-      Log.Log.WriteFile("Check for TechnoTrend");
-      _technoTrend = new TechnoTrend(tunerFilter, captureFilter);
-      if (_technoTrend.IsTechnoTrend)
-      {
-        Log.Log.WriteFile("TechnoTrend card detected");
-        return;
+        Log.Log.WriteFile("Check for TechnoTrend");
+        _technoTrend = new TechnoTrend(tunerFilter, captureFilter);
+        if (_technoTrend.IsTechnoTrend)
+        {
+          Log.Log.WriteFile("TechnoTrend card detected");
+          return;
+        }
+        _technoTrend = null;
+
       }
-      _technoTrend = null;
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+      }
     }
 
     /// <summary>
@@ -83,17 +91,24 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public bool IsCamReady()
     {
-      if (_digitalEveryWhere != null)
+      try
       {
-        _digitalEveryWhere.IsCamReady();
+        if (_digitalEveryWhere != null)
+        {
+          _digitalEveryWhere.IsCamReady();
+        }
+        if (_twinhan != null)
+        {
+          return _twinhan.IsCamReady();
+        }
+        if (_technoTrend != null)
+        {
+          return _technoTrend.IsCamReady();
+        }
       }
-      if (_twinhan!= null)
+      catch (Exception ex)
       {
-        return _twinhan.IsCamReady();
-      }
-      if (_technoTrend != null)
-      {
-        return _technoTrend.IsCamReady();
+        Log.Log.Write(ex);
       }
       return true;
     }
@@ -103,9 +118,16 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void ResetCAM()
     {
-      if (_digitalEveryWhere != null)
+      try
       {
-        _digitalEveryWhere.ResetCAM();
+        if (_digitalEveryWhere != null)
+        {
+          _digitalEveryWhere.ResetCAM();
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
       }
     }
 
@@ -120,30 +142,37 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool SendPMT(CamType camType, DVBBaseChannel channel, byte[] PMT, int pmtLength, int audioPid)
     {
-      if (_digitalEveryWhere != null)
+      try
       {
-        return _digitalEveryWhere.SendPMTToFireDTV(PMT, pmtLength);
-      }
-      if (_twinhan != null)
-      {
-
-        ChannelInfo info = new ChannelInfo();
-        info.DecodePmt(PMT);
-        int videoPid = -1;
-        foreach (PidInfo pmtData in info.pids)
+        if (_digitalEveryWhere != null)
         {
-          if (pmtData.isVideo && videoPid < 0) videoPid = pmtData.pid;
-          if (pmtData.isAudio && audioPid < 0) audioPid = pmtData.pid;
-          if (videoPid >= 0 && audioPid >= 0) break;
+          return _digitalEveryWhere.SendPMTToFireDTV(PMT, pmtLength);
         }
-        int caPmtLen;
-        byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
-        _twinhan.SendPMT(camType, (uint)videoPid, (uint)audioPid, caPmt, caPmtLen);
-        return true;
+        if (_twinhan != null)
+        {
+
+          ChannelInfo info = new ChannelInfo();
+          info.DecodePmt(PMT);
+          int videoPid = -1;
+          foreach (PidInfo pmtData in info.pids)
+          {
+            if (pmtData.isVideo && videoPid < 0) videoPid = pmtData.pid;
+            if (pmtData.isAudio && audioPid < 0) audioPid = pmtData.pid;
+            if (videoPid >= 0 && audioPid >= 0) break;
+          }
+          int caPmtLen;
+          byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
+          _twinhan.SendPMT(camType, (uint)videoPid, (uint)audioPid, caPmt, caPmtLen);
+          return true;
+        }
+        if (_technoTrend != null)
+        {
+          return _technoTrend.SendPMT(channel.ServiceId);
+        }
       }
-      if (_technoTrend != null)
+      catch (Exception ex)
       {
-        return _technoTrend.SendPMT(channel.ServiceId);
+        Log.Log.Write(ex);
       }
       return true;
     }
@@ -154,13 +183,20 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">The current tv/radio channel</param>
     public void SendDiseqcCommand(DVBSChannel channel)
     {
-      if (_digitalEveryWhere != null)
+      try
       {
-        _digitalEveryWhere.SendDiseqcCommand(channel);
+        if (_digitalEveryWhere != null)
+        {
+          _digitalEveryWhere.SendDiseqcCommand(channel);
+        }
+        if (_technoTrend != null)
+        {
+          _technoTrend.SendDiseqCommand(channel);
+        }
       }
-      if (_technoTrend != null)
+      catch (Exception ex)
       {
-        _technoTrend.SendDiseqCommand(channel);
+        Log.Log.Write(ex);
       }
     }
     /// <summary>
@@ -171,14 +207,21 @@ namespace TvLibrary.Implementations.DVB
     /// <remarks>when the pids array is empty, pid filtering is disabled and all pids are received</remarks>
     public void SendPids(DVBBaseChannel channel, ArrayList pids)
     {
-      if (_digitalEveryWhere != null)
+      try
       {
-        bool isDvbc, isDvbt, isDvbs, isAtsc;
-        isDvbc = ((channel as DVBCChannel) != null);
-        isDvbt = ((channel as DVBTChannel) != null);
-        isDvbs = ((channel as DVBSChannel) != null);
-        isAtsc = ((channel as ATSCChannel) != null);
-        _digitalEveryWhere.SetHardwarePidFiltering(isDvbc, isDvbt, isDvbs, isAtsc, pids);
+        if (_digitalEveryWhere != null)
+        {
+          bool isDvbc, isDvbt, isDvbs, isAtsc;
+          isDvbc = ((channel as DVBCChannel) != null);
+          isDvbt = ((channel as DVBTChannel) != null);
+          isDvbs = ((channel as DVBSChannel) != null);
+          isAtsc = ((channel as ATSCChannel) != null);
+          _digitalEveryWhere.SetHardwarePidFiltering(isDvbc, isDvbt, isDvbs, isAtsc, pids);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
       }
     }
   }
