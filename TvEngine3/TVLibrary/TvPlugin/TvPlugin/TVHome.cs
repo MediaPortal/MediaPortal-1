@@ -1098,6 +1098,15 @@ namespace TvPlugin
           case TvResult.UnknownError:
             errorMessage += "\rUnknown error occured\r";
             break;
+          case TvResult.UnknownChannel:
+            errorMessage += "\rUnknown channel\r";
+            break;
+          case TvResult.ChannelNotMappedToAnyCard:
+            errorMessage += "\rChannel not mapped to any card\r";
+            break;
+          case TvResult.NoTuningDetails:
+            errorMessage += "\rNo tuning details for the channel\r";
+            break;
           default:
             errorMessage += "\rUnknown error occured\r";
             break;
