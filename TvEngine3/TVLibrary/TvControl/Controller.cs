@@ -479,9 +479,5 @@ namespace TvControl
 
     List<string> ServerIpAdresses { get;}
     #endregion
-
-
-
-
   }
 }

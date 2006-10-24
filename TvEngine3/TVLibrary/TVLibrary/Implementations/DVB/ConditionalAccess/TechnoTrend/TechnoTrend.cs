@@ -102,7 +102,7 @@ namespace TvLibrary.Implementations.DVB
     }
     public unsafe delegate void PCBFCN_CI_OnSlotStatus(UInt32 Context,
                                           Byte nSlot,
-                                          CiSlotStatusType nStatus,
+                                          byte nStatus,
                                           SlotInfo* csInfo);
 
     public unsafe delegate void PCBFCN_CI_OnCAStatus(UInt32 Context,
@@ -175,6 +175,11 @@ namespace TvLibrary.Implementations.DVB
     public const string Usb2PinnacleTuner = "Pinnacle PCTV 400e Tuner";
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TechnoTrend"/> class.
+    /// </summary>
+    /// <param name="tunerFilter">The tuner filter.</param>
+    /// <param name="captureFilter">The capture filter.</param>
     public TechnoTrend(IBaseFilter tunerFilter, IBaseFilter captureFilter)
     {
       _captureFilter = tunerFilter;
@@ -260,6 +265,11 @@ namespace TvLibrary.Implementations.DVB
       _deviceType = TechnoTrendDeviceType.Unknown;
     }
 
+    /// <summary>
+    /// Gets the device ID.
+    /// </summary>
+    /// <param name="tunerfilter">The tunerfilter.</param>
+    /// <returns></returns>
     int GetDeviceID(IBaseFilter tunerfilter)
     {
       Log.Log.WriteFile("TechnoTrend: GetDeviceID");
@@ -302,6 +312,9 @@ namespace TvLibrary.Implementations.DVB
     }
 
 
+    /// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>
     public void Dispose()
     {
       if (_handle != 0xffffffff)
@@ -318,11 +331,23 @@ namespace TvLibrary.Implementations.DVB
       _hasCam = false;
     }
 
+    /// <summary>
+    /// Determines whether cam is ready.
+    /// </summary>
+    /// <returns>
+    /// 	<c>true</c> if [is cam ready]; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsCamReady()
     {
       return (bool)_isCamInitializedTable[_handle];
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this instance is techno trend.
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this instance is techno trend; otherwise, <c>false</c>.
+    /// </value>
     public bool IsTechnoTrend
     {
       get
@@ -331,6 +356,12 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this instance is techno trend USBDVBT.
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this instance is techno trend USBDVBT; otherwise, <c>false</c>.
+    /// </value>
     public bool IsTechnoTrendUSBDVBT
     {
       get
@@ -339,6 +370,11 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Sends the PMT.
+    /// </summary>
+    /// <param name="serviceId">The service id.</param>
+    /// <returns></returns>
     public bool SendPMT(int serviceId)
     {
       Log.Log.WriteFile("Technotrend: SendPMT serviceId:{0}", serviceId);
@@ -347,7 +383,11 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("Technotrend: CAM is not ready yet");
         return false;
       }
-      int hr = bdaapiCIReadPSIFastDrvDemux(_handle, serviceId);
+      byte enabled = 1;
+      int hr = bdaapiSetVideoport(_handle, 1, ref enabled);
+      Log.Log.WriteFile("Technotrend: CI enabled:{0} {1:X}", enabled, hr);
+
+      hr = bdaapiCIReadPSIFastDrvDemux(_handle, serviceId);
       if (hr == 0)
       {
         Log.Log.WriteFile("Technotrend: service decoded");
@@ -360,6 +400,10 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Sends the diseq command.
+    /// </summary>
+    /// <param name="channel">The channel.</param>
     public void SendDiseqCommand(DVBSChannel channel)
     {
       // send DISEQC:
@@ -474,7 +518,11 @@ namespace TvLibrary.Implementations.DVB
       return (_hasCam);
     }
 
-    // Here we turn on the USB DVB-T antennae
+    /// <summary>
+    /// Enables the power for the antenna.
+    /// only usefull for USB-2 DVBT
+    /// </summary>
+    /// <param name="onOff">if set to <c>true</c> [on off].</param>
     public void EnableAntenna(bool onOff)
     {
       int uiAntPwrOnOff = 0;
@@ -488,24 +536,54 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("TechnoTrend DVB-T 5v Antennae status:{0}", Get5vAntennae);
     }
 
-    unsafe public static void OnSlotStatus(UInt32 context, Byte slot, CiSlotStatusType status, SlotInfo* slotInfo)
+    /// <summary>
+    /// Called by the technotrend driver when slot status changes.
+    /// </summary>
+    /// <param name="context">The context.</param>
+    /// <param name="slot">The slot.</param>
+    /// <param name="status">The status.</param>
+    /// <param name="slotInfo">The slot info.</param>
+    unsafe public static void OnSlotStatus(UInt32 context, Byte slot, byte status, SlotInfo* slotInfo)
     {
-      if ((status == CiSlotStatusType.ModuleOk) || (status == CiSlotStatusType.CaOk) || (status == CiSlotStatusType.DebugMessage))
+      CiSlotStatusType slotStatus = (CiSlotStatusType)status;
+      try
       {
-        Log.Log.WriteFile("Technotrend: CAM initialized , status:{0} context:{1:X} slot:{2}", status, context, slot);
-        _isCamInitializedTable[context] = true;
+        if ((slotStatus == CiSlotStatusType.ModuleOk) || (slotStatus == CiSlotStatusType.CaOk) || (slotStatus == CiSlotStatusType.DebugMessage))
+        {
+          Log.Log.WriteFile("Technotrend: CAM initialized , status:{0} context:{1:X} slot:{2}", slotStatus, context, slot);
+          _isCamInitializedTable[context] = true;
+        }
+        else
+        {
+          Log.Log.WriteFile("Technotrend: CAM not initialized, status:{0} context:{1:X} slot:{2}", slotStatus, context, slot);
+          _isCamInitializedTable[context] = false;
+        }
       }
-      else
+      catch (Exception ex)
       {
-        Log.Log.WriteFile("Technotrend: CAM not initialized, status:{0} context:{1:X} slot:{2}", status, context, slot);
-        _isCamInitializedTable[context] = false;
+        Log.Log.Error("exception in technotrend:OnSlotStatus()");
+        Log.Log.Write(ex);
       }
-
     }
 
+    /// <summary>
+    /// Called by the technotrend driver when the CA status changes.
+    /// </summary>
+    /// <param name="context">The context.</param>
+    /// <param name="slot">The slot.</param>
+    /// <param name="replyTag">The reply tag.</param>
+    /// <param name="status">The status.</param>
     unsafe public static void OnCAStatus(UInt32 context, Byte slot, Byte replyTag, UInt16 status)
     {
-      Log.Log.WriteFile("Technotrend: OnCAStatus: context:{0:X} slot:{1:X} replytag:{2:X} statud:{3:X}", context, slot, replyTag, status);
+      try
+      {
+        Log.Log.WriteFile("Technotrend: OnCAStatus: context:{0:X} slot:{1:X} replytag:{2:X} statud:{3:X}", context, slot, replyTag, status);
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Error("exception in technotrend:OnCAStatus()");
+        Log.Log.Write(ex);
+      }
     }
   }
 }
