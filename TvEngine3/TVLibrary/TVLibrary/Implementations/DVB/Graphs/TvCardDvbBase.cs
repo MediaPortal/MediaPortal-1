@@ -1638,7 +1638,7 @@ namespace TvLibrary.Implementations.DVB
         hr = record.SetRecordingFileName(fileName);
         if (hr != 0)
         {
-          Log.Log.WriteFile("dvb:SetRecordingFileName failed:{0:X}", hr);
+          Log.Log.Error("dvb:SetRecordingFileName failed:{0:X}", hr);
         }
         SetRecorderPids();
         hr = record.StartRecord();

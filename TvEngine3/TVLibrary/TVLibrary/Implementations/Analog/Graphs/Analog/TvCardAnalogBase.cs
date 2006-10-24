@@ -193,19 +193,19 @@ namespace TvLibrary.Implementations.Analog
         AddTvTunerFilter();
         if (_filterTvTuner == null)
         {
-          Log.Log.WriteFile("analog: unable to add tv tuner filter");
+          Log.Log.Error("analog: unable to add tv tuner filter");
           throw new TvException("Analog: unable to add tv tuner filter");
         }
         AddCrossBarFilter();
         if (_filterCrossBar == null)
         {
-          Log.Log.WriteFile("analog: unable to add tv crossbar filter");
+          Log.Log.Error("analog: unable to add tv crossbar filter");
           throw new TvException("Analog: unable to add tv crossbar filter");
         }
         AddTvAudioFilter();
         if (_filterTvAudioTuner == null)
         {
-          Log.Log.WriteFile("analog: unable to add tv audio tuner filter");
+          Log.Log.Error("analog: unable to add tv audio tuner filter");
           throw new TvException("Analog: unable to add tv audio tuner filter");
         }
         AddTvCaptureFilter();
@@ -270,7 +270,7 @@ namespace TvLibrary.Implementations.Analog
       }
       if (hr != 0)
       {
-        Log.Log.WriteFile("analog: AddTvTunerFilter failed:0x{0:X}", hr);
+        Log.Log.Error("analog: AddTvTunerFilter failed:0x{0:X}", hr);
         throw new TvException("Unable to add tvtuner to graph");
       }
       _filterTvTuner = tmp;
@@ -367,7 +367,7 @@ namespace TvLibrary.Implementations.Analog
 
       if (_filterTvAudioTuner == null)
       {
-        Log.Log.WriteFile("analog: Unable to add TvAudioTuner to graph");
+        Log.Log.Error("analog: unable to add TvAudioTuner to graph");
         throw new TvException("Unable to add TvAudioTuner to graph");
       }
     }
@@ -473,7 +473,7 @@ namespace TvLibrary.Implementations.Analog
       }
       if (_filterCrossBar == null)
       {
-        Log.Log.WriteFile("analog: Unable to add crossbar to graph");
+        Log.Log.Error("analog: unable to add crossbar to graph");
         throw new TvException("Unable to add crossbar to graph");
       }
     }
@@ -544,7 +544,7 @@ namespace TvLibrary.Implementations.Analog
       }
       if (_filterCapture == null)
       {
-        Log.Log.WriteFile("analog: Unable to add TvCaptureFilter to graph");
+        Log.Log.Error("analog: unable to add TvCaptureFilter to graph");
         throw new TvException("Unable to add TvCaptureFilter to graph");
       }
     }
@@ -645,7 +645,7 @@ namespace TvLibrary.Implementations.Analog
           if (pins[i] != null) Release.ComObject("capture pin" + i.ToString(), pins[i]);
         }
       }
-      Log.Log.WriteFile("analog: ConnectEncoderFilter failed");
+      Log.Log.Error("analog: ConnectEncoderFilter failed");
       return false;
     }
 
@@ -932,7 +932,7 @@ namespace TvLibrary.Implementations.Analog
         if (pinInput1 != null) Release.ComObject("multiplexer pin0", pinInput1);
         if (pinInput2 != null) Release.ComObject("multiplexer pin1", pinInput2);
       }
-      Log.Log.WriteFile("analog: ConnectMultiplexer failed");
+      Log.Log.Error("analog: ConnectMultiplexer failed");
       return false;
     }
 
@@ -1565,7 +1565,7 @@ namespace TvLibrary.Implementations.Analog
       hr = _graphBuilder.AddFilter(_teeSink, devices[0].Name);
       if (hr != 0)
       {
-        Log.Log.WriteFile("analog:SinkGraphEx.SetupTeletext(): Unable to add tee/sink filter");
+        Log.Log.Error("analog:SinkGraphEx.SetupTeletext(): Unable to add tee/sink filter");
         return;
       }
 
@@ -1574,7 +1574,7 @@ namespace TvLibrary.Implementations.Analog
       Marshal.ReleaseComObject(pin);
       if (hr != 0)
       {
-        Log.Log.WriteFile("analog: : Unable to connect capture->tee/sink");
+        Log.Log.Error("analog: unable  to connect capture->tee/sink");
         _graphBuilder.RemoveFilter(_teeSink);
         Marshal.ReleaseComObject(_teeSink);
         _teeSink = _filterWstDecoder = _filterGrabber = null;
@@ -1591,7 +1591,7 @@ namespace TvLibrary.Implementations.Analog
           hr = _graphBuilder.AddFilter((IBaseFilter)_filterWstDecoder, device.Name);
           if (hr != 0)
           {
-            Log.Log.WriteFile("analog:SinkGraphEx.SetupTeletext(): Unable to add WSTCODEC filter");
+            Log.Log.Error("analog:SinkGraphEx.SetupTeletext(): Unable to add WSTCODEC filter");
             _graphBuilder.RemoveFilter(_teeSink);
             Marshal.ReleaseComObject(_teeSink);
             _teeSink = _filterWstDecoder = _filterGrabber = null;
@@ -1602,7 +1602,7 @@ namespace TvLibrary.Implementations.Analog
       }
       if (_filterWstDecoder == null)
       {
-        Log.Log.WriteFile("analog: : Unable to add WST Codec filter");
+        Log.Log.Error("analog: unable  to add WST Codec filter");
         _graphBuilder.RemoveFilter(_teeSink);
         Marshal.ReleaseComObject(_teeSink);
         _teeSink = _filterWstDecoder = _filterGrabber = null;
@@ -1616,7 +1616,7 @@ namespace TvLibrary.Implementations.Analog
       Marshal.ReleaseComObject(pinOut);
       if (hr != 0)
       {
-        Log.Log.WriteFile("analog: : Unable to tee/sink->wst codec");
+        Log.Log.Error("analog: unable  to tee/sink->wst codec");
         _graphBuilder.RemoveFilter(_filterWstDecoder);
         _graphBuilder.RemoveFilter(_teeSink);
         Marshal.ReleaseComObject(_filterWstDecoder);
@@ -1645,7 +1645,7 @@ namespace TvLibrary.Implementations.Analog
       Marshal.ReleaseComObject(pinOut);
       if (hr != 0)
       {
-        Log.Log.WriteFile("analog: Unable to wst codec->grabber");
+        Log.Log.Error("analog: unable to wst codec->grabber");
         _graphBuilder.RemoveFilter(_filterGrabber);
         _graphBuilder.RemoveFilter(_filterWstDecoder);
         _graphBuilder.RemoveFilter(_teeSink); ;
