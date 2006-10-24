@@ -36,8 +36,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Events\ITvServerEvent.cs" />
-    <Compile Include="Events\TvServerEventArgs.cs" />
     <Compile Include="ServiceProvider\ServiceProvider.cs" />
     <Compile Include="Epg\Languages.cs" />
     <Compile Include="Implementations\AudioStream\AnalogAudioStream.cs" />
