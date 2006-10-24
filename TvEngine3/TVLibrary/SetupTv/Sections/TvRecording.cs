@@ -279,12 +279,12 @@ namespace SetupTv.Sections
     {
       textBoxPreInterval.Text = "5";
       textBoxPostInterval.Text = "5";
-      checkBoxAutoDelete.Checked = true;
-      checkBoxAddToDatabase.Checked = false;
+      TvBusinessLayer layer = new TvBusinessLayer();
+      checkBoxAutoDelete.Checked = (layer.GetSetting("autodeletewatchedrecordings", "no").Value == "yes");
+      checkBoxAddToDatabase.Checked = (layer.GetSetting("addrecordingstomoviedbs", "no").Value == "yes"); 
       formatString[0] = "";
       formatString[1] = "";
 
-      TvBusinessLayer layer = new TvBusinessLayer();
       textBoxPreInterval.Text = layer.GetSetting("preRecordInterval", "5").Value;
       textBoxPostInterval.Text = layer.GetSetting("postRecordInterval", "5").Value;
       formatString[0] = layer.GetSetting("moviesformat", "").Value;
@@ -350,6 +350,30 @@ namespace SetupTv.Sections
       setting = layer.GetSetting("comskipLocation", "");
       setting.Value = textBoxComSkip.Text;
       setting.Persist();
+
+      setting = layer.GetSetting("autodeletewatchedrecordings", "no");
+      if (checkBoxAutoDelete.Checked)
+      {
+        setting.Value = "yes";
+      }
+      else
+      {
+        setting.Value = "no";
+      }
+      setting.Persist();
+
+      setting = layer.GetSetting("addrecordingstomoviedbs", "no");
+      if (checkBoxAddToDatabase.Checked)
+      {
+        setting.Value = "yes";
+      }
+      else
+      {
+        setting.Value = "no";
+      }
+      setting.Persist();
+
+
       //DatabaseManager.Instance.SaveChanges();
       /*
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))

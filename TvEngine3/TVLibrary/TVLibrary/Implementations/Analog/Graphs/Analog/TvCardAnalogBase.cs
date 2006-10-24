@@ -2076,8 +2076,10 @@ namespace TvLibrary.Implementations.Analog
     {
       get
       {
+        if (_filterTvTuner == null) return 128;
         int minChannel, maxChannel;
         IAMTVTuner tvTuner = _filterTvTuner as IAMTVTuner;
+        if (tvTuner == null) return 128;
         tvTuner.ChannelMinMax(out minChannel, out maxChannel);
         return maxChannel;
       }
@@ -2090,8 +2092,10 @@ namespace TvLibrary.Implementations.Analog
     {
       get
       {
+        if (_filterTvTuner == null) return 0;
         int minChannel, maxChannel;
         IAMTVTuner tvTuner = _filterTvTuner as IAMTVTuner;
+        if (tvTuner == null) return 0;
         tvTuner.ChannelMinMax(out minChannel, out maxChannel);
         return minChannel;
       }
