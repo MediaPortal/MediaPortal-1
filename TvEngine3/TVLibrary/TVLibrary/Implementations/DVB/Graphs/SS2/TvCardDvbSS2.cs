@@ -267,7 +267,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("ss2: build graph");
       if (_graphState != GraphState.Idle)
       {
-        Log.Log.WriteFile("ss2: Graph already build");
+        Log.Log.Error("ss2: Graph already build");
         throw new TvException("Graph already build");
       }
       DevicesInUse.Instance.Add(_tunerDevice);
@@ -284,27 +284,27 @@ namespace TvLibrary.Implementations.DVB
       _filterB2C2Adapter = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(DVBSkyStar2Helper.CLSID_B2C2Adapter, false));
       if (_filterB2C2Adapter == null)
       {
-        Log.Log.WriteFile("ss2:creategraph() _filterB2C2Adapter not found");
+        Log.Log.Error("ss2:creategraph() _filterB2C2Adapter not found");
         return;
       }
       Log.Log.WriteFile("ss2:creategraph() add filters to graph");
       int hr = _graphBuilder.AddFilter(_filterB2C2Adapter, "B2C2-Source");
       if (hr != 0)
       {
-        Log.Log.WriteFile("ss2: FAILED to add B2C2-Adapter");
+        Log.Log.Error("ss2: FAILED to add B2C2-Adapter");
         return;
       }
       // get interfaces
       _interfaceB2C2DataCtrl = _filterB2C2Adapter as DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3;
       if (_interfaceB2C2DataCtrl == null)
       {
-        Log.Log.WriteFile("ss2: cannot get IB2C2MPEG2DataCtrl3");
+        Log.Log.Error("ss2: cannot get IB2C2MPEG2DataCtrl3");
         return;
       }
       _interfaceB2C2TunerCtrl = _filterB2C2Adapter as DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2;
       if (_interfaceB2C2TunerCtrl == null)
       {
-        Log.Log.WriteFile("ss2: cannot get IB2C2MPEG2TunerCtrl3");
+        Log.Log.Error("ss2: cannot get IB2C2MPEG2TunerCtrl3");
         return;
       }
       //=========================================================================================================
@@ -314,7 +314,7 @@ namespace TvLibrary.Implementations.DVB
       hr = _interfaceB2C2TunerCtrl.Initialize();
       if (hr != 0)
       {
-        Log.Log.WriteFile("ss2: Tuner initialize failed:0x{0:X}", hr);
+        Log.Log.Error("ss2: Tuner initialize failed:0x{0:X}", hr);
         //return;
       }
       // call checklock once, the return value dont matter
@@ -342,12 +342,12 @@ namespace TvLibrary.Implementations.DVB
       IPin pinIn = DsFindPin.ByDirection(_infTeeMain, PinDirection.Input, 0);
       if (pinOut == null)
       {
-        Log.Log.WriteFile("ss2:unable to find pin 2 of b2c2adapter");
+        Log.Log.Error("ss2:unable to find pin 2 of b2c2adapter");
         throw new TvException("unable to find pin 2 of b2c2adapter");
       }
       if (pinIn == null)
       {
-        Log.Log.WriteFile("ss2:unable to find pin 0 of _infTeeMain");
+        Log.Log.Error("ss2:unable to find pin 0 of _infTeeMain");
         throw new TvException("unable to find pin 0 of _infTeeMain");
       }
 
@@ -356,7 +356,7 @@ namespace TvLibrary.Implementations.DVB
       Release.ComObject("mpeg2demux pinin", pinIn);
       if (hr != 0)
       {
-        Log.Log.WriteFile("ss2:unable to connect b2c2->_infTeeMain");
+        Log.Log.Error("ss2:unable to connect b2c2->_infTeeMain");
         throw new TvException("unable to connect b2c2->_infTeeMain");
       }
     }
@@ -483,7 +483,7 @@ namespace TvLibrary.Implementations.DVB
         ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
         if (timeshift == null)
         {
-          Log.Log.WriteFile("ss2:unable to get ITsTimeShift");
+          Log.Log.Error("ss2:unable to get ITsTimeShift");
           throw new TvException("unable to get ITsTimeShift");
         }
         timeshift.SetTimeShiftingFileName(fileName);
@@ -541,7 +541,7 @@ namespace TvLibrary.Implementations.DVB
       hr = (_graphBuilder as IMediaControl).Run();
       if (hr < 0 || hr > 1)
       {
-        Log.Log.WriteFile("ss2:RunGraph returns:0x{0:X}", hr);
+        Log.Log.Error("ss2:RunGraph returns:0x{0:X}", hr);
         throw new TvException("Unable to start graph");
       }
 
@@ -602,7 +602,7 @@ namespace TvLibrary.Implementations.DVB
       hr = (_graphBuilder as IMediaControl).Stop();
       if (hr < 0 || hr > 1)
       {
-        Log.Log.WriteFile("ss2:RunGraph returns:0x{0:X}", hr);
+        Log.Log.Error("ss2:RunGraph returns:0x{0:X}", hr);
         throw new TvException("Unable to stop graph");
       }
     }
@@ -619,7 +619,7 @@ namespace TvLibrary.Implementations.DVB
 
       if (!DeleteAllPIDs(_interfaceB2C2DataCtrl, 0))
       {
-        Log.Log.WriteFile("ss2:DeleteAllPIDs() failed pid:0x2000");
+        Log.Log.Error("ss2:DeleteAllPIDs() failed pid:0x2000");
       }
       if (pids.Count == 0 || true)
       {
@@ -627,7 +627,7 @@ namespace TvLibrary.Implementations.DVB
         int added = SetPidToPin(_interfaceB2C2DataCtrl, 0, PID_CAPTURE_ALL_INCLUDING_NULLS);
         if (added != 1)
         {
-          Log.Log.WriteFile("ss2:SetPidToPin() failed pid:0x2000");
+          Log.Log.Error("ss2:SetPidToPin() failed pid:0x2000");
         }
       }
       else
@@ -658,7 +658,7 @@ namespace TvLibrary.Implementations.DVB
       hr = _graphBuilder.AddFilter(_filterMpeg2DemuxTif, "TIF MPEG2 Demultiplexer");
       if (hr != 0)
       {
-        Log.Log.WriteFile("ss2:AddMpeg2DemuxerTif returns:0x{0:X}", hr);
+        Log.Log.Error("ss2:AddMpeg2DemuxerTif returns:0x{0:X}", hr);
         throw new TvException("Unable to add MPEG2 demultiplexer for tif");
       }
 
@@ -667,7 +667,7 @@ namespace TvLibrary.Implementations.DVB
       hr = _graphBuilder.AddFilter(_infTeeMain, "Main Inf Tee");
       if (hr != 0)
       {
-        Log.Log.WriteFile("ss2:Add main InfTee returns:0x{0:X}", hr);
+        Log.Log.Error("ss2:Add main InfTee returns:0x{0:X}", hr);
         throw new TvException("Unable to add  mainInfTee");
       }
     }
@@ -688,7 +688,7 @@ namespace TvLibrary.Implementations.DVB
       Release.ComObject("tifdemux pinin", demuxPinIn);
       if (hr != 0)
       {
-        Log.Log.WriteFile("ss2:Add main InfTee returns:0x{0:X}", hr);
+        Log.Log.Error("ss2:Add main InfTee returns:0x{0:X}", hr);
         throw new TvException("Unable to add  mainInfTee");
       }
 
@@ -821,7 +821,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("ss2:SetAnalyzerMapping {0:X}", pmtPid);
         if (_interfaceChannelScan == null)
         {
-          Log.Log.WriteFile("ss2:  no stream analyzer interface");
+          Log.Log.Error("ss2:  no stream analyzer interface");
           return;
         }
         //do grab epg, pat,sdt or nit when not timeshifting
@@ -956,13 +956,13 @@ namespace TvLibrary.Implementations.DVB
         hr = record.SetRecordingFileName(fileName);
         if (hr != 0)
         {
-          Log.Log.WriteFile("ss2:SetRecordingFileName failed:{0:X}", hr);
+          Log.Log.Error("ss2:SetRecordingFileName failed:{0:X}", hr);
         }
         SetRecorderPids();
         hr = record.StartRecord();
         if (hr != 0)
         {
-          Log.Log.WriteFile("ss2:StartRecord failed:{0:X}", hr);
+          Log.Log.Error("ss2:StartRecord failed:{0:X}", hr);
         }
       }
       _dateRecordingStarted = DateTime.Now;
@@ -1398,7 +1398,7 @@ namespace TvLibrary.Implementations.DVB
       _hasTeletext = false;
       if (dvbsChannel == null)
       {
-        Log.Log.WriteFile("Channel is not a DVBS channel!!! {0}", channel.GetType().ToString());
+        Log.Log.Error("Channel is not a DVBS channel!!! {0}", channel.GetType().ToString());
         return false;
       }
 
@@ -1444,7 +1444,7 @@ namespace TvLibrary.Implementations.DVB
       int hr = _interfaceB2C2TunerCtrl.SetFrequency(frequency);
       if (hr != 0)
       {
-        Log.Log.WriteFile("ss2:SetFrequencyKHz() failed:0x{0:X}", hr);
+        Log.Log.Error("ss2:SetFrequencyKHz() failed:0x{0:X}", hr);
         return false;
       }
       int lnbKhzTone;
@@ -1452,13 +1452,13 @@ namespace TvLibrary.Implementations.DVB
 
       if (lnbFrequency >= dvbsChannel.Frequency)
       {
-        Log.Log.WriteFile("ss2:  Error: LNB Frequency must be less than Transponder frequency");
+        Log.Log.Error("ss2:  Error: LNB Frequency must be less than Transponder frequency");
       }
       Log.Log.WriteFile("ss2:  SymbolRate:{0} KS/s", dvbsChannel.SymbolRate);
       hr = _interfaceB2C2TunerCtrl.SetSymbolRate(dvbsChannel.SymbolRate);
       if (hr != 0)
       {
-        Log.Log.WriteFile("ss2:SetSymbolRate() failed:0x{0:X}", hr);
+        Log.Log.Error("ss2:SetSymbolRate() failed:0x{0:X}", hr);
         return false;
       }
 
@@ -1467,7 +1467,7 @@ namespace TvLibrary.Implementations.DVB
       hr = _interfaceB2C2TunerCtrl.SetFec(fec);
       if (hr != 0)
       {
-        Log.Log.WriteFile("ss2:SetFec() failed:0x{0:X}", hr);
+        Log.Log.Error("ss2:SetFec() failed:0x{0:X}", hr);
         return false;
       }
 
@@ -1478,7 +1478,7 @@ namespace TvLibrary.Implementations.DVB
       hr = _interfaceB2C2TunerCtrl.SetPolarity(polarity);
       if (hr != 0)
       {
-        Log.Log.WriteFile("ss2:SetPolarity() failed:0x{0:X}", hr);
+        Log.Log.Error("ss2:SetPolarity() failed:0x{0:X}", hr);
         return false;
       }
 
@@ -1508,7 +1508,7 @@ namespace TvLibrary.Implementations.DVB
       hr = _interfaceB2C2TunerCtrl.SetLnbKHz((int)lnbSelection);
       if (hr != 0)
       {
-        Log.Log.WriteFile("ss2:SetLnbKHz() failed:0x{0:X}", hr);
+        Log.Log.Error("ss2:SetLnbKHz() failed:0x{0:X}", hr);
         return false;
       }
 
@@ -1541,7 +1541,7 @@ namespace TvLibrary.Implementations.DVB
       hr = _interfaceB2C2TunerCtrl.SetDiseqc((int)disType);
       if (hr != 0)
       {
-        Log.Log.WriteFile("ss2:SetDiseqc() failed:0x{0:X}", hr);
+        Log.Log.Error("ss2:SetDiseqc() failed:0x{0:X}", hr);
         return false;
       }
 
@@ -1550,7 +1550,7 @@ namespace TvLibrary.Implementations.DVB
       hr = _interfaceB2C2TunerCtrl.SetLnbFrequency(switchFreq);
       if (hr != 0)
       {
-        Log.Log.WriteFile("ss2:SetLnbFrequency() failed:0x{0:X}", hr);
+        Log.Log.Error("ss2:SetLnbFrequency() failed:0x{0:X}", hr);
         return false;
       }
 
@@ -1562,7 +1562,7 @@ namespace TvLibrary.Implementations.DVB
       _interfaceB2C2TunerCtrl.CheckLock();
       if (((uint)hr) == (uint)0x90010115)
       {
-        Log.Log.WriteFile("ss2:could not lock tuner");
+        Log.Log.Error("ss2:could not lock tuner");
       }
       if (hr != 0)
       {
@@ -1571,7 +1571,7 @@ namespace TvLibrary.Implementations.DVB
           hr = _interfaceB2C2TunerCtrl.SetTunerStatus();
         if (hr != 0)
         {
-          Log.Log.WriteFile("ss2:SetTunerStatus failed:0x{0:X}", hr);
+          Log.Log.Error("ss2:SetTunerStatus failed:0x{0:X}", hr);
           return false;
         }
       }
@@ -1619,13 +1619,13 @@ namespace TvLibrary.Implementations.DVB
 
       if (_currentChannel == null)
       {
-        Log.Log.WriteFile("ss2:StartTimeShifting not tuned to a channel");
+        Log.Log.Error("ss2:StartTimeShifting not tuned to a channel");
         throw new TvException("StartTimeShifting not tuned to a channel");
       }
       DVBBaseChannel channel = (DVBBaseChannel)_currentChannel;
       if (channel.NetworkId == -1 || channel.TransportId == -1 || channel.ServiceId == -1)
       {
-        Log.Log.WriteFile("ss2:StartTimeShifting not tuned to a channel but to a transponder");
+        Log.Log.Error("ss2:StartTimeShifting not tuned to a channel but to a transponder");
         throw new TvException("StartTimeShifting not tuned to a channel but to a transponder");
       }
       if (_graphState == GraphState.Created)

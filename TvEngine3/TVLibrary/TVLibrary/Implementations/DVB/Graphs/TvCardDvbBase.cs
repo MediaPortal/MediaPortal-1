@@ -395,7 +395,7 @@ namespace TvLibrary.Implementations.DVB
       _tunerStatistics = new List<IBDA_SignalStatistics>();
       if (_filterTuner == null)
       {
-        Log.Log.WriteFile("dvb: could not get IBDA_Topology since no tuner device");
+        Log.Log.Error("dvb: could not get IBDA_Topology since no tuner device");
         return;
       }
       //get the IBDA_Topology from the tuner device
@@ -403,7 +403,7 @@ namespace TvLibrary.Implementations.DVB
       IBDA_Topology topology = _filterTuner as IBDA_Topology;
       if (topology == null)
       {
-        Log.Log.WriteFile("dvb: could not get IBDA_Topology from tuner");
+        Log.Log.Error("dvb: could not get IBDA_Topology from tuner");
         return;
       }
 
@@ -416,12 +416,12 @@ namespace TvLibrary.Implementations.DVB
       int hr = topology.GetNodeTypes(out nodeTypeCount, 32, nodeTypes);
       if (hr != 0)
       {
-        Log.Log.WriteFile("dvb: FAILED could not get node types from tuner:0x{0:X}", hr);
+        Log.Log.Error("dvb: FAILED could not get node types from tuner:0x{0:X}", hr);
         return;
       }
       if (nodeTypeCount == 0)
       {
-        Log.Log.WriteFile("dvb: FAILED could not get any node types");
+        Log.Log.Error("dvb: FAILED could not get any node types");
       }
       Guid GuidIBDA_SignalStatistic = new Guid("1347D106-CF3A-428a-A5CB-AC0D9A2A4338");
       //for each node type
@@ -433,13 +433,13 @@ namespace TvLibrary.Implementations.DVB
         hr = topology.GetNodeInterfaces(nodeTypes[i], out numberOfInterfaces, 32, guidInterfaces);
         if (hr != 0)
         {
-          Log.Log.WriteFile("dvb: FAILED could not GetNodeInterfaces for node:{0} 0x:{1:X}", i, hr);
+          Log.Log.Error("dvb: FAILED could not GetNodeInterfaces for node:{0} 0x:{1:X}", i, hr);
         }
 
         hr = topology.GetControlNode(0, 1, nodeTypes[i], out objectNode);
         if (hr != 0)
         {
-          Log.Log.WriteFile("dvb: FAILED could not GetControlNode for node:{0} 0x:{1:X}", i, hr);
+          Log.Log.Error("dvb: FAILED could not GetControlNode for node:{0} 0x:{1:X}", i, hr);
           return;
         }
 
@@ -553,7 +553,7 @@ namespace TvLibrary.Implementations.DVB
       hr = (_graphBuilder as IMediaControl).Stop();
       if (hr < 0 || hr > 1)
       {
-        Log.Log.WriteFile("dvb:RunGraph returns:0x{0:X}", hr);
+        Log.Log.Error("dvb:RunGraph returns:0x{0:X}", hr);
         throw new TvException("Unable to stop graph");
       }
       _graphState = GraphState.Created;
@@ -605,7 +605,7 @@ namespace TvLibrary.Implementations.DVB
       }
       else
       {
-        Log.Log.WriteFile("dvb:This application doesn't support this Tuning Space");
+        Log.Log.Error("dvb:This application doesn't support this Tuning Space");
         // Tuning Space can also describe Analog TV but this application don't support them
         throw new TvException("This application doesn't support this Tuning Space");
       }
@@ -674,7 +674,7 @@ namespace TvLibrary.Implementations.DVB
 
       if (_filterTuner == null)
       {
-        Log.Log.WriteFile("dvb:No TvTuner installed");
+        Log.Log.Error("dvb:No TvTuner installed");
         throw new TvException("No TvTuner installed");
       }
       Log.Log.WriteFile("dvb:find bda receiver");
@@ -719,7 +719,7 @@ namespace TvLibrary.Implementations.DVB
           //hr = _capBuilder.RenderStream(null, null, tmp, null, _filterMpeg2DemuxTif);
           if (hr != 0)
           {
-            Log.Log.WriteFile("dvb:  Render->main inftee demux failed");
+            Log.Log.Error("dvb:  Render->main inftee demux failed");
             hr = _graphBuilder.RemoveFilter(tmp);
             Release.ComObject("bda receiver", tmp);
           }
@@ -759,7 +759,7 @@ namespace TvLibrary.Implementations.DVB
         }
         Release.ComObject("tuner pin out", pinOut);
         Release.ComObject("inftee main pin in", pinIn);
-        Log.Log.WriteFile("dvb:  unable to use single tv tuner filter...");
+        Log.Log.Error("dvb:  unable to use single tv tuner filter...");
         throw new TvException("No Tv Receiver filter found");
       }
       ConnectMpeg2DemuxToInfTee();
@@ -824,7 +824,7 @@ namespace TvLibrary.Implementations.DVB
       hr = _graphBuilder.AddFilter(_infTeeMain, "Inf Tee");
       if (hr != 0)
       {
-        Log.Log.WriteFile("dvb:Add main InfTee returns:0x{0:X}", hr);
+        Log.Log.Error("dvb:Add main InfTee returns:0x{0:X}", hr);
         throw new TvException("Unable to add  mainInfTee");
       }
     }
@@ -844,7 +844,7 @@ namespace TvLibrary.Implementations.DVB
       Release.ComObject("tifdemux pinin", demuxPinIn);
       if (hr != 0)
       {
-        Log.Log.WriteFile("dvb:Add main InfTee returns:0x{0:X}", hr);
+        Log.Log.Error("dvb:Add main InfTee returns:0x{0:X}", hr);
         throw new TvException("Unable to add  mainInfTee");
       }
 #if MULTI_DEMUX
@@ -884,7 +884,7 @@ namespace TvLibrary.Implementations.DVB
         int hr = _graphBuilder.AddFilter(_filterTsAnalyzer, "MediaPortal Ts Analyzer");
         if (hr != 0)
         {
-          Log.Log.WriteFile("dvb:Add main Ts Analyzer returns:0x{0:X}", hr);
+          Log.Log.Error("dvb:Add main Ts Analyzer returns:0x{0:X}", hr);
           throw new TvException("Unable to add Ts Analyzer filter");
         }
         IPin pinTee = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 1);
@@ -892,7 +892,7 @@ namespace TvLibrary.Implementations.DVB
         {
           if (hr != 0)
           {
-            Log.Log.WriteFile("dvb:unable to find pin#2 on inftee filter");
+            Log.Log.Error("dvb:unable to find pin#2 on inftee filter");
             throw new TvException("unable to find pin#2 on inftee filter");
           }
         }
@@ -901,7 +901,7 @@ namespace TvLibrary.Implementations.DVB
         {
           if (hr != 0)
           {
-            Log.Log.WriteFile("dvb:unable to find pin on ts analyzer filter");
+            Log.Log.Error("dvb:unable to find pin on ts analyzer filter");
             throw new TvException("unable to find pin on ts analyzer filter");
           }
         }
@@ -909,7 +909,7 @@ namespace TvLibrary.Implementations.DVB
         Release.ComObject("pinTsWriterIn", pin);
         if (hr != 0)
         {
-          Log.Log.WriteFile("dvb:unable to connect inftee to analyzer filter :0x{0:X}", hr);
+          Log.Log.Error("dvb:unable to connect inftee to analyzer filter :0x{0:X}", hr);
           throw new TvException("unable to connect inftee to analyzer filter");
         }
 
@@ -944,12 +944,12 @@ namespace TvLibrary.Implementations.DVB
             hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out _filterTIF);
             if (hr != 0)
             {
-              Log.Log.Write("    unable to add BDA MPEG2 Transport Information Filter filter:0x{0:X}", hr);
+              Log.Log.Error("    unable to add BDA MPEG2 Transport Information Filter filter:0x{0:X}", hr);
             }
           }
           catch (Exception)
           {
-            Log.Log.Write("    unable to add BDA MPEG2 Transport Information Filter filter");
+            Log.Log.Error("    unable to add BDA MPEG2 Transport Information Filter filter");
           }
           continue;
         }
@@ -962,12 +962,12 @@ namespace TvLibrary.Implementations.DVB
             hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out _filterSectionsAndTables);
             if (hr != 0)
             {
-              Log.Log.Write("    unable to add MPEG-2 Sections and Tables filter:0x{0:X}", hr);
+              Log.Log.Error("    unable to add MPEG-2 Sections and Tables filter:0x{0:X}", hr);
             }
           }
           catch (Exception)
           {
-            Log.Log.Write("    unable to add MPEG-2 Sections and Tables filter");
+            Log.Log.Error("    unable to add MPEG-2 Sections and Tables filter");
           }
           continue;
         }
@@ -1047,12 +1047,12 @@ namespace TvLibrary.Implementations.DVB
       Release.ComObject("mpeg2 sections&tables pin in", pinInSec);
       if (tifConnected == false)
       {
-        Log.Log.WriteFile("    unable to connect transport information filter");
+        Log.Log.Error("    unable to connect transport information filter");
         //throw new TvException("unable to connect transport information filter");
       }
       if (mpeg2SectionsConnected == false)
       {
-        Log.Log.WriteFile("    unable to connect mpeg 2 sections and tables filter");
+        Log.Log.Error("    unable to connect mpeg 2 sections and tables filter");
         //throw new TvException("unable to connect mpeg 2 sections and tables filter");
       }
     }
@@ -1644,7 +1644,7 @@ namespace TvLibrary.Implementations.DVB
         hr = record.StartRecord();
         if (hr != 0)
         {
-          Log.Log.WriteFile("dvb:StartRecord failed:{0:X}", hr);
+          Log.Log.Error("dvb:StartRecord failed:{0:X}", hr);
         }
       }
       _dateRecordingStarted = DateTime.Now;

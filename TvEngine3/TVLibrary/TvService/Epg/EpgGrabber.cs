@@ -92,7 +92,7 @@ namespace TvService
       }
       catch (Exception)
       {
-        Log.Write("Unable to open database!!!!");
+        Log.Error("Unable to open database!!!!");
       }
       _currentCardId = -1;
       _currentChannel = null;

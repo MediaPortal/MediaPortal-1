@@ -207,9 +207,9 @@ namespace TvService
         }
         catch (Exception ex)
         {
-          Log.Write("!!!Controller:Unable to connect to database!!!");
-          Log.Write("Controller: database connection string:{0}", Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString);
-          Log.Write("Sql error:{0}", ex.Message);
+          Log.Error("!!!Controller:Unable to connect to database!!!");
+          Log.Error("Controller: database connection string:{0}", Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString);
+          Log.Error("Sql error:{0}", ex.Message);
           return;
         }
 
@@ -459,7 +459,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return CardType.Analog;
           }
         }
@@ -496,7 +496,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return "";
           }
         }
@@ -529,7 +529,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return false;
           }
         }
@@ -560,7 +560,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return "";
           }
         }
@@ -592,7 +592,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return null;
           }
         }
@@ -624,7 +624,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return "";
           }
         }
@@ -658,7 +658,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return false;
           }
         }
@@ -690,7 +690,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return 0;
           }
         }
@@ -722,7 +722,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return 0;
           }
         }
@@ -755,7 +755,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return "";
           }
         }
@@ -782,7 +782,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return "";
           }
         }
@@ -814,7 +814,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return false;
           }
         }
@@ -846,7 +846,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return false;
           }
         }
@@ -878,7 +878,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return false;
           }
         }
@@ -910,7 +910,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return false;
           }
         }
@@ -942,7 +942,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return false;
           }
         }
@@ -973,7 +973,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+          Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
           return false;
         }
       }
@@ -1000,7 +1000,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return new TimeSpan(0, 0, 0, 15);
           }
         }
@@ -1032,7 +1032,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return DateTime.MinValue;
           }
         }
@@ -1064,7 +1064,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return DateTime.MinValue;
           }
         }
@@ -1098,7 +1098,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return false;
           }
         }
@@ -1128,7 +1128,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return 0;
           }
         }
@@ -1155,7 +1155,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return 0;
           }
         }
@@ -1192,7 +1192,7 @@ namespace TvService
             }
             catch (Exception)
             {
-              Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+              Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
               return false;
             }
           }
@@ -1238,7 +1238,7 @@ namespace TvService
             }
             catch (Exception)
             {
-              Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+              Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
               return false;
             }
           }
@@ -1282,7 +1282,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return;
           }
         }
@@ -1316,7 +1316,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return new byte[] { 1 };
           }
         }
@@ -1350,7 +1350,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return -1;
           }
         }
@@ -1387,7 +1387,7 @@ namespace TvService
             }
             catch (Exception)
             {
-              Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+              Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
               return TvResult.UnknownError;
             }
           }
@@ -1474,7 +1474,7 @@ namespace TvService
             }
             catch (Exception)
             {
-              Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+              Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
               return false;
             }
           }
@@ -1541,7 +1541,7 @@ namespace TvService
             }
             catch (Exception)
             {
-              Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+              Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
               return false;
             }
           }
@@ -1587,7 +1587,7 @@ namespace TvService
             }
             catch (Exception)
             {
-              Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+              Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
               return false;
             }
           }
@@ -1626,7 +1626,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
             return null;
           }
         }
@@ -1712,7 +1712,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+          Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
           return null;
         }
       }
@@ -1732,7 +1732,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+          Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
           return null;
         }
       }
@@ -1753,7 +1753,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+          Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
           return;
         }
       }
@@ -1772,7 +1772,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          Log.WriteFile("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+          Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
           return "";
         }
       }
@@ -1792,7 +1792,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          Log.WriteFile("Controller: unable to connect to slave controller at:{0}", recording.ReferencedServer().HostName);
+          Log.Error("Controller: unable to connect to slave controller at:{0}", recording.ReferencedServer().HostName);
           return "";
         }
       }
