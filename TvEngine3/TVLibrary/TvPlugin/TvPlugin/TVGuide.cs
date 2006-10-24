@@ -68,6 +68,9 @@ namespace TvPlugin
     {
       Log.Write("TVGuide:OnAdded");
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_TVGUIDE, this);
+      Restore();
+      PreInit();
+      ResetAllControls();
     }
     public override bool IsTv
     {

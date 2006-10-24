@@ -58,6 +58,9 @@ namespace TvPlugin
     {
       Log.Info("TVHome:OnAdded");
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_RADIO_GUIDE, this);
+      Restore();
+      PreInit();
+      ResetAllControls();
     }
     public override bool Init()
     {

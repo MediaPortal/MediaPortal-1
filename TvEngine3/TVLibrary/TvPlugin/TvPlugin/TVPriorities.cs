@@ -62,6 +62,9 @@ namespace TvPlugin
     public override void OnAdded()
     {
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES, this);
+      Restore();
+      PreInit();
+      ResetAllControls();
     }
     public override bool IsTv
     {

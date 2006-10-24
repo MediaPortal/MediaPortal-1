@@ -198,6 +198,9 @@ namespace TvPlugin
     {
       Log.Write("TvFullScreen:OnAdded");
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_TVFULLSCREEN, this);
+      Restore();
+      PreInit();
+      ResetAllControls();
     }
     public override bool SupportsDelayedLoad
     {

@@ -111,6 +111,9 @@ namespace TvPlugin
     public override void OnAdded()
     {
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_SEARCHTV, this);
+      Restore();
+      PreInit();
+      ResetAllControls();
     }
     public override bool IsTv
     {

@@ -78,6 +78,9 @@ namespace TvPlugin
     {
       GetID = (int)GUIWindow.Window.WINDOW_TVZAPOSD;
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_TVZAPOSD, this);
+      Restore();
+      PreInit();
+      ResetAllControls();
     }
     public override bool IsTv
     {

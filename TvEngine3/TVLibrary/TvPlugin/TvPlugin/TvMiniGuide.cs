@@ -69,6 +69,9 @@ namespace TvPlugin
     public override void OnAdded()
     {
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_MINI_GUIDE, this);
+      Restore();
+      PreInit();
+      ResetAllControls();
     }
     public override bool SupportsDelayedLoad
     {

@@ -132,6 +132,9 @@ namespace TvPlugin
     {
       MediaPortal.GUI.Library.Log.Info("TVHome:OnAdded");
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_TV, this);
+      Restore();
+      PreInit();
+      ResetAllControls();
     }
     public override bool IsTv
     {

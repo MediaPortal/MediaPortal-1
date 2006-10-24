@@ -64,6 +64,9 @@ namespace TvPlugin
     public override void OnAdded()
     {
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_DIALOG_TVGUIDE, this);
+      Restore();
+      PreInit();
+      ResetAllControls();
     }
     public override bool IsTv
     {
@@ -79,6 +82,9 @@ namespace TvPlugin
       Load(GUIGraphicsContext.Skin + @"\dialogTvGuide.xml");
       GetID = (int)GUIWindow.Window.WINDOW_DIALOG_TVGUIDE;
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_DIALOG_TVGUIDE, this);
+      Restore();
+      PreInit();
+      ResetAllControls();
       return true;
     }
 

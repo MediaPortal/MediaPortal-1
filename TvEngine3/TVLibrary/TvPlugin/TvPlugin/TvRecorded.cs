@@ -99,6 +99,9 @@ namespace TvPlugin
     {
       Log.Write("TvRecorded:OnAdded");
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_RECORDEDTV, this);
+      Restore();
+      PreInit();
+      ResetAllControls();
     }
     public override bool IsTv
     {
@@ -185,6 +188,9 @@ namespace TvPlugin
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvrecordedtv.xml");
       LoadSettings();
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_RECORDEDTV, this);
+      Restore();
+      PreInit();
+      ResetAllControls();
       return bResult;
     }
 
@@ -431,6 +437,9 @@ namespace TvPlugin
       if (nNewWindow != GetID)
       {
         GUIWindowManager.ReplaceWindow(nNewWindow);
+        Restore();
+        PreInit();
+        ResetAllControls();
       }
     }
 
