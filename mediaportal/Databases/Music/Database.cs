@@ -94,6 +94,7 @@ namespace MediaPortal.Music.Database
 
     static bool TreatFolderAsAlbum = false;
     static bool ScanForVariousArtists = true;
+    static bool ExtractEmbededCoverArt = true;
     //bool AppendPrefixToSortableNameEnd = true;
 
     string[] ArtistNamePrefixes = new string[]
@@ -137,6 +138,7 @@ namespace MediaPortal.Music.Database
       {
         TreatFolderAsAlbum = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
         ScanForVariousArtists = xmlreader.GetValueAsBool("musicfiles", "scanForVariousArtists", true);
+        ExtractEmbededCoverArt = xmlreader.GetValueAsBool("musicfiles", "buildThumbs", true);
       }
       Open();
     }
@@ -2879,90 +2881,93 @@ namespace MediaPortal.Music.Database
           song.Track = tag.Track;
           song.Duration = tag.Duration;
 
-          if (tag.CoverArtImageBytes != null)
+          if (ExtractEmbededCoverArt)
           {
-            try
+            if (tag.CoverArtImageBytes != null)
             {
-              char[] trimChars = {' ', '\x00'};
-              String tagAlbumName = String.Format("{0}-{1}", tag.Artist.Trim(trimChars), tag.Album.Trim(trimChars));
-              string strSmallThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicAlbum, tagAlbumName);
-              string strLargeThumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, tagAlbumName);
-              bool extractFile = false;
-              if (!System.IO.File.Exists(strSmallThumb))
-                extractFile = true;
-              else
+              try
               {
-                // Prevent creation of the thumbnai multiple times, when all songs of an album contain coverart
-                System.DateTime fileDate = System.IO.File.GetLastWriteTime(strSmallThumb);
-                System.TimeSpan span = currentDate - fileDate;
-                if (span.Hours > 0)
+                char[] trimChars = { ' ', '\x00' };
+                String tagAlbumName = String.Format("{0}-{1}", tag.Artist.Trim(trimChars), tag.Album.Trim(trimChars));
+                string strSmallThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicAlbum, tagAlbumName);
+                string strLargeThumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, tagAlbumName);
+                bool extractFile = false;
+                if (!System.IO.File.Exists(strSmallThumb))
                   extractFile = true;
-              }
-              if (extractFile)
-              {
-                if (!MediaPortal.Util.Picture.CreateThumbnail(tag.CoverArtImage, strSmallThumb, 128, 128, 0))
-                  Log.Debug("Could not extract thumbnail from {0}", strPathSong);
                 else
-                  if (!MediaPortal.Util.Picture.CreateThumbnail(tag.CoverArtImage, strLargeThumb, 512, 512, 0))
-                    Log.Debug("Could not extract thumbnail from {0}", strPathSong);
-              }
-              string folderThumb = MediaPortal.Util.Utils.GetFolderThumb(strPathSong);
-              if (!System.IO.File.Exists(folderThumb))
-              {
-                try
                 {
-                  System.IO.File.Copy(strSmallThumb, folderThumb, true);
-                  System.IO.File.SetAttributes(folderThumb, System.IO.File.GetAttributes(folderThumb) | System.IO.FileAttributes.Hidden);
+                  // Prevent creation of the thumbnai multiple times, when all songs of an album contain coverart
+                  System.DateTime fileDate = System.IO.File.GetLastWriteTime(strSmallThumb);
+                  System.TimeSpan span = currentDate - fileDate;
+                  if (span.Hours > 0)
+                    extractFile = true;
                 }
-                catch (Exception) { }
-              }
-              // Code for creating thumbs for genre and artists
-              // by using the thumb of the first item of a gerne / artist having a thumb
-
-              // The genre may contains unallowed chars
-              string strGenre = MediaPortal.Util.Utils.FilterFileName(song.Genre);
-
-              // Sometimes the genre contains a number code in brackets -> remove that
-              // (code borrowed from addGenre() method)
-              if (String.Compare(strGenre.Substring(0, 1), "(") == 0)
-              {
-                bool FixedTheCode = false;
-                for (int i = 1; (i < 10 && i < strGenre.Length & !FixedTheCode); ++i)
+                if (extractFile)
                 {
-                  if (String.Compare(strGenre.Substring(i, 1), ")") == 0)
+                  if (!MediaPortal.Util.Picture.CreateThumbnail(tag.CoverArtImage, strSmallThumb, 128, 128, 0))
+                    Log.Debug("Could not extract thumbnail from {0}", strPathSong);
+                  else
+                    if (!MediaPortal.Util.Picture.CreateThumbnail(tag.CoverArtImage, strLargeThumb, 512, 512, 0))
+                      Log.Debug("Could not extract thumbnail from {0}", strPathSong);
+                }
+                string folderThumb = MediaPortal.Util.Utils.GetFolderThumb(strPathSong);
+                if (!System.IO.File.Exists(folderThumb))
+                {
+                  try
                   {
-                    strGenre = strGenre.Substring(i + 1, (strGenre.Length - i - 1));
-                    FixedTheCode = true;
+                    System.IO.File.Copy(strSmallThumb, folderThumb, true);
+                    System.IO.File.SetAttributes(folderThumb, System.IO.File.GetAttributes(folderThumb) | System.IO.FileAttributes.Hidden);
+                  }
+                  catch (Exception) { }
+                }
+                // Code for creating thumbs for genre and artists
+                // by using the thumb of the first item of a gerne / artist having a thumb
+
+                // The genre may contains unallowed chars
+                string strGenre = MediaPortal.Util.Utils.FilterFileName(song.Genre);
+
+                // Sometimes the genre contains a number code in brackets -> remove that
+                // (code borrowed from addGenre() method)
+                if (String.Compare(strGenre.Substring(0, 1), "(") == 0)
+                {
+                  bool FixedTheCode = false;
+                  for (int i = 1; (i < 10 && i < strGenre.Length & !FixedTheCode); ++i)
+                  {
+                    if (String.Compare(strGenre.Substring(i, 1), ")") == 0)
+                    {
+                      strGenre = strGenre.Substring(i + 1, (strGenre.Length - i - 1));
+                      FixedTheCode = true;
+                    }
                   }
                 }
-              }
-              // Now the genre is clean and sober -> build a filename out of it
-              string genreThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicGenre, strGenre);
+                // Now the genre is clean and sober -> build a filename out of it
+                string genreThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicGenre, strGenre);
 
-              if (!System.IO.File.Exists(genreThumb))
-              {
-                // thumb for this genre does not exist yet -> simply use the folderThumb from above
-                // and copy it to thumbs\music\gerne\<genre>.jpg 
-                try
+                if (!System.IO.File.Exists(genreThumb))
                 {
-                  System.IO.File.Copy(strSmallThumb, genreThumb, true);
-                  System.IO.File.SetAttributes(genreThumb, System.IO.File.GetAttributes(genreThumb) | System.IO.FileAttributes.Hidden);
+                  // thumb for this genre does not exist yet -> simply use the folderThumb from above
+                  // and copy it to thumbs\music\gerne\<genre>.jpg 
+                  try
+                  {
+                    System.IO.File.Copy(strSmallThumb, genreThumb, true);
+                    System.IO.File.SetAttributes(genreThumb, System.IO.File.GetAttributes(genreThumb) | System.IO.FileAttributes.Hidden);
+                  }
+                  catch (Exception) { }
                 }
-                catch (Exception) { }
-              }
-              // same logic for the artists thumbs 
-              string artistThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicArtists, MediaPortal.Util.Utils.FilterFileName(song.Artist));
-              if (!System.IO.File.Exists(artistThumb))
-              {
-                try
+                // same logic for the artists thumbs 
+                string artistThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicArtists, MediaPortal.Util.Utils.FilterFileName(song.Artist));
+                if (!System.IO.File.Exists(artistThumb))
                 {
-                  System.IO.File.Copy(strSmallThumb, artistThumb, true);
-                  System.IO.File.SetAttributes(artistThumb, System.IO.File.GetAttributes(artistThumb) | System.IO.FileAttributes.Hidden);
+                  try
+                  {
+                    System.IO.File.Copy(strSmallThumb, artistThumb, true);
+                    System.IO.File.SetAttributes(artistThumb, System.IO.File.GetAttributes(artistThumb) | System.IO.FileAttributes.Hidden);
+                  }
+                  catch (Exception) { }
                 }
-                catch (Exception) { }
               }
+              catch (Exception) { }
             }
-            catch (Exception) { }
           }
 
           string strPath, strFileName;
