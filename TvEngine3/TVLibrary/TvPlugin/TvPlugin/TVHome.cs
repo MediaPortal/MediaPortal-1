@@ -1304,11 +1304,16 @@ namespace TvPlugin
       {
         if (g_Player.IsRadio == false)
         {
-          double pos = g_Player.Duration;
-          MediaPortal.GUI.Library.Log.Info("tvhome:seektoend dur:{0} pos:{1} {2}", g_Player.Duration, g_Player.CurrentPosition, g_Player.IsRadio);
-          //if (pos > 2) pos -= 2;
-          g_Player.SeekAbsolute(pos);
-          MediaPortal.GUI.Library.Log.Info("tvhome:seektoend  done dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
+          double duration = g_Player.Duration;
+          if (duration < 5) return;
+          duration -= 1;
+          double position = g_Player.CurrentPosition;
+          if (Math.Abs(duration - position) > 2)
+          {
+            MediaPortal.GUI.Library.Log.Info("tvhome:seektoend dur:{0} pos:{1} {2}", g_Player.Duration, g_Player.CurrentPosition, g_Player.IsRadio);
+            g_Player.SeekAbsolute(duration);
+            MediaPortal.GUI.Library.Log.Info("tvhome:seektoend  done dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
+          }
         }
       }
 
