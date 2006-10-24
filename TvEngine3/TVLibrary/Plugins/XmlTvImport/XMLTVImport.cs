@@ -27,6 +27,7 @@ using System.Threading;
 using System.IO;
 using TvDatabase;
 using TvLibrary.Log;
+using TvLibrary.Implementations;
 
 namespace TvEngine
 {
@@ -220,6 +221,13 @@ namespace TvEngine
                   {
                     chan = new Channel(ConvertHTMLToAnsi(nodeName.InnerText), false, true, 0, Schedule.MinSchedule, false, Schedule.MinSchedule, 10000, true, nodeId.InnerText);
                     chan.Persist();
+                    AnalogChannel tuningDetail = new AnalogChannel();
+                    tuningDetail.ChannelNumber = channelNo;
+                    tuningDetail.IsTv = true;
+                    tuningDetail.IsRadio = false;
+                    tuningDetail.Name = chan.Name;
+                    tuningDetail.Frequency = 0;
+                    layer.AddTuningDetails(chan, tuningDetail);
                   }
                   else
                   {
