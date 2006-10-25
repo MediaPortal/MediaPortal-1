@@ -67,9 +67,6 @@ namespace SetupTv.Sections
       setting.Persist();
 
       
-      setting = layer.GetSetting("xmlTvLastUpdate", "");
-      setting.Value = "";
-      setting.Persist();
 
       base.OnSectionDeActivated();
     }
@@ -81,6 +78,10 @@ namespace SetupTv.Sections
       checkBox1.Checked = layer.GetSetting("xmlTvUseTimeZone", "true").Value == "true";
       textBoxHours.Text = layer.GetSetting("xmlTvTimeZoneHours", "0").Value;
       textBoxMinutes.Text = layer.GetSetting("xmlTvTimeZoneMins", "0").Value;
+      labelLastImport.Text = layer.GetSetting("xmlTvResultLastImport", "").Value;
+      labelChannels.Text = layer.GetSetting("xmlTvResultChannels", "").Value;
+      labelPrograms.Text = layer.GetSetting("xmlTvResultPrograms", "").Value;
+      labelStatus.Text = layer.GetSetting("xmlTvResultStatus", "").Value;
     }
 
     private void XmlSetup_Load(object sender, EventArgs e)
@@ -98,16 +99,6 @@ namespace SetupTv.Sections
       {
         textBoxFolder.Text = dlg.SelectedPath;
       }
-    }
-
-    private void textBoxFolder_TextChanged(object sender, EventArgs e)
-    {
-
-    }
-
-    private void textBox2_TextChanged(object sender, EventArgs e)
-    {
-
     }
 
   }

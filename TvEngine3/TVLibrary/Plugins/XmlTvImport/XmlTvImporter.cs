@@ -180,7 +180,7 @@ namespace TvEngine
         workerThread.Start();
       }
     }
-    
+
     void ThreadFunctionImportTVGuide()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -192,9 +192,26 @@ namespace TvEngine
       {
         XMLTVImport import = new XMLTVImport(10);  // add 10 msec dely to the background thread
         import.Import(fileName, false);
+
+        Setting setting = layer.GetSetting("xmlTvResultLastImport", "");
+        setting.Value = DateTime.Now.ToString();
+        setting.Persist();
+        setting = layer.GetSetting("xmlTvResultChannels", "");
+        setting.Value = import.ImportStats.Channels.ToString();
+        setting.Persist();
+        setting = layer.GetSetting("xmlTvResultPrograms", "");
+        setting.Value = import.ImportStats.Programs.ToString();
+        setting.Persist();
+        setting = layer.GetSetting("xmlTvResultStatus", "");
+        setting.Value = import.ErrorMessage;
+        setting.Persist();
+        Log.Write("Xmltv: imported {0} channels, {1} programs status:{2}", import.ImportStats.Channels, import.ImportStats.Programs,import.ErrorMessage);
+
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error(@"plugin:xmltv import failed");
+        Log.Write(ex);
       }
 
       try
@@ -205,10 +222,10 @@ namespace TvEngine
         //
         if (File.Exists(fileName))
         {
-          Setting setting=layer.GetSetting("xmlTvLastUpdate", System.IO.Directory.GetCurrentDirectory());
+          Setting setting = layer.GetSetting("xmlTvLastUpdate", System.IO.Directory.GetCurrentDirectory());
 
           string strFileTime = System.IO.File.GetLastWriteTime(fileName).ToString();
-          setting.Value= strFileTime;
+          setting.Value = strFileTime;
           setting.Persist();
         }
 
