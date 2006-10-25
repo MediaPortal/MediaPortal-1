@@ -35,6 +35,8 @@ namespace SetupTv.Sections
       this.textBoxName = new System.Windows.Forms.TextBox();
       this.label25 = new System.Windows.Forms.Label();
       this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.comboBoxVideoSource = new System.Windows.Forms.ComboBox();
+      this.label28 = new System.Windows.Forms.Label();
       this.comboBoxCountry = new System.Windows.Forms.ComboBox();
       this.label3 = new System.Windows.Forms.Label();
       this.comboBoxInput = new System.Windows.Forms.ComboBox();
@@ -91,8 +93,9 @@ namespace SetupTv.Sections
       this.label22 = new System.Windows.Forms.Label();
       this.label23 = new System.Windows.Forms.Label();
       this.label24 = new System.Windows.Forms.Label();
-      this.label28 = new System.Windows.Forms.Label();
-      this.comboBoxVideoSource = new System.Windows.Forms.ComboBox();
+      this.label29 = new System.Windows.Forms.Label();
+      this.textBoxAnalogFrequency = new System.Windows.Forms.TextBox();
+      this.label30 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -170,6 +173,9 @@ namespace SetupTv.Sections
       // 
       // tabPage2
       // 
+      this.tabPage2.Controls.Add(this.label30);
+      this.tabPage2.Controls.Add(this.textBoxAnalogFrequency);
+      this.tabPage2.Controls.Add(this.label29);
       this.tabPage2.Controls.Add(this.comboBoxVideoSource);
       this.tabPage2.Controls.Add(this.label28);
       this.tabPage2.Controls.Add(this.comboBoxCountry);
@@ -186,11 +192,40 @@ namespace SetupTv.Sections
       this.tabPage2.Text = "Analog";
       this.tabPage2.UseVisualStyleBackColor = true;
       // 
+      // comboBoxVideoSource
+      // 
+      this.comboBoxVideoSource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxVideoSource.FormattingEnabled = true;
+      this.comboBoxVideoSource.Items.AddRange(new object[] {
+            "Tuner",
+            "CVBS #1",
+            "CVBS #2",
+            "CVBS #3",
+            "SVHS #1",
+            "SVHS #2",
+            "SVHS #3",
+            "RGB #1",
+            "RGB #2",
+            "RGB #3"});
+      this.comboBoxVideoSource.Location = new System.Drawing.Point(93, 143);
+      this.comboBoxVideoSource.Name = "comboBoxVideoSource";
+      this.comboBoxVideoSource.Size = new System.Drawing.Size(258, 21);
+      this.comboBoxVideoSource.TabIndex = 13;
+      // 
+      // label28
+      // 
+      this.label28.AutoSize = true;
+      this.label28.Location = new System.Drawing.Point(15, 151);
+      this.label28.Name = "label28";
+      this.label28.Size = new System.Drawing.Size(44, 13);
+      this.label28.TabIndex = 12;
+      this.label28.Text = "Source:";
+      // 
       // comboBoxCountry
       // 
       this.comboBoxCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCountry.FormattingEnabled = true;
-      this.comboBoxCountry.Location = new System.Drawing.Point(93, 79);
+      this.comboBoxCountry.Location = new System.Drawing.Point(93, 110);
       this.comboBoxCountry.Name = "comboBoxCountry";
       this.comboBoxCountry.Size = new System.Drawing.Size(258, 21);
       this.comboBoxCountry.TabIndex = 11;
@@ -199,7 +234,7 @@ namespace SetupTv.Sections
       // label3
       // 
       this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(15, 82);
+      this.label3.Location = new System.Drawing.Point(15, 113);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(46, 13);
       this.label3.TabIndex = 10;
@@ -213,7 +248,7 @@ namespace SetupTv.Sections
       this.comboBoxInput.Items.AddRange(new object[] {
             "Antenna",
             "Cable"});
-      this.comboBoxInput.Location = new System.Drawing.Point(93, 39);
+      this.comboBoxInput.Location = new System.Drawing.Point(93, 70);
       this.comboBoxInput.Name = "comboBoxInput";
       this.comboBoxInput.Size = new System.Drawing.Size(258, 21);
       this.comboBoxInput.TabIndex = 9;
@@ -222,7 +257,7 @@ namespace SetupTv.Sections
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(15, 42);
+      this.label2.Location = new System.Drawing.Point(15, 73);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(57, 13);
       this.label2.TabIndex = 8;
@@ -735,34 +770,32 @@ namespace SetupTv.Sections
       this.label24.TabIndex = 19;
       this.label24.Text = "Channel:";
       // 
-      // label28
+      // label29
       // 
-      this.label28.AutoSize = true;
-      this.label28.Location = new System.Drawing.Point(15, 120);
-      this.label28.Name = "label28";
-      this.label28.Size = new System.Drawing.Size(44, 13);
-      this.label28.TabIndex = 12;
-      this.label28.Text = "Source:";
+      this.label29.AutoSize = true;
+      this.label29.Location = new System.Drawing.Point(15, 39);
+      this.label29.Name = "label29";
+      this.label29.Size = new System.Drawing.Size(60, 13);
+      this.label29.TabIndex = 14;
+      this.label29.Text = "Frequency:";
       // 
-      // comboBoxVideoSource
+      // textBoxAnalogFrequency
       // 
-      this.comboBoxVideoSource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxVideoSource.FormattingEnabled = true;
-      this.comboBoxVideoSource.Items.AddRange(new object[] {
-            "Tuner",
-            "CVBS #1",
-            "CVBS #2",
-            "CVBS #3",
-            "SVHS #1",
-            "SVHS #2",
-            "SVHS #3",
-            "RGB #1",
-            "RGB #2",
-            "RGB #3"});
-      this.comboBoxVideoSource.Location = new System.Drawing.Point(93, 112);
-      this.comboBoxVideoSource.Name = "comboBoxVideoSource";
-      this.comboBoxVideoSource.Size = new System.Drawing.Size(258, 21);
-      this.comboBoxVideoSource.TabIndex = 13;
+      this.textBoxAnalogFrequency.Location = new System.Drawing.Point(93, 39);
+      this.textBoxAnalogFrequency.Name = "textBoxAnalogFrequency";
+      this.textBoxAnalogFrequency.Size = new System.Drawing.Size(100, 20);
+      this.textBoxAnalogFrequency.TabIndex = 15;
+      this.textBoxAnalogFrequency.Text = "0";
+      this.textBoxAnalogFrequency.TextChanged += new System.EventHandler(this.textBox10_TextChanged);
+      // 
+      // label30
+      // 
+      this.label30.AutoSize = true;
+      this.label30.Location = new System.Drawing.Point(212, 39);
+      this.label30.Name = "label30";
+      this.label30.Size = new System.Drawing.Size(123, 13);
+      this.label30.TabIndex = 16;
+      this.label30.Text = "MHz (leave 0 for default)";
       // 
       // FormEditChannel
       // 
@@ -858,5 +891,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label26;
     private System.Windows.Forms.Label label28;
     private System.Windows.Forms.ComboBox comboBoxVideoSource;
+    private System.Windows.Forms.Label label30;
+    private System.Windows.Forms.TextBox textBoxAnalogFrequency;
+    private System.Windows.Forms.Label label29;
   }
 }

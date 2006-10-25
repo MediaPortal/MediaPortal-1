@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 using System.Text;
+using Microsoft.Win32;
 using DirectShowLib;
 using TvLibrary.Implementations;
 using DirectShowLib.SBE;
@@ -140,7 +141,7 @@ namespace TvLibrary.Implementations.Analog
         return null;
       }
     }
- 
+
     /// <summary>
     /// Returns the EPG grabbed or null if epg grabbing is still busy
     /// </summary>
@@ -246,6 +247,10 @@ namespace TvLibrary.Implementations.Analog
       if (!CheckThreadId()) return false;
 
       AnalogChannel analogChannel = channel as AnalogChannel;
+      if (analogChannel.IsTv)
+      {
+        SetFrequencyOverride(analogChannel);
+      }
       IAMTVTuner tvTuner = _filterTvTuner as IAMTVTuner;
       if (_previousChannel != null)
       {
@@ -373,7 +378,7 @@ namespace TvLibrary.Implementations.Analog
         StopGraph();
         AddMpegMuxer(_currentChannel.IsTv);
         AddTsFileSink(_currentChannel.IsTv);
-        
+
         SetTimeShiftFileName(fileName);
       }
       RunGraph();
@@ -533,6 +538,34 @@ namespace TvLibrary.Implementations.Analog
 
     public void GrabEpg(BaseEpgGrabber callback)
     {
+    }
+    void SetFrequencyOverride(AnalogChannel channel)
+    {
+      int countryCode = channel.Country.Id;
+      string[] registryLocations = new string[] { String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-1", countryCode),
+																  String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-0", countryCode),
+																  String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS0-1"),
+																  String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS0-0")};
+      if (channel.Frequency == 0)
+      {
+        //remove the frequency override
+        for (int index = 0; index < registryLocations.Length; index++)
+        {
+          using (RegistryKey registryKey = Registry.LocalMachine.CreateSubKey(registryLocations[index]))
+          {
+            registryKey.DeleteValue(channel.ChannelNumber.ToString(), false);
+          }
+        }
+        return;
+      }
+      //set frequency override
+      for (int index = 0; index < registryLocations.Length; index++)
+      {
+        using (RegistryKey registryKey = Registry.LocalMachine.CreateSubKey(registryLocations[index]))
+        {
+          registryKey.SetValue(channel.ChannelNumber.ToString(), (int)channel.Frequency);
+        }
+      }
     }
 
   }

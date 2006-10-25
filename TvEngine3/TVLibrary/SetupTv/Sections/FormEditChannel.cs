@@ -88,6 +88,7 @@ namespace SetupTv.Sections
           else
             detail.TuningSource = (int)TunerInputType.Antenna;
           detail.VideoSource = comboBoxVideoSource.SelectedIndex;
+          detail.Frequency = (int)GetFrequency(textBoxAnalogFrequency.Text);
           detail.Persist();
         }
 
@@ -188,6 +189,7 @@ namespace SetupTv.Sections
               comboBoxInput.SelectedIndex = 1;
           }
           comboBoxVideoSource.SelectedIndex = detail.VideoSource;
+          textBoxAnalogFrequency.Text = SetFrequency(detail.Frequency);
         }
 
         //ATSC tab
@@ -279,6 +281,24 @@ namespace SetupTv.Sections
     private void comboBoxCountry_SelectedIndexChanged(object sender, EventArgs e)
     {
 
+    }
+
+    private void textBox10_TextChanged(object sender, EventArgs e)
+    {
+
+    }
+    long GetFrequency(string text)
+    {
+      float freq = float.Parse(text);
+      freq *= 1000000f;
+      return (long)freq;
+    }
+
+    string SetFrequency(long frequency)
+    {
+      float freq = frequency;
+      freq /= 1000000f;
+      return freq.ToString("f2");
     }
   }
 }

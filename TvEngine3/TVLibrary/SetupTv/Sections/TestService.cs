@@ -227,6 +227,7 @@ namespace SetupTv.Sections
 
           mpCheckBoxTimeShift.Checked = card.IsTimeShifting;
           mpLabelTimeShift.Text = card.TimeShiftFileName;
+          mpLabelChannel.Text = card.Channel.ToString();
           if (mpCheckBoxRec.Checked)
           {
             mpButtonRec.Text = "Stop Record";

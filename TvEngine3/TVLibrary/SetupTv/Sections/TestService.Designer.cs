@@ -61,14 +61,14 @@ namespace SetupTv.Sections
       // 
       // progressBarQuality
       // 
-      this.progressBarQuality.Location = new System.Drawing.Point(112, 74);
+      this.progressBarQuality.Location = new System.Drawing.Point(113, 107);
       this.progressBarQuality.Name = "progressBarQuality";
       this.progressBarQuality.Size = new System.Drawing.Size(328, 10);
       this.progressBarQuality.TabIndex = 52;
       // 
       // progressBarLevel
       // 
-      this.progressBarLevel.Location = new System.Drawing.Point(112, 51);
+      this.progressBarLevel.Location = new System.Drawing.Point(113, 84);
       this.progressBarLevel.Name = "progressBarLevel";
       this.progressBarLevel.Size = new System.Drawing.Size(328, 10);
       this.progressBarLevel.TabIndex = 51;
@@ -76,7 +76,7 @@ namespace SetupTv.Sections
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(22, 71);
+      this.label2.Location = new System.Drawing.Point(21, 104);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(74, 13);
       this.label2.TabIndex = 50;
@@ -85,7 +85,7 @@ namespace SetupTv.Sections
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(22, 48);
+      this.label1.Location = new System.Drawing.Point(21, 81);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(64, 13);
       this.label1.TabIndex = 49;
@@ -94,16 +94,16 @@ namespace SetupTv.Sections
       // mpLabel3
       // 
       this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(164, 24);
+      this.mpLabel3.Location = new System.Drawing.Point(21, 47);
       this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(86, 13);
+      this.mpLabel3.Size = new System.Drawing.Size(49, 13);
       this.mpLabel3.TabIndex = 47;
-      this.mpLabel3.Text = "Current Channel:";
+      this.mpLabel3.Text = "Channel:";
       // 
       // mpLabelTunerLocked
       // 
       this.mpLabelTunerLocked.AutoSize = true;
-      this.mpLabelTunerLocked.Location = new System.Drawing.Point(110, 24);
+      this.mpLabelTunerLocked.Location = new System.Drawing.Point(113, 24);
       this.mpLabelTunerLocked.Name = "mpLabelTunerLocked";
       this.mpLabelTunerLocked.Size = new System.Drawing.Size(19, 13);
       this.mpLabelTunerLocked.TabIndex = 46;
@@ -111,16 +111,16 @@ namespace SetupTv.Sections
       // 
       // mpLabelChannel
       // 
-      this.mpLabelChannel.AutoSize = true;
-      this.mpLabelChannel.Location = new System.Drawing.Point(256, 24);
+      this.mpLabelChannel.AutoEllipsis = true;
+      this.mpLabelChannel.Location = new System.Drawing.Point(113, 47);
       this.mpLabelChannel.Name = "mpLabelChannel";
-      this.mpLabelChannel.Size = new System.Drawing.Size(0, 13);
+      this.mpLabelChannel.Size = new System.Drawing.Size(325, 26);
       this.mpLabelChannel.TabIndex = 48;
       // 
       // label12
       // 
       this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(22, 24);
+      this.label12.Location = new System.Drawing.Point(21, 24);
       this.label12.Name = "label12";
       this.label12.Size = new System.Drawing.Size(73, 13);
       this.label12.TabIndex = 45;
@@ -143,7 +143,7 @@ namespace SetupTv.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(12, 12);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(450, 150);
+      this.mpGroupBox1.Size = new System.Drawing.Size(450, 187);
       this.mpGroupBox1.TabIndex = 53;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Status:";
@@ -151,7 +151,7 @@ namespace SetupTv.Sections
       // mpLabelRecording
       // 
       this.mpLabelRecording.AutoSize = true;
-      this.mpLabelRecording.Location = new System.Drawing.Point(129, 124);
+      this.mpLabelRecording.Location = new System.Drawing.Point(130, 157);
       this.mpLabelRecording.Name = "mpLabelRecording";
       this.mpLabelRecording.Size = new System.Drawing.Size(0, 13);
       this.mpLabelRecording.TabIndex = 56;
@@ -159,7 +159,7 @@ namespace SetupTv.Sections
       // mpLabelTimeShift
       // 
       this.mpLabelTimeShift.AutoSize = true;
-      this.mpLabelTimeShift.Location = new System.Drawing.Point(129, 101);
+      this.mpLabelTimeShift.Location = new System.Drawing.Point(130, 134);
       this.mpLabelTimeShift.Name = "mpLabelTimeShift";
       this.mpLabelTimeShift.Size = new System.Drawing.Size(0, 13);
       this.mpLabelTimeShift.TabIndex = 55;
@@ -170,7 +170,7 @@ namespace SetupTv.Sections
       this.mpCheckBoxTimeShift.CheckAlign = System.Drawing.ContentAlignment.TopRight;
       this.mpCheckBoxTimeShift.Enabled = false;
       this.mpCheckBoxTimeShift.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxTimeShift.Location = new System.Drawing.Point(20, 101);
+      this.mpCheckBoxTimeShift.Location = new System.Drawing.Point(21, 134);
       this.mpCheckBoxTimeShift.Name = "mpCheckBoxTimeShift";
       this.mpCheckBoxTimeShift.Size = new System.Drawing.Size(82, 17);
       this.mpCheckBoxTimeShift.TabIndex = 54;
@@ -184,7 +184,7 @@ namespace SetupTv.Sections
       this.mpCheckBoxRec.CheckAlign = System.Drawing.ContentAlignment.TopRight;
       this.mpCheckBoxRec.Enabled = false;
       this.mpCheckBoxRec.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxRec.Location = new System.Drawing.Point(26, 124);
+      this.mpCheckBoxRec.Location = new System.Drawing.Point(21, 157);
       this.mpCheckBoxRec.Name = "mpCheckBoxRec";
       this.mpCheckBoxRec.Size = new System.Drawing.Size(76, 17);
       this.mpCheckBoxRec.TabIndex = 53;
@@ -195,7 +195,7 @@ namespace SetupTv.Sections
       // 
       this.mpComboBoxChannels.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxChannels.FormattingEnabled = true;
-      this.mpComboBoxChannels.Location = new System.Drawing.Point(85, 170);
+      this.mpComboBoxChannels.Location = new System.Drawing.Point(84, 216);
       this.mpComboBoxChannels.Name = "mpComboBoxChannels";
       this.mpComboBoxChannels.Size = new System.Drawing.Size(146, 21);
       this.mpComboBoxChannels.TabIndex = 54;
@@ -203,7 +203,7 @@ namespace SetupTv.Sections
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(19, 173);
+      this.mpLabel1.Location = new System.Drawing.Point(18, 219);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(49, 13);
       this.mpLabel1.TabIndex = 55;
@@ -211,7 +211,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonTimeShift
       // 
-      this.mpButtonTimeShift.Location = new System.Drawing.Point(250, 168);
+      this.mpButtonTimeShift.Location = new System.Drawing.Point(249, 214);
       this.mpButtonTimeShift.Name = "mpButtonTimeShift";
       this.mpButtonTimeShift.Size = new System.Drawing.Size(75, 23);
       this.mpButtonTimeShift.TabIndex = 56;
@@ -221,7 +221,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonRec
       // 
-      this.mpButtonRec.Location = new System.Drawing.Point(345, 168);
+      this.mpButtonRec.Location = new System.Drawing.Point(344, 214);
       this.mpButtonRec.Name = "mpButtonRec";
       this.mpButtonRec.Size = new System.Drawing.Size(75, 23);
       this.mpButtonRec.TabIndex = 57;
@@ -246,7 +246,7 @@ namespace SetupTv.Sections
             this.columnHeader5,
             this.User});
       this.mpListView1.FullRowSelect = true;
-      this.mpListView1.Location = new System.Drawing.Point(12, 197);
+      this.mpListView1.Location = new System.Drawing.Point(12, 243);
       this.mpListView1.Name = "mpListView1";
       this.mpListView1.Size = new System.Drawing.Size(450, 125);
       this.mpListView1.TabIndex = 58;
@@ -283,7 +283,7 @@ namespace SetupTv.Sections
       // 
       // buttonRestart
       // 
-      this.buttonRestart.Location = new System.Drawing.Point(250, 328);
+      this.buttonRestart.Location = new System.Drawing.Point(250, 374);
       this.buttonRestart.Name = "buttonRestart";
       this.buttonRestart.Size = new System.Drawing.Size(103, 23);
       this.buttonRestart.TabIndex = 59;
@@ -293,7 +293,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonReGrabEpg
       // 
-      this.mpButtonReGrabEpg.Location = new System.Drawing.Point(371, 328);
+      this.mpButtonReGrabEpg.Location = new System.Drawing.Point(371, 374);
       this.mpButtonReGrabEpg.Name = "mpButtonReGrabEpg";
       this.mpButtonReGrabEpg.Size = new System.Drawing.Size(91, 23);
       this.mpButtonReGrabEpg.TabIndex = 60;
