@@ -203,7 +203,7 @@ namespace SetupTv.Sections
           if (builder.Length > 0) builder.Append(",");
           builder.Append("ATSC");
         }
-        ListViewItem item = new ListViewItem((mpListView1.Items.Count + 1).ToString());
+        ListViewItem item = new ListViewItem((items.Count + 1).ToString());
         item.SubItems.Add(ch.Name);
         item.Checked = ch.VisibleInGuide;
         item.Tag = ch;
@@ -289,6 +289,7 @@ namespace SetupTv.Sections
         mpListView1.Items.Remove(item);
       }
       mpListView1.EndUpdate();
+      ReOrder();
     }
 
     private void buttonUtp_Click(object sender, EventArgs e)
