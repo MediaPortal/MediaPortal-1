@@ -1929,57 +1929,62 @@ namespace MediaPortal.Visualization
           return;
 
         float fStep = 1.0f / (float)(FadeFrameCount - 1);
-
-        if (CurrentFrame < FadeFrameCount)
-        {
-          // Fade in the album art over the visualization
-          float opacity = fStep * (float)CurrentFrame;
-          DrawThumbnailOverlay(g, opacity);
-        }
-
-        else if (CurrentFrame < FadeFrameCount + ShowCoverArtFrameCount)
-        {
-          //show the album art for ShowCoverArtFrameCount frames and hide the visualisation
+        bool paused = g_Player.Paused;
+        // show a static thumb instead of the idle viz..
+        if (paused)
           DrawThumbnailOverlay(g, 1.0f);
-        }
-
-        else if (CurrentFrame < FadeFrameCount + ShowCoverArtFrameCount + FadeFrameCount)
-        {
-          // Fade out the album art;
-          float opacity = 1.0f - (fStep * (float)(CurrentFrame - (FadeFrameCount + ShowCoverArtFrameCount)));
-          DrawThumbnailOverlay(g, opacity);
-        }
-
-        else if (CurrentFrame < FadeFrameCount + ShowCoverArtFrameCount + FadeFrameCount + ShowVisualizationFrameCount)
-        {
-          //show only the visualisation for ShowVisualizationFrameCount frames
-          // so do nothing...
-        }
-
         else
         {
-          if (_ImagesPathsList.Count > 0)
+          if (CurrentFrame < FadeFrameCount)
           {
-            if (CurrentCoverArtImageIndex + 1 >= _ImagesPathsList.Count)
-            {
-              if (CurrentThumbImage != null)
-                CurrentCoverArtImageIndex = -1;
+            // Fade in the album art over the visualization
+            float opacity = fStep * (float)CurrentFrame;
+            DrawThumbnailOverlay(g, opacity);
+          }
 
-              else
-                CurrentCoverArtImageIndex = 0;
-            }
+          else if (CurrentFrame < FadeFrameCount + ShowCoverArtFrameCount)
+          {
+            //show the album art for ShowCoverArtFrameCount frames and hide the visualisation
+            DrawThumbnailOverlay(g, 1.0f);
+          }
 
-            else
-              CurrentCoverArtImageIndex++;
+          else if (CurrentFrame < FadeFrameCount + ShowCoverArtFrameCount + FadeFrameCount)
+          {
+            // Fade out the album art;
+            float opacity = 1.0f - (fStep * (float)(CurrentFrame - (FadeFrameCount + ShowCoverArtFrameCount)));
+            DrawThumbnailOverlay(g, opacity);
+          }
+
+          else if (CurrentFrame < FadeFrameCount + ShowCoverArtFrameCount + FadeFrameCount + ShowVisualizationFrameCount)
+          {
+            //show only the visualisation for ShowVisualizationFrameCount frames
+            // so do nothing...
           }
 
           else
-            CurrentCoverArtImageIndex = -1;
+          {
+            if (_ImagesPathsList.Count > 0)
+            {
+              if (CurrentCoverArtImageIndex + 1 >= _ImagesPathsList.Count)
+              {
+                if (CurrentThumbImage != null)
+                  CurrentCoverArtImageIndex = -1;
 
-          CurrentFrame = -1;
+                else
+                  CurrentCoverArtImageIndex = 0;
+              }
+
+              else
+                CurrentCoverArtImageIndex++;
+            }
+
+            else
+              CurrentCoverArtImageIndex = -1;
+
+            CurrentFrame = -1;
+          }
         }
       }
-
       catch (Exception ex)
       {
         Console.WriteLine("DoThumbnailOverlayFading caused an exception:{0}", ex);
