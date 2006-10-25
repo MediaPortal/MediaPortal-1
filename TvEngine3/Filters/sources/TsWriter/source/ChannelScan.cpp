@@ -37,6 +37,7 @@ CChannelScan::CChannelScan(LPUNKNOWN pUnk, HRESULT *phr, CMpTsFilter* filter)
 {
 	m_bIsParsing=false;
 	m_pFilter=filter;
+	m_pConditionalAccess=NULL;
 }
 CChannelScan::~CChannelScan(void)
 {

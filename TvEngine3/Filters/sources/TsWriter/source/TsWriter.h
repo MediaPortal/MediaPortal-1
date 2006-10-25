@@ -27,6 +27,7 @@
 #include "recorder.h"
 #include "timeshifting.h"
 #include "teletextgrabber.h"
+#include "technotrend.h"
 
 #include <map>
 using namespace std;
@@ -123,4 +124,5 @@ private:
 		CRecorder*			m_pRecorder;
 		CTimeShifting*	m_pTimeShifting;
 		CTeletextGrabber*	m_pTeletextGrabber;
+    CTechnotrend* m_pTechnoTrend;
 };

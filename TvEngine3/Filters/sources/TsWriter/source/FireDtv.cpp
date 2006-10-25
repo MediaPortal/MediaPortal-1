@@ -116,7 +116,7 @@ CFireDtv::CFireDtv(IFilterGraph *graph)
 	graph->EnumFilters(&pEnum);
 	CComPtr<IBaseFilter> filter;
 	ULONG fetched=0;
-	while ( SUCCEEDED(pEnum->Next(1,&filter,&fetched)))
+  while (filter.Release(), pEnum->Next(1,&filter,&fetched)== NOERROR)
 	{
 		if (fetched!=1) break;
 		
@@ -127,6 +127,7 @@ CFireDtv::CFireDtv(IFilterGraph *graph)
 		{
 			FILTER_INFO info;
 			filter->QueryFilterInfo(&info);
+       if (info.pGraph) info.pGraph->Release();
 			char filterName[1024];
 			WideCharToMultiByte(CP_ACP,0,info.achName,wcslen(info.achName),filterName,sizeof(filterName),NULL,NULL);
 			filterName[wcslen(info.achName)]=0;
