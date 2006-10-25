@@ -238,6 +238,7 @@ namespace SetupTv
       this.applyButton.UseVisualStyleBackColor = true;
       this.applyButton.Visible = false;
       this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
+      
       // 
       // SettingsForm
       // 
@@ -260,6 +261,7 @@ namespace SetupTv
       this.Closed += new System.EventHandler(this.SettingsForm_Closed);
       this.Load += new System.EventHandler(this.SettingsForm_Load);
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
 
@@ -349,6 +351,7 @@ namespace SetupTv
     public virtual void applyButton_Click(object sender, EventArgs e)
     {
     }
+
 
   }
 }

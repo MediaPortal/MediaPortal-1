@@ -48,6 +48,7 @@ namespace SetupTv
   public class SetupTvSettingsForm : SettingsForm
   {
     PluginLoader _pluginLoader = new PluginLoader();
+    protected LinkLabel linkLabel1;
     public SetupTvSettingsForm()
     {
 
@@ -57,6 +58,18 @@ namespace SetupTv
         // Required for Windows Form Designer support
         //
         InitializeComponent();
+        this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+        this.linkLabel1.AutoSize = true;
+        this.linkLabel1.Location = new System.Drawing.Point(16, 503);
+        this.linkLabel1.Name = "linkLabel1";
+        this.linkLabel1.Size = new System.Drawing.Size(115, 13);
+        this.linkLabel1.TabIndex = 7;
+        this.linkLabel1.TabStop = true;
+        this.linkLabel1.Text = "Donate to Mediaportal!";
+        this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+        this.Controls.Add(this.linkLabel1);
+        // 
+        linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://www.team-mediaportal.com/donate.html");
 
         CheckForIllegalCrossThreadCalls = false;
         //
@@ -579,5 +592,9 @@ namespace SetupTv
       SaveAllSettings();
     }
 
+    private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      System.Diagnostics.Process.Start((string)e.Link.LinkData); 
+    }
   }
 }
