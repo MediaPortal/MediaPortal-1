@@ -45,6 +45,7 @@ namespace SetupTv.Sections
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
       this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpComboBoxSensitivity = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
       // mpBeveledLine1
@@ -198,10 +199,21 @@ namespace SetupTv.Sections
       this.mpComboBoxSensitivity.Size = new System.Drawing.Size(121, 21);
       this.mpComboBoxSensitivity.TabIndex = 15;
       // 
+      // mpButton1
+      // 
+      this.mpButton1.Location = new System.Drawing.Point(148, 319);
+      this.mpButton1.Name = "mpButton1";
+      this.mpButton1.Size = new System.Drawing.Size(148, 23);
+      this.mpButton1.TabIndex = 16;
+      this.mpButton1.Text = "Add SVHS/VHS channels";
+      this.mpButton1.UseVisualStyleBackColor = true;
+      this.mpButton1.Click += new System.EventHandler(this.mpButton1_Click);
+      // 
       // CardAnalog
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.mpButton1);
       this.Controls.Add(this.mpComboBoxSensitivity);
       this.Controls.Add(this.mpLabel4);
       this.Controls.Add(this.progressBar1);
@@ -243,5 +255,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ProgressBar progressBar1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxSensitivity;
+    private MediaPortal.UserInterface.Controls.MPButton mpButton1;
   }
 }

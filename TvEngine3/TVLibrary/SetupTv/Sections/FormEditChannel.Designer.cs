@@ -91,6 +91,8 @@ namespace SetupTv.Sections
       this.label22 = new System.Windows.Forms.Label();
       this.label23 = new System.Windows.Forms.Label();
       this.label24 = new System.Windows.Forms.Label();
+      this.label28 = new System.Windows.Forms.Label();
+      this.comboBoxVideoSource = new System.Windows.Forms.ComboBox();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -168,6 +170,8 @@ namespace SetupTv.Sections
       // 
       // tabPage2
       // 
+      this.tabPage2.Controls.Add(this.comboBoxVideoSource);
+      this.tabPage2.Controls.Add(this.label28);
       this.tabPage2.Controls.Add(this.comboBoxCountry);
       this.tabPage2.Controls.Add(this.label3);
       this.tabPage2.Controls.Add(this.comboBoxInput);
@@ -190,6 +194,7 @@ namespace SetupTv.Sections
       this.comboBoxCountry.Name = "comboBoxCountry";
       this.comboBoxCountry.Size = new System.Drawing.Size(258, 21);
       this.comboBoxCountry.TabIndex = 11;
+      this.comboBoxCountry.SelectedIndexChanged += new System.EventHandler(this.comboBoxCountry_SelectedIndexChanged);
       // 
       // label3
       // 
@@ -199,6 +204,7 @@ namespace SetupTv.Sections
       this.label3.Size = new System.Drawing.Size(46, 13);
       this.label3.TabIndex = 10;
       this.label3.Text = "Country:";
+      this.label3.Click += new System.EventHandler(this.label3_Click);
       // 
       // comboBoxInput
       // 
@@ -729,6 +735,35 @@ namespace SetupTv.Sections
       this.label24.TabIndex = 19;
       this.label24.Text = "Channel:";
       // 
+      // label28
+      // 
+      this.label28.AutoSize = true;
+      this.label28.Location = new System.Drawing.Point(15, 120);
+      this.label28.Name = "label28";
+      this.label28.Size = new System.Drawing.Size(44, 13);
+      this.label28.TabIndex = 12;
+      this.label28.Text = "Source:";
+      // 
+      // comboBoxVideoSource
+      // 
+      this.comboBoxVideoSource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxVideoSource.FormattingEnabled = true;
+      this.comboBoxVideoSource.Items.AddRange(new object[] {
+            "Tuner",
+            "CVBS #1",
+            "CVBS #2",
+            "CVBS #3",
+            "SVHS #1",
+            "SVHS #2",
+            "SVHS #3",
+            "RGB #1",
+            "RGB #2",
+            "RGB #3"});
+      this.comboBoxVideoSource.Location = new System.Drawing.Point(93, 112);
+      this.comboBoxVideoSource.Name = "comboBoxVideoSource";
+      this.comboBoxVideoSource.Size = new System.Drawing.Size(258, 21);
+      this.comboBoxVideoSource.TabIndex = 13;
+      // 
       // FormEditChannel
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -821,5 +856,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label27;
     private System.Windows.Forms.TextBox textBoxAudioPid;
     private System.Windows.Forms.Label label26;
+    private System.Windows.Forms.Label label28;
+    private System.Windows.Forms.ComboBox comboBoxVideoSource;
   }
 }

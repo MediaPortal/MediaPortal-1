@@ -87,6 +87,7 @@ namespace SetupTv.Sections
             detail.TuningSource = (int)TunerInputType.Cable;
           else
             detail.TuningSource = (int)TunerInputType.Antenna;
+          detail.VideoSource = comboBoxVideoSource.SelectedIndex;
           detail.Persist();
         }
 
@@ -136,11 +137,11 @@ namespace SetupTv.Sections
         if (detail.ChannelType == 4)
         {
           detail.Frequency = Int32.Parse(textBox9.Text);
-          detail.NetworkId=Int32.Parse(textBox8.Text );
-          detail.TransportId=Int32.Parse(textBox7.Text );
-          detail.ServiceId=Int32.Parse(textBox6.Text );
-          if (comboBoxBandWidth.SelectedIndex ==0)
-            detail.Bandwidth =7;
+          detail.NetworkId = Int32.Parse(textBox8.Text);
+          detail.TransportId = Int32.Parse(textBox7.Text);
+          detail.ServiceId = Int32.Parse(textBox6.Text);
+          if (comboBoxBandWidth.SelectedIndex == 0)
+            detail.Bandwidth = 7;
           else
             detail.Bandwidth = 8;
           detail.Persist();
@@ -186,6 +187,7 @@ namespace SetupTv.Sections
             if (detail.TuningSource == (int)TunerInputType.Cable)
               comboBoxInput.SelectedIndex = 1;
           }
+          comboBoxVideoSource.SelectedIndex = detail.VideoSource;
         }
 
         //ATSC tab
@@ -267,6 +269,16 @@ namespace SetupTv.Sections
           if (_atsc == false) tabControl1.SelectedIndex = 0;
           break;
       }
+    }
+
+    private void label3_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void comboBoxCountry_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
     }
   }
 }

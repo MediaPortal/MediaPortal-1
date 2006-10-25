@@ -149,7 +149,7 @@ namespace SetupTv.Sections
         int maxChannel = RemoteControl.Instance.MaxChannel(_cardNumber);
         for (int channelNr = minChannel; channelNr <= maxChannel; channelNr++)
         {
-          float percent = ((float)((channelNr - minChannel)) / (maxChannel-minChannel));
+          float percent = ((float)((channelNr - minChannel)) / (maxChannel - minChannel));
           percent *= 100f;
           if (percent > 100f) percent = 100f;
           progressBar1.Value = (int)percent;
@@ -318,6 +318,103 @@ namespace SetupTv.Sections
 
     private void mpBeveledLine1_Load(object sender, EventArgs e)
     {
+
+    }
+
+    private void mpButton1_Click(object sender, EventArgs e)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+      Channel dbChannel = layer.AddChannel("CVBS#1 on " + card.IdCard.ToString());
+      dbChannel.IsTv = true;
+      dbChannel.Persist();
+      AnalogChannel tuningDetail = new AnalogChannel();
+      tuningDetail.IsTv = true;
+      tuningDetail.Name = dbChannel.Name;
+      tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput1;
+      layer.AddTuningDetails(dbChannel, tuningDetail);
+      layer.MapChannelToCard(card, dbChannel);
+
+      dbChannel = layer.AddChannel("CVBS#2 on " + card.IdCard.ToString());
+      dbChannel.IsTv = true;
+      dbChannel.Persist();
+      tuningDetail = new AnalogChannel();
+      tuningDetail.IsTv = true;
+      tuningDetail.Name = dbChannel.Name;
+      tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput2;
+      layer.AddTuningDetails(dbChannel, tuningDetail);
+      layer.MapChannelToCard(card, dbChannel);
+
+      dbChannel = layer.AddChannel("CVBS#3 on " + card.IdCard.ToString());
+      dbChannel.IsTv = true;
+      dbChannel.Persist();
+      tuningDetail = new AnalogChannel();
+      tuningDetail.IsTv = true;
+      tuningDetail.Name = dbChannel.Name;
+      tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput3;
+      layer.AddTuningDetails(dbChannel, tuningDetail);
+      layer.MapChannelToCard(card, dbChannel);
+
+      dbChannel = layer.AddChannel("SVHS#1 on " + card.IdCard.ToString());
+      dbChannel.IsTv = true;
+      dbChannel.Persist();
+      tuningDetail = new AnalogChannel();
+      tuningDetail.IsTv = true;
+      tuningDetail.Name = dbChannel.Name;
+      tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput1;
+      layer.AddTuningDetails(dbChannel, tuningDetail);
+      layer.MapChannelToCard(card, dbChannel);
+
+      dbChannel = layer.AddChannel("SVHS#2 on " + card.IdCard.ToString());
+      dbChannel.IsTv = true;
+      dbChannel.Persist();
+      tuningDetail = new AnalogChannel();
+      tuningDetail.IsTv = true;
+      tuningDetail.Name = dbChannel.Name;
+      tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput2;
+      layer.AddTuningDetails(dbChannel, tuningDetail);
+      layer.MapChannelToCard(card, dbChannel);
+
+      dbChannel = layer.AddChannel("SVHS#3 on " + card.IdCard.ToString());
+      dbChannel.IsTv = true;
+      dbChannel.Persist();
+      tuningDetail = new AnalogChannel();
+      tuningDetail.IsTv = true;
+      tuningDetail.Name = dbChannel.Name;
+      tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput3;
+      layer.AddTuningDetails(dbChannel, tuningDetail);
+      layer.MapChannelToCard(card, dbChannel);
+
+      dbChannel = layer.AddChannel("RGB#1 on " + card.IdCard.ToString());
+      dbChannel.IsTv = true;
+      dbChannel.Persist();
+      tuningDetail = new AnalogChannel();
+      tuningDetail.IsTv = true;
+      tuningDetail.Name = dbChannel.Name;
+      tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput1;
+      layer.AddTuningDetails(dbChannel, tuningDetail);
+      layer.MapChannelToCard(card, dbChannel);
+
+      dbChannel = layer.AddChannel("RGB#2 on " + card.IdCard.ToString());
+      dbChannel.IsTv = true;
+      dbChannel.Persist();
+      tuningDetail = new AnalogChannel();
+      tuningDetail.IsTv = true;
+      tuningDetail.Name = dbChannel.Name;
+      tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput2;
+      layer.AddTuningDetails(dbChannel, tuningDetail);
+      layer.MapChannelToCard(card, dbChannel);
+
+      dbChannel = layer.AddChannel("RGB#3 on " + card.IdCard.ToString());
+      dbChannel.IsTv = true;
+      dbChannel.Persist();
+      tuningDetail = new AnalogChannel();
+      tuningDetail.IsTv = true;
+      tuningDetail.Name = dbChannel.Name;
+      tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput3;
+      layer.AddTuningDetails(dbChannel, tuningDetail);
+      layer.MapChannelToCard(card, dbChannel);
+      MessageBox.Show("Channels added.");
 
     }
   }
