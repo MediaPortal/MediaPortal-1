@@ -177,6 +177,7 @@ namespace MediaPortal.Configuration.Sections
 				"Icons",
 				"Big Icons",
 				"Filmstrip",
+        "Albums",
 		};
 
     public MusicViews()
