@@ -1,5 +1,7 @@
+#region Copyright (C) 2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
@@ -25,26 +30,26 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Util
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class DaemonTools
-	{
+  /// <summary>
+  /// 
+  /// </summary>
+  public class DaemonTools
+  {
     static string _Path;
     static string _Drive;
-    static bool   _Enabled;
-    static int    _DriveNo;
-    static string _MountedIsoFile=String.Empty;
+    static bool _Enabled;
+    static int _DriveNo;
+    static string _MountedIsoFile = String.Empty;
     static List<string> _supportedExtensions;
 
     static DaemonTools()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        _Enabled= xmlreader.GetValueAsBool("daemon", "enabled", false);
-        _Path= xmlreader.GetValueAsString("daemon", "path", "");
-        _Drive=xmlreader.GetValueAsString("daemon", "drive", "E:");
-        _DriveNo=xmlreader.GetValueAsInt("daemon", "driveNo", 0);
+        _Enabled = xmlreader.GetValueAsBool("daemon", "enabled", false);
+        _Path = xmlreader.GetValueAsString("daemon", "path", "");
+        _Drive = xmlreader.GetValueAsString("daemon", "drive", "E:");
+        _DriveNo = xmlreader.GetValueAsInt("daemon", "driveNo", 0);
       }
       /*
        * DAEMON Tools supports the following image files:
@@ -69,21 +74,22 @@ namespace MediaPortal.Util
       _supportedExtensions.Add(".nrg");
       _supportedExtensions.Add(".pdi");
       _supportedExtensions.Add(".b5t");
+      _supportedExtensions.Add(".img");
     }
 
     static public bool IsEnabled
     {
-      get { return _Enabled;}
+      get { return _Enabled; }
     }
 
     static public bool IsMounted(string IsoFile)
     {
-			if (IsoFile==null) return false;
-			if (IsoFile==String.Empty) return false;
-      IsoFile=Utils.RemoveTrailingSlash(IsoFile);
+      if (IsoFile == null) return false;
+      if (IsoFile == String.Empty) return false;
+      IsoFile = Utils.RemoveTrailingSlash(IsoFile);
       if (_MountedIsoFile.Equals(IsoFile))
       {
-        if (System.IO.Directory.Exists(_Drive+@"\"))
+        if (System.IO.Directory.Exists(_Drive + @"\"))
         {
           return true;
         }
@@ -96,36 +102,36 @@ namespace MediaPortal.Util
     }
 
     static public bool Mount(string IsoFile, out string VirtualDrive)
-		{
-			VirtualDrive=String.Empty;
-			if (IsoFile==null) return false;
-			if (IsoFile==String.Empty) return false;
+    {
+      VirtualDrive = String.Empty;
+      if (IsoFile == null) return false;
+      if (IsoFile == String.Empty) return false;
       if (!_Enabled) return false;
       if (!System.IO.File.Exists(_Path)) return false;
 
       UnMount();
-  
-      IsoFile=Utils.RemoveTrailingSlash(IsoFile);
-      string strParams=String.Format("-mount {0},\"{1}\"",_DriveNo,IsoFile);
-      Process p = Utils.StartProcess(_Path, strParams, true , true);
+
+      IsoFile = Utils.RemoveTrailingSlash(IsoFile);
+      string strParams = String.Format("-mount {0},\"{1}\"", _DriveNo, IsoFile);
+      Process p = Utils.StartProcess(_Path, strParams, true, true);
       int timeout = 0;
-      while (!p.HasExited && (timeout<10000))
+      while (!p.HasExited && (timeout < 10000))
       {
         System.Threading.Thread.Sleep(100);
         timeout += 100;
       }
-      VirtualDrive=_Drive;
-      _MountedIsoFile=IsoFile;
+      VirtualDrive = _Drive;
+      _MountedIsoFile = IsoFile;
       return true;
     }
 
     static public void UnMount()
     {
-      if (!_Enabled) return ;
-      if (!System.IO.File.Exists(_Path)) return ;
-      
-      string strParams=String.Format("-unmount {0}",_DriveNo);
-      Process p = Utils.StartProcess(_Path, strParams, true , true);
+      if (!_Enabled) return;
+      if (!System.IO.File.Exists(_Path)) return;
+
+      string strParams = String.Format("-unmount {0}", _DriveNo);
+      Process p = Utils.StartProcess(_Path, strParams, true, true);
       int timeout = 0;
       while (!p.HasExited && (timeout < 10000))
       {
@@ -133,12 +139,12 @@ namespace MediaPortal.Util
         timeout += 100;
       }
 
-      _MountedIsoFile=String.Empty;
+      _MountedIsoFile = String.Empty;
     }
 
     static public string GetVirtualDrive()
     {
-      if (_MountedIsoFile!=String.Empty) return _Drive;
+      if (_MountedIsoFile != String.Empty) return _Drive;
       return String.Empty;
     }
 
