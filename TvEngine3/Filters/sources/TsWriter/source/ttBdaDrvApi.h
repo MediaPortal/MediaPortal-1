@@ -42,7 +42,6 @@
 #endif
 #else
 #ifdef __cplusplus 
-#define TTBDADRVAPI 
 #define TTBDADRVAPI extern "C" __declspec(dllimport) 
 #else
 #define TTBDADRVAPI __declspec(dllimport)

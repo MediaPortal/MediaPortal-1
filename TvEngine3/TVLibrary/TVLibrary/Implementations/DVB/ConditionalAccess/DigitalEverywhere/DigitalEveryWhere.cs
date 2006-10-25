@@ -204,7 +204,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="captureFilter">The capture filter.</param>
-    public DigitalEverywhere(IBaseFilter tunerFilter, IBaseFilter captureFilter)
+    public DigitalEverywhere(IBaseFilter tunerFilter, IBaseFilter analyzerFilter)
     //: base(filter)
     {
       _previousChannel = null;

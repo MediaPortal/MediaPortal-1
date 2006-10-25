@@ -78,7 +78,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				UseLibraryDependencyInputs="false"
-				AdditionalDependencies="strmbase.lib quartz.lib msvcrt.lib winmm.lib msacm32.lib olepro32.lib strmiids.lib .\source\ttBdaDrvApi.lib"
+				AdditionalDependencies="strmbase.lib quartz.lib msvcrt.lib winmm.lib msacm32.lib olepro32.lib strmiids.lib .\source\ttBdaDrvApi_Dll.lib"
 				ShowProgress="0"
 				OutputFile="Release/TsWriter.ax"
 				LinkIncremental="1"

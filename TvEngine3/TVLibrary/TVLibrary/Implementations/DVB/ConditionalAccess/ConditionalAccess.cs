@@ -47,12 +47,12 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="captureFilter">The capture filter.</param>
-    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter captureFilter)
+    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter)
     {
       try
       {
         Log.Log.WriteFile("Check for Digital Everywhere");
-        _digitalEveryWhere = new DigitalEverywhere(tunerFilter, captureFilter);
+        _digitalEveryWhere = new DigitalEverywhere(tunerFilter, analyzerFilter);
         if (_digitalEveryWhere.IsDigitalEverywhere)
         {
           Log.Log.WriteFile("Digital Everywhere card detected");
@@ -62,7 +62,7 @@ namespace TvLibrary.Implementations.DVB
         _digitalEveryWhere = null;
 
         Log.Log.WriteFile("Check for Twinhan");
-        _twinhan = new Twinhan(tunerFilter, captureFilter);
+        _twinhan = new Twinhan(tunerFilter, analyzerFilter);
         if (_twinhan.IsTwinhan)
         {
           Log.Log.WriteFile("Twinhan card detected");
@@ -71,7 +71,7 @@ namespace TvLibrary.Implementations.DVB
         _twinhan = null;
 
         Log.Log.WriteFile("Check for TechnoTrend");
-        _technoTrend = new TechnoTrend(tunerFilter, captureFilter);
+        _technoTrend = new TechnoTrend(tunerFilter, analyzerFilter);
         if (_technoTrend.IsTechnoTrend)
         {
           Log.Log.WriteFile("TechnoTrend card detected");

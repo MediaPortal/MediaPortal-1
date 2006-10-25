@@ -754,7 +754,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("dvb:  using only tv tuner ifilter...");
           ConnectMpeg2DemuxToInfTee();
           AddTsAnalyzerToGraph();
-          _conditionalAccess = new ConditionalAccess(_filterTuner, _filterCapture);
+          _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsAnalyzer);
           return;
         }
         Release.ComObject("tuner pin out", pinOut);
@@ -764,7 +764,7 @@ namespace TvLibrary.Implementations.DVB
       }
       ConnectMpeg2DemuxToInfTee();
       AddTsAnalyzerToGraph();
-      _conditionalAccess = new ConditionalAccess(_filterTuner, _filterCapture);
+      _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsAnalyzer);
     }
 
     #region IDisposable

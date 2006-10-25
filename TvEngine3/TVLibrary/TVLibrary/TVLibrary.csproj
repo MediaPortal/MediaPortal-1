@@ -76,6 +76,7 @@
     <Compile Include="Interfaces\Analyzer\IStreamAnalyzer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Interfaces\Analyzer\ITechnoTrend.cs" />
     <Compile Include="Interfaces\Analyzer\ITsRecorder.cs" />
     <Compile Include="Interfaces\Analyzer\ITsChannelScan.cs" />
     <Compile Include="Interfaces\Analyzer\ITsEpgScanner.cs" />

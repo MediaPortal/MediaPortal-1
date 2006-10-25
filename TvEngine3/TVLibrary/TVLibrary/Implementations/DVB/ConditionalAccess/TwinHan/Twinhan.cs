@@ -57,7 +57,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="captureFilter">The capture filter.</param>
-    public Twinhan(IBaseFilter tunerFilter, IBaseFilter captureFilter)
+    public Twinhan(IBaseFilter tunerFilter, IBaseFilter analyzerFilter)
     {
       _ptrPmt = Marshal.AllocCoTaskMem(8192);
       _ptrDwBytesReturned = Marshal.AllocCoTaskMem(20);
