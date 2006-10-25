@@ -24,16 +24,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.IO;
-using SetupTv;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Log;
-using TvEngine;
-
 
 namespace TvEngine
 {

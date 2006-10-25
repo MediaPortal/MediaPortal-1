@@ -33,13 +33,8 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 using Microsoft.Win32;
-
 using TvDatabase;
 using TvLibrary.Log;
-
-//using MediaPortal.GUI.Library;
-//using MediaPortal.TV.Database;
-//using MediaPortal.Util;
 
 namespace TvEngine
 {
@@ -255,7 +250,7 @@ namespace TvEngine
       _showAudioFormat = layer.GetSetting("TvMovieShowAudioFormat", "false").Value == "true";
       _slowImport = layer.GetSetting("TvMovieSlowImport", "false").Value == "true";
 
-      _xmlFile = "TVMovieMapping.xml";
+      _xmlFile = String.Format(@"{0}\MediaPortal TV Server\TVMovieMapping.xml", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
 
       string dataProviderString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0}";
 

@@ -25,19 +25,15 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
 using System.Drawing;
-using System.Text;
 using System.Xml;
 using System.Windows.Forms;
 using System.IO;
-using TvControl;
 using TvDatabase;
-using SetupTv;
 using TvEngine;
 using TvLibrary.Log;
+using System.Diagnostics;
+
 
 namespace SetupTv.Sections
 {
@@ -154,7 +150,8 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
-      _xmlFile = "TVMovieMapping.xml";
+      _xmlFile = String.Format(@"{0}\MediaPortal TV Server\TVMovieMapping.xml", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+
       LoadStations();
       LoadMapping();
 
@@ -483,6 +480,11 @@ namespace SetupTv.Sections
     {
       if (checkBoxAdditionalInfo.Checked)
         checkBoxUseShortDesc.Checked = false;
+    }
+
+    private void linkLabelInfo_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      Process.Start("http://www.tvmovie.de/ClickFinder.57.0.html");
     }
   }
 }

@@ -56,6 +56,9 @@ namespace SetupTv.Sections
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
       this.mpTabControl = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageSettings = new System.Windows.Forms.TabPage();
+      this.groupBoxInfos = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.linkLabelInfo = new System.Windows.Forms.LinkLabel();
+      this.labelInfo = new System.Windows.Forms.Label();
       this.mpGroupBoxDescriptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxSlowImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBoxGeneral = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -78,6 +81,7 @@ namespace SetupTv.Sections
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.mpTabControl.SuspendLayout();
       this.tabPageSettings.SuspendLayout();
+      this.groupBoxInfos.SuspendLayout();
       this.mpGroupBoxDescriptions.SuspendLayout();
       this.mpGroupBoxGeneral.SuspendLayout();
       this.tabPageMapChannels.SuspendLayout();
@@ -107,6 +111,7 @@ namespace SetupTv.Sections
       // 
       // tabPageSettings
       // 
+      this.tabPageSettings.Controls.Add(this.groupBoxInfos);
       this.tabPageSettings.Controls.Add(this.mpGroupBoxDescriptions);
       this.tabPageSettings.Controls.Add(this.mpGroupBoxGeneral);
       this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
@@ -116,6 +121,38 @@ namespace SetupTv.Sections
       this.tabPageSettings.TabIndex = 1;
       this.tabPageSettings.Text = "Settings";
       this.tabPageSettings.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxInfos
+      // 
+      this.groupBoxInfos.Controls.Add(this.linkLabelInfo);
+      this.groupBoxInfos.Controls.Add(this.labelInfo);
+      this.groupBoxInfos.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxInfos.Location = new System.Drawing.Point(16, 256);
+      this.groupBoxInfos.Name = "groupBoxInfos";
+      this.groupBoxInfos.Size = new System.Drawing.Size(424, 83);
+      this.groupBoxInfos.TabIndex = 14;
+      this.groupBoxInfos.TabStop = false;
+      this.groupBoxInfos.Text = "Infos";
+      // 
+      // linkLabelInfo
+      // 
+      this.linkLabelInfo.AutoSize = true;
+      this.linkLabelInfo.Location = new System.Drawing.Point(16, 48);
+      this.linkLabelInfo.Name = "linkLabelInfo";
+      this.linkLabelInfo.Size = new System.Drawing.Size(138, 13);
+      this.linkLabelInfo.TabIndex = 1;
+      this.linkLabelInfo.TabStop = true;
+      this.linkLabelInfo.Text = "Click here to get more infos.";
+      this.linkLabelInfo.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelInfo_LinkClicked);
+      // 
+      // labelInfo
+      // 
+      this.labelInfo.AutoSize = true;
+      this.labelInfo.Location = new System.Drawing.Point(16, 24);
+      this.labelInfo.Name = "labelInfo";
+      this.labelInfo.Size = new System.Drawing.Size(330, 13);
+      this.labelInfo.TabIndex = 0;
+      this.labelInfo.Text = "TV Movie Clickfinder is an EPG application for German TV channels.";
       // 
       // mpGroupBoxDescriptions
       // 
@@ -374,6 +411,8 @@ namespace SetupTv.Sections
       this.Size = new System.Drawing.Size(467, 388);
       this.mpTabControl.ResumeLayout(false);
       this.tabPageSettings.ResumeLayout(false);
+      this.groupBoxInfos.ResumeLayout(false);
+      this.groupBoxInfos.PerformLayout();
       this.mpGroupBoxDescriptions.ResumeLayout(false);
       this.mpGroupBoxDescriptions.PerformLayout();
       this.mpGroupBoxGeneral.ResumeLayout(false);
@@ -413,5 +452,8 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowAudioFormat;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseShortDesc;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableImport;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxInfos;
+    private System.Windows.Forms.LinkLabel linkLabelInfo;
+    private System.Windows.Forms.Label labelInfo;
   }
 }
