@@ -38,6 +38,7 @@ using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.GUI.Library;
 using DirectShowLib;
 
+
 namespace MediaPortal.Player
 {
   public class AudioPlayerWMP9 : IPlayer
@@ -50,6 +51,8 @@ namespace MediaPortal.Player
       Paused,
       Ended
     }
+    int _bufferTime = 5000;
+
     string _currentFile = "";
     PlayState _graphState = PlayState.Init;
     bool _isFullScreen = false;
@@ -58,7 +61,7 @@ namespace MediaPortal.Player
     static AxWMPLib.AxWindowsMediaPlayer _wmp10Player = null;
     bool _needUpdate = true;
     bool _notifyPlaying = true;
-    bool _bufferCompleted = true;
+    bool _bufferCompleted = true;    
 
     public AudioPlayerWMP9()
     {
@@ -97,8 +100,7 @@ namespace MediaPortal.Player
       _wmp10Player.Size = new System.Drawing.Size(264, 240);
       _wmp10Player.TabIndex = 0;            
 
-      GUIGraphicsContext.form.Controls.Add(_wmp10Player);
-
+      GUIGraphicsContext.form.Controls.Add(_wmp10Player);      
 
       try
       {
@@ -116,84 +118,8 @@ namespace MediaPortal.Player
       _wmp10Player.ClientSize = new Size(0, 0);
       _wmp10Player.Visible = false;
       GUIGraphicsContext.form.ResumeLayout(false);
-
-
     }
 
-    // no longer used?
-    //static public ArrayList GetCDTracks()
-    //{
-    //  GUIListItem item;
-    //  ArrayList list = new ArrayList();
-    //  item = new GUIListItem();
-    //  item.IsFolder = true;
-    //  item.Label = "..";
-    //  item.Label2 = "";
-    //  item.Path = "";
-    //  MediaPortal.Util.Utils.SetDefaultIcons(item);
-    //  MediaPortal.Util.Utils.SetThumbnails(ref item);
-    //  list.Add(item);
-
-    //  CreateInstance();
-    //  if (_wmp10Player.cdromCollection.count <= 0) return list;
-    //  if (_wmp10Player.cdromCollection.count <= 0) return list;
-
-
-    //  WMPLib.IWMPCdrom cdrom = _wmp10Player.cdromCollection.Item(0);
-
-    //  if (cdrom == null) return list;
-    //  if (cdrom.Playlist == null) return list;
-
-
-    //  for (int iTrack = 0; iTrack < cdrom.Playlist.count; iTrack++)
-    //  {
-    //    try
-    //    {
-    //      MusicTag tag = new MusicTag();
-    //      WMPLib.IWMPMedia media = cdrom.Playlist.get_Item(iTrack);
-    //      item = new GUIListItem();
-    //      item.IsFolder = false;
-    //      item.Label = media.name;
-    //      item.Label2 = "";
-    //      item.Path = String.Format("cdda:{0}", iTrack);
-    //      item.FileInfo = null;
-
-    //      for (int i = 0; i < media.attributeCount; ++i)
-    //      {
-    //        string strAttr = media.getAttributeName(i);
-    //        string strValue = media.getItemInfo(strAttr);
-    //        if (String.Compare("album", strAttr, true) == 0) tag.Album = strValue;
-    //        if (String.Compare("actor", strAttr, true) == 0) tag.Artist = strValue;
-    //        if (String.Compare("artist", strAttr, true) == 0) tag.Artist = strValue;
-    //        if (String.Compare("style", strAttr, true) == 0) tag.Genre = strValue;
-    //        if (String.Compare("releasedate", strAttr, true) == 0)
-    //        {
-    //          try
-    //          {
-    //            tag.Year = Convert.ToInt32(strValue.Substring(0, 4));
-    //          }
-    //          catch (Exception)
-    //          {
-    //          }
-    //        }
-    //      }
-    //      tag.Title = media.name;
-    //      tag.Duration = (int)media.duration;
-    //      tag.Track = iTrack + 1;
-    //      //tag.Comment  =
-    //      //tag.Year     =
-    //      //tag.Genre    =
-    //      item.MusicTag = tag;
-    //      list.Add(item);          
-    //    }
-    //    catch (Exception)
-    //    {
-    //    }
-
-    //  }
-    //  _isCDA = true;
-    //  return list;
-    //}
 
     public override bool Play(string strFile)
     {
@@ -211,6 +137,8 @@ namespace MediaPortal.Player
       _notifyPlaying = true;
       GC.Collect();
       CreateInstance();
+
+      LoadStreamingSettings();
 
       if (_wmp10Player == null) return false;
       if (_wmp10Player.cdromCollection == null) return false;
@@ -345,18 +273,28 @@ namespace MediaPortal.Player
       }
     }
 
+    private void LoadStreamingSettings()
+    {      
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        _bufferTime = xmlreader.GetValueAsInt("general", "streamingbuffer", 5000);
+      }      
+    }
+
     private void OnBuffering(object sender, AxWMPLib._WMPOCXEvents_BufferingEvent e)
     {
-      Log.Info("Audioplayer: ***** Debug - bandWidth: {0}", _wmp10Player.network.bandWidth);
-      Log.Info("Audioplayer: ***** Debug - bitRate: {0}", _wmp10Player.network.bitRate);
-      Log.Info("Audioplayer: ***** Debug - receivedPackets: {0}", _wmp10Player.network.receivedPackets);
-      Log.Info("Audioplayer: ***** Debug - receptionQuality: {0}", _wmp10Player.network.receptionQuality);
+      Log.Debug("Audioplayer: bandWidth: {0}", _wmp10Player.network.bandWidth);
+      Log.Debug("Audioplayer: bitRate: {0}", _wmp10Player.network.bitRate);
+      Log.Debug("Audioplayer: receivedPackets: {0}", _wmp10Player.network.receivedPackets);
+      Log.Debug("Audioplayer: receptionQuality: {0}", _wmp10Player.network.receptionQuality);
 
-      _wmp10Player.network.bufferingTime = 10000;
+      _wmp10Player.network.bufferingTime = _bufferTime;
 
       if (e.start)
       {
         _bufferCompleted = false;
+        Log.Debug("Audioplayer: bandWidth: {0}", _wmp10Player.network.bandWidth);
+        Log.Debug("Audioplayer: receptionQuality: {0}", _wmp10Player.network.receptionQuality);
       }
       if (!e.start)
       {
