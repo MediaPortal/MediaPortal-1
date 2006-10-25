@@ -971,7 +971,7 @@ namespace MediaPortal.Music.Database
                     if (mdb.GetSong(unfilteredList_[s].Title, ref dbSong))
                     {
                       tmpSong = dbSong.Clone();
-                      Log.Debug("Audioscrobber: Track filter for {1} found db song - {0}", tmpSong.FileName, unfilteredList_[s].Title);
+                      // Log.Debug("Audioscrobber: Track filter for {1} found db song - {0}", tmpSong.FileName, unfilteredList_[s].Title);
                       foundDoubleEntry = false;
                       // check and prevent entries from the same artist
                       for (int j = 0; j < tmpSongs.Count; j++)
@@ -1109,7 +1109,7 @@ namespace MediaPortal.Music.Database
       List<Song> albumTracks = new List<Song>();
       do
       {
-        lock (LookupLock)
+        //lock (LookupLock)
           albumTracks = ParseXMLDocForAlbumInfo(urlArtist, urlAlbum);
 
         if (sortBestTracks)
@@ -1156,120 +1156,118 @@ namespace MediaPortal.Music.Database
     /// <returns>List of Song where Song.Genre contains the used tag</returns>
     public List<Song> getTagInfo(string artistToSearch_, string trackToSearch_, bool randomizeUsedTag_, bool sortBestTracks_, bool addAvailableTracksOnly)
     {
-      lock (LookupLock)
+      int randomPosition = 0;
+      int calcRandValue = 0;
+      Random rand = new Random();
+      string urlArtist = getValidURLLastFMString(artistToSearch_);
+      string urlTrack = getValidURLLastFMString(trackToSearch_);
+      string tmpGenre = String.Empty;
+      List<Song> tagTracks = new List<Song>();
+
+      // fetch the most popular Tags for the current track
+      tagTracks = getTagsForTrack(urlArtist, urlTrack);
+
+      // no tags for current track - try artist tags instead
+      if (tagTracks.Count < 1)
+        tagTracks = getTagsForArtist(urlArtist);
+
+      if (tagTracks.Count > 0)
       {
-        int randomPosition = 0;
-        int calcRandValue = 0;
-        Random rand = new Random();
-        string urlArtist = getValidURLLastFMString(artistToSearch_);
-        string urlTrack = getValidURLLastFMString(trackToSearch_);
-        string tmpGenre = String.Empty;
-        List<Song> tagTracks = new List<Song>();
-
-        // fetch the most popular Tags for the current track
-        tagTracks = getTagsForTrack(urlArtist, urlTrack);
-
-        // no tags for current track - try artist tags instead
-        if (tagTracks.Count < 1)
-          tagTracks = getTagsForArtist(urlArtist);
-
-        if (tagTracks.Count > 0)
+        if (randomizeUsedTag_)
         {
-          if (randomizeUsedTag_)
+          // decide which tag to use            
+          // only use the "better" 50% for randomness
+          //calcRandValue = ((tagTracks.Count / 2) - 1) * _randomNessPercent / 100;
+
+          // only use the top 5 tags
+          if (tagTracks.Count > _limitRandomListCount)
+            calcRandValue = (_limitRandomListCount) * _randomNessPercent / 100;
+          else
+            calcRandValue = ((tagTracks.Count) - 1) * _randomNessPercent / 100;
+
+          // make sure calcRandValue is not lower then random(minvalue, )
+          calcRandValue = calcRandValue > 0 ? calcRandValue : 0;
+
+          randomPosition = rand.Next(0, calcRandValue);
+        }
+
+        if (randomPosition < tagTracks.Count - 1)
+        {
+          for (int x = 0; x < _limitRandomListCount; x++)
           {
-            // decide which tag to use            
-            // only use the "better" 50% for randomness
-            //calcRandValue = ((tagTracks.Count / 2) - 1) * _randomNessPercent / 100;
-
-            // only use the top 5 tags
-            if (tagTracks.Count > _limitRandomListCount)
-              calcRandValue = (_limitRandomListCount) * _randomNessPercent / 100;
-            else
-              calcRandValue = ((tagTracks.Count) - 1) * _randomNessPercent / 100;
-
-            // make sure calcRandValue is not lower then random(minvalue, )
-            calcRandValue = calcRandValue > 0 ? calcRandValue : 0;
-
-            randomPosition = rand.Next(0, calcRandValue);
-          }
-
-          if (randomPosition < tagTracks.Count - 1)
-          {
-            for (int x = 0; x < _limitRandomListCount; x++)
+            tmpGenre = tagTracks[randomPosition].Genre.ToLowerInvariant();
+            // filter unwanted tags
+            if (_unwantedTags.Contains(tmpGenre.ToLowerInvariant()))
             {
-              tmpGenre = tagTracks[randomPosition].Genre.ToLowerInvariant();
-              // filter unwanted tags
-              if (_unwantedTags.Contains(tmpGenre.ToLowerInvariant()))
+              randomPosition = rand.Next(0, calcRandValue);
+              Log.Debug("AudioScrobblerUtils: Tag {0} in blacklist, randomly chosing another one", tmpGenre);
+              // do not try to often..
+              // if random picking doesn't lead to a result quit the randomness and pick the best
+              if (x > tagTracks.Count * 3)
               {
-                randomPosition = rand.Next(0, calcRandValue);
-                Log.Debug("AudioScrobblerUtils: Tag {0} in blacklist, randomly chosing another one", tmpGenre);
-                // do not try to often..
-                // if random picking doesn't lead to a result quit the randomness and pick the best
-                if (x > tagTracks.Count * 3)
+                for (int t = 0; t < tagTracks.Count; t++)
                 {
-                  for (int t = 0; t < tagTracks.Count; t++)
+                  tmpGenre = tagTracks[t].Genre.ToLowerInvariant();
+                  if (!_unwantedTags.Contains(tmpGenre.ToLowerInvariant()))
                   {
-                    tmpGenre = tagTracks[t].Genre.ToLowerInvariant();
-                    if (!_unwantedTags.Contains(tmpGenre.ToLowerInvariant()))
-                    {
-                      Log.Debug("AudioScrobblerUtils: Tag {0} was the first non-blacklisted item", tmpGenre);
-                      break;
-                    }
+                    Log.Debug("AudioScrobblerUtils: Tag {0} was the first non-blacklisted item", tmpGenre);
+                    break;
+                  }
 
-                    if (t == tagTracks.Count - 1)
-                    {
-                      tmpGenre = tagTracks[0].Genre.ToLowerInvariant();
-                      Log.Debug("AudioScrobblerUtils: Random tag picking unsuccessful - selecting {0}", tmpGenre);
-                      break;
-                    }
+                  if (t == tagTracks.Count - 1)
+                  {
+                    tmpGenre = tagTracks[0].Genre.ToLowerInvariant();
+                    Log.Debug("AudioScrobblerUtils: Random tag picking unsuccessful - selecting {0}", tmpGenre);
+                    break;
                   }
                 }
               }
-              else
-              {
-                Log.Debug("AudioScrobblerUtils: Tag picking successful - selecting {0}", tmpGenre);
-                break;
-              }
             }
-          }
-          else
-          {
-            Log.Debug("AudioScrobblerUtils: randomPosition {0} not reasonable for list of {1} tags", randomPosition, tagTracks.Count);
-            if (tagTracks.Count == 1)
-            {
-              tmpGenre = tagTracks[0].Genre.ToLowerInvariant();
-              Log.Debug("AudioScrobblerUtils: Tag {0} is the only one found - selecting..", tmpGenre);
-            }
-          }
-
-          if (tmpGenre != String.Empty)
-          {
-            // use the best matches for the given track only            
-            if (sortBestTracks_)
-              tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tmpGenre, false, addAvailableTracksOnly);
             else
-              tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tmpGenre, true, addAvailableTracksOnly);
-
-            //// filter tracks not available in music database
-            //if (addAvailableTracksOnly)
-            //{
-            //  tagTracks = filterForLocalSongs(tagTracks, artistToSearch_, tmpGenre);
-            //}
+            {
+              Log.Debug("AudioScrobblerUtils: Tag picking successful - selecting {0}", tmpGenre);
+              break;
+            }
           }
-          else
-            tagTracks.Clear();
         }
-
-        // sort list by playcount (times a track was tagged in this case)
-        if (sortBestTracks_)
-          tagTracks.Sort(CompareSongsByTimesPlayed);
-
-        foreach (Song tagSong in tagTracks)
+        else
         {
-          tagSong.Genre = tmpGenre;
+          Log.Debug("AudioScrobblerUtils: randomPosition {0} not reasonable for list of {1} tags", randomPosition, tagTracks.Count);
+          if (tagTracks.Count == 1)
+          {
+            tmpGenre = tagTracks[0].Genre.ToLowerInvariant();
+            Log.Debug("AudioScrobblerUtils: Tag {0} is the only one found - selecting..", tmpGenre);
+          }
         }
-        return tagTracks;
+
+        if (tmpGenre != String.Empty)
+        {
+          // use the best matches for the given track only            
+          if (sortBestTracks_)
+            tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tmpGenre, false, addAvailableTracksOnly);
+          else
+            tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tmpGenre, true, addAvailableTracksOnly);
+
+          //// filter tracks not available in music database
+          //if (addAvailableTracksOnly)
+          //{
+          //  tagTracks = filterForLocalSongs(tagTracks, artistToSearch_, tmpGenre);
+          //}
+        }
+        else
+          tagTracks.Clear();
       }
+
+      // sort list by playcount (times a track was tagged in this case)
+      if (sortBestTracks_)
+        tagTracks.Sort(CompareSongsByTimesPlayed);
+
+      foreach (Song tagSong in tagTracks)
+      {
+        tagSong.Genre = tmpGenre;
+      }
+
+      return tagTracks;
     }
 
     /// <summary>
@@ -1515,8 +1513,8 @@ namespace MediaPortal.Music.Database
           // Here we get the image from the web and save it to disk
           try
           {
-            lock (LookupLock)
-            {
+            //lock (LookupLock)
+            //{
               string tmpFile = System.IO.Path.GetTempFileName();
               WebClient client = new WebClient();
               client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
@@ -1556,7 +1554,7 @@ namespace MediaPortal.Music.Database
                 Log.Info("MyMusic: Thumb successfully downloaded as {0}", fileName);
               }
               success = true;
-            }
+            //}
           }
           catch (Exception e)
           {
@@ -1579,53 +1577,65 @@ namespace MediaPortal.Music.Database
       int addedSongs = 0;
       //      Random thisOne = new Random();
       MusicDatabase dbs = new MusicDatabase();
-      List<Song> songList = new List<Song>();
+      List<Song> randomSongList = new List<Song>();
       Song randomSong = new Song();
       Song lookupSong = new Song();
+      int loops = 0;
 
       // fetch more than needed since there could be double entries
-      lock (LookupLock)
+
+      while (addedSongs < _limitRandomListCount * 2)
       {
-        while (addedSongs < _limitRandomListCount * 2)
-        {
-          lookupSong.Clear();
+        loops++;
+        lookupSong.Clear();
 
-          dbs.GetRandomSong(ref lookupSong);
-          randomSong = lookupSong.Clone();
+        dbs.GetRandomSong(ref lookupSong);
+        randomSong = lookupSong.Clone();
 
-          // dirty hack to improve .NET's shitty random.next()
-          //if (thisOne.Next(0, 6) == thisOne.Next(0, 6))
-          bool found = false;
-          for (int i = 0; i < songList.Count; i++)
-            if (songList[i].Artist == randomSong.Artist)
-              found = true;
-          if (!found)
+        // dirty hack to improve .NET's shitty random.next()
+        //if (thisOne.Next(0, 6) == thisOne.Next(0, 6))
+        bool found = false;
+        for (int i = 0; i < randomSongList.Count; i++)
+          if (randomSongList[i].Artist == randomSong.Artist)
           {
-            switch (randomMode_)
-            {
-              case offlineMode.timesplayed:
-                if (randomSong.TimesPlayed == 0)
-                {
-                  songList.Add(randomSong);
-                  addedSongs++;
-                }
-                break;
-              case offlineMode.favorites:
-                if (randomSong.Favorite)
-                {
-                  songList.Add(randomSong);
-                  addedSongs++;
-                }
-                break;
-              case offlineMode.random:
-                songList.Add(randomSong);
+            found = true;
+            break;
+          }
+
+        if (!found)
+        {
+          switch (randomMode_)
+          {
+            case offlineMode.timesplayed:
+              if (randomSong.TimesPlayed == 0)
+              {
+                randomSongList.Add(randomSong);
                 addedSongs++;
-                break;
-            }
+              }
+              break;
+            case offlineMode.favorites:
+              if (randomSong.Favorite)
+              {
+                randomSongList.Add(randomSong);
+                addedSongs++;
+              }
+              break;
+            case offlineMode.random:
+              randomSongList.Add(randomSong);
+              addedSongs++;
+              break;
           }
         }
+        // quick check; 3x rlimit times because every pass could try different artists in dbs.GetRandomSong(ref lookupSong);
+        if (loops > 15)
+        {
+          if (randomMode_ == offlineMode.timesplayed)
+            Log.Debug("AudioScrobblerUtils: Not enough unique unheard tracks for random mode");
+          break;
+        }
       }
-      return songList;
+
+      return randomSongList;
     }
 
 

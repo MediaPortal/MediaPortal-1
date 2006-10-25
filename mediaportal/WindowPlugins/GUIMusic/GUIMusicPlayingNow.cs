@@ -755,6 +755,15 @@ namespace MediaPortal.GUI.Music
           {
             if (CurrentTrackTag.Artist != PreviousTrackTag.Artist)
               UpdateArtistInfo();
+            else
+            {
+              CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.FilterFileName(CurrentTrackTag.Artist));
+              if (CurrentThumbFileName.Length > 0)
+              {
+                AddImageToImagePathContainer(CurrentThumbFileName);
+                UpdateImagePathContainer();
+              }
+            }
 
             if (CurrentTrackTag.Album != PreviousTrackTag.Album || facadeTagInfo.Count < 1)
             {
