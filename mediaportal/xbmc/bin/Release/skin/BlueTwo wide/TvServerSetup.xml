@@ -9,10 +9,11 @@
     <control>
       <type>group</type>
       <layout>GridLayout(2, 6, 52, 8, 1)</layout>
-      <posX>56</posX>
-      <posY>151</posY>
+	<posX>113</posX>
+	<posY>190</posY>
       <control>
         <type>button</type>
+        <textXOff>28</textXOff>
         <id>24</id>
         <label>6029</label>
       </control>
@@ -21,33 +22,34 @@
       <type>label</type>
       <description>Please specify the IP address or hostname</description>
       <id>1</id>
-      <posX>260</posX>
-      <posY>96</posY>
+      <posX>560</posX>
+      <posY>194</posY>
       <label>6026</label>
     </control>
     <control>
       <type>label</type>
       <description>of the master TV-Server</description>
       <id>1</id>
-      <posX>260</posX>
-      <posY>112</posY>
+      <posX>560</posX>
+      <posY>224</posY>
       <label>6027</label>
     </control>
     <control>
       <type>label</type>
       <description>Current setting:</description>
       <id>1</id>
-      <posX>260</posX>
-      <posY>160</posY>
+      <posX>560</posX>
+      <posY>300</posY>
       <label>6028</label>
     </control>
     <control>
       <type>label</type>
       <description>:</description>
       <id>30</id>
-      <posX>260</posX>
-      <posY>180</posY>
-      <font>font16</font>
+      <posX>560</posX>
+      <posY>330</posY>
+      <textcolor>White</textcolor>
+      <font>font13</font>
       <label>-</label>
     </control>
   </controls>
