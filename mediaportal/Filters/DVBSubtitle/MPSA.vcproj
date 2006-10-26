@@ -327,11 +327,23 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Source\PatParser\ConditionalAccess.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\PatParser\DvbUtil.h"
 					>
 				</File>
 				<File
+					RelativePath=".\Source\PatParser\FireDtv.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\PatParser\ISectionCallback.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\NITDecoder.h"
 					>
 				</File>
 				<File
@@ -355,6 +367,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Source\PatParser\SdtParser.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\PatParser\Section.h"
 					>
 				</File>
@@ -366,6 +382,10 @@
 					RelativePath=".\Source\PatParser\TsHeader.h"
 					>
 				</File>
+				<File
+					RelativePath=".\Source\PatParser\VirtualChannelTableParser.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="sources"
@@ -375,7 +395,19 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Source\PatParser\ConditionalAccess.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\PatParser\DvbUtil.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\FireDtv.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\NITDecoder.cpp"
 					>
 				</File>
 				<File
@@ -399,6 +431,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Source\PatParser\SdtParser.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\PatParser\Section.cpp"
 					>
 				</File>
@@ -408,6 +444,10 @@
 				</File>
 				<File
 					RelativePath=".\Source\PatParser\TsHeader.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\PatParser\VirtualChannelTableParser.cpp"
 					>
 				</File>
 			</Filter>
