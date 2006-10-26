@@ -56,13 +56,14 @@ namespace SetupTv.Sections
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
       this.tabControlTvMovie = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageSettings = new System.Windows.Forms.TabPage();
+      this.groupBoxEnableTvMovie = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxEnableImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxInfos = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.linkLabelInfo = new System.Windows.Forms.LinkLabel();
       this.labelInfo = new System.Windows.Forms.Label();
       this.groupBoxImport = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxSlowImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxDescriptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.checkBoxEnableImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxAdditionalInfo = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxShowAudioFormat = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxUseShortDesc = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -79,16 +80,15 @@ namespace SetupTv.Sections
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.listView2 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.tabControlTvMovie.SuspendLayout();
       this.tabPageSettings.SuspendLayout();
+      this.groupBoxEnableTvMovie.SuspendLayout();
       this.groupBoxInfos.SuspendLayout();
       this.groupBoxImport.SuspendLayout();
       this.groupBoxDescriptions.SuspendLayout();
       this.tabPageMapChannels.SuspendLayout();
       this.groupBoxMapping.SuspendLayout();
       this.panelTimeSpan.SuspendLayout();
-      this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // openFileDialog
@@ -114,7 +114,7 @@ namespace SetupTv.Sections
       // 
       // tabPageSettings
       // 
-      this.tabPageSettings.Controls.Add(this.mpGroupBox1);
+      this.tabPageSettings.Controls.Add(this.groupBoxEnableTvMovie);
       this.tabPageSettings.Controls.Add(this.groupBoxInfos);
       this.tabPageSettings.Controls.Add(this.groupBoxImport);
       this.tabPageSettings.Controls.Add(this.groupBoxDescriptions);
@@ -125,6 +125,30 @@ namespace SetupTv.Sections
       this.tabPageSettings.TabIndex = 1;
       this.tabPageSettings.Text = "Settings";
       this.tabPageSettings.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxEnableTvMovie
+      // 
+      this.groupBoxEnableTvMovie.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxEnableTvMovie.Controls.Add(this.checkBoxEnableImport);
+      this.groupBoxEnableTvMovie.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxEnableTvMovie.Location = new System.Drawing.Point(16, 8);
+      this.groupBoxEnableTvMovie.Name = "groupBoxEnableTvMovie";
+      this.groupBoxEnableTvMovie.Size = new System.Drawing.Size(424, 48);
+      this.groupBoxEnableTvMovie.TabIndex = 0;
+      this.groupBoxEnableTvMovie.TabStop = false;
+      // 
+      // checkBoxEnableImport
+      // 
+      this.checkBoxEnableImport.AutoSize = true;
+      this.checkBoxEnableImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxEnableImport.Location = new System.Drawing.Point(16, 20);
+      this.checkBoxEnableImport.Name = "checkBoxEnableImport";
+      this.checkBoxEnableImport.Size = new System.Drawing.Size(189, 17);
+      this.checkBoxEnableImport.TabIndex = 0;
+      this.checkBoxEnableImport.Text = "Enable TV Movie Clickfinder import";
+      this.checkBoxEnableImport.UseVisualStyleBackColor = true;
+      this.checkBoxEnableImport.CheckedChanged += new System.EventHandler(this.checkBoxEnableImport_CheckedChanged);
       // 
       // groupBoxInfos
       // 
@@ -200,18 +224,6 @@ namespace SetupTv.Sections
       this.groupBoxDescriptions.TabIndex = 1;
       this.groupBoxDescriptions.TabStop = false;
       this.groupBoxDescriptions.Text = "Descriptions";
-      // 
-      // checkBoxEnableImport
-      // 
-      this.checkBoxEnableImport.AutoSize = true;
-      this.checkBoxEnableImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEnableImport.Location = new System.Drawing.Point(16, 20);
-      this.checkBoxEnableImport.Name = "checkBoxEnableImport";
-      this.checkBoxEnableImport.Size = new System.Drawing.Size(189, 17);
-      this.checkBoxEnableImport.TabIndex = 0;
-      this.checkBoxEnableImport.Text = "Enable TV Movie Clickfinder import";
-      this.checkBoxEnableImport.UseVisualStyleBackColor = true;
-      this.checkBoxEnableImport.CheckedChanged += new System.EventHandler(this.checkBoxEnableImport_CheckedChanged);
       // 
       // checkBoxAdditionalInfo
       // 
@@ -414,18 +426,6 @@ namespace SetupTv.Sections
       this.columnHeader2.Text = "TV Movie Stations";
       this.columnHeader2.Width = 179;
       // 
-      // mpGroupBox1
-      // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox1.Controls.Add(this.checkBoxEnableImport);
-      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(16, 8);
-      this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(424, 48);
-      this.mpGroupBox1.TabIndex = 0;
-      this.mpGroupBox1.TabStop = false;
-      // 
       // TvMovieSetup
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -435,6 +435,8 @@ namespace SetupTv.Sections
       this.Size = new System.Drawing.Size(467, 388);
       this.tabControlTvMovie.ResumeLayout(false);
       this.tabPageSettings.ResumeLayout(false);
+      this.groupBoxEnableTvMovie.ResumeLayout(false);
+      this.groupBoxEnableTvMovie.PerformLayout();
       this.groupBoxInfos.ResumeLayout(false);
       this.groupBoxInfos.PerformLayout();
       this.groupBoxImport.ResumeLayout(false);
@@ -447,8 +449,6 @@ namespace SetupTv.Sections
       this.groupBoxMapping.PerformLayout();
       this.panelTimeSpan.ResumeLayout(false);
       this.panelTimeSpan.PerformLayout();
-      this.mpGroupBox1.ResumeLayout(false);
-      this.mpGroupBox1.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -481,6 +481,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxInfos;
     private System.Windows.Forms.LinkLabel linkLabelInfo;
     private System.Windows.Forms.Label labelInfo;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxEnableTvMovie;
   }
 }

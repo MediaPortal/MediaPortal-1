@@ -35,6 +35,8 @@ using System.Xml;
 using Microsoft.Win32;
 using TvDatabase;
 using TvLibrary.Log;
+using Gentle.Common;
+using Gentle.Framework;
 
 namespace TvEngine
 {
@@ -591,7 +593,7 @@ namespace TvEngine
 
       //Log.Debug("TVMovie: Removal of old EPG data");
       TvBusinessLayer layer = new TvBusinessLayer();
-      layer.RemoveOldPrograms();
+      //layer.RemoveOldPrograms();
       //Log.Debug("TVMovie: Removal done");
 
       if (_canceled)
@@ -610,6 +612,15 @@ namespace TvEngine
       if (OnStationsChanged != null)
         OnStationsChanged(1, maximum, string.Empty);
       //Log.Debug("TVMovie: Calculating stations done");
+
+      ArrayList channelList = new ArrayList();
+      foreach (Mapping mapping in mappingList)
+        if (channelList.IndexOf(mapping.Channel) == -1)
+        {
+          channelList.Add(mapping.Channel);
+          ClearPrograms(mapping.Channel);
+        }
+
 
       int counter = 0;
 
@@ -691,6 +702,25 @@ namespace TvEngine
       {
       }
       return 0;
+    }
+
+    void ClearPrograms(string channel)
+    {
+      Channel progChannel = null;
+      IList allChannels = Channel.ListAll();
+      foreach (Channel ch in allChannels)
+      {
+        if (ch.Name == channel)
+        {
+          progChannel = ch;
+          break;
+        }
+      }
+
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Delete, typeof(Program));
+      sb.AddConstraint(String.Format("idChannel = '{0}'", progChannel.IdChannel));
+      SqlStatement stmt = sb.GetStatement(true);
+      ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
     }
   }
 
