@@ -31,6 +31,8 @@ using System.Net;
 using System.Text;
 using System.Xml;
 using MediaPortal.Util;
+using MediaPortal.Services;
+using MediaPortal.Threading;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Music.Database
@@ -81,7 +83,7 @@ namespace MediaPortal.Music.Database
     public bool SortBestTracks;
 
     public delegate void AlbumInfoRequestHandler(AlbumInfoRequest request, List<Song> songs);
-    public event AlbumInfoRequestHandler AlbumInfoRequestCompleted;
+    public AlbumInfoRequestHandler AlbumInfoRequestCompleted;
 
     public AlbumInfoRequest(string artistToSearch, string albumToSearch, bool sortBestTracks)
       : base(RequestType.GetAlbumInfo)
@@ -109,7 +111,7 @@ namespace MediaPortal.Music.Database
     public bool RandomizeArtists;
 
     public delegate void SimilarArtistRequestHandler(SimilarArtistRequest request, List<Song> songs);
-    public event SimilarArtistRequestHandler SimilarArtistRequestCompleted;
+    public SimilarArtistRequestHandler SimilarArtistRequestCompleted;
 
     public SimilarArtistRequest(string artistToSearch, bool randomizeArtists)
       : base(RequestType.GetSimilarArtists)
@@ -136,7 +138,7 @@ namespace MediaPortal.Music.Database
     public string ArtistToSearch;
 
     public delegate void ArtistInfoRequestHandler(ArtistInfoRequest request, Song song);
-    public event ArtistInfoRequestHandler ArtistInfoRequestCompleted;
+    public ArtistInfoRequestHandler ArtistInfoRequestCompleted;
 
     public ArtistInfoRequest(string artistToSearch) : base(RequestType.GetArtistInfo)
     {
@@ -164,7 +166,7 @@ namespace MediaPortal.Music.Database
     public bool AddAvailableTracksOnly;
 
     public delegate void TagInfoRequestHandler(TagInfoRequest request, List<Song> songs);
-    public event TagInfoRequestHandler TagInfoRequestCompleted;
+    public TagInfoRequestHandler TagInfoRequestCompleted;
 
     public TagInfoRequest(string artistToSearch, string trackToSearch, bool randomizeUsedTag, bool sortBestTracks, bool addAvailableTracksOnly)
       : base(RequestType.GetAlbumInfo)
@@ -195,7 +197,7 @@ namespace MediaPortal.Music.Database
     public string TrackToSearch;
 
     public delegate void TagsForTrackRequestHandler(TagsForTrackRequest request, List<Song> songs);
-    public event TagsForTrackRequestHandler TagsForTrackRequestCompleted;
+    public TagsForTrackRequestHandler TagsForTrackRequestCompleted;
 
     public TagsForTrackRequest(string artistToSearch, string trackToSearch)
       : base(RequestType.GetTagsForTrack)
@@ -221,7 +223,7 @@ namespace MediaPortal.Music.Database
     public string UserForFeed;
 
     public delegate void UsersTagsRequestHandler(UsersTagsRequest request, List<Song> songs);
-    public event UsersTagsRequestHandler UsersTagsRequestCompleted;
+    public UsersTagsRequestHandler UsersTagsRequestCompleted;
 
     public UsersTagsRequest(string userForFeed)
       : base(RequestType.GetAudioScrobblerFeed)
@@ -246,7 +248,7 @@ namespace MediaPortal.Music.Database
     public string UserForFeed;
 
     public delegate void UsersFriendsRequestHandler(UsersFriendsRequest request, List<Song> songs);
-    public event UsersFriendsRequestHandler UsersFriendsRequestCompleted;
+    public UsersFriendsRequestHandler UsersFriendsRequestCompleted;
 
     public UsersFriendsRequest(string userForFeed)
       : base(RequestType.GetAudioScrobblerFeed)
@@ -272,7 +274,7 @@ namespace MediaPortal.Music.Database
     public string UserForFeed;
 
     public delegate void GeneralFeedRequestHandler(GeneralFeedRequest request, List<Song> songs);
-    public event GeneralFeedRequestHandler GeneralFeedRequestCompleted;
+    public GeneralFeedRequestHandler GeneralFeedRequestCompleted;
 
     public GeneralFeedRequest(lastFMFeed feedToSearch, string userForFeed)
       : base(RequestType.GetAudioScrobblerFeed)
@@ -298,7 +300,7 @@ namespace MediaPortal.Music.Database
     bool _randomizeList;
 
     public delegate void NeighboursArtistsRequestHandler(NeighboursArtistsRequest request, List<Song> songs);
-    public event NeighboursArtistsRequestHandler NeighboursArtistsRequestCompleted;
+    public NeighboursArtistsRequestHandler NeighboursArtistsRequestCompleted;
 
     public NeighboursArtistsRequest(bool randomizeList)
       : base(RequestType.GetNeighboursArtists)
@@ -323,7 +325,7 @@ namespace MediaPortal.Music.Database
     bool _randomizeList;
 
     public delegate void FriendsArtistsRequestHandler(FriendsArtistsRequest request, List<Song> songs);
-    public event FriendsArtistsRequestHandler FriendsArtistsRequestCompleted;
+    public FriendsArtistsRequestHandler FriendsArtistsRequestCompleted;
 
     public FriendsArtistsRequest(bool randomizeList)
       : base(RequestType.GetFriendsArtists)
@@ -346,7 +348,7 @@ namespace MediaPortal.Music.Database
   public class RandomTracksRequest : ScrobblerUtilsRequest
   {
     public delegate void RandomTracksRequestHandler(RandomTracksRequest request, List<Song> songs);
-    public event RandomTracksRequestHandler RandomTracksRequestCompleted;
+    public RandomTracksRequestHandler RandomTracksRequestCompleted;
 
     public RandomTracksRequest()
       : base(RequestType.GetRandomTracks) { }
@@ -366,7 +368,7 @@ namespace MediaPortal.Music.Database
   public class UnheardTracksRequest : ScrobblerUtilsRequest
   {
     public delegate void UnheardTracksRequestHandler(UnheardTracksRequest request, List<Song> songs);
-    public event UnheardTracksRequestHandler UnheardTracksRequestCompleted;
+    public UnheardTracksRequestHandler UnheardTracksRequestCompleted;
 
     public UnheardTracksRequest()
       : base(RequestType.GetUnhearedTracks) { }
@@ -386,7 +388,7 @@ namespace MediaPortal.Music.Database
   public class FavoriteTracksRequest : ScrobblerUtilsRequest
   {
     public delegate void FavoriteTracksRequestHandler(FavoriteTracksRequest request, List<Song> songs);
-    public event FavoriteTracksRequestHandler FavoriteTracksRequestCompleted;
+    public FavoriteTracksRequestHandler FavoriteTracksRequestCompleted;
 
     public FavoriteTracksRequest()
       : base(RequestType.GetFavoriteTracks) { }
@@ -421,12 +423,10 @@ namespace MediaPortal.Music.Database
     private lastFMFeed _currentNeighbourMode;
     //private offlineMode _currentOfflineMode;
 
-    private bool _run = false;
-    private Thread _thread;
+    private bool _running = false;
     public static readonly AudioscrobblerUtils Instance = new AudioscrobblerUtils();
     private List<ScrobblerUtilsRequest> _requestQueue = new List<ScrobblerUtilsRequest>();
     private object _queueMutex = new object();
-    private DateTime _lastQueueActivity;
 
     private delegate void AddRequestDelegate(ScrobblerUtilsRequest request);
     private delegate void RemoveRequestDelegate(ScrobblerUtilsRequest request);
@@ -449,24 +449,6 @@ namespace MediaPortal.Music.Database
       LoadSettings();
     }
 
-    ~AudioscrobblerUtils()
-    {
-      _run = false;
-    }
-
-    /// <summary>
-    /// Starts request queue processing thread.
-    /// </summary>
-    void Start()
-    {
-      _thread = new Thread(new ThreadStart(Run));
-      _thread.IsBackground = true;
-      _thread.Name = "AudioScrobblerUtils thread";
-      _run = true;
-      _lastQueueActivity = DateTime.Now;
-      _thread.Start();
-    }
-
     /// <summary>
     /// Adds a request to the request queue.
     /// Also starts the request processing thread if it's not running.
@@ -478,27 +460,31 @@ namespace MediaPortal.Music.Database
       {
         lock (_queueMutex)
         {
-          Log.Debug("AudioScrobblerUtils.AddRequest:{0}, requestID:{1}", request.Type.ToString(), request.ID);
-          if (_thread != null)
-            Log.Debug("AudioscrobblerUtils: thread status:{0}, pending requests:{1}", _thread.ThreadState, _requestQueue.Count);
+          // Add request to the request queue
           _requestQueue.Add(request);
-        }
-        if (!_run)
-          Start();
-      }
-    }
 
-    /// <summary>
-    /// Asynchronously adds a request to the request queue.
-    /// </summary>
-    /// <param name="request">ScrobblerUtilsRequest to add to the queue</param>
-    public void AddRequestAsync(ScrobblerUtilsRequest request)
-    {
-      AddRequestDelegate ard = new AddRequestDelegate(AddRequest);
-      ard.BeginInvoke(request, delegate(IAsyncResult iar)
-      {
-        ard.EndInvoke(iar);
-      }, null);
+          // Start queue processing if not already busy
+          if (!_running)
+          {
+            _running = true;
+            GlobalServiceProvider.Get<IThreadPool>().Add(delegate()
+            {
+              ScrobblerUtilsRequest req;
+              while (_requestQueue.Count > 0)
+              {
+                lock (_queueMutex)
+                {
+                  req = _requestQueue[0];
+                  _requestQueue.Remove(req);
+                }
+                req.PerformRequest();
+              }
+              lock (_queueMutex)
+                _running = false;
+            });
+          }
+        }
+      }
     }
 
     /// <summary>
@@ -509,73 +495,8 @@ namespace MediaPortal.Music.Database
     public void RemoveRequest(ScrobblerUtilsRequest request)
     {
       if (request != null)
-      {
         lock (_queueMutex)
-        {
-          Log.Debug("AudioScrobblerUtils.RemoveRequest:{0}, requestID:{1}", request.Type.ToString(), request.ID);
           _requestQueue.Remove(request);
-        }
-      }
-    }
-
-    /// <summary>
-    /// Asynchronously removes a request from the request queue.
-    /// </summary>
-    /// <param name="request">ScrobblerUtilsRequest to remove from the queue</param>
-    public void RemoveRequestAsync(ScrobblerUtilsRequest request)
-    {
-      RemoveRequestDelegate rrd = new RemoveRequestDelegate(RemoveRequest);
-      rrd.BeginInvoke(request, delegate(IAsyncResult iar)
-      {
-        rrd.EndInvoke(iar);
-      }, null);
-    }
-
-    /// <summary>
-    /// Main entrypoint for the request queue processing thread.
-    /// </summary>
-    void Run()
-    {
-      Log.Debug("AudioScrobblerUtils: thread started");
-      while (_run)
-      {
-        // check if there are requests on the processing queue
-        if (_requestQueue.Count > 0)
-        {
-          // fetch request from queue
-          ScrobblerUtilsRequest request;
-          lock (_queueMutex)
-          {
-            request = _requestQueue[0];
-            _requestQueue.Remove(request);
-          }
-          // process fetched request
-          request.PerformRequest();
-          _lastQueueActivity = DateTime.Now;
-          request = null;
-        }
-        else
-        {
-          // check if inactivity timeout has been reached
-          if (DateTime.Now >= _lastQueueActivity.AddMinutes(15))
-          {
-            // timeout has been reached, stop queue processing thread
-            Log.Debug("AudioScrobblerUtils.Run: thread inactivity timeout timer expired (last activity:{0}", _lastQueueActivity.ToString());
-            _thread = null;
-            _run = false;
-          }
-          else
-          {
-            // yield some CPU time
-            Thread.Sleep(100);
-          }
-        }
-      }
-      lock (_queueMutex)
-      {
-        _requestQueue.TrimExcess();
-      }
-      Log.Debug("AudioScrobblerUtils: thread ended");
     }
 
     #region SongComparer
