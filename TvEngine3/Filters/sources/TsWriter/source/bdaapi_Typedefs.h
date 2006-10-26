@@ -76,37 +76,37 @@ typedef enum
 /////////////////////////////////////////////////////////////////////////////
 typedef enum
 {
-    /// operation finished successful
+    /// 0 operation finished successful
     RET_SUCCESS = 0,
-    /// operation is not implemented for the opened handle
+    /// 1 operation is not implemented for the opened handle
     RET_NOT_IMPL,
-    /// operation is not supported for the opened handle
+    /// 2 operation is not supported for the opened handle
     RET_NOT_SUPPORTED,
-    /// the given HANDLE seems not to be correct
+    /// 3 the given HANDLE seems not to be correct
     RET_ERROR_HANDLE,
-    /// the internal IOCTL subsystem has no device handle
+    /// 4 the internal IOCTL subsystem has no device handle
     RET_IOCTL_NO_DEV_HANDLE,
-    /// the internal IOCTL failed
+    /// 5 the internal IOCTL failed
     RET_IOCTL_FAILED,
-    /// the infrared interface is already initialised
+    /// 6 the infrared interface is already initialised
     RET_IR_ALREADY_OPENED,
-    /// the infrared interface is not initialised
+    /// 7 the infrared interface is not initialised
     RET_IR_NOT_OPENED,
-    /// length exceeds maximum in EEPROM-Userspace operation
+    /// 8 length exceeds maximum in EEPROM-Userspace operation
     RET_TO_MANY_BYTES,
-    /// common interface hardware error
+    /// 9 common interface hardware error
     RET_CI_ERROR_HARDWARE,
-    /// common interface already opened
+    /// a common interface already opened
     RET_CI_ALREADY_OPENED,
-    /// operation finished with timeout
+    /// b operation finished with timeout
     RET_TIMEOUT,
-    /// read psi failed
+    /// c read psi failed
     RET_READ_PSI_FAILED,
-    /// not set
+    /// d not set
     RET_NOT_SET,
-    /// operation finished with general error
+    /// e operation finished with general error
     RET_ERROR,
-	/// operation finished with ilegal pointer
+	  /// f operation finished with ilegal pointer
     RET_ERROR_POINTER
 } TYPE_RET_VAL;
 

@@ -90,7 +90,11 @@ namespace TvControl
     /// <summary>
     /// Operation failed since the channel is not mapped to any card
     /// </summary>
-    ChannelNotMappedToAnyCard
+    ChannelNotMappedToAnyCard,
+    /// <summary>
+    /// Operation failed since the card is disabled
+    /// </summary>
+    CardIsDisabled
   }
   /// <summary>
   /// interface class describing all methods available

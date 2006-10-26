@@ -2289,7 +2289,7 @@ namespace TvLibrary.Implementations.DVB
                 _channelInfo.network_pmt_PID = channel.PmtPid;
                 _channelInfo.pcr_pid = channel.PcrPid;
 
-                Log.Log.WriteFile("dvb:SendPMT version:{0} len:{1}", version, pmtLength);
+                Log.Log.WriteFile("dvb:SendPMT version:{0} len:{1} {2}", version, pmtLength, _channelInfo.caPMT.ProgramNumber);
                 if (_conditionalAccess != null)
                 {
                   int audioPid = -1;

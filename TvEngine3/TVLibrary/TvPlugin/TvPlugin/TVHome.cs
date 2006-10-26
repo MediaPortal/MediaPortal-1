@@ -1083,6 +1083,9 @@ namespace TvPlugin
         errorMessage = "Unable to start timeshifting";
         switch (succeeded)
         {
+          case TvResult.CardIsDisabled:
+            errorMessage += "\rCard is disabled\r";
+            break;
           case TvResult.AllCardsBusy:
             errorMessage += "\rNo free card available\r";
             break;

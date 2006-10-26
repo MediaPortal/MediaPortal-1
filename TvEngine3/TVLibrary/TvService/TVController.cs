@@ -1374,7 +1374,7 @@ namespace TvService
     {
       try
       {
-        if (_allDbscards[cardId].Enabled == false) return TvResult.UnableToStartGraph;
+        if (_allDbscards[cardId].Enabled == false) return TvResult.CardIsDisabled;
         Log.Write("Controller: StartTimeShifting {0} {1} ", cardId, fileName);
         lock (this)
         {
@@ -1421,6 +1421,12 @@ namespace TvService
           fileName += ".tsbuffer";
           if (!WaitForTimeShiftFile(cardId, fileName))
           {
+            if (IsScrambled(cardId))
+            {
+              _localCards[cardId].StopTimeShifting();
+              _localCards[cardId].StopGraph();
+              return TvResult.ChannelIsScrambled;
+            }
             _localCards[cardId].StopTimeShifting();
             _localCards[cardId].StopGraph();
             return TvResult.NoVideoAudioDetected;
@@ -2285,7 +2291,7 @@ namespace TvService
     {
       try
       {
-        if (_allDbscards[idCard].Enabled == false) return TvResult.UnknownError;
+        if (_allDbscards[idCard].Enabled == false) return TvResult.CardIsDisabled;
         bool result;
         Log.WriteFile("Controller: CardTune {0} {1}", idCard, channel.Name);
         if (IsScrambled(idCard))
@@ -2319,7 +2325,7 @@ namespace TvService
     {
       try
       {
-        if (_allDbscards[idCard].Enabled == false) return TvResult.UnknownError;
+        if (_allDbscards[idCard].Enabled == false) return TvResult.CardIsDisabled;
         Log.WriteFile("Controller: CardTimeShift {0} {1}", idCard, fileName);
         if (IsTimeShifting(idCard)) return TvResult.Succeeded;
         return StartTimeShifting(idCard, fileName);

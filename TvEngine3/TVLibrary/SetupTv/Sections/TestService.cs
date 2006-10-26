@@ -144,6 +144,9 @@ namespace SetupTv.Sections
         {
           switch (result)
           {
+            case TvResult.CardIsDisabled:
+              MessageBox.Show("Card is not enabled");
+              break;
             case TvResult.AllCardsBusy:
               MessageBox.Show("All cards are busy");
               break;

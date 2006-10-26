@@ -36,6 +36,7 @@ extern void LogDebug(const char *fmt, ...) ;
 CRecorder::CRecorder(LPUNKNOWN pUnk, HRESULT *phr) 
 :CUnknown( NAME ("MpTsRecorder"), pUnk)
 {
+	strcpy(m_szFileName,"");
   m_timeShiftMode=ProgramStream;
 	m_bRecording=false;
 	m_pRecordFile=NULL;
@@ -156,7 +157,8 @@ STDMETHODIMP CRecorder::StartRecord()
 STDMETHODIMP CRecorder::StopRecord()
 {
 	CEnterCriticalSection enter(m_section);
-	LogDebug("Recorder:Stop Recording:'%s'",m_szFileName);
+  if (m_bRecording)
+	  LogDebug("Recorder:Stop Recording:'%s'",m_szFileName);
 	m_bRecording=false;
 	m_multiPlexer.Reset();
 	if (m_pRecordFile!=NULL)

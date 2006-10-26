@@ -55,6 +55,7 @@ STDMETHODIMP CEpgScanner::Reset()
 	LogDebug("epg: reset");
 	m_bGrabbing=false;
 	m_epgParser.Reset();
+  m_mhwParser.Reset();
 	return S_OK;
 }
 STDMETHODIMP CEpgScanner::GrabEPG()

@@ -36,5 +36,6 @@ private:
   HANDLE      m_hBdaApi;
   int         m_slotStatus;
   DEVICE_CAT  m_deviceType;
-  TS_CiCbFcnPointerSlim m_technoTrendStructure;
+  int         m_ciStatus;
+  TS_CiCbFcnPointer m_technoTrendStructure;
 };
