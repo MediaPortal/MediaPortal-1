@@ -37,6 +37,7 @@ using MediaPortal.GUI.Library;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using DShowNET.Helper;
+using DShowNET.TsFileSink;
 
 namespace MediaPortal.Player
 {
@@ -299,7 +300,7 @@ namespace MediaPortal.Player
           {
             using (RegistryKey settings = hklm.OpenSubKey(@"SOFTWARE\TSFileSource\settings\default", true))
             {
-              byte[] clockType = new byte[4] { 2, 0, 0, 0 };
+              byte[] clockType = new byte[4] { 3, 0, 0, 0 };
               byte[] programSid = new byte[4] { 0, 0, 0, 0 };
               byte[] value1Zeros = new byte[4];
               byte[] valueZero = new byte[1];
@@ -428,7 +429,9 @@ namespace MediaPortal.Player
           Log.Error("TSStreamBufferPlayer9:Failed to open file:{0} :0x{1:x}", filename, hr);
           return false;
         }
-
+        ITSFileSource source = _fileSource as ITSFileSource;
+        source.SetAC3Mode(1);
+        
         #endregion
 
 
@@ -565,6 +568,8 @@ namespace MediaPortal.Player
         {
           Log.Error("Unable to get IMediaSeeking interface#1");
         }
+        
+        source.SetClockMode(3);//audio renderer
         if (_audioRendererFilter != null)
         {
           Log.Info("TSStreamBufferPlayer9:set reference clock");
