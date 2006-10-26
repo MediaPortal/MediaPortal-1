@@ -925,8 +925,8 @@ namespace MediaPortal.Music.Database
                 break;
           }
           while (dotIndex > 0);
-        }         
-
+        }
+        outString = outString.Replace("++", "+");
         // build a clean end
         dotIndex = outString.LastIndexOf('-');
         if (dotIndex >= outString.Length - 2)
