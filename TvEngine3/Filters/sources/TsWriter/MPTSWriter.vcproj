@@ -179,17 +179,17 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="strmbasd.lib quartz.lib winmm.lib msvcrtd.lib ./source/ttBdaDrvApi_Dll.lib"
-				OutputFile="Debug/MPFileWriter.ax"
+				OutputFile="Debug/TsWriter.ax"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="C:\DXSDK\Lib"
 				IgnoreAllDefaultLibraries="false"
 				ModuleDefinitionFile=".\source\TsWriter.def"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/MPFileWriter.pdb"
+				ProgramDatabaseFile=".\Debug/TsWriter.pdb"
 				StackReserveSize="2097152"
 				StackCommitSize="2097152"
-				ImportLibrary=".\Debug/MPFileWriter.lib"
+				ImportLibrary=".\Debug/TsWriter.lib"
 				TargetMachine="1"
 			/>
 			<Tool
