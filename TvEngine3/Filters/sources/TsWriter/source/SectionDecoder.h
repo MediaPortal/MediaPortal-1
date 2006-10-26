@@ -36,10 +36,12 @@ public:
   int  GetPid();
   void SetTableId(int tableId);
 	void Reset();
+  void EnableLogging(bool onOff);
   int  GetTableId();
   virtual void OnNewSection(CSection& section);
 protected:
 private:
+  bool        m_bLog;
   int			    m_pid;
   int			    m_tableId;
   CSection		m_section;

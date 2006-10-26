@@ -22,10 +22,12 @@
 #include <windows.h>
 #include <time.h>
 #include "MhwParser.h"
+#include "Tsheader.h"
 
 extern void LogDebug(const char *fmt, ...) ;
 CMhwParser::CMhwParser(void)
 {
+  LogDebug("mhw ctor");
 	CEnterCriticalSection enter(m_section);
 	m_bGrabbing=false;
 	m_bDone=false;
@@ -34,22 +36,29 @@ CMhwParser::CMhwParser(void)
   pDecoder->SetPid(0xd2);
   pDecoder->SetTableId(0x90);
 	pDecoder->SetCallBack(this);
+ // pDecoder->EnableLogging(true);
+  m_vecDecoders.push_back(pDecoder);
 
   for (int i=0x70; i <=0x7f;++i)
   {
-    CSectionDecoder* pDecoder= new CSectionDecoder();
+    pDecoder= new CSectionDecoder();
     pDecoder->SetPid(0xd2);
     pDecoder->SetTableId(i);
-    m_vecDecoders.push_back(pDecoder);
 		pDecoder->SetCallBack(this);
+    m_vecDecoders.push_back(pDecoder);
   }
   for (int i=0x90; i <=0x92;++i)
   {
-    CSectionDecoder* pDecoder= new CSectionDecoder();
+    pDecoder= new CSectionDecoder();
     pDecoder->SetPid(0xd3);
     pDecoder->SetTableId(i);
-    m_vecDecoders.push_back(pDecoder);
 		pDecoder->SetCallBack(this);
+    m_vecDecoders.push_back(pDecoder);
+  }
+  for (int i=0; i < (int)m_vecDecoders.size();++i)
+  {
+    CSectionDecoder* pDecoder=m_vecDecoders[i];
+    LogDebug(" mhw decoder:%d pid:%x table:%x",i,pDecoder->GetPid(),pDecoder->GetTableId());
   }
 }
 
@@ -66,6 +75,7 @@ CMhwParser::~CMhwParser(void)
 
 void CMhwParser::Reset()
 {
+  LogDebug("mhw reset");
 	CEnterCriticalSection enter(m_section);
 	for (int i=0; i < (int)m_vecDecoders.size();++i)
 	{
@@ -94,7 +104,7 @@ void CMhwParser::OnTsPacket(byte* tsPacket)
 void CMhwParser::OnNewSection(int pid, int tableId, CSection& sections)
 {
 	CEnterCriticalSection enter(m_section);
-  //LogDebug("mhw new section pid:%x tableid:%x onid:%x sid:%x",pid,tableId,sections.NetworkId,sections.TransportId);
+//  LogDebug("mhw new section pid:%x tableid:%x %x %x len:%d",pid,tableId,sections.Data[4],sections.Data[5],sections.Data[6], sections.SectionLength);
   byte* section=&(sections.Data[5]);
   int sectionLength=sections.SectionLength;
   if (pid==0xd2)
@@ -135,18 +145,21 @@ void CMhwParser::OnNewSection(int pid, int tableId, CSection& sections)
   int passed=(int)(time(NULL)-m_TimeOutTimer);
   if (passed>30)
   {
+    LogDebug("mhw grabber ended");
 	  m_bDone=true;
 	  m_bGrabbing=false;
   }
 }
 void CMhwParser::GrabEPG()
 {
+  LogDebug("mhw grab");
 	CEnterCriticalSection enter(m_section);
 	Reset();
 	m_bGrabbing=true;
 	m_bDone=false;
 	m_mhwDecoder.Reset();
 	m_TimeOutTimer=time(NULL);
+  LogDebug("mhw grabber started decoders:%d", m_vecDecoders.size());
 }
 bool CMhwParser::isGrabbing()
 {
@@ -159,6 +172,7 @@ bool	CMhwParser::IsEPGReady()
 	int passed=(int)(time(NULL)-m_TimeOutTimer);
   if (passed>30)
   {
+    LogDebug("mhw grabber ended");
 	  m_bDone=true;
 	  m_bGrabbing=false;
   }

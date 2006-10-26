@@ -97,7 +97,7 @@ bool CMhwDecoder::ParseSummaries(byte* data, int maxLen)
 		imapSummaries it=m_mapSummaries.find(sum.ProgramID);
 		if (it==m_mapSummaries.end())
 		{
-			LogDebug("mhw-epg: added summary with id 0x%x '%s'",sum.ProgramID,sum.Description.c_str());
+			//LogDebug("mhw-epg: added summary with id 0x%x '%s'",sum.ProgramID,sum.Description.c_str());
 			m_mapSummaries[sum.ProgramID]=sum;
 			return true;
 		}
@@ -164,10 +164,10 @@ bool CMhwDecoder::ParseTitles(byte* data, int dataLen)
 
 	//prg.Time=prg.Time.AddSeconds(minVal);
 
-	LogDebug("mhw-epg: added title %s id:%x chan:%d theme:%i sum:%d date:%x time:%02.2d:%02.2d:00 duration:%02.2d:%02.2d",
-		prg.Title.c_str(),prg.ID,prg.ChannelID,prg.ThemeID,prg.Summaries,prg.dateStart,
-		h1,m,
-		(prg.Duration/60),(prg.Duration%60));
+	//LogDebug("mhw-epg: added title %s id:%x chan:%d theme:%i sum:%d date:%x time:%02.2d:%02.2d:00 duration:%02.2d:%02.2d",
+//		prg.Title.c_str(),prg.ID,prg.ChannelID,prg.ThemeID,prg.Summaries,prg.dateStart,
+//		h1,m,
+//		(prg.Duration/60),(prg.Duration%60));
 	m_vecTitles.push_back(prg);
 	return true;
 }
