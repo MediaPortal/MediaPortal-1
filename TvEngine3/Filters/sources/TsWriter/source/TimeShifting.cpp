@@ -224,7 +224,7 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
 
 	try
 	{
-		if (SERVICE_TYPE_AUDIO_MPEG1==3||SERVICE_TYPE_AUDIO_MPEG2==4||serviceType==SERVICE_TYPE_AUDIO_AC3)
+		if (SERVICE_TYPE_AUDIO_MPEG1==serviceType||SERVICE_TYPE_AUDIO_MPEG2==serviceType||serviceType==SERVICE_TYPE_AUDIO_AC3)
     {
 			if (m_pcrPid == pid)
 			{
