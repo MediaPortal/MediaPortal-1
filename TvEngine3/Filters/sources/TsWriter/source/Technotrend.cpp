@@ -268,7 +268,7 @@ STDMETHODIMP CTechnotrend::DescrambleService( int serviceId,BOOL* succeeded)
 {
   HRESULT hr;
   *succeeded=FALSE;
-  BOOL enabled;
+  BOOL enabled=FALSE;
   m_ciStatus=-1;
   LogDebug("TechnoTrend: DescrambleService:0x%x (%d)",serviceId,serviceId);
   if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK)
