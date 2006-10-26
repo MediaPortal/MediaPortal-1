@@ -28,6 +28,7 @@
 #include <initguid.h>
 
 #include "EpgScanner.h"
+#include "TsHeader.h"
 
 
 extern void LogDebug(const char *fmt, ...) ;
@@ -267,6 +268,21 @@ void CEpgScanner::OnTsPacket(byte* tsPacket)
 {
 	try
 	{
+    /*
+    CTsHeader header(tsPacket);
+    if (header.Pid==0xd2 && header.PayloadUnitStart)
+    {
+      char buf[1255];
+	    strcpy(buf,"");
+	    for (int i=0; i < 30;++i)
+	    {
+		    char tmp[200];
+		    sprintf(tmp,"%02.2x ", tsPacket[i]);
+		    strcat(buf,tmp);
+	    }
+      LogDebug("pid:%x start:%x %s", header.Pid,header.PayLoadStart,buf);
+    }*/
+
 		if (m_bGrabbing)
 		{
       {//criticalsection

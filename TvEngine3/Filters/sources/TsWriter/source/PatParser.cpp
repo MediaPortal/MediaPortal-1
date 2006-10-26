@@ -151,7 +151,7 @@ void CPatParser::OnNewSection(CSection& sections)
   byte* section=sections.Data;
 
   CTsHeader header(section);
-  int start=header.PayLoadStart+1;
+  int start=header.PayLoadStart;
   int table_id = section[start];
   if (table_id!=0) return ;
   int section_syntax_indicator = (section[start+1]>>7) & 1;

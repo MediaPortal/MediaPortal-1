@@ -95,7 +95,7 @@ void CPmtGrabber::OnNewSection(CSection& section)
 		m_iPmtLength=section.SectionLength+3;
 
 		CTsHeader header(section.Data);
-		int start=header.PayLoadStart+1;
+		int start=header.PayLoadStart;
 		memcpy(m_pmtData,&section.Data[start],m_iPmtLength);
 		if (m_pCallback!=NULL)
 		{

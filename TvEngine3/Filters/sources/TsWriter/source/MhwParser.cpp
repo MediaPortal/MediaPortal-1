@@ -105,7 +105,8 @@ void CMhwParser::OnNewSection(int pid, int tableId, CSection& sections)
 {
 	CEnterCriticalSection enter(m_section);
 //  LogDebug("mhw new section pid:%x tableid:%x %x %x len:%d",pid,tableId,sections.Data[4],sections.Data[5],sections.Data[6], sections.SectionLength);
-  byte* section=&(sections.Data[5]);
+  CTsHeader header(&sections.Data[0]);
+  byte* section=&(sections.Data[header.PayLoadStart]);
   int sectionLength=sections.SectionLength;
   if (pid==0xd2)
   {

@@ -20,6 +20,7 @@
  */
 #include <windows.h>
 #include "EpgParser.h"
+#include "TsHeader.h"
 #pragma warning(disable : 4995)
 
 extern void LogDebug(const char *fmt, ...) ;
@@ -127,7 +128,8 @@ void CEpgParser::OnNewSection(int pid, int tableId, CSection& sections)
 	try
 	{
 		//LogDebug("epg new section pid:%x tableid:%x onid:%x sid:%x len:%x",pid,tableId,sections.NetworkId,sections.TransportId,sections.SectionLength);
-		byte* section=&(sections.Data[5]);
+    CTsHeader header(&sections.Data[0]);
+    byte* section=&(sections.Data[header.PayLoadStart]);
 		int sectionLength=sections.SectionLength;
 		if (sectionLength>0)
 		{

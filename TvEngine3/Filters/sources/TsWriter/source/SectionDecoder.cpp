@@ -83,7 +83,7 @@ void CSectionDecoder::OnTsPacket(byte* tsPacket)
     
  	if (header.PayloadUnitStart)
 	{
-		int start=header.PayLoadStart+1;
+		int start=header.PayLoadStart;
 		int table_id = tsPacket[start];
 		
 		int section_syntax_indicator = (tsPacket[start+1]>>7) & 1;
