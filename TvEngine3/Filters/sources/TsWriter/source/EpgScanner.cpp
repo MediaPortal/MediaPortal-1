@@ -197,8 +197,8 @@ STDMETHODIMP CEpgScanner::GetMHWTitleCount(WORD* count)
 	CEnterCriticalSection enter(m_section);
 	try
 	{
-		//LogDebug("EpgScanner::GetMHWTitleCount");
 		m_mhwParser.GetTitleCount(count);
+    LogDebug("EpgScanner::GetMHWTitleCount:%d" ,(*count));
 	}
 	catch(...)
 	{

@@ -169,6 +169,7 @@ bool CMhwDecoder::ParseTitles(byte* data, int dataLen)
 //		h1,m,
 //		(prg.Duration/60),(prg.Duration%60));
 	m_vecTitles.push_back(prg);
+	LogDebug("mhw-epg: titles:%d", m_vecTitles.size());
 	return true;
 }
 bool CMhwDecoder::ParseThemes(byte* data, int dataLen)
@@ -210,6 +211,7 @@ bool CMhwDecoder::ParseThemes(byte* data, int dataLen)
 
 int CMhwDecoder::GetTitleCount()
 {
+	LogDebug("mhw-epg: GetTitleCount:%d", m_vecTitles.size());
 	CEnterCriticalSection lock (m_critSection);
 	return m_vecTitles.size();
 }

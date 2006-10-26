@@ -185,6 +185,7 @@ void CMhwParser::GetTitleCount(WORD* count)
 {
 	CEnterCriticalSection enter(m_section);
 	*count=m_mhwDecoder.GetTitleCount();
+	LogDebug("CMhwParser:GetTitleCount:%d", (*count));
 }
 void CMhwParser::GetTitle(WORD program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
 {
