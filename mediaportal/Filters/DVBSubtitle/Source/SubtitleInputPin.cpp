@@ -35,7 +35,7 @@
 // Subtitle decoding 
 #include "dvbsubs\dvbsubdecoder.h"
 
-extern void Log( const char *fmt, ... );
+extern void LogDebug( const char *fmt, ... );
 
 CSubtitleInputPin::CSubtitleInputPin( CDVBSub *pDVBSub,
 										LPUNKNOWN pUnk,
@@ -59,7 +59,7 @@ CSubtitleInputPin::CSubtitleInputPin( CDVBSub *pDVBSub,
   m_pesDecoder = new CPesDecoder( this );
   
   Reset();
-	Log( "Subtitle: Input pin created" );
+	LogDebug( "Subtitle: Input pin created" );
 }
 
 CSubtitleInputPin::~CSubtitleInputPin()
@@ -69,7 +69,7 @@ CSubtitleInputPin::~CSubtitleInputPin()
 
 HRESULT CSubtitleInputPin::CheckMediaType( const CMediaType *pmt )
 {
-  Log("Subtitle: CSubtitleInputPin::CheckMediaType()");
+  LogDebug("Subtitle: CSubtitleInputPin::CheckMediaType()");
   if( pmt->subtype == MEDIASUBTYPE_MPEG2_TRANSPORT )
 	{
 		return S_OK;
@@ -114,7 +114,7 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 
 	if ( m_bReset )
 	{
-		Log( "Subtitle: reset" );
+		LogDebug( "Subtitle: reset" );
 		m_bReset = false;
 	}
 	CheckPointer( pSample, E_POINTER );
@@ -128,7 +128,7 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 
   if( FAILED( hr ) ) 
 	{
-		Log( "Subtitle: Receive() err" );
+		LogDebug( "Subtitle: Receive() err" );
 		return hr;
 	}
 	lDataLen = pSample->GetActualDataLength();

@@ -58,7 +58,7 @@ int audio_pts_wrap=0;
 
 //struct timeval start_tv;
 
-extern void Log(const char *fmt, ...);
+extern void LogDebug(const char *fmt, ...);
 
 CDVBSubDecoder::~CDVBSubDecoder()
 {
@@ -108,7 +108,7 @@ void CDVBSubDecoder::Do_plot( int r,int x, int y, unsigned char pixel )
 	} 
 	else 
 	{
-		Log("DVBsubs: plot out of region: x=%d, y=%d - r=%d, height=%d",x,y,r,regions[r].height);
+		LogDebug("DVBsubs: plot out of region: x=%d, y=%d - r=%d, height=%d",x,y,r,regions[r].height);
 	}
 }
 
@@ -116,7 +116,7 @@ void CDVBSubDecoder::Plot( int r, int run_length, unsigned char pixel )
 {
 	int x2 = x + run_length;
 
-	//  Log("DVBsubs: plot: x=%d,y=%d,length=%d,pixel=%d", x, y, run_length,pixel );
+	//  LogDebug("DVBsubs: plot: x=%d,y=%d,length=%d,pixel=%d", x, y, run_length,pixel );
 	while ( x < x2 ) 
 	{
 		Do_plot( r, x , y , pixel );
@@ -161,11 +161,11 @@ void CDVBSubDecoder::Set_clut( int CLUT_id,int CLUT_entry_id,int Y_value, int Cr
 	if (G<0) G=0; if (G>255) G=255;
 	if (R<0) R=0; if (R>255) R=255; */
 
-//	Log("DVBsubs: Setting colour for CLUT_id=%d, CLUT_entry_id=%d",CLUT_id,CLUT_entry_id);
+//	LogDebug("DVBsubs: Setting colour for CLUT_id=%d, CLUT_entry_id=%d",CLUT_id,CLUT_entry_id);
 
 	if ((CLUT_id > 15) || (CLUT_entry_id > 15)) 
 	{
-		Log("DVBsubs: ERROR: CLUT_id=%d, CLUT_entry_id=%d",CLUT_id,CLUT_entry_id);
+		LogDebug("DVBsubs: ERROR: CLUT_id=%d, CLUT_entry_id=%d",CLUT_id,CLUT_entry_id);
 		exit(1);
 	}
 
@@ -204,8 +204,8 @@ void CDVBSubDecoder::Decode_4bit_pixel_code_string( int r, int object_id, int of
 	j = i + n;
 	while(i < j) 
 	{
-		//Log("DVBsubs: start of loop, i=%d, nibble-flag=%d", i, nibble_flag );
-		//Log("DVBsubs: buf=%02x %02x %02x %02x", buf[i], buf[i+1], buf[i+2], buf[i+3] );
+		//LogDebug("DVBsubs: start of loop, i=%d, nibble-flag=%d", i, nibble_flag );
+		//LogDebug("DVBsubs: buf=%02x %02x %02x %02x", buf[i], buf[i+1], buf[i+2], buf[i+3] );
 
 		bits = 0;
 		pixel_code = 0;
@@ -234,7 +234,7 @@ void CDVBSubDecoder::Decode_4bit_pixel_code_string( int r, int object_id, int of
 				} 
 				else 
 				{
-					//Log("DVBsubs: end_of_string - run_length=%d", run_length );
+					//LogDebug("DVBsubs: end_of_string - run_length=%d", run_length );
 					break;
 				}
 			} 
@@ -295,8 +295,8 @@ void CDVBSubDecoder::Process_pixel_data_sub_block( int r, int o, int ofs, int n 
 
 	x = ( regions[r].object_pos[o] ) >> 16;
 	y = ( ( regions[r].object_pos[o] ) & 0xffff ) + ofs;
-//	Log("DVBsubs: process_pixel_data_sub_block: r=%d, x=%d, y=%d, o=%d, ofs=%d, n=%d",r,x,y,o,ofs);
-//	Log("DVBsubs: process_pixel_data: %02x %02x %02x %02x %02x %02x",buf[i],buf[i+1],buf[i+2],buf[i+3],buf[i+4],buf[i+5]);
+//	LogDebug("DVBsubs: process_pixel_data_sub_block: r=%d, x=%d, y=%d, o=%d, ofs=%d, n=%d",r,x,y,o,ofs);
+//	LogDebug("DVBsubs: process_pixel_data: %02x %02x %02x %02x %02x %02x",buf[i],buf[i+1],buf[i+2],buf[i+3],buf[i+4],buf[i+5]);
 
 	while ( i < j ) 
 	{
@@ -315,7 +315,7 @@ void CDVBSubDecoder::Process_pixel_data_sub_block( int r, int o, int ofs, int n 
 				y += 2;
 				break;
 			default: 
-				Log("DVBsubs: unimplemented data_type %02x in pixel_data_sub_block", data_type );
+				LogDebug("DVBsubs: unimplemented data_type %02x in pixel_data_sub_block", data_type );
 		}
   }
   i = j;
@@ -340,12 +340,12 @@ void CDVBSubDecoder::Process_page_composition_segment()
 	page_version_number=(buf[i]&0xf0)>>4;
 	page_state=(buf[i]&0x0c)>>2;
 	i++;
-	//Log("DVBsubs: "PAGE_COMPOSITION_SEGMENT: page_id=%04x, page_time_out=%d, page_version=%d,page_state=%d",page_id, page_time_out, page_version_number, page_state );
-	//Log("DVBsubs: page_state=%d", page_state );
+	//LogDebug("DVBsubs: "PAGE_COMPOSITION_SEGMENT: page_id=%04x, page_time_out=%d, page_version=%d,page_state=%d",page_id, page_time_out, page_version_number, page_state );
+	//LogDebug("DVBsubs: page_state=%d", page_state );
   
 	if ((acquired==0) && (page_state!=2) && (page_state!=1)) 
 	{
-		//Log("DVBsubs: waiting for mode_change");
+		//LogDebug("DVBsubs: waiting for mode_change");
 		return;
 	} 
 	else 
@@ -429,7 +429,7 @@ void CDVBSubDecoder::Process_region_composition_segment()
 
 	if (region_fill_flag==1) 
 	{
-		//Log("DVBsubs: "filling region %d with %d", region_id, region_4_bit_pixel_code );
+		//LogDebug("DVBsubs: "filling region %d with %d", region_id, region_4_bit_pixel_code );
 		memset(regions[region_id].img,region_4_bit_pixel_code, sizeof( regions[region_id].img ) );
 	}
 
@@ -542,7 +542,7 @@ void CDVBSubDecoder::Process_object_data_segment()
 	non_modifying_colour_flag = (buf[i]&0x02)>>1;
 	i++;
 
-	//  Log("DVBsubs: "decoding object %d", object_id );
+	//  LogDebug("DVBsubs: "decoding object %d", object_id );
 	
 	old_i = i;
 	for (r=0;r<MAX_REGIONS;r++) 
@@ -550,10 +550,10 @@ void CDVBSubDecoder::Process_object_data_segment()
 		// If this object is in this region...
 		if (regions[r].win >= 0) 
 		{
-			//Log("DVBsubs: "testing region %d, object_pos=%08x", r, regions[r].object_pos[object_id] );
+			//LogDebug("DVBsubs: "testing region %d, object_pos=%08x", r, regions[r].object_pos[object_id] );
 			if (regions[r].object_pos[object_id]!=0xffffffff) 
 			{
-				//Log("DVBsubs: "rendering object %d into region %d", object_id, r );
+				//LogDebug("DVBsubs: "rendering object %d into region %d", object_id, r );
 				i=old_i;
 				
 				if (object_coding_method==0) 
@@ -584,7 +584,7 @@ void CDVBSubDecoder::Save_png(char* filename)
 		{
 			if (page.regions[r].is_visible) 
 			{
-				//Log("DVBsubs: bitmap displaying region %d at %d,%d width=%d,height=%d\n",r,page.regions[r].x,page.regions[r].y,regions[r].width,regions[r].height);
+				//LogDebug("DVBsubs: bitmap displaying region %d at %d,%d width=%d,height=%d\n",r,page.regions[r].x,page.regions[r].y,regions[r].width,regions[r].height);
 				count++;
 
 				out_y=page.regions[r].y*720;
@@ -609,7 +609,7 @@ void CDVBSubDecoder::Save_png(char* filename)
 	m_RenderedSubtitles[m_RenderedSubtitles.size() - 1] = m_CurrentSubtitle;
 	m_CurrentSubtitle = NULL; // ownership is transfered
 
-	Log("New subtitle ready - subtitle cache count = %d", m_RenderedSubtitles.size() );
+	LogDebug("New subtitle ready - subtitle cache count = %d", m_RenderedSubtitles.size() );
 }
 
 int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid ) 
@@ -651,7 +651,7 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 			first_PTS=PTS; 
 		}
 
-		Log("%s\r", Pts2hmsu(PTS-first_PTS,'.'));
+		LogDebug("%s\r", Pts2hmsu(PTS-first_PTS,'.'));
 
 		PES_header_data_length=buf[8];
 		i = 9 + PES_header_data_length;
@@ -661,13 +661,13 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 
 		if( data_identifier != 0x20 ) 
 		{
-			Log("DVBsubs: ERROR: PES data_identifier != 0x20 (%02x), aborting\n",data_identifier);
+			LogDebug("DVBsubs: ERROR: PES data_identifier != 0x20 (%02x), aborting\n",data_identifier);
 			return 1;
 		}
 		
 		if( subtitle_stream_id != 0 ) 
 		{
-			Log("DVBsubs: ERROR: subtitle_stream_id != 0 (%02x), aborting\n",subtitle_stream_id);
+			LogDebug("DVBsubs: ERROR: subtitle_stream_id != 0 (%02x), aborting\n",subtitle_stream_id);
 			return 1;
 		}
 
@@ -676,14 +676,14 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 			/* SUBTITLING SEGMENT */
 			if( buf[i] != 0x0f ) 
 			{ 
-				Log("DVBsubs: ERROR: sync byte not present, skipping rest of PES packet - next PNG is sub%05d.png",fileno);
+				LogDebug("DVBsubs: ERROR: sync byte not present, skipping rest of PES packet - next PNG is sub%05d.png",fileno);
 				i=PES_packet_length;
 				continue;
 			}
 			
 			i++;
 			segment_type=buf[i++];
-			//Log("Processing segment_type 0x%02x",segment_type);
+			//LogDebug("Processing segment_type 0x%02x",segment_type);
 
 			page_id=(buf[i]<<8)|buf[i+1]; 
 			segment_length=(buf[i+2]<<8)|buf[i+3];
@@ -709,7 +709,7 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 					// end_of_display_set_segment(); 
 					break;
 				default:
-					Log("DVBsubs: ERROR: Unknown segment %02x, length %d, data=%02x %02x %02x %02x",segment_type,segment_length,buf[i+4],buf[i+5],buf[i+6],buf[i+7]);
+					LogDebug("DVBsubs: ERROR: Unknown segment %02x, length %d, data=%02x %02x %02x %02x",segment_type,segment_length,buf[i+4],buf[i+5],buf[i+6],buf[i+7]);
 					exit(1);
 			}
 		i = new_i;
@@ -733,7 +733,7 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 			if( n )
 			{
 				sprintf(filename,"sub%05d.bmp",ext++);
-				Log("spu start=\"%s\" image=\"%s\"", Pts2hmsu(PTS-first_PTS,'.'),filename);
+				LogDebug("spu start=\"%s\" image=\"%s\"", Pts2hmsu(PTS-first_PTS,'.'),filename);
 				Save_png( filename );
 				
 				if( m_pObserver )
@@ -743,7 +743,7 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 
 			}
 		}
-		Log("DVBsubs: END OF INPUT PES DATA.");
+		LogDebug("DVBsubs: END OF INPUT PES DATA.");
 		return 0;
 	}
 
@@ -814,7 +814,7 @@ uint64_t CDVBSubDecoder::Get_pes_pts (unsigned char* buf)
 		dts+=k;			// 3bits
 		dts &= 0x1FFFFFFFFLL;
 	}
-	Log("Decoder PTS: %lld, DTS: %lld",pts,dts);
+	LogDebug("Decoder PTS: %lld, DTS: %lld",pts,dts);
 	return( pts );
 }
 

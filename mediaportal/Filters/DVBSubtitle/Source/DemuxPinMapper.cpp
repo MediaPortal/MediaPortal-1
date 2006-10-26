@@ -25,7 +25,7 @@
 #include <streams.h>
 #include <bdaiface.h>
 
-extern void Log( const char *fmt, ... );
+extern void LogDebug( const char *fmt, ... );
 
 HRESULT CDemuxPinMapper::MapPidToDemuxer( LONG pid, IPin *pDemuxerPin, MEDIA_SAMPLE_CONTENT sampleContent )
 {
@@ -62,7 +62,7 @@ HRESULT CDemuxPinMapper::MapPidToDemuxer( LONG pid, IPin *pDemuxerPin, MEDIA_SAM
 	}
 
   if( hr != S_OK )
-    Log( "CDemuxPinMapper::MapDemuxerPid failed! - %d", hr );
+    LogDebug( "CDemuxPinMapper::MapDemuxerPid failed! - %d", hr );
 
   return hr;
 }

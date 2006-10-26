@@ -21,7 +21,10 @@
 
 #pragma warning( disable: 4995 4996 )
 
+#include <shlobj.h>
 #include "DVBSub.h"
+
+static bool folderOk = false;
 
 const AMOVIESETUP_FILTER FilterInfo =
 {
@@ -67,21 +70,22 @@ BOOL APIENTRY DllMain(HANDLE hModule,
 // Logging 
 #ifdef DEBUG
 char *logbuffer=NULL; 
-void Log( const char *fmt, ... ) 
+void LogDebug(const char *fmt, ...) 
 {
-	if( logbuffer == NULL )
-	{
-		logbuffer=new char[100000];
-	}
 	va_list ap;
-	va_start( ap, fmt );
+	va_start(ap,fmt);
 
+	char buffer[1000]; 
 	int tmp;
-	va_start( ap,fmt );
-	tmp = vsprintf( logbuffer, fmt, ap );
-	va_end( ap ); 
+	va_start(ap,fmt);
+	tmp=vsprintf(buffer, fmt, ap);
+	va_end(ap); 
 
-	FILE* fp = fopen("d:\\MPSub.log","a+");
+  TCHAR folder[MAX_PATH];
+  TCHAR fileName[MAX_PATH];
+  ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+  sprintf(fileName,"%s\\MediaPortal\\log\\MPDVBSubs.Log",folder);
+  FILE* fp = fopen(fileName,"a+");
 	if (fp!=NULL)
 	{
 		SYSTEMTIME systemTime;
@@ -89,13 +93,13 @@ void Log( const char *fmt, ... )
 		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
 			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
 			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
-			logbuffer);
+			buffer);
 		fclose(fp);
 	}
 };
 
 #else
-void Log(const char *fmt, ...) 
+void LogDebug(const char *fmt, ...) 
 {
 }
 #endif

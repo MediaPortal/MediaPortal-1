@@ -26,7 +26,7 @@
 //#include <afxwin.h>
 #include "subtitle.h"
 
-extern void Log(const char *fmt, ...);
+extern void LogDebug(const char *fmt, ...);
 
 CSubtitle::CSubtitle( int width, int height )
 {
@@ -101,7 +101,7 @@ int CSubtitle::RenderBitmap( unsigned char* buffer, char *file_name, unsigned ch
         if( buffer[i] > 0 )
         {
           m_FirstScanline = i / m_Bitmap.bmWidth;
-          //Log("Subtitle::RenderBitmap - First scanline that contains subtitle picture %d", m_FirstScanline );
+          //LogDebug("Subtitle::RenderBitmap - First scanline that contains subtitle picture %d", m_FirstScanline );
         }
       }
 
@@ -173,7 +173,7 @@ uint64_t CSubtitle::PTS()
 
 void CSubtitle::SetPTS( uint64_t PTS )
 {
-	//Log("Subtitle::SetPTS %lld", PTS );
+	//LogDebug("Subtitle::SetPTS %lld", PTS );
 	m_PTS = PTS;
 }
 

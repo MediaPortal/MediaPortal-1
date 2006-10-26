@@ -18,6 +18,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma warning( disable: 4995 4996 )
+
 #include <windows.h>
 #include <commdlg.h>
 #include <bdatypes.h>
@@ -28,7 +30,7 @@
 #include "PatParser.h"
 #include "tsheader.h"
 
-void Log(const char *fmt, ...) ;
+void LogDebug(const char *fmt, ...) ;
 CPatParser::CPatParser(void)
 {
   m_packetsToSkip=0;
@@ -45,7 +47,7 @@ CPatParser::~CPatParser(void)
 
 void  CPatParser::CleanUp()
 {
-  for (int i=0; i < m_pmtParsers.size();++i)
+  for (int i=0; i < (int)m_pmtParsers.size();++i)
   {
     CPmtParser* parser=m_pmtParsers[i];
     delete parser;
@@ -56,7 +58,7 @@ void  CPatParser::CleanUp()
 void  CPatParser::Reset()
 {
 //	Dump();
-	Log("PatParser:Reset()");
+	LogDebug("PatParser:Reset()");
 	CSectionDecoder::Reset();
   CleanUp();
   m_packetsReceived=0;
@@ -68,7 +70,7 @@ int CPatParser::Count()
   int count= m_pmtParsers.size();
   if (count>0)
   {
-    for (int i=0; i < m_pmtParsers.size();++i)
+    for (int i=0; i < (int)m_pmtParsers.size();++i)
     {
       CPmtParser* parser=m_pmtParsers[i];
 	    if (false==parser->Ready()) 
@@ -107,7 +109,7 @@ void CPatParser::OnTsPacket(byte* tsPacket)
   m_packetsReceived++;
   if (m_packetsReceived > m_packetsToSkip)
   {
-    for (int i=0; i < m_pmtParsers.size();++i)
+    for (int i=0; i < (int)m_pmtParsers.size();++i)
     {
       CPmtParser* parser=m_pmtParsers[i];
       parser->OnTsPacket(tsPacket);
@@ -133,7 +135,7 @@ void CPatParser::OnNewSection(CSection& sections)
   int section_number = section[start+6];
   int last_section_number = section[start+7];
 
-//	  Log("DecodePat  %d section:%d lastsection:%d sectionlen:%d",
+//	  LogDebug("DecodePat  %d section:%d lastsection:%d sectionlen:%d",
 //						  version_number,section_number,last_section_number,section_length);
 
   int pmtcount=0;
@@ -150,7 +152,7 @@ void CPatParser::OnNewSection(CSection& sections)
 	  }
 
 	  bool found=false;
-	  for (int idx=0; idx < m_pmtParsers.size(); idx++)
+	  for (int idx=0; idx < (int)m_pmtParsers.size(); idx++)
 	  {
 		  CPmtParser* pmtParser = m_pmtParsers[idx];
 		  if (pmtParser->GetPid() == pmtPid)
@@ -166,7 +168,7 @@ void CPatParser::OnNewSection(CSection& sections)
 		  pmtParser->SetPid(pmtPid);
 			//pmtParser->SetPmtCallBack(this);
 		  m_pmtParsers.push_back( pmtParser );
-			Log("  add pmt# %d pid: %x",m_pmtParsers.size(), pmtPid);
+			LogDebug("  add pmt# %d pid: %x",m_pmtParsers.size(), pmtPid);
 			newPmtsAdded=true;
 	  }
   }
@@ -179,14 +181,14 @@ void CPatParser::Dump()
     CChannelInfo info;
     if (GetChannel( i, info))
     {
-      Log("%d) onid:%x tsid:%x sid:%x major:%d minor:%x freq:%x type:%d provider:%s service:%s",i,
+      LogDebug("%d) onid:%x tsid:%x sid:%x major:%d minor:%x freq:%x type:%d provider:%s service:%s",i,
             info.NetworkId,info.TransportId,info.ServiceId,info.MajorChannel,info.MinorChannel,info.Frequency,info.ServiceType,info.ProviderName,info.ServiceName);
-      Log("  pcr:%x pmt:%x video:%x audio1:%x audio2:%x audio3:%x ac3:%x ttx:%x sub:%x",
+      LogDebug("  pcr:%x pmt:%x video:%x audio1:%x audio2:%x audio3:%x ac3:%x ttx:%x sub:%x",
             info.PidTable.PcrPid,info.PidTable.PmtPid,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AudioPid2,info.PidTable.AudioPid3,info.PidTable.AC3Pid,info.PidTable.TeletextPid,info.PidTable.SubtitlePid);
     }
     else
     {
-      Log("%d) not found",i);
+      LogDebug("%d) not found",i);
     }
   }
 }

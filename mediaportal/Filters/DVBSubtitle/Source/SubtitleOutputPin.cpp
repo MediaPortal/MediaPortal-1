@@ -32,7 +32,7 @@
 //#include "proppage.h"
 #include "SubtitleOutputPin.h"
 
-extern void Log( const char *fmt, ... );
+extern void LogDebug( const char *fmt, ... );
 
 CSubtitleOutputPin::CSubtitleOutputPin(   
                       CDVBSub *pDVBSub,
@@ -48,7 +48,7 @@ CSubtitleOutputPin::CSubtitleOutputPin(
 					m_pDVBSub( pDVBSub )
 {
 	Reset();
-	Log( "SubtitleOutputPin: Output pin created" );
+	LogDebug( "SubtitleOutputPin: Output pin created" );
 }
 
 CSubtitleOutputPin::~CSubtitleOutputPin()
@@ -61,13 +61,13 @@ CSubtitleOutputPin::~CSubtitleOutputPin()
 //
 HRESULT CSubtitleOutputPin::CheckMediaType( const CMediaType *pmt )
 {
-	Log("SubtitleOutputPin: CheckMediaType()");
+	LogDebug("SubtitleOutputPin: CheckMediaType()");
 	if( pmt->majortype == MEDIATYPE_DVD_ENCRYPTED_PACK )
   {
-    Log("SubtitleOutputPin: CheckMediaType() - found MEDIATYPE_DVD_ENCRYPTED_PACK");
+    LogDebug("SubtitleOutputPin: CheckMediaType() - found MEDIATYPE_DVD_ENCRYPTED_PACK");
     if( pmt->subtype == MEDIASUBTYPE_DVD_SUBPICTURE )
   	{
-		  Log("SubtitleOutputPin: CheckMediaType() - found MEDIASUBTYPE_DVD_SUBPICTURE");
+		  LogDebug("SubtitleOutputPin: CheckMediaType() - found MEDIASUBTYPE_DVD_SUBPICTURE");
       return S_OK;
     }
 	}

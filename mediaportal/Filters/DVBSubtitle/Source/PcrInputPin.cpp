@@ -32,7 +32,7 @@
 #include "PcrInputPin.h"
 #include "PatParser\TsHeader.h"
 
-extern void Log( const char *fmt, ... );
+extern void LogDebug( const char *fmt, ... );
 
 const int TSPacketSize = 188;
 
@@ -54,7 +54,7 @@ CPcrInputPin::CPcrInputPin( CDVBSub *m_pFilter,
           m_pPin( NULL )
 {
 	Reset();
-	Log( "Pcr: Pin created" );
+	LogDebug( "Pcr: Pin created" );
 }
 
 CPcrInputPin::~CPcrInputPin()
@@ -67,7 +67,7 @@ CPcrInputPin::~CPcrInputPin()
 //
 HRESULT CPcrInputPin::CheckMediaType( const CMediaType *pmt )
 {
-	Log("Audio pin: CheckMediaType()");
+	LogDebug("Audio pin: CheckMediaType()");
 	if( pmt->subtype == MEDIASUBTYPE_MPEG2_TRANSPORT )
 	{
 		return S_OK;
@@ -108,7 +108,7 @@ STDMETHODIMP CPcrInputPin::Receive( IMediaSample *pSample )
 	HRESULT hr = pSample->GetPointer( &pbData );
 	if( FAILED(hr) )
 	{
-		Log( "Pcr pin: Receive() err = %d", hr );
+		LogDebug( "Pcr pin: Receive() err = %d", hr );
 		return hr;
 	}
 	lDataLen = pSample->GetActualDataLength();

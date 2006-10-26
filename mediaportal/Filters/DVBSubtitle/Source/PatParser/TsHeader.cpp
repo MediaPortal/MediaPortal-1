@@ -22,7 +22,7 @@
 #include "TsHeader.h" 
 #include "packetsync.h"
 
-extern void Log(const char *fmt, ...) ;
+extern void LogDebug(const char *fmt, ...) ;
 
 CTsHeader::CTsHeader(byte* tsPacket)
 {
@@ -87,19 +87,19 @@ void CTsHeader::Decode(byte *data)
 
 void CTsHeader::LogHeader()
 {
-	Log("tsheader:%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x",
+	LogDebug("tsheader:%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x",
 					m_packet[0],m_packet[1],m_packet[2],m_packet[3],m_packet[4],m_packet[5],m_packet[6],m_packet[7],m_packet[8],m_packet[9]);
-	Log("  SyncByte           :%x", SyncByte);
-	Log("  TransportError     :%x", TransportError);
-	Log("  PayloadUnitStart   :%d", PayloadUnitStart);
-	Log("  TransportPriority  :%x", TransportPriority);
-	Log("  Pid                :%x", Pid);
-	Log("  TScrambling        :%x", TScrambling);
-	Log("  AdaptionControl    :%x", AdaptionControl);
-	Log("  ContinuityCounter  :%x", ContinuityCounter);
-	Log("  AdaptionFieldLength:%d", AdaptionFieldLength);
-	Log("  PayLoadStart       :%d", PayLoadStart);
-	Log("  PayLoadOnly            :%d", PayLoadOnly());
-	Log("  AdaptionFieldOnly      :%d", AdaptionFieldOnly());
-	Log("  AdaptionFieldAndPayLoad:%d", AdaptionFieldAndPayLoad());
+	LogDebug("  SyncByte           :%x", SyncByte);
+	LogDebug("  TransportError     :%x", TransportError);
+	LogDebug("  PayloadUnitStart   :%d", PayloadUnitStart);
+	LogDebug("  TransportPriority  :%x", TransportPriority);
+	LogDebug("  Pid                :%x", Pid);
+	LogDebug("  TScrambling        :%x", TScrambling);
+	LogDebug("  AdaptionControl    :%x", AdaptionControl);
+	LogDebug("  ContinuityCounter  :%x", ContinuityCounter);
+	LogDebug("  AdaptionFieldLength:%d", AdaptionFieldLength);
+	LogDebug("  PayLoadStart       :%d", PayLoadStart);
+	LogDebug("  PayLoadOnly            :%d", PayLoadOnly());
+	LogDebug("  AdaptionFieldOnly      :%d", AdaptionFieldOnly());
+	LogDebug("  AdaptionFieldAndPayLoad:%d", AdaptionFieldAndPayLoad());
 }

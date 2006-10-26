@@ -18,6 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma warning( disable: 4995 4996 )
 
 #include "ChannelInfo.h"
 

@@ -22,7 +22,7 @@
 #include "PmtParser.h"
 #include "tsheader.h"
 
-extern void Log(const char *fmt, ...) ;
+extern void LogDebug(const char *fmt, ...) ;
 CPmtParser::CPmtParser()
 {
 	m_pmtCallback=NULL;
@@ -103,7 +103,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 	  stream_type = section[start+pointer];
 	  elementary_PID = ((section[start+pointer+1]&0x1F)<<8)+section[start+pointer+2];
 	  ES_info_length = ((section[start+pointer+3] & 0xF)<<8)+section[start+pointer+4];
-    //Log("pmt: pid:%x type:%x",elementary_PID, stream_type);
+    //LogDebug("pmt: pid:%x type:%x",elementary_PID, stream_type);
 	  if(stream_type==1 || stream_type==2)
 	  {
 			//mpeg2 video

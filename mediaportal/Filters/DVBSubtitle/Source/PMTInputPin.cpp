@@ -35,7 +35,7 @@
 #include "PatParser\PmtParser.h"
 #include "PatParser\PidTable.h"
 
-extern void Log( const char *fmt, ... );
+extern void LogDebug( const char *fmt, ... );
 
 const int   TSPacketSize = 188;
 ULONG       PMT_PID = 0x0;
@@ -63,7 +63,7 @@ CPMTInputPin::CPMTInputPin( CDVBSub *m_pFilter,
 {
 	m_pPatParser = new CPatParser();
   m_pPatParser->Reset();
-  Log( "PMT: Pin created" );
+  LogDebug( "PMT: Pin created" );
 }
 
 
@@ -100,7 +100,7 @@ HRESULT CPMTInputPin::CompleteConnect( IPin *pPin )
       
       if( hr != S_OK )
       {
-        Log( "Unable to find demuxer!" );
+        LogDebug( "Unable to find demuxer!" );
         return hr;
       }
       IPin* pPin;
@@ -134,7 +134,7 @@ HRESULT CPMTInputPin::CompleteConnect( IPin *pPin )
 			                while( pIEnumPIDMap->Next( 1, &pidMap, &count ) == S_OK )
                       {
                         SetVideoPid( pidMap.ulPID );
-                        Log( "  found video PID %d",  m_streamVideoPid );
+                        LogDebug( "  found video PID %d",  m_streamVideoPid );
 			                }
 		                }
 		              pMuxMapPid->Release();

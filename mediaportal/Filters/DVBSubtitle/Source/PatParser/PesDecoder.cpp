@@ -25,7 +25,7 @@
 #include "packetsync.h"
 
 
-extern void Log(const char *fmt, ...) ;
+extern void LogDebug(const char *fmt, ...) ;
 
 CPesDecoder::CPesDecoder(CPesCallback* callback)
 {
@@ -91,14 +91,14 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 	if (header.Pid != m_pid) return false;
 	if (header.SyncByte != TS_PACKET_SYNC) 
 	{
-		Log("pesdecoder pid:%x sync error", m_pid);
+		LogDebug("pesdecoder pid:%x sync error", m_pid);
 		return false;
 	}
   if (header.TransportError) 
 	{
     m_bStart=false;
 		m_iWritePos=0;
-		//Log("pesdecoder pid:%x transport error", m_pid);
+		//LogDebug("pesdecoder pid:%x transport error", m_pid);
 		return false;
 	}
 
@@ -119,11 +119,11 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 		{
 			if (m_pCallback!=NULL)
 			{
-				//Log(" pes %x start:%x", m_iStreamId,m_iWritePos);
+				//LogDebug(" pes %x start:%x", m_iStreamId,m_iWritePos);
 				int written=m_pCallback->OnNewPesPacket(m_iStreamId,m_pesHeader, m_iPesHeaderLen,  m_pesBuffer, m_iWritePos, m_bStart);
         if (written>=0)
         {
-				  //Log(" pes %x written:%x", m_iStreamId,written);
+				  //LogDebug(" pes %x written:%x", m_iStreamId,written);
           m_bStart=false;
 				  m_iWritePos=0;
         }
@@ -148,20 +148,20 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 
 	memcpy(&m_pesBuffer[m_iWritePos], &tsPacket[pos], 188-pos);
 	m_iWritePos += (188-pos);
-	//Log(" pes %x copy:%x len:%x maxlen:%x start:%d", m_iStreamId,m_iWritePos,(188-pos),m_iMaxLength,m_bStart);
+	//LogDebug(" pes %x copy:%x len:%x maxlen:%x start:%d", m_iStreamId,m_iWritePos,(188-pos),m_iMaxLength,m_bStart);
 	if (m_iWritePos  >= m_iMaxLength)
 	{
     int written=0;
 		if (m_pCallback!=NULL)
 		{
 			written=m_pCallback->OnNewPesPacket(m_iStreamId,m_pesHeader, m_iPesHeaderLen,  m_pesBuffer, m_iMaxLength, m_bStart);
-			//Log(" pes %x next:%x written:%x", m_iStreamId,m_iWritePos,written);
+			//LogDebug(" pes %x next:%x written:%x", m_iStreamId,m_iWritePos,written);
 		}
     m_bStart=false;
 
 		memcpy(m_pesBuffer, &m_pesBuffer[written] , m_iWritePos-written);
 		m_iWritePos -= written;
-		//Log(" pes %x now:%x", m_iStreamId,m_iWritePos);
+		//LogDebug(" pes %x now:%x", m_iStreamId,m_iWritePos);
 	}
   return result;
 }
