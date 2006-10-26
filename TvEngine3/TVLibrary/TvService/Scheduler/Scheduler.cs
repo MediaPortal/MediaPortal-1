@@ -386,11 +386,14 @@ namespace TvService
       CardDetail cardInfo = freeCards[0];
       Log.Write("Scheduler : record on card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
 
-      bool cardLocked = false;
       try
       {
+        if (_tvController.IsTimeShifting(cardInfo.Id)==false)
+        {
+          //if card is idle, then we lock it.
+          _tvController.LockCard(cardInfo.Id, user);
+        }
 
-        _tvController.LockCard(cardInfo.Id, user);
         _tvController.Fire(this,new TvServerEventArgs(TvServerEventType.StartRecording,new VirtualCard(cardInfo.Id),user,recording.Schedule,null));
         
         if (cardInfo.Card.RecordingFolder == String.Empty)
@@ -416,13 +419,6 @@ namespace TvService
       {
         Log.Write(ex);
       }
-      finally
-      {
-        if (cardLocked)
-        {
-          _tvController.UnlockCard(cardInfo.Id);
-        }
-      }
       return true;
     }
 
@@ -435,7 +431,18 @@ namespace TvService
 
       Log.Write("Scheduler : stop record {0} {1}-{2} {3}", recording.Channel, DateTime.Now, recording.EndTime, recording.Schedule.ProgramName);
       _controller.StopRecording(recording.CardInfo.Id);
-      _controller.StopTimeShifting(recording.CardInfo.Id, GetUser());
+
+      bool stopTimeshifting = true;
+      User user;
+      _controller.IsCardInUse(recording.CardInfo.Id, out user);
+      if (user != null && user.Name != GetUser().Name)
+      {
+        stopTimeshifting = false;
+      }
+      if (stopTimeshifting)
+      {
+        _controller.StopTimeShifting(recording.CardInfo.Id, GetUser());
+      }
 
       IList servers = Server.ListAll();
       Server ourServer = null;
@@ -464,7 +471,6 @@ namespace TvService
       }
       //DatabaseManager.Instance.SaveChanges();
       _recordingsInProgressList.Remove(recording);
-
     }
 
     /// <summary>

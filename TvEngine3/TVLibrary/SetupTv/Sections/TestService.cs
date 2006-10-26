@@ -106,6 +106,7 @@ namespace SetupTv.Sections
       catch (Exception)
       {
         MessageBox.Show("Unable to access service. Is the TvService running??");
+        return;
       }
     }
 
@@ -293,7 +294,7 @@ namespace SetupTv.Sections
           User cardUser;
           if (card.IsLocked(out cardUser))
           {
-            item.SubItems[5].Text =cardUser.Name;
+            item.SubItems[5].Text = cardUser.Name;
           }
           else
             item.SubItems[5].Text = "";

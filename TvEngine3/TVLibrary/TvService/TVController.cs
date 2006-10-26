@@ -156,6 +156,7 @@ namespace TvService
     public void LockCard(int cardId, User user)
     {
       _cardsInUse[cardId] = user;
+      Log.Info("card:{0} locked by:{1}", cardId, user.Name);
     }
 
     /// <summary>
@@ -166,6 +167,7 @@ namespace TvService
     {
       if (false == _cardsInUse.ContainsKey(cardId)) return;
       _cardsInUse.Remove(cardId);
+      Log.Info("card:{0} unlocked", cardId);
     }
 
 
@@ -1398,12 +1400,9 @@ namespace TvService
           }
           if (_localCards[cardId].IsTimeShifting)
           {
-            Log.Write("Controller:  refcount: card:{0} ", cardId);
             return TvResult.Succeeded;
           }
 
-          Log.Write("Controller: Tuner locked:{0} signal strength:{1} signal quality:{2}",
-              _localCards[cardId].IsTunerLocked, _localCards[cardId].SignalLevel, _localCards[cardId].SignalQuality);
           if (WaitForUnScrambledSignal(cardId) == false)
           {
             Log.Write("Controller: channel is scrambled");
@@ -1460,6 +1459,8 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return true;
+        if (false==IsTimeShifting(cardId)) return true;
+
         Log.Write("Controller: StopTimeShifting {0}", cardId);
         lock (this)
         {
