@@ -57,6 +57,7 @@ public:
   void OnTsPacket( byte* tsPacket );
 
   void SetVideoPid( int videoPid );
+  HRESULT FindVideoPID();
   void Reset();
 
 private:

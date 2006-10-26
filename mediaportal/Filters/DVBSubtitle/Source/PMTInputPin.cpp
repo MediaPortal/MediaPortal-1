@@ -90,70 +90,9 @@ HRESULT CPMTInputPin::CompleteConnect( IPin *pPin )
   if( hr == S_OK )
   {
     hr = MapPidToDemuxer( PMT_PID, m_pDemuxerPin, MEDIA_TRANSPORT_PACKET );
-
+  
     if( hr == S_OK )
-    {
-      IFilterGraph *pGraph = m_pFilter->GetFilterGraph();
-      IBaseFilter *pDemuxer = NULL;;
-      
-      hr = pGraph->FindFilterByName( L"MPEG-2 Demultiplexer", &pDemuxer );
-      
-      if( hr != S_OK )
-      {
-        LogDebug( "Unable to find demuxer!" );
-        return hr;
-      }
-      IPin* pPin;
-      PIN_DIRECTION  direction;
-      IEnumPins *pIEnumPins = NULL;
-      AM_MEDIA_TYPE *mediatype;
-	    if( SUCCEEDED( pDemuxer->EnumPins( &pIEnumPins ) ) )
-      {
-		    ULONG count(0);
-		    while( pIEnumPins->Next( 1, &pPin, &count ) == S_OK )
-        {
-			    hr = pPin->QueryDirection( &direction );
-			    if( direction == PINDIR_OUTPUT )
-          {
-				    IEnumMediaTypes* ppEnum;
-				    if( SUCCEEDED( pPin->EnumMediaTypes( &ppEnum ) ) )
-            {
-					    ULONG fetched( 0 );
-					    while( ppEnum->Next( 1, &mediatype, &fetched ) == S_OK )
-					    {
-						    if( mediatype->majortype == MEDIATYPE_Video )
-                {
-	                IMPEG2PIDMap* pMuxMapPid;
-	                if( SUCCEEDED( pPin->QueryInterface( &pMuxMapPid ) ) )
-                  {
-		                IEnumPIDMap *pIEnumPIDMap;
-		                if( SUCCEEDED( pMuxMapPid->EnumPIDMap( &pIEnumPIDMap ) ) )
-                    {
-			                ULONG count = 0;
-			                PID_MAP pidMap;
-			                while( pIEnumPIDMap->Next( 1, &pidMap, &count ) == S_OK )
-                      {
-                        SetVideoPid( pidMap.ulPID );
-                        LogDebug( "  found video PID %d",  m_streamVideoPid );
-			                }
-		                }
-		              pMuxMapPid->Release();
-							    ppEnum->Release();
-							    return S_OK;
-                  }
-						    }
-						    mediatype = NULL;
-					    }
-					    ppEnum->Release();
-					    ppEnum = NULL;
-				    }
-			    }
-			    pPin->Release();
-			    pPin = NULL;
-		    }
-		    pIEnumPins->Release();
-      }
-    }
+      hr = FindVideoPID();
   }
   return hr;
 }
@@ -171,6 +110,12 @@ void CPMTInputPin::SetVideoPid( int videoPid )
 STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
 {
   CheckPointer( pSample, E_POINTER );
+  
+  if( m_bReset )
+  {
+    FindVideoPID();
+    m_bReset = false;
+  }
 
   CAutoLock lock( m_pReceiveLock );
   PBYTE pbData=NULL;
@@ -179,7 +124,6 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
   HRESULT hr = pSample->GetPointer( &pbData );
   if( FAILED(hr) ) 
     return hr;
-
 	
 	lDataLen = pSample->GetActualDataLength();
 
@@ -215,6 +159,71 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
         }
       }
     }
+  }
+  return hr;
+}
+HRESULT CPMTInputPin::FindVideoPID()
+{
+  HRESULT hr;
+  IFilterGraph *pGraph = m_pFilter->GetFilterGraph();
+  IBaseFilter *pDemuxer = NULL;;
+  
+  hr = pGraph->FindFilterByName( L"MPEG-2 Demultiplexer", &pDemuxer );
+  
+  if( hr != S_OK )
+  {
+    LogDebug( "Unable to find demuxer!" );
+    return hr;
+  }
+  IPin* pPin;
+  PIN_DIRECTION  direction;
+  IEnumPins *pIEnumPins = NULL;
+  AM_MEDIA_TYPE *mediatype;
+  if( SUCCEEDED( pDemuxer->EnumPins( &pIEnumPins ) ) )
+  {
+    ULONG count(0);
+    while( pIEnumPins->Next( 1, &pPin, &count ) == S_OK )
+    {
+	    hr = pPin->QueryDirection( &direction );
+	    if( direction == PINDIR_OUTPUT )
+      {
+		    IEnumMediaTypes* ppEnum;
+		    if( SUCCEEDED( pPin->EnumMediaTypes( &ppEnum ) ) )
+        {
+			    ULONG fetched( 0 );
+			    while( ppEnum->Next( 1, &mediatype, &fetched ) == S_OK )
+			    {
+				    if( mediatype->majortype == MEDIATYPE_Video )
+            {
+              IMPEG2PIDMap* pMuxMapPid;
+              if( SUCCEEDED( pPin->QueryInterface( &pMuxMapPid ) ) )
+              {
+                IEnumPIDMap *pIEnumPIDMap;
+                if( SUCCEEDED( pMuxMapPid->EnumPIDMap( &pIEnumPIDMap ) ) )
+                {
+	                ULONG count = 0;
+	                PID_MAP pidMap;
+	                while( pIEnumPIDMap->Next( 1, &pidMap, &count ) == S_OK )
+                  {
+                    SetVideoPid( pidMap.ulPID );
+                    LogDebug( "  found video PID %d",  m_streamVideoPid );
+	                }
+                }
+              pMuxMapPid->Release();
+					    ppEnum->Release();
+					    return S_OK;
+              }
+				    }
+				    mediatype = NULL;
+			    }
+			    ppEnum->Release();
+			    ppEnum = NULL;
+		    }
+	    }
+	    pPin->Release();
+	    pPin = NULL;
+    }
+    pIEnumPins->Release();
   }
   return hr;
 }
@@ -268,6 +277,7 @@ void CPMTInputPin::Reset()
   m_pcrPid = -1;
   m_pPatParser->Reset();
   mappedPids.clear();
+  m_bReset = true;
 }
 
 
