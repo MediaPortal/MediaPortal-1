@@ -19,42 +19,32 @@
  *
  */
 #pragma once
-
 #include "sectiondecoder.h"
-#include "PmtParser.h"
-#include "sdtParser.h"
-#include "NitDecoder.h"
-#include "channelinfo.h"
-#include "VirtualChannelTableParser.h"
-#include "conditionalAccess.h"
+#include "section.h"
 #include <vector>
 using namespace std;
-
-class CPatParser : public CSectionDecoder, public IPmtCallBack
+class CNITDecoder: public  CSectionDecoder
 {
 public:
-  CPatParser(void);
-  virtual ~CPatParser(void);
-
-	void	OnTsPacket(byte* tsPacket);
-  void  Reset();
-	void  OnNewSection(CSection& section);
-
-  BOOL        IsReady();
-  int         Count();
-  bool        GetChannel(int index, CChannelInfo& info);
-  void        Dump();
-	void				SetConditionalAccess(CConditionalAccess* access);
-	void				OnPmtReceived(int pmtPid);
-
-  vector<CPmtParser*> m_pmtParsers;
-
+	CNITDecoder(void);
+	virtual ~CNITDecoder(void);
+	void  OnNewSection(CSection& sections);
+	void  Reset();
+	bool  Ready();
+	int		GetLogicialChannelNumber(int networkId, int transportId, int serviceId);
 private:
-	void				UpdateHwPids();
-  CVirtualChannelTableParser m_vctParser;
-  CSdtParser  m_sdtParser;
-	CNITDecoder m_nitDecoder;
-  void        CleanUp();
-	CConditionalAccess* m_pConditionalAccess;
+	void decodeNITTable(byte* buf);
+	void DVB_GetLogicalChannelNumber(int original_network_id,int transport_stream_id,byte* buf);
 
+	typedef  struct stNITLCN
+	{
+		int network_id;
+		int transport_id;
+		int service_id;
+		int LCN;
+	}NITLCN;
+
+	vector<NITLCN> m_vecLCN;
+	typedef vector<NITLCN>::iterator ivecLCN;
+	DWORD m_timer;
 };

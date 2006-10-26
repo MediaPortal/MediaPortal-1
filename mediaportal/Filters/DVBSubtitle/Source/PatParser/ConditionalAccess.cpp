@@ -18,33 +18,37 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#pragma once
-#include "ISectionCallback.h"
-#include "dvbutil.h"
-#include "Section.h"
+#pragma warning(disable : 4995)
+#include <windows.h>
+#include <commdlg.h>
+#include <bdatypes.h>
+#include <time.h>
+#include <streams.h>
+#include <initguid.h>
+#include "ConditionalAccess.h"
 
-#define MAX_SECTIONS 256
-
-class CSectionDecoder : public CDvbUtil
+CConditionalAccess::CConditionalAccess(IFilterGraph *graph)
 {
-public:
-  CSectionDecoder(void);
-  ~CSectionDecoder(void);
-	void SetCallBack(ISectionCallback* callback);
-	void OnTsPacket(byte* tsPacket);
-  void SetPid(int pid);
-  int  GetPid();
-  void SetTableId(int tableId);
-	void Reset();
-  void EnableLogging(bool onOff);
-  int  GetTableId();
-  virtual void OnNewSection(CSection& section);
-protected:
-private:
-  bool        m_bLog;
-  int			    m_pid;
-  int			    m_tableId;
-  CSection		m_section;
-	int         m_iContinuityCounter;
-	ISectionCallback* m_pCallback;
-};
+	m_pFireDtv = new CFireDtv(graph);
+}
+
+CConditionalAccess::~CConditionalAccess(void)
+{
+	delete m_pFireDtv;
+}
+
+bool CConditionalAccess::SetPids(vector<int> pids)
+{
+	if (m_pFireDtv->IsFireDtv())
+	{
+		return m_pFireDtv->SetPids(pids);
+	}
+	return true;
+}
+void CConditionalAccess::DisablePidFiltering()
+{
+	if (m_pFireDtv->IsFireDtv())
+	{
+		m_pFireDtv->DisablePidFiltering();
+	}
+}

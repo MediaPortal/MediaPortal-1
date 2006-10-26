@@ -18,6 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma warning(disable : 4995)
 #include <windows.h>
 #include "TsHeader.h" 
 #include "packetsync.h"
@@ -52,6 +53,7 @@ bool CTsHeader::AdaptionFieldAndPayLoad()
 
 void CTsHeader::Decode(byte *data)
 {
+  //47 40 d2 10
 	//															bits  byteNo		mask
 	//SyncByte											:	8			0				
 	//TransportError								:	1			1				0x80  10000000
@@ -83,6 +85,15 @@ void CTsHeader::Decode(byte *data)
 		AdaptionFieldLength=data[4];
 		PayLoadStart=5+AdaptionFieldLength;
 	}
+  if (AdaptionControl ==1 ) 
+  {
+    if (PayloadUnitStart)
+    {
+      if (data[4]==0&& data[5]==0 && data[6]==1) PayLoadStart=4;
+      else PayLoadStart=data[4]+5;
+    }
+  }
+
 }
 
 void CTsHeader::LogHeader()
@@ -102,4 +113,5 @@ void CTsHeader::LogHeader()
 	LogDebug("  PayLoadOnly            :%d", PayLoadOnly());
 	LogDebug("  AdaptionFieldOnly      :%d", AdaptionFieldOnly());
 	LogDebug("  AdaptionFieldAndPayLoad:%d", AdaptionFieldAndPayLoad());
+
 }

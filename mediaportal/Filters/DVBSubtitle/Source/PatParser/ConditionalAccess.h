@@ -18,43 +18,18 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#pragma once
-
-#include "sectiondecoder.h"
-#include "PmtParser.h"
-#include "sdtParser.h"
-#include "NitDecoder.h"
-#include "channelinfo.h"
-#include "VirtualChannelTableParser.h"
-#include "conditionalAccess.h"
+#include "firedtv.h"
 #include <vector>
 using namespace std;
+#pragma once
 
-class CPatParser : public CSectionDecoder, public IPmtCallBack
+class CConditionalAccess
 {
 public:
-  CPatParser(void);
-  virtual ~CPatParser(void);
-
-	void	OnTsPacket(byte* tsPacket);
-  void  Reset();
-	void  OnNewSection(CSection& section);
-
-  BOOL        IsReady();
-  int         Count();
-  bool        GetChannel(int index, CChannelInfo& info);
-  void        Dump();
-	void				SetConditionalAccess(CConditionalAccess* access);
-	void				OnPmtReceived(int pmtPid);
-
-  vector<CPmtParser*> m_pmtParsers;
-
+	CConditionalAccess(IFilterGraph *graph);
+	virtual ~CConditionalAccess(void);
+	bool		SetPids(vector<int> pids);
+	void		DisablePidFiltering();
 private:
-	void				UpdateHwPids();
-  CVirtualChannelTableParser m_vctParser;
-  CSdtParser  m_sdtParser;
-	CNITDecoder m_nitDecoder;
-  void        CleanUp();
-	CConditionalAccess* m_pConditionalAccess;
-
+	CFireDtv* m_pFireDtv;
 };

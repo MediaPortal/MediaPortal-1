@@ -19,42 +19,31 @@
  *
  */
 #pragma once
-
 #include "sectiondecoder.h"
-#include "PmtParser.h"
-#include "sdtParser.h"
-#include "NitDecoder.h"
 #include "channelinfo.h"
-#include "VirtualChannelTableParser.h"
-#include "conditionalAccess.h"
+#include "pidtable.h"
 #include <vector>
 using namespace std;
-
-class CPatParser : public CSectionDecoder, public IPmtCallBack
+class CVirtualChannelTableParser : ISectionCallback
 {
 public:
-  CPatParser(void);
-  virtual ~CPatParser(void);
+  CVirtualChannelTableParser(void);
+  virtual ~CVirtualChannelTableParser(void);
 
-	void	OnTsPacket(byte* tsPacket);
   void  Reset();
-	void  OnNewSection(CSection& section);
+	void OnNewSection(int pid, int tableId, CSection& section);
 
-  BOOL        IsReady();
-  int         Count();
-  bool        GetChannel(int index, CChannelInfo& info);
-  void        Dump();
-	void				SetConditionalAccess(CConditionalAccess* access);
-	void				OnPmtReceived(int pmtPid);
-
-  vector<CPmtParser*> m_pmtParsers;
-
+  int   Count();
+  bool  GetChannelInfo(int serviceId,CChannelInfo& info);
+	bool  GetChannel(int index,CChannelInfo& info);
+  void  OnTsPacket(byte* tsPacket);
 private:
-	void				UpdateHwPids();
-  CVirtualChannelTableParser m_vctParser;
-  CSdtParser  m_sdtParser;
-	CNITDecoder m_nitDecoder;
-  void        CleanUp();
-	CConditionalAccess* m_pConditionalAccess;
-
+  void DecodeServiceLocationDescriptor( byte* buf,int start,CChannelInfo& channelInfo);
+  void DecodeExtendedChannelNameDescriptor( byte* buf,int start,CChannelInfo& channelInfo, int maxLen);
+  char* DecodeMultipleStrings(byte* buf, int offset, int maxLen);
+  char* DecodeString(byte* buf, int offset, int compression_type, int mode, int number_of_bytes);
+  vector<CChannelInfo> m_vecChannels;
+  int m_iVctVersionC8;
+	int m_iVctVersionC9;
+  CSectionDecoder* m_decoder[2];
 };

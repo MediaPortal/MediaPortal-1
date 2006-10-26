@@ -19,42 +19,31 @@
  *
  */
 #pragma once
-
 #include "sectiondecoder.h"
-#include "PmtParser.h"
-#include "sdtParser.h"
-#include "NitDecoder.h"
-#include "channelinfo.h"
-#include "VirtualChannelTableParser.h"
-#include "conditionalAccess.h"
+#include "PidTable.h"
+#include "ChannelInfo.h"
 #include <vector>
 using namespace std;
 
-class CPatParser : public CSectionDecoder, public IPmtCallBack
+class CSdtParser: public  CSectionDecoder
 {
+private:
+  typedef struct stserviceData
+  {
+	  char Provider[255];
+	  char Name[255];
+	  WORD ServiceType;
+  }ServiceData;
+
 public:
-  CPatParser(void);
-  virtual ~CPatParser(void);
-
-	void	OnTsPacket(byte* tsPacket);
+  CSdtParser(void);
+  virtual ~CSdtParser(void);
+	void  OnNewSection(CSection& sections);
   void  Reset();
-	void  OnNewSection(CSection& section);
-
-  BOOL        IsReady();
-  int         Count();
-  bool        GetChannel(int index, CChannelInfo& info);
-  void        Dump();
-	void				SetConditionalAccess(CConditionalAccess* access);
-	void				OnPmtReceived(int pmtPid);
-
-  vector<CPmtParser*> m_pmtParsers;
+  int   Count();
+	bool GetChannelInfo(int serviceId,CChannelInfo& info);
 
 private:
-	void				UpdateHwPids();
-  CVirtualChannelTableParser m_vctParser;
-  CSdtParser  m_sdtParser;
-	CNITDecoder m_nitDecoder;
-  void        CleanUp();
-	CConditionalAccess* m_pConditionalAccess;
-
+  void DVB_GetService(BYTE *b,ServiceData *serviceData);
+  vector<CChannelInfo> m_vecChannels;
 };

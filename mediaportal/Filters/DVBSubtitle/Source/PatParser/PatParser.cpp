@@ -18,8 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#pragma warning( disable: 4995 4996 )
-
+#pragma warning(disable : 4995)
 #include <windows.h>
 #include <commdlg.h>
 #include <bdatypes.h>
@@ -33,8 +32,7 @@
 void LogDebug(const char *fmt, ...) ;
 CPatParser::CPatParser(void)
 {
-  m_packetsToSkip=0;
-  m_packetsReceived=0;
+	m_pConditionalAccess=NULL;
   Reset();
   SetTableId(0);
   SetPid(0);
@@ -61,25 +59,43 @@ void  CPatParser::Reset()
 	LogDebug("PatParser:Reset()");
 	CSectionDecoder::Reset();
   CleanUp();
-  m_packetsReceived=0;
+  m_vctParser.Reset();
+  m_sdtParser.Reset();
+	m_nitDecoder.Reset();
+	UpdateHwPids();
 }
 
+void CPatParser::SetConditionalAccess(CConditionalAccess* access)
+{
+	m_pConditionalAccess=access;
+}
  
+BOOL CPatParser::IsReady()
+{
+ if (m_vctParser.Count() > 0)
+  {
+    return TRUE;
+  }
+	if (m_nitDecoder.Ready()==false) return FALSE;
+  if (m_pmtParsers.size()==false) return FALSE;
+  for (int i=0; i < (int)m_pmtParsers.size();++i)
+  {
+    CPmtParser* parser=m_pmtParsers[i];
+    if (false==parser->Ready()) return FALSE;
+    CPidTable& table=parser->GetPidInfo();
+    CChannelInfo info;
+	  if (false==m_sdtParser.GetChannelInfo(table.ServiceId,info)) return FALSE;
+  }
+  return TRUE;
+}
+
 int CPatParser::Count()
 {
-  int count= m_pmtParsers.size();
-  if (count>0)
+  if (m_vctParser.Count() > 0)
   {
-    for (int i=0; i < (int)m_pmtParsers.size();++i)
-    {
-      CPmtParser* parser=m_pmtParsers[i];
-	    if (false==parser->Ready()) 
-	    {
-		    return 0;
-	    }
-    }
+    return m_vctParser.Count();
   }
-	return count;
+  return m_pmtParsers.size();
 }
 
 bool CPatParser::GetChannel(int index, CChannelInfo& info)
@@ -89,33 +105,44 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
 	{
 		return false;
 	}
+	if ( m_vctParser.Count()>0)
+	{
+		if (m_vctParser.GetChannel(index,info))
+		{
+			return true;
+		}
+		return false;
+	}
+
   CPmtParser* parser=m_pmtParsers[index];
 	if (false==parser->Ready()) 
 	{
 		return false;
 	}
-
-  info.PidTable=parser->GetPidInfo();
-	return true;
+  CPidTable& table=parser->GetPidInfo();
+	if (m_sdtParser.Count()>0)
+  {
+    if (m_sdtParser.GetChannelInfo(table.ServiceId, info))
+		{
+			info.PidTable = table;
+			info.LCN=m_nitDecoder.GetLogicialChannelNumber(info.NetworkId,info.TransportId,info.ServiceId);
+			return true;
+		}
+  }
+	return false;
 }
 
-void CPatParser::SkipPacketsAtStart(__int64 packets)
-{
-  m_packetsToSkip=packets;
-  m_packetsReceived=0;
-}
 void CPatParser::OnTsPacket(byte* tsPacket)
 {
-  m_packetsReceived++;
-  if (m_packetsReceived > m_packetsToSkip)
+	m_nitDecoder.OnTsPacket(tsPacket);
+  m_vctParser.OnTsPacket(tsPacket);
+  m_sdtParser.OnTsPacket(tsPacket);
+  for (int i=0; i < (int)m_pmtParsers.size();++i)
   {
-    for (int i=0; i < (int)m_pmtParsers.size();++i)
-    {
-      CPmtParser* parser=m_pmtParsers[i];
-      parser->OnTsPacket(tsPacket);
-    }
-    CSectionDecoder::OnTsPacket(tsPacket);
+    CPmtParser* parser=m_pmtParsers[i];
+    parser->OnTsPacket(tsPacket);
   }
+  CSectionDecoder::OnTsPacket(tsPacket);
 	
 }
 
@@ -124,7 +151,7 @@ void CPatParser::OnNewSection(CSection& sections)
   byte* section=sections.Data;
 
   CTsHeader header(section);
-  int start=header.PayLoadStart+1;
+  int start=header.PayLoadStart;
   int table_id = section[start];
   if (table_id!=0) return ;
   int section_syntax_indicator = (section[start+1]>>7) & 1;
@@ -166,12 +193,16 @@ void CPatParser::OnNewSection(CSection& sections)
 		  CPmtParser* pmtParser = new CPmtParser();
 		  pmtParser->SetTableId(2);
 		  pmtParser->SetPid(pmtPid);
-			//pmtParser->SetPmtCallBack(this);
+			pmtParser->SetPmtCallBack(this);
 		  m_pmtParsers.push_back( pmtParser );
 			LogDebug("  add pmt# %d pid: %x",m_pmtParsers.size(), pmtPid);
 			newPmtsAdded=true;
 	  }
   }
+	if (newPmtsAdded)
+	{
+			UpdateHwPids();
+	}
 }
 
 void CPatParser::Dump()
@@ -191,4 +222,40 @@ void CPatParser::Dump()
       LogDebug("%d) not found",i);
     }
   }
+}
+
+void CPatParser::OnPmtReceived(int pid)
+{
+	LogDebug("PatParser:  received pmt:%x", pid);
+	if ((m_pmtParsers.size()+5) <=16) return;
+	UpdateHwPids();
+}
+void CPatParser::UpdateHwPids()
+{
+	if (m_pConditionalAccess==NULL) return;
+	vector<int> pids;
+	pids.push_back(0x0); //pat
+	pids.push_back(0x10);//NIT
+	pids.push_back(0x11);//sdt
+	pids.push_back(0x1ffb);//atsc virtual channel table
+	pids.push_back(0x1fff);//padding stream..
+	for (int i=0; i < (int)m_pmtParsers.size();++i)
+	{
+		CPmtParser* parser = m_pmtParsers[i];
+		if (parser->Ready() == false)
+		{
+			pids.push_back( parser->GetPid() );
+		}
+		if (pids.size()>=16) break;
+	}
+	char buf[1024];
+	strcpy(buf,"");
+	for (int i=0; i < (int)pids.size();++i)
+	{
+		char tmp[100];
+		sprintf(tmp,"%x,", pids[i]);
+		strcat(buf,tmp);
+	}
+	LogDebug("PatParser: filter pids:%s", buf);
+	m_pConditionalAccess->SetPids(pids);
 }
