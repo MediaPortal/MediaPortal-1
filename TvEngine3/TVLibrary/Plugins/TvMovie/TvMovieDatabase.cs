@@ -242,8 +242,6 @@ namespace TvEngine
     public void Connect()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      if (layer.GetSetting("TvMovieEnabled", "false").Value != "true")
-        return;
 
       _useShortProgramDesc = layer.GetSetting("TvMovieShortProgramDesc", "false").Value == "true";
       _extendDescription = layer.GetSetting("TvMovieExtendDescription", "false").Value == "true";
@@ -296,48 +294,20 @@ namespace TvEngine
 
     private ArrayList GetMappingList()
     {
-      if (!File.Exists(_xmlFile))
-      {
-        Log.Error("TVMovie: Mapping file \"{0}\" does not exist", _xmlFile);
-        return null;
-      }
+      IList mappingDb = TvMovieMapping.ListAll();
       ArrayList mappingList = new ArrayList();
 
-      try
+      foreach (TvMovieMapping mapping in mappingDb)
       {
-        XmlDocument doc = new XmlDocument();
-        doc.Load(_xmlFile);
-        XmlNodeList listChannels = doc.DocumentElement.SelectNodes("/channellist/channel");
-        foreach (XmlNode channel in listChannels)
-        {
-          XmlNodeList listStations = channel.SelectNodes("station");
-          foreach (XmlNode station in listStations)
-          {
-            if (station != null)
-            {
-              XmlNode timesharing = station.SelectSingleNode("timesharing");
-              string newStart = timesharing.Attributes["start"].Value;
-              string newEnd = timesharing.Attributes["end"].Value;
-              string newChannel = (string)channel.Attributes["name"].Value;
-              string newStation = (string)station.Attributes["name"].Value;
+        string newStart = mapping.TimeSharingStart;
+        string newEnd = mapping.TimeSharingEnd;
+        string newChannel = Channel.Retrieve(mapping.IdChannel).Name;
+        string newStation = mapping.StationName;
 
-              if (CheckChannel(newChannel) && CheckStation(newStation))
-                mappingList.Add(new TvMovieDatabase.Mapping(newChannel, newStation, newStart, newEnd));
-            }
-          }
-        }
-      }
-      catch (System.Xml.XmlException ex)
-      {
-        Log.Error("TVMovie: The mapping file \"{0}\" seems to be corrupt", _xmlFile);
-        Log.Error("TVMovie: {0}", ex.Message);
-        return null;
+        mappingList.Add(new TvMovieDatabase.Mapping(newChannel, newStation, newStart, newEnd));
       }
 
-      if (mappingList.Count > 0)
-        return mappingList;
-      else
-        return null;
+      return mappingList;
     }
 
 

@@ -150,11 +150,6 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
-      _xmlFile = String.Format(@"{0}\MediaPortal TV Server\TVMovieMapping.xml", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-
-      LoadStations();
-      LoadMapping();
-
       TvBusinessLayer layer = new TvBusinessLayer();
       checkBoxEnableImport.Checked = layer.GetSetting("TvMovieEnabled", "false").Value == "true";
       checkBoxUseShortDesc.Checked = layer.GetSetting("TvMovieShortProgramDesc", "false").Value == "true";
@@ -171,42 +166,35 @@ namespace SetupTv.Sections
     /// </summary>
     private void LoadStations()
     {
-      try
+      TvMovieDatabase database = new TvMovieDatabase();
+      database.Connect();
+
+      treeViewStations.BeginUpdate();
+      treeViewStations.Nodes.Clear();
+
+      foreach (string station in database.Stations)
       {
-        TvMovieDatabase database = new TvMovieDatabase();
-        database.Connect();
-
-        treeViewStations.BeginUpdate();
-        treeViewStations.Nodes.Clear();
-
-        foreach (string station in database.Stations)
-        {
-          TreeNode stationNode = new TreeNode(station);
-          ChannelInfo channelInfo = new ChannelInfo();
-          channelInfo.Name = station;
-          stationNode.Tag = channelInfo;
-          treeViewStations.Nodes.Add(stationNode);
-        }
-
-        treeViewStations.EndUpdate();
-
-        treeViewChannels.BeginUpdate();
-        treeViewChannels.Nodes.Clear();
-
-        ArrayList mpChannelList = database.GetChannels();
-
-        foreach (Channel channel in mpChannelList)
-        {
-          TreeNode stationNode = new TreeNode(channel.Name);
-          treeViewChannels.Nodes.Add(stationNode);
-        }
-
-        treeViewChannels.EndUpdate();
+        TreeNode stationNode = new TreeNode(station);
+        ChannelInfo channelInfo = new ChannelInfo();
+        channelInfo.Name = station;
+        stationNode.Tag = channelInfo;
+        treeViewStations.Nodes.Add(stationNode);
       }
-      catch (Exception)
+
+      treeViewStations.EndUpdate();
+
+      treeViewChannels.BeginUpdate();
+      treeViewChannels.Nodes.Clear();
+
+      ArrayList mpChannelList = database.GetChannels();
+
+      foreach (Channel channel in mpChannelList)
       {
-        MessageBox.Show("Please make sure TV Movie Clickfinder has been installed and licensed locally.", "Error loading TV Movie database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        TreeNode stationNode = new TreeNode(channel.Name);
+        treeViewChannels.Nodes.Add(stationNode);
       }
+
+      treeViewChannels.EndUpdate();
     }
 
     /// <summary>
@@ -236,6 +224,11 @@ namespace SetupTv.Sections
 
       selectedChannel.Nodes.Add(selectedStation);
       selectedChannel.Expand();
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting setting = layer.GetSetting("TvMovieLastUpdate");
+      setting.Value = "0";
+      setting.Persist();
     }
 
 
@@ -262,115 +255,80 @@ namespace SetupTv.Sections
 
 
     /// <summary>
-    /// Save station-channel mapping to XML
+    /// Save station-channel mapping to database
     /// </summary>
     private void SaveMapping()
     {
-      XmlTextWriter writer = new XmlTextWriter(_xmlFile, System.Text.Encoding.UTF8);
-      writer.Formatting = Formatting.Indented;
-      writer.Indentation = 1;
-      writer.IndentChar = (char)9;
-      writer.WriteStartDocument(true);
-      writer.WriteStartElement("channellist"); // <channellist>
-      writer.WriteAttributeString("version", "1");
+      IList mappingList = TvMovieMapping.ListAll();
+      foreach (TvMovieMapping mapping in mappingList)
+        mapping.Remove();
 
       foreach (TreeNode channel in treeViewChannels.Nodes)
       {
-        writer.WriteStartElement("channel"); // <channel>
-        writer.WriteAttributeString("name", channel.Text);
         foreach (TreeNode station in channel.Nodes)
         {
+          TvBusinessLayer layer = new TvBusinessLayer();
           ChannelInfo channelInfo = (ChannelInfo)station.Tag;
-          writer.WriteStartElement("station"); // <station>
-          writer.WriteAttributeString("name", channelInfo.Name);
-          writer.WriteStartElement("timesharing"); // <timesharing>
-          writer.WriteAttributeString("start", channelInfo.Start);
-          writer.WriteAttributeString("end", channelInfo.End);
-          writer.WriteEndElement(); // </timesharing>
-          writer.WriteEndElement(); // </station>
+          TvMovieMapping mapping = new TvMovieMapping(layer.GetChannelByName(channel.Text).IdChannel,
+            channelInfo.Name, channelInfo.Start, channelInfo.End);
+          mapping.Persist();
         }
-        writer.WriteEndElement(); // </channel>
       }
-
-      writer.WriteEndElement(); // </channellist>
-      writer.WriteEndDocument();
-      writer.Close();
     }
 
 
     /// <summary>
-    /// Load station-channel mapping from XML
+    /// Load station-channel mapping from database
     /// </summary>
     private void LoadMapping()
     {
-      if (!File.Exists(_xmlFile))
+      treeViewChannels.BeginUpdate();
+      foreach (TreeNode treeNode in treeViewChannels.Nodes)
       {
-        Log.Info("TVMovie: Mapping file \"{0}\" does not exist, using empty list", _xmlFile);
-        return;
+        foreach (TreeNode childNode in treeNode.Nodes)
+          childNode.Remove();
       }
 
-      treeViewChannels.BeginUpdate();
+      IList mappingDb = TvMovieMapping.ListAll();
 
-      try
+      foreach (TvMovieMapping mapping in mappingDb)
       {
-        XmlDocument doc = new XmlDocument();
-        doc.Load(_xmlFile);
-        XmlNodeList listChannels = doc.DocumentElement.SelectNodes("//channellist/channel");
-        foreach (XmlNode channel in listChannels)
+        string channelName = Channel.Retrieve(mapping.IdChannel).Name;
+        TreeNode channelNode = FindChannel(channelName);
+        if (channelNode != null)
         {
-          string channelName = (string)channel.Attributes["name"].Value;
-          TreeNode channelNode = FindChannel(channelName);
-          if (channelNode != null)
+          string stationName = mapping.StationName;
+          if (FindStation(stationName) != null)
           {
-            XmlNodeList listStations = channel.SelectNodes("station");
-
-            foreach (XmlNode station in listStations)
+            TreeNode stationNode = (TreeNode)FindStation(stationName).Clone();
+            ChannelInfo channelInfo = new ChannelInfo();
+            if (stationNode != null)
             {
-              string stationName = (string)station.Attributes["name"].Value;
-              if (FindStation(stationName) != null)
-              {
-                TreeNode stationNode = (TreeNode)FindStation(stationName).Clone();
-                ChannelInfo channelInfo = new ChannelInfo();
-                if (stationNode != null)
-                {
-                  XmlNode timesharing = station.SelectSingleNode("timesharing");
-                  string start = "00:00";
-                  string end = "00:00";
-                  if (timesharing != null)
-                  {
-                    start = timesharing.Attributes["start"].Value;
-                    end = timesharing.Attributes["end"].Value;
-                  }
+              string start = mapping.TimeSharingStart;
+              string end = mapping.TimeSharingEnd;
 
-                  if (start != "00:00" || end != "00:00")
-                    stationNode.Text = string.Format("{0} ({1}-{2})", stationName, start, end);
-                  else
-                    stationNode.Text = string.Format("{0}", stationName);
-
-                  channelInfo.Start = start;
-                  channelInfo.End = end;
-                  channelInfo.Name = stationName;
-
-                  stationNode.Tag = channelInfo;
-
-                  if (listStations.Count > 1)
-                    stationNode.ForeColor = Color.Green;
-                  else
-                    stationNode.ForeColor = Color.Blue;
-                  channelNode.Nodes.Add(stationNode);
-                  channelNode.Expand();
-                }
-              }
+              if (start != "00:00" || end != "00:00")
+                stationNode.Text = string.Format("{0} ({1}-{2})", stationName, start, end);
               else
-                Log.Debug("TVMovie plugin: Channel {0} no longer present in Database - ignoring", stationName);
+                stationNode.Text = string.Format("{0}", stationName);
+
+              channelInfo.Start = start;
+              channelInfo.End = end;
+              channelInfo.Name = stationName;
+
+              stationNode.Tag = channelInfo;
+
+              //if (listStations.Count > 1)
+              //  stationNode.ForeColor = Color.Green;
+              //else
+              //  stationNode.ForeColor = Color.Blue;
+              channelNode.Nodes.Add(stationNode);
+              channelNode.Expand();
             }
           }
+          else
+            Log.Debug("TVMovie plugin: Channel {0} no longer present in Database - ignoring", stationName);
         }
-      }
-      catch (System.Xml.XmlException ex)
-      {
-        Log.Info("TVMovie: The mapping file \"{0}\" seems to be corrupt", _xmlFile);
-        Log.Info("TVMovie: {0}", ex.Message);
       }
       treeViewChannels.EndUpdate();
     }
@@ -485,6 +443,34 @@ namespace SetupTv.Sections
     private void linkLabelInfo_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       Process.Start("http://www.tvmovie.de/ClickFinder.57.0.html");
+    }
+
+    private void tabControlTvMovie_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (!checkBoxEnableImport.Checked)
+        tabControlTvMovie.SelectedIndex = 0;
+    }
+
+    private void checkBoxEnableImport_CheckedChanged(object sender, EventArgs e)
+    {
+      groupBoxDescriptions.Enabled = groupBoxImport.Enabled = checkBoxEnableImport.Checked;
+
+      if (checkBoxEnableImport.Checked)
+      {
+        try
+        {
+          TvMovieSql.CheckDatabase();
+          LoadStations();
+          LoadMapping();
+        }
+        catch (Exception ex)
+        {
+          MessageBox.Show("Please make sure TV Movie Clickfinder has been installed and licensed locally.", "Error loading TV Movie database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          checkBoxEnableImport.Checked = false;
+        }
+      }
+      else
+        SaveMapping();
     }
   }
 }

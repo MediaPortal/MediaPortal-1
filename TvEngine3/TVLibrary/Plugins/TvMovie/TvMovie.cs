@@ -37,14 +37,24 @@ namespace TvEngine
     private TvMovieDatabase _database;
     private System.Threading.Timer _stateTimer;
     private bool _isImporting = false;
+    private const long _timerIntervall = 1800000;
 
     private void ImportThread()
     {
       _isImporting = true;
 
+      try
+      {
+        _database = new TvMovieDatabase();
+        _database.Connect();
+      }
+      catch (Exception)
+      {
+        Log.Error("TVMovie: Import enabled, but the Clickfinder database was not found.");
+        return;
+      }
+
       Log.Debug("TVMovie: Checking database");
-      _database = new TvMovieDatabase();
-      _database.Connect();
 
       if (_database.WasUpdated)
       {
@@ -60,6 +70,10 @@ namespace TvEngine
 
     private void StartImportThread(Object stateInfo)
     {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      if (layer.GetSetting("TvMovieEnabled", "false").Value != "true")
+        return;
+
       if (!_isImporting)
       {
         Thread importThread = new Thread(new ThreadStart(ImportThread));
@@ -77,7 +91,7 @@ namespace TvEngine
 
     public string Version
     {
-      get { return "0.1"; }
+      get { return "0.2"; }
     }
 
     public string Author
@@ -92,12 +106,8 @@ namespace TvEngine
 
     public void Start(IController controller)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      if (layer.GetSetting("TvMovieEnabled", "false").Value != "true")
-        return;
-
       TimerCallback timerCallBack = new TimerCallback(StartImportThread);
-      _stateTimer = new System.Threading.Timer(timerCallBack, null, 10000, 1800000);
+      _stateTimer = new System.Threading.Timer(timerCallBack, null, 10000, _timerIntervall);
     }
 
     public void Stop()

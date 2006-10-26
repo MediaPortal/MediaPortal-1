@@ -59,6 +59,7 @@
     <Compile Include="Server.cs" />
     <Compile Include="Setting.cs" />
     <Compile Include="TuningDetail.cs" />
+    <Compile Include="TvMovieMapping.cs" />
     <Compile Include="Version.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

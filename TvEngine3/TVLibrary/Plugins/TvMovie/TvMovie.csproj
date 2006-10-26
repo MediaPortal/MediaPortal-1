@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="TvMovie.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TvMovieSql.cs" />
     <Compile Include="TvMovieDatabase.cs" />
     <Compile Include="TvMovieSetup.cs">
       <SubType>UserControl</SubType>
@@ -61,10 +62,12 @@
     <ProjectReference Include="..\..\SetupControls\SetupControls.csproj">
       <Project>{A2792D3C-04C1-4A92-9383-A33D59C54D8D}</Project>
       <Name>SetupControls</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\TvControl\TvControl.csproj">
       <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
       <Name>TvControl</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj">
       <Project>{58C35C9D-F18D-40F2-8024-24E50D01E9C5}</Project>
@@ -89,6 +92,7 @@
     <ProjectReference Include="..\PluginBase\PluginBase.csproj">
       <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>
       <Name>PluginBase</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -96,6 +100,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>TvMovieSetup.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TvMovieSql.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
