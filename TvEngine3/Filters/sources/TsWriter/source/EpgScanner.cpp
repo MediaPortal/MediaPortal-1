@@ -162,7 +162,7 @@ STDMETHODIMP CEpgScanner::GrabMHW()
 	CEnterCriticalSection enter(m_section);
 	try
 	{
-		//LogDebug("EpgScanner::GrabMHW");
+		LogDebug("EpgScanner::GrabMHW");
 		m_bGrabbing=true;
 		m_mhwParser.GrabEPG();
 	}

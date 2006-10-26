@@ -1718,12 +1718,18 @@ namespace TvLibrary.Implementations.DVB
           _interfaceEpgGrabber.IsMHWReady(out mhwReady);
           if (dvbReady == false || mhwReady == false) return null;
 
+          short titleCount;
+          uint channelCount = 0;
+          _interfaceEpgGrabber.GetMHWTitleCount(out titleCount);
+          if (titleCount > 0) mhwReady = true;
+          _interfaceEpgGrabber.GetEPGChannelCount(out channelCount);
+          if (channelCount > 0) dvbReady = true;
           List<EpgChannel> epgChannels = new List<EpgChannel>();
+          Log.Log.WriteFile("dvb:mhw ready MHW {0} titles found", titleCount);
+          Log.Log.WriteFile("dvb:dvb ready.EPG {0} channels", channelCount);
           if (mhwReady)
           {
-            short titleCount;
             _interfaceEpgGrabber.GetMHWTitleCount(out titleCount);
-            Log.Log.WriteFile("dvb:mhw ready {0} titles found", titleCount);
             for (int i = 0; i < titleCount; ++i)
             {
               short id = 0, transportid = 0, networkid = 0, channelnr = 0, channelid = 0, programid = 0, themeid = 0, PPV = 0, duration = 0;
@@ -1801,12 +1807,9 @@ namespace TvLibrary.Implementations.DVB
 
           if (dvbReady)
           {
-            uint channelCount = 0;
             ushort networkid = 0;
             ushort transportid = 0;
             ushort serviceid = 0;
-            _interfaceEpgGrabber.GetEPGChannelCount(out channelCount);
-            Log.Log.WriteFile("dvb:dvb ready. Epg for {0} channels", channelCount);
             for (uint x = 0; x < channelCount; ++x)
             {
               _interfaceEpgGrabber.GetEPGChannel((uint)x, ref networkid, ref transportid, ref serviceid);
