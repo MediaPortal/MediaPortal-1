@@ -117,6 +117,7 @@ bool CMhwDecoder::ParseTitles(byte* data, int dataLen)
 //		return;
 
 	ULONG progId=(data[38]<<24)+(data[39]<<16)+(data[40]<<8)+data[41];
+	
 	imapTitles it = m_mapTitles.find(progId);
 	if (it!=m_mapTitles.end()) return false;
 	m_mapTitles[progId]=1;
@@ -169,7 +170,7 @@ bool CMhwDecoder::ParseTitles(byte* data, int dataLen)
 //		h1,m,
 //		(prg.Duration/60),(prg.Duration%60));
 	m_vecTitles.push_back(prg);
-	LogDebug("mhw-epg: titles:%d", m_vecTitles.size());
+	//LogDebug("mhw-epg: titles:%d", m_vecTitles.size());
 	return true;
 }
 bool CMhwDecoder::ParseThemes(byte* data, int dataLen)

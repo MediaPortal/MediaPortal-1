@@ -110,7 +110,7 @@ void CMhwParser::OnNewSection(int pid, int tableId, CSection& sections)
   int sectionLength=sections.SectionLength;
   if (pid==0xd2)
   {
-	  if (tableId==0x90 && (tableId >=0x70 && tableId <=0x7f) )
+	  if (tableId==0x90 ||(tableId >=0x70 && tableId <=0x7f) )
 	  {
 		  if ( m_mhwDecoder.ParseTitles(section,sectionLength))
 		  {
