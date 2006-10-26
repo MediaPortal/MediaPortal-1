@@ -1763,7 +1763,7 @@ namespace TvLibrary.Implementations.DVB
               foreach (EpgChannel chan in epgChannels)
               {
                 DVBBaseChannel dvbChan = (DVBBaseChannel)chan.Channel;
-                if (dvbChan.NetworkId == networkid && dvbChan.TransportId == transportid && dvbChan.ServiceId == channelnr)
+                if (dvbChan.NetworkId == networkid && dvbChan.TransportId == transportid && dvbChan.ServiceId == channelid)
                 {
                   epgChannel = chan;
                   break;
@@ -1774,7 +1774,7 @@ namespace TvLibrary.Implementations.DVB
                 DVBBaseChannel dvbChan = new DVBBaseChannel();
                 dvbChan.NetworkId = networkid;
                 dvbChan.TransportId = transportid;
-                dvbChan.ServiceId = channelnr;
+                dvbChan.ServiceId = channelid;
                 dvbChan.Name = channelName;
                 epgChannel = new EpgChannel();
                 epgChannel.Channel = dvbChan;
@@ -1803,6 +1803,11 @@ namespace TvLibrary.Implementations.DVB
               program.Text.Add(epgLang);
               epgChannel.Programs.Add(program);
             }
+            for (int i = 0; i < epgChannels.Count; ++i)
+            {
+              epgChannels[i].Sort();
+            }
+            return epgChannels;
           }
 
           if (dvbReady)

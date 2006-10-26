@@ -19,7 +19,7 @@ class CMhwDecoder
 	
 	struct MHWSummary
 	{
-		int		ProgramID;// its the programm-id of epg, not an channel id
+		ULONG		ProgramID;// its the programm-id of epg, not an channel id
 		string	Description;
 	};
 	struct MHWTheme
@@ -29,10 +29,10 @@ class CMhwDecoder
 	};
 	struct MHWProgramm 
 	{
-		int		ID;
+		ULONG		ID;
 		int		ChannelID;
 		int		ThemeID;
-		int		PPV;
+		ULONG		PPV;
 		ULONG   dateStart;
 		ULONG   timeStart;
 		bool	Summaries;
@@ -61,8 +61,8 @@ private:
 	vector<MHWChannel> m_vecChannels;
 	typedef vector<MHWChannel>::iterator imapChannels;
 
-	map<int,MHWSummary> m_mapSummaries;
-	typedef map<int,MHWSummary> ::iterator imapSummaries;
+	map<ULONG,MHWSummary> m_mapSummaries;
+	typedef map<ULONG,MHWSummary> ::iterator imapSummaries;
 
 	vector<MHWProgramm> m_vecTitles;
 	typedef vector<MHWProgramm> ::iterator ivecTitles;

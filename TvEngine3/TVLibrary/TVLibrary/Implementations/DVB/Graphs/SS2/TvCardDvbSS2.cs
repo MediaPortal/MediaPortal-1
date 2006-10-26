@@ -1014,6 +1014,7 @@ namespace TvLibrary.Implementations.DVB
       return ((val & 0xF0) >> 4) * 10 + (val & 0xF);
     }
 
+
     /// <summary>
     /// Returns the EPG grabbed or null if epg grabbing is still busy
     /// </summary>
@@ -1021,7 +1022,7 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        if (!CheckThreadId()) return null;
+        //if (!CheckThreadId()) return null;
         try
         {
 
@@ -1031,12 +1032,18 @@ namespace TvLibrary.Implementations.DVB
           _interfaceEpgGrabber.IsMHWReady(out mhwReady);
           if (dvbReady == false || mhwReady == false) return null;
 
+          short titleCount;
+          uint channelCount = 0;
+          _interfaceEpgGrabber.GetMHWTitleCount(out titleCount);
+          if (titleCount > 0) mhwReady = true;
+          _interfaceEpgGrabber.GetEPGChannelCount(out channelCount);
+          if (channelCount > 0) dvbReady = true;
           List<EpgChannel> epgChannels = new List<EpgChannel>();
+          Log.Log.WriteFile("dvb:mhw ready MHW {0} titles found", titleCount);
+          Log.Log.WriteFile("dvb:dvb ready.EPG {0} channels", channelCount);
           if (mhwReady)
           {
-            short titleCount;
             _interfaceEpgGrabber.GetMHWTitleCount(out titleCount);
-            Log.Log.WriteFile("mhw ready {0}", titleCount);
             for (int i = 0; i < titleCount; ++i)
             {
               short id = 0, transportid = 0, networkid = 0, channelnr = 0, channelid = 0, programid = 0, themeid = 0, PPV = 0, duration = 0;
@@ -1055,8 +1062,6 @@ namespace TvLibrary.Implementations.DVB
               programName = Marshal.PtrToStringAnsi(ptrProgramName);
               summary = Marshal.PtrToStringAnsi(ptrSummary);
               theme = Marshal.PtrToStringAnsi(ptrTheme);
-              EpgChannel epgChannel = null;
-
               if (channelName == null) channelName = "";
               if (title == null) title = "";
               if (programName == null) programName = "";
@@ -1068,10 +1073,11 @@ namespace TvLibrary.Implementations.DVB
               summary = summary.Trim();
               theme = theme.Trim();
 
+              EpgChannel epgChannel = null;
               foreach (EpgChannel chan in epgChannels)
               {
                 DVBBaseChannel dvbChan = (DVBBaseChannel)chan.Channel;
-                if (dvbChan.NetworkId == networkid && dvbChan.TransportId == transportid && dvbChan.ServiceId == channelnr)
+                if (dvbChan.NetworkId == networkid && dvbChan.TransportId == transportid && dvbChan.ServiceId == channelid)
                 {
                   epgChannel = chan;
                   break;
@@ -1082,12 +1088,13 @@ namespace TvLibrary.Implementations.DVB
                 DVBBaseChannel dvbChan = new DVBBaseChannel();
                 dvbChan.NetworkId = networkid;
                 dvbChan.TransportId = transportid;
-                dvbChan.ServiceId = channelnr;
+                dvbChan.ServiceId = channelid;
                 dvbChan.Name = channelName;
                 epgChannel = new EpgChannel();
                 epgChannel.Channel = dvbChan;
                 epgChannels.Add(epgChannel);
               }
+
 
               uint d1 = datestart;
               uint m = timestart & 0xff;
@@ -1110,15 +1117,18 @@ namespace TvLibrary.Implementations.DVB
               program.Text.Add(epgLang);
               epgChannel.Programs.Add(program);
             }
+            for (int i = 0; i < epgChannels.Count; ++i)
+            {
+              epgChannels[i].Sort();
+            }
+            return epgChannels;
           }
+
           if (dvbReady)
           {
-            Log.Log.WriteFile("dvb ready");
-            uint channelCount = 0;
             ushort networkid = 0;
             ushort transportid = 0;
             ushort serviceid = 0;
-            _interfaceEpgGrabber.GetEPGChannelCount(out channelCount);
             for (uint x = 0; x < channelCount; ++x)
             {
               _interfaceEpgGrabber.GetEPGChannel((uint)x, ref networkid, ref transportid, ref serviceid);
@@ -1167,6 +1177,7 @@ namespace TvLibrary.Implementations.DVB
                 int starttime_y = year;
                 int starttime_m = month;
                 int starttime_d = day;
+                if (year < 2000) continue;
 
                 try
                 {
@@ -1195,10 +1206,8 @@ namespace TvLibrary.Implementations.DVB
                     description = description.Trim();
                     language = language.Trim();
                     genre = genre.Trim();
-
                     EpgLanguageText epgLangague = new EpgLanguageText(language, title, description, genre);
                     epgProgram.Text.Add(epgLangague);
-
 
                   }
                   epgChannel.Programs.Add(epgProgram);
@@ -1221,9 +1230,7 @@ namespace TvLibrary.Implementations.DVB
         }
       }
     }
-
     #endregion
-
     #region properties
     /// <summary>
     /// Gets/sets the card name

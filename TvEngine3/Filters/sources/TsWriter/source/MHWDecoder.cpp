@@ -84,8 +84,8 @@ bool CMhwDecoder::ParseSummaries(byte* data, int maxLen)
 	sum.Description="";
 	n+=11+(data[n+10]*7);
 
-	if (n >= maxLen ) 
-		return false;
+	//if (n >= maxLen ) 
+	//	return false;
 	char* buffer=new char[(maxLen-n)+10];
 	strncpy(buffer,(const char*)&data[n],(maxLen-n));
 	buffer[(maxLen-n)]=0;
@@ -97,7 +97,7 @@ bool CMhwDecoder::ParseSummaries(byte* data, int maxLen)
 		imapSummaries it=m_mapSummaries.find(sum.ProgramID);
 		if (it==m_mapSummaries.end())
 		{
-			//LogDebug("mhw-epg: added summary with id 0x%x '%s'",sum.ProgramID,sum.Description.c_str());
+			//LogDebug("mhw-epg: added progid:%x ",sum.ProgramID);
 			m_mapSummaries[sum.ProgramID]=sum;
 			return true;
 		}
@@ -171,8 +171,10 @@ bool CMhwDecoder::ParseTitles(byte* data, int dataLen)
 //		(prg.Duration/60),(prg.Duration%60));
 	m_vecTitles.push_back(prg);
 	//LogDebug("mhw-epg: titles:%d", m_vecTitles.size());
+	//LogDebug("mhw-epg: added title progid %x ppv:%x themeid:%x chanid:%x",progId,prg.PPV,prg.ThemeID,prg.ChannelID);
 	return true;
 }
+
 bool CMhwDecoder::ParseThemes(byte* data, int dataLen)
 {
 	if(m_vecThemes.size()>0)
@@ -212,7 +214,6 @@ bool CMhwDecoder::ParseThemes(byte* data, int dataLen)
 
 int CMhwDecoder::GetTitleCount()
 {
-	LogDebug("mhw-epg: GetTitleCount:%d", m_vecTitles.size());
 	CEnterCriticalSection lock (m_critSection);
 	return m_vecTitles.size();
 }
@@ -234,7 +235,11 @@ void CMhwDecoder::GetTitle(int program, WORD* id, WORD* transportId, WORD* netwo
 	*title="";
 	*programName="";
 
-	if (program >=(int)m_vecTitles.size()) return;
+	if (program >=(int)m_vecTitles.size()) 
+	{
+		//LogDebug("mhw-epg: GetTitle(%d) size:%d  not found",program,m_vecTitles.size());
+		return;
+	}
 	MHWProgramm& prog=m_vecTitles[program];
 	*id = prog.ID;
 	*transportId=prog.TransportStreamID;
@@ -258,7 +263,11 @@ void CMhwDecoder::GetChannel(WORD channelNr, WORD* channelId, WORD* networkId, W
 	CEnterCriticalSection lock (m_critSection);
 	*channelName="";
 	
-	if (channelNr>=m_vecChannels.size()) return;
+	if (channelNr>=m_vecChannels.size()) 
+	{
+		//LogDebug("mhw-epg: GetChannel(%d) size:%d  not found",channelNr,m_vecChannels.size());
+		return;
+	}
 
 	imapChannels it=m_vecChannels.begin();
 	int count=0;
@@ -275,14 +284,14 @@ void CMhwDecoder::GetSummary(WORD programId, char** summary)
 {
 	CEnterCriticalSection lock (m_critSection);
 	*summary="";
-	imapSummaries it=m_mapSummaries.find((int)programId);
+	imapSummaries it=m_mapSummaries.find((ULONG)programId);
 	if (it!=m_mapSummaries.end())
 	{
 		*summary=(char*)it->second.Description.c_str();		
 		//LogDebug("mhw-epg: GetSummary(%x) size:%d found ", programId,m_mapSummaries.size());
 	}
-	else
-		LogDebug("mhw-epg: GetSummary(%x) size:%d not found", programId,m_mapSummaries.size());
+	//else
+		//LogDebug("mhw-epg: GetSummary(%x) size:%d not found", programId,m_mapSummaries.size());
 }
 void CMhwDecoder::GetTheme(WORD themeId, char** theme)
 {
@@ -298,4 +307,5 @@ void CMhwDecoder::GetTheme(WORD themeId, char** theme)
 		}
 		++it;
 	}
+	//LogDebug("mhw-epg: GetTheme(%x) size:%d not found", themeId,m_vecThemes.size());
 }
