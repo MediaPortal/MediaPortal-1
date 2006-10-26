@@ -23,6 +23,8 @@
 *    http://forums.dvbowners.com/
 */
 
+#pragma warning(disable : 4995)
+#pragma warning(disable : 4996)
 #include <streams.h>
 #include "MultiFileWriter.h"
 #include <atlbase.h>
@@ -182,7 +184,7 @@ HRESULT MultiFileWriter::Write(PBYTE pbData, ULONG lDataLength)
 		// Write some data to the current file if it's not full
 		if (dataToWrite > 0)
 		{
-			m_pCurrentTSFile->Write(pbData, dataToWrite);
+			m_pCurrentTSFile->Write(pbData, (ULONG)dataToWrite);
 		}
 
 		// Try to create a new file
@@ -244,11 +246,11 @@ HRESULT MultiFileWriter::PrepareTSFile()
 	}
 	else
 	{
-		if (m_tsFileNames.size() >= m_minTSFiles) 
+		if (m_tsFileNames.size() >= (UINT)m_minTSFiles) 
 		{
 			if FAILED(hr = ReuseTSFile())
 			{
-				if (m_tsFileNames.size() < m_maxTSFiles)
+				if (m_tsFileNames.size() < (UINT)m_maxTSFiles)
 				{
 					if (hr != 0x80070020) // ERROR_SHARING_VIOLATION
 						LogDebug("Failed to reopen old file. Unexpected reason. Trying to create a new file.");
@@ -504,7 +506,7 @@ HRESULT MultiFileWriter::GetAvailableDiskSpace(__int64* llAvailableDiskSpace)
 	char	szDrive[4];
 	if (m_pTSBufferFileName[1] == ':')
 	{
-		szDrive[0] = m_pTSBufferFileName[0];
+		szDrive[0] = (char)m_pTSBufferFileName[0];
 		szDrive[1] = ':';
 		szDrive[2] = '\\';
 		szDrive[3] = '\0';

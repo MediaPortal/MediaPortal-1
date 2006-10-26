@@ -18,6 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma warning(disable : 4995)
 #include <windows.h>
 #include "multiplexer.h"
 void LogDebug(const char *fmt, ...) ;
@@ -220,12 +221,12 @@ __int64 pcrHi=m_pcrDecoder.PcrHigh() ;
 	//76543210  76543210 76543210 76543210 76543210 76543210 76543210 76543210 76543210 76543210
 	//01PPPMPP  PPPPPPPP PPPPPMPP PPPPPPPP PPPPPMEE EEEEEEEM RRRRRRRR RRRRRRRR RRRRRRMM VVVVVSSS
 	//4..9 = pcr 33bits / 9 bits
-	pBuffer[4] = ((pcrHi >> 28)  & 0x3) + 4 + (((pcrHi >> 30) & 7) << 3)+ 0x40;
-	pBuffer[5] = (pcrHi >> 20)  & 0xff;
-	pBuffer[6] = ((pcrHi >> 13) & 0x3) + 4 + ( ( (pcrHi >> 15) & 0x1f) <<3);
-	pBuffer[7] = (pcrHi >> 5) & 0xff;
-	pBuffer[8] = ((pcrLow >> 7) & 3) + 4 + ((pcrLow & 0x1f)<<3);
-	pBuffer[9] = ((pcrLow & 0x7f) << 1) +1 ;
+	pBuffer[4] = (byte)(((pcrHi >> 28)  & 0x3) + 4 + (((pcrHi >> 30) & 7) << 3)+ 0x40);
+	pBuffer[5] = (byte)((pcrHi >> 20)  & 0xff);
+	pBuffer[6] = (byte)(((pcrHi >> 13) & 0x3) + 4 + ( ( (pcrHi >> 15) & 0x1f) <<3));
+	pBuffer[7] = (byte)((pcrHi >> 5) & 0xff);
+	pBuffer[8] = (byte)(((pcrLow >> 7) & 3) + 4 + ((pcrLow & 0x1f)<<3));
+	pBuffer[9] = (byte)(((pcrLow & 0x7f) << 1) +1 );
 
 	//10..12 = mux rate
 	pBuffer[10] = (muxRate >> 14) & 0xff;

@@ -152,11 +152,11 @@ void CPcrDecoder::ChangePtsDts(byte* header, __int64 startPcr)
 	//	LogDebug(" pts:%x start:%x", (DWORD)pts,(DWORD)startPcr);
 		byte marker=0x21;
 		if (dts!=0) marker=0x31;
-		header[13]=(((pts&0x7f)<<1)+1); pts>>=7;
-		header[12]= (pts&0xff);				  pts>>=8;
-		header[11]=(((pts&0x7f)<<1)+1); pts>>=7;
-		header[10]=(pts&0xff);					pts>>=8;
-		header[9]= (((pts&7)<<1)+marker); 
+		header[13]=(byte)((((pts&0x7f)<<1)+1)); pts>>=7;
+		header[12]=(byte)( (pts&0xff));				  pts>>=8;
+		header[11]=(byte)((((pts&0x7f)<<1)+1)); pts>>=7;
+		header[10]=(byte)((pts&0xff));					pts>>=8;
+		header[9]=(byte)( (((pts&7)<<1)+marker)); 
 	}
 	if (dts >0)
 	{
@@ -165,10 +165,10 @@ void CPcrDecoder::ChangePtsDts(byte* header, __int64 startPcr)
 		else
 			dts-=startPcr;
 
-		header[18]=(((dts&0x7f)<<1)+1); dts>>=7;
-		header[17]= (dts&0xff);				  dts>>=8;
-		header[16]=(((dts&0x7f)<<1)+1); dts>>=7;
-		header[15]=(dts&0xff);					dts>>=8;
-		header[14]= (((dts&7)<<1)+0x11); 
+		header[18]=(byte)((((dts&0x7f)<<1)+1)); dts>>=7;
+		header[17]=(byte)( (dts&0xff));				  dts>>=8;
+		header[16]=(byte)((((dts&0x7f)<<1)+1)); dts>>=7;
+		header[15]=(byte)((dts&0xff));					dts>>=8;
+		header[14]=(byte)( (((dts&7)<<1)+0x11)); 
 	}
 }

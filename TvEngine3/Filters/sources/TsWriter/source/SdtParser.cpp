@@ -18,6 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma warning(disable : 4995)
 #include <windows.h>
 #include "sdtParser.h"
 #include "tsheader.h"
@@ -46,7 +47,7 @@ int CSdtParser::Count()
 }
 bool CSdtParser::GetChannelInfo(int serviceId,CChannelInfo& info)
 {
-	for (int i=0; i < m_vecChannels.size();++i)
+	for (int i=0; i < (int)m_vecChannels.size();++i)
 	{
 		if (m_vecChannels[i].ServiceId==serviceId)
 		{
@@ -91,7 +92,7 @@ void  CSdtParser::OnNewSection(CSection& sections)
   int EIT_present_following_flag;
   int pointer = 11;
   int x = 0;
-  int channel;	 
+  //int channel;	 
 
 	
 
@@ -133,7 +134,7 @@ void  CSdtParser::OnNewSection(CSection& sections)
         strcpy(info.ServiceName, serviceData.Name);
 
         bool found=false;
-        for (int i=0; i < m_vecChannels.size();++i)
+        for (int i=0; i < (int)m_vecChannels.size();++i)
         {
           CChannelInfo& chInfo=m_vecChannels[i];
           if (chInfo.NetworkId==info.NetworkId && chInfo.TransportId==info.TransportId && chInfo.ServiceId==info.ServiceId)

@@ -9,9 +9,6 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#if defined( _MSC_VER )
-#pragma message( "Including " __FILE__ ) 
-#endif // defined( _MSC_VER )
 
 //#ifndef _WINDOWS_
 //// Minimum system required: Windows NT 4.0

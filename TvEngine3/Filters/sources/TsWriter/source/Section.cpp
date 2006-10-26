@@ -1,5 +1,6 @@
 #include <windows.h>
 #include "Section.h"
+#pragma warning(disable : 4995)
 
 CSection::CSection(void)
 {

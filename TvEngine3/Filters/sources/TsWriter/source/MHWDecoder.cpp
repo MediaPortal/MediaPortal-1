@@ -19,6 +19,7 @@
  *
  */
 #pragma warning(disable: 4786)
+#pragma warning(disable : 4995)
 #include <windows.h>
 #include ".\mhwparser.h"
 #include "entercriticalSection.h"  

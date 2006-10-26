@@ -23,6 +23,7 @@
 *    http://forums.dvbowners.com/
 */
 
+#pragma warning(disable : 4995)
 #include <streams.h>
 #include "FileWriter.h"
 #include <atlbase.h>

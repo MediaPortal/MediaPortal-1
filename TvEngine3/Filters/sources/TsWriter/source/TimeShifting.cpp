@@ -19,6 +19,7 @@
  *
  */
 
+#pragma warning(disable : 4995)
 #include <windows.h>
 #include <commdlg.h>
 #include <bdatypes.h>
@@ -724,10 +725,10 @@ void CTimeShifting::WriteFakePAT()
   
   int len=17;
   DWORD crc= crc32((char*)&pat[5],len-5);
-  pat[len]=(crc>>24)&0xff;
-  pat[len+1]=(crc>>16)&0xff;
-  pat[len+2]=(crc>>8)&0xff;
-  pat[len+3]=(crc)&0xff;
+  pat[len]=(byte)((crc>>24)&0xff);
+  pat[len+1]=(byte)((crc>>16)&0xff);
+  pat[len+2]=(byte)((crc>>8)&0xff);
+  pat[len+3]=(byte)((crc)&0xff);
   Write(pat,188);
 }
 
@@ -829,10 +830,10 @@ void CTimeShifting::WriteFakePMT()
   pmt[7]=section_length&0xff;
 
   DWORD crc= crc32((char*)&pmt[5],offset-5);
-  pmt[offset++]=(crc>>24)&0xff;
-  pmt[offset++]=(crc>>16)&0xff;
-  pmt[offset++]=(crc>>8)&0xff;
-  pmt[offset++]=(crc)&0xff;
+  pmt[offset++]=(byte)((crc>>24)&0xff);
+  pmt[offset++]=(byte)((crc>>16)&0xff);
+  pmt[offset++]=(byte)((crc>>8)&0xff);
+  pmt[offset++]=(byte)((crc)&0xff);
   Write(pmt,188);
 }
 
@@ -905,11 +906,11 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 
 	
   UINT64 pcrHi=pcrNew - m_startPcr;
-  tsPacket[6] = ((pcrHi>>25)&0xff);
-  tsPacket[7] = ((pcrHi>>17)&0xff);
-  tsPacket[8] = ((pcrHi>>9)&0xff);
-  tsPacket[9] = ((pcrHi>>1)&0xff);
-  tsPacket[10]=	 (pcrHi&0x1);
+  tsPacket[6] = (byte)(((pcrHi>>25)&0xff));
+  tsPacket[7] = (byte)(((pcrHi>>17)&0xff));
+  tsPacket[8] = (byte)(((pcrHi>>9)&0xff));
+  tsPacket[9] = (byte)(((pcrHi>>1)&0xff));
+  tsPacket[10]=	(byte)( (pcrHi&0x1));
   tsPacket[11]=0;
 //	LogDebug("pcr: org:%x new:%x start:%x", (DWORD)pcrBaseHigh,(DWORD)pcrHi,(DWORD)m_startPcr);
 	pcrLogCount++;
@@ -950,22 +951,22 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr
 		
 		byte marker=0x21;
 		if (dts!=0) marker=0x31;
-		pesHeader[13]=(((pts&0x7f)<<1)+1); pts>>=7;
-		pesHeader[12]= (pts&0xff);				  pts>>=8;
-		pesHeader[11]=(((pts&0x7f)<<1)+1); pts>>=7;
-		pesHeader[10]=(pts&0xff);					pts>>=8;
-		pesHeader[9]= (((pts&7)<<1)+marker); 
+		pesHeader[13]=(byte)((((pts&0x7f)<<1)+1)); pts>>=7;
+		pesHeader[12]=(byte)( (pts&0xff));				  pts>>=8;
+		pesHeader[11]=(byte)((((pts&0x7f)<<1)+1)); pts>>=7;
+		pesHeader[10]=(byte)((pts&0xff));					pts>>=8;
+		pesHeader[9]=(byte)( (((pts&7)<<1)+marker)); 
 	}
 	if (dts >0LL)
 	{
 		if (dts > startPcr) 
 			dts = (UINT64)( ((UINT64)dts) - ((UINT64)startPcr) );
 		else dts=0LL;
-		pesHeader[18]=(((dts&0x7f)<<1)+1); dts>>=7;
-		pesHeader[17]= (dts&0xff);				  dts>>=8;
-		pesHeader[16]=(((dts&0x7f)<<1)+1); dts>>=7;
-		pesHeader[15]=(dts&0xff);					dts>>=8;
-		pesHeader[14]= (((dts&7)<<1)+0x11); 
+		pesHeader[18]=(byte)((((dts&0x7f)<<1)+1)); dts>>=7;
+		pesHeader[17]=(byte)( (dts&0xff));				  dts>>=8;
+		pesHeader[16]=(byte)((((dts&0x7f)<<1)+1)); dts>>=7;
+		pesHeader[15]=(byte)((dts&0xff));					dts>>=8;
+		pesHeader[14]=(byte)( (((dts&7)<<1)+0x11)); 
 	}
 }
 

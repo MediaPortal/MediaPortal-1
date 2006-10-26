@@ -18,6 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma warning(disable : 4995)
 #include <windows.h>
 #include <streams.h>
 #include <bdatypes.h>
@@ -82,7 +83,7 @@ bool CVirtualChannelTableParser::GetChannel(int index,CChannelInfo& info)
 
 bool CVirtualChannelTableParser::GetChannelInfo(int serviceId,CChannelInfo& info)
 {
-	for (int i=0; i < m_vecChannels.size();++i)
+	for (int i=0; i < (int)m_vecChannels.size();++i)
 	{
 		if (m_vecChannels[i].ServiceId==serviceId)
 		{
@@ -260,12 +261,12 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
 
   try
   {
-    for (int ch1=0; ch1 < m_vecChannels.size();++ch1)
+    for (int ch1=0; ch1 < (int)m_vecChannels.size();++ch1)
     {
       int nr=1;
       CChannelInfo& infoCh1 = m_vecChannels[ch1];
 
-      for (int ch2=0; ch2 < m_vecChannels.size();++ch2)
+      for (int ch2=0; ch2 < (int)m_vecChannels.size();++ch2)
       {
         if (ch2==ch1) continue;
         CChannelInfo& infoCh2 = m_vecChannels[ch2];

@@ -1,4 +1,5 @@
 #pragma warning(disable: 4786)
+#pragma warning(disable : 4995)
 #include <streams.h>
 #include <bdatypes.h>
 #include <time.h>
@@ -59,8 +60,12 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 		int last_table_id=buf[13];
 
 
-
-		unsigned long key=(network_id<<32)+(transport_id<<16)+service_id;
+    unsigned long lNetworkId=network_id;
+    unsigned long lTransport_id=transport_id;
+    unsigned long lServiceId=service_id;
+		unsigned long key=(unsigned long)(lNetworkId<<32UL);
+    key+=(lTransport_id<<16);
+    key+=lServiceId;
 		//LogDebug("DecodeEPG():key %x",key);
 		imapEPG it=m_mapEPG.find(key);
 		if (it==m_mapEPG.end())

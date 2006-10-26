@@ -18,6 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma warning(disable : 4995)
 #include <windows.h>
 #include <commdlg.h>
 #include <bdatypes.h>
@@ -44,7 +45,7 @@ CPatParser::~CPatParser(void)
 
 void  CPatParser::CleanUp()
 {
-  for (int i=0; i < m_pmtParsers.size();++i)
+  for (int i=0; i < (int)m_pmtParsers.size();++i)
   {
     CPmtParser* parser=m_pmtParsers[i];
     delete parser;
@@ -77,7 +78,7 @@ BOOL CPatParser::IsReady()
   }
 	if (m_nitDecoder.Ready()==false) return FALSE;
   if (m_pmtParsers.size()==false) return FALSE;
-  for (int i=0; i < m_pmtParsers.size();++i)
+  for (int i=0; i < (int)m_pmtParsers.size();++i)
   {
     CPmtParser* parser=m_pmtParsers[i];
     if (false==parser->Ready()) return FALSE;
@@ -136,7 +137,7 @@ void CPatParser::OnTsPacket(byte* tsPacket)
 	m_nitDecoder.OnTsPacket(tsPacket);
   m_vctParser.OnTsPacket(tsPacket);
   m_sdtParser.OnTsPacket(tsPacket);
-  for (int i=0; i < m_pmtParsers.size();++i)
+  for (int i=0; i < (int)m_pmtParsers.size();++i)
   {
     CPmtParser* parser=m_pmtParsers[i];
     parser->OnTsPacket(tsPacket);
@@ -178,7 +179,7 @@ void CPatParser::OnNewSection(CSection& sections)
 	  }
 
 	  bool found=false;
-	  for (int idx=0; idx < m_pmtParsers.size(); idx++)
+	  for (int idx=0; idx < (int)m_pmtParsers.size(); idx++)
 	  {
 		  CPmtParser* pmtParser = m_pmtParsers[idx];
 		  if (pmtParser->GetPid() == pmtPid)
@@ -238,7 +239,7 @@ void CPatParser::UpdateHwPids()
 	pids.push_back(0x11);//sdt
 	pids.push_back(0x1ffb);//atsc virtual channel table
 	pids.push_back(0x1fff);//padding stream..
-	for (int i=0; i < m_pmtParsers.size();++i)
+	for (int i=0; i < (int)m_pmtParsers.size();++i)
 	{
 		CPmtParser* parser = m_pmtParsers[i];
 		if (parser->Ready() == false)
@@ -249,7 +250,7 @@ void CPatParser::UpdateHwPids()
 	}
 	char buf[1024];
 	strcpy(buf,"");
-	for (int i=0; i < pids.size();++i)
+	for (int i=0; i < (int)pids.size();++i)
 	{
 		char tmp[100];
 		sprintf(tmp,"%x,", pids[i]);

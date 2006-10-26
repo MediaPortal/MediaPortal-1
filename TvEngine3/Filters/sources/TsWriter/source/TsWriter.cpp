@@ -19,6 +19,7 @@
  *
  */
 
+#pragma warning(disable : 4995)
 #include <windows.h>
 #include <commdlg.h>
 #include <bdatypes.h>
