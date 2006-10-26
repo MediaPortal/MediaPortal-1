@@ -18,7 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#pragma warning(disable : 4995)
+#pragma warning(disable : 4995 4996)
 #include <windows.h>
 #include <commdlg.h>
 #include <bdatypes.h>
