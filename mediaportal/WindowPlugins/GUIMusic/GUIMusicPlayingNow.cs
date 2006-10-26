@@ -207,11 +207,11 @@ namespace MediaPortal.GUI.Music
 
       // Remove pending requests from the request queue
       if (_lastAlbumRequest != null)
-        InfoScrobbler.RemoveRequestAsync(_lastAlbumRequest);
+        InfoScrobbler.RemoveRequest(_lastAlbumRequest);
       if (_lastArtistRequest != null)
-        InfoScrobbler.RemoveRequestAsync(_lastArtistRequest);
+        InfoScrobbler.RemoveRequest(_lastArtistRequest);
       if (_lastTagRequest != null)
-        InfoScrobbler.RemoveRequestAsync(_lastTagRequest);
+        InfoScrobbler.RemoveRequest(_lastTagRequest);
 
       ImagePathContainer.Clear();
       ClearVisualizationImages();
@@ -676,7 +676,7 @@ namespace MediaPortal.GUI.Music
                                         new AlbumInfoRequest.AlbumInfoRequestHandler(OnUpdateAlbumInfoCompleted)
                                         );
         _lastAlbumRequest = request;
-        InfoScrobbler.AddRequestAsync(request);
+        InfoScrobbler.AddRequest(request);
       }
     }
 
@@ -701,7 +701,7 @@ namespace MediaPortal.GUI.Music
                                         new ArtistInfoRequest.ArtistInfoRequestHandler(OnUpdateArtistInfoCompleted)
                                         );
         _lastArtistRequest = request;
-        InfoScrobbler.AddRequestAsync(request);
+        InfoScrobbler.AddRequest(request);
       }
     }
 
@@ -730,7 +730,7 @@ namespace MediaPortal.GUI.Music
                                         new TagInfoRequest.TagInfoRequestHandler(OnUpdateTagInfoCompleted)
                                         );
         _lastTagRequest = request;
-        InfoScrobbler.AddRequestAsync(request);
+        InfoScrobbler.AddRequest(request);
       }
     }
 
