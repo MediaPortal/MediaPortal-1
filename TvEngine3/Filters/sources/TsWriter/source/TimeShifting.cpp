@@ -373,11 +373,8 @@ STDMETHODIMP CTimeShifting::Start()
 		m_bTimeShifting=true;
 		if (m_timeShiftMode==TransportStream)
 		{
-			for (int i=0; i < 20;++i)
-			{
-				WriteFakePAT();
-				WriteFakePMT();
-			}
+			WriteFakePAT();
+			WriteFakePMT();
 		}
 	}
 	catch(...)
@@ -840,6 +837,7 @@ void CTimeShifting::WriteFakePMT()
 void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 {
   if (header.PayLoadOnly()) return;
+	//LogDebug("pcr:%x: (%d) %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x ",header.Pid,header.PayLoadStart,tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5],tsPacket[6],tsPacket[7],tsPacket[8],tsPacket[9],tsPacket[10],tsPacket[11],tsPacket[12],tsPacket[13],tsPacket[14],tsPacket[15],tsPacket[16],tsPacket[17],tsPacket[18]);
   if (tsPacket[4]<7) return; //adaptation field length
   if (tsPacket[5]!=0x10) return;
 
@@ -912,7 +910,7 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
   tsPacket[9] = (byte)(((pcrHi>>1)&0xff));
   tsPacket[10]=	(byte)( (pcrHi&0x1));
   tsPacket[11]=0;
-//	LogDebug("pcr: org:%x new:%x start:%x", (DWORD)pcrBaseHigh,(DWORD)pcrHi,(DWORD)m_startPcr);
+	//LogDebug("pcr: org:%x new:%x start:%x", (DWORD)pcrBaseHigh,(DWORD)pcrHi,(DWORD)m_startPcr);
 	pcrLogCount++;
 
 }
@@ -920,6 +918,7 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr)
 {
   if (false==header.PayloadUnitStart) return;
+//	LogDebug("pid:%x: (%d) %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x ",header.Pid,header.PayLoadStart,tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5],tsPacket[6],tsPacket[7],tsPacket[8],tsPacket[9],tsPacket[10],tsPacket[11],tsPacket[12],tsPacket[13],tsPacket[14],tsPacket[15],tsPacket[16],tsPacket[17],tsPacket[18]);
   int start=header.PayLoadStart;
   if (tsPacket[start] !=0 || tsPacket[start+1] !=0  || tsPacket[start+2] !=1) return; 
 
@@ -947,7 +946,7 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr
 		if (pts > startPcr) 
 			pts = (UINT64)( ((UINT64)pts) - ((UINT64)startPcr) );
 		else pts=0LL;
-	//	LogDebug("pts: org:%I64d new:%I64d start:%I64d pid:%x", ptsorg,pts,startPcr,header.Pid);
+		//LogDebug("pts: org:%x new:%x start:%x pid:%x", (DWORD)ptsorg,(DWORD)pts,(DWORD)startPcr,header.Pid);
 		
 		byte marker=0x21;
 		if (dts!=0) marker=0x31;

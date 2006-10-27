@@ -302,7 +302,7 @@ STDMETHODIMP CTechnotrend::DescrambleService( int serviceId,BOOL* succeeded)
     hr = bdaapiCIReadPSIFastDrvDemux(m_hBdaApi, (WORD)serviceId);
     if (hr==RET_SUCCESS)
     {
-      if (m_ciStatus==RET_SUCCESS)
+      if (m_ciStatus==RET_SUCCESS||m_ciStatus==5)
       {
         *succeeded=TRUE;
         LogDebug("TechnoTrend: service decoded:%x %d",hr,m_ciStatus);
