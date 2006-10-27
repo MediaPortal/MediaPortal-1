@@ -105,7 +105,7 @@ namespace SetupTv.Sections
       }
       catch (Exception)
       {
-        MessageBox.Show("Unable to access service. Is the TvService running??");
+        MessageBox.Show(this,"Unable to access service. Is the TvService running??");
         return;
       }
     }
@@ -146,31 +146,31 @@ namespace SetupTv.Sections
           switch (result)
           {
             case TvResult.CardIsDisabled:
-              MessageBox.Show("Card is not enabled");
+              MessageBox.Show(this,"Card is not enabled");
               break;
             case TvResult.AllCardsBusy:
-              MessageBox.Show("All cards are busy");
+              MessageBox.Show(this,"All cards are busy");
               break;
             case TvResult.ChannelIsScrambled:
-              MessageBox.Show("Channel is scrambled");
+              MessageBox.Show(this,"Channel is scrambled");
               break;
             case TvResult.NoVideoAudioDetected:
-              MessageBox.Show("No Video/Audio detected");
+              MessageBox.Show(this,"No Video/Audio detected");
               break;
             case TvResult.UnableToStartGraph:
-              MessageBox.Show("Unable to create/start graph");
+              MessageBox.Show(this,"Unable to create/start graph");
               break;
             case TvResult.ChannelNotMappedToAnyCard:
-              MessageBox.Show("Channel is not mapped to any card");
+              MessageBox.Show(this,"Channel is not mapped to any card");
               break;
             case TvResult.NoTuningDetails:
-              MessageBox.Show("No tuning information available for this channel");
+              MessageBox.Show(this,"No tuning information available for this channel");
               break;
             case TvResult.UnknownChannel:
-              MessageBox.Show("Unknown channel");
+              MessageBox.Show(this,"Unknown channel");
               break;
             case TvResult.UnknownError:
-              MessageBox.Show("Unknown error occured");
+              MessageBox.Show(this,"Unknown error occured");
               break;
           }
         }
@@ -302,7 +302,7 @@ namespace SetupTv.Sections
       }
       catch (Exception)
       {
-        MessageBox.Show("Unable to access service. Is the TvService running??");
+        MessageBox.Show(this,"Unable to access service. Is the TvService running??");
       }
     }
 

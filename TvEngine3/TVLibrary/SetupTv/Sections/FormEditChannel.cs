@@ -256,19 +256,39 @@ namespace SetupTv.Sections
       switch (tabControl1.SelectedIndex)
       {
         case 1:
-          if (_analog == false) tabControl1.SelectedIndex = 0;
+          if (_analog == false)
+          {
+            tabControl1.SelectedIndex = 0;
+            MessageBox.Show(this,"No analog tuning details available for this channel");
+          }
           break;
         case 2:
-          if (_dvbc == false) tabControl1.SelectedIndex = 0;
+          if (_dvbc == false)
+          {
+            tabControl1.SelectedIndex = 0;
+            MessageBox.Show(this, "No DVB-C tuning details available for this channel");
+          }
           break;
         case 3:
-          if (_dvbs == false) tabControl1.SelectedIndex = 0;
+          if (_dvbs == false)
+          {
+            tabControl1.SelectedIndex = 0;
+            MessageBox.Show(this, "No DVB-S tuning details available for this channel");
+          }
           break;
         case 4:
-          if (_dvbt == false) tabControl1.SelectedIndex = 0;
+          if (_dvbt == false)
+          {
+            tabControl1.SelectedIndex = 0;
+            MessageBox.Show(this, "No DVB-T tuning details available for this channel");
+          }
           break;
         case 5:
-          if (_atsc == false) tabControl1.SelectedIndex = 0;
+          if (_atsc == false)
+          {
+            tabControl1.SelectedIndex = 0;
+            MessageBox.Show(this, "No ATSC tuning details available for this channel");
+          }
           break;
       }
     }

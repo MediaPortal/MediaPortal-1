@@ -372,7 +372,7 @@ namespace SetupTv.Sections
       Channel channel = (Channel)mpListView1.Items[indexes[0]].Tag;
       FormEditChannel dlg = new FormEditChannel();
       dlg.Channel = channel;
-      dlg.ShowDialog();
+      dlg.ShowDialog(this);
       channel.Persist();
       OnSectionActivated();
     }
@@ -520,7 +520,7 @@ namespace SetupTv.Sections
       rootElement.AppendChild(nodechannels);
       xmlDoc.AppendChild(rootElement);
       xmlDoc.Save("export.xml");
-      MessageBox.Show("Channels exported to 'export.xml'");
+      MessageBox.Show(this,"Channels exported to 'export.xml'");
     }
 
     private void mpButtonExpert_Click(object sender, EventArgs e)
@@ -537,7 +537,7 @@ namespace SetupTv.Sections
       openFileDialog1.FileName = "export.xml";
       openFileDialog1.AddExtension = true;
       openFileDialog1.Multiselect = false;
-      if (openFileDialog1.ShowDialog() != DialogResult.OK) return;
+      if (openFileDialog1.ShowDialog(this) != DialogResult.OK) return;
       CountryCollection collection = new CountryCollection();
       TvBusinessLayer layer = new TvBusinessLayer();
       try
@@ -701,7 +701,7 @@ namespace SetupTv.Sections
       }
       catch (Exception)
       {
-        MessageBox.Show("Not a valid channel list");
+        MessageBox.Show(this,"Not a valid channel list");
       }
       OnSectionActivated();
     }

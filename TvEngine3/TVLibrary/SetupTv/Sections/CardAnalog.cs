@@ -123,7 +123,7 @@ namespace SetupTv.Sections
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
       if (card.Enabled == false)
       {
-        MessageBox.Show("Card is disabled, please enable the card before scanning");
+        MessageBox.Show(this,"Card is disabled, please enable the card before scanning");
         return;
       }
       Thread scanThread = new Thread(new ThreadStart(DoTvScan));
@@ -207,7 +207,7 @@ namespace SetupTv.Sections
       radioChannel.IsRadio = true;
       if (!RemoteControl.Instance.CanTune(_cardNumber, radioChannel))
       {
-        MessageBox.Show("The Tv Card does not support radio");
+        MessageBox.Show(this,"The Tv Card does not support radio");
         return;
       }
       Thread scanThread = new Thread(new ThreadStart(DoRadioScan));
@@ -414,7 +414,7 @@ namespace SetupTv.Sections
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput3;
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel);
-      MessageBox.Show("Channels added.");
+      MessageBox.Show(this,"Channels added.");
 
     }
   }

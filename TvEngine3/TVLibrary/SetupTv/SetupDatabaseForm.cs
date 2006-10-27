@@ -78,7 +78,7 @@ namespace SetupTv
       }
       catch (Exception)
       {
-        MessageBox.Show("gentle.config file not found!");
+        MessageBox.Show(this,"gentle.config file not found!");
       }
     }
     private void SetupDatabaseForm_Load(object sender, EventArgs e)
@@ -157,7 +157,7 @@ namespace SetupTv
       }
       catch (Exception ex)
       {
-        MessageBox.Show("Unable to create database:" + ex.Message);
+        MessageBox.Show(this,"Unable to create database:" + ex.Message);
       }
       SqlConnection.ClearAllPools();
     }
@@ -174,11 +174,11 @@ namespace SetupTv
       }
       catch (Exception ex)
       {
-        MessageBox.Show("Connection failed!" + ex.Message);
+        MessageBox.Show(this,"Connection failed!" + ex.Message);
         return;
       }
       SqlConnection.ClearAllPools();
-      MessageBox.Show("Connection succeeded!");
+      MessageBox.Show(this,"Connection succeeded!");
     }
     void Save()
     {
@@ -199,12 +199,12 @@ namespace SetupTv
     {
       if (mpTextBoxServer.Text.ToLower().IndexOf("localhost") > 0)
       {
-        MessageBox.Show("Please specify the hostname or ipadress for the server. not Localhost");
+        MessageBox.Show(this,"Please specify the hostname or ipadress for the server. not Localhost");
         return;
       }
       if (mpTextBoxServer.Text.ToLower().IndexOf("127.0.0.1") > 0)
       {
-        MessageBox.Show("Please specify the hostname or ipadress for the server. not 127.0.0.1");
+        MessageBox.Show(this,"Please specify the hostname or ipadress for the server. not 127.0.0.1");
         return;
       }
       Save();

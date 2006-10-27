@@ -407,7 +407,7 @@ namespace SetupTv.Sections
       dlg.SelectedPath = textBoxFolder.Text;
       dlg.Description = "Specify recording folder";
       dlg.ShowNewFolderButton = true;
-      if (dlg.ShowDialog() == DialogResult.OK)
+      if (dlg.ShowDialog(this) == DialogResult.OK)
       {
         textBoxFolder.Text = dlg.SelectedPath;
         CardInfo info = (CardInfo)comboBoxCards.SelectedItem;

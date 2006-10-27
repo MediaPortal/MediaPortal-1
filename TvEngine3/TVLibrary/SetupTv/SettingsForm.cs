@@ -109,7 +109,7 @@ namespace SetupTv
               }
               catch
               {
-                MessageBox.Show("Unable to connect to " + RemoteControl.HostName);
+                MessageBox.Show(this,"Unable to connect to " + RemoteControl.HostName);
               }
             }
             break;

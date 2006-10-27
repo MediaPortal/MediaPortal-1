@@ -124,7 +124,7 @@ namespace SetupTv.Sections
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
       if (card.Enabled == false)
       {
-        MessageBox.Show("Card is disabled, please enable the card before scanning");
+        MessageBox.Show(this,"Card is disabled, please enable the card before scanning");
         return;
       }
       Thread scanThread = new Thread(new ThreadStart(DoScan));

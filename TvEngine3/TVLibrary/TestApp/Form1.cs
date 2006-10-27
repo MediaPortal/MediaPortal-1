@@ -197,7 +197,7 @@ namespace TestApp
     {
       if ((_currentCard as TvCardAnalog) != null)
       {
-        MessageBox.Show("Scanning is not possible for analog tv cards");
+        MessageBox.Show(this,"Scanning is not possible for analog tv cards");
         return;
       }
       timer1.Enabled = false;
@@ -230,13 +230,13 @@ namespace TestApp
     {
       if ((_currentCard as TvCardAnalog) != null)
       {
-        MessageBox.Show("EPG grabbing is not possible for analog tv cards");
+        MessageBox.Show(this,"EPG grabbing is not possible for analog tv cards");
         return;
       }
      // ITVEPG epgGrabber = _currentCard.EpgInterface;
       // epgGrabber.OnEpgReceived += new EpgReceivedHandler(epgGrabber_OnEpgReceived);
       //epgGrabber.GrabEpg();
-      MessageBox.Show("Grabbing epg...");
+      MessageBox.Show(this,"Grabbing epg...");
     }
 
     void epgGrabber_OnEpgReceived(object sender, List<EpgChannel> epg)
@@ -260,7 +260,7 @@ namespace TestApp
           }
         }
       }
-      MessageBox.Show("Epg grabbed and save to epg.xml...");
+      MessageBox.Show(this,"Epg grabbed and save to epg.xml...");
     }
 
     private void buttonTimeShift_Click(object sender, EventArgs e)
@@ -268,7 +268,7 @@ namespace TestApp
       if (_currentCard.IsTimeShifting)
       {
         _currentCard.StopTimeShifting();
-        MessageBox.Show("Timeshifting stopped");
+        MessageBox.Show(this,"Timeshifting stopped");
       }
       else
       {
@@ -278,7 +278,7 @@ namespace TestApp
           System.IO.File.Delete(fileName);
         }
         _currentCard.StartTimeShifting(fileName);
-        MessageBox.Show("Timeshifting to:" + fileName);
+        MessageBox.Show(this,"Timeshifting to:" + fileName);
       }
     }
 
@@ -287,7 +287,7 @@ namespace TestApp
       if (_currentCard.IsRecording)
       {
         _currentCard.StopRecording();
-        MessageBox.Show("Recording stopped");
+        MessageBox.Show(this,"Recording stopped");
       }
       else
       {
@@ -297,7 +297,7 @@ namespace TestApp
           System.IO.File.Delete(fileName);
         }
         _currentCard.StartRecording(DirectShowLib.SBE.RecordingType.Content, fileName, 0);
-        MessageBox.Show("Recording to:" + fileName);
+        MessageBox.Show(this,"Recording to:" + fileName);
       }
     }
 
@@ -331,13 +331,13 @@ namespace TestApp
       _currentCard.GrabTeletext = true;
       if (_currentCard.TeletextDecoder == null || _currentCard.GrabTeletext == false)
       {
-        MessageBox.Show("This card does not support teletext");
+        MessageBox.Show(this,"This card does not support teletext");
         return;
       }
       _currentCard.TeletextDecoder.SetPageSize(400, 300);
       if (_currentCard.TeletextDecoder.NumberOfSubpages(0x100) < 0)
       {
-        MessageBox.Show("Page 100/0 not found (yet)");
+        MessageBox.Show(this,"Page 100/0 not found (yet)");
         return;
       }
       pictureBox1.Image = _currentCard.TeletextDecoder.GetPage(0x100, 0);
@@ -352,7 +352,7 @@ namespace TestApp
         _currentCard.StopTimeShifting();
         _stopStreaming = true;
         button3.Text = "Timeshift .ts";
-        MessageBox.Show("Stopped .ts timeshifting");
+        MessageBox.Show(this,"Stopped .ts timeshifting");
         return;
       }
       _currentCard.StartTimeShifting("live.ts");
@@ -370,7 +370,7 @@ namespace TestApp
         thread.Name = "Streaming thread";
         thread.Start();
       }
-      //MessageBox.Show("Timeshifting to live.ts");
+      //MessageBox.Show(this,"Timeshifting to live.ts");
     }
 
     private void button2_Click(object sender, EventArgs e)
@@ -379,12 +379,12 @@ namespace TestApp
       {
         _currentCard.StopRecording();
         button2.Text = "Record .mpg";
-        MessageBox.Show("Stopped recording");
+        MessageBox.Show(this,"Stopped recording");
         return;
       }
       _currentCard.StartRecording(DirectShowLib.SBE.RecordingType.Content, "recording.mpg", 0);
       button2.Text = "Stop .mpg record";
-      MessageBox.Show("Recording to recording.mpg");
+      MessageBox.Show(this,"Recording to recording.mpg");
     }
 
     protected void workerThread()

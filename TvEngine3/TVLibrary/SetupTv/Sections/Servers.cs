@@ -79,7 +79,7 @@ namespace SetupTv.Sections
       ListViewItem item = mpListView1.Items[index];
       Server server = (Server)item.Tag;
       server.Delete();
-      MessageBox.Show("Changes made require TvService to restart. Please restart the tvservice");
+      MessageBox.Show(this,"Changes made require TvService to restart. Please restart the tvservice");
       RemoteControl.Instance.Restart();
       OnSectionActivated();
     }
@@ -111,7 +111,7 @@ namespace SetupTv.Sections
         server.Persist();
       }
       RemoteControl.Instance.Restart();
-      MessageBox.Show("Changes made require TvService to restart. Please restart the tvservice");
+      MessageBox.Show(this,"Changes made require TvService to restart. Please restart the tvservice");
     }
 
     private void button1_Click(object sender, EventArgs e)
@@ -123,13 +123,13 @@ namespace SetupTv.Sections
 
       FormEditIpAdress dlg = new FormEditIpAdress();
       dlg.HostName = server.HostName;
-      if (dlg.ShowDialog() == DialogResult.OK)
+      if (dlg.ShowDialog(this) == DialogResult.OK)
       {
         item.Text = dlg.HostName;
         server.HostName = dlg.HostName;
         server.Persist();
         RemoteControl.Instance.Restart();
-        MessageBox.Show("Changes made require TvService to restart. Please restart the tvservice");
+        MessageBox.Show(this,"Changes made require TvService to restart. Please restart the tvservice");
       }
 
     }

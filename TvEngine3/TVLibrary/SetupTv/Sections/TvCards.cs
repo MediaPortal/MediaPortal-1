@@ -111,7 +111,7 @@ namespace SetupTv.Sections
       }
       catch (Exception)
       {
-        MessageBox.Show("Unable to access service. Is the TvService running??");
+        MessageBox.Show(this,"Unable to access service. Is the TvService running??");
       }
       ReOrder();
     }
