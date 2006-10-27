@@ -548,10 +548,14 @@ namespace TvLibrary.Implementations.Analog
 																  String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS0-0")};
       if (channel.Frequency == 0)
       {
-        //remove the frequency override
+        //remove the frequency override in 
         for (int index = 0; index < registryLocations.Length; index++)
         {
           using (RegistryKey registryKey = Registry.LocalMachine.CreateSubKey(registryLocations[index]))
+          {
+            registryKey.DeleteValue(channel.ChannelNumber.ToString(), false);
+          }
+          using (RegistryKey registryKey = Registry.CurrentUser.CreateSubKey(registryLocations[index]))
           {
             registryKey.DeleteValue(channel.ChannelNumber.ToString(), false);
           }
@@ -562,6 +566,10 @@ namespace TvLibrary.Implementations.Analog
       for (int index = 0; index < registryLocations.Length; index++)
       {
         using (RegistryKey registryKey = Registry.LocalMachine.CreateSubKey(registryLocations[index]))
+        {
+          registryKey.SetValue(channel.ChannelNumber.ToString(), (int)channel.Frequency);
+        }
+        using (RegistryKey registryKey = Registry.CurrentUser.CreateSubKey(registryLocations[index]))
         {
           registryKey.SetValue(channel.ChannelNumber.ToString(), (int)channel.Frequency);
         }
