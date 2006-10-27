@@ -704,11 +704,11 @@ void CTimeShifting::WriteFakePAT()
   pat[0]=0x47;
   pat[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
   pat[2]=(pid&0xff);
-  pat[3]=(AdaptionControl<<4) +m_iPatContinuityCounter;
-  pat[4]=0;
+  pat[3]=(AdaptionControl<<4) +m_iPatContinuityCounter;		//0x10
+  pat[4]=0;																								//0
 
-  pat[5]=tableId;//table id
-  pat[6]=0x80+((sectionLenght>>8)&0xf);
+  pat[5]=tableId;//table id																//0
+  pat[6]=0xb0+((sectionLenght>>8)&0xf);										//0xb0
   pat[7]=sectionLenght&0xff;
   pat[8]=(transportId>>8)&0xff;
   pat[9]=(transportId)&0xff;
