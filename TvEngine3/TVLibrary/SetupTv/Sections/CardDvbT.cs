@@ -91,7 +91,7 @@ namespace SetupTv.Sections
       progressBarLevel.Value = RemoteControl.Instance.SignalLevel(_cardNumber);
       progressBarQuality.Value = RemoteControl.Instance.SignalQuality(_cardNumber);
 
-      
+
     }
 
     public override void OnSectionActivated()
@@ -101,7 +101,7 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       mpComboBoxCountry.SelectedIndex = Int32.Parse(layer.GetSetting("dvbt" + _cardNumber.ToString() + "Country", "0").Value);
 
-      
+
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
       mpComboBoxCam.SelectedIndex = card.CamType;
     }
@@ -111,7 +111,7 @@ namespace SetupTv.Sections
     {
       base.OnSectionDeActivated();
       TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting=layer.GetSetting("dvbt" + _cardNumber.ToString() + "Country", "0");
+      Setting setting = layer.GetSetting("dvbt" + _cardNumber.ToString() + "Country", "0");
       setting.Value = mpComboBoxCountry.SelectedIndex.ToString();
 
       setting.Persist();
@@ -124,7 +124,7 @@ namespace SetupTv.Sections
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
       if (card.Enabled == false)
       {
-        MessageBox.Show(this,"Card is disabled, please enable the card before scanning");
+        MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
         return;
       }
       Thread scanThread = new Thread(new ThreadStart(DoScan));
@@ -136,6 +136,7 @@ namespace SetupTv.Sections
       int radioChannelsNew = 0;
       int tvChannelsUpdated = 0;
       int radioChannelsUpdated = 0;
+      int frequencyOffset = 0;
       try
       {
         RemoteControl.Instance.EpgGrabberEnabled = false;
@@ -144,21 +145,43 @@ namespace SetupTv.Sections
         Dictionary<int, int> frequencies = new Dictionary<int, int>();
         XmlDocument doc = new XmlDocument();
         doc.Load(@"TuningParameters\dvbt.xml");
-        XmlNodeList list = doc.SelectNodes("/dvbt/country");
-        foreach (XmlNode node in list)
+        XmlNodeList countryList = doc.SelectNodes("/dvbt/country");
+        foreach (XmlNode nodeCountry in countryList)
         {
-          XmlNode attribute = node.Attributes.GetNamedItem("name");
-          if (attribute.Value != mpComboBoxCountry.SelectedItem.ToString()) continue;
-          XmlNodeList nodesFreqs = node.SelectNodes("carrier");
-          foreach (XmlNode nodeFreq in nodesFreqs)
+          XmlNode nodeName = nodeCountry.Attributes.GetNamedItem("name");
+          if (nodeName.Value != mpComboBoxCountry.SelectedItem.ToString()) continue;
+          XmlNode nodeOffset = nodeCountry.Attributes.GetNamedItem("offset");
+          if (nodeOffset != null)
           {
-            string frequency = nodeFreq.Attributes.GetNamedItem("frequency").Value;
-            string bandwidth = "8";
-            if (nodeFreq.Attributes.GetNamedItem("bandwidth") != null)
+            if (nodeOffset.Value != null)
             {
-              bandwidth = nodeFreq.Attributes.GetNamedItem("bandwidth").Value;
+              if (Int32.TryParse(nodeOffset.Value, out frequencyOffset) == false)
+              {
+                frequencyOffset = 0;
+              }
             }
-            frequencies.Add(Int32.Parse(frequency), Int32.Parse(bandwidth));
+          }
+          XmlNodeList nodeFrequencyList = nodeCountry.SelectNodes("carrier");
+          foreach (XmlNode nodeFrequency in nodeFrequencyList)
+          {
+            string frequencyText = nodeFrequency.Attributes.GetNamedItem("frequency").Value;
+            string bandwidthText = "8";
+            if (nodeFrequency.Attributes.GetNamedItem("bandwidth") != null)
+            {
+              bandwidthText = nodeFrequency.Attributes.GetNamedItem("bandwidth").Value;
+            }
+            int frequency = Int32.Parse(frequencyText);
+            int bandWidth = Int32.Parse(bandwidthText);
+            if (frequencyOffset != 0)
+            {
+              frequencies.Add(frequency - frequencyOffset, bandWidth);
+              frequencies.Add(frequency, bandWidth);
+              frequencies.Add(frequency + frequencyOffset, bandWidth);
+            }
+            else
+            {
+              frequencies.Add(frequency, bandWidth);
+            }
           }
         }
         if (frequencies.Count == 0) return;
@@ -240,7 +263,7 @@ namespace SetupTv.Sections
             dbChannel.Persist();
             layer.AddChannelToGroup(dbChannel, channel.Provider);
             layer.AddTuningDetails(dbChannel, channel);
-            
+
             if (channel.IsTv)
             {
               if (exists)
@@ -286,8 +309,8 @@ namespace SetupTv.Sections
         RemoteControl.Instance.EpgGrabberEnabled = true;
       }
       ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
-       lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew, radioChannelsUpdated)));
-       lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));
+      lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew, radioChannelsUpdated)));
+      lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));
       lastItem.EnsureVisible();
     }
 
