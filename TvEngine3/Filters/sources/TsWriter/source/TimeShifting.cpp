@@ -823,7 +823,7 @@ void CTimeShifting::WriteFakePMT()
 
 
   unsigned section_length = (pmtLength );
-  pmt[6]=0x80+((section_length>>8)&0xf);
+  pmt[6]=0xb0+((section_length>>8)&0xf);
   pmt[7]=section_length&0xff;
 
   DWORD crc= crc32((char*)&pmt[5],offset-5);
