@@ -31,6 +31,7 @@ using System.Reflection;
 using System.IO;
 using System.Data;
 using System.Data.SqlClient;
+using TvLibrary.Log;
 
 namespace TvEngine
 {
@@ -78,7 +79,7 @@ namespace TvEngine
       }
       catch (Exception)
       {
-        MessageBox.Show("gentle.config file not found!");
+        Log.Error("TVMovie: gentle.config not found");
       }
     }
 
@@ -122,7 +123,7 @@ namespace TvEngine
       }
       catch (Exception ex)
       {
-        MessageBox.Show("Unable to create database:" + ex.Message);
+        Log.Error(string.Format("TVMovie: Unable to create database - {0}", ex.Message));
       }
       SqlConnection.ClearAllPools();
     }
