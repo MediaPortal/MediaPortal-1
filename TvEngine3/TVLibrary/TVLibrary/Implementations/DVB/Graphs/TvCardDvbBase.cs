@@ -264,8 +264,8 @@ namespace TvLibrary.Implementations.DVB
       {
         if (info.isAC3Audio || info.isAudio || info.isVideo || info.isDVBSubtitle)
         {
-          Log.Log.WriteFile("dvb: set timeshift {0}:{1}", info.stream_type,info);
-          timeshift.AddStream((short)info.pid, (short)info.stream_type,info.language);
+          Log.Log.WriteFile("dvb: set timeshift {0}:{1}", info.stream_type, info);
+          timeshift.AddStream((short)info.pid, (short)info.stream_type, info.language);
         }
       }
     }
@@ -1197,7 +1197,7 @@ namespace TvLibrary.Implementations.DVB
         _channelInfo.AddPid(audioInfo);
         _channelInfo.AddPid(videoInfo);
 
-        Log.Log.Write(" video:{0:X} audio:{1:X} pcr:{2:X} pmt:{3:X}",atscChannel.VideoPid, atscChannel.AudioPid, atscChannel.PcrPid, atscChannel.PmtPid);
+        Log.Log.Write(" video:{0:X} audio:{1:X} pcr:{2:X} pmt:{3:X}", atscChannel.VideoPid, atscChannel.AudioPid, atscChannel.PcrPid, atscChannel.PmtPid);
         SetMpegPidMapping(_channelInfo);
       }
       else
@@ -1721,9 +1721,15 @@ namespace TvLibrary.Implementations.DVB
           short titleCount;
           uint channelCount = 0;
           _interfaceEpgGrabber.GetMHWTitleCount(out titleCount);
-          if (titleCount > 0) mhwReady = true;
+          if (titleCount > 0)
+            mhwReady = true;
+          else
+            mhwReady = false;
           _interfaceEpgGrabber.GetEPGChannelCount(out channelCount);
-          if (channelCount > 0) dvbReady = true;
+          if (channelCount > 0)
+            dvbReady = true;
+          else
+            dvbReady = false;
           List<EpgChannel> epgChannels = new List<EpgChannel>();
           Log.Log.WriteFile("dvb:mhw ready MHW {0} titles found", titleCount);
           Log.Log.WriteFile("dvb:dvb ready.EPG {0} channels", channelCount);
@@ -1952,7 +1958,7 @@ namespace TvLibrary.Implementations.DVB
             {
               SetMpegPidMapping(_channelInfo);
             }
-          } 
+          }
         }
       }
       catch (Exception ex)
@@ -1976,7 +1982,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_conditionalAccess != null)
         {
-        //  _conditionalAccess.SendPids((DVBBaseChannel)_currentChannel, pids);
+          //  _conditionalAccess.SendPids((DVBBaseChannel)_currentChannel, pids);
         }
         return;
       }
@@ -2090,17 +2096,17 @@ namespace TvLibrary.Implementations.DVB
         {
           ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_filterTsAnalyzer;
           writer.SetAudioPid((short)audioStream.Pid);
-/*
-          ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
-          if (_currentAudioStream != null)
-          {
-            timeshift.RemoveStream((short)_currentAudioStream.Pid);
-          }
-          if (audioStream.StreamType == AudioStreamType.AC3)
-            timeshift.AddStream((short)audioStream.Pid, 0x81,audioStream.Language);
-          else
-            timeshift.AddStream((short)audioStream.Pid, 3, audioStream.Language);
-*/
+          /*
+                    ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
+                    if (_currentAudioStream != null)
+                    {
+                      timeshift.RemoveStream((short)_currentAudioStream.Pid);
+                    }
+                    if (audioStream.StreamType == AudioStreamType.AC3)
+                      timeshift.AddStream((short)audioStream.Pid, 0x81,audioStream.Language);
+                    else
+                      timeshift.AddStream((short)audioStream.Pid, 3, audioStream.Language);
+          */
         }
         _currentAudioStream = audioStream;
         _pmtVersion = -1;
@@ -2306,7 +2312,7 @@ namespace TvLibrary.Implementations.DVB
                     audioPid = _currentAudioStream.Pid;
                   }
 
-                  if (_conditionalAccess.SendPMT(_camType, (DVBBaseChannel)Channel, pmt, pmtLength, audioPid) )
+                  if (_conditionalAccess.SendPMT(_camType, (DVBBaseChannel)Channel, pmt, pmtLength, audioPid))
                   {
                     _pmtVersion = version;
                     Log.Log.WriteFile("dvb:cam flags:{0}", _conditionalAccess.IsCamReady());
@@ -2321,7 +2327,7 @@ namespace TvLibrary.Implementations.DVB
                   }
                 }
                 _pmtVersion = version;
-                
+
                 return true;
               }
             }

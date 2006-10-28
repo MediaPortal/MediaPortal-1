@@ -1035,9 +1035,15 @@ namespace TvLibrary.Implementations.DVB
           short titleCount;
           uint channelCount = 0;
           _interfaceEpgGrabber.GetMHWTitleCount(out titleCount);
-          if (titleCount > 0) mhwReady = true;
+          if (titleCount > 0)
+            mhwReady = true;
+          else
+            mhwReady = false;
           _interfaceEpgGrabber.GetEPGChannelCount(out channelCount);
-          if (channelCount > 0) dvbReady = true;
+          if (channelCount > 0)
+            dvbReady = true;
+          else
+            dvbReady = false;
           List<EpgChannel> epgChannels = new List<EpgChannel>();
           Log.Log.WriteFile("dvb:mhw ready MHW {0} titles found", titleCount);
           Log.Log.WriteFile("dvb:dvb ready.EPG {0} channels", channelCount);
