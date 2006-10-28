@@ -441,9 +441,6 @@
 		<id>178</id>
 		<value>트랙</value>
 	</string>
-	<d>
-		<value>확인</value>
-	</string>
 	<string>
 		<id>187</id>
 		<value>앨범이 발견되지 않았습니다.</value>
