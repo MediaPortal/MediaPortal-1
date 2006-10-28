@@ -36,9 +36,10 @@ namespace TvLibrary.Implementations.DVB
   public class ConditionalAccess
   {
     #region variables
-    DigitalEverywhere _digitalEveryWhere;
-    TechnoTrend _technoTrend;
-    Twinhan _twinhan;
+    DigitalEverywhere _digitalEveryWhere = null;
+    TechnoTrend _technoTrend = null;
+    Twinhan _twinhan = null;
+    Hauppauge _hauppauge=null;
     #endregion
 
     //ctor
@@ -79,6 +80,13 @@ namespace TvLibrary.Implementations.DVB
         }
         _technoTrend = null;
 
+        _hauppauge = new Hauppauge(tunerFilter, analyzerFilter);
+        if (_hauppauge.IsHauppauge)
+        {
+          Log.Log.WriteFile("Hauppauge card detected");
+          return;
+        }
+        _hauppauge = null;
       }
       catch (Exception ex)
       {
@@ -192,6 +200,10 @@ namespace TvLibrary.Implementations.DVB
         if (_technoTrend != null)
         {
           _technoTrend.SendDiseqCommand(channel);
+        }
+        if (_hauppauge != null)
+        {
+          _hauppauge.SendDiseqCommand(channel);
         }
       }
       catch (Exception ex)
