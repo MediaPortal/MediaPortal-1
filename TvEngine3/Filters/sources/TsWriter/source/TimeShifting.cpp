@@ -778,7 +778,7 @@ void CTimeShifting::WriteFakePMT()
 		if (serviceType==SERVICE_TYPE_AUDIO_AC3)
 		{
 			//AC3 is represented as normal audio stream type
-			serviceType=SERVICE_TYPE_AUDIO_MPEG2;
+			//serviceType=SERVICE_TYPE_AUDIO_MPEG2;
 		}
     pmt[offset++]=serviceType;
     pmt[offset++]=(info.fakePid>>8)&0x1F; // reserved; elementary_pid (high)
