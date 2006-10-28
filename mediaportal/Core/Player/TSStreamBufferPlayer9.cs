@@ -296,7 +296,7 @@ namespace MediaPortal.Player
         Log.Info("TSStreamBufferPlayer9:initialize tsfilesource");
         try
         {
-          using (RegistryKey hklm = Registry.LocalMachine)
+          using (RegistryKey hklm = Registry.CurrentUser)
           {
             using (RegistryKey settings = hklm.OpenSubKey(@"SOFTWARE\TSFileSource\settings\default", true))
             {
@@ -329,6 +329,7 @@ namespace MediaPortal.Player
                 Log.Info("set tsfilesource to auto mode");
                 settings.SetValue("enableAuto", valueOne, RegistryValueKind.Binary);
               }
+              settings.SetValue("enableInsertMode", valueZero, RegistryValueKind.Binary);
               settings.SetValue("enableDelay", valueZero, RegistryValueKind.Binary);
               settings.SetValue("enableFixedAR", valueOne, RegistryValueKind.Binary);
               settings.SetValue("enableMP2", valueZero, RegistryValueKind.Binary);
