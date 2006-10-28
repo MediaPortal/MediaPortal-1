@@ -787,14 +787,13 @@ void CTimeShifting::WriteFakePMT()
 		pmtLength+=4;
 		if (info.serviceType==SERVICE_TYPE_AUDIO_AC3)
 		{
-			strcpy(info.language,"");
 			int esLen=0;
 			pmt[offset++]=esLen+2;						// ES_info_length (low)
 			pmt[offset++]=DESCRIPTOR_DVB_AC3; // descriptor indicator
 			pmt[offset++]=esLen;
 			pmtLength+=3;
 		}
-		if (info.serviceType==SERVICE_TYPE_DVB_SUBTITLES1 || info.serviceType==SERVICE_TYPE_DVB_SUBTITLES2)
+		else if (info.serviceType==SERVICE_TYPE_DVB_SUBTITLES1 || info.serviceType==SERVICE_TYPE_DVB_SUBTITLES2)
 		{ 
 			int esLen=strlen(info.language)+5;
 			pmt[offset++]=esLen+2;   // ES_info_length (low)
