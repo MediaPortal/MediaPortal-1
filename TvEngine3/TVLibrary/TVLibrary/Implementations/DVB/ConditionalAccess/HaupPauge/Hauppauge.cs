@@ -200,19 +200,19 @@ namespace TvLibrary.Implementations.DVB
         diseqc &= 0xFFFFFFF7;
 
 
-      int len = 176;//sizeof(DISEQC_MESSAGE_PARAMS);
+      int len = 188;//sizeof(DISEQC_MESSAGE_PARAMS);
 
       Marshal.WriteByte(_ptrDiseqc, 0, (byte)((diseqc >> 24) & 0xff));
       Marshal.WriteByte(_ptrDiseqc, 1, (byte)((diseqc >> 16) & 0xff));
       Marshal.WriteByte(_ptrDiseqc, 2, (byte)((diseqc >> 8) & 0xff));
       Marshal.WriteByte(_ptrDiseqc, 3, (byte)(diseqc & 0xff));
-      Marshal.WriteInt32(_ptrDiseqc, 160, (Int32)4);
-      Marshal.WriteInt32(_ptrDiseqc, 164, (Int32)0);
-      Marshal.WriteInt32(_ptrDiseqc, 168, (Int32)3);
-      Marshal.WriteByte(_ptrDiseqc, 172, 1);
-      Marshal.WriteByte(_ptrDiseqc, 173, (int)DisEqcVersion.DISEQC_VER_1X);
-      Marshal.WriteByte(_ptrDiseqc, 174, (int)RxMode.RXMODE_NOREPLY);
-      Marshal.WriteByte(_ptrDiseqc, 175, 1);
+      Marshal.WriteInt32(_ptrDiseqc, 160, (Int32)4);//send_message_length
+      Marshal.WriteInt32(_ptrDiseqc, 164, (Int32)0);//receive_message_length
+      Marshal.WriteInt32(_ptrDiseqc, 168, (Int32)3);//amplitude_attenuation
+      Marshal.WriteByte(_ptrDiseqc, 172, 1);//tone_burst_modulated
+      Marshal.WriteByte(_ptrDiseqc, 176, (int)DisEqcVersion.DISEQC_VER_1X);
+      Marshal.WriteByte(_ptrDiseqc, 180, (int)RxMode.RXMODE_NOREPLY);
+      Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message
 
       int hr=_propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc, len, _ptrDiseqc, len);
       Log.Log.Info("hauppauge: setdiseqc returned:{0:X}", hr);
