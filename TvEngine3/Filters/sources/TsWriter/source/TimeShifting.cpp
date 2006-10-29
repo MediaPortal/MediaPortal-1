@@ -777,11 +777,11 @@ void CTimeShifting::WriteFakePMT()
 		int serviceType=info.serviceType;
 		if (serviceType==SERVICE_TYPE_AUDIO_AC3)
 		{
-			//AC3 is represented as normal audio stream type
-			//serviceType=SERVICE_TYPE_AUDIO_MPEG2;
+			//AC3 is represented as stream type 6
+			serviceType=SERVICE_TYPE_DVB_SUBTITLES2;
 		}
     pmt[offset++]=serviceType;
-    pmt[offset++]=(info.fakePid>>8)&0x1F; // reserved; elementary_pid (high)
+    pmt[offset++]=0xe0+((info.fakePid>>8)&0x1F); // reserved; elementary_pid (high)
     pmt[offset++]=(info.fakePid)&0xff; // elementary_pid (low)
     pmt[offset++]=0xF0;// reserved; ES_info_length (high)
 		pmtLength+=4;
