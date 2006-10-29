@@ -398,10 +398,10 @@ namespace TvLibrary.Implementations.DVB
 
           if (hr != 0)
           {
-            Log.Log.WriteFile("SetStructure() failed 0x{0:X}", hr);
+            Log.Log.WriteFile("Twinhan: cam failed 0x{0:X}", hr);
           }
           else
-            Log.Log.WriteFile("SetStructure() returned ok 0x{0:X}", hr);
+            Log.Log.WriteFile("Twinhan: cam returned ok 0x{0:X}", hr);
           Marshal.ReleaseComObject(propertySet);
 
         }
@@ -499,10 +499,10 @@ namespace TvLibrary.Implementations.DVB
 
           if (hr != 0)
           {
-            Log.Log.WriteFile("SetStructure() failed 0x{0:X}", hr);
+            Log.Log.WriteFile("TwinHan diseqc failed 0x{0:X}", hr);
           }
           else
-            Log.Log.WriteFile("SetStructure() returned ok 0x{0:X}", hr);
+            Log.Log.WriteFile("TwinHan diseqc ok 0x{0:X}", hr);
           Marshal.ReleaseComObject(propertySet);
 
         }
