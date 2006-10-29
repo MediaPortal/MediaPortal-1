@@ -838,7 +838,7 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
   if (header.PayLoadOnly()) return;
 	//LogDebug("pcr:%x: (%d) %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x ",header.Pid,header.PayLoadStart,tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5],tsPacket[6],tsPacket[7],tsPacket[8],tsPacket[9],tsPacket[10],tsPacket[11],tsPacket[12],tsPacket[13],tsPacket[14],tsPacket[15],tsPacket[16],tsPacket[17],tsPacket[18]);
   if (tsPacket[4]<7) return; //adaptation field length
-  if (tsPacket[5]!=0x10) return;
+  if ((tsPacket[5] & 0x10) ==0 ) return;
 
 
 /*
@@ -901,17 +901,23 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 	  m_highestPcr=pcrNew;
   }
 
-	
+	//0  1  2  3  4  5  6  7   8  9  10 11 
+	//47 09 0e 36 07 10 1e 0e  6b c1 7e 6b 9e 5d bb 17
+	//  program_clock_reference:
+	//  baseH: 0 (0x00)
+	//  baseL: 1008523138 (0x3c1cd782)
+	//  reserved: 63 (0x3f)
+	//  extension: 107 (0x006b)
+
   UINT64 pcrHi=pcrNew - m_startPcr;
   tsPacket[6] = (byte)(((pcrHi>>25)&0xff));
   tsPacket[7] = (byte)(((pcrHi>>17)&0xff));
   tsPacket[8] = (byte)(((pcrHi>>9)&0xff));
   tsPacket[9] = (byte)(((pcrHi>>1)&0xff));
-  tsPacket[10]=	(byte)( (pcrHi&0x1));
-  tsPacket[11]=0;
+  tsPacket[10]=	(byte)( (pcrHi&0x1)) + 0x7e;
+  tsPacket[11]=0;//extension
 	//LogDebug("pcr: org:%x new:%x start:%x", (DWORD)pcrBaseHigh,(DWORD)pcrHi,(DWORD)m_startPcr);
 	pcrLogCount++;
-
 }
 
 void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr)
