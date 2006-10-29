@@ -370,8 +370,8 @@
         <filter cat="capture"         name="Lifeview M9207 BDA Digital Capture" checkdevice="true"/>
       </filters>
       <connections>
-		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
-		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
@@ -2390,7 +2390,7 @@
       <interface cat="capture" video="" audio="" mpeg2="0"/>
       <filters>
         <filter cat="crossbar"	name="Adaptec AVC-2000 Crossbar"	checkdevice="true"/>
-		<filter cat="capture"	name="Adaptec AVC-2000 Device"		checkdevice="true"/>
+        <filter cat="capture"	  name="Adaptec AVC-2000 Device"		checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture" sinkpin="0"/>
@@ -4100,9 +4100,9 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  name="Adaptec PCI TV Tuner"			checkdevice="true"/>
-        <filter cat="tvaudio"  name="Adaptec PCI TV Audio"			checkdevice="true"/>
-        <filter cat="crossbar" name="Adaptec PCI Crossbar"			checkdevice="true"/>
+        <filter cat="tvtuner"  name="Adaptec PCI TV Tuner"			  checkdevice="true"/>
+        <filter cat="tvaudio"  name="Adaptec PCI TV Audio"			  checkdevice="true"/>
+        <filter cat="crossbar" name="Adaptec PCI Crossbar"			  checkdevice="true"/>
         <filter cat="capture"  name="Adaptec PCI Capture Device"	checkdevice="true"/>
       </filters>
       <connections>
@@ -4120,9 +4120,9 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  name="Adaptec PCI TV Tuner"			checkdevice="true"/>
-        <filter cat="tvaudio"  name="Adaptec PCI TV Audio"			checkdevice="true"/>
-        <filter cat="crossbar" name="Adaptec PCI Crossbar"			checkdevice="true"/>
+        <filter cat="tvtuner"  name="Adaptec PCI TV Tuner"			  checkdevice="true"/>
+        <filter cat="tvaudio"  name="Adaptec PCI TV Audio"			  checkdevice="true"/>
+        <filter cat="crossbar" name="Adaptec PCI Crossbar"			  checkdevice="true"/>
         <filter cat="capture"  name="Adaptec PCI Capture Device"	checkdevice="true"/>
       </filters>
       <connections>
@@ -4140,9 +4140,9 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  name="Adaptec USB TvTuner"			checkdevice="true"/>
-        <filter cat="tvaudio"  name="Adaptec USB TvAudio"			checkdevice="true"/>
-        <filter cat="crossbar" name="Adaptec USB Crossbar"			checkdevice="true"/>
+        <filter cat="tvtuner"  name="Adaptec USB TvTuner"			    checkdevice="true"/>
+        <filter cat="tvaudio"  name="Adaptec USB TvAudio"			    checkdevice="true"/>
+        <filter cat="crossbar" name="Adaptec USB Crossbar"			  checkdevice="true"/>
         <filter cat="capture"  name="Adaptec USB Capture Device"	checkdevice="true"/>
       </filters>
       <connections>
@@ -4159,9 +4159,9 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  name="Adaptec USB TvTuner"			checkdevice="true"/>
-        <filter cat="tvaudio"  name="Adaptec USB TvAudio"			checkdevice="true"/>
-        <filter cat="crossbar" name="Adaptec USB Crossbar"			checkdevice="true"/>
+        <filter cat="tvtuner"  name="Adaptec USB TvTuner"			    checkdevice="true"/>
+        <filter cat="tvaudio"  name="Adaptec USB TvAudio"			    checkdevice="true"/>
+        <filter cat="crossbar" name="Adaptec USB Crossbar"			  checkdevice="true"/>
         <filter cat="capture"  name="Adaptec USB Capture Device"	checkdevice="true"/>
       </filters>
       <connections>
@@ -11688,9 +11688,9 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  name="Adaptec USB TvTuner"			checkdevice="true"/>
-        <filter cat="tvaudio"  name="Adaptec USB TvAudio"			checkdevice="true"/>
-        <filter cat="crossbar" name="Adaptec USB Crossbar"			checkdevice="true"/>
+        <filter cat="tvtuner"  name="Adaptec USB TvTuner"			    checkdevice="true"/>
+        <filter cat="tvaudio"  name="Adaptec USB TvAudio"			    checkdevice="true"/>
+        <filter cat="crossbar" name="Adaptec USB Crossbar"			  checkdevice="true"/>
         <filter cat="capture"  name="Adaptec USB Capture Device"	checkdevice="true"/>
       </filters>
       <connections>
@@ -11708,9 +11708,9 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  name="Adaptec USB TvTuner"			checkdevice="true"/>
-        <filter cat="tvaudio"  name="Adaptec USB TvAudio"			checkdevice="true"/>
-        <filter cat="crossbar" name="Adaptec USB Crossbar"			checkdevice="true"/>
+        <filter cat="tvtuner"  name="Adaptec USB TvTuner"			    checkdevice="true"/>
+        <filter cat="tvaudio"  name="Adaptec USB TvAudio"			    checkdevice="true"/>
+        <filter cat="crossbar" name="Adaptec USB Crossbar"			  checkdevice="true"/>
         <filter cat="capture"  name="Adaptec USB Capture Device"	checkdevice="true"/>
       </filters>
       <connections>
@@ -17257,6 +17257,99 @@
         <connection sourcefilter="capture"    sourcepin="3" sinkfilter="audencoder" sinkpin="0"/>
         <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
         <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"        sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Digiwave 103g" capturename="Conexant 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_008414f1&amp;rev_03">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"          checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Conexant BDA DVB-S Tuner/Demod"           checkdevice="true"/>
+        <filter cat="capture"         name="Conexant 2388x Transport Stream Capture"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"  sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"      sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="HP OEM Conexant Falcon II" capturename="Conexant Falcon Video Capture" devid="ven_4444&amp;dev_0016&amp;subsys_4b2e1043&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="Conexant Falcon Tuner"  		    checkdevice="true"/>
+        <filter cat="tvaudio"  name="Conexant Falcon TvAudio"  		  checkdevice="true"/>
+        <filter cat="crossbar" name="Conexant Falcon Crossbar" 		  checkdevice="true"/>
+        <filter cat="capture"  name="Conexant Falcon Video Capture" checkdevice="true"/>
+        <filter cat="encoder"  name="Conexant Falcon Encoder"  		  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"	sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Lifeview TV Walker Twin DVB-T (Tuner 1)" capturename="Lifeview M9207 BDA Digital Capture" devid="vid_10FD&amp;pid_0513&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Lifeview M9207 BDA Digital Tuner"   checkdevice="true"/>
+        <filter cat="capture"         name="Lifeview M9207 BDA Digital Capture" checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Lifeview TV Walker Twin DVB-T (Tuner 2)" capturename="Lifeview M9207 BDA Digital Capture" devid="vid_10FD&amp;pid_0513&amp;mi_01">
+    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Lifeview M9207 BDA Digital Tuner"   checkdevice="true"/>
+        <filter cat="capture"         name="Lifeview M9207 BDA Digital Capture" checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AVerMedia AverTV USB MCE" capturename="AVerMedia USB Capture" devid="vid_07ca&amp;pid_1228">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="AVerMedia USB Tuner"           checkdevice="true"/>
+        <filter cat="tvaudio"  name="AVerMedia USB TvAudio"  	      checkdevice="true"/>
+        <filter cat="crossbar" name="AVerMedia USB Crossbar"	      checkdevice="true"/>
+        <filter cat="capture"  name="AVerMedia USB Capture"		      checkdevice="true"/>
+        <filter cat="encoder"  name="AVerMedia USB MPEG-2 Encoder"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture" sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture" sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="1" sinkfilter="encoder" sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder" sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
