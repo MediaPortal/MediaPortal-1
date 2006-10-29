@@ -185,7 +185,7 @@ namespace TvLibrary.Implementations.DVB
         if (!_card.IsTunerLocked && _card.SignalQuality == 0 && _card.SignalLevel == 0)
         {
           Log.Log.WriteFile("Scan: no signal detected");
-          return null;
+          return new List<IChannel>();
         }
         Log.Log.WriteFile("Scan: signal detected.");
       }
@@ -211,7 +211,7 @@ namespace TvLibrary.Implementations.DVB
           if (_card.SignalQuality == 0 && _card.SignalLevel == 0)
           {
             Log.Log.WriteFile("Scan! no signal detected: locked:{0} signal level:{1} signal quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
-            return null;
+            return new List<IChannel>();
           }
         }
         if (_card.IsTunerLocked || _card.SignalQuality > 0 || _card.SignalLevel > 0)

@@ -172,16 +172,7 @@ namespace SetupTv.Sections
             }
             int frequency = Int32.Parse(frequencyText);
             int bandWidth = Int32.Parse(bandwidthText);
-            if (frequencyOffset != 0)
-            {
-              frequencies.Add(frequency - frequencyOffset, bandWidth);
-              frequencies.Add(frequency, bandWidth);
-              frequencies.Add(frequency + frequencyOffset, bandWidth);
-            }
-            else
-            {
-              frequencies.Add(frequency, bandWidth);
-            }
+            frequencies.Add(frequency, bandWidth);
           }
         }
         if (frequencies.Count == 0) return;
@@ -213,7 +204,26 @@ namespace SetupTv.Sections
           {
             RemoteControl.Instance.Tune(_cardNumber, tuneChannel);
           }
-          IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
+          IChannel[] channels;
+          channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
+          if (channels.Length == 0)
+          {
+            /// try frequency - offset
+            tuneChannel.Frequency = values.Key - frequencyOffset;
+            tuneChannel.BandWidth = values.Value;
+            line = String.Format("{0}tp- {1} {2}", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
+            item.Text = line;
+            channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
+            if (channels.Length == 0)
+            {
+              /// try frequency + offset
+              tuneChannel.Frequency = values.Key + frequencyOffset;
+              tuneChannel.BandWidth = values.Value;
+              line = String.Format("{0}tp- {1} {2}", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
+              item.Text = line;
+              channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
+            }
+          }
 
           UpdateStatus();
           if (channels == null || channels.Length == 0)
