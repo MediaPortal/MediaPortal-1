@@ -21,6 +21,7 @@
 using System;
 using System.Runtime.InteropServices;
 using TvLibrary.Interfaces;
+using TvLibrary.Channels;
 
 using DirectShowLib;
 namespace TvLibrary.Implementations.DVB
@@ -38,6 +39,8 @@ namespace TvLibrary.Implementations.DVB
     readonly uint THBDA_IOCTL_CHECK_INTERFACE = 0xaa0001e4; //CTL_CODE(THBDA_IO_INDEX, 121, METHOD_BUFFERED, FILE_ANY_ACCESS)
     readonly uint THBDA_IOCTL_CI_GET_STATE = 0xaa000320;    //CTL_CODE(THBDA_IO_INDEX, 200, METHOD_BUFFERED, FILE_ANY_ACCESS)
     readonly uint THBDA_IOCTL_CI_GET_PMT_REPLY = 0xaa000348;//CTL_CODE(THBDA_IO_INDEX, 210, METHOD_BUFFERED, FILE_ANY_ACCESS)
+    readonly uint THBDA_IOCTL_SET_DiSEqC = 0xaa0001a0;//CTL_CODE(THBDA_IO_INDEX, 104, METHOD_BUFFERED, FILE_ANY_ACCESS) 
+    readonly uint THBDA_IOCTL_SET_LNB_DATA = 0xaa000200;//CTL_CODE(THBDA_IO_INDEX, 128, METHOD_BUFFERED, FILE_ANY_ACCESS) 
     #endregion
 
     #region variables
@@ -46,6 +49,7 @@ namespace TvLibrary.Implementations.DVB
     bool _camPresent;
     IBaseFilter _captureFilter;
     IntPtr _ptrPmt;
+    IntPtr _ptrDiseqc;
     IntPtr _ptrDwBytesReturned;
     IntPtr _thbdaBuf;
     IntPtr _ptrOutBuffer;
@@ -64,6 +68,7 @@ namespace TvLibrary.Implementations.DVB
       _thbdaBuf = Marshal.AllocCoTaskMem(8192);
       _ptrOutBuffer = Marshal.AllocCoTaskMem(8192);
       _ptrOutBuffer2 = Marshal.AllocCoTaskMem(8192);
+      _ptrDiseqc = Marshal.AllocCoTaskMem(8192);
 
       _captureFilter = tunerFilter;
       _initialized = false;
@@ -406,6 +411,103 @@ namespace TvLibrary.Implementations.DVB
       //System.Threading.Thread.Sleep(1000);
       //GetPmtReply();
 
+    }
+    /// <summary>
+    /// Sends the diseq command.
+    /// </summary>
+    /// <param name="channel">The channel.</param>
+    public void SendDiseqCommand(DVBSChannel channel)
+    {
+      byte disEqcPort = 0;
+
+      switch (channel.DisEqc)
+      {
+        case DisEqcType.None:
+          disEqcPort = 0;
+          break;
+        case DisEqcType.SimpleA://simple A
+          disEqcPort = 0;
+          break;
+        case DisEqcType.SimpleB://simple B
+          disEqcPort = 1;
+          break;
+        case DisEqcType.Level1AA://Level 1 A/A
+          disEqcPort = 1;
+          break;
+        case DisEqcType.Level1BA://Level 1 B/A
+          disEqcPort = 2;
+          break;
+        case DisEqcType.Level1AB://Level 1 A/B
+          disEqcPort = 3;
+          break;
+        case DisEqcType.Level1BB://Level 1 B/B
+          disEqcPort = 4;
+          break;
+      }
+      byte turnon22Khz;
+      if (channel.Frequency >= 11700000)
+      {
+        turnon22Khz = 1;
+        //hiBand = true;
+      }
+      else
+      {
+        turnon22Khz = 0;
+        //hiBand = false;
+      }
+
+      Int32 LNBLOFLowBand = 9750;
+      Int32 LNBLOFHighBand = 11700;
+      Int32 LNBLOFHiLoSW = 10600;
+      int thbdaLen = 0x28;
+      int disEqcLen = 20;
+      Marshal.WriteByte(_ptrDiseqc, 0, 1);// LNB_POWER
+      Marshal.WriteByte(_ptrDiseqc, 1, 0);// Tone_Data_Burst
+      Marshal.WriteInt32(_thbdaBuf, 4, LNBLOFLowBand);// ulLNBLOFLowBand   LNBLOF LowBand MHz
+      Marshal.WriteInt32(_thbdaBuf, 8, LNBLOFHighBand);// ulLNBLOFHighBand  LNBLOF HighBand MHz
+      Marshal.WriteInt32(_thbdaBuf, 12, LNBLOFHiLoSW);// ulLNBLOFHiLoSW   LNBLOF HiLoSW MHz
+      Marshal.WriteByte(_thbdaBuf, 16, turnon22Khz);// f22K_Output
+      Marshal.WriteByte(_thbdaBuf, 17, disEqcPort);// DiSEqC_Port
+
+      Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
+      Marshal.WriteInt16(_thbdaBuf, 4, 0x2017);
+      Marshal.WriteInt16(_thbdaBuf, 6, 0x4b03);
+      Marshal.WriteByte(_thbdaBuf, 8, 0x90);
+      Marshal.WriteByte(_thbdaBuf, 9, 0xf8);
+      Marshal.WriteByte(_thbdaBuf, 10, 0x85);
+      Marshal.WriteByte(_thbdaBuf, 11, 0x6a);
+      Marshal.WriteByte(_thbdaBuf, 12, 0x62);
+      Marshal.WriteByte(_thbdaBuf, 13, 0xcb);
+      Marshal.WriteByte(_thbdaBuf, 14, 0x3d);
+      Marshal.WriteByte(_thbdaBuf, 15, 0x67);
+      Marshal.WriteInt32(_thbdaBuf, 16, (int)THBDA_IOCTL_SET_LNB_DATA);//dwIoControlCode
+      Marshal.WriteInt32(_thbdaBuf, 20, (int)_ptrDiseqc.ToInt32());//lpInBuffer
+      Marshal.WriteInt32(_thbdaBuf, 24, disEqcLen);//nInBufferSize
+      Marshal.WriteInt32(_thbdaBuf, 28, (int)IntPtr.Zero);//lpOutBuffer
+      Marshal.WriteInt32(_thbdaBuf, 32, 0);//nOutBufferSize
+      Marshal.WriteInt32(_thbdaBuf, 36, (int)_ptrDwBytesReturned);//lpBytesReturned
+
+      IPin pin = DsFindPin.ByDirection(_captureFilter, PinDirection.Input, 0);
+      if (pin != null)
+      {
+        IKsPropertySet propertySet = pin as IKsPropertySet;
+        if (propertySet != null)
+        {
+          Guid propertyGuid = THBDA_TUNER;
+          int hr = propertySet.Set(propertyGuid, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
+          int back = Marshal.ReadInt32(_ptrDwBytesReturned);
+
+          if (hr != 0)
+          {
+            Log.Log.WriteFile("SetStructure() failed 0x{0:X}", hr);
+          }
+          else
+            Log.Log.WriteFile("SetStructure() returned ok 0x{0:X}", hr);
+          Marshal.ReleaseComObject(propertySet);
+
+        }
+        Marshal.ReleaseComObject(pin);
+      }
     }
   }
 }

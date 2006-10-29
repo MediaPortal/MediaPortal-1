@@ -201,6 +201,10 @@ namespace TvLibrary.Implementations.DVB
         {
           _technoTrend.SendDiseqCommand(channel);
         }
+        if (_twinhan != null)
+        {
+          _twinhan.SendDiseqCommand(channel);
+        }
         if (_hauppauge != null)
         {
           _hauppauge.SendDiseqCommand(channel);
