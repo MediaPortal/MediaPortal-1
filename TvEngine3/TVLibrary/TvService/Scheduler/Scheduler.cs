@@ -452,7 +452,7 @@ namespace TvService
           ourServer = server;
       }
       Recording newRec = new Recording(recording.Schedule.IdChannel, recording.Program.StartTime, recording.Program.EndTime, recording.Program.Title,
-                          recording.Program.Description, recording.Program.Genre, "", (int)recording.Schedule.KeepMethod,
+                          recording.Program.Description, recording.Program.Genre, recording.FileName, (int)recording.Schedule.KeepMethod,
                           recording.Schedule.KeepDate, 0, ourServer.IdServer);
       newRec.Persist();
       _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingEnded, new VirtualCard(recording.CardInfo.Id), GetUser(), recording.Schedule, newRec));
