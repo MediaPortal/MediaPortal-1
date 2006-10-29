@@ -160,8 +160,8 @@ namespace TvDatabase
 		/// </summary>
 		public string FileName
 		{
-			get { return fileName; }
-			set { isChanged |= fileName != value; fileName = value; }
+      get { return this.fileName; }
+      set { isChanged |= this.fileName != value; this.fileName = value; }
 		}
 
 		/// <summary>
