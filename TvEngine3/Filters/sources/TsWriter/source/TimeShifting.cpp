@@ -717,7 +717,7 @@ void CTimeShifting::WriteFakePAT()
   pat[12]=last_section_number;
   pat[13]=(FAKE_SERVICE_ID>>8)&0xff;
   pat[14]=(FAKE_SERVICE_ID)&0xff;
-  pat[15]=(pmtPid>>8)&0xff;
+  pat[15]=((pmtPid>>8)&0xff)|0xe0;
   pat[16]=(pmtPid)&0xff;
   
   int len=17;
