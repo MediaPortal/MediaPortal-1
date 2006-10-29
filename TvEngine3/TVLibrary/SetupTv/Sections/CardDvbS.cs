@@ -331,8 +331,8 @@ namespace SetupTv.Sections
 
     void UpdateStatus(int LNB)
     {
-      progressBarLevel.Value = RemoteControl.Instance.SignalLevel(_cardNumber);
-      progressBarQuality.Value = RemoteControl.Instance.SignalQuality(_cardNumber);
+      progressBarLevel.Value = Math.Max(100,RemoteControl.Instance.SignalLevel(_cardNumber));
+      progressBarQuality.Value = Math.Max(100,RemoteControl.Instance.SignalQuality(_cardNumber));
 
 
     }

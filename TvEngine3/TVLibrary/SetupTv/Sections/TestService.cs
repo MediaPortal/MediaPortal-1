@@ -223,8 +223,8 @@ namespace SetupTv.Sections
             mpLabelTunerLocked.Text = "yes";
           else
             mpLabelTunerLocked.Text = "no";
-          progressBarLevel.Value = card.SignalLevel;
-          progressBarQuality.Value = card.SignalQuality;
+          progressBarLevel.Value = Math.Max(100, card.SignalLevel);
+          progressBarQuality.Value = Math.Max(100,card.SignalQuality);
 
           mpCheckBoxRec.Checked = card.IsRecording;
           mpLabelRecording.Text = card.RecordingFileName;
