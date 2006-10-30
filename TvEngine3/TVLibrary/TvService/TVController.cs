@@ -830,6 +830,26 @@ namespace TvService
     }
 
     /// <summary>
+    /// Gets a value indicating whether any card is recording.
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this a card is recording; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsAnyCardRecording
+    {
+      get
+      {
+        Dictionary<int, Card>.Enumerator enumerator = _allDbscards.GetEnumerator();
+
+        while (enumerator.MoveNext())
+        {
+          KeyValuePair<int, Card> keyPair = enumerator.Current;
+          if (IsRecording(keyPair.Value.IdCard)) return true;
+        }
+        return false;
+      }
+    }
+    /// <summary>
     /// Returns if the card is recording or not
     /// </summary>
     /// <param name="cardId">id of the card.</param>
@@ -1459,7 +1479,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return true;
-        if (false==IsTimeShifting(cardId)) return true;
+        if (false == IsTimeShifting(cardId)) return true;
 
         Log.Write("Controller: StopTimeShifting {0}", cardId);
         lock (this)

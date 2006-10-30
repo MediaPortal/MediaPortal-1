@@ -231,6 +231,13 @@ namespace TvControl
     /// <returns>true when card is recording otherwise false</returns>
     bool IsRecording(int cardId);
 
+    /// <summary>
+    /// Gets a value indicating whether any card is recording.
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this a card is recording; otherwise, <c>false</c>.
+    /// </value>
+    bool IsAnyCardRecording { get;}
 
     /// <summary>
     /// Returns if the card is currently scanning for channels or not
