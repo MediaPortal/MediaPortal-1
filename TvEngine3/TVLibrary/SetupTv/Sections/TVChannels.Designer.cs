@@ -280,6 +280,7 @@ namespace SetupTv.Sections
       this.mpListViewChannels.AllowRowReorder = true;
       this.mpListViewChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader6});
+      this.mpListViewChannels.HideSelection = false;
       this.mpListViewChannels.Location = new System.Drawing.Point(12, 67);
       this.mpListViewChannels.Name = "mpListViewChannels";
       this.mpListViewChannels.Size = new System.Drawing.Size(193, 274);
