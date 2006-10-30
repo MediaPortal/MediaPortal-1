@@ -104,7 +104,8 @@ namespace SetupTv.Sections
 
     public override void OnSectionDeActivated()
     {
-      //SaveMapping();
+      if (tabControlTvMovie.SelectedIndex == 1)
+        SaveMapping();
 
       TvBusinessLayer layer = new TvBusinessLayer();
 
@@ -316,10 +317,6 @@ namespace SetupTv.Sections
 
               stationNode.Tag = channelInfo;
 
-              //if (listStations.Count > 1)
-              //  stationNode.ForeColor = Color.Green;
-              //else
-              //  stationNode.ForeColor = Color.Blue;
               channelNode.Nodes.Add(stationNode);
               channelNode.Expand();
             }
@@ -328,6 +325,7 @@ namespace SetupTv.Sections
             Log.Debug("TVMovie plugin: Channel {0} no longer present in Database - ignoring", stationName);
         }
       }
+      ColorTree();
       treeViewChannels.EndUpdate();
     }
 
@@ -350,6 +348,19 @@ namespace SetupTv.Sections
             return station;
 
       return null;
+    }
+
+
+    private void ColorTree()
+    {
+      foreach (TreeNode parentNode in treeViewChannels.Nodes)
+        foreach (TreeNode subNode in parentNode.Nodes)
+        {
+          if (parentNode.Nodes.Count > 1)
+            subNode.ForeColor = Color.Green;
+          else
+            subNode.ForeColor = Color.Blue;
+        }
     }
 
 
