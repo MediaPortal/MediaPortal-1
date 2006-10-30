@@ -39,6 +39,7 @@ CPmtGrabber::CPmtGrabber(LPUNKNOWN pUnk, HRESULT *phr)
 {
 	m_pCallback=NULL;
 	m_iPmtVersion=-1;
+	memset(m_pmtPrevData,0,sizeof(m_pmtPrevData));
 }
 CPmtGrabber::~CPmtGrabber(void)
 {
@@ -49,12 +50,13 @@ STDMETHODIMP CPmtGrabber::SetPmtPid( int pmtPid)
 {
 	try
 	{
-			CEnterCriticalSection enter(m_section);
+		CEnterCriticalSection enter(m_section);
 		LogDebug("pmtgrabber: grab pmt:%x", pmtPid);
 		CSectionDecoder::Reset();
 		CSectionDecoder::SetPid(pmtPid);
 		CSectionDecoder::SetTableId(2);
 		m_iPmtVersion=-1;
+		memset(m_pmtPrevData,0,sizeof(m_pmtPrevData));
 	}
 	catch(...)
 	{
@@ -97,10 +99,14 @@ void CPmtGrabber::OnNewSection(CSection& section)
 		CTsHeader header(section.Data);
 		int start=header.PayLoadStart;
 		memcpy(m_pmtData,&section.Data[start],m_iPmtLength);
-		if (m_pCallback!=NULL)
+		if (memcmp(m_pmtData,m_pmtPrevData,m_iPmtLength)!=0)
 		{
-			LogDebug("pmtgrabber: do calback");
-			m_pCallback->OnPMTReceived();
+			memcpy(m_pmtPrevData,m_pmtData,m_iPmtLength);
+			if (m_pCallback!=NULL)
+			{
+				LogDebug("pmtgrabber: do calback");
+				m_pCallback->OnPMTReceived();
+			}
 		}
 	}
 	catch(...)

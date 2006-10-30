@@ -58,6 +58,7 @@ public:
 private:
 	IPMTCallback* m_pCallback;
 	byte					m_pmtData[4096];
+	byte					m_pmtPrevData[4096];
 	int						m_iPmtVersion;
 	int						m_iPmtLength;
 	CCriticalSection m_section;
