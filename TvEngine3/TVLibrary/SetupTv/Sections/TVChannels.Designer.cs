@@ -46,6 +46,7 @@ namespace SetupTv.Sections
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.btnCombine = new System.Windows.Forms.Button();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpListViewMapped = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
@@ -55,7 +56,6 @@ namespace SetupTv.Sections
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.mpComboBoxCard = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.btnCombine = new System.Windows.Forms.Button();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -196,6 +196,7 @@ namespace SetupTv.Sections
       this.tabControl1.SelectedIndex = 0;
       this.tabControl1.Size = new System.Drawing.Size(465, 400);
       this.tabControl1.TabIndex = 8;
+      this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
       // tabPage1
       // 
@@ -232,6 +233,16 @@ namespace SetupTv.Sections
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Combinations";
       this.tabPage2.UseVisualStyleBackColor = true;
+      // 
+      // btnCombine
+      // 
+      this.btnCombine.Location = new System.Drawing.Point(372, 345);
+      this.btnCombine.Name = "btnCombine";
+      this.btnCombine.Size = new System.Drawing.Size(75, 23);
+      this.btnCombine.TabIndex = 14;
+      this.btnCombine.Text = "Combine";
+      this.btnCombine.UseVisualStyleBackColor = true;
+      this.btnCombine.Click += new System.EventHandler(this.btnCombine_Click);
       // 
       // mpLabel3
       // 
@@ -312,16 +323,6 @@ namespace SetupTv.Sections
       this.mpLabel1.Size = new System.Drawing.Size(32, 13);
       this.mpLabel1.TabIndex = 9;
       this.mpLabel1.Text = "Card:";
-      // 
-      // btnCombine
-      // 
-      this.btnCombine.Location = new System.Drawing.Point(372, 345);
-      this.btnCombine.Name = "btnCombine";
-      this.btnCombine.Size = new System.Drawing.Size(75, 23);
-      this.btnCombine.TabIndex = 14;
-      this.btnCombine.Text = "Combine";
-      this.btnCombine.UseVisualStyleBackColor = true;
-      this.btnCombine.Click += new System.EventHandler(this.btnCombine_Click);
       // 
       // TvChannels
       // 

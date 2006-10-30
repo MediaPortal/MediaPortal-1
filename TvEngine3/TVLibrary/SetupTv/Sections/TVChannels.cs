@@ -140,6 +140,7 @@ namespace SetupTv.Sections
     private ListViewColumnSorter lvwColumnSorter;
     private ListViewColumnSorter lvwColumnSorter2;
     private ListViewColumnSorter lvwColumnSorter3;
+    bool _redrawTab1 = false;
     public TvChannels()
       : this("TV Channels")
     {
@@ -180,7 +181,7 @@ namespace SetupTv.Sections
     }
     public override void OnSectionActivated()
     {
-
+      _redrawTab1 = false;
       mpComboBoxCard.Items.Clear();
       IList dbsCards = Card.ListAll();
       foreach (Card card in dbsCards)
@@ -894,9 +895,21 @@ namespace SetupTv.Sections
         schedule.IdChannel = selectedChannel.IdChannel;
         schedule.Persist();
       }
-      selectedChannel.Remove();
+      selectedChannel2.Remove();
 
       mpListViewChannels_SelectedIndexChanged(null, null);
+      _redrawTab1 = true;
+    }
+
+    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (tabControl1.SelectedIndex == 0)
+      {
+        if (_redrawTab1)
+        {
+          OnSectionActivated();
+        }
+      }
     }
   }
 }
