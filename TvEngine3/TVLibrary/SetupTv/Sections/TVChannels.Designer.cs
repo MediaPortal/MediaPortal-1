@@ -56,6 +56,7 @@ namespace SetupTv.Sections
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.mpComboBoxCard = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpButtonPreview = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -125,7 +126,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonDel
       // 
-      this.mpButtonDel.Location = new System.Drawing.Point(175, 331);
+      this.mpButtonDel.Location = new System.Drawing.Point(66, 350);
       this.mpButtonDel.Name = "mpButtonDel";
       this.mpButtonDel.Size = new System.Drawing.Size(54, 23);
       this.mpButtonDel.TabIndex = 1;
@@ -135,9 +136,9 @@ namespace SetupTv.Sections
       // 
       // buttonUtp
       // 
-      this.buttonUtp.Location = new System.Drawing.Point(11, 331);
+      this.buttonUtp.Location = new System.Drawing.Point(16, 326);
       this.buttonUtp.Name = "buttonUtp";
-      this.buttonUtp.Size = new System.Drawing.Size(38, 23);
+      this.buttonUtp.Size = new System.Drawing.Size(44, 23);
       this.buttonUtp.TabIndex = 3;
       this.buttonUtp.Text = "Up";
       this.buttonUtp.UseVisualStyleBackColor = true;
@@ -145,7 +146,7 @@ namespace SetupTv.Sections
       // 
       // buttonDown
       // 
-      this.buttonDown.Location = new System.Drawing.Point(55, 331);
+      this.buttonDown.Location = new System.Drawing.Point(16, 350);
       this.buttonDown.Name = "buttonDown";
       this.buttonDown.Size = new System.Drawing.Size(44, 23);
       this.buttonDown.TabIndex = 4;
@@ -155,7 +156,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonEdit
       // 
-      this.mpButtonEdit.Location = new System.Drawing.Point(111, 331);
+      this.mpButtonEdit.Location = new System.Drawing.Point(66, 326);
       this.mpButtonEdit.Name = "mpButtonEdit";
       this.mpButtonEdit.Size = new System.Drawing.Size(58, 23);
       this.mpButtonEdit.TabIndex = 5;
@@ -165,7 +166,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonExpert
       // 
-      this.mpButtonExpert.Location = new System.Drawing.Point(307, 331);
+      this.mpButtonExpert.Location = new System.Drawing.Point(142, 350);
       this.mpButtonExpert.Name = "mpButtonExpert";
       this.mpButtonExpert.Size = new System.Drawing.Size(54, 23);
       this.mpButtonExpert.TabIndex = 6;
@@ -175,7 +176,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonImport
       // 
-      this.mpButtonImport.Location = new System.Drawing.Point(247, 331);
+      this.mpButtonImport.Location = new System.Drawing.Point(142, 326);
       this.mpButtonImport.Name = "mpButtonImport";
       this.mpButtonImport.Size = new System.Drawing.Size(54, 23);
       this.mpButtonImport.TabIndex = 7;
@@ -200,6 +201,7 @@ namespace SetupTv.Sections
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.mpButtonPreview);
       this.tabPage1.Controls.Add(this.mpListView1);
       this.tabPage1.Controls.Add(this.mpButtonImport);
       this.tabPage1.Controls.Add(this.mpButtonClear);
@@ -324,6 +326,16 @@ namespace SetupTv.Sections
       this.mpLabel1.TabIndex = 9;
       this.mpLabel1.Text = "Card:";
       // 
+      // mpButtonPreview
+      // 
+      this.mpButtonPreview.Location = new System.Drawing.Point(221, 326);
+      this.mpButtonPreview.Name = "mpButtonPreview";
+      this.mpButtonPreview.Size = new System.Drawing.Size(54, 23);
+      this.mpButtonPreview.TabIndex = 8;
+      this.mpButtonPreview.Text = "Preview";
+      this.mpButtonPreview.UseVisualStyleBackColor = true;
+      this.mpButtonPreview.Click += new System.EventHandler(this.mpButtonPreview_Click);
+      // 
       // TvChannels
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -371,5 +383,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private System.Windows.Forms.ColumnHeader columnHeader8;
     private System.Windows.Forms.Button btnCombine;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonPreview;
   }
 }

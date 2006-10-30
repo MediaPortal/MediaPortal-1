@@ -191,6 +191,12 @@
     <Compile Include="Sections\FormEditIpAdress.Designer.cs">
       <DependentUpon>FormEditIpAdress.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\FormPreview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sections\FormPreview.Designer.cs">
+      <DependentUpon>FormPreview.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\GroupNameForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -329,6 +335,10 @@
     <EmbeddedResource Include="Sections\FormEditIpAdress.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FormEditIpAdress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\FormPreview.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FormPreview.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Servers.resx">
       <SubType>Designer</SubType>

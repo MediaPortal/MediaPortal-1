@@ -134,7 +134,7 @@ namespace SetupTv.Sections
     protected IPin _pinAudio;
     IMediaControl _mediaCtrl;
     protected IVideoWindow _videoWin = null;
-    public bool Play(string fileName, IntPtr handle)
+    public bool Play(string fileName, Form form)
     {
       Log.WriteFile("play:{0}", fileName);
       int hr;
@@ -153,32 +153,7 @@ namespace SetupTv.Sections
       MPEG2Demultiplexer demux = new MPEG2Demultiplexer();
       _mpegDemux = (IBaseFilter)demux;
       hr = _graphBuilder.AddFilter(_mpegDemux, "MPEG-2 Demultiplexer");
-
       #endregion
-
-      #region create mpeg2 demux pins
-
-
-      Log.WriteFile("create mpeg-2 demux pins");
-      //create mpeg-2 demux output pins
-      IMpeg2Demultiplexer demuxer = _mpegDemux as IMpeg2Demultiplexer;
-
-
-      hr = demuxer.CreateOutputPin(GetAudioMpg2Media(), "Audio", out _pinAudio);
-      if (hr != 0)
-      {
-        Log.WriteFile("unable to create audio pin");
-        return false;
-      }
-      hr = demuxer.CreateOutputPin(GetVideoMpg2Media(), "Video", out _pinVideo);
-      if (hr != 0)
-      {
-        Log.WriteFile("unable to create video pin");
-        return false;
-      }
-
-      #endregion
-
 
       #region load file in tsfilesource
       Log.WriteFile("load file in tsfilesource");
@@ -188,99 +163,37 @@ namespace SetupTv.Sections
         Log.WriteFile("TSStreamBufferPlayer9:Failed to get IFileSourceFilter");
         return false;
       }
-
-      AMMediaType mpeg2ProgramStream = new AMMediaType();
-      mpeg2ProgramStream.majorType = MediaType.Stream;
-      mpeg2ProgramStream.subType = MediaSubType.Mpeg2Program;
-
-      mpeg2ProgramStream.unkPtr = IntPtr.Zero;
-      mpeg2ProgramStream.sampleSize = 0;
-      mpeg2ProgramStream.temporalCompression = false;
-      mpeg2ProgramStream.fixedSizeSamples = true;
-      mpeg2ProgramStream.formatType = FormatType.None;
-      mpeg2ProgramStream.formatSize = 0;
-      mpeg2ProgramStream.formatPtr = IntPtr.Zero;
-      hr = interfaceFile.Load(fileName, mpeg2ProgramStream);
+      hr = interfaceFile.Load(fileName, null);
 
       if (hr != 0)
       {
         Log.WriteFile("TSStreamBufferPlayer9:Failed to load file");
         return false;
       }
-
-      #region connect tsfilesource->demux
-
-      Log.WriteFile("connect tsfilesource->demux");
-      Log.WriteFile("TSStreamBufferPlayer9:connect tsfilesource->mpeg2 demux");
-      IPin pinTsOut = DsFindPin.ByDirection((IBaseFilter)_tsFileSource, PinDirection.Output, 0);
-      if (pinTsOut == null)
-      {
-        Log.WriteFile("TSStreamBufferPlayer9:failed to find output pin of tsfilesource");
-        return false;
-      }
-      IPin pinDemuxIn = DsFindPin.ByDirection(_mpegDemux, PinDirection.Input, 0);
-      if (pinDemuxIn == null)
-      {
-        Log.WriteFile("TSStreamBufferPlayer9:failed to find output pin of tsfilesource");
-        return false;
-      }
-
-      hr = _graphBuilder.Connect(pinTsOut, pinDemuxIn);
-      if (hr != 0)
-      {
-        Log.WriteFile("TSStreamBufferPlayer9:failed to connect tsfilesource->mpeg2 demux:{0:X}", hr);
-        return false;
-      }
-      Marshal.ReleaseComObject(pinTsOut);
-      Marshal.ReleaseComObject(pinDemuxIn);
-      #endregion
-
-      #region map demux pids
-
-      Log.WriteFile("map mpeg2 pids");
-      IMPEG2StreamIdMap pStreamId = (IMPEG2StreamIdMap)_pinVideo;
-      hr = pStreamId.MapStreamId(0xe0, MPEG2Program.ElementaryStream, 0, 0);
-      if (hr != 0)
-      {
-        Log.WriteFile("TSStreamBufferPlayer9: failed to map pid 0xe0->video pin");
-        return false;
-      }
-      pStreamId = (IMPEG2StreamIdMap)_pinAudio;
-      hr = pStreamId.MapStreamId(0xc0, MPEG2Program.ElementaryStream, 0, 0);
-      if (hr != 0)
-      {
-        Log.WriteFile("TSStreamBufferPlayer9: failed  to map pid 0xc0->audio pin");
-        return false;
-      }
-
       #endregion
 
 
-      #region render demux audio/video pins
-
+      #region render pin
+      IPin pin = DsFindPin.ByDirection((IBaseFilter)_tsFileSource, PinDirection.Output, 0);
       Log.WriteFile("render pins");
-      hr = _graphBuilder.Render(_pinAudio);
+      hr = _graphBuilder.Render(pin);
       if (hr != 0)
       {
         Log.WriteFile("TSStreamBufferPlayer9:failed to render video output pin:{0:X}", hr);
       }
 
-      hr = _graphBuilder.Render(_pinVideo);
-      if (hr != 0)
-      {
-        Log.WriteFile("TSStreamBufferPlayer9:failed to render audio output pin:{0:X}", hr);
-      }
-      #endregion
+      Marshal.ReleaseComObject(pin);
 
       #endregion
 
 
       _videoWin = _graphBuilder as IVideoWindow;
       _videoWin.put_Visible(OABool.True);
-      _videoWin.put_Owner(handle);
+      _videoWin.put_Owner(form.Handle);
       _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
-      _videoWin.put_MessageDrain(handle);
-      _videoWin.SetWindowPosition(20, 320, 150, 150);
+      _videoWin.put_MessageDrain(form.Handle);
+
+      _videoWin.SetWindowPosition(form.ClientRectangle.X, form.ClientRectangle.Y, form.ClientRectangle.Width, form.ClientRectangle.Height);
 
       Log.WriteFile("run graph");
       _mediaCtrl = (IMediaControl)_graphBuilder;

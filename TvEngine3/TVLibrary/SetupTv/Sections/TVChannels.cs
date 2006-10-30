@@ -911,5 +911,15 @@ namespace SetupTv.Sections
         }
       }
     }
+
+    private void mpButtonPreview_Click(object sender, EventArgs e)
+    {
+      ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
+      if (indexes.Count == 0) return;
+      Channel channel = (Channel)mpListView1.Items[indexes[0]].Tag;
+      FormPreview previewWindow = new FormPreview();
+      previewWindow.Channel = channel;
+      previewWindow.ShowDialog(this);
+    }
   }
 }
