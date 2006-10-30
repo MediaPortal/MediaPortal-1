@@ -42,6 +42,8 @@ namespace TvService
       this.serviceInstaller1.Description = "Mediaportal Tv Service. Handles all tv related tasks.";
       this.serviceInstaller1.DisplayName = "TVService";
       this.serviceInstaller1.ServiceName = "TVService";
+      this.serviceInstaller1.ServicesDependedOn = new string[] {
+        "Remote Procedure Call (RPC) Locator"};
       this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
       // 
       // ProjectInstaller
