@@ -87,13 +87,6 @@
     <Compile Include="Interfaces\Analyzer\ItsTimeshift.cs" />
     <Compile Include="Interfaces\TsFileSink\ITsFileSink.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Simmetrics\AbstractStringMetric.cs" />
-    <Compile Include="Simmetrics\AbstractSubstitutionCost.cs" />
-    <Compile Include="Simmetrics\InterfaceStringMetric.cs" />
-    <Compile Include="Simmetrics\InterfaceSubstitutionCost.cs" />
-    <Compile Include="Simmetrics\Levenstein.cs" />
-    <Compile Include="Simmetrics\MathFuncs.cs" />
-    <Compile Include="Simmetrics\SubCost01.cs" />
     <Compile Include="Streaming\RtspStreaming.cs" />
     <Compile Include="Teletext\Implementations\DVBTeletext.cs" />
     <Compile Include="Teletext\Implementations\FastTextDecoder.cs" />
