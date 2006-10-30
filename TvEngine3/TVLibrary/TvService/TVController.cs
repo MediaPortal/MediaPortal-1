@@ -2439,7 +2439,7 @@ namespace TvService
       bool isRadio = channel.IsRadio;
       ulong minTimeShiftFile = 300 * 1024;//300Kb
       if (isRadio)
-        minTimeShiftFile = 100 * 1024;//100Kb
+        minTimeShiftFile = 200 * 1024;//100Kb
 
       timeStart = DateTime.Now;
       try
