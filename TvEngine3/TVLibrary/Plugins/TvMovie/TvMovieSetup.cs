@@ -104,7 +104,7 @@ namespace SetupTv.Sections
 
     public override void OnSectionDeActivated()
     {
-      SaveMapping();
+      //SaveMapping();
 
       TvBusinessLayer layer = new TvBusinessLayer();
 
@@ -447,6 +447,8 @@ namespace SetupTv.Sections
     {
       if (!checkBoxEnableImport.Checked)
         tabControlTvMovie.SelectedIndex = 0;
+      else if (tabControlTvMovie.SelectedIndex == 0)
+        SaveMapping();
     }
 
     private void checkBoxEnableImport_CheckedChanged(object sender, EventArgs e)
@@ -457,8 +459,8 @@ namespace SetupTv.Sections
       {
         try
         {
-          TvMovieSql.CheckDatabase();
           LoadStations();
+          TvMovieSql.CheckDatabase();
           LoadMapping();
         }
         catch (Exception)
