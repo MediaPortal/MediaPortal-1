@@ -844,5 +844,59 @@ namespace SetupTv.Sections
       mpListViewMapped.Items.AddRange(items.ToArray());
       mpListViewMapped.Sort();
     }
+
+    private void btnCombine_Click(object sender, EventArgs e)
+    {
+      if (mpListViewChannels.SelectedIndices == null) return;
+      if (mpListViewChannels.SelectedIndices.Count != 1) return;
+      if (mpListViewMapped.SelectedIndices == null) return;
+      if (mpListViewMapped.SelectedIndices.Count != 1) return;
+
+
+      Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
+
+      ListViewItem selectedItem = mpListViewChannels.Items[mpListViewChannels.SelectedIndices[0]];
+      Channel selectedChannel = (Channel)selectedItem.Tag;
+
+      ListViewItem selectedItem2 = mpListViewMapped.Items[mpListViewMapped.SelectedIndices[0]];
+      Channel selectedChannel2 = (Channel)selectedItem2.Tag;
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+      foreach (TuningDetail detail in selectedChannel2.ReferringTuningDetail())
+      {
+        detail.IdChannel = selectedChannel.IdChannel;
+        detail.Persist();
+      }
+      foreach (ChannelMap map in selectedChannel2.ReferringChannelMap())
+      {
+        map.IdChannel = selectedChannel.IdChannel;
+        map.Persist();
+      }
+      foreach (GroupMap groupMap in selectedChannel2.ReferringGroupMap())
+      {
+        groupMap.IdChannel = selectedChannel.IdChannel;
+        groupMap.Persist();
+      }
+      foreach(Program program in selectedChannel2.ReferringProgram())
+      {
+        program.IdChannel = selectedChannel.IdChannel;
+        program.Persist();
+      }
+
+      foreach (Recording recording in selectedChannel2.ReferringRecording())
+      {
+        recording.IdChannel = selectedChannel.IdChannel;
+        recording.Persist();
+      }
+
+      foreach (Schedule schedule in selectedChannel2.ReferringSchedule())
+      {
+        schedule.IdChannel = selectedChannel.IdChannel;
+        schedule.Persist();
+      }
+      selectedChannel.Remove();
+
+      mpListViewChannels_SelectedIndexChanged(null, null);
+    }
   }
 }

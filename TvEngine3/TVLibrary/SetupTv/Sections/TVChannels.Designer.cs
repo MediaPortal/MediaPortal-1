@@ -46,15 +46,16 @@ namespace SetupTv.Sections
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.tabPage2 = new System.Windows.Forms.TabPage();
-      this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpListViewMapped = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpListViewChannels = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.mpComboBoxCard = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
+      this.btnCombine = new System.Windows.Forms.Button();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -217,6 +218,7 @@ namespace SetupTv.Sections
       // 
       // tabPage2
       // 
+      this.tabPage2.Controls.Add(this.btnCombine);
       this.tabPage2.Controls.Add(this.mpLabel3);
       this.tabPage2.Controls.Add(this.mpListViewMapped);
       this.tabPage2.Controls.Add(this.mpLabel2);
@@ -230,11 +232,6 @@ namespace SetupTv.Sections
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Combinations";
       this.tabPage2.UseVisualStyleBackColor = true;
-      // 
-      // columnHeader5
-      // 
-      this.columnHeader5.Text = "Name";
-      this.columnHeader5.Width = 120;
       // 
       // mpLabel3
       // 
@@ -254,10 +251,19 @@ namespace SetupTv.Sections
             this.columnHeader5});
       this.mpListViewMapped.Location = new System.Drawing.Point(243, 67);
       this.mpListViewMapped.Name = "mpListViewMapped";
-      this.mpListViewMapped.Size = new System.Drawing.Size(204, 297);
+      this.mpListViewMapped.Size = new System.Drawing.Size(204, 274);
       this.mpListViewMapped.TabIndex = 12;
       this.mpListViewMapped.UseCompatibleStateImageBehavior = false;
       this.mpListViewMapped.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeader8
+      // 
+      this.columnHeader8.Text = "Ranking";
+      // 
+      // columnHeader5
+      // 
+      this.columnHeader5.Text = "Name";
+      this.columnHeader5.Width = 120;
       // 
       // mpLabel2
       // 
@@ -276,7 +282,7 @@ namespace SetupTv.Sections
             this.columnHeader6});
       this.mpListViewChannels.Location = new System.Drawing.Point(12, 67);
       this.mpListViewChannels.Name = "mpListViewChannels";
-      this.mpListViewChannels.Size = new System.Drawing.Size(193, 297);
+      this.mpListViewChannels.Size = new System.Drawing.Size(193, 274);
       this.mpListViewChannels.TabIndex = 10;
       this.mpListViewChannels.UseCompatibleStateImageBehavior = false;
       this.mpListViewChannels.View = System.Windows.Forms.View.Details;
@@ -306,9 +312,15 @@ namespace SetupTv.Sections
       this.mpLabel1.TabIndex = 9;
       this.mpLabel1.Text = "Card:";
       // 
-      // columnHeader8
+      // btnCombine
       // 
-      this.columnHeader8.Text = "Ranking";
+      this.btnCombine.Location = new System.Drawing.Point(372, 345);
+      this.btnCombine.Name = "btnCombine";
+      this.btnCombine.Size = new System.Drawing.Size(75, 23);
+      this.btnCombine.TabIndex = 14;
+      this.btnCombine.Text = "Combine";
+      this.btnCombine.UseVisualStyleBackColor = true;
+      this.btnCombine.Click += new System.EventHandler(this.btnCombine_Click);
       // 
       // TvChannels
       // 
@@ -356,5 +368,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxCard;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private System.Windows.Forms.ColumnHeader columnHeader8;
+    private System.Windows.Forms.Button btnCombine;
   }
 }
