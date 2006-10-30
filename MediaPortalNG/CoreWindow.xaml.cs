@@ -58,7 +58,7 @@ namespace MediaPortal
             //WriteNewProperty("Column0", "int", "");
             //WriteNewProperty("Column1", "int", "");
             //WriteNewProperty("Column2", "int", "");
-            //WriteNewProperty("ButtonDownWidth", "int", "");
+            //WriteNewProperty("ButtOnDownWidth", "int", "");
             //WriteNewProperty("ButtonContentValue", "int", "");
             //WriteNewProperty("ShowRange", "bool","");
             //WriteNewProperty("Reverse", "bool","");
@@ -73,8 +73,8 @@ namespace MediaPortal
             string data = @"       protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
             base.OnRenderSizeChanged(sizeInfo);
-            if (_Align == TextAlignment.Right)
-                Canvas.SetLeft(this, _PosX - sizeInfo.NewSize.Width);
+            if (_align == TextAlignment.Right)
+                Canvas.SetLeft(this, _positionX - sizeInfo.NewSize.Width);
         }";
             //WriteContentCode(writeAfter, data);
             
@@ -665,22 +665,22 @@ namespace MediaPortal
             catch { }
             try
             {
-                sw.WriteLine(" OnUP=" + chr34 + control.SelectSingleNode("onup").InnerText+chr34);
+                sw.WriteLine(" OnUp=" + chr34 + control.SelectSingleNode("OnUp").InnerText+chr34);
             }
             catch { }
             try
             {
-                sw.WriteLine(" OnDOWN=" + chr34 + control.SelectSingleNode("ondown").InnerText + chr34);
+                sw.WriteLine(" OnDown=" + chr34 + control.SelectSingleNode("OnDown").InnerText + chr34);
             }
             catch { }
             try
             {
-                sw.WriteLine(" OnRIGHT=" + chr34 + control.SelectSingleNode("onright").InnerText + chr34);
+                sw.WriteLine(" OnRight=" + chr34 + control.SelectSingleNode("OnRight").InnerText + chr34);
             }
             catch { }
             try
             {
-                sw.WriteLine(" OnLEFT=" + chr34 + control.SelectSingleNode("onleft").InnerText + chr34);
+                sw.WriteLine(" OnLeft=" + chr34 + control.SelectSingleNode("OnLeft").InnerText + chr34);
             }
             catch { }
 

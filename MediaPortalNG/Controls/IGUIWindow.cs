@@ -8,22 +8,13 @@ using System.Windows.Media;
 
 namespace MediaPortal
 {
-    public interface IGUIWindow
-    {
- 
-        /// <summary>
-        /// Gets the GUIWindow-ID
-        /// </summary>
-        int ID
-        {
-            get;
-        }
+  public interface IGUIWindow
+  {
 
-        int DefaultControl
-        {
-            get;
-        }
-
-
-    }
+    /// <summary>
+    /// Gets the GUIWindow-ID
+    /// </summary>
+    int ID { get;}
+    int DefaultControl { get;}
+  }
 }
