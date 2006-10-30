@@ -171,9 +171,17 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AxInterop.AXVLC, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\FullProjects\DreamBoxController\DreamBoxController\DreamBoxController\bin\Debug\AxInterop.AXVLC.dll</HintPath>
+    </Reference>
     <Reference Include="Communications">
       <Name>Communications</Name>
       <HintPath>..\Communications.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.AXVLC, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\FullProjects\DreamBoxController\DreamBoxController\DreamBoxController\bin\Debug\Interop.AXVLC.dll</HintPath>
     </Reference>
     <Reference Include="Interop.TunerLib">
       <Name>Interop.TunerLib</Name>
@@ -261,6 +269,10 @@
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ExternalPlayers\ExternalPlayers.csproj">
+      <Project>{DFAB8CDD-A6BA-4A87-930F-CB09B30C1C9D}</Project>
+      <Name>ExternalPlayers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TVCapture\TVCapture.csproj">
       <Name>TVCapture</Name>
       <Project>{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}</Project>
@@ -299,6 +311,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUIDVD\GUIDVDFullscreen.cs" />
+    <Compile Include="GUIMyDreambox\GuiRecordings.cs" />
+    <Compile Include="GUIMyDreambox\MyDreamboxRadio.cs" />
     <Compile Include="Home\GUIHome.cs" />
     <Compile Include="Home\GUIHomeBaseWindow.cs" />
     <Compile Include="Home\GUIHomeSetupForm.cs">
@@ -363,6 +377,22 @@
     <Compile Include="GUIMusic\MusicViewHandler.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUIMyDreambox\DreamboxSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUIMyDreambox\DreamboxSetupForm.Designer.cs">
+      <DependentUpon>DreamboxSetupForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUIMyDreambox\Dreambox\BoxInfo.cs" />
+    <Compile Include="GUIMyDreambox\Dreambox\ChannelInfo.cs" />
+    <Compile Include="GUIMyDreambox\Dreambox\Core.cs" />
+    <Compile Include="GUIMyDreambox\Dreambox\Data.cs" />
+    <Compile Include="GUIMyDreambox\Dreambox\NowPlaying799.cs" />
+    <Compile Include="GUIMyDreambox\Dreambox\Remote.cs" />
+    <Compile Include="GUIMyDreambox\Dreambox\Request.cs" />
+    <Compile Include="GUIMyDreambox\Dreambox\Zap.cs" />
+    <Compile Include="GUIMyDreambox\MyDreamboxGui.cs" />
+    <Compile Include="GUIMyDreambox\MyDreamboxPlugin.cs" />
     <Compile Include="GUIMyMail\GUIMyMailPlugin.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -991,6 +1021,10 @@
     <EmbeddedResource Include="GUIMusicVideos\GUIMusicVideoSetupForm.resx">
       <DependentUpon>GUIMusicVideoSetupForm.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIMyDreambox\DreamboxSetupForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DreamboxSetupForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUIMyMail\MailDetailSetup.resx">
       <DependentUpon>MailDetailSetup.cs</DependentUpon>
