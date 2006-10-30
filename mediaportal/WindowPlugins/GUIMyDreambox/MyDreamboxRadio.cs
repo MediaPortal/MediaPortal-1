@@ -254,7 +254,8 @@ namespace MediaPortal.GUI.Dreambox
                 string password = xmlreader.GetValue("mydreambox", "Password");
                 try
                 {
-                    _Dreambox = new DreamBox.Core("http://" + server, username, password);
+                    if (server.Length > 0)
+                        _Dreambox = new DreamBox.Core("http://" + server, username, password);
                 }
                 catch (Exception x)
                 {
