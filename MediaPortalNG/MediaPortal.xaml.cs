@@ -9,16 +9,11 @@ using System.Configuration;
 namespace MediaPortal
 {
 
-    public partial class app : Application
+  public partial class app : Application
+  {
+    void AppStartup(object sender, StartupEventArgs args)
     {
-
-        void AppStartup(object sender, StartupEventArgs args)
-        {
-
-            Core mpCore = new Core();
-       }
-
-
- 
+      Core mpCore = new Core();
     }
+  }
 }
