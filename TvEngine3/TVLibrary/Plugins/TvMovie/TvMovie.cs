@@ -114,7 +114,8 @@ namespace TvEngine
     {
       if (_database != null)
         _database.Canceled = true;
-      _stateTimer.Dispose();
+      if (_stateTimer != null)
+        _stateTimer.Dispose();
     }
 
     public SetupTv.SectionSettings Setup
