@@ -383,11 +383,12 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+
     void SetRecorderPids()
     {
       if (_channelInfo == null) return;
-      if (_currentChannel == null) return;
       if (_channelInfo.pids.Count == 0) return;
+      if (_currentChannel == null) return;
       if (_currentAudioStream == null) return;
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
       if (dvbChannel == null) return;
@@ -395,6 +396,7 @@ namespace TvLibrary.Implementations.DVB
       ITsRecorder recorder = _filterTsAnalyzer as ITsRecorder;
       recorder.SetPcrPid((short)dvbChannel.PcrPid);
       bool programStream = true;
+      bool audioPidSet = false;
       foreach (PidInfo info in _channelInfo.pids)
       {
         if (info.isAC3Audio || info.isAudio || info.isVideo)
@@ -410,12 +412,16 @@ namespace TvLibrary.Implementations.DVB
           }
           if (info.isAudio || info.isAC3Audio)
           {
-            addPid = true;
+            if (audioPidSet == false)
+            {
+              addPid = true;
+              audioPidSet = true;
+            }
           }
 
           if (addPid)
           {
-            Log.Log.WriteFile("ss2: set record {0}", info);
+            Log.Log.WriteFile("dvb: set record {0}", info);
             recorder.AddStream((short)info.pid, (info.isAC3Audio || info.isAudio), info.isVideo);
           }
         }

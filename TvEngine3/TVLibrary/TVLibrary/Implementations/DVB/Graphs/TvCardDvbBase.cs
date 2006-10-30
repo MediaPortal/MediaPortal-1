@@ -282,6 +282,7 @@ namespace TvLibrary.Implementations.DVB
       ITsRecorder recorder = _filterTsAnalyzer as ITsRecorder;
       recorder.SetPcrPid((short)dvbChannel.PcrPid);
       bool programStream = true;
+      bool audioPidSet = false;
       foreach (PidInfo info in _channelInfo.pids)
       {
         if (info.isAC3Audio || info.isAudio || info.isVideo)
@@ -297,7 +298,11 @@ namespace TvLibrary.Implementations.DVB
           }
           if (info.isAudio || info.isAC3Audio)
           {
-            addPid = true;
+            if (audioPidSet == false)
+            {
+              addPid = true;
+              audioPidSet = true;
+            }
           }
 
           if (addPid)
