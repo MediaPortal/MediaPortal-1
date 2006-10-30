@@ -73,8 +73,8 @@ namespace SetupTv.Sections
         AsString,
         AsValue
       };
-      public int SortColumn;
-      public SortOrder Order;
+      public int SortColumn=0;
+      public SortOrder Order = SortOrder.Ascending;
       public OrderTypes OrderType = OrderTypes.AsString;
 
       public int Compare(object x, object y)
@@ -139,6 +139,7 @@ namespace SetupTv.Sections
     }
     private ListViewColumnSorter lvwColumnSorter;
     private ListViewColumnSorter lvwColumnSorter2;
+    private ListViewColumnSorter lvwColumnSorter3;
     public TvChannels()
       : this("TV Channels")
     {
@@ -151,10 +152,12 @@ namespace SetupTv.Sections
 
       lvwColumnSorter = new ListViewColumnSorter();
       lvwColumnSorter2 = new ListViewColumnSorter();
+      lvwColumnSorter3 = new ListViewColumnSorter();
       lvwColumnSorter2.Order = SortOrder.Descending;
       lvwColumnSorter2.OrderType = ListViewColumnSorter.OrderTypes.AsValue;
       this.mpListView1.ListViewItemSorter = lvwColumnSorter;
       this.mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
+      this.mpListViewChannels.ListViewItemSorter = lvwColumnSorter3;
 
     }
 
@@ -781,6 +784,7 @@ namespace SetupTv.Sections
     {
       mpListViewChannels.BeginUpdate();
       mpListViewChannels.Items.Clear();
+      mpListViewMapped.Items.Clear();
 
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
       sb.AddOrderByField(true, "sortOrder");
@@ -800,17 +804,9 @@ namespace SetupTv.Sections
         item.Tag = channel;
         items.Add(item);
       }
-      items = new List<ListViewItem>();
-      foreach (Channel channel in channels)
-      {
-        if (channel.IsTv == false) continue;
-        ListViewItem item = new ListViewItem(channel.Name);
-        item.Tag = channel;
-        items.Add(item);
-      }
       mpListViewChannels.Items.AddRange(items.ToArray());
-      mpListViewChannels.Sort();
       mpListViewChannels.EndUpdate();
+      mpListViewChannels.Sort();
     }
 
     private void mpListViewChannels_SelectedIndexChanged(object sender, EventArgs e)
