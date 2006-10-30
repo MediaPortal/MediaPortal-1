@@ -159,6 +159,14 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AxInterop.AXVLC, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\FullProjects\DreamBoxController\DreamBoxController\DreamBoxController\bin\Debug\AxInterop.AXVLC.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.AXVLC, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\FullProjects\DreamBoxController\DreamBoxController\DreamBoxController\bin\Debug\Interop.AXVLC.dll</HintPath>
+    </Reference>
     <Reference Include="Interop.iTunesLib, Version=1.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Interop.iTunesLib.dll</HintPath>
@@ -207,6 +215,13 @@
     <Compile Include="Itunes\ITunesPlugin.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="VideoLAN\VideoLanControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="VideoLAN\VideoLanControl.designer.cs">
+      <DependentUpon>VideoLanControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VideoLAN\VideoLanPlugin.cs" />
     <Compile Include="Winamp\ConfigurationForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -221,6 +236,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Itunes\ConfigurationForm.resx">
       <DependentUpon>ConfigurationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VideoLAN\VideoLanControl.resx">
+      <DependentUpon>VideoLanControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Winamp\ConfigurationForm.resx">
       <DependentUpon>ConfigurationForm.cs</DependentUpon>
