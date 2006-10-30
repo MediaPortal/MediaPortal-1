@@ -146,6 +146,10 @@ copy ..\..\..\bass_vis.dll .
 copy ..\..\..\mpviz.dll .
 rem End BASS Music Engine dependancies
 
+rem MyDreambox plugin dependencies
+copy ..\..\..\WindowPlugins\GUIMyDreambox\AxInterop.AXVLC.dll .
+copy ..\..\..\WindowPlugins\GUIMyDreambox\Interop.AXVLC.dll .
+
 rem - LCDHype drivers
 xcopy ..\Release\plugins\process\LCDDrivers\*.* plugins\process\LCDDrivers /E /I /R /K /Y
 rem - Copy ExternalDisplay graphics

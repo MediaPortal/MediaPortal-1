@@ -127,4 +127,8 @@ copy ..\..\..\bass_vis.dll .
 copy ..\..\..\mpviz.dll .
 rem End BASS Music Engine dependancies
 
+rem MyDreambox plugin dependencies
+copy ..\..\..\WindowPlugins\GUIMyDreambox\AxInterop.AXVLC.dll .
+copy ..\..\..\WindowPlugins\GUIMyDreambox\Interop.AXVLC.dll .
+
 @if exist postbuild2.bat call postbuild2.bat
