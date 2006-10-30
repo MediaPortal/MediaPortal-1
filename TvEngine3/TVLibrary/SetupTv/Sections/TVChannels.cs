@@ -39,30 +39,83 @@ using TvLibrary.Log;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations;
 using TvLibrary.Channels;
+using similaritymetrics;
 namespace SetupTv.Sections
 {
   public partial class TvChannels : SectionSettings
   {
+    public class CardInfo
+    {
+      protected Card _card;
+
+      public Card Card
+      {
+        get
+        {
+          return _card;
+        }
+      }
+
+      public CardInfo(Card card)
+      {
+        _card = card;
+      }
+
+      public override string ToString()
+      {
+        return _card.Name.ToString();
+      }
+    }
     public class ListViewColumnSorter : IComparer
     {
+      public enum OrderTypes
+      {
+        AsString,
+        AsValue
+      };
       public int SortColumn;
       public SortOrder Order;
+      public OrderTypes OrderType = OrderTypes.AsString;
+
       public int Compare(object x, object y)
       {
-        int compareResult;
+        int compareResult=0;
         ListViewItem listviewX, listviewY;
         // Cast the objects to be compared to ListViewItem objects
         listviewX = (ListViewItem)x;
         listviewY = (ListViewItem)y;
-        if (SortColumn == 0)
+        switch (OrderType)
         {
-          compareResult = String.Compare(listviewX.Text, listviewY.Text);
-        }
-        else
-        {
-          // Compare the two items
-          compareResult = String.Compare(listviewX.SubItems[SortColumn].Text,
-            listviewY.SubItems[SortColumn].Text);
+          case OrderTypes.AsString:
+            if (SortColumn == 0)
+            {
+              compareResult = String.Compare(listviewX.Text, listviewY.Text);
+            }
+            else
+            {
+              // Compare the two items
+              compareResult = String.Compare(listviewX.SubItems[SortColumn].Text, listviewY.SubItems[SortColumn].Text);
+            }
+            break;
+          case OrderTypes.AsValue:
+            string line1, line2;
+            if (SortColumn == 0) line1 = listviewX.Text;
+            else line1 = listviewX.SubItems[SortColumn].Text;
+
+            if (SortColumn == 0) line2 = listviewY.Text;
+            else line2 = listviewY.SubItems[SortColumn].Text;
+            int pos1 = line1.IndexOf("%"); line1 = line1.Substring(0, pos1);
+            int pos2 = line2.IndexOf("%"); line2 = line2.Substring(0, pos2);
+            float value1 = float.Parse(line1);
+            float value2 = float.Parse(line2);
+            if (value1 < value2)
+              compareResult = -1;
+            else if (value1 > value2)
+              compareResult = 1;
+            else
+              compareResult = 0;
+            break;
+
         }
         // Calculate correct return value based on object comparison
         if (Order == SortOrder.Ascending)
@@ -85,6 +138,7 @@ namespace SetupTv.Sections
       }
     }
     private ListViewColumnSorter lvwColumnSorter;
+    private ListViewColumnSorter lvwColumnSorter2;
     public TvChannels()
       : this("TV Channels")
     {
@@ -96,7 +150,11 @@ namespace SetupTv.Sections
       InitializeComponent();
 
       lvwColumnSorter = new ListViewColumnSorter();
+      lvwColumnSorter2 = new ListViewColumnSorter();
+      lvwColumnSorter2.Order = SortOrder.Descending;
+      lvwColumnSorter2.OrderType = ListViewColumnSorter.OrderTypes.AsValue;
       this.mpListView1.ListViewItemSorter = lvwColumnSorter;
+      this.mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
 
     }
 
@@ -120,9 +178,17 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
 
+      mpComboBoxCard.Items.Clear();
+      IList dbsCards = Card.ListAll();
+      foreach (Card card in dbsCards)
+      {
+        mpComboBoxCard.Items.Add(new CardInfo(card));
+      }
+      mpComboBoxCard.SelectedIndex = 0;
+
       CountryCollection countries = new CountryCollection();
       Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
-      IList dbsCards = Card.ListAll();
+
       foreach (Card card in dbsCards)
       {
         cards[card.IdCard] = RemoteControl.Instance.Type(card.IdCard);
@@ -520,7 +586,7 @@ namespace SetupTv.Sections
       rootElement.AppendChild(nodechannels);
       xmlDoc.AppendChild(rootElement);
       xmlDoc.Save("export.xml");
-      MessageBox.Show(this,"Channels exported to 'export.xml'");
+      MessageBox.Show(this, "Channels exported to 'export.xml'");
     }
 
     private void mpButtonExpert_Click(object sender, EventArgs e)
@@ -701,9 +767,86 @@ namespace SetupTv.Sections
       }
       catch (Exception)
       {
-        MessageBox.Show(this,"Not a valid channel list");
+        MessageBox.Show(this, "Not a valid channel list");
       }
       OnSectionActivated();
+    }
+
+    private void mpButtonUnmap_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void mpComboBoxCard_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      mpListViewChannels.BeginUpdate();
+      mpListViewChannels.Items.Clear();
+
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      sb.AddOrderByField(true, "sortOrder");
+      SqlStatement stmt = sb.GetStatement(true);
+      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+
+      Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
+      IList maps = card.ReferringChannelMap();
+
+
+      List<ListViewItem> items = new List<ListViewItem>();
+      foreach (ChannelMap map in maps)
+      {
+        Channel channel = map.ReferencedChannel();
+        if (channel.IsTv == false) continue;
+        ListViewItem item = new ListViewItem(channel.Name);
+        item.Tag = channel;
+        items.Add(item);
+      }
+      items = new List<ListViewItem>();
+      foreach (Channel channel in channels)
+      {
+        if (channel.IsTv == false) continue;
+        ListViewItem item = new ListViewItem(channel.Name);
+        item.Tag = channel;
+        items.Add(item);
+      }
+      mpListViewChannels.Items.AddRange(items.ToArray());
+      mpListViewChannels.Sort();
+      mpListViewChannels.EndUpdate();
+    }
+
+    private void mpListViewChannels_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      mpListViewMapped.Items.Clear();
+      if (mpListViewChannels.SelectedIndices == null) return;
+      if (mpListViewChannels.SelectedIndices.Count != 1) return;
+      Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
+      ListViewItem selectedItem = mpListViewChannels.Items[mpListViewChannels.SelectedIndices[0]];
+      Channel selectedChannel = (Channel)selectedItem.Tag;
+      IList allChannels = Channel.ListAll();
+      List<ListViewItem> items = new List<ListViewItem>();
+      foreach (Channel channel in allChannels)
+      {
+        bool isMapped = false;
+        IList list = channel.ReferringChannelMap();
+        foreach (ChannelMap map in list)
+        {
+          if (map.IdCard == card.IdCard)
+          {
+            isMapped = true;
+            break;
+          }
+        }
+        if (isMapped) continue;
+        Levenstein comparer = new Levenstein();
+        float result = comparer.getSimilarity(selectedChannel.Name, channel.Name);
+
+
+        ListViewItem item = new ListViewItem((result * 100f).ToString("f2") + "%");
+        item.Tag = channel;
+        item.SubItems.Add(channel.Name);
+        items.Add(item);
+      }
+      mpListViewMapped.Items.AddRange(items.ToArray());
+      mpListViewMapped.Sort();
     }
   }
 }

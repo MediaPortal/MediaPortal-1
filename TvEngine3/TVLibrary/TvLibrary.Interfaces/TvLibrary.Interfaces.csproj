@@ -61,6 +61,13 @@
     <Compile Include="Log.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceProvider\GlobalServiceProvider.cs" />
+    <Compile Include="Simmetrics\AbstractStringMetric.cs" />
+    <Compile Include="Simmetrics\AbstractSubstitutionCost.cs" />
+    <Compile Include="Simmetrics\InterfaceStringMetric.cs" />
+    <Compile Include="Simmetrics\InterfaceSubstitutionCost.cs" />
+    <Compile Include="Simmetrics\Levenstein.cs" />
+    <Compile Include="Simmetrics\MathFuncs.cs" />
+    <Compile Include="Simmetrics\SubCost01.cs" />
     <Compile Include="TvException.cs" />
   </ItemGroup>
   <ItemGroup>

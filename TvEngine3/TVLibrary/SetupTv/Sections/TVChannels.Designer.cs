@@ -43,6 +43,21 @@ namespace SetupTv.Sections
       this.mpButtonExpert = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonImport = new MediaPortal.UserInterface.Controls.MPButton();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+      this.tabControl1 = new System.Windows.Forms.TabControl();
+      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpListViewMapped = new MediaPortal.UserInterface.Controls.MPListView();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpListViewChannels = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
+      this.mpComboBoxCard = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
+      this.tabControl1.SuspendLayout();
+      this.tabPage1.SuspendLayout();
+      this.tabPage2.SuspendLayout();
       this.SuspendLayout();
       // 
       // mpListView1
@@ -58,9 +73,9 @@ namespace SetupTv.Sections
             this.columnHeader4});
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.LabelEdit = true;
-      this.mpListView1.Location = new System.Drawing.Point(16, 37);
+      this.mpListView1.Location = new System.Drawing.Point(13, 41);
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(438, 306);
+      this.mpListView1.Size = new System.Drawing.Size(438, 284);
       this.mpListView1.TabIndex = 0;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
@@ -91,7 +106,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonClear
       // 
-      this.mpButtonClear.Location = new System.Drawing.Point(402, 347);
+      this.mpButtonClear.Location = new System.Drawing.Point(394, 328);
       this.mpButtonClear.Name = "mpButtonClear";
       this.mpButtonClear.Size = new System.Drawing.Size(51, 23);
       this.mpButtonClear.TabIndex = 1;
@@ -102,14 +117,14 @@ namespace SetupTv.Sections
       // mpLabelChannelCount
       // 
       this.mpLabelChannelCount.AutoSize = true;
-      this.mpLabelChannelCount.Location = new System.Drawing.Point(16, 10);
+      this.mpLabelChannelCount.Location = new System.Drawing.Point(13, 14);
       this.mpLabelChannelCount.Name = "mpLabelChannelCount";
       this.mpLabelChannelCount.Size = new System.Drawing.Size(0, 13);
       this.mpLabelChannelCount.TabIndex = 2;
       // 
       // mpButtonDel
       // 
-      this.mpButtonDel.Location = new System.Drawing.Point(183, 350);
+      this.mpButtonDel.Location = new System.Drawing.Point(175, 331);
       this.mpButtonDel.Name = "mpButtonDel";
       this.mpButtonDel.Size = new System.Drawing.Size(54, 23);
       this.mpButtonDel.TabIndex = 1;
@@ -119,7 +134,7 @@ namespace SetupTv.Sections
       // 
       // buttonUtp
       // 
-      this.buttonUtp.Location = new System.Drawing.Point(19, 350);
+      this.buttonUtp.Location = new System.Drawing.Point(11, 331);
       this.buttonUtp.Name = "buttonUtp";
       this.buttonUtp.Size = new System.Drawing.Size(38, 23);
       this.buttonUtp.TabIndex = 3;
@@ -129,7 +144,7 @@ namespace SetupTv.Sections
       // 
       // buttonDown
       // 
-      this.buttonDown.Location = new System.Drawing.Point(63, 350);
+      this.buttonDown.Location = new System.Drawing.Point(55, 331);
       this.buttonDown.Name = "buttonDown";
       this.buttonDown.Size = new System.Drawing.Size(44, 23);
       this.buttonDown.TabIndex = 4;
@@ -139,7 +154,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonEdit
       // 
-      this.mpButtonEdit.Location = new System.Drawing.Point(119, 350);
+      this.mpButtonEdit.Location = new System.Drawing.Point(111, 331);
       this.mpButtonEdit.Name = "mpButtonEdit";
       this.mpButtonEdit.Size = new System.Drawing.Size(58, 23);
       this.mpButtonEdit.TabIndex = 5;
@@ -149,7 +164,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonExpert
       // 
-      this.mpButtonExpert.Location = new System.Drawing.Point(315, 350);
+      this.mpButtonExpert.Location = new System.Drawing.Point(307, 331);
       this.mpButtonExpert.Name = "mpButtonExpert";
       this.mpButtonExpert.Size = new System.Drawing.Size(54, 23);
       this.mpButtonExpert.TabIndex = 6;
@@ -159,7 +174,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonImport
       // 
-      this.mpButtonImport.Location = new System.Drawing.Point(255, 350);
+      this.mpButtonImport.Location = new System.Drawing.Point(247, 331);
       this.mpButtonImport.Name = "mpButtonImport";
       this.mpButtonImport.Size = new System.Drawing.Size(54, 23);
       this.mpButtonImport.TabIndex = 7;
@@ -171,24 +186,144 @@ namespace SetupTv.Sections
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
       // 
+      // tabControl1
+      // 
+      this.tabControl1.Controls.Add(this.tabPage1);
+      this.tabControl1.Controls.Add(this.tabPage2);
+      this.tabControl1.Location = new System.Drawing.Point(3, 3);
+      this.tabControl1.Name = "tabControl1";
+      this.tabControl1.SelectedIndex = 0;
+      this.tabControl1.Size = new System.Drawing.Size(465, 400);
+      this.tabControl1.TabIndex = 8;
+      // 
+      // tabPage1
+      // 
+      this.tabPage1.Controls.Add(this.mpListView1);
+      this.tabPage1.Controls.Add(this.mpButtonImport);
+      this.tabPage1.Controls.Add(this.mpButtonClear);
+      this.tabPage1.Controls.Add(this.mpButtonExpert);
+      this.tabPage1.Controls.Add(this.mpButtonDel);
+      this.tabPage1.Controls.Add(this.mpButtonEdit);
+      this.tabPage1.Controls.Add(this.mpLabelChannelCount);
+      this.tabPage1.Controls.Add(this.buttonDown);
+      this.tabPage1.Controls.Add(this.buttonUtp);
+      this.tabPage1.Location = new System.Drawing.Point(4, 22);
+      this.tabPage1.Name = "tabPage1";
+      this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPage1.Size = new System.Drawing.Size(457, 374);
+      this.tabPage1.TabIndex = 0;
+      this.tabPage1.Text = "Channels";
+      this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // tabPage2
+      // 
+      this.tabPage2.Controls.Add(this.mpLabel3);
+      this.tabPage2.Controls.Add(this.mpListViewMapped);
+      this.tabPage2.Controls.Add(this.mpLabel2);
+      this.tabPage2.Controls.Add(this.mpListViewChannels);
+      this.tabPage2.Controls.Add(this.mpComboBoxCard);
+      this.tabPage2.Controls.Add(this.mpLabel1);
+      this.tabPage2.Location = new System.Drawing.Point(4, 22);
+      this.tabPage2.Name = "tabPage2";
+      this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPage2.Size = new System.Drawing.Size(457, 374);
+      this.tabPage2.TabIndex = 1;
+      this.tabPage2.Text = "Combinations";
+      this.tabPage2.UseVisualStyleBackColor = true;
+      // 
+      // columnHeader5
+      // 
+      this.columnHeader5.Text = "Name";
+      this.columnHeader5.Width = 120;
+      // 
+      // mpLabel3
+      // 
+      this.mpLabel3.AutoSize = true;
+      this.mpLabel3.Location = new System.Drawing.Point(251, 48);
+      this.mpLabel3.Name = "mpLabel3";
+      this.mpLabel3.Size = new System.Drawing.Size(154, 13);
+      this.mpLabel3.TabIndex = 13;
+      this.mpLabel3.Text = "Similar channels on other cards";
+      // 
+      // mpListViewMapped
+      // 
+      this.mpListViewMapped.AllowDrop = true;
+      this.mpListViewMapped.AllowRowReorder = true;
+      this.mpListViewMapped.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader8,
+            this.columnHeader5});
+      this.mpListViewMapped.Location = new System.Drawing.Point(243, 67);
+      this.mpListViewMapped.Name = "mpListViewMapped";
+      this.mpListViewMapped.Size = new System.Drawing.Size(204, 297);
+      this.mpListViewMapped.TabIndex = 12;
+      this.mpListViewMapped.UseCompatibleStateImageBehavior = false;
+      this.mpListViewMapped.View = System.Windows.Forms.View.Details;
+      // 
+      // mpLabel2
+      // 
+      this.mpLabel2.AutoSize = true;
+      this.mpLabel2.Location = new System.Drawing.Point(9, 48);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(54, 13);
+      this.mpLabel2.TabIndex = 11;
+      this.mpLabel2.Text = "Channels:";
+      // 
+      // mpListViewChannels
+      // 
+      this.mpListViewChannels.AllowDrop = true;
+      this.mpListViewChannels.AllowRowReorder = true;
+      this.mpListViewChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader6});
+      this.mpListViewChannels.Location = new System.Drawing.Point(12, 67);
+      this.mpListViewChannels.Name = "mpListViewChannels";
+      this.mpListViewChannels.Size = new System.Drawing.Size(193, 297);
+      this.mpListViewChannels.TabIndex = 10;
+      this.mpListViewChannels.UseCompatibleStateImageBehavior = false;
+      this.mpListViewChannels.View = System.Windows.Forms.View.Details;
+      this.mpListViewChannels.SelectedIndexChanged += new System.EventHandler(this.mpListViewChannels_SelectedIndexChanged);
+      // 
+      // columnHeader6
+      // 
+      this.columnHeader6.Text = "Name";
+      this.columnHeader6.Width = 180;
+      // 
+      // mpComboBoxCard
+      // 
+      this.mpComboBoxCard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxCard.FormattingEnabled = true;
+      this.mpComboBoxCard.Location = new System.Drawing.Point(67, 10);
+      this.mpComboBoxCard.Name = "mpComboBoxCard";
+      this.mpComboBoxCard.Size = new System.Drawing.Size(249, 21);
+      this.mpComboBoxCard.TabIndex = 8;
+      this.mpComboBoxCard.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxCard_SelectedIndexChanged);
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.AutoSize = true;
+      this.mpLabel1.Location = new System.Drawing.Point(9, 13);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(32, 13);
+      this.mpLabel1.TabIndex = 9;
+      this.mpLabel1.Text = "Card:";
+      // 
+      // columnHeader8
+      // 
+      this.columnHeader8.Text = "Ranking";
+      // 
       // TvChannels
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this.mpButtonImport);
-      this.Controls.Add(this.mpButtonExpert);
-      this.Controls.Add(this.mpButtonEdit);
-      this.Controls.Add(this.buttonDown);
-      this.Controls.Add(this.buttonUtp);
-      this.Controls.Add(this.mpLabelChannelCount);
-      this.Controls.Add(this.mpButtonDel);
-      this.Controls.Add(this.mpButtonClear);
-      this.Controls.Add(this.mpListView1);
+      this.Controls.Add(this.tabControl1);
       this.Name = "TvChannels";
-      this.Size = new System.Drawing.Size(467, 388);
+      this.Size = new System.Drawing.Size(474, 412);
       this.Load += new System.EventHandler(this.TvChannels_Load);
+      this.tabControl1.ResumeLayout(false);
+      this.tabPage1.ResumeLayout(false);
+      this.tabPage1.PerformLayout();
+      this.tabPage2.ResumeLayout(false);
+      this.tabPage2.PerformLayout();
       this.ResumeLayout(false);
-      this.PerformLayout();
 
     }
 
@@ -209,5 +344,17 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPButton mpButtonExpert;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonImport;
     private System.Windows.Forms.OpenFileDialog openFileDialog1;
+    private System.Windows.Forms.TabControl tabControl1;
+    private System.Windows.Forms.TabPage tabPage1;
+    private System.Windows.Forms.TabPage tabPage2;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
+    private MediaPortal.UserInterface.Controls.MPListView mpListViewMapped;
+    private System.Windows.Forms.ColumnHeader columnHeader5;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
+    private MediaPortal.UserInterface.Controls.MPListView mpListViewChannels;
+    private System.Windows.Forms.ColumnHeader columnHeader6;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxCard;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+    private System.Windows.Forms.ColumnHeader columnHeader8;
   }
 }
