@@ -298,11 +298,12 @@ namespace MediaPortal.Tests.Core.Threading
 
     private void SetupLogging()
     {
-      _pool.DebugLog += new LoggerDelegate(Console.Out.WriteLine);
-      // _pool.ErrorLog += new LoggerDelegate(Console.Error.WriteLine);
-      _pool.ErrorLog += new LoggerDelegate(Console.Out.WriteLine);
-      _pool.WarnLog += new LoggerDelegate(Console.Out.WriteLine);
-      _pool.InfoLog += new LoggerDelegate(Console.Out.WriteLine);
+      // only enable in case of trouble... ;-)
+      // _pool.DebugLog += new LoggerDelegate(Console.Out.WriteLine);
+      // // _pool.ErrorLog += new LoggerDelegate(Console.Error.WriteLine);
+      // _pool.ErrorLog += new LoggerDelegate(Console.Out.WriteLine);
+      // _pool.WarnLog += new LoggerDelegate(Console.Out.WriteLine);
+      // _pool.InfoLog += new LoggerDelegate(Console.Out.WriteLine);
     }
 
     #endregion
