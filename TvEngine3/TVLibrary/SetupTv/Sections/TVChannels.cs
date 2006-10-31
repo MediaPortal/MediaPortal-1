@@ -152,6 +152,7 @@ namespace SetupTv.Sections
       InitializeComponent();
 
       lvwColumnSorter = new ListViewColumnSorter();
+      lvwColumnSorter.Order = SortOrder.None;
       lvwColumnSorter2 = new ListViewColumnSorter();
       lvwColumnSorter3 = new ListViewColumnSorter();
       lvwColumnSorter2.Order = SortOrder.Descending;
