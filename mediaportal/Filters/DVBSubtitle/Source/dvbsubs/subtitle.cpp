@@ -177,6 +177,16 @@ void CSubtitle::SetPTS( uint64_t PTS )
 	m_PTS = PTS;
 }
 
+uint64_t CSubtitle::Timeout()
+{
+  return m_timeout;
+}
+
+void CSubtitle::SetTimeout( uint64_t timeout )
+{
+  m_timeout = timeout;
+}
+
 int CSubtitle::FirstScanline()
 {
   return m_FirstScanline;

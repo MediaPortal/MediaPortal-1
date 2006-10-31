@@ -46,9 +46,13 @@ public:
 	int Height();
 
 	uint64_t PTS();
-	
+
 	void SetPTS( uint64_t PTS );
 
+  uint64_t Timeout();
+
+  void SetTimeout( uint64_t timeout );
+  
   int FirstScanline();
 
 	unsigned char* GetData(); 
@@ -62,5 +66,7 @@ public:
 private:
 	
 	uint64_t m_PTS;
+
+  uint64_t m_timeout;
 };
 #endif

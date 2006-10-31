@@ -343,6 +343,8 @@ void CDVBSubDecoder::Process_page_composition_segment()
 	//LogDebug("DVBsubs: "PAGE_COMPOSITION_SEGMENT: page_id=%04x, page_time_out=%d, page_version=%d,page_state=%d",page_id, page_time_out, page_version_number, page_state );
 	//LogDebug("DVBsubs: page_state=%d", page_state );
   
+  m_CurrentSubtitle->SetTimeout( page_time_out );
+
 	if ((acquired==0) && (page_state!=2) && (page_state!=1)) 
 	{
 		//LogDebug("DVBsubs: waiting for mode_change");
