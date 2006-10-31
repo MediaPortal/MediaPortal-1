@@ -75,8 +75,8 @@ namespace SetupTv.Sections
       mpLabelTunerLocked.Text = "No";
       if (RemoteControl.Instance.TunerLocked(_cardNumber))
         mpLabelTunerLocked.Text = "Yes";
-      progressBarLevel.Value = Math.Max(100,RemoteControl.Instance.SignalLevel(_cardNumber));
-      progressBarQuality.Value = Math.Max(100,RemoteControl.Instance.SignalQuality(_cardNumber));
+      progressBarLevel.Value = Math.Min(100,RemoteControl.Instance.SignalLevel(_cardNumber));
+      progressBarQuality.Value = Math.Min(100, RemoteControl.Instance.SignalQuality(_cardNumber));
 
       ATSCChannel channel = RemoteControl.Instance.CurrentChannel(_cardNumber) as ATSCChannel;
       if (channel == null)
