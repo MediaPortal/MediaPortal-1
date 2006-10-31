@@ -2290,7 +2290,10 @@ namespace TvService
         }
         else
         {
-          result = TvResult.ChannelNotMappedToAnyCard;
+          if (cardsFound==0)
+            result = TvResult.ChannelNotMappedToAnyCard;
+          else
+            result = TvResult.AllCardsBusy;
         }
         return cardsAvailable;
       }
