@@ -171,9 +171,16 @@ namespace MediaPortal.Player
     protected DateTime updateTimer;
     protected FilterStreams FStreams = null;
     VMR7Util vmr7 = null;
+    protected g_Player.MediaType _mediaType;
+
 
     public VideoPlayerVMR7()
     {
+      _mediaType = g_Player.MediaType.Video;
+    }
+    public VideoPlayerVMR7(g_Player.MediaType type)
+    {
+      _mediaType = type;
     }
 
     public override bool Play(string strFile)
@@ -458,8 +465,6 @@ namespace MediaPortal.Player
         vmr7.Process();
       }
     }
-
-
 
 
     public override int PositionX
@@ -805,7 +810,10 @@ namespace MediaPortal.Player
 
     public override bool HasVideo
     {
-      get { return true; }
+      get 
+      { 
+        return (_mediaType==g_Player.MediaType.TV||_mediaType==g_Player.MediaType.Recording||_mediaType==g_Player.MediaType.Video); 
+      }
     }
 
     public override bool Ended
@@ -841,12 +849,12 @@ namespace MediaPortal.Player
           int intCount = 0;
           while (xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") != "undefined")
           {
-              if (xmlreader.GetValueAsBool("movieplayer", "usefilter" + intCount.ToString(), false))
-              {
-                  strFilters += xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") + ";";
-                  intFilters++;
-              }
-              intCount++;
+            if (xmlreader.GetValueAsBool("movieplayer", "usefilter" + intCount.ToString(), false))
+            {
+              strFilters += xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") + ";";
+              intFilters++;
+            }
+            intCount++;
           }
 
         }
@@ -861,7 +869,7 @@ namespace MediaPortal.Player
         string[] arrFilters = strFilters.Split(';');
         for (int i = 0; i < intFilters; i++)
         {
-            customFilters[i] = DirectShowUtil.AddFilterToGraph(graphBuilder, arrFilters[i]);
+          customFilters[i] = DirectShowUtil.AddFilterToGraph(graphBuilder, arrFilters[i]);
         }
 
         if (strAudiorenderer.Length > 0) audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
@@ -982,11 +990,11 @@ namespace MediaPortal.Player
         // FlipGer: release custom filters
         for (int i = 0; i < customFilters.Length; i++)
         {
-            if (customFilters[i] != null)
-            {
-                while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0);
-            }
-            customFilters[i] = null;
+          if (customFilters[i] != null)
+          {
+            while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0) ;
+          }
+          customFilters[i] = null;
         }
         if (vobSub != null)
         {
@@ -1382,6 +1390,7 @@ namespace MediaPortal.Player
 
     //ENDS
     #endregion
+
     #region IDisposable Members
 
     public override void Release()
@@ -1389,5 +1398,28 @@ namespace MediaPortal.Player
       CloseInterfaces();
     }
     #endregion
+
+    public override bool IsTV
+    {
+      get
+      {
+        return (_mediaType == g_Player.MediaType.TV||_mediaType == g_Player.MediaType.Recording);
+      }
+    }
+
+    public override bool IsTimeShifting
+    {
+      get
+      {
+        return false;
+      }
+    }
+    public override bool IsRadio
+    {
+      get
+      {
+        return _mediaType == g_Player.MediaType.Radio;
+      }
+    }
   }
 }

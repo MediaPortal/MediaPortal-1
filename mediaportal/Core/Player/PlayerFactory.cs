@@ -310,7 +310,7 @@ namespace MediaPortal.Player
       }
       if (!MediaPortal.Util.Utils.IsAVStream(fileName) && MediaPortal.Util.Utils.IsVideo(fileName))
       {
-        newPlayer = new Player.VideoPlayerVMR9();
+        newPlayer = new Player.VideoPlayerVMR9(type);
         return newPlayer;
       }
 

@@ -45,6 +45,11 @@ namespace MediaPortal.Player
     VMR9Util Vmr9 = null;
     public VideoPlayerVMR9()
     {
+      _mediaType = g_Player.MediaType.Video;
+    }
+    public VideoPlayerVMR9(g_Player.MediaType type)
+    {
+      _mediaType = type;
     }
 
     protected override void OnInitialized()
