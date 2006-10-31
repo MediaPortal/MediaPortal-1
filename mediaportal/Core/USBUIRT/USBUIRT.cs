@@ -20,17 +20,22 @@
  */
 
 using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Text;
 using System.Collections;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
+using System.Windows.Forms;
+using System.Xml;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 using MediaPortal.Util;
 
 namespace MediaPortal.IR
 {
+
   #region LearningEventArgs
+
   /// <summary>
   /// This class will handle all communication with an external USBUIRT device
   /// The USB-UIRT, allows your PC to both Receive and Transmit infrared signals -- 
@@ -38,7 +43,7 @@ namespace MediaPortal.IR
   /// VCR, Audio System, etc. 
   /// See www.usbuirt.com for more details on USBUIRT
   /// </summary>
-  public class LearningEventArgs : System.EventArgs
+  public class LearningEventArgs : EventArgs
   {
     public bool Succeeded = false;
     public string Button;
@@ -48,32 +53,33 @@ namespace MediaPortal.IR
     public int CurrentCodeCount = 0;
 
     public LearningEventArgs(string button, string ircode, bool succeeded,
-      bool capturingToggledIrCode, int totalCodeCount, int curCodeCount)
+                             bool capturingToggledIrCode, int totalCodeCount, int curCodeCount)
     {
-      this.Button = button;
-      this.IrCode = ircode;
-      this.Succeeded = succeeded;
-      this.IsToggledIrCode = capturingToggledIrCode;
-      this.TotalCodeCount = totalCodeCount;
-      this.CurrentCodeCount = curCodeCount;
+      Button = button;
+      IrCode = ircode;
+      Succeeded = succeeded;
+      IsToggledIrCode = capturingToggledIrCode;
+      TotalCodeCount = totalCodeCount;
+      CurrentCodeCount = curCodeCount;
     }
 
     public LearningEventArgs(string button, bool capturingToggledIrCode,
-      int totalCodeCount, int curCodeCount)
+                             int totalCodeCount, int curCodeCount)
     {
-      this.Button = button;
-      this.IsToggledIrCode = capturingToggledIrCode;
-      this.TotalCodeCount = totalCodeCount;
-      this.CurrentCodeCount = curCodeCount;
+      Button = button;
+      IsToggledIrCode = capturingToggledIrCode;
+      TotalCodeCount = totalCodeCount;
+      CurrentCodeCount = curCodeCount;
     }
   }
+
   #endregion
 
   public class USBUIRT : IDisposable, IComparer
   {
     #region Win API imports
 
-    const int WM_KEYDOWN = 0x0100;
+    private const int WM_KEYDOWN = 0x0100;
 
     [DllImport("user32.dll")]
     public static extern void PostMessage(IntPtr window, int message, int wparam, int lparam);
@@ -81,8 +87,9 @@ namespace MediaPortal.IR
     #endregion
 
     #region USBUIRT imports
+
     [StructLayout(LayoutKind.Sequential)]
-    struct UUINFO
+    private struct UUINFO
     {
       public int fwVersion;
       public int protVersion;
@@ -91,59 +98,75 @@ namespace MediaPortal.IR
       public char fwDateYear;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
-    struct UUGPIO
-    {
-      byte[] irCode;
-      byte action;
-      byte duration;
-    }
+    //Not used
+    //[StructLayout(LayoutKind.Sequential)]
+    //private struct UUGPIO
+    //{
+    //  public byte[] irCode;
+    //  public byte action;
+    //  public byte duration;
+    //}
 
     [DllImport("uuirtdrv.dll")]
-    static extern IntPtr UUIRTOpen();
+    private static extern IntPtr UUIRTOpen();
 
     [DllImport("uuirtdrv.dll")]
-    static extern bool UUIRTClose(IntPtr hHandle);
+    private static extern bool UUIRTClose(IntPtr hHandle);
+
+    //[DllImport("uuirtdrv.dll")]
+    //private static extern bool UUIRTGetDrvInfo(ref int puDrvVersion);
 
     [DllImport("uuirtdrv.dll")]
-    static extern bool UUIRTGetDrvInfo(ref int puDrvVersion);
+    private static extern bool UUIRTGetUUIRTInfo(IntPtr hHandle, ref UUINFO puuInfo);
 
     [DllImport("uuirtdrv.dll")]
-    static extern bool UUIRTGetUUIRTInfo(IntPtr hHandle, ref UUINFO puuInfo);
+    private static extern bool UUIRTGetUUIRTConfig(IntPtr hHandle, ref uint puConfig);
 
     [DllImport("uuirtdrv.dll")]
-    static extern bool UUIRTGetUUIRTConfig(IntPtr hHandle, ref uint puConfig);
+    private static extern bool UUIRTSetUUIRTConfig(IntPtr hHandle, uint uConfig);
 
     [DllImport("uuirtdrv.dll")]
-    static extern bool UUIRTSetUUIRTConfig(IntPtr hHandle, uint uConfig);
+    private static extern bool UUIRTTransmitIR(IntPtr hHandle, string IRCode, int codeFormat, int repeatCount,
+                                               int inactivityWaitTime, IntPtr hEvent, int res1, int res2);
 
     [DllImport("uuirtdrv.dll")]
-    static extern bool UUIRTTransmitIR(IntPtr hHandle, string IRCode, int codeFormat, int repeatCount, int inactivityWaitTime, IntPtr hEvent, int res1, int res2);
+    private static extern bool UUIRTLearnIR(IntPtr hHandle, int codeFormat,
+                                            [MarshalAs(UnmanagedType.LPStr)] StringBuilder ircode,
+                                            IRLearnCallbackDelegate progressProc, int userData, ref int pAbort,
+                                            int param1, [MarshalAs(UnmanagedType.AsAny)] Object o,
+                                            [MarshalAs(UnmanagedType.AsAny)] Object oo);
 
     [DllImport("uuirtdrv.dll")]
-    static extern bool UUIRTLearnIR(IntPtr hHandle, int codeFormat, [MarshalAs(UnmanagedType.LPStr)] StringBuilder ircode, IRLearnCallbackDelegate progressProc, int userData, ref int pAbort, int param1, [MarshalAs(UnmanagedType.AsAny)] Object o, [MarshalAs(UnmanagedType.AsAny)] Object oo);
+    private static extern bool UUIRTSetReceiveCallback(IntPtr hHandle, UUIRTReceiveCallbackDelegate receiveProc,
+                                                       int none);
 
-    [DllImport("uuirtdrv.dll")]
-    static extern bool UUIRTSetReceiveCallback(IntPtr hHandle, UUIRTReceiveCallbackDelegate receiveProc, int none);
+    //[DllImport("uuirtdrv.dll")]
+    //private static extern bool UUIRTSetUUIRTGPIOCfg(IntPtr hHandle, int index, ref UUGPIO GpioSt);
 
-    [DllImport("uuirtdrv.dll")]
-    static extern bool UUIRTSetUUIRTGPIOCfg(IntPtr hHandle, int index, ref UUGPIO GpioSt);
     //HUUHANDLE	  hHandle, int index, PUUGPIO pGpioSt);
 
-    [DllImport("uuirtdrv.dll")]
-    static extern bool UUIRTGetUUIRTGPIOCfg(IntPtr hHandle, ref int numSlots, ref uint dwPortPins, ref UUGPIO GpioSt);
+    //[DllImport("uuirtdrv.dll")]
+    //private static extern bool UUIRTGetUUIRTGPIOCfg(IntPtr hHandle, ref int numSlots, ref uint dwPortPins,
+    //                                                ref UUGPIO GpioSt);
+
     //(HUUHANDLE hHandle, int *pNumSlots, UINT32 *pdwPortPins, PUUGPIO pGPIOStruct);
+
     #endregion
 
     #region delegates
+
     public delegate void StartLearningEventHandler(object sender, LearningEventArgs e);
+
     public delegate void EventLearnedHandler(object sender, LearningEventArgs e);
+
     public delegate void EndLearnedHandler(object sender, EventArgs e);
 
     public delegate void RemoteCommandFeedbackHandler(object command, string irCode);
+
     private delegate void UUIRTReceiveCallbackDelegate(string val, IntPtr reserved);
 
     public delegate void IRLearnCallbackDelegate(uint val, uint val2, ulong val3);
+
     public delegate void OnRemoteCommand(object command);
 
     private delegate void ThreadSafeSendMessageDelegate(int wmMsg, int wparam, int lparam);
@@ -151,7 +174,8 @@ namespace MediaPortal.IR
     #endregion
 
     #region constants
-    static int UUIRTDRV_IRFMT_UUIRT = 0x0000;
+
+    private static int UUIRTDRV_IRFMT_UUIRT = 0x0000;
     private const string remotefile = "UIRTUSB-remote.xml";
     private const string tunerfile = "UIRTUSB-tuner.xml";
     //private const string    USBUIRT_PLUGINVER = "1.1 (December 23, 2005)";
@@ -159,6 +183,7 @@ namespace MediaPortal.IR
     #endregion
 
     #region variables
+
     private IntPtr UsbUirtHandle = IntPtr.Zero;
     private StringBuilder ircode = new StringBuilder("1", 2048);
     private int abort = 0;
@@ -195,32 +220,35 @@ namespace MediaPortal.IR
     private bool tunerCodesLoaded = false;
     private string lastIRCodeSent = string.Empty;
     //private bool                            lastIRCodeSentWasToggle = false;
+
     #endregion
 
     #region jumpTo enums
+
     //private const int FirstJumpToVal = 10000;
 
     public enum JumpToActionType
     {
       JUMP_TO_INVALID = 10000,
-      JUMP_TO_HOME,						//	WINDOW_HOME
-      JUMP_TO_MY_TV,						//	WINDOW_TV
-      JUMP_TO_MY_TV_FULLSCREEN,			//	WINDOW_TVFULLSCREEN	
-      JUMP_TO_MY_MOVIES,					//	WINDOW_VIDEOS
-      JUMP_TO_MY_MOVIES_FULLSCREEN,		//	WINDOW_FULLSCREEN_VIDEO
-      JUMP_TO_MY_MUSIC,					//	WINDOW_MUSIC_FILES
-      JUMP_TO_MY_PICTURES,				//	WINDOW_PICTURES
-      JUMP_TO_TV_GUIDE,					//	WINDOW_TVGUIDE
-      JUMP_TO_MY_RADIO,					//	WINDOW_RADIO
-      JUMP_TO_TELETEXT,					//	WINDOW_TELETEXT
-      JUMP_TO_TELETEXT_FULLSCREEN,		//	WINDOW_FULLSCREEN_TELETEXT
-      JUMP_TO_MY_WEATHER,					//	WINDOW_WEATHER
+      JUMP_TO_HOME, //	WINDOW_HOME
+      JUMP_TO_MY_TV, //	WINDOW_TV
+      JUMP_TO_MY_TV_FULLSCREEN, //	WINDOW_TVFULLSCREEN	
+      JUMP_TO_MY_MOVIES, //	WINDOW_VIDEOS
+      JUMP_TO_MY_MOVIES_FULLSCREEN, //	WINDOW_FULLSCREEN_VIDEO
+      JUMP_TO_MY_MUSIC, //	WINDOW_MUSIC_FILES
+      JUMP_TO_MY_PICTURES, //	WINDOW_PICTURES
+      JUMP_TO_TV_GUIDE, //	WINDOW_TVGUIDE
+      JUMP_TO_MY_RADIO, //	WINDOW_RADIO
+      JUMP_TO_TELETEXT, //	WINDOW_TELETEXT
+      JUMP_TO_TELETEXT_FULLSCREEN, //	WINDOW_FULLSCREEN_TELETEXT
+      JUMP_TO_MY_WEATHER, //	WINDOW_WEATHER
       JUMP_TO_LASTINVALID,
     }
 
     #endregion
 
     #region events
+
     public event StartLearningEventHandler StartLearning;
     public event EventLearnedHandler OnEventLearned;
     public event EndLearnedHandler OnEndLearning;
@@ -230,77 +258,45 @@ namespace MediaPortal.IR
     #endregion
 
     #region properties
+
     public static USBUIRT Instance
     {
-      get
-      {
-        return instance;
-      }
+      get { return instance; }
     }
 
     public bool Is3Digit
     {
-      get
-      {
-        return is3DigitTuner;
-      }
+      get { return is3DigitTuner; }
 
-      set
-      {
-        is3DigitTuner = value;
-      }
+      set { is3DigitTuner = value; }
     }
 
     public bool NeedsEnter
     {
-      get
-      {
-        return tunerNeedsEnter;
-      }
+      get { return tunerNeedsEnter; }
 
-      set
-      {
-        tunerNeedsEnter = value;
-      }
+      set { tunerNeedsEnter = value; }
     }
 
 
     public bool ReceiveEnabled
     {
-      get
-      {
-        return this.accepRemoteCommands;
-      }
+      get { return accepRemoteCommands; }
 
-      set
-      {
-        this.accepRemoteCommands = value;
-      }
+      set { accepRemoteCommands = value; }
     }
 
     public bool TransmitEnabled
     {
-      get
-      {
-        return this.transmitEventsEnabled;
-      }
+      get { return transmitEventsEnabled; }
 
-      set
-      {
-        this.transmitEventsEnabled = value;
-      }
+      set { transmitEventsEnabled = value; }
     }
 
     public int TimeLaps
     {
-      set
-      {
-        timelaps = value;
-      }
-      get
-      {
-        return timelaps;
-      }
+      set { timelaps = value; }
+      get { return timelaps; }
     }
 
     public bool AbortLearn
@@ -308,7 +304,7 @@ namespace MediaPortal.IR
       set
       {
         abortLearn = value;
-        this.abort = abortLearn ? 1 : 0;
+        abort = abortLearn ? 1 : 0;
 
         if (abortLearn)
         {
@@ -317,7 +313,7 @@ namespace MediaPortal.IR
             isLearning = false;
             waitingForIrRxLearnEvent = false;
             capturingToggledIrCode = false;
-            this.NotifyTrainingComplete();
+            NotifyTrainingComplete();
           }
 
           else
@@ -328,31 +324,25 @@ namespace MediaPortal.IR
           }
         }
       }
-      get
-      {
-        return abortLearn;
-      }
+      get { return abortLearn; }
     }
 
     public bool SkipLearnForCurrentCode
     {
-      get
-      {
-        return skipLearnForCurrentCode;
-      }
+      get { return skipLearnForCurrentCode; }
       set
       {
         skipLearnForCurrentCode = value;
-        this.abort = skipLearnForCurrentCode ? 1 : 0;
+        abort = skipLearnForCurrentCode ? 1 : 0;
 
         if (skipLearnForCurrentCode)
         {
           if (isLearning && waitingForIrRxLearnEvent)
           {
             if (currentButtonIndex < controlCodeButtonNames.Length - 1 ||
-              currentButtonIndex < controlCodeButtonNames.Length && !capturingToggledIrCode)
+                currentButtonIndex < controlCodeButtonNames.Length && !capturingToggledIrCode)
             {
-              this.LearnNextCode();
+              LearnNextCode();
             }
 
             else
@@ -367,42 +357,24 @@ namespace MediaPortal.IR
 
     public int CommandRepeatCount
     {
-      get
-      {
-        return commandRepeatCount;
-      }
-      set
-      {
-        commandRepeatCount = value;
-      }
+      get { return commandRepeatCount; }
+      set { commandRepeatCount = value; }
     }
 
     public int InterCommandDelay
     {
-      get
-      {
-        return interCommandDelay;
-      }
-      set
-      {
-        interCommandDelay = value;
-      }
+      get { return interCommandDelay; }
+      set { interCommandDelay = value; }
     }
 
     public bool TunerCodesLoaded
     {
-      get
-      {
-        return tunerCodesLoaded;
-      }
+      get { return tunerCodesLoaded; }
     }
 
     public bool IsUsbUirtLoaded
     {
-      get
-      {
-        return isUsbUirtLoaded;
-      }
+      get { return isUsbUirtLoaded; }
     }
 
     public bool IsUsbUirtConnected
@@ -410,7 +382,9 @@ namespace MediaPortal.IR
       get
       {
         if (UsbUirtHandle == IntPtr.Zero || UsbUirtHandle == empty)
+        {
           return false;
+        }
 
         uint puConfig = uint.MaxValue;
 
@@ -440,9 +414,9 @@ namespace MediaPortal.IR
     #endregion
 
     #region ctor / dtor
+
     private USBUIRT(OnRemoteCommand callback)
     {
-
       try
       {
         Log.Info("USBUIRT:Open");
@@ -468,13 +442,13 @@ namespace MediaPortal.IR
           Initialize();
 
           //setup callack to receive IR messages
-          urcb = new UUIRTReceiveCallbackDelegate(this.UUIRTReceiveCallback);
+          urcb = new UUIRTReceiveCallbackDelegate(UUIRTReceiveCallback);
           UUIRTSetReceiveCallback(UsbUirtHandle, urcb, 0);
           RemoteCommandCallback = callback;
         }
       }
 
-      catch (System.DllNotFoundException)
+      catch (DllNotFoundException)
       {
         //most users dont have the dll on their system so will get a exception here
         Log.Info("USBUIRT:uuirtdrv.dll not found");
@@ -503,7 +477,7 @@ namespace MediaPortal.IR
 
     private void Dispose(bool disposeManagedResources)
     {
-      if (!this.disposed)
+      if (!disposed)
       {
         disposed = true;
 
@@ -526,9 +500,10 @@ namespace MediaPortal.IR
     #endregion
 
     #region serialisation
+
     private void Initialize()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         ReceiveEnabled = xmlreader.GetValueAsBool("USBUIRT", "internal", false);
         TransmitEnabled = xmlreader.GetValueAsBool("USBUIRT", "external", false);
@@ -540,45 +515,55 @@ namespace MediaPortal.IR
       }
 
       if (!LoadValues())
+      {
         Log.Info("USBUIRT:unable to load values from:{0}", remotefile);
+      }
 
       if (!LoadTunerValues())
+      {
         Log.Info("USBUIRT:unable to load tunervalues from:{0}", tunerfile);
+      }
     }
 
     private bool LoadValues()
     {
-      bool result = false;
+      bool result;
 
       try
       {
-        if (!System.IO.File.Exists(remotefile))
+        if (!File.Exists(remotefile))
+        {
           return false;
+        }
 
-        System.Xml.XmlDocument xmlDoc = new System.Xml.XmlDocument();
+        XmlDocument xmlDoc = new XmlDocument();
         xmlDoc.Load(remotefile);
-        System.Xml.XmlNodeList entryNodes = xmlDoc.GetElementsByTagName("entry");
+        XmlNodeList entryNodes = xmlDoc.GetElementsByTagName("entry");
 
         Console.WriteLine(entryNodes.Count.ToString());
 
-        foreach (System.Xml.XmlNode node in entryNodes)
+        foreach (XmlNode node in entryNodes)
         {
-          System.Xml.XmlAttributeCollection codeAttribs = node.Attributes;
+          XmlAttributeCollection codeAttribs = node.Attributes;
 
           if (codeAttribs != null)
           {
             string irCode = node.InnerText;
             string sActionID = codeAttribs["actionID"].InnerText;
-            string actionDesc = codeAttribs["actionDescription"].InnerText;
 
             if (sActionID.Length > 0)
             {
               int nActionID = int.Parse(sActionID);
-              if ((int)nActionID < (int)JumpToActionType.JUMP_TO_INVALID)
-                commandsLearned[irCode] = (Action.ActionType)nActionID;
+              if (nActionID < (int) JumpToActionType.JUMP_TO_INVALID)
+              {
+                commandsLearned[irCode] = (Action.ActionType) nActionID;
+              }
 
-              else if ((int)nActionID > (int)JumpToActionType.JUMP_TO_INVALID && (int)nActionID < (int)JumpToActionType.JUMP_TO_LASTINVALID)
-                commandsLearned[irCode] = (JumpToActionType)nActionID;
+              else if (nActionID > (int) JumpToActionType.JUMP_TO_INVALID &&
+                       nActionID < (int) JumpToActionType.JUMP_TO_LASTINVALID)
+              {
+                commandsLearned[irCode] = (JumpToActionType) nActionID;
+              }
             }
           }
         }
@@ -601,18 +586,20 @@ namespace MediaPortal.IR
 
       try
       {
-        if (!System.IO.File.Exists(tunerfile))
+        if (!File.Exists(tunerfile))
+        {
           return false;
+        }
 
-        System.Xml.XmlDocument xmlDoc = new System.Xml.XmlDocument();
+        XmlDocument xmlDoc = new XmlDocument();
         xmlDoc.Load(tunerfile);
-        System.Xml.XmlNodeList entryNodes = xmlDoc.GetElementsByTagName("entry");
+        XmlNodeList entryNodes = xmlDoc.GetElementsByTagName("entry");
 
         Console.WriteLine(entryNodes.Count.ToString());
 
-        foreach (System.Xml.XmlNode node in entryNodes)
+        foreach (XmlNode node in entryNodes)
         {
-          System.Xml.XmlAttributeCollection codeAttribs = node.Attributes;
+          XmlAttributeCollection codeAttribs = node.Attributes;
 
           if (codeAttribs != null)
           {
@@ -623,26 +610,38 @@ namespace MediaPortal.IR
             string sIsToggle = string.Empty;
 
             if (codeAttribs["index"] != null)
+            {
               sIndex = codeAttribs["index"].InnerText;
+            }
 
             if (codeAttribs["istoggle"] != null)
+            {
               sIsToggle = codeAttribs["istoggle"].InnerText;
+            }
 
             if (sIsToggle.Length > 0)
+            {
               bIsToggle = bool.Parse(sIsToggle);
+            }
 
             if (sIndex.Length > 0)
             {
               int index = int.Parse(sIndex);
 
               if (remoteCode.Length > 0)
+              {
                 tunerCodesLoaded = true;
+              }
 
               if (bIsToggle)
+              {
                 stbToggleCommandsLearned[index] = remoteCode;
+              }
 
               else
+              {
                 stbCommandsLearned[index] = remoteCode;
+              }
               //externalTunerCodes[index] = remoteCode;
             }
           }
@@ -661,12 +660,12 @@ namespace MediaPortal.IR
     public bool SaveInternalValues()
     {
       bool result = false;
-      System.Xml.XmlTextWriter writer = null;
+      XmlTextWriter writer = null;
 
       try
       {
-        writer = new System.Xml.XmlTextWriter(remotefile, System.Text.Encoding.Unicode);
-        writer.Formatting = System.Xml.Formatting.Indented;
+        writer = new XmlTextWriter(remotefile, Encoding.Unicode);
+        writer.Formatting = Formatting.Indented;
         writer.WriteStartElement("docElement");
 
         // Sort by Action.ActionType before writing out to file... 
@@ -677,7 +676,7 @@ namespace MediaPortal.IR
         {
           // Key:		IR Code String
           // Value:	Action.ActionType
-          DictionaryEntry entry = (DictionaryEntry)commandsArr[i];
+          DictionaryEntry entry = (DictionaryEntry) commandsArr[i];
 
           string irCode = entry.Key.ToString();
           object command = entry.Value;
@@ -695,15 +694,15 @@ namespace MediaPortal.IR
 
       catch (Exception ex)
       {
-        System.Windows.Forms.MessageBox.Show(ex.Message);
+        MessageBox.Show(ex.Message);
       }
 
       finally
       {
         if (writer != null)
+        {
           writer.Close();
-
-        writer = null;
+        }
       }
 
       return result;
@@ -712,12 +711,12 @@ namespace MediaPortal.IR
     public bool SaveTunerValues()
     {
       bool result = false;
-      System.Xml.XmlTextWriter writer = null;
+      XmlTextWriter writer = null;
 
       try
       {
-        writer = new System.Xml.XmlTextWriter(tunerfile, System.Text.Encoding.Unicode);
-        writer.Formatting = System.Xml.Formatting.Indented;
+        writer = new XmlTextWriter(tunerfile, Encoding.Unicode);
+        writer.Formatting = Formatting.Indented;
         writer.WriteStartElement("docElement");
 
         for (int i = 0; i < 11; i++)
@@ -731,7 +730,7 @@ namespace MediaPortal.IR
           if (stbCommandsLearned.ContainsKey(i))
           {
             writer.WriteAttributeString("istoggle", false.ToString());
-            irTxCode = (string)stbCommandsLearned[i];
+            irTxCode = (string) stbCommandsLearned[i];
           }
 
           writer.WriteString(irTxCode);
@@ -743,10 +742,10 @@ namespace MediaPortal.IR
 
           irTxCode = string.Empty;
 
-          if (this.stbToggleCommandsLearned.ContainsKey(i))
+          if (stbToggleCommandsLearned.ContainsKey(i))
           {
             writer.WriteAttributeString("istoggle", true.ToString());
-            irTxCode = (string)stbToggleCommandsLearned[i];
+            irTxCode = (string) stbToggleCommandsLearned[i];
           }
 
           writer.WriteString(irTxCode);
@@ -766,36 +765,37 @@ namespace MediaPortal.IR
         if (writer != null)
         {
           writer.Close();
-
-          writer = null;
         }
       }
 
       tunerCodesLoaded = result;
       return result;
     }
+
     #endregion
 
     #region remote receiver methods
+
     public OnRemoteCommand RemoteCommandCallback
     {
-      set
-      {
-        remoteCommandCallback = value;
-      }
+      set { remoteCommandCallback = value; }
     }
 
     public void UUIRTReceiveCallback(string irid, IntPtr reserved)
     {
       if (!ReceiveEnabled)
+      {
         return;
+      }
 
       object command = commandsLearned[irid];
 
       if (command == null && !isLearning)
       {
         if (OnRemoteCommandFeedback != null)
+        {
           OnRemoteCommandFeedback(Action.ActionType.ACTION_INVALID, irid);
+        }
 
         return;
       }
@@ -822,9 +822,9 @@ namespace MediaPortal.IR
           NotifyEventLearned(controlCodeButtonNames[currentButtonIndex], irid, true, totCodeCount, curCodeIndex);
 
           if (currentButtonIndex < controlCodeButtonNames.Length - 1 ||
-            currentButtonIndex < controlCodeButtonNames.Length && !capturingToggledIrCode)
+              currentButtonIndex < controlCodeButtonNames.Length && !capturingToggledIrCode)
           {
-            this.LearnNextCode();
+            LearnNextCode();
           }
 
           else
@@ -838,48 +838,53 @@ namespace MediaPortal.IR
         {
           int cmdVal = Convert.ToInt32(command);
 
-          if (cmdVal < (int)JumpToActionType.JUMP_TO_INVALID)
+          if (cmdVal < (int) JumpToActionType.JUMP_TO_INVALID)
           {
             // If one of the romote numeric keys was presses, mimic a keyboard keydown message...
-            if (cmdVal >= (int)Action.ActionType.REMOTE_0 && cmdVal <= (int)Action.ActionType.REMOTE_9)
+            if (cmdVal >= (int) Action.ActionType.REMOTE_0 && cmdVal <= (int) Action.ActionType.REMOTE_9)
             {
-              int digit = cmdVal - (int)Action.ActionType.REMOTE_0;
-              System.Windows.Forms.Keys keyVal = (System.Windows.Forms.Keys)((int)System.Windows.Forms.Keys.D0 + digit);
+              int digit = cmdVal - (int) Action.ActionType.REMOTE_0;
+              Keys keyVal = (Keys) ((int) Keys.D0 + digit);
 
-              ThreadSafeSendMessage(WM_KEYDOWN, (int)keyVal, 0);
+              ThreadSafeSendMessage(WM_KEYDOWN, (int) keyVal, 0);
             }
 
-          //else if (remoteCommandCallback != null)
-            //        remoteCommandCallback(command);
+              //else if (remoteCommandCallback != null)
+              //        remoteCommandCallback(command);
             else
             {
-              Action.ActionType action = (Action.ActionType)command;
+              Action.ActionType action = (Action.ActionType) command;
 
               if (action == Action.ActionType.ACTION_PREVIOUS_MENU)
               {
                 //GUIWindowManager.ShowPreviousWindow();
-                ThreadSafeSendMessage(WM_KEYDOWN, (int)System.Windows.Forms.Keys.Escape, 0);
+                ThreadSafeSendMessage(WM_KEYDOWN, (int) Keys.Escape, 0);
               }
 
               else if (remoteCommandCallback != null)
+              {
                 remoteCommandCallback(command);
+              }
             }
           }
 
-          else if (cmdVal > (int)JumpToActionType.JUMP_TO_INVALID && cmdVal < (int)JumpToActionType.JUMP_TO_LASTINVALID)
+          else if (cmdVal > (int) JumpToActionType.JUMP_TO_INVALID && cmdVal < (int) JumpToActionType.JUMP_TO_LASTINVALID)
           {
-            object windowID = jumpToCommands[(int)command];
-            command = (JumpToActionType)command;
+            object windowID = jumpToCommands[(int) command];
+            command = (JumpToActionType) command;
 
             if (windowID != null)
             {
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)windowID, 0, null);
+              GUIMessage msg =
+                new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int) windowID, 0, null);
               GUIWindowManager.SendThreadMessage(msg);
             }
           }
 
           if (OnRemoteCommandFeedback != null)
+          {
             OnRemoteCommandFeedback(command, irid);
+          }
         }
 
         timestamp = DateTime.Now;
@@ -889,12 +894,15 @@ namespace MediaPortal.IR
     #endregion
 
     #region methods
+
     public static USBUIRT Create(OnRemoteCommand remoteCommandCallback)
     {
       try
       {
         if (instance == null)
+        {
           instance = new USBUIRT(remoteCommandCallback);
+        }
       }
 
       catch (Exception)
@@ -918,7 +926,6 @@ namespace MediaPortal.IR
         UUIRTGetUUIRTInfo(UsbUirtHandle, ref p);
 
         DateTime firmdate = new DateTime(p.fwDateYear + 2000, p.fwDateMonth, p.fwDateDay);
-        DateTime plugdate = new DateTime(2004, 4, 1);
 
         string firmversion = (p.fwVersion >> 8) + "." + (p.fwVersion & 0xff);
         //string plug = string.Format("Plugin Version: {0}", USBUIRT_PLUGINVER);
@@ -938,14 +945,18 @@ namespace MediaPortal.IR
     {
       uint config = 0;
       if (isUsbUirtLoaded)
-        UUIRTGetUUIRTConfig(this.UsbUirtHandle, ref config);
-      return (int)config;
+      {
+        UUIRTGetUUIRTConfig(UsbUirtHandle, ref config);
+      }
+      return (int) config;
     }
 
     public void SetPreferences(int pref)
     {
       if (isUsbUirtLoaded)
-        UUIRTSetUUIRTConfig(this.UsbUirtHandle, (uint)pref);
+      {
+        UUIRTSetUUIRTConfig(UsbUirtHandle, (uint) pref);
+      }
     }
 
     public bool Reconnect()
@@ -958,7 +969,7 @@ namespace MediaPortal.IR
         if (UsbUirtHandle == IntPtr.Zero || UsbUirtHandle == empty)
         {
           UsbUirtHandle = UUIRTOpen();
-          isUsbUirtLoaded = this.IsUsbUirtConnected;
+          isUsbUirtLoaded = IsUsbUirtConnected;
         }
 
         else
@@ -967,21 +978,23 @@ namespace MediaPortal.IR
           UUIRTClose(UsbUirtHandle);
           UsbUirtHandle = IntPtr.Zero;
           UsbUirtHandle = UUIRTOpen();
-          isUsbUirtLoaded = this.IsUsbUirtConnected;
+          isUsbUirtLoaded = IsUsbUirtConnected;
         }
 
         if (isUsbUirtLoaded)
         {
           Initialize();
-          urcb = new UUIRTReceiveCallbackDelegate(this.UUIRTReceiveCallback);
+          urcb = new UUIRTReceiveCallbackDelegate(UUIRTReceiveCallback);
           UUIRTSetReceiveCallback(UsbUirtHandle, urcb, 0);
         }
 
         else
+        {
           Log.Info("USBUIRT:Unable to open USBUIRT driver");
+        }
       }
 
-      catch (System.DllNotFoundException)
+      catch (DllNotFoundException)
       {
         //most users dont have the dll on their system so will get a exception here
         Log.Info("USBUIRT:uuirtdrv.dll not found");
@@ -997,12 +1010,13 @@ namespace MediaPortal.IR
 
     public void Close()
     {
-      this.Dispose();
+      Dispose();
     }
 
     #endregion
 
     #region notify events
+
     /// <summary>
     /// Method used to fire the "StartLearning" event. Any subscribers will be notified with the name of
     /// the button that is to be learned.
@@ -1017,12 +1031,12 @@ namespace MediaPortal.IR
       }
     }
 
-    protected void NotifyEventLearned(string button, string ircode, bool isSuccess, int totCodeCount, int curCodeIndex)
+    protected void NotifyEventLearned(string button, string _ircode, bool isSuccess, int totCodeCount, int curCodeIndex)
     {
       if (OnEventLearned != null)
       {
-        OnEventLearned(this, new LearningEventArgs(button, ircode, isSuccess,
-          capturingToggledIrCode, totCodeCount, curCodeIndex));
+        OnEventLearned(this, new LearningEventArgs(button, _ircode, isSuccess,
+                                                   capturingToggledIrCode, totCodeCount, curCodeIndex));
       }
     }
 
@@ -1037,11 +1051,12 @@ namespace MediaPortal.IR
     #endregion
 
     #region Learning methods
+
     private bool IRLearn()
     {
       try
       {
-        if (!UUIRTLearnIR(UsbUirtHandle, UUIRTDRV_IRFMT_UUIRT, this.ircode, null, 0, ref this.abort, 0, null, null))
+        if (!UUIRTLearnIR(UsbUirtHandle, UUIRTDRV_IRFMT_UUIRT, ircode, null, 0, ref abort, 0, null, null))
         {
           return false;
         }
@@ -1064,15 +1079,17 @@ namespace MediaPortal.IR
     {
       stbControlCodeCommands = stbControlCodes;
 
-      System.Threading.ThreadStart learnThreadStarter = new ThreadStart(LearnTunerCodesAsync);
-      System.Threading.Thread learnThread = new System.Threading.Thread(learnThreadStarter);
+      ThreadStart learnThreadStarter = new ThreadStart(LearnTunerCodesAsync);
+      Thread learnThread = new Thread(learnThreadStarter);
       learnThread.Start();
     }
 
     public void LearnTunerCodesAsync()
     {
       if (stbControlCodeCommands.Length == 0)
+      {
         return;
+      }
 
       bool result;
       skipLearnForCurrentCode = false;
@@ -1094,34 +1111,42 @@ namespace MediaPortal.IR
         }
 
         if (abortLearn)
+        {
           break;
+        }
 
-        for (int retry = 0; retry < retries * 2; retry++)
+        for (int retry = 0; retry < retries*2; retry++)
         {
           NotifyStartLearn(btnName, totCodeCount, (capturingToggledIrCode ? i + 1 : i));
           result = IRLearn();
 
           if (abort == 1 || abortLearn || skipLearnForCurrentCode)
+          {
             break;
+          }
 
           else
           {
-            string irCodeString = this.ircode.ToString();
+            string irCodeString = ircode.ToString();
             Console.WriteLine("Last Code Learned: " + lastIrCodeLearned);
             Console.WriteLine(" New Code Learned: " + irCodeString + "\r\n");
 
             // Certain code formats such as Philips RC5 and RC6 toggle a bit on consecutive key presses.  
             // To catch these we need to capture 2 seperate button presses for each button...
             if (capturingToggledIrCode && irCodeString.CompareTo(lastIrCodeLearned) != 0)
-              this.stbToggleCommandsLearned[keyVal] = irCodeString;
+            {
+              stbToggleCommandsLearned[keyVal] = irCodeString;
+            }
 
             else
-              stbCommandsLearned[keyVal] = this.ircode.ToString();
+            {
+              stbCommandsLearned[keyVal] = ircode.ToString();
+            }
 
             lastIrCodeLearned = irCodeString;
           }
 
-          NotifyEventLearned(btnName, this.ircode.ToString(), result, totCodeCount, i + 1);
+          NotifyEventLearned(btnName, ircode.ToString(), result, totCodeCount, i + 1);
 
           if (result && capturingToggledIrCode)
           {
@@ -1130,7 +1155,9 @@ namespace MediaPortal.IR
           }
 
           else
+          {
             capturingToggledIrCode = true;
+          }
         }
       }
 
@@ -1146,14 +1173,18 @@ namespace MediaPortal.IR
     public void BulkLearn(object[] commands, string[] buttonNames, bool clearCommands)
     {
       if (clearCommands)
+      {
         commandsLearned.Clear();
+      }
 
       controlCodeCommands = commands;
       controlCodeButtonNames = buttonNames;
       capturingToggledIrCode = false;
 
       if (commands.Length != buttonNames.Length)
+      {
         throw new Exception("invalid call to BulkLearn");
+      }
 
       skipLearnForCurrentCode = false;
       AbortLearn = false;
@@ -1170,7 +1201,7 @@ namespace MediaPortal.IR
       // To catch these we need to capture 2 seperate button presses for each button...
       capturingToggledIrCode = !capturingToggledIrCode;
       NotifyStartLearn(controlCodeButtonNames[capturingToggledIrCode ? currentButtonIndex : ++currentButtonIndex],
-                controlCodeCommands.Length, currentButtonIndex);
+                       controlCodeCommands.Length, currentButtonIndex);
 
       waitingForIrRxLearnEvent = true;
       isLearning = true;
@@ -1179,10 +1210,13 @@ namespace MediaPortal.IR
     #endregion
 
     #region remote control methods
+
     public void ChangeTunerChannel(string channel, bool ignoreLastChannel)
     {
       if (ignoreLastChannel)
+      {
         lastchannel = "";
+      }
 
       ChangeTunerChannel(channel);
     }
@@ -1190,20 +1224,27 @@ namespace MediaPortal.IR
     public void ChangeTunerChannel(string channel)
     {
       if (!isUsbUirtLoaded)
+      {
         return;
+      }
 
-      if (!TransmitEnabled) return;
+      if (!TransmitEnabled)
+      {
+        return;
+      }
 
       Log.Info("USBUIRT: NewChannel={0} LastChannel={1}", channel, lastchannel);
 
       // Already tuned to this channel?
       if (channel == lastchannel)
+      {
         return;
+      }
       int length = channel.Length;
 
       // Some STB's allow more than 3 digit channel numbers!
       //if ((!this.Is3Digit && length >2) || (length >3))
-      if (this.Is3Digit && length > 3)
+      if (Is3Digit && length > 3)
       {
         Log.Info("USBUIRT: invalid channel:{0}", channel);
         return;
@@ -1212,7 +1253,9 @@ namespace MediaPortal.IR
       for (int i = 0; i < length; i++)
       {
         if (channel[i] < '0' || channel[i] > '9')
+        {
           continue;
+        }
 
         int codeIndex = channel[i] - '0';
         bool isToggledCode = false;
@@ -1228,7 +1271,7 @@ namespace MediaPortal.IR
         Transmit(irTxString, UUIRTDRV_IRFMT_UUIRT, commandRepeatCount);
       }
 
-      if (this.NeedsEnter)
+      if (NeedsEnter)
       {
         int codeIndex = 10;
         bool isToggledCode = false;
@@ -1254,13 +1297,17 @@ namespace MediaPortal.IR
     {
       string irTxString = "";
       string toggledIrTxString = "";
-      string irOut = "";
+      string irOut;
 
       if (stbCommandsLearned.ContainsKey(codeIndex))
+      {
         irTxString = stbCommandsLearned[codeIndex].ToString();
+      }
 
       if (stbToggleCommandsLearned.ContainsKey(codeIndex))
+      {
         toggledIrTxString = stbToggleCommandsLearned[codeIndex].ToString();
+      }
 
       // is the code we're sending identical to the last one sent?
       // If so, check if there's a toggled version of the code...
@@ -1282,48 +1329,59 @@ namespace MediaPortal.IR
 
     public void Transmit(string gIRCode, int gIRCodeFormat, int repeatCount)
     {
-      if (!isUsbUirtLoaded) return;
-      if (!TransmitEnabled) return;
+      if (!isUsbUirtLoaded)
+      {
+        return;
+      }
+      if (!TransmitEnabled)
+      {
+        return;
+      }
 
       bool result = UUIRTTransmitIR(UsbUirtHandle,
-        gIRCode,		// IRCode 
-        gIRCodeFormat,	// codeFormat 
-        repeatCount,	// repeatCount 
-        0,				// inactivityWaitTime 
-        IntPtr.Zero,	// hEvent 
-        0,				// reserved1
-        0				// reserved2 
+                                    gIRCode, // IRCode 
+                                    gIRCodeFormat, // codeFormat 
+                                    repeatCount, // repeatCount 
+                                    0, // inactivityWaitTime 
+                                    IntPtr.Zero, // hEvent 
+                                    0, // reserved1
+                                    0 // reserved2 
         );
 
       if (!result)
+      {
         Log.Info("USBUIRT: unable to transmit code");
+      }
 
       else
-        System.Threading.Thread.Sleep(interCommandDelay);
+      {
+        Thread.Sleep(interCommandDelay);
+      }
     }
+
     #endregion
 
     #region misc methods
 
     private void CreateJumpToCommands()
     {
-      jumpToCommands[(int)JumpToActionType.JUMP_TO_HOME] = GUIWindow.Window.WINDOW_HOME;
-      jumpToCommands[(int)JumpToActionType.JUMP_TO_MY_TV] = GUIWindow.Window.WINDOW_TV;
-      jumpToCommands[(int)JumpToActionType.JUMP_TO_MY_TV_FULLSCREEN] = GUIWindow.Window.WINDOW_TVFULLSCREEN;
-      jumpToCommands[(int)JumpToActionType.JUMP_TO_MY_MOVIES] = GUIWindow.Window.WINDOW_VIDEOS;
-      jumpToCommands[(int)JumpToActionType.JUMP_TO_MY_MOVIES_FULLSCREEN] = GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO;
-      jumpToCommands[(int)JumpToActionType.JUMP_TO_MY_MUSIC] = GUIWindow.Window.WINDOW_MUSIC_FILES;
-      jumpToCommands[(int)JumpToActionType.JUMP_TO_MY_PICTURES] = GUIWindow.Window.WINDOW_PICTURES;
-      jumpToCommands[(int)JumpToActionType.JUMP_TO_TV_GUIDE] = GUIWindow.Window.WINDOW_TVGUIDE;
-      jumpToCommands[(int)JumpToActionType.JUMP_TO_MY_RADIO] = GUIWindow.Window.WINDOW_RADIO;
-      jumpToCommands[(int)JumpToActionType.JUMP_TO_TELETEXT] = GUIWindow.Window.WINDOW_TELETEXT;
-      jumpToCommands[(int)JumpToActionType.JUMP_TO_TELETEXT_FULLSCREEN] = GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT;
-      jumpToCommands[(int)JumpToActionType.JUMP_TO_MY_WEATHER] = GUIWindow.Window.WINDOW_WEATHER;
+      jumpToCommands[(int) JumpToActionType.JUMP_TO_HOME] = GUIWindow.Window.WINDOW_HOME;
+      jumpToCommands[(int) JumpToActionType.JUMP_TO_MY_TV] = GUIWindow.Window.WINDOW_TV;
+      jumpToCommands[(int) JumpToActionType.JUMP_TO_MY_TV_FULLSCREEN] = GUIWindow.Window.WINDOW_TVFULLSCREEN;
+      jumpToCommands[(int) JumpToActionType.JUMP_TO_MY_MOVIES] = GUIWindow.Window.WINDOW_VIDEOS;
+      jumpToCommands[(int) JumpToActionType.JUMP_TO_MY_MOVIES_FULLSCREEN] = GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO;
+      jumpToCommands[(int) JumpToActionType.JUMP_TO_MY_MUSIC] = GUIWindow.Window.WINDOW_MUSIC_FILES;
+      jumpToCommands[(int) JumpToActionType.JUMP_TO_MY_PICTURES] = GUIWindow.Window.WINDOW_PICTURES;
+      jumpToCommands[(int) JumpToActionType.JUMP_TO_TV_GUIDE] = GUIWindow.Window.WINDOW_TVGUIDE;
+      jumpToCommands[(int) JumpToActionType.JUMP_TO_MY_RADIO] = GUIWindow.Window.WINDOW_RADIO;
+      jumpToCommands[(int) JumpToActionType.JUMP_TO_TELETEXT] = GUIWindow.Window.WINDOW_TELETEXT;
+      jumpToCommands[(int) JumpToActionType.JUMP_TO_TELETEXT_FULLSCREEN] = GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT;
+      jumpToCommands[(int) JumpToActionType.JUMP_TO_MY_WEATHER] = GUIWindow.Window.WINDOW_WEATHER;
     }
 
     public bool GetCommandIrStrings(Action.ActionType actionType, ref string irCmd1, ref string irCmd2)
     {
-      bool result = false;
+      bool result;
       bool irCmd1Found = false;
       bool irCmd2Found = false;
 
@@ -1332,7 +1390,7 @@ namespace MediaPortal.IR
         string irCode = entry.ToString();
         object command = commandsLearned[irCode];
 
-        if ((Action.ActionType)command == actionType)
+        if ((Action.ActionType) command == actionType)
         {
           if (!irCmd1Found)
           {
@@ -1348,7 +1406,9 @@ namespace MediaPortal.IR
         }
 
         if (irCmd1Found && irCmd2Found)
+        {
           break;
+        }
       }
 
       result = irCmd1Found || irCmd2Found;
@@ -1362,7 +1422,9 @@ namespace MediaPortal.IR
       // no point interating through the hashtable if it doesn't 
       // contain this ActionType
       if (!commandsLearned.ContainsValue(command))
+      {
         return false;
+      }
 
       // Can't remove items while enumerating a Hashtable so we do it this way...
       ArrayList commandsArr = new ArrayList(commandsLearned);
@@ -1372,18 +1434,19 @@ namespace MediaPortal.IR
       {
         // Key:		IR Code String
         // Value:	Action.ActionType
-        DictionaryEntry entry = (DictionaryEntry)commandsArr[i];
+        DictionaryEntry entry = (DictionaryEntry) commandsArr[i];
 
-        if ((int)entry.Value == (int)command)
+        if ((int) entry.Value == (int) command)
         {
           commandsLearned.Remove(entry.Key);
           result = true;
         }
-
       }
 
       if (result)
-        this.SaveInternalValues();
+      {
+        SaveInternalValues();
+      }
 
       return result;
     }
@@ -1396,7 +1459,9 @@ namespace MediaPortal.IR
       bool result = entryCount != commandsLearned.Count;
 
       if (result)
-        this.SaveInternalValues();
+      {
+        SaveInternalValues();
+      }
 
       return result;
     }
@@ -1404,8 +1469,10 @@ namespace MediaPortal.IR
     public bool ClearAllLearnedSTBCommands()
     {
       // is there anything to clear?
-      if (this.stbCommandsLearned.Count + this.stbToggleCommandsLearned.Count == 0)
+      if (stbCommandsLearned.Count + stbToggleCommandsLearned.Count == 0)
+      {
         return false;
+      }
 
       stbCommandsLearned.Clear();
       stbToggleCommandsLearned.Clear();
@@ -1413,7 +1480,9 @@ namespace MediaPortal.IR
       bool result = stbCommandsLearned.Count == 0 && stbToggleCommandsLearned.Count == 0;
 
       if (result)
-        this.SaveTunerValues();
+      {
+        SaveTunerValues();
+      }
 
       return result;
     }
@@ -1425,7 +1494,9 @@ namespace MediaPortal.IR
       // no point interating through the hashtables if they don't
       // contain this command
       if (!stbCommandsLearned.ContainsKey(command) && !stbToggleCommandsLearned.ContainsKey(command))
+      {
         return false;
+      }
 
       // Key:		STB button number (10 == Enter)
       // Value:	txIRString
@@ -1443,7 +1514,9 @@ namespace MediaPortal.IR
       }
 
       if (result)
-        this.SaveTunerValues();
+      {
+        SaveTunerValues();
+      }
 
       return result;
     }
@@ -1455,13 +1528,13 @@ namespace MediaPortal.IR
       if (stbCommandsLearned.ContainsKey(cmdNumber))
       {
         result = true;
-        irCmd1 = (string)stbCommandsLearned[cmdNumber];
+        irCmd1 = (string) stbCommandsLearned[cmdNumber];
       }
 
       if (stbToggleCommandsLearned.ContainsKey(cmdNumber))
       {
         result = true;
-        irCmd2 = (string)stbToggleCommandsLearned[cmdNumber];
+        irCmd2 = (string) stbToggleCommandsLearned[cmdNumber];
       }
 
       return result;
@@ -1472,7 +1545,7 @@ namespace MediaPortal.IR
       if (GUIGraphicsContext.form.InvokeRequired)
       {
         ThreadSafeSendMessageDelegate d = new ThreadSafeSendMessageDelegate(ThreadSafeSendMessage);
-        GUIGraphicsContext.form.Invoke(d, new object[] { wmMsg, wparam, lparam });
+        GUIGraphicsContext.form.Invoke(d, new object[] {wmMsg, wparam, lparam});
       }
 
       else
@@ -1490,11 +1563,11 @@ namespace MediaPortal.IR
       // Key is the IR Code String
       // Value is the Action.ActionType
 
-      DictionaryEntry dictX = (DictionaryEntry)x;
-      DictionaryEntry dictY = (DictionaryEntry)y;
+      DictionaryEntry dictX = (DictionaryEntry) x;
+      DictionaryEntry dictY = (DictionaryEntry) y;
 
-      int actionValX = (int)dictX.Value;
-      int actionValY = (int)dictY.Value;
+      int actionValX = (int) dictX.Value;
+      int actionValY = (int) dictY.Value;
 
       return actionValX.CompareTo(actionValY);
     }
