@@ -89,6 +89,7 @@ namespace TvPlugin
     protected GUIVideoControl videoWindow = null;
     [SkinControlAttribute(9)]
     protected GUIToggleButtonControl btnTimeshiftingOnOff = null;
+    static bool _connected = false;
 
     static protected TvServer _server;
     #endregion
@@ -160,6 +161,17 @@ namespace TvPlugin
           _server = new TvServer();
         }
         return _server;
+      }
+    }
+    static public bool Connected
+    {
+      get
+      {
+        return _connected;
+      }
+      set
+      {
+        _connected = value;
       }
     }
     static public VirtualCard Card
@@ -659,7 +671,7 @@ namespace TvPlugin
 
     public override void Process()
     {
-      if (!RemoteControl.IsConnected) return;
+      if (!TVHome.Connected) return;
       TimeSpan ts = DateTime.Now - _updateTimer;
 
       if (GUIGraphicsContext.InVmr9Render)
@@ -1482,10 +1494,12 @@ namespace TvPlugin
         }
 
         MediaPortal.GUI.Library.Log.Info("loaded {0} groups", m_groups.Count);
+        TVHome.Connected = true;
       }
       catch (Exception ex)
       {
         MediaPortal.GUI.Library.Log.Error(ex);
+        TVHome.Connected = false;
       }
     }
     #endregion

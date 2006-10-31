@@ -30,7 +30,7 @@ using TvControl;
 
 using Gentle.Common;
 using Gentle.Framework;
-namespace MediaPortal.GUI.TV
+namespace TvPlugin
 {
 	/// <summary>
 	/// 
@@ -77,8 +77,14 @@ namespace MediaPortal.GUI.TV
       if (GUIGraphicsContext.IsFullScreenVideo) return false;
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalMilliseconds < 1000) return _lastStatus;
-
-      _lastStatus=RemoteControl.Instance.IsAnyCardRecording;
+      if (TVHome.Connected)
+      {
+        _lastStatus = RemoteControl.Instance.IsAnyCardRecording;
+      }
+      else
+      {
+        _lastStatus = false;
+      }
       _updateTimer = DateTime.Now;
       return _lastStatus;
     }
