@@ -692,7 +692,7 @@ namespace TvPlugin
           fileName = TVHome.TvServer.GetStreamUrlForFileName(rec.IdRecording);
         }
         Log.Write("TvRecorded Play:{0}", fileName);
-        if (g_Player.Play(fileName))
+        if (g_Player.Play(fileName,g_Player.MediaType.Recording))
         {
           if (Utils.IsVideo(fileName))
           {
@@ -1013,6 +1013,7 @@ namespace TvPlugin
     #region playback events
     private void OnPlayRecordingBackStopped(MediaPortal.Player.g_Player.MediaType type, int stoptime, string filename)
     {
+      Log.Write("TvRecorded:OnStopped {0} {1}", type,filename);
       if (type != g_Player.MediaType.Recording) return;
       //@
       /*
@@ -1022,12 +1023,13 @@ namespace TvPlugin
         VideoDatabase.SetMovieStopTime(movieid, stoptime);
       else
         VideoDatabase.DeleteMovieStopTime(movieid);
+       */
       if (GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
         msg.SendToTargetWindow = true;
         GUIWindowManager.SendThreadMessage(msg);
-      }*/
+      }
     }
 
     private void OnPlayRecordingBackEnded(MediaPortal.Player.g_Player.MediaType type, string filename)
