@@ -76,35 +76,54 @@ bool CMhwDecoder::ParseSummaries(byte* data, int maxLen)
 	if (maxLen < 12 /*|| data[7] != 0xFF || data[8] != 0xFF || data[9] !=0xFF || data[10] >= 10*/) 
 		return false;	/* Invalid Data */
 
+				
+//	LogDebug("ParseSummaries1");
 	CEnterCriticalSection lock (m_critSection);
 	int dataLen=((data[1]-0x70)<<8)+data[2];
 	int n=0;
+	
+//	LogDebug("ParseSummaries2:%d",dataLen);
 	MHWSummary sum;
 	sum.ProgramID=(data[n+3]<<24)+(data[n+4]<<16)+(data[n+5]<<8)+data[n+6];
 	sum.Description="";
 	n+=11+(data[n+10]*7);
 
+//	LogDebug("ParseSummaries3:%d",n);
 	if (n< 0 || n >= 4096 ) 
+	{
+//			LogDebug("ParseSummaries end1");
 		return false;
-	int nlen=(maxLen-n)+10;
+	}
+	int nlen=(maxLen-n);
 	if (nlen< 0 || nlen >= 4096 ) 
+	{
+//			LogDebug("ParseSummaries end2");
 		return false;
-	char* buffer=new char[(maxLen-n)+10];
-	strncpy(buffer,(const char*)&data[n],(maxLen-n));
-	buffer[(maxLen-n)]=0;
+	}
+//	LogDebug("ParseSummaries4:%d",nlen);
+	char* buffer=new char[nlen+10];
+	strncpy(buffer,(const char*)&data[n],nlen);
+	buffer[nlen]=0;
 	sum.Description=buffer;
+//	LogDebug("ParseSummaries5:%d",nlen);
 	delete[] buffer;
 
+	
+//	LogDebug("ParseSummaries6");
 	if(sum.ProgramID!=-1)
 	{
 		imapSummaries it=m_mapSummaries.find(sum.ProgramID);
 		if (it==m_mapSummaries.end())
 		{
+			
+			LogDebug("ParseSummaries7");
 			//LogDebug("mhw-epg: added progid:%x ",sum.ProgramID);
 			m_mapSummaries[sum.ProgramID]=sum;
+//			LogDebug("ParseSummaries8");
 			return true;
 		}
 	}//if(m_summaryBuffer.Contains(sum)==false)
+//			LogDebug("ParseSummaries9");
 	return false;
 }
 

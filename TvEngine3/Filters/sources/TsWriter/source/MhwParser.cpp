@@ -103,53 +103,70 @@ void CMhwParser::OnTsPacket(byte* tsPacket)
 
 void CMhwParser::OnNewSection(int pid, int tableId, CSection& sections)
 {
-	CEnterCriticalSection enter(m_section);
-//  LogDebug("mhw new section pid:%x tableid:%x %x %x len:%d",pid,tableId,sections.Data[4],sections.Data[5],sections.Data[6], sections.SectionLength);
-  CTsHeader header(&sections.Data[0]);
-  byte* section=&(sections.Data[header.PayLoadStart]);
-  int sectionLength=sections.SectionLength;
-  if (pid==0xd2)
-  {
-	  if (tableId==0x90 ||(tableId >=0x70 && tableId <=0x7f) )
-	  {
-		  if ( m_mhwDecoder.ParseTitles(section,sectionLength))
-		  {
-			  m_TimeOutTimer=time(NULL);
-		  }
-	  }
-  }
-  if (pid==0xd3)
-  {
-	  if (tableId==0x90)
-	  {
-		  if (m_mhwDecoder.ParseSummaries(section,sectionLength))
-		  {
-			  m_TimeOutTimer=time(NULL);
-		  }
-	  }
-	  if (tableId==0x91)
-	  {
-		  if (m_mhwDecoder.ParseChannels(section,sectionLength))
-		  {
-			  m_TimeOutTimer=time(NULL);
-		  }
-	  }
-	  if (tableId==0x92)
-	  {
-		  if (m_mhwDecoder.ParseThemes(section,sectionLength))
-		  {
-			  m_TimeOutTimer=time(NULL);
-		  }
-	  }
-  }
-			
-  int passed=(int)(time(NULL)-m_TimeOutTimer);
-  if (passed>30)
-  {
-    LogDebug("mhw grabber ended");
-	  m_bDone=true;
-	  m_bGrabbing=false;
-  }
+	try
+	{
+		CEnterCriticalSection enter(m_section);
+//		LogDebug("mhw new section pid:%x tableid:%x %x %x len:%d",pid,tableId,sections.Data[4],sections.Data[5],sections.Data[6], sections.SectionLength);
+		CTsHeader header(&sections.Data[0]);
+		if (header.PayLoadStart< 0 || header.PayLoadStart>188) return;
+
+		byte* section=&(sections.Data[header.PayLoadStart]);
+		int sectionLength=sections.SectionLength;
+		if (pid==0xd2)
+		{
+			if (tableId==0x90 ||(tableId >=0x70 && tableId <=0x7f) )
+			{
+//				LogDebug("mhw ParseTitles %d",sectionLength);
+				if ( m_mhwDecoder.ParseTitles(section,sectionLength))
+				{
+					m_TimeOutTimer=time(NULL);
+				}
+//				LogDebug("mhw ParseTitles done");
+			}
+		}
+		if (pid==0xd3)
+		{
+			if (tableId==0x90)
+			{
+//				LogDebug("mhw ParseSummaries %d",sectionLength);
+				if (m_mhwDecoder.ParseSummaries(section,sectionLength))
+				{
+					m_TimeOutTimer=time(NULL);
+				}
+//				LogDebug("mhw ParseSummaries done");
+			}
+			if (tableId==0x91)
+			{
+//				LogDebug("mhw ParseChannels %d",sectionLength);
+				if (m_mhwDecoder.ParseChannels(section,sectionLength))
+				{
+					m_TimeOutTimer=time(NULL);
+				}
+//				LogDebug("mhw ParseChannels done");
+			}
+			if (tableId==0x92)
+			{
+//				LogDebug("mhw ParseThemes %d",sectionLength);
+				if (m_mhwDecoder.ParseThemes(section,sectionLength))
+				{
+					m_TimeOutTimer=time(NULL);
+				}
+//				LogDebug("mhw ParseThemes done");
+			}
+		}
+				
+		int passed=(int)(time(NULL)-m_TimeOutTimer);
+		if (passed>30)
+		{
+			LogDebug("mhw grabber ended");
+			m_bDone=true;
+			m_bGrabbing=false;
+		}
+	}
+	catch(...)
+	{
+		LogDebug("mhw on new section exception pid:%x tableid:%x",pid,tableId);
+	}
 }
 void CMhwParser::GrabEPG()
 {
