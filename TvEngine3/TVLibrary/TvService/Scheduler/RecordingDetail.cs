@@ -41,6 +41,7 @@ namespace TvService
     DateTime _endTime;
     TvDatabase.Program _program;
     CardDetail _cardInfo;
+    DateTime _dateTimeRecordingStarted;
     #endregion
 
     #region ctor
@@ -96,6 +97,22 @@ namespace TvService
       set
       {
         _cardInfo = value;
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets the recording start date time.
+    /// </summary>
+    /// <value>The recording start date time.</value>
+    public DateTime RecordingStartDateTime
+    {
+      get
+      {
+        return _dateTimeRecordingStarted;
+      }
+      set
+      {
+        _dateTimeRecordingStarted = value;
       }
     }
 

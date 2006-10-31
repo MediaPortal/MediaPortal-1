@@ -411,6 +411,7 @@ namespace TvService
         string fileName = recording.FileName;
         if (false == _controller.StartRecording(cardInfo.Id, ref fileName, false, 0)) return false;
         recording.FileName = fileName;
+        recording.RecordingStartDateTime = DateTime.Now;
         _recordingsInProgressList.Add(recording);
         _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingStarted, new VirtualCard(cardInfo.Id), user, recording.Schedule, null));
         Log.Write("recList:count:{0} add scheduleid:{1} card:{2}", _recordingsInProgressList.Count, recording.Schedule.IdSchedule, recording.CardInfo.Card.Name);
@@ -451,7 +452,8 @@ namespace TvService
         if (server.HostName == Dns.GetHostName())
           ourServer = server;
       }
-      Recording newRec = new Recording(recording.Schedule.IdChannel, recording.Program.StartTime, recording.Program.EndTime, recording.Program.Title,
+      
+      Recording newRec = new Recording(recording.Schedule.IdChannel, recording.RecordingStartDateTime, DateTime.Now, recording.Program.Title,
                           recording.Program.Description, recording.Program.Genre, recording.FileName, (int)recording.Schedule.KeepMethod,
                           recording.Schedule.KeepDate, 0, ourServer.IdServer);
       newRec.Persist();
