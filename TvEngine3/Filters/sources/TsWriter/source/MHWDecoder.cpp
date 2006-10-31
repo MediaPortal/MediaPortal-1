@@ -84,8 +84,11 @@ bool CMhwDecoder::ParseSummaries(byte* data, int maxLen)
 	sum.Description="";
 	n+=11+(data[n+10]*7);
 
-	//if (n >= maxLen ) 
-	//	return false;
+	if (n< 0 || n >= 4096 ) 
+		return false;
+	int nlen=(maxLen-n)+10;
+	if (nlen< 0 || nlen >= 4096 ) 
+		return false;
 	char* buffer=new char[(maxLen-n)+10];
 	strncpy(buffer,(const char*)&data[n],(maxLen-n));
 	buffer[(maxLen-n)]=0;
