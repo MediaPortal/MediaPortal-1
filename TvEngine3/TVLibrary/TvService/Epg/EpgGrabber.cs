@@ -353,7 +353,7 @@ namespace TvService
           if (channel.GrabEpg == false) continue;
           ts = DateTime.Now - channel.LastGrabTime;
           if (ts.TotalHours < EpgReGrabAfter) continue; // less then 2 hrs ago
-          if (!IsDigitalChannel(channel))
+          if (!IsDigitalChannel(channel) || (channel.IsRadio==false && channel.IsTv==false) )
           {
             //dont grab epg for analog channels
             channel.GrabEpg = false;
