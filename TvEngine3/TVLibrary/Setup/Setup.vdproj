@@ -153,12 +153,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_46836ACD2C9949DBBD40C4A62EA8694C"
-        "OwnerKey" = "8:_9CCD9023620943089B74B25C0BBF5D12"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_4AF3223B15C344DBB66C9213973E5BED"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -215,6 +209,12 @@
         {
         "MsmKey" = "8:_598E343DF2E0234C3EE1D100CFA9295F"
         "OwnerKey" = "8:_6E1F783CC796ED7520D822AEE1140706"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5C5F24CD0AA04A6EA542801AE07586A3"
+        "OwnerKey" = "8:_554620AFFA98471AA9267BAF3078BB45"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -543,6 +543,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_B8806581C47F4B0FBA60A5048EA4AAC4"
+        "OwnerKey" = "8:_9CCD9023620943089B74B25C0BBF5D12"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_B97E5FAC78864F4D89B02AAB5EE105EC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -641,12 +647,6 @@
         {
         "MsmKey" = "8:_CFCE02D3F711444C984134C6A6B35E1B"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_CFEB68565C1F4A4894E38A68ED51FB65"
-        "OwnerKey" = "8:_554620AFFA98471AA9267BAF3078BB45"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -802,12 +802,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_58D4497F724D4331AAB97E9E93824FA3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_D26282653A0F4D64A3B58C2378AA2CB9"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -827,6 +821,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_E4ACB956578CCFA29B19886C0021CA08"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_58D4497F724D4331AAB97E9E93824FA3"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -3110,7 +3110,7 @@
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_7DF2A5F383B849D188F4F2575CA107FB"
             {
-            "Name" = "8:Log Files"
+            "Name" = "8:TV Server Log Files"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
@@ -3518,11 +3518,11 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_46836ACD2C9949DBBD40C4A62EA8694C"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_554620AFFA98471AA9267BAF3078BB45"
             {
             "UseDynamicProperties" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:policy_8_0_microsoft_vc80_atl_x86.msm"
+            "IsDependency" = "11:FALSE"
+            "SourcePath" = "8:C:\\Programme\\Gemeinsame Dateien\\Merge Modules\\Microsoft_VC80_CRT_x86.msm"
                 "Properties"
                 {
                 }
@@ -3532,11 +3532,11 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_554620AFFA98471AA9267BAF3078BB45"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_5C5F24CD0AA04A6EA542801AE07586A3"
             {
             "UseDynamicProperties" = "11:TRUE"
-            "IsDependency" = "11:FALSE"
-            "SourcePath" = "8:C:\\Programme\\Gemeinsame Dateien\\Merge Modules\\Microsoft_VC80_CRT_x86.msm"
+            "IsDependency" = "11:TRUE"
+            "SourcePath" = "8:policy_8_0_microsoft_vc80_crt_x86.msm"
                 "Properties"
                 {
                 }
@@ -3560,11 +3560,11 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_CFEB68565C1F4A4894E38A68ED51FB65"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_B8806581C47F4B0FBA60A5048EA4AAC4"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:policy_8_0_microsoft_vc80_crt_x86.msm"
+            "SourcePath" = "8:policy_8_0_microsoft_vc80_atl_x86.msm"
                 "Properties"
                 {
                 }
