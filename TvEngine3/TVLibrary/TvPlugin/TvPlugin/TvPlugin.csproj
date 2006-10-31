@@ -79,6 +79,8 @@
     <Compile Include="teletext\Hamming.cs" />
     <Compile Include="teletext\TeletextPageRenderer.cs" />
     <Compile Include="teletext\TvFullscreenTeletext.cs" />
+    <Compile Include="TvChannelSettings.cs" />
+    <Compile Include="TvEpgSettings.cs" />
     <Compile Include="TvFullScreen.cs" />
     <Compile Include="TVGuide.cs" />
     <Compile Include="TvGuideBase.cs" />
@@ -94,6 +96,7 @@
     <Compile Include="TVScheduler.cs" />
     <Compile Include="TVSearch.cs" />
     <Compile Include="teletext\TvTeletext.cs" />
+    <Compile Include="TvRecordingSettings.cs" />
     <Compile Include="TvSetup.cs" />
     <Compile Include="TVUtil.cs" />
     <Compile Include="TVZapOSD.cs" />
