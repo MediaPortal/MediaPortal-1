@@ -83,10 +83,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
     {
       if (Condition == null || Condition.Evaluate())
       {
-        for (int i = 0; i < Lines.Count; i++)
-        {
-          _keeper.SetLine(i, Lines[i]);
-        }
+        _keeper.Lines = Lines;
         _keeper.Images = Images;
         return true;
       }

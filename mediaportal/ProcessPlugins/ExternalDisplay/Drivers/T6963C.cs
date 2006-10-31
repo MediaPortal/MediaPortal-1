@@ -153,8 +153,6 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
     private void WaitForDisplayReady()
     {
-      //long t;
-
       int ret = 0;
       while (ret != 3)
       {
@@ -355,16 +353,18 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
           }
         }
       }
+
+
+      disp_set_addr(GHOME_ADDR + y*NC_COLS + (x/8));
+      disp_write_command(0xb0);
       for (int j = 0; j < bitmap.Height; j++)
       {
-        disp_set_addr(GHOME_ADDR + (j + y)*NC_COLS + (x/8));
-        disp_write_command(0xb0);
         for (int i = 0; i < width; i++)
         {
           disp_auto_write(bytes[i, j]);
         }
-        disp_write_command(0xb2);
       }
+      disp_write_command(0xb2);
     }
   }
 }

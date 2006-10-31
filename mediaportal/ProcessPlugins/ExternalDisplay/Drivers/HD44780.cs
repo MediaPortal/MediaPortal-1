@@ -104,6 +104,12 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
     public void DrawImage(int x, int y, Bitmap bitmap)
     {
+      //Not supported
+    }
+
+    public void DrawText(int line, string text)
+    {
+      //Not supported
     }
 
     /// <summary>

@@ -25,14 +25,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using ExternalDisplay.Setting;
-using MediaPortal.Util;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 using ProcessPlugins.ExternalDisplay.Drivers;
 using ProcessPlugins.ExternalDisplay.Setting;
 
@@ -315,6 +316,14 @@ namespace ProcessPlugins.ExternalDisplay
       set { m_ScrollDelay = value; }
     }
 
+    private int m_CharsToScroll = 1;
+
+    [XmlAttribute]
+    public int CharsToScroll
+    {
+      get { return m_CharsToScroll; }
+      set { m_CharsToScroll = value; }
+    }
 
     private bool m_ExtensiveLogging = false;
 
@@ -323,6 +332,52 @@ namespace ProcessPlugins.ExternalDisplay
     {
       get { return m_ExtensiveLogging; }
       set { m_ExtensiveLogging = value; }
+    }
+
+    private string m_Font = "Arial Black";
+
+    [XmlAttribute]
+    public string Font
+    {
+      get { return m_Font; }
+      set
+      {
+        Font font = new Font(value, FontSize);
+        m_Font = font.Name;
+        font.Dispose();
+      }
+    }
+
+    private int m_FontSize = 10;
+
+    [XmlAttribute]
+    public int FontSize
+    {
+      get { return m_FontSize; }
+      set
+      {
+        Font font = new Font(Font, value);
+        font.Dispose();
+        m_FontSize = value;
+      }
+    }
+
+    private bool m_ForceGraphicText = false;
+
+    [XmlAttribute]
+    public bool ForceGraphicText
+    {
+      get { return m_ForceGraphicText; }
+      set { m_ForceGraphicText = value; }
+    }
+
+    private int m_PixelsToScroll = 10;
+
+    [XmlAttribute]
+    public int PixelsToScroll
+    {
+      get { return m_PixelsToScroll; }
+      set { m_PixelsToScroll = value; }
     }
 
     /// <summary>

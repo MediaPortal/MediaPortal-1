@@ -25,9 +25,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using ExternalDisplay.Setting;
 using MediaPortal.GUI.Library;
 using ProcessPlugins.ExternalDisplay.Setting;
+using Image=ProcessPlugins.ExternalDisplay.Setting.Image;
 
 namespace ProcessPlugins.ExternalDisplay
 {
@@ -37,23 +39,39 @@ namespace ProcessPlugins.ExternalDisplay
   /// <author>JoeDalton</author>
   public class DisplayHandler
   {
-    protected int height;
-    protected int width;
+    protected int heightInChars;
+    protected int widthInChars;
     protected Line[] lines; //Keeps the lines of text to display on the display
     protected int[] pos; //Keeps track of the start positions in the display lines
     private List<Image> images;
-
-
     private IDisplay display; //Reference to the display we are controlling
+    private Font font;
+    private static readonly Brush graphicBrush = new SolidBrush(Color.White);
+    private static readonly Brush textBrush = new SolidBrush(Color.Black);
+    private int graphicTextHeight = -1;
+    private readonly int pixelsToScroll;
+    private readonly int widthInPixels;
+    private readonly int heightInPixels;
+    private readonly bool forceGraphicText;
+    private readonly int charsToScroll;
+
 
     internal DisplayHandler(IDisplay _display)
     {
       display = _display;
-      height = Settings.Instance.TextHeight;
-      width = Settings.Instance.TextWidth;
-      lines = new Line[height];
-      pos = new int[height];
-      for (int i = 0; i < height; i++)
+      //buffer a number of Settings in local fields (=faster access)
+      heightInChars = Settings.Instance.TextHeight;
+      widthInChars = Settings.Instance.TextWidth;
+      pixelsToScroll = Settings.Instance.PixelsToScroll;
+      widthInPixels = Settings.Instance.GraphicWidth;
+      heightInPixels = Settings.Instance.GraphicHeight;
+      forceGraphicText = Settings.Instance.ForceGraphicText;
+      charsToScroll = Settings.Instance.CharsToScroll;
+      //
+      lines = new Line[heightInChars];
+      pos = new int[heightInChars];
+      font = new Font(Settings.Instance.Font, Settings.Instance.FontSize);
+      for (int i = 0; i < heightInChars; i++)
       {
         lines[i] = new Line();
         pos[i] = 0;
@@ -72,9 +90,9 @@ namespace ProcessPlugins.ExternalDisplay
     /// <remarks>
     internal void Start()
     {
-      display.Setup(Settings.Instance.Port, Settings.Instance.TextHeight, Settings.Instance.TextWidth,
-                    Settings.Instance.TextComDelay, Settings.Instance.GraphicHeight,
-                    Settings.Instance.GraphicWidth, Settings.Instance.GraphicComDelay,
+      display.Setup(Settings.Instance.Port, heightInChars, widthInChars,
+                    Settings.Instance.TextComDelay, heightInPixels,
+                    widthInPixels, Settings.Instance.GraphicComDelay,
                     Settings.Instance.BackLight, Settings.Instance.Contrast);
       display.Initialize();
       display.SetCustomCharacters(Settings.Instance.CustomCharacters);
@@ -88,15 +106,22 @@ namespace ProcessPlugins.ExternalDisplay
       display.CleanUp();
     }
 
-    /// <summary>
-    /// Shows the given message on the indicated line.
-    /// </summary>
-    /// <param name="_line">The line to thow the message on.</param>
-    /// <param name="_message">The message to show.</param>
-    internal void SetLine(int _line, Line _message)
+    internal List<Line> Lines
     {
-      lines[_line] = _message;
-      //pos[_line-1]   = 0;  //reset scrolling
+      set
+      {
+        int i = 0;
+        while (i < value.Count && i < heightInChars)
+        {
+          lines[i] = value[i];
+          i++;
+        }
+        while (i < heightInChars)
+        {
+          lines[i] = new Line();
+          i++;
+        }
+      }
     }
 
     /// <summary>
@@ -118,19 +143,84 @@ namespace ProcessPlugins.ExternalDisplay
       }
       try
       {
-        for (byte i = 0; i < height; i++)
+        if (display.SupportsGraphics)
         {
-          display.SetLine(i, Process(i));
+          using (Bitmap buffer = new Bitmap(widthInPixels, heightInPixels))
+          {
+            using (Graphics graphics = Graphics.FromImage(buffer))
+            {
+              graphics.FillRectangle(graphicBrush, 0, 0, widthInPixels, heightInPixels);
+              foreach (Image image in Images)
+              {
+                graphics.DrawImage(image.Bitmap, image.X, image.Y);
+              }
+              if (!display.SupportsText || forceGraphicText)
+              {
+                for (int i = 0; i < heightInChars; i++)
+                {
+                  ProcessG(graphics, i);
+                }
+              }
+              display.DrawImage(0, 0, buffer);
+            }
+          }
         }
-        foreach (Image image in Images)
+        if (display.SupportsText && !forceGraphicText)
         {
-          display.DrawImage(image.X, image.Y, image.Bitmap);
+          for (int i = 0; i < heightInChars; i++)
+          {
+            display.SetLine(i, Process(i));
+          }
         }
       }
       catch (Exception ex)
       {
         Log.Info("ExternalDisplay.DisplayLines: " + ex.Message);
       }
+    }
+
+    private void ProcessG(Graphics _graphics, int _line)
+    {
+      Line line = lines[_line];
+      string text = line.Process();
+      if (string.IsNullOrEmpty(text))
+      {
+        return;
+      }
+      SizeF size = _graphics.MeasureString(text, font);
+      if (size.Height > graphicTextHeight)
+      {
+        graphicTextHeight = (int) (size.Height + 0.5f);
+      }
+      if (size.Width < widthInPixels)
+      {
+        //text is shorter than display width
+        StringFormat fmt = new StringFormat();
+        switch (line.Alignment)
+        {
+          case Alignment.Right:
+            fmt.Alignment = StringAlignment.Far;
+            break;
+          case Alignment.Centered:
+            fmt.Alignment = StringAlignment.Center;
+            break;
+          default:
+            fmt.Alignment = StringAlignment.Near;
+            break;
+        }
+        _graphics.DrawString(text, font, textBrush,
+                             new RectangleF(new PointF(0, _line*graphicTextHeight),
+                                            new SizeF(widthInPixels, size.Height)), fmt);
+        return;
+      }
+      //Text is longer than display width
+      if (pos[_line] > size.Width + pixelsToScroll)
+      {
+        pos[_line] = 0;
+      }
+      text += " - " + text;
+      _graphics.DrawString(text, font, textBrush, new PointF(0 - pos[_line], _line*graphicTextHeight));
+      pos[_line] += pixelsToScroll;
     }
 
     /// <summary>
@@ -148,37 +238,38 @@ namespace ProcessPlugins.ExternalDisplay
       //No text to display, so empty the line
       if (tmp == null || tmp.Length == 0)
       {
-        return new string(' ', width);
+        return new string(' ', widthInChars);
       }
-      if (tmp.Length <= width)
+      if (tmp.Length <= widthInChars)
       {
         //Text is shorter than display width
         switch (line.Alignment)
         {
           case Alignment.Right:
             {
-              string format = "{0," + width + "}";
+              string format = "{0," + widthInChars + "}";
               return string.Format(format, tmp);
             }
           case Alignment.Centered:
             {
-              int left = (width - tmp.Length)/2;
-              return new string(' ', left) + tmp + new string(' ', width - tmp.Length - left);
+              int left = (widthInChars - tmp.Length)/2;
+              return new string(' ', left) + tmp + new string(' ', widthInChars - tmp.Length - left);
             }
           default:
             {
-              string format = "{0,-" + width + "}";
+              string format = "{0,-" + widthInChars + "}";
               return string.Format(format, tmp);
             }
         }
       }
       //Text is longer than display width
-      if (pos[_line] > tmp.Length + 2)
+      if (pos[_line] > tmp.Length + charsToScroll + 1)
       {
         pos[_line] = 0;
       }
       tmp += " - " + tmp;
-      tmp = tmp.Substring(pos[_line]++, width);
+      tmp = tmp.Substring(pos[_line], widthInChars);
+      pos[_line] += charsToScroll;
       return tmp;
     }
   }
