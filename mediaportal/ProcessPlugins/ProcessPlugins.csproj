@@ -471,6 +471,12 @@
       <DependentUpon>WebEPGGrabberSettings.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ExternalDisplay\lcd.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ExternalDisplay\lcd_deactivated.gif" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

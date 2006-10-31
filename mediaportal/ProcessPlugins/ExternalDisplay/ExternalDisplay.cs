@@ -29,6 +29,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using Microsoft.Win32;
@@ -41,6 +42,7 @@ namespace ProcessPlugins.ExternalDisplay
   /// This plug-in can show status information on an external display like LCD, VFD, ...
   /// </summary>
   /// <author>JoeDalton</author>
+  [PluginIcons("ProcessPlugins.ExternalDisplay.lcd.gif", "ProcessPlugins.ExternalDisplay.lcd_deactivated.gif")]
   public class ExternalDisplay : IPlugin, ISetupForm
   {
     private const int WindowID = 9876; //The ID for this plugin

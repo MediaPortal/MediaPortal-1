@@ -26,21 +26,22 @@
 using System;
 using System.Collections;
 using System.Drawing;
-using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
+using System.Windows.Forms;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
-using MediaPortal.Profile;
 using MediaPortal.Player;
+using MediaPortal.Profile;
 using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public partial class PluginsNew : MediaPortal.Configuration.SectionSettings
+  public partial class PluginsNew : SectionSettings
   {
     private ArrayList loadedPlugins = new ArrayList();
     private ArrayList availablePlugins = new ArrayList();
-    bool isLoaded = false;
+    private bool isLoaded = false;
 
     private class ItemTag
     {
@@ -55,6 +56,20 @@ namespace MediaPortal.Configuration.Sections
       public bool IsEnabled = false;
       public bool IsPlugins = false;
       public bool ShowDefaultHome = false;
+      private Image activeImage = null;
+      private Image inactiveImage = null;
+
+      public Image ActiveImage
+      {
+        get { return activeImage; }
+        set { activeImage = value; }
+      }
+
+      public Image InactiveImage
+      {
+        get { return inactiveImage; }
+        set { inactiveImage = value; }
+      }
     }
 
     public PluginsNew()
@@ -65,7 +80,6 @@ namespace MediaPortal.Configuration.Sections
     public PluginsNew(string name)
       : base(name)
     {
-
       // This call is required by the Windows Form Designer.
       InitializeComponent();
     }
@@ -121,7 +135,9 @@ namespace MediaPortal.Configuration.Sections
         // Add to list
         //
         foreach (string file in files)
+        {
           availablePlugins.Add(file);
+        }
       }
     }
 
@@ -129,15 +145,23 @@ namespace MediaPortal.Configuration.Sections
     {
       foreach (ItemTag tag in loadedPlugins)
       {
-        ListViewItem item = null;
+        ListViewItem item;
         if (tag.IsProcess)
+        {
           item = new ListViewItem(tag.SetupForm.PluginName(), listViewPlugins.Groups["listViewGroupProcess"]);
+        }
         else if (tag.IsWindow)
+        {
           item = new ListViewItem(tag.SetupForm.PluginName(), listViewPlugins.Groups["listViewGroupWindow"]);
+        }
         else if (tag.IsExternalPlayer)
+        {
           item = new ListViewItem(tag.SetupForm.PluginName(), listViewPlugins.Groups["listViewGroupExternalPlayers"]);
+        }
         else
+        {
           item = new ListViewItem(tag.SetupForm.PluginName(), listViewPlugins.Groups["listViewGroupOther"]);
+        }
         item.Tag = tag;
         item.ToolTipText = string.Format("{0}", tag.SetupForm.Description());
         listViewPlugins.Items.Add(item);
@@ -154,7 +178,7 @@ namespace MediaPortal.Configuration.Sections
         {
           pluginAssembly = Assembly.LoadFrom(pluginFile);
         }
-        catch (System.BadImageFormatException)
+        catch (BadImageFormatException)
         {
         }
 
@@ -168,7 +192,9 @@ namespace MediaPortal.Configuration.Sections
             {
               // an abstract class cannot be instanciated
               if (type.IsAbstract)
+              {
                 continue;
+              }
               //
               // Try to locate the interface we're interested in
               //
@@ -177,15 +203,20 @@ namespace MediaPortal.Configuration.Sections
                 //
                 // Create instance of the current type
                 //
-                object pluginObject = null;
+                object pluginObject;
                 try
                 {
                   pluginObject = Activator.CreateInstance(type);
                 }
-                catch (System.Reflection.TargetInvocationException)
+                catch (TargetInvocationException)
                 {
-                  MessageBox.Show(string.Format("An error occured while loading the plugin {0}.\n\nIt's incompatible with the current MediaPortal version and won't be loaded.", type.FullName, "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error));
-                  Log.Info("Plugin Manager: Plugin {0} is incompatible with the current MediaPortal version! (File: {1})", type.FullName, pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
+                  MessageBox.Show(
+                    string.Format(
+                      "An error occured while loading the plugin {0}.\n\nIt's incompatible with the current MediaPortal version and won't be loaded.",
+                      type.FullName), "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                  Log.Info(
+                    "Plugin Manager: Plugin {0} is incompatible with the current MediaPortal version! (File: {1})",
+                    type.FullName, pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
                   continue;
                 }
                 ISetupForm pluginForm = pluginObject as ISetupForm;
@@ -199,32 +230,45 @@ namespace MediaPortal.Configuration.Sections
                   tag.DllName = pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1);
                   tag.WindowId = pluginForm.GetWindowId();
                   if (extPlayer != null)
+                  {
                     tag.IsExternalPlayer = true;
+                  }
                   else
+                  {
                     tag.IsProcess = true;
+                  }
                   if (showPlugin != null)
+                  {
                     tag.ShowDefaultHome = showPlugin.ShowDefaultHome();
+                  }
+                  LoadPluginImages(type, tag);
                   loadedPlugins.Add(tag);
                 }
               }
             }
             foreach (Type t in exportedTypes)
+            {
               if ((t.IsClass) && (t.IsSubclassOf(typeof(GUIWindow))))
               {
-                object newObj = null;
+                object newObj;
                 try
                 {
                   newObj = Activator.CreateInstance(t);
                 }
-                catch (System.Reflection.TargetInvocationException)
+                catch (TargetInvocationException)
                 {
-                  MessageBox.Show(string.Format("An error occured while loading the plugin {0}.\n\nIt's incompatible with the current MediaPortal version and won't be loaded.", t.FullName, "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error));
-                  Log.Info("PluginManager: {0} is incompatible with the current MediaPortal version! (File: {1})", t.FullName, pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
+                  MessageBox.Show(
+                    string.Format(
+                      "An error occured while loading the plugin {0}.\n\nIt's incompatible with the current MediaPortal version and won't be loaded.",
+                      t.FullName), "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                  Log.Info("PluginManager: {0} is incompatible with the current MediaPortal version! (File: {1})",
+                           t.FullName, pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
                   continue;
                 }
-                GUIWindow win = (GUIWindow)newObj;
+                GUIWindow win = (GUIWindow) newObj;
 
                 foreach (ItemTag tag in loadedPlugins)
+                {
                   if (tag.WindowId == win.GetID)
                   {
                     tag.Type = win.GetType().ToString();
@@ -232,39 +276,101 @@ namespace MediaPortal.Configuration.Sections
                     tag.IsWindow = true;
                     break;
                   }
+                }
               }
+            }
           }
           catch (Exception ex)
           {
-            MessageBox.Show(string.Format("An error occured while loading the plugin file {0}.\n\nIt's borken or incompatible with the current MediaPortal version and won't be loaded.", pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1), "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error));
-            Log.Info("PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!", pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
+            MessageBox.Show(
+              string.Format(
+                "An error occured while loading the plugin file {0}.\n\nIt's borken or incompatible with the current MediaPortal version and won't be loaded.",
+                pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1)), "Plugin Manager", MessageBoxButtons.OK,
+              MessageBoxIcon.Error);
+            Log.Info(
+              "PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!",
+              pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
             Log.Info("PluginManager: Exception: {0}", ex);
           }
         }
       }
     }
 
+    /// <summary>
+    /// Checks whether the a plugin has a <see cref="PluginIconsAttribute"/> defined.  If it has, the images that are indicated
+    /// in the attribute are loaded
+    /// </summary>
+    /// <param name="type">The <see cref="Type"/> to examine.</param>
+    /// <param name="tag">The <see cref="ItemTag"/> to store the images in.</param>
+    private static void LoadPluginImages(Type type, ItemTag tag)
+    {
+      PluginIconsAttribute[] icons = (PluginIconsAttribute[]) type.GetCustomAttributes(typeof(PluginIconsAttribute), false);
+      if (icons == null || icons.Length == 0)
+      {
+        return;
+      }
+      string resourceName = icons[0].ActivatedResourceName;
+      if (!string.IsNullOrEmpty(resourceName))
+      {
+        tag.ActiveImage = LoadImageFromResource(type, resourceName);
+      }
+      resourceName = icons[0].DeactivatedResourceName;
+      if (!string.IsNullOrEmpty(resourceName))
+      {
+        tag.InactiveImage = LoadImageFromResource(type, resourceName);
+      }
+    }
+
+    private static Image LoadImageFromResource(Type type, string resourceName)
+    {
+      try
+      {
+        return Image.FromStream(type.Assembly.GetManifestResourceStream(resourceName));
+      }
+      catch(ArgumentException)
+      {
+        //Thrown when the stream does not seem to contain a valid image
+      }
+      catch (FileLoadException)
+      {
+        //Throw when the resource could not be loaded
+      }
+      catch (FileNotFoundException)
+      {
+        //Thrown when the resource could not be found
+      }
+      return null;
+    }
+
     public override void LoadSettings()
     {
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
         foreach (ListViewItem item in listViewPlugins.Items)
         {
-          ItemTag itemTag = (ItemTag)item.Tag;
+          ItemTag itemTag = (ItemTag) item.Tag;
 
           if (itemTag.SetupForm != null)
           {
             if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
-              itemTag.IsEnabled = xmlreader.GetValueAsBool("plugins", itemTag.SetupForm.PluginName(), itemTag.SetupForm.DefaultEnabled());
+            {
+              itemTag.IsEnabled =
+                xmlreader.GetValueAsBool("plugins", itemTag.SetupForm.PluginName(), itemTag.SetupForm.DefaultEnabled());
+            }
             else
+            {
               itemTag.IsEnabled = itemTag.SetupForm.DefaultEnabled();
+            }
 
             if (itemTag.IsWindow)
             {
-              bool isHome = false;
-              bool isPlugins = false;
-              string dummy = string.Empty;
+              bool isHome;
+              bool isPlugins;
+              string dummy;
 
-              if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled() && itemTag.SetupForm.GetHome(out dummy, out dummy, out dummy, out dummy))
+              if (itemTag.SetupForm.CanEnable() ||
+                  itemTag.SetupForm.DefaultEnabled() &&
+                  itemTag.SetupForm.GetHome(out dummy, out dummy, out dummy, out dummy))
               {
                 isHome = itemTag.ShowDefaultHome;
                 isPlugins = !isHome;
@@ -275,15 +381,17 @@ namespace MediaPortal.Configuration.Sections
           }
           updateListViewItem(item);
         }
+      }
     }
 
     public override void SaveSettings()
     {
       LoadAll();
       using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
         foreach (ListViewItem item in listViewPlugins.Items)
         {
-          ItemTag itemTag = (ItemTag)item.Tag;
+          ItemTag itemTag = (ItemTag) item.Tag;
 
           bool isEnabled = itemTag.IsEnabled;
           bool isHome = itemTag.IsHome;
@@ -293,7 +401,9 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValueAsBool("pluginsdlls", itemTag.DllName, isEnabled);
 
           if ((isEnabled) && (!isHome && !isPlugins))
+          {
             isHome = true;
+          }
 
           if (itemTag.IsWindow)
           {
@@ -302,97 +412,165 @@ namespace MediaPortal.Configuration.Sections
             xmlwriter.SetValueAsBool("pluginswindows", itemTag.Type, isEnabled);
           }
         }
+      }
     }
 
     private void listViewPlugins_DoubleClick(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
       itemTag.IsEnabled = !itemTag.IsEnabled;
       if (!itemTag.SetupForm.CanEnable())
+      {
         itemTag.IsEnabled = itemTag.SetupForm.DefaultEnabled();
+      }
 
       updateListViewItem(listViewPlugins.FocusedItem);
     }
 
     private void updateListViewItem(ListViewItem item)
     {
-      if (((ItemTag)item.Tag).IsWindow)
-        if (((ItemTag)item.Tag).IsEnabled)
-          if (((ItemTag)item.Tag).IsHome)
+      ItemTag tag = (ItemTag) item.Tag;
+      if (tag.IsEnabled && tag.ActiveImage != null)
+      {
+        string enabledKey = item.Text+"_enabled";
+        if (!item.ImageList.Images.ContainsKey(enabledKey))
+        {
+          item.ImageList.Images.Add(enabledKey,tag.ActiveImage);
+        }
+        item.ImageKey = enabledKey;
+        return;
+      }
+      if (!tag.IsEnabled && tag.InactiveImage !=null)
+      {
+        string disabledKey = item.Text + "_disabled";
+        if (!item.ImageList.Images.ContainsKey(disabledKey))
+        {
+          item.ImageList.Images.Add(disabledKey, tag.InactiveImage);
+        }
+        item.ImageKey = disabledKey;
+        return;
+      }
+      if (tag.IsWindow)
+      {
+        if (tag.IsEnabled)
+        {
+          if (tag.IsHome)
+          {
             item.ImageIndex = 8;
-          else if (((ItemTag)item.Tag).IsPlugins)
+          }
+          else if (tag.IsPlugins)
+          {
             item.ImageIndex = 9;
+          }
           else
+          {
             item.ImageIndex = 2;
+          }
+        }
         else
+        {
           item.ImageIndex = 3;
-      else if (((ItemTag)item.Tag).IsProcess)
-        if (((ItemTag)item.Tag).IsEnabled)
+        }
+      }
+      else if (tag.IsProcess)
+      {
+        if (tag.IsEnabled)
+        {
           item.ImageIndex = 4;
+        }
         else
+        {
           item.ImageIndex = 5;
-      else if (((ItemTag)item.Tag).IsExternalPlayer)
-        if (((ItemTag)item.Tag).IsEnabled)
+        }
+      }
+      else if (tag.IsExternalPlayer)
+      {
+        if (tag.IsEnabled)
+        {
           item.ImageIndex = 6;
+        }
         else
+        {
           item.ImageIndex = 7;
-      else if (((ItemTag)item.Tag).IsEnabled)
+        }
+      }
+      else if (tag.IsEnabled)
+      {
         item.ImageIndex = 0;
+      }
       else
+      {
         item.ImageIndex = 1;
+      }
     }
 
-    void itemMyPlugins_Click(object sender, EventArgs e)
+    private void itemMyPlugins_Click(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
       itemTag.IsPlugins = !itemTag.IsPlugins;
       if (itemTag.IsPlugins)
+      {
         itemTag.IsHome = false;
+      }
       if (!itemTag.IsPlugins && !itemTag.IsHome)
+      {
         itemTag.IsPlugins = true;
+      }
       updateListViewItem(listViewPlugins.FocusedItem);
     }
 
-    void itemMyHome_Click(object sender, EventArgs e)
+    private void itemMyHome_Click(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
       itemTag.IsHome = !itemTag.IsHome;
       if (itemTag.IsHome)
+      {
         itemTag.IsPlugins = false;
+      }
       if (!itemTag.IsPlugins && !itemTag.IsHome)
+      {
         itemTag.IsHome = true;
+      }
       updateListViewItem(listViewPlugins.FocusedItem);
     }
 
-    void itemEnabled_Click(object sender, EventArgs e)
+    private void itemEnabled_Click(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
       itemTag.IsEnabled = !itemTag.IsEnabled;
       if (!itemTag.SetupForm.CanEnable())
+      {
         itemTag.IsEnabled = itemTag.SetupForm.DefaultEnabled();
+      }
 
       updateListViewItem(listViewPlugins.FocusedItem);
     }
 
-    void itemConfigure_Click(object sender, EventArgs e)
+    private void itemConfigure_Click(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
       if ((itemTag.SetupForm != null) &&
-        (itemTag.SetupForm.HasSetup()))
+          (itemTag.SetupForm.HasSetup()))
+      {
         itemTag.SetupForm.ShowPlugin();
+      }
     }
 
     private void listViewPlugins_MouseClick(object sender, MouseEventArgs e)
     {
       if (e.Button == MouseButtons.Right)
+      {
         contextMenuStrip.Show(MousePosition);
+      }
     }
 
     private void addContextMenuItem(string name, string menuEntry, Image image, bool clickable)
     {
-      ToolStripItem item = null;
+      ToolStripItem item;
       if (clickable)
+      {
         item = contextMenuStrip.Items.Add(string.Empty);
+      }
       else
       {
         item = new ToolStripLabel(string.Empty);
@@ -417,10 +595,10 @@ namespace MediaPortal.Configuration.Sections
           item.Click += new EventHandler(itemMyPlugins_Click);
           break;
         case "Name":
-          item.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+          item.Font = new Font("Tahoma", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
           break;
         case "Author":
-          item.Font = new System.Drawing.Font("Tahoma", 7.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+          item.Font = new Font("Tahoma", 7.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
           break;
       }
     }
@@ -437,7 +615,7 @@ namespace MediaPortal.Configuration.Sections
 
       if (listViewPlugins.FocusedItem != null)
       {
-        ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+        ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
 
         addContextMenuItem("Name", itemTag.SetupForm.PluginName(), null, false);
         addContextMenuItem("Author", string.Format("Author: {0}", itemTag.SetupForm.Author()), null, false);
@@ -450,14 +628,27 @@ namespace MediaPortal.Configuration.Sections
         else
         {
           addContextMenuItem("Enabled", "Enabled", imageListContextMenu.Images[0], true);
-          string dummy = string.Empty;
-          if (itemTag.SetupForm.CanEnable() && itemTag.IsWindow && itemTag.SetupForm.GetHome(out dummy, out dummy, out dummy, out dummy))
+          string dummy;
+          if (itemTag.SetupForm.CanEnable() && itemTag.IsWindow &&
+              itemTag.SetupForm.GetHome(out dummy, out dummy, out dummy, out dummy))
           {
-            if (!itemTag.IsHome) addContextMenuItem("My Home", "Listed in Home", imageListContextMenu.Images[1], true);
-            else addContextMenuItem("My Home", "Listed in Home", imageListContextMenu.Images[0], true);
+            if (!itemTag.IsHome)
+            {
+              addContextMenuItem("My Home", "Listed in Home", imageListContextMenu.Images[1], true);
+            }
+            else
+            {
+              addContextMenuItem("My Home", "Listed in Home", imageListContextMenu.Images[0], true);
+            }
 
-            if (!itemTag.IsPlugins) addContextMenuItem("My Plugins", "Listed in My Plugins", imageListContextMenu.Images[1], true);
-            else addContextMenuItem("My Plugins", "Listed in My Plugins", imageListContextMenu.Images[0], true);
+            if (!itemTag.IsPlugins)
+            {
+              addContextMenuItem("My Plugins", "Listed in My Plugins", imageListContextMenu.Images[1], true);
+            }
+            else
+            {
+              addContextMenuItem("My Plugins", "Listed in My Plugins", imageListContextMenu.Images[0], true);
+            }
           }
 
           if (itemTag.SetupForm.HasSetup())
@@ -468,6 +659,5 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
-
   }
 }
