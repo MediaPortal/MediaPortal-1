@@ -63,9 +63,9 @@ namespace SetupTv
         this.linkLabel1.Location = new System.Drawing.Point(16, 503);
         this.linkLabel1.Name = "linkLabel1";
         this.linkLabel1.Size = new System.Drawing.Size(115, 13);
-        this.linkLabel1.TabIndex = 7;
+        this.linkLabel1.TabIndex = 8;
         this.linkLabel1.TabStop = true;
-        this.linkLabel1.Text = "Donate to Mediaportal!";
+        this.linkLabel1.Text = "Donate to MediaPortal";
         this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
         this.Controls.Add(this.linkLabel1);
         // 
@@ -109,7 +109,7 @@ namespace SetupTv
               }
               catch
               {
-                MessageBox.Show(this,"Unable to connect to " + RemoteControl.HostName);
+                MessageBox.Show(this, "Unable to connect to " + RemoteControl.HostName);
               }
             }
             break;
@@ -271,6 +271,7 @@ namespace SetupTv
       this.holderPanel = new System.Windows.Forms.Panel();
       this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
       this.applyButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonViewLog = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
       // sectionTree
@@ -285,7 +286,7 @@ namespace SetupTv
       this.sectionTree.Location = new System.Drawing.Point(16, 16);
       this.sectionTree.Name = "sectionTree";
       this.sectionTree.Size = new System.Drawing.Size(184, 460);
-      this.sectionTree.TabIndex = 2;
+      this.sectionTree.TabIndex = 3;
       this.sectionTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.sectionTree_AfterSelect);
       this.sectionTree.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.sectionTree_BeforeSelect);
       // 
@@ -293,7 +294,7 @@ namespace SetupTv
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelButton.Location = new System.Drawing.Point(621, 499);
+      this.cancelButton.Location = new System.Drawing.Point(520, 499);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(75, 23);
       this.cancelButton.TabIndex = 1;
@@ -304,7 +305,7 @@ namespace SetupTv
       // okButton
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.Location = new System.Drawing.Point(542, 499);
+      this.okButton.Location = new System.Drawing.Point(441, 499);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
       this.okButton.TabIndex = 0;
@@ -324,7 +325,7 @@ namespace SetupTv
       this.headerLabel.Name = "headerLabel";
       this.headerLabel.PaddingLeft = 2;
       this.headerLabel.Size = new System.Drawing.Size(472, 24);
-      this.headerLabel.TabIndex = 3;
+      this.headerLabel.TabIndex = 4;
       this.headerLabel.TabStop = false;
       this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
       this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -339,7 +340,7 @@ namespace SetupTv
       this.holderPanel.Location = new System.Drawing.Point(216, 48);
       this.holderPanel.Name = "holderPanel";
       this.holderPanel.Size = new System.Drawing.Size(472, 428);
-      this.holderPanel.TabIndex = 4;
+      this.holderPanel.TabIndex = 5;
       // 
       // beveledLine1
       // 
@@ -348,21 +349,32 @@ namespace SetupTv
       this.beveledLine1.Location = new System.Drawing.Point(8, 489);
       this.beveledLine1.Name = "beveledLine1";
       this.beveledLine1.Size = new System.Drawing.Size(688, 2);
-      this.beveledLine1.TabIndex = 5;
+      this.beveledLine1.TabIndex = 6;
       this.beveledLine1.TabStop = false;
       // 
       // applyButton
       // 
       this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.applyButton.Location = new System.Drawing.Point(462, 499);
+      this.applyButton.Location = new System.Drawing.Point(361, 499);
       this.applyButton.Name = "applyButton";
       this.applyButton.Size = new System.Drawing.Size(75, 23);
-      this.applyButton.TabIndex = 6;
+      this.applyButton.TabIndex = 7;
       this.applyButton.TabStop = false;
       this.applyButton.Text = "&Apply";
       this.applyButton.UseVisualStyleBackColor = true;
       this.applyButton.Visible = false;
       this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
+      // 
+      // buttonViewLog
+      // 
+      this.buttonViewLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonViewLog.Location = new System.Drawing.Point(600, 499);
+      this.buttonViewLog.Name = "buttonViewLog";
+      this.buttonViewLog.Size = new System.Drawing.Size(96, 23);
+      this.buttonViewLog.TabIndex = 2;
+      this.buttonViewLog.Text = "View &log files";
+      this.buttonViewLog.UseVisualStyleBackColor = true;
+      this.buttonViewLog.Click += new System.EventHandler(this.buttonViewLog_Click);
       // 
       // SettingsForm
       // 
@@ -371,6 +383,7 @@ namespace SetupTv
       this.AutoScroll = true;
       this.CancelButton = this.cancelButton;
       this.ClientSize = new System.Drawing.Size(704, 530);
+      this.Controls.Add(this.buttonViewLog);
       this.Controls.Add(this.applyButton);
       this.Controls.Add(this.beveledLine1);
       this.Controls.Add(this.holderPanel);
@@ -573,7 +586,14 @@ namespace SetupTv
       }
     }
 
-
+    public override void buttonViewLog_Click(object sender, EventArgs e)
+    {
+      Process process = new Process();
+      process.StartInfo.FileName = "explorer.exe";
+      process.StartInfo.Arguments = String.Format(@"{0}\MediaPortal TV Server\log\", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+      process.StartInfo.UseShellExecute = true;
+      process.Start();
+    }
 
     public override void SaveAllSettings()
     {
@@ -594,7 +614,7 @@ namespace SetupTv
 
     private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      System.Diagnostics.Process.Start((string)e.Link.LinkData); 
+      System.Diagnostics.Process.Start((string)e.Link.LinkData);
     }
   }
 }
