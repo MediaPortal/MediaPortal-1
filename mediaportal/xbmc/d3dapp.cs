@@ -2558,8 +2558,8 @@ namespace MediaPortal
         strMsg = "Warning: Nothing will be rendered.\n";
         strMsg += "The reference rendering device was selected, but your\n";
         strMsg += "computer only has a reduced-functionality reference device\n";
-        strMsg += "installed.  Install the DirectX SDK to get the full\n";
-        strMsg += "reference device.\n";
+        strMsg += "installed. Please check if your graphics card and\n";
+        strMsg += "drivers meet the minimum system requirements.\n";
 
         return strMsg;
       }
