@@ -580,7 +580,7 @@ namespace MediaPortal.Player
           hr = mp.SetSyncSource(clock);
           //Log.Info("TSStreamBufferPlayer9:set reference clock:{0:X}", hr);
 
-          _mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
+          //_mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
         }
 
         if (_isRadio == false)

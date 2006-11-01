@@ -41,7 +41,7 @@ namespace MediaPortal.Player
   {
     [ComImport, Guid("4F8BF30C-3BEB-43A3-8BF2-10096FD28CF2")]
     protected class TsFileSource { }
-                      
+
     [ComImport, Guid("b9559486-e1bb-45d3-a2a2-9a7afe49b23f")]
     protected class TsReaderSource { }
     #region imports
@@ -155,7 +155,7 @@ namespace MediaPortal.Player
     public override bool Play(string strFile)
     {
       _endOfFileDetected = false;
-      Log.Info("Streambufferplayer play:{0} radio:{1}", strFile,_isRadio);
+      Log.Info("Streambufferplayer play:{0} radio:{1}", strFile, _isRadio);
       if (!System.IO.File.Exists(strFile))
         return false;
       iSpeed = 1;
@@ -263,12 +263,14 @@ namespace MediaPortal.Player
 
       _state = PlayState.Playing;
 
-      _mediaCtrl.Run();
+      long dur=0;
+      _mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
+      _mediaCtrl.Run(); 
+      //_mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
       UpdateCurrentPosition();
       UpdateDuration();
       OnInitialized();
-      _mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
-      Log.Info("TsBaseStreamBuffer:running pos:{1} duration:{2}", Duration, CurrentPosition);
+      Log.Info("TsBaseStreamBuffer:running pos:{1} duration:{2} {3}", Duration, CurrentPosition,dur);
       return true;
     }
 
@@ -381,7 +383,7 @@ namespace MediaPortal.Player
         return;
 
       //Log.Info("1");
-
+      /*
       if (_startingUp && _isLive)
       {
         ushort pgmCount = 0;
@@ -413,7 +415,8 @@ namespace MediaPortal.Player
       {
         _startingUp = false;
       }
-
+      */
+      _startingUp = false;
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalMilliseconds >= 800 || iSpeed != 1)
       {
@@ -477,20 +480,18 @@ namespace MediaPortal.Player
       }
       if (_endOfFileDetected && IsTimeShifting)
       {
-        //UpdateDuration();
-        Log.Info("Reach end of timeshift buffer. ");
-        _endOfFileDetected = false;
-        double pos = CurrentPosition - 2;
+        UpdateDuration();
+        UpdateCurrentPosition();
+        double pos = CurrentPosition;
         if (pos < 0) pos = 0;
         SeekAbsolute(pos);
       }
-      //Log.Info("2");
     }
     public override bool IsTV
     {
       get
       {
-        return (_isRadio==false);
+        return (_isRadio == false);
       }
     }
     public override bool IsTimeShifting
@@ -1026,16 +1027,7 @@ namespace MediaPortal.Player
       }
       else
       {
-        if (Duration > 0)
-        {
-          _endOfFileDetected = true;
-        }
-        else
-        {
-          CloseInterfaces();
-          _state = PlayState.Ended;
-        }
-        //SeekAsolutePercentage(99);
+        _endOfFileDetected = true;
       }
     }
     void CheckVideoResolutionChanges()
@@ -1164,12 +1156,12 @@ namespace MediaPortal.Player
           int intCount = 0;
           while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")
           {
-              if (xmlreader.GetValueAsBool("mytv", "usefilter" + intCount.ToString(), false))
-              {
-                  strFilters += xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") + ";";
-                  intFilters++;
-              }
-              intCount++;
+            if (xmlreader.GetValueAsBool("mytv", "usefilter" + intCount.ToString(), false))
+            {
+              strFilters += xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") + ";";
+              intFilters++;
+            }
+            intCount++;
           }
           strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
@@ -1201,7 +1193,7 @@ namespace MediaPortal.Player
         string[] arrFilters = strFilters.Split(';');
         for (int i = 0; i < intFilters; i++)
         {
-            customFilters[i] = DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
+          customFilters[i] = DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
         }
 
         if (strVideoCodec.ToLower().IndexOf("nvidia") >= 0)
@@ -1308,11 +1300,11 @@ namespace MediaPortal.Player
         // FlipGer: release custom filters
         for (int i = 0; i < customFilters.Length; i++)
         {
-            if (customFilters[i] != null)
-            {
-                while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0) ;
-            }
-            customFilters[i] = null;
+          if (customFilters[i] != null)
+          {
+            while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0) ;
+          }
+          customFilters[i] = null;
         }
         if (_fileSource != null)
         {
@@ -1367,52 +1359,9 @@ namespace MediaPortal.Player
           if (hr == 0)
           {
             hr = _mediaEvt.FreeEventParams(code, p1, p2);
-            /*
-                        if (code>=EventCode.StreamBufferTimeHole && code <= EventCode.StreamBufferRateChanged)
-                        {
-                          Log.Info("TSStreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1,p2,p1,p2);
-                          long contentStart,contentStop,streamPosition,segmentstop;
-                          double fcontentStart,fcontentStop,fstreamPosition,fsegmentstop;
-                          _mediaSeeking.GetAvailable(out contentStart, out contentStop);
-                          _mediaSeeking.GetCurrentPosition(out streamPosition);
-                          _mediaSeeking.GetStopPosition(out segmentstop);
-                          fcontentStart=(double)contentStart;
-                          fcontentStop=(double)contentStop;
-                          fstreamPosition=(double)streamPosition;
-                          fsegmentstop=(double)segmentstop;
-
-                          fcontentStart/=10000000d;
-                          fcontentStop/=10000000d;
-                          fstreamPosition/=10000000d;
-                          fsegmentstop/=10000000d;
-                          Log.Info("TSStreamBufferPlayer:  content start   :{0} content stop :{1}", fcontentStart.ToString("f2"), fcontentStop.ToString("f2"));
-                          Log.Info("TSStreamBufferPlayer:  streamPosition  :{0} segment stop :{1}", fstreamPosition.ToString("f2"), fsegmentstop.ToString("f2"));
-                          if (code==EventCode.StreamBufferTimeHole)
-                          {
-                            //The Stream Buffer Source filter has reached a gap in the content. 
-                            //p1 = Time of the start of the gap, in milliseconds, relative to the content start.
-                            //param2 = Duration of the gap, in milliseconds.
-                            double newpos=(double)p1 + (double)p2 + contentStart;
-                            newpos /=1000d;
-                            if (newpos <fstreamPosition-1 || newpos > fstreamPosition+1)
-                            {
-                              Log.Info("TSStreamBufferPlayer:  seek to:{0}", newpos.ToString("f2"));
-                              SeekAbsolute(1d+newpos);
-                            }
-                          }
-                          if (code==EventCode.StreamBufferContentBecomingStale)
-                          {
-                            if (Paused)
-                            {
-                              Log.Info("TSStreamBufferPlayer:  unpause");
-                              Pause();
-                            }
-                          }
-                        }
-                        else */
             if (code == EventCode.Complete || code == EventCode.ErrorAbort)
             {
-              //Log.Info("TSStreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1,p2,p1,p2);
+              Log.Info("TSStreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}", code.ToString(), p1, p2, p1, p2);
               MovieEnded();
             }
             //else
