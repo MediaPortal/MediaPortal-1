@@ -431,14 +431,15 @@ namespace TvLibrary.Implementations.DVB
         recorder.AddStream((short)0x11, false, false);//sdt
         recorder.AddStream((short)dvbChannel.PmtPid, false, false);
         recorder.SetMode(TimeShiftingMode.TransportStream);
-        Log.Log.WriteFile("ss2: record transport stream mode");
+        Log.Log.WriteFile("dvb: record transport stream mode");
       }
       else
       {
         recorder.SetMode(TimeShiftingMode.ProgramStream);
-        Log.Log.WriteFile("ss2: record program stream mode");
+        Log.Log.WriteFile("dvb: record program stream mode");
       }
     }
+
 
     /// <summary>
     /// returns true if we timeshift in transport stream mode
@@ -952,23 +953,23 @@ namespace TvLibrary.Implementations.DVB
     protected void StartRecord(string fileName, RecordingType recordingType, ref long startTime)
     {
       if (!CheckThreadId()) return;
-      Log.Log.WriteFile("ss2:StartRecord({0})", fileName);
+      Log.Log.WriteFile("dvb:StartRecord({0})", fileName);
 
       int hr;
       if (_filterTsAnalyzer != null)
       {
-        Log.Log.WriteFile("ss2:SetRecordingFileName: uses .mpg");
+        Log.Log.WriteFile("dvb:SetRecordingFileName: uses .mpg");
         ITsRecorder record = _filterTsAnalyzer as ITsRecorder;
         hr = record.SetRecordingFileName(fileName);
         if (hr != 0)
         {
-          Log.Log.Error("ss2:SetRecordingFileName failed:{0:X}", hr);
+          Log.Log.Error("dvb:SetRecordingFileName failed:{0:X}", hr);
         }
         SetRecorderPids();
         hr = record.StartRecord();
         if (hr != 0)
         {
-          Log.Log.Error("ss2:StartRecord failed:{0:X}", hr);
+          Log.Log.Error("dvb:StartRecord failed:{0:X}", hr);
         }
       }
       _dateRecordingStarted = DateTime.Now;
@@ -982,8 +983,7 @@ namespace TvLibrary.Implementations.DVB
     protected void StopRecord()
     {
       if (!CheckThreadId()) return;
-
-      Log.Log.WriteFile("ss2:StopRecord()");
+      Log.Log.WriteFile("dvb:StopRecord()");
 
       if (_filterTsAnalyzer != null)
       {
@@ -991,6 +991,7 @@ namespace TvLibrary.Implementations.DVB
         record.StopRecord();
 
       }
+      _recordingFileName = "";
     }
     #endregion
 
@@ -1684,32 +1685,53 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool StartRecording(RecordingType recordingType, string fileName, long startTime)
     {
-      Log.Log.WriteFile("ss2:StartRecording to {0}", fileName);
-      if (!CheckThreadId()) return false;
-      if (_graphState == GraphState.Recording) return false;
-      if (_graphState != GraphState.TimeShifting)
+      try
       {
-        throw new TvException("Card must be timeshifting before starting recording");
+        if (!CheckThreadId()) return false;
+        Log.Log.WriteFile("StartRecording to {0}", fileName);
+
+        if (_graphState == GraphState.Recording) return false;
+
+        if (_graphState != GraphState.TimeShifting)
+        {
+          throw new TvException("Card must be timeshifting before starting recording");
+        }
+
+        _graphState = GraphState.Recording;
+        StartRecord(fileName, recordingType, ref startTime);
+
+        _recordingFileName = fileName;
+        Log.Log.WriteFile("Started recording on {0}", startTime);
+
+        return true;
       }
-      _recordingFileName = fileName;
-      StartRecord(fileName, recordingType, ref startTime);
-      Log.Log.WriteFile("ss2:Started recording on {0}", startTime);
-      _graphState = GraphState.Recording;
-      return true;
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+        throw ex;
+      }
     }
+
     /// <summary>
     /// Stop recording
     /// </summary>
     /// <returns></returns>
     public bool StopRecording()
     {
-      Log.Log.WriteFile("ss2:StopRecording");
-      if (!CheckThreadId()) return false;
-      if (_graphState != GraphState.Recording) return false;
-      StopRecord();
-      _recordingFileName = "";
-      _graphState = GraphState.TimeShifting;
-      return true;
+      try
+      {
+        if (!CheckThreadId()) return false;
+        if (_graphState != GraphState.Recording) return false;
+        Log.Log.WriteFile("StopRecording");
+        _graphState = GraphState.TimeShifting;
+        StopRecord();
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+        throw ex;
+      }
     }
     #endregion
 
