@@ -263,14 +263,12 @@ namespace MediaPortal.Player
 
       _state = PlayState.Playing;
 
-      Log.Info("TsBaseStreamBuffer:start graph");
       _mediaCtrl.Run();
-      SeekAbsolute(0);
       UpdateCurrentPosition();
       UpdateDuration();
-      Log.Info("TsBaseStreamBuffer:playing state");
       OnInitialized();
-      Log.Info("TsBaseStreamBuffer:done");
+      _mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
+      Log.Info("TsBaseStreamBuffer:running pos:{1} duration:{2}", Duration, CurrentPosition);
       return true;
     }
 
@@ -384,8 +382,6 @@ namespace MediaPortal.Player
 
       //Log.Info("1");
 
-      _startingUp = false;
-      /*
       if (_startingUp && _isLive)
       {
         ushort pgmCount = 0;
@@ -400,7 +396,7 @@ namespace MediaPortal.Player
         tsInterface.GetPCRPid(ref pcrPid);
         tsInterface.GetPgmCount(ref pgmCount);
         tsInterface.GetDuration(ref duration);
-        if (pgmCount > 0)
+        if (pgmCount > 0 && duration > 0)
         {
           tsInterface.GetPgmNumb(ref pgmNumber);
           Log.Info("programs:{0} duration:{1} current pgm:{2}", pgmCount, duration, pgmNumber);
@@ -412,7 +408,11 @@ namespace MediaPortal.Player
           }
           _startingUp = false;
         }
-      }*/
+      }
+      else
+      {
+        _startingUp = false;
+      }
 
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalMilliseconds >= 800 || iSpeed != 1)
@@ -477,11 +477,11 @@ namespace MediaPortal.Player
       }
       if (_endOfFileDetected && IsTimeShifting)
       {
-        Log.Info("Reach end of timeshift buffer. seek 4 secs back");
+        //UpdateDuration();
+        Log.Info("Reach end of timeshift buffer. ");
         _endOfFileDetected = false;
-        UpdateDuration();
-        double pos =Duration-4.0;
-        if (pos < 0) pos=0;
+        double pos = CurrentPosition - 2;
+        if (pos < 0) pos = 0;
         SeekAbsolute(pos);
       }
       //Log.Info("2");
@@ -1026,7 +1026,15 @@ namespace MediaPortal.Player
       }
       else
       {
-        _endOfFileDetected = true;
+        if (Duration > 0)
+        {
+          _endOfFileDetected = true;
+        }
+        else
+        {
+          CloseInterfaces();
+          _state = PlayState.Ended;
+        }
         //SeekAsolutePercentage(99);
       }
     }

@@ -573,19 +573,14 @@ namespace MediaPortal.Player
         source.SetClockMode(3);//audio renderer
         if (_audioRendererFilter != null)
         {
-          Log.Info("TSStreamBufferPlayer9:set reference clock");
+          //Log.Info("TSStreamBufferPlayer9:set reference clock");
           IMediaFilter mp = _graphBuilder as IMediaFilter;
           IReferenceClock clock = _audioRendererFilter as IReferenceClock;
           hr = mp.SetSyncSource(null);
           hr = mp.SetSyncSource(clock);
-          Log.Info("TSStreamBufferPlayer9:set reference clock:{0:X}", hr);
+          //Log.Info("TSStreamBufferPlayer9:set reference clock:{0:X}", hr);
 
-          long start, latest;
-          _mediaSeeking.GetAvailable(out start, out latest);
-          if (latest > 3 * 10000000) latest -= 3 * 10000000;
-          Log.Info("TSStreamBufferPlayer9:start :{0} end:{1} {0:X}", start, latest, hr);
-          hr = _mediaSeeking.SetPositions(new DsLong(latest), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
-          Log.Info("TSStreamBufferPlayer9:seek :{0:X}", hr);
+          _mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
         }
 
         if (_isRadio == false)
