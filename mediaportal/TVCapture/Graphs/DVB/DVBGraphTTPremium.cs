@@ -125,7 +125,8 @@ namespace MediaPortal.TV.Recording
         _cardType = xmlreader.GetValueAsString("DVBTTPremium", "cardtype", "");
         _cardFilename = xmlreader.GetValueAsString("dvb_ts_cards", "filename", "");
       }
-      _streamDemuxer.SetCardType((int)DVBEPG.EPGCard.TTPremiumCards, NetworkType.DVBS);
+      GetTunerCapabilities();
+      _streamDemuxer.SetCardType((int)DVBEPG.EPGCard.TTPremiumCards, _networkType);
     }
 
     public override bool CreateGraph(int Quality)
@@ -211,35 +212,6 @@ namespace MediaPortal.TV.Recording
           return false;
         }
 
-        // Get network type (DVBS, DVBC, DVBT)
-        TTNetworkType nt;
-        hr = _interfaceTTPremium.GetNetworkType(out nt);
-        if (hr != 0)
-        {
-          Log.Info("DVBGraphTTPremium: Network Type failed:0x{0:X}", hr);
-          return false;
-        }
-
-        switch (nt)
-        {
-          case TTNetworkType.DVB_S:
-            Log.Info("DVBGraphTTPremium: Network type=DVBS");
-            _networkType = NetworkType.DVBS;
-            break;
-          case TTNetworkType.DVB_C:
-            Log.Info("DVBGraphTTPremium: Network type=DVBC");
-            _networkType = NetworkType.DVBC;
-            break;
-          case TTNetworkType.DVB_T:
-            Log.Info("DVBGraphTTPremium: Network type=DVBT");
-            _networkType = NetworkType.DVBT;
-            break;
-          case TTNetworkType.Unkown:
-            Log.Info("DVBGraphTTPremium: Network type=unknown?");
-            _networkType = NetworkType.Unknown;
-            break;
-        }
-
         _filterSampleGrabber = null;
         _sampleInterface = null;
         //TESTTEST: DONT USE GRABBER AT ALL
@@ -247,7 +219,7 @@ namespace MediaPortal.TV.Recording
 
                 if (GUIGraphicsContext.DX9Device != null)
                 {
-                  Log.Info("DVBGraphSkyStar2: Add Sample Grabber");
+                  Log.Info("DVBGraphTTPremium: Add Sample Grabber");
                   _filterSampleGrabber = (IBaseFilter)new SampleGrabber();
                   _sampleInterface = (ISampleGrabber)_filterSampleGrabber;
                   _graphBuilder.AddFilter(_filterSampleGrabber, "Sample Grabber");
@@ -331,7 +303,7 @@ namespace MediaPortal.TV.Recording
         //=========================================================================================================
         // add the stream analyzer
         //=========================================================================================================
-        Log.Info("DVBGraphSkyStar2: Add Stream Analyzer");
+        Log.Info("DVBGraphTTPremium: Add Stream Analyzer");
         _filterDvbAnalyzer = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(ClassId.MPStreamAnalyzer, true));
         _analyzerInterface = (IStreamAnalyzer)_filterDvbAnalyzer;
         _epgGrabberInterface = _filterDvbAnalyzer as IEPGGrabber;
@@ -615,7 +587,7 @@ namespace MediaPortal.TV.Recording
         _epgGrabber.AnalyzerInterface = _analyzerInterface;
         _epgGrabber.Network = Network();
 
-        //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2:Add graph to ROT table");
+        //Log.WriteFile(LogType.Log,"DVBGraphTTPremium:Add graph to ROT table");
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
       }
       catch (Exception ex)
@@ -659,7 +631,7 @@ namespace MediaPortal.TV.Recording
 
         if (_vmr9 != null)
         {
-          //Log.Info("DVBGraphSkyStar2:remove vmr9");
+          //Log.Info("DVBGraphTTPremium:remove vmr9");
           _vmr9.Dispose();
           _vmr9 = null;
         }
@@ -1031,5 +1003,119 @@ namespace MediaPortal.TV.Recording
         Log.Error("DVBGraphTTPremium:DeleteAllPids(), couldn't delete PIDs on pin:{0}, hr:{1}", pinIndex, hr);
       }
     }
-  }
+    private void GetTunerCapabilities()
+    {
+      try
+        {
+          // Make a new filter graph
+          // Log.WriteFile(LogType.Log,"DVBGraphTTPremium:create new filter graph (IGraphBuilder)");
+          _graphBuilder = (IGraphBuilder)new FilterGraph();
+
+          // Get the Capture Graph Builder
+          _captureGraphBuilderInterface = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
+
+          //Log.WriteFile(LogType.Log,"DVBGraphTTPremium:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
+          int hr = _captureGraphBuilderInterface.SetFiltergraph(_graphBuilder);
+          if (hr < 0)
+          {
+            Log.Error("DVBGraphTTPremium:FAILED link :0x{0:X}", hr);
+              return;
+          }
+
+          //=========================================================================================================
+          // add the tt premium specific filters
+          //=========================================================================================================
+          Log.Info("DVBGraphTTPremium:CreateGraph() create TTPremium source filter");
+          _filterTTPremium = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_TTPremiumSource, false));
+          if (_filterTTPremium == null)
+          {
+            Log.Info("DVBGraphTTPremium:creategraph() _filterTTPremium not found");
+              return;
+          }
+          // get interface
+          _interfaceTTPremium = _filterTTPremium as ITTPremiumSource;
+          if (_interfaceTTPremium == null)
+          {
+            Log.Info("DVBGraphTTPremium: cannot get ITTPremiumSource");
+              return;
+          }
+
+          //=========================================================================================================
+          // initialize tuner
+          //=========================================================================================================
+          Log.Info("DVBGraphTTPremium: Initialize Tuner()");
+          hr = _interfaceTTPremium.Init();
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphTTPremium: Tuner initialize failed:0x{0:X}", hr);
+              return;
+          }
+
+          // Get network type (DVBS, DVBC, DVBT)
+          TTNetworkType nt;
+          hr = _interfaceTTPremium.GetNetworkType(out nt);
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphTTPremium: Network Type failed:0x{0:X}", hr);
+              return;
+          }
+
+          switch (nt)
+          {
+            case TTNetworkType.DVB_S:
+              Log.Info("DVBGraphTTPremium: Network type=DVBS");
+              _networkType = NetworkType.DVBS;
+              break;
+            case TTNetworkType.DVB_C:
+              Log.Info("DVBGraphTTPremium: Network type=DVBC");
+              _networkType = NetworkType.DVBC;
+              break;
+            case TTNetworkType.DVB_T:
+              Log.Info("DVBGraphTTPremium: Network type=DVBT");
+              _networkType = NetworkType.DVBT;
+              break;
+            case TTNetworkType.Unkown:
+              Log.Info("DVBGraphTTPremium: Network type=unknown?");
+              _networkType = NetworkType.Unknown;
+              break;
+          }
+
+          if (_interfaceTTPremium != null)
+          {
+            hr = _interfaceTTPremium.Close();
+            while ((hr = Marshal.ReleaseComObject(_interfaceTTPremium)) > 0) ;
+            if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_interfaceTTPremium):{0}", hr);
+            _interfaceTTPremium = null;
+          }
+
+          if (_filterTTPremium != null)
+          {
+            while ((hr = Marshal.ReleaseComObject(_filterTTPremium)) > 0) ;
+            if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_filterTTPremium):{0}", hr);
+            _filterTTPremium = null;
+          }
+
+          //Log.WriteFile(LogType.Log,"DVBGraphTTPremium: remove graph");
+          if (_captureGraphBuilderInterface != null)
+          {
+            //Log.Info("DVBGraphTTPremium:free remove capturegraphbuilder");
+            while ((hr = Marshal.ReleaseComObject(_captureGraphBuilderInterface)) > 0) ;
+            if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_captureGraphBuilderInterface):{0}", hr);
+            _captureGraphBuilderInterface = null;
+          }
+
+          if (_graphBuilder != null)
+          {
+            //Log.Info("DVBGraphTTPremium:free graphbuilder");
+            while ((hr = Marshal.ReleaseComObject(_graphBuilder)) > 0) ;
+            if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_graphBuilder):{0}", hr);
+            _graphBuilder = null;
+          }
+        }
+        catch (Exception ex)
+        {
+            Log.Write(ex);
+        }
+    }
+}
 }
