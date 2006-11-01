@@ -258,7 +258,7 @@ namespace SQLite.NET
         {
           IntPtr pVm;
           IntPtr pzTail;
-          err = sqlite3_prepare16(dbHandle, query, query.Length, out pVm, out pzTail);
+          err = sqlite3_prepare16(dbHandle, query, query.Length*2, out pVm, out pzTail);
           if (err == SqliteError.OK)
           {
             ReadpVm(query, set1, pVm);
