@@ -1807,7 +1807,7 @@
 	</string>
 	<string Prefix="Mit ">
 		<id>605</id>
-		<value>Fjernsyn</value>
+		<value>TV</value>
 	</string>
 	<string>
 		<id>606</id>
@@ -2705,7 +2705,7 @@
 		<id>912</id>
 		<value>Kunne ikke hente de seneste nyheder!</value>
 	</string>
-	<string Prefix="Mine">
+	<string Prefix="Mine ">
 		<id>913</id>
 		<value>Moduler</value>
 	</string>
