@@ -790,7 +790,18 @@ namespace TvPlugin
           count++;
         }
       }
-
+      if (channels.Count == 0)
+      {
+        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+        if (pDlgOK != null)
+        {
+          pDlgOK.SetHeading(692);//my tv
+          pDlgOK.SetLine(1, "No active streams");
+          pDlgOK.SetLine(2, "");
+          pDlgOK.DoModal(this.GetID);
+        }
+        return;
+      }
       dlg.SelectedLabel = selected;
       dlg.DoModal(this.GetID);
       if (dlg.SelectedLabel < 0) return;
@@ -1081,11 +1092,6 @@ namespace TvPlugin
         }
       }
 
-      if (g_Player.Playing)
-      {
-        SeekToEnd();
-      }
-
       //check if we are currently watching a tv channel with AC3
       IAudioStream[] audioStreams;
       bool hadAc3 = false;
@@ -1100,6 +1106,7 @@ namespace TvPlugin
           }
         }
       }
+      bool wasPlaying = g_Player.Playing && g_Player.IsTimeShifting && g_Player.IsTV;
       //Start timeshifting the new tv channel
       VirtualCard card;
       succeeded = RemoteControl.Instance.StartTimeShifting(channel, new User(), out card);
@@ -1131,6 +1138,10 @@ namespace TvPlugin
         if (!g_Player.Playing)
         {
           StartPlay();
+        }
+        else if (wasPlaying)
+        {
+          SeekToEnd();
         }
 
         return true;
