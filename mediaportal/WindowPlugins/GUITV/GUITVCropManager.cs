@@ -83,13 +83,16 @@ namespace MediaPortal.GUI.TV
     /// <param name="filename"></param>
     void g_Player_PlayBackStarted(g_Player.MediaType type, string filename)
     {
-      if (Recorder.Running)
+      if (Recorder.Running && Recorder.CommandProcessor!=null)
       {
         Log.Debug("GUITVCropManager.g_Player_PlackBackStarted: media: {0} tv:{1} ts:{2}", type, g_Player.IsTV, g_Player.IsTimeShifting);
         if (type == g_Player.MediaType.TV && !g_Player.IsTVRecording)
         {
           // This is timeshifted TV
-          SendCropMessage(Recorder.CommandProcessor.TVCards[Recorder.CommandProcessor.CurrentCardIndex]);
+          if (Recorder.CommandProcessor.CurrentCardIndex>=0 && Recorder.CommandProcessor.CurrentCardIndex < Recorder.Count)
+          {
+            SendCropMessage(Recorder.CommandProcessor.TVCards[Recorder.CommandProcessor.CurrentCardIndex]);
+          }
         }
         else if (g_Player.IsTVRecording)
         {
