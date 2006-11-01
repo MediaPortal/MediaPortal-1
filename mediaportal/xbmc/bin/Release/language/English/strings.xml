@@ -3071,11 +3071,11 @@
   </string>
   <string>
     <id>945</id>
-    <value>Letterbox</value>
+    <value>Letterbox 4:3</value>
   </string>
   <string>
     <id>946</id>
-    <value>Pan / Scan</value>
+    <value>Pan and Scan</value>
   </string>
   <string>
     <id>947</id>
@@ -4172,6 +4172,10 @@
   <string>
     <id>2143</id>
     <value>Home</value>
+  </string>
+  <string>
+    <id>2144</id>
+    <value>Start Burning</value>
   </string>
   <string Prefix="My ">
     <id>2200</id>
