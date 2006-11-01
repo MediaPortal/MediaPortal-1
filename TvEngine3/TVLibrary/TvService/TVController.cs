@@ -413,6 +413,7 @@ namespace TvService
         }
       }
       _localCards = null;
+      Gentle.Common.CacheManager.Clear();
     }
 
     #endregion
@@ -2163,6 +2164,13 @@ namespace TvService
         return ipadresses;
       }
     }
+    /// <summary>
+    /// Clears the cache.
+    /// </summary>
+    public void ClearCache()
+    {
+      Gentle.Common.CacheManager.Clear();
+    }
 
 
     #endregion
@@ -2280,6 +2288,8 @@ namespace TvService
             }
 
             Log.Write("Controller:    card:{0} type:{1} is free priority:{2}", keyPair.Value.IdCard, Type(keyPair.Value.IdCard), channelMap.ReferencedCard().Priority);
+            
+            
             cardsAvailable.Add(new CardDetail(keyPair.Value.IdCard, channelMap.ReferencedCard(), tuningDetail));
           }
         }

@@ -290,7 +290,7 @@ namespace SetupTv.Sections
       formatString[0] = layer.GetSetting("moviesformat", "").Value;
       formatString[1] = layer.GetSetting("seriesformat", "").Value;
 
-      checkBoxComSkipEnabled.Checked = (layer.GetSetting("comskipEnabled", "yes").Value == "yes");
+      checkBoxComSkipEnabled.Checked = (layer.GetSetting("comskipEnabled", "no").Value == "yes");
       textBoxComSkip.Text = layer.GetSetting("comskipLocation", "").Value;
       /*using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
@@ -337,12 +337,12 @@ namespace SetupTv.Sections
 
       if (checkBoxComSkipEnabled.Checked)
       {
-        setting = layer.GetSetting("comskipEnabled", "yes");
+        setting = layer.GetSetting("comskipEnabled", "no");
         setting.Value = "yes";
       }
       else
       {
-        setting = layer.GetSetting("comskipEnabled", "yes");
+        setting = layer.GetSetting("comskipEnabled", "no");
         setting.Value = "no";
       }
       setting.Persist();
@@ -413,6 +413,7 @@ namespace SetupTv.Sections
         CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
         info.card.RecordingFolder = textBoxFolder.Text;
         info.card.Persist();
+        RemoteControl.Instance.ClearCache();
       }
     }
 
@@ -427,6 +428,10 @@ namespace SetupTv.Sections
       if (comboBoxCards.Items.Count > 0)
         comboBoxCards.SelectedIndex = 0;
       base.OnSectionActivated();
+    }
+    public override void OnSectionDeActivated()
+    {
+      base.OnSectionDeActivated();
     }
 
     private void checkBoxComSkipEnabled_CheckedChanged(object sender, EventArgs e)
@@ -457,6 +462,7 @@ namespace SetupTv.Sections
       CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
       info.card.RecordingFolder = textBoxFolder.Text;
       info.card.Persist();
+      RemoteControl.Instance.ClearCache();
     }
   }
 }

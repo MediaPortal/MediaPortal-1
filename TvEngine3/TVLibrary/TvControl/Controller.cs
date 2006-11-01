@@ -378,6 +378,11 @@ namespace TvControl
     /// <param name="cardId">card id</param>
     /// <returns>id of Schedule or -1 if  card not recording</returns>
     int GetRecordingSchedule(int cardId);
+
+    /// <summary>
+    /// Clears the cache.
+    /// </summary>
+    void ClearCache();
     #region audio stream selection
     /// <summary>
     /// returns the list of available audio streams for the card specified
