@@ -411,8 +411,7 @@ namespace TvPlugin
         }
       }
       if (!bRecording) return;
-      ///@
-      ///GUITVPriorities.OnSetEpisodesToKeep(rec);
+      TvPriorities.OnSetEpisodesToKeep(rec);
       Update();
     }
 

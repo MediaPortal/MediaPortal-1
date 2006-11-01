@@ -116,7 +116,7 @@ bool CMhwDecoder::ParseSummaries(byte* data, int maxLen)
 		if (it==m_mapSummaries.end())
 		{
 			
-			LogDebug("ParseSummaries7");
+			//LogDebug("ParseSummaries7");
 			//LogDebug("mhw-epg: added progid:%x ",sum.ProgramID);
 			m_mapSummaries[sum.ProgramID]=sum;
 //			LogDebug("ParseSummaries8");
