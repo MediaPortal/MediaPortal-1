@@ -195,7 +195,7 @@ namespace TvPlugin
           }
           if (stop)
           {
-            //_card.StopTimeShifting();
+            _card.StopTimeShifting();
           }
           _card = value;
         }
@@ -279,7 +279,7 @@ namespace TvPlugin
       if (currentWindow.IsTv) return;
       if (TVHome.Card.IsTimeShifting == false) return;
       if (TVHome.Card.IsRecording == true) return;
-      //TVHome.Card.StopTimeShifting();
+      TVHome.Card.StopTimeShifting();
     }
 
     public override void OnAction(Action action)

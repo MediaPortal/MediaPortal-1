@@ -528,8 +528,15 @@ namespace TvControl
     public void StopTimeShifting()
     {
       if (_cardId < 0) return;
+      if (IsRecording) return;
+      if (IsTimeShifting == false) return;
       RemoteControl.HostName = _server;
-      RemoteControl.Instance.StopTimeShifting(_cardId, new User());
+      User user;
+      RemoteControl.Instance.IsCardInUse(_cardId, out user);
+      if (user.Name == Dns.GetHostName())
+      {
+        RemoteControl.Instance.StopTimeShifting(_cardId, new User());
+      }
     }
 
     /// <summary>
