@@ -1107,6 +1107,7 @@ namespace TvPlugin
         }
       }
       bool wasPlaying = g_Player.Playing && g_Player.IsTimeShifting && g_Player.IsTV;
+      
       //Start timeshifting the new tv channel
       VirtualCard card;
       succeeded = RemoteControl.Instance.StartTimeShifting(channel, new User(), out card);
