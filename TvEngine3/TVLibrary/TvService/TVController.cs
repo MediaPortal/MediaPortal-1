@@ -1481,6 +1481,7 @@ namespace TvService
       {
         if (_allDbscards[cardId].Enabled == false) return true;
         if (false == IsTimeShifting(cardId)) return true;
+        if (IsRecording(cardId)) return true;
 
         Log.Write("Controller: StopTimeShifting {0}", cardId);
         lock (this)

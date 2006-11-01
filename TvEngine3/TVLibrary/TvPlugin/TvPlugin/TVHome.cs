@@ -195,7 +195,7 @@ namespace TvPlugin
           }
           if (stop)
           {
-            _card.StopTimeShifting();
+            //_card.StopTimeShifting();
           }
           _card = value;
         }
@@ -279,7 +279,7 @@ namespace TvPlugin
       if (currentWindow.IsTv) return;
       if (TVHome.Card.IsTimeShifting == false) return;
       if (TVHome.Card.IsRecording == true) return;
-      TVHome.Card.StopTimeShifting();
+      //TVHome.Card.StopTimeShifting();
     }
 
     public override void OnAction(Action action)
@@ -465,7 +465,7 @@ namespace TvPlugin
       {
         GUIGraphicsContext.VideoWindow = new Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
       }
- 
+
 
       // start viewing tv... 
       GUIGraphicsContext.IsFullScreenVideo = false;
@@ -752,21 +752,21 @@ namespace TvPlugin
       dlg.Reset();
       dlg.SetHeading(692); // Active Tv Streams
       int selected = 0;
-      
+
       IList cards = TvDatabase.Card.ListAll();
       List<string> channels = new List<string>();
       int count = 0;
       foreach (Card card in cards)
       {
-        if (card.Enabled==false) continue;
+        if (card.Enabled == false) continue;
         bool isRecording;
         bool isTimeShifting;
-        isRecording=RemoteControl.Instance.IsRecording(card.IdCard);
-        isTimeShifting=RemoteControl.Instance.IsTimeShifting(card.IdCard);
+        isRecording = RemoteControl.Instance.IsRecording(card.IdCard);
+        isTimeShifting = RemoteControl.Instance.IsTimeShifting(card.IdCard);
         if (isRecording || isTimeShifting)
         {
           User user;
-          string channelName=RemoteControl.Instance.CurrentChannelName(card.IdCard);
+          string channelName = RemoteControl.Instance.CurrentChannelName(card.IdCard);
           RemoteControl.Instance.IsCardInUse(card.IdCard, out user);
           channels.Add(channelName);
           GUIListItem item = new GUIListItem();
@@ -1139,7 +1139,6 @@ namespace TvPlugin
       {
         //timeshifting failed...
         g_Player.Stop();
-        TVHome.Card.StopTimeShifting();
       }
 
 
@@ -1234,7 +1233,6 @@ namespace TvPlugin
         else
         {
           g_Player.Stop();
-          TVHome.Card.StopTimeShifting();
         }
       }
     }
