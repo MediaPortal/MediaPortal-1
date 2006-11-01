@@ -1381,6 +1381,7 @@ namespace TvPlugin
         if (g_Player.IsRadio == false)
         {
           double duration = g_Player.Duration;
+          if (duration < 5) return;
           duration -= 2;
           if (duration < 0) duration = 0;
           double position = g_Player.CurrentPosition;

@@ -2451,7 +2451,7 @@ namespace TvService
 
       IChannel channel = _localCards[cardId].Channel;
       bool isRadio = channel.IsRadio;
-      ulong minTimeShiftFile = 300 * 1024;//300Kb
+      ulong minTimeShiftFile = 500 * 1024;//300Kb
       if (isRadio)
         minTimeShiftFile = 200 * 1024;//100Kb
 
