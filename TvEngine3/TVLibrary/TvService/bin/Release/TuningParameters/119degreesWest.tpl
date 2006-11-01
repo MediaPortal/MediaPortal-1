@@ -1,4 +1,4 @@
-satname=EchoStar 7 (119W)
+satname=Echostar 7 (119W)
 12224,V,20000
 12239,H,20000
 12253,V,20000
