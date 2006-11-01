@@ -123,6 +123,7 @@ namespace MediaPortal.Player
     protected const int WS_CLIPSIBLINGS = 0x04000000;
     protected DateTime _updateTimer = DateTime.Now;
     protected MediaPortal.GUI.Library.Geometry.Type _geometry = MediaPortal.GUI.Library.Geometry.Type.Normal;
+    protected bool _endOfFileDetected = false;
 
     protected bool _startingUp;
     protected bool _isRadio = false;
@@ -153,6 +154,7 @@ namespace MediaPortal.Player
     }
     public override bool Play(string strFile)
     {
+      _endOfFileDetected = false;
       Log.Info("Streambufferplayer play:{0} radio:{1}", strFile,_isRadio);
       if (!System.IO.File.Exists(strFile))
         return false;
@@ -472,6 +474,15 @@ namespace MediaPortal.Player
       if (_speedRate != 10000)
       {
         DoFFRW();
+      }
+      if (_endOfFileDetected && IsTimeShifting)
+      {
+        Log.Info("Reach end of timeshift buffer. seek 4 secs back");
+        _endOfFileDetected = false;
+        UpdateDuration();
+        double pos =Duration-4.0;
+        if (pos < 0) pos=0;
+        SeekAbsolute(pos);
       }
       //Log.Info("2");
     }
@@ -1015,7 +1026,8 @@ namespace MediaPortal.Player
       }
       else
       {
-        SeekAsolutePercentage(99);
+        _endOfFileDetected = true;
+        //SeekAsolutePercentage(99);
       }
     }
     void CheckVideoResolutionChanges()
