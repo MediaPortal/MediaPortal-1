@@ -149,11 +149,13 @@ namespace MediaPortal.Configuration
         Log.Info("found {0} tv cards", sect.captureCards.Count);
         foreach (TVCaptureDevice dev in sect.captureCards)
         {
+/*
           if (dev.VideoDevice == "B2C2 MPEG-2 Source" ||
               dev.VideoDevice == "TechnoTrend SAA7146 Capture (WDM)")
           {
             dev.CreateGraph();
           }
+*/
           if (dev.Network == NetworkType.Analog)
           {
             Log.Info("Analog TV Card:{0}", dev.CommercialName);
@@ -179,11 +181,13 @@ namespace MediaPortal.Configuration
               Log.Info("Digital ATSC Card:{0}", dev.CommercialName);
               ATSCCard = true;
           }
+/*
           if (dev.VideoDevice == "B2C2 MPEG-2 Source" || 
               dev.VideoDevice == "TechnoTrend SAA7146 Capture (WDM)")
           {
             dev.DeleteGraph();
           }
+*/
         }
 
         AddSection(new Sections.Wizard_Welcome(), "Welcome to MediaPortal", "");
