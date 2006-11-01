@@ -88,7 +88,7 @@ namespace TvPlugin
     [SkinControlAttribute(99)]
     protected GUIVideoControl videoWindow = null;
     [SkinControlAttribute(9)]
-    protected GUIToggleButtonControl btnTimeshiftingOnOff = null;
+    protected GUIButtonControl btnActiveStreams = null;
     static bool _connected = false;
 
     static protected TvServer _server;
@@ -424,6 +424,7 @@ namespace TvPlugin
     }
     protected override void OnPageLoad()
     {
+      btnActiveStreams.Label = GUILocalizeStrings.Get(692);
       try
       {
         int cards = RemoteControl.Instance.Cards;
@@ -464,8 +465,7 @@ namespace TvPlugin
       {
         GUIGraphicsContext.VideoWindow = new Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
       }
-
-      btnTimeshiftingOnOff.Visible = false;
+ 
 
       // start viewing tv... 
       GUIGraphicsContext.IsFullScreenVideo = false;
@@ -580,6 +580,10 @@ namespace TvPlugin
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
+      if (control == btnActiveStreams)
+      {
+        OnActiveStreams();
+      }
       if (control == btnTvOnOff)
       {
         if (TVHome.Card.IsTimeShifting)
@@ -741,7 +745,57 @@ namespace TvPlugin
     public static void UpdateTimeShift()
     {
     }
+    void OnActiveStreams()
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg == null) return;
+      dlg.Reset();
+      dlg.SetHeading(692); // Active Tv Streams
+      int selected = 0;
+      
+      IList cards = TvDatabase.Card.ListAll();
+      List<string> channels = new List<string>();
+      int count = 0;
+      foreach (Card card in cards)
+      {
+        if (card.Enabled==false) continue;
+        bool isRecording;
+        bool isTimeShifting;
+        isRecording=RemoteControl.Instance.IsRecording(card.IdCard);
+        isTimeShifting=RemoteControl.Instance.IsTimeShifting(card.IdCard);
+        if (isRecording || isTimeShifting)
+        {
+          User user;
+          string channelName=RemoteControl.Instance.CurrentChannelName(card.IdCard);
+          RemoteControl.Instance.IsCardInUse(card.IdCard, out user);
+          channels.Add(channelName);
+          GUIListItem item = new GUIListItem();
+          item.Label = channelName;
+          item.Label2 = user.Name;
+          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channelName);
+          if (!System.IO.File.Exists(strLogo))
+          {
+            strLogo = "defaultVideoBig.png";
+          }
+          item.IconImage = strLogo;
+          if (isRecording)
+            item.PinImage = Thumbs.TvRecordingIcon;
+          else
+            item.PinImage = "";
+          dlg.Add(item);
+          if (TVHome.Card != null && TVHome.Card.ChannelName == channelName)
+          {
+            selected = count;
+          }
+          count++;
+        }
+      }
 
+      dlg.SelectedLabel = selected;
+      dlg.DoModal(this.GetID);
+      if (dlg.SelectedLabel < 0) return;
+      ViewChannelAndCheck(channels[dlg.SelectedLabel]);
+    }
     void OnRecord()
     {
       //record now.
