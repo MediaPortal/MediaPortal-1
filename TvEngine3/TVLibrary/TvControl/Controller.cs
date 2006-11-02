@@ -103,6 +103,12 @@ namespace TvControl
   public interface IController
   {
     #region internal interface
+    /// <summary>
+    /// Gets the server.
+    /// </summary>
+    /// <value>The server.</value>
+    Server Server {get;}
+
     ///<summary>
     ///Gets the total number of tv-cards installed.
     ///</summary>

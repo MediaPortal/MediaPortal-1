@@ -430,49 +430,50 @@ namespace TvService
     void StopRecord(RecordingDetail recording)
     {
 
-      Log.Write("Scheduler : stop record {0} {1}-{2} {3}", recording.Channel, DateTime.Now, recording.EndTime, recording.Schedule.ProgramName);
-      _controller.StopRecording(recording.CardInfo.Id);
+      try
+      {
+        Log.Write("Scheduler : stop record {0} {1}-{2} {3}", recording.Channel, recording.RecordingStartDateTime, recording.EndTime, recording.Schedule.ProgramName);
+        _controller.StopRecording(recording.CardInfo.Id);
 
-      bool stopTimeshifting = true;
-      User user;
-      _controller.IsCardInUse(recording.CardInfo.Id, out user);
-      if (user != null && user.Name != GetUser().Name)
-      {
-        stopTimeshifting = false;
-      }
-      if (stopTimeshifting)
-      {
-        _controller.StopTimeShifting(recording.CardInfo.Id, GetUser());
-      }
+        bool stopTimeshifting = true;
+        User user;
+        _controller.IsCardInUse(recording.CardInfo.Id, out user);
+        if (user != null && user.Name != GetUser().Name)
+        {
+          stopTimeshifting = false;
+        }
+        if (stopTimeshifting)
+        {
+          _controller.StopTimeShifting(recording.CardInfo.Id, GetUser());
+        }
 
-      IList servers = Server.ListAll();
-      Server ourServer = null;
-      foreach (Server server in servers)
-      {
-        if (server.HostName == Dns.GetHostName())
-          ourServer = server;
-      }
-      
-      Recording newRec = new Recording(recording.Schedule.IdChannel, recording.RecordingStartDateTime, DateTime.Now, recording.Program.Title,
-                          recording.Program.Description, recording.Program.Genre, recording.FileName, (int)recording.Schedule.KeepMethod,
-                          recording.Schedule.KeepDate, 0, ourServer.IdServer);
-      newRec.Persist();
-      _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingEnded, new VirtualCard(recording.CardInfo.Id), GetUser(), recording.Schedule, newRec));
+        Recording newRec = new Recording(recording.Schedule.IdChannel, recording.RecordingStartDateTime, DateTime.Now, recording.Program.Title,
+                            recording.Program.Description, recording.Program.Genre, recording.FileName, (int)recording.Schedule.KeepMethod,
+                            recording.Schedule.KeepDate, 0, _tvController.Server.IdServer);
+        newRec.Persist();
+        _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingEnded, new VirtualCard(recording.CardInfo.Id), GetUser(), recording.Schedule, newRec));
 
-      //DatabaseManager.Instance.SaveChanges();
+        //DatabaseManager.Instance.SaveChanges();
 
-      PostProcessing processor = new PostProcessing();
-      processor.Process(recording);
-      if ((ScheduleRecordingType)recording.Schedule.ScheduleType == ScheduleRecordingType.Once)
-      {
-        recording.Schedule.Delete();
+        PostProcessing processor = new PostProcessing();
+        processor.Process(recording);
+        if ((ScheduleRecordingType)recording.Schedule.ScheduleType == ScheduleRecordingType.Once)
+        {
+          recording.Schedule.Delete();
+        }
+        else
+        {
+          _episodeManagement.OnScheduleEnded(recording.FileName, recording.Schedule, recording.Program);
+        }
       }
-      else
+      catch (Exception ex)
       {
-        _episodeManagement.OnScheduleEnded(recording.FileName, recording.Schedule, recording.Program);
+        Log.Write(ex);
       }
-      //DatabaseManager.Instance.SaveChanges();
-      _recordingsInProgressList.Remove(recording);
+      finally
+      {
+        _recordingsInProgressList.Remove(recording);
+      }
     }
 
     /// <summary>

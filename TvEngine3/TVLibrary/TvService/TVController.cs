@@ -422,6 +422,17 @@ namespace TvService
 
     #region internal interface
     /// <summary>
+    /// Gets the server.
+    /// </summary>
+    /// <value>The server.</value>
+    public Server Server
+    {
+      get
+      {
+        return _ourServer;
+      }
+    }
+    /// <summary>
     /// Gets the total number of cards installed.
     /// </summary>
     /// <value>Number which indicates the cards installed</value>
