@@ -425,11 +425,11 @@ namespace TvService
     /// Gets the server.
     /// </summary>
     /// <value>The server.</value>
-    public Server Server
+    public int IdServer
     {
       get
       {
-        return _ourServer;
+        return _ourServer.IdServer;
       }
     }
     /// <summary>

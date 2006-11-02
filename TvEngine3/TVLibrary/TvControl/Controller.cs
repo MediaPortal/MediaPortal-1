@@ -107,7 +107,7 @@ namespace TvControl
     /// Gets the server.
     /// </summary>
     /// <value>The server.</value>
-    Server Server {get;}
+    int IdServer {get;}
 
     ///<summary>
     ///Gets the total number of tv-cards installed.
