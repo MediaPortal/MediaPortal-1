@@ -42,11 +42,8 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     /// </summary>
     private Container components = null;
 
-    private TextBox[] textLines = null;
-
-    private delegate void SetLineDelegate(int _line, string _message);
-
     private bool isDisabled = false;
+    private PictureBox graphicDisplay;
     private string errorMessage = "";
 
     public DebugForm()
@@ -57,24 +54,8 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
         // Required for Windows Form Designer support
         //
         InitializeComponent();
-        SuspendLayout();
-        //Dynamically create textboxes for the number of configured display lines
-        textLines = new TextBox[Settings.Instance.TextHeight];
-        for (int i = 0; i < Settings.Instance.TextHeight; i++)
-        {
-          TextBox line = new TextBox();
-          line.Anchor = (AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right;
-          line.Enabled = false;
-          line.Location = new Point(8, 8 + (24*i));
-          line.Name = "txtLine" + i;
-          line.Size = new Size(320, 20);
-          line.TabIndex = 0;
-          line.Text = "";
-          textLines[i] = line;
-          Controls.Add(line);
-        }
-        Height = Settings.Instance.TextHeight*24 + 50;
-        ResumeLayout(false);
+        Size = new Size(Settings.Instance.GraphicWidth+6,Settings.Instance.GraphicHeight + 24);
+        DoRefresh();
       }
       catch (Exception ex)
       {
@@ -99,6 +80,14 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       base.Dispose(disposing);
     }
 
+    private void DoRefresh()
+    {
+      if (InvokeRequired)
+      {Invoke(new MethodInvoker(DoRefresh));
+      return;
+      }
+      Update();
+    }
     #region Windows Form Designer generated code
 
     /// <summary>
@@ -107,17 +96,33 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     /// </summary>
     private void InitializeComponent()
     {
+      this.graphicDisplay = new System.Windows.Forms.PictureBox();
+      ((System.ComponentModel.ISupportInitialize)(this.graphicDisplay)).BeginInit();
       this.SuspendLayout();
+      // 
+      // graphicDisplay
+      // 
+      this.graphicDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.graphicDisplay.Location = new System.Drawing.Point(0, 0);
+      this.graphicDisplay.Name = "graphicDisplay";
+      this.graphicDisplay.Size = new System.Drawing.Size(360, 82);
+      this.graphicDisplay.TabIndex = 0;
+      this.graphicDisplay.TabStop = false;
+      this.graphicDisplay.WaitOnLoad = true;
       // 
       // DebugForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(336, 70);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+      this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+      this.ClientSize = new System.Drawing.Size(360, 82);
+      this.Controls.Add(this.graphicDisplay);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
       this.Name = "DebugForm";
       this.Text = "MediaPortal Status";
       this.TopMost = true;
+      ((System.ComponentModel.ISupportInitialize)(this.graphicDisplay)).EndInit();
       this.ResumeLayout(false);
+
     }
 
     #endregion
@@ -140,6 +145,10 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
     public void DrawImage(int x, int y, Bitmap bitmap)
     {
+      graphicDisplay.Image = bitmap;
+      Visible = true;
+      DoRefresh();
+      Application.DoEvents();
     }
 
     /// <summary>
@@ -175,13 +184,13 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     /// <param name="_message">The text to display</param>
     public void SetLine(int _line, string _message)
     {
-      if (InvokeRequired)
-      {
-        Invoke(new SetLineDelegate(SetLine), _line, _message);
-        return;
-      }
-      textLines[_line].Text = _message;
-      Update(); //Give this form the time to repaint itself...
+      //if (InvokeRequired)
+      //{
+      //  Invoke(new SetLineDelegate(SetLine), _line, _message);
+      //  return;
+      //}
+      //textLines[_line].Text = _message;
+      //DoRefresh(); //Give this form the time to repaint itself...
     }
 
     #endregion
@@ -222,33 +231,20 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
     public void Initialize()
     {
-      Clear();
     }
 
     public void CleanUp()
     {
-      Clear();
+      Hide();
     }
 
-    private void Clear()
-    {
-      if (InvokeRequired)
-      {
-        Invoke(new MethodInvoker(Clear));
-        return;
-      }
-      for (int i = 0; i < Settings.Instance.TextHeight; i++)
-      {
-        textLines[i].Text = new string(' ', Settings.Instance.TextWidth);
-      }
-    }
 
     /// <summary>
     /// Does this display support text mode?
     /// </summary>
     public bool SupportsText
     {
-      get { return true; }
+      get { return false; }
     }
 
     /// <summary>
@@ -256,7 +252,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     /// </summary>
     public bool SupportsGraphics
     {
-      get { return false; }
+      get { return true; }
     }
 
     /// <summary>
