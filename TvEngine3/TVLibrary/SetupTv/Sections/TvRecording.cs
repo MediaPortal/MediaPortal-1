@@ -145,7 +145,7 @@ namespace SetupTv.Sections
       string strReturn = strDirectory;
       if (strDirectory != string.Empty)
         strReturn += "\\";
-      strReturn += strName + ".dvr-ms";
+      strReturn += strName + ".mpg";
       return strReturn;
     }
 
