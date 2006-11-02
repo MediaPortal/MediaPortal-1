@@ -780,7 +780,11 @@ namespace TvPlugin
 
     void UpdateDescription()
     {
+      TvBusinessLayer layer = new TvBusinessLayer();
       Schedule rec = new Schedule(1,  "", Schedule.MinSchedule, Schedule.MinSchedule);
+      rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+      rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+
       SetProperties(rec);
       GUIListItem pItem = GetItem(GetSelectedItemNo());
       if (pItem == null)

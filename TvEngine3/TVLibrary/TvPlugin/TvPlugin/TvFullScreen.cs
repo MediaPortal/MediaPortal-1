@@ -735,7 +735,7 @@ namespace TvPlugin
       if (message.Message == GUIMessage.MessageType.GUI_MSG_RECORD)
       {
         string channel = TVHome.Card.ChannelName;
-
+        TvBusinessLayer layer = new TvBusinessLayer();
 
         Program prog = TVHome.Navigator.GetChannel(channel).CurrentProgram;
         VirtualCard card;
@@ -782,24 +782,19 @@ namespace TvPlugin
         }
         else
         {
-          Log.Write("1");
           if (prog != null)
           {
-            Log.Write("2");
             _dialogBottomMenu = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
             if (_dialogBottomMenu != null)
             {
-              Log.Write("3");
               _dialogBottomMenu.Reset();
               _dialogBottomMenu.SetHeading(605);//my tv
               _dialogBottomMenu.AddLocalizedString(875); //current program
               _dialogBottomMenu.AddLocalizedString(876); //till manual stop
               _bottomDialogMenuVisible = true;
 
-              Log.Write("4");
               _dialogBottomMenu.DoModal(GetID);
 
-              Log.Write("5");
               _bottomDialogMenuVisible = false;
               Schedule rec;
               switch (_dialogBottomMenu.SelectedId)
@@ -809,6 +804,9 @@ namespace TvPlugin
                   _isStartingTSForRecording = !g_Player.IsTimeShifting;
                   Program program = TVHome.Navigator.Channel.CurrentProgram;
                   rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
+                  rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+                  rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+
                   rec.Persist();
                   RemoteControl.Instance.OnNewSchedule();
                   break;
@@ -818,6 +816,8 @@ namespace TvPlugin
                   _isStartingTSForRecording = !g_Player.IsTimeShifting;
 
                   rec = new Schedule(TVHome.Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + TVHome.Navigator.Channel.Name + ")", DateTime.Now, DateTime.Now.AddDays(1));
+                  rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+                  rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
                   rec.Persist();
                   RemoteControl.Instance.OnNewSchedule();
                   break;
@@ -829,10 +829,10 @@ namespace TvPlugin
           }
           else
           {
-
-            Log.Write("bah");
             _isStartingTSForRecording = !g_Player.IsTimeShifting;
             Schedule rec = new Schedule(TVHome.Navigator.Channel.IdChannel, (int)ScheduleRecordingType.Once, GUILocalizeStrings.Get(413) + " (" + TVHome.Navigator.Channel.Name + ")", DateTime.Now, DateTime.Now.AddDays(1), 1, 1, "", 1, 1, Schedule.MinSchedule, 5, 5, Schedule.MinSchedule);
+            rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+            rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
 
             rec.Persist();
             RemoteControl.Instance.OnNewSchedule();

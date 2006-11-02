@@ -191,7 +191,10 @@ namespace TvPlugin
       btnNotify.Selected = currentProgram.Notify;
 
       lstUpcomingEpsiodes.Clear();
-      Schedule recTmp = new Schedule(currentProgram.IdChannel,  currentProgram.Title,currentProgram.StartTime, currentProgram.EndTime);
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Schedule recTmp = new Schedule(currentProgram.IdChannel, currentProgram.Title, currentProgram.StartTime, currentProgram.EndTime);
+      recTmp.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+      recTmp.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
       List<Schedule> recs = TVHome.Util.GetRecordingTimes(recTmp);
       foreach (Schedule recSeries in recs)
       {
@@ -534,20 +537,20 @@ namespace TvPlugin
             return;
           }
         }
-        Log.Write("new record");
+        TvBusinessLayer layer = new TvBusinessLayer();
         rec = new Schedule(program.IdChannel, program.Title,program.StartTime, program.EndTime);
+        rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+        rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
         rec.Persist();
         RemoteControl.Instance.OnNewSchedule();
       }
       else
       {
-        Log.Write("is recording");
         if (rec.IsRecordingProgram(program, true))
         {
-          Log.Write("is recording prog");
           if (rec.ScheduleType != (int)ScheduleRecordingType.Once)
           {
-            Log.Write("schedule type!=once");
+            
             GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
             if (dlg == null) return;
             dlg.Reset();
@@ -585,21 +588,16 @@ namespace TvPlugin
           }
           else
           {
-            Log.Write("schedule type==once");
             if (CheckIfRecording(rec))
             {
-              Log.Write("CheckIfRecording done");
               RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
-              Log.Write("rec deleted");
               rec.Delete();
               RemoteControl.Instance.OnNewSchedule();
             }
           }
         }
       }
-      Log.Write("doupdate");
       Update();
-      Log.Write("done");
     }
 
     void OnAdvancedRecord()
@@ -652,6 +650,9 @@ namespace TvPlugin
             rec.ScheduleType = (int)ScheduleRecordingType.Weekends;
             break;
         }
+        TvBusinessLayer layer = new TvBusinessLayer();
+        rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+        rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
         rec.Persist();
         RemoteControl.Instance.OnNewSchedule();
 
@@ -662,7 +663,6 @@ namespace TvPlugin
         DateTime dtEnd = dtStart.AddHours(3);
         long iStart = Utils.datetolong(dtStart);
         long iEnd = Utils.datetolong(dtEnd);
-        TvBusinessLayer layer = new TvBusinessLayer();
         programs = layer.GetPrograms(rec.ReferencedChannel(), dtStart, dtEnd);
         if (programs.Count >= 2)
         {
@@ -682,6 +682,9 @@ namespace TvPlugin
               if (dlgYesNo.IsConfirmed)
               {
                 rec=new Schedule(currentProgram.IdChannel,  currentProgram.Title,nextNext.StartTime, nextNext.EndTime);
+
+                rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+                rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
                 rec.Persist();
                 RemoteControl.Instance.OnNewSchedule();
               }

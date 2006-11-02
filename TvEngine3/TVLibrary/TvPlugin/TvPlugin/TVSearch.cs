@@ -1008,6 +1008,9 @@ namespace TvPlugin
         if (dlg.SelectedLabel == -1) return;
         Schedule rec = new Schedule(program.IdChannel, program.Title,program.StartTime, program.EndTime);
 
+        TvBusinessLayer layer = new TvBusinessLayer();
+        rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+        rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
         switch (dlg.SelectedLabel)
         {
           case 0://none

@@ -318,7 +318,7 @@ namespace TvPlugin
                 }
               }
             }
-
+            TvBusinessLayer layer = new TvBusinessLayer();
             if (!isRecording)
             {
               if (prog != null)
@@ -338,6 +338,8 @@ namespace TvPlugin
                         //record current program
                         Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, Navigator.Channel.CurrentProgram.Title,
                                                     Navigator.Channel.CurrentProgram.StartTime, Navigator.Channel.CurrentProgram.EndTime);
+                        newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+                        newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
                         newSchedule.Persist();
                         RemoteControl.Instance.OnNewSchedule();
                       }
@@ -347,6 +349,9 @@ namespace TvPlugin
                       {
                         Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
                                                     DateTime.Now, DateTime.Now.AddDays(1));
+                        newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+                        newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+
                         newSchedule.Persist();
                         RemoteControl.Instance.OnNewSchedule();
                       }
@@ -358,6 +363,9 @@ namespace TvPlugin
               {
                 Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
                                                     DateTime.Now, DateTime.Now.AddDays(1));
+                newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+                newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+
                 newSchedule.Persist();
                 RemoteControl.Instance.OnNewSchedule();
               }
@@ -811,6 +819,7 @@ namespace TvPlugin
     {
       //record now.
       //Are we recording this channel already?
+      TvBusinessLayer layer = new TvBusinessLayer();
       if (!TVHome.Card.IsRecording)
       {
         //no then start recording
@@ -830,6 +839,9 @@ namespace TvPlugin
                 {
                   Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, Navigator.Channel.CurrentProgram.Title,
                             Navigator.Channel.CurrentProgram.StartTime, Navigator.Channel.CurrentProgram.EndTime);
+                  newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+                  newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+
                   newSchedule.Persist();
                   RemoteControl.Instance.OnNewSchedule();
                 }
@@ -839,6 +851,9 @@ namespace TvPlugin
                 {
                   Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
                                               DateTime.Now, DateTime.Now.AddDays(1));
+                  newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+                  newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+
                   newSchedule.Persist();
                   RemoteControl.Instance.OnNewSchedule();
                 }
@@ -851,6 +866,9 @@ namespace TvPlugin
           //manual record
           Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
                                       DateTime.Now, DateTime.Now.AddDays(1));
+          newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+          newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+
           newSchedule.Persist();
           RemoteControl.Instance.OnNewSchedule();
         }

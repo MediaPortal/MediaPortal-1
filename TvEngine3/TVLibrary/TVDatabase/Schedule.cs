@@ -91,8 +91,8 @@ namespace TvDatabase
       KeepDate = MinSchedule;
       KeepMethod = (int)KeepMethodType.UntilSpaceNeeded;
       MaxAirings = 5;
-      PostRecordInterval = 5;
-      PreRecordInterval = 5;
+      PostRecordInterval = 0;
+      PreRecordInterval = 0;
       Priority = 0;
       Quality = 0;
       ScheduleType = (int)ScheduleRecordingType.Once;
@@ -560,6 +560,7 @@ namespace TvDatabase
     public Schedule Clone()
     {
       Schedule schedule = new Schedule(IdChannel, scheduleType, ProgramName, StartTime, EndTime, MaxAirings, Priority, Directory, Quality, KeepMethod, KeepDate, PreRecordInterval, PostRecordInterval, Canceled);
+
       schedule._isSeries = _isSeries;
       return schedule;
     }

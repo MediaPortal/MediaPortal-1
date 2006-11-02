@@ -1019,6 +1019,9 @@ namespace TvPlugin
 
       Schedule rec = new Schedule(selectedChannel.IdChannel, "", Schedule.MinSchedule, Schedule.MinSchedule);
 
+      TvBusinessLayer layer = new TvBusinessLayer();
+      rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+      rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
       if (!isQuickRecord)
       {
         dlg.DoModal(GetID);
@@ -1301,6 +1304,9 @@ namespace TvPlugin
     void UpdateDescription()
     {
       Schedule rec = new Schedule(-1, "", Schedule.MinSchedule, Schedule.MinSchedule);
+      TvBusinessLayer layer = new TvBusinessLayer();
+      rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+      rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
       SetProperties(rec);
       GUIListItem pItem = GetItem(GetSelectedItemNo());
       if (pItem == null)
