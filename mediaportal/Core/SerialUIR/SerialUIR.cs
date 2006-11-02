@@ -256,7 +256,7 @@ namespace MediaPortal.SerialIR
 			return ReOpen();
 		}
 
-		private SerialUIR(OnRemoteCommand remoteCommandCallback)
+		private SerialUIR(OnRemoteCommand remoteCommandCallback) : this()
 		{
 			try
 			{
