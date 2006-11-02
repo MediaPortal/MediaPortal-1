@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-<!-- changed : 02-October-2006 by dman_lfc				-->
+<!-- changed : 16-October-2006 by mPod				-->
 <!-- contains:										-->
 <!--   - Australia 								-->
 <!--   - Austria 									-->
@@ -1261,6 +1261,7 @@
 		<carrier frequency="570000" bandwidth="8" />
 		<carrier frequency="618000" bandwidth="8" />
 		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
 		<carrier frequency="754000" bandwidth="8" />
 		<carrier frequency="778000" bandwidth="8" />
 		<carrier frequency="826000" bandwidth="8" />		
