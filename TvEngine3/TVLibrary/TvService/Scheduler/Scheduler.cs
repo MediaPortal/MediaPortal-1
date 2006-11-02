@@ -447,15 +447,13 @@ namespace TvService
           _controller.StopTimeShifting(recording.CardInfo.Id, GetUser());
         }
 
-        Server server = Server.Retrieve(_tvController.IdServer);
-        if (server != null)
-        {
-          Recording newRec = new Recording(recording.Schedule.IdChannel, recording.RecordingStartDateTime, DateTime.Now, recording.Program.Title,
-                              recording.Program.Description, recording.Program.Genre, recording.FileName, (int)recording.Schedule.KeepMethod,
-                              recording.Schedule.KeepDate, 0, server.IdServer);
-          newRec.Persist();
-          _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingEnded, new VirtualCard(recording.CardInfo.Id), GetUser(), recording.Schedule, newRec));
-        }
+        int idServer = recording.CardInfo.Card.IdServer;
+        Recording newRec = new Recording(recording.Schedule.IdChannel, recording.RecordingStartDateTime, DateTime.Now, recording.Program.Title,
+                            recording.Program.Description, recording.Program.Genre, recording.FileName, (int)recording.Schedule.KeepMethod,
+                            recording.Schedule.KeepDate, 0, idServer);
+        newRec.Persist();
+        _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingEnded, new VirtualCard(recording.CardInfo.Id), GetUser(), recording.Schedule, newRec));
+
 
         //DatabaseManager.Instance.SaveChanges();
 
