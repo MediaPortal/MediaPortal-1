@@ -30,13 +30,14 @@ public:
 	void	Reset();
 	void	OnTsPacket(byte* tsPacket);
 
-	__int64 PcrHigh();
-	int     PcrLow();
-	__int64 Pcr();
-	bool    GetPtsDts(byte* pesHeader, __int64& pts, __int64& dts);
-	void		ChangePtsDts(byte* header, __int64 startPcr);
+	UINT64 PcrHigh();
+	UINT64     PcrLow();
+	UINT64 Pcr();
+	bool    GetPtsDts(byte* pesHeader, UINT64& pts, UINT64& dts);
+  void    ChangePtsDts(byte* header, UINT64 startPcr);
+
 private:
-	int m_pcrPid;
-	__int64 m_pcrHigh;
-	int     m_pcrLow;
+	int    m_pcrPid;
+	UINT64 m_pcrHigh;
+	UINT64 m_pcrLow;
 };

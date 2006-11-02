@@ -47,20 +47,17 @@ public:
 	void ClearStreams();
 	void SetFileWriterCallBack(IFileWriter* callback);
 	int OnNewPesPacket(int streamid,byte* header, int headerlen,byte* data, int len, bool isStart);
+
 private:
-	
   int  SplitPesPacket(int streamId,byte* header, int headerlen,byte* pesPacket, int nLen,bool isStart);
 	int  WritePackHeader();
-	CPcrDecoder m_pcrDecoder;
   
 	vector<CPesDecoder*> m_pesDecoders;
 	typedef vector<CPesDecoder*>::iterator ivecPesDecoders;
+	CPcrDecoder m_pcrDecoder;
 	IFileWriter* m_pCallback;
 	int m_videoPacketCounter;
 	int m_audioPacketCounter;
 	bool  m_streams[255];
   byte* m_pesBuffer;
-	__int64 m_startPcr;
-	__int64 m_highestPcr;
-  bool    m_bDetermineNewStartPcr;
 };

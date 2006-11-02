@@ -52,10 +52,7 @@ void CMultiplexer::Reset()
 //	LogDebug("mux: reset");
 	m_videoPacketCounter= 0;
   m_audioPacketCounter=0;
-	m_startPcr=0;
-	m_highestPcr=0;
 	m_pcrDecoder.Reset();
-  m_bDetermineNewStartPcr=false;
 	ClearStreams();
 }
 
@@ -67,7 +64,6 @@ void CMultiplexer::ClearStreams()
 	{
 		CPesDecoder* decoder=*it;
 		delete decoder;
-    m_bDetermineNewStartPcr=true;
 	}
 	m_pesDecoders.clear();
 }
@@ -161,8 +157,6 @@ void CMultiplexer::OnTsPacket(byte* tsPacket)
 
 int CMultiplexer::OnNewPesPacket(int streamId,byte* header, int headerlen,byte* pesPacket, int pesLength, bool isStart)
 {
-
-//	LogDebug("OnNewPesPacket streamid:%x len:%x start:%d", streamId,pesLength,isStart);
 	if (pesLength<=0) return 0;
   if (m_pesDecoders.size()==1)
   {
@@ -203,12 +197,7 @@ int CMultiplexer::OnNewPesPacket(int streamId,byte* header, int headerlen,byte* 
 int CMultiplexer::WritePackHeader()
 {
 
-/*	
-__int64 pcrHi=m_pcrDecoder.PcrHigh() ;
-  int pcrLow=m_pcrDecoder.PcrLow();
-*/
-
-	__int64 pcrHi=m_pcrDecoder.PcrHigh() - m_startPcr;
+	UINT64 pcrHi=m_pcrDecoder.PcrHigh();
   int pcrLow=0;//m_pcrDecoder.PcrLow();	
   int muxRate=(6*1024*1024)/50; //6MB/s
   byte pBuffer[0x20];
@@ -242,49 +231,11 @@ __int64 pcrHi=m_pcrDecoder.PcrHigh() ;
   return PACK_HEADER_LENGTH;
 }
 
-static __int64 maxDiff=0;
+
 int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte* pesPacket, int sectionLength, bool isStart)
 { 
-//	LogDebug("sid:%x len:%x start:%d headerlen:%x %02.2x%02.2x %02.2x%02.2x %02.2x%02.2x %02.2x%02.2x %02.2x%02.2x %02.2x%02.2x", 
-//		streamId, sectionLength,isStart,headerlen,
-		//pesPacket[0],pesPacket[1], pesPacket[2],pesPacket[3], pesPacket[4],pesPacket[5],
-		//pesPacket[6],pesPacket[7], pesPacket[8],pesPacket[9], pesPacket[10],pesPacket[11]);
 	if (streamId<0) return sectionLength;
   if (m_pCallback == NULL) return sectionLength;
-	
-
-  __int64 pcrNew=m_pcrDecoder.Pcr();
-  if (m_bDetermineNewStartPcr )
-  {
-    if (pcrNew==0) 
-    {
-      LogDebug("Pcr: skip..");
-      return sectionLength;
-    }
-
-    m_bDetermineNewStartPcr=false;
-	  //correct pcr rollover
-    __int64 duration=m_highestPcr-m_startPcr;
-  
-    LogDebug("Pcr change detected from:%x to:%x duration:%x", (DWORD)m_highestPcr, (DWORD)pcrNew,(DWORD)duration);
-	  __int64 newStartPcr = pcrNew- (duration) ;
-	  LogDebug("Pcr new start pcr from:%x to %x ", (DWORD)m_startPcr,(DWORD)newStartPcr);
-    m_startPcr=newStartPcr;
-    m_highestPcr=newStartPcr;
-  }
-
-  
-	if (m_startPcr==0)
-	{
-		m_startPcr = pcrNew;
-    m_highestPcr=pcrNew;
-		LogDebug("Pcr new start pcr :%x", (DWORD)m_startPcr);
-	} 
-
-  if (pcrNew > m_highestPcr)
-  {
-	  m_highestPcr=pcrNew;
-  }
 
   if (sectionLength != 0x7e9)
   {
@@ -292,7 +243,6 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
     {
 
       int len=headerlen+sectionLength-6;
-		  m_pcrDecoder.ChangePtsDts(header, m_startPcr);
 			memset(m_pesBuffer,0xff,0x800);
       WritePackHeader();
 	    header[3]=streamId;
@@ -351,7 +301,6 @@ int CMultiplexer::SplitPesPacket(int streamId,byte* header, int headerlen, byte*
 		header[3]=streamId;
     header[4]=0x7;
     header[5]=0xec;
-		m_pcrDecoder.ChangePtsDts(header, m_startPcr);
     m_pCallback->Write(header, headerlen);
     m_pCallback->Write(pesPacket, len);
 		return len;

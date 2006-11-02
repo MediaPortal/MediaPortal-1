@@ -52,16 +52,16 @@ int CPcrDecoder::GetPcrPid()
 	return m_pcrPid;
 }
 
-__int64 CPcrDecoder::PcrHigh()
+UINT64 CPcrDecoder::PcrHigh()
 {
 	return m_pcrHigh;
 }
 
-int CPcrDecoder::PcrLow()
+UINT64 CPcrDecoder::PcrLow()
 {
 	return m_pcrLow;
 }
-__int64 CPcrDecoder::Pcr()
+UINT64 CPcrDecoder::Pcr()
 {
 	return m_pcrHigh;
 }
@@ -71,56 +71,39 @@ void CPcrDecoder::OnTsPacket(byte* tsPacket)
 	if (m_pcrPid==-1) return;
 	CTsHeader header(tsPacket);
 	if (header.Pid != m_pcrPid) return;
+  if (header.PayLoadOnly()) return;
+  if (tsPacket[4]<7) return; //adaptation field length
+  if ((tsPacket[5] & 0x10) ==0 ) return;
 
-	int afc, len, flags;
-	byte *p;
-	unsigned int v;
+	UINT64 pcrBaseHigh=0LL;
+	UINT64 k=tsPacket[6]; k<<=25LL;pcrBaseHigh+=k;
+	k=tsPacket[7]; k<<=17LL;pcrBaseHigh+=k;
+	k=tsPacket[8]; k<<=9LL;pcrBaseHigh+=k;
+	k=tsPacket[9]; k<<=1LL;pcrBaseHigh+=k;
+	k=((tsPacket[10]>>7)&0x1); pcrBaseHigh +=k;
+  m_pcrHigh=pcrBaseHigh;
+  m_pcrLow=0;
 
-	afc = (tsPacket[3] >> 4) & 3;
-	if (afc <= 1)
-	{
-		return ;
-	}
-	p = tsPacket + 4;
-	len = p[0];
-	p++;
-	if (len == 0)
-	{
-			return ;
-	}
-	flags = *p++;
-	len--;
-	if (!(flags & 0x10))
-	{
-			return ;
-	}
-	if (len < 6)
-	{
-			return ;
-	}
-	v = (p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3];
-	m_pcrHigh = ((__int64)v << 1) | (p[4] >> 7);			//33 bits
-	m_pcrLow = ((p[4] & 1) << 8) | p[5];							//9	 bits
 
-//	LogDebug("pcr:%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x",p[0],p[1],p[2],p[3],p[4],p[5]);
 }
-bool CPcrDecoder::GetPtsDts(byte* pesHeader, __int64& pts, __int64& dts)
+bool CPcrDecoder::GetPtsDts(byte* pesHeader, UINT64& pts, UINT64& dts)
 {
-	pts=0;
-	dts=0;
+	pts=0LL;
+	dts=0LL;
 	bool ptsAvailable=false;
 	bool dtsAvailable=false;
 	if ( (pesHeader[7]&0x80)!=0) ptsAvailable=true;
 	if ( (pesHeader[7]&0x40)!=0) dtsAvailable=true;
 	if (ptsAvailable)
 	{	
-		pts+= ((pesHeader[13]>>1)&0x7f);					// 7bits	7
+		pts+= ((pesHeader[13]>>1)&0x7f);				// 7bits	7
 		pts+=(pesHeader[12]<<7);								// 8bits	15
 		pts+=((pesHeader[11]>>1)<<15);					// 7bits	22
 		pts+=((pesHeader[10])<<22);							// 8bits	30
-    __int64 k=((pesHeader[9]>>1)&0x7);
-    k <<=30;
+    UINT64 k=((pesHeader[9]>>1)&0x7);
+    k <<=30LL;
 		pts+=k;			// 3bits
+		pts &= 0x1FFFFFFFFLL;
 	}
 	if (dtsAvailable)
 	{
@@ -128,47 +111,51 @@ bool CPcrDecoder::GetPtsDts(byte* pesHeader, __int64& pts, __int64& dts)
 		dts+=(pesHeader[17]<<7);								// 8bits	15
 		dts+=((pesHeader[16]>>1)<<15);					// 7bits	22
 		dts+=((pesHeader[15])<<22);							// 8bits	30
-    __int64 k=((pesHeader[14]>>1)&0x7);
-    k <<=30;
+    UINT64 k=((pesHeader[14]>>1)&0x7);
+    k <<=30LL;
 		dts+=k;			// 3bits
+		dts &= 0x1FFFFFFFFLL;
 	
 	}
+	
 	return (ptsAvailable||dtsAvailable);
 }
 
-void CPcrDecoder::ChangePtsDts(byte* header, __int64 startPcr)
+void CPcrDecoder::ChangePtsDts(byte* header, UINT64 startPcr)
 {
-	__int64 pts=0,dts=0;
-	if (!GetPtsDts(header, pts, dts)) 
+  if (header[0] !=0 || header[1] !=0  || header[2] !=1) return; 
+  byte* pesHeader=header;
+	UINT64 pts=0LL;
+	UINT64 dts=0LL;
+	if (!GetPtsDts(pesHeader, pts, dts)) 
 	{
 		return ;
 	}
-	if (pts>0)
+	if (pts>0LL)
 	{
-		if (pts < startPcr) 
-			pts=0;
-		else
-			pts-=startPcr;
-	//	LogDebug(" pts:%x start:%x", (DWORD)pts,(DWORD)startPcr);
+		UINT64 ptsorg=pts;
+		if (pts > startPcr) 
+			pts = (UINT64)( ((UINT64)pts) - ((UINT64)startPcr) );
+		else pts=0LL;
+		//LogDebug("pts: org:%x new:%x start:%x pid:%x", (DWORD)ptsorg,(DWORD)pts,(DWORD)startPcr,header.Pid);
+		
 		byte marker=0x21;
 		if (dts!=0) marker=0x31;
-		header[13]=(byte)((((pts&0x7f)<<1)+1)); pts>>=7;
-		header[12]=(byte)( (pts&0xff));				  pts>>=8;
-		header[11]=(byte)((((pts&0x7f)<<1)+1)); pts>>=7;
-		header[10]=(byte)((pts&0xff));					pts>>=8;
-		header[9]=(byte)( (((pts&7)<<1)+marker)); 
+		pesHeader[13]=(byte)((((pts&0x7f)<<1)+1)); pts>>=7;
+		pesHeader[12]=(byte)( (pts&0xff));				  pts>>=8;
+		pesHeader[11]=(byte)((((pts&0x7f)<<1)+1)); pts>>=7;
+		pesHeader[10]=(byte)((pts&0xff));					pts>>=8;
+		pesHeader[9]=(byte)( (((pts&7)<<1)+marker)); 
 	}
-	if (dts >0)
+	if (dts >0LL)
 	{
-		if (dts < startPcr) 
-			dts=0;
-		else
-			dts-=startPcr;
-
-		header[18]=(byte)((((dts&0x7f)<<1)+1)); dts>>=7;
-		header[17]=(byte)( (dts&0xff));				  dts>>=8;
-		header[16]=(byte)((((dts&0x7f)<<1)+1)); dts>>=7;
-		header[15]=(byte)((dts&0xff));					dts>>=8;
-		header[14]=(byte)( (((dts&7)<<1)+0x11)); 
+		if (dts > startPcr) 
+			dts = (UINT64)( ((UINT64)dts) - ((UINT64)startPcr) );
+		else dts=0LL;
+		pesHeader[18]=(byte)((((dts&0x7f)<<1)+1)); dts>>=7;
+		pesHeader[17]=(byte)( (dts&0xff));				  dts>>=8;
+		pesHeader[16]=(byte)((((dts&0x7f)<<1)+1)); dts>>=7;
+		pesHeader[15]=(byte)((dts&0xff));					dts>>=8;
+		pesHeader[14]=(byte)( (((dts&7)<<1)+0x11)); 
 	}
 }
