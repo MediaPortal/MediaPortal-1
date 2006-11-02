@@ -385,13 +385,14 @@ namespace TvService
       if (freeCards.Count == 0) return false;
       CardDetail cardInfo = freeCards[0];
       Log.Write("Scheduler : record on card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
-
+      bool lockedCard = false;
       try
       {
         if (_tvController.IsTimeShifting(cardInfo.Id) == false)
         {
           //if card is idle, then we lock it.
           _tvController.LockCard(cardInfo.Id, user);
+          lockedCard = true;
         }
 
         _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.StartRecording, new VirtualCard(cardInfo.Id), user, recording.Schedule, null));
@@ -400,16 +401,28 @@ namespace TvService
           cardInfo.Card.RecordingFolder = System.IO.Directory.GetCurrentDirectory();
 
         Log.Write("Scheduler : record, first tune to channel");
-        if (false == _controller.Tune(cardInfo.Id, cardInfo.TuningDetail)) return false;
+        if (false == _controller.TuneScan(cardInfo.Id, cardInfo.TuningDetail))
+        {
+          if (lockedCard) _tvController.UnlockCard(cardInfo.Id);
+          return false;
+        }
         Log.Write("Scheduler : record, now start timeshift");
         string timeshiftFileName = String.Format(@"{0}\live{1}.ts", cardInfo.Card.RecordingFolder, cardInfo.Id);
-        if (TvResult.Succeeded != _controller.StartTimeShifting(cardInfo.Id, timeshiftFileName)) return false;
+        if (TvResult.Succeeded != _controller.StartTimeShifting(cardInfo.Id, timeshiftFileName))
+        {
+          if (lockedCard) _tvController.UnlockCard(cardInfo.Id);
+          return false;
+        }
 
         recording.MakeFileName(cardInfo.Card.RecordingFolder);
         recording.CardInfo = cardInfo;
         Log.Write("Scheduler : record to {0}", recording.FileName);
         string fileName = recording.FileName;
-        if (false == _controller.StartRecording(cardInfo.Id, ref fileName, false, 0)) return false;
+        if (false == _controller.StartRecording(cardInfo.Id, ref fileName, false, 0))
+        {
+          if (lockedCard) _tvController.UnlockCard(cardInfo.Id);
+          return false;
+        }
         recording.FileName = fileName;
         recording.RecordingStartDateTime = DateTime.Now;
         _recordingsInProgressList.Add(recording);
@@ -429,7 +442,6 @@ namespace TvService
     /// <param name="recording">Recording</param>
     void StopRecord(RecordingDetail recording)
     {
-
       try
       {
         Log.Write("Scheduler : stop record {0} {1}-{2} {3}", recording.Channel, recording.RecordingStartDateTime, recording.EndTime, recording.Schedule.ProgramName);
@@ -444,6 +456,7 @@ namespace TvService
         }
         if (stopTimeshifting)
         {
+          Log.Write("Scheduler : stop timeshifting");
           _controller.StopTimeShifting(recording.CardInfo.Id, GetUser());
         }
 
@@ -465,6 +478,11 @@ namespace TvService
         }
         else
         {
+          if (DateTime.Now < recording.Program.EndTime)
+          {
+            CanceledSchedule canceled = new CanceledSchedule(recording.Schedule.IdSchedule, recording.Program.StartTime);
+            canceled.Persist();
+          }
           _episodeManagement.OnScheduleEnded(recording.FileName, recording.Schedule, recording.Program);
         }
       }
