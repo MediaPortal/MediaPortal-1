@@ -41,6 +41,10 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIGraphicsContext
   {
+    static TransformMatrix _guiTransform = new TransformMatrix();
+    static TransformMatrix _windowTransform = new TransformMatrix();
+    static TransformMatrix _finalWindowTransform = new TransformMatrix();
+    static TransformMatrix _finalTransform = new TransformMatrix();
     //enum containing current state of mediaportal
     public enum State
     {
@@ -1117,5 +1121,75 @@ namespace MediaPortal.GUI.Library
     }
 
 
+    static public void SetWindowTransform(TransformMatrix matrix)
+    {
+      _finalWindowTransform = _guiTransform.multiply(matrix);
+    }
+    static public void SetControlTransform(TransformMatrix matrix)
+    {
+      _finalTransform = _finalWindowTransform.multiply(matrix);
+    }
+    static public void SetScalingResolution(/*RESOLUTION res,*/ int posX, int posY, bool needsScaling)
+    {
+      //m_windowResolution = res;
+      if (needsScaling)
+      {
+        /*
+                // calculate necessary scalings
+                float fFromWidth = (float)g_settings.m_ResInfo[res].iWidth;
+                float fFromHeight = (float)g_settings.m_ResInfo[res].iHeight;
+                float fToPosX = (float)g_settings.m_ResInfo[m_Resolution].Overscan.left;
+                float fToPosY = (float)g_settings.m_ResInfo[m_Resolution].Overscan.top;
+                float fToWidth = (float)g_settings.m_ResInfo[m_Resolution].Overscan.right - fToPosX;
+                float fToHeight = (float)g_settings.m_ResInfo[m_Resolution].Overscan.bottom - fToPosY;
+                // add additional zoom to compensate for any overskan built in skin
+                float fZoom = g_SkinInfo.GetSkinZoom();
+                if (!g_guiSkinzoom) // lookup gui setting if we didn't have it already
+                  g_guiSkinzoom = (CSettingInt*)g_guiSettings.GetSetting("lookandfeel.skinzoom");
+                if (g_guiSkinzoom)
+                  fZoom *= (100 + g_guiSkinzoom->GetData()) * 0.01f;
+                fZoom -= 1.0f;
+                fToPosX -= fToWidth * fZoom * 0.5f;
+                fToWidth *= fZoom + 1.0f;
+                // adjust for aspect ratio as zoom is given in the vertical direction and we don't 
+                // do aspect ratio corrections in the gui code 
+                fZoom = fZoom / g_settings.m_ResInfo[m_Resolution].fPixelRatio;
+                fToPosY -= fToHeight * fZoom * 0.5f;
+                fToHeight *= fZoom + 1.0f;
+                _windowScaleX = fToWidth / fFromWidth;
+                _windowScaleY = fToHeight / fFromHeight;
+                TransformMatrix windowOffset = TransformMatrix.CreateTranslation((float)posX, (float)posY);
+                TransformMatrix guiScaler = TransformMatrix.CreateScaler(fToWidth / fFromWidth, fToHeight / fFromHeight);
+                TransformMatrix guiOffset = TransformMatrix.CreateTranslation(fToPosX, fToPosY);
+                _guiTransform = guiOffset * guiScaler * windowOffset;
+        */
+      }
+      else
+      {
+        _guiTransform = TransformMatrix.CreateTranslation((float)posX, (float)posY);
+        //_windowScaleX = 1.0f;
+        //_windowScaleY = 1.0f;
+      }
+      // reset the final transform and window transforms
+      _finalWindowTransform = _guiTransform;
+      _finalTransform = _guiTransform;
+    }
+    static public void ScaleFinalCoords(ref float x, ref float y)
+    {
+      _finalTransform.TransformPosition(ref x, ref y);
+    }
+    static public float ScaleFinalXCoord(float x, float y)
+    {
+      return _finalTransform.TransformXCoord(x, y);
+    }
+    static public float ScaleFinalYCoord(float x, float y)
+    {
+      return _finalTransform.TransformYCoord(x, y);
+    }
+    static public uint MergeAlpha(uint color)
+    {
+      uint alpha = _finalTransform.TransformAlpha((color >> 24) & 0xff);
+      return ((alpha << 24) & 0xff000000) | (color & 0xffffff);
+    }
   }
 }
