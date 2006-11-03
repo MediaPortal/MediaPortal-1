@@ -61,7 +61,7 @@ namespace MediaPortal.GUI.Library
     protected string _description = "";
     [XMLSkinElement("dimColor")]
     protected int _dimColor = 0x60ffffff;
-    
+
     protected int _parentControlId = 0;
     protected bool _isSelected = false;
     protected bool _calibration = true;
@@ -74,7 +74,12 @@ namespace MediaPortal.GUI.Library
     protected long _originalDiffuseColor;
     protected GUIControl _parentControl = null;
     protected bool _isDimmed = false;
+    bool _hasRendered = false;
+    bool _visibleFromSkinCondition = true;
+    int _visibleCondition = 0;
+    bool _allowHiddenFocus = false;
 
+    List<VisualEffect> _animations = new List<VisualEffect>();
     //protected int DimColor = 0x60ffffff;
 
     /// <summary>
@@ -109,7 +114,8 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// The basic constructur of the GUIControl class.
     /// </summary>
-    public GUIControl(int dwParentID) : this()
+    public GUIControl(int dwParentID)
+      : this()
     {
       _parentControlId = dwParentID;
     }
@@ -124,7 +130,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwPosY">The Y position on the screen of this control.</param>
     /// <param name="dwWidth">The width of this control.</param>
     /// <param name="dwHeight">The height of this control.</param>
-    public GUIControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight) : this()
+    public GUIControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight)
+      : this()
     {
       _parentControlId = dwParentID;
       _controlId = dwControlId;
@@ -133,6 +140,8 @@ namespace MediaPortal.GUI.Library
 
       base.Width = dwWidth;
       base.Height = dwHeight;
+      _visibleFromSkinCondition = true;
+      _visibleCondition = 0;
     }
 
     public GUIControl ParentControl
@@ -153,7 +162,7 @@ namespace MediaPortal.GUI.Library
         _isDimmed = value;
       }
     }
-        
+
     /// <summary> 
     /// This function is called after all of the XmlSkinnable fields have been filled
     /// with appropriate data.
@@ -191,7 +200,10 @@ namespace MediaPortal.GUI.Library
     /// The default render method. This needs to be overwritten when inherited to give every control 
     /// its specific look and feel.
     /// </summary>
-    public abstract void Render(float timePassed);
+    public virtual void Render(float timePassed)
+    {
+      _hasRendered = true;
+    }
 
     /// <summary>
     /// Property to get/set the id of the window 
@@ -429,6 +441,8 @@ namespace MediaPortal.GUI.Library
 
           case GUIMessage.MessageType.GUI_MSG_VISIBLE:
             Visibility = System.Windows.Visibility.Visible;
+            // _visible = _visibleCondition ? g_infoManager.GetBool(_visibleCondition, m_dwParentID) : true;
+
             return true;
 
           case GUIMessage.MessageType.GUI_MSG_HIDDEN:
@@ -497,6 +511,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public virtual void AllocResources()
     {
+      _hasRendered = false;
     }
 
     /// <summary>
@@ -504,6 +519,10 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public virtual void FreeResources()
     {
+      // Reset our animation states
+      for (int i = 0; i < _animations.Count; i++)
+        _animations[i].ResetAnimation();
+      _hasRendered = false;
     }
 
     /// <summary>
@@ -523,6 +542,7 @@ namespace MediaPortal.GUI.Library
     /// <returns>true or false</returns>
     public virtual bool CanFocus()
     {
+      if (_allowHiddenFocus && Focusable && IsEnabled) return true;
       return Focusable && IsEnabled && IsVisible;
     }
 
@@ -1102,7 +1122,7 @@ namespace MediaPortal.GUI.Library
 
     public virtual int DimColor
     {
-      get { return _dimColor;  }
+      get { return _dimColor; }
       set { _dimColor = value; }
     }
 
@@ -1152,66 +1172,66 @@ namespace MediaPortal.GUI.Library
       DoUpdate();
     }
 
-		public List<GUIControl> LoadControl(string xmlFilename)
-		{
-			XmlDocument doc = new XmlDocument();
-			doc.Load(GUIGraphicsContext.Skin + "\\" + xmlFilename);
-			List<GUIControl> listControls= new List<GUIControl>();
+    public List<GUIControl> LoadControl(string xmlFilename)
+    {
+      XmlDocument doc = new XmlDocument();
+      doc.Load(GUIGraphicsContext.Skin + "\\" + xmlFilename);
+      List<GUIControl> listControls = new List<GUIControl>();
 
 
-			if (doc.DocumentElement == null) return listControls;
-			if (doc.DocumentElement.Name != "window") return listControls;
+      if (doc.DocumentElement == null) return listControls;
+      if (doc.DocumentElement.Name != "window") return listControls;
 
-			// Load Definitions
-			Hashtable table = new Hashtable();
-			try
-			{
-				foreach (XmlNode node in doc.SelectNodes("/window/define"))
-				{
-					string[] tokens = node.InnerText.Split(':');
-					if (tokens.Length < 2) continue;
-					table[tokens[0]] = tokens[1];
-				}
-			}
-			catch (Exception e)
-			{
-				Log.Info("LoadDefines: {0}", e.Message);
-			}
+      // Load Definitions
+      Hashtable table = new Hashtable();
+      try
+      {
+        foreach (XmlNode node in doc.SelectNodes("/window/define"))
+        {
+          string[] tokens = node.InnerText.Split(':');
+          if (tokens.Length < 2) continue;
+          table[tokens[0]] = tokens[1];
+        }
+      }
+      catch (Exception e)
+      {
+        Log.Info("LoadDefines: {0}", e.Message);
+      }
 
-			foreach (XmlNode controlNode in doc.DocumentElement.SelectNodes("/window/controls/control"))
-			{
-				try
-				{
-					GUIControl newControl = GUIControlFactory.Create(_windowId, controlNode, table);
-					if (newControl != null) listControls.Add(newControl);
-				}
-				catch (Exception ex)
-				{
-					Log.Error("Unable to load control: {0}", ex.ToString());
-				}
-			}
-			return listControls;
-		}
+      foreach (XmlNode controlNode in doc.DocumentElement.SelectNodes("/window/controls/control"))
+      {
+        try
+        {
+          GUIControl newControl = GUIControlFactory.Create(_windowId, controlNode, table);
+          if (newControl != null) listControls.Add(newControl);
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Unable to load control: {0}", ex.ToString());
+        }
+      }
+      return listControls;
+    }
 
-		public GUIAnimation LoadAnimationControl(int parentID, int controlId, int posX, int posY, int width, int height, string texture)
-		{
-			if ((texture != null) && (texture.Contains(".xml")))
-			{
-				List<GUIControl> list = LoadControl(texture);
-				foreach (GUIControl control in list)
-				{
-					GUIAnimation animation = control as GUIAnimation;
-					if (animation != null)
-					{
-						animation.SetPosition(posX, posY);
-						animation.Width = width;
-						animation.Height = height;
-						return animation;
-					}
-				}
-			}
-		  return new GUIAnimation(parentID, controlId, posX, posY, width, height, texture);
-		}
+    public GUIAnimation LoadAnimationControl(int parentID, int controlId, int posX, int posY, int width, int height, string texture)
+    {
+      if ((texture != null) && (texture.Contains(".xml")))
+      {
+        List<GUIControl> list = LoadControl(texture);
+        foreach (GUIControl control in list)
+        {
+          GUIAnimation animation = control as GUIAnimation;
+          if (animation != null)
+          {
+            animation.SetPosition(posX, posY);
+            animation.Width = width;
+            animation.Height = height;
+            return animation;
+          }
+        }
+      }
+      return new GUIAnimation(parentID, controlId, posX, posY, width, height, texture);
+    }
 
     public string SubType
     {
@@ -1304,5 +1324,204 @@ namespace MediaPortal.GUI.Library
     }
 
     #endregion Properties
+
+
+    public void SetAnimations(List<VisualEffect> animations)
+    {
+      _animations = animations;
+    }
+
+    public virtual void QueueAnimation(AnimationType animType)
+    {
+      // rule out the animations we shouldn't perform
+      if (!IsVisible || !HasRendered)
+      { // hidden or never rendered - don't allow exit or entry animations for this control
+        if (animType == AnimationType.WindowClose && !IsEffectAnimating(AnimationType.WindowOpen))
+          return;
+      }
+      if (!IsVisible)
+      { // hidden - only allow hidden anims if we're animating a visible anim
+        if (animType == AnimationType.Hidden && !IsEffectAnimating(AnimationType.Visible))
+          return;
+        if (animType == AnimationType.WindowOpen)
+          return;
+      }
+      VisualEffect reverseAnim = GetAnimation((AnimationType)(-(int)animType), false);
+      VisualEffect forwardAnim = GetAnimation(animType, true);
+      // we first check whether the reverse animation is in progress (and reverse it)
+      // then we check for the normal animation, and queue it
+      if (reverseAnim != null && reverseAnim.IsReversible && (reverseAnim.CurrentState == AnimationState.InProcess || reverseAnim.CurrentState == AnimationState.Delayed))
+      {
+        reverseAnim.QueuedProcess = AnimationProcess.Reverse;
+        if (forwardAnim != null) forwardAnim.ResetAnimation();
+      }
+      else if (forwardAnim != null)
+      {
+        forwardAnim.QueuedProcess = AnimationProcess.Normal;
+        if (reverseAnim != null) reverseAnim.ResetAnimation();
+      }
+      else
+      { // hidden and visible animations delay the change of state.  If there is no animations
+        // to perform, then we should just change the state straightaway
+        if (reverseAnim != null) reverseAnim.ResetAnimation();
+        UpdateStates(animType, AnimationProcess.Normal, AnimationState.StateApplied);
+      }
+    }
+    public virtual VisualEffect GetAnimation(AnimationType type, bool checkConditions /* = true */)
+    {
+      for (int i = 0; i < _animations.Count; i++)
+      {
+        if (_animations[i].AnimationType == type)
+        {
+          if (!checkConditions || _animations[i].Condition == 0 /*|| g_infoManager.GetBool(_animations[i].condition)*/)
+            return _animations[i];
+        }
+      }
+      return null;
+    }
+    void UpdateStates(AnimationType type, AnimationProcess currentProcess, AnimationState currentState)
+    {
+      bool visible = IsVisible;
+      // Make sure control is hidden or visible at the appropriate times
+      // while processing a visible or hidden animation it needs to be visible,
+      // but when finished a hidden operation it needs to be hidden
+      if (type == AnimationType.Visible)
+      {
+        if (currentProcess == AnimationProcess.Reverse)
+        {
+          if (currentState == AnimationState.StateApplied)
+            IsVisible = false;
+        }
+        else if (currentProcess == AnimationProcess.Normal)
+        {
+          if (currentState == AnimationState.Delayed)
+            IsVisible = false;
+          else
+            IsVisible = _visibleFromSkinCondition;
+        }
+      }
+      else if (type == AnimationType.Hidden)
+      {
+        if (currentProcess == AnimationProcess.Normal)  // a hide animation
+        {
+          if (currentState == AnimationState.StateApplied)
+            IsVisible = false; // finished
+          else
+            IsVisible = true; // have to be visible until we are finished
+        }
+        else if (currentProcess == AnimationProcess.Reverse)  // a visible animation
+        { // no delay involved here - just make sure it's visible
+          IsVisible = _visibleFromSkinCondition;
+        }
+      }
+      else if (type == AnimationType.WindowOpen)
+      {
+        if (currentProcess == AnimationProcess.Normal)
+        {
+          if (currentState == AnimationState.Delayed)
+            IsVisible = false; // delayed
+          else
+            IsVisible = _visibleFromSkinCondition;
+        }
+      }
+      else if (type == AnimationType.Focus)
+      {
+        // call the focus function if we have finished a focus animation
+        // (buttons can "click" on focus)
+        if (currentProcess == AnimationProcess.Normal && currentState == AnimationState.StateApplied)
+          OnFocus();
+      }
+      //  if (visible != m_visible)
+      //    CLog::DebugLog("UpdateControlState of control id %i - now %s (type=%d, process=%d, state=%d)", m_dwControlID, m_visible ? "visible" : "hidden", type, currentProcess, currentState);
+    }
+    protected void Animate(uint currentTime)
+    {
+      TransformMatrix transform = new TransformMatrix();
+      for (int i = 0; i < _animations.Count; i++)
+      {
+        VisualEffect anim = _animations[i];
+        anim.Animate(currentTime, HasRendered);
+        // Update the control states (such as visibility)
+        UpdateStates(anim.AnimationType, anim.CurrentProcess, anim.CurrentState);
+        // and render the animation effect
+        anim.RenderAnimation(ref transform);
+      }
+      GUIGraphicsContext.SetControlTransform(transform);
+    }
+
+    public virtual bool IsEffectAnimating(AnimationType animType)
+    {
+      for (int i = 0; i < _animations.Count; i++)
+      {
+        VisualEffect anim = _animations[i];
+        if (anim.AnimationType == animType)
+        {
+          if (anim.QueuedProcess == AnimationProcess.Normal)
+            return true;
+          if (anim.CurrentProcess == AnimationProcess.Normal)
+            return true;
+        }
+        else if (anim.AnimationType == (AnimationType)(-(int)animType))
+        {
+          if (anim.QueuedProcess == AnimationProcess.Reverse)
+            return true;
+          if (anim.CurrentProcess == AnimationProcess.Reverse)
+            return true;
+        }
+      }
+      return false;
+    }
+
+    public bool HasRendered
+    {
+      get
+      {
+        return _hasRendered;
+      }
+    }
+
+    protected void UpdateVisibility()
+    {
+      /*
+      bool bWasVisible = _visibleFromSkinCondition;
+      _visibleFromSkinCondition = g_infoManager.GetBool(_visibleCondition, m_dwParentID);
+      if (!bWasVisible && _visibleFromSkinCondition)
+      { // automatic change of visibility - queue the in effect
+        //    CLog::DebugLog("Visibility changed to visible for control id %i", m_dwControlID);
+        QueueAnimation(ANIM_TYPE_VISIBLE);
+      }
+      else if (bWasVisible && !_visibleFromSkinCondition)
+      { // automatic change of visibility - do the out effect
+        //    CLog::DebugLog("Visibility changed to hidden for control id %i", m_dwControlID);
+        QueueAnimation(ANIM_TYPE_HIDDEN);
+      }*/
+    }
+    protected void SetInitialVisibility()
+    {
+      /*
+      _visibleFromSkinCondition = m_visible = g_infoManager.GetBool(_visibleCondition, m_dwParentID);
+      // no need to enquire every frame if we are always visible or always hidden
+      if (_visibleCondition == SYSTEM_ALWAYS_TRUE || _visibleCondition == SYSTEM_ALWAYS_FALSE)
+        _visibleCondition = 0;
+      */
+    }
+    public virtual void UpdateEffectState(uint currentTime)
+    {
+      if (_visibleCondition != 0)
+        UpdateVisibility();
+      Animate(currentTime);
+    }
+
+    protected void SetVisibleCondition(int visible, bool allowHiddenFocus)
+    {
+      _visibleCondition = visible;
+      _allowHiddenFocus = allowHiddenFocus;
+    }
+
+
+    protected virtual void OnFocus()
+    {
+    }
+
   }
 }

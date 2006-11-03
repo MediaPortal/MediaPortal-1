@@ -223,6 +223,7 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
+      base.Render(timePassed);
     }
 
     public bool UseViewPort
@@ -402,6 +403,7 @@ namespace MediaPortal.GUI.Library
       GUIPropertyManager.OnPropertyChanged += new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
       _font = GUIFontManager.GetFont(_fontName);
       Update();
+      base.AllocResources();
     }
 
     void GUIPropertyManager_OnPropertyChanged(string tag, string tagValue)
@@ -420,6 +422,7 @@ namespace MediaPortal.GUI.Library
     {
       _reCalculate = true;
       GUIPropertyManager.OnPropertyChanged -= new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+      base.FreeResources();
     }
 
     /// <summary>

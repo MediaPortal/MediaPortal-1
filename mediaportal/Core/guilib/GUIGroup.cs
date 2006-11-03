@@ -30,34 +30,35 @@ using MediaPortal.Drawing.Layouts;
 
 namespace MediaPortal.GUI.Library
 {
-	/// <summary>
-	/// A class which implements a group
-	/// A group can hold 1 or more controls
-	/// and apply an animation to the entire group
-	/// </summary>
-	public class GUIGroup : GUIControl, ISupportInitialize, IAddChild
-	{
-		#region Constructors
+  /// <summary>
+  /// A class which implements a group
+  /// A group can hold 1 or more controls
+  /// and apply an animation to the entire group
+  /// </summary>
+  public class GUIGroup : GUIControl, ISupportInitialize, IAddChild
+  {
+    #region Constructors
 
-		public GUIGroup(int parentId) : base(parentId)
-		{
-		}
+    public GUIGroup(int parentId)
+      : base(parentId)
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public override void OnInit()
-		{
-			_startAnimation = true;
-			_animator = new Animator(_animatorType);
-		}
+    public override void OnInit()
+    {
+      _startAnimation = true;
+      _animator = new Animator(_animatorType);
+    }
 
-		public void AddControl(GUIControl control)
-		{
+    public void AddControl(GUIControl control)
+    {
       control.DimColor = DimColor;
       Children.Add(control);
-		}
+    }
 
     public override bool Dimmed
     {
@@ -70,276 +71,279 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-		public override void Render(float timePassed)
-		{
-			if(GUIGraphicsContext.Animations)
-			{
-				if(_animator != null)
-				{
-					if(_startAnimation)
-					{
-						_startAnimation = false;
-						StorePosition();
-					}
+    public override void Render(float timePassed)
+    {
+      if (GUIGraphicsContext.Animations)
+      {
+        if (_animator != null)
+        {
+          if (_startAnimation)
+          {
+            _startAnimation = false;
+            StorePosition();
+          }
 
-					foreach(GUIControl control in Children)
-					{
-						if(control != null)
-							control.Animate(timePassed, _animator);
-					}
+          foreach (GUIControl control in Children)
+          {
+            if (control != null)
+              control.Animate(timePassed, _animator);
+          }
 
-					_animator.Advance(timePassed);
-				}
-			}
+          _animator.Advance(timePassed);
+        }
+      }
 
       foreach (GUIControl control in Children)
       {
         control.Render(timePassed);
       }
-			
-			if(_animator != null && _animator.IsDone())
-			{
-				ReStorePosition();
-				_animator = null;
-			}
-		}
 
-		public override void FreeResources()
-		{
-			if(_animator != null)
-			{
-				ReStorePosition();
-				_animator = null;
-			}
+      if (_animator != null && _animator.IsDone())
+      {
+        ReStorePosition();
+        _animator = null;
+      }
+      base.Render(timePassed);
+    }
 
-			foreach(GUIControl control in Children)
-				control.FreeResources();
-		}
+    public override void FreeResources()
+    {
+      if (_animator != null)
+      {
+        ReStorePosition();
+        _animator = null;
+      }
 
-		public override void AllocResources()
-		{
+      foreach (GUIControl control in Children)
+        control.FreeResources();
+      base.FreeResources();
+    }
+
+    public override void AllocResources()
+    {
       foreach (GUIControl control in Children)
       {
         control.ParentControl = this;
         control.AllocResources();
       }
-		}
+      base.AllocResources();
+    }
 
-		public override void PreAllocResources()
-		{
-			foreach(GUIControl control in Children)
-				control.PreAllocResources();
-		}
+    public override void PreAllocResources()
+    {
+      foreach (GUIControl control in Children)
+        control.PreAllocResources();
+    }
 
-		public override GUIControl GetControlById(int ID)
-		{
-			foreach(GUIControl control in Children)
-			{
-				GUIControl childControl = control.GetControlById(ID);
+    public override GUIControl GetControlById(int ID)
+    {
+      foreach (GUIControl control in Children)
+      {
+        GUIControl childControl = control.GetControlById(ID);
 
-				if(childControl != null)
-					return childControl;
-			}
+        if (childControl != null)
+          return childControl;
+      }
 
-			return null;
-		}
+      return null;
+    }
 
-		public override bool NeedRefresh()
-		{
-			foreach(GUIControl control in Children)
-			{
-				if(control.NeedRefresh())
-					return true;
-			}
+    public override bool NeedRefresh()
+    {
+      foreach (GUIControl control in Children)
+      {
+        if (control.NeedRefresh())
+          return true;
+      }
 
-			return false;
-		}
+      return false;
+    }
 
-		public override bool HitTest(int x, int y, out int controlID, out bool focused)
-		{
-			controlID=-1;
-			focused=false;
+    public override bool HitTest(int x, int y, out int controlID, out bool focused)
+    {
+      controlID = -1;
+      focused = false;
 
-			for(int index = Children.Count - 1; index >= 0; index--)
-			{
-				if((((GUIControl)Children[index])).HitTest(x, y, out controlID, out focused))
-					return true;
-			}
+      for (int index = Children.Count - 1; index >= 0; index--)
+      {
+        if ((((GUIControl)Children[index])).HitTest(x, y, out controlID, out focused))
+          return true;
+      }
 
-			return false;
-		}
+      return false;
+    }
 
-		public override void OnAction(Action action)
-		{
-			foreach(GUIControl control in Children)
-			{
-				if(control.Focus)
-					control.OnAction(action);
-			}
-		}
+    public override void OnAction(Action action)
+    {
+      foreach (GUIControl control in Children)
+      {
+        if (control.Focus)
+          control.OnAction(action);
+      }
+    }
 
-		public void Remove(int controlId)
-		{
-			foreach(GUIControl control in Children)
-			{
-				if(control is GUIGroup)
-				{
-					((GUIGroup)control).Remove(controlId);
-					break;
-				}
-				else if(control.GetID == controlId)
-				{
-					Children.Remove(control);
-					break;
-				}
-			}
-		}
+    public void Remove(int controlId)
+    {
+      foreach (GUIControl control in Children)
+      {
+        if (control is GUIGroup)
+        {
+          ((GUIGroup)control).Remove(controlId);
+          break;
+        }
+        else if (control.GetID == controlId)
+        {
+          Children.Remove(control);
+          break;
+        }
+      }
+    }
 
-		public int GetFocusControlId()
-		{
-			foreach(GUIControl control in Children)
-			{
-				if(control is GUIGroup)
-				{
-					int focusedId = ((GUIGroup)control).GetFocusControlId();
+    public int GetFocusControlId()
+    {
+      foreach (GUIControl control in Children)
+      {
+        if (control is GUIGroup)
+        {
+          int focusedId = ((GUIGroup)control).GetFocusControlId();
 
-					if(focusedId != -1)
-						return focusedId;
-				}
-				else if(control.Focus)
-				{
-					return control.GetID;
-				}
-			}
+          if (focusedId != -1)
+            return focusedId;
+        }
+        else if (control.Focus)
+        {
+          return control.GetID;
+        }
+      }
 
-			return -1;
-		}
+      return -1;
+    }
 
-		public override void DoUpdate()
-		{
-			foreach(GUIControl control in Children)
-				control.DoUpdate();
-		}
-    
-		public override void StorePosition()
-		{
-			foreach(GUIControl control in Children)
-				control.StorePosition();
-      
-			base.StorePosition();
-		}
+    public override void DoUpdate()
+    {
+      foreach (GUIControl control in Children)
+        control.DoUpdate();
+    }
 
-		public override void ReStorePosition()
-		{
-			foreach(GUIControl control in Children)
-				control.ReStorePosition();
-      
-			base.ReStorePosition();
-		}
+    public override void StorePosition()
+    {
+      foreach (GUIControl control in Children)
+        control.StorePosition();
 
-		public override void Animate(float timePassed,Animator animator)
-		{
-			foreach(GUIControl control in Children)
-				control.Animate(timePassed, animator);
+      base.StorePosition();
+    }
 
-			base.Animate(timePassed, animator);
-		}
+    public override void ReStorePosition()
+    {
+      foreach (GUIControl control in Children)
+        control.ReStorePosition();
 
-		#endregion Methods
+      base.ReStorePosition();
+    }
 
-		#region Properties
+    public override void Animate(float timePassed, Animator animator)
+    {
+      foreach (GUIControl control in Children)
+        control.Animate(timePassed, animator);
 
-		public Animator.AnimationType Animation
-		{
-			get { return _animatorType; }
-			set { _animatorType = value; }
-		}
+      base.Animate(timePassed, animator);
+    }
 
-		public int Count
-		{
-			get { return Children.Count; }
-		}
+    #endregion Methods
 
-		public GUIControl this[int index]
-		{
-			get { return (GUIControl)Children[index]; }
-		}
+    #region Properties
 
-		/// <summary>
-		/// Property to get/set the id of the window 
-		/// to which this control belongs
-		/// </summary>
-		public override int WindowId
-		{
-			get { return base.WindowId; }
-			set { base.WindowId = value; foreach(GUIControl control in Children) control.WindowId = value; }
-		}
+    public Animator.AnimationType Animation
+    {
+      get { return _animatorType; }
+      set { _animatorType = value; }
+    }
 
-		#endregion Properties
+    public int Count
+    {
+      get { return Children.Count; }
+    }
 
-		////////////////////////////
-		
-		#region Methods
+    public GUIControl this[int index]
+    {
+      get { return (GUIControl)Children[index]; }
+    }
 
-		void IAddChild.AddChild(object value)
-		{
-			if(value is GUIControl == false)
-				return;
+    /// <summary>
+    /// Property to get/set the id of the window 
+    /// to which this control belongs
+    /// </summary>
+    public override int WindowId
+    {
+      get { return base.WindowId; }
+      set { base.WindowId = value; foreach (GUIControl control in Children) control.WindowId = value; }
+    }
+
+    #endregion Properties
+
+    ////////////////////////////
+
+    #region Methods
+
+    void IAddChild.AddChild(object value)
+    {
+      if (value is GUIControl == false)
+        return;
       GUIControl cntl = (GUIControl)value;
       cntl.DimColor = DimColor;
-			Children.Add(cntl);
-		}
+      Children.Add(cntl);
+    }
 
-		void IAddChild.AddText(string text)
-		{
-		}
+    void IAddChild.AddText(string text)
+    {
+    }
 
-		protected void Arrange()
-		{
-			if(_beginInitCount != 0)
-				return;
+    protected void Arrange()
+    {
+      if (_beginInitCount != 0)
+        return;
 
-			if(_layout == null)
-				return;
+      if (_layout == null)
+        return;
 
-			this.Size = _layout.Measure(this, this.Size);
+      this.Size = _layout.Measure(this, this.Size);
 
-			_layout.Arrange(this);
-		}
+      _layout.Arrange(this);
+    }
 
-		protected override Size ArrangeOverride(Rect finalRect)
-		{
-			this.Location = finalRect.Location;
-			this.Size = finalRect.Size;
+    protected override Size ArrangeOverride(Rect finalRect)
+    {
+      this.Location = finalRect.Location;
+      this.Size = finalRect.Size;
 
-			if(_layout == null)
-				return this.Size;
+      if (_layout == null)
+        return this.Size;
 
-			_layout.Arrange(this);
+      _layout.Arrange(this);
 
-			return finalRect.Size;
-		}
+      return finalRect.Size;
+    }
 
-		void ISupportInitialize.BeginInit()
-		{
-			_beginInitCount++;
-		}
+    void ISupportInitialize.BeginInit()
+    {
+      _beginInitCount++;
+    }
 
-		void ISupportInitialize.EndInit()
-		{
-			if(--_beginInitCount == 0)
-				Arrange();
-		}
+    void ISupportInitialize.EndInit()
+    {
+      if (--_beginInitCount == 0)
+        Arrange();
+    }
 
-		protected override Size MeasureOverride(Size availableSize)
-		{
-			if(_layout == null)
-				return Size.Empty;
+    protected override Size MeasureOverride(Size availableSize)
+    {
+      if (_layout == null)
+        return Size.Empty;
 
-			_layout.Measure(this, this.Size);
+      _layout.Measure(this, this.Size);
 
-			return this.Size = _layout.Size;
-		}
+      return this.Size = _layout.Size;
+    }
 
     public override int DimColor
     {
@@ -355,37 +359,79 @@ namespace MediaPortal.GUI.Library
     }
 
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public ILayout Layout
-		{
-			get { return _layout; }
-			set { _layout = value; }
-		}
+    public ILayout Layout
+    {
+      get { return _layout; }
+      set { _layout = value; }
+    }
 
-		public UIElementCollection Children
-		{
-			get { if(_children == null) _children = new UIElementCollection(); return _children; }
-		}
+    public UIElementCollection Children
+    {
+      get { if (_children == null) _children = new UIElementCollection(); return _children; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		Animator					_animator;
-		int							_beginInitCount = 0;
-		UIElementCollection			_children;
+    Animator _animator;
+    int _beginInitCount = 0;
+    UIElementCollection _children;
 
-		[XMLSkinElement("layout")]
-		ILayout						_layout;
+    [XMLSkinElement("layout")]
+    ILayout _layout;
 
-		[XMLSkinElement("animation")]
-		Animator.AnimationType		_animatorType = Animator.AnimationType.None;
+    [XMLSkinElement("animation")]
+    Animator.AnimationType _animatorType = Animator.AnimationType.None;
 
-		bool						_startAnimation;
+    bool _startAnimation;
 
-		#endregion Fields
-	}
+    #endregion Fields
+
+    public override void QueueAnimation(AnimationType animType)
+    {
+      foreach (GUIControl control in Children)
+      {
+        if (control != null) control.QueueAnimation(animType);
+      }
+    }
+    public override VisualEffect GetAnimation(AnimationType type, bool checkConditions /* = true */)
+    {
+      foreach (GUIControl control in Children)
+      {
+        if (control != null)
+        {
+          VisualEffect effect = control.GetAnimation(type, checkConditions);
+          if (effect != null) return effect;
+        }
+      }
+      return null;
+    }
+    public override bool IsEffectAnimating(AnimationType animType)
+    {
+      foreach (GUIControl control in Children)
+      {
+        if (control != null)
+        {
+          bool yes = control.IsEffectAnimating(animType);
+          if (yes) return true;
+        }
+      }
+      return false;
+    }
+    public override void UpdateEffectState(uint currentTime)
+    {
+      foreach (GUIControl control in Children)
+      {
+        if (control != null)
+        {
+          control.UpdateEffectState(currentTime);
+        }
+      }
+    }
+  }
 }

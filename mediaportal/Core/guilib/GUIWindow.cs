@@ -158,7 +158,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_SETTINGS_TV_EPG = 706,
       WINDOW_SETTINGS_TV_EPG_MAPPING = 707,
       WINDOW_SETTINGS_SKIPSTEPS = 708, // by rtv
-      WINDOW_SETTINGS_TVENGINE=709,
+      WINDOW_SETTINGS_TVENGINE = 709,
       WINDOW_TV_PROGRAM_INFO = 748,
       WINDOW_TV_NO_SIGNAL = 749,
       WINDOW_MY_RECIPIES = 750,
@@ -203,7 +203,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_TVZAPOSD = 3007,
       WINDOW_VIDEO_OVERLAY_TOP = 3008,
       WINDOW_MINI_GUIDE = 3009,
-			WINDOW_ACTIONMENU = 3010,
+      WINDOW_ACTIONMENU = 3010,
       WINDOW_TV_CROP_SETTINGS = 3011,
       WINDOW_TELETEXT = 7700,
       WINDOW_FULLSCREEN_TELETEXT = 7701,
@@ -247,6 +247,12 @@ namespace MediaPortal.GUI.Library
     bool _isSkinLoaded = false;
     bool _shouldRestore = false;
     private string _lastSkin = string.Empty;
+    bool _windowAllocated;
+    bool _hasRendered = false;
+
+    VisualEffect _showAnimation = new VisualEffect();   // for dialogs
+    VisualEffect _closeAnimation = new VisualEffect();
+
     #endregion
 
     #region ctor
@@ -261,7 +267,8 @@ namespace MediaPortal.GUI.Library
     /// Constructor
     /// </summary>
     /// <param name="strXMLFile">filename of xml skin file which belongs to this window</param>
-    public GUIWindow(string skinFile) : this()
+    public GUIWindow(string skinFile)
+      : this()
     {
       if (skinFile == null) return;
       _previousWindowId = -1;
@@ -427,6 +434,9 @@ namespace MediaPortal.GUI.Library
       if (_windowXmlFileName == "") return false;
       // TODO what is the reason for this check
       if (Children.Count > 0) return false;
+      _showAnimation.Reset();
+      _closeAnimation.Reset();
+
       _defaultControlId = 0;
       // Load the reference controls
       //int iPos = _windowXmlFileName.LastIndexOf('\\');
@@ -449,6 +459,22 @@ namespace MediaPortal.GUI.Library
         string root = doc.DocumentElement.Name;
         // Check root element
         if (root != "window") return false;
+
+        XmlNodeList nodeListAnimations = doc.DocumentElement.SelectNodes("/window/animation");
+        if (nodeListAnimations != null)
+        {
+          foreach (XmlNode nodeAnimation in nodeListAnimations)
+          {
+            if (nodeAnimation.InnerText.ToLower() == "windowopen")
+            {
+              _showAnimation.Create(nodeAnimation);
+            }
+            if (nodeAnimation.InnerText.ToLower() == "windowclose")
+            {
+              _closeAnimation.Create(nodeAnimation);
+            }
+          }
+        }
         // Load id value
         XmlNode nodeId = doc.DocumentElement.SelectSingleNode("/window/id");
         if (nodeId == null) return false;
@@ -712,8 +738,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public virtual bool IsOverlayAllowed
     {
-      get { return _isOverlayAllowed;  }
-			set { _isOverlayAllowed = value; }
+      get { return _isOverlayAllowed; }
+      set { _isOverlayAllowed = value; }
     }
 
     /// <summary>
@@ -748,9 +774,21 @@ namespace MediaPortal.GUI.Library
     {
       if (_isSkinLoaded && (_lastSkin != GUIGraphicsContext.Skin))
         LoadSkin();
+
+      QueueAnimation(AnimationType.WindowOpen);
     }
     protected virtual void OnPageDestroy(int new_windowId)
     {
+      // Dialog animations are handled in Close() rather than here
+      if (HasAnimation(AnimationType.WindowClose) && !IsDialog)
+      {
+        // Perform the window out effect
+        QueueAnimation(AnimationType.WindowClose);
+        while (IsAnimating(AnimationType.WindowClose))
+        {
+          GUIWindowManager.Process();
+        }
+      }
     }
     protected virtual void OnShowContextMenu()
     {
@@ -820,6 +858,7 @@ namespace MediaPortal.GUI.Library
       {
         Log.Error("AllocResources exception:{0}", ex.ToString());
       }
+      _windowAllocated = true;
     }
 
     /// <summary>
@@ -828,6 +867,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public virtual void FreeResources()
     {
+
+      _windowAllocated = false;
       try
       {
         // tell every control to free its resources
@@ -1013,9 +1054,16 @@ namespace MediaPortal.GUI.Library
             }
             font = null;
           }
+          uint currentTime = (uint)(DXUtil.Timer(DirectXTimer.GetAbsoluteTime) * 1000.0);
+          // render our window animation - returns false if it needs to stop rendering
+          if (!RenderAnimation(currentTime))
+            return;
 
           foreach (GUIControl control in Children)
+          {
+            control.UpdateEffectState(currentTime);
             control.Render(timePassed);
+          }
 
           GUIWaitCursor.Render();
         }
@@ -1024,6 +1072,7 @@ namespace MediaPortal.GUI.Library
           Log.Error("render exception:{0}", ex.ToString());
         }
       }
+      _hasRendered = true;
     }
 
     /// <summary>
@@ -1139,7 +1188,7 @@ namespace MediaPortal.GUI.Library
       if (message == null) return true;
       //lock (this)
       AnimationTrigger(message);
-			int id;
+      int id;
       {
         try
         {
@@ -1188,7 +1237,7 @@ namespace MediaPortal.GUI.Library
                   AllocResources();
 
                 }
-                
+
                 InitControls();
 
                 GUIGraphicsContext.Overlay = _isOverlayAllowed;
@@ -1321,7 +1370,7 @@ namespace MediaPortal.GUI.Library
         {
           // no control selected
           //LooseFocus();
-					control.Focus = false;
+          control.Focus = false;
         }
       }
     }
@@ -1343,8 +1392,8 @@ namespace MediaPortal.GUI.Library
 
     void TemporaryAnimationTrigger()
     {
-//BAV: Testing
-return;      
+      //BAV: Testing
+      return;
       //if (_children == null)
       //  return;
 
@@ -1356,16 +1405,16 @@ return;
       //}
     }
 
-		void AnimationTrigger(GUIMessage message)
-		{
-			if (_children == null) return;
-		
-			foreach (UIElement element in _children)
-			{
-				if (element is GUIAnimation)
-					((GUIAnimation)element).OnMessage(message);
-			}
-		}
+    void AnimationTrigger(GUIMessage message)
+    {
+      if (_children == null) return;
+
+      foreach (UIElement element in _children)
+      {
+        if (element is GUIAnimation)
+          ((GUIAnimation)element).OnMessage(message);
+      }
+    }
 
     #endregion
 
@@ -1394,6 +1443,102 @@ return;
     public virtual void OnAdded()
     {
     }
+    #region effects
+
+
+    bool RenderAnimation(uint time)
+    {
+      TransformMatrix transform = new TransformMatrix();
+      // show animation
+      _showAnimation.Animate(time, true);
+      UpdateStates(_showAnimation.AnimationType, _showAnimation.CurrentProcess, _showAnimation.CurrentState);
+      _showAnimation.RenderAnimation(ref transform);
+      // close animation
+      _closeAnimation.Animate(time, true);
+      UpdateStates(_closeAnimation.AnimationType, _closeAnimation.CurrentProcess, _closeAnimation.CurrentState);
+      _closeAnimation.RenderAnimation(ref transform);
+      GUIGraphicsContext.SetWindowTransform(transform);
+      return true;
+    }
+    void UpdateStates(AnimationType type, AnimationProcess currentProcess, AnimationState currentState)
+    {
+    }
+    bool HasAnimation(AnimationType animType)
+    {
+      if (_showAnimation.AnimationType == AnimationType.WindowOpen)
+        return true;
+      else if (_closeAnimation.AnimationType == AnimationType.WindowClose)
+        return true;
+      // Now check the controls to see if we have this animation
+      foreach (GUIControl control in Children)
+        if (control.GetAnimation(animType, true) != null) return true;
+      return false;
+    }
+
+    void QueueAnimation(AnimationType animType)
+    {
+      if (animType == AnimationType.WindowOpen)
+      {
+        if (_closeAnimation.CurrentProcess == AnimationProcess.Normal && _closeAnimation.IsReversible)
+        {
+          _closeAnimation.QueuedProcess = AnimationProcess.Reverse;
+          _showAnimation.ResetAnimation();
+        }
+        else
+        {
+          if (0 == _showAnimation.Condition /*|| g_infoManager.GetBool(_showAnimation.condition, GetID())*/)
+            _showAnimation.QueuedProcess = AnimationProcess.Normal;
+          _closeAnimation.ResetAnimation();
+        }
+      }
+      if (animType == AnimationType.WindowClose)
+      {
+        if (!_windowAllocated || !_hasRendered) // can't render an animation if we aren't allocated or haven't rendered
+          return;
+        if (_showAnimation.CurrentProcess == AnimationProcess.Normal && _showAnimation.IsReversible)
+        {
+          _showAnimation.QueuedProcess = AnimationProcess.Reverse;
+          _closeAnimation.ResetAnimation();
+        }
+        else
+        {
+          if (0 == _closeAnimation.Condition /*|| g_infoManager.GetBool(_closeAnimation.condition, GetID())*/)
+            _closeAnimation.QueuedProcess = AnimationProcess.Normal;
+          _showAnimation.ResetAnimation();
+        }
+      }
+      foreach (GUIControl control in Children)
+      {
+        control.QueueAnimation(animType);
+      }
+    }
+
+    bool IsAnimating(AnimationType animType)
+    {
+      if (animType == AnimationType.WindowOpen)
+      {
+        if (_showAnimation.QueuedProcess == AnimationProcess.Normal) return true;
+        if (_showAnimation.CurrentProcess == AnimationProcess.Normal) return true;
+        if (_closeAnimation.QueuedProcess == AnimationProcess.Reverse) return true;
+        if (_closeAnimation.CurrentProcess == AnimationProcess.Reverse) return true;
+      }
+      else if (animType == AnimationType.WindowClose)
+      {
+        if (_closeAnimation.QueuedProcess == AnimationProcess.Normal) return true;
+        if (_closeAnimation.CurrentProcess == AnimationProcess.Normal) return true;
+        if (_showAnimation.QueuedProcess == AnimationProcess.Reverse) return true;
+        if (_showAnimation.CurrentProcess == AnimationProcess.Reverse) return true;
+      }
+      foreach (GUIControl control in Children)
+      {
+        if (control.IsEffectAnimating(animType)) return true;
+      }
+      return false;
+    }
+
+
+
+    #endregion
     /// XAML related code follows
 
     #region Properties

@@ -370,17 +370,20 @@ namespace MediaPortal.GUI.Library
       return control;
     }
 
-    private static void UpdateControlWithXmlData(GUIControl control,
-      Type controlType,
-      XmlNode pControlNode, IDictionary defines)
+    private static void UpdateControlWithXmlData(GUIControl control, Type controlType, XmlNode pControlNode, IDictionary defines)
     {
       Hashtable membersThatCanBeUpdated = GetMembersToUpdate(controlType);
-
+      List<VisualEffect> animations = new List<VisualEffect>();
       XmlNodeList childNodes = pControlNode.ChildNodes;
       foreach (XmlNode element in childNodes)
       {
-        MemberInfo correspondingMember =
-          membersThatCanBeUpdated[element.Name] as MemberInfo;
+        if (element.Name == "animation")
+        {
+          VisualEffect effect=new VisualEffect();
+          effect.Create(element);
+          animations.Add(effect);
+        }
+        MemberInfo correspondingMember = membersThatCanBeUpdated[element.Name] as MemberInfo;
 
         if (correspondingMember != null)
         {
@@ -441,6 +444,7 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
+      control.SetAnimations(animations);
     }
 
     private static void AddSubitemsToControl(XmlNode subItemsNode, GUIControl control)
@@ -533,8 +537,8 @@ namespace MediaPortal.GUI.Library
           return typeof(GUIPlayListItemListControl);
         case ("gridcontrol"):
           return typeof(GUIGridControl);
-				case ("actiongroup"):
-					return typeof(GUIActionGroup);
+        case ("actiongroup"):
+          return typeof(GUIActionGroup);
         case ("menu"):
           return typeof(GUIMenuControl);
         default:

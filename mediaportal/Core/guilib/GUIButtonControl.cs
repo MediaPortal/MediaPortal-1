@@ -231,6 +231,7 @@ namespace MediaPortal.GUI.Library
 
       _labelControl.SetPosition(x, _textOffsetY + _positionY);
       _labelControl.Render(timePassed);
+      base.Render(timePassed);
     }
 
     /// <summary>
@@ -337,7 +338,6 @@ namespace MediaPortal.GUI.Library
 
       if (_hoverImage != null)
         _hoverImage.PreAllocResources();
-
     }
 
     /// <summary>

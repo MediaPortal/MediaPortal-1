@@ -1226,7 +1226,7 @@ public class MediaPortalApp : D3DApp, IRender
         //Log.Info("dx9 device=null");//remove
         return;
       }
-
+      MediaPortal.GUI.Library.GUIGraphicsContext.SetScalingResolution(0, 0, false);
 
       //Log.Info("render frame:{0}",frames);//remove
       ++frames;

@@ -279,6 +279,8 @@
     <Compile Include="guilib\GUIMenuControl.cs" />
     <Compile Include="guilib\GUIPlayListItemListControl.cs" />
     <Compile Include="guilib\GUIPlayListtButtonControl.cs" />
+    <Compile Include="guilib\TransformMatrix.cs" />
+    <Compile Include="guilib\VisualEffect.cs" />
     <Compile Include="ServiceImplementations\LogImpl.cs" />
     <Compile Include="MusicPlayer\BASS\BassAudio.cs" />
     <Compile Include="MusicPlayer\Visualization\IVisualization.cs" />

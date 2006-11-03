@@ -528,6 +528,7 @@ namespace MediaPortal.GUI.Library
         }
         // Set state to render the image
         _reCalculate = true;
+        base.AllocResources();
       }
       finally
       {
@@ -599,6 +600,7 @@ namespace MediaPortal.GUI.Library
           }
         }
         Cleanup();
+        base.FreeResources();
       }
     }
 
@@ -1052,6 +1054,7 @@ namespace MediaPortal.GUI.Library
         _vmax = _vmax * _texVmax;
       }
       Render(timePassed);
+      base.Render(timePassed);
     }
     /// <summary>
     /// Renders the Image
@@ -1108,13 +1111,23 @@ namespace MediaPortal.GUI.Library
       //get the current frame
       if (_packedTextureNo >= 0)
       {
+        float x = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_fx, _fy) + 0.5f) - 0.5f;
+        float y = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_fx, _fy) + 0.5f) - 0.5f;
+        float nw = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_nw, _nh) + 0.5f) - 0.5f;
+        float nh = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_nw, _nh) + 0.5f) - 0.5f;
+        uint color = (uint)_diffuseColor;
         if (Dimmed)
-          FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)(_diffuseColor & DimColor));
-        else
-          FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)_diffuseColor);
+          color = (uint)(_diffuseColor & DimColor);
+        color = GUIGraphicsContext.MergeAlpha(color);
+        FontEngineDrawTexture(_packedTextureNo, x, y, nw, nh, _uoff, _voff, _umax, _vmax, (int)color);
+
+        //if (Dimmed)
+        //  FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)(_diffuseColor & DimColor));
+        //else
+        //  FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)_diffuseColor);
+        base.Render(timePassed);
         return;
       }
-
       else if (_listTextures != null)
       {
         if (_listTextures.Length > 0)
@@ -1133,11 +1146,23 @@ namespace MediaPortal.GUI.Library
             AllocResources();
             return;
           }
+
+          float x = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_fx, _fy) + 0.5f) - 0.5f;
+          float y = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_fx, _fy) + 0.5f) - 0.5f;
+          float nw = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_nw, _nh) + 0.5f) - 0.5f;
+          float nh = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_nw, _nh) + 0.5f) - 0.5f;
+          uint color = (uint)_diffuseColor;
           if (Dimmed)
-            frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)(_diffuseColor & DimColor));
-          else
-            frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)_diffuseColor);
+            color = (uint)(_diffuseColor & DimColor);
+          color = GUIGraphicsContext.MergeAlpha(color);
+          frame.Draw( x, y, nw, nh, _uoff, _voff, _umax, _vmax, (int)color);
+
+          //if (Dimmed)
+          //  frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)(_diffuseColor & DimColor));
+          //else
+          //  frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)_diffuseColor);
           frame = null;
+          base.Render(timePassed);
         }
       }
     }
