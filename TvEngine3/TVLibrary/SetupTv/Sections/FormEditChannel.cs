@@ -82,7 +82,7 @@ namespace SetupTv.Sections
         if (detail.ChannelType == 0)
         {
           detail.ChannelNumber = Int32.Parse(textBoxChannel.Text);
-          detail.CountryId = countries.Countries[comboBoxCountry.SelectedIndex].Id;
+          detail.CountryId = comboBoxCountry.SelectedIndex;
           if (comboBoxInput.SelectedIndex == 1)
             detail.TuningSource = (int)TunerInputType.Cable;
           else
@@ -178,16 +178,9 @@ namespace SetupTv.Sections
         {
           _analog = true;
           textBoxChannel.Text = detail.ChannelNumber.ToString();
-          for (int i = 0; i < countries.Countries.Length; ++i)
-          {
-            if (detail.CountryId == countries.Countries[i].Id)
-            {
-              comboBoxCountry.SelectedIndex = i;
-              break;
-            }
-            if (detail.TuningSource == (int)TunerInputType.Cable)
-              comboBoxInput.SelectedIndex = 1;
-          }
+          if (detail.TuningSource == (int)TunerInputType.Cable)
+            comboBoxInput.SelectedIndex = 1;
+          comboBoxCountry.SelectedIndex = detail.CountryId;
           comboBoxVideoSource.SelectedIndex = detail.VideoSource;
           textBoxAnalogFrequency.Text = SetFrequency(detail.Frequency);
         }
@@ -259,7 +252,7 @@ namespace SetupTv.Sections
           if (_analog == false)
           {
             tabControl1.SelectedIndex = 0;
-            MessageBox.Show(this,"No analog tuning details available for this channel");
+            MessageBox.Show(this, "No analog tuning details available for this channel");
           }
           break;
         case 2:

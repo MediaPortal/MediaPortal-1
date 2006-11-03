@@ -30,6 +30,7 @@ namespace TvLibrary
   public class Country
   {
     int _id;
+    int _index;
     string _name;
     string _code;
 
@@ -47,6 +48,21 @@ namespace TvLibrary
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="T:Country"/> class.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    /// <param name="country">The country.</param>
+    /// <param name="code">The code.</param>
+    /// <param name="code">country index.</param>
+    public Country(int id, string country, string code, int index)
+    {
+      _id = id;
+      _name = country;
+      _code = code;
+      _index = index;
+    }
+
+    /// <summary>
     /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </summary>
     /// <returns>
@@ -55,6 +71,22 @@ namespace TvLibrary
     public override string ToString()
     {
       return _name;
+    }
+
+    /// <summary>
+    /// Gets the index.
+    /// </summary>
+    /// <value>The index.</value>
+    public int Index
+    {
+      get
+      {
+        return _index;
+      }
+      set
+      {
+        _index = value;
+      }
     }
 
     /// <summary>

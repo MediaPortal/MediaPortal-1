@@ -192,7 +192,7 @@ namespace TvDatabase
           case 0: //AnalogChannel
             AnalogChannel analogChannel = new AnalogChannel();
             analogChannel.ChannelNumber = detail.ChannelNumber;
-            analogChannel.Country = collection.GetTunerCountryFromID(detail.CountryId);
+            analogChannel.Country = collection.Countries[detail.CountryId];
             analogChannel.Frequency = detail.Frequency;
             analogChannel.IsRadio = detail.IsRadio;
             analogChannel.IsTv = detail.IsTv;
@@ -329,7 +329,7 @@ namespace TvDatabase
         channelName = analogChannel.Name;
         channelFrequency = analogChannel.Frequency;
         channelNumber = analogChannel.ChannelNumber;
-        country = analogChannel.Country.Id;
+        country = analogChannel.Country.Index;
         isRadio = analogChannel.IsRadio;
         isTv = analogChannel.IsTv;
         tunerSource = (int)analogChannel.TunerSource;

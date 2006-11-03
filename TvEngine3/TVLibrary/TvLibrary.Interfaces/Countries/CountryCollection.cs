@@ -262,6 +262,14 @@ namespace TvLibrary
     };
 #endregion
 
+    public CountryCollection()
+    {
+      int index = 0;
+      foreach (Country country in _countryList)
+      {
+        country.Index = index++;
+      }
+    }
     /// <summary>
     /// Returns a country specified by name
     /// </summary>
