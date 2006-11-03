@@ -80,6 +80,8 @@
     <Compile Include="teletext\TeletextPageRenderer.cs" />
     <Compile Include="teletext\TvFullscreenTeletext.cs" />
     <Compile Include="TvChannelSettings.cs" />
+    <Compile Include="TvCropManager.cs" />
+    <Compile Include="TvCropSettings.cs" />
     <Compile Include="TvEpgSettings.cs" />
     <Compile Include="TvFullScreen.cs" />
     <Compile Include="TVGuide.cs" />

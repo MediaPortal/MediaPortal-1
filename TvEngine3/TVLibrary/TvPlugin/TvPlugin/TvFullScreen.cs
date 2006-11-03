@@ -1275,6 +1275,7 @@ namespace TvPlugin
       {
         dlg.AddLocalizedString(492); // Audio language menu
       }
+      dlg.AddLocalizedString(11000); // Crop settings
       dlg.AddLocalizedString(970); // Previous window
 
       _isDialogVisible = true;
@@ -1400,6 +1401,12 @@ namespace TvPlugin
           GUIWindowManager.IsOsdVisible = false;
           GUIGraphicsContext.IsFullScreenVideo = false;
           GUIWindowManager.ShowPreviousWindow();
+          break;
+        case 11000:
+          TvCropSettings cropSettings = (TvCropSettings)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV_CROP_SETTINGS);
+          _isDialogVisible = true;
+          cropSettings.DoModal(GetID);
+          _isDialogVisible = false;
           break;
       }
     }
