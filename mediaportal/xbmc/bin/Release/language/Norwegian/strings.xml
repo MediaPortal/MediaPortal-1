@@ -395,7 +395,7 @@
    </string>
    <string>
       <id>167</id>
-      <value>FTP server:</value>
+      <value>FTP-server:</value>
    </string>
    <string>
       <id>168</id>
@@ -543,7 +543,7 @@
    </string>
    <string>
       <id>204</id>
-      <value>Rating:</value>
+      <value>Vurdering:</value>
    </string>
    <string>
       <id>205</id>
@@ -1191,7 +1191,7 @@
    </string>
    <string>
       <id>367</id>
-      <value>Sorter etter: Rating</value>
+      <value>Sorter etter: Vurdering</value>
    </string>
    <string>
       <id>368</id>
@@ -1417,6 +1417,7 @@
       <id>426</id>
       <value>Ingen CDDB info funnet.</value>
    </string>
+
    <string>
       <id>427</id>
       <value>Disc:</value>
@@ -1635,7 +1636,7 @@
    </string>
    <string>
       <id>481</id>
-      <value>Audioinnstillinger</value>
+      <value>Lydinnstillinger</value>
    </string>
    <string>
       <id>482</id>
@@ -2371,11 +2372,11 @@
    </string>
    <string>
       <id>718</id>
-      <value>Slette Top 100</value>
+      <value>Slette Topp 100</value>
    </string>
    <string>
       <id>719</id>
-      <value>Er du sikker på at du vil nullstille Top 100 listen?</value>
+      <value>Er du sikker på at du vil nullstille Topp 100-listen?</value>
    </string>
    <string>
       <id>720</id>
@@ -2755,7 +2756,7 @@
    </string>
    <string>
       <id>866</id>
-      <value>Minske volum over tid</value>
+      <value>Demp volum over tid</value>
    </string>
    <string>
       <id>867</id>
@@ -3135,7 +3136,7 @@
    </string>
    <string>
       <id>961</id>
-      <value>MSN Status</value>
+      <value>MSN-status</value>
    </string>
    <string>
       <id>970</id>
@@ -3155,7 +3156,7 @@
    </string>
    <string>
       <id>974</id>
-      <value>Topp Meny</value>
+      <value>Toppmeny</value>
    </string>
    <string>
       <id>975</id>
@@ -3179,7 +3180,7 @@
    </string>
    <string>
       <id>980</id>
-      <value>Spill opptak fra "live" punktet</value>
+      <value>Spill opptak fra "live"-punktet</value>
    </string>
    <string>
       <id>981</id>
@@ -3287,7 +3288,7 @@
    </string>
    <string>
       <id>1007</id>
-      <value>Stop opptaket og fortsett å se på TV</value>
+      <value>Stopp opptaket og fortsett å se på TV</value>
    </string>
    <string>
       <id>1008</id>
@@ -3407,7 +3408,7 @@
    </string>
    <string Prefix="Min ">
       <id>1037</id>
-      <value>TV-program informasjon</value>
+      <value>TV-programinformasjon</value>
    </string>
    <string>
       <id>1038</id>
@@ -3579,7 +3580,7 @@
    </string>
    <string>
       <id>1958</id>
-      <value>CPU bruk</value>
+      <value>CPU-bruk</value>
    </string>
    <string>
       <id>1959</id>
@@ -3591,7 +3592,7 @@
    </string>
    <string>
       <id>1961</id>
-      <value>Klokke frekvens</value>
+      <value>Klokkefrekvens</value>
    </string>
    <string>
       <id>1962</id>
@@ -3717,7 +3718,6 @@
       <id>2018</id>
       <value>kopp</value>
    </string>
-
    <string>
       <id>2019</id>
       <value>halvliter</value>
@@ -3800,11 +3800,11 @@
    </string>
    <string>
       <id>2039</id>
-      <value>mililiter</value>
+      <value>milliliter</value>
    </string>
    <string>
       <id>2040</id>
-      <value>mililiter</value>
+      <value>milliliter</value>
    </string>
    <string>
       <id>2041</id>
@@ -3880,11 +3880,11 @@
   </string>
 	 <string>
 		<id>2069</id>
-		<value>Ferdig med å lime sammen video filene</value>
+		<value>Ferdig med å lime sammen videofilene</value>
 	</string>
 	<string>
 		<id>2070</id>
-		<value>Ferdig med å konvertere video filen</value>
+		<value>Ferdig med å konvertere videofilen</value>
 	</string>
 	<string>
 		<id>2071</id>
@@ -3956,7 +3956,7 @@
    </string>
    <string>
       <id>2088</id>
-      <value>Kutte liste:</value>
+      <value>Kutteliste:</value>
    </string>
    <string>
       <id>2089</id>
@@ -3980,7 +3980,7 @@
    </string>
    <string>
       <id>2094</id>
-      <value>Video liste</value>
+      <value>Videoliste</value>
    </string>
    <string>
       <id>2095</id>
@@ -4174,6 +4174,10 @@
       <id>2143</id>
       <value>Hjem</value>
    </string>
+  <string>
+    <id>2144</id>
+    <value>Start Brenning</value>
+  </string>
    <string Prefix="Min ">
       <id>2200</id>
       <value>Utforsker</value>
@@ -4313,7 +4317,7 @@
 	</string>
 	<string>
 		<id>2508</id>
-		<value>Ingen bilde refferanse fra denne artikkel.</value>
+		<value>Ingen bildereferanse fra denne artikkel.</value>
 	</string>
 	<string>
 		<id>2509</id>
@@ -4321,7 +4325,7 @@
 	</string>
 	<string>
 		<id>2510</id>
-		<value>Vennligst velg videreføring fra link listen.</value>
+		<value>Vennligst velg videreføring fra linklisten.</value>
 	</string>
 <string>
 		<id>2511</id>
@@ -4333,7 +4337,7 @@
 	</string>
 	<string>
 		<id>2513</id>
-		<value>Vennlighst ta en titt i log filen.</value>
+		<value>Vennligst ta en titt i loggfilen.</value>
 	</string>
 	<string>
 		<id>2514</id>
@@ -4494,7 +4498,7 @@
    </string>
    <string>
       <id>4003</id>
-      <value>Vennligst spesifiser din favoritt folder i instillinger.</value>
+      <value>Vennligst spesifiser din favorittmappe i instillinger.</value>
    </string>
    <string>
       <id>4500</id>
@@ -4510,7 +4514,7 @@
    </string>
    <string>
       <id>4503</id>
-      <value>Henter album informasjon. Vennligst vent...</value>
+      <value>Henter albuminformasjon. Vennligst vent...</value>
    </string>
    <string>
       <id>4504</id>
@@ -4570,7 +4574,7 @@
    </string>
    <string>
       <id>4518</id>
-      <value>Album tittel ikke funnet\r\nPrøver: {0}</value>
+      <value>Albumtittel ikke funnet\r\nPrøver: {0}</value>
    </string>
    <string>
       <id>4519</id>
@@ -4582,7 +4586,7 @@
    </string>
    <string>
       <id>4521</id>
-      <value>Vis album informasjon</value>
+      <value>Vis albuminformasjon</value>
    </string>
    <string>
       <id>4522</id>
@@ -4622,7 +4626,7 @@
    </string>
    <string>
       <id>4554</id>
-      <value>Hent CD Informasjon</value>
+      <value>Hent CD-informasjon</value>
    </string>
    <string>
       <id>4555</id>
@@ -4634,7 +4638,7 @@
    </string>
    <string Prefix="Mine ">
       <id>5900</id>
-      <value>Forfilmer</value>
+      <value>Trailere</value>
    </string>
    <string>
       <id>5901</id>
@@ -4658,7 +4662,7 @@
    </string>
    <string>
       <id>5906</id>
-      <value>Forfilmer</value>
+      <value>Trailere</value>
    </string>
    <string>
       <id>5907</id>
@@ -4698,17 +4702,15 @@
    </string>
    <string>
       <id>5916</id>
-      <value>Ingen forfilmer ble funnet.</value>
+      <value>Ingen trailere ble funnet.</value>
    </string>
    <string>
       <id>5917</id>
-      <value>Tyske forfilmer</value>
+      <value>Tyske trailere</value>
    </string>
    <string>
       <id>5918</id>
       <value>Télévision Suisse Romande VOD</value>
-
-
    </string>
    <string>
       <id>5919</id>
@@ -4716,7 +4718,7 @@
    </string>
    <string>
       <id>5920</id>
-      <value>Film premierer denne uken</value>
+      <value>Kinopremierer denne uken</value>
    </string>
    <string>
       <id>5921</id>
@@ -4724,19 +4726,19 @@
    </string>
    <string>
       <id>5922</id>
-      <value>Best selgende DVD-er</value>
+      <value>Bestselgende DVD-er</value>
    </string>
    <string>
       <id>5923</id>
-      <value>DVD premierer denne uken</value>
+      <value>DVD-utgivelser denne uken</value>
    </string>
    <string>
       <id>5924</id>
-      <value>DVD premierer neste uke</value>
+      <value>DVD-utgivelser neste uke</value>
    </string>
    <string>
       <id>5925</id>
-      <value>Forhånds bestilte DVD-er</value>
+      <value>Forhåndsbestilte DVD-er</value>
    </string>
    <string>
       <id>6000</id>
@@ -4825,15 +4827,15 @@
    </string>
    <string>
       <id>6021</id>
-      <value>Automatisk blande slideshow</value>
+      <value>Miks slideshow</value>
    </string>
    <string>
       <id>6022</id>
-      <value>Film oppsett</value>
+      <value>Filmoppsett</value>
    </string>
    <string>
       <id>6023</id>
-      <value>Skjerm oppsett</value>
+      <value>Skjermoppsett</value>
    </string>
    <string>
       <id>6024</id>
@@ -4845,7 +4847,7 @@
    </string>
   <string>
     <id>6026</id>
-    <value>Vennligst, spesifiser ip adressen eller datamaskin navn</value>
+    <value>Vennligst, spesifiser ip adressen eller datamaskinens navn</value>
   </string>
   <string>
     <id>6027</id>
@@ -4853,7 +4855,7 @@
   </string>
   <string>
     <id>6028</id>
-    <value>Gjeldende instilling:</value>
+    <value>Gjeldende innstilling:</value>
   </string>
   <string>
     <id>6029</id>
@@ -4893,7 +4895,7 @@
    </string>
    <string>
       <id>8009</id>
-      <value>Marker alle ulest</value>
+      <value>Marker alle som ulest</value>
    </string>
    <string>
       <id>8010</id>
@@ -4905,7 +4907,7 @@
    </string>
    <string>
       <id>8012</id>
-      <value>minst 1 postboks for å bruke epost-plugin.</value>
+      <value>minst 1 postboks for å bruke e-post-plugin.</value>
    </string>
    <string>
       <id>8013</id>
@@ -5037,7 +5039,7 @@
    </string>         
    <string>
       <id>10100</id>
-      <value>Gjemte miner</value>
+      <value>Skjulte miner</value>
    </string>
    <string>
       <id>10101</id>
@@ -5145,11 +5147,11 @@
    </string>
    <string>
       <id>13016</id>
-      <value>Sorter etter:  Kjøringer</value>
+      <value>Sorter etter: Kjøringer</value>
    </string>
    <string>
       <id>13017</id>
-      <value>Sorter etter: Nyligst</value>
+      <value>Sorter etter: Nyeste</value>
    </string>
    <string>
       <id>13018</id>
@@ -5189,7 +5191,7 @@
    </string>
    <string>
       <id>19008</id>
-      <value>Høyest poengsum</value>
+      <value>Høyeste poengsum</value>
    </string>
    <string>
       <id>19009</id>
@@ -5250,7 +5252,7 @@
    </string>
    <string>
       <id>19109</id>
-      <value>midium</value>
+      <value>medium</value>
    </string>
    <string>
       <id>19110</id>
@@ -5298,7 +5300,7 @@
    </string>
    <string Prefix="Mine ">
       <id>30000</id>
-      <value>Musikk videoer</value>
+      <value>Musikkvideoer</value>
    </string>
    <string>
       <id>30001</id>
@@ -5338,7 +5340,7 @@
    </string>
    <string>
       <id>30010</id>
-      <value>Søke resultat for {0} - Side {1} </value>
+      <value>Søkeresultat for {0} - Side {1} </value>
    </string>
    <string>
       <id>33000</id>
@@ -5402,7 +5404,7 @@
    </string>
    <string>
       <id>33030</id>
-      <value>De beste album sporene</value>
+      <value>De beste albumsporene</value>
    </string>
    <string>
       <id>33031</id>
@@ -5450,7 +5452,7 @@
    </string>
    <string>
       <id>34013</id>
-      <value>Oppdagelse Modus</value>
+      <value>Oppdagelsesmodus</value>
    </string>
    <string>
       <id>34014</id>
@@ -5498,7 +5500,7 @@
    </string>
    <string>
       <id>34047</id>
-      <value>Mine elskede spor</value>
+      <value>Mine favorittspor</value>
    </string>
    <string>
       <id>34050</id>
@@ -5883,11 +5885,11 @@
    </string>
    <string Prefix="Min ">
       <id>100756</id>
-      <value>Status detaljer</value>
+      <value>Status-detaljer</value>
    </string>
    <string Prefix="Min ">
       <id>100757</id>
-      <value>Status innstillinger</value>
+      <value>Status-innstillinger</value>
    </string>
    <string Prefix="Min ">
       <id>100758</id>
@@ -5895,7 +5897,7 @@
    </string>
    <string Prefix="Mine ">
       <id>100759</id>
-      <value>Arkiverte Tv Info</value>
+      <value>Arkiverte Tv-info</value>
    </string>
    <string Prefix="Min ">
       <id>100760</id>
@@ -5935,7 +5937,7 @@
    </string>
    <string>
       <id>102006</id>
-      <value>Audiovisualisering</value>
+      <value>Lyd-visualisering</value>
    </string>
    <string Prefix="Mine ">
       <id>102007</id>
@@ -5963,7 +5965,7 @@
    </string>
    <string>
       <id>102013</id>
-      <value>Set poengsum</value>
+      <value>Sett poengsum</value>
    </string>
    <string>
       <id>102014</id>
@@ -6031,7 +6033,7 @@
    </string>
    <string>
       <id>200004</id>
-      <value>Manuellt supplert tvguide.xml</value>
+      <value>Manuelt supplert tvguide.xml</value>
    </string>
    <string>
       <id>200005</id>
@@ -6059,11 +6061,11 @@
    </string>
    <string>
       <id>200011</id>
-      <value>Med MediaPortal kan du nyte din favoritt musikk, lytte til radioprogram, se på bilder, video,</value>
+      <value>Med MediaPortal kan du nyte din favorittmusikk, lytte til radioprogram, se på bilder, video,</value>
    </string>
    <string>
       <id>200012</id>
-      <value>DVD, samt se på / ta opp direktesendt TV, pluss mye mye mer.</value>
+      <value>DVD, samt se og ta opp direktesendt TV, pluss mye mye mer.</value>
    </string>
    <string>
       <id>200013</id>
@@ -6071,7 +6073,7 @@
    </string>
    <string>
       <id>200014</id>
-      <value>begynn med å velge språk og land nedenfor:</value>
+      <value>start med å velge språk og land nedenfor:</value>
    </string>
    <string>
       <id>200015</id>
@@ -6143,7 +6145,7 @@
    </string>
    <string>
       <id>200033</id>
-      <value>TV Oppsett - Analog TV</value>
+      <value>TV-oppsett - Analog TV</value>
    </string>
    <string>
       <id>200034</id>
@@ -6151,7 +6153,7 @@
    </string>
    <string>
       <id>200035</id>
-      <value>NB hvis din by ikke er listet må du manuelt instille kanalene.</value>
+      <value>NB hvis din by ikke er listet må du manuelt stille inn kanalene.</value>
    </string>
    <string>
       <id>200036</id>

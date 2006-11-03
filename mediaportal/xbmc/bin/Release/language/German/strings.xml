@@ -4173,6 +4173,10 @@
       <id>2143</id>
       <value>Hauptmenü</value>
    </string>
+   <string>
+      <id>2144</id>
+      <value>Starte Brennvorgang</value>
+   </string>
    <string Prefix="Mein ">
       <id>2200</id>
       <value>Explorer</value>
