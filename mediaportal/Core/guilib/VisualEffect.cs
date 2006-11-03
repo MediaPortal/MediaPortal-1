@@ -107,8 +107,36 @@ namespace MediaPortal.GUI.Library
       _condition = 0;
       _isReversible = true;
     }
+    float GetFloat(string text)
+    {
+      bool useCommas = false;
+      float fTest = 123.12f;
+      string test = fTest.ToString();
+      if (test.IndexOf(",") >= 0)
+        useCommas = true;
+      if (useCommas) 
+        text = text.Replace(".", ",");
+      else
+        text = text.Replace(",", ".");
+      return float.Parse(text);
+    }
+    void GetPosition(string text, ref float x, ref float y)
+    {
+      x=y=0;
+      int pos = text.IndexOf(",");
+      if (pos >= 0)
+      {
+        x = float.Parse(text.Substring(0, pos));
+        y = float.Parse(text.Substring(pos + 1));
+      }
+      else
+      {
+        x = float.Parse(text);
+      }
+    }
     public void Create(XmlNode node)
     {
+      
       string animType = node.InnerText.ToLower();
       if (String.Compare(animType, "visible", true) == 0)
         _type = AnimationType.Visible;
@@ -152,8 +180,8 @@ namespace MediaPortal.GUI.Library
       UInt32.TryParse(nodeAttribute.Value.ToString(), out _length);
 
       nodeAttribute = node.Attributes.GetNamedItem("delay");
-      if (nodeAttribute!=null)
-      UInt32.TryParse(nodeAttribute.Value.ToString(), out _delay);
+      if (nodeAttribute != null)
+        UInt32.TryParse(nodeAttribute.Value.ToString(), out _delay);
 
       //_length = (uint)(_length * g_SkinInfo.GetEffectsSlowdown());
       //_delay = (uint)(_delay * g_SkinInfo.GetEffectsSlowdown());
@@ -172,8 +200,7 @@ namespace MediaPortal.GUI.Library
       nodeAttribute = node.Attributes.GetNamedItem("acceleration");
       if (nodeAttribute != null)
       {
-        float.TryParse(node.Value.ToString(), out accel);
-        _acceleration = (float)accel;
+        _acceleration = GetFloat(nodeAttribute.Value.ToString());
       }
 
 
@@ -184,25 +211,19 @@ namespace MediaPortal.GUI.Library
         string startPos = nodeAttribute.Value;
         if (startPos != null)
         {
-          _startX = float.Parse(startPos);
-          int commaPos = startPos.IndexOf(",");
-          if (commaPos > 0)
-            _startY = float.Parse(startPos.Substring(commaPos + 1));
+          GetPosition(startPos, ref _startX, ref _startY);
         }
         nodeAttribute = node.Attributes.GetNamedItem("end");
         string endPos = nodeAttribute.Value;
         if (endPos != null)
         {
-          _endX = float.Parse(endPos);
-          int commaPos = endPos.IndexOf(",");
-          if (commaPos > 0)
-            _endY = float.Parse(endPos.Substring(commaPos + 1));
+          GetPosition(endPos, ref _endX, ref _endY);
         }
         // scale our parameters
-        //g_graphicsContext.ScaleXCoord(startX, res);
-        //g_graphicsContext.ScaleYCoord(startY, res);
-        //g_graphicsContext.ScaleXCoord(endX, res);
-        //g_graphicsContext.ScaleYCoord(endY, res);
+        GUIGraphicsContext.ScaleHorizontal(ref _startX );
+        GUIGraphicsContext.ScaleVertical(ref _startY);
+        GUIGraphicsContext.ScaleHorizontal(ref _endX);
+        GUIGraphicsContext.ScaleVertical(ref _endY);
       }
       else if (_effect == EffectType.Fade)
       {
@@ -242,12 +263,9 @@ namespace MediaPortal.GUI.Library
         if (nodeAttribute != null)
         {
           string centerPos = nodeAttribute.Value;
-          _centerX = float.Parse(centerPos);
-          int comma = centerPos.IndexOf(",");
-          if (comma > 0)
-            _centerY = float.Parse(centerPos.Substring(comma + 1));
-          //g_graphicsContext.ScaleXCoord(centerX, res);
-          //g_graphicsContext.ScaleYCoord(centerY, res);
+          GetPosition(centerPos, ref _centerX, ref _centerY);
+          GUIGraphicsContext.ScaleHorizontal(ref _centerX);
+          GUIGraphicsContext.ScaleHorizontal(ref _centerY);
         }
       }
       else // if (effect == EffectType.Zoom)
@@ -260,30 +278,21 @@ namespace MediaPortal.GUI.Library
         if (nodeAttribute != null)
         {
           string start = node.Value;
-          _startX = _startY = float.Parse(start);
-          int comma = start.IndexOf(",");
-          if (comma > 0)
-            _startY = float.Parse(start.Substring(comma + 1));
+          GetPosition(start, ref _startX, ref _startY);
         }
         nodeAttribute = node.Attributes.GetNamedItem("end");
         if (nodeAttribute != null)
         {
           string start = node.Value;
-          _endX = _endY = float.Parse(start);
-          int comma = start.IndexOf(",");
-          if (comma > 0)
-            _endY = float.Parse(start.Substring(comma + 1));
+          GetPosition(start, ref _endX, ref _endY);
         }
         nodeAttribute = node.Attributes.GetNamedItem("center");
-        if (nodeAttribute!=null)
+        if (nodeAttribute != null)
         {
           string start = node.Value;
-          _centerX = float.Parse(start);
-          int comma = start.IndexOf(",");
-          if (comma > 0)
-            _centerY = float.Parse(start.Substring(comma + 1));
-          //g_graphicsContext.ScaleXCoord(centerX, res);
-          //g_graphicsContext.ScaleYCoord(centerY, res);
+          GetPosition(start, ref _centerX, ref _centerY);
+          GUIGraphicsContext.ScaleHorizontal(ref _centerX);
+          GUIGraphicsContext.ScaleVertical(ref _centerY);
         }
       }
     }
@@ -299,7 +308,7 @@ namespace MediaPortal.GUI.Library
       _startAlpha = anim._endAlpha;
       _centerX = anim._centerX;
       _centerY = anim._centerY;
-      _type = (AnimationType) (- (int)anim._type);
+      _type = (AnimationType)(-(int)anim._type);
       _effect = anim._effect;
       _length = anim._length;
       _isReversible = anim._isReversible;
@@ -311,7 +320,7 @@ namespace MediaPortal.GUI.Library
       if (_queuedProcess == AnimationProcess.Normal)
       {
         if (_currentProcess == AnimationProcess.Reverse)
-          _start =(uint)( time - (int)(_length * _amount));  // reverse direction of effect
+          _start = (uint)(time - (int)(_length * _amount));  // reverse direction of effect
         else
           _start = time;
         _currentProcess = AnimationProcess.Normal;
@@ -319,7 +328,7 @@ namespace MediaPortal.GUI.Library
       else if (_queuedProcess == AnimationProcess.Reverse)
       {
         if (_currentProcess == AnimationProcess.Normal)
-          _start =(uint)( time - (int)(_length * (1 - _amount))); // turn around direction of effect
+          _start = (uint)(time - (int)(_length * (1 - _amount))); // turn around direction of effect
         else
           _start = time;
         _currentProcess = AnimationProcess.Reverse;

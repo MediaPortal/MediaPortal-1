@@ -451,6 +451,17 @@ namespace MediaPortal.GUI.Library
       y = (int)Math.Round(((float)y) * fPercentY);
     }
 
+    static public void ScaleVertical(ref float y)
+    {
+      // Adjust for global zoom.
+      float fZoomedScreenHeight = (float)Height * ZoomVertical;
+
+      float fSkinHeight = (float)m_skinSize.Height;
+
+      float fPercentY = fZoomedScreenHeight / fSkinHeight;
+      y = (float)Math.Round(((float)y) * fPercentY);
+    }
+
     /// <summary>
     /// Scale y position for current resolution
     /// </summary>
@@ -476,6 +487,17 @@ namespace MediaPortal.GUI.Library
       // X
       float fPercentX = (fZoomedScreenWidth) / fSkinWidth;
       x = (int)Math.Round(((float)x) * fPercentX);
+    }
+    static public void ScaleHorizontal(ref float x)
+    {
+      // Adjust for global zoom.
+      float fZoomedScreenWidth = (float)Width * ZoomHorizontal;
+
+      float fSkinWidth = (float)m_skinSize.Width;
+
+      // X
+      float fPercentX = (fZoomedScreenWidth) / fSkinWidth;
+      x = (float)Math.Round(((float)x) * fPercentX);
     }
 
 
