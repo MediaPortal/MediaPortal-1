@@ -44,7 +44,7 @@ int FAKE_PCR_PID      = 0x30;//0x21;
 int FAKE_VIDEO_PID    = 0x30;
 int FAKE_AUDIO_PID    = 0x40;
 int FAKE_SUBTITLE_PID = 0x50;
-static int pcrLogCount=0;
+
 extern void LogDebug(const char *fmt, ...) ;
 
 //FILE* fTsFile=NULL;
@@ -166,7 +166,7 @@ STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 	try
 	{
 		LogDebug("Timeshifter:pcr pid:0x%x",pcrPid); 
-		pcrLogCount=0;
+		
 		m_multiPlexer.ClearStreams();
 		m_multiPlexer.SetPcrPid(pcrPid);
 		if (m_bTimeShifting)
@@ -605,9 +605,9 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 				pkt[2]=(pid&0xff);
 				if (header.Pid==m_pcrPid) PatchPcr(pkt,header);
-				if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
 				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				{
+				  if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
 					Write(pkt,188);
           m_iPacketCounter++;
 				}
@@ -633,10 +633,10 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 				pkt[2]=(pid&0xff);
 				if (header.Pid==m_pcrPid) PatchPcr(pkt,header);
-				if (PayLoadUnitStart)  PatchPtsDts(pkt,header,m_startPcr);
 				
 				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				{
+				  if (PayLoadUnitStart)  PatchPtsDts(pkt,header,m_startPcr);
 					Write(pkt,188);
           m_iPacketCounter++;
 				}
@@ -652,9 +652,9 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 				pkt[2]=(pid&0xff);
 				if (header.Pid==m_pcrPid) PatchPcr(pkt,header);
-				if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
 				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				{
+				  if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
 					Write(pkt,188);
           m_iPacketCounter++;
 				}
@@ -900,7 +900,7 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 	    LogDebug("Pcr new start pcr from:%I64d  to %I64d  ", m_startPcr,newStartPcr);
       m_startPcr=newStartPcr;
       m_highestPcr=newStartPcr;
-			pcrLogCount=0;
+			
     }
   }
   
@@ -933,13 +933,13 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
   tsPacket[10]=	(byte)( (pcrHi&0x1)) + 0x7e;
   tsPacket[11]=0;//extension
 	//LogDebug("pcr: org:%x new:%x start:%x", (DWORD)pcrBaseHigh,(DWORD)pcrHi,(DWORD)m_startPcr);
-	pcrLogCount++;
+	
 }
 
 void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr)
 {
   if (false==header.PayloadUnitStart) return;
-//	LogDebug("pid:%x: (%d) %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x ",header.Pid,header.PayLoadStart,tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5],tsPacket[6],tsPacket[7],tsPacket[8],tsPacket[9],tsPacket[10],tsPacket[11],tsPacket[12],tsPacket[13],tsPacket[14],tsPacket[15],tsPacket[16],tsPacket[17],tsPacket[18]);
+
   int start=header.PayLoadStart;
   if (tsPacket[start] !=0 || tsPacket[start+1] !=0  || tsPacket[start+2] !=1) return; 
 
@@ -952,23 +952,12 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr
 	}
 	if (pts>0LL)
 	{
-		/*
-		char buf[1255];
-		strcpy(buf,"");
-		for (int i=0; i < 30;++i)
-		{
-			char tmp[200];
-			sprintf(tmp,"%02.2x ", tsPacket[i]);
-			strcat(buf,tmp);
-		}
-		LogDebug(buf);
-		*/
 		UINT64 ptsorg=pts;
 		if (pts > startPcr) 
 			pts = (UINT64)( ((UINT64)pts) - ((UINT64)startPcr) );
 		else pts=0LL;
-		//LogDebug("pts: org:%x new:%x start:%x pid:%x", (DWORD)ptsorg,(DWORD)pts,(DWORD)startPcr,header.Pid);
 		
+	//  LogDebug("pts: org:%x new:%x start:%x", (DWORD)ptsorg,(DWORD)pts,(DWORD)startPcr); 
 		byte marker=0x21;
 		if (dts!=0) marker=0x31;
 		pesHeader[13]=(byte)((((pts&0x7f)<<1)+1)); pts>>=7;
@@ -976,12 +965,15 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr
 		pesHeader[11]=(byte)((((pts&0x7f)<<1)+1)); pts>>=7;
 		pesHeader[10]=(byte)((pts&0xff));					pts>>=8;
 		pesHeader[9]=(byte)( (((pts&7)<<1)+marker)); 
+    
 	}
 	if (dts >0LL)
 	{
+		UINT64 dtsorg=dts;
 		if (dts > startPcr) 
 			dts = (UINT64)( ((UINT64)dts) - ((UINT64)startPcr) );
 		else dts=0LL;
+	 // LogDebug("dts: org:%x new:%x start:%x", (DWORD)dtsorg,(DWORD)dts,(DWORD)startPcr); 
 		pesHeader[18]=(byte)((((dts&0x7f)<<1)+1)); dts>>=7;
 		pesHeader[17]=(byte)( (dts&0xff));				  dts>>=8;
 		pesHeader[16]=(byte)((((dts&0x7f)<<1)+1)); dts>>=7;

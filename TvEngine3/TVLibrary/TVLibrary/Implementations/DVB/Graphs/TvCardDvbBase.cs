@@ -205,6 +205,17 @@ namespace TvLibrary.Implementations.DVB
     {
       if (!CheckThreadId()) return;
 
+      if (_graphState == GraphState.TimeShifting)
+      {
+        if (_filterTsAnalyzer != null)
+        {
+          ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
+          if (timeshift != null)
+          {
+            timeshift.Pause(1);
+          }
+        }
+      }
       Log.Log.WriteFile("dvb:SubmitTuneRequest");
       _startTimeShifting = false;
       _channelInfo = new ChannelInfo();

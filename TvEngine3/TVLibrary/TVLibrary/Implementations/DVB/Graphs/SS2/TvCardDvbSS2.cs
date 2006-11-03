@@ -1445,6 +1445,19 @@ namespace TvLibrary.Implementations.DVB
       {
         _interfaceEpgGrabber.Reset();
       }
+      
+      if (_graphState == GraphState.TimeShifting)
+      {
+        if (_filterTsAnalyzer != null)
+        {
+          ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
+          if (timeshift != null)
+          {
+            timeshift.Pause(1);
+          }
+        }
+      }
+
       _startTimeShifting = false;
       int lnbFrequency = 10600000;
       bool hiBand = true;
