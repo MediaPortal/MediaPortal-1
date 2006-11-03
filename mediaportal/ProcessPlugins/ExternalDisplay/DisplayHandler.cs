@@ -152,7 +152,9 @@ namespace ProcessPlugins.ExternalDisplay
               graphics.FillRectangle(graphicBrush, 0, 0, widthInPixels, heightInPixels);
               foreach (Image image in Images)
               {
-                graphics.DrawImage(image.Bitmap, image.X, image.Y);
+                //we need to use the bitmap's physical dimensions, otherwise the image class 
+                //will resize the image according the dpi of the monitor in Windows.
+                graphics.DrawImage(image.Bitmap, new RectangleF(new PointF(image.X, image.Y), image.Bitmap.PhysicalDimension));
               }
               if (!display.SupportsText || forceGraphicText)
               {

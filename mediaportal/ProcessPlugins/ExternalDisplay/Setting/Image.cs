@@ -25,7 +25,9 @@
 
 using System;
 using System.Drawing;
+using System.IO;
 using System.Xml.Serialization;
+using MediaPortal.Services;
 
 namespace ProcessPlugins.ExternalDisplay.Setting
 {
@@ -62,7 +64,20 @@ namespace ProcessPlugins.ExternalDisplay.Setting
       {
         if (bitmap == null)
         {
-          bitmap = (Bitmap) Bitmap.FromFile(File);
+          try
+          {
+            bitmap = (Bitmap)Bitmap.FromFile(File);
+          }
+          catch(OutOfMemoryException)
+          {
+            GlobalServiceProvider.Get<ILog>().Error("Out of memory while loading image file {0}!  Probably bad image format.  Defaulting to a single pixel.",File);
+            bitmap = new Bitmap(1,1);
+          }
+          catch(FileNotFoundException)
+          {
+            GlobalServiceProvider.Get<ILog>().Error("Error while loading image file {0}.  File not found!  Defaulting to a single pixel.", File);
+            bitmap = new Bitmap(1, 1);
+          }
         }
         return bitmap;
       }
