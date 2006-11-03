@@ -568,6 +568,7 @@ namespace TvPlugin
         GroupMap gm = (GroupMap)groups[i];
         Channel channel = gm.ReferencedChannel();
         if (channel.IsTv == false) continue;
+        if (channel.VisibleInGuide == false) continue;
         dlg.Add(channel.Name);
         if (Navigator.CurrentChannel != null)
         {
