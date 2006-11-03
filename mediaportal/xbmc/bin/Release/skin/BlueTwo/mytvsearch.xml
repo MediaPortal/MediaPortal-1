@@ -1,5 +1,7 @@
 
 <window>
+<animation effect="fade" time="1000">WindowOpen</animation>
+<animation effect="fade" time="1000">WindowClose</animation>
 	<id>604</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
