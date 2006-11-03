@@ -311,6 +311,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUIDVD\GUIDVDFullscreen.cs" />
+    <Compile Include="GUIMyDreambox\Dreambox\EPG.cs" />
+    <Compile Include="GUIMyDreambox\Dreambox\XML.cs" />
     <Compile Include="GUIMyDreambox\GuiRecordings.cs" />
     <Compile Include="GUIMyDreambox\MyDreamboxRadio.cs" />
     <Compile Include="Home\GUIHome.cs" />

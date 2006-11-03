@@ -68,7 +68,7 @@ namespace DreamBox
         {
             get
             {
-                string userbouquests = "user - bouquets (tv)";
+                string userbouquests = "Bouquets (TV)".ToLower();
                 string temp = "";
                 Request request = new Request(_Url, _UserName, _Password);
                 string sreturn = request.PostData(_Command + "getServices?ref=0");
@@ -87,7 +87,65 @@ namespace DreamBox
 
                     foreach (string s in allBouquets)
                     {
-                        if (s.ToLower().Split(';')[1] == userbouquests)
+                        if (s.ToLower().Contains(userbouquests))
+                        {
+                            temp = s.Split(';')[0];
+                            break;
+                        }
+                    }
+
+                    sreturn = request.PostData(_Command + "getServices?ref=" + temp);
+                    allBouquets = sreturn.Split('\n');
+
+                    foreach (string bouquets in allBouquets)
+                    {
+                        if (bouquets.IndexOf(';') > -1 && bouquets.Length > 0) // HOTFIX!!!!! 28-10-2006
+                        {
+                            string[] bouquet = bouquets.Split(';');
+                            row = table.NewRow();
+                            row["Ref"] = bouquet[0].ToString();
+                            row["Name"] = bouquet[1].ToString();
+                            table.Rows.Add(row);
+                        }
+
+                    }
+
+                    ds.Tables.Add(table);
+
+                }
+                catch (Exception ex)
+                {
+                    //throw ex;
+                }
+
+                return ds;
+            }
+        }
+
+        public DataSet UserRadioBouquets
+        {
+            get
+            {
+                string userbouquests = "bouquets (radio)";
+                string temp = "";
+                Request request = new Request(_Url, _UserName, _Password);
+                string sreturn = request.PostData(_Command + "getServices?ref=0");
+                string[] allBouquets = sreturn.Split('\n');
+
+                // convert to dataset
+                DataSet ds = new DataSet();
+                DataTable table = new DataTable("Bouquets");
+                DataRow row = null;
+
+                try
+                {
+
+                    table.Columns.Add("Ref", Type.GetType("System.String"));
+                    table.Columns.Add("Name", Type.GetType("System.String"));
+
+                    foreach (string s in allBouquets)
+                    {
+                        if (s.ToLower().Contains(userbouquests))  // HOTFIX!!!!! 28-10-2006
                         {
                             temp = s.Split(';')[0];
                             break;
@@ -122,62 +180,45 @@ namespace DreamBox
             }
         }
 
-        public DataSet UserRadioBouquets
+        public DataSet Channels(string reference)
         {
-            get
+            Request request = new Request(_Url, _UserName, _Password);
+            string sreturn = request.PostData(_Command + "getServices?ref=" + reference);
+            string[] allBouquets = sreturn.Split('\n');
+
+            // convert to dataset
+            DataSet ds = new DataSet();
+            DataTable table = new DataTable("Bouquets");
+            DataRow row = null;
+
+            try
             {
-                string userbouquests = "bouquets (radio)".ToLower();
-                string temp = "";
-                Request request = new Request(_Url, _UserName, _Password);
-                string sreturn = request.PostData(_Command + "getServices?ref=0");
-                string[] allBouquets = sreturn.Split('\n');
 
-                // convert to dataset
-                DataSet ds = new DataSet();
-                DataTable table = new DataTable("Bouquets");
-                DataRow row = null;
+                table.Columns.Add("Ref", Type.GetType("System.String"));
+                table.Columns.Add("Name", Type.GetType("System.String"));
 
-                try
+                foreach (string bouquets in allBouquets)
                 {
-
-                    table.Columns.Add("Ref", Type.GetType("System.String"));
-                    table.Columns.Add("Name", Type.GetType("System.String"));
-
-                    foreach (string s in allBouquets)
+                    if (bouquets.IndexOf(';') > -1)
                     {
-                        if (s.ToLower().Split(';')[1].EndsWith(userbouquests) && s.Length > 0)
-                        {
-                            temp = s.Split(';')[0];
-                            break;
-                        }
+                        string[] bouquet = bouquets.Split(';');
+                        row = table.NewRow();
+                        row["Ref"] = bouquet[0].ToString();
+                        row["Name"] = bouquet[1].ToString();
+                        table.Rows.Add(row);
                     }
 
-                    sreturn = request.PostData(_Command + "getServices?ref=" + temp);
-                    allBouquets = sreturn.Split('\n');
-
-                    foreach (string bouquets in allBouquets)
-                    {
-                        if (bouquets.IndexOf(';') > -1)
-                        {
-                            string[] bouquet = bouquets.Split(';');
-                            row = table.NewRow();
-                            row["Ref"] = bouquet[0].ToString();
-                            row["Name"] = bouquet[1].ToString();
-                            table.Rows.Add(row);
-                        }
-
-                    }
-
-                    ds.Tables.Add(table);
-
                 }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                table.DefaultView.Sort = "Name";
+                ds.Tables.Add(table);
 
-                return ds;
             }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return ds;
         }
 
         public DataSet Recordings
@@ -275,48 +316,24 @@ namespace DreamBox
             }
         }
 
-        public DataSet Channels(string reference)
+        #region EPG
+        public DataSet CurrentEPG
         {
-            Request request = new Request(_Url, _UserName, _Password);
-            string sreturn = request.PostData(_Command + "getServices?ref=" + reference);
-            string[] allBouquets = sreturn.Split('\n');
-
-            // convert to dataset
-            DataSet ds = new DataSet();
-            DataTable table = new DataTable("Bouquets");
-            DataRow row = null;
-
-            try
+            get
             {
-
-                table.Columns.Add("Ref", Type.GetType("System.String"));
-                table.Columns.Add("Name", Type.GetType("System.String"));
-
-                foreach (string bouquets in allBouquets)
+                Request request = new Request(_Url, _UserName, _Password);
+                string sreturn = request.PostData(_Command + "getcurrentepg");
+                string result = "";
+                Regex objAlphaPattern = new Regex("middle.*?", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                MatchCollection col = objAlphaPattern.Matches(sreturn);
+                for (int i = 0; i < col.Count; i++)
                 {
-                    if (bouquets.IndexOf(';') > -1)
-                    {
-                        string[] bouquet = bouquets.Split(';');
-                        row = table.NewRow();
-                        row["Ref"] = bouquet[0].ToString();
-                        row["Name"] = bouquet[1].ToString();
-                        table.Rows.Add(row);
-                    }
-
+                    result = col[i].Value.ToString();
                 }
-                table.DefaultView.Sort = "Name";
-                ds.Tables.Add(table);
-
+                return null;
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-            return ds;
         }
-        #region MyRegion
-        
         #endregion
     }
+
 }

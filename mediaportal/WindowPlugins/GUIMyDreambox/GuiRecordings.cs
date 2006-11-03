@@ -183,7 +183,7 @@ namespace MediaPortal.GUI.Dreambox
             string currentChannelName = _Dreambox.CurrentChannel.Name;
            
 
-            if (uri != _Dreambox.BoxInfo.ServiceReference)
+            if (uri != _Dreambox.XML.CurrentService.ServiceReference)
             {
                 //_Dreambox.RemoteControl.Zap(uri);
             }

@@ -14,7 +14,8 @@ namespace DreamBox
 
         public DreamBox.Data Data = null;
         public DreamBox.Remote Remote = null;
-        private DreamBox.BoxInfo _BoxInfo = null;
+        private DreamBox.EPG _EPG = null;
+        private DreamBox.XML _XML = null;
 
         public Core(string url, string username, string password)
         {
@@ -24,25 +25,27 @@ namespace DreamBox
 
             this.Data = new Data(url, username, password);
             this.Remote = new Remote(url, username, password);
-            this._BoxInfo = new BoxInfo(url, username, password);
+            this._EPG = new EPG(url, username, password);
+            this._XML = new XML(url, username, password);
         }
 
-        public DreamBox.BoxInfo BoxInfo
+
+
+        public EPG EPG
         {
             get
             {
-                if (_BoxInfo == null)
-                {
-                    this._BoxInfo = new BoxInfo(_Url, _UserName, _Password);
-                }
-                else
-                {
-                    this._BoxInfo.Refresh();
-                }
-                return this._BoxInfo;
+                return _EPG;
             }
         }
 
+        public XML XML
+        {
+            get
+            {
+                return _XML;
+            }
+        }
 
         public string Url
         {
@@ -61,8 +64,8 @@ namespace DreamBox
             get { return _UserName; }
             set { _UserName = value; }
         }
-	
-	
+
+
         private string _SelectedBouquet;
         public string SelectedBouquet
         {
@@ -76,12 +79,13 @@ namespace DreamBox
             get { return _SelectedChannel; }
             set { _SelectedChannel = value; }
         }
-	
-	
+
+
         public ChannelInfo CurrentChannel
         {
-            get {
-                return new ChannelInfo(_Url, _UserName, _Password); 
+            get
+            {
+                return new ChannelInfo(_Url, _UserName, _Password);
             }
         }
         public Remote RemoteControl
@@ -92,7 +96,7 @@ namespace DreamBox
             }
         }
 
-	
+
 
 
     }

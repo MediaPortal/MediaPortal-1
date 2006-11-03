@@ -263,25 +263,7 @@ namespace MediaPortal.GUI.Dreambox
                 }
             }
         }
-        void SetLabels()
-        {
-            BoxInfo boxInfo = _Dreambox.BoxInfo;
-            BoutiqueReference = boxInfo.ServiceReference;
-            GUIPropertyManager.SetProperty("#TV.View.channel", boxInfo.ServiceName);
-            GUIPropertyManager.SetProperty("#TV.View.title", boxInfo.NowSt);
-            GUIPropertyManager.SetProperty("#TV.View.start", boxInfo.NowT);
-            GUIPropertyManager.SetProperty("#TV.View.stop", boxInfo.NextT);
-            GUIPropertyManager.SetProperty("#TV.View.description", "Next: " + boxInfo.NextT + " - " + boxInfo.NextSt);
-
-            string currentChannel = GUIPropertyManager.GetProperty("#view");
-            if (currentChannel == "")
-                return;
-
-            //GUIPropertyManager.SetProperty("#TV.View.description", currentChannel);
-            GUIPropertyManager.SetProperty("#TV.View.description", "Playing recording: " + currentChannel);
-
-
-        }
+      
         void Play(string fileName)
         {
             playlistPlayer = new PlayListPlayer();
@@ -324,7 +306,6 @@ namespace MediaPortal.GUI.Dreambox
             string url = serverUrl + ":31339/0," + channelInfo.Pmt.Replace("h", ",").Trim() + channelInfo.Vpid.Replace("h", ",").Trim() + channelInfo.Apid.Replace("h", ",").Trim() + channelInfo.Pcrpid.Replace("h", "").Trim();
             url = url + "$" + GUIPropertyManager.GetProperty("#TV.View.channel") + "$" + ".gary";
             // zap channels
-            SetLabels();
             Play(url);
 
         }
@@ -352,51 +333,9 @@ namespace MediaPortal.GUI.Dreambox
 
         void _ChannelTimer_Tick(object sender, EventArgs e)
         {
-            BoxInfo boxInfo = _Dreambox.BoxInfo;
+            
 
-            if (Processing) // switching channels, do not run this again
-                return;
-            if (_Dreambox.CurrentChannel.Name != "")
-            {
-                GUIPropertyManager.SetProperty("#TV.View.channel", boxInfo.ServiceName);
-                GUIPropertyManager.SetProperty("#TV.View.title", GUILocalizeStrings.Get(875) + ": " + boxInfo.NowSt);
-                GUIPropertyManager.SetProperty("#TV.View.start", boxInfo.NowT);
-                GUIPropertyManager.SetProperty("#TV.View.stop", boxInfo.NextT);
-                GUIPropertyManager.SetProperty("#TV.View.description", "Next: " + boxInfo.NextT + " - " + boxInfo.NextSt);
-                //btnBouquet.Label = GUILocalizeStrings.Get(971);
-                //btnChannel.Label = GUILocalizeStrings.Get(602) + " " + boxInfo.ServiceName;
-
-            }
-
-            if (boxInfo.ServiceReference.EndsWith(".ts")) // Dreambox is in video playback mode
-            {
-                Processing = true;
-                GUIPropertyManager.SetProperty("#TV.View.channel", GUILocalizeStrings.Get(157));
-                GUIPropertyManager.SetProperty("#TV.View.title", GUILocalizeStrings.Get(875) + ": " + boxInfo.NowSt);
-                string[] sTime = boxInfo.VideoTime.Split(':');
-                //if (sTime.GetUpperBound(0) == 3)
-                //{
-                //    VideoNow = new TimeSpan(int.Parse(sTime[0]), int.Parse(sTime[1]), int.Parse(sTime[2]));
-                //}
-                //else
-                //{
-                //    VideoNow = new TimeSpan(0, int.Parse(sTime[0]), int.Parse(sTime[1]));
-                //}
-                //TimeSpan EndTime = VideoStarted + VideoNow;
-                //TimeSpan NowTime = new TimeSpan(1, DateTime.Now.Minute, DateTime.Now.Second);
-                //int PercentComplete = (int)((VideoStarted.TotalSeconds - VideoNow.TotalSeconds) / (EndTime.TotalSeconds - VideoStarted.TotalSeconds));
-                //progressBar.Percentage = PercentComplete;
-                //GUIPropertyManager.SetProperty("#TV.View.stop", EndTime.ToString());
-                Processing = false;
-                return;
-            }
-            if (BoutiqueReference != boxInfo.ServiceReference)
-            {
-                BoutiqueReference = boxInfo.ServiceReference;
-                //boxInfo = _Dreambox.BoxInfo;
-                //System.Threading.Thread.Sleep(2000); // Wait 2 second.
-                PlayCurrentChannel();
-            }
+          
 
         }
 

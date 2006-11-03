@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
@@ -20,12 +21,28 @@ namespace MediaPortal.GUI.Dreambox
         public const int WindowID = 6660;
 
 
+        private static bool ChangeChannel = false;
+        private static string _CurrentBouquet = "";
+        private static string _CurrentChannelName = "";
+        private static CurrentServiceData _OldChannel = null;
+
+        private System.ComponentModel.BackgroundWorker _backgroundWorker = new System.ComponentModel.BackgroundWorker();
+        private System.ComponentModel.BackgroundWorker _bouquetWorker = new System.ComponentModel.BackgroundWorker();
+        private System.ComponentModel.BackgroundWorker _channelWorker = new System.ComponentModel.BackgroundWorker();
+        private System.ComponentModel.BackgroundWorker _TVScreenWorker = new System.ComponentModel.BackgroundWorker();
+
+        private delegate void ServiceDataHandler(CurrentServiceData currentServiceData);
+        private delegate void BouquetDataHandler(DataSet bouquets);
+        private delegate void ChannelDataHandler(DataSet channels);
+        private delegate void TVScreenHandler();
+
+
         #region Constructor
         public MyDreamboxGui()
-			{
-                GetID = (int)MyDreamboxGui.WindowID;
-			}
-		#endregion
+        {
+            GetID = (int)MyDreamboxGui.WindowID;
+        }
+        #endregion
 
         #region SkinControlAttributes
         [SkinControlAttribute(6)]
@@ -41,10 +58,9 @@ namespace MediaPortal.GUI.Dreambox
         #endregion
 
         #region Private Variables
-        private System.ComponentModel.BackgroundWorker _backgroundWorker = new System.ComponentModel.BackgroundWorker();
         private System.Windows.Forms.Timer _ChannelTimer = new System.Windows.Forms.Timer();
 
-        private DreamBox.Core _Dreambox = null;
+        private static DreamBox.Core _Dreambox = null;
         PlayListPlayer playlistPlayer;
         private string BoutiqueReference = string.Empty;
         private static bool Processing = false;
@@ -66,8 +82,8 @@ namespace MediaPortal.GUI.Dreambox
             ChannelButton = 7,
             TVButton = 3,
             TVOnOff = 8,
+            RadioButton = 4,
             RecordingsButton = 11,
-            RadioButton = 14,
             List = 50
         }
         #endregion
@@ -79,10 +95,24 @@ namespace MediaPortal.GUI.Dreambox
             LoadSettings();
 
             return Load(GUIGraphicsContext.Skin + @"\mydreamboxmain.xml");
+
+
         }
         protected override void OnPageLoad()
         {
-            SetLabels();
+            if (_Dreambox == null)
+                LoadSettings();
+
+            _backgroundWorker.DoWork += new DoWorkEventHandler(_backgroundWorker_DoWork);
+            _TVScreenWorker.DoWork += new DoWorkEventHandler(_TVScreenWorker_DoWork);
+            _TVScreenWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_TVScreenWorker_RunWorkerCompleted);
+
+            //_bouquetWorker.DoWork += new DoWorkEventHandler(_bouquetWorker_DoWork);
+            //_channelWorker.DoWork += new DoWorkEventHandler(_channelWorker_DoWork);
+            
+            
+
+            //SetLabels();
             _ChannelTimer.Interval = 2000;
             _ChannelTimer.Tick += new EventHandler(_ChannelTimer_Tick);
             _ChannelTimer.Start();
@@ -149,7 +179,7 @@ namespace MediaPortal.GUI.Dreambox
                                     if (_Bouquets.Rows[i]["Name"].ToString() == bouquetName)
                                     {
                                         bouquetRef = _Bouquets.Rows[i]["Ref"].ToString();
-                                        _SelectedBouquetID = i+1;
+                                        _SelectedBouquetID = i + 1;
                                         break;
                                     }
                                 }
@@ -202,7 +232,7 @@ namespace MediaPortal.GUI.Dreambox
                             {
                                 menu.Add(_Channels.Rows[i]["Name"].ToString());
                             }
-                            
+
                             menu.DoModal(GetID);
                             string channelName = menu.SelectedLabelText;
                             string channelRef = "";
@@ -220,7 +250,7 @@ namespace MediaPortal.GUI.Dreambox
                                 {
                                     // zap to that channel
                                     StopPlaying();
-                                    _Dreambox.RemoteControl.Zap(channelRef);
+                                    ChangeChannelButtonClicked(channelRef);
                                 }
                             }
                             return true;
@@ -246,15 +276,17 @@ namespace MediaPortal.GUI.Dreambox
                                 GUIPropertyManager.SetProperty("#view", "");
                                 _ChannelTimer.Start();
                                 PlayCurrentChannel();
-                                
+
                             }
                             return true;
                         }
                         if (iControl == (int)Controls.RadioButton)
                         {
                             //activate Radio Screen
-                            GUIWindowManager.ActivateWindow(6662);
+                            //GUIWindowManager.ActivateWindow(GuiMain.WindowID);
+                            return true;
                         }
+
 
 
                         return true;
@@ -268,7 +300,7 @@ namespace MediaPortal.GUI.Dreambox
             }
             return base.OnMessage(message);
 
-        } 
+        }
         public override void OnAction(Action action)
         {
             switch (action.wID)
@@ -299,7 +331,7 @@ namespace MediaPortal.GUI.Dreambox
                         {
                             StopPlaying();
                             _Dreambox.RemoteControl.Right();
-                            
+
                         }
                         return;
                     }
@@ -312,6 +344,8 @@ namespace MediaPortal.GUI.Dreambox
         #region Private Methods
         void LoadSettings()
         {
+            //string path = Path.Combine(Config.Get(Config.Dir.Config), "MediaPortal.xml");
+            //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(path))
             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
                 string server = xmlreader.GetValue("mydreambox", "IP");
@@ -319,8 +353,7 @@ namespace MediaPortal.GUI.Dreambox
                 string password = xmlreader.GetValue("mydreambox", "Password");
                 try
                 {
-                    if (server.Length > 0)
-                        _Dreambox = new DreamBox.Core("http://" + server, username, password);
+                    _Dreambox = new DreamBox.Core("http://" + server, username, password);
                 }
                 catch (Exception x)
                 {
@@ -328,25 +361,7 @@ namespace MediaPortal.GUI.Dreambox
                 }
             }
         }
-        void SetLabels()
-        {
-            BoxInfo boxInfo = _Dreambox.BoxInfo;
-            BoutiqueReference = boxInfo.ServiceReference;
-            GUIPropertyManager.SetProperty("#TV.View.channel", boxInfo.ServiceName);
-            GUIPropertyManager.SetProperty("#TV.View.title", boxInfo.NowSt);
-            GUIPropertyManager.SetProperty("#TV.View.start", boxInfo.NowT);
-            GUIPropertyManager.SetProperty("#TV.View.stop", boxInfo.NextT);
-            GUIPropertyManager.SetProperty("#TV.View.description", "Next: " + boxInfo.NextT + " - " + boxInfo.NextSt);
 
-            string currentChannel = GUIPropertyManager.GetProperty("#view");
-            if (currentChannel == "")
-                return;
-            
-            //GUIPropertyManager.SetProperty("#TV.View.description", currentChannel);
-            GUIPropertyManager.SetProperty("#TV.View.description", "Playing recording: " + currentChannel);
-            
-
-        }
         void Play(string fileName)
         {
             playlistPlayer = new PlayListPlayer();
@@ -388,9 +403,8 @@ namespace MediaPortal.GUI.Dreambox
             string url = serverUrl + ":31339/0," + channelInfo.Pmt.Replace("h", ",").Trim() + channelInfo.Vpid.Replace("h", ",").Trim() + channelInfo.Apid.Replace("h", ",").Trim() + channelInfo.Pcrpid.Replace("h", "").Trim();
             url = url + "$" + GUIPropertyManager.GetProperty("#TV.View.channel") + "$" + ".gary";
             // zap channels
-            SetLabels();
             Play(url);
-            
+
         }
         void StopPlaying()
         {
@@ -401,7 +415,7 @@ namespace MediaPortal.GUI.Dreambox
                 g_Player.Stop();
             }
             catch { }
-            
+
         }
         #endregion
 
@@ -416,59 +430,127 @@ namespace MediaPortal.GUI.Dreambox
 
         void _ChannelTimer_Tick(object sender, EventArgs e)
         {
-            BoxInfo boxInfo = _Dreambox.BoxInfo;
-
-            if (Processing) // switching channels, do not run this again
-                return;
-            if (_Dreambox.CurrentChannel.Name != "")
-            {
-                GUIPropertyManager.SetProperty("#TV.View.channel", boxInfo.ServiceName);
-                GUIPropertyManager.SetProperty("#TV.View.title", GUILocalizeStrings.Get(875) + ": " + boxInfo.NowSt);
-                GUIPropertyManager.SetProperty("#TV.View.start", boxInfo.NowT);
-                GUIPropertyManager.SetProperty("#TV.View.stop", boxInfo.NextT);
-                GUIPropertyManager.SetProperty("#TV.View.description", "Next: " + boxInfo.NextT + " - " + boxInfo.NextSt);
-                btnBouquet.Label = GUILocalizeStrings.Get(971);
-                btnChannel.Label = GUILocalizeStrings.Get(602) + " " + boxInfo.ServiceName;
-                
-            }
-
-            if (boxInfo.ServiceReference.EndsWith(".ts")) // Dreambox is in video playback mode
-            {
-                Processing = true;
-                GUIPropertyManager.SetProperty("#TV.View.channel", GUILocalizeStrings.Get(157));
-                GUIPropertyManager.SetProperty("#TV.View.title", GUILocalizeStrings.Get(875) + ": " + boxInfo.NowSt);
-                string[] sTime = boxInfo.VideoTime.Split(':');
-                //if (sTime.GetUpperBound(0) == 3)
-                //{
-                //    VideoNow = new TimeSpan(int.Parse(sTime[0]), int.Parse(sTime[1]), int.Parse(sTime[2]));
-                //}
-                //else
-                //{
-                //    VideoNow = new TimeSpan(0, int.Parse(sTime[0]), int.Parse(sTime[1]));
-                //}
-                //TimeSpan EndTime = VideoStarted + VideoNow;
-                //TimeSpan NowTime = new TimeSpan(1, DateTime.Now.Minute, DateTime.Now.Second);
-                //int PercentComplete = (int)((VideoStarted.TotalSeconds - VideoNow.TotalSeconds) / (EndTime.TotalSeconds - VideoStarted.TotalSeconds));
-                //progressBar.Percentage = PercentComplete;
-                //GUIPropertyManager.SetProperty("#TV.View.stop", EndTime.ToString());
-                Processing = false;
-                return;
-            }
-            if (BoutiqueReference != boxInfo.ServiceReference)
-            {
-                BoutiqueReference = boxInfo.ServiceReference;
-                //boxInfo = _Dreambox.BoxInfo;
-                //System.Threading.Thread.Sleep(2000); // Wait 2 second.
-                PlayCurrentChannel();
-            }
-                
+            if (!_backgroundWorker.IsBusy)
+                _backgroundWorker.RunWorkerAsync();
         }
 
 
 
         #endregion
 
+        #region Update OSD
+        void _StatusTimer_Tick(object sender, EventArgs e)
+        {
+            if (!_backgroundWorker.IsBusy)
+                _backgroundWorker.RunWorkerAsync();
 
+        }
+
+
+        void _backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+
+            DreamBox.Core box = null;
+            //string path = Path.Combine(Config.Get(Config.Dir.Config), "MediaPortal.xml");
+            //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(path))
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            {
+                string server = xmlreader.GetValue("mydreambox", "IP");
+                string username = xmlreader.GetValue("mydreambox", "UserName");
+                string password = xmlreader.GetValue("mydreambox", "Password");
+                try
+                {
+                    box = new DreamBox.Core("http://" + server, username, password);
+                }
+                catch (Exception x)
+                {
+                    Console.WriteLine(x.Message);
+                }
+            }
+            _CurrentChannelName = btnChannel.Label;
+            CurrentServiceData data = box.XML.CurrentService;
+            HandleServiceData(data);
+            //this.Invoke(new ServiceDataHandler(HandleServiceData), new object[] { data });
+        }
+
+        void HandleServiceData(CurrentServiceData data)
+        {
+            if (_CurrentChannelName != data.ServiceName) { ChangeChannel = true; };
+
+            GUIPropertyManager.SetProperty("#TV.View.channel", data.ServiceName);
+            GUIPropertyManager.SetProperty("#TV.View.title", GUILocalizeStrings.Get(875) + ": " + data.CurrentEvent.Description);
+            GUIPropertyManager.SetProperty("#TV.View.start", data.CurrentEvent.Time);
+            GUIPropertyManager.SetProperty("#TV.View.stop", data.NextEvent.Time);
+            GUIPropertyManager.SetProperty("#TV.View.description", "Next: " + data.NextEvent.Description);
+            btnBouquet.Label = GUILocalizeStrings.Get(971);
+            btnChannel.Label = GUILocalizeStrings.Get(602) + " " + data.ServiceName;
+
+            if (data.ServiceReference.EndsWith(".ts")) // Dreambox is in video playback mode
+            {
+                GUIPropertyManager.SetProperty("#TV.View.channel", GUILocalizeStrings.Get(157));
+                GUIPropertyManager.SetProperty("#TV.View.title", GUILocalizeStrings.Get(875) + ": " + data.CurrentEvent.Description);
+                return;
+            }
+        }
+        #endregion
+
+        void ChangeChannelButtonClicked(string uri)
+        {
+            //TV: url should be like http://192.168.2.128:31339/0,089c,0201,0064,ffffffff
+            //RADIO: url sould be like http://192.168.2.128:31343/7e
+            //ZAP: selected value are like 1:0:1:fab:451:35:c00000:0:0:0:
+
+
+            _OldChannel = _Dreambox.XML.CurrentService;
+            StreamInfoData data = _Dreambox.XML.StreamInfo;
+            string serverUrl = _Dreambox.Url;
+            try
+            {
+                serverUrl = serverUrl.Substring(7);
+                serverUrl = serverUrl.Substring(0, serverUrl.LastIndexOf(':'));
+            }
+            catch
+            { }
+            serverUrl = @"http://" + serverUrl;
+            // zap channels
+
+            // check if current channel is not clicked
+            if (uri != data.ServiceReference)
+            {
+                _Dreambox.RemoteControl.Zap(uri);
+            }
+            if (!_TVScreenWorker.IsBusy)
+                _TVScreenWorker.RunWorkerAsync();
+        }
+
+        void _TVScreenWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            if (_OldChannel != null)
+            {
+                CurrentServiceData newChannel = _Dreambox.XML.CurrentService;
+                while (!ChangeChannel && (_OldChannel.ServiceName != newChannel.ServiceName))
+                {
+
+                    // let thread wait (not clean! I know!)
+                    System.Threading.Thread.Sleep(1);
+                }
+                ChangeChannel = true;
+            }
+
+
+        }
+        void _TVScreenWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // thread completed, now change channel
+            if (ChangeChannel)
+            {
+                System.Threading.Thread.Sleep(500);
+                ChangeChannel = false;
+                //this.Invoke(new TVScreenHandler(PlayCurrentChannel), new object[] { });
+                PlayCurrentChannel();
+            }
+
+        }
     }
 
 

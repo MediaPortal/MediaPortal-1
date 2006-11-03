@@ -19,6 +19,17 @@ namespace DreamBox
             _Password = password;
         }
 
+        public Stream GetStream(string command)
+        {
+            Uri uri = new Uri(_Url + command);
+            WebRequest request = WebRequest.Create(uri);
+            request.Credentials = new NetworkCredential(_UserName, _Password);
+
+            WebResponse response = request.GetResponse();
+            Stream stream = response.GetResponseStream();
+            return stream;
+        }
+
         public string PostData(string command)
         {
             Uri uri = new Uri(_Url + command);
