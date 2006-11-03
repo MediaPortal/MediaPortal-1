@@ -283,6 +283,7 @@ namespace MediaPortal.GUI.Weather
     {
       SaveSettings();
       base.OnPageDestroy(new_windowId);
+      _geochronGenerator = null;
     }
     public override bool OnMessage(GUIMessage message)
     {
