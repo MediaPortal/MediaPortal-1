@@ -17,7 +17,7 @@ CEpgDecoder::CEpgDecoder()
 	m_bParseEPG=false;
 	m_bEpgDone=false;
 
-	m_epgTimeout=time(NULL)+60;
+	m_epgTimeout=time(NULL);
 }
 CEpgDecoder::~CEpgDecoder()
 {
@@ -36,7 +36,7 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 
 		time_t currentTime=time(NULL);
 		time_t timespan=currentTime-m_epgTimeout;
-		if (timespan>10)
+		if (timespan>60)
 		{
 			//LogDebug("EPG:timeout ch:%d",m_mapEPG.size());
 			m_bParseEPG=false;
@@ -590,7 +590,7 @@ void CEpgDecoder::ResetEPG()
 	m_mapEPG.clear();
 	//m_bParseEPG=false;
 	m_bEpgDone=false;
-	m_epgTimeout=time(NULL)+60;
+	m_epgTimeout=time(NULL);
 }
 
 void CEpgDecoder::GrabEPG()

@@ -156,7 +156,7 @@ void CMhwParser::OnNewSection(int pid, int tableId, CSection& sections)
 		}
 				
 		int passed=(int)(time(NULL)-m_TimeOutTimer);
-		if (passed>30)
+		if (passed>60)
 		{
 			LogDebug("mhw grabber ended");
 			m_bDone=true;
@@ -188,7 +188,7 @@ bool	CMhwParser::IsEPGReady()
 {
 	CEnterCriticalSection enter(m_section);
 	int passed=(int)(time(NULL)-m_TimeOutTimer);
-  if (passed>30)
+  if (passed>60)
   {
     LogDebug("mhw grabber ended");
 	  m_bDone=true;
