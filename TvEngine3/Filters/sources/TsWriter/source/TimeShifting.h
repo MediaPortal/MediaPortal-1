@@ -72,6 +72,7 @@ DECLARE_INTERFACE_(ITsTimeshifting, IUnknown)
 	STDMETHOD(SetMode) (THIS_ int mode) PURE;
 	STDMETHOD(GetMode) (THIS_ int *mode) PURE;
 	STDMETHOD(SetPmtPid) (THIS_ int pmtPid) PURE;
+	STDMETHOD(Pause) (THIS_ BYTE onOff) PURE;
 };
 
 class CTimeShifting: public CUnknown, public ITsTimeshifting, public IFileWriter
@@ -114,6 +115,7 @@ public:
 	STDMETHODIMP SetMode(int mode) ;
 	STDMETHODIMP GetMode(int *mode) ;
 	STDMETHODIMP SetPmtPid(int pmtPid);
+	STDMETHODIMP Pause( BYTE onOff) ;
 	void OnTsPacket(byte* tsPacket);
 	void Write(byte* buffer, int len);
 
@@ -144,6 +146,7 @@ private:
 	int									 m_iPmtContinuityCounter;
 	int									 m_iPatContinuityCounter;
   
+  BOOL   m_bPaused;
 	UINT64 m_startPcr;
 	UINT64 m_highestPcr;
   bool    m_bDetermineNewStartPcr;

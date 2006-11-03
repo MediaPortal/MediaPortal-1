@@ -207,5 +207,12 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     /// <returns></returns>
     [PreserveSig]
     int SetPmtPid(short pmtPid);
+    /// <summary>
+    /// pauses or continues writing to the timeshifting file.
+    /// </summary>
+    /// <param name="onoff">if true then pause, else run.</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int Pause(byte onoff);
   }
 }

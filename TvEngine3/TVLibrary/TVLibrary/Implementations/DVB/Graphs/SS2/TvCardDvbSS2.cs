@@ -371,6 +371,7 @@ namespace TvLibrary.Implementations.DVB
       if (dvbChannel == null) return;
 
       ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
+      timeshift.Pause(1);
       timeshift.SetPcrPid((short)dvbChannel.PcrPid);
       timeshift.SetPmtPid((short)dvbChannel.PmtPid);
       foreach (PidInfo info in _channelInfo.pids)
@@ -381,6 +382,7 @@ namespace TvLibrary.Implementations.DVB
           timeshift.AddStream((short)info.pid, (short)info.stream_type, info.language);
         }
       }
+      timeshift.Pause(0);
     }
 
 

@@ -107,7 +107,7 @@ DWORD crc32 (char *data, int len)
 CTimeShifting::CTimeShifting(LPUNKNOWN pUnk, HRESULT *phr) 
 :CUnknown( NAME ("MpTsTimeshifting"), pUnk)
 {
-
+  m_bPaused=FALSE;
 	m_params.chunkSize=1024*1024*256;
 	m_params.maxFiles=20;
 	m_params.maxSize=1024*1024*256;
@@ -132,6 +132,7 @@ CTimeShifting::~CTimeShifting(void)
 void CTimeShifting::OnTsPacket(byte* tsPacket)
 {
 	CEnterCriticalSection enter(m_section);
+  if (m_bPaused) return;
 	if (m_bTimeShifting)
 	{
     if (m_timeShiftMode==ProgramStream)
@@ -145,6 +146,19 @@ void CTimeShifting::OnTsPacket(byte* tsPacket)
 	}
 }
 
+
+STDMETHODIMP CTimeShifting::Pause( BYTE onOff) 
+{
+  if (onOff!=0) 
+    m_bPaused=TRUE;
+  else
+    m_bPaused=FALSE;
+	if (m_bPaused)
+    LogDebug("Timeshifter:paused:yes"); 
+  else
+    LogDebug("Timeshifter:paused:no"); 
+  return S_OK;
+}
 
 STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 {
@@ -376,6 +390,7 @@ STDMETHODIMP CTimeShifting::Start()
 			WriteFakePAT();
 			WriteFakePMT();
 		}
+    m_bPaused=FALSE;
 	}
 	catch(...)
 	{
@@ -406,6 +421,7 @@ STDMETHODIMP CTimeShifting::Reset()
 		FAKE_AUDIO_PID    = 0x40;
 		FAKE_SUBTITLE_PID = 0x50;
     m_iPacketCounter=0;
+    m_bPaused=FALSE;
 	}
 	catch(...)
 	{
