@@ -481,7 +481,7 @@ namespace TvService
         if ((_localCards[cardId] as TvCardATSC) != null) return CardType.Atsc;
         if ((_localCards[cardId] as TvCardDVBC) != null) return CardType.DvbC;
         if ((_localCards[cardId] as TvCardDVBS) != null) return CardType.DvbS;
-        if ((_localCards[cardId] as TvCardDvbSS2) != null) return CardType.DvbS;
+        if ((_localCards[cardId] as TvCardDvbSS2) != null) return (CardType) _localCards[cardId].cardType; //CardType.DvbS;
         if ((_localCards[cardId] as TvCardDVBT) != null) return CardType.DvbT;
         return CardType.Analog;
       }

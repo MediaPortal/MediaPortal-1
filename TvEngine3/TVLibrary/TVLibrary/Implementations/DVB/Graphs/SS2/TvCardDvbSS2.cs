@@ -50,10 +50,112 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
+    #region enums
 
+    enum TunerType
+    {
+      ttSat = 0,
+      ttCable = 1,
+      ttTerrestrial = 2,
+      ttATSC = 3,
+      ttUnknown = -1
+    }
+    enum eModulationTAG
+    {
+      QAM_4 = 2,
+      QAM_16,
+      QAM_32,
+      QAM_64,
+      QAM_128,
+      QAM_256,
+      MODE_UNKNOWN = -1
+    }
+    enum GuardIntervalType
+    {
+      Interval_1_32 = 0,
+      Interval_1_16,
+      Interval_1_8,
+      Interval_1_4,
+      Interval_Auto
+    }
+    enum BandWidthType
+    {
+      MHz_6 = 6,
+      MHz_7 = 7,
+      MHz_8 = 8,
+    }
+    enum SS2DisEqcType
+    {
+      None = 0,
+      Simple_A,
+      Simple_B,
+      Level_1_A_A,
+      Level_1_B_A,
+      Level_1_A_B,
+      Level_1_B_B
+    }
+    enum FecType
+    {
+      Fec_1_2 = 1,
+      Fec_2_3,
+      Fec_3_4,
+      Fec_5_6,
+      Fec_7_8,
+      Fec_Auto
+    }
+
+    enum LNBSelectionType
+    {
+      Lnb0 = 0,
+      Lnb22kHz,
+      Lnb33kHz,
+      Lnb44kHz,
+    }
+
+    enum PolarityType
+    {
+      Horizontal = 0,
+      Vertical,
+    }
+
+    enum CardType
+    {
+      Analog,
+      DvbS,
+      DvbT,
+      DvbC,
+      Atsc
+    }
+
+    #endregion
+
+    #region Structs
+    //
+	//	Structure completedy by GetTunerCapabilities() to return tuner capabilities
+	//
+    private struct tTunerCapabilities
+    {
+      public TunerType eModulation;
+      public int dwConstellationSupported;       // Show if SetModulation() is supported
+      public int dwFECSupported;                 // Show if SetFec() is suppoted
+      public int dwMinTransponderFreqInKHz;
+      public int dwMaxTransponderFreqInKHz;
+      public int dwMinTunerFreqInKHz;
+      public int dwMaxTunerFreqInKHz;
+      public int dwMinSymbolRateInBaud;
+      public int dwMaxSymbolRateInBaud;
+      public int bAutoSymbolRate;				// Obsolte		
+      public int dwPerformanceMonitoring;        // See bitmask definitions below
+      public int dwLockTimeInMilliSecond;		// lock time in millisecond
+      public int dwKernelLockTimeInMilliSecond;	// lock time for kernel
+      public int dwAcquisitionCapabilities;
+    }
+
+    #endregion
 
     #region variables
     DsDevice _tunerDevice;
+    CardType _cardType;
     string _recordingFileName;
     GraphState _graphState;
     IChannel _currentChannel;
@@ -122,77 +224,6 @@ namespace TvLibrary.Implementations.DVB
       Recording
     }
     #endregion
-
-    #region enums
-
-    enum TunerType
-    {
-      ttSat = 0,
-      ttCable = 1,
-      ttTerrestrial = 2,
-      ttATSC = 3,
-      ttUnknown = -1
-    }
-    enum eModulationTAG
-    {
-      QAM_4 = 2,
-      QAM_16,
-      QAM_32,
-      QAM_64,
-      QAM_128,
-      QAM_256,
-      MODE_UNKNOWN = -1
-    };
-    enum GuardIntervalType
-    {
-      Interval_1_32 = 0,
-      Interval_1_16,
-      Interval_1_8,
-      Interval_1_4,
-      Interval_Auto
-    };
-    enum BandWidthType
-    {
-      MHz_6 = 6,
-      MHz_7 = 7,
-      MHz_8 = 8,
-    };
-    enum SS2DisEqcType
-    {
-      None = 0,
-      Simple_A,
-      Simple_B,
-      Level_1_A_A,
-      Level_1_B_A,
-      Level_1_A_B,
-      Level_1_B_B
-    };
-    enum FecType
-    {
-      Fec_1_2 = 1,
-      Fec_2_3,
-      Fec_3_4,
-      Fec_5_6,
-      Fec_7_8,
-      Fec_Auto
-    }
-
-    enum LNBSelectionType
-    {
-      Lnb0 = 0,
-      Lnb22kHz,
-      Lnb33kHz,
-      Lnb44kHz,
-    } ;
-
-    enum PolarityType
-    {
-      Horizontal = 0,
-      Vertical,
-    };
-
-    #endregion
-
     #region constants
     [ComImport, Guid("BAAC8911-1BA2-4ec2-96BA-6FFE42B62F72")]
     class MPStreamAnalyzer { }
@@ -239,6 +270,7 @@ namespace TvLibrary.Implementations.DVB
 #else
       _pmtTimer.Elapsed += new System.Timers.ElapsedEventHandler(_pmtTimer_Elapsed);
 #endif
+      GetTunerCapabilities();
     }
     #endregion
 
@@ -1304,6 +1336,19 @@ namespace TvLibrary.Implementations.DVB
         return _currentChannel;
       }
     }
+    /// <summary>
+    /// Gets/sets the card cardType
+    /// </summary>
+    public int cardType
+    {
+      get
+      {
+        return (int)_cardType;
+      }
+      set
+      {
+      }
+    }
     #endregion
 
     #region epg & scanning
@@ -1406,6 +1451,19 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>true if succeeded else false</returns>
     public bool Tune(IChannel channel)
     {
+      int frequency = 0;
+      int symbolRate = 0;
+      int modulation = (int)eModulationTAG.QAM_64;
+      int bandWidth = 0;
+      int lnbFrequency = 10600000;
+      bool hiBand = true;
+      LNBSelectionType lnbSelection = LNBSelectionType.Lnb0;
+      int lnbKhzTone = 22;
+      int fec = (int)FecType.Fec_Auto;
+      int polarity = 0;
+      SS2DisEqcType disType = SS2DisEqcType.None;
+      int switchFreq = 0;
+      int pmtPid = 0;
 
       Log.Log.WriteFile("ss2:Tune({0})", channel);
       if (_epgGrabbing)
@@ -1416,23 +1474,179 @@ namespace TvLibrary.Implementations.DVB
           _epgGrabberCallback.OnEpgCancelled();
         }
       }
-      DVBSChannel dvbsChannel = channel as DVBSChannel;
-      _hasTeletext = false;
-      if (dvbsChannel == null)
+      switch (_cardType)
       {
-        Log.Log.Error("Channel is not a DVBS channel!!! {0}", channel.GetType().ToString());
-        return false;
-      }
+        case CardType.DvbS:
+          DVBSChannel dvbsChannel = channel as DVBSChannel;
+          if (dvbsChannel == null)
+          {
+            Log.Log.Error("Channel is not a DVBS channel!!! {0}", channel.GetType().ToString());
+            return false;
+          }
+          DVBSChannel oldChannels = _currentChannel as DVBSChannel;
+          if (_currentChannel != null)
+          {
+            if (oldChannels.Equals(channel))
+            {
+              Log.Log.WriteFile("ss2:already tuned on this channel");
+              return true;
+            }
+          }
+          frequency = (int)dvbsChannel.Frequency;
+          symbolRate = dvbsChannel.SymbolRate;
 
-      DVBSChannel oldChannel = _currentChannel as DVBSChannel;
-      if (_currentChannel != null)
-      {
-        if (oldChannel.Equals(channel))
-        {
-          Log.Log.WriteFile("ss2:already tuned on this channel");
-          return true;
-        }
+          if (dvbsChannel.Frequency >= 11700000)
+          {
+            lnbFrequency = 10600000;
+            hiBand = true;
+          }
+          else
+          {
+            lnbFrequency = 9750000;
+            hiBand = false;
+          }
+          if (lnbFrequency >= frequency)
+          {
+            Log.Log.Error("ss2:  Error: LNB Frequency must be less than Transponder frequency");
+          }
+          //0=horizontal,1=vertical
+          polarity = 0;
+          if (dvbsChannel.Polarisation == Polarisation.LinearV) polarity = 1;
+          Log.Log.WriteFile("ss2:  Polarity:{0} {1}", dvbsChannel.Polarisation, polarity);
+
+          switch (lnbKhzTone)
+          {
+            case 0:
+              lnbSelection = LNBSelectionType.Lnb0;
+              break;
+            case 22:
+              lnbSelection = LNBSelectionType.Lnb22kHz;
+              break;
+            case 33:
+              lnbSelection = LNBSelectionType.Lnb33kHz;
+              break;
+            case 44:
+              lnbSelection = LNBSelectionType.Lnb44kHz;
+              break;
+          }
+          if (hiBand == false)
+          {
+            lnbSelection = LNBSelectionType.Lnb0;
+          }
+          switch (dvbsChannel.DisEqc)
+          {
+            case DisEqcType.None: // none
+              disType = SS2DisEqcType.None;
+              break;
+            case DisEqcType.SimpleA: // Simple A
+              disType = SS2DisEqcType.Simple_A;
+              break;
+            case DisEqcType.SimpleB: // Simple B
+              disType = SS2DisEqcType.Simple_B;
+              break;
+            case DisEqcType.Level1AA: // Level 1 A/A
+              disType = SS2DisEqcType.Level_1_A_A;
+              break;
+            case DisEqcType.Level1BA: // Level 1 B/A
+              disType = SS2DisEqcType.Level_1_B_A;
+              break;
+            case DisEqcType.Level1AB: // Level 1 A/B
+              disType = SS2DisEqcType.Level_1_A_B;
+              break;
+            case DisEqcType.Level1BB: // Level 1 B/B
+              disType = SS2DisEqcType.Level_1_B_B;
+              break;
+          }
+          switchFreq = lnbFrequency / 1000;//in MHz
+          pmtPid = dvbsChannel.PmtPid;
+          break;
+        case CardType.DvbT:
+          DVBTChannel dvbtChannel = channel as DVBTChannel;
+          if (dvbtChannel == null)
+          {
+            Log.Log.Error("Channel is not a DVBT channel!!! {0}", channel.GetType().ToString());
+            return false;
+          }
+          DVBTChannel oldChannelt = _currentChannel as DVBTChannel;
+          if (_currentChannel != null)
+          {
+            if (oldChannelt.Equals(channel))
+            {
+              Log.Log.WriteFile("ss2:already tuned on this channel");
+              return true;
+            }
+          }
+          frequency = (int)dvbtChannel.Frequency;
+          bandWidth = dvbtChannel.BandWidth;
+          pmtPid = dvbtChannel.PmtPid;
+          break;
+        case CardType.DvbC:
+          DVBCChannel dvbcChannel = channel as DVBCChannel;
+          if (dvbcChannel == null)
+          {
+            Log.Log.Error("Channel is not a DVBC channel!!! {0}", channel.GetType().ToString());
+            return false;
+          }
+          DVBCChannel oldChannelc = _currentChannel as DVBCChannel;
+          if (_currentChannel != null)
+          {
+            if (oldChannelc.Equals(channel))
+            {
+              Log.Log.WriteFile("ss2:already tuned on this channel");
+              return true;
+            }
+          }
+          frequency = (int)dvbcChannel.Frequency;
+          symbolRate = dvbcChannel.SymbolRate;
+          switch (dvbcChannel.ModulationType)
+          {
+            case ModulationType.Mod16Qam:
+              modulation = (int)eModulationTAG.QAM_16;
+              break;
+            case ModulationType.Mod32Qam:
+              modulation = (int)eModulationTAG.QAM_32;
+              break;
+            case ModulationType.Mod64Qam:
+              modulation = (int)eModulationTAG.QAM_64;
+              break;
+            case ModulationType.Mod128Qam:
+              modulation = (int)eModulationTAG.QAM_128;
+              break;
+            case ModulationType.Mod256Qam:
+              modulation = (int)eModulationTAG.QAM_256;
+              break;
+          }
+          pmtPid = dvbcChannel.PmtPid;
+          break;
+        case CardType.Atsc:
+          ATSCChannel dvbaChannel = channel as ATSCChannel;
+          if (dvbaChannel == null)
+          {
+            Log.Log.Error("Channel is not a ATSC channel!!! {0}", channel.GetType().ToString());
+            return false;
+          }
+          ATSCChannel oldChannela = _currentChannel as ATSCChannel;
+          if (_currentChannel != null)
+          {
+            if (oldChannela.Equals(channel))
+            {
+              Log.Log.WriteFile("ss2:already tuned on this channel");
+              return true;
+            }
+          }
+          Log.Log.WriteFile("DVBGraphSkyStar2:  ATSC Channel:{0}", dvbaChannel.PhysicalChannel);
+          //#DM B2C2 SDK says ATSC is tuned by frequency. Here we work the OTA frequency by channel number#
+          int atscfreq = 0;
+          if (dvbaChannel.PhysicalChannel <= 6) atscfreq = 45 + (dvbaChannel.PhysicalChannel * 6);
+          if (dvbaChannel.PhysicalChannel >= 7 && dvbaChannel.PhysicalChannel <= 13) atscfreq = 177 + ((dvbaChannel.PhysicalChannel - 7) * 6);
+          if (dvbaChannel.PhysicalChannel >= 14) atscfreq = 473 + ((dvbaChannel.PhysicalChannel - 14) * 6);
+          //#DM changed tuning parameter from physical channel to calculated frequency above.
+          frequency = atscfreq;
+          Log.Log.WriteFile("ss2:  ATSC Frequency:{0} MHz", frequency);
+          pmtPid = dvbaChannel.PmtPid;
+          break;
       }
+      _hasTeletext = false;
       _pmtVersion = -1;
       _startTimeShifting = false;
       _channelInfo = new ChannelInfo();
@@ -1457,22 +1671,8 @@ namespace TvLibrary.Implementations.DVB
           }
         }
       }
-
       _startTimeShifting = false;
-      int lnbFrequency = 10600000;
-      bool hiBand = true;
-      if (dvbsChannel.Frequency >= 11700000)
-      {
-        lnbFrequency = 10600000;
-        hiBand = true;
-      }
-      else
-      {
-        lnbFrequency = 9750000;
-        hiBand = false;
-      }
 
-      int frequency = (int)dvbsChannel.Frequency;
       if (frequency > 13000)
         frequency /= 1000;
       Log.Log.WriteFile("ss2:  Transponder Frequency:{0} MHz", frequency);
@@ -1482,111 +1682,88 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Error("ss2:SetFrequencyKHz() failed:0x{0:X}", hr);
         return false;
       }
-      int lnbKhzTone;
-      //GetDisEqcSettings(ref ch, out lowOsc, out hiOsc, out lnbKhzTone, out disEqcUsed);
 
-      if (lnbFrequency >= dvbsChannel.Frequency)
+      switch (_cardType)
       {
-        Log.Log.Error("ss2:  Error: LNB Frequency must be less than Transponder frequency");
-      }
-      Log.Log.WriteFile("ss2:  SymbolRate:{0} KS/s", dvbsChannel.SymbolRate);
-      hr = _interfaceB2C2TunerCtrl.SetSymbolRate(dvbsChannel.SymbolRate);
-      if (hr != 0)
-      {
-        Log.Log.Error("ss2:SetSymbolRate() failed:0x{0:X}", hr);
-        return false;
-      }
-
-      int fec = (int)FecType.Fec_Auto;
-      Log.Log.WriteFile("ss2:  Fec:{0} {1}", ((FecType)fec), fec);
-      hr = _interfaceB2C2TunerCtrl.SetFec(fec);
-      if (hr != 0)
-      {
-        Log.Log.Error("ss2:SetFec() failed:0x{0:X}", hr);
-        return false;
-      }
-
-      //0=horizontal,1=vertical
-      int polarity = 0;
-      if (dvbsChannel.Polarisation == Polarisation.LinearV) polarity = 1;
-      Log.Log.WriteFile("ss2:  Polarity:{0} {1}", dvbsChannel.Polarisation, polarity);
-      hr = _interfaceB2C2TunerCtrl.SetPolarity(polarity);
-      if (hr != 0)
-      {
-        Log.Log.Error("ss2:SetPolarity() failed:0x{0:X}", hr);
-        return false;
-      }
-
-      lnbKhzTone = 22;
-      LNBSelectionType lnbSelection = LNBSelectionType.Lnb0;
-      switch (lnbKhzTone)
-      {
-        case 0:
-          lnbSelection = LNBSelectionType.Lnb0;
+        case CardType.DvbC:
+          Log.Log.WriteFile("ss2:  SymbolRate:{0} KS/s", symbolRate);
+          hr = _interfaceB2C2TunerCtrl.SetSymbolRate(symbolRate);
+          if (hr != 0)
+          {
+            Log.Log.Error("ss2:SetSymbolRate() failed:0x{0:X}", hr);
+            return false;
+          }
+          Log.Log.WriteFile("ss2:  Modulation:{0}", ((eModulationTAG)modulation));
+          hr = _interfaceB2C2TunerCtrl.SetModulation(modulation);
+          if (hr != 0)
+          {
+            Log.Log.Error("ss2:SetModulation() failed:0x{0:X}", hr);
+            return false;
+          }
           break;
-        case 22:
-          lnbSelection = LNBSelectionType.Lnb22kHz;
+        case CardType.DvbT:
+          Log.Log.WriteFile("ss2:  GuardInterval:auto");
+          hr = _interfaceB2C2TunerCtrl.SetGuardInterval((int)GuardIntervalType.Interval_Auto);
+          if (hr != 0)
+          {
+            Log.Log.Error("ss2:SetGuardInterval() failed:0x{0:X}", hr);
+            return false;
+          }
+          Log.Log.WriteFile("ss2:  Bandwidth:{0} MHz", bandWidth);
+          //hr = _interfaceB2C2TunerCtrl.SetBandwidth((int)dvbtChannel.BandWidth);
+          // Set Channel Bandwidth (NOTE: Temporarily use polarity function to avoid having to 
+          // change SDK interface for SetBandwidth)
+          // from Technisat SDK 03/2006
+          hr = _interfaceB2C2TunerCtrl.SetPolarity(bandWidth);
+          if (hr != 0)
+          {
+            Log.Log.Error("ss2:SetBandwidth() failed:0x{0:X}", hr);
+            return false;
+          }
           break;
-        case 33:
-          lnbSelection = LNBSelectionType.Lnb33kHz;
+        case CardType.DvbS:
+          Log.Log.WriteFile("ss2:  SymbolRate:{0} KS/s", symbolRate);
+          hr = _interfaceB2C2TunerCtrl.SetSymbolRate(symbolRate);
+          if (hr != 0)
+          {
+            Log.Log.Error("ss2:SetSymbolRate() failed:0x{0:X}", hr);
+            return false;
+          }
+          Log.Log.WriteFile("ss2:  Fec:{0} {1}", ((FecType)fec), fec);
+          hr = _interfaceB2C2TunerCtrl.SetFec(fec);
+          if (hr != 0)
+          {
+            Log.Log.Error("ss2:SetFec() failed:0x{0:X}", hr);
+            return false;
+          }
+          hr = _interfaceB2C2TunerCtrl.SetPolarity(polarity);
+          if (hr != 0)
+          {
+            Log.Log.Error("ss2:SetPolarity() failed:0x{0:X}", hr);
+            return false;
+          }
+          Log.Log.WriteFile("ss2:  Lnb:{0}", lnbSelection);
+          hr = _interfaceB2C2TunerCtrl.SetLnbKHz((int)lnbSelection);
+          if (hr != 0)
+          {
+            Log.Log.Error("ss2:SetLnbKHz() failed:0x{0:X}", hr);
+            return false;
+          }
+          Log.Log.WriteFile("ss2:  Diseqc:{0} {1}", disType, disType);
+          hr = _interfaceB2C2TunerCtrl.SetDiseqc((int)disType);
+          if (hr != 0)
+          {
+            Log.Log.Error("ss2:SetDiseqc() failed:0x{0:X}", hr);
+            return false;
+          }
+          Log.Log.WriteFile("ss2:  LNBFrequency:{0} MHz", switchFreq);
+          hr = _interfaceB2C2TunerCtrl.SetLnbFrequency(switchFreq);
+          if (hr != 0)
+          {
+            Log.Log.Error("ss2:SetLnbFrequency() failed:0x{0:X}", hr);
+            return false;
+          }
           break;
-        case 44:
-          lnbSelection = LNBSelectionType.Lnb44kHz;
-          break;
-      }
-      if (hiBand == false)
-      {
-        lnbSelection = LNBSelectionType.Lnb0;
-      }
-
-      Log.Log.WriteFile("ss2:  Lnb:{0}", lnbSelection);
-      hr = _interfaceB2C2TunerCtrl.SetLnbKHz((int)lnbSelection);
-      if (hr != 0)
-      {
-        Log.Log.Error("ss2:SetLnbKHz() failed:0x{0:X}", hr);
-        return false;
-      }
-
-      SS2DisEqcType disType = SS2DisEqcType.None;
-      switch (dvbsChannel.DisEqc)
-      {
-        case DisEqcType.None: // none
-          disType = SS2DisEqcType.None;
-          break;
-        case DisEqcType.SimpleA: // Simple A
-          disType = SS2DisEqcType.Simple_A;
-          break;
-        case DisEqcType.SimpleB: // Simple B
-          disType = SS2DisEqcType.Simple_B;
-          break;
-        case DisEqcType.Level1AA: // Level 1 A/A
-          disType = SS2DisEqcType.Level_1_A_A;
-          break;
-        case DisEqcType.Level1BA: // Level 1 B/A
-          disType = SS2DisEqcType.Level_1_B_A;
-          break;
-        case DisEqcType.Level1AB: // Level 1 A/B
-          disType = SS2DisEqcType.Level_1_A_B;
-          break;
-        case DisEqcType.Level1BB: // Level 1 B/B
-          disType = SS2DisEqcType.Level_1_B_B;
-          break;
-      }
-      Log.Log.WriteFile("ss2:  Diseqc:{0} {1}", disType, disType);
-      hr = _interfaceB2C2TunerCtrl.SetDiseqc((int)disType);
-      if (hr != 0)
-      {
-        Log.Log.Error("ss2:SetDiseqc() failed:0x{0:X}", hr);
-        return false;
-      }
-
-      int switchFreq = lnbFrequency / 1000;//in MHz
-      Log.Log.WriteFile("ss2:  LNBFrequency:{0} MHz", switchFreq);
-      hr = _interfaceB2C2TunerCtrl.SetLnbFrequency(switchFreq);
-      if (hr != 0)
-      {
-        Log.Log.Error("ss2:SetLnbFrequency() failed:0x{0:X}", hr);
-        return false;
       }
 
 #if FORM
@@ -1628,7 +1805,7 @@ namespace TvLibrary.Implementations.DVB
       SendHWPids(pids);
 
 
-      SetupPmtGrabber(dvbsChannel.PmtPid);
+      SetupPmtGrabber(pmtPid);
       Log.Log.WriteFile("ss2:tune done");
       return true;
     }
@@ -2265,6 +2442,101 @@ namespace TvLibrary.Implementations.DVB
       }
       set
       {
+      }
+    }
+    private void GetTunerCapabilities()
+    {
+      int hr;
+      Log.Log.WriteFile("ss2: GetTunerCapabilities");
+      _graphBuilder = (IFilterGraph2)new FilterGraph();
+      _rotEntry = new DsROTEntry(_graphBuilder);
+      _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
+      _capBuilder.SetFiltergraph(_graphBuilder);
+
+      //=========================================================================================================
+      // add the skystar 2 specific filters
+      //=========================================================================================================
+      Log.Log.WriteFile("ss2:GetTunerCapabilities() create B2C2 adapter");
+      _filterB2C2Adapter = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(DVBSkyStar2Helper.CLSID_B2C2Adapter, false));
+      if (_filterB2C2Adapter == null)
+      {
+        Log.Log.Error("ss2:GetTunerCapabilities() _filterB2C2Adapter not found");
+        return;
+      }
+      _interfaceB2C2TunerCtrl = _filterB2C2Adapter as DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2;
+      if (_interfaceB2C2TunerCtrl == null)
+      {
+        Log.Log.Error("ss2: cannot get IB2C2MPEG2TunerCtrl3");
+        return;
+      }
+
+      //=========================================================================================================
+      // initialize skystar 2 tuner
+      //=========================================================================================================
+      /* Not necessary for query-only application
+       
+      Log.Log.WriteFile("ss2: Initialize Tuner()");
+      hr = _interfaceB2C2TunerCtrl.Initialize();
+      if (hr != 0)
+      {
+        Log.Log.Error("ss2: Tuner initialize failed:0x{0:X}", hr);
+        //return;
+      }
+      */
+      //=========================================================================================================
+      // Get tuner type (DVBS, DVBC, DVBT, ATSC)
+      //=========================================================================================================
+      tTunerCapabilities tc;
+      int lTunerCapSize = Marshal.SizeOf(typeof(tTunerCapabilities));
+
+      IntPtr ptCaps = Marshal.AllocHGlobal(lTunerCapSize);
+
+      hr = _interfaceB2C2TunerCtrl.GetTunerCapabilities(ptCaps, ref lTunerCapSize);
+      if (hr != 0)
+      {
+        Log.Log.Error("ss2: Tuner Type failed:0x{0:X}", hr);
+        return;
+      }
+      tc = (tTunerCapabilities)Marshal.PtrToStructure(ptCaps, typeof(tTunerCapabilities));
+
+      switch (tc.eModulation)
+      {
+        case TunerType.ttSat:
+          Log.Log.WriteFile("ss2: Card type = DVBS");
+          _cardType = CardType.DvbS;
+          break;
+        case TunerType.ttCable:
+          Log.Log.WriteFile("ss2: Card type = DVBC");
+          _cardType = CardType.DvbC;
+          break;
+        case TunerType.ttTerrestrial:
+          Log.Log.WriteFile("ss2: Card type = DVBT");
+          _cardType = CardType.DvbT;
+          break;
+        case TunerType.ttATSC:
+          Log.Log.WriteFile("ss2: Card type = ATSC");
+          _cardType = CardType.Atsc;
+          break;
+        case TunerType.ttUnknown:
+          Log.Log.WriteFile("ss2: Card type = unknown?");
+          _cardType = CardType.DvbS;
+          break;
+      }
+      Marshal.FreeHGlobal(ptCaps);
+
+      // Release all used object
+      if (_filterB2C2Adapter != null)
+      {
+        Release.ComObject("tuner filter", _filterB2C2Adapter); _filterB2C2Adapter = null;
+      }
+      _rotEntry.Dispose();
+      if (_capBuilder != null)
+      {
+        Release.ComObject("capture builder", _capBuilder); _capBuilder = null;
+      }
+      if (_graphBuilder != null)
+      {
+        Release.ComObject("graph builder", _graphBuilder); _graphBuilder = null;
       }
     }
   }

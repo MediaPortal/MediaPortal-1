@@ -165,6 +165,11 @@ namespace TvLibrary.Interfaces
     /// </summary>
     /// <value>The type of the cam.</value>
     CamType CamType {get;set;}
+    /// <summary>
+    /// Gets/sets the card type
+    /// </summary>
+    int cardType { get;}
+
     #endregion
 
     #region epg & scanning

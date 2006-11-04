@@ -34,6 +34,14 @@ using DirectShowLib.BDA;
 
 namespace TvLibrary.Implementations.DVB
 {
+    enum CardType
+    {
+      Analog,
+      DvbS,
+      DvbT,
+      DvbC,
+      Atsc
+    }
   /// <summary>
   /// Class which implements scanning for tv/radio channels for DVB-S SkyStar 2 cards
   /// </summary>
@@ -93,26 +101,89 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     protected override IChannel CreateNewChannel(ChannelInfo info)
     {
-      DVBSChannel tuningChannel = (DVBSChannel)_card.Channel;
-      DVBSChannel dvbsChannel = new DVBSChannel();
-      dvbsChannel.Name = info.service_name;
-      dvbsChannel.Provider = info.service_provider_name;
-      dvbsChannel.SymbolRate = tuningChannel.SymbolRate;
-      dvbsChannel.Polarisation = tuningChannel.Polarisation;
-      dvbsChannel.SwitchingFrequency = tuningChannel.SwitchingFrequency;
-      dvbsChannel.Frequency = tuningChannel.Frequency;
-      dvbsChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream|| info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
-      dvbsChannel.IsRadio = (info.serviceType == (int)DvbBaseScanning.ServiceType.Audio);
-      dvbsChannel.NetworkId = info.networkID;
-      dvbsChannel.ServiceId = info.serviceID;
-      dvbsChannel.TransportId = info.transportStreamID;
-      dvbsChannel.PmtPid = info.network_pmt_PID;
-      dvbsChannel.PcrPid = info.pcr_pid;
-      dvbsChannel.DisEqc = tuningChannel.DisEqc;
-      dvbsChannel.FreeToAir = !info.scrambled;
+      switch (_card.cardType )
+      {
+        case (int)CardType.DvbS:
+          DVBSChannel tuningChannels = (DVBSChannel)_card.Channel;
+          DVBSChannel dvbsChannel = new DVBSChannel();
+          dvbsChannel.Name = info.service_name;
+          dvbsChannel.Provider = info.service_provider_name;
+          dvbsChannel.SymbolRate = tuningChannels.SymbolRate;
+          dvbsChannel.Polarisation = tuningChannels.Polarisation;
+          dvbsChannel.SwitchingFrequency = tuningChannels.SwitchingFrequency;
+          dvbsChannel.Frequency = tuningChannels.Frequency;
+          dvbsChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
+          dvbsChannel.IsRadio = (info.serviceType == (int)DvbBaseScanning.ServiceType.Audio);
+          dvbsChannel.NetworkId = info.networkID;
+          dvbsChannel.ServiceId = info.serviceID;
+          dvbsChannel.TransportId = info.transportStreamID;
+          dvbsChannel.PmtPid = info.network_pmt_PID;
+          dvbsChannel.PcrPid = info.pcr_pid;
+          dvbsChannel.DisEqc = tuningChannels.DisEqc;
+          dvbsChannel.FreeToAir = !info.scrambled;
 
-      Log.Log.Write("Found:{0}", dvbsChannel);
-      return dvbsChannel;
+          Log.Log.Write("Found:{0}", dvbsChannel);
+          return dvbsChannel;
+        case (int)CardType.DvbC:
+          DVBCChannel tuningChannelc = (DVBCChannel)_card.Channel;
+          DVBCChannel dvbcChannel = new DVBCChannel();
+          dvbcChannel.Name = info.service_name;
+          dvbcChannel.Provider = info.service_provider_name;
+          dvbcChannel.SymbolRate = tuningChannelc.SymbolRate;
+          dvbcChannel.ModulationType = tuningChannelc.ModulationType;
+          dvbcChannel.Frequency = tuningChannelc.Frequency;
+          dvbcChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
+          dvbcChannel.IsRadio = (info.serviceType == (int)DvbBaseScanning.ServiceType.Audio);
+          dvbcChannel.NetworkId = info.networkID;
+          dvbcChannel.ServiceId = info.serviceID;
+          dvbcChannel.TransportId = info.transportStreamID;
+          dvbcChannel.PmtPid = info.network_pmt_PID;
+          dvbcChannel.PcrPid = info.pcr_pid;
+          dvbcChannel.FreeToAir = !info.scrambled;
+
+          Log.Log.Write("Found:{0}", dvbcChannel);
+          return dvbcChannel;
+        case (int)CardType.DvbT:
+          DVBTChannel tuningChannelt = (DVBTChannel)_card.Channel;
+          DVBTChannel dvbtChannel = new DVBTChannel();
+          dvbtChannel.Name = info.service_name;
+          dvbtChannel.Provider = info.service_provider_name;
+          dvbtChannel.Frequency = tuningChannelt.Frequency;
+          dvbtChannel.BandWidth = tuningChannelt.BandWidth;
+          dvbtChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
+          dvbtChannel.IsRadio = (info.serviceType == (int)DvbBaseScanning.ServiceType.Audio);
+          dvbtChannel.NetworkId = info.networkID;
+          dvbtChannel.ServiceId = info.serviceID;
+          dvbtChannel.TransportId = info.transportStreamID;
+          dvbtChannel.PmtPid = info.network_pmt_PID;
+          dvbtChannel.PcrPid = info.pcr_pid;
+          dvbtChannel.FreeToAir = !info.scrambled;
+
+          Log.Log.Write("Found:{0}", dvbtChannel);
+          return dvbtChannel;
+        case (int)CardType.Atsc:
+          ATSCChannel tuningChannela = (ATSCChannel)_card.Channel;
+          ATSCChannel dvbaChannel = new ATSCChannel();
+          dvbaChannel.Name = info.service_name;
+          dvbaChannel.Provider = info.service_provider_name;
+          dvbaChannel.Frequency = tuningChannela.Frequency;
+          dvbaChannel.PhysicalChannel = tuningChannela.PhysicalChannel;
+          dvbaChannel.LogicalChannelNumber = tuningChannela.LogicalChannelNumber;
+          dvbaChannel.MajorChannel = tuningChannela.MajorChannel;
+          dvbaChannel.MinorChannel = tuningChannela.MinorChannel;
+          dvbaChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
+          dvbaChannel.IsRadio = (info.serviceType == (int)DvbBaseScanning.ServiceType.Audio);
+          dvbaChannel.NetworkId = info.networkID;
+          dvbaChannel.ServiceId = info.serviceID;
+          dvbaChannel.TransportId = info.transportStreamID;
+          dvbaChannel.PmtPid = info.network_pmt_PID;
+          dvbaChannel.PcrPid = info.pcr_pid;
+          dvbaChannel.FreeToAir = !info.scrambled;
+
+          Log.Log.Write("Found:{0}", dvbaChannel);
+          return dvbaChannel;
+      }
+      return null; // never append just to satify the dev tool :-)
     }
   }
 }

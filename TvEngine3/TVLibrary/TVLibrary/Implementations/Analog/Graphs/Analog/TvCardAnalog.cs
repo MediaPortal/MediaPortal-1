@@ -118,6 +118,20 @@ namespace TvLibrary.Implementations.Analog
         return _currentChannel;
       }
     }
+    /// <summary>
+    /// Gets/sets the card cardType
+    /// </summary>
+    public int cardType
+    {
+      get
+      {
+        return 0; // Only to handle cards without BDA driver
+      }
+      set
+      {
+      }
+    }
+
     #endregion
 
     #region epg & scanning

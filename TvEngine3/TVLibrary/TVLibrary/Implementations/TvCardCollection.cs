@@ -50,7 +50,7 @@ namespace TvLibrary.Implementations
           Log.Log.WriteFile("Detected SkyStar 2 card");
           TvCardDvbSS2 card = new TvCardDvbSS2(devices[i]);
           _cards.Add(card);
-          break;
+          //break;  maybe more than one B2C2 card ?
         }
       }
 
