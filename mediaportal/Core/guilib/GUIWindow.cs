@@ -786,6 +786,7 @@ namespace MediaPortal.GUI.Library
         QueueAnimation(AnimationType.WindowClose);
         while (IsAnimating(AnimationType.WindowClose))
         {
+          if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.RUNNING) break;
           GUIWindowManager.Process();
         }
       }
