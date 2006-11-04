@@ -29,6 +29,8 @@ using TvDatabase;
 using TvLibrary.Log;
 using TvLibrary.Implementations;
 
+using Gentle.Common;
+using Gentle.Framework;
 namespace TvEngine
 {
   class XMLTVImport : IComparer
@@ -104,6 +106,26 @@ namespace TvEngine
     }
     public bool Import(string fileName, bool showProgress)
     {
+      Dictionary<int, DateTime> lastProgramForChannel = new Dictionary<int, DateTime>();
+      IList channels = Channel.ListAll();
+      foreach (Channel ch in channels)
+      {
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TvDatabase.Program));
+        sb.AddConstraint(Operator.Equals, "idChannel", ch.IdChannel);
+        sb.AddOrderByField(false, "starttime");
+        sb.SetRowLimit(1);
+        SqlStatement stmt = sb.GetStatement(true);
+        IList programsInDbs = ObjectFactory.GetCollection(typeof(TvDatabase.Program), stmt.Execute());
+
+        DateTime lastProgram = DateTime.MinValue;
+        if (programsInDbs.Count > 0)
+        {
+          TvDatabase.Program p = (TvDatabase.Program)programsInDbs[0];
+          lastProgram = p.EndTime;
+        }
+        lastProgramForChannel[ch.IdChannel] = lastProgram;
+      }
+
       _errorMessage = "";
       if (_isImporting == true)
       {
@@ -604,14 +626,20 @@ namespace TvEngine
               if (prog.EndTime > dtStartDate)
               {
                 Thread.Sleep(_backgroundDelay);
-                //Log.WriteFile(LogType.EPG, "epg-import :{0,-20} {1} {2}-{3} {4}",
-                //          prog.Channel,
-                //          prog.StartTime.ToShortDateString(),
-                //          prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                //          prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                //          prog.Title);
 
-                prog.Persist();
+
+                if (lastProgramForChannel.ContainsKey(prog.IdChannel))
+                {
+                  DateTime lastProgramDate = lastProgramForChannel[prog.IdChannel];
+                  if (prog.StartTime >= lastProgramDate)
+                  {
+                    prog.Persist();
+                  }
+                }
+                else
+                {
+                  prog.Persist();
+                }
                 if (prog.StartTime < _status.StartTime) _status.StartTime = prog.StartTime;
                 if (prog.EndTime > _status.EndTime) _status.EndTime = prog.EndTime;
                 _status.Programs++;
