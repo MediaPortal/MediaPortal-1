@@ -2,6 +2,8 @@
 	<id>761</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
+  <animation effect="fade" time="200">WindowOpen</animation>
+  <animation effect="fade" time="200">WindowClose</animation>
 <controls>	
 	<control>
 		<description>Time</description>

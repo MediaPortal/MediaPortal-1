@@ -2,6 +2,8 @@
   <id>2000</id>
   <defaultcontrol>3</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <animation effect="fade" time="200">WindowOpen</animation>
+  <animation effect="fade" time="200">WindowClose</animation>
   <controls>
     <control>
       <description>background image</description>

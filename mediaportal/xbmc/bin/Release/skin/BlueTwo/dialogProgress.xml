@@ -2,6 +2,8 @@
 <window>
   <id>101</id>
   <defaultcontrol>10</defaultcontrol>
+  <animation effect="fade" time="200">WindowOpen</animation>
+  <animation effect="fade" time="200">WindowClose</animation>
   <allowoverlay>yes</allowoverlay>
   <controls>
   <import>common.dialog.xml</import>
