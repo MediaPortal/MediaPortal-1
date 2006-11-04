@@ -134,7 +134,7 @@ namespace MediaPortal.GUI.Library
         x = float.Parse(text);
       }
     }
-    public void Create(XmlNode node)
+    public bool Create(XmlNode node)
     {
       
       string animType = node.InnerText.ToLower();
@@ -155,7 +155,7 @@ namespace MediaPortal.GUI.Library
       if (_type == AnimationType.None)
       {
         Log.Error("Control has invalid animation type");
-        return;
+        return false;
       }
       XmlNode nodeAttribute = node.Attributes.GetNamedItem("condition");
       if (nodeAttribute != null)
@@ -164,7 +164,7 @@ namespace MediaPortal.GUI.Library
         //_condition = g_infoManager.TranslateString(conditionString);
       }
       nodeAttribute = node.Attributes.GetNamedItem("effect");
-      if (nodeAttribute == null) return;
+      if (nodeAttribute == null) return false;
       string effectType = nodeAttribute.Value;
       // effect type
       if (String.Compare(effectType, "fade") == 0)
@@ -295,6 +295,7 @@ namespace MediaPortal.GUI.Library
           GUIGraphicsContext.ScaleVertical(ref _centerY);
         }
       }
+      return true;
     }
     // creates the reverse animation
     void CreateReverse(VisualEffect anim)

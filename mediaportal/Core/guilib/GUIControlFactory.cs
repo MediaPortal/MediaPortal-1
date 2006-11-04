@@ -380,8 +380,10 @@ namespace MediaPortal.GUI.Library
         if (element.Name == "animation")
         {
           VisualEffect effect=new VisualEffect();
-          effect.Create(element);
-          animations.Add(effect);
+          if (effect.Create(element))
+          {
+            animations.Add(effect);
+          }
         }
         MemberInfo correspondingMember = membersThatCanBeUpdated[element.Name] as MemberInfo;
 
