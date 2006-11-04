@@ -77,7 +77,9 @@ namespace MediaPortal.TV.Database
     public string GroupName;
     public int Sort;
     public int Pincode;
+    public string Tag;
     private List<TVChannel> tvChannels = null;
+
     public override string ToString()
     {
       return GroupName;
