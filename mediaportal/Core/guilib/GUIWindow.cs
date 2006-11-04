@@ -779,15 +779,22 @@ namespace MediaPortal.GUI.Library
     }
     protected virtual void OnPageDestroy(int new_windowId)
     {
-      // Dialog animations are handled in Close() rather than here
-      if (HasAnimation(AnimationType.WindowClose) && !IsDialog)
+      if (GUIGraphicsContext.IsFullScreenVideo == false)
       {
-        // Perform the window out effect
-        QueueAnimation(AnimationType.WindowClose);
-        while (IsAnimating(AnimationType.WindowClose))
+        if (new_windowId != (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO &&
+            new_windowId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
         {
-          if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.RUNNING) break;
-          GUIWindowManager.Process();
+          // Dialog animations are handled in Close() rather than here
+          if (HasAnimation(AnimationType.WindowClose) && !IsDialog)
+          {
+            // Perform the window out effect
+            QueueAnimation(AnimationType.WindowClose);
+            while (IsAnimating(AnimationType.WindowClose))
+            {
+              if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.RUNNING) break;
+              GUIWindowManager.Process();
+            }
+          }
         }
       }
     }
