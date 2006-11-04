@@ -1,4 +1,6 @@
 ﻿<window>
+  <animation effect="fade" time="250">WindowOpen</animation>
+  <animation effect="fade" time="500">WindowClose</animation>
    <id>170601</id>
    <defaultcontrol>101</defaultcontrol>
    <allowoverlay>no</allowoverlay>
