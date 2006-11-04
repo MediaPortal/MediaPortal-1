@@ -75,6 +75,7 @@ namespace MediaPortal.GUI.Library
     static bool _shouldRefresh = false;
     static bool _isSwitchingToNewWindow = false;
     static string _currentWindowName = String.Empty;
+    static int _nextWindowIndex = -1;
     #endregion
 
     #region ctor
@@ -517,15 +518,15 @@ namespace MediaPortal.GUI.Library
     /// This function will show/present/activate the window specified
     /// </summary>
     /// <param name="iWindowID">window id of the window to activate</param>
-    static public void ReplaceWindow(int iWindowID)
+    static public void ReplaceWindow(int windowId)
     {
-      ActivateWindow(iWindowID, true);
+      ActivateWindow(windowId, true);
     }
-    static public void ActivateWindow(int iWindowID)
+    static public void ActivateWindow(int windowId)
     {
-      ActivateWindow(iWindowID, false);
+      ActivateWindow(windowId, false);
     }
-    static public void ActivateWindow(int iWindowID, bool bReplaceWindow)
+    static public void ActivateWindow(int newWindowId, bool replaceWindow)
     {
       _isSwitchingToNewWindow = true;
       try
@@ -536,27 +537,30 @@ namespace MediaPortal.GUI.Library
         }
         if (_routedWindow != null)
         {
-          GUIMessage msgDlg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _routedWindow.GetID, 0, 0, iWindowID, 0, null);
+          GUIMessage msgDlg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _routedWindow.GetID, 0, 0, newWindowId, 0, null);
           _routedWindow.OnMessage(msgDlg);
           _routedWindow = null;
         }
 
         GUIMessage msg;
-        GUIWindow pWindow;
-        int iActiveWindow = _activeWindowIndex;
+        GUIWindow previousWindow = null;
+        GUIWindow newWindow = null;
+        int previousWindowIndex = _activeWindowIndex;
+        int newWindowIndex = 0;
 
-        // deactivate current window
+        #region find current window
         if (_activeWindowIndex >= 0 && _activeWindowIndex < _windowCount)
         {
           // store current window settings
           // get active window
-          pWindow = _listWindows[_activeWindowIndex];
+          previousWindow = _listWindows[_activeWindowIndex];
 
-          if (!bReplaceWindow)
+
+          if (!replaceWindow)
           {
             // push active window id to window stack
-            _activeWindowId = pWindow.GetID;
-            if (iWindowID != _activeWindowId)
+            _activeWindowId = previousWindow.GetID;
+            if (newWindowId != _activeWindowId)
             {
               if (_listHistory.Count > 15) _listHistory.RemoveAt(0);
               _listHistory.Add(_activeWindowId);
@@ -564,13 +568,93 @@ namespace MediaPortal.GUI.Library
             }
           }
 
-          // deactivate active window
-          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, pWindow.GetID, 0, 0, iWindowID, 0, null);
-          pWindow.OnMessage(msg);
+          // deactivate old window
+          /*
+          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, previousWindow.GetID, 0, 0, newWindowId, 0, null);
+          previousWindow.OnMessage(msg);
           if (OnDeActivateWindow != null)
-            OnDeActivateWindow(pWindow.GetID);
+            OnDeActivateWindow(previousWindow.GetID);
+          if (!replaceWindow)
+          {
+            _previousActiveWindowId = _activeWindowId;
+            _previousActiveWindowIndex = _activeWindowIndex;
+          }
+          _activeWindowIndex = -1;
+          _activeWindowId = -1;
+          */
+        }
+        #endregion
 
-          if (!bReplaceWindow)
+        #region find new window
+        // find the new window
+        for (int i = 0; i < _windowCount; i++)
+        {
+          if (_listWindows[i].GetID == newWindowId)
+          {
+            try
+            {
+              newWindow = _listWindows[i];
+              newWindowIndex = i;
+            }
+            catch (Exception ex)
+            {
+              Log.Info("WindowManager:Unable to initialize window:{0} {1} {2} {3}",
+                      newWindowId, ex.Message, ex.Source, ex.StackTrace);
+              break;
+            }
+          }
+        }
+        if (newWindow == null)
+        {
+          // new window doesnt exists. (maybe .xml file is invalid or doesnt exists)
+          // so we go back to the previous (last active) window
+
+          // Remove the stored (last active) window from the list cause we are going back to that window
+          if ((!replaceWindow) && (_listHistory.Count > 0))
+          {
+            _listHistory.RemoveAt(_listHistory.Count - 1);
+          }
+          // Get previous window id (previous to the last active window) id
+          _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_HOME;
+          if (_listHistory.Count > 0)
+          {
+            _previousActiveWindowId = _listHistory[_listHistory.Count - 1];
+          }
+
+          newWindowIndex = previousWindowIndex;
+          // Check if replacement window was fault, ifso return to home
+          if (replaceWindow)
+          {
+            // activate HOME window
+            newWindowId = (int)GUIWindow.Window.WINDOW_HOME;
+            for (int i = 0; i < _windowCount; i++)
+            {
+              newWindow = _listWindows[i];
+              if (newWindow.GetID == newWindowId)
+              {
+                newWindowIndex = i;
+                break;
+              }
+            }
+          }
+          // (re)load
+          if (newWindowIndex < 0 || newWindowIndex >= _windowCount) newWindowIndex = 0;
+          newWindow = _listWindows[newWindowIndex];
+          _activeWindowId = newWindow.GetID;
+        }
+        #endregion
+
+        //deactivate previous window
+        if (previousWindow != null)
+        {
+
+          //_nextWindowIndex = newWindowIndex;
+          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, previousWindow.GetID, 0, 0, newWindowId, 0, null);
+          previousWindow.OnMessage(msg);
+          if (OnDeActivateWindow != null)
+            OnDeActivateWindow(previousWindow.GetID);
+          UnRoute();
+          if (!replaceWindow)
           {
             _previousActiveWindowId = _activeWindowId;
             _previousActiveWindowIndex = _activeWindowIndex;
@@ -578,72 +662,18 @@ namespace MediaPortal.GUI.Library
           _activeWindowIndex = -1;
           _activeWindowId = -1;
         }
-        UnRoute();
 
-        // activate the new window
-        for (int i = 0; i < _windowCount; i++)
-        {
-          pWindow = _listWindows[i];
-          if (pWindow.GetID == iWindowID)
-          {
-            try
-            {
-              _activeWindowIndex = i;
-              _activeWindowId = iWindowID;
-              if (OnActivateWindow != null)
-                OnActivateWindow(pWindow.GetID);
-              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, pWindow.GetID, 0, 0, _previousActiveWindowId, 0, null);
-              pWindow.OnMessage(msg);
-              return;
-            }
-            catch (Exception ex)
-            {
-              Log.Info("WindowManager:Unable to initialize window:{0} {1} {2} {3}",
-                      iWindowID, ex.Message, ex.Source, ex.StackTrace);
-              break;
-            }
-          }
-        }
-
-        // new window doesnt exists. (maybe .xml file is invalid or doesnt exists)
-        // so we go back to the previous (last active) window
-
-        // Remove the stored (last active) window from the list cause we are going back to that window
-        if ((!bReplaceWindow) && (_listHistory.Count > 0))
-        {
-          _listHistory.RemoveAt(_listHistory.Count - 1);
-        }
-        // Get previous window id (previous to the last active window) id
-        _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_HOME;
-        if (_listHistory.Count > 0)
-        {
-          _previousActiveWindowId = _listHistory[_listHistory.Count - 1];
-        }
-
-        _activeWindowIndex = iActiveWindow;
-        // Check if replacement window was fault, ifso return to home
-        if (bReplaceWindow)
-        {
-          // activate HOME window
-          _activeWindowId = (int)GUIWindow.Window.WINDOW_HOME;
-          for (int i = 0; i < _windowCount; i++)
-          {
-            pWindow = _listWindows[i];
-            if (pWindow.GetID == _activeWindowId)
-            {
-              _activeWindowIndex = i;
-              break;
-            }
-          }
-        }
-        // (re)load
-        if (_activeWindowIndex < 0 || _activeWindowIndex >= _windowCount) _activeWindowIndex = 0;
-        pWindow = _listWindows[_activeWindowIndex];
-        _activeWindowId = pWindow.GetID;
+        //activate the new window
+        _activeWindowIndex = newWindowIndex;
+        _activeWindowId = newWindow.GetID;
+        _nextWindowIndex = -1;
         if (OnActivateWindow != null)
-          OnActivateWindow(pWindow.GetID);
-        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, pWindow.GetID, 0, 0, _previousActiveWindowId, 0, null);
-        pWindow.OnMessage(msg);
+          OnActivateWindow(newWindow.GetID);
+        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, newWindow.GetID, 0, 0, _previousActiveWindowId, 0, null);
+        newWindow.OnMessage(msg);
+        
+        
+        
       }
       catch (Exception ex)
       {
@@ -682,7 +712,7 @@ namespace MediaPortal.GUI.Library
           }
         }*/
         GUIMessage msg;
-        GUIWindow pWindow;
+        GUIWindow currentWindow;
         int _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_HOME;
         if (_listHistory.Count > 0)
         {
@@ -694,45 +724,42 @@ namespace MediaPortal.GUI.Library
         if ((_activeWindowIndex >= 0 && _activeWindowIndex < _windowCount))
         {
           // deactivate current window
-          pWindow = _listWindows[_activeWindowIndex];
-
-
+          currentWindow = _listWindows[_activeWindowIndex];
 
           // deactivate any window
           if (_routedWindow != null)
           {
-            GUIMessage msgDlg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _routedWindow.GetID, 0, 0, pWindow.GetID, 0, null);
+            GUIMessage msgDlg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _routedWindow.GetID, 0, 0, currentWindow.GetID, 0, null);
             _routedWindow.OnMessage(msgDlg);
             _routedWindow = null;
           }
-
-
-          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, pWindow.GetID, 0, 0, _previousActiveWindowId, 0, null);
-          pWindow.OnMessage(msg);
+          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, currentWindow.GetID, 0, 0, _previousActiveWindowId, 0, null);
+          currentWindow.OnMessage(msg);
           if (OnDeActivateWindow != null)
-            OnDeActivateWindow(pWindow.GetID);
+            OnDeActivateWindow(currentWindow.GetID);
           _activeWindowIndex = -1;
           _activeWindowId = -1;
         }
 
         UnRoute();
 
+        GUIWindow newWindow = null;
         // activate the new window
         for (int i = 0; i < _windowCount; i++)
         {
-          pWindow = _listWindows[i];
-          if (pWindow.GetID == _previousActiveWindowId)
+          newWindow = _listWindows[i];
+          if (newWindow.GetID == _previousActiveWindowId)
           {
             try
             {
               _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_INVALID;
               if (_listHistory.Count > 0) _previousActiveWindowId = (int)_listHistory[_listHistory.Count - 1];
               _activeWindowIndex = i;
-              _activeWindowId = pWindow.GetID;
+              _activeWindowId = newWindow.GetID;
               if (OnActivateWindow != null)
-                OnActivateWindow(pWindow.GetID);
-              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, pWindow.GetID, 0, 0, fromWindowId, 0, null);
-              pWindow.OnMessage(msg);
+                OnActivateWindow(newWindow.GetID);
+              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, newWindow.GetID, 0, 0, fromWindowId, 0, null);
+              newWindow.OnMessage(msg);
               return;
             }
             catch (Exception)
@@ -749,26 +776,27 @@ namespace MediaPortal.GUI.Library
         _activeWindowId = (int)GUIWindow.Window.WINDOW_HOME;
         for (int i = 0; i < _windowCount; i++)
         {
-          pWindow = _listWindows[i];
-          if (pWindow.GetID == _activeWindowId)
+          newWindow = _listWindows[i];
+          if (newWindow.GetID == _activeWindowId)
           {
             _activeWindowIndex = i;
             break;
           }
         }
 
-        pWindow = _listWindows[_activeWindowIndex];
-        _activeWindowId = pWindow.GetID;
+        newWindow = _listWindows[_activeWindowIndex];
+        _activeWindowId = newWindow.GetID;
         if (OnActivateWindow != null)
-          OnActivateWindow(pWindow.GetID);
-        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, pWindow.GetID, 0, 0, (int)GUIWindow.Window.WINDOW_INVALID, 0, null);
-        pWindow.OnMessage(msg);
+          OnActivateWindow(newWindow.GetID);
+        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, newWindow.GetID, 0, 0, (int)GUIWindow.Window.WINDOW_INVALID, 0, null);
+        newWindow.OnMessage(msg);
       }
       finally
       {
         _isSwitchingToNewWindow = false;
       }
     }
+
     /// <summary>
     /// Close current window. When MediaPortal closes
     /// we need to close current window
@@ -985,6 +1013,16 @@ namespace MediaPortal.GUI.Library
           pWindow = null;
         }
       }
+      if (_nextWindowIndex >= 0 && _nextWindowIndex < _windowCount)
+      {
+        GUIGraphicsContext.SetScalingResolution(0, 0, false);
+        GUIWindow pWindow = _listWindows[_nextWindowIndex];
+        if (null != pWindow)
+        {
+          pWindow.Render(timePassed);
+          pWindow = null;
+        }
+      }
 
       // and call postrender
       // PostRender(timePassed);
@@ -1124,7 +1162,7 @@ namespace MediaPortal.GUI.Library
     }
     static public void Replace(int windowId, GUIWindow window)
     {
-      Log.Info("WindowManager::replace {0}" , windowId);
+      Log.Info("WindowManager::replace {0}", windowId);
       for (int i = 0; i < _listWindows.Length; ++i)
       {
         if (_listWindows[i] != null)

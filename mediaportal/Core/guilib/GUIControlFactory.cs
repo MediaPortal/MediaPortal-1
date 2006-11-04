@@ -383,6 +383,7 @@ namespace MediaPortal.GUI.Library
           if (effect.Create(element))
           {
             animations.Add(effect);
+            continue;
           }
         }
         MemberInfo correspondingMember = membersThatCanBeUpdated[element.Name] as MemberInfo;
@@ -446,7 +447,8 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
-      control.SetAnimations(animations);
+      if (animations.Count>0)
+        control.SetAnimations(animations);
     }
 
     private static void AddSubitemsToControl(XmlNode subItemsNode, GUIControl control)

@@ -1274,6 +1274,7 @@ namespace MediaPortal.GUI.Library
                 }
                 Log.Info("window:{0} init", this.ToString());
               }
+              _hasRendered = false;
               OnPageLoad();
 
               TemporaryAnimationTrigger();
