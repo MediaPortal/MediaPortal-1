@@ -304,8 +304,6 @@ namespace Wikipedia
           GUIControl.ShowControl(GetID, searchtermLabel.GetID);
         if (imagedescLabel.IsVisible)
           GUIControl.HideControl(GetID, imagedescLabel.GetID);
-        if (imagedescLabel.IsVisible)
-          GUIControl.HideControl(GetID, imagedescLabel.GetID);
         if (buttonBack.IsVisible)
           GUIControl.HideControl(GetID, buttonBack.GetID);
       }
@@ -403,8 +401,6 @@ namespace Wikipedia
             GUIControl.HideControl(GetID, imageControl.GetID);
           if (!searchtermLabel.IsVisible)
             GUIControl.ShowControl(GetID, searchtermLabel.GetID);
-          if (imagedescLabel.IsVisible)
-            GUIControl.HideControl(GetID, imagedescLabel.GetID);
           if (imagedescLabel.IsVisible)
             GUIControl.HideControl(GetID, imagedescLabel.GetID);
           if (buttonBack.IsVisible)
