@@ -41,6 +41,20 @@
 #define LUSB2BDA_DVB_NAME_T_TUNER    L"USB 2.0 BDA DVB-T Tuner"
 #define LUSB2BDA_DVBS_NAME_PIN_TUNER L"Pinnacle PCTV 400e Tuner"
 
+
+//slot status
+#define	CI_SLOT_EMPTY							0
+#define	CI_SLOT_MODULE_INSERTED		1
+#define	CI_SLOT_MODULE_OK					2
+#define CI_SLOT_CA_OK							3
+#define	CI_SLOT_DBG_MSG						4
+#define	CI_SLOT_UNKNOWN_STATE			0xFF
+
+//SendCIMessage Tags
+#define	CI_PSI_COMPLETE					0xC
+#define	CI_MODULE_READY					0xD
+#define	CI_SWITCH_PRG_REPLY			0xE
+
 extern void LogDebug(const char *fmt, ...) ;
 
 CTechnotrend::CTechnotrend(LPUNKNOWN pUnk, HRESULT *phr)
@@ -291,18 +305,13 @@ STDMETHODIMP CTechnotrend::DescrambleService( int serviceId,BOOL* succeeded)
   *succeeded=FALSE;
   BOOL enabled=FALSE;
   m_ciStatus=-1;
-  LogDebug("TechnoTrend: DescrambleService:0x%x (%d)",serviceId,serviceId);
+	LogDebug("TechnoTrend: DescrambleService:0x%x (%d) (%d)",serviceId,serviceId,m_slotStatus);
   if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK)
   {
-    //hr=bdaapiSetVideoport(m_hBdaApi,TRUE,&enabled);
-    //LogDebug("TechnoTrend: bdaapiSetVideoport CI:%x",hr);
-    //WORD PNR=(WORD)serviceId;
-    //hr=bdaapiCIMultiDecode(m_hBdaApi,&PNR,1);
-    //LogDebug("TechnoTrend: bdaapiCIMultiDecode:%x",hr);
     hr = bdaapiCIReadPSIFastDrvDemux(m_hBdaApi, (WORD)serviceId);
     if (hr==RET_SUCCESS)
     {
-      if (m_ciStatus==RET_SUCCESS||m_ciStatus==5)
+      if (m_ciStatus==1)
       {
         *succeeded=TRUE;
         LogDebug("TechnoTrend: service decoded:%x %d",hr,m_ciStatus);
@@ -317,11 +326,6 @@ STDMETHODIMP CTechnotrend::DescrambleService( int serviceId,BOOL* succeeded)
     {
       LogDebug("TechnoTrend: service not decoded:%x",hr);
     }    
-  }
-  else
-  {
-    //HRESULT hr=bdaapiSetVideoport(m_hBdaApi,FALSE,&enabled);
-    //LogDebug("TechnoTrend: bdaapiSetVideoport FTA:%x",hr);
   }
   
   return S_OK;
@@ -374,8 +378,37 @@ bool CTechnotrend::GetDeviceID(IBaseFilter* tunerFilter, UINT& deviceId)
 
 void CTechnotrend::OnCaChange(BYTE  nSlot,BYTE  nReplyTag,WORD  wStatus)
 {
-  LogDebug("Technotrend: ca change. slot:%d replytag:%d 0x%x status:%d 0x%x",nSlot,nReplyTag,nReplyTag,wStatus,wStatus);
-  m_ciStatus=wStatus;
+	switch(nReplyTag)	
+	{
+		case CI_PSI_COMPLETE:
+			LogDebug("$ CI: ### Number of programs : %04d",wStatus);
+		break;
+
+		case CI_MODULE_READY:
+			LogDebug("$ CI: CI_MODULE_READY in OnCAStatus not supported");
+		break;
+		case CI_SWITCH_PRG_REPLY:
+		{
+			switch(wStatus)
+			{
+				case ERR_INVALID_DATA:
+					LogDebug("$ CI: ERROR::SetProgram failed !!! (invalid PNR)");
+				break;
+				case ERR_NO_CA_RESOURCE:
+					LogDebug("$ CI: ERROR::SetProgram failed !!! (no CA resource available)");
+				break;
+				case ERR_NONE:
+					LogDebug("$ CI:    SetProgram OK");
+					m_ciStatus=1;
+				break;
+				default:
+				break;
+			}
+		}
+		break;
+		default:
+		break;
+	}
 }
 
 void CTechnotrend::OnSlotChange(BYTE nSlot,BYTE nStatus,TYP_SLOT_INFO* csInfo)
