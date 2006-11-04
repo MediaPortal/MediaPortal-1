@@ -450,6 +450,7 @@ namespace MediaPortal.GUI.Library
           _font.DrawText((float)_imageRight.XPosition + fWidth, (float)_imageRight.YPosition + fHeight, _textColor, strText, GUIControl.Alignment.ALIGN_LEFT, -1);
         }
       }
+      base.Render(timePassed);
     }
 
     public override bool CanFocus()

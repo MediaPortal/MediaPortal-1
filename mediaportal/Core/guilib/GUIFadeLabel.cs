@@ -231,6 +231,7 @@ namespace MediaPortal.GUI.Library
           _currentFrame = 0;
         }
       }
+      base.Render(timePassed);
     }
 
     /// <summary>

@@ -218,7 +218,8 @@ namespace MediaPortal.GUI.Library
 			_imageRight.Height=iHeightRight;
 			_imageRight.Width=iWidthRight;
 			_imageRight.SetPosition(iXPos,iYPos);
-			_imageRight.Render(timePassed);
+      _imageRight.Render(timePassed);
+      base.Render(timePassed);
 		}
 
 		/// <summary>

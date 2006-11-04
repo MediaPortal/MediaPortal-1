@@ -196,6 +196,7 @@ namespace MediaPortal.GUI.Library
         _viewPlayList.Render(timePassed);
       else if (_viewThumbnail != null)
         _viewThumbnail.Render(timePassed);
+      base.Render(timePassed);
     }
 
     /// <summary>
@@ -984,6 +985,65 @@ namespace MediaPortal.GUI.Library
             }
           }
     */
-
+    public override void QueueAnimation(AnimationType animType)
+    {
+      if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+        _viewFilmStrip.QueueAnimation(animType);
+      if (_currentViewMode == ViewMode.List && _viewList != null)
+        _viewList.QueueAnimation(animType);
+      if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
+        _viewThumbnail.QueueAnimation(animType);
+      if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+        _viewAlbum.QueueAnimation(animType);
+      if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+        _viewPlayList.QueueAnimation(animType);
+      base.QueueAnimation(animType);
+    }
+    public override VisualEffect GetAnimation(AnimationType type, bool checkConditions /* = true */)
+    {
+      VisualEffect effect = GetAnimation(type, checkConditions);
+      if (effect != null) return effect;
+      if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+        return _viewFilmStrip.GetAnimation(type, checkConditions);
+      if (_currentViewMode == ViewMode.List && _viewList != null)
+        return _viewList.GetAnimation(type, checkConditions);
+      if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
+        return _viewThumbnail.GetAnimation(type, checkConditions);
+      if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+        return _viewAlbum.GetAnimation(type, checkConditions);
+      if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+        return _viewPlayList.GetAnimation(type, checkConditions);
+      return null;
+    }
+    public override bool IsEffectAnimating(AnimationType animType)
+    {
+      bool yesNo = base.IsEffectAnimating(animType);
+      if (yesNo) return true;
+      if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+        return _viewFilmStrip.IsEffectAnimating(animType);
+      if (_currentViewMode == ViewMode.List && _viewList != null)
+        return _viewList.IsEffectAnimating(animType);
+      if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
+        return _viewThumbnail.IsEffectAnimating(animType);
+      if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+        return _viewAlbum.IsEffectAnimating(animType);
+      if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+        return _viewPlayList.IsEffectAnimating(animType);
+      return false;
+    }
+    public override void UpdateEffectState(uint currentTime)
+    {
+      base.UpdateEffectState(currentTime);
+      if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+        _viewFilmStrip.UpdateEffectState(currentTime);
+      if (_currentViewMode == ViewMode.List && _viewList != null)
+        _viewList.UpdateEffectState(currentTime);
+      if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
+        _viewThumbnail.UpdateEffectState(currentTime);
+      if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+        _viewAlbum.UpdateEffectState(currentTime);
+      if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+        _viewPlayList.UpdateEffectState(currentTime);
+    }
   }
 }

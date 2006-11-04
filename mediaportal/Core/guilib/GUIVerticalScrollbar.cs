@@ -127,6 +127,7 @@ namespace MediaPortal.GUI.Library
       _imageBottom.Width=_imageTop.TextureWidth;
       _imageBottom.Render(timePassed);
 
+      base.Render(timePassed);
     }
 
 		

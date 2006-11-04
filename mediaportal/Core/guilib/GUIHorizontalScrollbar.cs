@@ -144,6 +144,7 @@ namespace MediaPortal.GUI.Library
       _imageRight.Width = _imageLeft.TextureWidth;
       _imageRight.Render(timePassed);
 
+      base.Render(timePassed);
     }
 
     /// <summary>

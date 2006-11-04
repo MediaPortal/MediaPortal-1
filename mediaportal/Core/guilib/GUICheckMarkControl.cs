@@ -200,6 +200,7 @@ namespace MediaPortal.GUI.Library
 				_imageCheckMarkNonFocused.SetPosition(dwCheckMarkPosX, _positionY);
         _imageCheckMarkNonFocused.Render(timePassed);
       }
+      base.Render(timePassed);
     }
 
 		/// <summary>

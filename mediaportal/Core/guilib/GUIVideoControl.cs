@@ -139,6 +139,7 @@ namespace MediaPortal.GUI.Library
 					}
 				}
       }
+      base.Render(timePassed);
     }
 
     public override void OnAction( Action action) 

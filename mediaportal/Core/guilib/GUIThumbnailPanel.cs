@@ -691,6 +691,7 @@ namespace MediaPortal.GUI.Library
       }
       if (Focus)
         GUIPropertyManager.SetProperty("#highlightedbutton", String.Empty);
+      base.Render(timePassed);
     }
 
 

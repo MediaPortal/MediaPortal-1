@@ -330,6 +330,7 @@ namespace MediaPortal.GUI.Library
 				}
         _labelControl.Render(timePassed);
       }
+      base.Render(timePassed);
     }
 
     public override void 	OnAction(Action action)

@@ -185,7 +185,8 @@ namespace MediaPortal.GUI.Library
 
 				if (iPages>1)
 					_upDownControl.Render(timePassed);
-			}
+      }
+      base.Render(timePassed);
 		}
 
 		public override void OnAction(Action action)

@@ -190,6 +190,7 @@ namespace MediaPortal.GUI.Library
       }
 
       GUIGraphicsContext.DX9Device.Viewport = oldviewport;
+      base.Render(timePassed);
     }
 
 

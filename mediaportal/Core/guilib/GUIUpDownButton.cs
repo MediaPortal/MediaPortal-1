@@ -145,7 +145,9 @@ namespace MediaPortal.GUI.Library
 				_spinControl.SetPosition(_imageNonFocused.XPosition+_imageNonFocused.Width-off-2*_spinControlWidth, 
 																_imageNonFocused.YPosition+ (_imageNonFocused.Height-_spinControlHeight)/2 );
 				_spinControl.Render(timePassed);
-			}
+      }
+      base.Render(timePassed);
+
 		}
 		public override bool HitTest(int x, int y, out int controlID, out bool focused)
 		{

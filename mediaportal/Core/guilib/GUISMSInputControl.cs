@@ -418,6 +418,7 @@ namespace MediaPortal.GUI.Library
       DrawTextBox(timePassed);
       DrawText();
       CheckTimer();
+      base.Render(timePassed);
     }
 
     void DrawInput()

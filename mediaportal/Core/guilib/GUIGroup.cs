@@ -394,6 +394,7 @@ namespace MediaPortal.GUI.Library
 
     public override void QueueAnimation(AnimationType animType)
     {
+      base.QueueAnimation(animType);
       foreach (GUIControl control in Children)
       {
         if (control != null) control.QueueAnimation(animType);
@@ -401,11 +402,13 @@ namespace MediaPortal.GUI.Library
     }
     public override VisualEffect GetAnimation(AnimationType type, bool checkConditions /* = true */)
     {
+      VisualEffect effect = base.GetAnimation(type, checkConditions);
+      if (effect != null) return effect;
       foreach (GUIControl control in Children)
       {
         if (control != null)
         {
-          VisualEffect effect = control.GetAnimation(type, checkConditions);
+          effect = control.GetAnimation(type, checkConditions);
           if (effect != null) return effect;
         }
       }
@@ -413,6 +416,7 @@ namespace MediaPortal.GUI.Library
     }
     public override bool IsEffectAnimating(AnimationType animType)
     {
+      if (base.IsEffectAnimating(animType)) return true;
       foreach (GUIControl control in Children)
       {
         if (control != null)
@@ -432,6 +436,7 @@ namespace MediaPortal.GUI.Library
           control.UpdateEffectState(currentTime);
         }
       }
+      base.UpdateEffectState(currentTime);
     }
   }
 }

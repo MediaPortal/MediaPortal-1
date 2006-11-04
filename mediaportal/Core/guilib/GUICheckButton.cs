@@ -214,7 +214,8 @@ namespace MediaPortal.GUI.Library
 			}
 			checkMark.SetPosition(_imageNonFocused.XPosition+_imageNonFocused.Width-CheckOffsetX-checkMark.Width, 
 				_imageNonFocused.YPosition+ CheckOffsetY );
-			checkMark.Render(timePassed);
+      checkMark.Render(timePassed);
+      base.Render(timePassed);
 		}
 
 		/// <summary>

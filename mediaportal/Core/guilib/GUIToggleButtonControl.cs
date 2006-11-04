@@ -158,6 +158,7 @@ namespace MediaPortal.GUI.Library
 	     } 
         _font.DrawText(x, (float)_textOffsetY + _positionY, color, _label, _textAlignment, -1);
       }
+      base.Render(timePassed);
     }
 
     public override void OnAction(Action action)

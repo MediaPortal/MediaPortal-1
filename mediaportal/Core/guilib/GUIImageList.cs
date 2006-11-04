@@ -100,7 +100,8 @@ namespace MediaPortal.GUI.Library
 			else
 			{
 				RenderVertical(timePassed);
-			}
+      }
+      base.Render(timePassed);
 		}
 
 		void RenderHorizontal(float timePassed)

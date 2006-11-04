@@ -368,6 +368,7 @@ namespace MediaPortal.GUI.Library
           _labelControl.Render(timePassed);
         }
       }
+      base.Render(timePassed);
     }
 
     /// <summary>

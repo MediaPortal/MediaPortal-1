@@ -140,7 +140,8 @@ namespace MediaPortal.GUI.Library
 
 			_sortImages[sortImageIndex].Render(timePassed);
 
-			Focus = isFocused;
+      Focus = isFocused;
+      base.Render(timePassed);
 		}
 
 		public override bool HitTest(int x, int y, out int controlID, out bool focused)

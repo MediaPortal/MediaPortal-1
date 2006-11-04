@@ -85,6 +85,7 @@ namespace MediaPortal.GUI.Library
 				Log.Info(e.Message);
 			}
 
+      base.Render(timePassed);
 		}
 		public override void AllocResources()
 		{

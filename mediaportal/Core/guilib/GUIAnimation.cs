@@ -413,6 +413,7 @@ namespace MediaPortal.GUI.Library
 
 
       _images[index].Render(timePassed);
+      base.Render(timePassed);
     }
 
     #endregion Methods

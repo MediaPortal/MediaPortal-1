@@ -227,6 +227,7 @@ namespace MediaPortal.GUI.Library
         _labelControl2.Width = iWidth - 10;
         _labelControl2.Render(timePassed);
       }
+      base.Render(timePassed);
     }
 
     /// <summary>

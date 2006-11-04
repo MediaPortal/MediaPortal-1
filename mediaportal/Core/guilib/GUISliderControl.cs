@@ -190,6 +190,7 @@ namespace MediaPortal.GUI.Library
           _imageMid.Render(timePassed);
         }
       }
+      base.Render(timePassed);
     }
 
     /// <summary>
