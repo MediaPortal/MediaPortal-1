@@ -39,7 +39,7 @@ namespace TvPlugin
     int _days;
     public TVUtil()
     {
-      _days = 1;
+      _days = 10;
     }
 
     public TVUtil(int days)

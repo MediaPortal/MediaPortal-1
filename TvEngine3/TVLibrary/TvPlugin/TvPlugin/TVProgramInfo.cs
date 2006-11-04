@@ -147,10 +147,7 @@ namespace TvPlugin
       lblProgramDescription.Label = currentProgram.Description;
       lblProgramTitle.Label = currentProgram.Title;
 
-      Log.Write("Schedule.ListAll()");
       IList recordings = Schedule.ListAll();
-      Log.Write("Schedule.ListAll() returns {0}", recordings);
-      Log.Write("Schedule.ListAll() returns {0}", recordings.Count);
       bool bRecording = false;
       bool bSeries = false;
       foreach (Schedule record in recordings)
@@ -193,6 +190,7 @@ namespace TvPlugin
       lstUpcomingEpsiodes.Clear();
       TvBusinessLayer layer = new TvBusinessLayer();
       Schedule recTmp = new Schedule(currentProgram.IdChannel, currentProgram.Title, currentProgram.StartTime, currentProgram.EndTime);
+      recTmp.ScheduleType = (int)ScheduleRecordingType.EveryTimeOnThisChannel;
       recTmp.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
       recTmp.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
       List<Schedule> recs = TVHome.Util.GetRecordingTimes(recTmp);
