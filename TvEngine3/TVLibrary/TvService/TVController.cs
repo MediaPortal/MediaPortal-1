@@ -2014,6 +2014,8 @@ namespace TvService
         {
           _scheduler.ResetTimer();
         }
+        Fire(this, new TvServerEventArgs(TvServerEventType.ScheduledAdded));
+
       }
       catch (Exception ex)
       {

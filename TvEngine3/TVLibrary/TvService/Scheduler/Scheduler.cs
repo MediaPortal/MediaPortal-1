@@ -475,6 +475,7 @@ namespace TvService
         if ((ScheduleRecordingType)recording.Schedule.ScheduleType == ScheduleRecordingType.Once)
         {
           recording.Schedule.Delete();
+          _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.ScheduleDeleted, new VirtualCard(recording.CardInfo.Id), GetUser(), recording.Schedule,null));
         }
         else
         {

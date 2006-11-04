@@ -34,6 +34,8 @@ namespace TvEngine.Events
     StartRecording,
     RecordingStarted,
     RecordingEnded,
+    ScheduledAdded,
+    ScheduleDeleted
   };
 
   public class TvServerEventArgs : EventArgs
