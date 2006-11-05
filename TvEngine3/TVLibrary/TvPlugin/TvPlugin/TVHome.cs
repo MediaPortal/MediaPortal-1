@@ -256,7 +256,7 @@ namespace TvPlugin
     public override bool Init()
     {
       MediaPortal.GUI.Library.Log.Info("TVHome:Init");
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvhome.xml");
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvhomeServer.xml");
       GetID = (int)GUIWindow.Window.WINDOW_TV;
 
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayBackStopped);
