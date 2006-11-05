@@ -34,6 +34,9 @@ namespace TvEngine
     #region variables
     bool _cmWorkerThreadRunning = false;
     System.Timers.Timer _cmWorkerTimer;
+    public TvBusinessLayer cmLayer = new TvBusinessLayer();
+    
+    IList _schedules =  Schedule.ListAll();
     #endregion
 
     #region properties
@@ -55,7 +58,7 @@ namespace TvEngine
     {
       get
       {
-        return "0.0.0.1";
+        return "1.0.0.0";
       }
     }
 
@@ -123,12 +126,13 @@ namespace TvEngine
 
     #region private members
     /// <summary>
-    /// timer event wich starts UpdateConflicts() thread
+    /// timer event callback
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
     void _cmWorkerTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
+      System.Threading.Thread.CurrentThread.Priority = ThreadPriority.Lowest;
       UpdateConflicts();
     }
     /// <summary>
@@ -140,33 +144,66 @@ namespace TvEngine
       if (!_cmWorkerThreadRunning)
       {
         _cmWorkerThreadRunning = true;
-        Thread workerThread = new Thread(new ThreadStart(cmWorkThread));
-        workerThread.Priority = ThreadPriority.Lowest;
-        workerThread.Start();
+        Log.WriteFile("ConflictManager: Main worker thread");
+        try
+        {
+          _schedules = Schedule.ListAll();
+
+          foreach (Schedule _schedule in _schedules)
+          {
+            foreach (Schedule _otherschedule in _schedules)
+            {
+              if (IsOverlap(_schedule, _otherschedule))
+              {
+                Log.WriteFile("Schedule with id {0} overlaps schedule with id {1}", _schedule.IdSchedule, _otherschedule.IdSchedule);
+              }
+            }
+          }
+        }
+        catch (Exception)
+        {
+        }
+        _cmWorkerThreadRunning = false;
       }
-    }
-    /// <summary>
-    /// Conflicts Manager Worker thread
-    /// </summary>
-    void cmWorkThread()
-    {
-      Log.WriteFile("ConflictManager: Main worker thread");
-      TvBusinessLayer cmLayer = new TvBusinessLayer();
-      IList _cards = cmLayer.Cards;
-      List<Schedule> _shedules;
-      try
-      {
-      }
-      catch (Exception)
-      {
-      }
-      _cmWorkerThreadRunning = false;
     }
 
     private void Init()
     {
-
     }
+
+    /// <summary>
+    /// Checks if 2 scheduled recordings are overlapping
+    /// </summary>
+    /// <param name="Schedule 1"></param>
+    /// <param name="Schedule 2"></param>
+    /// <returns>true if sheduled recordings are overlapping</returns>
+    static private bool IsOverlap(Schedule sched_1, Schedule sched_2)
+    {
+      // sch_1        s------------------------e
+      // sch_2    ---------s-----------------------------
+      // sch_2  ------------------e
+      if ((sched_2.StartTime >= sched_1.StartTime && sched_2.StartTime < sched_1.EndTime) ||
+          (sched_2.StartTime <= sched_1.StartTime && sched_2.EndTime >= sched_1.EndTime) ||
+          (sched_2.EndTime > sched_1.StartTime && sched_2.StartTime <= sched_1.EndTime)) return true;
+      return false;
+    }
+
+    /// <summary>Tries to assign a recording to a card</summary>
+    /// <param name="arec">The recording you wan't to try to assign</param>
+    /// <param name="cardrec">An array of Recordings lists (one list for each card)</param>
+    /// <returns>True if succeed, False either</returns>
+     private bool AssignScheduleToCard(Schedule _Sched)
+    {
+   
+      //TvBusinessLayer cmLayer = new TvBusinessLayer();
+      IList _cards = cmLayer.Cards;
+      foreach (Card _card in _cards)
+      {
+        if (_card.canViewTvChannel(_Sched.IdChannel)) _Sched.RecommendedCard = _card.IdCard;
+      }
+      return false;
+    }
+
     #endregion
   }
 }
