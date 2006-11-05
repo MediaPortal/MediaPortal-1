@@ -418,6 +418,7 @@ namespace MediaPortal.GUI.Video
 
       if (btnSortBy != null)
         btnSortBy.SortChanged += new SortEventHandler(SortChanged);
+      base.OnPageLoad();
     }
     protected override void OnPageDestroy(int newWindowId)
     {
@@ -429,6 +430,7 @@ namespace MediaPortal.GUI.Video
         xmlwriter.SetValue("movies", "startWindow", VideoState.StartWindow.ToString());
         xmlwriter.SetValue("movies", "startview", VideoState.View);
       }
+      base.OnPageDestroy(newWindowId);
     }
 
     #region Sort Members
