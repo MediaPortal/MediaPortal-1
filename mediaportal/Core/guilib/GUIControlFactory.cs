@@ -379,7 +379,7 @@ namespace MediaPortal.GUI.Library
       {
         if (element.Name == "animation")
         {
-          VisualEffect effect=new VisualEffect();
+          VisualEffect effect = new VisualEffect();
           if (effect.Create(element))
           {
             animations.Add(effect);
@@ -447,7 +447,7 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
-      if (animations.Count>0)
+      if (animations.Count > 0)
         control.SetAnimations(animations);
     }
 

@@ -1326,7 +1326,14 @@ namespace MediaPortal.GUI.Library
     #endregion Properties
 
 
-    public void SetAnimations(List<VisualEffect> animations)
+    public List<VisualEffect> Animations
+    {
+      get
+      {
+        return _animations;
+      }
+    }
+    public virtual void SetAnimations(List<VisualEffect> animations)
     {
       _animations = animations;
     }
@@ -1346,26 +1353,76 @@ namespace MediaPortal.GUI.Library
         if (animType == AnimationType.WindowOpen)
           return;
       }
-      VisualEffect reverseAnim = GetAnimation((AnimationType)(-(int)animType), false);
-      VisualEffect forwardAnim = GetAnimation(animType, true);
-      // we first check whether the reverse animation is in progress (and reverse it)
-      // then we check for the normal animation, and queue it
-      if (reverseAnim != null && reverseAnim.IsReversible && (reverseAnim.CurrentState == AnimationState.InProcess || reverseAnim.CurrentState == AnimationState.Delayed))
+      List<VisualEffect> reverseAnims = GetAnimations((AnimationType)(-(int)animType), false);
+      List<VisualEffect> forwardAnims = GetAnimations(animType, false);
+      bool done = false;
+      foreach (VisualEffect reverseAnim in reverseAnims)
       {
-        reverseAnim.QueuedProcess = AnimationProcess.Reverse;
-        if (forwardAnim != null) forwardAnim.ResetAnimation();
+        if (reverseAnim.IsReversible && (reverseAnim.CurrentState == AnimationState.InProcess || reverseAnim.CurrentState == AnimationState.Delayed))
+        {
+          reverseAnim.QueuedProcess = AnimationProcess.Reverse;
+          foreach (VisualEffect forwardAnim in forwardAnims)
+          {
+            forwardAnim.ResetAnimation();
+          }
+          done = true;
+        }
       }
-      else if (forwardAnim != null)
+      if (!done)
       {
-        forwardAnim.QueuedProcess = AnimationProcess.Normal;
-        if (reverseAnim != null) reverseAnim.ResetAnimation();
+        foreach (VisualEffect forwardAnim in forwardAnims)
+        {
+          forwardAnim.QueuedProcess = AnimationProcess.Normal;
+          foreach (VisualEffect reverseAnim in reverseAnims)
+          {
+            reverseAnim.ResetAnimation();
+          }
+          done = true;
+        }
       }
-      else
-      { // hidden and visible animations delay the change of state.  If there is no animations
-        // to perform, then we should just change the state straightaway
-        if (reverseAnim != null) reverseAnim.ResetAnimation();
+      if (!done)
+      {
+        foreach (VisualEffect reverseAnim in reverseAnims)
+        {
+          reverseAnim.ResetAnimation();
+        }
         UpdateStates(animType, AnimationProcess.Normal, AnimationState.StateApplied);
       }
+      /*
+      VisualEffect reverseAnim = GetAnimations((AnimationType)(-(int)animType), false);
+    VisualEffect forwardAnim = GetAnimations(animType, true);
+    // we first check whether the reverse animation is in progress (and reverse it)
+    // then we check for the normal animation, and queue it
+    if (reverseAnim != null && reverseAnim.IsReversible && (reverseAnim.CurrentState == AnimationState.InProcess || reverseAnim.CurrentState == AnimationState.Delayed))
+    {
+      reverseAnim.QueuedProcess = AnimationProcess.Reverse;
+      if (forwardAnim != null) forwardAnim.ResetAnimation();
+    }
+    else if (forwardAnim != null)
+    {
+      forwardAnim.QueuedProcess = AnimationProcess.Normal;
+      if (reverseAnim != null) reverseAnim.ResetAnimation();
+    }
+    else
+    { // hidden and visible animations delay the change of state.  If there is no animations
+      // to perform, then we should just change the state straightaway
+      if (reverseAnim != null) reverseAnim.ResetAnimation();
+      UpdateStates(animType, AnimationProcess.Normal, AnimationState.StateApplied);
+    }
+       */
+    }
+    public virtual List<VisualEffect> GetAnimations(AnimationType type, bool checkConditions /* = true */)
+    {
+      List<VisualEffect> effects = new List<VisualEffect>();
+      for (int i = 0; i < _animations.Count; i++)
+      {
+        if (_animations[i].AnimationType == type)
+        {
+          if (!checkConditions || _animations[i].Condition == 0 /*|| g_infoManager.GetBool(_animations[i].condition)*/)
+            effects.Add(_animations[i]);
+        }
+      }
+      return effects;
     }
     public virtual VisualEffect GetAnimation(AnimationType type, bool checkConditions /* = true */)
     {

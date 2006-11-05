@@ -395,10 +395,10 @@ namespace MediaPortal.GUI.Library
     public override void QueueAnimation(AnimationType animType)
     {
       base.QueueAnimation(animType);
-      foreach (GUIControl control in Children)
-      {
-        if (control != null) control.QueueAnimation(animType);
-      }
+      //foreach (GUIControl control in Children)
+      //{
+      //  if (control != null) control.QueueAnimation(animType);
+      //}
     }
     public override VisualEffect GetAnimation(AnimationType type, bool checkConditions /* = true */)
     {

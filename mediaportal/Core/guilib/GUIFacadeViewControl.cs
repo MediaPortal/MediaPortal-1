@@ -987,7 +987,7 @@ namespace MediaPortal.GUI.Library
     */
     public override void QueueAnimation(AnimationType animType)
     {
-      if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+      /*if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
         _viewFilmStrip.QueueAnimation(animType);
       if (_currentViewMode == ViewMode.List && _viewList != null)
         _viewList.QueueAnimation(animType);
@@ -997,11 +997,12 @@ namespace MediaPortal.GUI.Library
         _viewAlbum.QueueAnimation(animType);
       if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
         _viewPlayList.QueueAnimation(animType);
+       * */
       base.QueueAnimation(animType);
     }
     public override VisualEffect GetAnimation(AnimationType type, bool checkConditions /* = true */)
     {
-      VisualEffect effect = GetAnimation(type, checkConditions);
+      VisualEffect effect = base.GetAnimation(type, checkConditions);
       if (effect != null) return effect;
       if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
         return _viewFilmStrip.GetAnimation(type, checkConditions);

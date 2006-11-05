@@ -208,15 +208,15 @@ namespace MediaPortal.GUI.Library
       if (_effect == EffectType.Slide)
       {
         nodeAttribute = node.Attributes.GetNamedItem("start");
-        string startPos = nodeAttribute.Value;
-        if (startPos != null)
+        if (nodeAttribute != null)
         {
+          string startPos = nodeAttribute.Value;
           GetPosition(startPos, ref _startX, ref _startY);
         }
         nodeAttribute = node.Attributes.GetNamedItem("end");
-        string endPos = nodeAttribute.Value;
-        if (endPos != null)
+        if (nodeAttribute != null)
         {
+          string endPos = nodeAttribute.Value;
           GetPosition(endPos, ref _endX, ref _endY);
         }
         // scale our parameters
