@@ -224,6 +224,7 @@ CREATE TABLE Schedule(
 	preRecordInterval int NOT NULL,
 	postRecordInterval int NOT NULL,
 	canceled datetime NOT NULL,
+	recommendedCard int NOT NULL,
  CONSTRAINT PK_Schedule PRIMARY KEY  
 (
 	id_Schedule ASC
@@ -389,9 +390,40 @@ pcrPid,
 videoSource,
 tuningSource)
 GO
+--- version 12 ----
+CREATE TABLE Conflict(
+	idConflict int IDENTITY(1,1) NOT NULL,
+	idSchedule int NOT NULL,
+	idConflictingSchedule int NOT NULL,
+	idChannel int NOT NULL,
+	conflictDate datetime NOT NULL,
+	idCard int NULL,
+	 CONSTRAINT PK_Conflict PRIMARY KEY  
+	(
+		idConflict ASC
+	)WITH (PAD_INDEX  = OFF, IGNORE_DUP_KEY = OFF) 
+) 
+GO
+
+ALTER TABLE Conflict  WITH CHECK ADD  CONSTRAINT FK_Conflict_Channel FOREIGN KEY(idChannel)
+REFERENCES Channel (idChannel)
+GO
+ALTER TABLE Conflict CHECK CONSTRAINT FK_Conflict_Channel
+GO
+ALTER TABLE Conflict  WITH CHECK ADD  CONSTRAINT FK_Conflict_Schedule FOREIGN KEY(idSchedule)
+REFERENCES Schedule (id_Schedule)
+GO
+ALTER TABLE Conflict CHECK CONSTRAINT FK_Conflict_Schedule
+GO
+ALTER TABLE Conflict  WITH CHECK ADD  CONSTRAINT FK_Conflict_Schedule1 FOREIGN KEY(idConflictingSchedule)
+REFERENCES Schedule (id_Schedule)
+GO
+ALTER TABLE Conflict CHECK CONSTRAINT FK_Conflict_Schedule1
+GO
+--- version 12 ----
 ---- update version -----
 GO
 delete from version
 GO
-insert into version(versionNumber) values(11)
+insert into version(versionNumber) values(12)
 GO
