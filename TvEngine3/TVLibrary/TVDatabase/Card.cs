@@ -222,10 +222,29 @@ namespace TvDatabase
 
 		#endregion
 
+    #region Public Methods
 
-		#region Relations
+    /// <summary>
+    /// Checks if a card can view a specific channel
+    /// </summary>
+    /// <param name="_card">Card object</param>
+    /// <param name="_channelId">Channel id</param>
+    /// <returns>true/false</returns>
+    public bool canViewTvChannel(int _channelId)
+    {
+      IList _cardChannels = this.ReferringChannelMap();
+      foreach (ChannelMap _cmap in _cardChannels)
+      {
+        if (_channelId == _cmap.IdChannel) return true;
+      }
+      return false;
+    }
 
-		/// <summary>
+    #endregion
+    
+    #region Relations
+
+    /// <summary>
 		/// Get a list of ChannelMap referring to the current entity.
 		/// </summary>
 		public IList ReferringChannelMap()
