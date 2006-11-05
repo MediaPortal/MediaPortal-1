@@ -76,6 +76,8 @@ namespace TvDatabase
     private int postRecordInterval;
     [TableColumn("canceled", NotNull = true)]
     private DateTime canceled;
+    [TableColumn("recommendedCard", NotNull = true)]
+    private int recommendedCard;
     #endregion
 
     #region Constructors
@@ -161,6 +163,15 @@ namespace TvDatabase
     public int IdSchedule
     {
       get { return idSchedule; }
+    }
+
+    /// <summary>
+    /// Property to get/set the card id recommended by ConflictsManager plugin
+    /// </summary>
+    public int RecommendedCard
+    {
+      get { return recommendedCard; }
+      set { isChanged |= recommendedCard != value; recommendedCard = value; }
     }
 
     /// <summary>
