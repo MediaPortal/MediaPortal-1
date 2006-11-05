@@ -34,9 +34,9 @@ namespace TvEngine
     #region variables
     bool _cmWorkerThreadRunning = false;
     System.Timers.Timer _cmWorkerTimer;
-    public TvBusinessLayer cmLayer = new TvBusinessLayer();
-    
-    IList _schedules =  Schedule.ListAll();
+    TvBusinessLayer cmLayer = new TvBusinessLayer();
+    IList _schedules = Schedule.ListAll();
+
     #endregion
 
     #region properties
@@ -125,6 +125,7 @@ namespace TvEngine
     #endregion
 
     #region private members
+
     /// <summary>
     /// timer event callback
     /// </summary>
@@ -133,37 +134,32 @@ namespace TvEngine
     void _cmWorkerTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
       System.Threading.Thread.CurrentThread.Priority = ThreadPriority.Lowest;
-      UpdateConflicts();
+      if (!_cmWorkerThreadRunning) // avoids reentrancy
+      {
+        _cmWorkerThreadRunning = true;
+        UpdateConflicts();
+        _cmWorkerThreadRunning = false;
+      }
     }
+
     /// <summary>
     /// Parses the sheduled recordings
     /// and updates the conflicting recordings table
     /// </summary>
     protected void UpdateConflicts()
     {
-      if (!_cmWorkerThreadRunning)
-      {
-        _cmWorkerThreadRunning = true;
-        Log.WriteFile("ConflictManager: Main worker thread");
-        try
-        {
-          _schedules = Schedule.ListAll();
+      Log.WriteFile("ConflictManager: Updating conflicts list");
+      _schedules = Schedule.ListAll();
 
-          foreach (Schedule _schedule in _schedules)
+      foreach (Schedule _schedule in _schedules)
+      {
+        foreach (Schedule _otherschedule in _schedules)
+        {
+          if (IsOverlap(_schedule, _otherschedule))
           {
-            foreach (Schedule _otherschedule in _schedules)
-            {
-              if (IsOverlap(_schedule, _otherschedule))
-              {
-                Log.WriteFile("Schedule with id {0} overlaps schedule with id {1}", _schedule.IdSchedule, _otherschedule.IdSchedule);
-              }
-            }
+            //todo
           }
         }
-        catch (Exception)
-        {
-        }
-        _cmWorkerThreadRunning = false;
       }
     }
 
@@ -194,8 +190,6 @@ namespace TvEngine
     /// <returns>True if succeed, False either</returns>
      private bool AssignScheduleToCard(Schedule _Sched)
     {
-   
-      //TvBusinessLayer cmLayer = new TvBusinessLayer();
       IList _cards = cmLayer.Cards;
       foreach (Card _card in _cards)
       {
