@@ -533,6 +533,8 @@ namespace MediaPortal.GUI.Library
           return typeof(GUISortButtonControl);
         case ("volumebar"):
           return typeof(GUIVolumeBar);
+        case ("multiimage"):
+          return typeof(GUIMultiImage);
         case ("animation"):
           return typeof(GUIAnimation);
         case ("playlistbutton"):

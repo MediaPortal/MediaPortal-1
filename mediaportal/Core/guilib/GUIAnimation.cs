@@ -47,19 +47,19 @@ namespace MediaPortal.GUI.Library
     public GUIAnimation(int parentId)
       : base(parentId)
     {
-			InitTriggerList();
+      InitTriggerList();
     }
 
-		public GUIAnimation(GUIAnimation a)
-			:base(a._parentControlId, a._controlId, a._positionX, a._positionY, a._width, a._height)
-		{
-			_animating = false;
+    public GUIAnimation(GUIAnimation a)
+      : base(a._parentControlId, a._controlId, a._positionX, a._positionY, a._width, a._height)
+    {
+      _animating = false;
       _isFirstRender = true;
       _iterationCount = 0;
       _startTick = 0;
       _hidePngAnimations = false;
-		  _triggerList = a._triggerList.GetRange(0, a._triggerList.Count);
-			_easing = a._easing;
+      _triggerList = a._triggerList.GetRange(0, a._triggerList.Count);
+      _easing = a._easing;
       _fillBehavior = a._fillBehavior;
       _horizontalAlignment = a._horizontalAlignment;
       _textureNames = a._textureNames;
@@ -68,39 +68,39 @@ namespace MediaPortal.GUI.Library
       _repeatBehavior = a._repeatBehavior;
       _verticalAlignment = a._verticalAlignment;
       _triggerNames = a._triggerNames;
-			InitTriggerList();
-		}
+      InitTriggerList();
+    }
 
-		public GUIAnimation(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strTextureNames)
-			: base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
-		{
-			_animating = false;
-			_isFirstRender = true;
-			_iterationCount = 0;
-			_startTick = 0;
-			_hidePngAnimations = false;
-			_textureNames = strTextureNames;
-			InitTriggerList();
-		}
-    
+    public GUIAnimation(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strTextureNames)
+      : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
+    {
+      _animating = false;
+      _isFirstRender = true;
+      _iterationCount = 0;
+      _startTick = 0;
+      _hidePngAnimations = false;
+      _textureNames = strTextureNames;
+      InitTriggerList();
+    }
+
     #endregion Constructors
 
     #region Methods
 
-		protected void InitTriggerList()
-		{
-			_triggerList.Clear();
-			if (_triggerNames == String.Empty) return;
+    protected void InitTriggerList()
+    {
+      _triggerList.Clear();
+      if (_triggerNames == String.Empty) return;
 
-			foreach (string trigger in _triggerNames.Split(';'))
-			{
-				switch ((trigger.Trim()).ToUpper())
-				{
-					case "INIT": _triggerList.Add(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT); break;
-					case "FOCUS": _triggerList.Add(GUIMessage.MessageType.GUI_MSG_SETFOCUS); break;
-				}
-			}
-		}
+      foreach (string trigger in _triggerNames.Split(';'))
+      {
+        switch ((trigger.Trim()).ToUpper())
+        {
+          case "INIT": _triggerList.Add(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT); break;
+          case "FOCUS": _triggerList.Add(GUIMessage.MessageType.GUI_MSG_SETFOCUS); break;
+        }
+      }
+    }
 
     public void Begin()
     {
@@ -141,50 +141,50 @@ namespace MediaPortal.GUI.Library
         _imageId++;
         _images[index] = new GUIImage(ParentID, _imageId + index, 0, 0, Width, Height, (string)_filenames[index], Color.White);
         _images[index].ParentControl = this;
-				_images[index].ColourDiffuse = ColourDiffuse;
-				_images[index].DimColor = DimColor;
-				_images[index].Filtering = Filtering;
+        _images[index].ColourDiffuse = ColourDiffuse;
+        _images[index].DimColor = DimColor;
+        _images[index].Filtering = Filtering;
         _images[index].RepeatBehavior = _repeatBehavior;
         _images[index].AllocResources();
         //_images[index].ScaleToScreenResolution(); -> causes too big images in fullscreen
 
         w = Math.Max(w, _images[index].Width);
         h = Math.Max(h, _images[index].Height);
-				_renderWidth = Math.Max(_renderWidth, _images[index].RenderWidth);
-				_renderHeight = Math.Max(_renderHeight, _images[index].RenderHeight);
-				_textureWidth = Math.Max(_textureWidth, _images[index].TextureWidth);
-				_textureHeight = Math.Max(_textureHeight, _images[index].TextureHeight);
+        _renderWidth = Math.Max(_renderWidth, _images[index].RenderWidth);
+        _renderHeight = Math.Max(_renderHeight, _images[index].RenderHeight);
+        _textureWidth = Math.Max(_textureWidth, _images[index].TextureWidth);
+        _textureHeight = Math.Max(_textureHeight, _images[index].TextureHeight);
 
       }
 
-			int x = _positionX;
-			int y = _positionY;
+      int x = _positionX;
+      int y = _positionY;
 
-			if (_horizontalAlignment == HorizontalAlignment.Center)
-			{
-				x = x - (w / 2);
-			}
-			else if (_horizontalAlignment == HorizontalAlignment.Right)
-			{
-				x = x - w;
-			}
+      if (_horizontalAlignment == HorizontalAlignment.Center)
+      {
+        x = x - (w / 2);
+      }
+      else if (_horizontalAlignment == HorizontalAlignment.Right)
+      {
+        x = x - w;
+      }
 
-			if (_verticalAlignment == VerticalAlignment.Center)
-			{
-				y = y - (h / 2);
-			}
-			else if (_verticalAlignment == VerticalAlignment.Bottom)
-			{
-				y = y - h;
-			}
+      if (_verticalAlignment == VerticalAlignment.Center)
+      {
+        y = y - (h / 2);
+      }
+      else if (_verticalAlignment == VerticalAlignment.Bottom)
+      {
+        y = y - h;
+      }
 
       for (int index = 0; index < _images.Length; index++)
       {
         _images[index].SetPosition(x, y);
       }
-		}
+    }
 
-		public override void FreeResources()
+    public override void FreeResources()
     {
       if (_images == null)
         return;
@@ -195,177 +195,177 @@ namespace MediaPortal.GUI.Library
       _images = null;
     }
 
-		 // recalculate the image dimensions & position
-		public void Refresh()
-		{
-			if (_images == null) return;
-			for (int index = 0; index < _images.Length; index++)
-				_images[index].Refresh();
-		}
+    // recalculate the image dimensions & position
+    public void Refresh()
+    {
+      if (_images == null) return;
+      for (int index = 0; index < _images.Length; index++)
+        _images[index].Refresh();
+    }
 
-		public void SetFileName(string newFilename)
-		{
-			FreeResources();
-			_textureNames = newFilename;
-			AllocResources();
-		}
+    public void SetFileName(string newFilename)
+    {
+      FreeResources();
+      _textureNames = newFilename;
+      AllocResources();
+    }
 
-		public override void SetPosition(int dwPosX, int dwPosY)
-		{
-			base.SetPosition(dwPosX, dwPosY);
-			if (_images == null) return;
-			for (int index = 0; index < _images.Length; index++)
-				_images[index].SetPosition(dwPosX, dwPosY);
-		}
+    public override void SetPosition(int dwPosX, int dwPosY)
+    {
+      base.SetPosition(dwPosX, dwPosY);
+      if (_images == null) return;
+      for (int index = 0; index < _images.Length; index++)
+        _images[index].SetPosition(dwPosX, dwPosY);
+    }
 
-		public override int Width
-		{
-			get
-			{
-				return base.Width;
-			}
-			set
-			{
-				base.Width = value;
-				if (_images == null) return;
-				for (int index = 0; index < _images.Length; index++)
-					_images[index].Width = value;
-			}
-		}
+    public override int Width
+    {
+      get
+      {
+        return base.Width;
+      }
+      set
+      {
+        base.Width = value;
+        if (_images == null) return;
+        for (int index = 0; index < _images.Length; index++)
+          _images[index].Width = value;
+      }
+    }
 
-		public override int Height
-		{
-			get
-			{
-				return base.Height;
-			}
-			set
-			{
-				base.Height = value;
-				if (_images == null) return;
-				for (int index = 0; index < _images.Length; index++)
-					_images[index].Height = value;
-			}
-		}
+    public override int Height
+    {
+      get
+      {
+        return base.Height;
+      }
+      set
+      {
+        base.Height = value;
+        if (_images == null) return;
+        for (int index = 0; index < _images.Length; index++)
+          _images[index].Height = value;
+      }
+    }
 
-		public bool Filtering
-		{
-			get
-			{
-				if ((_images != null) && (_images.Length > 0)) return _images[0].Filtering;
-				return false;
-			}
-			set
-			{
-				if (_images == null) return;
-				for (int index = 0; index < _images.Length; index++)
-					_images[index].Filtering = value;
-			}
-		}
+    public bool Filtering
+    {
+      get
+      {
+        if ((_images != null) && (_images.Length > 0)) return _images[0].Filtering;
+        return false;
+      }
+      set
+      {
+        if (_images == null) return;
+        for (int index = 0; index < _images.Length; index++)
+          _images[index].Filtering = value;
+      }
+    }
 
-		/// <summary>
-		/// Get/Set if the aspectratio of the texture needs to be preserved during rendering.
-		/// </summary>
-		public bool KeepAspectRatio
-		{
-			get { return _keepAspectRatio; }
-			set
-			{
-				_keepAspectRatio = value;
-				if (_images == null) return;
-				for (int index = 0; index < _images.Length; index++)
-					_images[index].KeepAspectRatio = value;
+    /// <summary>
+    /// Get/Set if the aspectratio of the texture needs to be preserved during rendering.
+    /// </summary>
+    public bool KeepAspectRatio
+    {
+      get { return _keepAspectRatio; }
+      set
+      {
+        _keepAspectRatio = value;
+        if (_images == null) return;
+        for (int index = 0; index < _images.Length; index++)
+          _images[index].KeepAspectRatio = value;
 
-			}
-		}
+      }
+    }
 
 
-		/// <summary>
-		/// Get the width in which the control is rendered.
-		/// </summary>
-		public int RenderWidth
-		{
-			get { return _renderWidth; }
-		}
+    /// <summary>
+    /// Get the width in which the control is rendered.
+    /// </summary>
+    public int RenderWidth
+    {
+      get { return _renderWidth; }
+    }
 
-		/// <summary>
-		/// Get the height in which the control is rendered.
-		/// </summary>
-		public int RenderHeight
-		{
-			get { return _renderHeight; }
-		}
+    /// <summary>
+    /// Get the height in which the control is rendered.
+    /// </summary>
+    public int RenderHeight
+    {
+      get { return _renderHeight; }
+    }
 
-		/// <summary>
-		/// Get/Set the TextureWidth
-		/// </summary>
-		public int TextureWidth
-		{
-			get { return _textureWidth; }
-			set
-			{
-				_textureWidth = value;
-				if (_images == null) return;
-				for (int index = 0; index < _images.Length; index++)
-					_images[index].TextureWidth = value;
+    /// <summary>
+    /// Get/Set the TextureWidth
+    /// </summary>
+    public int TextureWidth
+    {
+      get { return _textureWidth; }
+      set
+      {
+        _textureWidth = value;
+        if (_images == null) return;
+        for (int index = 0; index < _images.Length; index++)
+          _images[index].TextureWidth = value;
 
-			}
-		}
+      }
+    }
 
-		/// <summary>
-		/// Get/Set the TextureHeight
-		/// </summary>
-		public int TextureHeight
-		{
-			get { return _textureHeight; }
-			set
-			{
-				_textureHeight = value;
-				if (_images == null) return;
-				for (int index = 0; index < _images.Length; index++)
-					_images[index].TextureHeight = value;
-			}
-		}
+    /// <summary>
+    /// Get/Set the TextureHeight
+    /// </summary>
+    public int TextureHeight
+    {
+      get { return _textureHeight; }
+      set
+      {
+        _textureHeight = value;
+        if (_images == null) return;
+        for (int index = 0; index < _images.Length; index++)
+          _images[index].TextureHeight = value;
+      }
+    }
 
-		public override int DimColor
-		{
-			get
-			{
-				return base.DimColor;
-			}
-			set
-			{
-				base.DimColor = value;
-				if (_images == null) return;
-				for (int index = 0; index < _images.Length; index++)
-					_images[index].DimColor = value;
-			}
-		}
+    public override int DimColor
+    {
+      get
+      {
+        return base.DimColor;
+      }
+      set
+      {
+        base.DimColor = value;
+        if (_images == null) return;
+        for (int index = 0; index < _images.Length; index++)
+          _images[index].DimColor = value;
+      }
+    }
 
-		public override long ColourDiffuse
-		{
-			get
-			{
-				return base.ColourDiffuse;
-			}
-			set
-			{
-				base.ColourDiffuse = value;
-				if (_images == null) return;
-				for (int index = 0; index < _images.Length; index++)
-					_images[index].ColourDiffuse = value;
-			}
-		}
+    public override long ColourDiffuse
+    {
+      get
+      {
+        return base.ColourDiffuse;
+      }
+      set
+      {
+        base.ColourDiffuse = value;
+        if (_images == null) return;
+        for (int index = 0; index < _images.Length; index++)
+          _images[index].ColourDiffuse = value;
+      }
+    }
 
-		public override bool OnMessage(GUIMessage message)
-		{
-			foreach (GUIMessage.MessageType triggerMsg in _triggerList)
-			{
-				if (triggerMsg == message.Message) Begin(); 
-			}
-			
-			return (base.OnMessage(message));
-		}
+    public override bool OnMessage(GUIMessage message)
+    {
+      foreach (GUIMessage.MessageType triggerMsg in _triggerList)
+      {
+        if (triggerMsg == message.Message) Begin();
+      }
+
+      return (base.OnMessage(message));
+    }
 
     public override void Render(float timePassed)
     {
@@ -437,12 +437,12 @@ namespace MediaPortal.GUI.Library
       get { if (_filenames == null) _filenames = new ArrayList(); return _filenames; }
     }
 
-		public string FileName
-		{
-			get { return _textureNames; }
-		}
-				
-		public new HorizontalAlignment HorizontalAlignment
+    public string FileName
+    {
+      get { return _textureNames; }
+    }
+
+    public new HorizontalAlignment HorizontalAlignment
     {
       get { return _horizontalAlignment; }
       set { _horizontalAlignment = value; }
@@ -451,7 +451,7 @@ namespace MediaPortal.GUI.Library
     public RepeatBehavior RepeatBehavior
     {
       get { return _repeatBehavior; }
-      set 
+      set
       {
         _repeatBehavior = value;
         if (_images == null) return;
@@ -494,12 +494,12 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("VerticalAlignment")]
     protected VerticalAlignment _verticalAlignment = VerticalAlignment.Top;
 
-		[XMLSkinElement("Triggers")]
-		protected string _triggerNames = "init";
+    [XMLSkinElement("Triggers")]
+    protected string _triggerNames = "init";
 
-		[XMLSkinElement("keepaspectratio")]
-		private bool _keepAspectRatio = false;
-		
+    [XMLSkinElement("keepaspectratio")]
+    private bool _keepAspectRatio = false;
+
     #endregion Properties (Skin)
 
     #region Fields
@@ -512,11 +512,11 @@ namespace MediaPortal.GUI.Library
     static int _imageId = 200000;
     double _startTick = 0;
     bool _hidePngAnimations = false;
-		protected List<GUIMessage.MessageType> _triggerList = new List<GUIMessage.MessageType>();
-		int _renderWidth = 0;
-		int _renderHeight = 0;
-		int _textureWidth = 0;
-		int _textureHeight = 0;
+    protected List<GUIMessage.MessageType> _triggerList = new List<GUIMessage.MessageType>();
+    int _renderWidth = 0;
+    int _renderHeight = 0;
+    int _textureWidth = 0;
+    int _textureHeight = 0;
 
     #endregion Fields
   }
