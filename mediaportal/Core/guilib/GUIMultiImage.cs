@@ -203,6 +203,7 @@ namespace MediaPortal.GUI.Library
         if (nextImage >= m_images.Count)
           nextImage = m_loop ? 0 : m_currentImage;  // stay on the last image if <loop>no</loop>
 
+        //Log.WriteFile(MediaPortal.Services.LogType.Log, "next:{0} current:{1}", nextImage, m_currentImage);
         if (nextImage != m_currentImage)
         {
           // check if we should be loading a new image yet
@@ -213,6 +214,7 @@ namespace MediaPortal.GUI.Library
             LoadImage(nextImage);
             // start the fade timer
             m_fadeTimer.StartZero();
+            //Log.WriteFile(MediaPortal.Services.LogType.Log, "start fade");
           }
 
           // check if we are still fading
@@ -225,15 +227,20 @@ namespace MediaPortal.GUI.Library
               m_fadeTimer.Stop();
               // swap images
               m_images[m_currentImage].FreeResources();
-              m_images[nextImage].SetAlpha(255);
+              m_images[nextImage].ColourDiffuse= (m_images[nextImage].ColourDiffuse | (long)0xff000000);
               m_currentImage = nextImage;
               // start the load timer
               m_imageTimer.StartZero();
+              //Log.WriteFile(MediaPortal.Services.LogType.Log, "fade end. current:{0}", m_currentImage);
             }
             else
             { // perform the fade
-              float fadeAmount = timeFading / m_fadeTime;
-              m_images[nextImage].SetAlpha((int)(255 * fadeAmount));
+              float fadeAmount = timeFading / ((float)m_fadeTime);
+              long alpha = (int)(255 * fadeAmount);
+              alpha <<= 24;
+              alpha += (m_images[nextImage].ColourDiffuse & 0x00ffffff);
+              m_images[nextImage].ColourDiffuse = alpha;
+              //Log.WriteFile(MediaPortal.Services.LogType.Log, "fade :{0:X}", alpha);
             }
             m_images[nextImage].Render(timePassed);
           }

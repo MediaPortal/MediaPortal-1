@@ -6,7 +6,7 @@ namespace MediaPortal.Util
 {
   public class StopWatch
   {
-    bool _isRunning;
+    bool _isRunning=false;
     uint _startTime;
 
     public void Stop()
