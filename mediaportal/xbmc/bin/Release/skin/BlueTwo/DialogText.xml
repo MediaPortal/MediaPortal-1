@@ -2,8 +2,6 @@
   <id>7900</id>
   <defaultcontrol>3</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
-  <animation effect="fade" time="200">WindowOpen</animation>
-  <animation effect="fade" time="200">WindowClose</animation>
   <controls>
     <control>
       <type>image</type>
@@ -14,6 +12,8 @@
       <height>576</height>
       <texture>black.bmp</texture>
       <colordiffuse>60ffffff</colordiffuse>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <type>image</type>
@@ -23,6 +23,8 @@
       <width>546</width>
       <height>366</height>
       <texture>context_background.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Heading text label</description>
@@ -33,6 +35,8 @@
       <label>181</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Exit button</description>
@@ -49,6 +53,8 @@
       <onright>3</onright>
       <onup>3</onup>
       <ondown>3</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>textarea</description>
@@ -64,6 +70,8 @@
       <ondown>2</ondown>
       <spinPosX>500</spinPosX>
       <spinPosY>370</spinPosY>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
   </controls>
 </window>

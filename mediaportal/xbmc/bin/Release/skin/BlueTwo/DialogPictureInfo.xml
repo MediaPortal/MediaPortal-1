@@ -2,8 +2,6 @@
   <id>2014</id>
   <defaultcontrol>6</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <animation effect="fade" time="200">WindowOpen</animation>
-  <animation effect="fade" time="200">WindowClose</animation>
   <controls>
     <control>
       <description>background image</description>
@@ -21,6 +19,8 @@
       <posX>60</posX>
       <posY>20</posY>
       <texture>info_logo.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Image Title value</description>
@@ -32,6 +32,8 @@
       <font>font16</font>
       <align>right</align>
       <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Dimensions txt</description>
@@ -42,6 +44,8 @@
       <label>9000</label>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Resolution txt</description>
@@ -52,6 +56,8 @@
       <label>9001</label>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Flash txt</description>
@@ -62,6 +68,8 @@
       <label>9002</label>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Metering mode txt</description>
@@ -72,6 +80,8 @@
       <label>9003</label>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Exposure Compensation txt</description>
@@ -82,6 +92,8 @@
       <label>9004</label>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Shutterspeed txt</description>
@@ -92,6 +104,8 @@
       <label>9005</label>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Date Taken txt</description>
@@ -102,6 +116,8 @@
       <label>9006</label>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Fstop txt</description>
@@ -112,6 +128,8 @@
       <label>9007</label>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Exposure Time txt</description>
@@ -123,6 +141,8 @@
       <font>font13</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Camera Model txt</description>
@@ -133,6 +153,8 @@
       <label>9009</label>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Equipment make txt</description>
@@ -143,6 +165,8 @@
       <label>9010</label>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>View Comment txt</description>
@@ -153,6 +177,8 @@
       <label>9011</label>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Image Dimensions value</description>
@@ -163,6 +189,8 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Resolutions value</description>
@@ -173,6 +201,8 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Flash value</description>
@@ -184,6 +214,8 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Metering Mode value</description>
@@ -195,6 +227,8 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Exposure Compensation value</description>
@@ -206,6 +240,8 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Shutter Speed value</description>
@@ -217,6 +253,8 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Date Taken value</description>
@@ -227,6 +265,8 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Fstop value</description>
@@ -237,6 +277,8 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Exposure Time value</description>
@@ -247,6 +289,8 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Camera Model value</description>
@@ -258,6 +302,8 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Equipment Make value</description>
@@ -269,6 +315,8 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>View Comments value</description>
@@ -279,6 +327,8 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Image</description>
@@ -292,6 +342,8 @@
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>FFFFFFFF</colordiffuse>
       <keepaspectratio>yes</keepaspectratio>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
   </controls>
 </window>

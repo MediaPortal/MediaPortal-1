@@ -1,6 +1,4 @@
 <window>
-  <animation effect="fade" time="250">WindowOpen</animation>
-  <animation effect="fade" time="500">WindowClose</animation>
   <id>504</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
@@ -12,7 +10,8 @@
     <control>
       <type>group</type>
       <description>group element</description>
-      <animation>FlyInFromLeft</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <posX>60</posX>
       <posY>97</posY>
       <layout>StackLayout</layout>
@@ -119,7 +118,8 @@
     <control>
       <type>group</type>
       <description>group element</description>
-      <animation>FlyInFromTop</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <control>
         <description>composite control consisting of a list control and a thumbnail panel</description>
         <type>facadeview</type>

@@ -3,11 +3,9 @@
   <id>2002</id>
   <defaultcontrol>10</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
-  <animation effect="fade" time="200">WindowOpen</animation>
-  <animation effect="fade" time="200">WindowClose</animation>
   <controls>
-  <import>common.dialog.xml</import>
-    
+    <import>common.dialog.xml</import>
+
     <control>
       <description>OK button</description>
       <type>button</type>
@@ -25,6 +23,8 @@
       <onright>10</onright>
       <onup>10</onup>
       <ondown>10</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     
     

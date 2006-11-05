@@ -10,6 +10,8 @@
 		<width>680</width>
 		<height>40</height>
 		<texture>osd_bg_top.png</texture>
+    <animation effect="fade" time="200">WindowOpen</animation>
+    <animation effect="fade" time="200">WindowClose</animation>
 	</control>
 	<control>
 		<description>progressbar background</description>
@@ -21,6 +23,8 @@
 		<height>20</height>
 		<texture>osd_progress_background.png</texture>
 		<visible>yes</visible>
+    <animation effect="fade" time="200">WindowOpen</animation>
+    <animation effect="fade" time="200">WindowClose</animation>
 	</control>
 	<control>
 		<description>Progress Bar</description>
@@ -36,6 +40,8 @@
 		<righttexture>osd_progress_right.png</righttexture>
 		<visible>yes</visible>
 		<label>#percentage</label>
+    <animation effect="fade" time="200">WindowOpen</animation>
+    <animation effect="fade" time="200">WindowClose</animation>
 	</control>
 
 
@@ -49,6 +55,8 @@
 		<align>left</align>
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
+    <animation effect="fade" time="200">WindowOpen</animation>
+    <animation effect="fade" time="200">WindowClose</animation>
 	</control>
 	<control>
 		<description>End Time Info</description>
@@ -60,6 +68,8 @@
 		<align>left</align>
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
+    <animation effect="fade" time="200">WindowOpen</animation>
+    <animation effect="fade" time="200">WindowClose</animation>
 	</control>
 
 <!--         <control>

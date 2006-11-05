@@ -2,8 +2,6 @@
   <id>758</id>
   <defaultcontrol>14</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
-  <animation effect="fade" time="200">WindowOpen</animation>
-  <animation effect="fade" time="200">WindowClose</animation>
   <controls>
     <control>
       <type>image</type>
@@ -23,6 +21,8 @@
       <width>436</width>
       <height>246</height>
       <texture>dialog_background.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <type>image</type>
@@ -31,6 +31,8 @@
       <posY>301</posY>
       <width>345</width>
       <texture>osd_progress_background.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>dialog Heading</description>
@@ -42,6 +44,8 @@
       <width>370</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>dialog line 1</description>
@@ -54,6 +58,8 @@
       <font>font13</font>
       <width>370</width>
       <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>dialog line 2</description>
@@ -66,6 +72,8 @@
       <font>font13</font>
       <width>370</width>
       <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>progress control</description>
@@ -76,6 +84,8 @@
       <width>367</width>
       <height>25</height>
       <visible>no</visible>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Yes button</description>
@@ -92,6 +102,8 @@
       <onright>10</onright>
       <onup>12</onup>
       <ondown>12</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>No button</description>
@@ -108,6 +120,8 @@
       <onright>14</onright>
       <onup>13</onup>
       <ondown>13</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Always</description>
@@ -124,6 +138,8 @@
       <onright>13</onright>
       <onup>11</onup>
       <ondown>11</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Never</description>
@@ -140,6 +156,8 @@
       <onright>12</onright>
       <onup>10</onup>
       <ondown>10</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Cancel button</description>
@@ -156,6 +174,8 @@
       <onright>11</onright>
       <onup>14</onup>
       <ondown>14</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
   </controls>
 </window>

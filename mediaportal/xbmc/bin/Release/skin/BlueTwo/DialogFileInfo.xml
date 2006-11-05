@@ -2,8 +2,6 @@
   <id>1206</id>
   <defaultcontrol>8</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <animation effect="fade" time="200">WindowOpen</animation>
-  <animation effect="fade" time="200">WindowClose</animation>
   <controls>
     <control>
       <description>background image</description>
@@ -21,6 +19,8 @@
       <posX>60</posX>
       <posY>20</posY>
       <texture>info_logo.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>File Title</description>
@@ -32,6 +32,8 @@
       <font>font16</font>
       <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>System</description>
@@ -42,6 +44,8 @@
       <label>13000</label>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Manufacturer</description>
@@ -52,6 +56,8 @@
       <label>13001</label>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Rating</description>
@@ -62,6 +68,8 @@
       <label>173</label>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Genre</description>
@@ -72,6 +80,8 @@
       <label>174</label>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>System value</description>
@@ -83,6 +93,8 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Manufacturer value</description>
@@ -94,6 +106,8 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Rating value</description>
@@ -105,6 +119,8 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Genre value</description>
@@ -116,6 +132,8 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Screenshot</description>
@@ -129,6 +147,8 @@
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>FFFFFFFF</colordiffuse>
       <keepaspectratio>yes</keepaspectratio>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Screenshot big</description>
@@ -142,6 +162,8 @@
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>FFFFFFFF</colordiffuse>
       <keepaspectratio>yes</keepaspectratio>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Overview</description>
@@ -158,6 +180,8 @@
       <onright>8</onright>
       <onup>8</onup>
       <ondown>8</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Refresh</description>
@@ -173,6 +197,8 @@
       <ondown>11</ondown>
       <onleft>4</onleft>
       <onright>4</onright>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Overview / Screenshot Toggle</description>
@@ -188,6 +214,8 @@
       <ondown>7</ondown>
       <onleft>4</onleft>
       <onright>4</onright>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Prev</description>
@@ -203,6 +231,8 @@
       <ondown>9</ondown>
       <onleft>4</onleft>
       <onright>4</onright>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Next</description>
@@ -218,6 +248,8 @@
       <ondown>8</ondown>
       <onleft>4</onleft>
       <onright>4</onright>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Launch</description>
@@ -233,6 +265,8 @@
       <ondown>12</ondown>
       <onleft>4</onleft>
       <onright>4</onright>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
   </controls>
 </window>

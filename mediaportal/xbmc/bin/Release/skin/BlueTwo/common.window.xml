@@ -30,6 +30,8 @@
 			<font>font16</font>
 			<align>right</align>
 			<textcolor>White</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Number of Files Label</description>
@@ -40,6 +42,8 @@
 			<label>#itemcount</label>
 			<align>left</align>
 			<textcolor>White</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -65,6 +69,8 @@
 			<width>161</width>
 			<height>158</height>
 			<texture>#header.hover</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>		
 	</controls>
 </window>

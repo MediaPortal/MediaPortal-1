@@ -1,18 +1,17 @@
 <window>
-  <animation effect="fade" time="250">WindowOpen</animation>
-  <animation effect="fade" time="500">WindowClose</animation>
-	<id>30</id>
-	<defaultcontrol>2</defaultcontrol>
-	<allowoverlay>yes</allowoverlay>
-	<define>#header.label:666</define>
-	<define>#header.image:radio_logo.png</define>
-	<define>#header.hover:hover_my radio.png</define>
-	<controls>
-		<import>common.window.xml</import>
-		<control>
-			<type>group</type>
-			<description>group element</description>
-			<animation>FlyInFromLeft</animation>
+  <id>30</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:666</define>
+  <define>#header.image:radio_logo.png</define>
+  <define>#header.hover:hover_my radio.png</define>
+  <controls>
+    <import>common.window.xml</import>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 			<posX>60</posX>
 			<posY>97</posY>
 			<layout>StackLayout</layout>
@@ -82,7 +81,8 @@
 		<control>
 			<type>group</type>
 			<description>group element</description>
-			<animation>FlyInFromTop</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 			<control>
 				<description>listcontrol</description>
 				<type>listcontrol</type>

@@ -1,21 +1,20 @@
 <window>
-  <animation effect="fade" time="250">WindowOpen</animation>
-  <animation effect="fade" time="500">WindowClose</animation>
   <id>500</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
-	<define>#header.label:136</define>
-	<define>#header.text:music</define>
-	<define>#header.hover:hover_my music.png</define>
+  <define>#header.label:136</define>
+  <define>#header.text:music</define>
+  <define>#header.hover:hover_my music.png</define>
   <controls>
-	<import>common.window.xml</import>
-	<control>
-	<type>group</type>
-	<description>group element</description>
-	<animation>FlyInFromLeft</animation>
-	<layout>StackLayout(2)</layout>
-	<posX>60</posX>
-	<posY>97</posY>
+    <import>common.window.xml</import>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <layout>StackLayout(2)</layout>
+      <posX>60</posX>
+      <posY>97</posY>
 
       <control>
         <description>View-As button</description>
@@ -115,7 +114,7 @@
       </control>
     </control>
 
-   <import>common.facade.playlist.xml</import>
+    <import>common.facade.playlist.xml</import>
 
   </controls>
 </window>

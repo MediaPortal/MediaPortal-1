@@ -1,6 +1,4 @@
 <window>
-  <animation effect="fade" time="250">WindowOpen</animation>
-  <animation effect="fade" time="500">WindowClose</animation>
 	<id>607</id>
 	<defaultcontrol>10</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
@@ -21,6 +19,8 @@
 			<posX>60</posX>
 			<posY>20</posY>
 			<texture>television_logo.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>	
 		<control>
 			<type>image</type>
@@ -28,6 +28,8 @@
 			<posX>75</posX>
 			<posY>370</posY>
 			<texture>hover_my tv.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>		
 		<control>
 			<description>Priorities Text Label</description>
@@ -38,6 +40,8 @@
 			<label>877</label>
 			<align>right</align>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>	
 		<control>
 			<description>Date</description>
@@ -49,6 +53,8 @@
 			<align>right</align>
 			<font>font13</font>
 			<textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Time</description>
@@ -60,6 +66,8 @@
 			<align>right</align>
 			<font>font13</font>
 			<textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Number of Files Label</description>
@@ -71,6 +79,8 @@
 			<font>font13</font>
 			<align>left</align>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Selected item Label</description>
@@ -83,11 +93,14 @@
 			<font>font13</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<type>group</type>
 			<description>group element</description>
-			<animation>FlyInFromTop</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 			<control>
 				<description>scheduler recordings listcontrol</description>
 				<type>updownlistcontrol</type>
@@ -132,6 +145,8 @@
 			<font>font13</font>
 			<align>left</align>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Current program time</description>
@@ -143,6 +158,8 @@
 			<align>left</align>
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Description1</description>
@@ -155,40 +172,48 @@
 			<label>#TV.Scheduled.Description</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
-		</control>
-		<control>
-			<description>genre</description>
-			<type>label</type>
-			<id>17</id>
-			<posX>660</posX>
-			<posY>460</posY>
-			<label>#TV.Scheduled.Genre</label>
-			<align>right</align>
-			<font>font13</font>
-			<textcolor>FFB2D4F5</textcolor>
-		</control>			
-		<control>
-			<description>TV background</description>
-			<type>image</type>
-			<id>1</id>
-			<posX>60</posX>
-			<posY>420</posY>
-			<width>180</width>
-			<height>135</height>
-			<colordiffuse>60ffffff</colordiffuse>
-			<texture>playback_background.png</texture>
-		</control>
-		<control>
-			<description>TV preview window</description> 
-			<type>videowindow</type> 
-			<id>99</id> 
-			<posX>65</posX> 
-			<posY>425</posY> 
-			<width>170</width> 
-			<height>125</height>
-			<onup>7</onup>
-			<action>18</action>
-			<textureFocus>tv_green_border.png</textureFocus> 
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>genre</description>
+      <type>label</type>
+      <id>17</id>
+      <posX>660</posX>
+      <posY>460</posY>
+      <label>#TV.Scheduled.Genre</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>TV background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>420</posY>
+      <width>180</width>
+      <height>135</height>
+      <colordiffuse>60ffffff</colordiffuse>
+      <texture>playback_background.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>TV preview window</description>
+      <type>videowindow</type>
+      <id>99</id>
+      <posX>65</posX>
+      <posY>425</posY>
+      <width>170</width>
+      <height>125</height>
+      <onup>7</onup>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 	</controls>
 </window>

@@ -1,6 +1,4 @@
 <window>
-  <animation effect="fade" time="250">WindowOpen</animation>
-  <animation effect="fade" time="500">WindowClose</animation>
   <id>501</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
@@ -11,8 +9,9 @@
     <import>common.window.xml</import>
     <control>
       <type>group</type>
-      <description>group element</description>
-      <animation>FlyInFromLeft</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <description>group element</description> 
       <posX>60</posX>
       <posY>97</posY>
       <layout>StackLayout</layout>

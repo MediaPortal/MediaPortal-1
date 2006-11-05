@@ -2,8 +2,6 @@
 <window>
   <id>101</id>
   <defaultcontrol>10</defaultcontrol>
-  <animation effect="fade" time="200">WindowOpen</animation>
-  <animation effect="fade" time="200">WindowClose</animation>
   <allowoverlay>yes</allowoverlay>
   <controls>
   <import>common.dialog.xml</import>
@@ -14,6 +12,8 @@
       <posY>326</posY>
       <width>305</width>
       <texture>osd_progress_background.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>progress control</description>
@@ -23,6 +23,8 @@
       <posY>325</posY>
       <width>327</width>
       <height>25</height>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Cancel button</description>
@@ -39,6 +41,8 @@
       <onright>10</onright>
       <onup>10</onup>
       <ondown>10</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
   </controls>
 </window>

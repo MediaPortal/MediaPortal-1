@@ -1,6 +1,4 @@
 <window>
-  <animation effect="fade" time="250">WindowOpen</animation>
-  <animation effect="fade" time="500">WindowClose</animation>
 	<id>611</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
@@ -21,6 +19,8 @@
 			<posX>60</posX>
 			<posY>20</posY>
 			<texture>television_logo.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>	
 		<control>
 			<type>image</type>
@@ -28,6 +28,8 @@
 			<posX>75</posX>
 			<posY>370</posY>
 			<texture>hover_my tv.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>		
 		<control>
 			<description>AutoCompress Label</description>
@@ -39,6 +41,8 @@
 			<font>font16</font>
 			<align>right</align>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Date</description>
@@ -50,17 +54,21 @@
 			<align>right</align>
 			<font>font13</font>
 			<textcolor>ffa9d0f7</textcolor>
-		</control>
-		<control>
-			<description>Time</description>
-			<type>label</type>
-			<id>201</id>
-			<posX>690</posX>
-			<posY>50</posY>
-			<label>#time</label>
-			<align>right</align>
-			<font>font13</font>
-			<textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>Time</description>
+      <type>label</type>
+      <id>201</id>
+      <posX>690</posX>
+      <posY>50</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		
 		<control>
@@ -75,6 +83,8 @@
 			<onright>2</onright>
 			<onup>17</onup>
 			<ondown>5</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Auto compress label</description>
@@ -85,6 +95,8 @@
 			<label>895</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Auto compress select</description>
@@ -115,6 +127,8 @@
 			<textureDown>arrow_round_left_nofocus.png</textureDown>
 			<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
 			<textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 
 
@@ -130,6 +144,8 @@
 			<onright>15</onright>
 			<onup>5</onup>
 			<ondown>99</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 
 
@@ -144,6 +160,8 @@
 			<width>161</width> 
 			<height>134</height> 
 			<texture>playback_background.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>TV preview window</description> 
@@ -155,7 +173,9 @@
 			<height>108</height> 
 			<onup>5</onup>
 			<action>18</action>
-			<textureFocus>tv_green_border.png</textureFocus> 
+			<textureFocus>tv_green_border.png</textureFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 	</controls>
 </window>
