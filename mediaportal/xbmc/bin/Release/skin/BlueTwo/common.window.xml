@@ -11,6 +11,8 @@
 			<texture>background.png</texture>
 		</control>
 		<control>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 			<type>image</type>
 			<id>1</id>
 			<posX>60</posX>
@@ -18,6 +20,8 @@
 			<texture>#header.image</texture>
 		</control>
 		<control>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 			<type>label</type>
 			<id>1</id>
 			<posX>250</posX>
@@ -38,6 +42,8 @@
 			<textcolor>White</textcolor>
 		</control>
 		<control>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 			<description>Selected item Label</description>
 			<type>fadelabel</type>
 			<id>1</id>
@@ -50,6 +56,8 @@
 			<textcolor>White</textcolor>
 		</control>
 		<control>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 			<type>image</type>
 			<id>1</id>
 			<posX>77</posX>
