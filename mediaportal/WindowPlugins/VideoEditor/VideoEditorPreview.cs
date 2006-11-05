@@ -593,18 +593,10 @@ namespace WindowPlugins.VideoEditor
           {
             if (iCount < NR_OF_SPILTER_TIME_STAMPS)
             {
-              tStamp[iCount].s_sec = (int) cutPointsList[iCount].StartTime;
-              tStamp[iCount].s_min = tStamp[iCount].s_sec/60;
-              tStamp[iCount].s_hour = tStamp[iCount].s_min/60;
-              tStamp[iCount].s_min = tStamp[iCount].s_min%60;
-              tStamp[iCount].s_sec = tStamp[iCount].s_sec%60;
-
-              tStamp[iCount].e_sec = (int) cutPointsList[iCount].EndTime;
-              tStamp[iCount].e_min = tStamp[iCount].e_sec/60;
-              tStamp[iCount].e_hour = tStamp[iCount].e_min/60;
-              tStamp[iCount].e_min = tStamp[iCount].e_min%60;
-              tStamp[iCount].e_sec = tStamp[iCount].e_sec%60;
-              //iCount++;
+                tStamp[iCount].start = new DateTime(1900, 1, 1, 0, 0, 0, 0);
+                tStamp[iCount].start = tStamp[iCount].start.AddSeconds((int)cutPointsList[iCount].StartTime);
+                tStamp[iCount].end = new DateTime(1900, 1, 1, 0, 0, 0, 0);
+                tStamp[iCount].end = tStamp[iCount].end.AddSeconds((int)cutPointsList[iCount].EndTime);
             }
           }
           cutThread = new Thread(new ThreadStart(CutMpeg));
@@ -615,7 +607,7 @@ namespace WindowPlugins.VideoEditor
           progressLbl.IsVisible = true;
           cutBtn.IsEnabled = false;
           cutThread.Start();
-          //CutMpeg();
+          //CutMpeg(); 
           break;
         default:
           MessageBox(GUILocalizeStrings.Get(2080), GUILocalizeStrings.Get(2081)); // Unsupported filetype, Cannot cut
@@ -685,7 +677,7 @@ namespace WindowPlugins.VideoEditor
       cMpeg2Splitter.OnFinished += new Mpeg2Splitter.Finished(dvrMod_OnFinished);
 
       //CutProgressTime();
-      cMpeg2Splitter.Rip(inFilename.FullName, outFilename.FullName, ref tStamp, cutPointsList.Count);
+      cMpeg2Splitter.Scene(inFilename.FullName, outFilename.FullName, ref tStamp, cutPointsList.Count);
       //cutFinished = true;
       progressLbl.Label = "100";
       progressBar.Percentage = 100;
