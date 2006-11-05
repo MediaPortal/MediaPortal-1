@@ -50,7 +50,7 @@
     <Compile Include="Channel.cs" />
     <Compile Include="ChannelGroup.cs" />
     <Compile Include="ChannelMap.cs" />
-    <Compile Include="Conflicts.cs" />
+    <Compile Include="Conflict.cs" />
     <Compile Include="Favorite.cs" />
     <Compile Include="GroupMap.cs" />
     <Compile Include="Program.cs" />
