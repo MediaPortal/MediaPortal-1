@@ -27,7 +27,7 @@ namespace WebEPG_conf
 	/// <summary>
 	/// Summary description for ChannelInfo.
 	/// </summary>
-	public class GrabberInfo
+	public class GrabberConfigInfo
 	{
 		public string GrabberID;
 		public string GrabberName;

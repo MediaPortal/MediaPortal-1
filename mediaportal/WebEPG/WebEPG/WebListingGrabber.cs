@@ -26,9 +26,9 @@ using System.IO;
 using System.Net;
 using System.Web;
 using System.Text;
-using System.Threading;
 using System.Collections;
 using System.Globalization;
+using System.Xml.Serialization;
 using MediaPortal.Services;
 using MediaPortal.Webepg.Profile;
 using MediaPortal.TV.Database;
@@ -36,68 +36,37 @@ using MediaPortal.WebEPG;
 using MediaPortal.Utils.Web;
 using MediaPortal.Utils.Time;
 using MediaPortal.Utils.Services;
+using MediaPortal.EPG.config;
+using MediaPortal.WebEPG.Parser;
+using MediaPortal.WebEPG.Config.Grabber;
 
-namespace MediaPortal.EPG
+namespace MediaPortal.WebEPG
 {
   /// <summary>
   /// Summary description for Class1
   /// </summary>
   public class WebListingGrabber
   {
-    #region Enums
-    public enum Expect
-    {
-      Start,
-      Morning,
-      Afternoon
-    }
-    #endregion
-
     #region Variables
-    WorldTimeZone _SiteTimeZone = null;
-    HTTPRequest _listingRequest;
-    HTTPRequest _requestSubURL;
+    WorldTimeZone _siteTimeZone = null;
+    ListingTimeControl _timeControl;
+    RequestData _reqData;
+    RequestBuilder _reqBuilder;
+    GrabberConfigFile _grabber;
+    DateTime _grabStart;
     string _strID = string.Empty;
-    string _strBaseDir = "";
-    string _SubListingLink;
-    string _strRepeat;
-    string _strSubtitles;
-    string _strEpNum;
-    string _strEpTotal;
-    string _removeProgramsList;
-    string[] _strDayNames = null;
-    string _strWeekDay;
+    string _strBaseDir = string.Empty;
     bool _grabLinked;
-    bool _monthLookup;
-    bool _searchRegex;
-    bool _searchRemove;
     bool _dblookup = true;
-    //bool _timeAdjustOnly;
-    int _listingTime;
     int _linkStart;
     int _linkEnd;
-    int _maxListingCount;
-    int _pageStart;
-    int _pageEnd;
-    int _offsetStart;
-    int _LastStart;
-    int _grabDelay;
-    int _guideDays;
-    //int _addDays;
-    bool _bNextDay;
-    Profiler _templateProfile;
-    //Parser _templateParser;
-    Profiler _templateSubProfile;
-    //Parser _templateSubParser;
-    MediaPortal.Webepg.Profile.Xml _xmlreader;
+
+    IParser _parser;
     ArrayList _programs;
     ArrayList _dbPrograms;
-    DateTime _StartGrab;
-    long _startDateTime;
+
     int _dbLastProg;
     int _maxGrabDays;
-    int _siteGuideDays;
-    int _GrabDay;
     ILog _log;
     #endregion
 
@@ -119,170 +88,86 @@ namespace MediaPortal.EPG
     #region Public Methods
     public bool Initalise(string File)
     {
-      string listingTemplate;
-
       _log.Info(LogType.WebEPG, "WebEPG: Opening {0}", File);
 
-      _xmlreader = new MediaPortal.Webepg.Profile.Xml(_strBaseDir + File);
-
-      string baseUrl = _xmlreader.GetValueAsString("Listing", "BaseURL", "");
-      if (baseUrl == "")
+      try
       {
-        _log.Error(LogType.WebEPG, "WebEPG: {0}: No BaseURL defined", File);
+        //_grabber = new GrabberConfig(_strBaseDir + File);
+
+        XmlSerializer s = new XmlSerializer(typeof(GrabberConfigFile));
+
+        TextReader r = new StreamReader(_strBaseDir + File);
+        _grabber = (GrabberConfigFile)s.Deserialize(r);
+      }
+      catch (ArgumentException ex)
+      {
+        _log.Error(LogType.WebEPG, "WebEPG: Config Error {0}: {1}", File, ex.Message);
         return false;
       }
 
-      string getQuery = _xmlreader.GetValueAsString("Listing", "SearchURL", "");
-      string postQuery = _xmlreader.GetValueAsString("Listing", "PostQuery", "");
-      _listingRequest = new HTTPRequest(baseUrl, getQuery, postQuery);
+      if (_grabber.Listing.SearchParameters == null)
+        _grabber.Listing.SearchParameters = new RequestData();
 
-      _grabDelay = _xmlreader.GetValueAsInt("Listing", "GrabDelay", 500);
-      _maxListingCount = _xmlreader.GetValueAsInt("Listing", "MaxCount", 0);
-      _offsetStart = _xmlreader.GetValueAsInt("Listing", "OffsetStart", 0);
-      _pageStart = _xmlreader.GetValueAsInt("Listing", "PageStart", 0);
-      _pageEnd = _xmlreader.GetValueAsInt("Listing", "PageEnd", 0);
-      _guideDays = _xmlreader.GetValueAsInt("Info", "GuideDays", 0);
+      _reqData = _grabber.Listing.SearchParameters;
 
-      string strTimeZone = _xmlreader.GetValueAsString("Info", "TimeZone", "");
-      if (strTimeZone != "")
+
+      if (_grabber.Info.TimeZone != string.Empty)
       {
         //_timeAdjustOnly = _xmlreader.GetValueAsBool("Info", "TimeAdjustOnly", false);
         _log.Info(LogType.WebEPG, "WebEPG: TimeZone, Local: {0}", TimeZone.CurrentTimeZone.StandardName);
         try
         {
-          _log.Info(LogType.WebEPG, "WebEPG: TimeZone, Site : {0}", strTimeZone);
-          //_log.Info(LogType.WebEPG, false, "[Debug] WebEPG: TimeZone, debug: {0}", _timeAdjustOnly);
-          _SiteTimeZone = new WorldTimeZone(strTimeZone);
+          _log.Info(LogType.WebEPG, "WebEPG: TimeZone, Site : {0}", _grabber.Info.TimeZone);
+          //_log.Info(false, "[Debug] WebEPG: TimeZone, debug: {0}", _timeAdjustOnly);
+          _siteTimeZone = new WorldTimeZone(_grabber.Info.TimeZone);
         }
         catch (ArgumentException)
         {
           _log.Error(LogType.WebEPG, "WebEPG: TimeZone Not valid");
-          _SiteTimeZone = null;
+          _siteTimeZone = null;
         }
       }
       else
       {
-        _SiteTimeZone = null;
+        _siteTimeZone = new WorldTimeZone(TimeZone.CurrentTimeZone.StandardName);
       }
 
-      string ListingType = _xmlreader.GetValueAsString("Listing", "ListingType", "");
-
-      switch (ListingType)
+      switch (_grabber.Listing.listingType)
       {
-        case "XML":
-          XMLProfilerData data = new XMLProfilerData();
-          data.ChannelEntry = _xmlreader.GetValueAsString("Listing", "ChannelEntry", "");
-          data.StartEntry = _xmlreader.GetValueAsString("Listing", "StartEntry", "");
-          data.EndEntry = _xmlreader.GetValueAsString("Listing", "EndEntry", "");
-          data.TitleEntry = _xmlreader.GetValueAsString("Listing", "TitleEntry", "");
-          data.SubtitleEntry = _xmlreader.GetValueAsString("Listing", "SubtitleEntry", "");
-          data.DescEntry = _xmlreader.GetValueAsString("Listing", "DescEntry", "");
-          data.GenreEntry = _xmlreader.GetValueAsString("Listing", "GenreEntry", "");
-          data.XPath = _xmlreader.GetValueAsString("Listing", "XPath", "");
-          _templateProfile = new XMLProfiler("", data);
+        case ListingInfo.Type.Xml:
+          _parser = new XmlParser(_grabber.Listing.XmlTemplate);
           break;
 
-        case "DATA":
-          string strListingDelimitor = _xmlreader.GetValueAsString("Listing", "ListingDelimitor", "\n");
-          string strDataDelimitor = _xmlreader.GetValueAsString("Listing", "DataDelimitor", "\t");
-          listingTemplate = _xmlreader.GetValueAsString("Listing", "Template", "");
-          if (listingTemplate == "")
+        case ListingInfo.Type.Data:
+
+          if (_grabber.Listing.DataTemplate.Template == null)
+          {
+            _log.Error("WebEPG: {0}: No Template", File);
+            return false;
+          }
+          _parser = new DataParser(_grabber.Listing.DataTemplate);
+          break;
+
+        case ListingInfo.Type.Html:
+          HtmlParserTemplate defaultTemplate = _grabber.Listing.HtmlTemplate.GetTemplate("default");
+          if (defaultTemplate == null ||
+            defaultTemplate.SectionTemplate == null ||
+            defaultTemplate.SectionTemplate.Template == null)
           {
             _log.Error(LogType.WebEPG, "WebEPG: {0}: No Template", File);
             return false;
           }
-          _templateProfile = new DataProfiler(listingTemplate, strDataDelimitor[0], strListingDelimitor[0]);
-          break;
-
-        default: // HTML
-          _siteGuideDays = _xmlreader.GetValueAsInt("Info", "GuideDays", 0);
-          if (_siteGuideDays < _maxGrabDays)
+          _parser = new WebParser(_grabber.Listing.HtmlTemplate);
+          if (_grabber.Info.GrabDays < _maxGrabDays)
           {
-            _log.Warn(LogType.WebEPG, "WebEPG: GrabDays {0} more than GuideDays {0}, limiting grab days", _siteGuideDays, _maxGrabDays);
-            _maxGrabDays = _siteGuideDays;
-          }
-          string strGuideStart = _xmlreader.GetValueAsString("Listing", "Start", "<body");
-          string strGuideEnd = _xmlreader.GetValueAsString("Listing", "End", "</body");
-          //bool bAhrefs = _xmlreader.GetValueAsBool("Listing", "Ahrefs", false);
-          string tags = _xmlreader.GetValueAsString("Listing", "Tags", "T");
-          string encoding = _xmlreader.GetValueAsString("Listing", "Encoding", "");
-          listingTemplate = _xmlreader.GetValueAsString("Listing", "Template", "");
-          if (listingTemplate == "")
-          {
-            _log.Error(LogType.WebEPG, "WebEPG: {0}: No Template", File);
-            return false;
-          }
-          //_templateProfile = new HTMLProfiler(listingTemplate, bAhrefs, strGuideStart, strGuideEnd);
-          _templateProfile = new HTMLProfiler(listingTemplate, tags, strGuideStart, strGuideEnd, encoding);
-
-          _searchRegex = _xmlreader.GetValueAsBool("Listing", "SearchRegex", false);
-          if (_searchRegex)
-          {
-            _searchRemove = _xmlreader.GetValueAsBool("Listing", "SearchRemove", false);
-            _strRepeat = _xmlreader.GetValueAsString("Listing", "SearchRepeat", "");
-            _strSubtitles = _xmlreader.GetValueAsString("Listing", "SearchSubtitles", "");
-            _strEpNum = _xmlreader.GetValueAsString("Listing", "SearchEpNum", "");
-            _strEpTotal = _xmlreader.GetValueAsString("Listing", "SearchEpTotal", "");
+            _log.Warn(LogType.WebEPG, "WebEPG: GrabDays {0} more than GuideDays {0}, limiting grab days", _grabber.Info.GrabDays, _maxGrabDays);
+            _maxGrabDays = _grabber.Info.GrabDays;
           }
 
-          _SubListingLink = _xmlreader.GetValueAsString("Listing", "SubListingLink", "");
-          if (_SubListingLink != "")
-          {
-            string strSubStart = _xmlreader.GetValueAsString("SubListing", "Start", "<body");
-            string strSubEnd = _xmlreader.GetValueAsString("SubListing", "End", "</body");
-            string subencoding = _xmlreader.GetValueAsString("SubListing", "Encoding", "");
-            string subUrl = _xmlreader.GetValueAsString("SubListing", "URL", "");
-            if (subUrl != "")
-            {
-              _requestSubURL = new HTTPRequest(subUrl);
-              _requestSubURL.PostQuery = _xmlreader.GetValueAsString("SubListing", "PostQuery", "");
-            }
-            string Subtags = _xmlreader.GetValueAsString("SubListing", "Tags", "T");
-            string sublistingTemplate = _xmlreader.GetValueAsString("SubListing", "Template", "");
-            if (sublistingTemplate == "")
-            {
-              _log.Error(LogType.WebEPG, "WebEPG: {0}: No SubTemplate", File);
-              _SubListingLink = "";
-            }
-            else
-            {
-              _templateSubProfile = new HTMLProfiler(sublistingTemplate, Subtags, strSubStart, strSubEnd, subencoding);
-            }
-          }
-
-          string firstDay = _xmlreader.GetValueAsString("DayNames", "0", "");
-          if (firstDay != "" && _guideDays != 0)
-          {
-            _strDayNames = new string[_guideDays];
-            _strDayNames[0] = firstDay;
-            for (int i = 1; i < _guideDays; i++)
-              _strDayNames[i] = _xmlreader.GetValueAsString("DayNames", i.ToString(), "");
-          }
           break;
       }
 
-      _monthLookup = _xmlreader.GetValueAsBool("DateTime", "Months", false);
       return true;
-    }
-
-    public long GetEpochTime(DateTime dtCurTime)
-    {
-      DateTime dtEpochStartTime = Convert.ToDateTime("1/1/1970 8:00:00 AM");
-      TimeSpan ts = dtCurTime.Subtract(dtEpochStartTime);
-
-      long epochtime;
-      epochtime = ((((((ts.Days * 24) + ts.Hours) * 60) + ts.Minutes) * 60) + ts.Seconds);
-      return epochtime;
-    }
-
-    public long GetEpochDate(DateTime dtCurTime)
-    {
-      DateTime dtEpochStartTime = Convert.ToDateTime("1/1/1970 8:00:00 AM");
-      TimeSpan ts = dtCurTime.Subtract(dtEpochStartTime);
-
-      long epochdate;
-      epochdate = (ts.Days);
-      return epochdate;
     }
 
     public ArrayList GetGuide(string strChannelID, bool Linked, int linkStart, int linkEnd)
@@ -296,59 +181,47 @@ namespace MediaPortal.EPG
       _grabLinked = Linked;
       _linkStart = linkStart;
       _linkEnd = linkEnd;
-      int offset = 0;
+      //int offset = 0;
 
-      string searchID = _xmlreader.GetValueAsString("ChannelList", strChannelID, "");
-      string searchLang = _xmlreader.GetValueAsString("Listing", "SearchLanguage", "en-US");
-      _strWeekDay = _xmlreader.GetValueAsString("Listing", "WeekdayString", "dddd");
-      CultureInfo culture = new CultureInfo(searchLang);
-
-      _removeProgramsList = _xmlreader.GetValueAsString("RemovePrograms", "*", "");
-      if (_removeProgramsList != "")
-        _removeProgramsList += ";";
-      string chanRemovePrograms = _xmlreader.GetValueAsString("RemovePrograms", strChannelID, "");
-      if (chanRemovePrograms != "")
-      {
-        _removeProgramsList += chanRemovePrograms;
-        _removeProgramsList += ";";
-      }
-
-      if (searchID == "")
+      _reqData.ChannelId = _grabber.GetChannel(strChannelID);
+      if (_reqData.ChannelId == string.Empty)
       {
         _log.Info(LogType.WebEPG, "WebEPG: ChannelId: {0} not found!", strChannelID);
         return null;
       }
 
-      _programs = new ArrayList();
+      //_removeProgramsList = _grabber.GetRemoveProgramList(strChannelID); // <--- !!!
 
-      HTTPRequest channelRequest = new HTTPRequest(_listingRequest);
-      channelRequest.ReplaceTag("[ID]", searchID);
-      HTTPRequest pageRequest;
+      _programs = new ArrayList();
 
       _log.Info(LogType.WebEPG, "WebEPG: ChannelId: {0}", strChannelID);
 
-      _GrabDay = 0;
-      _StartGrab = startDateTime;
-      _startDateTime = GetLongDateTime(startDateTime.AddHours(-2));
-      _log.Debug(LogType.WebEPG, "WebEPG: Grab Start {0} {1}", _StartGrab.ToShortTimeString(), _StartGrab.ToShortDateString());
+      //_GrabDay = 0;
+      if (_grabber.Listing.Request.Delay < 500)
+        _grabber.Listing.Request.Delay = 500;
+      _reqBuilder = new RequestBuilder(_grabber.Listing.Request, startDateTime, _reqData);
+      _grabStart = startDateTime;
+
+      _log.Debug(LogType.WebEPG, "WebEPG: Grab Start {0} {1}", startDateTime.ToShortTimeString(), startDateTime.ToShortDateString());
       int requestedStartDay = startDateTime.Subtract(DateTime.Now).Days;
       if (requestedStartDay > 0)
       {
-        if (requestedStartDay > _siteGuideDays)
+        if (requestedStartDay > _grabber.Info.GrabDays)
         {
-          _log.Error(LogType.WebEPG, "WebEPG: Trying to grab pass guide days");
+          _log.Error(LogType.WebEPG, "WebEPG: Trying to grab past guide days");
           return null;
         }
 
-        if (requestedStartDay + _maxGrabDays > _siteGuideDays)
+        if (requestedStartDay + _maxGrabDays > _grabber.Info.GrabDays)
         {
-          _maxGrabDays = _siteGuideDays - requestedStartDay;
+          _maxGrabDays = _grabber.Info.GrabDays - requestedStartDay;
           _log.Warn(LogType.WebEPG, "WebEPG: Grab days more than Guide days, limiting to {0}", _maxGrabDays);
         }
 
-        _GrabDay = requestedStartDay;
-        if (_GrabDay > _maxGrabDays)
-          _maxGrabDays = _GrabDay + _maxGrabDays;
+        //_GrabDay = requestedStartDay;
+        _reqBuilder.DayOffset = requestedStartDay;
+        if (_reqBuilder.DayOffset > _maxGrabDays) //_GrabDay > _maxGrabDays)
+          _maxGrabDays = _reqBuilder.DayOffset + _maxGrabDays; // _GrabDay + _maxGrabDays;
       }
 
       //TVDatabase.BeginTransaction();
@@ -364,8 +237,6 @@ namespace MediaPortal.EPG
       {
         if (TVDatabase.GetEPGMapping(strChannelID, out dbChannelId, out dbChannelName)) // (nodeId.InnerText, out idTvChannel, out strTvChannel);
         {
-          //DateTime endGrab = _StartGrab.AddDays(_maxGrabDays + 1);
-          //DateTime startGrab = _StartGrab.AddHours(-1);
           TVDatabase.GetProgramsPerChannel(dbChannelName, ref _dbPrograms);
         }
       }
@@ -375,53 +246,35 @@ namespace MediaPortal.EPG
         _dblookup = false;
       }
 
-
-      while (_GrabDay < _maxGrabDays)
+      _timeControl = new ListingTimeControl(_siteTimeZone.FromLocalTime(startDateTime));
+      while (_reqBuilder.DayOffset < _maxGrabDays)
       {
-        pageRequest = new HTTPRequest(channelRequest);
-        if (_strDayNames != null)
-          pageRequest.ReplaceTag("[DAY_NAME]", _strDayNames[_GrabDay]);
-
-        pageRequest.ReplaceTag("[DAY_OFFSET]", (_GrabDay + _offsetStart).ToString());
-        pageRequest.ReplaceTag("[EPOCH_TIME]", GetEpochTime(_StartGrab).ToString());
-        pageRequest.ReplaceTag("[EPOCH_DATE]", GetEpochDate(_StartGrab).ToString());
-        pageRequest.ReplaceTag("[DAYOFYEAR]", _StartGrab.DayOfYear.ToString());
-        pageRequest.ReplaceTag("[YYYY]", _StartGrab.Year.ToString());
-        pageRequest.ReplaceTag("[MM]", String.Format("{0:00}", _StartGrab.Month));
-        pageRequest.ReplaceTag("[_M]", _StartGrab.Month.ToString());
-        pageRequest.ReplaceTag("[MONTH]", _StartGrab.ToString("MMMM", culture));
-        pageRequest.ReplaceTag("[DD]", String.Format("{0:00}", _StartGrab.Day));
-        pageRequest.ReplaceTag("[_D]", _StartGrab.Day.ToString());
-        pageRequest.ReplaceTag("[WEEKDAY]", _StartGrab.ToString(_strWeekDay, culture));
-
-        offset = 0;
-        _LastStart = 0;
-        _bNextDay = false;
-        _listingTime = (int)Expect.Start;
+        _reqBuilder.Offset = 0;
 
         bool error;
-        while (GetListing(new HTTPRequest(pageRequest), offset, searchID, out error))
+        while (GetListing(out error))
         {
-          Thread.Sleep(_grabDelay);
-          if (_maxListingCount == 0)
+          if (_grabber.Listing.SearchParameters.MaxListingCount == 0)
             break;
-          offset++; // += _maxListingCount;
+          _reqBuilder.Offset++;
         }
+
         if (error)
         {
           _log.Error(LogType.WebEPG, "WebEPG: ChannelId: {0} grabber error", strChannelID);
           break;
         }
+
         //_GrabDay++;
-        if (channelRequest != pageRequest)
+        if (_reqBuilder.HasDate()) // < here
         {
-          _StartGrab = _StartGrab.AddDays(1);
-          _GrabDay++;
+          _reqBuilder.AddDays(1);
         }
         else
         {
-          if (!pageRequest.HasTag("[LIST_OFFSET]"))
+          if (!_reqBuilder.HasList()) // < here
             break;
+          _reqBuilder.AddDays(_timeControl.GrabDay);
         }
       }
 
@@ -430,38 +283,6 @@ namespace MediaPortal.EPG
     #endregion
 
     #region Private Methods
-    private int getMonth(string month)
-    {
-      if (_monthLookup)
-        return _xmlreader.GetValueAsInt("DateTime", month, 0);
-      else
-        return int.Parse(month);
-    }
-
-    private string getGenre(string genre)
-    {
-      return _xmlreader.GetValueAsString("GenreMap", genre, genre);
-    }
-
-    private long GetLongDateTime(DateTime dt)
-    {
-      long lDatetime;
-
-      lDatetime = dt.Year;
-      lDatetime *= 100;
-      lDatetime += dt.Month;
-      lDatetime *= 100;
-      lDatetime += dt.Day;
-      lDatetime *= 100;
-      lDatetime += dt.Hour;
-      lDatetime *= 100;
-      lDatetime += dt.Minute;
-      lDatetime *= 100;
-      // no seconds
-
-      return lDatetime;
-    }
-
     private TVProgram dbProgram(string Title, long Start)
     {
       if (_dbPrograms.Count > 0)
@@ -491,377 +312,105 @@ namespace MediaPortal.EPG
       return null;
     }
 
-    private bool AdjustTime(ref ProgramData guideData)
+    private TVProgram GetProgram(int index)
     {
-      int addDays = 1;
+      ProgramData guideData = (ProgramData)_parser.GetData(index);
 
-      // Day
-      if (guideData.Day == 0)
+      if (guideData == null ||
+        guideData.StartTime == null || guideData.Title == string.Empty)
       {
-        guideData.Day = _StartGrab.Day;
-      }
-      else
-      {
-        if (guideData.Day != _StartGrab.Day && _listingTime != (int)Expect.Start)
-        {
-          _GrabDay++;
-          _StartGrab = _StartGrab.AddDays(1);
-          _bNextDay = false;
-          _LastStart = 0;
-          _listingTime = (int)Expect.Morning;
-        }
+        return null;
       }
 
-      // Start Time
-      switch (_listingTime)
-      {
-        case (int)Expect.Start:
-          if (_GrabDay == 0)
-          {
-            if (guideData.StartTime.Hour < _StartGrab.Hour)
-              return false;
+      // Set ChannelId
+      guideData.ChannelId = _strID;
 
-            if (guideData.StartTime.Hour <= 12)
-            {
-              _listingTime = (int)Expect.Morning;
-              goto case (int)Expect.Morning;
-            }
-
-            _listingTime = (int)Expect.Afternoon;
-            goto case (int)Expect.Afternoon;
-          }
-
-          if (guideData.StartTime.Hour >= 20)
-            return false;				// Guide starts on pervious day ignore these listings.
-
-          _listingTime = (int)Expect.Morning;
-          goto case (int)Expect.Morning;      // Pass into Morning Code
-
-        case (int)Expect.Morning:
-          if (_LastStart > guideData.StartTime.Hour)
-          {
-            _listingTime = (int)Expect.Afternoon;
-            //if (_bNextDay)
-            //{
-            //    _GrabDay++;
-            //}
-          }
-          else
-          {
-            if (guideData.StartTime.Hour <= 12)
-              break;						// Do nothing
-          }
-
-          // Pass into Afternoon Code
-          //_LastStart = 0;
-          goto case (int)Expect.Afternoon;
-
-        case (int)Expect.Afternoon:
-          if (guideData.StartTime.Hour < 12)		// Site doesn't have correct time
-            guideData.StartTime.Hour += 12;     // starts again at 1:00 with "pm"
-
-          if (_LastStart > guideData.StartTime.Hour)
-          {
-            guideData.StartTime.Hour -= 12;
-            if (_bNextDay)
-            {
-              addDays++;
-              _GrabDay++;
-              _StartGrab = _StartGrab.AddDays(1);
-              //_bNextDay = false;
-            }
-            else
-            {
-              _bNextDay = true;
-            }
-            _listingTime = (int)Expect.Morning;
-            break;
-          }
-
-          break;
-
-        default:
-          break;
-      }
-
-
-      //Month
-      int month;
-      if (guideData.Month == "")
-      {
-        month = _StartGrab.Month;
-      }
-      else
-      {
-        month = getMonth(guideData.Month);
-      }
-
-      // Create DateTime
-      DateTime dtStart;
-      try
-      {
-        dtStart = new DateTime(_StartGrab.Year, month, guideData.Day, guideData.StartTime.Hour, guideData.StartTime.Minute, 0, 0);
-      }
-      catch
-      {
-        _log.Error(LogType.WebEPG, "WebEPG: DateTime Error Program: {0}", guideData.Title);
-        return false; // DateTime error
-      }
-      if (_bNextDay)
-        dtStart = dtStart.AddDays(addDays);
-
-      guideData.StartTime.Hour = dtStart.Hour;
-      guideData.StartTime.Minute = dtStart.Minute;
-      guideData.StartTime.Day = dtStart.Day;
-      guideData.StartTime.Month = dtStart.Month;
-      guideData.StartTime.Year = dtStart.Year;
-
-      _LastStart = guideData.StartTime.Hour;
-
-      if (guideData.EndTime != null)
-      {
-        DateTime dtEnd = new DateTime(_StartGrab.Year, month, guideData.Day, guideData.EndTime.Hour, guideData.EndTime.Minute, 0, 0);
-        if (_bNextDay)
-        {
-          if (guideData.StartTime.Hour > guideData.EndTime.Hour)
-            dtEnd = dtEnd.AddDays(addDays + 1);
-          else
-            dtEnd = dtEnd.AddDays(addDays);
-        }
-        else
-        {
-          if (guideData.StartTime.Hour > guideData.EndTime.Hour)
-            dtEnd = dtEnd.AddDays(addDays);
-        }
-
-        guideData.EndTime.Hour = dtEnd.Hour;
-        guideData.EndTime.Minute = dtEnd.Minute;
-        guideData.EndTime.Day = dtEnd.Day;
-        guideData.EndTime.Month = dtEnd.Month;
-        guideData.EndTime.Year = dtEnd.Year;
-      }
-
-      _log.Debug(LogType.WebEPG, "WebEPG: Guide, Program Debug: [{0} {1}]", _GrabDay, _bNextDay);
-
-      return true;
-    }
-
-    private void AdjustTimeZone(ProgramData guideData, ref TVProgram program)
-    {
-      // Start Time
-      DateTime dtStart = new DateTime(guideData.StartTime.Year, guideData.StartTime.Month, guideData.StartTime.Day, guideData.StartTime.Hour, guideData.StartTime.Minute, 0);
-
-      // Check TimeZone
-      if (_SiteTimeZone != null && !_SiteTimeZone.IsLocalTimeZone())
-      {
-        _log.Debug(LogType.WebEPG, "WebEPG: TimeZone, Adjusting from start Guide Time: {0} {1}", dtStart.ToShortTimeString(), dtStart.ToShortDateString());
-        dtStart = _SiteTimeZone.ToLocalTime(dtStart);
-        //if (_timeAdjustOnly)
-        //  dtStart = new DateTime(guideData.StartTime.Year, guideData.StartTime.Month, guideData.StartTime.Day, dtStart.Hour, dtStart.Minute, 0);
-        _log.Debug(LogType.WebEPG, "WebEPG: TimeZone, Adjusting to   start Local Time: {0} {1}", dtStart.ToShortTimeString(), dtStart.ToShortDateString());
-      }
-
-      program.Start = GetLongDateTime(dtStart);
-
-      // End Time
-      if (guideData.EndTime != null)
-      {
-        DateTime dtEnd = new DateTime(guideData.EndTime.Year, guideData.EndTime.Month, guideData.EndTime.Day, guideData.EndTime.Hour, guideData.EndTime.Minute, 0);
-
-        // Check TimeZone
-        if (_SiteTimeZone != null && !_SiteTimeZone.IsLocalTimeZone())
-        {
-          _log.Debug(LogType.WebEPG, "WebEPG: TimeZone, Adjusting from end Guide Time: {0} {1}", dtEnd.ToShortTimeString(), dtEnd.ToShortDateString());
-          dtEnd = _SiteTimeZone.ToLocalTime(dtEnd);
-          //if (_timeAdjustOnly)
-          //  dtEnd = new DateTime(guideData.EndTime.Year, guideData.EndTime.Month, guideData.EndTime.Day, dtEnd.Hour, dtEnd.Minute, 0, 0);
-          _log.Debug(LogType.WebEPG, "WebEPG: TimeZone, Adjusting to   end Local Time: {0} {1}", dtEnd.ToShortTimeString(), dtEnd.ToShortDateString());
-        }
-
-        program.End = GetLongDateTime(dtEnd);
-
-        _log.Info(LogType.WebEPG, "WebEPG: Guide, Program Info: {0} / {1} - {2}", program.Start, program.End, guideData.Title);
-      }
-      else
-      {
-        _log.Info(LogType.WebEPG, "WebEPG: Guide, Program Info: {0} - {1}", program.Start, guideData.Title);
-      }
-    }
-
-    private TVProgram GetProgram(Profiler guideProfile, int index)
-    {
-      //Parser Listing = guideProfile.GetProfileParser(index);
-
-      TVProgram program = new TVProgram();
-      HTMLProfiler htmlProf = null;
-      if (guideProfile is HTMLProfiler)
-      {
-        htmlProf = (HTMLProfiler)guideProfile;
-
-        if (_searchRegex)
-        {
-          string repeat = htmlProf.SearchRegex(index, _strRepeat, _searchRemove);
-          string subtitles = htmlProf.SearchRegex(index, _strSubtitles, _searchRemove);
-          string epNum = htmlProf.SearchRegex(index, _strEpNum, _searchRemove);
-          string epTotal = htmlProf.SearchRegex(index, _strEpTotal, _searchRemove);
-        }
-      }
-      ProgramData guideData = new ProgramData();
-      ParserData data = (ParserData)guideData;
-      guideProfile.GetParserData(index, ref data); //_templateParser.GetProgram(Listing);
-
-      if (guideData.StartTime == null || guideData.Title == "")
+      if (_grabber.Actions != null && guideData.IsRemoved(_grabber.Actions))
         return null;
 
-      if (guideData.IsProgram(_removeProgramsList))
-        return null;
-
-      _log.Debug(LogType.WebEPG, "WebEPG: Guide, Program title: {0}", guideData.Title);
-      _log.Debug(LogType.WebEPG, "WebEPG: Guide, Program start: {0}:{1} - {2}/{3}/{4}", guideData.StartTime.Hour, guideData.StartTime.Minute, guideData.StartTime.Day, guideData.StartTime.Month, guideData.StartTime.Year);
-      if (guideData.EndTime != null)
-        _log.Debug(LogType.WebEPG, "WebEPG: Guide, Program end  : {0}:{1} - {2}/{3}/{4}", guideData.EndTime.Hour, guideData.EndTime.Minute, guideData.EndTime.Day, guideData.EndTime.Month, guideData.EndTime.Year);
-      _log.Debug(LogType.WebEPG, "WebEPG: Guide, Program desc.: {0}", guideData.Description);
-      _log.Debug(LogType.WebEPG, "WebEPG: Guide, Program genre: {0}", guideData.Genre);
-
-      program.Channel = _strID;
-      program.Title = guideData.Title;
+      //_log.Debug(LogType.WebEPG, "WebEPG: Guide, Program title: {0}", guideData.Title);
+      //_log.Debug(LogType.WebEPG, "WebEPG: Guide, Program start: {0}:{1} - {2}/{3}/{4}", guideData.StartTime.Hour, guideData.StartTime.Minute, guideData.StartTime.Day, guideData.StartTime.Month, guideData.StartTime.Year);
+      //if (guideData.EndTime != null)
+      //  _log.Debug(LogType.WebEPG, "WebEPG: Guide, Program end  : {0}:{1} - {2}/{3}/{4}", guideData.EndTime.Hour, guideData.EndTime.Minute, guideData.EndTime.Day, guideData.EndTime.Month, guideData.EndTime.Year);
+      //_log.Debug(LogType.WebEPG, "WebEPG: Guide, Program desc.: {0}", guideData.Description);
+      //_log.Debug(LogType.WebEPG, "WebEPG: Guide, Program genre: {0}", guideData.Genre);
 
       // Adjust Time
-      if (guideData.StartTime.Day == 0 && guideData.StartTime.Month == 0 && guideData.StartTime.Year == 0)
+      if (guideData.StartTime.Day == 0 || guideData.StartTime.Month == 0 || guideData.StartTime.Year == 0)
       {
-        if (!AdjustTime(ref guideData))
+        if (!_timeControl.CheckAdjustTime(ref guideData))
           return null;
       }
 
-      //Adjust TimeZone
-      AdjustTimeZone(guideData, ref program);
-
-      //Program starts in the past
-      if (program.Start < _startDateTime)
+      //Set TimeZone
+      guideData.StartTime.TimeZone = _siteTimeZone;
+      if (guideData.EndTime != null)
       {
-        _log.Info(LogType.WebEPG, "WebEPG: Program starts in the past, ignoring it");
-        return null;
+        guideData.EndTime.TimeZone = _siteTimeZone;
+        _log.Info(LogType.WebEPG, "WebEPG: Guide, Program Info: {0} / {1} - {2}", guideData.StartTime.ToLocalLongDateTime(), guideData.EndTime.ToLocalLongDateTime(), guideData.Title);
+      }
+      else
+      {
+        _log.Info(LogType.WebEPG, "WebEPG: Guide, Program Info: {0} - {1}", guideData.StartTime.ToLocalLongDateTime(), guideData.Title);
       }
 
+      if (guideData.StartTime.ToLocalTime() < _grabStart.AddHours(-2))
+      {
+        _log.Info(LogType.WebEPG, "WebEPG: Program starts in the past, ignoring it.");
+        return null;
+      }
 
       // Check TV db if program exists
       if (_dblookup)
       {
-        TVProgram dbProg = dbProgram(program.Title, program.Start);
+        TVProgram dbProg = dbProgram(guideData.Title, guideData.StartTime.ToLocalLongDateTime());
         if (dbProg != null)
         {
           _log.Info(LogType.WebEPG, "WebEPG: Program already in db");
           dbProg.Channel = _strID;
-          if (program.End != 0 && dbProg.End == program.End)
-          {
-            return dbProg;
-          }
-          else
-          {
-            _log.Info(LogType.WebEPG, "WebEPG: Program changed updating");
-          }
+          return dbProg;
         }
       }
-
-      if (guideData.Description != "")
-        program.Description = guideData.Description;
-
-      if (guideData.Genre != "")
-        program.Genre = getGenre(guideData.Genre);
 
       // SubLink
-      if (_grabLinked && _SubListingLink != ""
-         && guideData.StartTime.Hour >= _linkStart
-         && guideData.StartTime.Hour <= _linkEnd
-         && htmlProf != null)
+      if (guideData.HasSublink())
       {
-        HTTPRequest sublinkRequest;
-        if (_requestSubURL != null)
-          sublinkRequest = new HTTPRequest(_requestSubURL);
-        else
-          sublinkRequest = new HTTPRequest(_listingRequest.Url);
-
-
-        if (htmlProf.GetHyperLink(index, _SubListingLink, ref sublinkRequest))
+        if (_parser is WebParser)
         {
-          _log.Info(LogType.WebEPG, "WebEPG: Reading {0}", sublinkRequest.ToString());
-          Thread.Sleep(_grabDelay);
-          Profiler SubProfile = _templateSubProfile.GetPageProfiler(sublinkRequest);
-          int Count = 0;
-          if (SubProfile != null)
-            Count = SubProfile.subProfileCount();
+          WebParser webParser = (WebParser)_parser;
+
+          if (!webParser.GetLinkedData(ref guideData))
+            _log.Warn(LogType.WebEPG, "WebEPG: Getting sublinked data failed");
           else
-            _log.Error(LogType.WebEPG, "Linked page error");
+            _log.Debug(LogType.WebEPG, "WebEPG: Getting sublinked data sucessful");
 
-          if (Count > 0)
-          {
-            _log.Debug(LogType.WebEPG, "Count {0}", Count);
-            ProgramData SubData = new ProgramData();
-            ParserData refdata = (ParserData)SubData;
-            SubProfile.GetParserData(0, ref refdata);
-
-            if (SubData.IsProgram(_removeProgramsList))
-              return null;
-
-            //if (program.EndTime == null && SubData.EndTime != null)
-            //{
-            //  program.EndTime = SubData.EndTime;
-            //  _log.Info(LogType.WebEPG, false, "[Debug] WebEPG: Guide, Program end  : {0}:{1} - {2}/{3}/{4}", SubData.EndTime.Hour, guideData.EndTime.Minute, SubData.EndTime.Day, SubData.EndTime.Month, guideData.EndTime.Year);
-            //}
-
-            if (SubData.Description != "")
-            {
-              program.Description = SubData.Description;
-              _log.Debug(LogType.WebEPG, "WebEPG: Guide, Program desc.: {0}", program.Description);
-            }
-
-            if (SubData.Genre != "")
-            {
-              program.Genre = getGenre(SubData.Genre);
-              _log.Debug(LogType.WebEPG, "WebEPG: Guide, Program genre: {0}", program.Genre);
-            }
-
-            if (SubData.SubTitle != "")
-              program.Episode = SubData.SubTitle;
-          }
-          else
-          {
-            _log.Warn(LogType.WebEPG, "No information found on linked page");
-          }
         }
-
       }
 
-      return program;
+      if (_grabber.Actions != null)
+        guideData.Replace(_grabber.Actions);
+
+      return guideData.ToTvProgram();
     }
 
-    private bool GetListing(HTTPRequest request, int offset, string strChannel, out bool error)
+    private bool GetListing(out bool error)
     {
-      Profiler guideProfile;
       int listingCount = 0;
       bool bMore = false;
       error = false;
 
-      request.ReplaceTag("[LIST_OFFSET]", (offset * _maxListingCount).ToString());
-      request.ReplaceTag("[PAGE_OFFSET]", (offset + _pageStart).ToString());
+      HTTPRequest request = _reqBuilder.GetRequest();
 
       _log.Info(LogType.WebEPG, "WebEPG: Reading {0}", request.ToString());
 
-      if (_templateProfile is XMLProfiler)
-      {
-        XMLProfiler templateProfile = (XMLProfiler)_templateProfile;
-        templateProfile.SetChannelID(strChannel);
-      }
-      guideProfile = _templateProfile.GetPageProfiler(request);
-      if (guideProfile != null)
-        listingCount = guideProfile.subProfileCount();
+      listingCount = _parser.ParseUrl(request);
 
       if (listingCount == 0) // && _maxListingCount == 0)
       {
-        if (_maxListingCount == 0 || (_maxListingCount != 0 && offset == 0))
+        if (_grabber.Listing.SearchParameters.MaxListingCount == 0 || (_grabber.Listing.SearchParameters.MaxListingCount != 0 && _reqBuilder.Offset == 0))
         {
           _log.Info(LogType.WebEPG, "WebEPG: No Listings Found");
-          _GrabDay++;
+          _reqBuilder.AddDays(1); // _GrabDay++;
           error = true;
         }
         else
@@ -874,19 +423,19 @@ namespace MediaPortal.EPG
       {
         _log.Info(LogType.WebEPG, "WebEPG: Listing Count {0}", listingCount);
 
-        if (listingCount == _maxListingCount) // || _pageStart + offset < _pageEnd)
+        if (listingCount == _grabber.Listing.SearchParameters.MaxListingCount) // || _pageStart + offset < _pageEnd)
           bMore = true;
 
         for (int i = 0; i < listingCount; i++)
         {
-          TVProgram program = GetProgram(guideProfile, i);
+          TVProgram program = GetProgram(i);
           if (program != null)
           {
             _programs.Add(program);
           }
         }
 
-        if (_GrabDay > _maxGrabDays)
+        if (_timeControl.GrabDay > _maxGrabDays) //_GrabDay > _maxGrabDays)
           bMore = false;
       }
 

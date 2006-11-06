@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,19 +18,25 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
 
-namespace MediaPortal.Utils.Web.Parser
+using System;
+using System.Collections;
+
+namespace WebEPG_conf
 {
-    public class XMLProfilerData
-    {
-		public string XPath;
-		public string ChannelEntry;
-		public string StartEntry;
-		public string EndEntry;
-		public string TitleEntry;
-		public string SubtitleEntry;
-		public string DescEntry;
-		public string GenreEntry;
-    }
+	/// <summary>
+	/// Summary description for ChannelInfo.
+	/// </summary>
+	public class ChannelConfigInfo
+	{
+		public string DisplayName;
+		public string FullName;
+		public string ChannelID;
+		public string PrimaryGrabberID;
+		public string PrimaryGrabberName;
+		public bool Linked;
+		public int linkStart;
+		public int linkEnd;
+		public SortedList GrabberList;
+	}
 }

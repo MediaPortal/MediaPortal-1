@@ -24,27 +24,41 @@
 #endregion
 
 using System;
+using System.Xml.Serialization;
 
 namespace MediaPortal.Utils.Web
 {
   public class HTTPRequest
   {
-    private string _scheme = string.Empty;
     private string _host = string.Empty;
     private string _getQuery = string.Empty;
     private string _postQuery = string.Empty;
+    private string _scheme = string.Empty;
     private bool _externalBrowser = false;
+    private string _encoding = string.Empty;
+    private int _delay = 0;
 
     public HTTPRequest()
     {
     }
 
-    public HTTPRequest(string baseUrl, string getQuery, string postQuery)
+    public HTTPRequest(string baseUrl, string getQuery)
     {
       Uri baseUri = new Uri(baseUrl);
       Uri request = new Uri(baseUri, getQuery);
       BuildRequest(request);
+    }
+
+    public HTTPRequest(string baseUrl, string getQuery, string postQuery)
+      : this(baseUrl, getQuery)
+    {
       _postQuery = postQuery;
+    }
+
+    public HTTPRequest(string baseUrl, string getQuery, string postQuery, string encoding)
+      : this(baseUrl, getQuery, postQuery)
+    {
+      _encoding = encoding;
     }
 
     public HTTPRequest(HTTPRequest request)
@@ -53,6 +67,7 @@ namespace MediaPortal.Utils.Web
       _host = request._host;
       _getQuery = request._getQuery;
       _postQuery = request._postQuery;
+      _externalBrowser = request._externalBrowser;
     }
 
     public HTTPRequest(Uri request)
@@ -64,12 +79,6 @@ namespace MediaPortal.Utils.Web
     {
       Uri request = new Uri(uri);
       BuildRequest(request);
-    }
-
-    public HTTPRequest(string host, string getQuery)
-    {
-      _host = host;
-      _getQuery = getQuery;
     }
 
     private void BuildRequest(Uri request)
@@ -91,15 +100,38 @@ namespace MediaPortal.Utils.Web
       get { return _getQuery; }
     }
 
+    [XmlAttribute("url")]
+    public string Url
+    {
+      set { BuildRequest(new Uri(value)); }
+      get { return _scheme + Uri.SchemeDelimiter + _host + _getQuery; }
+    }
+
+    [XmlAttribute("post")]
     public string PostQuery
     {
       get { return _postQuery; }
       set { _postQuery = value; }
     }
-
-    public string Url
+    [XmlAttribute("external")]
+    public bool External
     {
-      get { return _scheme + Uri.SchemeDelimiter + _host + _getQuery; }
+      get { return _externalBrowser; }
+      set { _externalBrowser = value; }
+    }
+
+    [XmlAttribute("encoding")]
+    public string Encoding
+    {
+      get { return _encoding; }
+      set { _encoding = value; }
+    }
+
+    [XmlAttribute("delay")]
+    public int Delay
+    {
+      get { return _delay; }
+      set { _delay = value; }
     }
 
     public Uri Uri
@@ -115,8 +147,6 @@ namespace MediaPortal.Utils.Web
     // Add relative or absolute url
     public HTTPRequest Add(string relativeUri)
     {
-      if(relativeUri.StartsWith("?"))
-        relativeUri = Uri.LocalPath + relativeUri;
       Uri newUri = new Uri(Uri, relativeUri);
       return new HTTPRequest(newUri);
     }
@@ -136,12 +166,6 @@ namespace MediaPortal.Utils.Web
         return true;
 
       return false;
-    }
-
-    public bool External
-    {
-      get { return _externalBrowser; }
-      set { _externalBrowser = value; }
     }
 
     public override string ToString()
@@ -170,7 +194,7 @@ namespace MediaPortal.Utils.Web
     public override bool Equals(object obj)
     {
       HTTPRequest req = obj as HTTPRequest;
-      if (req==null)
+      if (req == null)
         return false;
       if (_scheme == req._scheme &&
           _host == req._host &&

@@ -100,6 +100,7 @@
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -121,7 +122,8 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="config\ChannelInfo.cs">
+    <Compile Include="config\ChannelGrabberInfo.cs" />
+    <Compile Include="config\Grabber\ChannelInfo.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="config\ChannelsList.cs">
@@ -133,27 +135,43 @@
     <Compile Include="config\EPGConfigData.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="config\GrabberInfo.cs">
+    <Compile Include="config\Grabber\SublinkInfo.cs" />
+    <Compile Include="config\Grabber\DataParserTemplate.cs" />
+    <Compile Include="config\Grabber\GrabberConfigFile.cs" />
+    <Compile Include="config\Grabber\GrabberInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="config\Grabber\ListingInfo.cs" />
+    <Compile Include="config\Grabber\ModifyInfo.cs" />
+    <Compile Include="ListingTimeControl.cs" />
     <Compile Include="MPCode\TVProgram.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="MPCode\Xml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Parser\DataProfiler.cs">
+    <Compile Include="config\Grabber\WebParserTemplate.cs" />
+    <Compile Include="config\Grabber\WebSearchData.cs" />
+    <Compile Include="Parser\DataPreference.cs" />
+    <Compile Include="Parser\WebParser.cs" />
+    <Compile Include="Parser\IParser.cs" />
+    <Compile Include="config\Grabber\XmlField.cs" />
+    <Compile Include="Parser\DataRows.cs" />
+    <Compile Include="Parser\DataParser.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Parser\DataRowParser.cs" />
     <Compile Include="Parser\ProgramData.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Parser\XMLProfiler.cs">
+    <Compile Include="Parser\XmlParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Parser\XMLProfilerData.cs">
+    <Compile Include="config\Grabber\XmlParserTemplate.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="RequestBuilder.cs" />
+    <Compile Include="config\Grabber\RequestData.cs" />
     <Compile Include="Utils\XMLTVExport.cs">
       <SubType>Code</SubType>
     </Compile>

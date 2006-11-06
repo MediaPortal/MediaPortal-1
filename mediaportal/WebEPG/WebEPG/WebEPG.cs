@@ -1,23 +1,25 @@
-/*
-  *	Copyright (C) 2005-2006 Team MediaPortal
-  *	http://www.team-mediaportal.com
-  *
-  *  This Program is free software; you can redistribute it and/or modify
-  *  it under the terms of the GNU General Public License as published by
-  *  the Free Software Foundation; either version 2, or (at your option)
-  *  any later version.
-  *
-  *  This Program is distributed in the hope that it will be useful,
-  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  *  GNU General Public License for more details.
-  *
-  *  You should have received a copy of the GNU General Public License
-  *  along with GNU Make; see the file COPYING.  If not, write to
-  *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
-  *  http://www.gnu.org/copyleft/gpl.html
-  *
-  */
+#region Copyright (C) 2006 Team MediaPortal
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+#endregion
 
 using System;
 using System.IO;
@@ -29,7 +31,6 @@ using MediaPortal.Services;
 using MediaPortal.Webepg.Profile;
 using MediaPortal.TV.Database;
 using MediaPortal.WebEPG;
-using MediaPortal.Util;
 using MediaPortal.Utils;
 using MediaPortal.Utils.Time;
 using MediaPortal.Utils.Services;
@@ -38,16 +39,8 @@ namespace MediaPortal.EPG
 {
   public class WebEPG
   {
-    private MediaPortal.Webepg.Profile.Xml _xmlreader;
-    private WebListingGrabber _epgGrabber;
-    private ILog _log;
-    private string _configFile;
-    private string _xmltvDirectory;
-    private ArrayList _channels = null;
-    private MergeInfo[] _mergedList = null;
-    private Hashtable _mergedChannels = new Hashtable();
-
-    struct GrabberInfo
+    #region Private Structs
+    private struct GrabberInfo
     {
       public string id;
       public string name;
@@ -60,34 +53,49 @@ namespace MediaPortal.EPG
       public bool isMerged;
     }
 
-    struct MergeChannelLocation
+    private struct MergeChannelLocation
     {
       public int mergeNum;
       public int mergeChannel;
     }
 
-    struct MergeInfo
+    private struct MergeInfo
     {
       public int count;
       public string name;
       public MergeChannelData[] channels;
     }
 
-    struct MergeChannelData
+    private struct MergeChannelData
     {
       public TimeRange time;
       public ArrayList programs;
     }
+    #endregion
 
+    #region Variables
+    private MediaPortal.Webepg.Profile.Xml _xmlreader;
+    private WebListingGrabber _epgGrabber;
+    private ILog _log;
+    private string _configFile;
+    private string _xmltvDirectory;
+    private ArrayList _channels = null;
+    private MergeInfo[] _mergedList = null;
+    private Hashtable _mergedChannels = new Hashtable();
+    #endregion
+
+    #region Constructors/Destructors
     public WebEPG()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
 
-      _configFile = Config.GetFile(Config.Dir.Base, "WebEPG", "WebEPG.xml");
-      _xmltvDirectory = Config.GetSubFolder(Config.Dir.Base, "xmltv\\");
+      _configFile = Environment.CurrentDirectory + "\\WebEPG\\WebEPG.xml";
+      _xmltvDirectory = Environment.CurrentDirectory + "\\xmltv\\";
     }
+    #endregion
 
+    #region Public Methods
     public bool Import()
     {
       if (!LoadConfig())
@@ -173,7 +181,7 @@ namespace MediaPortal.EPG
             programs = _mergedList[i].channels[c].programs;
             for (int p = 0; p < programs.Count; p++)
             {
-              TVProgram program = (TVProgram) programs[p];
+              TVProgram program = (TVProgram)programs[p];
               program.Channel = "merged" + i.ToString();
               if (_mergedList[i].channels[c].time.IsInRange(program.Start))
                 xmltv.WriteProgram(program, 0);
@@ -185,9 +193,10 @@ namespace MediaPortal.EPG
       xmltv.Close();
 
       return true;
-
     }
+    #endregion
 
+    #region Private Methods
     private bool LoadConfig()
     {
       string grabberDir;
@@ -208,7 +217,7 @@ namespace MediaPortal.EPG
 
       _xmlreader = new MediaPortal.Webepg.Profile.Xml(_configFile);
       maxGrabDays = _xmlreader.GetValueAsInt("General", "MaxDays", 1);
-      grabberDir = _xmlreader.GetValueAsString("General", "GrabberDir", Config.GetSubFolder(Config.Dir.Base, "WebEPG\\grabbers\\"));
+      grabberDir = _xmlreader.GetValueAsString("General", "GrabberDir", Environment.CurrentDirectory + "\\WebEPG\\grabbers\\");
       _epgGrabber = new WebListingGrabber(maxGrabDays, grabberDir);
 
       int AuthCount = _xmlreader.GetValueAsInt("AuthSites", "Count", 0);
@@ -294,5 +303,6 @@ namespace MediaPortal.EPG
 
       return true;
     }
+    #endregion
   }
 }

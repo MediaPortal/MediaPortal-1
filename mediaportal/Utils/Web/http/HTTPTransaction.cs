@@ -21,10 +21,10 @@
 using System;
 using System.Text;
 using System.IO;
-using System.IO.Compression;
 using System.Net;
 using System.Web;
 using System.Collections;
+using System.Threading;
 
 namespace MediaPortal.Utils.Web
 {
@@ -64,8 +64,8 @@ namespace MediaPortal.Utils.Web
 
     public CookieCollection Cookies
     {
-      get { return _cookies; }
-      set { _cookies = value; }
+      get { return _cookies;}
+      set { _cookies=value;}
     }
 
     public byte[] GetData() //string strURL, string strEncode)
@@ -81,15 +81,16 @@ namespace MediaPortal.Utils.Web
       int size;
       int totalSize;
 
+      if(pageRequest.Delay > 0)
+        Thread.Sleep(pageRequest.Delay);
+
       try
       {
         // Make the Webrequest
         // Create the request header
         Uri pageUri = pageRequest.Uri;
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(pageUri);
+        HttpWebRequest request = (HttpWebRequest) WebRequest.Create(pageUri);
         request.UserAgent = _agent;
-        request.Headers.Add("Accept-Encoding: gzip, deflate");
-        //request.AutomaticDecompression = DecompressionMethods.GZip;
         if (pageRequest.PostQuery == string.Empty)
         {
           // GET request
@@ -120,43 +121,35 @@ namespace MediaPortal.Utils.Web
           }
         }
 
-        _response = (HttpWebResponse)request.GetResponse();
+        _response = (HttpWebResponse) request.GetResponse();
         if (request.CookieContainer != null)
         {
           _response.Cookies = request.CookieContainer.GetCookies(request.RequestUri);
           _cookies = _response.Cookies;
         }
 
-        Stream responseStream = _response.GetResponseStream();
-
-        Stream receiveStream = responseStream;
-
-        if (_response.ContentEncoding == "gzip")
-          receiveStream = new GZipStream(responseStream, CompressionMode.Decompress);
-
-        if (_response.ContentEncoding == "deflate")
-          receiveStream = new DeflateStream(responseStream, CompressionMode.Decompress);
+        Stream ReceiveStream = _response.GetResponseStream();
 
         Block = new byte[blockSize];
         totalSize = 0;
 
-        while ((size = receiveStream.Read(Block, 0, blockSize)) > 0)
+        while( (size = ReceiveStream.Read(Block, 0, blockSize) ) > 0)
         {
           readBlock = new byte[size];
           Array.Copy(Block, readBlock, size);
-          Blocks.Add(readBlock);
+          Blocks.Add( readBlock );
           totalSize += size;
         }
 
-        receiveStream.Close();
+        ReceiveStream.Close();
         _response.Close();
 
-        int pos = 0;
-        _data = new byte[totalSize];
+        int pos=0;
+        _data = new byte[ totalSize ];
 
-        for (int i = 0; i < Blocks.Count; i++)
+        for(int i = 0; i< Blocks.Count; i++)
         {
-          Block = (byte[])Blocks[i];
+          Block = (byte[]) Blocks[i];
           Block.CopyTo(_data, pos);
           pos += Block.Length;
         }

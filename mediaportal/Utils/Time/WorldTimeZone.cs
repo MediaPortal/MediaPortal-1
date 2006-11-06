@@ -33,6 +33,7 @@ namespace MediaPortal.Utils.Time
 {
   public class WorldTimeZone : TimeZone
   {
+    #region Variables
     private const string VALUE_INDEX = "Index";
     private const string VALUE_DISPLAY_NAME = "Display";
     private const string VALUE_STANDARD_NAME = "Std";
@@ -52,7 +53,9 @@ namespace MediaPortal.Utils.Time
     private TimeZoneInfo _TimeZone;
 
     private bool _bHasDlt;
+    #endregion
 
+    #region Structs
     private struct TimeZoneDate
     {
       public int Month;
@@ -75,7 +78,9 @@ namespace MediaPortal.Utils.Time
       public TimeZoneDate StdDate;
       public TimeZoneDate DltDate;
     }
+    #endregion
 
+    #region Constructors/Destructors
     private WorldTimeZone()
     {
     }
@@ -110,38 +115,27 @@ namespace MediaPortal.Utils.Time
           _bHasDlt = false;
       }
     }
+    #endregion
 
-    public override string DaylightName
+    #region Public Methods
+    public bool IsLocalTimeZone()
     {
-      get
-      {
-        return _TimeZone.DltName;
-      }
+      if (TimeZone.CurrentTimeZone.StandardName == this.StandardName)
+        return true;
+
+      return false;
     }
 
-    public override string StandardName
+    public DateTime FromLocalTime(DateTime time)
     {
-      get
-      {
-        return _TimeZone.StdName;
-      }
+      if (time.Kind != DateTimeKind.Unspecified)
+        time = new DateTime(time.Ticks, DateTimeKind.Unspecified);
+
+      return time.Add(GetUtcOffset(time) - System.TimeZone.CurrentTimeZone.GetUtcOffset(time));
     }
+    #endregion
 
-    public override DaylightTime GetDaylightChanges(int year)
-    {
-      DaylightTime DLTime = null;
-
-      if (_bHasDlt)
-      {
-        DateTime StdDay = GetDateTime(_TimeZone.StdDate, year);
-        DateTime DltDay = GetDateTime(_TimeZone.DltDate, year);
-
-        DLTime = new DaylightTime(DltDay, StdDay, new TimeSpan(0, _TimeZone.DltOffset, 0));
-      }
-
-      return DLTime;
-    }
-
+    #region Private Methods
     private DateTime GetDateTime(TimeZoneDate TimeChange, int year)
     {
       DateTime ChangeDay;
@@ -183,57 +177,6 @@ namespace MediaPortal.Utils.Time
       ChangeDay = ChangeDay.Add(TimeChange.TimeOfDay);
 
       return ChangeDay;
-    }
-
-    public override DateTime ToUniversalTime(DateTime time)
-    {
-      return time.Add(-GetUtcOffset(time));
-    }
-
-    public override DateTime ToLocalTime(DateTime time)
-    {
-      if (time.Kind != DateTimeKind.Unspecified)
-        time = new DateTime(time.Ticks, DateTimeKind.Unspecified);
-
-      return time.Add(System.TimeZone.CurrentTimeZone.GetUtcOffset(time) - GetUtcOffset(time));
-    }
-
-    public override TimeSpan GetUtcOffset(DateTime time)
-    {
-      int UtcOffset = _TimeZone.Offset;
-
-      if (IsDaylightSavingTime(time))
-        UtcOffset += _TimeZone.DltOffset;
-
-      return new TimeSpan(0, -UtcOffset, 0);
-    }
-
-    public bool IsLocalTimeZone()
-    {
-      if (TimeZone.CurrentTimeZone.StandardName == this.StandardName)
-        return true;
-
-      return false;
-    }
-
-    public override bool IsDaylightSavingTime(DateTime time)
-    {
-      if (_TimeZone.DltDate.Month == 0)   // Never Dlt time;
-        return false;
-
-      DaylightTime DLTime = GetDaylightChanges(time.Year);
-
-      if (DLTime.Start > DLTime.End)
-      {
-        if (time >= DLTime.Start || time < DLTime.End)
-          return true;
-      }
-      else
-      {
-        if (time >= DLTime.Start && time < DLTime.End)
-          return true;
-      }
-      return false;
     }
 
     private void LoadRegistryTimeZones()
@@ -320,5 +263,82 @@ namespace MediaPortal.Utils.Time
 
       return TimeChange;
     }
+    #endregion
+
+    #region TimeZone Overloads
+    public override string DaylightName
+    {
+      get
+      {
+        return _TimeZone.DltName;
+      }
+    }
+
+    public override string StandardName
+    {
+      get
+      {
+        return _TimeZone.StdName;
+      }
+    }
+
+    public override bool IsDaylightSavingTime(DateTime time)
+    {
+      if (_TimeZone.DltDate.Month == 0)   // Never Dlt time;
+        return false;
+
+      DaylightTime DLTime = GetDaylightChanges(time.Year);
+
+      if (DLTime.Start > DLTime.End)
+      {
+        if (time >= DLTime.Start || time < DLTime.End)
+          return true;
+      }
+      else
+      {
+        if (time >= DLTime.Start && time < DLTime.End)
+          return true;
+      }
+      return false;
+    }
+
+    public override DaylightTime GetDaylightChanges(int year)
+    {
+      DaylightTime DLTime = null;
+
+      if (_bHasDlt)
+      {
+        DateTime StdDay = GetDateTime(_TimeZone.StdDate, year);
+        DateTime DltDay = GetDateTime(_TimeZone.DltDate, year);
+
+        DLTime = new DaylightTime(DltDay, StdDay, new TimeSpan(0, _TimeZone.DltOffset, 0));
+      }
+
+      return DLTime;
+    }
+
+    public override DateTime ToUniversalTime(DateTime time)
+    {
+      return time.Add(-GetUtcOffset(time));
+    }
+
+    public override DateTime ToLocalTime(DateTime time)
+    {
+      if (time.Kind != DateTimeKind.Unspecified)
+        time = new DateTime(time.Ticks, DateTimeKind.Unspecified);
+
+      return time.Add(System.TimeZone.CurrentTimeZone.GetUtcOffset(time) - GetUtcOffset(time));
+    }
+
+    public override TimeSpan GetUtcOffset(DateTime time)
+    {
+      int UtcOffset = _TimeZone.Offset;
+
+      if (IsDaylightSavingTime(time))
+        UtcOffset += _TimeZone.DltOffset;
+
+      return new TimeSpan(0, -UtcOffset, 0);
+    }
+    #endregion
   }
 }

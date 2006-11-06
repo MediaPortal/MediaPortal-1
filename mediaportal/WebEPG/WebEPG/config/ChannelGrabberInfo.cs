@@ -27,7 +27,7 @@ namespace MediaPortal.EPG.config
   /// <summary>
   /// Summary description for ChannelInfo.
   /// </summary>
-  public class ChannelInfo
+  public class ChannelGrabberInfo
   {
     public string FullName;
     public string ChannelID;

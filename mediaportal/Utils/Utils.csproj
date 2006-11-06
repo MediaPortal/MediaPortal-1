@@ -110,15 +110,18 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\PluginIconsAttribute.cs" />
     <Compile Include="Service\LogSharedFileWriter.cs" />
     <Compile Include="Service\LogFile.cs" />
     <Compile Include="Service\Log.cs" />
     <Compile Include="Service\LogFileWriter.cs" />
     <Compile Include="Time\BasicTime.cs" />
     <Compile Include="Time\TimeRange.cs" />
+    <Compile Include="Time\WorldDateTime.cs" />
     <Compile Include="Time\WorldTimeZone.cs" />
     <Compile Include="Web\Check\CheckConnections.cs" />
+    <Compile Include="Web\html\MatchTagCollection.cs" />
+    <Compile Include="Web\html\HtmlString.cs" />
+    <Compile Include="Web\html\MatchTag.cs" />
     <Compile Include="Web\http\AsyncGetRequest.cs" />
     <Compile Include="Web\http\HTTPRequest.cs" />
     <Compile Include="Web\http\HTTPAuth.cs" />
@@ -131,18 +134,17 @@
     <Compile Include="Web\http\HTTPTransaction.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Web\Parser\HTMLProfiler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Web\Parser\Parser.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Web\Parser\HtmlSectionMatch.cs" />
+    <Compile Include="Web\Parser\HtmlSectionTemplate.cs" />
+    <Compile Include="Web\Parser\HtmlParserTemplate.cs" />
+    <Compile Include="Web\Parser\HtmlParser.cs" />
+    <Compile Include="Web\Parser\HtmlProfiler.cs" />
+    <Compile Include="Web\Parser\IParserData.cs" />
     <Compile Include="Web\Parser\ParserData.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Web\Parser\Profiler.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Web\Parser\HtmlSectionParser.cs" />
+    <Compile Include="Xml\XmlNoNamespaceWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="SHDocVw">

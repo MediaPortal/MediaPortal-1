@@ -205,7 +205,22 @@ namespace MediaPortal.Utils.Time
       }
       else
       {
-        throw (new ArgumentException("Invalid Time Argument"));
+        // no seperator. Only numbers 0630 ?
+        int time;
+        try
+        {
+           time = int.Parse(strTime);
+        }
+        catch (Exception)
+        {
+          throw (new ArgumentException("Invalid Time Argument"));
+        }
+
+        if (time > 0 && time < 2400)
+        {
+          _minute = time % 100;
+          _hour = time / 100;
+        }
       }
 
       if (strTime.ToLower().IndexOf("pm") != -1 && _hour != 0)

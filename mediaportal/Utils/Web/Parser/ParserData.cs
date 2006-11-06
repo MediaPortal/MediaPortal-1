@@ -1,3 +1,4 @@
+#region Copyright (C) 2006 Team MediaPortal
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,19 +19,41 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
+
 using System;
+using System.Collections;
 
 namespace MediaPortal.Utils.Web
 {
 	/// <summary>
-	/// This is a abstract base class for parser data.
+	/// Class generic for parser data.
 	/// </summary>
-	abstract public class ParserData
+	public class ParserData : IParserData
 	{
-		public ParserData()
-		{
-		}
+    #region Variables
+    Hashtable _data;
+    #endregion
 
-		abstract public void SetElement(string tag, string value);
-	}
+    #region Constructors/Destructors
+    public ParserData()
+    {
+      _data = new Hashtable();
+    }
+    #endregion
+
+    #region Public Methods
+    public string GetElement(string tag)
+    {
+      return (string)_data[tag];
+    }
+    #endregion
+
+    #region IParserData Implementations
+    public void SetElement(string tag, string value)
+    {
+      _data.Add(tag, value);
+    }
+    #endregion
+  }
 }

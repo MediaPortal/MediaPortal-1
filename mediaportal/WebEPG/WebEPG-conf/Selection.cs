@@ -127,9 +127,9 @@ namespace WebEPG_conf
       // 
       // treeView1
       // 
-      this.treeView1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.treeView1.Location = new System.Drawing.Point(16, 48);
       this.treeView1.Name = "treeView1";
       this.treeView1.Size = new System.Drawing.Size(256, 272);
@@ -137,9 +137,9 @@ namespace WebEPG_conf
       // 
       // gbSelection
       // 
-      this.gbSelection.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.gbSelection.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.gbSelection.Controls.Add(this.bClose);
       this.gbSelection.Controls.Add(this.bSelect);
       this.gbSelection.Controls.Add(this.rbWebsites);
@@ -157,7 +157,7 @@ namespace WebEPG_conf
       // 
       // bClose
       // 
-      this.bClose.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.bClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.bClose.Location = new System.Drawing.Point(336, 320);
       this.bClose.Name = "bClose";
       this.bClose.Size = new System.Drawing.Size(72, 24);
@@ -167,7 +167,7 @@ namespace WebEPG_conf
       // 
       // bSelect
       // 
-      this.bSelect.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left ) ) );
+      this.bSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.bSelect.Location = new System.Drawing.Point(16, 320);
       this.bSelect.Name = "bSelect";
       this.bSelect.Size = new System.Drawing.Size(72, 24);
@@ -199,8 +199,8 @@ namespace WebEPG_conf
       // 
       // tbAInfo
       // 
-      this.tbAInfo.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.tbAInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tbAInfo.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
       this.tbAInfo.BorderColor = System.Drawing.Color.Empty;
       this.tbAInfo.Location = new System.Drawing.Point(272, 40);

@@ -35,8 +35,8 @@ namespace MediaPortal.Utils.Web
     string _strPageSource = string.Empty;
     string _defaultEncode = "iso-8859-1";
     string _pageEncodingMessage = string.Empty;
-    string _Encoding = string.Empty;
-    string _Error;
+    string _encoding = string.Empty;
+    string _error;
 
     public HTMLPage()
     {
@@ -44,19 +44,20 @@ namespace MediaPortal.Utils.Web
 
     public HTMLPage(HTTPRequest page)
     {
+      _encoding = page.Encoding;
       LoadPage(page);
     }
 
     public HTMLPage(HTTPRequest page, string encoding)
     {
-      _Encoding = encoding;
+      _encoding = encoding;
       LoadPage(page);
     }
 
     public string Encoding
     {
-      get { return _Encoding; }
-      set { _Encoding = value; }
+      get { return _encoding; }
+      set { _encoding = value; }
     }
 
     public string PageEncodingMessage
@@ -66,7 +67,7 @@ namespace MediaPortal.Utils.Web
 
     public string Error
     {
-      get { return _Error; }
+      get { return _error; }
     }
 
     public bool LoadPage(HTTPRequest page)
@@ -106,40 +107,40 @@ namespace MediaPortal.Utils.Web
       return _strPageSource;
     }
 
-    public string GetBody()
-    {
-      //return _strPageSource.Substring(_startIndex, _endIndex - _startIndex);
-      //try
-      //{
-      //    XmlDocument xmlDoc = new XmlDocument();
-      //    xmlDoc.LoadXml(_strPageSource);
-      //    XmlNode bodyNode = xmlDoc.DocumentElement.SelectSingleNode("//body");
-      //    return bodyNode.InnerText;
-      //}
-      //catch (System.Xml.XmlException ex)
-      //{
-      //    _Error = "XML Error finding Body"; 
-      //}
-      int startIndex = _strPageSource.ToLower().IndexOf("<body", 0);
-      if (startIndex == -1)
-      {
-        // report Error
-        _Error = "No body start found";
-        return null;
-      }
+    //public string GetBody()
+    //{
+    //  //return _strPageSource.Substring(_startIndex, _endIndex - _startIndex);
+    //  //try
+    //  //{
+    //  //    XmlDocument xmlDoc = new XmlDocument();
+    //  //    xmlDoc.LoadXml(_strPageSource);
+    //  //    XmlNode bodyNode = xmlDoc.DocumentElement.SelectSingleNode("//body");
+    //  //    return bodyNode.InnerText;
+    //  //}
+    //  //catch (System.Xml.XmlException ex)
+    //  //{
+    //  //    _Error = "XML Error finding Body"; 
+    //  //}
+    //  int startIndex = _strPageSource.ToLower().IndexOf("<body", 0);
+    //  if (startIndex == -1)
+    //  {
+    //    // report Error
+    //    _error = "No body start found";
+    //    return null;
+    //  }
 
-      int endIndex = _strPageSource.ToLower().IndexOf("</body", startIndex);
+    //  int endIndex = _strPageSource.ToLower().IndexOf("</body", startIndex);
 
-      if (endIndex == -1)
-      {
-        //report Error
-        _Error = "No body end found";
-        endIndex = _strPageSource.Length;
-      }
+    //  if (endIndex == -1)
+    //  {
+    //    //report Error
+    //    _error = "No body end found";
+    //    endIndex = _strPageSource.Length;
+    //  }
 
-      return _strPageSource.Substring(startIndex, endIndex - startIndex);
+    //  return _strPageSource.Substring(startIndex, endIndex - startIndex);
 
-    }
+    //}
 
     private bool GetExternal(HTTPRequest page)
     {
@@ -171,10 +172,10 @@ namespace MediaPortal.Utils.Web
         byte[] pageData = Page.GetData();
         int i;
 
-        if (_Encoding != "")
+        if (_encoding != "")
         {
-          strEncode = _Encoding;
-          _pageEncodingMessage = "Forced: " + _Encoding;
+          strEncode = _encoding;
+          _pageEncodingMessage = "Forced: " + _encoding;
         }
         else
         {
@@ -189,7 +190,7 @@ namespace MediaPortal.Utils.Web
               i += 8;
               for (; i < _strPageSource.Length && _strPageSource[i] != '\"'; i++)
                 strEncode += _strPageSource[i];
-              _Encoding = strEncode;
+              _encoding = strEncode;
             }
 
             if (strEncode == "")
@@ -218,7 +219,7 @@ namespace MediaPortal.Utils.Web
         }
         return true;
       }
-      _Error = Page.GetError();
+      _error = Page.GetError();
       return false;
     }
   }

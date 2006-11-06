@@ -1,23 +1,25 @@
-/*
-  *	Copyright (C) 2005 Team MediaPortal
-  *	http://www.team-mediaportal.com
-  *
-  *  This Program is free software; you can redistribute it and/or modify
-  *  it under the terms of the GNU General Public License as published by
-  *  the Free Software Foundation; either version 2, or (at your option)
-  *  any later version.
-  *
-  *  This Program is distributed in the hope that it will be useful,
-  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  *  GNU General Public License for more details.
-  *
-  *  You should have received a copy of the GNU General Public License
-  *  along with GNU Make; see the file COPYING.  If not, write to
-  *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
-  *  http://www.gnu.org/copyleft/gpl.html
-  *
-  */
+#region Copyright (C) 2006 Team MediaPortal
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+#endregion
 
 using System;
 using System.IO;
@@ -26,6 +28,7 @@ using System.Web;
 using System.Text;
 using System.Collections;
 using System.Windows.Forms;
+using MediaPortal.Services;
 using MediaPortal.Utils.Web;
 using MediaPortal.Utils.Services;
 using MediaPortal.EPG;
@@ -45,11 +48,11 @@ namespace MediaPortal.EPG.WebEPGTester
     static void Main()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
-      ILog log = new Log("WebEPG-Tester", Log.Level.Debug);
+      ILog log = new TestLog("WebEPG-Tester", Level.Debug);
 
       StringBuilder sb = new StringBuilder();
       StringWriter logString = new StringWriter(sb);
-      ILog webepgLog = new Log(logString, Log.Level.Debug);
+      ILog webepgLog = new TestLog(logString, Level.Debug);
       services.Add<ILog>(webepgLog);
       ChannelsList config = new ChannelsList(Environment.CurrentDirectory + "\\WebEPG");
 
@@ -81,18 +84,22 @@ namespace MediaPortal.EPG.WebEPGTester
             //  System.IO.Directory.CreateDirectory(grabberDir);
 
             SortedList channels = config.GetChannelList(countries[c], grabbers[g]);
+            if (channels.Count == 0)
+              continue;
 
-            IDictionaryEnumerator enumerator = channels.GetEnumerator();
             WebListingGrabber m_EPGGrabber = new WebListingGrabber(2, Environment.CurrentDirectory + "\\WebEPG\\grabbers\\");
 
             log.Info("WebEPG: Grabber {0}\\{1}", countries[c], grabbers[g]);
             XMLTVExport xmltv = new XMLTVExport(grabberDir);
             xmltv.Open();
 
-            LogFileWriter countryLog = new LogFileWriter("log", countries[c] + "-" + grabbers[g]);
-            while (enumerator.MoveNext())
+            FileInfo grabberLogFile = new FileInfo("log\\" + countries[c] + "-" + grabbers[g] + ".log");
+            if (grabberLogFile.Exists)
+              grabberLogFile.Delete();
+
+            for (int i = 0; i < 1; i++)
             {
-              ChannelInfo channel = (ChannelInfo)enumerator.Value;
+              ChannelGrabberInfo channel = (ChannelGrabberInfo)channels.GetByIndex(i);
               xmltv.WriteChannel(channel.ChannelID, channel.FullName);
               log.Info("WebEPG: Getting Channel {0}", channel.ChannelID);
 
@@ -133,13 +140,13 @@ namespace MediaPortal.EPG.WebEPGTester
               {
                 log.Error("WebEPG: Grabber error for: {0}", channel.ChannelID);
                 logString.Flush();
-                countryLog.Write(sb.ToString());
-                countryLog.Flush();
+                TextWriter grabberLog = new StreamWriter(grabberLogFile.FullName);
+                grabberLog.Write(sb.ToString());
+                grabberLog.Flush();
               }
               sb.Remove(0, sb.Length);
             }
             xmltv.Close();
-            countryLog.Close();
           }
         }
       }
