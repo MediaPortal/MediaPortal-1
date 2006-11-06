@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConflictsManager.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\SetupControls\SetupControls.csproj">
@@ -81,8 +82,5 @@
       <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>
       <Name>PluginBase</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
