@@ -20,6 +20,7 @@
  */
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Serialization;
@@ -96,7 +97,7 @@ namespace MediaPortal.GUI.Library
       uint currentTime = (uint)(DXUtil.Timer(DirectXTimer.GetAbsoluteTime) * 1000.0);
       foreach (GUIControl control in Children)
       {
-        control.UpdateEffectState(currentTime);
+       // control.UpdateEffectState(currentTime);
         control.Render(timePassed);
       }
 
@@ -397,10 +398,20 @@ namespace MediaPortal.GUI.Library
     public override void QueueAnimation(AnimationType animType)
     {
       base.QueueAnimation(animType);
-      //foreach (GUIControl control in Children)
-      //{
-      //  if (control != null) control.QueueAnimation(animType);
-      //}
+    }
+    public override List<VisualEffect> GetAnimations(AnimationType type, bool checkConditions)
+    {
+      List<VisualEffect> effects = base.GetAnimations(type, checkConditions);
+      
+      foreach (GUIControl control in Children)
+      {
+        if (control != null)
+        {
+          List<VisualEffect> effects2 = control.GetAnimations(type, checkConditions);
+          effects.AddRange(effects2);
+        }
+      }
+      return effects;
     }
     public override VisualEffect GetAnimation(AnimationType type, bool checkConditions /* = true */)
     {
@@ -433,5 +444,7 @@ namespace MediaPortal.GUI.Library
     {
       base.UpdateEffectState(currentTime);
     }
+
+
   }
 }

@@ -1016,6 +1016,22 @@ namespace MediaPortal.GUI.Library
         return _viewPlayList.GetAnimation(type, checkConditions);
       return null;
     }
+    public override List<VisualEffect> GetAnimations(AnimationType type, bool checkConditions /* = true */)
+    {
+      List<VisualEffect> effects = base.GetAnimations(type, checkConditions);
+
+      if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+        effects.AddRange(_viewFilmStrip.GetAnimations(type, checkConditions));
+      if (_currentViewMode == ViewMode.List && _viewList != null)
+        effects.AddRange(_viewList.GetAnimations(type, checkConditions));
+      if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
+        effects.AddRange(_viewThumbnail.GetAnimations(type, checkConditions));
+      if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+        effects.AddRange(_viewAlbum.GetAnimations(type, checkConditions));
+      if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+        effects.AddRange(_viewPlayList.GetAnimations(type, checkConditions));
+      return effects;
+    }
     public override bool IsEffectAnimating(AnimationType animType)
     {
       bool yesNo = base.IsEffectAnimating(animType);
@@ -1035,6 +1051,17 @@ namespace MediaPortal.GUI.Library
     public override void UpdateEffectState(uint currentTime)
     {
       base.UpdateEffectState(currentTime);
+
+      if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+        _viewFilmStrip.UpdateEffectState(currentTime);
+      if (_currentViewMode == ViewMode.List && _viewList != null)
+        _viewList.UpdateEffectState(currentTime);
+      if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
+        _viewThumbnail.UpdateEffectState(currentTime);
+      if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+        _viewAlbum.UpdateEffectState(currentTime);
+      if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+        _viewPlayList.UpdateEffectState(currentTime);
     }
   }
 }
