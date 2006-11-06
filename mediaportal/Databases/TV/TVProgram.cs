@@ -1,3 +1,4 @@
+#region Copyright (C) 2006 Team MediaPortal
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
+
 using System;
 using MediaPortal.GUI.Library;
 using System.Diagnostics;
@@ -31,6 +34,7 @@ namespace MediaPortal.TV.Database
   [Serializable()]
   public class TVProgram : IComparable, IComparable<TVProgram>
   {
+    #region Variables
     string _channelName = String.Empty;
     string _genre = String.Empty;
     string _title = String.Empty;
@@ -49,12 +53,16 @@ namespace MediaPortal.TV.Database
     int _programId = 0;
     string _duration = String.Empty;
     string _timeFromNow = String.Empty;
+    #endregion
+
+    #region Constructors/Destructors
     /// <summary>
     /// Constructor
     /// </summary>
     public TVProgram()
     {
     }
+
     public TVProgram(string channelName, DateTime start, DateTime end, string title)
     {
       _channelName = channelName;
@@ -62,6 +70,7 @@ namespace MediaPortal.TV.Database
       _endTime = Util.Utils.datetolong(end);
       _title = title;
     }
+
     public TVProgram(string channelName, DateTime start, DateTime end, string title, string description)
     {
       _channelName = channelName;
@@ -70,6 +79,7 @@ namespace MediaPortal.TV.Database
       _description = description;
       _title = title;
     }
+
     public TVProgram(string channelName, DateTime start, DateTime end, string title, string description, string genre)
     {
       _channelName = channelName;
@@ -79,67 +89,9 @@ namespace MediaPortal.TV.Database
       _genre = genre;
       _title = title;
     }
+    #endregion
 
-    /// <summary>
-    /// Returns a new TVProgram instance which contains the same values
-    /// </summary>
-    /// <returns>new TVProgram</returns>
-    public TVProgram Clone()
-    {
-      TVProgram prog = new TVProgram();
-      prog.ID = _programId;
-      prog._channelName = _channelName;
-      prog._genre = _genre;
-      prog._title = _title;
-      prog._epsiode = _epsiode;
-      prog._description = _description;
-      prog._repeat = _repeat;
-      prog._startTime = _startTime;
-      prog._endTime = _endTime;
-      prog._date = _date;
-      prog._serieNumber = _serieNumber;
-      prog._epsiodeNum = _epsiodeNum;
-      prog._epsiodePart = _epsiodePart;
-      prog._starRating = _starRating;
-      prog._classification = _classification;
-      prog._duration = _duration;
-      prog._timeFromNow = _timeFromNow;
-      prog._epsiodeFullDetails = _epsiodeFullDetails;
-      return prog;
-    }
-
-    /// <summary>
-    /// Converts a date/time in xmltv format (yyyymmddhhmmss) to a DateTime object
-    /// </summary>
-    /// <param name="ldate">date/time</param>
-    /// <returns>DateTime object containing the date/time</returns>
-    DateTime longtodate(long ldate)
-    {
-      if (ldate <= 0) return DateTime.MinValue;
-      int year, month, day, hour, minute, sec;
-      sec = (int)(ldate % 100L); ldate /= 100L;
-      minute = (int)(ldate % 100L); ldate /= 100L;
-      hour = (int)(ldate % 100L); ldate /= 100L;
-      day = (int)(ldate % 100L); ldate /= 100L;
-      month = (int)(ldate % 100L); ldate /= 100L;
-      year = (int)ldate;
-      if (day < 0 || day > 31) return DateTime.MinValue;
-      if (month < 0 || month > 12) return DateTime.MinValue;
-      if (year < 1900 || year > 2100) return DateTime.MinValue;
-      if (sec < 0 || sec > 59) return DateTime.MinValue;
-      if (minute < 0 || minute > 59) return DateTime.MinValue;
-      if (hour < 0 || hour > 23) return DateTime.MinValue;
-      try
-      {
-        DateTime dt = new DateTime(year, month, day, hour, minute, 0, 0);
-        return dt;
-      }
-      catch (Exception)
-      {
-      }
-      return DateTime.MinValue;
-    }
-
+    #region Properties
     /// <summary>
     /// Property to get/set the name of this tv program
     /// </summary>
@@ -319,6 +271,37 @@ namespace MediaPortal.TV.Database
     {
       get { return longtodate(_endTime); }
     }
+    #endregion
+
+    #region Public Methods
+    /// <summary>
+    /// Returns a new TVProgram instance which contains the same values
+    /// </summary>
+    /// <returns>new TVProgram</returns>
+    public TVProgram Clone()
+    {
+      TVProgram prog = new TVProgram();
+      prog.ID = _programId;
+      prog._channelName = _channelName;
+      prog._genre = _genre;
+      prog._title = _title;
+      prog._epsiode = _epsiode;
+      prog._description = _description;
+      prog._repeat = _repeat;
+      prog._startTime = _startTime;
+      prog._endTime = _endTime;
+      prog._date = _date;
+      prog._serieNumber = _serieNumber;
+      prog._epsiodeNum = _epsiodeNum;
+      prog._epsiodePart = _epsiodePart;
+      prog._starRating = _starRating;
+      prog._classification = _classification;
+      prog._duration = _duration;
+      prog._timeFromNow = _timeFromNow;
+      prog._epsiodeFullDetails = _epsiodeFullDetails;
+      return prog;
+    }
+
     /// <summary>
     /// Checks if the program is running between the specified start and end time/dates
     /// </summary>
@@ -348,6 +331,41 @@ namespace MediaPortal.TV.Database
       if (tCurTime >= StartTime && tCurTime <= EndTime) bRunningAt = true;
       return bRunningAt;
     }
+    #endregion
+
+    #region Private Methods
+    /// <summary>
+    /// Converts a date/time in xmltv format (yyyymmddhhmmss) to a DateTime object
+    /// </summary>
+    /// <param name="ldate">date/time</param>
+    /// <returns>DateTime object containing the date/time</returns>
+    private DateTime longtodate(long ldate)
+    {
+      if (ldate <= 0) return DateTime.MinValue;
+      int year, month, day, hour, minute, sec;
+      sec = (int)(ldate % 100L); ldate /= 100L;
+      minute = (int)(ldate % 100L); ldate /= 100L;
+      hour = (int)(ldate % 100L); ldate /= 100L;
+      day = (int)(ldate % 100L); ldate /= 100L;
+      month = (int)(ldate % 100L); ldate /= 100L;
+      year = (int)ldate;
+      if (day < 0 || day > 31) return DateTime.MinValue;
+      if (month < 0 || month > 12) return DateTime.MinValue;
+      if (year < 1900 || year > 2100) return DateTime.MinValue;
+      if (sec < 0 || sec > 59) return DateTime.MinValue;
+      if (minute < 0 || minute > 59) return DateTime.MinValue;
+      if (hour < 0 || hour > 23) return DateTime.MinValue;
+      try
+      {
+        DateTime dt = new DateTime(year, month, day, hour, minute, 0, 0);
+        return dt;
+      }
+      catch (Exception)
+      {
+      }
+      return DateTime.MinValue;
+    }
+
     /// <summary>
     /// Calculates the duration of a program and sets the Duration property
     /// </summary>
@@ -375,6 +393,7 @@ namespace MediaPortal.TV.Database
           break;
       }
     }
+
     /// <summary>
     /// Calculates how long from current time a program starts or started, set the TimeFromNow property
     /// </summary>
@@ -461,6 +480,7 @@ namespace MediaPortal.TV.Database
       }
 
     }
+
     private void GetEpisodeDetail()
     {
       string space = " ";
@@ -475,6 +495,8 @@ namespace MediaPortal.TV.Database
       if ((_epsiodePart != "-") & (_epsiodePart != String.Empty)) epDetail.Insert(epDetail.Length - 1, space + GUILocalizeStrings.Get(3021) + space + _epsiodePart.Substring(0, 1) + space + GUILocalizeStrings.Get(3022) + space + _epsiodePart.Substring(2, 1));
       _epsiodeFullDetails = epDetail.ToString();
     }
+    #endregion
+
     #region IComparable Members
 
     public int CompareTo(object obj)
