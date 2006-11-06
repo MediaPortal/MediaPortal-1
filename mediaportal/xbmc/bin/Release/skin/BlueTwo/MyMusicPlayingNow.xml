@@ -20,8 +20,7 @@
       <width>670</width>
       <height>142</height>
       <texture>osd_bg.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <type>image</type>
@@ -32,8 +31,7 @@
       <width>90</width>
       <height>126</height>
       <texture>music.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <type>image</type>
@@ -42,8 +40,7 @@
       <posX>60</posX>
       <posY>20</posY>
       <texture>music_logo.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <type>image</type>
@@ -55,8 +52,7 @@
       <height>358</height>
       <texture>nowplaying_background.png</texture>
       <keepaspectratio>no</keepaspectratio>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <type>image</type>
@@ -70,8 +66,6 @@
       <keepaspectratio>no</keepaspectratio>
       <centered>yes</centered>
       <zoom>yes</zoom>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
       <type>label</type>
@@ -85,8 +79,7 @@
       <font>font18</font>
       <align>left</align>
       <disabledcolor>ff808080</disabledcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <type>label</type>
@@ -100,8 +93,7 @@
       <font>font16</font>
       <align>left</align>
       <disabledcolor>ff808080</disabledcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <type>label</type>
@@ -115,8 +107,7 @@
       <font>font16</font>
       <align>left</align>
       <disabledcolor>ff808080</disabledcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <type>label</type>
@@ -129,8 +120,6 @@
       <font>font14</font>
       <align>right</align>
       <disabledcolor>ff808080</disabledcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
       <type>label</type>
@@ -143,8 +132,7 @@
       <font>font14</font>
       <align>left</align>
       <textcolor>ffffffff</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <type>image</type>
@@ -153,8 +141,7 @@
       <posY>373</posY>
       <width>180</width>
       <texture>osd_progress_background.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <type>progress</type>
@@ -168,8 +155,7 @@
       <texturebg>progress_back.png</texturebg>
       <midtexture>osd_progress_mid.png</midtexture>
       <righttexture>osd_progress_right.png</righttexture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+
     </control>
     <control>
       <type>label</type>
@@ -181,8 +167,7 @@
       <font>font14</font>
       <align>left</align>
       <textcolor>80ffffff</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <type>label</type>
@@ -194,8 +179,6 @@
       <font>font14</font>
       <align>right</align>
       <textcolor>80ffffff</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
       <type>label</type>
@@ -253,8 +236,6 @@
       <textureDownFocus>-</textureDownFocus>
       <textureFocus>list_sub_focus_arrow_small.png</textureFocus>
       <textureNoFocus>-</textureNoFocus>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
     </control>
 
 
@@ -279,8 +260,6 @@
       <textureDownFocus>-</textureDownFocus>
       <textureFocus>list_sub_focus_arrow.png</textureFocus>
       <textcolor>White</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
     </control>
 
     <control>
