@@ -54,7 +54,7 @@ namespace MediaPortal.PowerScheduler
 		private const int PBT_APMPOWERSTATUSCHANGE  = 0x000A;
 		private const int PBT_APMOEMEVENT           = 0x000B;
 		private const int PBT_APMRESUMEAUTOMATIC    = 0x0012;
-		private const string _version               = "v0.0.2";
+		private const string _version               = "v0.0.5";
 		#endregion
 
 		#region Protected Variables
@@ -74,7 +74,8 @@ namespace MediaPortal.PowerScheduler
 		protected DateTime _wakeupTime        = DateTime.MaxValue; // Date/Time for the next wakeup
 		protected int      _preRecordInterval = 2;	            	 // Interval to start recording before entered starttime
 		protected int      _wakeupInterval    = 1;			           // 1 minute to give computer time to wakeup
-		protected bool     _reinitRecorder    = false;             // Re-init the Recorder when resuming  
+		protected bool     _reinitRecorder    = false;             // Re-init the Recorder when resuming
+		protected bool     _onResumeRunning   = false;						 // avoid multible OnResume calls
     // TV Guide Variables
 		protected DateTime _nextRecordingTime = DateTime.MaxValue; // Date/Time when the next recording takes place
 		#endregion
@@ -118,6 +119,17 @@ namespace MediaPortal.PowerScheduler
 				_wakeupInterval    = xmlreader.GetValueAsInt("powerscheduler", "wakeupinterval", 1);
 				_preRecordInterval = xmlreader.GetValueAsInt("capture", "prerecord", 5);
 				_reinitRecorder    = xmlreader.GetValueAsBool("powerscheduler", "reinitonresume", false);
+				if (_extensiveLogging)
+				{
+					Log.Info("Powerscheduler: LoadSettings");
+					Log.Info("   - ShutDownInterval = {0}", _shutDownInterval);
+					Log.Info("   - ShutDownMode     = {0}", _shutDownMode);
+					Log.Info("   - ForceShutDown    = {0}", _forceShutDown);
+					Log.Info("   - TimerInterval    = {0}", _timerInterval);
+					Log.Info("   - WakeUpInterval   = {0}", _wakeupInterval);
+					Log.Info("   - PreRecordingInt  = {0}", _preRecordInterval);
+					Log.Info("   - ReinitRecorder   = {0}", _reinitRecorder);
+				}
 			}
 		}
 		#endregion
@@ -245,15 +257,15 @@ namespace MediaPortal.PowerScheduler
 			switch (_shutDownMode.ToLower())
 			{
 				case "suspend":
-					LogDebug("Suspend system -> WakeUp at {0}", _wakeupTime);
+					Log.Info("PowerScheduler: Suspend system -> WakeUp at {0}", _wakeupTime);
 					MediaPortal.Util.Utils.SuspendSystem(_forceShutDown);
 					break;
 				case "hibernate":
-					LogDebug("Hibernate system -> WakeUp at {0}", _wakeupTime);
+					Log.Info("PowerScheduler: Hibernate system -> WakeUp at {0}", _wakeupTime);
 					MediaPortal.Util.Utils.HibernateSystem(_forceShutDown);
 					break;
 				case "shutdown":
-					LogDebug("ShutDown system");
+					Log.Info("PowerScheduler: ShutDown system");
 					WindowsController.ExitWindows(RestartOptions.ShutDown, _forceShutDown);
 					break;
 			}
@@ -373,9 +385,17 @@ namespace MediaPortal.PowerScheduler
 		{
 			if (_reinitRecorder)
 			{
-				LogDebug("Re-init Recorder");
-				Recorder.Stop();
-				Recorder.Start();
+				if (Recorder.IsAnyCardRecording())
+				{
+					LogDebug("Reinit Recorder cancled due to running Recording");
+				}
+				else
+				{
+					LogDebug("Reinit Recorder -> Start");
+					Recorder.Stop();
+					Recorder.Start();
+					LogDebug("Reinit Recorder -> Done");
+				}
 			}
 		}
 		#endregion
@@ -431,6 +451,7 @@ namespace MediaPortal.PowerScheduler
 					case PBT_APMSUSPEND:
 						LogDebug("OnSuspend->StopTimer");
 						StopTimer();
+						_onResumeRunning = false;
 						break;
 
 					//The PBT_APMRESUMECRITICAL event is broadcast as a notification that the system has resumed operation. 
@@ -444,9 +465,13 @@ namespace MediaPortal.PowerScheduler
 					//The PBT_APMRESUMEAUTOMATIC event is broadcast when the computer wakes up automatically to
 					//handle an event. An application will not generally respond unless it is handling the event, because the user is not present.
 					case PBT_APMRESUMEAUTOMATIC:
-						LogDebug("OnResume->Start");
-						Start();
-						OnResume();
+						if (!_onResumeRunning)
+						{
+							_onResumeRunning = true;
+							LogDebug("OnResume->Start");
+							OnResume();
+							Start();
+						}
 						break;
 				}
 			}
@@ -499,12 +524,12 @@ namespace MediaPortal.PowerScheduler
 		
 		public bool DefaultEnabled()
 		{
-			return true;
+			return false;
 		}
 
 		public int GetWindowId()
 		{
-			return 8765;
+			return 6039;
 		}
 
 		public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
