@@ -1141,7 +1141,13 @@ namespace MediaPortal.GUI.Library
 
       return false;
     }
-
+    static public TransformMatrix ControlTransform
+    {
+      get
+      {
+        return _finalTransform;
+      }
+    }
 
     static public void SetWindowTransform(TransformMatrix matrix)
     {

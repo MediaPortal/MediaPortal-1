@@ -57,6 +57,8 @@ namespace MediaPortal.GUI.Library
 
     public void AddControl(GUIControl control)
     {
+      if (base.Animations.Count != 0)
+        control.Animations.AddRange(base.Animations);
       control.DimColor = DimColor;
       Children.Add(control);
     }
@@ -97,7 +99,7 @@ namespace MediaPortal.GUI.Library
       uint currentTime = (uint)(DXUtil.Timer(DirectXTimer.GetAbsoluteTime) * 1000.0);
       foreach (GUIControl control in Children)
       {
-       // control.UpdateEffectState(currentTime);
+        control.UpdateEffectState(currentTime);
         control.Render(timePassed);
       }
 
@@ -293,6 +295,8 @@ namespace MediaPortal.GUI.Library
       if (value is GUIControl == false)
         return;
       GUIControl cntl = (GUIControl)value;
+      if (base.Animations.Count != 0)
+        cntl.Animations.AddRange(base.Animations);
       cntl.DimColor = DimColor;
       Children.Add(cntl);
     }
@@ -397,11 +401,15 @@ namespace MediaPortal.GUI.Library
 
     public override void QueueAnimation(AnimationType animType)
     {
-      base.QueueAnimation(animType);
+      
+      foreach (GUIControl control in Children)
+      {
+        control.QueueAnimation(animType);
+      }
     }
     public override List<VisualEffect> GetAnimations(AnimationType type, bool checkConditions)
     {
-      List<VisualEffect> effects = base.GetAnimations(type, checkConditions);
+      List<VisualEffect> effects = new List<VisualEffect>();
       
       foreach (GUIControl control in Children)
       {
@@ -415,8 +423,7 @@ namespace MediaPortal.GUI.Library
     }
     public override VisualEffect GetAnimation(AnimationType type, bool checkConditions /* = true */)
     {
-      VisualEffect effect = base.GetAnimation(type, checkConditions);
-      if (effect != null) return effect;
+      VisualEffect effect = null;
       foreach (GUIControl control in Children)
       {
         if (control != null)
@@ -429,7 +436,6 @@ namespace MediaPortal.GUI.Library
     }
     public override bool IsEffectAnimating(AnimationType animType)
     {
-      if (base.IsEffectAnimating(animType)) return true;
       foreach (GUIControl control in Children)
       {
         if (control != null)
@@ -439,10 +445,6 @@ namespace MediaPortal.GUI.Library
         }
       }
       return false;
-    }
-    public override void UpdateEffectState(uint currentTime)
-    {
-      base.UpdateEffectState(currentTime);
     }
 
 
