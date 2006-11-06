@@ -110,6 +110,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\PluginIconsAttribute.cs" />
     <Compile Include="Service\LogSharedFileWriter.cs" />
     <Compile Include="Service\LogFile.cs" />
     <Compile Include="Service\Log.cs" />

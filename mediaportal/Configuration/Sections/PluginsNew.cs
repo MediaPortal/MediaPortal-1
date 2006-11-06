@@ -304,7 +304,7 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="tag">The <see cref="ItemTag"/> to store the images in.</param>
     private static void LoadPluginImages(Type type, ItemTag tag)
     {
-      PluginIconsAttribute[] icons = (PluginIconsAttribute[]) type.GetCustomAttributes(typeof(PluginIconsAttribute), false);
+      PluginIconsAttribute[] icons = (PluginIconsAttribute[])type.GetCustomAttributes(typeof(PluginIconsAttribute), false);
       if (icons == null || icons.Length == 0)
       {
         return;
