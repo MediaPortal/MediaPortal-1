@@ -9,8 +9,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Team Mediaportal")]
-[assembly: AssemblyProduct("ConflictsManager.Properties")]
-[assembly: AssemblyCopyright("Team Mediaportal")]
+[assembly: AssemblyProduct("ConflictsManager")]
+[assembly: AssemblyCopyright("Copyright © Team MediaPortal 2006")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
