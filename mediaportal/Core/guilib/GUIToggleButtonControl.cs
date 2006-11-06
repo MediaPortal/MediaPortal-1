@@ -59,7 +59,7 @@ namespace MediaPortal.GUI.Library
     protected int _textOffsetY = 0;
     [XMLSkinElement("textalign")]
     protected GUIControl.Alignment _textAlignment = GUIControl.Alignment.ALIGN_LEFT;
-    
+
 
     public GUIToggleButtonControl(int parentId)
       : base(parentId)
@@ -80,16 +80,16 @@ namespace MediaPortal.GUI.Library
     {
       base.FinalizeConstruction();
 
-			_imageFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _focusedTextureName);
+      _imageFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _focusedTextureName);
       _imageFocused.ParentControl = this;
 
-			_imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _nonFocusedTextureName);
+      _imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _nonFocusedTextureName);
       _imageNonFocused.ParentControl = this;
 
-			_imageAlternativeFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _alternativeFocusTextureName);
+      _imageAlternativeFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _alternativeFocusTextureName);
       _imageAlternativeFocused.ParentControl = this;
 
-			_imageAlternativeNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _alternativeNonFocusTextureName);
+      _imageAlternativeNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _alternativeNonFocusTextureName);
       _imageAlternativeNonFocused.ParentControl = this;
       if (_fontName != "" && _fontName != "-")
         _font = GUIFontManager.GetFont(_fontName);
@@ -143,20 +143,24 @@ namespace MediaPortal.GUI.Library
         if (Dimmed)
           color &= (DimColor);
 
-		// render the text on the button
-	    int x = 0;
-	
-	    switch (_textAlignment)
-	    {
-	      case Alignment.ALIGN_LEFT:
-	        x = _textOffsetX + _positionX;
-	       break;
-	 
-	      case Alignment.ALIGN_RIGHT:
-	       x = _positionX + _width - _textOffsetX;
-	       break;
-	     } 
-        _font.DrawText(x, (float)_textOffsetY + _positionY, color, _label, _textAlignment, -1);
+        // render the text on the button
+        int x = 0;
+
+        switch (_textAlignment)
+        {
+          case Alignment.ALIGN_LEFT:
+            x = _textOffsetX + _positionX;
+            break;
+
+          case Alignment.ALIGN_RIGHT:
+            x = _positionX + _width - _textOffsetX;
+            break;
+        }
+        float x1 = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(x, _textOffsetY + _positionY) + 0.5f) - 0.5f;
+        float y1 = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(x, _textOffsetY + _positionY) + 0.5f) - 0.5f;
+        uint c = (uint)color;
+        c = GUIGraphicsContext.MergeAlpha(c);
+        _font.DrawText(x1, (float)y1, c, _label, _textAlignment, -1);
       }
       base.Render(timePassed);
     }
@@ -354,7 +358,7 @@ namespace MediaPortal.GUI.Library
       get { return _textOffsetY; }
       set { _textOffsetY = value; }
     }
-    
+
     public override int DimColor
     {
       get { return base.DimColor; }
