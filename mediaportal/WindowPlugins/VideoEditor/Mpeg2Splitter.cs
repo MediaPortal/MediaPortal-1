@@ -24,8 +24,8 @@
 #endregion
 
 #define ENABLE_FAST_SEEK
-//#define ENABLE_SCR_CORRECT_TIME_STAMP
-//#define ENABLE_PTS_DTS_CORRECT_TIME_STAMP
+#define ENABLE_SCR_CORRECT_TIME_STAMP
+#define ENABLE_PTS_DTS_CORRECT_TIME_STAMP
 
 using System;
 using System.Collections.Generic;
