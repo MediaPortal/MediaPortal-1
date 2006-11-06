@@ -88,7 +88,7 @@ namespace MediaPortal.PowerScheduler
         cobx_shutdown.Text = xmlreader.GetValueAsString("powerscheduler", "shutdownmode", "Suspend");
         cbxExtensive.Checked = xmlreader.GetValueAsBool("powerscheduler", "extensivelogging", false);
         cbxForced.Checked = xmlreader.GetValueAsBool("powerscheduler", "forcedshutdown", false);
-        cbxReinit.Checked = xmlreader.GetValueAsBool("powerscheduler", "reinitonresume", true);
+        cbxReinit.Checked = xmlreader.GetValueAsBool("powerscheduler", "reinitonresume", false);
 
       }
     }
@@ -224,7 +224,7 @@ namespace MediaPortal.PowerScheduler
       this.cbxReinit.Name = "cbxReinit";
       this.cbxReinit.Size = new System.Drawing.Size(138, 17);
       this.cbxReinit.TabIndex = 18;
-      this.cbxReinit.Text = "Re-init tuners on resume";
+      this.cbxReinit.Text = "Re-init tuners on resume (may cause issues)";
       this.cbxReinit.UseVisualStyleBackColor = true;
       // 
       // nud_wakeup
@@ -255,7 +255,7 @@ namespace MediaPortal.PowerScheduler
       this.Controls.Add(this.groupBox1);
       this.Name = "PowerSchedulerSetupForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-      this.Text = "Power Scheduler configuration 0.3";
+      this.Text = "Power scheduler configuration";
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nud_wakeup)).EndInit();
