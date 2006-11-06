@@ -495,8 +495,8 @@ namespace MediaPortal.GUI.Library
         {
           MenuButtonInfo info = _buttonInfos[i];
           GUIButtonControl button = new GUIButtonControl(GetID, controlID, buttonX, buttonY, _buttonWidth, _buttonHeight,
-                                    (info.FocusTextureName != null) ? info.FocusTextureName : _textureButtonFocus,
-                                    (info.NonFocusTextureName != null) ? info.NonFocusTextureName : _textureButtonNoFocus);
+                                    (info.FocusTextureName != "") ? info.FocusTextureName : _textureButtonFocus,
+                                    (info.NonFocusTextureName != "") ? info.NonFocusTextureName : _textureButtonNoFocus);
           button.Label = info.Text;
           button.Data = info;
           button.ParentControl = this;
