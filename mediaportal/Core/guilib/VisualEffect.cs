@@ -265,7 +265,7 @@ namespace MediaPortal.GUI.Library
           string centerPos = nodeAttribute.Value;
           GetPosition(centerPos, ref _centerX, ref _centerY);
           GUIGraphicsContext.ScaleHorizontal(ref _centerX);
-          GUIGraphicsContext.ScaleHorizontal(ref _centerY);
+          GUIGraphicsContext.ScaleVertical(ref _centerY);
         }
       }
       else // if (effect == EffectType.Zoom)
