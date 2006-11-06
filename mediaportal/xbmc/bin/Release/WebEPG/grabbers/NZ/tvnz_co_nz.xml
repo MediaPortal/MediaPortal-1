@@ -1,36 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!-- tvnz_co_nz.xml  Version 1.0 -->
-
-<profile>
-  <section name="ChannelList">
-    <entry name="tvone@tvnz.co.nz">tvone_epg_skin/channelDesc=tv_one</entry>
-    <entry name="tv2@tvnz.co.nz">tv2_epg_skin/channelDesc=tv2</entry>
-  </section>
-
-<!-- Formating of Listing -->
-  <section name="Listing"> 
-    <entry name="BaseURL">http://tvnz.co.nz/view/</entry>
-    <entry name="SearchURL">[ID]&amp;date=[DD][MM][YYYY]</entry>
-
-<!-- Unique Listing Start string -->
-    <entry name="Start">epg_programmes_content_container</entry>
-
-<!-- Unique Listing End string -->
-
-<!--    <entry name="End">Button_top_p.gif</entry> -->
-
-    <entry name="Tags">DS</entry>
-<!-- Template of the Listing information -->
-    <entry name="Template">
-&#60;div&#62;
-&#60;strong&#62;&#60;#TITLE&#62;&#60;/strong&#62;&#60;#START&#62;&#60;/div&#62;                                       
-&#60;div&#62;&#60;#DESCRIPTION&#62;&#60;/div&#62;
-    </entry>
-  </section>
-  <section name="Info">
-    <entry name="GuideDays">7</entry>
-    <entry name="Language">en</entry>
-    <entry name="TimeZone">New Zealand Standard Time</entry>
-  </section>
-</profile>
+<Grabber>
+  <Info availableDays="7" timezone="New Zealand Standard Time" />
+  <Channels>
+    <Channel id="tvone@tvnz.co.nz" siteId="tvone_epg_skin/channelDesc=tv_one" />
+    <Channel id="tv2@tvnz.co.nz" siteId="tv2_epg_skin/channelDesc=tv2" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://tvnz.co.nz/view/[ID]&amp;date=[DD][MM][YYYY]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="epg_programmes_content_container">
+        <SectionTemplate tags="DS">
+          <TemplateText>
+&lt;div&gt;
+&lt;strong&gt;&lt;#TITLE&gt;&lt;/strong&gt;&lt;#START&gt;&lt;/div&gt;                                       
+&lt;div&gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

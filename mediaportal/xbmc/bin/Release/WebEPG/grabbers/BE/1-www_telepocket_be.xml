@@ -1,96 +1,73 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
-<!-- www_telemousique_be.xml  Version 1.1 -->
-
-<profile>
-  <section name="ChannelList">
-
-<!-- National - Francophone -->
-    <entry name="la1.be">LA%20UNE</entry>				<!-- La Une -->
-    <entry name="ladeux.be">La%20Deux</entry>				<!-- La Deux -->
-    <entry name="tvi@rtl.be">RTL%20TVI</entry>				<!-- RTL-TVI -->
-    <entry name="club@rtl.be">Club%20RTL</entry>			<!-- ClubRTL -->
-    <entry name="ab3@rtl.be">AB3</entry>				<!-- AB 3 -->
-    <entry name="ab4@rtl.be">AB4</entry>				<!-- AB 4 -->
-
-    <entry name="plug@rtl.be">PLUGTV</entry>				<!-- PLUG-TV -->
-    <entry name="1@betv.be">BE1</entry>					<!-- Be1 -->
-    <entry name="cine1@betv.be">BE%20CINE1</entry>			<!-- Be Ciné 1 -->
-    <entry name="cine2@betv.be">BE%20CINE2</entry>			<!-- Be Ciné 2 -->
-    <entry name="sport1@betv.be">BE%20SPORT1</entry>			<!-- Be Sport 1 -->
-    <entry name="sport2@betv.be">BE%20SPORT2</entry>			<!-- Be Sport 2 -->
-    <entry name="mcm.be">MCM</entry>					<!-- MCM 100% belge -->
-
-<!-- National - Vlaams -->
-    <entry name="een.be">TV1</entry>					<!-- één -->
-    <entry name="ketnet.be">Ketnet</entry>				<!-- Ketnet -->
-    <entry name="canvas.be">Canvas</entry>				<!-- Canvas -->
-<!--    <entry name="sporza.be">SPORZA</entry>				no program data Sporza -->
-    <entry name="vtm.be">VTM</entry>					<!-- VTM -->
-    <entry name="vt4.be">VT4</entry>					<!-- VT4 -->
-
-<!-- European -->
-    <entry name="tf1.fr">TF1</entry>					<!-- TF1 -->
-    <entry name="france2.fr">France2</entry>				<!-- France 2 -->
-    <entry name="france3.fr">France3</entry>				<!-- France 3 -->
-    <entry name="arte-tv.com">ARTE</entry>					<!-- ARTE -->
-    <entry name="france5.fr">La%20CINQ</entry>				<!-- France 5 -->
-    <entry name="f@tv5.fr">TV5</entry>					<!-- TV5 -->
-    <entry name="m6.fr">M6</entry>					<!-- M6 -->
-    <entry name="bbc1@bbc.co.uk">BBC1</entry>				<!-- BBC1 -->
-    <entry name="bbc2@bbc.co.uk">BBC2</entry>				<!-- BBC2 -->
-    <entry name="bbcworld.com">BBC%20World</entry>			<!-- BBC World -->
-    <entry name="euronews.net">EuroNews</entry>				<!-- EuroNews -->
-    <entry name="ned1@omroep.nl">Hollande1</entry>			<!-- Hollande 1 -->
-    <entry name="ned2@omroep.nl">Hollande2</entry>			<!-- Hollande 2 -->
-    <entry name="ned3@omroep.nl">Hollande3</entry>			<!-- Hollande 3 -->
-    <entry name="ard.de">ALL1</entry>					<!-- ARD - Allemagne 1 -->
-    <entry name="zdf.de">ALL2</entry>					<!-- ZDF - Allemagne 2 -->
-    <entry name="wdr.de">ALL3%20WDR</entry>				<!-- WDR - Allemagne 3 -->
-    <entry name="sw.de">ALL3%20SWF</entry>				<!-- SWF - Allemagne 3 -->
-    <entry name="rtl.de">RTL%20Allemagne</entry>			<!-- RTL Allemagne -->
-    <entry name="raiuno.rai.it">RAI</entry>				<!-- Rai Uno -->
-    <entry name="tve.es">TVE</entry>					<!-- TVE -->
-    <entry name="international@rtp.pt">RTP%20Internacional</entry>	<!-- RTPi -->
-
-<!-- International -->
-    <entry name="cnni-emea@cnn.com">CNN</entry>				<!-- CNN International - EMEA -->
-    <entry name="cnbc.com">CNBC</entry>					<!-- CNBC -->
-    <entry name="mtv.com">MTV</entry>					<!-- MTV -->
-  </section>
-
-<!-- Formating of Listing -->
-  <section name="Listing">
-    <entry name="BaseURL">http://www.telepocket.be/fr/</entry>
-    <entry name="SearchURL">zender.asp?move=full&amp;channel=[ID]&amp;dag=[_M]/[_D]/[YYYY]</entry>
-
-<!-- Unique Listing Start string -->
-    <entry name="Start">Complet</entry>
-
-<!-- Unique Listing End string -->
-    <entry name="End">&#60;/body&#62;</entry>
-
-<!-- Template of the Listing information -->
-    <entry name="Template">
-	&#60;tr&#62;
-	&#60;td&#62;&#60;/td&#62;
-	&#60;td&#62;&#60;#START&#62;&#60;/td&#62;
-	&#60;td&#62;&#60;#END&#62;&#60;/td&#62;
-	&#60;td&#62;&#60;#TITLE&#62;&#60;/td&#62;
-	&#60;td&#62;&#60;#GENRE&#62;&#60;/td&#62;
-	&#60;td&#62;&#60;/td&#62;
-	&#60;/tr&#62;
-	&#60;tr&#62;
-	&#60;td&#62;&#60;/td&#62;
-	&#60;td&#62;&#60;/td&#62;
-	&#60;td&#62;&#60;#DESCRIPTION&#62;&#60;/td&#62;
-	&#60;td&#62;&#60;/td&#62;
-	&#60;/tr&#62;</entry>
-  </section>
-  <section name="Info">
-    <entry name="GuideDays">3</entry>
-    <entry name="Language">fr</entry>
-    <entry name="SiteDescription">Telepocket</entry>
-    <entry name="TimeZone">W. Europe Standard Time</entry>
-  </section>
-</profile>
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info availableDays="3" timezone="W. Europe Standard Time" />
+  <Channels>
+    <Channel id="la1.be" siteId="LA%20UNE" />
+    <Channel id="ladeux.be" siteId="La%20Deux" />
+    <Channel id="tvi@rtl.be" siteId="RTL%20TVI" />
+    <Channel id="club@rtl.be" siteId="Club%20RTL" />
+    <Channel id="ab3@rtl.be" siteId="AB3" />
+    <Channel id="ab4@rtl.be" siteId="AB4" />
+    <Channel id="plug@rtl.be" siteId="PLUGTV" />
+    <Channel id="1@betv.be" siteId="BE1" />
+    <Channel id="cine1@betv.be" siteId="BE%20CINE1" />
+    <Channel id="cine2@betv.be" siteId="BE%20CINE2" />
+    <Channel id="sport1@betv.be" siteId="BE%20SPORT1" />
+    <Channel id="sport2@betv.be" siteId="BE%20SPORT2" />
+    <Channel id="mcm.be" siteId="MCM" />
+    <Channel id="een.be" siteId="TV1" />
+    <Channel id="ketnet.be" siteId="Ketnet" />
+    <Channel id="canvas.be" siteId="Canvas" />
+    <Channel id="vtm.be" siteId="VTM" />
+    <Channel id="vt4.be" siteId="VT4" />
+    <Channel id="tf1.fr" siteId="TF1" />
+    <Channel id="france2.fr" siteId="France2" />
+    <Channel id="france3.fr" siteId="France3" />
+    <Channel id="arte-tv.com" siteId="ARTE" />
+    <Channel id="france5.fr" siteId="La%20CINQ" />
+    <Channel id="f@tv5.fr" siteId="TV5" />
+    <Channel id="m6.fr" siteId="M6" />
+    <Channel id="bbc1@bbc.co.uk" siteId="BBC1" />
+    <Channel id="bbc2@bbc.co.uk" siteId="BBC2" />
+    <Channel id="bbcworld.com" siteId="BBC%20World" />
+    <Channel id="euronews.net" siteId="EuroNews" />
+    <Channel id="ned1@omroep.nl" siteId="Hollande1" />
+    <Channel id="ned2@omroep.nl" siteId="Hollande2" />
+    <Channel id="ned3@omroep.nl" siteId="Hollande3" />
+    <Channel id="ard.de" siteId="ALL1" />
+    <Channel id="zdf.de" siteId="ALL2" />
+    <Channel id="wdr.de" siteId="ALL3%20WDR" />
+    <Channel id="sw.de" siteId="ALL3%20SWF" />
+    <Channel id="rtl.de" siteId="RTL%20Allemagne" />
+    <Channel id="raiuno.rai.it" siteId="RAI" />
+    <Channel id="tve.es" siteId="TVE" />
+    <Channel id="international@rtp.pt" siteId="RTP%20Internacional" />
+    <Channel id="cnni-emea@cnn.com" siteId="CNN" />
+    <Channel id="cnbc.com" siteId="CNBC" />
+    <Channel id="mtv.com" siteId="MTV" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.telepocket.be/fr/zender.asp?move=full&amp;channel=[ID]&amp;dag=[_M]/[_D]/[YYYY]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="Complet" end="&lt;/body&gt;">
+        <SectionTemplate tags="T">
+          <TemplateText>
+	&lt;tr&gt;
+	&lt;td&gt;&lt;/td&gt;
+	&lt;td&gt;&lt;#START&gt;&lt;/td&gt;
+	&lt;td&gt;&lt;#END&gt;&lt;/td&gt;
+	&lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
+	&lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;
+	&lt;td&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+	&lt;td&gt;&lt;/td&gt;
+	&lt;td&gt;&lt;/td&gt;
+	&lt;td&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
+	&lt;td&gt;&lt;/td&gt;
+	&lt;/tr&gt;</TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

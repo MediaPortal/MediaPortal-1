@@ -1,62 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<profile>
-
-<!-- Channel section lists all the channels available from this website. -->
-
-  <section name="ChannelList">
-
-    <entry name="tv1@yle.fi">1076152536046</entry>			<!-- TV1 -->
-    <entry name="tv2@yle.fi">1076152536062</entry>			<!-- TV2 -->
-    <entry name="mtv3@mtv3.fi">1076152536012</entry>			<!-- MTV3 -->
-    <entry name="nelonen@nelonen.fi">1076152536037</entry>		<!-- Nelonen -->
-    <entry name="subtv.fi">1076152536083</entry>			<!-- Subtv -->
-    <entry name="fst.fi">1076152536074</entry>				<!-- FST -->
-    <entry name="yleteema@yle.fi">1076152536130</entry>			<!-- Yle Teema -->
-    <entry name="yle24@yle.fi">1076152536134</entry>			<!-- Yle 24 -->
-    <entry name="urheilukanava.fi">1076152536114</entry>		<!-- Urheilukanava -->
-    <entry name="mtv3+@mtv3.fi">1076152569751</entry>			<!-- MTV3+ -->
-    <entry name="nelonenplus@nelonen.fi">1076152569766</entry>		<!-- Nelonen Plus -->
-    <entry name="thevoice.fi">1101978368206</entry>			<!-- The Voice -->
-    <entry name="canalplus@canalplus.fi">1076152569706</entry>		<!-- Canal+-->
-    <entry name="canalplusfilm1@canalplus.fi">1076152569708</entry>	<!-- Canal+ Film1 -->
-    <entry name="canalplusfilm2@canalplus.fi">1076152569710</entry>	<!-- Canal+ Film2 -->
-    <entry name="canalplussport@canalplus.fi">1101978367954</entry>	<!-- Canal+ Sport -->    
-
-  </section>
-
-<!-- Formating of Listing -->
-  <section name="Listing">
-    <entry name="BaseURL">http://nyt.hs.fi/televisio/</entry>
-    <entry name="SearchURL">[ID]/[DAY_NAME]</entry>
-
-<!-- Unique Listing Start string -->
-    <entry name="Start">pieni_webkuva</entry>
-
-<!-- Template of the Listing information -->
-    <entry name="Template">
-&#60;tr&#62;
-&#60;td&#62;&#60;/td&#62;
-&#60;td&#62;&#60;#START&#62;&#60;/td&#62;
-&#60;td&#62;&#60;/td&#62;
-&#60;td&#62;&#60;#TITLE&#62;&#60;br&#62;&#60;#DESCRIPTION&#62;&#60;/td&#62;
-&#60;td&#62;&#60;/td&#62;
-&#60;/tr&#62;
-    </entry>
-  </section>
-
-  <section name="DayNames">
-    <entry name="0">tanaan</entry>
-    <entry name="1">huomenna</entry>
-    <entry name="2">ylihuomenna</entry>
-    <entry name="3">plus3</entry>
-    <entry name="4">plus4</entry>
-    <entry name="5">plus5</entry>
-    <entry name="6">plus6</entry>
-  </section>
-
-  <section name="Info">
-    <entry name="GuideDays">7</entry>
-    <entry name="Lang">fi</entry>
-  </section>
-</profile>
+<Grabber>
+  <Info language="fi" availableDays="7" timezone="" />
+  <Channels>
+    <Channel id="tv1@yle.fi" siteId="1076152536046" />
+    <Channel id="tv2@yle.fi" siteId="1076152536062" />
+    <Channel id="mtv3@mtv3.fi" siteId="1076152536012" />
+    <Channel id="nelonen@nelonen.fi" siteId="1076152536037" />
+    <Channel id="subtv.fi" siteId="1076152536083" />
+    <Channel id="fst.fi" siteId="1076152536074" />
+    <Channel id="yleteema@yle.fi" siteId="1076152536130" />
+    <Channel id="yle24@yle.fi" siteId="1076152536134" />
+    <Channel id="urheilukanava.fi" siteId="1076152536114" />
+    <Channel id="mtv3+@mtv3.fi" siteId="1076152569751" />
+    <Channel id="nelonenplus@nelonen.fi" siteId="1076152569766" />
+    <Channel id="thevoice.fi" siteId="1101978368206" />
+    <Channel id="canalplus@canalplus.fi" siteId="1076152569706" />
+    <Channel id="canalplusfilm1@canalplus.fi" siteId="1076152569708" />
+    <Channel id="canalplusfilm2@canalplus.fi" siteId="1076152569710" />
+    <Channel id="canalplussport@canalplus.fi" siteId="1101978367954" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://nyt.hs.fi/televisio/[ID]/[DAY_NAME]" post="" external="false" encoding="" />
+    <Search startOffset="0" maxlistings="0" startPage="0">
+      <DayNames>
+        <Day>tanaan</Day>
+        <Day>huomenna</Day>
+        <Day>ylihuomenna</Day>
+        <Day>plus3</Day>
+        <Day>plus4</Day>
+        <Day>plus5</Day>
+        <Day>plus6</Day>
+      </DayNames>
+    </Search>
+    <Html>
+      <Template name="default" start="pieni_webkuva">
+        <SectionTemplate tags="T">
+          <TemplateText>
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#START&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#TITLE&gt;&lt;br&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

@@ -1,39 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!-- tvnz_co_nz.xml  Version 1.0 -->
-
-<profile>
-  <section name="ChannelList">
-    <entry name="tudiscovery.com">13</entry>
-    <entry name="tudiscoverykids.com">14</entry>
-  </section>
-
-<!-- Formating of Listing -->
-  <section name="Listing">
-    <entry name="BaseURL">http://www.vtr.cl/portalcable/buscador/</entry>
-    <entry name="SearchURL">buscador_control.php?pagina=1&amp;palabra=&amp;canal=[ID]&amp;dia=[_D]&amp;hora=hh&amp;rep=1&amp;ordenar=1&amp;offset=[LIST_OFFSET]&amp;offsetPagina=1</entry>
-
-    <entry name="MaxCount">10</entry>
-<!-- Unique Listing Start string -->
-    <entry name="Start">cabeceraTablaResultadoDestacada</entry>
-
-<!-- Unique Listing End string -->
-
-    <entry name="End">cuerpoTablaResultadoFin</entry>
-
-    <entry name="Tags">T</entry>
-<!-- Template of the Listing information -->
-    <entry name="Template">
-&#60;tr&#62;
-&#60;td&#62;&#60;br&#62;&#60;#START&#62;&#60;/td&#62;
-&#60;td&#62;&#60;table&#62;&#60;tr&#62;&#60;td&#62;&#60;/td&#62;&#60;/tr&#62;&#60;/table&#62;&#60;/td&#62;
-&#60;td&#62;&#60;#TITLE&#62;&#60;/td&#62;
-&#60;td&#62;&#60;#GENRE&#62;&#60;/td&#62;
-    </entry>
-  </section>
-  <section name="Info">
-    <entry name="GuideDays">2</entry>
-    <entry name="Language">es</entry>
-<!--     <entry name="TimeZone">Greenwich Standard Time</entry> -->
-  </section>
-</profile>
+<Grabber>
+  <Info availableDays="2" timezone="" />
+  <Channels>
+    <Channel id="tudiscovery.com" siteId="13" />
+    <Channel id="tudiscoverykids.com" siteId="14" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.vtr.cl/portalcable/buscador/buscador_control.php?pagina=1&amp;palabra=&amp;canal=[ID]&amp;dia=[_D]&amp;hora=hh&amp;rep=1&amp;ordenar=1&amp;offset=[LIST_OFFSET]&amp;offsetPagina=1" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="cabeceraTablaResultadoDestacada" end="cuerpoTablaResultadoFin">
+        <SectionTemplate tags="T">
+          <TemplateText>
+&lt;tr&gt;
+&lt;td&gt;&lt;br&gt;&lt;#START&gt;&lt;/td&gt;
+&lt;td&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

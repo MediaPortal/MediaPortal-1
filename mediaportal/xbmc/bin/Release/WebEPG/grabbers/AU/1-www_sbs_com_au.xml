@@ -1,40 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<profile>
-
-<!-- Channel section lists all the channels available from this website. -->
-
-  <section name="ChannelList">
-
-    <entry name="sbs@sbs.com.au">SBS</entry>		<!-- SBS -->
-
-
-  </section>
-
-<!-- Formating of Listing -->
-  <section name="Listing">
-    <entry name="BaseURL">http://www.sbs.com.au/whatson/</entry>
-    <entry name="SearchURL">index.php3?progdate=[DD]:[MM]:[YYYY]</entry>
-
-    <entry name="Ahrefs">no</entry>
-
-<!-- Unique Listing Start string -->
-    <entry name="Start">MORNING</entry>
-
-<!-- Template of the Listing information -->
-    <entry name="Template">
-&#60;tr&#62;
-&#60;td&#62;&#60;#START&#62;&#60;/td&#62;
-&#60;td&#62;&#60;#TITLE&#62;&#60;/td&#62;
-&#60;/tr&#62;
-&#60;tr&#62;
-&#60;td&#62;&#60;/td&#62;
-&#60;td&#62;&#60;#DESCRIPTION&#62;&#60;br&#62;&#60;/td&#62;
-&#60;/tr&#62;
-    </entry>
-  </section>
-  <section name="Info">
-    <entry name="GuideDays">4</entry>
-    <entry name="Lang">en</entry>
-  </section>
-</profile>
+<Grabber>
+  <Info language="en" availableDays="4" timezone="" />
+  <Channels>
+    <Channel id="sbs@sbs.com.au" siteId="SBS" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.sbs.com.au/whatson/index.php3?progdate=[DD]:[MM]:[YYYY]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="MORNING">
+        <SectionTemplate tags="T">
+          <TemplateText>
+&lt;tr&gt;
+&lt;td&gt;&lt;#START&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#DESCRIPTION&gt;&lt;br&gt;&lt;/td&gt;
+&lt;/tr&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

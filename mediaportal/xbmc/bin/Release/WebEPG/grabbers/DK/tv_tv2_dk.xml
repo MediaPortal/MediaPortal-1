@@ -1,68 +1,55 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
-<profile>
-
-<!-- Channel section lists all the channels available from this website. -->
-
-  <section name="ChannelList">
-
-    <entry name="tv2@tv2.dk">Region=1&amp;KanalID=1</entry>				<!-- TV2 -->
-    <entry name="tv2zulu@tv2.dk">Region=1&amp;KanalID=2</entry>			<!-- TV2 Zulu -->
-    <entry name="tv2charlie@tv2.dk">Region=1&amp;KanalID=152</entry>		<!-- TV2 Charlie -->
-    <entry name="dr1@dr.dk">Region=1&amp;KanalID=3</entry>				<!-- DR1 -->
-    <entry name="dr2@dr.dk">Region=1&amp;KanalID=4</entry>				<!-- DR2 -->
-    <entry name="tv3@tv3.dk">Region=1&amp;KanalID=6</entry>				<!-- TV3 -->
-    <entry name="tv3+@tv3.dk">Region=1&amp;KanalID=5</entry>			<!-- TV3+ -->
-    <entry name="tvdanmark2@tvdanmark.dk">Region=1&amp;KanalID=8</entry>	<!-- TV Danmark -->
-    <entry name="kanal5.dk">Region=1&amp;KanalID=7</entry>				<!-- Kanal 5 -->
-    <entry name="canal+@canalplus.dk">Region=1&amp;KanalID=9</entry>		<!-- Canal+ -->
-    <entry name="canal+film1@canalplus.dk">Region=1&amp;KanalID=10</entry>	<!-- Canal+ Film1 -->
-    <entry name="canal+film2@canalplus.dk">Region=1&amp;KanalID=148</entry>	<!-- Canal+ Film2 -->
-    <entry name="tv1000@tv1000.dk">Region=1&amp;KanalID=11</entry>		<!-- TV1000 -->
-    <entry name="tv1000classic@tv1000.dk">Region=1&amp;KanalID=12</entry>	<!-- TV1000 Classic -->
-    <entry name="viasatsport1@viasat.dk">Region=1&amp;KanalID=149</entry>	<!-- ViaSat Sport1 -->
-    <entry name="eurosport@eurosport.com">Region=1&amp;KanalID=13</entry>	<!-- Eurosport -->
-    <entry name="kanal-kbh.dk">Region=1&amp;KanalID=109</entry>			<!-- Kanal København -->
-    <entry name="dk4.dk">Region=1&amp;KanalID=14</entry>				<!-- DK4 -->
-    
-    <entry name="svt1@svt.dk">Region=3&amp;KanalID=24</entry>			<!-- Sverige 1 -->
-    <entry name="svt2@svt.dk">Region=3&amp;KanalID=25</entry>			<!-- Sverige 2 -->
-    <entry name="tv4@svt.dk">Region=3&amp;KanalID=27</entry>			<!-- TV4 Sverige -->
-    <entry name="nrk1@nrk.no">Region=3&amp;KanalID=31</entry>			<!-- NRK 1 -->
-    <entry name="tv2.no">Region=3&amp;KanalID=33</entry>			<!-- TV2 Norge  -->
-    
-    <entry name="bbcprime.com">Region=4&amp;KanalID=37</entry>			<!-- BBC Prime  -->
-    <entry name="bbcworld.com">Region=4&amp;KanalID=38</entry>			<!-- BBC World  -->
-    <entry name="cartoon.dk">Region=4&amp;KanalID=39</entry>			<!-- Cartoon Network  -->
-    <entry name="cnni-emea@cnn.com">Region=4&amp;KanalID=40</entry>		<!-- CNN -->
-    <entry name="discovery.dk">Region=4&amp;KanalID=41</entry>	<!-- Discovery Channel -->
-    <entry name="animalplanet.dk">Region=4&amp;KanalID=36</entry>	<!-- Animal Planet  -->
-    <entry name="mtve.com">Region=4&amp;KanalID=42</entry>				<!-- MTV Europe  -->
-    <entry name="nationalgeographicchannel.dk">Region=4&amp;KanalID=43</entry>	<!-- National Geographic Channel  -->
-    <entry name="vh1.com">Region=4&amp;KanalID=52</entry>				<!-- VH-1  -->
-    <entry name="hallmarkchannel.co.uk">Region=4&amp;KanalID=98</entry>		<!-- Hallmark -->
-    <entry name="tcmeurope.com">Region=4&amp;KanalID=101</entry>				<!-- TCM -->
-
-  </section>
-
-<!-- Formating of Listing -->
-  <section name="Listing">
-    <entry name="BaseURL">http://tv.tv2.dk/tv/</entry>
-    <entry name="SearchURL">listning.php?[ID]&amp;Soegeord=&amp;Dato=[DAY_OFFSET]&amp;Kategori=0&amp;Periode=1</entry>
-
-    <entry name="Tags">D</entry>
-
-<!-- Template of the Listing information -->
-    <entry name="Template">
-&#60;div&#62;
-&#60;div&#62;&#60;#START&#62; &#60;#TITLE&#62;&#60;/div&#62;
-&#60;div&#62;&#60;#GENRE&#62;&#60;/div&#62;
-&#60;div&#62;&#60;#DESCRIPTION&#62;&#60;div&#62;
-    </entry>
-  </section>
-  <section name="Info">
-    <entry name="GuideDays">6</entry>
-    <entry name="Lang">da</entry>
-    <entry name="TimeZone">W. Europe Standard Time</entry>
-  </section>
-</profile>
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="da" availableDays="6" timezone="W. Europe Standard Time" />
+  <Channels>
+    <Channel id="tv2@tv2.dk" siteId="Region=1&amp;KanalID=1" />
+    <Channel id="tv2zulu@tv2.dk" siteId="Region=1&amp;KanalID=2" />
+    <Channel id="tv2charlie@tv2.dk" siteId="Region=1&amp;KanalID=152" />
+    <Channel id="dr1@dr.dk" siteId="Region=1&amp;KanalID=3" />
+    <Channel id="dr2@dr.dk" siteId="Region=1&amp;KanalID=4" />
+    <Channel id="tv3@tv3.dk" siteId="Region=1&amp;KanalID=6" />
+    <Channel id="tv3+@tv3.dk" siteId="Region=1&amp;KanalID=5" />
+    <Channel id="tvdanmark2@tvdanmark.dk" siteId="Region=1&amp;KanalID=8" />
+    <Channel id="kanal5.dk" siteId="Region=1&amp;KanalID=7" />
+    <Channel id="canal+@canalplus.dk" siteId="Region=1&amp;KanalID=9" />
+    <Channel id="canal+film1@canalplus.dk" siteId="Region=1&amp;KanalID=10" />
+    <Channel id="canal+film2@canalplus.dk" siteId="Region=1&amp;KanalID=148" />
+    <Channel id="tv1000@tv1000.dk" siteId="Region=1&amp;KanalID=11" />
+    <Channel id="tv1000classic@tv1000.dk" siteId="Region=1&amp;KanalID=12" />
+    <Channel id="viasatsport1@viasat.dk" siteId="Region=1&amp;KanalID=149" />
+    <Channel id="eurosport@eurosport.com" siteId="Region=1&amp;KanalID=13" />
+    <Channel id="kanal-kbh.dk" siteId="Region=1&amp;KanalID=109" />
+    <Channel id="dk4.dk" siteId="Region=1&amp;KanalID=14" />
+    <Channel id="svt1@svt.dk" siteId="Region=3&amp;KanalID=24" />
+    <Channel id="svt2@svt.dk" siteId="Region=3&amp;KanalID=25" />
+    <Channel id="tv4@svt.dk" siteId="Region=3&amp;KanalID=27" />
+    <Channel id="nrk1@nrk.no" siteId="Region=3&amp;KanalID=31" />
+    <Channel id="tv2.no" siteId="Region=3&amp;KanalID=33" />
+    <Channel id="bbcprime.com" siteId="Region=4&amp;KanalID=37" />
+    <Channel id="bbcworld.com" siteId="Region=4&amp;KanalID=38" />
+    <Channel id="cartoon.dk" siteId="Region=4&amp;KanalID=39" />
+    <Channel id="cnni-emea@cnn.com" siteId="Region=4&amp;KanalID=40" />
+    <Channel id="discovery.dk" siteId="Region=4&amp;KanalID=41" />
+    <Channel id="animalplanet.dk" siteId="Region=4&amp;KanalID=36" />
+    <Channel id="mtve.com" siteId="Region=4&amp;KanalID=42" />
+    <Channel id="nationalgeographicchannel.dk" siteId="Region=4&amp;KanalID=43" />
+    <Channel id="vh1.com" siteId="Region=4&amp;KanalID=52" />
+    <Channel id="hallmarkchannel.co.uk" siteId="Region=4&amp;KanalID=98" />
+    <Channel id="tcmeurope.com" siteId="Region=4&amp;KanalID=101" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://tv.tv2.dk/tv/listning.php?[ID]&amp;Soegeord=&amp;Dato=[DAY_OFFSET]&amp;Kategori=0&amp;Periode=1" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default">
+        <SectionTemplate tags="D">
+          <TemplateText>
+&lt;div&gt;
+&lt;div&gt;&lt;#START&gt; &lt;#TITLE&gt;&lt;/div&gt;
+&lt;div&gt;&lt;#GENRE&gt;&lt;/div&gt;
+&lt;div&gt;&lt;#DESCRIPTION&gt;&lt;div&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

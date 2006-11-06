@@ -1,167 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!-- The grabber xml file describes how to get the program listing infomation from the page. -->
-<!-- It has the following format: -->
-
-<profile>
-
-<!-- Channel section lists all the channels available from this website. -->
-
-  <section name="ChannelList">
-
-
-	<entry name="svt1@svt.se">21</entry>			<!-- SVT 1 -->
-	<entry name="svt2@svt.se">22</entry>			<!-- SVT 2 -->
-	<entry name="tv3.se">26</entry>				<!-- TV3 -->	
-	<entry name="tv4@tv4.se">27</entry>			<!-- TV4 -->
-	<entry name="fakta@tv4.se">230</entry> 			<!-- TV4 Fakta -->
-	<entry name="kanal5.se">10</entry>			<!-- Kanal 5 -->
-	<entry name="action@viasat.se">28</entry>		<!-- Viasat Action/Nature -->
-	<entry name="history@viasat.se">215</entry>		<!-- Viasat History -->
-	<entry name="ztv.se">240</entry>			<!-- ZTV -->
-	<entry name="tv6@viasat.se">42</entry> 			<!-- TV6 --> 
-	<entry name="tv8.se">43</entry>				<!-- TV8 -->
-	<entry name="tv1000@tv1000.se">33</entry>		<!-- TV1000 -->
-	<entry name="plusone@tv1000.se">206</entry>		<!-- TV1000 Plus One -->
-	<entry name="action@tv1000.se">207</entry>		<!-- TV1000 Action -->
-	<entry name="nordic@tv1000.se">209</entry>		<!-- TV1000 Nordic -->
-	<entry name="classic@tv1000.se">208</entry>		<!-- TV1000 Classic -->
-	<entry name="family@tv1000.se">210</entry>		<!-- TV1000 Family -->
-	<entry name="canalplus@canalplus.se">11</entry>		<!-- Canal+ -->
-	<entry name="film1@canalplus.se">12</entry>		<!-- Canal+ Film 1 -->
-	<entry name="film2@canalplus.se">55</entry>		<!-- Canal+ Film 2 -->
-	<entry name="sport@canalplus.se">140</entry>		<!-- Canal+ Sport -->
-	<entry name="cmorefilm@canalplus.se">201</entry>	<!-- C More Film -->
-	<entry name="film@tv4.se">176</entry>			<!-- TV4 Film -->
-	<entry name="showtime@canaldigital.se">214</entry>	<!-- Showtime -->
-	<entry name="tcm.tv">24</entry>				<!-- TCM -->
-	<entry name="MTV@mtve.com">14</entry>			<!-- MTV -->
-	<entry name="MTV2@mtve.com">74</entry>			<!-- MTV2 -->
-	<entry name="vh1.com">47</entry>			<!-- VH-1 -->
-	<entry name="eurosport@eurosport.com">9</entry>		<!-- Eurosport -->
-	<entry name="eurosport2@eurosport.com">217</entry>	<!-- Eurosport2 -->
-	<entry name="expressen.se">18</entry>			<!-- Sport-Expressen -->
-	<entry name="sport@viasatsport.se">53</entry>		<!-- Viasat Sport -->
-	<entry name="sport2@viasatsport.se">197</entry>		<!-- Viasat Sport 2 -->
-	<entry name="sport3@viasatsport.se">198</entry>		<!-- Viasat Sport 3 -->
-	<entry name="extremesports.tv">67</entry>		<!-- Extreme Sports -->
-	<entry name="manutd.com">193</entry>			<!-- Manchester United TV -->
-	<entry name="cnni-emea@cnn.com">5</entry>		<!-- CNN -->
-	<entry name="skynews@sky.com">18</entry>		<!-- Sky News -->
-	<entry name="cnbc@msn.com">56</entry>			<!-- CNBC -->
-	<entry name="24@svt.se">101</entry>			<!-- 24 -->
-    	<entry name="europa@svt.se">100</entry>			<!-- SVT Europa -->  	
-	<entry name="kunskapskanalen@svt.se">213</entry>	<!-- Kunskapskanalen -->
-    	<entry name="plus@tv4.se">142</entry>			<!-- TV4 Plus -->
-    	<entry name="tv400.tv">199</entry>			<!-- TV400 -->
-    	<entry name="barnkanalen@svt.se">143</entry>		<!-- Barnkanalen -->
-    	<entry name="int@ort.ru">139</entry>			<!-- ORT Int -->
-    	<entry name="discovery@discovery.com">7</entry>		<!-- Discovery Channel -->
-    	<entry name="civilisation@discovery.com">118</entry>	<!-- Discovery Civilisation -->
-    	<entry name="Science@discovery.com">119</entry>		<!-- Discovery Science -->
-    	<entry name="travel_living@discovery.com">120</entry>	<!-- Discovery Travel & Living -->
-    	<entry name="animalplanet.com">54</entry>		<!-- Animal Planet -->
-    	<entry name="explorer@viasat.se">76</entry>		<!-- Viasat Explorer -->
-    	<entry name="travelchannel.com">25</entry>		<!-- Travel -->
-    	<entry name="avante">25</entry>				<!-- Avante -->
-    	<entry name="nationalgeographic.com">48</entry>		<!-- National Geographic Channel -->
-    	<entry name="cartoonnetwork.se">4</entry>		<!-- Cartoon Network -->
-    	<entry name="jetix.se">60</entry>			<!-- Jetix -->
-    	<entry name="nickelodeon.se">45</entry>			<!-- Nickelodeon -->
-    	<entry name="disneychannel.se">147</entry>		<!-- Disney Channel -->
-    	<entry name="hallmarkchannel.com">13</entry>		<!-- Hallmark -->
-    	<entry name="star">114</entry>				<!-- Star! -->
-    	<entry name="ftv.com">82</entry>			<!-- Fashion TV -->
-<!--    	<entry name="club">115</entry>				 Club -->
-    	<entry name="realitychannel.tv">117</entry>		<!-- Reality TV -->
-    	<entry name="godnetwork.com">111</entry>		<!-- God Channel -->
-    	<entry name="rtvpink.com">109</entry>			<!-- Pink Plus -->
-    	<entry name="playboytv.co.uk">223</entry>		<!-- Playboy -->
-    	<entry name="euronews.net">104</entry>			<!-- EuroNews -->
-    	<entry name="espn.com">196</entry>			<!-- ESPN Classic Sport -->
-    	<entry name="privategold">175</entry>			<!-- Private Gold -->
-    	<entry name="hrt1@hrt.hr">50</entry>			<!-- HRT1 -->
-    	<entry name="tvfinland@yle.fi">29</entry>		<!-- TV Finland -->
-    	<entry name="tv1@yle.fi">31</entry>			<!-- YLE TV1 -->
-    	<entry name="tv2@yle.fi">36</entry>			<!-- TLE TV2 -->
-    	<entry name="mtv3@mtv3.fi">39</entry>			<!-- MTV3 -->
-    	<entry name="nelonen@nelonen.fi">189</entry>		<!-- Nelonen -->
-    	<entry name="fst@yle.fi">219</entry>			<!-- FST -->
-    	<entry name="yle24@yle.fi">220</entry>			<!-- YLE24 -->
-    	<entry name="yleteema@yle.fi">221</entry>		<!-- YLE Teema -->
-    	<entry name="tvnorge.no">73</entry>			<!-- TV Norge -->
-    	<entry name="nrk1@nrk.no">72</entry>			<!-- NRK1 -->
-    	<entry name="nrk2@nrk.no">63</entry>			<!-- NRK2 -->
-    	<entry name="tv2.no">37</entry>				<!-- TV2 Norge -->
-    	<entry name="tv3.no">62</entry>				<!-- TV3 Norge -->
-    	<entry name="ztv.no">75</entry>				<!-- ZTV Norge -->
-    	<entry name="tvdanmark1@tvdanmark.dk">103</entry>	<!-- TV Danmark 1 -->
-	<entry name="tvdanmark2@tvdanmark.dk">105</entry>	<!-- TV Danmark 2 -->
-	<entry name="dr1@dr.dk">58</entry>			<!-- DR1 -->
-	<entry name="dr2@dr.dk">59</entry>			<!-- DR2 -->
-	<entry name="tv2@tv2.dk">71</entry>			<!-- TV2 Danmark -->
-	<entry name="tv2zulu@tv2.dk">126</entry>		<!-- TV2 Zulu -->
-	<entry name="tv3.dk">57</entry>				<!-- TV3 Danmark -->
-	<entry name="3plus.dk">83</entry>			<!-- 3+ Danmark -->
-	<entry name="bbcprime.com">2</entry>			<!-- BBC Prime -->
-	<entry name="bbcfood.com">149</entry>			<!-- BBC Food -->
-	<entry name="bbcworld.com">3</entry>			<!-- BBC World -->
-<!--	<entry name="mbc.co.kr">88</entry>			 MBC -->
-	<entry name="arte-tv.com">84</entry>			<!-- Arte -->
-	<entry name="mdr.de">91</entry>				<!-- MDR Fernsehen -->
-	<entry name="pro-sieben.de">98</entry>			<!-- PRO 7 -->
-	<entry name="rtl.de">16</entry>				<!-- RTL -->
-	<entry name="rtl2.de">15</entry>			<!-- RTL2 -->
-	<entry name="viva.tv">106</entry>			<!-- Viva -->
-	<entry name="vivaplus.tv">85</entry>			<!-- Viva Plus -->
-	<entry name="ard-digital.de">69</entry>			<!-- ARD -->
-	<entry name="zdf.de">51</entry>				<!-- ZDF -->
-	<entry name="sat1.de">17</entry>			<!-- SAT1 -->
-	<entry name="3sat.de">1</entry>				<!-- 3SAT -->
-	<entry name="dsf.de">8</entry>				<!-- DSF -->
-<!--	<entry name="dw-world.de">6</entry>			 Deutche Welle -->
-	<entry name="vox.de">107</entry>			<!-- Vox -->
-	<entry name="kabel1.de">113</entry>			<!-- Kabel 1 -->
-	<entry name="tvchile.cl">52</entry>			<!-- TV Chile -->
-	<entry name="tv5.org">40</entry>			<!-- TV5 -->
-	<entry name="tvp.pl">66</entry>				<!-- TV Polonia -->
-	<entry name="mezzo.tv">46</entry>			<!-- Mezzo -->
-	<entry name="raiuno.rai.it">64</entry>			<!-- Rai Uno -->
-	<entry name="raidue.rai.it">65</entry>			<!-- Rai Due -->
-	<entry name="rtve.es">41</entry>			<!-- TVE -->
-	<entry name="Canal7">80</entry>				<!-- Canal 7 -->
-	<entry name="spiceplatinum.nl">222</entry>		<!-- Spice Platinum -->
-	<entry name="stockholm@kanalokal.se">238</entry>	<!-- Kanal Lokal Stockholm --> 
-	<entry name="goteborg@kanallokal.se">239</entry>	<!-- Kanal Lokal Goteborg --> 
-	<entry name="ostgotland@kanallokal.se">234</entry>	<!-- Kanal Lokal Ostergotland --> 
-	<entry name="Silver-se">241</entry>			<!-- Silver --> 
-<!--	<entry name="Axess_Tv-se">247</entry>			 Axess TV --> 
-	<entry name="voice.fi">216</entry>			<!-- The Voice --> 
-<!--        <entry name="tv@aftonbladet.se">248</entry>              Aftonbladet TV --> 
-        <entry name="OneTelevision@kanal5.se">246</entry>       <!-- One Television --> 
-  </section>
-
-<!-- Formating of Listing -->
-  <section name="Listing">
-	<entry name="BaseURL">http://www.dagenstv.com/se/chart/</entry>
-	<entry name="SearchURL">?dat=[YYYY]-[MM]-[DD]&amp;cha=[ID]</entry>
-
-    <entry name="Start">&#60;!-- Indrag --&#62;</entry>
-
-<!-- Template of the Listing information -->
-    <entry name="Template">
-	&#60;tr&#62;											
-	&#60;td&#62;&#60;#START&#62;&#60;/td&#62;											
-	&#60;td&#62;&#60;/td&#62;
-	&#60;td&#62;&#60;#TITLE&#62;&#60;br&#62;&#60;#DESCRIPTION&#62;&#60;/td&#62;
-	&#60;td&#62;&#60;/td&#62;											
-	&#60;td&#62;&#60;/td&#62;											
-	&#60;/tr&#62;
-    </entry>
-  </section>
-
-  <section name="Info">
-    <entry name="GuideDays">7</entry>
-    <entry name="TimeZone">W. Europe Standard Time</entry>
-  </section>
-</profile>
+<Grabber>
+  <Info availableDays="0" timezone="" />
+  <Channels>
+    <Channel id="svt1@svt.se" siteId="21" />
+    <Channel id="svt2@svt.se" siteId="22" />
+    <Channel id="tv3.se" siteId="26" />
+    <Channel id="tv4@tv4.se" siteId="27" />
+    <Channel id="fakta@tv4.se" siteId="230" />
+    <Channel id="kanal5.se" siteId="10" />
+    <Channel id="action@viasat.se" siteId="28" />
+    <Channel id="history@viasat.se" siteId="215" />
+    <Channel id="ztv.se" siteId="240" />
+    <Channel id="tv6@viasat.se" siteId="42" />
+    <Channel id="tv8.se" siteId="43" />
+    <Channel id="tv1000@tv1000.se" siteId="33" />
+    <Channel id="plusone@tv1000.se" siteId="206" />
+    <Channel id="action@tv1000.se" siteId="207" />
+    <Channel id="nordic@tv1000.se" siteId="209" />
+    <Channel id="classic@tv1000.se" siteId="208" />
+    <Channel id="family@tv1000.se" siteId="210" />
+    <Channel id="canalplus@canalplus.se" siteId="11" />
+    <Channel id="film1@canalplus.se" siteId="12" />
+    <Channel id="film2@canalplus.se" siteId="55" />
+    <Channel id="sport@canalplus.se" siteId="140" />
+    <Channel id="cmorefilm@canalplus.se" siteId="201" />
+    <Channel id="film@tv4.se" siteId="176" />
+    <Channel id="showtime@canaldigital.se" siteId="214" />
+    <Channel id="tcm.tv" siteId="24" />
+    <Channel id="MTV@mtve.com" siteId="14" />
+    <Channel id="MTV2@mtve.com" siteId="74" />
+    <Channel id="vh1.com" siteId="47" />
+    <Channel id="eurosport@eurosport.com" siteId="9" />
+    <Channel id="eurosport2@eurosport.com" siteId="217" />
+    <Channel id="expressen.se" siteId="18" />
+    <Channel id="sport@viasatsport.se" siteId="53" />
+    <Channel id="sport2@viasatsport.se" siteId="197" />
+    <Channel id="sport3@viasatsport.se" siteId="198" />
+    <Channel id="extremesports.tv" siteId="67" />
+    <Channel id="manutd.com" siteId="193" />
+    <Channel id="cnni-emea@cnn.com" siteId="5" />
+    <Channel id="skynews@sky.com" siteId="18" />
+    <Channel id="cnbc@msn.com" siteId="56" />
+    <Channel id="24@svt.se" siteId="101" />
+    <Channel id="europa@svt.se" siteId="100" />
+    <Channel id="kunskapskanalen@svt.se" siteId="213" />
+    <Channel id="plus@tv4.se" siteId="142" />
+    <Channel id="tv400.tv" siteId="199" />
+    <Channel id="barnkanalen@svt.se" siteId="143" />
+    <Channel id="int@ort.ru" siteId="139" />
+    <Channel id="discovery@discovery.com" siteId="7" />
+    <Channel id="civilisation@discovery.com" siteId="118" />
+    <Channel id="Science@discovery.com" siteId="119" />
+    <Channel id="travel_living@discovery.com" siteId="120" />
+    <Channel id="animalplanet.com" siteId="54" />
+    <Channel id="explorer@viasat.se" siteId="76" />
+    <Channel id="travelchannel.com" siteId="25" />
+    <Channel id="avante" siteId="25" />
+    <Channel id="nationalgeographic.com" siteId="48" />
+    <Channel id="cartoonnetwork.se" siteId="4" />
+    <Channel id="jetix.se" siteId="60" />
+    <Channel id="nickelodeon.se" siteId="45" />
+    <Channel id="disneychannel.se" siteId="147" />
+    <Channel id="hallmarkchannel.com" siteId="13" />
+    <Channel id="star" siteId="114" />
+    <Channel id="ftv.com" siteId="82" />
+    <Channel id="realitychannel.tv" siteId="117" />
+    <Channel id="godnetwork.com" siteId="111" />
+    <Channel id="rtvpink.com" siteId="109" />
+    <Channel id="playboytv.co.uk" siteId="223" />
+    <Channel id="euronews.net" siteId="104" />
+    <Channel id="espn.com" siteId="196" />
+    <Channel id="privategold" siteId="175" />
+    <Channel id="hrt1@hrt.hr" siteId="50" />
+    <Channel id="tvfinland@yle.fi" siteId="29" />
+    <Channel id="tv1@yle.fi" siteId="31" />
+    <Channel id="tv2@yle.fi" siteId="36" />
+    <Channel id="mtv3@mtv3.fi" siteId="39" />
+    <Channel id="nelonen@nelonen.fi" siteId="189" />
+    <Channel id="fst@yle.fi" siteId="219" />
+    <Channel id="yle24@yle.fi" siteId="220" />
+    <Channel id="yleteema@yle.fi" siteId="221" />
+    <Channel id="tvnorge.no" siteId="73" />
+    <Channel id="nrk1@nrk.no" siteId="72" />
+    <Channel id="nrk2@nrk.no" siteId="63" />
+    <Channel id="tv2.no" siteId="37" />
+    <Channel id="tv3.no" siteId="62" />
+    <Channel id="ztv.no" siteId="75" />
+    <Channel id="tvdanmark1@tvdanmark.dk" siteId="103" />
+    <Channel id="tvdanmark2@tvdanmark.dk" siteId="105" />
+    <Channel id="dr1@dr.dk" siteId="58" />
+    <Channel id="dr2@dr.dk" siteId="59" />
+    <Channel id="tv2@tv2.dk" siteId="71" />
+    <Channel id="tv2zulu@tv2.dk" siteId="126" />
+    <Channel id="tv3.dk" siteId="57" />
+    <Channel id="3plus.dk" siteId="83" />
+    <Channel id="bbcprime.com" siteId="2" />
+    <Channel id="bbcfood.com" siteId="149" />
+    <Channel id="bbcworld.com" siteId="3" />
+    <Channel id="arte-tv.com" siteId="84" />
+    <Channel id="mdr.de" siteId="91" />
+    <Channel id="pro-sieben.de" siteId="98" />
+    <Channel id="rtl.de" siteId="16" />
+    <Channel id="rtl2.de" siteId="15" />
+    <Channel id="viva.tv" siteId="106" />
+    <Channel id="vivaplus.tv" siteId="85" />
+    <Channel id="ard-digital.de" siteId="69" />
+    <Channel id="zdf.de" siteId="51" />
+    <Channel id="sat1.de" siteId="17" />
+    <Channel id="3sat.de" siteId="1" />
+    <Channel id="dsf.de" siteId="8" />
+    <Channel id="vox.de" siteId="107" />
+    <Channel id="kabel1.de" siteId="113" />
+    <Channel id="tvchile.cl" siteId="52" />
+    <Channel id="tv5.org" siteId="40" />
+    <Channel id="tvp.pl" siteId="66" />
+    <Channel id="mezzo.tv" siteId="46" />
+    <Channel id="raiuno.rai.it" siteId="64" />
+    <Channel id="raidue.rai.it" siteId="65" />
+    <Channel id="rtve.es" siteId="41" />
+    <Channel id="Canal7" siteId="80" />
+    <Channel id="spiceplatinum.nl" siteId="222" />
+    <Channel id="stockholm@kanalokal.se" siteId="238" />
+    <Channel id="goteborg@kanallokal.se" siteId="239" />
+    <Channel id="ostgotland@kanallokal.se" siteId="234" />
+    <Channel id="Silver-se" siteId="241" />
+    <Channel id="voice.fi" siteId="216" />
+    <Channel id="OneTelevision@kanal5.se" siteId="246" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.dagenstv.com/se/chart/?dat=[YYYY]-[MM]-[DD]&amp;cha=[ID]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="&lt;!-- Indrag --&gt;">
+        <SectionTemplate tags="T">
+          <TemplateText>
+	&lt;tr&gt;											
+	&lt;td&gt;&lt;#START&gt;&lt;/td&gt;											
+	&lt;td&gt;&lt;/td&gt;
+	&lt;td&gt;&lt;#TITLE&gt;&lt;br&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
+	&lt;td&gt;&lt;/td&gt;											
+	&lt;td&gt;&lt;/td&gt;											
+	&lt;/tr&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

@@ -1,44 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<profile>
-
-<!-- Channel section lists all the channels available from this website. -->
-
-  <section name="ChannelList">
-
-    <entry name="abc-vic@abc.net.au">vic</entry>	<!-- abc vic -->
-    <entry name="abc-nsw@abc.net.au">nsw</entry>	<!-- abc nsw -->
-    <entry name="abc-qld@abc.net.au">qld</entry>	<!-- abc qld -->
-    <entry name="abc-act@abc.net.au">act</entry>	<!-- abc act -->
-    <entry name="abc-tas@abc.net.au">tas</entry>	<!-- abc tas -->
-    <entry name="abc-wa@abc.net.au">wa</entry>		<!-- abc wa -->
-    <entry name="abc-sa@abc.net.au">sa</entry>		<!-- abc sa -->
-    <entry name="abc-nt@abc.net.au">nt</entry>		<!-- abc nt -->
-    <entry name="abc2@abc.net.au">abc2</entry>		<!-- abc2 same nationally -->
-
-
-  </section>
-
-<!-- Formating of Listing -->
-  <section name="Listing">
-    <entry name="BaseURL">http://www.abc.net.au/tv/guide/</entry>
-    <entry name="SearchURL">[ID]/[YYYY][MM]/[YYYY][MM][DD].htm</entry>
-
-    <entry name="Ahrefs">no</entry>
-
-<!-- Unique Listing Start string -->
-    <entry name="Start">name="morning"</entry>
-
-<!-- Template of the Listing information -->
-    <entry name="Template">
-&#60;tr&#62;
-&#60;th&#62;&#60;#START&#62;&#60;/th&#62;
-&#60;td&#62;&#60;#TITLE&#62;&#60;/td&#62;
-&#60;/tr&#62;
-    </entry>
-  </section>
-  <section name="Info">
-    <entry name="GuideDays">14</entry>
-    <entry name="Lang">en</entry>
-  </section>
-</profile>
+<Grabber>
+  <Info language="en" availableDays="14" timezone="" />
+  <Channels>
+    <Channel id="abc-vic@abc.net.au" siteId="vic" />
+    <Channel id="abc-nsw@abc.net.au" siteId="nsw" />
+    <Channel id="abc-qld@abc.net.au" siteId="qld" />
+    <Channel id="abc-act@abc.net.au" siteId="act" />
+    <Channel id="abc-tas@abc.net.au" siteId="tas" />
+    <Channel id="abc-wa@abc.net.au" siteId="wa" />
+    <Channel id="abc-sa@abc.net.au" siteId="sa" />
+    <Channel id="abc-nt@abc.net.au" siteId="nt" />
+    <Channel id="abc2@abc.net.au" siteId="abc2" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.abc.net.au/tv/guide/[ID]/[YYYY][MM]/[YYYY][MM][DD].htm" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="name=&quot;morning&quot;">
+        <SectionTemplate tags="T">
+          <TemplateText>
+&lt;tr&gt;
+&lt;th&gt;&lt;#START&gt;&lt;/th&gt;
+&lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
+&lt;/tr&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

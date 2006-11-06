@@ -1,70 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<profile>
-  <section name="ChannelList">
-    <entry name="Rai 1">1</entry>
-    <!-- Rai 1 -->
-    <entry name="Rai 2">3</entry>
-    <!-- Rai 2 -->
-    <entry name="Rai 3">16</entry>
-    <!-- Rai 3 -->
-    <entry name="Canale 5">22</entry>
-    <!-- Canale 5 -->
-    <entry name="Italia 1">23</entry>
-    <!-- Italia 1 -->
-    <entry name="Rete 4">24</entry>
-    <!-- Rete 4 -->
-    <entry name="La7">75</entry>
-    <!-- La7 -->
-    <entry name="All Music">72</entry>
-    <!-- All Music -->
-    <entry name="MTV Italia">24</entry>
-    <!-- Mtv -->
-  </section>
-
-  <section name="Listing">
-    <entry name="BaseURL">http://spettacolo.alice.it</entry>
-    <entry name="SearchURL">/guidatv/cgi/index.cgi?tipo=3&amp;channel=[ID]&amp;day=[DD]/[MM]/[YYYY]</entry>
-    <entry name="Tags">TDA</entry>
-
-    <!-- Template of the Listing information -->
-    <entry name="Template">
-      &#60;tr&#62;
-      &#60;td&#62;
-      &#60;div&#62;
-      &#60;#START&#62;
-      &#60;/div&#62;
-      &#60;/td&#62;
-      &#60;td&#62;
-      &#60;div&#62;
-      &#60;a href&#62;
-      &#60;#TITLE&#62;
-      &#60;/div&#62;
-      &#60;/td&#62;
-      &#60;td&#62;
-      &#60;div&#62;
-      &#60;#GENRE&#62;
-      &#60;/div&#62;
-      &#60;/td&#62;
-      &#60;/tr&#62;
-    </entry>
-    <entry name="SubListingLink">tipo</entry>
-  </section>
-  <section name="SubListing">
-    <entry name="Tags">D</entry>
-    <entry name="Template">
-      &#60;div&#62;
-      &#60;#DESCRIPTION&#62;
-      &#60;br&#62;&#60;br&#62;
-      &#60;b&#62;&#60;/b&#62;
-      &#60;br&#62;
-      &#60;br&#62;
-      &#60;/div&#62;
-    </entry>
-  </section>
-  <section name="Info">
-    <entry name="GuideDays">6</entry>
-    <entry name="Language">it</entry>
-    <entry name="SiteDescription">alice.it</entry>
-    <entry name="TimeZone">W. Europe Standard Time</entry>
-  </section>
-</profile>
+<Grabber>
+  <Info availableDays="6" timezone="W. Europe Standard Time" />
+  <Channels>
+    <Channel id="Rai 1" siteId="1" />
+    <Channel id="Rai 2" siteId="3" />
+    <Channel id="Rai 3" siteId="16" />
+    <Channel id="Canale 5" siteId="22" />
+    <Channel id="Italia 1" siteId="23" />
+    <Channel id="Rete 4" siteId="24" />
+    <Channel id="La7" siteId="75" />
+    <Channel id="All Music" siteId="72" />
+    <Channel id="MTV Italia" siteId="24" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://spettacolo.alice.it/guidatv/cgi/index.cgi?tipo=3&amp;channel=[ID]&amp;day=[DD]/[MM]/[YYYY]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default">
+        <SectionTemplate tags="TDA">
+          <TemplateText>
+      &lt;tr&gt;
+      &lt;td&gt;
+      &lt;div&gt;
+      &lt;#START&gt;
+      &lt;/div&gt;
+      &lt;/td&gt;
+      &lt;td&gt;
+      &lt;div&gt;
+      &lt;a href&gt;
+      &lt;#TITLE&gt;
+      &lt;/div&gt;
+      &lt;/td&gt;
+      &lt;td&gt;
+      &lt;div&gt;
+      &lt;#GENRE&gt;
+      &lt;/div&gt;
+      &lt;/td&gt;
+      &lt;/tr&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Template name="Details">
+        <SectionTemplate tags="D">
+          <TemplateText>
+      &lt;div&gt;
+      &lt;#DESCRIPTION&gt;
+      &lt;br&gt;&lt;br&gt;
+      &lt;b&gt;&lt;/b&gt;
+      &lt;br&gt;
+      &lt;br&gt;
+      &lt;/div&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Sublinks>
+        <Sublink search="tipo" template="Details" />
+      </Sublinks>
+    </Html>
+  </Listing>
+</Grabber>
