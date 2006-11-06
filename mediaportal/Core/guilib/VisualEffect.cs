@@ -122,7 +122,7 @@ namespace MediaPortal.GUI.Library
     }
     void GetPosition(string text, ref float x, ref float y)
     {
-      Log.Info("GetPos:{0}", text);
+//      Log.Info("GetPos:{0}", text);
       x = y = 0;
       if (text == null) return;
       int pos = text.IndexOf(",");
