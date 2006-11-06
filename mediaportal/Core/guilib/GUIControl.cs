@@ -440,13 +440,12 @@ namespace MediaPortal.GUI.Library
             }
 
           case GUIMessage.MessageType.GUI_MSG_VISIBLE:
-            Visibility = System.Windows.Visibility.Visible;
-            // _visible = _visibleCondition ? g_infoManager.GetBool(_visibleCondition, m_dwParentID) : true;
+            Visible = true;
 
             return true;
 
           case GUIMessage.MessageType.GUI_MSG_HIDDEN:
-            Visibility = System.Windows.Visibility.Hidden;
+            Visible = false;
             return true;
 
           case GUIMessage.MessageType.GUI_MSG_ENABLED:
@@ -504,7 +503,7 @@ namespace MediaPortal.GUI.Library
         {
           QueueAnimation(AnimationType.Focus);
         }
-        SetValue(IsFocusedProperty, value); 
+        SetValue(IsFocusedProperty, value);
       }
     }
 
@@ -633,7 +632,14 @@ namespace MediaPortal.GUI.Library
     public bool Visible
     {
       get { return IsVisible; }
-      set { IsVisible = value; }
+      set
+      {
+        if (IsVisible && !value)
+          QueueAnimation(AnimationType.Hidden);
+        else if (!IsVisible && value)
+          QueueAnimation(AnimationType.Visible);
+        IsVisible = value;
+      }
     }
 
     /// <summary>
@@ -1500,6 +1506,7 @@ namespace MediaPortal.GUI.Library
       //  if (visible != m_visible)
       //    CLog::DebugLog("UpdateControlState of control id %i - now %s (type=%d, process=%d, state=%d)", m_dwControlID, m_visible ? "visible" : "hidden", type, currentProcess, currentState);
     }
+
     protected void Animate(uint currentTime)
     {
       TransformMatrix transform = new TransformMatrix();
