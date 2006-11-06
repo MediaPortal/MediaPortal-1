@@ -10,6 +10,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Settings.Wizard;
 using MediaPortal.TV.Database;
 using MediaPortal.EPG.config;
+using MediaPortal.WebEPG.Config.Grabber;
 using DShowNET;
 
 namespace WindowPlugins.GUISettings.Epg
@@ -127,7 +128,7 @@ namespace WindowPlugins.GUISettings.Epg
         int chID = _channelList.FindChannel(chan.Name, country);
         if (chID != -1)
         {
-          ChannelInfo chInfo = (ChannelInfo)_epgChannels[chID];
+          ChannelGrabberInfo chInfo = (ChannelGrabberInfo)_epgChannels[chID];
           ch.Label2 = chInfo.FullName;
           ch.Path = chInfo.ChannelID;
           ch.ItemId = chID;
@@ -140,7 +141,7 @@ namespace WindowPlugins.GUISettings.Epg
             {
               for (int i=0; i < _epgChannels.Count;++i)
               {
-                ChannelInfo info =(ChannelInfo)_epgChannels[i];
+                ChannelGrabberInfo info =(ChannelGrabberInfo)_epgChannels[i];
                 if (info.ChannelID == data.ChannelID)
                 {
                   ch.ItemId = i;
@@ -183,7 +184,7 @@ namespace WindowPlugins.GUISettings.Epg
             EPGConfigData data = new EPGConfigData();
             data.DisplayName = item.Label;
             data.ChannelID = item.Path;
-            ChannelInfo selChannel = (ChannelInfo)_epgChannels[item.ItemId];
+            ChannelGrabberInfo selChannel = (ChannelGrabberInfo)_epgChannels[item.ItemId];
             GrabberInfo gInfo = (GrabberInfo)selChannel.GrabberList.GetByIndex(0);
             data.PrimaryGrabberID = gInfo.GrabberID;
             config.Add(data);
@@ -213,7 +214,7 @@ namespace WindowPlugins.GUISettings.Epg
 
       int selected = 0;
       int count = 0;
-      foreach (ChannelInfo chan in _epgChannels)
+      foreach (ChannelGrabberInfo chan in _epgChannels)
       {
         dlg.Add(chan.FullName);
         if (chan.FullName == item.Label2) selected = count;
@@ -231,7 +232,7 @@ namespace WindowPlugins.GUISettings.Epg
       }
       else
       {
-        ChannelInfo selChannel = (ChannelInfo)_epgChannels[dlg.SelectedLabel - 1];
+        ChannelGrabberInfo selChannel = (ChannelGrabberInfo)_epgChannels[dlg.SelectedLabel - 1];
         item.Label2 = selChannel.FullName;
         item.Path = selChannel.ChannelID;
         item.ItemId = dlg.SelectedLabel - 1;
