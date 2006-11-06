@@ -512,6 +512,7 @@ namespace MediaPortal.GUI.Music
 
       // Make sure we clear any images we added so we revert back the coverart image
       ClearVisualizationImages();
+      base.OnPageDestroy(new_windowId);
     }
 
     public override void Render(float timePassed)

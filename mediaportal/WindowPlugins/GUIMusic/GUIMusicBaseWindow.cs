@@ -617,6 +617,7 @@ namespace MediaPortal.GUI.Music
 
       if (btnSortBy != null)
         btnSortBy.SortChanged += new SortEventHandler(SortChanged);
+      base.OnPageLoad();
     }
 
     protected override void OnPageDestroy(int newWindowId)
@@ -629,6 +630,7 @@ namespace MediaPortal.GUI.Music
         xmlwriter.SetValue("music", "startWindow", MusicState.StartWindow.ToString());
         xmlwriter.SetValue("music", "startview", MusicState.View);
       }
+      base.OnPageDestroy(newWindowId);
     }
 
     protected void LoadPlayList(string strPlayList)

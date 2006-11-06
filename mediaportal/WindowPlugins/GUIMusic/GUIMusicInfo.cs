@@ -159,6 +159,7 @@ namespace MediaPortal.GUI.Music
         coverArtTexture = null;
       }
       GUIGraphicsContext.Overlay = m_bOverlay;
+      base.OnPageDestroy(newWindowId);
     }
     protected override void OnPageLoad()
     {
