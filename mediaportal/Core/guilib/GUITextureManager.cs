@@ -161,7 +161,8 @@ namespace MediaPortal.GUI.Library
         return newimage.FileName;
       }
 
-      if (!System.IO.File.Exists(fileName))
+      //if (!System.IO.File.Exists(fileName))
+      if(!fileName.Contains("\\"))
       {
         if (fileName[1] != ':')
           return GUIGraphicsContext.Skin + @"\media\" + fileName;
