@@ -4,7 +4,7 @@ using System.Text;
 using MediaPortal.Services;
 using MediaPortal.Tests.MockObjects;
 using NUnit.Framework;
-using MediaPortal.WebEPG;
+using MediaPortal.WebEPG.Parser;
 using System.IO;
 using MediaPortal.Utils.Services;
 
@@ -17,14 +17,14 @@ namespace MediaPortal.Tests.WebEPG.Parser
     [SetUp]
     public void Init()
     {
-        GlobalServiceProvider.Replace<ILog>(new NoLog());
+      GlobalServiceProvider.Replace<ILog>(new NoLog());
     }
 
     [Test]
     public void SetElementTime()
     {
       ProgramData testData = new ProgramData();
-      testData.ChannelID = "myChannel.tv";
+      testData.ChannelId = "myChannel.tv";
 
       // #START/#END Tags
       // Test usual hour values, with each separator
@@ -91,7 +91,7 @@ namespace MediaPortal.Tests.WebEPG.Parser
       // <#DESCRIPTION> 
       testData.SetElement("<#DESCRIPTION>", "   This is description, isn't it?   ");
       Assert.IsTrue(testData.Description == "This is description, isn't it?");
-  
+
     }
   }
 }
