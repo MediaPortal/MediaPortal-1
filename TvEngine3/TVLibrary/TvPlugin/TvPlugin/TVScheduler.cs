@@ -491,11 +491,9 @@ namespace TvPlugin
           else
           {
             Log.Info("not recording:{0}", rec.IdSchedule);
-            //@
-            /*if (ConflictManager.IsConflict(rec))
-            {
+            if (rec.ReferringConflicts().Count > 0)
               item.PinImage = Thumbs.TvConflictRecordingIcon;
-            }*/
+
           }
           listSchedules.Add(item);
           total++;
@@ -546,11 +544,8 @@ namespace TvPlugin
               }
               else
               {
-                //@
-                /*if (ConflictManager.IsConflict(rec))
-                {
+                if (rec.ReferringConflicts().Count > 0)
                   item.PinImage = Thumbs.TvConflictRecordingIcon;
-                }*/
               }
               item.ThumbnailImage = strLogo;
               item.IconImageBig = strLogo;
@@ -633,12 +628,10 @@ namespace TvPlugin
           else
             item.PinImage = Thumbs.TvRecordingIcon;
         }
-        //@
-        /*
-      else if (ConflictManager.IsConflict(rec))
-      {
-        item.PinImage = Thumbs.TvConflictRecordingIcon;
-      }*/
+        else if (rec.ReferringConflicts().Count > 0)
+        {
+          item.PinImage = Thumbs.TvConflictRecordingIcon;
+        }
         else
         {
           item.PinImage = String.Empty;
@@ -852,14 +845,14 @@ namespace TvPlugin
             {
               rec.Delete();
               RemoteControl.Instance.OnNewSchedule();
-              
+
             }
             LoadDirectory();
           }
           break;
 
         case 979: // Play recording from beginning
-          
+
           string filename = TVHome.Card.RecordingFileName;
           if (filename != String.Empty)
           {
@@ -1149,7 +1142,7 @@ namespace TvPlugin
         dlg.Items.Clear();
         dlg.EnableChannel = true;
         dlg.EnableStartTime = true;
-        if (RemoteControl.Instance.IsRecordingSchedule(rec.IdSchedule,out card))
+        if (RemoteControl.Instance.IsRecordingSchedule(rec.IdSchedule, out card))
         {
           dlg.EnableChannel = false;
           dlg.EnableStartTime = false;

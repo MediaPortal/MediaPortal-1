@@ -247,10 +247,10 @@ namespace TvPlugin
           else
             item.PinImage = Thumbs.TvRecordingIcon;
         }
-        //@ else if (ConflictManager.IsConflict(rec))
-        //{
-        //  item.PinImage = Thumbs.TvConflictRecordingIcon;
-        //}
+        else if (rec.ReferringConflicts().Count > 0)
+        {
+          item.PinImage = Thumbs.TvConflictRecordingIcon;
+        }
         item.ThumbnailImage = strLogo;
         item.IconImageBig = strLogo;
         item.IconImage = strLogo;
@@ -298,10 +298,10 @@ namespace TvPlugin
           else
             item.PinImage = Thumbs.TvRecordingIcon;
         }
-        //@else if (ConflictManager.IsConflict(rec))
-        //{
-        //  item.PinImage = Thumbs.TvConflictRecordingIcon;
-        //}
+        else if (rec.ReferringConflicts().Count > 0)
+        {
+          item.PinImage = Thumbs.TvConflictRecordingIcon;
+        }
         else
         {
           item.PinImage = String.Empty;

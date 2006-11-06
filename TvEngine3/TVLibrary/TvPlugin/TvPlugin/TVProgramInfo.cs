@@ -111,7 +111,7 @@ namespace TvPlugin
       {
         foreach (Program prog in progs)
         {
-          if (prog.StartTime == rec.StartTime && prog.EndTime == rec.EndTime && prog.ReferencedChannel()== rec.ReferencedChannel())
+          if (prog.StartTime == rec.StartTime && prog.EndTime == rec.EndTime && prog.ReferencedChannel() == rec.ReferencedChannel())
           {
             currentProgram = prog;
             break;
@@ -209,7 +209,14 @@ namespace TvPlugin
         Schedule recOrg;
         if (IsRecordingSchedule(recSeries, out recOrg, true))
         {
-          item.PinImage = Thumbs.TvRecordingIcon;
+          if (recOrg.ReferringConflicts().Count > 0)
+          {
+            item.PinImage = Thumbs.TvConflictRecordingIcon;
+          }
+          else
+          {
+            item.PinImage = Thumbs.TvRecordingIcon;
+          }
           item.MusicTag = recOrg;
         }
 
@@ -456,7 +463,7 @@ namespace TvPlugin
                 if (CheckIfRecording(rec))
                 {
                   //delete specific series
-                  CanceledSchedule canceledSerie = new CanceledSchedule(rec.IdSchedule,recSeries.StartTime);
+                  CanceledSchedule canceledSerie = new CanceledSchedule(rec.IdSchedule, recSeries.StartTime);
 
                   canceledSerie.Persist();
                   RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
@@ -498,7 +505,7 @@ namespace TvPlugin
       Log.Write("{0} schedules", recordings.Count);
       foreach (Schedule record in recordings)
       {
-        
+
         if (record.Canceled != Schedule.MinSchedule) continue;
         if (record.IsRecordingProgram(program, true))
         {
@@ -536,7 +543,7 @@ namespace TvPlugin
           }
         }
         TvBusinessLayer layer = new TvBusinessLayer();
-        rec = new Schedule(program.IdChannel, program.Title,program.StartTime, program.EndTime);
+        rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
         rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
         rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
         rec.Persist();
@@ -548,7 +555,7 @@ namespace TvPlugin
         {
           if (rec.ScheduleType != (int)ScheduleRecordingType.Once)
           {
-            
+
             GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
             if (dlg == null) return;
             dlg.Reset();
@@ -623,7 +630,7 @@ namespace TvPlugin
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1) return;
 
-        Schedule rec = new Schedule(currentProgram.IdChannel, currentProgram.Title,currentProgram.StartTime,currentProgram.EndTime);
+        Schedule rec = new Schedule(currentProgram.IdChannel, currentProgram.Title, currentProgram.StartTime, currentProgram.EndTime);
         switch (dlg.SelectedId)
         {
           case 611://once
@@ -679,7 +686,7 @@ namespace TvPlugin
               dlgYesNo.DoModal(GetID);
               if (dlgYesNo.IsConfirmed)
               {
-                rec=new Schedule(currentProgram.IdChannel,  currentProgram.Title,nextNext.StartTime, nextNext.EndTime);
+                rec = new Schedule(currentProgram.IdChannel, currentProgram.Title, nextNext.StartTime, nextNext.EndTime);
 
                 rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                 rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);

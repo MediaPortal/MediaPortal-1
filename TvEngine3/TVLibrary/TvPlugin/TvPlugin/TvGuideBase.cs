@@ -1122,9 +1122,8 @@ namespace TvPlugin
           {
             if (record.IsRecordingProgram(_currentProgram, true))
             {
-              ///@
-              ///if (ConflictManager.IsConflict(record))
-              ///  bConflict = true;
+              if (record.ReferringConflicts().Count != 0)
+                bConflict = true;
               if ((ScheduleRecordingType)record.ScheduleType != ScheduleRecordingType.Once)
                 bSeries = true;
               bRecording = true;
@@ -1305,9 +1304,8 @@ namespace TvPlugin
         {
           if (record.IsRecordingProgram(program, true))
           {
-            ///@
-            ///if (ConflictManager.IsConflict(record))
-            ///  bConflict = true;
+            if (record.ReferringConflicts().Count!=0)
+              bConflict = true;
             if ((ScheduleRecordingType)record.ScheduleType != ScheduleRecordingType.Once)
               bSeries = true;
             bRecording = true;
@@ -1481,9 +1479,8 @@ namespace TvPlugin
           {
             if (record.IsRecordingProgram(program, true))
             {
-              ///@
-              ///if (ConflictManager.IsConflict(record))
-              ///bConflict = true;
+              if (record.ReferringConflicts().Count != 0)
+               bConflict = true;
               if ((ScheduleRecordingType)record.ScheduleType != ScheduleRecordingType.Once)
                 bSeries = true;
               bRecording = true;
