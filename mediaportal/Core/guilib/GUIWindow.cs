@@ -789,11 +789,24 @@ namespace MediaPortal.GUI.Library
           {
             // Perform the window out effect
             QueueAnimation(AnimationType.WindowClose);
+            bool switching = GUIWindowManager.IsSwitchingToNewWindow;
+            GUIWindowManager.IsSwitchingToNewWindow = false;
             while (IsAnimating(AnimationType.WindowClose))
             {
               if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.RUNNING) break;
+              if (GUIGraphicsContext.Vmr9Active)
+              {
+                if (Player.VMR9Util.g_vmr9 != null)
+                {
+                  if (!Player.VMR9Util.g_vmr9.Enabled)
+                  {
+                    break;
+                  }
+                }
+              }
               GUIWindowManager.Process();
             }
+            GUIWindowManager.IsSwitchingToNewWindow = switching;
           }
         }
       }

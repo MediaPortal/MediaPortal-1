@@ -532,10 +532,15 @@ namespace MediaPortal.Player
       }
     }
 
-    /*public void UseRGBMode(bool onOff)
+    public bool Enabled
     {
-      _useRGBmode = onOff;
-    }*/
+      get
+      {
+        if (!_isVmr9Initialized) return true;
+        if (_scene == null) return true;
+        return _scene.Enabled;
+      }
+    }
 
     public bool SaveBitmap(System.Drawing.Bitmap bitmap, bool show, bool transparent, float alphaValue)
     {
