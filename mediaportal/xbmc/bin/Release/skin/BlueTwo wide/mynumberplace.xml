@@ -1,10 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
+  <animation effect="fade" time="250">WindowOpen</animation>
+  <animation effect="fade" time="500">WindowClose</animation>
 	<id>7777</id>
 	<defaultcontrol>2</defaultcontrol>
         <allowoverlay>no</allowoverlay>
 	<define>#header.label:19101</define>
-  <!--<define>#header.hover:hover_mynumberplace.png</define>-->
+  <!--<define>#header.image:mynumberplace_logo.png</define>
+  <define>#header.hover:hover_mynumberplace.png</define>-->
 	<controls>
 		<import>common.window.xml</import>
 		<import>common.time.xml</import>

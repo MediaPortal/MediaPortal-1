@@ -279,7 +279,7 @@ namespace MediaPortal.GUI.NumberPlace
     protected override void OnPageLoad()
     {
       try
-      {
+      {        
         _Settings.Load();
         ShowInvalid();
 
@@ -310,12 +310,12 @@ namespace MediaPortal.GUI.NumberPlace
           ResumeTimer();
 
         UpdateButtonStates();
+        base.OnPageLoad();
       }
       catch (Exception e1)
       {
         Log.Error("GUINumberPlace: Exception occured - {0}", e1.Message);
       }
-
     }
 
     private void ClearGrid()

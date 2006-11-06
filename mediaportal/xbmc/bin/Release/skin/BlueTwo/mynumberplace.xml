@@ -5,7 +5,8 @@
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <define>#header.label:19101</define>
-  <!--<define>#header.hover:hover_mynumberplace.png</define>-->
+  <!--<define>#header.image:mynumberplace_logo.png</define>
+  <define>#header.hover:hover_mynumberplace.png</define>-->
   <controls>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
