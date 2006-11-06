@@ -126,7 +126,7 @@ namespace MediaPortal.Player
                                     Pool.Managed);
 
       _blackImage = new GUIImage(0);
-      _blackImage.SetFileName(" :black.bmp"); // : - denotes temporary, so it's disposed when FreeResources
+      _blackImage.SetFileName("black.bmp");
       _blackImage.AllocResources();
 
       _cropSettings = new CropSettings();
