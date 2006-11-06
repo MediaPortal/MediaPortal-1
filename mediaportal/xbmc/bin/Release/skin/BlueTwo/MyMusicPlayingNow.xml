@@ -25,7 +25,7 @@
     </control>
     <control>
       <type>image</type>
-      <description>menu background image</description>
+      <description>background hover image</description>
       <id>0</id>
       <posX>40</posX>
       <posY>443</posY>
@@ -74,7 +74,7 @@
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
-      <type>fadelabel</type>
+      <type>label</type>
       <description>track label</description>
       <id>113</id>
       <posX>138</posX>
@@ -89,7 +89,7 @@
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
-      <type>fadelabel</type>
+      <type>label</type>
       <description>track label</description>
       <id>113</id>
       <posX>138</posX>
@@ -104,7 +104,7 @@
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
-      <type>fadelabel</type>
+      <type>label</type>
       <description>track label</description>
       <id>113</id>
       <posX>138</posX>
@@ -119,7 +119,7 @@
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
-      <type>fadelabel</type>
+      <type>label</type>
       <description>year label</description>
       <id>114</id>
       <posX>676</posX>
@@ -207,11 +207,9 @@
       <font>font14</font>
       <align>right</align>
       <textcolor>80ffffff</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
-      <type>fadelabel</type>
+      <type>label</type>
       <description>next track label</description>
       <id>121</id>
       <posX>663</posX>
@@ -221,11 +219,9 @@
       <align>right</align>
       <textcolor>80ffffff</textcolor>
       <disabledcolor>80ffffff</disabledcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
-      <type>fadelabel</type>
+      <type>label</type>
       <description>next artist label</description>
       <id>123</id>
       <posX>662</posX>
@@ -235,8 +231,6 @@
       <align>right</align>
       <textcolor>80ffffff</textcolor>
       <disabledcolor>80ffffff</disabledcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
     </control>
 
     <control>
@@ -306,9 +300,7 @@
       <orientation>horizontal</orientation>
       <align>left</align>
       <percentage>#Lastfm.Rating.AlbumTrack1</percentage>
-      <visible>yes</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <visible>no</visible>
     </control>
 
     <control>
@@ -328,9 +320,7 @@
       <orientation>horizontal</orientation>
       <align>left</align>
       <percentage>#Lastfm.Rating.AlbumTrack2</percentage>
-      <visible>yes</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <visible>no</visible>
     </control>
 
     <control>
@@ -350,9 +340,7 @@
       <orientation>horizontal</orientation>
       <align>left</align>
       <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
-      <visible>yes</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <visible>no</visible>
     </control>
 
 
@@ -373,9 +361,7 @@
       <orientation>horizontal</orientation>
       <align>left</align>
       <percentage>#Lastfm.Rating.AlbumTrack1</percentage>
-      <visible>yes</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <visible>no</visible>
     </control>
 
     <control>
@@ -395,9 +381,7 @@
       <orientation>horizontal</orientation>
       <align>left</align>
       <percentage>#Lastfm.Rating.AlbumTrack2</percentage>
-      <visible>yes</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <visible>no</visible>
     </control>
 
     <control>
@@ -417,9 +401,7 @@
       <orientation>horizontal</orientation>
       <align>left</align>
       <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
-      <visible>yes</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <visible>no</visible>
     </control>
 
 
@@ -440,9 +422,7 @@
       <orientation>horizontal</orientation>
       <align>left</align>
       <percentage>#Lastfm.Rating.AlbumTrack1</percentage>
-      <visible>yes</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <visible>no</visible>
     </control>
 
     <control>
@@ -462,9 +442,7 @@
       <orientation>horizontal</orientation>
       <align>left</align>
       <percentage>#Lastfm.Rating.AlbumTrack2</percentage>
-      <visible>yes</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <visible>no</visible>
     </control>
 
     <control>
@@ -484,9 +462,7 @@
       <orientation>horizontal</orientation>
       <align>left</align>
       <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
-      <visible>yes</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <visible>no</visible>
     </control>
 
 
@@ -507,9 +483,7 @@
       <orientation>horizontal</orientation>
       <align>left</align>
       <percentage>#Lastfm.Rating.AlbumTrack1</percentage>
-      <visible>yes</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <visible>no</visible>
     </control>
 
     <control>
@@ -529,9 +503,7 @@
       <orientation>horizontal</orientation>
       <align>left</align>
       <percentage>#Lastfm.Rating.AlbumTrack2</percentage>
-      <visible>yes</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <visible>no</visible>
     </control>
 
     <control>
@@ -551,13 +523,11 @@
       <orientation>horizontal</orientation>
       <align>left</align>
       <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
-      <visible>yes</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <visible>no</visible>
     </control>
 
     <control>
-      <type>fadelabel</type>
+      <type>label</type>
       <description>best album tracks label</description>
       <id>29</id>
       <posX>42</posX>
@@ -565,11 +535,9 @@
       <width>280</width>
       <label>33030</label>
       <textcolor>White</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
-      <type>fadelabel</type>
+      <type>label</type>
       <description>best tag tracks label</description>
       <id>28</id>
       <posX>42</posX>
@@ -577,8 +545,6 @@
       <width>280</width>
       <label>Top tracks for tag</label>
       <textcolor>White</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
     </control>
   </controls>
 </window>
