@@ -1035,16 +1035,6 @@ namespace MediaPortal.GUI.Library
     public override void UpdateEffectState(uint currentTime)
     {
       base.UpdateEffectState(currentTime);
-      if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
-        _viewFilmStrip.UpdateEffectState(currentTime);
-      if (_currentViewMode == ViewMode.List && _viewList != null)
-        _viewList.UpdateEffectState(currentTime);
-      if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
-        _viewThumbnail.UpdateEffectState(currentTime);
-      if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
-        _viewAlbum.UpdateEffectState(currentTime);
-      if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
-        _viewPlayList.UpdateEffectState(currentTime);
     }
   }
 }

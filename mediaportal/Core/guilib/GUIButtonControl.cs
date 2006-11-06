@@ -154,6 +154,7 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScalePosToScreenResolution(ref _textOffsetX, ref _textOffsetY);
     }
 
+
     public override bool Focus
     {
       get
@@ -228,7 +229,6 @@ namespace MediaPortal.GUI.Library
           x = _positionX + _width - _textOffsetX;
           break;
       }
-
       _labelControl.SetPosition(x, _textOffsetY + _positionY);
       _labelControl.Render(timePassed);
       base.Render(timePassed);

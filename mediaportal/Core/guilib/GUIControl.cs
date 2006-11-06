@@ -496,7 +496,16 @@ namespace MediaPortal.GUI.Library
     public new virtual bool Focus
     {
       get { return IsFocused; }
-      set { SetValue(IsFocusedProperty, value); }
+      set
+      {
+        if (Focus && !value)
+          QueueAnimation(AnimationType.Unfocus);
+        else if (!Focus && value)
+        {
+          QueueAnimation(AnimationType.Focus);
+        }
+        SetValue(IsFocusedProperty, value); 
+      }
     }
 
     /// <summary>

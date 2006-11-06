@@ -390,7 +390,9 @@ namespace MediaPortal.GUI.Library
       {
         float offset = _amount * (_acceleration * _amount + 1.0f - _acceleration);
         if (_effect == EffectType.Fade)
+        {
           _matrix.SetFader(((float)(_endAlpha - _startAlpha) * _amount + _startAlpha) * 0.01f);
+        }
         else if (_effect == EffectType.Slide)
         {
           _matrix.SetTranslation((_endX - _startX) * offset + _startX, (_endY - _startY) * offset + _startY);

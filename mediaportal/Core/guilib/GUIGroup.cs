@@ -93,8 +93,10 @@ namespace MediaPortal.GUI.Library
         }
       }
 
+      uint currentTime = (uint)(DXUtil.Timer(DirectXTimer.GetAbsoluteTime) * 1000.0);
       foreach (GUIControl control in Children)
       {
+        control.UpdateEffectState(currentTime);
         control.Render(timePassed);
       }
 
@@ -429,13 +431,6 @@ namespace MediaPortal.GUI.Library
     }
     public override void UpdateEffectState(uint currentTime)
     {
-      foreach (GUIControl control in Children)
-      {
-        if (control != null)
-        {
-          control.UpdateEffectState(currentTime);
-        }
-      }
       base.UpdateEffectState(currentTime);
     }
   }
