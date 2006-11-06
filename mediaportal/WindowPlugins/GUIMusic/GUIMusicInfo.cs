@@ -150,7 +150,7 @@ namespace MediaPortal.GUI.Music
 
 
     protected override void OnPageDestroy(int newWindowId)
-    {
+    {  
       base.OnPageDestroy(newWindowId);
       albumInfo = null;
       if (coverArtTexture != null)

@@ -350,7 +350,7 @@ namespace MediaPortal.GUI.Music
             lblCurrentAlbum.AllowScrolling = false;
             lblFilteredSearch.AllowScrolling = false;
         }
-
+       
         private void EnableControls(bool enabled)
         {
             checkSkipExisting.Disabled = !enabled;
