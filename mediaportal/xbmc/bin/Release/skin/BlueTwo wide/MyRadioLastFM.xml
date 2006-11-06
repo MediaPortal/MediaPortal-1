@@ -101,7 +101,7 @@
 			<ondown>30</ondown>
 		</control>
 		<control>
-			<type>fadelabel</type>
+			<type>label</type>
 			<description>track label</description>
 			<id>0</id>
 			<posX>285</posX>
@@ -114,7 +114,7 @@
 			<disabledcolor>ff808080</disabledcolor>
 		</control>
 		<control>
-			<type>fadelabel</type>
+			<type>label</type>
 			<description>artist label</description>
 			<id>0</id>
 			<posX>285</posX>

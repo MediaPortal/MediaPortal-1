@@ -130,7 +130,7 @@
 
 
     <control>
-      <type>fadelabel</type>
+      <type>label</type>
       <description>track label</description>
       <id>0</id>
       <posX>138</posX>
@@ -146,7 +146,7 @@
     </control>
 
     <control>
-      <type>fadelabel</type>
+      <type>label</type>
       <description>artist label</description>
       <id>0</id>
       <posX>138</posX>
