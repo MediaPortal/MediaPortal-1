@@ -391,6 +391,8 @@ videoSource,
 tuningSource)
 GO
 --- version 12 ----
+GO
+
 CREATE TABLE Conflict(
 	idConflict int IDENTITY(1,1) NOT NULL,
 	idSchedule int NOT NULL,
@@ -421,8 +423,11 @@ GO
 ALTER TABLE Conflict CHECK CONSTRAINT FK_Conflict_Schedule1
 GO
 --- version 12 ----
+GO
+
 ---- update version -----
 GO
+
 delete from version
 GO
 insert into version(versionNumber) values(12)
