@@ -376,6 +376,51 @@ namespace TvDatabase
       //return new GentleList( typeof(CanceledSchedule), this );
     }
     /// <summary>
+    /// Get a list of Conflicts referring to the current entity.
+    /// </summary>
+    public IList ReferringConflicts()
+    {
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Conflict));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "idSchedule", idSchedule);
+
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      return ObjectFactory.GetCollection(typeof(Conflict), stmt.Execute());
+
+      // TODO In the end, a GentleList should be returned instead of an arraylist
+      //return new GentleList( typeof(CanceledSchedule), this );
+    }
+
+    /// <summary>
+    /// Get a list of Conflicts referring to the current entity.
+    /// </summary>
+    public IList ConflictingSchedules()
+    {
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Conflict));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "idConflictingSchedule", idSchedule);
+
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      return ObjectFactory.GetCollection(typeof(Conflict), stmt.Execute());
+
+      // TODO In the end, a GentleList should be returned instead of an arraylist
+      //return new GentleList( typeof(CanceledSchedule), this );
+    }
+
+
+    /// <summary>
     ///
     /// </summary>
     public Channel ReferencedChannel()
@@ -554,7 +599,15 @@ namespace TvDatabase
 
     public void Delete()
     {
-      IList list = ReferringCanceledSchedule();
+      IList list = ReferringConflicts();
+      foreach (Conflict conflict in list)
+        conflict.Remove();
+
+      list = ConflictingSchedules();
+      foreach (Conflict conflict in list)
+        conflict.Remove();
+
+      list = ReferringCanceledSchedule();
       foreach (CanceledSchedule schedule in list)
         schedule.Remove();
       Remove();

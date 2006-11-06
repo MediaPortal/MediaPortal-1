@@ -7,7 +7,7 @@ using System.Collections;
 using Gentle.Common;
 using Gentle.Framework;
 
-namespace TVDatabase
+namespace TvDatabase
 {
 	/// <summary>
 	/// Instances of this class represent the properties and methods of a row in the table <b>Conflicts</b>.
