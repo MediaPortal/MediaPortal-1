@@ -403,7 +403,7 @@ CREATE TABLE Conflict(
 	 CONSTRAINT PK_Conflict PRIMARY KEY  
 	(
 		idConflict ASC
-	)WITH (PAD_INDEX  = OFF, IGNORE_DUP_KEY = OFF) 
+	)
 ) 
 GO
 
