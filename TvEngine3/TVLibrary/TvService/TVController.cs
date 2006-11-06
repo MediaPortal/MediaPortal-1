@@ -481,7 +481,7 @@ namespace TvService
         if ((_localCards[cardId] as TvCardATSC) != null) return CardType.Atsc;
         if ((_localCards[cardId] as TvCardDVBC) != null) return CardType.DvbC;
         if ((_localCards[cardId] as TvCardDVBS) != null) return CardType.DvbS;
-        if ((_localCards[cardId] as TvCardDvbSS2) != null) return (CardType) _localCards[cardId].cardType; //CardType.DvbS;
+        if ((_localCards[cardId] as TvCardDvbSS2) != null) return (CardType)_localCards[cardId].cardType; //CardType.DvbS;
         if ((_localCards[cardId] as TvCardDVBT) != null) return CardType.DvbT;
         return CardType.Analog;
       }
@@ -1802,45 +1802,70 @@ namespace TvService
 
     public string GetStreamingUrl(int cardId)
     {
-      if (_allDbscards[cardId].Enabled == false) return "";
-      if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+      try
       {
-        try
+        if (_allDbscards[cardId].Enabled == false) return "";
+        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
-          RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-          return RemoteControl.Instance.GetStreamingUrl(cardId);
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.GetStreamingUrl(cardId);
+          }
+          catch (Exception)
+          {
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return "";
+          }
         }
-        catch (Exception)
-        {
-          Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
-          return "";
-        }
+        return String.Format("rtsp://{0}/stream{1}", _ourServer.HostName, cardId);
       }
-      return String.Format("rtsp://{0}/stream{1}", _ourServer.HostName, cardId);
+      catch (Exception)
+      {
+      }
+      return "";
     }
 
     public string GetRecordingUrl(int idRecording)
     {
-      Recording recording = Recording.Retrieve(idRecording);
-      if (recording == null) return "";
-      if (!IsLocal(recording.ReferencedServer().HostName))
+      try
       {
+        Recording recording = Recording.Retrieve(idRecording);
+        if (recording == null) return "";
+        if (recording.FileName == null) return "";
+        if (recording.FileName.Length == 0) return "";
+        if (!IsLocal(recording.ReferencedServer().HostName))
+        {
+          try
+          {
+            RemoteControl.HostName = recording.ReferencedServer().HostName;
+            return RemoteControl.Instance.GetRecordingUrl(idRecording);
+          }
+          catch (Exception)
+          {
+            Log.Error("Controller: unable to connect to slave controller at:{0}", recording.ReferencedServer().HostName);
+            return "";
+          }
+        }
         try
         {
-          RemoteControl.HostName = recording.ReferencedServer().HostName;
-          return RemoteControl.Instance.GetRecordingUrl(idRecording);
+          if (System.IO.File.Exists(recording.FileName))
+          {
+            _streamer.Start();
+            string streamName = _streamer.AddMpegFile(recording.FileName);
+            string url = String.Format("rtsp://{0}/{1}", _ourServer.HostName, streamName);
+            Log.WriteFile("Controller: streaming url:{0} file:{1}", url, recording.FileName);
+            return url;
+          }
         }
         catch (Exception)
         {
-          Log.Error("Controller: unable to connect to slave controller at:{0}", recording.ReferencedServer().HostName);
-          return "";
         }
       }
-      _streamer.Start();
-      string streamName = _streamer.AddMpegFile(recording.FileName);
-      string url = String.Format("rtsp://{0}/{1}", _ourServer.HostName, streamName);
-      Log.WriteFile("Controller: streaming url:{0} file:{1}", url, recording.FileName);
-      return url;
+      catch (Exception)
+      {
+      }
+      return "";
     }
     #endregion
 
@@ -2302,8 +2327,8 @@ namespace TvService
             }
 
             Log.Write("Controller:    card:{0} type:{1} is free priority:{2}", keyPair.Value.IdCard, Type(keyPair.Value.IdCard), channelMap.ReferencedCard().Priority);
-            
-            
+
+
             cardsAvailable.Add(new CardDetail(keyPair.Value.IdCard, channelMap.ReferencedCard(), tuningDetail));
           }
         }
@@ -2314,7 +2339,7 @@ namespace TvService
         }
         else
         {
-          if (cardsFound==0)
+          if (cardsFound == 0)
             result = TvResult.ChannelNotMappedToAnyCard;
           else
             result = TvResult.AllCardsBusy;
