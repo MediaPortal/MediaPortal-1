@@ -38,6 +38,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <Optimize>false</Optimize>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -81,6 +82,10 @@
     <Compile Include="MockObjects\NoLog.cs" />
     <Compile Include="TagReader\TestTagReader.cs" />
     <Compile Include="Utils\Services\ServiceTest.cs" />
+    <Compile Include="Utils\Web\HtmlProfilerTest.cs" />
+    <Compile Include="Utils\Web\HtmlSectionParserTest.cs" />
+    <Compile Include="Utils\Web\HtmlStringTest.cs" />
+    <Compile Include="WebEPG\ListingTimeControlTest.cs" />
     <Compile Include="WebEPG\ProgramDataTest.cs" />
     <Compile Include="Support\DxDiagLogTests.cs" />
     <Compile Include="Support\EventLogLoggerTests.cs" />
@@ -103,9 +108,9 @@
     <Compile Include="TVCapture\DiskManagement\TestFreeDiskSpace.cs" />
     <Compile Include="TVCapture\Teletext\TestTopText.cs" />
     <Compile Include="TVCapture\TestRecorder.cs" />
-    <Compile Include="Utils\HttpRequestTest.cs" />
-    <Compile Include="Utils\LogTest.cs" />
-    <Compile Include="Utils\WorldTimeZoneTest.cs" />
+    <Compile Include="Utils\Web\HttpRequestTest.cs" />
+    <Compile Include="Utils\Services\LogTest.cs" />
+    <Compile Include="Utils\Time\WorldTimeZoneTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
