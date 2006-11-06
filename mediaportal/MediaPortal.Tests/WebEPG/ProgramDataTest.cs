@@ -85,8 +85,8 @@ namespace MediaPortal.Tests.WebEPG.Parser
       Assert.IsTrue(testData.StartTime.Minute == 0);
 
       // <#DAY>
-      testData.SetElement("<#DAY>", "09");
-      Assert.IsTrue(testData.Day == 9);
+      //testData.SetElement("<#DAY>", "09");
+      //Assert.IsTrue(testData.Day == 9);
 
       // <#DESCRIPTION> 
       testData.SetElement("<#DESCRIPTION>", "   This is description, isn't it?   ");
