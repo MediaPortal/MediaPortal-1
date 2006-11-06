@@ -90,8 +90,9 @@ namespace MediaPortal.GUI.Library
 		public override void AllocResources()
 		{
 			base.AllocResources ();
+      _imageVolumeBar.SetFileName(_textureName);
 			_imageVolumeBar.AllocResources();
-			_imageVolumeBar.SetFileName(_textureName);
+
 		}
 		public override void FreeResources()
 		{
