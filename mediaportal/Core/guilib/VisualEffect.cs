@@ -122,7 +122,9 @@ namespace MediaPortal.GUI.Library
     }
     void GetPosition(string text, ref float x, ref float y)
     {
-      x=y=0;
+      Log.Info("GetPos:{0}", text);
+      x = y = 0;
+      if (text == null) return;
       int pos = text.IndexOf(",");
       if (pos >= 0)
       {
@@ -277,19 +279,19 @@ namespace MediaPortal.GUI.Library
         nodeAttribute = node.Attributes.GetNamedItem("start");
         if (nodeAttribute != null)
         {
-          string start = node.Value;
+          string start = nodeAttribute.Value;
           GetPosition(start, ref _startX, ref _startY);
         }
         nodeAttribute = node.Attributes.GetNamedItem("end");
         if (nodeAttribute != null)
         {
-          string start = node.Value;
+          string start = nodeAttribute.Value;
           GetPosition(start, ref _endX, ref _endY);
         }
         nodeAttribute = node.Attributes.GetNamedItem("center");
         if (nodeAttribute != null)
         {
-          string start = node.Value;
+          string start = nodeAttribute.Value;
           GetPosition(start, ref _centerX, ref _centerY);
           GUIGraphicsContext.ScaleHorizontal(ref _centerX);
           GUIGraphicsContext.ScaleVertical(ref _centerY);
