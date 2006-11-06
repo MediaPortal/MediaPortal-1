@@ -145,11 +145,11 @@ namespace MediaPortal.GUI.Video
           item2.Label2 = item2.FileInfo.ModificationTime.ToShortDateString() + " " + item2.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           if (sortAscending)
           {
-            return DateTime.Compare(item1.FileInfo.ModificationTime, item2.FileInfo.CreationTime);
+            return DateTime.Compare(item1.FileInfo.ModificationTime, item2.FileInfo.ModificationTime);
           }
           else
           {
-            return DateTime.Compare(item2.FileInfo.ModificationTime, item1.FileInfo.CreationTime);
+            return DateTime.Compare(item2.FileInfo.ModificationTime, item1.FileInfo.ModificationTime);
           }
 
 

@@ -729,6 +729,7 @@ namespace MediaPortal.Util
             item.Label = strPath;
             item.Label2 = "";
             item.Path = strDirs[i];
+            item.FileInfo = new FileInformation(strDirs[i], item.IsFolder);
             Utils.SetDefaultIcons(item);
             int pin;
             if (!IsProtectedShare(item.Path, out pin))
@@ -775,7 +776,7 @@ namespace MediaPortal.Util
               item.Label2 = "";
               item.Path = strFiles[i];
 
-              item.FileInfo = new FileInformation(strFiles[i]);
+              item.FileInfo = new FileInformation(strFiles[i], item.IsFolder);
               Utils.SetDefaultIcons(item);
               Utils.SetThumbnails(ref item);
               items.Add(item);
@@ -901,6 +902,7 @@ namespace MediaPortal.Util
           item.Label = strPath;
           item.Label2 = "";
           item.Path = strDirs[i];
+          item.FileInfo = new FileInformation(strDirs[i], item.IsFolder);
           Utils.SetDefaultIcons(item);
           int pin;
           if (!IsProtectedShare(item.Path, out pin))
@@ -947,7 +949,7 @@ namespace MediaPortal.Util
             item.Label = Utils.GetFilename(strFiles[i]);
             item.Label2 = "";
             item.Path = strFiles[i];
-            item.FileInfo = new FileInformation(strFiles[i]);
+            item.FileInfo = new FileInformation(strFiles[i], item.IsFolder);
             Utils.SetDefaultIcons(item);
             Utils.SetThumbnails(ref item);
             items.Add(item);
@@ -1585,6 +1587,7 @@ namespace MediaPortal.Util
             item.Label = strPath;
             item.Label2 = "";
             item.Path = strDirs[i];
+            item.FileInfo = new FileInformation(strDirs[i], item.IsFolder);
             Utils.SetDefaultIcons(item);
             int pin;
             if (!IsProtectedShare(item.Path, out pin))
@@ -1643,7 +1646,7 @@ namespace MediaPortal.Util
 
               //<OKAY_AWRIGHT-310506>
               if (!doesContainRedBookData)
-                item.FileInfo = new FileInformation(strFiles[i]);
+                item.FileInfo = new FileInformation(strFiles[i], item.IsFolder);
               else
               {
                 item.FileInfo = new FileInformation();
@@ -1867,6 +1870,7 @@ namespace MediaPortal.Util
           item.Label = strPath;
           item.Label2 = "";
           item.Path = strDirs[i];
+          item.FileInfo = new FileInformation(strDirs[i], item.IsFolder);
           Utils.SetDefaultIcons(item);
           int pin;
           if (!IsProtectedShare(item.Path, out pin))
@@ -1913,7 +1917,7 @@ namespace MediaPortal.Util
             item.Label = Utils.GetFilename(strFiles[i]);
             item.Label2 = "";
             item.Path = strFiles[i];
-            item.FileInfo = new FileInformation(strFiles[i]);
+            item.FileInfo = new FileInformation(strFiles[i], item.IsFolder);
             Utils.SetDefaultIcons(item);
             Utils.SetThumbnails(ref item);
             items.Add(item);

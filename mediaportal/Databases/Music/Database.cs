@@ -1570,7 +1570,7 @@ namespace MediaPortal.Music.Database
           item.Label2 = String.Empty;
           item.Label3 = String.Empty;
           item.Path = strFileName;
-          item.FileInfo = new FileInformation(strFileName);
+          item.FileInfo = new FileInformation(strFileName, item.IsFolder);
           MediaPortal.Util.Utils.SetDefaultIcons(item);
           MediaPortal.Util.Utils.SetThumbnails(ref item);
           songs.Add(item);

@@ -37,20 +37,31 @@ namespace Core.Util
     {
     }
 
-    public FileInformation(string file)
+    public FileInformation(string file, bool isFolder)
     {
-      System.IO.FileInfo info = new System.IO.FileInfo(file);
-      Length=info.Length;
-      Name=info.Name;
-      try
+      if(isFolder)
       {
-        CreationTime=info.CreationTime;
-				ModificationTime=info.LastWriteTime;
+        System.IO.DirectoryInfo info = new System.IO.DirectoryInfo(file);
+        Length = 0;
+        Name = info.Name;
+        try
+        {
+          CreationTime = info.CreationTime;
+          ModificationTime = info.LastWriteTime;
+        }
+        catch (Exception) { }
       }
-      catch(Exception)
+      else
       {
-				creationTime=DateTime.MinValue;
-				ModificationTime=DateTime.MinValue;
+        System.IO.FileInfo info = new System.IO.FileInfo(file);
+        Length = info.Length;
+        Name = info.Name;
+        try
+        {
+            CreationTime = info.CreationTime;
+            ModificationTime = info.LastWriteTime;
+        }
+        catch (Exception) { }
       }
     }
     public long Length

@@ -298,10 +298,9 @@ namespace MyMail
             {
               theItem.ThumbnailImage = "defaultHardDiskBig.png";
             }
-
-            theItem.FileInfo = new FileInformation(theItem.Path);
-            theItem.Label3 = Convert.ToString(theItem.FileInfo.Length);
             theItem.IsFolder = false;
+            theItem.FileInfo = new FileInformation(theItem.Path, theItem.IsFolder);
+            theItem.Label3 = Convert.ToString(theItem.FileInfo.Length);
             theItem.Label2 = Convert.ToString(mailAttachment.attKind);
             listItems.Add(theItem);
 
