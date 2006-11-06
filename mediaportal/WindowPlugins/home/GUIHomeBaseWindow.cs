@@ -166,20 +166,20 @@ namespace MediaPortal.GUI.Home
       {
         name = String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin, name);
       }
-      if ((System.IO.Path.HasExtension(name)) && (System.IO.File.Exists(name))) return name;
+      if ((System.IO.Path.HasExtension(name)) && (System.IO.File.Exists(name))) return System.IO.Path.GetFileName(name);
 
       
       string filename = System.IO.Path.ChangeExtension(name, ".png");
-      if (System.IO.File.Exists(filename)) return filename;
+      if (System.IO.File.Exists(filename)) return System.IO.Path.GetFileName(filename);
 
       filename = System.IO.Path.ChangeExtension(name, ".gif");
-      if (System.IO.File.Exists(filename)) return filename;
+      if (System.IO.File.Exists(filename)) return System.IO.Path.GetFileName(filename);
 
       filename = System.IO.Path.ChangeExtension(name, ".bmp");
-      if (System.IO.File.Exists(filename)) return filename;
+      if (System.IO.File.Exists(filename)) return System.IO.Path.GetFileName(filename);
 
       filename = System.IO.Path.ChangeExtension(name, ".xml");
-      if (System.IO.File.Exists(filename)) return filename;
+      if (System.IO.File.Exists(filename)) return System.IO.Path.GetFileName(filename);
 
       return String.Empty;
     }
