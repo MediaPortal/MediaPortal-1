@@ -733,6 +733,7 @@ namespace MediaPortal.GUI.Library
             _routedWindow.OnMessage(msgDlg);
             _routedWindow = null;
           }
+
           msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, currentWindow.GetID, 0, 0, _previousActiveWindowId, 0, null);
           currentWindow.OnMessage(msg);
           if (OnDeActivateWindow != null)

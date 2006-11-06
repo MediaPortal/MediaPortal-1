@@ -161,7 +161,7 @@ namespace MediaPortal.GUI.Library
       if (nodeAttribute != null)
       {
         string conditionString = nodeAttribute.Value;
-        //_condition = g_infoManager.TranslateString(conditionString);
+        _condition = GUIInfoManager.TranslateString(conditionString);
       }
       nodeAttribute = node.Attributes.GetNamedItem("effect");
       if (nodeAttribute == null) return false;

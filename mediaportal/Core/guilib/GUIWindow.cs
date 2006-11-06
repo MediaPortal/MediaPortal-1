@@ -770,11 +770,22 @@ namespace MediaPortal.GUI.Library
     {
       this.instance = obj;
     }
+    void SetControlVisibility()
+    {
+      // reset our info manager caches
+      GUIInfoManager.ResetCache();
+      foreach (GUIControl control in Children)
+      {
+        if (control.GetVisibleCondition()!=0)
+          control.SetInitialVisibility();
+      }
+    }
     protected virtual void OnPageLoad()
     {
       if (_isSkinLoaded && (_lastSkin != GUIGraphicsContext.Skin))
         LoadSkin();
 
+      SetControlVisibility();
       QueueAnimation(AnimationType.WindowOpen);
     }
     protected virtual void OnPageDestroy(int new_windowId)
@@ -1508,7 +1519,7 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          if (0 == _showAnimation.Condition /*|| g_infoManager.GetBool(_showAnimation.condition, GetID())*/)
+          if (0 == _showAnimation.Condition || GUIInfoManager.GetBool(_showAnimation.Condition, GetID))
             _showAnimation.QueuedProcess = AnimationProcess.Normal;
           _closeAnimation.ResetAnimation();
         }
@@ -1524,7 +1535,7 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          if (0 == _closeAnimation.Condition /*|| g_infoManager.GetBool(_closeAnimation.condition, GetID())*/)
+          if (0 == _closeAnimation.Condition || GUIInfoManager.GetBool(_closeAnimation.Condition, GetID))
             _closeAnimation.QueuedProcess = AnimationProcess.Normal;
           _showAnimation.ResetAnimation();
         }

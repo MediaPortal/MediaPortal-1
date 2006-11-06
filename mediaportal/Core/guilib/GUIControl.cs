@@ -440,11 +440,20 @@ namespace MediaPortal.GUI.Library
             }
 
           case GUIMessage.MessageType.GUI_MSG_VISIBLE:
-            Visible = true;
+            Visible = (_visibleCondition!=0) ? GUIInfoManager.GetBool(_visibleCondition, ParentID) : true;
 
             return true;
 
           case GUIMessage.MessageType.GUI_MSG_HIDDEN:
+            if (IsEffectAnimating(AnimationType.Visible))
+            {
+              //        CLog::DebugLog("Resetting visible animation on control %i (we are %s)", m_dwControlID, m_visible ? "visible" : "hidden");
+              List<VisualEffect> visibleAnims = GetAnimations(AnimationType.Visible, false);
+              foreach (VisualEffect anim in visibleAnims)
+              {
+                anim.ResetAnimation();
+              }
+            }
             Visible = false;
             return true;
 
@@ -1426,6 +1435,10 @@ namespace MediaPortal.GUI.Library
     }
        */
     }
+    public virtual int GetVisibleCondition()  
+    {
+      return _visibleCondition; ;
+    }
     public virtual List<VisualEffect> GetAnimations(AnimationType type, bool checkConditions /* = true */)
     {
       List<VisualEffect> effects = new List<VisualEffect>();
@@ -1433,7 +1446,7 @@ namespace MediaPortal.GUI.Library
       {
         if (_animations[i].AnimationType == type)
         {
-          if (!checkConditions || _animations[i].Condition == 0 /*|| g_infoManager.GetBool(_animations[i].condition)*/)
+          if (!checkConditions || _animations[i].Condition == 0 || GUIInfoManager.GetBool(_animations[i].Condition, 0))
             effects.Add(_animations[i]);
         }
       }
@@ -1445,7 +1458,7 @@ namespace MediaPortal.GUI.Library
       {
         if (_animations[i].AnimationType == type)
         {
-          if (!checkConditions || _animations[i].Condition == 0 /*|| g_infoManager.GetBool(_animations[i].condition)*/)
+          if (!checkConditions || _animations[i].Condition == 0 || GUIInfoManager.GetBool(_animations[i].Condition, 0))
             return _animations[i];
         }
       }
@@ -1555,28 +1568,25 @@ namespace MediaPortal.GUI.Library
 
     protected void UpdateVisibility()
     {
-      /*
       bool bWasVisible = _visibleFromSkinCondition;
-      _visibleFromSkinCondition = g_infoManager.GetBool(_visibleCondition, m_dwParentID);
+      _visibleFromSkinCondition = GUIInfoManager.GetBool(_visibleCondition, ParentID);
       if (!bWasVisible && _visibleFromSkinCondition)
       { // automatic change of visibility - queue the in effect
         //    CLog::DebugLog("Visibility changed to visible for control id %i", m_dwControlID);
-        QueueAnimation(ANIM_TYPE_VISIBLE);
+        QueueAnimation(AnimationType.Visible);
       }
       else if (bWasVisible && !_visibleFromSkinCondition)
       { // automatic change of visibility - do the out effect
         //    CLog::DebugLog("Visibility changed to hidden for control id %i", m_dwControlID);
-        QueueAnimation(ANIM_TYPE_HIDDEN);
-      }*/
+        QueueAnimation(AnimationType.Hidden);
+      }
     }
-    protected void SetInitialVisibility()
+    public virtual void SetInitialVisibility()
     {
-      /*
-      _visibleFromSkinCondition = m_visible = g_infoManager.GetBool(_visibleCondition, m_dwParentID);
+      _visibleFromSkinCondition = Visible = GUIInfoManager.GetBool(_visibleCondition, ParentID);
       // no need to enquire every frame if we are always visible or always hidden
-      if (_visibleCondition == SYSTEM_ALWAYS_TRUE || _visibleCondition == SYSTEM_ALWAYS_FALSE)
+      if (_visibleCondition == GUIInfoManager.SYSTEM_ALWAYS_TRUE || _visibleCondition == GUIInfoManager.SYSTEM_ALWAYS_FALSE)
         _visibleCondition = 0;
-      */
     }
     public virtual void UpdateEffectState(uint currentTime)
     {
@@ -1585,7 +1595,7 @@ namespace MediaPortal.GUI.Library
       Animate(currentTime);
     }
 
-    protected void SetVisibleCondition(int visible, bool allowHiddenFocus)
+    public virtual void SetVisibleCondition(int visible, bool allowHiddenFocus)
     {
       _visibleCondition = visible;
       _allowHiddenFocus = allowHiddenFocus;

@@ -370,6 +370,11 @@ namespace MediaPortal.GUI.Library
       return control;
     }
 
+    private static bool GetConditionalVisibility(XmlNode element, GUIControl control, ref int condition, ref bool allowHiddenFocus)
+    {
+      condition = GUIInfoManager.TranslateString(element.InnerText);
+      return (condition != 0);
+    }
     private static void UpdateControlWithXmlData(GUIControl control, Type controlType, XmlNode pControlNode, IDictionary defines)
     {
       Hashtable membersThatCanBeUpdated = GetMembersToUpdate(controlType);
@@ -377,6 +382,20 @@ namespace MediaPortal.GUI.Library
       XmlNodeList childNodes = pControlNode.ChildNodes;
       foreach (XmlNode element in childNodes)
       {
+        if (element.Name == "visible")
+        {
+          if (element.InnerText != null)
+          {
+            if (element.InnerText != "yes" && element.InnerText != "no")
+            {
+              int iVisibleCondition = 0;
+              bool allowHiddenFocus = false;
+              GetConditionalVisibility(element, control, ref iVisibleCondition, ref allowHiddenFocus);
+              control.SetVisibleCondition(iVisibleCondition, allowHiddenFocus);
+              continue;
+            }
+          }
+        }
         if (element.Name == "animation")
         {
           VisualEffect effect = new VisualEffect();
