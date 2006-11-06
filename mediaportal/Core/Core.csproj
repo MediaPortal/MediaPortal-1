@@ -276,10 +276,12 @@
     <Compile Include="guilib\GUIGridCell.cs" />
     <Compile Include="guilib\GUIGridControl.cs" />
     <Compile Include="guilib\GUIGridRow.cs" />
+    <Compile Include="guilib\GUIInfoManager.cs" />
     <Compile Include="guilib\GUIMenuControl.cs" />
     <Compile Include="guilib\GUIMultiImage.cs" />
     <Compile Include="guilib\GUIPlayListItemListControl.cs" />
     <Compile Include="guilib\GUIPlayListtButtonControl.cs" />
+    <Compile Include="guilib\SkinSettings.cs" />
     <Compile Include="guilib\TransformMatrix.cs" />
     <Compile Include="guilib\VisualEffect.cs" />
     <Compile Include="ServiceImplementations\LogImpl.cs" />
