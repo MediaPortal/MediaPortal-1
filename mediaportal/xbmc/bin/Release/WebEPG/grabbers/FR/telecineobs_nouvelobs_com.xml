@@ -146,13 +146,11 @@
     <Site url="http://telecineobs.nouvelobs.com/?" post="formtv-limit=200&amp;formtv-initialisation=1&amp;formtv-crenau=0&amp;formtv-chaine=[ID]&amp;positionGroupeChainePrincipal=0&amp;formtv-date=[YYYY]-[MM]-[DD]" external="false" encoding="" />
     <Html>
       <Template name="default" start="Votre programme TV" end="Imprimer cette grille">
-        <SectionTemplate tags="TASC">
+        <SectionTemplate tags="TSC">
           <TemplateText>
-&lt;tr&gt;
 &lt;td&gt;
-&lt;a&gt;
-&lt;z(&gt;&lt;cite&gt;&lt;/cite&gt;&lt;/z){0,1}&gt;
-&lt;#START&gt;-&lt;#TITLE&gt;&lt;/a&gt;
+&lt;z(&gt;&lt;cite&gt;&lt;/cite&gt;&lt;/z)?&gt;
+&lt;#START&gt;-&lt;#TITLE&gt;
 &lt;/td&gt;
 &lt;td&gt;
 &lt;span&gt;&lt;#GENRE&gt;&lt;/span&gt;
