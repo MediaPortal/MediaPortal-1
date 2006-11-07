@@ -39,11 +39,11 @@ namespace TvDatabase
 		public Conflict(int idSchedule, int idConflictingSchedule, int idChannel, DateTime conflictDate)
 		{
 			isChanged = true;
-			idConflict = 0;
 			this.idSchedule = idSchedule;
 			this.idConflictingSchedule = idConflictingSchedule;
 			this.idChannel = idChannel;
 			this.conflictDate = conflictDate;
+      this.idCard = 0;
 		}
 
 		/// <summary> 
