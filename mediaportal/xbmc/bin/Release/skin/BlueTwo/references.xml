@@ -45,8 +45,8 @@
         <textureFocus>menu_list_focus.png</textureFocus>
         <textureNoFocus>menu_list_nofocus.png</textureNoFocus>
         <font>font13</font>
-        <textcolor>ffffffff</textcolor>
-        <colordiffuse>ffffffff</colordiffuse>
+        <textcolor>white</textcolor>
+        <colordiffuse>white</colordiffuse>
         <disabledcolor>60ffffff</disabledcolor>
     </control>
 
@@ -63,8 +63,8 @@
         <textureFocus>menu_list_focus.png</textureFocus>
         <textureNoFocus>menu_list_nofocus.png</textureNoFocus>
         <font>font13</font>
-        <textcolor>ffffffff</textcolor>
-        <colordiffuse>ffffffff</colordiffuse>
+        <textcolor>white</textcolor>
+        <colordiffuse>white</colordiffuse>
         <disabledcolor>60ffffff</disabledcolor>
     </control>
 
@@ -120,8 +120,8 @@
         <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
         <label>-</label>
         <font>font13</font>
-        <textcolor>ffffffff</textcolor>
-        <colordiffuse>ffffffff</colordiffuse>
+        <textcolor>white</textcolor>
+        <colordiffuse>white</colordiffuse>
         <disabledcolor>60ffffff</disabledcolor>
     </control>
 
@@ -442,7 +442,7 @@
         <width>180</width>
         <align>left</align>
         <font>font13</font>
-        <textcolor>ffffffff</textcolor>
+        <textcolor>white</textcolor>
     </control>
 
     <control>
@@ -464,7 +464,7 @@
         <textureDownFocus>page_down_focus.png</textureDownFocus>
         <image>icon-folder.png</image>
         <font>font13</font>
-        <textcolor>ffffffff</textcolor>
+        <textcolor>white</textcolor>
         <colordiffuse>ffffffff</colordiffuse>
     </control>
 
@@ -521,7 +521,7 @@
         <height>16</height>
         <font>font13</font>
         <reverse>yes</reverse>
-        <textcolor>ffffffff</textcolor>
+        <textcolor>white</textcolor>
         <disabledcolor>60ffffff</disabledcolor>
         <spintype>text</spintype>
     </control>
@@ -566,8 +566,8 @@
         <textureRight>arrow_round_right_nofocus.png</textureRight>
         <textureRightFocus>arrow_round_right_focus.png</textureRightFocus>
         <font>font13</font>
-        <textcolor>ffffffff</textcolor>
-        <colordiffuse>ffffffff</colordiffuse>
+        <textcolor>white</textcolor>
+        <colordiffuse>white</colordiffuse>
         <disabledcolor>60ffffff</disabledcolor>
         <onleft>50</onleft>
         <onright>50</onright>

@@ -19,8 +19,8 @@
 			<type>image</type>
 			<id>1</id>
 			<posX>0</posX>
-			<posY>120</posY>
-			<width>310</width>
+			<posY>130</posY>
+			<width>338</width>
       
 			<height>375</height>
 			<texture>background_glass_hoover_area.png</texture>
@@ -50,8 +50,8 @@
       <hoverY>200</hoverY>
       <hoverWidth>230</hoverWidth>
       <hoverHeight>225</hoverHeight>
-      <scrollTime>160</scrollTime>
-      <scrollTimeMin>100</scrollTimeMin>
+      <scrollTime>120</scrollTime>
+      <scrollTimeMin>60</scrollTimeMin>
 			<textureBackground>background_glass_menu_area.png</textureBackground>
       <onright>13</onright>
       <onleft>10</onleft>
@@ -60,15 +60,15 @@
     <control>
       <description>Date</description>
       <type>label</type>
-      <animation effect="fade" time="250">WindowOpen</animation>
+<!--       <animation effect="fade" time="250">WindowOpen</animation> -->
       <animation effect="fade" time="500">WindowClose</animation>
       <id>200</id>
-      <posX>230</posX>
-      <posY>170</posY>
+      <posX>240</posX>
+      <posY>150</posY>
       <label>#date</label>
       <align>right</align>
       <font>font13</font>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>80ffffff</textcolor>
     </control>
     <control>
       <description>Time</description>
@@ -76,8 +76,8 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <id>201</id>
-      <posX>240</posX>
-      <posY>170</posY>
+      <posX>260</posX>
+      <posY>150</posY>
       <label>#time</label>
       <align>left</align>
       <font>font13</font>

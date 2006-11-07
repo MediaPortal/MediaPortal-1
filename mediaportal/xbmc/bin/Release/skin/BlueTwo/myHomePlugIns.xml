@@ -19,8 +19,9 @@
 			<type>image</type>
 			<id>1</id>
 			<posX>0</posX>
-			<posY>120</posY>
-			<width>310</width>
+			<posY>130</posY>
+			<width>338</width>
+      
 			<height>375</height>
 			<texture>background_glass_hoover_area.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -29,6 +30,8 @@
     <control>
 			<description>Menu</description>
 			<type>menu</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 			<id>50</id>
 			<posX>370</posX>
 			<posY>130</posY>
@@ -47,45 +50,45 @@
       <hoverY>200</hoverY>
       <hoverWidth>230</hoverWidth>
       <hoverHeight>225</hoverHeight>
-      <scrollTime>160</scrollTime>
-      <scrollTimeMin>100</scrollTimeMin>
+      <scrollTime>120</scrollTime>
+      <scrollTimeMin>60</scrollTimeMin>
 			<textureBackground>background_glass_menu_area.png</textureBackground>
       <onright>13</onright>
       <onleft>10</onleft>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
     <!-- Date and Time -->
     <control>
       <description>Date</description>
       <type>label</type>
+<!--       <animation effect="fade" time="250">WindowOpen</animation> -->
+      <animation effect="fade" time="500">WindowClose</animation>
       <id>200</id>
-      <posX>230</posX>
-      <posY>170</posY>
+      <posX>240</posX>
+      <posY>150</posY>
       <label>#date</label>
       <align>right</align>
       <font>font13</font>
-      <textcolor>ffa9d0f7</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <textcolor>80ffffff</textcolor>
     </control>
     <control>
       <description>Time</description>
       <type>label</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <id>201</id>
-      <posX>240</posX>
-      <posY>170</posY>
+      <posX>260</posX>
+      <posY>150</posY>
       <label>#time</label>
       <align>left</align>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <!-- TOPBAR Buttons -->
     <control>
       <description>Back button</description>
 			<type>button</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 			<id>10</id>
       <posX>410</posX>
 			<posY>40</posY>
@@ -99,12 +102,12 @@
 			<onright>11</onright>
 			<onup>10</onup>
 			<ondown>50</ondown>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
       <description>videowallpaper button</description>
       <type>button</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <id>11</id>
       <posX>470</posX>
       <posY>40</posY>
@@ -118,12 +121,12 @@
       <onright>12</onright>
       <onup>11</onup>
       <ondown>50</ondown>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
       <description>basichome button button</description>
       <type>button</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <id>12</id>
       <posX>530</posX>
       <posY>40</posY>
@@ -137,12 +140,12 @@
       <onright>13</onright>
       <onup>12</onup>
       <ondown>50</ondown>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
       <description>Exit button</description>
       <type>button</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <id>13</id>
       <posX>590</posX>
       <posY>40</posY>
@@ -156,8 +159,6 @@
       <onright>50</onright>
       <onup>13</onup>
       <ondown>50</ondown>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 
   </controls>
