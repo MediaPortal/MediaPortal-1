@@ -55,9 +55,9 @@
         <onleft>22</onleft>
         <onright>50</onright>
         <onup>21</onup>
-        <ondown>23</ondown>
+        <ondown>28</ondown>
       </control>
-      <control>
+<!--       <control>
         <description>Play button</description>
         <type>button</type>
         <id>23</id>
@@ -66,7 +66,7 @@
         <onright>50</onright>
         <onup>22</onup>
         <ondown>28</ondown>
-      </control>
+      </control> -->
 
       <control>
         <description>scrobble mode button</description>
@@ -75,7 +75,7 @@
         <label>33001</label>
         <onleft>28</onleft>
         <onright>50</onright>
-        <onup>23</onup>
+        <onup>22</onup>
         <ondown>29</ondown>
       </control>
 

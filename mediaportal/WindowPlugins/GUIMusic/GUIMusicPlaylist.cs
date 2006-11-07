@@ -133,7 +133,8 @@ namespace MediaPortal.GUI.Music
     [SkinControlAttribute(20)]    protected GUIButtonControl btnShuffle = null;
     [SkinControlAttribute(21)]    protected GUIButtonControl btnSave = null;
     [SkinControlAttribute(22)]    protected GUIButtonControl btnClear = null;
-    [SkinControlAttribute(23)]    protected GUIButtonControl btnPlay = null;
+    //[SkinControlAttribute(23)]    protected GUIButtonControl btnPlay = null;
+    [SkinControlAttribute(26)]    protected GUIButtonControl btnNowPlaying = null;
     [SkinControlAttribute(27)]    protected GUIToggleButtonControl btnScrobble = null;
     [SkinControlAttribute(28)]    protected GUIButtonControl btnScrobbleMode = null;
     [SkinControlAttribute(29)]    protected GUIButtonControl btnScrobbleUser = null;
@@ -290,7 +291,7 @@ namespace MediaPortal.GUI.Music
       }
       if ((m_iLastControl == facadeView.GetID) && facadeView.Count <= 0)
       {
-        m_iLastControl = btnViewAs.GetID;
+        m_iLastControl = btnNowPlaying.GetID;
         GUIControl.FocusControl(GetID, m_iLastControl);
       }
       if (facadeView.Count <= 0)
@@ -445,14 +446,14 @@ namespace MediaPortal.GUI.Music
       {
         ClearPlayList();
       }
-      else if (control == btnPlay)
-      {
-        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
-        playlistPlayer.Reset();
-        playlistPlayer.Play(facadeView.SelectedListItemIndex);
+      //else if (control == btnPlay)
+      //{
+      //  playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+      //  playlistPlayer.Reset();
+      //  playlistPlayer.Play(facadeView.SelectedListItemIndex);
 
-        UpdateButtonStates();
-      }
+      //  UpdateButtonStates();
+      //}
 
       else if (control == btnScrobble)
       {
@@ -514,7 +515,7 @@ namespace MediaPortal.GUI.Music
             {
               if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST)
               {
-                m_iLastControl = btnViewAs.GetID;
+                m_iLastControl = btnNowPlaying.GetID;
                 GUIControl.FocusControl(GetID, m_iLastControl);
               }
             }
@@ -536,7 +537,7 @@ namespace MediaPortal.GUI.Music
           if (facadeView.Count > 0)
           {
             btnClear.Disabled = false;
-            btnPlay.Disabled = false;
+//            btnPlay.Disabled = false;
             btnSave.Disabled = false;
 
             if (ScrobblerOn)
@@ -547,14 +548,14 @@ namespace MediaPortal.GUI.Music
           else
           {
             btnClear.Disabled = true;
-            btnPlay.Disabled = true;
+//            btnPlay.Disabled = true;
             btnSave.Disabled = true;
           }
         }
         else
         {
           btnClear.Disabled = true;
-          btnPlay.Disabled = true;
+//          btnPlay.Disabled = true;
           btnSave.Disabled = true;
         }
         //PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
@@ -839,7 +840,7 @@ namespace MediaPortal.GUI.Music
       ClearScrobbleStartTrack();
       LoadDirectory(String.Empty);
       UpdateButtonStates();
-      GUIControl.FocusControl(GetID, btnViewAs.GetID);
+      GUIControl.FocusControl(GetID, btnNowPlaying.GetID);
 
     }
 

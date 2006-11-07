@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 	<id>500</id>
 	<defaultcontrol>2</defaultcontrol>
@@ -11,7 +11,8 @@
 		<control>
 			<type>group</type>
 			<description>group element</description>
-			<animation>FlyInFromLeft</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 			<layout>StackLayout(2)</layout>
 			<posX>113</posX>
 			<posY>129</posY>
@@ -54,9 +55,9 @@
 				<onleft>22</onleft>
 				<onright>50</onright>
 				<onup>21</onup>
-				<ondown>23</ondown>
+        <ondown>28</ondown>
 			</control>
-			<control>
+<!--       <control>
 				<description>Play button</description>
 				<type>button</type>
 				<id>23</id>
@@ -65,7 +66,8 @@
 				<onright>50</onright>
 				<onup>22</onup>
 				<ondown>28</ondown>
-			</control>
+      </control> -->
+
 			<control>
 				<description>scrobble mode button</description>
 				<type>button</type>
@@ -73,7 +75,7 @@
 				<label>33001</label>
 				<onleft>28</onleft>
 				<onright>50</onright>
-				<onup>23</onup>
+        <onup>22</onup>
 				<ondown>29</ondown>
 			</control>
 			<control>
