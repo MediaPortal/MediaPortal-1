@@ -1113,8 +1113,11 @@ namespace MediaPortal.GUI.Library
       {
         float x = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_fx, _fy) + 0.5f) - 0.5f;
         float y = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_fx, _fy) + 0.5f) - 0.5f;
-        float nw = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_nw, _nh) + 0.5f) - 0.5f;
-        float nh = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_nw, _nh) + 0.5f) - 0.5f;
+        float nw = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_fx + _nw, _fy + _nh) + 0.5f) - 0.5f;
+        float nh = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_fx + _nw, _fy + _nh) + 0.5f) - 0.5f;
+        nw -= x;
+        nh -= y;
+
         uint color = (uint)_diffuseColor;
         if (Dimmed)
           color = (uint)(_diffuseColor & DimColor);
@@ -1155,7 +1158,7 @@ namespace MediaPortal.GUI.Library
           if (Dimmed)
             color = (uint)(_diffuseColor & DimColor);
           color = GUIGraphicsContext.MergeAlpha(color);
-          frame.Draw( x, y, nw, nh, _uoff, _voff, _umax, _vmax, (int)color);
+          frame.Draw(x, y, nw, nh, _uoff, _voff, _umax, _vmax, (int)color);
 
           //if (Dimmed)
           //  frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)(_diffuseColor & DimColor));

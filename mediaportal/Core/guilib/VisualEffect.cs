@@ -281,18 +281,22 @@ namespace MediaPortal.GUI.Library
         {
           string start = nodeAttribute.Value;
           GetPosition(start, ref _startX, ref _startY);
+          if (_startX == 0) _startX = 100;
+          if (_startY == 0) _startY = 100;
         }
         nodeAttribute = node.Attributes.GetNamedItem("end");
         if (nodeAttribute != null)
         {
-          string start = nodeAttribute.Value;
-          GetPosition(start, ref _endX, ref _endY);
+          string endLine = nodeAttribute.Value;
+          GetPosition(endLine, ref _endX, ref _endY);
+          if (_endX == 0) _endX = 100;
+          if (_endY == 0) _endY = 100;
         }
         nodeAttribute = node.Attributes.GetNamedItem("center");
         if (nodeAttribute != null)
         {
-          string start = nodeAttribute.Value;
-          GetPosition(start, ref _centerX, ref _centerY);
+          string center = nodeAttribute.Value;
+          GetPosition(center, ref _centerX, ref _centerY);
           GUIGraphicsContext.ScaleHorizontal(ref _centerX);
           GUIGraphicsContext.ScaleVertical(ref _centerY);
         }

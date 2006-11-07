@@ -138,7 +138,8 @@ namespace MediaPortal.GUI.Library
           {
             float x = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX, _positionY) + 0.5f) - 0.5f;
             float y = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_positionX, _positionY) + 0.5f) - 0.5f;
-            float w = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_width, _positionY) + 0.5f) - 0.5f;
+            float w = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX+_width, _positionY) + 0.5f) - 0.5f;
+            w -= x;
             uint c = (uint)color;
             c = GUIGraphicsContext.MergeAlpha(c);
             _font.DrawTextWidth(x, y, (int)c, _cachedTextLabel, _width, _textAlignment);
@@ -147,7 +148,8 @@ namespace MediaPortal.GUI.Library
           {
             float x = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX, _positionY) + 0.5f) - 0.5f;
             float y = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_positionX, _positionY) + 0.5f) - 0.5f;
-            float w = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_width, _positionY) + 0.5f) - 0.5f;
+            float w = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX+_width, _positionY) + 0.5f) - 0.5f;
+            w -= x;
             uint c = (uint)color;
             c = GUIGraphicsContext.MergeAlpha(c);
             _font.DrawText(x, y, (int)c, _cachedTextLabel, _textAlignment, -1);
@@ -170,7 +172,8 @@ namespace MediaPortal.GUI.Library
           int yoff = (int)((_height - _textheight) / 2);
           float x = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX + xoff, _positionY + yoff) + 0.5f) - 0.5f;
           float y = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_positionX + xoff, _positionY + yoff) + 0.5f) - 0.5f;
-          float w = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_width , _positionY) + 0.5f) - 0.5f;
+          float w = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX +_width , _positionY) + 0.5f) - 0.5f;
+          w -= x;
           uint c = (uint)color;
           c = GUIGraphicsContext.MergeAlpha(c);
 
@@ -214,7 +217,8 @@ namespace MediaPortal.GUI.Library
               if (_width < 6) return;
               float x = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX - _textwidth, _positionY) + 0.5f) - 0.5f;
               float y = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_positionX - _textwidth, _positionY) + 0.5f) - 0.5f;
-              float w = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_width - 5, _positionY) + 0.5f) - 0.5f;
+              float w = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX - _textwidth+_width - 5, _positionY) + 0.5f) - 0.5f;
+              w -= x;
               uint c = (uint)color;
               c = GUIGraphicsContext.MergeAlpha(c);
 
@@ -229,7 +233,8 @@ namespace MediaPortal.GUI.Library
           {
             float x = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX, _positionY) + 0.5f) - 0.5f;
             float y = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_positionX, _positionY) + 0.5f) - 0.5f;
-            float w = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_width, _positionY) + 0.5f) - 0.5f;
+            float w = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX+_width, _positionY) + 0.5f) - 0.5f;
+            w -= x;
             uint c = (uint)color;
             c = GUIGraphicsContext.MergeAlpha(c);
 
@@ -259,7 +264,8 @@ namespace MediaPortal.GUI.Library
 
             float x = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX, _positionY) + 0.5f) - 0.5f;
             float y = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_positionX, _positionY) + 0.5f) - 0.5f;
-            float w = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_width - 5, _positionY) + 0.5f) - 0.5f;
+            float w = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX+_width - 5, _positionY) + 0.5f) - 0.5f;
+            w -= x;
             uint c = (uint)color;
             c = GUIGraphicsContext.MergeAlpha(c);
             _font.DrawText((float)x, (float)y, (int)c, _cachedTextLabel, _textAlignment, (int)w);

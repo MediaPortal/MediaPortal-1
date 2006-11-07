@@ -796,7 +796,7 @@ namespace MediaPortal.GUI.Library
             new_windowId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
         {
           // Dialog animations are handled in Close() rather than here
-          if (HasAnimation(AnimationType.WindowClose) && !IsDialog)
+          if (HasAnimation(AnimationType.WindowClose) )//&& !IsDialog)
           {
             // Perform the window out effect
             QueueAnimation(AnimationType.WindowClose);
