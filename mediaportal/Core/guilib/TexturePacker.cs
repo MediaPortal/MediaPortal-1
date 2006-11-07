@@ -180,6 +180,32 @@ namespace MediaPortal.GUI.Library
     {
     }
     #endregion
+    
+    static public void Cleanup()
+    {
+      // Check if mediaportal is new than packedgfx, then delete packedgfx (will be recreated at next run)
+      // purpose is to have fresh packedgfx containing _all_ media.
+      string file1 = GUIGraphicsContext.Skin + @"\packedgfx2.bxml";
+      string file2 = Config.GetFile(Config.Dir.Base, "MediaPortal.exe");
+      DateTime dt1 = System.IO.File.GetLastWriteTime(file1);
+      DateTime dt2 = System.IO.File.GetLastWriteTime(file2);
+      if ( dt1 > dt2)
+        return;
+
+      MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
+
+      // Intended for developers that rebuild mp often.
+      if (xmlreader.GetValueAsBool("debug", "should_never_remove_packed_skin", false))
+        return;
+      Log.Info("TexturePacker: Removing packed skin");
+
+      System.IO.File.Delete(GUIGraphicsContext.Skin + @"\packedgfx2.bxml");
+      for(int i =0;i<10;i++)
+      {
+        string fileName = String.Format(@"{0}\packedgfx2{1}.png", GUIGraphicsContext.Skin,i);
+        System.IO.File.Delete(fileName);
+      }
+    }
 
 
     bool Add(PackedTextureNode root, Image img, Image rootImage, string fileName)
@@ -275,6 +301,7 @@ namespace MediaPortal.GUI.Library
       int iMaxHeight = d3dcaps.MaxTextureHeight;
       if (iMaxWidth > 2048) iMaxWidth = 2048;
       if (iMaxHeight > 2048) iMaxHeight = 2048;
+
       while (true)
       {
         bool ImagesLeft = false;
@@ -297,6 +324,8 @@ namespace MediaPortal.GUI.Library
               continue;
             }
             bool dontAdd;
+              
+
             if (AddBitmap(bigOne.root, rootImage, files[i], out dontAdd))
             {
               files[i] = String.Empty;
