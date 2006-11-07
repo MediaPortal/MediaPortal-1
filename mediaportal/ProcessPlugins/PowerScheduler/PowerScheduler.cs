@@ -115,24 +115,27 @@ namespace MediaPortal.PowerScheduler
         _forceShutDown = xmlreader.GetValueAsBool("powerscheduler", "forcedshutdown", false);
         _extensiveLogging = xmlreader.GetValueAsBool("powerscheduler", "extensivelogging", false);
 
-        _timerInterval = xmlreader.GetValueAsInt("powerscheduler", "timerinterval", 30);
-        _wakeupInterval = xmlreader.GetValueAsInt("powerscheduler", "wakeupinterval", 1);
-        _preRecordInterval = xmlreader.GetValueAsInt("capture", "prerecord", 5);
-        _reinitRecorder = xmlreader.GetValueAsBool("powerscheduler", "reinitonresume", false);
-        if (_extensiveLogging)
-        {
-          Log.Info("Powerscheduler: LoadSettings");
-          Log.Info("   - ShutDownInterval = {0}", _shutDownInterval);
-          Log.Info("   - ShutDownMode     = {0}", _shutDownMode);
-          Log.Info("   - ForceShutDown    = {0}", _forceShutDown);
-          Log.Info("   - TimerInterval    = {0}", _timerInterval);
-          Log.Info("   - WakeUpInterval   = {0}", _wakeupInterval);
-          Log.Info("   - PreRecordingInt  = {0}", _preRecordInterval);
-          Log.Info("   - ReinitRecorder   = {0}", _reinitRecorder);
-        }
-      }
-    }
-    #endregion
+				_timerInterval     = xmlreader.GetValueAsInt("powerscheduler", "timerinterval", 30);
+				_wakeupInterval    = xmlreader.GetValueAsInt("powerscheduler", "wakeupinterval", 1);
+				_preRecordInterval = xmlreader.GetValueAsInt("capture", "prerecord", 5);
+				_reinitRecorder    = xmlreader.GetValueAsBool("powerscheduler", "reinitonresume", false);
+
+				if (_shutDownInterval < 1) ResetShutDown();   // be sure that we do no shutdown
+
+				if (_extensiveLogging)
+				{
+					Log.Info("Powerscheduler: LoadSettings");
+					Log.Info("   - ShutDownInterval = {0}", _shutDownInterval);
+					Log.Info("   - ShutDownMode     = {0}", _shutDownMode);
+					Log.Info("   - ForceShutDown    = {0}", _forceShutDown);
+					Log.Info("   - TimerInterval    = {0}", _timerInterval);
+					Log.Info("   - WakeUpInterval   = {0}", _wakeupInterval);
+					Log.Info("   - PreRecordingInt  = {0}", _preRecordInterval);
+					Log.Info("   - ReinitRecorder   = {0}", _reinitRecorder);
+				}
+			}
+		}
+		#endregion
 
     #region ShutDown Timer routines
     /// <summary>
@@ -140,21 +143,29 @@ namespace MediaPortal.PowerScheduler
     /// When the users enters the Home plugin we want to enable the shut down counter.
     /// When the user leaves the Home plugin then the shut down counter should be disabled
     /// </summary>
-    /// <param name="windowId">id of the window which is about to be activated</param>
-    private void OnActivateWindow(int windowId)
-    {
-      if ((windowId == (int)GUIWindow.Window.WINDOW_HOME) ||
-              (windowId == (int)GUIWindow.Window.WINDOW_SECOND_HOME))
-      {
-        // we are switching to home
-        SetShutDown();
-      }
-      else
-      {
-        ResetShutDown();
-      }
-    }
+    /// <param name="windowId">id of the window which is about to be activated</param
+		private void OnActivateWindow(int windowId)
+		{
+			if (_shutDownInterval > 0)
+			{
+				if ((windowId == (int)GUIWindow.Window.WINDOW_HOME) ||
+						(windowId == (int)GUIWindow.Window.WINDOW_SECOND_HOME))
+				{
+					// we are switching to home
+					SetShutDown();
+				}
+				else
+				{
+					ResetShutDown();
+				}
+			}
+		}
 
+		/// <summary>
+		/// This routine sets the ShutDown Time. 
+		/// !!!! DO NOT call it directly !!!!
+		/// Always call  ->  OnActivateWindow(GUIWindowManager.ActiveWindow); 
+		/// </summary>
     private void SetShutDown()
     {
       _shutDownTime = DateTime.Now.AddMinutes(_shutDownInterval);
@@ -163,8 +174,7 @@ namespace MediaPortal.PowerScheduler
 
     private void ResetShutDown()
     {
-      if (_shutDownTime == DateTime.MaxValue)
-        return;
+      if (_shutDownTime == DateTime.MaxValue)  return;  // no display message
       LogDebug("ShutDownTimer disabled");
       _shutDownTime = DateTime.MaxValue;
     }
