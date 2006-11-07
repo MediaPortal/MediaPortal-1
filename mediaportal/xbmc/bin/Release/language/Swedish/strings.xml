@@ -3798,6 +3798,142 @@
 		<value>Ingen träff!</value>
 	</string>
 	<string>
+		<id>2065</id>
+		<value>Välj mpeg fil att konvertera till divx:</value>
+	</string>
+	<string>
+		<id>2066</id>
+		<value>Mpeg till divx</value>
+	</string>
+	<string>
+		<id>2067</id>
+		<value>Välj dvr-ms fil att konvertera till divx:</value>
+	</string>
+	<string>
+		<id>2068</id>
+		<value>Dvr-ms till divx</value>
+	</string>
+	<string>
+		<id>2069</id>
+		<value>Sammanfogningen slutförd</value>
+	</string>
+	<string>
+		<id>2070</id>
+		<value>Konverteringen slutförd</value>
+	</string>
+	<string>
+		<id>2071</id>
+		<value>Dvr-ms till mpeg</value>
+	</string>
+	<string>
+		<id>2072</id>
+		<value>Starta konverting</value>
+	</string>
+	<string>
+		<id>2073</id>
+		<value>Välj dvr-ms fil att konvertera:</value>
+	</string>
+	<string>
+		<id>2074</id>
+		<value>Välj filer att sammanfoga:</value>
+	</string>
+	<string>
+		<id>2075</id>
+		<value>Definera nya delningspunkter</value>
+	</string>
+		<string>
+		<id>2076</id>
+		<value>Editera</value>
+	</string>
+	<string>
+		<id>2077</id>
+		<value>Dela</value>
+	</string>
+	<string>
+		<id>2078</id>
+		<value>Sammanfoga</value>
+	</string>
+	<string>
+		<id>2079</id>
+		<value>Starta sammanfogningen</value>
+	</string>
+	<string>
+		<id>2080</id>
+		<value>Ej stödd filtyp</value>
+	</string>
+	<string>
+		<id>2081</id>
+		<value>Kan ej dela</value>
+	</string>
+	<string>
+		<id>2082</id>
+		<value>Delning slutförd</value>
+	</string>
+	<string>
+		<id>2083</id>
+		<value>Önskar du ta bort orginalfilen?</value>
+	</string>
+	<string>
+		<id>2084</id>
+		<value>start</value>
+	</string>
+	<string>
+		<id>2085</id>
+		<value>slut</value>
+	</string>
+	<string>
+		<id>2086</id>
+		<value>framåt</value>
+	</string>
+	<string>
+		<id>2087</id>
+		<value>bakåt</value>
+	</string>
+	<string>
+		<id>2088</id>
+		<value>Delningspunkter:</value>
+	</string>
+	<string>
+		<id>2089</id>
+		<value>ändra kvalitet</value>
+	</string>
+	<string Prefix="Min ">
+		<id>2090</id>
+		<value>Videoeditor</value>
+	</string>
+    <string>
+		<id>2091</id>
+		<value>Operationen är avbruten</value>
+	</string>
+	<string>
+		<id>2092</id>
+		<value>Välj en fil att editera:</value>
+	</string>
+	<string>
+		<id>2093</id>
+		<value>lägg till</value>
+	</string>
+	<string>
+		<id>2094</id>
+		<value>Videolista</value>
+	</string>
+	<string>
+		<id>2095</id>
+		<value>Dela</value>
+	</string>
+	<string>
+    <id>2097</id>
+		<value>Föregående längd:</value>
+	</string>
+	<string>
+		<id>2098</id>
+		<value>Ny längd:</value>
+	</string>
+	<string>
+		<id>2099</id>
+		<value>Nuvarande position:</value>
+	</string>
+	<string>
 		<id>2100</id>
 		<value>Min Brännare</value>
 	</string>
