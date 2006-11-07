@@ -116,7 +116,7 @@
 		<posY>330</posY>
 		<width>260</width>
 		<height>230</height>
-		<texture>osd_bg_settngs.png</texture>
+		<texture>osd_bg_settings.png</texture>
 		<colorkey>0</colorkey>
 		<colordiffuse>ffffffff</colordiffuse>
 		<visible>no</visible>
