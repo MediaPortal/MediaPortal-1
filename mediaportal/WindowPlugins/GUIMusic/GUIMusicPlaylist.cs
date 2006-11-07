@@ -527,8 +527,7 @@ namespace MediaPortal.GUI.Music
     }
 
     protected override void UpdateButtonStates()
-    {
-      base.UpdateButtonStates();
+    {      
       // only update while playlist is visible
       if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST)
       {
@@ -538,10 +537,8 @@ namespace MediaPortal.GUI.Music
           {
             btnClear.Disabled = false;
             btnPlay.Disabled = false;
-            if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
-              btnSave.Disabled = false;
-            else
-              btnSave.Disabled = true;
+            btnSave.Disabled = false;
+
             if (ScrobblerOn)
               btnScrobble.Selected = true;
             else
@@ -551,9 +548,23 @@ namespace MediaPortal.GUI.Music
           {
             btnClear.Disabled = true;
             btnPlay.Disabled = true;
+            btnSave.Disabled = true;
           }
         }
+        else
+        {
+          btnClear.Disabled = true;
+          btnPlay.Disabled = true;
+          btnSave.Disabled = true;
+        }
+        //PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+
+        //if (playList != null && playList.Count > 0)
+        //  btnSave.Disabled = false;
+        //else
+        //  btnSave.Disabled = true;
       }
+      base.UpdateButtonStates();
     }
 
     protected override void OnClick(int iItem)
