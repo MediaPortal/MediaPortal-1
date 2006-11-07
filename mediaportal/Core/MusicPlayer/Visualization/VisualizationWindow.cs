@@ -1941,26 +1941,22 @@ namespace MediaPortal.Visualization
             float opacity = fStep * (float)CurrentFrame;
             DrawThumbnailOverlay(g, opacity);
           }
-
           else if (CurrentFrame < FadeFrameCount + ShowCoverArtFrameCount)
           {
             //show the album art for ShowCoverArtFrameCount frames and hide the visualisation
             DrawThumbnailOverlay(g, 1.0f);
           }
-
           else if (CurrentFrame < FadeFrameCount + ShowCoverArtFrameCount + FadeFrameCount)
           {
             // Fade out the album art;
             float opacity = 1.0f - (fStep * (float)(CurrentFrame - (FadeFrameCount + ShowCoverArtFrameCount)));
             DrawThumbnailOverlay(g, opacity);
           }
-
           else if (CurrentFrame < FadeFrameCount + ShowCoverArtFrameCount + FadeFrameCount + ShowVisualizationFrameCount)
           {
             //show only the visualisation for ShowVisualizationFrameCount frames
             // so do nothing...
           }
-
           else
           {
             if (_ImagesPathsList.Count > 0)
@@ -1973,11 +1969,9 @@ namespace MediaPortal.Visualization
                 else
                   CurrentCoverArtImageIndex = 0;
               }
-
               else
                 CurrentCoverArtImageIndex++;
             }
-
             else
               CurrentCoverArtImageIndex = -1;
 
