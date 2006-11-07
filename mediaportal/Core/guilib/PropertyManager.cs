@@ -200,7 +200,7 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Current.Lastfm.TrackTags"] = String.Empty;
       _properties["#Play.Current.Lastfm.SimilarArtists"] = String.Empty;
       _properties["#Play.Current.Lastfm.ArtistInfo"] = String.Empty;
-
+      _properties["#Play.Current.Lastfm.CurrentStream"] = String.Empty;
 
       _properties["#Play.Next.Thumb"] = String.Empty;
       _properties["#Play.Next.File"] = String.Empty;

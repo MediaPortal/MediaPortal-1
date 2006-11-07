@@ -428,6 +428,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         _currentTuneType = StreamType.Personal;
         Log.Info("StreamControl: Tune into personal station of: {0}", username_);
+        GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34043) + username_);
         return true;
       }
       else
@@ -442,6 +443,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         _currentTuneType = StreamType.Loved;
         Log.Info("StreamControl: Tune into loved tracks of: {0}", username_);
+        GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34044) + username_);
         return true;
       }
       else
@@ -456,6 +458,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         _currentTuneType = StreamType.Group;
         Log.Info("StreamControl: Tune into group radio for: {0}", groupname_);
+
+        GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", "Group radio of: " + groupname_);
+
         return true;
       }
       else
@@ -470,6 +475,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         _currentTuneType = StreamType.Recommended;
         Log.Info("StreamControl: Tune into recommended station for: {0}", username_);
+        GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34040));
         return true;
       }
       else
@@ -484,6 +490,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         _currentTuneType = StreamType.Artist;
         Log.Info("StreamControl: Tune into artists similar to: {0}", artist_);
+
+        GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", "Artists similar to: " + artist_);
+
         return true;
       }
       else
@@ -505,6 +514,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         _currentTuneType = StreamType.Tags;
         Log.Info("StreamControl: Tune into tags: {0}", TuneTags);
+        GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34041) + TuneTags);
         return true;
       }
       else

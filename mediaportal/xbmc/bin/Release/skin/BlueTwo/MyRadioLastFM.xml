@@ -15,7 +15,7 @@
 
     <control>
       <type>image</type>
-      <description>menu background image</description>
+			<description>OSD background image</description>
       <id>0</id>
       <posX>31</posX>
       <posY>425</posY>
@@ -28,7 +28,7 @@
 
     <control>
       <type>image</type>
-      <description>menu background image</description>
+			<description>background hover image</description>
       <id>0</id>
       <posX>40</posX>
       <posY>443</posY>
@@ -140,7 +140,7 @@
       <label>#Play.Current.Title</label>
       <font>font18</font>
       <align>left</align>
-      <disabledcolor>ff808080</disabledcolor>
+      <disabledcolor>ff800000</disabledcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -161,7 +161,6 @@
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
 
-
     <control>
       <type>label</type>
       <description>album label</description>
@@ -176,7 +175,21 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-
+    
+    <control>
+      <type>label</type>
+      <description>stream label</description>
+      <id>0</id>
+      <posX>296</posX>
+      <posY>36</posY>
+      <width>400</width>
+      <label>#Play.Current.Lastfm.CurrentStream</label>
+      <font>font16</font>
+      <align>left</align>
+      <textcolor>80ffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
 
     <control>
       <type>label</type>
@@ -187,7 +200,7 @@
       <label>#currentplaytime</label>
       <font>font14</font>
       <align>left</align>
-      <textcolor>80ffffff</textcolor>
+      <textcolor>white</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -201,7 +214,7 @@
       <label>#trackduration</label>
       <font>font14</font>
       <align>right</align>
-      <textcolor>80ffffff</textcolor>
+      <textcolor>white</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -212,7 +225,7 @@
       <description>Similar artists box</description>
       <id>0</id>
       <posX>60</posX>
-      <posY>283</posY>
+      <posY>303</posY>
       <width>240</width>
       <label>#Play.Current.Lastfm.SimilarArtists</label>
       <font>font13</font>

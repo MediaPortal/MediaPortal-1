@@ -610,6 +610,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.SimilarArtists", String.Empty);
       GUIPropertyManager.SetProperty("#trackduration", " ");
       GUIPropertyManager.SetProperty("#currentplaytime", String.Empty);
+      GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", String.Empty);
 
       //reset the TrayIcon
       ShowSongTrayBallon(GUILocalizeStrings.Get(34050), " ", 1, false); // Stream stopped
