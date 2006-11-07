@@ -1016,6 +1016,7 @@ public class MediaPortalApp : D3DApp, IRender
     GUIFontManager.Dispose();
     GUIWindowManager.Clear();
     GUILocalizeStrings.Dispose();
+    TexturePacker.Cleanup();
 
     VolumeHandler.Dispose();
 
