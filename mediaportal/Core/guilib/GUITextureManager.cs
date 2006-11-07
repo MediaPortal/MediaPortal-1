@@ -449,52 +449,68 @@ namespace MediaPortal.GUI.Library
         //}
         //else
         //{
-          //fmt=GetCompression(fileName);
-          Direct3D.Format fmt = Direct3D.Format.A8R8G8B8;
-          
-          ImageInformation info2 = new ImageInformation();
-          texture = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
-                                          fileName,
-                                          0, 0,//width/height
-                                          1,//mipslevels
-                                          0,//Usage.Dynamic,
-                                          fmt,
-                                          Pool.Managed,
-                                          Filter.None,
-                                          Filter.None,
-                                          (int)lColorKey,
-                                          ref info2);
-          width = info2.Width;
-          height = info2.Height;
-          /*
-          if (width > (GUIGraphicsContext.Width/2) ||
-            height> (GUIGraphicsContext.Height/2) )
-          {
-            texture.Dispose();
-            fmt=Direct3D.Format.A8R8G8B8;
-            texture=TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
-              fileName,
-              0,0,//width/height
-              1,//mipslevels
-              0,//Usage.Dynamic,
-              fmt,
-              Pool.Managed,
-              Filter.None,
-              Filter.None,
-              (int)lColorKey,
-              ref info2);
-            width=info2.Width;
-            height=info2.Height;
-          }
-          Log.Info("Texturemanager loaded:{0} {1}x{2} format:{3}",
-                        fileName,width,height,info2.Format);*/
+        //fmt=GetCompression(fileName);
+        Direct3D.Format fmt = Direct3D.Format.A8R8G8B8;
+
+        ImageInformation info2 = new ImageInformation();
+        texture = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
+                                        fileName,
+                                        0, 0,//width/height
+                                        1,//mipslevels
+                                        0,//Usage.Dynamic,
+                                        fmt,
+                                        Pool.Managed,
+                                        Filter.None,
+                                        Filter.None,
+                                        (int)lColorKey,
+                                        ref info2);
+        width = info2.Width;
+        height = info2.Height;
+        /*
+        if (width > (GUIGraphicsContext.Width/2) ||
+          height> (GUIGraphicsContext.Height/2) )
+        {
+          texture.Dispose();
+          fmt=Direct3D.Format.A8R8G8B8;
+          texture=TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
+            fileName,
+            0,0,//width/height
+            1,//mipslevels
+            0,//Usage.Dynamic,
+            fmt,
+            Pool.Managed,
+            Filter.None,
+            Filter.None,
+            (int)lColorKey,
+            ref info2);
+          width=info2.Width;
+          height=info2.Height;
+        }
+        Log.Info("Texturemanager loaded:{0} {1}x{2} format:{3}",
+                      fileName,width,height,info2.Format);*/
 
         //}
       }
       catch (Exception ex)
       {
-        Log.Error("TextureManage:LoadGraphic({0})", fileName);
-        Log.Error(ex);
+        Log.Error("TextureManager: LoadGraphic - invalid thumb({0})", fileName);
+        Direct3D.Format fmt = Direct3D.Format.A8R8G8B8;
+        string fallback = GUIGraphicsContext.Skin + @"\media\" + "black.bmp";
+
+        ImageInformation info2 = new ImageInformation();
+        texture = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
+                                        fallback,
+                                        0, 0,//width/height
+                                        1,//mipslevels
+                                        0,//Usage.Dynamic,
+                                        fmt,
+                                        Pool.Managed,
+                                        Filter.None,
+                                        Filter.None,
+                                        (int)lColorKey,
+                                        ref info2);
+        width = info2.Width;
+        height = info2.Height;
       }
       finally
       {
