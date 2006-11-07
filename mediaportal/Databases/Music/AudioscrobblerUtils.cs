@@ -808,6 +808,8 @@ namespace MediaPortal.Music.Database
         cleanString = cleanString.Replace("&", " and ");
         // make sure there's only one space
         cleanString = cleanString.Replace("  ", " ");
+        // substitute "/" with "+"
+        cleanString = cleanString.Replace(@"/", "+");
 
         dotIndex = 0;
         if (cleanString != String.Empty)
@@ -1505,7 +1507,7 @@ namespace MediaPortal.Music.Database
 
       // fetch more than needed since there could be double entries
 
-      while (addedSongs < _limitRandomListCount * 2)
+      while (addedSongs < _limitRandomListCount * 3)
       {
         loops++;
         lookupSong.Clear();
@@ -1548,7 +1550,7 @@ namespace MediaPortal.Music.Database
           }
         }
         // quick check; 3x rlimit times because every pass could try different artists in dbs.GetRandomSong(ref lookupSong);
-        if (loops > 15)
+        if (loops > 20)
         {
           if (randomMode_ == offlineMode.timesplayed)
             Log.Debug("AudioScrobblerUtils: Not enough unique unheard tracks for random mode");

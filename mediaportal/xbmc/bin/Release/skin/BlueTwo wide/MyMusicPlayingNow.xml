@@ -79,7 +79,6 @@
 			<label>#Play.Current.Title</label>
 			<font>font18</font>
 			<align>left</align>
-			<disabledcolor>ff808080</disabledcolor>
       <animation effect="fade" time="150">WindowOpen</animation>
 		</control>
 		<control>
@@ -93,7 +92,6 @@
 			<label>#Play.Current.Artist</label>
 			<font>font16</font>
 			<align>left</align>
-			<disabledcolor>ff808080</disabledcolor>
       <animation effect="fade" time="150">WindowOpen</animation>
 		</control>
 		<control>
@@ -107,7 +105,6 @@
 			<label>#Play.Current.Track</label>
 			<font>font16</font>
 			<align>left</align>
-			<disabledcolor>ff808080</disabledcolor>
       <animation effect="fade" time="150">WindowOpen</animation>
 		</control>
 		<control>
@@ -120,7 +117,7 @@
 			<label>#Play.Current.Year</label>
 			<font>font13</font>
 			<align>right</align>
-			<disabledcolor>ff808080</disabledcolor>
+<!-- 			<textcolor>white</textcolor> -->
 		</control>
 		<control>
 			<type>label</type>
@@ -132,7 +129,7 @@
 			<label>#Play.Current.Album</label>
 			<font>font13</font>
 			<align>left</align>
-			<textcolor>ffffffff</textcolor>
+<!-- 			<textcolor>white</textcolor> -->
       <animation effect="fade" time="150">WindowOpen</animation>
 		</control>
 		<control>
@@ -156,7 +153,6 @@
 			<texturebg>progress_back.png</texturebg>
 			<midtexture>osd_progress_mid.png</midtexture>
 			<righttexture>osd_progress_right.png</righttexture>
-
 		</control>
 		<control>
 			<type>label</type>
@@ -202,7 +198,6 @@
 			<label>#Play.Next.Title</label>
 			<align>right</align>
 			<textcolor>80ffffff</textcolor>
-			<disabledcolor>80ffffff</disabledcolor>
 		</control>
 		<control>
       <type>label</type>
@@ -214,7 +209,6 @@
 			<label>#Play.Next.Artist</label>
 			<align>right</align>
 			<textcolor>80ffffff</textcolor>
-			<disabledcolor>80ffffff</disabledcolor>
 		</control>
 		<control>
 			<type>listcontrol</type>
@@ -511,7 +505,7 @@
 			<posY>152</posY>
 			<width>550</width>
 			<label>33030</label>
-			<textcolor>White</textcolor>
+<!-- 			<textcolor>80ffffff</textcolor> -->
 		</control>
 		<control>
       <type>label</type>
@@ -521,7 +515,7 @@
 			<posY>354</posY>
 			<width>550</width>
 			<label>Top tracks for tag</label>
-			<textcolor>White</textcolor>
+<!-- 			<textcolor>80ffffff</textcolor> -->
 		</control>
 	</controls>
 </window>
