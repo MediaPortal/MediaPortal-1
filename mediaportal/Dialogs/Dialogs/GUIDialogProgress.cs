@@ -80,7 +80,7 @@ namespace MediaPortal.Dialogs
       base.OnAction(action);
     }
 
-    #region Base Dialog Members 
+    #region Base Dialog Members
 
     public void Close()
     {
@@ -91,7 +91,7 @@ namespace MediaPortal.Dialogs
         OnMessage(msg);
         if (GUIWindowManager.RoutedWindow == GetID)
         {
-            GUIWindowManager.UnRoute();
+          GUIWindowManager.UnRoute();
         }
         m_pParentWindow = null;
         GUIGraphicsContext.Overlay = m_bOverlay;
@@ -103,7 +103,7 @@ namespace MediaPortal.Dialogs
       }
       GUIWindowManager.IsSwitchingToNewWindow = false;
       m_bRunning = false;
-  }
+    }
 
     public void StartModal(int dwParentId)
     {
@@ -191,6 +191,7 @@ namespace MediaPortal.Dialogs
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
+            base.OnMessage(message);
             m_pParentWindow = null;
             GUIGraphicsContext.Overlay = m_bOverlay;
             base.OnMessage(message);
@@ -299,20 +300,20 @@ namespace MediaPortal.Dialogs
         OnMessage(msg);
       }
     }
-      public void DisableCancel(bool bOnOff)
+    public void DisableCancel(bool bOnOff)
+    {
+      if (bOnOff)
       {
-          if (bOnOff)
-          {
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLED, GetID, 0, CONTROL_CANCEL, 0, 0, null);
-              OnMessage(msg);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLED, GetID, 0, CONTROL_CANCEL, 0, 0, null);
+        OnMessage(msg);
 
-          }
-          else
-          {
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLED, GetID, 0, CONTROL_CANCEL, 0, 0, null);
-              OnMessage(msg);
-          }
       }
+      else
+      {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLED, GetID, 0, CONTROL_CANCEL, 0, 0, null);
+        OnMessage(msg);
+      }
+    }
 
     #region IRenderLayer
     public bool ShouldRenderLayer()

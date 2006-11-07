@@ -224,6 +224,7 @@ namespace MediaPortal.Dialogs
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
             m_bRunning = false;
+            base.OnMessage(message);
             return true;
           }
 
@@ -231,8 +232,8 @@ namespace MediaPortal.Dialogs
           {
             m_bPrevOverlay = GUIGraphicsContext.Overlay;
             base.OnMessage(message);
-            int parentWindowId=GUIWindowManager.ActiveWindow;
-            GUIWindow parentWindow=GUIWindowManager.GetWindow(parentWindowId);
+            int parentWindowId = GUIWindowManager.ActiveWindow;
+            GUIWindow parentWindow = GUIWindowManager.GetWindow(parentWindowId);
 
             GUIGraphicsContext.Overlay = parentWindow.IsOverlayAllowed;
             listView.Clear();

@@ -66,7 +66,7 @@ namespace MediaPortal.Dialogs
       base.OnAction(action);
     }
 
-    #region Base Dialog Members 
+    #region Base Dialog Members
 
     void Close()
     {
@@ -116,6 +116,7 @@ namespace MediaPortal.Dialogs
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
+            base.OnMessage(message);
             m_pParentWindow = null;
             m_bRunning = false;
             GUIGraphicsContext.Overlay = m_bPrevOverlay;

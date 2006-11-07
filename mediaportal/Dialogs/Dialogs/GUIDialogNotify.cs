@@ -52,7 +52,7 @@ namespace MediaPortal.Dialogs
     int timeOutInSeconds = 8;
     DateTime vmr7UpdateTimer = DateTime.Now;
     bool m_bNeedRefresh = false;
-      string logoUrl = string.Empty;
+    string logoUrl = string.Empty;
 
 
     public GUIDialogNotify()
@@ -158,6 +158,7 @@ namespace MediaPortal.Dialogs
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
+            base.OnMessage(message);
             m_pParentWindow = null;
             m_bRunning = false;
             GUIGraphicsContext.Overlay = m_bPrevOverlay;
@@ -175,7 +176,7 @@ namespace MediaPortal.Dialogs
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
             if (imgLogo != null)
             {
-                SetImage(logoUrl);
+              SetImage(logoUrl);
             }
 
           }
@@ -216,24 +217,24 @@ namespace MediaPortal.Dialogs
     }
     public void SetImage(string filename)
     {
-        logoUrl = filename;
-        if (System.IO.File.Exists(filename))
+      logoUrl = filename;
+      if (System.IO.File.Exists(filename))
+      {
+        if (imgLogo != null)
         {
-            if (imgLogo != null)
-            {
-                imgLogo.SetFileName(filename);
-                m_bNeedRefresh = true;
-                imgLogo.IsVisible = true;
-            }
+          imgLogo.SetFileName(filename);
+          m_bNeedRefresh = true;
+          imgLogo.IsVisible = true;
         }
-        else
+      }
+      else
+      {
+        if (imgLogo != null)
         {
-            if (imgLogo != null)
-            {
-                imgLogo.IsVisible = false;
-                m_bNeedRefresh = true;
-            }
+          imgLogo.IsVisible = false;
+          m_bNeedRefresh = true;
         }
+      }
     }
     public void SetImageDimensions(Size size, bool keepAspectRatio,bool centered)
     {
@@ -242,7 +243,7 @@ namespace MediaPortal.Dialogs
       imgLogo.Height = size.Height;
       imgLogo.KeepAspectRatio = keepAspectRatio;
       imgLogo.Centered = centered;
-    } 
+    }
 
     public int TimeOut
     {
@@ -256,15 +257,15 @@ namespace MediaPortal.Dialogs
       }
 
     }
-      public override bool NeedRefresh()
+    public override bool NeedRefresh()
+    {
+      if (m_bNeedRefresh)
       {
-          if (m_bNeedRefresh)
-          {
-              m_bNeedRefresh = false;
-              return true;
-          }
-          return false;
+        m_bNeedRefresh = false;
+        return true;
       }
+      return false;
+    }
 
     #region IRenderLayer
     public bool ShouldRenderLayer()

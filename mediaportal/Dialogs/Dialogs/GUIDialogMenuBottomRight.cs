@@ -247,6 +247,7 @@ namespace MediaPortal.Dialogs
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
+            base.OnMessage(message);
             m_bRunning = false;
             return true;
           }
