@@ -23,20 +23,23 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using TvControl;
-using TvDatabase;
 using System.Threading;
 using TvLibrary.Log;
+using TvDatabase;
+using Gentle.Common;
+using Gentle.Framework;
+using TvEngine.Events;
+using TvLibrary.Interfaces;
 
 namespace TvEngine
 {
   public class ConflictsManager : ITvServerPlugin
   {
     #region variables
-    bool _cmWorkerThreadRunning = false;
     System.Timers.Timer _cmWorkerTimer;
     TvBusinessLayer cmLayer = new TvBusinessLayer();
     IList _schedules = Schedule.ListAll();
-
+    IList _cards = Card.ListAll();
     #endregion
 
     #region properties
@@ -93,11 +96,9 @@ namespace TvEngine
     /// </summary>
     public void Start(IController controller)
     {
-      Log.WriteFile("plugin: ConflictsManager started");
-      _cmWorkerTimer = new System.Timers.Timer();
-      _cmWorkerTimer.Interval = 60000;
-      _cmWorkerTimer.Enabled = true;
-      _cmWorkerTimer.Elapsed += new System.Timers.ElapsedEventHandler(_cmWorkerTimer_Elapsed);
+      Log.WriteFile("plugin: ConflictsManager stopped");
+      ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
+      events.OnTvServerEvent += new TvServerEventHandler(events_OnTvServerEvent);
     }
 
     /// <summary>
@@ -106,12 +107,20 @@ namespace TvEngine
     public void Stop()
     {
       Log.WriteFile("plugin: ConflictsManager stopped");
-      if (_cmWorkerTimer != null)
-      {
-        _cmWorkerTimer.Enabled = false;
-        _cmWorkerTimer.Dispose();
-        _cmWorkerTimer = null;
-      }
+      ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
+      events.OnTvServerEvent -= new TvServerEventHandler(events_OnTvServerEvent);
+    }
+
+        /// <summary>
+    /// Handles the OnTvServerEvent event fired by the server.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="eventArgs">The <see cref="System.EventArgs"/> the event data.</param>
+    void events_OnTvServerEvent(object sender, EventArgs eventArgs)
+    {
+      TvServerEventArgs tvEvent = (TvServerEventArgs)eventArgs;
+      if (tvEvent.EventType == TvServerEventType.ScheduledAdded || tvEvent.EventType == TvServerEventType.ScheduleDeleted)
+        UpdateConflicts();
     }
 
     /// <summary>
@@ -127,40 +136,19 @@ namespace TvEngine
     #region private members
 
     /// <summary>
-    /// timer event callback
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    void _cmWorkerTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-    {
-      System.Threading.Thread.CurrentThread.Priority = ThreadPriority.Lowest;
-      if (!_cmWorkerThreadRunning) // avoids reentrancy
-      {
-        _cmWorkerThreadRunning = true;
-        UpdateConflicts();
-        _cmWorkerThreadRunning = false;
-      }
-    }
-
-    /// <summary>
     /// Parses the sheduled recordings
     /// and updates the conflicting recordings table
     /// </summary>
-    protected void UpdateConflicts()
+    public void UpdateConflicts()
     {
-      Log.WriteFile("ConflictManager: Updating conflicts list");
-      _schedules = Schedule.ListAll();
-
-      foreach (Schedule _schedule in _schedules)
-      {
-        foreach (Schedule _otherschedule in _schedules)
-        {
-          if (IsOverlap(_schedule, _otherschedule))
-          {
-            //todo
-          }
-        }
-      }
+      Log.Info("ConflictManager: Updating conflicts list");
+      // clears all conflicts in db
+      IList _cList = Conflict.ListAll();
+      foreach (Conflict aconflict in _cList) aconflict.Remove();
+      //
+      IList _schedules = Schedule.ListAll();
+      List<Schedule>[] sortedList = AssignSchedulesToCards(_schedules);
+      //List<Conflict> _conflicts = new List<Conflict>();
     }
 
     private void Init()
@@ -172,7 +160,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="Schedule 1"></param>
     /// <param name="Schedule 2"></param>
-    /// <returns>true if sheduled recordings are overlapping</returns>
+    /// <returns>true if sheduled recordings are overlapping, false either</returns>
     static private bool IsOverlap(Schedule sched_1, Schedule sched_2)
     {
       // sch_1        s------------------------e
@@ -184,18 +172,73 @@ namespace TvEngine
       return false;
     }
 
-    /// <summary>Tries to assign a recording to a card</summary>
-    /// <param name="arec">The recording you wan't to try to assign</param>
-    /// <param name="cardrec">An array of Recordings lists (one list for each card)</param>
-    /// <returns>True if succeed, False either</returns>
-     private bool AssignScheduleToCard(Schedule _Sched)
+    /// <summary>Assign all shedules to cards</summary>
+    /// <param name="Schedules">An IList containing all scheduled recordings</param>
+    /// <returns>Array of List<Schedule> : one per card, index [0] contains unassigned schedules</returns>
+    private List<Schedule>[] AssignSchedulesToCards(IList Schedules)
     {
       IList _cards = cmLayer.Cards;
-      foreach (Card _card in _cards)
+      // creates an array of Schedule ILists
+      // element [0] will be filled with conflicting schedules
+      // element [x] will be filled with the schedules assigned to card with idcard=x
+      List<Schedule>[] _cardSchedules = new List<Schedule>[_cards.Count + 1];
+      for (int i = 0; i < _cards.Count + 1; i++) _cardSchedules[i] = new List<Schedule>();
+      //Log.Info("found {0} cards, {1} Schedules", _cards.Count, _schedules.Count);
+      foreach (Schedule _Schedule in Schedules)
       {
-        if (_card.canViewTvChannel(_Sched.IdChannel)) _Sched.RecommendedCard = _card.IdCard;
+        //Log.Info("Parsing Schedule {0}", _Schedule.IdSchedule);
+        bool _assigned = false;
+        Schedule _lastOverlappingSchedule = null;
+        int _lastBusyCard = 0;
+
+        foreach (Card _card in _cards)
+        {
+          //Log.Info("Trying card: {0} - Canview channel : {1} , {2}", _card.IdCard, _Schedule.IdChannel, _card.canViewTvChannel(_Schedule.IdChannel));
+          if (_card.canViewTvChannel(_Schedule.IdChannel))
+          {
+            //Log.Info("card {0} can view channel {1} and has {2} assigned schedules", _card.IdCard, _Schedule.IdChannel, _cardSchedules[_card.IdCard].Count);
+
+            // checks if any schedule assigned to this cards overlaps current parsed schedule
+            bool free = true;
+            foreach (Schedule _assignedShedule in _cardSchedules[_card.IdCard])
+            {
+              if (IsOverlap(_Schedule, _assignedShedule))
+              {
+                //Log.Info("Overlapping Schedule : {0}", _assignedShedule.IdSchedule);
+                free = false;
+                _lastOverlappingSchedule = _assignedShedule;
+                _lastBusyCard = _card.IdCard;
+                break;
+              }
+            }
+            if (free)
+            {
+              _cardSchedules[_card.IdCard].Add(_Schedule);
+              _assigned = true;
+              _Schedule.RecommendedCard = _card.IdCard;
+              _Schedule.Persist();
+              //Log.Info("Schedule {0} assigned to card {1}", _Schedule.IdSchedule, _card.IdCard);
+              break;
+            }
+          }
+        }
+
+        if (_assigned)
+        {
+          //Log.Info("Schedule {0} assigned", _Schedule.IdSchedule);
+        }
+        if (!_assigned)
+        {
+          //Log.Info("Schedule {0} could not be assigned", _Schedule.IdSchedule);
+          _cardSchedules[0].Add(_Schedule);
+          Conflict _newConflict = new Conflict(_Schedule.IdSchedule, _lastOverlappingSchedule.IdSchedule, _Schedule.IdChannel, _Schedule.StartTime);
+          _newConflict.IdCard = _lastBusyCard;
+          _newConflict.Persist();
+
+        }
       }
-      return false;
+
+      return _cardSchedules;
     }
 
     #endregion
