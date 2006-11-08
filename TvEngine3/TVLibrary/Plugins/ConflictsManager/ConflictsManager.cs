@@ -36,7 +36,6 @@ namespace TvEngine
   public class ConflictsManager : ITvServerPlugin
   {
     #region variables
-    System.Timers.Timer _cmWorkerTimer;
     TvBusinessLayer cmLayer = new TvBusinessLayer();
     IList _schedules = Schedule.ListAll();
     IList _cards = Card.ListAll();
@@ -111,7 +110,7 @@ namespace TvEngine
       events.OnTvServerEvent -= new TvServerEventHandler(events_OnTvServerEvent);
     }
 
-        /// <summary>
+    /// <summary>
     /// Handles the OnTvServerEvent event fired by the server.
     /// </summary>
     /// <param name="sender">The source of the event.</param>
@@ -131,10 +130,6 @@ namespace TvEngine
       get { return null; }
     }
 
-    #endregion
-
-    #region private members
-
     /// <summary>
     /// Parses the sheduled recordings
     /// and updates the conflicting recordings table
@@ -142,13 +137,25 @@ namespace TvEngine
     public void UpdateConflicts()
     {
       Log.Info("ConflictManager: Updating conflicts list");
-      // clears all conflicts in db
-      IList _cList = Conflict.ListAll();
-      foreach (Conflict aconflict in _cList) aconflict.Remove();
+      ClearConflictTable();
       //
       IList _schedules = Schedule.ListAll();
       List<Schedule>[] sortedList = AssignSchedulesToCards(_schedules);
       //List<Conflict> _conflicts = new List<Conflict>();
+    }
+
+    #endregion
+
+    #region private members
+
+    /// <summary>
+    /// Removes all records in Table : Conflict
+    /// </summary>
+    private static void ClearConflictTable()
+    {
+      // clears all conflicts in db
+      IList _cList = Conflict.ListAll();
+      foreach (Conflict aconflict in _cList) aconflict.Remove();
     }
 
     private void Init()
@@ -183,28 +190,23 @@ namespace TvEngine
       // element [x] will be filled with the schedules assigned to card with idcard=x
       List<Schedule>[] _cardSchedules = new List<Schedule>[_cards.Count + 1];
       for (int i = 0; i < _cards.Count + 1; i++) _cardSchedules[i] = new List<Schedule>();
-      //Log.Info("found {0} cards, {1} Schedules", _cards.Count, _schedules.Count);
+
+      #region assigns schedules from table
       foreach (Schedule _Schedule in Schedules)
       {
-        //Log.Info("Parsing Schedule {0}", _Schedule.IdSchedule);
         bool _assigned = false;
         Schedule _lastOverlappingSchedule = null;
         int _lastBusyCard = 0;
-
         foreach (Card _card in _cards)
         {
-          //Log.Info("Trying card: {0} - Canview channel : {1} , {2}", _card.IdCard, _Schedule.IdChannel, _card.canViewTvChannel(_Schedule.IdChannel));
           if (_card.canViewTvChannel(_Schedule.IdChannel))
           {
-            //Log.Info("card {0} can view channel {1} and has {2} assigned schedules", _card.IdCard, _Schedule.IdChannel, _cardSchedules[_card.IdCard].Count);
-
             // checks if any schedule assigned to this cards overlaps current parsed schedule
             bool free = true;
             foreach (Schedule _assignedShedule in _cardSchedules[_card.IdCard])
             {
               if (IsOverlap(_Schedule, _assignedShedule))
               {
-                //Log.Info("Overlapping Schedule : {0}", _assignedShedule.IdSchedule);
                 free = false;
                 _lastOverlappingSchedule = _assignedShedule;
                 _lastBusyCard = _card.IdCard;
@@ -217,19 +219,12 @@ namespace TvEngine
               _assigned = true;
               _Schedule.RecommendedCard = _card.IdCard;
               _Schedule.Persist();
-              //Log.Info("Schedule {0} assigned to card {1}", _Schedule.IdSchedule, _card.IdCard);
               break;
             }
           }
         }
-
-        if (_assigned)
-        {
-          //Log.Info("Schedule {0} assigned", _Schedule.IdSchedule);
-        }
         if (!_assigned)
         {
-          //Log.Info("Schedule {0} could not be assigned", _Schedule.IdSchedule);
           _cardSchedules[0].Add(_Schedule);
           Conflict _newConflict = new Conflict(_Schedule.IdSchedule, _lastOverlappingSchedule.IdSchedule, _Schedule.IdChannel, _Schedule.StartTime);
           _newConflict.IdCard = _lastBusyCard;
@@ -237,6 +232,21 @@ namespace TvEngine
 
         }
       }
+      #endregion
+
+      #region gets incoming periodic schedules for the next 30 days
+      List<Schedule> _incomingSchedules = new List<Schedule>();
+      
+      // daily
+      // weekly schedules
+      // EveryTimeOnThisChannel
+      // EveryTimeOnEveryChannel
+      // Weekends
+      // WorkingDays
+      #endregion
+
+      #region assigns incoming periodic schedules
+      #endregion
 
       return _cardSchedules;
     }
