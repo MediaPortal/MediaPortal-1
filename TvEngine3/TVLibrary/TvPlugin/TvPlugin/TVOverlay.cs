@@ -32,16 +32,17 @@ using Gentle.Common;
 using Gentle.Framework;
 namespace TvPlugin
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class TvOverlay:GUIOverlayWindow, IRenderLayer
-	{
+  /// <summary>
+  /// 
+  /// </summary>
+  public class TvOverlay : GUIOverlayWindow, IRenderLayer
+  {
     DateTime _updateTimer = DateTime.Now;
     bool _lastStatus = false;
+    bool _didRenderLastTime = false;
     public TvOverlay()
-		{
-			GetID=(int)GUIWindow.Window.WINDOW_TV_OVERLAY;
+    {
+      GetID = (int)GUIWindow.Window.WINDOW_TV_OVERLAY;
     }
     public override void OnAdded()
     {
@@ -67,14 +68,35 @@ namespace TvPlugin
     }
     public override bool SupportsDelayedLoad
     {
-      get { return false;}
-    }    
-    
+      get { return false; }
+    }
+
 
     #region IRenderLayer
+
+    void OnUpdateState(bool render)
+    {
+      if (_didRenderLastTime != render)
+      {
+        _didRenderLastTime = render;
+        if (render)
+        {
+          QueueAnimation(AnimationType.WindowOpen);
+        }
+        else
+        {
+          QueueAnimation(AnimationType.WindowClose);
+        }
+      }
+    }
     public bool ShouldRenderLayer()
     {
-      if (GUIGraphicsContext.IsFullScreenVideo) return false;
+      if (GUIGraphicsContext.IsFullScreenVideo)
+      {
+        OnUpdateState(false);
+        return base.IsAnimating(AnimationType.WindowClose);
+      }
+
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalMilliseconds < 1000) return _lastStatus;
       if (TVHome.Connected)
@@ -86,7 +108,11 @@ namespace TvPlugin
         _lastStatus = false;
       }
       _updateTimer = DateTime.Now;
-      return _lastStatus;
+      OnUpdateState(_lastStatus);
+      if (!_lastStatus) 
+        return base.IsAnimating(AnimationType.WindowClose);
+      else 
+        return _lastStatus;
     }
 
     public void RenderLayer(float timePassed)
@@ -94,5 +120,5 @@ namespace TvPlugin
       Render(timePassed);
     }
     #endregion
-	}
+  }
 }
