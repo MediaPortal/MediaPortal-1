@@ -12,6 +12,8 @@
       <description>group element</description>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="250" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="500" end="800,0" >WindowClose</animation>
       <layout>StackLayout(2)</layout>
       <posX>60</posX>
       <posY>97</posY>
