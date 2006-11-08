@@ -42,7 +42,7 @@ namespace MediaPortal.GUI.Video
 
   public class GUIVideoOSD : GUIWindow
   {
-    enum Controls
+    enum Controls:int
     {
       OSD_VIDEOPROGRESS = 1,
       OSD_SKIPBWD = 210,
@@ -87,7 +87,9 @@ namespace MediaPortal.GUI.Video
       OSD_SUBMENU_BG_BOOKMARKS = 303,
       OSD_SUBMENU_BG_VIDEO = 304,
       OSD_SUBMENU_BG_AUDIO = 305,
-      OSD_SUBMENU_NIB = 350
+      OSD_SUBMENU_NIB = 350,
+      Panel1=101,
+      Panel2=150
     };
     bool m_bSubMenuOn = false;
     int m_iActiveMenu = 0;
@@ -276,7 +278,9 @@ namespace MediaPortal.GUI.Video
             m_bNeedRefresh = false;
             Reset();
             FocusControl(GetID, (int)Controls.OSD_PLAY, 0);	// set focus to play button by default when window is shown
-
+            QueueAnimation(AnimationType.WindowOpen);
+            for (int i = (int)Controls.Panel1; i < (int)Controls.Panel2; ++i)
+              ShowControl(GetID, i);
             return true;
           }
 
@@ -599,13 +603,13 @@ namespace MediaPortal.GUI.Video
 
         if (!m_bSubMenuOn)	// sub menu not currently showing?
         {
-          pImgNib.IsVisible = true;		// make it show
-          pImgBG.IsVisible = true;		// make it show
+          pImgNib.Visible = true;		// make it show
+          pImgBG.Visible = true;		// make it show
         }
         else
         {
-          pImgNib.IsVisible = false;		// hide it
-          pImgBG.IsVisible = false;		// hide it
+          pImgNib.Visible = false;		// hide it
+          pImgBG.Visible = false;		// hide it
         }
       }
 

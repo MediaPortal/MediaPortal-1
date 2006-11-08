@@ -2087,7 +2087,7 @@ namespace MediaPortal.GUI.TV
       GUIControl cntl = base.GetControl(idControl);
       if ( cntl != null )
       {
-        cntl.IsVisible = false;
+        cntl.Visible = false;
       }
       cntl = null;
     }
@@ -2096,7 +2096,7 @@ namespace MediaPortal.GUI.TV
       GUIControl cntl = base.GetControl(idControl);
       if ( cntl != null )
       {
-        cntl.IsVisible = true;
+        cntl.Visible = true;
       }
       cntl = null;
     }
