@@ -1530,6 +1530,11 @@ namespace MediaPortal.GUI.Library
         // Update the control states (such as visibility)
         UpdateStates(anim.AnimationType, anim.CurrentProcess, anim.CurrentState);
         // and render the animation effect
+        float centerX= (float)(XPosition + (Width / 2));
+        float centerY=(float)(YPosition + (Height / 2));
+        GUIGraphicsContext.ScaleHorizontal(ref centerX);
+        GUIGraphicsContext.ScaleVertical(ref centerY);
+        anim.SetCenter(centerX,centerY);
         anim.RenderAnimation(ref transform);
       }
       GUIGraphicsContext.SetControlTransform(transform);

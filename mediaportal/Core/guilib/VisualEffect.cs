@@ -382,7 +382,14 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
-
+    public void SetCenter(float x, float y)
+    {
+      if (_effect == EffectType.Zoom || _effect == EffectType.Rotate)
+      {
+        if (_centerX == 0) _centerX = x;
+        if (_centerY == 0) _centerY = y;
+      }
+    }
 
     public void RenderAnimation(ref TransformMatrix matrix)
     {
