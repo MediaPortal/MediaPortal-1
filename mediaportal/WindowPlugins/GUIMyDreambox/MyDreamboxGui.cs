@@ -122,182 +122,180 @@ namespace MediaPortal.GUI.Dreambox
 
         public override bool OnMessage(GUIMessage message)
         {
-            switch (message.Message)
+            if (message.Message != GUIMessage.MessageType.GUI_MSG_SETFOCUS)
             {
-
-
-                case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
-                    {
-                        break;
-                    }
-                case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-                    {
-                        base.OnMessage(message);
-                        GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(605));
-                        StartAmountSeconds = VideoStarted.Seconds;
-
-                        _Bouquets = _Dreambox.Data.UserTVBouquets.Tables[0];
-                        _SelectedBouquetID = int.Parse(_Dreambox.CurrentChannel.CurrentServiceReference.ToLower().Replace("h", "").TrimStart('0'));
-                        string selectedBouquetReference = _Bouquets.Rows[_SelectedBouquetID - 1]["Ref"].ToString();
-                        _Channels = _Dreambox.Data.Channels(selectedBouquetReference).Tables[0];
-                        return true;
-                    }
-                case GUIMessage.MessageType.GUI_MSG_CLICKED:
-                    {
-                        //get sender control
-                        base.OnMessage(message);
-                        int iControl = message.SenderControlId;
-
-                        if (iControl == (int)Controls.List)
+                switch (message.Message)
+                {
+                    case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
                         {
-                            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, iControl, 0, 0, null);
-                            OnMessage(msg);
-                            int iItem = (int)msg.Param1;
-                            int iAction = (int)message.Param1;
-                            if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM)
-                            {
-                                // play
-                            }
+                            base.OnMessage(message);
+                            GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(605));
+                            StartAmountSeconds = VideoStarted.Seconds;
+
+                            _Bouquets = _Dreambox.Data.UserTVBouquets.Tables[0];
+                            _SelectedBouquetID = int.Parse(_Dreambox.CurrentChannel.CurrentServiceReference.ToLower().Replace("h", "").TrimStart('0'));
+                            string selectedBouquetReference = _Bouquets.Rows[_SelectedBouquetID - 1]["Ref"].ToString();
+                            _Channels = _Dreambox.Data.Channels(selectedBouquetReference).Tables[0];
+                            return true;
                         }
-                        if (iControl == (int)Controls.BouquetButton)
+                    case GUIMessage.MessageType.GUI_MSG_CLICKED:
                         {
-                            //show list with bouquets
-                            GUIDialogMenuBottomRight menu = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
-                            menu.Reset();
-                            menu.SetHeading(GUILocalizeStrings.Get(971) + ": ");
-                            for (int i = 0; i < _Bouquets.Rows.Count; i++)
+                            //get sender control
+                            base.OnMessage(message);
+                            int iControl = message.SenderControlId;
+
+                            if (iControl == (int)Controls.List)
                             {
-                                menu.Add(_Bouquets.Rows[i]["Name"].ToString());
+                                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, iControl, 0, 0, null);
+                                OnMessage(msg);
+                                int iItem = (int)msg.Param1;
+                                int iAction = (int)message.Param1;
+                                if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM)
+                                {
+                                    // play
+                                }
                             }
-                            menu.DoModal(GetID);
-                            string bouquetName = menu.SelectedLabelText;
-                            string bouquetRef = "";
-                            if (bouquetName != "")
+                            if (iControl == (int)Controls.BouquetButton)
                             {
+                                //show list with bouquets
+                                GUIDialogMenuBottomRight menu = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
+                                menu.Reset();
+                                menu.SetHeading(GUILocalizeStrings.Get(971) + ": ");
                                 for (int i = 0; i < _Bouquets.Rows.Count; i++)
                                 {
-                                    if (_Bouquets.Rows[i]["Name"].ToString() == bouquetName)
-                                    {
-                                        bouquetRef = _Bouquets.Rows[i]["Ref"].ToString();
-                                        _SelectedBouquetID = i + 1;
-                                        break;
-                                    }
+                                    menu.Add(_Bouquets.Rows[i]["Name"].ToString());
                                 }
-                                if (bouquetRef.Length > 0)
+                                menu.DoModal(GetID);
+                                string bouquetName = menu.SelectedLabelText;
+                                string bouquetRef = "";
+                                if (bouquetName != "")
                                 {
-                                    // set new _SelectedBouquetRef
-                                    _SelectedBouquetRef = bouquetRef;
-                                    // get new list of channels
-                                    _Channels = _Dreambox.Data.Channels(bouquetRef).Tables[0];
-
-                                    // show channels
-                                    menu.Reset();
-                                    menu.SetHeading(GUILocalizeStrings.Get(602));
-                                    for (int i = 0; i < _Channels.Rows.Count; i++)
+                                    for (int i = 0; i < _Bouquets.Rows.Count; i++)
                                     {
-                                        menu.Add(_Channels.Rows[i]["Name"].ToString());
+                                        if (_Bouquets.Rows[i]["Name"].ToString() == bouquetName)
+                                        {
+                                            bouquetRef = _Bouquets.Rows[i]["Ref"].ToString();
+                                            _SelectedBouquetID = i + 1;
+                                            break;
+                                        }
                                     }
-
-                                    menu.DoModal(GetID);
-                                    string channelName = menu.SelectedLabelText;
-                                    string channelRef = "";
-                                    if (channelName != "")
+                                    if (bouquetRef.Length > 0)
                                     {
+                                        // set new _SelectedBouquetRef
+                                        _SelectedBouquetRef = bouquetRef;
+                                        // get new list of channels
+                                        _Channels = _Dreambox.Data.Channels(bouquetRef).Tables[0];
+
+                                        // show channels
+                                        menu.Reset();
+                                        menu.SetHeading(GUILocalizeStrings.Get(602));
                                         for (int i = 0; i < _Channels.Rows.Count; i++)
                                         {
-                                            if (_Channels.Rows[i]["Name"].ToString() == channelName)
-                                            {
-                                                channelRef = _Channels.Rows[i]["Ref"].ToString();
-                                                break;
-                                            }
+                                            menu.Add(_Channels.Rows[i]["Name"].ToString());
                                         }
-                                        if (channelRef.Length > 0)
-                                        {
-                                            // zap to that channel
-                                            StopPlaying();
-                                            _Dreambox.RemoteControl.Zap(channelRef);
-                                        }
-                                    }//end
-                                }
-                            }
-                            return true;
-                        }
-                        if (iControl == (int)Controls.ChannelButton)
-                        {
-                            //Show list with channels
-                            GUIDialogMenuBottomRight menu = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
-                            menu.Reset();
-                            menu.SetHeading(GUILocalizeStrings.Get(602));
-                            for (int i = 0; i < _Channels.Rows.Count; i++)
-                            {
-                                menu.Add(_Channels.Rows[i]["Name"].ToString());
-                            }
 
-                            menu.DoModal(GetID);
-                            string channelName = menu.SelectedLabelText;
-                            string channelRef = "";
-                            if (channelName != "")
-                            {
-                                for (int i = 0; i < _Channels.Rows.Count; i++)
-                                {
-                                    if (_Channels.Rows[i]["Name"].ToString() == channelName)
-                                    {
-                                        channelRef = _Channels.Rows[i]["Ref"].ToString();
-                                        break;
+                                        menu.DoModal(GetID);
+                                        string channelName = menu.SelectedLabelText;
+                                        string channelRef = "";
+                                        if (channelName != "")
+                                        {
+                                            for (int i = 0; i < _Channels.Rows.Count; i++)
+                                            {
+                                                if (_Channels.Rows[i]["Name"].ToString() == channelName)
+                                                {
+                                                    channelRef = _Channels.Rows[i]["Ref"].ToString();
+                                                    break;
+                                                }
+                                            }
+                                            if (channelRef.Length > 0)
+                                            {
+                                                // zap to that channel
+                                                StopPlaying();
+                                                _Dreambox.RemoteControl.Zap(channelRef);
+                                            }
+                                        }//end
                                     }
                                 }
-                                if (channelRef.Length > 0)
+                                return true;
+                            }
+                            if (iControl == (int)Controls.ChannelButton)
+                            {
+                                //Show list with channels
+                                GUIDialogMenu menu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+                                menu.Reset();
+                                menu.SetHeading(GUILocalizeStrings.Get(602));
+                                for (int i = 0; i < _Channels.Rows.Count; i++)
                                 {
-                                    // zap to that channel
-                                    StopPlaying();
-                                    ChangeChannelButtonClicked(channelRef);
+                                    menu.Add(_Channels.Rows[i]["Name"].ToString());
                                 }
+
+                                menu.DoModal(GetID);
+                                string channelName = menu.SelectedLabelText;
+                                string channelRef = "";
+                                if (channelName != "")
+                                {
+                                    for (int i = 0; i < _Channels.Rows.Count; i++)
+                                    {
+                                        if (_Channels.Rows[i]["Name"].ToString() == channelName)
+                                        {
+                                            channelRef = _Channels.Rows[i]["Ref"].ToString();
+                                            break;
+                                        }
+                                    }
+                                    if (channelRef.Length > 0)
+                                    {
+                                        // zap to that channel
+                                        StopPlaying();
+                                        ChangeChannelButtonClicked(channelRef);
+                                    }
+                                }
+                                return true;
                             }
-                            return true;
-                        }
-                        if (iControl == (int)Controls.RecordingsButton)
-                        {
-                            //activate Recordings Screen
-                            GUIWindowManager.ActivateWindow(6661);
-                            return true;
-                        }
-                        if (iControl == (int)Controls.TVOnOff)
-                        {
-                            //check if TV is turned on or off
-                            if (!btnTVOnOff.Selected)
+                            if (iControl == (int)Controls.RecordingsButton)
                             {
-                                // stop tv
-                                StopPlaying();
-                                _ChannelTimer.Stop();
+                                //activate Recordings Screen
+                                GUIWindowManager.ActivateWindow(6661);
+                                return true;
                             }
-                            else
+                            if (iControl == (int)Controls.TVOnOff)
                             {
-                                // start tv
-                                GUIPropertyManager.SetProperty("#view", "");
-                                _ChannelTimer.Start();
-                                PlayCurrentChannel();
+                                //check if TV is turned on or off
+                                if (!btnTVOnOff.Selected)
+                                {
+                                    // stop tv
+                                    StopPlaying();
+                                    _ChannelTimer.Stop();
+                                }
+                                else
+                                {
+                                    // start tv
+                                    GUIPropertyManager.SetProperty("#view", "");
+                                    _ChannelTimer.Start();
+                                    PlayCurrentChannel();
 
+                                }
+                                return true;
                             }
+                            if (iControl == (int)Controls.RadioButton)
+                            {
+                                //activate Radio Screen
+                                //GUIWindowManager.ActivateWindow(GuiMain.WindowID);
+                                return true;
+                            }
+
+
+
                             return true;
                         }
-                        if (iControl == (int)Controls.RadioButton)
+                    case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
                         {
-                            //activate Radio Screen
-                            //GUIWindowManager.ActivateWindow(GuiMain.WindowID);
-                            return true;
+
                         }
+                        break;
 
-
-
-                        return true;
-                    }
-                case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-                    {
-
-                    }
-                    break;
-
+                }
             }
+            
             return base.OnMessage(message);
 
         }
@@ -309,6 +307,20 @@ namespace MediaPortal.GUI.Dreambox
                     {
                         // switch new Language
 
+                        return;
+                    }
+                case Action.ActionType.ACTION_PAGE_DOWN:
+                    {
+                        string channelRef = PreviousChannelRef();
+                        _Dreambox.RemoteControl.Zap(channelRef);
+                        ChangeChannelButtonClicked(channelRef);
+                        return;
+                    }
+                case Action.ActionType.ACTION_PAGE_UP:
+                    {
+                        string channelRef = NextChannelRef();
+                        _Dreambox.RemoteControl.Zap(channelRef);
+                        ChangeChannelButtonClicked(channelRef);
                         return;
                     }
                 case Action.ActionType.ACTION_PREVIOUS_MENU:
@@ -550,6 +562,34 @@ namespace MediaPortal.GUI.Dreambox
                 PlayCurrentChannel();
             }
 
+        }
+
+
+        string NextChannelRef()
+        {
+            int index = -1;
+            for (int i = 0; i < _Channels.Rows.Count; i++)
+            {
+                if (_Channels.Rows[i]["Ref"].ToString() == _Dreambox.XML.CurrentService.ServiceReference)
+                {
+                    index = i+1;
+                    break;
+                }
+            }
+            return _Channels.Rows[index]["Ref"].ToString();
+        }
+        string PreviousChannelRef()
+        {
+            int index = -1;
+            for (int i = 0; i < _Channels.Rows.Count; i++)
+            {
+                if (_Channels.Rows[i]["Ref"].ToString() == _Dreambox.XML.CurrentService.ServiceReference)
+                {
+                    index = i - 1;
+                    break;
+                }
+            }
+            return _Channels.Rows[index]["Ref"].ToString();
         }
     }
 

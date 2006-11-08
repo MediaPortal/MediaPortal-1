@@ -20,14 +20,13 @@ namespace MediaPortal.VideoLanPlugin
         double _duration;
         double _currentPosition;
         DateTime _updateTimer;
-        private string[] _supportedExtension = new string[2];
+        private string[] _supportedExtension = new string[1];
 
         bool _isFullScreen = false;
         bool _notifyPlaying = true;
         int _positionX = 10, _positionY = 10, _videoWidth = 100, _videoHeight = 100;
 
-        public enum enumAspectRatio { Ratio_4x3, Ratio_16x9};
-        public enumAspectRatio AspectRatio = enumAspectRatio.Ratio_4x3;
+
 
         public static VideoLanControl vlcControl = null;
 
@@ -91,8 +90,8 @@ namespace MediaPortal.VideoLanPlugin
             //_supportedExtension[1] = ".avi";
             //_supportedExtension[2] = ".mp4";
             //_supportedExtension[3] = ".mov";
-            _supportedExtension[0] = ".ts";
-            _supportedExtension[1] = ".gary";
+            //_supportedExtension[0] = ".ts";
+            _supportedExtension[0] = ".gary";
             for (int i = 0; i < _supportedExtension.Length; i++)
             {
                 if (_supportedExtension[i].Equals(ext))
@@ -137,8 +136,9 @@ namespace MediaPortal.VideoLanPlugin
                 _started = false;
                 _ended = false;
 
-                string[] option = new string[1];
+                string[] option = new string[2];
                 option[0] = "--audio-visual=Goom";
+                option[1] = "--no-overlay";
 
 
 
@@ -186,23 +186,6 @@ namespace MediaPortal.VideoLanPlugin
             {
                 object key = vlcControl.Player.getVariable("key-aspect-ratio");
                 vlcControl.Player.setVariable("key-pressed", key);
-                //switch (AspectRatio)
-                //{
-                //    case enumAspectRatio.Ratio_4x3:
-                //        {
-                //            vlcControl.Player.setVariable("aspect-ratio", "1.85");
-                            
-                //            vlcControl.Player.Refresh();
-                //            break;
-                //        }
-                //    case enumAspectRatio.Ratio_16x9:
-                //        {
-                //            vlcControl.Player.setVariable("aspect-ratio", "1.33");
-                //            vlcControl.Player.Refresh();
-                //            break;
-                //        }
-
-                //}
             }
             if (foAction.wID == Action.ActionType.ACTION_SHOW_GUI)
             {
