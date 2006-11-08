@@ -148,5 +148,15 @@ namespace MediaPortal.GUI.Library
     {
       return (uint)(colour * alpha);
     }
+    public void GetScaling(out  float m00, out  float m01, out  float m02, out  float m10, out  float m11, out  float m12)
+    {
+      m00 = m[0, 0];
+      m01 = m[0, 1];
+      m02 = m[0, 2];
+
+      m10 = m[1, 0];
+      m11 = m[1, 1];
+      m12 = m[1, 2];
+    }
   }
 }

@@ -47,7 +47,8 @@ namespace MediaPortal.GUI.Library
     unsafe private static extern int FontEngineAddSurface(int hasCode, bool useAlphaBlend, void* fontTexture);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color);
+    unsafe private static extern void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, float m00, float m01, float m02, float m10, float m11, float m12);
+
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     unsafe private static extern void FontEnginePresentTextures();
@@ -181,7 +182,9 @@ namespace MediaPortal.GUI.Library
         //Trace.WriteLine(logline);
         if (_textureNumber >= 0)
         {
-          FontEngineDrawTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color);
+          float m00, m01, m02, m10, m11, m12;
+          GUIGraphicsContext.GetScaling(out m00, out m01, out m02, out m10, out m11, out m12);
+          FontEngineDrawTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color, m00, m01, m02, m10, m11, m12);
         }
         else
         {

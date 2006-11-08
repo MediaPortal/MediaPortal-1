@@ -156,11 +156,9 @@ namespace MediaPortal.GUI.Library
             x = _positionX + _width - _textOffsetX;
             break;
         }
-        float x1 = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(x, _textOffsetY + _positionY) + 0.5f) - 0.5f;
-        float y1 = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(x, _textOffsetY + _positionY) + 0.5f) - 0.5f;
         uint c = (uint)color;
         c = GUIGraphicsContext.MergeAlpha(c);
-        _font.DrawText(x1, (float)y1, c, _label, _textAlignment, -1);
+        _font.DrawText(x, (float)_textOffsetY + _positionY, c, _label, _textAlignment, -1);
       }
       base.Render(timePassed);
     }

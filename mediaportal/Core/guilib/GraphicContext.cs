@@ -1202,6 +1202,10 @@ namespace MediaPortal.GUI.Library
       _finalWindowTransform = _guiTransform;
       _finalTransform = _guiTransform;
     }
+    static public void GetScaling(out  float m00, out  float m01, out  float m02, out  float m10, out  float m11, out  float m12)
+    {
+      _finalTransform.GetScaling(out   m00, out   m01, out   m02, out   m10, out   m11, out   m12);
+    }
     static public void ScaleFinalCoords(ref float x, ref float y)
     {
       _finalTransform.TransformPosition(ref x, ref y);

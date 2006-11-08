@@ -53,7 +53,7 @@ namespace MediaPortal.GUI.Library
     unsafe private static extern int FontEngineAddSurface(int hasCode, bool useAlphaBlend, void* fontTexture);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color);
+    unsafe private static extern void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, float m00, float m01, float m02, float m10, float m11, float m12);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     unsafe private static extern void FontEnginePresentTextures();
@@ -1111,18 +1111,14 @@ namespace MediaPortal.GUI.Library
       //get the current frame
       if (_packedTextureNo >= 0)
       {
-        float x = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_fx, _fy) + 0.5f) - 0.5f;
-        float y = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_fx, _fy) + 0.5f) - 0.5f;
-        float nw = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_fx + _nw, _fy + _nh) + 0.5f) - 0.5f;
-        float nh = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_fx + _nw, _fy + _nh) + 0.5f) - 0.5f;
-        nw -= x;
-        nh -= y;
 
         uint color = (uint)_diffuseColor;
         if (Dimmed)
           color = (uint)(_diffuseColor & DimColor);
         color = GUIGraphicsContext.MergeAlpha(color);
-        FontEngineDrawTexture(_packedTextureNo, x, y, nw, nh, _uoff, _voff, _umax, _vmax, (int)color);
+        float m00, m01, m02, m10, m11, m12;
+        GUIGraphicsContext.GetScaling(out m00, out m01, out m02, out m10, out m11, out m12);
+        FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color, m00, m01, m02, m10, m11, m12);
 
         //if (Dimmed)
         //  FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)(_diffuseColor & DimColor));
@@ -1149,16 +1145,12 @@ namespace MediaPortal.GUI.Library
             AllocResources();
             return;
           }
-
-          float x = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_fx, _fy) + 0.5f) - 0.5f;
-          float y = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_fx, _fy) + 0.5f) - 0.5f;
-          float nw = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_nw, _nh) + 0.5f) - 0.5f;
-          float nh = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_nw, _nh) + 0.5f) - 0.5f;
+ 
           uint color = (uint)_diffuseColor;
           if (Dimmed)
             color = (uint)(_diffuseColor & DimColor);
           color = GUIGraphicsContext.MergeAlpha(color);
-          frame.Draw(x, y, nw, nh, _uoff, _voff, _umax, _vmax, (int)color);
+          frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color);
 
           //if (Dimmed)
           //  frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)(_diffuseColor & DimColor));

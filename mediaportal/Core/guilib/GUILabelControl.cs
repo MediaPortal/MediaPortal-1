@@ -136,23 +136,15 @@ namespace MediaPortal.GUI.Library
         {
           if (_width > 0)
           {
-            float x = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX, _positionY) + 0.5f) - 0.5f;
-            float y = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_positionX, _positionY) + 0.5f) - 0.5f;
-            float w = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX+_width, _positionY) + 0.5f) - 0.5f;
-            w -= x;
             uint c = (uint)color;
             c = GUIGraphicsContext.MergeAlpha(c);
-            _font.DrawTextWidth(x, y, (int)c, _cachedTextLabel, _width, _textAlignment);
+            _font.DrawTextWidth(_positionX, _positionY, (int)c, _cachedTextLabel, _width, _textAlignment);
           }
           else
           {
-            float x = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX, _positionY) + 0.5f) - 0.5f;
-            float y = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_positionX, _positionY) + 0.5f) - 0.5f;
-            float w = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX+_width, _positionY) + 0.5f) - 0.5f;
-            w -= x;
             uint c = (uint)color;
             c = GUIGraphicsContext.MergeAlpha(c);
-            _font.DrawText(x, y, (int)c, _cachedTextLabel, _textAlignment, -1);
+            _font.DrawText(_positionX, _positionY, (int)c, _cachedTextLabel, _textAlignment, -1);
           }
           return;
         }
@@ -170,14 +162,10 @@ namespace MediaPortal.GUI.Library
         {
           int xoff = (int)((_width - _textwidth) / 2);
           int yoff = (int)((_height - _textheight) / 2);
-          float x = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX + xoff, _positionY + yoff) + 0.5f) - 0.5f;
-          float y = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_positionX + xoff, _positionY + yoff) + 0.5f) - 0.5f;
-          float w = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX +_width , _positionY) + 0.5f) - 0.5f;
-          w -= x;
           uint c = (uint)color;
           c = GUIGraphicsContext.MergeAlpha(c);
 
-          _font.DrawText((float)x, (float)y, (int)c, _cachedTextLabel, GUIControl.Alignment.ALIGN_LEFT, _width);
+          _font.DrawText((float)_positionX + xoff, (float)_positionY + yoff, (int)c, _cachedTextLabel, GUIControl.Alignment.ALIGN_LEFT, _width);
         }
         else
         {
@@ -186,13 +174,11 @@ namespace MediaPortal.GUI.Library
           {
             if (_width == 0 || _textwidth < _width)
             {
-              float x = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX - _textwidth, _positionY) + 0.5f) - 0.5f;
-              float y = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_positionX - _textwidth, _positionY) + 0.5f) - 0.5f;
               
               uint c = (uint)color;
               c = GUIGraphicsContext.MergeAlpha(c);
 
-              _font.DrawText((float)x, (float)y, (int)c, _cachedTextLabel, GUIControl.Alignment.ALIGN_LEFT, -1);
+              _font.DrawText((float)_positionX - _textwidth, (float)_positionY, (int)c, _cachedTextLabel, GUIControl.Alignment.ALIGN_LEFT, -1);
             }
             else
             {/*
@@ -215,14 +201,10 @@ namespace MediaPortal.GUI.Library
               if (heighteight < 1) return;
               */
               if (_width < 6) return;
-              float x = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX - _textwidth, _positionY) + 0.5f) - 0.5f;
-              float y = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_positionX - _textwidth, _positionY) + 0.5f) - 0.5f;
-              float w = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX - _textwidth+_width - 5, _positionY) + 0.5f) - 0.5f;
-              w -= x;
               uint c = (uint)color;
               c = GUIGraphicsContext.MergeAlpha(c);
 
-              _font.DrawText((float)x, (float)y, (int)c, _cachedTextLabel, GUIControl.Alignment.ALIGN_LEFT, (int)w);
+              _font.DrawText((float)_positionX - _textwidth, (float)_positionY, (int)c, _cachedTextLabel, GUIControl.Alignment.ALIGN_LEFT, (int)_width - 5);
               //if (_useViewPort)
               //  GUIGraphicsContext.DX9Device.Viewport = oldviewport;
             }
@@ -231,14 +213,10 @@ namespace MediaPortal.GUI.Library
 
           if (_width == 0 || _textwidth < _width)
           {
-            float x = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX, _positionY) + 0.5f) - 0.5f;
-            float y = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_positionX, _positionY) + 0.5f) - 0.5f;
-            float w = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX+_width, _positionY) + 0.5f) - 0.5f;
-            w -= x;
             uint c = (uint)color;
             c = GUIGraphicsContext.MergeAlpha(c);
 
-            _font.DrawText((float)x, (float)y, (int)c, _cachedTextLabel, _textAlignment, (int)w);
+            _font.DrawText((float)_positionX, (float)_positionY, (int)c, _cachedTextLabel, _textAlignment, (int)_width);
           }
           else
           {
@@ -262,13 +240,9 @@ namespace MediaPortal.GUI.Library
             if (fPosCY <= 0) fPosCY = 0;*/
             if (_width < 6) return;
 
-            float x = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX, _positionY) + 0.5f) - 0.5f;
-            float y = (float)Math.Floor(GUIGraphicsContext.ScaleFinalYCoord(_positionX, _positionY) + 0.5f) - 0.5f;
-            float w = (float)Math.Floor(GUIGraphicsContext.ScaleFinalXCoord(_positionX+_width - 5, _positionY) + 0.5f) - 0.5f;
-            w -= x;
             uint c = (uint)color;
             c = GUIGraphicsContext.MergeAlpha(c);
-            _font.DrawText((float)x, (float)y, (int)c, _cachedTextLabel, _textAlignment, (int)w);
+            _font.DrawText((float)_positionX, (float)_positionY, (int)c, _cachedTextLabel, _textAlignment, (int)_width - 5);
           }
         }
       }

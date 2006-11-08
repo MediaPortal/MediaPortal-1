@@ -23,6 +23,7 @@
 
 #include "stdafx.h"
 #include "fontEngine.h"
+#include "transformmatrix.h"
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
@@ -370,15 +371,14 @@ int FontEngineAddSurface(int hashCode, bool useAlphaBlend,void* surface)
 }
 
 //*******************************************************************************************************************
-void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color)
+void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, float m00, float m01, float m02, float m10, float m11, float m12)
 {
-//	char log[128];
-//	sprintf(log,"FontEngineDrawTexture(%d) (%d,%d)-(%d,%d)\n", textureNo,(int)x,(int)y,(int)(x+nw),(int)(y+nh));
-//	OutputDebugString(log);
-	//Log(log);
 	if (textureNo < 0 || textureNo>=MAX_TEXTURES) return;
 	TEXTURE_DATA_T* texture;
-	
+  float m[2][3];
+  m[0][0]=m00;m[0][1]=m01;m[0][2]=m02;
+  m[1][0]=m10;m[1][1]=m11;m[1][2]=m12;
+  TransformMatrix matrix(m);
 	//1-2-1
 	bool needRedraw=false;
 	bool textureAlreadyDrawn=false;
@@ -501,21 +501,58 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 	xpos2-=0.5f;
 	ypos2-=0.5f;
 
+  //upper left
+  float x1=matrix.ScaleFinalXCoord(xpos,ypos);
+  float y1=matrix.ScaleFinalYCoord(xpos,ypos);
 
+  //bottom left
+  float x2=matrix.ScaleFinalXCoord(xpos,ypos+nh);
+  float y2=matrix.ScaleFinalYCoord(xpos,ypos+nh);
 
+  //bottom right
+  float x3=matrix.ScaleFinalXCoord(xpos+nw,ypos+nh);
+  float y3=matrix.ScaleFinalYCoord(xpos+nw,ypos+nh);
+
+  //upper right
+  float x4=matrix.ScaleFinalXCoord(xpos+nw,ypos);
+  float y4=matrix.ScaleFinalYCoord(xpos+nw,ypos);
+
+  //upper left
 	if (texture->vertices[iv].tu != tx1 || texture->vertices[iv].tv !=ty1 || texture->vertices[iv].color!=color)
 		texture->updateVertexBuffer=true;
-	texture->vertices[iv].x=xpos ;  texture->vertices[iv].y=ypos ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx1; texture->vertices[iv].tv=ty1;iv++;
+	texture->vertices[iv].x=x1 ;  
+  texture->vertices[iv].y=y1 ; 
+  texture->vertices[iv].color=color;
+  texture->vertices[iv].tu=tx1; 
+  texture->vertices[iv].tv=ty1;
+  iv++;
 
+  //bottom left
 	if (texture->vertices[iv].x != xpos || texture->vertices[iv].y !=ypos2 || texture->vertices[iv].tv!=ty2)
 		texture->updateVertexBuffer=true;
-	texture->vertices[iv].x=xpos ;  texture->vertices[iv].y=ypos2  ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx1; texture->vertices[iv].tv=ty2;iv++;
+	texture->vertices[iv].x=x2 ;  
+  texture->vertices[iv].y=y2  ; 
+  texture->vertices[iv].color=color;
+  texture->vertices[iv].tu=tx1; 
+  texture->vertices[iv].tv=ty2;
+  iv++;
 
+  //bottom right
 	if (texture->vertices[iv].x != xpos2 || texture->vertices[iv].y!=ypos2 || texture->vertices[iv].tu!=tx2)
 		texture->updateVertexBuffer=true;
-	texture->vertices[iv].x=xpos2;  texture->vertices[iv].y=ypos2  ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx2; texture->vertices[iv].tv=ty2;iv++;
+	texture->vertices[iv].x=x3;  
+  texture->vertices[iv].y=y3  ; 
+  texture->vertices[iv].color=color;
+  texture->vertices[iv].tu=tx2; 
+  texture->vertices[iv].tv=ty2;iv++;
 
-	texture->vertices[iv].x=xpos2;  texture->vertices[iv].y=ypos ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx2; texture->vertices[iv].tv=ty1;iv++;
+  //upper right
+	texture->vertices[iv].x=x4;  
+  texture->vertices[iv].y=y4 ; 
+  texture->vertices[iv].color=color;
+  texture->vertices[iv].tu=tx2; 
+  texture->vertices[iv].tv=ty1;
+  iv++;
 
 	texture->iv=texture->iv+4;
 	texture->dwNumTriangles=texture->dwNumTriangles+2;
@@ -666,12 +703,14 @@ void FontEngineSetCoordinate(int fontNumber, int index, int subindex, float fVal
 }
 
 // Updates a vertex in the memory buffer if needed
-void UpdateVertex(FONT_DATA_T* pFont, CUSTOMVERTEX* pVertex, float x, float y, float tu, float tv, DWORD color)
+void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVertex, float x, float y, float tu, float tv, DWORD color)
 {
-	if(pVertex->x != x || pVertex->y != y || pVertex->tu != tu || pVertex->tv != tv || pVertex->color != color)
+  float x1 = matrix.ScaleFinalXCoord(x,y);
+  float y1 = matrix.ScaleFinalYCoord(x,y);
+	if(pVertex->x != x1 || pVertex->y != y1 || pVertex->tu != tu || pVertex->tv != tv || pVertex->color != color)
 	{
-		pVertex->x = x;
-		pVertex->y = y;
+		pVertex->x = x1;
+		pVertex->y = y1;
 		pVertex->tu = tu;
 		pVertex->tv = tv;
 		pVertex->color = color;
@@ -680,12 +719,21 @@ void UpdateVertex(FONT_DATA_T* pFont, CUSTOMVERTEX* pVertex, float x, float y, f
 }
 
 //*******************************************************************************************************************
-void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int yposStart, DWORD intColor, int maxWidth)
+void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int yposStart, DWORD intColor, int maxWidth, float m00, float m01, float m02, float m10, float m11, float m12)
 {
 	if (fontNumber< 0 || fontNumber>=MAX_FONTS) return;
 	if (m_pDevice==NULL) return;
 	if (fontData[fontNumber].pVertexBuffer==NULL) return;
 	if (textVoid==NULL) return;
+  
+	TEXTURE_DATA_T* texture;
+  float m[2][3];
+  m[0][0]=m00;m[0][1]=m01;m[0][2]=m02;
+  m[1][0]=m10;m[1][1]=m11;m[1][2]=m12;
+  TransformMatrix matrix(m);
+
+
+
 	WCHAR* text = (WCHAR*)textVoid;
 
 	FONT_DATA_T* font = &(fontData[fontNumber]);
@@ -831,10 +879,10 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
 				alpha2|= (intColor & 0xffffff);
 			}
 			int vertices=font->iv;
-			UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos1, tx1, ty1, alpha1);
-			UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos2, tx1, ty2, alpha1);
-			UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos2, tx2, ty2, alpha2);
-			UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos1, tx2, ty1, alpha2);
+			UpdateVertex(matrix,font, &font->vertices[font->iv++], xpos1, ypos1, tx1, ty1, alpha1);
+			UpdateVertex(matrix,font, &font->vertices[font->iv++], xpos1, ypos2, tx1, ty2, alpha1);
+			UpdateVertex(matrix,font, &font->vertices[font->iv++], xpos2, ypos2, tx2, ty2, alpha2);
+			UpdateVertex(matrix,font, &font->vertices[font->iv++], xpos2, ypos1, tx2, ty1, alpha2);
 			//UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos2, tx1, ty2, alpha2);
 			//UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos1, tx2, ty1, alpha1);
 
