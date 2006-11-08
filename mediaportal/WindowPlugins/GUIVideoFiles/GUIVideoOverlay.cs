@@ -57,6 +57,7 @@ namespace MediaPortal.GUI.Video
     protected GUIImage _imageRewind = null;
 
     string _thumbLogo = "";
+    bool _didRenderLastTime = false;
     public GUIVideoOverlay()
     {
       GetID = (int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY;
@@ -83,23 +84,41 @@ namespace MediaPortal.GUI.Video
     public override void Render(float timePassed)
     {
     }
+    void OnUpdateState(bool render)
+    {
+      if (_didRenderLastTime != render)
+      {
+        _didRenderLastTime = render;
+        if (render)
+        {
+          QueueAnimation(AnimationType.WindowOpen);
+        }
+        else
+        {
+          QueueAnimation(AnimationType.WindowClose);
+        }
+      }
+    }
 
     public override bool DoesPostRender()
     {
       if (!g_Player.Playing)
       {
         _fileName = String.Empty;
-        return false;
+        OnUpdateState(false);
+        return base.IsAnimating(AnimationType.WindowClose);
       }
       if ((g_Player.IsRadio || g_Player.IsMusic))
       {
         _fileName = String.Empty;
-        return false;
+        OnUpdateState(false);
+        return base.IsAnimating(AnimationType.WindowClose);
       }
       if (!g_Player.IsVideo && !g_Player.IsDVD && !g_Player.IsTVRecording && !g_Player.IsTV)
       {
         _fileName = String.Empty;
-        return false;
+        OnUpdateState(false);
+        return base.IsAnimating(AnimationType.WindowClose);
       }
 
       if (g_Player.CurrentFile != _fileName)
@@ -117,40 +136,56 @@ namespace MediaPortal.GUI.Video
         GUIPropertyManager.SetProperty("#Play.Current.Director", GUIPropertyManager.GetProperty("#TV.View.start") + " - " + GUIPropertyManager.GetProperty("#TV.View.stop"));
       }
 
-      if (GUIGraphicsContext.IsFullScreenVideo) return false;
-      if (GUIGraphicsContext.Calibrating) return false;
-      if (!GUIGraphicsContext.Overlay) return false;
+      if (GUIGraphicsContext.IsFullScreenVideo)
+      {
+        OnUpdateState(false);
+        return base.IsAnimating(AnimationType.WindowClose);
+      }
+      if (GUIGraphicsContext.Calibrating)
+      {
+        OnUpdateState(false);
+        return base.IsAnimating(AnimationType.WindowClose);
+      }
+      if (!GUIGraphicsContext.Overlay)
+      {
+        OnUpdateState(false);
+        return base.IsAnimating(AnimationType.WindowClose);
+      }
 
+      OnUpdateState(true);
       return true;
     }
 
     public override void PostRender(float timePassed, int iLayer)
     {
       if (iLayer != 2) return;
-      if (GUIPropertyManager.GetProperty("#Play.Current.Thumb") != _thumbLogo)
+      if (!base.IsAnimating(AnimationType.WindowClose))
       {
-        _fileName = g_Player.CurrentFile;
-        SetCurrentFile(_fileName);
+        if (GUIPropertyManager.GetProperty("#Play.Current.Thumb") != _thumbLogo)
+        {
+          _fileName = g_Player.CurrentFile;
+          SetCurrentFile(_fileName);
+        }
+
+        int speed = g_Player.Speed;
+        double pos = g_Player.CurrentPosition;
+        if (_imagePlayLogo != null)
+          _imagePlayLogo.Visible = (g_Player.Paused == false);
+
+        if (_imagePauseLogo != null)
+          _imagePauseLogo.Visible = false;// (g_Player.Paused == true);
+
+        if (_imageFastForward != null)
+          _imageFastForward.Visible = false; // (g_Player.Speed>1);
+
+        if (_imageRewind != null)
+          _imageRewind.Visible = false; // (g_Player.Speed<0);
+
+
+
+        if (_videoRectangle != null)
+          _videoRectangle.Visible = GUIGraphicsContext.ShowBackground;
       }
-
-      int speed = g_Player.Speed;
-      double pos = g_Player.CurrentPosition;
-      if (_imagePlayLogo != null)
-        _imagePlayLogo.Visible = (g_Player.Paused == false);
-
-      if (_imagePauseLogo != null)
-        _imagePauseLogo.Visible = false;// (g_Player.Paused == true);
-
-      if (_imageFastForward != null)
-        _imageFastForward.Visible = false; // (g_Player.Speed>1);
-
-      if (_imageRewind != null)
-        _imageRewind.Visible = false; // (g_Player.Speed<0);
-
-
-
-      if (_videoRectangle != null)
-        _videoRectangle.Visible = GUIGraphicsContext.ShowBackground;
       base.Render(timePassed);
     }
 

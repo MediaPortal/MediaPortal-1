@@ -1508,7 +1508,7 @@ namespace MediaPortal.GUI.Library
       return false;
     }
 
-    void QueueAnimation(AnimationType animType)
+    public void QueueAnimation(AnimationType animType)
     {
       if (animType == AnimationType.WindowOpen)
       {
@@ -1546,7 +1546,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    bool IsAnimating(AnimationType animType)
+    protected bool IsAnimating(AnimationType animType)
     {
       if (animType == AnimationType.WindowOpen)
       {

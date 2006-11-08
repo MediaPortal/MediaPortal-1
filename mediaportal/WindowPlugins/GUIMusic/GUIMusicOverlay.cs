@@ -62,6 +62,7 @@ namespace MediaPortal.GUI.Music
     string m_strThumb = String.Empty;
     bool VisualisationEnabled = true;
     bool _useBassEngine = false; //SV Added by SteveV 2006-09-07
+    bool _didRenderLastTime = false;
 
     enum Controls
     {
@@ -139,24 +140,46 @@ namespace MediaPortal.GUI.Music
     {
     }
 
+    void OnUpdateState(bool render)
+    {
+      if (_didRenderLastTime != render)
+      {
+        _didRenderLastTime = render;
+        if (render)
+        {
+          QueueAnimation(AnimationType.WindowOpen);
+        }
+        else
+        {
+          QueueAnimation(AnimationType.WindowClose);
+        }
+      }
+    }
     public override bool DoesPostRender()
     {
       if (!g_Player.Playing && !Recorder.IsRadio())
       {
         m_strFile = String.Empty;
-        return false;
+        OnUpdateState(false);
+        return base.IsAnimating(AnimationType.WindowClose);
       }
 
       if (!g_Player.IsRadio && !g_Player.IsMusic && !Recorder.IsRadio())
       {
         // m_strFile = String.Empty; // rtv: Bav what's up here - this will alwasys re-trigger "if (g_Player.Playing && g_Player.CurrentFile != m_strFile)" below?
-        return false;
+
+        OnUpdateState(false);
+        return base.IsAnimating(AnimationType.WindowClose);
       }
       if (GUIGraphicsContext.IsFullScreenVideo)
         return false;
       CheckForNewFile();
       if (!GUIGraphicsContext.Overlay)
-        return false;
+      {
+        OnUpdateState(false);
+        return base.IsAnimating(AnimationType.WindowClose);
+      }
+      OnUpdateState(true);
       return true;
     }
 
@@ -184,293 +207,297 @@ namespace MediaPortal.GUI.Music
     {
       if (iLayer != 2)
         return;
-      GUIFadeLabel fader = (GUIFadeLabel)GetControl((int)Controls.CONTROL_INFO);
-      if (fader != null)
-      {
-        fader.AllowScrolling = true;
-      }
-      if (GUIGraphicsContext.Overlay == false)
-      {
 
-        return;
-      }
-
-      // Aways get the positions before we do anything, because the window could be resized.
-      m_iPosXRect = GetControlXPosition((int)Controls.CONTROL_LOGO_RECT);
-      m_iPosYRect = GetControlYPosition((int)Controls.CONTROL_LOGO_RECT);
-      m_iPosOrgRectangle = GetControlYPosition((int)Controls.CONTROL_LOGO_RECT);
-      m_iPosOrgIcon = GetControlYPosition((int)Controls.CONTROL_LOGO_PIC);
-      m_iPosOrgPlay = GetControlYPosition((int)Controls.CONTROL_PLAY_LOGO);
-      m_iPosOrgPause = GetControlYPosition((int)Controls.CONTROL_PAUSE_LOGO);
-      m_iPosOrgInfo = GetControlYPosition((int)Controls.CONTROL_INFO);
-      m_iPosOrgPlayTime = GetControlYPosition((int)Controls.CONTROL_PLAYTIME);
-      m_iPosOrgBigPlayTime = GetControlYPosition((int)Controls.CONTROL_BIG_PLAYTIME);
-
-      int iSteps = 25;
-      if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_VISUALISATION)
+      if (!base.IsAnimating(AnimationType.WindowClose))
       {
-        SetPosition((int)Controls.CONTROL_LOGO_RECT, 50, 50, m_iPosOrgRectangle);
-        SetPosition((int)Controls.CONTROL_LOGO_PIC, 50, 50, m_iPosOrgIcon);
-        SetPosition((int)Controls.CONTROL_PLAY_LOGO, 50, 50, m_iPosOrgPlay);
-        SetPosition((int)Controls.CONTROL_PAUSE_LOGO, 50, 50, m_iPosOrgPause);
-        SetPosition((int)Controls.CONTROL_FF_LOGO, 50, 50, m_iPosOrgPause);
-        SetPosition((int)Controls.CONTROL_RW_LOGO, 50, 50, m_iPosOrgPause);
-        SetPosition((int)Controls.CONTROL_INFO, 50, 50, m_iPosOrgInfo);
-        SetPosition((int)Controls.CONTROL_PLAYTIME, 50, 50, m_iPosOrgPlayTime);
-        SetPosition((int)Controls.CONTROL_BIG_PLAYTIME, 50, 50, m_iPosOrgBigPlayTime);
-        m_iFrames = 0;
-      }
-      else
-      {
-        if (m_iFrames < iSteps)
+        GUIFadeLabel fader = (GUIFadeLabel)GetControl((int)Controls.CONTROL_INFO);
+        if (fader != null)
         {
-          // scroll up
-          SetPosition((int)Controls.CONTROL_LOGO_RECT, m_iFrames, iSteps, m_iPosOrgRectangle);
-          SetPosition((int)Controls.CONTROL_LOGO_PIC, m_iFrames, iSteps, m_iPosOrgIcon);
-          SetPosition((int)Controls.CONTROL_PLAY_LOGO, m_iFrames, iSteps, m_iPosOrgPlay);
-          SetPosition((int)Controls.CONTROL_PAUSE_LOGO, m_iFrames, iSteps, m_iPosOrgPause);
-          SetPosition((int)Controls.CONTROL_FF_LOGO, m_iFrames, iSteps, m_iPosOrgPause);
-          SetPosition((int)Controls.CONTROL_RW_LOGO, m_iFrames, iSteps, m_iPosOrgPause);
-          SetPosition((int)Controls.CONTROL_INFO, m_iFrames, iSteps, m_iPosOrgInfo);
-          SetPosition((int)Controls.CONTROL_PLAYTIME, m_iFrames, iSteps, m_iPosOrgPlayTime);
-          SetPosition((int)Controls.CONTROL_BIG_PLAYTIME, m_iFrames, iSteps, m_iPosOrgBigPlayTime);
-          m_iFrames++;
+          fader.AllowScrolling = true;
         }
-        else if (m_iFrames >= iSteps && m_iFrames <= 5 * iSteps + iSteps)
+        if (GUIGraphicsContext.Overlay == false)
         {
-          //show
-          SetPosition((int)Controls.CONTROL_LOGO_RECT, iSteps, iSteps, m_iPosOrgRectangle);
-          SetPosition((int)Controls.CONTROL_LOGO_PIC, iSteps, iSteps, m_iPosOrgIcon);
-          SetPosition((int)Controls.CONTROL_PLAY_LOGO, iSteps, iSteps, m_iPosOrgPlay);
-          SetPosition((int)Controls.CONTROL_PAUSE_LOGO, iSteps, iSteps, m_iPosOrgPause);
-          SetPosition((int)Controls.CONTROL_FF_LOGO, iSteps, iSteps, m_iPosOrgPause);
-          SetPosition((int)Controls.CONTROL_RW_LOGO, iSteps, iSteps, m_iPosOrgPause);
-          SetPosition((int)Controls.CONTROL_INFO, iSteps, iSteps, m_iPosOrgInfo);
-          SetPosition((int)Controls.CONTROL_PLAYTIME, iSteps, iSteps, m_iPosOrgPlayTime);
-          SetPosition((int)Controls.CONTROL_BIG_PLAYTIME, iSteps, iSteps, m_iPosOrgBigPlayTime);
-          m_iFrames++;
+
+          return;
         }
-        else if (m_iFrames >= 5 * iSteps + iSteps)
+
+        // Aways get the positions before we do anything, because the window could be resized.
+        m_iPosXRect = GetControlXPosition((int)Controls.CONTROL_LOGO_RECT);
+        m_iPosYRect = GetControlYPosition((int)Controls.CONTROL_LOGO_RECT);
+        m_iPosOrgRectangle = GetControlYPosition((int)Controls.CONTROL_LOGO_RECT);
+        m_iPosOrgIcon = GetControlYPosition((int)Controls.CONTROL_LOGO_PIC);
+        m_iPosOrgPlay = GetControlYPosition((int)Controls.CONTROL_PLAY_LOGO);
+        m_iPosOrgPause = GetControlYPosition((int)Controls.CONTROL_PAUSE_LOGO);
+        m_iPosOrgInfo = GetControlYPosition((int)Controls.CONTROL_INFO);
+        m_iPosOrgPlayTime = GetControlYPosition((int)Controls.CONTROL_PLAYTIME);
+        m_iPosOrgBigPlayTime = GetControlYPosition((int)Controls.CONTROL_BIG_PLAYTIME);
+
+        int iSteps = 25;
+        if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_VISUALISATION)
         {
-          if (m_iFrames > 5 * iSteps + 2 * iSteps)
-          {
-            m_iFrames = 5 * iSteps + 2 * iSteps;
-          }
-          //scroll down
-          SetPosition((int)Controls.CONTROL_LOGO_RECT, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgRectangle);
-          SetPosition((int)Controls.CONTROL_LOGO_PIC, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgIcon);
-          SetPosition((int)Controls.CONTROL_PLAY_LOGO, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgPlay);
-          SetPosition((int)Controls.CONTROL_PAUSE_LOGO, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgPause);
-          SetPosition((int)Controls.CONTROL_FF_LOGO, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgPause);
-          SetPosition((int)Controls.CONTROL_RW_LOGO, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgPause);
-          SetPosition((int)Controls.CONTROL_INFO, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgInfo);
-          SetPosition((int)Controls.CONTROL_PLAYTIME, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgPlayTime);
-          SetPosition((int)Controls.CONTROL_BIG_PLAYTIME, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgBigPlayTime);
-          m_iFrames++;
-        }
-      }
-
-      long lPTS1 = (long)(g_Player.CurrentPosition);
-      int hh = (int)(lPTS1 / 3600) % 100;
-      int mm = (int)((lPTS1 / 60) % 60);
-      int ss = (int)((lPTS1 / 1) % 60);
-
-      int iSpeed = g_Player.Speed;
-      if (hh == 0 && mm == 0 && ss < 5)
-      {
-        if (iSpeed < 1)
-        {
-          iSpeed = 1;
-          g_Player.Speed = iSpeed;
-          g_Player.SeekAbsolute(0.0d);
-        }
-      }
-
-      //msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, (int)Controls.CONTROL_PLAYTIME,0,0,null); 
-      //msg.Label=strTime; 
-      //OnMessage(msg);
-
-
-      HideControl((int)Controls.CONTROL_PLAY_LOGO);
-      HideControl((int)Controls.CONTROL_PAUSE_LOGO);
-      HideControl((int)Controls.CONTROL_FF_LOGO);
-      HideControl((int)Controls.CONTROL_RW_LOGO);
-      if (g_Player.Paused)
-      {
-        ShowControl((int)Controls.CONTROL_PAUSE_LOGO);
-      }
-      else
-      {
-        iSpeed = g_Player.Speed;
-        if (iSpeed > 1)
-        {
-          ShowControl((int)Controls.CONTROL_FF_LOGO);
-        }
-        else if (iSpeed < 0)
-        {
-          ShowControl((int)Controls.CONTROL_RW_LOGO);
+          SetPosition((int)Controls.CONTROL_LOGO_RECT, 50, 50, m_iPosOrgRectangle);
+          SetPosition((int)Controls.CONTROL_LOGO_PIC, 50, 50, m_iPosOrgIcon);
+          SetPosition((int)Controls.CONTROL_PLAY_LOGO, 50, 50, m_iPosOrgPlay);
+          SetPosition((int)Controls.CONTROL_PAUSE_LOGO, 50, 50, m_iPosOrgPause);
+          SetPosition((int)Controls.CONTROL_FF_LOGO, 50, 50, m_iPosOrgPause);
+          SetPosition((int)Controls.CONTROL_RW_LOGO, 50, 50, m_iPosOrgPause);
+          SetPosition((int)Controls.CONTROL_INFO, 50, 50, m_iPosOrgInfo);
+          SetPosition((int)Controls.CONTROL_PLAYTIME, 50, 50, m_iPosOrgPlayTime);
+          SetPosition((int)Controls.CONTROL_BIG_PLAYTIME, 50, 50, m_iPosOrgBigPlayTime);
+          m_iFrames = 0;
         }
         else
         {
-          ShowControl((int)Controls.CONTROL_PLAY_LOGO);
-        }
-      }
-      float fx;
-      float fy;
-
-
-      if (g_Player.IsRadio || Recorder.IsRadio())
-      {
-        HideControl((int)Controls.CONTROL_PLAYTIME);
-        HideControl((int)Controls.CONTROL_BIG_PLAYTIME);
-      }
-      else
-      {
-        ShowControl((int)Controls.CONTROL_PLAYTIME);
-        ShowControl((int)Controls.CONTROL_BIG_PLAYTIME);
-      }
-
-      string strThumb = (string)GUIPropertyManager.GetProperty("#Play.Current.Thumb");
-
-
-      GUIImage AlbumArtPicture = (GUIImage)GetControl((int)Controls.CONTROL_LOGO_PIC);
-      GUIImage OverlayBackground = (GUIImage)GetControl((int)Controls.CONTROL_LOGO_RECT);
-      // do we have album art?
-      if (strThumb.Length == 0)
-      {
-        // no then hide the album art picture
-        if (AlbumArtPicture != null)
-          AlbumArtPicture.IsVisible = false;
-
-        if (OverlayBackground != null)
-        {
-          //make Overlay Background visible
-          OverlayBackground.IsVisible = true;
-          OverlayBackground.SetPosition(m_iPosXRect, m_iPosYRect);
-          // and position the video/visualisation in middle of the rectangle
-          if (VisualisationEnabled)
+          if (m_iFrames < iSteps)
           {
-            fx = AlbumArtPicture.XPosition;
-            fy = AlbumArtPicture.YPosition;
-            GUIGraphicsContext.Correct(ref fx, ref fy);
-            GUIGraphicsContext.VideoWindow = new Rectangle((int)fx, (int)fy, AlbumArtPicture.Width, AlbumArtPicture.Height);
+            // scroll up
+            SetPosition((int)Controls.CONTROL_LOGO_RECT, m_iFrames, iSteps, m_iPosOrgRectangle);
+            SetPosition((int)Controls.CONTROL_LOGO_PIC, m_iFrames, iSteps, m_iPosOrgIcon);
+            SetPosition((int)Controls.CONTROL_PLAY_LOGO, m_iFrames, iSteps, m_iPosOrgPlay);
+            SetPosition((int)Controls.CONTROL_PAUSE_LOGO, m_iFrames, iSteps, m_iPosOrgPause);
+            SetPosition((int)Controls.CONTROL_FF_LOGO, m_iFrames, iSteps, m_iPosOrgPause);
+            SetPosition((int)Controls.CONTROL_RW_LOGO, m_iFrames, iSteps, m_iPosOrgPause);
+            SetPosition((int)Controls.CONTROL_INFO, m_iFrames, iSteps, m_iPosOrgInfo);
+            SetPosition((int)Controls.CONTROL_PLAYTIME, m_iFrames, iSteps, m_iPosOrgPlayTime);
+            SetPosition((int)Controls.CONTROL_BIG_PLAYTIME, m_iFrames, iSteps, m_iPosOrgBigPlayTime);
+            m_iFrames++;
           }
-        }
-      }
-      else
-      {
-        // ok, we have an album art picture!
-        OverlayBackground.IsVisible = true;
-        AlbumArtPicture.IsVisible = false;
-        if (g_Player.HasVideo)
-        {
-          // if we have a video or visualisation then move background by 20,20 pixels
-          int xoff = 20;
-          int yoff = 20;
-          GUIGraphicsContext.ScaleHorizontal(ref xoff);
-          GUIGraphicsContext.ScaleVertical(ref yoff);
-
-          OverlayBackground.SetPosition(GUIGraphicsContext.OffsetX + m_iPosXRect + xoff, GUIGraphicsContext.OffsetY + m_iPosYRect + yoff);
-        }
-        else
-        {
-          OverlayBackground.SetPosition(GUIGraphicsContext.OffsetX + m_iPosXRect, GUIGraphicsContext.OffsetY + m_iPosYRect);
-        }
-      }
-      // if we have an album art picture
-      if (strThumb.Length != 0)
-      {
-        try
-        {
-          base.RestoreControlPosition((int)Controls.CONTROL_LOGO_PIC);
-          //OverlayBackground.Visible=true;
-
-          // make album art visible
-          AlbumArtPicture.IsVisible = true;
-          AlbumArtPicture.FixedHeight = AlbumArtPicture.KeepAspectRatio;
-          float fXPos = (float)AlbumArtPicture.XPosition;
-          float fYPos = (float)AlbumArtPicture.YPosition;
-          int iWidth = AlbumArtPicture.Width;
-          int iHeight = AlbumArtPicture.Height;
-          GUIGraphicsContext.Correct(ref fXPos, ref fYPos);
-
-          // if we also have video or visualsation
-          if (VisualisationEnabled && g_Player.HasVideo && g_Player.IsDVD == false && g_Player.IsTV == false && g_Player.IsTVRecording == false)
+          else if (m_iFrames >= iSteps && m_iFrames <= 5 * iSteps + iSteps)
           {
-            if (!_useBassEngine)
-              DoSlideAnimation(AlbumArtPicture, fXPos, fYPos, iWidth, iHeight);
-
-          // We're using the BassMusicPlayer so just show the visualization window and it will handle
-            // it's own rendering of the visualizationa nd album art
-            else
+            //show
+            SetPosition((int)Controls.CONTROL_LOGO_RECT, iSteps, iSteps, m_iPosOrgRectangle);
+            SetPosition((int)Controls.CONTROL_LOGO_PIC, iSteps, iSteps, m_iPosOrgIcon);
+            SetPosition((int)Controls.CONTROL_PLAY_LOGO, iSteps, iSteps, m_iPosOrgPlay);
+            SetPosition((int)Controls.CONTROL_PAUSE_LOGO, iSteps, iSteps, m_iPosOrgPause);
+            SetPosition((int)Controls.CONTROL_FF_LOGO, iSteps, iSteps, m_iPosOrgPause);
+            SetPosition((int)Controls.CONTROL_RW_LOGO, iSteps, iSteps, m_iPosOrgPause);
+            SetPosition((int)Controls.CONTROL_INFO, iSteps, iSteps, m_iPosOrgInfo);
+            SetPosition((int)Controls.CONTROL_PLAYTIME, iSteps, iSteps, m_iPosOrgPlayTime);
+            SetPosition((int)Controls.CONTROL_BIG_PLAYTIME, iSteps, iSteps, m_iPosOrgBigPlayTime);
+            m_iFrames++;
+          }
+          else if (m_iFrames >= 5 * iSteps + iSteps)
+          {
+            if (m_iFrames > 5 * iSteps + 2 * iSteps)
             {
-              GUIGraphicsContext.VideoWindow = new Rectangle((int)fXPos, (int)fYPos, (int)iWidth, (int)iHeight);
-              AlbumArtPicture.IsVisible = false;
-              base.Render(timePassed);
-              return;
+              m_iFrames = 5 * iSteps + 2 * iSteps;
             }
+            //scroll down
+            SetPosition((int)Controls.CONTROL_LOGO_RECT, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgRectangle);
+            SetPosition((int)Controls.CONTROL_LOGO_PIC, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgIcon);
+            SetPosition((int)Controls.CONTROL_PLAY_LOGO, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgPlay);
+            SetPosition((int)Controls.CONTROL_PAUSE_LOGO, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgPause);
+            SetPosition((int)Controls.CONTROL_FF_LOGO, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgPause);
+            SetPosition((int)Controls.CONTROL_RW_LOGO, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgPause);
+            SetPosition((int)Controls.CONTROL_INFO, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgInfo);
+            SetPosition((int)Controls.CONTROL_PLAYTIME, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgPlayTime);
+            SetPosition((int)Controls.CONTROL_BIG_PLAYTIME, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgBigPlayTime);
+            m_iFrames++;
+          }
+        }
 
-            //AlbumArtPicture.YPosition = (int)fYPos;
-            //int iStep = iWidth / 15;
-            //if (m_iFrame < 15)
-            //{
-            //    //slide in album art from left->right
-            //    //and slide out the visualisation
-            //    AlbumArtPicture.XPosition = (int)fXPos - GUIGraphicsContext.OffsetX;
-            //    AlbumArtPicture.Width = iStep * m_iFrame;
-            //    if ((AlbumArtPicture.Width <= 0) || (m_iFrame == 0)) AlbumArtPicture.Width = 1;
-            //    int x = (int)AlbumArtPicture.Width + AlbumArtPicture.XPosition + GUIGraphicsContext.OffsetX;
-            //    int w = (iWidth - (x - (int)fXPos));
-            //    GUIGraphicsContext.VideoWindow = new Rectangle((int)x, (int)fYPos,
-            //                                                   (int)w,
-            //                                                   (int)iHeight);
-            //    AlbumArtPicture.DoUpdate();
-            //    m_iFrame++;
-            //}
-            //else if (m_iFrame < 15 + 100)
-            //{
-            //    //show the album art for 100 frames
-            //    //and hide the visualisation
-            //    m_iFrame++;
-            //    GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
-            //}
-            //else if (m_iFrame < 15 + 100 + 15)
-            //{
-            //    //slide in the visualisation
-            //    //and slide out the album art picture
-            //    fXPos -= GUIGraphicsContext.OffsetX;
-            //    int frame = m_iFrame - (15 + 100);
-            //    AlbumArtPicture.XPosition = iStep * frame + (int)fXPos;
-            //    AlbumArtPicture.Width = iWidth - (AlbumArtPicture.XPosition - (int)fXPos);
+        long lPTS1 = (long)(g_Player.CurrentPosition);
+        int hh = (int)(lPTS1 / 3600) % 100;
+        int mm = (int)((lPTS1 / 60) % 60);
+        int ss = (int)((lPTS1 / 1) % 60);
 
-            //    GUIGraphicsContext.VideoWindow = new Rectangle((int)fXPos + GUIGraphicsContext.OffsetX, (int)fYPos,
-            //                                                   (int)(AlbumArtPicture.XPosition - fXPos), (int)iHeight);
-            //    AlbumArtPicture.DoUpdate();
-            //    m_iFrame++;
-            //}
-            //else if (m_iFrame < 15 + 100 + 15 + 150)
-            //{
-            //    //show the visualisation for 150 frames
-            //    m_iFrame++;
-            //    GUIGraphicsContext.VideoWindow = new Rectangle((int)fXPos, (int)fYPos, (int)iWidth, (int)iHeight);
-            //}
-            //else m_iFrame = 0;
+        int iSpeed = g_Player.Speed;
+        if (hh == 0 && mm == 0 && ss < 5)
+        {
+          if (iSpeed < 1)
+          {
+            iSpeed = 1;
+            g_Player.Speed = iSpeed;
+            g_Player.SeekAbsolute(0.0d);
+          }
+        }
+
+        //msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, (int)Controls.CONTROL_PLAYTIME,0,0,null); 
+        //msg.Label=strTime; 
+        //OnMessage(msg);
+
+
+        HideControl((int)Controls.CONTROL_PLAY_LOGO);
+        HideControl((int)Controls.CONTROL_PAUSE_LOGO);
+        HideControl((int)Controls.CONTROL_FF_LOGO);
+        HideControl((int)Controls.CONTROL_RW_LOGO);
+        if (g_Player.Paused)
+        {
+          ShowControl((int)Controls.CONTROL_PAUSE_LOGO);
+        }
+        else
+        {
+          iSpeed = g_Player.Speed;
+          if (iSpeed > 1)
+          {
+            ShowControl((int)Controls.CONTROL_FF_LOGO);
+          }
+          else if (iSpeed < 0)
+          {
+            ShowControl((int)Controls.CONTROL_RW_LOGO);
           }
           else
           {
-            g_Player.Visible = false;
-            AlbumArtPicture.Visible = true;
-            GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
-            AlbumArtPicture.SetPosition(((int)fXPos - GUIGraphicsContext.OffsetX), (int)fYPos);
+            ShowControl((int)Controls.CONTROL_PLAY_LOGO);
           }
         }
-        catch (Exception)
+        float fx;
+        float fy;
+
+
+        if (g_Player.IsRadio || Recorder.IsRadio())
         {
-          m_strFile = String.Empty;
+          HideControl((int)Controls.CONTROL_PLAYTIME);
+          HideControl((int)Controls.CONTROL_BIG_PLAYTIME);
         }
+        else
+        {
+          ShowControl((int)Controls.CONTROL_PLAYTIME);
+          ShowControl((int)Controls.CONTROL_BIG_PLAYTIME);
+        }
+
+        string strThumb = (string)GUIPropertyManager.GetProperty("#Play.Current.Thumb");
+
+
+        GUIImage AlbumArtPicture = (GUIImage)GetControl((int)Controls.CONTROL_LOGO_PIC);
+        GUIImage OverlayBackground = (GUIImage)GetControl((int)Controls.CONTROL_LOGO_RECT);
+        // do we have album art?
+        if (strThumb.Length == 0)
+        {
+          // no then hide the album art picture
+          if (AlbumArtPicture != null)
+            AlbumArtPicture.IsVisible = false;
+
+          if (OverlayBackground != null)
+          {
+            //make Overlay Background visible
+            OverlayBackground.IsVisible = true;
+            OverlayBackground.SetPosition(m_iPosXRect, m_iPosYRect);
+            // and position the video/visualisation in middle of the rectangle
+            if (VisualisationEnabled)
+            {
+              fx = AlbumArtPicture.XPosition;
+              fy = AlbumArtPicture.YPosition;
+              GUIGraphicsContext.Correct(ref fx, ref fy);
+              GUIGraphicsContext.VideoWindow = new Rectangle((int)fx, (int)fy, AlbumArtPicture.Width, AlbumArtPicture.Height);
+            }
+          }
+        }
+        else
+        {
+          // ok, we have an album art picture!
+          OverlayBackground.IsVisible = true;
+          AlbumArtPicture.IsVisible = false;
+          if (g_Player.HasVideo)
+          {
+            // if we have a video or visualisation then move background by 20,20 pixels
+            int xoff = 20;
+            int yoff = 20;
+            GUIGraphicsContext.ScaleHorizontal(ref xoff);
+            GUIGraphicsContext.ScaleVertical(ref yoff);
+
+            OverlayBackground.SetPosition(GUIGraphicsContext.OffsetX + m_iPosXRect + xoff, GUIGraphicsContext.OffsetY + m_iPosYRect + yoff);
+          }
+          else
+          {
+            OverlayBackground.SetPosition(GUIGraphicsContext.OffsetX + m_iPosXRect, GUIGraphicsContext.OffsetY + m_iPosYRect);
+          }
+        }
+        // if we have an album art picture
+        if (strThumb.Length != 0)
+        {
+          try
+          {
+            base.RestoreControlPosition((int)Controls.CONTROL_LOGO_PIC);
+            //OverlayBackground.Visible=true;
+
+            // make album art visible
+            AlbumArtPicture.IsVisible = true;
+            AlbumArtPicture.FixedHeight = AlbumArtPicture.KeepAspectRatio;
+            float fXPos = (float)AlbumArtPicture.XPosition;
+            float fYPos = (float)AlbumArtPicture.YPosition;
+            int iWidth = AlbumArtPicture.Width;
+            int iHeight = AlbumArtPicture.Height;
+            GUIGraphicsContext.Correct(ref fXPos, ref fYPos);
+
+            // if we also have video or visualsation
+            if (VisualisationEnabled && g_Player.HasVideo && g_Player.IsDVD == false && g_Player.IsTV == false && g_Player.IsTVRecording == false)
+            {
+              if (!_useBassEngine)
+                DoSlideAnimation(AlbumArtPicture, fXPos, fYPos, iWidth, iHeight);
+
+            // We're using the BassMusicPlayer so just show the visualization window and it will handle
+              // it's own rendering of the visualizationa nd album art
+              else
+              {
+                GUIGraphicsContext.VideoWindow = new Rectangle((int)fXPos, (int)fYPos, (int)iWidth, (int)iHeight);
+                AlbumArtPicture.IsVisible = false;
+                base.Render(timePassed);
+                return;
+              }
+
+              //AlbumArtPicture.YPosition = (int)fYPos;
+              //int iStep = iWidth / 15;
+              //if (m_iFrame < 15)
+              //{
+              //    //slide in album art from left->right
+              //    //and slide out the visualisation
+              //    AlbumArtPicture.XPosition = (int)fXPos - GUIGraphicsContext.OffsetX;
+              //    AlbumArtPicture.Width = iStep * m_iFrame;
+              //    if ((AlbumArtPicture.Width <= 0) || (m_iFrame == 0)) AlbumArtPicture.Width = 1;
+              //    int x = (int)AlbumArtPicture.Width + AlbumArtPicture.XPosition + GUIGraphicsContext.OffsetX;
+              //    int w = (iWidth - (x - (int)fXPos));
+              //    GUIGraphicsContext.VideoWindow = new Rectangle((int)x, (int)fYPos,
+              //                                                   (int)w,
+              //                                                   (int)iHeight);
+              //    AlbumArtPicture.DoUpdate();
+              //    m_iFrame++;
+              //}
+              //else if (m_iFrame < 15 + 100)
+              //{
+              //    //show the album art for 100 frames
+              //    //and hide the visualisation
+              //    m_iFrame++;
+              //    GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
+              //}
+              //else if (m_iFrame < 15 + 100 + 15)
+              //{
+              //    //slide in the visualisation
+              //    //and slide out the album art picture
+              //    fXPos -= GUIGraphicsContext.OffsetX;
+              //    int frame = m_iFrame - (15 + 100);
+              //    AlbumArtPicture.XPosition = iStep * frame + (int)fXPos;
+              //    AlbumArtPicture.Width = iWidth - (AlbumArtPicture.XPosition - (int)fXPos);
+
+              //    GUIGraphicsContext.VideoWindow = new Rectangle((int)fXPos + GUIGraphicsContext.OffsetX, (int)fYPos,
+              //                                                   (int)(AlbumArtPicture.XPosition - fXPos), (int)iHeight);
+              //    AlbumArtPicture.DoUpdate();
+              //    m_iFrame++;
+              //}
+              //else if (m_iFrame < 15 + 100 + 15 + 150)
+              //{
+              //    //show the visualisation for 150 frames
+              //    m_iFrame++;
+              //    GUIGraphicsContext.VideoWindow = new Rectangle((int)fXPos, (int)fYPos, (int)iWidth, (int)iHeight);
+              //}
+              //else m_iFrame = 0;
+            }
+            else
+            {
+              g_Player.Visible = false;
+              AlbumArtPicture.Visible = true;
+              GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
+              AlbumArtPicture.SetPosition(((int)fXPos - GUIGraphicsContext.OffsetX), (int)fYPos);
+            }
+          }
+          catch (Exception)
+          {
+            m_strFile = String.Empty;
+          }
+        }
+        if (!VisualisationEnabled)
+          GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
       }
-      if (!VisualisationEnabled)
-        GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
       base.Render(timePassed);
     }
 

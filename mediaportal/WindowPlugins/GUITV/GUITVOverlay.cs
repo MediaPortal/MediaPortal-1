@@ -33,7 +33,8 @@ namespace MediaPortal.GUI.TV
 	/// 
 	/// </summary>
 	public class GUITVOverlay:GUIOverlayWindow, IRenderLayer
-	{
+  {
+    bool _didRenderLastTime = false;
     public GUITVOverlay()
 		{
 			GetID=(int)GUIWindow.Window.WINDOW_TV_OVERLAY;
@@ -59,12 +60,37 @@ namespace MediaPortal.GUI.TV
     
     }
 
+    void OnUpdateState(bool render)
+    {
+      if (_didRenderLastTime != render)
+      {
+        _didRenderLastTime = render;
+        if (render)
+        {
+          QueueAnimation(AnimationType.WindowOpen);
+        }
+        else
+        {
+          QueueAnimation(AnimationType.WindowClose);
+        }
+      }
+    }
     #region IRenderLayer
     public bool ShouldRenderLayer()
     {
-      if (GUIGraphicsContext.IsFullScreenVideo) return false;
-      if (Recorder.IsAnyCardRecording()) return true;
-      return false;
+      if (GUIGraphicsContext.IsFullScreenVideo)
+      {
+        OnUpdateState(false);
+        return base.IsAnimating(AnimationType.WindowClose);
+      }
+      if (Recorder.IsAnyCardRecording())
+      {
+        OnUpdateState(true);
+        return true;
+      }
+
+      OnUpdateState(false);
+      return base.IsAnimating(AnimationType.WindowClose);
     }
 
     public void RenderLayer(float timePassed)
