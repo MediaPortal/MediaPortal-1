@@ -60,13 +60,13 @@
     <control>
       <description>Date</description>
       <type>label</type>
-<!--       <animation effect="fade" time="250">WindowOpen</animation> -->
+      <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <id>200</id>
-      <posX>240</posX>
+      <posX>180</posX>
       <posY>150</posY>
-      <label>#date</label>
-      <align>right</align>
+      <label>#homedate</label>
+      <align>left</align>
       <font>font13</font>
       <textcolor>80ffffff</textcolor>
     </control>
@@ -76,11 +76,11 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <id>201</id>
-      <posX>260</posX>
-      <posY>150</posY>
+      <posX>292</posX>
+      <posY>182</posY>
       <label>#time</label>
       <align>left</align>
-      <font>font13</font>
+      <font>font14</font>
       <textcolor>ffffffff</textcolor>
     </control>
     <!-- TOPBAR Buttons -->
@@ -89,6 +89,8 @@
 			<type>button</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="zoom" start="100,100" end="110,110" center="433,81"  time="300" >focus</animation>
+      <animation effect="zoom" start="110,110" end="100,100" center="433,81"  time="300" >unfocus</animation>
 			<id>10</id>
       <posX>410</posX>
 			<posY>40</posY>
@@ -108,6 +110,8 @@
       <type>button</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="zoom" start="100,100" end="110,110" center="493,81"  time="300" >focus</animation>
+      <animation effect="zoom" start="110,110" end="100,100" center="493,81"  time="300" >unfocus</animation>
       <id>11</id>
       <posX>470</posX>
       <posY>40</posY>
@@ -127,6 +131,8 @@
       <type>button</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="zoom" start="100,100" end="110,110" center="558,81"  time="300" >focus</animation>
+      <animation effect="zoom" start="110,110" end="100,100" center="558,81"  time="300" >unfocus</animation>
       <id>12</id>
       <posX>530</posX>
       <posY>40</posY>
@@ -146,6 +152,8 @@
       <type>button</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="zoom" start="100,100" end="110,110" center="618,81"  time="300" >focus</animation>
+      <animation effect="zoom" start="110,110" end="100,100" center="618,81"  time="300" >unfocus</animation>
       <id>13</id>
       <posX>590</posX>
       <posY>40</posY>

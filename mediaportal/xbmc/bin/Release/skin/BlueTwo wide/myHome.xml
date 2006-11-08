@@ -15,7 +15,7 @@
           <texture>background.png</texture>
         </control>
         <control>
-          <description>menu background image</description>
+          <description>background image</description>
           <type>image</type>
           <id>1</id>
           <posX>45</posX>
@@ -23,11 +23,15 @@
           <width>500</width>
           <height>466</height>
           <texture>background_glass_hoover_area.png</texture>
+          <animation effect="fade" time="250">WindowOpen</animation>
+          <animation effect="fade" time="500">WindowClose</animation>
         </control>
 
             <control>
                 <description>Menu</description>
                 <type>menu</type>
+                <animation effect="fade" time="250">WindowOpen</animation>
+                <animation effect="fade" time="500">WindowClose</animation>
                 <id>50</id>
                 <posX>700</posX>
                 <posY>180</posY>
@@ -46,8 +50,8 @@
                 <hoverY>285</hoverY>
                 <hoverWidth>300</hoverWidth>
                 <hoverHeight>350</hoverHeight>
-                <scrollTime>140</scrollTime>
-                <scrollTimeMin>80</scrollTimeMin>
+                <scrollTime>120</scrollTime>
+                <scrollTimeMin>60</scrollTimeMin>
                 <textureBackground>background_glass_menu_area.png</textureBackground>
                 <onright>13</onright>
                 <onleft>10</onleft>
@@ -57,22 +61,26 @@
         <control>
           <description>Date</description>
           <type>label</type>
+          <animation effect="fade" time="250">WindowOpen</animation>
+          <animation effect="fade" time="500">WindowClose</animation>
           <id>200</id>
-          <posX>590</posX>
-          <posY>188</posY>
-          <label>#date</label>
-          <align>right</align>
+          <posX>450</posX>
+          <posY>198</posY>
+          <label>#homedate</label>
+          <align>left</align>
           <font>font14</font>
           <textcolor>ffa9d0f7</textcolor>
         </control>
         <control>
           <description>Time</description>
           <type>label</type>
+          <animation effect="fade" time="250">WindowOpen</animation>
+          <animation effect="fade" time="500">WindowClose</animation>
           <id>201</id>
-          <posX>590</posX>
-          <posY>232</posY>
+          <posX>600</posX>
+          <posY>242</posY>
           <label>#time</label>
-          <align>right</align>
+          <align>left</align>
           <font>font16</font>
           <textcolor>ffffffff</textcolor>
         </control>
@@ -80,6 +88,10 @@
         <control>
           <description>Back button</description>
           <type>button</type>
+          <animation effect="fade" time="250">WindowOpen</animation>
+          <animation effect="fade" time="500">WindowClose</animation>
+          <animation effect="zoom" start="100,100" end="110,110" center="838,81"  time="150" >focus</animation>
+          <animation effect="zoom" start="110,110" end="100,100" center="838,81"  time="300" >unfocus</animation>
           <id>10</id>
           <posX>810</posX>
           <posY>60</posY>
@@ -98,6 +110,10 @@
         <control>
           <description>videowallpaper button</description>
           <type>button</type>
+          <animation effect="fade" time="250">WindowOpen</animation>
+          <animation effect="fade" time="500">WindowClose</animation>
+          <animation effect="zoom" start="100,100" end="110,110" center="908,81"  time="150" >focus</animation>
+          <animation effect="zoom" start="110,110" end="100,100" center="908,81"  time="300" >unfocus</animation>
           <id>11</id>
           <posX>880</posX>
           <posY>60</posY>
@@ -116,6 +132,10 @@
         <control>
           <description>basichome button button</description>
           <type>button</type>
+          <animation effect="fade" time="250">WindowOpen</animation>
+          <animation effect="fade" time="500">WindowClose</animation>
+          <animation effect="zoom" start="100,100" end="110,110" center="978,81"  time="150" >focus</animation>
+          <animation effect="zoom" start="110,110" end="100,100" center="978,81"  time="300" >unfocus</animation>
           <id>12</id>
           <posX>950</posX>
           <posY>60</posY>
@@ -134,6 +154,10 @@
         <control>
           <description>Exit button</description>
           <type>button</type>
+          <animation effect="fade" time="250">WindowOpen</animation>
+          <animation effect="fade" time="500">WindowClose</animation>
+          <animation effect="zoom" start="100,100" end="110,110" center="1048,81"  time="150" >focus</animation>
+          <animation effect="zoom" start="110,110" end="100,100" center="1048,81"  time="300" >unfocus</animation>
           <id>13</id>
           <posX>1020</posX>
           <posY>60</posY>

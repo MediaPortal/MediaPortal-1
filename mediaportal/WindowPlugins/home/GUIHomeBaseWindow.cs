@@ -113,7 +113,8 @@ namespace MediaPortal.GUI.Home
 			switch (message.Message)
 			{
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-          if (lblDate != null) lblDate.Label = GetDate();
+          GetDate();
+          if (lblDate != null) lblDate.Label = GUIPropertyManager.GetProperty("#homedate");
           if (lblTime != null) lblTime.Label = GUIPropertyManager.GetProperty("#time");
           break;
         
@@ -131,7 +132,8 @@ namespace MediaPortal.GUI.Home
       if (DateTime.Now.Minute != _updateTimer.Minute)
       {
         _updateTimer = DateTime.Now;
-        if (lblDate != null) lblDate.Label = GetDate();
+        GetDate();
+        if (lblDate != null) lblDate.Label = GUIPropertyManager.GetProperty("#homedate");
         if (lblTime != null) lblTime.Label = GUIPropertyManager.GetProperty("#time");
       }
     }
@@ -229,6 +231,8 @@ namespace MediaPortal.GUI.Home
       dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<Year>", cur.Year.ToString(), "unknown");
       dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<YY>", (cur.Year - 2000).ToString("00"), "unknown");
 
+      GUIPropertyManager.SetProperty("#homedate", dateString);
+      
       return dateString;
     }
     #endregion

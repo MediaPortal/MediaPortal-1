@@ -60,16 +60,16 @@
     <control>
       <description>Date</description>
       <type>label</type>
-      <!--       <animation effect="fade" time="250">WindowOpen</animation> -->
+      <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <id>200</id>
-      <posX>240</posX>
+      <posX>180</posX>
       <posY>150</posY>
-      <label>#date</label>
-      <align>right</align>
+      <label>#homedate</label>
+      <align>left</align>
       <font>font13</font>
       <textcolor>80ffffff</textcolor>
-      <animation effect="rotate" end="360" center="25,160" time="5000" acceleration="1.1">WindowOpen</animation>
+<!--       <animation effect="rotate" end="360" center="25,160" time="5000" acceleration="1.1">WindowOpen</animation> -->
 
     </control>
     <control>
@@ -78,11 +78,11 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <id>201</id>
-      <posX>260</posX>
-      <posY>150</posY>
+      <posX>292</posX>
+      <posY>182</posY>
       <label>#time</label>
       <align>left</align>
-      <font>font13</font>
+      <font>font14</font>
       <textcolor>ffffffff</textcolor>
     </control>
     <!-- TOPBAR Buttons -->

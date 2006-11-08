@@ -48,6 +48,7 @@ namespace MediaPortal.GUI.Library
       _properties["#selecteditem"] = String.Empty;
       _properties["#selecteditem2"] = String.Empty;
       _properties["#selectedthumb"] = String.Empty;
+      _properties["#homedate"] = String.Empty;
       _properties["#title"] = String.Empty;			// song title, imdb movie title, recording title
       _properties["#artist"] = String.Empty;			// song artist
       _properties["#album"] = String.Empty;			// song album
