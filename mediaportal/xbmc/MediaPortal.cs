@@ -755,18 +755,6 @@ public class MediaPortalApp : D3DApp, IRender
         return;
       }
 
-      if (_startWithBasicHome)
-      {
-        Log.Info("Main: Switch to basic home screen");
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
-      }
-      else
-      {
-        Log.Info("Main: Switch to home screen");
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
-      }
-      //_suspended = false;
-
       EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
       bool turnMonitorOn;
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -799,8 +787,17 @@ public class MediaPortalApp : D3DApp, IRender
       _onResumeRunning = false;
       _suspended = false;
       deviceLost = true;  // reset device
-      Log.Info("Main: OnResume - Done");
-
+			if (_startWithBasicHome)
+			{
+				Log.Info("Main: Switch to basic home screen");
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+			}
+			else
+			{
+				Log.Info("Main: Switch to home screen");
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+			}
+			Log.Info("Main: OnResume - Done");
     }
   }
 
