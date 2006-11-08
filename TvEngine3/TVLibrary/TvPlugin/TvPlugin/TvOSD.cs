@@ -92,7 +92,9 @@ namespace TvPlugin
       OSD_SUBMENU_BG_BOOKMARKS = 303,
       OSD_SUBMENU_BG_VIDEO = 304,
       OSD_SUBMENU_BG_AUDIO = 305,
-      OSD_SUBMENU_NIB = 350
+      OSD_SUBMENU_NIB = 350,
+      Panel1=101,
+      Panel2=150
     };
 
     [SkinControlAttribute(36)]
@@ -365,6 +367,9 @@ namespace TvPlugin
             Reset();
             FocusControl(GetID, (int)Controls.OSD_PLAY, 0);	// set focus to play button by default when window is shown
             ShowPrograms();
+            QueueAnimation(AnimationType.WindowOpen);
+            for (int i = (int)Controls.Panel1; i < (int)Controls.Panel2; ++i)
+              ShowControl(GetID, i);
             return true;
           }
 
@@ -628,7 +633,7 @@ namespace TvPlugin
                 // show the controls on this sub menu
                 ShowControl(GetID, (int)Controls.OSD_AVDELAY);
                 ShowControl(GetID, (int)Controls.OSD_AVDELAY_LABEL);
-                lstAudioStreamList.IsVisible = true;
+                lstAudioStreamList.Visible = true;
 
                 FocusControl(GetID, (int)Controls.OSD_AVDELAY, 0);	// set focus to the first control in our group
                 PopulateAudioStreams();		// populate the list control with audio streams for this video
@@ -741,13 +746,13 @@ namespace TvPlugin
 
         if (!isSubMenuVisible)	// sub menu not currently showing?
         {
-          pImgNib.IsVisible = true;		// make it show
-          pImgBG.IsVisible = true;		// make it show
+          pImgNib.Visible = true;		// make it show
+          pImgBG.Visible = true;		// make it show
         }
         else
         {
-          pImgNib.IsVisible = false;		// hide it
-          pImgBG.IsVisible = false;		// hide it
+          pImgNib.Visible = false;		// hide it
+          pImgBG.Visible = false;		// hide it
         }
       }
 
@@ -757,7 +762,7 @@ namespace TvPlugin
       HideControl(GetID, (int)Controls.OSD_VOLUMESLIDER);
       HideControl(GetID, (int)Controls.OSD_VIDEOPOS);
       HideControl(GetID, (int)Controls.OSD_VIDEOPOS_LABEL);
-      lstAudioStreamList.IsVisible = false;
+      lstAudioStreamList.Visible = false;
 
       HideControl(GetID, (int)Controls.OSD_AVDELAY);
       HideControl(GetID, (int)Controls.OSD_SHARPNESSLABEL);
@@ -1165,7 +1170,7 @@ namespace TvPlugin
       HideControl(GetID, (int)Controls.OSD_VOLUMESLIDER);
       HideControl(GetID, (int)Controls.OSD_VIDEOPOS);
       HideControl(GetID, (int)Controls.OSD_VIDEOPOS_LABEL);
-      lstAudioStreamList.IsVisible = false;
+      lstAudioStreamList.Visible = false;
 
       HideControl(GetID, (int)Controls.OSD_AVDELAY);
       HideControl(GetID, (int)Controls.OSD_SATURATIONLABEL);
@@ -1256,11 +1261,11 @@ namespace TvPlugin
         {
           imgTvChannelLogo.SetFileName(strLogo);
           m_bNeedRefresh = true;
-          imgTvChannelLogo.IsVisible = true;
+          imgTvChannelLogo.Visible = true;
         }
         else
         {
-          imgTvChannelLogo.IsVisible = false;
+          imgTvChannelLogo.Visible = false;
         }
       }
     }
@@ -1291,7 +1296,7 @@ namespace TvPlugin
       if (imgRecIcon != null)
       {
         VirtualCard card;
-        imgRecIcon.IsVisible = RemoteControl.Instance.IsRecording(GetChannelName(), out card);
+        imgRecIcon.Visible = RemoteControl.Instance.IsRecording(GetChannelName(), out card);
       }
 
       // Channel icon
