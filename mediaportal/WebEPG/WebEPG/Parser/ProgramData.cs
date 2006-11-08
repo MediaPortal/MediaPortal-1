@@ -46,6 +46,10 @@ namespace MediaPortal.WebEPG.Parser
     private Dictionary<string, int> _months;
     private WorldDateTime _startTime;
     private WorldDateTime _endTime;
+    private int _epNumb;
+    private int _epSeason;
+    private bool _repeat;
+    private bool _subtitles;
     #endregion
 
     #region Constructors/Destructors
@@ -125,11 +129,11 @@ namespace MediaPortal.WebEPG.Parser
       {
         if (actions[i].action == ModifyInfo.Action.Remove)
         {
-          if((actions[i].channel == "*" || actions[i].channel == _channelId))
+          if ((actions[i].channel == "*" || actions[i].channel == _channelId))
           {
             string fieldText = GetElement(actions[i].field);
 
-            if(fieldText!= null && fieldText.Contains(actions[i].search))
+            if (fieldText != null && fieldText.Contains(actions[i].search))
               return true;
           }
         }
@@ -195,6 +199,11 @@ namespace MediaPortal.WebEPG.Parser
           this.preference.Genre = data.preference.Genre;
         }
 
+        if (data._repeat)
+          this._repeat = data._repeat;
+
+        if (data._subtitles)
+          this._subtitles = data._subtitles;
 
         // Merge values without pPreference
         if (data._channelId != string.Empty && this._channelId == string.Empty)
@@ -218,6 +227,12 @@ namespace MediaPortal.WebEPG.Parser
       program.Genre = _genre;
       program.Description = _description;
       program.Start = _startTime.ToLocalLongDateTime();
+      if (_epNumb > 0)
+        program.EpisodeNum = _epNumb.ToString();
+      if (_epSeason > 0)
+        program.SeriesNum = _epSeason.ToString();
+      if (_repeat)
+        program.Repeat = "Repeat";
       if (_endTime != null)
         program.End = _endTime.ToLocalLongDateTime();
 
@@ -320,7 +335,7 @@ namespace MediaPortal.WebEPG.Parser
     {
       List<string> actorList = new List<string>();
 
-      int index=0;
+      int index = 0;
       int start;
       while ((start = strActors.IndexOf(',', index)) != -1)
       {
@@ -330,6 +345,47 @@ namespace MediaPortal.WebEPG.Parser
       }
 
       return actorList;
+    }
+
+    private int GetNumber(string element)
+    {
+      string number = string.Empty;
+      int numberValue;
+      bool found = false;
+
+      for (int i = 0; i < element.Length; i++)
+      {
+        if (!found)
+        {
+          if (Char.IsDigit(element[i]))
+          {
+            number += element[i];
+            found = true;
+          }
+        }
+        else
+        {
+          if (Char.IsDigit(element[i]))
+          {
+            number += element[i];
+          }
+          else
+          {
+            break;
+          }
+        }
+      }
+
+      try
+      {
+        numberValue = Int32.Parse(number);
+      }
+      catch (Exception)
+      {
+        numberValue = 0;
+      }
+
+      return numberValue;
     }
     #endregion
 
@@ -389,6 +445,18 @@ namespace MediaPortal.WebEPG.Parser
             break;
           case "#ACTORS":
             _actors = GetActors(element);
+            break;
+          case "#EPNUMB":
+            _epNumb = GetNumber(element);
+            break;
+          case "#EPSEASON":
+            _epSeason = GetNumber(element);
+            break;
+          case "#REPEAT":
+            _repeat = true;
+            break;
+          case "#SUBTITLES":
+            _subtitles = true;
             break;
           default:
             break;

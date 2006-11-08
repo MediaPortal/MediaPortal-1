@@ -100,6 +100,19 @@ namespace MediaPortal.WebEPG
         if (program.Genre != String.Empty && program.Genre != "-")
           _writer.WriteElementString("category", program.Genre);
 
+        string episodeNum = String.Empty;
+        if (program.EpisodeNum != String.Empty)
+          episodeNum += program.EpisodeNum;
+
+        if (program.SeriesNum != String.Empty)
+          episodeNum += "." + program.SeriesNum;
+
+        if(episodeNum != String.Empty)
+          _writer.WriteElementString("episode-num", episodeNum);
+
+        if (program.Repeat != String.Empty)
+          _writer.WriteElementString("previously-shown", null);
+
         /*
           _writer.WriteStartElement("credits");
           _writer.WriteElementString("director", "xxx");

@@ -103,16 +103,18 @@ namespace MediaPortal.WebEPG.Parser
 
     public IParserData GetData(int index)
     {
+      ProgramData data = new ProgramData();
       if (_template.searchList != null)
       {
         for (int i = 0; i < _template.searchList.Count; i++)
         {
           WebSearchData search = _template.searchList[i];
           string result = _listingParser.SearchRegex(index, search.Match, search.Remove);
+          data.SetElement(search.Field, result);
         }
       }
 
-      ProgramData data = (ProgramData)_listingParser.GetData(index);
+      data.Merge((ProgramData)_listingParser.GetData(index));
       if (_sublinkParser != null)
       {
         HTTPRequest sublinkRequest = new HTTPRequest(_sublinkRequest);

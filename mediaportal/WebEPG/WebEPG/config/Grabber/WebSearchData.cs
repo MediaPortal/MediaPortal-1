@@ -34,7 +34,7 @@ namespace MediaPortal.WebEPG.Config.Grabber
 	{
     [XmlAttribute("match")]
     public string Match;
-    [XmlAttribute("feild")]
+    [XmlAttribute("field")]
     public string Field;
     [XmlAttribute("remove")]
     public bool Remove;

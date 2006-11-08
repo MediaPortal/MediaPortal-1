@@ -22,30 +22,59 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace MediaPortal.Utils.Web
 {
-	/// <summary>
-	/// Class generic for parser data.
-	/// </summary>
-	public class ParserData : IParserData
-	{
+  /// <summary>
+  /// Class generic for parser data.
+  /// </summary>
+  public class ParserData : IParserData
+  {
     #region Variables
-    Hashtable _data;
+    Dictionary<string, string> _data;
     #endregion
 
     #region Constructors/Destructors
     public ParserData()
     {
-      _data = new Hashtable();
+      _data = new Dictionary<string, string>();
+    }
+    #endregion
+
+    #region Properties
+    public int Count
+    {
+      get { return _data.Count; }
     }
     #endregion
 
     #region Public Methods
     public string GetElement(string tag)
     {
-      return (string)_data[tag];
+      return _data[tag];
+    }
+
+    public string GetKey(int index)
+    {
+      Dictionary<string, string>.Enumerator enumerator = _data.GetEnumerator();
+
+      enumerator.MoveNext();
+      for (int i = 0; i < index; i++)
+        enumerator.MoveNext();
+
+      return enumerator.Current.Key;
+    }
+
+    public string GetData(int index)
+    {
+      Dictionary<string, string>.Enumerator enumerator = _data.GetEnumerator();
+
+      enumerator.MoveNext();
+      for (int i = 0; i < index; i++)
+        enumerator.MoveNext();
+
+      return enumerator.Current.Value;
     }
     #endregion
 
