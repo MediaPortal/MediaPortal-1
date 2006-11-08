@@ -48,7 +48,8 @@
     <textcolor>white</textcolor>
     <colordiffuse>white</colordiffuse>
     <disabledcolor>60ffffff</disabledcolor>
-    <animation effect="zoom" start="100,100" end="110,110" time="300">focus</animation>
+<!--     <selectedColor>white</selectedColor> -->
+    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
     <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
   </control>
 
@@ -68,7 +69,7 @@
     <textcolor>white</textcolor>
     <colordiffuse>white</colordiffuse>
     <disabledcolor>60ffffff</disabledcolor>
-    <animation effect="zoom" start="100,100" end="110,110" time="300">focus</animation>
+    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
     <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
   </control>
 
@@ -103,10 +104,10 @@
     <textureDelete>playlist_item_delete_nofocus.png</textureDelete>
     <textureDeleteFocused>playlist_item_delete_focus.png</textureDeleteFocused>
     <font>font13</font>
-    <textcolor>ffffffff</textcolor>
-    <colordiffuse>ffffffff</colordiffuse>
+    <textcolor>white</textcolor>
+    <colordiffuse>white</colordiffuse>
     <disabledcolor>60ffffff</disabledcolor>
-    <animation effect="zoom" start="100,100" end="110,110" time="300">focus</animation>
+    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
     <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
   </control>
 
@@ -129,7 +130,7 @@
     <textcolor>white</textcolor>
     <colordiffuse>white</colordiffuse>
     <disabledcolor>60ffffff</disabledcolor>
-    <animation effect="zoom" start="100,100" end="110,110" time="300">focus</animation>
+    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
     <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
   </control>
 
@@ -154,7 +155,7 @@
     <colordiffuse>White</colordiffuse>
     <disabledcolor>60ffffff</disabledcolor>
     <label>103</label>
-    <animation effect="zoom" start="100,100" end="110,110" time="300">focus</animation>
+    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
     <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
   </control>
 
@@ -195,7 +196,7 @@
     <IconXOff>8</IconXOff>
     <IconYOff>8</IconYOff>
     <suffix>|</suffix>
-    <animation effect="zoom" start="100,100" end="110,110" time="300">focus</animation>
+    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
     <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
   </control>
 
@@ -386,7 +387,7 @@
     <thumbPosYBig>12</thumbPosYBig>
     <thumbZoom>no</thumbZoom>
     <textXOff>0</textXOff>
-    <animation effect="zoom" start="100,100" end="110,110" time="300">focus</animation>
+    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
     <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
     <textYOff>0</textYOff>
   </control>
@@ -445,7 +446,7 @@
     <InfoImagewidth>275</InfoImagewidth>
     <InfoImageheight>275</InfoImageheight>
     <InfoImagediffuse>ffffffff</InfoImagediffuse>
-    <animation effect="zoom" start="100,100" end="110,110" time="300">focus</animation>
+    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
     <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
   </control>
 
@@ -540,7 +541,7 @@
     <textcolor>white</textcolor>
     <disabledcolor>60ffffff</disabledcolor>
     <spintype>text</spintype>
-    <animation effect="zoom" start="100,100" end="110,110" time="300">focus</animation>
+    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
     <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
   </control>
 
@@ -560,7 +561,7 @@
     <MarkHeight>16</MarkHeight>
     <align>left</align>
     <shadow>no</shadow>
-    <animation effect="zoom" start="100,100" end="110,110" time="300">focus</animation>
+    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
     <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
   </control>
 
@@ -593,7 +594,7 @@
     <onright>50</onright>
     <onup>3</onup>
     <ondown>7</ondown>
-    <animation effect="zoom" start="100,100" end="110,110" time="300">focus</animation>
+    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
     <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
   </control>
 </controls>

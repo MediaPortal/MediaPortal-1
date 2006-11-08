@@ -41,7 +41,7 @@
          <posY>97</posY>
          <onleft>20</onleft>
          <onright>20</onright>
-         <onup>14</onup>
+         <onup>13</onup>
          <ondown>11</ondown>
          <label>137</label>
       </control>
@@ -104,9 +104,9 @@
         <type>textbox</type>
         <id>20</id>
         <posX>280</posX>
-        <posY>70</posY>
+        <posY>92</posY>
         <width>380</width>
-        <height>466</height>
+        <height>444</height>
         <spinWidth>16</spinWidth>
         <spinColor>ffffffff</spinColor>
         <image>icon-folder.png</image>
