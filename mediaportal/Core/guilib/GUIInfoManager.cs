@@ -937,7 +937,7 @@ namespace MediaPortal.GUI.Library
 
         if (!EvaluateBooleanExpression(comb, ref result, dwContextWindow))
           result = false;
-        CacheBool(condition1, dwContextWindow, result);
+        //CacheBool(condition1, dwContextWindow, result);
         return result;
       }
 
@@ -991,7 +991,7 @@ namespace MediaPortal.GUI.Library
       {
         // cache return value
         result = GetMultiInfoBool(m_multiInfo[condition - MULTI_INFO_START], dwContextWindow);
-        CacheBool(condition1, dwContextWindow, result);
+        //CacheBool(condition1, dwContextWindow, result);
         return result;
       }
       else if (condition == SYSTEM_HASLOCKS)
@@ -1182,7 +1182,7 @@ namespace MediaPortal.GUI.Library
           break;
         case CONTROL_IS_VISIBLE:
           {
-            GUIWindow pWindow = GUIWindowManager.GetWindow(dwContextWindow);
+            GUIWindow pWindow = null;// GUIWindowManager.GetWindow(dwContextWindow);
             if (null == pWindow) pWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
             if (pWindow != null)
             {
@@ -1195,7 +1195,7 @@ namespace MediaPortal.GUI.Library
           break;
         case CONTROL_HAS_FOCUS:
           {
-            GUIWindow pWindow = GUIWindowManager.GetWindow(dwContextWindow);
+            GUIWindow pWindow = null;// GUIWindowManager.GetWindow(dwContextWindow);
             if (null == pWindow) pWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
             if (pWindow != null)
               bReturn = (pWindow.GetFocusControlId() == info.m_data1);
