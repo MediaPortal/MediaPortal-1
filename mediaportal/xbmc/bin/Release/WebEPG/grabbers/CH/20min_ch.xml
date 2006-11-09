@@ -55,18 +55,104 @@
     </TemplateText>
         </SectionTemplate>
       </Template>
-      <Template name="Details" start="Kanal">
+      <Template name="Details" start="SMS">
         <SectionTemplate tags="T">
           <TemplateText>
-
-               &lt;/tr&gt;&lt;tr&gt;
-                 &lt;td&gt;&lt;/td&gt;
-                 &lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;
-               &lt;/tr&gt;&lt;tr&gt;
-                 &lt;td&gt;&lt;/td&gt;
-                 &lt;td&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
-               &lt;/tr&gt;&lt;tr&gt;
+               &lt;/tr&gt;
+               &lt;Z(&gt;
+               &lt;tr&gt;
+                 &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+                 &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+               &lt;/tr&gt;
+               &lt;/Z)?&gt;
+               &lt;Z(&gt;
+               &lt;tr&gt;
+                 &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+                 &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+               &lt;/tr&gt;
+               &lt;/Z)?&gt;
+               &lt;Z(&gt;
+               &lt;tr&gt;
+                 &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+                 &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+               &lt;/tr&gt;
+               &lt;/Z)?&gt;
+               &lt;Z(&gt;
+               &lt;tr&gt;
+                 &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+                 &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+               &lt;/tr&gt;
+               &lt;/Z)?&gt;
+               &lt;Z(&gt;
+               &lt;tr&gt;
+                 &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+                 &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+               &lt;/tr&gt;
+               &lt;/Z)?&gt;
+               &lt;Z(&gt;
+               &lt;tr&gt;
+                 &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+                 &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+               &lt;/tr&gt;
+               &lt;/Z)?&gt;
+               &lt;Z(&gt;
+               &lt;tr&gt;
+                 &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+                 &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+               &lt;/tr&gt;
+               &lt;/Z)?&gt;
+               &lt;Z(&gt;
+               &lt;tr&gt;
+                 &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+                 &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+               &lt;/tr&gt;
+               &lt;/Z)?&gt;
+               &lt;Z(&gt;
+               &lt;tr&gt;
+                 &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+                 &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+               &lt;/tr&gt;
+               &lt;/Z)?&gt;
+               &lt;Z(&gt;
+               &lt;tr&gt;
+                 &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+                 &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+               &lt;/tr&gt;
+               &lt;/Z)?&gt;
+               &lt;Z(&gt;
+               &lt;tr&gt;
+                 &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+                 &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+               &lt;/tr&gt;
+               &lt;/Z)?&gt;
+               &lt;Z(&gt;
+               &lt;tr&gt;
+                 &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+                 &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+               &lt;/tr&gt;
+               &lt;/Z)?&gt;
+               &lt;Z(&gt;
+               &lt;tr&gt;
+                 &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+                 &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+               &lt;/tr&gt;
+               &lt;/Z)?&gt;
+               &lt;Z(&gt;
+               &lt;tr&gt;
+                 &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+                 &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+               &lt;/tr&gt;
+               &lt;/Z)?&gt;
     	</TemplateText>
+  <MatchList>
+   <Match field="#COUNTRY" match="Produktionsland" />
+   <Match field="#GENRE" match="Genre" />
+   <Match field="#DESCRIPTION" match="Beschreibung" />
+   <Match field="#DESCRIPTION" match="Info" />
+   <Match field="#ACTORS" match="Schauspieler" />
+   <Match field="#SUBTITLE" match="Untertitel" />
+   <Match field="#EPISODE" match="Episode" />
+  </MatchList>
         </SectionTemplate>
       </Template>
       <Sublinks>
