@@ -196,7 +196,6 @@
     <IconXOff>8</IconXOff>
     <IconYOff>8</IconYOff>
     <suffix>|</suffix>
-    <visible>no</visible>
   </control>
 
   <control>
@@ -387,7 +386,6 @@
     <thumbZoom>no</thumbZoom>
     <textXOff>0</textXOff>
     <textYOff>0</textYOff>
-    <visible>no</visible>
   </control>
 
   <control>
@@ -444,7 +442,6 @@
     <InfoImagewidth>275</InfoImagewidth>
     <InfoImageheight>275</InfoImageheight>
     <InfoImagediffuse>ffffffff</InfoImagediffuse>
-    <visible>no</visible>
   </control>
 
   <control>
