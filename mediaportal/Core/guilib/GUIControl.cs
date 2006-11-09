@@ -1537,8 +1537,8 @@ namespace MediaPortal.GUI.Library
         // and render the animation effect
         float centerX= (float)(XPosition + (Width / 2));
         float centerY=(float)(YPosition + (Height / 2));
-        GUIGraphicsContext.ScaleHorizontal(ref centerX);
-        GUIGraphicsContext.ScaleVertical(ref centerY);
+        //GUIGraphicsContext.ScaleHorizontal(ref centerX);
+        //GUIGraphicsContext.ScaleVertical(ref centerY);
         anim.SetCenter(centerX,centerY);
         anim.RenderAnimation(ref transform);
       }
