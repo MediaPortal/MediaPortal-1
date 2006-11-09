@@ -2294,6 +2294,10 @@
 		<value>Discographie (compilations, coffrets)</value>
 	</string>
 	<string>
+		<id>692</id>
+		<value>Flux Télé</value>
+	</string>
+	<string>
 		<id>700</id>
 		<value>Discographie (eps, singles)</value>
 	</string>
@@ -3859,6 +3863,22 @@
 		<value>Pas de saisie !</value>
 	</string>
 	<string>
+		<id>2065</id>
+		<value>Choisissez le fichier mpeg que vous voulez convertir en divx :</value>
+	</string>
+	<string>
+		<id>2066</id>
+		<value>Mpeg vers divx</value>
+	</string>
+	<string>
+		<id>2067</id>
+		<value>Choisissez le fichier dvr-ms que vous voulez convertir en divx :</value>
+	</string>
+		<string>
+		<id>2068</id>
+		<value>Dvr-ms vers divx</value>
+	</string>
+	<string>
 		<id>2069</id>
 		<value>Jonction des fichiers videos terminée</value>
 	</string>
@@ -4153,6 +4173,10 @@
 	<string>
 		<id>2143</id>
 		<value>Accueil</value>
+	</string>
+		<string>
+		<id>2144</id>
+		<value>Départ Gravure</value>
 	</string>
 	<string>
 		<id>2200</id>
@@ -4821,6 +4845,22 @@
 		<value>Configuration Étapes de saut</value>
 	</string>
 	<string>
+		<id>6026</id>
+		<value>Spécifiez l'adresse IP ou le nom d'hôte</value>
+	</string>
+	<string>
+		<id>6027</id>
+		<value>du serveur télé maître</value>
+	</string>
+	<string>
+		<id>6028</id>
+		<value>Réglages actuels</value>
+	</string>
+	<string>
+		<id>6029</id>
+		<value>Change</value>
+	</string>
+	<string>
 		<id>8000</id>
 		<value>Messages</value>
 	</string>
@@ -5468,6 +5508,10 @@
 	<string>
 		<id>34052</id>
 		<value>Pas d'infos ou mauvaise connexion</value>
+	</string>
+	<string>
+		<id>34053</id>
+		<value>Erreur visu du flux sélectionné </value>
 	</string>
 	<string>
 		<id>99845</id>
