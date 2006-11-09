@@ -1469,6 +1469,7 @@ namespace MediaPortal.GUI.Library
     }
     void UpdateStates(AnimationType type, AnimationProcess currentProcess, AnimationState currentState)
     {
+      if (GUIGraphicsContext.Animations == false) return;
       bool visible = IsVisible;
       // Make sure control is hidden or visible at the appropriate times
       // while processing a visible or hidden animation it needs to be visible,
@@ -1503,14 +1504,14 @@ namespace MediaPortal.GUI.Library
         }
       }
       else if (type == AnimationType.WindowOpen)
-      {
+      {/*
         if (currentProcess == AnimationProcess.Normal)
         {
           if (currentState == AnimationState.Delayed)
             IsVisible = false; // delayed
           else
             IsVisible = _visibleFromSkinCondition;
-        }
+        }*/
       }
       else if (type == AnimationType.Focus)
       {
@@ -1525,7 +1526,7 @@ namespace MediaPortal.GUI.Library
 
     protected void Animate(uint currentTime)
     {
-      if (false == GUIGraphicsContext.Animations) return ;
+      if (false == GUIGraphicsContext.Animations) return;
       TransformMatrix transform = new TransformMatrix();
       for (int i = 0; i < _animations.Count; i++)
       {
@@ -1578,8 +1579,14 @@ namespace MediaPortal.GUI.Library
 
     protected void UpdateVisibility()
     {
+      if (_visibleCondition == 0) return;
       bool bWasVisible = _visibleFromSkinCondition;
       _visibleFromSkinCondition = GUIInfoManager.GetBool(_visibleCondition, ParentID);
+      if (GUIGraphicsContext.Animations == false)
+      {
+        Visible = _visibleFromSkinCondition;
+        return;
+      }
       if (!bWasVisible && _visibleFromSkinCondition)
       { // automatic change of visibility - queue the in effect
         //    CLog::DebugLog("Visibility changed to visible for control id %i", m_dwControlID);
@@ -1593,7 +1600,13 @@ namespace MediaPortal.GUI.Library
     }
     public virtual void SetInitialVisibility()
     {
-      _visibleFromSkinCondition = Visible = GUIInfoManager.GetBool(_visibleCondition, ParentID);
+      if (_visibleCondition == 0)
+      {
+        _visibleFromSkinCondition = Visible;
+        return;
+      }
+      _visibleFromSkinCondition = Visible=GUIInfoManager.GetBool(_visibleCondition, ParentID);
+
       // no need to enquire every frame if we are always visible or always hidden
       if (_visibleCondition == GUIInfoManager.SYSTEM_ALWAYS_TRUE || _visibleCondition == GUIInfoManager.SYSTEM_ALWAYS_FALSE)
         _visibleCondition = 0;

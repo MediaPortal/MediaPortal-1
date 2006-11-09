@@ -215,7 +215,6 @@ namespace MediaPortal.GUI.Radio
 
     protected override void OnPageLoad()
     {
-      base.OnPageLoad();
       LoadSettings();
       switch (currentSortMethod)
       {
@@ -246,16 +245,12 @@ namespace MediaPortal.GUI.Radio
       virtualDirectory.AddExtension(".asx");
 
       ShowThumbPanel();
+      UpdateButtons();
       LoadDirectory(currentFolder);
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
 
-      //if (btnLastFM != null)
-      //{
-      //  if (_useLastFM)
-      //    btnLastFM.Visible = true;
-      //  else
-      //    btnLastFM.Visible = false;
-      //}
+
+      base.OnPageLoad();
     }
 
     protected override void OnPageDestroy(int newWindowId)
