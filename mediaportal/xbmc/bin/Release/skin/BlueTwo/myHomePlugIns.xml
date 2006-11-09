@@ -27,11 +27,14 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
 		</control>
+  
     <control>
 			<description>Menu</description>
 			<type>menu</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
 			<id>50</id>
 			<posX>370</posX>
 			<posY>130</posY>
@@ -68,7 +71,7 @@
       <label>#homedate</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>80ffffff</textcolor>
+      <textcolor>ffa9d0f7</textcolor>
     </control>
     <control>
       <description>Time</description>

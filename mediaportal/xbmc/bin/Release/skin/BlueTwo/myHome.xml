@@ -70,9 +70,7 @@
       <label>#homedate</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>80ffffff</textcolor>
-<!--       <animation effect="rotate" end="360" center="25,160" time="5000" acceleration="1.1">WindowOpen</animation> -->
-
+      <textcolor>ffa9d0f7</textcolor>
     </control>
     <control>
       <description>Time</description>

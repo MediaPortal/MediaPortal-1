@@ -1,25 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 	<id>32</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
+	<define>#header.label:902</define>
+<!-- 	<define>#header.text:music</define> -->
+	<define>#header.hover:hover_msn messenger.png</define>
 	<controls>
-		<control>
-			<description>BG</description>
-			<type>image</type>
-			<id>1</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<width>720</width>
-			<height>576</height>
-			<texture>background.png</texture>
-		</control>
-		<control>
-			<type>image</type>
-			<id>1</id>
-			<posX>75</posX>
-			<posY>370</posY>
-			<texture>hover_msn messenger.png</texture>
-		</control>		
+		<import>common.window.xml</import>
 		<control>
 			<type>image</type>
 			<id>1</id>
@@ -27,17 +15,7 @@
 			<posY>20</posY>
 			<texture>messenger_logo.png</texture>
 		</control>
-		<control>
-			<description>online contacts label</description>
-			<type>label</type>
-			<id>1</id>
-			<posX>250</posX>
-			<posY>70</posY>
-			<label>902</label>
-			<font>font16</font>
-			<align>right</align>
-			<textcolor>ffffffff</textcolor>
-		</control>
+
 		<control>
 			<description>Number of Files Label</description>
 			<type>label</type>
