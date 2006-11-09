@@ -1364,6 +1364,7 @@ namespace MediaPortal.GUI.Library
 
     public virtual void QueueAnimation(AnimationType animType)
     {
+      if (false == GUIGraphicsContext.Animations) return;
       // rule out the animations we shouldn't perform
       if (!IsVisible || !HasRendered)
       { // hidden or never rendered - don't allow exit or entry animations for this control
@@ -1441,6 +1442,7 @@ namespace MediaPortal.GUI.Library
     }
     public virtual List<VisualEffect> GetAnimations(AnimationType type, bool checkConditions /* = true */)
     {
+      if (false == GUIGraphicsContext.Animations) return null;
       List<VisualEffect> effects = new List<VisualEffect>();
       for (int i = 0; i < _animations.Count; i++)
       {
@@ -1454,6 +1456,7 @@ namespace MediaPortal.GUI.Library
     }
     public virtual VisualEffect GetAnimation(AnimationType type, bool checkConditions /* = true */)
     {
+      if (false == GUIGraphicsContext.Animations) return null;
       for (int i = 0; i < _animations.Count; i++)
       {
         if (_animations[i].AnimationType == type)
@@ -1522,6 +1525,7 @@ namespace MediaPortal.GUI.Library
 
     protected void Animate(uint currentTime)
     {
+      if (false == GUIGraphicsContext.Animations) return ;
       TransformMatrix transform = new TransformMatrix();
       for (int i = 0; i < _animations.Count; i++)
       {
@@ -1542,6 +1546,7 @@ namespace MediaPortal.GUI.Library
 
     public virtual bool IsEffectAnimating(AnimationType animType)
     {
+      if (false == GUIGraphicsContext.Animations) return false;
       for (int i = 0; i < _animations.Count; i++)
       {
         VisualEffect anim = _animations[i];
