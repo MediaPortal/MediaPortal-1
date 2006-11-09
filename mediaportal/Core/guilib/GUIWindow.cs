@@ -776,7 +776,7 @@ namespace MediaPortal.GUI.Library
       GUIInfoManager.ResetCache();
       foreach (GUIControl control in Children)
       {
-        if (control.GetVisibleCondition()!=0)
+        if (control.GetVisibleCondition() != 0)
           control.SetInitialVisibility();
       }
     }
@@ -796,7 +796,7 @@ namespace MediaPortal.GUI.Library
             new_windowId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
         {
           // Dialog animations are handled in Close() rather than here
-          if (HasAnimation(AnimationType.WindowClose) )//&& !IsDialog)
+          if (HasAnimation(AnimationType.WindowClose))//&& !IsDialog)
           {
             // Perform the window out effect
             QueueAnimation(AnimationType.WindowClose);
@@ -1299,10 +1299,9 @@ namespace MediaPortal.GUI.Library
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, _defaultControlId, 0, 0, null);
                 OnMessage(msg);
 
-                if (message.Param1 != (int)GUIWindow.Window.WINDOW_INVALID)
-                {
-                  GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
-                }
+
+                GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
+
                 Log.Info("window:{0} init", this.ToString());
               }
               _hasRendered = false;

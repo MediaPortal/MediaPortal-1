@@ -182,7 +182,6 @@ namespace MediaPortal.GUI.Music
     public override bool Init()
     {
       bool result = Load(GUIGraphicsContext.Skin + @"\MyMusicCoverArtGrabberResults.xml");
-      GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}", GUILocalizeStrings.Get(100005), GUILocalizeStrings.Get(4515)));
       return result;
     }
 
@@ -276,6 +275,7 @@ namespace MediaPortal.GUI.Music
         btnCancel.NavigateUp = (int)ControlIDs.BTN_SKIP;
         listView.NavigateLeft = (int)ControlIDs.BTN_SKIP;
       }
+      GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}", GUILocalizeStrings.Get(100005), GUILocalizeStrings.Get(4515)));
     }
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
