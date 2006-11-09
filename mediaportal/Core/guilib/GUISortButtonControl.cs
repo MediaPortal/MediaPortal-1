@@ -104,11 +104,8 @@ namespace MediaPortal.GUI.Library
 		{
 			bool isFocused = this.Focus;
 
-			if(_isSortImageHot)
-				Focus = false;
 
 			base.Render(timePassed);
-
 			int x = _positionX + _sortButtonOffsetX;
 			int y = _positionY + _sortButtonOffsetY;
 
@@ -139,9 +136,6 @@ namespace MediaPortal.GUI.Library
 			int sortImageIndex = _isAscending ? isFocused && _isSortImageHot ? 3 : 2 : isFocused && _isSortImageHot ? 1 : 0;
 
 			_sortImages[sortImageIndex].Render(timePassed);
-
-      Focus = isFocused;
-      base.Render(timePassed);
 		}
 
 		public override bool HitTest(int x, int y, out int controlID, out bool focused)
