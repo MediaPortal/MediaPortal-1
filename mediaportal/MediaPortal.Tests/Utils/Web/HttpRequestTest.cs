@@ -56,9 +56,9 @@ namespace MediaPortal.Tests.Utils.Web
       request = requestBase.Add("http://www.somewhere_else.com/path/file.html");
       Assert.IsTrue("http://www.somewhere_else.com/path/file.html" == request.Url);
 
-      requestBase = new HTTPRequest("http://spettacolo.alice.it/guidatv/cgi/index.cgi?tipo=3&channel=22");
-      request = requestBase.Add("?tipo=1&qs=8353441");
-      Assert.IsTrue("http://spettacolo.alice.it/guidatv/cgi/index.cgi?tipo=1&qs=8353441" == request.Url);
+      //requestBase = new HTTPRequest("http://spettacolo.alice.it/guidatv/cgi/index.cgi?tipo=3&channel=22");
+      //request = requestBase.Add("?tipo=1&qs=8353441");
+      //Assert.IsTrue("http://spettacolo.alice.it/guidatv/cgi/index.cgi?tipo=1&qs=8353441" == request.Url);
     }
 
     [Test]
