@@ -131,6 +131,10 @@ namespace MediaPortal.Dialogs
         cursor = new WaitCursor();
         GUIWindowManager.Process();
       }
+      while (IsAnimating(AnimationType.WindowOpen) && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      {
+        GUIWindowManager.Process();
+      }
     }
 
     public void ContinueModal()
@@ -194,7 +198,6 @@ namespace MediaPortal.Dialogs
             base.OnMessage(message);
             m_pParentWindow = null;
             GUIGraphicsContext.Overlay = m_bOverlay;
-            base.OnMessage(message);
             FreeResources();
             DeInitControls();
 
@@ -205,12 +208,12 @@ namespace MediaPortal.Dialogs
           {
             m_bOverlay = GUIGraphicsContext.Overlay;
             m_bCanceled = false;
-            base.OnMessage(message);
             // GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
             GUIGraphicsContext.Overlay = m_pParentWindow.IsOverlayAllowed;
             m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
             DisableCancel(false);
+            QueueAnimation(AnimationType.WindowOpen);
           }
           return true;
 
