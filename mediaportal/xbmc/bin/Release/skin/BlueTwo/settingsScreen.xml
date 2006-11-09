@@ -9,7 +9,6 @@
 		<control>
 			<type>group</type>
 			<description>group element</description>
-			<animation>FlyInFromTop</animation>
 			<control>
 				<description>UI Calibration button</description>
 				<type>button</type>

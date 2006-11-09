@@ -14,7 +14,6 @@
 		<control>
 			<type>group</type>
 			<description>group element</description>
-			<animation>FlyInFromTop</animation>
 			<layout>StackLayout</layout>
 			<posX>280</posX>
 			<posY>165</posY>

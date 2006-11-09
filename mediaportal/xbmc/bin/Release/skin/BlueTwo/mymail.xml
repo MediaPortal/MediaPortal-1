@@ -54,7 +54,6 @@
 		<control>
 			<type>group</type>
 			<description>group element</description>
-			<animation>FlyInFromLeft</animation>
 			<control>
 				<description>refresh mailbox</description>
 				<type>button</type>

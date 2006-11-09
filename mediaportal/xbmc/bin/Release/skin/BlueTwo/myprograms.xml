@@ -12,7 +12,6 @@
 		<control>
 			<type>group</type>
 			<description>group element</description>
-			<animation>FlyInFromLeft</animation>
 			<control>
 				<description>View-As button</description>
 				<type>button</type>

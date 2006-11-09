@@ -133,7 +133,6 @@
     <control>
       <type>group</type>
       <description>group element</description>
-      <animation>FlyInFromLeft</animation>
       <control>
         <description>Auto compress button</description>
         <type>button</type>

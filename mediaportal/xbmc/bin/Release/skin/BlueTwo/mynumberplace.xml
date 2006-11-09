@@ -13,7 +13,6 @@
     <control>
       <type>group</type>
       <description>group element</description>
-      <animation>FlyInFromLeft</animation>
       <layout>StackLayout(2)</layout>
       <posX>60</posX>
       <posY>97</posY>
