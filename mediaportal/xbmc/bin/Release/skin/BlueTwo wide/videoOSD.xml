@@ -46,7 +46,7 @@
   	<control>
   		<description>Movie Name</description>
   		<id>36</id>
-  		<type>textbox</type>
+  		<type>fadelabel</type>
   		<width>290</width>
   		<height>30</height>
   		<posX>150</posX>
