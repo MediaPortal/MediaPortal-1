@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <controls>
     <control>
@@ -42,7 +43,6 @@
           <id>50</id>
           <scrollOffset>1</scrollOffset>
         </control>
-
       </control>
     </control>
   </controls>

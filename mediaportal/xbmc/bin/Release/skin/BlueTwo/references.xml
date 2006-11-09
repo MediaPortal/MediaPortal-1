@@ -1,10 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <controls>
   <skin>
     <width>720</width>
     <height>576</height>
     <version>0.2.1.0</version>
   </skin>
-
   <control>
     <description>default image</description>
     <type>image</type>
@@ -19,7 +19,6 @@
     <keepaspectratio>no</keepaspectratio>
     <visible>yes</visible>
   </control>
-
   <control>
     <description>default label</description>
     <type>label</type>
@@ -31,7 +30,6 @@
     <textcolor>FFdddddd</textcolor>
     <disabledcolor>80ffffff</disabledcolor>
   </control>
-
   <control>
     <description>default button</description>
     <type>button</type>
@@ -52,7 +50,6 @@
     <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
     <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
   </control>
-
   <control>
     <description>default updownbutton</description>
     <type>updownbutton</type>
@@ -110,7 +107,6 @@
     <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
     <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
   </control>
-
   <control>
     <description>default togglebutton</description>
     <type>togglebutton</type>
@@ -133,7 +129,6 @@
     <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
     <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
   </control>
-
   <control>
     <description>sort button</description>
     <type>sortbutton</type>
@@ -158,7 +153,6 @@
     <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
     <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
   </control>
-
   <control>
     <description>default listcontrol</description>
     <type>listcontrol</type>
@@ -197,7 +191,6 @@
     <IconYOff>8</IconYOff>
     <suffix>|</suffix>
   </control>
-
   <control>
     <description>default checklistcontrol</description>
     <type>checklistcontrol</type>
@@ -242,7 +235,6 @@
     <IconYOff>8</IconYOff>
     <suffix>|</suffix>
   </control>
-
   <control>
     <description>default up/downlistcontrol</description>
     <type>updownlistcontrol</type>
@@ -281,7 +273,6 @@
     <IconYOff>8</IconYOff>
     <suffix>|</suffix>
   </control>
-
   <control>
     <description>default playlist item listcontrol</description>
     <type>playlistcontrol</type>
@@ -340,7 +331,6 @@
     <textureDelete>playlist_item_delete_nofocus.png</textureDelete>
     <textureDeleteFocused>playlist_item_delete_focus.png</textureDeleteFocused>
   </control>
-
   <control>
     <description>default thumbnail panel</description>
     <type>thumbnailpanel</type>
@@ -387,7 +377,6 @@
     <textXOff>0</textXOff>
     <textYOff>0</textYOff>
   </control>
-
   <control>
     <description>default filmstrip</description>
     <type>filmstrip</type>
@@ -443,7 +432,6 @@
     <InfoImageheight>275</InfoImageheight>
     <InfoImagediffuse>ffffffff</InfoImagediffuse>
   </control>
-
   <control>
     <description>default fadelabel</description>
     <type>fadelabel</type>
@@ -455,7 +443,6 @@
     <font>font13</font>
     <textcolor>white</textcolor>
   </control>
-
   <control>
     <description>default textarea</description>
     <type>textbox</type>
@@ -478,7 +465,6 @@
     <textcolor>white</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
   </control>
-
   <control>
     <description>default progress control</description>
     <type>progress</type>
@@ -492,7 +478,6 @@
     <righttexture>osd_progress_right.png</righttexture>
     <visible>no</visible>
   </control>
-
   <control>
     <description>default horizontal scrollbar control</description>
     <type>hscrollbar</type>
@@ -504,7 +489,6 @@
     <righttexture>mouse_right_horizontal.png</righttexture>
     <visible>no</visible>
   </control>
-
   <control>
     <description>default vertical scrollbar control</description>
     <type>vscrollbar</type>
@@ -516,7 +500,6 @@
     <scrollbarbottom>mouse_right_vertical.png</scrollbarbottom>
     <visible>no</visible>
   </control>
-
   <control>
     <description>default spin control</description>
     <type>spincontrol</type>
@@ -538,7 +521,6 @@
     <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
     <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
   </control>
-
   <control>
     <description>default checkmark</description>
     <type>checkmark</type>
@@ -558,7 +540,6 @@
     <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
     <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
   </control>
-
   <control>
     <description>default select button</description>
     <type>selectbutton</type>

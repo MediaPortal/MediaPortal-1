@@ -2,7 +2,7 @@
 <window>
   <controls>
     <control>
-      <description>background</description>
+		<description>progressbar background</description>
       <type>image</type>
       <id>104</id>
       <posX>20</posX>
@@ -15,7 +15,7 @@
       <animation effect="fade" time="250">windowopen</animation>
     </control>
     <control>
-      <description>progressbar background</description>
+		<description>background</description>
       <type>image</type>
       <id>105</id>
       <posX>86</posX>
