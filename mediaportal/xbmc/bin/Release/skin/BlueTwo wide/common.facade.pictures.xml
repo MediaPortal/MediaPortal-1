@@ -3,8 +3,11 @@
     <controls>
         <control>
             <type>group</type>
+      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="400" end="800,0" >WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
             <description>group element</description>
-            <animation>FlyInFromTop</animation>
             <control>
                 <description>composite control consisting of a list control and a thumbnail panel</description>
                 <type>facadeview</type>
@@ -43,6 +46,7 @@
 		    <backgroundy>126</backgroundy>
 		    <backgroundwidth>572</backgroundwidth>
 		    <backgroundheight>446</backgroundheight>
+		    <InfoImage>-</InfoImage>
 		    <InfoImagex>628</InfoImagex>
 		    <InfoImagey>152</InfoImagey>
 		    <InfoImagewidth>500</InfoImagewidth>

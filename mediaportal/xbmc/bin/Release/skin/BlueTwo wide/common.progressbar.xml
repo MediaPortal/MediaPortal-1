@@ -10,6 +10,9 @@
 		<width>1246</width>
 		<height>60</height>
 		<texture>osd_bg_top.png</texture>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
 	</control>
 	<control>
 		<description>background</description>
@@ -20,7 +23,9 @@
 		<width>780</width>
 		<height>30</height>
 		<texture>osd_progress_background.png</texture>
-		<visible>yes</visible>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
 	</control>
 	<control>
 		<description>Progress Bar</description>
@@ -34,8 +39,10 @@
 		<lefttexture>osd_progress_left.png</lefttexture>
 		<midtexture>osd_progress_mid.png</midtexture>
 		<righttexture>osd_progress_right.png</righttexture>
-		<visible>yes</visible>
+      <visible>no</visible>
 		<label>#percentage</label>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
 	</control>
 
 
@@ -49,6 +56,9 @@
 		<align>left</align>
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+      <visible>no</visible>
 	</control>
 	<control>
 		<description>End Time Info</description>
@@ -60,6 +70,9 @@
 		<align>left</align>
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+      <visible>no</visible>
 	</control>
 
 <!-- 	<control>

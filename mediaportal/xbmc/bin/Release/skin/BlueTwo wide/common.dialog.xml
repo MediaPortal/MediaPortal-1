@@ -19,6 +19,8 @@
 			<width>634</width>
 			<height>268</height>
 			<texture>dialog_background.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>dialog Heading</description>
@@ -30,6 +32,8 @@
 			<label>-</label>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>dialog line 1</description>
@@ -41,6 +45,8 @@
 			<width>400</width>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>dialog line 2</description>
@@ -52,6 +58,8 @@
 			<width>400</width>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>dialog line 3</description>
@@ -63,6 +71,8 @@
 			<width>400</width>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>	
   </controls>
 </window>

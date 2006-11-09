@@ -24,6 +24,8 @@
 			<align>center</align>
 			<font>dingbats</font>
 			<textcolor>40ffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>home BM Radio</description>
@@ -49,6 +51,8 @@
 			<onright>3</onright>
 			<onup>21</onup>
 			<ondown>2</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>home BM Video</description>
@@ -73,6 +77,8 @@
 			<onright>4</onright>
 			<onup>21</onup>
 			<ondown>3</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>home BM FFS</description>
@@ -97,6 +103,8 @@
 			<onright>5</onright>
 			<onup>21</onup>
 			<ondown>4</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>home BM Music</description>
@@ -121,6 +129,8 @@
 			<onright>6</onright>
 			<onup>21</onup>
 			<ondown>5</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>home BM Pictures</description>
@@ -145,6 +155,8 @@
 			<onright>2</onright>
 			<onup>21</onup>
 			<ondown>6</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Date</description>
@@ -156,6 +168,8 @@
 			<align>right</align>
 			<font>font13</font>
 			<textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Time</description>
@@ -167,6 +181,8 @@
 			<align>left</align>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<type>image</type>
@@ -174,6 +190,8 @@
 			<posX>273</posX>
 			<posY>554</posY>
 			<texture>-</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<type>image</type>
@@ -181,6 +199,8 @@
 			<posX>113</posX>
 			<posY>26</posY>
 			<texture>basichome_logo.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 	</controls>
 </window>

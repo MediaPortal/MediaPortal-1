@@ -8,6 +8,8 @@
 			<Duration>0:0:01</Duration>
 			<RepeatBehavior>1</RepeatBehavior>
 			<FillBehavior>HoldEnd</FillBehavior>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 	</controls>
 </window>

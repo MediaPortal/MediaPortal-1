@@ -43,9 +43,12 @@
 		<textureFocus>menu_list_focus.png</textureFocus>
 		<textureNoFocus>menu_list_nofocus.png</textureNoFocus>
 		<font>font13</font>
-		<textcolor>ffffffff</textcolor>
-		<colordiffuse>ffffffff</colordiffuse>
+    <textcolor>white</textcolor>
+    <colordiffuse>white</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
+<!--     <selectedColor>white</selectedColor> -->
+    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
+    <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
 	</control>
 	<control>
 		<description>default updownbutton</description>
@@ -60,9 +63,11 @@
 		<textureFocus>menu_list_focus.png</textureFocus>
 		<textureNoFocus>menu_list_nofocus.png</textureNoFocus>
 		<font>font13</font>
-		<textcolor>ffffffff</textcolor>
-		<colordiffuse>ffffffff</colordiffuse>
+    <textcolor>white</textcolor>
+    <colordiffuse>white</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
+    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
+    <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
 	</control>
 	<control>
 		<description>playlist item button</description>
@@ -95,9 +100,11 @@
 		<textureDelete>playlist_item_delete_nofocus.png</textureDelete>
 		<textureDeleteFocused>playlist_item_delete_focus.png</textureDeleteFocused>
 		<font>font13</font>
-		<textcolor>ffffffff</textcolor>
-		<colordiffuse>ffffffff</colordiffuse>
+    <textcolor>white</textcolor>
+    <colordiffuse>white</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
+    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
+    <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
 	</control>
 	<control>
 		<description>default togglebutton</description>
@@ -115,9 +122,11 @@
 		<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>ffffffff</textcolor>
-		<colordiffuse>ffffffff</colordiffuse>
+    <textcolor>white</textcolor>
+    <colordiffuse>white</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
+    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
+    <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
 	</control>
 	<control>
 		<description>sort button</description>
@@ -140,6 +149,8 @@
 		<colordiffuse>White</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
 		<label>103</label>
+    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
+    <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
 	</control>
 	<control>
 		<description>default listcontrol</description>
@@ -362,6 +373,8 @@
 		<thumbPosXBig>28</thumbPosXBig>
 		<thumbPosYBig>28</thumbPosYBig>
 		<thumbZoom>no</thumbZoom>
+    <textXOff>0</textXOff>
+    <textYOff>0</textYOff>
 	</control>
 	<control>
 		<description>default filmstrip</description>
@@ -427,7 +440,7 @@
 		<width>240</width>
 		<align>left</align>
 		<font>font13</font>
-		<textcolor>ffffffff</textcolor>
+    <textcolor>white</textcolor>
 	</control>
 	<control>
 		<description>default textarea</description>
@@ -448,7 +461,7 @@
 		<textureDownFocus>page_down_focus.png</textureDownFocus>
 		<image>icon-folder.png</image>
 		<font>font13</font>
-		<textcolor>ffffffff</textcolor>
+    <textcolor>white</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 	</control>
 	<control>
@@ -501,9 +514,11 @@
 		<height>21</height>
 		<font>font13</font>
 		<reverse>yes</reverse>
-		<textcolor>ffffffff</textcolor>
+    <textcolor>white</textcolor>
 		<disabledcolor>60ffffff</disabledcolor>
 		<spintype>text</spintype>
+    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
+    <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
 	</control>
 	<control>
 		<description>default checkmark</description>
@@ -521,6 +536,8 @@
 		<MarkHeight>21</MarkHeight>
 		<align>left</align>
 		<shadow>no</shadow>
+    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
+    <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
 	</control>
 	<control>
 		<description>default select button</description>
@@ -544,12 +561,14 @@
 		<textureRight>arrow_round_right_nofocus.png</textureRight>
 		<textureRightFocus>arrow_round_right_focus.png</textureRightFocus>
 		<font>font13</font>
-		<textcolor>ffffffff</textcolor>
-		<colordiffuse>ffffffff</colordiffuse>
+    <textcolor>white</textcolor>
+    <colordiffuse>white</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
 		<onleft>50</onleft>
 		<onright>50</onright>
 		<onup>3</onup>
 		<ondown>7</ondown>
+    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
+    <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
 	</control>
 </controls>
