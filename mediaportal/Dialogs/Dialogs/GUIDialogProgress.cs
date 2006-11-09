@@ -256,7 +256,7 @@ namespace MediaPortal.Dialogs
       SetLine(1, "");
       SetLine(2, "");
       SetLine(3, "");
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, 2, 0, 0, null);
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, 1, 0, 0, null);
       msg.Label = strLine;
       OnMessage(msg);
 
@@ -271,7 +271,7 @@ namespace MediaPortal.Dialogs
     public void SetLine(int iLine, string strLine)
     {
       if (iLine < 1) return;
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, 2 + iLine, 0, 0, null);
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, 1 + iLine, 0, 0, null);
       msg.Label = strLine;
       OnMessage(msg);
     }
