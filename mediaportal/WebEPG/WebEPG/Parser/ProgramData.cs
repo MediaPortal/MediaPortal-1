@@ -46,10 +46,10 @@ namespace MediaPortal.WebEPG.Parser
     private Dictionary<string, int> _months;
     private WorldDateTime _startTime;
     private WorldDateTime _endTime;
-    private int _epNumb;
-    private int _epSeason;
-    private bool _repeat;
-    private bool _subtitles;
+    private int _episode = 0;
+    private int _season = 0;
+    private bool _repeat = false;
+    private bool _subtitles = false;
     #endregion
 
     #region Constructors/Destructors
@@ -205,6 +205,12 @@ namespace MediaPortal.WebEPG.Parser
         if (data._subtitles)
           this._subtitles = data._subtitles;
 
+        if (data._episode > 0)
+          this._episode = data._episode;
+
+        if (data._season > 0)
+          this._season = data._season;
+
         // Merge values without pPreference
         if (data._channelId != string.Empty && this._channelId == string.Empty)
           this._channelId = data._channelId;
@@ -227,10 +233,10 @@ namespace MediaPortal.WebEPG.Parser
       program.Genre = _genre;
       program.Description = _description;
       program.Start = _startTime.ToLocalLongDateTime();
-      if (_epNumb > 0)
-        program.EpisodeNum = _epNumb.ToString();
-      if (_epSeason > 0)
-        program.SeriesNum = _epSeason.ToString();
+      if (_episode > 0)
+        program.EpisodeNum = _episode.ToString();
+      if (_season > 0)
+        program.SeriesNum = _season.ToString();
       if (_repeat)
         program.Repeat = "Repeat";
       if (_endTime != null)
@@ -337,7 +343,8 @@ namespace MediaPortal.WebEPG.Parser
 
       int index = 0;
       int start;
-      while ((start = strActors.IndexOf(',', index)) != -1)
+      char[] delimitors = new char[2]{',','\n'};
+      while ((start = strActors.IndexOfAny(delimitors, index)) != -1)
       {
         string actor = strActors.Substring(index, start - index);
         actorList.Add(actor.Trim(' ', '\n', '\t'));
@@ -446,11 +453,11 @@ namespace MediaPortal.WebEPG.Parser
           case "#ACTORS":
             _actors = GetActors(element);
             break;
-          case "#EPNUMB":
-            _epNumb = GetNumber(element);
+          case "#EPISODE":
+            _episode = GetNumber(element);
             break;
-          case "#EPSEASON":
-            _epSeason = GetNumber(element);
+          case "#SEASON":
+            _season = GetNumber(element);
             break;
           case "#REPEAT":
             _repeat = true;
