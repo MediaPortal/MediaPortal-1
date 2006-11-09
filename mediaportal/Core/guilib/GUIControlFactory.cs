@@ -388,11 +388,14 @@ namespace MediaPortal.GUI.Library
           {
             if (element.InnerText != "yes" && element.InnerText != "no")
             {
-              int iVisibleCondition = 0;
-              bool allowHiddenFocus = false;
-              GetConditionalVisibility(element, control, ref iVisibleCondition, ref allowHiddenFocus);
-              control.SetVisibleCondition(iVisibleCondition, allowHiddenFocus);
-              continue;
+              if (element.InnerText.Length != 0)
+              {
+                int iVisibleCondition = 0;
+                bool allowHiddenFocus = false;
+                GetConditionalVisibility(element, control, ref iVisibleCondition, ref allowHiddenFocus);
+                control.SetVisibleCondition(iVisibleCondition, allowHiddenFocus);
+                continue;
+              }
             }
           }
         }

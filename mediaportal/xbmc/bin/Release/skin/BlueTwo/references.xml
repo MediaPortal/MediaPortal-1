@@ -196,8 +196,7 @@
     <IconXOff>8</IconXOff>
     <IconYOff>8</IconYOff>
     <suffix>|</suffix>
-    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
-    <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
+    <visible>no</visible>
   </control>
 
   <control>
@@ -387,9 +386,8 @@
     <thumbPosYBig>12</thumbPosYBig>
     <thumbZoom>no</thumbZoom>
     <textXOff>0</textXOff>
-    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
-    <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
     <textYOff>0</textYOff>
+    <visible>no</visible>
   </control>
 
   <control>
@@ -446,8 +444,7 @@
     <InfoImagewidth>275</InfoImagewidth>
     <InfoImageheight>275</InfoImageheight>
     <InfoImagediffuse>ffffffff</InfoImagediffuse>
-    <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
-    <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
+    <visible>no</visible>
   </control>
 
   <control>
