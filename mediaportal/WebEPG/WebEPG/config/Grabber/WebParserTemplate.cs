@@ -36,6 +36,9 @@ namespace MediaPortal.WebEPG.Config.Grabber
 	{
     [XmlElement("Template")]
     public List<HtmlParserTemplate> Templates;
+    [XmlArray("DataPreference")]
+    [XmlArrayItem("Preference")]
+    public List<DataPreference> preferences;
     [XmlArray("Sublinks")]
     [XmlArrayItem("Sublink")]
     public List<SublinkInfo> sublinks;
