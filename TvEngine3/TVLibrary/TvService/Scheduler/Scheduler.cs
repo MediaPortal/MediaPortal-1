@@ -384,7 +384,28 @@ namespace TvService
       List<CardDetail> freeCards = _tvController.GetFreeCardsForChannelName(recording.Channel, user, out result);
       if (freeCards.Count == 0) return false;
       CardDetail cardInfo = freeCards[0];
-      Log.Write("Scheduler : record on card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
+      if (recording.Schedule.RecommendedCard > 0)
+      {
+        bool isAvailable = false;
+        foreach (CardDetail card in freeCards)
+        {
+          if (card.Id == recording.Schedule.RecommendedCard)
+          {
+            cardInfo = card;
+            isAvailable = true;
+            Log.Write("Scheduler : record on recommended card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
+            break;
+          }
+        }
+        if (!isAvailable)
+        {
+          Log.Write("Scheduler : recommended card:{0} is not aivailble. start recording on card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
+        }
+      }
+      else
+      {
+        Log.Write("Scheduler : record on card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
+      }
       bool lockedCard = false;
       try
       {
