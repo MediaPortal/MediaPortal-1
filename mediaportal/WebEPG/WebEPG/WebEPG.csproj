@@ -152,7 +152,7 @@
     </Compile>
     <Compile Include="config\Grabber\WebParserTemplate.cs" />
     <Compile Include="config\Grabber\WebSearchData.cs" />
-    <Compile Include="Parser\DataPreference.cs" />
+    <Compile Include="config\Grabber\DataPreference.cs" />
     <Compile Include="Parser\WebParser.cs" />
     <Compile Include="Parser\IParser.cs" />
     <Compile Include="config\Grabber\XmlField.cs" />
