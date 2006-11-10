@@ -493,9 +493,16 @@ namespace MediaPortal.GUI.Music
         ImageChangeTimer.Start();
       }
 
-      g_Player_PlayBackStarted(g_Player.MediaType.Music, g_Player.CurrentFile);
+      if (g_Player.Playing)
+      {
+        g_Player_PlayBackStarted(g_Player.MediaType.Music, g_Player.CurrentFile);
 
-      SetVisualizationWindow();
+        SetVisualizationWindow();
+      }
+      else
+      {
+        // notify user what he's lost here?
+      }
     }
 
     protected override void OnPageDestroy(int new_windowId)
