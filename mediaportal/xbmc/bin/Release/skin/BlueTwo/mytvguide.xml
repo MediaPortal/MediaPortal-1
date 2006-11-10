@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>600</id>
   <defaultcontrol>2</defaultcontrol>
@@ -196,9 +197,9 @@
       <posY>0</posY>
       <width>32</width>
       <height>32</height>
-      <keepaspectratio>yes</keepaspectratio>
+			<keepaspectratio>no</keepaspectratio>
       <centered>no</centered>
-      <zoom>yes</zoom>
+			<zoom>no</zoom>
       <texture>defaultVideoBig.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>

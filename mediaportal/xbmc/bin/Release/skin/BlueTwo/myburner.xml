@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 	<id>760</id>
 	<defaultcontrol>2</defaultcontrol>
@@ -75,12 +76,14 @@
 		<control>
 			<type>group</type>
 			<description>group element</description>
+				<posX>60</posX>
+				<posY>97</posY>
+			<layout>StackLayout</layout>			
 			<control>
 				<description>Video</description>
 				<type>button</type>
 				<id>2</id>
-				<posX>60</posX>
-				<posY>97</posY>
+
 				<label>2101</label>
 				<onleft>2</onleft>
 				<onright>20</onright>
@@ -91,8 +94,6 @@
 				<description>Audio</description>
 				<type>button</type>
 				<id>3</id>
-				<posX>60</posX>
-				<posY>131</posY>
 				<label>2102</label>
 				<onleft>3</onleft>
 				<onright>20</onright>
@@ -103,8 +104,6 @@
 				<description>Data</description>
 				<type>button</type>
 				<id>4</id>
-				<posX>60</posX>
-				<posY>165</posY>
 				<label>2103</label>
 				<onleft>4</onleft>
 				<onright>20</onright>
@@ -115,8 +114,6 @@
 				<description>cd info</description>
 				<type>button</type>
 				<id>5</id>
-				<posX>60</posX>
-				<posY>199</posY>
 				<label>2123</label>
 				<onleft>5</onleft>
 				<onright>20</onright>
@@ -127,8 +124,6 @@
 				<description>rw format</description>
 				<type>button</type>
 				<id>6</id>
-				<posX>60</posX>
-				<posY>233</posY>
 				<label>2114</label>
 				<onleft>6</onleft>
 				<onright>20</onright>
@@ -139,8 +134,6 @@
 				<description>cd eject</description>
 				<type>button</type>
 				<id>7</id>
-				<posX>60</posX>
-				<posY>267</posY>
 				<label>2126</label>
 				<onleft>7</onleft>
 				<onright>20</onright>

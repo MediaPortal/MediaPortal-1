@@ -1,4 +1,5 @@
-﻿<window>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
    <id>619</id>
    <defaultcontrol>24</defaultcontrol>
    <allowoverlay>yes</allowoverlay>

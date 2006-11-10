@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 	<id>604</id>
 	<defaultcontrol>2</defaultcontrol>
@@ -294,30 +295,30 @@
       <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 			
-		<control>
-			<description>TV background</description>
-			<type>image</type>
-			<id>18</id>
-			<posX>60</posX>
-			<posY>420</posY>
-			<width>180</width>
-			<height>135</height>
-			<colordiffuse>60ffffff</colordiffuse>
-			<texture>playback_background.png</texture>
+    <control>
+      <type>image</type>
+      <description>Current program background</description>
+      <id>18</id>
+      <posX>75</posX>
+      <posY>419</posY>
+      <width>161</width>
+      <height>134</height>
+      <texture>playback_background.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-		</control>
+    </control>
 		<control>
-			<description>TV preview window</description> 
 			<type>videowindow</type> 
+      <description>TV preview window</description>
 			<id>99</id> 
-			<posX>65</posX> 
-			<posY>425</posY> 
-			<width>170</width> 
-			<height>125</height>
-			<onup>7</onup>
-			<action>18</action>
+      <posX>86</posX>
+      <posY>431</posY>
+      <width>135</width>
+      <height>108</height>
+      <colordiffuse>ffffffff</colordiffuse>
+      <onup>7</onup>
 			<textureFocus>tv_green_border.png</textureFocus>
+      <action>18</action>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
 		</control>

@@ -1,49 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>613</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+	<define>#header.label:126</define>
+	<define>#header.image:television_logo.png</define>
+	<define>#header.hover:hover_my tv.png</define>
   <controls>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>0</posX>
-      <posY>0</posY>
-      <width>720</width>
-      <height>576</height>
-      <texture>background.png</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>1</id>
-      <posX>60</posX>
-      <posY>20</posY>
-      <texture>television_logo.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <type>image</type>
-      <id>1</id>
-      <posX>75</posX>
-      <posY>370</posY>
-      <texture>hover_my tv.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>Status Text Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>250</posX>
-      <posY>70</posY>
-      <label>126</label>
-      <font>font16</font>
-      <align>right</align>
-      <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
+	    <import>common.window.xml</import>
     <control>
       <description>Date</description>
       <type>label</type>

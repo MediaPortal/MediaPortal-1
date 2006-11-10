@@ -301,6 +301,7 @@
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
+    
     <control>
       <description>Program Button Up</description>
       <type>button</type>
