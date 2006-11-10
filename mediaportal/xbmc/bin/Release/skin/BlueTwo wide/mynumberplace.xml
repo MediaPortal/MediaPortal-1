@@ -1,7 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-  <animation effect="fade" time="250">WindowOpen</animation>
-  <animation effect="fade" time="500">WindowClose</animation>
 	<id>7777</id>
 	<defaultcontrol>2</defaultcontrol>
         <allowoverlay>no</allowoverlay>
@@ -14,7 +12,6 @@
 		<control>
 			<type>group</type>
 			<description>group element</description>
-			<animation>FlyInFromLeft</animation>
                         <layout>StackLayout(2)</layout>
                         <posX>113</posX>
                         <posY>129</posY>
@@ -233,6 +230,7 @@
 				<texture>bar_vert.png</texture>
 			</control>
 		</control>
+    
 		<control>
 			<type>group</type>
 			<description>BarHorGroup</description>
@@ -242,6 +240,7 @@
 			<width>533</width>
 			<height>533</height>
 			<animation>ZoomInFromMiddle</animation>
+      
 			<control>
 				<type>image</type>
 				<id>976</id>
@@ -331,6 +330,7 @@
 				<textureFocus>icon_empty_focus.png</textureFocus>
 				<textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
 			</control>
+      
 			<control>
 				<type>cell</type>
 				<id>1003</id>
@@ -379,6 +379,7 @@
 				<textureFocus>icon_empty_focus.png</textureFocus>
 				<textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
 			</control>
+      
 			<control>
 				<type>cell</type>
 				<id>1006</id>

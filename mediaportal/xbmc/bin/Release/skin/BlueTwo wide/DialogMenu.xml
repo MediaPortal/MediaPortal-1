@@ -22,6 +22,8 @@
 			<width>766</width>
 			<height>568</height>
 			<texture>context_background.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Heading text label</description>
@@ -32,6 +34,8 @@
 			<label>181</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Exit button</description>
@@ -48,6 +52,8 @@
 			<onright>3</onright>
 			<onup>3</onup>
 			<ondown>3</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>options listcontrol</description>
@@ -61,6 +67,8 @@
 			<onright>2</onright>
 			<spinPosX>857</spinPosX>
 			<spinPosY>570</spinPosY>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 	</controls>
 </window>

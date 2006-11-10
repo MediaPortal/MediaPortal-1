@@ -20,6 +20,8 @@
 			<posX>113</posX>
 			<posY>26</posY>
 			<texture>-</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Playlist text label</description>
@@ -31,6 +33,8 @@
 			<font>font16</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Number of Files Label</description>
@@ -41,6 +45,8 @@
 			<label>#itemcount</label>
 			<align>left</align>
 			<textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Selected item Label</description>
@@ -53,11 +59,14 @@
 			<font>font13</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<type>group</type>
 			<description>group element</description>
-			<animation>FlyInFromLeft</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 			<control>
 				<description>Shuffle button</description>
 				<type>button</type>
@@ -70,6 +79,8 @@
 				<onup>2</onup>
 				<ondown>21</ondown>
 				<onup>2</onup>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="500">WindowClose</animation>
 			</control>
 			<control>
 				<description>Save button</description>
@@ -82,6 +93,8 @@
 				<onright>50</onright>
 				<onup>20</onup>
 				<ondown>22</ondown>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="500">WindowClose</animation>
 			</control>
 			<control>
 				<description>Clear button</description>
@@ -94,6 +107,8 @@
 				<onright>50</onright>
 				<onup>21</onup>
 				<ondown>23</ondown>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="500">WindowClose</animation>
 			</control>
 			<control>
 				<description>Play button</description>
@@ -106,6 +121,8 @@
 				<onright>50</onright>
 				<onup>22</onup>
 				<ondown>24</ondown>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="500">WindowClose</animation>
 			</control>
 			<control>
 				<description>Next button</description>
@@ -118,6 +135,8 @@
 				<onright>50</onright>
 				<onup>23</onup>
 				<ondown>25</ondown>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="500">WindowClose</animation>
 			</control>
 			<control>
 				<description>Previous button</description>
@@ -130,12 +149,17 @@
 				<onright>50</onright>
 				<onup>24</onup>
 				<ondown>26</ondown>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="500">WindowClose</animation>
 			</control>
 		</control>
 		<control>
 			<type>group</type>
 			<description>group element</description>
-			<animation>FlyInFromTop</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="250" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="500" end="800,0" >WindowClose</animation>
 			<control>
 				<description>composite control consisting of a list control and a thumbnail panel</description>
 				<type>facadeview</type>

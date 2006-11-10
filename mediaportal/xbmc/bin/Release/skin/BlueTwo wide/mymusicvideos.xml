@@ -11,8 +11,9 @@
 
         <control>
             <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
             <description>group element</description>
-            <animation>FlyInFromLeft</animation>
             <layout>StackLayout(2)</layout>
             <posX>113</posX>
             <posY>129</posY>
@@ -101,7 +102,8 @@
         <control>
             <type>group</type>
             <description>group element</description>
-            <animation>FlyInFromLeft</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
             <layout>StackLayout(2)</layout>
             <posX>113</posX>
             <posY>129</posY>
@@ -148,6 +150,8 @@
         </control>
         <control>
             <type>listcontrol</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
             <description>listcontrol</description>
             <id>50</id>
             <onleft>2</onleft>

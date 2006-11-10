@@ -20,6 +20,8 @@
 			<posX>113</posX>
 			<posY>26</posY>
 			<texture>select_logo.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Select text label</description>
@@ -31,6 +33,8 @@
 			<font>font16</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Number of Files Label</description>
@@ -41,6 +45,8 @@
 			<label>#itemcount</label>
 			<align>left</align>
 			<textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Selected item Label</description>
@@ -52,6 +58,8 @@
 			<font>font13</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>albums listcontrol</description>
@@ -61,6 +69,8 @@
 			<onright>5</onright>
 			<onup>5</onup>
 			<ondown>5</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>IMDB</description>
@@ -73,6 +83,8 @@
 			<onright>3</onright>
 			<onup>21</onup>
 			<ondown>3</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 	</controls>
 </window>

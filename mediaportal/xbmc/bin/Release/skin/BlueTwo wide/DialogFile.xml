@@ -22,6 +22,8 @@
 			<width>489</width>
 			<height>33</height>
 			<visible>no</visible>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Yes button</description>
@@ -38,6 +40,8 @@
 			<onright>10</onright>
 			<onup>12</onup>
 			<ondown>12</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>No button</description>
@@ -54,6 +58,8 @@
 			<onright>14</onright>
 			<onup>13</onup>
 			<ondown>13</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Always</description>
@@ -70,6 +76,8 @@
 			<onright>13</onright>
 			<onup>11</onup>
 			<ondown>11</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Never</description>
@@ -86,6 +94,8 @@
 			<onright>12</onright>
 			<onup>10</onup>
 			<ondown>10</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Cancel button</description>
@@ -102,6 +112,8 @@
 			<onright>11</onright>
 			<onup>14</onup>
 			<ondown>14</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 	</controls>
 </window>

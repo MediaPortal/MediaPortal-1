@@ -22,6 +22,8 @@
 			<width>800</width>
 			<height>328</height>
 			<texture>dialog_background.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>dialog Heading</description>
@@ -32,6 +34,8 @@
 			<label>934</label>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Rating label</description>
@@ -42,6 +46,8 @@
 			<label>204</label>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>right button</description>
@@ -53,10 +59,13 @@
 			<height>36</height>
 			<textureFocus>arrow_round_right_focus.png</textureFocus>
 			<textureNoFocus>arrow_round_right_nofocus.png</textureNoFocus>
+      <label></label>
 			<onleft>11</onleft>
 			<onright>10</onright>
 			<onup>13</onup>
 			<ondown>13</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>left button</description>
@@ -68,10 +77,13 @@
 			<height>36</height>
 			<textureFocus>arrow_round_left_focus.png</textureFocus>
 			<textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
+      <label></label>
 			<onleft>11</onleft>
 			<onright>10</onright>
 			<onup>13</onup>
 			<ondown>13</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>OK button</description>
@@ -90,6 +102,8 @@
 			<onright>10</onright>
 			<onup>10</onup>
 			<ondown>10</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>next item</description>
@@ -101,10 +115,13 @@
 			<height>36</height>
 			<textureFocus>arrow_round_right_focus.png</textureFocus>
 			<textureNoFocus>arrow_round_right_nofocus.png</textureNoFocus>
+      <label></label>
 			<onleft>14</onleft>
 			<onright>12</onright>
 			<onup>10</onup>
 			<ondown>10</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Play</description>
@@ -122,6 +139,8 @@
 			<onright>13</onright>
 			<onup>10</onup>
 			<ondown>10</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>previous item</description>
@@ -133,10 +152,13 @@
 			<height>36</height>
 			<textureFocus>arrow_round_left_focus.png</textureFocus>
 			<textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
+      <label></label>
 			<onleft>15</onleft>
 			<onright>14</onright>
 			<onup>10</onup>
 			<ondown>10</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Title</description>
@@ -147,6 +169,8 @@
 			<label>204</label>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<type>image</type>
@@ -154,6 +178,8 @@
 			<posX>521</posX>
 			<posY>386</posY>
 			<texture>star.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<type>image</type>
@@ -161,6 +187,8 @@
 			<posX>597</posX>
 			<posY>386</posY>
 			<texture>star.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<type>image</type>
@@ -168,6 +196,8 @@
 			<posX>673</posX>
 			<posY>386</posY>
 			<texture>star.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<type>image</type>
@@ -175,6 +205,8 @@
 			<posX>749</posX>
 			<posY>386</posY>
 			<texture>star.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<type>image</type>
@@ -182,6 +214,8 @@
 			<posX>825</posX>
 			<posY>386</posY>
 			<texture>star.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 	</controls>
 </window>

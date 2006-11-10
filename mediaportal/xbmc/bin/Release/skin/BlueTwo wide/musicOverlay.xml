@@ -13,6 +13,8 @@
 			<align>left</align>
 			<font>font72</font>
 			<textcolor>20ffffff</textcolor>
+    <animation effect="fade" time="500">WindowClose</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
 		</control>
 		<control>
 			<description>music rectangle</description>
@@ -23,6 +25,8 @@
 			<width>220</width>
 			<height>182</height>
 			<texture>playback_background.png</texture>
+    <animation effect="fade" time="500">WindowClose</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
 		</control>
 		<control>
 			<description>music logo</description>
@@ -35,6 +39,8 @@
 			<keepaspectratio>yes</keepaspectratio>
 			<centered>yes</centered>
 			<texture>#Play.Current.Thumb</texture>
+    <animation effect="fade" time="500">WindowClose</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
 		</control>
 		<control>
 			<description>play logo</description>
@@ -43,6 +49,8 @@
 			<posX>37</posX>
 			<posY>528</posY>
 			<texture>logo_play.png</texture>
+    <animation effect="fade" time="500">WindowClose</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
 		</control>
 		<control>
 			<description>Pause logo</description>
@@ -51,6 +59,8 @@
 			<posX>36</posX>
 			<posY>525</posY>
 			<texture>logo_pause.png</texture>
+    <animation effect="fade" time="500">WindowClose</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
 		</control>
 		<control>
 			<description>FF logo</description>
@@ -59,6 +69,8 @@
 			<posX>18</posX>
 			<posY>528</posY>
 			<texture>logo_fastforward.png</texture>
+    <animation effect="fade" time="500">WindowClose</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
 		</control>
 		<control>
 			<description>RW logo</description>
@@ -67,6 +79,8 @@
 			<posX>18</posX>
 			<posY>528</posY>
 			<texture>logo_rewind.png</texture>
+    <animation effect="fade" time="500">WindowClose</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
 		</control>
 		<control>
 			<description>album/artist/genre etc info label</description>
@@ -79,6 +93,8 @@
 			<font>font13</font>
 			<label>#Play.Current.Title\r#Play.Current.Artist\r#Play.Current.Album\r#Play.Current.Duration</label>
 			<textcolor>FFFFFFFF</textcolor>
+    <animation effect="fade" time="500">WindowClose</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
 			<id>5</id>
 		</control>
 	</controls>

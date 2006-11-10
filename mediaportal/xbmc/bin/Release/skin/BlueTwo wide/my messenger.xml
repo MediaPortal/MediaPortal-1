@@ -41,7 +41,6 @@
 		<control>
 			<type>group</type>
 			<description>group element</description>
-			<animation>FlyInFromLeft</animation>
 			<control>
 				<description>View-As button</description>
 				<type>button</type>
@@ -102,7 +101,6 @@
 		<control>
 			<type>group</type>
 			<description>group element</description>
-			<animation>FlyInFromTop</animation>
 			<control>
 				<description>listcontrol</description>
 				<type>listcontrol</type>

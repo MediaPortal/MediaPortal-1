@@ -20,6 +20,8 @@
 			<posX>113</posX>
 			<posY>26</posY>
 			<texture>movieinfo_logo.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Actor Name Label</description>
@@ -30,6 +32,8 @@
 			<label>493</label>
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Actor Name value</description>
@@ -42,6 +46,8 @@
 			<font>font16</font>
 			<align>left</align>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Born</description>
@@ -52,6 +58,8 @@
 			<label>686</label>
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Date of Birth</description>
@@ -63,6 +71,8 @@
 			<label>#Actor.DateOfBirth #Actor.PlaceOfBirth</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Biography</description>
@@ -85,6 +95,8 @@
 			<onright>22</onright>
 			<onup>2</onup>
 			<ondown>4</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Movies</description>
@@ -107,6 +119,8 @@
 			<onright>22</onright>
 			<onup>3</onup>
 			<ondown>5</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Biography value</description>
@@ -119,6 +133,8 @@
 			<label>#Actor.Biography</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Image logo</description>
@@ -132,6 +148,8 @@
 			<colorkey>FFFF00FF</colorkey>
 			<colordiffuse>FFFFFFFF</colordiffuse>
 			<keepaspectratio>yes</keepaspectratio>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>textarea</description>
@@ -146,6 +164,8 @@
 			<onup>4</onup>
 			<ondown>4</ondown>
 			<label>#Actor.Movies</label>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 	</controls>
 </window>

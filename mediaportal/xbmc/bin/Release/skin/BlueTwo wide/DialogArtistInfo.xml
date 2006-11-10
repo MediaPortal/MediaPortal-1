@@ -20,6 +20,8 @@
 			<posX>113</posX>
 			<posY>26</posY>
 			<texture>info_logo.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Artist</description>
@@ -30,6 +32,8 @@
 			<label>493</label>
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Artist value</description>
@@ -41,6 +45,8 @@
 			<font>font16</font>
 			<align>left</align>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Born</description>
@@ -51,6 +57,8 @@
 			<label>686</label>
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Years Active</description>
@@ -61,6 +69,8 @@
 			<label>687</label>
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Genres</description>
@@ -71,6 +81,8 @@
 			<label>135</label>
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Tones</description>
@@ -81,6 +93,8 @@
 			<label>175</label>
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Styles</description>
@@ -91,6 +105,8 @@
 			<label>176</label>
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Instruments</description>
@@ -101,6 +117,8 @@
 			<label>688</label>
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Artist value</description>
@@ -111,6 +129,8 @@
 			<label>-</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Born value</description>
@@ -121,6 +141,8 @@
 			<label>-</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Years Active value</description>
@@ -131,6 +153,8 @@
 			<label>-</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Genres value</description>
@@ -141,6 +165,8 @@
 			<label>-</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Tones value</description>
@@ -152,6 +178,8 @@
 			<label>-</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Styles value</description>
@@ -163,6 +191,8 @@
 			<label>-</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Instruments value</description>
@@ -173,6 +203,8 @@
 			<label>-</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>artist image</description>
@@ -186,6 +218,8 @@
 			<colorkey>FFFF00FF</colorkey>
 			<colordiffuse>FFFFFFFF</colordiffuse>
 			<keepaspectratio>yes</keepaspectratio>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>textarea</description>
@@ -199,6 +233,8 @@
 			<onright>5</onright>
 			<onup>5</onup>
 			<ondown>5</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Bio/Albums</description>
@@ -213,6 +249,8 @@
 			<onright>4</onright>
 			<onup>6</onup>
 			<ondown>6</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 		<control>
 			<description>Refresh</description>
@@ -228,6 +266,8 @@
 			<onright>4</onright>
 			<onup>5</onup>
 			<ondown>5</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 		</control>
 	</controls>
 </window>

@@ -17,7 +17,8 @@
 		<control>
 			<type>group</type>
 			<description>group element</description>
-			<animation>FlyInFromBottom</animation>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
 			<control>
 				<type>image</type>
 				<id>0</id>

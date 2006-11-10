@@ -40,7 +40,7 @@
 	  <posY>129</posY>
 	  <onleft>20</onleft>
 	  <onright>20</onright>
-	  <onup>14</onup>
+         <onup>13</onup>
 	  <ondown>11</ondown>
 	  <label>137</label>
   </control>
@@ -103,15 +103,16 @@
 	  <type>textbox</type>
 	  <id>20</id>
 	  <posX>531</posX>
-	  <posY>93</posY>
+	  <posY>113</posY>
 	  <width>686</width>
-	  <height>621</height>
+	  <height>600</height>
 	  <spinWidth>21</spinWidth>
 	  <spinColor>ffffffff</spinColor>
 	  <image>icon-folder.png</image>
 	  <spinHeight>21</spinHeight>
 	  <spinPosY>706</spinPosY>
 	  <spinPosX>1157</spinPosX>
+    <text></text>
   </control>
   
   <control>
@@ -122,6 +123,7 @@
 		<posY>93</posY>
 		<width>686</width>
 		<height>621</height>
+    <texture></texture>
 		<visible>no</visible>
 		<colorkey>00000000</colorkey>
 		<colordiffuse>White</colordiffuse>

@@ -117,4 +117,24 @@ including the text (the alpha component of textcolor is ignored)
 		<texture>logo_fastforward.png</texture>
 	</control>3:42 PM 9/4/2006
 
-  <control><description>Rew Icon</description><type>image</type><id>11</id><posX>94</posX><posY>620</posY><width>98</width><height>92</height><texture>logo_rewind.png</texture></control><control><description>Stop Icon</description><type>image</type><id>12</id><posX>94</posX><posY>620</posY><width>86</width><height>86</height><texture>logo_stop.png</texture></control></controls>
+  <control>
+    <description>Rew Icon</description>
+    <type>image</type>
+    <id>11</id>
+    <posX>94</posX>
+    <posY>620</posY>
+    <width>98</width>
+    <height>92</height>
+    <texture>logo_rewind.png</texture>
+  </control><control>
+  <control>
+    <description>Stop Icon</description>
+    <type>image</type>
+    <id>12</id>
+    <posX>94</posX>
+    <posY>620</posY>
+    <width>86</width>
+    <height>86</height>
+    <texture>logo_stop.png</texture>
+  </control>
+</controls>
