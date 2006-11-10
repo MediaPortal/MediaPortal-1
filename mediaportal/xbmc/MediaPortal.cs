@@ -785,8 +785,8 @@ public class MediaPortalApp : D3DApp, IRender
       InputDevices.Init();
 
       _onResumeRunning = false;
-      _suspended = false;
       deviceLost = true;  // reset device
+			_suspended = false;
 			if (_startWithBasicHome)
 			{
 				Log.Info("Main: Switch to basic home screen");

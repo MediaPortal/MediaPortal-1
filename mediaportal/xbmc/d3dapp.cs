@@ -1639,7 +1639,9 @@ namespace MediaPortal
 
     private void D3DApp_Load(object sender, EventArgs e)
     {
-      Application.Idle += new EventHandler(Application_Idle);
+			this.timer.Enabled = false;
+			this.timer.Interval = 50;
+			//Application.Idle += new EventHandler(Application_Idle);
       Initialize();
       OnStartup();
 
@@ -1657,6 +1659,9 @@ namespace MediaPortal
       }
       catch
       { }
+			Thread renderThread = new Thread(new ThreadStart(RenderWorkerThread));
+			renderThread.Start();
+			timer.Enabled = true;
     }
 
 
@@ -1925,6 +1930,7 @@ namespace MediaPortal
       // 
       this.timer.Enabled = true;
       this.timer.Interval = 300;
+			this.timer.Tick += new System.EventHandler(this.timer_Tick);
       // 
       // D3DApp
       // 
@@ -2422,43 +2428,34 @@ namespace MediaPortal
     private static int loopCount = 1;
     private static int sleepCount = 0;
 
-    private void Application_Idle(object sender, EventArgs e)
-    {
-      do
-      {
-        OnProcess();
-        FrameMove();
+		void RenderWorkerThread()
+		{
+			while (true)
+			{
+				if (GUIWindowManager.IsSwitchingToNewWindow == false)
+				{
+					FullRender();
+				}
+				Thread.Sleep(5);
+				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+					break;
 
-        StartFrameClock();
-        FullRender();
-        //if (g_Player.Playing /*&& !g_Player.IsExternalPlayer*/ && g_Player.IsMusic)         
-        //if (g_Player.Playing /*&& !g_Player.IsExternalPlayer*/ && g_Player.IsMusic && !g_Player.HasVideo)
-        if (g_Player.Playing && !g_Player.IsExternalPlayer && !g_Player.IsMusic && !g_Player.HasVideo)
-        {
-          if (GUIGraphicsContext.CurrentFPS < GUIGraphicsContext.MaxFPS)
-            loopCount++;
-          //else if (loopCount > 0)
-          else if (GUIGraphicsContext.CurrentFPS > GUIGraphicsContext.MaxFPS)
-            loopCount--;
+			}
+		}
 
-          sleepCount++;
-          if (sleepCount >= loopCount)
-          {
-            WaitForFrameClock();
-            sleepCount = 0;
-            UpdateStats();
-          }
-        }
-        else
-        {
-          loopCount = 1;
-          WaitForFrameClock();
-        }
-        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
-          break;
-      }
-      while (AppStillIdle());
-    }
+
+		private void Application_Idle(object sender, EventArgs e)
+		{
+			do
+			{
+				OnProcess();
+				FrameMove();
+
+				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+					break;
+			}
+			while (AppStillIdle());
+		}
 
     protected void DoMinimizeOnStartup()
     {
@@ -2476,8 +2473,14 @@ namespace MediaPortal
 
       mousedoubleclick(e);
     }
-  }
+		private void timer_Tick(object sender, EventArgs e)
+    {
 
+      OnProcess();
+      FrameMove();
+    }
+  }
+		
   #region Enums for D3D Applications
 
   /// <summary>
