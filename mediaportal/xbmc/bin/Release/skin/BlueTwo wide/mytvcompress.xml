@@ -3,42 +3,12 @@
 	<id>612</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
+	<define>#header.label:896</define>
+	<define>#header.image:television_logo.png</define>
+	<define>#header.hover:hover_my tv.png</define>
 	<controls>
-		<control>
-			<description>BG</description>
-			<type>image</type>
-			<id>1</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<width>1366</width>
-			<height>768</height>
-			<texture>background.png</texture>
-		</control>
-		<control>
-			<type>image</type>
-			<id>1</id>
-			<posX>113</posX>
-			<posY>26</posY>
-			<texture>television_logo.png</texture>
-		</control>
-		<control>
-			<type>image</type>
-			<id>1</id>
-			<posX>142</posX>
-			<posY>493</posY>
-			<texture>hover_my tv.png</texture>
-		</control>
-		<control>
-			<description>Compress Text Label</description>
-			<type>label</type>
-			<id>1</id>
-			<posX>474</posX>
-			<posY>93</posY>
-			<label>896</label>
-			<font>font16</font>
-			<align>right</align>
-			<textcolor>FFFFFFFF</textcolor>
-		</control>
+	    <import>common.window.xml</import>
+
 		<control>
 			<description>Date</description>
 			<type>label</type>
@@ -49,6 +19,8 @@
 			<align>right</align>
 			<font>font13</font>
 			<textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Time</description>
@@ -60,6 +32,8 @@
 			<align>right</align>
 			<font>font13</font>
 			<textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Number of Files Label</description>
@@ -70,6 +44,8 @@
 			<label>#itemcount</label>
 			<align>left</align>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Selected item Label</description>
@@ -82,11 +58,14 @@
 			<font>font13</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<type>group</type>
 			<description>group element</description>
-			<animation>FlyInFromLeft</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 			<control>
 				<description>View-As button</description>
 				<type>button</type>
@@ -150,7 +129,8 @@
 		<control>
 			<type>group</type>
 			<description>group element</description>
-			<animation>FlyInFromTop</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 			<control>
 				<description>scheduler recordings listcontrol</description>
 				<type>checklistcontrol</type>
@@ -240,28 +220,31 @@
 			</control>
 		</control>
 		<control>
+			<description>TV background</description>
 			<type>image</type>
-			<description>Current program background</description>
-			<id>300</id>
-			<posX>140</posX>
-			<posY>560</posY>
-			<width>240</width>
-			<height>180</height>
+			<id>98</id>
+			<posX>113</posX>
+			<posY>544</posY>
+			<width>235</width>
+			<height>175</height>
 			<colordiffuse>60ffffff</colordiffuse>
 			<texture>previewbackground.png</texture>
+			<animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
+
 		<control>
-			<type>videowindow</type>
 			<description>TV preview window</description>
+			<type>videowindow</type>
 			<id>99</id>
-			<posX>147</posX>
-			<posY>566</posY>
-			<width>226</width>
-			<height>166</height>
-			<colordiffuse>ffffffff</colordiffuse>
-			<onup>5</onup>
-			<textureFocus>tv_green_border.png</textureFocus>
+			<posX>121</posX>
+			<posY>550</posY>
+			<width>221</width>
+			<height>161</height>
 			<action>18</action>
+			<textureFocus>tv_green_border.png</textureFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 	</controls>
 </window>

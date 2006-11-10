@@ -22,6 +22,8 @@
 			<width>529</width>
 			<height>93</height>
 			<texture>teletext_logo.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>tele-text rendering image</description>
@@ -32,6 +34,8 @@
 			<width>613</width>
 			<height>613</height>
 			<texture>button_small_settings_nofocus.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>template for program title darkarea </description>
@@ -41,6 +45,8 @@
 			<label>-</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>template for program title darkarea </description>
@@ -52,11 +58,14 @@
 			<label>-</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<type>group</type>
 			<description>group element</description>
-			<animation>FlyInFromLeft</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 			<control>
 				<description>Page100</description>
 				<type>button</type>
@@ -194,6 +203,8 @@
 			<height>180</height>
 			<colordiffuse>60ffffff</colordiffuse>
 			<texture>previewbackground.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>TV preview window</description>
@@ -205,6 +216,8 @@
 			<height>166</height>
 			<action>18</action>
 			<textureFocus>tv_green_border.png</textureFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 	</controls>
 </window>

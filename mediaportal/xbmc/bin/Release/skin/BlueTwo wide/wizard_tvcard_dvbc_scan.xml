@@ -124,6 +124,7 @@
 			<width>789</width>
 			<height>33</height>
 		</control>
+  
 		<control>
 			<type>label</type>
 			<description>total channels found</description>
@@ -140,5 +141,6 @@
 			<posY>517</posY>
 			<label>-</label>
 		</control>
+ 
 	</controls>
 </window>

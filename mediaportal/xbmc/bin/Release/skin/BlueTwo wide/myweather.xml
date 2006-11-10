@@ -12,8 +12,11 @@
         <import>common.time.xml</import>
         <control>
             <type>group</type>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300" >WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
             <description>group element</description>
-            <animation>FlyInFromLeft</animation>
             <layout>StackLayout</layout>
             <posX>113</posX>
             <posY>129</posY>
@@ -465,6 +468,7 @@
             <posY>129</posY>
             <width>720</width>
             <height>576</height>
+            <texture></texture>
             <visible>no</visible>
             <colorkey>00000000</colorkey>
             <colordiffuse>White</colordiffuse>

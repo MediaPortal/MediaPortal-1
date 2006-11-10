@@ -10,6 +10,8 @@
 		<import>common.window.xml</import>
 		<control>
 			<type>imagelist</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 			<id>101</id>
 			<posX>1233</posX>
 			<posY>66</posY>
@@ -28,7 +30,10 @@
 		<control>
 			<type>group</type>
 			<description>group element</description>
-			<animation>FlyInFromLeft</animation>
+      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="400" end="800,0" >WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 			<layout>StackLayout</layout>
 			<posX>113</posX>
 			<posY>129</posY>

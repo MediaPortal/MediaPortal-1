@@ -5,6 +5,20 @@
       <controls>
 
       <import>common.progressbar.xml</import>
+	<control>
+		<description>background</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>60</posX>
+		<posY>478</posY>
+		<width>400</width>
+		<height>230</height>
+		<texture>osd_bg_video.png</texture>
+		<visible>yes</visible>
+      
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+	</control>
       
 	<control>
 		<description>Current Time Info</description>
@@ -16,19 +30,12 @@
 		<align>left</align>
 		<font>font13</font>
 		<textcolor>FF071422</textcolor>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
 	</control>
 
-	<control>
-		<description>background</description>
-		<type>image</type>
-		<id>105</id>
-		<posX>60</posX>
-		<posY>478</posY>
-		<width>400</width>
-		<height>230</height>
-		<texture>osd_bg_video.png</texture>
-		<visible>yes</visible>
-	</control>
+
 
   	<control>
   		<description>TV Logo</description>
@@ -41,6 +48,9 @@
   		<texture>#Play.Current.Thumb</texture>
   		<keepaspectratio>yes</keepaspectratio>
   		<centered>yes</centered>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
 
   	<control>
@@ -55,6 +65,9 @@
   		<font>font13</font>
   		<label>#Play.Current.Title</label>
   		<textcolor>FFB2D4F5</textcolor>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
 
   	<control>
@@ -69,6 +82,9 @@
   		<label>#Play.Current.Plot</label>
   		<font>font10</font>
   		<textcolor>FFFFFFFF</textcolor>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
 
   	<control>
@@ -89,6 +105,9 @@
   		<onright>213</onright>
   		<onup>213</onup>
   		<ondown>218</ondown>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
 
   	<control>
@@ -109,6 +128,9 @@
   		<onright>218</onright>
   		<onup>213</onup>
   		<ondown>218</ondown>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Sub Menu Background (subtitles)</description>
@@ -122,6 +144,9 @@
   		<colorkey>0</colorkey>
   		<colordiffuse>ffffffff</colordiffuse>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>SubTitle Delay label</description>
@@ -133,6 +158,9 @@
   		<font>font13</font>
   		<textcolor>FFFFFFFF</textcolor>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>SubTitle Delay Slider</description>
@@ -149,6 +177,9 @@
   		<onleft>218</onleft>
   		<onright>800</onright>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>SubTitles On/Off Checkbox</description>
@@ -162,6 +193,9 @@
   		<onleft>218</onleft>
   		<onright>801</onright>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Sub Titles List Control</description>
@@ -176,6 +210,9 @@
   		<onup>802</onup>
   		<ondown>802</ondown>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
 
 
@@ -201,6 +238,9 @@
   		<onup>213</onup>
   		<ondown>215</ondown>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Rewind</description>
@@ -221,6 +261,9 @@
   		<onup>218</onup>
   		<ondown>212</ondown>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Stop</description>
@@ -239,6 +282,9 @@
   		<onup>211</onup>
   		<ondown>210</ondown>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Fast Forward</description>
@@ -259,6 +305,9 @@
   		<onup>219</onup>
   		<ondown>216</ondown>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Skip Fwd</description>
@@ -279,6 +328,9 @@
   		<onup>210</onup>
   		<ondown>213</ondown>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Mute</description>
@@ -299,6 +351,9 @@
   		<onup>214</onup>
   		<ondown>210</ondown>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
 
   	<control>
@@ -320,6 +375,9 @@
   		<onup>215</onup>
   		<ondown>214</ondown>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Sub Menu Background (volume)</description>
@@ -331,6 +389,9 @@
   		<colorkey>0</colorkey>
   		<colordiffuse>ffffffff</colordiffuse>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Sub Menu Background (subtitles)</description>
@@ -342,6 +403,9 @@
   		<colorkey>0</colorkey>
   		<colordiffuse>ffffffff</colordiffuse>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Sub Menu Background (bookmarks)</description>
@@ -353,6 +417,9 @@
   		<colorkey>0</colorkey>
   		<colordiffuse>ffffffff</colordiffuse>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Sub Menu Background (video)</description>
@@ -364,6 +431,9 @@
   		<colorkey>0</colorkey>
   		<colordiffuse>ffffffff</colordiffuse>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Sub Menu Background (audio)</description>
@@ -375,6 +445,9 @@
   		<colorkey>0</colorkey>
   		<colordiffuse>ffffffff</colordiffuse>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Sub Menu Nib</description>
@@ -386,6 +459,9 @@
   		<colorkey>0</colorkey>
   		<colordiffuse>ffffffff</colordiffuse>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Volume Slider</description>
@@ -401,6 +477,9 @@
   		<onleft>400</onleft>
   		<onright>400</onright>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>A/v Delay label</description>
@@ -412,6 +491,9 @@
   		<font>font13</font>
   		<textcolor>FFFFFFFF</textcolor>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>A/V Delay Slider</description>
@@ -428,6 +510,9 @@
   		<onleft>501</onleft>
   		<onright>501</onright>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="250">visiblechange</animation>
   	</control>
   	<control>
   		<description>Audio Stream List Control</description>
@@ -442,6 +527,9 @@
   		<onup>501</onup>
   		<ondown>501</ondown>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Video Position label</description>
@@ -453,6 +541,9 @@
   		<font>font13</font>
   		<textcolor>FFFFFFFF</textcolor>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Video Position Slider</description>
@@ -469,6 +560,9 @@
   		<onleft>700</onleft>
   		<onright>702</onright>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Non-Interleaved Checkbox</description>
@@ -482,6 +576,9 @@
   		<onleft>701</onleft>
   		<onright>701</onright>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>No Cache Checkbox</description>
@@ -495,6 +592,9 @@
   		<onleft>701</onleft>
   		<onright>702</onright>
   		<visible>no</visible>
+      
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Adjust Framerate Checkbox</description>
@@ -508,6 +608,9 @@
   		<onleft>703</onleft>
   		<onright>702</onright>
   		<visible>no</visible>
+      
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>brightness label</description>
@@ -519,6 +622,9 @@
   		<font>font13</font>
   		<textcolor>FFFFFFFF</textcolor>
   		<visible>no</visible>
+      
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>brightness</description>
@@ -535,6 +641,9 @@
   		<onleft>704</onleft>
   		<onright>704</onright>
   		<visible>no</visible>
+      
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>contrast label</description>
@@ -546,6 +655,9 @@
   		<font>font13</font>
   		<textcolor>FFFFFFFF</textcolor>
   		<visible>no</visible>
+      
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>contrast</description>
@@ -562,6 +674,9 @@
   		<onleft>705</onleft>
   		<onright>705</onright>
   		<visible>no</visible>
+      
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>gamma label</description>
@@ -573,6 +688,9 @@
   		<font>font13</font>
   		<textcolor>FFFFFFFF</textcolor>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>gamma</description>
@@ -589,6 +707,9 @@
   		<onleft>706</onleft>
   		<onright>706</onright>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Create Bookmark</description>
@@ -610,6 +731,9 @@
   		<onup>600</onup>
   		<ondown>601</ondown>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Clear Bookmarks</description>
@@ -631,6 +755,9 @@
   		<onup>600</onup>
   		<ondown>601</ondown>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
   	<control>
   		<description>Bookmarks List Control</description>
@@ -647,6 +774,9 @@
   		<spinPosX>465</spinPosX>
   		<spinPosY>480</spinPosY>
   		<visible>no</visible>
+
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
   	</control>
       </controls>
 </window>

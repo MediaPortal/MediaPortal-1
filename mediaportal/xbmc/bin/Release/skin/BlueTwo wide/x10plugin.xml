@@ -46,6 +46,7 @@
 			<onup>2</onup>
 			<ondown>10</ondown>
 		</control>
+	
 		<control>
 			<description>On Button</description>
 			<type>button</type>
@@ -94,6 +95,7 @@
 			<onup>12</onup>
 			<ondown>15</ondown>
 		</control>
+	
 		<control>
 			<description>This room On</description>
 			<type>button</type>
@@ -171,7 +173,7 @@
 		<control>
 			<type>group</type>
 			<description>main appliance group</description>
-			<animation>FlyInFromRight</animation>
+			
 			<control>
 				<description>List appliance</description>
 				<type>listcontrol</type>
@@ -191,6 +193,7 @@
 			<id>30</id>
 			<posX>512</posX>
 			<posY>666</posY>
+			<label></label>
 			<font>font16</font>
 			<align>left</align>
 			<textcolor>FFB2D4F5</textcolor>

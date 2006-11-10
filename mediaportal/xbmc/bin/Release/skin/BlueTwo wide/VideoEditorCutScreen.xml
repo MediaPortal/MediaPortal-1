@@ -73,6 +73,7 @@
 			<posY>264</posY>
 			<onup>24</onup>
 			<ondown>24</ondown>
+		   	<label></label>
 		</control>
 		<control>
 			<type>label</type>
@@ -92,6 +93,7 @@
 			<posY>317</posY>
 			<onup>24</onup>
 			<ondown>24</ondown>
+		   	<label></label>
 		</control>
 		<control>
 			<type>label</type>
@@ -147,6 +149,7 @@
 			<posX>607</posX>
 			<posY>580</posY>
 			<onup>24</onup>
+		   	<label></label>
 		</control>
 		<control>
 			<type>button</type>
@@ -170,6 +173,7 @@
 			<posX>777</posX>
 			<posY>580</posY>
 			<onup>24</onup>
+		   	<label></label>
 		</control>
 		<control>
 			<type>button</type>
@@ -257,12 +261,12 @@
 			<action>18</action>
 			<textureFocus>video_window_focus.png</textureFocus>
 		</control>
-<!-- 		<control>
+      		<control>
 			<type>label</type>
 			<id>102</id>
 			<posX>569</posX>
 			<posY>666</posY>
-		</control> -->
+		</control>
 		<control>
 			<type>statusbar</type>
 			<id>103</id>

@@ -98,7 +98,6 @@
 		<control>
 			<type>group</type>
 			<description>group element</description>
-			<animation>FlyInFromLeft</animation>
 			<control>
 				<description>back button</description>
 				<type>button</type>

@@ -4,6 +4,7 @@
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
 	<controls>
+	
 		<control>
 			<description>background image</description>
 			<type>image</type>

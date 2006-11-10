@@ -24,6 +24,8 @@
 			<label>#itemcount</label>
 			<align>left</align>
 			<textcolor>White</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Selected item Label</description>
@@ -36,6 +38,8 @@
 			<font>font14</font>
 			<align>right</align>
 			<textcolor>White</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<type>image</type>
@@ -43,6 +47,8 @@
 			<posX>142</posX>
 			<posY>493</posY>
 			<texture>#header.hover</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<type>image</type>
@@ -52,6 +58,9 @@
 			<posY>98</posY>
 			<width>560</width>
 			<height>104</height>
+			<texture></texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<type>image</type>
@@ -60,6 +69,8 @@
 			<posX>113</posX>
 			<posY>21</posY>
 			<texture>tvseries_logo.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<type>textbox</type>
@@ -70,6 +81,8 @@
 			<width>826</width>
 			<textcolor>FFFFFFFF</textcolor>
 			<font>font16</font>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<type>textbox</type>
@@ -81,6 +94,8 @@
 			<align>right</align>
 			<textcolor>FFA9D0F7</textcolor>
 			<font>font13</font>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<type>textboxscrollup</type>
@@ -94,12 +109,15 @@
 			<colordiffuse>ffffffff</colordiffuse>
 			<textcolor>FFFFFFFF</textcolor>
 			<font>font13</font>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<type>group</type>
 			<layout>StackLayout</layout>
 			<description>group element</description>
-			<animation>FlyInFromLeft</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 			<posX>113</posX>
 			<posY>416</posY>
 			<control>
@@ -125,7 +143,10 @@
 			<type>group</type>
 			<description>group element</description>
 			<id>28</id>
-			<animation>FlyInFromTop</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="400" end="800,0" >WindowClose</animation>
 			<control>
 				<description>composite control consisting of a list control and a thumbnail panel</description>
 				<type>facadeview</type>

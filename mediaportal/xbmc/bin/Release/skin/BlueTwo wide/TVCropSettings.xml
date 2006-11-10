@@ -5,6 +5,7 @@
 	<allowoverlay>no</allowoverlay>
 	<controls>
 		<control>
+			<description>background image</description>
 			<type>image</type>
 			<id>0</id>
 			<posX>300</posX>

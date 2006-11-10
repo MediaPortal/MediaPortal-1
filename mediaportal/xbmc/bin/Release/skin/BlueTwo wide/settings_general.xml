@@ -86,6 +86,7 @@
 			<width>533</width>
 			<height>400</height>
 			<colordiffuse>ffffffff</colordiffuse>
+			<texture></texture>
 		</control>
 		<control>
 			<description>Skip steps screen button</description>

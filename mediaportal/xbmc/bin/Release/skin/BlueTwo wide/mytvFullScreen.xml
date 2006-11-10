@@ -15,6 +15,7 @@
 		  <id>0</id>
 		  <colordiffuse>White</colordiffuse>
 		  <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>row 1 label</description>
@@ -29,6 +30,7 @@
 			<font>font13</font>
 			<textcolor>Black</textcolor>
 			<visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>row 2 label</description>
@@ -39,8 +41,9 @@
 			<label>-</label>
 			<align>left</align>
 			<font>font13</font>
-			<textcolor>White</textcolor>
+      <textcolor>Black</textcolor>
 			<visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>row 3 label</description>
@@ -51,8 +54,9 @@
 			<label>-</label>
 			<align>left</align>
 			<font>font13</font>
-			<textcolor>White</textcolor>
+      <textcolor>Black</textcolor>
 			<visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>pause image</description>
@@ -62,9 +66,9 @@
 			<posY>80</posY>
 			<visible>no</visible>
 			<texture>video-pause.png</texture>
-<!-- 			<texture>-</texture> -->
 			<colorkey>0</colorkey>
-			<colordiffuse>White</colordiffuse>
+      <colordiffuse>ffffffff</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>2x image</description>
@@ -76,9 +80,9 @@
 	         	<posY>19</posY>
 			<visible>no</visible>
 			<texture>video+2x.png</texture>
-			<filtered>no</filtered>
 			<colorkey>0</colorkey>
-			<colordiffuse>White</colordiffuse>
+      <colordiffuse>ffffffff</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>4x image</description>
@@ -89,7 +93,8 @@
 			<visible>no</visible>
 			<texture>video+4x.png</texture>
 			<colorkey>0</colorkey>
-			<colordiffuse>White</colordiffuse>
+      <colordiffuse>ffffffff</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>8x image</description>
@@ -100,7 +105,8 @@
 			<visible>no</visible>
 			<texture>video+8x.png</texture>
 			<colorkey>0</colorkey>
-			<colordiffuse>White</colordiffuse>
+      <colordiffuse>ffffffff</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>16x image</description>
@@ -111,7 +117,8 @@
 			<visible>no</visible>
 			<texture>video+16x.png</texture>
 			<colorkey>0</colorkey>
-			<colordiffuse>White</colordiffuse>
+      <colordiffuse>ffffffff</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>32x image</description>
@@ -122,7 +129,8 @@
 			<visible>no</visible>
 			<texture>video+32x.png</texture>
 			<colorkey>0</colorkey>
-			<colordiffuse>White</colordiffuse>
+      <colordiffuse>ffffffff</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>- 2x image</description>
@@ -133,7 +141,8 @@
 			<visible>no</visible>
 			<texture>video-2x.png</texture>
 			<colorkey>0</colorkey>
-			<colordiffuse>White</colordiffuse>
+      <colordiffuse>ffffffff</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>- 4x image</description>
@@ -144,7 +153,8 @@
 			<visible>no</visible>
 			<texture>video-4x.png</texture>
 			<colorkey>0</colorkey>
-			<colordiffuse>White</colordiffuse>
+      <colordiffuse>ffffffff</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>- 8x image</description>
@@ -155,7 +165,8 @@
 			<visible>no</visible>
 			<texture>video-8x.png</texture>
 			<colorkey>0</colorkey>
-			<colordiffuse>White</colordiffuse>
+      <colordiffuse>ffffffff</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>- 16x image</description>
@@ -166,7 +177,8 @@
 			<visible>no</visible>
 			<texture>video-16x.png</texture>
 			<colorkey>0</colorkey>
-			<colordiffuse>White</colordiffuse>
+      <colordiffuse>ffffffff</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>- 32x image</description>
@@ -177,7 +189,8 @@
 			<visible>no</visible>
 			<texture>video-32x.png</texture>
 			<colorkey>0</colorkey>
-			<colordiffuse>White</colordiffuse>
+      <colordiffuse>ffffffff</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>bar image</description>
@@ -191,6 +204,7 @@
 			<colorkey>0</colorkey>
 			<colordiffuse>White</colordiffuse>
 			<visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>background</description>
@@ -202,6 +216,7 @@
 			<height>29</height>
 			<texture>osd_progress_background.png</texture>
 			<visible>yes</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>TV Progress Bar</description>
@@ -230,6 +245,9 @@
 			<label>#TV.Record.percent1</label>
 			<label1>#TV.Record.percent2</label1>
 			<label2>#TV.Record.percent3</label2>
+      <startlabel></startlabel>
+      <endlabel></endlabel>
+      <toplabel></toplabel>
 			<font>font13</font>
 			<textcolor>FF000000</textcolor>
 		</control>
@@ -239,10 +257,11 @@
 			<id>101</id>
 			<posX>303</posX>
 			<posY>660</posY>
-			<label>#currentplaytime</label>
+			<label>#TV.View.start</label>
 			<align>right</align>
 			<font>font16</font>
-			<textcolor>White</textcolor>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>End Time Info</description>
@@ -254,6 +273,7 @@
 			<align>left</align>
 			<font>font16</font>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>rec logo</description>
@@ -264,6 +284,7 @@
 			<texture>rec.png</texture>
 			<colordiffuse>ffffffff</colordiffuse>
 			<visible>yes</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>MSGBox</description>
@@ -276,6 +297,7 @@
 			<label>-</label>
 			<textureFocus>bar_hor.png</textureFocus>
 			<textureNoFocus>bar_hor.png</textureNoFocus>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>MSGBox label 1</description>
@@ -289,6 +311,7 @@
 			<font>dingbats</font>
 			<textcolor>FFFFFFFF</textcolor>
 			<visible>yes</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>MSGBox label 2</description>
@@ -302,6 +325,7 @@
 			<font>dingbats</font>
 			<textcolor>FFFFFFFF</textcolor>
 			<visible>yes</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>MSGBox label 3</description>
@@ -315,6 +339,7 @@
 			<font>dingbats</font>
 			<textcolor>FFFFFFFF</textcolor>
 			<visible>yes</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>MSGBox label 2</description>
@@ -328,6 +353,7 @@
 			<font>dingbats</font>
 			<textcolor>FFFFFFFF</textcolor>
 			<visible>yes</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<type>image</type>
@@ -336,8 +362,9 @@
 			<posY>128</posY>
 			<texture>volume.states.mute.png</texture>
 			<colorkey>0</colorkey>
-			<colordiffuse>White</colordiffuse>
+      <colordiffuse>ffffffff</colordiffuse>
 			<visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<type>volumebar</type>
@@ -351,6 +378,7 @@
 			<colorkey>0</colorkey>
 			<colordiffuse>White</colordiffuse>
 			<visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 	</controls>
 </window>

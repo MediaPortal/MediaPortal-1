@@ -13,13 +13,15 @@
 			<type>group</type>
 			<layout>StackLayout</layout>
 			<description>group element</description>
-			<animation>FlyInFromLeft</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 			<posX>113</posX>
 			<posY>129</posY>
 			<control>
 				<description>Record</description>
 				<type>button</type>
 				<id>2</id>
+				<label></label>
 				<onup>17</onup>
 				<ondown>3</ondown>
 				<onright>10</onright>
@@ -110,6 +112,8 @@
 			<align>left</align>
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>upcoming episodes listcontrol</description>
@@ -144,6 +148,8 @@
 			<onright>2</onright>
 			<onup>2</onup>
 			<ondown>2</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Current program title</description>
@@ -152,9 +158,12 @@
 			<posX>493</posX>
 			<posY>133</posY>
 			<width>333</width>
+			<label></label>
 			<font>font13</font>
 			<align>left</align>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Current program time</description>
@@ -162,9 +171,12 @@
 			<id>14</id>
 			<posX>493</posX>
 			<posY>160</posY>
+			<label></label>
 			<align>left</align>
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Description1</description>
@@ -177,6 +189,8 @@
 			<label>#TV.RecordedTV.Description</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>genre</description>
@@ -184,9 +198,12 @@
 			<id>17</id>
 			<posX>1252</posX>
 			<posY>160</posY>
+			<label></label>
 			<align>right</align>
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Current program background</description>
@@ -197,6 +214,8 @@
 			<width>214</width>
 			<height>178</height>
 			<texture>playback_background.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>TV preview window</description>
@@ -209,6 +228,8 @@
 			<onup>5</onup>
 			<action>18</action>
 			<textureFocus>tv_green_border.png</textureFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Current program title</description>
@@ -217,9 +238,12 @@
 			<posX>493</posX>
 			<posY>586</posY>
 			<width>333</width>
+			<label></label>
 			<font>font14</font>
 			<align>left</align>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Current program time</description>
@@ -227,9 +251,12 @@
 			<id>14</id>
 			<posX>493</posX>
 			<posY>613</posY>
+			<label></label>
 			<align>left</align>
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>Description1</description>
@@ -239,8 +266,11 @@
 			<posY>646</posY>
 			<width>573</width>
 			<height>86</height>
+			<label></label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
 			<description>genre</description>
@@ -248,9 +278,12 @@
 			<id>17</id>
 			<posX>1252</posX>
 			<posY>613</posY>
+			<label></label>
 			<align>right</align>
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 	</controls>
 </window>

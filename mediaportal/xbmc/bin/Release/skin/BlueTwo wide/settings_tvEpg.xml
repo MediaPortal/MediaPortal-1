@@ -49,7 +49,6 @@
 			<type>group</type>
 			<layout>StackLayout</layout>
 			<description>group element</description>
-			<animation>FlyInFromLeft</animation>
 			<posX>113</posX>
 			<posY>160</posY>
 			<control>

@@ -60,8 +60,7 @@
 			<font>font10</font>
 			<font2>font10</font2>
 			<font3>font12</font3>
-			<remoteColor>ffffffff</remoteColor>
-			<!-- used for selected channel -->
+			<remoteColor>ffffffff</remoteColor>   <!-- used for selected channel -->
 			<onleft>36</onleft>
 			<onright>34</onright>
 		</control>

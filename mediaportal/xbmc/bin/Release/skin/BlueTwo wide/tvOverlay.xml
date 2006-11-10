@@ -12,6 +12,8 @@
 			<posY>66</posY>
 			<texture>rec.png</texture>
 			<colordiffuse>ffffffff</colordiffuse>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
 		</control>
 	</controls>
 </window>

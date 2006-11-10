@@ -13,6 +13,8 @@
 			<align>left</align>
 			<font>font72</font>
 			<textcolor>20ffffff</textcolor>
+    <animation effect="fade" time="500">WindowClose</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
 		</control>
 		<control>
 			<description>play logo</description>
@@ -21,6 +23,8 @@
 			<posX>37</posX>
 			<posY>528</posY>
 			<texture>logo_play.png</texture>
+    <animation effect="fade" time="500">WindowClose</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
 		</control>
 		<control>
 			<description>Pause logo</description>
@@ -29,6 +33,8 @@
 			<posX>36</posX>
 			<posY>525</posY>
 			<texture>logo_pause.png</texture>
+    <animation effect="fade" time="500">WindowClose</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
 		</control>
 		<control>
 			<description>FF logo</description>
@@ -37,6 +43,8 @@
 			<posX>18</posX>
 			<posY>528</posY>
 			<texture>logo_fastforward.png</texture>
+    <animation effect="fade" time="500">WindowClose</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
 		</control>
 		<control>
 			<description>RW logo</description>
@@ -45,6 +53,8 @@
 			<posX>18</posX>
 			<posY>528</posY>
 			<texture>logo_rewind.png</texture>
+    <animation effect="fade" time="500">WindowClose</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
 		</control>
 		<control>
 			<description>scrolling info label</description>
@@ -56,6 +66,8 @@
 			<align>left</align>
 			<font>font13</font>
 			<label>#Play.Current.Title\r#Play.Current.Genre\r#Play.Current.Year\r#Play.Current.Director</label>
+    <animation effect="fade" time="500">WindowClose</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
 			<id>5</id>
 		</control>
 		<control>
@@ -69,6 +81,8 @@
 			<texture>playback_background.png</texture>
 			<colorkey>0</colorkey>
 			<colordiffuse>ffffffff</colordiffuse>
+    <animation effect="fade" time="500">WindowClose</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
 		</control>
 		<control>
 			<description>video preview window</description>
@@ -80,6 +94,8 @@
 			<height>144</height>
 			<action>18</action>
 			<textureFocus>tv_green_border.png</textureFocus>
+    <animation effect="fade" time="500">WindowClose</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
 		</control>
 	</controls>
 </window>

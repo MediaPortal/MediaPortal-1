@@ -4,17 +4,10 @@
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:1</define>
+	<define>#header.image:mplogo.png</define>
 	<define>#header.hover:hover_my pictures.png</define>
 	<controls>
 		<import>common.settings.xml</import>
-<!-- 		<control>
-			<type>image</type>
-			<description>MP Logo</description>
-			<id>1</id>
-			<posX>60</posX>
-			<posY>32</posY>
-			<texture>mplogo.png</texture>
-		</control> -->
 
 		<control>
 			<description>Speed label</description>
