@@ -2448,9 +2448,13 @@
 		<carrier frequency="754000" bandwidth="8" />
 		<carrier frequency="786000" bandwidth="8" />
 		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="826000" bandwidth="8" />
 		<carrier frequency="834000" bandwidth="8" />
 		<carrier frequency="842000" bandwidth="8" />
 		<carrier frequency="850000" bandwidth="8" />
+	</country>
+	<country name="UK - Winter Hill B" offset="167">
+		<carrier frequency="306000" bandwidth="8" />
+		<carrier frequency="626000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
 	</country>
 </dvbt>
