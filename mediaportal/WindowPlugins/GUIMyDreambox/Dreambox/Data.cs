@@ -113,9 +113,9 @@ namespace DreamBox
                     ds.Tables.Add(table);
 
                 }
-                catch (Exception ex)
+                catch 
                 {
-                    //throw ex;
+
                 }
 
                 return ds;
