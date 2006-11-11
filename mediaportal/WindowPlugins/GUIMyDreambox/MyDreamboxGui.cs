@@ -82,7 +82,7 @@ namespace MediaPortal.GUI.Dreambox
             ChannelButton = 7,
             TVButton = 3,
             TVOnOff = 8,
-            RadioButton = 4,
+            RadioButton = 14,
             RecordingsButton = 11,
             List = 50
         }
@@ -216,6 +216,11 @@ namespace MediaPortal.GUI.Dreambox
                                         }//end
                                     }
                                 }
+                                return true;
+                            }
+                            if (iControl == (int)Controls.RadioButton)
+                            {
+                                playlistPlayer.g_Player.Play(@"http://dreambox:31339/0,013d,0bff,0c00.ts");
                                 return true;
                             }
                             if (iControl == (int)Controls.ChannelButton)
