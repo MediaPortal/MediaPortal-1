@@ -24,33 +24,61 @@
 #endregion
 
 using System;
+using System.Data;
 using System.Windows.Forms;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using MediaPortal.GUI.Library;
+
+using DreamBox;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Soap;
 using MediaPortal.TV.Database;
+using MediaPortal.TV.Recording;
 using MediaPortal.Util;
+using MediaPortal.GUI.Library;
+
 
 namespace ProcessPlugins.DreamboxDirectEPG
 {
     public class DreamboxDirectEPG : IPlugin, ISetupForm
     {
+        private System.ComponentModel.BackgroundWorker _EPGbackgroundWorker = new System.ComponentModel.BackgroundWorker();
         System.Windows.Forms.Timer _timer;
         private int _Hour = 0;
         private int _Minute = 0;
+        private ArrayList captureCards = new ArrayList();
+        private string _DreamboxIP = "";
+        private string _DreamboxUserName = "";
+        private string _DreamboxPassword = "";
 
         public DreamboxDirectEPG()
         {
+            _EPGbackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(_EPGbackgroundWorker_RunWorkerCompleted);
+            _EPGbackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(_EPGbackgroundWorker_DoWork);
             _timer = new System.Windows.Forms.Timer();
-            // check every 15 seconds for notifies
-            _timer.Interval = 15000;
+            // check every 60 seconds for changes
+            _timer.Interval = 60000;
             _timer.Enabled = false;
             _timer.Tick += new EventHandler(_timer_Tick);
+        }
+
+        void _EPGbackgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            // Import Dreambox EPG Data
+            ImportEPG();
+        }
+
+        void _EPGbackgroundWorker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            // Done
         }
 
         public void Start()
         {
             LoadSettings();
+            _timer.Enabled = true;
         }
 
         private void LoadSettings()
@@ -59,12 +87,17 @@ namespace ProcessPlugins.DreamboxDirectEPG
             {
                 _Hour = xmlreader.GetValueAsInt("DreamboxDirectEPG", "Hour", 0);
                 _Minute = xmlreader.GetValueAsInt("DreamboxDirectEPG", "Minute", 0);
+
+                _DreamboxIP = xmlreader.GetValueAsString("DreamboxDirectEPG", "IP", "dreambox");
+                _DreamboxUserName = xmlreader.GetValueAsString("DreamboxDirectEPG", "UserName", "root");
+                _DreamboxPassword = xmlreader.GetValueAsString("DreamboxDirectEPG", "Password", "dreambox");
             }
         }
 
         public void Stop()
         {
             Log.Info("DreamBoxDirectEPG: plugin stopping.");
+            _timer.Enabled = false;
             return;
         }
 
@@ -72,8 +105,14 @@ namespace ProcessPlugins.DreamboxDirectEPG
         void _timer_Tick(object sender, EventArgs e)
         {
             // check time
-
-            // if time ok then start import (threaded)
+            System.DateTime now = System.DateTime.Now;
+            if (now.Hour == _Hour && now.Minute == _Minute)
+            {
+                // if time ok then start import (threaded)
+                if (!_EPGbackgroundWorker.IsBusy)
+                    _EPGbackgroundWorker.RunWorkerAsync();
+            }
+            
         }
 
         #region IPlugin Members
@@ -147,6 +186,114 @@ namespace ProcessPlugins.DreamboxDirectEPG
             strPictureImage = String.Empty;
             return false;
         }
+
+        #endregion
+
+        #region Import EPG
+        void ImportEPG()
+        {
+            DreamBox.Core box = new DreamBox.Core("http://" + _DreamboxIP, _DreamboxUserName, _DreamboxPassword);
+            DataTable dt = box.Data.UserTVBouquets.Tables[0];
+
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                string reference = dt.Rows[i]["Ref"].ToString();
+                ImportEPGChannels(reference);
+
+            }
+        }
+        private void ImportEPGChannels(string reference)
+        {
+            DreamBox.Core box = new DreamBox.Core("http://" + _DreamboxIP, _DreamboxUserName, _DreamboxPassword);
+            DataTable dt = box.Data.Channels(reference).Tables[0];
+
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                string channelreference = dt.Rows[i]["Ref"].ToString();
+                ImportChannelEPG(channelreference);
+
+            }
+        }
+        private void ImportChannelEPG(string reference)
+        {
+            DreamBox.Core box = new DreamBox.Core("http://" + _DreamboxIP, _DreamboxUserName, _DreamboxPassword);
+            ServiceEpgData epg = box.XML.EPG(reference);
+
+            ArrayList programs = new ArrayList();
+            TVDatabase.GetAllPrograms(out programs);
+
+            foreach (EpgEvent tvprogram in epg.Events)
+            {
+                bool found = false;
+                foreach (TVProgram p in programs)
+                {
+                    if (p.Title == tvprogram.Description)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    // add start date
+                    int year = Convert.ToInt32(tvprogram.Date.Split('.')[2].ToString());
+                    int month = Convert.ToInt32(tvprogram.Date.Split('.')[1].ToString());
+                    int day = Convert.ToInt32(tvprogram.Date.Split('.')[0].ToString());
+                    int hour = Convert.ToInt32(tvprogram.Time.Split(':')[0].ToString());
+                    int minutes = Convert.ToInt32(tvprogram.Time.Split(':')[1].ToString());
+                    System.DateTime start = new DateTime(year, month, day, hour, minutes, 0);
+
+                    double duration = Convert.ToDouble(tvprogram.Duration);
+                    System.DateTime end = start.AddSeconds(duration); ;
+
+                    TVProgram program = new TVProgram(epg.ServiceName, start, end, tvprogram.Description);
+                    program.Description = tvprogram.Details;
+                    program.Genre = tvprogram.Genre;
+                    program.Date = start.ToString();
+
+                    TVDatabase.AddProgram(program);
+                }
+
+            }
+
+        }
+        public void LoadCaptureCards()
+        {
+
+            if (File.Exists(Config.GetFile(Config.Dir.Config, "capturecards.xml")))
+            {
+                using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "capturecards.xml"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    try
+                    {
+                        //
+                        // Create Soap Formatter
+                        //
+                        SoapFormatter formatter = new SoapFormatter();
+
+                        //
+                        // Serialize
+                        //
+                        captureCards = new ArrayList();
+                        captureCards = (ArrayList)formatter.Deserialize(fileStream);
+                        for (int i = 0; i < captureCards.Count; i++)
+                        {
+                            ((TVCaptureDevice)captureCards[i]).ID = (i + 1);
+
+                        }
+                        //
+                        // Finally close our file stream
+                        //
+                        fileStream.Close();
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Failed to load previously configured capture card(s), you will need to re-configure your device(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+        }
+
 
         #endregion
     }

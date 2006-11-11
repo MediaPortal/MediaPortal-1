@@ -270,6 +270,16 @@
     <Compile Include="DreamboxDirectEPG\DreamboxDirectEPGSettings.Designer.cs">
       <DependentUpon>DreamboxDirectEPGSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="DreamboxDirectEPG\Dreambox\BoxInfo.cs" />
+    <Compile Include="DreamboxDirectEPG\Dreambox\ChannelInfo.cs" />
+    <Compile Include="DreamboxDirectEPG\Dreambox\Core.cs" />
+    <Compile Include="DreamboxDirectEPG\Dreambox\Data.cs" />
+    <Compile Include="DreamboxDirectEPG\Dreambox\EPG.cs" />
+    <Compile Include="DreamboxDirectEPG\Dreambox\NowPlaying799.cs" />
+    <Compile Include="DreamboxDirectEPG\Dreambox\Remote.cs" />
+    <Compile Include="DreamboxDirectEPG\Dreambox\Request.cs" />
+    <Compile Include="DreamboxDirectEPG\Dreambox\XML.cs" />
+    <Compile Include="DreamboxDirectEPG\Dreambox\Zap.cs" />
     <Compile Include="ExternalDisplay\Drivers\BaseDisplay.cs" />
     <Compile Include="ExternalDisplay\Drivers\Clipboard.cs">
       <SubType>Code</SubType>

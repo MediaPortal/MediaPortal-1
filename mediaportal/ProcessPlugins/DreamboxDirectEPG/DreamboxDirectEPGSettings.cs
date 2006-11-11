@@ -14,6 +14,7 @@ namespace ProcessPlugins.DreamboxDirectEPG
         public DreamboxDirectEPGSettings()
         {
             InitializeComponent();
+            LoadSettings();
         }
 
         private void mpButton2_Click(object sender, EventArgs e)
@@ -36,9 +37,16 @@ namespace ProcessPlugins.DreamboxDirectEPG
                 int hour = xmlreader.GetValueAsInt("DreamboxDirectEPG", "Hour", 0);
                 int minute = xmlreader.GetValueAsInt("DreamboxDirectEPG", "Minute", 0);
 
-                MessageBox.Show(hour.ToString());
                 mpNumericUpDown1.Value = Convert.ToDecimal(hour);
                 mpNumericUpDown2.Value = Convert.ToDecimal(minute);
+
+                string ip = xmlreader.GetValueAsString("DreamboxDirectEPG", "IP", "dreambox");
+                string userName = xmlreader.GetValueAsString("DreamboxDirectEPG", "UserName", "root");
+                string password = xmlreader.GetValueAsString("DreamboxDirectEPG", "Password", "dreambox");
+
+                edtDreamboxIP.Text = ip;
+                edtUserName.Text = userName;
+                edtPassword.Text = password;
             }
         }
 
@@ -48,6 +56,10 @@ namespace ProcessPlugins.DreamboxDirectEPG
             {
                 xmlwriter.SetValue("DreamboxDirectEPG", "Hour", mpNumericUpDown1.Value.ToString());
                 xmlwriter.SetValue("DreamboxDirectEPG", "Minute", mpNumericUpDown2.Value.ToString());
+
+                xmlwriter.SetValue("DreamboxDirectEPG", "IP", edtDreamboxIP.Text);
+                xmlwriter.SetValue("DreamboxDirectEPG", "UserName", edtUserName.Text);
+                xmlwriter.SetValue("DreamboxDirectEPG", "Password", edtPassword.Text);
             }
             return true;
         }
