@@ -240,7 +240,7 @@ namespace MediaPortal.TV.Recording
       // rec_2  ------------------e
       if ((record_2.Start >= record_1.Start && record_2.Start < record_1.End) ||
           (record_2.Start <= record_1.Start && record_2.End >= record_1.End) ||
-          (record_2.End > record_1.Start && record_2.Start <= record_1.End)) return true;
+          (record_2.End > record_1.Start && record_2.End <= record_1.End)) return true;
       return false;
     }
     /// <summary>Tries to assign a recording to a card</summary>
