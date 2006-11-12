@@ -172,10 +172,13 @@ namespace TvEngine
     {
       // sch_1        s------------------------e
       // sch_2    ---------s-----------------------------
+      // sch_2    s--------------------------------e
       // sch_2  ------------------e
-      if ((sched_2.StartTime >= sched_1.StartTime && sched_2.StartTime < sched_1.EndTime) ||
-          (sched_2.StartTime <= sched_1.StartTime && sched_2.EndTime >= sched_1.EndTime) ||
-          (sched_2.EndTime > sched_1.StartTime && sched_2.StartTime <= sched_1.EndTime)) return true;
+      if (
+        ((sched_2.StartTime.AddMinutes(-sched_2.PreRecordInterval) >= sched_1.StartTime.AddMinutes(-sched_1.PreRecordInterval)) && (sched_2.StartTime.AddMinutes(-sched_2.PreRecordInterval) < sched_1.EndTime.AddMinutes(sched_1.PostRecordInterval))) ||
+          ((sched_2.StartTime.AddMinutes(-sched_2.PreRecordInterval) <= sched_1.StartTime.AddMinutes(-sched_1.PreRecordInterval)) && (sched_2.EndTime.AddMinutes(sched_2.PostRecordInterval) >= sched_1.EndTime.AddMinutes(sched_1.PostRecordInterval))) ||
+          ((sched_2.EndTime.AddMinutes(sched_2.PostRecordInterval) > sched_1.StartTime.AddMinutes(-sched_1.PreRecordInterval)) && (sched_2.EndTime.AddMinutes(sched_2.PostRecordInterval) <= sched_1.EndTime.AddMinutes(sched_1.PostRecordInterval)))
+        ) return true;
       return false;
     }
 
@@ -236,16 +239,110 @@ namespace TvEngine
 
       #region gets incoming periodic schedules for the next 30 days
       List<Schedule> _incomingSchedules = new List<Schedule>();
-      
-      // daily
-      // weekly schedules
-      // EveryTimeOnThisChannel
-      // EveryTimeOnEveryChannel
-      // Weekends
-      // WorkingDays
+      foreach (Schedule _Schedule in _schedules)
+      {
+        if (_Schedule.Canceled != null)
+        {
+          ScheduleRecordingType scheduleType = (ScheduleRecordingType)_Schedule.ScheduleType;
+          switch (scheduleType)
+          {
+            // daily
+            case ScheduleRecordingType.Daily:
+              {
+                // first set the Original schedule's date to today's date
+                if (_Schedule.StartTime.Day != _Schedule.EndTime.Day)
+                {
+                  _Schedule.StartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, _Schedule.StartTime.Hour, _Schedule.StartTime.Minute, _Schedule.StartTime.Second);
+                  _Schedule.EndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, _Schedule.EndTime.Hour, _Schedule.EndTime.Minute, _Schedule.EndTime.Second);
+                  _Schedule.EndTime = _Schedule.EndTime.AddDays(1);
+                  _Schedule.Persist();
+                }
+                else
+                {
+                  _Schedule.StartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, _Schedule.StartTime.Hour, _Schedule.StartTime.Minute, _Schedule.StartTime.Second);
+                  _Schedule.EndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, _Schedule.EndTime.Hour, _Schedule.EndTime.Minute, _Schedule.EndTime.Second);
+                  _Schedule.Persist();
+                }
+                // then generate the daily schedules for the next 30 days
+                for (int i = 1; i <= 30; i++)
+                {
+                  Schedule _incomingSchedule = _Schedule.Clone();
+                  _incomingSchedule.StartTime = _incomingSchedule.StartTime.AddDays(i);
+                  _incomingSchedule.EndTime = _incomingSchedule.EndTime.AddDays(i);
+                  _incomingSchedules.Add(_incomingSchedule);
+                }
+              }
+              break;
+            // weekly 
+            case ScheduleRecordingType.Weekly:
+              {
+              }
+              break;
+            // EveryTimeOnThisChannel
+            case ScheduleRecordingType.EveryTimeOnThisChannel:
+              {
+              }
+              break;
+            // EveryTimeOnEveryChannel
+            case ScheduleRecordingType.EveryTimeOnEveryChannel:
+              {
+              }
+              break;
+            // Weekends
+            case ScheduleRecordingType.Weekends:
+              {
+              }
+              break;
+            // WorkingDays
+            case ScheduleRecordingType.WorkingDays:
+              {
+              }
+              break;
+          }//switch (scheduleType)
+        }//if (_Schedule.Canceled != null)
+      }//foreach (Schedule _Schedule in _schedules)
       #endregion
 
       #region assigns incoming periodic schedules
+      foreach (Schedule _Schedule in _incomingSchedules)
+      {
+        bool _assigned = false;
+        Schedule _lastOverlappingSchedule = null;
+        int _lastBusyCard = 0;
+        foreach (Card _card in _cards)
+        {
+          if (_card.canViewTvChannel(_Schedule.IdChannel))
+          {
+            // checks if any schedule assigned to this cards overlaps current parsed schedule
+            bool free = true;
+            foreach (Schedule _assignedShedule in _cardSchedules[_card.IdCard])
+            {
+              if (IsOverlap(_Schedule, _assignedShedule))
+              {
+                free = false;
+                _lastOverlappingSchedule = _assignedShedule;
+                _lastBusyCard = _card.IdCard;
+                break;
+              }
+            }
+            if (free)
+            {
+              _cardSchedules[_card.IdCard].Add(_Schedule);
+              _assigned = true;
+              _Schedule.RecommendedCard = _card.IdCard;
+              break;
+            }
+          }
+        }
+        if (!_assigned)
+        {
+          _cardSchedules[0].Add(_Schedule);
+          Conflict _newConflict = new Conflict(_Schedule.IdSchedule, _lastOverlappingSchedule.IdSchedule, _Schedule.IdChannel, _Schedule.StartTime);
+          _newConflict.IdCard = _lastBusyCard;
+          _newConflict.Persist();
+
+        }
+      }
       #endregion
 
       return _cardSchedules;
