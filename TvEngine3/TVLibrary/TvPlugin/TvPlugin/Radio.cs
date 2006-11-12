@@ -105,7 +105,24 @@ namespace TvPlugin
 
       playlistPlayer = PlayListPlayer.SingletonPlayer;
       LoadSettings();
+      g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
     }
+
+    void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
+    {
+      if (type == g_Player.MediaType.Radio)
+      {
+        VirtualCard card = TVHome.Card;
+        if (card.IsTimeShifting && card.Channel != null)
+        {
+          if (card.Channel.IsRadio)
+          {
+            card.StopTimeShifting();
+          }
+        }
+      }
+    }
+
     public override void OnAdded()
     {
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_RADIO, this);
