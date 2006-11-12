@@ -417,7 +417,11 @@ namespace TvService
               {
                 RemoteControl.Instance.TuneScan(card.IdCard, tuning);
                 _currentCardId = card.IdCard;
-                _tvController.GrabEpg(this, card.IdCard);
+                if (false==_tvController.GrabEpg(this, card.IdCard))
+                {
+                  _currentCardId = -1;
+                  return false;
+                }
               }
             }
             catch (Exception ex)
@@ -448,7 +452,11 @@ namespace TvService
             {
               RemoteControl.Instance.TuneScan(card.IdCard, tuning);
               _currentCardId = card.IdCard;
-              _tvController.GrabEpg(this, card.IdCard);
+              if (false == _tvController.GrabEpg(this, card.IdCard))
+              {
+                _currentCardId = -1;
+                return false;
+              }
             }
             catch (Exception ex)
             {
@@ -477,7 +485,11 @@ namespace TvService
             {
               RemoteControl.Instance.TuneScan(card.IdCard, tuning);
               _currentCardId = card.IdCard;
-              _tvController.GrabEpg(this, card.IdCard);
+              if (false == _tvController.GrabEpg(this, card.IdCard))
+              {
+                _currentCardId = -1;
+                return false;
+              }
             }
             catch (Exception ex)
             {
@@ -506,7 +518,11 @@ namespace TvService
             {
               RemoteControl.Instance.TuneScan(card.IdCard, tuning);
               _currentCardId = card.IdCard;
-              _tvController.GrabEpg(this, card.IdCard);
+              if (false == _tvController.GrabEpg(this, card.IdCard))
+              {
+                _currentCardId = -1;
+                return false;
+              }
             }
             catch (Exception ex)
             {

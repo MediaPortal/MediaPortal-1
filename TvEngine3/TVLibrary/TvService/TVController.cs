@@ -1696,25 +1696,26 @@ namespace TvService
     /// </summary>
     /// <param name="cardId">id of the card.</param>
     /// <returns></returns>
-    public void GrabEpg(BaseEpgGrabber grabber, int cardId)
+    public bool GrabEpg(BaseEpgGrabber grabber, int cardId)
     {
       try
       {
-        if (_allDbscards[cardId].Enabled == false) return;
+        if (_allDbscards[cardId].Enabled == false) return false;
         if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
         {
           //RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
           //RemoteControl.Instance.GrabEpg(cardId);
-          return;
+          return false;
         }
 
         _localCards[cardId].GrabEpg(grabber);
+        return true;
 
       }
       catch (Exception ex)
       {
         Log.Write(ex);
-        return;
+        return false;
       }
     }
     public List<EpgChannel> Epg(int cardId)
@@ -2547,8 +2548,15 @@ namespace TvService
     }
     public void Fire(object sender, EventArgs args)
     {
-      if (OnTvServerEvent != null)
-        OnTvServerEvent(sender, args);
+      try
+      {
+        if (OnTvServerEvent != null)
+          OnTvServerEvent(sender, args);
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
     }
     #endregion
 
