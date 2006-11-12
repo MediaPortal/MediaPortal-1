@@ -4177,9 +4177,9 @@
     <id>2144</id>
     <value>Start Burning</value>
   </string>
-    <string>
+  <string>
     <id>2145</id>
-    <value>Import Current Playlist</value>
+    <value>Import current playlist</value>
   </string>
   <string Prefix="My ">
     <id>2200</id>

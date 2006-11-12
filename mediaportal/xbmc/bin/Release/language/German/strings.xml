@@ -4177,6 +4177,10 @@
       <id>2144</id>
       <value>Starte Brennvorgang</value>
    </string>
+   <string>
+      <id>2145</id>
+      <value>Aktuelle Wiedergabeliste verwenden</value>
+  </string>
    <string Prefix="Mein ">
       <id>2200</id>
       <value>Explorer</value>
