@@ -391,7 +391,7 @@ namespace SetupTv.Sections
       for (int i = indexes.Count - 1; i >= 0; i--)
       {
         int index = indexes[i];
-        if (index > 0)
+        if (index > 0 && index + 1 < mpListView1.Items.Count)
         {
           ListViewItem item = mpListView1.Items[index];
           mpListView1.Items.RemoveAt(index);
