@@ -15,8 +15,10 @@ const char* STREAM_NAME = "testStream";
 const char* STREAM_DESCRIPTION = "Session streamed by \"MediaPortal Tv Server v1.0\"";
 const char* FILE_NAME = "C:\\temp\\testApp\\live.ts.tsbuffer";
 extern void Log(const char *fmt, ...) ;
-UsageEnvironment* env;
-RTSPServer* rtspServer;
+
+UsageEnvironment* m_env;
+RTSPServer*			m_rtspServer;
+
 void StreamSetup(char* ipAdress);
 void StreamRun();
 void announceStream(RTSPServer* rtspServer, ServerMediaSession* sms,char * streamName, char * inputFileName); // fwd
@@ -41,6 +43,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 #endif
 
+//**************************************************************************************
 void StreamSetup(char* ipAdress)
 {
   TCHAR folder[MAX_PATH];
@@ -50,32 +53,36 @@ void StreamSetup(char* ipAdress)
 	::DeleteFile(fileName);
 
 
-	Log("Setup stream server for ip:%s",ipAdress);
+	Log("Stream server:Setup stream server for ip:%s",ipAdress);
 	
 	ReceivingInterfaceAddr=inet_addr(ipAdress );
 	SendingInterfaceAddr=inet_addr(ipAdress );
 
   TaskScheduler* scheduler = BasicTaskScheduler::createNew();
-  env = BasicUsageEnvironment::createNew(*scheduler);
+  m_env = BasicUsageEnvironment::createNew(*scheduler);
 
-  rtspServer = RTSPServer::createNew(*env);
-  if (rtspServer == NULL) 
+  m_rtspServer = RTSPServer::createNew(*m_env);
+  if (m_rtspServer == NULL) 
   {
-    Log("Failed to create RTSP server: %s",env->getResultMsg());
+    Log("Stream server:Failed to create RTSP server: %s",m_env->getResultMsg());
     exit(1);
   }
 }
+
+//**************************************************************************************
 void StreamRun()
 {
-	env->taskScheduler().doEventLoop(); 
+	m_env->taskScheduler().doEventLoop(); 
 }
 
+//**************************************************************************************
 void StreamRemove( char* streamName)
 {
-	Log("Stream server: remove stream %s", streamName);
-	rtspServer->removeServerMediaSession(streamName);
+	Log("Stream server:Stream server: remove stream %s", streamName);
+	m_rtspServer->removeServerMediaSession(streamName);
 }
 
+//**************************************************************************************
 void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStream)
 {
 	try
@@ -84,24 +91,24 @@ void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStrea
     if (isProgramStream)
     {
 		  Log("Stream server: add timeshift  mpeg-2 program stream %s filename:%s", streamName,fileName);
-		  ServerMediaSession* sms= ServerMediaSession::createNew(*env, streamName, streamName,STREAM_DESCRIPTION,false);
+		  ServerMediaSession* sms= ServerMediaSession::createNew(*m_env, streamName, streamName,STREAM_DESCRIPTION,false);
 
-      TsMPEG1or2FileServerDemux* demux= TsMPEG1or2FileServerDemux::createNew(*env, fileName, False);
-      sms->addSubsession(demux->newVideoServerMediaSubsession(False));
+      TsMPEG1or2FileServerDemux* demux= TsMPEG1or2FileServerDemux::createNew(*m_env, fileName, false);
+      sms->addSubsession(demux->newVideoServerMediaSubsession(false));
       sms->addSubsession(demux->newAudioServerMediaSubsession());
-      rtspServer->addServerMediaSession(sms);
+      m_rtspServer->addServerMediaSession(sms);
 
   	  
-		  announceStream(rtspServer, sms, streamName, fileName);
+		  announceStream(m_rtspServer, sms, streamName, fileName);
     }
     else
     { 
       Log("Stream server: add timeshift  mpeg-2 transport stream %s filename:%s", streamName,fileName);
-      ServerMediaSession* sms= ServerMediaSession::createNew(*env, streamName, streamName,STREAM_DESCRIPTION,false);
-      sms->addSubsession(TsMPEG2TransportFileServerMediaSubsession::createNew(*env, fileName, false));
-      rtspServer->addServerMediaSession(sms);
+      ServerMediaSession* sms= ServerMediaSession::createNew(*m_env, streamName, streamName,STREAM_DESCRIPTION,false);
+      sms->addSubsession(TsMPEG2TransportFileServerMediaSubsession::createNew(*m_env, fileName, false));
+      m_rtspServer->addServerMediaSession(sms);
 
-		  announceStream(rtspServer, sms, streamName, fileName);
+		  announceStream(m_rtspServer, sms, streamName, fileName);
     }
 	}
 	catch(...)
@@ -109,19 +116,21 @@ void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStrea
 		Log("Stream server: unable to add stream %s filename:%s", streamName,fileName);
 	}
 }
+
+//**************************************************************************************
 void StreamAddMpegFile(char* streamName, char* fileName)
 {
 	try
 	{
 		Log("Stream server: add mpeg-2 stream %s filename:%s", streamName,fileName);
 		//add a stream...
-    ServerMediaSession* sms= ServerMediaSession::createNew(*env, streamName, streamName,STREAM_DESCRIPTION,false);
-    MPEG1or2FileServerDemux* demux= MPEG1or2FileServerDemux::createNew(*env, fileName, False);
-    sms->addSubsession(demux->newVideoServerMediaSubsession(False));
+    ServerMediaSession* sms= ServerMediaSession::createNew(*m_env, streamName, streamName,STREAM_DESCRIPTION,false);
+    MPEG1or2FileServerDemux* demux= MPEG1or2FileServerDemux::createNew(*m_env, fileName, false);
+    sms->addSubsession(demux->newVideoServerMediaSubsession(false));
     sms->addSubsession(demux->newAudioServerMediaSubsession());
-		rtspServer->addServerMediaSession(sms);
+		m_rtspServer->addServerMediaSession(sms);
 	  
-		announceStream(rtspServer, sms, streamName, fileName);
+		announceStream(m_rtspServer, sms, streamName, fileName);
 	}
 	catch(...)
 	{
@@ -129,9 +138,9 @@ void StreamAddMpegFile(char* streamName, char* fileName)
 	}
 }
 
+//**************************************************************************************
 void announceStream(RTSPServer* rtspServer, ServerMediaSession* sms,char * streamName, char * inputFileName) 
 {
   char* url = rtspServer->rtspURL(sms);
-  UsageEnvironment& env = rtspServer->envir(); 
 	Log("Stream server: url for stream is %s", url);
 }
