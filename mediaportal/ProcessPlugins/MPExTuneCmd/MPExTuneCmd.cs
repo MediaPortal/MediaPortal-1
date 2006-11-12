@@ -113,7 +113,7 @@ namespace MediaPortal.MPExTuneCmd
 				newProcess.StartInfo.Arguments = argsLine;
 				newProcess.StartInfo.UseShellExecute = true;
 				newProcess.StartInfo.CreateNoWindow = true;
-				newProcess.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
+				newProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 				newProcess.Start();
 			}
 
