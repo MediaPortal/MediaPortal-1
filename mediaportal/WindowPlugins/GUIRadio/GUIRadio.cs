@@ -41,12 +41,18 @@ namespace MediaPortal.GUI.Radio
 {
   public class GUIRadio : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
-    [SkinControlAttribute(2)]     protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]     protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(6)]     protected GUIButtonControl btnPrevious = null;
-    [SkinControlAttribute(7)]     protected GUIButtonControl btnNext = null;    
-    [SkinControlAttribute(50)]    protected GUIListControl listView = null;
-    [SkinControlAttribute(51)]    protected GUIThumbnailPanel thumbnailView = null;
+    [SkinControlAttribute(2)]
+    protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]
+    protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(6)]
+    protected GUIButtonControl btnPrevious = null;
+    [SkinControlAttribute(7)]
+    protected GUIButtonControl btnNext = null;
+    [SkinControlAttribute(50)]
+    protected GUIListControl listView = null;
+    [SkinControlAttribute(51)]
+    protected GUIThumbnailPanel thumbnailView = null;
 
 
     enum SortMethod
@@ -234,7 +240,7 @@ namespace MediaPortal.GUI.Radio
           btnSortBy.SelectedItem = 4;
           break;
       }
-      
+
 
       currentPlayList = null;
       virtualDirectory = new VirtualDirectory();
@@ -425,6 +431,7 @@ namespace MediaPortal.GUI.Radio
 
     void LoadDirectory(string strNewDirectory)
     {
+      GUIWaitCursor.Show();
       GUIListItem SelectedItem = GetSelectedItem();
       if (SelectedItem != null)
       {
@@ -561,7 +568,7 @@ namespace MediaPortal.GUI.Radio
         GUIControl.SelectItemControl(GetID, listView.GetID, selectedItemIndex);
         GUIControl.SelectItemControl(GetID, thumbnailView.GetID, selectedItemIndex);
       }
-
+      GUIWaitCursor.Hide();
     }
     #endregion
 

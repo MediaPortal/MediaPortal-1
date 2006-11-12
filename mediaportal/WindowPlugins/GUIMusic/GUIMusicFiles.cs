@@ -229,7 +229,7 @@ namespace MediaPortal.GUI.Music
         {
           string strShareName = String.Format("sharename{0}", i);
           string strSharePath = String.Format("sharepath{0}", i);
-          string strPincode = String.Format("pincode{0}", i);          
+          string strPincode = String.Format("pincode{0}", i);
 
           string shareType = String.Format("sharetype{0}", i);
           string shareServer = String.Format("shareserver{0}", i);
@@ -970,6 +970,7 @@ namespace MediaPortal.GUI.Music
 
     protected override void LoadDirectory(string strNewDirectory)
     {
+      GUIWaitCursor.Show();
       GUIListItem SelectedItem = facadeView.SelectedListItem;
       if (SelectedItem != null)
       {
@@ -1054,6 +1055,7 @@ namespace MediaPortal.GUI.Music
       {
         GUIControl.SelectItemControl(GetID, facadeView.GetID, m_iItemSelected);
       }
+      GUIWaitCursor.Hide();
     }
 
     void AddItemToPlayList(GUIListItem pItem)

@@ -130,14 +130,21 @@ namespace MediaPortal.GUI.Music
     protected ScrobbleMode currentScrobbleMode = ScrobbleMode.Similar;
     protected offlineMode currentOfflineMode = offlineMode.random;
 
-    [SkinControlAttribute(20)]    protected GUIButtonControl btnShuffle = null;
-    [SkinControlAttribute(21)]    protected GUIButtonControl btnSave = null;
-    [SkinControlAttribute(22)]    protected GUIButtonControl btnClear = null;
+    [SkinControlAttribute(20)]
+    protected GUIButtonControl btnShuffle = null;
+    [SkinControlAttribute(21)]
+    protected GUIButtonControl btnSave = null;
+    [SkinControlAttribute(22)]
+    protected GUIButtonControl btnClear = null;
     //[SkinControlAttribute(23)]    protected GUIButtonControl btnPlay = null;
-    [SkinControlAttribute(26)]    protected GUIButtonControl btnNowPlaying = null;
-    [SkinControlAttribute(27)]    protected GUIToggleButtonControl btnScrobble = null;
-    [SkinControlAttribute(28)]    protected GUIButtonControl btnScrobbleMode = null;
-    [SkinControlAttribute(29)]    protected GUIButtonControl btnScrobbleUser = null;
+    [SkinControlAttribute(26)]
+    protected GUIButtonControl btnNowPlaying = null;
+    [SkinControlAttribute(27)]
+    protected GUIToggleButtonControl btnScrobble = null;
+    [SkinControlAttribute(28)]
+    protected GUIButtonControl btnScrobbleMode = null;
+    [SkinControlAttribute(29)]
+    protected GUIButtonControl btnScrobbleUser = null;
 
 
     public GUIMusicPlayList()
@@ -196,7 +203,7 @@ namespace MediaPortal.GUI.Music
       LoadScrobbleUserSettings();
 
       ascrobbler = AudioscrobblerUtils.Instance;
-//      ScrobbleLock = new object();
+      //      ScrobbleLock = new object();
       //added by Sam
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
       return Load(GUIGraphicsContext.Skin + @"\myMusicplaylist.xml");
@@ -528,7 +535,7 @@ namespace MediaPortal.GUI.Music
     }
 
     protected override void UpdateButtonStates()
-    {      
+    {
       // only update while playlist is visible
       if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST)
       {
@@ -537,7 +544,7 @@ namespace MediaPortal.GUI.Music
           if (facadeView.Count > 0)
           {
             btnClear.Disabled = false;
-//            btnPlay.Disabled = false;
+            //            btnPlay.Disabled = false;
             btnSave.Disabled = false;
 
             if (ScrobblerOn)
@@ -548,14 +555,14 @@ namespace MediaPortal.GUI.Music
           else
           {
             btnClear.Disabled = true;
-//            btnPlay.Disabled = true;
+            //            btnPlay.Disabled = true;
             btnSave.Disabled = true;
           }
         }
         else
         {
           btnClear.Disabled = true;
-//          btnPlay.Disabled = true;
+          //          btnPlay.Disabled = true;
           btnSave.Disabled = true;
         }
         //PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
@@ -689,6 +696,7 @@ namespace MediaPortal.GUI.Music
     {
       if (facadeView != null)
       {
+        GUIWaitCursor.Show();
         TimeSpan totalPlayingTime = new TimeSpan();
         GUIListItem SelectedItem = facadeView.SelectedListItem;
         if (SelectedItem != null)
@@ -817,6 +825,7 @@ namespace MediaPortal.GUI.Music
           }
         }
         UpdateButtonStates();
+        GUIWaitCursor.Hide();
       }
     }
 
@@ -1275,28 +1284,28 @@ namespace MediaPortal.GUI.Music
           case ScrobbleMode.Neighbours:
             //lock (ScrobbleLock)
             //{
-              try
-              {
-                UpdateNeighboursArtists(true);
-              }
-              catch (Exception ex)
-              {
-                Log.Error("ScrobbleLookupThread: exception on lookup Neighbours - {0}", ex.Message);
-              }
+            try
+            {
+              UpdateNeighboursArtists(true);
+            }
+            catch (Exception ex)
+            {
+              Log.Error("ScrobbleLookupThread: exception on lookup Neighbours - {0}", ex.Message);
+            }
             //}
             break;
 
           case ScrobbleMode.Friends:
             //lock (ScrobbleLock)
             //{
-              try
-              {
-                UpdateFriendsArtists(true);
-              }
-              catch (Exception ex)
-              {
-                Log.Error("ScrobbleLookupThread: exception on lookup - Friends {0}", ex.Message);
-              }
+            try
+            {
+              UpdateFriendsArtists(true);
+            }
+            catch (Exception ex)
+            {
+              Log.Error("ScrobbleLookupThread: exception on lookup - Friends {0}", ex.Message);
+            }
             //}
             break;
           case ScrobbleMode.Random:

@@ -1,4 +1,7 @@
-/*	Copyright (C) 2005-2006 Team MediaPortal
+#region Copyright (C) 2005-2006 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -17,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -427,6 +432,7 @@ namespace MediaPortal.GUI.TV
     #region scheduled tv methods
     void LoadDirectory()
     {
+      GUIWaitCursor.Show();
       GUIControl.ClearControl(GetID, listSchedules.GetID);
 
       List<TVRecording> itemlist = new List<TVRecording>();
@@ -543,6 +549,7 @@ namespace MediaPortal.GUI.TV
 
       OnSort();
       UpdateButtonStates();
+      GUIWaitCursor.Hide();
     }
 
     void UpdateButtonStates()
@@ -655,7 +662,7 @@ namespace MediaPortal.GUI.TV
                 item.Label2 = String.Format("{0} {1}", strType, strTime);
                 break;
 
-            case TVRecording.RecordingType.WeekEnds:
+              case TVRecording.RecordingType.WeekEnds:
                 strTime = String.Format("{0}-{1} {2}-{3}",
                   GUILocalizeStrings.Get(662),//662=Sat
                   GUILocalizeStrings.Get(663),//663=Sun
@@ -685,7 +692,7 @@ namespace MediaPortal.GUI.TV
                 break;
               case TVRecording.RecordingType.EveryTimeOnThisChannel:
                 item.Label = rec.Title;
-                item.Label2 = GUILocalizeStrings.Get(650, new object[] { rec.Channel } );
+                item.Label2 = GUILocalizeStrings.Get(650, new object[] { rec.Channel });
                 break;
               case TVRecording.RecordingType.EveryTimeOnEveryChannel:
                 item.Label = rec.Title;
@@ -926,7 +933,7 @@ namespace MediaPortal.GUI.TV
             rec.RecType = TVRecording.RecordingType.WeekDays;
             rec.Canceled = 0;
             break;
-        case 6://Sat-Sun
+          case 6://Sat-Sun
             rec.RecType = TVRecording.RecordingType.WeekEnds;
             rec.Canceled = 0;
             break;
@@ -948,9 +955,9 @@ namespace MediaPortal.GUI.TV
       dlg.Add(GUILocalizeStrings.Get(781));         //Quick record 
       dlg.Add(GUILocalizeStrings.Get(782));         //Advanced record
       dlg.DoModal(GetID);
-      
-      if ( dlg.SelectedLabel < 0 ) return;
-      if ( dlg.SelectedLabel == 0 )
+
+      if (dlg.SelectedLabel < 0) return;
+      if (dlg.SelectedLabel == 0)
         isQuickRecord = true;
 
       dlg.Reset();
@@ -985,12 +992,12 @@ namespace MediaPortal.GUI.TV
       TVRecording rec = new TVRecording();
       rec.Channel = selectedChannel.Name;
 
-      if ( !isQuickRecord )
+      if (!isQuickRecord)
       {
         dlg.DoModal(GetID);
-        if ( dlg.SelectedLabel == -1 ) return;
+        if (dlg.SelectedLabel == -1) return;
 
-        switch ( dlg.SelectedLabel )
+        switch (dlg.SelectedLabel)
         {
           case 0://once
             rec.RecType = TVRecording.RecordingType.Once;
@@ -1020,20 +1027,20 @@ namespace MediaPortal.GUI.TV
 
       DateTime dtNow = DateTime.Now;
       int day;
-      if ( !isQuickRecord )
+      if (!isQuickRecord)
       {
         dlg.Reset();
         dlg.SetHeading(636);//select day
         dlg.ShowQuickNumbers = false;
 
-        for ( day = 0; day < 30; day++ )
-          {
-          if ( day > 0 )
+        for (day = 0; day < 30; day++)
+        {
+          if (day > 0)
             dtNow = DateTime.Now.AddDays(day);
           dlg.Add(dtNow.ToLongDateString());
-          }
+        }
         dlg.DoModal(GetID);
-        if ( dlg.SelectedLabel == -1 )
+        if (dlg.SelectedLabel == -1)
           return;
         day = dlg.SelectedLabel;
       }
@@ -1046,7 +1053,7 @@ namespace MediaPortal.GUI.TV
       //time
       //int no = 0;
       int hour, minute, steps;
-      if ( isQuickRecord ) steps = 15;
+      if (isQuickRecord) steps = 15;
       else steps = 5;
       dlg.Add("00:00");
       for (hour = 0; hour <= 23; hour++)
@@ -1066,7 +1073,7 @@ namespace MediaPortal.GUI.TV
         }
       }
       // pre-select the current time
-      dlg.SelectedLabel = (DateTime.Now.Hour * (60 / steps)) + (Convert.ToInt16(DateTime.Now.Minute / steps)); 
+      dlg.SelectedLabel = (DateTime.Now.Hour * (60 / steps)) + (Convert.ToInt16(DateTime.Now.Minute / steps));
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1) return;
 
@@ -1087,11 +1094,11 @@ namespace MediaPortal.GUI.TV
       if (dlg.SelectedLabel == -1) return;
       int duration = (dlg.SelectedLabel + 1) * 30;
 
-      if (! isQuickRecord)
+      if (!isQuickRecord)
       {
         GUITVPriorities.OnSetQuality(rec);
       }
-      
+
       dtNow = DateTime.Now.AddDays(day);
       rec.Start = MediaPortal.Util.Utils.datetolong(new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, hour, minute, 0, 0));
       rec.End = MediaPortal.Util.Utils.datetolong(rec.StartTime.AddMinutes(duration));
@@ -1152,7 +1159,7 @@ namespace MediaPortal.GUI.TV
           strType = GUILocalizeStrings.Get(651);//Everytime on any channel
           break;
         case TVRecording.RecordingType.EveryTimeOnThisChannel:
-          strType = GUILocalizeStrings.Get(650, new object[] { rec.Channel } );//Everytime on this channel
+          strType = GUILocalizeStrings.Get(650, new object[] { rec.Channel });//Everytime on this channel
           break;
         case TVRecording.RecordingType.Once:
           strType = GUILocalizeStrings.Get(647);//Once
@@ -1160,7 +1167,7 @@ namespace MediaPortal.GUI.TV
         case TVRecording.RecordingType.WeekDays:
           strType = GUILocalizeStrings.Get(680);//Mon-Fri
           break;
-      case TVRecording.RecordingType.WeekEnds:
+        case TVRecording.RecordingType.WeekEnds:
           strType = GUILocalizeStrings.Get(1050);//Sat-Sun
           break;
         case TVRecording.RecordingType.Weekly:

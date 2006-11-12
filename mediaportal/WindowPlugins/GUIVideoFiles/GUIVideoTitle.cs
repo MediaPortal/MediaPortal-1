@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -242,7 +246,7 @@ namespace MediaPortal.GUI.Video
       dlg.Add(GUILocalizeStrings.Get(925)); //delete
       dlg.Add(GUILocalizeStrings.Get(368)); //IMDB
       dlg.Add(GUILocalizeStrings.Get(208)); //play
-			dlg.Add(GUILocalizeStrings.Get(926)); //add to playlist
+      dlg.Add(GUILocalizeStrings.Get(926)); //add to playlist
 
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1) return;
@@ -259,9 +263,9 @@ namespace MediaPortal.GUI.Video
         case 2: // play
           OnClick(itemNo);
           break;
-				case 3: //add to playlist
-					OnQueueItem(itemNo);
-					break;
+        case 3: //add to playlist
+          OnQueueItem(itemNo);
+          break;
       }
     }
 
@@ -316,6 +320,7 @@ namespace MediaPortal.GUI.Video
 
     protected override void LoadDirectory(string strNewDirectory)
     {
+      GUIWaitCursor.Show();
       GUIListItem SelectedItem = facadeView.SelectedListItem;
       if (SelectedItem != null)
       {
@@ -408,6 +413,7 @@ namespace MediaPortal.GUI.Video
       {
         GUIControl.SelectItemControl(GetID, facadeView.GetID, currentSelectedItem);
       }
+      GUIWaitCursor.Hide();
     }
 
 

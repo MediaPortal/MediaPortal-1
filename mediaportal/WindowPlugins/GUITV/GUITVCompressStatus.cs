@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -316,6 +320,7 @@ namespace MediaPortal.GUI.TV
 
     void LoadDirectory()
     {
+      GUIWaitCursor.Show();
       GUIControl.ClearControl(GetID, listAlbums.GetID);
       GUIControl.ClearControl(GetID, listViews.GetID);
 
@@ -357,7 +362,7 @@ namespace MediaPortal.GUI.TV
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
       GUIControl.SelectItemControl(GetID, listViews.GetID, m_iSelectedItem);
       GUIControl.SelectItemControl(GetID, listAlbums.GetID, m_iSelectedItem);
-
+      GUIWaitCursor.Hide();
     }
 
     void UpdateButtonStates()

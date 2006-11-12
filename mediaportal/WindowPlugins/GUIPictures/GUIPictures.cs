@@ -1101,6 +1101,7 @@ namespace MediaPortal.GUI.Pictures
 
     void LoadDirectory(string strNewDirectory)
     {
+      GUIWaitCursor.Show();
       GUIListItem SelectedItem = GetSelectedItem();
       if (SelectedItem != null)
       {
@@ -1157,6 +1158,7 @@ namespace MediaPortal.GUI.Pictures
       GUIPropertyManager.SetProperty("#itemcount", objectCount);
 
       ShowThumbPanel();
+      GUIWaitCursor.Hide();
     }
 
     void CreateFolderThumbs()

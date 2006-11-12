@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -204,6 +208,7 @@ namespace MediaPortal.GUI.TV
     #region scheduled tv methods
     void LoadDirectory()
     {
+      GUIWaitCursor.Show();
       GUIControl.ClearControl(GetID, listPriorities.GetID);
 
       List<TVRecording> itemlist = new List<TVRecording>();
@@ -245,7 +250,7 @@ namespace MediaPortal.GUI.TV
       GUIControl cntlLabel = GetControl(12);
       if (cntlLabel != null)
         cntlLabel.YPosition = listPriorities.SpinY;
-
+      GUIWaitCursor.Hide();
     }
     void SetLabels()
     {

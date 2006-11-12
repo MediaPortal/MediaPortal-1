@@ -422,7 +422,7 @@ namespace MediaPortal.GUI.Video
 
     protected override void LoadDirectory(string newFolderName)
     {
-
+      GUIWaitCursor.Show();
       // Mounting and loading a DVD image file takes a long time,
       // so display a message letting the user know that something 
       // is happening.
@@ -548,6 +548,8 @@ namespace MediaPortal.GUI.Video
 
       if (currentSelectedItem >= 0 && !itemSelected)
         GUIControl.SelectItemControl(GetID, facadeView.GetID, currentSelectedItem);
+
+      GUIWaitCursor.Hide();
     }
     #endregion
 
