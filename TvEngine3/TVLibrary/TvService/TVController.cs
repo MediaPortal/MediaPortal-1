@@ -99,7 +99,11 @@ namespace TvService
     public TVController()
     {
       GlobalServiceProvider.Instance.Add<ITvServerEvent>(this);
-      Init();
+      if (Init() == false)
+      {
+        System.Threading.Thread.Sleep(5000);
+        Init();
+      }
     }
 
     /// <summary>
@@ -177,7 +181,7 @@ namespace TvService
     /// start the epg grabber and scheduler
     /// and check if its supposed to be a master or slave controller
     /// </summary>
-    void Init()
+    bool Init()
     {
       try
       {
@@ -212,7 +216,7 @@ namespace TvService
           Log.Error("!!!Controller:Unable to connect to database!!!");
           Log.Error("Controller: database connection string:{0}", Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString);
           Log.Error("Sql error:{0}", ex.Message);
-          return;
+          return false;
         }
 
         // find ourself
@@ -334,8 +338,10 @@ namespace TvService
       catch (Exception ex)
       {
         Log.Write(ex);
+        return false;
       }
       Log.WriteFile("Controller: initalized");
+      return true;
     }
     #endregion
 
