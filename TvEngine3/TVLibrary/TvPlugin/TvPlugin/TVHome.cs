@@ -697,7 +697,12 @@ namespace TvPlugin
       btnGroup.Disabled = false;
       btnRecord.Disabled = true;
       btnTeletext.Visible = false;
-      btnTvOnOff.Selected = TVHome.Card.IsTimeShifting;
+
+      bool isTimeShifting = TVHome.Card.IsTimeShifting;
+      if (btnTvOnOff.Selected != isTimeShifting)
+      {
+        btnTvOnOff.Selected = isTimeShifting;
+      }
 
       if (g_Player.Playing == false)
       {
@@ -728,7 +733,13 @@ namespace TvPlugin
       btnChannel.Disabled = false;
       btnGroup.Disabled = false;
       btnRecord.Disabled = false;
-      btnTeletext.Visible = TVHome.Card.HasTeletext;
+
+
+      bool hasTeletext = TVHome.Card.HasTeletext;
+      if (btnTeletext.IsVisible != hasTeletext)
+      {
+        btnTeletext.IsVisible = hasTeletext;
+      }
       // Let the navigator zap channel if needed
       Navigator.CheckChannelChange();
 
@@ -904,8 +915,16 @@ namespace TvPlugin
     /// </summary>
     void UpdateStateOfButtons()
     {
-      btnTvOnOff.Selected = TVHome.Card.IsTimeShifting;
-      btnTeletext.IsVisible = TVHome.Card.HasTeletext;
+      bool isTimeShifting = TVHome.Card.IsTimeShifting;
+      if (btnTvOnOff.Selected != isTimeShifting)
+      {
+        btnTvOnOff.Selected = isTimeShifting;
+      }
+      bool hasTeletext = TVHome.Card.HasTeletext;
+      if (btnTeletext.IsVisible != hasTeletext)
+      {
+        btnTeletext.IsVisible = hasTeletext;
+      }
       //are we recording a tv program?
       if (TVHome.Card.IsRecording)
       {
