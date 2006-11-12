@@ -181,7 +181,7 @@ namespace MediaPortal.GUI.Home
       if (System.IO.File.Exists(filename)) return System.IO.Path.GetFileName(filename);
 
       filename = System.IO.Path.ChangeExtension(name, ".xml");
-      if (System.IO.File.Exists(filename)) return System.IO.Path.GetFileName(filename);
+      if (System.IO.File.Exists(filename)) return "media\\" + System.IO.Path.GetFileName(filename);
 
       return String.Empty;
     }

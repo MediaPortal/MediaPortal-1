@@ -143,6 +143,7 @@ namespace MediaPortal.GUI.Library
         _images[index].ParentControl = this;
         _images[index].ColourDiffuse = ColourDiffuse;
         _images[index].DimColor = DimColor;
+				_images[index].KeepAspectRatio = _keepAspectRatio;
         _images[index].Filtering = Filtering;
         _images[index].RepeatBehavior = _repeatBehavior;
         _images[index].AllocResources();

@@ -397,7 +397,7 @@ namespace MediaPortal.GUI.Library
       }
       _focusImage.SetPosition(_focusImage._positionX, _buttonList[FocusedButton]._positionY);
       _buttonList[FocusedButton].Focus = true;                                             // focus after all changes
-      LoadHoverImage(FocusedButton);
+      //LoadHoverImage(FocusedButton);
       if (_scrollButton.Count > 0) _scrollButton.Clear();
       if (_scrollText.Count > 0) _scrollText.Clear();
 
@@ -535,7 +535,7 @@ namespace MediaPortal.GUI.Library
           {
             GUIAnimation hover = LoadAnimationControl(GetID, btn.GetID, _hoverPositionX, _hoverPositionY, _hoverWidth, _hoverHeight, fileName);
             hover.KeepAspectRatio = true;
-            hover.RepeatBehavior = new RepeatBehavior(1);
+            //hover.RepeatBehavior = new RepeatBehavior(1);
             hover.AllocResources();
             _hoverList.Add(hover);
           }
@@ -615,12 +615,16 @@ namespace MediaPortal.GUI.Library
                   {  // move scroll bar only when idle
                     double button = _buttonHeight + _spaceBetweenButtons;
                     int position = 1 + (int)Math.Round(((double)y - YPosition - 2 * _buttonOffset) / button);
-                    if (Math.Abs(FocusedButton - position) > 1) FocusedButton = position;
-                    else
-                    {
-                      if (position > FocusedButton) OnDown();
-                      else if (position < FocusedButton) OnUp();
-                    }
+										if (Math.Abs(FocusedButton - position) > 1)
+										{
+											FocusedButton = position;
+											LoadHoverImage(FocusedButton);
+										}
+										else
+										{
+											if (position > FocusedButton) OnDown();
+											else if (position < FocusedButton) OnUp();
+										}
                   }
                 }
               }

@@ -1248,6 +1248,8 @@ namespace MediaPortal.GUI.Library
           if (animation != null)
           {
             animation.SetPosition(posX, posY);
+						animation.WindowId = parentID;
+						animation.GetID = controlId;
             animation.Width = width;
             animation.Height = height;
             return animation;
