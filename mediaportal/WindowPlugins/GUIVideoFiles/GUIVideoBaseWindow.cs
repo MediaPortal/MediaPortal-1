@@ -54,9 +54,9 @@ namespace MediaPortal.GUI.Video
     protected bool m_bSortAscending;
     protected bool m_bSortAscendingRoot;
     protected VideoViewHandler handler;
-		protected string _playListPath = String.Empty;
-		protected string _currentFolder = String.Empty;
-		protected string _lastFolder = String.Empty;
+    protected string _playListPath = String.Empty;
+    protected string _currentFolder = String.Empty;
+    protected string _lastFolder = String.Empty;
 
 
     [SkinControlAttribute(50)]
@@ -71,8 +71,8 @@ namespace MediaPortal.GUI.Video
     protected GUIButtonControl btnPlayDVD = null;
     [SkinControlAttribute(8)]
     protected GUIButtonControl btnTrailers = null;
-	[SkinControlAttribute(9)]
-	protected GUIButtonControl btnPlaylistFolder = null;
+    [SkinControlAttribute(9)]
+    protected GUIButtonControl btnPlaylistFolder = null;
 
     protected PlayListPlayer playlistPlayer;
 
@@ -126,10 +126,10 @@ namespace MediaPortal.GUI.Video
         currentSortMethodRoot = (VideoSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethodroot", (int)VideoSort.SortMethod.Name);
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
         m_bSortAscendingRoot = xmlreader.GetValueAsBool(SerializeName, "sortascroot", true);
-				
-				_playListPath = xmlreader.GetValueAsString("movies", "playlists", String.Empty);
-				_playListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(_playListPath);
-        
+
+        _playListPath = xmlreader.GetValueAsString("movies", "playlists", String.Empty);
+        _playListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(_playListPath);
+
       }
 
       SwitchView();
@@ -153,7 +153,8 @@ namespace MediaPortal.GUI.Video
     {
       get
       {
-        if (CurrentView != View.List) return true;
+        if (CurrentView != View.List)
+          return true;
         return false;
       }
     }
@@ -162,7 +163,8 @@ namespace MediaPortal.GUI.Video
     {
       get
       {
-        if (CurrentView == View.LargeIcons) return true;
+        if (CurrentView == View.LargeIcons)
+          return true;
         return false;
       }
     }
@@ -263,7 +265,7 @@ namespace MediaPortal.GUI.Video
 
       if (control == btnPlayDVD)
       {
-              //check if dvd is inserted
+        //check if dvd is inserted
         string[] drives = Environment.GetLogicalDrives();
 
         foreach (string drive in drives)
@@ -307,20 +309,20 @@ namespace MediaPortal.GUI.Video
         }
       }
 
-			if (control == btnPlaylistFolder)
-			{
-				if (_currentFolder != _playListPath)
-				{
-					_lastFolder = _currentFolder;
-					_currentFolder = _playListPath;
-				}
-				else
-				{
-					_currentFolder = _lastFolder;
-				}
-				LoadDirectory(_currentFolder);
-				return;
-			}
+      if (control == btnPlaylistFolder)
+      {
+        if (_currentFolder != _playListPath)
+        {
+          _lastFolder = _currentFolder;
+          _currentFolder = _playListPath;
+        }
+        else
+        {
+          _currentFolder = _lastFolder;
+        }
+        LoadDirectory(_currentFolder);
+        return;
+      }
     }
 
     protected void SelectCurrentItem()
@@ -338,7 +340,7 @@ namespace MediaPortal.GUI.Video
       GUIPropertyManager.SetProperty("#view", handler.LocalizedCurrentView);
       if (GetID == (int)GUIWindow.Window.WINDOW_VIDEO_TITLE)
       {
-          GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}", GUILocalizeStrings.Get(100006), handler.LocalizedCurrentView));
+        GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}", GUILocalizeStrings.Get(100006), handler.LocalizedCurrentView));
       }
       else
       {
@@ -412,7 +414,8 @@ namespace MediaPortal.GUI.Video
     protected override void OnPageLoad()
     {
       GUIVideoOverlay videoOverlay = (GUIVideoOverlay)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY);
-      if ((videoOverlay != null) && (videoOverlay.Focused)) videoOverlay.Focused = false;
+      if ((videoOverlay != null) && (videoOverlay.Focused))
+        videoOverlay.Focused = false;
 
       LoadSettings();
 
@@ -453,7 +456,7 @@ namespace MediaPortal.GUI.Video
         if (movie != null && movie.ID > 0)
         {
           if (CurrentSortMethod == VideoSort.SortMethod.Name)
-            item.Label2 = movie.Rating.ToString();
+            item.Label2 = MediaPortal.Util.Utils.SecondsToHMString(movie.RunTime * 60);
           else if (CurrentSortMethod == VideoSort.SortMethod.Year)
             item.Label2 = movie.Year.ToString();
           else if (CurrentSortMethod == VideoSort.SortMethod.Rating)
@@ -461,13 +464,20 @@ namespace MediaPortal.GUI.Video
           else if (CurrentSortMethod == VideoSort.SortMethod.Label)
             item.Label2 = movie.DVDLabel.ToString();
           else if (CurrentSortMethod == VideoSort.SortMethod.Size)
-            item.Label2 = MediaPortal.Util.Utils.SecondsToHMString(movie.RunTime * 60);
+          {
+            if (item.FileInfo != null)
+              item.Label2 = MediaPortal.Util.Utils.GetSize(item.FileInfo.Length);
+            else
+              item.Label2 = MediaPortal.Util.Utils.SecondsToHMString(movie.RunTime * 60);
+          }
         }
         else
         {
           string strSize1 = String.Empty, strDate = String.Empty;
-          if (item.FileInfo != null) strSize1 = MediaPortal.Util.Utils.GetSize(item.FileInfo.Length);
-          if (item.FileInfo != null) strDate = item.FileInfo.ModificationTime.ToShortDateString() + " " + item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+          if (item.FileInfo != null)
+            strSize1 = MediaPortal.Util.Utils.GetSize(item.FileInfo.Length);
+          if (item.FileInfo != null)
+            strDate = item.FileInfo.ModificationTime.ToShortDateString() + " " + item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           if (CurrentSortMethod == VideoSort.SortMethod.Name)
             item.Label2 = strSize1;
           else if (CurrentSortMethod == VideoSort.SortMethod.Date)
@@ -479,8 +489,9 @@ namespace MediaPortal.GUI.Video
     }
     protected void SwitchView()
     {
-			if (facadeView == null) return;
-			switch (CurrentView)
+      if (facadeView == null)
+        return;
+      switch (CurrentView)
       {
         case View.List:
           facadeView.View = GUIFacadeControl.ViewMode.List;
@@ -501,7 +512,8 @@ namespace MediaPortal.GUI.Video
     protected bool GetKeyboard(ref string strLine)
     {
       VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-      if (null == keyboard) return false;
+      if (null == keyboard)
+        return false;
       keyboard.Reset();
       keyboard.Text = strLine;
       keyboard.DoModal(GetID);
@@ -517,7 +529,8 @@ namespace MediaPortal.GUI.Video
     protected void OnShowViews()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      if (dlg == null)
+        return;
       dlg.Reset();
       dlg.SetHeading(924); // menu
       dlg.Add(GUILocalizeStrings.Get(134));//videos
@@ -526,7 +539,8 @@ namespace MediaPortal.GUI.Video
         dlg.Add(view.LocalizedName); //play
       }
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel == -1) return;
+      if (dlg.SelectedLabel == -1)
+        return;
       if (dlg.SelectedLabel == 0)
       {
         int nNewWindow = (int)GUIWindow.Window.WINDOW_VIDEOS;
