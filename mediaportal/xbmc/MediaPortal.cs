@@ -832,7 +832,7 @@ public class MediaPortalApp : D3DApp, IRender
       g_Player.Process();
       HandleMessage();
       FrameMove();
-      FullRender();
+      //FullRender();
       if (GUIGraphicsContext.Vmr9Active)
       {
         Thread.Sleep(50);
