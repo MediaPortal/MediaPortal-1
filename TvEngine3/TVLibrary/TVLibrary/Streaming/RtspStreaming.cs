@@ -27,7 +27,7 @@ using System.Net;
 using System.Net.Sockets;
 using TvLibrary.Log;
 
-namespace TVLibrary.Streaming
+namespace TvLibrary.Streaming
 {
   /// <summary>
   /// class which handles all RTSP related tasks
@@ -78,7 +78,7 @@ namespace TVLibrary.Streaming
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.Log.Write(ex);
       }
     }
     #endregion
@@ -92,7 +92,7 @@ namespace TVLibrary.Streaming
       if (_initialized == false) return;
       if (_running) return;
       _streamIndex = 100;
-      Log.WriteFile("RTSP: start streamer");
+      Log.Log.WriteFile("RTSP: start streamer");
       _running = true;
       Thread thread = new Thread(new ThreadStart(workerThread));
       thread.SetApartmentState(ApartmentState.STA);
@@ -108,7 +108,7 @@ namespace TVLibrary.Streaming
     public void Stop()
     {
       if (_initialized == false) return;
-      Log.WriteFile("RTSP: stop streamer");
+      Log.Log.WriteFile("RTSP: stop streamer");
       _running = false;
     }
 
@@ -123,12 +123,12 @@ namespace TVLibrary.Streaming
       if (_initialized == false) return;
       if (_streams.ContainsKey(streamName))
       {
-        Log.WriteFile("RTSP: add stream {0} already added");
+        Log.Log.WriteFile("RTSP: add stream {0} already added");
         return;
       }
       if (System.IO.File.Exists(fileName))
       {
-        Log.WriteFile("RTSP: add stream {0} file:{1}", streamName, fileName);
+        Log.Log.WriteFile("RTSP: add stream {0} file:{1}", streamName, fileName);
         StreamAddTimeShiftFile(streamName, fileName, isProgramStream);
         _streams[streamName] = fileName;
       }
@@ -145,14 +145,14 @@ namespace TVLibrary.Streaming
       string streamName = String.Format("file{0}", _streamIndex++);
       if (_streams.ContainsKey(streamName))
       {
-        Log.WriteFile("RTSP: add stream {0} already added");
+        Log.Log.WriteFile("RTSP: add stream {0} already added");
         return streamName;
       }
       if (System.IO.File.Exists(fileName))
       {
         if (fileName.ToLower().IndexOf(".mpg") >= 0)
         {
-          Log.WriteFile("RTSP: add stream {0} file:{1}", streamName, fileName);
+          Log.Log.WriteFile("RTSP: add stream {0} file:{1}", streamName, fileName);
           StreamAddMpegFile(streamName, fileName);
           _streams[streamName] = fileName;
         }
@@ -167,7 +167,7 @@ namespace TVLibrary.Streaming
     public void Remove(string streamName)
     {
       if (_initialized == false) return;
-      Log.WriteFile("RTSP: remove stream {0}", streamName);
+      Log.Log.WriteFile("RTSP: remove stream {0}", streamName);
       if (_streams.ContainsKey(streamName))
       {
         StreamRemove(streamName);
@@ -183,7 +183,7 @@ namespace TVLibrary.Streaming
     /// </summary>
     protected void workerThread()
     {
-      Log.WriteFile("RTSP: Streamer started");
+      Log.Log.WriteFile("RTSP: Streamer started");
       try
       {
         while (_running)
@@ -193,9 +193,9 @@ namespace TVLibrary.Streaming
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.Log.Write(ex);
       }
-      Log.WriteFile("RTSP: Streamer stopped");
+      Log.Log.WriteFile("RTSP: Streamer stopped");
       _running = false;
     }
     #endregion

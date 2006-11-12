@@ -35,7 +35,7 @@ using TvLibrary.Implementations.DVB;
 using TvLibrary.Channels;
 using TvLibrary.Epg;
 using TvLibrary.Log;
-using TVLibrary.Streaming;
+using TvLibrary.Streaming;
 using TvControl;
 using TvEngine;
 using TvDatabase;

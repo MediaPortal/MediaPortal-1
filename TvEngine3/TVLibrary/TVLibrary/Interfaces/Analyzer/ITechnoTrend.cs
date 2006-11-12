@@ -24,7 +24,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 
-namespace TVLibrary.Interfaces.Analyzer
+namespace TvLibrary.Interfaces.Analyzer
 {
   [ComVisible(true), ComImport,
  Guid("B0AB5587-DCEC-49f4-B1AA-06EF58DBF1D3"),

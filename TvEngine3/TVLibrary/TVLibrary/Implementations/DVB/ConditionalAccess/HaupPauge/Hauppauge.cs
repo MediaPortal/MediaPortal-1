@@ -6,7 +6,7 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using System.Windows.Forms;
 using TvLibrary.Channels;
-using TVLibrary.Interfaces.Analyzer;
+using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.DVB
 {
