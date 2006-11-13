@@ -683,6 +683,21 @@ namespace MediaPortal.GUI.Music
       return tmpTag;
     }
 
+    private string CleanTagString(string tagField)
+    {
+      int dotIndex = 0;
+      string outString = String.Empty;
+
+      outString = Convert.ToString(tagField);
+      outString = Util.Utils.MakeFileName(outString);
+
+      dotIndex = outString.IndexOf(@"\");
+      if (dotIndex > 0)
+        outString = outString.Remove(dotIndex);
+
+      return outString;
+    }
+
     /// <summary>
     /// Updates the album info for the current track playing.
     /// The album info is fetched asynchronously by adding a request onto the request queue of the AudioScrobblerUtils
@@ -690,6 +705,8 @@ namespace MediaPortal.GUI.Music
     /// </summary>
     private void UpdateAlbumInfo()
     {
+      string CurrentArtist = CleanTagString(CurrentTrackTag.Artist);
+      string CurrentAlbum = CleanTagString(CurrentTrackTag.Album);
       if (_doAlbumLookups)
       {
         if (CurrentTrackTag == null)
@@ -700,8 +717,8 @@ namespace MediaPortal.GUI.Music
           return;
         }
         AlbumInfoRequest request = new AlbumInfoRequest(
-                                        CurrentTrackTag.Artist,
-                                        CurrentTrackTag.Album,
+                                        CurrentArtist,
+                                        CurrentAlbum,
                                         true,
                                         new AlbumInfoRequest.AlbumInfoRequestHandler(OnUpdateAlbumInfoCompleted)
                                         );
@@ -717,6 +734,7 @@ namespace MediaPortal.GUI.Music
     /// </summary>
     private void UpdateArtistInfo()
     {
+      string CurrentArtist = CleanTagString(CurrentTrackTag.Artist);
       if (_doArtistLookups)
       {
         if (CurrentTrackTag == null)
@@ -727,7 +745,7 @@ namespace MediaPortal.GUI.Music
           return;
         }
         ArtistInfoRequest request = new ArtistInfoRequest(
-                                        CurrentTrackTag.Artist,
+                                        CurrentArtist,
                                         new ArtistInfoRequest.ArtistInfoRequestHandler(OnUpdateArtistInfoCompleted)
                                         );
         _lastArtistRequest = request;
@@ -742,6 +760,8 @@ namespace MediaPortal.GUI.Music
     /// </summary>
     private void UpdateTagInfo()
     {
+      string CurrentArtist = CleanTagString(CurrentTrackTag.Artist);
+      string CurrentTrack = CleanTagString(CurrentTrackTag.Title);
       if (_doTrackTagLookups)
       {
         if (CurrentTrackTag == null)
@@ -752,8 +772,8 @@ namespace MediaPortal.GUI.Music
           return;
         }
         TagInfoRequest request = new TagInfoRequest(
-                                        CurrentTrackTag.Artist,
-                                        CurrentTrackTag.Title,
+                                        CurrentArtist,
+                                        CurrentTrack,
                                         true,
                                         false,
                                         true,
