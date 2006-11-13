@@ -209,6 +209,7 @@ namespace MediaPortal.GUI.Library
       int labelWidth = _width - 2 * _textOffsetX;
       if (labelWidth <= 0)
       {
+        base.Render(timePassed);
         return;
       }
       _labelControl.Width = labelWidth;
