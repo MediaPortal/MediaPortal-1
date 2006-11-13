@@ -683,8 +683,8 @@ namespace MediaPortal.GUI.Pictures
 
       string sizeItem1 = String.Empty;
       string sizeItem2 = String.Empty;
-      if (item1.FileInfo != null) sizeItem1 = MediaPortal.Util.Utils.GetSize(item1.FileInfo.Length);
-      if (item2.FileInfo != null) sizeItem2 = MediaPortal.Util.Utils.GetSize(item2.FileInfo.Length);
+      if (item1.FileInfo != null && !item1.IsFolder) sizeItem1 = MediaPortal.Util.Utils.GetSize(item1.FileInfo.Length);
+      if (item2.FileInfo != null && !item2.IsFolder) sizeItem2 = MediaPortal.Util.Utils.GetSize(item2.FileInfo.Length);
 
       SortMethod method = (SortMethod)mapSettings.SortBy;
       bool sortAsc = mapSettings.SortAscending;
