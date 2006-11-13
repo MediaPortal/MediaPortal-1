@@ -473,7 +473,6 @@ namespace TvLibrary.Implementations.DVB
     }
     #endregion
 
-
     #region epg & scanning
     /// <summary>
     /// returns the ITVScanning interface used for scanning channels

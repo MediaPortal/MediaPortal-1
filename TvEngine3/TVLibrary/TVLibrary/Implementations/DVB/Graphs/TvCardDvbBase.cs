@@ -138,8 +138,8 @@ namespace TvLibrary.Implementations.DVB
     string _timeshiftFileName = "";
     protected GraphState _graphState = GraphState.Idle;
     protected bool _startTimeShifting = false;
-    DVBAudioStream _currentAudioStream;
-    BaseEpgGrabber _epgGrabberCallback = null;
+    protected DVBAudioStream _currentAudioStream;
+    protected BaseEpgGrabber _epgGrabberCallback = null;
     CamType _camType;
 
 
@@ -790,7 +790,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
     /// </summary>
-    public void Dispose()
+    public virtual void Dispose()
     {
       Decompose();
     }
@@ -1343,7 +1343,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// updates the signal quality/level and tuner locked statusses
     /// </summary>
-    protected void UpdateSignalQuality()
+    protected virtual void UpdateSignalQuality()
     {
       TimeSpan ts = DateTime.Now - _lastSignalUpdate;
       if (ts.TotalMilliseconds < 5000) return;
@@ -2137,7 +2137,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Gets/sets the card device
     /// </summary>
-    public string DevicePath
+    public virtual string DevicePath
     {
       get
       {

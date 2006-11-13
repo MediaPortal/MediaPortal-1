@@ -52,6 +52,7 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
+        if (tunerFilter == null && analyzerFilter == null) return;
         Log.Log.WriteFile("Check for Digital Everywhere");
         _digitalEveryWhere = new DigitalEverywhere(tunerFilter, analyzerFilter);
         if (_digitalEveryWhere.IsDigitalEverywhere)
