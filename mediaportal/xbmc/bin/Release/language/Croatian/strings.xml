@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="ISO-8859-2" ?>
- <strings>
+<?xml version="1.0" encoding="iso-8859-2" ?>
+<strings>
 	<characters>255</characters>
 	<string>
 		<id>0</id>
@@ -24,10 +24,6 @@
 	<string>
 		<id>5</id>
 		<value>Postavke</value>
-	</string>
-	<string>
-		<id>6</id>
-		<value>XBOX Media Center CVS build</value>
 	</string>
 	<string>
 		<id>7</id>
@@ -1920,11 +1916,11 @@
 	<string>
 		<id>669</id>
 		<value>Poredaj po: anr</value>
-	</string>	
+	</string>
 	<string>
 		<id>670</id>
 		<value>Poredaj po: Bitrate</value>
-	</string>	
+	</string>
 	<string>
 		<id>671</id>
 		<value>Poredaj po: Gledano</value>
@@ -1932,15 +1928,15 @@
 	<string>
 		<id>672</id>
 		<value>Snimaj Pon-Pet</value>
-	</string>	
+	</string>
 	<string>
 		<id>673</id>
 		<value>Pomici brzinu</value>
-	</string>	
+	</string>
 	<string>
 		<id>674</id>
 		<value>GUI Postavke</value>
-	</string>	
+	</string>
 	<string>
 		<id>675</id>
 		<value>Primjer:</value>
@@ -1948,259 +1944,480 @@
 	<string>
 		<id>676</id>
 		<value>Obrisi pogledane snimke?</value>
-	</string>	
+	</string>
 	<string>
 		<id>677</id>
 		<value>puta</value>
-	</string>	
+	</string>
 	<string>
 		<id>678</id>
 		<value>Poredaj: anr</value>
-	</string>	
+	</string>
 	<string>
 		<id>679</id>
 		<value>Tjedno</value>
-	</string>	
+	</string>
 	<string>
 		<id>680</id>
 		<value>Pon-pet</value>
-	</string>	
+	</string>
 	<string>
 		<id>681</id>
 		<value>Čekam</value>
-	</string>	
+	</string>
 	<string>
 		<id>682</id>
 		<value>Snimku</value>
-	</string>	
+	</string>
 	<string>
 		<id>683</id>
 		<value>Zavrseno</value>
-	</string>	
+	</string>
 	<string>
 		<id>684</id>
 		<value>Otkazano</value>
-	</string>	
+	</string>
 	<string>
 		<id>685</id>
 		<value>Poredaj po: Status</value>
-	</string>	
-	
+	</string>
 
-<string><id>686</id><value>Roden</value></string>
-<string><id>687</id><value>Godina aktivan</value></string>
-<string><id>688</id><value>Instrumenti</value></string>
-<string><id>689</id><value>Bio.</value></string>
-<string><id>690</id><value>Diskografija (Albumi)</value></string>
-<string><id>691</id><value>Diskografija (kompilacije, boxevi)</value></string>
-<string><id>700</id><value>Diskografija (eps, singlovi)</value></string>
-<string><id>701</id><value>Diskografija (bootlegs, videos, interviews)</value></string>
-<string><id>702</id><value>Niti jedan izvodac nije pronaden!</value></string>
-<string><id>703</id><value>Niste spojeni na internet!</value></string>
-<string><id>704</id><value>Pronalazenje feedova</value></string>
-<string><id>705</id><value>Ucitavam RSS Feed za </value></string>
-<string><id>706</id><value>Odaberi Feed</value></string>
-<string><id>707</id><value>TV uklj./isklj.</value></string>
-<string><id>708</id><value>Timeshifting</value></string>
-<string><id>709</id><value>Auto update</value></string>
-<string><id>710</id><value>Nova verzija je dostupna</value></string>
-<string><id>711</id><value>Azurirati v#old ->v#new ?</value></string>
-<string><id>712</id><value>Povratak</value></string>
 
-<string>
-	<id>713</id>
-	<value>Automatsko pokretanje</value>
-</string>
-<string>
-	<id>714</id>
-	<value>DVD ubacen, da li ga zelite pokrenuti?</value>
-</string>
-<string>
-	<id>715</id>
-	<value>CD ubacen, zelite li ga pokrenuti?</value>
-</string>
-<string>
-	<id>716</id>
-	<value>Satelitska slika</value>
-</string>
-<string>
-	<id>717</id>
-	<value>Vrijeme</value>
-</string>
-<string>
-	<id>718</id>
-	<value>Ocisti Top100</value>
-</string>
-<string>
-	<id>719</id>
-	<value>Jeste li sigurni da zelite ocistiti top 100 listu?</value>
-</string>
-<string>
-	<id>720</id>
-	<value>Pokazi: Trajanje</value>
-</string>
-<string>
-	<id>721</id>
-	<value>Pokazi: Svirano puta</value>
-</string>
-<string>
-	<id>722</id>
-	<value>Ne mogu otvoriti DVD</value>
-</string>
-<string>
-	<id>723</id>
-	<value>Jeste li ubacili DVD?</value>
-</string>
-<string>
-	<id>800</id>
-	<value>Pocinje sa</value>
-</string>
-<string>
-	<id>801</id>
-	<value>Sadrzi</value>
-</string>
-<string>
-	<id>802</id>
-	<value>Zavrsava sa</value>
-</string>
-<string>
-	<id>803</id>
-	<value>  Je  </value>
-</string>
-<string>
-	<id>804</id>
-	<value>U redu</value>
-</string>
-<string>
-	<id>805</id>
-	<value>Ocisti</value>
-</string>
-<string>
-	<id>8000</id>
-	<value>Moj Mail</value>
-</string>
-<string>
-	<id>8001</id>
-	<value>Provjeri Mailbox</value>
-</string>
-<string>
-	<id>8002</id>
-	<value>Auto provjera isklj.</value>
-</string>
-<string>
-	<id>8003</id>
-	<value>Auto provjera uklj.</value>
-</string>
-<string>
-	<id>8004</id>
-	<value>Imate novi mail!</value>
-</string>
-<string>
-	<id>8005</id>
-	<value>Osvjezavam Mailbox</value>
-</string>
-<string>
-	<id>8006</id>
-	<value>Automatska provjera ISKLJ.</value>
-</string>
-<string>
-	<id>8007</id>
-	<value>Automatska provjera UKLJ.</value>
-</string>
-<string>
-	<id>8008</id>
-	<value>Povratak</value>
-</string>
-<string>
-	<id>8010</id>
-	<value>Mailbox nije definiran</value>
-</string>
-<string>
-	<id>8011</id>
-	<value>Molim, idite u postavke i definirajte</value>
-</string>
-<string>
-	<id>8012</id>
-	<value>najmanje 1 Mailbox za upotrebu Mail-Plugina.</value>
-</string>
-<string>
-	<id>8013</id>
-	<value>Nema odgovora od servera</value>
-</string>
-<string>
-	<id>8014</id>
-	<value>Server '{0}' ne odgovara!</value>
-</string>
-<string>
-	<id>8015</id>
-	<value>Provjerite konfiguraciju za '{0}'</value>
-</string>
-<string>
-	<id>8016</id>
-	<value>Od:</value>
-</string>
-<string>
-	<id>8017</id>
-	<value>Za:</value>
-</string>
-<string>
-	<id>8018</id>
-	<value>Naslov:</value>
-</string>
-<string><id>100000</id><value>Home</value></string>
-<string><id>100001</id><value>Moj TV</value></string>
-<string><id>100002</id><value>Moje slike</value></string>
-<string><id>100003</id><value>Moje datoteke</value></string>
-<string><id>100004</id><value>Postavke</value></string>
-<string><id>100005</id><value>Moja glazba</value></string>
-<string><id>100006</id><value>Moj video</value></string>
-<string><id>100007</id><value>Informacije o sistemu</value></string>
-<string><id>100008</id><value>Postavke->Opcenito</value></string>
-<string><id>100009</id><value>Postavke->Ekran</value></string>
-<string><id>100010</id><value>Postavke->Ekran->UI Kalibracija</value></string>
-<string><id>100011</id><value>Postavke->Ekran->Kalibracija ekrana</value></string>
-<string><id>100012</id><value>Postavke->SlideShow</value></string>
-<string><id>100013</id><value>Postavke->Ekran->Filteri</value></string>
-<string><id>100014</id><value>Postavke->Glazba</value></string>
-<string><id>100015</id><value>Postavke->Ekran->Podnaslovi</value></string>
-<string><id>100016</id><value>Postavke->Ekran->Čuvar ekrana</value></string>
-<string><id>100017</id><value>Postavke->Vrijeme</value></string>
-<string><id>100020</id><value>Postavke->Skripte</value></string>
-<string><id>100021</id><value>Moj video/zanr</value></string>
-<string><id>100022</id><value>Moj video/glumac</value></string>
-<string><id>100023</id><value>Moj video/godina</value></string>
-<string><id>100024</id><value>Postavke->Programi</value></string>
-<string><id>100025</id><value>Moj video/naziv</value></string>
-<string><id>100026</id><value>Postavke->Opcenito->Predspremnik</value></string>
-<string><id>100027</id><value>Postavke->Opcenito->Automatsko pokretanje</value></string>
-<string><id>100028</id><value>Moj video/playliste</value></string>
-<string><id>100029</id><value>Postavke->Opcenito->LCD</value></string>
-<string><id>100030</id><value>Moj Radio</value></string>
-<string><id>100031</id><value>Postavke->Ekran->brzina spustanja</value></string>
-<string><id>100100</id><value>Da/ne dijalog</value></string>
-<string><id>100101</id><value>Dijalog napretka</value></string>
-<string><id>100500</id><value>Moja glazba/playlista</value></string>
-<string><id>100501</id><value>Moja glazba/datoteke</value></string>
-<string><id>100502</id><value>Moja glazba/albumi</value></string>
-<string><id>100503</id><value>Moja glazba/izvodaci</value></string>
-<string><id>100504</id><value>Moja glazba/zanrovi</value></string>
-<string><id>100505</id><value>Moja glazba/top100</value></string>
-<string><id>100600</id><value>Moj TV/vodic</value></string>
-<string><id>100601</id><value>Moj TV/raspored</value></string>
-<string><id>100602</id><value>Moj TV/cijeli ekran</value></string>
-<string><id>100603</id><value>Moj TV/Snimljena TV</value></string>
-<string><id>101000</id><value>tipkovnica</value></string>
-<string><id>102000</id><value>Dijalog izbora</value></string>
-<string><id>102001</id><value>Moja glazba/info</value></string>
-<string><id>102002</id><value>Dijalog OK</value></string>
-<string><id>102003</id><value>Moj video/Info</value></string>
-<string><id>102004</id><value>Moje skripte/Info</value></string>
-<string><id>102005</id><value>Video u cijelom ekranu</value></string>
-<string><id>102006</id><value>Audio vizualizacije</value></string>
-<string><id>102007</id><value>Moje slike/slideshow</value></string>
-<string><id>102008</id><value>Filestacking dijalog</value></string>
-<string><id>102600</id><value>Moje vrijeme</value></string>
-<string><id>102900</id><value>Čuvar zaslona</value></string>
-<string><id>102901</id><value>OSD u cijelom ekranu</value></string>
+	<string>
+		<id>686</id>
+		<value>Roden</value>
+	</string>
+	<string>
+		<id>687</id>
+		<value>Godina aktivan</value>
+	</string>
+	<string>
+		<id>688</id>
+		<value>Instrumenti</value>
+	</string>
+	<string>
+		<id>689</id>
+		<value>Bio.</value>
+	</string>
+	<string>
+		<id>690</id>
+		<value>Diskografija (Albumi)</value>
+	</string>
+	<string>
+		<id>691</id>
+		<value>Diskografija (kompilacije, boxevi)</value>
+	</string>
+	<string>
+		<id>700</id>
+		<value>Diskografija (eps, singlovi)</value>
+	</string>
+	<string>
+		<id>701</id>
+		<value>Diskografija (bootlegs, videos, interviews)</value>
+	</string>
+	<string>
+		<id>702</id>
+		<value>Niti jedan izvodac nije pronaden!</value>
+	</string>
+	<string>
+		<id>703</id>
+		<value>Niste spojeni na internet!</value>
+	</string>
+	<string>
+		<id>704</id>
+		<value>Pronalazenje feedova</value>
+	</string>
+	<string>
+		<id>705</id>
+		<value>Ucitavam RSS Feed za </value>
+	</string>
+	<string>
+		<id>706</id>
+		<value>Odaberi Feed</value>
+	</string>
+	<string>
+		<id>707</id>
+		<value>TV uklj./isklj.</value>
+	</string>
+	<string>
+		<id>708</id>
+		<value>Timeshifting</value>
+	</string>
+	<string>
+		<id>709</id>
+		<value>Auto update</value>
+	</string>
+	<string>
+		<id>710</id>
+		<value>Nova verzija je dostupna</value>
+	</string>
+	<string>
+		<id>711</id>
+		<value>Azurirati v#old ->v#new ?</value>
+	</string>
+	<string>
+		<id>712</id>
+		<value>Povratak</value>
+	</string>
 
+	<string>
+		<id>713</id>
+		<value>Automatsko pokretanje</value>
+	</string>
+	<string>
+		<id>714</id>
+		<value>DVD ubacen, da li ga zelite pokrenuti?</value>
+	</string>
+	<string>
+		<id>715</id>
+		<value>CD ubacen, zelite li ga pokrenuti?</value>
+	</string>
+	<string>
+		<id>716</id>
+		<value>Satelitska slika</value>
+	</string>
+	<string>
+		<id>717</id>
+		<value>Vrijeme</value>
+	</string>
+	<string>
+		<id>718</id>
+		<value>Ocisti Top100</value>
+	</string>
+	<string>
+		<id>719</id>
+		<value>Jeste li sigurni da zelite ocistiti top 100 listu?</value>
+	</string>
+	<string>
+		<id>720</id>
+		<value>Pokazi: Trajanje</value>
+	</string>
+	<string>
+		<id>721</id>
+		<value>Pokazi: Svirano puta</value>
+	</string>
+	<string>
+		<id>722</id>
+		<value>Ne mogu otvoriti DVD</value>
+	</string>
+	<string>
+		<id>723</id>
+		<value>Jeste li ubacili DVD?</value>
+	</string>
+	<string>
+		<id>800</id>
+		<value>Pocinje sa</value>
+	</string>
+	<string>
+		<id>801</id>
+		<value>Sadrzi</value>
+	</string>
+	<string>
+		<id>802</id>
+		<value>Zavrsava sa</value>
+	</string>
+	<string>
+		<id>803</id>
+		<value>  Je  </value>
+	</string>
+	<string>
+		<id>804</id>
+		<value>U redu</value>
+	</string>
+	<string>
+		<id>805</id>
+		<value>Ocisti</value>
+	</string>
+	<string>
+		<id>8000</id>
+		<value>Moj Mail</value>
+	</string>
+	<string>
+		<id>8001</id>
+		<value>Provjeri Mailbox</value>
+	</string>
+	<string>
+		<id>8002</id>
+		<value>Auto provjera isklj.</value>
+	</string>
+	<string>
+		<id>8003</id>
+		<value>Auto provjera uklj.</value>
+	</string>
+	<string>
+		<id>8004</id>
+		<value>Imate novi mail!</value>
+	</string>
+	<string>
+		<id>8005</id>
+		<value>Osvjezavam Mailbox</value>
+	</string>
+	<string>
+		<id>8006</id>
+		<value>Automatska provjera ISKLJ.</value>
+	</string>
+	<string>
+		<id>8007</id>
+		<value>Automatska provjera UKLJ.</value>
+	</string>
+	<string>
+		<id>8008</id>
+		<value>Povratak</value>
+	</string>
+	<string>
+		<id>8010</id>
+		<value>Mailbox nije definiran</value>
+	</string>
+	<string>
+		<id>8011</id>
+		<value>Molim, idite u postavke i definirajte</value>
+	</string>
+	<string>
+		<id>8012</id>
+		<value>najmanje 1 Mailbox za upotrebu Mail-Plugina.</value>
+	</string>
+	<string>
+		<id>8013</id>
+		<value>Nema odgovora od servera</value>
+	</string>
+	<string>
+		<id>8014</id>
+		<value>Server '{0}' ne odgovara!</value>
+	</string>
+	<string>
+		<id>8015</id>
+		<value>Provjerite konfiguraciju za '{0}'</value>
+	</string>
+	<string>
+		<id>8016</id>
+		<value>Od:</value>
+	</string>
+	<string>
+		<id>8017</id>
+		<value>Za:</value>
+	</string>
+	<string>
+		<id>8018</id>
+		<value>Naslov:</value>
+	</string>
+	<string>
+		<id>100000</id>
+		<value>Home</value>
+	</string>
+	<string>
+		<id>100001</id>
+		<value>Moj TV</value>
+	</string>
+	<string>
+		<id>100002</id>
+		<value>Moje slike</value>
+	</string>
+	<string>
+		<id>100003</id>
+		<value>Moje datoteke</value>
+	</string>
+	<string>
+		<id>100004</id>
+		<value>Postavke</value>
+	</string>
+	<string>
+		<id>100005</id>
+		<value>Moja glazba</value>
+	</string>
+	<string>
+		<id>100006</id>
+		<value>Moj video</value>
+	</string>
+	<string>
+		<id>100007</id>
+		<value>Informacije o sistemu</value>
+	</string>
+	<string>
+		<id>100008</id>
+		<value>Postavke->Opcenito</value>
+	</string>
+	<string>
+		<id>100009</id>
+		<value>Postavke->Ekran</value>
+	</string>
+	<string>
+		<id>100010</id>
+		<value>Postavke->Ekran->UI Kalibracija</value>
+	</string>
+	<string>
+		<id>100011</id>
+		<value>Postavke->Ekran->Kalibracija ekrana</value>
+	</string>
+	<string>
+		<id>100012</id>
+		<value>Postavke->SlideShow</value>
+	</string>
+	<string>
+		<id>100013</id>
+		<value>Postavke->Ekran->Filteri</value>
+	</string>
+	<string>
+		<id>100014</id>
+		<value>Postavke->Glazba</value>
+	</string>
+	<string>
+		<id>100015</id>
+		<value>Postavke->Ekran->Podnaslovi</value>
+	</string>
+	<string>
+		<id>100016</id>
+		<value>Postavke->Ekran->Čuvar ekrana</value>
+	</string>
+	<string>
+		<id>100017</id>
+		<value>Postavke->Vrijeme</value>
+	</string>
+	<string>
+		<id>100020</id>
+		<value>Postavke->Skripte</value>
+	</string>
+	<string>
+		<id>100021</id>
+		<value>Moj video/zanr</value>
+	</string>
+	<string>
+		<id>100022</id>
+		<value>Moj video/glumac</value>
+	</string>
+	<string>
+		<id>100023</id>
+		<value>Moj video/godina</value>
+	</string>
+	<string>
+		<id>100024</id>
+		<value>Postavke->Programi</value>
+	</string>
+	<string>
+		<id>100025</id>
+		<value>Moj video/naziv</value>
+	</string>
+	<string>
+		<id>100026</id>
+		<value>Postavke->Opcenito->Predspremnik</value>
+	</string>
+	<string>
+		<id>100027</id>
+		<value>Postavke->Opcenito->Automatsko pokretanje</value>
+	</string>
+	<string>
+		<id>100028</id>
+		<value>Moj video/playliste</value>
+	</string>
+	<string>
+		<id>100029</id>
+		<value>Postavke->Opcenito->LCD</value>
+	</string>
+	<string>
+		<id>100030</id>
+		<value>Moj Radio</value>
+	</string>
+	<string>
+		<id>100031</id>
+		<value>Postavke->Ekran->brzina spustanja</value>
+	</string>
+	<string>
+		<id>100100</id>
+		<value>Da/ne dijalog</value>
+	</string>
+	<string>
+		<id>100101</id>
+		<value>Dijalog napretka</value>
+	</string>
+	<string>
+		<id>100500</id>
+		<value>Moja glazba/playlista</value>
+	</string>
+	<string>
+		<id>100501</id>
+		<value>Moja glazba/datoteke</value>
+	</string>
+	<string>
+		<id>100502</id>
+		<value>Moja glazba/albumi</value>
+	</string>
+	<string>
+		<id>100503</id>
+		<value>Moja glazba/izvodaci</value>
+	</string>
+	<string>
+		<id>100504</id>
+		<value>Moja glazba/zanrovi</value>
+	</string>
+	<string>
+		<id>100505</id>
+		<value>Moja glazba/top100</value>
+	</string>
+	<string>
+		<id>100600</id>
+		<value>Moj TV/vodic</value>
+	</string>
+	<string>
+		<id>100601</id>
+		<value>Moj TV/raspored</value>
+	</string>
+	<string>
+		<id>100602</id>
+		<value>Moj TV/cijeli ekran</value>
+	</string>
+	<string>
+		<id>100603</id>
+		<value>Moj TV/Snimljena TV</value>
+	</string>
+	<string>
+		<id>101000</id>
+		<value>tipkovnica</value>
+	</string>
+	<string>
+		<id>102000</id>
+		<value>Dijalog izbora</value>
+	</string>
+	<string>
+		<id>102001</id>
+		<value>Moja glazba/info</value>
+	</string>
+	<string>
+		<id>102002</id>
+		<value>Dijalog OK</value>
+	</string>
+	<string>
+		<id>102003</id>
+		<value>Moj video/Info</value>
+	</string>
+	<string>
+		<id>102004</id>
+		<value>Moje skripte/Info</value>
+	</string>
+	<string>
+		<id>102005</id>
+		<value>Video u cijelom ekranu</value>
+	</string>
+	<string>
+		<id>102006</id>
+		<value>Audio vizualizacije</value>
+	</string>
+	<string>
+		<id>102007</id>
+		<value>Moje slike/slideshow</value>
+	</string>
+	<string>
+		<id>102008</id>
+		<value>Filestacking dijalog</value>
+	</string>
+	<string>
+		<id>102600</id>
+		<value>Moje vrijeme</value>
+	</string>
+	<string>
+		<id>102900</id>
+		<value>Čuvar zaslona</value>
+	</string>
+	<string>
+		<id>102901</id>
+		<value>OSD u cijelom ekranu</value>
+	</string>
 </strings>

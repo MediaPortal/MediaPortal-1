@@ -25,10 +25,6 @@
 		<id>5</id>
 		<value>Ajustes</value>
 	</string>
-	<string>
-		<id>6</id>
-		<value>XBOX Media Center CVS build</value>
-	</string>
 	<string Prefix="Mis ">
 		<id>7</id>
 		<value>Archivos</value>
@@ -1301,10 +1297,10 @@
 		<id>394</id>
 		<value>No disponible</value>
 	</string>
-  <string>
-    <id>395</id>
-    <value>Bruma</value>
-  </string>
+	<string>
+		<id>395</id>
+		<value>Bruma</value>
+	</string>
 	<string>
 		<id>396</id>
 		<value>Seleccionar localidad</value>
@@ -1761,14 +1757,14 @@
 		<id>518</id>
 		<value>¿Borrar esta canción?</value>
 	</string>
-  <string>
-  	<id>519</id>
-  	<value>Quitar subtítulos</value>
-  </string>
-  <string>
-    <id>529</id>
-    <value>Ver: Lista de iconos grandes</value>
-  </string>
+	<string>
+		<id>519</id>
+		<value>Quitar subtítulos</value>
+	</string>
+	<string>
+		<id>529</id>
+		<value>Ver: Lista de iconos grandes</value>
+	</string>
 	<string>
 		<id>530</id>
 		<value>Disco de fotos insertado, ¿quieres abrirlo?</value>
@@ -1781,14 +1777,14 @@
 		<id>532</id>
 		<value>Disco de audio insertado, ¿quieres abrirlo?</value>
 	</string>
-  <string>
-    <id>533</id>
-    <value>Guía</value>
-  </string>
-  <string>
-    <id>534</id>
-    <value>Moderado</value>
-  </string>  
+	<string>
+		<id>533</id>
+		<value>Guía</value>
+	</string>
+	<string>
+		<id>534</id>
+		<value>Moderado</value>
+	</string>
 	<string>
 		<id>550</id>
 		<value>Corte</value>
@@ -2369,98 +2365,98 @@
 		<id>751</id>
 		<value>Mostrar todas las canciones de este artista</value>
 	</string>
-  <string>
-    <id>752</id>
-    <value>Grabación no especificada</value>
-  </string>
-  <string>
-    <id>753</id>
-    <value>No hay sintonizadoras de TV instaladas</value>
-  </string>
-  <string>
-    <id>754</id>
-    <value>Ninguna sintonizadora de TV está grabando el programa especificado</value>
-  </string>
-  <string>
-    <id>755</id>
-    <value>Ninguna sintonizadora de TV está viendo tv</value>
-  </string>
-  <string>
-    <id>756</id>
-    <value>Ninguna sintonizadora de TV puede recibir:{0}</value>
-  </string>
-  <string>
-    <id>757</id>
-    <value>Todas las sintonizadoras de TV están ocupadas</value>
-  </string>
-  <string>
-    <id>758</id>
-    <value>La sintonizadora de TV no está grabando</value>
-  </string>
-  <string>
-    <id>759</id>
-    <value>Fallo arrancando timeshift</value>
-  </string>
-  <string>
-    <id>760</id>
-    <value>Ninguna sintonizadora de TV disponible para timeshifting</value>
-  </string>
-  <string>
-    <id>761</id>
-    <value>Fallo parando timeshift</value>
-  </string>
-  <string>
-    <id>762</id>
-    <value>Fallo arrancando TV</value>
-  </string>
-  <string>
-    <id>763</id>
-    <value>El grabador está ocupado</value>
-  </string>
-  <string>
-    <id>764</id>
-    <value>El grabador está en pausa</value>
-  </string>
-  <string>
-    <id>765</id>
-    <value>No hay suficiente espacio libre en disco</value>
-  </string>
-  <string>
-    <id>766</id>
-    <value>ya importando...</value>
-  </string>
-  <string>
-    <id>767</id>
-    <value>Fichero XMLTV erroneo</value>
-  </string>
-  <string>
-    <id>768</id>
-    <value>No se encontraron canales</value>
-  </string>
-    <string>
-    <id>769</id>
-    <value>No se encontraron programas</value>
-  </string>
-    <string>
-    <id>770</id>
-    <value>No se encontrí el fichero xmltv</value>
-  </string>
 	<string>
-	<id>771</id>
-	<value>El PIN introducido no fue aceptado</value>
-  </string>
-  <string>
-	<id>772</id>
-	<value>¿Quiere intentarlo de nuevo?</value>
-  </string>
-  <string>
-	<id>773</id>
-	<value>COMIENZO</value>
-  </string>
-  <string>
-	<id>774</id>
-    <value>FIN</value>
-  </string>    
+		<id>752</id>
+		<value>Grabación no especificada</value>
+	</string>
+	<string>
+		<id>753</id>
+		<value>No hay sintonizadoras de TV instaladas</value>
+	</string>
+	<string>
+		<id>754</id>
+		<value>Ninguna sintonizadora de TV está grabando el programa especificado</value>
+	</string>
+	<string>
+		<id>755</id>
+		<value>Ninguna sintonizadora de TV está viendo tv</value>
+	</string>
+	<string>
+		<id>756</id>
+		<value>Ninguna sintonizadora de TV puede recibir:{0}</value>
+	</string>
+	<string>
+		<id>757</id>
+		<value>Todas las sintonizadoras de TV están ocupadas</value>
+	</string>
+	<string>
+		<id>758</id>
+		<value>La sintonizadora de TV no está grabando</value>
+	</string>
+	<string>
+		<id>759</id>
+		<value>Fallo arrancando timeshift</value>
+	</string>
+	<string>
+		<id>760</id>
+		<value>Ninguna sintonizadora de TV disponible para timeshifting</value>
+	</string>
+	<string>
+		<id>761</id>
+		<value>Fallo parando timeshift</value>
+	</string>
+	<string>
+		<id>762</id>
+		<value>Fallo arrancando TV</value>
+	</string>
+	<string>
+		<id>763</id>
+		<value>El grabador está ocupado</value>
+	</string>
+	<string>
+		<id>764</id>
+		<value>El grabador está en pausa</value>
+	</string>
+	<string>
+		<id>765</id>
+		<value>No hay suficiente espacio libre en disco</value>
+	</string>
+	<string>
+		<id>766</id>
+		<value>ya importando...</value>
+	</string>
+	<string>
+		<id>767</id>
+		<value>Fichero XMLTV erroneo</value>
+	</string>
+	<string>
+		<id>768</id>
+		<value>No se encontraron canales</value>
+	</string>
+	<string>
+		<id>769</id>
+		<value>No se encontraron programas</value>
+	</string>
+	<string>
+		<id>770</id>
+		<value>No se encontrí el fichero xmltv</value>
+	</string>
+	<string>
+		<id>771</id>
+		<value>El PIN introducido no fue aceptado</value>
+	</string>
+	<string>
+		<id>772</id>
+		<value>¿Quiere intentarlo de nuevo?</value>
+	</string>
+	<string>
+		<id>773</id>
+		<value>COMIENZO</value>
+	</string>
+	<string>
+		<id>774</id>
+		<value>FIN</value>
+	</string>
 	<string>
 		<id>800</id>
 		<value>Empieza con</value>
@@ -3661,87 +3657,87 @@
 		<id>2054</id>
 		<value>¡No hay entradas!</value>
 	</string>
-  <string>
-    <id>2080</id>
-    <value>Tipo de fichero no soportado</value>
-  </string>	
-  <string>
-    <id>2081</id>
-    <value>No se puede cortar</value>
-  </string>
-  <string>
-    <id>2082</id>
-    <value>Mpeg:Terminó de cortar el fichero de vídeo</value>
-  </string>
-  <string>
-    <id>2083</id>
-    <value>Dvrms:Terminó de cortar el fichero de vídeo</value>
-  </string>
+	<string>
+		<id>2080</id>
+		<value>Tipo de fichero no soportado</value>
+	</string>
+	<string>
+		<id>2081</id>
+		<value>No se puede cortar</value>
+	</string>
+	<string>
+		<id>2082</id>
+		<value>Mpeg:Terminó de cortar el fichero de vídeo</value>
+	</string>
+	<string>
+		<id>2083</id>
+		<value>Dvrms:Terminó de cortar el fichero de vídeo</value>
+	</string>
 
-  <!-- End of My Recipie Strings -->
-  
-  <string>
-    <id>2084</id>
-    <value>comienzo</value>
-  </string>   
-  <string>
-    <id>2085</id>
-    <value>fin</value>
-  </string>   
-  <string>
-    <id>2086</id>
-    <value>adelante</value>
-  </string>   
-  <string>
-    <id>2087</id>
-    <value>atrás</value>
-  </string>   
-  <string>
-    <id>2088</id>
-    <value>Lista de corte:</value>
-  </string>   
-  <string>
-    <id>2089</id>
-    <value>ajustar calidad</value>
-  </string>   
-  <string>
-    <id>2090</id>
-    <value>Dvr-MpegCut</value>
-  </string>
-  <string>
-    <id>2091</id>
-    <value>El proceso ha sido cancelado</value>
-  </string>  
-    <string>
-  <id>2092</id>
-    <value>Por favor, elija el fichero que quiere editar:</value>
-  </string> 
-  <string>
-    <id>2093</id>
-    <value>añadir</value>
-  </string> 
-  <string>
-    <id>2094</id>
-    <value>Lista de vídeos</value>
-  </string>
-  <string>
-    <id>2095</id>
-    <value>Cortar</value>
-  </string> 
+	<!-- End of My Recipie Strings -->
 
-  <string>
-    <id>2097</id>
-    <value>duración previa:</value>
-  </string>
-  <string>
-    <id>2098</id>
-    <value>nueva duración:</value>
-  </string>          
-  <string>
-    <id>2099</id>
-    <value>posición actual:</value>
-  </string> 
-  <!-- My Burner Strings -->
+	<string>
+		<id>2084</id>
+		<value>comienzo</value>
+	</string>
+	<string>
+		<id>2085</id>
+		<value>fin</value>
+	</string>
+	<string>
+		<id>2086</id>
+		<value>adelante</value>
+	</string>
+	<string>
+		<id>2087</id>
+		<value>atrás</value>
+	</string>
+	<string>
+		<id>2088</id>
+		<value>Lista de corte:</value>
+	</string>
+	<string>
+		<id>2089</id>
+		<value>ajustar calidad</value>
+	</string>
+	<string>
+		<id>2090</id>
+		<value>Dvr-MpegCut</value>
+	</string>
+	<string>
+		<id>2091</id>
+		<value>El proceso ha sido cancelado</value>
+	</string>
+	<string>
+		<id>2092</id>
+		<value>Por favor, elija el fichero que quiere editar:</value>
+	</string>
+	<string>
+		<id>2093</id>
+		<value>añadir</value>
+	</string>
+	<string>
+		<id>2094</id>
+		<value>Lista de vídeos</value>
+	</string>
+	<string>
+		<id>2095</id>
+		<value>Cortar</value>
+	</string>
+
+	<string>
+		<id>2097</id>
+		<value>duración previa:</value>
+	</string>
+	<string>
+		<id>2098</id>
+		<value>nueva duración:</value>
+	</string>
+	<string>
+		<id>2099</id>
+		<value>posición actual:</value>
+	</string>
+	<!-- My Burner Strings -->
 	<string Prefix="Mi ">
 		<id>2100</id>
 		<value>Grabadora</value>
@@ -4022,19 +4018,19 @@
 		<id>2225</id>
 		<value>Directorio creado</value>
 	</string>
-  <!-- End of My Explorer Strings -->
-  <string>
-    <id>2997</id>
-    <value>h</value>
-  </string>
-  <string>
-    <id>2998</id>
-    <value>min</value>
-  </string>
-  <string>
-    <id>2999</id>
-    <value>seg</value>
-  </string>    
+	<!-- End of My Explorer Strings -->
+	<string>
+		<id>2997</id>
+		<value>h</value>
+	</string>
+	<string>
+		<id>2998</id>
+		<value>min</value>
+	</string>
+	<string>
+		<id>2999</id>
+		<value>seg</value>
+	</string>
 	<string>
 		<id>3000</id>
 		<value>Opciones del programa</value>
@@ -5175,10 +5171,10 @@
 		<id>200037</id>
 		<value>Saltar&gt;</value>
 	</string>
-  <string>
-    <id>200038</id>
-    <value>En un PC de sobremesa compartido con otras aplicaciones</value>
-  </string>
+	<string>
+		<id>200038</id>
+		<value>En un PC de sobremesa compartido con otras aplicaciones</value>
+	</string>
 	<string>
 		<id>4000</id>
 		<value>Navegador Web</value>
@@ -5323,14 +5319,14 @@
 		<id>4554</id>
 		<value>Buscar info CD</value>
 	</string>
-  <string>
-    <id>4555</id>
-    <value>Lista de reproducción actual</value>
-  </string>  
-  <string>
-    <id>4557</id>
-    <value>Añadir todo a la lista de reproducción</value>
-  </string>  
+	<string>
+		<id>4555</id>
+		<value>Lista de reproducción actual</value>
+	</string>
+	<string>
+		<id>4557</id>
+		<value>Añadir todo a la lista de reproducción</value>
+	</string>
 	<string>
 		<id>10100</id>
 		<value>Minas ocultas</value>
@@ -5347,10 +5343,9 @@
 		<id>10103</id>
 		<value>Buscaminas</value>
 	</string>
-  <!-- End Minesweeper Strings -->
-  <string>
-	<id>10104</id>
-	<value>Mini Guía</value>
-  </string>
-
+	<!-- End Minesweeper Strings -->
+	<string>
+		<id>10104</id>
+		<value>Mini Guía</value>
+	</string>
 </strings>

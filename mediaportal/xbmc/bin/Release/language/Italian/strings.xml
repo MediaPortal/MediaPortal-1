@@ -26,10 +26,6 @@
 		<value>Impostazioni</value>
 	</string>
 	<string>
-		<id>6</id>
-		<value>XBOX Media Center CVS build</value>
-	</string>
-	<string>
 		<id>7</id>
 		<value>File</value>
 	</string>
@@ -1300,10 +1296,10 @@
 	<string>
 		<id>394</id>
 		<value>N/A</value>
-  </string>
-  <string>
-    <id>395</id>
-    <value>Foschia</value>
+	</string>
+	<string>
+		<id>395</id>
+		<value>Foschia</value>
 	</string>
 	<string>
 		<id>396</id>
@@ -1760,14 +1756,14 @@
 	<string>
 		<id>518</id>
 		<value>Elimina questa canzone</value>
-  </string>
-  <string>
-      <id>519</id>
-      <value>Sottotitoli disattivati</value>
-	</string>	  	
-  <string>
-     <id>529</id>
-     <value>Vista: Elenco icone grandi</value>
+	</string>
+	<string>
+		<id>519</id>
+		<value>Sottotitoli disattivati</value>
+	</string>
+	<string>
+		<id>529</id>
+		<value>Vista: Elenco icone grandi</value>
 	</string>
 	<string>
 		<id>530</id>
@@ -1780,10 +1776,10 @@
 	<string>
 		<id>532</id>
 		<value>Disco audio inserito, vuoi aprirlo?</value>
-  </string>
-  <string>
-     <id>533</id>
-     <value>Guida</value>
+	</string>
+	<string>
+		<id>533</id>
+		<value>Guida</value>
 	</string>
 	<string>
 		<id>534</id>
@@ -1820,48 +1816,48 @@
 	<string>
 		<id>542</id>
 		<value>NW</value>
-	</string>		
+	</string>
 	<string>
 		<id>543</id>
 		<value>Temporale</value>
-	</string>								
-        <string>
+	</string>
+	<string>
 		<id>544</id>
 		<value>NNE</value>
-	</string>		
-        <string>
+	</string>
+	<string>
 		<id>545</id>
 		<value>ENE</value>
-	</string>	
-        <string>
+	</string>
+	<string>
 		<id>546</id>
 		<value>ESE</value>
-	</string>	
-        <string>
+	</string>
+	<string>
 		<id>547</id>
 		<value>SSE</value>
-	</string>	
-        <string>
+	</string>
+	<string>
 		<id>548</id>
 		<value>SSW</value>
-	</string>	
-        <string>
+	</string>
+	<string>
 		<id>549</id>
 		<value>WSW</value>
-	</string>	
-        <string>
+	</string>
+	<string>
 		<id>551</id>
 		<value>WNW</value>
-	</string>	
-        <string>
+	</string>
+	<string>
 		<id>552</id>
 		<value>NNW</value>
-	</string>	
-  <string>
+	</string>
+	<string>
 		<id>553</id>
 		<value>Tardi</value>
-  </string>
-  <string>
+	</string>
+	<string>
 		<id>554</id>
 		<value>Molto</value>
 	</string>
@@ -1876,7 +1872,7 @@
 	<string>
 		<id>590</id>
 		<value>P. 100</value>
-	</string>	
+	</string>
 	<string>
 		<id>591</id>
 		<value>P. 200</value>
@@ -1884,19 +1880,19 @@
 	<string>
 		<id>592</id>
 		<value>P. 300</value>
-    </string>
+	</string>
 	<string>
 		<id>593</id>
 		<value>Nascosto</value>
-    </string>    
+	</string>
 	<string>
 		<id>594</id>
 		<value>Sottopagina</value>
-    </string>     
+	</string>
 	<string>
 		<id>595</id>
 		<value>Schermo intero</value>
-    </string>      
+	</string>
 	<string>
 		<id>596</id>
 		<value>In attesa della pagina {0}/{1}...</value>
@@ -2532,27 +2528,27 @@
 	<string>
 		<id>765</id>
 		<value>Spazio su disco insufficiente</value>
-	</string>	
-    <string>
-      <id>766</id>
-      <value>Importazione già in corso...</value>
-    </string>
-    <string>
-      <id>767</id>
-      <value>File XMLTV non valido</value>
-    </string>
-    <string>
-      <id>768</id>
-      <value>Nessun canale trovato</value>
-    </string>
-    <string>
-      <id>769</id>
-      <value>Nessun programma trovato</value>
-    </string>
-    <string>
-      <id>770</id>
-      <value>Nessun file xmltv trovato</value>
-    </string>
+	</string>
+	<string>
+		<id>766</id>
+		<value>Importazione già in corso...</value>
+	</string>
+	<string>
+		<id>767</id>
+		<value>File XMLTV non valido</value>
+	</string>
+	<string>
+		<id>768</id>
+		<value>Nessun canale trovato</value>
+	</string>
+	<string>
+		<id>769</id>
+		<value>Nessun programma trovato</value>
+	</string>
+	<string>
+		<id>770</id>
+		<value>Nessun file xmltv trovato</value>
+	</string>
 	<string>
 		<id>771</id>
 		<value>PIN inserito non accettato</value>
@@ -2560,18 +2556,18 @@
 	<string>
 		<id>772</id>
 		<value>Si desidera riprovare?</value>
-    </string>
+	</string>
 	<string>
 		<id>782</id>
 		<value>Registrazione avanzata</value>
 	</string>
-    <string>
-	  <id>773</id>
-	  <value>AVVIO</value>
-    </string>
-    <string>
-	  <id>774</id>
-      <value>FINE</value>
+	<string>
+		<id>773</id>
+		<value>AVVIO</value>
+	</string>
+	<string>
+		<id>774</id>
+		<value>FINE</value>
 	</string>
 	<string>
 		<id>800</id>
@@ -3792,88 +3788,88 @@
 	<string>
 		<id>2054</id>
 		<value>Nessuna voce!</value>
-	</string>	
-  <string>
-    <id>2080</id>
-    <value>Tipo di file non supportato</value>
-  </string>	
-  <string>
-    <id>2081</id>
-    <value>Impossibile tagliare</value>
-  </string>	  	
-  <string>
-    <id>2082</id>
-    <value>Mpeg:Ritaglio del video completato</value>
-  </string>	
-  <string>
-    <id>2083</id>
-    <value>Dvrms:Ritaglio del video completato</value>
-  </string>
-
-  <!-- End of My Recipie Strings -->
-  
-  <string>
-    <id>2084</id>
-    <value>inizio</value>
-  </string>   
-  <string>
-    <id>2085</id>
-    <value>fine</value>
-  </string>   
-  <string>
-    <id>2086</id>
-    <value>avanti</value>
-  </string>   
-  <string>
-    <id>2087</id>
-    <value>indietro</value>
-  </string>   
-  <string>
-    <id>2088</id>
-    <value>Ritagli:</value>
-  </string>   
-  <string>
-    <id>2089</id>
-    <value>personalizza qualità</value>
-  </string>   
-  <string>
-    <id>2090</id>
-    <value>Dvr-MpegCut</value>
-  </string>
-  <string>
-    <id>2091</id>
-    <value>Processo annullato</value>
-  </string>  
-    <string>
-  <id>2092</id>
-    <value>Scegliere il file che si desidera modificare:</value>
-  </string> 
-  <string>
-    <id>2093</id>
-    <value>aggiungi</value>
-  </string> 
-  <string>
-    <id>2094</id>
-    <value>Lista video</value>
 	</string>
 	<string>
-    <id>2095</id>
-    <value>Taglia</value>
-  </string> 
+		<id>2080</id>
+		<value>Tipo di file non supportato</value>
+	</string>
+	<string>
+		<id>2081</id>
+		<value>Impossibile tagliare</value>
+	</string>
+	<string>
+		<id>2082</id>
+		<value>Mpeg:Ritaglio del video completato</value>
+	</string>
+	<string>
+		<id>2083</id>
+		<value>Dvrms:Ritaglio del video completato</value>
+	</string>
 
-  <string>
-    <id>2097</id>
-    <value>durata (originale):</value>
-  </string>
-  <string>
-    <id>2098</id>
-    <value>durata (modificato):</value>
-  </string>          
-  <string>
-    <id>2099</id>
-    <value>posizione corrente:</value>
-  </string>  
-    <!-- My Burner Strings -->
+	<!-- End of My Recipie Strings -->
+
+	<string>
+		<id>2084</id>
+		<value>inizio</value>
+	</string>
+	<string>
+		<id>2085</id>
+		<value>fine</value>
+	</string>
+	<string>
+		<id>2086</id>
+		<value>avanti</value>
+	</string>
+	<string>
+		<id>2087</id>
+		<value>indietro</value>
+	</string>
+	<string>
+		<id>2088</id>
+		<value>Ritagli:</value>
+	</string>
+	<string>
+		<id>2089</id>
+		<value>personalizza qualità</value>
+	</string>
+	<string>
+		<id>2090</id>
+		<value>Dvr-MpegCut</value>
+	</string>
+	<string>
+		<id>2091</id>
+		<value>Processo annullato</value>
+	</string>
+	<string>
+		<id>2092</id>
+		<value>Scegliere il file che si desidera modificare:</value>
+	</string>
+	<string>
+		<id>2093</id>
+		<value>aggiungi</value>
+	</string>
+	<string>
+		<id>2094</id>
+		<value>Lista video</value>
+	</string>
+	<string>
+		<id>2095</id>
+		<value>Taglia</value>
+	</string>
+
+	<string>
+		<id>2097</id>
+		<value>durata (originale):</value>
+	</string>
+	<string>
+		<id>2098</id>
+		<value>durata (modificato):</value>
+	</string>
+	<string>
+		<id>2099</id>
+		<value>posizione corrente:</value>
+	</string>
+	<!-- My Burner Strings -->
 	<string>
 		<id>2100</id>
 		<value>Masterizza</value>
@@ -4154,18 +4150,18 @@
 		<id>2225</id>
 		<value>Cartella Creata</value>
 	</string>
-  <!-- End of My Explorer Strings -->
-    <string>
-      <id>2997</id>
-      <value>ore</value>
-    </string>
-    <string>
-      <id>2998</id>
-      <value>min</value>
-    </string>
-    <string>
-      <id>2999</id>
-      <value>sec</value>
+	<!-- End of My Explorer Strings -->
+	<string>
+		<id>2997</id>
+		<value>ore</value>
+	</string>
+	<string>
+		<id>2998</id>
+		<value>min</value>
+	</string>
+	<string>
+		<id>2999</id>
+		<value>sec</value>
 	</string>
 	<string>
 		<id>3000</id>
@@ -5436,8 +5432,8 @@
 		<id>4543</id>
 		<value>Informazioni sulla traccia non disponibili</value>
 	</string>
-  <!-- End Playing Now Strings -->
-  <!-- Begin Addtional MyMusic Strings -->
+	<!-- End Playing Now Strings -->
+	<!-- Begin Addtional MyMusic Strings -->
 	<string>
 		<id>4550</id>
 		<value>Aggiungi alla coda</value>
@@ -5461,13 +5457,13 @@
 	<string>
 		<id>4555</id>
 		<value>Playlist attuale</value>
-    </string>  
-    <string>
-    <id>4557</id>
-    <value>Aggiungi tutto alla playlist</value>
 	</string>
-  <!-- End Addtional MyMusic Strings -->
-  <!-- Begin Minesweeper Strings -->
+	<string>
+		<id>4557</id>
+		<value>Aggiungi tutto alla playlist</value>
+	</string>
+	<!-- End Addtional MyMusic Strings -->
+	<!-- Begin Minesweeper Strings -->
 	<string>
 		<id>10100</id>
 		<value>Mine nascoste (?)</value>
@@ -5484,10 +5480,10 @@
 		<id>10103</id>
 		<value>My Minesweeper</value>
 	</string>
-  <!-- End Minesweeper Strings -->
-  <string>
-	<id>10104</id>
-	<value>Mini EPG</value>
+	<!-- End Minesweeper Strings -->
+	<string>
+		<id>10104</id>
+		<value>Mini EPG</value>
 	</string>
 	<string>
 		<id>556</id>
@@ -5545,7 +5541,7 @@
 		<id>6000</id>
 		<value>Codec Video</value>
 	</string>
-	<string>	
+	<string>
 		<id>6001</id>
 		<value>Codec audio</value>
 	</string>
@@ -5593,10 +5589,10 @@
 		<id>6012</id>
 		<value>Aggiornamento Guida TV dai seguenti canali DVB:</value>
 	</string>
-	<string>	
+	<string>
 		<id>6013</id>
 		<value>XMLTV manuale</value>
-	</string>	
+	</string>
 	<string>
 		<id>6014</id>
 		<value>Impostazioni TV</value>
@@ -5660,7 +5656,7 @@
 	<string>
 		<id>559</id>
 		<value>nelle vicinanze</value>
-	</string>	
+	</string>
 	<string>
 		<id>560</id>
 		<value>Miglioramento</value>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
 <strings>
 	<characters>255</characters>
 	<string>
@@ -23,10 +24,6 @@
 	<string>
 		<id>5</id>
 		<value>Opciones</value>
-	</string>
-	<string>
-		<id>6</id>
-		<value>XBOX Media Center CVS build</value>
 	</string>
 	<string>
 		<id>7</id>
@@ -142,7 +139,7 @@
 	</string>
 	<string>
 		<id>105</id>
-		<value>Ordenar por: TamaÃ±o</value>
+		<value>Ordenar por: Tamaño</value>
 	</string>
 	<string>
 		<id>106</id>
@@ -526,7 +523,7 @@
 	</string>
 	<string>
 		<id>201</id>
-		<value>AÃ±o:</value>
+		<value>Año:</value>
 	</string>
 	<string>
 		<id>202</id>
@@ -874,7 +871,7 @@
 	</string>
 	<string>
 		<id>289</id>
-		<value>TamaÃ±o</value>
+		<value>Tamaño</value>
 	</string>
 	<string>
 		<id>290</id>
@@ -1094,7 +1091,7 @@
 	</string>
 	<string>
 		<id>345</id>
-		<value>AÃ±o</value>
+		<value>Año</value>
 	</string>
 	<string>
 		<id>346</id>
@@ -1178,7 +1175,7 @@
 	</string>
 	<string>
 		<id>366</id>
-		<value>Ordenar por: AÃ±o</value>
+		<value>Ordenar por: Año</value>
 	</string>
 	<string>
 		<id>367</id>
@@ -1262,7 +1259,7 @@
 	</string>
 	<string>
 		<id>387</id>
-		<value>TempraÃ±o</value>
+		<value>Tempraño</value>
 	</string>
 	<string>
 		<id>388</id>
@@ -1382,7 +1379,7 @@
 	</string>
 	<string>
 		<id>420</id>
-		<value>Mis Videos/AÃ±os</value>
+		<value>Mis Videos/Años</value>
 	</string>
 	<string>
 		<id>421</id>
@@ -1446,7 +1443,7 @@
 	</string>
 	<string>
 		<id>436</id>
-		<value>AÃ±o:</value>
+		<value>Año:</value>
 	</string>
 	<string>
 		<id>437</id>
@@ -2102,7 +2099,7 @@
 	</string>
 	<string>
 		<id>100023</id>
-		<value>Mis Videos/aÃ±o</value>
+		<value>Mis Videos/año</value>
 	</string>
 	<string>
 		<id>100024</id>
@@ -2318,7 +2315,7 @@
 	</string>
 	<string>
 		<id>687</id>
-		<value>AÃ±os Activo</value>
+		<value>Años Activo</value>
 	</string>
 	<string>
 		<id>688</id>
@@ -2462,7 +2459,7 @@
 	</string>
 	<string>
 		<id>731</id>
-		<value>el programa entonces se detendrÃ¡ la grabacion</value>
+		<value>el programa entonces se detendrá la grabacion</value>
 	</string>
 	<string>
 		<id>732</id>
@@ -2546,7 +2543,7 @@
 	</string>
 	<string>
 		<id>854</id>
-		<value>Activado en estos dÃ­as</value>
+		<value>Activado en estos días</value>
 	</string>
 	<string>
 		<id>855</id>
@@ -3022,7 +3019,7 @@
 	</string>
 	<string>
 		<id>2016</id>
-		<value>pequeÃ±o</value>
+		<value>pequeño</value>
 	</string>
 	<string>
 		<id>2017</id>
@@ -3102,7 +3099,7 @@
 	</string>
 	<string>
 		<id>2036</id>
-		<value>galÃ³n</value>
+		<value>galón</value>
 	</string>
 	<string>
 		<id>2037</id>
@@ -3170,7 +3167,7 @@
 	</string>
 	<string>
 		<id>2053</id>
-		<value>CategorÃ­a</value>
+		<value>Categoría</value>
 	</string>
 	<string>
 		<id>2054</id>
@@ -3342,7 +3339,7 @@
 	</string>
 	<string>
 		<id>8005</id>
-		<value>Actualizando buzÃ³n de correo</value>
+		<value>Actualizando buzón de correo</value>
 	</string>
 	<string>
 		<id>8007</id>
@@ -3438,7 +3435,7 @@
 	</string>
 	<string>
 		<id>9000</id>
-		<value>TamaÃ±o de la imagen:</value>
+		<value>Tamaño de la imagen:</value>
 	</string>
 	<string>
 		<id>9001</id>
@@ -3510,7 +3507,7 @@
 	</string>
 	<string>
 		<id>13006</id>
-		<value>Imagen pequeÃ±a</value>
+		<value>Imagen pequeña</value>
 	</string>
 	<string>
 		<id>13007</id>
@@ -3774,7 +3771,7 @@
 	</string>
 	<string>
 		<id>743</id>
-		<value>Pronostico de 4 dÃ­as</value>
+		<value>Pronostico de 4 días</value>
 	</string>
 	<string>
 		<id>742</id>

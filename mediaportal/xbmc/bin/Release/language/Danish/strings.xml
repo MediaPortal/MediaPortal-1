@@ -1,50 +1,46 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <strings>
 	<characters>255</characters>
-<string Prefix="Mine ">
-      <id>0</id>
-      <value>Programmer</value>
-   </string>
-  <string Prefix="Mine ">
-      <id>1</id>
-      <value>Billeder</value>
-   </string>
-  <string Prefix="Min ">
-      <id>2</id>
-      <value>Musik</value>
-   </string>
-  <string Prefix="Mine ">
-      <id>3</id>
-      <value>Videoer</value>
-   </string>
-   <string>
-      <id>4</id>
-      <value>TV Guide</value>
-   </string>
-   <string>
-      <id>5</id>
-      <value>Indstillinger</value>
-   </string>
-   <string>
-      <id>6</id>
-      <value>XBOX Media Center CVS build</value>
-   </string>
-  <string Prefix="Mine ">
-      <id>7</id>
-      <value>Filer</value>
-   </string>
-  <string Prefix="Min ">
-      <id>8</id>
-      <value>Vejrudsigt</value>
-   </string>
-  <string Prefix="Mine ">
-      <id>9</id>
-      <value>Nyheder</value>
-   </string>
-  <string Prefix="Mine ">
-      <id>10</id>
-      <value>Opskrifter</value>
-   </string>
+	<string Prefix="Mine ">
+		<id>0</id>
+		<value>Programmer</value>
+	</string>
+	<string Prefix="Mine ">
+		<id>1</id>
+		<value>Billeder</value>
+	</string>
+	<string Prefix="Min ">
+		<id>2</id>
+		<value>Musik</value>
+	</string>
+	<string Prefix="Mine ">
+		<id>3</id>
+		<value>Videoer</value>
+	</string>
+	<string>
+		<id>4</id>
+		<value>TV Guide</value>
+	</string>
+	<string>
+		<id>5</id>
+		<value>Indstillinger</value>
+	</string>
+	<string Prefix="Mine ">
+		<id>7</id>
+		<value>Filer</value>
+	</string>
+	<string Prefix="Min ">
+		<id>8</id>
+		<value>Vejrudsigt</value>
+	</string>
+	<string Prefix="Mine ">
+		<id>9</id>
+		<value>Nyheder</value>
+	</string>
+	<string Prefix="Mine ">
+		<id>10</id>
+		<value>Opskrifter</value>
+	</string>
 	<string>
 		<id>11</id>
 		<value>Mandag</value>

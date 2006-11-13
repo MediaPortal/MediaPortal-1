@@ -26,10 +26,6 @@
 		<value>Inställningar</value>
 	</string>
 	<string>
-		<id>6</id>
-		<value>MediaPortal CVS build</value>
-	</string>
-	<string>
 		<id>7</id>
 		<value>Mina Filer</value>
 	</string>
@@ -1858,14 +1854,14 @@
 		<value>VSV</value>
 	</string>
 	<string>
-      <id>550</id>
-      <value>Beskär</value>
-   </string>
+		<id>550</id>
+		<value>Beskär</value>
+	</string>
 	<string>
 		<id>551</id>
 		<value>VNV</value>
 	</string>
-        <string>
+	<string>
 		<id>550</id>
 		<value>Beskär</value>
 	</string>
@@ -2562,8 +2558,8 @@
 		<value>Hittade ingen XMLTV-fil</value>
 	</string>
 	<string>
-      <id>777</id>
-      <value>Start av timeshift</value>
+		<id>777</id>
+		<value>Start av timeshift</value>
 	</string>
 	<string>
 		<id>778</id>
@@ -2579,7 +2575,7 @@
 	</string>
 	<string>
 		<id>790</id>
-    <value>Nästa: </value>
+		<value>Nästa: </value>
 	</string>
 	<string>
 		<id>798</id>
@@ -3841,7 +3837,7 @@
 		<id>2075</id>
 		<value>Definera nya delningspunkter</value>
 	</string>
-		<string>
+	<string>
 		<id>2076</id>
 		<value>Editera</value>
 	</string>
@@ -3901,7 +3897,7 @@
 		<id>2090</id>
 		<value>Videoeditor</value>
 	</string>
-    <string>
+	<string>
 		<id>2091</id>
 		<value>Operationen är avbruten</value>
 	</string>
@@ -3922,7 +3918,7 @@
 		<value>Dela</value>
 	</string>
 	<string>
-    <id>2097</id>
+		<id>2097</id>
 		<value>Föregående längd:</value>
 	</string>
 	<string>
@@ -4213,14 +4209,14 @@
 		<id>2225</id>
 		<value>Mappen skapad!</value>
 	</string>
-		<!-- Wikipedia Strings -->
+	<!-- Wikipedia Strings -->
 	<string>
 		<id>2500</id>
 		<value>Inga söktermer inmatade!</value>
 	</string>
 	<string>
 		<id>2501</id>
-	<value>Vänligen mata in en giltig sökterm!</value>
+		<value>Vänligen mata in en giltig sökterm!</value>
 	</string>
 	<string>
 		<id>2502</id>
@@ -4281,7 +4277,7 @@
 	<string Prefix="Min ">
 		<id>2516</id>
 		<value>Wikipedia</value>
-	</string>	
+	</string>
 	<string>
 		<id>2600</id>
 		<value>Engelska</value>
@@ -4508,17 +4504,17 @@
 		<value>Förbeställda DVD:er</value>
 	</string>
 	<string>
-      <id>6005</id>
-      <value>Timeshiftbuffer</value>
-    </string>
+		<id>6005</id>
+		<value>Timeshiftbuffer</value>
+	</string>
 	<string>
-      <id>6006</id>
-      <value>Start av TV</value>
-   </string>
+		<id>6006</id>
+		<value>Start av TV</value>
+	</string>
 	<string>
-      <id>6008</id>
-      <value>Kanalordning</value>
-   </string>
+		<id>6008</id>
+		<value>Kanalordning</value>
+	</string>
 	<string>
 		<id>8000</id>
 		<value>Min e-post</value>
@@ -5676,7 +5672,7 @@
 		<value>Liten TV-tablå</value>
 	</string>
 	<string>
-      <id>11000</id>
-      <value>Ändra beskärning</value>
-   </string>
+		<id>11000</id>
+		<value>Ändra beskärning</value>
+	</string>
 </strings>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-2"?>
+<?xml version="1.0" encoding="iso-8859-2"?>
 <strings>
 	<characters>380</characters>
 	<string>
@@ -24,10 +24,6 @@
 	<string>
 		<id>5</id>
 		<value>Ustawienia</value>
-	</string>
-	<string>
-		<id>6</id>
-		<value>XBOX Media Center CVS build</value>
 	</string>
 	<string>
 		<id>7</id>
