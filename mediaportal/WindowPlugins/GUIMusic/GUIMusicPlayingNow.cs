@@ -289,24 +289,40 @@ namespace MediaPortal.GUI.Music
 
     private bool AddImageToImagePathContainer(string newImage)
     {
+      string ImagePath = Convert.ToString(newImage);
       // Check if we should let the visualization window handle image flipping
       if (_usingBassEngine && _showVisualization)
       {
-        Log.Debug("GUIMusicPlayingNow: adding image to visualization - {0}", newImage);
+        Log.Debug("GUIMusicPlayingNow: adding image to visualization - {0}", ImagePath);
         Visualization.VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
 
         if (vizWindow != null)
         {
-          vizWindow.AddImage(newImage);
-          return true;
+          if (System.IO.File.Exists(ImagePath))
+          {
+            try
+            {
+              vizWindow.AddImage(ImagePath);
+              return true;
+            }
+            catch (Exception ex)
+            {
+              Log.Error("GUIMusicPlayingNow: error adding image ({0}) - {1}", ImagePath, ex.Message);
+            }
+          }
+          else
+          {
+            Log.Warn("GUIMusicPlayingNow: could not use image - {0}", ImagePath);
+            return false;
+          }
         }
       }
 
       bool success = false;
       if (ImagePathContainer != null)
       {
-        Log.Debug("GUIMusicPlayingNow: adding image to container - {0}", newImage);
-        if (ImagePathContainer.Contains(newImage))
+        Log.Debug("GUIMusicPlayingNow: adding image to container - {0}", ImagePath);
+        if (ImagePathContainer.Contains(ImagePath))
           return false;
 
         // check for placeholder
@@ -324,10 +340,17 @@ namespace MediaPortal.GUI.Music
         if (found)
           ImagePathContainer.RemoveAt(indexDel - 1);
 
-        if (System.IO.File.Exists(newImage))
+        if (System.IO.File.Exists(ImagePath))
         {
-          ImagePathContainer.Add(newImage);
-          success = true;
+          try
+          {
+            ImagePathContainer.Add(ImagePath);
+            success = true;
+          }
+          catch (Exception ex)
+          {
+            Log.Error("GUIMusicPlayingNow: error adding image ({0}) - {1}", ImagePath, ex.Message);
+          }
 
           // display the first pic automatically
           if (ImagePathContainer.Count == 1)
