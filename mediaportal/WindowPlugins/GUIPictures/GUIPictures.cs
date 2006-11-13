@@ -104,22 +104,14 @@ namespace MediaPortal.GUI.Pictures
       Filmstrip = 4,
     }
 
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]
-    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnSlideShow = null;
-    [SkinControlAttribute(7)]
-    protected GUIButtonControl btnSlideShowRecursive = null;
-    [SkinControlAttribute(8)]
-    protected GUIButtonControl btnCreateThumbs = null;
-    [SkinControlAttribute(9)]
-    protected GUIButtonControl btnRotate = null;
-    [SkinControlAttribute(50)]
-    protected GUIFacadeControl facadeView = null;
-
-
+    [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(6)]    protected GUIButtonControl btnSlideShow = null;
+    [SkinControlAttribute(7)]    protected GUIButtonControl btnSlideShowRecursive = null;
+    [SkinControlAttribute(8)]    protected GUIButtonControl btnCreateThumbs = null;
+    [SkinControlAttribute(9)]    protected GUIButtonControl btnRotate = null;
+    [SkinControlAttribute(50)]   protected GUIFacadeControl facadeView = null;
+    
     int selectedItemIndex = -1;
     GUIListItem selectedListItem = null;
     DirectoryHistory folderHistory = new DirectoryHistory();

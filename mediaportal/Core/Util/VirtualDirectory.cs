@@ -71,7 +71,7 @@ namespace MediaPortal.Util
       {
         previousShare = currentShare;
         currentShare = value;
-        Log.Info("*****Setting current share:{0}-Previous:{1}", currentShare, previousShare);
+        Log.Debug("VirtualDirectory: Setting current share: {0} - Previous: {1}", currentShare, previousShare);
       }
     }
     public string PreviousShare

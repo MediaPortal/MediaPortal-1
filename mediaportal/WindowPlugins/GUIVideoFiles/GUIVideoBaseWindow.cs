@@ -63,20 +63,13 @@ namespace MediaPortal.GUI.Video
     protected string _lastFolder = String.Empty;
 
 
-    [SkinControlAttribute(50)]
-    protected GUIFacadeControl facadeView = null;
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]
-    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(5)]
-    protected GUIButtonControl btnViews = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnPlayDVD = null;
-    [SkinControlAttribute(8)]
-    protected GUIButtonControl btnTrailers = null;
-    [SkinControlAttribute(9)]
-    protected GUIButtonControl btnPlaylistFolder = null;
+    [SkinControlAttribute(50)]    protected GUIFacadeControl facadeView = null;
+    [SkinControlAttribute(2)]     protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]     protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(5)]     protected GUIButtonControl btnViews = null;
+    [SkinControlAttribute(6)]     protected GUIButtonControl btnPlayDVD = null;
+    [SkinControlAttribute(8)]     protected GUIButtonControl btnTrailers = null;
+    [SkinControlAttribute(9)]     protected GUIButtonControl btnPlaylistFolder = null;
 
     protected PlayListPlayer playlistPlayer;
 
@@ -444,7 +437,7 @@ namespace MediaPortal.GUI.Video
     protected virtual void OnSort()
     {
       SetLabels();
-      facadeView.Sort(new VideoSort(CurrentSortMethod, CurrentSortAsc));
+      facadeView.Sort(new VideoSort(CurrentSortMethod, CurrentSortAsc));      
       UpdateButtonStates();
     }
 
@@ -457,7 +450,8 @@ namespace MediaPortal.GUI.Video
       {
         GUIListItem item = facadeView[i];
         IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
-        if (movie != null && movie.ID > 0)
+
+        if (movie != null && movie.ID > 0 && !item.IsFolder)
         {
           if (CurrentSortMethod == VideoSort.SortMethod.Name)
             item.Label2 = MediaPortal.Util.Utils.SecondsToHMString(movie.RunTime * 60);
@@ -478,9 +472,9 @@ namespace MediaPortal.GUI.Video
         else
         {
           string strSize1 = String.Empty, strDate = String.Empty;
-          if (item.FileInfo != null)
+          if (item.FileInfo != null && !item.IsFolder)
             strSize1 = MediaPortal.Util.Utils.GetSize(item.FileInfo.Length);
-          if (item.FileInfo != null)
+          if (item.FileInfo != null && !item.IsFolder)
             strDate = item.FileInfo.ModificationTime.ToShortDateString() + " " + item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           if (CurrentSortMethod == VideoSort.SortMethod.Name)
             item.Label2 = strSize1;
@@ -491,6 +485,7 @@ namespace MediaPortal.GUI.Video
         }
       }
     }
+
     protected void SwitchView()
     {
       if (facadeView == null)
@@ -508,7 +503,7 @@ namespace MediaPortal.GUI.Video
           break;
         case View.FilmStrip:
           facadeView.View = GUIFacadeControl.ViewMode.Filmstrip;
-          break;
+          break;          
       }
     }
 
@@ -616,7 +611,7 @@ namespace MediaPortal.GUI.Video
       CurrentSortAsc = e.Order != System.Windows.Forms.SortOrder.Descending;
 
       OnSort();
-      UpdateButtonStates();
+      //UpdateButtonStates();
       GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
     }
   }
