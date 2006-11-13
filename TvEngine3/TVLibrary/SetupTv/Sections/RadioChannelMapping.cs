@@ -77,7 +77,7 @@ namespace SetupTv.Sections
       //mpListViewMapped.ListViewItemSorter = new MPListViewSortOnColumn(0);
     }
 
- 
+
     public override void OnSectionActivated()
     {
       mpComboBoxCard.Items.Clear();
@@ -90,7 +90,8 @@ namespace SetupTv.Sections
       mpComboBoxCard_SelectedIndexChanged_1(null, null);
     }
 
-    private void mpButtonMap_Click(object sender, EventArgs e)
+
+    private void mpButtonMap_Click_1(object sender, EventArgs e)
     {
       Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
 
@@ -101,7 +102,7 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in selectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        ChannelMap map=layer.MapChannelToCard(card, channel);
+        ChannelMap map = layer.MapChannelToCard(card, channel);
         mpListViewChannels.Items.Remove(item);
 
         ListViewItem newItem = mpListViewMapped.Items.Add(channel.Name);
@@ -109,10 +110,11 @@ namespace SetupTv.Sections
       }
       mpListViewChannels.EndUpdate();
       mpListViewMapped.EndUpdate();
-      
+
     }
 
-    private void mpButtonUnmap_Click(object sender, EventArgs e)
+
+    private void mpButtonUnmap_Click_1(object sender, EventArgs e)
     {
       mpListViewChannels.BeginUpdate();
       mpListViewMapped.BeginUpdate();
@@ -127,15 +129,17 @@ namespace SetupTv.Sections
         ListViewItem newItem = mpListViewChannels.Items.Add(map.ReferencedChannel().Name);
         newItem.Tag = map.ReferencedChannel();
 
+
         map.Remove();
       }
       mpListViewChannels.Sort();
 
       mpListViewChannels.EndUpdate();
       mpListViewMapped.EndUpdate();
+
     }
 
-    
+
     private void mpComboBoxCard_SelectedIndexChanged_1(object sender, EventArgs e)
     {
 
@@ -151,13 +155,15 @@ namespace SetupTv.Sections
 
       Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
       IList maps = card.ReferringChannelMap();
-      //maps.ApplySort(new ChannelMap.Comparer(), false);
+
+      List<ListViewItem> items = new List<ListViewItem>();
       foreach (ChannelMap map in maps)
       {
         Channel channel = map.ReferencedChannel();
         if (channel.IsRadio == false) continue;
-        ListViewItem item = mpListViewMapped.Items.Add(channel.Name);
+        ListViewItem item = new ListViewItem(channel.Name);
         item.Tag = map;
+        items.Add(item);
         bool remove = false;
         foreach (Channel ch in channels)
         {
@@ -171,18 +177,19 @@ namespace SetupTv.Sections
         {
           channels.Remove(channel);
         }
-
       }
+      mpListViewMapped.Items.AddRange(items.ToArray());
 
-
+      items = new List<ListViewItem>();
       foreach (Channel channel in channels)
       {
-        if (channel.IsRadio == false) continue;
-        ListViewItem item = mpListViewChannels.Items.Add(channel.Name);
+        if (channel.IsTv == false) continue;
+        ListViewItem item = new ListViewItem(channel.Name);
         item.Tag = channel;
+        items.Add(item);
       }
+      mpListViewChannels.Items.AddRange(items.ToArray());
       mpListViewChannels.Sort();
-
       mpListViewChannels.EndUpdate();
       mpListViewMapped.EndUpdate();
     }
@@ -191,5 +198,6 @@ namespace SetupTv.Sections
     {
 
     }
+
   }
 }

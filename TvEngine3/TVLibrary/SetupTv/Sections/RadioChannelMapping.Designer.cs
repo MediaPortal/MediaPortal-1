@@ -53,6 +53,7 @@ namespace SetupTv.Sections
       this.mpButtonUnmap.TabIndex = 15;
       this.mpButtonUnmap.Text = "<<";
       this.mpButtonUnmap.UseVisualStyleBackColor = true;
+      this.mpButtonUnmap.Click += new System.EventHandler(this.mpButtonUnmap_Click_1);
       // 
       // mpButtonMap
       // 
@@ -62,6 +63,7 @@ namespace SetupTv.Sections
       this.mpButtonMap.TabIndex = 14;
       this.mpButtonMap.Text = ">>";
       this.mpButtonMap.UseVisualStyleBackColor = true;
+      this.mpButtonMap.Click += new System.EventHandler(this.mpButtonMap_Click_1);
       // 
       // mpLabel3
       // 
