@@ -214,7 +214,7 @@ namespace Wikipedia
           pDlgOK.SetHeading(GUILocalizeStrings.Get(2502)); //Select your local Wikipedia:
 
           // Add all the local sites we want to be displayed starting with int 0.
-          for (int i = 0; i <= 6; i++)
+          for (int i = 0; i <= 8; i++)
           {
             pDlgOK.Add(GUILocalizeStrings.Get(2600 + i)); //English, German, French ...
           }
@@ -335,6 +335,12 @@ namespace Wikipedia
           break;
         case 6: //Italian
           language = "Italian";
+          break;
+        case 7: //Spanish
+          language = "Spanish";
+          break;
+        case 8: //Portuguese
+          language = "Portuguese";
           break;
       }
       if (searchtermLabel.Label != string.Empty && searchtermLabel.Label != "Wikipedia")
