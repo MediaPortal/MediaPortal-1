@@ -123,8 +123,16 @@ namespace MediaPortal.GUI.Library
         ClearFontCache();
       }
 
-      if (_cachedTextLabel == null) return;
-      if (_cachedTextLabel.Length == 0) return;
+      if (_cachedTextLabel == null)
+      {
+        base.Render(timePassed);
+        return;
+      }
+      if (_cachedTextLabel.Length == 0)
+      {
+        base.Render(timePassed);
+        return;
+      }
 
       long color = _textColor;
       if (Dimmed)
@@ -146,6 +154,7 @@ namespace MediaPortal.GUI.Library
             c = GUIGraphicsContext.MergeAlpha(c);
             _font.DrawText(_positionX, _positionY, (int)c, _cachedTextLabel, _textAlignment, -1);
           }
+          base.Render(timePassed);
           return;
         }
 
@@ -200,7 +209,11 @@ namespace MediaPortal.GUI.Library
               if (fwidth < 1) return;
               if (heighteight < 1) return;
               */
-              if (_width < 6) return;
+              if (_width < 6)
+              {
+                base.Render(timePassed);
+                return;
+              }
               uint c = (uint)color;
               c = GUIGraphicsContext.MergeAlpha(c);
 
@@ -208,6 +221,7 @@ namespace MediaPortal.GUI.Library
               //if (_useViewPort)
               //  GUIGraphicsContext.DX9Device.Viewport = oldviewport;
             }
+            base.Render(timePassed);
             return;
           }
 
