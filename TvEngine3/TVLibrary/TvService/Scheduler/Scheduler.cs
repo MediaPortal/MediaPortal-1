@@ -383,29 +383,68 @@ namespace TvService
       TvResult result;
       List<CardDetail> freeCards = _tvController.GetFreeCardsForChannelName(recording.Channel, user, out result);
       if (freeCards.Count == 0) return false;
-      CardDetail cardInfo = freeCards[0];
+      CardDetail cardInfo = null;
+
+      //first try to start recording using the recommended card
       if (recording.Schedule.RecommendedCard > 0)
       {
-        bool isAvailable = false;
         foreach (CardDetail card in freeCards)
         {
-          if (card.Id == recording.Schedule.RecommendedCard)
+          if (card.Id != recording.Schedule.RecommendedCard) continue;
+
+          //when card is idle we can use it
+          //when card is busy, but already tuned to the correct channel then we can use it also
+          User byUser;
+          if ((_tvController.IsCardInUse(card.Id, out byUser) == false) || _tvController.CurrentChannelName(card.Id) == recording.Channel)
           {
+            // use the recommended card.
             cardInfo = card;
-            isAvailable = true;
             Log.Write("Scheduler : record on recommended card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
             break;
           }
         }
-        if (!isAvailable)
+        if (cardInfo == null)
         {
-          Log.Write("Scheduler : recommended card:{0} is not aivailble. start recording on card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
+          Log.Write("Scheduler : recommended card:{0} is not available", recording.Schedule.RecommendedCard);
         }
       }
-      else
+
+      if (cardInfo == null)
       {
-        Log.Write("Scheduler : record on card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
+        //first try, find a free card
+        foreach (CardDetail card in freeCards)
+        {
+          User byUser;
+          if (_tvController.IsCardInUse(card.Id, out byUser) == false)
+          {
+            cardInfo = card;
+            Log.Write("Scheduler : record on free card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
+            break;
+          }
+        }
       }
+      if (cardInfo == null)
+      {
+        Log.Write("Scheduler : all cards busy, check if any card is already tuned to channel:{0}", recording.Channel);
+        //all cards in use, check if a card is already tuned to the channel we want to record
+        foreach (CardDetail card in freeCards)
+        {
+          if (_tvController.CurrentChannelName(card.Id) == recording.Channel)
+          {
+            cardInfo = card;
+            Log.Write("Scheduler : record on card:{0} priority:{1} which is tuned to {2}", cardInfo.Id, cardInfo.Card.Priority, recording.Channel);
+            break;
+          }
+        }
+      }
+
+      if (cardInfo == null)
+      {
+        //all cards in use, no card tuned to the channel, use the first one.
+        cardInfo = freeCards[0];
+        Log.Write("Scheduler : no card is tuned to the correct channel. record on card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
+      }
+
       bool lockedCard = false;
       try
       {
@@ -496,7 +535,7 @@ namespace TvService
         if ((ScheduleRecordingType)recording.Schedule.ScheduleType == ScheduleRecordingType.Once)
         {
           recording.Schedule.Delete();
-          _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.ScheduleDeleted, new VirtualCard(recording.CardInfo.Id), GetUser(), recording.Schedule,null));
+          _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.ScheduleDeleted, new VirtualCard(recording.CardInfo.Id), GetUser(), recording.Schedule, null));
         }
         else
         {

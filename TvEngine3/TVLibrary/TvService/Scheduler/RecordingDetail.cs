@@ -61,13 +61,13 @@ namespace TvService
       _program = schedule.ReferencedChannel().CurrentProgram;
       if (_program != null)
       {
-        //if we started recording before the schedule start time
-        if (DateTime.Now < _schedule.StartTime)
+        //if we started recording before the start of the show
+        if (DateTime.Now < _program.StartTime)
         {
-          // and the schedule endtime is past the current program endtime
           if (schedule.ReferencedChannel().NextProgram != null)
           {
-            if (_schedule.EndTime >= _program.EndTime)
+            // and the endtime is past the current program endtime
+            if (endTime >= _program.EndTime)
             {
               //then we are not recording the current program, but the next one
               _program = schedule.ReferencedChannel().NextProgram;
