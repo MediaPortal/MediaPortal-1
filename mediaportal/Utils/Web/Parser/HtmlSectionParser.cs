@@ -132,14 +132,14 @@ namespace MediaPortal.Utils.Web
                 if (index < sourceField.source.Length)
                 {
                   if (element.start == string.Empty ||
-                    (startPos = sourceField.source.IndexOf(element.start, index)) == -1)
+                    (startPos = sourceField.source.IndexOf(element.start, index, StringComparison.OrdinalIgnoreCase)) == -1)
                     startPos = index;
                   else
                     startPos = startPos + element.start.Length;
 
                   int endPos;
                   if (element.end == string.Empty ||
-                    (endPos = sourceField.source.IndexOf(element.end, startPos)) == -1)
+                    (endPos = sourceField.source.IndexOf(element.end, startPos, StringComparison.OrdinalIgnoreCase)) == -1)
                     endPos = sourceField.source.Length;
 
                   string elementSource = sourceField.source.Substring(startPos, endPos - startPos);
