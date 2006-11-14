@@ -17572,7 +17572,23 @@
     </tv>
   </capturecard>
   
-  <capturecard commercialname="Technisat DVB-PC TV Star PCI" capturename="TechniSat BDA Digital Capture" devid="ven_13d0&amp;dev_2103&amp;subsys_210313d0&amp;rev_02">
+  <capturecard commercialname="Skystar 2 (BDA)" capturename="TechniSat BDA Digital Capture" devid="ven_13d0&amp;dev_2103&amp;subsys_210313d0&amp;rev_02">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"	checkdevice="false"/>
+        <filter cat="tunerdevice"     name="TechniSat BDA Digital Tuner"	    checkdevice="true"/>
+        <filter cat="capture"         name="TechniSat BDA Digital Capture"	  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+  
+  <capturecard commercialname="Skystar 2 (BDA)" capturename="TechniSat BDA Digital Capture" devid="ven_13d0&amp;dev_2103&amp;subsys_210313d0&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
