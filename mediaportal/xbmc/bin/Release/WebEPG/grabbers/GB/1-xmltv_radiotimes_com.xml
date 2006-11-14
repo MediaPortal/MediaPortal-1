@@ -109,8 +109,6 @@
     <Channel id="film4p1@channel4.com" siteId="584" />
     <Channel id="film4w@channel4.com" siteId="1041" />
     <Channel id="five" siteId="134" />
-    <Channel id="us@five.tv" siteId="2008"/>
-    <Channel id="life@five.tv" siteId="2007"/>
     <Channel id="flaunt.tv" siteId="1141" />
     <Channel id="fxuk.tv" siteId="1461" />
     <Channel id="god.tv" siteId="137" />
@@ -330,7 +328,7 @@
   </Channels>
   <Listing type="Data">
     <Site url="http://xmltv.radiotimes.com/xmltv/[ID].dat" post="" external="false" encoding="" />
-    <Data rowDelimitor="&#xA;" dataDelimitor="~">&lt;#TITLE&gt;~~~~~~~~~~~~~~~~&lt;#GENRE&gt;~&lt;#DESCRIPTION&gt;~~&lt;#DAY&gt;/&lt;#MONTH&gt;/~&lt;#START&gt;~&lt;#END&gt;~
+    <Data rowDelimitor="&#xA;" dataDelimitor="~">#TITLE~~#SUBTITLE~~~#ACTORS~~~#REPEAT~#SUBTITLES~~~~~~~#GENRE~#DESCRIPTION~~#DATE~#START~#END~
 </Data>
   </Listing>
 </Grabber>
