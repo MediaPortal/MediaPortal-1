@@ -21,7 +21,7 @@ void CWaitEvent::ResetEvent()
 }
 BOOL CWaitEvent::Wait()
 {
-  DWORD dwResult=::WaitForSingleObject(m_hObject,1000);
+  DWORD dwResult=::WaitForSingleObject(m_hObject,500);
   if (dwResult==WAIT_OBJECT_0) return true;
 
   return false;

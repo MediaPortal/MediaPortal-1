@@ -62,7 +62,8 @@ public:
 	CFilterList m_FilterRefList;	// List to hold the Removed filters.string
 	virtual void OnTsPacket(byte* tsPacket);
 	virtual void OnRawDataReceived(BYTE *pbData, long lDataLength);
-
+  
+  BOOL IsClientRunning(void);
 private:
   Demux*          m_pDemux;
   PidInfo         m_pids;

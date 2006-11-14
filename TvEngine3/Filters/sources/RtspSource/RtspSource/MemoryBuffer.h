@@ -27,10 +27,12 @@ public:
 	HRESULT PutBuffer(BYTE *pbData, long lDataLength, long lOffset);
 	void Clear();
   DWORD Size();
+  void Run(bool onOff);
 protected:
 	vector<BUFFERITEM *> m_Array;
 	CCritSec m_BufferLock;
   DWORD    m_BytesInBuffer;
   CWaitEvent m_event;
   IMemoryCallback* m_pcallback;
+  bool m_bRunning;
 };

@@ -424,9 +424,11 @@ long CRTSPClient::Duration()
 void CRTSPClient::FillBuffer(DWORD byteCount)
 {	
 	Log("Fillbuffer...%d\n",byteCount);
+  DWORD tickCount=GetTickCount();
 	while ( IsRunning() && m_buffer.Size() < byteCount)
 	{
 		Sleep(5);
+    if (GetTickCount()-tickCount > 3000) break;
 	}
 	Log("Fillbuffer...%d/%d\n",byteCount,m_buffer.Size() );
 	

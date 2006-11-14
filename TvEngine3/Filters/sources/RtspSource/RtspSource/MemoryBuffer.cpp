@@ -9,6 +9,7 @@ extern void Log(const char *fmt, ...) ;
 CMemoryBuffer::CMemoryBuffer(void)
 :m_event(NULL,FALSE,FALSE,NULL)
 {
+  m_bRunning=true;
   m_BytesInBuffer=0;
   m_pcallback=NULL;
 }
@@ -34,14 +35,21 @@ DWORD CMemoryBuffer::Size()
 {
   return m_BytesInBuffer;
 }
+void CMemoryBuffer::Run(bool onOff)
+{
+  m_bRunning=onOff;
+  Log("buffer running:%d", onOff);
+}
 
 DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset)
 {	
 	if (lDataLength<0) return 0;
   while (m_BytesInBuffer < lDataLength)
   {	
+    if (!m_bRunning) return 0;
     m_event.ResetEvent();
     m_event.Wait();
+    if (!m_bRunning) return 0;
   }
 		
 	//Log("get..%d/%d",lDataLength,m_BytesInBuffer);

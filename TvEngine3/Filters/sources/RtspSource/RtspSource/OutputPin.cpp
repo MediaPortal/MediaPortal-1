@@ -178,6 +178,7 @@ HRESULT COutputPin::CompleteConnect(IPin *pReceivePin)
 HRESULT COutputPin::FillBuffer(IMediaSample *pSample)
 {
 	CAutoLock lock(&m_FillLock);
+  if (!m_pFilter->IsClientRunning()) return S_OK;
 
   BYTE* pBuffer;
   pSample->GetPointer(&pBuffer);
@@ -186,13 +187,13 @@ HRESULT COutputPin::FillBuffer(IMediaSample *pSample)
   pSample->SetActualDataLength(bytesRead);
 
 	long ticks=GetTickCount()-m_tickUpdateCount;
-	if (ticks>1000)
+  if (ticks>1000 && m_pFilter->IsClientRunning())
 	{
 		ticks=GetTickCount()-m_tickCount;
-		CRefTime refAdd(ticks);
-		m_rtDuration = refAdd+m_rtDurationAtStart;
-		m_pFilter->NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
-		m_tickUpdateCount=GetTickCount();
+    CRefTime refAdd(ticks);
+    m_rtDuration = refAdd+m_rtDurationAtStart;
+    m_pFilter->NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
+    m_tickUpdateCount=GetTickCount();
 	}
   return S_OK;
 }

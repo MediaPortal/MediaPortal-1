@@ -101,7 +101,7 @@ void MultiFramedRTPSource::doStopGettingFrames() {
   reset();
 }
 
-static bool bInDoGetNextFrame1=false;
+//static bool bInDoGetNextFrame1=false;
 void MultiFramedRTPSource::doGetNextFrame() {
   if (!fAreDoingNetworkReads) {
     // Turn on background read handling of incoming packets:
@@ -119,9 +119,9 @@ void MultiFramedRTPSource::doGetNextFrame() {
 }
 
 void MultiFramedRTPSource::doGetNextFrame1() {
-	if (bInDoGetNextFrame1) return;
+	//if (bInDoGetNextFrame1) return;
 
-	bInDoGetNextFrame1=true;
+	//bInDoGetNextFrame1=true;
   while (fNeedDelivery) {
     // If we already have packet data available, then deliver it now.
     Boolean packetLossPrecededThis;
@@ -196,7 +196,7 @@ void MultiFramedRTPSource::doGetNextFrame1() {
       fNeedDelivery = True;
     }
   }
-	bInDoGetNextFrame1=false;
+//	bInDoGetNextFrame1=false;
 }
 
 void MultiFramedRTPSource
@@ -430,7 +430,7 @@ BufferedPacket* BufferedPacketFactory
 
 ReorderingPacketBuffer
 ::ReorderingPacketBuffer(BufferedPacketFactory* packetFactory)
-  : fThresholdTime(100000) /* default reordering threshold: 100 ms */,
+  : fThresholdTime(0) /* default reordering threshold: 100 ms */,
     fHaveSeenFirstPacket(False), fHeadPacket(NULL), fSavedPacket(NULL) {
   fPacketFactory = (packetFactory == NULL)
     ? (new BufferedPacketFactory)

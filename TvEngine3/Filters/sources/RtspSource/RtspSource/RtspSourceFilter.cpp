@@ -136,6 +136,7 @@ HRESULT CRtspSourceFilter::OnConnect()
 {	
 	Log("Filter:OnConnect, find pat/pmt...");
   m_buffer.SetCallback(this);
+  m_buffer.Run(true);
   m_patParser.SkipPacketsAtStart(500);
   m_patParser.Reset();
   if (m_client.Play(0.0f))
@@ -212,6 +213,7 @@ STDMETHODIMP CRtspSourceFilter::Run(REFERENCE_TIME tStart)
 	milliSecs/=1000.0f;
 
 	m_buffer.Clear();
+  m_buffer.Run(true);
 	Log("Filter:play stream() from %f",milliSecs);
   if (m_client.Play(milliSecs))
 	{
@@ -223,6 +225,7 @@ STDMETHODIMP CRtspSourceFilter::Run(REFERENCE_TIME tStart)
 	else 
 	{	
 		Log("Filter:failed to play stream()");
+    m_buffer.Run(false);
 		return E_FAIL;
 	}
 	m_client.Run();
@@ -231,10 +234,11 @@ STDMETHODIMP CRtspSourceFilter::Run(REFERENCE_TIME tStart)
 
 STDMETHODIMP CRtspSourceFilter::Stop()
 {
+	m_buffer.Run(false);
+  Log("Filter:stop client...");
+  m_client.Stop();
 	Log("Filter:stop playing...");
 	HRESULT hr=CSource::Stop();
-	Log("Filter:stop client...");
-  m_client.Stop();
 	Log("Filter:clear buffer...");
   m_buffer.Clear();
 	Log("Filter:stop done...%x",hr);
@@ -246,6 +250,11 @@ STDMETHODIMP CRtspSourceFilter::Pause()
 	Log("Filter:pause playing...");
 	m_client.Pause();
   return CSource::Pause();
+}
+
+BOOL CRtspSourceFilter::IsClientRunning(void)
+{
+  return m_client.IsRunning();
 }
 
 BOOL CRtspSourceFilter::is_Active(void)
@@ -278,7 +287,7 @@ STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *
 	if (wcsstr(m_fileName,L"rtsp://")==NULL)
 	{
 		Log("Filter:using defailt filename");
-		wcscpy(m_fileName,L"rtsp://erwin-PC/stream4");
+		wcscpy(m_fileName,L"rtsp://pcebeckers/stream1");
 	}
 
 	Log("Filter:Initialize");
