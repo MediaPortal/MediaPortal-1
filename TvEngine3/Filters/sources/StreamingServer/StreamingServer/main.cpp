@@ -33,7 +33,7 @@ extern netAddressBits ReceivingInterfaceAddr ;
 int _tmain(int argc, _TCHAR* argv[])
 {
   StreamSetup("192.168.1.58");
-  StreamAddTimeShiftFile("test", "C:\\1.ts.tsbuffer",false);
+  StreamAddMpegFile("test", "C:\\erwin\\tvServer\\TVLibrary\\TvService\\bin\\Debug\\5_manual_200611130905p54.mpg");
   while (true)
   {
     StreamRun();

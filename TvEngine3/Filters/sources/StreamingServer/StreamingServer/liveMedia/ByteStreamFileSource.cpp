@@ -26,7 +26,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "ByteStreamFileSource.hh"
 #include "InputFile.hh"
 #include "GroupsockHelper.hh"
-
+#define READ_FROM_FILES_SYNCHRONOUSLY 1
 ////////// ByteStreamFileSource //////////
 
 ByteStreamFileSource*
