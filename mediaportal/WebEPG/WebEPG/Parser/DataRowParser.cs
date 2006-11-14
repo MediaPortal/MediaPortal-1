@@ -84,7 +84,7 @@ namespace MediaPortal.WebEPG.Parser
 
         int start = 0;
         int end = delim.Index;
-        if (i - 1 > 0)
+        if (i - 1 >= 0)
         {
           Match last = elementTags[i - 1];
 

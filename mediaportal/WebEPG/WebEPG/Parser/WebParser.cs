@@ -39,6 +39,8 @@ namespace MediaPortal.WebEPG.Parser
     string _sublinkMatch;
     HTTPRequest _sublinkRequest;
     WebParserTemplate _template;
+    DataPreference _listingPreference;
+    DataPreference _sublinkPreference;
     #endregion
 
     #region Constructors/Destructors
@@ -46,6 +48,7 @@ namespace MediaPortal.WebEPG.Parser
     {
       _template = webTemplate;
       HtmlParserTemplate listingTemplate = _template.GetTemplate("default");
+      _listingPreference = _template.GetPreference("default");
       Dictionary<string, int> monthsDict = null;
       if (_template.months != null)
       {
@@ -62,6 +65,7 @@ namespace MediaPortal.WebEPG.Parser
       {
         SublinkInfo sublink = _template.sublinks[0];
         HtmlParserTemplate sublinkTemplate = _template.GetTemplate(sublink.template);
+        _sublinkPreference = _template.GetPreference(sublinkTemplate.Name);
         if (sublinkTemplate != null)
         {
           _sublinkParser = new HtmlParser(sublinkTemplate, typeof(ProgramData));
@@ -83,6 +87,7 @@ namespace MediaPortal.WebEPG.Parser
         {
           // get first match
           ProgramData subdata = (ProgramData)_sublinkParser.GetData(0);
+          subdata.Preference = _sublinkPreference;
 
           data.Merge(subdata);
 
@@ -116,6 +121,7 @@ namespace MediaPortal.WebEPG.Parser
       }
 
       ProgramData data = ((ProgramData)_listingParser.GetData(index));
+      data.Preference = _listingPreference;
       if (searchData != null)
         data.Merge(searchData);
       if (_sublinkParser != null)

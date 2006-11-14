@@ -41,7 +41,7 @@ namespace MediaPortal.WebEPG.Parser
     private string _description = String.Empty;
     private string _genre = String.Empty;
     private List<string> _actors;
-    private DataPreference preference;
+    private DataPreference _preference;
     private HTTPRequest _sublink;
     private Dictionary<string, int> _months;
     private WorldDateTime _startTime;
@@ -73,6 +73,12 @@ namespace MediaPortal.WebEPG.Parser
 
     #region Properties
     // Public Properties
+    public DataPreference Preference
+    {
+      get { return _preference; }
+      set { _preference = value; }
+    }
+
     public HTTPRequest SublinkRequest
     {
       get { return _sublink; }
@@ -164,39 +170,39 @@ namespace MediaPortal.WebEPG.Parser
       if (data != null)
       {
         // Preference not yet set?
-        if (this.preference == null)
-          this.preference = new DataPreference();
+        if (this._preference == null)
+          this._preference = new DataPreference();
 
-        if (data.preference == null)
-          data.preference = new DataPreference();
+        if (data._preference == null)
+          data._preference = new DataPreference();
 
         // Merge values with Preference
         if (data._title != string.Empty &&
-          (this._title == string.Empty || data.preference.Title > this.preference.Title))
+          (this._title == string.Empty || data._preference.Title > this._preference.Title))
         {
           this._title = data._title;
-          this.preference.Title = data.preference.Title;
+          this._preference.Title = data._preference.Title;
         }
 
         if (data._subTitle != string.Empty &&
-          (this._subTitle == string.Empty || data.preference.Subtitle > this.preference.Subtitle))
+          (this._subTitle == string.Empty || data._preference.Subtitle > this._preference.Subtitle))
         {
           this._subTitle = data._subTitle;
-          this.preference.Subtitle = data.preference.Subtitle;
+          this._preference.Subtitle = data._preference.Subtitle;
         }
 
         if (data._description != string.Empty &&
-          (this._description == string.Empty || data.preference.Description > this.preference.Description))
+          (this._description == string.Empty || data._preference.Description > this._preference.Description))
         {
           this._description = data._description;
-          this.preference.Description = data.preference.Description;
+          this._preference.Description = data._preference.Description;
         }
 
         if (data._genre != string.Empty &&
-          (this._genre == string.Empty || data.preference.Genre > this.preference.Genre))
+          (this._genre == string.Empty || data._preference.Genre > this._preference.Genre))
         {
           this._genre = data._genre;
-          this.preference.Genre = data.preference.Genre;
+          this._preference.Genre = data._preference.Genre;
         }
 
         if (data._repeat)
@@ -343,7 +349,7 @@ namespace MediaPortal.WebEPG.Parser
 
       int index = 0;
       int start;
-      char[] delimitors = new char[2]{',','\n'};
+      char[] delimitors = new char[2] { ',', '\n' };
       while ((start = strActors.IndexOfAny(delimitors, index)) != -1)
       {
         string actor = strActors.Substring(index, start - index);
@@ -394,6 +400,24 @@ namespace MediaPortal.WebEPG.Parser
 
       return numberValue;
     }
+
+    private void GetDate(string element)
+    {
+      if (_startTime == null)
+        _startTime = new WorldDateTime();
+
+      int pos = 0;
+      if ((pos = element.IndexOf("/")) != -1)
+      {
+        _startTime.Day = Int32.Parse(element.Substring(0, pos));
+      }
+
+      int start = pos + 1;
+      if ((pos = element.IndexOf("/", start)) != -1)
+      {
+        _startTime.Month = Int32.Parse(element.Substring(start, pos - start));
+      }
+    }
     #endregion
 
     #region IParserData Implementations
@@ -424,6 +448,9 @@ namespace MediaPortal.WebEPG.Parser
               _endTime = new WorldDateTime();
             _endTime.Hour = endTime.Hour;
             _endTime.Minute = endTime.Minute;
+            break;
+          case "#DATE":
+            GetDate(element);
             break;
           case "#DAY":
             if (_startTime == null)
@@ -460,10 +487,12 @@ namespace MediaPortal.WebEPG.Parser
             _season = GetNumber(element);
             break;
           case "#REPEAT":
-            _repeat = true;
+            if (element.ToLower().IndexOf("false") == -1)
+              _repeat = true;
             break;
           case "#SUBTITLES":
-            _subtitles = true;
+            if (element.ToLower().IndexOf("false") == -1)
+              _subtitles = true;
             break;
           default:
             break;

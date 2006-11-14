@@ -59,5 +59,15 @@ namespace MediaPortal.WebEPG.Config.Grabber
       }
       return null;
     }
+
+    public DataPreference GetPreference(string name)
+    {
+      for (int i = 0; i < preferences.Count; i++)
+      {
+        if (preferences[i].Template == name)
+          return preferences[i];
+      }
+      return null;
+    }
   }
 }
