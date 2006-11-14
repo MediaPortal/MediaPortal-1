@@ -50,8 +50,9 @@ namespace TvService
     /// </summary>
     /// <param name="schedule">Schedule of this recording</param>
     /// <param name="channel">Channel on which the recording is done</param>
-    /// <param name="endTime">Date/Time the recording should stop</param>
-    public RecordingDetail(Schedule schedule, string channel, DateTime endTime)
+    /// <param name="endTime">Date/Time the recording should start without pre-record interval</param>
+    /// <param name="endTime">Date/Time the recording should stop with post record interval</param>
+    public RecordingDetail(Schedule schedule, string channel, DateTime startTime, DateTime endTime)
     {
       _schedule = schedule;
       _channel = channel;
@@ -61,17 +62,13 @@ namespace TvService
       _program = schedule.ReferencedChannel().CurrentProgram;
       if (_program != null)
       {
-        //if we started recording before the start of the show
-        if (DateTime.Now < _program.StartTime)
+        if (startTime >= _program.EndTime)
         {
-          if (schedule.ReferencedChannel().NextProgram != null)
+          TvDatabase.Program next = schedule.ReferencedChannel().NextProgram;
+          if (next != null)
           {
-            // and the endtime is past the current program endtime
-            if (endTime >= _program.EndTime)
-            {
-              //then we are not recording the current program, but the next one
-              _program = schedule.ReferencedChannel().NextProgram;
-            }
+            //then we are not recording the current program, but the next one
+            _program = next;
           }
         }
       }

@@ -220,7 +220,7 @@ namespace TvService
             currentTime <= schedule.EndTime.AddMinutes(_postRecordInterval))
         {
 
-          newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name, schedule.EndTime.AddMinutes(_postRecordInterval));
+          newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name,schedule.StartTime, schedule.EndTime.AddMinutes(_postRecordInterval));
           return true;
         }
         return false;
@@ -235,7 +235,7 @@ namespace TvService
         {
           if (!schedule.IsSerieIsCanceled(start))
           {
-            newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name, end.AddMinutes(_postRecordInterval));
+            newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name,start, end.AddMinutes(_postRecordInterval));
             return true;
           }
         }
@@ -254,7 +254,7 @@ namespace TvService
 
             if (!schedule.IsSerieIsCanceled(start))
             {
-              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name, end.AddMinutes(_postRecordInterval));
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name, start,end.AddMinutes(_postRecordInterval));
               return true;
             }
           }
@@ -272,7 +272,7 @@ namespace TvService
           {
             if (!schedule.IsSerieIsCanceled(start))
             {
-              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name, end.AddMinutes(_postRecordInterval));
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name,start, end.AddMinutes(_postRecordInterval));
               return true;
             }
           }
@@ -291,7 +291,7 @@ namespace TvService
           {
             if (!schedule.IsSerieIsCanceled(start))
             {
-              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name, end.AddMinutes(_postRecordInterval));
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name, start,end.AddMinutes(_postRecordInterval));
               return true;
             }
           }
@@ -311,7 +311,7 @@ namespace TvService
             {
               if (!schedule.IsSerieIsCanceled(current.StartTime))
               {
-                newRecording = new RecordingDetail(schedule, current.ReferencedChannel().Name, current.EndTime.AddMinutes(_postRecordInterval));
+                newRecording = new RecordingDetail(schedule, current.ReferencedChannel().Name,current.StartTime, current.EndTime.AddMinutes(_postRecordInterval));
                 return true;
               }
             }
@@ -325,7 +325,7 @@ namespace TvService
             {
               if (!schedule.IsSerieIsCanceled(next.StartTime))
               {
-                newRecording = new RecordingDetail(schedule, next.ReferencedChannel().Name, next.EndTime.AddMinutes(_postRecordInterval));
+                newRecording = new RecordingDetail(schedule, next.ReferencedChannel().Name,next.StartTime, next.EndTime.AddMinutes(_postRecordInterval));
                 return true;
               }
             }
@@ -347,7 +347,7 @@ namespace TvService
               {
                 if (!schedule.IsSerieIsCanceled(current.StartTime))
                 {
-                  newRecording = new RecordingDetail(schedule, current.ReferencedChannel().Name, current.EndTime.AddMinutes(_postRecordInterval));
+                  newRecording = new RecordingDetail(schedule, current.ReferencedChannel().Name,current.StartTime, current.EndTime.AddMinutes(_postRecordInterval));
                   return true;
                 }
               }
@@ -361,7 +361,7 @@ namespace TvService
               {
                 if (!schedule.IsSerieIsCanceled(next.StartTime))
                 {
-                  newRecording = new RecordingDetail(schedule, next.ReferencedChannel().Name, next.EndTime.AddMinutes(_postRecordInterval));
+                  newRecording = new RecordingDetail(schedule, next.ReferencedChannel().Name,next.StartTime, next.EndTime.AddMinutes(_postRecordInterval));
                   return true;
                 }
               }
