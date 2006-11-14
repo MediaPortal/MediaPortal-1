@@ -85,8 +85,8 @@
     <Site url="http://www.bleb.org/tv/data/listings/[DAY_OFFSET]/[ID].xml?WebEPG" post="" external="false" encoding="" delay="2000" />
     <Xml xpath="//programme" channel="">
       <Fields>
-        <Field name="#STARTXMLTV" xmlname="start" />
-        <Field name="#ENDXMLTV" xmlname="end" />
+        <Field name="#START" xmlname="start" />
+        <Field name="#END" xmlname="end" />
         <Field name="#TITLE" xmlname="title" />
         <Field name="#SUBTITLE" xmlname="subtitle" />
         <Field name="#DESCRIPTION" xmlname="desc" />
