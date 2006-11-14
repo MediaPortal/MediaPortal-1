@@ -41,6 +41,7 @@ namespace SetupTv.Sections
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpComboBoxCam = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.checkBoxCreateGroups = new System.Windows.Forms.CheckBox();
       this.SuspendLayout();
       // 
       // progressBar1
@@ -158,10 +159,21 @@ namespace SetupTv.Sections
       this.mpComboBoxCam.TabIndex = 71;
       this.mpComboBoxCam.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxCam_SelectedIndexChanged);
       // 
+      // checkBoxCreateGroups
+      // 
+      this.checkBoxCreateGroups.AutoSize = true;
+      this.checkBoxCreateGroups.Location = new System.Drawing.Point(138, 326);
+      this.checkBoxCreateGroups.Name = "checkBoxCreateGroups";
+      this.checkBoxCreateGroups.Size = new System.Drawing.Size(175, 17);
+      this.checkBoxCreateGroups.TabIndex = 73;
+      this.checkBoxCreateGroups.Text = "Create groups for each provider";
+      this.checkBoxCreateGroups.UseVisualStyleBackColor = true;
+      // 
       // CardDvbT
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.checkBoxCreateGroups);
       this.Controls.Add(this.mpLabel2);
       this.Controls.Add(this.mpComboBoxCam);
       this.Controls.Add(this.listViewStatus);
@@ -197,5 +209,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxCam;
+    private System.Windows.Forms.CheckBox checkBoxCreateGroups;
   }
 }

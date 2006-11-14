@@ -234,6 +234,8 @@ namespace SetupTv.Sections
       
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
       mpComboBox1Cam.SelectedIndex = card.CamType;
+      checkBoxCreateGroups.Checked = (layer.GetSetting("dvbc" + _cardNumber.ToString() + "creategroups", "true").Value == "true");
+
 
     }
     public override void OnSectionDeActivated()
@@ -242,6 +244,10 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting=layer.GetSetting("dvbc" + _cardNumber.ToString() + "Country", "0");
       setting.Value = mpComboBoxCountry.SelectedIndex.ToString();
+      setting.Persist();
+
+      setting = layer.GetSetting("dvbc" + _cardNumber.ToString() + "creategroups", "false");
+      setting.Value = checkBoxCreateGroups.Checked ? "true" : "false";
       setting.Persist();
       //DatabaseManager.Instance.SaveChanges();
     }
@@ -345,7 +351,10 @@ namespace SetupTv.Sections
               dbChannel.SortOrder = channel.LogicalChannelNumber;
             }
             dbChannel.Persist();
-            layer.AddChannelToGroup(dbChannel, channel.Provider);
+            if (checkBoxCreateGroups.Checked)
+            {
+              layer.AddChannelToGroup(dbChannel, channel.Provider);
+            }
             layer.AddTuningDetails(dbChannel, channel);
             if (channel.IsTv)
             {

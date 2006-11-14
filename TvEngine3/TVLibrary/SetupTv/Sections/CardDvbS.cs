@@ -283,7 +283,9 @@ namespace SetupTv.Sections
       mpLNB2_CheckedChanged(null, null); ;
       mpLNB3_CheckedChanged(null, null); ;
       mpLNB4_CheckedChanged(null, null); ;
-      
+
+      checkBoxCreateGroups.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "creategroups", "true").Value == "true");
+
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
       mpComboBoxCam.SelectedIndex = card.CamType;
     }
@@ -292,6 +294,10 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       base.OnSectionDeActivated();
       Setting setting;
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "creategroups", "false");
+      setting.Value = checkBoxCreateGroups.Checked ? "true" : "false";
+      setting.Persist();
+      
       setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "Sattelite1", "0");
       setting.Value = mpTransponder1.SelectedIndex.ToString();
       setting.Persist();
@@ -500,7 +506,10 @@ namespace SetupTv.Sections
           }
           dbChannel.Persist();
 
-          layer.AddChannelToGroup(dbChannel, channel.Provider);
+          if (checkBoxCreateGroups.Checked)
+          {
+            layer.AddChannelToGroup(dbChannel, channel.Provider);
+          }
           layer.AddTuningDetails(dbChannel, channel);
           if (channel.IsTv)
           {

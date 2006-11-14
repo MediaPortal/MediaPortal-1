@@ -39,7 +39,9 @@ namespace SetupTv.Sections
       this.mpLNB1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpTransponder1 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLNB4 = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpComboBoxCam = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpTransponder4 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpDisEqc4 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLNB3 = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -52,8 +54,7 @@ namespace SetupTv.Sections
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.listViewStatus = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpComboBoxCam = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.checkBoxCreateGroups = new System.Windows.Forms.CheckBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -171,6 +172,15 @@ namespace SetupTv.Sections
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "LNB Setup";
       // 
+      // mpLabel3
+      // 
+      this.mpLabel3.AutoSize = true;
+      this.mpLabel3.Location = new System.Drawing.Point(39, 148);
+      this.mpLabel3.Name = "mpLabel3";
+      this.mpLabel3.Size = new System.Drawing.Size(33, 13);
+      this.mpLabel3.TabIndex = 74;
+      this.mpLabel3.Text = "CAM:";
+      // 
       // mpLNB4
       // 
       this.mpLNB4.AutoSize = true;
@@ -182,6 +192,22 @@ namespace SetupTv.Sections
       this.mpLNB4.Text = "LNB#3";
       this.mpLNB4.UseVisualStyleBackColor = true;
       this.mpLNB4.CheckedChanged += new System.EventHandler(this.mpLNB4_CheckedChanged);
+      // 
+      // mpComboBoxCam
+      // 
+      this.mpComboBoxCam.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxCam.FormattingEnabled = true;
+      this.mpComboBoxCam.Items.AddRange(new object[] {
+            "default",
+            "viaccess",
+            "aston",
+            "conax",
+            "cryptoworks"});
+      this.mpComboBoxCam.Location = new System.Drawing.Point(78, 141);
+      this.mpComboBoxCam.Name = "mpComboBoxCam";
+      this.mpComboBoxCam.Size = new System.Drawing.Size(103, 21);
+      this.mpComboBoxCam.TabIndex = 73;
+      this.mpComboBoxCam.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxCam_SelectedIndexChanged);
       // 
       // mpTransponder4
       // 
@@ -295,35 +321,21 @@ namespace SetupTv.Sections
       this.columnHeader1.Text = "Status";
       this.columnHeader1.Width = 350;
       // 
-      // mpLabel3
+      // checkBoxCreateGroups
       // 
-      this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(39, 148);
-      this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(33, 13);
-      this.mpLabel3.TabIndex = 74;
-      this.mpLabel3.Text = "CAM:";
-      // 
-      // mpComboBoxCam
-      // 
-      this.mpComboBoxCam.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBoxCam.FormattingEnabled = true;
-      this.mpComboBoxCam.Items.AddRange(new object[] {
-            "default",
-            "viaccess",
-            "aston",
-            "conax",
-            "cryptoworks"});
-      this.mpComboBoxCam.Location = new System.Drawing.Point(78, 141);
-      this.mpComboBoxCam.Name = "mpComboBoxCam";
-      this.mpComboBoxCam.Size = new System.Drawing.Size(103, 21);
-      this.mpComboBoxCam.TabIndex = 73;
-      this.mpComboBoxCam.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxCam_SelectedIndexChanged);
+      this.checkBoxCreateGroups.AutoSize = true;
+      this.checkBoxCreateGroups.Location = new System.Drawing.Point(149, 388);
+      this.checkBoxCreateGroups.Name = "checkBoxCreateGroups";
+      this.checkBoxCreateGroups.Size = new System.Drawing.Size(175, 17);
+      this.checkBoxCreateGroups.TabIndex = 68;
+      this.checkBoxCreateGroups.Text = "Create groups for each provider";
+      this.checkBoxCreateGroups.UseVisualStyleBackColor = true;
       // 
       // CardDvbS
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.checkBoxCreateGroups);
       this.Controls.Add(this.listViewStatus);
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.mpCheckBox1);
@@ -371,5 +383,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxCam;
+    private System.Windows.Forms.CheckBox checkBoxCreateGroups;
   }
 }
