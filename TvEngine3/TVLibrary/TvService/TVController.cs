@@ -102,7 +102,11 @@ namespace TvService
       if (Init() == false)
       {
         System.Threading.Thread.Sleep(5000);
-        Init();
+        if (Init() == false)
+        {
+          System.Threading.Thread.Sleep(5000);
+          Init();
+        }
       }
     }
 
