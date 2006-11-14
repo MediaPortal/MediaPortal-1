@@ -20,7 +20,7 @@ namespace MediaPortal.VideoLanPlugin
         double _duration;
         double _currentPosition;
         DateTime _updateTimer;
-        private string[] _supportedExtension = new string[1];
+        private string[] _supportedExtension = new string[2];
 
         bool _isFullScreen = false;
         bool _notifyPlaying = true;
@@ -90,8 +90,8 @@ namespace MediaPortal.VideoLanPlugin
             //_supportedExtension[1] = ".avi";
             //_supportedExtension[2] = ".mp4";
             //_supportedExtension[3] = ".mov";
-            //_supportedExtension[0] = ".ts";
-            _supportedExtension[0] = ".gary";
+            _supportedExtension[0] = ".ts";
+            _supportedExtension[1] = ".gary";
             for (int i = 0; i < _supportedExtension.Length; i++)
             {
                 if (_supportedExtension[i].Equals(ext))
@@ -175,6 +175,16 @@ namespace MediaPortal.VideoLanPlugin
             if (foAction.wID == Action.ActionType.ACTION_NEXT_AUDIO)
             {
                 object key = vlcControl.Player.getVariable("key-audio-track");
+                vlcControl.Player.setVariable("key-pressed", key);
+            }
+            if (foAction.wID == Action.ActionType.ACTION_FORWARD)
+            {
+                object key = vlcControl.Player.getVariable("key-faster");
+                vlcControl.Player.setVariable("key-pressed", key);
+            }
+            if (foAction.wID == Action.ActionType.ACTION_REWIND)
+            {
+                object key = vlcControl.Player.getVariable("key-slower");
                 vlcControl.Player.setVariable("key-pressed", key);
             }
             if (foAction.wID == Action.ActionType.ACTION_TAKE_SCREENSHOT)
