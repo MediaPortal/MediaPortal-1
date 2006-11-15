@@ -1,4 +1,4 @@
-satname=DirecTV 5 & EchoStar 8/10 (110°W)
+satname=DirecTV 5 (109.8°W) & EchoStar 8/10 (110°W)
 12618,L,20000
 12647,L,20000
 12676,L,20000
