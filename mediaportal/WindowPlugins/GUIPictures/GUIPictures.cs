@@ -1482,7 +1482,7 @@ namespace MediaPortal.GUI.Pictures
       if (filmstrip == null) return;
       string thumbnailImage = GetLargeThumbnail(item.Path);
       filmstrip.InfoImageFileName = thumbnailImage;
-      UpdateButtonStates();
+      //UpdateButtonStates();
     }
 
     #endregion
