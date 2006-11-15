@@ -107,9 +107,9 @@ namespace ProcessPlugins.ExternalDreamboxTV
             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
 
-                _DreamboxIP = xmlreader.GetValueAsString("DreamboxDirectEPG", "IP", "dreambox");
-                _DreamboxUserName = xmlreader.GetValueAsString("DreamboxDirectEPG", "UserName", "root");
-                _DreamboxPassword = xmlreader.GetValueAsString("DreamboxDirectEPG", "Password", "dreambox");
+                _DreamboxIP = xmlreader.GetValueAsString("Dreambox", "IP", "dreambox");
+                _DreamboxUserName = xmlreader.GetValueAsString("Dreambox", "UserName", "root");
+                _DreamboxPassword = xmlreader.GetValueAsString("Dreambox", "Password", "dreambox");
             }
         }
 

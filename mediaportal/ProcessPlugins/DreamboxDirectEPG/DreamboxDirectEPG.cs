@@ -85,12 +85,12 @@ namespace ProcessPlugins.DreamboxDirectEPG
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        _Hour = xmlreader.GetValueAsInt("DreamboxDirectEPG", "Hour", 0);
-        _Minute = xmlreader.GetValueAsInt("DreamboxDirectEPG", "Minute", 0);
+          _Hour = xmlreader.GetValueAsInt("Dreambox", "Hour", 0);
+          _Minute = xmlreader.GetValueAsInt("Dreambox", "Minute", 0);
 
-        _DreamboxIP = xmlreader.GetValueAsString("DreamboxDirectEPG", "IP", "dreambox");
-        _DreamboxUserName = xmlreader.GetValueAsString("DreamboxDirectEPG", "UserName", "root");
-        _DreamboxPassword = xmlreader.GetValueAsString("DreamboxDirectEPG", "Password", "dreambox");
+        _DreamboxIP = xmlreader.GetValueAsString("Dreambox", "IP", "dreambox");
+        _DreamboxUserName = xmlreader.GetValueAsString("Dreambox", "UserName", "root");
+        _DreamboxPassword = xmlreader.GetValueAsString("Dreambox", "Password", "dreambox");
       }
     }
 
