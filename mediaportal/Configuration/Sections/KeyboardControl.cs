@@ -112,7 +112,7 @@ namespace MediaPortal.Configuration.Sections
       items.Add(new ListViewItem(new string[] { "Slideshow", "right", "Next picture or move right in zoom mode" }, -1));
       items.Add(new ListViewItem(new string[] { "Slideshow", "Enter", "Pause/Resume slideshow" }, -1));
       items.Add(new ListViewItem(new string[] { "Slideshow", "PageUp", "Zoom out" }, -1));
-      items.Add(new ListViewItem(new string[] { "Slideshow", "PageUp", "Zoom in" }, -1));
+      items.Add(new ListViewItem(new string[] { "Slideshow", "PageDown", "Zoom in" }, -1));
       items.Add(new ListViewItem(new string[] { "Slideshow", "1-9", "Zoom level 1-9" }, -1));
       items.Add(new ListViewItem(new string[] { "Slideshow", "up", "Move picture up in zoommode" }, -1));
       items.Add(new ListViewItem(new string[] { "Slideshow", "down", "Move picture down in zoommode" }, -1));
