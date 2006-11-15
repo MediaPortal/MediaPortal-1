@@ -1530,6 +1530,7 @@ namespace MediaPortal
       // Keep track of the frame count
       //if (frames < 10) return;
       float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
+      frames++;
       // Update the scene stats once per second
       if (time - lastTime >= 1.0f)
       {
@@ -2425,23 +2426,29 @@ namespace MediaPortal
       return !result;
     }
 
-    private static int loopCount = 1;
-    private static int sleepCount = 0;
+    private float _lastRenderTime = 0.0f;
 
-		void RenderWorkerThread()
-		{
-			while (true)
-			{
-				if (GUIWindowManager.IsSwitchingToNewWindow == false)
-				{
-					FullRender();
-				}
-				Thread.Sleep(5);
-				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
-					break;
-
-			}
-		}
+    void RenderWorkerThread()
+    {
+      float currentTime;
+      float renderTime = 0.0f;
+      while (true)
+      {
+        currentTime = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
+        if (((currentTime + renderTime) - _lastRenderTime) >= (2.0f / GUIGraphicsContext.MaxFPS))
+        {
+          if (GUIWindowManager.IsSwitchingToNewWindow == false)
+          {
+            FullRender();
+            renderTime = DXUtil.Timer(DirectXTimer.GetAbsoluteTime) - currentTime;
+            _lastRenderTime = currentTime;
+          }
+        }
+        Thread.Sleep(5);
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+          break;
+      }
+    }
 
 
 		private void Application_Idle(object sender, EventArgs e)
