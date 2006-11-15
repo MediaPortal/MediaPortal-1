@@ -89,6 +89,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
                 {
                     DreamBox.Core dreambox = new DreamBox.Core("http://" + _DreamboxIP, _DreamboxUserName, _DreamboxPassword);
                     dreambox.Remote.Zap(reference);
+                    Log.Info("ExternalDreamboxTV ZAP: {0}\r\n", reference);
                 }
                 else
                     Log.Info("ExternalDreamboxTV Error: {0}\r\n", "Could not zap because IP address of dreambox not set.");
