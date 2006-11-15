@@ -60,6 +60,13 @@ namespace ProcessPlugins.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap dream_20multimedia {
+            get {
+                object obj = ResourceManager.GetObject("dream%20multimedia", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap tvmovie4_topgrafik_nw {
             get {
                 object obj = ResourceManager.GetObject("tvmovie4_topgrafik-nw", resourceCulture);

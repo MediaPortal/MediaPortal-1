@@ -34,15 +34,15 @@ namespace ProcessPlugins.DreamboxDirectEPG
         {
             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
-                int hour = xmlreader.GetValueAsInt("DreamboxDirectEPG", "Hour", 0);
-                int minute = xmlreader.GetValueAsInt("DreamboxDirectEPG", "Minute", 0);
+                int hour = xmlreader.GetValueAsInt("Dreambox", "Hour", 0);
+                int minute = xmlreader.GetValueAsInt("Dreambox", "Minute", 0);
 
                 mpNumericUpDown1.Value = Convert.ToDecimal(hour);
                 mpNumericUpDown2.Value = Convert.ToDecimal(minute);
 
-                string ip = xmlreader.GetValueAsString("DreamboxDirectEPG", "IP", "dreambox");
-                string userName = xmlreader.GetValueAsString("DreamboxDirectEPG", "UserName", "root");
-                string password = xmlreader.GetValueAsString("DreamboxDirectEPG", "Password", "dreambox");
+                string ip = xmlreader.GetValueAsString("Dreambox", "IP", "dreambox");
+                string userName = xmlreader.GetValueAsString("Dreambox", "UserName", "root");
+                string password = xmlreader.GetValueAsString("Dreambox", "Password", "dreambox");
 
                 edtDreamboxIP.Text = ip;
                 edtUserName.Text = userName;
@@ -54,12 +54,12 @@ namespace ProcessPlugins.DreamboxDirectEPG
         {
             using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
-                xmlwriter.SetValue("DreamboxDirectEPG", "Hour", mpNumericUpDown1.Value.ToString());
-                xmlwriter.SetValue("DreamboxDirectEPG", "Minute", mpNumericUpDown2.Value.ToString());
+                xmlwriter.SetValue("Dreambox", "Hour", mpNumericUpDown1.Value.ToString());
+                xmlwriter.SetValue("Dreambox", "Minute", mpNumericUpDown2.Value.ToString());
 
-                xmlwriter.SetValue("DreamboxDirectEPG", "IP", edtDreamboxIP.Text);
-                xmlwriter.SetValue("DreamboxDirectEPG", "UserName", edtUserName.Text);
-                xmlwriter.SetValue("DreamboxDirectEPG", "Password", edtPassword.Text);
+                xmlwriter.SetValue("Dreambox", "IP", edtDreamboxIP.Text);
+                xmlwriter.SetValue("Dreambox", "UserName", edtUserName.Text);
+                xmlwriter.SetValue("Dreambox", "Password", edtPassword.Text);
             }
             return true;
         }
