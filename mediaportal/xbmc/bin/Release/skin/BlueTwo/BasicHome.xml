@@ -174,7 +174,7 @@
 			<id>200</id>
 			<posX>393</posX>
 			<posY>470</posY>
-			<label>#date</label>
+			<label>#homedate</label>
 			<align>right</align>
 			<font>font13</font>
 			<textcolor>ffa9d0f7</textcolor>
