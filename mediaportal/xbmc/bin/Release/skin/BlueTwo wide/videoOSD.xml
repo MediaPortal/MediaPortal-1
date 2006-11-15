@@ -23,7 +23,7 @@
 	<control>
 		<description>Current Time Info</description>
 		<type>label</type>
-		<id>0</id>
+		<id>110</id>
 		<posX>1186</posX>
 		<posY>27</posY>
 		<label>#time</label>

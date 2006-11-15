@@ -258,6 +258,8 @@ namespace MediaPortal.GUI.Video
             //if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(true);
             // following line should stay. Problems with OSD not
             // appearing are already fixed elsewhere
+            for (int i = (int)Controls.Panel1; i < (int)Controls.Panel2; i++)
+              HideControl(GetID, i);
             FreeResources();
             GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + message.Param1));
             return true;
@@ -279,7 +281,7 @@ namespace MediaPortal.GUI.Video
             Reset();
             FocusControl(GetID, (int)Controls.OSD_PLAY, 0);	// set focus to play button by default when window is shown
             QueueAnimation(AnimationType.WindowOpen);
-            for (int i = (int)Controls.Panel1; i < (int)Controls.Panel2; ++i)
+            for (int i = (int)Controls.Panel1; i < (int)Controls.Panel2; i++)
               ShowControl(GetID, i);
             return true;
           }
