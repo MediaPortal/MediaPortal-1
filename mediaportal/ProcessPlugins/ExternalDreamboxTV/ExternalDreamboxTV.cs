@@ -78,7 +78,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
         {
             Log.Info("ExternalDreamboxTV processing external tuner cmd: {0}", channel_data);
             // ZAP
-
+            Zap(channel_data);
         }
 
         void Zap(string reference)
