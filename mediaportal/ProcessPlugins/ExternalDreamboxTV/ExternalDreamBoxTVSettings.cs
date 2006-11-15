@@ -142,7 +142,13 @@ namespace ProcessPlugins.ExternalDreamboxTV
                 this.edtChannel.Text = table1.Rows[num1]["Name"].ToString();
                 this.progChannels.Value = num1;
                 string text1 = table1.Rows[num1]["Ref"].ToString();
-                this.ImportChannelEPG(text1);
+                try
+                {
+
+                    this.ImportChannelEPG(text1);
+                }
+                catch { }
+                
             }
         }
         private void ImportChannelEPG(string reference)
@@ -290,12 +296,12 @@ namespace ProcessPlugins.ExternalDreamboxTV
                 try
                 {
                     TVDatabase.RemovePrograms();
-                    this._EPGbackgroundWorker.RunWorkerAsync();
                 }
                 catch (Exception exception1)
                 {
                     MessageBox.Show(exception1.Message);
                 }
+                this._EPGbackgroundWorker.RunWorkerAsync();
             }
             else
             {
