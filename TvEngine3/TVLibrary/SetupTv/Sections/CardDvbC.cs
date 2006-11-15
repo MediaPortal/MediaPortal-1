@@ -56,6 +56,8 @@ namespace SetupTv.Sections
     int _cardNumber;
     DVBCList[] _dvbcChannels = new DVBCList[1000];
     int _channelCount = 0;
+    bool _isScanning = false;
+    bool _stopScanning = false;
 
     public CardDvbC()
       : this("DVBC")
@@ -221,7 +223,7 @@ namespace SetupTv.Sections
     {
       progressBarLevel.Value = Math.Min(100, RemoteControl.Instance.SignalLevel(_cardNumber));
       progressBarQuality.Value = Math.Min(100, RemoteControl.Instance.SignalQuality(_cardNumber));
-      
+
     }
 
     public override void OnSectionActivated()
@@ -231,7 +233,7 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       mpComboBoxCountry.SelectedIndex = Int32.Parse(layer.GetSetting("dvbc" + _cardNumber.ToString() + "Country", "0").Value);
 
-      
+
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
       mpComboBox1Cam.SelectedIndex = card.CamType;
       checkBoxCreateGroups.Checked = (layer.GetSetting("dvbc" + _cardNumber.ToString() + "creategroups", "true").Value == "true");
@@ -242,7 +244,7 @@ namespace SetupTv.Sections
     {
       base.OnSectionDeActivated();
       TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting=layer.GetSetting("dvbc" + _cardNumber.ToString() + "Country", "0");
+      Setting setting = layer.GetSetting("dvbc" + _cardNumber.ToString() + "Country", "0");
       setting.Value = mpComboBoxCountry.SelectedIndex.ToString();
       setting.Persist();
 
@@ -256,15 +258,22 @@ namespace SetupTv.Sections
 
     private void mpButtonScanTv_Click_1(object sender, EventArgs e)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      if (card.Enabled == false)
+      if (_isScanning == false)
       {
-        MessageBox.Show(this,"Card is disabled, please enable the card before scanning");
-        return;
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+        if (card.Enabled == false)
+        {
+          MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
+          return;
+        }
+        Thread scanThread = new Thread(new ThreadStart(DoScan));
+        scanThread.Start();
       }
-      Thread scanThread = new Thread(new ThreadStart(DoScan));
-      scanThread.Start();
+      else
+      {
+        _stopScanning = true;
+      }
     }
     void DoScan()
     {
@@ -272,13 +281,17 @@ namespace SetupTv.Sections
       int radioChannelsNew = 0;
       int tvChannelsUpdated = 0;
       int radioChannelsUpdated = 0;
+
+      string buttonText = mpButtonScanTv.Text;
       try
       {
+        _isScanning = true;
+        _stopScanning = false;
+        mpButtonScanTv.Text = "Cancel...";
         RemoteControl.Instance.EpgGrabberEnabled = false;
         LoadList(String.Format(@"Tuningparameters\{0}.dvbc", mpComboBoxCountry.SelectedItem));
         if (_channelCount == 0) return;
 
-        mpButtonScanTv.Enabled = false;
         mpComboBoxCountry.Enabled = false;
         listViewStatus.Items.Clear();
 
@@ -287,17 +300,18 @@ namespace SetupTv.Sections
 
         for (int index = 0; index < _channelCount; ++index)
         {
+          if (_stopScanning) return;
           float percent = ((float)(index)) / _channelCount;
           percent *= 100f;
           if (percent > 100f) percent = 100f;
           progressBar1.Value = (int)percent;
 
-          
+
           DVBCChannel tuneChannel = new DVBCChannel();
           tuneChannel.Frequency = _dvbcChannels[index].frequency;
           tuneChannel.ModulationType = _dvbcChannels[index].modulation;
           tuneChannel.SymbolRate = _dvbcChannels[index].symbolrate;
-          string line = String.Format("{0}tp- {1} {2} {3}",  1 + index, tuneChannel.Frequency, tuneChannel.ModulationType, tuneChannel.SymbolRate);
+          string line = String.Format("{0}tp- {1} {2} {3}", 1 + index, tuneChannel.Frequency, tuneChannel.ModulationType, tuneChannel.SymbolRate);
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
 
@@ -305,7 +319,7 @@ namespace SetupTv.Sections
           {
             RemoteControl.Instance.Tune(_cardNumber, tuneChannel);
           }
-          
+
           IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
           UpdateStatus();
 
@@ -388,11 +402,8 @@ namespace SetupTv.Sections
           }
         }
 
-        progressBar1.Value = 100;
-        mpButtonScanTv.Enabled = true;
-        mpComboBoxCountry.Enabled = true;
         //DatabaseManager.Instance.SaveChanges();
-        
+
       }
       catch (Exception ex)
       {
@@ -401,6 +412,10 @@ namespace SetupTv.Sections
       finally
       {
         RemoteControl.Instance.EpgGrabberEnabled = true;
+        progressBar1.Value = 100;
+        mpComboBoxCountry.Enabled = true;
+        mpButtonScanTv.Text = buttonText;
+        _isScanning = false;
       }
       ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew, radioChannelsUpdated)));
       lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));

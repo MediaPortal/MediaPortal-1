@@ -86,6 +86,8 @@ namespace SetupTv.Sections
     int _radioChannelsNew = 0;
     int _tvChannelsUpdated = 0;
     int _radioChannelsUpdated = 0;
+    bool _isScanning = false;
+    bool _stopScanning = false;
 
     public CardDvbS()
       : this("DVBC")
@@ -196,7 +198,7 @@ namespace SetupTv.Sections
       mpTransponder4.Items.Clear();
       string[] files = System.IO.Directory.GetFiles(System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters", "*.tpl");
       List<Sattelite> satellites = new List<Sattelite>();
-      
+
       foreach (string file in files)
       {
         string fileName = System.IO.Path.GetFileName(file);
@@ -284,7 +286,9 @@ namespace SetupTv.Sections
       mpLNB3_CheckedChanged(null, null); ;
       mpLNB4_CheckedChanged(null, null); ;
 
+
       checkBoxCreateGroups.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "creategroups", "true").Value == "true");
+
 
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
       mpComboBoxCam.SelectedIndex = card.CamType;
@@ -353,22 +357,33 @@ namespace SetupTv.Sections
 
     private void mpButtonScanTv_Click(object sender, EventArgs e)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      if (card.Enabled == false)
+      if (_isScanning == false)
       {
-        MessageBox.Show(this,"Card is disabled, please enable the card before scanning");
-        return;
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+        if (card.Enabled == false)
+        {
+          MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
+          return;
+        }
+        Thread scanThread = new Thread(new ThreadStart(DoScan));
+        scanThread.Start();
       }
-      Thread scanThread = new Thread(new ThreadStart(DoScan));
-      scanThread.Start();
+      else
+      {
+        _stopScanning = true;
+      }
     }
     void DoScan()
     {
+
+      string buttonText = mpButtonScanTv.Text;
       try
       {
+        _isScanning = true;
+        _stopScanning = false;
+        mpButtonScanTv.Text = "Cancel...";
         RemoteControl.Instance.EpgGrabberEnabled = false;
-        mpButtonScanTv.Enabled = false;
         mpTransponder1.Enabled = false;
         mpTransponder2.Enabled = false;
         mpTransponder3.Enabled = false;
@@ -389,20 +404,30 @@ namespace SetupTv.Sections
         _radioChannelsUpdated = 0;
 
         Scan(1, (DisEqcType)mpDisEqc1.SelectedIndex, (Sattelite)mpTransponder1.SelectedItem);
+        if (_stopScanning) return;
         if (mpLNB2.Checked)
           Scan(2, (DisEqcType)mpDisEqc2.SelectedIndex, (Sattelite)mpTransponder2.SelectedItem);
 
         if (mpLNB3.Checked)
+          if (_stopScanning) return;
           Scan(3, (DisEqcType)mpDisEqc3.SelectedIndex, (Sattelite)mpTransponder3.SelectedItem);
 
+        if (_stopScanning) return;
         if (mpLNB4.Checked)
           Scan(4, (DisEqcType)mpDisEqc2.SelectedIndex, (Sattelite)mpTransponder4.SelectedItem);
 
-        ListViewItem item = listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}",_radioChannelsNew,_radioChannelsUpdated)));
+        ListViewItem item = listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", _radioChannelsNew, _radioChannelsUpdated)));
         item = listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", _tvChannelsNew, _tvChannelsUpdated)));
         item = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
         item.EnsureVisible();
-        mpButtonScanTv.Enabled = true;
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
+      finally
+      {
+        RemoteControl.Instance.EpgGrabberEnabled = true;
         mpTransponder1.Enabled = true;
         mpTransponder2.Enabled = true;
         mpTransponder3.Enabled = true;
@@ -416,14 +441,8 @@ namespace SetupTv.Sections
         mpLNB2.Enabled = true;
         mpLNB3.Enabled = true;
         mpLNB4.Enabled = true;
-      }
-      catch (Exception ex)
-      {
-        Log.Write(ex);
-      }
-      finally
-      {
-        RemoteControl.Instance.EpgGrabberEnabled = true;
+        mpButtonScanTv.Text = buttonText;
+        _isScanning = false;
       }
     }
 
@@ -438,6 +457,7 @@ namespace SetupTv.Sections
 
       for (int index = 0; index < _channelCount; ++index)
       {
+        if (_stopScanning) return;
         float percent = ((float)(index)) / _channelCount;
         percent *= 100f;
         if (percent > 100f) percent = 100f;
@@ -462,7 +482,7 @@ namespace SetupTv.Sections
         IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
         UpdateStatus(LNB);
 
-        if (channels == null || channels.Length == 0) 
+        if (channels == null || channels.Length == 0)
         {
           if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
           {
@@ -539,7 +559,7 @@ namespace SetupTv.Sections
           }
           layer.MapChannelToCard(card, dbChannel);
           line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:New:{5} Updated:{6}",
-              LNB,1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate, newChannels, updatedChannels);
+              LNB, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate, newChannels, updatedChannels);
           item.Text = line;
         }
       }

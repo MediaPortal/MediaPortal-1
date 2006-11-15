@@ -41,6 +41,8 @@ namespace SetupTv.Sections
   public partial class CardAnalog : SectionSettings
   {
     int _cardNumber;
+    bool _isScanning = false;
+    bool _stopScanning = false;
 
     public CardAnalog()
       : this("Analog")
@@ -119,27 +121,38 @@ namespace SetupTv.Sections
 
     private void mpButtonScan_Click(object sender, EventArgs e)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      if (card.Enabled == false)
+      if (_isScanning == false)
       {
-        MessageBox.Show(this,"Card is disabled, please enable the card before scanning");
-        return;
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+        if (card.Enabled == false)
+        {
+          MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
+          return;
+        }
+        Thread scanThread = new Thread(new ThreadStart(DoTvScan));
+        scanThread.Start();
       }
-      Thread scanThread = new Thread(new ThreadStart(DoTvScan));
-      scanThread.Start();
+      else
+      {
+        _stopScanning = true;
+      }
     }
     void DoTvScan()
     {
+      string buttonText = mpButtonScanTv.Text;
       try
       {
+        _isScanning = true;
+        _stopScanning = false;
+        mpButtonScanTv.Text="Cancel...";
         RemoteControl.Instance.EpgGrabberEnabled = false;
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
         mpComboBoxCountry.Enabled = false;
         mpComboBoxSource.Enabled = false;
         mpButtonScanRadio.Enabled = false;
-        mpButtonScanTv.Enabled = false;
+        //mpButtonScanTv.Enabled = false;
         mpComboBoxSensitivity.Enabled = false;
         UpdateStatus();
         mpListView1.Items.Clear();
@@ -149,6 +162,7 @@ namespace SetupTv.Sections
         int maxChannel = RemoteControl.Instance.MaxChannel(_cardNumber);
         for (int channelNr = minChannel; channelNr <= maxChannel; channelNr++)
         {
+          if (_stopScanning) return;
           float percent = ((float)((channelNr - minChannel)) / (maxChannel - minChannel));
           percent *= 100f;
           if (percent > 100f) percent = 100f;
@@ -185,33 +199,42 @@ namespace SetupTv.Sections
           layer.AddChannelToGroup(dbChannel, "Analog");
         }
 
-        progressBar1.Value = 100;
-        mpComboBoxCountry.Enabled = true;
-        mpComboBoxSource.Enabled = true;
-        mpButtonScanRadio.Enabled = true;
-        mpButtonScanTv.Enabled = true;
-        mpComboBoxSensitivity.Enabled = true;
-        //DatabaseManager.Instance.SaveChanges();
 
       }
       finally
       {
         RemoteControl.Instance.EpgGrabberEnabled = true;
+        mpButtonScanTv.Text = buttonText;
+        progressBar1.Value = 100;
+        mpComboBoxCountry.Enabled = true;
+        mpComboBoxSource.Enabled = true;
+        mpButtonScanRadio.Enabled = true;
+        //        mpButtonScanTv.Enabled = true;
+        mpComboBoxSensitivity.Enabled = true;
+        //DatabaseManager.Instance.SaveChanges();
+        _isScanning = false;
       }
     }
 
     private void mpButtonScanRadio_Click(object sender, EventArgs e)
     {
-      AnalogChannel radioChannel = new AnalogChannel();
-      radioChannel.Frequency = 96000000;
-      radioChannel.IsRadio = true;
-      if (!RemoteControl.Instance.CanTune(_cardNumber, radioChannel))
+      if (_isScanning == false)
       {
-        MessageBox.Show(this,"The Tv Card does not support radio");
-        return;
+        AnalogChannel radioChannel = new AnalogChannel();
+        radioChannel.Frequency = 96000000;
+        radioChannel.IsRadio = true;
+        if (!RemoteControl.Instance.CanTune(_cardNumber, radioChannel))
+        {
+          MessageBox.Show(this, "The Tv Card does not support radio");
+          return;
+        }
+        Thread scanThread = new Thread(new ThreadStart(DoRadioScan));
+        scanThread.Start();
       }
-      Thread scanThread = new Thread(new ThreadStart(DoRadioScan));
-      scanThread.Start();
+      else
+      {
+        _stopScanning = true;
+      }
     }
 
     int SignalStrength(int sensitivity)
@@ -244,14 +267,20 @@ namespace SetupTv.Sections
           sensitivity = 1;
           break;
       }
+
+      string buttonText = mpButtonScanRadio.Text;
       try
       {
+        _isScanning = true;
+        _stopScanning = false;
+        mpButtonScanRadio.Text = "Cancel...";
+
         RemoteControl.Instance.EpgGrabberEnabled = false;
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
         mpComboBoxCountry.Enabled = false;
         mpComboBoxSource.Enabled = false;
-        mpButtonScanRadio.Enabled = false;
+        //mpButtonScanRadio.Enabled = false;
         mpComboBoxSensitivity.Enabled = false;
         mpButtonScanTv.Enabled = false;
         UpdateStatus();
@@ -260,6 +289,7 @@ namespace SetupTv.Sections
 
         for (int freq = 87500000; freq < 108000000; freq += 100000)
         {
+          if (_stopScanning) return;
           float percent = ((float)(freq - 87500000)) / (108000000f - 87500000f);
           percent *= 100f;
           if (percent > 100f) percent = 100f;
@@ -297,13 +327,6 @@ namespace SetupTv.Sections
           }
         }
 
-        progressBar1.Value = 100;
-        mpComboBoxCountry.Enabled = true;
-        mpComboBoxSource.Enabled = true;
-        mpButtonScanRadio.Enabled = true;
-        mpButtonScanTv.Enabled = true;
-        mpComboBoxSensitivity.Enabled = true;
-        //DatabaseManager.Instance.SaveChanges();
 
       }
       catch (Exception ex)
@@ -313,6 +336,15 @@ namespace SetupTv.Sections
       finally
       {
         RemoteControl.Instance.EpgGrabberEnabled = true;
+        mpButtonScanRadio.Text = buttonText;
+        progressBar1.Value = 100;
+        mpComboBoxCountry.Enabled = true;
+        mpComboBoxSource.Enabled = true;
+        mpButtonScanRadio.Enabled = true;
+        mpButtonScanTv.Enabled = true;
+        mpComboBoxSensitivity.Enabled = true;
+        //DatabaseManager.Instance.SaveChanges();
+        _isScanning = false;
       }
     }
 

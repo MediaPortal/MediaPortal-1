@@ -48,6 +48,8 @@ namespace SetupTv.Sections
   {
 
     int _cardNumber;
+    bool _isScanning = false;
+    bool _stopScanning = false;
     public CardAtsc()
       : this("DVBC")
     {
@@ -75,7 +77,7 @@ namespace SetupTv.Sections
       mpLabelTunerLocked.Text = "No";
       if (RemoteControl.Instance.TunerLocked(_cardNumber))
         mpLabelTunerLocked.Text = "Yes";
-      progressBarLevel.Value = Math.Min(100,RemoteControl.Instance.SignalLevel(_cardNumber));
+      progressBarLevel.Value = Math.Min(100, RemoteControl.Instance.SignalLevel(_cardNumber));
       progressBarQuality.Value = Math.Min(100, RemoteControl.Instance.SignalQuality(_cardNumber));
 
       ATSCChannel channel = RemoteControl.Instance.CurrentChannel(_cardNumber) as ATSCChannel;
@@ -87,8 +89,15 @@ namespace SetupTv.Sections
 
     private void mpButtonScanTv_Click(object sender, EventArgs e)
     {
-      Thread scanThread = new Thread(new ThreadStart(DoScan));
-      scanThread.Start();
+      if (_isScanning == false)
+      {
+        Thread scanThread = new Thread(new ThreadStart(DoScan));
+        scanThread.Start();
+      }
+      else
+      {
+        _stopScanning = true;
+      }
     }
     void DoScan()
     {
@@ -96,18 +105,23 @@ namespace SetupTv.Sections
       int radioChannelsNew = 0;
       int tvChannelsUpdated = 0;
       int radioChannelsUpdated = 0;
+
+      string buttonText = mpButtonScanTv.Text;
       try
       {
+        _isScanning = true;
+        _stopScanning = false;
+        mpButtonScanTv.Text = "Cancel...";
         RemoteControl.Instance.EpgGrabberEnabled = false;
         listViewStatus.Items.Clear();
 
-        mpButtonScanTv.Enabled = false;
 
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
 
         for (int index = 2; index <= 69; ++index)
         {
+          if (_stopScanning) return;
           float percent = ((float)(index)) / (69 - 2);
           percent *= 100f;
           if (percent > 100f) percent = 100f;
@@ -208,8 +222,6 @@ namespace SetupTv.Sections
           }
         }
 
-        progressBar1.Value = 100;
-        mpButtonScanTv.Enabled = true;
         //DatabaseManager.Instance.SaveChanges();
 
       }
@@ -220,6 +232,9 @@ namespace SetupTv.Sections
       finally
       {
         RemoteControl.Instance.EpgGrabberEnabled = true;
+        progressBar1.Value = 100;
+        mpButtonScanTv.Text = buttonText;
+        _isScanning = false;
       }
       ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew, radioChannelsUpdated)));
       lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));

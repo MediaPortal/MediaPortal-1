@@ -45,6 +45,8 @@ namespace SetupTv.Sections
   {
 
     int _cardNumber;
+    bool _isScanning = false;
+    bool _stopScanning = false;
 
     public CardDvbT()
       : this("Analog")
@@ -125,15 +127,22 @@ namespace SetupTv.Sections
 
     private void mpButtonScanTv_Click(object sender, EventArgs e)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      if (card.Enabled == false)
+      if (_isScanning == false)
       {
-        MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
-        return;
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+        if (card.Enabled == false)
+        {
+          MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
+          return;
+        }
+        Thread scanThread = new Thread(new ThreadStart(DoScan));
+        scanThread.Start();
       }
-      Thread scanThread = new Thread(new ThreadStart(DoScan));
-      scanThread.Start();
+      else
+      {
+        _stopScanning = true;
+      }
     }
     void DoScan()
     {
@@ -142,8 +151,13 @@ namespace SetupTv.Sections
       int tvChannelsUpdated = 0;
       int radioChannelsUpdated = 0;
       int frequencyOffset = 0;
+
+      string buttonText = mpButtonScanTv.Text;
       try
       {
+        _isScanning = true;
+        _stopScanning = false;
+        mpButtonScanTv.Text = "Cancel...";
         RemoteControl.Instance.EpgGrabberEnabled = false;
         listViewStatus.Items.Clear();
 
@@ -182,7 +196,6 @@ namespace SetupTv.Sections
         }
         if (frequencies.Count == 0) return;
 
-        mpButtonScanTv.Enabled = false;
         mpComboBoxCountry.Enabled = false;
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
@@ -191,6 +204,7 @@ namespace SetupTv.Sections
         Dictionary<int, int>.Enumerator enumerator = frequencies.GetEnumerator();
         while (enumerator.MoveNext())
         {
+          if (_stopScanning) return;
           index++;
           float percent = ((float)(index)) / frequencies.Count;
           percent *= 100f;
@@ -313,9 +327,6 @@ namespace SetupTv.Sections
             item.Text = line;
           }
         }
-        progressBar1.Value = 100;
-        mpButtonScanTv.Enabled = true;
-        mpComboBoxCountry.Enabled = true;
         //DatabaseManager.Instance.SaveChanges();
       }
       catch (Exception ex)
@@ -325,6 +336,10 @@ namespace SetupTv.Sections
       finally
       {
         RemoteControl.Instance.EpgGrabberEnabled = true;
+        progressBar1.Value = 100;
+        mpComboBoxCountry.Enabled = true;
+        mpButtonScanTv.Text = buttonText;
+        _isScanning = false;
       }
       ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
       lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew, radioChannelsUpdated)));
