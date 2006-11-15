@@ -248,12 +248,14 @@ namespace WindowPlugins.GUISettings
 
     void OnLanguageChanged()
     {
+      int oldLang = btnLanguage.SelectedItem;
       SaveSettings();
       GUILocalizeStrings.Clear();
       GUILocalizeStrings.Load(Config.GetFile(Config.Dir.Language, btnLanguage.SelectedLabel + @"\strings.xml"));
       GUIWindowManager.OnResize();
       GUIWindowManager.ActivateWindow(GetID); // without this you cannot change skins / lang any more..
       GUIControl.FocusControl(GetID, btnLanguage.GetID);
+      GUIControl.SelectItemControl(GetID, btnLanguage.GetID, oldLang);
     }
   }
 }
