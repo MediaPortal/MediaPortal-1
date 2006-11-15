@@ -444,21 +444,42 @@ namespace TvLibrary.Implementations.DVB
           disEqcPort = 4;
           break;
       }
-      byte turnon22Khz;
-      if (channel.Frequency >= 11700000)
-      {
-        turnon22Khz = 1;
-        //hiBand = true;
-      }
-      else
-      {
-        turnon22Khz = 0;
-        //hiBand = false;
-      }
-
+      byte turnon22Khz = 0;
       Int32 LNBLOFLowBand = 9750;
       Int32 LNBLOFHighBand = 11700;
       Int32 LNBLOFHiLoSW = 10600;
+
+      switch (channel.BandType)
+      {
+        case BandType.Universal:
+          if (channel.Frequency >= 11700000)
+          {
+            turnon22Khz = 1;
+            //hiBand = true;
+          }
+          else
+          {
+            turnon22Khz = 0;
+            //hiBand = false;
+          }
+          break;
+        case BandType.Circular:
+          LNBLOFLowBand = 11250;
+          LNBLOFHighBand = 11250;
+          LNBLOFHiLoSW = 0;
+          break;
+        case BandType.Linear:
+          LNBLOFLowBand = 10750;
+          LNBLOFHighBand = 10750;
+          LNBLOFHiLoSW = 0;
+          break;
+        case BandType.CBand:
+          LNBLOFLowBand = 5150;
+          LNBLOFHighBand = 5150;
+          LNBLOFHiLoSW = 0;
+          break;
+      }
+
       int thbdaLen = 0x28;
       int disEqcLen = 20;
       Marshal.WriteByte(_ptrDiseqc, 0, 1);// LNB_POWER

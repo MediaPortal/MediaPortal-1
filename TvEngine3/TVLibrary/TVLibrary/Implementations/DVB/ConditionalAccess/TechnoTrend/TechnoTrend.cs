@@ -61,7 +61,7 @@ namespace TvLibrary.Implementations.DVB
     public bool IsCamReady()
     {
       if (_technoTrendInterface == null) return false;
-      bool yesNo=false;
+      bool yesNo = false;
       _technoTrendInterface.IsCamReady(ref yesNo);
       return yesNo;
     }
@@ -102,17 +102,23 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">The channel.</param>
     public void SendDiseqCommand(DVBSChannel channel)
     {
-      if (_technoTrendInterface == null) return ;
-      bool hiBand = true;
-      if (channel.Frequency >= 11700000)
+      if (_technoTrendInterface == null) return;
+      bool hiBand = false;
+
+      switch (channel.BandType)
       {
-        //lnbFrequency = 10600000;
-        hiBand = true;
-      }
-      else
-      {
-        //lnbFrequency = 9750000;
-        hiBand = false;
+        case BandType.Universal:
+          if (channel.Frequency >= 11700000)
+          {
+            //lnbFrequency = 10600000;
+            hiBand = true;
+          }
+          else
+          {
+            //lnbFrequency = 9750000;
+            hiBand = false;
+          }
+          break;
       }
       _technoTrendInterface.SetDisEqc((short)channel.DisEqc, hiBand, (channel.Polarisation == Polarisation.LinearV));
     }
@@ -126,6 +132,6 @@ namespace TvLibrary.Implementations.DVB
     public bool IsCamPresent()
     {
       return true;
-    } 
+    }
   }
 }

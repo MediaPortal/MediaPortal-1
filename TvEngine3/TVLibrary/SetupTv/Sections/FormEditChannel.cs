@@ -127,16 +127,16 @@ namespace SetupTv.Sections
           switch (comboBoxPol.SelectedIndex)
           {
             case 0:
-              detail.Polarisation = Polarisation.LinearH;
+              detail.Polarisation = (int)Polarisation.LinearH;
               break;
             case 1:
-              detail.Polarisation = Polarisation.LinearV;
+              detail.Polarisation = (int)Polarisation.LinearV;
               break;
             case 2:
-              detail.Polarisation = Polarisation.CircularL;
+              detail.Polarisation = (int)Polarisation.CircularL;
               break;
             case 3:
-              detail.Polarisation = Polarisation.CircularR;
+              detail.Polarisation = (int)Polarisation.CircularR;
               break;
           }
 

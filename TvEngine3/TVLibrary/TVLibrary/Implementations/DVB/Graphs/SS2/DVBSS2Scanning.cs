@@ -120,6 +120,7 @@ namespace TvLibrary.Implementations.DVB
           dvbsChannel.PmtPid = info.network_pmt_PID;
           dvbsChannel.PcrPid = info.pcr_pid;
           dvbsChannel.DisEqc = tuningChannels.DisEqc;
+          dvbsChannel.BandType = tuningChannels.BandType;
           dvbsChannel.FreeToAir = !info.scrambled;
 
           Log.Log.Write("Found:{0}", dvbsChannel);

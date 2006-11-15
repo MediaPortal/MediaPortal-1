@@ -55,6 +55,11 @@ namespace SetupTv.Sections
       this.listViewStatus = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.checkBoxCreateGroups = new System.Windows.Forms.CheckBox();
+      this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpBand1 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpBand2 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpBand3 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpBand4 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -142,13 +147,19 @@ namespace SetupTv.Sections
       // 
       this.mpTransponder1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpTransponder1.FormattingEnabled = true;
-      this.mpTransponder1.Location = new System.Drawing.Point(228, 36);
+      this.mpTransponder1.Location = new System.Drawing.Point(294, 36);
       this.mpTransponder1.Name = "mpTransponder1";
-      this.mpTransponder1.Size = new System.Drawing.Size(202, 21);
+      this.mpTransponder1.Size = new System.Drawing.Size(147, 21);
       this.mpTransponder1.TabIndex = 65;
+      this.mpTransponder1.SelectedIndexChanged += new System.EventHandler(this.mpTransponder1_SelectedIndexChanged);
       // 
       // groupBox1
       // 
+      this.groupBox1.Controls.Add(this.mpBand4);
+      this.groupBox1.Controls.Add(this.mpBand3);
+      this.groupBox1.Controls.Add(this.mpBand2);
+      this.groupBox1.Controls.Add(this.mpBand1);
+      this.groupBox1.Controls.Add(this.mpLabel4);
       this.groupBox1.Controls.Add(this.mpLabel3);
       this.groupBox1.Controls.Add(this.mpLNB4);
       this.groupBox1.Controls.Add(this.mpComboBoxCam);
@@ -213,10 +224,11 @@ namespace SetupTv.Sections
       // 
       this.mpTransponder4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpTransponder4.FormattingEnabled = true;
-      this.mpTransponder4.Location = new System.Drawing.Point(228, 115);
+      this.mpTransponder4.Location = new System.Drawing.Point(294, 115);
       this.mpTransponder4.Name = "mpTransponder4";
-      this.mpTransponder4.Size = new System.Drawing.Size(202, 21);
+      this.mpTransponder4.Size = new System.Drawing.Size(147, 21);
       this.mpTransponder4.TabIndex = 75;
+      this.mpTransponder4.SelectedIndexChanged += new System.EventHandler(this.mpTransponder4_SelectedIndexChanged);
       // 
       // mpDisEqc4
       // 
@@ -243,10 +255,11 @@ namespace SetupTv.Sections
       // 
       this.mpTransponder3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpTransponder3.FormattingEnabled = true;
-      this.mpTransponder3.Location = new System.Drawing.Point(228, 88);
+      this.mpTransponder3.Location = new System.Drawing.Point(294, 88);
       this.mpTransponder3.Name = "mpTransponder3";
-      this.mpTransponder3.Size = new System.Drawing.Size(202, 21);
+      this.mpTransponder3.Size = new System.Drawing.Size(147, 21);
       this.mpTransponder3.TabIndex = 72;
+      this.mpTransponder3.SelectedIndexChanged += new System.EventHandler(this.mpTransponder3_SelectedIndexChanged);
       // 
       // mpDisEqc3
       // 
@@ -273,10 +286,11 @@ namespace SetupTv.Sections
       // 
       this.mpTransponder2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpTransponder2.FormattingEnabled = true;
-      this.mpTransponder2.Location = new System.Drawing.Point(227, 61);
+      this.mpTransponder2.Location = new System.Drawing.Point(293, 61);
       this.mpTransponder2.Name = "mpTransponder2";
-      this.mpTransponder2.Size = new System.Drawing.Size(202, 21);
+      this.mpTransponder2.Size = new System.Drawing.Size(147, 21);
       this.mpTransponder2.TabIndex = 69;
+      this.mpTransponder2.SelectedIndexChanged += new System.EventHandler(this.mpTransponder2_SelectedIndexChanged);
       // 
       // mpDisEqc2
       // 
@@ -290,7 +304,7 @@ namespace SetupTv.Sections
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(225, 16);
+      this.mpLabel2.Location = new System.Drawing.Point(300, 16);
       this.mpLabel2.Name = "mpLabel2";
       this.mpLabel2.Size = new System.Drawing.Size(47, 13);
       this.mpLabel2.TabIndex = 66;
@@ -330,6 +344,74 @@ namespace SetupTv.Sections
       this.checkBoxCreateGroups.TabIndex = 68;
       this.checkBoxCreateGroups.Text = "Create groups for each provider";
       this.checkBoxCreateGroups.UseVisualStyleBackColor = true;
+      // 
+      // mpLabel4
+      // 
+      this.mpLabel4.AutoSize = true;
+      this.mpLabel4.Location = new System.Drawing.Point(216, 16);
+      this.mpLabel4.Name = "mpLabel4";
+      this.mpLabel4.Size = new System.Drawing.Size(35, 13);
+      this.mpLabel4.TabIndex = 76;
+      this.mpLabel4.Text = "Band:";
+      // 
+      // mpBand1
+      // 
+      this.mpBand1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpBand1.FormattingEnabled = true;
+      this.mpBand1.Items.AddRange(new object[] {
+            "Universal",
+            "Linear",
+            "Circular",
+            "C-Band"});
+      this.mpBand1.Location = new System.Drawing.Point(206, 36);
+      this.mpBand1.Name = "mpBand1";
+      this.mpBand1.Size = new System.Drawing.Size(79, 21);
+      this.mpBand1.TabIndex = 77;
+      this.mpBand1.SelectedIndexChanged += new System.EventHandler(this.mpBand1_SelectedIndexChanged);
+      // 
+      // mpBand2
+      // 
+      this.mpBand2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpBand2.FormattingEnabled = true;
+      this.mpBand2.Items.AddRange(new object[] {
+            "Universal",
+            "Linear",
+            "Circular",
+            "C-Band"});
+      this.mpBand2.Location = new System.Drawing.Point(205, 63);
+      this.mpBand2.Name = "mpBand2";
+      this.mpBand2.Size = new System.Drawing.Size(79, 21);
+      this.mpBand2.TabIndex = 78;
+      this.mpBand2.SelectedIndexChanged += new System.EventHandler(this.mpComboBox1_SelectedIndexChanged);
+      // 
+      // mpBand3
+      // 
+      this.mpBand3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpBand3.FormattingEnabled = true;
+      this.mpBand3.Items.AddRange(new object[] {
+            "Universal",
+            "Linear",
+            "Circular",
+            "C-Band"});
+      this.mpBand3.Location = new System.Drawing.Point(206, 90);
+      this.mpBand3.Name = "mpBand3";
+      this.mpBand3.Size = new System.Drawing.Size(79, 21);
+      this.mpBand3.TabIndex = 79;
+      this.mpBand3.SelectedIndexChanged += new System.EventHandler(this.mpComboBox1_SelectedIndexChanged_1);
+      // 
+      // mpBand4
+      // 
+      this.mpBand4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpBand4.FormattingEnabled = true;
+      this.mpBand4.Items.AddRange(new object[] {
+            "Universal",
+            "Linear",
+            "Circular",
+            "C-Band"});
+      this.mpBand4.Location = new System.Drawing.Point(206, 117);
+      this.mpBand4.Name = "mpBand4";
+      this.mpBand4.Size = new System.Drawing.Size(79, 21);
+      this.mpBand4.TabIndex = 80;
       // 
       // CardDvbS
       // 
@@ -384,5 +466,10 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxCam;
     private System.Windows.Forms.CheckBox checkBoxCreateGroups;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpBand1;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpBand2;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpBand3;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpBand4;
   }
 }

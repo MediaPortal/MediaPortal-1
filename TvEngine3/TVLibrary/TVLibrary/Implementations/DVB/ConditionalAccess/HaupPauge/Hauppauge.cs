@@ -139,14 +139,20 @@ namespace TvLibrary.Implementations.DVB
       if (_isHauppauge == false) return;
       int position = 0;
       int option = 0;
-      bool hiBand = true;
-      if (channel.Frequency >= 11700000)
+      bool hiBand = false;
+
+      switch (channel.BandType)
       {
-        hiBand = true;
-      }
-      else
-      {
-        hiBand = false;
+        case BandType.Universal:
+          if (channel.Frequency >= 11700000)
+          {
+            hiBand = true;
+          }
+          else
+          {
+            hiBand = false;
+          }
+          break;
       }
 
       switch (channel.DisEqc)

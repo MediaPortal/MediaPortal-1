@@ -131,8 +131,8 @@ namespace TvLibrary.Implementations.DVB
 
     #region Structs
     //
-	//	Structure completedy by GetTunerCapabilities() to return tuner capabilities
-	//
+    //	Structure completedy by GetTunerCapabilities() to return tuner capabilities
+    //
     private struct tTunerCapabilities
     {
       public TunerType eModulation;
@@ -331,43 +331,66 @@ namespace TvLibrary.Implementations.DVB
           frequency = (int)dvbsChannel.Frequency;
           symbolRate = dvbsChannel.SymbolRate;
 
-          if (dvbsChannel.Frequency >= 11700000)
+          switch (dvbsChannel.BandType)
           {
-            lnbFrequency = 10600000;
-            hiBand = true;
+            case BandType.Universal:
+              if (dvbsChannel.Frequency >= 11700000)
+              {
+                lnbFrequency = 10600000;
+                hiBand = true;
+              }
+              else
+              {
+                lnbFrequency = 9750000;
+                hiBand = false;
+              }
+              if (lnbFrequency >= frequency)
+              {
+                Log.Log.Error("ss2:  Error: LNB Frequency must be less than Transponder frequency");
+              }
+              break;
+            case BandType.Circular:
+              hiBand = false;
+              lnbFrequency = 11250000;
+              break;
+            case BandType.Linear:
+              hiBand = false;
+              lnbFrequency = 10750000;
+              break;
+            case BandType.CBand:
+              hiBand = false;
+              lnbFrequency = 5150000;
+              break;
           }
-          else
-          {
-            lnbFrequency = 9750000;
-            hiBand = false;
-          }
-          if (lnbFrequency >= frequency)
-          {
-            Log.Log.Error("ss2:  Error: LNB Frequency must be less than Transponder frequency");
-          }
+
           //0=horizontal,1=vertical
           polarity = 0;
           if (dvbsChannel.Polarisation == Polarisation.LinearV) polarity = 1;
           Log.Log.WriteFile("ss2:  Polarity:{0} {1}", dvbsChannel.Polarisation, polarity);
 
-          switch (lnbKhzTone)
+          lnbSelection = LNBSelectionType.Lnb0;
+          if (dvbsChannel.BandType == BandType.Universal)
           {
-            case 0:
+            //only set the LNB (22,33,44) Khz tone when we use ku-band and are in hi-band
+            switch (lnbKhzTone)
+            {
+              case 0:
+                lnbSelection = LNBSelectionType.Lnb0;
+                break;
+              case 22:
+                lnbSelection = LNBSelectionType.Lnb22kHz;
+                break;
+              case 33:
+                lnbSelection = LNBSelectionType.Lnb33kHz;
+                break;
+              case 44:
+                lnbSelection = LNBSelectionType.Lnb44kHz;
+                break;
+            }
+            if (hiBand == false)
+            {
               lnbSelection = LNBSelectionType.Lnb0;
-              break;
-            case 22:
-              lnbSelection = LNBSelectionType.Lnb22kHz;
-              break;
-            case 33:
-              lnbSelection = LNBSelectionType.Lnb33kHz;
-              break;
-            case 44:
-              lnbSelection = LNBSelectionType.Lnb44kHz;
-              break;
-          }
-          if (hiBand == false)
-          {
-            lnbSelection = LNBSelectionType.Lnb0;
+            }
           }
           switch (dvbsChannel.DisEqc)
           {
@@ -487,7 +510,7 @@ namespace TvLibrary.Implementations.DVB
       {
         BuildGraph();
       }
-      
+
 
       if (frequency > 13000)
         frequency /= 1000;
@@ -806,17 +829,17 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>true if card can tune to the channel otherwise false</returns>
     public bool CanTune(IChannel channel)
     {
-      if (_cardType==CardType.DvbS)
+      if (_cardType == CardType.DvbS)
       {
         if ((channel as DVBSChannel) == null) return false;
         return true;
       }
-      if (_cardType==CardType.DvbT)
+      if (_cardType == CardType.DvbT)
       {
         if ((channel as DVBTChannel) == null) return false;
         return true;
       }
-      if (_cardType==CardType.DvbC)
+      if (_cardType == CardType.DvbC)
       {
         if ((channel as DVBCChannel) == null) return false;
         return true;
@@ -927,7 +950,7 @@ namespace TvLibrary.Implementations.DVB
         throw new TvException("unable to connect b2c2->_infTeeMain");
       }
     }
-    
+
     /// <summary>
     /// Sends the HW pids.
     /// </summary>

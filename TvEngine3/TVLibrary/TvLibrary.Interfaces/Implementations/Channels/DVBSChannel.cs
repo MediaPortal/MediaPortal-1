@@ -27,6 +27,16 @@ using TvLibrary.Interfaces;
 namespace TvLibrary.Channels
 {
   /// <summary>
+  /// enum describing the DVBS band
+  /// </summary>
+  public enum BandType
+  {
+    Universal = 0,
+    Linear = 1,
+    Circular = 2,
+    CBand = 3,
+  }
+  /// <summary>
   /// enum describing the different DisEqc type
   /// </summary>
   public enum DisEqcType
@@ -72,6 +82,7 @@ namespace TvLibrary.Channels
     int _symbolRate;
     int _switchingFrequency;
     DisEqcType _disEqc;
+    BandType _bandType;
     #endregion
 
     /// <summary>
@@ -81,9 +92,25 @@ namespace TvLibrary.Channels
     {
       SwitchingFrequency = 0;
       DisEqc = DisEqcType.SimpleA;
+      _bandType = BandType.Universal;
     }
 
     #region properties
+    /// <summary>
+    /// gets/sets the BandType for this channel
+    /// </summary>
+    public BandType BandType
+    {
+      get
+      {
+        return _bandType;
+      }
+      set
+      {
+        _bandType = value;
+      }
+    }
+
     /// <summary>
     /// gets/sets the Polarisation for this channel
     /// </summary>
@@ -150,8 +177,8 @@ namespace TvLibrary.Channels
     /// </returns>
     public override string ToString()
     {
-      string line = String.Format("DVBS:{0} SymbolRate:{1} Polarisation:{2} DisEqc:{3} Switch Freq:{4}",
-          base.ToString(), SymbolRate, Polarisation, DisEqc,SwitchingFrequency);
+      string line = String.Format("DVBS:{0} SymbolRate:{1} Polarisation:{2} DisEqc:{3} band:{4}",
+          base.ToString(), SymbolRate, Polarisation, DisEqc, BandType);
       return line;
     }
 
@@ -164,13 +191,14 @@ namespace TvLibrary.Channels
     /// </returns>
     public override bool Equals(object obj)
     {
-      if ((obj as DVBSChannel)==null) return false;
+      if ((obj as DVBSChannel) == null) return false;
       if (!base.Equals(obj)) return false;
       DVBSChannel ch = obj as DVBSChannel;
       if (ch.Polarisation != Polarisation) return false;
       if (ch.SymbolRate != SymbolRate) return false;
       if (ch.SwitchingFrequency != SwitchingFrequency) return false;
       if (ch.DisEqc != DisEqc) return false;
+      if (ch.BandType != BandType) return false;
 
       return true;
     }
@@ -183,7 +211,7 @@ namespace TvLibrary.Channels
     public override int GetHashCode()
     {
       return base.GetHashCode() ^ _polarisation.GetHashCode() ^ _symbolRate.GetHashCode() ^
-             _switchingFrequency.GetHashCode() ^ _disEqc.GetHashCode() ;
+             _switchingFrequency.GetHashCode() ^ _disEqc.GetHashCode() ^ _bandType.GetHashCode();
     }
   }
 }

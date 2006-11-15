@@ -285,6 +285,11 @@ namespace SetupTv.Sections
       mpDisEqc3.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc3", "0").Value);
       mpDisEqc4.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc4", "0").Value);
 
+      mpBand1.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "band1", "0").Value);
+      mpBand2.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "band2", "0").Value);
+      mpBand3.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "band3", "0").Value);
+      mpBand4.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "band4", "0").Value);
+
       mpLNB2.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB2", "false").Value == "true");
       mpLNB3.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB3", "false").Value == "true");
       mpLNB4.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB4", "false").Value == "true");
@@ -307,7 +312,7 @@ namespace SetupTv.Sections
       setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "creategroups", "false");
       setting.Value = checkBoxCreateGroups.Checked ? "true" : "false";
       setting.Persist();
-      
+
       setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "Sattelite1", "0");
       setting.Value = mpTransponder1.SelectedIndex.ToString();
       setting.Persist();
@@ -332,6 +337,20 @@ namespace SetupTv.Sections
       setting.Persist();
       setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc4", "0");
       setting.Value = mpDisEqc4.SelectedIndex.ToString();
+      setting.Persist();
+
+
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "band1", "0");
+      setting.Value = mpBand1.SelectedIndex.ToString();
+      setting.Persist();
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "band2", "0");
+      setting.Value = mpBand2.SelectedIndex.ToString();
+      setting.Persist();
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "band3", "0");
+      setting.Value = mpBand3.SelectedIndex.ToString();
+      setting.Persist();
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "band4", "0");
+      setting.Value = mpBand4.SelectedIndex.ToString();
       setting.Persist();
 
       setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB2", "false");
@@ -402,6 +421,10 @@ namespace SetupTv.Sections
         mpLNB2.Enabled = false;
         mpLNB3.Enabled = false;
         mpLNB4.Enabled = false;
+        mpBand1.Enabled = false;
+        mpBand2.Enabled = false;
+        mpBand3.Enabled = false;
+        mpBand4.Enabled = false;
 
         listViewStatus.Items.Clear();
         _tvChannelsNew = 0;
@@ -409,18 +432,18 @@ namespace SetupTv.Sections
         _tvChannelsUpdated = 0;
         _radioChannelsUpdated = 0;
 
-        Scan(1, (DisEqcType)mpDisEqc1.SelectedIndex, (Sattelite)mpTransponder1.SelectedItem);
+        Scan(1, (BandType)mpBand1.SelectedIndex, (DisEqcType)mpDisEqc1.SelectedIndex, (Sattelite)mpTransponder1.SelectedItem);
         if (_stopScanning) return;
         if (mpLNB2.Checked)
-          Scan(2, (DisEqcType)mpDisEqc2.SelectedIndex, (Sattelite)mpTransponder2.SelectedItem);
+          Scan(2, (BandType)mpBand2.SelectedIndex, (DisEqcType)mpDisEqc2.SelectedIndex, (Sattelite)mpTransponder2.SelectedItem);
 
         if (mpLNB3.Checked)
           if (_stopScanning) return;
-          Scan(3, (DisEqcType)mpDisEqc3.SelectedIndex, (Sattelite)mpTransponder3.SelectedItem);
+        Scan(3, (BandType)mpBand3.SelectedIndex, (DisEqcType)mpDisEqc3.SelectedIndex, (Sattelite)mpTransponder3.SelectedItem);
 
         if (_stopScanning) return;
         if (mpLNB4.Checked)
-          Scan(4, (DisEqcType)mpDisEqc2.SelectedIndex, (Sattelite)mpTransponder4.SelectedItem);
+          Scan(4, (BandType)mpBand4.SelectedIndex, (DisEqcType)mpDisEqc2.SelectedIndex, (Sattelite)mpTransponder4.SelectedItem);
 
         ListViewItem item = listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", _radioChannelsNew, _radioChannelsUpdated)));
         item = listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", _tvChannelsNew, _tvChannelsUpdated)));
@@ -442,6 +465,10 @@ namespace SetupTv.Sections
         mpDisEqc2.Enabled = true;
         mpDisEqc3.Enabled = true;
         mpDisEqc4.Enabled = true;
+        mpBand1.Enabled = true;
+        mpBand2.Enabled = true;
+        mpBand3.Enabled = true;
+        mpBand4.Enabled = true;
         progressBar1.Value = 100;
 
         mpLNB2.Enabled = true;
@@ -452,7 +479,7 @@ namespace SetupTv.Sections
       }
     }
 
-    void Scan(int LNB, DisEqcType disEqc, Sattelite sattelite)
+    void Scan(int LNB, BandType bandType, DisEqcType disEqc, Sattelite sattelite)
     {
       LoadTransponders(sattelite.FileName);
       if (_channelCount == 0) return;
@@ -474,6 +501,8 @@ namespace SetupTv.Sections
         tuneChannel.Frequency = _transponders[index].CarrierFrequency;
         tuneChannel.Polarisation = _transponders[index].Polarisation;
         tuneChannel.SymbolRate = _transponders[index].SymbolRate;
+        tuneChannel.BandType = bandType;
+
         tuneChannel.DisEqc = disEqc;
         string line = String.Format("lnb:{0} {1}tp- {2} {3} {4}", LNB, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate);
         ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
@@ -603,6 +632,41 @@ namespace SetupTv.Sections
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
       card.CamType = mpComboBoxCam.SelectedIndex;
       card.Persist();
+    }
+
+    private void mpBand1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void mpComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void mpComboBox1_SelectedIndexChanged_1(object sender, EventArgs e)
+    {
+
+    }
+
+    private void mpTransponder4_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void mpTransponder3_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void mpTransponder2_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void mpTransponder1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
     }
 
 

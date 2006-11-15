@@ -169,8 +169,8 @@ namespace TvLibrary.Implementations.DVB
       _tuningSpace.put__NetworkType(typeof(DVBSNetworkProvider).GUID);
       _tuningSpace.put_SystemType(DVBSystemType.Satellite);
 
-      _tuningSpace.put_LNBSwitch(11700000);
       _tuningSpace.put_SpectralInversion(SpectralInversion.Automatic);
+      _tuningSpace.put_LNBSwitch(11700000);
       _tuningSpace.put_LowOscillator(lowOsc * 1000);
       _tuningSpace.put_HighOscillator(hiOsc * 1000);
 
@@ -305,6 +305,39 @@ namespace TvLibrary.Implementations.DVB
       ILocator locator;
 
       if (!CheckThreadId()) return false;
+      int lowOsc = 9750;
+      int hiOsc = 10600;
+      switch (dvbsChannel.BandType)
+      {
+        case BandType.Universal:
+          lowOsc = 9750;
+          hiOsc = 10600;
+          _tuningSpace.put_LNBSwitch(11700000);
+          _tuningSpace.put_LowOscillator(lowOsc * 1000);
+          _tuningSpace.put_HighOscillator(hiOsc * 1000);
+          break;
+        case BandType.Circular:
+          lowOsc = 11250;
+          hiOsc = 11250;
+          _tuningSpace.put_LNBSwitch(0);
+          _tuningSpace.put_LowOscillator(lowOsc * 1000);
+          _tuningSpace.put_HighOscillator(hiOsc * 1000);
+          break;
+        case BandType.Linear:
+          lowOsc = 10750;
+          hiOsc = 10750;
+          _tuningSpace.put_LNBSwitch(0);
+          _tuningSpace.put_LowOscillator(lowOsc * 1000);
+          _tuningSpace.put_HighOscillator(hiOsc * 1000);
+          break;
+        case BandType.CBand:
+          lowOsc = 5150;
+          hiOsc = 5150;
+          _tuningSpace.put_LNBSwitch(0);
+          _tuningSpace.put_LowOscillator(lowOsc * 1000);
+          _tuningSpace.put_HighOscillator(hiOsc * 1000);
+          break;
+      }
       _tuningSpace.get_DefaultLocator(out locator);
       IDVBSLocator dvbsLocator = (IDVBSLocator)locator;
       int hr = dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
@@ -313,6 +346,7 @@ namespace TvLibrary.Implementations.DVB
       hr = _tuneRequest.put_SID(dvbsChannel.ServiceId);
       hr = _tuneRequest.put_TSID(dvbsChannel.TransportId);
       hr = locator.put_CarrierFrequency((int)dvbsChannel.Frequency);
+
       _tuneRequest.put_Locator(locator);
 
 

@@ -271,7 +271,7 @@ namespace TvLibrary.Implementations.DVB
     /// </preconditions>
     public bool SendPMTToFireDTV(byte[] PMT, int pmtLength)
     {
-      
+
       //typedef struct _FIRESAT_CA_DATA{ 
       //  UCHAR uSlot;                      //0
       //  UCHAR uTag;                       //1   (2..3 = padding)
@@ -774,15 +774,32 @@ namespace TvLibrary.Implementations.DVB
       //    bit   4-7  :           specifices which bits are valid , 0XF means all bits are valid and should be set)
       int lnbFrequency = 10600000;
       bool hiBand = true;
-      if (channel.Frequency >= 11700000)
+      switch (channel.BandType)
       {
-        lnbFrequency = 10600000;
-        hiBand = true;
-      }
-      else
-      {
-        lnbFrequency = 9750000;
-        hiBand = false;
+        case BandType.Universal:
+          if (channel.Frequency >= 11700000)
+          {
+            lnbFrequency = 10600000;
+            hiBand = true;
+          }
+          else
+          {
+            lnbFrequency = 9750000;
+            hiBand = false;
+          }
+          break;
+
+        case BandType.Circular:
+          hiBand = false;
+          break;
+
+        case BandType.Linear:
+          hiBand = false;
+          break;
+
+        case BandType.CBand:
+          hiBand = false;
+          break;
       }
       Log.Log.WriteFile("FireDTV SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, lnb frequency:{3}, polarisation:{4} hiband:{5}",
               channel.DisEqc, antennaNr, channel.Frequency, lnbFrequency, channel.Polarisation, hiBand);
