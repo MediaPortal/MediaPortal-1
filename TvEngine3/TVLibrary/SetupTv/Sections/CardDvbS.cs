@@ -172,6 +172,12 @@ namespace SetupTv.Sections
                   case "h":
                     transponder.Polarisation = Polarisation.LinearH;
                     break;
+                  case "r":
+                    transponder.Polarisation = Polarisation.CircularR;
+                    break;
+                  case "l":
+                    transponder.Polarisation = Polarisation.CircularL;
+                    break;
                   default:
                     transponder.Polarisation = Polarisation.LinearH;
                     break;

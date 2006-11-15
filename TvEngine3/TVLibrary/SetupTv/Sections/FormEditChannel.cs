@@ -124,11 +124,21 @@ namespace SetupTv.Sections
           detail.ServiceId = Int32.Parse(textBox2.Text);
           detail.Symbolrate = Int32.Parse(textBox1.Text);
           detail.SwitchingFrequency = Int32.Parse(textBoxSwitch.Text);
-
-          if (comboBoxPol.SelectedIndex == 1)
-            detail.Polarisation = (int)Polarisation.LinearH;
-          else
-            detail.Polarisation = (int)Polarisation.LinearV;
+          switch (comboBoxPol.SelectedIndex)
+          {
+            case 0:
+              detail.Polarisation = Polarisation.LinearH;
+              break;
+            case 1:
+              detail.Polarisation = Polarisation.LinearV;
+              break;
+            case 2:
+              detail.Polarisation = Polarisation.CircularL;
+              break;
+            case 3:
+              detail.Polarisation = Polarisation.CircularR;
+              break;
+          }
 
           detail.Diseqc = comboBoxDisEqc.SelectedIndex;
           detail.Persist();
@@ -217,10 +227,21 @@ namespace SetupTv.Sections
           textBox2.Text = detail.ServiceId.ToString();
           textBox1.Text = detail.Symbolrate.ToString();
           textBoxSwitch.Text = detail.SwitchingFrequency.ToString();
-
-          if (detail.Polarisation != (int)Polarisation.LinearH)
+          switch ((Polarisation)detail.Polarisation)
+          {
+            case Polarisation.LinearH: 
+            comboBoxPol.SelectedIndex = 0;
+            break;
+            case Polarisation.LinearV: 
             comboBoxPol.SelectedIndex = 1;
-
+            break;
+            case Polarisation.CircularL: 
+            comboBoxPol.SelectedIndex = 2;
+            break;
+            case Polarisation.CircularR: 
+            comboBoxPol.SelectedIndex = 2;
+            break;
+          }
           comboBoxDisEqc.SelectedIndex = (int)detail.Diseqc;
         }
 

@@ -35,6 +35,7 @@ namespace SetupTv.Sections
       this.textBoxName = new System.Windows.Forms.TextBox();
       this.label25 = new System.Windows.Forms.Label();
       this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.label31 = new System.Windows.Forms.Label();
       this.label30 = new System.Windows.Forms.Label();
       this.textBoxAnalogFrequency = new System.Windows.Forms.TextBox();
       this.label29 = new System.Windows.Forms.Label();
@@ -96,7 +97,6 @@ namespace SetupTv.Sections
       this.label22 = new System.Windows.Forms.Label();
       this.label23 = new System.Windows.Forms.Label();
       this.label24 = new System.Windows.Forms.Label();
-      this.label31 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -193,6 +193,16 @@ namespace SetupTv.Sections
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Analog";
       this.tabPage2.UseVisualStyleBackColor = true;
+      // 
+      // label31
+      // 
+      this.label31.AutoSize = true;
+      this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.label31.Location = new System.Drawing.Point(15, 180);
+      this.label31.Name = "label31";
+      this.label31.Size = new System.Drawing.Size(360, 13);
+      this.label31.TabIndex = 17;
+      this.label31.Text = "Note: A reboot might be needed when changing the frequency";
       // 
       // label30
       // 
@@ -487,7 +497,9 @@ namespace SetupTv.Sections
       this.comboBoxPol.FormattingEnabled = true;
       this.comboBoxPol.Items.AddRange(new object[] {
             "Horizontal",
-            "Vertical"});
+            "Vertical",
+            "CircularL",
+            "CircularR"});
       this.comboBoxPol.Location = new System.Drawing.Point(99, 161);
       this.comboBoxPol.Name = "comboBoxPol";
       this.comboBoxPol.Size = new System.Drawing.Size(146, 21);
@@ -798,16 +810,6 @@ namespace SetupTv.Sections
       this.label24.Size = new System.Drawing.Size(49, 13);
       this.label24.TabIndex = 19;
       this.label24.Text = "Channel:";
-      // 
-      // label31
-      // 
-      this.label31.AutoSize = true;
-      this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label31.Location = new System.Drawing.Point(15, 180);
-      this.label31.Name = "label31";
-      this.label31.Size = new System.Drawing.Size(360, 13);
-      this.label31.TabIndex = 17;
-      this.label31.Text = "Note: A reboot might be needed when changing the frequency";
       // 
       // FormEditChannel
       // 
