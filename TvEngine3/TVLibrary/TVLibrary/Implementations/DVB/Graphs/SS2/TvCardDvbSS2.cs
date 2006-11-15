@@ -363,9 +363,10 @@ namespace TvLibrary.Implementations.DVB
               break;
           }
 
-          //0=horizontal,1=vertical
+          //0=horizontal or left, 1=vertical or right
           polarity = 0;
           if (dvbsChannel.Polarisation == Polarisation.LinearV) polarity = 1;
+          if (dvbsChannel.Polarisation == Polarisation.CircularR) polarity = 1;
           Log.Log.WriteFile("ss2:  Polarity:{0} {1}", dvbsChannel.Polarisation, polarity);
 
           lnbSelection = LNBSelectionType.Lnb0;
