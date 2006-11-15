@@ -188,6 +188,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MPEG2TstFileServerMediaSubsession.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\StreamingServer.def"
 				>
 			</File>
@@ -199,6 +203,10 @@
 			>
 			<File
 				RelativePath=".\FileReader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MPEG2TstFileServerMediaSubsession.h"
 				>
 			</File>
 			<File

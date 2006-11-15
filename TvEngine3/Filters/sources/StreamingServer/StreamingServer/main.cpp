@@ -7,6 +7,7 @@
 #include "TsStreamFileSource.hh"
 #include "MPEG2TransportFileServerMediaSubsession.hh"
 #include "TsMPEG2TransportFileServerMediaSubsession.h" 
+#include "MPEG2TstFileServerMediaSubsession.h" 
 #include "TsMPEG1or2FileServerDemux.h" 
 #include "MPEG1or2FileServerDemux.hh" 
 #include "TsFileDuration.h"
@@ -33,7 +34,7 @@ extern netAddressBits ReceivingInterfaceAddr ;
 int _tmain(int argc, _TCHAR* argv[])
 {
   StreamSetup("192.168.1.58");
-  StreamAddMpegFile("test", "C:\\erwin\\tvServer\\TVLibrary\\TvService\\bin\\Debug\\5_manual_200611130905p54.mpg");
+  StreamAddMpegFile("stream1", "C:\\media\\movies\\5_manual_200611130905p54.mpg");
   while (true)
   {
     StreamRun();
@@ -123,14 +124,11 @@ void StreamAddMpegFile(char* streamName, char* fileName)
 	try
 	{
 		Log("Stream server: add mpeg-2 stream %s filename:%s", streamName,fileName);
-		//add a stream...
     ServerMediaSession* sms= ServerMediaSession::createNew(*m_env, streamName, streamName,STREAM_DESCRIPTION,false);
-    MPEG1or2FileServerDemux* demux= MPEG1or2FileServerDemux::createNew(*m_env, fileName, false);
-    sms->addSubsession(demux->newVideoServerMediaSubsession(false));
-    sms->addSubsession(demux->newAudioServerMediaSubsession());
-		m_rtspServer->addServerMediaSession(sms);
-	  
-		announceStream(m_rtspServer, sms, streamName, fileName);
+    sms->addSubsession(MPEG2TstFileServerMediaSubsession::createNew(*m_env, fileName, false));
+    m_rtspServer->addServerMediaSession(sms);
+
+	  announceStream(m_rtspServer, sms, streamName, fileName);
 	}
 	catch(...)
 	{
