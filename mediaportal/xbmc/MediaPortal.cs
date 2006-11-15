@@ -1437,6 +1437,7 @@ public class MediaPortalApp : D3DApp, IRender
           }
         }
       }
+      HandleCursor();
     }
 #if !DEBUG
     catch (Exception ex)

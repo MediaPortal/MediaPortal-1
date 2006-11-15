@@ -1222,7 +1222,7 @@ namespace MediaPortal
 
       if (GUIGraphicsContext.Vmr9Active)
       {
-        HandleCursor();
+        //HandleCursor(); remove
 
         if ((ActiveForm != this) && (alwaysOnTop))
           this.Activate();
@@ -1266,7 +1266,7 @@ namespace MediaPortal
 #endif
       }
 
-      HandleCursor();
+      //HandleCursor(); remove
 
       if ((ActiveForm != this) && (alwaysOnTop))
         Activate();
@@ -1363,7 +1363,7 @@ namespace MediaPortal
       GUIWindowManager.ReplaceWindow(_iActiveWindow);
     }
 
-    private void HandleCursor()
+    protected void HandleCursor()
     {
       if (!isMaximized)
         return;
