@@ -58,6 +58,47 @@ namespace ProcessPlugins.ExternalDreamboxTV
         public void Start()
         {
             LoadSettings();
+            GUIWindowManager.Receivers += new SendMessageHandler(GUIWindowManager_Receivers);
+        }
+
+        void GUIWindowManager_Receivers(GUIMessage message)
+        {
+            switch (message.Message)
+            {
+                case GUIMessage.MessageType.GUI_MSG_TUNE_EXTERNAL_CHANNEL:
+                    bool bIsInteger;
+                    double retNum;
+                    bIsInteger = Double.TryParse(message.Label, System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
+                    this.ChangeTunerChannel(message.Label);
+                    break;
+            }
+        }
+
+        public void ChangeTunerChannel(string channel_data)
+        {
+            Log.Info("ExternalDreamboxTV processing external tuner cmd: {0}", channel_data);
+            // ZAP
+
+        }
+
+        void Zap(string reference)
+        {
+            try
+            {
+                if (_DreamboxIP.Length > 0)
+                {
+                    DreamBox.Core dreambox = new DreamBox.Core("http://" + _DreamboxIP, _DreamboxUserName, _DreamboxPassword);
+                    dreambox.Remote.Zap(reference);
+                }
+                else
+                    Log.Info("ExternalDreamboxTV Error: {0}\r\n", "Could not zap because IP address of dreambox not set.");
+
+            }
+            catch (Exception x)
+            {
+                Log.Info("ExternalDreamboxTV Error: {0}\r\n{1}", x.Message, x.StackTrace);
+            }
+
         }
 
         private void LoadSettings()
