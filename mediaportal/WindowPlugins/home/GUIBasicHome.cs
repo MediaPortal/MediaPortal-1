@@ -37,6 +37,16 @@ namespace WindowPlugins.home
 		{
 			return Load (GUIGraphicsContext.Skin+@"\BasicHome.xml");
 		}
+    protected override void OnPageLoad()
+    {
+      GUIControl ctl = GetControl(GetFocusControlId());
+      if (ctl != null)
+      {
+        ctl.Focus = false;
+        ctl.Focus = true;   // this will update the skin propperty #highlightedbutton
+      }
+      base.OnPageLoad();
+    }
 
 	}
 }
