@@ -35,8 +35,8 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public class DVBSkyStar2Helper
   {
-    
-    //
+
+    #region technisat guids
     public static Guid IID_IB2C2AVCTRL2 = new Guid(0x9c0563ce, 0x2ef7, 0x4568, 0xa2, 0x97, 0x88, 0xc7, 0xbb, 0x82, 0x40, 0x75);
     public static Guid CLSID_B2C2Adapter = new Guid(0xe82536a0, 0x94da, 0x11d2, 0xa4, 0x63, 0x0, 0xa0, 0xc9, 0x5d, 0x30, 0x8d);
     public static Guid CLSID_StreamBufferSink = new Guid(0x2db47ae5, 0xcf39, 0x43c2, 0xb4, 0xd6, 0xc, 0xd8, 0xd9, 0x9, 0x46, 0xf4);
@@ -45,6 +45,8 @@ namespace TvLibrary.Implementations.DVB
     public static Guid CLSID_Mpeg2Data = new Guid(0xC666E115, 0xBB62, 0x4027, 0xA1, 0x13, 0x82, 0xD6, 0x43, 0xFE, 0x2D, 0x99);
     public static Guid MEDIATYPE_MPEG2_SECTIONS = new Guid(0x455f176c, 0x4b06, 0x47ce, 0x9a, 0xef, 0x8c, 0xae, 0xf7, 0x3d, 0xf7, 0xb5);
     public static Guid MEDIASUBTYPE_MPEG2_DATA = new Guid(0xc892e55b, 0x252d, 0x42b5, 0xa3, 0x16, 0xd9, 0x97, 0xe7, 0xa5, 0xd9, 0x95);
+    #endregion
+
     // interfaces
     #region AVControl
     [ComVisible(true), ComImport,
@@ -91,6 +93,7 @@ namespace TvLibrary.Implementations.DVB
         );
     };
     #endregion
+
     #region DataControl
     [ComVisible(true), ComImport,
       Guid("7F35C560-08B9-11d5-A469-00D0D7B2C2D7"),
@@ -257,6 +260,7 @@ namespace TvLibrary.Implementations.DVB
       int RestoreUnicastMacAddress();
     };
     #endregion// do NOT use data control interface !!!
+
     #region TunerControl
     //
     // tuner follows
@@ -390,6 +394,7 @@ namespace TvLibrary.Implementations.DVB
         );
     };
     #endregion
+
     #region TunerControl2
     [ComVisible(true), ComImport,
       Guid("CD900832-50DF-4f8f-882D-1C358F90B3F2"),
@@ -442,6 +447,35 @@ namespace TvLibrary.Implementations.DVB
 
       int GetSignalQuality(
         [Out] out int pdwSignalQuality
+        );
+    };
+    #endregion
+
+
+    #region TunerControl3
+    [ComVisible(true), ComImport,
+     Guid("4B39EB78-D3CD-4223-B682-46AE66968118"),
+      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IB2C2MPEG2TunerCtrl3 : IB2C2MPEG2TunerCtrl2
+    {
+      int SetBandwidth(
+        int bandwidth
+        );
+
+      int GetBandwidth(
+        [Out] out int bandwidth
+        );
+    };
+    #endregion
+
+    #region TunerControl4
+    [ComVisible(true), ComImport,
+     Guid("61A9051F-04C4-435e-8742-9EDD2C543CE9"),
+      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IB2C2MPEG2TunerCtrl4 : IB2C2MPEG2TunerCtrl3
+    {
+      int SendDiSEqCCommand(
+        int length, IntPtr disEqcCommand
         );
     };
     #endregion
