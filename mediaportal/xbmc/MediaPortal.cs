@@ -833,6 +833,7 @@ public class MediaPortalApp : D3DApp, IRender
       HandleMessage();
       FrameMove();
       //FullRender();
+      Render3DEnvironment(); // part of FullRender() which is needed on Resume...
       if (GUIGraphicsContext.Vmr9Active)
       {
         Thread.Sleep(50);
