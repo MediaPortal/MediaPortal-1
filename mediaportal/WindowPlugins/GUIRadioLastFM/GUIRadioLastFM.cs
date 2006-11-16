@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -88,7 +89,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         _configSubmitToProfile = xmlreader.GetValueAsBool("audioscrobbler", "submitradiotracks", true);
         _configListEntryCount = xmlreader.GetValueAsInt("audioscrobbler", "listentrycount", 12);
       }
-
+      
       LastFMStation = new StreamControl();
       InfoScrobbler = AudioscrobblerUtils.Instance;
       _usersOwnTags = new List<string>();
@@ -102,19 +103,30 @@ namespace MediaPortal.GUI.RADIOLASTFM
       g_Player.PlayBackEnded += new g_Player.EndedHandler(PlayBackEndedHandler);
 
       LastFMStation.StreamSongChanged += new StreamControl.SongChangedHandler(OnLastFMStation_StreamSongChanged);
+      
       return bResult;
     }
 
     #region Serialisation
     private void LoadSettings()
     {
+      GUIWaitCursor.Show();
+      BackgroundWorker worker = new BackgroundWorker();
+      worker.DoWork += new DoWorkEventHandler(Worker_LoadSettings);
+      worker.RunWorkerAsync(); 
+    }
+
+    private void Worker_LoadSettings(object sender, DoWorkEventArgs e)
+    {
       if (!LastFMStation.IsInit)
       {
         LastFMStation.LoadConfig();
         LastFMStation.SubmitRadioSongs = _configSubmitToProfile;
       }
+      
       UpdateUsersTags(LastFMStation.AccountUser);
       UpdateUsersFriends(LastFMStation.AccountUser);
+      GUIWaitCursor.Hide();
     }
 
     //void SaveSettings()
@@ -140,6 +152,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
+      
       if (_trayBallonSongChange != null)
         _trayBallonSongChange.Visible = true;
 

@@ -130,7 +130,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     #region Serialisation
     private void LoadSettings()
-    {
+    {      
       BadLock = new object();
 
       CurrentSongTag = new MusicTag();
@@ -160,7 +160,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
           _isInit = true;
         }
-      }
+      }      
     }
     #endregion
 
@@ -272,12 +272,14 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public bool PlayStream()
     {
+      GUIWaitCursor.Show();
       _currentState = StreamPlaybackState.starting;
       // often the buffer is too slow for the playback to start
       for (int i = 0; i < 3; i++)
       {
         if (g_Player.Play(_currentRadioURL))
         {
+          GUIWaitCursor.Hide();
           _currentState = StreamPlaybackState.streaming;
           ToggleRecordToProfile(_recordToProfile);
           ToggleDiscoveryMode(_discoveryMode);
@@ -287,6 +289,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           return true;
         }
       }
+      GUIWaitCursor.Hide();
       _currentState = StreamPlaybackState.initialized;
       return false;
     }
