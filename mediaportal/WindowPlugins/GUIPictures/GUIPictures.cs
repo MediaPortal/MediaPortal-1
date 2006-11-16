@@ -111,7 +111,8 @@ namespace MediaPortal.GUI.Pictures
     [SkinControlAttribute(8)]    protected GUIButtonControl btnCreateThumbs = null;
     [SkinControlAttribute(9)]    protected GUIButtonControl btnRotate = null;
     [SkinControlAttribute(50)]   protected GUIFacadeControl facadeView = null;
-    
+
+
     int selectedItemIndex = -1;
     GUIListItem selectedListItem = null;
     DirectoryHistory folderHistory = new DirectoryHistory();
@@ -684,7 +685,7 @@ namespace MediaPortal.GUI.Pictures
       string sizeItem1 = String.Empty;
       string sizeItem2 = String.Empty;
       if (item1.FileInfo != null && !item1.IsFolder) sizeItem1 = MediaPortal.Util.Utils.GetSize(item1.FileInfo.Length);
-      if (item2.FileInfo != null && !item2.IsFolder) sizeItem2 = MediaPortal.Util.Utils.GetSize(item2.FileInfo.Length);
+      if (item2.FileInfo != null && !item1.IsFolder) sizeItem2 = MediaPortal.Util.Utils.GetSize(item2.FileInfo.Length);
 
       SortMethod method = (SortMethod)mapSettings.SortBy;
       bool sortAsc = mapSettings.SortAscending;
@@ -992,7 +993,6 @@ namespace MediaPortal.GUI.Pictures
         dlgProgress.Progress();
       }
 
-
       using (PictureDatabase dbs = new PictureDatabase())
       {
         for (int i = 0; i < GetItemCount(); ++i)
@@ -1238,19 +1238,15 @@ namespace MediaPortal.GUI.Pictures
                 g.DrawImage(imgFolder, 0, 0, width, height);
                 int x, y, w, h;
                 x = 0; y = 0; w = thumbnailWidth; h = thumbnailHeight;
-
                 //Load first of 4 images for the folder thumb.
                 //Avoid crashes caused by damaged image files:
                 try
                 {
-                  using (Image img = LoadPicture((string)pictureList[0]))
-                  {
-                    g.DrawImage(img, x + 10, y + 10, w, h);
-                  }
+                    AddPicture(g, (string)pictureList[0], x + 10, y + 10, w, h);
                 }
                 catch (Exception)
                 {
-                  Log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[0]);
+                    Log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[0]);
                 }
 
                 //If exists load second of 4 images for the folder thumb.
@@ -1258,10 +1254,7 @@ namespace MediaPortal.GUI.Pictures
                 {
                   try
                   {
-                    using (Image img = LoadPicture((string)pictureList[1]))
-                    {
-                      g.DrawImage(img, x + thumbnailWidth + 20, y + 10, w, h);
-                    }
+                    AddPicture(g, (string)pictureList[1], x + thumbnailWidth + 20, y + 10, w, h);
                   }
                   catch (Exception)
                   {
@@ -1274,10 +1267,7 @@ namespace MediaPortal.GUI.Pictures
                 {
                   try
                   {
-                    using (Image img = LoadPicture((string)pictureList[2]))
-                    {
-                      g.DrawImage(img, x + 10, y + thumbnailHeight + 20, w, h);
-                    }
+                    AddPicture(g, (string)pictureList[2], x + 10, y + thumbnailHeight + 20, w, h);
                   }
                   catch (Exception)
                   {
@@ -1290,10 +1280,7 @@ namespace MediaPortal.GUI.Pictures
                 {
                   try
                   {
-                    using (Image img = LoadPicture((string)pictureList[3]))
-                    {
-                      g.DrawImage(img, x + thumbnailWidth + 20, y + thumbnailHeight + 20, w, h);
-                    }
+                    AddPicture(g, (string)pictureList[3], x + thumbnailWidth + 20, y + thumbnailHeight + 20, w, h);
                   }
                   catch (Exception)
                   {
@@ -1319,8 +1306,10 @@ namespace MediaPortal.GUI.Pictures
       }//if (pictureList.Count>0)
     }
 
-    Image LoadPicture(string strFileName)
+    void AddPicture(Graphics g, string strFileName, int x, int y, int w, int h)
     {
+      // Add a thumbnail of the specified picture file to the image referenced by g, draw it at the
+      // given location and size.
       Image img = null;
       using (PictureDatabase dbs = new PictureDatabase())
       {
@@ -1354,10 +1343,10 @@ namespace MediaPortal.GUI.Pictures
                   break;
               }
             }
+            g.DrawImage(img, x, y, w, h);
           }
         }
       }
-      return img;
     }
 
     void Filter(ref List<GUIListItem> itemlist)
@@ -1481,8 +1470,8 @@ namespace MediaPortal.GUI.Pictures
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
       if (filmstrip == null) return;
       string thumbnailImage = GetLargeThumbnail(item.Path);
-      filmstrip.InfoImageFileName = thumbnailImage;
-      //UpdateButtonStates();
+      filmstrip.InfoImageFileName = thumbnailImage;      
+      UpdateButtonStates();
     }
 
     #endregion
@@ -1560,3 +1549,5 @@ namespace MediaPortal.GUI.Pictures
 
   }
 }
+
+ 	  	 
