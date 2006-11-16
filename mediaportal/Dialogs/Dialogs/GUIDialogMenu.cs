@@ -37,12 +37,9 @@ namespace MediaPortal.Dialogs
     bool m_bRunning = false;
     #endregion
 
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnClose = null;
-    [SkinControlAttribute(3)]
-    protected GUIListControl listView = null;
-    [SkinControlAttribute(4)]
-    protected GUILabelControl lblHeading = null;
+    [SkinControlAttribute(2)]    protected GUIButtonControl btnClose = null;
+    [SkinControlAttribute(3)]    protected GUIListControl listView = null;
+    [SkinControlAttribute(4)]    protected GUILabelControl lblHeading = null;
     int selectedItemIndex = -1;
     int selectedId = -1;
     bool showQuickNumbers = true;
@@ -224,7 +221,7 @@ namespace MediaPortal.Dialogs
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
             m_bRunning = false;
-            base.OnMessage(message);
+//            base.OnMessage(message);
             return true;
           }
 
