@@ -17572,7 +17572,7 @@
     </tv>
   </capturecard>
   
-  <capturecard commercialname="Skystar 2 (BDA)" capturename="TechniSat BDA Digital Capture" devid="ven_13d0&amp;dev_2103&amp;subsys_210313d0&amp;rev_02">
+  <capturecard commercialname="TechniSat Skystar 2 (BDA)" capturename="TechniSat BDA Digital Capture" devid="ven_13d0&amp;dev_2103&amp;subsys_210313d0&amp;rev_02">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
@@ -17588,7 +17588,7 @@
     </tv>
   </capturecard>
   
-  <capturecard commercialname="Skystar 2 (BDA)" capturename="TechniSat BDA Digital Capture" devid="ven_13d0&amp;dev_2103&amp;subsys_210313d0&amp;rev_01">
+  <capturecard commercialname="TechniSat Skystar 2 (BDA)" capturename="TechniSat BDA Digital Capture" devid="ven_13d0&amp;dev_2103&amp;subsys_210313d0&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
@@ -17600,6 +17600,20 @@
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
         <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Twinhan DVB-T (Mantis)" capturename="DTV-DVB Mantis Virtual BDA Receiver" devid="ven_1822&amp;dev_4e35&amp;subsys_00281822&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="DTV-DVB Mantis DVBS BDA Receiver"	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
