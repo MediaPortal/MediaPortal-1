@@ -440,11 +440,11 @@ namespace MediaPortal.Player
 
           LoadAudioDecoderPlugins();
 
-          Log.Info("BASS: Creating event procs...");
+          Log.Debug("BASS: Creating event procs...");
           PlaybackFadeOutProcDelegate = new SYNCPROC(PlaybackFadeOutProc);
           PlaybackEndProcDelegate = new SYNCPROC(PlaybackEndProc);
           PlaybackStreamFreedProcDelegate = new SYNCPROC(PlaybackStreamFreedProc);
-          Log.Info("BASS: Event procs created successfully.");
+          Log.Debug("BASS: Event procs created successfully.");
 
           StreamEventSyncHandles.Add(new List<int>());
           StreamEventSyncHandles.Add(new List<int>());
@@ -458,7 +458,7 @@ namespace MediaPortal.Player
         else
         {
           int error = Bass.BASS_ErrorGetCode();
-          Log.Info("BASS: Error initializing BASS audio engine {0}", Enum.GetName(typeof(BASSErrorCode), error));
+          Log.Error("BASS: Error initializing BASS audio engine {0}", Enum.GetName(typeof(BASSErrorCode), error));
         }
       }
 
@@ -607,7 +607,7 @@ namespace MediaPortal.Player
       try
       {
         result = VizManager.CreateVisualization(vizPluginInfo);
-        Log.Info("BASS: Create visualization {0}", (result ? "succeeded" : "failed"));
+        Log.Debug("BASS: Create visualization {0}", (result ? "succeeded" : "failed"));
       }
 
       catch (Exception ex)
@@ -705,19 +705,19 @@ namespace MediaPortal.Player
         if (Path.GetExtension(file.Name).ToLower() != ".dll")
           continue;
 
-        Log.Info("  Core Audioplayer: Loading: {0}", file.FullName);
+        Log.Debug("  Core Audioplayer: Loading: {0}", file.FullName);
         pluginHandle = Bass.BASS_PluginLoad(file.FullName);
 
         if (pluginHandle != 0)
         {
           DecoderPluginHandles.Add(pluginHandle);
           decoderCount++;
-          Log.Info("BASS: Added: {0}", file.FullName);
+          Log.Debug("BASS: Added: {0}", file.FullName);
         }
 
         else
         {
-          Log.Info("BASS: Unable to load: {0}", file.FullName);
+          Log.Debug("BASS: Unable to load: {0}", file.FullName);
         }
       }
 
@@ -820,6 +820,8 @@ namespace MediaPortal.Player
             stream = Bass.BASS_StreamCreateURL(filePath, 0, BASSStream.BASS_SAMPLE_SOFTWARE | BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE, null, 0);
             Log.Debug("BASSAudio: Webstream found - trying to fetch stream {0}", Convert.ToString(stream));
           }
+          else if (IsMODFile(filePath))
+            stream = Bass.BASS_MusicLoad(filePath, 0, 0, BASSMusic.BASS_SAMPLE_SOFTWARE | BASSMusic.BASS_SAMPLE_FLOAT | BASSMusic.BASS_MUSIC_AUTOFREE | BASSMusic.BASS_MUSIC_PRESCAN, 0);
           else
             stream = Bass.BASS_StreamCreateFile(filePath, 0, 0, BASSStream.BASS_SAMPLE_SOFTWARE | BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE);
 
@@ -844,10 +846,6 @@ namespace MediaPortal.Player
           if (stream != 0 && Bass.BASS_ChannelPlay(stream, false))
           {
             Log.Info("BASS: playback started");
-            //                        Console.WriteLine("Playing:{0}", Path.GetFileName(filePath));
-
-            //VizWindow.Size = new Size(0, 0);
-            //VizWindow.Visible = false;
 
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
             msg.Label = FilePath;
@@ -876,7 +874,7 @@ namespace MediaPortal.Player
           else
           {
             int error = Bass.BASS_ErrorGetCode();
-            //                        Console.WriteLine(Enum.GetName(typeof(BASSErrorCode), error));
+
             Log.Error("BASS: Unable to play {0}.  Reason: {1}.", filePath, Enum.GetName(typeof(BASSErrorCode), error));
 
             // Release all of the sync proc handles
@@ -895,6 +893,27 @@ namespace MediaPortal.Player
       }
 
       return result;
+    }
+
+    // Checks to see, if we got a MOD File
+    private bool IsMODFile(string filePath)
+    {
+      string ext = Path.GetExtension(filePath).ToLower();
+
+      switch (ext)
+      {
+        case ".mod":
+        case ".mo3":
+        case ".it":
+        case ".xm":
+        case ".s3m":
+        case ".mtm":
+        case ".umx":
+          return true;
+
+        default:
+          return false;
+      }
     }
 
     private List<int> RegisterPlaybackEvents(int stream, int streamIndex)
@@ -1480,7 +1499,7 @@ namespace MediaPortal.Player
 
       if (_IsFullScreen)
       {
-        Log.Info("BASS: Fullscreen");
+        Log.Debug("BASS: Fullscreen");
 
         _VideoPositionX = GUIGraphicsContext.OverScanLeft;
         _VideoPositionY = GUIGraphicsContext.OverScanTop;
@@ -1496,7 +1515,7 @@ namespace MediaPortal.Player
 
         VizWindow.Size = new System.Drawing.Size(_VideoWidth, _VideoHeight);
         VizWindow.Visible = true;
-        Log.Info("BASS:  Done");
+        Log.Debug("BASS:  Done");
 
         return;
       }
