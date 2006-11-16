@@ -988,7 +988,7 @@ namespace MediaPortal.GUI.Pictures
         dlgProgress.ShowProgressBar(true);
         dlgProgress.SetLine(1, String.Empty);
         dlgProgress.SetLine(2, String.Empty);
-        dlgProgress.StartModal(GetID);
+        //dlgProgress.StartModal(GetID);
         dlgProgress.ShowProgressBar(true);
         dlgProgress.Progress();
       }
@@ -1160,9 +1160,8 @@ namespace MediaPortal.GUI.Pictures
       {
         dlgProgress.SetHeading(110);
         dlgProgress.SetLine(1, String.Empty);
-        dlgProgress.SetLine(2, String.Empty);
-        dlgProgress.StartModal(GetID);
-        dlgProgress.ShowProgressBar(true);
+        dlgProgress.SetLine(2, String.Empty);        
+        //dlgProgress.StartModal(GUIWindowManager.ActiveWindow);        
         dlgProgress.Progress();
       }
       for (int i = 0; i < GetItemCount(); ++i)
@@ -1170,6 +1169,7 @@ namespace MediaPortal.GUI.Pictures
         int percent = ((i + 1) * 100) / GetItemCount();
         if (dlgProgress != null)
         {
+          dlgProgress.ShowProgressBar(true);
           dlgProgress.SetPercentage(percent);
           string progressLine = String.Format(GUILocalizeStrings.Get(8033) + ": {0}/{1}", i + 1, GetItemCount());
           dlgProgress.SetLine(1, String.Empty);
