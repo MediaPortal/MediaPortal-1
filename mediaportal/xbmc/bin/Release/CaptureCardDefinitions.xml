@@ -17617,4 +17617,52 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV 7010iX (DVB-S)" capturename="Pinnacle PCTV 7010iX BDA Digital Capture" devid="ven_1131&amp;dev_7162&amp;subsys_010111bd&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"          checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Pinnacle PCTV 7010iX BDA DVBS Tuner"	    checkdevice="true"/>
+        <filter cat="capture"         name="Pinnacle PCTV 7010iX BDA Digital Capture" checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV 7010iX (DVB-T)" capturename="Pinnacle PCTV 7010iX BDA Digital Capture" devid="ven_1131&amp;dev_7162&amp;subsys_010111bd&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"          checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Pinnacle PCTV 7010iX BDA DVBT Tuner"	    checkdevice="true"/>
+        <filter cat="capture"         name="Pinnacle PCTV 7010iX BDA Digital Capture" checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="KNC ONE TV-Star DVB-S" capturename="KNC TV-Station / TV-Star DVB-S (X4) Capture" devid="ven_1131&amp;dev_7146&amp;subsys_00141894&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"              checkdevice="false"/>
+        <filter cat="tunerdevice"     name="KNC TV-Station / TV-Star DVB-S (X4) Tuner"    checkdevice="true"/>
+        <filter cat="capture"         name="KNC TV-Station / TV-Star DVB-S (X4) Capture"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"  sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"      sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
