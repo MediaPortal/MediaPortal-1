@@ -445,7 +445,7 @@ namespace MediaPortal.GUI.TV
         cntlLabel.YPosition = listViews.SpinY;
 
       OnSort();
-      UpdateButtons();
+      //UpdateButtons(); done in OnSort()
       Update();
       GUIWaitCursor.Hide();
     }

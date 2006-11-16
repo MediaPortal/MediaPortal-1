@@ -357,7 +357,7 @@ namespace MediaPortal.GUI.TV
         cntlLabel.YPosition = listViews.SpinY;
 
       OnSort();
-      UpdateButtonStates();
+      //UpdateButtonStates(); done in OnSort()
       UpdateProperties();
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
       GUIControl.SelectItemControl(GetID, listViews.GetID, m_iSelectedItem);

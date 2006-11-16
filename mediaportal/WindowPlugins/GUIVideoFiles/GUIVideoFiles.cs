@@ -430,6 +430,7 @@ namespace MediaPortal.GUI.Video
       {
         if (PlayMountedImageFile(GetID, newFolderName))
         {
+          GUIWaitCursor.Hide();
           return;
         }
         else
@@ -440,6 +441,7 @@ namespace MediaPortal.GUI.Video
           }
           else
           {
+            GUIWaitCursor.Hide();
             return;
           }
         }

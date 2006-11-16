@@ -41,18 +41,12 @@ namespace MediaPortal.GUI.Radio
 {
   public class GUIRadio : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]
-    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnPrevious = null;
-    [SkinControlAttribute(7)]
-    protected GUIButtonControl btnNext = null;
-    [SkinControlAttribute(50)]
-    protected GUIListControl listView = null;
-    [SkinControlAttribute(51)]
-    protected GUIThumbnailPanel thumbnailView = null;
+    [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(6)]    protected GUIButtonControl btnPrevious = null;
+    [SkinControlAttribute(7)]    protected GUIButtonControl btnNext = null;
+    [SkinControlAttribute(50)]   protected GUIListControl listView = null;
+    [SkinControlAttribute(51)]   protected GUIThumbnailPanel thumbnailView = null;
 
 
     enum SortMethod

@@ -55,26 +55,16 @@ namespace MediaPortal.GUI.MusicVideos
     protected string _currentPlaying;
     //private bool PShuffleOn = false;
     #endregion
-    [SkinControlAttribute(50)]
-    protected GUIFacadeControl facadeView = null;
-    [SkinControlAttribute(2)]
-    //protected GUIButtonControl btnViewAs = null;
-    //[SkinControlAttribute(3)]
-    //protected GUISortButtonControl btnSortBy = null;
-    //[SkinControlAttribute(5)]
-    //protected GUIButtonControl btnViews = null;
-    //[SkinControlAttribute(20)]
-    protected GUIButtonControl btnShuffle = null;
-    [SkinControlAttribute(21)]
-    protected GUIButtonControl btnSave = null;
-    [SkinControlAttribute(22)]
-    protected GUIButtonControl btnClear = null;
-    [SkinControlAttribute(23)]
-    protected GUIButtonControl btnPlay = null;
-    [SkinControlAttribute(24)]
-    protected GUIButtonControl btnNext = null;
-    [SkinControlAttribute(25)]
-    protected GUIButtonControl btnPrevious = null;
+    [SkinControlAttribute(50)]    protected GUIFacadeControl facadeView = null;
+    [SkinControlAttribute(2)]     protected GUIButtonControl btnViewAs = null;
+    //[SkinControlAttribute(3)]    //protected GUISortButtonControl btnSortBy = null;
+    //[SkinControlAttribute(5)]    //protected GUIButtonControl btnViews = null;
+    [SkinControlAttribute(20)]    protected GUIButtonControl btnShuffle = null;
+    [SkinControlAttribute(21)]    protected GUIButtonControl btnSave = null;
+    [SkinControlAttribute(22)]    protected GUIButtonControl btnClear = null;
+    [SkinControlAttribute(23)]    protected GUIButtonControl btnPlay = null;
+    [SkinControlAttribute(24)]    protected GUIButtonControl btnNext = null;
+    [SkinControlAttribute(25)]    protected GUIButtonControl btnPrevious = null;
     private int WINDOW_ID = 4735;
 
     public GUIMusicVideoPlayList()

@@ -971,91 +971,99 @@ namespace MediaPortal.GUI.Music
     protected override void LoadDirectory(string strNewDirectory)
     {
       GUIWaitCursor.Show();
-      GUIListItem SelectedItem = facadeView.SelectedListItem;
-      if (SelectedItem != null)
+      try
       {
-        if (SelectedItem.IsFolder && SelectedItem.Label != "..")
+        GUIListItem SelectedItem = facadeView.SelectedListItem;
+        if (SelectedItem != null)
         {
-          m_history.Set(SelectedItem.Label, currentFolder);
+          if (SelectedItem.IsFolder && SelectedItem.Label != "..")
+          {
+            m_history.Set(SelectedItem.Label, currentFolder);
+          }
         }
-      }
-      if (strNewDirectory != currentFolder && _MapSettings != null)
-      {
-        SaveFolderSettings(currentFolder);
-      }
-
-      if (strNewDirectory != currentFolder || _MapSettings == null)
-      {
-        LoadFolderSettings(strNewDirectory);
-      }
-      currentFolder = strNewDirectory;
-      GUIControl.ClearControl(GetID, facadeView.GetID);
-
-      string strObjects = String.Empty;
-      TimeSpan totalPlayingTime = new TimeSpan();
-
-      List<GUIListItem> itemlist = m_directory.GetDirectoryExt(currentFolder);
-
-      string strSelectedItem = m_history.Get(currentFolder);
-      int iItem = 0;
-      OnRetrieveMusicInfo(ref itemlist);
-      foreach (GUIListItem item in itemlist)
-      {
-        MusicTag tag = item.MusicTag as MusicTag;
-        if (tag != null)
+        if (strNewDirectory != currentFolder && _MapSettings != null)
         {
-          if (tag.Duration > 0)
-            totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, tag.Duration));
+          SaveFolderSettings(currentFolder);
         }
-        if (item.Label == ".." && currentFolder == m_strPlayListPath)
-          continue;
-        item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-        item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-        facadeView.Add(item);
-      }
-      OnSort();
-      bool itemSelected = false;
-      for (int i = 0; i < facadeView.Count; ++i)
-      {
-        GUIListItem item = facadeView[i];
-        if (item.Label == strSelectedItem)
-        {
-          GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem);
-          itemSelected = true;
-          break;
-        }
-        iItem++;
-      }
-      for (int i = 0; i < facadeView.Count; ++i)
-      {
-        GUIListItem item = facadeView[i];
-        if (item.Path.Equals(_currentPlaying, StringComparison.OrdinalIgnoreCase))
-        {
-          item.Selected = true;
-          break;
-        }
-      }
-      int iTotalItems = itemlist.Count;
-      if (itemlist.Count > 0)
-      {
-        GUIListItem rootItem = itemlist[0];
-        if (rootItem.Label == "..")
-          iTotalItems--;
-      }
-      strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
-      if (totalPlayingTime.Seconds > 0)
-      {
-        strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(1052),
-                    MediaPortal.Util.Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));//songs
-      }
 
-      GUIPropertyManager.SetProperty("#itemcount", strObjects);
+        if (strNewDirectory != currentFolder || _MapSettings == null)
+        {
+          LoadFolderSettings(strNewDirectory);
+        }
+        currentFolder = strNewDirectory;
+        GUIControl.ClearControl(GetID, facadeView.GetID);
 
-      if (m_iItemSelected >= 0 && !itemSelected)
-      {
-        GUIControl.SelectItemControl(GetID, facadeView.GetID, m_iItemSelected);
+        string strObjects = String.Empty;
+        TimeSpan totalPlayingTime = new TimeSpan();
+
+        List<GUIListItem> itemlist = m_directory.GetDirectoryExt(currentFolder);
+
+        string strSelectedItem = m_history.Get(currentFolder);
+        int iItem = 0;
+        OnRetrieveMusicInfo(ref itemlist);
+        foreach (GUIListItem item in itemlist)
+        {
+          MusicTag tag = item.MusicTag as MusicTag;
+          if (tag != null)
+          {
+            if (tag.Duration > 0)
+              totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, tag.Duration));
+          }
+          if (item.Label == ".." && currentFolder == m_strPlayListPath)
+            continue;
+          item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+          item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+          facadeView.Add(item);
+        }
+        OnSort();
+        bool itemSelected = false;
+        for (int i = 0; i < facadeView.Count; ++i)
+        {
+          GUIListItem item = facadeView[i];
+          if (item.Label == strSelectedItem)
+          {
+            GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem);
+            itemSelected = true;
+            break;
+          }
+          iItem++;
+        }
+        for (int i = 0; i < facadeView.Count; ++i)
+        {
+          GUIListItem item = facadeView[i];
+          if (item.Path.Equals(_currentPlaying, StringComparison.OrdinalIgnoreCase))
+          {
+            item.Selected = true;
+            break;
+          }
+        }
+        int iTotalItems = itemlist.Count;
+        if (itemlist.Count > 0)
+        {
+          GUIListItem rootItem = itemlist[0];
+          if (rootItem.Label == "..")
+            iTotalItems--;
+        }
+        strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
+        if (totalPlayingTime.Seconds > 0)
+        {
+          strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(1052),
+                      MediaPortal.Util.Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));//songs
+        }
+
+        GUIPropertyManager.SetProperty("#itemcount", strObjects);
+
+        if (m_iItemSelected >= 0 && !itemSelected)
+        {
+          GUIControl.SelectItemControl(GetID, facadeView.GetID, m_iItemSelected);
+        }
+        GUIWaitCursor.Hide();
       }
-      GUIWaitCursor.Hide();
+      catch (Exception ex)
+      {
+        GUIWaitCursor.Hide();
+        Log.Error("GUIMusicFiles: An error occured while loading the directory {0}", ex.Message);
+      }
     }
 
     void AddItemToPlayList(GUIListItem pItem)

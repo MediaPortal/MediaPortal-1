@@ -438,105 +438,113 @@ namespace MediaPortal.GUI.TV
     void LoadDirectory()
     {
       GUIWaitCursor.Show();
-      GUIControl.ClearControl(GetID, listAlbums.GetID);
-      GUIControl.ClearControl(GetID, listViews.GetID);
-
-      List<TVRecorded> recordings = new List<TVRecorded>();
-      List<GUIListItem> itemlist = new List<GUIListItem>();
-      TVDatabase.GetRecordedTV(ref recordings);
-      if (currentShow == String.Empty)
+      try
       {
-        foreach (TVRecorded rec in recordings)
+        GUIControl.ClearControl(GetID, listAlbums.GetID);
+        GUIControl.ClearControl(GetID, listViews.GetID);
+
+        List<TVRecorded> recordings = new List<TVRecorded>();
+        List<GUIListItem> itemlist = new List<GUIListItem>();
+        TVDatabase.GetRecordedTV(ref recordings);
+        if (currentShow == String.Empty)
         {
-          bool add = true;
-          foreach (GUIListItem item in itemlist)
+          foreach (TVRecorded rec in recordings)
           {
-            TVRecorded rec2 = item.TVTag as TVRecorded;
-            if (rec.Title.Equals(rec2.Title))
+            bool add = true;
+            foreach (GUIListItem item in itemlist)
             {
-              item.IsFolder = true;
-              MediaPortal.Util.Utils.SetDefaultIcons(item);
-              string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVShows, rec.Title);
-              if (System.IO.File.Exists(strLogo))
+              TVRecorded rec2 = item.TVTag as TVRecorded;
+              if (rec.Title.Equals(rec2.Title))
               {
-                item.ThumbnailImage = strLogo;
-                item.IconImageBig = strLogo;
-                item.IconImage = strLogo;
+                item.IsFolder = true;
+                MediaPortal.Util.Utils.SetDefaultIcons(item);
+                string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVShows, rec.Title);
+                if (System.IO.File.Exists(strLogo))
+                {
+                  item.ThumbnailImage = strLogo;
+                  item.IconImageBig = strLogo;
+                  item.IconImage = strLogo;
+                }
+                add = false;
+                break;
               }
-              add = false;
-              break;
             }
-          }
-          if (add)
-          {
-            GUIListItem item = new GUIListItem();
-            item.Label = rec.Title;
-            item.TVTag = rec;
-            string strLogo = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
-            if (!System.IO.File.Exists(strLogo))
+            if (add)
             {
-              strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
+              GUIListItem item = new GUIListItem();
+              item.Label = rec.Title;
+              item.TVTag = rec;
+              string strLogo = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
               if (!System.IO.File.Exists(strLogo))
               {
-                strLogo = "defaultVideoBig.png";
+                strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
+                if (!System.IO.File.Exists(strLogo))
+                {
+                  strLogo = "defaultVideoBig.png";
+                }
               }
+              item.ThumbnailImage = strLogo;
+              item.IconImageBig = strLogo;
+              item.IconImage = strLogo;
+              itemlist.Add(item);
             }
-            item.ThumbnailImage = strLogo;
-            item.IconImageBig = strLogo;
-            item.IconImage = strLogo;
-            itemlist.Add(item);
           }
         }
-      }
-      else
-      {
-        GUIListItem item = new GUIListItem();
-        item.Label = "..";
-        item.IsFolder = true;
-        MediaPortal.Util.Utils.SetDefaultIcons(item);
-        itemlist.Add(item);
-        foreach (TVRecorded rec in recordings)
+        else
         {
-          if (rec.Title.Equals(currentShow))
+          GUIListItem item = new GUIListItem();
+          item.Label = "..";
+          item.IsFolder = true;
+          MediaPortal.Util.Utils.SetDefaultIcons(item);
+          itemlist.Add(item);
+          foreach (TVRecorded rec in recordings)
           {
-            item = new GUIListItem();
-            item.Label = rec.Title;
-            item.TVTag = rec;
-            string strLogo = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
-            if (!System.IO.File.Exists(strLogo))
+            if (rec.Title.Equals(currentShow))
             {
-              strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
+              item = new GUIListItem();
+              item.Label = rec.Title;
+              item.TVTag = rec;
+              string strLogo = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
               if (!System.IO.File.Exists(strLogo))
               {
-                strLogo = "defaultVideoBig.png";
+                strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
+                if (!System.IO.File.Exists(strLogo))
+                {
+                  strLogo = "defaultVideoBig.png";
+                }
               }
+              item.ThumbnailImage = strLogo;
+              item.IconImageBig = strLogo;
+              item.IconImage = strLogo;
+              itemlist.Add(item);
             }
-            item.ThumbnailImage = strLogo;
-            item.IconImageBig = strLogo;
-            item.IconImage = strLogo;
-            itemlist.Add(item);
           }
         }
+        foreach (GUIListItem item in itemlist)
+        {
+          listAlbums.Add(item);
+          listViews.Add(item);
+        }
+
+        string strObjects = String.Format("{0} {1}", itemlist.Count, GUILocalizeStrings.Get(632));
+        GUIPropertyManager.SetProperty("#itemcount", strObjects);
+        GUIControl cntlLabel = GetControl(12);
+
+        if (currentViewMethod == ViewAs.Album)
+          cntlLabel.YPosition = listAlbums.SpinY;
+        else
+          cntlLabel.YPosition = listViews.SpinY;
+
+        OnSort();
+        //UpdateButtonStates(); done in on sort
+        UpdateProperties();
+        GUIWaitCursor.Hide();
       }
-      foreach (GUIListItem item in itemlist)
+      catch (Exception ex)
       {
-        listAlbums.Add(item);
-        listViews.Add(item);
+        GUIWaitCursor.Hide();
+        Log.Error("RecordedTV: An error occured while loading the recordings {0}", ex.Message);        
       }
-
-      string strObjects = String.Format("{0} {1}", itemlist.Count, GUILocalizeStrings.Get(632));
-      GUIPropertyManager.SetProperty("#itemcount", strObjects);
-      GUIControl cntlLabel = GetControl(12);
-
-      if (currentViewMethod == ViewAs.Album)
-        cntlLabel.YPosition = listAlbums.SpinY;
-      else
-        cntlLabel.YPosition = listViews.SpinY;
-
-      OnSort();
-      UpdateButtonStates();
-      UpdateProperties();
-      GUIWaitCursor.Hide();
     }
 
     void UpdateButtonStates()

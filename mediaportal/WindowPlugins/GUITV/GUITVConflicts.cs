@@ -255,6 +255,8 @@ namespace MediaPortal.GUI.TV
           cntlLabel.YPosition = listConflicts.SpinY;
 
         SetLabels();
+        GUIWaitCursor.Hide();
+
         return;
       }
       List<TVRecording> itemlist = new List<TVRecording>();
