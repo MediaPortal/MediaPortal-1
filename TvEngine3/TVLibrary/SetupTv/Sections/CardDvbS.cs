@@ -434,14 +434,15 @@ namespace SetupTv.Sections
 
         Scan(1, (BandType)mpBand1.SelectedIndex, (DisEqcType)mpDisEqc1.SelectedIndex, (Sattelite)mpTransponder1.SelectedItem);
         if (_stopScanning) return;
+
         if (mpLNB2.Checked)
           Scan(2, (BandType)mpBand2.SelectedIndex, (DisEqcType)mpDisEqc2.SelectedIndex, (Sattelite)mpTransponder2.SelectedItem);
+        if (_stopScanning) return;
 
         if (mpLNB3.Checked)
-          if (_stopScanning) return;
         Scan(3, (BandType)mpBand3.SelectedIndex, (DisEqcType)mpDisEqc3.SelectedIndex, (Sattelite)mpTransponder3.SelectedItem);
-
         if (_stopScanning) return;
+
         if (mpLNB4.Checked)
           Scan(4, (BandType)mpBand4.SelectedIndex, (DisEqcType)mpDisEqc2.SelectedIndex, (Sattelite)mpTransponder4.SelectedItem);
 
