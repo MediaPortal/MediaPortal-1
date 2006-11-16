@@ -65,7 +65,11 @@ void  CSdtParser::OnNewSection(CSection& sections)
   CTsHeader header(section);
   int start=header.PayLoadStart;
   int table_id = section[start+0];
-  if (table_id!=0x42) return ;
+  if (table_id!=0x42) 
+	{
+		LogDebug("sdtparser: tableid=%x", table_id);
+		return ;
+	}
   int section_syntax_indicator = (section[start+1]>>7) & 1;
   int section_length = ((section[start+1]& 0xF)<<8) + section[start+2];
   
@@ -77,8 +81,8 @@ void  CSdtParser::OnNewSection(CSection& sections)
   int section_number = section[start+6];
   int last_section_number = section[start+7];
   int original_network_id = ((section[start+8])<<8)+section[start+9];
-//	  LogDebug("decodeSDTTable len=%d section no:%d last section no:%d cni:%d version:%d si:%d", 
-//		  section_length,section_number,last_section_number,current_next_indicator,version_number,section_syntax_indicator);
+  LogDebug("decodeSDTTable len=%d section no:%d last section no:%d cni:%d version:%d si:%d", 
+		  section_length,section_number,last_section_number,current_next_indicator,version_number,section_syntax_indicator);
 
 
     section_length=sectionLen;
@@ -116,7 +120,7 @@ void  CSdtParser::OnNewSection(CSection& sections)
 		  int indicator=section[start+pointer];
 		  x = 0;
 		  x = section[start+pointer + 1] + 2;
-		  //Log.Write("indicator = {0:X}",indicator);
+			LogDebug("sdt parser: indicator = %x",indicator);
 		  if (indicator == 0x48)
 		  {
 			  ServiceData serviceData;							

@@ -73,7 +73,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 
 	if (!_isFound)
 	{
-		//LogDebug("got pmt:%x service id:%x", GetPid(), program_number);
+		LogDebug("got pmt:%x service id:%x", GetPid(), program_number);
 		_isFound=true;	
 		if (m_pmtCallback!=NULL)
 		{
@@ -104,7 +104,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 	  stream_type = section[start+pointer];
 	  elementary_PID = ((section[start+pointer+1]&0x1F)<<8)+section[start+pointer+2];
 	  ES_info_length = ((section[start+pointer+3] & 0xF)<<8)+section[start+pointer+4];
-    //Log("pmt: pid:%x type:%x",elementary_PID, stream_type);
+    LogDebug("pmt: pid:%x type:%x",elementary_PID, stream_type);
 		if(stream_type==SERVICE_TYPE_VIDEO_MPEG1 || stream_type==SERVICE_TYPE_VIDEO_MPEG2)
 	  {
 			//mpeg2 video
@@ -162,7 +162,11 @@ void CPmtParser::OnNewSection(CSection& sections)
 	  len2 = ES_info_length;
 	  while (len2 > 0)
 	  {
-		  if (pointer+1>=sectionLen) return ;
+		  if (pointer+1>=sectionLen) 
+			{
+				LogDebug("pmt parser check1");
+				return ;
+			}
 		  x = 0;
 		  int indicator=section[start+pointer];
 		  x = section[start+pointer + 1] + 2;
@@ -172,7 +176,11 @@ void CPmtParser::OnNewSection(CSection& sections)
 			}
 		  if(indicator==DESCRIPTOR_MPEG_ISO639_Lang)
 		  {	
-			  if (pointer+4>=sectionLen) return ;
+			  if (pointer+4>=sectionLen) 
+			{
+				LogDebug("pmt parser check2");
+				return ;
+			}
 			  BYTE d[3];
 			  d[0]=section[start+pointer+2];
 			  d[1]=section[start+pointer+3];
@@ -218,7 +226,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 		  len1 -= x;
 		  pointer += x;
 	  }
-//	  LogDebug("DecodePMT pid:0x%x pcrpid:0x%x videopid:0x%x audiopid:0x%x ac3pid:0x%x sid:%x",
-//		  m_pidInfo.PmtPid, m_pidInfo.PcrPid,m_pidInfo.VideoPid,m_pidInfo.AudioPid1,m_pidInfo.AC3Pid,m_pidInfo.ServiceId);
+	  LogDebug("DecodePMT pid:0x%x pcrpid:0x%x videopid:0x%x audiopid:0x%x ac3pid:0x%x sid:%x",
+		  m_pidInfo.PmtPid, m_pidInfo.PcrPid,m_pidInfo.VideoPid,m_pidInfo.AudioPid1,m_pidInfo.AC3Pid,m_pidInfo.ServiceId);
   }
 }
