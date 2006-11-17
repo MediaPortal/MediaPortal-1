@@ -25,25 +25,25 @@
 #include <vector>
 using namespace std;
 
+class ISdtCallBack
+{
+public:
+	virtual void OnSdtReceived(CChannelInfo sdtInfo)=0;
+};
+
+
 class CSdtParser: public  CSectionDecoder
 {
 private:
-  typedef struct stserviceData
-  {
-	  char Provider[255];
-	  char Name[255];
-	  WORD ServiceType;
-  }ServiceData;
-
 public:
   CSdtParser(void);
   virtual ~CSdtParser(void);
 	void  OnNewSection(CSection& sections);
   void  Reset();
-  int   Count();
-	bool GetChannelInfo(int serviceId,CChannelInfo& info);
-
+  void SetCallback(ISdtCallBack* callback);
+  bool IsReady();
 private:
-  void DVB_GetService(BYTE *b,ServiceData *serviceData);
-  vector<CChannelInfo> m_vecChannels;
+  void DVB_GetService(BYTE *b,CChannelInfo& info);
+  ISdtCallBack* m_pCallback;
+  bool m_bFound;
 };

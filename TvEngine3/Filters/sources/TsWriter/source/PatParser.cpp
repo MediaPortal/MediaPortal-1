@@ -29,10 +29,11 @@
 #include "PatParser.h"
 #include "tsheader.h"
 
+extern DWORD crc32 (char *data, int len);
 void LogDebug(const char *fmt, ...) ;
 CPatParser::CPatParser(void)
 {
-	m_pConditionalAccess=NULL;
+	//m_pConditionalAccess=NULL;
   Reset();
   SetTableId(0);
   SetPid(0);
@@ -51,6 +52,7 @@ void  CPatParser::CleanUp()
     delete parser;
   }
   m_pmtParsers.clear();
+  m_vecChannels.clear();
 }
 
 void  CPatParser::Reset()
@@ -61,14 +63,15 @@ void  CPatParser::Reset()
   CleanUp();
   m_vctParser.Reset();
   m_sdtParser.Reset();
+  m_sdtParserOther.Reset();
 	m_nitDecoder.Reset();
-	UpdateHwPids();
+	//UpdateHwPids();
+  m_sdtParser.SetCallback(this);
+  m_sdtParserOther.SetCallback(this);
+  m_sdtParserOther.SetTableId(0x46);
+  m_vctParser.SetCallback(this);
 }
 
-void CPatParser::SetConditionalAccess(CConditionalAccess* access)
-{
-	m_pConditionalAccess=access;
-}
  
 BOOL CPatParser::IsReady()
 {
@@ -81,11 +84,9 @@ BOOL CPatParser::IsReady()
   for (int i=0; i < (int)m_pmtParsers.size();++i)
   {
     CPmtParser* parser=m_pmtParsers[i];
-    if (false==parser->Ready()) return FALSE;
-    CPidTable& table=parser->GetPidInfo();
-    CChannelInfo info;
-	  if (false==m_sdtParser.GetChannelInfo(table.ServiceId,info)) return FALSE;
+    if (false==parser->IsReady()) return FALSE;
   }
+  if (false==m_sdtParser.IsReady()) return FALSE;
   return TRUE;
 }
 
@@ -93,9 +94,9 @@ int CPatParser::Count()
 {
   if (m_vctParser.Count() > 0)
   {
-    return m_vctParser.Count();
+    return m_vecChannels.size();
   }
-  return m_pmtParsers.size();
+  return m_vecChannels.size();
 }
 
 bool CPatParser::GetChannel(int index, CChannelInfo& info)
@@ -105,31 +106,65 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
 	{
 		return false;
 	}
-	if ( m_vctParser.Count()>0)
-	{
-		if (m_vctParser.GetChannel(index,info))
-		{
-			return true;
-		}
-		return false;
-	}
+  info = m_vecChannels[index];
+	info.LCN=m_nitDecoder.GetLogicialChannelNumber(info.NetworkId,info.TransportId,info.ServiceId);
+	return true;
+}
 
-  CPmtParser* parser=m_pmtParsers[index];
-	if (false==parser->Ready()) 
-	{
-		return false;
-	}
-  CPidTable& table=parser->GetPidInfo();
-	if (m_sdtParser.Count()>0)
+
+void CPatParser::OnChannel(CChannelInfo info)
+{
+  m_vecChannels.push_back(info);
+}
+
+void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
+{
+  for (int i=0; i < m_vecChannels.size(); ++i)
   {
-    if (m_sdtParser.GetChannelInfo(table.ServiceId, info))
-		{
-			info.PidTable = table;
-			info.LCN=m_nitDecoder.GetLogicialChannelNumber(info.NetworkId,info.TransportId,info.ServiceId);
-			return true;
-		}
+    CChannelInfo& info=m_vecChannels[i];
+    if (info.ServiceId==sdtInfo.ServiceId)
+    {
+      info.NetworkId=sdtInfo.NetworkId;
+      info.TransportId=sdtInfo.TransportId;
+      info.ServiceId=sdtInfo.ServiceId;
+      info.EIT_schedule_flag=sdtInfo.EIT_schedule_flag;
+      info.EIT_present_following_flag=sdtInfo.EIT_present_following_flag;
+      info.RunningStatus=sdtInfo.RunningStatus;
+      info.FreeCAMode=sdtInfo.FreeCAMode;
+      info.ServiceType=sdtInfo.ServiceType;
+      strcpy(info.ProviderName,sdtInfo.ProviderName);
+      strcpy(info.ServiceName,sdtInfo.ServiceName);
+      return;
+    }
   }
-	return false;
+  CChannelInfo info;
+  info.NetworkId=sdtInfo.NetworkId;
+  info.TransportId=sdtInfo.TransportId;
+  info.ServiceId=sdtInfo.ServiceId;
+  info.EIT_schedule_flag=sdtInfo.EIT_schedule_flag;
+  info.EIT_present_following_flag=sdtInfo.EIT_present_following_flag;
+  info.RunningStatus=sdtInfo.RunningStatus;
+  info.FreeCAMode=sdtInfo.FreeCAMode;
+  info.ServiceType=sdtInfo.ServiceType;
+  strcpy(info.ProviderName,sdtInfo.ProviderName);
+  strcpy(info.ServiceName,sdtInfo.ServiceName);
+  m_vecChannels.push_back(info);
+}
+void CPatParser::OnPidsReceived(CPidTable pidTable)
+{
+  for (int i=0; i < m_vecChannels.size(); ++i)
+  {
+    CChannelInfo& info=m_vecChannels[i];
+    if (info.ServiceId==pidTable.ServiceId)
+    {
+      info.PidTable=pidTable;
+      return;
+    }
+  }
+  CChannelInfo info;
+  info.ServiceId=pidTable.ServiceId;
+  info.PidTable=pidTable;
+  m_vecChannels.push_back(info);
 }
 
 void CPatParser::OnTsPacket(byte* tsPacket)
@@ -137,6 +172,7 @@ void CPatParser::OnTsPacket(byte* tsPacket)
 	m_nitDecoder.OnTsPacket(tsPacket);
   m_vctParser.OnTsPacket(tsPacket);
   m_sdtParser.OnTsPacket(tsPacket);
+  m_sdtParserOther.OnTsPacket(tsPacket);
   for (int i=0; i < (int)m_pmtParsers.size();++i)
   {
     CPmtParser* parser=m_pmtParsers[i];
@@ -162,8 +198,8 @@ void CPatParser::OnNewSection(CSection& sections)
   int section_number = section[start+6];
   int last_section_number = section[start+7];
 
-//	  LogDebug("DecodePat  %d section:%d lastsection:%d sectionlen:%d",
-//						  version_number,section_number,last_section_number,section_length);
+  
+ // DWORD crc= crc32((char*)&section[start],sections.SectionLength+start+3-5);
 
   int pmtcount=0;
   int loop =(section_length - 9) / 4;
@@ -171,6 +207,7 @@ void CPatParser::OnNewSection(CSection& sections)
   for(int i=0; i < loop; i++)
   {
 	  int offset = (8 +(i * 4));
+    int serviceId=((section[start+offset] & 0x1F)<<8) + section[start+offset+1];
 	  int pmtPid = ((section[start+offset+2] & 0x1F)<<8) + section[start+offset+3];
 	  if (pmtPid < 0x10 || pmtPid >=0x1fff) 
 	  {
@@ -178,7 +215,24 @@ void CPatParser::OnNewSection(CSection& sections)
 		  return ;
 	  }
 
-	  bool found=false;
+    bool found=false;
+    for (int idx=0; idx < (int)m_vecChannels.size(); idx++)
+	  {
+      CChannelInfo& info = m_vecChannels[idx];
+      if (info.TransportId==transport_stream_id && info.ServiceId==serviceId) 
+      {
+        found=true;
+        break;
+      }
+    }
+    if (!found)
+    {
+      CChannelInfo info;
+      info.TransportId=transport_stream_id;
+      info.ServiceId=serviceId;
+      m_vecChannels.push_back(info);
+    }
+	   found=false;
 	  for (int idx=0; idx < (int)m_pmtParsers.size(); idx++)
 	  {
 		  CPmtParser* pmtParser = m_pmtParsers[idx];
@@ -201,7 +255,7 @@ void CPatParser::OnNewSection(CSection& sections)
   }
 	if (newPmtsAdded)
 	{
-			UpdateHwPids();
+			//UpdateHwPids();
 	}
 }
 
@@ -212,10 +266,9 @@ void CPatParser::Dump()
     CChannelInfo info;
     if (GetChannel( i, info))
     {
-      LogDebug("%d) onid:%x tsid:%x sid:%x major:%d minor:%x freq:%x type:%d provider:%s service:%s",i,
-            info.NetworkId,info.TransportId,info.ServiceId,info.MajorChannel,info.MinorChannel,info.Frequency,info.ServiceType,info.ProviderName,info.ServiceName);
-      LogDebug("  pcr:%x pmt:%x video:%x audio1:%x audio2:%x audio3:%x ac3:%x ttx:%x sub:%x",
-            info.PidTable.PcrPid,info.PidTable.PmtPid,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AudioPid2,info.PidTable.AudioPid3,info.PidTable.AC3Pid,info.PidTable.TeletextPid,info.PidTable.SubtitlePid);
+      LogDebug("%4d)  p:%-15s s:%-25s  onid:%4x tsid:%4x sid:%4x major:%3d minor:%3x freq:%3x type:%3d pcr:%4x pmt:%4x v:%4x a1:%4x a2:%4x a3:%4x ac3:%4x ttx:%4x sub:%4x",i,
+            info.ProviderName,info.ServiceName,info.NetworkId,info.TransportId,info.ServiceId,info.MajorChannel,info.MinorChannel,info.Frequency,
+            info.ServiceType,info.PidTable.PcrPid,info.PidTable.PmtPid,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AudioPid2,info.PidTable.AudioPid3,info.PidTable.AC3Pid,info.PidTable.TeletextPid,info.PidTable.SubtitlePid);
     }
     else
     {
@@ -226,13 +279,13 @@ void CPatParser::Dump()
 
 void CPatParser::OnPmtReceived(int pid)
 {
-	LogDebug("PatParser:  received pmt:%x", pid);
-	if ((m_pmtParsers.size()+5) <=16) return;
-	UpdateHwPids();
+//	LogDebug("PatParser:  received pmt:%x", pid);
+	//if ((m_pmtParsers.size()+5) <=16) return;
+	//UpdateHwPids();
 }
 void CPatParser::UpdateHwPids()
-{
-	if (m_pConditionalAccess==NULL) return;
+{/*
+	//if (m_pConditionalAccess==NULL) return;
 	vector<int> pids;
 	pids.push_back(0x0); //pat
 	pids.push_back(0x10);//NIT
@@ -257,5 +310,5 @@ void CPatParser::UpdateHwPids()
 		strcat(buf,tmp);
 	}
 	LogDebug("PatParser: filter pids:%s", buf);
-	m_pConditionalAccess->SetPids(pids);
+	//m_pConditionalAccess->SetPids(pids);*/
 }

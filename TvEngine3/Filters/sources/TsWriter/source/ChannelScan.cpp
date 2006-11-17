@@ -54,8 +54,8 @@ STDMETHODIMP CChannelScan::Start()
 			delete m_pConditionalAccess;
 			m_pConditionalAccess=NULL;
 		}
-		m_pConditionalAccess = new CConditionalAccess(m_pFilter->GetFilterGraph());
-		m_patParser.SetConditionalAccess(m_pConditionalAccess);
+	//	m_pConditionalAccess = new CConditionalAccess(m_pFilter->GetFilterGraph());
+		//m_patParser.SetConditionalAccess(m_pConditionalAccess);
 		m_patParser.Reset();
 		m_bIsParsing=true;
 	}
@@ -72,11 +72,11 @@ STDMETHODIMP CChannelScan::Stop()
 	try
 	{
 		m_patParser.Reset();
-		m_patParser.SetConditionalAccess(NULL);
-		if (m_pConditionalAccess!=NULL)
-		{
-			delete m_pConditionalAccess; 
-		}
+		//m_patParser.SetConditionalAccess(NULL);
+		//if (m_pConditionalAccess!=NULL)
+		//{
+		//	delete m_pConditionalAccess; 
+		//}
 		m_pConditionalAccess=NULL;
 	}
 	catch(...)

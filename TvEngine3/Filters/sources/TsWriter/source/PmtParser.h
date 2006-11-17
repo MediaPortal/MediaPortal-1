@@ -44,6 +44,7 @@ class IPmtCallBack
 {
 public:
 	virtual void OnPmtReceived(int pmtPid)=0;
+  virtual void OnPidsReceived(CPidTable info)=0;
 };
 
 class CPmtParser: public  CSectionDecoder
@@ -51,13 +52,11 @@ class CPmtParser: public  CSectionDecoder
 public:
   CPmtParser(void);
   virtual ~CPmtParser(void);
-  CPidTable& GetPidInfo();
-	void			 OnNewSection(CSection& sections);
-  bool			 Ready();
-	void       SetPmtCallBack(IPmtCallBack* callback);
+	void		OnNewSection(CSection& sections);
+	void    SetPmtCallBack(IPmtCallBack* callback);
+  bool    IsReady();
 private:
   int				m_pmtPid;
-  CPidTable m_pidInfo;
 	bool			_isFound;
 	IPmtCallBack* m_pmtCallback;
 };

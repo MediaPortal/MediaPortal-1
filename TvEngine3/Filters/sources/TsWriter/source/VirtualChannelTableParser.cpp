@@ -43,6 +43,7 @@ CVirtualChannelTableParser::CVirtualChannelTableParser(void)
   m_iVctVersionC8=-1;
   m_iVctVersionC9=-1;
 	//LogDebug("vct: ctor");
+  m_pCallback=NULL;
 }
 
 CVirtualChannelTableParser::~CVirtualChannelTableParser(void)
@@ -53,6 +54,10 @@ CVirtualChannelTableParser::~CVirtualChannelTableParser(void)
 }
 
 
+void CVirtualChannelTableParser::SetCallback(IAtscCallback* callback)
+{
+  m_pCallback=callback;
+}
 void CVirtualChannelTableParser::Reset()
 {
 	//LogDebug("vct: Reset()");
@@ -277,6 +282,15 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
             sprintf(infoCh2.ServiceName,"%s#%d", infoCh2.ServiceName,nr++);
           }
         }
+      }
+    }
+
+    for (int ch1=0; ch1 < (int)m_vecChannels.size();++ch1)
+    {
+      CChannelInfo& infoCh1 = m_vecChannels[ch1];
+      if (m_pCallback!=NULL)
+      {
+        m_pCallback->OnChannel(infoCh1);
       }
     }
   }

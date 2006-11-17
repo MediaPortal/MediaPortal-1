@@ -25,7 +25,7 @@
 #include "SectionDecoder.h"
 #include "TsHeader.h"
 #include "packetsync.h"
-
+extern DWORD crc32 (char *data, int len);
 
 void LogDebug(const char *fmt, ...) ;
 CSectionDecoder::CSectionDecoder(void)
@@ -80,87 +80,94 @@ void CSectionDecoder::OnTsPacket(byte* tsPacket)
 
   CTsHeader header(tsPacket);
   if (header.Pid != m_pid) return;
-    
+
+
+//  LogDebug("pid:%03.3x table id:%03.3x payloadunit start:%x start:%d %x",m_pid,m_tableId,(int)header.PayloadUnitStart,header.PayLoadStart, tsPacket[header.PayLoadStart]);
  	if (header.PayloadUnitStart)
 	{
 		int start=header.PayLoadStart;
-		int table_id = tsPacket[start];
-		
-		int section_syntax_indicator = (tsPacket[start+1]>>7) & 1;
-		int current_next_indicator = tsPacket[start+5] & 1;
-		int section_length = ((tsPacket[start+1]& 0xF)<<8) + tsPacket[start+2];
-		int transport_stream_id = (tsPacket[start+3]<<8)+tsPacket[start+4];
-		int version_number = ((tsPacket[start+5]>>1)&0x1F);
-		int section_number = tsPacket[start+6];
-		int last_section_number = tsPacket[start+7];
-    unsigned int network_id= (tsPacket[start+8]<<16)+(tsPacket[start+9]);
-    if(m_bLog)
-      LogDebug("  tableid:%x si:%x cni:%x len:%d %d/%d %x %x %x %x %x %x %x %x %x %x %x %x %x ",
-      table_id,section_syntax_indicator,current_next_indicator,section_length,section_number,last_section_number,
-      tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5],tsPacket[6],tsPacket[7],tsPacket[8],tsPacket[9],tsPacket[10],tsPacket[11],tsPacket[12]);
-		if (table_id != m_tableId) return ;
-//		if (current_next_indicator==0)  return;
-//		if (section_syntax_indicator!=1) return;
-
-
-    //section is identified by:pid , tableId, sectionNumber, TransportId and networkId
-
-    //LogDebug("%x:%x %x %x %x %d/%d len:%d ",m_pid,m_tableId,network_id,transport_stream_id,current_next_indicator,section_number,last_section_number,section_length);
-
-		m_section.Length=section_length+start+3;
-    m_section.NetworkId=network_id;
-    m_section.TransportId=transport_stream_id;
-    m_section.Version=version_number;
-    m_section.SectionNumber=section_number;
-    m_section.SectionLength=section_length;
-		m_section.LastSectionNumber=last_section_number;
-		int len = TS_PACKET_LEN-8;
-    m_section.SectionPos=0;
-    m_section.BufferPos=0;
-		m_iContinuityCounter=header.ContinuityCounter;
-
-		if (m_section.BufferPos+188>=MAX_SECTION_LENGTH)
+    if (m_section.BufferPos > 0 )
 		{
-      if (m_bLog)
-        LogDebug("section decoder:section length to large pid:%x table:%x", m_pid,m_tableId);
-			return;
-		}
-    memcpy(&m_section.Data[m_section.BufferPos], tsPacket, 188);
-		m_section.BufferPos+=188;
-    m_section.SectionPos+= 188-(start+3);
-		
-    if (m_section.SectionPos >= m_section.SectionLength)
-		{
+      memcpy(&m_section.Data[m_section.BufferPos],&tsPacket[5],start-5);
+      m_section.BufferPos+=start-5;
+      m_section.SectionLength+=start-5;
 			OnNewSection(m_section);
 			if (m_pCallback!=NULL)
 			{
 				m_pCallback->OnNewSection(m_pid, m_tableId, m_section);
 			}
+      m_section.BufferPos=0;
 		}
+
+    while (tsPacket[start]==m_tableId)
+    {
+		  int table_id = tsPacket[start];
+  		
+		  int section_syntax_indicator = (tsPacket[start+1]>>7) & 1;
+		  int current_next_indicator = tsPacket[start+5] & 1;
+		  int section_length = ((tsPacket[start+1]& 0xF)<<8) + tsPacket[start+2];
+		  int transport_stream_id = (tsPacket[start+3]<<8)+tsPacket[start+4];
+		  int version_number = ((tsPacket[start+5]>>1)&0x1F);
+		  int section_number = tsPacket[start+6];
+		  int last_section_number = tsPacket[start+7];
+      unsigned int network_id= (tsPacket[start+8]<<16)+(tsPacket[start+9]);
+
+		  m_section.Length=section_length+start+3;
+      m_section.NetworkId=network_id;
+      m_section.TransportId=transport_stream_id;
+      m_section.Version=version_number;
+      m_section.SectionNumber=section_number;
+      m_section.SectionLength=section_length;
+		  m_section.LastSectionNumber=last_section_number;
+		  //int len = TS_PACKET_LEN-8;
+      m_section.SectionPos=0;
+      m_section.BufferPos=0;
+		  m_iContinuityCounter=header.ContinuityCounter;
+
+		  if (m_section.BufferPos+188>=MAX_SECTION_LENGTH)
+		  {
+          LogDebug("section decoder:section length to large pid:%x table:%x", m_pid,m_tableId);
+			  return;
+		  }
+      int len=section_length+3;
+      if (len>188-start) len=188-start;
+      memcpy(&m_section.Data[0], tsPacket, 5);
+      memcpy(&m_section.Data[5], &tsPacket[start], len);
+      m_section.Data[4]=0;
+		  m_section.BufferPos= (len+5);
+      m_section.SectionPos= len-3;
+  		
+      if (m_section.SectionPos >= m_section.SectionLength)
+		  {
+			  OnNewSection(m_section);
+			  if (m_pCallback!=NULL)
+			  {
+				  m_pCallback->OnNewSection(m_pid, m_tableId, m_section);
+			  }
+        start = start+section_length+3;
+        m_section.SectionPos=0;
+        m_section.BufferPos=0;
+        m_section.SectionLength=0;
+		  }
+      else break;
+    }
 	}
 	else
 	{
-		if (m_section.BufferPos==0) return;//wait for payloadunit start...
-		if (m_section.SectionPos>=m_section.SectionLength) 
-    {
-      if (m_bLog)
-        LogDebug("section decoder:section length to large2 pid:%x table:%x", m_pid,m_tableId);
-      m_section.BufferPos=0;
-      return;
-    }
-
 		int start=header.PayLoadStart;
     int len=188-start;
+   // if (m_tableId==0x46)
+   //   LogDebug("%x:%x next: %05.5d len:%05.5d pos:%05.5d ->%05.5d",m_pid,m_tableId,start,m_section.SectionLength,m_section.SectionPos,m_section.SectionPos+len);
+		if (m_section.BufferPos==0) return;//wait for payloadunit start...
+
 		
 		if (m_section.BufferPos+len>=MAX_SECTION_LENGTH)
 		{
-      if (m_bLog)
         LogDebug("section decoder:section length to large3 pid:%x table:%x", m_pid,m_tableId);
 			return;
 		}
 		if (len <=0)
 		{
-      if (m_bLog)
         LogDebug("section decoder:section len < 0 pid:%x table:%x", m_pid,m_tableId);
 			return;
 		}

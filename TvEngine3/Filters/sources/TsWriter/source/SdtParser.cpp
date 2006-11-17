@@ -29,6 +29,7 @@ CSdtParser::CSdtParser(void)
   SetPid(0x11);
   SetTableId(0x42);
   Reset();
+  m_pCallback=NULL;
 }
 
 CSdtParser::~CSdtParser(void)
@@ -36,26 +37,19 @@ CSdtParser::~CSdtParser(void)
 }
 
 void CSdtParser::Reset()
-{
+{        
+  m_bFound=false;
+
 	CSectionDecoder::Reset();
-	m_vecChannels.clear();
 }
 
-int CSdtParser::Count()
+bool CSdtParser::IsReady()
 {
-  return m_vecChannels.size();
+  return m_bFound;
 }
-bool CSdtParser::GetChannelInfo(int serviceId,CChannelInfo& info)
+void CSdtParser::SetCallback(ISdtCallBack* callback)
 {
-	for (int i=0; i < (int)m_vecChannels.size();++i)
-	{
-		if (m_vecChannels[i].ServiceId==serviceId)
-		{
-		 info=m_vecChannels[i];
-		 return true;
-		}
-	}
-	return false;
+  m_pCallback=callback;
 }
 
 void  CSdtParser::OnNewSection(CSection& sections)
@@ -65,11 +59,6 @@ void  CSdtParser::OnNewSection(CSection& sections)
   CTsHeader header(section);
   int start=header.PayLoadStart;
   int table_id = section[start+0];
-  if (table_id!=0x42) 
-	{
-		LogDebug("sdtparser: tableid=%x", table_id);
-		return ;
-	}
   int section_syntax_indicator = (section[start+1]>>7) & 1;
   int section_length = ((section[start+1]& 0xF)<<8) + section[start+2];
   
@@ -81,8 +70,8 @@ void  CSdtParser::OnNewSection(CSection& sections)
   int section_number = section[start+6];
   int last_section_number = section[start+7];
   int original_network_id = ((section[start+8])<<8)+section[start+9];
-  LogDebug("decodeSDTTable len=%d section no:%d last section no:%d cni:%d version:%d si:%d", 
-		  section_length,section_number,last_section_number,current_next_indicator,version_number,section_syntax_indicator);
+ // LogDebug("decodeSDTTable len=%d section no:%d last section no:%d cni:%d version:%d si:%d", 
+	//	  section_length,section_number,last_section_number,current_next_indicator,version_number,section_syntax_indicator);
 
 
     section_length=sectionLen;
@@ -98,8 +87,6 @@ void  CSdtParser::OnNewSection(CSection& sections)
   int x = 0;
   //int channel;	 
 
-	
-
   while (len1 > 0)
   {
 	  //if (start+pointer+4 >=sectionLen) return ;
@@ -109,7 +96,7 @@ void  CSdtParser::OnNewSection(CSection& sections)
 	  running_status = (section[start+pointer+3]>>5) & 7;
 	  free_CA_mode = (section[start+pointer+3]>>4) &1;
 	  descriptors_loop_length = ((section[start+pointer+3] & 0xF)<<8)+section[start+pointer+4];
-	  //
+	  
 	  pointer += 5;
 	  len1 -= 5;
 	  len2 = descriptors_loop_length;
@@ -120,12 +107,11 @@ void  CSdtParser::OnNewSection(CSection& sections)
 		  int indicator=section[start+pointer];
 		  x = 0;
 		  x = section[start+pointer + 1] + 2;
-			LogDebug("sdt parser: indicator = %x",indicator);
+			//LogDebug("sdt parser: indicator = %x",indicator);
 		  if (indicator == 0x48)
-		  {
-			  ServiceData serviceData;							
-			  DVB_GetService(section+start+pointer,&serviceData);
+		  {					
         CChannelInfo info;
+			  DVB_GetService(section+start+pointer,info);
         info.NetworkId=original_network_id;
         info.TransportId=transport_stream_id;
         info.ServiceId=service_id;
@@ -133,26 +119,9 @@ void  CSdtParser::OnNewSection(CSection& sections)
         info.EIT_present_following_flag=EIT_present_following_flag;
         info.RunningStatus=running_status;
         info.FreeCAMode=free_CA_mode;
-        info.ServiceType=serviceData.ServiceType;
-        strcpy(info.ProviderName, serviceData.Provider);
-        strcpy(info.ServiceName, serviceData.Name);
 
-        bool found=false;
-        for (int i=0; i < (int)m_vecChannels.size();++i)
-        {
-          CChannelInfo& chInfo=m_vecChannels[i];
-          if (chInfo.NetworkId==info.NetworkId && chInfo.TransportId==info.TransportId && chInfo.ServiceId==info.ServiceId)
-          {
-            found=true;
-            break;
-          }
-        }
-        if (!found)
-        {
-          m_vecChannels.push_back(info);
-          LogDebug("  sdt: provider:'%s' channel:'%s' onid:0x%x tsid:0x%x sid:%x", 
-            serviceData.Provider,serviceData.Name,original_network_id, transport_stream_id,service_id);
-        }
+        if (m_pCallback!=NULL)
+          m_pCallback->OnSdtReceived(info);
 		  }
 		  else
 		  {
@@ -164,27 +133,29 @@ void  CSdtParser::OnNewSection(CSection& sections)
 		  pointer += x;
 		  len1 -= x;
 	  }		
-  }
+  }        
+  m_bFound=true;
+
 }
 
-void CSdtParser::DVB_GetService(BYTE *b,ServiceData *serviceData)
+void CSdtParser::DVB_GetService(BYTE *b,CChannelInfo& info)
 {
 	int descriptor_tag;
 	int descriptor_length;
 	int service_provider_name_length;
 	int service_name_length;
 	int pointer = 0;
-	memset(serviceData,0,sizeof(struct stserviceData));
+	
 	descriptor_tag = b[0];
 	descriptor_length = b[1];
-	serviceData->ServiceType = b[2];
+	info.ServiceType = b[2];
 	service_provider_name_length = b[3];
 	pointer = 4;
-	getString468A(b+pointer,service_provider_name_length,serviceData->Provider);
+	getString468A(b+pointer,service_provider_name_length,info.ProviderName);
 	pointer += service_provider_name_length;
 	service_name_length = b[pointer];
 	pointer += 1;
-	getString468A(b+pointer, service_name_length,serviceData->Name);
+	getString468A(b+pointer, service_name_length,info.ServiceName);
 }
 
 

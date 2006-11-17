@@ -26,11 +26,11 @@
 #include "NitDecoder.h"
 #include "channelinfo.h"
 #include "VirtualChannelTableParser.h"
-#include "conditionalAccess.h"
+//#include "conditionalAccess.h"
 #include <vector>
 using namespace std;
 
-class CPatParser : public CSectionDecoder, public IPmtCallBack
+class CPatParser : public CSectionDecoder, public IPmtCallBack, public ISdtCallBack, public IAtscCallback
 {
 public:
   CPatParser(void);
@@ -44,15 +44,20 @@ public:
   int         Count();
   bool        GetChannel(int index, CChannelInfo& info);
   void        Dump();
-	void				SetConditionalAccess(CConditionalAccess* access);
+	//void				SetConditionalAccess(CConditionalAccess* access);
 	void				OnPmtReceived(int pmtPid);
+  void        OnPidsReceived(CPidTable info);
+	void        OnSdtReceived(CChannelInfo sdtInfo);
+  void        OnChannel(CChannelInfo info);
 private:
-	void				UpdateHwPids();
+	void				               UpdateHwPids();
   CVirtualChannelTableParser m_vctParser;
-  CSdtParser  m_sdtParser;
-	CNITDecoder m_nitDecoder;
-  void        CleanUp();
-	CConditionalAccess* m_pConditionalAccess;
+  CSdtParser                 m_sdtParser;
+  CSdtParser                 m_sdtParserOther;
+	CNITDecoder                m_nitDecoder;
+  void                       CleanUp();
+	//CConditionalAccess* m_pConditionalAccess;
 
   vector<CPmtParser*> m_pmtParsers;
+  vector<CChannelInfo> m_vecChannels;
 };

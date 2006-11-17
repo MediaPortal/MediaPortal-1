@@ -21,9 +21,11 @@
 #pragma warning(disable : 4995)
 #include <windows.h>
 #include "PmtParser.h"
+#include "channelinfo.h"
 #include "tsheader.h"
 
-void LogDebug(const char *fmt, ...) ;
+void LogDebug(const char *fmt, ...) ; 
+
 CPmtParser::CPmtParser()
 {
 	m_pmtCallback=NULL;
@@ -34,21 +36,15 @@ CPmtParser::~CPmtParser(void)
 {
 }
 
-bool CPmtParser::Ready()
-{
-	return _isFound;
-}
-CPidTable& CPmtParser::GetPidInfo()
-{
-  return m_pidInfo;
-}
-	
 void CPmtParser::SetPmtCallBack(IPmtCallBack* callback)
 {
 	m_pmtCallback=callback;
 }
 
-
+bool CPmtParser::IsReady()
+{
+  return _isFound;
+}
 void CPmtParser::OnNewSection(CSection& sections)
 { 
   byte* section=(&sections.Data)[0];
@@ -70,16 +66,16 @@ void CPmtParser::OnNewSection(CSection& sections)
   int pointer = 12;
   int len1 = section_length -( 9 + program_info_length +4);
   int x;
-
 	if (!_isFound)
 	{
-		LogDebug("got pmt:%x service id:%x", GetPid(), program_number);
+		//LogDebug("got pmt:%x service id:%x", GetPid(), program_number);
 		_isFound=true;	
 		if (m_pmtCallback!=NULL)
 		{
 			m_pmtCallback->OnPmtReceived(GetPid());
 		}
 	}
+  CPidTable pidInfo;
   // loop 1
   while (len2 > 0)
   {
@@ -95,67 +91,67 @@ void CPmtParser::OnNewSection(CSection& sections)
   int audioToSet=0;
 
 
-  m_pidInfo.Reset();
-  m_pidInfo.PmtPid=GetPid();
-  m_pidInfo.ServiceId=program_number;
+  pidInfo.Reset();
+  pidInfo.PmtPid=GetPid();
+  pidInfo.ServiceId=program_number;
   while (len1 > 0)
   {
 	  //if (start+pointer+4>=sectionLen+9) return ;
 	  stream_type = section[start+pointer];
 	  elementary_PID = ((section[start+pointer+1]&0x1F)<<8)+section[start+pointer+2];
 	  ES_info_length = ((section[start+pointer+3] & 0xF)<<8)+section[start+pointer+4];
-    LogDebug("pmt: pid:%x type:%x",elementary_PID, stream_type);
+   // LogDebug("pmt: pid:%x type:%x",elementary_PID, stream_type);
 		if(stream_type==SERVICE_TYPE_VIDEO_MPEG1 || stream_type==SERVICE_TYPE_VIDEO_MPEG2)
 	  {
 			//mpeg2 video
-		  if(m_pidInfo.VideoPid==0)
+		  if(pidInfo.VideoPid==0)
 			{
-				m_pidInfo.VideoPid=elementary_PID;
-				m_pidInfo.videoServiceType=stream_type;
+				pidInfo.VideoPid=elementary_PID;
+				pidInfo.videoServiceType=stream_type;
 			}
 	  }
 		if(stream_type==SERVICE_TYPE_VIDEO_MPEG4 || stream_type==SERVICE_TYPE_VIDEO_H264)
 	  {
 			//h.264/mpeg4 video
-		  if(m_pidInfo.VideoPid==0)
+		  if(pidInfo.VideoPid==0)
 			{
-			  m_pidInfo.VideoPid=elementary_PID;
-				m_pidInfo.videoServiceType=stream_type;
+			  pidInfo.VideoPid=elementary_PID;
+				pidInfo.videoServiceType=stream_type;
 			}
 	  }
 		if(stream_type==SERVICE_TYPE_AUDIO_MPEG1 || stream_type==SERVICE_TYPE_AUDIO_MPEG2)
 	  {
 			//mpeg 2 audio
 		  audioToSet=0;
-		  if(m_pidInfo.AudioPid1==0)
+		  if(pidInfo.AudioPid1==0)
 		  {
 			  audioToSet=1;
-			  m_pidInfo.AudioPid1=elementary_PID;
+			  pidInfo.AudioPid1=elementary_PID;
 		  }
 		  else
 		  {
-			  if(m_pidInfo.AudioPid2==0)
+			  if(pidInfo.AudioPid2==0)
 			  {
 				  audioToSet=2;
-				  m_pidInfo.AudioPid2=elementary_PID;
+				  pidInfo.AudioPid2=elementary_PID;
 			  }
 			  else
 			  {
-				  if(m_pidInfo.AudioPid3==0)
+				  if(pidInfo.AudioPid3==0)
 				  {
 					  audioToSet=3;
-					  m_pidInfo.AudioPid3=elementary_PID;
+					  pidInfo.AudioPid3=elementary_PID;
 				  }
 			  }
 		  }
 	  }
-	  m_pidInfo.PcrPid=pcr_pid;
+	  pidInfo.PcrPid=pcr_pid;
 
 		if(stream_type==SERVICE_TYPE_AUDIO_AC3)
 	  {
 			//ac3 audio
-		  if(m_pidInfo.AC3Pid==0)
-			  m_pidInfo.AC3Pid=elementary_PID;
+		  if(pidInfo.AC3Pid==0)
+			  pidInfo.AC3Pid=elementary_PID;
 	  }
 	  pointer += 5;
 	  len1 -= 5;
@@ -172,7 +168,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 		  x = section[start+pointer + 1] + 2;
 		  if(indicator==DESCRIPTOR_DVB_AC3)
 			{
-			  m_pidInfo.AC3Pid=elementary_PID;
+			  pidInfo.AC3Pid=elementary_PID;
 			}
 		  if(indicator==DESCRIPTOR_MPEG_ISO639_Lang)
 		  {	
@@ -187,28 +183,28 @@ void CPmtParser::OnNewSection(CSection& sections)
 			  d[2]=section[start+pointer+4];
 			  if(audioToSet==1)
 			  {
-				  m_pidInfo.Lang1_1=d[0];
-				  m_pidInfo.Lang1_2=d[1];
-				  m_pidInfo.Lang1_3=d[2];
+				  pidInfo.Lang1_1=d[0];
+				  pidInfo.Lang1_2=d[1];
+				  pidInfo.Lang1_3=d[2];
 			  }
 			  if(audioToSet==2)
 			  {
-				  m_pidInfo.Lang2_1=d[0];
-				  m_pidInfo.Lang2_2=d[1];
-				  m_pidInfo.Lang2_3=d[2];
+				  pidInfo.Lang2_1=d[0];
+				  pidInfo.Lang2_2=d[1];
+				  pidInfo.Lang2_3=d[2];
 			  }
 			  if(audioToSet==3)
 			  {
-				  m_pidInfo.Lang3_1=d[0];
-				  m_pidInfo.Lang3_2=d[1];
-				  m_pidInfo.Lang3_3=d[2];
+				  pidInfo.Lang3_1=d[0];
+				  pidInfo.Lang3_2=d[1];
+				  pidInfo.Lang3_3=d[2];
 			  }
 
 		  }
-		  if(indicator==DESCRIPTOR_DVB_TELETEXT && m_pidInfo.TeletextPid==0)
-			  m_pidInfo.TeletextPid=elementary_PID;
+		  if(indicator==DESCRIPTOR_DVB_TELETEXT && pidInfo.TeletextPid==0)
+			  pidInfo.TeletextPid=elementary_PID;
 
-			if(indicator==DESCRIPTOR_DVB_SUBTITLING && m_pidInfo.SubtitlePid==0)
+			if(indicator==DESCRIPTOR_DVB_SUBTITLING && pidInfo.SubtitlePid==0)
 			{
 				if (stream_type==SERVICE_TYPE_DVB_SUBTITLES2)
 				{
@@ -216,17 +212,21 @@ void CPmtParser::OnNewSection(CSection& sections)
 					d[0]=section[start+pointer+2];
 					d[1]=section[start+pointer+3];
 					d[2]=section[start+pointer+4];
-					m_pidInfo.SubtitlePid=elementary_PID;
-					m_pidInfo.SubLang1_1=d[0];
-					m_pidInfo.SubLang1_2=d[1];
-					m_pidInfo.SubLang1_3=d[2];
+					pidInfo.SubtitlePid=elementary_PID;
+					pidInfo.SubLang1_1=d[0];
+					pidInfo.SubLang1_2=d[1];
+					pidInfo.SubLang1_3=d[2];
 				}
 			}
 		  len2 -= x;
 		  len1 -= x;
 		  pointer += x;
 	  }
-	  LogDebug("DecodePMT pid:0x%x pcrpid:0x%x videopid:0x%x audiopid:0x%x ac3pid:0x%x sid:%x",
-		  m_pidInfo.PmtPid, m_pidInfo.PcrPid,m_pidInfo.VideoPid,m_pidInfo.AudioPid1,m_pidInfo.AC3Pid,m_pidInfo.ServiceId);
+	  //LogDebug("DecodePMT pid:0x%x pcrpid:0x%x videopid:0x%x audiopid:0x%x ac3pid:0x%x sid:%x",
+		//  pidInfo.PmtPid, pidInfo.PcrPid,pidInfo.VideoPid,pidInfo.AudioPid1,pidInfo.AC3Pid,pidInfo.ServiceId);
+    if (m_pmtCallback!=NULL)
+    {
+      m_pmtCallback->OnPidsReceived(pidInfo);
+    }
   }
 }

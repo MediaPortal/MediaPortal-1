@@ -24,6 +24,13 @@
 #include "pidtable.h"
 #include <vector>
 using namespace std;
+
+class IAtscCallback
+{
+public:
+	virtual void OnChannel(CChannelInfo info)=0;
+};
+
 class CVirtualChannelTableParser : ISectionCallback
 {
 public:
@@ -37,6 +44,7 @@ public:
   bool  GetChannelInfo(int serviceId,CChannelInfo& info);
 	bool  GetChannel(int index,CChannelInfo& info);
   void  OnTsPacket(byte* tsPacket);
+  void SetCallback(IAtscCallback* callback);
 private:
   void DecodeServiceLocationDescriptor( byte* buf,int start,CChannelInfo& channelInfo);
   void DecodeExtendedChannelNameDescriptor( byte* buf,int start,CChannelInfo& channelInfo, int maxLen);
@@ -46,4 +54,5 @@ private:
   int m_iVctVersionC8;
 	int m_iVctVersionC9;
   CSectionDecoder* m_decoder[2];
+  IAtscCallback* m_pCallback;
 };
