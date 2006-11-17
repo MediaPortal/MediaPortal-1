@@ -1032,6 +1032,12 @@
       <sound />
       <description>Zap to last viewed Channel</description>
     </action>
+    <action>
+      <id>122</id>
+      <key>P</key>
+      <sound />
+      <description>Start autozap</description>
+    </action>
   </window>
   <window>
     <id>3003</id>
