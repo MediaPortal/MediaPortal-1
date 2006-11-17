@@ -57,15 +57,13 @@ namespace ProcessPlugins.ExternalDisplay
       {
       }
 
-      /* For sending to a port */
+      // For sending to a port
+      [DllImport("dlportio.dll", EntryPoint = "DlPortWritePortUchar")]
+      private static extern void Output(int adress, byte value);
 
-      [DllImport("inpout32.dll", EntryPoint="Out32")]
-      private static extern void Output(uint _addres, int _value);
-
-      /* For receiving from a port */
-
-      [DllImport("inpout32.dll", EntryPoint="Inp32")]
-      private static extern int Input(uint _addres);
+      //For receiving from a port
+      [DllImport("dlportio.dll", EntryPoint = "DlPortReadPortUchar")]
+      private static extern int Input(int adress);
 
       /// <summary>
       /// The indexer for this class
@@ -73,10 +71,10 @@ namespace ProcessPlugins.ExternalDisplay
       /// <value>
       /// Reads or writes to the specified port address
       /// </value>
-      public int this[uint _addres]
+      public int this[int _addres]
       {
         get { return Input(_addres); }
-        set { Output(_addres, value); }
+        set { Output(_addres, (byte)value); }
       }
     }
   }

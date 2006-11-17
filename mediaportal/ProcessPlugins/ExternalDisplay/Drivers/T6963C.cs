@@ -26,6 +26,8 @@
 using System.Drawing;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System;
+using System.Drawing.Imaging;
 
 namespace ProcessPlugins.ExternalDisplay.Drivers
 {
@@ -44,6 +46,8 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     private int NC_COLS;
     private int grows;
     private int gcols;
+    private Bitmap lastBitmap = null;
+    byte[] bitmapData;
 
     [DllImport("dlportio.dll", EntryPoint = "DlPortWritePortUchar")]
     private static extern void Output(int adress, byte value);
@@ -58,7 +62,6 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       NC_COLS = _cols;
       grows = linesG;
       gcols = colsG;
-
       data = int.Parse(_port, NumberStyles.HexNumber);
       control = data + 2;
       int tmp;
@@ -153,15 +156,15 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
     private void WaitForDisplayReady()
     {
-      int ret = 0;
-      while (ret != 3)
-      {
-        Output(control, 0x26);
-        Output(control, 0x2e);
-        ret = Input(data);
-        Output(control, 0x26);
-        ret = ret & 3;
-      }
+        int ret = 0;
+        while (ret != 3)
+        {
+            Output(control, 0x26);
+            Output(control, 0x2e);
+            ret = Input(data);
+            Output(control, 0x26);
+            ret = ret & 3;
+        }
     }
 
     public void SendData(int Data)
@@ -333,38 +336,45 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       SendData(_data);
     }
 
-    public void DrawImage(int x, int y, Bitmap bitmap)
+    public void DrawImage(Bitmap bitmap)
     {
-      int width = bitmap.Width/8;
-      int[,] bytes = new int[width,bitmap.Height];
-
-      for (int j = 0; j < bitmap.Height; j++)
+      if (bitmap == null || bitmap.Equals(lastBitmap))
       {
-        for (int i = 0; i < width; i++)
-        {
-          for (int k = 0; k < 8; k++)
-          {
-            Color color = bitmap.GetPixel(i*8 + k, j);
-            if (color.B == 0)
-            {
-              int b2 = 1 << (7 - k);
-              bytes[i, j] = bytes[i, j] | b2;
-            }
-          }
-        }
+        return;
+      }
+      BitmapData data = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+      try
+      {
+        if (bitmapData == null)
+          bitmapData = new byte[data.Stride * grows];
+        Marshal.Copy(data.Scan0, bitmapData, 0, bitmapData.Length);
+      }
+      finally
+      {
+        bitmap.UnlockBits(data);
       }
 
-
-      disp_set_addr(GHOME_ADDR + y*NC_COLS + (x/8));
+      int size = gcols*grows;
+      byte b=0;
+      disp_set_addr(GHOME_ADDR);
       disp_write_command(0xb0);
-      for (int j = 0; j < bitmap.Height; j++)
+      for (int i = 0; i < size; i++)
       {
-        for (int i = 0; i < width; i++)
+        int pixel = i * 3;
+        if (Color.FromArgb(bitmapData[pixel + 2],
+                           bitmapData[pixel + 1],
+                           bitmapData[pixel]).GetBrightness() < 0.5f)
         {
-          disp_auto_write(bytes[i, j]);
+          b = (byte)(b | (byte)(1 << (7-i%8)));
+        }
+        if (i % 8 == 7)
+        {
+          disp_auto_write(b);
+          b = 0;
         }
       }
       disp_write_command(0xb2);
+      lastBitmap = bitmap;
     }
   }
 }

@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using ExternalDisplay.Setting;
 using MediaPortal.GUI.Library;
 using ProcessPlugins.ExternalDisplay.Setting;
@@ -54,6 +55,23 @@ namespace ProcessPlugins.ExternalDisplay
     private readonly int heightInPixels;
     private readonly bool forceGraphicText;
     private readonly int charsToScroll;
+    private Bitmap emptyBitmap;
+
+    public Bitmap EmptyBitmap
+    {
+      get
+      {
+        if (emptyBitmap == null)
+        {
+          emptyBitmap = new Bitmap(widthInPixels, heightInPixels,PixelFormat.Format32bppArgb);
+          using (Graphics graphics = Graphics.FromImage(emptyBitmap))
+          {
+            graphics.FillRectangle(graphicBrush, 0, 0, widthInPixels, heightInPixels);
+          }
+        }
+        return (Bitmap) emptyBitmap.Clone();
+      }
+    }
 
 
     internal DisplayHandler(IDisplay _display)
@@ -145,16 +163,20 @@ namespace ProcessPlugins.ExternalDisplay
       {
         if (display.SupportsGraphics)
         {
-          using (Bitmap buffer = new Bitmap(widthInPixels, heightInPixels))
+          using (Bitmap buffer = EmptyBitmap)
           {
             using (Graphics graphics = Graphics.FromImage(buffer))
             {
-              graphics.FillRectangle(graphicBrush, 0, 0, widthInPixels, heightInPixels);
               foreach (Image image in Images)
               {
                 //we need to use the bitmap's physical dimensions, otherwise the image class 
                 //will resize the image according the dpi of the monitor in Windows.
-                graphics.DrawImage(image.Bitmap, new RectangleF(new PointF(image.X, image.Y), image.Bitmap.PhysicalDimension));
+                Bitmap bitmap = image.Bitmap;
+                //bitmap can be null if the file is not found or the value evaluated to a non existing file
+                if (bitmap != null)
+                {
+                  graphics.DrawImage(bitmap, new RectangleF(new PointF(image.X, image.Y), bitmap.PhysicalDimension));
+                }
               }
               if (!display.SupportsText || forceGraphicText)
               {
@@ -163,7 +185,7 @@ namespace ProcessPlugins.ExternalDisplay
                   ProcessG(graphics, i);
                 }
               }
-              display.DrawImage(0, 0, buffer);
+              display.DrawImage(buffer);
             }
           }
         }

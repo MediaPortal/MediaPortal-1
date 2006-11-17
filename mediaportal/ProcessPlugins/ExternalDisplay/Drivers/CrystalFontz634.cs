@@ -59,7 +59,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     {
     }
 
-    public void DrawImage(int x, int y, Bitmap bitmap)
+    public void DrawImage(Bitmap bitmap)
     {
     }
 

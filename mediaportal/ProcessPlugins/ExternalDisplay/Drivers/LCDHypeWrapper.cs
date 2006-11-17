@@ -25,6 +25,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
@@ -54,6 +55,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     private bool isDisabled = false;
     private string errorMessage = "";
     private Bitmap lastBitmap;
+    private byte[] bytes = new byte[MAX_RESPIXELS];
 
     public LCDHypeWrapper(string dllFile)
     {
@@ -107,7 +109,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       }
     }
 
-    public void DrawImage(int x, int y, Bitmap bitmap)
+    public void DrawImage(Bitmap bitmap)
     {
       if (!SupportsGraphics)
       {
@@ -117,22 +119,34 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       {
         return;
       }
-      int width = bitmap.Width;
-      byte[] bytes = new byte[MAX_RESPIXELS];
-
-      for (int j = 0; j < bitmap.Height; j++)
+      //clear the array
+      Array.Clear(bytes, 0, bytes.Length);
+      //a rectangle of the size of the bitmap
+      Rectangle l_Size = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
+      //get the bitmap data
+      BitmapData l_Data = bitmap.LockBits(l_Size, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+      int bpp = l_Data.Stride/l_Data.Width;
+      //create a source buffer for the bitmap data (RGB 24 bits)
+      byte[] l_DestBuffer = new byte[l_Data.Stride*l_Size.Height];
+      //copy the data buffer to the destination buffer
+      Marshal.Copy(l_Data.Scan0, l_DestBuffer, 0, l_DestBuffer.Length);
+      bitmap.UnlockBits(l_Data);
+      for (int j = 0; j < l_Size.Height; j++)
       {
-        for (int i = 0; i < width; i++)
+        for (int i = 0; i < l_Size.Width; i++)
         {
-          Color color = bitmap.GetPixel(i, j);
-          if (color.B == 0)
+          //test if current pixel must be enabled or not
+          int pixel = i*bpp + j*l_Data.Stride;
+          if (Color.FromArgb(l_DestBuffer[pixel + 2],
+                             l_DestBuffer[pixel + 1],
+                             l_DestBuffer[pixel]).GetBrightness() < 0.5f)
           {
-            bytes[i + j*width] = 1;
+            bytes[i + j*l_Size.Width] = 1;
           }
         }
       }
       m_tDllReg.InvokeMember("LCD_SendToGfxMemory", BINDING_FLAGS, null, null,
-                             new object[] {bytes, x, y, width - 1, bitmap.Height - 1, false});
+                             new object[] {bytes, 0, 0, l_Size.Width - 1, l_Size.Height - 1, false});
       lastBitmap = bitmap;
     }
 
@@ -292,7 +306,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
       //DLL_GetInfo
       meb = tb.DefinePInvokeMethod("DLL_GetInfo", dllFile, METHOD_ATTRIBUTES,
-                                   CallingConventions.Standard, typeof(void),
+                                   CallingConventions.Standard, typeof (void),
                                    new Type[]
                                      {
                                        Type.GetType(
@@ -305,35 +319,35 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
       //LCD_IsReadyToReceive
       meb = tb.DefinePInvokeMethod("LCD_IsReadyToReceive", dllFile, METHOD_ATTRIBUTES,
-                                   CallingConventions.Standard, typeof(bool), null, CallingConvention.StdCall,
+                                   CallingConventions.Standard, typeof (bool), null, CallingConvention.StdCall,
                                    CharSet.Auto);
       // Apply preservesig metadata attribute so we can handle return HRESULT ourselves
       meb.SetImplementationFlags(MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags());
 
       //LCD_Init
       meb = tb.DefinePInvokeMethod("LCD_Init", dllFile, METHOD_ATTRIBUTES,
-                                   CallingConventions.Standard, typeof(void), null, CallingConvention.StdCall,
+                                   CallingConventions.Standard, typeof (void), null, CallingConvention.StdCall,
                                    CharSet.Auto);
       // Apply preservesig metadata attribute so we can handle return HRESULT ourselves
       meb.SetImplementationFlags(MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags());
 
       //LCD_ConfigDialog
       meb = tb.DefinePInvokeMethod("LCD_ConfigDialog", dllFile, METHOD_ATTRIBUTES,
-                                   CallingConventions.Standard, typeof(void), null, CallingConvention.StdCall,
+                                   CallingConventions.Standard, typeof (void), null, CallingConvention.StdCall,
                                    CharSet.Auto);
       // Apply preservesig metadata attribute so we can handle return HRESULT ourselves
       meb.SetImplementationFlags(MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags());
 
       //LCD_CleanUp
       meb = tb.DefinePInvokeMethod("LCD_CleanUp", dllFile, METHOD_ATTRIBUTES,
-                                   CallingConventions.Standard, typeof(void), null, CallingConvention.StdCall,
+                                   CallingConventions.Standard, typeof (void), null, CallingConvention.StdCall,
                                    CharSet.Auto);
       // Apply preservesig metadata attribute so we can handle return HRESULT ourselves
       meb.SetImplementationFlags(MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags());
 
       //LCD_GetCGRAMChar
       meb = tb.DefinePInvokeMethod("LCD_GetCGRAMChar", dllFile, METHOD_ATTRIBUTES,
-                                   CallingConventions.Standard, typeof(byte), new Type[] {typeof(byte)},
+                                   CallingConventions.Standard, typeof (byte), new Type[] {typeof (byte)},
                                    CallingConvention.StdCall,
                                    CharSet.Auto);
       // Apply preservesig metadata attribute so we can handle return HRESULT ourselves
@@ -341,7 +355,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
       //LCD_SetCGRAMChar
       meb = tb.DefinePInvokeMethod("LCD_SetCGRAMChar", dllFile, METHOD_ATTRIBUTES,
-                                   CallingConventions.Standard, typeof(void), new Type[] {typeof(CharacterData)},
+                                   CallingConventions.Standard, typeof (void), new Type[] {typeof (CharacterData)},
                                    CallingConvention.StdCall,
                                    CharSet.Auto);
       // Apply preservesig metadata attribute so we can handle return HRESULT ourselves
@@ -349,40 +363,40 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
       //LCD_SendToMemory
       meb = tb.DefinePInvokeMethod("LCD_SendToMemory", dllFile, METHOD_ATTRIBUTES,
-                                   CallingConventions.Standard, typeof(void), new Type[] {typeof(byte)},
+                                   CallingConventions.Standard, typeof (void), new Type[] {typeof (byte)},
                                    CallingConvention.StdCall, CharSet.Auto);
       // Apply preservesig metadata attribute so we can handle return HRESULT ourselves
       meb.SetImplementationFlags(MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags());
 
       //LCD_SendToGfxMemory
       meb = tb.DefinePInvokeMethod("LCD_SendToGfxMemory", dllFile, METHOD_ATTRIBUTES,
-                                   CallingConventions.Standard, typeof(void),
+                                   CallingConventions.Standard, typeof (void),
                                    new Type[]
                                      {
-                                       typeof(byte[]), typeof(int), typeof(int), typeof(int), typeof(int),
-                                       typeof(bool)
+                                       typeof (byte[]), typeof (int), typeof (int), typeof (int), typeof (int),
+                                       typeof (bool)
                                      }, CallingConvention.StdCall, CharSet.Auto);
       // Apply preservesig metadata attribute so we can handle return HRESULT ourselves
       meb.SetImplementationFlags(MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags());
 
       //LCD_SetOutputAddress
       meb = tb.DefinePInvokeMethod("LCD_SetOutputAddress", dllFile, METHOD_ATTRIBUTES,
-                                   CallingConventions.Standard, typeof(void),
-                                   new Type[] {typeof(int), typeof(int)},
+                                   CallingConventions.Standard, typeof (void),
+                                   new Type[] {typeof (int), typeof (int)},
                                    CallingConvention.StdCall, CharSet.Auto);
       // Apply preservesig metadata attribute so we can handle return HRESULT ourselves
       meb.SetImplementationFlags(MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags());
 
       //LCD_SetIOPropertys
       meb = tb.DefinePInvokeMethod("LCD_SetIOPropertys", dllFile, METHOD_ATTRIBUTES,
-                                   CallingConventions.Standard, typeof(void),
+                                   CallingConventions.Standard, typeof (void),
                                    new Type[]
                                      {
-                                       typeof(string), typeof(int), typeof(int), typeof(int), typeof(int),
-                                       typeof(int),
-                                       typeof(int), typeof(bool), typeof(byte), typeof(bool), typeof(byte),
-                                       typeof(int),
-                                       typeof(bool), typeof(bool)
+                                       typeof (string), typeof (int), typeof (int), typeof (int), typeof (int),
+                                       typeof (int),
+                                       typeof (int), typeof (bool), typeof (byte), typeof (bool), typeof (byte),
+                                       typeof (int),
+                                       typeof (bool), typeof (bool)
                                      }, CallingConvention.StdCall, CharSet.Ansi);
       // Apply preservesig metadata attribute so we can handle return HRESULT ourselves
       meb.SetImplementationFlags(MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags());
@@ -405,11 +419,9 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     [StructLayout(LayoutKind.Sequential)]
     private struct CharacterData
     {
-      [MarshalAs(UnmanagedType.U1)]
-      public byte Position;
+      [MarshalAs(UnmanagedType.U1)] public byte Position;
 
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-      public byte[,] Data;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public byte[,] Data;
 
       public void SetData(int[] data)
       {
@@ -430,32 +442,24 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     [StructLayout(LayoutKind.Sequential)]
     public struct DLLInfo
     {
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-      public char[] IDArray; //Display description
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)] public char[] IDArray; //Display description
 
-      [MarshalAs(UnmanagedType.I1)]
-      public bool SupportGfxLCD; //does this driver support graphical LCDs?
+      [MarshalAs(UnmanagedType.I1)] public bool SupportGfxLCD; //does this driver support graphical LCDs?
 
-      [MarshalAs(UnmanagedType.I1)]
-      public bool SupportTxtLCD; //does this driver support text
+      [MarshalAs(UnmanagedType.I1)] public bool SupportTxtLCD; //does this driver support text
 
-      [MarshalAs(UnmanagedType.I1)]
-      public bool SupportLightSlider; //does this driver support the light control slider
+      [MarshalAs(UnmanagedType.I1)] public bool SupportLightSlider; //does this driver support the light control slider
 
-      [MarshalAs(UnmanagedType.I1)]
-      public bool SupportContrastSlider; //does this driver support the contrast slider
+      [MarshalAs(UnmanagedType.I1)] public bool SupportContrastSlider; //does this driver support the contrast slider
 
-      [MarshalAs(UnmanagedType.I1)]
-      public bool SupportOutports; //does this driver support outports for controlling external circuits
+      [MarshalAs(UnmanagedType.I1)] public bool SupportOutports;
+                                                //does this driver support outports for controlling external circuits
 
-      [MarshalAs(UnmanagedType.U1)]
-      public byte CCharWidth; //custom char width in pixels
+      [MarshalAs(UnmanagedType.U1)] public byte CCharWidth; //custom char width in pixels
 
-      [MarshalAs(UnmanagedType.U1)]
-      public byte CCharHeight; //custom char height in pixels
+      [MarshalAs(UnmanagedType.U1)] public byte CCharHeight; //custom char height in pixels
 
-      [MarshalAs(UnmanagedType.U1)]
-      public byte FontPitch; //fontpitch of LCD in pixels
+      [MarshalAs(UnmanagedType.U1)] public byte FontPitch; //fontpitch of LCD in pixels
     }
   }
 }

@@ -131,6 +131,6 @@ namespace ProcessPlugins.ExternalDisplay
     /// <param name="x">The X position to draw the image on</param>
     /// <param name="y">The Y position to draw the image on</param>
     /// <param name="bitmap">A <see cref="Bitmap"/> representing the image to draw</param>
-    void DrawImage(int x, int y, Bitmap bitmap);
+    void DrawImage(Bitmap bitmap);
   }
 }

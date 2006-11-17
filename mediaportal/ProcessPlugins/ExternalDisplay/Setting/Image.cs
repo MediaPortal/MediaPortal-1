@@ -24,8 +24,8 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
-using System.IO;
 using System.Xml.Serialization;
 using MediaPortal.Services;
 
@@ -36,15 +36,31 @@ namespace ProcessPlugins.ExternalDisplay.Setting
   public class Image
   {
     private Bitmap bitmap;
+    private string fileName;
+    private Value value;
+
+    [XmlAttribute] public int X;
+
+    [XmlAttribute] public int Y;
+
+    [XmlElement("Text", typeof (Text))]
+    [XmlElement("Property", typeof (Property))]
+    [XmlElement("Parse", typeof (Parse))]
+    [DefaultValue(null)]
+    public Value Value
+    {
+      get { return value; }
+      set { this.value = value; }
+    }
+
 
     [XmlAttribute]
-    public int X;
-
-    [XmlAttribute]
-    public int Y;
-
-    [XmlAttribute]
-    public string File;
+    [DefaultValue(null)]
+    public string File
+    {
+      get { return fileName; }
+      set { fileName = value; }
+    }
 
     public Image()
     {
@@ -62,22 +78,41 @@ namespace ProcessPlugins.ExternalDisplay.Setting
     {
       get
       {
-        if (bitmap == null)
+        try
         {
-          try
+          if (value != null)
           {
-            bitmap = (Bitmap)Bitmap.FromFile(File);
+            string file = value.Evaluate();
+            if (file==fileName)
+              return bitmap;
+            fileName = file;
+            if (System.IO.File.Exists(file))
+            {
+              bitmap = (Bitmap) Bitmap.FromFile(file);
+            }
+            return bitmap;
           }
-          catch(OutOfMemoryException)
+          if (bitmap == null)
           {
-            GlobalServiceProvider.Get<ILog>().Error("Out of memory while loading image file {0}!  Probably bad image format.  Defaulting to a single pixel.",File);
-            bitmap = new Bitmap(1,1);
+            if (System.IO.File.Exists(fileName))
+            {
+              bitmap = (Bitmap) Bitmap.FromFile(fileName);
+            }
+            else
+            {
+              GlobalServiceProvider.Get<ILog>().Error(
+                "Error while loading image file {0}.  File not found!  Defaulting to a single pixel.", File);
+              bitmap = new Bitmap(1, 1);
+            }
           }
-          catch(FileNotFoundException)
-          {
-            GlobalServiceProvider.Get<ILog>().Error("Error while loading image file {0}.  File not found!  Defaulting to a single pixel.", File);
-            bitmap = new Bitmap(1, 1);
-          }
+        }
+        catch (OutOfMemoryException)
+        {
+          GlobalServiceProvider.Get<ILog>().Error(
+            "Out of memory while loading image file {0}!  Probably bad image format.  Defaulting to a single pixel.",
+            File);
+          //We provide a default image, to avoid reloading it and getting the same error again
+          bitmap = new Bitmap(1, 1);
         }
         return bitmap;
       }

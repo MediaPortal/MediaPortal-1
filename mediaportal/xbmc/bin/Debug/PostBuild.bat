@@ -132,7 +132,7 @@ rem - plugin LCD driver DLLs
 rem usbuirt driver should only reside in windows\system32
 rem copy ..\..\..\FTD2XX.DLL .
 copy ..\..\..\SG_VFD.dll .
-copy ..\..\..\inpout32.dll .
+copy ..\..\..\dlportio.dll .
 rem if not exist LUI\. mkdir LUI
 rem copy ..\..\..\LUI.dll LUI\.
 copy ..\..\..\Communications.dll .

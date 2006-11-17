@@ -43,8 +43,8 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     private const uint DELAY_LONG = 1600;
     private const uint DELAY_INIT = 4100;
     private const uint DELAY_BUS = 17;
-    private uint data = 0x378;
-    private uint control;
+    private int data = 0x378;
+    private int control;
     private bool use2Controllers;
     private bool alternateAddressing = false;
     private Controller controller = Controller.All;
@@ -102,7 +102,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       DDRam();
     }
 
-    public void DrawImage(int x, int y, Bitmap bitmap)
+    public void DrawImage(Bitmap bitmap)
     {
       //Not supported
     }
@@ -236,12 +236,12 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       //The parallel port control port has bits 0, 1 and 3 reversed,
       //this means that when we send 1, they are actually low.
       //That is why we are XOR-ing the value with 1011 to flip those bytes to their opposite state
-      IO.Port[control] = ((byte) Register.Instruction | (byte) Mode.Write) ^ MASK;
+      IO.Port[control] = ((int)Register.Instruction | (int)Mode.Write) ^ MASK;
       IO.Port[data] = _value;
       Wait(DELAY_BUS);
-      IO.Port[control] = (byte) (((byte) controller | (byte) Register.Instruction | (byte) Mode.Write) ^ MASK);
+      IO.Port[control] =  (( (int)controller |  (int)Register.Instruction | (int)Mode.Write) ^ MASK);
       Wait(DELAY_BUS);
-      IO.Port[control] = ((byte) Register.Instruction | (byte) Mode.Write) ^ MASK;
+      IO.Port[control] = ((int)Register.Instruction | (int)Mode.Write) ^ MASK;
       Wait(DELAY_SHORT);
     }
 
@@ -273,32 +273,32 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
         count.End(); while (count.MicroSeconds < time);
     }
 
-    private enum Controller : byte
+    private enum Controller 
     {
       C1 = 0x1, //0001
       C2 = 0x8, //1000
       All = 0x9 //1001
     }
 
-    private enum Font : byte
+    private enum Font 
     {
       Font5x8 = 0x0,
       Font5x10 = 0x4
     }
 
-    private enum Cursor : byte
+    private enum Cursor 
     {
       On = 0x2,
       Off = 0x0
     }
 
-    private enum Display : byte
+    private enum Display
     {
       On = 0x4,
       Off = 0x0
     }
 
-    private enum Blink : byte
+    private enum Blink
     {
       Yes = 0x1,
       No = 0x0
@@ -307,7 +307,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     /// <summary>
     /// The number of data bits used to communciate with the display
     /// </summary>
-    private enum DataBits : byte
+    private enum DataBits
     {
       /// <summary>
       /// Use 4 bit wide data bus
@@ -322,7 +322,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     /// <summary>
     /// The number of lines in the display
     /// </summary>
-    private enum Lines : byte
+    private enum Lines 
     {
       /// <summary>
       /// The display has one line
@@ -334,7 +334,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       Two = 0x8
     }
 
-    private enum Register : byte
+    private enum Register 
     {
       /// <summary>
       /// Use the Instruction register
@@ -346,7 +346,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       Data = 0x4
     }
 
-    private enum Instruction : byte
+    private enum Instruction
     {
       ClearDisplay = 0x01,
       Home = 0x02,
@@ -358,7 +358,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       SetDDRamAddress = 0x80
     }
 
-    private enum Mode : byte
+    private enum Mode
     {
       Read = 0x2,
       Write = 0x0
@@ -402,7 +402,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     public void Setup(string _port, int _lines, int _cols, int _delay, int linesG, int colsG, int timeG,
                       bool backLight, int contrast)
     {
-      data = uint.Parse(_port, NumberStyles.HexNumber);
+      data = int.Parse(_port, NumberStyles.HexNumber);
       control = data + 2;
       lines = _lines;
       cols = _cols;
