@@ -17665,4 +17665,20 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Hauppauge WINTV-HVR 1100" capturename="Hauppauge WinTV-HVR 713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_67010070&amp;rev_d1">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"              checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Hauppauge WinTV-HVR 713x BDA DVBT Tuner"      checkdevice="true"/>
+        <filter cat="capture"         name="Hauppauge WinTV-HVR 713x BDA Digital Capture" checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
