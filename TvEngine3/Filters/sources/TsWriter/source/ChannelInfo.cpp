@@ -47,4 +47,5 @@ void CChannelInfo::Reset()
   Modulation=0;
   strcpy(ProviderName,"");
   strcpy(ServiceName,"");
+	OtherMux=false;
 }

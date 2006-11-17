@@ -119,7 +119,7 @@ void  CSdtParser::OnNewSection(CSection& sections)
         info.EIT_present_following_flag=EIT_present_following_flag;
         info.RunningStatus=running_status;
         info.FreeCAMode=free_CA_mode;
-
+				info.OtherMux = (table_id==0x46);
         if (m_pCallback!=NULL)
           m_pCallback->OnSdtReceived(info);
 		  }

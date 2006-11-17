@@ -81,22 +81,56 @@ BOOL CPatParser::IsReady()
   {
     return TRUE;
   }
-	if (m_nitDecoder.Ready()==false) return FALSE;
-  if (m_mapPmtParsers.size()==false) return FALSE;
-  if (false==m_sdtParser.IsReady()) return FALSE;
+	if (m_nitDecoder.Ready()==false) 
+	{
+//		LogDebug("nit not ready");
+//		return FALSE;
+	}
+  if (m_mapPmtParsers.size()==false) 
+	{
+//		LogDebug("not pmts yet ready");
+		return FALSE;
+	}
+  if (false==m_sdtParser.IsReady()) 
+	{
+//		LogDebug("not sdt yet ready");
+		return FALSE;
+	}
   
   for (itPmtParser it=m_mapPmtParsers.begin(); it != m_mapPmtParsers.end() ;++it)
   {
     CPmtParser* parser=it->second;
-    if (false==parser->IsReady()) return FALSE;
+    if (false==parser->IsReady()) 
+		{
+			//LogDebug("pmt:%x not ready", parser->GetPid());
+			return FALSE;
+		}
   }
+	
+	int nr=-1;
   itChannels it=m_mapChannels.begin();
   while (it!=m_mapChannels.end()) 
   {
+		nr++;
 		CChannelInfo& info=it->second;
-		if (info.NetworkId==0&&info.TransportId==0 && info.ServiceName[0]==0) return FALSE;
+		if (info.OtherMux==true) 
+		{
+			++it;
+			continue;
+		}
+		if (info.NetworkId==0 && info.PidTable.PmtPid==0 && info.TransportId!=0 && info.ServiceName[0]==0) 
+		{
+			++it;
+			continue;
+		}
+		if (info.ServiceName[0]==0) 
+		{
+			//LogDebug("ch:%d not ready",nr);
+			return FALSE;
+		}
 		++it;
 	}
+		//LogDebug("all ready");
   return TRUE;
 }
 
@@ -106,14 +140,17 @@ int CPatParser::Count()
   {
     return m_mapChannels.size();
   }
+	  //LogDebug("Count:%d ", m_mapChannels.size());
   return m_mapChannels.size();
 }
 
 bool CPatParser::GetChannel(int index, CChannelInfo& info)
 {
 	static CChannelInfo unknownChannel;
+	//LogDebug("GetChannel:%d", index);
   if (index < 0 || index > Count()) 
 	{
+	  LogDebug("GetChannel:%d invalid", index);
 		return false;
 	}
   if (index==0) Dump();
@@ -124,7 +161,7 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
     it++;
     index--;
   }
-  info = it->second;
+	memcpy(&info, &(it->second), sizeof(CChannelInfo));
 	info.LCN=m_nitDecoder.GetLogicialChannelNumber(info.NetworkId,info.TransportId,info.ServiceId);
 	return true;
 }
@@ -137,6 +174,7 @@ void CPatParser::OnChannel(CChannelInfo info)
 
 void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
 {
+	if (sdtInfo.NetworkId==0) return;
 	//LogDebug("SDT: onid:%x tsid:%x nit:%x p:%s s:%s", sdtInfo.NetworkId,sdtInfo.TransportId,sdtInfo.ServiceId, sdtInfo.ProviderName,sdtInfo.ServiceName);
   itChannels it=m_mapChannels.find(sdtInfo.ServiceId);
   if (it!=m_mapChannels.end())
@@ -150,6 +188,7 @@ void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
     info.RunningStatus=sdtInfo.RunningStatus;
     info.FreeCAMode=sdtInfo.FreeCAMode;
     info.ServiceType=sdtInfo.ServiceType;
+    info.OtherMux=sdtInfo.OtherMux;
     strcpy(info.ProviderName,sdtInfo.ProviderName);
     strcpy(info.ServiceName,sdtInfo.ServiceName);
     return;
@@ -164,6 +203,7 @@ void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
   info.RunningStatus=sdtInfo.RunningStatus;
   info.FreeCAMode=sdtInfo.FreeCAMode;
   info.ServiceType=sdtInfo.ServiceType;
+	info.OtherMux=sdtInfo.OtherMux;
   strcpy(info.ProviderName,sdtInfo.ProviderName);
   strcpy(info.ServiceName,sdtInfo.ServiceName);
   m_mapChannels[sdtInfo.ServiceId] = info;
@@ -188,7 +228,7 @@ void CPatParser::OnTsPacket(byte* tsPacket)
 	m_nitDecoder.OnTsPacket(tsPacket);
   m_vctParser.OnTsPacket(tsPacket);
   m_sdtParser.OnTsPacket(tsPacket);
-  //m_sdtParserOther.OnTsPacket(tsPacket);
+  m_sdtParserOther.OnTsPacket(tsPacket);
 
   for (itPmtParser it=m_mapPmtParsers.begin(); it != m_mapPmtParsers.end() ;++it)
   {
@@ -226,7 +266,7 @@ void CPatParser::OnNewSection(CSection& sections)
 	  int offset = (8 +(i * 4));
     int serviceId=((section[start+offset] & 0x1F)<<8) + section[start+offset+1];
 	  int pmtPid = ((section[start+offset+2] & 0x1F)<<8) + section[start+offset+3];
-		LogDebug("sid:%x pmt:%x", serviceId,pmtPid);
+		//LogDebug("sid:%x pmt:%x", serviceId,pmtPid);
 	  if (pmtPid < 0x10 || pmtPid >=0x1fff) 
 	  {
       //invalid pmt pid
@@ -272,9 +312,9 @@ void CPatParser::Dump()
   while (it!=m_mapChannels.end()) 
   {
     CChannelInfo& info=it->second;
-      LogDebug("%4d)  p:%-15s s:%-25s  onid:%4x tsid:%4x sid:%4x major:%3d minor:%3x freq:%3x type:%3d pcr:%4x pmt:%4x v:%4x a1:%4x a2:%4x a3:%4x ac3:%4x ttx:%4x sub:%4x",i,
+		LogDebug("%4d)  p:%-15s s:%-25s  onid:%4x tsid:%4x sid:%4x major:%3d minor:%3x freq:%3x type:%3d pcr:%4x pmt:%4x v:%4x a1:%4x a2:%4x a3:%4x ac3:%4x ttx:%4x sub:%4x othermux:%d",i,
             info.ProviderName,info.ServiceName,info.NetworkId,info.TransportId,info.ServiceId,info.MajorChannel,info.MinorChannel,info.Frequency,
-            info.ServiceType,info.PidTable.PcrPid,info.PidTable.PmtPid,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AudioPid2,info.PidTable.AudioPid3,info.PidTable.AC3Pid,info.PidTable.TeletextPid,info.PidTable.SubtitlePid);
+            info.ServiceType,info.PidTable.PcrPid,info.PidTable.PmtPid,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AudioPid2,info.PidTable.AudioPid3,info.PidTable.AC3Pid,info.PidTable.TeletextPid,info.PidTable.SubtitlePid,info.OtherMux);
 
     it++;
     i++;

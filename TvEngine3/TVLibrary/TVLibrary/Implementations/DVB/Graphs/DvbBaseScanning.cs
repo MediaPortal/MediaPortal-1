@@ -242,7 +242,7 @@ namespace TvLibrary.Implementations.DVB
           _analyzer.IsReady(out yesNo);
           if (yesNo) break;
           TimeSpan ts = DateTime.Now - startTime;
-          if (ts.TotalMilliseconds > 3000) break;
+          if (ts.TotalMilliseconds > 13000) break;
         }
         _analyzer.GetCount(out channelCount);
         if (channelCount == 0)
@@ -288,11 +288,11 @@ namespace TvLibrary.Implementations.DVB
         bool[] channelFound = new bool[channelCount];
         List<IChannel> channelsFound = new List<IChannel>();
         startTime = DateTime.Now;
-        while (true)
+        //while (true)
         {
           for (int i = 0; i < channelCount; ++i)
           {
-            if (channelFound[i]) continue;
+            //if (channelFound[i]) continue;
             networkId = 0;
             transportId = 0;
             serviceId = 0;
@@ -303,6 +303,9 @@ namespace TvLibrary.Implementations.DVB
                   out pcrPid, out pmtPid, out videoPid, out audio1Pid, out audio2Pid, out audio3Pid,
                   out ac3Pid, out  audioLanguage1, out audioLanguage2, out audioLanguage3, out teletextPid, out subtitlePid, out subtitleLanguage, out videoStreamType);
             bool isValid = ((networkId != 0 || transportId != 0 || serviceId != 0) && pmtPid != 0);
+            string name = Marshal.PtrToStringAnsi(serviceName);
+            //Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} v:{6:X} a:{7:X} ac3:{8:X} type:{9:X}", 
+            //  i, networkId, transportId, serviceId, pmtPid, name,videoPid,audio1Pid,ac3Pid, serviceType);
             if (videoStreamType == 0x10 || videoStreamType == 0x1b)
             {
               Log.Log.WriteFile("H264/MPEG4!");
@@ -402,10 +405,10 @@ namespace TvLibrary.Implementations.DVB
               System.Threading.Thread.Sleep(50);
             }
           }
-          if (found >= channelCount) break;
-          TimeSpan ts = DateTime.Now - startTime;
-          if (ts.TotalMilliseconds > 4000) break;
-          System.Threading.Thread.Sleep(100);
+          //if (found >= channelCount) break;
+          // TimeSpan ts = DateTime.Now - startTime;
+          // if (ts.TotalMilliseconds > 4000) break;
+         // System.Threading.Thread.Sleep(100);
         } // while true
         if (found != channelCount)
           Log.Log.Write("Scan! Got {0} from {1} channels", found, channelCount);

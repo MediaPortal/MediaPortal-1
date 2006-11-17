@@ -106,6 +106,10 @@ STDMETHODIMP CChannelScan::IsReady( BOOL* yesNo)
 	try
 	{
 		*yesNo=m_patParser.IsReady();
+		if (*yesNo)
+		{
+			m_bIsParsing=false;
+		}
 	}
 	catch(...)
 	{

@@ -44,4 +44,5 @@ public:
   char ServiceName[255];
 
   CPidTable PidTable;
+	bool OtherMux;
 };

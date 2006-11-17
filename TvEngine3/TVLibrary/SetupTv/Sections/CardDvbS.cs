@@ -511,7 +511,7 @@ namespace SetupTv.Sections
 
         if (index == 0)
         {
-          RemoteControl.Instance.TuneScan(_cardNumber, tuneChannel);
+          RemoteControl.Instance.Tune(_cardNumber, tuneChannel);
         }
         UpdateStatus(LNB);
 
