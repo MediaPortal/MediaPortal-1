@@ -267,23 +267,6 @@
     <Compile Include="CallerId\YAC\CallerIdPlugin.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DreamboxDirectEPG\DreamboxDirectEPG.cs" />
-    <Compile Include="DreamboxDirectEPG\DreamboxDirectEPGSettings.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DreamboxDirectEPG\DreamboxDirectEPGSettings.Designer.cs">
-      <DependentUpon>DreamboxDirectEPGSettings.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DreamboxDirectEPG\Dreambox\BoxInfo.cs" />
-    <Compile Include="DreamboxDirectEPG\Dreambox\ChannelInfo.cs" />
-    <Compile Include="DreamboxDirectEPG\Dreambox\Core.cs" />
-    <Compile Include="DreamboxDirectEPG\Dreambox\Data.cs" />
-    <Compile Include="DreamboxDirectEPG\Dreambox\EPG.cs" />
-    <Compile Include="DreamboxDirectEPG\Dreambox\NowPlaying799.cs" />
-    <Compile Include="DreamboxDirectEPG\Dreambox\Remote.cs" />
-    <Compile Include="DreamboxDirectEPG\Dreambox\Request.cs" />
-    <Compile Include="DreamboxDirectEPG\Dreambox\XML.cs" />
-    <Compile Include="DreamboxDirectEPG\Dreambox\Zap.cs" />
     <Compile Include="ExternalDisplay\Drivers\BaseDisplay.cs" />
     <Compile Include="ExternalDisplay\Drivers\Clipboard.cs">
       <SubType>Code</SubType>
@@ -383,6 +366,15 @@
     <Compile Include="DiskManagement\DiskManagement.cs" />
     <Compile Include="DiskManagement\EpisodeManagement.cs" />
     <Compile Include="DiskManagement\RecordingManagement.cs" />
+    <Compile Include="ExternalDreamboxTV\Dreambox\BoxInfo.cs" />
+    <Compile Include="ExternalDreamboxTV\Dreambox\ChannelInfo.cs" />
+    <Compile Include="ExternalDreamboxTV\Dreambox\Core.cs" />
+    <Compile Include="ExternalDreamboxTV\Dreambox\Data.cs" />
+    <Compile Include="ExternalDreamboxTV\Dreambox\NowPlaying799.cs" />
+    <Compile Include="ExternalDreamboxTV\Dreambox\Remote.cs" />
+    <Compile Include="ExternalDreamboxTV\Dreambox\Request.cs" />
+    <Compile Include="ExternalDreamboxTV\Dreambox\XML.cs" />
+    <Compile Include="ExternalDreamboxTV\Dreambox\Zap.cs" />
     <Compile Include="ExternalDreamboxTV\ExternalDreamboxTV.cs" />
     <Compile Include="ExternalDreamboxTV\ExternalDreamBoxTVSettings.cs">
       <SubType>Form</SubType>
@@ -490,10 +482,6 @@
     <EmbeddedResource Include="ExternalDisplay\lcd.gif" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DreamboxDirectEPG\DreamboxDirectEPGSettings.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>DreamboxDirectEPGSettings.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ExternalDisplay\lcd_deactivated.gif" />
     <EmbeddedResource Include="ExternalDreamboxTV\ExternalDreamBoxTVSettings.resx">
       <DependentUpon>ExternalDreamBoxTVSettings.cs</DependentUpon>

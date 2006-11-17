@@ -56,6 +56,10 @@ namespace ProcessPlugins.ExternalDreamboxTV
             this.edtTotalBoutiques = new MediaPortal.UserInterface.Controls.MPTextBox();
             this.btnEPG = new MediaPortal.UserInterface.Controls.MPButton();
             this.btnClose = new MediaPortal.UserInterface.Controls.MPButton();
+            this.mpGroupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+            this.edtSyncHours = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
+            this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.edtSaveEPGSyncSettings = new MediaPortal.UserInterface.Controls.MPButton();
             this.mpTabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.mpGroupBox3.SuspendLayout();
@@ -63,6 +67,8 @@ namespace ProcessPlugins.ExternalDreamboxTV
             this.tabPage2.SuspendLayout();
             this.mpGroupBox1.SuspendLayout();
             this.mpGroupBox2.SuspendLayout();
+            this.mpGroupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.edtSyncHours)).BeginInit();
             this.SuspendLayout();
             // 
             // mpTabControl1
@@ -189,6 +195,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
             // 
             // mpGroupBox1
             // 
+            this.mpGroupBox1.Controls.Add(this.mpGroupBox4);
             this.mpGroupBox1.Controls.Add(this.progLabel);
             this.mpGroupBox1.Controls.Add(this.lblProgressText);
             this.mpGroupBox1.Controls.Add(this.btnLoadChannels);
@@ -252,7 +259,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
             this.mpGroupBox2.Size = new System.Drawing.Size(318, 161);
             this.mpGroupBox2.TabIndex = 2;
             this.mpGroupBox2.TabStop = false;
-            this.mpGroupBox2.Text = "mpGroupBox2";
+            this.mpGroupBox2.Text = "Import Statisctics";
             // 
             // mpLabel3
             // 
@@ -354,6 +361,50 @@ namespace ProcessPlugins.ExternalDreamboxTV
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
+            // mpGroupBox4
+            // 
+            this.mpGroupBox4.Controls.Add(this.edtSaveEPGSyncSettings);
+            this.mpGroupBox4.Controls.Add(this.mpLabel8);
+            this.mpGroupBox4.Controls.Add(this.edtSyncHours);
+            this.mpGroupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.mpGroupBox4.Location = new System.Drawing.Point(33, 107);
+            this.mpGroupBox4.Name = "mpGroupBox4";
+            this.mpGroupBox4.Size = new System.Drawing.Size(107, 98);
+            this.mpGroupBox4.TabIndex = 7;
+            this.mpGroupBox4.TabStop = false;
+            this.mpGroupBox4.Text = "Sync EPG every:";
+            // 
+            // edtSyncHours
+            // 
+            this.edtSyncHours.Location = new System.Drawing.Point(14, 26);
+            this.edtSyncHours.Maximum = new decimal(new int[] {
+            24,
+            0,
+            0,
+            0});
+            this.edtSyncHours.Name = "edtSyncHours";
+            this.edtSyncHours.Size = new System.Drawing.Size(48, 20);
+            this.edtSyncHours.TabIndex = 0;
+            // 
+            // mpLabel8
+            // 
+            this.mpLabel8.AutoSize = true;
+            this.mpLabel8.Location = new System.Drawing.Point(68, 30);
+            this.mpLabel8.Name = "mpLabel8";
+            this.mpLabel8.Size = new System.Drawing.Size(33, 13);
+            this.mpLabel8.TabIndex = 1;
+            this.mpLabel8.Text = "hours";
+            // 
+            // edtSaveEPGSyncSettings
+            // 
+            this.edtSaveEPGSyncSettings.Location = new System.Drawing.Point(7, 59);
+            this.edtSaveEPGSyncSettings.Name = "edtSaveEPGSyncSettings";
+            this.edtSaveEPGSyncSettings.Size = new System.Drawing.Size(94, 23);
+            this.edtSaveEPGSyncSettings.TabIndex = 2;
+            this.edtSaveEPGSyncSettings.Text = "Save";
+            this.edtSaveEPGSyncSettings.UseVisualStyleBackColor = true;
+            this.edtSaveEPGSyncSettings.Click += new System.EventHandler(this.edtSaveEPGSyncSettings_Click);
+            // 
             // ExternalDreamBoxTVSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -376,6 +427,9 @@ namespace ProcessPlugins.ExternalDreamboxTV
             this.mpGroupBox1.PerformLayout();
             this.mpGroupBox2.ResumeLayout(false);
             this.mpGroupBox2.PerformLayout();
+            this.mpGroupBox4.ResumeLayout(false);
+            this.mpGroupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.edtSyncHours)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -410,5 +464,9 @@ namespace ProcessPlugins.ExternalDreamboxTV
         private MediaPortal.UserInterface.Controls.MPButton btnSaveSettings;
         private MediaPortal.UserInterface.Controls.MPButton btnClose;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox4;
+        private MediaPortal.UserInterface.Controls.MPLabel mpLabel8;
+        private MediaPortal.UserInterface.Controls.MPNumericUpDown edtSyncHours;
+        private MediaPortal.UserInterface.Controls.MPButton edtSaveEPGSyncSettings;
     }
 }

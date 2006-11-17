@@ -385,10 +385,12 @@ namespace ProcessPlugins.ExternalDreamboxTV
                 string ip = xmlreader.GetValueAsString("Dreambox", "IP", "dreambox");
                 string userName = xmlreader.GetValueAsString("Dreambox", "UserName", "root");
                 string password = xmlreader.GetValueAsString("Dreambox", "Password", "dreambox");
+                string syncText = xmlreader.GetValueAsString("Dreambox", "SyncHour", "0");
 
                 edtDreamIP.Text = ip;
                 edtDreamUserName.Text = userName;
                 edtDreamPassword.Text = password;
+                edtSyncHours.Text = syncText;
             }
         }
 
@@ -411,6 +413,15 @@ namespace ProcessPlugins.ExternalDreamboxTV
         private void ExternalDreamBoxTVSettings_Load(object sender, EventArgs e)
         {
             LoadSettings();
+        }
+
+        private void edtSaveEPGSyncSettings_Click(object sender, EventArgs e)
+        {
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            {
+                xmlwriter.SetValue("Dreambox", "SyncHour", edtSyncHours.Text);
+            }
+            MessageBox.Show("Saved");
         }
 
 

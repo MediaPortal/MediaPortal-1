@@ -38,6 +38,7 @@ using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
+using System.ComponentModel;
 
 
 namespace ProcessPlugins.ExternalDreamboxTV
@@ -47,6 +48,9 @@ namespace ProcessPlugins.ExternalDreamboxTV
         private string _DreamboxIP = "";
         private string _DreamboxUserName = "";
         private string _DreamboxPassword = "";
+        private double _SyncHours = 0;
+        private System.Timers.Timer _SyncTimer = new System.Timers.Timer();
+        private BackgroundWorker _EPGbackgroundWorker;
 
         public ExternalDreamboxTV()
         {
@@ -58,7 +62,62 @@ namespace ProcessPlugins.ExternalDreamboxTV
         public void Start()
         {
             LoadSettings();
-            GUIWindowManager.Receivers += new SendMessageHandler(GUIWindowManager_Receivers);
+            GUIWindowManager.Receivers +=new SendMessageHandler(GUIWindowManager_Receivers);
+            _SyncTimer.Elapsed += new System.Timers.ElapsedEventHandler(_SyncTimer_Elapsed);
+            this._EPGbackgroundWorker = new BackgroundWorker();
+            this._EPGbackgroundWorker.DoWork += new DoWorkEventHandler(_EPGbackgroundWorker_DoWork);
+            this._EPGbackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_EPGbackgroundWorker_RunWorkerCompleted);
+            
+            if (_SyncHours > 0)
+            {
+                int inval = Convert.ToInt32(_SyncHours);
+                TimeSpan ts = new TimeSpan(inval, 0, 0);
+                _SyncTimer.Interval = ts.TotalMilliseconds;
+                _SyncTimer.Start();
+            }
+
+        }
+
+        void _EPGbackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            Log.Info("External Dreambox TV: Scheduled EPG import has run.");
+        }
+
+        void _EPGbackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            this.ImportEPG();
+        }
+
+        void _SyncTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            // check for last time
+            string sLastEPGSync = "";
+            System.DateTime lastEPGSync = System.DateTime.Now.AddDays(-1);
+
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            {
+                sLastEPGSync = xmlreader.GetValueAsString("Dreambox", "LastEPGSync", System.DateTime.Now.AddDays(-1).ToString());
+                try
+                {
+                    lastEPGSync = System.DateTime.Parse(sLastEPGSync);
+                }
+                catch { }
+
+            }
+
+            // do check
+            System.DateTime test = lastEPGSync.AddHours(_SyncHours);
+            if (test < System.DateTime.Now)
+            {
+                // Get EPG
+
+            }
+
+            // Save new Sync Data
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            {
+                xmlwriter.SetValue("Dreambox", "LastEPGSync", System.DateTime.Now.ToString());
+            }
         }
 
         void GUIWindowManager_Receivers(GUIMessage message)
@@ -110,18 +169,72 @@ namespace ProcessPlugins.ExternalDreamboxTV
                 _DreamboxIP = xmlreader.GetValueAsString("Dreambox", "IP", "dreambox");
                 _DreamboxUserName = xmlreader.GetValueAsString("Dreambox", "UserName", "root");
                 _DreamboxPassword = xmlreader.GetValueAsString("Dreambox", "Password", "dreambox");
+                string syncText = xmlreader.GetValueAsString("Dreambox", "SyncHour", "0");
+                try
+                {
+                    _SyncHours = Convert.ToDouble(syncText);
+                }
+                catch { }
+
             }
         }
 
         public void Stop()
         {
+            _SyncTimer.Stop();
             Log.Info("External Dreambox TV: plugin stopping.");
             return;
         }
 
 
+        void ImportEPG()
+        {
+            DreamBox.Core core1 = new DreamBox.Core("http://" + _DreamboxIP, _DreamboxUserName, _DreamboxPassword);
+            DataTable table1 = core1.Data.UserTVBouquets.Tables[0];
+            for (int num1 = 0; num1 < table1.Rows.Count; num1++)
+            {
+                string text1 = table1.Rows[num1]["Ref"].ToString();
+                this.ImportEPGChannels(text1);
+            }
+        }
 
+        private void ImportEPGChannels(string reference)
+        {
+            DreamBox.Core core1 = new DreamBox.Core("http://" + _DreamboxIP, _DreamboxUserName, _DreamboxPassword);
+            DataTable table1 = core1.Data.Channels(reference).Tables[0];
+            for (int num1 = 0; num1 < table1.Rows.Count; num1++)
+            {
+                string text1 = table1.Rows[num1]["Ref"].ToString();
+                try
+                {
+                    this.ImportChannelEPG(text1);
+                }
+                catch { }
 
+            }
+        }
+        private void ImportChannelEPG(string reference)
+        {
+            DreamBox.Core core1 = new DreamBox.Core("http://" + _DreamboxIP, _DreamboxUserName, _DreamboxPassword);
+            ServiceEpgData data1 = core1.XML.EPG(reference);
+            foreach (EpgEvent event1 in data1.Events)
+            {
+                int num1 = Convert.ToInt32(event1.Date.Split(new char[] { '.' })[2].ToString());
+                int num2 = Convert.ToInt32(event1.Date.Split(new char[] { '.' })[1].ToString());
+                int num3 = Convert.ToInt32(event1.Date.Split(new char[] { '.' })[0].ToString());
+                int num4 = Convert.ToInt32(event1.Time.Split(new char[] { ':' })[0].ToString());
+                int num5 = Convert.ToInt32(event1.Time.Split(new char[] { ':' })[1].ToString());
+                DateTime time1 = new DateTime(num1, num2, num3, num4, num5, 0);
+                double num6 = Convert.ToDouble(event1.Duration);
+                DateTime time2 = time1.AddSeconds(num6);
+                TVProgram program1 = new TVProgram(data1.ServiceName, time1, time2, event1.Description);
+
+                program1.Description = event1.Details;
+                program1.Genre = event1.Genre;
+                program1.Date = time1.ToString();
+                TVDatabase.AddProgram(program1);
+            }
+        }
 
         #region IPlugin Members
 
