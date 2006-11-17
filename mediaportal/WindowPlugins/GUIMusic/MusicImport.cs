@@ -161,8 +161,10 @@ namespace MediaPortal.MusicImport
             TagReader.MusicTag musicTag = new TagReader.MusicTag();
             musicTag.Artist = "Unknown Artist";
             musicTag.Album = "Unknown Album";
-            musicTag.Title = "Track " + item.Label.Substring(5);
-            musicTag.Track = Convert.ToInt16(item.Label.Substring(5));
+            string track = item.Label.Substring(5);
+            track = track.Substring(0, track.IndexOf('.'));
+            musicTag.Title = "Track " + track;
+            musicTag.Track = Convert.ToInt16(track);
             item.MusicTag = musicTag;
           }
           trackInfo.MusicTag = (TagReader.MusicTag)item.MusicTag;
@@ -444,7 +446,7 @@ namespace MediaPortal.MusicImport
                     mp3Config.format.lhv1.bEnableVBR = 1;
                     mp3Config.format.lhv1.nVbrMethod = VBRMETHOD.VBR_METHOD_ABR;
                     uint ConToKbwVbrAbr_bps = Convert.ToUInt16(Rates[mp3BitRate]);
-                    mp3Config.format.lhv1.dwVbrAbr_bps = ConToKbwVbrAbr_bps * 1000; 
+                    mp3Config.format.lhv1.dwVbrAbr_bps = ConToKbwVbrAbr_bps * 1000;
                   }
 
                   if (mp3MONO)
