@@ -165,11 +165,18 @@ namespace ProcessPlugins.ExternalDreamboxTV
                 DateTime time1 = new DateTime(num1, num2, num3, num4, num5, 0);
                 double num6 = Convert.ToDouble(event1.Duration);
                 DateTime time2 = time1.AddSeconds(num6);
-                TVProgram program1 = new TVProgram(data1.ServiceName, time1, time2, event1.Description);
-                program1.Description = event1.Details;
-                program1.Genre=event1.Genre ;
-                program1.Date= time1.ToString();
-                TVDatabase.AddProgram(program1);
+                long t1 = Convert.ToInt64(time1.ToString("yyyyMMddHHmmss"));
+                long t2 = Convert.ToInt64(time1.ToString("yyyyMMddHHmmss"));
+                ArrayList programsInDatabase = new ArrayList();
+                TVDatabase.GetProgramsPerChannel(data1.ServiceName, t1+1, t2+1, ref programsInDatabase);
+                if (programsInDatabase.Count == 0)
+                {
+                    TVProgram program1 = new TVProgram(data1.ServiceName, time1, time2, event1.Description);
+                    program1.Description = event1.Details;
+                    program1.Genre = event1.Genre;
+                    program1.Date = time1.ToString();
+                    TVDatabase.AddProgram(program1);
+                }
             }
         }
 
