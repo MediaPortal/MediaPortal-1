@@ -54,6 +54,7 @@ void  CPatParser::CleanUp()
     it=m_mapPmtParsers.erase(it);
   }
   m_mapChannels.clear();
+  m_bDumped=false;
 }
 
 void  CPatParser::Reset()
@@ -179,7 +180,7 @@ void CPatParser::OnTsPacket(byte* tsPacket)
 	m_nitDecoder.OnTsPacket(tsPacket);
   m_vctParser.OnTsPacket(tsPacket);
   m_sdtParser.OnTsPacket(tsPacket);
-  m_sdtParserOther.OnTsPacket(tsPacket);
+  //m_sdtParserOther.OnTsPacket(tsPacket);
 
   for (itPmtParser it=m_mapPmtParsers.begin(); it != m_mapPmtParsers.end() ;++it)
   {
@@ -254,6 +255,8 @@ void CPatParser::OnNewSection(CSection& sections)
 
 void CPatParser::Dump()
 {
+  if (m_bDumped) return;
+  m_bDumped=true;
   int i=0;
   itChannels it=m_mapChannels.begin();
   while (it!=m_mapChannels.end()) 

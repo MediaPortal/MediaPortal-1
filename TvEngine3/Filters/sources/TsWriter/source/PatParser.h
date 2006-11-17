@@ -63,4 +63,5 @@ private:
   typedef map<int,CPmtParser*> ::iterator itPmtParser;
   map<int,CChannelInfo> m_mapChannels;
   typedef map<int,CChannelInfo> ::iterator itChannels;
+  bool m_bDumped;
 };
