@@ -250,6 +250,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\XihSolutions.DotMSN.dll</HintPath>
     </Reference>
+    <Reference Include="XPBurnComponent, Version=1.0.1.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\XPBurnComponent.dll</HintPath>
+    </Reference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Name>Core</Name>
       <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
@@ -309,6 +313,12 @@
     </Compile>
     <Compile Include="GUIAlarm\GUISleepTimer.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIBurner\BurnVideoDVD.cs" />
+    <Compile Include="GUIBurner\GUIBurner.cs" />
+    <Compile Include="GUIBurner\MadlldlibWrapper.cs" />
+    <Compile Include="GUIBurner\SetupForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="GUIDVD\GUIDVDFullscreen.cs" />
     <Compile Include="GUIMyDreambox\Dreambox\EPG.cs" />
@@ -1008,6 +1018,10 @@
     <Compile Include="VideoEditor\VideoEditorSetup.cs" />
     <EmbeddedResource Include="GUIAlarm\AlarmSetupForm.resx">
       <DependentUpon>AlarmSetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIBurner\SetupForm.resx">
+      <DependentUpon>SetupForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Home\GUIHomeSetupForm.resx">
       <SubType>Designer</SubType>

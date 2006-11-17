@@ -46,6 +46,7 @@ namespace MediaPortal.Util
       CustomInputDevice,
       Config,
       CustomInputDefault,
+      BurnerSupport,
     }
     #endregion
 
@@ -285,6 +286,7 @@ private Config()
       Set(Dir.Skin, Path.Combine(baseDir, @"skin\"));
       Set(Dir.Thumbs, Path.Combine(baseDir, @"thumbs\"));
       Set(Dir.Weather, Path.Combine(baseDir, @"weather\"));
+      Set(Dir.BurnerSupport, Path.Combine(baseDir, @"Burner\"));
     }
 
 

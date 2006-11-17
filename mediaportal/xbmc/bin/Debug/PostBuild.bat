@@ -157,3 +157,8 @@ xcopy ..\release\Thumbs\ExternalDisplay\*.* .\Thumbs\ExternalDisplay /E /I /R /K
 rem -------------------
 rem End ExternalDisplay
 rem -------------------
+
+rem MyBurner plugin dependencies
+copy ..\..\..\WindowPlugins\GUIBurner\XPBurnComponent.dll .
+copy ..\..\..\WindowPlugins\GUIBurner\madlldlib.dll .
+

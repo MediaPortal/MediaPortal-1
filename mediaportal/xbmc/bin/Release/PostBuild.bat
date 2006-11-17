@@ -131,4 +131,9 @@ rem MyDreambox plugin dependencies
 copy ..\..\..\WindowPlugins\GUIMyDreambox\AxInterop.AXVLC.dll .
 copy ..\..\..\WindowPlugins\GUIMyDreambox\Interop.AXVLC.dll .
 
+rem MyBurner plugin dependencies
+copy ..\..\..\WindowPlugins\GUIBurner\XPBurnComponent.dll .
+copy ..\..\..\WindowPlugins\GUIBurner\madlldlib.dll .
+
+
 @if exist postbuild2.bat call postbuild2.bat
