@@ -90,6 +90,13 @@ BOOL CPatParser::IsReady()
     CPmtParser* parser=it->second;
     if (false==parser->IsReady()) return FALSE;
   }
+  itChannels it=m_mapChannels.begin();
+  while (it!=m_mapChannels.end()) 
+  {
+		CChannelInfo& info=it->second;
+		if (info.NetworkId==0&&info.TransportId==0 && info.ServiceName[0]==0) return FALSE;
+		++it;
+	}
   return TRUE;
 }
 
@@ -130,6 +137,7 @@ void CPatParser::OnChannel(CChannelInfo info)
 
 void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
 {
+	//LogDebug("SDT: onid:%x tsid:%x nit:%x p:%s s:%s", sdtInfo.NetworkId,sdtInfo.TransportId,sdtInfo.ServiceId, sdtInfo.ProviderName,sdtInfo.ServiceName);
   itChannels it=m_mapChannels.find(sdtInfo.ServiceId);
   if (it!=m_mapChannels.end())
   {
@@ -218,9 +226,11 @@ void CPatParser::OnNewSection(CSection& sections)
 	  int offset = (8 +(i * 4));
     int serviceId=((section[start+offset] & 0x1F)<<8) + section[start+offset+1];
 	  int pmtPid = ((section[start+offset+2] & 0x1F)<<8) + section[start+offset+3];
+		LogDebug("sid:%x pmt:%x", serviceId,pmtPid);
 	  if (pmtPid < 0x10 || pmtPid >=0x1fff) 
 	  {
       //invalid pmt pid
+			LogDebug("invalid sid:%x pmt:%x", serviceId,pmtPid);
 		  return ;
 	  }
 
@@ -232,7 +242,7 @@ void CPatParser::OnNewSection(CSection& sections)
       info.ServiceId=serviceId;
       m_mapChannels[serviceId]=info;
     }
-	   
+
     itPmtParser it2= m_mapPmtParsers.find(pmtPid);
     if (it2==m_mapPmtParsers.end())
     {
@@ -273,7 +283,7 @@ void CPatParser::Dump()
 
 void CPatParser::OnPmtReceived(int pid)
 {
-//	LogDebug("PatParser:  received pmt:%x", pid);
+	LogDebug("PatParser:  received pmt:%x", pid);
 	//if ((m_mapPmtParsers.size()+5) <=16) return;
 	//UpdateHwPids();
 }
