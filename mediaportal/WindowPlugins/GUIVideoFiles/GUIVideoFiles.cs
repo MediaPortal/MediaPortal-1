@@ -428,9 +428,11 @@ namespace MediaPortal.GUI.Video
       // is happening.
       if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(newFolderName)))
       {
+        // hide it before playback since it would be on top of the "play from that point" dialog
+        GUIWaitCursor.Hide();
+
         if (PlayMountedImageFile(GetID, newFolderName))
         {
-          GUIWaitCursor.Hide();
           return;
         }
         else
@@ -441,7 +443,6 @@ namespace MediaPortal.GUI.Video
           }
           else
           {
-            GUIWaitCursor.Hide();
             return;
           }
         }
