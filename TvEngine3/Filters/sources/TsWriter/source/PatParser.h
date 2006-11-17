@@ -28,6 +28,7 @@
 #include "VirtualChannelTableParser.h"
 //#include "conditionalAccess.h"
 #include <vector>
+#include <map>
 using namespace std;
 
 class CPatParser : public CSectionDecoder, public IPmtCallBack, public ISdtCallBack, public IAtscCallback
@@ -58,6 +59,8 @@ private:
   void                       CleanUp();
 	//CConditionalAccess* m_pConditionalAccess;
 
-  vector<CPmtParser*> m_pmtParsers;
-  vector<CChannelInfo> m_vecChannels;
+  map<int,CPmtParser*> m_mapPmtParsers;
+  typedef map<int,CPmtParser*> ::iterator itPmtParser;
+  map<int,CChannelInfo> m_mapChannels;
+  typedef map<int,CChannelInfo> ::iterator itChannels;
 };

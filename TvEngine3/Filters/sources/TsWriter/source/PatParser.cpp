@@ -46,13 +46,14 @@ CPatParser::~CPatParser(void)
 
 void  CPatParser::CleanUp()
 {
-  for (int i=0; i < (int)m_pmtParsers.size();++i)
+  itPmtParser it=m_mapPmtParsers.begin();
+  while (it!=m_mapPmtParsers.end())
   {
-    CPmtParser* parser=m_pmtParsers[i];
+    CPmtParser* parser=it->second;
     delete parser;
+    it=m_mapPmtParsers.erase(it);
   }
-  m_pmtParsers.clear();
-  m_vecChannels.clear();
+  m_mapChannels.clear();
 }
 
 void  CPatParser::Reset()
@@ -80,13 +81,14 @@ BOOL CPatParser::IsReady()
     return TRUE;
   }
 	if (m_nitDecoder.Ready()==false) return FALSE;
-  if (m_pmtParsers.size()==false) return FALSE;
-  for (int i=0; i < (int)m_pmtParsers.size();++i)
+  if (m_mapPmtParsers.size()==false) return FALSE;
+  if (false==m_sdtParser.IsReady()) return FALSE;
+  
+  for (itPmtParser it=m_mapPmtParsers.begin(); it != m_mapPmtParsers.end() ;++it)
   {
-    CPmtParser* parser=m_pmtParsers[i];
+    CPmtParser* parser=it->second;
     if (false==parser->IsReady()) return FALSE;
   }
-  if (false==m_sdtParser.IsReady()) return FALSE;
   return TRUE;
 }
 
@@ -94,9 +96,9 @@ int CPatParser::Count()
 {
   if (m_vctParser.Count() > 0)
   {
-    return m_vecChannels.size();
+    return m_mapChannels.size();
   }
-  return m_vecChannels.size();
+  return m_mapChannels.size();
 }
 
 bool CPatParser::GetChannel(int index, CChannelInfo& info)
@@ -106,7 +108,15 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
 	{
 		return false;
 	}
-  info = m_vecChannels[index];
+  if (index==0) Dump();
+
+  itChannels it=m_mapChannels.begin();
+  while (index) 
+  {
+    it++;
+    index--;
+  }
+  info = it->second;
 	info.LCN=m_nitDecoder.GetLogicialChannelNumber(info.NetworkId,info.TransportId,info.ServiceId);
 	return true;
 }
@@ -114,29 +124,28 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
 
 void CPatParser::OnChannel(CChannelInfo info)
 {
-  m_vecChannels.push_back(info);
+  m_mapChannels[info.ServiceId]=info;
 }
 
 void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
 {
-  for (int i=0; i < m_vecChannels.size(); ++i)
+  itChannels it=m_mapChannels.find(sdtInfo.ServiceId);
+  if (it!=m_mapChannels.end())
   {
-    CChannelInfo& info=m_vecChannels[i];
-    if (info.ServiceId==sdtInfo.ServiceId)
-    {
-      info.NetworkId=sdtInfo.NetworkId;
-      info.TransportId=sdtInfo.TransportId;
-      info.ServiceId=sdtInfo.ServiceId;
-      info.EIT_schedule_flag=sdtInfo.EIT_schedule_flag;
-      info.EIT_present_following_flag=sdtInfo.EIT_present_following_flag;
-      info.RunningStatus=sdtInfo.RunningStatus;
-      info.FreeCAMode=sdtInfo.FreeCAMode;
-      info.ServiceType=sdtInfo.ServiceType;
-      strcpy(info.ProviderName,sdtInfo.ProviderName);
-      strcpy(info.ServiceName,sdtInfo.ServiceName);
-      return;
-    }
+    CChannelInfo& info=it->second;
+    info.NetworkId=sdtInfo.NetworkId;
+    info.TransportId=sdtInfo.TransportId;
+    info.ServiceId=sdtInfo.ServiceId;
+    info.EIT_schedule_flag=sdtInfo.EIT_schedule_flag;
+    info.EIT_present_following_flag=sdtInfo.EIT_present_following_flag;
+    info.RunningStatus=sdtInfo.RunningStatus;
+    info.FreeCAMode=sdtInfo.FreeCAMode;
+    info.ServiceType=sdtInfo.ServiceType;
+    strcpy(info.ProviderName,sdtInfo.ProviderName);
+    strcpy(info.ServiceName,sdtInfo.ServiceName);
+    return;
   }
+
   CChannelInfo info;
   info.NetworkId=sdtInfo.NetworkId;
   info.TransportId=sdtInfo.TransportId;
@@ -148,23 +157,21 @@ void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
   info.ServiceType=sdtInfo.ServiceType;
   strcpy(info.ProviderName,sdtInfo.ProviderName);
   strcpy(info.ServiceName,sdtInfo.ServiceName);
-  m_vecChannels.push_back(info);
+  m_mapChannels[sdtInfo.ServiceId] = info;
 }
 void CPatParser::OnPidsReceived(CPidTable pidTable)
 {
-  for (int i=0; i < m_vecChannels.size(); ++i)
+  itChannels it=m_mapChannels.find(pidTable.ServiceId);
+  if (it!=m_mapChannels.end())
   {
-    CChannelInfo& info=m_vecChannels[i];
-    if (info.ServiceId==pidTable.ServiceId)
-    {
-      info.PidTable=pidTable;
-      return;
-    }
+    CChannelInfo& info=it->second;
+    info.PidTable=pidTable;
+    return;
   }
   CChannelInfo info;
   info.ServiceId=pidTable.ServiceId;
   info.PidTable=pidTable;
-  m_vecChannels.push_back(info);
+  m_mapChannels[info.ServiceId] = info;
 }
 
 void CPatParser::OnTsPacket(byte* tsPacket)
@@ -173,9 +180,10 @@ void CPatParser::OnTsPacket(byte* tsPacket)
   m_vctParser.OnTsPacket(tsPacket);
   m_sdtParser.OnTsPacket(tsPacket);
   m_sdtParserOther.OnTsPacket(tsPacket);
-  for (int i=0; i < (int)m_pmtParsers.size();++i)
+
+  for (itPmtParser it=m_mapPmtParsers.begin(); it != m_mapPmtParsers.end() ;++it)
   {
-    CPmtParser* parser=m_pmtParsers[i];
+    CPmtParser* parser=it->second;
     parser->OnTsPacket(tsPacket);
   }
   CSectionDecoder::OnTsPacket(tsPacket);
@@ -215,43 +223,28 @@ void CPatParser::OnNewSection(CSection& sections)
 		  return ;
 	  }
 
-    bool found=false;
-    for (int idx=0; idx < (int)m_vecChannels.size(); idx++)
-	  {
-      CChannelInfo& info = m_vecChannels[idx];
-      if (info.TransportId==transport_stream_id && info.ServiceId==serviceId) 
-      {
-        found=true;
-        break;
-      }
-    }
-    if (!found)
+    itChannels it =m_mapChannels.find(serviceId);
+    if (it==m_mapChannels.end())
     {
       CChannelInfo info;
       info.TransportId=transport_stream_id;
       info.ServiceId=serviceId;
-      m_vecChannels.push_back(info);
+      m_mapChannels[serviceId]=info;
     }
-	   found=false;
-	  for (int idx=0; idx < (int)m_pmtParsers.size(); idx++)
-	  {
-		  CPmtParser* pmtParser = m_pmtParsers[idx];
-		  if (pmtParser->GetPid() == pmtPid)
-		  {
-			  found=true;
-			  break;
-		  }
-	  }
-	  if (!found && pmtPid>0x12)
-	  {
-		  CPmtParser* pmtParser = new CPmtParser();
-		  pmtParser->SetTableId(2);
-		  pmtParser->SetPid(pmtPid);
-			pmtParser->SetPmtCallBack(this);
-		  m_pmtParsers.push_back( pmtParser );
-			LogDebug("  add pmt# %d pid: %x",m_pmtParsers.size(), pmtPid);
-			newPmtsAdded=true;
-	  }
+	   
+    itPmtParser it2= m_mapPmtParsers.find(pmtPid);
+    if (it2==m_mapPmtParsers.end())
+    {
+	    if (pmtPid>0x12)
+	    {
+		    CPmtParser* pmtParser = new CPmtParser();
+		    pmtParser->SetTableId(2);
+		    pmtParser->SetPid(pmtPid);
+			  pmtParser->SetPmtCallBack(this);
+		    m_mapPmtParsers[pmtPid]=pmtParser ;
+			  newPmtsAdded=true;
+	    }
+    }
   }
 	if (newPmtsAdded)
 	{
@@ -280,7 +273,7 @@ void CPatParser::Dump()
 void CPatParser::OnPmtReceived(int pid)
 {
 //	LogDebug("PatParser:  received pmt:%x", pid);
-	//if ((m_pmtParsers.size()+5) <=16) return;
+	//if ((m_mapPmtParsers.size()+5) <=16) return;
 	//UpdateHwPids();
 }
 void CPatParser::UpdateHwPids()
@@ -292,9 +285,9 @@ void CPatParser::UpdateHwPids()
 	pids.push_back(0x11);//sdt
 	pids.push_back(0x1ffb);//atsc virtual channel table
 	pids.push_back(0x1fff);//padding stream..
-	for (int i=0; i < (int)m_pmtParsers.size();++i)
+	for (int i=0; i < (int)m_mapPmtParsers.size();++i)
 	{
-		CPmtParser* parser = m_pmtParsers[i];
+		CPmtParser* parser = m_mapPmtParsers[i];
 		if (parser->Ready() == false)
 		{
 			pids.push_back( parser->GetPid() );
