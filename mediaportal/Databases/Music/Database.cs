@@ -3033,7 +3033,19 @@ namespace MediaPortal.Music.Database
         }
         else
         {
-          Log.Info("Musicdatabasereorg: cannot get tag for {0} ", strPathSong);
+          Log.Info("Musicdatabasereorg: cannot get tag for {0}. Using filename as Title.", strPathSong);
+          string title = Path.GetFileNameWithoutExtension(strPathSong);
+          string strSQL;
+          strSQL = String.Format("update song set strTitle='{0}' where idSong={1}", title, idSong);
+          try
+          {
+            m_db.Execute(strSQL);
+          }
+          catch (Exception)
+          {
+            Log.Error("Musicdatabasereorg: Update tags for {0} failed because of DB exception", strPathSong);
+            return false;
+          }
         }
       }
       catch (Exception ex)
