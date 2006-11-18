@@ -1432,8 +1432,8 @@ namespace TvPlugin
         if (g_Player.IsRadio == false)
         {
           double duration = g_Player.Duration;
-          if (duration < 5) return;
-          duration -= 2;
+          //if (duration < 5) return;
+          //duration -= 2;
           if (duration < 0) duration = 0;
           double position = g_Player.CurrentPosition;
           MediaPortal.GUI.Library.Log.Info("tvhome:seektoend dur:{0} pos:{1} {2}", g_Player.Duration, g_Player.CurrentPosition, g_Player.IsRadio);
