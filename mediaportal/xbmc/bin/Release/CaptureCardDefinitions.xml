@@ -17762,7 +17762,7 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"     name="AVerMedia, AVerTV Tuner (878)"              checkdevice="true"/>
+        <filter cat="tvtuner"     name="AVerMedia, AVerTV TvTuner (878)"            checkdevice="true"/>
         <filter cat="tvaudio"     name="AVerMedia, AVerTV WDM Audio Capture (878)"  checkdevice="true"/>
         <filter cat="crossbar"    name="AVerMedia, AVerTV Crossbar (878)"           checkdevice="true"/>
         <filter cat="capture"     name="AVerMedia, AVerTV WDM Video Capture (878)"  checkdevice="true"/>
@@ -17796,6 +17796,52 @@
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
         <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AVerMedia AverTV Studio 503" capturename="AverMedia, AVerTV WDM Video Capture (7133/7135)" devid="ven_1131&amp;dev_7133&amp;subsys_a11b1461&amp;rev_d1">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="AVerMedia, AVerTV WDM TvTuner"                    checkdevice="true"/>
+        <filter cat="tvaudio"     name="Cap7134 TV Audio"                                 checkdevice="true"/>
+        <filter cat="crossbar"    name="Cap7134 Crossbar"                                 checkdevice="true"/>
+        <filter cat="capture"     name="AverMedia, AVerTV WDM Video Capture (7133/7135)"  checkdevice="true"/>
+        <filter cat="videncoder"  name="AVerMedia MPEG Video Encoder"                     checkdevice="false"/>
+        <filter cat="audencoder"  name="AVerMedia MPEG Audio Encoder"                     checkdevice="false"/>
+        <filter cat="mux"         name="AVerMedia MPEG-2 Multiplexer"                     checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"   sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"    sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"   sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"    sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder" sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="3" sinkfilter="audencoder" sinkpin="0"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
+        <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"        sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge PVR2 USB2" capturename="Hauppauge WinTV PVR2 USB2 Encoder" devid="vid_2040&amp;pid_2900">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR2 USB2 TvTuner"  checkdevice="true"/>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR2 USB2 TvAudio"  checkdevice="true"/>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR2 USB2 Crossbar" checkdevice="true"/>
+        <filter cat="capture"  name="Hauppauge WinTV PVR2 USB2 Encoder"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
