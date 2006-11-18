@@ -54,7 +54,7 @@ namespace MediaPortal.PowerScheduler
     private const int PBT_APMPOWERSTATUSCHANGE = 0x000A;
     private const int PBT_APMOEMEVENT = 0x000B;
     private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
-    private const string _version = "v0.0.5";
+    private const string _version = "v0.0.6";
     #endregion
 
     #region Protected Variables
@@ -360,7 +360,7 @@ namespace MediaPortal.PowerScheduler
       foreach (IWakeable wakeable in wakeables)
       {
         DateTime pluginTime = wakeable.GetNextEvent(ealiestStartTime);
-        if (pluginTime < nextWakeUpTime)
+        if ((pluginTime >= ealiestStartTime) && (pluginTime < nextWakeUpTime))
         {
           nextWakeUpTime = pluginTime;
         }
