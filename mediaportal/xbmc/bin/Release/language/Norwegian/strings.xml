@@ -3496,7 +3496,7 @@
 	</string>
 	<string>
 		<id>1200</id>
-		<value>Oppsett Wizard</value>
+		<value>Oppsettsassistent</value>
 	</string>
 	<string Prefix="Min ">
 		<id>1440</id>
@@ -4174,6 +4174,10 @@
 		<id>2144</id>
 		<value>Start Brenning</value>
 	</string>
+	<string>
+		<id>2145</id>
+		<value>Importer gjeldende spilleliste</value>
+	</string>
 	<string Prefix="Min ">
 		<id>2200</id>
 		<value>Utforsker</value>
@@ -4374,6 +4378,14 @@
 	<string>
 		<id>2606</id>
 		<value>Italiensk</value>
+	</string>
+	<string>
+		<id>2607</id>
+		<value>Spansk</value>
+	</string>
+	<string>
+		<id>2608</id>
+		<value>Portugisisk</value>
 	</string>
 	<!-- End of Wikipedia Strings -->
 	<string>
@@ -5753,91 +5765,91 @@
 	</string>
 	<string Prefix="Min ">
 		<id>100615</id>
-		<value>Wizard/velkommen</value>
+		<value>Assistent/velkommen</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100616</id>
-		<value>Wizard/Kort oppdaget</value>
+		<value>Assistent/Kort oppdaget</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100617</id>
-		<value>Wizard/land</value>
+		<value>Assistent/land</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100618</id>
-		<value>Wizard/skann</value>
+		<value>Assistent/skann</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100619</id>
-		<value>Wizard/DVBC/land</value>
+		<value>Assistent/DVBC/land</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100620</id>
-		<value>Wizard/DVBC/skann</value>
+		<value>Assistent/DVBC/skann</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100621</id>
-		<value>Wizard/DVBS/LNB</value>
+		<value>Assistent/DVBS/LNB</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100622</id>
-		<value>Wizard/DVBS/LNB detaljer</value>
+		<value>Assistent/DVBS/LNB detaljer</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100623</id>
-		<value>Wizard/DVBS/sender</value>
+		<value>Assistent/DVBS/sender</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100624</id>
-		<value>Wizard/DVBS/skann</value>
+		<value>Assistent/DVBS/skann</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100625</id>
-		<value>Wizard/ATSC/Skann</value>
+		<value>Assistent/ATSC/Skann</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100626</id>
-		<value>Wizard/analog/land</value>
+		<value>Assistent/analog/land</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100627</id>
-		<value>Wizard/analog/by</value>
+		<value>Assistent/analog/by</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100628</id>
-		<value>Wizard/analog/importert</value>
+		<value>Assistent/analog/importert</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100629</id>
-		<value>Wizard/analog/manuell</value>
+		<value>Assistent/analog/manuell</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100630</id>
-		<value>Wizard/analog/Skann</value>
+		<value>Assistent/analog/Skann</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100631</id>
-		<value>Wizard/analog/omdøpe</value>
+		<value>Assistent/analog/omdøpe</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100632</id>
-		<value>Wizard/analog/radio</value>
+		<value>Assistent/analog/radio</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100633</id>
-		<value>Wizard/analog/omdøpe radio</value>
+		<value>Assistent/analog/omdøpe radio</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100634</id>
-		<value>Wizard/fjernkontroll</value>
+		<value>Assistent/fjernkontroll</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100635</id>
-		<value>Wizard/EPG</value>
+		<value>Assistent/EPG</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100699</id>
-		<value>Wizard/ferdig</value>
+		<value>Assistent/ferdig</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100700</id>
@@ -6065,7 +6077,7 @@
 	</string>
 	<string>
 		<id>200013</id>
-		<value>Denne wizarden lar deg sette opp MediaPortal raskt og enkelt. Vennligst gå gjennom trinnene,</value>
+		<value>Denne Assistenten lar deg sette opp MediaPortal raskt og enkelt. Vennligst gå gjennom trinnene,</value>
 	</string>
 	<string>
 		<id>200014</id>
@@ -6085,7 +6097,7 @@
 	</string>
 	<string>
 		<id>200019</id>
-		<value>Trykk "Avslutt" for å lukke wizarden.</value>
+		<value>Trykk "Avslutt" for å lukke Assistenten.</value>
 	</string>
 	<string>
 		<id>200020</id>
