@@ -200,6 +200,7 @@ namespace TvEngine
         bool _assigned = false;
         Schedule _lastOverlappingSchedule = null;
         int _lastBusyCard = 0;
+        bool _overlap = false;
         foreach (Card _card in _cards)
         {
           if (_card.canViewTvChannel(_Schedule.IdChannel))
@@ -211,6 +212,7 @@ namespace TvEngine
               if (IsOverlap(_Schedule, _assignedShedule))
               {
                 free = false;
+                //_overlap = true;
                 _lastOverlappingSchedule = _assignedShedule;
                 _lastBusyCard = _card.IdCard;
                 break;
@@ -220,8 +222,11 @@ namespace TvEngine
             {
               _cardSchedules[_card.IdCard].Add(_Schedule);
               _assigned = true;
-              _Schedule.RecommendedCard = _card.IdCard;
-              _Schedule.Persist();
+              if (_overlap)
+              {
+                _Schedule.RecommendedCard = _card.IdCard;
+                _Schedule.Persist();
+              }
               break;
             }
           }
