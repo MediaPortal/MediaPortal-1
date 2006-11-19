@@ -681,20 +681,17 @@ namespace MediaPortal.GUI.Video
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
-          goto case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT;
-
         case GUIMessage.MessageType.GUI_MSG_LOSTFOCUS:
-          goto case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT;
-
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
-          goto case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT;
-
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-          goto case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT;
-
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           m_dwOSDTimeOut = DateTime.Now;
           break;
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
+          _osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+          _isOsdVisible = false;
+          GUIWindowManager.IsOsdVisible = false;
+          return true;
       }
       bool result = _osdWindow.OnMessage(message);	// route messages to OSD window
       if (_osdWindow.NeedRefresh())
