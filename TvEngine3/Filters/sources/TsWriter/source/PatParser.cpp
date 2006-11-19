@@ -36,7 +36,7 @@ void LogDebug(const char *fmt, ...) ;
 CPatParser::CPatParser(void)
 {
 	//m_pConditionalAccess=NULL;
-  Reset();
+  Reset(NULL);
   SetTableId(0);
   SetPid(0);
 }
@@ -63,10 +63,11 @@ void  CPatParser::CleanUp()
 }
 
 //*****************************************************************************
-void  CPatParser::Reset()
+void  CPatParser::Reset(IChannelScanCallback* callback)
 {
+	m_pCallback=callback;
 //	Dump();
-	LogDebug("PatParser:Reset()");
+	LogDebug("PatParser:Reset(%d)",m_pCallback);
 	CSectionDecoder::Reset();
   CleanUp();
   m_vctParser.Reset();
@@ -175,39 +176,29 @@ void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
   if (it!=m_mapChannels.end())
   {
     CChannelInfo& info=it->second;
-		if (info.SdtReceived) return;
-    info.NetworkId=sdtInfo.NetworkId;
-    info.TransportId=sdtInfo.TransportId;
-    info.ServiceId=sdtInfo.ServiceId;
-    info.EIT_schedule_flag=sdtInfo.EIT_schedule_flag;
-    info.EIT_present_following_flag=sdtInfo.EIT_present_following_flag;
-    info.RunningStatus=sdtInfo.RunningStatus;
-    info.FreeCAMode=sdtInfo.FreeCAMode;
-    info.ServiceType=sdtInfo.ServiceType;
-    info.OtherMux=sdtInfo.OtherMux;
-	  info.SdtReceived=true;
-    strcpy(info.ProviderName,sdtInfo.ProviderName);
-    strcpy(info.ServiceName,sdtInfo.ServiceName);
-    return;
-  }
-		//LogDebug("?SDT: onid:%x tsid:%x nit:%x p:%s s:%s other:%d", sdtInfo.NetworkId,sdtInfo.TransportId,sdtInfo.ServiceId, sdtInfo.ProviderName,sdtInfo.ServiceName, sdtInfo.OtherMux);
-/*
-  CChannelInfo info;
-  info.NetworkId=sdtInfo.NetworkId;
-  info.TransportId=sdtInfo.TransportId;
-  info.ServiceId=sdtInfo.ServiceId;
-  info.EIT_schedule_flag=sdtInfo.EIT_schedule_flag;
-  info.EIT_present_following_flag=sdtInfo.EIT_present_following_flag;
-  info.RunningStatus=sdtInfo.RunningStatus;
-  info.FreeCAMode=sdtInfo.FreeCAMode;
-  info.ServiceType=sdtInfo.ServiceType;
-	info.OtherMux=sdtInfo.OtherMux;
-	info.SdtReceived=true;
-  strcpy(info.ProviderName,sdtInfo.ProviderName);
-  strcpy(info.ServiceName,sdtInfo.ServiceName);
-	LogDebug("SDT: onid:%x tsid:%x nit:%x p:%s s:%s other:%d", sdtInfo.NetworkId,sdtInfo.TransportId,sdtInfo.ServiceId, sdtInfo.ProviderName,sdtInfo.ServiceName, sdtInfo.OtherMux);
-  m_mapChannels[sdtInfo.ServiceId] = info;
-	*/
+		if (info.SdtReceived==false) 
+		{
+			info.NetworkId=sdtInfo.NetworkId;
+			info.TransportId=sdtInfo.TransportId;
+			info.ServiceId=sdtInfo.ServiceId;
+			info.EIT_schedule_flag=sdtInfo.EIT_schedule_flag;
+			info.EIT_present_following_flag=sdtInfo.EIT_present_following_flag;
+			info.RunningStatus=sdtInfo.RunningStatus;
+			info.FreeCAMode=sdtInfo.FreeCAMode;
+			info.ServiceType=sdtInfo.ServiceType;
+			info.OtherMux=sdtInfo.OtherMux;
+			info.SdtReceived=true;
+			strcpy(info.ProviderName,sdtInfo.ProviderName);
+			strcpy(info.ServiceName,sdtInfo.ServiceName);
+			if (IsReady() )
+			{
+				if (m_pCallback!=NULL)
+					m_pCallback->OnScannerDone();
+			}
+		}
+	}
+  return;
+  
 }
 
 //*****************************************************************************
@@ -217,19 +208,20 @@ void CPatParser::OnPidsReceived(CPidTable pidTable)
   if (it!=m_mapChannels.end())
   {
     CChannelInfo& info=it->second;
-		if (info.PmtReceived) return;
-		//LogDebug("PMT: onid:%x tsid:%x nit:%x p:%s s:%s other:%d", info.NetworkId,info.TransportId,info.ServiceId, info.ProviderName,info.ServiceName, info.OtherMux);
-    info.PidTable=pidTable;
-		info.PmtReceived=true;
-    return;
-  }
-	/*
-  CChannelInfo info;
-  info.ServiceId=pidTable.ServiceId;
-  info.PidTable=pidTable;
-	info.PmtReceived=true;
-  m_mapChannels[info.ServiceId] = info;*/
-	//LogDebug("?PMT: sid:%x", pidTable.ServiceId);
+		if (info.PmtReceived==false) 
+		{
+			//LogDebug("PMT: onid:%x tsid:%x nit:%x p:%s s:%s other:%d", info.NetworkId,info.TransportId,info.ServiceId, info.ProviderName,info.ServiceName, info.OtherMux);
+			info.PidTable=pidTable;
+			info.PmtReceived=true;
+			if (IsReady() )
+			{
+				if (m_pCallback!=NULL)
+					m_pCallback->OnScannerDone();
+			}
+		}
+	}
+  return;
+  
 }
 
 //*****************************************************************************
@@ -237,13 +229,15 @@ void CPatParser::OnTsPacket(byte* tsPacket)
 {
 	m_nitDecoder.OnTsPacket(tsPacket);
   m_vctParser.OnTsPacket(tsPacket);
-  m_sdtParser.OnTsPacket(tsPacket);
+	
+	m_sdtParser.OnTsPacket(tsPacket);
   m_sdtParserOther.OnTsPacket(tsPacket);
 
   for (itPmtParser it=m_mapPmtParsers.begin(); it != m_mapPmtParsers.end() ;++it)
   {
     CPmtParser* parser=it->second;
-    parser->OnTsPacket(tsPacket);
+		if (!parser->IsReady())
+			parser->OnTsPacket(tsPacket);
   }
   CSectionDecoder::OnTsPacket(tsPacket);
 	

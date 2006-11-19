@@ -121,6 +121,7 @@ void  CSdtParser::OnNewSection(CSection& sections)
         info.RunningStatus=running_status;
         info.FreeCAMode=free_CA_mode;
 				info.OtherMux = (table_id==0x46);
+				m_bFound=true;
         if (m_pCallback!=NULL)
           m_pCallback->OnSdtReceived(info);
 		  }
@@ -135,7 +136,6 @@ void  CSdtParser::OnNewSection(CSection& sections)
 		  len1 -= x;
 	  }		
   }        
-  m_bFound=true;
 
 }
 

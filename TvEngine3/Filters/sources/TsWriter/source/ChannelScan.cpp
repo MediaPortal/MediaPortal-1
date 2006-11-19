@@ -39,11 +39,17 @@ CChannelScan::CChannelScan(LPUNKNOWN pUnk, HRESULT *phr, CMpTsFilter* filter)
 	m_bIsParsing=false;
 	m_pFilter=filter;
 	m_pConditionalAccess=NULL;
+	m_pCallback=NULL;
 }
 CChannelScan::~CChannelScan(void)
 {
 }
 
+STDMETHODIMP CChannelScan::SetCallBack(IChannelScanCallback* callback)
+{
+	m_pCallback=callback;
+	return S_OK;
+}
 STDMETHODIMP CChannelScan::Start()
 {
 	CEnterCriticalSection enter(m_section);
@@ -56,7 +62,7 @@ STDMETHODIMP CChannelScan::Start()
 		}
 	//	m_pConditionalAccess = new CConditionalAccess(m_pFilter->GetFilterGraph());
 		//m_patParser.SetConditionalAccess(m_pConditionalAccess);
-		m_patParser.Reset();
+		m_patParser.Reset(m_pCallback);
 		m_bIsParsing=true;
 	}
 	catch(...)
@@ -71,7 +77,8 @@ STDMETHODIMP CChannelScan::Stop()
 	CEnterCriticalSection enter(m_section);
 	try
 	{
-		m_patParser.Reset();
+		m_pCallback=NULL;
+		m_patParser.Reset(NULL);
 		//m_patParser.SetConditionalAccess(NULL);
 		//if (m_pConditionalAccess!=NULL)
 		//{

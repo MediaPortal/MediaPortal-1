@@ -31,6 +31,11 @@
 #include <map>
 using namespace std;
 
+DECLARE_INTERFACE_(IChannelScanCallback, IUnknown)
+{
+	STDMETHOD(OnScannerDone)()PURE;
+};
+
 class CPatParser : public CSectionDecoder, public IPmtCallBack, public ISdtCallBack, public IAtscCallback
 {
 public:
@@ -38,7 +43,7 @@ public:
   virtual ~CPatParser(void);
 
 	void	OnTsPacket(byte* tsPacket);
-  void  Reset();
+  void  Reset(IChannelScanCallback* callback);
 	void  OnNewSection(CSection& section);
 
   BOOL        IsReady();
@@ -64,4 +69,5 @@ private:
   map<int,CChannelInfo> m_mapChannels;
   typedef map<int,CChannelInfo> ::iterator itChannels;
   bool m_bDumped;
+	IChannelScanCallback* m_pCallback;
 };

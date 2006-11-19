@@ -26,6 +26,9 @@
 using namespace Mediaportal;
 
 #pragma once
+
+
+
 // {1663DC42-D169-41da-BCE2-EEEC482CB9FB}
 DEFINE_GUID(IID_ITSChannelScan, 0x1663dc42, 0xd169, 0x41da, 0xbc, 0xe2, 0xee, 0xec, 0x48, 0x2c, 0xb9, 0xfb);
 
@@ -65,6 +68,7 @@ DECLARE_INTERFACE_(ITSChannelScan, IUnknown)
 										 int* subtitlePid,
 										 char** subLanguage1,
 										 int* videoStreamType)PURE;
+	STDMETHOD(SetCallBack)(THIS_ IChannelScanCallback* callback)PURE;
 
 };
 
@@ -112,6 +116,7 @@ public:
 										 int* subtitlePid,
 										 char** subLanguage1,
 										 int* videoStreamType);
+	STDMETHODIMP SetCallBack(IChannelScanCallback* callback);
 
 
 	void OnTsPacket(byte* tsPacket);
@@ -121,4 +126,5 @@ private:
 	CMpTsFilter* m_pFilter;
 	CCriticalSection m_section;
 	CConditionalAccess*	m_pConditionalAccess;
+	IChannelScanCallback* m_pCallback;
 };
