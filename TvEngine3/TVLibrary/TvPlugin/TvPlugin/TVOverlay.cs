@@ -91,11 +91,11 @@ namespace TvPlugin
     }
     public bool ShouldRenderLayer()
     {
-      if (GUIGraphicsContext.IsFullScreenVideo)
-      {
-        OnUpdateState(false);
-        return base.IsAnimating(AnimationType.WindowClose);
-      }
+      if (GUIGraphicsContext.IsFullScreenVideo) return false;
+      //{
+      //  OnUpdateState(false);
+      //  return base.IsAnimating(AnimationType.WindowClose);
+      //}
 
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalMilliseconds < 1000) return _lastStatus;
@@ -117,6 +117,7 @@ namespace TvPlugin
 
     public void RenderLayer(float timePassed)
     {
+      if (GUIGraphicsContext.IsFullScreenVideo) return ;
       Render(timePassed);
     }
     #endregion
