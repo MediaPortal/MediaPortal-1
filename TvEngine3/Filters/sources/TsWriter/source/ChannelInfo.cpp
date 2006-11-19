@@ -48,4 +48,6 @@ void CChannelInfo::Reset()
   strcpy(ProviderName,"");
   strcpy(ServiceName,"");
 	OtherMux=false;
+	PmtReceived=false;
+	SdtReceived=false;
 }

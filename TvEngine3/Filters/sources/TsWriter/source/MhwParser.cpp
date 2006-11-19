@@ -55,11 +55,6 @@ CMhwParser::CMhwParser(void)
 		pDecoder->SetCallBack(this);
     m_vecDecoders.push_back(pDecoder);
   }
-  for (int i=0; i < (int)m_vecDecoders.size();++i)
-  {
-    CSectionDecoder* pDecoder=m_vecDecoders[i];
-    LogDebug(" mhw decoder:%d pid:%x table:%x",i,pDecoder->GetPid(),pDecoder->GetTableId());
-  }
 }
 
 CMhwParser::~CMhwParser(void)

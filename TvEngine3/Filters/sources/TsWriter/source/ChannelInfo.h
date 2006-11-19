@@ -45,4 +45,6 @@ public:
 
   CPidTable PidTable;
 	bool OtherMux;
+	bool PmtReceived;
+	bool SdtReceived;
 };

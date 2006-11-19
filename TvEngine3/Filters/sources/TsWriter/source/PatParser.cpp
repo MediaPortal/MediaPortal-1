@@ -31,6 +31,8 @@
 
 extern DWORD crc32 (char *data, int len);
 void LogDebug(const char *fmt, ...) ;
+
+//*****************************************************************************
 CPatParser::CPatParser(void)
 {
 	//m_pConditionalAccess=NULL;
@@ -39,11 +41,13 @@ CPatParser::CPatParser(void)
   SetPid(0);
 }
 
+//*****************************************************************************
 CPatParser::~CPatParser(void)
 {
   CleanUp();
 }
 
+//*****************************************************************************
 void  CPatParser::CleanUp()
 {
   itPmtParser it=m_mapPmtParsers.begin();
@@ -57,6 +61,7 @@ void  CPatParser::CleanUp()
   m_bDumped=false;
 }
 
+//*****************************************************************************
 void  CPatParser::Reset()
 {
 //	Dump();
@@ -75,6 +80,7 @@ void  CPatParser::Reset()
 }
 
  
+//*****************************************************************************
 BOOL CPatParser::IsReady()
 {
  if (m_vctParser.Count() > 0)
@@ -88,12 +94,12 @@ BOOL CPatParser::IsReady()
 	}
   if (m_mapPmtParsers.size()==false) 
 	{
-//		LogDebug("not pmts yet ready");
+		//LogDebug("no pmt parsers ");
 		return FALSE;
 	}
   if (false==m_sdtParser.IsReady()) 
 	{
-//		LogDebug("not sdt yet ready");
+		//LogDebug("sdt not ready");
 		return FALSE;
 	}
   
@@ -102,52 +108,40 @@ BOOL CPatParser::IsReady()
     CPmtParser* parser=it->second;
     if (false==parser->IsReady()) 
 		{
-			//LogDebug("pmt:%x not ready", parser->GetPid());
+		  //LogDebug("pmt not ready");
 			return FALSE;
 		}
   }
-	
-	int nr=-1;
-  itChannels it=m_mapChannels.begin();
-  while (it!=m_mapChannels.end()) 
+	int x=0;
+	for (itChannels it=m_mapChannels.begin(); it !=m_mapChannels.end();++it)
   {
-		nr++;
 		CChannelInfo& info=it->second;
-		if (info.OtherMux==true) 
+		if (info.PmtReceived == false || info.SdtReceived == false) 
 		{
-			++it;
-			continue;
-		}
-		if (info.NetworkId==0 && info.PidTable.PmtPid==0 && info.TransportId!=0 && info.ServiceName[0]==0) 
-		{
-			++it;
-			continue;
-		}
-		if (info.ServiceName[0]==0) 
-		{
-			//LogDebug("ch:%d not ready",nr);
+			LogDebug("ch:%d pmt:%d sdt:%d othermux:%d %s onid:%x tsid:%x sid:%x",
+				x,info.PmtReceived,info.SdtReceived,info.OtherMux,info.ServiceName,
+				info.NetworkId,info.TransportId,info.ServiceId);
 			return FALSE;
 		}
-		++it;
+		x++;
 	}
-		//LogDebug("all ready");
   return TRUE;
 }
 
+//*****************************************************************************
 int CPatParser::Count()
 {
   if (m_vctParser.Count() > 0)
   {
     return m_mapChannels.size();
   }
-	  //LogDebug("Count:%d ", m_mapChannels.size());
   return m_mapChannels.size();
 }
 
+//*****************************************************************************
 bool CPatParser::GetChannel(int index, CChannelInfo& info)
 {
 	static CChannelInfo unknownChannel;
-	//LogDebug("GetChannel:%d", index);
   if (index < 0 || index > Count()) 
 	{
 	  LogDebug("GetChannel:%d invalid", index);
@@ -167,19 +161,20 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
 }
 
 
+//*****************************************************************************
 void CPatParser::OnChannel(CChannelInfo info)
 {
   m_mapChannels[info.ServiceId]=info;
 }
 
+//*****************************************************************************
 void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
 {
-	if (sdtInfo.NetworkId==0) return;
-	//LogDebug("SDT: onid:%x tsid:%x nit:%x p:%s s:%s", sdtInfo.NetworkId,sdtInfo.TransportId,sdtInfo.ServiceId, sdtInfo.ProviderName,sdtInfo.ServiceName);
-  itChannels it=m_mapChannels.find(sdtInfo.ServiceId);
+	itChannels it=m_mapChannels.find(sdtInfo.ServiceId);
   if (it!=m_mapChannels.end())
   {
     CChannelInfo& info=it->second;
+		if (info.SdtReceived) return;
     info.NetworkId=sdtInfo.NetworkId;
     info.TransportId=sdtInfo.TransportId;
     info.ServiceId=sdtInfo.ServiceId;
@@ -189,11 +184,13 @@ void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
     info.FreeCAMode=sdtInfo.FreeCAMode;
     info.ServiceType=sdtInfo.ServiceType;
     info.OtherMux=sdtInfo.OtherMux;
+	  info.SdtReceived=true;
     strcpy(info.ProviderName,sdtInfo.ProviderName);
     strcpy(info.ServiceName,sdtInfo.ServiceName);
     return;
   }
-
+		//LogDebug("?SDT: onid:%x tsid:%x nit:%x p:%s s:%s other:%d", sdtInfo.NetworkId,sdtInfo.TransportId,sdtInfo.ServiceId, sdtInfo.ProviderName,sdtInfo.ServiceName, sdtInfo.OtherMux);
+/*
   CChannelInfo info;
   info.NetworkId=sdtInfo.NetworkId;
   info.TransportId=sdtInfo.TransportId;
@@ -204,25 +201,37 @@ void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
   info.FreeCAMode=sdtInfo.FreeCAMode;
   info.ServiceType=sdtInfo.ServiceType;
 	info.OtherMux=sdtInfo.OtherMux;
+	info.SdtReceived=true;
   strcpy(info.ProviderName,sdtInfo.ProviderName);
   strcpy(info.ServiceName,sdtInfo.ServiceName);
+	LogDebug("SDT: onid:%x tsid:%x nit:%x p:%s s:%s other:%d", sdtInfo.NetworkId,sdtInfo.TransportId,sdtInfo.ServiceId, sdtInfo.ProviderName,sdtInfo.ServiceName, sdtInfo.OtherMux);
   m_mapChannels[sdtInfo.ServiceId] = info;
+	*/
 }
+
+//*****************************************************************************
 void CPatParser::OnPidsReceived(CPidTable pidTable)
 {
   itChannels it=m_mapChannels.find(pidTable.ServiceId);
   if (it!=m_mapChannels.end())
   {
     CChannelInfo& info=it->second;
+		if (info.PmtReceived) return;
+		LogDebug("PMT: onid:%x tsid:%x nit:%x p:%s s:%s other:%d", info.NetworkId,info.TransportId,info.ServiceId, info.ProviderName,info.ServiceName, info.OtherMux);
     info.PidTable=pidTable;
+		info.PmtReceived=true;
     return;
   }
+	/*
   CChannelInfo info;
   info.ServiceId=pidTable.ServiceId;
   info.PidTable=pidTable;
-  m_mapChannels[info.ServiceId] = info;
+	info.PmtReceived=true;
+  m_mapChannels[info.ServiceId] = info;*/
+	//LogDebug("?PMT: sid:%x", pidTable.ServiceId);
 }
 
+//*****************************************************************************
 void CPatParser::OnTsPacket(byte* tsPacket)
 {
 	m_nitDecoder.OnTsPacket(tsPacket);
@@ -239,6 +248,7 @@ void CPatParser::OnTsPacket(byte* tsPacket)
 	
 }
 
+//*****************************************************************************
 void CPatParser::OnNewSection(CSection& sections)
 {
   byte* section=sections.Data;
@@ -264,7 +274,7 @@ void CPatParser::OnNewSection(CSection& sections)
   for(int i=0; i < loop; i++)
   {
 	  int offset = (8 +(i * 4));
-    int serviceId=((section[start+offset] & 0x1F)<<8) + section[start+offset+1];
+    int serviceId=((section[start+offset] /*& 0x1F*/)<<8) + section[start+offset+1];
 	  int pmtPid = ((section[start+offset+2] & 0x1F)<<8) + section[start+offset+3];
 		//LogDebug("sid:%x pmt:%x", serviceId,pmtPid);
 	  if (pmtPid < 0x10 || pmtPid >=0x1fff) 
@@ -274,20 +284,21 @@ void CPatParser::OnNewSection(CSection& sections)
 		  return ;
 	  }
 
-    itChannels it =m_mapChannels.find(serviceId);
-    if (it==m_mapChannels.end())
+		if (pmtPid>0x12 && transport_stream_id>0 && serviceId>0)
     {
-      CChannelInfo info;
-      info.TransportId=transport_stream_id;
-      info.ServiceId=serviceId;
-      m_mapChannels[serviceId]=info;
-    }
+			itChannels it =m_mapChannels.find(serviceId);
+			if (it==m_mapChannels.end())
+			{
+				CChannelInfo info;
+				info.TransportId=transport_stream_id;
+				info.ServiceId=serviceId;
+				m_mapChannels[serviceId]=info;
+				LogDebug("pat: tsid:%x sid:%x pmt:%x", transport_stream_id,serviceId,pmtPid);
+			}
 
-    itPmtParser it2= m_mapPmtParsers.find(pmtPid);
-    if (it2==m_mapPmtParsers.end())
-    {
-	    if (pmtPid>0x12)
-	    {
+			itPmtParser it2= m_mapPmtParsers.find(pmtPid);
+			if (it2==m_mapPmtParsers.end())
+			{
 		    CPmtParser* pmtParser = new CPmtParser();
 		    pmtParser->SetTableId(2);
 		    pmtParser->SetPid(pmtPid);
@@ -303,6 +314,7 @@ void CPatParser::OnNewSection(CSection& sections)
 	}
 }
 
+//*****************************************************************************
 void CPatParser::Dump()
 {
   if (m_bDumped) return;
@@ -321,12 +333,15 @@ void CPatParser::Dump()
   }
 }
 
+//*****************************************************************************
 void CPatParser::OnPmtReceived(int pid)
 {
 	LogDebug("PatParser:  received pmt:%x", pid);
 	//if ((m_mapPmtParsers.size()+5) <=16) return;
 	//UpdateHwPids();
 }
+
+//*****************************************************************************
 void CPatParser::UpdateHwPids()
 {/*
 	//if (m_pConditionalAccess==NULL) return;
