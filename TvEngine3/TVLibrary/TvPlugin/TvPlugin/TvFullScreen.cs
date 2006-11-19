@@ -127,6 +127,8 @@ namespace TvPlugin
     bool _isVolumeVisible = false;
     DateTime _volumeTimer = DateTime.MinValue;
     bool _isStartingTSForRecording = false;
+    private bool _autoZapMode = false;
+    private System.Timers.Timer _autoZapTimer = new System.Timers.Timer();
 
     [SkinControlAttribute(500)]
     protected GUIImage imgVolumeMuteIcon;
@@ -140,63 +142,41 @@ namespace TvPlugin
     #region enums
     enum Control
     {
-      BLUE_BAR = 0
-    ,
-      MSG_BOX = 2
-    ,
-      MSG_BOX_LABEL1 = 3
-    ,
-      MSG_BOX_LABEL2 = 4
-    ,
-      MSG_BOX_LABEL3 = 5
-    ,
-      MSG_BOX_LABEL4 = 6
-    ,
-      LABEL_ROW1 = 10
-    ,
-      LABEL_ROW2 = 11
-    ,
-      LABEL_ROW3 = 12
-    ,
-      IMG_PAUSE = 16
-    ,
-      IMG_2X = 17
-    ,
-      IMG_4X = 18
-    ,
-      IMG_8X = 19
-    ,
-      IMG_16X = 20
-    ,
-      IMG_32X = 21
-
-    ,
-      IMG_MIN2X = 23
-    ,
-      IMG_MIN4X = 24
-    ,
-      IMG_MIN8X = 25
-    ,
-      IMG_MIN16X = 26
-    ,
-      IMG_MIN32X = 27
-    ,
-      LABEL_CURRENT_TIME = 22
-    ,
-      OSD_VIDEOPROGRESS = 100
-    , REC_LOGO = 39
+      BLUE_BAR = 0,
+      MSG_BOX = 2,
+      MSG_BOX_LABEL1 = 3,
+      MSG_BOX_LABEL2 = 4,
+      MSG_BOX_LABEL3 = 5,
+      MSG_BOX_LABEL4 = 6,
+      LABEL_ROW1 = 10,
+      LABEL_ROW2 = 11,
+      LABEL_ROW3 = 12,
+      IMG_PAUSE = 16,
+      IMG_2X = 17,
+      IMG_4X = 18,
+      IMG_8X = 19,
+      IMG_16X = 20,
+      IMG_32X = 21,
+      IMG_MIN2X = 23,
+      IMG_MIN4X = 24,
+      IMG_MIN8X = 25,
+      IMG_MIN16X = 26,
+      IMG_MIN32X = 27,
+      LABEL_CURRENT_TIME = 22,
+      OSD_VIDEOPROGRESS = 100,
+      REC_LOGO = 39
     };
     #endregion
 
     public TvFullScreen()
     {
-      Log.Write("TvFullScreen:ctor");
+      Log.Debug("TvFullScreen:ctor");
       GetID = (int)GUIWindow.Window.WINDOW_TVFULLSCREEN;
     }
 
     public override void OnAdded()
     {
-      Log.Write("TvFullScreen:OnAdded");
+      Log.Debug("TvFullScreen:OnAdded");
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_TVFULLSCREEN, this);
       Restore();
       PreInit();
@@ -240,7 +220,7 @@ namespace TvPlugin
       Load(GUIGraphicsContext.Skin + @"\mytvFullScreen.xml");
       GetID = (int)GUIWindow.Window.WINDOW_TVFULLSCREEN;
 
-      Log.Write("TvFullScreen:Init");
+      Log.Debug("TvFullScreen:Init");
       return true;
     }
 
@@ -440,13 +420,15 @@ namespace TvPlugin
 
         }
       }
-      //Log.WriteFile(Log.LogType.Error, "action:{0}",action.wID);
+      //Log.DebugFile(Log.LogType.Error, "action:{0}",action.wID);
       switch (action.wID)
       {
         case Action.ActionType.ACTION_MOUSE_DOUBLECLICK:
         case Action.ActionType.ACTION_SELECT_ITEM:
           {
-            if (_zapOsdVisible)
+            if (_autoZapMode)
+              StopAutoZap();
+            else if (_zapOsdVisible)
             {
               TVHome.Navigator.ZapNow();
             }
@@ -485,7 +467,7 @@ namespace TvPlugin
               {
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _zapWindow.GetID, 0, 0, GetID, 0, null);
                 _zapWindow.OnMessage(msg);
-                Log.Write("ZAP OSD:ON");
+                Log.Debug("ZAP OSD:ON");
                 _zapTimeOutTimer = DateTime.Now;
                 _zapOsdVisible = true;
               }
@@ -500,7 +482,7 @@ namespace TvPlugin
         case Action.ActionType.ACTION_SHOW_MSN_OSD:
           if (_isMsnChatPopup)
           {
-            Log.Write("MSN CHAT:ON");
+            Log.Debug("MSN CHAT:ON");
 
             _msnWindowVisible = true;
             GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
@@ -603,7 +585,7 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_PREVIOUS_MENU:
         case Action.ActionType.ACTION_SHOW_GUI:
-          Log.Write("fullscreentv:show gui");
+          Log.Debug("fullscreentv:show gui");
           //if(_vmr9OSD!=null)
           //	_vmr9OSD.HideBitmap();
           GUIWindowManager.ShowPreviousWindow();
@@ -611,7 +593,7 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_SHOW_OSD:	// Show the OSD
           {
-            Log.Write("OSD:ON");
+            Log.Debug("OSD:ON");
             _osdTimeoutTimer = DateTime.Now;
 
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
@@ -711,6 +693,10 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_CONTEXT_MENU:
           ShowContextMenu();
+          break;
+
+        case Action.ActionType.ACTION_AUTOZAP:
+          StartAutoZap();
           break;
       }
 
@@ -979,7 +965,7 @@ namespace TvPlugin
         _notifyDialogVisible = true;
         dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
         _notifyDialogVisible = false;
-        Log.Write("Notify Message:" + channel + ", " + message.Label);
+        Log.Debug("Notify Message:" + channel + ", " + message.Label);
         return true;
       }
       #endregion
@@ -1075,7 +1061,7 @@ namespace TvPlugin
 
           if (!_msnWindowVisible && _isMsnChatPopup)
           {
-            Log.Write("MSN CHAT:ON");
+            Log.Debug("MSN CHAT:ON");
             _msnWindowVisible = true;
             GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
             ///@
@@ -1091,7 +1077,7 @@ namespace TvPlugin
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
-            Log.Write("TvFullScreen:deinit->OSD:Off");
+            Log.Debug("TvFullScreen:deinit->OSD:Off");
             if (_isOsdVisible)
             {
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
@@ -1180,8 +1166,8 @@ namespace TvPlugin
 
             _lastPause = g_Player.Paused;
             _lastSpeed = g_Player.Speed;
-            ///Log.Write("start fullscreen channel:{0}", Recorder.TVChannelName);
-            Log.Write("TvFullScreen:init->OSD:Off");
+            ///Log.Debug("start fullscreen channel:{0}", Recorder.TVChannelName);
+            Log.Debug("TvFullScreen:init->OSD:Off");
             _isOsdVisible = false;
             GUIWindowManager.IsOsdVisible = false;
             _channelInputVisible = false;
@@ -1283,7 +1269,7 @@ namespace TvPlugin
       dlg.DoModal(GetID);
       _isDialogVisible = false;
 
-      Log.Write("selected id:{0}", dlg.SelectedId);
+      Log.Debug("selected id:{0}", dlg.SelectedId);
       if (dlg.SelectedId == -1) return;
       switch (dlg.SelectedId)
       {
@@ -1299,12 +1285,12 @@ namespace TvPlugin
         case 10104: // MiniEPG
           {
 
-            Log.Write("get miniguide");
+            Log.Debug("get miniguide");
             TvMiniGuide miniGuide = (TvMiniGuide)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MINI_GUIDE);
             _isDialogVisible = true;
-            Log.Write("show miniguide");
+            Log.Debug("show miniguide");
             miniGuide.DoModal(GetID);
-            Log.Write("done miniguide");
+            Log.Debug("done miniguide");
             _isDialogVisible = false;
             break;
           }
@@ -1378,7 +1364,7 @@ namespace TvPlugin
           break;
 
         case 12902: // MSN Messenger
-          Log.Write("MSN CHAT:ON");
+          Log.Debug("MSN CHAT:ON");
           _msnWindowVisible = true;
           GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
           //@_msnWindow.DoModal(GetID, null);
@@ -1868,17 +1854,17 @@ namespace TvPlugin
 
       // Let the navigator zap channel if needed
       TVHome.Navigator.CheckChannelChange();
-      //Log.Write("osd visible:{0} timeoutvalue:{1}", _zapOsdVisible ,_zapTimeOutValue);
+      //Log.Debug("osd visible:{0} timeoutvalue:{1}", _zapOsdVisible ,_zapTimeOutValue);
       if (_zapOsdVisible && _zapTimeOutValue > 0)
       {
         TimeSpan ts = DateTime.Now - _zapTimeOutTimer;
-        //Log.Write("timeout :{0}", ts.TotalMilliseconds);
+        //Log.Debug("timeout :{0}", ts.TotalMilliseconds);
         if (ts.TotalMilliseconds > _zapTimeOutValue)
         {
           //yes, then remove osd offscreen
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _zapWindow.GetID, 0, 0, GetID, 0, null);
           _zapWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-          Log.Write("ZAP OSD:Off timeout");
+          Log.Debug("ZAP OSD:Off timeout");
           _zapOsdVisible = false;
           msg = null;
         }
@@ -1951,7 +1937,7 @@ namespace TvPlugin
       GUIMessage msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
       _osdWindow.OnMessage(msg2);	// Send a de-init msg to the OSD
       msg2 = null;
-      Log.Write("timeout->OSD:Off");
+      Log.Debug("timeout->OSD:Off");
       _isOsdVisible = false;
       GUIWindowManager.IsOsdVisible = false;
 
@@ -1962,14 +1948,14 @@ namespace TvPlugin
       /// msg2 = null;
       _msnWindowVisible = false;
       GUIWindowManager.IsOsdVisible = false;
-      Log.Write("Tvfullscreen:not viewing anymore");
+      Log.Debug("Tvfullscreen:not viewing anymore");
       GUIWindowManager.ShowPreviousWindow();
     }
 
     public void UpdateOSD()
     {
       if (GUIWindowManager.ActiveWindow != GetID) return;
-      Log.Write("UpdateOSD()");
+      Log.Debug("UpdateOSD()");
       if (_isOsdVisible)
       {
         _osdWindow.UpdateChannelInfo();
@@ -2064,7 +2050,7 @@ namespace TvPlugin
           {
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _zapWindow.GetID, 0, 0, GetID, 0, null);
             _zapWindow.OnMessage(msg);
-            Log.Write("ZAP OSD:ON");
+            Log.Debug("ZAP OSD:ON");
             _zapTimeOutTimer = DateTime.Now;
             _zapOsdVisible = true;
           }
@@ -2176,7 +2162,7 @@ namespace TvPlugin
     void ChangeChannelNr(int channelNr)
     {
 
-      Log.Write("ChangeChannelNr()");
+      Log.Debug("ChangeChannelNr()");
       if (_byIndex == true)
       {
         TVHome.Navigator.ZapToChannel(channelNr, false);
@@ -2193,7 +2179,7 @@ namespace TvPlugin
 
     public void ZapPreviousChannel()
     {
-      Log.Write("ZapPreviousChannel()");
+      Log.Debug("ZapPreviousChannel()");
       TVHome.Navigator.ZapToPreviousChannel(true);
       _zapTimeOutTimer = DateTime.Now;
       UpdateOSD();
@@ -2206,7 +2192,7 @@ namespace TvPlugin
 
     public void ZapNextChannel()
     {
-      Log.Write("ZapNextChannel()");
+      Log.Debug("ZapNextChannel()");
       TVHome.Navigator.ZapToNextChannel(true);
       _zapTimeOutTimer = DateTime.Now;
       UpdateOSD();
@@ -2218,6 +2204,32 @@ namespace TvPlugin
 
     }
 
+    public void StartAutoZap()
+    {
+      Log.Debug("TVFullscreen: Start autozap mode");
+      _autoZapMode = true;
+      _autoZapTimer.Elapsed += new System.Timers.ElapsedEventHandler(_autoZapTimer_Elapsed);
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        _autoZapTimer.Interval = xmlreader.GetValueAsInt("capture", "autoZapTimer", 10000);
+      }
+      _autoZapTimer.Start();
+      _autoZapTimer_Elapsed(null, null);
+    }
+
+    private void _autoZapTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    {
+      if (_autoZapMode)
+        ZapNextChannel();
+      else
+        _autoZapTimer.Stop();
+    }
+
+    public void StopAutoZap()
+    {
+      Log.Debug("Stop zap mode");
+      _autoZapMode = false;
+    }
 
     public override int GetFocusControlId()
     {
@@ -2251,6 +2263,9 @@ namespace TvPlugin
 
     protected override void OnPageDestroy(int newWindowId)
     {
+      _autoZapMode = false;
+      _autoZapTimer.Dispose();
+
       ///@
       /*
       if (!GUIGraphicsContext.IsTvWindow(newWindowId))
@@ -2268,6 +2283,13 @@ namespace TvPlugin
       SaveSettings();
       base.OnPageDestroy(newWindowId);
     }
+
+    protected override void OnPageLoad()
+    {
+      _autoZapTimer = new System.Timers.Timer();
+      base.OnPageLoad();
+    }
+
     void RenderVolume(bool show)
     {
       if (imgVolumeBar == null) return;
