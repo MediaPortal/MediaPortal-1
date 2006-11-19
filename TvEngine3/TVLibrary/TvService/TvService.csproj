@@ -57,6 +57,7 @@
     <Compile Include="DiskManagement\EpisodeManagement.cs" />
     <Compile Include="DiskManagement\RecordingFileInfo.cs" />
     <Compile Include="DiskManagement\RecordingManagement.cs" />
+    <Compile Include="Epg\Transponder.cs" />
     <Compile Include="PluginLoader.cs" />
     <Compile Include="Scheduler\CardDetail.cs" />
     <Compile Include="Epg\EpgGrabber.cs" />

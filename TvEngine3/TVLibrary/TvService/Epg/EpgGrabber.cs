@@ -70,10 +70,12 @@ namespace TvService
     bool _reEntrant = false;
     List<EpgChannel> _epg;
     int _currentCardId = -1;
-    Channel _currentChannel;
+
     DateTime _grabStartTime;
     bool _isRunning;
     TVController _tvController;
+    List<Transponder> _transponders;
+    int _currentTransponderIndex = -1;
     #endregion
 
     #region ctor
@@ -95,7 +97,6 @@ namespace TvService
         Log.Error("Unable to open database!!!!");
       }
       _currentCardId = -1;
-      _currentChannel = null;
       _lastEpgGrabTime = DateTime.MinValue;
       _grabStartTime = DateTime.MinValue;
       _state = EpgState.Idle;
@@ -115,7 +116,6 @@ namespace TvService
 
       if (_state == EpgState.Idle) return;
       _state = EpgState.Idle;
-      _currentChannel = null;
       _tvController.StopGrabbingEpg(_currentCardId);
       _currentCardId = -1;
       return;
@@ -145,8 +145,6 @@ namespace TvService
           Log.Write("epg grabber:OnEpgReceived while updating");
           return 0;
         }
-        // which channel is the epg grabber currently grabbing
-        if (_currentChannel == null) return 0;
 
         //is the card still idle?
         if (IsCardIdle(_currentCardId) == false)
@@ -167,14 +165,10 @@ namespace TvService
         {
           //no epg found for this channel
           Log.Write("EPG no data.");
-          if (_currentChannel != null)
+          if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
           {
-            //update database
-            _currentChannel.LastGrabTime = DateTime.Now;
-            _currentChannel.Persist();
-            //DatabaseManager.Instance.SaveChanges();
-            //DatabaseManager.Instance.ClearQueryCache();
-            _currentChannel = null;
+            Transponder transponder = _transponders[_currentTransponderIndex];
+            transponder.OnTimeOut();
           }
           _state = EpgState.Idle;
           _tvController.StopGrabbingEpg(_currentCardId);
@@ -182,7 +176,7 @@ namespace TvService
           return 0;
         }
 
-        if (_currentChannel != null)
+        if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
         {
           //create worker thread to update the database
           Log.Write("EPG received for {0} channels.", epg.Count);
@@ -221,7 +215,10 @@ namespace TvService
     public void Start()
     {
       if (_isRunning) return;
-      Log.Write("EPG: grabber started..");
+      GetTransponders();
+      Log.Write("EPG: grabber started {0} transponders..",_transponders.Count);
+      
+      _currentTransponderIndex = -1;
       //DatabaseManager.Instance.ClearQueryCache();
       _isRunning = true;
       _epgTimer.Enabled = true;
@@ -291,13 +288,16 @@ namespace TvService
             //epg grabber timed out. Update database
             //and go back to idle mode
             Log.Write("EPG timeout:{0}.", ts.TotalSeconds);
-            _currentChannel.LastGrabTime = DateTime.Now;
-            _currentChannel.Persist();
+            if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
+            {
+              Transponder transponder = _transponders[_currentTransponderIndex];
+              transponder.OnTimeOut();
+            }
             _tvController.StopGrabbingEpg(_currentCardId);
             //DatabaseManager.Instance.SaveChanges();
             //DatabaseManager.Instance.ClearQueryCache();
 
-            _currentChannel = null;
+
             _grabStartTime = DateTime.MinValue;
             _state = EpgState.Idle;
             _currentCardId = -1;
@@ -330,7 +330,58 @@ namespace TvService
       }
       return false;
     }
+    void GetTransponders()
+    {
+      _transponders = new List<Transponder>();
+      IList channels = Channel.ListAll();
+      foreach (Channel channel in channels)
+      {
+        if (channel.GrabEpg == false) continue;
+        if (channel.IsRadio == false && channel.IsTv == false) continue;
+        foreach (TuningDetail detail in channel.ReferringTuningDetail())
+        {
+          if (detail.ChannelType == 0) continue;//analog
 
+          Transponder t = new Transponder(detail);
+          bool found = false;
+          foreach (Transponder transponder in _transponders)
+          {
+            if (transponder.Equals(t))
+            {
+              found = true;
+              transponder.Channels.Add(channel);
+              break;
+            }
+          }
+
+          if (!found)
+          {
+            t.Channels.Add(channel);
+            _transponders.Add(t);
+          }
+        }
+      }
+    }
+    Channel GetNextChannel(out Transponder transponder)
+    {
+      transponder = null;
+      if (_transponders.Count == 0) return null;
+      while (true)
+      {
+        _currentTransponderIndex++;
+        if (_currentTransponderIndex >= _transponders.Count)
+          _currentTransponderIndex = 0;
+        if (_currentTransponderIndex >= _transponders.Count) return null;
+
+        transponder = _transponders[_currentTransponderIndex];
+        transponder.Index++;
+        if (transponder.Index >= transponder.Channels.Count)
+          transponder.Index = 0;
+        if (transponder.Index >= transponder.Channels.Count) return null;
+
+        return transponder.Channels[transponder.Index];
+      }
+    }
     /// <summary>
     /// This method checks if there is a channel who's epg needs to be updated
     /// Channel is updated when:
@@ -343,41 +394,31 @@ namespace TvService
       if (ts.TotalSeconds < EpgGrabInterval) return;
       _lastEpgGrabTime = DateTime.Now;
       TvBusinessLayer layer = new TvBusinessLayer();
-      IList channels = Channel.ListAll();
+
       try
       {
-        foreach (Channel channel in channels)
+        Transponder transponder;
+        Channel channel = null;
+        while (true)
         {
-          // channel.GrabEpg = true;
-          // channel.LastGrabTime = new DateTime(2000, 1, 1, 0, 0, 0);
+          channel = GetNextChannel(out transponder);
+          if (channel == null) return;
           if (channel.GrabEpg == false) continue;
           ts = DateTime.Now - channel.LastGrabTime;
           if (ts.TotalHours < EpgReGrabAfter) continue; // less then 2 hrs ago
-          if (!IsDigitalChannel(channel) || (channel.IsRadio==false && channel.IsTv==false) )
-          {
-            //dont grab epg for analog channels
-            channel.GrabEpg = false;
-            channel.LastGrabTime = DateTime.Now;
-            channel.Persist();
-            //DatabaseManager.Instance.SaveChanges();
-            //DatabaseManager.Instance.ClearQueryCache();
-            continue;
-          }
-          // this channel needs its epg to be updated.
-          // check which cards can receive it and if one is free
-          IList tuningList = layer.GetTuningChannelByName(channel.Name);
-          foreach (IChannel tuning in tuningList)
-          {
-            //try grabbing the epg for this channel
-            if (GrabEpgForChannel(channel, tuning))
-            {
-              //succeeded, then wait for epg to be received
-              _currentChannel = channel;
-              _state = EpgState.Grabbing;
-              _grabStartTime = DateTime.Now;
-              return;
-            }
-          }
+          break;
+        }
+
+        IChannel tuning = transponder.Tuning;
+        if (tuning == null) return;
+        Log.Write("epg: grab epg for transponder #{0} {1}", _currentTransponderIndex, transponder.ToString());
+        //try grabbing the epg for this channel
+        if (GrabEpgForChannel(channel, transponder.Tuning))
+        {
+          //succeeded, then wait for epg to be received
+          _state = EpgState.Grabbing;
+          _grabStartTime = DateTime.Now;
+          return;
         }
       }
       catch (Exception ex)
@@ -417,7 +458,7 @@ namespace TvService
               {
                 RemoteControl.Instance.TuneScan(card.IdCard, tuning);
                 _currentCardId = card.IdCard;
-                if (false==_tvController.GrabEpg(this, card.IdCard))
+                if (false == _tvController.GrabEpg(this, card.IdCard))
                 {
                   _currentCardId = -1;
                   return false;
@@ -550,9 +591,8 @@ namespace TvService
       Log.Write("EPG: Remove old programs from database...");
       TvBusinessLayer layer = new TvBusinessLayer();
       layer.RemoveOldPrograms();
-      //DatabaseManager.Instance.SaveChanges();
-      //DatabaseManager.Instance.ClearQueryCache();
 
+      bool timeOut = false;
       Log.Write("EPG: Updating database with new programs...");
       try
       {
@@ -574,14 +614,14 @@ namespace TvService
               bool success = UpdateDatabaseChannel(channelNr, epgChannel, detail.ReferencedChannel());
               if (_state != EpgState.Updating)
               {
-                _currentChannel = null;
                 Log.Write("EPG: stopped updating state changed");
+                timeOut = true;
                 return;
               }
               if (IsCardIdle(_currentCardId) == false)
               {
-                _currentChannel = null;
                 Log.Write("EPG: stopped updating card not idle");
+                timeOut = true;
                 return;
               }
               if (success)
@@ -610,12 +650,13 @@ namespace TvService
       }
       finally
       {
-        if (_currentChannel != null)
+        if (timeOut == false)
         {
-          _currentChannel.LastGrabTime = DateTime.Now;
-          _currentChannel.Persist();
-          
-          Log.Write("EPG: database updated for {0} {1} {2}", _currentChannel.Name, _state, IsCardIdle(_currentCardId));
+          if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
+          {
+            Transponder transponder = _transponders[_currentTransponderIndex];
+            transponder.OnTimeOut();
+          }
         }
         if (_state != EpgState.Idle && _currentCardId >= 0)
         {
@@ -636,10 +677,17 @@ namespace TvService
     /// <returns>true if succeeded otherwise false</returns>
     bool UpdateDatabaseChannel(int channelNr, EpgChannel epgChannel, Channel channel)
     {
+      if (_currentTransponderIndex < 0 && _currentTransponderIndex >= _transponders.Count)
+      {
+        return false;
+      }
+      Transponder transponder = _transponders[_currentTransponderIndex];
+
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("epgLanguages");
       string epgLanguages = setting.Value;
-      TimeSpan ts = DateTime.Now - channel.LastGrabTime;
+
+      TimeSpan ts = DateTime.Now - transponder.GetGrabTime(channel);
       if (ts.TotalHours < EpgReGrabAfter)
       {
         Log.Write("EPG: channel:{0} {1} not needed lastUpdate:{2}", channelNr, channel.Name, channel.LastGrabTime);
@@ -650,7 +698,7 @@ namespace TvService
       //IList progs = channel.ReferringProgram();
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TvDatabase.Program));
       sb.AddConstraint(Operator.Equals, "idChannel", channel.IdChannel);
-      sb.AddOrderByField(false,"starttime");
+      sb.AddOrderByField(false, "starttime");
       sb.SetRowLimit(5);
       SqlStatement stmt = sb.GetStatement(true);
       IList programsInDbs = ObjectFactory.GetCollection(typeof(TvDatabase.Program), stmt.Execute());
@@ -711,8 +759,7 @@ namespace TvService
 
       }//foreach (EpgProgram program in epgChannel.Programs)
 
-      channel.LastGrabTime = DateTime.Now;
-      channel.Persist();
+      transponder.SetGrabTime(channel);
       return true;
     }
 
