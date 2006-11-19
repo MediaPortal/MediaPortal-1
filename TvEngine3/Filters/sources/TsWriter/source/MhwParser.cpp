@@ -87,7 +87,7 @@ void CMhwParser::Reset()
 void CMhwParser::OnTsPacket(byte* tsPacket)
 {
 	if (m_bGrabbing==false) return;
-
+return;
 	CEnterCriticalSection enter(m_section);
 	for (int i=0; i < (int)m_vecDecoders.size();++i)
 	{
