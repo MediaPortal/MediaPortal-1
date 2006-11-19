@@ -1,3 +1,28 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,6 +35,7 @@ using TvDatabase;
 using TvControl;
 using Gentle.Common;
 using Gentle.Framework;
+
 namespace TvPlugin
 {
   /// <summary>
@@ -53,7 +79,7 @@ namespace TvPlugin
 
     public override void OnAdded()
     {
-      Log.Write("TVProgramInfo:OnAdded");
+      Log.Debug("TVProgramInfo:OnAdded");
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO, this);
       Restore();
       PreInit();
@@ -498,11 +524,11 @@ namespace TvPlugin
 
     void OnRecordProgram(Program program)
     {
-      Log.Write("OnRecordProgram");
+      Log.Debug("OnRecordProgram");
       bool bRecording = false;
       Schedule rec = null;
       IList recordings = Schedule.ListAll();
-      Log.Write("{0} schedules", recordings.Count);
+      Log.Debug("{0} schedules", recordings.Count);
       foreach (Schedule record in recordings)
       {
 
@@ -520,7 +546,7 @@ namespace TvPlugin
 
       if (!bRecording)
       {
-        Log.Write("not recording");
+        Log.Debug("not recording");
         foreach (Schedule record in recordings)
         {
           if (record.IsRecordingProgram(program, false))

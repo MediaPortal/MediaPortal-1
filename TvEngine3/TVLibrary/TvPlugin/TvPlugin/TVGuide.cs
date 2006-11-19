@@ -1,4 +1,6 @@
-  /* 
+#region Copyright (C) 2005-2006 Team MediaPortal
+
+/* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 #region usings
 using System;
 using System.Text;
@@ -53,7 +58,8 @@ namespace TvPlugin
     [SkinControlAttribute(99)]
     protected GUIVideoControl videoWindow;
 
-    public TVGuide() : base()
+    public TVGuide()
+      : base()
     {
       GetID = (int)GUIWindow.Window.WINDOW_TVGUIDE;
     }
@@ -66,7 +72,7 @@ namespace TvPlugin
     }
     public override void OnAdded()
     {
-      Log.Write("TVGuide:OnAdded");
+      Log.Debug("TVGuide:OnAdded");
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_TVGUIDE, this);
       Restore();
       PreInit();

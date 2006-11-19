@@ -97,7 +97,7 @@ namespace TvPlugin
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\TVMiniGuide.xml");
       GetID = (int)GUIWindow.Window.WINDOW_MINI_GUIDE;
-      
+
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
       return bResult;
     }
@@ -117,7 +117,7 @@ namespace TvPlugin
     /// </summary>
     void Close()
     {
-      Log.Write("miniguide:close()");
+      Log.Debug("miniguide:close()");
       GUIWindowManager.IsSwitchingToNewWindow = true;
       lock (this)
       {
@@ -206,7 +206,7 @@ namespace TvPlugin
     /// <param name="new_windowId"></param>
     protected override void OnPageDestroy(int new_windowId)
     {
-      Log.Write("miniguide OnPageDestroy");
+      Log.Debug("miniguide OnPageDestroy");
       base.OnPageDestroy(new_windowId);
       m_bRunning = false;
     }
@@ -216,7 +216,7 @@ namespace TvPlugin
     /// </summary>
     protected override void OnPageLoad()
     {
-      Log.Write("miniguide onpageload");
+      Log.Debug("miniguide onpageload");
       // following line should stay. Problems with OSD not
       // appearing are already fixed elsewhere
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
@@ -363,12 +363,12 @@ namespace TvPlugin
     /// <param name="dwParentId"></param>
     public void DoModal(int dwParentId)
     {
-      Log.Write("miniguide domodal");
+      Log.Debug("miniguide domodal");
       m_dwParentWindowID = dwParentId;
       m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
       if (null == m_pParentWindow)
       {
-        Log.Write("parentwindow=0");
+        Log.Debug("parentwindow=0");
         m_dwParentWindowID = 0;
         return;
       }
@@ -391,7 +391,7 @@ namespace TvPlugin
       }
       GUILayerManager.UnRegisterLayer(this);
 
-      Log.Write("miniguide closed");
+      Log.Debug("miniguide closed");
     }
 
     // Overlay IRenderLayer members

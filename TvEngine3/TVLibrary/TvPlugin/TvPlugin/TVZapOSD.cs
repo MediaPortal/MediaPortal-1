@@ -148,7 +148,7 @@ namespace TvPlugin
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      Log.Write("zaposd pagedestroy");
+      Log.Debug("zaposd pagedestroy");
       FreeResources();
       base.OnPageDestroy(newWindowId);
 
@@ -156,7 +156,7 @@ namespace TvPlugin
     }
     protected override void OnPageLoad()
     {
-      Log.Write("zaposd pageload");
+      Log.Debug("zaposd pageload");
       // following line should stay. Problems with OSD not
       // appearing are already fixed elsewhere
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
@@ -253,7 +253,7 @@ namespace TvPlugin
 
     private void OnPreviousChannel()
     {
-      Log.Write("GUITV OSD: OnNextChannel");
+      Log.Debug("GUITV OSD: OnNextChannel");
       if (!TVHome.Card.IsTimeShifting) return;
       TVHome.Navigator.ZapToPreviousChannel(true);
 
@@ -264,7 +264,7 @@ namespace TvPlugin
     private void OnNextChannel()
     {
 
-      Log.Write("GUITV ZAPOSD: OnNextChannel");
+      Log.Debug("GUITV ZAPOSD: OnNextChannel");
       if (!TVHome.Card.IsTimeShifting) return;
       TVHome.Navigator.ZapToNextChannel(true);
       SetCurrentChannelLogo();

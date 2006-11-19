@@ -197,7 +197,7 @@ namespace TvPlugin
 
     protected void Initialize()
     {
-      Log.Write("StartImportXML: Initialize");
+      Log.Debug("StartImportXML: Initialize");
       _tvGuideFileName = "xmltv";
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
@@ -640,7 +640,7 @@ namespace TvPlugin
               }
               UpdateCurrentProgram();
 
-              Log.Write("turn tv on");
+              Log.Debug("turn tv on");
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
               msg.SendToTargetWindow = true;
               GUIWindowManager.SendThreadMessage(msg);
@@ -689,7 +689,7 @@ namespace TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.Debug("TvGuideBase: {0}", ex);
       }
       return base.OnMessage(message); ;
     }
@@ -1304,7 +1304,7 @@ namespace TvPlugin
         {
           if (record.IsRecordingProgram(program, true))
           {
-            if (record.ReferringConflicts().Count!=0)
+            if (record.ReferringConflicts().Count != 0)
               bConflict = true;
             if ((ScheduleRecordingType)record.ScheduleType != ScheduleRecordingType.Once)
               bSeries = true;
@@ -1480,7 +1480,7 @@ namespace TvPlugin
             if (record.IsRecordingProgram(program, true))
             {
               if (record.ReferringConflicts().Count != 0)
-               bConflict = true;
+                bConflict = true;
               if ((ScheduleRecordingType)record.ScheduleType != ScheduleRecordingType.Once)
                 bSeries = true;
               bRecording = true;
@@ -2185,7 +2185,7 @@ namespace TvPlugin
       }
       catch (Exception)
       {
-        Log.Write("StartImportXML - Exception " + _tvGuideFileName);
+        Log.Debug("StartImportXML - Exception " + _tvGuideFileName);
         return;
       }
       _tvGuideFileWatcher.EnableRaisingEvents = false;
@@ -2203,7 +2203,7 @@ namespace TvPlugin
     {
       ///@
       /*
-      Log.Write(@"detected new tvguide ->import new tvguide");
+      Log.Debug(@"detected new tvguide ->import new tvguide");
       Thread.Sleep(500);
       try
       {
@@ -2235,7 +2235,7 @@ namespace TvPlugin
       }
       _tvGuideFileWatcher.EnableRaisingEvents = true;
       _workerThreadRunning = false;
-      Log.Write(@"import done");
+      Log.Debug(@"import done");
        */
     }
 
@@ -2285,7 +2285,7 @@ namespace TvPlugin
 
           case 938: // view channel
 
-            Log.Write("viewch channel:{0}", _currentChannel);
+            Log.Debug("viewch channel:{0}", _currentChannel);
             TVHome.ViewChannelAndCheck(_currentChannel);
             if (TVHome.Card.IsTimeShifting && TVHome.Card.ChannelName == _currentProgram.ReferencedChannel().Name)
             {
@@ -2614,7 +2614,7 @@ namespace TvPlugin
 
       if (_channelList.Count == 0)
       {
-        Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true,"");
+        Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true, "");
         for (int i = 0; i < 10; ++i)
           _channelList.Add(newChannel);
       }

@@ -22,6 +22,7 @@
  */
 
 #endregion
+
 #region usings
 using System;
 using System.Text;
@@ -581,7 +582,7 @@ namespace TvPlugin
               }
               UpdateCurrentProgram();
 
-              Log.Write("turn tv on");
+              Log.Debug("turn tv on");
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
               msg.SendToTargetWindow = true;
               GUIWindowManager.SendThreadMessage(msg);
@@ -630,7 +631,7 @@ namespace TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.Debug("RadioGuideBase: {0}", ex);
       }
       return base.OnMessage(message); ;
     }
@@ -1069,7 +1070,7 @@ namespace TvPlugin
         if (chan >= _channelList.Count) chan = 0;
       }
 
-      IList programs ;
+      IList programs;
       DateTime dtStart = DateTime.Now;
       DateTime dtEnd = dtStart.AddDays(30);
       long iStart = Utils.datetolong(dtStart);
@@ -1261,7 +1262,7 @@ namespace TvPlugin
       }
 
 
-      IList programs ;
+      IList programs;
       TvBusinessLayer layer = new TvBusinessLayer();
       programs = layer.GetPrograms(channel, Utils.longtodate(iStart), Utils.longtodate(iEnd));
       if (programs.Count == 0)
@@ -2129,7 +2130,7 @@ namespace TvPlugin
 
       if (_channelList.Count == 0)
       {
-        Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true,"");
+        Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true, "");
         for (int i = 0; i < 10; ++i)
           _channelList.Add(newChannel);
       }

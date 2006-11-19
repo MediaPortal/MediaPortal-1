@@ -1,4 +1,7 @@
-/*	Copyright (C) 2005-2006 Team MediaPortal
+#region Copyright (C) 2005-2006 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -17,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -74,7 +79,7 @@ namespace TvPlugin
     }
     public override void OnAdded()
     {
-      Log.Write("TvRecorded:OnAdded");
+      Log.Debug("TvRecorded:OnAdded");
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_SCHEDULER, this);
       Restore();
       PreInit();

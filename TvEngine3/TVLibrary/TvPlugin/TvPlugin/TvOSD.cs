@@ -93,8 +93,8 @@ namespace TvPlugin
       OSD_SUBMENU_BG_VIDEO = 304,
       OSD_SUBMENU_BG_AUDIO = 305,
       OSD_SUBMENU_NIB = 350,
-      Panel1=101,
-      Panel2=150
+      Panel1 = 101,
+      Panel2 = 150
     };
 
     [SkinControlAttribute(36)]
@@ -469,7 +469,7 @@ namespace TvPlugin
                 ToggleSubMenu(0, m_iActiveMenu);						// hide the currently active sub-menu
               }
               //g_application.m_guiWindowFullScreen.m_bOSDVisible = false;	// toggle the OSD off so parent window can de-init
-              Log.Write("TVOSD:stop");
+              Log.Debug("TVOSD:stop");
               if (TVHome.Card.IsRecording)
               {
 
@@ -1225,7 +1225,7 @@ namespace TvPlugin
 
     private void OnPreviousChannel()
     {
-      Log.Write("GUITV OSD: OnPreviousChannel");
+      Log.Debug("GUITV OSD: OnPreviousChannel");
       if (!TVHome.Card.IsTimeShifting) return;
       TVHome.Navigator.ZapToPreviousChannel(false);
 
@@ -1235,7 +1235,7 @@ namespace TvPlugin
 
     private void OnNextChannel()
     {
-      Log.Write("GUITV OSD: OnNextChannel");
+      Log.Debug("GUITV OSD: OnNextChannel");
       if (!TVHome.Card.IsTimeShifting) return;
 
       TVHome.Navigator.ZapToNextChannel(false);

@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -97,7 +101,7 @@ namespace TvPlugin
     }
     public override void OnAdded()
     {
-      Log.Write("TvRecorded:OnAdded");
+      Log.Debug("TvRecorded:OnAdded");
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_RECORDEDTV, this);
       Restore();
       PreInit();
@@ -651,7 +655,7 @@ namespace TvPlugin
       Recording rec = (Recording)pItem.TVTag;
       //if (System.IO.File.Exists(rec.FileName))
       {
-        Log.Write("TVRecording:play:{0}", rec.FileName);
+        Log.Debug("TVRecording:play:{0}", rec.FileName);
         g_Player.Stop();
         TVHome.Card.StopTimeShifting();
 
@@ -666,7 +670,7 @@ namespace TvPlugin
                 int idFile = VideoDatabase.GetFileId(rec.FileName);
                 if (idMovie >= 0 && idFile >= 0 )
                 {
-                  Log.Write("play got movie id:{0} for {1}", idMovie, rec.FileName);
+                  Log.Debug("play got movie id:{0} for {1}", idMovie, rec.FileName);
                   stoptime = VideoDatabase.GetMovieStopTime(idMovie);
                   if (stoptime > 0)
                   {
@@ -691,8 +695,8 @@ namespace TvPlugin
         {
           fileName = TVHome.TvServer.GetStreamUrlForFileName(rec.IdRecording);
         }
-        Log.Write("TvRecorded Play:{0}", fileName);
-        if (g_Player.Play(fileName,g_Player.MediaType.Recording))
+        Log.Debug("TvRecorded Play:{0}", fileName);
+        if (g_Player.Play(fileName, g_Player.MediaType.Recording))
         {
           if (Utils.IsVideo(fileName))
           {
@@ -1013,7 +1017,7 @@ namespace TvPlugin
     #region playback events
     private void OnPlayRecordingBackStopped(MediaPortal.Player.g_Player.MediaType type, int stoptime, string filename)
     {
-      Log.Write("TvRecorded:OnStopped {0} {1}", type,filename);
+      Log.Debug("TvRecorded:OnStopped {0} {1}", type, filename);
       if (type != g_Player.MediaType.Recording) return;
       //@
       /*
