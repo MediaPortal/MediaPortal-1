@@ -533,7 +533,7 @@ namespace TvLibrary.Implementations.DVB
         _epgGrabbing = false;
         if (_epgGrabberCallback != null && _epgGrabbing)
         {
-          Log.Log.WriteFile("dvb:cancel epg->stop graph");
+          Log.Log.Epg("dvb:cancel epg->stop graph");
           _epgGrabberCallback.OnEpgCancelled();
         }
       }
@@ -1091,7 +1091,7 @@ namespace TvLibrary.Implementations.DVB
         _epgGrabbing = false;
         if (_epgGrabberCallback != null && _epgGrabbing)
         {
-          Log.Log.WriteFile("dvb:cancel epg->decompose");
+          Log.Log.Epg("dvb:cancel epg->decompose");
           _epgGrabberCallback.OnEpgCancelled();
         }
       }
@@ -1749,8 +1749,8 @@ namespace TvLibrary.Implementations.DVB
           else
             dvbReady = false;
           List<EpgChannel> epgChannels = new List<EpgChannel>();
-          Log.Log.WriteFile("dvb:mhw ready MHW {0} titles found", titleCount);
-          Log.Log.WriteFile("dvb:dvb ready.EPG {0} channels", channelCount);
+          Log.Log.Epg("dvb:mhw ready MHW {0} titles found", titleCount);
+          Log.Log.Epg("dvb:dvb ready.EPG {0} channels", channelCount);
           if (mhwReady)
           {
             _interfaceEpgGrabber.GetMHWTitleCount(out titleCount);
@@ -2188,7 +2188,7 @@ namespace TvLibrary.Implementations.DVB
           _epgGrabbing = false;
           if (_epgGrabberCallback != null && _epgGrabbing)
           {
-            Log.Log.WriteFile("dvb:cancel epg->scanning");
+            Log.Log.Epg("dvb:cancel epg->scanning");
             _epgGrabberCallback.OnEpgCancelled();
           }
         }

@@ -43,7 +43,11 @@ namespace TvLibrary.Log
       /// <summary>
       /// error logging
       /// </summary>
-      Error
+      Error,
+      /// <summary>
+      /// epg logging
+      /// </summary>
+      Epg
     }
     static DateTime _previousDate;
     /// <summary>
@@ -93,6 +97,13 @@ namespace TvLibrary.Log
           File.Move(name, bakFile);
 
         name = GetFileName(LogType.Error);
+        bakFile = name.Replace(".log", ".bak");
+        if (File.Exists(bakFile))
+          File.Delete(bakFile);
+        if (File.Exists(name))
+          File.Move(name, bakFile);
+
+        name = GetFileName(LogType.Epg);
         bakFile = name.Replace(".log", ".bak");
         if (File.Exists(bakFile))
           File.Delete(bakFile);
@@ -165,6 +176,9 @@ namespace TvLibrary.Log
         case LogType.Error:
           return String.Format(@"{0}\MediaPortal TV Server\log\error.log", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
 
+        case LogType.Epg:
+          return String.Format(@"{0}\MediaPortal TV Server\log\epg.log", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+
         default:
           return String.Format(@"{0}\MediaPortal TV Server\log\tv.log", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
 
@@ -198,6 +212,15 @@ namespace TvLibrary.Log
     static public void Debug(string format, params object[] arg)
     {
       WriteToFile(LogType.Debug, format, arg);
+    }
+    /// <summary>
+    /// Logs the message to the epg file
+    /// </summary>
+    /// <param name="format">The format.</param>
+    /// <param name="arg">The arg.</param>
+    static public void Epg(string format, params object[] arg)
+    {
+      WriteToFile(LogType.Epg, format, arg);
     }
     /// <summary>
     /// Logs the message to the info file
