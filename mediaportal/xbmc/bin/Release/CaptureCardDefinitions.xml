@@ -17845,4 +17845,20 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV 310c DVB-T/Analog Tuner" capturename="DVB-T Digital TV Caputere" devid="ven_14f1&amp;dev_8800&amp;subsys_178812ab&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="DVB-T Tuner"                      checkdevice="false"/>
+        <filter cat="capture"         name="DVB-T Digital TV Capture"         checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
