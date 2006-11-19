@@ -25,6 +25,15 @@ using System.Runtime.InteropServices;
 
 namespace TvLibrary.Interfaces.Analyzer
 {
+
+  [ComVisible(true), ComImport,
+  Guid("CE141670-1840-4188-8A40-618BA3A5A1C3"),
+  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IChannelScanCallback
+  {
+	  [PreserveSig] 
+    int OnScannerDone();
+  }
   /// <summary>
   /// interface to the channel scan com object
   /// </summary>
@@ -128,5 +137,8 @@ namespace TvLibrary.Interfaces.Analyzer
                        out short subtitlePid,
                        out IntPtr subtitleLanguage,
                        out short videoStreamType);
+    
+    [PreserveSig]
+	  int SetCallBack(IChannelScanCallback callback);
   }
 }
