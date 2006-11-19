@@ -1508,13 +1508,15 @@ namespace TvPlugin
 
     public override void Process()
     {
-      //	_isTvOn=true;
-
-      TVHome.UpdateProgressPercentageBar();
       CheckTimeOuts();
       if (ScreenStateChanged())
       {
         UpdateGUI();
+      }
+
+      if ((_statusVisible || _stepSeekVisible || (!_isOsdVisible && g_Player.Speed != 1) || (!_isOsdVisible && g_Player.Paused)))
+      {
+        TVHome.UpdateProgressPercentageBar();
       }
 
       if (!VideoRendererStatistics.IsVideoFound)
@@ -1874,6 +1876,7 @@ namespace TvPlugin
     public override void Render(float timePassed)
     {
       if (GUIWindowManager.IsSwitchingToNewWindow) return;
+      /*
       if (VMR7Util.g_vmr7 != null)
       {
         if (!GUIWindowManager.IsRouted)
@@ -1919,7 +1922,7 @@ namespace TvPlugin
             }
           }
         }
-      }
+      }*/
 
       if (GUIGraphicsContext.Vmr9Active)
       {
