@@ -4,11 +4,13 @@
 
 CSection::CSection(void)
 {
+	Data=new byte[MAX_SECTION_LENGTH*5];
   Reset();
 }
 
 CSection::~CSection(void)
 {
+	delete[] Data;
 }
 
 void CSection::Reset()

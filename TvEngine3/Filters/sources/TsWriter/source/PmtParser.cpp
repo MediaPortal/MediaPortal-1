@@ -53,6 +53,7 @@ void CPmtParser::OnNewSection(CSection& sections)
   CTsHeader header(section);
   int start=header.PayLoadStart;
   int table_id = section[start+0];
+	if (table_id!=2) return;
   int section_syntax_indicator = (section[start+1]>>7) & 1;
   int section_length = ((section[start+1]& 0xF)<<8) + section[start+2];
   int program_number = (section[start+3]<<8)+section[start+4];

@@ -87,7 +87,7 @@ void CMhwParser::Reset()
 void CMhwParser::OnTsPacket(byte* tsPacket)
 {
 	if (m_bGrabbing==false) return;
-return;
+//return;
 	CEnterCriticalSection enter(m_section);
 	for (int i=0; i < (int)m_vecDecoders.size();++i)
 	{
@@ -106,10 +106,12 @@ void CMhwParser::OnNewSection(int pid, int tableId, CSection& sections)
 		if (header.PayLoadStart< 0 || header.PayLoadStart>188) return;
 
 		byte* section=&(sections.Data[header.PayLoadStart]);
+		int table_id = section[0];
+
 		int sectionLength=sections.SectionLength;
 		if (pid==0xd2)
 		{
-			if (tableId==0x90 ||(tableId >=0x70 && tableId <=0x7f) )
+			if (table_id==0x90 ||(table_id >=0x70 && table_id <=0x7f) )
 			{
 //				LogDebug("mhw ParseTitles %d",sectionLength);
 				if ( m_mhwDecoder.ParseTitles(section,sectionLength))
@@ -121,7 +123,7 @@ void CMhwParser::OnNewSection(int pid, int tableId, CSection& sections)
 		}
 		if (pid==0xd3)
 		{
-			if (tableId==0x90)
+			if (table_id==0x90)
 			{
 //				LogDebug("mhw ParseSummaries %d",sectionLength);
 				if (m_mhwDecoder.ParseSummaries(section,sectionLength))
@@ -130,7 +132,7 @@ void CMhwParser::OnNewSection(int pid, int tableId, CSection& sections)
 				}
 //				LogDebug("mhw ParseSummaries done");
 			}
-			if (tableId==0x91)
+			if (table_id==0x91)
 			{
 //				LogDebug("mhw ParseChannels %d",sectionLength);
 				if (m_mhwDecoder.ParseChannels(section,sectionLength))
@@ -139,7 +141,7 @@ void CMhwParser::OnNewSection(int pid, int tableId, CSection& sections)
 				}
 //				LogDebug("mhw ParseChannels done");
 			}
-			if (tableId==0x92)
+			if (table_id==0x92)
 			{
 //				LogDebug("mhw ParseThemes %d",sectionLength);
 				if (m_mhwDecoder.ParseThemes(section,sectionLength))

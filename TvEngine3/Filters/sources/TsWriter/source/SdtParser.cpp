@@ -59,6 +59,7 @@ void  CSdtParser::OnNewSection(CSection& sections)
   CTsHeader header(section);
   int start=header.PayLoadStart;
   int table_id = section[start+0];
+	if (table_id!=0x42 && table_id!=0x46) return;
   int section_syntax_indicator = (section[start+1]>>7) & 1;
   int section_length = ((section[start+1]& 0xF)<<8) + section[start+2];
   

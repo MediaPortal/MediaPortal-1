@@ -58,6 +58,7 @@ void  CPatParser::CleanUp()
     it=m_mapPmtParsers.erase(it);
   }
   m_mapChannels.clear();
+	m_mapPmtParsers.clear();
   m_bDumped=false;
 }
 
@@ -118,9 +119,9 @@ BOOL CPatParser::IsReady()
 		CChannelInfo& info=it->second;
 		if (info.PmtReceived == false || info.SdtReceived == false) 
 		{
-			LogDebug("ch:%d pmt:%d sdt:%d othermux:%d %s onid:%x tsid:%x sid:%x",
-				x,info.PmtReceived,info.SdtReceived,info.OtherMux,info.ServiceName,
-				info.NetworkId,info.TransportId,info.ServiceId);
+			//LogDebug("ch:%d pmt:%d sdt:%d othermux:%d %s onid:%x tsid:%x sid:%x",
+			//	x,info.PmtReceived,info.SdtReceived,info.OtherMux,info.ServiceName,
+			//	info.NetworkId,info.TransportId,info.ServiceId);
 			return FALSE;
 		}
 		x++;
@@ -217,7 +218,7 @@ void CPatParser::OnPidsReceived(CPidTable pidTable)
   {
     CChannelInfo& info=it->second;
 		if (info.PmtReceived) return;
-		LogDebug("PMT: onid:%x tsid:%x nit:%x p:%s s:%s other:%d", info.NetworkId,info.TransportId,info.ServiceId, info.ProviderName,info.ServiceName, info.OtherMux);
+		//LogDebug("PMT: onid:%x tsid:%x nit:%x p:%s s:%s other:%d", info.NetworkId,info.TransportId,info.ServiceId, info.ProviderName,info.ServiceName, info.OtherMux);
     info.PidTable=pidTable;
 		info.PmtReceived=true;
     return;
@@ -293,7 +294,7 @@ void CPatParser::OnNewSection(CSection& sections)
 				info.TransportId=transport_stream_id;
 				info.ServiceId=serviceId;
 				m_mapChannels[serviceId]=info;
-				LogDebug("pat: tsid:%x sid:%x pmt:%x", transport_stream_id,serviceId,pmtPid);
+			//	LogDebug("pat: tsid:%x sid:%x pmt:%x", transport_stream_id,serviceId,pmtPid);
 			}
 
 			itPmtParser it2= m_mapPmtParsers.find(pmtPid);
@@ -336,7 +337,7 @@ void CPatParser::Dump()
 //*****************************************************************************
 void CPatParser::OnPmtReceived(int pid)
 {
-	LogDebug("PatParser:  received pmt:%x", pid);
+	//LogDebug("PatParser:  received pmt:%x", pid);
 	//if ((m_mapPmtParsers.size()+5) <=16) return;
 	//UpdateHwPids();
 }

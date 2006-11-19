@@ -16,5 +16,5 @@ public:
   int    BufferPos;
   int    SectionLength;
 	int    Length;
-  byte   Data[MAX_SECTION_LENGTH];
+  byte   *Data;
 };
