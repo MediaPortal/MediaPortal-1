@@ -183,7 +183,7 @@ namespace SetupTv.Sections
       // checkBoxCreateGroups
       // 
       this.checkBoxCreateGroups.AutoSize = true;
-      this.checkBoxCreateGroups.Location = new System.Drawing.Point(138, 360);
+      this.checkBoxCreateGroups.Location = new System.Drawing.Point(16, 354);
       this.checkBoxCreateGroups.Name = "checkBoxCreateGroups";
       this.checkBoxCreateGroups.Size = new System.Drawing.Size(175, 17);
       this.checkBoxCreateGroups.TabIndex = 71;

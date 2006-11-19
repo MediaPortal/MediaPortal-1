@@ -39,6 +39,11 @@ namespace SetupTv.Sections
       this.mpLNB1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpTransponder1 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.mpBand4 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpBand3 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpBand2 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpBand1 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLNB4 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpComboBoxCam = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -55,11 +60,6 @@ namespace SetupTv.Sections
       this.listViewStatus = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.checkBoxCreateGroups = new System.Windows.Forms.CheckBox();
-      this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpBand1 = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpBand2 = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpBand3 = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpBand4 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -182,6 +182,74 @@ namespace SetupTv.Sections
       this.groupBox1.TabIndex = 66;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "LNB Setup";
+      // 
+      // mpBand4
+      // 
+      this.mpBand4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpBand4.FormattingEnabled = true;
+      this.mpBand4.Items.AddRange(new object[] {
+            "Universal",
+            "Linear",
+            "Circular",
+            "C-Band"});
+      this.mpBand4.Location = new System.Drawing.Point(206, 117);
+      this.mpBand4.Name = "mpBand4";
+      this.mpBand4.Size = new System.Drawing.Size(79, 21);
+      this.mpBand4.TabIndex = 80;
+      // 
+      // mpBand3
+      // 
+      this.mpBand3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpBand3.FormattingEnabled = true;
+      this.mpBand3.Items.AddRange(new object[] {
+            "Universal",
+            "Linear",
+            "Circular",
+            "C-Band"});
+      this.mpBand3.Location = new System.Drawing.Point(206, 90);
+      this.mpBand3.Name = "mpBand3";
+      this.mpBand3.Size = new System.Drawing.Size(79, 21);
+      this.mpBand3.TabIndex = 79;
+      this.mpBand3.SelectedIndexChanged += new System.EventHandler(this.mpComboBox1_SelectedIndexChanged_1);
+      // 
+      // mpBand2
+      // 
+      this.mpBand2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpBand2.FormattingEnabled = true;
+      this.mpBand2.Items.AddRange(new object[] {
+            "Universal",
+            "Linear",
+            "Circular",
+            "C-Band"});
+      this.mpBand2.Location = new System.Drawing.Point(205, 63);
+      this.mpBand2.Name = "mpBand2";
+      this.mpBand2.Size = new System.Drawing.Size(79, 21);
+      this.mpBand2.TabIndex = 78;
+      this.mpBand2.SelectedIndexChanged += new System.EventHandler(this.mpComboBox1_SelectedIndexChanged);
+      // 
+      // mpBand1
+      // 
+      this.mpBand1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpBand1.FormattingEnabled = true;
+      this.mpBand1.Items.AddRange(new object[] {
+            "Universal",
+            "Linear",
+            "Circular",
+            "C-Band"});
+      this.mpBand1.Location = new System.Drawing.Point(206, 36);
+      this.mpBand1.Name = "mpBand1";
+      this.mpBand1.Size = new System.Drawing.Size(79, 21);
+      this.mpBand1.TabIndex = 77;
+      this.mpBand1.SelectedIndexChanged += new System.EventHandler(this.mpBand1_SelectedIndexChanged);
+      // 
+      // mpLabel4
+      // 
+      this.mpLabel4.AutoSize = true;
+      this.mpLabel4.Location = new System.Drawing.Point(216, 16);
+      this.mpLabel4.Name = "mpLabel4";
+      this.mpLabel4.Size = new System.Drawing.Size(35, 13);
+      this.mpLabel4.TabIndex = 76;
+      this.mpLabel4.Text = "Band:";
       // 
       // mpLabel3
       // 
@@ -338,80 +406,12 @@ namespace SetupTv.Sections
       // checkBoxCreateGroups
       // 
       this.checkBoxCreateGroups.AutoSize = true;
-      this.checkBoxCreateGroups.Location = new System.Drawing.Point(149, 388);
+      this.checkBoxCreateGroups.Location = new System.Drawing.Point(16, 388);
       this.checkBoxCreateGroups.Name = "checkBoxCreateGroups";
       this.checkBoxCreateGroups.Size = new System.Drawing.Size(175, 17);
       this.checkBoxCreateGroups.TabIndex = 68;
       this.checkBoxCreateGroups.Text = "Create groups for each provider";
       this.checkBoxCreateGroups.UseVisualStyleBackColor = true;
-      // 
-      // mpLabel4
-      // 
-      this.mpLabel4.AutoSize = true;
-      this.mpLabel4.Location = new System.Drawing.Point(216, 16);
-      this.mpLabel4.Name = "mpLabel4";
-      this.mpLabel4.Size = new System.Drawing.Size(35, 13);
-      this.mpLabel4.TabIndex = 76;
-      this.mpLabel4.Text = "Band:";
-      // 
-      // mpBand1
-      // 
-      this.mpBand1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpBand1.FormattingEnabled = true;
-      this.mpBand1.Items.AddRange(new object[] {
-            "Universal",
-            "Linear",
-            "Circular",
-            "C-Band"});
-      this.mpBand1.Location = new System.Drawing.Point(206, 36);
-      this.mpBand1.Name = "mpBand1";
-      this.mpBand1.Size = new System.Drawing.Size(79, 21);
-      this.mpBand1.TabIndex = 77;
-      this.mpBand1.SelectedIndexChanged += new System.EventHandler(this.mpBand1_SelectedIndexChanged);
-      // 
-      // mpBand2
-      // 
-      this.mpBand2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpBand2.FormattingEnabled = true;
-      this.mpBand2.Items.AddRange(new object[] {
-            "Universal",
-            "Linear",
-            "Circular",
-            "C-Band"});
-      this.mpBand2.Location = new System.Drawing.Point(205, 63);
-      this.mpBand2.Name = "mpBand2";
-      this.mpBand2.Size = new System.Drawing.Size(79, 21);
-      this.mpBand2.TabIndex = 78;
-      this.mpBand2.SelectedIndexChanged += new System.EventHandler(this.mpComboBox1_SelectedIndexChanged);
-      // 
-      // mpBand3
-      // 
-      this.mpBand3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpBand3.FormattingEnabled = true;
-      this.mpBand3.Items.AddRange(new object[] {
-            "Universal",
-            "Linear",
-            "Circular",
-            "C-Band"});
-      this.mpBand3.Location = new System.Drawing.Point(206, 90);
-      this.mpBand3.Name = "mpBand3";
-      this.mpBand3.Size = new System.Drawing.Size(79, 21);
-      this.mpBand3.TabIndex = 79;
-      this.mpBand3.SelectedIndexChanged += new System.EventHandler(this.mpComboBox1_SelectedIndexChanged_1);
-      // 
-      // mpBand4
-      // 
-      this.mpBand4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpBand4.FormattingEnabled = true;
-      this.mpBand4.Items.AddRange(new object[] {
-            "Universal",
-            "Linear",
-            "Circular",
-            "C-Band"});
-      this.mpBand4.Location = new System.Drawing.Point(206, 117);
-      this.mpBand4.Name = "mpBand4";
-      this.mpBand4.Size = new System.Drawing.Size(79, 21);
-      this.mpBand4.TabIndex = 80;
       // 
       // CardDvbS
       // 
