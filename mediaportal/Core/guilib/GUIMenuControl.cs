@@ -74,8 +74,8 @@ namespace MediaPortal.GUI.Library
     protected int _hoverWidth = 0;
     [XMLSkinElement("hoverHeight")]
     protected int _hoverHeight = 0;
-    [XMLSkinElement("hoverAspectratio")]
-    protected bool _hoverAspectRation = true;
+    [XMLSkinElement("hoverKeepAspectratio")]
+    protected bool _hoverKeepAspectRation = true;
     [XMLSkinElement("scrollTimeMin")]
     protected int _scrollTimeMin = 100;        // min duration for a scrolling - speedup
     [XMLSkinElement("scrollTime")]
@@ -536,7 +536,7 @@ namespace MediaPortal.GUI.Library
           if (fileName != null)
           {
             GUIAnimation hover = LoadAnimationControl(GetID, btn.GetID, _hoverPositionX, _hoverPositionY, _hoverWidth, _hoverHeight, fileName);
-            hover.KeepAspectRatio = _hoverAspectRation;
+            hover.KeepAspectRatio = _hoverKeepAspectRation;
             //hover.RepeatBehavior = new RepeatBehavior(1);
             hover.AllocResources();
             _hoverList.Add(hover);

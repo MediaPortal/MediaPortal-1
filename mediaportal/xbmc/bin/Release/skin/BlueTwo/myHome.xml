@@ -52,6 +52,7 @@
       <hoverY>200</hoverY>
       <hoverWidth>230</hoverWidth>
       <hoverHeight>225</hoverHeight>
+      <hoverKeepAspectratio>yes</hoverKeepAspectratio>
       <scrollTime>120</scrollTime>
       <scrollTimeMin>60</scrollTimeMin>
       <textureBackground>background_glass_menu_area.png</textureBackground>
