@@ -17,13 +17,26 @@ namespace TvService
     TuningDetail _detail;
     List<Channel> _channels;
     int _currentChannelIndex;
+    bool _inUse;
     public Transponder(TuningDetail detail)
     {
       _channels = new List<Channel>();
       _detail = detail;
       _currentChannelIndex = -1;
+      _inUse = false;
     }
 
+    public bool InUse
+    {
+      get
+      {
+        return _inUse;
+      }
+      set
+      {
+        _inUse = value;
+      }
+    }
 
     public int Index
     {
@@ -66,8 +79,6 @@ namespace TvService
         if (Index<0 || Index >=Channels.Count) return null;
         TvBusinessLayer layer = new TvBusinessLayer();
         return layer.GetTuningChannelByType(Channels[Index],TuningDetail.ChannelType);
-        
-
       }
     }
 
