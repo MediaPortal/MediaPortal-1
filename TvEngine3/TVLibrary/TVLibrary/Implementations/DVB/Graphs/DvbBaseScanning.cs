@@ -75,7 +75,7 @@ namespace TvLibrary.Implementations.DVB
     const int ScanMaxChannels = 10;
     #endregion
 
-    
+
     #region variables
     ITsChannelScan _analyzer;
     ITVCard _card;
@@ -179,12 +179,12 @@ namespace TvLibrary.Implementations.DVB
         try
         {
           _event = new ManualResetEvent(false);
-          
+
           _analyzer.SetCallBack(this);
           _analyzer.Start();
           startTime = DateTime.Now;
 
-          _event.WaitOne(5000,true);
+          _event.WaitOne(10000, true);
 
           short networkId;
           short transportId;
@@ -272,35 +272,42 @@ namespace TvLibrary.Implementations.DVB
               strAudioLanguage2 = Marshal.PtrToStringAnsi(audioLanguage2);
               strAudioLanguage3 = Marshal.PtrToStringAnsi(audioLanguage3);
 
+              bool hasVideo = false;
+              bool hasAudio = false;
               if (videoPid > 0)
               {
                 PidInfo pidInfo = new PidInfo();
                 pidInfo.VideoPid(videoPid, videoStreamType);
                 info.AddPid(pidInfo);
+                hasVideo = true;
               }
               if (audio1Pid > 0)
               {
                 PidInfo pidInfo = new PidInfo();
                 pidInfo.AudioPid(audio1Pid, strAudioLanguage1);
                 info.AddPid(pidInfo);
+                hasAudio = true;
               }
               if (audio2Pid > 0)
               {
                 PidInfo pidInfo = new PidInfo();
                 pidInfo.AudioPid(audio2Pid, strAudioLanguage2);
                 info.AddPid(pidInfo);
+                hasAudio = true;
               }
               if (audio3Pid > 0)
               {
                 PidInfo pidInfo = new PidInfo();
                 pidInfo.AudioPid(audio3Pid, strAudioLanguage3);
                 info.AddPid(pidInfo);
+                hasAudio = true;
               }
               if (ac3Pid > 0)
               {
                 PidInfo pidInfo = new PidInfo();
                 pidInfo.Ac3Pid(ac3Pid, "");
                 info.AddPid(pidInfo);
+                hasAudio = true;
               }
               if (teletextPid > 0)
               {
@@ -327,15 +334,25 @@ namespace TvLibrary.Implementations.DVB
                   isTvRadioChannel = true;
                 }
               }
+              else if (hasVideo || hasAudio)
+              {
+                if (hasVideo)
+                  info.serviceType = (int)ServiceType.Video;
+                else
+                  info.serviceType = (int)ServiceType.Audio;
+                IChannel dvbChannel = CreateNewChannel(info);
+                if (dvbChannel != null)
+                {
+                  channelsFound.Add(dvbChannel);
+                  isTvRadioChannel = true;
+                }
+
+              }
               if (!isTvRadioChannel)
               {
                 Log.Log.Write("Found Unknown: {0} {1} type:{2} onid:{3:X} tsid:{4:X} sid:{5:X}",
                   info.service_provider_name, info.service_name, info.serviceType, info.networkID, info.transportStreamID, info.serviceID);
               }
-            }
-            if ((i % 10) == 0)
-            {
-              System.Threading.Thread.Sleep(50);
             }
           }
           if (found != channelCount)

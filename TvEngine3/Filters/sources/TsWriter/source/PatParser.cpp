@@ -87,7 +87,7 @@ void  CPatParser::Reset(IChannelScanCallback* callback)
 BOOL CPatParser::IsReady()
 {
  DWORD timeSpan=GetTickCount()-m_tickCount;
- if (timeSpan < 200) return FALSE;
+ if (timeSpan < 1000) return FALSE;
 
  if (m_vctParser.Count() > 0)
   {
