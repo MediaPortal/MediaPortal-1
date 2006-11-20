@@ -79,12 +79,16 @@ void  CPatParser::Reset(IChannelScanCallback* callback)
   m_sdtParserOther.SetCallback(this);
   m_sdtParserOther.SetTableId(0x46);
   m_vctParser.SetCallback(this);
+  m_tickCount = GetTickCount();
 }
 
  
 //*****************************************************************************
 BOOL CPatParser::IsReady()
 {
+ DWORD timeSpan=GetTickCount()-m_tickCount;
+ if (timeSpan < 200) return FALSE;
+
  if (m_vctParser.Count() > 0)
   {
     return TRUE;
@@ -178,6 +182,7 @@ void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
     CChannelInfo& info=it->second;
 		if (info.SdtReceived==false) 
 		{
+      m_tickCount = GetTickCount();
 			info.NetworkId=sdtInfo.NetworkId;
 			info.TransportId=sdtInfo.TransportId;
 			info.ServiceId=sdtInfo.ServiceId;
@@ -210,6 +215,7 @@ void CPatParser::OnPidsReceived(CPidTable pidTable)
     CChannelInfo& info=it->second;
 		if (info.PmtReceived==false) 
 		{
+      m_tickCount = GetTickCount();
 			//LogDebug("PMT: onid:%x tsid:%x nit:%x p:%s s:%s other:%d", info.NetworkId,info.TransportId,info.ServiceId, info.ProviderName,info.ServiceName, info.OtherMux);
 			info.PidTable=pidTable;
 			info.PmtReceived=true;
@@ -236,8 +242,7 @@ void CPatParser::OnTsPacket(byte* tsPacket)
   for (itPmtParser it=m_mapPmtParsers.begin(); it != m_mapPmtParsers.end() ;++it)
   {
     CPmtParser* parser=it->second;
-		if (!parser->IsReady())
-			parser->OnTsPacket(tsPacket);
+		parser->OnTsPacket(tsPacket);
   }
   CSectionDecoder::OnTsPacket(tsPacket);
 	
@@ -287,7 +292,9 @@ void CPatParser::OnNewSection(CSection& sections)
 				CChannelInfo info;
 				info.TransportId=transport_stream_id;
 				info.ServiceId=serviceId;
+        info.PidTable.PmtPid=pmtPid;
 				m_mapChannels[serviceId]=info;
+        m_tickCount = GetTickCount();
 			//	LogDebug("pat: tsid:%x sid:%x pmt:%x", transport_stream_id,serviceId,pmtPid);
 			}
 
@@ -300,6 +307,7 @@ void CPatParser::OnNewSection(CSection& sections)
 			  pmtParser->SetPmtCallBack(this);
 		    m_mapPmtParsers[pmtPid]=pmtParser ;
 			  newPmtsAdded=true;
+        m_tickCount = GetTickCount();
 	    }
     }
   }

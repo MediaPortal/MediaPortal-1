@@ -55,6 +55,7 @@ public:
   void        OnPidsReceived(CPidTable info);
 	void        OnSdtReceived(CChannelInfo sdtInfo);
   void        OnChannel(CChannelInfo info);
+
 private:
 	void				               UpdateHwPids();
   CVirtualChannelTableParser m_vctParser;
@@ -66,8 +67,10 @@ private:
 
   map<int,CPmtParser*> m_mapPmtParsers;
   typedef map<int,CPmtParser*> ::iterator itPmtParser;
+
   map<int,CChannelInfo> m_mapChannels;
   typedef map<int,CChannelInfo> ::iterator itChannels;
   bool m_bDumped;
 	IChannelScanCallback* m_pCallback;
+  DWORD                 m_tickCount;
 };
