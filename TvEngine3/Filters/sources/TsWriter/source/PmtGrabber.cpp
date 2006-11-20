@@ -92,12 +92,17 @@ void CPmtGrabber::OnNewSection(CSection& section)
 	{
  		if (section.Version == m_iPmtVersion) return;
 	  CEnterCriticalSection enter(m_section);
+
+		CTsHeader header(section.Data);
+		int start=header.PayLoadStart;
+    int table_id = section.Data[start+0];
+	  if (table_id!=2) return;
+    if (section.SectionLength<0 || section.SectionLength>=MAX_SECTION_LENGTH) return;
+
 		LogDebug("pmtgrabber: got pmt version:%d %d", section.Version,m_iPmtVersion);
 		m_iPmtVersion=section.Version;
 		m_iPmtLength=section.SectionLength+3;
 
-		CTsHeader header(section.Data);
-		int start=header.PayLoadStart;
 		memcpy(m_pmtData,&section.Data[start],m_iPmtLength);
 		if (memcmp(m_pmtData,m_pmtPrevData,m_iPmtLength)!=0)
 		{

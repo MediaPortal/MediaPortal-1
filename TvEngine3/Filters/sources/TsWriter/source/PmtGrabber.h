@@ -57,8 +57,8 @@ public:
   virtual void OnNewSection(CSection& section);
 private:
 	IPMTCallback* m_pCallback;
-	byte					m_pmtData[4096];
-	byte					m_pmtPrevData[4096];
+  byte					m_pmtData[MAX_SECTION_LENGTH];
+	byte					m_pmtPrevData[MAX_SECTION_LENGTH];
 	int						m_iPmtVersion;
 	int						m_iPmtLength;
 	CCriticalSection m_section;
