@@ -376,7 +376,8 @@ namespace MediaPortal.Player
             if (MediaPortal.Util.Utils.IsDVD(dvd))
             {
               _currentFile = String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", (char)('A' + i));
-              break;
+              if (System.IO.File.Exists(_currentFile))
+                break;
             }
           }
         }
