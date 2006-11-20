@@ -33,7 +33,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using System.Diagnostics;
-//using XPBurn;
+using XPBurn;
 #endregion
 
 namespace GUIBurner
@@ -44,7 +44,7 @@ namespace GUIBurner
   public class SetupForm : System.Windows.Forms.Form, ISetupForm, IShowPlugin
   {
     #region Private Variables
-    //private XPBurn.XPBurnCD CDBurner;
+    private XPBurn.XPBurnCD CDBurner;
     private int selIndx = 0;
     private MediaPortal.UserInterface.Controls.MPButton buttonOK;
     private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
@@ -90,7 +90,7 @@ namespace GUIBurner
       // TODO: Add any constructor code after InitializeComponent call
       //
 
-      //CDBurner = new XPBurn.XPBurnCD();
+      CDBurner = new XPBurn.XPBurnCD();
       GetRecorder();
       
       comboBox1.Enabled = true;
@@ -484,7 +484,7 @@ namespace GUIBurner
     #region Private Methods
 
     private void GetRecorder()
-    {/*
+    {
       //Fill The Combobox with available drives
       string name;
 
@@ -494,7 +494,7 @@ namespace GUIBurner
         name = CDBurner.Vendor + " " + CDBurner.ProductID + " " + CDBurner.Revision;
         comboBox1.Items.Add(name);
         comboBox1.SelectedIndex = 0;
-      }*/
+      }
     }
 
     private void buttonOK_Click(object sender, System.EventArgs e)
