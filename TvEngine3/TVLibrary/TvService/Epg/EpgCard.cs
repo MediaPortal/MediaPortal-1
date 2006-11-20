@@ -235,7 +235,7 @@ namespace TvService
       _isRunning = true;
       if (GrabEpgForChannel(channel, transponders[index].Tuning, _card))
       {
-        Log.Epg("Epg: card:{0} start grab", _currentCardId);
+        Log.Epg("Epg: card:{0} start grab {1}", _currentCardId, transponders[index].Tuning.ToString());
         transponders[index].InUse = true;
         //succeeded, then wait for epg to be received
         _state = EpgState.Grabbing;
