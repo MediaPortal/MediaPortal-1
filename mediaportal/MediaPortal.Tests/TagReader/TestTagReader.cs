@@ -107,7 +107,7 @@ namespace MediaPortal.Tests.TagReader
     {
       MusicTag tag;
       tag = MediaPortal.TagReader.TagReader.ReadTag(filename);
-      Assert.IsNull(tag);
+      Assert.AreNotEqual(tag.Duration, 0);
     }
   }
 }
