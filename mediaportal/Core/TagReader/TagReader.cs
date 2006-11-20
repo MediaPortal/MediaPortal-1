@@ -113,9 +113,9 @@ namespace MediaPortal.TagReader
         {
           if (reader.SupportsFile(strFile))
           {
+            MusicTag musicTag = new MusicTag();
             if (reader.Read(strFile))
-            {
-              MusicTag musicTag = new MusicTag();
+            {             
               musicTag.Album = reader.Album;
               musicTag.Artist = reader.Artist;
               musicTag.AlbumArtist = reader.AlbumArtist;
@@ -146,11 +146,25 @@ namespace MediaPortal.TagReader
                 }
               }
 
+              // if we didn't get a title, use the Filename without extension to prevent the file to appear as "unknown"
+              if (musicTag.Title == "")
+                musicTag.Title = System.IO.Path.GetFileNameWithoutExtension(strFile);
+
               reader.Dispose();
 
               return musicTag;
             }
-            reader.Dispose();
+            else
+            {
+              Log.Info("{0} does not contain valid tags. Using Filename as Title", strFile);
+              musicTag.Title = System.IO.Path.GetFileNameWithoutExtension(strFile);
+              // Set non Tag related values
+              musicTag.Duration = (int)Math.Round(reader.LengthMS / 1000.00);
+              musicTag.FileName = strFile;
+              musicTag.BitRate = reader.AverageBitrate;
+              reader.Dispose();
+              return musicTag;
+            }
           }
         }
         catch (Exception ex)
