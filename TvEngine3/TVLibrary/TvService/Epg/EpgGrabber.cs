@@ -54,7 +54,6 @@ namespace TvService
     bool _reEntrant = false;
     TVController _tvController;
     List<Transponder> _transponders;
-    int _currentTransponderIndex = -1;
     List<EpgCard> _epgCards;
     #endregion
 
@@ -155,20 +154,31 @@ namespace TvService
       }
     }
 
+    /// <summary>
+    /// Grabs the epg for a card.
+    /// </summary>
+    /// <param name="epgCard">The epg card.</param>
     void GrabEpgOnCard(EpgCard epgCard)
     {
       CardType type = _tvController.Type(epgCard.Card.IdCard);
+      //skip analog cards
       if (type == CardType.Analog) return;
+
+      //for each transponder
       int counter = -1;
       foreach (Transponder transponder in _transponders)
       {
         counter++;
+        //skip transponders which are in use
         if (transponder.InUse) continue;
+
+        //check if card type is the same as the channel type of the transponder
         if (type == CardType.Atsc && transponder.TuningDetail.ChannelType != 1) continue;
         if (type == CardType.DvbC && transponder.TuningDetail.ChannelType != 2) continue;
         if (type == CardType.DvbS && transponder.TuningDetail.ChannelType != 3) continue;
         if (type == CardType.DvbT && transponder.TuningDetail.ChannelType != 4) continue;
 
+        //find next channel to grab
         int allChecked = 0;
         while (true)
         {
@@ -176,16 +186,19 @@ namespace TvService
           transponder.Index++;
           if (transponder.Index >= transponder.Channels.Count)
             transponder.Index = 0;
-          if (transponder.Index >= transponder.Channels.Count) continue;
+          if (transponder.Index >= transponder.Channels.Count) return;
 
+          //check if its time to grab the epg for this channel
           TimeSpan ts = DateTime.Now - transponder.Channels[transponder.Index].LastGrabTime;
           if (ts.TotalHours < EpgReGrabAfter)
           {
             if (allChecked >= transponder.Channels.Count) break;
             continue; // less then 2 hrs ago
           }
+          //get the channel
           Channel ch = transponder.Channels[transponder.Index];
           Log.Epg("epg:Grab for transponder #{0} {1}", counter, transponder.ToString());
+          //start grabbing
           epgCard.GrabEpg(_transponders, counter, transponder.Channels[transponder.Index]);
 
           return;
@@ -194,24 +207,36 @@ namespace TvService
     }
 
 
+    /// <summary>
+    /// Gets the a list of all transponders
+    /// </summary>
     void GetTransponders()
     {
       _transponders = new List<Transponder>();
+      //get all channels
       IList channels = Channel.ListAll();
       foreach (Channel channel in channels)
       {
+        //if epg grabbing is enabled and channel is a radio or tv channel
         if (channel.GrabEpg == false) continue;
         if (channel.IsRadio == false && channel.IsTv == false) continue;
+
+        //for each tuning detail of the channel
         foreach (TuningDetail detail in channel.ReferringTuningDetail())
         {
+          //skip analog channels
           if (detail.ChannelType == 0) continue;//analog
 
+          //create a new transponder
           Transponder t = new Transponder(detail);
           bool found = false;
+
+          //check if transonder already exists
           foreach (Transponder transponder in _transponders)
           {
             if (transponder.Equals(t))
             {
+              //yes, then simply add the channel to this transponder
               found = true;
               transponder.Channels.Add(channel);
               break;
@@ -220,40 +245,11 @@ namespace TvService
 
           if (!found)
           {
+            //new transponder, add the channel to this transponder
+            //and add the transponder to the transponder list
             t.Channels.Add(channel);
             _transponders.Add(t);
           }
-        }
-      }
-    }
-    Channel GetNextChannel(out Transponder transponder)
-    {
-      transponder = null;
-      if (_transponders.Count == 0) return null;
-      while (true)
-      {
-        _currentTransponderIndex++;
-        if (_currentTransponderIndex >= _transponders.Count)
-          _currentTransponderIndex = 0;
-        if (_currentTransponderIndex >= _transponders.Count) return null;
-
-        transponder = _transponders[_currentTransponderIndex];
-        int allChecked = 0;
-        while (true)
-        {
-          allChecked++;
-          transponder.Index++;
-          if (transponder.Index >= transponder.Channels.Count)
-            transponder.Index = 0;
-          if (transponder.Index >= transponder.Channels.Count) return null;
-
-          TimeSpan ts = DateTime.Now - transponder.Channels[transponder.Index].LastGrabTime;
-          if (ts.TotalHours < EpgReGrabAfter)
-          {
-            if (allChecked >= transponder.Channels.Count) break;
-            continue; // less then 2 hrs ago
-          }
-          return transponder.Channels[transponder.Index];
         }
       }
     }

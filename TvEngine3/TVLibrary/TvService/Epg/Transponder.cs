@@ -1,3 +1,23 @@
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,12 +32,22 @@ using TvLibrary.Interfaces;
 
 namespace TvService
 {
-  public class Transponder 
+  /// <summary>
+  /// Class which holds all channels for a transponder
+  public class Transponder
   {
+    #region variables
     TuningDetail _detail;
     List<Channel> _channels;
     int _currentChannelIndex;
     bool _inUse;
+    #endregion
+
+    #region ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Transponder"/> class.
+    /// </summary>
+    /// <param name="detail">The detail.</param>
     public Transponder(TuningDetail detail)
     {
       _channels = new List<Channel>();
@@ -25,7 +55,13 @@ namespace TvService
       _currentChannelIndex = -1;
       _inUse = false;
     }
+    #endregion
 
+    #region properties
+    /// <summary>
+    /// Gets or sets a value indicating whether the transponder is in use or not
+    /// </summary>
+    /// <value><c>true</c> if in use; otherwise, <c>false</c>.</value>
     public bool InUse
     {
       get
@@ -38,6 +74,10 @@ namespace TvService
       }
     }
 
+    /// <summary>
+    /// Gets or sets the current channel index.
+    /// </summary>
+    /// <value>The channel index.</value>
     public int Index
     {
       get
@@ -50,6 +90,10 @@ namespace TvService
       }
     }
 
+    /// <summary>
+    /// Gets or sets the channels for this transponder
+    /// </summary>
+    /// <value>The channels.</value>
     public List<Channel> Channels
     {
       get
@@ -61,6 +105,11 @@ namespace TvService
         _channels = value;
       }
     }
+
+    /// <summary>
+    /// Gets or sets the tuning details for this transponder.
+    /// </summary>
+    /// <value>The tuning detail.</value>
     public TuningDetail TuningDetail
     {
       get
@@ -72,6 +121,11 @@ namespace TvService
         _detail = value;
       }
     }
+
+    /// <summary>
+    /// Gets the tuning detail for the current channel.
+    /// </summary>
+    /// <value>The tuning detail.</value>
     public IChannel Tuning
     {
       get
@@ -81,7 +135,12 @@ namespace TvService
         return layer.GetTuningChannelByType(Channels[Index],TuningDetail.ChannelType);
       }
     }
+    #endregion
 
+    #region public members
+    /// <summary>
+    /// Called when epg times out, simply sets the lastgrabtime for the current channel
+    /// </summary>
     public void OnTimeOut()
     {
       if (Index < 0 || Index >= Channels.Count) return;
@@ -91,7 +150,14 @@ namespace TvService
 
     }
 
-    public override bool  Equals(object obj)
+    /// <summary>
+    /// Determines whether the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>.
+    /// </summary>
+    /// <param name="obj">The <see cref="T:System.Object"></see> to compare with the current <see cref="T:System.Object"></see>.</param>
+    /// <returns>
+    /// true if the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>; otherwise, false.
+    /// </returns>
+    public override bool Equals(object obj)
     {
       Transponder other=(Transponder)obj;
       if (other.TuningDetail.ChannelType != TuningDetail.ChannelType) return false;
@@ -102,6 +168,10 @@ namespace TvService
       if (other.TuningDetail.Polarisation != TuningDetail.Polarisation) return false;
       return true;
     }
+
+    /// <summary>
+    /// Logs the transponder info to the log file.
+    /// </summary>
     public void Dump()
     {
       Log.Write("Transponder:{0} {1} {2} {3} {4} {5}", _currentChannelIndex,TuningDetail.ChannelType, TuningDetail.Frequency, TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth, TuningDetail.Polarisation);
@@ -110,12 +180,20 @@ namespace TvService
         Log.Write(" {0}", c.Name);
       }
     }
+
+    /// <summary>
+    /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </returns>
     public override string ToString()
     {
       return string.Format("type:{0} freq:{1} mod:{2} sr:{3} bw:{4} pol:{5}", 
         TuningDetail.ChannelType, TuningDetail.Frequency, 
         TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth, TuningDetail.Polarisation);
-      
     }
+    #endregion
+
   }
 }
