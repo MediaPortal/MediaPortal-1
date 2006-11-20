@@ -1260,6 +1260,8 @@ namespace MediaPortal.GUI.Video
             }
             strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title);
             strLargeThumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, movieDetails.Title);
+
+            pItem.IsPlayed = movieDetails.Watched > 0 ? true : false;
           }
         }
         if (System.IO.File.Exists(strThumb))

@@ -358,6 +358,8 @@ namespace MediaPortal.GUI.Video
         item.AlbumInfoTag = movie;
         item.Year = movie.Year;
         item.DVDLabel = movie.DVDLabel;
+        item.IsPlayed = movie.Watched > 0 ? true : false;
+
         item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
 
         itemlist.Add(item);
