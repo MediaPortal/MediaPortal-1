@@ -440,6 +440,8 @@ namespace MediaPortal.GUI.TV
       GUIWaitCursor.Show();
       try
       {
+        String strDefaultUnseenIcon = GUIGraphicsContext.Skin + @"\Media\defaultVideoBig.png";
+        String strDefaultSeenIcon = GUIGraphicsContext.Skin + @"\Media\defaultVideoSeenBig.png";
         GUIControl.ClearControl(GetID, listAlbums.GetID);
         GUIControl.ClearControl(GetID, listViews.GetID);
 
@@ -461,9 +463,9 @@ namespace MediaPortal.GUI.TV
                 string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVShows, rec.Title);
                 if (System.IO.File.Exists(strLogo))
                 {
-                  item.ThumbnailImage = strLogo;
-                  item.IconImageBig = strLogo;
-                  item.IconImage = strLogo;
+                  item.ThumbnailImage = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
+                  item.IconImageBig = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
+                  item.IconImage = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
                 }
                 add = false;
                 break;
@@ -480,12 +482,12 @@ namespace MediaPortal.GUI.TV
                 strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
                 if (!System.IO.File.Exists(strLogo))
                 {
-                  strLogo = "defaultVideoBig.png";
+                  strLogo = strDefaultUnseenIcon;
                 }
               }
-              item.ThumbnailImage = strLogo;
-              item.IconImageBig = strLogo;
-              item.IconImage = strLogo;
+              item.ThumbnailImage = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
+              item.IconImageBig = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
+              item.IconImage = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
               itemlist.Add(item);
             }
           }
@@ -510,12 +512,12 @@ namespace MediaPortal.GUI.TV
                 strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
                 if (!System.IO.File.Exists(strLogo))
                 {
-                  strLogo = "defaultVideoBig.png";
+                  strLogo = strDefaultUnseenIcon;
                 }
               }
-              item.ThumbnailImage = strLogo;
-              item.IconImageBig = strLogo;
-              item.IconImage = strLogo;
+              item.ThumbnailImage = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
+              item.IconImageBig = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
+              item.IconImage = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
               itemlist.Add(item);
             }
           }
@@ -626,7 +628,10 @@ namespace MediaPortal.GUI.TV
         item1.Label2 = item2.Label2 = strTime;
         if (currentViewMethod == ViewAs.Album)
         {
-          item1.Label3 = item2.Label3 = rec.Genre;
+          if (rec.Genre != "unknown")
+            item1.Label3 = item2.Label3 = rec.Genre;
+          else
+            item1.Label3 = item2.Label3 = String.Empty;
         }
         else
         {
