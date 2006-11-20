@@ -145,8 +145,8 @@
 			<id>1</id>
 			<posX>533</posX>
 			<posY>116</posY>
-			<width>528</width>
-			<height>446</height>
+			<width>703</width>
+			<height>454</height>
 			<colordiffuse>60ffffff</colordiffuse>
 			<texture>tv_background.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -156,9 +156,9 @@
 			<description>video window</description>
 			<type>videowindow</type>
 			<id>99</id>
-			<posX>569</posX>
-			<posY>142</posY>
-			<width>466</width>
+			<posX>572</posX>
+			<posY>146</posY>
+			<width>615</width>
 			<height>346</height>
 			<onleft>2</onleft>
 			<onright>2</onright>
@@ -172,8 +172,8 @@
 			<type>fadelabel</type>
 			<id>13</id>
 			<posX>550</posX>
-			<posY>553</posY>
-			<width>333</width>
+			<posY>563</posY>
+			<width>433</width>
 			<label>#TV.View.title</label>
 			<font>font13</font>
 			<align>left</align>
@@ -185,8 +185,8 @@
 			<description>Channel label</description>
 			<type>label</type>
 			<id>13</id>
-			<posX>1252</posX>
-			<posY>553</posY>
+			<posX>1212</posX>
+			<posY>563</posY>
 			<label>602</label>
 			<font>font13</font>
 			<align>right</align>
@@ -211,7 +211,7 @@
 			<description>Current Channelname</description>
 			<type>fadelabel</type>
 			<id>13</id>
-			<posX>1252</posX>
+			<posX>1212</posX>
 			<posY>580</posY>
 			<width>120</width>
 			<label>#TV.View.channel</label>
@@ -242,7 +242,7 @@
 			<id>1</id>
 			<posX>569</posX>
 			<posY>502</posY>
-			<width>466</width>
+			<width>616</width>
 			<texture>osd_progress_background.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -251,9 +251,9 @@
 			<description>progress bar</description>
 			<type>progress</type>
 			<id>20</id>
-			<posX>548</posX>
+			<posX>558</posX>
 			<posY>501</posY>
-			<width>496</width>
+			<width>632</width>
 			<height>33</height>
 			<label>#TV.View.Percentage</label>
 			<visible>yes</visible>
