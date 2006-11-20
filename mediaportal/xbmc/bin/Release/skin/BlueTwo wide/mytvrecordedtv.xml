@@ -61,11 +61,11 @@
 			<type>fadelabel</type>
 			<description>Selected item Label</description>
 			<id>1</id>
-			<posX>1252</posX>
+			<posX>1233</posX>
 			<posY>93</posY>
 			<label>#selecteditem</label>
 			<align>right</align>
-			<disabledcolor>ff808080</disabledcolor>
+<!-- 			<disabledcolor>ff808080</disabledcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
 		</control>
@@ -114,15 +114,6 @@
 				<textXOff>18</textXOff>
 				<font>font13</font>
 				<label>620</label>
-				<disabledcolor>60ffffff</disabledcolor>
-				<textYOff>6</textYOff>
-				<textureAscendingFocused>arrow_round_up_focus.png</textureAscendingFocused>
-				<textureDescendingFocused>arrow_round_down_focus.png</textureDescendingFocused>
-				<textureAscending>arrow_round_up_nofocus.png</textureAscending>
-				<textureFocus>menu_list_focus.png</textureFocus>
-				<textureNoFocus>menu_list_nofocus.png</textureNoFocus>
-				<textcolor>White</textcolor>
-				<textureDescending>arrow_round_down_nofocus.png</textureDescending>
 			</control>
 			<control>
 				<type>button</type>
@@ -231,7 +222,7 @@
 				<description>Current program title</description>
 				<id>13</id>
 				<posX>493</posX>
-				<posY>586</posY>
+				<posY>555</posY>
 				<width>573</width>
 				<label>#TV.RecordedTV.Title</label>
 				<disabledcolor>ff808080</disabledcolor>
@@ -240,8 +231,9 @@
 				<type>label</type>
 				<description>Current program time</description>
 				<id>14</id>
-				<posX>493</posX>
-				<posY>613</posY>
+				<posX>1233</posX>
+				<posY>555</posY>
+                                <align>right</align>
 				<label>#TV.RecordedTV.Time</label>
 				<textcolor>ffb2d4f5</textcolor>
 			</control>
@@ -250,13 +242,13 @@
 				<description>Description1</description>
 				<id>15</id>
 				<posX>493</posX>
-				<posY>646</posY>
-				<width>573</width>
-				<height>86</height>
+				<posY>588</posY>
+				<width>727</width>
+				<height>106</height>
 				<colordiffuse>ffffffff</colordiffuse>
-				<font>font13</font>
+				<font>font12</font>
 				<label>#TV.RecordedTV.Description</label>
-				<textcolor>FFFFFFFF</textcolor>
+				<textcolor>white</textcolor>
 			</control>
       <!--          <control>
 				<type>label</type>

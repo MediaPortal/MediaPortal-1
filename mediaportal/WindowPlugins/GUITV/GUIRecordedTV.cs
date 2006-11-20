@@ -463,9 +463,9 @@ namespace MediaPortal.GUI.TV
                 string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVShows, rec.Title);
                 if (System.IO.File.Exists(strLogo))
                 {
-                  item.ThumbnailImage = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
-                  item.IconImageBig = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
-                  item.IconImage = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
+                  item.ThumbnailImage = strLogo;
+                  item.IconImageBig = strLogo;
+                  item.IconImage = strLogo;
                 }
                 add = false;
                 break;
@@ -482,12 +482,12 @@ namespace MediaPortal.GUI.TV
                 strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
                 if (!System.IO.File.Exists(strLogo))
                 {
-                  strLogo = strDefaultUnseenIcon;
+                  strLogo = rec.Played > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
                 }
               }
-              item.ThumbnailImage = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
-              item.IconImageBig = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
-              item.IconImage = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
+              item.ThumbnailImage = strLogo;
+              item.IconImageBig = strLogo;
+              item.IconImage = strLogo;
               itemlist.Add(item);
             }
           }
@@ -512,12 +512,12 @@ namespace MediaPortal.GUI.TV
                 strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
                 if (!System.IO.File.Exists(strLogo))
                 {
-                  strLogo = strDefaultUnseenIcon;
+                  strLogo = rec.Played > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
                 }
               }
-              item.ThumbnailImage = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
-              item.IconImageBig = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
-              item.IconImage = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
+              item.ThumbnailImage = strLogo;
+              item.IconImageBig = strLogo;
+              item.IconImage = strLogo;
               itemlist.Add(item);
             }
           }

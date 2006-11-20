@@ -61,11 +61,11 @@
 			<type>fadelabel</type>
 			<description>Selected item Label</description>
 			<id>1</id>
-			<posX>1252</posX>
+			<posX>1233</posX>
 			<posY>93</posY>
 			<label>#selecteditem</label>
 			<align>right</align>
-			<disabledcolor>ff808080</disabledcolor>
+<!-- 			<disabledcolor>ff808080</disabledcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
 		</control>
@@ -158,8 +158,42 @@
 				<onright>11</onright>
 				<onup>3</onup>
 				<ondown>3</ondown>
+<!-- 				<textcolor>ffffffff</textcolor>
+				<downloadColor>ff80ff80</downloadColor>
+				<remoteColor>ffFFA075</remoteColor>  -->
+				<font3>font10</font3>
+				<font2>font10</font2>
+				<textYOff3>38</textYOff3>
+				<textXOff2>736</textXOff2>
+				<IconYOff>10</IconYOff>
+				<textYOff>2</textYOff>
 				<textureFocus>recording_background_focus.png</textureFocus>
+				<font>font13</font>
+				<textureUp>page_up_nofocus.png</textureUp>
+				<textXOff>94</textXOff>
+				<itemHeight>46</itemHeight>
+				<keepaspectratio>no</keepaspectratio>
+				<shadedColor>20ffffff</shadedColor>
+				<textXOff3>189</textXOff3>
+				<textureHeight>66</textureHeight>
+				<selectedColor>FFF8BC70</selectedColor>
+				<itemWidth>46</itemWidth>
 				<textureNoFocus>recording_background_nofocus.png</textureNoFocus>
+				<IconXOff>22</IconXOff>
+				<spaceBetweenItems>6</spaceBetweenItems>
+				<textureDownFocus>page_down_focus.png</textureDownFocus>
+<!-- 				<spinColor>ffffffff</spinColor>
+				<spinPosX>1149</spinPosX>
+				<spinPosY>557</spinPosY>
+				<spinHeight>36</spinHeight>
+				<spinWidth>34</spinWidth>
+				<suffix>|</suffix>
+				<textcolor2>ffffffff</textcolor2>
+				<textcolor3>ffffffff</textcolor3> -->
+				<textYOff2>38</textYOff2>
+				<image>folder_focus.png</image>
+<!-- 				<textureUpFocus>page_up_focus.png</textureUpFocus>
+				<textureDown>page_down_nofocus.png</textureDown> -->
 			</control>
 			<control>
 				<type>listcontrol</type>
@@ -178,7 +212,7 @@
 				<description>Current program title</description>
 				<id>13</id>
 				<posX>493</posX>
-				<posY>586</posY>
+				<posY>555</posY>
 				<width>573</width>
 				<label>#TV.RecordedTV.Title</label>
 				<disabledcolor>ff808080</disabledcolor>
@@ -187,8 +221,9 @@
 				<type>label</type>
 				<description>Current program time</description>
 				<id>14</id>
-				<posX>493</posX>
-				<posY>613</posY>
+				<posX>1233</posX>
+				<posY>555</posY>
+        <align>right</align>
 				<label>#TV.RecordedTV.Time</label>
 				<textcolor>ffb2d4f5</textcolor>
 			</control>
@@ -197,13 +232,13 @@
 				<description>Description1</description>
 				<id>15</id>
 				<posX>493</posX>
-				<posY>646</posY>
-				<width>573</width>
-				<height>86</height>
+				<posY>588</posY>
+				<width>727</width>
+				<height>106</height>
 				<colordiffuse>ffffffff</colordiffuse>
-				<font>font13</font>
+				<font>font12</font>
 				<label>#TV.RecordedTV.Description</label>
-				<textcolor>FFFFFFFF</textcolor>
+				<textcolor>white</textcolor>
 			</control>
       <!--          <control>
 				<type>label</type>

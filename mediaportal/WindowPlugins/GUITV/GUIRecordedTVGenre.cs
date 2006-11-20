@@ -384,11 +384,11 @@ namespace MediaPortal.GUI.TV
             string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
             if (!System.IO.File.Exists(strLogo))
             {
-              strLogo = strDefaultUnseenIcon;
+              strLogo = rec.Played > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
             }
-            item.ThumbnailImage = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
-            item.IconImageBig = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
-            item.IconImage = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
+            item.ThumbnailImage = strLogo;
+            item.IconImageBig = strLogo;
+            item.IconImage = strLogo;
             listAlbums.Add(item);
             listViews.Add(item);
           }
@@ -417,11 +417,11 @@ namespace MediaPortal.GUI.TV
             string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
             if (!System.IO.File.Exists(strLogo))
             {
-              strLogo = strDefaultUnseenIcon;
+              strLogo = rec.Played > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
             }
-            item.ThumbnailImage = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
-            item.IconImageBig = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
-            item.IconImage = rec.Played > 0 ? strDefaultSeenIcon : strLogo;
+            item.ThumbnailImage = strLogo;
+            item.IconImageBig = strLogo;
+            item.IconImage = strLogo;
             listAlbums.Add(item);
             listViews.Add(item);
           }
@@ -656,7 +656,7 @@ namespace MediaPortal.GUI.TV
           string strTime = String.Format("{0} {1} ",
             MediaPortal.Util.Utils.GetShortDayString(rec.StartTime),
             MediaPortal.Util.Utils.SecondsToHMString((int)ts.TotalSeconds));
-          item.Label2 = strTime;
+            item.Label2 = strTime;
           if (rec.Genre != "unknown")
             item.Label3 = rec.Genre;
           else
