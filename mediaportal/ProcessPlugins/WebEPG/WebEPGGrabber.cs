@@ -131,8 +131,8 @@ namespace MediaPortal.ProcessPlugins.WebEPG
           _grabberRunning = true;
           Log.Info("WebEPGGrabber.Run: schedule is due:{0}", DateTime.Now.ToString());
 
-          string configFile = Config.GetSubFolder(Config.Dir.Base, "\\WebEPG\\WebEPG.xml");
-          string xmltvDirectory = Config.GetSubFolder(Config.Dir.Base, "\\xmltv\\");
+          string configFile = Config.GetFile(Config.Dir.Base, "WebEPG", "WebEPG.xml");
+          string xmltvDirectory = Config.GetSubFolder(Config.Dir.Base, "xmltv");
           MediaPortal.EPG.WebEPG grabber = new MediaPortal.EPG.WebEPG(configFile, xmltvDirectory);
           try
           {
