@@ -45,7 +45,6 @@ using MediaPortal.Video.Database;
 using MediaPortal.Music.Database;
 using Core.Util;
 using System.Diagnostics;
-//using Mp3Reader;
 #endregion
 
 
@@ -108,7 +107,7 @@ namespace MediaPortal.GUI.GUIBurner
     }
 
 
-    //private XPBurn.XPBurnCD CDBurner = null;         // Microsoft code from http://msdn.microsoft.com/vcsharp/downloads/samples/xpburn/     
+    private XPBurn.XPBurnCD CDBurner = null;         // Microsoft code from http://msdn.microsoft.com/vcsharp/downloads/samples/xpburn/     
 
 
     // MK Have no idea what this lot is!!
@@ -212,8 +211,8 @@ namespace MediaPortal.GUI.GUIBurner
 
           try
           {
-            //CDBurner = new XPBurn.XPBurnCD();
-            //CDBurner.BurnerDrive = CDBurner.RecorderDrives[recorder].ToString();
+            CDBurner = new XPBurn.XPBurnCD();
+            CDBurner.BurnerDrive = CDBurner.RecorderDrives[recorder].ToString();
           }
           catch
           {
@@ -421,7 +420,7 @@ namespace MediaPortal.GUI.GUIBurner
             switch (currentState)
             {
               case States.STATE_MAIN:
-                //CDBurner.Eject();
+                CDBurner.Eject();
                 break;
             }
             return true;
@@ -1145,7 +1144,7 @@ namespace MediaPortal.GUI.GUIBurner
 
     private void BurnCD(BurnTypes bTyp)
     {
-/*
+
       AutoPlay.StopListening();
       
       GUIPropertyManager.SetProperty("#burner_size", "");
@@ -1237,7 +1236,6 @@ namespace MediaPortal.GUI.GUIBurner
       currentState = States.STATE_MAIN;
       UpdateButtons();
       AutoPlay.StartListening();
- */
     }
 
     private void DeleteTemporaryWavFiles()
@@ -1263,7 +1261,7 @@ namespace MediaPortal.GUI.GUIBurner
     }
 
     private void CdRwFormat()
-    {/*
+    {
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (dlgYesNo != null)
       {
@@ -1303,11 +1301,11 @@ namespace MediaPortal.GUI.GUIBurner
             CDBurner.EraseComplete += new XPBurn.NotifyCompletionStatus(EraseFinished);
           }
         }
-      }*/
+      }
     }
 
     private void CdInfo()
-    {/*
+    {
       string info = GUILocalizeStrings.Get(2123);
       currentState = States.STATE_DISK_INFO;
       UpdateButtons();
@@ -1336,7 +1334,6 @@ namespace MediaPortal.GUI.GUIBurner
         Log.Info("MyBurner:Error CD Info", ex.Message);
       }
       GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_CD_DETAILS, info);
-      */
     }
 
     private void EraseFinished(System.UInt32 status)

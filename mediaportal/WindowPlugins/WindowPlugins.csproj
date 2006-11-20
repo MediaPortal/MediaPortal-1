@@ -252,7 +252,7 @@
     </Reference>
     <Reference Include="XPBurnComponent, Version=1.0.1.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\XPBurnComponent.dll</HintPath>
+      <HintPath>GUIBurner\XPBurnComponent.dll</HintPath>
     </Reference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Name>Core</Name>
