@@ -661,6 +661,8 @@ namespace MediaPortal.GUI.TV
             item.Label3 = rec.Genre;
           else
             item.Label3 = String.Empty;
+          if (rec.Played > 0)
+            item.IsPlayed = true;
         }
       }
     }

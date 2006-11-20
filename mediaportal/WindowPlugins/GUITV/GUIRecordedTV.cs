@@ -638,6 +638,11 @@ namespace MediaPortal.GUI.TV
           if (currentSortMethod == SortMethod.Channel)
             item1.Label2 = item2.Label2 = rec.Channel;
         }
+        if (rec.Played > 0)
+        {
+          item1.IsPlayed = true;
+          item2.IsPlayed = true;
+        }
       }
     }
 

@@ -64,6 +64,7 @@ namespace MediaPortal.GUI.Library
     protected GUIImage _imagePinIcon = null;
     protected bool _isRemote = false;           // indicating if this is a local or remote file
     protected bool _isDownloading = false;            // indicating if this file is being downloaded
+    protected bool _isPlayed = false;                // indicating if playcount > 1
     int _idItem = 0;                // General item id
     bool _retrieveCoverArtAllowed = true;
     int _dimColor = 0x60ffffff;
@@ -558,6 +559,12 @@ namespace MediaPortal.GUI.Library
     private void itemSelectedCallback(IAsyncResult ar)
     {
       OnItemSelected.EndInvoke(ar);
+    }
+
+    public bool IsPlayed
+    {
+      get { return _isPlayed; }
+      set { _isPlayed = value; }
     }
     public bool IsRemote
     {

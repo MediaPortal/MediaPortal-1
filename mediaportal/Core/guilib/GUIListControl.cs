@@ -96,6 +96,8 @@ namespace MediaPortal.GUI.Library
 
     [XMLSkinElement("remoteColor")]
     protected long _remoteColor = 0xffff0000;
+    [XMLSkinElement("playedColor")]
+    protected long _playedColor = 0xffa0d0ff;
     [XMLSkinElement("downloadColor")]
     protected long _downloadColor = 0xff00ff00;
     [XMLSkinElement("shadedColor")]
@@ -532,11 +534,15 @@ namespace MediaPortal.GUI.Library
         if (pItem.Selected)
           dwColor = _selectedColor2;
 
+        if (pItem.IsPlayed)
+          dwColor = _playedColor;
+
         if (pItem.IsRemote)
         {
           dwColor = _remoteColor;
           if (pItem.IsDownloading) dwColor = _downloadColor;
         }
+
 				if (!Focus) dwColor &= DimColor;
 
         int xpos = dwPosX;
@@ -577,6 +583,9 @@ namespace MediaPortal.GUI.Library
         if (pItem.Selected)
           dwColor = _selectedColor;
 
+        if (pItem.IsPlayed)
+          dwColor = _playedColor;
+
         if (pItem.IsRemote)
         {
           dwColor = _remoteColor;
@@ -595,6 +604,9 @@ namespace MediaPortal.GUI.Library
 
         if (pItem.Selected)
           dwColor = _selectedColor2;
+
+        if (pItem.IsPlayed)
+          dwColor = _playedColor;
 
         if (pItem.IsRemote)
         {
@@ -635,6 +647,9 @@ namespace MediaPortal.GUI.Library
 
         if (pItem.Selected)
           dwColor = _selectedColor3;
+
+        if (pItem.IsPlayed)
+          dwColor = _playedColor;
 
         if (pItem.IsRemote)
         {
