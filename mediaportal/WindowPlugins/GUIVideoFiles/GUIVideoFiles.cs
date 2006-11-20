@@ -1251,7 +1251,11 @@ namespace MediaPortal.GUI.Video
         }
         if (file != string.Empty)
         {
+          byte[] resumeData = null;
+          int fileId = VideoDatabase.GetFileId(file);
           int id = VideoDatabase.GetMovieInfo(file, ref movieDetails);
+          bool foundWatched = false;
+
           if (id >= 0)
           {
             if (MediaPortal.Util.Utils.IsDVD(pItem.Path))
@@ -1261,9 +1265,27 @@ namespace MediaPortal.GUI.Video
             strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title);
             strLargeThumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, movieDetails.Title);
 
-            pItem.IsPlayed = movieDetails.Watched > 0 ? true : false;
+            if (movieDetails.Watched > 0)
+              foundWatched = true;
           }
+          // do not double check
+          if (!foundWatched)
+          {
+            if (fileId >= 0)
+            {
+              if (VideoDatabase.GetMovieStopTime(fileId) > 0)
+                foundWatched = true;
+              else
+              {
+                VideoDatabase.GetMovieStopTimeAndResumeData(fileId, out resumeData);
+                if (resumeData != null)
+                  foundWatched = true;
+              }
+            }
+          }
+          pItem.IsPlayed = foundWatched;
         }
+
         if (System.IO.File.Exists(strThumb))
         {
           pItem.ThumbnailImage = strThumb;
