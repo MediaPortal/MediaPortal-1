@@ -53,7 +53,9 @@ namespace MediaPortal.EPG.TestWebEPG
       try
       {
 #endif
-        WebEPG epg = new WebEPG();
+      string configFile = Environment.CurrentDirectory + "\\WebEPG\\WebEPG.xml";
+      string xmltvDirectory = Environment.CurrentDirectory + "\\xmltv\\";
+        WebEPG epg = new WebEPG(configFile, xmltvDirectory);
         epg.Import();
 #if !DEBUG
       }

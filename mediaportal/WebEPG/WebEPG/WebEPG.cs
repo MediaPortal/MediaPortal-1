@@ -85,13 +85,13 @@ namespace MediaPortal.EPG
     #endregion
 
     #region Constructors/Destructors
-    public WebEPG()
+    public WebEPG(string configFile, string xmltvDirectory)
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
 
-      _configFile = Environment.CurrentDirectory + "\\WebEPG\\WebEPG.xml";
-      _xmltvDirectory = Environment.CurrentDirectory + "\\xmltv\\";
+      _configFile = configFile; 
+      _xmltvDirectory = xmltvDirectory;
     }
     #endregion
 
