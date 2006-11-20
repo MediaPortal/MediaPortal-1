@@ -112,8 +112,6 @@ copy ..\..\..\RemotePlugins\bin\debug\RemotePlugins.dll .
 
 
 copy ..\..\..\sqlite.dll .
-copy ..\..\..\tag.exe .
-copy ..\..\..\tag.cfg .
 copy ..\..\..\TaskScheduler.dll .
 copy ..\..\..\AxInterop.WMPLib.dll .
 copy ..\..\..\Interop.WMPLib.dll .
