@@ -45,6 +45,11 @@ namespace MediaPortal.GUI.TV
   /// </summary>
   public class GUIRecordedTV : GUIWindow, IComparer<GUIListItem>
   {
+    public GUIRecordedTV()
+    {
+      GetID = (int)GUIWindow.Window.WINDOW_RECORDEDTV;
+    }
+
     #region variables
     enum Controls
     {
@@ -77,25 +82,14 @@ namespace MediaPortal.GUI.TV
     string currentShow = String.Empty;
     bool _creatingThumbNails = false;
 
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]
-    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(5)]
-    protected GUIButtonControl btnView = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnCleanup = null;
-
-    [SkinControlAttribute(10)]
-    protected GUIListControl listAlbums = null;
-    [SkinControlAttribute(11)]
-    protected GUIListControl listViews = null;
+    [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(5)]    protected GUIButtonControl btnView = null;
+    [SkinControlAttribute(6)]    protected GUIButtonControl btnCleanup = null;
+    [SkinControlAttribute(10)]   protected GUIListControl listAlbums = null;
+    [SkinControlAttribute(11)]   protected GUIListControl listViews = null;
 
     #endregion
-    public GUIRecordedTV()
-    {
-      GetID = (int)GUIWindow.Window.WINDOW_RECORDEDTV;
-    }
 
     #region Serialisation
     void LoadSettings()
@@ -371,33 +365,40 @@ namespace MediaPortal.GUI.TV
       dlg.Reset();
       dlg.SetHeading(rec.Title);
 
-      for (int i = 655; i <= 656; ++i)
-      {
-        dlg.Add(GUILocalizeStrings.Get(i));
-      }
+      dlg.AddLocalizedString(655);     //Play recorded tv
+      dlg.AddLocalizedString(656);     //Delete recorded tv
+      if (pItem.IsPlayed)
+        dlg.AddLocalizedString(830); //Reset watched status
       dlg.Add(GUILocalizeStrings.Get(1048));//Settings
 
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1) return;
-      switch (dlg.SelectedLabel)
+      switch (dlg.SelectedId)
       {
-        case 1: // delete
+        case 656: // delete
           {
             OnDeleteRecording(iItem);
           }
           break;
 
-        case 0: // play
+        case 655: // play
           {
             if (OnPlayRecording(iItem))
               return;
           }
-          break;
+          break;        
 
-        case 2: // Settings
+        case 1048: // Settings
           {
             GUITvRecordedInfo.CurrentProgram = rec;
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_RECORDED_INFO, true);
+          }
+          break;
+
+        case 830: // Reset watched status
+          {
+            ResetWatchedStatus(rec.FileName);
+            LoadDirectory();
           }
           break;
       }
@@ -978,8 +979,7 @@ namespace MediaPortal.GUI.TV
       return 0;
     }
     #endregion
-
-
+    
     #region playback events
     private void OnPlayRecordingBackStopped(MediaPortal.Player.g_Player.MediaType type, int stoptime, string filename)
     {
@@ -1000,12 +1000,15 @@ namespace MediaPortal.GUI.TV
 
     private void OnPlayRecordingBackEnded(MediaPortal.Player.g_Player.MediaType type, string filename)
     {
-      if (type != g_Player.MediaType.Recording) return;
+      if (type != g_Player.MediaType.Recording)
+        return;
       int fileid = VideoDatabase.GetFileId(filename);
       int movieid = VideoDatabase.GetMovieId(filename);
-      if (fileid < 0) return;
+      if (fileid < 0)
+        return;
 
-      VideoDatabase.DeleteMovieStopTime(fileid);
+      if (VideoDatabase.HasMovieInfo(filename))
+        VideoDatabase.DeleteMovieStopTime(fileid);
 
       g_Player.Stop();
 
@@ -1034,6 +1037,23 @@ namespace MediaPortal.GUI.TV
       VideoDatabase.AddMovieFile(filename);
     }
 
+    private void ResetWatchedStatus(string filename)
+    {
+      if (VideoDatabase.HasMovieInfo(filename))
+      {
+        IMDBMovie movieDetails = new IMDBMovie();
+        int idMovie = VideoDatabase.GetMovieInfo(filename, ref movieDetails);
+        movieDetails.Watched = 0;
+        VideoDatabase.SetWatched(movieDetails);
+      }
+      int fileId = VideoDatabase.GetFileId(filename);
+      VideoDatabase.DeleteMovieStopTime(fileId);
+
+      TVRecorded rec = new TVRecorded();
+      TVDatabase.GetRecordedTVByFilename(filename, ref rec);
+      rec.Played = 0;
+      TVDatabase.PlayedRecordedTV(rec);      
+    }
     #endregion
 
     void SortChanged(object sender, SortEventArgs e)

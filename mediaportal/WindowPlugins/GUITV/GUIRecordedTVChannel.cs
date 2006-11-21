@@ -192,8 +192,7 @@ namespace MediaPortal.GUI.TV
     }
 
     protected override void OnPageDestroy(int newWindowId)
-    {
-      base.OnPageDestroy(newWindowId);
+    {    
 
       SaveSettings();
       if (!GUIGraphicsContext.IsTvWindow(newWindowId))
@@ -208,6 +207,7 @@ namespace MediaPortal.GUI.TV
           }
         }
       }
+      base.OnPageDestroy(newWindowId);
     }
 
     protected override void OnPageLoad()

@@ -195,7 +195,6 @@ namespace MediaPortal.GUI.TV
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      base.OnPageDestroy(newWindowId);
 
       SaveSettings();
       if (!GUIGraphicsContext.IsTvWindow(newWindowId))
@@ -210,6 +209,7 @@ namespace MediaPortal.GUI.TV
           }
         }
       }
+      base.OnPageDestroy(newWindowId);
     }
 
     protected override void OnPageLoad()
@@ -758,6 +758,7 @@ namespace MediaPortal.GUI.TV
             if (!dlgYesNo.IsConfirmed) stoptime = 0;
           }
         }
+        Log.Info("GUIRecordedTV Play:{0}", rec.FileName);
         if (g_Player.Play(rec.FileName))
         {
           if (MediaPortal.Util.Utils.IsVideo(rec.FileName))
