@@ -23,6 +23,7 @@
 #include "section.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
+#include "TsHeader.h"
 
 using namespace Mediaportal;
 
@@ -61,5 +62,6 @@ private:
 	byte					m_pmtPrevData[MAX_SECTION_LENGTH];
 	int						m_iPmtVersion;
 	int						m_iPmtLength;
+  CTsHeader     m_tsHeader;
 	CCriticalSection m_section;
 };

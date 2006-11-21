@@ -24,6 +24,7 @@
 #include "mhwdecoder.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
+#include "Tsheader.h"
 #include <vector>
 using namespace std;
 
@@ -51,5 +52,6 @@ private:
 	bool				m_bGrabbing;
 	bool				m_bDone;
 	CCriticalSection m_section;
+  CTsHeader             m_tsHeader;
 };
 

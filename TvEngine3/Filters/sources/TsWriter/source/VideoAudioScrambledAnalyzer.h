@@ -20,6 +20,7 @@
  */
 #pragma once
 
+#include "TsHeader.h"
 class CVideoAudioScrambledAnalyzer
 {
 public:
@@ -46,8 +47,9 @@ public:
 
 private:
   void Dump(bool audio, bool video);
-		int m_videoPid;
-		int m_audioPid;
-		enum ScrambleState m_bAudioEncrypted;
-		enum ScrambleState m_bVideoEncrypted;
+	int m_videoPid;
+	int m_audioPid;
+	enum ScrambleState m_bAudioEncrypted;
+	enum ScrambleState m_bVideoEncrypted;
+  CTsHeader  m_tsheader;
 };

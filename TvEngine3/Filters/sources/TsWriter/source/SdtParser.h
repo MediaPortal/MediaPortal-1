@@ -22,6 +22,7 @@
 #include "sectiondecoder.h"
 #include "PidTable.h"
 #include "ChannelInfo.h"
+#include "tsheader.h"
 #include <vector>
 using namespace std;
 
@@ -31,6 +32,7 @@ public:
 	virtual void OnSdtReceived(CChannelInfo sdtInfo)=0;
 };
 
+#define PID_SDT 0x11
 
 class CSdtParser: public  CSectionDecoder
 {
@@ -46,4 +48,5 @@ private:
   void DVB_GetService(BYTE *b,CChannelInfo& info);
   ISdtCallBack* m_pCallback;
   bool m_bFound;
+  CTsHeader             m_tsHeader;
 };

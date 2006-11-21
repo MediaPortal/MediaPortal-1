@@ -28,7 +28,6 @@
 #include <initguid.h>
 
 #include "recorder.h"
-#include "tsheader.h"
 
 
 extern void LogDebug(const char *fmt, ...) ;
@@ -185,15 +184,15 @@ void CRecorder::Write(byte* buffer, int len)
 void CRecorder::WriteTs(byte* tsPacket)
 {
 	if (!m_bRecording) return;
-	CTsHeader header(tsPacket);
-	if (header.TransportError) return;
-  if (header.Pid==0)
+	m_tsHeader.Decode(tsPacket);
+	if (m_tsHeader.TransportError) return;
+  if (m_tsHeader.Pid==0)
   {
     //PAT
     Write(tsPacket,188);
     return;
   }
-  if (header.Pid==m_multiPlexer.GetPcrPid())
+  if (m_tsHeader.Pid==m_multiPlexer.GetPcrPid())
   {
     //PCR
     Write(tsPacket,188);
@@ -202,7 +201,7 @@ void CRecorder::WriteTs(byte* tsPacket)
   itvecPids it = m_vecPids.begin();
   while (it!=m_vecPids.end())
   {
-    if (header.Pid==*it)
+    if (m_tsHeader.Pid==*it)
     {
       Write(tsPacket,188);
       return;

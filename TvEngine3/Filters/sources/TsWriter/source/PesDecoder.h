@@ -20,6 +20,7 @@
  */
 #pragma once
 
+#include "tsHeader.h"
 #define MAX_PES_PACKET 0x80000
 class CPesCallback
 {
@@ -52,4 +53,5 @@ private:
 	int						m_iWritePos;
 	int						m_iMaxLength;
 	int						m_iStreamId;
+  CTsHeader     m_tsHeader;
 };

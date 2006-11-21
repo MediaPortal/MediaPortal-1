@@ -27,7 +27,6 @@
 #include <initguid.h>
 
 #include "PatParser.h"
-#include "tsheader.h"
 
 extern DWORD crc32 (char *data, int len);
 void LogDebug(const char *fmt, ...) ;
@@ -38,7 +37,7 @@ CPatParser::CPatParser(void)
 	//m_pConditionalAccess=NULL;
   Reset(NULL);
   SetTableId(0);
-  SetPid(0);
+  SetPid(PID_PAT);
 }
 
 //*****************************************************************************
@@ -139,9 +138,9 @@ int CPatParser::Count()
 {
   if (m_vctParser.Count() > 0)
   {
-    return m_mapChannels.size();
+    return (int)m_mapChannels.size();
   }
-  return m_mapChannels.size();
+  return (int)m_mapChannels.size();
 }
 
 //*****************************************************************************
@@ -233,19 +232,41 @@ void CPatParser::OnPidsReceived(CPidTable pidTable)
 //*****************************************************************************
 void CPatParser::OnTsPacket(byte* tsPacket)
 {
-	m_nitDecoder.OnTsPacket(tsPacket);
-  m_vctParser.OnTsPacket(tsPacket);
+  int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
+
+  if (pid==PID_NIT) 
+  {
+    m_nitDecoder.OnTsPacket(tsPacket);
+    return;
+  }
+  if (pid==PID_VCT) 
+  {
+    m_vctParser.OnTsPacket(tsPacket);
+    return;
+  }
 	
-	m_sdtParser.OnTsPacket(tsPacket);
-  m_sdtParserOther.OnTsPacket(tsPacket);
+	if (pid==PID_SDT)
+  {
+    m_sdtParser.OnTsPacket(tsPacket);
+    m_sdtParserOther.OnTsPacket(tsPacket);
+    return;
+  }
+
+  if (pid==PID_PAT)
+  {
+    CSectionDecoder::OnTsPacket(tsPacket);
+    return;
+  }
 
   for (itPmtParser it=m_mapPmtParsers.begin(); it != m_mapPmtParsers.end() ;++it)
   {
     CPmtParser* parser=it->second;
-		parser->OnTsPacket(tsPacket);
+    if (pid==parser->GetPid())
+    {
+		  parser->OnTsPacket(tsPacket);
+      return;
+    }
   }
-  CSectionDecoder::OnTsPacket(tsPacket);
-	
 }
 
 //*****************************************************************************
@@ -253,8 +274,8 @@ void CPatParser::OnNewSection(CSection& sections)
 {
   byte* section=sections.Data;
 
-  CTsHeader header(section);
-  int start=header.PayLoadStart;
+  m_tsHeader.Decode(section);
+  int start=m_tsHeader.PayLoadStart;
   int table_id = section[start];
   if (table_id!=0) return ;
   int section_syntax_indicator = (section[start+1]>>7) & 1;

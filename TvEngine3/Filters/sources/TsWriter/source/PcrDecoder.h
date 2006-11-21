@@ -20,6 +20,7 @@
  */
 #pragma once
 
+#include "tsheader.h"
 class CPcrDecoder
 {
 public:
@@ -40,4 +41,5 @@ private:
 	int    m_pcrPid;
 	UINT64 m_pcrHigh;
 	UINT64 m_pcrLow;
+  CTsHeader m_tsHeader;
 };

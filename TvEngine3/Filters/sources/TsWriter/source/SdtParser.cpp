@@ -21,12 +21,11 @@
 #pragma warning(disable : 4995)
 #include <windows.h>
 #include "sdtParser.h"
-#include "tsheader.h"
 
 void LogDebug(const char *fmt, ...) ;
 CSdtParser::CSdtParser(void)
 {
-  SetPid(0x11);
+  SetPid(PID_SDT);
   SetTableId(0x42);
   Reset();
   m_pCallback=NULL;
@@ -56,8 +55,8 @@ void  CSdtParser::OnNewSection(CSection& sections)
 {
   byte* section=(&sections.Data)[0];
   int sectionLen=sections.SectionLength;
-  CTsHeader header(section);
-  int start=header.PayLoadStart;
+  m_tsHeader.Decode(section);
+  int start=m_tsHeader.PayLoadStart;
   int table_id = section[start+0];
 	if (table_id!=0x42 && table_id!=0x46) return;
   int section_syntax_indicator = (section[start+1]>>7) & 1;

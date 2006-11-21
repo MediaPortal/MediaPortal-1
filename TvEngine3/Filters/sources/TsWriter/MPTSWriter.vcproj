@@ -49,6 +49,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="0"
+				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="C:\DXSDK\Samples\C++\DirectShow\BaseClasses,C:\DXSDK\Include"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;NDEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;_X86_=1;WINVER=0x0400"
 				StringPooling="false"

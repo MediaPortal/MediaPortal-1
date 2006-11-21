@@ -237,7 +237,7 @@ bool CMhwDecoder::ParseThemes(byte* data, int dataLen)
 int CMhwDecoder::GetTitleCount()
 {
 	CEnterCriticalSection lock (m_critSection);
-	return m_vecTitles.size();
+	return (int)m_vecTitles.size();
 }
 
 void CMhwDecoder::GetTitle(int program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
@@ -263,13 +263,13 @@ void CMhwDecoder::GetTitle(int program, WORD* id, WORD* transportId, WORD* netwo
 		return;
 	}
 	MHWProgramm& prog=m_vecTitles[program];
-	*id = prog.ID;
+	*id = (WORD)prog.ID;
 	*transportId=prog.TransportStreamID;
 	*networkId=prog.NetworkID;
 	*channelId=prog.ChannelID;
-	*programId=prog.ID;
+	*programId=(WORD)prog.ID;
 	*themeId=prog.ThemeID;
-	*PPV=prog.PPV;
+	*PPV=(WORD)prog.PPV;
 	*Summaries=prog.Summaries;
 	*duration=prog.Duration;
 	*dateStart=prog.dateStart;

@@ -20,7 +20,6 @@
  */
 #include <windows.h>
 #include "VideoAudioScrambledAnalyzer.h"
-#include "TsHeader.h"
 #include "packetsync.h"
 
 extern void LogDebug(const char *fmt, ...) ;
@@ -71,18 +70,21 @@ bool CVideoAudioScrambledAnalyzer::IsVideoScrambled()
 
 void CVideoAudioScrambledAnalyzer::Reset()
 {
-		LogDebug("analyzer: reset");
-		m_bVideoEncrypted=Unknown;
-		m_bAudioEncrypted=Unknown;
+	LogDebug("analyzer: reset");
+	m_bVideoEncrypted=Unknown;
+	m_bAudioEncrypted=Unknown;
 }
 
 void CVideoAudioScrambledAnalyzer::OnTsPacket(byte* tsPacket)
 {
-	CTsHeader  header(tsPacket);
-	if (header.SyncByte != TS_PACKET_SYNC) return;
-	if (header.TransportError==true) return;
-	BOOL scrambled= (header.TScrambling!=0);
-	if (header.Pid==m_audioPid && m_audioPid > 0x10) 
+  int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
+  if (pid!=m_videoPid && pid!=m_audioPid) return;
+
+	m_tsheader.Decode(tsPacket);
+	if (m_tsheader.SyncByte != TS_PACKET_SYNC) return;
+	if (m_tsheader.TransportError==true) return;
+	BOOL scrambled= (m_tsheader.TScrambling!=0);
+	if (m_tsheader.Pid==m_audioPid && m_audioPid > 0x10) 
 	{
     enum ScrambleState newState;
     if (scrambled)
@@ -96,7 +98,7 @@ void CVideoAudioScrambledAnalyzer::OnTsPacket(byte* tsPacket)
     }
 	}
 
-	if (header.Pid==m_videoPid && m_videoPid > 0x10) 
+	if (m_tsheader.Pid==m_videoPid && m_videoPid > 0x10) 
 	{
     enum ScrambleState newState;
     if (scrambled)

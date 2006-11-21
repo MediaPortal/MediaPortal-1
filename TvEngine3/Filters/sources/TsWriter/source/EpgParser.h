@@ -24,6 +24,7 @@
 #include "epgdecoder.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
+#include "TsHeader.h"
 #include <vector>
 using namespace std;
 class CEpgParser :  public ISectionCallback
@@ -50,4 +51,5 @@ private:
 	CEpgDecoder m_epgDecoder;
 	bool				m_bGrabbing;
 	CCriticalSection m_section;
+  CTsHeader             m_tsHeader;
 };

@@ -21,6 +21,7 @@
 #pragma once
 #include "sectiondecoder.h"
 #include "PidTable.h"
+#include "tsheader.h"
 #include <map>
 using namespace std;
 
@@ -59,4 +60,5 @@ private:
   int				m_pmtPid;
 	bool			_isFound;
 	IPmtCallBack* m_pmtCallback;
+  CTsHeader             m_tsHeader;
 };

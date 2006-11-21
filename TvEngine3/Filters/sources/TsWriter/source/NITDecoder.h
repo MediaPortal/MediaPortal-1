@@ -23,6 +23,9 @@
 #include "section.h"
 #include <vector>
 using namespace std;
+
+#define PID_NIT 0x10
+
 class CNITDecoder: public  CSectionDecoder
 {
 public:

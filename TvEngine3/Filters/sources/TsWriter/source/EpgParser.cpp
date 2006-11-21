@@ -20,8 +20,9 @@
  */
 #include <windows.h>
 #include "EpgParser.h"
-#include "TsHeader.h"
 #pragma warning(disable : 4995)
+
+#define PID_EPG 0x12
 
 extern void LogDebug(const char *fmt, ...) ;
 CEpgParser::CEpgParser(void)
@@ -31,7 +32,7 @@ CEpgParser::CEpgParser(void)
   for (int i=0x4e; i <=0x6f;++i)
   {
     CSectionDecoder* pDecoder= new CSectionDecoder();
-    pDecoder->SetPid(0x12);
+    pDecoder->SetPid(PID_EPG);
     pDecoder->SetTableId(i);
     m_vecDecoders.push_back(pDecoder);
 		pDecoder->SetCallBack(this);
@@ -114,6 +115,9 @@ void  CEpgParser::GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageInde
 void CEpgParser::OnTsPacket(byte* tsPacket)
 {
 	if (m_bGrabbing==false) return;
+  int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
+  if (pid!=PID_EPG) return;
+
 	CEnterCriticalSection enter(m_section);
 	for (int i=0; i < (int)m_vecDecoders.size();++i)
 	{
@@ -128,8 +132,8 @@ void CEpgParser::OnNewSection(int pid, int tableId, CSection& sections)
 	try
 	{
 		//LogDebug("epg new section pid:%x tableid:%x onid:%x sid:%x len:%x",pid,tableId,sections.NetworkId,sections.TransportId,sections.SectionLength);
-    CTsHeader header(&sections.Data[0]);
-    byte* section=&(sections.Data[header.PayLoadStart]);
+    m_tsHeader.Decode(&sections.Data[0]);
+    byte* section=&(sections.Data[m_tsHeader.PayLoadStart]);
 		int sectionLength=sections.SectionLength;
 		if (sectionLength>0)
 		{

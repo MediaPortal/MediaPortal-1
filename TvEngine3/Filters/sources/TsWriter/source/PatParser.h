@@ -26,15 +26,19 @@
 #include "NitDecoder.h"
 #include "channelinfo.h"
 #include "VirtualChannelTableParser.h"
+#include "tsheader.h"
 //#include "conditionalAccess.h"
 #include <vector>
 #include <map>
 using namespace std;
 
+
 DECLARE_INTERFACE_(IChannelScanCallback, IUnknown)
 {
 	STDMETHOD(OnScannerDone)()PURE;
 };
+
+#define PID_PAT 0x0
 
 class CPatParser : public CSectionDecoder, public IPmtCallBack, public ISdtCallBack, public IAtscCallback
 {
@@ -73,4 +77,5 @@ private:
   bool m_bDumped;
 	IChannelScanCallback* m_pCallback;
   DWORD                 m_tickCount;
+  CTsHeader             m_tsHeader;
 };

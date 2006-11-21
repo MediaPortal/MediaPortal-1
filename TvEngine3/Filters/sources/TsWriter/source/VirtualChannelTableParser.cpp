@@ -23,20 +23,19 @@
 #include <streams.h>
 #include <bdatypes.h>
 #include "VirtualChannelTableParser.h"
-#include "tsheader.h"
 
 extern void LogDebug(const char *fmt, ...) ;
 CVirtualChannelTableParser::CVirtualChannelTableParser(void)
 {
   m_decoder[0] = new CSectionDecoder();
-  m_decoder[0]->SetPid(0x1ffb);
+  m_decoder[0]->SetPid(PID_VCT);
   m_decoder[0]->SetTableId(0xc8);
   m_decoder[0]->SetCallBack(this);
   m_decoder[0]->Reset();
 
   
   m_decoder[1] = new CSectionDecoder();
-  m_decoder[1]->SetPid(0x1ffb);
+  m_decoder[1]->SetPid(PID_VCT);
   m_decoder[1]->SetTableId(0xc9);
   m_decoder[1]->SetCallBack(this);
   m_decoder[1]->Reset();
@@ -76,7 +75,7 @@ void CVirtualChannelTableParser::OnTsPacket(byte* tsPacket)
 
 int CVirtualChannelTableParser::Count()
 {
-  return m_vecChannels.size();
+  return (int)m_vecChannels.size();
 }
 
 bool CVirtualChannelTableParser::GetChannel(int index,CChannelInfo& info)
@@ -103,8 +102,8 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
 {
   byte* section=newSection.Data;
   
-  CTsHeader header(section);
-  int startOff=header.PayLoadStart;
+  m_tsHeader.Decode(section);
+  int startOff=m_tsHeader.PayLoadStart;
   byte* buf=&section[startOff];
   int table_id = buf[0];
   if (table_id!=0xc8 && table_id != 0xc9) return;

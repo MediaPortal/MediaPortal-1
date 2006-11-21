@@ -152,4 +152,5 @@ private:
   bool    m_bDetermineNewStartPcr;
 	bool		m_bStartPcrFound;
   int     m_iPacketCounter;
+  CTsHeader m_tsHeader;
 };

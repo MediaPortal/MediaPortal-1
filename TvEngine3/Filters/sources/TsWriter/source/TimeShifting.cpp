@@ -28,7 +28,6 @@
 #include <initguid.h>
 
 #include "timeshifting.h"
-#include "tsheader.h"
 #include "pmtparser.h"
 
 #define PID_PAT   0
@@ -567,9 +566,9 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 {
 	if (m_pcrPid<0 || m_vecPids.size()==0|| m_pmtPid<0) return;
 
-	CTsHeader header(tsPacket);
-	if (header.TransportError) return;
-	if (header.TScrambling!=0) return;
+  m_tsHeader.Decode(tsPacket);
+	if (m_tsHeader.TransportError) return;
+	if (m_tsHeader.TScrambling!=0) return;
   if (m_iPacketCounter>=100)
   {
     WriteFakePAT();
@@ -578,14 +577,14 @@ void CTimeShifting::WriteTs(byte* tsPacket)
   }
 
   int PayLoadUnitStart=0;
-  if (header.PayloadUnitStart) PayLoadUnitStart=1;
+  if (m_tsHeader.PayloadUnitStart) PayLoadUnitStart=1;
 
 
 	itvecPids it=m_vecPids.begin();
 	while (it!=m_vecPids.end())
 	{
 		PidInfo& info=*it;
-		if (header.Pid==info.realPid)
+		if (m_tsHeader.Pid==info.realPid)
 		{
 			if (info.serviceType==SERVICE_TYPE_VIDEO_MPEG1 || info.serviceType==SERVICE_TYPE_VIDEO_MPEG2||info.serviceType==SERVICE_TYPE_VIDEO_MPEG4||info.serviceType==SERVICE_TYPE_VIDEO_H264)
 			{
@@ -604,10 +603,10 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				int pid=info.fakePid;
 				pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 				pkt[2]=(pid&0xff);
-				if (header.Pid==m_pcrPid) PatchPcr(pkt,header);
+				if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
 				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				{
-				  if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
+				  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);
 					Write(pkt,188);
           m_iPacketCounter++;
 				}
@@ -632,11 +631,11 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				int pid=info.fakePid;
 				pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 				pkt[2]=(pid&0xff);
-				if (header.Pid==m_pcrPid) PatchPcr(pkt,header);
+				if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
 				
 				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				{
-				  if (PayLoadUnitStart)  PatchPtsDts(pkt,header,m_startPcr);
+				  if (PayLoadUnitStart)  PatchPtsDts(pkt,m_tsHeader,m_startPcr);
 					Write(pkt,188);
           m_iPacketCounter++;
 				}
@@ -651,10 +650,10 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				int pid=info.fakePid;
 				pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 				pkt[2]=(pid&0xff);
-				if (header.Pid==m_pcrPid) PatchPcr(pkt,header);
+				if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
 				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				{
-				  if (PayLoadUnitStart) PatchPtsDts(pkt,header,m_startPcr);
+				  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);
 					Write(pkt,188);
           m_iPacketCounter++;
 				}
@@ -667,7 +666,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 			int pid=info.fakePid;
 			pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 			pkt[2]=(pid&0xff);
-			if (header.Pid==m_pcrPid) PatchPcr(pkt,header);
+			if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
 			if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 			{
 				Write(pkt,188);
@@ -678,12 +677,12 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 		++it;
 	}
 
-  if (header.Pid==m_pcrPid)
+  if (m_tsHeader.Pid==m_pcrPid)
   {
     byte pkt[200];
     memcpy(pkt,tsPacket,188);
     int pid=FAKE_PCR_PID;
-		PatchPcr(pkt,header);
+    PatchPcr(pkt,m_tsHeader);
 		pkt[1]=( (pid>>8) & 0x1f);
 		pkt[2]=(pid&0xff);
 		pkt[3]=(2<<4);// Adaption Field Control==adaptation field only, no payload

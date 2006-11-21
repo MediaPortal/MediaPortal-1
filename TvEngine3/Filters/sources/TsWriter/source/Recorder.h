@@ -24,6 +24,7 @@
 #include "criticalsection.h"
 #include "entercriticalsection.h"
 #include "timeshifting.h"
+#include "tsheader.h"
 #include <vector>
 using namespace std;
 using namespace Mediaportal;
@@ -68,6 +69,7 @@ private:
 	CMultiplexer m_multiPlexer;
 	bool				 m_bRecording;
 	char				 m_szFileName[2048];
+  CTsHeader m_tsHeader;
 	FileWriter* m_pRecordFile;
 	CCriticalSection m_section;
   TimeShiftingMode     m_timeShiftMode;

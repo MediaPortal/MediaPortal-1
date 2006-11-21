@@ -28,7 +28,6 @@
 #include <initguid.h>
 
 #include "pmtgrabber.h"
-#include "TsHeader.h"
 
 
 extern void LogDebug(const char *fmt, ...) ;
@@ -78,8 +77,8 @@ void CPmtGrabber::OnTsPacket(byte* tsPacket)
 	if (m_pCallback==NULL) return;
 	if (GetPid()<=0) return;
 	
-  CTsHeader header(tsPacket);
-  if (header.Pid != GetPid()) return;
+  m_tsHeader.Decode(tsPacket);
+  if (m_tsHeader.Pid != GetPid()) return;
  // LogDebug(" got tspacket pid:%x", GetPid());
 	CEnterCriticalSection enter(m_section);
 	CSectionDecoder::OnTsPacket(tsPacket);
@@ -93,9 +92,9 @@ void CPmtGrabber::OnNewSection(CSection& section)
  		if (section.Version == m_iPmtVersion) return;
 	  CEnterCriticalSection enter(m_section);
 
-		CTsHeader header(section.Data);
-		int start=header.PayLoadStart;
-    int table_id = section.Data[start+0];
+		m_tsHeader.Decode(section.Data);
+		int start=m_tsHeader.PayLoadStart;
+    int table_id = section.Data[start];
 	  if (table_id!=2) return;
     if (section.SectionLength<0 || section.SectionLength>=MAX_SECTION_LENGTH) return;
 

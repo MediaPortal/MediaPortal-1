@@ -22,6 +22,7 @@
 #include "sectiondecoder.h"
 #include "channelinfo.h"
 #include "pidtable.h"
+#include "tsHeader.h"
 #include <vector>
 using namespace std;
 
@@ -30,6 +31,8 @@ class IAtscCallback
 public:
 	virtual void OnChannel(CChannelInfo info)=0;
 };
+
+#define PID_VCT 0x1ffb
 
 class CVirtualChannelTableParser : ISectionCallback
 {
@@ -55,4 +58,5 @@ private:
 	int m_iVctVersionC9;
   CSectionDecoder* m_decoder[2];
   IAtscCallback* m_pCallback;
+  CTsHeader             m_tsHeader;
 };

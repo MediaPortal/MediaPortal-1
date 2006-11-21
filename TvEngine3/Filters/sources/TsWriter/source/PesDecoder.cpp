@@ -21,7 +21,6 @@
 #include <windows.h>
 #include <stdio.h>
 #include "pesdecoder.h"
-#include "TsHeader.h"
 #include "packetsync.h"
 
 
@@ -86,15 +85,14 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 {
   if (tsPacket==NULL) return false;
 	if (m_pid==-1) return false;
-	
-	CTsHeader  header(tsPacket);
-	if (header.Pid != m_pid) return false;
-	if (header.SyncByte != TS_PACKET_SYNC) 
+	m_tsHeader.Decode(tsPacket);
+	if (m_tsHeader.Pid != m_pid) return false;
+	if (m_tsHeader.SyncByte != TS_PACKET_SYNC) 
 	{
 		LogDebug("pesdecoder pid:%x sync error", m_pid);
 		return false;
 	}
-  if (header.TransportError) 
+  if (m_tsHeader.TransportError) 
 	{
     m_bStart=false;
 		m_iWritePos=0;
@@ -102,17 +100,17 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 		return false;
 	}
 
-	BOOL scrambled= (header.TScrambling!=0);
+	BOOL scrambled= (m_tsHeader.TScrambling!=0);
 	if (scrambled) return false; 
-	if ( header.AdaptionFieldOnly() ) 
+	if ( m_tsHeader.AdaptionFieldOnly() ) 
 	{
 		return false;
 	}
  
-	int pos = header.PayLoadStart;
+	int pos = m_tsHeader.PayLoadStart;
 
 	bool result=false;
-	if (header.PayloadUnitStart)
+	if (m_tsHeader.PayloadUnitStart)
 	{
 
 		if (m_iWritePos>0)

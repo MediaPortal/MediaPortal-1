@@ -20,7 +20,6 @@
  */
 #include <windows.h>
 #include "pcrDecoder.h"
-#include "tsheader.h"
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -69,9 +68,9 @@ UINT64 CPcrDecoder::Pcr()
 void CPcrDecoder::OnTsPacket(byte* tsPacket)
 {
 	if (m_pcrPid==-1) return;
-	CTsHeader header(tsPacket);
-	if (header.Pid != m_pcrPid) return;
-  if (header.PayLoadOnly()) return;
+	m_tsHeader.Decode(tsPacket);
+	if (m_tsHeader.Pid != m_pcrPid) return;
+  if (m_tsHeader.PayLoadOnly()) return;
   if (tsPacket[4]<7) return; //adaptation field length
   if ((tsPacket[5] & 0x10) ==0 ) return;
 
@@ -137,7 +136,7 @@ void CPcrDecoder::ChangePtsDts(byte* header, UINT64 startPcr)
 		if (pts > startPcr) 
 			pts = (UINT64)( ((UINT64)pts) - ((UINT64)startPcr) );
 		else pts=0LL;
-		//LogDebug("pts: org:%x new:%x start:%x pid:%x", (DWORD)ptsorg,(DWORD)pts,(DWORD)startPcr,header.Pid);
+		//LogDebug("pts: org:%x new:%x start:%x pid:%x", (DWORD)ptsorg,(DWORD)pts,(DWORD)startPcr,m_tsHeader.Pid);
 		
 		byte marker=0x21;
 		if (dts!=0) marker=0x31;

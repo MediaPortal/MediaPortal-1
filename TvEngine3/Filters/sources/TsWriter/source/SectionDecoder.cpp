@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "SectionDecoder.h"
-#include "TsHeader.h"
+#include "Tsheader.h"
 #include "packetsync.h"
 extern DWORD crc32 (char *data, int len);
 
@@ -77,32 +77,33 @@ void CSectionDecoder::Reset()
 void CSectionDecoder::OnTsPacket(byte* tsPacket)
 {
   if (m_tableId < 0 || m_pid < 0) return;
+  if (tsPacket==NULL) return;
 
-  CTsHeader header(tsPacket);
-  if (header.Pid != m_pid) return;
+  m_header.Decode(tsPacket);
+  if (m_header.Pid != m_pid) return;
+  if (m_header.TransportError) 
+  {
+    m_section.Reset();
+    return;
+  }
 
 	if (m_bLog)
-		LogDebug("pid:%03.3x table id:%03.3x payloadunit start:%x start:%d %x",m_pid,m_tableId,(int)header.PayloadUnitStart,header.PayLoadStart, tsPacket[header.PayLoadStart]);
- 	if (header.PayloadUnitStart)
+		LogDebug("pid:%03.3x table id:%03.3x payloadunit start:%x start:%d %x",m_pid,m_tableId,(int)m_header.PayloadUnitStart,m_header.PayLoadStart, tsPacket[m_header.PayLoadStart]);
+ 	if (m_header.PayloadUnitStart)
 	{
-		int start=header.PayLoadStart;
+		int start=m_header.PayLoadStart;
     if (m_section.BufferPos > 0 && m_section.SectionLength > 0 && start > 5)
 		{
-			if (m_section.BufferPos+start < MAX_SECTION_LENGTH)
+      int len=start-5;
+			if (m_section.BufferPos+len < MAX_SECTION_LENGTH)
 		  {
-				memcpy(&m_section.Data[m_section.BufferPos],&tsPacket[5],start-5);
-				m_section.BufferPos+=start-5;
-				m_section.SectionPos+=start-5;
+				memcpy(&m_section.Data[m_section.BufferPos],&tsPacket[5],len);
+				m_section.BufferPos +=len;
+				m_section.SectionPos+=len;
 				if (m_bLog)
 					LogDebug("pid:%03.3x append %d %d %d",m_pid,m_section.BufferPos,m_section.SectionPos,m_section.SectionLength);
 
-				//m_section.SectionLength+=start-5;
-			
-				OnNewSection(m_section);
-				if (m_pCallback!=NULL)
-				{
-					m_pCallback->OnNewSection(m_pid, m_tableId, m_section);
-				}
+        ProcessSection();
 			}
 		}
 
@@ -130,7 +131,7 @@ void CSectionDecoder::OnTsPacket(byte* tsPacket)
 		  //int len = TS_PACKET_LEN-8;
       m_section.SectionPos=0;
       m_section.BufferPos=0;
-		  m_iContinuityCounter=header.ContinuityCounter;
+		  m_iContinuityCounter=m_header.ContinuityCounter;
 
       int len=section_length+3;
       if (len > 188-start) len=188-start;
@@ -144,13 +145,8 @@ void CSectionDecoder::OnTsPacket(byte* tsPacket)
 		  {
 				if (m_bLog)
 					LogDebug("pid:%03.3x new %d %d %d",m_pid,m_section.BufferPos,m_section.SectionPos,m_section.SectionLength);
-			  OnNewSection(m_section);
-			  if (m_pCallback!=NULL)
-			  {
-				  m_pCallback->OnNewSection(m_pid, m_tableId, m_section);
-			  }
+        ProcessSection();
         start = start+section_length+3;
-				m_section.Reset();
 				if (start+10 > 188) break;
 		  }
       else break;
@@ -158,9 +154,9 @@ void CSectionDecoder::OnTsPacket(byte* tsPacket)
 	}
 	else
 	{
-		int start=header.PayLoadStart;
-    int len=188-start;
 		if (m_section.BufferPos==0) return;//wait for payloadunit start...
+		int start=m_header.PayLoadStart;
+    int len=188-start;
 		if (m_section.BufferPos+len>=MAX_SECTION_LENGTH)
 		{
       LogDebug("section decoder:section length to large3 pid:%x table:%x", m_pid,m_tableId);
@@ -179,15 +175,7 @@ void CSectionDecoder::OnTsPacket(byte* tsPacket)
 
 		if (m_section.SectionPos >= m_section.SectionLength)
 		{
-			if (m_bLog)
-					LogDebug("pid:%03.3x got %d %d %d",m_pid,m_section.BufferPos,m_section.SectionPos,m_section.SectionLength);
-
-			OnNewSection(m_section);
-			if (m_pCallback!=NULL)
-			{
-				m_pCallback->OnNewSection(m_pid, m_tableId, m_section);
-			}
-			m_section.Reset();
+      ProcessSection();
 		}
 	}
 }
@@ -197,4 +185,29 @@ void CSectionDecoder::OnNewSection(CSection& section)
 {
 }
 
+void CSectionDecoder::ProcessSection()
+{
+  if (m_section.SectionPos<=5 || m_section.SectionLength<=0) 
+  {
+		m_section.Reset();
+    return;
+  }
+  m_headerSection.Decode(m_section.Data);
+  if (m_section.Data[m_headerSection.PayLoadStart]==m_tableId)
+  {
+		if (m_bLog)
+				LogDebug("pid:%03.3x got %d %d %d",m_pid,m_section.BufferPos,m_section.SectionPos,m_section.SectionLength);
+
+	  OnNewSection(m_section);
+	  if (m_pCallback!=NULL)
+	  {
+		  m_pCallback->OnNewSection(m_pid, m_tableId, m_section);
+	  }
+  }
+  else
+  {
+    int x=123;
+  }
+	m_section.Reset();
+}
 

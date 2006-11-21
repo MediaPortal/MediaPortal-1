@@ -22,7 +22,9 @@
 #include <windows.h>
 #include <time.h>
 #include "MhwParser.h"
-#include "Tsheader.h"
+
+#define PID_MHW1  0xd2
+#define PID_MHW2  0xd3
 
 extern void LogDebug(const char *fmt, ...) ;
 CMhwParser::CMhwParser(void)
@@ -33,7 +35,7 @@ CMhwParser::CMhwParser(void)
 	m_bDone=false;
 
   CSectionDecoder* pDecoder= new CSectionDecoder();
-  pDecoder->SetPid(0xd2);
+  pDecoder->SetPid(PID_MHW1);
   pDecoder->SetTableId(0x90);
 	pDecoder->SetCallBack(this);
  // pDecoder->EnableLogging(true);
@@ -42,7 +44,7 @@ CMhwParser::CMhwParser(void)
   for (int i=0x70; i <=0x7f;++i)
   {
     pDecoder= new CSectionDecoder();
-    pDecoder->SetPid(0xd2);
+    pDecoder->SetPid(PID_MHW1);
     pDecoder->SetTableId(i);
 		pDecoder->SetCallBack(this);
     m_vecDecoders.push_back(pDecoder);
@@ -50,7 +52,7 @@ CMhwParser::CMhwParser(void)
   for (int i=0x90; i <=0x92;++i)
   {
     pDecoder= new CSectionDecoder();
-    pDecoder->SetPid(0xd3);
+    pDecoder->SetPid(PID_MHW2);
     pDecoder->SetTableId(i);
 		pDecoder->SetCallBack(this);
     m_vecDecoders.push_back(pDecoder);
@@ -87,7 +89,9 @@ void CMhwParser::Reset()
 void CMhwParser::OnTsPacket(byte* tsPacket)
 {
 	if (m_bGrabbing==false) return;
-//return;
+  int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
+  if (pid!=PID_MHW1 && pid!=PID_MHW2) return;
+
 	CEnterCriticalSection enter(m_section);
 	for (int i=0; i < (int)m_vecDecoders.size();++i)
 	{
@@ -102,10 +106,10 @@ void CMhwParser::OnNewSection(int pid, int tableId, CSection& sections)
 	{
 		CEnterCriticalSection enter(m_section);
 //		LogDebug("mhw new section pid:%x tableid:%x %x %x len:%d",pid,tableId,sections.Data[4],sections.Data[5],sections.Data[6], sections.SectionLength);
-		CTsHeader header(&sections.Data[0]);
-		if (header.PayLoadStart< 0 || header.PayLoadStart>188) return;
+		m_tsHeader.Decode(&sections.Data[0]);
+		if (m_tsHeader.PayLoadStart< 0 || m_tsHeader.PayLoadStart>188) return;
 
-		byte* section=&(sections.Data[header.PayLoadStart]);
+		byte* section=&(sections.Data[m_tsHeader.PayLoadStart]);
 		int table_id = section[0];
 
 		int sectionLength=sections.SectionLength;

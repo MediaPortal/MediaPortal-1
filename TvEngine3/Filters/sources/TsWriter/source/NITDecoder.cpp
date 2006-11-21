@@ -18,14 +18,14 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#pragma warning(disable : 4995)
 #include <windows.h>
 #include "NITDecoder.h"
+
 
 extern void LogDebug(const char *fmt, ...) ;
 CNITDecoder::CNITDecoder(void)
 {
-	SetPid(0x10);
+	SetPid(PID_NIT);
 	SetTableId(0x40);
 }
 
@@ -255,7 +255,7 @@ void CNITDecoder::DVB_GetLogicalChannelNumber(int original_network_id,int transp
 
 			pointer+=4;
 			bool alreadyAdded=false;
-			for (int j=0; j <(int) m_vecLCN.size();++j)
+			for (int j=0; j < (int)m_vecLCN.size();++j)
 			{
 				NITLCN& lcn = m_vecLCN[j];
 				if (lcn.network_id==original_network_id && lcn.transport_id==transport_stream_id && lcn.service_id==ServiceID)

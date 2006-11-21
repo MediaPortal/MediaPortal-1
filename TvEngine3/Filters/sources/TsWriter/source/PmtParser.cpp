@@ -22,7 +22,6 @@
 #include <windows.h>
 #include "PmtParser.h"
 #include "channelinfo.h"
-#include "tsheader.h"
 
 void LogDebug(const char *fmt, ...) ; 
 
@@ -50,8 +49,8 @@ void CPmtParser::OnNewSection(CSection& sections)
   byte* section=(&sections.Data)[0];
   int sectionLen=sections.SectionLength;
 
-  CTsHeader header(section);
-  int start=header.PayLoadStart;
+  m_tsHeader.Decode(section);
+  int start=m_tsHeader.PayLoadStart;
   int table_id = section[start+0];
 	if (table_id!=2) return;
   int section_syntax_indicator = (section[start+1]>>7) & 1;

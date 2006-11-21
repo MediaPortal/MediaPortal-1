@@ -22,6 +22,7 @@
 #include "ISectionCallback.h"
 #include "dvbutil.h"
 #include "Section.h"
+#include "TsHeader.h"
 
 #define MAX_SECTIONS 256
 
@@ -41,10 +42,13 @@ public:
   virtual void OnNewSection(CSection& section);
 protected:
 private:
+  void ProcessSection();
   bool        m_bLog;
   int			    m_pid;
   int			    m_tableId;
   CSection		m_section;
 	int         m_iContinuityCounter;
 	ISectionCallback* m_pCallback;
+  CTsHeader m_header;
+  CTsHeader m_headerSection;
 };
