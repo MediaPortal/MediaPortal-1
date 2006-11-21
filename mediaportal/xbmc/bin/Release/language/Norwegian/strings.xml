@@ -2686,6 +2686,10 @@
 		<id>820</id>
 		<value>Slette usette opptak?</value>
 	</string>
+	<string>
+		<id>830</id>
+		<value>Marker som usett</value>
+	</string>
 	<string Prefix="Min ">
 		<id>850</id>
 		<value>Alarm</value>
