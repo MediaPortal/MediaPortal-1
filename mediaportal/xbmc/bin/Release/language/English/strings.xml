@@ -1091,7 +1091,7 @@
 	</string>
 	<string>
 		<id>343</id>
-		<value>Adjust Framerate</value>
+		<value>Adjust framerate</value>
 	</string>
 	<string>
 		<id>344</id>
@@ -1111,7 +1111,7 @@
 	</string>
 	<string>
 		<id>348</id>
-		<value>Flatten Directory Hierarchy</value>
+		<value>Flat directory hierarchy</value>
 	</string>
 	<string>
 		<id>349</id>
@@ -1139,15 +1139,15 @@
 	</string>
 	<string>
 		<id>355</id>
-		<value>Screensaver Idle Timeout</value>
+		<value>Screensaver idle timeout</value>
 	</string>
 	<string>
 		<id>356</id>
-		<value>Screensaver Mode</value>
+		<value>Screensaver mode</value>
 	</string>
 	<string>
 		<id>357</id>
-		<value>Shutdown Idle Timeout</value>
+		<value>Shutdown idle timeout</value>
 	</string>
 	<string>
 		<id>358</id>
@@ -2684,6 +2684,10 @@
 	<string>
 		<id>820</id>
 		<value>Delete unseen recording?</value>
+	</string>
+	<string>
+		<id>830</id>
+		<value>Reset watched status</value>
 	</string>
 	<string Prefix="My ">
 		<id>850</id>

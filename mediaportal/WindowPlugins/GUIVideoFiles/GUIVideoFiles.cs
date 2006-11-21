@@ -1277,8 +1277,8 @@ namespace MediaPortal.GUI.Video
                 foundWatched = true;
               else
               {
-                VideoDatabase.GetMovieStopTimeAndResumeData(fileId, out resumeData);
-                if (resumeData != null)
+                int stops = VideoDatabase.GetMovieStopTimeAndResumeData(fileId, out resumeData);
+                if (resumeData != null || stops > 0)
                   foundWatched = true;
               }
             }
@@ -1297,6 +1297,19 @@ namespace MediaPortal.GUI.Video
           pItem.IconImageBig = strLargeThumb;
         }
       } // of for (int x = 0; x < items.Count; ++x)
+    }
+
+    private void SetMovieUnwatched(string movieFileName)
+    {
+      if (VideoDatabase.HasMovieInfo(movieFileName))
+      {
+        IMDBMovie movieDetails = new IMDBMovie();
+        int idMovie = VideoDatabase.GetMovieInfo(movieFileName, ref movieDetails);
+        movieDetails.Watched = 0;
+        VideoDatabase.SetWatched(movieDetails);
+      }
+      int fileId = VideoDatabase.GetFileId(movieFileName);
+      VideoDatabase.DeleteMovieStopTime(fileId);
     }
 
     public bool CheckMovie(string movieFileName)
@@ -1596,6 +1609,8 @@ namespace MediaPortal.GUI.Video
         else
           VideoDatabase.DeleteMovieStopTime(idFile);
       }
+      LoadDirectory(_currentFolder);
+      UpdateButtonStates();
     }
 
     private void OnPlayBackEnded(MediaPortal.Player.g_Player.MediaType type, string filename)
@@ -1612,8 +1627,18 @@ namespace MediaPortal.GUI.Video
         {
           string strFilePath = (string)movies[i];
           int idFile = VideoDatabase.GetFileId(strFilePath);
-          if (idFile < 0) break;
-          VideoDatabase.DeleteMovieStopTime(idFile);
+          if (idFile < 0)
+            break;
+          // only delete stop time if there's a movie info for "watched" status as SetWatched() will fail otherwhise
+          if (VideoDatabase.HasMovieInfo(strFilePath))
+            VideoDatabase.DeleteMovieStopTime(idFile);
+          else
+          {
+            byte[] resumeData = null;
+            int stops = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
+            stops++;
+            VideoDatabase.SetMovieStopTimeAndResumeData(idFile, stops, resumeData);
+          }
         }
 
         IMDBMovie details = new IMDBMovie();
@@ -1621,6 +1646,8 @@ namespace MediaPortal.GUI.Video
         details.Watched++;
         VideoDatabase.SetWatched(details);
       }
+      LoadDirectory(_currentFolder);
+      UpdateButtonStates();
     }
     private void OnPlayBackStarted(MediaPortal.Player.g_Player.MediaType type, string filename)
     {
@@ -1694,18 +1721,24 @@ namespace MediaPortal.GUI.Video
           }
           else
           {
-            dlg.AddLocalizedString(208); //play
+            dlg.AddLocalizedString(208); //Play
             dlg.AddLocalizedString(926); //Queue
             dlg.AddLocalizedString(368); //IMDB
-            if (MediaPortal.Util.Utils.getDriveType(item.Path) != 5) dlg.AddLocalizedString(925); //delete
+            if (item.IsPlayed)
+              dlg.AddLocalizedString(830); //Reset watched status
+            if (MediaPortal.Util.Utils.getDriveType(item.Path) != 5)
+              dlg.AddLocalizedString(925); //Delete
             if (!IsFolderPinProtected(item.Path) && !item.IsRemote && fileMenuEnabled)
               dlg.AddLocalizedString(500); // FileMenu
 
           }
         }
       }
-      if (!mapSettings.Stack) dlg.AddLocalizedString(346); //Stack
-      else dlg.AddLocalizedString(347); //Unstack
+      if (!mapSettings.Stack)
+        dlg.AddLocalizedString(346); //Stack
+      else
+        dlg.AddLocalizedString(347); //Unstack
+
       dlg.DoModal(GetID);
       if (dlg.SelectedId == -1) return;
       switch (dlg.SelectedId)
@@ -1769,6 +1802,12 @@ namespace MediaPortal.GUI.Video
           availablePaths.Add(item.Path);
           IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching);
           LoadDirectory(_currentFolder);
+          break;
+
+        case 830: // Reset watched status
+          SetMovieUnwatched(item.Path);
+          LoadDirectory(_currentFolder);
+          UpdateButtonStates();
           break;
 
         case 500: // File menu
