@@ -79,19 +79,21 @@ namespace MediaPortal.EPG
     private ILog _log;
     private string _configFile;
     private string _xmltvDirectory;
+    private string _baseDirectory;
     private ArrayList _channels = null;
     private MergeInfo[] _mergedList = null;
     private Hashtable _mergedChannels = new Hashtable();
     #endregion
 
     #region Constructors/Destructors
-    public WebEPG(string configFile, string xmltvDirectory)
+    public WebEPG(string configFile, string xmltvDirectory, string baseDirectory)
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
 
       _configFile = configFile; 
       _xmltvDirectory = xmltvDirectory;
+      _baseDirectory = baseDirectory;
     }
     #endregion
 
@@ -217,7 +219,7 @@ namespace MediaPortal.EPG
 
       _xmlreader = new MediaPortal.Webepg.Profile.Xml(_configFile);
       maxGrabDays = _xmlreader.GetValueAsInt("General", "MaxDays", 1);
-      grabberDir = _xmlreader.GetValueAsString("General", "GrabberDir", Environment.CurrentDirectory + "\\WebEPG\\grabbers\\");
+      grabberDir = _xmlreader.GetValueAsString("General", "GrabberDir", _baseDirectory + "\\WebEPG\\grabbers\\");
       _epgGrabber = new WebListingGrabber(maxGrabDays, grabberDir);
 
       int AuthCount = _xmlreader.GetValueAsInt("AuthSites", "Count", 0);

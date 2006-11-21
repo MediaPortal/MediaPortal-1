@@ -133,7 +133,7 @@ namespace MediaPortal.ProcessPlugins.WebEPG
 
           string configFile = Config.GetFile(Config.Dir.Base, "WebEPG", "WebEPG.xml");
           string xmltvDirectory = Config.GetSubFolder(Config.Dir.Base, "xmltv");
-          MediaPortal.EPG.WebEPG grabber = new MediaPortal.EPG.WebEPG(configFile, xmltvDirectory);
+          MediaPortal.EPG.WebEPG grabber = new MediaPortal.EPG.WebEPG(configFile, xmltvDirectory, Config.GetFolder(Config.Dir.Base));
           try
           {
             Log.Info("WebEPGGrabber.Run: run grabber");
