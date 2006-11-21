@@ -546,7 +546,7 @@ namespace GUIBurner
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        textBoxTempPath.Text = xmlreader.GetValueAsString("burner", "temp_folder", Path.GetTempPath());
+        textBoxTempPath.Text = xmlreader.GetValueAsString("burner", "temp_folder", Path.GetDirectoryName(Path.GetTempPath()));
         textBoxDVDBurnExePath.Text = xmlreader.GetValueAsString("burner", "dvdburnexe_folder", "C:\\Program Files\\Windows Resource Kits\\Tools");
 
         selIndx = xmlreader.GetValueAsInt("burner", "recorder", 0);
