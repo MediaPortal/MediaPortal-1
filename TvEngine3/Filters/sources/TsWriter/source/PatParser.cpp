@@ -194,10 +194,13 @@ void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
 			info.SdtReceived=true;
 			strcpy(info.ProviderName,sdtInfo.ProviderName);
 			strcpy(info.ServiceName,sdtInfo.ServiceName);
-			if (IsReady() )
+			if (m_pCallback!=NULL)
 			{
-				if (m_pCallback!=NULL)
+				if (IsReady() )
+        {
 					m_pCallback->OnScannerDone();
+          m_pCallback=NULL;
+        }
 			}
 		}
 	}
@@ -218,10 +221,13 @@ void CPatParser::OnPidsReceived(CPidTable pidTable)
 			//LogDebug("PMT: onid:%x tsid:%x nit:%x p:%s s:%s other:%d", info.NetworkId,info.TransportId,info.ServiceId, info.ProviderName,info.ServiceName, info.OtherMux);
 			info.PidTable=pidTable;
 			info.PmtReceived=true;
-			if (IsReady() )
+			if (m_pCallback!=NULL)
 			{
-				if (m_pCallback!=NULL)
+				if (IsReady() )
+        {
 					m_pCallback->OnScannerDone();
+          m_pCallback=NULL;
+        }
 			}
 		}
 	}
@@ -267,6 +273,14 @@ void CPatParser::OnTsPacket(byte* tsPacket)
       return;
     }
   }
+	if (m_pCallback!=NULL)
+	{
+		if (IsReady() )
+    {
+			m_pCallback->OnScannerDone();
+      m_pCallback=NULL;
+    }
+	}
 }
 
 //*****************************************************************************
