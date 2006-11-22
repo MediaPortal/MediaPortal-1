@@ -1068,7 +1068,7 @@ namespace MediaPortal.GUI.Video
           if ((idMovie >= 0) && (idFile >= 0))
           {
             timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
-            Log.Info("GUIVideoFiles: OnPlayBackStopped for DVD - idFile={0} timeMovieStopped={1} resumeData={2}", idFile, timeMovieStopped, resumeData);
+            //Log.Info("GUIVideoFiles: OnPlayBackStopped for DVD - idFile={0} timeMovieStopped={1} resumeData={2}", idFile, timeMovieStopped, resumeData);
             if (timeMovieStopped > 0)
             {
               string title = System.IO.Path.GetFileName(fileName);
@@ -1109,6 +1109,7 @@ namespace MediaPortal.GUI.Video
       dlgOk.DoModal(GetID);
       return false;
     }
+
     protected override void OnInfo(int iItem)
     {
       currentSelectedItem = facadeView.SelectedListItemIndex;
