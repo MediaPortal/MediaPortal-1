@@ -120,6 +120,7 @@ namespace MediaPortal.GUI.Video
     int scanningFileNumber = 1;
     int scanningFileTotal = 1;
     bool _isFuzzyMatching = false;
+    bool _markWatchedFiles = true;
     ArrayList conflictFiles = new ArrayList();
 
     static GUIVideoFiles()
@@ -196,10 +197,12 @@ namespace MediaPortal.GUI.Video
       base.LoadSettings();
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
+        _markWatchedFiles = xmlreader.GetValueAsBool("movies", "markwatched", true);
         ShowTrailerButton = xmlreader.GetValueAsBool("plugins", "My Trailers", true);
         fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         fileMenuPinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", String.Empty));
         m_directory.Clear();
+        
         string strDefault = xmlreader.GetValueAsString("movies", "default", String.Empty);
         for (int i = 0; i < 20; i++)
         {
@@ -339,7 +342,7 @@ namespace MediaPortal.GUI.Video
         case GUIMessage.MessageType.GUI_MSG_CD_REMOVED:
           if (g_Player.Playing && g_Player.IsDVD)
           {
-            Log.Info("GUIVideo:stop dvd since DVD is ejected");
+            Log.Info("GUIVideoFiles: Stop dvd since DVD is ejected");
             g_Player.Stop();
           }
 
@@ -886,7 +889,7 @@ namespace MediaPortal.GUI.Video
       if (playlist.Count == 1)
       {
         //TODO
-        Log.Info("GUIVideoFiles play:{0}", playlist[0].FileName);
+        Log.Info("GUIVideoFiles: play single playlist item - {0}", playlist[0].FileName);
         if (g_Player.Play(playlist[0].FileName))
         {
           if (MediaPortal.Util.Utils.IsVideo(playlist[0].FileName))
@@ -995,7 +998,7 @@ namespace MediaPortal.GUI.Video
         {
           if (strDirs.Length == 1)
           {
-            Log.Info("**************Is a DVD folder:{0}", strDirs[0]);
+            Log.Debug("GUIVideoFiles: DVD folder detected - {0}", strDirs[0]);
             return String.Format(@"{0}\VIDEO_TS.IFO", strDirs[0]);
           }
         }
@@ -1037,7 +1040,7 @@ namespace MediaPortal.GUI.Video
 
     public override bool OnPlayDVD(String drive)
     {
-      Log.Info("GUIVideoFiles playDVD");
+      Log.Info("GUIVideoFiles: playing DVD");
       if (g_Player.Playing && g_Player.IsDVD)
       {
         return true;
@@ -1065,7 +1068,7 @@ namespace MediaPortal.GUI.Video
           if ((idMovie >= 0) && (idFile >= 0))
           {
             timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
-            Log.Info("GUIVideoFiles::OnPlayBackStopped idFile={0} timeMovieStopped={1} resumeData={2}", idFile, timeMovieStopped, resumeData);
+            Log.Info("GUIVideoFiles: OnPlayBackStopped for DVD - idFile={0} timeMovieStopped={1} resumeData={2}", idFile, timeMovieStopped, resumeData);
             if (timeMovieStopped > 0)
             {
               string title = System.IO.Path.GetFileName(fileName);
@@ -1182,7 +1185,7 @@ namespace MediaPortal.GUI.Video
         {
           movieDetails.Path = strFile.Substring(0, strFile.IndexOf(movieDetails.File) - 1);
         }
-        Log.Info("Search:{0}, file:{1}, path:{2}", movieDetails.SearchString, movieDetails.File, movieDetails.Path);
+        Log.Info("GUIVideoFiles: IMDB search: {0}, file:{1}, path:{2}", movieDetails.SearchString, movieDetails.File, movieDetails.Path);
         if (!IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, false))
         {
           return;
@@ -1265,11 +1268,11 @@ namespace MediaPortal.GUI.Video
             strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title);
             strLargeThumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, movieDetails.Title);
 
-            if (movieDetails.Watched > 0)
+            if (movieDetails.Watched > 0 && _markWatchedFiles)
               foundWatched = true;
           }
           // do not double check
-          if (!foundWatched)
+          if (!foundWatched && _markWatchedFiles)
           {
             if (fileId >= 0)
             {
@@ -1477,8 +1480,7 @@ namespace MediaPortal.GUI.Video
       byte[] resumeData = null;
       if ((idMovie >= 0) && (idFile >= 0))
       {
-        timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
-        Log.Info("GUIVideoFiles::OnPlayBackStopped idFile={0} timeMovieStopped={1} resumeData={2}", idFile, timeMovieStopped, resumeData);
+        timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);        
         if (timeMovieStopped > 0)
         {
           string title = System.IO.Path.GetFileName(filename);
@@ -1526,7 +1528,7 @@ namespace MediaPortal.GUI.Video
 
     static public bool PlayMountedImageFile(int WindowID, string file)
     {
-      Log.Info("*************PlayMountedImageFile");
+      Log.Info("GUIVideoFiles: PlayMountedImageFile - {0}", file);
       if (MountImageFile(WindowID, file))
       {
         string strDir = DaemonTools.GetVirtualDrive();
@@ -1545,7 +1547,7 @@ namespace MediaPortal.GUI.Video
           newitem.Type = Playlists.PlayListItem.PlayListItemType.Video;
           playlist.Add(newitem);
 
-          Log.Info("\"Autoplaying\" DVD image mounted on {0}", strDir);
+          Log.Debug("GUIVideoFiles: Autoplaying DVD image mounted on {0}", strDir);
           PlayMovieFromPlayList(true);
           return true;
         }
@@ -1555,7 +1557,7 @@ namespace MediaPortal.GUI.Video
 
     static public bool MountImageFile(int WindowID, string file)
     {
-      Log.Info("GUIVideoFiles:MountImageFile");
+      Log.Debug("GUIVideoFiles: MountImageFile");
       if (!DaemonTools.IsMounted(file))
       {
         if (m_askBeforePlayingDVDImage)
@@ -1602,15 +1604,23 @@ namespace MediaPortal.GUI.Video
         {
           byte[] resumeData = null;
           g_Player.Player.GetResumeState(out resumeData);
-          Log.Info("GUIVideoFiles::OnPlayBackStopped idFile={0} timeMovieStopped={1} resumeData={2}", idFile, timeMovieStopped, resumeData);
+          Log.Info("GUIVideoFiles: OnPlayBackStopped idFile={0} timeMovieStopped={1} resumeData={2}", idFile, timeMovieStopped, resumeData);
           VideoDatabase.SetMovieStopTimeAndResumeData(idFile, timeMovieStopped, resumeData);
-          Log.Info("GUIVideoFiles::OnPlayBackStopped store resume time");
+          Log.Debug("GUIVideoFiles: OnPlayBackStopped store resume time");
         }
         else
           VideoDatabase.DeleteMovieStopTime(idFile);
       }
-      LoadDirectory(_currentFolder);
-      UpdateButtonStates();
+      if (_markWatchedFiles) // save a little performance
+      {
+        if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
+        {
+          LoadDirectory(_currentFolder);
+          UpdateButtonStates();
+        }
+        else
+          Log.Debug("GUIVideoFiles: No LoadDirectory needed in fullscreen");
+      }
     }
 
     private void OnPlayBackEnded(MediaPortal.Player.g_Player.MediaType type, string filename)
@@ -1646,8 +1656,16 @@ namespace MediaPortal.GUI.Video
         details.Watched++;
         VideoDatabase.SetWatched(details);
       }
-      LoadDirectory(_currentFolder);
-      UpdateButtonStates();
+      if (_markWatchedFiles) // save a little performance
+      {
+        if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
+        {
+          LoadDirectory(_currentFolder);
+          UpdateButtonStates();
+        }
+        else
+          Log.Debug("GUIVideoFiles: No LoadDirectory needed in fullscreen");
+      }
     }
     private void OnPlayBackStarted(MediaPortal.Player.g_Player.MediaType type, string filename)
     {
@@ -2115,7 +2133,8 @@ namespace MediaPortal.GUI.Video
             MediaPortal.Util.Picture.CreateThumbnail(strTemp, strThumb, 128, 128, 0);
             MediaPortal.Util.Picture.CreateThumbnail(strTemp, LargeThumb, 512, 512, 0);
           }
-          else Log.Info("Unable to download {0}->{1}", url, strTemp);
+          else
+            Log.Debug("GUIVideoFiles: unable to download thumb {0}->{1}", url, strTemp);
           MediaPortal.Util.Utils.FileDelete(strTemp);
         }
       }
@@ -2140,9 +2159,11 @@ namespace MediaPortal.GUI.Video
             //ShowProgress(GUILocalizeStrings.Get(1009), actor, "", 0);
             DownloadThumnail(Thumbs.MovieActors, imdbActor.ThumbnailUrl, actor);
           }
-          else Log.Info("url=empty for actor {0}", actor);
+          else
+            Log.Debug("GUIVideoFiles: url=empty for director {0}", actor);
         }
-        else Log.Info("url=null for actor {0}", actor);
+        else
+          Log.Debug("GUIVideoFiles: url=null for director {0}", actor);
       }
     }
     static void DownloadActors(IMDBMovie movieDetails)
@@ -2184,9 +2205,11 @@ namespace MediaPortal.GUI.Video
                 //ShowProgress(GUILocalizeStrings.Get(1009), actor, "", percent);
                 DownloadThumnail(Thumbs.MovieActors, imdbActor.ThumbnailUrl, actor);
               }
-              else Log.Info("url=empty for actor {0}", actor);
+              else
+                Log.Debug("GUIVideoFiles: url=empty for actor {0}", actor);
             }
-            else Log.Info("url=null for actor {0}", actor);
+            else
+              Log.Debug("GUIVideoFiles: url=null for actor {0}", actor);
           }
         }
       }
@@ -2238,7 +2261,7 @@ namespace MediaPortal.GUI.Video
 
     static public void Reset()
     {
-      Log.Info("****Resetting virtual directory");
+      Log.Debug("GUIVideoFiles: Resetting virtual directory");
       m_directory.Reset();
     }
 

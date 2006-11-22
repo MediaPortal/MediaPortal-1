@@ -234,7 +234,7 @@ namespace MediaPortal.Configuration.Sections
       // groupBox1
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.externalPlayerCheckBox);
       this.groupBox1.Controls.Add(this.parametersButton);
       this.groupBox1.Controls.Add(this.parametersTextBox);
@@ -242,20 +242,24 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.fileNameButton);
       this.groupBox1.Controls.Add(this.fileNameTextBox);
       this.groupBox1.Controls.Add(this.label1);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(0, 136);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 112);
       this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "External Player";
+      this.groupBox1.Text = "External player";
       // 
       // externalPlayerCheckBox
       // 
+      this.externalPlayerCheckBox.AutoSize = true;
+      this.externalPlayerCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.externalPlayerCheckBox.Location = new System.Drawing.Point(16, 24);
       this.externalPlayerCheckBox.Name = "externalPlayerCheckBox";
-      this.externalPlayerCheckBox.Size = new System.Drawing.Size(232, 16);
+      this.externalPlayerCheckBox.Size = new System.Drawing.Size(231, 17);
       this.externalPlayerCheckBox.TabIndex = 0;
       this.externalPlayerCheckBox.Text = "Use external player (replaces internal player)";
+      this.externalPlayerCheckBox.UseVisualStyleBackColor = true;
       this.externalPlayerCheckBox.CheckedChanged += new System.EventHandler(this.externalPlayerCheckBox_CheckedChanged);
       // 
       // parametersButton
@@ -266,17 +270,18 @@ namespace MediaPortal.Configuration.Sections
       this.parametersButton.Size = new System.Drawing.Size(72, 22);
       this.parametersButton.TabIndex = 6;
       this.parametersButton.Text = "List";
+      this.parametersButton.UseVisualStyleBackColor = true;
       this.parametersButton.Click += new System.EventHandler(this.parametersButton_Click);
       // 
       // parametersTextBox
       // 
       this.parametersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.parametersTextBox.BorderColor = System.Drawing.Color.Empty;
       this.parametersTextBox.Location = new System.Drawing.Point(168, 76);
       this.parametersTextBox.Name = "parametersTextBox";
       this.parametersTextBox.Size = new System.Drawing.Size(208, 20);
       this.parametersTextBox.TabIndex = 5;
-      this.parametersTextBox.Text = "";
       // 
       // label2
       // 
@@ -294,17 +299,18 @@ namespace MediaPortal.Configuration.Sections
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
       this.fileNameButton.TabIndex = 3;
       this.fileNameButton.Text = "Browse";
+      this.fileNameButton.UseVisualStyleBackColor = true;
       this.fileNameButton.Click += new System.EventHandler(this.fileNameButton_Click);
       // 
       // fileNameTextBox
       // 
       this.fileNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileNameTextBox.BorderColor = System.Drawing.Color.Empty;
       this.fileNameTextBox.Location = new System.Drawing.Point(168, 52);
       this.fileNameTextBox.Name = "fileNameTextBox";
       this.fileNameTextBox.Size = new System.Drawing.Size(208, 20);
       this.fileNameTextBox.TabIndex = 2;
-      this.fileNameTextBox.Text = "";
       // 
       // label1
       // 
@@ -317,13 +323,14 @@ namespace MediaPortal.Configuration.Sections
       // mpGroupBox1
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.audioRendererComboBox);
       this.mpGroupBox1.Controls.Add(this.label3);
       this.mpGroupBox1.Controls.Add(this.label6);
       this.mpGroupBox1.Controls.Add(this.audioCodecComboBox);
       this.mpGroupBox1.Controls.Add(this.videoCodecComboBox);
       this.mpGroupBox1.Controls.Add(this.label5);
+      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(472, 128);
@@ -334,7 +341,8 @@ namespace MediaPortal.Configuration.Sections
       // audioRendererComboBox
       // 
       this.audioRendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioRendererComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioRendererComboBox.Location = new System.Drawing.Point(168, 92);
       this.audioRendererComboBox.Name = "audioRendererComboBox";
@@ -360,7 +368,8 @@ namespace MediaPortal.Configuration.Sections
       // audioCodecComboBox
       // 
       this.audioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioCodecComboBox.Location = new System.Drawing.Point(168, 44);
       this.audioCodecComboBox.Name = "audioCodecComboBox";
@@ -370,7 +379,8 @@ namespace MediaPortal.Configuration.Sections
       // videoCodecComboBox
       // 
       this.videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.videoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.videoCodecComboBox.Location = new System.Drawing.Point(168, 20);
       this.videoCodecComboBox.Name = "videoCodecComboBox";
@@ -392,6 +402,7 @@ namespace MediaPortal.Configuration.Sections
       this.Name = "MoviePlayer";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
       this.mpGroupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
 

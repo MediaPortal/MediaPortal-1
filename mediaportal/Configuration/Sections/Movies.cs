@@ -63,6 +63,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPTabPage tabPage3;
     private MediaPortal.UserInterface.Controls.MPLabel label7;
     private MediaPortal.UserInterface.Controls.MPComboBox defaultSubtitleLanguageComboBox;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowWatched;
 
     //string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
     string[] aspectRatio = { "normal", "original", "stretch", "zoom", "zoom149", "letterbox", "panscan" };
@@ -102,7 +103,9 @@ namespace MediaPortal.Configuration.Sections
 
         repeatPlaylistCheckBox.Checked = xmlreader.GetValueAsBool("movies", "repeat", true);
 
-        showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("subtitles", "enabled", true);
+        showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("subtitles", "enabled", false);
+        checkBoxShowWatched.Checked = xmlreader.GetValueAsBool("movies", "markwatched", true);
+
         string defaultLanguage = xmlreader.GetValueAsString("subtitles", "language", "English");
 
         dropShadowTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("subtitles", "shadow", 5));
@@ -155,6 +158,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("movies", "repeat", repeatPlaylistCheckBox.Checked);
         xmlwriter.SetValue("movies", "playlists", folderNameTextBox.Text);
 
+        xmlwriter.SetValueAsBool("movies", "markwatched", checkBoxShowWatched.Checked);
+
         xmlwriter.SetValueAsBool("subtitles", "enabled", showSubtitlesCheckBox.Checked);
         xmlwriter.SetValue("subtitles", "shadow", dropShadowTextBox.Text);
         xmlwriter.SetValue("subtitles", "language", defaultSubtitleLanguageComboBox.Text);
@@ -191,6 +196,7 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxShowWatched = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.defaultZoomModeComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.fileNameButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -220,8 +226,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.checkBoxShowWatched);
       this.groupBox1.Controls.Add(this.defaultZoomModeComboBox);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.fileNameButton);
@@ -231,15 +238,28 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(16, 16);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(432, 116);
+      this.groupBox1.Size = new System.Drawing.Size(432, 147);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
       // 
+      // checkBoxShowWatched
+      // 
+      this.checkBoxShowWatched.AutoSize = true;
+      this.checkBoxShowWatched.Checked = true;
+      this.checkBoxShowWatched.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxShowWatched.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxShowWatched.Location = new System.Drawing.Point(19, 116);
+      this.checkBoxShowWatched.Name = "checkBoxShowWatched";
+      this.checkBoxShowWatched.Size = new System.Drawing.Size(381, 17);
+      this.checkBoxShowWatched.TabIndex = 6;
+      this.checkBoxShowWatched.Text = "Mark every already watched file (deactivate for performance with many files)";
+      this.checkBoxShowWatched.UseVisualStyleBackColor = true;
+      // 
       // defaultZoomModeComboBox
       // 
-      this.defaultZoomModeComboBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultZoomModeComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultZoomModeComboBox.Items.AddRange(new object[] {
@@ -250,14 +270,14 @@ namespace MediaPortal.Configuration.Sections
             "Zoom 14:9",
             "4:3 Letterbox",
             "4:3 Pan and scan"});
-      this.defaultZoomModeComboBox.Location = new System.Drawing.Point(136, 76);
+      this.defaultZoomModeComboBox.Location = new System.Drawing.Point(136, 24);
       this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
       this.defaultZoomModeComboBox.Size = new System.Drawing.Size(280, 21);
       this.defaultZoomModeComboBox.TabIndex = 5;
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(16, 80);
+      this.label1.Location = new System.Drawing.Point(16, 28);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(120, 16);
       this.label1.TabIndex = 4;
@@ -265,8 +285,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameButton
       // 
-      this.fileNameButton.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right ) ) );
-      this.fileNameButton.Location = new System.Drawing.Point(344, 51);
+      this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileNameButton.Location = new System.Drawing.Point(344, 61);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
       this.fileNameButton.TabIndex = 3;
@@ -276,10 +296,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // folderNameTextBox
       // 
-      this.folderNameTextBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.folderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.folderNameTextBox.BorderColor = System.Drawing.Color.Empty;
-      this.folderNameTextBox.Location = new System.Drawing.Point(136, 52);
+      this.folderNameTextBox.Location = new System.Drawing.Point(136, 63);
       this.folderNameTextBox.Name = "folderNameTextBox";
       this.folderNameTextBox.Size = new System.Drawing.Size(200, 20);
       this.folderNameTextBox.TabIndex = 2;
@@ -288,7 +308,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.repeatPlaylistCheckBox.AutoSize = true;
       this.repeatPlaylistCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.repeatPlaylistCheckBox.Location = new System.Drawing.Point(16, 24);
+      this.repeatPlaylistCheckBox.Location = new System.Drawing.Point(19, 93);
       this.repeatPlaylistCheckBox.Name = "repeatPlaylistCheckBox";
       this.repeatPlaylistCheckBox.Size = new System.Drawing.Size(152, 17);
       this.repeatPlaylistCheckBox.TabIndex = 0;
@@ -297,7 +317,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // folderNameLabel
       // 
-      this.folderNameLabel.Location = new System.Drawing.Point(16, 56);
+      this.folderNameLabel.Location = new System.Drawing.Point(16, 66);
       this.folderNameLabel.Name = "folderNameLabel";
       this.folderNameLabel.Size = new System.Drawing.Size(80, 16);
       this.folderNameLabel.TabIndex = 1;
@@ -305,8 +325,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.label7);
       this.mpGroupBox1.Controls.Add(this.defaultSubtitleLanguageComboBox);
       this.mpGroupBox1.Controls.Add(this.dropShadowTextBox);
@@ -333,8 +353,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultSubtitleLanguageComboBox
       // 
-      this.defaultSubtitleLanguageComboBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.defaultSubtitleLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultSubtitleLanguageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultSubtitleLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultSubtitleLanguageComboBox.Location = new System.Drawing.Point(136, 100);
@@ -345,8 +365,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // dropShadowTextBox
       // 
-      this.dropShadowTextBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.dropShadowTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.dropShadowTextBox.BorderColor = System.Drawing.Color.Empty;
       this.dropShadowTextBox.Location = new System.Drawing.Point(136, 76);
       this.dropShadowTextBox.Name = "dropShadowTextBox";
@@ -374,7 +394,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // subtitlesButton
       // 
-      this.subtitlesButton.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.subtitlesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.subtitlesButton.Location = new System.Drawing.Point(344, 51);
       this.subtitlesButton.Name = "subtitlesButton";
       this.subtitlesButton.Size = new System.Drawing.Size(72, 22);
@@ -385,8 +405,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // subtitlesFontTextBox
       // 
-      this.subtitlesFontTextBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.subtitlesFontTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.subtitlesFontTextBox.BorderColor = System.Drawing.Color.Empty;
       this.subtitlesFontTextBox.Location = new System.Drawing.Point(136, 52);
       this.subtitlesFontTextBox.Name = "subtitlesFontTextBox";
@@ -404,9 +424,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabControl1
       // 
-      this.tabControl1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPage1);
       this.tabControl1.Controls.Add(this.tabPage3);
       this.tabControl1.Location = new System.Drawing.Point(0, 0);
