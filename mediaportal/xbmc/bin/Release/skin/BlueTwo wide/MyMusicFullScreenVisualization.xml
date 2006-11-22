@@ -126,7 +126,8 @@ including the text (the alpha component of textcolor is ignored)
     <width>98</width>
     <height>92</height>
     <texture>logo_rewind.png</texture>
-  </control><control>
+  </control>
+  
   <control>
     <description>Stop Icon</description>
     <type>image</type>
