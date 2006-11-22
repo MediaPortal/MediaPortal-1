@@ -126,8 +126,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       GUIDialogOK msgdlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
       if (msgdlg == null)
         return;
-      msgdlg.SetHeading("Radio handshake failed!");
-      msgdlg.SetLine(1, "Streams might be temporarily unavailable");
+      msgdlg.SetHeading(GUILocalizeStrings.Get(34054)); // Radio handshake failed!
+      msgdlg.SetLine(1, GUILocalizeStrings.Get(34055)); // Streams might be temporarily unavailable
       msgdlg.DoModal(GetID);
 
       btnStartStream.Selected = false;
@@ -250,7 +250,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
 // 1
         dlg.Add(GUILocalizeStrings.Get(34040));  // Recommendation radio
 // 2
-        dlg.Add("MediaPortal User's group radio");
+        dlg.Add("MediaPortal User's group radio");        
+
 // 3
         if (btnChooseTag.Label != String.Empty)
           desiredTag = GUILocalizeStrings.Get(34041) + btnChooseTag.Label;  // Tune into chosen Tag: 
@@ -272,12 +273,14 @@ namespace MediaPortal.GUI.RADIOLASTFM
           desiredFriend = GUILocalizeStrings.Get(34045); // No Friend has been chosen yet
         dlg.Add(desiredFriend);
 
+// 6
+        dlg.Add(GUILocalizeStrings.Get(34048));      // My neighbour radio  
 
         if (isSubscriber)
         {
-// 6
-          dlg.Add(GUILocalizeStrings.Get(34046)); // My personal radio
 // 7
+          dlg.Add(GUILocalizeStrings.Get(34046)); // My personal radio
+// 8
           dlg.Add(GUILocalizeStrings.Get(34047)); // My loved tracks
         }
         
@@ -295,7 +298,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           case 2:
             TuneIntoSelected = StreamType.Group;
             LastFMStation.StreamsUser = "MediaPortal Users";
-            break;
+            break;          
           case 3:
             // bail out if no tags available
             if (btnChooseTag.Label == GUILocalizeStrings.Get(34030))
@@ -317,10 +320,14 @@ namespace MediaPortal.GUI.RADIOLASTFM
             LastFMStation.StreamsUser = btnChooseFriend.Label;
             break;
           case 6:
+            TuneIntoSelected = StreamType.Neighbours;
+            LastFMStation.StreamsUser = LastFMStation.AccountUser;
+            break;  
+          case 7:
             TuneIntoSelected = StreamType.Personal;
             LastFMStation.StreamsUser = LastFMStation.AccountUser;
             break;
-          case 7:
+          case 8:
             TuneIntoSelected = StreamType.Loved;
             LastFMStation.StreamsUser = LastFMStation.AccountUser;
             break;
@@ -355,6 +362,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
             MyTags.Add(btnChooseTag.Label);
             //MyTags.Add("melodic death metal");
             LastFMStation.TuneIntoTags(MyTags);
+            break;
+            
+          case StreamType.Neighbours:
+            LastFMStation.TuneIntoNeighbourRadio(LastFMStation.StreamsUser);
             break;
         }
 

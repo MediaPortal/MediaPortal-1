@@ -467,6 +467,21 @@ namespace MediaPortal.GUI.RADIOLASTFM
         return false;
     }
 
+    public bool TuneIntoNeighbourRadio(string username_)
+    {
+      string TuneUser = InfoScrobbler.getValidURLLastFMString(username_);
+
+      if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://user/" + TuneUser + "/neighbours"))
+      {
+        _currentTuneType = StreamType.Neighbours;
+        Log.Info("StreamControl: Tune into neighbour station of: {0}", username_);
+        GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34048)); // My neighbour radio
+        return true;
+      }
+      else
+        return false;
+    }
+
     public bool TuneIntoLovedTracks(string username_)
     {
       string TuneUser = InfoScrobbler.getValidURLLastFMString(username_);

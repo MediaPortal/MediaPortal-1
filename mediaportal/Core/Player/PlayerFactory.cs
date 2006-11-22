@@ -216,6 +216,25 @@ namespace MediaPortal.Player
           ////return newPlayer;
 
           string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
+          int streamPlayer = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
+
+          // choose player for Internet radio streams 
+          if (fileName.IndexOf(@"/last.mp3?") > 0)
+          {
+            switch (streamPlayer)
+            {
+              case 0:
+                return BassMusicPlayer.Player;
+              case 1:
+                return new Player.AudioPlayerWMP9();
+              case 2:
+                return new Player.AudioPlayerVMR7();
+              case 3:
+                return new RTSPPlayer();
+              default:
+                return BassMusicPlayer.Player;
+            }
+          }
 
           if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
           {
@@ -231,30 +250,6 @@ namespace MediaPortal.Player
           return newPlayer;
         }
       }
-
-      // choose player for Internet radio streams 
-      if (fileName.IndexOf(@"/last.mp3?") > 0)
-      {
-        int streamPlayer = 0;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-        {
-          streamPlayer = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
-        }
-        switch (streamPlayer)
-        {
-          case 0:
-            return BassMusicPlayer.Player;
-          case 1:
-            return new Player.AudioPlayerWMP9();
-          case 2:
-            return new Player.AudioPlayerVMR7();
-          case 3:
-            return new RTSPPlayer();
-          default:
-            return BassMusicPlayer.Player;
-        }        
-      }
-
 
       newPlayer = new Player.AudioPlayerWMP9();
       return newPlayer;
@@ -331,8 +326,32 @@ namespace MediaPortal.Player
       {
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Windows Media Player 9");
-          if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)
+          string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
+          int streamPlayer = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
+
+          // choose player for Internet radio streams 
+          if (fileName.IndexOf(@"/last.mp3?") > 0)
+          {
+            switch (streamPlayer)
+            {
+              case 0:
+                return BassMusicPlayer.Player;
+              case 1:
+                return new Player.AudioPlayerWMP9();
+              case 2:
+                return new Player.AudioPlayerVMR7();
+              case 3:
+                return new RTSPPlayer();
+              default:
+                return BassMusicPlayer.Player;
+            }
+          }
+
+          if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
+          {
+            return BassMusicPlayer.Player;
+          }
+          else if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)
           {
             newPlayer = new Player.AudioPlayerWMP9();
             return newPlayer;

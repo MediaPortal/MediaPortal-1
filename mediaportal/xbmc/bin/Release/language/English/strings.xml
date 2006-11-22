@@ -5511,6 +5511,10 @@
 		<value>My loved tracks</value>
 	</string>
 	<string>
+		<id>34048</id>
+		<value>My neighbour radio</value>
+	</string>
+	<string>
 		<id>34050</id>
 		<value>No stream active</value>
 	</string>
@@ -5526,6 +5530,14 @@
 		<id>34053</id>
 		<value>Playback of selected stream failed</value>
 	</string>
+	<string>
+		<id>34054</id>
+		<value>Radio handshake failed!</value>
+	</string>
+	<string>
+		<id>34055</id>
+		<value>Streams might be temporarily unavailable</value>
+	</string>	
 
 	<string>
 		<id>100000</id>

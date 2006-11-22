@@ -566,6 +566,10 @@ namespace MediaPortal.GUI.Music
 
     void SetCurrentFile(string strFile)
     {
+      // last.fm radio set's properties manually therefore do not overwrite them.
+      if (strFile.Contains(@"/last.mp3?"))
+        return;
+
       GUIPropertyManager.RemovePlayerProperties();
       m_iFrames = 0;
       string skin = GUIGraphicsContext.Skin;

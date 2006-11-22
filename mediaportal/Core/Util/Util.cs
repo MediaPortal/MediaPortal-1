@@ -299,22 +299,32 @@ namespace MediaPortal.Util
 
     static public bool IsVideo(string strPath)
     {
-      if (strPath == null) return false;
-      if (strPath.ToLower().IndexOf("rtsp:") >= 0) return true;
-      if (strPath.ToLower().StartsWith("mms:") && strPath.ToLower().EndsWith(".ymvp")) return true;
+      if (strPath == null)                           return false;
+      if (strPath.IndexOf(@"/last.mp3?") > 0)        return false;
+      if (strPath.ToLower().IndexOf("rtsp:") >= 0)   return true;
+      if (strPath.ToLower().StartsWith("mms:") 
+        && strPath.ToLower().EndsWith(".ymvp"))      return true;
       try
       {
-        if (!System.IO.Path.HasExtension(strPath)) return false;
-        if (IsPlayList(strPath)) return false;
+        if (!System.IO.Path.HasExtension(strPath))
+          return false;
+        if (IsPlayList(strPath))
+          return false;
         string extensionFile = System.IO.Path.GetExtension(strPath).ToLower();
-        if (extensionFile.ToLower().Equals(".tv")) return true;
-        if (extensionFile.ToLower().Equals(".ts")) return true;
-        if (extensionFile.ToLower().Equals(".sbe")) return true;
-        if (extensionFile.ToLower().Equals(".dvr-ms")) return true;
-        if (VirtualDirectory.IsImageFile(extensionFile.ToLower())) return true;
+        if (extensionFile.ToLower().Equals(".tv"))
+          return true;
+        if (extensionFile.ToLower().Equals(".ts"))
+          return true;
+        if (extensionFile.ToLower().Equals(".sbe"))
+          return true;
+        if (extensionFile.ToLower().Equals(".dvr-ms"))
+          return true;
+        if (VirtualDirectory.IsImageFile(extensionFile.ToLower()))
+          return true;
         foreach (string extension in m_VideoExtensions)
         {
-          if (extension == extensionFile) return true;
+          if (extension == extensionFile)
+            return true;
         }
       }
       catch (Exception)
@@ -336,6 +346,7 @@ namespace MediaPortal.Util
     static public bool IsAudio(string strPath)
     {
       if (strPath == null) return false;
+      if (strPath.IndexOf(@"/last.mp3?") > 0)      return true;
       try
       {
         if (!System.IO.Path.HasExtension(strPath)) return false;

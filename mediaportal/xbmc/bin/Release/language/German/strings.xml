@@ -5512,6 +5512,10 @@
 		<value>Meine Favoriten</value>
 	</string>
 	<string>
+		<id>34048</id>
+		<value>Mein Nachbarradio</value>
+	</string>
+	<string>
 		<id>34050</id>
 		<value>Kein Stream aktiv</value>
 	</string>
@@ -5526,6 +5530,14 @@
 	<string>
 		<id>34053</id>
 		<value>Wiedergabe dieses Streams fehlgeschlagen</value>
+	</string>
+	<string>
+		<id>34054</id>
+		<value>Radiostart fehlgeschlagen!</value>
+	</string>
+	<string>
+		<id>34055</id>
+		<value>Wiedergabe temporär nicht möglich</value>
 	</string>
 
 	<string>
