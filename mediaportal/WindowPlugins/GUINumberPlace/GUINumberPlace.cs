@@ -583,6 +583,7 @@ namespace MediaPortal.GUI.NumberPlace
       else if (control == btnNewGame)
       {
         //new game
+        GUIWaitCursor.Show();
         int minrating = 0;
         int maxrating = 0;
         ClearGrid();
@@ -639,6 +640,7 @@ namespace MediaPortal.GUI.NumberPlace
           }
         }
         grid = puzzle;
+        GUIWaitCursor.Hide();
         StartTimer();
         gameRunning = true;
         if (_Settings.Show || _Settings.Block)
