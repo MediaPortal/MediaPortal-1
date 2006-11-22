@@ -277,9 +277,9 @@ namespace MediaPortal.Music.Database
     /// </summary>
     public static void Connect()
     {
-      // avoid delay on start
-      //if (!_signedIn)
-      //  DoHandshake(true);
+      // start thread on start
+      if (!_signedIn)
+        DoHandshake(true, HandshakeType.Submit);
 
       if (!_disableTimerThread)
         StartSubmitQueueThread();
