@@ -26,6 +26,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
@@ -42,6 +43,30 @@ namespace MediaPortal.Music.Database
 {
   public static class AudioscrobblerBase
   {
+    #region Events
+    public delegate void HandshakeCompleted(HandshakeType ReasonForHandshake, DateTime lastSuccessfulHandshake);
+    public static event HandshakeCompleted workerSuccess;
+
+    public delegate void HandshakeFailed(HandshakeType ReasonForHandshake, DateTime lastSuccessfulHandshake, Exception errorReason);
+    public static event HandshakeFailed workerFailed;
+
+    public delegate void RadioHandshakeCompleted();
+    public static event RadioHandshakeCompleted RadioHandshakeSuccess;
+
+    public delegate void RadioHandshakeFailed();
+    public static event RadioHandshakeFailed RadioHandshakeError;
+    #endregion
+
+    #region Enums
+    public enum HandshakeType : int
+    {
+      Submit = 1,
+      ChangeUser = 2,
+      PreRadio = 3,
+      Recover = 4,
+    }
+    #endregion
+
     #region Constants
     const int MAX_QUEUE_SIZE = 10;
     const int HANDSHAKE_INTERVAL = 30;     //< In minutes.
@@ -58,6 +83,8 @@ namespace MediaPortal.Music.Database
     // Client-specific config variables.
     private static string username;
     private static string password;
+    private static string olduser;
+    private static string oldpass;
 
     //private string cacheFile;
 
@@ -97,10 +124,13 @@ namespace MediaPortal.Music.Database
     static AudioscrobblerBase()
     {
       LoadSettings();
+      workerSuccess += new HandshakeCompleted(OnHandshakeSuccessful);
+      workerFailed += new HandshakeFailed(OnHandshakeFailed);
 
       if (_useDebugLog)
         Log.Info("AudioscrobblerBase: new scrobbler for {0} with {1} cached songs - debuglog={2}", Username, Convert.ToString(queue.Count), Convert.ToString(_useDebugLog));
     }
+
 
     static void LoadSettings()
     {
@@ -194,8 +224,6 @@ namespace MediaPortal.Music.Database
     {
       get
       {
-        DoRadioHandshake(false);
-
         return _radioSession;
       }
     }
@@ -273,8 +301,8 @@ namespace MediaPortal.Music.Database
 
     public static void ChangeUser(string scrobbleUser_, string scrobblePassword_)
     {
-      string olduser = username;
-      string oldpass = password;
+      olduser = username;
+      oldpass = password;
       if (username != scrobbleUser_)
       {
         queue.Save();
@@ -298,17 +326,7 @@ namespace MediaPortal.Music.Database
           //xmlwriter.SetValue("audioscrobbler", "pass", password);
         }
 
-        if (!DoHandshake(true))
-        {
-          Log.Error("AudioscrobblerBase: {0}", "ChangeUser failed - using previous account");
-          username = olduser;
-          password = oldpass;
-        }
-        else
-        {
-          LoadSettings();
-          Log.Info("AudioscrobblerBase: Changed user to {0} - loaded {1} queue items", scrobbleUser_, queue.Count);
-        }
+        DoHandshake(true, HandshakeType.ChangeUser);
       }
     }
 
@@ -366,7 +384,7 @@ namespace MediaPortal.Music.Database
       if (_antiHammerCount < 5)
       {
         _antiHammerCount = _antiHammerCount + 1;
-        DoHandshake(true);
+        DoHandshake(true, HandshakeType.Recover);
         SUBMIT_INTERVAL = SUBMIT_INTERVAL * _antiHammerCount;
         // prevent null argument exception
         if (SUBMIT_INTERVAL == 0)
@@ -388,13 +406,13 @@ namespace MediaPortal.Music.Database
     /// Handshake with the Audioscrobbler service
     /// </summary>
     /// <returns>True if the connection was successful, false otherwise</returns>
-    private static bool DoHandshake(bool forceNow_)
+    private static void DoHandshake(bool forceNow_, HandshakeType ReasonForHandshake)
     {
       // Handle uninitialized username/password.
       if (username == "" || password == "")
       {
         Log.Error("AudioscrobblerBase: {0}", "user or password not defined");
-        return false;
+        return;
       }
 
       if (!forceNow_)
@@ -406,10 +424,21 @@ namespace MediaPortal.Music.Database
           string logmessage = "Next handshake due at " + nexthandshake;
           if (_useDebugLog)
             Log.Debug("AudioscrobblerBase: {0}", logmessage);
-          return true;
+          workerSuccess(ReasonForHandshake, lastHandshake);
+          return;
         }
       }
-      
+
+      BackgroundWorker worker = new BackgroundWorker();
+      worker.DoWork += new DoWorkEventHandler(Worker_TryHandshake);
+      worker.RunWorkerAsync(ReasonForHandshake);
+    }
+
+    private static void Worker_TryHandshake(object sender, DoWorkEventArgs e)
+    {
+      HandshakeType ReasonForHandshake = (HandshakeType)e.Argument;
+      Exception errorReason = null;
+      bool success = false;
       string authTime = Convert.ToString(Util.Utils.GetUnixTime(DateTime.UtcNow));
       string tmpPass = HashSingleString(password);
       string tmpAuth = HashSingleString(tmpPass + authTime);
@@ -420,42 +449,87 @@ namespace MediaPortal.Music.Database
                  + "&c=" + CLIENT_NAME
                  + "&v=" + CLIENT_VERSION
                  + "&u=" + System.Web.HttpUtility.UrlEncode(username);
-                 //+ "&t=" + authTime
-                 //+ "&a=" + tmpAuth;  
-      
-      // Request URI: http://post.audioscrobbler.com/?hs=true&p=1.1&c=ass&v=1.0.6&u=f1n4rf1n
-      // Parse handshake response
-      bool success = GetResponse(url, "", false);
+      //+ "&t=" + authTime
+      //+ "&a=" + tmpAuth;  
 
-      if (!success)
+      // Request URI: http://post.audioscrobbler.com/?hs=true&p=1.1&c=ass&v=1.0.6&u=f1n4rf1n
+
+      try
       {
-        Log.Warn("AudioscrobblerBase: {0}", "Handshake failed");
-        return false;
+        // Parse handshake response
+        success = GetResponse(url, "", false);
+      }
+      catch (Exception ex)
+      {
+        errorReason = ex;
       }
 
-      // Send the event.
-      if (!_signedIn)
-        _signedIn = true;
+      if (success)
+      {
+        if (!_signedIn)
+          _signedIn = true;
 
-      lastHandshake = DateTime.Now;
-      // reset to leave "safe mode"
-      _antiHammerCount = 0;
+        lastHandshake = DateTime.Now;
+        // reset to leave "safe mode"
+        _antiHammerCount = 0;
 
-      if (_useDebugLog)
-        Log.Debug("AudioscrobblerBase: {0}", "Handshake successful");
-      return true;
+        if (_useDebugLog)
+          Log.Debug("AudioscrobblerBase: {0}", "Handshake successful");
+
+        workerSuccess(ReasonForHandshake, lastHandshake);
+      }
+      else
+      {
+        Log.Warn("AudioscrobblerBase: {0}", "Handshake failed");
+        workerFailed(ReasonForHandshake, lastHandshake, errorReason);
+      }
     }
 
-    public static bool DoRadioHandshake(bool forceNow_)
+    private static void OnHandshakeSuccessful(AudioscrobblerBase.HandshakeType ReasonForHandshake, DateTime lastSuccessfulHandshake)
+    {
+      switch (ReasonForHandshake)
+      {
+        case HandshakeType.ChangeUser:
+          LoadSettings();
+          Log.Info("AudioscrobblerBase: Changed user to {0} - loaded {1} queue items", username, queue.Count);
+          break;
+        case HandshakeType.PreRadio:
+          AttemptRadioHandshake();
+          break;
+        case HandshakeType.Submit:
+          AttemptSubmitNow();
+          break;
+      }
+    }
+
+
+    private static void OnHandshakeFailed(AudioscrobblerBase.HandshakeType ReasonForHandshake, DateTime lastSuccessfulHandshake, Exception errorReason)
+    {
+      switch (ReasonForHandshake)
+      {
+        case HandshakeType.ChangeUser:
+          Log.Warn("AudioscrobblerBase: {0}", "ChangeUser failed - using previous account");
+          username = olduser;
+          password = oldpass;         
+          break;
+        case HandshakeType.PreRadio:
+          Log.Warn("AudioscrobblerBase: {0}", "Handshake failed - not attempting radio login");
+          break;
+        case HandshakeType.Submit:
+          Log.Warn("AudioscrobblerBase: {0}", "Handshake failed - no submits");
+          break;
+      }
+    }
+
+    public static void DoRadioHandshake(bool forceNow_)
     {
       // Handle uninitialized username/password.
       if (username == "" || password == "")
       {
         Log.Error("AudioscrobblerBase: {0}", "user or password not defined for Last.FM Radio");
-        return false;
+        RadioHandshakeError();
+        return;
       }
-      if (!DoHandshake(false))
-        return false;
 
       if (!forceNow_)
       {
@@ -466,10 +540,17 @@ namespace MediaPortal.Music.Database
           string logmessage = "Next radio handshake due at " + nextRadioHandshake;
           if (_useDebugLog)
             Log.Debug("AudioscrobblerBase: {0}", logmessage);
-          return true;
+
+          RadioHandshakeSuccess();
+          return;
         }
       }
 
+      DoHandshake(false, HandshakeType.PreRadio);
+    }
+
+    private static bool AttemptRadioHandshake()
+    {
       // http://ws.audioscrobbler.com/radio/handshake.php?version=1.0.6&platform=win32&username=f1n4rf1n&passwordmd5=3847af7ab43a1c31503e8bef7736c41f&language=en    
       string tmpUser = System.Web.HttpUtility.UrlEncode(username).ToLower();
       string tmpPass = HashSingleString(password);
@@ -487,10 +568,11 @@ namespace MediaPortal.Music.Database
       if (!success)
       {
         Log.Warn("AudioscrobblerBase: {0}", "Radio handshake failed");
+        RadioHandshakeError();
         return false;
       }
 
-      lastRadioHandshake = DateTime.Now;
+      lastRadioHandshake = DateTime.Now;      
 
       if (_useDebugLog)
         Log.Debug("AudioscrobblerBase: {0}", "Radio handshake successful");
@@ -506,6 +588,7 @@ namespace MediaPortal.Music.Database
       if (_useDebugLog)
         Log.Debug("AudioscrobblerBase: {0}", "Upgrade request send");
 
+      RadioHandshakeSuccess();
       return true;
     }
     
@@ -717,14 +800,12 @@ namespace MediaPortal.Music.Database
     /// </summary>
     private static void SubmitQueue()
     {
-      int _submittedSongs = 0;
-
       // Make sure that a connection is possible.
-      if (!DoHandshake(false))
-      {
-        Log.Warn("AudioscrobblerBase: {0}", "Handshake failed.");
-        return;
-      }
+      DoHandshake(false, HandshakeType.Submit);
+    }
+
+    private static void AttemptSubmitNow()
+    {      
       // If the queue is empty, nothing else to do today.
       if (queue.Count <= 0)
       {
@@ -732,6 +813,8 @@ namespace MediaPortal.Music.Database
           Log.Debug("AudioscrobblerBase: {0}", "Queue is empty");
         return;
       }
+
+      int _submittedSongs = 0;
 
       // Only one thread should attempt to run through the queue at a time.
       lock (submitLock)

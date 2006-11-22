@@ -102,9 +102,35 @@ namespace MediaPortal.GUI.RADIOLASTFM
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(PlayBackStoppedHandler);
       g_Player.PlayBackEnded += new g_Player.EndedHandler(PlayBackEndedHandler);
 
+      LastFMStation.RadioSettingsSuccess +=new StreamControl.RadioSettingsLoaded(OnRadioSettingsSuccess);
+      LastFMStation.RadioSettingsError +=new StreamControl.RadioSettingsFailed(OnRadioSettingsError);
+
       LastFMStation.StreamSongChanged += new StreamControl.SongChangedHandler(OnLastFMStation_StreamSongChanged);
       
       return bResult;
+    }
+
+    private void OnRadioSettingsSuccess()
+    {
+      UpdateUsersTags(LastFMStation.AccountUser);
+      UpdateUsersFriends(LastFMStation.AccountUser);
+      GUIWaitCursor.Hide();
+
+      btnStartStream.Selected = true;
+    }
+
+    private void OnRadioSettingsError()
+    {
+      GUIWaitCursor.Hide();
+
+      GUIDialogOK msgdlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+      if (msgdlg == null)
+        return;
+      msgdlg.SetHeading("Radio handshake failed!");
+      msgdlg.SetLine(1, "Streams might be temporarily unavailable");
+      msgdlg.DoModal(GetID);
+
+      btnStartStream.Selected = false;
     }
 
     #region Serialisation
@@ -122,11 +148,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         LastFMStation.LoadConfig();
         LastFMStation.SubmitRadioSongs = _configSubmitToProfile;
-      }
-      
-      UpdateUsersTags(LastFMStation.AccountUser);
-      UpdateUsersFriends(LastFMStation.AccountUser);
-      GUIWaitCursor.Hide();
+      }   
+      else
+        GUIWaitCursor.Hide();
     }
 
     //void SaveSettings()

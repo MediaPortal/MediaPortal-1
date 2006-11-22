@@ -40,7 +40,6 @@ using MediaPortal.Utils.Web;
 
 namespace MediaPortal.GUI.RADIOLASTFM
 {
-
   public enum StreamPlaybackState : int
   {
     offline = 0,
@@ -73,8 +72,14 @@ namespace MediaPortal.GUI.RADIOLASTFM
   {
     public delegate void SongChangedHandler(MusicTag newCurrentSong, DateTime startTime);
     public event SongChangedHandler StreamSongChanged;
-    //static public event SongChangedHandler StreamSongChanged;
 
+    public delegate void RadioSettingsLoaded();
+    public event RadioSettingsLoaded RadioSettingsSuccess;
+
+    public delegate void RadioSettingsFailed();
+    public event RadioSettingsFailed RadioSettingsError;
+    
+    
     private AudioscrobblerUtils InfoScrobbler = null;
 
     private string _currentRadioURL = String.Empty;
@@ -98,6 +103,13 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private Object BadLock = null;
 
     private AsyncGetRequest httpcommand = null;
+
+    // constructor
+    public StreamControl()
+    {
+      AudioscrobblerBase.RadioHandshakeSuccess += new AudioscrobblerBase.RadioHandshakeCompleted(OnRadioLoginSuccess);
+      AudioscrobblerBase.RadioHandshakeError += new AudioscrobblerBase.RadioHandshakeFailed(OnRadioLoginFailed);
+    }
 
     #region Examples
     // 4. http.request.uri = Request URI: http://ws.audioscrobbler.com/ass/upgrade.php?platform=win&version=1.0.7&lang=en&user=f1n4rf1n
@@ -147,22 +159,39 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       if (_currentUser.Length > 0)
       {
-        _currentSession = AudioscrobblerBase.RadioSession;
-        // for now..
-        _currentStreamsUser = _currentUser;
-
-        if (_currentSession != String.Empty)
-        {
-          _isSubscriber = AudioscrobblerBase.Subscriber;
-          //_currentRadioURL = "http://streamer1.last.fm/last.mp3?Session=" + _currentSession;
-          _currentRadioURL = AudioscrobblerBase.RadioStreamLocation;
-          _currentState = StreamPlaybackState.initialized;
-
-          _isInit = true;
-        }
+        AudioscrobblerBase.DoRadioHandshake(true);       
       }      
     }
+
+    private void OnRadioLoginSuccess()
+    {
+      // for now..
+      _currentStreamsUser = _currentUser;
+      _currentSession = AudioscrobblerBase.RadioSession;
+
+      if (_currentSession != String.Empty)
+      {
+        _isSubscriber = AudioscrobblerBase.Subscriber;
+        //_currentRadioURL = "http://streamer1.last.fm/last.mp3?Session=" + _currentSession;
+        _currentRadioURL = AudioscrobblerBase.RadioStreamLocation;
+        _currentState = StreamPlaybackState.initialized;
+        _isInit = true;
+        RadioSettingsSuccess();
+      }
+      else
+        RadioSettingsError();      
+    }
+
+    private void OnRadioLoginFailed()
+    {
+      _currentState = StreamPlaybackState.offline;
+      _currentSession = String.Empty;
+      _isInit = false; // need to check that..
+      RadioSettingsError();
+    }
     #endregion
+
+    #region getters & setters
 
     public string AccountUser
     {
@@ -266,8 +295,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       get { return _isSubscriber; }
     }
-    
 
+    #endregion
+    
     #region Control functions
 
     public bool PlayStream()
@@ -420,8 +450,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         Log.Info("StreamControl: Currently not streaming - ignoring command");
     }
     #endregion
-
-
+    
     #region Tuning functions
     public bool TuneIntoPersonalRadio(string username_)
     {
@@ -524,8 +553,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         return false;
     }
     #endregion
-
-
+    
     #region Network related
     private bool SendCommandRequest(string url_)
     {
@@ -622,7 +650,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
       return;
     }
     # endregion
-
 
     #region Response parser
     private void ParseSuccessful(List<String> responseList_, String formerRequest_)
@@ -737,8 +764,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
     }
     #endregion
-
-
+    
     #region Utils
     private void OnTimerTick(object trash_, ElapsedEventArgs args_)
     {
