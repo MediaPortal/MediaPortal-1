@@ -107,7 +107,7 @@ namespace MediaPortal.GUI.Video
     DirectoryHistory m_history = new DirectoryHistory();
     string m_strDirectoryStart = String.Empty;
     int currentSelectedItem = -1;
-    static VirtualDirectory m_directory = new VirtualDirectory();
+    static VirtualDirectory m_directory;
     MapSettings mapSettings = new MapSettings();
     static bool m_askBeforePlayingDVDImage = false;
     // File menu
@@ -133,9 +133,7 @@ namespace MediaPortal.GUI.Video
     {
       GetID = (int)GUIWindow.Window.WINDOW_VIDEOS;
 
-      m_directory.AddDrives();
-      m_directory.SetExtensions(MediaPortal.Util.Utils.VideoExtensions);
-      m_directory.AddExtension(".m3u");
+
     }
 
     protected override bool CurrentSortAsc
@@ -201,7 +199,7 @@ namespace MediaPortal.GUI.Video
         ShowTrailerButton = xmlreader.GetValueAsBool("plugins", "My Trailers", true);
         fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         fileMenuPinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", String.Empty));
-        m_directory.Clear();
+        /*m_directory.Clear();
         
         string strDefault = xmlreader.GetValueAsString("movies", "default", String.Empty);
         for (int i = 0; i < 20; i++)
@@ -249,6 +247,13 @@ namespace MediaPortal.GUI.Video
             m_directory.Add(share);
           }
           else break;
+        }*/
+        m_directory = VirtualDirectories.Instance.Movies;
+ 
+        if (m_directory.DefaultShare != null)
+        {
+          _currentFolder = m_directory.DefaultShare.Path;
+          m_strDirectoryStart = m_directory.DefaultShare.Path;
         }
         m_askBeforePlayingDVDImage = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
 
@@ -587,7 +592,7 @@ namespace MediaPortal.GUI.Video
       }
       else
       {
-        if (!RequestPin(path))
+        if (!m_directory.RequestPin(path))
         {
           return;
         }
@@ -800,7 +805,7 @@ namespace MediaPortal.GUI.Video
 
       if (listItem == null) return;
       if (listItem.IsRemote) return;
-      if (!RequestPin(listItem.Path))
+      if (!m_directory.RequestPin(listItem.Path))
       {
         return;
       }
@@ -1038,78 +1043,6 @@ namespace MediaPortal.GUI.Video
       return string.Empty;
     }
 
-    public override bool OnPlayDVD(String drive)
-    {
-      Log.Info("GUIVideoFiles: playing DVD");
-      if (g_Player.Playing && g_Player.IsDVD)
-      {
-        return true;
-      }
-      if (g_Player.Playing && !g_Player.IsDVD)
-      {
-        g_Player.Stop();
-      }
-      if (Util.Utils.getDriveType(drive) == 5) //cd or dvd drive
-      {
-        string driverLetter = drive.Substring(0, 1);
-        string fileName = String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter);
-        if (!RequestPin(fileName))
-        {
-          return false;
-        }
-        if (System.IO.File.Exists(fileName))
-        {
-          IMDBMovie movieDetails = new IMDBMovie();
-          VideoDatabase.GetMovieInfo(fileName, ref movieDetails);
-          int idFile = VideoDatabase.GetFileId(fileName);
-          int idMovie = VideoDatabase.GetMovieId(fileName);
-          int timeMovieStopped = 0;
-          byte[] resumeData = null;
-          if ((idMovie >= 0) && (idFile >= 0))
-          {
-            timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
-            //Log.Info("GUIVideoFiles: OnPlayBackStopped for DVD - idFile={0} timeMovieStopped={1} resumeData={2}", idFile, timeMovieStopped, resumeData);
-            if (timeMovieStopped > 0)
-            {
-              string title = System.IO.Path.GetFileName(fileName);
-              VideoDatabase.GetMovieInfoById(idMovie, ref movieDetails);
-              if (movieDetails.Title != String.Empty) title = movieDetails.Title;
-
-              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-              if (null == dlgYesNo) return false;
-              dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
-              dlgYesNo.SetLine(1, title);
-              dlgYesNo.SetLine(2, GUILocalizeStrings.Get(936) + MediaPortal.Util.Utils.SecondsToHMSString(timeMovieStopped));
-              dlgYesNo.SetDefaultToYes(true);
-              dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-
-              if (!dlgYesNo.IsConfirmed) timeMovieStopped = 0;
-            }
-          }
-
-          g_Player.PlayDVD();
-          if (g_Player.Playing && timeMovieStopped > 0)
-          {
-            if (g_Player.IsDVD)
-            {
-              g_Player.Player.SetResumeState(resumeData);
-            }
-            else
-            {
-              g_Player.SeekAbsolute(timeMovieStopped);
-            }
-          }
-          return true;
-        }
-      }
-      //no disc in drive...
-      GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-      dlgOk.SetHeading(3);//my videos
-      dlgOk.SetLine(1, 219);//no disc
-      dlgOk.DoModal(GetID);
-      return false;
-    }
-
     protected override void OnInfo(int iItem)
     {
       currentSelectedItem = facadeView.SelectedListItemIndex;
@@ -1118,7 +1051,7 @@ namespace MediaPortal.GUI.Video
       GUIListItem pItem = facadeView.SelectedListItem;
       if (pItem == null) return;
       if (pItem.IsRemote) return;
-      if (!RequestPin(pItem.Path))
+      if (!m_directory.RequestPin(pItem.Path))
       {
         return;
       }
@@ -1813,7 +1746,7 @@ namespace MediaPortal.GUI.Video
               if (item.IsRemote) return;
             }
           }
-          if (!RequestPin(item.Path))
+          if (!m_directory.RequestPin(item.Path))
           {
             return;
           }
@@ -1864,7 +1797,7 @@ namespace MediaPortal.GUI.Video
       GUIListItem item = facadeView.SelectedListItem;
       if (item == null) return;
       if (item.IsFolder && item.Label == "..") return;
-      if (!RequestPin(item.Path))
+      if (!m_directory.RequestPin(item.Path))
       {
         return;
       }
@@ -1901,7 +1834,7 @@ namespace MediaPortal.GUI.Video
     void OnDeleteItem(GUIListItem item)
     {
       if (item.IsRemote) return;
-      if (!RequestPin(item.Path))
+      if (!m_directory.RequestPin(item.Path))
       {
         return;
       }
@@ -2073,43 +2006,6 @@ namespace MediaPortal.GUI.Video
       return m_directory.IsProtectedShare(folder, out pinCode);
     }
 
-    static public bool RequestPin(string folder)
-    {
-      int iPincodeCorrect;
-      if (m_directory.IsProtectedShare(folder, out iPincodeCorrect))
-      {
-        bool retry = true;
-        {
-          while (retry)
-          {
-            //no, then ask user to enter the pincode
-            GUIMessage msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
-            GUIWindowManager.SendMessage(msgGetPassword);
-            int iPincode = -1;
-            try
-            {
-              iPincode = Int32.Parse(msgGetPassword.Label);
-            }
-            catch (Exception)
-            {
-            }
-            if (iPincode != iPincodeCorrect)
-            {
-              GUIMessage msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0, 0);
-              GUIWindowManager.SendMessage(msgWrongPassword);
-
-              if (!(bool)msgWrongPassword.Object)
-              {
-                return false;
-              }
-            }
-            else
-              retry = false;
-          }
-        }
-      }
-      return true;
-    }
     static void DownloadThumnail(string folder, string url, string name)
     {
       if (url == null) return;
