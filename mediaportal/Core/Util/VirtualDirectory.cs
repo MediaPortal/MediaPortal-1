@@ -56,12 +56,72 @@ namespace MediaPortal.Util
     string currentShare = String.Empty;
     string previousShare = String.Empty;
     string m_strLocalFolder = String.Empty;
+    Share defaultshare = null;
     bool showFilesWithoutExtension = false;
     /// <summary>
     /// constructor
     /// </summary>
     public VirtualDirectory()
     {
+    }
+    
+    public void LoadSettings(string section)
+    {
+        Clear();
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        {
+          string strDefault = xmlreader.GetValueAsString(section, "default", String.Empty);
+          for (int i = 0; i < 20; i++)
+          {
+            string strShareName = String.Format("sharename{0}", i);
+            string strSharePath = String.Format("sharepath{0}", i);
+            string strPincode = String.Format("pincode{0}", i);
+
+            string shareType = String.Format("sharetype{0}", i);
+            string shareServer = String.Format("shareserver{0}", i);
+            string shareLogin = String.Format("sharelogin{0}", i);
+            string sharePwd = String.Format("sharepassword{0}", i);
+            string sharePort = String.Format("shareport{0}", i);
+            string remoteFolder = String.Format("shareremotepath{0}", i);
+            string shareViewPath = String.Format("shareview{0}", i);
+
+            Share share = new Share();
+            share.Name = xmlreader.GetValueAsString(section, strShareName, String.Empty);
+            share.Path = xmlreader.GetValueAsString(section, strSharePath, String.Empty);
+            string pinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString(section, strPincode, string.Empty));
+            if (pinCode != string.Empty)
+              share.Pincode = Convert.ToInt32(pinCode);
+            else
+              share.Pincode = -1;
+
+            share.IsFtpShare = xmlreader.GetValueAsBool(section, shareType, false);
+            share.FtpServer = xmlreader.GetValueAsString(section, shareServer, String.Empty);
+            share.FtpLoginName = xmlreader.GetValueAsString(section, shareLogin, String.Empty);
+            share.FtpPassword = xmlreader.GetValueAsString(section, sharePwd, String.Empty);
+            share.FtpPort = xmlreader.GetValueAsInt(section, sharePort, 21);
+            share.FtpFolder = xmlreader.GetValueAsString(section, remoteFolder, "/");
+            share.DefaultView = (Share.Views)xmlreader.GetValueAsInt(section, shareViewPath, (int)Share.Views.List);
+
+            if (share.Name.Length > 0)
+            {
+              if (strDefault == share.Name)
+              {
+                share.Default = true;
+                if (defaultshare == null)
+                {
+                  defaultshare = share;
+                }
+              }
+              Add(share);
+            }
+            else break;
+          }
+        }
+    }
+
+    public Share DefaultShare
+    {
+      get { return defaultshare;}
     }
 
     public string CurrentShare
@@ -94,6 +154,44 @@ namespace MediaPortal.Util
       currentShare = String.Empty;
       previousShare = String.Empty;
       m_strPreviousDir = String.Empty;
+    }
+
+    public bool RequestPin(string folder)
+    {
+      int iPincodeCorrect;
+      if (IsProtectedShare(folder, out iPincodeCorrect))
+      {
+        bool retry = true;
+        {
+          while (retry)
+          {
+            //no, then ask user to enter the pincode
+            GUIMessage msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+            GUIWindowManager.SendMessage(msgGetPassword);
+            int iPincode = -1;
+            try
+            {
+              iPincode = Int32.Parse(msgGetPassword.Label);
+            }
+            catch (Exception)
+            {
+            }
+            if (iPincode != iPincodeCorrect)
+            {
+              GUIMessage msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0, 0);
+              GUIWindowManager.SendMessage(msgWrongPassword);
+
+              if (!(bool)msgWrongPassword.Object)
+              {
+                return false;
+              }
+            }
+            else
+              retry = false;
+          }
+        }
+      }
+      return true;
     }
 
     /// <summary>
@@ -2037,6 +2135,77 @@ namespace MediaPortal.Util
       Log.Info("*****Start listening to drives");
     }
     #endregion
+
+
+  }
+  /// <summary>
+  /// Singleton class that returns instances to the diffrent kind
+  /// of virtual directories music, movies ..
+  /// Loads virtual directory information on demand
+  /// </summary>
+
+  public class VirtualDirectories
+  {
+    internal static VirtualDirectories _Instance = null;
+
+    VirtualDirectory _Music = null;
+    VirtualDirectory _Movies = null;
+    VirtualDirectory _Pictures = null;
+
+    private VirtualDirectories()
+    {
+    }
+
+    public static VirtualDirectories Instance
+    {
+      get
+      {
+        if (_Instance == null)
+          _Instance = new VirtualDirectories();
+        return _Instance;
+      }
+    }
+
+    public VirtualDirectory Music
+    {
+      get
+      {
+        if (_Music == null)
+        {
+          _Music = new VirtualDirectory();
+          _Music.LoadSettings("music");
+        }
+        return _Music;
+      }
+    }
+
+    public VirtualDirectory Movies
+    {
+      get
+      {
+        if (_Movies == null)
+        {
+          _Movies = new VirtualDirectory();
+          _Movies.LoadSettings("movies");
+          _Movies.AddDrives();
+          _Movies.SetExtensions(MediaPortal.Util.Utils.VideoExtensions);
+          _Movies.AddExtension(".m3u");
+        }
+        return _Movies;
+      }
+    }
+    public VirtualDirectory Pictures
+    {
+      get
+      {
+        if (_Pictures == null)
+        {
+          _Pictures = new VirtualDirectory();
+          _Pictures.LoadSettings("pictures");
+        }
+        return _Pictures;
+      }
+    }
 
 
   }
