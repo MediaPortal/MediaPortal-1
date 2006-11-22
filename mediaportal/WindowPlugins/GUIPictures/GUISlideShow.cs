@@ -38,6 +38,7 @@ using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Picture.Database;
+using MediaPortal.Music.Database;
 using MediaPortal.Dialogs;
 
 using Microsoft.DirectX;
@@ -473,6 +474,7 @@ namespace MediaPortal.GUI.Pictures
    float _renderTimer;
    public static readonly string SegmentIndicator = "#segment";
    PlayListPlayer playlistPlayer;
+   MusicDatabase mDB = null;
    #endregion
 
    #region GUIWindow overrides
@@ -507,6 +509,8 @@ namespace MediaPortal.GUI.Pictures
          break;
 
        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED:
+         if (mDB == null)
+           mDB = new MusicDatabase();
          ShowSong();
          break;
      }
@@ -2437,13 +2441,23 @@ namespace MediaPortal.GUI.Pictures
          albumart = string.Empty;
      }
      // get Song-info
-     MediaPortal.TagReader.MusicTag tag = MediaPortal.TagReader.TagReader.ReadTag(g_Player.CurrentFile);
+
+     // hwahrmann 2006-11-22 Using the Tagreader caused a COM exception in Win Media SDK, when reading WMA files
+     // Accessing the Music Database instead of using the Tagreader.
+     //MediaPortal.TagReader.MusicTag tag = MediaPortal.TagReader.TagReader.ReadTag(g_Player.CurrentFile);
+     Song song = new Song();
+
+     // If we don't have a tag in the db, we use the filename without the extension as song.title
+     song.Title = Path.GetFileNameWithoutExtension(g_Player.CurrentFile);
+     mDB.GetSongByFileName(g_Player.CurrentFile, ref song);
+     
      // Show Dialog
      dlg.Reset();
      dlg.ClearAll();
      dlg.SetImage(albumart);
      dlg.SetHeading(4540);
-     dlg.SetText(tag.Title + "\n" + tag.Artist + "\n" + tag.Album);
+     //dlg.SetText(tag.Title + "\n" + tag.Artist + "\n" + tag.Album);
+     dlg.SetText(song.Title + "\n" + song.Artist + "\n" + song.Album);
      dlg.TimeOut = 5;
      dlg.DoModal(GUIWindowManager.ActiveWindow);
    }
