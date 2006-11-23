@@ -1536,7 +1536,6 @@ namespace MediaPortal
       // Keep track of the frame count
       //if (frames < 10) return;
       float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
-      frames++;
       // Update the scene stats once per second
       if (time - lastTime >= 1.0f)
       {
@@ -1672,6 +1671,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.UseGuiThread)
       {
         Thread renderThread = new Thread(new ThreadStart(RenderWorkerThread));
+        renderThread.IsBackground = true;
         renderThread.Start();
       }
 			timer.Enabled = true;
@@ -2473,36 +2473,30 @@ namespace MediaPortal
       while (AppStillIdle());
     }
 
-    private float _lastRenderTime = 0.0f;
-
-    private bool RenderAtFullSpeed()
-    {
-      bool fullSpeed = false;
-      if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_FILES) fullSpeed = true;
-      else
-        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST) fullSpeed = true;
-
-      return fullSpeed;
-    }
-  
-
     void RenderWorkerThread()
     {
-      float currentTime;
-      float renderTime = 0.0f;
+      float currentTime = 0.0f;
+      float _lastSec = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
+      int fps = 0;
+      int sleepTime = 1000 / GUIGraphicsContext.MaxFPS;
       while (true)
       {
-        currentTime = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
-        if (((currentTime + renderTime) - _lastRenderTime) >= (2.0f / GUIGraphicsContext.MaxFPS) || RenderAtFullSpeed())
+        if (GUIWindowManager.IsSwitchingToNewWindow == false)
         {
-          if (GUIWindowManager.IsSwitchingToNewWindow == false)
-          {
-            FullRender();
-            renderTime = DXUtil.Timer(DirectXTimer.GetAbsoluteTime) - currentTime;
-            _lastRenderTime = currentTime;
-          }
+          FullRender();
+          fps++;
         }
-        Thread.Sleep(5);
+        Thread.Sleep(sleepTime);
+        currentTime = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
+        if (currentTime - _lastSec >= 1.0f)
+        {
+          if (fps < GUIGraphicsContext.MaxFPS)
+            sleepTime--;
+          else if (fps > GUIGraphicsContext.MaxFPS)
+            sleepTime++;
+          fps = 0;
+          _lastSec = currentTime;
+        }
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
           break;
       }
