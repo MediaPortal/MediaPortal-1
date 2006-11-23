@@ -25,6 +25,7 @@ void StreamRun();
 void announceStream(RTSPServer* rtspServer, ServerMediaSession* sms,char * streamName, char * inputFileName); // fwd
 void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStream);
 void StreamAddMpegFile(char* streamName, char* fileName);
+void StreamAdd3gpFile(char* streamName, char* fileName);
 void StreamRemove(char* streamName);
 
 extern netAddressBits SendingInterfaceAddr ;
@@ -34,7 +35,7 @@ extern netAddressBits ReceivingInterfaceAddr ;
 int _tmain(int argc, _TCHAR* argv[])
 {
   StreamSetup("192.168.1.58");
-  StreamAddMpegFile("stream1", "C:\\media\\movies\\5_manual_200611130905p54.mpg");
+  StreamAdd3gpFile("stream1", "C:\\2\\test.3gp");
   while (true)
   {
     StreamRun();
@@ -127,6 +128,24 @@ void StreamAddMpegFile(char* streamName, char* fileName)
     ServerMediaSession* sms= ServerMediaSession::createNew(*m_env, streamName, streamName,STREAM_DESCRIPTION,false);
     sms->addSubsession(MPEG2TstFileServerMediaSubsession::createNew(*m_env, fileName, false));
     m_rtspServer->addServerMediaSession(sms);
+
+	  announceStream(m_rtspServer, sms, streamName, fileName);
+	}
+	catch(...)
+	{
+		Log("Stream server: unable to add stream %s filename:%s", streamName,fileName);
+	}
+}
+
+//**************************************************************************************
+void StreamAdd3gpFile(char* streamName, char* fileName)
+{
+	try
+	{
+		Log("Stream server: add mpeg-4 stream %s filename:%s", streamName,fileName);
+    ServerMediaSession* sms= ServerMediaSession::createNew(*m_env, streamName, streamName,STREAM_DESCRIPTION,false);
+//    sms->addSubsession(H263plusVideoFileServerMediaSubsession::createNew(*m_env, fileName, false));
+//    m_rtspServer->addServerMediaSession(sms);
 
 	  announceStream(m_rtspServer, sms, streamName, fileName);
 	}

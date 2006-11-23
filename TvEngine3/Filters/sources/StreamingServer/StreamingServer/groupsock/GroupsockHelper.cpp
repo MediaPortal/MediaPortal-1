@@ -720,10 +720,23 @@ int gettimeofday(struct timeval* tp, int* /*tz*/) {
   tp->tv_sec = (long) ((ularge.QuadPart - epoch) / 10000000L);
   tp->tv_usec = (long) (system_time.wMilliseconds * 1000);
 #else
+#ifdef USE_OLD_GETTIMEOFDAY_FOR_WINDOWS_CODE
   struct timeb tb;
   ftime(&tb);
   tp->tv_sec = tb.time;
   tp->tv_usec = 1000*tb.millitm;
+#else
+  LARGE_INTEGER tickNow;
+  static LARGE_INTEGER tickFrequency;
+  static BOOL tickFrequencySet = FALSE;
+  if (tickFrequencySet == FALSE) {
+    QueryPerformanceFrequency(&tickFrequency);
+    tickFrequencySet = TRUE;
+  }
+  QueryPerformanceCounter(&tickNow);
+  tp->tv_sec = (long) (tickNow.QuadPart / tickFrequency.QuadPart);
+  tp->tv_usec = (long) (((tickNow.QuadPart % tickFrequency.QuadPart) * 1000000L) / tickFrequency.QuadPart);
+#endif
 #endif
   return 0;
 }

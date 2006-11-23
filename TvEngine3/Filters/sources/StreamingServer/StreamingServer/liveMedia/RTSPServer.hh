@@ -75,7 +75,7 @@ public:
 			      RTSPServer*& resultServer);
 
   void addServerMediaSession(ServerMediaSession* serverMediaSession);
-  ServerMediaSession* lookupServerMediaSession(char const* streamName);
+  virtual ServerMediaSession* lookupServerMediaSession(char const* streamName);
   void removeServerMediaSession(ServerMediaSession* serverMediaSession);
   void removeServerMediaSession(char const* streamName);
 
@@ -83,6 +83,10 @@ public:
       // returns a "rtsp://" URL that could be used to access the
       // specified session (which must already have been added to
       // us using "addServerMediaSession()".
+      // This string is dynamically allocated; caller should delete[]
+  char* rtspURLPrefix() const;
+      // like "rtspURL()", except that it returns just the common prefix used by
+      // each session's "rtsp://" URL.
       // This string is dynamically allocated; caller should delete[]
 
 protected:

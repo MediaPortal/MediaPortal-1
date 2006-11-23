@@ -269,11 +269,13 @@ char* RTSPClient::describeURL(char const* url, Authenticator* authenticator,
       break;
     }
 
-    // Skip every subsequent header line, until we see a blank line
+    // Skip over subsequent header lines, until we see a blank line.
     // The remaining data is assumed to be the SDP descriptor that we want.
-    // We should really do some checking on the headers here - e.g., to
-    // check for "Content-type: application/sdp", "Content-base",
-    // "Content-location", "CSeq", etc. #####
+    // While skipping over the header lines, we also check for certain headers
+    // that we recognize.
+    // (We should also check for "Content-type: application/sdp",
+    // "Content-location", "CSeq", etc.) #####
+    char* contentBase = new char[fResponseBufferSize]; // ensures enough space
     char* serverType = new char[fResponseBufferSize]; // ensures enough space
     int contentLength = -1;
     char* lineStart;
@@ -290,6 +292,10 @@ char* RTSPClient::describeURL(char const* url, Authenticator* authenticator,
 	  envir().setResultMsg("Bad \"Content-length:\" header: \"",
 			       lineStart, "\"");
 	  break;
+	}
+      } else if (sscanf(lineStart, "Content-Base: %s", contentBase) == 1) {
+	if (contentBase[0] != '\0'/*sanity check*/) {
+	  delete[] fBaseURL; fBaseURL = strDup(contentBase);
 	}
       } else if (sscanf(lineStart, "Server: %s", serverType) == 1) {
 	if (strncmp(serverType, "Kasenna", 7) == 0) fServerIsKasenna = True;
@@ -313,6 +319,7 @@ char* RTSPClient::describeURL(char const* url, Authenticator* authenticator,
       }
     } 
     delete[] serverType;
+    delete[] contentBase;
 
     // We're now at the end of the response header lines
     if (wantRedirection) {

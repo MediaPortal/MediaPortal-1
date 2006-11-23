@@ -44,7 +44,7 @@ public:
 protected:
   virtual ~SimpleRTPSource();
 
-private:
+protected:
   SimpleRTPSource(UsageEnvironment& env, Groupsock* RTPgs,
 		  unsigned char rtpPayloadFormat,
 		  unsigned rtpTimestampFrequency,

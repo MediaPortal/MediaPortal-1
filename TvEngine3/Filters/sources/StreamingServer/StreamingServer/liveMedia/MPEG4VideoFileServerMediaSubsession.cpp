@@ -36,6 +36,7 @@ MPEG4VideoFileServerMediaSubsession
                                       char const* fileName, Boolean reuseFirstSource)
   : FileServerMediaSubsession(env, fileName, reuseFirstSource),
     fDoneFlag(0) {
+      fDummyRTPSink=NULL;
 }
 
 MPEG4VideoFileServerMediaSubsession
@@ -62,14 +63,17 @@ static void checkForAuxSDPLine(void* clientData) {
 }
 
 void MPEG4VideoFileServerMediaSubsession::checkForAuxSDPLine1() {
-  if (fDummyRTPSink->auxSDPLine() != NULL) {
-    // Signal the event loop that we're done:
-    setDoneFlag();
-  } else {
-    // try again after a brief delay:
-    int uSecsToDelay = 100000; // 100 ms
-    nextTask() = envir().taskScheduler().scheduleDelayedTask(uSecsToDelay,
-			      (TaskFunc*)checkForAuxSDPLine, this);
+  if (fDummyRTPSink!=NULL)
+  {
+    if (fDummyRTPSink->auxSDPLine() != NULL) {
+      // Signal the event loop that we're done:
+      setDoneFlag();
+    } else {
+      // try again after a brief delay:
+      int uSecsToDelay = 100000; // 100 ms
+      nextTask() = envir().taskScheduler().scheduleDelayedTask(uSecsToDelay,
+			        (TaskFunc*)checkForAuxSDPLine, this);
+    }
   }
 }
 

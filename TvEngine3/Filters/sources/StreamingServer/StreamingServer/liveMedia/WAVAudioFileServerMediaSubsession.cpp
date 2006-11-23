@@ -163,14 +163,16 @@ RTPSink* WAVAudioFileServerMediaSubsession
       } else {
 	payloadFormatCode = rtpPayloadTypeIfDynamic;
       }
-    } else {
+    } else if (fAudioFormat == WA_PCMA) {
       mimeType = "PCMA";
       if (fSamplingFrequency == 8000 && fNumChannels == 1) {
 	payloadFormatCode = 8; // a static RTP payload type
       } else {
 	payloadFormatCode = rtpPayloadTypeIfDynamic;
       }
-    }
+    } else { //unknown format
+		break;
+	}
     
     return SimpleRTPSink::createNew(envir(), rtpGroupsock,
 				    payloadFormatCode, fSamplingFrequency,

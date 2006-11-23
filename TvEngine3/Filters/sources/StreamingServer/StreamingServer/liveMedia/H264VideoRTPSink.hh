@@ -81,6 +81,7 @@ class H264FUAFragmenter: public FramedFilter {
 public:
   H264FUAFragmenter(UsageEnvironment& env, FramedSource* inputSource,
 		    unsigned inputBufferMax, unsigned maxOutputPacketSize);
+  virtual ~H264FUAFragmenter();
 
   Boolean lastFragmentCompletedNALUnit() const { return fLastFragmentCompletedNALUnit; }
 
@@ -88,8 +89,6 @@ private: // redefined virtual functions:
   virtual void doGetNextFrame();
 
 private:
-  virtual ~H264FUAFragmenter();
-
   static void afterGettingFrame(void* clientData, unsigned frameSize,
 				unsigned numTruncatedBytes,
                                 struct timeval presentationTime,

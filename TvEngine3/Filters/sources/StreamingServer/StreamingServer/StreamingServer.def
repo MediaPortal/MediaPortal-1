@@ -6,3 +6,4 @@ StreamRun			@2
 StreamAddTimeShiftFile			@3
 StreamAddMpegFile		@4
 StreamRemove		@5
+StreamAdd3gpFile @6

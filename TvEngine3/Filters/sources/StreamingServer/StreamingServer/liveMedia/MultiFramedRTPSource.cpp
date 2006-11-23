@@ -36,8 +36,13 @@ public:
   BufferedPacket* getNextCompletedPacket(Boolean& packetLossPreceded);
   void releaseUsedPacket(BufferedPacket* packet);
   void freePacket(BufferedPacket* packet) {
-    if (packet != fSavedPacket) delete packet;
+    if (packet != fSavedPacket) {
+      delete packet;
+    } else {
+      fSavedPacketFree = True;
+    }
   }
+  Boolean isEmpty() const { return fHeadPacket == NULL; }
 
   void setThresholdTime(unsigned uSeconds) { fThresholdTime = uSeconds; }
 
@@ -49,6 +54,7 @@ private:
   BufferedPacket* fHeadPacket;
   BufferedPacket* fSavedPacket;
       // to avoid calling new/free in the common case
+  Boolean fSavedPacketFree;
 };
 
 
@@ -185,10 +191,17 @@ void MultiFramedRTPSource::doGetNextFrame1() {
 		<< fSavedMaxSize << ").  "
 		<< fNumTruncatedBytes << " bytes of trailing data will be dropped!\n";
       }
-      // Call our own 'after getting' function.  Because we're preceded
-      // by a network read, we can call this directly, without risking
-      // infinite recursion.
-      afterGetting(this);
+      // Call our own 'after getting' function, so that the downstream object can consume the data:
+      if (fReorderingBuffer->isEmpty()) {
+	// Common case optimization: There are no more queued incoming packets, so this code will not get
+	// executed again without having first returned to the event loop.  Call our 'after getting' function
+	// directly, because there's no risk of a long chain of recursion (and thus stack overflow):
+	afterGetting(this);
+      } else {
+	// Special case: Call our 'after getting' function via the event loop.
+	nextTask() = envir().taskScheduler().scheduleDelayedTask(0,
+								 (TaskFunc*)FramedSource::afterGetting, this);
+      }
     } else {
       // This packet contained fragmented data, and does not complete
       // the data that the client wants.  Keep getting data:
@@ -430,8 +443,8 @@ BufferedPacket* BufferedPacketFactory
 
 ReorderingPacketBuffer
 ::ReorderingPacketBuffer(BufferedPacketFactory* packetFactory)
-  : fThresholdTime(0) /* default reordering threshold: 100 ms */,
-    fHaveSeenFirstPacket(False), fHeadPacket(NULL), fSavedPacket(NULL) {
+  : fThresholdTime(100000) /* default reordering threshold: 100 ms */,
+    fHaveSeenFirstPacket(False), fHeadPacket(NULL), fSavedPacket(NULL), fSavedPacketFree(True) {
   fPacketFactory = (packetFactory == NULL)
     ? (new BufferedPacketFactory)
     : packetFactory;
@@ -443,11 +456,8 @@ ReorderingPacketBuffer::~ReorderingPacketBuffer() {
 }
 
 void ReorderingPacketBuffer::reset() {
-  if (fHeadPacket == NULL) {
-    delete fSavedPacket;
-  } else {
-    delete fHeadPacket; // will also delete fSavedPacket, because it's on the list
-  }
+  if (fSavedPacketFree) delete fSavedPacket; // because fSavedPacket is not in the list
+  delete fHeadPacket; // will also delete fSavedPacket if it's in the list
   fHaveSeenFirstPacket = False;
   fHeadPacket = NULL;
   fSavedPacket = NULL;
@@ -457,11 +467,15 @@ BufferedPacket* ReorderingPacketBuffer
 ::getFreePacket(MultiFramedRTPSource* ourSource) {
   if (fSavedPacket == NULL) { // we're being called for the first time
     fSavedPacket = fPacketFactory->createNewPacket(ourSource);
+    fSavedPacketFree = True;
   }
-
-  return fHeadPacket == NULL
-    ? fSavedPacket
-    : fPacketFactory->createNewPacket(ourSource);
+  
+  if (fSavedPacketFree == True) {
+    fSavedPacketFree = False;
+    return fSavedPacket;
+  } else {
+    return fPacketFactory->createNewPacket(ourSource);
+  }
 }
 
 Boolean ReorderingPacketBuffer::storePacket(BufferedPacket* bPacket) {

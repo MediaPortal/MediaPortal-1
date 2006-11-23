@@ -25,6 +25,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "H263plusVideoRTPSource.hh" // for the special header
 #include "MPEG4GenericRTPSource.hh" //for "samplingFrequencyFromAudioSpecificConfig()"
 #include "MPEG4LATMAudioRTPSource.hh" // for "parseGeneralConfigStr()"
+#include "Base64.hh"
 
 #include <ctype.h>
 
@@ -601,6 +602,10 @@ Boolean SubsessionIOState::setQTstate() {
 	fQTMediaDataAtomCreator = &QuickTimeFileSink::addAtom_h263;
 	fQTTimeScale = 600;
 	fQTTimeUnitsPerSample = fQTTimeScale/fOurSink.fMovieFPS;
+      } else if (strcmp(fOurSubsession.codecName(), "H264") == 0) {
+	fQTMediaDataAtomCreator = &QuickTimeFileSink::addAtom_avc1;
+	fQTTimeScale = 600;
+	fQTTimeUnitsPerSample = fQTTimeScale/fOurSink.fMovieFPS;
       } else if (strcmp(fOurSubsession.codecName(), "MP4V-ES") == 0) {
 	fQTMediaDataAtomCreator = &QuickTimeFileSink::addAtom_mp4v;
 	fQTTimeScale = 600;
@@ -745,15 +750,17 @@ void SubsessionIOState::useFrame(SubsessionBuffer& buffer) {
   struct timeval const& presentationTime = buffer.presentationTime();
   unsigned const destFileOffset = ftell(fOurSink.fOutFid);
   unsigned sampleNumberOfFrameStart = fQTTotNumSamples + 1;
+  Boolean avcHack = fQTMediaDataAtomCreator == &QuickTimeFileSink::addAtom_avc1;
 
   // If we're not syncing streams, or this subsession is not video, then
   // just give this frame a fixed duration:
   if (!fOurSink.fSyncStreams
       || fQTcomponentSubtype != fourChar('v','i','d','e')) {
     unsigned const frameDuration = fQTTimeUnitsPerSample*fQTSamplesPerFrame;
+    unsigned frameSizeToUse = frameSize;
+    if (avcHack) frameSizeToUse += 4; // H.264/AVC gets the frame size prefix
 
-    fQTTotNumSamples += useFrame1(frameSize, presentationTime,
-				  frameDuration, destFileOffset);
+    fQTTotNumSamples += useFrame1(frameSizeToUse, presentationTime, frameDuration, destFileOffset);
   } else {
     // For synced video streams, we use the difference between successive
     // frames' presentation times as the 'frame duration'.  So, record
@@ -766,10 +773,11 @@ void SubsessionIOState::useFrame(SubsessionBuffer& buffer) {
       if (duration < 0.0) duration = 0.0;
       unsigned frameDuration
 	= (unsigned)((2*duration*fQTTimeScale+1)/2); // round
+      unsigned frameSizeToUse = fPrevFrameState.frameSize;
+      if (avcHack) frameSizeToUse += 4; // H.264/AVC gets the frame size prefix
 
       unsigned numSamples
-	= useFrame1(fPrevFrameState.frameSize, ppt,
-		    frameDuration, fPrevFrameState.destFileOffset);
+	= useFrame1(frameSizeToUse, ppt, frameDuration, fPrevFrameState.destFileOffset);
       fQTTotNumSamples += numSamples;
       sampleNumberOfFrameStart = fQTTotNumSamples + 1;
     }
@@ -779,6 +787,8 @@ void SubsessionIOState::useFrame(SubsessionBuffer& buffer) {
     fPrevFrameState.presentationTime = presentationTime;
     fPrevFrameState.destFileOffset = destFileOffset;
   }
+
+  if (avcHack) fOurSink.addWord(frameSize);
 
   // Write the data into the file:
   fwrite(frameSource, 1, frameSize, fOurSink.fOutFid);
@@ -1739,6 +1749,67 @@ addAtom(h263);
   size += addZeroWords(6); // Compressor name (continued - zero)
   size += addWord(0x00000018); // Compressor name (final)+Depth
   size += addHalfWord(0xffff); // Color table id
+addAtomEnd;
+
+addAtom(avc1);
+// General sample description fields:
+  size += addWord(0x00000000); // Reserved
+  size += addWord(0x00000001); // Reserved+Data       reference index
+// Video sample       description     fields:
+  size += addWord(0x00000000); // Version+Revision level
+  size += add4ByteString("appl"); // Vendor
+  size += addWord(0x00000000); // Temporal quality
+  size += addWord(0x00000000); // Spatial quality
+  unsigned const widthAndHeight       = (fMovieWidth<<16)|fMovieHeight;
+  size += addWord(widthAndHeight); // Width+height
+  size += addWord(0x00480000); // Horizontal resolution
+  size += addWord(0x00480000); // Vertical resolution
+  size += addWord(0x00000000); // Data size
+  size += addWord(0x00010548); // Frame       count+Compressor name (start)
+    // "H.264"
+  size += addWord(0x2e323634); // Compressor name (continued)
+  size += addZeroWords(6); // Compressor name (continued - zero)
+  size += addWord(0x00000018); // Compressor name (final)+Depth
+  size += addHalfWord(0xffff); // Color       table id
+  size += addAtom_avcC();
+addAtomEnd;
+ 
+addAtom(avcC);
+// Begin by Base-64 decoding the "sprop" parameter sets strings:
+  char* psets = strDup(fCurrentIOState->fOurSubsession.fmtp_spropparametersets());
+  size_t comma_pos = strcspn(psets, ",");
+  psets[comma_pos] = '\0';
+  char* sps_b64 = psets;
+  char* pps_b64 = &psets[comma_pos+1];
+  unsigned sps_count;
+  unsigned char* sps_data = base64Decode(sps_b64, sps_count, false);
+  unsigned pps_count;
+  unsigned char* pps_data = base64Decode(pps_b64, pps_count, false);
+
+// Then add the decoded data:
+  size += addByte(0x01); // configuration version
+  size += addByte(sps_data[1]); // profile
+  size += addByte(sps_data[2]); // profile compat
+  size += addByte(sps_data[3]); // level
+  size += addByte(0xff); /* 0b11111100 | lengthsize = 0x11 */
+  size += addByte(0xe0 | (sps_count > 0 ? 1 : 0) );
+  if (sps_count > 0) {
+    size += addHalfWord(sps_count);
+    for (unsigned i = 0; i < sps_count; i++) {
+      size += addByte(sps_data[i]);
+    }
+  }
+  size += addByte(pps_count > 0 ? 1 : 0);
+  if (pps_count > 0) {
+    size += addHalfWord(pps_count);
+    for (unsigned i = 0; i < pps_count; i++) {
+      size += addByte(pps_data[i]);
+    }
+  }
+
+// Finally, delete the data that we allocated:
+  delete[] pps_data; delete[] sps_data;
+  delete[] psets;
 addAtomEnd;
 
 addAtom(mp4v);

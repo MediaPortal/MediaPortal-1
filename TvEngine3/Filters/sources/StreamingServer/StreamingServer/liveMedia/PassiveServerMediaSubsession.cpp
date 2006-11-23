@@ -133,7 +133,7 @@ void PassiveServerMediaSubsession::startStream(unsigned /*clientSessionId*/,
   // many times on the same "RTCPInstance", and (ii) the "RTCPInstance" remains
   // in existence after "deleteStream()" is called.
   rtpSeqNum = fRTPSink.currentSeqNo();
-  rtpTimestamp = fRTPSink.currentTimestamp();
+  rtpTimestamp = fRTPSink.presetNextTimestamp();
 }
 
 PassiveServerMediaSubsession::~PassiveServerMediaSubsession() {

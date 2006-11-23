@@ -51,7 +51,7 @@ RTPSink::RTPSink(UsageEnvironment& env,
   : MediaSink(env), fRTPInterface(this, rtpGS),
     fRTPPayloadType(rtpPayloadType),
     fPacketCount(0), fOctetCount(0), fTotalOctetCount(0),
-    fTimestampFrequency(rtpTimestampFrequency), fHaveComputedFirstTimestamp(False),
+    fTimestampFrequency(rtpTimestampFrequency), fNextTimestampHasBeenPreset(True),
     fNumChannels(numChannels) {
   fRTPPayloadFormatName
     = strDup(rtpPayloadFormatName == NULL ? "???" : rtpPayloadFormatName);
@@ -61,7 +61,6 @@ RTPSink::RTPSink(UsageEnvironment& env,
   fSeqNo = (u_int16_t)our_random();
   fSSRC = our_random32();
   fTimestampBase = our_random32();
-  fCurrentTimestamp = fTimestampBase;
 
   fTransmissionStatsDB = new RTPTransmissionStatsDB(*this);
 }
@@ -72,16 +71,20 @@ RTPSink::~RTPSink() {
 }
 
 u_int32_t RTPSink::convertToRTPTimestamp(struct timeval tv) {
-  u_int32_t rtpTimestampIncrement = timevalToTimestamp(tv);
+  // Begin by converting from "struct timeval" units to RTP timestamp units:
+  u_int32_t timestampIncrement = (fTimestampFrequency*tv.tv_sec);
+  timestampIncrement += (u_int32_t)((2.0*fTimestampFrequency*tv.tv_usec + 1000000.0)/2000000);
+       // note: rounding
 
-  if (!fHaveComputedFirstTimestamp) {
-    // Make the first timestamp the same as the current "fTimestampBase", so that
-    // timestamps begin with the value we promised when this "RTPSink" was created:
-    fTimestampBase -= rtpTimestampIncrement;
-    fHaveComputedFirstTimestamp = True;
+  // Then add this to our 'timestamp base':
+  if (fNextTimestampHasBeenPreset) {
+    // Make the returned timestamp the same as the current "fTimestampBase",
+    // so that timestamps begin with the value that was previously preset:
+    fTimestampBase -= timestampIncrement;
+    fNextTimestampHasBeenPreset = False;
   }
 
-  u_int32_t const rtpTimestamp = fTimestampBase + rtpTimestampIncrement;
+  u_int32_t const rtpTimestamp = fTimestampBase + timestampIncrement;
 #ifdef DEBUG_TIMESTAMPS
   fprintf(stderr, "fTimestampBase: 0x%08x, tv: %lu.%06ld\n\t=> RTP timestamp: 0x%08x\n",
 	  fTimestampBase, tv.tv_sec, tv.tv_usec, rtpTimestamp);
@@ -91,11 +94,15 @@ u_int32_t RTPSink::convertToRTPTimestamp(struct timeval tv) {
   return rtpTimestamp;
 }
 
-u_int32_t RTPSink::timevalToTimestamp(struct timeval tv) const {
-  u_int32_t timestamp = (fTimestampFrequency*tv.tv_sec);
-  timestamp += (u_int32_t)((2.0*fTimestampFrequency*tv.tv_usec + 1000000.0)/2000000);
-       // note: rounding
-  return timestamp;
+u_int32_t RTPSink::presetNextTimestamp() {
+  struct timeval timeNow;
+  gettimeofday(&timeNow, NULL);
+
+  u_int32_t tsNow = convertToRTPTimestamp(timeNow);
+  fTimestampBase = tsNow;
+  fNextTimestampHasBeenPreset = True;
+
+  return tsNow;
 }
 
 void RTPSink::getTotalBitrate(unsigned& outNumBytes, double& outElapsedTime) {

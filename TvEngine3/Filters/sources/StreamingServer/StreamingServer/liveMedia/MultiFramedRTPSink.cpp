@@ -125,6 +125,21 @@ void MultiFramedRTPSink::setFrameSpecificHeaderBytes(unsigned char const* bytes,
   fOutBuf->insert(bytes, numBytes, fCurFrameSpecificHeaderPosition + bytePosition);
 }
 
+void MultiFramedRTPSink::setFramePadding(unsigned numPaddingBytes) {
+  if (numPaddingBytes > 0) {
+    // Add the padding bytes (with the last one being the padding size):
+    unsigned char paddingBuffer[255]; //max padding
+    memset(paddingBuffer, 0, numPaddingBytes);
+    paddingBuffer[numPaddingBytes-1] = numPaddingBytes;
+    fOutBuf->enqueue(paddingBuffer, numPaddingBytes);
+
+    // Set the RTP padding bit:
+    unsigned rtpHdr = fOutBuf->extractWord(0);
+    rtpHdr |= 0x20000000;
+    fOutBuf->insertWord(rtpHdr, 0);
+  }
+}
+
 Boolean MultiFramedRTPSink::continuePlaying() {
   // Send the first packet.
   // (This will also schedule any future sends.)
@@ -278,13 +293,15 @@ void MultiFramedRTPSink
     sendPacketIfNecessary();
   } else {
     // Use this frame in our outgoing packet:
+    unsigned char * frameStart = fOutBuf->curPtr();
+    fOutBuf->increment(numFrameBytesToUse);
+        // do this now, in case "doSpecialFrameHandling()" calls "setFramePadding()" to append padding bytes
 
     // Here's where any payload format specific processing gets done:
-    doSpecialFrameHandling(curFragmentationOffset, fOutBuf->curPtr(),
+    doSpecialFrameHandling(curFragmentationOffset, frameStart,
 			   numFrameBytesToUse, presentationTime,
 			   overflowBytes);
 
-    fOutBuf->increment(numFrameBytesToUse);
     ++fNumFramesUsedSoFar;
 
     // Update the time at which the next packet should be sent, based

@@ -117,7 +117,7 @@ public:
   Port const& serverRTPPort() const { return fServerRTPPort; }
   Port const& serverRTCPPort() const { return fServerRTCPPort; }
 
-  RTPSink const* rtpSink() const { return fRTPSink; }
+  RTPSink* rtpSink() const { return fRTPSink; }
 
   float streamDuration() const { return fStreamDuration; }
 
@@ -257,7 +257,7 @@ void OnDemandServerMediaSubsession::startStream(unsigned clientSessionId,
 			      rtcpRRHandler, rtcpRRHandlerClientData);
     if (streamState->rtpSink() != NULL) {
       rtpSeqNum = streamState->rtpSink()->currentSeqNo();
-      rtpTimestamp = streamState->rtpSink()->currentTimestamp();
+      rtpTimestamp = streamState->rtpSink()->presetNextTimestamp();
     }
   }
 }
@@ -497,6 +497,4 @@ void StreamState::reclaim() {
 
   delete fRTPgs; fRTPgs = NULL;
   delete fRTCPgs; fRTCPgs = NULL;
-
-  fReferenceCount = 0;
 }

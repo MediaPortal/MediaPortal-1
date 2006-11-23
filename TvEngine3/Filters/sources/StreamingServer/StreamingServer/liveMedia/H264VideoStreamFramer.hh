@@ -31,7 +31,7 @@ class H264VideoStreamFramer: public FramedFilter {
 public:
   virtual Boolean currentNALUnitEndsAccessUnit() = 0;
   // subclasses must define this function.  It returns True iff the
-  // most recenty received NAL unit ends a video 'access unit' (i.e., 'frame')
+  // most recently received NAL unit ends a video 'access unit' (i.e., 'frame')
 
 protected:
   H264VideoStreamFramer(UsageEnvironment& env, FramedSource* inputSource);

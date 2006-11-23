@@ -61,13 +61,15 @@ public:
       // optional SDP line (e.g. a=fmtp:...)
 
   u_int16_t currentSeqNo() const { return fSeqNo; }
-  u_int32_t currentTimestamp() const { return fCurrentTimestamp; }
+  u_int32_t presetNextTimestamp();
+      // ensures that the next timestamp to be used will correspond to
+      // the current 'wall clock' time.
 
   RTPTransmissionStatsDB& transmissionStatsDB() const {
     return *fTransmissionStatsDB;
   }
 
-  Boolean haveComputedFirstTimestamp() const { return fHaveComputedFirstTimestamp; }
+  Boolean nextTimestampHasBeenPreset() const { return fNextTimestampHasBeenPreset; }
 
   void setStreamSocket(int sockNum, unsigned char streamChannelId) {
     fRTPInterface.setStreamSocket(sockNum, streamChannelId);
@@ -106,12 +108,9 @@ private:
   virtual Boolean isRTPSink() const;
 
 private:
-  u_int32_t timevalToTimestamp(struct timeval tv) const;
-
-private:
   u_int32_t fSSRC, fTimestampBase;
   unsigned fTimestampFrequency;
-  Boolean fHaveComputedFirstTimestamp;
+  Boolean fNextTimestampHasBeenPreset;
   char const* fRTPPayloadFormatName;
   unsigned fNumChannels;
   struct timeval fCreationTime;

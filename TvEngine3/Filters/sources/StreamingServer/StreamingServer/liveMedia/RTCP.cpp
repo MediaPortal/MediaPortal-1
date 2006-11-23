@@ -583,8 +583,10 @@ void RTCPInstance::onReceive(int typeOfPacket, int totPacketSize,
 }
 
 void RTCPInstance::sendReport() {
-  /// Note: Don't send a SR until at least one RTP packet has been sent. (David Bertrand, 2006.07.18)
-  if (fSink != NULL && !fSink->haveComputedFirstTimestamp()) return;
+  // Hack: Don't send a SR during those (brief) times when the timestamp of the
+  // next outgoing RTP packet has been preset, to ensure that that timestamp gets
+  // used for that outgoing packet. (David Bertrand, 2006.07.18)
+  if (fSink != NULL && fSink->nextTimestampHasBeenPreset()) return;
 
 #ifdef DEBUG
   fprintf(stderr, "sending REPORT\n");

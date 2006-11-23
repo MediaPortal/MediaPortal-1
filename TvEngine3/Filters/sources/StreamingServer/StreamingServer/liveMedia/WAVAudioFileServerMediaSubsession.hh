@@ -34,13 +34,13 @@ public:
       // If "convertToULaw" is True, 16-bit audio streams are converted to
       // 8-bit u-law audio prior to streaming.
 
-private:
+protected:
   WAVAudioFileServerMediaSubsession(UsageEnvironment& env, char const* fileName,
 				    Boolean reuseFirstSource, Boolean convertToULaw);
       // called only by createNew();
   virtual ~WAVAudioFileServerMediaSubsession();
 
-private: // redefined virtual functions
+protected: // redefined virtual functions
   virtual void seekStreamSource(FramedSource* inputSource, float seekNPT);
   virtual void setStreamSourceScale(FramedSource* inputSource, float scale);
   virtual FramedSource* createNewStreamSource(unsigned clientSessionId,
@@ -51,7 +51,7 @@ private: // redefined virtual functions
   virtual void testScaleFactor(float& scale);
   virtual float duration() const;
 
-private:
+protected:
   Boolean fConvertToULaw;
 
   // The following parameters of the input stream are set after

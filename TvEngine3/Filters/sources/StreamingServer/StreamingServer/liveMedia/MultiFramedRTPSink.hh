@@ -75,6 +75,7 @@ protected:
 				  unsigned wordPosition = 0);
   void setFrameSpecificHeaderBytes(unsigned char const* bytes, unsigned numBytes,
 				   unsigned bytePosition = 0);
+  void setFramePadding(unsigned numPaddingBytes);
   unsigned numFramesUsedSoFar() const { return fNumFramesUsedSoFar; }
 
   unsigned ourMaxPacketSize() const { return fOurMaxPacketSize; }

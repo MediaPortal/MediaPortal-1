@@ -151,16 +151,15 @@ public:
 #endif
 
 protected:
+  RTSPClient(UsageEnvironment& env, int verbosityLevel,
+	     char const* applicationName, portNumBits tunnelOverHTTPPortNum);
+      // called only by createNew();
   virtual ~RTSPClient();
 
 private: // redefined virtual functions
   virtual Boolean isRTSPClient() const;
 
 private:
-  RTSPClient(UsageEnvironment& env, int verbosityLevel,
-	     char const* applicationName, portNumBits tunnelOverHTTPPortNum);
-      // called only by createNew();
-
   void reset();
   void resetTCPSockets();
 
