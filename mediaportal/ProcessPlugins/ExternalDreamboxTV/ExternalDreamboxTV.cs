@@ -71,11 +71,13 @@ namespace ProcessPlugins.ExternalDreamboxTV
             if (_SyncHours > 0)
             {
                 int inval = Convert.ToInt32(_SyncHours);
-                TimeSpan ts = new TimeSpan(inval, 1, 0);
+                TimeSpan ts = new TimeSpan(0, 1, 0);
                 _SyncTimer.Interval = ts.TotalMilliseconds;
                 _SyncTimer.Start();
             }
 
+
+            
         }
 
         void _EPGbackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -128,6 +130,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
             
             switch (message.Message)
             {
+                    
                 case GUIMessage.MessageType.GUI_MSG_TUNE_EXTERNAL_CHANNEL:
                     Log.Info("DreamboxTV: Changing channel");
                     bool bIsInteger;
@@ -136,6 +139,29 @@ namespace ProcessPlugins.ExternalDreamboxTV
                     // is Dreambox recording?
                     if (DreamboxIsRecording)
                     {
+                        int id = message.TargetWindowId;
+                        if ((int)GUIWindow.Window.WINDOW_TV == id)
+                        {
+                            string recordmessage = "Dreambox is recording.\rAt the moment you cannot zap\rto another channel.";
+                            MediaPortal.Dialogs.GUIDialogOK pDlgOK = (MediaPortal.Dialogs.GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                            if (pDlgOK != null)
+                            {
+                                string[] lines = recordmessage.Split('\r');
+                                pDlgOK.SetHeading(605);//my tv
+                                pDlgOK.SetLine(1, lines[0]);
+                                if (lines.Length > 1)
+                                    pDlgOK.SetLine(2, lines[1]);
+                                else
+                                    pDlgOK.SetLine(2, "");
+
+                                if (lines.Length > 2)
+                                    pDlgOK.SetLine(3, lines[2]);
+                                else
+                                    pDlgOK.SetLine(3, "");
+                                pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
+                            }
+                            return;
+                        }
                         // future things here like telling GUI that dreambox cannot be switched because it is recording
                         Log.Info("DreamboxTV: Cannot zap because box is recording.");
                         return;
