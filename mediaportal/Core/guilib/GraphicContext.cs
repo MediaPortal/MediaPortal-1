@@ -137,6 +137,7 @@ namespace MediaPortal.GUI.Library
     const uint WM_SYSCOMMAND = 0x0112;
     const int MONITOR_ON = -1;
     const int MONITOR_OFF = 2;
+    static bool _useGuiThread = false;
 
     [DllImport("user32.dll")]
     static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, IntPtr lParam);
@@ -158,6 +159,21 @@ namespace MediaPortal.GUI.Library
       get { return _lastActivity; }
     }
 
+    static public bool UseGuiThread
+    {
+      get
+      {
+        return _useGuiThread ;
+      }
+      set
+      {
+        _useGuiThread = value;
+        if (_useGuiThread)
+          Log.Info("using seperate thread for GUI");
+        else
+          Log.Info("not using seperate thread for GUI");
+      }
+    }
     /// <summary>
     /// Enable/disable screen output
     /// </summary>

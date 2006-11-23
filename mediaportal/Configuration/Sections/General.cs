@@ -111,7 +111,8 @@ namespace MediaPortal.Configuration.Sections
 	    new string[] { "general", "startbasichome", "false" },
       new string[] { "general", "turnmonitoronafterresume", "false" },
       new string[] { "general", "enables3trick","true" },
-      new string[] { "general", "autosize", "false" }
+      new string[] { "general", "autosize", "false" },
+      new string[] { "general", "useuithread", "false" }
       //new string[] { "general", "allowfocus", "false" }
       };
 
@@ -220,9 +221,9 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBoxGeneralSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
-      this.cbDebug = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.lbDebug = new System.Windows.Forms.Label();
+      this.cbDebug = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
       this.groupBoxGeneralSettings.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -241,6 +242,30 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxGeneralSettings.TabIndex = 1;
       this.groupBoxGeneralSettings.TabStop = false;
       this.groupBoxGeneralSettings.Text = "General Settings";
+      // 
+      // lbDebug
+      // 
+      this.lbDebug.AutoSize = true;
+      this.lbDebug.Location = new System.Drawing.Point(21, 364);
+      this.lbDebug.Name = "lbDebug";
+      this.lbDebug.Size = new System.Drawing.Size(57, 13);
+      this.lbDebug.TabIndex = 3;
+      this.lbDebug.Text = "Log Level:";
+      // 
+      // cbDebug
+      // 
+      this.cbDebug.BorderColor = System.Drawing.Color.Empty;
+      this.cbDebug.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbDebug.FormattingEnabled = true;
+      this.cbDebug.Items.AddRange(new object[] {
+            "Error",
+            "Warning",
+            "Information",
+            "Debug"});
+      this.cbDebug.Location = new System.Drawing.Point(85, 360);
+      this.cbDebug.Name = "cbDebug";
+      this.cbDebug.Size = new System.Drawing.Size(121, 21);
+      this.cbDebug.TabIndex = 2;
       // 
       // settingsCheckedListBox
       // 
@@ -268,35 +293,12 @@ namespace MediaPortal.Configuration.Sections
             "Start with basic home screen",
             "Turn monitor/tv on when resuming from standby",
             "Allow S3 standby although wake up devices are present",
-            "Autosize window mode to skin"});
+            "Autosize window mode to skin",
+            "Enable seperate thread to render GUI"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 304);
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 319);
       this.settingsCheckedListBox.TabIndex = 0;
-      // 
-      // cbDebug
-      // 
-      this.cbDebug.BorderColor = System.Drawing.Color.Empty;
-      this.cbDebug.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbDebug.FormattingEnabled = true;
-      this.cbDebug.Items.AddRange(new object[] {
-            "Error",
-            "Warning",
-            "Information",
-            "Debug"});
-      this.cbDebug.Location = new System.Drawing.Point(84, 352);
-      this.cbDebug.Name = "cbDebug";
-      this.cbDebug.Size = new System.Drawing.Size(121, 21);
-      this.cbDebug.TabIndex = 2;
-      // 
-      // lbDebug
-      // 
-      this.lbDebug.AutoSize = true;
-      this.lbDebug.Location = new System.Drawing.Point(20, 356);
-      this.lbDebug.Name = "lbDebug";
-      this.lbDebug.Size = new System.Drawing.Size(57, 13);
-      this.lbDebug.TabIndex = 3;
-      this.lbDebug.Text = "Log Level:";
       // 
       // General
       // 

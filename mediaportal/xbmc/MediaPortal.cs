@@ -465,6 +465,7 @@ public class MediaPortalApp : D3DApp, IRender
       timeScreenSaver = xmlreader.GetValueAsInt("general", "screensavertime", 60);
       clientSizeX = xmlreader.GetValueAsInt("general", "sizex", clientSizeX);
       clientSizeY = xmlreader.GetValueAsInt("general", "sizey", clientSizeY);
+      GUIGraphicsContext.UseGuiThread = xmlreader.GetValueAsBool("general", "useuithread", false);
     }
 
     // check if MediaPortal is already running...
@@ -836,12 +837,18 @@ public class MediaPortalApp : D3DApp, IRender
       g_Player.Process();
       HandleMessage();
       FrameMove();
-      //FullRender();  
-      Render3DEnvironment(); // part of FullRender() which is needed on Resume...
-      //if (deviceLost)
-      //{
-      //  RecoverDevice();
-      //}
+      if (GUIGraphicsContext.UseGuiThread)
+      {
+        FullRender();
+      }
+      else
+      {
+        Render3DEnvironment(); // part of FullRender() which is needed on Resume...
+        //if (deviceLost)
+        //{
+        //  RecoverDevice();
+        //}
+      }
       if (GUIGraphicsContext.Vmr9Active)
       {
         Thread.Sleep(50);

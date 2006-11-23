@@ -1648,7 +1648,10 @@ namespace MediaPortal
     {
 			this.timer.Enabled = false;
 			this.timer.Interval = 50;
-			//Application.Idle += new EventHandler(Application_Idle);
+      if (!GUIGraphicsContext.UseGuiThread)
+      {
+        Application.Idle += new EventHandler(Application_Idle);
+      }
       Initialize();
       OnStartup();
 
@@ -1666,8 +1669,11 @@ namespace MediaPortal
       }
       catch
       { }
-			Thread renderThread = new Thread(new ThreadStart(RenderWorkerThread));
-			renderThread.Start();
+      if (GUIGraphicsContext.UseGuiThread)
+      {
+        Thread renderThread = new Thread(new ThreadStart(RenderWorkerThread));
+        renderThread.Start();
+      }
 			timer.Enabled = true;
     }
 
@@ -2429,6 +2435,44 @@ namespace MediaPortal
       return !result;
     }
 
+    private static int loopCount = 1;
+    private static int sleepCount = 0;
+
+    private void Application_Idle(object sender, EventArgs e)
+    {
+      do
+      {
+        OnProcess();
+        FrameMove();
+        if (!GUIGraphicsContext.UseGuiThread)
+        {
+          StartFrameClock();
+          FullRender();
+          //if (g_Player.Playing /*&& !g_Player.IsExternalPlayer*/ && g_Player.IsMusic)         
+          //if (g_Player.Playing /*&& !g_Player.IsExternalPlayer*/ && g_Player.IsMusic && !g_Player.HasVideo)
+          if (g_Player.Playing && !g_Player.IsExternalPlayer && !g_Player.IsMusic && !g_Player.HasVideo)
+          {
+            if (GUIGraphicsContext.CurrentFPS < GUIGraphicsContext.MaxFPS)
+              loopCount++;
+            //else if (loopCount > 0)
+            else if (GUIGraphicsContext.CurrentFPS > GUIGraphicsContext.MaxFPS)
+              loopCount--;
+
+            sleepCount++;
+            if (sleepCount >= loopCount)
+            {
+              WaitForFrameClock();
+              sleepCount = 0;
+              UpdateStats();
+            }
+          }
+        }
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+          break;
+      }
+      while (AppStillIdle());
+    }
+
     private float _lastRenderTime = 0.0f;
 
     private bool RenderAtFullSpeed()
@@ -2463,20 +2507,6 @@ namespace MediaPortal
           break;
       }
     }
-
-
-		private void Application_Idle(object sender, EventArgs e)
-		{
-			do
-			{
-				OnProcess();
-				FrameMove();
-
-				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
-					break;
-			}
-			while (AppStillIdle());
-		}
 
     protected void DoMinimizeOnStartup()
     {
