@@ -5515,6 +5515,10 @@
 		<value>Mine favorittspor</value>
 	</string>
 	<string>
+		<id>34048</id>
+		<value>Mine naboers radio</value>
+	</string>
+	<string>
 		<id>34050</id>
 		<value>Ingen stream aktiv</value>
 	</string>
@@ -5529,6 +5533,14 @@
 	<string>
 		<id>34053</id>
 		<value>Avspilling av valgte stream feilet</value>
+	</string>
+	<string>
+		<id>34054</id>
+		<value>Radio handshake feilet!</value>
+	</string>
+	<string>
+		<id>34055</id>
+		<value>Stream midlertidig utilgjengelig</value>
 	</string>
 
 	<string>
@@ -6081,7 +6093,7 @@
 	</string>
 	<string>
 		<id>200013</id>
-		<value>Denne Assistenten lar deg sette opp MediaPortal raskt og enkelt. Vennligst gå gjennom trinnene,</value>
+		<value>Denne assistenten lar deg sette opp MediaPortal raskt og enkelt. Vennligst gå gjennom trinnene,</value>
 	</string>
 	<string>
 		<id>200014</id>
@@ -6101,7 +6113,7 @@
 	</string>
 	<string>
 		<id>200019</id>
-		<value>Trykk "Avslutt" for å lukke Assistenten.</value>
+		<value>Trykk "Avslutt" for å lukke assistenten.</value>
 	</string>
 	<string>
 		<id>200020</id>
