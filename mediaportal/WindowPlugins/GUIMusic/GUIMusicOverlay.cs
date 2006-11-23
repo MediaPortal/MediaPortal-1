@@ -590,7 +590,7 @@ namespace MediaPortal.GUI.Music
       try
       {
         GUIPropertyManager.SetProperty("#Play.Current.File", System.IO.Path.GetFileName(strFile));
-        GUIPropertyManager.SetProperty("#Play.Current.Title", System.IO.Path.GetFileName(strFile));
+        GUIPropertyManager.SetProperty("#Play.Current.Title", MediaPortal.Util.Utils.GetFilename(strFile));
       }
       catch (Exception) { }
 

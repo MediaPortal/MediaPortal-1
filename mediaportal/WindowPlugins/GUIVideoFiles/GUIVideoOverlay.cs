@@ -209,7 +209,7 @@ namespace MediaPortal.GUI.Video
     void SetCurrentFile(string fileName)
     {
       GUIPropertyManager.RemovePlayerProperties();
-      GUIPropertyManager.SetProperty("#Play.Current.Title", System.IO.Path.GetFileName(fileName));
+      GUIPropertyManager.SetProperty("#Play.Current.Title", MediaPortal.Util.Utils.GetFilename(fileName));
       GUIPropertyManager.SetProperty("#Play.Current.File", System.IO.Path.GetFileName(fileName));
       GUIPropertyManager.SetProperty("#Play.Current.Thumb", "");
 
