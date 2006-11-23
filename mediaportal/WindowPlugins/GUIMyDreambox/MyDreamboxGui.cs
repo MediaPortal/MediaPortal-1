@@ -22,7 +22,6 @@ namespace MediaPortal.GUI.Dreambox
 
 
         private static bool ChangeChannel = false;
-        private static string _CurrentBouquet = "";
         private static string _CurrentChannelName = "";
         private static CurrentServiceData _OldChannel = null;
 
@@ -63,11 +62,9 @@ namespace MediaPortal.GUI.Dreambox
         private static DreamBox.Core _Dreambox = null;
         PlayListPlayer playlistPlayer;
         private string BoutiqueReference = string.Empty;
-        private static bool Processing = false;
 
         TimeSpan VideoStarted = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
         private double StartAmountSeconds = 0;
-        TimeSpan VideoNow = new TimeSpan();
 
         private static DataTable _Bouquets = null;
         private static DataTable _Channels = null;
@@ -397,7 +394,6 @@ namespace MediaPortal.GUI.Dreambox
             playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC_TEMP;
             playlistPlayer.PlayNext();
             //g_Player.Play(fileName);
-            Processing = false;
 
         }
 

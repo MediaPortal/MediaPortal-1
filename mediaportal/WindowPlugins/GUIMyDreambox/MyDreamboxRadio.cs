@@ -47,11 +47,8 @@ namespace MediaPortal.GUI.Dreambox
         private DreamBox.Core _Dreambox = null;
         PlayListPlayer playlistPlayer;
         private string BoutiqueReference = string.Empty;
-        private static bool Processing = false;
 
         TimeSpan VideoStarted = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
-        private double StartAmountSeconds = 0;
-        TimeSpan VideoNow = new TimeSpan();
 
         private static DataTable _Bouquets = null;
         private static DataTable _Channels = null;
@@ -100,7 +97,6 @@ namespace MediaPortal.GUI.Dreambox
                     {
                         base.OnMessage(message);
                         GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(665));
-                        //StartAmountSeconds = VideoStarted.Seconds;
 
                         _Bouquets = _Dreambox.Data.UserRadioBouquets.Tables[0];
                         _SelectedBouquetID = int.Parse(_Dreambox.CurrentChannel.CurrentServiceReference.ToLower().Replace("h", "").TrimStart('0'));
@@ -282,7 +278,6 @@ namespace MediaPortal.GUI.Dreambox
             playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC_TEMP;
             playlistPlayer.PlayNext();
             //g_Player.Play(fileName);
-            Processing = false;
 
         }
 

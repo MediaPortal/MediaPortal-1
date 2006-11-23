@@ -234,7 +234,6 @@ namespace DreamBox
                 retval = col[i].ToString();
                 retval = retval.Replace(@"<" + keyname + ">", "");
                 retval = retval.Replace(@"</" + keyname + ">", "");
-                break;
             }
             return retval;
         }

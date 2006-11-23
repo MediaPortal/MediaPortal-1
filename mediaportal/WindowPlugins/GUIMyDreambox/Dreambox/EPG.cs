@@ -10,7 +10,7 @@ namespace DreamBox
         private string _Url = "";
         private string _UserName = "";
         private string _Password = "";
-        private string _Command = "/cgi-bin/";
+        //private string _Command = "/cgi-bin/";
         private DreamBox.Data Data = null;
 
         public EPG(string url, string username, string password)
