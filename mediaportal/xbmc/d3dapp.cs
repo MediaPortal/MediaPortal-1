@@ -84,7 +84,6 @@ namespace MediaPortal
     protected bool _shuttingDown = false;
     protected bool _firstTimeWindowDisplayed = true;
     protected bool _autoHideMouse = false;
-    protected bool _needUpdate = false;
     protected DateTime _mouseTimeOutTimer = DateTime.Now;
     private Control ourRenderTarget;  // The window we will render too
     protected bool isUsingMenus = true; // Should we use the default windows
@@ -1340,7 +1339,6 @@ namespace MediaPortal
           //InitializeDeviceObjects();
         }
         deviceLost = false;
-        _needUpdate = true;
       }
     }
 
@@ -1396,7 +1394,6 @@ namespace MediaPortal
             //hide mouse
             Cursor.Hide();
             _showCursor = false;
-            _needUpdate = true;
             Invalidate(true);
           }
         }
@@ -2085,7 +2082,6 @@ namespace MediaPortal
         {
           Cursor.Show();
           _showCursor = true;
-          _needUpdate = true;
           Invalidate(true);
         }
         _mouseTimeOutTimer = DateTime.Now;
@@ -2100,7 +2096,6 @@ namespace MediaPortal
       {
         Cursor.Show();
         _showCursor = true;
-        _needUpdate = true;
         Invalidate(true);
       }
       _mouseTimeOutTimer = DateTime.Now;
@@ -2114,7 +2109,6 @@ namespace MediaPortal
       {
         Cursor.Show();
         _showCursor = true;
-        _needUpdate = true;
         Invalidate(true);
       }
       _mouseTimeOutTimer = DateTime.Now;
