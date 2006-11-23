@@ -582,6 +582,8 @@ namespace MediaPortal.Player
       }
     }
 
+    public delegate void SafeInvoke();
+
     public override void SetVideoWindow()
     {
 
@@ -594,7 +596,6 @@ namespace MediaPortal.Player
       if (!_needUpdate) return;
       _needUpdate = false;
 
-
       if (_isFullScreen)
       {
         Log.Info("AudioPlayer:Fullscreen");
@@ -604,24 +605,47 @@ namespace MediaPortal.Player
         _videoWidth = GUIGraphicsContext.OverScanWidth;
         _videoHeight = GUIGraphicsContext.OverScanHeight;
 
-        _wmp10Player.Location = new Point(0, 0);
-        _wmp10Player.ClientSize = new System.Drawing.Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
-        _wmp10Player.Size = new System.Drawing.Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
+        SafeInvoke si = new SafeInvoke(delegate()
+        {
+          _wmp10Player.Location = new Point(0, 0);
+          _wmp10Player.ClientSize = new System.Drawing.Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
+          _wmp10Player.Size = new System.Drawing.Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
+          _wmp10Player.stretchToFit = true;
+        });
+
+        if (_wmp10Player.InvokeRequired)
+        {
+          IAsyncResult iar = _wmp10Player.BeginInvoke(si);
+          iar.AsyncWaitHandle.WaitOne();
+        }
+        else
+        {
+          si();
+        }
 
         _videoRectangle = new Rectangle(0, 0, _wmp10Player.ClientSize.Width, _wmp10Player.ClientSize.Height);
         _sourceRectangle = _videoRectangle;
 
         //_wmp10Player.fullScreen=true;
-        _wmp10Player.stretchToFit = true;
         Log.Info("AudioPlayer:done");
         return;
       }
       else
       {
-
-        _wmp10Player.ClientSize = new System.Drawing.Size(_videoWidth, _videoHeight);
-        _wmp10Player.Location = new Point(_positionX, _positionY);
-
+        SafeInvoke si = new SafeInvoke(delegate()
+        {
+          _wmp10Player.ClientSize = new System.Drawing.Size(_videoWidth, _videoHeight);
+          _wmp10Player.Location = new Point(_positionX, _positionY);
+        });
+        if (_wmp10Player.InvokeRequired)
+        {
+          IAsyncResult iar = _wmp10Player.BeginInvoke(si);
+          iar.AsyncWaitHandle.WaitOne();
+        }
+        else
+        {
+          si();
+        }
         _videoRectangle = new Rectangle(_positionX, _positionY, _wmp10Player.ClientSize.Width, _wmp10Player.ClientSize.Height);
         _sourceRectangle = _videoRectangle;
         //Log.Info("AudioPlayer:set window:({0},{1})-({2},{3})",_positionX,_positionY,_positionX+_wmp10Player.ClientSize.Width,_positionY+_wmp10Player.ClientSize.Height);
