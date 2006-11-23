@@ -748,10 +748,12 @@ public class MediaPortalApp : D3DApp, IRender
   static object syncResume = new object();
   private void OnResume()
   {
+    Log.Debug("Main: OnResume - set lock for syncronous inits");
     lock (syncResume)
     {
       if (!_suspended)
       {
+        Log.Info("Main: OnResume - OnResume called but !_suspended");
         return;
       }
 
@@ -773,7 +775,7 @@ public class MediaPortalApp : D3DApp, IRender
       if (!Recorder.Running && !_onResumeRunning)
       {
         _onResumeRunning = true;
-        Log.Info("Main: Starting recorder");
+        Log.Info("Main: OnResume - Starting recorder");
         Recorder.Start();
         if (turnMonitorOn)
         {
@@ -782,6 +784,8 @@ public class MediaPortalApp : D3DApp, IRender
       }
 
       AutoPlay.StartListening();
+
+      Log.Info("Main: OnResume - init InputDevices");
       InputDevices.Init();
 
       _onResumeRunning = false;
@@ -789,12 +793,12 @@ public class MediaPortalApp : D3DApp, IRender
 			_suspended = false;
 			if (_startWithBasicHome)
 			{
-				Log.Info("Main: Switch to basic home screen");
+        Log.Info("Main: OnResume - Switch to basic home screen");
 				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
 			}
 			else
 			{
-				Log.Info("Main: Switch to home screen");
+        Log.Info("Main: OnResume - Switch to home screen");
 				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
 			}
 			Log.Info("Main: OnResume - Done");
@@ -832,8 +836,12 @@ public class MediaPortalApp : D3DApp, IRender
       g_Player.Process();
       HandleMessage();
       FrameMove();
-      //FullRender();
+      //FullRender();  
       Render3DEnvironment(); // part of FullRender() which is needed on Resume...
+      //if (deviceLost)
+      //{
+      //  RecoverDevice();
+      //}
       if (GUIGraphicsContext.Vmr9Active)
       {
         Thread.Sleep(50);

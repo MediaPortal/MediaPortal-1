@@ -1282,16 +1282,13 @@ namespace MediaPortal
 #endif
     }
 
-
-    /// <summary>
-    /// Draws the scene 
-    /// </summary>
-    public void Render3DEnvironment()
+    public void RecoverDevice()
     {
       if (deviceLost)
       {
         try
         {
+          Log.Debug("d3dapp: RecoverDevice called");
           // Test the cooperative level to see if it's okay to render
           //Log.Info("app.TestCooperativeLevel()");
           GUIGraphicsContext.DX9Device.TestCooperativeLevel();
@@ -1304,11 +1301,14 @@ namespace MediaPortal
           // If the device was lost, do not render until we get it back
           isHandlingSizeChanges = false;
           isWindowActive = false;
-          //Log.Info("app.DeviceLostException");
+          Log.Debug("d3dapp: DeviceLostException");
+
           return;
+          //m_bNeedReset = true;
         }
         catch (DeviceNotResetException)
         {
+          Log.Debug("d3dapp: DeviceNotResetException");
           m_bNeedReset = true;
         }
         if (m_bNeedReset)
@@ -1321,26 +1321,35 @@ namespace MediaPortal
           //Log.Info("app.TestCooperativeLevel()->app.DeviceNotResetException");
           if (windowed)
           {
+            Log.Debug("d3dapp: Windowed while need reset");
             GraphicsAdapterInfo adapterInfo = graphicsSettings.AdapterInfo;
             graphicsSettings.WindowedDisplayMode = Manager.Adapters[adapterInfo.AdapterOrdinal].CurrentDisplayMode;
             presentParams.BackBufferFormat = graphicsSettings.WindowedDisplayMode.Format;
           }
 
           // Reset the device and resize it
-          Log.Info("D3D: Resetting DX9 device");
+          Log.Warn("d3dapp: Resetting DX9 device");
           try
           {
             GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
           }
           catch { }
 
-          Log.Info("app.EnvironmentResized()");
+          Log.Debug("d3dapp: EnvironmentResized()");
           EnvironmentResized(GUIGraphicsContext.DX9Device, new CancelEventArgs());
           //InitializeDeviceObjects();
         }
         deviceLost = false;
         _needUpdate = true;
       }
+    }
+
+    /// <summary>
+    /// Draws the scene 
+    /// </summary>
+    public void Render3DEnvironment()
+    {
+      RecoverDevice();
 
       try
       {
@@ -1349,7 +1358,7 @@ namespace MediaPortal
       }
       catch (Exception ex)
       {
-        Log.Info("D3D: Exception: {0}", ex);
+        Log.Error("d3dapp: Exception: {0}", ex);
       }
     }
 
@@ -2428,6 +2437,17 @@ namespace MediaPortal
 
     private float _lastRenderTime = 0.0f;
 
+    private bool RenderAtFullSpeed()
+    {
+      bool fullSpeed = false;
+      if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_FILES) fullSpeed = true;
+      else
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST) fullSpeed = true;
+
+      return fullSpeed;
+    }
+  
+
     void RenderWorkerThread()
     {
       float currentTime;
@@ -2435,7 +2455,7 @@ namespace MediaPortal
       while (true)
       {
         currentTime = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
-        if (((currentTime + renderTime) - _lastRenderTime) >= (2.0f / GUIGraphicsContext.MaxFPS))
+        if (((currentTime + renderTime) - _lastRenderTime) >= (2.0f / GUIGraphicsContext.MaxFPS) || RenderAtFullSpeed())
         {
           if (GUIWindowManager.IsSwitchingToNewWindow == false)
           {
