@@ -54,7 +54,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
 
         public ExternalDreamboxTV()
         {
-
+            Log.Info("DreamboxTV: .ctor");
         }
 
 
@@ -71,7 +71,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
             if (_SyncHours > 0)
             {
                 int inval = Convert.ToInt32(_SyncHours);
-                TimeSpan ts = new TimeSpan(inval, 0, 0);
+                TimeSpan ts = new TimeSpan(0, 3, 0);
                 _SyncTimer.Interval = ts.TotalMilliseconds;
                 _SyncTimer.Start();
             }
@@ -80,7 +80,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
 
         void _EPGbackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            Log.Info("External Dreambox TV: Scheduled EPG import has run.");
+            Log.Info("DreamboxTV: Scheduled EPG import has run.");
         }
 
         void _EPGbackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -90,6 +90,8 @@ namespace ProcessPlugins.ExternalDreamboxTV
 
         void _SyncTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
+            Log.Info("DreamboxTV: Timer Tick!");
+
             // check for last time
             string sLastEPGSync = "";
             System.DateTime lastEPGSync = System.DateTime.Now.AddDays(-1);
@@ -110,7 +112,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
             if (test < System.DateTime.Now)
             {
                 // Get EPG
-
+                Log.Info("DreamboxTV: Get EPG");
             }
 
             // Save new Sync Data
@@ -122,13 +124,23 @@ namespace ProcessPlugins.ExternalDreamboxTV
 
         void GUIWindowManager_Receivers(GUIMessage message)
         {
+            Log.Info("DreamboxTV: Changing channel");
             switch (message.Message)
             {
                 case GUIMessage.MessageType.GUI_MSG_TUNE_EXTERNAL_CHANNEL:
+                    
                     bool bIsInteger;
                     double retNum;
                     bIsInteger = Double.TryParse(message.Label, System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
-                    this.ChangeTunerChannel(message.Label);
+                    // is Dreambox recording?
+                    if (DreamboxIsRecording)
+                    {
+                        // future things here like telling GUI that dreambox cannot be switched because it is recording
+                        Log.Info("DreamboxTV: Cannot zap because box is recording.");
+                        return;
+                    }
+                    else
+                        this.ChangeTunerChannel(message.Label);
                     break;
             }
         }
@@ -161,8 +173,40 @@ namespace ProcessPlugins.ExternalDreamboxTV
 
         }
 
+        bool DreamboxIsRecording
+        {
+            get
+            {
+                bool bReturn = false;
+                try
+                {
+                    DreamBox.Core core1 = new DreamBox.Core("http://" + _DreamboxIP, _DreamboxUserName, _DreamboxPassword);
+                    int recording = core1.XML.Status.recording;
+                    switch (recording)
+                    {
+                        case 0:
+                            {
+                                bReturn = false;
+                                break;
+                            }
+                        case 1:
+                            {
+                                bReturn = true;
+                                break;
+                            }
+                    }
+                }
+                catch
+                {
+
+                }
+                return bReturn;
+            }
+        }
+
         private void LoadSettings()
         {
+            Log.Info("DreamboxTV: Loading settings");
             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
 
@@ -244,6 +288,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
 
 
             }
+            Log.Info("DreamboxTV: EPG imported");
         }
 
         #region IPlugin Members
