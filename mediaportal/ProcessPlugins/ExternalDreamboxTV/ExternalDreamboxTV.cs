@@ -71,7 +71,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
             if (_SyncHours > 0)
             {
                 int inval = Convert.ToInt32(_SyncHours);
-                TimeSpan ts = new TimeSpan(0, 3, 0);
+                TimeSpan ts = new TimeSpan(inval, 1, 0);
                 _SyncTimer.Interval = ts.TotalMilliseconds;
                 _SyncTimer.Start();
             }
@@ -113,6 +113,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
             {
                 // Get EPG
                 Log.Info("DreamboxTV: Get EPG");
+                this.ImportEPG();
             }
 
             // Save new Sync Data
@@ -124,11 +125,11 @@ namespace ProcessPlugins.ExternalDreamboxTV
 
         void GUIWindowManager_Receivers(GUIMessage message)
         {
-            Log.Info("DreamboxTV: Changing channel");
+            
             switch (message.Message)
             {
                 case GUIMessage.MessageType.GUI_MSG_TUNE_EXTERNAL_CHANNEL:
-                    
+                    Log.Info("DreamboxTV: Changing channel");
                     bool bIsInteger;
                     double retNum;
                     bIsInteger = Double.TryParse(message.Label, System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
@@ -240,6 +241,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
                 string text1 = table1.Rows[num1]["Ref"].ToString();
                 this.ImportEPGChannels(text1);
             }
+            Log.Info("DreamboxTV: EPG imported");
         }
 
         private void ImportEPGChannels(string reference)
@@ -288,7 +290,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
 
 
             }
-            Log.Info("DreamboxTV: EPG imported");
+            
         }
 
         #region IPlugin Members
