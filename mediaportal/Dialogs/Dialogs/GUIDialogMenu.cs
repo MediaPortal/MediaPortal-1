@@ -221,7 +221,9 @@ namespace MediaPortal.Dialogs
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
             m_bRunning = false;
-//            base.OnMessage(message);
+
+            // THIS IS AN INFINITY LOOP if you press the dialog's quick numbers (like 1,2,3)
+            base.OnMessage(message);
             return true;
           }
 
