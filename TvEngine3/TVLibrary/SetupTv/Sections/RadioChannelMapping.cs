@@ -183,7 +183,7 @@ namespace SetupTv.Sections
       items = new List<ListViewItem>();
       foreach (Channel channel in channels)
       {
-        if (channel.IsTv == false) continue;
+        if (channel.IsRadio == false) continue;
         ListViewItem item = new ListViewItem(channel.Name);
         item.Tag = channel;
         items.Add(item);
