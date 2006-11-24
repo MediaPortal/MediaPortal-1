@@ -229,8 +229,9 @@ STDMETHODIMP CTechnotrend::SetAntennaPower( BOOL onOff)
   return S_OK;
 }
 
-STDMETHODIMP CTechnotrend::SetDisEqc(int diseqcType, BOOL hiband, BOOL vertical)
+STDMETHODIMP CTechnotrend::SetDisEqc(int diseqcType, int hiband, int vertical)
 {
+	LogDebug("Technotrend: SetDisEqc antenna :%d hiband:%d vertical:%d",diseqcType,hiband, vertical);
   int position=0;
   int option=0;
   switch (diseqcType)

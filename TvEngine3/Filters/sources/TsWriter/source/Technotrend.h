@@ -11,7 +11,7 @@ DECLARE_INTERFACE_(ITechnoTrend, IUnknown)
 	STDMETHOD(IsTechnoTrend)(THIS_ BOOL* yesNo)PURE;
 	STDMETHOD(IsCamReady)(THIS_ BOOL* yesNo)PURE;
 	STDMETHOD(SetAntennaPower)(THIS_ BOOL onOff)PURE;
-	STDMETHOD(SetDisEqc)(THIS_ int diseqcType, BOOL hiband, BOOL vertical)PURE;
+	STDMETHOD(SetDisEqc)(THIS_ int diseqcType, int hiband, int vertical)PURE;
 	STDMETHOD(DescrambleService)(THIS_ int serviceId,BOOL* succeeded)PURE;
 };
 
@@ -26,7 +26,7 @@ public:
 	STDMETHODIMP IsTechnoTrend( BOOL* yesNo);
 	STDMETHODIMP IsCamReady( BOOL* yesNo);
 	STDMETHODIMP SetAntennaPower( BOOL onOff);
-	STDMETHODIMP SetDisEqc( int diseqcType, BOOL hiband, BOOL vertical);
+	STDMETHODIMP SetDisEqc( int diseqcType, int hiband, int vertical);
 	STDMETHODIMP DescrambleService( int serviceId,BOOL* succeeded);
 
   void OnCaChange(BYTE  nSlot,BYTE  nReplyTag,WORD  wStatus);

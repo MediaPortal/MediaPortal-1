@@ -103,7 +103,7 @@ namespace TvLibrary.Implementations.DVB
     public void SendDiseqCommand(DVBSChannel channel)
     {
       if (_technoTrendInterface == null) return;
-      bool hiBand = false;
+      short isHiBand = 0;
 
       switch (channel.BandType)
       {
@@ -111,16 +111,18 @@ namespace TvLibrary.Implementations.DVB
           if (channel.Frequency >= 11700000)
           {
             //lnbFrequency = 10600000;
-            hiBand = true;
+            isHiBand = 1;
           }
           else
           {
             //lnbFrequency = 9750000;
-            hiBand = false;
+            isHiBand = 0;
           }
           break;
       }
-      _technoTrendInterface.SetDisEqc((short)channel.DisEqc, hiBand, (channel.Polarisation == Polarisation.LinearV));
+      short isVertical = 0;
+      if (channel.Polarisation == Polarisation.LinearV) isVertical = 1;
+      _technoTrendInterface.SetDisEqc((short)channel.DisEqc, isHiBand, isVertical);
     }
 
     /// <summary>
