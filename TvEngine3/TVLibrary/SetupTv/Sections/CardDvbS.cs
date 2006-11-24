@@ -231,8 +231,6 @@ namespace SetupTv.Sections
       if (mpTransponder4.Items.Count > 0)
         mpTransponder4.SelectedIndex = 0;
 
-      mpLNB1.Checked = true;
-      mpLNB1.Enabled = false;
       mpDisEqc1.Items.Clear();
       mpDisEqc1.Items.Add(DisEqcType.None);
       mpDisEqc1.Items.Add(DisEqcType.SimpleA);
@@ -290,9 +288,11 @@ namespace SetupTv.Sections
       mpBand3.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "band3", "0").Value);
       mpBand4.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "band4", "0").Value);
 
+      mpLNB1.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB1", "false").Value == "true");
       mpLNB2.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB2", "false").Value == "true");
       mpLNB3.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB3", "false").Value == "true");
       mpLNB4.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB4", "false").Value == "true");
+      mpLNB1_CheckedChanged(null, null); ;
       mpLNB2_CheckedChanged(null, null); ;
       mpLNB3_CheckedChanged(null, null); ;
       mpLNB4_CheckedChanged(null, null); ;
@@ -351,6 +351,11 @@ namespace SetupTv.Sections
       setting.Persist();
       setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "band4", "0");
       setting.Value = mpBand4.SelectedIndex.ToString();
+      setting.Persist();
+
+
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB1", "false");
+      setting.Value = mpLNB1.Checked ? "true" : "false";
       setting.Persist();
 
       setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB2", "false");
@@ -432,7 +437,8 @@ namespace SetupTv.Sections
         _tvChannelsUpdated = 0;
         _radioChannelsUpdated = 0;
 
-        Scan(1, (BandType)mpBand1.SelectedIndex, (DisEqcType)mpDisEqc1.SelectedIndex, (Sattelite)mpTransponder1.SelectedItem);
+        if (mpLNB1.Checked)
+          Scan(1, (BandType)mpBand1.SelectedIndex, (DisEqcType)mpDisEqc1.SelectedIndex, (Sattelite)mpTransponder1.SelectedItem);
         if (_stopScanning) return;
 
         if (mpLNB2.Checked)
@@ -472,6 +478,7 @@ namespace SetupTv.Sections
         mpBand4.Enabled = true;
         progressBar1.Value = 100;
 
+        mpLNB1.Enabled = true;
         mpLNB2.Enabled = true;
         mpLNB3.Enabled = true;
         mpLNB4.Enabled = true;
@@ -668,6 +675,12 @@ namespace SetupTv.Sections
     private void mpTransponder1_SelectedIndexChanged(object sender, EventArgs e)
     {
 
+    }
+
+    private void mpLNB1_CheckedChanged(object sender, EventArgs e)
+    {
+      mpTransponder1.Enabled = mpLNB1.Checked;
+      mpDisEqc1.Enabled = mpLNB1.Checked;
     }
 
 

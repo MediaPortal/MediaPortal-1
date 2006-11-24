@@ -142,6 +142,7 @@ namespace SetupTv.Sections
       this.mpLNB1.TabIndex = 64;
       this.mpLNB1.Text = "LNB#1";
       this.mpLNB1.UseVisualStyleBackColor = true;
+      this.mpLNB1.CheckedChanged += new System.EventHandler(this.mpLNB1_CheckedChanged);
       // 
       // mpTransponder1
       // 
