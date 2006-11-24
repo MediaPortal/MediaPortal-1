@@ -2497,6 +2497,7 @@ namespace MediaPortal
       int sleepTime = 1000 / GUIGraphicsContext.MaxFPS;
       while (true)
       {
+
         if (GUIWindowManager.IsSwitchingToNewWindow == false)
         {
           FullRender();
@@ -2514,13 +2515,16 @@ namespace MediaPortal
           _lastSec = currentTime;
         }
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+        {
+          Log.Warn("d3dapp: GUIGraphicsContext.CurrentState = STOPPING");
           break;
+        }
       }
     }
 
     protected void DoMinimizeOnStartup()
     {
-      Log.Info("D3D: Minimizing to tray on startup");
+      Log.Info("d3dapp: Minimizing to tray on startup");
 
       WindowState = FormWindowState.Minimized;
       Hide();
