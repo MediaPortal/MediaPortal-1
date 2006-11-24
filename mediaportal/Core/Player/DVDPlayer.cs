@@ -149,7 +149,7 @@ namespace MediaPortal.Player
     protected const int WM_MOUSEMOVE = 0x0200;
     protected const int WM_LBUTTONUP = 0x0202;
 
-    ArrayList _mouseMsg;
+    protected ArrayList _mouseMsg;
     public DVDPlayer()
     {
     }
@@ -1374,15 +1374,16 @@ namespace MediaPortal.Player
       if (!Playing) return;
       if (!_started) return;
       if (GUIGraphicsContext.InVmr9Render) return;
-      OnProcess();
       HandleMouseMessages();
+      OnProcess();
+
 
     }
 
     void HandleMouseMessages()
     {
       if (!GUIGraphicsContext.IsFullScreenVideo) return;
-      if (GUIGraphicsContext.Vmr9Active) return;
+      //if (GUIGraphicsContext.Vmr9Active) return;
       try
       {
 
@@ -1390,18 +1391,19 @@ namespace MediaPortal.Player
         foreach (Message m in _mouseMsg)
         {
           long lParam = m.LParam.ToInt32();
+          int x = (int)(lParam & 0xffff)-213;
+          int y = (int)(lParam >> 16)-270;
+          
+          pt = new System.Drawing.Point(x, y);
+
           if (m.Msg == WM_MOUSEMOVE)
           {
-            pt = new System.Drawing.Point((int)(lParam & 0xffff), (int)((lParam >> 16) & 0xffff));
-
             // Select the button at the current position, if it exists
             _dvdCtrl.SelectAtPosition(pt);
           }
 
           if (m.Msg == WM_LBUTTONUP)
           {
-            pt = new System.Drawing.Point((int)(lParam & 0xffff), (int)((lParam >> 16) & 0xffff));
-
             // Highlight the button at the current position, if it exists
             _dvdCtrl.ActivateAtPosition(pt);
           }

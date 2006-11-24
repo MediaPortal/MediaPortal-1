@@ -151,7 +151,10 @@ namespace MediaPortal.Player
         {
           _vmr9.UseRGBMode(xmlreader.GetValueAsBool("dvdplayer", "usergbmode", false));
         }*/
+
         _vmr9.AddVMR9(_graphBuilder);
+
+
         try
         {
           Log.Info("DVDPlayer9:Add {0}", dvdDNavigator);
@@ -247,6 +250,8 @@ namespace MediaPortal.Player
 
         _videoWidth = _vmr9.VideoWidth;
         _videoHeight = _vmr9.VideoHeight;
+
+
 
         if (!_vmr9.IsVMR9Connected)
         {
@@ -428,5 +433,69 @@ namespace MediaPortal.Player
       if (_vmr9 == null) return;
       _vmr9.Repaint();
     }
+
+    public override void Process()
+    {
+      if (!Playing) return;
+      if (!_started) return;
+      if (GUIGraphicsContext.InVmr9Render) return;
+      HandleMouseMessages();
+      OnProcess();
+
+
+    }
+
+    void HandleMouseMessages()
+    {
+      if (!GUIGraphicsContext.IsFullScreenVideo) return;
+      //if (GUIGraphicsContext.Vmr9Active) return;
+      try
+      {
+
+        System.Drawing.Point pt;
+        foreach (Message m in _mouseMsg)
+        {
+          long lParam = m.LParam.ToInt32();
+          double x = (double)(lParam & 0xffff);
+          double y = (double)(lParam >> 16);
+          double arx, ary;
+
+          Rectangle src,dst;
+
+          // Transform back to original window position / aspect ratio
+          // in order to know the intended position
+          _vmr9.GetVideoWindows(out src, out dst);
+
+          x -= dst.X;
+          y -= dst.Y;
+          arx = (double)dst.Width / (double)src.Width;
+          ary = (double)dst.Height / (double)src.Height;
+          x /= arx;
+          y /= ary;
+
+
+          pt = new System.Drawing.Point((int)x, (int)y);
+
+          if (m.Msg == WM_MOUSEMOVE)
+          {
+            // Select the button at the current position, if it exists
+            _dvdCtrl.SelectAtPosition(pt);
+          }
+
+          if (m.Msg == WM_LBUTTONUP)
+          {
+            // Highlight the button at the current position, if it exists
+            _dvdCtrl.ActivateAtPosition(pt);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+
+        Log.Error("DVDPlayer9:HandleMouseMessages() {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+      }
+      _mouseMsg.Clear();
+    }
+
   }
 }
