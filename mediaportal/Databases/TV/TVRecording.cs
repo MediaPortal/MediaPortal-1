@@ -459,19 +459,19 @@ namespace MediaPortal.TV.Database
         // record program daily at same time & channel
         case RecordingType.Daily:
           // check if recording start/date time is correct
-            dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
-            dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
-            // dtend < dtstart means that the program starts before 00:00 and ends after
-            // We have to care that we will change of dayweek while recording
-            // As the year/month/day values are used to adjust a periodic recording
-            // we need to adjust the start/end values before testing the interval
-            // this depends if "Now" is before of after midnight
-            // so if now < 12:00 or now >12:00
-            actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day,12,0,0);
-            
-            
-            if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
-            if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
+          dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
+          dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
+          // dtend < dtstart means that the program starts before 00:00 and ends after
+          // We have to care that we will change of dayweek while recording
+          // As the year/month/day values are used to adjust a periodic recording
+          // we need to adjust the start/end values before testing the interval
+          // this depends if "Now" is before of after midnight
+          // so if now < 12:00 or now >12:00
+          actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+
+
+          if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
+          if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
 
           if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
           {
@@ -489,9 +489,9 @@ namespace MediaPortal.TV.Database
           // check if recording start/date time is correct
           dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
           dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
-          actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day,12,0,0);
-          
-          
+          actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+
+
           if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
           if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
           if (dtStart.DayOfWeek >= DayOfWeek.Monday && dtStart.DayOfWeek <= DayOfWeek.Friday)
@@ -512,9 +512,9 @@ namespace MediaPortal.TV.Database
           // check if recording start/date time is correct
           dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
           dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
-          actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day,12,0,0);
-          
-          
+          actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+
+
           if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
           if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
           if (dtStart.DayOfWeek == DayOfWeek.Saturday || dtStart.DayOfWeek == DayOfWeek.Sunday)
@@ -533,14 +533,25 @@ namespace MediaPortal.TV.Database
         // record program weekly at same time & channel
         case RecordingType.Weekly:
           // check if day of week of recording matches 
-          if (this.StartTime.DayOfWeek == dtTime.DayOfWeek)
+          // if the recording overlaps midnight and it's past midnight,
+          // we gotta use the previous DayOfWeek
+          DayOfWeek _dayOfWeek;
+          actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+          if ((this.EndTime.Hour < this.StartTime.Hour) && (dtTime < actualdaytwelve))
+          {
+            DateTime _tempDate = dtTime;
+            _tempDate = _tempDate.AddDays(-1);
+            _dayOfWeek = _tempDate.DayOfWeek;
+          }
+          else _dayOfWeek = dtTime.DayOfWeek;
+          if (this.StartTime.DayOfWeek == _dayOfWeek)
           {
             // check if start/end time of recording is correct
             dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
             dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
-            actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day,12,0,0);
-            
-            
+            actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+
+
             if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
             if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
             if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
@@ -650,13 +661,13 @@ namespace MediaPortal.TV.Database
           if (currentProgram.Channel == this.Channel) //check channel is correct
           {
             // check if program start/date time is correct
-              dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, currentProgram.StartTime.Minute, 0);
-              dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, currentProgram.EndTime.Minute, 0);
-              actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day,12,0,0);
-              
-              
-              if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
-              if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
+            dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, currentProgram.StartTime.Minute, 0);
+            dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, currentProgram.EndTime.Minute, 0);
+            actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+
+
+            if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
+            if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
             if (dtStart.DayOfWeek >= DayOfWeek.Monday && dtStart.DayOfWeek <= DayOfWeek.Friday)
             {
               if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
@@ -664,9 +675,9 @@ namespace MediaPortal.TV.Database
                 // check if recording start/date time is correct
                 dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
                 dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
-                actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day,12,0,0);
-                
-                
+                actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+
+
                 if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
                 if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
                 if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
@@ -690,9 +701,9 @@ namespace MediaPortal.TV.Database
             // check if program start/date time is correct
             dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, currentProgram.StartTime.Minute, 0);
             dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, currentProgram.EndTime.Minute, 0);
-            actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day,12,0,0);
-            
-            
+            actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+
+
             if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
             if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
             if (dtStart.DayOfWeek == DayOfWeek.Saturday || dtStart.DayOfWeek == DayOfWeek.Sunday)
@@ -702,9 +713,9 @@ namespace MediaPortal.TV.Database
                 // check if recording start/date time is correct
                 dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
                 dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
-                actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day,12,0,0);
-                
-                
+                actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+
+
                 if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
                 if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
                 if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
@@ -728,9 +739,9 @@ namespace MediaPortal.TV.Database
             // check if program start/date time is correct
             dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, currentProgram.StartTime.Minute, 0);
             dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, currentProgram.EndTime.Minute, 0);
-            actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day,12,0,0);
-            
-            
+            actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+
+
             if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
             if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
             if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
@@ -738,9 +749,9 @@ namespace MediaPortal.TV.Database
               // check if recording start/date time is correct
               dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
               dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
-              actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day,12,0,0);
-              
-              
+              actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+
+
               if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
               if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
               if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
@@ -761,16 +772,27 @@ namespace MediaPortal.TV.Database
           if (currentProgram == null) return false;   // we need a program
           if (currentProgram.Channel == this.Channel) // check if channel is correct
           {
-            // check if day of week of program matches 
-            if (currentProgram.StartTime.DayOfWeek == dtTime.DayOfWeek)
+            // check if day of week of recording matches 
+            // if the recording overlaps midnight and it's past midnight,
+            // we gotta use the previous DayOfWeek
+            DayOfWeek _dayOfWeek;
+            actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+            if ((this.EndTime.Hour < this.StartTime.Hour) && dtTime < actualdaytwelve)
+            {
+              DateTime _tempDate = dtTime;
+              _tempDate = _tempDate.AddDays(-1);
+              _dayOfWeek = _tempDate.DayOfWeek;
+            }
+            else _dayOfWeek = dtTime.DayOfWeek;
+            if (currentProgram.StartTime.DayOfWeek == _dayOfWeek)
             {
 
               // check if start/end time of program is correct
               dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, currentProgram.StartTime.Minute, 0);
               dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, currentProgram.EndTime.Minute, 0);
-              actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day,12,0,0);
-              
-              
+              actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+
+
               if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
               if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
 
@@ -783,9 +805,9 @@ namespace MediaPortal.TV.Database
                   // check if start/end time of recording is correct
                   dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
                   dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
-                  actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day,12,0,0);
-                  
-                  
+                  actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+
+
                   if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
                   if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
                   if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
