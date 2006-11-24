@@ -695,75 +695,108 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Error("dvb:No TvTuner installed");
         throw new TvException("No TvTuner installed");
       }
-      Log.Log.WriteFile("dvb:find bda receiver");
-      // Then enumerate BDA Receiver Components category to found a filter connecting 
-      // to the tuner and the MPEG2 Demux
-      devices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
-
-      string guidBdaMPEFilter = @"\{8e60217d-a2ee-47f8-b0c5-0f44c55f66dc}";
-      string guidBdaSlipDeframerFilter = @"\{03884cb6-e89a-4deb-b69e-8dc621686e6a}";
-      for (int i = 0; i < devices.Length; i++)
+      bool skipCaptureFilter = false;
+      IPin pinOut = DsFindPin.ByDirection(_filterTuner, PinDirection.Output, 0);
+      if (pinOut != null)
       {
-        if (devices[i].DevicePath.ToLower().IndexOf(guidBdaMPEFilter) >= 0) continue;
-        if (devices[i].DevicePath.ToLower().IndexOf(guidBdaSlipDeframerFilter) >= 0) continue;
-
-        IBaseFilter tmp;
-        Log.Log.WriteFile("dvb:  -{0}", devices[i].Name);
-        if (DevicesInUse.Instance.IsUsed(devices[i])) continue;
-        try
+        IEnumMediaTypes enumMedia;
+        int fetched;
+        pinOut.EnumMediaTypes(out enumMedia);
+        if (enumMedia != null)
         {
-          hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
-        {
-          continue;
-        }
-
-        if (hr != 0)
-        {
-          if (tmp != null)
+          AMMediaType[] mediaTypes = new AMMediaType[21];
+          enumMedia.Next(20, mediaTypes, out fetched);
+          if (fetched > 0)
           {
-            _graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("bda receiver", tmp);
+            for (int i = 0; i < fetched; ++i)
+            {
+              //Log.Log.Write("{0}", i);
+              //Log.Log.Write(" major :{0} {1}", mediaTypes[i].majorType, (mediaTypes[i].majorType==MediaType.Stream));
+              //Log.Log.Write(" sub   :{0} {1}", mediaTypes[i].subType, (mediaTypes[i].subType == MediaSubType.Mpeg2Transport ) );
+              //Log.Log.Write(" format:{0} {1}", mediaTypes[i].formatType, (mediaTypes[i].formatType != FormatType.None) );
+              if (mediaTypes[i].majorType == MediaType.Stream && mediaTypes[i].subType == MediaSubType.Mpeg2Transport && mediaTypes[i].formatType != FormatType.None)
+              {
+                skipCaptureFilter = false;
+              }
+              if (mediaTypes[i].majorType == MediaType.Stream && mediaTypes[i].subType == MediaSubType.BdaMpeg2Transport && mediaTypes[i].formatType == FormatType.None)
+              {
+                skipCaptureFilter = true;
+              }
+            }
           }
-          continue;
         }
-        hr = _capBuilder.RenderStream(null, null, _filterTuner, null, tmp);
-        if (hr == 0)
+      }
+      if (false==skipCaptureFilter)
+      {
+        Log.Log.WriteFile("dvb:find bda receiver");
+        // Then enumerate BDA Receiver Components category to found a filter connecting 
+        // to the tuner and the MPEG2 Demux
+        devices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
+
+        string guidBdaMPEFilter = @"\{8e60217d-a2ee-47f8-b0c5-0f44c55f66dc}";
+        string guidBdaSlipDeframerFilter = @"\{03884cb6-e89a-4deb-b69e-8dc621686e6a}";
+        for (int i = 0; i < devices.Length; i++)
         {
-          // Got it !
-          // Connect it to the MPEG-2 Demux
-          hr = _capBuilder.RenderStream(null, null, tmp, null, _infTeeMain);
-          //hr = _capBuilder.RenderStream(null, null, tmp, null, _filterMpeg2DemuxTif);
+          if (devices[i].DevicePath.ToLower().IndexOf(guidBdaMPEFilter) >= 0) continue;
+          if (devices[i].DevicePath.ToLower().IndexOf(guidBdaSlipDeframerFilter) >= 0) continue;
+
+          IBaseFilter tmp;
+          Log.Log.WriteFile("dvb:  -{0}", devices[i].Name);
+          if (DevicesInUse.Instance.IsUsed(devices[i])) continue;
+          try
+          {
+            hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
+          }
+          catch (Exception)
+          {
+            continue;
+          }
+
           if (hr != 0)
           {
-            Log.Log.Error("dvb:  Render->main inftee demux failed");
-            hr = _graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("bda receiver", tmp);
+            if (tmp != null)
+            {
+              _graphBuilder.RemoveFilter(tmp);
+              Release.ComObject("bda receiver", tmp);
+            }
+            continue;
+          }
+          hr = _capBuilder.RenderStream(null, null, _filterTuner, null, tmp);
+          if (hr == 0)
+          {
+            // Got it !
+            // Connect it to the MPEG-2 Demux
+            hr = _capBuilder.RenderStream(null, null, tmp, null, _infTeeMain);
+            //hr = _capBuilder.RenderStream(null, null, tmp, null, _filterMpeg2DemuxTif);
+            if (hr != 0)
+            {
+              Log.Log.Error("dvb:  Render->main inftee demux failed");
+              hr = _graphBuilder.RemoveFilter(tmp);
+              Release.ComObject("bda receiver", tmp);
+            }
+            else
+            {
+              _filterCapture = tmp;
+              _captureDevice = devices[i];
+              DevicesInUse.Instance.Add(devices[i]);
+              Log.Log.WriteFile("dvb:OK");
+              break;
+            }
           }
           else
           {
-            _filterCapture = tmp;
-            _captureDevice = devices[i];
-            DevicesInUse.Instance.Add(devices[i]);
-            Log.Log.WriteFile("dvb:OK");
-            break;
+            // Try another...
+            hr = _graphBuilder.RemoveFilter(tmp);
+            Release.ComObject("bda receiver", tmp);
           }
         }
-        else
-        {
-          // Try another...
-          hr = _graphBuilder.RemoveFilter(tmp);
-          Release.ComObject("bda receiver", tmp);
-        }
       }
-
       if (_filterCapture == null)
       {
         Log.Log.WriteFile("dvb:  No TvCapture device found....");
         IPin pinIn = DsFindPin.ByDirection(_infTeeMain, PinDirection.Input, 0);
         //IPin pinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTif, PinDirection.Input, 0);
-        IPin pinOut = DsFindPin.ByDirection(_filterTuner, PinDirection.Output, 0);
+        pinOut = DsFindPin.ByDirection(_filterTuner, PinDirection.Output, 0);
         hr = _graphBuilder.Connect(pinOut, pinIn);
         if (hr == 0)
         {
