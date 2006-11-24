@@ -54,7 +54,7 @@ namespace MediaPortal.PowerScheduler
     private const int PBT_APMPOWERSTATUSCHANGE = 0x000A;
     private const int PBT_APMOEMEVENT = 0x000B;
     private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
-    private const string _version = "v0.0.6";
+    private const string _version = "v0.0.7";
     #endregion
 
     #region Protected Variables
@@ -72,10 +72,10 @@ namespace MediaPortal.PowerScheduler
     // Wake Up Variables
     private WaitableTimer _wakeupTimer = new WaitableTimer();
     protected DateTime _wakeupTime = DateTime.MaxValue; // Date/Time for the next wakeup
-    protected int _preRecordInterval = 2;	            	 // Interval to start recording before entered starttime
-    protected int _wakeupInterval = 1;			           // 1 minute to give computer time to wakeup
+    protected int _preRecordInterval = 2;	            	// Interval to start recording before entered starttime
+    protected int _wakeupInterval = 1;			            // 1 minute to give computer time to wakeup
     protected bool _reinitRecorder = false;             // Re-init the Recorder when resuming
-    protected bool _onResumeRunning = false;						 // avoid multible OnResume calls
+    protected bool _onResumeRunning = false;						// avoid multible OnResume calls
     // TV Guide Variables
     protected DateTime _nextRecordingTime = DateTime.MaxValue; // Date/Time when the next recording takes place
     #endregion
@@ -495,7 +495,7 @@ namespace MediaPortal.PowerScheduler
     #region IWakeable Interface
     public DateTime GetNextEvent(DateTime earliestWakeuptime)
     {
-      return _nextRecordingTime;
+      return _nextRecordingTime.AddMinutes(-_wakeupInterval);
     }
 
     public bool DisallowShutdown()
