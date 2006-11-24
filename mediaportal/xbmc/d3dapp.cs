@@ -2466,6 +2466,11 @@ namespace MediaPortal
               UpdateStats();
             }
           }
+          else
+          {
+            loopCount = 1;
+            WaitForFrameClock();
+          }
         }
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
           break;
