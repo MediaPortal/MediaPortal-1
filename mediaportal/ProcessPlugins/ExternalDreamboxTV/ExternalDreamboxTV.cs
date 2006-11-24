@@ -116,13 +116,15 @@ namespace ProcessPlugins.ExternalDreamboxTV
                 // Get EPG
                 Log.Info("DreamboxTV: Get EPG");
                 this.ImportEPG();
+
+                // Save new Sync Data
+                using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+                {
+                    xmlwriter.SetValue("Dreambox", "LastEPGSync", System.DateTime.Now.ToString());
+                }
             }
 
-            // Save new Sync Data
-            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-            {
-                xmlwriter.SetValue("Dreambox", "LastEPGSync", System.DateTime.Now.ToString());
-            }
+
         }
 
         void GUIWindowManager_Receivers(GUIMessage message)
@@ -139,28 +141,23 @@ namespace ProcessPlugins.ExternalDreamboxTV
                     // is Dreambox recording?
                     if (DreamboxIsRecording)
                     {
-                        int id = message.TargetWindowId;
-                        if ((int)GUIWindow.Window.WINDOW_TV == id)
+                        string recordmessage = "Dreambox is recording.\rAt the moment you cannot zap\rto another channel.";
+                        MediaPortal.Dialogs.GUIDialogOK pDlgOK = (MediaPortal.Dialogs.GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                        if (pDlgOK != null)
                         {
-                            string recordmessage = "Dreambox is recording.\rAt the moment you cannot zap\rto another channel.";
-                            MediaPortal.Dialogs.GUIDialogOK pDlgOK = (MediaPortal.Dialogs.GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                            if (pDlgOK != null)
-                            {
-                                string[] lines = recordmessage.Split('\r');
-                                pDlgOK.SetHeading(605);//my tv
-                                pDlgOK.SetLine(1, lines[0]);
-                                if (lines.Length > 1)
-                                    pDlgOK.SetLine(2, lines[1]);
-                                else
-                                    pDlgOK.SetLine(2, "");
+                            string[] lines = recordmessage.Split('\r');
+                            pDlgOK.SetHeading(605);//my tv
+                            pDlgOK.SetLine(1, lines[0]);
+                            if (lines.Length > 1)
+                                pDlgOK.SetLine(2, lines[1]);
+                            else
+                                pDlgOK.SetLine(2, "");
 
-                                if (lines.Length > 2)
-                                    pDlgOK.SetLine(3, lines[2]);
-                                else
-                                    pDlgOK.SetLine(3, "");
-                                pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
-                            }
-                            return;
+                            if (lines.Length > 2)
+                                pDlgOK.SetLine(3, lines[2]);
+                            else
+                                pDlgOK.SetLine(3, "");
+                            pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
                         }
                         // future things here like telling GUI that dreambox cannot be switched because it is recording
                         Log.Info("DreamboxTV: Cannot zap because box is recording.");
