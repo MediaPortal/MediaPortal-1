@@ -31,13 +31,15 @@ using System.Net;
 using System.Text;
 using System.Timers;
 using System.Windows.Forms;
-using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
+using MediaPortal.Util;
 
 namespace MediaPortal.Audioscrobbler
 {
+  [PluginIcons("ProcessPlugins.Audioscrobbler.Audioscrobbler.gif", "ProcessPlugins.Audioscrobbler.AudioscrobblerDisabled.gif")]
   public class AudioscrobblerPlugin : ISetupForm, IPlugin
   {
     private int _timerTickSecs = 15;
@@ -215,10 +217,11 @@ namespace MediaPortal.Audioscrobbler
             }
             // DB lookup of song failed
             else
-              if (g_Player.IsMusic)
+              // last.fm radio is handled but the stream itself
+              if (g_Player.IsMusic && (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_RADIO_LASTFM))
               {
                 Log.Info("Audioscrobbler plugin: database does not contain track - ignoring track: {0} by {1} from {2}", currentSong.Title, currentSong.Artist, currentSong.Album);
-                Log.Debug("g_player: filename of current song - {0}", g_Player.CurrentFile);
+                //Log.Debug("g_player: filename of current song - {0}", g_Player.CurrentFile);
               }
 
           }

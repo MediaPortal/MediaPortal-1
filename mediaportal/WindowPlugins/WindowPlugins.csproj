@@ -1144,6 +1144,12 @@
     <Content Include="GUIPrograms\FileDetailContents.xml" />
     <Content Include="GUIPrograms\ProgramSettingProfiles.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIRadioLastFM\BallonRadio.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIRadioLastFM\BallonRadioDisabled.gif" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

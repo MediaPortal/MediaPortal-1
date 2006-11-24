@@ -30,6 +30,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
+using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
@@ -39,6 +40,8 @@ using MediaPortal.Util;
 
 namespace MediaPortal.GUI.RADIOLASTFM
 {
+  [PluginIcons("WindowPlugins.GUIRadioLastFM.BallonRadio.gif", "WindowPlugins.GUIRadioLastFM.BallonRadioDisabled.gif")]
+  //[PluginIcons("WindowPlugins.GUIRadioLastFM.BallonRadio.png", "WindowPlugins.GUIRadioLastFM.BallonRadioDisabled.png")]
   public class GUIRadioLastFM : GUIWindow, ISetupForm, IShowPlugin
   {
     private enum SkinControlIDs

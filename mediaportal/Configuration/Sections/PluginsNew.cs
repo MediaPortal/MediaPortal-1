@@ -176,10 +176,12 @@ namespace MediaPortal.Configuration.Sections
         Assembly pluginAssembly = null;
         try
         {
+          Log.Debug("PluginsNew: loadPlugins {0}", pluginFile);
           pluginAssembly = Assembly.LoadFrom(pluginFile);
         }
         catch (BadImageFormatException)
         {
+          Log.Warn("PluginsNew: {0} has a bad image format", pluginFile);
         }
 
         if (pluginAssembly != null)
@@ -261,7 +263,7 @@ namespace MediaPortal.Configuration.Sections
                     string.Format(
                       "An error occured while loading the plugin {0}.\n\nIt's incompatible with the current MediaPortal version and won't be loaded.",
                       t.FullName), "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                  Log.Info("PluginManager: {0} is incompatible with the current MediaPortal version! (File: {1})",
+                  Log.Warn("PluginManager: {0} is incompatible with the current MediaPortal version! (File: {1})",
                            t.FullName, pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
                   continue;
                 }
@@ -284,10 +286,10 @@ namespace MediaPortal.Configuration.Sections
           {
             MessageBox.Show(
               string.Format(
-                "An error occured while loading the plugin file {0}.\n\nIt's borken or incompatible with the current MediaPortal version and won't be loaded.",
+                "An error occured while loading the plugin file {0}.\n\nIt's broken or incompatible with the current MediaPortal version and won't be loaded.",
                 pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1)), "Plugin Manager", MessageBoxButtons.OK,
               MessageBoxIcon.Error);
-            Log.Info(
+            Log.Warn(
               "PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!",
               pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
             Log.Info("PluginManager: Exception: {0}", ex);
@@ -307,16 +309,19 @@ namespace MediaPortal.Configuration.Sections
       PluginIconsAttribute[] icons = (PluginIconsAttribute[])type.GetCustomAttributes(typeof(PluginIconsAttribute), false);
       if (icons == null || icons.Length == 0)
       {
+        //Log.Debug("PluginsNew: no icons");
         return;
       }
       string resourceName = icons[0].ActivatedResourceName;
       if (!string.IsNullOrEmpty(resourceName))
       {
+        Log.Debug("PluginsNew: load active image from resource - {0}", resourceName);
         tag.ActiveImage = LoadImageFromResource(type, resourceName);
       }
       resourceName = icons[0].DeactivatedResourceName;
       if (!string.IsNullOrEmpty(resourceName))
       {
+        Log.Debug("PluginsNew: load deactivated image from resource - {0}", resourceName);
         tag.InactiveImage = LoadImageFromResource(type, resourceName);
       }
     }
@@ -327,16 +332,19 @@ namespace MediaPortal.Configuration.Sections
       {
         return Image.FromStream(type.Assembly.GetManifestResourceStream(resourceName));
       }
-      catch(ArgumentException)
+      catch(ArgumentException aex)
       {
+        Log.Error("PluginsNew: Argument Exception loading the image - {0}, {1}", resourceName, aex.Message);
         //Thrown when the stream does not seem to contain a valid image
       }
-      catch (FileLoadException)
+      catch (FileLoadException lex)
       {
+        Log.Error("PluginsNew: FileLoad Exception loading the image - {0}, {1}", resourceName, lex.Message);
         //Throw when the resource could not be loaded
       }
-      catch (FileNotFoundException)
+      catch (FileNotFoundException fex)
       {
+        Log.Error("PluginsNew: FileNotFound Exception loading the image - {0}, {1}", resourceName, fex.Message);
         //Thrown when the resource could not be found
       }
       return null;

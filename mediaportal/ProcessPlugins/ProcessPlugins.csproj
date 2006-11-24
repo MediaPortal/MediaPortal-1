@@ -479,6 +479,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Audioscrobbler\Audioscrobbler.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Audioscrobbler\AudioscrobblerDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="ExternalDisplay\lcd.gif" />
   </ItemGroup>
   <ItemGroup>
