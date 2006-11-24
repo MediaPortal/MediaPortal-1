@@ -123,6 +123,8 @@ CTimeShifting::CTimeShifting(LPUNKNOWN pUnk, HRESULT *phr)
   m_startPcr=0;
   m_highestPcr=0;
   m_bDetermineNewStartPcr=false;
+	m_iPatVersion=0;
+	m_iPmtVersion=0;
 }
 CTimeShifting::~CTimeShifting(void)
 {
@@ -183,6 +185,12 @@ STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 		FAKE_VIDEO_PID    = 0x30;
 		FAKE_AUDIO_PID    = 0x40;
 		FAKE_SUBTITLE_PID = 0x50;
+		m_iPatVersion++;
+		if (m_iPatVersion>15) 
+			m_iPatVersion=0;
+		m_iPmtVersion++;
+		if (m_iPmtVersion>15) 
+			m_iPmtVersion=0;
 	}
 	catch(...)
 	{
@@ -435,6 +443,7 @@ STDMETHODIMP CTimeShifting::Stop()
 	try
 	{
 		//fclose(fTsFile );
+
 		LogDebug("Timeshifter:Stop timeshifting:'%s'",m_szFileName);
 		m_bTimeShifting=false;
 		m_multiPlexer.Reset();
@@ -703,7 +712,6 @@ void CTimeShifting::WriteFakePAT()
   int transportId=FAKE_TRANSPORT_ID;
   int pmtPid=FAKE_PMT_PID;
   int sectionLenght=9+4;
-  int version_number=0;
   int current_next_indicator=1;
   int section_number = 0;
   int last_section_number = 0;
@@ -727,7 +735,7 @@ void CTimeShifting::WriteFakePAT()
   pat[7]=sectionLenght&0xff;
   pat[8]=(transportId>>8)&0xff;
   pat[9]=(transportId)&0xff;
-  pat[10]=((version_number&0x1f)<<1)+current_next_indicator;
+	pat[10]=((m_iPatVersion&0x1f)<<1)+current_next_indicator;
   pat[11]=section_number;
   pat[12]=last_section_number;
   pat[13]=(FAKE_SERVICE_ID>>8)&0xff;
@@ -748,7 +756,7 @@ void CTimeShifting::WriteFakePMT()
 {
   int program_info_length=0;
   int sectionLenght=9+2*5+5;
-  int version_number=0;
+  
   int current_next_indicator=1;
   int section_number = 0;
   int last_section_number = 0;
@@ -775,7 +783,7 @@ void CTimeShifting::WriteFakePMT()
   pmt[7]=0;
   pmt[8]=(FAKE_SERVICE_ID>>8)&0xff;
   pmt[9]=(FAKE_SERVICE_ID)&0xff;
-  pmt[10]=((version_number&0x1f)<<1)+current_next_indicator;
+	pmt[10]=((m_iPmtVersion&0x1f)<<1)+current_next_indicator;
   pmt[11]=section_number;
   pmt[12]=last_section_number;
   pmt[13]=(FAKE_PCR_PID>>8)&0xff;
