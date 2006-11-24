@@ -1547,7 +1547,8 @@ namespace MediaPortal.GUI.Video
       }
       if (_markWatchedFiles) // save a little performance
       {
-        if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
+        if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO &&
+            GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_HOME)
         {
           LoadDirectory(_currentFolder);
           UpdateButtonStates();
