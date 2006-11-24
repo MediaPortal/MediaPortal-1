@@ -1221,7 +1221,10 @@ namespace MediaPortal
 
       if (GUIGraphicsContext.Vmr9Active)
       {
-        //HandleCursor(); remove
+        if (!GUIGraphicsContext.UseSeparateRenderThread)
+        {
+          HandleCursor();
+        }
 
         if ((ActiveForm != this) && (alwaysOnTop))
           this.Activate();
@@ -1265,7 +1268,10 @@ namespace MediaPortal
 #endif
       }
 
-      //HandleCursor(); remove
+      if (!GUIGraphicsContext.UseSeparateRenderThread)
+      {
+        HandleCursor();
+      }
 
       if ((ActiveForm != this) && (alwaysOnTop))
         Activate();
@@ -1370,7 +1376,7 @@ namespace MediaPortal
       GUIWindowManager.ReplaceWindow(_iActiveWindow);
     }
 
-    protected void HandleCursor()
+    public void HandleCursor()
     {
       if (!isMaximized)
         return;
@@ -1645,12 +1651,16 @@ namespace MediaPortal
 
     private void D3DApp_Load(object sender, EventArgs e)
     {
-			this.timer.Enabled = false;
-			this.timer.Interval = 50;
-      if (!GUIGraphicsContext.UseGuiThread)
+      if (!GUIGraphicsContext.UseSeparateRenderThread)
       {
         Application.Idle += new EventHandler(Application_Idle);
       }
+      else
+      {
+        this.timer.Enabled = false;
+        this.timer.Interval = 50;
+      }
+
       Initialize();
       OnStartup();
 
@@ -1668,13 +1678,13 @@ namespace MediaPortal
       }
       catch
       { }
-      if (GUIGraphicsContext.UseGuiThread)
+      if (GUIGraphicsContext.UseSeparateRenderThread)
       {
         Thread renderThread = new Thread(new ThreadStart(RenderWorkerThread));
         renderThread.IsBackground = true;
         renderThread.Start();
-      }
-			timer.Enabled = true;
+        timer.Enabled = true;
+      }			
     }
 
 
@@ -1943,7 +1953,8 @@ namespace MediaPortal
       // 
       this.timer.Enabled = true;
       this.timer.Interval = 300;
-			this.timer.Tick += new System.EventHandler(this.timer_Tick);
+      if (!GUIGraphicsContext.UseSeparateRenderThread)
+        this.timer.Tick += new System.EventHandler(this.timer_Tick);
       // 
       // D3DApp
       // 
@@ -2444,7 +2455,7 @@ namespace MediaPortal
       {
         OnProcess();
         FrameMove();
-        if (!GUIGraphicsContext.UseGuiThread)
+        if (!GUIGraphicsContext.UseSeparateRenderThread)
         {
           StartFrameClock();
           FullRender();
@@ -2523,9 +2534,9 @@ namespace MediaPortal
 
       mousedoubleclick(e);
     }
+
 		private void timer_Tick(object sender, EventArgs e)
     {
-
       OnProcess();
       FrameMove();
     }

@@ -137,7 +137,7 @@ namespace MediaPortal.GUI.Library
     const uint WM_SYSCOMMAND = 0x0112;
     const int MONITOR_ON = -1;
     const int MONITOR_OFF = 2;
-    static bool _useGuiThread = false;
+    static bool _useSeparateRenderThread = false;
 
     [DllImport("user32.dll")]
     static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, IntPtr lParam);
@@ -159,19 +159,19 @@ namespace MediaPortal.GUI.Library
       get { return _lastActivity; }
     }
 
-    static public bool UseGuiThread
+    static public bool UseSeparateRenderThread
     {
       get
       {
-        return _useGuiThread ;
+        return _useSeparateRenderThread ;
       }
       set
       {
-        _useGuiThread = value;
-        if (_useGuiThread)
-          Log.Info("using seperate thread for GUI");
+        _useSeparateRenderThread = value;
+        if (_useSeparateRenderThread)
+          Log.Info("GraphicContext: using separate thread for GUI rendering");
         else
-          Log.Info("not using seperate thread for GUI");
+          Log.Info("GraphicContext: not using separate thread for GUI rendering");
       }
     }
     /// <summary>
