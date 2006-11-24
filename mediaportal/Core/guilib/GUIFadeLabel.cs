@@ -167,6 +167,7 @@ namespace MediaPortal.GUI.Library
       if (GUIGraphicsContext.graphics != null)
       {
         _labelControl.Render(timePassed);
+				base.Render(timePassed);
         return;
       }
 
@@ -176,6 +177,7 @@ namespace MediaPortal.GUI.Library
         if (_labelControl.TextWidth < _width)
         {
           _labelControl.Render(timePassed);
+					base.Render(timePassed);
           return;
         }
       }
