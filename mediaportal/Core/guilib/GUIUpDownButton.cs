@@ -138,6 +138,7 @@ namespace MediaPortal.GUI.Library
 				_labelControl.SetPosition(_textOffsetX+_positionX, _textOffsetY+_positionY);
 				_labelControl.Render(timePassed);
 			}
+			base.Render(timePassed);
 			if (_spinControl!=null)
 			{
 				int off=5;
@@ -146,8 +147,7 @@ namespace MediaPortal.GUI.Library
 																_imageNonFocused.YPosition+ (_imageNonFocused.Height-_spinControlHeight)/2 );
 				_spinControl.Render(timePassed);
       }
-      base.Render(timePassed);
-
+      //base.Render(timePassed);
 		}
 		public override bool HitTest(int x, int y, out int controlID, out bool focused)
 		{
