@@ -123,6 +123,13 @@ namespace TvControl
     int CardId(int cardIndex);
 
     /// <summary>
+    /// returns if the card is enabled or disabled
+    /// </summary>
+    /// <param name="cardId">id of the card.</param>
+    /// <value>true if enabled, otherwise false</value>
+    bool Enabled(int cardId);
+
+    /// <summary>
     /// Gets the type of card (analog,dvbc,dvbs,dvbt,atsc)
     /// </summary>
     /// <param name="cardId">id of the card.</param>

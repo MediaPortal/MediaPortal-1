@@ -79,6 +79,19 @@ namespace TvControl
       }
     }
     /// <summary>
+    /// returns if the card is enabled;
+    /// </summary>
+    [XmlIgnore]
+    public bool Enabled
+    {
+      get
+      {
+        if (_cardId < 0) return false;
+        RemoteControl.HostName = _server;
+        return RemoteControl.Instance.Enabled(_cardId);
+      }
+    }
+    /// <summary>
     /// gets the ip adress of the tvservice
     /// </summary>
     public string RemoteServer
@@ -92,6 +105,7 @@ namespace TvControl
     /// <summary>
     /// gets/sets the recording folder for the card
     /// </summary>
+    [XmlIgnore]
     public string RecordingFolder
     {
       get

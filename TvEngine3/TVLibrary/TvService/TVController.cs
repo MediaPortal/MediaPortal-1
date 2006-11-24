@@ -466,6 +466,16 @@ namespace TvService
     }
 
     /// <summary>
+    /// returns if the card is enabled or disabled
+    /// </summary>
+    /// <param name="cardId">id of the card.</param>
+    /// <value>true if enabled, otherwise false</value>
+    public bool Enabled(int cardId)
+    {
+      return _allDbscards[cardId].Enabled;
+    }
+
+    /// <summary>
     /// Gets the type of card.
     /// </summary>
     /// <param name="cardId">id of card.</param>

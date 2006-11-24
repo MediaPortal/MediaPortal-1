@@ -275,6 +275,14 @@ namespace SetupTv.Sections
           VirtualCard card = (VirtualCard)mpListView1.Items[i].Tag;
           ListViewItem item = mpListView1.Items[i];
           string tmp = "idle";
+          if (card.Enabled == false)
+          {
+            item.SubItems[2].Text = "disabled";
+            item.SubItems[3].Text = "";
+            item.SubItems[4].Text = "";
+            item.SubItems[5].Text = "";
+            continue;
+          }
           if (card.IsTimeShifting) tmp = "Timeshifting";
           if (card.IsRecording) tmp = "Recording";
           if (card.IsScanning) tmp = "Scanning";

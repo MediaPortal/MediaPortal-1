@@ -84,6 +84,7 @@ namespace SetupTv.Sections
       IList cards = Card.ListAll();
       foreach (Card card in cards)
       {
+        if (card.Enabled == false) continue;
         mpComboBoxCard.Items.Add(new CardInfo(card));
       }
       mpComboBoxCard.SelectedIndex = 0;
