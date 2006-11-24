@@ -108,7 +108,9 @@
     <Channel id="film4@channel4.com" siteId="160" />
     <Channel id="film4p1@channel4.com" siteId="584" />
     <Channel id="film4w@channel4.com" siteId="1041" />
-    <Channel id="five" siteId="134" />
+    <Channel id="five.tv" siteId="134" />
+    <Channel id="us@five.tv" siteId="2008"/>
+    <Channel id="life@five.tv" siteId="2007"/>
     <Channel id="flaunt.tv" siteId="1141" />
     <Channel id="fxuk.tv" siteId="1461" />
     <Channel id="god.tv" siteId="137" />
