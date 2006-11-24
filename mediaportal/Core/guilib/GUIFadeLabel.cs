@@ -107,7 +107,11 @@ namespace MediaPortal.GUI.Library
     {
       if (GUIGraphicsContext.EditMode == false)
       {
-        if (!IsVisible) return;
+        if (!IsVisible)
+        {
+          base.Render(timePassed);
+          return;
+        }
       }
       _isScrolling = false;
       if (_label != null && _label.Length > 0)
@@ -149,7 +153,11 @@ namespace MediaPortal.GUI.Library
       }
 
       // if there are no labels do not render
-      if (_listLabels.Count == 0) return;
+      if (_listLabels.Count == 0)
+      {
+        base.Render(timePassed);
+        return;
+      }
 
       // reset the current label is index is out of bounds
       if (_currentLabelIndex < 0 || _currentLabelIndex >= _listLabels.Count) _currentLabelIndex = 0;
