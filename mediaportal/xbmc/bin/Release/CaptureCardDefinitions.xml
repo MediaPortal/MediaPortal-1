@@ -16687,6 +16687,33 @@
     </tv>
   </capturecard>
 
+  <capturecard commercialname="TerraTec Cinergy HT PCI (Analogue)" capturename="Cinergy HT PCI BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_1175153b&amp;rev_d1">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="Cinergy HT PCI BDA Analog TV Tuner" checkdevice="true"/>
+        <filter cat="tvaudio"     name="Cinergy HT PCI BDA Analog TV Audio" checkdevice="true"/>
+        <filter cat="crossbar"    name="Cinergy HT PCI BDA Analog Xbar"     checkdevice="true"/>
+        <filter cat="capture"     name="Cinergy HT PCI BDA Analog Capture"  checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"                     checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"                     checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"                          checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"	  sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
+        <connection sourcefilter="crossbar"   sourcepin="1" sinkfilter="capture"	  sinkpin="1"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"	      sinkpin="0"/>
+        <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"	      sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
   <capturecard commercialname="AverTV Purity-3D Dual MCE 500 - Tuner 1" capturename="AVerMedia XC-MPEG Capture 1" devid="ven_1745&amp;dev_2020&amp;subsys_f7381461&amp;rev_00">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
