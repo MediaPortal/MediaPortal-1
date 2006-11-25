@@ -751,7 +751,12 @@ namespace MediaPortal.TV.Recording
 
     public string RadioStation
     {
-      get { return _currentRadioStationName; }
+      get
+      {
+        if (_currentRadioStationName == null)
+          return String.Empty;
+        return _currentRadioStationName;
+      }
     }
     /// <summary>
     /// Property to set Radio tuning sensitivity.
