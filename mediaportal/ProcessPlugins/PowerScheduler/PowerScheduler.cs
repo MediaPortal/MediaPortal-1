@@ -500,19 +500,19 @@ namespace MediaPortal.PowerScheduler
 
     public bool DisallowShutdown()
     {
-      if ((g_Player.Playing) ||         // are we playing something ? 
-              (Recorder.IsRadio()) ||       // are we playing analog or digital radio?    
-              (Recorder.IsAnyCardRecording()) ||   // are we recording something? 
-              (TVDatabase.SupressEvents) || // is there a DataBase update running?
-              (_shutDownTime > _wakeupTime.AddMinutes(-_wakeupInterval)))  // shutdown will kill the start of the recording
+      if ((g_Player.Playing) ||                // are we playing something ? 
+          (Recorder.IsRadio()) ||              // are we playing analog or digital radio?    
+          (Recorder.IsAnyCardRecording()) ||   // are we recording something? 
+          (TVDatabase.SupressEvents) ||        // is there a DataBase update running?
+          (_shutDownTime > _wakeupTime))       // is shutdown killing the start of the recording
       {
         Log.Info(" PowerScheduler.DisallowShutdown() = TRUE");
         Log.Info("   - Recorder.IsAnyCardRecording() = " + Recorder.IsAnyCardRecording().ToString());
-        Log.Info("   - Recorder.IsRadio()     = " + Recorder.IsRadio().ToString());
-        Log.Info("   - g_Player.Playing       = " + g_Player.Playing.ToString());
-        Log.Info("   - Database Update        = " + TVDatabase.SupressEvents.ToString());
-        Log.Info("   - ShutDown Time          = " + _shutDownTime.ToString());
-        Log.Info("   - WakeUp Time            = " + _wakeupTime.ToString());
+        Log.Info("   - Recorder.IsRadio()            = " + Recorder.IsRadio().ToString());
+        Log.Info("   - g_Player.Playing              = " + g_Player.Playing.ToString());
+        Log.Info("   - Database Update               = " + TVDatabase.SupressEvents.ToString());
+        Log.Info("   - ShutDown Time                 = " + _shutDownTime.ToString());
+        Log.Info("   - WakeUp Time                   = " + _wakeupTime.ToString());
         return true;
       }
       return false;
