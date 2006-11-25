@@ -643,6 +643,7 @@ namespace MediaPortal.GUI.Library
       get { return IsVisible; }
       set
       {
+        if (IsVisible == value) return;
         if (IsVisible && !value)
           QueueAnimation(AnimationType.Hidden);
         else if (!IsVisible && value)
