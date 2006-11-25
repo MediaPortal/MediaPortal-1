@@ -34,16 +34,18 @@ namespace MediaPortal.WebEPG
   public class XMLTVExport
   {
     XmlTextWriter _writer;
-    string _xmltvDir;
+    string _xmltvTempFile;
+    string _xmltvFile;
 
     public XMLTVExport(string dir)
     {
-      _xmltvDir = dir;
+      _xmltvTempFile = Path.Combine(dir, "TVguide-writing.xml");
+      _xmltvFile = Path.Combine(dir, "TVguide.xml");
     }
 
     public void Open()
     {
-      _writer = new XmlTextWriter(_xmltvDir + "TVguide-writing.xml", System.Text.Encoding.UTF8);
+      _writer = new XmlTextWriter(_xmltvTempFile, System.Text.Encoding.UTF8);
       _writer.Formatting = Formatting.Indented;
       //Write the <xml version="1.0"> element
       _writer.WriteStartDocument();
@@ -57,8 +59,8 @@ namespace MediaPortal.WebEPG
       _writer.WriteEndElement();
       _writer.Flush();
       _writer.Close();
-      System.IO.File.Delete(_xmltvDir + "TVguide.xml");
-      System.IO.File.Move(_xmltvDir + "TVguide-writing.xml", _xmltvDir + "TVguide.xml");
+      System.IO.File.Delete(_xmltvFile);
+      System.IO.File.Move(_xmltvTempFile, _xmltvFile));
     }
 
     public void WriteChannel(string id, string name)
