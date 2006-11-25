@@ -66,7 +66,6 @@ namespace MediaPortal.GUI.Home
 		public GUIHomeBaseWindow()
 		{
       LoadSettings();
-      Log.Write("GUIHomeBaseWindow SendMessageHandler");
       GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
     }
 		#endregion
