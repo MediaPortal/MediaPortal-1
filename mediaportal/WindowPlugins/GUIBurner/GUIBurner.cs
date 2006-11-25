@@ -43,6 +43,7 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Video.Database;
 using MediaPortal.Music.Database;
+using MediaPortal.TagReader;
 using Core.Util;
 using System.Diagnostics;
 #endregion
@@ -75,19 +76,23 @@ namespace MediaPortal.GUI.GUIBurner
     enum States
     {
       STATE_MAIN = 0,
-      STATE_MAKE_AUDIO_CD = 1,
-      //STATE_MAKE_VIDEO_CD = 2,
-      STATE_MAKE_VIDEO_DVD = 3,
-      STATE_DISK_INFO = 4,
-      STATE_VIDEO = 5,
-      STATE_AUDIO = 6
+      STATE_VIDEO,
+      STATE_AUDIO,
+      STATE_DATA,
+      STATE_MAKE_AUDIO_CD,
+      STATE_MAKE_DATA_CD,
+      STATE_MAKE_VIDEO_DVD,
+      STATE_MAKE_DATA_DVD,
+      STATE_DISK_INFO,
     };
 
     enum BurnTypes
     {
       VIDEO_CD = 1,
       VIDEO_DVD = 2,
-      AUDIO_CD = 3
+      AUDIO_CD = 3,
+      DATA_CD = 4,
+      DATA_DVD = 5
     };
 
     private BurnTypes burnType = BurnTypes.AUDIO_CD;
@@ -97,7 +102,8 @@ namespace MediaPortal.GUI.GUIBurner
 
     #region Private Variables
 
-    BurnVideoDVD DVDBurner;
+    BurnDVD DvdBurner;
+//    BurnDataDVD DVDDataBurner;
 
     private struct file
     {
@@ -143,10 +149,11 @@ namespace MediaPortal.GUI.GUIBurner
 
     private bool PalTvFormat = true;              // Which format for the DVD
     private bool LeaveFilesForDebugging = true;   // Leave temporary files to aid debugging
-    private bool DummyBurn = false;               // Tell the BurnVideoDVD not to actually burn the DVD
+    private bool DummyBurn = false;               // Tell the BurnDVD not to actually burn the DVD
 
     static ArrayList mp3_extensions = new ArrayList();
     static ArrayList video_extensions = new ArrayList();
+    static ArrayList data_extensions = new ArrayList();
 
     public static int soundFileSize = 0;
     private static long lStartTime = 0;
@@ -179,6 +186,9 @@ namespace MediaPortal.GUI.GUIBurner
     {
       mp3_extensions.Clear();
       mp3_extensions.Add(".mp3");
+
+      data_extensions.Clear();
+      data_extensions.Add("*");
 
       video_extensions.Clear();
       video_extensions.Add(".mpg");
@@ -216,67 +226,11 @@ namespace MediaPortal.GUI.GUIBurner
           }
           catch
           {
+            Log.Error("Problem creating XPBurn");
           }
 
-
-          /*
-          PlayList playlist = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
-
-          for (int i = 0; i < playlist.Count; i++)
-          {
-            string FileName = playlist[i].FileName;
-            //FilePathsToBurn.Add(FileName);
-
-
-            file fl = new file();
-            fl.name = FileName;
-            fl.path = FileName;
-            //fl.size = cItem.FileInfo.Length;
-            fl.size = 0;
-            files.Add(fl);
-
-            Log.Info("BurnDVD Add File From Video Playlist: {0}", FileName);
-          }
-
-          Debugger.Launch();
-          Debugger.Break();
-
-
-          
-          
-          
-          actSize = 0;
-          GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST_COPY);
-          foreach (file f in files)
-          {
-            GUIListItem pItem = new GUIListItem(f.name);
-            FileInformation fi = new FileInformation();
-            fi.Length = f.size;
-            actSize = actSize + f.size;
-            fi.Name = f.name;
-            pItem.Path = f.path;
-            pItem.FileInfo = (FileInformation)fi;
-            GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST_COPY, pItem);
-          }
-          
-          if (actSize > 0)
-            perc = Convert.ToInt16(actSize / (max / 100d));
-          else
-            perc = 0;
-          
-          tmpStr = Utils.GetSize(actSize) + " ";
-          GUIPropertyManager.SetProperty("#burner_size", tmpStr);
-          GUIPropertyManager.SetProperty("#burner_perc", perc.ToString());
-          */
-
-
-
-
-
-
-
-          GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(2100));
-          GUIPropertyManager.SetProperty("#burner_title", GUILocalizeStrings.Get(2100));
+          GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(2100));   // My Burner
+          GUIPropertyManager.SetProperty("#burner_title", GUILocalizeStrings.Get(2100));    // My Burner
           GUIPropertyManager.SetProperty("#burner_perc", "-5");
           GUIPropertyManager.SetProperty("#burner_size", " ");
           GUIPropertyManager.SetProperty("#burner_info", " ");
@@ -286,6 +240,7 @@ namespace MediaPortal.GUI.GUIBurner
           UpdateButtons();
           #endregion
           return true;
+
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           #region GUI_MSG_CLICKED
           base.OnMessage(message);
@@ -333,9 +288,23 @@ namespace MediaPortal.GUI.GUIBurner
                 ShowList();
                 break;
 
+              // If on Data screen
+              case States.STATE_DATA:
+                currentState = States.STATE_MAKE_DATA_CD;
+                ShowList();
+                break;
+
+
+
               // If on Audio CD Menu
               case States.STATE_MAKE_AUDIO_CD:
                 burnType = BurnTypes.AUDIO_CD;
+                BurnCD(burnType);
+                break;
+
+              // If on Data CD Menu
+              case States.STATE_MAKE_DATA_CD:
+                burnType = BurnTypes.DATA_CD;
                 BurnCD(burnType);
                 break;
 
@@ -345,6 +314,11 @@ namespace MediaPortal.GUI.GUIBurner
                 BurnDVD(burnType);
                 break;
 
+              // If on Data DVD Menu
+              case States.STATE_MAKE_DATA_DVD:
+                burnType = BurnTypes.DATA_DVD;
+                BurnDVD(burnType);
+                break;
             }
             return true;
             #endregion
@@ -356,31 +330,24 @@ namespace MediaPortal.GUI.GUIBurner
             switch (currentState)
             {
               case States.STATE_MAIN:
-                currentState = States.STATE_DISK_INFO;    // Disk Info button
-                ShowList();
-                CdInfo();
+                currentState = States.STATE_DATA;
+                UpdateButtons();
                 break;
 
+              case States.STATE_DATA:
+                currentState = States.STATE_MAKE_DATA_DVD;
+                ShowList();
+                break;
+
+
+
               case States.STATE_MAKE_VIDEO_DVD:
-                // Import Video Playlist
                 ImportVideoPlaylist();
                 break;
 
               case States.STATE_MAKE_AUDIO_CD:
-                // Import Audio Playlist
                 ImportAudioPlaylist();
                 break;
-
-/*              case States.STATE_IMPORT_AUDIO_PLAYLIST:
-                // Import Audio Playlist
-                //Impor
-                break;
-
-              case States.STATE_IMPORT_VIDEO_PLAYLIST:
-                // Import Audio Playlist
-                ImportVideoPlaylist();
-                break;
-*/
             }
             return true;
             #endregion
@@ -572,9 +539,20 @@ namespace MediaPortal.GUI.GUIBurner
                   currentFolder = currentFolder.Remove(indx, 1);
                 }
 
+               // Debugger.Launch();
+               // Debugger.Break();
+
+
                 GUIListItem pItem = new GUIListItem(item);
-                pItem.Path = currentFolder;
+
+                MusicTag tag = TagReader.TagReader.ReadTag(pItem.Path);
+                pItem.MusicTag = tag;
+
                 GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST_COPY, pItem);
+
+
+                int TimeInSeconds = tag.Duration;
+                string Time = Util.Utils.SecondsToHMSString(TimeInSeconds);
 
 // TESTING - need to change this to be a real time instead of a filesize.
                 actSize = actSize + pItem.FileInfo.Length;
@@ -661,10 +639,7 @@ namespace MediaPortal.GUI.GUIBurner
 
     private void UpdatePercentageFullDisplay()
     {
-      //g_Player.Duration
-      //g_Player.
-
-
+      // if we are in data mode....
       if (actSize > 0)
         perc = Convert.ToInt16(actSize / (max / 100d));
       else
@@ -775,7 +750,28 @@ namespace MediaPortal.GUI.GUIBurner
           currentExt = video_extensions;
           LoadDriveListControl();
           currentFolder = "";
-          max = dvdSize * 5;
+          max = dvdSize;
+          actSize = 0;
+          break;
+
+
+        case States.STATE_MAKE_DATA_CD:
+          UpdateButtons();
+          GUIPropertyManager.SetProperty("#burner_title", GUILocalizeStrings.Get(2105));  //Create Data-CD
+          currentExt = data_extensions;
+          LoadDriveListControl();
+          currentFolder = "";
+          max = cdSize;
+          actSize = 0;
+          break;
+
+        case States.STATE_MAKE_DATA_DVD:
+          UpdateButtons();
+          GUIPropertyManager.SetProperty("#burner_title", GUILocalizeStrings.Get(2106));  //Create Data-DVD
+          currentExt = data_extensions;
+          LoadDriveListControl();
+          currentFolder = "";
+          max = dvdSize;
           actSize = 0;
           break;
       }
@@ -802,9 +798,9 @@ namespace MediaPortal.GUI.GUIBurner
           GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON2);
           GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON2);
 
-          //GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON3, GUILocalizeStrings.Get(2136)); //Data
-          //GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON3);
-          //GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON3);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON3, GUILocalizeStrings.Get(2136)); //Data
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON3);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON3);
 
           //GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON4, GUILocalizeStrings.Get(2123)); //Disk info
           //GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON4);
@@ -832,7 +828,7 @@ namespace MediaPortal.GUI.GUIBurner
 
           break;
 
-        case States.STATE_AUDIO:
+        case States.STATE_AUDIO:  // Audio Menu
           AllButtonsDisabledAndHidden();
 
           GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON1);
@@ -845,6 +841,25 @@ namespace MediaPortal.GUI.GUIBurner
 
           break;
 
+
+        case States.STATE_DATA:   // Data Menu
+          AllButtonsDisabledAndHidden();
+
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON1);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(712));  //Back
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON1);
+
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON2);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2105)); //Create Data-CD
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON2);
+
+          //GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON3);
+          //GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON3, GUILocalizeStrings.Get(2106)); //Create Data-DVD
+          //GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON3);
+          
+          break;
+
+
         case States.STATE_DISK_INFO:
           AllButtonsDisabledAndHidden();
 
@@ -856,7 +871,7 @@ namespace MediaPortal.GUI.GUIBurner
           GUIControl.EnableControl(GetID, (int)Controls.CONTROL_CD_DETAILS);
           break;
 
-        // We have this state as a seperate one as in the future we may support DVD Audio etc
+
         case States.STATE_MAKE_AUDIO_CD:
           AllButtonsDisabledAndHidden();
 
@@ -874,7 +889,6 @@ namespace MediaPortal.GUI.GUIBurner
 
           break;
 
-        // We have this state as a seperate one as in the future we may support VideoCD's
         case States.STATE_MAKE_VIDEO_DVD:
           AllButtonsDisabledAndHidden();
 
@@ -891,6 +905,35 @@ namespace MediaPortal.GUI.GUIBurner
           GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON3);
 
           break;
+
+          
+        case States.STATE_MAKE_DATA_CD:
+          AllButtonsDisabledAndHidden();
+
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON1);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(712));  // Back
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON1);
+
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON2);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON2);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2144)); // Start Burning
+
+          break;
+
+
+        case States.STATE_MAKE_DATA_DVD:
+          AllButtonsDisabledAndHidden();
+
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON1);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(712));  // Back
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON1);
+
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON2);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON2);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2144)); // Start Burning
+
+          break;
+
       }
     }
 
@@ -997,14 +1040,13 @@ namespace MediaPortal.GUI.GUIBurner
     #endregion
 
     #region DVD Burning
-    #region Listen for BurnVideoDVD Events
+    #region Listen for BurnDVD Events
     private void DVDBurner_FileFinished(object sender, FileFinishedEventArgs e)
     {
       //string text = "Completed File: " + e.SourceFile;
       //GUIPropertyManager.SetProperty("#convert_info", text);
       //GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BACK, text);
     }
-
     private void DVDBurner_OutputReceived(object sender, System.Diagnostics.DataReceivedEventArgs e)
     {
       string text = e.Data.ToString();
@@ -1017,12 +1059,14 @@ namespace MediaPortal.GUI.GUIBurner
       //GUIPropertyManager.SetProperty("#convert_info", text);
     }
 
-    private void DVDBurner_BurnVideoDVDStatusUpdate(object sender, BurnVideoDVDStatusUpdateEventArgs e)
+    private void DVDBurner_BurnDVDStatusUpdate(object sender, BurnDVDStatusUpdateEventArgs e)
     {
       string text = e.Status;
       GUIPropertyManager.SetProperty("#convert_info", text);
     }
-    #endregion
+
+
+#endregion
 
 
     /// <summary>
@@ -1101,7 +1145,7 @@ namespace MediaPortal.GUI.GUIBurner
             GUIListItem cItem = GUIControl.GetListItem(GetID, (int)Controls.CONTROL_LIST_COPY, i);
             try
             {
-              FilePathsToBurn.Add(cItem.Path + "\\" + cItem.Label);
+              FilePathsToBurn.Add(cItem.Path);
               Log.Info("BurnDVD Add File: {0}", cItem.Path + "\\" + cItem.Label);
             }
             catch (Exception ex)
@@ -1114,24 +1158,38 @@ namespace MediaPortal.GUI.GUIBurner
           Log.Info("BurnDVD BurnType: {0}", bTyp.ToString());
           
           string strTempFolder = tmpFolder + @"\DVD";
-          
-          string strTvFormat;
 
-          if (PalTvFormat == true)
-            strTvFormat = "pal";
-          else
-            strTvFormat = "ntsc";
+          if (bTyp == BurnTypes.VIDEO_DVD)
+          {
+            string strTvFormat;
 
+            if (PalTvFormat == true)
+              strTvFormat = "pal";
+            else
+              strTvFormat = "ntsc";
 
-          DVDBurner = new BurnVideoDVD(FilePathsToBurn, strTempFolder, strTvFormat, dvdBurnFolder, LeaveFilesForDebugging, recorderdrive, DummyBurn);
+            DvdBurner = new BurnDVD(FilePathsToBurn, strTempFolder, strTvFormat, dvdBurnFolder, LeaveFilesForDebugging, recorderdrive, DummyBurn);
 
+            //Listen for some events
+            DvdBurner.FileFinished += new BurnDVD.FileFinishedEventHandler(DVDBurner_FileFinished);
+            //DVDBurner.OutputReceived += new DataReceivedEventHandler(DVDBurner_OutputReceived);
+            DvdBurner.AllFinished += new EventHandler(DVDBurner_AllFinished);
+            DvdBurner.BurnDVDStatusUpdate += new BurnDVD.BurnDVDStatusUpdateEventHandler(DVDBurner_BurnDVDStatusUpdate);
+            DvdBurner.Start();
+          }
+          if (bTyp == BurnTypes.DATA_DVD)
+          {
+/*            DvdBurner = new BurnDVD(false, FilePathsToBurn, strTempFolder, null, dvdBurnFolder, LeaveFilesForDebugging, recorderdrive, DummyBurn);
 
-          //Listen for some events
-          DVDBurner.FileFinished += new BurnVideoDVD.FileFinishedEventHandler(DVDBurner_FileFinished);
-          //DVDBurner.OutputReceived += new DataReceivedEventHandler(DVDBurner_OutputReceived);
-          DVDBurner.AllFinished += new EventHandler(DVDBurner_AllFinished);
-          DVDBurner.BurnVideoDVDStatusUpdate += new BurnVideoDVD.BurnVideoDVDStatusUpdateEventHandler(DVDBurner_BurnVideoDVDStatusUpdate);
-          DVDBurner.Start();
+            //Listen for some events
+            DvdBurner.FileFinished += new BurnDVD.FileFinishedEventHandler(DVDBurner_FileFinished);
+            //DVDBurner.OutputReceived += new DataReceivedEventHandler(DVDBurner_OutputReceived);
+            DvdBurner.AllFinished += new EventHandler(DVDBurner_AllFinished);
+            DvdBurner.BurnDVDStatusUpdate += new BurnDVD.BurnDVDStatusUpdateEventHandler(DVDBurner_BurnDVDStatusUpdate);
+            DvdBurner.Start();
+*/            
+          }
+
         }
       }
       currentState = States.STATE_MAIN;
@@ -1165,7 +1223,7 @@ namespace MediaPortal.GUI.GUIBurner
           {
             GUIListItem cItem = GUIControl.GetListItem(GetID, (int)Controls.CONTROL_LIST_COPY, i);
 
-            if (currentState == States.STATE_MAKE_AUDIO_CD)
+            if (bTyp == BurnTypes.AUDIO_CD)
             {
               string outName = System.IO.Path.ChangeExtension(cItem.FileInfo.Name, ".wav");
               GUIPropertyManager.SetProperty("#burner_size", "MP3->WAV  " + outName);
@@ -1177,6 +1235,8 @@ namespace MediaPortal.GUI.GUIBurner
               FileInfo fi = new FileInfo(tmpFolder + "\\" + outName);
               cItem.FileInfo.Length = (int)fi.Length;
             }
+
+            // Otherwise we are a data CD and dont need to do any conversions
 
             try
             {
