@@ -60,7 +60,7 @@ namespace MediaPortal.WebEPG
       _writer.Flush();
       _writer.Close();
       System.IO.File.Delete(_xmltvFile);
-      System.IO.File.Move(_xmltvTempFile, _xmltvFile));
+      System.IO.File.Move(_xmltvTempFile, _xmltvFile);
     }
 
     public void WriteChannel(string id, string name)
