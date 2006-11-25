@@ -2492,7 +2492,7 @@ namespace MediaPortal
     void RenderWorkerThread()
     {
       float currentTime = 0.0f;
-      float _lastSec = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
+      float lastSec = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
       int fps = 0;
       int sleepTime = 1000 / GUIGraphicsContext.MaxFPS;
       while (true)
@@ -2505,14 +2505,25 @@ namespace MediaPortal
         }
         Thread.Sleep(sleepTime);
         currentTime = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
-        if (currentTime - _lastSec >= 1.0f)
+
+        if (currentTime - lastSec >= 1.0f)
         {
-          if (fps < GUIGraphicsContext.MaxFPS)
-            sleepTime--;
-          else if (fps > GUIGraphicsContext.MaxFPS)
-            sleepTime++;
+          // only regulate FPS when app is focused
+          if (GUIGraphicsContext.HasFocus)
+          {
+            if (fps < GUIGraphicsContext.MaxFPS)
+            {
+              if (sleepTime > 1)
+                sleepTime--;
+            }
+            else if (fps > GUIGraphicsContext.MaxFPS)
+            {
+              if (sleepTime < 1000)
+                sleepTime++;
+            }
+          }
           fps = 0;
-          _lastSec = currentTime;
+          lastSec = currentTime;
         }
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
         {
