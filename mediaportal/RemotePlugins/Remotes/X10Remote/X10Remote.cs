@@ -42,6 +42,7 @@ namespace MediaPortal.InputDevices
     bool _logVerbose = false;
     bool _x10Medion = true;
     bool _x10Ati = false;
+    bool _x10Firefly = false;
     bool _x10UseChannelControl = false;
     int _x10Channel = 0;
 
@@ -56,6 +57,7 @@ namespace MediaPortal.InputDevices
         _controlEnabled = xmlreader.GetValueAsBool("remote", "X10", false);
         _x10Medion = xmlreader.GetValueAsBool("remote", "X10Medion", true);
         _x10Ati = xmlreader.GetValueAsBool("remote", "X10ATI", true);
+        _x10Firefly = xmlreader.GetValueAsBool("remote", "X10Firefly", true);
         _logVerbose = xmlreader.GetValueAsBool("remote", "X10VerboseLog", false);
         _x10UseChannelControl = xmlreader.GetValueAsBool("remote", "X10UseChannelControl", false);
         _x10Channel = xmlreader.GetValueAsInt("remote", "X10Channel", 0);
@@ -67,6 +69,8 @@ namespace MediaPortal.InputDevices
             _inputHandler = new InputHandler("Medion X10");
           else if (_x10Ati)
             _inputHandler = new InputHandler("ATI X10");
+          else if (_x10Firefly)
+            _inputHandler = new InputHandler("Firefly X10");
           else
             _inputHandler = new InputHandler("Other X10");
         else
@@ -85,6 +89,8 @@ namespace MediaPortal.InputDevices
             Log.Info("X10Remote: Start Medion");
           else if (_x10Ati)
             Log.Info("X10Remote: Start ATI");
+          else if (_x10Firefly)
+            Log.Info("X10Remote: Start Firefly");
           else
             Log.Info("X10Remote: Start Other");
         }
@@ -136,7 +142,7 @@ namespace MediaPortal.InputDevices
         Log.Info("X10Remote: varTimestamp = {0}", e.varTimestamp.ToString());
         Log.Info("X10Remote: Command End ----------------------------------------------");
       }
-      
+
       if (e.eKeyState.ToString() == "X10KEY_ON" || e.eKeyState.ToString() == "X10KEY_REPEAT")
       {
         if (_x10UseChannelControl && (e.lAddress != _x10Channel))
