@@ -75,7 +75,7 @@ namespace MediaPortal.InputDevices
     class Data
     {
       string type;
-      object value;
+      object dataValue;
       object parameter;
       bool focus = false;
 
@@ -86,7 +86,7 @@ namespace MediaPortal.InputDevices
         if (newParameter == null)
           newParameter = string.Empty;
         type = (string)newType;
-        value = newValue;
+        dataValue = newValue;
         parameter = newParameter;
       }
 
@@ -97,14 +97,14 @@ namespace MediaPortal.InputDevices
         if (newParameter == null)
           newParameter = string.Empty;
         type = (string)newType;
-        value = newValue;
+        dataValue = newValue;
         parameter = newParameter;
         focus = newFocus;
       }
 
       public string Type { get { return type; } }
-      public object Value { get { return value; } }
-      public object Parameter { get { return parameter; } }
+      public object Value { get { return dataValue; } set { dataValue = value; } }
+      public object Parameter { get { return parameter; } set { parameter = value; } }
       public bool Focus { get { return focus; } set { focus = value; } }
     }
 
@@ -1585,8 +1585,12 @@ namespace MediaPortal.InputDevices
         newButtonForm.ShowDialog();
         if (newButtonForm.Accepted)
         {
+          ((Data)(node.Tag)).Parameter = newButtonForm.ButtonName;
+          ((Data)(node.Tag)).Value = newButtonForm.ButtonCode;
+          node.Text = newButtonForm.ButtonName;
           Log.Info("Name: {0}", newButtonForm.ButtonName);
           Log.Info("Code: {0}", newButtonForm.ButtonCode);
+          changedSettings = true;
         }
       }
     }
