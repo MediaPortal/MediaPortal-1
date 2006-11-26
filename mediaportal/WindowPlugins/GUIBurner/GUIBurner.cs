@@ -1227,7 +1227,8 @@ namespace MediaPortal.GUI.GUIBurner
             {
               string outName = System.IO.Path.ChangeExtension(cItem.FileInfo.Name, ".wav");
               GUIPropertyManager.SetProperty("#burner_size", "MP3->WAV  " + outName);
-              ConvertMP3toWAV(cItem.Path + "\\" + cItem.FileInfo.Name, tmpFolder + "\\" + outName);
+              //ConvertMP3toWAV(cItem.Path + "\\" + cItem.FileInfo.Name, tmpFolder + "\\" + outName);
+              ConvertMP3toWAV(cItem.Path, tmpFolder + "\\" + outName);
 
               cItem.Label = outName;
               cItem.FileInfo.Name = outName;
@@ -1240,7 +1241,8 @@ namespace MediaPortal.GUI.GUIBurner
 
             try
             {
-              CDBurner.AddFile(cItem.Path + "\\" + cItem.Label, cItem.Path + "\\" + cItem.Label);
+              //CDBurner.AddFile(cItem.Path + "\\" + cItem.Label, cItem.Path + "\\" + cItem.Label);
+              CDBurner.AddFile(cItem.Path, cItem.Path + "\\" + cItem.Label);
               Log.Info("Add File: {0}", cItem.Path + "\\" + cItem.Label);
             }
             catch (Exception ex)
