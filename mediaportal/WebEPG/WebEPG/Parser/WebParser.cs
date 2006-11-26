@@ -87,11 +87,14 @@ namespace MediaPortal.WebEPG.Parser
         {
           // get first match
           ProgramData subdata = (ProgramData)_sublinkParser.GetData(0);
-          subdata.Preference = _sublinkPreference;
+          if (subdata != null)
+          {
+            subdata.Preference = _sublinkPreference;
 
-          data.Merge(subdata);
+            data.Merge(subdata);
 
-          return true;
+            return true;
+          }
         }
       }
       return false;
@@ -121,16 +124,19 @@ namespace MediaPortal.WebEPG.Parser
       }
 
       ProgramData data = ((ProgramData)_listingParser.GetData(index));
-      data.Preference = _listingPreference;
-      if (searchData != null)
-        data.Merge(searchData);
-      if (_sublinkParser != null)
+      if (data != null)
       {
-        HTTPRequest sublinkRequest = new HTTPRequest(_sublinkRequest);
-        if (sublinkRequest.Delay < 500)
-          sublinkRequest.Delay = 500;
-        if (_listingParser.GetHyperLink(index, _sublinkMatch, ref sublinkRequest))
-          data.SublinkRequest = sublinkRequest;
+        data.Preference = _listingPreference;
+        if (searchData != null)
+          data.Merge(searchData);
+        if (_sublinkParser != null)
+        {
+          HTTPRequest sublinkRequest = new HTTPRequest(_sublinkRequest);
+          if (sublinkRequest.Delay < 500)
+            sublinkRequest.Delay = 500;
+          if (_listingParser.GetHyperLink(index, _sublinkMatch, ref sublinkRequest))
+            data.SublinkRequest = sublinkRequest;
+        }
       }
       return data;
     }

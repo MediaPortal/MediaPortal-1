@@ -93,6 +93,7 @@ namespace MediaPortal.WebEPG
       request.ReplaceTag("[DD]", String.Format("{0:00}", _requestTime.Day));
       request.ReplaceTag("[_D]", _requestTime.Day.ToString());
       request.ReplaceTag("[WEEKDAY]", _requestTime.DateTime.ToString(_data.WeekDay, culture));
+      request.ReplaceTag("[DAY_OF_WEEK]", ((int)_requestTime.DateTime.DayOfWeek).ToString());
 
       request.ReplaceTag("[LIST_OFFSET]", (_offset * _data.MaxListingCount).ToString());
       request.ReplaceTag("[PAGE_OFFSET]", (_offset + _data.PageStart).ToString());
@@ -113,6 +114,7 @@ namespace MediaPortal.WebEPG
       _baseRequest.HasTag("[MONTH]") ||
       _baseRequest.HasTag("[DD]") ||
       _baseRequest.HasTag("[_D]") ||
+      _baseRequest.HasTag("[DAY_OF_WEEK]") ||
       _baseRequest.HasTag("[WEEKDAY]"))
         return true;
 

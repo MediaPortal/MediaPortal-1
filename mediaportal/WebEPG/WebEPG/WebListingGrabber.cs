@@ -396,6 +396,7 @@ namespace MediaPortal.WebEPG
     private bool GetListing(out bool error)
     {
       int listingCount = 0;
+      int programCount = 0;
       bool bMore = false;
       error = false;
 
@@ -434,6 +435,11 @@ namespace MediaPortal.WebEPG
             _programs.Add(program);
           }
         }
+
+        if(_programs.Count - programCount < listingCount)
+          _log.Warn(LogType.WebEPG, "WebEPG: Program Count ({0}) < Listing Count ({1}), possible template error", _programs.Count - programCount, listingCount);
+
+        programCount = _programs.Count;
 
         if (_timeControl.GrabDay > _maxGrabDays) //_GrabDay > _maxGrabDays)
           bMore = false;
