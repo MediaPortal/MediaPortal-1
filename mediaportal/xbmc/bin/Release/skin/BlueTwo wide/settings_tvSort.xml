@@ -49,7 +49,7 @@
 		</control>
 		<control>
 			<description>tvchannels listcontrol</description>
-			<type>updownlistcontrol</type>
+			<type>playlistcontrol</type>
 			<id>10</id>
 			<width>566</width>
 			<height>626</height>
@@ -67,6 +67,16 @@
 			<spinPosY>690</spinPosY>
 			<itemWidth>46</itemWidth>
 			<itemHeight>46</itemHeight>
+			<upBtnWidth>35</upBtnWidth>
+			<downBtnWidth>35</downBtnWidth>
+			<deleteBtnWidth>50</deleteBtnWidth>
+			<upBtnHeight>66</upBtnHeight>
+			<downBtnHeight>66</downBtnHeight>
+			<deleteBtnHeight>66</deleteBtnHeight>
+			<upBtnXOffset>458</upBtnXOffset>
+			<downBtnXOffset>493</downBtnXOffset>
+			<deleteBtnXOffset>528</deleteBtnXOffset>
+
 			<textureFocus>recording_background_focus.png</textureFocus>
 			<textureNoFocus>recording_background_nofocus.png</textureNoFocus>
 			<spaceBetweenItems>6</spaceBetweenItems>

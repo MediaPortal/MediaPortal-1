@@ -14,7 +14,7 @@ namespace WindowPlugins.GUISettings.TV
 	public class GUISettingsSortChannels : GUIWindow, IComparer<TVChannel>
 	{
 		[SkinControlAttribute(24)]		protected GUIButtonControl btnTvGroup=null;
-		[SkinControlAttribute(10)]		protected GUIUpDownListControl listChannels=null;
+		[SkinControlAttribute(10)]		protected GUIPlayListItemListControl listChannels = null;
 
 		TVGroup currentGroup=null;
 		public GUISettingsSortChannels()
@@ -97,20 +97,18 @@ namespace WindowPlugins.GUISettings.TV
 		{
 			if (control == listChannels)
 			{
+				OnMoveUp(listChannels.SelectedListItemIndex);
 				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,control.GetID,0,0,null);
-				OnMessage(msg);         
-				int iItem=(int)msg.Param1;
-				OnMoveUp(iItem);
+				OnMessage(msg);         // needed to show the selected control correctly
 			}
 		}
 		protected override void OnClickedDown( int controlId, GUIControl control, Action.ActionType actionType) 
 		{
 			if (control == listChannels)
 			{
+				OnMoveDown(listChannels.SelectedListItemIndex);
 				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,control.GetID,0,0,null);
-				OnMessage(msg);         
-				int iItem=(int)msg.Param1;
-				OnMoveDown(iItem);
+				OnMessage(msg);      // needed to show the selected control correctly   
 			}
 		}
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
@@ -119,6 +117,22 @@ namespace WindowPlugins.GUISettings.TV
 			base.OnClicked (controlId, control, actionType);
 		}
 
+		public override void OnAction(Action action)
+		{
+			switch (action.wID)
+			{
+				case Action.ActionType.ACTION_MOVE_SELECTED_ITEM_UP:
+					OnClickedUp(listChannels.GetID, listChannels, action.wID);
+					break;
+				case Action.ActionType.ACTION_MOVE_SELECTED_ITEM_DOWN:
+					OnClickedDown(listChannels.GetID, listChannels, action.wID);
+					break;
+				case Action.ActionType.ACTION_DELETE_SELECTED_ITEM:
+					OnDeleteItem(listChannels.SelectedListItemIndex);
+					break;
+			}
+			base.OnAction(action);
+		}
 
 		void OnMoveDown(int item)
 		{
@@ -146,8 +160,9 @@ namespace WindowPlugins.GUISettings.TV
 				}
 				SaveGroup();
 			}
-			UpdateList();
-			listChannels.SelectedListItemIndex=item+1;
+			//UpdateList();
+			//listChannels.MoveItemDown(item);
+			listChannels.SelectedListItemIndex = listChannels.MoveItemDown(item);
 		}
 		
 		void OnMoveUp(int item)
@@ -176,8 +191,32 @@ namespace WindowPlugins.GUISettings.TV
 				}
 				SaveGroup();
 			}
-			UpdateList();
-			listChannels.SelectedListItemIndex=item-1;
+			//UpdateList();
+			//listChannels.MoveItemUp(item);
+			listChannels.SelectedListItemIndex = listChannels.MoveItemUp(item);
+		}
+
+		void OnDeleteItem(int item)
+		{
+			if ((item < 0) || (item > listChannels.Count)) return;
+			GUIListItem item1 = listChannels[item];
+			TVChannel chan1 = (TVChannel)item1.MusicTag;
+
+			if (currentGroup == null)
+			{
+				TVDatabase.RemoveChannel(chan1.Name);
+			}
+			else
+			{
+				for (int i = 0; i < currentGroup.TvChannels.Count; i++)
+				{
+					TVChannel ch = currentGroup.TvChannels[i];
+					if (ch.Name == chan1.Name) currentGroup.TvChannels.RemoveAt(i);
+				}
+				SaveGroup();
+			}
+
+			listChannels.SelectedListItemIndex = listChannels.RemoveItem(listChannels.SelectedListItemIndex);
 		}
 
 		void OnTvGroup()

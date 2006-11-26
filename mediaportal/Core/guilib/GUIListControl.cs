@@ -2256,6 +2256,7 @@ namespace MediaPortal.GUI.Library
             _cursorX -= _itemsPerPage;
           }
           _upDownControl.Value = iPage;
+					SelectItem(value);
           OnSelectionChanged();
         }
         _refresh = true;
@@ -2920,6 +2921,36 @@ namespace MediaPortal.GUI.Library
 
       return selectedItemIndex;
     }
+
+		public virtual int RemoveItem(int iItem)
+		{
+			int selectedItemIndex = -1;
+
+			if (iItem < 0 || iItem >= _listItems.Count)
+				return -1;
+						
+			try
+			{
+				//Log.Info("Moving List Item {0} up. Old index:{1}, new index{2}", item1.Path, iItem, iPreviousItem);
+				System.Threading.Monitor.Enter(this);
+				_listItems.RemoveAt(iItem);
+				if (selectedItemIndex >= _listItems.Count) selectedItemIndex = _listItems.Count - 1;
+			}
+
+			catch (Exception ex)
+			{
+				Log.Info("GUIListControl.RemoveItem caused an exception: {0}", ex.Message);
+				selectedItemIndex = -1;
+			}
+
+			finally
+			{
+				System.Threading.Monitor.Exit(this);
+			}
+
+			return selectedItemIndex;
+		}
+
 
     public override int DimColor
     {
