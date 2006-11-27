@@ -504,18 +504,19 @@ namespace Tag.MP3
           // Check is the genre value is an invalid composite of genre id and genre name such 
           // as (2)Country. if it is we'll split and use the genre id
           if (pos > 0 && pos < sGenreVal.Length - 1)
+          {
             sGenreVal = sGenreVal.Substring(0, pos);
 
-          sGenreVal = sGenreVal.Replace("(", "");
-          sGenreVal = sGenreVal.Replace(")", "");
+            sGenreVal = sGenreVal.Replace("(", "");
+            sGenreVal = sGenreVal.Replace(")", "");
 
-          // Check for another variant of the composite of genre id and genre name; 02Country
-          for (int i = 0; i < sGenreVal.Length; i++)
-          {
-            if (Utils.IsAlphaNumericValue(sGenreVal[i]))
-              return Utils.GetGenre(sGenreVal.Substring(i));
+            // Check for another variant of the composite of genre id and genre name; 02Country
+            for (int i = 0; i < sGenreVal.Length; i++)
+            {
+              if (Utils.IsAlphaNumericValue(sGenreVal[i]))
+                return Utils.GetGenre(sGenreVal.Substring(i));
+            }
           }
-
           return Utils.GetGenre(sGenreVal);
         }
 
