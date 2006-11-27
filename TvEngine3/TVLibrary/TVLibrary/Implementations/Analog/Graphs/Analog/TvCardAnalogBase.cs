@@ -217,15 +217,23 @@ namespace TvLibrary.Implementations.Analog
           {
             AddTvEncoderFilter(false);
           }
-          if (!AddTvMultiPlexer(true))
+          FindCapturePin(MediaType.Stream, MediaSubType.Null);
+          if (_pinCapture == null)
+            FindCapturePin(MediaType.Video, MediaSubType.Mpeg2Program);
+          if (_pinCapture == null)
           {
-            AddTvMultiPlexer(false);
+            if (!AddTvMultiPlexer(true))
+            {
+              AddTvMultiPlexer(false);
+            }
           }
         }
-
-        FindCapturePin(MediaType.Stream, MediaSubType.Null);
         if (_pinCapture == null)
-          FindCapturePin(MediaType.Video, MediaSubType.Mpeg2Program);
+        {
+          FindCapturePin(MediaType.Stream, MediaSubType.Null);
+          if (_pinCapture == null)
+            FindCapturePin(MediaType.Video, MediaSubType.Mpeg2Program);
+        }
 
         if (_pinCapture == null)
         {
@@ -1068,6 +1076,45 @@ namespace TvLibrary.Implementations.Analog
           continue;
         }
         if (tmp == null) continue;
+
+        //check output pins...
+        //dont accept filters which have a mpeg-ts output pin..
+        bool isTsFilter = false;
+        IPin pinOut = DsFindPin.ByDirection(tmp, PinDirection.Output, 0);
+        if (pinOut != null)
+        {
+          IEnumMediaTypes enumMediaTypes;
+          pinOut.EnumMediaTypes(out enumMediaTypes);
+          if (enumMediaTypes != null)
+          {
+            int fetched = 0;
+            AMMediaType[] mediaTypes = new AMMediaType[20];
+            enumMediaTypes.Next(20, mediaTypes, out fetched);
+            if (fetched > 0)
+            {
+              for (int media = 0; media < fetched; ++media)
+              {
+                if (mediaTypes[media].majorType == MediaType.Stream && mediaTypes[media].subType == MediaSubType.Mpeg2Transport)
+                {
+                  isTsFilter = true;
+                  break;
+                }
+              }
+            }
+            Release.ComObject("IEnumMediaTypes",enumMediaTypes);
+          }
+        }
+        if (isTsFilter)
+        {
+          if (tmp != null)
+          {
+            hr = _graphBuilder.RemoveFilter(tmp);
+            Release.ComObject("TvEncoderFilter", tmp);
+          }
+          continue;
+        }
+        if (tmp == null) continue;
+
         //bool success = false;
         IPin pin1 = DsFindPin.ByDirection(tmp, PinDirection.Input, 0);
         IPin pin2 = DsFindPin.ByDirection(tmp, PinDirection.Input, 1);

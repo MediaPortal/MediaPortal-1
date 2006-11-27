@@ -204,6 +204,28 @@ void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
 			}
 		}
 	}
+  else
+  {
+    if (sdtInfo.OtherMux==false)
+    { 
+      m_tickCount = GetTickCount();
+      CChannelInfo info;
+			info.NetworkId=sdtInfo.NetworkId;
+			info.TransportId=sdtInfo.TransportId;
+			info.ServiceId=sdtInfo.ServiceId;
+			info.EIT_schedule_flag=sdtInfo.EIT_schedule_flag;
+			info.EIT_present_following_flag=sdtInfo.EIT_present_following_flag;
+			info.RunningStatus=sdtInfo.RunningStatus;
+			info.FreeCAMode=sdtInfo.FreeCAMode;
+			info.ServiceType=sdtInfo.ServiceType;
+			info.OtherMux=sdtInfo.OtherMux;
+			info.SdtReceived=true;
+			info.PmtReceived=false;
+			strcpy(info.ProviderName,sdtInfo.ProviderName);
+			strcpy(info.ServiceName,sdtInfo.ServiceName);
+      m_mapChannels[info.ServiceId]=info;
+    }
+  }
   return;
   
 }

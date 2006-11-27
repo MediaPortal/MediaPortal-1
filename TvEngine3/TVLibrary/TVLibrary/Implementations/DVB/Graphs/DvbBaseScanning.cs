@@ -174,6 +174,7 @@ namespace TvLibrary.Implementations.DVB
       _card.IsScanning = false;
       DateTime startTime = DateTime.Now;
       ResetSignalUpdate();
+      Log.Log.WriteFile("Scan: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel , _card.SignalQuality);
       if (_card.IsTunerLocked || _card.SignalLevel > 0 || _card.SignalQuality > 0)
       {
         try
