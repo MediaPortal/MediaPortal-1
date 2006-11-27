@@ -1200,14 +1200,19 @@ namespace MediaPortal.Util
     {
       if (!IsRemote(file))
       {
-        Log.Debug("VirtualDirectory: File {0} is not remote", file);
+        //Log.Debug("VirtualDirectory: File {0} is not remote", file);
+        Log.Debug("VirtualDirectory: this file is not remote");
         return true;
       }
+
+      string singleFilename = String.Empty;
+      string singlePath = String.Empty;
+      GetRemoteFileNameAndPath(file, out singleFilename, out singlePath);
 
       //check if we're still downloading
       if (FtpConnectionCache.IsDownloading(file))
       {
-        Log.Debug("VirtualDirectory: Remote file {0} is downloading right now", file);
+        Log.Debug("VirtualDirectory: Remote file {0} is downloading right now", singleFilename);
         return false;
       }
 
@@ -1219,11 +1224,12 @@ namespace MediaPortal.Util
         FileInfo info = new FileInfo(localFile);
         if (info.Length == size)
         {
-          Log.Debug("VirtualDirectory: Remote file {0} is downloaded completely", file);
+          Log.Debug("VirtualDirectory: Remote file {0} is downloaded completely", singleFilename);
           //already downloaded
           return true;
         }
-        Log.Debug("VirtualDirectory: Downloading remote file {0} already got {1} bytes", file, Convert.ToString(info.Length));
+
+        Log.Debug("VirtualDirectory: Downloading remote file {0} already got {1} bytes", singleFilename, Convert.ToString(info.Length));
         // not completely downloaded yet
       }
 
@@ -1282,7 +1288,8 @@ namespace MediaPortal.Util
       FTPClient client = GetFtpClient(file);
       if (client == null)
       {
-        Log.Debug("VirtualDirectory: DownloadRemoteFile {0} aborted due to previous errors", file);
+        //Log.Debug("VirtualDirectory: DownloadRemoteFile {0} aborted due to previous errors", file);
+        Log.Debug("VirtualDirectory: DownloadRemoteFile aborted due to previous errors");
         return false;
       }
 
@@ -1304,7 +1311,8 @@ namespace MediaPortal.Util
       {
         // client.ChDir(remotePath);
         string localFile = GetLocalFilename(file);
-        Log.Debug("VirtualDirectory: Trying to download file: {0} remote: {1} local: {2}", file, remoteFilename, localFile);
+        //Log.Debug("VirtualDirectory: Trying to download file: {0} remote: {1} local: {2}", file, remoteFilename, localFile);
+        Log.Debug("VirtualDirectory: Trying to download remote file: {0} local: {1}", remoteFilename, localFile);
         return FtpConnectionCache.Download(client, file, remoteFilename, localFile);
       }
       catch (Exception ex)

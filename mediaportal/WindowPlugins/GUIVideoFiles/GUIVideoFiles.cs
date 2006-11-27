@@ -252,8 +252,22 @@ namespace MediaPortal.GUI.Video
  
         if (m_directory.DefaultShare != null)
         {
-          _currentFolder = m_directory.DefaultShare.Path;
-          m_strDirectoryStart = m_directory.DefaultShare.Path;
+          if (m_directory.DefaultShare.IsFtpShare)
+          {
+            //remote:hostname?port?login?password?folder
+            _currentFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+                m_directory.DefaultShare.FtpServer,
+                m_directory.DefaultShare.FtpPort,
+                m_directory.DefaultShare.FtpLoginName,
+                m_directory.DefaultShare.FtpPassword,
+                MediaPortal.Util.Utils.RemoveTrailingSlash(m_directory.DefaultShare.FtpFolder));
+            m_strDirectoryStart = _currentFolder;
+          }
+          else
+          {
+            _currentFolder = m_directory.DefaultShare.Path;
+            m_strDirectoryStart = m_directory.DefaultShare.Path;
+          }          
         }
         m_askBeforePlayingDVDImage = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
 
@@ -446,33 +460,22 @@ namespace MediaPortal.GUI.Video
         else
         {
           if (DaemonTools.IsMounted(_currentFolder))
-          {
             newFolderName = DaemonTools.GetVirtualDrive() + @"\";
-          }
           else
-          {
             return;
-          }
         }
       }
+
       GUIListItem selectedListItem = facadeView.SelectedListItem;
       if (selectedListItem != null)
-      {
         if (selectedListItem.IsFolder && selectedListItem.Label != "..")
-        {
           m_history.Set(selectedListItem.Label, _currentFolder);
-        }
-      }
 
       if (newFolderName != _currentFolder && mapSettings != null)
-      {
         SaveFolderSettings(_currentFolder);
-      }
 
       if (newFolderName != _currentFolder || mapSettings == null)
-      {
         LoadFolderSettings(newFolderName);
-      }
 
       _currentFolder = newFolderName;
 
@@ -480,6 +483,7 @@ namespace MediaPortal.GUI.Video
 
       ArrayList itemlist = new ArrayList();
       GUIControl.ClearControl(GetID, facadeView.GetID);
+
       itemlist = m_directory.GetDirectory(_currentFolder);
       if (mapSettings.Stack)
       {
