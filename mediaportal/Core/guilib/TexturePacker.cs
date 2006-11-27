@@ -405,11 +405,7 @@ namespace MediaPortal.GUI.Library
     {
       bool result = false;
       dontAdd = false;
-
-
-      using (FileStream stream = new FileStream(file, FileMode.Open))
-      {
-        using (Image bmp = Image.FromStream(stream, true, false))
+      using (Image bmp = Image.FromFile(file))
         {
           if (bmp.Width >= GUIGraphicsContext.Width ||
             bmp.Height >= GUIGraphicsContext.Height)
@@ -429,7 +425,6 @@ namespace MediaPortal.GUI.Library
             file = file.Remove(0, 1);
           }
           result = Add(root, bmp, rootImage, file);
-        }
       }
       return result;
     }

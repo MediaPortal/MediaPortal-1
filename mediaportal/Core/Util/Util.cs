@@ -1234,14 +1234,10 @@ namespace MediaPortal.Util
             client.DownloadFile(strURL, strLogo);
             if (extensionURL != extensionFile)
             {
-
-              using (FileStream stream = new FileStream(strFile, FileMode.Open))
-              {
-                using (Image imgSrc = Image.FromStream(stream, true, false))
+              using (Image imgSrc = Image.FromFile(strLogo))
                 {
                   imgSrc.Save(strFile, imageFormat);
                 }
-              }
               Utils.FileDelete(strLogo);
             }
             GUITextureManager.CleanupThumbs();

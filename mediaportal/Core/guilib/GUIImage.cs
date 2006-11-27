@@ -195,16 +195,12 @@ namespace MediaPortal.GUI.Library
             if (strFileNameTemp.Length > 0 && strFileNameTemp.IndexOf(@"\#") != -1)
               return;
 
-
-            using (FileStream stream = new FileStream(strFileNameTemp, FileMode.Open))
-            {
-              using (Image img = Image.FromStream(stream, true, false))
+            using (Image img = Image.FromFile(strFileNameTemp))
               {
                 if (0 == _width)
                   _width = img.Width;
                 if (0 == _height)
-                  _height = img.Height;
-              }
+                  _height = img.Height;              
             }
           }
           catch (Exception)

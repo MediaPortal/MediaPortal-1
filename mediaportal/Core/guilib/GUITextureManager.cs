@@ -198,11 +198,7 @@ namespace MediaPortal.GUI.Library
         Image theImage = null;
         try
         {
-
-          using (FileStream imgstream = new FileStream(fileName, FileMode.Open))
-          {
-            theImage = Image.FromStream(imgstream, true, false);
-
+          theImage = Image.FromFile(fileName);
             if (theImage != null)
             {
               CachedTexture newCache = new CachedTexture();
@@ -261,7 +257,6 @@ namespace MediaPortal.GUI.Library
               return newCache.Frames;
             }
           }
-        }
         catch (Exception ex)
         {
           Log.Error("TextureManager:exception loading texture {0}", fileName);
@@ -541,14 +536,13 @@ namespace MediaPortal.GUI.Library
 
             try
             {
-              using (FileStream imgstream = new FileStream(fileName, FileMode.Open))
-              {
-                cached.image = Image.FromStream(imgstream, true, false);
+              cached.image = Image.FromFile(fileName);             
+              
                 using (Graphics g = Graphics.FromImage(cached.image))
                 {
                   g.DrawImage(cached.image, 0, 0);
                 }
-              }
+              
             }
             catch (Exception ex)
             {
@@ -565,15 +559,11 @@ namespace MediaPortal.GUI.Library
       Image img = null;
       try
       {
-        using (FileStream imgstream = new FileStream(fileName, FileMode.Open))
-        {
-
-          img = Image.FromStream(imgstream, true, false);
+          img = Image.FromFile(fileName);
           using (Graphics g = Graphics.FromImage(img))
           {
             g.DrawImage(img, 0, 0);
-          }
-        }
+          }        
       }
       catch (Exception ex)
       {

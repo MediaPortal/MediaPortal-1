@@ -70,130 +70,129 @@ namespace MediaPortal.Util
     {
       iWidth = 0;
       iHeight = 0;
-      if (strPic == null) return null;
-      if (strPic == String.Empty) return null;
+      if (strPic == null)
+        return null;
+      if (strPic == String.Empty)
+        return null;
 
       Log.Info("load picture {0}", strPic);
       Direct3D.Texture texture = null;
       Image theImage = null;
       try
       {
-        using (FileStream stream = new FileStream(strPic, FileMode.Open))
+        theImage = Image.FromFile(strPic);
+        if (theImage == null)
+          return null;
+        if (iRotate > 0)
         {
-          theImage = Image.FromStream(stream, true, false);
-
-
-          if (theImage == null) return null;
-          if (iRotate > 0)
+          RotateFlipType fliptype;
+          switch (iRotate)
           {
-            RotateFlipType fliptype;
-            switch (iRotate)
-            {
-              case 1:
-                fliptype = RotateFlipType.Rotate90FlipNone;
-                theImage.RotateFlip(fliptype);
-                break;
-              case 2:
-                fliptype = RotateFlipType.Rotate180FlipNone;
-                theImage.RotateFlip(fliptype);
-                break;
-              case 3:
-                fliptype = RotateFlipType.Rotate270FlipNone;
-                theImage.RotateFlip(fliptype);
-                break;
-              default:
-                fliptype = RotateFlipType.RotateNoneFlipNone;
-                break;
-            }
-          }
-          iWidth = theImage.Size.Width;
-          iHeight = theImage.Size.Height;
-
-          int iBitmapWidth = iWidth;
-          int iBitmapHeight = iHeight;
-
-          bool bResize = false;
-          float fOutputFrameAR;
-          if (bZoom)
-          {
-            bResize = true;
-            iBitmapWidth = iMaxWidth;
-            iBitmapHeight = iMaxHeight;
-            while (iWidth < iMaxWidth || iHeight < iMaxHeight)
-            {
-              iWidth *= 2;
-              iHeight *= 2;
-            }
-            int iOffsetX1 = GUIGraphicsContext.OverScanLeft;
-            int iOffsetY1 = GUIGraphicsContext.OverScanTop;
-            int iScreenWidth = GUIGraphicsContext.OverScanWidth;
-            int iScreenHeight = GUIGraphicsContext.OverScanHeight;
-            float fPixelRatio = GUIGraphicsContext.PixelRatio;
-            float fSourceFrameAR = ((float)iWidth) / ((float)iHeight);
-            fOutputFrameAR = fSourceFrameAR / fPixelRatio;
-          }
-          else
-          {
-            fOutputFrameAR = ((float)iWidth) / ((float)iHeight);
-          }
-
-          if (iWidth > iMaxWidth)
-          {
-            bResize = true;
-            iWidth = iMaxWidth;
-            iHeight = (int)(((float)iWidth) / fOutputFrameAR);
-          }
-
-          if (iHeight > (int)iMaxHeight)
-          {
-            bResize = true;
-            iHeight = iMaxHeight;
-            iWidth = (int)(fOutputFrameAR * ((float)iHeight));
-          }
-
-          if (!bOversized)
-          {
-            iBitmapWidth = iWidth;
-            iBitmapHeight = iHeight;
-          }
-          else
-          {
-            // Adjust width/height 2 pixcels for smoother zoom actions at the edges
-            iBitmapWidth = iWidth + 2;
-            iBitmapHeight = iHeight + 2;
-            bResize = true;
-          }
-
-
-          if (bResize)
-          {
-            using (Bitmap result = new Bitmap(iBitmapWidth, iBitmapHeight))
-            {
-              using (Graphics g = Graphics.FromImage(result))
-              {
-                g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                if (bOversized)
-                {
-                  // Set picture at center position
-                  int xpos = 1;// (iMaxWidth-iWidth)/2;
-                  int ypos = 1;// (iMaxHeight-iHeight)/2;
-                  g.DrawImage(theImage, new Rectangle(xpos, ypos, iWidth, iHeight));
-                }
-                else
-                {
-                  g.DrawImage(theImage, new Rectangle(0, 0, iWidth, iHeight));
-                }
-              }
-              texture = Picture.ConvertImageToTexture(result, out iWidth, out iHeight);
-            }
-          }
-          else
-          {
-            texture = Picture.ConvertImageToTexture((Bitmap)theImage, out iWidth, out iHeight);
+            case 1:
+              fliptype = RotateFlipType.Rotate90FlipNone;
+              theImage.RotateFlip(fliptype);
+              break;
+            case 2:
+              fliptype = RotateFlipType.Rotate180FlipNone;
+              theImage.RotateFlip(fliptype);
+              break;
+            case 3:
+              fliptype = RotateFlipType.Rotate270FlipNone;
+              theImage.RotateFlip(fliptype);
+              break;
+            default:
+              fliptype = RotateFlipType.RotateNoneFlipNone;
+              break;
           }
         }
+        iWidth = theImage.Size.Width;
+        iHeight = theImage.Size.Height;
+
+        int iBitmapWidth = iWidth;
+        int iBitmapHeight = iHeight;
+
+        bool bResize = false;
+        float fOutputFrameAR;
+        if (bZoom)
+        {
+          bResize = true;
+          iBitmapWidth = iMaxWidth;
+          iBitmapHeight = iMaxHeight;
+          while (iWidth < iMaxWidth || iHeight < iMaxHeight)
+          {
+            iWidth *= 2;
+            iHeight *= 2;
+          }
+          int iOffsetX1 = GUIGraphicsContext.OverScanLeft;
+          int iOffsetY1 = GUIGraphicsContext.OverScanTop;
+          int iScreenWidth = GUIGraphicsContext.OverScanWidth;
+          int iScreenHeight = GUIGraphicsContext.OverScanHeight;
+          float fPixelRatio = GUIGraphicsContext.PixelRatio;
+          float fSourceFrameAR = ((float)iWidth) / ((float)iHeight);
+          fOutputFrameAR = fSourceFrameAR / fPixelRatio;
+        }
+        else
+        {
+          fOutputFrameAR = ((float)iWidth) / ((float)iHeight);
+        }
+
+        if (iWidth > iMaxWidth)
+        {
+          bResize = true;
+          iWidth = iMaxWidth;
+          iHeight = (int)(((float)iWidth) / fOutputFrameAR);
+        }
+
+        if (iHeight > (int)iMaxHeight)
+        {
+          bResize = true;
+          iHeight = iMaxHeight;
+          iWidth = (int)(fOutputFrameAR * ((float)iHeight));
+        }
+
+        if (!bOversized)
+        {
+          iBitmapWidth = iWidth;
+          iBitmapHeight = iHeight;
+        }
+        else
+        {
+          // Adjust width/height 2 pixcels for smoother zoom actions at the edges
+          iBitmapWidth = iWidth + 2;
+          iBitmapHeight = iHeight + 2;
+          bResize = true;
+        }
+
+
+        if (bResize)
+        {
+          using (Bitmap result = new Bitmap(iBitmapWidth, iBitmapHeight))
+          {
+            using (Graphics g = Graphics.FromImage(result))
+            {
+              g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+              g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+              g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+              if (bOversized)
+              {
+                // Set picture at center position
+                int xpos = 1;// (iMaxWidth-iWidth)/2;
+                int ypos = 1;// (iMaxHeight-iHeight)/2;
+                g.DrawImage(theImage, new Rectangle(xpos, ypos, iWidth, iHeight));
+              }
+              else
+              {
+                g.DrawImage(theImage, new Rectangle(0, 0, iWidth, iHeight));
+              }
+            }
+            texture = Picture.ConvertImageToTexture(result, out iWidth, out iHeight);
+          }
+        }
+        else
+        {
+          texture = Picture.ConvertImageToTexture((Bitmap)theImage, out iWidth, out iHeight);
+        }
+
       }
       catch (Exception ex)
       {
@@ -220,7 +219,8 @@ namespace MediaPortal.Util
     {
       iWidth = 0;
       iHeight = 0;
-      if (theImage == null) return null;
+      if (theImage == null)
+        return null;
       // Texture texture=null;
       try
       {
@@ -277,15 +277,23 @@ namespace MediaPortal.Util
     //static public void RenderImage(ref Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, bool bHiQuality)
     static public void RenderImage(Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, bool bHiQuality)
     {
-      if (texture == null) return;
-      if (texture.Disposed) return;
-      if (GUIGraphicsContext.DX9Device == null) return;
-      if (GUIGraphicsContext.DX9Device.Disposed) return;
+      if (texture == null)
+        return;
+      if (texture.Disposed)
+        return;
+      if (GUIGraphicsContext.DX9Device == null)
+        return;
+      if (GUIGraphicsContext.DX9Device.Disposed)
+        return;
 
-      if (x < 0 || y < 0) return;
-      if (nw < 0 || nh < 0) return;
-      if (iTextureWidth < 0 || iTextureHeight < 0) return;
-      if (iTextureLeft < 0 || iTextureTop < 0) return;
+      if (x < 0 || y < 0)
+        return;
+      if (nw < 0 || nh < 0)
+        return;
+      if (iTextureWidth < 0 || iTextureHeight < 0)
+        return;
+      if (iTextureLeft < 0 || iTextureTop < 0)
+        return;
 
       VertexBuffer m_vbBuffer = null;
       try
@@ -304,18 +312,30 @@ namespace MediaPortal.Util
         float vmax = ((float)iTextureHeight) / ((float)desc.Height);
         long _diffuseColor = 0xffffffff;
 
-        if (uoffs < 0 || uoffs > 1) return;
-        if (voffs < 0 || voffs > 1) return;
-        if (umax < 0 || umax > 1) return;
-        if (vmax < 0 || vmax > 1) return;
-        if (iTextureWidth + iTextureLeft < 0 || iTextureWidth + iTextureLeft > (float)desc.Width) return;
-        if (iTextureHeight + iTextureTop < 0 || iTextureHeight + iTextureTop > (float)desc.Height) return;
-        if (x < 0) x = 0;
-        if (x > GUIGraphicsContext.Width) x = GUIGraphicsContext.Width;
-        if (y < 0) y = 0;
-        if (y > GUIGraphicsContext.Height) y = GUIGraphicsContext.Height;
-        if (nw < 0) nw = 0;
-        if (nh < 0) nh = 0;
+        if (uoffs < 0 || uoffs > 1)
+          return;
+        if (voffs < 0 || voffs > 1)
+          return;
+        if (umax < 0 || umax > 1)
+          return;
+        if (vmax < 0 || vmax > 1)
+          return;
+        if (iTextureWidth + iTextureLeft < 0 || iTextureWidth + iTextureLeft > (float)desc.Width)
+          return;
+        if (iTextureHeight + iTextureTop < 0 || iTextureHeight + iTextureTop > (float)desc.Height)
+          return;
+        if (x < 0)
+          x = 0;
+        if (x > GUIGraphicsContext.Width)
+          x = GUIGraphicsContext.Width;
+        if (y < 0)
+          y = 0;
+        if (y > GUIGraphicsContext.Height)
+          y = GUIGraphicsContext.Height;
+        if (nw < 0)
+          nw = 0;
+        if (nh < 0)
+          nh = 0;
         if (x + nw > GUIGraphicsContext.Width)
         {
           nw = GUIGraphicsContext.Width - x;
@@ -326,22 +346,34 @@ namespace MediaPortal.Util
         }
 
         CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0, 0); // Lock the buffer (which will return our structs)
-        verts[0].X = x - 0.5f; verts[0].Y = y + nh - 0.5f; verts[0].Z = 0.0f; verts[0].Rhw = 1.0f;
+        verts[0].X = x - 0.5f;
+        verts[0].Y = y + nh - 0.5f;
+        verts[0].Z = 0.0f;
+        verts[0].Rhw = 1.0f;
         verts[0].Color = (int)_diffuseColor;
         verts[0].Tu = uoffs;
         verts[0].Tv = voffs + vmax;
 
-        verts[1].X = x - 0.5f; verts[1].Y = y - 0.5f; verts[1].Z = 0.0f; verts[1].Rhw = 1.0f;
+        verts[1].X = x - 0.5f;
+        verts[1].Y = y - 0.5f;
+        verts[1].Z = 0.0f;
+        verts[1].Rhw = 1.0f;
         verts[1].Color = (int)_diffuseColor;
         verts[1].Tu = uoffs;
         verts[1].Tv = voffs;
 
-        verts[2].X = x + nw - 0.5f; verts[2].Y = y + nh - 0.5f; verts[2].Z = 0.0f; verts[2].Rhw = 1.0f;
+        verts[2].X = x + nw - 0.5f;
+        verts[2].Y = y + nh - 0.5f;
+        verts[2].Z = 0.0f;
+        verts[2].Rhw = 1.0f;
         verts[2].Color = (int)_diffuseColor;
         verts[2].Tu = uoffs + umax;
         verts[2].Tv = voffs + vmax;
 
-        verts[3].X = x + nw - 0.5f; verts[3].Y = y - 0.5f; verts[3].Z = 0.0f; verts[3].Rhw = 1.0f;
+        verts[3].X = x + nw - 0.5f;
+        verts[3].Y = y - 0.5f;
+        verts[3].Z = 0.0f;
+        verts[3].Rhw = 1.0f;
         verts[3].Color = (int)_diffuseColor;
         verts[3].Tu = uoffs + umax;
         verts[3].Tv = voffs;
@@ -419,15 +451,23 @@ namespace MediaPortal.Util
     //static public void RenderImage(ref Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, bool bHiQuality)
     static public void RenderImage(Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, bool bHiQuality)
     {
-      if (texture == null) return;
-      if (texture.Disposed) return;
-      if (GUIGraphicsContext.DX9Device == null) return;
-      if (GUIGraphicsContext.DX9Device.Disposed) return;
+      if (texture == null)
+        return;
+      if (texture.Disposed)
+        return;
+      if (GUIGraphicsContext.DX9Device == null)
+        return;
+      if (GUIGraphicsContext.DX9Device.Disposed)
+        return;
 
-      if (x < 0 || y < 0) return;
-      if (nw < 0 || nh < 0) return;
-      if (iTextureWidth < 0 || iTextureHeight < 0) return;
-      if (iTextureLeft < 0 || iTextureTop < 0) return;
+      if (x < 0 || y < 0)
+        return;
+      if (nw < 0 || nh < 0)
+        return;
+      if (iTextureWidth < 0 || iTextureHeight < 0)
+        return;
+      if (iTextureLeft < 0 || iTextureTop < 0)
+        return;
 
       VertexBuffer m_vbBuffer = null;
       try
@@ -446,18 +486,30 @@ namespace MediaPortal.Util
         float vmax = ((float)iTextureHeight) / ((float)desc.Height);
         long _diffuseColor = 0xffffffff;
 
-        if (uoffs < 0 || uoffs > 1) return;
-        if (voffs < 0 || voffs > 1) return;
-        if (umax < 0 || umax > 1) return;
-        if (vmax < 0 || vmax > 1) return;
-        if (umax + uoffs < 0 || umax + uoffs > 1) return;
-        if (vmax + voffs < 0 || vmax + voffs > 1) return;
-        if (x < 0) x = 0;
-        if (x > GUIGraphicsContext.Width) x = GUIGraphicsContext.Width;
-        if (y < 0) y = 0;
-        if (y > GUIGraphicsContext.Height) y = GUIGraphicsContext.Height;
-        if (nw < 0) nw = 0;
-        if (nh < 0) nh = 0;
+        if (uoffs < 0 || uoffs > 1)
+          return;
+        if (voffs < 0 || voffs > 1)
+          return;
+        if (umax < 0 || umax > 1)
+          return;
+        if (vmax < 0 || vmax > 1)
+          return;
+        if (umax + uoffs < 0 || umax + uoffs > 1)
+          return;
+        if (vmax + voffs < 0 || vmax + voffs > 1)
+          return;
+        if (x < 0)
+          x = 0;
+        if (x > GUIGraphicsContext.Width)
+          x = GUIGraphicsContext.Width;
+        if (y < 0)
+          y = 0;
+        if (y > GUIGraphicsContext.Height)
+          y = GUIGraphicsContext.Height;
+        if (nw < 0)
+          nw = 0;
+        if (nh < 0)
+          nh = 0;
         if (x + nw > GUIGraphicsContext.Width)
         {
           nw = GUIGraphicsContext.Width - x;
@@ -468,22 +520,34 @@ namespace MediaPortal.Util
         }
 
         CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0, 0); // Lock the buffer (which will return our structs)
-        verts[0].X = x - 0.5f; verts[0].Y = y + nh - 0.5f; verts[0].Z = 0.0f; verts[0].Rhw = 1.0f;
+        verts[0].X = x - 0.5f;
+        verts[0].Y = y + nh - 0.5f;
+        verts[0].Z = 0.0f;
+        verts[0].Rhw = 1.0f;
         verts[0].Color = (int)_diffuseColor;
         verts[0].Tu = uoffs;
         verts[0].Tv = voffs + vmax;
 
-        verts[1].X = x - 0.5f; verts[1].Y = y - 0.5f; verts[1].Z = 0.0f; verts[1].Rhw = 1.0f;
+        verts[1].X = x - 0.5f;
+        verts[1].Y = y - 0.5f;
+        verts[1].Z = 0.0f;
+        verts[1].Rhw = 1.0f;
         verts[1].Color = (int)_diffuseColor;
         verts[1].Tu = uoffs;
         verts[1].Tv = voffs;
 
-        verts[2].X = x + nw - 0.5f; verts[2].Y = y + nh - 0.5f; verts[2].Z = 0.0f; verts[2].Rhw = 1.0f;
+        verts[2].X = x + nw - 0.5f;
+        verts[2].Y = y + nh - 0.5f;
+        verts[2].Z = 0.0f;
+        verts[2].Rhw = 1.0f;
         verts[2].Color = (int)_diffuseColor;
         verts[2].Tu = uoffs + umax;
         verts[2].Tv = voffs + vmax;
 
-        verts[3].X = x + nw - 0.5f; verts[3].Y = y - 0.5f; verts[3].Z = 0.0f; verts[3].Rhw = 1.0f;
+        verts[3].X = x + nw - 0.5f;
+        verts[3].Y = y - 0.5f;
+        verts[3].Z = 0.0f;
+        verts[3].Rhw = 1.0f;
         verts[3].Color = (int)_diffuseColor;
         verts[3].Tu = uoffs + umax;
         verts[3].Tv = voffs;
@@ -561,15 +625,23 @@ namespace MediaPortal.Util
     //static public void RenderImage(ref Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, long lColorDiffuse)
     static public void RenderImage(Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, long lColorDiffuse)
     {
-      if (texture == null) return;
-      if (texture.Disposed) return;
-      if (GUIGraphicsContext.DX9Device == null) return;
-      if (GUIGraphicsContext.DX9Device.Disposed) return;
+      if (texture == null)
+        return;
+      if (texture.Disposed)
+        return;
+      if (GUIGraphicsContext.DX9Device == null)
+        return;
+      if (GUIGraphicsContext.DX9Device.Disposed)
+        return;
 
-      if (x < 0 || y < 0) return;
-      if (nw < 0 || nh < 0) return;
-      if (iTextureWidth < 0 || iTextureHeight < 0) return;
-      if (iTextureLeft < 0 || iTextureTop < 0) return;
+      if (x < 0 || y < 0)
+        return;
+      if (nw < 0 || nh < 0)
+        return;
+      if (iTextureWidth < 0 || iTextureHeight < 0)
+        return;
+      if (iTextureLeft < 0 || iTextureTop < 0)
+        return;
 
       VertexBuffer m_vbBuffer = null;
       try
@@ -587,18 +659,30 @@ namespace MediaPortal.Util
         float umax = ((float)iTextureWidth) / ((float)desc.Width);
         float vmax = ((float)iTextureHeight) / ((float)desc.Height);
 
-        if (uoffs < 0 || uoffs > 1) return;
-        if (voffs < 0 || voffs > 1) return;
-        if (umax < 0 || umax > 1) return;
-        if (vmax < 0 || vmax > 1) return;
-        if (umax + uoffs < 0 || umax + uoffs > 1) return;
-        if (vmax + voffs < 0 || vmax + voffs > 1) return;
-        if (x < 0) x = 0;
-        if (x > GUIGraphicsContext.Width) x = GUIGraphicsContext.Width;
-        if (y < 0) y = 0;
-        if (y > GUIGraphicsContext.Height) y = GUIGraphicsContext.Height;
-        if (nw < 0) nw = 0;
-        if (nh < 0) nh = 0;
+        if (uoffs < 0 || uoffs > 1)
+          return;
+        if (voffs < 0 || voffs > 1)
+          return;
+        if (umax < 0 || umax > 1)
+          return;
+        if (vmax < 0 || vmax > 1)
+          return;
+        if (umax + uoffs < 0 || umax + uoffs > 1)
+          return;
+        if (vmax + voffs < 0 || vmax + voffs > 1)
+          return;
+        if (x < 0)
+          x = 0;
+        if (x > GUIGraphicsContext.Width)
+          x = GUIGraphicsContext.Width;
+        if (y < 0)
+          y = 0;
+        if (y > GUIGraphicsContext.Height)
+          y = GUIGraphicsContext.Height;
+        if (nw < 0)
+          nw = 0;
+        if (nh < 0)
+          nh = 0;
         if (x + nw > GUIGraphicsContext.Width)
         {
           nw = GUIGraphicsContext.Width - x;
@@ -609,22 +693,34 @@ namespace MediaPortal.Util
         }
 
         CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0, 0); // Lock the buffer (which will return our structs)
-        verts[0].X = x - 0.5f; verts[0].Y = y + nh - 0.5f; verts[0].Z = 0.0f; verts[0].Rhw = 1.0f;
+        verts[0].X = x - 0.5f;
+        verts[0].Y = y + nh - 0.5f;
+        verts[0].Z = 0.0f;
+        verts[0].Rhw = 1.0f;
         verts[0].Color = (int)lColorDiffuse;
         verts[0].Tu = uoffs;
         verts[0].Tv = voffs + vmax;
 
-        verts[1].X = x - 0.5f; verts[1].Y = y - 0.5f; verts[1].Z = 0.0f; verts[1].Rhw = 1.0f;
+        verts[1].X = x - 0.5f;
+        verts[1].Y = y - 0.5f;
+        verts[1].Z = 0.0f;
+        verts[1].Rhw = 1.0f;
         verts[1].Color = (int)lColorDiffuse;
         verts[1].Tu = uoffs;
         verts[1].Tv = voffs;
 
-        verts[2].X = x + nw - 0.5f; verts[2].Y = y + nh - 0.5f; verts[2].Z = 0.0f; verts[2].Rhw = 1.0f;
+        verts[2].X = x + nw - 0.5f;
+        verts[2].Y = y + nh - 0.5f;
+        verts[2].Z = 0.0f;
+        verts[2].Rhw = 1.0f;
         verts[2].Color = (int)lColorDiffuse;
         verts[2].Tu = uoffs + umax;
         verts[2].Tv = voffs + vmax;
 
-        verts[3].X = x + nw - 0.5f; verts[3].Y = y - 0.5f; verts[3].Z = 0.0f; verts[3].Rhw = 1.0f;
+        verts[3].X = x + nw - 0.5f;
+        verts[3].Y = y - 0.5f;
+        verts[3].Z = 0.0f;
+        verts[3].Rhw = 1.0f;
         verts[3].Color = (int)lColorDiffuse;
         verts[3].Tu = uoffs + umax;
         verts[3].Tv = voffs;
@@ -702,15 +798,23 @@ namespace MediaPortal.Util
     //static public void RenderImage(ref Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, long lColorDiffuse)
     static public void RenderImage(Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, long lColorDiffuse)
     {
-      if (texture == null) return;
-      if (texture.Disposed) return;
-      if (GUIGraphicsContext.DX9Device == null) return;
-      if (GUIGraphicsContext.DX9Device.Disposed) return;
+      if (texture == null)
+        return;
+      if (texture.Disposed)
+        return;
+      if (GUIGraphicsContext.DX9Device == null)
+        return;
+      if (GUIGraphicsContext.DX9Device.Disposed)
+        return;
 
-      if (x < 0 || y < 0) return;
-      if (nw < 0 || nh < 0) return;
-      if (iTextureWidth < 0 || iTextureHeight < 0) return;
-      if (iTextureLeft < 0 || iTextureTop < 0) return;
+      if (x < 0 || y < 0)
+        return;
+      if (nw < 0 || nh < 0)
+        return;
+      if (iTextureWidth < 0 || iTextureHeight < 0)
+        return;
+      if (iTextureLeft < 0 || iTextureTop < 0)
+        return;
 
       VertexBuffer m_vbBuffer = null;
       try
@@ -728,18 +832,30 @@ namespace MediaPortal.Util
         float umax = ((float)iTextureWidth) / ((float)desc.Width);
         float vmax = ((float)iTextureHeight) / ((float)desc.Height);
 
-        if (uoffs < 0 || uoffs > 1) return;
-        if (voffs < 0 || voffs > 1) return;
-        if (umax < 0 || umax > 1) return;
-        if (vmax < 0 || vmax > 1) return;
-        if (umax + uoffs < 0 || umax + uoffs > 1) return;
-        if (vmax + voffs < 0 || vmax + voffs > 1) return;
-        if (x < 0) x = 0;
-        if (x > GUIGraphicsContext.Width) x = GUIGraphicsContext.Width;
-        if (y < 0) y = 0;
-        if (y > GUIGraphicsContext.Height) y = GUIGraphicsContext.Height;
-        if (nw < 0) nw = 0;
-        if (nh < 0) nh = 0;
+        if (uoffs < 0 || uoffs > 1)
+          return;
+        if (voffs < 0 || voffs > 1)
+          return;
+        if (umax < 0 || umax > 1)
+          return;
+        if (vmax < 0 || vmax > 1)
+          return;
+        if (umax + uoffs < 0 || umax + uoffs > 1)
+          return;
+        if (vmax + voffs < 0 || vmax + voffs > 1)
+          return;
+        if (x < 0)
+          x = 0;
+        if (x > GUIGraphicsContext.Width)
+          x = GUIGraphicsContext.Width;
+        if (y < 0)
+          y = 0;
+        if (y > GUIGraphicsContext.Height)
+          y = GUIGraphicsContext.Height;
+        if (nw < 0)
+          nw = 0;
+        if (nh < 0)
+          nh = 0;
         if (x + nw > GUIGraphicsContext.Width)
         {
           nw = GUIGraphicsContext.Width - x;
@@ -750,22 +866,34 @@ namespace MediaPortal.Util
         }
 
         CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0, 0); // Lock the buffer (which will return our structs)
-        verts[0].X = x - 0.5f; verts[0].Y = y + nh - 0.5f; verts[0].Z = 0.0f; verts[0].Rhw = 1.0f;
+        verts[0].X = x - 0.5f;
+        verts[0].Y = y + nh - 0.5f;
+        verts[0].Z = 0.0f;
+        verts[0].Rhw = 1.0f;
         verts[0].Color = (int)lColorDiffuse;
         verts[0].Tu = uoffs;
         verts[0].Tv = voffs + vmax;
 
-        verts[1].X = x - 0.5f; verts[1].Y = y - 0.5f; verts[1].Z = 0.0f; verts[1].Rhw = 1.0f;
+        verts[1].X = x - 0.5f;
+        verts[1].Y = y - 0.5f;
+        verts[1].Z = 0.0f;
+        verts[1].Rhw = 1.0f;
         verts[1].Color = (int)lColorDiffuse;
         verts[1].Tu = uoffs;
         verts[1].Tv = voffs;
 
-        verts[2].X = x + nw - 0.5f; verts[2].Y = y + nh - 0.5f; verts[2].Z = 0.0f; verts[2].Rhw = 1.0f;
+        verts[2].X = x + nw - 0.5f;
+        verts[2].Y = y + nh - 0.5f;
+        verts[2].Z = 0.0f;
+        verts[2].Rhw = 1.0f;
         verts[2].Color = (int)lColorDiffuse;
         verts[2].Tu = uoffs + umax;
         verts[2].Tv = voffs + vmax;
 
-        verts[3].X = x + nw - 0.5f; verts[3].Y = y - 0.5f; verts[3].Z = 0.0f; verts[3].Rhw = 1.0f;
+        verts[3].X = x + nw - 0.5f;
+        verts[3].Y = y - 0.5f;
+        verts[3].Z = 0.0f;
+        verts[3].Rhw = 1.0f;
         verts[3].Color = (int)lColorDiffuse;
         verts[3].Tu = uoffs + umax;
         verts[3].Tv = voffs;
@@ -842,23 +970,23 @@ namespace MediaPortal.Util
     /// </param>
     static public bool CreateThumbnail(string strFile, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
     {
-      if (strFile == null || strThumb == null || iMaxHeight <= 0 || iMaxHeight <= 0) return false;
-      if (strFile == String.Empty || strThumb == String.Empty) return false;
+      if (strFile == null || strThumb == null || iMaxHeight <= 0 || iMaxHeight <= 0)
+        return false;
+      if (strFile == String.Empty || strThumb == String.Empty)
+        return false;
 
       Image theImage = null;
 
       try
       {
-        using (FileStream stream = new FileStream(strFile, FileMode.Open))
-        {
-          theImage = Image.FromStream(stream, true, false);
+        theImage = Image.FromFile(strFile);
 
 
-          if (CreateThumbnail(theImage, strThumb, iMaxWidth, iMaxHeight, iRotate))
-            return true;
-          else
-            return false;
-        }
+        if (CreateThumbnail(theImage, strThumb, iMaxWidth, iMaxHeight, iRotate))
+          return true;
+        else
+          return false;
+
       }
       catch (Exception ex)
       {
@@ -889,9 +1017,12 @@ namespace MediaPortal.Util
     /// </param>
     static public bool CreateThumbnail(Image theImage, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
     {
-      if (strThumb == null || iMaxHeight <= 0 || iMaxHeight <= 0) return false;
-      if (strThumb == String.Empty) return false;
-      if (theImage == null) return false;
+      if (strThumb == null || iMaxHeight <= 0 || iMaxHeight <= 0)
+        return false;
+      if (strThumb == String.Empty)
+        return false;
+      if (theImage == null)
+        return false;
 
       try
       {
