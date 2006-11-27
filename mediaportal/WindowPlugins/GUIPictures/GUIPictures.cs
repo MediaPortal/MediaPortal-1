@@ -1160,7 +1160,7 @@ namespace MediaPortal.GUI.Pictures
       {
         dlgProgress.SetHeading(110);
         dlgProgress.SetLine(1, String.Empty);
-        dlgProgress.SetLine(2, String.Empty);        
+        dlgProgress.SetLine(2, String.Empty);
         //dlgProgress.StartModal(GUIWindowManager.ActiveWindow);        
         dlgProgress.Progress();
       }
@@ -1242,11 +1242,11 @@ namespace MediaPortal.GUI.Pictures
                 //Avoid crashes caused by damaged image files:
                 try
                 {
-                    AddPicture(g, (string)pictureList[0], x + 10, y + 10, w, h);
+                  AddPicture(g, (string)pictureList[0], x + 10, y + 10, w, h);
                 }
                 catch (Exception)
                 {
-                    Log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[0]);
+                  Log.Info("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[0]);
                 }
 
                 //If exists load second of 4 images for the folder thumb.
@@ -1470,8 +1470,17 @@ namespace MediaPortal.GUI.Pictures
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
       if (filmstrip == null) return;
       string thumbnailImage = GetLargeThumbnail(item.Path);
-      filmstrip.InfoImageFileName = thumbnailImage;      
+      filmstrip.InfoImageFileName = thumbnailImage;
       //UpdateButtonStates();  -> fixing mantis bug 902
+    }
+
+    private void SortChanged(object sender, SortEventArgs e)
+    {
+      mapSettings.SortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
+
+      OnSort();
+
+      GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
     }
 
     #endregion
@@ -1538,16 +1547,6 @@ namespace MediaPortal.GUI.Pictures
 
     #endregion
 
-    private void SortChanged(object sender, SortEventArgs e)
-    {
-      mapSettings.SortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
-
-      OnSort();
-
-      GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
-    }
-
   }
 }
-
  	  	 
