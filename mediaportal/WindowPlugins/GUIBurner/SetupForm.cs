@@ -417,7 +417,7 @@ namespace GUIBurner
 
     public string Description()
     {
-      return "Burn CD's and DVD's in MediaPortal";
+      return "Burn CD\'s and DVD\'s in MediaPortal";
     }
 
     public string Author()
