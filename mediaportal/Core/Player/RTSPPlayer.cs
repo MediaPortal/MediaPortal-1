@@ -624,10 +624,15 @@ namespace MediaPortal.Player
         SetVideoWindow();
         mediaPos.get_Duration(out m_dDuration);
         Log.Info("RTSPPlayer:Duration:{0}", m_dDuration);
-        if (m_dDuration < 1) m_dDuration = 1;
-        SeekAbsolute(m_dDuration - 1);
-
-
+        if (_mediaType == g_Player.MediaType.TV)
+        {
+          if (m_dDuration < 1) m_dDuration = 1;
+          SeekAbsolute(m_dDuration - 1);
+        }
+        else
+        {
+          SeekAbsolute(0);
+        }
 
         OnInitialized();
       }
