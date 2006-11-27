@@ -255,12 +255,7 @@ namespace MediaPortal.GUI.Video
           if (m_directory.DefaultShare.IsFtpShare)
           {
             //remote:hostname?port?login?password?folder
-            _currentFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
-                m_directory.DefaultShare.FtpServer,
-                m_directory.DefaultShare.FtpPort,
-                m_directory.DefaultShare.FtpLoginName,
-                m_directory.DefaultShare.FtpPassword,
-                MediaPortal.Util.Utils.RemoveTrailingSlash(m_directory.DefaultShare.FtpFolder));
+            _currentFolder = m_directory.GetShareRemoteURL(m_directory.DefaultShare);
             m_strDirectoryStart = _currentFolder;
           }
           else

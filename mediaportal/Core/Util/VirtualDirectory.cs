@@ -282,8 +282,9 @@ namespace MediaPortal.Util
 
         if (share.IsFtpShare)
         {
-          item.Path = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
-                share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+          //item.Path = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+            //    share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+          item.Path = GetShareRemoteURL(share);
           item.IsRemote = true;
         }
         Utils.SetDefaultIcons(item);
@@ -362,8 +363,9 @@ namespace MediaPortal.Util
       if (share == null) return false;
       if (share.IsFtpShare)
       {
-        string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
-          share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+        //string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+        //  share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+        string remoteFolder = GetShareRemoteURL(share);
         if (strDir == remoteFolder)
         {
           return true;
@@ -398,8 +400,9 @@ namespace MediaPortal.Util
       {
         if (share.IsFtpShare)
         {
-          string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
-            share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+          //string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+          //  share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+          string remoteFolder = GetShareRemoteURL(share);
           if (CurrentShare == remoteFolder)
           {
             return false;
@@ -426,8 +429,9 @@ namespace MediaPortal.Util
       }
       else if (share.IsFtpShare)
       {
-        string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
-          share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+        //string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+        //  share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+        string remoteFolder = GetShareRemoteURL(share);
         CurrentShare = remoteFolder;
       }
       else
@@ -462,8 +466,9 @@ namespace MediaPortal.Util
           {
             if (share.IsFtpShare)
             {
-              string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
-                share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+              //string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+              //  share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+              string remoteFolder = GetShareRemoteURL(share);
               if (strDir.ToLower() == remoteFolder.ToLower())
               {
                 return share;
@@ -477,8 +482,9 @@ namespace MediaPortal.Util
                 }
                 else
                 {
-                  string foundRemoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
-                    foundShare.FtpServer, foundShare.FtpPort, foundShare.FtpLoginName, foundShare.FtpPassword, Utils.RemoveTrailingSlash(foundShare.FtpFolder));
+                  //string foundRemoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+                  //  foundShare.FtpServer, foundShare.FtpPort, foundShare.FtpLoginName, foundShare.FtpPassword, Utils.RemoveTrailingSlash(foundShare.FtpFolder));
+                  string foundRemoteFolder = GetShareRemoteURL(foundShare);
                   if (foundRemoteFolder.Length < remoteFolder.Length)
                   {
                     foundShare = share;
@@ -538,6 +544,16 @@ namespace MediaPortal.Util
       if (folder == null) return false;
       if (folder.IndexOf("remote:") == 0) return true;
       return false;
+    }
+
+    public string GetShareRemoteURL(Share shareName)
+    {
+      return String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+                shareName.FtpServer,
+                shareName.FtpPort,
+                shareName.FtpLoginName,
+                shareName.FtpPassword,
+                MediaPortal.Util.Utils.RemoveTrailingSlash(shareName.FtpFolder));
     }
 
     /// <summary>
@@ -1176,8 +1192,9 @@ namespace MediaPortal.Util
           string filename, path;
           GetRemoteFileNameAndPath(remotefile, out filename, out path);
 
-          string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
-            share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+          //string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+          //  share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+          string remoteFolder = GetShareRemoteURL(share);
 
           if (remotefile.IndexOf(remoteFolder) == 0)
           {
@@ -2071,8 +2088,9 @@ namespace MediaPortal.Util
 
         if (share.IsFtpShare)
         {
-          item.Path = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
-                share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+          //item.Path = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+          //      share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+          item.Path = GetShareRemoteURL(share);
           item.IsRemote = true;
         }
         Utils.SetDefaultIcons(item);

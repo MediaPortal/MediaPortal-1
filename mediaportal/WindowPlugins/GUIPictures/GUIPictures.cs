@@ -183,14 +183,22 @@ namespace MediaPortal.GUI.Pictures
 
           if (share.Name.Length > 0)
           {
-
             if (strDefault == share.Name)
             {
               share.Default = true;
               if (currentFolder.Length == 0)
               {
-                currentFolder = share.Path;
-                m_strDirectoryStart = share.Path;
+                if (share.IsFtpShare)
+                {
+                  //remote:hostname?port?login?password?folder
+                  currentFolder = virtualDirectory.GetShareRemoteURL(share);
+                  m_strDirectoryStart = currentFolder;
+                }
+                else
+                {
+                  currentFolder = share.Path;
+                  m_strDirectoryStart = share.Path;
+                }
               }
             }
             virtualDirectory.Add(share);
