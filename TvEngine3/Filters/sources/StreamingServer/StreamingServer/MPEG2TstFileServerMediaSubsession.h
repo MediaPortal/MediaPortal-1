@@ -15,10 +15,12 @@ protected:
   MPEG2TstFileServerMediaSubsession(UsageEnvironment& env,char const* fileName,Boolean reuseFirstSource);
   // called only by createNew();
   virtual ~MPEG2TstFileServerMediaSubsession();
+  virtual float duration() const;
 
 private: // redefined virtual functions
   virtual FramedSource* createNewStreamSource(unsigned clientSessionId,unsigned& estBitrate);
   virtual RTPSink* createNewRTPSink(Groupsock* rtpGroupsock,unsigned char rtpPayloadTypeIfDynamic,FramedSource* inputSource);
+  float _duration;
 };
 
 #endif

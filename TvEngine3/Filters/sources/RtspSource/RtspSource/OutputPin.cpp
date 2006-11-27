@@ -23,7 +23,7 @@
 #include "demux.h"
  
 #define BUFFER_SIZE (1316*30)
-
+extern void Log(const char *fmt, ...) ;
 COutputPin::COutputPin(LPUNKNOWN pUnk, CRtspSourceFilter *pFilter, HRESULT *phr,CCritSec* section) :
 	CSourceStream(NAME("pinOut"), phr, pFilter, L"Out"),
   CSourceSeeking(NAME("pinOut"),pUnk,phr,section),
@@ -45,10 +45,20 @@ COutputPin::COutputPin(LPUNKNOWN pUnk, CRtspSourceFilter *pFilter, HRESULT *phr,
   m_biMpegDemux=false;
 	m_tickCount=GetTickCount();
 	m_tickUpdateCount=GetTickCount();
+  m_bIsTimeShifting=true;
 }
 
 COutputPin::~COutputPin(void)
 {
+}
+
+void COutputPin::IsTimeShifting(bool onOff)
+{
+  m_bIsTimeShifting=onOff;
+  if (m_bIsTimeShifting) 
+    Log("timeshifting file");
+  else
+    Log("normal file");
 }
 
 STDMETHODIMP COutputPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
@@ -186,15 +196,18 @@ HRESULT COutputPin::FillBuffer(IMediaSample *pSample)
   DWORD bytesRead=m_pFilter->GetData(pBuffer,lDataLength);
   pSample->SetActualDataLength(bytesRead);
 
-	long ticks=GetTickCount()-m_tickUpdateCount;
-  if (ticks>1000 && m_pFilter->IsClientRunning())
-	{
-		ticks=GetTickCount()-m_tickCount;
-    CRefTime refAdd(ticks);
-    m_rtDuration = refAdd+m_rtDurationAtStart;
-    m_pFilter->NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
-    m_tickUpdateCount=GetTickCount();
-	}
+  if (m_bIsTimeShifting)
+  {
+	  long ticks=GetTickCount()-m_tickUpdateCount;
+    if (ticks>1000 && m_pFilter->IsClientRunning())
+	  {
+		  ticks=GetTickCount()-m_tickCount;
+      CRefTime refAdd(ticks);
+      m_rtDuration = refAdd+m_rtDurationAtStart;
+      m_pFilter->NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
+      m_tickUpdateCount=GetTickCount();
+	  }
+  }
   return S_OK;
 }
 HRESULT COutputPin::ChangeStart()

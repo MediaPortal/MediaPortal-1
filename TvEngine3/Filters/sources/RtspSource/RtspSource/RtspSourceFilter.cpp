@@ -289,6 +289,14 @@ STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *
 		Log("Filter:using defailt filename");
 		wcscpy(m_fileName,L"rtsp://pcebeckers/stream1");
 	}
+  if (wcsstr(m_fileName,L"stream")!=NULL)
+  {
+    m_pOutputPin->IsTimeShifting(true);
+  }
+  else
+  {
+    m_pOutputPin->IsTimeShifting(false);
+  }
 
 	Log("Filter:Initialize");
   if (m_client.Initialize())

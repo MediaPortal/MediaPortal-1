@@ -18,14 +18,14 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // A 'ServerMediaSubsession' object that creates new, unicast, "RTPSink"s
 // on demand, from a MPEG-2 Transport Stream file.
 // Implementation
-
+#include <streams.h>
 #include "MPEG2TstFileServerMediaSubsession.h"
 #include "SimpleRTPSink.hh"
 #include "ByteStreamFileSource.hh"
 #include "MPEG2TransportStreamFramer.hh"
 #include "MPEG1or2Demux.hh"
 #include "MPEG2TransportStreamFromPESSource.hh"
-
+#include "TsFileDuration.h"
 MPEG2TstFileServerMediaSubsession* MPEG2TstFileServerMediaSubsession::createNew(UsageEnvironment& env,char const* fileName,Boolean reuseFirstSource) 
 {
   return new MPEG2TstFileServerMediaSubsession(env, fileName, reuseFirstSource);
@@ -47,6 +47,13 @@ MPEG2TstFileServerMediaSubsession::~MPEG2TstFileServerMediaSubsession()
 FramedSource* MPEG2TstFileServerMediaSubsession ::createNewStreamSource(unsigned /*clientSessionId*/, unsigned& estBitrate) 
 {
   estBitrate = 5000; // kbps, estimate
+
+  CTsFileDuration duration;
+  duration.SetFileName((char*)fFileName);
+  duration.OpenFile();
+  duration.UpdateDuration();
+  duration.CloseFile();
+  _duration=duration.Duration();
 
   // Create the video source:
   unsigned const inputDataChunkSize = TRANSPORT_PACKETS_PER_NETWORK_PACKET*TRANSPORT_PACKET_SIZE;
@@ -72,4 +79,9 @@ RTPSink* MPEG2TstFileServerMediaSubsession ::createNewRTPSink(Groupsock* rtpGrou
   return SimpleRTPSink::createNew(envir(), rtpGroupsock,
 				  33, 90000, "video", "mp2t",
 				  1, True, False /*no 'M' bit*/);
+}
+
+float MPEG2TstFileServerMediaSubsession::duration() const
+{
+  return _duration;
 }

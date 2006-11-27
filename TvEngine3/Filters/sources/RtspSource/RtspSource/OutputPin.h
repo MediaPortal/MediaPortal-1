@@ -46,6 +46,7 @@ public:
 
 	virtual HRESULT OnThreadStartPlay(void) ;
 	void UpdateStopStart();
+  void IsTimeShifting(bool onOff);
 protected:
   HRESULT DisconnectOutputPins(IBaseFilter *pFilter);
   HRESULT DisconnectDemux();
@@ -59,6 +60,7 @@ protected:
 	bool m_bRunning;
   bool m_bSeeking;
   bool m_biMpegDemux;
+  bool m_bIsTimeShifting;
 	DWORD m_tickCount;
 	DWORD m_tickUpdateCount;
 	CRefTime m_rtDurationAtStart;
