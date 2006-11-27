@@ -1427,7 +1427,7 @@ namespace TvPlugin
     static void SeekToEnd()
     {
       string timeshiftFileName = TVHome.Card.TimeShiftFileName;
-      if (System.IO.File.Exists(timeshiftFileName))
+      if ( System.IO.File.Exists(timeshiftFileName))
       {
         if (g_Player.IsRadio == false)
         {

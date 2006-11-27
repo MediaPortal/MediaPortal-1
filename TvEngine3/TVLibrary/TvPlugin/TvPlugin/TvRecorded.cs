@@ -705,7 +705,7 @@ namespace TvPlugin
           }
           if (stoptime > 0)
           {
-            g_Player.SeekAbsolute(stoptime);
+           // g_Player.SeekAbsolute(stoptime);
           }
           return true;
         }
@@ -1096,10 +1096,17 @@ namespace TvPlugin
         IList recordings = Recording.ListAll();
         foreach (Recording rec in recordings)
         {
-          string thumbNail = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
-          if (!System.IO.File.Exists(thumbNail))
+          if (System.IO.File.Exists(rec.FileName))
           {
-            DvrMsImageGrabber.GrabFrame(rec.FileName, thumbNail, System.Drawing.Imaging.ImageFormat.Jpeg, 128, 128);
+            string ext = System.IO.Path.GetExtension(rec.FileName).ToLower();
+            if (ext == ".dvr-ms")
+            {
+              string thumbNail = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
+              if (!System.IO.File.Exists(thumbNail))
+              {
+                DvrMsImageGrabber.GrabFrame(rec.FileName, thumbNail, System.Drawing.Imaging.ImageFormat.Jpeg, 128, 128);
+              }
+            }
           }
         }
       }
