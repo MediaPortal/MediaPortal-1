@@ -83,7 +83,8 @@ namespace MediaPortal.GUI.Video
     {
       Log.Info("DVDFullscreen: Play DVD");
       GUIVideoFiles videoFiles = (GUIVideoFiles)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEOS);
-      if (null == videoFiles) return false;
+      if (null == videoFiles)
+        return false;
       //check if dvd is inserted
       string[] drives = Environment.GetLogicalDrives();
 
@@ -106,6 +107,7 @@ namespace MediaPortal.GUI.Video
       dlgOk.DoModal(GetID);
       return false;
     }
+
     #region ISetupForm Members
 
     public bool CanEnable()
@@ -149,7 +151,7 @@ namespace MediaPortal.GUI.Video
 
     public string Description()
     {
-      return "Adds \"Play DVD\" button to homescreen";
+      return @"Play DVD directly from via menu";
     }
 
     public void ShowPlugin()
@@ -158,6 +160,7 @@ namespace MediaPortal.GUI.Video
     }
 
     #endregion
+
     #region IShowPlugin Members
 
     public bool ShowDefaultHome()
@@ -167,5 +170,4 @@ namespace MediaPortal.GUI.Video
 
     #endregion
   }
-
 }

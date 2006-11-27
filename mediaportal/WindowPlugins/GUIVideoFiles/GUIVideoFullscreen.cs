@@ -85,10 +85,8 @@ namespace MediaPortal.GUI.Video
       PANEL2 = 150
     };
 
-    [SkinControlAttribute(500)]
-    protected GUIImage imgVolumeMuteIcon;
-    [SkinControlAttribute(501)]
-    protected GUIVolumeBar imgVolumeBar;
+    [SkinControlAttribute(500)]     protected GUIImage imgVolumeMuteIcon;
+    [SkinControlAttribute(501)]     protected GUIVolumeBar imgVolumeBar;
 
     bool _isOsdVisible = false;
     bool _showStep = false;
@@ -133,6 +131,7 @@ namespace MediaPortal.GUI.Video
       GetID = (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO;
       return bResult;
     }
+
     #region settings serialisation
     void LoadSettings()
     {
@@ -269,6 +268,7 @@ namespace MediaPortal.GUI.Video
       }
       return;
     }
+
     void OnMsnAction(Action action)
     {
       if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI))) // hide the OSD
@@ -604,7 +604,7 @@ namespace MediaPortal.GUI.Video
           {
             if (g_Player.Paused)
             {
-              if (g_Player.CanSeek)
+              if (g_Player.CanSeek && !g_Player.IsDVD)
               {
                 double dPos = g_Player.CurrentPosition;
                 if (dPos > 1)
@@ -622,7 +622,7 @@ namespace MediaPortal.GUI.Video
           {
             if (g_Player.Paused)
             {
-              if (g_Player.CanSeek)
+              if (g_Player.CanSeek && !g_Player.IsDVD)
               {
                 double dPos = g_Player.CurrentPosition;
                 if (g_Player.Duration - dPos > 1)
