@@ -63,27 +63,34 @@ namespace MediaPortal.TV.Recording
 
     public TvCardCollection()
     {
-			
-			using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config,"capturecards.xml"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+      if (System.IO.File.Exists(Config.GetFile(Config.Dir.Config, "capturecards.xml")))
       {
-        try
+        using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "capturecards.xml"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
-        	SoapFormatter c = new SoapFormatter();
-					ArrayList cards = (ArrayList)c.Deserialize(fileStream);
-					foreach (TVCaptureDevice dev in cards)
-					{
-						_tvcards.Add(dev);
-					}
-				}
-				catch (Exception)
-				{
-          Log.WriteFile(LogType.Recorder, true, "Recorder: invalid capturecards.xml found! please delete it");
-				}
-				finally
-				{
-					fileStream.Close();
-				}
+          try
+          {
+            SoapFormatter c = new SoapFormatter();
+            ArrayList cards = (ArrayList)c.Deserialize(fileStream);
+            foreach (TVCaptureDevice dev in cards)
+            {
+              _tvcards.Add(dev);
+            }
+          }
+          catch (Exception)
+          {
+            Log.WriteFile(LogType.Recorder, true, "Recorder: invalid capturecards.xml found! please delete it");
+          }
+          finally
+          {
+            fileStream.Close();
+          }
+        }
       }
+      else
+      {
+        _tvcards = new List<TVCaptureDevice>();
+      }
+
       //subscribe to the recording events of each card
       for (int i = 0; i < _tvcards.Count; i++)
       {
