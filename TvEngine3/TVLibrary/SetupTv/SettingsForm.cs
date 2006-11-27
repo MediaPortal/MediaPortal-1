@@ -168,6 +168,7 @@ namespace SetupTv
         AddChildSection(radioChannels, new RadioEpgGrabber());
 
         AddSection(new TvRecording());
+        AddSection(new StreamingServer());
 
         AddSection(new TestService());
 

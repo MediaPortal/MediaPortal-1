@@ -246,6 +246,8 @@ RTSPServer::RTSPClientSession
   envir().taskScheduler().turnOnBackgroundReadHandling(fClientSocket,
      (TaskScheduler::BackgroundHandlerProc*)&incomingRequestHandler, this);
   noteLiveness();
+  startDateTime=time(NULL);
+  fOurServer.AddClient(this);
 }
 
 RTSPServer::RTSPClientSession::~RTSPClientSession() {
@@ -266,8 +268,32 @@ RTSPServer::RTSPClientSession::~RTSPClientSession() {
       fOurServer.removeServerMediaSession(fOurServerMediaSession);
     }
   }
+  fOurServer.RemoveClient(this);
 }
 
+
+vector<RTSPServer::RTSPClientSession*> RTSPServer::Clients()
+{
+  return m_clients;
+}
+void RTSPServer::AddClient(RTSPClientSession* client)
+{
+  m_clients.push_back(client);
+}
+void RTSPServer::RemoveClient(RTSPClientSession* client)
+{
+  itClients it;
+  it=m_clients.begin();
+  while (it!=m_clients.end())
+  {
+    if (*it==client)
+    {
+      m_clients.erase(it);
+      return;
+    }
+    ++it;
+  }
+}
 void RTSPServer::RTSPClientSession::reclaimStreamStates() {
   for (unsigned i = 0; i < fNumStreamStates; ++i) {
     if (fStreamStates[i].subsession != NULL) {

@@ -216,6 +216,12 @@
     <Compile Include="Sections\Servers.Designer.cs">
       <DependentUpon>Servers.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\StreamingServer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\StreamingServer.Designer.cs">
+      <DependentUpon>StreamingServer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\TvRecording.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -343,6 +349,10 @@
     <EmbeddedResource Include="Sections\Servers.resx">
       <SubType>Designer</SubType>
       <DependentUpon>Servers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\StreamingServer.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>StreamingServer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>

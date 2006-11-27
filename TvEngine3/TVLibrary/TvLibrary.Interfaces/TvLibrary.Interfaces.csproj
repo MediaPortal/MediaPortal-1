@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\SpecialChannel.cs" />
+    <Compile Include="RtspClient.cs" />
     <Compile Include="ServiceProvider\ServiceProvider.cs" />
     <Compile Include="Epg\Languages.cs" />
     <Compile Include="Implementations\AudioStream\AnalogAudioStream.cs" />

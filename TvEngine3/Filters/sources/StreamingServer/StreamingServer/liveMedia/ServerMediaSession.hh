@@ -83,8 +83,9 @@ private:
   ServerMediaSubsession* fSubsessionsHead;
   ServerMediaSubsession* fSubsessionsTail;
   unsigned fSubsessionCounter;
-
+public:
   char* fStreamName;
+private:
   char* fInfoSDPString;
   char* fDescriptionSDPString;
   char* fMiscSDPLines;

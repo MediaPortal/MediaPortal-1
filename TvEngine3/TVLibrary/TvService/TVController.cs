@@ -1485,7 +1485,8 @@ namespace TvService
           if (System.IO.File.Exists(fileName))
           {
             _streamer.Start();
-            _streamer.AddTimeShiftFile(String.Format("stream{0}", cardId), fileName, (false == _localCards[cardId].IsTimeshiftingTransportStream));
+            RtspStream stream = new RtspStream(String.Format("stream{0}", cardId), fileName, _localCards[cardId]);
+            _streamer.AddStream(stream);
           }
           else
           {
@@ -1873,7 +1874,9 @@ namespace TvService
           if (System.IO.File.Exists(recording.FileName))
           {
             _streamer.Start();
-            string streamName = _streamer.AddMpegFile(recording.FileName);
+            string streamName=recording.FileName.GetHashCode().ToString();
+            RtspStream stream = new RtspStream(streamName, recording.FileName, recording.Title);
+            _streamer.AddStream(stream);
             string url = String.Format("rtsp://{0}/{1}", _ourServer.HostName, streamName);
             Log.WriteFile("Controller: streaming url:{0} file:{1}", url, recording.FileName);
             return url;
@@ -2235,6 +2238,16 @@ namespace TvService
 
     #endregion
 
+    #region streaming
+    public List<RtspClient> StreamingClients 
+    {
+      get
+      {
+        if (_streamer == null) return new List<RtspClient>();
+        return _streamer.Clients;
+      }
+    }
+    #endregion
     #endregion
 
     #region private members

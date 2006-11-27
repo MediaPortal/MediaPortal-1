@@ -42,20 +42,27 @@ namespace TvLibrary.Streaming
     protected static extern void StreamRun();
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
-    protected static extern void StreamAddTimeShiftFile(string streamName, string fileName,bool isProgramStream);
+    protected static extern void StreamAddTimeShiftFile(string streamName, string fileName, bool isProgramStream);
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
     protected static extern void StreamAddMpegFile(string streamName, string fileName);
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
     protected static extern void StreamRemove(string streamName);
+
+
+    [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
+    protected static extern void StreamGetClientCount(ref short clients);
+
+    [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
+    protected static extern void StreamGetClientDetail(short clientNr, out IntPtr ipAdres, out IntPtr streamName, ref short isActive, out long ticks);
     #endregion
 
     #region variables
     bool _running = false;
     bool _initialized = false;
     long _streamIndex = 0;
-    Dictionary<string, string> _streams;
+    Dictionary<string, RtspStream> _streams;
     #endregion
 
     #region ctor
@@ -74,7 +81,7 @@ namespace TvLibrary.Streaming
           break;
         }
         _initialized = true;
-        _streams = new Dictionary<string, string>();
+        _streams = new Dictionary<string, RtspStream>();
       }
       catch (Exception ex)
       {
@@ -83,6 +90,58 @@ namespace TvLibrary.Streaming
     }
     #endregion
 
+    #region properties
+    /// <summary>
+    /// Gets the streaming clients.
+    /// </summary>
+    /// <value>The clients.</value>
+    public List<RtspClient> Clients
+    {
+      get
+      {
+        List<RtspClient> clients = new List<RtspClient>();
+        short count = 0;
+        StreamGetClientCount(ref count);
+        for (short i = 0; i < count; ++i)
+        {
+          short isActive = 0;
+          IntPtr ptrIpAdress;
+          IntPtr ptrStream;
+          string ipadress = "";
+          string streamName = "";
+          long ticks;
+          StreamGetClientDetail(i, out ptrIpAdress, out ptrStream, ref isActive, out ticks);
+          DateTime started = new DateTime(1970, 1, 1, 0, 0, 0);
+          started = started.AddSeconds(ticks);
+
+          if (ptrIpAdress != IntPtr.Zero)
+          {
+            ipadress = Marshal.PtrToStringAnsi(ptrIpAdress);
+          }
+          if (ptrStream != null)
+          {
+            streamName = Marshal.PtrToStringAnsi(ptrStream);
+          }
+          string description="";
+
+          if (_streams.ContainsKey(streamName))
+          {
+            RtspStream stream = _streams[streamName];
+            if (stream.Recording != null && stream.Recording.Length>0)
+              description = stream.Recording;
+            else
+            {
+              description = stream.Card.Channel.Name;
+            }
+          }
+          
+          RtspClient client = new RtspClient(isActive != 0, ipadress, streamName, description,started);
+          clients.Add(client);
+        }
+        return clients;
+      }
+    }
+    #endregion
     #region public members
     /// <summary>
     /// Starts RTSP Streaming.
@@ -118,46 +177,27 @@ namespace TvLibrary.Streaming
     /// <param name="streamName">Name of the stream.</param>
     /// <param name="fileName">Name of the timeshift file.</param
     /// <param name="isProgramStream">true if file is a mpeg-2 program stream, false if file is a mpeg-2 transport stream.</param>
-    public void AddTimeShiftFile(string streamName, string fileName, bool isProgramStream)
+    public void AddStream(RtspStream stream)
     {
       if (_initialized == false) return;
-      if (_streams.ContainsKey(streamName))
+      if (_streams.ContainsKey(stream.Name))
       {
         Log.Log.WriteFile("RTSP: add stream {0} already added");
         return;
       }
-      if (System.IO.File.Exists(fileName))
+      if (System.IO.File.Exists(stream.FileName))
       {
-        Log.Log.WriteFile("RTSP: add stream {0} file:{1}", streamName, fileName);
-        StreamAddTimeShiftFile(streamName, fileName, isProgramStream);
-        _streams[streamName] = fileName;
-      }
-    }
-
-    /// <summary>
-    /// Creates a new RTSP stream
-    /// </summary>
-    /// <param name="fileName">file to stream.</param>
-    /// <returns>name of the stream</returns>
-    public string AddMpegFile(string fileName)
-    {
-      if (_initialized == false) return "";
-      string streamName = String.Format("file{0}", _streamIndex++);
-      if (_streams.ContainsKey(streamName))
-      {
-        Log.Log.WriteFile("RTSP: add stream {0} already added");
-        return streamName;
-      }
-      if (System.IO.File.Exists(fileName))
-      {
-        if (fileName.ToLower().IndexOf(".mpg") >= 0)
+        Log.Log.WriteFile("RTSP: add stream {0} file:{1}", stream.Name, stream.FileName);
+        if (stream.Card != null)
         {
-          Log.Log.WriteFile("RTSP: add stream {0} file:{1}", streamName, fileName);
-          StreamAddMpegFile(streamName, fileName);
-          _streams[streamName] = fileName;
+          StreamAddTimeShiftFile(stream.Name, stream.FileName, false);
         }
+        else
+        {
+          StreamAddMpegFile(stream.Name, stream.FileName);
+        }
+        _streams[stream.Name] = stream;
       }
-      return streamName;
     }
 
     /// <summary>

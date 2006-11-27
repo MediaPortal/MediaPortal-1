@@ -35,15 +35,49 @@ extern netAddressBits ReceivingInterfaceAddr ;
 int _tmain(int argc, _TCHAR* argv[])
 {
   StreamSetup("192.168.1.58");
-  StreamAdd3gpFile("stream1", "C:\\2\\test.3gp");
+  StreamAddTimeShiftFile("stream1", "C:\\media\\movies\\live1.ts.tsbuffer",false);
+
   while (true)
   {
     StreamRun();
   }
+  StreamRemove("stream1");
 	return 0;
 }
 
 #endif
+
+//**************************************************************************************
+void StreamGetClientCount(int* clients)
+{
+  *clients=0;
+  if (m_rtspServer==NULL) return ;
+  *clients= m_rtspServer->Clients().size();
+}
+
+//**************************************************************************************
+void StreamGetClientDetail(int clientNr, char** ipAdres, char** streamName, int* isActive, long* ticks)
+{
+  static char szipAdres[50];
+  static char szstreamName[150];
+  *ipAdres=NULL;
+  *streamName=NULL;
+  *isActive=0;
+  *ticks=0;
+  vector<RTSPServer::RTSPClientSession*> clients=m_rtspServer->Clients();
+  if (clientNr>=clients.size()) return;
+  RTSPServer::RTSPClientSession* client = clients[clientNr];
+
+  sprintf(szipAdres,"%d.%d.%d.%d", client->fClientAddr.sin_addr.S_un.S_un_b.s_b1,
+                                   client->fClientAddr.sin_addr.S_un.S_un_b.s_b2,
+                                   client->fClientAddr.sin_addr.S_un.S_un_b.s_b3,
+                                   client->fClientAddr.sin_addr.S_un.S_un_b.s_b4);
+  *isActive=client->fSessionIsActive;
+  strcpy(szstreamName,client->fOurServerMediaSession->fStreamName);
+  *streamName=&szstreamName[0];
+  *ipAdres=&szipAdres[0];
+  *ticks=client->startDateTime;
+}
 
 //**************************************************************************************
 void StreamSetup(char* ipAdress)

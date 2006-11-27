@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using TvLibrary.Interfaces;
+using TvLibrary.Streaming;
 namespace TvControl
 {
   /// <summary>
@@ -507,6 +508,9 @@ namespace TvControl
     bool IsCardInUse(int cardId, out User user);
 
     List<string> ServerIpAdresses { get;}
+    #endregion
+    #region streaming
+    List<RtspClient> StreamingClients { get;}
     #endregion
   }
 }

@@ -1,0 +1,103 @@
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using TvControl;
+using TvDatabase;
+using TvLibrary.Interfaces;
+using TvLibrary.Streaming;
+using TvLibrary.Implementations;
+
+
+using Gentle.Common;
+using Gentle.Framework;
+namespace SetupTv.Sections
+{
+  public partial class StreamingServer : SectionSettings
+  {
+    public StreamingServer()
+      : this("Streaming Server")
+    {
+    }
+
+    public StreamingServer(string name)
+      : base(name)
+    {
+      InitializeComponent();
+    }
+
+    public override void OnSectionActivated()
+    {
+      timer1.Enabled = true;
+    }
+
+    public override void OnSectionDeActivated()
+    {
+      timer1.Enabled = false;
+      base.OnSectionDeActivated();
+    }
+
+    private void label1_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void timer1_Tick(object sender, EventArgs e)
+    {
+      List<RtspClient> clients = RemoteControl.Instance.StreamingClients;
+      for (int i = 0; i < clients.Count; ++i)
+      {
+        RtspClient client = clients[i];
+        if (i >= listView1.Items.Count)
+        {
+          ListViewItem item = new ListViewItem(client.StreamName);
+          item.SubItems.Add(client.IpAdress);
+          if (client.IsActive)
+            item.SubItems.Add("yes");
+          else
+            item.SubItems.Add("no");
+          item.SubItems.Add(client.DateTimeStarted.ToString("yyyy-MM-dd HH:mm:ss"));
+          item.SubItems.Add(client.Description);
+          listView1.Items.Add(item);
+        }
+        else
+        {
+          ListViewItem item = listView1.Items[i];
+          item.Text = client.StreamName;
+          item.SubItems[1].Text = client.IpAdress;
+          if (client.IsActive)
+            item.SubItems[2].Text = "yes";
+          else
+            item.SubItems[2].Text = "no";
+          item.SubItems[3].Text = client.DateTimeStarted.ToString("yyyy-MM-dd HH:mm:ss");
+          item.SubItems[4].Text = client.Description;
+        }
+      }
+      while (listView1.Items.Count > clients.Count)
+        listView1.Items.RemoveAt(listView1.Items.Count-1);
+    }
+  }
+}

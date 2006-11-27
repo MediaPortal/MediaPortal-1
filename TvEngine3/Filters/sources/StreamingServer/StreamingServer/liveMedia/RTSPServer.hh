@@ -30,7 +30,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #ifndef _DIGEST_AUTHENTICATION_HH
 #include "DigestAuthentication.hh"
 #endif
-
+#include <vector>
+using namespace std;
 // A data structure used for optional user/password authentication:
 
 class UserAuthenticationDatabase {
@@ -106,6 +107,7 @@ private:
   static void incomingConnectionHandler(void*, int /*mask*/);
   void incomingConnectionHandler1();
 
+public:
   // The state of each individual session handled by a RTSP server:
   class RTSPClientSession {
   public:
@@ -149,15 +151,19 @@ private:
   private:
     RTSPServer& fOurServer;
     unsigned fOurSessionId;
-    ServerMediaSession* fOurServerMediaSession;
     int fClientSocket;
+  public:
+    ServerMediaSession* fOurServerMediaSession;
     struct sockaddr_in fClientAddr;
+    Boolean fSessionIsActive;
+    LONG startDateTime;
+  private:
     TaskToken fLivenessCheckTask;
     unsigned char fRequestBuffer[RTSP_BUFFER_SIZE];
     unsigned fRequestBytesAlreadySeen, fRequestBufferBytesLeft;
     unsigned char* fLastCRLF;
     unsigned char fResponseBuffer[RTSP_BUFFER_SIZE];
-    Boolean fIsMulticast, fSessionIsActive, fStreamAfterSETUP;
+    Boolean fIsMulticast, fStreamAfterSETUP;
     Authenticator fCurrentAuthenticator; // used if access control is needed
     unsigned char fTCPStreamIdCount; // used for (optional) RTP/TCP
     unsigned fNumStreamStates; 
@@ -175,6 +181,15 @@ private:
   unsigned fReclamationTestSeconds;
   HashTable* fServerMediaSessions;
   unsigned fSessionIdCounter;
+public:
+    HashTable*  Streams() { return fServerMediaSessions;}
+    void AddClient(RTSPServer::RTSPClientSession* client);
+    void RemoveClient(RTSPClientSession* client);
+
+    vector<RTSPServer::RTSPClientSession*> Clients();
+    typedef vector<RTSPServer::RTSPClientSession*>::iterator itClients;
+    
+    vector<RTSPServer::RTSPClientSession*> m_clients;
 };
 
 #endif

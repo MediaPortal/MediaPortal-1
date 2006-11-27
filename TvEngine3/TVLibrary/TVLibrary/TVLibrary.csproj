@@ -87,6 +87,7 @@
     <Compile Include="Interfaces\Analyzer\ItsTimeshift.cs" />
     <Compile Include="Interfaces\TsFileSink\ITsFileSink.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Streaming\RtspStream.cs" />
     <Compile Include="Streaming\RtspStreaming.cs" />
     <Compile Include="Teletext\Implementations\DVBTeletext.cs" />
     <Compile Include="Teletext\Implementations\FastTextDecoder.cs" />
