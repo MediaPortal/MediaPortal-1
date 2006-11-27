@@ -470,7 +470,7 @@ namespace MediaPortal.GUI.Library
           //get the filename of the texture
           string fileName = file;
           if (_containsProperty)
-            fileName = GUIPropertyManager.Parse(file);
+						fileName = _cachedTextureFileName = GUIPropertyManager.Parse(file);
           if (fileName.Length == 0)
             continue;
           if (_textureFileNameTag.Length == 0)
