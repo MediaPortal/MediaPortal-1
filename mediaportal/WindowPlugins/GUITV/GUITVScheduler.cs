@@ -433,8 +433,10 @@ namespace MediaPortal.GUI.TV
     void LoadDirectory()
     {
       GUIWaitCursor.Show();
+      m_iSelectedItem = GetSelectedItemNo();
+      GUIListItem currentItem = GetItem(m_iSelectedItem);
+      TVRecording currentRec = null;
       GUIControl.ClearControl(GetID, listSchedules.GetID);
-
       List<TVRecording> itemlist = new List<TVRecording>();
       TVDatabase.GetRecordings(ref itemlist);
       int total = 0;
@@ -484,6 +486,8 @@ namespace MediaPortal.GUI.TV
       }
       else
       {
+        if (currentItem != null)
+          currentRec = currentItem.TVTag as TVRecording;
 
         GUIListItem item = new GUIListItem();
         item.Label = "..";
@@ -491,10 +495,35 @@ namespace MediaPortal.GUI.TV
         MediaPortal.Util.Utils.SetDefaultIcons(item);
         listSchedules.Add(item);
         total++;
-
+        
         foreach (TVRecording rec in itemlist)
         {
-          if (!rec.Title.Equals(currentShow)) continue;
+          //(if (!rec.Title.Equals(currentShow)) continue;
+          if (currentRec == null) continue;
+
+          switch (currentRec.RecType)
+          {
+            case TVRecording.RecordingType.Once:
+              if ((rec.Channel != currentRec.Channel) || (rec.StartTime.TimeOfDay != currentRec.StartTime.TimeOfDay))
+                continue;
+              break;
+            case TVRecording.RecordingType.Daily:
+              goto case TVRecording.RecordingType.Once;
+            case TVRecording.RecordingType.WeekDays:
+              goto case TVRecording.RecordingType.Once;
+            case TVRecording.RecordingType.WeekEnds:
+              goto case TVRecording.RecordingType.Once;
+            case TVRecording.RecordingType.Weekly:
+              goto case TVRecording.RecordingType.Once;
+            case TVRecording.RecordingType.EveryTimeOnThisChannel:
+              if (rec.Channel != currentRec.Channel)
+                continue;
+              break;
+            case TVRecording.RecordingType.EveryTimeOnEveryChannel:
+              if (!rec.Title.Equals(currentShow)) continue;
+              break;
+          }
+          
           List<TVRecording> recs = ConflictManager.Util.GetRecordingTimes(rec);
           if (recs.Count >= 1)
           {
@@ -719,8 +748,13 @@ namespace MediaPortal.GUI.TV
           return;
         }
         currentShow = rec.Title;
+        //List<TVRecording> recs = ConflictManager.Util.GetRecordingTimes(rec);
         LoadDirectory();
-        return;
+        // the up ".." item is always there..
+        if (listSchedules.Count > 1)
+        {          
+          return;
+        }
       }
 
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
