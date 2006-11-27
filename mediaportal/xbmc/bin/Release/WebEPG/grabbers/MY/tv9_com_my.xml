@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info availableDays="3" timezone="W. Europe Standard Time" />
+  <Info availableDays="3" />
   <Channels>
     <Channel id="tv9.com.my" siteId="02" />
   </Channels>

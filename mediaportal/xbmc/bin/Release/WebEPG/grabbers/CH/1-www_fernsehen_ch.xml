@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Grabber>
   <Info language="de" availableDays="14" timezone="W. Europe Standard Time" />
   <Channels>
@@ -72,6 +72,7 @@
   </Channels>
   <Listing type="Html">
     <Site url="http://www.fernsehen.ch/sender/senderprogramm.php3?sender=[ID]&amp;limit=[LIST_OFFSET]" post="" external="false" encoding="" />
+    <Search maxlistings="10" />
     <Html>
       <Template name="default" start="&lt;!-- Vorschlag Output DB start--&gt;" end="&lt;!-- Vorschlag Include output DB ende --&gt;">
         <SectionTemplate tags="T">
