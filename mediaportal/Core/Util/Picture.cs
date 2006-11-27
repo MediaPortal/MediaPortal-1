@@ -18,13 +18,18 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 using System;
 using System.Drawing;
-using System.Windows.Forms;
 using System.IO;
+using System.Threading;
+using System.Windows.Forms;
+
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
+
 using Direct3D = Microsoft.DirectX.Direct3D;
+
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Util
@@ -194,9 +199,15 @@ namespace MediaPortal.Util
         }
 
       }
+
+      catch (ThreadAbortException ext)
+      {
+        Log.Debug("Picture: exception loading {0} err:{1}", strPic, ext.Message);
+      }
+
       catch (Exception ex)
       {
-        Log.Info("Picture.load exception {0} err:{1} stack:{2}", strPic, ex.Message, ex.StackTrace);
+        Log.Warn("Picture: exception loading {0} err:{1}", strPic, ex.Message);
       }
       finally
       {
