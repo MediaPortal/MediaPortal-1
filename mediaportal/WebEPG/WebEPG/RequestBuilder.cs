@@ -128,6 +128,22 @@ namespace MediaPortal.WebEPG
 
       return false;
     }
+
+    public bool IsLastPage()
+    {
+      if (_offset + _data.PageStart == _data.PageEnd)
+        return true;
+
+      return false;
+    }
+
+    public bool IsMaxListing(int count)
+    {
+      if (_data.MaxListingCount != 0 && _data.MaxListingCount == count)
+        return true;
+
+      return false;
+    }
     #endregion
   }
 }

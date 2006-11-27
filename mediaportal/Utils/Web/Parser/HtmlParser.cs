@@ -197,8 +197,15 @@ namespace MediaPortal.Utils.Web
       string[] param = GetJavaSubLinkParams(result); //strLinkURL);
       if (param != null)
       {
-        for (int i = 0; i < param.Length; i++)
-          linkURL.ReplaceTag("[" + (i + 1).ToString() + "]", param[i]);
+        if (param.Length == 1 && !linkURL.HasTag("[1]"))
+        {
+          linkURL = linkURL.Add(param[0]);
+        }
+        else
+        {
+          for (int i = 0; i < param.Length; i++)
+            linkURL.ReplaceTag("[" + (i + 1).ToString() + "]", param[i]);
+        }
       }
       else
       {

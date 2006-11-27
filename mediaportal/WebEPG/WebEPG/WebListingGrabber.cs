@@ -254,8 +254,8 @@ namespace MediaPortal.WebEPG
         bool error;
         while (GetListing(out error))
         {
-          if (_grabber.Listing.SearchParameters.MaxListingCount == 0)
-            break;
+          //if (_grabber.Listing.SearchParameters.MaxListingCount == 0)
+          //  break;
           _reqBuilder.Offset++;
         }
 
@@ -377,6 +377,8 @@ namespace MediaPortal.WebEPG
       {
         if (_parser is WebParser)
         {
+          _log.Info(LogType.WebEPG, "WebEPG: SubLink Request {0}", guideData.SublinkRequest.ToString());
+
           WebParser webParser = (WebParser)_parser;
 
           if (!webParser.GetLinkedData(ref guideData))
@@ -424,7 +426,7 @@ namespace MediaPortal.WebEPG
       {
         _log.Info(LogType.WebEPG, "WebEPG: Listing Count {0}", listingCount);
 
-        if (listingCount == _grabber.Listing.SearchParameters.MaxListingCount) // || _pageStart + offset < _pageEnd)
+        if (_reqBuilder.IsMaxListing(listingCount) || !_reqBuilder.IsLastPage())
           bMore = true;
 
         for (int i = 0; i < listingCount; i++)

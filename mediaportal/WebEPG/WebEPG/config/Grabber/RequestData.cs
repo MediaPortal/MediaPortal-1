@@ -41,6 +41,8 @@ namespace MediaPortal.WebEPG.Config.Grabber
     public int MaxListingCount = 0;
     [XmlAttribute("startPage")]
     public int PageStart;
+    [XmlAttribute("endPage")]
+    public int PageEnd;
     [XmlAttribute("language")]
     public string SearchLang = "en-US";
     [XmlArray("DayNames")]

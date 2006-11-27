@@ -112,7 +112,7 @@ namespace MediaPortal.WebEPG.Parser
     public IParserData GetData(int index)
     {
       ProgramData searchData = null;
-      if (_template.searchList != null)
+      if (_template.searchList != null && _template.searchList.Count > 0)
       {
         searchData = new ProgramData();
         for (int i = 0; i < _template.searchList.Count; i++)
