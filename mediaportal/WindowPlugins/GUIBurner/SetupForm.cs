@@ -23,18 +23,19 @@
 
 #endregion
 
-#region Usings
 using System;
 using System.IO;
 
+using System.Diagnostics;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using MediaPortal.GUI.Library;
-using System.Diagnostics;
+
 using XPBurn;
-#endregion
+
+using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.GUIBurner
 {
@@ -91,7 +92,7 @@ namespace MediaPortal.GUI.GUIBurner
     #region Serialization
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         textBoxTempPath.Text = xmlreader.GetValueAsString("burner", "temp_folder", Path.GetDirectoryName(Path.GetTempPath()));
         textBoxDVDBurnExePath.Text = xmlreader.GetValueAsString("burner", "dvdburnexe_folder", @"C:\Program Files\Windows Resource Kits\Tools");
@@ -123,7 +124,7 @@ namespace MediaPortal.GUI.GUIBurner
 
     private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("burner", "temp_folder", textBoxTempPath.Text);
         xmlwriter.SetValue("burner", "dvdburnexe_folder", textBoxDVDBurnExePath.Text);
