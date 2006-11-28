@@ -7,7 +7,6 @@
   <define>#currentremaining:#TV.View.stop</define>
   <controls>
     <import>common.progressbar.xml</import>
-
     <control>
       <description>background</description>
       <type>image</type>
@@ -38,6 +37,39 @@
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
+ <control>
+      <description>TV Progress Bar</description>
+      <type>tvprogress</type>
+      <id>100</id>
+      <posX>76</posX>
+      <posY>30</posY>
+      <width>470</width>
+      <height>20</height>
+      <toptexture>osd_progress_indicator.png</toptexture>
+      <TextureOffsetY>22</TextureOffsetY>
+      <bottomtexture>-</bottomtexture>
+      <texturetick>-</texturetick>
+      <lefttexture>-</lefttexture>
+      <midtexture>-</midtexture>
+      <righttexture>-</righttexture>
+      <logotexture>-</logotexture>
+      <fillbackgroundtexture>-</fillbackgroundtexture>
+      <fillbgxoff>10</fillbgxoff>
+      <fillbgyoff>10</fillbgyoff>
+      <filltexture1>osd_progress_mid_red.png</filltexture1>
+      <filltexture2>osd_progress_mid.png</filltexture2>
+      <filltexture3>osd_progress_mid_orange.png</filltexture3>
+      <fillheight>20</fillheight>
+      <visible>yes</visible>
+      <label>#TV.Record.percent1</label>
+      <label1>#TV.Record.percent2</label1>
+      <label2>#TV.Record.percent3</label2>
+      <startlabel></startlabel>
+      <endlabel></endlabel>
+      <toplabel></toplabel>
+      <font>font13</font>
+      <textcolor>FF000000</textcolor>
+    </control> 
 
 
     <!-- 	<control>
