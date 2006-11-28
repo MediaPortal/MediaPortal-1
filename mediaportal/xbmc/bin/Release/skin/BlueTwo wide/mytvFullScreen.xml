@@ -3,7 +3,11 @@
 	<id>602</id>
 	<defaultcontrol>13</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
+ <define>#percentage:#TV.View.Percentage</define>
+  <define>#currentplaytime:#TV.View.start</define>
+  <define>#currentremaining:#TV.View.stop</define>
 	<controls>
+ <import>common.progressbar.xml</import>
 		<control>
 		  <description>bar image</description>
 		  <posX>60</posX>
@@ -25,6 +29,7 @@
 			<posY>73</posY> -->
         		<posX>1177</posX>
 	        	<posY>27</posY>
+			<width>120</width>
 			<label>-</label>
 			<align>left</align>
 			<font>font13</font>
@@ -62,8 +67,8 @@
 			<description>pause image</description>
 			<type>image</type>
 			<id>16</id>
-			<posX>948</posX>
-			<posY>80</posY>
+                        <posX>1155</posX>
+                        <posY>17</posY>
 			<visible>no</visible>
 			<texture>video-pause.png</texture>
 			<colorkey>0</colorkey>
@@ -77,7 +82,7 @@
 <!-- 			<width>733</width>
 			<height>26</height> -->
          		<posX>1166</posX>
-	         	<posY>19</posY>
+	         	<posY>18</posY>
 			<visible>no</visible>
 			<texture>video+2x.png</texture>
 			<colorkey>0</colorkey>
@@ -89,7 +94,7 @@
 			<type>image</type>
 			<id>18</id>
          		<posX>1166</posX>
-	         	<posY>19</posY>
+	         	<posY>18</posY>
 			<visible>no</visible>
 			<texture>video+4x.png</texture>
 			<colorkey>0</colorkey>
@@ -101,7 +106,7 @@
 			<type>image</type>
 			<id>19</id>
          		<posX>1166</posX>
-	         	<posY>19</posY>
+	         	<posY>18</posY>
 			<visible>no</visible>
 			<texture>video+8x.png</texture>
 			<colorkey>0</colorkey>
@@ -113,7 +118,7 @@
 			<type>image</type>
 			<id>20</id>
          		<posX>1166</posX>
-	         	<posY>19</posY>
+	         	<posY>18</posY>
 			<visible>no</visible>
 			<texture>video+16x.png</texture>
 			<colorkey>0</colorkey>
@@ -125,7 +130,7 @@
 			<type>image</type>
 			<id>21</id>
          		<posX>1166</posX>
-	         	<posY>19</posY>
+	         	<posY>18</posY>
 			<visible>no</visible>
 			<texture>video+32x.png</texture>
 			<colorkey>0</colorkey>
@@ -137,7 +142,7 @@
 			<type>image</type>
 			<id>23</id>
          		<posX>1166</posX>
-	         	<posY>19</posY>
+	         	<posY>18</posY>
 			<visible>no</visible>
 			<texture>video-2x.png</texture>
 			<colorkey>0</colorkey>
@@ -149,7 +154,7 @@
 			<type>image</type>
 			<id>24</id>
          		<posX>1166</posX>
-	         	<posY>19</posY>
+	         	<posY>18</posY>
 			<visible>no</visible>
 			<texture>video-4x.png</texture>
 			<colorkey>0</colorkey>
@@ -161,7 +166,7 @@
 			<type>image</type>
 			<id>25</id>
          		<posX>1166</posX>
-	         	<posY>19</posY>
+	         	<posY>18</posY>
 			<visible>no</visible>
 			<texture>video-8x.png</texture>
 			<colorkey>0</colorkey>
@@ -173,7 +178,7 @@
 			<type>image</type>
 			<id>26</id>
          		<posX>1166</posX>
-	         	<posY>19</posY>
+	         	<posY>18</posY>
 			<visible>no</visible>
 			<texture>video-16x.png</texture>
 			<colorkey>0</colorkey>
@@ -185,7 +190,7 @@
 			<type>image</type>
 			<id>27</id>
          		<posX>1166</posX>
-	         	<posY>19</posY>
+	         	<posY>18</posY>
 			<visible>no</visible>
 			<texture>video-32x.png</texture>
 			<colorkey>0</colorkey>
@@ -207,25 +212,13 @@
       <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
-			<description>background</description>
-			<type>image</type>
-			<id>104</id>
-			<posX>324</posX>
-			<posY>661</posY>
-			<width>710</width>
-			<height>29</height>
-			<texture>osd_progress_background.png</texture>
-			<visible>yes</visible>
-      <animation effect="fade" time="250">visiblechange</animation>
-		</control>
-		<control>
 			<description>TV Progress Bar</description>
 			<type>tvprogress</type>
 			<id>100</id>
-			<posX>301</posX>
-			<posY>663</posY>
-			<width>733</width>
-			<height>26</height>
+			<posX>178</posX>
+			<posY>28</posY>
+			<width>814</width>
+			<height>14</height>
 			<toptexture>osd_progress_indicator.png</toptexture>
 			<TextureOffsetY>29</TextureOffsetY>
 			<bottomtexture>-</bottomtexture>
@@ -250,30 +243,6 @@
       <toplabel></toplabel>
 			<font>font13</font>
 			<textcolor>FF000000</textcolor>
-		</control>
-		<control>
-			<description>Start Time Info</description>
-			<type>label</type>
-			<id>101</id>
-			<posX>303</posX>
-			<posY>660</posY>
-			<label>#TV.View.start</label>
-			<align>right</align>
-			<font>font16</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">visiblechange</animation>
-		</control>
-		<control>
-			<description>End Time Info</description>
-			<type>label</type>
-			<id>107</id>
-			<posX>1052</posX>
-			<posY>660</posY>
-			<label>#TV.View.stop</label>
-			<align>left</align>
-			<font>font16</font>
-			<textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">visiblechange</animation>
 		</control>
 		<control>
 			<description>rec logo</description>

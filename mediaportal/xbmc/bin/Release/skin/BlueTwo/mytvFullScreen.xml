@@ -3,9 +3,13 @@
   <id>602</id>
   <defaultcontrol>13</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <define>#percentage:#TV.View.Percentage</define>
+  <define>#currentplaytime:#TV.View.start</define>
+  <define>#currentremaining:#TV.View.stop</define>
   <controls>
+    <import>common.progressbar.xml</import>
     <control>
-      <description>bar image</description>
+	<description>progressbar background</description>
       <type>image</type>
       <id>0</id>
       <posX>20</posX>
@@ -13,10 +17,9 @@
       <width>680</width>
       <height>40</height>
       <texture>osd_bg_top.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>White</colordiffuse>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
     </control>
     <control>
       <description>row 1 label</description>
@@ -24,6 +27,7 @@
       <id>10</id>
       <posX>614</posX>
       <posY>30</posY>
+      <width>80</width>
       <label>-</label>
       <align>left</align>
       <font>font13</font>
@@ -192,37 +196,13 @@
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
     <control>
-      <description>bar image</description>
-      <type>image</type>
-      <id>105</id>
-      <posX>60</posX>
-      <posY>474</posY>
-      <width>600</width>
-      <texture>dialog_osd_background.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>White</colordiffuse>
-      <visible>no</visible>
-      <animation effect="fade" time="250">visiblechange</animation>
-    </control>
-    <control>
-      <description>background</description>
-      <type>image</type>
-      <id>104</id>
-      <posX>171</posX>
-      <posY>496</posY>
-      <width>375</width>
-      <height>22</height>
-      <texture>osd_progress_background.png</texture>
-      <visible>yes</visible>
-      <animation effect="fade" time="250">visiblechange</animation>
-    </control>
-    <control>
       <description>TV Progress Bar</description>
       <type>tvprogress</type>
       <id>100</id>
-      <posX>159</posX>
-      <posY>497</posY>
-      <width>394</width>
+      <posX>76</posX>
+      <posY>30</posY>
+      <width>470</width>
+      <height>20</height>
       <toptexture>osd_progress_indicator.png</toptexture>
       <TextureOffsetY>22</TextureOffsetY>
       <bottomtexture>-</bottomtexture>
@@ -247,41 +227,21 @@
       <toplabel></toplabel>
       <font>font13</font>
       <textcolor>FF000000</textcolor>
-    </control>
-    <control>
-      <description>Start Time Info</description>
-      <type>label</type>
-      <id>106</id>
-      <posX>160</posX>
-      <posY>495</posY>
-      <label>#TV.View.start</label>
-      <align>right</align>
-      <font>font16</font>
-      <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
-    </control>
-    <control>
-      <description>End Time Info</description>
-      <type>label</type>
-      <id>107</id>
-      <posX>555</posX>
-      <posY>495</posY>
-      <label>#TV.View.stop</label>
-      <align>left</align>
-      <font>font16</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
     </control>
     <control>
       <description>rec logo</description>
       <type>image</type>
       <id>39</id>
-      <posX>165</posX>
-      <posY>465</posY>
+      <posX>600</posX>
+      <posY>500</posY>
       <texture>rec.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>yes</visible>
+
       <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
     </control>
     <control>
       <description>MSGBox</description>
