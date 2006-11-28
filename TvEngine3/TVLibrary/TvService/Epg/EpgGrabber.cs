@@ -182,6 +182,7 @@ namespace TvService
         int allChecked = 0;
         while (true)
         {
+          int index = transponder.Index;
           allChecked++;
           transponder.Index++;
           if (transponder.Index >= transponder.Channels.Count)
@@ -197,11 +198,19 @@ namespace TvService
           }
           //get the channel
           Channel ch = transponder.Channels[transponder.Index];
-          Log.Epg("epg:Grab for transponder #{0} {1}", counter, transponder.ToString());
-          //start grabbing
-          epgCard.GrabEpg(_transponders, counter, transponder.Channels[transponder.Index]);
+          if (epgCard.Card.canViewTvChannel(ch.IdChannel))
+          {
+            Log.Epg("epg:Grab for transponder #{0} {1}", counter, transponder.ToString());
+            //start grabbing
+            epgCard.GrabEpg(_transponders, counter, transponder.Channels[transponder.Index]);
 
-          return;
+            return;
+          }
+          else
+          {
+            //restore index...
+            transponder.Index=index;
+          }
         }
       }
     }

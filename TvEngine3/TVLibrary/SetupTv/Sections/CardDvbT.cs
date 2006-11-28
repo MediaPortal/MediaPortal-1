@@ -216,7 +216,7 @@ namespace SetupTv.Sections
           tuneChannel.Frequency = values.Key;
           tuneChannel.BandWidth = values.Value;
 
-          string line = String.Format("{0}tp- {1} {2}", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
+          string line = String.Format("{0}tp- {1} {2}MHz ", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
           if (index == 0)
@@ -230,7 +230,7 @@ namespace SetupTv.Sections
             /// try frequency - offset
             tuneChannel.Frequency = values.Key - frequencyOffset;
             tuneChannel.BandWidth = values.Value;
-            line = String.Format("{0}tp- {1} {2}", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
+            line = String.Format("{0}tp- {1} {2}MHz ", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
             item.Text = line;
             channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
             if (channels.Length == 0)
@@ -238,7 +238,7 @@ namespace SetupTv.Sections
               /// try frequency + offset
               tuneChannel.Frequency = values.Key + frequencyOffset;
               tuneChannel.BandWidth = values.Value;
-              line = String.Format("{0}tp- {1} {2}", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
+              line = String.Format("{0}tp- {1} {2}MHz ", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
               item.Text = line;
               channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
             }
@@ -249,14 +249,14 @@ namespace SetupTv.Sections
           {
             if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
             {
-              line = String.Format("{0}tp- {1} {2}:No Signal", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
+              line = String.Format("{0}tp- {1} {2}MHz :No Signal", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
               item.Text = line;
               item.ForeColor = Color.Red;
               continue;
             }
             else
             {
-              line = String.Format("{0}tp- {1} {2}:Nothing found", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
+              line = String.Format("{0}tp- {1} {2}MHz :Nothing found", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
               item.Text = line;
               item.ForeColor = Color.Red;
               continue;
@@ -323,7 +323,7 @@ namespace SetupTv.Sections
               }
             }
             layer.MapChannelToCard(card, dbChannel);
-            line = String.Format("{0}tp- {1} {2}:New:{3} Updated:{4}", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth, newChannels, updatedChannels);
+            line = String.Format("{0}tp- {1} {2}MHz :New:{3} Updated:{4}", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth, newChannels, updatedChannels);
             item.Text = line;
           }
         }
