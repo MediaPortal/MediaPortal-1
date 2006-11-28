@@ -36,12 +36,12 @@ using System.Diagnostics;
 using XPBurn;
 #endregion
 
-namespace GUIBurner
+namespace MediaPortal.GUI.GUIBurner
 {
   /// <summary>
-  /// Summary description for SetupForm.
+  /// Summary description for BurnerSetupForm.
   /// </summary>
-  public class SetupForm : System.Windows.Forms.Form, ISetupForm, IShowPlugin
+  public partial class BurnerSetupForm : Form
   {
     #region Private Variables
     private XPBurn.XPBurnCD CDBurner;
@@ -49,58 +49,97 @@ namespace GUIBurner
     private MediaPortal.UserInterface.Controls.MPButton buttonOK;
     private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
     private System.Windows.Forms.OpenFileDialog openFileDialog1;
-    private TextBox textBox1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxDeviceSettings;
+    private ComboBox comboBoxDeviceSelection;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDriveletter;
     private MediaPortal.UserInterface.Controls.MPTextBox mpTextBoxBurnerDriver;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPButton buttonCancel;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxOptions;
+    private Label labelTempHint;
     private MediaPortal.UserInterface.Controls.MPTextBox textBoxTempPath;
     private MediaPortal.UserInterface.Controls.MPLabel labelSelectTempPath;
     private MediaPortal.UserInterface.Controls.MPButton buttonSelectTempPathLocation;
-    private RadioButton radioButtonTvFormatNtsc;
-    private Label label15;
-    private CheckBox checkBoxLeaveFileForDebug;
-    private ComboBox comboBox1;
-    private Label label3;
-    private RadioButton radioButtonTvFormatPal;
-    private TextBox textBoxDVDBurnExePath;
-    private MediaPortal.UserInterface.Controls.MPButton buttonSelectDvdBurnPathLocation;
-    private Label label4;
     private CheckBox checkBoxDontBurnDVD;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private Label label2;
-    private Label label5;
-    private TextBox textBox2;
-    private Label label6;
-    private Label label7;
+    private CheckBox checkBoxLeaveFileForDebug;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxSupportFiles;
+    private MediaPortal.UserInterface.Controls.MPLabel labeldvdburnPath;
+    private MediaPortal.UserInterface.Controls.MPButton buttonSelectDvdBurnPathLocation;
+    private TextBox textBoxDVDBurnExePath;
+    private LinkLabel linkLabelDVDBurnDownload;
+    private LinkLabel linkLabelCygwinDownload;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxDVDFormat;
+    private RadioButton radioButtonTvFormatNtsc;
+    private RadioButton radioButtonTvFormatPal;
     /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
     #endregion
 
-    #region SetupForm
-    public SetupForm()
+    #region BurnerSetupForm
+    public BurnerSetupForm()
     {
-      //
-      // Required for Windows Form Designer support
-      //
       InitializeComponent();
       LoadSettings();
       //
       // TODO: Add any constructor code after InitializeComponent call
       //
-
-      CDBurner = new XPBurn.XPBurnCD();
-      GetRecorder();
-      
-      comboBox1.Enabled = true;
-      textBoxTempPath.Enabled = true;
-      buttonSelectTempPathLocation.Enabled = true;
-      comboBox1.SelectedIndex = selIndx;
     }
     #endregion
 
-    #region Overtides
+    #region Serialization
+    private void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        textBoxTempPath.Text = xmlreader.GetValueAsString("burner", "temp_folder", Path.GetDirectoryName(Path.GetTempPath()));
+        textBoxDVDBurnExePath.Text = xmlreader.GetValueAsString("burner", "dvdburnexe_folder", @"C:\Program Files\Windows Resource Kits\Tools");
+
+        selIndx = xmlreader.GetValueAsInt("burner", "recorder", 0);
+        mpTextBoxBurnerDriver.Text = xmlreader.GetValueAsString("burner", "recorderdrive", "D:");
+
+        radioButtonTvFormatPal.Checked = xmlreader.GetValueAsBool("burner", "PalTvFormat", true);
+        radioButtonTvFormatNtsc.Checked = !radioButtonTvFormatPal.Checked;
+
+        checkBoxLeaveFileForDebug.Checked = xmlreader.GetValueAsBool("burner", "leavedebugfiles", true);
+        checkBoxDontBurnDVD.Checked = xmlreader.GetValueAsBool("burner", "dummyburn", false);
+
+        try
+        {
+          CDBurner = new XPBurn.XPBurnCD();
+          GetRecorder();
+          comboBoxDeviceSelection.SelectedIndex = selIndx;
+          comboBoxDeviceSelection.Enabled = true;
+        }
+        catch (Exception ex)
+        {
+          MessageBox.Show("Some components are missing!");
+        }        
+        textBoxTempPath.Enabled = true;
+        buttonSelectTempPathLocation.Enabled = true;        
+      }
+    }
+
+    private void SaveSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        xmlwriter.SetValue("burner", "temp_folder", textBoxTempPath.Text);
+        xmlwriter.SetValue("burner", "dvdburnexe_folder", textBoxDVDBurnExePath.Text);
+
+        xmlwriter.SetValue("burner", "recorder", comboBoxDeviceSelection.SelectedIndex);
+        xmlwriter.SetValue("burner", "recorderdrive", mpTextBoxBurnerDriver.Text);
+
+        xmlwriter.SetValueAsBool("burner", "PalTvFormat", radioButtonTvFormatPal.Checked);
+
+        xmlwriter.SetValueAsBool("burner", "leavedebugfiles", checkBoxLeaveFileForDebug.Checked);
+        xmlwriter.SetValueAsBool("burner", "dummyburn", checkBoxDontBurnDVD.Checked);
+      }
+    }
+    #endregion
+
+    #region Overrides
     /// <summary>
     /// Clean up any resources being used.
     /// </summary>
@@ -126,217 +165,38 @@ namespace GUIBurner
     {
       this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-      this.textBox1 = new System.Windows.Forms.TextBox();
-      this.radioButtonTvFormatNtsc = new System.Windows.Forms.RadioButton();
-      this.label15 = new System.Windows.Forms.Label();
-      this.checkBoxLeaveFileForDebug = new System.Windows.Forms.CheckBox();
-      this.comboBox1 = new System.Windows.Forms.ComboBox();
-      this.label3 = new System.Windows.Forms.Label();
-      this.radioButtonTvFormatPal = new System.Windows.Forms.RadioButton();
-      this.textBoxDVDBurnExePath = new System.Windows.Forms.TextBox();
-      this.label4 = new System.Windows.Forms.Label();
-      this.checkBoxDontBurnDVD = new System.Windows.Forms.CheckBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label5 = new System.Windows.Forms.Label();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.buttonSelectDvdBurnPathLocation = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.buttonOK = new MediaPortal.UserInterface.Controls.MPButton();
+      this.groupBoxDeviceSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.comboBoxDeviceSelection = new System.Windows.Forms.ComboBox();
+      this.labelDriveletter = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpTextBoxBurnerDriver = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.buttonCancel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.groupBoxOptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labelTempHint = new System.Windows.Forms.Label();
       this.textBoxTempPath = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.labelSelectTempPath = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonSelectTempPathLocation = new MediaPortal.UserInterface.Controls.MPButton();
-      this.buttonOK = new MediaPortal.UserInterface.Controls.MPButton();
-      this.textBox2 = new System.Windows.Forms.TextBox();
-      this.label6 = new System.Windows.Forms.Label();
-      this.label7 = new System.Windows.Forms.Label();
+      this.checkBoxDontBurnDVD = new System.Windows.Forms.CheckBox();
+      this.checkBoxLeaveFileForDebug = new System.Windows.Forms.CheckBox();
+      this.groupBoxSupportFiles = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labeldvdburnPath = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.buttonSelectDvdBurnPathLocation = new MediaPortal.UserInterface.Controls.MPButton();
+      this.textBoxDVDBurnExePath = new System.Windows.Forms.TextBox();
+      this.linkLabelDVDBurnDownload = new System.Windows.Forms.LinkLabel();
+      this.linkLabelCygwinDownload = new System.Windows.Forms.LinkLabel();
+      this.groupBoxDVDFormat = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.radioButtonTvFormatNtsc = new System.Windows.Forms.RadioButton();
+      this.radioButtonTvFormatPal = new System.Windows.Forms.RadioButton();
+      this.groupBoxDeviceSettings.SuspendLayout();
+      this.groupBoxOptions.SuspendLayout();
+      this.groupBoxSupportFiles.SuspendLayout();
+      this.groupBoxDVDFormat.SuspendLayout();
       this.SuspendLayout();
-      // 
-      // textBox1
-      // 
-      this.textBox1.Location = new System.Drawing.Point(15, 189);
-      this.textBox1.Name = "textBox1";
-      this.textBox1.Size = new System.Drawing.Size(595, 20);
-      this.textBox1.TabIndex = 40;
-      this.textBox1.Text = "http://www.microsoft.com/downloads/details.aspx?FamilyID=9D467A69-57FF-4AE7-96EE-" +
-          "B18C4790CFFD&displaylang=en";
-      // 
-      // radioButtonTvFormatNtsc
-      // 
-      this.radioButtonTvFormatNtsc.AutoSize = true;
-      this.radioButtonTvFormatNtsc.Location = new System.Drawing.Point(297, 332);
-      this.radioButtonTvFormatNtsc.Name = "radioButtonTvFormatNtsc";
-      this.radioButtonTvFormatNtsc.Size = new System.Drawing.Size(54, 17);
-      this.radioButtonTvFormatNtsc.TabIndex = 2;
-      this.radioButtonTvFormatNtsc.TabStop = true;
-      this.radioButtonTvFormatNtsc.Text = "NTSC";
-      this.radioButtonTvFormatNtsc.UseVisualStyleBackColor = true;
-      // 
-      // label15
-      // 
-      this.label15.AutoSize = true;
-      this.label15.Location = new System.Drawing.Point(12, 380);
-      this.label15.Name = "label15";
-      this.label15.Size = new System.Drawing.Size(159, 13);
-      this.label15.TabIndex = 43;
-      this.label15.Text = "Keep Temp Files For Debugging";
-      // 
-      // checkBoxLeaveFileForDebug
-      // 
-      this.checkBoxLeaveFileForDebug.AutoSize = true;
-      this.checkBoxLeaveFileForDebug.Location = new System.Drawing.Point(220, 380);
-      this.checkBoxLeaveFileForDebug.Name = "checkBoxLeaveFileForDebug";
-      this.checkBoxLeaveFileForDebug.Size = new System.Drawing.Size(15, 14);
-      this.checkBoxLeaveFileForDebug.TabIndex = 42;
-      this.checkBoxLeaveFileForDebug.UseVisualStyleBackColor = true;
-      // 
-      // comboBox1
-      // 
-      this.comboBox1.FormattingEnabled = true;
-      this.comboBox1.Location = new System.Drawing.Point(220, 28);
-      this.comboBox1.Name = "comboBox1";
-      this.comboBox1.Size = new System.Drawing.Size(270, 21);
-      this.comboBox1.TabIndex = 44;
-      // 
-      // label3
-      // 
-      this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(12, 332);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(65, 13);
-      this.label3.TabIndex = 46;
-      this.label3.Text = "DVD Format";
-      // 
-      // radioButtonTvFormatPal
-      // 
-      this.radioButtonTvFormatPal.AutoSize = true;
-      this.radioButtonTvFormatPal.Checked = true;
-      this.radioButtonTvFormatPal.Location = new System.Drawing.Point(220, 332);
-      this.radioButtonTvFormatPal.Name = "radioButtonTvFormatPal";
-      this.radioButtonTvFormatPal.Size = new System.Drawing.Size(45, 17);
-      this.radioButtonTvFormatPal.TabIndex = 1;
-      this.radioButtonTvFormatPal.TabStop = true;
-      this.radioButtonTvFormatPal.Text = "PAL";
-      this.radioButtonTvFormatPal.UseVisualStyleBackColor = true;
-      // 
-      // textBoxDVDBurnExePath
-      // 
-      this.textBoxDVDBurnExePath.Location = new System.Drawing.Point(220, 214);
-      this.textBoxDVDBurnExePath.Name = "textBoxDVDBurnExePath";
-      this.textBoxDVDBurnExePath.Size = new System.Drawing.Size(272, 20);
-      this.textBoxDVDBurnExePath.TabIndex = 47;
-      this.textBoxDVDBurnExePath.Text = "C:\\Program Files\\Windows Resource Kits\\Tools";
-      // 
-      // label4
-      // 
-      this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(12, 400);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(98, 13);
-      this.label4.TabIndex = 49;
-      this.label4.Text = "Dont burn the DVD";
-      // 
-      // checkBoxDontBurnDVD
-      // 
-      this.checkBoxDontBurnDVD.AutoSize = true;
-      this.checkBoxDontBurnDVD.Location = new System.Drawing.Point(220, 400);
-      this.checkBoxDontBurnDVD.Name = "checkBoxDontBurnDVD";
-      this.checkBoxDontBurnDVD.Size = new System.Drawing.Size(15, 14);
-      this.checkBoxDontBurnDVD.TabIndex = 50;
-      this.checkBoxDontBurnDVD.UseVisualStyleBackColor = true;
-      // 
-      // label2
-      // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(14, 162);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(549, 13);
-      this.label2.TabIndex = 52;
-      this.label2.Text = "Please download and install the below file. This is a publicly available download" +
-          " from Microsoft that contains an app";
-      // 
-      // label5
-      // 
-      this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(12, 175);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(244, 13);
-      this.label5.TabIndex = 53;
-      this.label5.Text = " called dvdburn.exe which is required by MyBurner";
-      // 
-      // mpLabel2
-      // 
-      this.mpLabel2.Location = new System.Drawing.Point(12, 217);
-      this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(200, 24);
-      this.mpLabel2.TabIndex = 51;
-      this.mpLabel2.Text = "Select Path to dvdburn.exe ";
-      // 
-      // buttonSelectDvdBurnPathLocation
-      // 
-      this.buttonSelectDvdBurnPathLocation.Location = new System.Drawing.Point(508, 210);
-      this.buttonSelectDvdBurnPathLocation.Name = "buttonSelectDvdBurnPathLocation";
-      this.buttonSelectDvdBurnPathLocation.Size = new System.Drawing.Size(32, 24);
-      this.buttonSelectDvdBurnPathLocation.TabIndex = 48;
-      this.buttonSelectDvdBurnPathLocation.Text = "...";
-      this.buttonSelectDvdBurnPathLocation.UseVisualStyleBackColor = true;
-      this.buttonSelectDvdBurnPathLocation.Click += new System.EventHandler(this.buttonSelectDvdBurnPathLocation_Click);
-      // 
-      // mpLabel1
-      // 
-      this.mpLabel1.Location = new System.Drawing.Point(318, 65);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(222, 29);
-      this.mpLabel1.TabIndex = 38;
-      this.mpLabel1.Text = "Enter in your Burner\'s drive letter. E.g. \"D:\" but without the speechmarks";
-      // 
-      // mpTextBoxBurnerDriver
-      // 
-      this.mpTextBoxBurnerDriver.BorderColor = System.Drawing.Color.Empty;
-      this.mpTextBoxBurnerDriver.Location = new System.Drawing.Point(220, 65);
-      this.mpTextBoxBurnerDriver.Name = "mpTextBoxBurnerDriver";
-      this.mpTextBoxBurnerDriver.Size = new System.Drawing.Size(92, 20);
-      this.mpTextBoxBurnerDriver.TabIndex = 37;
-      // 
-      // label1
-      // 
-      this.label1.Location = new System.Drawing.Point(12, 28);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(80, 24);
-      this.label1.TabIndex = 33;
-      this.label1.Text = "Select Burner Drive";
-      // 
-      // textBoxTempPath
-      // 
-      this.textBoxTempPath.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxTempPath.Enabled = false;
-      this.textBoxTempPath.Location = new System.Drawing.Point(220, 97);
-      this.textBoxTempPath.Name = "textBoxTempPath";
-      this.textBoxTempPath.Size = new System.Drawing.Size(272, 20);
-      this.textBoxTempPath.TabIndex = 34;
-      // 
-      // labelSelectTempPath
-      // 
-      this.labelSelectTempPath.Location = new System.Drawing.Point(12, 97);
-      this.labelSelectTempPath.Name = "labelSelectTempPath";
-      this.labelSelectTempPath.Size = new System.Drawing.Size(96, 24);
-      this.labelSelectTempPath.TabIndex = 35;
-      this.labelSelectTempPath.Text = "Select Temp Path";
-      // 
-      // buttonSelectTempPathLocation
-      // 
-      this.buttonSelectTempPathLocation.Enabled = false;
-      this.buttonSelectTempPathLocation.Location = new System.Drawing.Point(508, 97);
-      this.buttonSelectTempPathLocation.Name = "buttonSelectTempPathLocation";
-      this.buttonSelectTempPathLocation.Size = new System.Drawing.Size(32, 24);
-      this.buttonSelectTempPathLocation.TabIndex = 36;
-      this.buttonSelectTempPathLocation.Text = "...";
-      this.buttonSelectTempPathLocation.UseVisualStyleBackColor = true;
-      this.buttonSelectTempPathLocation.Click += new System.EventHandler(this.buttonSelectTempPathLocation_Click);
       // 
       // buttonOK
       // 
-      this.buttonOK.Location = new System.Drawing.Point(522, 380);
+      this.buttonOK.Location = new System.Drawing.Point(437, 393);
       this.buttonOK.Name = "buttonOK";
       this.buttonOK.Size = new System.Drawing.Size(88, 24);
       this.buttonOK.TabIndex = 2;
@@ -344,145 +204,273 @@ namespace GUIBurner
       this.buttonOK.UseVisualStyleBackColor = true;
       this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
       // 
-      // textBox2
+      // groupBoxDeviceSettings
       // 
-      this.textBox2.Location = new System.Drawing.Point(12, 291);
-      this.textBox2.Name = "textBox2";
-      this.textBox2.Size = new System.Drawing.Size(595, 20);
-      this.textBox2.TabIndex = 55;
-      this.textBox2.Text = "http://www.team-mediaportal.com/files/Download/SystemUtilities/BurnerSupportFiles" +
-          ".rar/";
+      this.groupBoxDeviceSettings.Controls.Add(this.comboBoxDeviceSelection);
+      this.groupBoxDeviceSettings.Controls.Add(this.labelDriveletter);
+      this.groupBoxDeviceSettings.Controls.Add(this.mpTextBoxBurnerDriver);
+      this.groupBoxDeviceSettings.Controls.Add(this.label1);
+      this.groupBoxDeviceSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxDeviceSettings.Location = new System.Drawing.Point(12, 21);
+      this.groupBoxDeviceSettings.Name = "groupBoxDeviceSettings";
+      this.groupBoxDeviceSettings.Size = new System.Drawing.Size(616, 57);
+      this.groupBoxDeviceSettings.TabIndex = 58;
+      this.groupBoxDeviceSettings.TabStop = false;
+      this.groupBoxDeviceSettings.Text = "Device settings";
       // 
-      // label6
+      // comboBoxDeviceSelection
       // 
-      this.label6.AutoSize = true;
-      this.label6.Location = new System.Drawing.Point(12, 121);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(466, 13);
-      this.label6.TabIndex = 56;
-      this.label6.Text = "This is where all the MyBurner temp files will be stored. This may be upto 5 gb f" +
-          "or a complete DVD";
+      this.comboBoxDeviceSelection.Enabled = false;
+      this.comboBoxDeviceSelection.FormattingEnabled = true;
+      this.comboBoxDeviceSelection.Location = new System.Drawing.Point(120, 21);
+      this.comboBoxDeviceSelection.Name = "comboBoxDeviceSelection";
+      this.comboBoxDeviceSelection.Size = new System.Drawing.Size(346, 21);
+      this.comboBoxDeviceSelection.TabIndex = 48;
       // 
-      // label7
+      // labelDriveletter
       // 
-      this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(14, 275);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(381, 13);
-      this.label7.TabIndex = 57;
-      this.label7.Text = "Please download and install the below file. These are files required by MyBurner";
+      this.labelDriveletter.AutoSize = true;
+      this.labelDriveletter.Location = new System.Drawing.Point(499, 24);
+      this.labelDriveletter.Name = "labelDriveletter";
+      this.labelDriveletter.Size = new System.Drawing.Size(61, 13);
+      this.labelDriveletter.TabIndex = 47;
+      this.labelDriveletter.Text = "Drive letter:";
       // 
-      // SetupForm
+      // mpTextBoxBurnerDriver
+      // 
+      this.mpTextBoxBurnerDriver.BorderColor = System.Drawing.Color.Empty;
+      this.mpTextBoxBurnerDriver.Location = new System.Drawing.Point(566, 21);
+      this.mpTextBoxBurnerDriver.Name = "mpTextBoxBurnerDriver";
+      this.mpTextBoxBurnerDriver.Size = new System.Drawing.Size(32, 20);
+      this.mpTextBoxBurnerDriver.TabIndex = 46;
+      // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(15, 24);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(96, 13);
+      this.label1.TabIndex = 45;
+      this.label1.Text = "Select burner drive";
+      // 
+      // buttonCancel
+      // 
+      this.buttonCancel.Location = new System.Drawing.Point(540, 393);
+      this.buttonCancel.Name = "buttonCancel";
+      this.buttonCancel.Size = new System.Drawing.Size(88, 24);
+      this.buttonCancel.TabIndex = 59;
+      this.buttonCancel.Text = "Cancel";
+      this.buttonCancel.UseVisualStyleBackColor = true;
+      this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
+      // 
+      // groupBoxOptions
+      // 
+      this.groupBoxOptions.Controls.Add(this.groupBoxDVDFormat);
+      this.groupBoxOptions.Controls.Add(this.checkBoxDontBurnDVD);
+      this.groupBoxOptions.Controls.Add(this.checkBoxLeaveFileForDebug);
+      this.groupBoxOptions.Controls.Add(this.labelTempHint);
+      this.groupBoxOptions.Controls.Add(this.textBoxTempPath);
+      this.groupBoxOptions.Controls.Add(this.labelSelectTempPath);
+      this.groupBoxOptions.Controls.Add(this.buttonSelectTempPathLocation);
+      this.groupBoxOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxOptions.Location = new System.Drawing.Point(12, 94);
+      this.groupBoxOptions.Name = "groupBoxOptions";
+      this.groupBoxOptions.Size = new System.Drawing.Size(616, 144);
+      this.groupBoxOptions.TabIndex = 60;
+      this.groupBoxOptions.TabStop = false;
+      this.groupBoxOptions.Text = "Options";
+      // 
+      // labelTempHint
+      // 
+      this.labelTempHint.AutoSize = true;
+      this.labelTempHint.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelTempHint.Location = new System.Drawing.Point(120, 55);
+      this.labelTempHint.Name = "labelTempHint";
+      this.labelTempHint.Size = new System.Drawing.Size(469, 13);
+      this.labelTempHint.TabIndex = 60;
+      this.labelTempHint.Text = "All temp files for the burn process will be stored there (This may be up to 5 gb " +
+          "for a complete DVD).";
+      // 
+      // textBoxTempPath
+      // 
+      this.textBoxTempPath.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxTempPath.Enabled = false;
+      this.textBoxTempPath.Location = new System.Drawing.Point(120, 27);
+      this.textBoxTempPath.Name = "textBoxTempPath";
+      this.textBoxTempPath.Size = new System.Drawing.Size(431, 20);
+      this.textBoxTempPath.TabIndex = 57;
+      // 
+      // labelSelectTempPath
+      // 
+      this.labelSelectTempPath.AutoSize = true;
+      this.labelSelectTempPath.Location = new System.Drawing.Point(15, 30);
+      this.labelSelectTempPath.Name = "labelSelectTempPath";
+      this.labelSelectTempPath.Size = new System.Drawing.Size(87, 13);
+      this.labelSelectTempPath.TabIndex = 58;
+      this.labelSelectTempPath.Text = "Select temp path";
+      // 
+      // buttonSelectTempPathLocation
+      // 
+      this.buttonSelectTempPathLocation.Enabled = false;
+      this.buttonSelectTempPathLocation.Location = new System.Drawing.Point(568, 24);
+      this.buttonSelectTempPathLocation.Name = "buttonSelectTempPathLocation";
+      this.buttonSelectTempPathLocation.Size = new System.Drawing.Size(30, 24);
+      this.buttonSelectTempPathLocation.TabIndex = 59;
+      this.buttonSelectTempPathLocation.Text = "...";
+      this.buttonSelectTempPathLocation.UseVisualStyleBackColor = true;
+      this.buttonSelectTempPathLocation.Click += new System.EventHandler(this.buttonSelectTempPathLocation_Click);
+      // 
+      // checkBoxDontBurnDVD
+      // 
+      this.checkBoxDontBurnDVD.AutoSize = true;
+      this.checkBoxDontBurnDVD.Location = new System.Drawing.Point(120, 114);
+      this.checkBoxDontBurnDVD.Name = "checkBoxDontBurnDVD";
+      this.checkBoxDontBurnDVD.Size = new System.Drawing.Size(126, 17);
+      this.checkBoxDontBurnDVD.TabIndex = 67;
+      this.checkBoxDontBurnDVD.Text = "Do not burn the DVD";
+      this.checkBoxDontBurnDVD.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxLeaveFileForDebug
+      // 
+      this.checkBoxLeaveFileForDebug.AutoSize = true;
+      this.checkBoxLeaveFileForDebug.Location = new System.Drawing.Point(120, 91);
+      this.checkBoxLeaveFileForDebug.Name = "checkBoxLeaveFileForDebug";
+      this.checkBoxLeaveFileForDebug.Size = new System.Drawing.Size(178, 17);
+      this.checkBoxLeaveFileForDebug.TabIndex = 63;
+      this.checkBoxLeaveFileForDebug.Text = "Keep Temp Files For Debugging";
+      this.checkBoxLeaveFileForDebug.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxSupportFiles
+      // 
+      this.groupBoxSupportFiles.Controls.Add(this.linkLabelCygwinDownload);
+      this.groupBoxSupportFiles.Controls.Add(this.linkLabelDVDBurnDownload);
+      this.groupBoxSupportFiles.Controls.Add(this.labeldvdburnPath);
+      this.groupBoxSupportFiles.Controls.Add(this.buttonSelectDvdBurnPathLocation);
+      this.groupBoxSupportFiles.Controls.Add(this.textBoxDVDBurnExePath);
+      this.groupBoxSupportFiles.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxSupportFiles.Location = new System.Drawing.Point(12, 253);
+      this.groupBoxSupportFiles.Name = "groupBoxSupportFiles";
+      this.groupBoxSupportFiles.Size = new System.Drawing.Size(616, 125);
+      this.groupBoxSupportFiles.TabIndex = 61;
+      this.groupBoxSupportFiles.TabStop = false;
+      this.groupBoxSupportFiles.Text = "Necessary support files";
+      // 
+      // labeldvdburnPath
+      // 
+      this.labeldvdburnPath.AutoSize = true;
+      this.labeldvdburnPath.Location = new System.Drawing.Point(18, 92);
+      this.labeldvdburnPath.Name = "labeldvdburnPath";
+      this.labeldvdburnPath.Size = new System.Drawing.Size(138, 13);
+      this.labeldvdburnPath.TabIndex = 61;
+      this.labeldvdburnPath.Text = "Select path to dvdburn.exe ";
+      // 
+      // buttonSelectDvdBurnPathLocation
+      // 
+      this.buttonSelectDvdBurnPathLocation.Location = new System.Drawing.Point(568, 86);
+      this.buttonSelectDvdBurnPathLocation.Name = "buttonSelectDvdBurnPathLocation";
+      this.buttonSelectDvdBurnPathLocation.Size = new System.Drawing.Size(30, 24);
+      this.buttonSelectDvdBurnPathLocation.TabIndex = 60;
+      this.buttonSelectDvdBurnPathLocation.Text = "...";
+      this.buttonSelectDvdBurnPathLocation.UseVisualStyleBackColor = true;
+      this.buttonSelectDvdBurnPathLocation.Click += new System.EventHandler(this.buttonSelectDvdBurnPathLocation_Click);
+      // 
+      // textBoxDVDBurnExePath
+      // 
+      this.textBoxDVDBurnExePath.Location = new System.Drawing.Point(171, 89);
+      this.textBoxDVDBurnExePath.Name = "textBoxDVDBurnExePath";
+      this.textBoxDVDBurnExePath.Size = new System.Drawing.Size(380, 20);
+      this.textBoxDVDBurnExePath.TabIndex = 59;
+      this.textBoxDVDBurnExePath.Text = "C:\\Program Files\\Windows Resource Kits\\Tools";
+      // 
+      // linkLabelDVDBurnDownload
+      // 
+      this.linkLabelDVDBurnDownload.AutoSize = true;
+      this.linkLabelDVDBurnDownload.LinkArea = new System.Windows.Forms.LinkArea(28, 9);
+      this.linkLabelDVDBurnDownload.Location = new System.Drawing.Point(18, 66);
+      this.linkLabelDVDBurnDownload.Name = "linkLabelDVDBurnDownload";
+      this.linkLabelDVDBurnDownload.Size = new System.Drawing.Size(378, 17);
+      this.linkLabelDVDBurnDownload.TabIndex = 66;
+      this.linkLabelDVDBurnDownload.TabStop = true;
+      this.linkLabelDVDBurnDownload.Text = "Please download and install this file from Microsoft containing dvdburn.exe";
+      this.linkLabelDVDBurnDownload.UseCompatibleTextRendering = true;
+      this.linkLabelDVDBurnDownload.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDVDBurnDownload_LinkClicked);
+      // 
+      // linkLabelCygwinDownload
+      // 
+      this.linkLabelCygwinDownload.AutoSize = true;
+      this.linkLabelCygwinDownload.LinkArea = new System.Windows.Forms.LinkArea(16, 19);
+      this.linkLabelCygwinDownload.Location = new System.Drawing.Point(18, 28);
+      this.linkLabelCygwinDownload.Name = "linkLabelCygwinDownload";
+      this.linkLabelCygwinDownload.Size = new System.Drawing.Size(443, 17);
+      this.linkLabelCygwinDownload.TabIndex = 67;
+      this.linkLabelCygwinDownload.TabStop = true;
+      this.linkLabelCygwinDownload.Text = "Please download this cygwin package and put its folder into MediaPortal\'s root di" +
+          "rectory";
+      this.linkLabelCygwinDownload.UseCompatibleTextRendering = true;
+      this.linkLabelCygwinDownload.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelCygwinDownload_LinkClicked);
+      // 
+      // groupBoxDVDFormat
+      // 
+      this.groupBoxDVDFormat.Controls.Add(this.radioButtonTvFormatNtsc);
+      this.groupBoxDVDFormat.Controls.Add(this.radioButtonTvFormatPal);
+      this.groupBoxDVDFormat.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxDVDFormat.Location = new System.Drawing.Point(410, 86);
+      this.groupBoxDVDFormat.Name = "groupBoxDVDFormat";
+      this.groupBoxDVDFormat.Size = new System.Drawing.Size(141, 45);
+      this.groupBoxDVDFormat.TabIndex = 68;
+      this.groupBoxDVDFormat.TabStop = false;
+      this.groupBoxDVDFormat.Text = "DVD Format";
+      // 
+      // radioButtonTvFormatNtsc
+      // 
+      this.radioButtonTvFormatNtsc.AutoSize = true;
+      this.radioButtonTvFormatNtsc.Location = new System.Drawing.Point(80, 19);
+      this.radioButtonTvFormatNtsc.Name = "radioButtonTvFormatNtsc";
+      this.radioButtonTvFormatNtsc.Size = new System.Drawing.Size(54, 17);
+      this.radioButtonTvFormatNtsc.TabIndex = 64;
+      this.radioButtonTvFormatNtsc.TabStop = true;
+      this.radioButtonTvFormatNtsc.Text = "NTSC";
+      this.radioButtonTvFormatNtsc.UseVisualStyleBackColor = true;
+      // 
+      // radioButtonTvFormatPal
+      // 
+      this.radioButtonTvFormatPal.AutoSize = true;
+      this.radioButtonTvFormatPal.Checked = true;
+      this.radioButtonTvFormatPal.Location = new System.Drawing.Point(15, 19);
+      this.radioButtonTvFormatPal.Name = "radioButtonTvFormatPal";
+      this.radioButtonTvFormatPal.Size = new System.Drawing.Size(45, 17);
+      this.radioButtonTvFormatPal.TabIndex = 63;
+      this.radioButtonTvFormatPal.TabStop = true;
+      this.radioButtonTvFormatPal.Text = "PAL";
+      this.radioButtonTvFormatPal.UseVisualStyleBackColor = true;
+      // 
+      // BurnerSetupForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(640, 427);
-      this.Controls.Add(this.label7);
-      this.Controls.Add(this.label6);
-      this.Controls.Add(this.textBox2);
-      this.Controls.Add(this.label5);
-      this.Controls.Add(this.label2);
-      this.Controls.Add(this.mpLabel2);
-      this.Controls.Add(this.checkBoxDontBurnDVD);
-      this.Controls.Add(this.label4);
-      this.Controls.Add(this.buttonSelectDvdBurnPathLocation);
-      this.Controls.Add(this.textBoxDVDBurnExePath);
-      this.Controls.Add(this.radioButtonTvFormatNtsc);
-      this.Controls.Add(this.label3);
-      this.Controls.Add(this.radioButtonTvFormatPal);
-      this.Controls.Add(this.comboBox1);
-      this.Controls.Add(this.label15);
-      this.Controls.Add(this.checkBoxLeaveFileForDebug);
-      this.Controls.Add(this.textBox1);
-      this.Controls.Add(this.mpLabel1);
-      this.Controls.Add(this.mpTextBoxBurnerDriver);
-      this.Controls.Add(this.label1);
-      this.Controls.Add(this.textBoxTempPath);
-      this.Controls.Add(this.labelSelectTempPath);
-      this.Controls.Add(this.buttonSelectTempPathLocation);
+      this.ClientSize = new System.Drawing.Size(640, 429);
+      this.Controls.Add(this.groupBoxSupportFiles);
+      this.Controls.Add(this.groupBoxOptions);
+      this.Controls.Add(this.buttonCancel);
+      this.Controls.Add(this.groupBoxDeviceSettings);
       this.Controls.Add(this.buttonOK);
-      this.Name = "SetupForm";
-      this.Text = "My Burner Setup";
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+      this.Name = "BurnerSetupForm";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+      this.Text = "My Burner setup";
+      this.groupBoxDeviceSettings.ResumeLayout(false);
+      this.groupBoxDeviceSettings.PerformLayout();
+      this.groupBoxOptions.ResumeLayout(false);
+      this.groupBoxOptions.PerformLayout();
+      this.groupBoxSupportFiles.ResumeLayout(false);
+      this.groupBoxSupportFiles.PerformLayout();
+      this.groupBoxDVDFormat.ResumeLayout(false);
+      this.groupBoxDVDFormat.PerformLayout();
       this.ResumeLayout(false);
-      this.PerformLayout();
 
     }
-    #endregion
-
-    #region plugin vars
-
-    public string PluginName()
-    {
-      return "My Burner";
-    }
-
-    public string Description()
-    {
-      return "Burn CD\'s and DVD\'s in MediaPortal";
-    }
-
-    public string Author()
-    {
-      return "EgonSpenglerUk improving Gucky62s work";
-    }
-
-    public void ShowPlugin()
-    {
-      ShowDialog();
-    }
-
-    public bool DefaultEnabled()
-    {
-      return false;
-    }
-
-    public bool CanEnable()
-    {
-      return true;
-    }
-
-    public bool HasSetup()
-    {
-      return true;
-    }
-
-    public int GetWindowId()
-    {
-      return 760;
-    }
-
-    /// <summary>
-    /// If the plugin should have its own button on the home screen then it
-    /// should return true to this method, otherwise if it should not be on home
-    /// it should return false
-    /// </summary>
-    /// <param name="strButtonText">text the button should have</param>
-    /// <param name="strButtonImage">image for the button, or empty for default</param>
-    /// <param name="strButtonImageFocus">image for the button, or empty for default</param>
-    /// <param name="strPictureImage">subpicture for the button or empty for none</param>
-    /// <returns>true  : plugin needs its own button on home
-    ///          false : plugin does not need its own button on home</returns>
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
-    {
-      strButtonText = GUILocalizeStrings.Get(2100);
-      strButtonImage = "";
-      strButtonImageFocus = "";
-      strPictureImage = "";
-      return true;
-    }
-
-    #endregion
-
-    #region IShowPlugin Members
-
-    public bool ShowDefaultHome()
-    {
-      return false;
-    }
-
     #endregion
 
     #region Private Methods
-
     private void GetRecorder()
     {
       //Fill The Combobox with available drives
@@ -492,8 +480,8 @@ namespace GUIBurner
       {
         CDBurner.BurnerDrive = CDBurner.RecorderDrives[i].ToString();
         name = CDBurner.Vendor + " " + CDBurner.ProductID + " " + CDBurner.Revision;
-        comboBox1.Items.Add(name);
-        comboBox1.SelectedIndex = 0;
+        comboBoxDeviceSelection.Items.Add(name);
+        comboBoxDeviceSelection.SelectedIndex = 0;
       }
     }
 
@@ -542,41 +530,34 @@ namespace GUIBurner
       }
     }
 
-    private void LoadSettings()
-    {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-      {
-        textBoxTempPath.Text = xmlreader.GetValueAsString("burner", "temp_folder", Path.GetDirectoryName(Path.GetTempPath()));
-        textBoxDVDBurnExePath.Text = xmlreader.GetValueAsString("burner", "dvdburnexe_folder", "C:\\Program Files\\Windows Resource Kits\\Tools");
 
-        selIndx = xmlreader.GetValueAsInt("burner", "recorder", 0);
-        mpTextBoxBurnerDriver.Text = xmlreader.GetValueAsString("burner", "recorderdrive", "D:");
-        
-        radioButtonTvFormatPal.Checked = xmlreader.GetValueAsBool("burner", "PalTvFormat", true);
-        radioButtonTvFormatNtsc.Checked = !radioButtonTvFormatPal.Checked;
-
-        checkBoxLeaveFileForDebug.Checked = xmlreader.GetValueAsBool("burner", "leavedebugfiles", true);
-        checkBoxDontBurnDVD.Checked = xmlreader.GetValueAsBool("burner", "dummyburn", false);
-      }
-    }
-
-    private void SaveSettings()
-    {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-      {
-        xmlwriter.SetValue("burner", "temp_folder", textBoxTempPath.Text);
-        xmlwriter.SetValue("burner", "dvdburnexe_folder", textBoxDVDBurnExePath.Text);
-
-        xmlwriter.SetValue("burner", "recorder", comboBox1.SelectedIndex);
-        xmlwriter.SetValue("burner", "recorderdrive", mpTextBoxBurnerDriver.Text);
-
-        xmlwriter.SetValueAsBool("burner", "PalTvFormat", radioButtonTvFormatPal.Checked);
-        
-        xmlwriter.SetValueAsBool("burner", "leavedebugfiles", checkBoxLeaveFileForDebug.Checked);
-        xmlwriter.SetValueAsBool("burner", "dummyburn", checkBoxDontBurnDVD.Checked);
-      }
-    }
     #endregion
 
+    private void linkLabelDVDBurnDownload_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      try
+      {
+        Help.ShowHelp(this, @"http://www.microsoft.com/downloads/details.aspx?FamilyID=9D467A69-57FF-4AE7-96EE-B18C4790CFFD&displaylang=en");
+      }
+      catch
+      {
+      }
+    }
+
+    private void linkLabelCygwinDownload_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      try
+      {
+        Help.ShowHelp(this, @"http://www.team-mediaportal.com/files/Download/SystemUtilities/BurnerSupportFiles.rar/");
+      }
+      catch
+      {
+      }
+    }
+
+    private void buttonCancel_Click(object sender, EventArgs e)
+    {
+      this.Close();
+    }
   }
 }

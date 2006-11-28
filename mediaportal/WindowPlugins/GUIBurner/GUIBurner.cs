@@ -1,5 +1,4 @@
 #region Copyright (C) 2006 Team MediaPortal
-
 /* 
  *      Copyright (C) 2006 Team MediaPortal
  *      http://www.team-mediaportal.com
@@ -20,21 +19,21 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-
 #endregion
 
-
-#region Usings
 using System;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.IO;
-using System.Threading;
-using System.Globalization;
 using System.Collections;
+using System.Diagnostics;
+using System.IO;
+using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
+using System.Threading;
+using System.Text;
+using System.Windows.Forms;
+
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
@@ -44,11 +43,8 @@ using MediaPortal.Playlists;
 using MediaPortal.Video.Database;
 using MediaPortal.Music.Database;
 using MediaPortal.TagReader;
+
 using Core.Util;
-using System.Diagnostics;
-#endregion
-
-
 
 
 namespace MediaPortal.GUI.GUIBurner
@@ -56,7 +52,7 @@ namespace MediaPortal.GUI.GUIBurner
   /// <summary>
   /// Summary description for GUIBurner.
   /// </summary>
-  public class GUIBurner : GUIWindow
+  public class GUIBurner : GUIWindow, ISetupForm, IShowPlugin
   {
     #region Private Enumerations
     enum Controls
@@ -1440,6 +1436,65 @@ namespace MediaPortal.GUI.GUIBurner
       //XPBurn.XPBurnCD CDBurner = new XPBurn.XPBurnCD();
 
       DeleteTemporaryWavFiles();
+    }
+    #endregion
+
+    #region ISetupForm Members
+    public string PluginName()
+    {
+      return "My Burner";
+    }
+
+    public string Description()
+    {
+      return @"Burn CD and DVD in MediaPortal";
+    }
+
+    public string Author()
+    {
+      return "Gucky62/EgonSpenglerUk";
+    }
+
+    public void ShowPlugin()
+    {
+      Form BurnerSetup = new BurnerSetupForm();
+      BurnerSetup.ShowDialog();
+    }
+
+    public bool DefaultEnabled()
+    {
+      return false;
+    }
+
+    public bool CanEnable()
+    {
+      return true;
+    }
+
+    public bool HasSetup()
+    {
+      return true;
+    }
+
+    public int GetWindowId()
+    {
+      return 760;
+    }
+
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    {
+      strButtonText = GUILocalizeStrings.Get(2100);
+      strButtonImage = "";
+      strButtonImageFocus = "";
+      strPictureImage = "";
+      return true;
+    }
+    #endregion
+
+    #region IShowPlugin Members
+    public bool ShowDefaultHome()
+    {
+      return false;
     }
     #endregion
   }
