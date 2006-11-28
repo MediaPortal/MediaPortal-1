@@ -23,8 +23,6 @@
 #include <time.h>
 #include "MhwParser.h"
 
-#define PID_MHW1  0xd2
-#define PID_MHW2  0xd3
 
 extern void LogDebug(const char *fmt, ...) ;
 CMhwParser::CMhwParser(void)
@@ -86,7 +84,7 @@ void CMhwParser::Reset()
 }
 
 
-void CMhwParser::OnTsPacket(byte* tsPacket)
+void CMhwParser::OnTsPacket(CTsHeader& header,byte* tsPacket)
 {
 	if (m_bGrabbing==false) return;
   int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
@@ -96,7 +94,7 @@ void CMhwParser::OnTsPacket(byte* tsPacket)
 	for (int i=0; i < (int)m_vecDecoders.size();++i)
 	{
 		CSectionDecoder* pDecoder = m_vecDecoders[i];
-		pDecoder->OnTsPacket(tsPacket);
+		pDecoder->OnTsPacket(header,tsPacket);
 	}
 }
 

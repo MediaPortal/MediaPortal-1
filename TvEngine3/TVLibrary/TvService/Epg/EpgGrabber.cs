@@ -184,11 +184,11 @@ namespace TvService
         {
           int index = transponder.Index;
           allChecked++;
+          if (allChecked > transponder.Channels.Count) return;
           transponder.Index++;
           if (transponder.Index >= transponder.Channels.Count)
             transponder.Index = 0;
           if (transponder.Index >= transponder.Channels.Count) return;
-
           //check if its time to grab the epg for this channel
           TimeSpan ts = DateTime.Now - transponder.Channels[transponder.Index].LastGrabTime;
           if (ts.TotalHours < EpgReGrabAfter)

@@ -33,6 +33,7 @@ public:
   ~CSectionDecoder(void);
 	void SetCallBack(ISectionCallback* callback);
 	void OnTsPacket(byte* tsPacket);
+	void OnTsPacket(CTsHeader& header,byte* tsPacket);
   void SetPid(int pid);
   int  GetPid();
   void SetTableId(int tableId);

@@ -22,7 +22,6 @@
 #include "EpgParser.h"
 #pragma warning(disable : 4995)
 
-#define PID_EPG 0x12
 
 extern void LogDebug(const char *fmt, ...) ;
 CEpgParser::CEpgParser(void)
@@ -112,17 +111,15 @@ void  CEpgParser::GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageInde
 }
 
 
-void CEpgParser::OnTsPacket(byte* tsPacket)
+void CEpgParser::OnTsPacket(CTsHeader& header, byte* tsPacket)
 {
 	if (m_bGrabbing==false) return;
-  int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
-  if (pid!=PID_EPG) return;
 
 	CEnterCriticalSection enter(m_section);
 	for (int i=0; i < (int)m_vecDecoders.size();++i)
 	{
 		CSectionDecoder* pDecoder = m_vecDecoders[i];
-		pDecoder->OnTsPacket(tsPacket);
+		pDecoder->OnTsPacket(header,tsPacket);
 	}
 }
 

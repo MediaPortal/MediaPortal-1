@@ -28,7 +28,6 @@
 #include <initguid.h>
 
 #include "EpgScanner.h"
-#include "TsHeader.h"
 
 
 extern void LogDebug(const char *fmt, ...) ;
@@ -285,10 +284,15 @@ void CEpgScanner::OnTsPacket(byte* tsPacket)
 
 		if (m_bGrabbing)
 		{
-      {//criticalsection
+      int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
+      if (pid!=PID_EPG && pid!=PID_MHW1 && pid != PID_MHW2) return;
+      {
+        m_header.Decode(tsPacket);
 			  CEnterCriticalSection enter(m_section);
-			  m_epgParser.OnTsPacket(tsPacket);
-			  m_mhwParser.OnTsPacket(tsPacket);
+        if (pid==PID_EPG)
+			    m_epgParser.OnTsPacket(m_header,tsPacket);
+        else
+			    m_mhwParser.OnTsPacket(m_header,tsPacket);
 			  if (m_epgParser.IsEPGReady() && m_mhwParser.IsEPGReady())
 			  {
 	        LogDebug("epg: epg received");

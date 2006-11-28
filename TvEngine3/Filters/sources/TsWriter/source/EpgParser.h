@@ -27,6 +27,9 @@
 #include "TsHeader.h"
 #include <vector>
 using namespace std;
+
+#define PID_EPG 0x12
+
 class CEpgParser :  public ISectionCallback
 {
 public:
@@ -42,7 +45,7 @@ public:
 	void	GetEPGEvent( ULONG channel,  ULONG event,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** strgenre    );
 	void    GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language, char** eventText, char** eventDescription    );
 
-	void	OnTsPacket(byte* tsPacket);
+	void	OnTsPacket(CTsHeader& header,byte* tsPacket);
 	void  OnNewSection(int pid, int tableId, CSection& section); 
 
 

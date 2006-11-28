@@ -23,6 +23,7 @@
 #include "mhwparser.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
+#include "TsHeader.h"
 
 using namespace Mediaportal;
 
@@ -98,4 +99,5 @@ protected:
 private:
 	bool m_bGrabbing;
 	CCriticalSection m_section;
+  CTsHeader m_header;
 };

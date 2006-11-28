@@ -28,6 +28,8 @@
 #include <vector>
 using namespace std;
 
+#define PID_MHW1  0xd2
+#define PID_MHW2  0xd3
 class CMhwParser:public ISectionCallback
 {
 public:
@@ -43,7 +45,7 @@ public:
 	void GetSummary(WORD programId, char** summary);
 	void GetTheme(WORD themeId, char** theme);
 
-	void	OnTsPacket(byte* tsPacket);
+	void	OnTsPacket(CTsHeader& header,byte* tsPacket);
 	void  OnNewSection(int pid, int tableId, CSection& section);
 private:
   vector<CSectionDecoder*> m_vecDecoders;

@@ -80,19 +80,19 @@ void CSectionDecoder::OnTsPacket(byte* tsPacket)
   if (tsPacket==NULL) return;
 
   m_header.Decode(tsPacket);
-  if (m_header.Pid != m_pid) return;
-  /*
-  if (m_header.TransportError) 
-  {
-    m_section.Reset();
-    return;
-  }*/
+  OnTsPacket(m_header,tsPacket);
+}
+
+void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
+{
+  if (m_tableId < 0 || m_pid < 0) return;
+  if (header.Pid != m_pid) return;
 
 	if (m_bLog)
-		LogDebug("pid:%03.3x table id:%03.3x payloadunit start:%x start:%d %x",m_pid,m_tableId,(int)m_header.PayloadUnitStart,m_header.PayLoadStart, tsPacket[m_header.PayLoadStart]);
- 	if (m_header.PayloadUnitStart)
+		LogDebug("pid:%03.3x table id:%03.3x payloadunit start:%x start:%d %x",m_pid,m_tableId,(int)header.PayloadUnitStart,header.PayLoadStart, tsPacket[header.PayLoadStart]);
+ 	if (header.PayloadUnitStart)
 	{
-		int start=m_header.PayLoadStart;
+		int start=header.PayLoadStart;
     if (m_section.BufferPos > 0 && m_section.SectionLength > 0 && start > 5)
 		{
       int len=start-5;
@@ -132,7 +132,7 @@ void CSectionDecoder::OnTsPacket(byte* tsPacket)
 		  //int len = TS_PACKET_LEN-8;
       m_section.SectionPos=0;
       m_section.BufferPos=0;
-		  m_iContinuityCounter=m_header.ContinuityCounter;
+		  m_iContinuityCounter=header.ContinuityCounter;
 
       int len=section_length+3;
       if (len > 188-start) len=188-start;
@@ -156,7 +156,7 @@ void CSectionDecoder::OnTsPacket(byte* tsPacket)
 	else
 	{
 		if (m_section.BufferPos==0) return;//wait for payloadunit start...
-		int start=m_header.PayLoadStart;
+		int start=header.PayLoadStart;
     int len=188-start;
 		if (m_section.BufferPos+len>=MAX_SECTION_LENGTH)
 		{

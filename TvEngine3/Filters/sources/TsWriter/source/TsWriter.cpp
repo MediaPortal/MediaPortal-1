@@ -483,71 +483,18 @@ BOOL APIENTRY DllMain(HANDLE hModule, DWORD  dwReason, LPVOID lpReserved)
 
 void CMpTs::AnalyzeTsPacket(byte* tsPacket)
 {
-	/*
-	CTsHeader header(tsPacket);
-	if (header.Pid==0||header.Pid==0x10||header.Pid==0x11||header.Pid==0x12||header.Pid==0xd2||header.Pid==0xd3)
-	{
-		DumpTs(tsPacket);
-	}*/
 	try
 	{
 		m_pVideoAnalyzer->OnTsPacket(tsPacket);
-	}
-	catch(...)
-	{
-		LogDebug("exception in video analyzer");
-	}
-
-	try
-	{
 		m_pChannelScanner->OnTsPacket(tsPacket);
-	}
-	catch(...)
-	{
-		LogDebug("exception in channel scanner");
-	}
-
-	try
-	{
 		m_pEpgScanner->OnTsPacket(tsPacket);
-	}
-	catch(...)
-	{
-		LogDebug("exception in epg scanner");
-	}
-	
-	try
-	{
 		m_pPmtGrabber->OnTsPacket(tsPacket);
-	}
-	catch(...)
-	{
-		LogDebug("exception in pmt grabber");
-	}
-	try
-	{
 		m_pRecorder->OnTsPacket(tsPacket);
-	}
-	catch(...)
-	{
-		LogDebug("exception in recorder");
-	}
-	try
-	{
 		m_pTimeShifting->OnTsPacket(tsPacket);
-	}
-	catch(...)
-	{
-		LogDebug("exception in timeshifter");
-	}
-	try
-	{
 		m_pTeletextGrabber->OnTsPacket(tsPacket);
 	}
 	catch(...)
 	{
-		LogDebug("exception in teletext grabber");
+		LogDebug("exception in AnalyzeTsPacket");
 	}
-	
-	
 }
