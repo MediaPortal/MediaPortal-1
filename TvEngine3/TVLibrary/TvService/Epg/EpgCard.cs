@@ -89,7 +89,7 @@ namespace TvService
       _grabStartTime = DateTime.MinValue;
       _state = EpgState.Idle;
       _currentCardId = -1;
-      _epgTimer.Interval = 1000;
+      _epgTimer.Interval = 30000;
       _epgTimer.Elapsed += new System.Timers.ElapsedEventHandler(_epgTimer_Elapsed);
     }
     #endregion
@@ -621,6 +621,7 @@ namespace TvService
         _currentCardId = -1;
         _state = EpgState.Idle;
         _currentCardId = -1;
+        Gentle.Common.CacheManager.Clear();
       }
     }
 

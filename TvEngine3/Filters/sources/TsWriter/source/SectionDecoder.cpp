@@ -81,11 +81,12 @@ void CSectionDecoder::OnTsPacket(byte* tsPacket)
 
   m_header.Decode(tsPacket);
   if (m_header.Pid != m_pid) return;
+  /*
   if (m_header.TransportError) 
   {
     m_section.Reset();
     return;
-  }
+  }*/
 
 	if (m_bLog)
 		LogDebug("pid:%03.3x table id:%03.3x payloadunit start:%x start:%d %x",m_pid,m_tableId,(int)m_header.PayloadUnitStart,m_header.PayLoadStart, tsPacket[m_header.PayLoadStart]);
@@ -193,20 +194,25 @@ void CSectionDecoder::ProcessSection()
     return;
   }
   m_headerSection.Decode(m_section.Data);
-  if (m_section.Data[m_headerSection.PayLoadStart]==m_tableId)
+  int start=m_headerSection.PayLoadStart;
+  if (m_section.Data[start]==m_tableId)
   {
-		if (m_bLog)
-				LogDebug("pid:%03.3x got %d %d %d",m_pid,m_section.BufferPos,m_section.SectionPos,m_section.SectionLength);
+		int section_length = ((m_section.Data[start+1]& 0xF)<<8) + m_section.Data[start+2];
+    if (section_length>0)
+    {
+      DWORD crc=crc32((char*)&m_section.Data[m_headerSection.PayLoadStart],section_length+3);
+      if (crc==0)
+      {
+		    if (m_bLog)
+				    LogDebug("pid:%03.3x got %d %d %d",m_pid,m_section.BufferPos,m_section.SectionPos,m_section.SectionLength);
 
-	  OnNewSection(m_section);
-	  if (m_pCallback!=NULL)
-	  {
-		  m_pCallback->OnNewSection(m_pid, m_tableId, m_section);
-	  }
-  }
-  else
-  {
-    int x=123;
+	      OnNewSection(m_section);
+	      if (m_pCallback!=NULL)
+	      {
+		      m_pCallback->OnNewSection(m_pid, m_tableId, m_section);
+	      }
+      }
+    }
   }
 	m_section.Reset();
 }

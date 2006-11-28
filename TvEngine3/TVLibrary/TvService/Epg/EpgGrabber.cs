@@ -65,7 +65,7 @@ namespace TvService
     public EpgGrabber(TVController controller)
     {
       _tvController = controller;
-      _epgTimer.Interval = 1000;
+      _epgTimer.Interval = 30000;
       _epgTimer.Elapsed += new System.Timers.ElapsedEventHandler(_epgTimer_Elapsed);
     }
     #endregion

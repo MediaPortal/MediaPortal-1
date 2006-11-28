@@ -65,16 +65,17 @@ void DumpTs(byte* tspacket)
 	fwrite(tspacket,1,188,fp);
 	fclose(fp);
 }
+	
+static char logbuffer[2000]; 
 void LogDebug(const char *fmt, ...) 
 {
-#ifndef DEBUG
+#ifdef DEBUG
 	va_list ap;
 	va_start(ap,fmt);
 
-	char buffer[1000]; 
 	int tmp;
 	va_start(ap,fmt);
-	tmp=vsprintf(buffer, fmt, ap);
+	tmp=vsprintf(logbuffer, fmt, ap);
 	va_end(ap); 
 
   TCHAR folder[MAX_PATH];
@@ -89,8 +90,9 @@ void LogDebug(const char *fmt, ...)
 		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
 			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
 			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
-			buffer);
+			logbuffer);
 		fclose(fp);
+    ::OutputDebugStringA(logbuffer);::OutputDebugStringA("\n");
 	}
 #endif
 };

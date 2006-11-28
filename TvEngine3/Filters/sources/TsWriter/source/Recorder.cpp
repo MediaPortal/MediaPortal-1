@@ -49,9 +49,9 @@ CRecorder::~CRecorder(void)
 void CRecorder::OnTsPacket(byte* tsPacket)
 {
 	
-	CEnterCriticalSection enter(m_section);
 	if (m_bRecording)
 	{
+	  CEnterCriticalSection enter(m_section);
     if (m_timeShiftMode==ProgramStream)
     {
 		  m_multiPlexer.OnTsPacket(tsPacket);
@@ -185,7 +185,7 @@ void CRecorder::WriteTs(byte* tsPacket)
 {
 	if (!m_bRecording) return;
 	m_tsHeader.Decode(tsPacket);
-	if (m_tsHeader.TransportError) return;
+	//if (m_tsHeader.TransportError) return;
   if (m_tsHeader.Pid==0)
   {
     //PAT

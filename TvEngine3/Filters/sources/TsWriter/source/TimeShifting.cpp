@@ -132,10 +132,10 @@ CTimeShifting::~CTimeShifting(void)
 
 void CTimeShifting::OnTsPacket(byte* tsPacket)
 {
-	CEnterCriticalSection enter(m_section);
   if (m_bPaused) return;
 	if (m_bTimeShifting)
 	{
+	  CEnterCriticalSection enter(m_section);
     if (m_timeShiftMode==ProgramStream)
     {
 		  m_multiPlexer.OnTsPacket(tsPacket);
@@ -576,8 +576,8 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 	if (m_pcrPid<0 || m_vecPids.size()==0|| m_pmtPid<0) return;
 
   m_tsHeader.Decode(tsPacket);
-	if (m_tsHeader.TransportError) return;
-	if (m_tsHeader.TScrambling!=0) return;
+	//if (m_tsHeader.TransportError) return;
+	//if (m_tsHeader.TScrambling!=0) return;
   if (m_iPacketCounter>=100)
   {
     WriteFakePAT();

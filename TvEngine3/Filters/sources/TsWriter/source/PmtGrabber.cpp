@@ -76,9 +76,8 @@ void CPmtGrabber::OnTsPacket(byte* tsPacket)
 {
 	if (m_pCallback==NULL) return;
 	if (GetPid()<=0) return;
-	
-  m_tsHeader.Decode(tsPacket);
-  if (m_tsHeader.Pid != GetPid()) return;
+  int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
+  if (pid != GetPid()) return;
  // LogDebug(" got tspacket pid:%x", GetPid());
 	CEnterCriticalSection enter(m_section);
 	CSectionDecoder::OnTsPacket(tsPacket);
