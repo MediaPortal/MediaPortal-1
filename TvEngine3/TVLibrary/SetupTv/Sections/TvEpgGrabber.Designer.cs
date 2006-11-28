@@ -86,7 +86,7 @@ namespace SetupTv.Sections
             this.columnHeader2});
       this.mpListView2.Location = new System.Drawing.Point(244, 41);
       this.mpListView2.Name = "mpListView2";
-      this.mpListView2.Size = new System.Drawing.Size(205, 262);
+      this.mpListView2.Size = new System.Drawing.Size(205, 306);
       this.mpListView2.TabIndex = 3;
       this.mpListView2.UseCompatibleStateImageBehavior = false;
       this.mpListView2.View = System.Windows.Forms.View.Details;
@@ -102,13 +102,13 @@ namespace SetupTv.Sections
       this.mpLabel2.AutoSize = true;
       this.mpLabel2.Location = new System.Drawing.Point(244, 15);
       this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(63, 13);
+      this.mpLabel2.Size = new System.Drawing.Size(183, 13);
       this.mpLabel2.TabIndex = 4;
-      this.mpLabel2.Text = "Languages:";
+      this.mpLabel2.Text = "Grab epg for the following languages:";
       // 
       // mpButtonAll
       // 
-      this.mpButtonAll.Location = new System.Drawing.Point(244, 309);
+      this.mpButtonAll.Location = new System.Drawing.Point(293, 353);
       this.mpButtonAll.Name = "mpButtonAll";
       this.mpButtonAll.Size = new System.Drawing.Size(75, 23);
       this.mpButtonAll.TabIndex = 5;
@@ -118,7 +118,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonNone
       // 
-      this.mpButtonNone.Location = new System.Drawing.Point(374, 309);
+      this.mpButtonNone.Location = new System.Drawing.Point(374, 353);
       this.mpButtonNone.Name = "mpButtonNone";
       this.mpButtonNone.Size = new System.Drawing.Size(75, 23);
       this.mpButtonNone.TabIndex = 6;
@@ -128,7 +128,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonAllChannels
       // 
-      this.mpButtonAllChannels.Location = new System.Drawing.Point(17, 353);
+      this.mpButtonAllChannels.Location = new System.Drawing.Point(66, 353);
       this.mpButtonAllChannels.Name = "mpButtonAllChannels";
       this.mpButtonAllChannels.Size = new System.Drawing.Size(75, 23);
       this.mpButtonAllChannels.TabIndex = 5;

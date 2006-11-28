@@ -1146,7 +1146,7 @@ namespace TvPlugin
         }
       }
       bool wasPlaying = g_Player.Playing && g_Player.IsTimeShifting && g_Player.IsTV;
-      
+
       //Start timeshifting the new tv channel
       VirtualCard card;
       succeeded = RemoteControl.Instance.StartTimeShifting(channel, new User(), out card);
@@ -1169,11 +1169,27 @@ namespace TvPlugin
         // when we switch from mpeg-2 <-> ac3, then recreate the playing graph
         if (hadAc3 != hasAc3)
         {
+          Log.Info("stop player: ac3 changed:{0}-{1}", hadAc3, hasAc3);
           g_Player.Stop();
         }
-        if (g_Player.Playing && g_Player.CurrentFile != TVHome.Card.TimeShiftFileName)
+        if (g_Player.Playing) 
         {
-          g_Player.Stop();
+          if (System.IO.File.Exists(TVHome.Card.TimeShiftFileName))
+          {
+            if (g_Player.CurrentFile != TVHome.Card.TimeShiftFileName)
+            {
+              Log.Info("stop player: file changed:{0}-{1}", g_Player.CurrentFile, TVHome.Card.TimeShiftFileName);
+              g_Player.Stop();
+            }
+          }
+          else
+          {
+            if (g_Player.CurrentFile != TVHome.Card.RTSPUrl)
+            {
+              Log.Info("stop player: url changed:{0}-{1}", g_Player.CurrentFile, TVHome.Card.RTSPUrl);
+              g_Player.Stop();
+            }
+          }
         }
         if (!g_Player.Playing)
         {
@@ -1411,7 +1427,7 @@ namespace TvPlugin
       g_Player.MediaType mediaType = g_Player.MediaType.TV;
       if (channel.IsRadio)
         mediaType = g_Player.MediaType.Radio;
-      if (System.IO.File.Exists(timeshiftFileName))
+      if ( System.IO.File.Exists(timeshiftFileName))
       {
         MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0}", timeshiftFileName);
         g_Player.Play(timeshiftFileName, mediaType);
@@ -1427,7 +1443,7 @@ namespace TvPlugin
     static void SeekToEnd()
     {
       string timeshiftFileName = TVHome.Card.TimeShiftFileName;
-      if ( System.IO.File.Exists(timeshiftFileName))
+      if (System.IO.File.Exists(timeshiftFileName))
       {
         if (g_Player.IsRadio == false)
         {
@@ -1439,7 +1455,7 @@ namespace TvPlugin
           MediaPortal.GUI.Library.Log.Info("tvhome:seektoend dur:{0} pos:{1} {2}", g_Player.Duration, g_Player.CurrentPosition, g_Player.IsRadio);
           g_Player.SeekAbsolute(duration);
           MediaPortal.GUI.Library.Log.Info("tvhome:seektoend  done dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
-          
+
         }
       }
 

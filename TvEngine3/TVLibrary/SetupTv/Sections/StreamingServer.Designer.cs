@@ -29,14 +29,16 @@ namespace SetupTv.Sections
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StreamingServer));
       this.timer1 = new System.Windows.Forms.Timer(this.components);
       this.listView1 = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
-      this.label1 = new System.Windows.Forms.Label();
       this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+      this.label1 = new System.Windows.Forms.Label();
+      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.SuspendLayout();
       // 
       // timer1
@@ -55,9 +57,11 @@ namespace SetupTv.Sections
       this.listView1.Location = new System.Drawing.Point(18, 49);
       this.listView1.Name = "listView1";
       this.listView1.Size = new System.Drawing.Size(446, 347);
+      this.listView1.SmallImageList = this.imageList1;
       this.listView1.TabIndex = 0;
       this.listView1.UseCompatibleStateImageBehavior = false;
       this.listView1.View = System.Windows.Forms.View.Details;
+      this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
       // 
       // columnHeader1
       // 
@@ -79,6 +83,11 @@ namespace SetupTv.Sections
       this.columnHeader4.Text = "Connected Since";
       this.columnHeader4.Width = 120;
       // 
+      // columnHeader5
+      // 
+      this.columnHeader5.Text = "Description";
+      this.columnHeader5.Width = 120;
+      // 
       // label1
       // 
       this.label1.AutoSize = true;
@@ -89,10 +98,11 @@ namespace SetupTv.Sections
       this.label1.Text = "Streaming clients:";
       this.label1.Click += new System.EventHandler(this.label1_Click);
       // 
-      // columnHeader5
+      // imageList1
       // 
-      this.columnHeader5.Text = "Description";
-      this.columnHeader5.Width = 120;
+      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+      this.imageList1.Images.SetKeyName(0, "user.ico");
       // 
       // StreamingServer
       // 
@@ -117,5 +127,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader3;
     private System.Windows.Forms.ColumnHeader columnHeader4;
     private System.Windows.Forms.ColumnHeader columnHeader5;
+    private System.Windows.Forms.ImageList imageList1;
   }
 }

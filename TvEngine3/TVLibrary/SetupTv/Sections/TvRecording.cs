@@ -464,5 +464,10 @@ namespace SetupTv.Sections
       info.card.Persist();
       RemoteControl.Instance.ClearCache();
     }
+
+    private void label19_Click(object sender, EventArgs e)
+    {
+
+    }
   }
 }

@@ -81,6 +81,7 @@ namespace SetupTv.Sections
             item.SubItems.Add("no");
           item.SubItems.Add(client.DateTimeStarted.ToString("yyyy-MM-dd HH:mm:ss"));
           item.SubItems.Add(client.Description);
+          item.ImageIndex = 0;
           listView1.Items.Add(item);
         }
         else
@@ -94,10 +95,16 @@ namespace SetupTv.Sections
             item.SubItems[2].Text = "no";
           item.SubItems[3].Text = client.DateTimeStarted.ToString("yyyy-MM-dd HH:mm:ss");
           item.SubItems[4].Text = client.Description;
+          item.ImageIndex = 0;
         }
       }
       while (listView1.Items.Count > clients.Count)
         listView1.Items.RemoveAt(listView1.Items.Count-1);
+    }
+
+    private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
     }
   }
 }

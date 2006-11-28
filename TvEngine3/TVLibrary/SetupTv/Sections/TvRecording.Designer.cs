@@ -132,7 +132,7 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Location = new System.Drawing.Point(6, 6);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(324, 193);
+      this.groupBox1.Size = new System.Drawing.Size(411, 326);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       // 
@@ -365,7 +365,7 @@ namespace SetupTv.Sections
             "Series"});
       this.comboBoxMovies.Location = new System.Drawing.Point(80, 20);
       this.comboBoxMovies.Name = "comboBoxMovies";
-      this.comboBoxMovies.Size = new System.Drawing.Size(121, 21);
+      this.comboBoxMovies.Size = new System.Drawing.Size(276, 21);
       this.comboBoxMovies.TabIndex = 0;
       this.comboBoxMovies.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
       // 
@@ -601,6 +601,7 @@ namespace SetupTv.Sections
       this.label19.Tag = "";
       this.label19.Text = "configurable parameters. After analysis it can remove the commercials detected";
       this.label19.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+      this.label19.Click += new System.EventHandler(this.label19_Click);
       // 
       // label18
       // 
@@ -627,7 +628,7 @@ namespace SetupTv.Sections
       // 
       // buttonLocateComSkip
       // 
-      this.buttonLocateComSkip.Location = new System.Drawing.Point(327, 66);
+      this.buttonLocateComSkip.Location = new System.Drawing.Point(316, 80);
       this.buttonLocateComSkip.Name = "buttonLocateComSkip";
       this.buttonLocateComSkip.Size = new System.Drawing.Size(23, 23);
       this.buttonLocateComSkip.TabIndex = 7;
@@ -646,7 +647,7 @@ namespace SetupTv.Sections
       // 
       // textBoxComSkip
       // 
-      this.textBoxComSkip.Location = new System.Drawing.Point(26, 69);
+      this.textBoxComSkip.Location = new System.Drawing.Point(26, 82);
       this.textBoxComSkip.Name = "textBoxComSkip";
       this.textBoxComSkip.Size = new System.Drawing.Size(284, 20);
       this.textBoxComSkip.TabIndex = 5;

@@ -174,7 +174,7 @@ namespace SetupTv.Sections
       // 
       this.progressBar1.Location = new System.Drawing.Point(16, 112);
       this.progressBar1.Name = "progressBar1";
-      this.progressBar1.Size = new System.Drawing.Size(328, 10);
+      this.progressBar1.Size = new System.Drawing.Size(435, 10);
       this.progressBar1.TabIndex = 12;
       // 
       // mpLabel4

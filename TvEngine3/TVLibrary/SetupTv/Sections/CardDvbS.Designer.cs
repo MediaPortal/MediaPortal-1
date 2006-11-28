@@ -99,7 +99,7 @@ namespace SetupTv.Sections
       // 
       this.progressBar1.Location = new System.Drawing.Point(19, 244);
       this.progressBar1.Name = "progressBar1";
-      this.progressBar1.Size = new System.Drawing.Size(328, 10);
+      this.progressBar1.Size = new System.Drawing.Size(424, 10);
       this.progressBar1.TabIndex = 55;
       // 
       // mpButtonScanTv
@@ -108,7 +108,7 @@ namespace SetupTv.Sections
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(131, 23);
       this.mpButtonScanTv.TabIndex = 50;
-      this.mpButtonScanTv.Text = "Scan for Tv Channels";
+      this.mpButtonScanTv.Text = "Scan for channels";
       this.mpButtonScanTv.UseVisualStyleBackColor = true;
       this.mpButtonScanTv.Click += new System.EventHandler(this.mpButtonScanTv_Click);
       // 

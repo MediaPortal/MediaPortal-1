@@ -248,5 +248,10 @@ namespace SetupTv.Sections
       mpListView1.EndUpdate();
     }
 
+    private void mpLabel2_Click(object sender, EventArgs e)
+    {
+
+    }
+
   }
 }
