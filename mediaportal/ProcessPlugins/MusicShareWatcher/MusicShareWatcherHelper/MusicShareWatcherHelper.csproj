@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DelayedFileSystemWatcher.cs" />
+    <Compile Include="MusicShareWatcherEvent.cs" />
     <Compile Include="MusicShareWatcherHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

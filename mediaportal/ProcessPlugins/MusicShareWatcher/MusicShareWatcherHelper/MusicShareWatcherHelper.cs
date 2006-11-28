@@ -46,12 +46,19 @@ namespace MediaPortal.MusicShareWatcher
     #region Variables
     private bool bMonitoring;
     static public MusicDatabase musicDB = null;
-    ArrayList m_shares = new ArrayList();
-    ArrayList m_watchers = new ArrayList();
+    ArrayList m_Shares = new ArrayList();
+    ArrayList m_Watchers = new ArrayList();
     static Thread m_CheckForVariousArtistsThread;
+
+    // Lock order is _enterThread, _events.SyncRoot
+    private object m_EnterThread = new object(); // Only one timer event is processed at any given moment
+    private ArrayList m_Events = null;
+
+    private System.Timers.Timer m_Timer = null;
+    private int m_TimerInterval = 2000; // milliseconds
     #endregion
 
-
+    #region Constructors/Destructors
     public MusicShareWatcherHelper()
     {
       // Create Log File
@@ -61,6 +68,7 @@ namespace MediaPortal.MusicShareWatcher
       m_CheckForVariousArtistsThread = new Thread(new ThreadStart(CheckForVariousArtists));
       m_CheckForVariousArtistsThread.Name = "Check for Various Artists";
     }
+    #endregion
 
     #region Main
     public void StartMonitor()
@@ -86,19 +94,22 @@ namespace MediaPortal.MusicShareWatcher
       if (status)
       {
         bMonitoring = true;
-        foreach (DelayedFileSystemWatcher watcher in m_watchers)
+        foreach (DelayedFileSystemWatcher watcher in m_Watchers)
         {
           watcher.EnableRaisingEvents = true;
         }
+        m_Timer.Start();
         Log.Info(LogType.MusicShareWatcher, "Monitoring of shares enabled");
       }
       else
       {
         bMonitoring = false;
-        foreach (DelayedFileSystemWatcher watcher in m_watchers)
+        foreach (DelayedFileSystemWatcher watcher in m_Watchers)
         {
           watcher.EnableRaisingEvents = false;
         }
+        m_Timer.Stop();
+        m_Events.Clear();
         Log.Info(LogType.MusicShareWatcher, "Monitoring of shares disabled");
       }
     }
@@ -109,10 +120,11 @@ namespace MediaPortal.MusicShareWatcher
       LoadShares();
       Log.Info(LogType.MusicShareWatcher, "Monitoring active for following shares:");
       Log.Info(LogType.MusicShareWatcher, "---------------------------------------");
-      foreach (String sharename in m_shares)
+      foreach (String sharename in m_Shares)
       {
         try
         {
+          m_Events = ArrayList.Synchronized(new ArrayList(64));
           // Create the watchers. 
           //I need 2 type of watchers. 1 for files and the other for directories
           // Reason is that i don't know if the event occured on a file or directory.
@@ -123,7 +135,7 @@ namespace MediaPortal.MusicShareWatcher
           watcherFile.Path = sharename;
           watcherDirectory.Path = sharename;
           /* Watch for changes in LastWrite times, and the renaming of files or directories. */
-          watcherFile.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
+          watcherFile.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.Attributes;
           watcherDirectory.NotifyFilter = NotifyFilters.DirectoryName;
           // Monitor all Files and subdirectories.
           watcherFile.Filter = "*.*";
@@ -136,21 +148,25 @@ namespace MediaPortal.MusicShareWatcher
           watcherFile.Created += new FileSystemEventHandler(OnCreated);
           watcherFile.Deleted += new FileSystemEventHandler(OnDeleted);
           watcherFile.Renamed += new RenamedEventHandler(OnRenamed);
-          // For directories, i'm only interested in Create, Delete and Rename events
-          watcherDirectory.Created += new FileSystemEventHandler(OnDirectoryCreated);
+          // For directories, i'm only interested in a Delete event
           watcherDirectory.Deleted += new FileSystemEventHandler(OnDirectoryDeleted);
-          watcherDirectory.Renamed += new RenamedEventHandler(OnRenamed);
 
           // Begin watching.
           watcherFile.EnableRaisingEvents = true;
           watcherDirectory.EnableRaisingEvents = true;
-          m_watchers.Add(watcherFile);
-          m_watchers.Add(watcherDirectory);
+          m_Watchers.Add(watcherFile);
+          m_Watchers.Add(watcherDirectory);
+
+          // Start Timer for processing events
+          m_Timer = new System.Timers.Timer(m_TimerInterval);
+          m_Timer.Elapsed += new System.Timers.ElapsedEventHandler(ProcessEvents);
+          m_Timer.AutoReset = true;
+          m_Timer.Enabled = watcherFile.EnableRaisingEvents;
           Log.Info(LogType.MusicShareWatcher, sharename);
         }
         catch (System.ArgumentException ex)
         {
-          Log.Info(LogType.MusicShareWatcher, "Unable to turn on monitoring for: " + sharename + " ( " + ex.Message + " )");
+          Log.Info(LogType.MusicShareWatcher, "Unable to turn on monitoring for: {0} Exception: {1}", sharename ,ex.Message);
         }
       }
       Log.Info(LogType.MusicShareWatcher, "---------------------------------------");
@@ -159,20 +175,118 @@ namespace MediaPortal.MusicShareWatcher
     #endregion Main
 
     #region EventHandlers
-    // Event handler handling the Create of a file
-    private static void OnCreated(object source, FileSystemEventArgs e)
+    // Event handler for Create of a file
+    private void OnCreated(object source, FileSystemEventArgs e)
     {
-      AddNewSong(e.FullPath);
+      Log.Debug(LogType.MusicShareWatcher, "Add Song Fired: {0}", e.FullPath);
+      m_Events.Add(new MusicShareWatcherEvent(MusicShareWatcherEvent.EventType.Create, e.FullPath));
     }
 
-    // Method used by OnCreated and ScanDir to fill the song structure
-    private static bool AddNewSong(string strFileName)
+    /// <summary>
+    /// Scan the Album cache for multiple artists
+    /// Scanning is however delayed, in order to make sure that complete albums may get copied and 
+    /// not checked several times.
+    /// </summary>
+    private static void CheckForVariousArtists()
+    {
+      Thread.Sleep(20000);
+      musicDB.UpdateAlbumArtistsCounts(0, 0);
+    }
+
+    // Event handler for Change of a file
+    private void OnChanged(object source, FileSystemEventArgs e)
+    {
+      FileInfo fi = new FileInfo(e.FullPath);
+      // A Change event occured.
+      // Was it on a file? Ignore change events on directories
+      if (fi.Exists)
+      {
+        Log.Debug(LogType.MusicShareWatcher, "Change Song Fired: {0}", e.FullPath);
+        m_Events.Add(new MusicShareWatcherEvent(MusicShareWatcherEvent.EventType.Change, e.FullPath));
+      }
+    }
+
+    // Event handler handling the Delete of a file
+    private void OnDeleted(object source, FileSystemEventArgs e)
+    {
+      Log.Debug(LogType.MusicShareWatcher, "Delete Song Fired: {0}", e.FullPath);
+      m_Events.Add(new MusicShareWatcherEvent(MusicShareWatcherEvent.EventType.Delete, e.FullPath));
+    }
+
+    // Event handler handling the Delete of a directory
+    private void OnDirectoryDeleted(object source, FileSystemEventArgs e)
+    {
+      Log.Debug(LogType.MusicShareWatcher, "Delete Directory Fired: {0}", e.FullPath);
+      m_Events.Add(new MusicShareWatcherEvent(MusicShareWatcherEvent.EventType.DeleteDirectory, e.FullPath));
+    }
+
+    // Event handler handling the Rename of a file/directory
+    private void OnRenamed(object source, RenamedEventArgs e)
+    {
+      Log.Debug(LogType.MusicShareWatcher, "Rename File/Directory Fired: {0}", e.FullPath);
+      m_Events.Add(new MusicShareWatcherEvent(MusicShareWatcherEvent.EventType.Rename, e.FullPath, e.OldFullPath));
+    }
+    #endregion EventHandlers
+
+    #region Private Methods
+    void ProcessEvents(object sender, System.Timers.ElapsedEventArgs e)
+    {
+      // Allow only one Timer event to be executed.
+      if (System.Threading.Monitor.TryEnter(m_EnterThread))
+      {
+        // Only one thread at a time is processing the events                
+        try
+        {
+          // Lock the Collection, while processing the Events
+          lock (m_Events.SyncRoot)
+          {
+            MusicShareWatcherEvent currentEvent = null;
+            for (int i = 0; i < m_Events.Count; i++)
+            {
+              currentEvent = m_Events[i] as MusicShareWatcherEvent;
+              switch (currentEvent.Type)
+              {
+                case MusicShareWatcherEvent.EventType.Create:
+                  AddNewSong(currentEvent.FileName);
+                  break;
+                case MusicShareWatcherEvent.EventType.Change:
+                  UpdateSong(currentEvent.FileName);
+                  break;
+                case MusicShareWatcherEvent.EventType.Delete:
+                  musicDB.DeleteSong(currentEvent.FileName, true);
+                  Log.Info(LogType.MusicShareWatcher, "Deleted Song: {0}", currentEvent.FileName);
+                  break;
+                case MusicShareWatcherEvent.EventType.DeleteDirectory:
+                  musicDB.DeleteSongDirectory(currentEvent.FileName);
+                  Log.Info(LogType.MusicShareWatcher, "Deleted Directory: {0}", currentEvent.FileName);
+                  break;
+                case MusicShareWatcherEvent.EventType.Rename:
+                  if (musicDB.RenameSong(currentEvent.OldFileName, currentEvent.FileName))
+                    Log.Info(LogType.MusicShareWatcher, "Song / Directory {0} renamed to {1]", currentEvent.OldFileName, currentEvent.FileName);
+                  else
+                    Log.Info(LogType.MusicShareWatcher, "Song / Directory rename failed: {0}", currentEvent.FileName);
+                  break;
+              }
+              m_Events.RemoveAt(i);
+              i--; // Don't skip next event
+            }
+          }
+        }
+        finally
+        {
+          System.Threading.Monitor.Exit(m_EnterThread);
+        }
+      }
+
+    }
+
+    // Method used by OnCreated to fill the song structure
+    private static void AddNewSong(string strFileName)
     {
       // Has the song already be added? 
       // This happens when a full directory is copied into the share.
-      // Because the create is called twice from OnCreated and On DirectoryCreated
       if (musicDB.SongExists(strFileName))
-        return false;
+        return;
       // For some reason the Create is fired already by windows while the file is still copied.
       // This happens especially on large songs copied via WLAN.
       // The result is that MP Readtag is throwing an IO Exception.
@@ -187,10 +301,8 @@ namespace MediaPortal.MusicShareWatcher
       }
       catch (System.IO.IOException)
       {
-        // We got an I/O exception, because the file is still copied.
-        // Start the thread. I use pooling to pass the filename as a parm.
-        ThreadPool.QueueUserWorkItem(new WaitCallback(DelayAddSong), strFileName);
-        return false;
+        // The file is not closed yet. Ignore the event, it will be processed by the Change event
+        return;
       }
       MusicTag tag = new MusicTag();
       tag = TagReader.TagReader.ReadTag(strFileName);
@@ -207,7 +319,7 @@ namespace MediaPortal.MusicShareWatcher
         song.Track = tag.Track;
         song.Duration = tag.Duration;
         musicDB.AddSong(song, true);
-        Log.Info(LogType.MusicShareWatcher, "Added Song: " + strFileName);
+        Log.Info(LogType.MusicShareWatcher, "Added Song: {0}", strFileName);
         /// Whenever a new song is added it might happen that multiple artists are there for the same album. 
         /// Scan all albums in cache
         if (m_CheckForVariousArtistsThread.ThreadState == ThreadState.Stopped || m_CheckForVariousArtistsThread.ThreadState == ThreadState.Unstarted)
@@ -221,128 +333,32 @@ namespace MediaPortal.MusicShareWatcher
           catch (ThreadStateException)
           { }
         }
-        return true;
       }
-      return false;
     }
 
-    /// <summary>
-    /// Delays Adding of a song, because we got an I/O Problem in the first case
-    /// </summary>
-    private static void DelayAddSong(object filename)
+    private static void UpdateSong(string strFilename)
     {
-      Thread.Sleep(5000);
-      AddNewSong((string)filename);
-    }
-
-    /// <summary>
-    /// Scan the Album cache for multiple artists
-    /// Scanning is however delayed, in order to make sure that complete albums may get copied and 
-    /// not checked several times.
-    /// </summary>
-    private static void CheckForVariousArtists()
-    {
-      Thread.Sleep(20000);
-      musicDB.UpdateAlbumArtistsCounts(0, 0);
-    }
-
-
-    // Event handler handling the Create of a Directory
-    private static void OnDirectoryCreated(object source, FileSystemEventArgs e)
-    {
-      // We need to loop now through all sub directories and issue a AddSong
-      DirectoryInfo di = new DirectoryInfo(e.FullPath);
-      // Delay the start of the directoryscan
-      ThreadPool.QueueUserWorkItem(new WaitCallback(DelayDirScan), di);
-    }
-
-    // Delay execution of subdirectory scan, as this may cause double calls for add
-    // Also not all files are recognized, when moving large directories
-    private static void DelayDirScan(object di)
-    {
-      Thread.Sleep(5000);
-      ScanDir((DirectoryInfo)di);
-    }
-
-    // Method to scan sub directories for files
-    private static void ScanDir(DirectoryInfo di)
-    {
-      try
+      Song song = new Song();
+      if (musicDB.GetSongByFileName(strFilename, ref song))
       {
-        // First add all files found in this directory
-        FileSystemInfo[] files = di.GetFiles();
-        foreach (FileInfo newfile in files)
-        {
-          string strFileName = di.FullName + "\\" + newfile;
-          AddNewSong(strFileName);
-        }
-        // Now we get all Sub directories and scan trough them as well
-        FileSystemInfo[] dirs = di.GetDirectories();
-        foreach (DirectoryInfo subDir in dirs)
-        {
-          ScanDir(subDir);
-        }
+        if (musicDB.UpdateSong(strFilename, song.songId))
+          Log.Info(LogType.MusicShareWatcher, "Updated Song: {0}", strFilename);
       }
-      catch (DirectoryNotFoundException)
+      else
       {
-        Log.Warn(LogType.MusicShareWatcher, "Directory Deleted or renamed before scanning: {0}", di.Name);
+        // The song was not found in the database, add it
+        Log.Info(LogType.MusicShareWatcher, "Added Song: {0}", strFilename);
+        AddNewSong(strFilename);
       }
     }
-
-    // Event handler handling the Change and Delete of a file
-    private static void OnChanged(object source, FileSystemEventArgs e)
-    {
-      FileInfo fi = new FileInfo(e.FullPath);
-      // A Change event occured.
-      // Was it on a file? Ignore change events on directories
-      if (fi.Exists)
-      {
-        Song song = new Song();
-        if (musicDB.GetSongByFileName(e.FullPath, ref song))
-        {
-          if (musicDB.UpdateSong(e.FullPath, song.songId))
-            Log.Info(LogType.MusicShareWatcher, "Updated Song: " + e.FullPath);
-        }
-        else
-        {
-          // The song was not found in the database, add it
-          Log.Warn(LogType.MusicShareWatcher, "Song was not found in database. Added it." + e.FullPath);
-          AddNewSong(e.FullPath);
-        }
-      }
-    }
-
-    // Event handler handling the Delete of a file
-    private static void OnDeleted(object source, FileSystemEventArgs e)
-    {
-      Log.Debug(LogType.MusicShareWatcher, "Delete Song Fired: " + e.FullPath);
-      musicDB.DeleteSong(e.FullPath, true);
-      Log.Info(LogType.MusicShareWatcher, "Deleted Song: " + e.FullPath);
-    }
-
-    // Event handler handling the Delete of a directory
-    private static void OnDirectoryDeleted(object source, FileSystemEventArgs e)
-    {
-      Log.Debug(LogType.MusicShareWatcher, "Delete Directory Fired: " + e.FullPath);
-      musicDB.DeleteSongDirectory(e.FullPath);
-      Log.Info(LogType.MusicShareWatcher, "Deleted Directory: " + e.FullPath);
-    }
-
-    // Event handler handling the Rename of a file/directory
-    private static void OnRenamed(object source, RenamedEventArgs e)
-    {
-      // A File has been renamed.
-      if (musicDB.RenameSong(e.OldFullPath, e.FullPath))
-        Log.Info(LogType.MusicShareWatcher, "Song / Directory: " + e.OldFullPath + " renamed to " + e.FullPath);
-    }
-    #endregion EventHandlers
+    #endregion
 
     #region Common Methods
 
     // Retrieve the Music Shares that should be monitored
     int LoadShares()
     {
-      MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config,"MediaPortal.xml"));
+      MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
       string strDefault = xmlreader.GetValueAsString("music", "default", String.Empty);
       for (int i = 0; i < 20; i++)
       {
@@ -355,7 +371,7 @@ namespace MediaPortal.MusicShareWatcher
         string SharePath = xmlreader.GetValueAsString("music", strSharePath, String.Empty);
 
         if (SharePath.Length > 0)
-          m_shares.Add(SharePath);
+          m_Shares.Add(SharePath);
       }
 
       xmlreader = null;

@@ -25,6 +25,7 @@
 
 using System;
 using System.Windows.Forms;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 
@@ -33,9 +34,10 @@ namespace MediaPortal.MusicShareWatcher
   /// <summary>
   /// This is a Process Plugin for the Music Share Watcher
   /// </summary>
+  [PluginIcons("ProcessPlugins.MusicShareWatcher.MusicShareWatcher.gif", "ProcessPlugins.MusicShareWatcher.MusicShareWatcher_deactivated.gif")]
   public class MusicShareWatcherPlugin : IPlugin, ISetupForm
   {
-    private const string _version = "0.2";
+    private const string _version = "0.3";
     private bool _monitor = false;
     private static MusicShareWatcherHelper watcher = null;
 
@@ -76,7 +78,7 @@ namespace MediaPortal.MusicShareWatcher
 
     public string Description()
     {
-      return "Starts the Music Share Watcher inside Mediaportal";
+      return "Monitors changes to the Music Shares and updates the Database accordingly.";
     }
 
     public bool DefaultEnabled()

@@ -50,21 +50,21 @@ namespace MediaPortal.MusicShareWatcher
             this.monitoringEnabledMenuItem,
             this.closeMenuItem});
           this.contextMenu.Name = "contextMenuStrip1";
-          this.contextMenu.Size = new System.Drawing.Size(216, 48);
+          this.contextMenu.Size = new System.Drawing.Size(205, 48);
           // 
           // monitoringEnabledMenuItem
           // 
           this.monitoringEnabledMenuItem.Checked = true;
           this.monitoringEnabledMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
           this.monitoringEnabledMenuItem.Name = "monitoringEnabledMenuItem";
-          this.monitoringEnabledMenuItem.Size = new System.Drawing.Size(215, 22);
+          this.monitoringEnabledMenuItem.Size = new System.Drawing.Size(204, 22);
           this.monitoringEnabledMenuItem.Text = "Monitoring Enabled";
           this.monitoringEnabledMenuItem.Click += new System.EventHandler(this.monitoringEnabledMenuItem_Click);
           // 
           // closeMenuItem
           // 
           this.closeMenuItem.Name = "closeMenuItem";
-          this.closeMenuItem.Size = new System.Drawing.Size(215, 22);
+          this.closeMenuItem.Size = new System.Drawing.Size(204, 22);
           this.closeMenuItem.Text = "Close Music Share Watcher";
           this.closeMenuItem.Click += new System.EventHandler(this.closeMenuItem_Click);
           // 
