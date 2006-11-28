@@ -69,9 +69,9 @@
       <zoom>yes</zoom>
 		</control>
 		<control>
-      <type>label</type>
+      <type>fadelabel</type>
 			<description>track label</description>
-			<id>113</id>
+			<id>0</id>
 			<posX>262</posX>
 			<posY>602</posY>
 			<width>600</width>
@@ -82,9 +82,9 @@
       <animation effect="fade" time="150">WindowOpen</animation>
 		</control>
 		<control>
-      <type>label</type>
+      <type>fadelabel</type>
 			<description>track label</description>
-			<id>113</id>
+			<id>0</id>
 			<posX>262</posX>
 			<posY>646</posY>
 			<width>600</width>
@@ -95,9 +95,9 @@
       <animation effect="fade" time="150">WindowOpen</animation>
 		</control>
 		<control>
-      <type>label</type>
+      <type>fadelabel</type>
 			<description>track label</description>
-			<id>113</id>
+			<id>0</id>
 			<posX>262</posX>
 			<posY>682</posY>
 			<width>600</width>
@@ -108,9 +108,9 @@
       <animation effect="fade" time="150">WindowOpen</animation>
 		</control>
 		<control>
-      <type>label</type>
+			<type>fadelabel</type>
 			<description>year label</description>
-			<id>114</id>
+			<id>0</id>
 			<posX>1258</posX>
 			<posY>86</posY>
 			<width>150</width>
@@ -122,7 +122,7 @@
 		<control>
 			<type>label</type>
 			<description>album label</description>
-			<id>6</id>
+			<id>0</id>
 			<posX>908</posX>
 			<posY>86</posY>
 			<width>230</width>
@@ -157,7 +157,7 @@
 		<control>
 			<type>label</type>
 			<description>track progress label</description>
-			<id>119</id>
+			<id>0</id>
 			<posX>908</posX>
 			<posY>482</posY>
 			<label>#currentplaytime</label>
@@ -169,7 +169,7 @@
 		<control>
 			<type>label</type>
 			<description>track duration label</description>
-			<id>110</id>
+			<id>0</id>
 			<posX>1258</posX>
 			<posY>482</posY>
 			<label>#duration</label>
@@ -189,7 +189,7 @@
 			<textcolor>80ffffff</textcolor>
 		</control>
 		<control>
-      <type>label</type>
+      <type>fadelabel</type>
 			<description>next track label</description>
 			<id>121</id>
 			<posX>1237</posX>
@@ -200,7 +200,7 @@
 			<textcolor>80ffffff</textcolor>
 		</control>
 		<control>
-      <type>label</type>
+      <type>fadelabel</type>
 			<description>next artist label</description>
 			<id>123</id>
 			<posX>1235</posX>
@@ -220,19 +220,19 @@
 			<posY>181</posY>
 			<width>335</width>
 			<height>180</height>
-                        <textXOff>10</textXOff>
-                        <IconXOff>4</IconXOff>
+			<textXOff>10</textXOff>
+			<IconXOff>4</IconXOff>
 			<spinColor>-</spinColor>
-                        <image>-</image>
+			<image>-</image>
 			<textureUp>-</textureUp>
 			<textureDown>-</textureDown>
 			<textureUpFocus>-</textureUpFocus>
 			<textureDownFocus>-</textureDownFocus>
-                        <textureFocus>list_sub_focus_arrow_small.png</textureFocus>
-                        <textureNoFocus>-</textureNoFocus>
+			<textureFocus>list_sub_focus_arrow_small.png</textureFocus>
+			<textureNoFocus>-</textureNoFocus>
  		</control>
 
-	        <control>
+	  <control>
 			<type>listcontrol</type>
 			<description>list of best tag tracks</description>
 			<id>155</id>
@@ -242,16 +242,16 @@
 			<posY>384</posY>
 			<width>435</width>
 			<height>180</height>
-                        <textXOff>10</textXOff>
-                        <IconXOff>4</IconXOff>
+			<textXOff>10</textXOff>
+			<IconXOff>4</IconXOff>
 			<spinColor>-</spinColor>
-                        <image>-</image>
+			<image>-</image>
 			<textureUp>-</textureUp>
-                        <textureNoFocus>-</textureNoFocus>
+			<textureNoFocus>-</textureNoFocus>
 			<textureDown>-</textureDown>
 			<textureUpFocus>-</textureUpFocus>
 			<textureDownFocus>-</textureDownFocus>
-                        <textureFocus>list_sub_focus_arrow.png</textureFocus>
+			<textureFocus>list_sub_focus_arrow.png</textureFocus>
 			<textcolor>White</textcolor>
 		</control>
       
@@ -498,7 +498,7 @@
             </control>
 
 		<control>
-      <type>label</type>
+      <type>fadelabel</type>
 			<description>best album tracks label</description>
 			<id>29</id>
 			<posX>109</posX>
@@ -508,7 +508,7 @@
 <!-- 			<textcolor>80ffffff</textcolor> -->
 		</control>
 		<control>
-      <type>label</type>
+      <type>fadelabel</type>
 			<description>best tag tracks label</description>
 			<id>28</id>
 			<posX>109</posX>

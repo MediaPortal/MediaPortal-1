@@ -117,7 +117,7 @@
       <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
-			<type>label</type>
+  		<type>fadelabel</type>
 			<description>track label</description>
 			<id>0</id>
 			<posX>285</posX>
@@ -132,7 +132,7 @@
       <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
-			<type>label</type>
+  		<type>fadelabel</type>
 			<description>artist label</description>
 			<id>0</id>
 			<posX>285</posX>
@@ -202,7 +202,7 @@
       <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
-			<type>textbox</type>
+      <type>textbox</type>
 			<description>Similar artists box</description>
 			<id>0</id>
 			<posX>113</posX>
@@ -216,7 +216,7 @@
       <animation effect="fade" time="500">WindowClose</animation>
 		</control>
 		<control>
-			<type>textbox</type>
+      <type>textbox</type>
 			<description>Track tags box</description>
 			<id>0</id>
 			<posX>113</posX>
@@ -229,6 +229,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
 		</control>
+
 		<!--
       <control>
          <type>listcontrol</type>

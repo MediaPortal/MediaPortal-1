@@ -59,6 +59,7 @@
         <onright>13</onright>
         <onleft>10</onleft>
       </control>
+
       <!-- Date and Time -->
       <control>
         <description>Date</description>
@@ -66,10 +67,10 @@
         <animation effect="fade" time="250">WindowOpen</animation>
         <animation effect="fade" time="500">WindowClose</animation>
         <id>200</id>
-          <posX>430</posX>
+        <posX>630</posX>
         <posY>198</posY>
         <label>#homedate</label>
-        <align>left</align>
+        <align>right</align>
         <font>font14</font>
         <textcolor>ffa9d0f7</textcolor>
       </control>
@@ -79,10 +80,10 @@
         <animation effect="fade" time="250">WindowOpen</animation>
         <animation effect="fade" time="500">WindowClose</animation>
         <id>201</id>
-          <posX>580</posX>
+        <posX>630</posX>
         <posY>242</posY>
         <label>#time</label>
-        <align>left</align>
+        <align>right</align>
         <font>font16</font>
         <textcolor>ffffffff</textcolor>
       </control>
