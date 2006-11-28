@@ -28,7 +28,7 @@
 			<id>1</id>
 			<posX>428</posX>
 			<posY>286</posY>
-			<width>400</width>
+			<width>480</width>
 			<label>-</label>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
@@ -37,12 +37,12 @@
 		</control>
 		<control>
 			<description>dialog line 1</description>
-			<type>label</type>
+			<type>fadelabel</type>
 			<id>2</id>
 			<posX>428</posX>
 			<posY>324</posY>
 			<label>-</label>
-			<width>400</width>
+			<width>480</width>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
@@ -55,7 +55,7 @@
 			<posX>428</posX>
 			<posY>356</posY>
 			<label>-</label>
-			<width>400</width>
+			<width>480</width>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
@@ -68,7 +68,7 @@
 			<posX>428</posX>
 			<posY>386</posY>
 			<label>-</label>
-			<width>400</width>
+			<width>480</width>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
