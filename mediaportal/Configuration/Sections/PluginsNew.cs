@@ -253,6 +253,12 @@ namespace MediaPortal.Configuration.Sections
               if ((t.IsClass) && (t.IsSubclassOf(typeof(GUIWindow))))
               {
                 object newObj;
+                
+                // an abstract class cannot be instanciated
+                if (t.IsAbstract)
+                {
+                  continue;
+                }
                 try
                 {
                   newObj = Activator.CreateInstance(t);
