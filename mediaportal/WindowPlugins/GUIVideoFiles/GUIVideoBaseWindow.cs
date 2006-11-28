@@ -40,7 +40,7 @@ namespace MediaPortal.GUI.Video
   /// <summary>
   /// Summary description for GUIVideoBaseWindow.
   /// </summary>
-  public class GUIVideoBaseWindow : GUIWindow
+  public abstract class GUIVideoBaseWindow : GUIWindow
   {
 
     public enum View
