@@ -2509,7 +2509,8 @@ namespace MediaPortal
         if (currentTime - lastSec >= 1.0f)
         {
           // only regulate FPS when app is focused
-          if (GUIGraphicsContext.HasFocus)
+          // active == !(this.WindowState == FormWindowState.Minimized)
+          if (GUIGraphicsContext.HasFocus && active)
           {
             if (fps < GUIGraphicsContext.MaxFPS)
             {
