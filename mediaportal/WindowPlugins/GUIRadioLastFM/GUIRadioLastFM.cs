@@ -40,8 +40,7 @@ using MediaPortal.Util;
 
 namespace MediaPortal.GUI.RADIOLASTFM
 {
-  [PluginIcons("WindowPlugins.GUIRadioLastFM.BallonRadio.gif", "WindowPlugins.GUIRadioLastFM.BallonRadioDisabled.gif")]
-  //[PluginIcons("WindowPlugins.GUIRadioLastFM.BallonRadio.png", "WindowPlugins.GUIRadioLastFM.BallonRadioDisabled.png")]
+  [PluginIcons("WindowPlugins.GUIRadioLastFM.BallonRadio.gif", "WindowPlugins.GUIRadioLastFM.BallonRadioDisabled.gif")]  
   public class GUIRadioLastFM : GUIWindow, ISetupForm, IShowPlugin
   {
     private enum SkinControlIDs
@@ -56,7 +55,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     [SkinControlAttribute((int)SkinControlIDs.BTN_START_STREAM)]    protected GUIButtonControl btnStartStream = null;
     [SkinControlAttribute((int)SkinControlIDs.BTN_CHOOSE_TAG)]      protected GUIButtonControl btnChooseTag = null;
     [SkinControlAttribute((int)SkinControlIDs.BTN_CHOOSE_FRIEND)]   protected GUIButtonControl btnChooseFriend = null;
-    [SkinControlAttribute((int)SkinControlIDs.LIST_TRACK_TAGS)]     protected GUIListControl facadeTrackTags = null;
+    //[SkinControlAttribute((int)SkinControlIDs.LIST_TRACK_TAGS)]     protected GUIListControl facadeTrackTags = null;
     [SkinControlAttribute((int)SkinControlIDs.IMG_ARTIST_ART)]      protected GUIImage imgArtistArt = null;
 
     private AudioscrobblerUtils InfoScrobbler = null;

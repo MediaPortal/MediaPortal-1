@@ -58,13 +58,13 @@ namespace MediaPortal.GUI.Music
     {
       LBL_CAPTION = 1,
       IMG_COVERART = 112,
-      LBL_TRACK_NAME = 113,
-      LBL_ALBUM_NAME = 114,
-      LBL_ALBUM_YEAR = 115,
-      LBL_ARTIST_NAME = 6,
+      //LBL_TRACK_NAME = 113,
+      //LBL_ALBUM_NAME = 114,
+      //LBL_ALBUM_YEAR = 115,
+      //LBL_ARTIST_NAME = 6,
       IMG_TRACK_PROGRESS_BG = 117,
       PROG_TRACK = 118,
-      REMAIN_TRACK = 110,
+      //REMAIN_TRACK = 110,
 
       IMGLIST_RATING = 141,
       IMGLIST_NEXTRATING = 142,
@@ -115,8 +115,8 @@ namespace MediaPortal.GUI.Music
     [SkinControlAttribute((int)ControlIDs.LBL_UP_NEXT)]              protected GUILabelControl LblUpNext = null;
     [SkinControlAttribute((int)ControlIDs.LIST_TAG_INFO)]            protected GUIListControl facadeTagInfo = null;
     [SkinControlAttribute((int)ControlIDs.LIST_ALBUM_INFO)]          protected GUIListControl facadeAlbumInfo = null;
-    [SkinControlAttribute((int)ControlIDs.BEST_ALBUM_TRACKS)]        protected GUILabelControl LblBestAlbumTracks = null;
-    [SkinControlAttribute((int)ControlIDs.BEST_TAG_TRACKS)]          protected GUILabelControl LblBestTagTracks = null;
+    [SkinControlAttribute((int)ControlIDs.BEST_ALBUM_TRACKS)]        protected GUIFadeLabel LblBestAlbumTracks = null;
+    [SkinControlAttribute((int)ControlIDs.BEST_TAG_TRACKS)]          protected GUIFadeLabel LblBestTagTracks = null;
     [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOWN_TRACK1)]   protected GUIImageList ImgListUnknownTrack1 = null;
     [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOWN_TRACK2)]   protected GUIImageList ImgListUnknownTrack2 = null;
     [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOWN_TRACK3)]   protected GUIImageList ImgListUnknownTrack3 = null;
