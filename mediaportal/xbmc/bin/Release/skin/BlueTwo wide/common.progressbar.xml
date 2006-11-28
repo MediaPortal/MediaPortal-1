@@ -39,7 +39,7 @@
 		<lefttexture>osd_progress_left.png</lefttexture>
 		<midtexture>osd_progress_mid.png</midtexture>
 		<righttexture>osd_progress_right.png</righttexture>
-    <visible>yes</visible>
+      <visible>no</visible>
 		<label>#percentage</label>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
