@@ -72,6 +72,9 @@ namespace MediaPortal.GUI.GUIBurner
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxDVDFormat;
     private RadioButton radioButtonTvFormatNtsc;
     private RadioButton radioButtonTvFormatPal;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxAspectRatio;
+    private RadioButton radioButtonAspectRatio16x9;
+    private RadioButton radioButtonAspectRatio4x3;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -102,6 +105,9 @@ namespace MediaPortal.GUI.GUIBurner
 
         radioButtonTvFormatPal.Checked = xmlreader.GetValueAsBool("burner", "PalTvFormat", true);
         radioButtonTvFormatNtsc.Checked = !radioButtonTvFormatPal.Checked;
+
+        radioButtonAspectRatio4x3.Checked = xmlreader.GetValueAsBool("burner", "AspectRatio4x3", true);
+        radioButtonAspectRatio16x9.Checked = !radioButtonAspectRatio4x3.Checked;
 
         checkBoxLeaveFileForDebug.Checked = xmlreader.GetValueAsBool("burner", "leavedebugfiles", true);
         checkBoxDontBurnDVD.Checked = xmlreader.GetValueAsBool("burner", "dummyburn", false);
@@ -135,7 +141,8 @@ namespace MediaPortal.GUI.GUIBurner
         xmlwriter.SetValue("burner", "recorderdrive", mpTextBoxBurnerDriver.Text);
 
         xmlwriter.SetValueAsBool("burner", "PalTvFormat", radioButtonTvFormatPal.Checked);
-
+        xmlwriter.SetValueAsBool("burner", "AspectRatio4x3", radioButtonAspectRatio4x3.Checked);
+        
         xmlwriter.SetValueAsBool("burner", "leavedebugfiles", checkBoxLeaveFileForDebug.Checked);
         xmlwriter.SetValueAsBool("burner", "dummyburn", checkBoxDontBurnDVD.Checked);
       }
@@ -176,25 +183,29 @@ namespace MediaPortal.GUI.GUIBurner
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBoxOptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxDVDFormat = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.radioButtonTvFormatNtsc = new System.Windows.Forms.RadioButton();
+      this.radioButtonTvFormatPal = new System.Windows.Forms.RadioButton();
+      this.checkBoxDontBurnDVD = new System.Windows.Forms.CheckBox();
+      this.checkBoxLeaveFileForDebug = new System.Windows.Forms.CheckBox();
       this.labelTempHint = new System.Windows.Forms.Label();
       this.textBoxTempPath = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.labelSelectTempPath = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonSelectTempPathLocation = new MediaPortal.UserInterface.Controls.MPButton();
-      this.checkBoxDontBurnDVD = new System.Windows.Forms.CheckBox();
-      this.checkBoxLeaveFileForDebug = new System.Windows.Forms.CheckBox();
       this.groupBoxSupportFiles = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.linkLabelCygwinDownload = new System.Windows.Forms.LinkLabel();
+      this.linkLabelDVDBurnDownload = new System.Windows.Forms.LinkLabel();
       this.labeldvdburnPath = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonSelectDvdBurnPathLocation = new MediaPortal.UserInterface.Controls.MPButton();
       this.textBoxDVDBurnExePath = new System.Windows.Forms.TextBox();
-      this.linkLabelDVDBurnDownload = new System.Windows.Forms.LinkLabel();
-      this.linkLabelCygwinDownload = new System.Windows.Forms.LinkLabel();
-      this.groupBoxDVDFormat = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.radioButtonTvFormatNtsc = new System.Windows.Forms.RadioButton();
-      this.radioButtonTvFormatPal = new System.Windows.Forms.RadioButton();
+      this.groupBoxAspectRatio = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.radioButtonAspectRatio16x9 = new System.Windows.Forms.RadioButton();
+      this.radioButtonAspectRatio4x3 = new System.Windows.Forms.RadioButton();
       this.groupBoxDeviceSettings.SuspendLayout();
       this.groupBoxOptions.SuspendLayout();
-      this.groupBoxSupportFiles.SuspendLayout();
       this.groupBoxDVDFormat.SuspendLayout();
+      this.groupBoxSupportFiles.SuspendLayout();
+      this.groupBoxAspectRatio.SuspendLayout();
       this.SuspendLayout();
       // 
       // buttonOK
@@ -268,6 +279,7 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // groupBoxOptions
       // 
+      this.groupBoxOptions.Controls.Add(this.groupBoxAspectRatio);
       this.groupBoxOptions.Controls.Add(this.groupBoxDVDFormat);
       this.groupBoxOptions.Controls.Add(this.checkBoxDontBurnDVD);
       this.groupBoxOptions.Controls.Add(this.checkBoxLeaveFileForDebug);
@@ -282,6 +294,61 @@ namespace MediaPortal.GUI.GUIBurner
       this.groupBoxOptions.TabIndex = 60;
       this.groupBoxOptions.TabStop = false;
       this.groupBoxOptions.Text = "Options";
+      // 
+      // groupBoxDVDFormat
+      // 
+      this.groupBoxDVDFormat.Controls.Add(this.radioButtonTvFormatNtsc);
+      this.groupBoxDVDFormat.Controls.Add(this.radioButtonTvFormatPal);
+      this.groupBoxDVDFormat.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxDVDFormat.Location = new System.Drawing.Point(317, 86);
+      this.groupBoxDVDFormat.Name = "groupBoxDVDFormat";
+      this.groupBoxDVDFormat.Size = new System.Drawing.Size(130, 45);
+      this.groupBoxDVDFormat.TabIndex = 68;
+      this.groupBoxDVDFormat.TabStop = false;
+      this.groupBoxDVDFormat.Text = "DVD Format";
+      // 
+      // radioButtonTvFormatNtsc
+      // 
+      this.radioButtonTvFormatNtsc.AutoSize = true;
+      this.radioButtonTvFormatNtsc.Location = new System.Drawing.Point(65, 19);
+      this.radioButtonTvFormatNtsc.Name = "radioButtonTvFormatNtsc";
+      this.radioButtonTvFormatNtsc.Size = new System.Drawing.Size(54, 17);
+      this.radioButtonTvFormatNtsc.TabIndex = 64;
+      this.radioButtonTvFormatNtsc.TabStop = true;
+      this.radioButtonTvFormatNtsc.Text = "NTSC";
+      this.radioButtonTvFormatNtsc.UseVisualStyleBackColor = true;
+      // 
+      // radioButtonTvFormatPal
+      // 
+      this.radioButtonTvFormatPal.AutoSize = true;
+      this.radioButtonTvFormatPal.Checked = true;
+      this.radioButtonTvFormatPal.Location = new System.Drawing.Point(15, 19);
+      this.radioButtonTvFormatPal.Name = "radioButtonTvFormatPal";
+      this.radioButtonTvFormatPal.Size = new System.Drawing.Size(45, 17);
+      this.radioButtonTvFormatPal.TabIndex = 63;
+      this.radioButtonTvFormatPal.TabStop = true;
+      this.radioButtonTvFormatPal.Text = "PAL";
+      this.radioButtonTvFormatPal.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxDontBurnDVD
+      // 
+      this.checkBoxDontBurnDVD.AutoSize = true;
+      this.checkBoxDontBurnDVD.Location = new System.Drawing.Point(120, 114);
+      this.checkBoxDontBurnDVD.Name = "checkBoxDontBurnDVD";
+      this.checkBoxDontBurnDVD.Size = new System.Drawing.Size(126, 17);
+      this.checkBoxDontBurnDVD.TabIndex = 67;
+      this.checkBoxDontBurnDVD.Text = "Do not burn the DVD";
+      this.checkBoxDontBurnDVD.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxLeaveFileForDebug
+      // 
+      this.checkBoxLeaveFileForDebug.AutoSize = true;
+      this.checkBoxLeaveFileForDebug.Location = new System.Drawing.Point(120, 91);
+      this.checkBoxLeaveFileForDebug.Name = "checkBoxLeaveFileForDebug";
+      this.checkBoxLeaveFileForDebug.Size = new System.Drawing.Size(178, 17);
+      this.checkBoxLeaveFileForDebug.TabIndex = 63;
+      this.checkBoxLeaveFileForDebug.Text = "Keep Temp Files For Debugging";
+      this.checkBoxLeaveFileForDebug.UseVisualStyleBackColor = true;
       // 
       // labelTempHint
       // 
@@ -323,26 +390,6 @@ namespace MediaPortal.GUI.GUIBurner
       this.buttonSelectTempPathLocation.UseVisualStyleBackColor = true;
       this.buttonSelectTempPathLocation.Click += new System.EventHandler(this.buttonSelectTempPathLocation_Click);
       // 
-      // checkBoxDontBurnDVD
-      // 
-      this.checkBoxDontBurnDVD.AutoSize = true;
-      this.checkBoxDontBurnDVD.Location = new System.Drawing.Point(120, 114);
-      this.checkBoxDontBurnDVD.Name = "checkBoxDontBurnDVD";
-      this.checkBoxDontBurnDVD.Size = new System.Drawing.Size(126, 17);
-      this.checkBoxDontBurnDVD.TabIndex = 67;
-      this.checkBoxDontBurnDVD.Text = "Do not burn the DVD";
-      this.checkBoxDontBurnDVD.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxLeaveFileForDebug
-      // 
-      this.checkBoxLeaveFileForDebug.AutoSize = true;
-      this.checkBoxLeaveFileForDebug.Location = new System.Drawing.Point(120, 91);
-      this.checkBoxLeaveFileForDebug.Name = "checkBoxLeaveFileForDebug";
-      this.checkBoxLeaveFileForDebug.Size = new System.Drawing.Size(178, 17);
-      this.checkBoxLeaveFileForDebug.TabIndex = 63;
-      this.checkBoxLeaveFileForDebug.Text = "Keep Temp Files For Debugging";
-      this.checkBoxLeaveFileForDebug.UseVisualStyleBackColor = true;
-      // 
       // groupBoxSupportFiles
       // 
       this.groupBoxSupportFiles.Controls.Add(this.linkLabelCygwinDownload);
@@ -357,6 +404,33 @@ namespace MediaPortal.GUI.GUIBurner
       this.groupBoxSupportFiles.TabIndex = 61;
       this.groupBoxSupportFiles.TabStop = false;
       this.groupBoxSupportFiles.Text = "Necessary support files";
+      // 
+      // linkLabelCygwinDownload
+      // 
+      this.linkLabelCygwinDownload.AutoSize = true;
+      this.linkLabelCygwinDownload.LinkArea = new System.Windows.Forms.LinkArea(16, 19);
+      this.linkLabelCygwinDownload.Location = new System.Drawing.Point(18, 28);
+      this.linkLabelCygwinDownload.Name = "linkLabelCygwinDownload";
+      this.linkLabelCygwinDownload.Size = new System.Drawing.Size(443, 17);
+      this.linkLabelCygwinDownload.TabIndex = 67;
+      this.linkLabelCygwinDownload.TabStop = true;
+      this.linkLabelCygwinDownload.Text = "Please download this cygwin package and put its folder into MediaPortal\'s root di" +
+          "rectory";
+      this.linkLabelCygwinDownload.UseCompatibleTextRendering = true;
+      this.linkLabelCygwinDownload.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelCygwinDownload_LinkClicked);
+      // 
+      // linkLabelDVDBurnDownload
+      // 
+      this.linkLabelDVDBurnDownload.AutoSize = true;
+      this.linkLabelDVDBurnDownload.LinkArea = new System.Windows.Forms.LinkArea(28, 9);
+      this.linkLabelDVDBurnDownload.Location = new System.Drawing.Point(18, 66);
+      this.linkLabelDVDBurnDownload.Name = "linkLabelDVDBurnDownload";
+      this.linkLabelDVDBurnDownload.Size = new System.Drawing.Size(378, 17);
+      this.linkLabelDVDBurnDownload.TabIndex = 66;
+      this.linkLabelDVDBurnDownload.TabStop = true;
+      this.linkLabelDVDBurnDownload.Text = "Please download and install this file from Microsoft containing dvdburn.exe";
+      this.linkLabelDVDBurnDownload.UseCompatibleTextRendering = true;
+      this.linkLabelDVDBurnDownload.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDVDBurnDownload_LinkClicked);
       // 
       // labeldvdburnPath
       // 
@@ -385,67 +459,40 @@ namespace MediaPortal.GUI.GUIBurner
       this.textBoxDVDBurnExePath.TabIndex = 59;
       this.textBoxDVDBurnExePath.Text = "C:\\Program Files\\Windows Resource Kits\\Tools";
       // 
-      // linkLabelDVDBurnDownload
+      // groupBoxAspectRatio
       // 
-      this.linkLabelDVDBurnDownload.AutoSize = true;
-      this.linkLabelDVDBurnDownload.LinkArea = new System.Windows.Forms.LinkArea(28, 9);
-      this.linkLabelDVDBurnDownload.Location = new System.Drawing.Point(18, 66);
-      this.linkLabelDVDBurnDownload.Name = "linkLabelDVDBurnDownload";
-      this.linkLabelDVDBurnDownload.Size = new System.Drawing.Size(378, 17);
-      this.linkLabelDVDBurnDownload.TabIndex = 66;
-      this.linkLabelDVDBurnDownload.TabStop = true;
-      this.linkLabelDVDBurnDownload.Text = "Please download and install this file from Microsoft containing dvdburn.exe";
-      this.linkLabelDVDBurnDownload.UseCompatibleTextRendering = true;
-      this.linkLabelDVDBurnDownload.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDVDBurnDownload_LinkClicked);
+      this.groupBoxAspectRatio.Controls.Add(this.radioButtonAspectRatio16x9);
+      this.groupBoxAspectRatio.Controls.Add(this.radioButtonAspectRatio4x3);
+      this.groupBoxAspectRatio.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxAspectRatio.Location = new System.Drawing.Point(467, 85);
+      this.groupBoxAspectRatio.Name = "groupBoxAspectRatio";
+      this.groupBoxAspectRatio.Size = new System.Drawing.Size(130, 45);
+      this.groupBoxAspectRatio.TabIndex = 69;
+      this.groupBoxAspectRatio.TabStop = false;
+      this.groupBoxAspectRatio.Text = "Aspect Ratio";
       // 
-      // linkLabelCygwinDownload
+      // radioButtonAspectRatio16x9
       // 
-      this.linkLabelCygwinDownload.AutoSize = true;
-      this.linkLabelCygwinDownload.LinkArea = new System.Windows.Forms.LinkArea(16, 19);
-      this.linkLabelCygwinDownload.Location = new System.Drawing.Point(18, 28);
-      this.linkLabelCygwinDownload.Name = "linkLabelCygwinDownload";
-      this.linkLabelCygwinDownload.Size = new System.Drawing.Size(443, 17);
-      this.linkLabelCygwinDownload.TabIndex = 67;
-      this.linkLabelCygwinDownload.TabStop = true;
-      this.linkLabelCygwinDownload.Text = "Please download this cygwin package and put its folder into MediaPortal\'s root di" +
-          "rectory";
-      this.linkLabelCygwinDownload.UseCompatibleTextRendering = true;
-      this.linkLabelCygwinDownload.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelCygwinDownload_LinkClicked);
+      this.radioButtonAspectRatio16x9.AutoSize = true;
+      this.radioButtonAspectRatio16x9.Location = new System.Drawing.Point(68, 19);
+      this.radioButtonAspectRatio16x9.Name = "radioButtonAspectRatio16x9";
+      this.radioButtonAspectRatio16x9.Size = new System.Drawing.Size(48, 17);
+      this.radioButtonAspectRatio16x9.TabIndex = 64;
+      this.radioButtonAspectRatio16x9.TabStop = true;
+      this.radioButtonAspectRatio16x9.Text = "16/9";
+      this.radioButtonAspectRatio16x9.UseVisualStyleBackColor = true;
       // 
-      // groupBoxDVDFormat
+      // radioButtonAspectRatio4x3
       // 
-      this.groupBoxDVDFormat.Controls.Add(this.radioButtonTvFormatNtsc);
-      this.groupBoxDVDFormat.Controls.Add(this.radioButtonTvFormatPal);
-      this.groupBoxDVDFormat.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxDVDFormat.Location = new System.Drawing.Point(410, 86);
-      this.groupBoxDVDFormat.Name = "groupBoxDVDFormat";
-      this.groupBoxDVDFormat.Size = new System.Drawing.Size(141, 45);
-      this.groupBoxDVDFormat.TabIndex = 68;
-      this.groupBoxDVDFormat.TabStop = false;
-      this.groupBoxDVDFormat.Text = "DVD Format";
-      // 
-      // radioButtonTvFormatNtsc
-      // 
-      this.radioButtonTvFormatNtsc.AutoSize = true;
-      this.radioButtonTvFormatNtsc.Location = new System.Drawing.Point(80, 19);
-      this.radioButtonTvFormatNtsc.Name = "radioButtonTvFormatNtsc";
-      this.radioButtonTvFormatNtsc.Size = new System.Drawing.Size(54, 17);
-      this.radioButtonTvFormatNtsc.TabIndex = 64;
-      this.radioButtonTvFormatNtsc.TabStop = true;
-      this.radioButtonTvFormatNtsc.Text = "NTSC";
-      this.radioButtonTvFormatNtsc.UseVisualStyleBackColor = true;
-      // 
-      // radioButtonTvFormatPal
-      // 
-      this.radioButtonTvFormatPal.AutoSize = true;
-      this.radioButtonTvFormatPal.Checked = true;
-      this.radioButtonTvFormatPal.Location = new System.Drawing.Point(15, 19);
-      this.radioButtonTvFormatPal.Name = "radioButtonTvFormatPal";
-      this.radioButtonTvFormatPal.Size = new System.Drawing.Size(45, 17);
-      this.radioButtonTvFormatPal.TabIndex = 63;
-      this.radioButtonTvFormatPal.TabStop = true;
-      this.radioButtonTvFormatPal.Text = "PAL";
-      this.radioButtonTvFormatPal.UseVisualStyleBackColor = true;
+      this.radioButtonAspectRatio4x3.AutoSize = true;
+      this.radioButtonAspectRatio4x3.Checked = true;
+      this.radioButtonAspectRatio4x3.Location = new System.Drawing.Point(15, 19);
+      this.radioButtonAspectRatio4x3.Name = "radioButtonAspectRatio4x3";
+      this.radioButtonAspectRatio4x3.Size = new System.Drawing.Size(42, 17);
+      this.radioButtonAspectRatio4x3.TabIndex = 63;
+      this.radioButtonAspectRatio4x3.TabStop = true;
+      this.radioButtonAspectRatio4x3.Text = "4/3";
+      this.radioButtonAspectRatio4x3.UseVisualStyleBackColor = true;
       // 
       // BurnerSetupForm
       // 
@@ -464,10 +511,12 @@ namespace MediaPortal.GUI.GUIBurner
       this.groupBoxDeviceSettings.PerformLayout();
       this.groupBoxOptions.ResumeLayout(false);
       this.groupBoxOptions.PerformLayout();
-      this.groupBoxSupportFiles.ResumeLayout(false);
-      this.groupBoxSupportFiles.PerformLayout();
       this.groupBoxDVDFormat.ResumeLayout(false);
       this.groupBoxDVDFormat.PerformLayout();
+      this.groupBoxSupportFiles.ResumeLayout(false);
+      this.groupBoxSupportFiles.PerformLayout();
+      this.groupBoxAspectRatio.ResumeLayout(false);
+      this.groupBoxAspectRatio.PerformLayout();
       this.ResumeLayout(false);
 
     }

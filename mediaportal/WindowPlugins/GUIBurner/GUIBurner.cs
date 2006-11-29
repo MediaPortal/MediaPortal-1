@@ -144,6 +144,7 @@ namespace MediaPortal.GUI.GUIBurner
     private bool fastFormat;
 
     private bool PalTvFormat = true;              // Which format for the DVD
+    private bool AspectRatio4x3 = true;           // Which aspect ratio for the DVD
     private bool LeaveFilesForDebugging = true;   // Leave temporary files to aid debugging
     private bool DummyBurn = false;               // Tell the BurnDVD not to actually burn the DVD
 
@@ -978,6 +979,7 @@ namespace MediaPortal.GUI.GUIBurner
         recorderdrive = xmlreader.GetValueAsString("burner", "recorderdrive", "");
 
         PalTvFormat = xmlreader.GetValueAsBool("burner", "PalTvFormat", true);
+        AspectRatio4x3 = xmlreader.GetValueAsBool("burner", "AspectRatio4x3", true);
         LeaveFilesForDebugging = xmlreader.GetValueAsBool("burner", "leavedebugfiles", true);
         DummyBurn = xmlreader.GetValueAsBool("burner", "dummyburn", false);
 
@@ -1157,13 +1159,19 @@ namespace MediaPortal.GUI.GUIBurner
           if (bTyp == BurnTypes.VIDEO_DVD)
           {
             string strTvFormat;
+            string strAspectRatio;
 
             if (PalTvFormat == true)
               strTvFormat = "pal";
             else
               strTvFormat = "ntsc";
 
-            DvdBurner = new BurnDVD(FilePathsToBurn, strTempFolder, strTvFormat, dvdBurnFolder, LeaveFilesForDebugging, recorderdrive, DummyBurn);
+            if (AspectRatio4x3 == true)
+              strAspectRatio = @"4/3";
+            else
+              strAspectRatio = @"16/9";
+
+            DvdBurner = new BurnDVD(FilePathsToBurn, strTempFolder, strTvFormat, strAspectRatio, dvdBurnFolder, LeaveFilesForDebugging, recorderdrive, DummyBurn);
 
             //Listen for some events
             DvdBurner.FileFinished += new BurnDVD.FileFinishedEventHandler(DVDBurner_FileFinished);

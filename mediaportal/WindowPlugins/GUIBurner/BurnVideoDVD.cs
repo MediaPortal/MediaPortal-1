@@ -121,7 +121,8 @@ namespace MediaPortal.GUI.GUIBurner
     bool _InDebugMode = false;        // Debug option
     bool _BurnTheDVD = true;         // Burn the DVD
     List<string> _FilesToBurn = new List<string>(); // Converted Files ready to Burn
-    string _TvFormat = string.Empty; // PAL or NTSC
+    string _TvFormat = string.Empty; // "PAL" or "NTSC"
+    string _AspectRatio = string.Empty; // "4/3" or "16/9"
     #endregion
 
     //events
@@ -149,12 +150,13 @@ namespace MediaPortal.GUI.GUIBurner
     ///<return>None</return>
     ///<param name="FileNames">ArrayList of Filenames to include on the VidoeDVD</param>
     ///<param name="PathToTempFolder">Path to the folder to use for creating temporary files</param>
-    ///<param name="TVFormat">NTSC or PAL format for the VideoDVD</param>
+    ///<param name="TVFormat">"NTSC" or "PAL" format for the VideoDVD</param>
+    ///<param name="AspectRatio">Aspect ratio - either "4/3" or "16/9"</param>
     ///<param name="PathToDvdBurnExe">Path to the executable used to write the ISO to the DVD</param>
     ///<param name="DebugMode">Debug Mode includes more logging and does not delete the temporary files created</param>
     ///<param name="RecorderDrive">The drive letter of the Recorder</param>
     ///<param name="DummyBurn">Do everything except the burn. Used for debugging</param>
-    public BurnDVD(ArrayList FileNames, string PathToTempFolder, string TVFormat, string PathtoDVDBurnExe, bool DebugMode, string RecorderDrive, bool DummyBurn)
+    public BurnDVD(ArrayList FileNames, string PathToTempFolder, string TVFormat, string AspectRatio, string PathtoDVDBurnExe, bool DebugMode, string RecorderDrive, bool DummyBurn)
     {
       _InDebugMode = DebugMode;
 
@@ -162,15 +164,16 @@ namespace MediaPortal.GUI.GUIBurner
       if (DummyBurn)
         _BurnTheDVD = false;
 
-      pBurnVideoDVD(FileNames, PathToTempFolder, TVFormat, PathtoDVDBurnExe, RecorderDrive);
+      pBurnVideoDVD(FileNames, PathToTempFolder, TVFormat, AspectRatio, PathtoDVDBurnExe, RecorderDrive);
     }
 
     ///<summary>Private Initialization method called by the Constructors.</summary>
-    private void pBurnVideoDVD(ArrayList FileNames, string PathToTempFolder, string TVFormat, string PathtoDVDBurnExe, string RecorderDrive)
+    private void pBurnVideoDVD(ArrayList FileNames, string PathToTempFolder, string TVFormat, string AspectRatio, string PathtoDVDBurnExe, string RecorderDrive)
     {
       _FileNames = FileNames;
       _FileNameCount = 0;
       _TvFormat = TVFormat;
+      _AspectRatio = AspectRatio;
       _PathtoDvdBurnExe = PathtoDVDBurnExe;
       _Started = false;
       _TempFolderPath = PathToTempFolder;
@@ -713,9 +716,9 @@ namespace MediaPortal.GUI.GUIBurner
 
               string args = String.Empty;
               if (_TvFormat.ToUpper() == "PAL")
-                args = "-oac lavc -ovc lavc -of mpeg -mpegopts format=dvd:tsaf -vf scale=720:576,harddup -srate 48000 -af lavcresample=48000 -lavcopts vcodec=mpeg2video:vrc_buf_size=1835:vrc_maxrate=9800:vbitrate=5000:keyint=15:acodec=ac3:abitrate=192:aspect=16/9 -ofps 25 -o \"" + DestinationFilePath + "\"  \"" + SourceFilePath + "\" ";
+                args = "-oac lavc -ovc lavc -of mpeg -mpegopts format=dvd:tsaf -vf scale=720:576,harddup -srate 48000 -af lavcresample=48000 -lavcopts vcodec=mpeg2video:vrc_buf_size=1835:vrc_maxrate=9800:vbitrate=5000:keyint=15:acodec=ac3:abitrate=192:aspect=" + _AspectRatio + " -ofps 25 -o \"" + DestinationFilePath + "\"  \"" + SourceFilePath + "\" ";
               else
-                args = "-oac lavc -ovc lavc -of mpeg -mpegopts format=dvd:tsaf -vf scale=720:480,harddup -srate 48000 -af lavcresample=48000 -lavcopts vcodec=mpeg2video:vrc_buf_size=1835:vrc_maxrate=9800:vbitrate=5000:keyint=18:acodec=ac3:abitrate=192:aspect=16/9 -ofps 30000/1001 -o \"" + DestinationFilePath + "\"  \"" + SourceFilePath + "\" ";
+                args = "-oac lavc -ovc lavc -of mpeg -mpegopts format=dvd:tsaf -vf scale=720:480,harddup -srate 48000 -af lavcresample=48000 -lavcopts vcodec=mpeg2video:vrc_buf_size=1835:vrc_maxrate=9800:vbitrate=5000:keyint=18:acodec=ac3:abitrate=192:aspect=" + _AspectRatio + " -ofps 30000/1001 -o \"" + DestinationFilePath + "\"  \"" + SourceFilePath + "\" ";
 
               BurnerProcess.StartInfo.Arguments = args;
 
