@@ -91,7 +91,7 @@ namespace TvService
     {
       if (_isRunning) return;
       GetTransponders();
-      Log.Epg("EPG: grabber started {0} transponders..", _transponders.Count);
+      Log.Epg("EPG: grabber initialized for {0} transponders..", _transponders.Count);
       _isRunning = true;
       _epgTimer.Enabled = true;
       IList cards = Card.ListAll();
