@@ -2,11 +2,13 @@
 #define EPG_PARSER_H
 #include <map>
 #include <vector>
+#include <list>
 #include <string>
 using namespace std;
 #include "dvbutil.h"
 #include "criticalsection.h"
 using namespace Mediaportal;
+
 typedef  struct stEPGLanguage
 {
 	DWORD language;
@@ -16,26 +18,34 @@ typedef  struct stEPGLanguage
 
 typedef struct stEPGEvent
 {
-	unsigned int eventid;
+	unsigned int  eventid;
 	unsigned long dateMJD;
 	unsigned long timeUTC;
 	unsigned long duration;
-	unsigned int running_status;
-	unsigned int free_CA_mode;
+	unsigned int  running_status;
+	unsigned int  free_CA_mode;
 	string genre;
 	vector<EPGLanguage> vecLanguages;
 	typedef vector<EPGLanguage>::iterator ivecLanguages;
+    
+  bool operator < (const stEPGEvent& rhs)
+  {
+    if ( dateMJD != rhs.dateMJD) return (dateMJD < rhs.dateMJD);
+    return timeUTC < rhs.timeUTC;
+  }
 }EPGEvent;
 
 typedef struct stEPGChannel
 {
-	bool allSectionsReceived;
-	int last_section_number;
-	int original_network_id;
-	int transport_id;
-	int service_id;
-	map<unsigned int,EPGEvent> mapEvents;
-	typedef map<unsigned int,EPGEvent>::iterator imapEvents;
+	bool    allSectionsReceived;
+	int     last_section_number;
+	int     original_network_id;
+	int     transport_id;
+	int     service_id;
+	map<DWORD,EPGEvent> mapEvents;
+  list<EPGEvent> m_sortedEvents;
+	typedef list<EPGEvent>::iterator ilistEvents;
+	typedef map<DWORD,EPGEvent>::iterator imapEvents;
 
 	map<int,bool> mapSectionsReceived;
 	typedef map<int,bool>::iterator imapSectionsReceived;
@@ -55,7 +65,7 @@ public:
 	ULONG	GetEPGChannelCount( );
 	ULONG	GetEPGEventCount( ULONG channel);
 	void	GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
-	void	GetEPGEvent( ULONG channel,  ULONG event,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** strgenre    );
+	void	GetEPGEvent( ULONG channel,  ULONG event,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** strgenre  ,unsigned int* eventid   );
 	void    GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language, char** eventText, char** eventDescription    );
 	HRESULT	DecodeEPG(byte* pbData,int len);
 

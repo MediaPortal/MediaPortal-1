@@ -8,6 +8,7 @@
 #include "autostring.h"
 #include "entercriticalsection.h"
 
+extern DWORD crc32 (char *data, int len);
 extern void LogDebug(const char *fmt, ...) ;
 
 #define S_FINISHED (S_OK+1)
@@ -16,7 +17,6 @@ CEpgDecoder::CEpgDecoder()
   ResetEPG();
 	m_bParseEPG=false;
 	m_bEpgDone=false;
-
 	m_epgTimeout=time(NULL);
 }
 CEpgDecoder::~CEpgDecoder()
@@ -28,27 +28,28 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 	CEnterCriticalSection lock (m_critSection);
 	try
 	{
-		//30-08-2005 19:54:38 DecodeEPG() check section 0 (50 f0 0f 2e e3 c9 d32ff20)
-		//LogDebug("DecodeEPG():%d",len);
-		if (!m_bParseEPG) return E_FAIL;
-		if (m_bEpgDone) return E_FAIL;
-		if (buf==NULL) return E_FAIL;
+		if (!m_bParseEPG) 
+      return E_FAIL;
+		if (m_bEpgDone) 
+      return E_FAIL;
+		if (buf==NULL)
+      return E_FAIL;
 
 		time_t currentTime=time(NULL);
 		time_t timespan=currentTime-m_epgTimeout;
 		if (timespan>60)
 		{
-			//LogDebug("EPG:timeout ch:%d",m_mapEPG.size());
 			m_bParseEPG=false;
 			m_bEpgDone=true;
 			return S_FINISHED;
 		}
-		if (len<=14) return E_FAIL;
+		if (len<=14) 
+      return E_FAIL;
+
 		int tableid = buf[0];
-
-		if((tableid < 0x50 || tableid > 0x6f) && tableid != 0x4e && tableid != 0x4f) return E_FAIL;
+		if((tableid < 0x50 || tableid > 0x6f) && tableid != 0x4e && tableid != 0x4f) 
+      return E_FAIL;
 		int section_length = ((buf[1]& 0xF)<<8) + buf[2];
-
 		int service_id = (buf[3]<<8)+buf[4];
 		int version_number = (buf[5]>>1) & 0x1f;
 		int current_next_indicator = buf[5]&1;
@@ -66,11 +67,9 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 		unsigned long key=(unsigned long)(lNetworkId<<32UL);
     key+=(lTransport_id<<16);
     key+=lServiceId;
-		//LogDebug("DecodeEPG():key %x",key);
 		imapEPG it=m_mapEPG.find(key);
 		if (it==m_mapEPG.end())
 		{
-			//LogDebug("DecodeEPG():new channel");
 			EPGChannel newChannel ;
 			newChannel.original_network_id=network_id;
 			newChannel.service_id=service_id;
@@ -78,29 +77,22 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 			newChannel.allSectionsReceived=false;
 			m_mapEPG[key]=newChannel;
 			it=m_mapEPG.find(key);
-			//LogDebug("epg:add new channel table:0x%x onid:0x%x tsid:0x%x sid:0x%x",tableid,network_id,transport_id,service_id);
 		}
-		if (it==m_mapEPG.end()) return E_FAIL;
+		if (it==m_mapEPG.end()) 
+      return E_FAIL;
 		EPGChannel& channel=it->second; 
 
 		//did we already receive this section ?
-		key=(section_number);
-		//LogDebug("DecodeEPG() check section %x (%02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x)",
-		//									key, buf[0],buf[1],buf[2],buf[3],buf[4],buf[5],buf[6],buf[7],buf[8],buf[9],buf[10],buf[11],buf[12],buf[13]);
+		key=crc32 ((char*)buf,len);
 		EPGChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(key);
-		if (itSec!=channel.mapSectionsReceived.end()) return S_FINISHED; //yes
+		if (itSec!=channel.mapSectionsReceived.end())
+      return S_FINISHED; //yes
 		channel.mapSectionsReceived[key]=true;
-
-		//	LogDebug("epg: tid:0x%x len:%d %d (%d/%d) sid:0x%x tsid:0x%x onid:0x%x slsn:%d last table id:0x%x cn:%d version:%d", 
-		//		buf[0],len,section_length,section_number,last_section_number, 
-		//		service_id,transport_id,network_id,segment_last_section_number,last_table_id,
-		//		current_next_indicator,version_number);
 
 		m_epgTimeout=time(NULL);
 		int start=14;
 		while (start+11 <= len)
 		{
-			//LogDebug("epg:   %d/%d", start,len);
 			unsigned int event_id=(buf[start]<<8)+buf[start+1];
 			unsigned long dateMJD=(buf[start+2]<<8)+buf[start+3];
 			unsigned long timeUTC=(buf[start+4]<<16)+(buf[start+5]<<8)+buf[6];
@@ -125,10 +117,10 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 
 			start=start+12;
 			int off=0;
-			//		LogDebug("epg:    onid:0x%x tsid:0x%x sid:0x%x event:0x%x date:0x%x time:0x%x duration:0x%x running:%d free:%d start:%d desclen:%d",network_id,transport_id,service_id, event_id,dateMJD,timeUTC,duration,running_status,free_CA_mode,start,descriptors_len);
 			while (off < descriptors_len)
 			{
-				if (start+off+1>len) return  E_FAIL;
+				if (start+off+1>len) 
+          return  E_FAIL;
 				int descriptor_tag = buf[start+off];
 				int descriptor_len = buf[start+off+1];
 				if (descriptor_len>0) 
@@ -209,8 +201,6 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 		lenB = descriptor_length - 5;
 		len1 = length_of_items;
 
-		//	LogDebug("grabext: tag:%x len:%d lang:%x lengthofitems:%x %d/%d", 
-		//		descriptor_tag,descriptor_length,language,length_of_items,descriptor_number,last_descriptor_number);
 		while (len1 > 0)
 		{
 			item_description_length = data[pointer];
@@ -219,21 +209,8 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 				LogDebug("*** epg:DecodeExtendedEvent check 1");
 				return;
 			}
-			//		LogDebug("  1: %d item_description_length:[%d]",pointer,data[pointer]);
-			/*
-			if (item_description_length>0)
-			{
-			CAutoString buffer (item_description_length+10);
-			getString468A(&data[pointer+1], item_description_length,buffer.GetBuffer());
-			string testText=buffer.GetBuffer();
-			if (testText.size()==0)
-			testText="-not avail.-";
-			}
-			*/
 
 			pointer += (1 + item_description_length);
-
-			//		LogDebug("  1: %d [%s]",pointer,testText.c_str() );
 
 			item_length = data[pointer];
 			if (item_length < 0 || pointer+item_length>descriptor_length+2) 
@@ -244,14 +221,11 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 
 			if (item_length>0)
 			{
-				//		LogDebug("  1: %d item_length:[%d]",pointer,item_length);
 
 				CAutoString buffer2 (item_length+10);
 				getString468A(&data[pointer+1], item_length,buffer2.GetBuffer());
 				item = buffer2.GetBuffer();
 			}
-
-			//		LogDebug("  1: %d item_length:[%s]",pointer,item.c_str());
 
 			pointer += (1 + item_length);
 			len1 -= (2 + item_description_length + item_length);
@@ -260,7 +234,6 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 
 		pointer=7+length_of_items;
 		text_length = data[pointer];
-		//	LogDebug("  2: %d text_length:[%d]",pointer,text_length);
 		pointer += 1;
 		if (text_length< 0 || pointer+text_length>descriptor_length+2) 
 		{
@@ -275,9 +248,6 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 			text = buffer.GetBuffer();
 		}
 
-		//LogDebug("  2: %d [%s]",pointer,text.c_str());
-
-		//BUG HERE?
 		//find language...
 		EPGEvent::ivecLanguages it = epgEvent.vecLanguages.begin();
 		for (it = epgEvent.vecLanguages.begin(); it != epgEvent.vecLanguages.end();++it)
@@ -656,10 +626,19 @@ bool CEpgDecoder::IsEPGReady()
 }
 ULONG CEpgDecoder::GetEPGChannelCount( )
 {
-	
+  map<DWORD,EPGEvent>::iterator itEvent;
 	CEnterCriticalSection lock (m_critSection);
-	//	LogDebug("GetEPGChannelCount:%d",m_mapEPG.size());
-	return m_mapEPG.size();
+  for (imapEPG it =m_mapEPG.begin(); it != m_mapEPG.end();++it)
+  {
+    EPGChannel& epgChannel =it->second;
+    epgChannel.m_sortedEvents.clear();
+    for ( itEvent=epgChannel.mapEvents.begin(); itEvent !=epgChannel.mapEvents.end();++itEvent)
+    {
+      epgChannel.m_sortedEvents.push_back(itEvent->second);
+    }
+    epgChannel.m_sortedEvents.sort();
+  }
+	return (ULONG)m_mapEPG.size();
 }
 bool CEpgDecoder::GetChannelByindex(ULONG channelIndex, EPGChannel& epgChannel)
 {
@@ -687,11 +666,10 @@ bool CEpgDecoder::GetChannelByindex(ULONG channelIndex, EPGChannel& epgChannel)
 
 ULONG  CEpgDecoder::GetEPGEventCount( ULONG channel)
 {
-	
 	CEnterCriticalSection lock (m_critSection);
 	EPGChannel epgChannel;
 	if (!GetChannelByindex(channel,epgChannel)) return 0;
-	return epgChannel.mapEvents.size();
+	return (ULONG)epgChannel.m_sortedEvents.size();
 }
 void CEpgDecoder::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  )
 {
@@ -715,7 +693,7 @@ void CEpgDecoder::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transpo
 		*service_id=m_prevChannel.service_id;
 	}
 }
-void CEpgDecoder::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* languageCount, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** genre    )
+void CEpgDecoder::GetEPGEvent( ULONG channel,  ULONG eventIndex,ULONG* languageCount, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** genre ,unsigned int* eventid   )
 {
 	
 	CEnterCriticalSection lock (m_critSection);
@@ -723,26 +701,28 @@ void CEpgDecoder::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* languageCoun
 	*dateMJD=0;
 	*timeUTC=0;
 	*duration=0;
+  *eventid=0;
 	*genre = (char*)"";
 	if (channel!=m_prevChannelIndex)
 	{
 		EPGChannel epgChannel;
 		if (!GetChannelByindex(channel,epgChannel)) return ;
 	}
-	if (eventid >= m_prevChannel.mapEvents.size()) return;
+	if (eventIndex >= m_prevChannel.m_sortedEvents.size()) return;
 
 	ULONG count=0;
-	EPGChannel::imapEvents itEvent=m_prevChannel.mapEvents.begin();
-	while (count < eventid) 
+	EPGChannel::ilistEvents itEvent=m_prevChannel.m_sortedEvents.begin();
+	while (count < eventIndex) 
 	{ 
 		itEvent++; 
 		count++;
 	}
-	EPGEvent& epgEvent=itEvent->second;
-	m_prevEventIndex=eventid;
+	EPGEvent& epgEvent=*itEvent;
+	m_prevEventIndex=eventIndex;
 	m_prevEvent=epgEvent;
 
-	*languageCount=epgEvent.vecLanguages.size();
+  *eventid=epgEvent.eventid;
+	*languageCount=(ULONG)epgEvent.vecLanguages.size();
 	*dateMJD=epgEvent.dateMJD;
 	*timeUTC=epgEvent.timeUTC;
 	*duration=epgEvent.duration;
@@ -762,15 +742,15 @@ void CEpgDecoder::GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageInde
 
 	if (m_prevEventIndex!=eventid)
 	{
-		if (eventid >= m_prevChannel.mapEvents.size()) return;
+		if (eventid >= m_prevChannel.m_sortedEvents.size()) return;
 		ULONG count=0;
-		EPGChannel::imapEvents itEvent=m_prevChannel.mapEvents.begin();
+		EPGChannel::ilistEvents itEvent=m_prevChannel.m_sortedEvents.begin();
 		while (count < eventid) 
 		{ 
 			itEvent++; 
 			count++;
 		}
-		EPGEvent& epgEvent=itEvent->second;
+		EPGEvent& epgEvent=*itEvent;
 		m_prevEventIndex=eventid;
 		m_prevEvent=epgEvent;
 	}

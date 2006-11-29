@@ -134,8 +134,8 @@ STDMETHODIMP CEpgScanner::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* lang
 	CEnterCriticalSection enter(m_section);
 	try
 	{
-		//LogDebug("EpgScanner::GetEPGEvent");
-		m_epgParser.GetEPGEvent( channel,  eventid, language,dateMJD, timeUTC, duration, genre    );
+    unsigned int eventid;
+		m_epgParser.GetEPGEvent( channel,  eventid, language,dateMJD, timeUTC, duration, genre,&eventid   );
 	}
 	catch(...)
 	{
