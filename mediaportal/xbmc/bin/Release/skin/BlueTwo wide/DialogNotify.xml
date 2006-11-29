@@ -17,8 +17,8 @@
 		<control>
 			<type>group</type>
 			<description>group element</description>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+                        <animation effect="fade" time="200">WindowOpen</animation>
+                        <animation effect="fade" time="200">WindowClose</animation>
 			<control>
 				<type>image</type>
 				<id>0</id>
@@ -52,7 +52,7 @@
 				<onleft>4</onleft>
 				<onright>4</onright>
 				<onup>4</onup>
-				<ondown>4</ondown>
+				<ondown>6</ondown>
 			</control>
 			<control>
 				<description>logo</description>
@@ -72,14 +72,14 @@
 				<type>textbox</type>
 				<id>6</id>
 				<font>font10</font>
-				<posX>796</posX>
-				<posY>593</posY>
+				<posX>787</posX>
+				<posY>599</posY>
 				<width>300</width>
 				<height>120</height>
 				<spinWidth>21</spinWidth>
 				<spinHeight>21</spinHeight>
-				<spinPosX>1100</spinPosX>
-				<spinPosY>684</spinPosY>
+				<spinPosX>1077</spinPosX>
+				<spinPosY>680</spinPosY>
 				<onleft>4</onleft>
 				<onright>4</onright>
 				<onup>4</onup>
@@ -89,3 +89,4 @@
 		</control>
 	</controls>
 </window>
+
