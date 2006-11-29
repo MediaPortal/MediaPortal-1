@@ -51,6 +51,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
         private double _SyncHours = 0;
         private System.Timers.Timer _SyncTimer = new System.Timers.Timer();
         private BackgroundWorker _EPGbackgroundWorker;
+        private BackgroundWorker _ZapbackgroundWorker;
 
         public ExternalDreamboxTV()
         {
@@ -67,7 +68,10 @@ namespace ProcessPlugins.ExternalDreamboxTV
             this._EPGbackgroundWorker = new BackgroundWorker();
             this._EPGbackgroundWorker.DoWork += new DoWorkEventHandler(_EPGbackgroundWorker_DoWork);
             this._EPGbackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_EPGbackgroundWorker_RunWorkerCompleted);
-            
+
+            this._ZapbackgroundWorker = new BackgroundWorker();
+            this._ZapbackgroundWorker.DoWork += new DoWorkEventHandler(_ZapbackgroundWorker_DoWork);
+
             if (_SyncHours > 0)
             {
                 int inval = Convert.ToInt32(_SyncHours);
@@ -78,6 +82,31 @@ namespace ProcessPlugins.ExternalDreamboxTV
 
 
             
+        }
+
+        void _ZapbackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            string reference = (string)e.Argument;
+            // Zap channel
+            if (!_ZapbackgroundWorker.IsBusy)
+            {
+                try
+                {
+                    if (_DreamboxIP.Length > 0)
+                    {
+                        DreamBox.Core dreambox = new DreamBox.Core("http://" + _DreamboxIP, _DreamboxUserName, _DreamboxPassword);
+                        dreambox.Remote.Zap(reference);
+                        Log.Info("ExternalDreamboxTV ZAP: {0}\r\n", reference);
+                    }
+                    else
+                        Log.Info("ExternalDreamboxTV Error: {0}\r\n", "Could not zap because IP address of dreambox not set.");
+
+                }
+                catch (Exception x)
+                {
+                    Log.Info("ExternalDreamboxTV Error: {0}\r\n{1}", x.Message, x.StackTrace);
+                }
+            }
         }
 
         void _EPGbackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -115,7 +144,9 @@ namespace ProcessPlugins.ExternalDreamboxTV
             {
                 // Get EPG
                 Log.Info("DreamboxTV: Get EPG");
-                this.ImportEPG();
+                if (!this._EPGbackgroundWorker.IsBusy)
+                    this._EPGbackgroundWorker.RunWorkerAsync();
+                //this.ImportEPG();
 
                 // Save new Sync Data
                 using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -194,7 +225,6 @@ namespace ProcessPlugins.ExternalDreamboxTV
             {
                 Log.Info("ExternalDreamboxTV Error: {0}\r\n{1}", x.Message, x.StackTrace);
             }
-
         }
 
         bool DreamboxIsRecording
