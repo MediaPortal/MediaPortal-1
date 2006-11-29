@@ -429,6 +429,12 @@
     <Compile Include="TvMovie\TvMovieDatabase.cs" />
     <Compile Include="TvMovie\TvMovie.cs" />
     <Compile Include="TvNotifies\NotifyManager.cs" />
+    <Compile Include="TvNotifies\NotifySetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TvNotifies\NotifySetupForm.Designer.cs">
+      <DependentUpon>NotifySetupForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="WebEPG\WebEPGGrabber.cs" />
     <Compile Include="WebEPG\WebEPGGrabberSettings.cs">
       <SubType>Form</SubType>
@@ -508,10 +514,20 @@
     <EmbeddedResource Include="MusicShareWatcher\MusicShareWatcher_deactivated.gif" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="TvNotifies\Notifybutton.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TvNotifies\Notifybutton_disabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="TvMovie\tvmovie.gif" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TvMovie\tvmovie_inactive.gif" />
+    <EmbeddedResource Include="TvNotifies\NotifySetupForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>NotifySetupForm.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

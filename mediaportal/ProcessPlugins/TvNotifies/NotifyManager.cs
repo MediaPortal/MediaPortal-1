@@ -26,13 +26,17 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Forms;
+
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.Util;
 
-namespace ProcessPlugins.TVNotifies
+namespace MediaPortal.TvNotifies
 {
-  public class NotifyManager: IPlugin, ISetupForm 
+  [PluginIcons("ProcessPlugins.TvNotifies.Notifybutton.gif", "ProcessPlugins.TvNotifies.Notifybutton_disabled.gif")]
+  public class NotifyManager : ISetupForm, IPlugin //, IShowPlugin
   {
     System.Windows.Forms.Timer _timer;
     // flag indicating that notifies have been added/changed/removed
@@ -112,7 +116,7 @@ namespace ProcessPlugins.TVNotifies
 
     public string Description()
     {
-      return "Launch a notification before a program starts";
+      return "Display notify OSD before a program starts";
     }
 
     public bool DefaultEnabled()
@@ -122,7 +126,6 @@ namespace ProcessPlugins.TVNotifies
 
     public int GetWindowId()
     {
-      // TODO:  Add CallerIdPlugin.GetWindowId implementation
       return -1;
     }
 
@@ -138,7 +141,7 @@ namespace ProcessPlugins.TVNotifies
 
     public string Author()
     {
-      return "Frodo";
+      return "Frodo, rtv";
     }
 
     public string PluginName()
@@ -148,15 +151,22 @@ namespace ProcessPlugins.TVNotifies
 
     public bool HasSetup()
     {
-      // TODO:  Add CallerIdPlugin.HasSetup implementation
-      return false;
+      return true;
     }
 
     public void ShowPlugin()
     {
-      // TODO:  Add CallerIdPlugin.ShowPlugin implementation
+      Form NotifySetup = new TvNotifies.NotifySetupForm();
+      NotifySetup.ShowDialog();
     }
 
     #endregion
+
+    //#region IShowPlugin Members
+    //public bool ShowDefaultHome()
+    //{
+    //  return false;
+    //}
+    //#endregion
   }
 }

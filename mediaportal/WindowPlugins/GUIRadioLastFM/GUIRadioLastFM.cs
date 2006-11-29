@@ -891,10 +891,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       return true;
     }
-    #endregion
 
-
-    #region IShowPlugin Members
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {
       strButtonText = GUILocalizeStrings.Get(34000);
@@ -904,16 +901,18 @@ namespace MediaPortal.GUI.RADIOLASTFM
       return true;
     }
 
-    public bool ShowDefaultHome()
-    {
-      return false;
-    }
-
     // show the setup dialog
     public void ShowPlugin()
     {
       PluginSetupForm lastfmsetup = new PluginSetupForm();
       lastfmsetup.ShowDialog();
+    }
+    #endregion    
+
+    #region IShowPlugin Members
+    public bool ShowDefaultHome()
+    {
+      return false;
     }
     #endregion
   }
