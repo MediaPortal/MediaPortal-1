@@ -40,7 +40,7 @@
  <control>
       <description>TV Progress Bar</description>
       <type>tvprogress</type>
-      <id>100</id>
+      <id>101</id>
       <posX>76</posX>
       <posY>30</posY>
       <width>470</width>
