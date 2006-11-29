@@ -101,13 +101,13 @@ STDMETHODIMP CEpgScanner::GetEPGChannelCount( ULONG* channelCount)
 	}
 	return S_OK;
 }
-STDMETHODIMP CEpgScanner::GetEPGEventCount( ULONG channel,  ULONG* eventCount)
+STDMETHODIMP CEpgScanner::GetEPGEventCount( ULONG channelidx,  ULONG* eventCount)
 {
 	CEnterCriticalSection enter(m_section);
 	try
 	{
 		//LogDebug("EpgScanner::GetEPGEventCount");
-		*eventCount=m_epgParser.GetEPGEventCount( channel);
+		*eventCount=m_epgParser.GetEPGEventCount( channelidx);
 	}
 	catch(...)
 	{
@@ -115,13 +115,13 @@ STDMETHODIMP CEpgScanner::GetEPGEventCount( ULONG channel,  ULONG* eventCount)
 	}
 	return S_OK;
 }
-STDMETHODIMP CEpgScanner::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  )
+STDMETHODIMP CEpgScanner::GetEPGChannel( ULONG channelidx,  WORD* networkId,  WORD* transportid, WORD* service_id  )
 {
 	CEnterCriticalSection enter(m_section);
 	try
 	{
 		//LogDebug("EpgScanner::GetEPGChannel");
-		m_epgParser.GetEPGChannel( channel,  networkId,  transportid, service_id  );
+		m_epgParser.GetEPGChannel( channelidx,  networkId,  transportid, service_id  );
 	}
 	catch(...)
 	{
@@ -129,13 +129,13 @@ STDMETHODIMP CEpgScanner::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD*
 	}
 	return S_OK;
 }
-STDMETHODIMP CEpgScanner::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** genre    )
+STDMETHODIMP CEpgScanner::GetEPGEvent( ULONG channel,  ULONG eventidx,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** genre    )
 {
 	CEnterCriticalSection enter(m_section);
 	try
 	{
     unsigned int eventid;
-		m_epgParser.GetEPGEvent( channel,  eventid, language,dateMJD, timeUTC, duration, genre,&eventid   );
+		m_epgParser.GetEPGEvent( channel,  eventidx, language,dateMJD, timeUTC, duration, genre,&eventid   );
 	}
 	catch(...)
 	{
@@ -143,13 +143,13 @@ STDMETHODIMP CEpgScanner::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* lang
 	}
 	return S_OK;
 }
-STDMETHODIMP CEpgScanner::GetEPGLanguage(THIS_ ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription    )
+STDMETHODIMP CEpgScanner::GetEPGLanguage(THIS_ ULONG channel, ULONG eventidx,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription    )
 {
 	CEnterCriticalSection enter(m_section);
 	try
 	{
 		//LogDebug("EpgScanner::GetEPGLanguage");
-		m_epgParser.GetEPGLanguage( channel,  eventid, languageIndex,language,eventText,eventDescription    );
+		m_epgParser.GetEPGLanguage( channel,  eventidx, languageIndex,language,eventText,eventDescription    );
 	}
 	catch(...)
 	{

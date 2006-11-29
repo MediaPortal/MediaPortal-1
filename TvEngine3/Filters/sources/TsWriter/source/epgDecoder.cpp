@@ -17,6 +17,7 @@ CEpgDecoder::CEpgDecoder()
   ResetEPG();
 	m_bParseEPG=false;
 	m_bEpgDone=false;
+  m_bSorted=FALSE;
 	m_epgTimeout=time(NULL);
 }
 CEpgDecoder::~CEpgDecoder()
@@ -592,6 +593,7 @@ void CEpgDecoder::ResetEPG()
 	m_mapEPG.clear();
 	//m_bParseEPG=false;
 	m_bEpgDone=false;
+  m_bSorted=false;
 	m_epgTimeout=time(NULL);
 }
 
@@ -610,6 +612,7 @@ void CEpgDecoder::GrabEPG()
 	m_mapEPG.clear();
 	m_bParseEPG=true;
 	m_bEpgDone=false;
+  m_bSorted=false;
 	m_epgTimeout=time(NULL);
 }
 bool CEpgDecoder::IsEPGGrabbing()
@@ -618,16 +621,12 @@ bool CEpgDecoder::IsEPGGrabbing()
 }
 bool CEpgDecoder::IsEPGReady()
 {
-	//if (m_bEpgDone)
-	//{
-	//	LogDebug("CEpgDecoder::IsEPGReady() ->yes");
-	//}
 	return m_bEpgDone;
 }
-ULONG CEpgDecoder::GetEPGChannelCount( )
+void CEpgDecoder::Sort()
 {
+  if (m_bSorted) return;
   map<DWORD,EPGEvent>::iterator itEvent;
-	CEnterCriticalSection lock (m_critSection);
   for (imapEPG it =m_mapEPG.begin(); it != m_mapEPG.end();++it)
   {
     EPGChannel& epgChannel =it->second;
@@ -638,12 +637,18 @@ ULONG CEpgDecoder::GetEPGChannelCount( )
     }
     epgChannel.m_sortedEvents.sort();
   }
+  m_bSorted=true;
+}
+ULONG CEpgDecoder::GetEPGChannelCount( )
+{
+	CEnterCriticalSection lock (m_critSection);
+  Sort();
 	return (ULONG)m_mapEPG.size();
 }
 bool CEpgDecoder::GetChannelByindex(ULONG channelIndex, EPGChannel& epgChannel)
 {
-	
 	CEnterCriticalSection lock (m_critSection);
+  Sort();
 	EPGEvent evt;
 	m_prevEventIndex=-1;
 	m_prevEvent=evt;
@@ -667,6 +672,7 @@ bool CEpgDecoder::GetChannelByindex(ULONG channelIndex, EPGChannel& epgChannel)
 ULONG  CEpgDecoder::GetEPGEventCount( ULONG channel)
 {
 	CEnterCriticalSection lock (m_critSection);
+  Sort();
 	EPGChannel epgChannel;
 	if (!GetChannelByindex(channel,epgChannel)) return 0;
 	return (ULONG)epgChannel.m_sortedEvents.size();
@@ -675,6 +681,7 @@ void CEpgDecoder::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transpo
 {
 	
 	CEnterCriticalSection lock (m_critSection);
+  Sort();
 	*networkId=0;
 	*transportid=0;
 	*service_id=0;
@@ -695,8 +702,8 @@ void CEpgDecoder::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transpo
 }
 void CEpgDecoder::GetEPGEvent( ULONG channel,  ULONG eventIndex,ULONG* languageCount, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** genre ,unsigned int* eventid   )
 {
-	
 	CEnterCriticalSection lock (m_critSection);
+  Sort();
 	*languageCount=0;
 	*dateMJD=0;
 	*timeUTC=0;

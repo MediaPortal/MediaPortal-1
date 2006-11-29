@@ -74,7 +74,7 @@ private:
 	void DecodeShortEventDescriptor(byte* buf,EPGEvent& event);
 	void DecodeContentDescription(byte* buf,EPGEvent& event);
 	void DecodeExtendedEvent(byte* buf, EPGEvent& event);
-	
+  void Sort();	
 
 	map<unsigned long,EPGChannel> m_mapEPG;
 	typedef map<unsigned long,EPGChannel>::iterator imapEPG;
@@ -85,6 +85,7 @@ private:
 	long	   m_prevEventIndex;
 	EPGChannel m_prevChannel;
 	EPGEvent   m_prevEvent;
+  bool       m_bSorted;
 	CCriticalSection m_critSection;
 };
 
