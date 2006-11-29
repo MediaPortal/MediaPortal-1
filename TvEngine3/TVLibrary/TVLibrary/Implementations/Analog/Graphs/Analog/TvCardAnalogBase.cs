@@ -1051,10 +1051,15 @@ namespace TvLibrary.Implementations.Analog
         Log.Log.WriteFile("analog: AddTvEncoderFilter no encoder devices found");
         return false;
       }
+      Log.Log.WriteFile("analog: AddTvEncoderFilter found:{0} encoders", devices.Length);
       for (int i = 0; i < devices.Length; i++)
       {
-        Log.Log.WriteFile("analog: AddTvEncoderFilter try:{0}", devices[i].Name);
-        if (DevicesInUse.Instance.IsUsed(devices[i])) continue;
+        if (DevicesInUse.Instance.IsUsed(devices[i]))
+        {
+          Log.Log.WriteFile("analog:  skip :{0} (inuse)", devices[i].Name);
+          continue;
+        }
+        Log.Log.WriteFile("analog:  try encoder:{0}", devices[i].Name);
         int hr;
         try
         {
@@ -1062,7 +1067,7 @@ namespace TvLibrary.Implementations.Analog
         }
         catch (Exception)
         {
-          Log.Log.WriteFile("analog: cannot add filter to graph");
+          Log.Log.WriteFile("analog: cannot add filter {0} to graph", devices[i].Name);
           continue;
         }
 
@@ -1072,6 +1077,7 @@ namespace TvLibrary.Implementations.Analog
           {
             hr = _graphBuilder.RemoveFilter(tmp);
             Release.ComObject("TvEncoderFilter", tmp);
+            tmp = null;
           }
           continue;
         }
@@ -1094,22 +1100,31 @@ namespace TvLibrary.Implementations.Analog
             {
               for (int media = 0; media < fetched; ++media)
               {
-                if (mediaTypes[media].majorType == MediaType.Stream && mediaTypes[media].subType == MediaSubType.Mpeg2Transport)
+                if (mediaTypes[media].majorType == MediaType.Stream && 
+                    mediaTypes[media].subType == MediaSubType.Mpeg2Transport)
                 {
                   isTsFilter = true;
+                }
+                if (mediaTypes[media].majorType == MediaType.Stream &&
+                    mediaTypes[media].subType == MediaSubType.Mpeg2Program)
+                {
+                  isTsFilter = false;
                   break;
                 }
               }
             }
-            Release.ComObject("IEnumMediaTypes",enumMediaTypes);
           }
+          Release.ComObject("pinout", pinOut);
         }
+
         if (isTsFilter)
         {
+          Log.Log.WriteFile("analog:  filter {0} has mpeg-2 ts outputs", devices[i].Name);
           if (tmp != null)
           {
             hr = _graphBuilder.RemoveFilter(tmp);
             Release.ComObject("TvEncoderFilter", tmp);
+            tmp = null;
           }
           continue;
         }
@@ -1118,8 +1133,8 @@ namespace TvLibrary.Implementations.Analog
         //bool success = false;
         IPin pin1 = DsFindPin.ByDirection(tmp, PinDirection.Input, 0);
         IPin pin2 = DsFindPin.ByDirection(tmp, PinDirection.Input, 1);
-        if (pin1 != null) Log.Log.WriteFile("analog: encoder pin1:{0}", FilterGraphTools.LogPinInfo(pin1));
-        if (pin2 != null) Log.Log.WriteFile("analog: encoder pin2:{0}", FilterGraphTools.LogPinInfo(pin2));
+        if (pin1 != null) Log.Log.WriteFile("analog: encoder in-pin1:{0}", FilterGraphTools.LogPinInfo(pin1));
+        if (pin2 != null) Log.Log.WriteFile("analog: encoder in-pin2:{0}", FilterGraphTools.LogPinInfo(pin2));
         if (pin1 != null && pin2 != null)
         {
           if (ConnectEncoderFilter(tmp, true, true, matchPinNames))
@@ -2060,7 +2075,7 @@ namespace TvLibrary.Implementations.Analog
       }
     }
 
-    
+
 
     /// <summary>
     /// returns true if card is currently grabbing the epg
