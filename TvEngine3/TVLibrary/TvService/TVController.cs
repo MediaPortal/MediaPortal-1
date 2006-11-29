@@ -2190,7 +2190,7 @@ namespace TvService
           if (IsRecording(cardId)) return false;
           if (IsTimeShifting(cardId)) return false;
           if (IsScanning(cardId)) return false;
-          //if (IsGrabbingEpg(cardId)) return false;
+          if (IsGrabbingEpg(cardId)) return false;
         }
         return true;
       }
