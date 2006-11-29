@@ -507,6 +507,12 @@
   <ItemGroup>
     <EmbeddedResource Include="MusicShareWatcher\MusicShareWatcher_deactivated.gif" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TvMovie\tvmovie.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TvMovie\tvmovie_inactive.gif" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

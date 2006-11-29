@@ -30,13 +30,14 @@ using MediaPortal.GUI.Library;
 using System.Windows.Forms;
 using System.Threading;
 
+using MediaPortal.Configuration;
 using MediaPortal.TV.Database;
 
 namespace ProcessPlugins.TvMovie
 {
+  [PluginIcons("ProcessPlugins.TvMovie.tvmovie.gif", "ProcessPlugins.TvMovie.tvmovie_inactive.gif")]
   public class TvMovie : ISetupForm, IPlugin
   {
-
     private TvMovieDatabase _database;
     private System.Threading.Timer _stateTimer;
     private bool _isImporting = false;

@@ -52,7 +52,6 @@ namespace MediaPortal.AudioScrobbler
       LoadSettings();
     }
 
-
     #region Serialisation
     protected void LoadSettings()
     {
@@ -334,7 +333,6 @@ namespace MediaPortal.AudioScrobbler
     }
     #endregion
 
-
     #region control events
     // Implements the manual sorting of items by columns.
     class ListViewItemComparer : IComparer
@@ -496,7 +494,6 @@ namespace MediaPortal.AudioScrobbler
     }
     #endregion
 
-
     #region Internal formatting
     private ListViewItem BuildListViewItemSingleTag(Song song_)
     {
@@ -548,7 +545,6 @@ namespace MediaPortal.AudioScrobbler
       return listItem;
     }
     #endregion
-
 
     #region Button events
     private void buttonCancel_Click(object sender, EventArgs e)
