@@ -1018,9 +1018,10 @@ namespace MediaPortal.GUI.GUIBurner
         CDBurner = new XPBurn.XPBurnCD();
         CDBurner.BurnerDrive = CDBurner.RecorderDrives[recorder].ToString();
       }
-      catch
+      catch(Exception ex)
       {
         Log.Error("Problem creating XPBurn");
+        Log.Error(ex);
       }
 
     }

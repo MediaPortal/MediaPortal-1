@@ -116,6 +116,8 @@ namespace MediaPortal.GUI.GUIBurner
         catch (Exception ex)
         {
           MessageBox.Show("Some components are missing!");
+          Log.Error("Problem creating XPBurn");
+          Log.Error(ex);
         }        
         textBoxTempPath.Enabled = true;
         buttonSelectTempPathLocation.Enabled = true;        
