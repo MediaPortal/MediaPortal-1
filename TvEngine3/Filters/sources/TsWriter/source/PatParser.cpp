@@ -193,7 +193,24 @@ void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
 			info.OtherMux=sdtInfo.OtherMux;
 			info.SdtReceived=true;
 			strcpy(info.ProviderName,sdtInfo.ProviderName);
-			strcpy(info.ServiceName,sdtInfo.ServiceName);
+     
+      int number=0;
+      char compareBuffer[255];
+      for (itChannels it2 = m_mapChannels.begin();it2!=m_mapChannels.end();++it2)
+      {
+        CChannelInfo& info2=it2->second;
+        if (info2.ServiceId==sdtInfo.ServiceId) continue;
+        if (number==0)
+			    strcpy(compareBuffer,sdtInfo.ServiceName);
+        else
+          sprintf(compareBuffer,"%s (%d)", sdtInfo.ServiceName,number);
+          if (strcmp(info2.ServiceName,compareBuffer)==0) number++;
+      }
+
+      if (number==0)
+			  strcpy(info.ServiceName,sdtInfo.ServiceName);
+      else
+        sprintf(info.ServiceName,"%s (%d)", sdtInfo.ServiceName,number);
 			if (m_pCallback!=NULL)
 			{
 				if (IsReady() )
@@ -222,7 +239,24 @@ void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
 			info.SdtReceived=true;
 			info.PmtReceived=false;
 			strcpy(info.ProviderName,sdtInfo.ProviderName);
-			strcpy(info.ServiceName,sdtInfo.ServiceName);
+      
+      int number=0;
+      char compareBuffer[255];
+      for (itChannels it2 = m_mapChannels.begin();it2!=m_mapChannels.end();++it2)
+      {
+        CChannelInfo& info2=it2->second;
+        if (info2.ServiceId==sdtInfo.ServiceId) continue;
+        if (number==0)
+			    strcpy(compareBuffer,sdtInfo.ServiceName);
+        else
+          sprintf(compareBuffer,"%s (%d)", sdtInfo.ServiceName,number);
+          if (strcmp(info2.ServiceName,compareBuffer)==0) number++;
+      }
+      if (number==0)
+			  strcpy(info.ServiceName,sdtInfo.ServiceName);
+      else
+        sprintf(info.ServiceName,"%s (%d)", sdtInfo.ServiceName,number);
+
       m_mapChannels[info.ServiceId]=info;
     }
   }

@@ -69,7 +69,7 @@ void DumpTs(byte* tspacket)
 static char logbuffer[2000]; 
 void LogDebug(const char *fmt, ...) 
 {
-#ifdef DEBUG
+#ifndef DEBUG
 	va_list ap;
 	va_start(ap,fmt);
 
@@ -92,7 +92,7 @@ void LogDebug(const char *fmt, ...)
 			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
 			logbuffer);
 		fclose(fp);
-    ::OutputDebugStringA(logbuffer);::OutputDebugStringA("\n");
+    //::OutputDebugStringA(logbuffer);::OutputDebugStringA("\n");
 	}
 #endif
 };
