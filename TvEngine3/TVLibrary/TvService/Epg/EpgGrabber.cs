@@ -101,6 +101,7 @@ namespace TvService
         EpgCard epgCard = new EpgCard(_tvController, card);
         _epgCards.Add(epgCard);
       }
+      _epgTimer_Elapsed(null, null);
     }
 
     /// <summary>
@@ -221,6 +222,7 @@ namespace TvService
     /// </summary>
     void GetTransponders()
     {
+      Gentle.Common.CacheManager.Clear();
       _transponders = new List<Transponder>();
       //get all channels
       IList channels = Channel.ListAll();
