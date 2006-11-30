@@ -226,9 +226,11 @@ namespace MediaPortal.PowerScheduler
       if ((_wakeupTime < DateTime.Now) ||
            ((_rescanTVDatabase) && (!TVDatabase.SupressEvents)))
       {
-        CheckNextRecoring();                              // checks when the next recording takes place 
+				ResetShutDown();                                  // ensure that the assumptions about EarliestStartTime are true.
+				CheckNextRecoring();                              // checks when the next recording takes place 
         SetWakeUpTime();                                  // set the WakeUp Timer
         _rescanTVDatabase = false;
+				OnActivateWindow(GUIWindowManager.ActiveWindow);  // SetShutDown is called when needed 
       }
 
       if (_shutDownTime > DateTime.Now)
@@ -366,8 +368,8 @@ namespace MediaPortal.PowerScheduler
         }
         LogDebug("Plugin: {0},  Time: {1}", wakeable.PluginName(), pluginTime);
       }
-
-      if ((nextWakeUpTime > DateTime.Now) && (nextWakeUpTime < DateTime.MaxValue))
+			
+      if ((nextWakeUpTime > DateTime.Now) && (nextWakeUpTime < DateTime.Now.AddMonths(3)))
       {
         if (nextWakeUpTime != _wakeupTime)      // only set it when it is different
         {
@@ -495,7 +497,9 @@ namespace MediaPortal.PowerScheduler
     #region IWakeable Interface
     public DateTime GetNextEvent(DateTime earliestWakeuptime)
     {
-      return _nextRecordingTime.AddMinutes(-_wakeupInterval);
+      DateTime recordingTime = _nextRecordingTime.AddMinutes(-_wakeupInterval); 
+			if (recordingTime < earliestWakeuptime) recordingTime = earliestWakeuptime; 
+			return recordingTime;
     }
 
     public bool DisallowShutdown()
