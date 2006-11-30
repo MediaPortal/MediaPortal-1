@@ -393,11 +393,15 @@ namespace ProcessPlugins.ExternalDreamboxTV
                 string userName = xmlreader.GetValueAsString("Dreambox", "UserName", "root");
                 string password = xmlreader.GetValueAsString("Dreambox", "Password", "dreambox");
                 string syncText = xmlreader.GetValueAsString("Dreambox", "SyncHour", "0");
+                string LastEPGSyncText = xmlreader.GetValueAsString("Dreambox", "LastEPGSync", System.DateTime.Now.ToString());
+                bool ResetBox = Convert.ToBoolean(xmlreader.GetValueAsString("Dreambox", "ResetBox", "false"));
 
                 edtDreamIP.Text = ip;
                 edtDreamUserName.Text = userName;
                 edtDreamPassword.Text = password;
                 edtSyncHours.Text = syncText;
+                chkResetAfterSync.Checked = ResetBox;
+                edtLastSync.Text = LastEPGSyncText;
             }
         }
 
@@ -408,6 +412,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
                 xmlwriter.SetValue("Dreambox", "IP", edtDreamIP.Text);
                 xmlwriter.SetValue("Dreambox", "UserName", edtDreamUserName.Text);
                 xmlwriter.SetValue("Dreambox", "Password", edtDreamPassword.Text);
+                xmlwriter.SetValue("Dreambox", "LastEPGSync", edtLastSync.Text);
             }
             return true;
         }
@@ -429,6 +434,23 @@ namespace ProcessPlugins.ExternalDreamboxTV
                 xmlwriter.SetValue("Dreambox", "SyncHour", edtSyncHours.Text);
             }
             MessageBox.Show("Saved");
+        }
+
+        private void btnSetLastSync_Click(object sender, EventArgs e)
+        {
+            // Save last Sync
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            {
+                xmlwriter.SetValue("Dreambox", "LastEPGSync", edtLastSync.Text);
+            }
+        }
+
+        private void chkResetAfterSync_CheckedChanged(object sender, EventArgs e)
+        {
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            {
+                xmlwriter.SetValue("Dreambox", "ResetBox", chkResetAfterSync.Checked.ToString().ToLower());
+            }
         }
 
 

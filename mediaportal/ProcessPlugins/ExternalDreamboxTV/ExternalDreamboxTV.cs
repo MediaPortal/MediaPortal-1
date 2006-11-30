@@ -48,6 +48,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
         private string _DreamboxIP = "";
         private string _DreamboxUserName = "";
         private string _DreamboxPassword = "";
+        private bool _ReloadBoxAfterSync = false;
         private double _SyncHours = 0;
         private System.Timers.Timer _SyncTimer = new System.Timers.Timer();
         private BackgroundWorker _EPGbackgroundWorker;
@@ -117,6 +118,12 @@ namespace ProcessPlugins.ExternalDreamboxTV
         void _EPGbackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             this.ImportEPG();
+            if (_ReloadBoxAfterSync)
+            {
+                Log.Info("DreamboxTV: reboot box!");
+                DreamBox.Core core1 = new DreamBox.Core("http://" + _DreamboxIP, _DreamboxUserName, _DreamboxPassword);
+                core1.Reboot();
+            }
         }
 
         void _SyncTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -267,7 +274,10 @@ namespace ProcessPlugins.ExternalDreamboxTV
                 _DreamboxIP = xmlreader.GetValueAsString("Dreambox", "IP", "dreambox");
                 _DreamboxUserName = xmlreader.GetValueAsString("Dreambox", "UserName", "root");
                 _DreamboxPassword = xmlreader.GetValueAsString("Dreambox", "Password", "dreambox");
+                _ReloadBoxAfterSync = Convert.ToBoolean(xmlreader.GetValueAsString("Dreambox", "ResetBox", "false"));
+
                 string syncText = xmlreader.GetValueAsString("Dreambox", "SyncHour", "0");
+
                 try
                 {
                     _SyncHours = Convert.ToDouble(syncText);

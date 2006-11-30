@@ -87,6 +87,12 @@ namespace DreamBox
             }
         }
 
+        public void Reboot()
+        {
+            Request request = new Request(_Url, _UserName, _Password);
+            string sreturn = request.PostData("/cgi-bin/admin?command=reboot");
+        }
+
 
 
 

@@ -41,6 +41,14 @@ namespace ProcessPlugins.ExternalDreamboxTV
             this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+            this.mpGroupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+            this.btnSetLastSync = new System.Windows.Forms.Button();
+            this.edtLastSync = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.chkResetAfterSync = new System.Windows.Forms.CheckBox();
+            this.edtSaveEPGSyncSettings = new MediaPortal.UserInterface.Controls.MPButton();
+            this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.edtSyncHours = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
             this.progLabel = new MediaPortal.UserInterface.Controls.MPLabel();
             this.lblProgressText = new System.Windows.Forms.Label();
             this.btnLoadChannels = new System.Windows.Forms.Button();
@@ -56,19 +64,15 @@ namespace ProcessPlugins.ExternalDreamboxTV
             this.edtTotalBoutiques = new MediaPortal.UserInterface.Controls.MPTextBox();
             this.btnEPG = new MediaPortal.UserInterface.Controls.MPButton();
             this.btnClose = new MediaPortal.UserInterface.Controls.MPButton();
-            this.mpGroupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-            this.edtSyncHours = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
-            this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
-            this.edtSaveEPGSyncSettings = new MediaPortal.UserInterface.Controls.MPButton();
             this.mpTabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.mpGroupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tabPage2.SuspendLayout();
             this.mpGroupBox1.SuspendLayout();
-            this.mpGroupBox2.SuspendLayout();
             this.mpGroupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.edtSyncHours)).BeginInit();
+            this.mpGroupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // mpTabControl1
@@ -210,6 +214,93 @@ namespace ProcessPlugins.ExternalDreamboxTV
             this.mpGroupBox1.TabStop = false;
             this.mpGroupBox1.Text = "Import Channels and EPG";
             // 
+            // mpGroupBox4
+            // 
+            this.mpGroupBox4.Controls.Add(this.btnSetLastSync);
+            this.mpGroupBox4.Controls.Add(this.edtLastSync);
+            this.mpGroupBox4.Controls.Add(this.label1);
+            this.mpGroupBox4.Controls.Add(this.chkResetAfterSync);
+            this.mpGroupBox4.Controls.Add(this.edtSaveEPGSyncSettings);
+            this.mpGroupBox4.Controls.Add(this.mpLabel8);
+            this.mpGroupBox4.Controls.Add(this.edtSyncHours);
+            this.mpGroupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.mpGroupBox4.Location = new System.Drawing.Point(6, 48);
+            this.mpGroupBox4.Name = "mpGroupBox4";
+            this.mpGroupBox4.Size = new System.Drawing.Size(494, 97);
+            this.mpGroupBox4.TabIndex = 7;
+            this.mpGroupBox4.TabStop = false;
+            this.mpGroupBox4.Text = "Sync EPG every:";
+            // 
+            // btnSetLastSync
+            // 
+            this.btnSetLastSync.Location = new System.Drawing.Point(455, 23);
+            this.btnSetLastSync.Name = "btnSetLastSync";
+            this.btnSetLastSync.Size = new System.Drawing.Size(33, 23);
+            this.btnSetLastSync.TabIndex = 6;
+            this.btnSetLastSync.Text = "set";
+            this.btnSetLastSync.UseVisualStyleBackColor = true;
+            this.btnSetLastSync.Click += new System.EventHandler(this.btnSetLastSync_Click);
+            // 
+            // edtLastSync
+            // 
+            this.edtLastSync.Location = new System.Drawing.Point(223, 25);
+            this.edtLastSync.Name = "edtLastSync";
+            this.edtLastSync.Size = new System.Drawing.Size(232, 20);
+            this.edtLastSync.TabIndex = 5;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(167, 28);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(55, 13);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "Last sync:";
+            // 
+            // chkResetAfterSync
+            // 
+            this.chkResetAfterSync.AutoSize = true;
+            this.chkResetAfterSync.Checked = true;
+            this.chkResetAfterSync.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkResetAfterSync.Location = new System.Drawing.Point(170, 63);
+            this.chkResetAfterSync.Name = "chkResetAfterSync";
+            this.chkResetAfterSync.Size = new System.Drawing.Size(241, 17);
+            this.chkResetAfterSync.TabIndex = 3;
+            this.chkResetAfterSync.Text = "Reset Dreambox after load (keeps box stable)";
+            this.chkResetAfterSync.UseVisualStyleBackColor = true;
+            this.chkResetAfterSync.CheckedChanged += new System.EventHandler(this.chkResetAfterSync_CheckedChanged);
+            // 
+            // edtSaveEPGSyncSettings
+            // 
+            this.edtSaveEPGSyncSettings.Location = new System.Drawing.Point(7, 59);
+            this.edtSaveEPGSyncSettings.Name = "edtSaveEPGSyncSettings";
+            this.edtSaveEPGSyncSettings.Size = new System.Drawing.Size(94, 23);
+            this.edtSaveEPGSyncSettings.TabIndex = 2;
+            this.edtSaveEPGSyncSettings.Text = "Save";
+            this.edtSaveEPGSyncSettings.UseVisualStyleBackColor = true;
+            this.edtSaveEPGSyncSettings.Click += new System.EventHandler(this.edtSaveEPGSyncSettings_Click);
+            // 
+            // mpLabel8
+            // 
+            this.mpLabel8.AutoSize = true;
+            this.mpLabel8.Location = new System.Drawing.Point(68, 30);
+            this.mpLabel8.Name = "mpLabel8";
+            this.mpLabel8.Size = new System.Drawing.Size(33, 13);
+            this.mpLabel8.TabIndex = 1;
+            this.mpLabel8.Text = "hours";
+            // 
+            // edtSyncHours
+            // 
+            this.edtSyncHours.Location = new System.Drawing.Point(14, 26);
+            this.edtSyncHours.Maximum = new decimal(new int[] {
+            24,
+            0,
+            0,
+            0});
+            this.edtSyncHours.Name = "edtSyncHours";
+            this.edtSyncHours.Size = new System.Drawing.Size(48, 20);
+            this.edtSyncHours.TabIndex = 0;
+            // 
             // progLabel
             // 
             this.progLabel.AutoSize = true;
@@ -228,7 +319,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
             // 
             // btnLoadChannels
             // 
-            this.btnLoadChannels.Location = new System.Drawing.Point(33, 241);
+            this.btnLoadChannels.Location = new System.Drawing.Point(20, 222);
             this.btnLoadChannels.Name = "btnLoadChannels";
             this.btnLoadChannels.Size = new System.Drawing.Size(107, 23);
             this.btnLoadChannels.TabIndex = 4;
@@ -238,9 +329,9 @@ namespace ProcessPlugins.ExternalDreamboxTV
             // 
             // progChannels
             // 
-            this.progChannels.Location = new System.Drawing.Point(33, 48);
+            this.progChannels.Location = new System.Drawing.Point(6, 19);
             this.progChannels.Name = "progChannels";
-            this.progChannels.Size = new System.Drawing.Size(452, 23);
+            this.progChannels.Size = new System.Drawing.Size(494, 23);
             this.progChannels.TabIndex = 3;
             // 
             // mpGroupBox2
@@ -254,9 +345,9 @@ namespace ProcessPlugins.ExternalDreamboxTV
             this.mpGroupBox2.Controls.Add(this.mpLabel1);
             this.mpGroupBox2.Controls.Add(this.edtTotalBoutiques);
             this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.mpGroupBox2.Location = new System.Drawing.Point(167, 107);
+            this.mpGroupBox2.Location = new System.Drawing.Point(167, 151);
             this.mpGroupBox2.Name = "mpGroupBox2";
-            this.mpGroupBox2.Size = new System.Drawing.Size(318, 161);
+            this.mpGroupBox2.Size = new System.Drawing.Size(318, 127);
             this.mpGroupBox2.TabIndex = 2;
             this.mpGroupBox2.TabStop = false;
             this.mpGroupBox2.Text = "Import Statisctics";
@@ -264,7 +355,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
             // mpLabel3
             // 
             this.mpLabel3.AutoSize = true;
-            this.mpLabel3.Location = new System.Drawing.Point(7, 114);
+            this.mpLabel3.Location = new System.Drawing.Point(6, 97);
             this.mpLabel3.Name = "mpLabel3";
             this.mpLabel3.Size = new System.Drawing.Size(72, 13);
             this.mpLabel3.TabIndex = 7;
@@ -275,7 +366,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
             this.edtChannel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.edtChannel.BorderColor = System.Drawing.Color.Empty;
             this.edtChannel.Enabled = false;
-            this.edtChannel.Location = new System.Drawing.Point(97, 111);
+            this.edtChannel.Location = new System.Drawing.Point(96, 94);
             this.edtChannel.Name = "edtChannel";
             this.edtChannel.ReadOnly = true;
             this.edtChannel.Size = new System.Drawing.Size(215, 20);
@@ -284,7 +375,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
             // mpLabel4
             // 
             this.mpLabel4.AutoSize = true;
-            this.mpLabel4.Location = new System.Drawing.Point(7, 88);
+            this.mpLabel4.Location = new System.Drawing.Point(6, 71);
             this.mpLabel4.Name = "mpLabel4";
             this.mpLabel4.Size = new System.Drawing.Size(81, 13);
             this.mpLabel4.TabIndex = 5;
@@ -295,7 +386,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
             this.edtTotalChannels.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.edtTotalChannels.BorderColor = System.Drawing.Color.Empty;
             this.edtTotalChannels.Enabled = false;
-            this.edtTotalChannels.Location = new System.Drawing.Point(97, 85);
+            this.edtTotalChannels.Location = new System.Drawing.Point(96, 68);
             this.edtTotalChannels.Name = "edtTotalChannels";
             this.edtTotalChannels.ReadOnly = true;
             this.edtTotalChannels.Size = new System.Drawing.Size(67, 20);
@@ -304,7 +395,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
             // mpLabel2
             // 
             this.mpLabel2.AutoSize = true;
-            this.mpLabel2.Location = new System.Drawing.Point(7, 59);
+            this.mpLabel2.Location = new System.Drawing.Point(6, 42);
             this.mpLabel2.Name = "mpLabel2";
             this.mpLabel2.Size = new System.Drawing.Size(75, 13);
             this.mpLabel2.TabIndex = 3;
@@ -315,7 +406,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
             this.edtBoutique.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.edtBoutique.BorderColor = System.Drawing.Color.Empty;
             this.edtBoutique.Enabled = false;
-            this.edtBoutique.Location = new System.Drawing.Point(97, 56);
+            this.edtBoutique.Location = new System.Drawing.Point(96, 39);
             this.edtBoutique.Name = "edtBoutique";
             this.edtBoutique.ReadOnly = true;
             this.edtBoutique.Size = new System.Drawing.Size(215, 20);
@@ -324,7 +415,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
             // mpLabel1
             // 
             this.mpLabel1.AutoSize = true;
-            this.mpLabel1.Location = new System.Drawing.Point(7, 33);
+            this.mpLabel1.Location = new System.Drawing.Point(6, 16);
             this.mpLabel1.Name = "mpLabel1";
             this.mpLabel1.Size = new System.Drawing.Size(84, 13);
             this.mpLabel1.TabIndex = 1;
@@ -335,7 +426,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
             this.edtTotalBoutiques.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.edtTotalBoutiques.BorderColor = System.Drawing.Color.Empty;
             this.edtTotalBoutiques.Enabled = false;
-            this.edtTotalBoutiques.Location = new System.Drawing.Point(97, 30);
+            this.edtTotalBoutiques.Location = new System.Drawing.Point(96, 13);
             this.edtTotalBoutiques.Name = "edtTotalBoutiques";
             this.edtTotalBoutiques.ReadOnly = true;
             this.edtTotalBoutiques.Size = new System.Drawing.Size(67, 20);
@@ -343,7 +434,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
             // 
             // btnEPG
             // 
-            this.btnEPG.Location = new System.Drawing.Point(33, 211);
+            this.btnEPG.Location = new System.Drawing.Point(20, 192);
             this.btnEPG.Name = "btnEPG";
             this.btnEPG.Size = new System.Drawing.Size(107, 23);
             this.btnEPG.TabIndex = 0;
@@ -357,53 +448,9 @@ namespace ProcessPlugins.ExternalDreamboxTV
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 23);
             this.btnClose.TabIndex = 1;
-            this.btnClose.Text = "Cancel";
+            this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-            // 
-            // mpGroupBox4
-            // 
-            this.mpGroupBox4.Controls.Add(this.edtSaveEPGSyncSettings);
-            this.mpGroupBox4.Controls.Add(this.mpLabel8);
-            this.mpGroupBox4.Controls.Add(this.edtSyncHours);
-            this.mpGroupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.mpGroupBox4.Location = new System.Drawing.Point(33, 107);
-            this.mpGroupBox4.Name = "mpGroupBox4";
-            this.mpGroupBox4.Size = new System.Drawing.Size(107, 98);
-            this.mpGroupBox4.TabIndex = 7;
-            this.mpGroupBox4.TabStop = false;
-            this.mpGroupBox4.Text = "Sync EPG every:";
-            // 
-            // edtSyncHours
-            // 
-            this.edtSyncHours.Location = new System.Drawing.Point(14, 26);
-            this.edtSyncHours.Maximum = new decimal(new int[] {
-            24,
-            0,
-            0,
-            0});
-            this.edtSyncHours.Name = "edtSyncHours";
-            this.edtSyncHours.Size = new System.Drawing.Size(48, 20);
-            this.edtSyncHours.TabIndex = 0;
-            // 
-            // mpLabel8
-            // 
-            this.mpLabel8.AutoSize = true;
-            this.mpLabel8.Location = new System.Drawing.Point(68, 30);
-            this.mpLabel8.Name = "mpLabel8";
-            this.mpLabel8.Size = new System.Drawing.Size(33, 13);
-            this.mpLabel8.TabIndex = 1;
-            this.mpLabel8.Text = "hours";
-            // 
-            // edtSaveEPGSyncSettings
-            // 
-            this.edtSaveEPGSyncSettings.Location = new System.Drawing.Point(7, 59);
-            this.edtSaveEPGSyncSettings.Name = "edtSaveEPGSyncSettings";
-            this.edtSaveEPGSyncSettings.Size = new System.Drawing.Size(94, 23);
-            this.edtSaveEPGSyncSettings.TabIndex = 2;
-            this.edtSaveEPGSyncSettings.Text = "Save";
-            this.edtSaveEPGSyncSettings.UseVisualStyleBackColor = true;
-            this.edtSaveEPGSyncSettings.Click += new System.EventHandler(this.edtSaveEPGSyncSettings_Click);
             // 
             // ExternalDreamBoxTVSettings
             // 
@@ -425,11 +472,11 @@ namespace ProcessPlugins.ExternalDreamboxTV
             this.tabPage2.ResumeLayout(false);
             this.mpGroupBox1.ResumeLayout(false);
             this.mpGroupBox1.PerformLayout();
-            this.mpGroupBox2.ResumeLayout(false);
-            this.mpGroupBox2.PerformLayout();
             this.mpGroupBox4.ResumeLayout(false);
             this.mpGroupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.edtSyncHours)).EndInit();
+            this.mpGroupBox2.ResumeLayout(false);
+            this.mpGroupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -468,5 +515,9 @@ namespace ProcessPlugins.ExternalDreamboxTV
         private MediaPortal.UserInterface.Controls.MPLabel mpLabel8;
         private MediaPortal.UserInterface.Controls.MPNumericUpDown edtSyncHours;
         private MediaPortal.UserInterface.Controls.MPButton edtSaveEPGSyncSettings;
+        private System.Windows.Forms.CheckBox chkResetAfterSync;
+        private System.Windows.Forms.Button btnSetLastSync;
+        private System.Windows.Forms.TextBox edtLastSync;
+        private System.Windows.Forms.Label label1;
     }
 }
