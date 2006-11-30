@@ -176,7 +176,7 @@ namespace MediaPortal.GUI.Video
       g_Player.PlayBackStopped += new MediaPortal.Player.g_Player.StoppedHandler(OnPlayBackStopped);
       g_Player.PlayBackEnded += new MediaPortal.Player.g_Player.EndedHandler(OnPlayBackEnded);
       g_Player.PlayBackStarted += new MediaPortal.Player.g_Player.StartedHandler(OnPlayBackStarted);
-      _currentFolder = null;
+      // _currentFolder = null;
 
       LoadSettings();
       bool result = Load(GUIGraphicsContext.Skin + @"\myVideo.xml");
@@ -250,7 +250,7 @@ namespace MediaPortal.GUI.Video
         }*/
         virtualDirectory = VirtualDirectories.Instance.Movies;
 
-        if (_currentFolder == _virtualStartDirectory)
+        if (_virtualStartDirectory == String.Empty)
         {
           if (virtualDirectory.DefaultShare != null)
           {
