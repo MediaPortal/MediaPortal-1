@@ -5913,7 +5913,7 @@
 	</string>
 	<string Prefix="My ">
 		<id>100707</id>
-		<value>EPG <-> channel mapping</value>
+		<value>EPG -> Channel mapping</value>
 	</string>
 	<string Prefix="My ">
 		<id>100708</id>
