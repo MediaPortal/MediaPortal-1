@@ -782,81 +782,104 @@ namespace MediaPortal.Music.Database
       }
     }
 
+    private string removeInvalidChars(string inputString_)
+    {
+      string cleanString = inputString_;
+      int dotIndex = 0;
+
+      // remove CD1, CD2, CDn from Tracks
+      if (Util.Utils.ShouldStack(cleanString, cleanString))
+        Util.Utils.RemoveStackEndings(ref cleanString);
+      // remove [DJ Spacko MIX (2000)]
+      dotIndex = cleanString.IndexOf("[");
+      if (dotIndex > 0)
+        cleanString = cleanString.Remove(dotIndex);
+      dotIndex = cleanString.IndexOf("(");
+      if (dotIndex > 0)
+        cleanString = cleanString.Remove(dotIndex);
+
+      // substitute "&" with "and"
+      cleanString = cleanString.Replace("&", " and ");
+      // make sure there's only one space
+      cleanString = cleanString.Replace("  ", " ");
+      // substitute "/" with "+"
+      cleanString = cleanString.Replace(@"/", "+");
+      // clean soundtracks
+      cleanString = cleanString.Replace("OST ", " ");
+      cleanString = cleanString.Replace("Soundtrack - ", " ");
+      if (cleanString.EndsWith("Soundtrack"))
+        cleanString.Remove(cleanString.IndexOf("Soundtrack"));
+      if (cleanString.EndsWith("OST"))
+        cleanString.Remove(cleanString.IndexOf("OST"));
+
+      return cleanString;
+    }
+
+    private string removeEndingChars(string inputString_)
+    {
+      int dotIndex = 0;
+      // build a clean end
+      dotIndex = inputString_.LastIndexOf('-');
+      if (dotIndex >= inputString_.Length - 2)
+        inputString_ = inputString_.Remove(dotIndex);
+      dotIndex = inputString_.LastIndexOf('+');
+      if (dotIndex >= inputString_.Length - 2)
+        inputString_ = inputString_.Remove(dotIndex);
+
+      return inputString_;
+    }
+
     public string getValidURLLastFMString(string lastFMString)
     {
       int dotIndex = 0;
       int lastIndex = -1;
-      string outString = String.Empty;
-      string cleanString = String.Empty;
+      string outString = String.Empty;      
       string urlString = System.Web.HttpUtility.UrlEncode(lastFMString);
 
       try
       {
-        cleanString = lastFMString;
-        // remove CD1, CD2, CDn from Tracks
-        if (Util.Utils.ShouldStack(cleanString, cleanString))
-          Util.Utils.RemoveStackEndings(ref cleanString);
-        // remove [DJ Spacko MIX (2000)]
-        dotIndex = cleanString.IndexOf("[");
-        if (dotIndex > 0)
-          cleanString = cleanString.Remove(dotIndex);
-        dotIndex = cleanString.IndexOf("(");
-        if (dotIndex > 0)
-          cleanString = cleanString.Remove(dotIndex);
+        outString = removeInvalidChars(lastFMString);
 
-        // substitute "&" with "and"
-        cleanString = cleanString.Replace("&", " and ");
-        // make sure there's only one space
-        cleanString = cleanString.Replace("  ", " ");
-        // substitute "/" with "+"
-        cleanString = cleanString.Replace(@"/", "+");
-
-        dotIndex = 0;
-        if (cleanString != String.Empty)
-        {
-          // build a clean end
-          dotIndex = cleanString.LastIndexOf('-');
-          if (dotIndex >= cleanString.Length - 2)
-            outString = cleanString.Remove(dotIndex);
-          dotIndex = cleanString.LastIndexOf('+');
-          if (dotIndex >= cleanString.Length - 2)
-            outString = cleanString.Remove(dotIndex);
-          urlString = System.Web.HttpUtility.UrlEncode(cleanString);
-        }
+        if (outString != String.Empty)        
+          urlString = System.Web.HttpUtility.UrlEncode(removeEndingChars(outString));        
 
         outString = urlString;
 
         List<Char> invalidSingleChars = new List<Char>();
         invalidSingleChars.Add('.');
         invalidSingleChars.Add(',');
+
+        // bail out if I missed a race condition
+        int failSafe = 0;
         foreach (Char singleChar in invalidSingleChars)
         {
           do
           {
+            failSafe++;
             dotIndex = urlString.IndexOf(singleChar);
             if (dotIndex > 0)
               if (dotIndex > lastIndex)
               {
-                if (dotIndex < urlString.Length -1)
+                if (dotIndex < urlString.Length - 1)
                 {
                   lastIndex = dotIndex;
                   outString = urlString.Insert(dotIndex + 1, "+");
                   urlString = outString;
-                }                
+                }
               }
               else
                 break;
+            if (failSafe > 500)
+            {
+              Log.Error("*****AudioscrobblerUtils: Possible race condition cleaning string: {0}", urlString);
+              return String.Empty;
+            }
           }
           while (dotIndex > 0);
         }
         outString = outString.Replace("++", "+");
         // build a clean end
-        dotIndex = outString.LastIndexOf('-');
-        if (dotIndex >= outString.Length - 2)
-          outString = outString.Remove(dotIndex);
-        dotIndex = outString.LastIndexOf('+');
-        if (dotIndex >= outString.Length - 2)
-          outString = outString.Remove(dotIndex);
+        outString = removeEndingChars(outString);
       }
       catch (Exception ex)
       {
