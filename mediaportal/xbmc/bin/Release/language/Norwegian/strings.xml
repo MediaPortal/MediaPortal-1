@@ -5680,6 +5680,10 @@
 		<value>Programtilegg</value>
 	</string>
 	<string>
+		<id>100035</id>
+		<value>Basic home</value>
+	</string>
+	<string>
 		<id>100100</id>
 		<value>Ja/nei-dialog</value>
 	</string>
@@ -5714,6 +5718,22 @@
 	<string Prefix="Min ">
 		<id>100506</id>
 		<value>Musikk/favoritter</value>
+	</string>
+	<string Prefix="Min ">
+		<id>100507</id>
+		<value>Musikk/År</value>
+	</string>
+	<string Prefix="Min ">
+		<id>100508</id>
+		<value>Musikk/Finn/Resultater</value>
+	</string>
+	<string Prefix="Min ">
+		<id>100509</id>
+		<value>Musikk/Finn/Fremgang</value>
+	</string>
+	<string Prefix="Min ">
+		<id>100510</id>
+		<value>Musikk/Spiller</value>
 	</string>
 	<string Prefix="Min">
 		<id>100511</id>
@@ -5864,10 +5884,14 @@
 		<value>Assistent/EPG</value>
 	</string>
 	<string Prefix="Min ">
+		<id>100636</id>
+		<value>Assistent/Generelt</value>
+	</string>
+	<string Prefix="Min ">
 		<id>100699</id>
 		<value>Assistent/ferdig</value>
 	</string>
-	<string Prefix="Min ">
+	<string Prefix="Mine ">
 		<id>100700</id>
 		<value>TV-innstillinger</value>
 	</string>
@@ -5879,17 +5903,33 @@
 		<id>100702</id>
 		<value>Sorter TV-kanaler</value>
 	</string>
-	<string Prefix="Min ">
+	<string Prefix="Mine ">
 		<id>100703</id>
 		<value>TV filminnstillinger</value>
 	</string>
-	<string Prefix="Min ">
+	<string Prefix="Mine ">
 		<id>100704</id>
 		<value>DVD-innstillinger</value>
 	</string>
-	<string Prefix="Min ">
+	<string Prefix="Mine ">
 		<id>100705</id>
 		<value>Skin-innstillinger</value>
+	</string>
+	<string Prefix="Mine ">
+		<id>100706</id>
+		<value>EPG-innstillinger</value>
+	</string>
+	<string Prefix="Min ">
+		<id>100707</id>
+		<value>EPG -> Kanal fletting</value>
+	</string>
+	<string Prefix="Mine ">
+		<id>100708</id>
+		<value>Skip step-innstillinger</value>
+	</string>
+	<string Prefix="Mine ">
+		<id>100709</id>
+		<value>TV server-innstillinger</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100748</id>
@@ -5926,6 +5966,14 @@
 	<string Prefix="Min ">
 		<id>100760</id>
 		<value>Brenner</value>
+	</string>
+	<string Prefix="Min ">
+		<id>100761</id>
+		<value>TV guide</value>
+	</string>
+	<string Prefix="Min ">
+		<id>100762</id>
+		<value>Radio guide</value>
 	</string>
 	<string Prefix="Min ">
 		<id>100770</id>
@@ -6020,6 +6068,14 @@
 		<value>Fullskjerms-OSD</value>
 	</string>
 	<string Prefix="Min ">
+		<id>102959</id>
+		<value>Video editor</value>
+	</string>
+	<string Prefix="Min ">
+		<id>103001</id>
+		<value>DVD</value>
+	</string>
+	<string Prefix="Min ">
 		<id>103003</id>
 		<value>TV/OSD</value>
 	</string>
@@ -6032,12 +6088,36 @@
 		<value>TV/Zap OSD</value>
 	</string>
 	<string Prefix="Min ">
+		<id>103009</id>
+		<value>TV/Mini EPG</value>
+	</string>
+	<string Prefix="Min ">
+		<id>103011</id>
+		<value>TV/Beskjær-innstillinger</value>
+	</string>
+	<string Prefix="Min ">
+		<id>104711</id>
+		<value>Wikipedia</value>
+	</string>
+	<string Prefix="Mine ">
+		<id>105900</id>
+		<value>Trailere</value>
+	</string>
+	<string Prefix="Min ">
 		<id>107700</id>
 		<value>TV/Tekst-TV</value>
 	</string>
 	<string Prefix="Min ">
 		<id>107701</id>
 		<value>TV/Tekst-TV</value>
+	</string>
+	<string Prefix="Min ">
+		<id>107777</id>
+		<value>Sudoku</value>
+	</string>
+	<string Prefix="Min ">
+		<id>107890</id>
+		<value>Last.fm radio</value>
 	</string>
 	<string>
 		<id>200000</id>
