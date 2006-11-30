@@ -189,7 +189,7 @@ namespace TvService
         if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
         {
           //create worker thread to update the database
-          Log.Epg("Epg: card:{0} received epg for {1} channels", _currentCardId,epg.Count);
+          Log.Epg("Epg: card:{0} received epg for {1} channels", _currentCardId, epg.Count);
           _state = EpgState.Updating;
           _epg = epg;
           Thread workerThread = new Thread(new ThreadStart(UpdateDatabaseThread));
@@ -593,8 +593,8 @@ namespace TvService
           if (!found)
           {
             DVBBaseChannel dvbChannel = epgChannel.Channel as DVBBaseChannel;
-           // Log.Epg("EPG: no channel found for networkid:{0} transportid:{1} serviceid:{2}",
-           //         dvbChannel.NetworkId, dvbChannel.TransportId, dvbChannel.ServiceId);
+            // Log.Epg("EPG: no channel found for networkid:{0} transportid:{1} serviceid:{2}",
+            //         dvbChannel.NetworkId, dvbChannel.TransportId, dvbChannel.ServiceId);
           }
         }
       }
@@ -642,7 +642,7 @@ namespace TvService
       TimeSpan ts = DateTime.Now - channel.LastGrabTime;
       if (ts.TotalHours < EpgReGrabAfter)
       {
-        Log.Epg("Epg: card:{0} :{1} {2} not needed lastUpdate:{3}", _currentCardId,channelNr, channel.Name, channel.LastGrabTime);
+        Log.Epg("Epg: card:{0} :{1} {2} not needed lastUpdate:{3}", _currentCardId, channelNr, channel.Name, channel.LastGrabTime);
         return false;
       }
       Log.Epg("Epg: card:{0} :{1} {2}  lastUpdate:{3}", _currentCardId, channelNr, channel.Name, channel.LastGrabTime);
@@ -674,32 +674,40 @@ namespace TvService
           Log.Epg("Epg: card:{0} updating card not idle", _currentCardId);
           return false;
         }
-        if (program.Text.Count == 0) continue;
         if (program.EndTime <= lastProgram) continue;
+        string title = "";
+        string description = "";
+        string genre = "";
 
-        int offset = -1;
-        for (int i = 0; i < program.Text.Count; ++i)
+        if (program.Text.Count != 0)
         {
-          if (program.Text[0].Language.ToLower() == "all")
+          int offset = -1;
+          for (int i = 0; i < program.Text.Count; ++i)
           {
-            offset = i;
-            break;
+            if (program.Text[0].Language.ToLower() == "all")
+            {
+              offset = i;
+              break;
+            }
+            if (epgLanguages.Length == 0 || epgLanguages.ToLower().IndexOf(program.Text[i].Language.ToLower()) >= 0)
+            {
+              offset = i;
+              break;
+            }
           }
-          if (epgLanguages.Length == 0 || epgLanguages.ToLower().IndexOf(program.Text[i].Language.ToLower()) >= 0)
+          if (offset != -1)
           {
-            offset = i;
-            break;
+            title = program.Text[offset].Title;
+            description = program.Text[offset].Description;
+            genre = program.Text[offset].Genre;
+          }
+          else
+          {
+            title = program.Text[0].Title;
+            description = program.Text[0].Description;
+            genre = program.Text[0].Genre;
           }
         }
-        if (offset == -1)
-        {
-          channel.LastGrabTime = DateTime.Now;
-          channel.Persist();
-          return true;
-        }
-        string title = program.Text[offset].Title;
-        string description = program.Text[offset].Description;
-        string genre = program.Text[offset].Genre;
 
         if (title == null) title = "";
         if (description == null) description = "";
