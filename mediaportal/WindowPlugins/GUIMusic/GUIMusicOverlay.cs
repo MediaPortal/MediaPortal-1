@@ -634,6 +634,8 @@ namespace MediaPortal.GUI.Music
       strFile = playlistPlayer.GetNext();
       if (strFile == String.Empty)
       {
+        // fix high cpu load due to constant checking
+        m_strThumb = (string)GUIPropertyManager.GetProperty("#Play.Current.Thumb");
         return;
       }
 
