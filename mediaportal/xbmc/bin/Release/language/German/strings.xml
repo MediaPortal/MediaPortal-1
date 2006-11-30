@@ -2339,7 +2339,7 @@
 	</string>
 	<string>
 		<id>711</id>
-		<value>Update von v#old -&gt;v#new ?</value>
+		<value>Update von v#old ->v#new ?</value>
 	</string>
 	<string>
 		<id>712</id>
@@ -4071,7 +4071,7 @@
 	</string>
 	<string>
 		<id>2118</id>
-		<value>DVR-MS -&gt;MPEG2</value>
+		<value>DVR-MS ->MPEG2</value>
 	</string>
 	<string>
 		<id>2119</id>
@@ -4163,11 +4163,11 @@
 	</string>
 	<string>
 		<id>2141</id>
-		<value>MPEG2 -&gt;DivX</value>
+		<value>MPEG2 -> DivX</value>
 	</string>
 	<string>
 		<id>2142</id>
-		<value>MPEG2 -&gt;MPEG4</value>
+		<value>MPEG2 -> MPEG4</value>
 	</string>
 	<string>
 		<id>2143</id>
@@ -5574,47 +5574,47 @@
 	</string>
 	<string>
 		<id>100008</id>
-		<value>Einstellungen-&gt;Allgemein</value>
+		<value>Einstellungen->Allgemein</value>
 	</string>
 	<string>
 		<id>100009</id>
-		<value>Einstellungen-&gt;Bildschirm</value>
+		<value>Einstellungen->Bildschirm</value>
 	</string>
 	<string>
 		<id>100010</id>
-		<value>Einstellungen-&gt;Bildschirm-&gt;UI Kalibierung</value>
+		<value>Einstellungen->Bildschirm->UI Kalibierung</value>
 	</string>
 	<string>
 		<id>100011</id>
-		<value>Einstellungen-&gt;Bildschirm-&gt;Kalibrierung</value>
+		<value>Einstellungen->Bildschirm->Kalibrierung</value>
 	</string>
 	<string>
 		<id>100012</id>
-		<value>Einstellungen-&gt;Diashow</value>
+		<value>Einstellungen->Diashow</value>
 	</string>
 	<string>
 		<id>100013</id>
-		<value>Einstellungen-&gt;Bildschirm-&gt;Filter</value>
+		<value>Einstellungen->Bildschirm->Filter</value>
 	</string>
 	<string>
 		<id>100014</id>
-		<value>Einstellungen-&gt;Musik</value>
+		<value>Einstellungen->Musik</value>
 	</string>
 	<string>
 		<id>100015</id>
-		<value>Einstellungen-&gt;Bildschirm-&gt;Untertitel</value>
+		<value>Einstellungen->Bildschirm->Untertitel</value>
 	</string>
 	<string>
 		<id>100016</id>
-		<value>Einstellungen-&gt;Bildschirm-&gt;Bildschirmschoner</value>
+		<value>Einstellungen->Bildschirm->Bildschirmschoner</value>
 	</string>
 	<string>
 		<id>100017</id>
-		<value>Einstellungen-&gt;Wetter</value>
+		<value>Einstellungen->Wetter</value>
 	</string>
 	<string>
 		<id>100020</id>
-		<value>Einstellungen-&gt;Skripte</value>
+		<value>Einstellungen->Skripte</value>
 	</string>
 	<string Prefix="Meine ">
 		<id>100021</id>
@@ -5630,7 +5630,7 @@
 	</string>
 	<string>
 		<id>100024</id>
-		<value>Einstellungen-&gt;Programme</value>
+		<value>Einstellungen->Programme</value>
 	</string>
 	<string Prefix="Meine ">
 		<id>100025</id>
@@ -5638,11 +5638,11 @@
 	</string>
 	<string>
 		<id>100026</id>
-		<value>Einstellungen-&gt;Allgemein-&gt;Speicher</value>
+		<value>Einstellungen->Allgemein->Speicher</value>
 	</string>
 	<string>
 		<id>100027</id>
-		<value>Einstellungen-&gt;Allgemein-&gt;Autostart</value>
+		<value>Einstellungen->Allgemein->Autostart</value>
 	</string>
 	<string Prefix="Meine ">
 		<id>100028</id>
@@ -5650,7 +5650,7 @@
 	</string>
 	<string>
 		<id>100029</id>
-		<value>Einstellungen-&gt;Allgemein-&gt;LCD</value>
+		<value>Einstellungen->Allgemein->LCD</value>
 	</string>
 	<string Prefix="Mein ">
 		<id>100030</id>
@@ -5658,7 +5658,7 @@
 	</string>
 	<string>
 		<id>100031</id>
-		<value>Einstellungen-&gt;Bildschirm-&gt;Textlauf-Geschwindigkeit</value>
+		<value>Einstellungen->Bildschirm->Textlauf-Geschwindigkeit</value>
 	</string>
 	<string>
 		<id>100032</id>
@@ -5671,6 +5671,10 @@
 	<string>
 		<id>100034</id>
 		<value>Sonstiges</value>
+	</string>
+	<string>
+		<id>100035</id>
+		<value>Startbildschirm</value>
 	</string>
 	<string>
 		<id>100100</id>
@@ -5707,6 +5711,22 @@
 	<string Prefix="Meine ">
 		<id>100506</id>
 		<value>Musik/Favoriten</value>
+	</string>
+	<string Prefix="Meine ">
+		<id>100507</id>
+		<value>Musik/Jahre</value>
+	</string>
+	<string Prefix="Meine ">
+		<id>100508</id>
+		<value>Musik/Onlinesuche/Ergebnisse</value>
+	</string>
+	<string Prefix="Meine ">
+		<id>100509</id>
+		<value>Musik/Onlinesuche/Fortschritt</value>
+	</string>
+	<string Prefix="Mein ">
+		<id>100510</id>
+		<value>Musik/Aktueller Titel</value>
 	</string>
 	<string Prefix="Meine">
 		<id>100511</id>
@@ -5857,6 +5877,10 @@
 		<value>Assistent/EPG</value>
 	</string>
 	<string Prefix="Mein ">
+		<id>100636</id>
+		<value>Assistent/Allgemein</value>
+	</string>
+	<string Prefix="Mein ">
 		<id>100699</id>
 		<value>Assistent/Fertig</value>
 	</string>
@@ -5874,7 +5898,7 @@
 	</string>
 	<string Prefix="Meine ">
 		<id>100703</id>
-		<value>TV-Film-Einstellungen</value>
+		<value>Video-Einstellungen</value>
 	</string>
 	<string Prefix="Meine ">
 		<id>100704</id>
@@ -5883,6 +5907,22 @@
 	<string Prefix="Meine ">
 		<id>100705</id>
 		<value>Oberflächen-Einstellungen</value>
+	</string>
+	<string Prefix="Meine ">
+		<id>100706</id>
+		<value>EPG-Einstellungen</value>
+	</string>
+	<string Prefix="Meine ">
+		<id>100707</id>
+		<value>EPG-Kanal-Zuordnung</value>
+	</string>
+	<string Prefix="Meine ">
+		<id>100708</id>
+		<value>Skip-Stufen-Einstellungen</value>
+	</string>
+	<string Prefix="Meine ">
+		<id>100709</id>
+		<value>TV-Server-Einstellungen</value>
 	</string>
 	<string Prefix="Mein ">
 		<id>100748</id>
@@ -5919,6 +5959,14 @@
 	<string Prefix="Mein ">
 		<id>100760</id>
 		<value>Brenner</value>
+	</string>
+	<string Prefix="Mein ">
+		<id>100761</id>
+		<value>TV-Programm</value>
+	</string>
+	<string Prefix="Mein ">
+		<id>100762</id>
+		<value>Radio-Programm</value>
 	</string>
 	<string Prefix="Mein ">
 		<id>100770</id>
@@ -6013,6 +6061,14 @@
 		<value>Vollbild OSD</value>
 	</string>
 	<string Prefix="Mein ">
+		<id>102959</id>
+		<value>Video-Editor</value>
+	</string>
+	<string Prefix="Meine ">
+		<id>103001</id>
+		<value>DVDs</value>
+	</string>
+	<string Prefix="Mein ">
 		<id>103003</id>
 		<value>TV/OSD</value>
 	</string>
@@ -6024,6 +6080,22 @@
 		<id>103007</id>
 		<value>TV/Zap OSD</value>
 	</string>
+	<string Prefix="Meine ">
+		<id>103009</id>
+		<value>TV/Kanal-Liste</value>
+	</string>
+	<string Prefix="Meine ">
+		<id>103011</id>
+		<value>TV/Bereichs-Einstellungen</value>
+	</string>
+	<string Prefix="Meine ">
+		<id>104711</id>
+		<value>Wikipedia</value>
+	</string>
+	<string Prefix="Meine ">
+		<id>105900</id>
+		<value>Kino-Vorschau</value>
+	</string>
 	<string Prefix="Mein ">
 		<id>107700</id>
 		<value>TV/Videotext</value>
@@ -6031,6 +6103,14 @@
 	<string Prefix="Mein ">
 		<id>107701</id>
 		<value>TV/Videotext</value>
+	</string>
+	<string Prefix="Mein ">
+		<id>107777</id>
+		<value>Su-ji wa doku</value>
+	</string>
+	<string Prefix="Mein ">
+		<id>107890</id>
+		<value>Last.fm Radio</value>
 	</string>
 	<string>
 		<id>200000</id>

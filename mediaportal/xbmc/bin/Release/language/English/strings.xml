@@ -1779,7 +1779,7 @@
 	</string>
 	<string>
 		<id>533</id>
-		<value>Guide</value>
+		<value>Radio guide</value>
 	</string>
 	<string>
 		<id>534</id>
@@ -5672,6 +5672,10 @@
 		<value>Plugins</value>
 	</string>
 	<string>
+		<id>100035</id>
+		<value>Basic home</value>
+	</string>
+	<string>
 		<id>100100</id>
 		<value>Yes/no dialog</value>
 	</string>
@@ -5706,6 +5710,22 @@
 	<string Prefix="My ">
 		<id>100506</id>
 		<value>Music/Favorites</value>
+	</string>
+	<string Prefix="My ">
+		<id>100507</id>
+		<value>Music/Years</value>
+	</string>
+	<string Prefix="My ">
+		<id>100508</id>
+		<value>Music/Lookup/Results</value>
+	</string>
+	<string Prefix="My ">
+		<id>100509</id>
+		<value>Music/Lookup/Progress</value>
+	</string>
+	<string Prefix="My ">
+		<id>100510</id>
+		<value>Music/Now playing</value>
 	</string>
 	<string Prefix="My">
 		<id>100511</id>
@@ -5856,6 +5876,10 @@
 		<value>Wizard/EPG</value>
 	</string>
 	<string Prefix="My ">
+		<id>100636</id>
+		<value>Wizard/General</value>
+	</string>
+	<string Prefix="My ">
 		<id>100699</id>
 		<value>Wizard/Finished</value>
 	</string>
@@ -5873,7 +5897,7 @@
 	</string>
 	<string Prefix="My ">
 		<id>100703</id>
-		<value>TV Movie settings</value>
+		<value>Movie settings</value>
 	</string>
 	<string Prefix="My ">
 		<id>100704</id>
@@ -5882,6 +5906,22 @@
 	<string Prefix="My ">
 		<id>100705</id>
 		<value>Skin settings</value>
+	</string>
+	<string Prefix="My ">
+		<id>100706</id>
+		<value>EPG settings</value>
+	</string>
+	<string Prefix="My ">
+		<id>100707</id>
+		<value>EPG <-> channel mapping</value>
+	</string>
+	<string Prefix="My ">
+		<id>100708</id>
+		<value>Skip step settings</value>
+	</string>
+	<string Prefix="My ">
+		<id>100709</id>
+		<value>TV server settings</value>
 	</string>
 	<string Prefix="My ">
 		<id>100748</id>
@@ -5918,6 +5958,14 @@
 	<string Prefix="My ">
 		<id>100760</id>
 		<value>Burner</value>
+	</string>
+	<string Prefix="My ">
+		<id>100761</id>
+		<value>TV guide</value>
+	</string>
+	<string Prefix="My ">
+		<id>100762</id>
+		<value>Radio guide</value>
 	</string>
 	<string Prefix="My ">
 		<id>100770</id>
@@ -6012,6 +6060,14 @@
 		<value>Fullscreen OSD</value>
 	</string>
 	<string Prefix="My ">
+		<id>102959</id>
+		<value>Video editor</value>
+	</string>
+	<string Prefix="My ">
+		<id>103001</id>
+		<value>DVD</value>
+	</string>
+	<string Prefix="My ">
 		<id>103003</id>
 		<value>TV/OSD</value>
 	</string>
@@ -6024,12 +6080,36 @@
 		<value>TV/Zap OSD</value>
 	</string>
 	<string Prefix="My ">
+		<id>103009</id>
+		<value>TV/Mini EPG</value>
+	</string>
+	<string Prefix="My ">
+		<id>103011</id>
+		<value>TV/Crop settings</value>
+	</string>
+	<string Prefix="My ">
+		<id>104711</id>
+		<value>Wikipedia</value>
+	</string>
+	<string Prefix="My ">
+		<id>105900</id>
+		<value>Trailers</value>
+	</string>
+	<string Prefix="My ">
 		<id>107700</id>
 		<value>TV/Teletext</value>
 	</string>
 	<string Prefix="My ">
 		<id>107701</id>
 		<value>TV/Teletext</value>
+	</string>
+	<string Prefix="My ">
+		<id>107777</id>
+		<value>Sudoku</value>
+	</string>
+	<string Prefix="My ">
+		<id>107890</id>
+		<value>Last.fm radio</value>
 	</string>
 	<string>
 		<id>200000</id>

@@ -852,6 +852,7 @@ namespace MediaPortal.GUI.NumberPlace
       }
 
       GUIPropertyManager.SetProperty("#numberplace.time", strMinutes + ":" + strSeconds);
+      GUIPropertyManager.SetProperty("#selecteditem", strMinutes + ":" + strSeconds);
 
       for (int i = 0; i < _Settings.HighScore.Count; i++)
       {

@@ -38,31 +38,20 @@ namespace WindowPlugins.VideoEditor
 {
 	public class GUIVideoEditor : GUIWindow
 	{
-		readonly int windowID = 170601;
+		//readonly int windowID = 170601;
 
 		#region GUIControls
-		[SkinControlAttribute(23)]
-		protected GUILabelControl titelLbl = null;
-		[SkinControlAttribute(24)]
-		protected GUIButtonControl backBtn = null;
-		//[SkinControlAttribute(25)]
-		//protected GUIButtonControl cancelBtn = null;
-		[SkinControlAttribute(32)]
-		protected GUILabelControl startTime = null;
-		[SkinControlAttribute(34)]
-		protected GUILabelControl oldDurationLbl = null;
-		[SkinControlAttribute(101)]
-		protected GUIListControl videoListLct = null;
-    [SkinControlAttribute(102)]
-    protected GUISpinControl joinCutSpinCtrl = null;
-		[SkinControlAttribute(99)]
-		protected GUIVideoControl videoWindow = null;
-    [SkinControlAttribute(103)]
-    protected GUIListControl joinListCtrl = null;
-    [SkinControlAttribute(104)]
-    protected GUIButtonControl startJoinBtn = null;
-		[SkinControlAttribute(105)]
-		protected GUIProgressControl progressBar = null;
+		[SkinControlAttribute(23)]		protected GUILabelControl titelLbl = null;
+		[SkinControlAttribute(24)]		protected GUIButtonControl backBtn = null;
+		//[SkinControlAttribute(25)]		//protected GUIButtonControl cancelBtn = null;
+		[SkinControlAttribute(32)]		protected GUILabelControl startTime = null;
+		[SkinControlAttribute(34)]		protected GUILabelControl oldDurationLbl = null;
+		[SkinControlAttribute(101)]		protected GUIListControl videoListLct = null;
+    [SkinControlAttribute(102)]   protected GUISpinControl joinCutSpinCtrl = null;
+		[SkinControlAttribute(99)]		protected GUIVideoControl videoWindow = null;
+    [SkinControlAttribute(103)]   protected GUIListControl joinListCtrl = null;
+    [SkinControlAttribute(104)]   protected GUIButtonControl startJoinBtn = null;
+		[SkinControlAttribute(105)] 	protected GUIProgressControl progressBar = null;
 		#endregion
 
 		#region Own Variables
@@ -84,16 +73,19 @@ namespace WindowPlugins.VideoEditor
 		#endregion
 
 		public GUIVideoEditor()
-		{ }
+		{
+      GetID = (int)GUIWindow.Window.WINDOW_VIDEO_EDITOR;
+    }
 
 		#region Overrides
-		public override int GetID
-		{
-			get
-			{
-				return windowID;
-			}
-		}
+    //public override int GetID
+    //{
+    //  get
+    //  {
+    //    return windowID;
+    //  }
+    //}
+
 		public override bool Init()
 		{
 			try
@@ -112,6 +104,7 @@ namespace WindowPlugins.VideoEditor
 				return false;
 			}
 		}
+		
 		protected override void OnPageLoad()
 		{
 			base.OnPageLoad();

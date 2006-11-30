@@ -946,7 +946,7 @@ namespace MediaPortal.GUI.Pictures
     }
 
     void OnShowPicture(string strFile)
-    {
+    {      
       GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_SLIDESHOW);
       if (SlideShow == null)
         return;

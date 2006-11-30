@@ -401,6 +401,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         if (dlg.SelectedId == -1)
           return;
         btnChooseTag.Label = _usersOwnTags[dlg.SelectedId -1];
+        GUIPropertyManager.SetProperty("#selecteditem", btnChooseTag.Label);
       }
 
       if (control == btnChooseFriend)
@@ -417,6 +418,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         if (dlg.SelectedId == -1)
           return;
         btnChooseFriend.Label = _usersFriends[dlg.SelectedId - 1];
+        GUIPropertyManager.SetProperty("#selecteditem", btnChooseFriend.Label);
       }
 
       base.OnClicked(controlId, control, actionType);

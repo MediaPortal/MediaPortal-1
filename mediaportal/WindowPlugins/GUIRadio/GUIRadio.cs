@@ -763,6 +763,7 @@ namespace MediaPortal.GUI.Radio
       else
       {
         Play(item);
+        GUIPropertyManager.SetProperty("#selecteditem", item.Label);
       }
     }
 

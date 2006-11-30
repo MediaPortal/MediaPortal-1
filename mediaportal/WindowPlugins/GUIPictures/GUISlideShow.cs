@@ -93,7 +93,8 @@ namespace MediaPortal.GUI.Pictures
 
     public SlidePicture(string strFilePath, bool useActualSizeTexture)
     {
-      _filePath = strFilePath;
+      _filePath = strFilePath;      
+
       using (PictureDatabase dbs = new PictureDatabase())
       {
         _rotation = dbs.GetRotation(_filePath);
@@ -313,6 +314,8 @@ namespace MediaPortal.GUI.Pictures
       string slideFilePath = _slideList[_currentSlideIndex];
 
       _currentSlide = _slideCache.GetCurrentSlide(slideFilePath);
+
+      GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(slideFilePath));
 
       ResetCurrentZoom(_currentSlide);
 

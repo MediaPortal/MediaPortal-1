@@ -74,6 +74,7 @@ namespace Wikipedia
 
     public GUIWikipedia()
     {
+      GetID = (int)GUIWindow.Window.WINDOW_WIKIPEDIA;
     }
     #region ISetupForm Members
 
@@ -146,16 +147,13 @@ namespace Wikipedia
     }
     #endregion
 
-    public override int GetID
-    {
-      get
-      {
-        return 4711;
-      }
-      set
-      {
-      }
-    }
+    //public override int GetID
+    //{
+    //  get
+    //  {
+    //    return 4711;
+    //  }
+    //}
 
     public override bool Init()
     {
@@ -191,6 +189,7 @@ namespace Wikipedia
         {
           Log.Info("Wikipedia: Searchterm gotten from OSD keyboard: {0}", searchterm);
           GetAndDisplayArticle(searchterm);
+          GUIPropertyManager.SetProperty("#selecteditem", searchterm);
         }
         // Else display an error dialog.
         else
