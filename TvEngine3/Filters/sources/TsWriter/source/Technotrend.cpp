@@ -232,57 +232,39 @@ STDMETHODIMP CTechnotrend::SetAntennaPower( BOOL onOff)
 STDMETHODIMP CTechnotrend::SetDisEqc(int diseqcType, int hiband, int vertical)
 {
 	LogDebug("Technotrend: SetDisEqc antenna :%d hiband:%d vertical:%d",diseqcType,hiband, vertical);
-  int position=0;
+  int antennaNr=1;
   int option=0;
   switch (diseqcType)
   {
     case 0:
     case 1://simple A
-      position = 0;
-      option = 0;
+      antennaNr = 1;
       break;
     case 2://simple B
-      position = 0;
-      option = 0;
+      antennaNr = 2;
       break;
     case 3://Level 1 A/A
-      position = 0;
-      option = 0;
+      antennaNr = 1;
       break;
     case 4://Level 1 B/A
-      position = 1;
-      option = 0;
+      antennaNr = 2;
       break;
     case 5://Level 1 A/B
-      position = 0;
-      option = 1;
+      antennaNr = 3;
       break;
     case 6://Level 1 B/B
-      position = 1;
-      option = 1;
+      antennaNr = 4;
       break;
   }
-  UINT diseqc = 0xE01038F0;
-  if (hiband)                 // high band
+  ULONG diseqc = 0xE01038F0;
+  if (hiband!=0)              // high band
     diseqc |= 0x00000001;
-  else                        // low band
-    diseqc &= 0xFFFFFFFE;
 
-  if (vertical)             // vertikal
-    diseqc &= 0xFFFFFFFD;
-  else                        // horizontal
+  if (vertical==0)            // horizontal
     diseqc |= 0x00000002;
 
-  if (position != 0)             // Sat B
-    diseqc |= 0x00000004;
-  else                        // Sat A
-    diseqc &= 0xFFFFFFFB;
+  diseqc |=  (byte)((antennaNr - 1) << 2);
 
-  if (option != 0)               // option B
-    diseqc |= 0x00000008;
-  else                        // option A
-    diseqc &= 0xFFFFFFF7;
-        
   Polarisation polarity;
   if (vertical)
     polarity = BDA_POLARISATION_LINEAR_V;

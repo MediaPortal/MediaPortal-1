@@ -110,12 +110,10 @@ namespace TvLibrary.Implementations.DVB
         case BandType.Universal:
           if (channel.Frequency >= 11700000)
           {
-            //lnbFrequency = 10600000;
             isHiBand = 1;
           }
           else
           {
-            //lnbFrequency = 9750000;
             isHiBand = 0;
           }
           break;
