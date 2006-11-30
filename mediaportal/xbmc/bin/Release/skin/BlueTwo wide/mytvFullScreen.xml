@@ -7,7 +7,6 @@
   <define>#currentplaytime:#TV.View.start</define>
   <define>#currentremaining:#TV.View.stop</define>
 	<controls>
- <import>common.progressbar.xml</import>
 		<control>
 		  <description>bar image</description>
 		  <posX>60</posX>
@@ -21,6 +20,7 @@
 		  <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
 		</control>
+<import>common.progressbar.xml</import>
 		<control>
 			<description>row 1 label</description>
 			<type>label</type>
