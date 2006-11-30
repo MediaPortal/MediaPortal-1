@@ -98,6 +98,7 @@ namespace TvService
       _epgCards = new List<EpgCard>();
       foreach (Card card in cards)
       {
+        if (false == card.Enabled) continue;
         EpgCard epgCard = new EpgCard(_tvController, card);
         _epgCards.Add(epgCard);
       }
