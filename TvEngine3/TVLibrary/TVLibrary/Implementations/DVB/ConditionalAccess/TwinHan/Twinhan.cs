@@ -39,7 +39,7 @@ namespace TvLibrary.Implementations.DVB
     readonly uint THBDA_IOCTL_CHECK_INTERFACE = 0xaa0001e4; //CTL_CODE(THBDA_IO_INDEX, 121, METHOD_BUFFERED, FILE_ANY_ACCESS)
     readonly uint THBDA_IOCTL_CI_GET_STATE = 0xaa000320;    //CTL_CODE(THBDA_IO_INDEX, 200, METHOD_BUFFERED, FILE_ANY_ACCESS)
     readonly uint THBDA_IOCTL_CI_GET_PMT_REPLY = 0xaa000348;//CTL_CODE(THBDA_IO_INDEX, 210, METHOD_BUFFERED, FILE_ANY_ACCESS)
-    readonly uint THBDA_IOCTL_SET_DiSEqC = 0xaa0001a0;//CTL_CODE(THBDA_IO_INDEX, 104, METHOD_BUFFERED, FILE_ANY_ACCESS) 
+    readonly uint THBDA_IOCTL_SET_DiSEqC   = 0xaa0001a0;//CTL_CODE(THBDA_IO_INDEX, 104, METHOD_BUFFERED, FILE_ANY_ACCESS) 
     readonly uint THBDA_IOCTL_SET_LNB_DATA = 0xaa000200;//CTL_CODE(THBDA_IO_INDEX, 128, METHOD_BUFFERED, FILE_ANY_ACCESS) 
     #endregion
 
@@ -423,13 +423,13 @@ namespace TvLibrary.Implementations.DVB
       switch (channel.DisEqc)
       {
         case DisEqcType.None:
-          disEqcPort = 0;
+          disEqcPort = 0;//no diseqc
           break;
         case DisEqcType.SimpleA://simple A
-          disEqcPort = 0;
+          disEqcPort = 1;
           break;
         case DisEqcType.SimpleB://simple B
-          disEqcPort = 1;
+          disEqcPort = 2;
           break;
         case DisEqcType.Level1AA://Level 1 A/A
           disEqcPort = 1;
@@ -444,23 +444,21 @@ namespace TvLibrary.Implementations.DVB
           disEqcPort = 4;
           break;
       }
-      byte turnon22Khz = 0;
-      Int32 LNBLOFLowBand = 9750;
-      Int32 LNBLOFHighBand = 11700;
-      Int32 LNBLOFHiLoSW = 10600;
+      byte turnon22Khz = 1;
+      Int32 LNBLOFLowBand  =  9750;
+      Int32 LNBLOFHighBand = 10600;
+      Int32 LNBLOFHiLoSW   = 11700;
 
       switch (channel.BandType)
       {
         case BandType.Universal:
           if (channel.Frequency >= 11700000)
           {
-            turnon22Khz = 1;
-            //hiBand = true;
+            turnon22Khz = 2;
           }
           else
           {
-            turnon22Khz = 0;
-            //hiBand = false;
+            turnon22Khz = 1;
           }
           break;
         case BandType.Circular:
@@ -479,16 +477,23 @@ namespace TvLibrary.Implementations.DVB
           LNBLOFHiLoSW = 0;
           break;
       }
-
+      //LNBLOFLowBand *= 1000;//in Khz
+      //LNBLOFHighBand *= 1000;//in Khz
+      //LNBLOFHiLoSW *= 1000;//in Khz
+      Log.Log.WriteFile("Twinhan: Setdiseqc port:{0} 22khz:{1} low:{2} hi:{3} switch:{4}", disEqcPort, turnon22Khz, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW);
       int thbdaLen = 0x28;
       int disEqcLen = 20;
-      Marshal.WriteByte(_ptrDiseqc, 0, 1);// LNB_POWER
-      Marshal.WriteByte(_ptrDiseqc, 1, 0);// Tone_Data_Burst
-      Marshal.WriteInt32(_thbdaBuf, 4, LNBLOFLowBand);// ulLNBLOFLowBand   LNBLOF LowBand MHz
-      Marshal.WriteInt32(_thbdaBuf, 8, LNBLOFHighBand);// ulLNBLOFHighBand  LNBLOF HighBand MHz
-      Marshal.WriteInt32(_thbdaBuf, 12, LNBLOFHiLoSW);// ulLNBLOFHiLoSW   LNBLOF HiLoSW MHz
-      Marshal.WriteByte(_thbdaBuf, 16, turnon22Khz);// f22K_Output
-      Marshal.WriteByte(_thbdaBuf, 17, disEqcPort);// DiSEqC_Port
+      Marshal.WriteByte(_ptrDiseqc, 0, 1);              // 0: LNB_POWER
+      Marshal.WriteByte(_ptrDiseqc, 1, 0);              // 1: Tone_Data_Burst (Tone_Data_OFF:0 | Tone_Burst_ON:1 | Data_Burst_ON:2)
+      Marshal.WriteByte(_ptrDiseqc, 2, 0);
+      Marshal.WriteByte(_ptrDiseqc, 3, 0);    
+      Marshal.WriteInt32(_ptrDiseqc, 4, LNBLOFLowBand); // 4: ulLNBLOFLowBand   LNBLOF LowBand MHz
+      Marshal.WriteInt32(_ptrDiseqc, 8, LNBLOFHighBand);// 8: ulLNBLOFHighBand  LNBLOF HighBand MHz
+      Marshal.WriteInt32(_ptrDiseqc, 12, LNBLOFHiLoSW); //12: ulLNBLOFHiLoSW   LNBLOF HiLoSW MHz
+      Marshal.WriteByte(_ptrDiseqc, 16, turnon22Khz);   //16: f22K_Output (F22K_Output_HiLo:0 | F22K_Output_Off:1 | F22K_Output_On:2
+      Marshal.WriteByte(_ptrDiseqc, 17, disEqcPort);    //17: DiSEqC_Port
+      Marshal.WriteByte(_ptrDiseqc, 18, 0);    
+      Marshal.WriteByte(_ptrDiseqc, 19, 0);    
 
       Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
       Marshal.WriteInt16(_thbdaBuf, 4, 0x2017);
@@ -516,8 +521,6 @@ namespace TvLibrary.Implementations.DVB
         {
           Guid propertyGuid = THBDA_TUNER;
           int hr = propertySet.Set(propertyGuid, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
-          int back = Marshal.ReadInt32(_ptrDwBytesReturned);
-
           if (hr != 0)
           {
             Log.Log.WriteFile("TwinHan diseqc failed 0x{0:X}", hr);
