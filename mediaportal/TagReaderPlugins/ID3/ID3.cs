@@ -124,6 +124,25 @@ namespace ID3
                 {11025, 12000, 8000}
             };
 
+    private static int[,] SamplesPerFrameTable = new int[3, 3]
+      {
+        // MPEG1
+        {384, 1152, 1152},
+ 
+        // MPEG2
+        {384, 1152, 576},
+
+        // MPEG2
+        {384, 1152, 576}
+      };
+
+    private static int[] SlotSizes = new int[3]
+      {
+        4,  // Layer1
+        1,  // Layer2
+        1   // Layer3
+      };
+
     private string[] ImageType = new string[]
         {
             "Other",
@@ -504,17 +523,24 @@ namespace ID3
     {
       byte[] mpegAudioFrameHeader = new byte[4];
       uint mpegAudioFrameVal = 0;
-      _TotalFrameCount = 1;
+      _TotalFrameCount = 0;
+      int sumBitrates = 0;
+      int _FrameSize = 0;
+      int bitrate = 0;
 
       // Search for a valid header
       while (s.Position < s.Length)
       {
         if (IsValidHeader(mpegAudioFrameVal, mpegAudioFrameHeader))
         {
-          Console.WriteLine("Stream Position: {0}", s.Position);
+          bitrate = GetBitrate(getBitrateIndex(mpegAudioFrameVal), _MpegVersion, _LayerDescription);
           ++_TotalFrameCount;
-        }
+          sumBitrates += bitrate;
 
+          // Calculate Framesize and skip to next header
+          _FrameSize = (int)((((double)GetSamplesPerFrame(_MpegVersion, _LayerDescription) / 8 * (double)bitrate * 1000) / (double)GetSampleRate(getSampleRateIndex(mpegAudioFrameVal), _MpegVersion)) + getPaddingBit(mpegAudioFrameVal)) * GetSlotSize(_LayerDescription);
+          s.Position += _FrameSize - 4;
+        }
         // read in four characters
         try
         {
@@ -531,7 +557,7 @@ namespace ID3
       }
 
       if (_TotalFrameCount > 0)
-        _Duration = _TotalFrameCount * 1152 / _SampleRate;
+        _Duration = sumBitrates / _TotalFrameCount;
 
       return true;
     }
@@ -797,6 +823,47 @@ namespace ID3
         table = 2;
 
       return SampleRateTable[table, sampleRateIndex];
+    }
+
+    private int GetSamplesPerFrame(MPEG_VERSION mpegVer, LAYER_DESCRIPTION layerDesc)
+    {
+      int row = -1;
+      int column = -1;
+
+      if (mpegVer == MPEG_VERSION.MPEG_1)
+        row = 0;
+
+      else if (mpegVer == MPEG_VERSION.MPEG_2)
+        row = 1;
+
+      else if (mpegVer == MPEG_VERSION.MPEG_2_5)
+        row = 2;
+
+      if (layerDesc == LAYER_DESCRIPTION.LAYER_I)
+        column = 0;
+
+      else if (layerDesc == LAYER_DESCRIPTION.LAYER_II)
+        column = 1;
+
+      else if (layerDesc == LAYER_DESCRIPTION.LAYER_III)
+        column = 2;
+
+      return SamplesPerFrameTable[row, column];
+    }
+
+    private int GetSlotSize(LAYER_DESCRIPTION layerDesc)
+    {
+      int table = -1;
+      if (layerDesc == LAYER_DESCRIPTION.LAYER_I)
+        table = 0;
+
+      else if (layerDesc == LAYER_DESCRIPTION.LAYER_II)
+        table = 1;
+
+      else if (layerDesc == LAYER_DESCRIPTION.LAYER_III)
+        table = 2;
+
+      return SlotSizes[table];
     }
 
     private string GetChannelModeString(UInt32 channelMode)
