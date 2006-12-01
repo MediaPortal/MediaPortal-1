@@ -265,6 +265,7 @@ STDMETHODIMP CEpgScanner::GetMHWTheme(WORD themeId, char** theme)
 
 void CEpgScanner::OnTsPacket(byte* tsPacket)
 {
+  if (false==m_bGrabbing) return;
 	try
 	{
     /*

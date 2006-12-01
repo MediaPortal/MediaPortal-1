@@ -154,5 +154,7 @@ private:
   int     m_iPacketCounter;
 	int			m_iPatVersion;
 	int			m_iPmtVersion;
+  byte*   m_pWriteBuffer;
+  int     m_iWriteBufferPos;
   CTsHeader m_tsHeader;
 };
