@@ -75,4 +75,6 @@ private:
   TimeShiftingMode     m_timeShiftMode;
 	vector<int>			 m_vecPids;
 	typedef vector<int>::iterator itvecPids;
+  byte*   m_pWriteBuffer;
+  int     m_iWriteBufferPos;
 };

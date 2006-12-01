@@ -29,7 +29,7 @@
 
 #include "recorder.h"
 
-
+#define RECORD_BUFFER_SIZE 256000
 extern void LogDebug(const char *fmt, ...) ;
 
 //FILE* fpOut=NULL;
@@ -40,10 +40,13 @@ CRecorder::CRecorder(LPUNKNOWN pUnk, HRESULT *phr)
   m_timeShiftMode=ProgramStream;
 	m_bRecording=false;
 	m_pRecordFile=NULL;
+  m_pWriteBuffer = new byte[RECORD_BUFFER_SIZE];
+  m_iWriteBufferPos=0;
 	m_multiPlexer.SetFileWriterCallBack(this);
 }
 CRecorder::~CRecorder(void)
 {
+  delete [] m_pWriteBuffer;
 }
 
 void CRecorder::OnTsPacket(byte* tsPacket)
@@ -149,6 +152,7 @@ STDMETHODIMP CRecorder::StartRecord()
 	}
 
 	LogDebug("Recorder:Start Recording:'%s'",m_szFileName);
+  m_iWriteBufferPos=0;
 	m_bRecording=true;
 	//::DeleteFile("out.ts");
 	//fpOut =fopen("out.ts","wb+");
@@ -163,6 +167,11 @@ STDMETHODIMP CRecorder::StopRecord()
 	m_multiPlexer.Reset();
 	if (m_pRecordFile!=NULL)
 	{
+    if (m_iWriteBufferPos>0)
+    {
+	    m_pRecordFile->Write(m_pWriteBuffer,m_iWriteBufferPos);
+      m_iWriteBufferPos=0;
+    }
 		m_pRecordFile->CloseFile();
 		delete m_pRecordFile;
 		m_pRecordFile=NULL;
@@ -173,12 +182,27 @@ STDMETHODIMP CRecorder::StopRecord()
 
 void CRecorder::Write(byte* buffer, int len)
 {
-	CEnterCriticalSection enter(m_section);
 	if (!m_bRecording) return;
-	if (m_pRecordFile!=NULL)
-	{
-		m_pRecordFile->Write(buffer,len);
-	}
+  if (buffer==NULL) return;
+  if (len <=0) return;
+	CEnterCriticalSection enter(m_section);
+  if (len + m_iWriteBufferPos >= RECORD_BUFFER_SIZE)
+  {
+	  try
+	  {
+		  if (m_pRecordFile!=NULL)
+		  {
+			  m_pRecordFile->Write(m_pWriteBuffer,m_iWriteBufferPos);
+        m_iWriteBufferPos=0;
+		  }
+	  }
+	  catch(...)
+	  {
+		  LogDebug("Timeshifter:Write exception");
+	  }
+  }
+  memcpy(&m_pWriteBuffer[m_iWriteBufferPos],buffer,len);
+  m_iWriteBufferPos+=len;
 }
 
 void CRecorder::WriteTs(byte* tsPacket)
