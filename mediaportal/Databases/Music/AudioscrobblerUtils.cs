@@ -413,7 +413,6 @@ namespace MediaPortal.Music.Database
     private bool _doCoverLookups = true;
     private string _defaultUser = "";
     private Object LookupLock;
-    private Object ParseLock;
 
     // Similar mode intelligence params
     private int _minimumArtistMatchPercent = 50;
@@ -669,8 +668,7 @@ namespace MediaPortal.Music.Database
 
       _randomNessPercent = (tmpRand >= 25) ? tmpRand : 77;
       _unwantedTags = buildTagBlacklist();
-      LookupLock = new object();
-      ParseLock = new object();
+      LookupLock = new object();      
     }
 
     #endregion
@@ -781,116 +779,6 @@ namespace MediaPortal.Music.Database
           return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/tag/toptags.xml", @"//toptags/tag", feed_);
         default:
           return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
-      }
-    }
-
-    private string removeInvalidChars(string inputString_)
-    {
-      string cleanString = inputString_;
-      int dotIndex = 0;
-
-      // remove CD1, CD2, CDn from Tracks
-      if (Util.Utils.ShouldStack(cleanString, cleanString))
-        Util.Utils.RemoveStackEndings(ref cleanString);
-      // remove [DJ Spacko MIX (2000)]
-      dotIndex = cleanString.IndexOf("[");
-      if (dotIndex > 0)
-        cleanString = cleanString.Remove(dotIndex);
-      dotIndex = cleanString.IndexOf("(");
-      if (dotIndex > 0)
-        cleanString = cleanString.Remove(dotIndex);
-
-      // substitute "&" with "and"
-      cleanString = cleanString.Replace("&", " and ");
-      // make sure there's only one space
-      cleanString = cleanString.Replace("  ", " ");
-      // substitute "/" with "+"
-      cleanString = cleanString.Replace(@"/", "+");
-      // clean soundtracks
-      cleanString = cleanString.Replace("OST ", " ");
-      cleanString = cleanString.Replace("Soundtrack - ", " ");
-      if (cleanString.EndsWith("Soundtrack"))
-        cleanString.Remove(cleanString.IndexOf("Soundtrack"));
-      if (cleanString.EndsWith("OST"))
-        cleanString.Remove(cleanString.IndexOf("OST"));
-
-      return cleanString;
-    }
-
-    private string removeEndingChars(string inputString_)
-    {
-      int dotIndex = 0;
-      // build a clean end
-      dotIndex = inputString_.LastIndexOf('-');
-      if (dotIndex >= inputString_.Length - 2)
-        inputString_ = inputString_.Remove(dotIndex);
-      dotIndex = inputString_.LastIndexOf('+');
-      if (dotIndex >= inputString_.Length - 2)
-        inputString_ = inputString_.Remove(dotIndex);
-
-      return inputString_;
-    }
-
-    public string getValidURLLastFMString(string lastFMString)
-    {
-      lock (ParseLock)
-      {
-        int index = 0;
-        int lastIndex = -1;
-        string outString = String.Empty;
-        string urlString = System.Web.HttpUtility.UrlEncode(lastFMString);
-
-        try
-        {
-          outString = removeInvalidChars(lastFMString);
-
-          if (outString != String.Empty)
-            urlString = System.Web.HttpUtility.UrlEncode(removeEndingChars(outString));
-
-          outString = urlString;
-
-          List<Char> invalidSingleChars = new List<Char>();
-          invalidSingleChars.Add('.');
-          invalidSingleChars.Add(',');
-
-          // bail out if I missed a race condition
-          int failSafe = 0;
-          foreach (Char singleChar in invalidSingleChars)
-          {
-            do
-            {
-              failSafe++;
-              index = urlString.IndexOf(singleChar);
-              if (index > 0)
-                if (index > lastIndex)
-                {
-                  if (index < urlString.Length - 1)
-                  {
-                    lastIndex = index;
-                    outString = urlString.Insert(index + 1, "+");
-                    urlString = outString;
-                  }
-                }
-                else
-                  break;
-              if (failSafe > 500)
-              {
-                Log.Error("*****AudioscrobblerUtils: Possible race condition cleaning string: {0}", urlString);
-                return String.Empty;
-              }
-            }
-            while (index > 0);
-          }
-          outString = outString.Replace("++", "+");
-          // build a clean end
-          outString = removeEndingChars(outString);
-        }
-        catch (Exception ex)
-        {
-          Log.Error("Audioscrobber: Error while building valid url string {0}", ex.Message);
-          return urlString;
-        }
-        return outString;
       }
     }
 
@@ -1031,7 +919,7 @@ namespace MediaPortal.Music.Database
 
     public List<Song> getTopAlbums(string artistToSearch_)
     {
-      string urlArtist = getValidURLLastFMString(artistToSearch_);
+      string urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_);
       List<Song> TopAlbums = new List<Song>();
 
       TopAlbums = ParseXMLDocForTopAlbums(urlArtist);
@@ -1054,8 +942,8 @@ namespace MediaPortal.Music.Database
     public List<Song> getAlbumInfo(string artistToSearch_, string albumToSearch_, bool sortBestTracks)
     {
       int failover = 0;
-      string urlArtist = getValidURLLastFMString(artistToSearch_);
-      string urlAlbum = getValidURLLastFMString(albumToSearch_);
+      string urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_);
+      string urlAlbum = AudioscrobblerBase.getValidURLLastFMString(albumToSearch_);
       List<Song> albumTracks = new List<Song>();
       do
       {
@@ -1071,15 +959,15 @@ namespace MediaPortal.Music.Database
           switch (failover)
           {
             case 1:
-              urlArtist = getValidURLLastFMString("The " + artistToSearch_);
+              urlArtist = AudioscrobblerBase.getValidURLLastFMString("The " + artistToSearch_);
               break;
             case 2:
-              urlArtist = getValidURLLastFMString(artistToSearch_);
-              urlAlbum = getValidURLLastFMString("The " + albumToSearch_);
+              urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_);
+              urlAlbum = AudioscrobblerBase.getValidURLLastFMString("The " + albumToSearch_);
               break;
             case 3:
-              urlArtist = getValidURLLastFMString("The " + artistToSearch_);
-              urlAlbum = getValidURLLastFMString("The " + albumToSearch_);
+              urlArtist = AudioscrobblerBase.getValidURLLastFMString("The " + artistToSearch_);
+              urlAlbum = AudioscrobblerBase.getValidURLLastFMString("The " + albumToSearch_);
               break;
             default:
               Log.Debug("AudioScrobblerUtils: No album info for {1} found after {0} tries", failover, artistToSearch_ + " - " + albumToSearch_);
@@ -1109,8 +997,8 @@ namespace MediaPortal.Music.Database
       int randomPosition = 0;
       int calcRandValue = 0;
       Random rand = new Random();
-      string urlArtist = getValidURLLastFMString(artistToSearch_);
-      string urlTrack = getValidURLLastFMString(trackToSearch_);
+      string urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_);
+      string urlTrack = AudioscrobblerBase.getValidURLLastFMString(trackToSearch_);
       string tmpGenre = String.Empty;
       List<Song> tagTracks = new List<Song>();
 
@@ -1228,7 +1116,7 @@ namespace MediaPortal.Music.Database
     public Song getArtistInfo(string artistToSearch_)
     {
       Song tmpSong = new Song();
-      string urlArtist = getValidURLLastFMString(artistToSearch_);
+      string urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_);
 
       tmpSong = ParseXMLDocForArtistInfo(urlArtist);
 
@@ -1252,15 +1140,15 @@ namespace MediaPortal.Music.Database
 
     public List<Song> getTagsForArtist(string artistToSearch_)
     {
-      string urlArtist = getValidURLLastFMString(artistToSearch_);
+      string urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_);
 
       return ParseXMLDocForUsedTags(urlArtist, "", lastFMFeed.topartisttags);
     }
 
     public List<Song> getTagsForTrack(string artistToSearch_, string trackToSearch_)
     {
-      string urlArtist = getValidURLLastFMString(artistToSearch_);
-      string urlTrack = getValidURLLastFMString(trackToSearch_);
+      string urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_);
+      string urlTrack = AudioscrobblerBase.getValidURLLastFMString(trackToSearch_);
 
       return ParseXMLDocForUsedTags(urlArtist, urlTrack, lastFMFeed.toptracktags);
     }

@@ -80,7 +80,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     public event RadioSettingsFailed RadioSettingsError;
     
     
-    private AudioscrobblerUtils InfoScrobbler = null;
+    //private AudioscrobblerUtils InfoScrobbler = null;
 
     private string _currentRadioURL = String.Empty;
     private string _currentSession = String.Empty;
@@ -150,7 +150,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       _nowPlayingTimer.Interval = 180000;
       _nowPlayingTimer.Elapsed += new ElapsedEventHandler(OnTimerTick);
 
-      InfoScrobbler = AudioscrobblerUtils.Instance;
+      //InfoScrobbler = AudioscrobblerUtils.Instance;
       httpcommand = new AsyncGetRequest();
       httpcommand.workerFinished += new AsyncGetRequest.AsyncGetRequestCompleted(OnParseAsyncResponse);
       httpcommand.workerError += new AsyncGetRequest.AsyncGetRequestError(OnAsyncRequestError);
@@ -454,7 +454,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #region Tuning functions
     public bool TuneIntoPersonalRadio(string username_)
     {
-      string TuneUser = InfoScrobbler.getValidURLLastFMString(username_);
+      string TuneUser = AudioscrobblerBase.getValidURLLastFMString(username_);
 
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://user/" + TuneUser + "/personal"))
       {
@@ -469,7 +469,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public bool TuneIntoNeighbourRadio(string username_)
     {
-      string TuneUser = InfoScrobbler.getValidURLLastFMString(username_);
+      string TuneUser = AudioscrobblerBase.getValidURLLastFMString(username_);
 
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://user/" + TuneUser + "/neighbours"))
       {
@@ -484,7 +484,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public bool TuneIntoLovedTracks(string username_)
     {
-      string TuneUser = InfoScrobbler.getValidURLLastFMString(username_);
+      string TuneUser = AudioscrobblerBase.getValidURLLastFMString(username_);
 
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://user/" + TuneUser + "/loved"))
       {
@@ -499,7 +499,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public bool TuneIntoGroupRadio(string groupname_)
     {
-      string TuneGroup = InfoScrobbler.getValidURLLastFMString(groupname_);
+      string TuneGroup = AudioscrobblerBase.getValidURLLastFMString(groupname_);
 
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://group/" + TuneGroup))
       {
@@ -516,7 +516,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public bool TuneIntoRecommendedRadio(string username_)
     {
-      string TuneUser = InfoScrobbler.getValidURLLastFMString(username_);
+      string TuneUser = AudioscrobblerBase.getValidURLLastFMString(username_);
 
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://user/" + TuneUser + "/recommended"))
       {
@@ -531,7 +531,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public bool TuneIntoArtist(string artist_)
     {
-      string TuneArtist = InfoScrobbler.getValidURLLastFMString(artist_);
+      string TuneArtist = AudioscrobblerBase.getValidURLLastFMString(artist_);
 
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://artist/" + TuneArtist + "/similarartists"))
       {
@@ -552,7 +552,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       foreach (string singleTag in tags_)
       {
-        TuneTags += InfoScrobbler.getValidURLLastFMString(singleTag) + ",";
+        TuneTags += AudioscrobblerBase.getValidURLLastFMString(singleTag) + ",";
       }
       // remove trailing comma
       TuneTags = TuneTags.Remove(TuneTags.Length - 1);

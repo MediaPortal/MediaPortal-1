@@ -198,17 +198,18 @@ namespace MediaPortal.Music.Database
 
         sb.AppendFormat(
              "&a[{6}]={0}&t[{6}]={1}&b[{6}]={2}&m[{6}]={3}&l[{6}]={4}&i[{6}]={5}",
-             HttpUtility.UrlEncode(track.Artist),
-             HttpUtility.UrlEncode(track.Title),
-             HttpUtility.UrlEncode(track.Album),
+             AudioscrobblerBase.getValidURLLastFMString(track.Artist),
+             AudioscrobblerBase.getValidURLLastFMString(track.Title),
+             AudioscrobblerBase.getValidURLLastFMString(track.Album),
              "" /* musicbrainz id */,
              track.Duration.ToString(),
-             HttpUtility.UrlEncode(track.StartTime),
+             AudioscrobblerBase.getValidURLLastFMString(track.StartTime),
              i);
       }
 
       num_tracks = i;
       return sb.ToString();
+
     }
 
     public void Add(Song track)

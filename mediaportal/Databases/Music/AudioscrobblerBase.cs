@@ -93,6 +93,7 @@ namespace MediaPortal.Music.Database
     static AudioscrobblerQueue queue;
     private static Object queueLock;
     private static Object submitLock;
+    private static Object ParseLock;
     private static int _antiHammerCount = 0;
     private static DateTime lastHandshake;        //< last successful attempt.
     private static DateTime lastRadioHandshake;
@@ -141,6 +142,8 @@ namespace MediaPortal.Music.Database
         username = xmlreader.GetValueAsString("audioscrobbler", "user", "");
 
         string tmpPass;
+        ParseLock = new object();
+
         MusicDatabase mdb = new MusicDatabase();
 
         tmpPass = mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(username)), "");
@@ -814,41 +817,48 @@ namespace MediaPortal.Music.Database
         return;
       }
 
-      int _submittedSongs = 0;
+      BackgroundWorker worker = new BackgroundWorker();
+      worker.DoWork += new DoWorkEventHandler(Worker_TrySubmitTracks);
+      worker.RunWorkerAsync();
+    }
 
+    private static void Worker_TrySubmitTracks(object sender, DoWorkEventArgs e)
+    {
       // Only one thread should attempt to run through the queue at a time.
       lock (submitLock)
       {
+        int _submittedSongs = 0;
+
         // Save the queue now since connecting to AS may time out, which
         // takes time, and the user could quit, losing one valuable song...
         queue.Save();
 
-     /*
-        s=<sessionID>            The Session ID string as returned by the handshake. Required.
-        a[0]=<artist>            The artist name. Required.
-        t[0]=<track>             The track title. Required.
-        i[0]=<time>              The time the track started playing, in UNIX timestamp format (integer number of seconds since 00:00:00, January 1st 1970 UTC). This must be in the UTC time zone, and is required.
-        o[0]=<source>            The source of the track. Required, must be one of the following codes:
+        /*
+           s=<sessionID>            The Session ID string as returned by the handshake. Required.
+           a[0]=<artist>            The artist name. Required.
+           t[0]=<track>             The track title. Required.
+           i[0]=<time>              The time the track started playing, in UNIX timestamp format (integer number of seconds since 00:00:00, January 1st 1970 UTC). This must be in the UTC time zone, and is required.
+           o[0]=<source>            The source of the track. Required, must be one of the following codes:
 
-            P = Chosen by the user, no shuffle
-            S = Chosen by the user, shuffle enabled
-            T = Chosen by the user, unknown shuffle status (e.g. iPod)
-            R = Non-personalised broadcast (e.g. Shoutcast, BBC Radio 1)
-            E = Personalised recommendation except Last.fm (e.g. Pandora, Launchcast)
-            L = Last.fm (any mode)
-            U = Source unknown
+               P = Chosen by the user, no shuffle
+               S = Chosen by the user, shuffle enabled
+               T = Chosen by the user, unknown shuffle status (e.g. iPod)
+               R = Non-personalised broadcast (e.g. Shoutcast, BBC Radio 1)
+               E = Personalised recommendation except Last.fm (e.g. Pandora, Launchcast)
+               L = Last.fm (any mode)
+               U = Source unknown
 
-        r[0]=<rating>
+           r[0]=<rating>
 
-            L = Love
-            B = Ban
-            S = Skip (only if source=L)
+               L = Love
+               B = Ban
+               S = Skip (only if source=L)
 
-        b[0]=<album>             The album title, or empty if not known.
-        n[0]=<tracknumber>       The position of the track on the album, or empty if not known.
-        m[0]=<mb-trackid>        The MusicBrainz Track ID, or empty if not known.
-        l[0]=<secs>              The length of the track in seconds, or empty if not known. 
-     */
+           b[0]=<album>             The album title, or empty if not known.
+           n[0]=<tracknumber>       The position of the track on the album, or empty if not known.
+           m[0]=<mb-trackid>        The MusicBrainz Track ID, or empty if not known.
+           l[0]=<secs>              The length of the track in seconds, or empty if not known. 
+        */
         // Build POST data from the username and the password.
         string webUsername = System.Web.HttpUtility.UrlEncode(username);
         string md5resp = HashSubmitToken();
@@ -893,7 +903,6 @@ namespace MediaPortal.Music.Database
         Log.Debug("AudioscrobblerBase: submitted songs successfully removed from queue. Idle...");
       }
     }
-
     #endregion
 
     #region Audioscrobbler response parsers.
@@ -1083,6 +1092,116 @@ namespace MediaPortal.Music.Database
       }
 
       return md5response;   
+    }
+
+    private static string removeInvalidChars(string inputString_)
+    {
+      string cleanString = inputString_;
+      int dotIndex = 0;
+
+      // remove CD1, CD2, CDn from Tracks
+      if (Util.Utils.ShouldStack(cleanString, cleanString))
+        Util.Utils.RemoveStackEndings(ref cleanString);
+      // remove [DJ Spacko MIX (2000)]
+      dotIndex = cleanString.IndexOf("[");
+      if (dotIndex > 0)
+        cleanString = cleanString.Remove(dotIndex);
+      dotIndex = cleanString.IndexOf("(");
+      if (dotIndex > 0)
+        cleanString = cleanString.Remove(dotIndex);
+
+      // substitute "&" with "and"
+      cleanString = cleanString.Replace("&", " and ");
+      // make sure there's only one space
+      cleanString = cleanString.Replace("  ", " ");
+      // substitute "/" with "+"
+      cleanString = cleanString.Replace(@"/", "+");
+      // clean soundtracks
+      cleanString = cleanString.Replace("OST ", " ");
+      cleanString = cleanString.Replace("Soundtrack - ", " ");
+      if (cleanString.EndsWith("Soundtrack"))
+        cleanString.Remove(cleanString.IndexOf("Soundtrack"));
+      if (cleanString.EndsWith("OST"))
+        cleanString.Remove(cleanString.IndexOf("OST"));
+
+      return cleanString;
+    }
+
+    private static string removeEndingChars(string inputString_)
+    {
+      int dotIndex = 0;
+      // build a clean end
+      dotIndex = inputString_.LastIndexOf('-');
+      if (dotIndex >= inputString_.Length - 2)
+        inputString_ = inputString_.Remove(dotIndex);
+      dotIndex = inputString_.LastIndexOf('+');
+      if (dotIndex >= inputString_.Length - 2)
+        inputString_ = inputString_.Remove(dotIndex);
+
+      return inputString_;
+    }
+
+    public static string getValidURLLastFMString(string lastFMString)
+    {
+      lock (ParseLock)
+      {
+        int index = 0;
+        int lastIndex = -1;
+        string outString = String.Empty;
+        string urlString = System.Web.HttpUtility.UrlEncode(lastFMString);
+
+        try
+        {
+          outString = removeInvalidChars(lastFMString);
+
+          if (outString != String.Empty)
+            urlString = System.Web.HttpUtility.UrlEncode(removeEndingChars(outString));
+
+          outString = urlString;
+
+          List<Char> invalidSingleChars = new List<Char>();
+          invalidSingleChars.Add('.');
+          invalidSingleChars.Add(',');
+
+          // bail out if I missed a race condition
+          int failSafe = 0;
+          foreach (Char singleChar in invalidSingleChars)
+          {
+            do
+            {
+              failSafe++;
+              index = urlString.IndexOf(singleChar);
+              if (index > 0)
+                if (index > lastIndex)
+                {
+                  if (index < urlString.Length - 1)
+                  {
+                    lastIndex = index;
+                    outString = urlString.Insert(index + 1, "+");
+                    urlString = outString;
+                  }
+                }
+                else
+                  break;
+              if (failSafe > 500)
+              {
+                Log.Error("*****AudioscrobblerUtils: Possible race condition cleaning string: {0}", urlString);
+                return String.Empty;
+              }
+            }
+            while (index > 0);
+          }
+          outString = outString.Replace("++", "+");
+          // build a clean end
+          outString = removeEndingChars(outString);
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Audioscrobber: Error while building valid url string {0}", ex.Message);
+          return urlString;
+        }
+        return outString;
+      }
     }
     #endregion
 
