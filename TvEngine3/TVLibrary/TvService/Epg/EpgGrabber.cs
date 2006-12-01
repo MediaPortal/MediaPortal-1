@@ -91,6 +91,7 @@ namespace TvService
     {
       if (_isRunning) return;
       GetTransponders();
+      if (_transponders.Count == 0) return;
       Log.Epg("EPG: grabber initialized for {0} transponders..", _transponders.Count);
       _isRunning = true;
       _epgTimer.Enabled = true;
@@ -102,7 +103,7 @@ namespace TvService
         EpgCard epgCard = new EpgCard(_tvController, card);
         _epgCards.Add(epgCard);
       }
-      _epgTimer_Elapsed(null, null);
+      //_epgTimer_Elapsed(null, null);
     }
 
     /// <summary>
