@@ -111,6 +111,30 @@ namespace TvService
     }
 
     /// <summary>
+    /// Determines whether the specified card is the local pc or not.
+    /// </summary>
+    /// <param name="cardId">card</param>
+    /// <returns>
+    /// 	<c>true</c> if the specified host name is local; otherwise, <c>false</c>.
+    /// </returns>
+    bool IsLocal(int cardId)
+    {
+      return IsLocal(_allDbscards[cardId]);
+    }
+
+    /// <summary>
+    /// Determines whether the specified card is the local pc or not.
+    /// </summary>
+    /// <param name="card">Card</param>
+    /// <returns>
+    /// 	<c>true</c> if the specified host name is local; otherwise, <c>false</c>.
+    /// </returns>
+    bool IsLocal(Card card)
+    {
+      return IsLocal(card.ReferencedServer().HostName);
+    }
+
+    /// <summary>
     /// Determines whether the specified host name is the local pc or not.
     /// </summary>
     /// <param name="hostName">Name of the host or ip adress</param>
@@ -307,7 +331,7 @@ namespace TvService
         foreach (Card card in cardsInDbs)
         {
           _allDbscards[card.IdCard] = card;
-          if (IsLocal(card.ReferencedServer().HostName))
+          if (IsLocal(card))
           {
             for (int x = 0; x < localCardCollection.Cards.Count; ++x)
             {
@@ -484,7 +508,7 @@ namespace TvService
     {
       try
       {
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -521,7 +545,7 @@ namespace TvService
     {
       try
       {
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -554,7 +578,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return false;
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -585,7 +609,7 @@ namespace TvService
     {
       try
       {
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -617,7 +641,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return null;
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -649,7 +673,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return "";
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -683,7 +707,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return false;
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -715,7 +739,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return 0;
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -747,7 +771,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return 0;
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -779,7 +803,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return "";
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -807,7 +831,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return "";
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -839,7 +863,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return false;
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -891,7 +915,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return false;
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -923,7 +947,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return false;
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -955,7 +979,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return false;
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -987,7 +1011,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return false;
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -1018,7 +1042,7 @@ namespace TvService
     public bool HasTeletext(int cardId)
     {
       if (_allDbscards[cardId].Enabled == false) return false;
-      if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+      if (IsLocal(cardId) == false)
       {
         try
         {
@@ -1045,7 +1069,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return new TimeSpan(0, 0, 0, 15);
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -1077,7 +1101,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return DateTime.MinValue;
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -1109,7 +1133,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return DateTime.MinValue;
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -1143,7 +1167,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return true;
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -1173,7 +1197,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return 0;
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -1200,7 +1224,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return 0;
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -1237,7 +1261,7 @@ namespace TvService
         Log.Write("Controller:Tune {0} to {1}", cardId, channel.Name);
         lock (this)
         {
-          if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+          if (IsLocal(cardId) == false)
           {
             try
             {
@@ -1283,7 +1307,7 @@ namespace TvService
         Log.Write("Controller:TuneScan {0} to {1}", cardId, channel.Name);
         lock (this)
         {
-          if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+          if (IsLocal(cardId) == false)
           {
             try
             {
@@ -1326,7 +1350,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return;
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -1361,7 +1385,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return new byte[] { 1 };
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -1395,7 +1419,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return -1;
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -1432,7 +1456,7 @@ namespace TvService
         Log.Write("Controller: StartTimeShifting {0} {1} ", cardId, fileName);
         lock (this)
         {
-          if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+          if (IsLocal(cardId) == false)
           {
             try
             {
@@ -1502,6 +1526,33 @@ namespace TvService
       return TvResult.UnknownError;
     }
 
+    public void StopCard(int cardId)
+    {
+      try
+      {
+        if (_allDbscards[cardId].Enabled == false) return;
+        if (IsLocal(cardId) == false)
+        {
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            RemoteControl.Instance.StopCard(cardId);
+            return;
+          }
+          catch (Exception)
+          {
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return ;
+          }
+        }
+        _localCards[cardId].StopGraph();
+
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
+    }
     /// <summary>
     /// Stops the time shifting.
     /// </summary>
@@ -1524,7 +1575,7 @@ namespace TvService
           {
             if (user.IsAdmin == false && cardUser.Name != user.Name) return false;
           }
-          if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+          if (IsLocal(cardId) == false)
           {
             try
             {
@@ -1551,7 +1602,7 @@ namespace TvService
           while (enumerator.MoveNext())
           {
             KeyValuePair<int, Card> keyPair = enumerator.Current;
-            if (IsLocal(keyPair.Value.ReferencedServer().HostName))
+            if (IsLocal(keyPair.Value))
             {
               if (IsTimeShifting(keyPair.Value.IdCard) || IsRecording(keyPair.Value.IdCard))
               {
@@ -1593,7 +1644,7 @@ namespace TvService
         {
           RecordingType recType = RecordingType.Content;
           if (!contentRecording) recType = RecordingType.Reference;
-          if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+          if (IsLocal(cardId) == false)
           {
             try
             {
@@ -1639,7 +1690,7 @@ namespace TvService
         Log.Write("Controller: StopRecording {0}", cardId);
         lock (this)
         {
-          if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+          if (IsLocal(cardId) == false)
           {
             try
             {
@@ -1678,7 +1729,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return new List<IChannel>().ToArray();
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -1716,7 +1767,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return false;
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           //RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
           //RemoteControl.Instance.GrabEpg(cardId);
@@ -1736,7 +1787,7 @@ namespace TvService
     public List<EpgChannel> Epg(int cardId)
     {
       if (_allDbscards[cardId].Enabled == false) return new List<EpgChannel>();
-      if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+      if (IsLocal(cardId) == false)
       {
         //RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
         //RemoteControl.Instance.GrabEpg(cardId);
@@ -1765,7 +1816,7 @@ namespace TvService
     public IAudioStream[] AvailableAudioStreams(int cardId)
     {
       if (_allDbscards[cardId].Enabled == false) return new List<IAudioStream>().ToArray();
-      if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+      if (IsLocal(cardId) == false)
       {
         try
         {
@@ -1785,7 +1836,7 @@ namespace TvService
     public IAudioStream GetCurrentAudioStream(int cardId)
     {
       if (_allDbscards[cardId].Enabled == false) return null;
-      if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+      if (IsLocal(cardId) == false)
       {
         try
         {
@@ -1805,7 +1856,7 @@ namespace TvService
     {
       if (_allDbscards[cardId].Enabled == false) return;
       Log.WriteFile("Controller: setaudiostream:{0} {1}", cardId, stream);
-      if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+      if (IsLocal(cardId) == false)
       {
         try
         {
@@ -1827,7 +1878,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return "";
-        if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+        if (IsLocal(cardId) == false)
         {
           try
           {
@@ -1874,7 +1925,7 @@ namespace TvService
           if (System.IO.File.Exists(recording.FileName))
           {
             _streamer.Start();
-            string streamName=recording.FileName.GetHashCode().ToString();
+            string streamName = recording.FileName.GetHashCode().ToString();
             RtspStream stream = new RtspStream(streamName, recording.FileName, recording.Title);
             _streamer.AddStream(stream);
             string url = String.Format("rtsp://{0}/{1}", _ourServer.HostName, streamName);
@@ -2203,7 +2254,7 @@ namespace TvService
     public void StopGrabbingEpg(int cardId)
     {
       if (false == _allDbscards.ContainsKey(cardId)) return;
-      if (IsLocal(_allDbscards[cardId].ReferencedServer().HostName) == false)
+      if (IsLocal(cardId) == false)
       {
         // RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
         // RemoteControl.Instance.StopGrabbingEpg(cardId);
@@ -2239,7 +2290,7 @@ namespace TvService
     #endregion
 
     #region streaming
-    public List<RtspClient> StreamingClients 
+    public List<RtspClient> StreamingClients
     {
       get
       {

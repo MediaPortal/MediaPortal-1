@@ -45,7 +45,6 @@ namespace TvService
   /// </summary>
   public class EpgGrabber
   {
-
     #region variables
     const int EpgReGrabAfter = 4;//hours
     System.Timers.Timer _epgTimer = new System.Timers.Timer();
@@ -70,8 +69,7 @@ namespace TvService
     }
     #endregion
 
-
-    #region public members
+    #region properties
     /// <summary>
     /// Property which returns true if EPG grabber is currently grabbing the epg
     /// or false is epg grabber is idle
@@ -83,7 +81,9 @@ namespace TvService
         return _isRunning;
       }
     }
+    #endregion
 
+    #region public members
     /// <summary>
     /// Starts the epg grabber
     /// </summary>
@@ -217,7 +217,6 @@ namespace TvService
         }
       }
     }
-
 
     /// <summary>
     /// Gets the a list of all transponders

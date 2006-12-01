@@ -323,6 +323,14 @@ namespace TvControl
     /// <returns>TvResult indicating whether method succeeded</returns>
     TvResult StartTimeShifting(int cardId, string fileName);
 
+
+    /// <summary>
+    /// Stops the card.
+    /// </summary>
+    /// <param name="cardId">id of the card.</param>
+    /// <returns></returns>
+    void StopCard(int cardId);
+
     /// <summary>
     /// Stops the time shifting.
     /// </summary>

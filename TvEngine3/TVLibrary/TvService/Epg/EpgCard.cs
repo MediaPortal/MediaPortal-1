@@ -94,7 +94,7 @@ namespace TvService
     }
     #endregion
 
-    #region epg callback
+    #region properties
 
     /// <summary>
     /// Gets the card.
@@ -107,6 +107,35 @@ namespace TvService
         return _card;
       }
     }
+
+    /// <summary>
+    /// Property which returns true if EPG grabber is currently grabbing the epg
+    /// or false is epg grabber is idle
+    /// </summary>
+    public bool IsRunning
+    {
+      get
+      {
+        return _isRunning;
+      }
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether this instance is grabbing.
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this instance is grabbing; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsGrabbing
+    {
+      get
+      {
+        return (_state != EpgState.Idle);
+      }
+    }
+    #endregion
+
+    #region epg callback
 
     /// <summary>
     /// Gets called when epg has been cancelled
@@ -182,6 +211,7 @@ namespace TvService
           }
           _state = EpgState.Idle;
           _tvController.StopGrabbingEpg(_currentCardId);
+          _tvController.StopCard(_currentCardId);
           _currentCardId = -1;
           return 0;
         }
@@ -207,18 +237,6 @@ namespace TvService
     #endregion
 
     #region public members
-    /// <summary>
-    /// Property which returns true if EPG grabber is currently grabbing the epg
-    /// or false is epg grabber is idle
-    /// </summary>
-    public bool IsRunning
-    {
-      get
-      {
-        return _isRunning;
-      }
-    }
-
     /// <summary>
     /// Grabs the epg.
     /// </summary>
@@ -269,19 +287,6 @@ namespace TvService
       _isRunning = false;
     }
 
-    /// <summary>
-    /// Gets a value indicating whether this instance is grabbing.
-    /// </summary>
-    /// <value>
-    /// 	<c>true</c> if this instance is grabbing; otherwise, <c>false</c>.
-    /// </value>
-    public bool IsGrabbing
-    {
-      get
-      {
-        return (_state != EpgState.Idle);
-      }
-    }
     #endregion
 
     #region private members
@@ -508,22 +513,7 @@ namespace TvService
       return false;
     }
 
-    /// <summary>
-    /// Gets the channel.
-    /// </summary>
-    /// <param name="idChannel">The id channel.</param>
-    /// <returns></returns>
-    Channel GetChannel(int idChannel)
-    {
-      foreach (Transponder transponder in _transponders)
-      {
-        foreach (Channel ch in transponder.Channels)
-        {
-          if (ch.IdChannel == idChannel) return ch;
-        }
-      }
-      return null;
-    }
+    #region database update routines
     /// <summary>
     /// workerthread which will update the database with the new epg received
     /// </summary>
@@ -617,6 +607,7 @@ namespace TvService
         if (_state != EpgState.Idle && _currentCardId >= 0)
         {
           _tvController.StopGrabbingEpg(_currentCardId);
+          _tvController.StopCard(_currentCardId);
         }
         _currentCardId = -1;
         _state = EpgState.Idle;
@@ -723,7 +714,9 @@ namespace TvService
       channel.Persist();
       return true;
     }
+    #endregion
 
+    #region helper methods
     /// <summary>
     /// Method which returns if the card is idle or not
     /// </summary>
@@ -740,6 +733,24 @@ namespace TvService
       if (_tvController.IsCardInUse(cardId, out cardUser)) return false;
       return true;
     }
+
+    /// <summary>
+    /// Gets the channel.
+    /// </summary>
+    /// <param name="idChannel">The id channel.</param>
+    /// <returns></returns>
+    Channel GetChannel(int idChannel)
+    {
+      foreach (Transponder transponder in _transponders)
+      {
+        foreach (Channel ch in transponder.Channels)
+        {
+          if (ch.IdChannel == idChannel) return ch;
+        }
+      }
+      return null;
+    }
+    #endregion
     #endregion
   }
 }
