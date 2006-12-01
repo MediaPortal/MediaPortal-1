@@ -7,32 +7,20 @@
 		<description>background</description>
 		<type>image</type>
 		<id>0</id>
-		<posX>60</posX>
-		<posY>420</posY>
-		<width>400</width>
+		<posX>0</posX>
+		<posY>430</posY>
+		<width>720</width>
 		<height>150</height>
-		<texture>zaposd_background.png</texture>
+		<texture>sub-background.png</texture>
 		<visible>yes</visible>
-	</control>
-	<control>
-		<description>TV Logo</description>
-		<type>image</type>
-		<id>10</id>
-		<posX>81</posX>
-		<posY>433</posY>
-		<width>50</width>
-		<height>50</height>
-		<texture>#TV.View.thumb</texture>
-		<keepaspectratio>yes</keepaspectratio>
-		<centered>yes</centered>
 	</control>
 	<control>
 		<description>Progress Bar</description>
 		<type>progress</type>
 		<id>1</id>
-		<posX>195</posX>
-		<posY>473</posY>
-		<width>180</width>
+		<posX>217</posX>
+		<posY>455</posY>
+		<width>200</width>
 		<height>5</height>
 		<texturebg>osd_progress_back.png</texturebg>
 		<lefttexture>osd_progress_left.png</lefttexture>
@@ -42,71 +30,94 @@
 		<label>#TV.View.Percentage</label>
 	</control>
 	<control>
+		<description>background</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>230</posX>
+		<posY>453</posY>
+		<width>200</width>
+		<texture>progress_over.png</texture>
+		<visible>yes</visible>
+	</control>
+	<control>
 		<description>Start Time Info</description>
 		<type>label</type>
 		<id>101</id>
-		<posX>150</posX>
-		<posY>466</posY>
+		<posX>215</posX>
+		<posY>446</posY>
 		<label>#TV.View.start</label>
-		<align>left</align>
-		<font>font13</font>
+		<align>right</align>
+		<font>font15</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
 		<description>End Time Info</description>
 		<type>label</type>
 		<id>102</id>
-		<posX>375</posX>
-		<posY>466</posY>
+		<posX>440</posX>
+		<posY>446</posY>
 		<label>#TV.View.stop</label>
 		<align>left</align>
-		<font>font13</font>
+		<font>font15</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 		<control>
 		<description>rec logo</description>
 		<type>image</type>
 		<id>39</id>
-		<posX>340</posX>
-		<posY>435</posY>
+		<posX>380</posX>
+		<posY>420</posY>
 		<texture>rec.png</texture>
-		<colordiffuse>50ffffff</colordiffuse>
+		<colordiffuse>ffffffff</colordiffuse>
 		<visible>yes</visible>
 	</control>
 	<control>
 		<description>On tv NOW</description>
 		<id>36</id>
 		<type>textbox</type>
-		<width>300</width>
+		<width>500</width>
 		<height>30</height>
-		<posX>150</posX>
-		<posY>490</posY>
+		<posX>173</posX>
+		<posY>470</posY>
 		<align>left</align>
-		<font>font16</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<font>font17</font>
+		<textcolor>FFFFFF</textcolor>
 	</control>
 	<control>
 		<description>On tv NEXT</description>
 		<id>37</id>
 		<type>textbox</type>
-		<width>300</width>
+		<width>500</width>
 		<height>30</height>
-		<posX>150</posX>
-		<posY>520</posY>
+		<posX>173</posX>
+		<posY>500</posY>
 		<align>left</align>
-		<font>font13</font>
-		<textcolor>FFB2D4F5</textcolor>
+		<font>font15</font>
+		<textcolor>BFBFBF</textcolor>
 	</control>
 	<control>
 		<description>Current channel</description>
 		<type>label</type>
 		<id>35</id>
-		<posX>150</posX>
-		<posY>434</posY>
+		<posX>80</posX>
+		<posY>458</posY>
 		<label>-</label>
-		<align>left</align>
-		<font>font16</font>
+		<align>center</align>
+		<font>font15</font>
 		<textcolor>FFFFFFFF</textcolor>
+	</control>
+	<control>
+		<description>TV Logo</description>
+		<type>image</type>
+		<id>10</id>
+		<posX>45</posX>
+		<posY>470</posY>
+		<width>70</width>
+		<height>70</height>
+		<texture>#TV.View.thumb</texture>
+		<visible>yes</visible>
+		<centered>yes</centered>
+		<keepaspectratio>yes</keepaspectratio>
 	</control>
 </controls>
 </window>
