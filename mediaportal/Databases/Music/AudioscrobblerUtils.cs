@@ -413,6 +413,7 @@ namespace MediaPortal.Music.Database
     private bool _doCoverLookups = true;
     private string _defaultUser = "";
     private Object LookupLock;
+    private Object ParseLock;
 
     // Similar mode intelligence params
     private int _minimumArtistMatchPercent = 50;
@@ -669,6 +670,7 @@ namespace MediaPortal.Music.Database
       _randomNessPercent = (tmpRand >= 25) ? tmpRand : 77;
       _unwantedTags = buildTagBlacklist();
       LookupLock = new object();
+      ParseLock = new object();
     }
 
     #endregion
@@ -831,63 +833,65 @@ namespace MediaPortal.Music.Database
 
     public string getValidURLLastFMString(string lastFMString)
     {
-      int dotIndex = 0;
-      int lastIndex = -1;
-      string outString = String.Empty;      
-      string urlString = System.Web.HttpUtility.UrlEncode(lastFMString);
-
-      try
+      lock (ParseLock)
       {
-        outString = removeInvalidChars(lastFMString);
+        int index = 0;
+        int lastIndex = -1;
+        string outString = String.Empty;
+        string urlString = System.Web.HttpUtility.UrlEncode(lastFMString);
 
-        if (outString != String.Empty)        
-          urlString = System.Web.HttpUtility.UrlEncode(removeEndingChars(outString));        
-
-        outString = urlString;
-
-        List<Char> invalidSingleChars = new List<Char>();
-        invalidSingleChars.Add('.');
-        invalidSingleChars.Add(',');
-
-        // bail out if I missed a race condition
-        int failSafe = 0;
-        foreach (Char singleChar in invalidSingleChars)
+        try
         {
-          do
-          {
-            failSafe++;
-            dotIndex = urlString.IndexOf(singleChar);
-            if (dotIndex > 0)
-              if (dotIndex > lastIndex)
-              {
-                if (dotIndex < urlString.Length - 1)
-                {
-                  lastIndex = dotIndex;
-                  outString = urlString.Insert(dotIndex + 1, "+");
-                  urlString = outString;
-                }
-              }
-              else
-                break;
-            if (failSafe > 500)
-            {
-              Log.Error("*****AudioscrobblerUtils: Possible race condition cleaning string: {0}", urlString);
-              return String.Empty;
-            }
-          }
-          while (dotIndex > 0);
-        }
-        outString = outString.Replace("++", "+");
-        // build a clean end
-        outString = removeEndingChars(outString);
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Audioscrobber: Error while building valid url string {0}", ex.Message);
-        return urlString;
-      }
+          outString = removeInvalidChars(lastFMString);
 
-      return outString;
+          if (outString != String.Empty)
+            urlString = System.Web.HttpUtility.UrlEncode(removeEndingChars(outString));
+
+          outString = urlString;
+
+          List<Char> invalidSingleChars = new List<Char>();
+          invalidSingleChars.Add('.');
+          invalidSingleChars.Add(',');
+
+          // bail out if I missed a race condition
+          int failSafe = 0;
+          foreach (Char singleChar in invalidSingleChars)
+          {
+            do
+            {
+              failSafe++;
+              index = urlString.IndexOf(singleChar);
+              if (index > 0)
+                if (index > lastIndex)
+                {
+                  if (index < urlString.Length - 1)
+                  {
+                    lastIndex = index;
+                    outString = urlString.Insert(index + 1, "+");
+                    urlString = outString;
+                  }
+                }
+                else
+                  break;
+              if (failSafe > 500)
+              {
+                Log.Error("*****AudioscrobblerUtils: Possible race condition cleaning string: {0}", urlString);
+                return String.Empty;
+              }
+            }
+            while (index > 0);
+          }
+          outString = outString.Replace("++", "+");
+          // build a clean end
+          outString = removeEndingChars(outString);
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Audioscrobber: Error while building valid url string {0}", ex.Message);
+          return urlString;
+        }
+        return outString;
+      }
     }
 
     public List<Song> filterForLocalSongs(List<Song> unfilteredList_, string excludeArtist_, string currentTag_, songFilterType filterType)
