@@ -4,17 +4,17 @@
     <defaultcontrol>2</defaultcontrol>
     <allowoverlay>yes</allowoverlay>
     <define>#header.label:136</define>
-  <define>#header.image:videos_logo.png</define>
+    <define>#header.image:videos_logo.png</define>
     <define>#header.hover:hover_my videos.png</define>
     <controls>
         <import>common.window.xml</import>
         <control>
             <type>group</type>
             <description>group element</description>
-      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="400" end="800,0" >WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+            <animation effect="slide" time="400" end="800,0" >WindowClose</animation>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="500">WindowClose</animation>
             <control>
                 <description>View-As button</description>
                 <type>button</type>
@@ -109,10 +109,10 @@
         <control>
             <type>group</type>
             <description>group element</description>
-      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="400" end="800,0" >WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+            <animation effect="slide" time="400" end="800,0" >WindowClose</animation>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="500">WindowClose</animation>
             <control>
                 <description>composite control consisting of a list control and a thumbnail panel</description>
                 <type>facadeview</type>

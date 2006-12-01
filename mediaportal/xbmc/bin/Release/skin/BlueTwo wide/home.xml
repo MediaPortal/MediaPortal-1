@@ -1,114 +1,112 @@
 <window>
-  <id>0</id>
-  <defaultcontrol>2</defaultcontrol>
-  <allowoverlay>yes</allowoverlay>
-  <autohidetopbar>no</autohidetopbar>
-  <controls>
-
-    <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>0</posX>
-      <posY>0</posY>
-      <width>1366</width>
-      <height>768</height>
-      <texture>background.png</texture>
-    </control>
-
-    <control>
-      <description>menu background image</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>700</posX>
-      <posY>173</posY>
-      <width>500</width>
-      <height>466</height>
-<!--       <height>499</height> -->
-      <texture>background_glass_menu_area.png</texture>
-    </control>
-    <control>
-      <description>menu background image</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>45</posX>
-      <posY>190</posY>
-      <width>500</width>
-      <height>466</height>
-<!--       <height>499</height> -->
-      <texture>background_glass_hoover_area.png</texture>
-    </control>
-    <control>
-      <description>template for panel in which all buttons should b fitted</description>
-      <type>image</type>
-      <id>1002</id>
-      <posX>700</posX>
-      <posY>213</posY>
-      <width>500</width>
-      <height>366</height>
-      <texture>-</texture>
-    </control>
-    <control>
-      <description>template for hover image</description>
-      <type>image</type>
-      <id>1000</id>
-      <posX>180</posX>
-      <posY>285</posY>
-      <align>center</align>
-      <texture>-</texture>
-      <visible>no</visible>
-    </control>
-    <control>
-      <description>template for button</description>
-      <type>button</type>
-      <id>1001</id>
-      <posX>750</posX>
-      <posY>213</posY>
-      <width>380</width>
-      <textXOff>30</textXOff>
-      <textYOff>10</textYOff>
-      <height>65</height>
-      <label>605</label>
-      <font>font16</font>
-      <texture>hp_selectionbar.png</texture>
-      <textureFocus>hp_selectionbar.png</textureFocus>
-      <textureNoFocus>-</textureNoFocus>
-      <visible>no</visible>
-      <textcolor>ffffffff</textcolor>
-    </control>
-    <control>
-      <description>template label for small font</description>
-      <type>label</type>
-      <id>1003</id>
-      <posX>705</posX>
-      <posY>652</posY>
-      <label/>
-      <align>left</align>
-      <font>font16</font>
-      <visible>no</visible>
-      <textcolor>ffffffff</textcolor>
-    </control>
-    <control>
-      <description>Date</description>
-      <type>label</type>
-      <id>200</id>
-      <posX>550</posX>
-      <posY>180</posY>
-      <label>#date</label>
-      <align>right</align>
-      <font>font14</font>
-      <textcolor>ffa9d0f7</textcolor>
-    </control>
-    <control>
-      <description>Time</description>
-      <type>label</type>
-      <id>201</id>
-      <posX>550</posX>
-      <posY>220</posY>
-      <label>#time</label>
-      <align>right</align>
-      <font>font16</font>
-      <textcolor>ffffffff</textcolor>
-    </control>
-  </controls>
+    <id>0</id>
+    <defaultcontrol>2</defaultcontrol>
+    <allowoverlay>yes</allowoverlay>
+    <autohidetopbar>no</autohidetopbar>
+    <controls>
+        <control>
+            <description>background image</description>
+            <type>image</type>
+            <id>1</id>
+            <posX>0</posX>
+            <posY>0</posY>
+            <width>1366</width>
+            <height>768</height>
+            <texture>background.png</texture>
+        </control>
+        <control>
+            <description>menu background image</description>
+            <type>image</type>
+            <id>1</id>
+            <posX>700</posX>
+            <posY>173</posY>
+            <width>500</width>
+            <height>466</height>
+            <!--       <height>499</height> -->
+            <texture>background_glass_menu_area.png</texture>
+        </control>
+        <control>
+            <description>menu background image</description>
+            <type>image</type>
+            <id>1</id>
+            <posX>45</posX>
+            <posY>190</posY>
+            <width>500</width>
+            <height>466</height>
+            <!--       <height>499</height> -->
+            <texture>background_glass_hoover_area.png</texture>
+        </control>
+        <control>
+            <description>template for panel in which all buttons should b fitted</description>
+            <type>image</type>
+            <id>1002</id>
+            <posX>700</posX>
+            <posY>213</posY>
+            <width>500</width>
+            <height>366</height>
+            <texture>-</texture>
+        </control>
+        <control>
+            <description>template for hover image</description>
+            <type>image</type>
+            <id>1000</id>
+            <posX>180</posX>
+            <posY>285</posY>
+            <align>center</align>
+            <texture>-</texture>
+            <visible>no</visible>
+        </control>
+        <control>
+            <description>template for button</description>
+            <type>button</type>
+            <id>1001</id>
+            <posX>750</posX>
+            <posY>213</posY>
+            <width>380</width>
+            <textXOff>30</textXOff>
+            <textYOff>10</textYOff>
+            <height>65</height>
+            <label>605</label>
+            <font>font16</font>
+            <texture>hp_selectionbar.png</texture>
+            <textureFocus>hp_selectionbar.png</textureFocus>
+            <textureNoFocus>-</textureNoFocus>
+            <visible>no</visible>
+            <textcolor>ffffffff</textcolor>
+        </control>
+        <control>
+            <description>template label for small font</description>
+            <type>label</type>
+            <id>1003</id>
+            <posX>705</posX>
+            <posY>652</posY>
+            <label/>
+            <align>left</align>
+            <font>font16</font>
+            <visible>no</visible>
+            <textcolor>ffffffff</textcolor>
+        </control>
+        <control>
+            <description>Date</description>
+            <type>label</type>
+            <id>200</id>
+            <posX>550</posX>
+            <posY>180</posY>
+            <label>#date</label>
+            <align>right</align>
+            <font>font14</font>
+            <textcolor>ffa9d0f7</textcolor>
+        </control>
+        <control>
+            <description>Time</description>
+            <type>label</type>
+            <id>201</id>
+            <posX>550</posX>
+            <posY>220</posY>
+            <label>#time</label>
+            <align>right</align>
+            <font>font16</font>
+            <textcolor>ffffffff</textcolor>
+        </control>
+    </controls>
 </window>

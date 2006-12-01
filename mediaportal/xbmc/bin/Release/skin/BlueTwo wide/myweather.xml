@@ -12,10 +12,10 @@
         <import>common.time.xml</import>
         <control>
             <type>group</type>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300" >WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+            <animation effect="slide" time="400" end="0,-300" >WindowClose</animation>
+            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowOpen</animation>
             <description>group element</description>
             <layout>StackLayout</layout>
             <posX>113</posX>

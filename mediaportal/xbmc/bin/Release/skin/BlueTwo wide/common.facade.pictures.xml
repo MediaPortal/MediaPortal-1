@@ -3,10 +3,10 @@
     <controls>
         <control>
             <type>group</type>
-      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="400" end="800,0" >WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+            <animation effect="slide" time="400" end="800,0" >WindowClose</animation>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="500">WindowClose</animation>
             <description>group element</description>
             <control>
                 <description>composite control consisting of a list control and a thumbnail panel</description>
@@ -22,17 +22,17 @@
                     <description>Thumbnail Panel</description>
                     <type>thumbnailpanel</type>
                     <id>50</id>
-<!--                     <scrollOffset>1</scrollOffset> -->
+                    <!--                     <scrollOffset>1</scrollOffset> -->
                     <onleft>2</onleft>
                     <onright>2</onright>
-		    <textureWidthBig>260</textureWidthBig>
-		    <textureHeightBig>195</textureHeightBig>
-		    <itemWidthBig>270</itemWidthBig>
-		    <itemHeightBig>296</itemHeightBig>
-		    <thumbWidthBig>200</thumbWidthBig>
-		    <thumbHeightBig>150</thumbHeightBig>
-		    <thumbPosXBig>28</thumbPosXBig>
-		    <thumbPosYBig>21</thumbPosYBig>
+                    <textureWidthBig>260</textureWidthBig>
+                    <textureHeightBig>195</textureHeightBig>
+                    <itemWidthBig>270</itemWidthBig>
+                    <itemHeightBig>296</itemHeightBig>
+                    <thumbWidthBig>200</thumbWidthBig>
+                    <thumbHeightBig>150</thumbHeightBig>
+                    <thumbPosXBig>28</thumbPosXBig>
+                    <thumbPosYBig>21</thumbPosYBig>
                 </control>
                 <control>
                     <description>Filmstrip view</description>
@@ -42,15 +42,15 @@
                     <onright>2</onright>
                     <onup>2</onup>
                     <ondown>2</ondown>
-		    <backgroundx>600</backgroundx>
-		    <backgroundy>126</backgroundy>
-		    <backgroundwidth>572</backgroundwidth>
-		    <backgroundheight>446</backgroundheight>
-		    <InfoImage>-</InfoImage>
-		    <InfoImagex>628</InfoImagex>
-		    <InfoImagey>152</InfoImagey>
-		    <InfoImagewidth>500</InfoImagewidth>
-		    <InfoImageheight>375</InfoImageheight>
+                    <backgroundx>600</backgroundx>
+                    <backgroundy>126</backgroundy>
+                    <backgroundwidth>572</backgroundwidth>
+                    <backgroundheight>446</backgroundheight>
+                    <InfoImage>-</InfoImage>
+                    <InfoImagex>628</InfoImagex>
+                    <InfoImagey>152</InfoImagey>
+                    <InfoImagewidth>500</InfoImagewidth>
+                    <InfoImageheight>375</InfoImageheight>
                 </control>
                 <control>
                     <description>playlist listcontrol</description>

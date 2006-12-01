@@ -8,11 +8,10 @@
     <define>#header.hover:hover_musicvideo.png</define>
     <controls>
         <import>common.window.xml</import>
-
         <control>
             <type>group</type>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="500">WindowClose</animation>
             <description>group element</description>
             <layout>StackLayout(2)</layout>
             <posX>113</posX>
@@ -102,56 +101,56 @@
         <control>
             <type>group</type>
             <description>group element</description>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="500">WindowClose</animation>
             <layout>StackLayout(2)</layout>
             <posX>113</posX>
             <posY>129</posY>
-        <control>
-            <type>button</type>
-            <description>back button</description>
-            <id>9</id>
-            <onleft>50</onleft>
-            <onright>50</onright>
-            <onup>39</onup>
-            <ondown>34</ondown>
-            <label>712</label>
-        </control>
-        <control>
-            <type>button</type>
-            <description>list nav Button</description>
-            <id>34</id>
-            <onleft>50</onleft>
-            <onright>50</onright>
-            <onup>9</onup>
-            <ondown>35</ondown>
-            <label>30005</label>
-        </control>
-        <control>
-            <type>button</type>
-            <description>list nav Button</description>
-            <id>35</id>>
-            <onleft>50</onleft>
-            <onright>50</onright>
-            <onup>34</onup>
-            <ondown>8</ondown>
-            <label>30004</label>
-        </control>
-        <control>
-            <type>button</type>
-            <description>Play all button</description>
-            <id>8</id>
-            <onleft>50</onleft>
-            <onright>50</onright>
-            <onup>35</onup>
-            <ondown>25</ondown>
-            <label>30003</label>
-        </control>
+            <control>
+                <type>button</type>
+                <description>back button</description>
+                <id>9</id>
+                <onleft>50</onleft>
+                <onright>50</onright>
+                <onup>39</onup>
+                <ondown>34</ondown>
+                <label>712</label>
+            </control>
+            <control>
+                <type>button</type>
+                <description>list nav Button</description>
+                <id>34</id>
+                <onleft>50</onleft>
+                <onright>50</onright>
+                <onup>9</onup>
+                <ondown>35</ondown>
+                <label>30005</label>
+            </control>
+            <control>
+                <type>button</type>
+                <description>list nav Button</description>
+                <id>35</id>>
+                <onleft>50</onleft>
+                <onright>50</onright>
+                <onup>34</onup>
+                <ondown>8</ondown>
+                <label>30004</label>
+            </control>
+            <control>
+                <type>button</type>
+                <description>Play all button</description>
+                <id>8</id>
+                <onleft>50</onleft>
+                <onright>50</onright>
+                <onup>35</onup>
+                <ondown>25</ondown>
+                <label>30003</label>
+            </control>
         </control>
         <control>
             <type>listcontrol</type>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="500">WindowClose</animation>
             <description>listcontrol</description>
             <id>50</id>
             <onleft>2</onleft>
@@ -160,12 +159,12 @@
             <ondown>2</ondown>
         </control>
         <control>
-             <type>image</type>
-             <id>36</id>
-             <posX>206</posX>
-             <posY>485</posY>
-             <texture></texture>
-             <visible>no</visible>
+            <type>image</type>
+            <id>36</id>
+            <posX>206</posX>
+            <posY>485</posY>
+            <texture></texture>
+            <visible>no</visible>
         </control>
     </controls>
 </window>

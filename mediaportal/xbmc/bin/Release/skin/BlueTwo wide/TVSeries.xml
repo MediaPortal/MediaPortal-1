@@ -1,183 +1,183 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-	<id>0</id>
-	<defaultcontrol>2</defaultcontrol>
-	<allowoverlay>yes</allowoverlay>
-	<define>#header.hover:hover_my tv series.png</define>
-	<controls>
-		<control>
-			<description>BG</description>
-			<type>image</type>
-			<id>1</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<width>1366</width>
-			<height>768</height>
-			<texture>background.png</texture>
-		</control>
-		<control>
-			<description>Number of Files Label</description>
-			<type>label</type>
-			<id>1</id>
-			<posX>493</posX>
-			<posY>706</posY>
-			<label>#itemcount</label>
-			<align>left</align>
-			<textcolor>White</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-		</control>
-		<control>
-			<description>Selected item Label</description>
-			<type>fadelabel</type>
-			<id>1</id>
-			<posX>1252</posX>
-			<posY>93</posY>
-			<width>533</width>
-			<label>#selecteditem</label>
-			<font>font14</font>
-			<align>right</align>
-			<textcolor>White</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-		</control>
-		<control>
-			<type>image</type>
-			<id>1</id>
-			<posX>142</posX>
-			<posY>493</posY>
-			<texture>#header.hover</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-		</control>
-		<control>
-			<type>image</type>
-			<description>Series Logo</description>
-			<id>30</id>
-			<posX>113</posX>
-			<posY>98</posY>
-			<width>560</width>
-			<height>104</height>
-			<texture></texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-		</control>
-		<control>
-			<type>image</type>
-			<description>Logo</description>
-			<id>68</id>
-			<posX>113</posX>
-			<posY>21</posY>
-			<texture>tvseries_logo.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-		</control>
-		<control>
-			<type>textbox</type>
-			<description>Title</description>
-			<id>40</id>
-			<posX>113</posX>
-			<posY>210</posY>
-			<width>826</width>
-			<textcolor>FFFFFFFF</textcolor>
-			<font>font16</font>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-		</control>
-		<control>
-			<type>textbox</type>
-			<description>Genre</description>
-			<id>33</id>
-			<posX>113</posX>
-			<posY>245</posY>
-			<width>826</width>
-			<align>right</align>
-			<textcolor>FFA9D0F7</textcolor>
-			<font>font13</font>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-		</control>
-		<control>
-			<type>textboxscrollup</type>
-			<description>Description</description>
-			<id>31</id>
-			<posX>113</posX>
-			<posY>280</posY>
-			<width>826</width>
-			<height>120</height>
-			<seperator>-----------------------------------------------------------------------------------------------------------------------</seperator>
-			<colordiffuse>ffffffff</colordiffuse>
-			<textcolor>FFFFFFFF</textcolor>
-			<font>font13</font>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-		</control>
-		<control>
-			<type>group</type>
-			<layout>StackLayout</layout>
-			<description>group element</description>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-			<posX>113</posX>
-			<posY>416</posY>
-			<control>
-				<description>Back</description>
-				<type>button</type>
-				<id>2</id>
-				<onright>50</onright>
-				<onup>5</onup>
-				<ondown>3</ondown>
-				<label>Back</label>
-			</control>
-			<control>
-				<description>View-As button</description>
-				<type>button</type>
-				<id>3</id>
-				<onright>50</onright>
-				<onup>2</onup>
-				<ondown>4</ondown>
-				<label>100</label>
-			</control>
-		</control>
-		<control>
-			<type>group</type>
-			<description>group element</description>
-			<id>28</id>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="400" end="800,0" >WindowClose</animation>
-			<control>
-				<description>composite control consisting of a list control and a thumbnail panel</description>
-				<type>facadeview</type>
-				<id>50</id>
-				<control>
-					<description>listcontrol</description>
-					<type>listcontrol</type>
-					<id>50</id>
-					<posX>493</posX>
-					<posY>416</posY>
-					<height>333</height>
-					<onleft>2</onleft>
-					<onright>2</onright>
-					<onup>2</onup>
-					<ondown>2</ondown>
-					<spaceBetweenItems>2</spaceBetweenItems>
-				</control>
-				<control>
-					<description>Thumbnail Panel</description>
-					<type>thumbnailpanel</type>
-					<id>50</id>
-					<posX>493</posX>
-					<posY>416</posY>
-					<height>306</height>
-					<onleft>2</onleft>
-					<onright>2</onright>
-					<onup>2</onup>
-					<ondown>2</ondown>
-				</control>
-			</control>
-		</control>
-		<import>common.facade.xml</import>
-	</controls>
+    <id>0</id>
+    <defaultcontrol>2</defaultcontrol>
+    <allowoverlay>yes</allowoverlay>
+    <define>#header.hover:hover_my tv series.png</define>
+    <controls>
+        <control>
+            <description>BG</description>
+            <type>image</type>
+            <id>1</id>
+            <posX>0</posX>
+            <posY>0</posY>
+            <width>1366</width>
+            <height>768</height>
+            <texture>background.png</texture>
+        </control>
+        <control>
+            <description>Number of Files Label</description>
+            <type>label</type>
+            <id>1</id>
+            <posX>493</posX>
+            <posY>706</posY>
+            <label>#itemcount</label>
+            <align>left</align>
+            <textcolor>White</textcolor>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="500">WindowClose</animation>
+        </control>
+        <control>
+            <description>Selected item Label</description>
+            <type>fadelabel</type>
+            <id>1</id>
+            <posX>1252</posX>
+            <posY>93</posY>
+            <width>533</width>
+            <label>#selecteditem</label>
+            <font>font14</font>
+            <align>right</align>
+            <textcolor>White</textcolor>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="500">WindowClose</animation>
+        </control>
+        <control>
+            <type>image</type>
+            <id>1</id>
+            <posX>142</posX>
+            <posY>493</posY>
+            <texture>#header.hover</texture>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="500">WindowClose</animation>
+        </control>
+        <control>
+            <type>image</type>
+            <description>Series Logo</description>
+            <id>30</id>
+            <posX>113</posX>
+            <posY>98</posY>
+            <width>560</width>
+            <height>104</height>
+            <texture></texture>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="500">WindowClose</animation>
+        </control>
+        <control>
+            <type>image</type>
+            <description>Logo</description>
+            <id>68</id>
+            <posX>113</posX>
+            <posY>21</posY>
+            <texture>tvseries_logo.png</texture>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="500">WindowClose</animation>
+        </control>
+        <control>
+            <type>textbox</type>
+            <description>Title</description>
+            <id>40</id>
+            <posX>113</posX>
+            <posY>210</posY>
+            <width>826</width>
+            <textcolor>FFFFFFFF</textcolor>
+            <font>font16</font>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="500">WindowClose</animation>
+        </control>
+        <control>
+            <type>textbox</type>
+            <description>Genre</description>
+            <id>33</id>
+            <posX>113</posX>
+            <posY>245</posY>
+            <width>826</width>
+            <align>right</align>
+            <textcolor>FFA9D0F7</textcolor>
+            <font>font13</font>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="500">WindowClose</animation>
+        </control>
+        <control>
+            <type>textboxscrollup</type>
+            <description>Description</description>
+            <id>31</id>
+            <posX>113</posX>
+            <posY>280</posY>
+            <width>826</width>
+            <height>120</height>
+            <seperator>-----------------------------------------------------------------------------------------------------------------------</seperator>
+            <colordiffuse>ffffffff</colordiffuse>
+            <textcolor>FFFFFFFF</textcolor>
+            <font>font13</font>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="500">WindowClose</animation>
+        </control>
+        <control>
+            <type>group</type>
+            <layout>StackLayout</layout>
+            <description>group element</description>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="500">WindowClose</animation>
+            <posX>113</posX>
+            <posY>416</posY>
+            <control>
+                <description>Back</description>
+                <type>button</type>
+                <id>2</id>
+                <onright>50</onright>
+                <onup>5</onup>
+                <ondown>3</ondown>
+                <label>Back</label>
+            </control>
+            <control>
+                <description>View-As button</description>
+                <type>button</type>
+                <id>3</id>
+                <onright>50</onright>
+                <onup>2</onup>
+                <ondown>4</ondown>
+                <label>100</label>
+            </control>
+        </control>
+        <control>
+            <type>group</type>
+            <description>group element</description>
+            <id>28</id>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+            <animation effect="slide" time="400" end="800,0" >WindowClose</animation>
+            <control>
+                <description>composite control consisting of a list control and a thumbnail panel</description>
+                <type>facadeview</type>
+                <id>50</id>
+                <control>
+                    <description>listcontrol</description>
+                    <type>listcontrol</type>
+                    <id>50</id>
+                    <posX>493</posX>
+                    <posY>416</posY>
+                    <height>333</height>
+                    <onleft>2</onleft>
+                    <onright>2</onright>
+                    <onup>2</onup>
+                    <ondown>2</ondown>
+                    <spaceBetweenItems>2</spaceBetweenItems>
+                </control>
+                <control>
+                    <description>Thumbnail Panel</description>
+                    <type>thumbnailpanel</type>
+                    <id>50</id>
+                    <posX>493</posX>
+                    <posY>416</posY>
+                    <height>306</height>
+                    <onleft>2</onleft>
+                    <onright>2</onright>
+                    <onup>2</onup>
+                    <ondown>2</ondown>
+                </control>
+            </control>
+        </control>
+        <import>common.facade.xml</import>
+    </controls>
 </window>
