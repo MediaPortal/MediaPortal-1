@@ -180,8 +180,8 @@
                         <IconXOff>12</IconXOff>
 			<onright>30</onright>
 			<onleft>2</onleft>
-<!-- 			<onup>4</onup>
-			<ondown>2</ondown>  -->
+<!-- 			<onup>4</onup>  -->
+			<ondown>30</ondown>
 		</control>
 		<control>
 			<description>copy listcontrol</description>

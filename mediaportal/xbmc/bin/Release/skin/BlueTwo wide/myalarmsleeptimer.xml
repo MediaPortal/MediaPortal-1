@@ -25,19 +25,19 @@
 			<id>3</id>
 			<posX>113</posX>
 			<posY>129</posY>
-			<width>253</width>
+<!-- 			<width>253</width>
 			<height>42</height>
 			<textXOff>18</textXOff>
 			<textYOff>6</textYOff>
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
 			<colordiffuse>ffffffff</colordiffuse>
-			<disabledcolor>60ffffff</disabledcolor>
+			<disabledcolor>60ffffff</disabledcolor> -->
 			<label>856</label>
-			<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
+<!-- 			<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
 			<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
 			<textureFocus>togglebutton-on-focus.png</textureFocus>
-			<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
+			<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus> -->
 			<onright>4</onright>
 			<onup>17</onup>
 			<ondown>7</ondown>
@@ -79,11 +79,11 @@
 			<ondown>5</ondown>
 			<onleft>3</onleft>
 			<onright>5</onright>
-			<textcolor>FFFFFFFF</textcolor>
+<!-- 			<textcolor>FFFFFFFF</textcolor>
 			<textureUp>arrow_round_up_nofocus.png</textureUp>
 			<textureDown>arrow_round_down_nofocus.png</textureDown>
 			<textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
-			<textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
+			<textureDownFocus>arrow_round_down_focus.png</textureDownFocus> -->
 		</control>
 		<control>
 			<description>fade out volume</description>
