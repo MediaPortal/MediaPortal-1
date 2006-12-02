@@ -2554,11 +2554,13 @@ namespace MediaPortal.GUI.TV
               bool recMatchFound = false;
               foreach (TVRecording rec in _recordingList)
               {
-                if (rec.Title.Equals(_currentProgram.Title))
+                // Take into consideration old and comming recordings! Just checking titel is not enough
+                // It could be that there is a old recording with the same title
+                if ((rec.Title == _currentProgram.Title) && (rec.StartTime <= DateTime.Now) && (rec.EndTime >= DateTime.Now))
                 {
                   recMatchFound = true;
 
-                  Log.Debug("TVGuide: clicked on a currently running recording");
+                  Log.Debug("TVGuide: clicked on a currently running recording {0}", _currentProgram.Title);
                   GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
                   if (dlg == null)
                     return;
