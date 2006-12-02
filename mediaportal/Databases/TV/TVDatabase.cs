@@ -2208,58 +2208,7 @@ namespace MediaPortal.TV.Database
       return result;
     }
 
-    /*public static bool GetRecordings(ref ArrayList recordings)
-    {
-      lock (typeof(TVDatabase))
-      {
-        recordings.Clear();
-        try
-        {
-          if (null == m_db) return false;
-          string strSQL;
-          strSQL = String.Format("select * from channel,recording where recording.idChannel=channel.idChannel order by iStartTime");
-          SQLiteResultSet results;
-          results = m_db.Execute(strSQL);
-          if (results.Rows.Count == 0) return false;
-          for (int i = 0; i < results.Rows.Count; ++i)
-          {
-            long iStart = DatabaseUtility.GetAsInt64(results, i, "recording.iStartTime");
-            long iEnd = DatabaseUtility.GetAsInt64(results, i, "recording.iEndTime");
-            TVRecording rec = new TVRecording();
-            rec.Channel = DatabaseUtility.Get(results, i, "channel.strChannel");
-            rec.Start = iStart;
-            rec.End = iEnd;
-            rec.Canceled = DatabaseUtility.GetAsInt64(results, i, "recording.iCancelTime");
-            rec.ID = DatabaseUtility.GetAsInt(results, i, "recording.idRecording");
-            rec.Title = DatabaseUtility.Get(results, i, "recording.strProgram");
-            rec.RecType = (TVRecording.RecordingType)DatabaseUtility.GetAsInt(results, i, "recording.iRecordingType");
-            rec.Quality = (TVRecording.QualityType)DatabaseUtility.GetAsInt(results, i, "recording.quality");
-            rec.Priority = DatabaseUtility.GetAsInt(results, i, "recording.priority");
-            rec.EpisodesToKeep = DatabaseUtility.GetAsInt(results, i, "recording.episodesToKeep");
 
-            int iContectRec = DatabaseUtility.GetAsInt(results, i, "recording.bContentRecording");
-            if (iContectRec == 1) rec.IsContentRecording = true;
-            else rec.IsContentRecording = false;
-            rec.KeepRecordingMethod = (TVRecorded.KeepMethod)DatabaseUtility.GetAsInt(results, i, "recording.keepMethod");
-            long date = DatabaseUtility.GetAsInt64(results, i, "recording.keepDate");
-            rec.KeepRecordingTill = MediaPortal.Util.Utils.longtodate(date);
-            rec.PaddingFront = DatabaseUtility.GetAsInt(results, i, "recording.paddingFront");
-            rec.PaddingEnd = DatabaseUtility.GetAsInt(results, i, "recording.paddingEnd");
-            GetCanceledRecordings(ref rec);
-            recordings.Add(rec);
-          }
-
-          return true;
-        }
-        catch (Exception ex)
-        {
-          Log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-          Open();
-        }
-        return false;
-      }
-    }
-		*/
     public static void BeginTransaction()
     {
       lock (typeof(TVDatabase))
@@ -4588,58 +4537,6 @@ namespace MediaPortal.TV.Database
       }
     }
 
-    /*public static bool GetRecordings(ref List<TVRecording> recordings)
-    {
-      lock (typeof(TVDatabase))
-      {
-        recordings.Clear();
-        try
-        {
-          if (null == m_db) return false;
-          string strSQL;
-          strSQL = String.Format("select * from channel,recording where recording.idChannel=channel.idChannel order by iStartTime");
-          SQLiteResultSet results;
-          results = m_db.Execute(strSQL);
-          if (results.Rows.Count == 0) return false;
-          for (int i = 0; i < results.Rows.Count; ++i)
-          {
-            long iStart = DatabaseUtility.GetAsInt64(results, i, "recording.iStartTime");
-            long iEnd = DatabaseUtility.GetAsInt64(results, i, "recording.iEndTime");
-            TVRecording rec = new TVRecording();
-            rec.Channel = DatabaseUtility.Get(results, i, "channel.strChannel");
-            rec.Start = iStart;
-            rec.End = iEnd;
-            rec.Canceled = DatabaseUtility.GetAsInt64(results, i, "recording.iCancelTime");
-            rec.ID = DatabaseUtility.GetAsInt(results, i, "recording.idRecording");
-            rec.Title = DatabaseUtility.Get(results, i, "recording.strProgram");
-            rec.RecType = (TVRecording.RecordingType)DatabaseUtility.GetAsInt(results, i, "recording.iRecordingType");
-            rec.Quality = (TVRecording.QualityType)DatabaseUtility.GetAsInt(results, i, "recording.quality");
-            rec.Priority = DatabaseUtility.GetAsInt(results, i, "recording.priority");
-            rec.EpisodesToKeep = DatabaseUtility.GetAsInt(results, i, "recording.episodesToKeep");
-
-            int iContectRec = DatabaseUtility.GetAsInt(results, i, "recording.bContentRecording");
-            if (iContectRec == 1) rec.IsContentRecording = true;
-            else rec.IsContentRecording = false;
-            rec.KeepRecordingMethod = (TVRecorded.KeepMethod)DatabaseUtility.GetAsInt(results, i, "recording.keepMethod");
-            long date = DatabaseUtility.GetAsInt64(results, i, "recording.keepDate");
-            rec.KeepRecordingTill = MediaPortal.Util.Utils.longtodate(date);
-            rec.PaddingFront = DatabaseUtility.GetAsInt(results, i, "recording.paddingFront");
-            rec.PaddingEnd = DatabaseUtility.GetAsInt(results, i, "recording.paddingEnd");
-            GetCanceledRecordings(ref rec);
-            recordings.Add(rec);
-          }
-
-          return true;
-        }
-        catch (Exception ex)
-        {
-          Log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-          Open();
-        }
-        return false;
-      }
-    }
-    */
     public static void GetNotifies(List<TVNotify> notifies, bool complete)
     {
       notifies.Clear();
