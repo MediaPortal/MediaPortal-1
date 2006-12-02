@@ -21,6 +21,8 @@
 
 using System;
 using MediaPortal.GUI.Library;
+using System.Drawing;
+
 
 namespace WindowPlugins.home
 {
@@ -29,6 +31,9 @@ namespace WindowPlugins.home
 	/// </summary>
 	public class GUIBasicHome : GUIWindow
 	{
+    [SkinControlAttribute(99)]
+    protected GUIVideoControl _videoWindow = null;
+
 		public GUIBasicHome()
 		{
 			GetID=(int)GUIWindow.Window.WINDOW_SECOND_HOME;
@@ -46,6 +51,11 @@ namespace WindowPlugins.home
         ctl.Focus = true;   // this will update the skin propperty #highlightedbutton
       }
       base.OnPageLoad();
+      //set video window position
+      if (_videoWindow != null)
+      {
+        GUIGraphicsContext.VideoWindow = new Rectangle(_videoWindow.XPosition, _videoWindow.YPosition, _videoWindow.Width, _videoWindow.Height);
+      }
     }
 
 	}

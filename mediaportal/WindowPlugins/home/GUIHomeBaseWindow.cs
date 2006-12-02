@@ -113,8 +113,7 @@ namespace MediaPortal.GUI.Home
 			switch (message.Message)
 			{
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-          GetDate();
-          if (lblDate != null) lblDate.Label = GUIPropertyManager.GetProperty("#homedate");
+          if (lblDate != null) lblDate.Label = GetDate();
           if (lblTime != null) lblTime.Label = GUIPropertyManager.GetProperty("#time");
           break;
         
@@ -132,8 +131,7 @@ namespace MediaPortal.GUI.Home
       if (DateTime.Now.Minute != _updateTimer.Minute)
       {
         _updateTimer = DateTime.Now;
-        GetDate();
-        if (lblDate != null) lblDate.Label = GUIPropertyManager.GetProperty("#homedate");
+        if (lblDate != null) lblDate.Label = GetDate();
         if (lblTime != null) lblTime.Label = GUIPropertyManager.GetProperty("#time");
       }
     }
@@ -162,6 +160,15 @@ namespace MediaPortal.GUI.Home
       return GetMediaFileName(FileName);
     }
 
+    public string GetNonFocusHoverFileName(string FileName)
+    {
+      string name = System.IO.Path.GetFileName(FileName);
+      string dir = System.IO.Path.GetDirectoryName(FileName);
+      if (dir.Length > 0) dir = dir + "\\";
+      if (!name.ToLower().Contains("nonfocushover_")) FileName = dir + "nonfocushover_" + name;
+      return GetMediaFileName(FileName);
+    }
+
     protected string GetMediaFileName(string name)
     {
       if (System.IO.Path.GetPathRoot(name) == "") 
@@ -169,6 +176,7 @@ namespace MediaPortal.GUI.Home
         name = String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin, name);
       }
       if ((System.IO.Path.HasExtension(name)) && (System.IO.File.Exists(name))) return System.IO.Path.GetFileName(name);
+
 
       
       string filename = System.IO.Path.ChangeExtension(name, ".png");
@@ -181,7 +189,7 @@ namespace MediaPortal.GUI.Home
       if (System.IO.File.Exists(filename)) return System.IO.Path.GetFileName(filename);
 
       filename = System.IO.Path.ChangeExtension(name, ".xml");
-      if (System.IO.File.Exists(filename)) return "media\\" + System.IO.Path.GetFileName(filename);
+      if (System.IO.File.Exists(filename)) return "media\\" +   System.IO.Path.GetFileName(filename);
 
       return String.Empty;
     }
@@ -232,7 +240,7 @@ namespace MediaPortal.GUI.Home
       dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<YY>", (cur.Year - 2000).ToString("00"), "unknown");
 
       GUIPropertyManager.SetProperty("#homedate", dateString);
-      
+
       return dateString;
     }
     #endregion
@@ -310,6 +318,7 @@ namespace MediaPortal.GUI.Home
           // Only one window should act on this.
           if (GetID != (int)GUIWindow.Window.WINDOW_HOME)
             break;
+
           VirtualKeyboard keyboard2 = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
           if (null == keyboard2) return;
           keyboard2.Reset();
@@ -327,6 +336,7 @@ namespace MediaPortal.GUI.Home
           // Only one window should act on this.
           if (GetID != (int)GUIWindow.Window.WINDOW_HOME)
             break;
+
           using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
             if (!xmlreader.GetValueAsBool("general", "hidewrongpin", false))

@@ -145,7 +145,8 @@ namespace MediaPortal.GUI.Library
     public override void Stop()
     {
       base.Stop();
-      _animationList[_currentIndex].Stop();
+      foreach (Animation animation in _animationList) animation.Stop();
+      //_animationList[_currentIndex].Stop();
     }
 
     public void Add(Animation item)
