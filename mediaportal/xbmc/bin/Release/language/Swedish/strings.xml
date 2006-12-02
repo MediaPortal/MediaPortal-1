@@ -2634,6 +2634,10 @@
 		<value>Ta bort ej sedd inspelning?</value>
 	</string>
 	<string>
+		<id>830</id>
+		<value>Återställ status sedd</value>
+	</string>
+	<string>
 		<id>850</id>
 		<value>Mitt Alarm</value>
 	</string>
