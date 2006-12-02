@@ -251,8 +251,8 @@ namespace MediaPortal.GUI.MusicVideos
         //{
         //    moCurrentPlayingVideo = MusicVideoPlaylist.getInstance().getCurrentPlayingVideo();
         //}
-
-        GUIPropertyManager.SetProperty("#Play.Current.Title", moCurrentPlayingVideo.artistName + "-" + moCurrentPlayingVideo.songName);
+        if (moCurrentPlayingVideo != null) 
+          GUIPropertyManager.SetProperty("#Play.Current.Title", moCurrentPlayingVideo.artistName + "-" + moCurrentPlayingVideo.songName);
         //GUIPropertyManager.SetProperty("#Play.Current.File", loVideo.songName);
       }
       base.OnPreviousWindow();
