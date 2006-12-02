@@ -369,7 +369,7 @@ namespace MediaPortal.GUI.TV
       dlg.AddLocalizedString(656);     //Delete recorded tv
       if (pItem.IsPlayed)
         dlg.AddLocalizedString(830); //Reset watched status
-      dlg.Add(GUILocalizeStrings.Get(1048));//Settings
+      dlg.AddLocalizedString(1048);//Settings
 
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1) return;
