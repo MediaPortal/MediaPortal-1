@@ -23,7 +23,7 @@
     <posX>71</posX>
     <posY>399</posY>
     <width>171</width>
-    <height>165</height>
+    <height>150</height>
     <texture>playback_background.png</texture>
     <animation effect="fade" time="500">WindowClose</animation>
     <animation effect="fade" time="250">WindowOpen</animation>
@@ -85,10 +85,10 @@
   <control>
     <description>album/artist/genre etc info label</description>
     <type>fadelabel</type>
-    <width>135</width>
+    <width>116</width>
     <height>30</height>
-    <posX>90</posX>
-    <posY>509</posY>
+    <posX>104</posX>
+    <posY>511</posY>
     <align>left</align>
     <font>font13</font>
     <label>#Play.Current.Title\r#Play.Current.Artist\r#Play.Current.Album\r#Play.Current.Duration</label>

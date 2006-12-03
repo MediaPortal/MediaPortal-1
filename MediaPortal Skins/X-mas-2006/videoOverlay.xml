@@ -59,10 +59,10 @@
 	<control>
 		<description>scrolling info label</description>
 		<type>fadelabel</type>
-		<width>135</width>
-		<height>30</height>
-		<posX>90</posX>
-		<posY>529</posY>
+		<width>116</width>
+    	<height>30</height>
+    	<posX>104</posX>
+    	<posY>511</posY>
 		<align>left</align>
 		<font>font13</font>
 		<label>#Play.Current.Title\r#Play.Current.Genre\r#Play.Current.Year\r#Play.Current.Director</label>
@@ -74,10 +74,10 @@
 		<description>video rectangle</description>
 		<type>image</type>
 		<id>0</id>
-		<posX>75</posX>
-		<posY>399</posY>
-		<width>161</width>
-		<height>134</height>
+		<posX>71</posX>
+    	<posY>399</posY>
+    	<width>171</width>
+    	<height>150</height>
 		<texture>playback_background.png</texture>
 		<colorkey>0</colorkey>
 		<colordiffuse>ffffffff</colordiffuse>
@@ -88,10 +88,10 @@
 		<description>video preview window</description>
 		<type>videowindow</type>
 		<id>1</id>
-		<posX>86</posX>
-		<posY>410</posY>
+		<posX>87</posX>
+		<posY>415</posY>
 		<width>135</width>
-		<height>108</height>
+		<height>96</height>
 		<action>18</action>
 		<textureFocus>tv_green_border.png</textureFocus>
     <animation effect="fade" time="500">WindowClose</animation>
