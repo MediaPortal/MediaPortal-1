@@ -315,6 +315,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUIBurner\BurnVideoDVD.cs" />
+    <Compile Include="GUIBurner\BurnDataDVD.cs" />
+    <Compile Include="GUIBurner\BurnDVDEvents.cs" />
     <Compile Include="GUIBurner\GUIBurner.cs" />
     <Compile Include="GUIBurner\MadlldlibWrapper.cs" />
     <Compile Include="GUIBurner\SetupForm.cs">

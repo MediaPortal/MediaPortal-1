@@ -98,8 +98,8 @@ namespace MediaPortal.GUI.GUIBurner
 
     #region Private Variables
 
-    BurnDVD DvdBurner;
-    //    BurnDataDVD DVDDataBurner;
+    BurnVideoDVD VideoDvdBurner;
+    BurnDataDVD DataDvdBurner;
 
     private struct file
     {
@@ -837,9 +837,9 @@ namespace MediaPortal.GUI.GUIBurner
           GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2105)); //Create Data-CD
           GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON2);
 
-          //GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON3);
-          //GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON3, GUILocalizeStrings.Get(2106)); //Create Data-DVD
-          //GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON3);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON3);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON3, GUILocalizeStrings.Get(2106)); //Create Data-DVD
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON3);
 
           break;
 
@@ -1171,28 +1171,26 @@ namespace MediaPortal.GUI.GUIBurner
             else
               strAspectRatio = @"16/9";
 
-            DvdBurner = new BurnDVD(FilePathsToBurn, strTempFolder, strTvFormat, strAspectRatio, dvdBurnFolder, LeaveFilesForDebugging, recorderdrive, DummyBurn);
+            VideoDvdBurner = new BurnVideoDVD(FilePathsToBurn, strTempFolder, strTvFormat, strAspectRatio, dvdBurnFolder, LeaveFilesForDebugging, recorderdrive, DummyBurn);
 
             //Listen for some events
-            DvdBurner.FileFinished += new BurnDVD.FileFinishedEventHandler(DVDBurner_FileFinished);
-            //DVDBurner.OutputReceived += new DataReceivedEventHandler(DVDBurner_OutputReceived);
-            DvdBurner.AllFinished += new EventHandler(DVDBurner_AllFinished);
-            DvdBurner.BurnDVDStatusUpdate += new BurnDVD.BurnDVDStatusUpdateEventHandler(DVDBurner_BurnDVDStatusUpdate);
-            DvdBurner.Start();
+            VideoDvdBurner.FileFinished += new BurnVideoDVD.FileFinishedEventHandler(DVDBurner_FileFinished);
+            //VideoDvdBurner.OutputReceived += new DataReceivedEventHandler(DVDBurner_OutputReceived);
+            VideoDvdBurner.AllFinished += new EventHandler(DVDBurner_AllFinished);
+            VideoDvdBurner.BurnDVDStatusUpdate += new BurnVideoDVD.BurnDVDStatusUpdateEventHandler(DVDBurner_BurnDVDStatusUpdate);
+            VideoDvdBurner.Start();
           }
           if (bTyp == BurnTypes.DATA_DVD)
           {
-            /*            DvdBurner = new BurnDVD(false, FilePathsToBurn, strTempFolder, null, dvdBurnFolder, LeaveFilesForDebugging, recorderdrive, DummyBurn);
+            DataDvdBurner = new BurnDataDVD(FilePathsToBurn, strTempFolder, dvdBurnFolder, LeaveFilesForDebugging, recorderdrive, DummyBurn);
 
-                        //Listen for some events
-                        DvdBurner.FileFinished += new BurnDVD.FileFinishedEventHandler(DVDBurner_FileFinished);
-                        //DVDBurner.OutputReceived += new DataReceivedEventHandler(DVDBurner_OutputReceived);
-                        DvdBurner.AllFinished += new EventHandler(DVDBurner_AllFinished);
-                        DvdBurner.BurnDVDStatusUpdate += new BurnDVD.BurnDVDStatusUpdateEventHandler(DVDBurner_BurnDVDStatusUpdate);
-                        DvdBurner.Start();
-            */
+            //Listen for some events
+            DataDvdBurner.FileFinished += new BurnDataDVD.FileFinishedEventHandler(DVDBurner_FileFinished);
+            //DataDvdBurner.OutputReceived += new DataReceivedEventHandler(DVDBurner_OutputReceived);
+            DataDvdBurner.AllFinished += new EventHandler(DVDBurner_AllFinished);
+            DataDvdBurner.BurnDVDStatusUpdate += new BurnDataDVD.BurnDVDStatusUpdateEventHandler(DVDBurner_BurnDVDStatusUpdate);
+            DataDvdBurner.Start();
           }
-
         }
       }
       currentState = States.STATE_MAIN;

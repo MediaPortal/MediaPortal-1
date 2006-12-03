@@ -34,56 +34,7 @@ using MediaPortal.Util;
 
 namespace MediaPortal.GUI.GUIBurner
 {
-  #region EventArgs Classes
-  public class FileFinishedEventArgs : System.EventArgs
-  {
-    public string SourceFile;
-    public string DestinationFile;
-
-    public FileFinishedEventArgs(string inputFileName, string outputFileName)
-    {
-      SourceFile = inputFileName;
-      DestinationFile = outputFileName;
-    }
-  }
-
-  public class ProcessExitedEventArgs : System.EventArgs
-  {
-    public string ProcessName;
-    public string DestinationFile;
-
-    public ProcessExitedEventArgs(string ProcessExitedName)
-    {
-      ProcessName = ProcessExitedName;
-    }
-  }
-
-  public class BurnDVDErrorEventArgs : System.EventArgs
-  {
-    public string Error_Process;
-    public string Error_Text;
-
-    public BurnDVDErrorEventArgs(string ErrorProcess, string ErrorText)
-    {
-      Error_Process = ErrorProcess;
-      Error_Text = ErrorText;
-    }
-  }
-
-  public class BurnDVDStatusUpdateEventArgs : System.EventArgs
-  {
-    private string _Status;
-    public BurnDVDStatusUpdateEventArgs(string StatusString)
-    {
-      _Status = StatusString;
-    }
-    public string Status { get { return _Status; } set { _Status = value; } }
-
-  }
-  #endregion
-
-
-  public class BurnDVD
+  public class BurnVideoDVD
   {
     #region enums
     private enum ConvertState
@@ -116,7 +67,6 @@ namespace MediaPortal.GUI.GUIBurner
     ArrayList _FileNames;                       // ArrayList of files to process
     int _FileNameCount = 0;            // Track the file in the Array being processed
     string _TempFolderPath = String.Empty; // Path to temp folder used
-    string _ScanBusLocation = String.Empty; // DVD Recorder address for CDRecord.exe argument
     string _RecorderDrive = String.Empty; // CD/DVD Drive letter
     bool _InDebugMode = false;        // Debug option
     bool _BurnTheDVD = true;         // Burn the DVD
@@ -156,7 +106,7 @@ namespace MediaPortal.GUI.GUIBurner
     ///<param name="DebugMode">Debug Mode includes more logging and does not delete the temporary files created</param>
     ///<param name="RecorderDrive">The drive letter of the Recorder</param>
     ///<param name="DummyBurn">Do everything except the burn. Used for debugging</param>
-    public BurnDVD(ArrayList FileNames, string PathToTempFolder, string TVFormat, string AspectRatio, string PathtoDVDBurnExe, bool DebugMode, string RecorderDrive, bool DummyBurn)
+    public BurnVideoDVD(ArrayList FileNames, string PathToTempFolder, string TVFormat, string AspectRatio, string PathtoDVDBurnExe, bool DebugMode, string RecorderDrive, bool DummyBurn)
     {
       _InDebugMode = DebugMode;
 
@@ -271,7 +221,7 @@ namespace MediaPortal.GUI.GUIBurner
         CleanUp();
         if (AllFinished != null)
         {
-          AllFinished(this, new System.EventArgs());
+          AllFinished(this, new EventArgs());
         }
       }
     }
@@ -686,9 +636,9 @@ namespace MediaPortal.GUI.GUIBurner
             ProvideStatusUpdate("Converting \"" + strFileName + "\" to DVD format");
 
 
-            string DestinationFilePath = System.IO.Path.GetFileNameWithoutExtension(_CurrentFileName);
+            string DestinationFilePath = Path.GetFileNameWithoutExtension(_CurrentFileName);
             DestinationFilePath = DestinationFilePath + ".mpg";
-            DestinationFilePath = System.IO.Path.Combine(_TempFolderPath, DestinationFilePath);
+            DestinationFilePath = Path.Combine(_TempFolderPath, DestinationFilePath);
 
 
             string SourceFilePath = _CurrentFileName;
@@ -701,7 +651,7 @@ namespace MediaPortal.GUI.GUIBurner
             try
             {
 
-              BurnerProcess = new System.Diagnostics.Process();
+              BurnerProcess = new Process();
               BurnerProcess.EnableRaisingEvents = true;                    // Gets or sets whether the Exited event should be raised when the process terminates. 
               BurnerProcess.StartInfo.WorkingDirectory = Config.GetFolder(Config.Dir.BurnerSupport);
               BurnerProcess.StartInfo.UseShellExecute = false;
@@ -723,7 +673,7 @@ namespace MediaPortal.GUI.GUIBurner
               BurnerProcess.StartInfo.Arguments = args;
 
               BurnerProcess.Exited += new EventHandler(BurnerProcess_Exited);
-              BurnerProcess.OutputDataReceived += new System.Diagnostics.DataReceivedEventHandler(FileConversionOutputDataReceivedHandler);
+              BurnerProcess.OutputDataReceived += new DataReceivedEventHandler(FileConversionOutputDataReceivedHandler);
 
               LogWrite("Starting: " + _CurrentProcess, "Exe Arguments: " + args);
 
@@ -899,7 +849,7 @@ namespace MediaPortal.GUI.GUIBurner
       if (!_InDebugMode)
       {
         // Delete the temp DVD dir and any contents from any previous DVD creation.
-        System.IO.Directory.Delete(_TempFolderPath, true);
+        Directory.Delete(_TempFolderPath, true);
       }
       else
       {
