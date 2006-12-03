@@ -30,7 +30,7 @@ namespace MediaPortal.GUI.TV
     [SkinControlAttribute(9)]     protected GUIButtonControl btnPostRecord = null;
 
     static TVProgram currentProgram = null;
-
+    bool noPrePostWithinBlock = false;
     public GUITVProgramInfo()
     {
       GetID = (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO;//748
@@ -38,6 +38,12 @@ namespace MediaPortal.GUI.TV
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvprogram.xml");
+      
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        noPrePostWithinBlock = xmlreader.GetValueAsBool("mytv", "noprepostwithinblock", false);
+      }
+      
       return bResult;
     }
     protected override void OnPageLoad()
@@ -121,6 +127,9 @@ namespace MediaPortal.GUI.TV
       TVDatabase.GetRecordings(ref recordings);
       bool bRecording = false;
       bool bSeries = false;
+      bool bNoPaddingEnd = false;
+      bool bNoPaddingFront = false;
+
       foreach ( TVRecording record in recordings )
       {
         if ( record.Canceled > 0 )
@@ -131,6 +140,10 @@ namespace MediaPortal.GUI.TV
           {
             if ( record.RecType != TVRecording.RecordingType.Once )
               bSeries = true;
+            if (record.PaddingFront == -2)
+              bNoPaddingFront = true;
+            if (record.PaddingEnd == -2)
+              bNoPaddingEnd = true;
             bRecording = true;
             break;
           }
@@ -157,6 +170,12 @@ namespace MediaPortal.GUI.TV
         btnPreRecord.Disabled = true;
         btnPostRecord.Disabled = true;
       }
+
+      if( bNoPaddingFront )
+        btnPreRecord.Disabled = true;
+      if ( bNoPaddingEnd )
+        btnPostRecord.Disabled = true;
+
       List<TVNotify> notifies = new List<TVNotify>();
       TVDatabase.GetNotifies(notifies, false);
       bool showNotify = false;
@@ -489,6 +508,57 @@ namespace MediaPortal.GUI.TV
       Update();
     }
 
+    void AddNoPrePost(ref TVRecording rec, ref List<TVRecording> recs)
+    {
+      if (!noPrePostWithinBlock)
+        return;
+      foreach (TVRecording recording in recs)
+      {
+        if (rec.Channel == recording.Channel && rec.EndTime == recording.StartTime)
+        {
+          Log.Debug("blockrecording add {0} before {1}", rec.Title, recording.Title);
+          Log.Debug("blockrecording update {0}", recording.Title);
+          rec.PaddingEnd = -2;
+          recording.PaddingFront = -2;
+          TVDatabase.UpdateRecording(recording, TVDatabase.RecordingChange.Modified);
+        }
+        if (rec.Channel == recording.Channel && rec.StartTime == recording.EndTime)
+        {
+          Log.Debug("blockrecording add {0} after {1}", rec.Title, recording.Title);
+          Log.Debug("blockrecording update {0}", recording.Title);
+          rec.PaddingFront = -2;
+          recording.PaddingEnd = -2;
+          TVDatabase.UpdateRecording(recording, TVDatabase.RecordingChange.Modified);
+        }
+      }
+    }
+
+    void RemoveNoPrePost(ref TVRecording rec, ref List<TVRecording> recs)
+    {
+      if (!noPrePostWithinBlock)
+        return;
+      foreach (TVRecording recording in recs)
+      {
+        if (rec.Channel == recording.Channel && rec.EndTime == recording.StartTime)
+        {
+          Log.Debug("blockrecording remove {0} before {1}", rec.Title, recording.Title);
+          Log.Debug("blockrecording update {0}", recording.Title);
+          rec.PaddingEnd = -1;
+          recording.PaddingFront = -1;
+          TVDatabase.UpdateRecording(recording, TVDatabase.RecordingChange.Modified);
+        }
+        if (rec.Channel == recording.Channel && rec.StartTime == recording.EndTime)
+        {
+          Log.Debug("blockrecording remove {0} after {1}", rec.Title, recording.Title);
+          Log.Debug("blockrecording update {0}", recording.Title);
+          rec.PaddingFront = -1;
+          recording.PaddingEnd = -1;
+          TVDatabase.UpdateRecording(recording, TVDatabase.RecordingChange.Modified);
+        }
+      }
+    }
+
+
     void OnRecordProgram( TVProgram program )
     {
       bool bRecording = false;
@@ -511,7 +581,7 @@ namespace MediaPortal.GUI.TV
         }
       }
 
-      if ( !bRecording )
+      if ( !bRecording ) // Not recording this program, add it.
       {
         foreach ( TVRecording record in recordings )
         {
@@ -538,6 +608,7 @@ namespace MediaPortal.GUI.TV
         rec.Start = program.Start;
         rec.End = program.End;
         rec.RecType = TVRecording.RecordingType.Once;
+        AddNoPrePost(ref rec, ref recordings);
         Recorder.AddRecording(ref rec);
       }
       else
@@ -586,6 +657,7 @@ namespace MediaPortal.GUI.TV
             if ( CheckIfRecording(rec) )
             {
               //cancel recording2
+              RemoveNoPrePost(ref rec, ref recordings);
               TVDatabase.RemoveRecording(rec);
               Recorder.StopRecording(rec);
             }
