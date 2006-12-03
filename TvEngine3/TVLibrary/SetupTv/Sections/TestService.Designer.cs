@@ -56,6 +56,7 @@ namespace SetupTv.Sections
       this.User = new System.Windows.Forms.ColumnHeader();
       this.buttonRestart = new System.Windows.Forms.Button();
       this.mpButtonReGrabEpg = new MediaPortal.UserInterface.Controls.MPButton();
+      this.cardName = new System.Windows.Forms.ColumnHeader();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -244,7 +245,8 @@ namespace SetupTv.Sections
             this.columnHeader3,
             this.columnHeader4,
             this.columnHeader5,
-            this.User});
+            this.User,
+            this.cardName});
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.Location = new System.Drawing.Point(12, 243);
       this.mpListView1.Name = "mpListView1";
@@ -301,6 +303,11 @@ namespace SetupTv.Sections
       this.mpButtonReGrabEpg.UseVisualStyleBackColor = true;
       this.mpButtonReGrabEpg.Click += new System.EventHandler(this.mpButtonReGrabEpg_Click);
       // 
+      // cardName
+      // 
+      this.cardName.Text = "Card Name";
+      this.cardName.Width = 120;
+      // 
       // TestService
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -352,5 +359,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPButton mpButtonReGrabEpg;
     private System.Windows.Forms.ColumnHeader columnHeader5;
     private System.Windows.Forms.ColumnHeader User;
+    private System.Windows.Forms.ColumnHeader cardName;
   }
 }

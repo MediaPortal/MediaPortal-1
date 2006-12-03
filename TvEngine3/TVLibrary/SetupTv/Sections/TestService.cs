@@ -100,6 +100,7 @@ namespace SetupTv.Sections
           }
           else
             item.SubItems.Add("");
+          item.SubItems.Add(vcard.Name);
           item.Tag = vcard;
         }
       }
@@ -306,6 +307,7 @@ namespace SetupTv.Sections
           }
           else
             item.SubItems[5].Text = "";
+          item.SubItems[6].Text = card.Name;
         }
       }
       catch (Exception)
