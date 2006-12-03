@@ -194,8 +194,16 @@ namespace MediaPortal.TV.Recording
               //no, then check if its time to record it
               int paddingFront = rec.PaddingFront;
               int paddingEnd = rec.PaddingEnd;
-              if (paddingFront < 0) paddingFront = _preRecordInterval;
-              if (paddingEnd < 0) paddingEnd = _postRecordInterval;
+
+              if (paddingFront == -1)
+                paddingFront = _preRecordInterval;
+              else if (paddingFront == -2)
+                paddingFront = 0;
+
+              if (paddingEnd == -1)
+                paddingEnd = _postRecordInterval;
+              else if (paddingFront == -2)
+                paddingEnd = 0;
 
               // check which program is current running on this channel
               TVProgram prog = chan.GetProgramAt(dtCurrentTime.AddMinutes(1 + paddingFront));
