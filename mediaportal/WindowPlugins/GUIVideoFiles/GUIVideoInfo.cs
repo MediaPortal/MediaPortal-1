@@ -38,37 +38,24 @@ namespace MediaPortal.GUI.Video
   /// </summary>
   public class GUIVideoInfo : GUIWindow, IRenderLayer, IMDB.IProgress
   {
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnPlay = null;
-    [SkinControlAttribute(3)]
-    protected GUIToggleButtonControl btnPlot = null;
-    [SkinControlAttribute(4)]
-    protected GUIToggleButtonControl btnCast = null;
-    [SkinControlAttribute(5)]
-    protected GUIButtonControl btnRefresh = null;
-    [SkinControlAttribute(6)]
-    protected GUIToggleButtonControl btnWatched = null;
-    [SkinControlAttribute(10)]
-    protected GUISpinControl spinImages = null;
-    [SkinControlAttribute(11)]
-    protected GUISpinControl spinDisc = null;
-    [SkinControlAttribute(20)]
-    protected GUITextScrollUpControl tbPlotArea = null;
-    [SkinControlAttribute(21)]
-    protected GUIImage imgCoverArt = null;
-    [SkinControlAttribute(22)]
-    protected GUITextControl tbTextArea = null;
-    [SkinControlAttribute(30)]
-    protected GUILabelControl lblImage = null;
-    [SkinControlAttribute(100)]
-    protected GUILabelControl lblDisc = null;
+    [SkinControlAttribute(2)]    protected GUIButtonControl btnPlay = null;
+    [SkinControlAttribute(3)]    protected GUIToggleButtonControl btnPlot = null;
+    [SkinControlAttribute(4)]    protected GUIToggleButtonControl btnCast = null;
+    [SkinControlAttribute(5)]    protected GUIButtonControl btnRefresh = null;
+    [SkinControlAttribute(6)]    protected GUIToggleButtonControl btnWatched = null;
+    [SkinControlAttribute(10)]   protected GUISpinControl spinImages = null;
+    [SkinControlAttribute(11)]   protected GUISpinControl spinDisc = null;
+    [SkinControlAttribute(20)]   protected GUITextScrollUpControl tbPlotArea = null;
+    [SkinControlAttribute(21)]   protected GUIImage imgCoverArt = null;
+    [SkinControlAttribute(22)]   protected GUITextControl tbTextArea = null;
+    [SkinControlAttribute(30)]   protected GUILabelControl lblImage = null;
+    [SkinControlAttribute(100)]  protected GUILabelControl lblDisc = null;
+
     enum ViewMode
     {
       Image,
       Cast,
     }
-
-
 
     ViewMode viewmode = ViewMode.Image;
     IMDBMovie currentMovie = null;
@@ -81,17 +68,16 @@ namespace MediaPortal.GUI.Video
     {
       GetID = (int)GUIWindow.Window.WINDOW_VIDEO_INFO;
     }
+
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\DialogVideoInfo.xml");
-
     }
+
     public override void PreInit()
     {
     }
-
-
-
+    
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
@@ -388,6 +374,7 @@ namespace MediaPortal.GUI.Video
       }
       currentMovie.SetProperties();
     }
+
     void AmazonLookupThread()
     {
       try
@@ -429,8 +416,7 @@ namespace MediaPortal.GUI.Video
             coverArtUrls[pictureIndex++] = amazonSearch[i];
           }
         }
-
-
+        
         spinImages.Reset();
         spinImages.SetReverse(true);
         spinImages.SetRange(1, pictureCount);

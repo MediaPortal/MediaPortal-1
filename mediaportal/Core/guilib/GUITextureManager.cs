@@ -129,9 +129,9 @@ namespace MediaPortal.GUI.Library
       Bitmap result = new Bitmap(width, height);
       using (Graphics g = Graphics.FromImage(result))
       {
-        g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+        g.CompositingQuality = Thumbs.Compositing;
+        g.InterpolationMode = Thumbs.Interpolation;
+        g.SmoothingMode = Thumbs.Smoothing;
         g.DrawImage(imgSrc, new Rectangle(0, 0, width, height));
       }
       return result;
@@ -571,6 +571,7 @@ namespace MediaPortal.GUI.Library
         Log.Error(ex);
         return null;
       }
+
       if (img != null)
       {
         CachedTexture newCache = new CachedTexture();

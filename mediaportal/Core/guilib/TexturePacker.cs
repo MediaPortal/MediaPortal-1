@@ -132,10 +132,10 @@ namespace MediaPortal.GUI.Library
           using (Graphics g = Graphics.FromImage(rootImage))
           {
             FileName = fileName;
-            g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+            g.CompositingQuality = Thumbs.Compositing;
             g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            g.InterpolationMode = Thumbs.Interpolation;
+            g.SmoothingMode = Thumbs.Smoothing;
             // draw oversized image first
             g.DrawImage(img, Rect.Left, Rect.Top, Rect.Width, Rect.Height);
             // draw original image ontop of oversized image

@@ -1726,6 +1726,7 @@ namespace MediaPortal.Configuration.Sections
       cbTitle.Items.Add(emptyItem);
       cbTitle.SelectedIndex = index;
     }
+
     void UpdateEdit(IMDBMovie movie)
     {
       tbTitle.Text = movie.Title;
@@ -1764,9 +1765,9 @@ namespace MediaPortal.Configuration.Sections
             Bitmap result = new Bitmap(img.Width, img.Height);
             using (Graphics g = Graphics.FromImage(result))
             {
-              g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-              g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-              g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+              g.CompositingQuality = Thumbs.Compositing;
+              g.InterpolationMode = Thumbs.Interpolation;
+              g.SmoothingMode = Thumbs.Smoothing;
               g.DrawImage(img, new Rectangle(0, 0, img.Width, img.Height));
             }
             pictureBox1.Image = result;
@@ -2196,9 +2197,9 @@ namespace MediaPortal.Configuration.Sections
           Bitmap result = new Bitmap(img.Width, img.Height);
           using (Graphics g = Graphics.FromImage(result))
           {
-            g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            g.CompositingQuality = Thumbs.Compositing;
+            g.InterpolationMode = Thumbs.Interpolation;
+            g.SmoothingMode = Thumbs.Smoothing;
             g.DrawImage(img, new Rectangle(0, 0, img.Width, img.Height));
           }
           pictureBox1.Image = result;

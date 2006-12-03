@@ -63,7 +63,6 @@ namespace MediaPortal.GUI.Pictures
         _SortAscending = true;
       }
 
-
       [XmlElement("SortBy")]
       public int SortBy
       {
@@ -104,20 +103,13 @@ namespace MediaPortal.GUI.Pictures
       Filmstrip = 4,
     }
 
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]
-    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnSlideShow = null;
-    [SkinControlAttribute(7)]
-    protected GUIButtonControl btnSlideShowRecursive = null;
-    [SkinControlAttribute(8)]
-    protected GUIButtonControl btnCreateThumbs = null;
-    [SkinControlAttribute(9)]
-    protected GUIButtonControl btnRotate = null;
-    [SkinControlAttribute(50)]
-    protected GUIFacadeControl facadeView = null;
+    [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(6)]    protected GUIButtonControl btnSlideShow = null;
+    [SkinControlAttribute(7)]    protected GUIButtonControl btnSlideShowRecursive = null;
+    [SkinControlAttribute(8)]    protected GUIButtonControl btnCreateThumbs = null;
+    [SkinControlAttribute(9)]    protected GUIButtonControl btnRotate = null;
+    [SkinControlAttribute(50)]   protected GUIFacadeControl facadeView = null;
 
 
     int selectedItemIndex = -1;
@@ -861,7 +853,6 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-
     void OnInfo(int itemNumber)
     {
       GUIListItem item = GetItem(itemNumber);
@@ -873,6 +864,7 @@ namespace MediaPortal.GUI.Pictures
       exifDialog.FileName = item.Path;
       exifDialog.DoModal(GetID);
     }
+
     void OnRotatePicture()
     {
       GUIListItem item = GetSelectedItem();
@@ -1007,6 +999,7 @@ namespace MediaPortal.GUI.Pictures
     {
       OnSlideShow(0);
     }
+
     void OnSlideShow(int iStartItem)
     {
       GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_SLIDESHOW);
@@ -1044,17 +1037,18 @@ namespace MediaPortal.GUI.Pictures
     void OnCreateThumbs()
     {
       CreateFolderThumbs();
-      GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-      if (dlgProgress != null)
-      {
-        dlgProgress.SetHeading(110);
-        dlgProgress.ShowProgressBar(true);
-        dlgProgress.SetLine(1, String.Empty);
-        dlgProgress.SetLine(2, String.Empty);
-        dlgProgress.StartModal(GetID);
-        dlgProgress.ShowProgressBar(true);
-        dlgProgress.Progress();
-      }
+      GUIWaitCursor.Show();
+      //GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      //if (dlgProgress != null)
+      //{
+      //  dlgProgress.SetHeading(110);
+      //  dlgProgress.ShowProgressBar(true);
+      //  dlgProgress.SetLine(1, String.Empty);
+      //  dlgProgress.SetLine(2, String.Empty);
+      //  dlgProgress.StartModal(GetID);
+      //  dlgProgress.ShowProgressBar(true);
+      //  dlgProgress.Progress();
+      //}
 
       using (PictureDatabase dbs = new PictureDatabase())
       {
@@ -1064,21 +1058,21 @@ namespace MediaPortal.GUI.Pictures
           GUIListItem item = GetItem(i);
           if (item.IsRemote)
             continue;
-          if (dlgProgress != null)
-          {
-            dlgProgress.SetPercentage(percent);
-            string progressLine = String.Format(GUILocalizeStrings.Get(8033) + ": {0}/{1}", i + 1, GetItemCount());
-            dlgProgress.SetLine(1, String.Empty);
-            dlgProgress.SetLine(2, progressLine);
-          }
+          //if (dlgProgress != null)
+          //{
+          //  dlgProgress.SetPercentage(percent);
+          //  string progressLine = String.Format(GUILocalizeStrings.Get(8033) + ": {0}/{1}", i + 1, GetItemCount());
+          //  dlgProgress.SetLine(1, String.Empty);
+          //  dlgProgress.SetLine(2, progressLine);
+          //}
           if (item.IsRemote)
           {
-            if (dlgProgress != null)
-            {
-              dlgProgress.Progress();
-              if (dlgProgress.IsCanceled)
-                break;
-            }
+            //if (dlgProgress != null)
+            //{
+            //  dlgProgress.Progress();
+            //  if (dlgProgress.IsCanceled)
+            //    break;
+            //}
             continue;
           }
 
@@ -1086,25 +1080,39 @@ namespace MediaPortal.GUI.Pictures
           {
             if (MediaPortal.Util.Utils.IsPicture(item.Path))
             {
-              if (dlgProgress != null)
-              {
-                string strFile = String.Format(GUILocalizeStrings.Get(863) + ": {0}", item.Label);
-                dlgProgress.SetLine(1, strFile);
-                dlgProgress.Progress();
-                if (dlgProgress.IsCanceled)
-                  break;
-              }
+              //if (dlgProgress != null)
+              //{
+              //  string strFile = String.Format(GUILocalizeStrings.Get(863) + ": {0}", item.Label);
+              //  dlgProgress.SetLine(1, strFile);
+              //  dlgProgress.Progress();
+              //  if (dlgProgress.IsCanceled)
+              //    break;
+              //}
 
+              // create thumbs for default listcontrol views
               string thumbnailImage = GetThumbnail(item.Path);
-              int iRotate = dbs.GetRotation(item.Path);
-              Util.Picture.CreateThumbnail(item.Path, thumbnailImage, 128, 128, iRotate);
+              //if (!System.IO.File.Exists(thumbnailImage))
+              //{
+                int iRotate = dbs.GetRotation(item.Path);
+                Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, iRotate);
+              //}
+
+              // create large thumbs for filmstrip panel
+              thumbnailImage = GetLargeThumbnail(item.Path);
+              //if (!System.IO.File.Exists(thumbnailImage))
+              //{
+                iRotate = dbs.GetRotation(item.Path);
+                Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, iRotate);
+              //}
             }
           }
         }
       }
-      if (dlgProgress != null)
-        dlgProgress.Close();
+      // CreateMissingThumbnails();
+      //if (dlgProgress != null)
+      //  dlgProgress.Close();
       GUITextureManager.CleanupThumbs();
+      GUIWaitCursor.Hide();
       LoadDirectory(currentFolder);
     }
 
@@ -1187,7 +1195,7 @@ namespace MediaPortal.GUI.Pictures
       currentFolder = strNewDirectory;
       GUIControl.ClearControl(GetID, facadeView.GetID);
 
-      CreateThumbnails();
+      CreateMissingThumbnails();
       string objectCount = String.Empty;
       List<GUIListItem> itemlist = virtualDirectory.GetDirectoryExt(currentFolder);
       Filter(ref itemlist);
@@ -1305,9 +1313,9 @@ namespace MediaPortal.GUI.Pictures
           {
             using (Graphics g = Graphics.FromImage(bmp))
             {
-              g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-              g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-              g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+              g.CompositingQuality = Thumbs.Compositing;
+              g.InterpolationMode = Thumbs.Interpolation;
+              g.SmoothingMode = Thumbs.Smoothing;
 
               g.DrawImage(imgFolder, 0, 0, width, height);
               int x, y, w, h;
@@ -1449,6 +1457,7 @@ namespace MediaPortal.GUI.Pictures
         return String.Empty;
       return String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, MediaPortal.Util.Utils.EncryptLine(fileName));
     }
+
     static public string GetLargeThumbnail(string fileName)
     {
       if (fileName == String.Empty)
@@ -1457,16 +1466,16 @@ namespace MediaPortal.GUI.Pictures
     }
 
 
-    void CreateThumbnails()
+    void CreateMissingThumbnails()
     {
-      Thread WorkerThread = new Thread(new ThreadStart(WorkerThreadFunction));
+      Thread WorkerThread = new Thread(new ThreadStart(MissingThumbWorker));
       WorkerThread.SetApartmentState(ApartmentState.STA);
       WorkerThread.IsBackground = true;
       WorkerThread.Priority = ThreadPriority.BelowNormal;
       WorkerThread.Start();
     }
 
-    void WorkerThreadFunction()
+    void MissingThumbWorker()
     {
       if (!virtualDirectory.IsRemote(currentFolder))
       {
@@ -1491,16 +1500,16 @@ namespace MediaPortal.GUI.Pictures
                 if (!System.IO.File.Exists(thumbnailImage))
                 {
                   int iRotate = dbs.GetRotation(item.Path);
-                  Util.Picture.CreateThumbnail(item.Path, thumbnailImage, 128, 128, iRotate);
-                  System.Threading.Thread.Sleep(100);
+                  Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, iRotate);
+                  System.Threading.Thread.Sleep(25);
                 }
 
                 thumbnailImage = GetLargeThumbnail(item.Path);
                 if (!System.IO.File.Exists(thumbnailImage))
                 {
                   int iRotate = dbs.GetRotation(item.Path);
-                  Util.Picture.CreateThumbnail(item.Path, thumbnailImage, 512, 512, iRotate);
-                  //  System.Threading.Thread.Sleep(100);
+                  Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, iRotate);
+                  System.Threading.Thread.Sleep(25);
                 }
               }
             }
@@ -1520,7 +1529,7 @@ namespace MediaPortal.GUI.Pictures
           }
         } //foreach (GUIListItem item in itemlist)
       }
-    } //void WorkerThreadFunction()
+    } //void MissingThumbWorker()
 
     bool GetUserInputString(ref string sString)
     {

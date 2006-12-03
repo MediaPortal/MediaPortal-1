@@ -168,16 +168,15 @@ namespace MediaPortal.Util
           bResize = true;
         }
 
-
         if (bResize)
         {
           using (Bitmap result = new Bitmap(iBitmapWidth, iBitmapHeight))
           {
             using (Graphics g = Graphics.FromImage(result))
             {
-              g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-              g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-              g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+              g.CompositingQuality = Thumbs.Compositing;
+              g.InterpolationMode = Thumbs.Interpolation;
+              g.SmoothingMode = Thumbs.Smoothing;
               if (bOversized)
               {
                 // Set picture at center position
@@ -996,7 +995,10 @@ namespace MediaPortal.Util
         if (CreateThumbnail(theImage, strThumb, iMaxWidth, iMaxHeight, iRotate))
           return true;
         else
+        {
+          Log.Warn("Picture: Creating thumbnail failed for {0}", strFile);
           return false;
+        }
 
       }
       catch (Exception ex)
@@ -1075,9 +1077,9 @@ namespace MediaPortal.Util
           {
             using (Graphics g = Graphics.FromImage(result))
             {
-              g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-              g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-              g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+              g.CompositingQuality = Thumbs.Compositing;
+              g.InterpolationMode = Thumbs.Interpolation;
+              g.SmoothingMode = Thumbs.Smoothing;
               g.DrawImage(theImage, new Rectangle(0, 0, iWidth, iHeight));
             }
             result.Save(strThumb, System.Drawing.Imaging.ImageFormat.Jpeg);

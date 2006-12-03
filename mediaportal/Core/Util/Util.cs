@@ -1674,6 +1674,7 @@ namespace MediaPortal.Util
       }
       return strThumb;
     }
+
     static public string GetLargeCoverArtName(string strFolder, string strFileName)
     {
       if (strFolder == null) return String.Empty;

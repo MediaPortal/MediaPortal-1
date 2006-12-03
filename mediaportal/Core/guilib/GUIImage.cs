@@ -196,11 +196,11 @@ namespace MediaPortal.GUI.Library
               return;
 
             using (Image img = Image.FromFile(strFileNameTemp))
-              {
-                if (0 == _width)
-                  _width = img.Width;
-                if (0 == _height)
-                  _height = img.Height;              
+            {
+              if (0 == _width)
+                _width = img.Width;
+              if (0 == _height)
+                _height = img.Height;
             }
           }
           catch (Exception)
@@ -466,7 +466,7 @@ namespace MediaPortal.GUI.Library
           //get the filename of the texture
           string fileName = file;
           if (_containsProperty)
-						fileName = _cachedTextureFileName = GUIPropertyManager.Parse(file);
+            fileName = _cachedTextureFileName = GUIPropertyManager.Parse(file);
           if (fileName.Length == 0)
             continue;
           if (_textureFileNameTag.Length == 0)
@@ -1052,6 +1052,7 @@ namespace MediaPortal.GUI.Library
       Render(timePassed);
       base.Render(timePassed);
     }
+
     /// <summary>
     /// Renders the Image
     /// </summary>
@@ -1141,7 +1142,7 @@ namespace MediaPortal.GUI.Library
             AllocResources();
             return;
           }
- 
+
           uint color = (uint)_diffuseColor;
           if (Dimmed)
             color = (uint)(_diffuseColor & DimColor);
