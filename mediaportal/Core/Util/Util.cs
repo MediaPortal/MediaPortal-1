@@ -1141,30 +1141,42 @@ namespace MediaPortal.Util
 
       if (strText == null) return String.Empty;
       if (strText.Length == 0) return String.Empty;
+      
       string strFName = strText.Replace(':', '_');
       strFName = strFName.Replace('/', '_');
       strFName = strFName.Replace('\\', '_');
       strFName = strFName.Replace('*', '_');
       strFName = strFName.Replace('?', '_');
       strFName = strFName.Replace('\"', '_');
-      strFName = strFName.Replace('<', '_'); ;
+      strFName = strFName.Replace('<', '_');      
       strFName = strFName.Replace('>', '_');
       strFName = strFName.Replace('|', '_');
 
-      char[] filechars = strFName.ToCharArray();
+      bool unclean = true;
       char[] invalids = System.IO.Path.GetInvalidFileNameChars();
-
-      foreach (char c in filechars)
+      while (unclean)
       {
-        k++;
-        foreach (char i in invalids)
-        {
-          j++;
-          if (c == i)
+        unclean = false;
+
+        char[] filechars = strFName.ToCharArray();
+
+        if (!unclean)
+          foreach (char c in filechars)
           {
-            Log.Warn("Utils: *** File name {1} still contains invalid chars - {0}", Convert.ToString(c), strFName);
+            k++;
+            if (!unclean)
+              foreach (char i in invalids)
+              {
+                j++;
+                if (c == i)
+                {
+                  unclean = true;
+                  //Log.Warn("Utils: *** File name {1} still contains invalid chars - {0}", Convert.ToString(c), strFName);
+                  strFName = strFName.Replace(c, '_');
+                  break;
+                }
+              }
           }
-        }
       }
 
       return strFName;
@@ -1609,6 +1621,7 @@ namespace MediaPortal.Util
       }
       return name;
     }
+
     static public string EncryptLine(string strLine)
     {
       if (strLine == null) return String.Empty;
@@ -1623,31 +1636,23 @@ namespace MediaPortal.Util
 
     static public string GetCoverArt(string strFolder, string strFileName)
     {
-      if (strFolder == null) return String.Empty;
-      if (strFolder.Length == 0) return String.Empty;
+      if (strFolder == null)           return String.Empty;
+      if (strFolder.Length == 0)       return String.Empty;
 
-      if (strFileName == null) return String.Empty;
-      if (strFileName.Length == 0) return String.Empty;
-      if (strFileName == String.Empty) return String.Empty;/*
-			try
-			{
-				string tbnImage = System.IO.Path.ChangeExtension(strFileName,".tbn");
-				if (System.IO.File.Exists(tbnImage)) return tbnImage;
-				tbnImage = System.IO.Path.ChangeExtension(strFileName,".png");
-				if (System.IO.File.Exists(tbnImage)) return tbnImage;
-				tbnImage = System.IO.Path.ChangeExtension(strFileName,".gif");
-				if (System.IO.File.Exists(tbnImage)) return tbnImage;
-				tbnImage = System.IO.Path.ChangeExtension(strFileName,".jpg");
-				if (System.IO.File.Exists(tbnImage)) return tbnImage;
-			}
-			catch(Exception){}*/
+      if (strFileName == null)         return String.Empty;
+      if (strFileName.Length == 0)     return String.Empty;
+      if (strFileName == String.Empty) return String.Empty;
 
-      string strThumb = String.Format(@"{0}\{1}", strFolder, Utils.FilterFileName(strFileName));
+      string strThumb = String.Format(@"{0}\{1}", strFolder, Utils.MakeFileName(strFileName));
 
-      if (System.IO.File.Exists(strThumb + ".png")) return strThumb + ".png";
-      else if (System.IO.File.Exists(strThumb + ".jpg")) return strThumb + ".jpg";
-      else if (System.IO.File.Exists(strThumb + ".gif")) return strThumb + ".gif";
-      else if (System.IO.File.Exists(strThumb + ".tbn")) return strThumb + ".tbn";
+      if (System.IO.File.Exists(strThumb + ".png"))
+        return strThumb + ".png";
+      else if (System.IO.File.Exists(strThumb + ".jpg"))
+        return strThumb + ".jpg";
+      else if (System.IO.File.Exists(strThumb + ".gif"))
+        return strThumb + ".gif";
+      else if (System.IO.File.Exists(strThumb + ".tbn"))
+        return strThumb + ".tbn";
       return String.Empty;
     }
 
@@ -1670,7 +1675,7 @@ namespace MediaPortal.Util
       string strThumb = Utils.GetCoverArt(strFolder, strFileName);
       if (strThumb == string.Empty)
       {
-        strThumb = String.Format(@"{0}\{1}.jpg", strFolder, Utils.FilterFileName(strFileName));
+        strThumb = String.Format(@"{0}\{1}.jpg", strFolder, Utils.MakeFileName(strFileName));
       }
       return strThumb;
     }

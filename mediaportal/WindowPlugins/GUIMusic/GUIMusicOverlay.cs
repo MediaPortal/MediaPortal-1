@@ -457,6 +457,12 @@ namespace MediaPortal.GUI.Music
           if (strThumb != String.Empty)
           {
             thumb = strThumb;
+            // let us test if there is a larger cover art image
+            string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(thumb);
+            if (System.IO.File.Exists(strLarge))
+            {
+              thumb = strLarge;
+            }
           }
         }
       }

@@ -198,7 +198,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       String ThumbFileName = String.Empty;
 
       if (LastFMStation.CurrentTrackTag != null && LastFMStation.CurrentTrackTag.Artist != String.Empty)
-        ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.FilterFileName(LastFMStation.CurrentTrackTag.Artist));
+        ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, LastFMStation.CurrentTrackTag.Artist);
 
       SetArtistThumb(ThumbFileName);
 
@@ -544,7 +544,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       if (request.Equals(_lastArtistCoverRequest))
       {
-        String ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.FilterFileName(LastFMStation.CurrentTrackTag.Artist));
+        String ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, LastFMStation.CurrentTrackTag.Artist);
         if (ThumbFileName.Length > 0)
         {
           SetArtistThumb(ThumbFileName);
@@ -842,6 +842,15 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       if (thumb.Length <= 0)
         thumb = GUIGraphicsContext.Skin + @"\media\missing_coverart.png";
+      else
+      {
+        // let us test if there is a larger cover art image
+        string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(thumb);
+        if (System.IO.File.Exists(strLarge))
+        {
+          thumb = strLarge;
+        }
+      }
 
       //String refString = String.Empty;
       //Util.Utils.GetQualifiedFilename(thumb, ref refString);

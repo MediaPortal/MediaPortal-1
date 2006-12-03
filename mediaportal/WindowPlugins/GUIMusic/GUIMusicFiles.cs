@@ -26,9 +26,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Net;
-using System.Xml.Serialization;
 using System.Globalization;
+using System.IO;
+using System.Net;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Soap;
+using System.Xml.Serialization;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
@@ -38,9 +42,7 @@ using MediaPortal.Database;
 using MediaPortal.Music.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.View;
-using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Soap;
+
 
 namespace MediaPortal.GUI.Music
 {
@@ -1261,11 +1263,12 @@ namespace MediaPortal.GUI.Music
       }
     }
 
+
     static public string GetCoverArt(bool isfolder, string filename, MusicTag tag)
-    {
-      string strFolderThumb = String.Empty;
+    {      
       if (isfolder)
       {
+        string strFolderThumb = String.Empty;
         strFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
         if (System.IO.File.Exists(strFolderThumb))
         {
@@ -1290,48 +1293,50 @@ namespace MediaPortal.GUI.Music
       {
         return strThumb;
       }
-      else
-      {
-        strThumb = GUIMusicFiles.GetAlbumThumbName(strArtistName, "The " + strAlbumName);
-        if (System.IO.File.Exists(strThumb))
-        {
-          return strThumb;
-        }
-        else
-        {
-          strThumb = GUIMusicFiles.GetAlbumThumbName("The " + strArtistName, strAlbumName);
-          if (System.IO.File.Exists(strThumb))
-          {
-            return strThumb;
-          }
-        }
-      }
+      //else
+      //{
+      //  strThumb = GUIMusicFiles.GetAlbumThumbName(strArtistName, "The " + strAlbumName);
+      //  if (System.IO.File.Exists(strThumb))
+      //  {
+      //    return strThumb;
+      //  }
+      //  else
+      //  {
+      //    strThumb = GUIMusicFiles.GetAlbumThumbName("The " + strArtistName, strAlbumName);
+      //    if (System.IO.File.Exists(strThumb))
+      //    {
+      //      return strThumb;
+      //    }
+      //  }
+      //}
+
 
       // no album art? then use folder.jpg
-      string strPathName;
-      string strFileName;
-      DatabaseUtility.Split(filename, out strPathName, out strFileName);
-      strFolderThumb = strPathName + @"\folder.jpg";
-      if (System.IO.File.Exists(strFolderThumb))
-      {
-        return strFolderThumb;
-      }
-      else
-      {
-        strFolderThumb = strPathName + @"\cover.jpg";
-        if (System.IO.File.Exists(strFolderThumb))
-        {
-          return strFolderThumb;
-        }
-        else
-        {
-          strFolderThumb = strPathName + @"\front.jpg";
-          if (System.IO.File.Exists(strFolderThumb))
-          {
-            return strFolderThumb;
-          }
-        }
-      }
+      //string strPathName;
+      //string strFileName;
+      //DatabaseUtility.Split(filename, out strPathName, out strFileName);
+      //strFolderThumb = strPathName + @"\folder.jpg";
+      //if (System.IO.File.Exists(strFolderThumb))
+      //{
+      //  return strFolderThumb;
+      //}
+
+      //else
+      //{
+      //  strFolderThumb = strPathName + @"\cover.jpg";
+      //  if (System.IO.File.Exists(strFolderThumb))
+      //  {
+      //    return strFolderThumb;
+      //  }
+      //  else
+      //  {
+      //    strFolderThumb = strPathName + @"\front.jpg";
+      //    if (System.IO.File.Exists(strFolderThumb))
+      //    {
+      //      return strFolderThumb;
+      //    }
+      //  }
+      //}
       return string.Empty;
     }
 

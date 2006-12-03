@@ -202,8 +202,8 @@ namespace MediaPortal.GUI.Music
 
 
         case SortMethod.Filename:
-          string strFile1 = System.IO.Path.GetFileName(item1.Path);
-          string strFile2 = System.IO.Path.GetFileName(item2.Path);
+          string strFile1 = MediaPortal.Util.Utils.GetFilename(item1.Path);
+          string strFile2 = MediaPortal.Util.Utils.GetFilename(item2.Path);
           if (bAscending)
           {
             return String.Compare(strFile1, strFile2, true);

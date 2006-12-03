@@ -1323,14 +1323,6 @@ namespace MediaPortal.Music.Database
       if (!_doCoverLookups)
         return success;
 
-      //string singleFileName = null;
-      //string singlePathName = null;
-
-      //Util.Utils.Split(fileName, singlePathName, singleFileName);
-      // remove invalid chars
-      //singleFileName = Util.Utils.MakeFileName(singleFileName);
-      // combine again
-      //fileName = System.IO.Path.Combine(singlePathName, singleFileName);
       fileName = Util.Utils.MakeFileName(fileName);
 
       if (imageUrl != "")
@@ -1338,14 +1330,12 @@ namespace MediaPortal.Music.Database
         // do not download last.fm's placeholder
         if ((imageUrl.IndexOf("no_album") <= 0) && (imageUrl.IndexOf("no_artist") <= 0))
         {
-          //Check if we already have the file.
-          //          string thumbspath = @"Thumbs\music\albums\";
-
           //Create the album subdir in thumbs if it does not exist.
           if (!System.IO.Directory.Exists(thumbspath))
             System.IO.Directory.CreateDirectory(thumbspath);
 
           string fullPath = System.IO.Path.Combine(thumbspath, fileName);
+          string fullLargePath = Util.Utils.ConvertToLargeCoverArt(fullPath);
 
           Log.Debug("MyMusic: Trying to get thumb: {0}", imageUrl);
           // Here we get the image from the web and save it to disk
@@ -1361,7 +1351,7 @@ namespace MediaPortal.Music.Database
               //temp file downloaded - check if needed
               if (System.IO.File.Exists(fullPath))
               {
-                System.IO.FileInfo oldFile = new System.IO.FileInfo(fullPath);
+                System.IO.FileInfo oldFile = new System.IO.FileInfo(fullLargePath);
                 System.IO.FileInfo newFile = new System.IO.FileInfo(tmpFile);
 
                 if (oldFile.Length >= newFile.Length)
@@ -1374,8 +1364,10 @@ namespace MediaPortal.Music.Database
                 {
                   try
                   {
-                    oldFile.Delete();
-                    newFile.MoveTo(fullPath);
+                    //oldFile.Delete();
+                    //newFile.MoveTo(fullPath);
+                    Util.Picture.CreateThumbnail(tmpFile, fullPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+                    Util.Picture.CreateThumbnail(tmpFile, fullLargePath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
                     Log.Debug("MyMusic: fetched better thumb {0} overwriting existing one", fileName);
                   }
                   catch (System.IO.IOException ex)
@@ -1387,8 +1379,10 @@ namespace MediaPortal.Music.Database
               }
               else
               {
-                System.IO.FileInfo saveFile = new System.IO.FileInfo(tmpFile);
-                saveFile.MoveTo(fullPath);
+                //System.IO.FileInfo saveFile = new System.IO.FileInfo(tmpFile);
+                //saveFile.MoveTo(fullPath);
+                Util.Picture.CreateThumbnail(tmpFile, fullPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+                Util.Picture.CreateThumbnail(tmpFile, fullLargePath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
                 Log.Info("MyMusic: Thumb successfully downloaded as {0}", fileName);
               }
               success = true;

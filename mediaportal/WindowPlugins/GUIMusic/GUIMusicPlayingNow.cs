@@ -224,7 +224,13 @@ namespace MediaPortal.GUI.Music
       CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
 
       if (CurrentThumbFileName.Length > 0)
+      {
+        // let us test if there is a larger cover art image
+        string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(CurrentThumbFileName);
+        if (System.IO.File.Exists(strLarge))
+          CurrentThumbFileName = strLarge;
         AddImageToImagePathContainer(CurrentThumbFileName);
+      }
 
       UpdateImagePathContainer();
       UpdateTrackInfo();
@@ -608,12 +614,18 @@ namespace MediaPortal.GUI.Music
             CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
 
             if (CurrentThumbFileName.Length > 0)
+            {
+              // let us test if there is a larger cover art image
+              string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(CurrentThumbFileName);
+              if (System.IO.File.Exists(strLarge))
+                CurrentThumbFileName = strLarge;
               AddImageToImagePathContainer(CurrentThumbFileName);
 
-            if (_usingBassEngine)
-              BassMusicPlayer.Player.VisualizationWindow.CoverArtImagePath = CurrentThumbFileName;
+              if (_usingBassEngine)
+                BassMusicPlayer.Player.VisualizationWindow.CoverArtImagePath = CurrentThumbFileName;
 
-            UpdateImagePathContainer();
+              UpdateImagePathContainer();
+            }
           }
           break;
 
@@ -813,7 +825,7 @@ namespace MediaPortal.GUI.Music
               UpdateArtistInfo();
             else
             {
-              CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.FilterFileName(CurrentTrackTag.Artist));
+              CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.MakeFileName(CurrentTrackTag.Artist));
               if (CurrentThumbFileName.Length > 0)
               {
                 AddImageToImagePathContainer(CurrentThumbFileName);
@@ -1458,8 +1470,14 @@ namespace MediaPortal.GUI.Music
           //{
           CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
           if (CurrentThumbFileName.Length > 0)
+          {
+            // let us test if there is a larger cover art image
+            string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(CurrentThumbFileName);
+            if (System.IO.File.Exists(strLarge))            
+              CurrentThumbFileName = strLarge;
+            
             AddImageToImagePathContainer(CurrentThumbFileName);
-
+          }
           if (LblBestAlbumTracks != null)
             LblBestAlbumTracks.Visible = true;
 
@@ -1478,7 +1496,7 @@ namespace MediaPortal.GUI.Music
     {
       if (request.Equals(_lastArtistRequest))
       {
-        CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.FilterFileName(CurrentTrackTag.Artist));
+        CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.MakeFileName(CurrentTrackTag.Artist));
         if (CurrentThumbFileName.Length > 0)
         {
           AddImageToImagePathContainer(CurrentThumbFileName);

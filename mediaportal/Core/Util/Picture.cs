@@ -1065,7 +1065,16 @@ namespace MediaPortal.Util
         {
           iWidth = (int)Math.Floor((fAR * ((float)iHeight)));
         }
-        Utils.FileDelete(strThumb);
+
+        try
+        {
+          Utils.FileDelete(strThumb);
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Picture: Error deleting old thumbnail - {0}", ex.Message);
+        }
+        
         Image imageThumb = null;
         try
         {
@@ -1082,10 +1091,17 @@ namespace MediaPortal.Util
               g.SmoothingMode = Thumbs.Smoothing;
               g.DrawImage(theImage, new Rectangle(0, 0, iWidth, iHeight));
             }
-            result.Save(strThumb, System.Drawing.Imaging.ImageFormat.Jpeg);
-            return true;
+            try
+            {
+              result.Save(strThumb, System.Drawing.Imaging.ImageFormat.Jpeg);
+              return true;
+            }
+            catch (Exception ex)
+            {
+              Log.Error("Picture: Error saving new thumbnail {0} - {1}", strThumb, ex.Message);
+              return false;
+            }
           }
-
         }
         finally
         {
