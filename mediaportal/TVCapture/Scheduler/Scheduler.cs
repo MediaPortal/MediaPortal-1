@@ -202,7 +202,7 @@ namespace MediaPortal.TV.Recording
 
               if (paddingEnd == -1)
                 paddingEnd = _postRecordInterval;
-              else if (paddingFront == -2)
+              else if (paddingEnd == -2)
                 paddingEnd = 0;
 
               // check which program is current running on this channel
@@ -266,7 +266,7 @@ namespace MediaPortal.TV.Recording
 
         if (paddingEnd == -1)
           paddingEnd = _postRecordInterval;
-        else if (paddingFront == -2)
+        else if (paddingEnd == -2)
           paddingEnd = 0;
 
         // 1st check if the recording itself should b recorded
