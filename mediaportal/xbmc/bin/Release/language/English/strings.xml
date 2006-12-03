@@ -4181,6 +4181,14 @@
 		<id>2145</id>
 		<value>Import current playlist</value>
 	</string>
+	<string>
+		<id>2146</id>
+		<value>Not enough room on CD</value>
+	</string>
+ 	<string>
+		<id>2147</id>
+		<value>Not enough room on DVD</value>
+	</string>
 	<string Prefix="My ">
 		<id>2200</id>
 		<value>Explorer</value>

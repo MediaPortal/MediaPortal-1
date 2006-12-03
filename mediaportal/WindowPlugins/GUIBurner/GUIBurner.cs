@@ -136,11 +136,15 @@ namespace MediaPortal.GUI.GUIBurner
     private string currentFolder = null;
     private string[] drives = new string[50];
     private int driveCount = 0;
-    private long actSize = 0;
-    private long cdSize = 681574400;
-    private long dvdSize = 5046586572;
+    private long totalSize = 0;
+    private int totalTime = 0;
+    private long cdMaxSize = 681574400;
+    private long dvdMaxSize = 5046586572;
+    private int cdMaxTime = 4440;     // Seconds = 74 min
+    private int dvdMaxTime = 7920;    // Seconds = 2 hours 12 min. 
+
     private int perc = 0;
-    private long max = 681574400;
+    private long max = 0;
     private bool fastFormat;
 
     private bool PalTvFormat = true;              // Which format for the DVD
@@ -219,7 +223,8 @@ namespace MediaPortal.GUI.GUIBurner
           GUIPropertyManager.SetProperty("#burner_size", " ");
           GUIPropertyManager.SetProperty("#burner_info", " ");
           GUIPropertyManager.SetProperty("#convert_info", " ");
-          actSize = 0;
+          totalSize = 0;
+          totalTime = 0;
           currentState = States.STATE_MAIN;
           UpdateButtons();
 
@@ -412,18 +417,25 @@ namespace MediaPortal.GUI.GUIBurner
                 }
                 sel = true;
               }
-              actSize = 0;
+              totalSize = 0;
+              totalTime = 0;
+
               GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST_COPY);
               foreach (file f in files)
               {
                 GUIListItem pItem = new GUIListItem(f.name);
                 FileInformation fi = new FileInformation();
                 fi.Length = f.size;
-                actSize = actSize + f.size;
                 fi.Name = f.name;
                 pItem.Path = f.path;
                 pItem.FileInfo = (FileInformation)fi;
                 GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST_COPY, pItem);
+
+                totalSize = totalSize + f.size;
+
+                MusicTag tag = TagReader.TagReader.ReadTag(pItem.Path);
+                pItem.MusicTag = tag;
+                totalTime = totalTime + tag.Duration;
               }
 
               UpdatePercentageFullDisplay();
@@ -523,23 +535,29 @@ namespace MediaPortal.GUI.GUIBurner
                   currentFolder = currentFolder.Remove(indx, 1);
                 }
 
-                // Debugger.Launch();
-                // Debugger.Break();
-
-
                 GUIListItem pItem = new GUIListItem(item);
 
+
+                // Work out how big the CD/DVD is so far...both in terms of file size (used for Data) and play length (user for Audio/Video)
+                totalSize = totalSize + pItem.FileInfo.Length;
+
                 MusicTag tag = TagReader.TagReader.ReadTag(pItem.Path);
-                pItem.MusicTag = tag;
+                if (tag != null)
+                {
+                  pItem.MusicTag = tag;
+                  totalTime = totalTime + tag.Duration;
+                }
 
-                GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST_COPY, pItem);
+                if (SpaceOnMedia() == true)       // Check if there is enough room on the CD/DVD (depending on currentState)
+                {
+                  GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST_COPY, pItem);
+                }
+                else
+                {
+                  totalSize = totalSize - pItem.FileInfo.Length;
+                  totalTime = totalTime - tag.Duration;
+                }
 
-
-                int TimeInSeconds = tag.Duration;
-                string Time = Util.Utils.SecondsToHMSString(TimeInSeconds);
-
-                // TESTING - need to change this to be a real time instead of a filesize.
-                actSize = actSize + pItem.FileInfo.Length;
                 UpdatePercentageFullDisplay();
                 #endregion
               }
@@ -620,18 +638,104 @@ namespace MediaPortal.GUI.GUIBurner
     #endregion
 
     #region Private Methods
-
+   
     private void UpdatePercentageFullDisplay()
     {
-      // if we are in data mode....
-      if (actSize > 0)
-        perc = Convert.ToInt16(actSize / (max / 100d));
-      else
-        perc = 0;
-      tmpStr = Util.Utils.GetSize(actSize) + " ";
+      switch (currentState)
+      {
+        case States.STATE_MAKE_AUDIO_CD:
+        case States.STATE_MAKE_VIDEO_DVD:
+          {
+            if (totalTime > 0)
+              perc = Convert.ToInt16(totalTime / (max / 100d));
+            else
+              perc = 0;
+
+            tmpStr = Util.Utils.SecondsToHMSString(totalTime) + "  of " + Util.Utils.SecondsToHMSString((int)max);
+          }
+          break;
+
+        case States.STATE_MAKE_DATA_CD:
+        case States.STATE_MAKE_DATA_DVD:
+          {
+            if (totalSize > 0)
+              perc = Convert.ToInt16(totalSize / (max / 100d));
+            else
+              perc = 0;
+            tmpStr = Util.Utils.GetSize(totalSize) + " of " + Util.Utils.GetSize(max);
+          }
+          break;
+      }
 
       GUIPropertyManager.SetProperty("#burner_size", tmpStr);
       GUIPropertyManager.SetProperty("#burner_perc", perc.ToString());
+    }
+
+    /// <summary>
+    /// Check that there is enough room available on the CD/DVD
+    /// </summary>
+    /// <returns>True is room available - else false</returns>
+    private bool SpaceOnMedia()
+    {
+      switch (currentState)
+      {
+        case States.STATE_MAKE_AUDIO_CD:
+          if (totalTime > max)
+          {
+            GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+            if (null != dlgNotify)
+            {
+              dlgNotify.SetHeading(GUILocalizeStrings.Get(2100));    // Burner
+              dlgNotify.SetText(GUILocalizeStrings.Get(2146));       // Not enough room on CD
+              dlgNotify.DoModal(GetID);
+            }
+            return false;
+          }
+          break;
+
+        case States.STATE_MAKE_VIDEO_DVD:
+          if (totalTime > max)
+          {
+            GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+            if (null != dlgNotify)
+            {
+              dlgNotify.SetHeading(GUILocalizeStrings.Get(2100));    // Burner
+              dlgNotify.SetText(GUILocalizeStrings.Get(2147));       // Not enough room on DVD
+              dlgNotify.DoModal(GetID);
+            }
+            return false;
+          }
+          break;
+
+        case States.STATE_MAKE_DATA_CD:
+          if (totalTime > max)
+          {
+            GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+            if (null != dlgNotify)
+            {
+              dlgNotify.SetHeading(GUILocalizeStrings.Get(2100));    // Burner
+              dlgNotify.SetText(GUILocalizeStrings.Get(2146));       // Not enough room on CD
+              dlgNotify.DoModal(GetID);
+            }
+            return false;
+          }
+          break;
+
+        case States.STATE_MAKE_DATA_DVD:
+          if (totalSize > max)
+          {
+            GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+            if (null != dlgNotify)
+            {
+              dlgNotify.SetHeading(GUILocalizeStrings.Get(2100));    // Burner
+              dlgNotify.SetText(GUILocalizeStrings.Get(2146));       // Not enough room on DVD
+              dlgNotify.DoModal(GetID);
+            }
+            return false;
+          }
+          break;
+      }
+      return true;
     }
 
     private void LoadListControl(string folder, ArrayList Exts)
@@ -724,8 +828,8 @@ namespace MediaPortal.GUI.GUIBurner
           currentExt = mp3_extensions;
           LoadDriveListControl();
           currentFolder = "";
-          max = cdSize;
-          actSize = 0;
+          max = cdMaxTime;
+          totalTime = 0;
           break;
 
         case States.STATE_MAKE_VIDEO_DVD:
@@ -734,8 +838,8 @@ namespace MediaPortal.GUI.GUIBurner
           currentExt = video_extensions;
           LoadDriveListControl();
           currentFolder = "";
-          max = dvdSize;
-          actSize = 0;
+          max = dvdMaxTime;
+          totalTime = 0;
           break;
 
 
@@ -745,8 +849,8 @@ namespace MediaPortal.GUI.GUIBurner
           currentExt = data_extensions;
           LoadDriveListControl();
           currentFolder = "";
-          max = cdSize;
-          actSize = 0;
+          max = cdMaxSize;
+          totalSize = 0;
           break;
 
         case States.STATE_MAKE_DATA_DVD:
@@ -755,8 +859,8 @@ namespace MediaPortal.GUI.GUIBurner
           currentExt = data_extensions;
           LoadDriveListControl();
           currentFolder = "";
-          max = dvdSize;
-          actSize = 0;
+          max = dvdMaxSize;
+          totalSize = 0;
           break;
       }
     }
@@ -1020,7 +1124,7 @@ namespace MediaPortal.GUI.GUIBurner
         CDBurner = new XPBurn.XPBurnCD();
         CDBurner.BurnerDrive = CDBurner.RecorderDrives[recorder].ToString();
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         Log.Error("Problem creating XPBurn");
         Log.Error(ex);
@@ -1457,7 +1561,7 @@ namespace MediaPortal.GUI.GUIBurner
 
     public string Description()
     {
-      return @"Burn CD and DVD in MediaPortal";
+      return @"Burn CDs and DVDs in MediaPortal";
     }
 
     public string Author()
