@@ -1130,7 +1130,7 @@ namespace TvPlugin
           return true;
         }
       }
-
+      /*
       //check if we are currently watching a tv channel with AC3
       IAudioStream[] audioStreams;
       bool hadAc3 = false;
@@ -1145,6 +1145,7 @@ namespace TvPlugin
           }
         }
       }
+       * */
       bool wasPlaying = g_Player.Playing && g_Player.IsTimeShifting && g_Player.IsTV;
 
       //Start timeshifting the new tv channel
@@ -1155,7 +1156,7 @@ namespace TvPlugin
       if (succeeded == TvResult.Succeeded)
       {
         //timeshifting succeeded
-
+        /*
         //check if we the new tvchannel has AC3
         audioStreams = TVHome.Card.AvailableAudioStreams;
         bool hasAc3 = false;
@@ -1172,6 +1173,7 @@ namespace TvPlugin
           Log.Info("stop player: ac3 changed:{0}-{1}", hadAc3, hasAc3);
           g_Player.Stop();
         }
+        */
         if (g_Player.Playing) 
         {
           if (System.IO.File.Exists(TVHome.Card.TimeShiftFileName))
