@@ -32,6 +32,7 @@ using System.Threading;
 using System.Text;
 using System.Timers;
 using System.Windows.Forms;
+using System.Drawing;
 
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -516,11 +517,16 @@ namespace MediaPortal.GUI.Music
         ImageChangeTimer.Start();
       }
 
+      if (ImgCoverArt != null)
+      {
+        GUIGraphicsContext.VideoWindow = new Rectangle(ImgCoverArt.XPosition, ImgCoverArt.YPosition, ImgCoverArt.Width, ImgCoverArt.Height);
+      }
+  
       if (g_Player.Playing)
       {
         g_Player_PlayBackStarted(g_Player.MediaType.Music, g_Player.CurrentFile);
 
-        SetVisualizationWindow();
+        //SetVisualizationWindow();
       }
       else
       {

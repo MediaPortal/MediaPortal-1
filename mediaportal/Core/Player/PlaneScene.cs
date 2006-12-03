@@ -164,8 +164,7 @@ namespace MediaPortal.Player
     public bool InTv
     {
       get
-      {
-        int windowId = GUIWindowManager.ActiveWindow;
+      { int windowId = GUIWindowManager.ActiveWindow;
         GUIWindow window=GUIWindowManager.GetWindow(windowId);
         if (window.IsTv) return true;
         if (windowId == (int)GUIWindow.Window.WINDOW_TV ||
@@ -346,8 +345,11 @@ namespace MediaPortal.Player
           if (!InTv)
           {
             //we are not in the my tv module
-            //then check if video/tv preview window is enable
-            if (!GUIGraphicsContext.Overlay) return false; //not enabled, dont show tv
+            //then check if a VideoWindow is defined or video/tv preview window is enable
+            System.Drawing.Rectangle rect = GUIGraphicsContext.VideoWindow; 
+//BAV: todo -> remove Overlay check -> should no longer be needed
+            //if (((rect.Height < 1) && (rect.Width < 1)) || (!GUIGraphicsContext.Overlay)) return false; //not enabled, dont show tv
+            if ((rect.Height < 1) && (rect.Width < 1)) return false;
           }
         }
 

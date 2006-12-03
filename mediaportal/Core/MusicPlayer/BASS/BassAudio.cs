@@ -1456,16 +1456,17 @@ namespace MediaPortal.Player
 
       if (VizManager == null)
         return;
-
-      if (GUIGraphicsContext.BlankScreen || (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
+     
+      if (GUIGraphicsContext.BlankScreen) //BAV || (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
       {
-        if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
+        //BAV if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
         {
+          
           if (VizWindow.Visible)
             VizWindow.Visible = false;
         }
       }
-
+      
       else if (!VizWindow.Visible)
       {
         NeedUpdate = true;

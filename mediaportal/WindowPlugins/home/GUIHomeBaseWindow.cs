@@ -26,6 +26,7 @@
 #region Usings
 using System;
 using System.IO;
+using System.Drawing;
 using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Utils.Services;
@@ -47,6 +48,7 @@ namespace MediaPortal.GUI.Home
 		[SkinControlAttribute(200)]		protected GUILabelControl lblDate = null;
 		[SkinControlAttribute(201)]		protected GUILabelControl lblTime = null;
 		[SkinControlAttribute(50)]		protected GUIMenuControl  menuMain = null;
+    [SkinControlAttribute(99)]    protected GUIVideoControl videoWindow = null;
 
 		#endregion
 		
@@ -103,6 +105,16 @@ namespace MediaPortal.GUI.Home
       }
       LoadButtonNames();
 		}
+
+    protected override void OnPageLoad()
+    {
+      base.OnPageLoad();
+      //set video window position
+      if (videoWindow != null)
+      {
+        GUIGraphicsContext.VideoWindow = new Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
+      }
+    }
 
 		protected virtual void LoadButtonNames()
 		{

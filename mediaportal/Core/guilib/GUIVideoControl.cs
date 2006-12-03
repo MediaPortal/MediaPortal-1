@@ -36,14 +36,16 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class GUIVideoControl : GUIControl
 	{
-		GUIImage image;
 		[XMLSkinElement("textureFocus")]	protected string	_focusedTextureName="";
-		[XMLSkinElement("action")]			protected int		_actionId=-1;
-		protected GUIAnimation _imageFocusRectangle=null;
-		
+		[XMLSkinElement("action")]			  protected int		  _actionId=-1;
+
+    protected GUIImage blackImage;
+    protected GUIImage thumbImage;
+    protected GUIAnimation _imageFocusRectangle=null;
 		protected Rectangle[] _videoWindows= new Rectangle[1];
-	
-		public GUIVideoControl(int dwParentID) : base(dwParentID)
+       
+
+    public GUIVideoControl(int dwParentID) : base(dwParentID)
 		{
 		}
 		public GUIVideoControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string texturename)
@@ -56,10 +58,12 @@ namespace MediaPortal.GUI.Library
 		{
 			base.FinalizeConstruction ();
 			_imageFocusRectangle = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _focusedTextureName);
-			image = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, "black.bmp" ,1);
-
+      thumbImage = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, "#Play.Current.Thumb", 1);
+      blackImage = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, "black.bmp", 1);
+          
       _imageFocusRectangle.ParentControl = this;
-      image.ParentControl = this;
+      thumbImage.ParentControl = this;
+      blackImage.ParentControl = this;
 		}
 
 
@@ -67,13 +71,15 @@ namespace MediaPortal.GUI.Library
     {
       base.AllocResources ();
       _imageFocusRectangle.AllocResources();
-			image.AllocResources();
+			thumbImage.AllocResources();
+      blackImage.AllocResources();
     }
     public override void FreeResources()
     {
       base.FreeResources ();
       _imageFocusRectangle.FreeResources();
-			image.FreeResources();
+			thumbImage.FreeResources();
+      blackImage.FreeResources();
     }
 
 
@@ -127,7 +133,10 @@ namespace MediaPortal.GUI.Library
 						//image.SetPosition(_videoWindows[0].X,_videoWindows[0].Y);
 						//image.Width=_videoWindows[0].Width;
 						//image.Height=_videoWindows[0].Height;
-						image.Render(timePassed);
+            if (GUIGraphicsContext.VideoWindow.Width < 1)
+              thumbImage.Render(timePassed);
+            else
+              blackImage.Render(timePassed);
 						//GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target|ClearFlags.Target, Color.FromArgb(255,1,1,1), 1.0f, 0,_videoWindows);
 					}
 				}
@@ -199,6 +208,5 @@ namespace MediaPortal.GUI.Library
       return false;
     }
 
-    
-	}
+  }
 }
