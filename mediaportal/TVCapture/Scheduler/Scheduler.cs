@@ -606,7 +606,7 @@ namespace MediaPortal.TV.Recording
 
       //finally start recording...
       handler.TuneExternalChannel(rec.Channel, false);
-      card.Record(rec, currentProgram, iPostRecordInterval, iPostRecordInterval);
+      card.Record(rec, currentProgram, iPreRecordInterval, iPostRecordInterval);
 
       //if the user was using this card to watch tv, then start watching it also
       if (handler.CurrentCardIndex == cardNo)
