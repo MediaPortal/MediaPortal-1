@@ -47,7 +47,9 @@
       <posX>370</posX>
       <posY>130</posY>
       <width>310</width>
-      <dimColor>80ffffff</dimColor>
+      <textcolor>fffffff0</textcolor>
+      <textColorNoFocus>FF6495ED</textColorNoFocus>
+      <dimColor>80B36162</dimColor>
       <buttonTextXOff>40</buttonTextXOff>
       <buttonTextYOff>38</buttonTextYOff>
       <buttonOffset>25</buttonOffset>
@@ -62,8 +64,8 @@
 			<hoverWidth>432</hoverWidth>
 			<hoverHeight>336</hoverHeight>
 			<hoverKeepAspectratio>yes</hoverKeepAspectratio>
-			<scrollTime>300</scrollTime>
-			<scrollTimeMin>400</scrollTimeMin>
+			<scrollTime>200</scrollTime>
+			<scrollTimeMin>300</scrollTimeMin>
 			<textureBackground>-</textureBackground>
 			<onright>13</onright>
 			<onleft>10</onleft>
