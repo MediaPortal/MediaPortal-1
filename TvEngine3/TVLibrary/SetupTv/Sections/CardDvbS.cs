@@ -58,6 +58,15 @@ namespace SetupTv.Sections
         return SatteliteName.CompareTo(other.SatteliteName);
       }
 
+
+      #region IComparable<Sattelite> Members
+
+      int IComparable<Sattelite>.CompareTo(Sattelite other)
+      {
+        return SatteliteName.CompareTo(other.SatteliteName);
+      }
+
+      #endregion
     }
 
     class Transponder : IComparable<Transponder>
