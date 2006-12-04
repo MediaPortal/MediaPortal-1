@@ -39,6 +39,8 @@
       <posX>370</posX>
       <posY>130</posY>
       <width>310</width>
+      <textcolor>ffffffff</textcolor>
+      <textColorNoFocus>ffa9d0f7</textColorNoFocus>
       <dimColor>80ffffff</dimColor>
       <buttonTextXOff>48</buttonTextXOff>
       <buttonTextYOff>6</buttonTextYOff>
@@ -172,5 +174,6 @@
       <onup>13</onup>
       <ondown>50</ondown>
     </control>
+
   </controls>
 </window>
