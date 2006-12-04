@@ -62,13 +62,19 @@ namespace MediaPortal.GUI.Home
     protected bool _playNotifyBeep = true;
     protected int  _preNotifyConfig = 60;
     protected GUIOverlayWindow _overlayWin = null;
+    static bool _addedGlobalMessageHandler = false;
 		#endregion
 
 		#region Constructor
 		public GUIHomeBaseWindow()
 		{
       LoadSettings();
-      GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
+      //do this only once, we dont want a global message handler for every derived class
+      if (!_addedGlobalMessageHandler)
+      {
+        _addedGlobalMessageHandler = true;
+        GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
+      }
     }
 		#endregion
 
