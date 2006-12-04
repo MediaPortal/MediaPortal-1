@@ -2415,5 +2415,17 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Gets the interface for controlling the diseqc motor
+    /// </summary>
+    /// <value>Theinterface for controlling the diseqc motor.</value>
+    public IDiSEqCMotor DiSEqCMotor
+    {
+      get
+      {
+        if (_conditionalAccess == null) return null;
+        return _conditionalAccess.DiSEqCMotor;
+      }
+    }
   }
 }

@@ -519,6 +519,8 @@ namespace TvControl
     #endregion
     #region streaming
     List<RtspClient> StreamingClients { get;}
+
+    IDiSEqCMotor GetDiSEqCMotor(int cardId);
     #endregion
   }
 }

@@ -2247,6 +2247,17 @@ namespace TvService
       }
     }
 
+    public IDiSEqCMotor GetDiSEqCMotor(int cardId)
+    {
+      if (false == _allDbscards.ContainsKey(cardId)) return null;
+      if (IsLocal(cardId) == false)
+      {
+        return null;
+      }
+
+      return _localCards[cardId].DiSEqCMotor;
+    }
+
     /// <summary>
     /// Stops the grabbing epg.
     /// </summary>
@@ -2624,6 +2635,7 @@ namespace TvService
       }
       return false;
     }
+
     public void Fire(object sender, EventArgs args)
     {
       try

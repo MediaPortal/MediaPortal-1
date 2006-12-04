@@ -36,6 +36,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\IDiSEqCMotor.cs" />
     <Compile Include="Interfaces\SpecialChannel.cs" />
     <Compile Include="RtspClient.cs" />
     <Compile Include="ServiceProvider\ServiceProvider.cs" />

@@ -29,7 +29,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Summary description for Twinhan.
   /// </summary>
-  public class Twinhan
+  public class Twinhan : IDiSEqCController
   {
 
     #region guids
@@ -39,8 +39,10 @@ namespace TvLibrary.Implementations.DVB
     readonly uint THBDA_IOCTL_CHECK_INTERFACE = 0xaa0001e4; //CTL_CODE(THBDA_IO_INDEX, 121, METHOD_BUFFERED, FILE_ANY_ACCESS)
     readonly uint THBDA_IOCTL_CI_GET_STATE = 0xaa000320;    //CTL_CODE(THBDA_IO_INDEX, 200, METHOD_BUFFERED, FILE_ANY_ACCESS)
     readonly uint THBDA_IOCTL_CI_GET_PMT_REPLY = 0xaa000348;//CTL_CODE(THBDA_IO_INDEX, 210, METHOD_BUFFERED, FILE_ANY_ACCESS)
-    readonly uint THBDA_IOCTL_SET_DiSEqC   = 0xaa0001a0;//CTL_CODE(THBDA_IO_INDEX, 104, METHOD_BUFFERED, FILE_ANY_ACCESS) 
+    readonly uint THBDA_IOCTL_SET_DiSEqC = 0xaa0001a0;//CTL_CODE(THBDA_IO_INDEX, 104, METHOD_BUFFERED, FILE_ANY_ACCESS) 
+    readonly uint THBDA_IOCTL_GET_DiSEqC = 0xaa0001a4;//CTL_CODE(THBDA_IO_INDEX, 105, METHOD_BUFFERED, FILE_ANY_ACCESS) 
     readonly uint THBDA_IOCTL_SET_LNB_DATA = 0xaa000200;//CTL_CODE(THBDA_IO_INDEX, 128, METHOD_BUFFERED, FILE_ANY_ACCESS) 
+
     #endregion
 
     #region variables
@@ -445,9 +447,9 @@ namespace TvLibrary.Implementations.DVB
           break;
       }
       byte turnon22Khz = 1;
-      Int32 LNBLOFLowBand  =  9750;
+      Int32 LNBLOFLowBand = 9750;
       Int32 LNBLOFHighBand = 10600;
-      Int32 LNBLOFHiLoSW   = 11700;
+      Int32 LNBLOFHiLoSW = 11700;
 
       switch (channel.BandType)
       {
@@ -486,14 +488,14 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteByte(_ptrDiseqc, 0, 1);              // 0: LNB_POWER
       Marshal.WriteByte(_ptrDiseqc, 1, 0);              // 1: Tone_Data_Burst (Tone_Data_OFF:0 | Tone_Burst_ON:1 | Data_Burst_ON:2)
       Marshal.WriteByte(_ptrDiseqc, 2, 0);
-      Marshal.WriteByte(_ptrDiseqc, 3, 0);    
+      Marshal.WriteByte(_ptrDiseqc, 3, 0);
       Marshal.WriteInt32(_ptrDiseqc, 4, LNBLOFLowBand); // 4: ulLNBLOFLowBand   LNBLOF LowBand MHz
       Marshal.WriteInt32(_ptrDiseqc, 8, LNBLOFHighBand);// 8: ulLNBLOFHighBand  LNBLOF HighBand MHz
       Marshal.WriteInt32(_ptrDiseqc, 12, LNBLOFHiLoSW); //12: ulLNBLOFHiLoSW   LNBLOF HiLoSW MHz
       Marshal.WriteByte(_ptrDiseqc, 16, turnon22Khz);   //16: f22K_Output (F22K_Output_HiLo:0 | F22K_Output_Off:1 | F22K_Output_On:2
       Marshal.WriteByte(_ptrDiseqc, 17, disEqcPort);    //17: DiSEqC_Port
-      Marshal.WriteByte(_ptrDiseqc, 18, 0);    
-      Marshal.WriteByte(_ptrDiseqc, 19, 0);    
+      Marshal.WriteByte(_ptrDiseqc, 18, 0);
+      Marshal.WriteByte(_ptrDiseqc, 19, 0);
 
       Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
       Marshal.WriteInt16(_thbdaBuf, 4, 0x2017);
@@ -523,15 +525,161 @@ namespace TvLibrary.Implementations.DVB
           int hr = propertySet.Set(propertyGuid, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
           if (hr != 0)
           {
-            Log.Log.WriteFile("TwinHan diseqc failed 0x{0:X}", hr);
+            Log.Log.WriteFile("TwinHan SetLNB failed 0x{0:X}", hr);
           }
           else
-            Log.Log.WriteFile("TwinHan diseqc ok 0x{0:X}", hr);
+            Log.Log.WriteFile("TwinHan SetLNB ok 0x{0:X}", hr);
           Marshal.ReleaseComObject(propertySet);
 
         }
         Marshal.ReleaseComObject(pin);
       }
     }
+
+    #region IDiSEqCController Members
+
+    /// <summary>
+    /// Sends the DiSEqC command.
+    /// </summary>
+    /// <param name="diSEqC">The DiSEqC command.</param>
+    /// <returns>true if succeeded, otherwise false</returns>
+    public bool SendDiSEqCCommand(byte[] diSEqC)
+    {
+      int thbdaLen = 0x28;
+      int disEqcLen = 16;
+      Marshal.WriteInt32(_ptrDiseqc, 0, (int)diSEqC.Length);//command len
+
+      for (int i = 0; i < 12; ++i)
+        Marshal.WriteByte(_ptrDiseqc, 4 + i, 0);
+
+      for (int i = 0; i < diSEqC.Length; ++i)
+      {
+        Marshal.WriteByte(_ptrDiseqc, 4 + i, diSEqC[i]);
+      }
+
+      Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
+      Marshal.WriteInt16(_thbdaBuf, 4, 0x2017);
+      Marshal.WriteInt16(_thbdaBuf, 6, 0x4b03);
+      Marshal.WriteByte(_thbdaBuf, 8, 0x90);
+      Marshal.WriteByte(_thbdaBuf, 9, 0xf8);
+      Marshal.WriteByte(_thbdaBuf, 10, 0x85);
+      Marshal.WriteByte(_thbdaBuf, 11, 0x6a);
+      Marshal.WriteByte(_thbdaBuf, 12, 0x62);
+      Marshal.WriteByte(_thbdaBuf, 13, 0xcb);
+      Marshal.WriteByte(_thbdaBuf, 14, 0x3d);
+      Marshal.WriteByte(_thbdaBuf, 15, 0x67);
+      Marshal.WriteInt32(_thbdaBuf, 16, (int)THBDA_IOCTL_SET_DiSEqC);//dwIoControlCode
+      Marshal.WriteInt32(_thbdaBuf, 20, (int)_ptrDiseqc.ToInt32());//lpInBuffer
+      Marshal.WriteInt32(_thbdaBuf, 24, disEqcLen);//nInBufferSize
+      Marshal.WriteInt32(_thbdaBuf, 28, (int)IntPtr.Zero);//lpOutBuffer
+      Marshal.WriteInt32(_thbdaBuf, 32, 0);//nOutBufferSize
+      Marshal.WriteInt32(_thbdaBuf, 36, (int)_ptrDwBytesReturned);//lpBytesReturned
+
+      bool success = false;
+      IPin pin = DsFindPin.ByDirection(_captureFilter, PinDirection.Input, 0);
+      if (pin != null)
+      {
+        IKsPropertySet propertySet = pin as IKsPropertySet;
+        if (propertySet != null)
+        {
+          Guid propertyGuid = THBDA_TUNER;
+          int hr = propertySet.Set(propertyGuid, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
+          if (hr != 0)
+          {
+            Log.Log.WriteFile("TwinHan set DiSEqC failed 0x{0:X}", hr);
+          }
+          else
+          {
+            Log.Log.WriteFile("TwinHan set DiSEqC ok 0x{0:X}", hr);
+            success = true;
+          }
+          Marshal.ReleaseComObject(propertySet);
+
+        }
+        Marshal.ReleaseComObject(pin);
+      }
+      return success;
+    }
+
+    /// <summary>
+    /// Sends a diseqc command and reads a reply
+    /// </summary>
+    /// <param name="reply">The reply.</param>
+    /// <returns>true if succeeded, otherwise false</returns>
+    public bool ReadDiSEqCCommand(out byte[] reply)
+    {
+      reply = new byte[1];
+      reply[0] = 0;
+      int thbdaLen = 0x28;
+      int disEqcLen = 16;
+      for (int i = 0; i < 16; ++i)
+        Marshal.WriteByte(_ptrDiseqc,  i, 0);
+
+      Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
+      Marshal.WriteInt16(_thbdaBuf, 4, 0x2017);
+      Marshal.WriteInt16(_thbdaBuf, 6, 0x4b03);
+      Marshal.WriteByte(_thbdaBuf, 8, 0x90);
+      Marshal.WriteByte(_thbdaBuf, 9, 0xf8);
+      Marshal.WriteByte(_thbdaBuf, 10, 0x85);
+      Marshal.WriteByte(_thbdaBuf, 11, 0x6a);
+      Marshal.WriteByte(_thbdaBuf, 12, 0x62);
+      Marshal.WriteByte(_thbdaBuf, 13, 0xcb);
+      Marshal.WriteByte(_thbdaBuf, 14, 0x3d);
+      Marshal.WriteByte(_thbdaBuf, 15, 0x67);
+      Marshal.WriteInt32(_thbdaBuf, 16, (int)THBDA_IOCTL_GET_DiSEqC);//dwIoControlCode
+      Marshal.WriteInt32(_thbdaBuf, 20, (int)IntPtr.Zero.ToInt32());//lpInBuffer
+      Marshal.WriteInt32(_thbdaBuf, 24, 0);//nInBufferSize
+      Marshal.WriteInt32(_thbdaBuf, 28, (int)_ptrDiseqc.ToInt32());//lpOutBuffer
+      Marshal.WriteInt32(_thbdaBuf, 32, disEqcLen);//nOutBufferSize
+      Marshal.WriteInt32(_thbdaBuf, 36, (int)_ptrDwBytesReturned);//lpBytesReturned
+
+      bool success = false;
+      IPin pin = DsFindPin.ByDirection(_captureFilter, PinDirection.Input, 0);
+      if (pin != null)
+      {
+        IKsPropertySet propertySet = pin as IKsPropertySet;
+        if (propertySet != null)
+        {
+          Guid propertyGuid = THBDA_TUNER;
+          int hr = propertySet.Set(propertyGuid, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
+          if (hr != 0)
+          {
+            Log.Log.WriteFile("TwinHan get DiSEqC failed 0x{0:X}", hr);
+          }
+          else
+          {
+            Log.Log.WriteFile("TwinHan get DiSEqC ok 0x{0:X}", hr);
+            success = true;
+          }
+
+          string line = "";
+          for (int i = 0; i < 16; ++i)
+          {
+            byte k = Marshal.ReadByte(_ptrDiseqc, i);
+            line += String.Format("{0:X} ", k);
+          }
+          Log.Log.Write("reply:{0}", line);
+
+          success = true;
+
+          int bytesReturned = Marshal.ReadInt32(_ptrDiseqc);
+          if (bytesReturned > 0)
+          {
+            reply = new byte[bytesReturned];
+            for (int i = 0; i < bytesReturned; ++i)
+            {
+              reply[i] = Marshal.ReadByte(_ptrDiseqc, 4 + i);
+            }
+          }
+
+          Marshal.ReleaseComObject(propertySet);
+
+        }
+        Marshal.ReleaseComObject(pin);
+      }
+      return success;
+    }
+
+    #endregion
   }
 }

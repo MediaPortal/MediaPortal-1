@@ -570,5 +570,6 @@ namespace TvLibrary.Implementations.DVB
       if ((channel as DVBSChannel) == null) return false;
       return true;
     }
+
   }
 }

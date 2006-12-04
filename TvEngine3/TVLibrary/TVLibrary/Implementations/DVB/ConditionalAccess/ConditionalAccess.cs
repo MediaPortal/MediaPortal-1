@@ -26,6 +26,7 @@ using DirectShowLib;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -39,7 +40,8 @@ namespace TvLibrary.Implementations.DVB
     DigitalEverywhere _digitalEveryWhere = null;
     TechnoTrend _technoTrend = null;
     Twinhan _twinhan = null;
-    Hauppauge _hauppauge=null;
+    Hauppauge _hauppauge = null;
+    DiSEqCMotor _diSEqCMotor = null;
     #endregion
 
     //ctor
@@ -47,7 +49,7 @@ namespace TvLibrary.Implementations.DVB
     /// Initializes a new instance of the <see cref="T:ConditionalAccess"/> class.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
-    /// <param name="captureFilter">The capture filter.</param>
+    /// <param name="analyzerFilter">The capture filter.</param>
     public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter)
     {
       try
@@ -68,6 +70,7 @@ namespace TvLibrary.Implementations.DVB
         if (_twinhan.IsTwinhan)
         {
           Log.Log.WriteFile("Twinhan card detected");
+          _diSEqCMotor = new DiSEqCMotor(_twinhan);
           return;
         }
         _twinhan = null;
@@ -92,6 +95,18 @@ namespace TvLibrary.Implementations.DVB
       catch (Exception ex)
       {
         Log.Log.Write(ex);
+      }
+    }
+
+    /// <summary>
+    /// Gets the interface for controlling the DiSeQC motor.
+    /// </summary>
+    /// <value>IDiSEqCMotor.</value>
+    public IDiSEqCMotor DiSEqCMotor 
+    {
+      get
+      {
+        return _diSEqCMotor;
       }
     }
 
@@ -205,6 +220,10 @@ namespace TvLibrary.Implementations.DVB
         if (_twinhan != null)
         {
           _twinhan.SendDiseqCommand(channel);
+          if (_diSEqCMotor != null)
+          {
+            _diSEqCMotor.GetPosition();
+          }
         }
         if (_hauppauge != null)
         {

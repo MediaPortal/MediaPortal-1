@@ -42,6 +42,8 @@
     <Compile Include="DeviceSorter.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\TvCardAnalogBase.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\HaupPauge\Hauppauge.cs" />
+    <Compile Include="Implementations\DVB\DisEqC\DiSEqCMotor.cs" />
+    <Compile Include="Implementations\DVB\DisEqC\IDiSEqCController.cs" />
     <Compile Include="Implementations\DVB\Graphs\DvbBaseScanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\SS2\DVBSS2Scanning.cs" />
     <Compile Include="Implementations\Helper\DevicesInUse.cs" />

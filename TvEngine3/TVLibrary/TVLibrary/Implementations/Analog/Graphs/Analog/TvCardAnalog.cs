@@ -590,6 +590,17 @@ namespace TvLibrary.Implementations.Analog
       }
     }
 
+    /// <summary>
+    /// Gets the interface for controlling the diseqc motor
+    /// </summary>
+    /// <value>Theinterface for controlling the diseqc motor.</value>
+    public IDiSEqCMotor DiSEqCMotor
+    {
+      get
+      {
+        return null;
+      }
+    }
   }
 }
 

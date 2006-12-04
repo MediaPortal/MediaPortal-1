@@ -170,6 +170,12 @@ namespace TvLibrary.Interfaces
     /// </summary>
     int cardType { get;}
 
+    /// <summary>
+    /// Gets the interface for controlling the diseqc motor
+    /// </summary>
+    /// <value>Theinterface for controlling the diseqc motor.</value>
+    IDiSEqCMotor DiSEqCMotor { get;}
+
     #endregion
 
     #region epg & scanning
