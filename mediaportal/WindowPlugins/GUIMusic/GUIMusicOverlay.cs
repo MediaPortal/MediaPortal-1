@@ -242,10 +242,10 @@ namespace MediaPortal.GUI.Music
       GUIPropertyManager.SetProperty("#Play.Current.File", System.IO.Path.GetFileName(fileName));
 
       MusicTag tag = null;
-      string thumb = String.Empty;
-      tag = GetInfo(fileName, out thumb);
+      _thumbLogo = String.Empty;
+      tag = GetInfo(fileName, out _thumbLogo);
 
-      GUIPropertyManager.SetProperty("#Play.Current.Thumb", thumb);
+      GUIPropertyManager.SetProperty("#Play.Current.Thumb", _thumbLogo);
       if (tag != null)
       {
         string strText = GUILocalizeStrings.Get(437);	//	"Duration"
@@ -282,7 +282,7 @@ namespace MediaPortal.GUI.Music
         return;
       }
       tag = null;
-      thumb = String.Empty;
+      string thumb = String.Empty;
       tag = GetInfo(fileName, out thumb);
 
       GUIPropertyManager.SetProperty("#Play.Next.Thumb", thumb);
