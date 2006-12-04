@@ -396,10 +396,10 @@
         <itemHeight>108</itemHeight>
         <textureWidth>80</textureWidth>
         <textureHeight>80</textureHeight>
-        <thumbWidth>62</thumbWidth>
-        <thumbHeight>62</thumbHeight>
-        <thumbPosX>9</thumbPosX>
-        <thumbPosY>9</thumbPosY>
+        <thumbWidth>52</thumbWidth>
+        <thumbHeight>52</thumbHeight>
+        <thumbPosX>19</thumbPosX>
+        <thumbPosY>19</thumbPosY>
         <imageFolder>icon_empty_nofocus.png</imageFolder>
         <imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
         <font>font13</font>
@@ -413,10 +413,10 @@
         <textureHeightBig>108</textureHeightBig>
         <itemWidthBig>148</itemWidthBig>
         <itemHeightBig>142</itemHeightBig>
-        <thumbWidthBig>84</thumbWidthBig>
-        <thumbHeightBig>84</thumbHeightBig>
-        <thumbPosXBig>12</thumbPosXBig>
-        <thumbPosYBig>12</thumbPosYBig>
+        <thumbWidthBig>74</thumbWidthBig>
+        <thumbHeightBig>74</thumbHeightBig>
+        <thumbPosXBig>22</thumbPosXBig>
+        <thumbPosYBig>22</thumbPosYBig>
         <thumbZoom>no</thumbZoom>
         <textXOff>0</textXOff>
         <textYOff>0</textYOff>
@@ -438,14 +438,14 @@
         <textureDown>page_down_nofocus.png</textureDown>
         <textureUpFocus>page_up_focus.png</textureUpFocus>
         <textureDownFocus>page_down_focus.png</textureDownFocus>
-        <itemWidth>67</itemWidth>
-        <itemHeight>76</itemHeight>
-        <textureWidth>67</textureWidth>
-        <textureHeight>69</textureHeight>
-        <thumbWidth>50</thumbWidth>
-        <thumbHeight>50</thumbHeight>
-        <thumbPosX>8</thumbPosX>
-        <thumbPosY>9</thumbPosY>
+        <itemWidth>108</itemWidth>
+        <itemHeight>108</itemHeight>
+        <textureWidth>80</textureWidth>
+        <textureHeight>80</textureHeight>
+        <thumbWidth>52</thumbWidth>
+        <thumbHeight>52</thumbHeight>
+        <thumbPosX>19</thumbPosX>
+        <thumbPosY>19</thumbPosY>
         <imageFolder>icon_empty_nofocus.png</imageFolder>
         <imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
         <font>font13</font>
@@ -464,16 +464,16 @@
         <thumbPosXBig>12</thumbPosXBig>
         <thumbPosYBig>12</thumbPosYBig>
         <background>filmstrip_bg.png</background>
-        <backgroundx>300</backgroundx>
+        <backgroundx>290</backgroundx>
         <backgroundy>97</backgroundy>
-        <backgroundwidth>313</backgroundwidth>
-        <backgroundheight>326</backgroundheight>
+        <backgroundwidth>370</backgroundwidth>
+        <backgroundheight>312</backgroundheight>
         <backgrounddiffuse>60ffffff</backgrounddiffuse>
         <InfoImage>-</InfoImage>
-        <InfoImagex>315</InfoImagex>
-        <InfoImagey>115</InfoImagey>
-        <InfoImagewidth>275</InfoImagewidth>
-        <InfoImageheight>275</InfoImageheight>
+        <InfoImagex>307</InfoImagex>
+        <InfoImagey>126</InfoImagey>
+        <InfoImagewidth>325</InfoImagewidth>
+        <InfoImageheight>250</InfoImageheight>
         <InfoImagediffuse>ffffffff</InfoImagediffuse>
         <unfocusedAlpha>170</unfocusedAlpha>
     </control>
