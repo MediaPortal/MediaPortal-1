@@ -208,6 +208,7 @@ namespace SetupTv.Sections
       mpTransponder4.Items.Clear();
       string[] files = System.IO.Directory.GetFiles(System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters", "*.tpl");
       List<Sattelite> satellites = new List<Sattelite>();
+      satellites.Sort();
 
       foreach (string file in files)
       {
@@ -218,7 +219,6 @@ namespace SetupTv.Sections
           satellites.Add(ts);
         }
       }
-      satellites.Sort();
       foreach (Sattelite ts in satellites)
       {
         mpTransponder1.Items.Add(ts);
@@ -387,7 +387,6 @@ namespace SetupTv.Sections
     {
       base.OnSectionActivated();
       UpdateStatus(1);
-      SetupMotor();
     }
 
 
@@ -694,8 +693,13 @@ namespace SetupTv.Sections
     {
       comboBoxSat.Items.Clear();
 
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "selectedMotorSat", "0");
+      int index = 0;
+      Int32.TryParse(setting.Value, out index);
       string[] files = System.IO.Directory.GetFiles(System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters", "*.tpl");
       List<Sattelite> satellites = new List<Sattelite>();
+      satellites.Sort();
 
       foreach (string file in files)
       {
@@ -711,12 +715,19 @@ namespace SetupTv.Sections
       {
         comboBoxSat.Items.Add(sat);
       }
-      comboBoxSat.SelectedIndex = 0;
+      if (index >= 0 && index < satellites.Count)
+        comboBoxSat.SelectedIndex = index;
+      else
+        comboBoxSat.SelectedIndex = 0;
       LoadMotorTransponder();
     }
 
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
     {
+      if (tabControl1.SelectedIndex == 1)
+      {
+        SetupMotor();
+      }
     }
 
     private void buttonMoveWest_Click(object sender, EventArgs e)
@@ -822,6 +833,10 @@ namespace SetupTv.Sections
 
     private void comboBoxSat_SelectedIndexChanged(object sender, EventArgs e)
     {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "selectedMotorSat", "0");
+      setting.Value = comboBoxSat.SelectedIndex.ToString();
+      setting.Persist();
       LoadMotorTransponder();
       comboBox1_SelectedIndexChanged(null, null);
     }
@@ -878,7 +893,8 @@ namespace SetupTv.Sections
       {
         comboBox1.Items.Add(transponder);
       }
-      comboBox1.SelectedIndex = 0;
+      if (comboBox1.Items.Count>0)
+        comboBox1.SelectedIndex = 0;
     }
 
     private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
