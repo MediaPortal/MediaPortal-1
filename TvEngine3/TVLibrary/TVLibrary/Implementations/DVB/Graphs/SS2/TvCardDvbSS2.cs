@@ -1173,10 +1173,10 @@ namespace TvLibrary.Implementations.DVB
       {
         Release.ComObject("TIF filter", _filterTIF); _filterTIF = null;
       }
-      if (_filterSectionsAndTables != null)
-      {
-        Release.ComObject("secions&tables filter", _filterSectionsAndTables); _filterSectionsAndTables = null;
-      }
+      //if (_filterSectionsAndTables != null)
+      //{
+      //  Release.ComObject("secions&tables filter", _filterSectionsAndTables); _filterSectionsAndTables = null;
+      //}
 
 
       if (_filterTsAnalyzer != null)
@@ -1185,7 +1185,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_infTeeMain != null)
       {
-        Release.ComObject("_filterMpTsAnalyzer", _infTeeMain); _infTeeMain = null;
+        Release.ComObject("_infTeeMain", _infTeeMain); _infTeeMain = null;
       }
 
       _rotEntry.Dispose();

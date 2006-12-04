@@ -105,7 +105,7 @@ namespace TvLibrary.Implementations.DVB
     protected IBaseFilter _filterTuner = null;
     protected IBaseFilter _filterCapture = null;
     protected IBaseFilter _filterTIF = null;
-    protected IBaseFilter _filterSectionsAndTables = null;
+    //protected IBaseFilter _filterSectionsAndTables = null;
 
     protected DsDevice _tunerDevice = null;
     protected DsDevice _captureDevice = null;
@@ -1004,7 +1004,7 @@ namespace TvLibrary.Implementations.DVB
           }
           continue;
         }
-
+        /*
         if (devices[i].Name.Equals("MPEG-2 Sections and Tables"))
         {
           Log.Log.Write("    add MPEG-2 Sections and Tables filter");
@@ -1021,13 +1021,13 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Error("    unable to add MPEG-2 Sections and Tables filter");
           }
           continue;
-        }
+        }*/
       }
 
       IPin pinInTif = DsFindPin.ByDirection(_filterTIF, PinDirection.Input, 0);
-      IPin pinInSec = DsFindPin.ByDirection(_filterSectionsAndTables, PinDirection.Input, 0);
+      //IPin pinInSec = DsFindPin.ByDirection(_filterSectionsAndTables, PinDirection.Input, 0);
       Log.Log.WriteFile("    pinTif:{0}", FilterGraphTools.LogPinInfo(pinInTif));
-      Log.Log.WriteFile("    pinSec:{0}", FilterGraphTools.LogPinInfo(pinInSec));
+      //Log.Log.WriteFile("    pinSec:{0}", FilterGraphTools.LogPinInfo(pinInSec));
       //connect tif
       Log.Log.WriteFile("    Connect tif and mpeg2 sections and tables");
       IEnumPins enumPins;
@@ -1077,6 +1077,7 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.WriteFile("    tif not connected:0x{0:X}", hr);
           }
         }
+        /*
         if (mpeg2SectionsConnected == false)
         {
           Log.Log.WriteFile("    try sections&tables:{0}", FilterGraphTools.LogPinInfo(pins[0]));
@@ -1090,22 +1091,22 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.WriteFile("    dvb:mpeg 2 sections and tables not connected:0x{0:X}", hr);
           }
-        }
+        }*/
         Release.ComObject("mpeg2 demux pin" + pinNr.ToString(), pins[0]);
       }
       Release.ComObject("IEnumMedia", enumPins);
       Release.ComObject("TIF pin in", pinInTif);
-      Release.ComObject("mpeg2 sections&tables pin in", pinInSec);
+     // Release.ComObject("mpeg2 sections&tables pin in", pinInSec);
       if (tifConnected == false)
       {
         Log.Log.Error("    unable to connect transport information filter");
         //throw new TvException("unable to connect transport information filter");
       }
-      if (mpeg2SectionsConnected == false)
-      {
-        Log.Log.Error("    unable to connect mpeg 2 sections and tables filter");
+      // if (mpeg2SectionsConnected == false)
+     // {
+       // Log.Log.Error("    unable to connect mpeg 2 sections and tables filter");
         //throw new TvException("unable to connect mpeg 2 sections and tables filter");
-      }
+      //}
     }
 
 
@@ -1176,10 +1177,10 @@ namespace TvLibrary.Implementations.DVB
       {
         Release.ComObject("TIF filter", _filterTIF); _filterTIF = null;
       }
-      if (_filterSectionsAndTables != null)
-      {
-        Release.ComObject("secions&tables filter", _filterSectionsAndTables); _filterSectionsAndTables = null;
-      }
+      //if (_filterSectionsAndTables != null)
+      //{
+      //  Release.ComObject("secions&tables filter", _filterSectionsAndTables); _filterSectionsAndTables = null;
+      //}
       Log.Log.WriteFile("  free pins...");
       if (_filterTsAnalyzer != null)
       {
