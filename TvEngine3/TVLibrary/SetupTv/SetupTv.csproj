@@ -276,6 +276,12 @@
     <Compile Include="Sections\TvGroups.Designer.cs">
       <DependentUpon>TvGroups.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\TvSchedules.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\TvSchedules.Designer.cs">
+      <DependentUpon>TvSchedules.cs</DependentUpon>
+    </Compile>
     <Compile Include="ServiceHelper.cs" />
     <Compile Include="SettingsForm.cs">
       <SubType>Form</SubType>
@@ -353,6 +359,10 @@
     <EmbeddedResource Include="Sections\StreamingServer.resx">
       <SubType>Designer</SubType>
       <DependentUpon>StreamingServer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\TvSchedules.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TvSchedules.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
