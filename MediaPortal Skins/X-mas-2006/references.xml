@@ -217,13 +217,15 @@
         <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
         <textureHeight>32</textureHeight>
         <image>folder_focus.png</image>
-        <font>font13</font>
-        <shadedColor>20ffffff</shadedColor>
+        <font>font13</font>        
         <selectedColor>FFFFFFF0</selectedColor>
         <playedColor>FFFFDAB9</playedColor>
         <textcolor>FFFFFFF0</textcolor>
         <textcolor2>FFFFFFF0</textcolor2>
         <textcolor3>FFFFFFF0</textcolor3>
+        <shadedColor>90ffffff</shadedColor>
+        <dimColor>90fffff0</dimColor>
+        <unfocusedAlpha>220</unfocusedAlpha>        
         <colordiffuse>ffffffff</colordiffuse>
         <remoteColor>ffFFA075</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
@@ -257,11 +259,13 @@
         <textureHeight>32</textureHeight>
         <image>folder_focus.png</image>
         <font>font13</font>
-        <shadedColor>20ffffff</shadedColor>
         <selectedColor>ffB36162</selectedColor>
         <textcolor>FFFFFFF0</textcolor>
         <textcolor2>FFFFFFF0</textcolor2>
         <textcolor3>FFFFFFF0</textcolor3>
+        <shadedColor>90ffffff</shadedColor>
+        <dimColor>90fffff0</dimColor>
+        <unfocusedAlpha>220</unfocusedAlpha>                        
         <colordiffuse>ffffffff</colordiffuse>
         <remoteColor>ffFFA075</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
@@ -301,11 +305,13 @@
         <textureHeight>32</textureHeight>
         <image>folder_focus.png</image>
         <font>font13</font>
-        <shadedColor>20ffffff</shadedColor>
         <selectedColor>ffB36162</selectedColor>
         <textcolor>FFFFFFF0</textcolor>
         <textcolor2>FFFFFFF0</textcolor2>
         <textcolor3>FFFFFFF0</textcolor3>
+        <shadedColor>90ffffff</shadedColor>
+        <dimColor>90fffff0</dimColor>
+        <unfocusedAlpha>220</unfocusedAlpha>        
         <colordiffuse>ffffffff</colordiffuse>
         <remoteColor>ffFFA075</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
@@ -339,11 +345,13 @@
         <textureHeight>32</textureHeight>
         <image>folder_focus.png</image>
         <font>font13</font>
-        <shadedColor>20ffffff</shadedColor>
         <selectedColor>ffB36162</selectedColor>
         <textcolor>FFFFFFF0</textcolor>
         <textcolor2>FFFFFFF0</textcolor2>
         <textcolor3>FFFFFFF0</textcolor3>
+        <shadedColor>90ffffff</shadedColor>
+        <dimColor>90fffff0</dimColor>
+        <unfocusedAlpha>220</unfocusedAlpha>        
         <colordiffuse>ffffffff</colordiffuse>
         <remoteColor>ffFFA075</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
@@ -405,6 +413,9 @@
         <font>font13</font>
         <selectedColor>ffB36162</selectedColor>
         <textcolor>ffB36162</textcolor>
+        <shadedColor>90ffffff</shadedColor>
+        <dimColor>90fffff0</dimColor>
+        <unfocusedAlpha>220</unfocusedAlpha>        
         <colordiffuse>ffffffff</colordiffuse>
         <remoteColor>ffFFA075</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
@@ -451,6 +462,9 @@
         <font>font13</font>
         <selectedColor>ffB36162</selectedColor>
         <textcolor>ffB36162</textcolor>
+        <shadedColor>90ffffff</shadedColor>
+        <dimColor>90fffff0</dimColor>
+        <unfocusedAlpha>220</unfocusedAlpha>        
         <colordiffuse>ffffffff</colordiffuse>
         <remoteColor>ffFFA075</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
