@@ -2295,7 +2295,7 @@ namespace TvService
       if (motor == null) return;
       motor.ForceLimits = onOff;
     }
-    public void DiSEqCDriveMotor(int cardId, DiSEqCDirection direction, byte numberOfSeconds)
+    public void DiSEqCDriveMotor(int cardId, DiSEqCDirection direction, byte numberOfSteps)
     {
       if (false == _allDbscards.ContainsKey(cardId)) return ;
       if (IsLocal(cardId) == false)
@@ -2305,7 +2305,7 @@ namespace TvService
 
       IDiSEqCMotor motor = _localCards[cardId].DiSEqCMotor;
       if (motor == null) return;
-      motor.DriveMotor(direction, numberOfSeconds);
+      motor.DriveMotor(direction, numberOfSteps);
     }
     public void DiSEqCStorePosition(int cardId, byte position)
     {

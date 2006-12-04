@@ -744,7 +744,7 @@ namespace SetupTv.Sections
       //move motor west
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      RemoteControl.Instance.DiSEqCDriveMotor(card.IdCard, DiSEqCDirection.West, 1);
+      RemoteControl.Instance.DiSEqCDriveMotor(card.IdCard, DiSEqCDirection.West, 10);
     }
 
     private void buttonSetWestLimit_Click(object sender, EventArgs e)
@@ -785,6 +785,11 @@ namespace SetupTv.Sections
         Sattelite tmp = (Sattelite)comboBoxSat.Items[i];
         setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + tmp.SatteliteName, "0");
         if (setting.Value == "0") continue;
+        if (tmp.SatteliteName == sat.SatteliteName)
+        {
+          Int32.TryParse(setting.Value, out index);
+          break;
+        }
         index++;
       }
 
@@ -801,7 +806,7 @@ namespace SetupTv.Sections
       //move motor east
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      RemoteControl.Instance.DiSEqCDriveMotor(card.IdCard, DiSEqCDirection.East, 1);
+      RemoteControl.Instance.DiSEqCDriveMotor(card.IdCard, DiSEqCDirection.East, 10);
     }
 
     private void buttonSetEastLimit_Click(object sender, EventArgs e)
@@ -885,6 +890,21 @@ namespace SetupTv.Sections
 
       tuneChannel.DisEqc = DisEqcType.SimpleA;
       RemoteControl.Instance.TuneScan(card.IdCard, tuneChannel);
+
+    }
+
+    private void buttonStop_Click(object sender, EventArgs e)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+      RemoteControl.Instance.DiSEqCStopMotor(card.IdCard);
+    }
+
+    private void buttonGotoStart_Click(object sender, EventArgs e)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+      RemoteControl.Instance.DiSEqCGotoReferencePosition(card.IdCard);
 
     }
   }

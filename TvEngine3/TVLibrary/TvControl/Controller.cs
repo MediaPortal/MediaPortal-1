@@ -526,7 +526,7 @@ namespace TvControl
     void DiSEqCSetEastLimit(int cardId);
     void DiSEqCSetWestLimit(int cardId);
     void DiSEqCForceLimit(int cardId, bool onoff);
-    void DiSEqCDriveMotor(int cardId, DiSEqCDirection direction, byte numberOfSeconds);
+    void DiSEqCDriveMotor(int cardId, DiSEqCDirection direction, byte numberOfSteps);
     void DiSEqCStorePosition(int cardId, byte position);
     void DiSEqCGotoReferencePosition(int cardId);
     void DiSEqCGotoPosition(int cardId, byte position);

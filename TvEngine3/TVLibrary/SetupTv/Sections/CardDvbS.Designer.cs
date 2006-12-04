@@ -63,6 +63,10 @@ namespace SetupTv.Sections
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.label10 = new System.Windows.Forms.Label();
+      this.label9 = new System.Windows.Forms.Label();
+      this.label8 = new System.Windows.Forms.Label();
+      this.label7 = new System.Windows.Forms.Label();
       this.comboBox1 = new System.Windows.Forms.ComboBox();
       this.label4 = new System.Windows.Forms.Label();
       this.progressBarSatQuality = new System.Windows.Forms.ProgressBar();
@@ -78,10 +82,8 @@ namespace SetupTv.Sections
       this.buttonSetWestLimit = new System.Windows.Forms.Button();
       this.buttonMoveEast = new System.Windows.Forms.Button();
       this.buttonMoveWest = new System.Windows.Forms.Button();
-      this.label7 = new System.Windows.Forms.Label();
-      this.label8 = new System.Windows.Forms.Label();
-      this.label9 = new System.Windows.Forms.Label();
-      this.label10 = new System.Windows.Forms.Label();
+      this.buttonStop = new System.Windows.Forms.Button();
+      this.buttonGotoStart = new System.Windows.Forms.Button();
       this.groupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -471,6 +473,8 @@ namespace SetupTv.Sections
       // 
       // tabPage2
       // 
+      this.tabPage2.Controls.Add(this.buttonGotoStart);
+      this.tabPage2.Controls.Add(this.buttonStop);
       this.tabPage2.Controls.Add(this.label10);
       this.tabPage2.Controls.Add(this.label9);
       this.tabPage2.Controls.Add(this.label8);
@@ -498,6 +502,46 @@ namespace SetupTv.Sections
       this.tabPage2.Text = "DiSEqC Motor";
       this.tabPage2.UseVisualStyleBackColor = true;
       this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
+      // 
+      // label10
+      // 
+      this.label10.AutoSize = true;
+      this.label10.ForeColor = System.Drawing.Color.Red;
+      this.label10.Location = new System.Drawing.Point(15, 302);
+      this.label10.Name = "label10";
+      this.label10.Size = new System.Drawing.Size(51, 13);
+      this.label10.TabIndex = 39;
+      this.label10.Text = "TVcard!!!";
+      // 
+      // label9
+      // 
+      this.label9.AutoSize = true;
+      this.label9.ForeColor = System.Drawing.Color.Red;
+      this.label9.Location = new System.Drawing.Point(15, 286);
+      this.label9.Name = "label9";
+      this.label9.Size = new System.Drawing.Size(382, 13);
+      this.label9.TabIndex = 38;
+      this.label9.Text = "supply 500mA then you should not use this screen. Doing so might blow up your";
+      // 
+      // label8
+      // 
+      this.label8.AutoSize = true;
+      this.label8.ForeColor = System.Drawing.Color.Red;
+      this.label8.Location = new System.Drawing.Point(15, 270);
+      this.label8.Name = "label8";
+      this.label8.Size = new System.Drawing.Size(385, 13);
+      this.label8.TabIndex = 37;
+      this.label8.Text = "a TV card which can deliver at least 500mA for the motor. If your TVCard cannot";
+      // 
+      // label7
+      // 
+      this.label7.AutoSize = true;
+      this.label7.ForeColor = System.Drawing.Color.Red;
+      this.label7.Location = new System.Drawing.Point(15, 253);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(397, 13);
+      this.label7.TabIndex = 36;
+      this.label7.Text = "WARNING!!! This screen not only requires a DisEQC 1.2 compatible motor but also";
       // 
       // comboBox1
       // 
@@ -640,45 +684,25 @@ namespace SetupTv.Sections
       this.buttonMoveWest.UseVisualStyleBackColor = true;
       this.buttonMoveWest.Click += new System.EventHandler(this.buttonMoveWest_Click);
       // 
-      // label7
+      // buttonStop
       // 
-      this.label7.AutoSize = true;
-      this.label7.ForeColor = System.Drawing.Color.Red;
-      this.label7.Location = new System.Drawing.Point(15, 253);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(397, 13);
-      this.label7.TabIndex = 36;
-      this.label7.Text = "WARNING!!! This screen not only requires a DisEQC 1.2 compatible motor but also";
+      this.buttonStop.Location = new System.Drawing.Point(249, 82);
+      this.buttonStop.Name = "buttonStop";
+      this.buttonStop.Size = new System.Drawing.Size(75, 23);
+      this.buttonStop.TabIndex = 40;
+      this.buttonStop.Text = "STOP";
+      this.buttonStop.UseVisualStyleBackColor = true;
+      this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
       // 
-      // label8
+      // buttonGotoStart
       // 
-      this.label8.AutoSize = true;
-      this.label8.ForeColor = System.Drawing.Color.Red;
-      this.label8.Location = new System.Drawing.Point(15, 270);
-      this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(385, 13);
-      this.label8.TabIndex = 37;
-      this.label8.Text = "a TV card which can deliver at least 500mA for the motor. If your TVCard cannot";
-      // 
-      // label9
-      // 
-      this.label9.AutoSize = true;
-      this.label9.ForeColor = System.Drawing.Color.Red;
-      this.label9.Location = new System.Drawing.Point(15, 286);
-      this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(382, 13);
-      this.label9.TabIndex = 38;
-      this.label9.Text = "supply 500mA then you should not use this screen. Doing so might blow up your";
-      // 
-      // label10
-      // 
-      this.label10.AutoSize = true;
-      this.label10.ForeColor = System.Drawing.Color.Red;
-      this.label10.Location = new System.Drawing.Point(15, 302);
-      this.label10.Name = "label10";
-      this.label10.Size = new System.Drawing.Size(51, 13);
-      this.label10.TabIndex = 39;
-      this.label10.Text = "TVcard!!!";
+      this.buttonGotoStart.Location = new System.Drawing.Point(249, 140);
+      this.buttonGotoStart.Name = "buttonGotoStart";
+      this.buttonGotoStart.Size = new System.Drawing.Size(75, 23);
+      this.buttonGotoStart.TabIndex = 41;
+      this.buttonGotoStart.Text = "Goto start position";
+      this.buttonGotoStart.UseVisualStyleBackColor = true;
+      this.buttonGotoStart.Click += new System.EventHandler(this.buttonGotoStart_Click);
       // 
       // CardDvbS
       // 
@@ -757,5 +781,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label8;
     private System.Windows.Forms.Label label7;
     private System.Windows.Forms.Label label10;
+    private System.Windows.Forms.Button buttonStop;
+    private System.Windows.Forms.Button buttonGotoStart;
   }
 }

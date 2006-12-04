@@ -114,8 +114,8 @@ namespace TvLibrary.Implementations.DVB
     {
       Log.Log.Write("DiSEqC: stop motor");
       byte[] cmd = new byte[3];
-      cmd[0] = FramingByte;
-      cmd[1] = AllDirections;
+      cmd[0] = (byte)FramingByte;
+      cmd[1] = (byte)Azimutal;
       cmd[2] = (byte)DiSEqCCommands.Halt;
       _controller.SendDiSEqCCommand(cmd);
     }
@@ -181,9 +181,11 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="direction">The direction.</param>
     /// <param name="numberOfSeconds">the number of seconds to move.</param>
-    public void DriveMotor(DiSEqCDirection direction, byte numberOfSeconds)
+    public void DriveMotor(DiSEqCDirection direction, byte steps)
     {
-      Log.Log.Write("DiSEqC: drive motor {0} for {1} seconds", direction.ToString(), numberOfSeconds);
+      if (steps == 0) return;
+      StopMotor();
+      Log.Log.Write("DiSEqC: drive motor {0} for {1} steps", direction.ToString(), steps);
       byte[] cmd = new byte[4];
       cmd[0] = FramingByte;
       cmd[1] = Azimutal;
@@ -195,17 +197,10 @@ namespace TvLibrary.Implementations.DVB
       {
         cmd[2] = (byte)DiSEqCCommands.DriveEast;
       }
-      cmd[3] = numberOfSeconds;
-      int milliSecs = ((int)numberOfSeconds) * 1000;
-      DateTime start = DateTime.Now;
+      cmd[3] = (byte)(0x100 - steps);
       _controller.SendDiSEqCCommand(cmd);
-      while (true)
-      {
-        TimeSpan ts = DateTime.Now - start;
-        if (ts.TotalMilliseconds >= milliSecs) break;
-        System.Threading.Thread.Sleep(10);
-      }
-      StopMotor();
+      //System.Threading.Thread.Sleep(1000*steps);
+      //StopMotor();
     }
 
     /// <summary>
