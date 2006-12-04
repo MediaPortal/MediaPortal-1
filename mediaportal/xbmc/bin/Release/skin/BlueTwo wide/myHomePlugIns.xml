@@ -38,6 +38,8 @@
             <posX>700</posX>
             <posY>180</posY>
             <width>488</width>
+            <textcolor>ffffffff</textcolor>
+            <textColorNoFocus>ffa9d0f7</textColorNoFocus>
             <dimColor>80ffffff</dimColor>
             <buttonTextXOff>77</buttonTextXOff>
             <buttonTextYOff>10</buttonTextYOff>
@@ -131,7 +133,6 @@
             <onup>11</onup>
             <ondown>50</ondown>
         </control>
-
         <control>
             <description>basichome button button</description>
             <type>button</type>
@@ -153,7 +154,6 @@
             <onup>12</onup>
             <ondown>50</ondown>
         </control>
-
         <control>
             <description>Exit button</description>
             <type>button</type>

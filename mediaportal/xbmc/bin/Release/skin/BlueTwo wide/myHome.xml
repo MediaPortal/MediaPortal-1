@@ -26,6 +26,7 @@
             <animation effect="fade" time="250">WindowOpen</animation>
             <animation effect="fade" time="500">WindowClose</animation>
         </control>
+
         <control>
             <description>Menu</description>
             <type>menu</type>
@@ -37,6 +38,8 @@
             <posX>700</posX>
             <posY>180</posY>
             <width>488</width>
+            <textcolor>ffffffff</textcolor>
+            <textColorNoFocus>ffa9d0f7</textColorNoFocus>
             <dimColor>80ffffff</dimColor>
             <buttonTextXOff>77</buttonTextXOff>
             <buttonTextYOff>10</buttonTextYOff>
@@ -58,6 +61,7 @@
             <onright>13</onright>
             <onleft>10</onleft>
         </control>
+
         <!-- Date and Time -->
         <control>
             <description>Date</description>
@@ -107,6 +111,7 @@
             <onup>10</onup>
             <ondown>50</ondown>
         </control>
+
         <control>
             <description>videowallpaper button</description>
             <type>button</type>
