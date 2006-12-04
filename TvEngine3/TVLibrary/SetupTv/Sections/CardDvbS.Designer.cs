@@ -76,6 +76,8 @@ namespace SetupTv.Sections
       this.buttonSetWestLimit = new System.Windows.Forms.Button();
       this.buttonMoveEast = new System.Windows.Forms.Button();
       this.buttonMoveWest = new System.Windows.Forms.Button();
+      this.label4 = new System.Windows.Forms.Label();
+      this.comboBox1 = new System.Windows.Forms.ComboBox();
       this.groupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -465,6 +467,8 @@ namespace SetupTv.Sections
       // 
       // tabPage2
       // 
+      this.tabPage2.Controls.Add(this.comboBox1);
+      this.tabPage2.Controls.Add(this.label4);
       this.tabPage2.Controls.Add(this.progressBarSatQuality);
       this.tabPage2.Controls.Add(this.progressBarSatLevel);
       this.tabPage2.Controls.Add(this.label5);
@@ -532,7 +536,7 @@ namespace SetupTv.Sections
       // 
       // buttonGoto
       // 
-      this.buttonGoto.Location = new System.Drawing.Point(265, 24);
+      this.buttonGoto.Location = new System.Drawing.Point(288, 24);
       this.buttonGoto.Name = "buttonGoto";
       this.buttonGoto.Size = new System.Drawing.Size(51, 23);
       this.buttonGoto.TabIndex = 7;
@@ -563,7 +567,7 @@ namespace SetupTv.Sections
       // 
       this.comboBoxSat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxSat.FormattingEnabled = true;
-      this.comboBoxSat.Location = new System.Drawing.Point(68, 26);
+      this.comboBoxSat.Location = new System.Drawing.Point(91, 26);
       this.comboBoxSat.Name = "comboBoxSat";
       this.comboBoxSat.Size = new System.Drawing.Size(180, 21);
       this.comboBoxSat.TabIndex = 4;
@@ -608,6 +612,25 @@ namespace SetupTv.Sections
       this.buttonMoveWest.Text = "<<Move West";
       this.buttonMoveWest.UseVisualStyleBackColor = true;
       this.buttonMoveWest.Click += new System.EventHandler(this.buttonMoveWest_Click);
+      // 
+      // label4
+      // 
+      this.label4.AutoSize = true;
+      this.label4.Location = new System.Drawing.Point(15, 54);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(70, 13);
+      this.label4.TabIndex = 34;
+      this.label4.Text = "Transponder:";
+      // 
+      // comboBox1
+      // 
+      this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBox1.FormattingEnabled = true;
+      this.comboBox1.Location = new System.Drawing.Point(91, 51);
+      this.comboBox1.Name = "comboBox1";
+      this.comboBox1.Size = new System.Drawing.Size(180, 21);
+      this.comboBox1.TabIndex = 35;
+      this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
       // 
       // CardDvbS
       // 
@@ -680,5 +703,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Button buttonSetWestLimit;
     private System.Windows.Forms.Button buttonMoveEast;
     private System.Windows.Forms.Button buttonMoveWest;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.ComboBox comboBox1;
   }
 }

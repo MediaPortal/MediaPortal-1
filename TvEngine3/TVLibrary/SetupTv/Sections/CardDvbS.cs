@@ -76,6 +76,10 @@ namespace SetupTv.Sections
         if (SymbolRate < other.SymbolRate) return -1;
         return 0;
       }
+      public override string ToString()
+      {
+        return String.Format("{0} {1} {2}", CarrierFrequency, SymbolRate, Polarisation);
+      }
     }
 
     int _cardNumber;
@@ -449,7 +453,7 @@ namespace SetupTv.Sections
         if (_stopScanning) return;
 
         if (mpLNB3.Checked)
-        Scan(3, (BandType)mpBand3.SelectedIndex, (DisEqcType)mpDisEqc3.SelectedIndex, (Sattelite)mpTransponder3.SelectedItem);
+          Scan(3, (BandType)mpBand3.SelectedIndex, (DisEqcType)mpDisEqc3.SelectedIndex, (Sattelite)mpTransponder3.SelectedItem);
         if (_stopScanning) return;
 
         if (mpLNB4.Checked)
@@ -708,6 +712,7 @@ namespace SetupTv.Sections
         comboBoxSat.Items.Add(sat);
       }
       comboBoxSat.SelectedIndex = 0;
+      LoadMotorTransponder();
     }
 
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -720,7 +725,7 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
       IDiSEqCMotor motor = RemoteControl.Instance.GetDiSEqCMotor(card.IdCard);
-      if (motor==null) 
+      if (motor == null)
       {
         MessageBox.Show("DiSEqC is not supported for this card");
         return;
@@ -812,11 +817,13 @@ namespace SetupTv.Sections
         MessageBox.Show("DiSEqC is not supported for this card");
         return;
       }
-      motor.StorePosition((byte)(index+1));
+      motor.StorePosition((byte)(index + 1));
     }
 
     private void comboBoxSat_SelectedIndexChanged(object sender, EventArgs e)
     {
+      LoadMotorTransponder();
+      comboBox1_SelectedIndexChanged(null, null);
     }
 
     private void checkBoxEnabled_CheckedChanged(object sender, EventArgs e)
@@ -832,18 +839,62 @@ namespace SetupTv.Sections
       if (checkBoxEnabled.Checked)
       {
         motor.ForceLimits = true;
+        Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "true");
+        setting.Value = "yes";
+        setting.Persist();
       }
       else
       {
         if (MessageBox.Show("Warning", "Disabling the east/west limits could damage your dish!!! Are you sure?", MessageBoxButtons.YesNo) == DialogResult.Yes)
         {
           motor.ForceLimits = false;
+          Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "true");
+          setting.Value = "no";
+          setting.Persist();
         }
         else
         {
           motor.ForceLimits = true;
+          Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "true");
+          setting.Value = "yes";
+          setting.Persist();
         }
       }
+    }
+
+    void LoadMotorTransponder()
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "true");
+      if (setting.Value == "yes")
+        checkBoxEnabled.Checked = true;
+      if (setting.Value == "no")
+        checkBoxEnabled.Checked = false;
+      comboBox1.Items.Clear();
+      Sattelite sat = (Sattelite)comboBoxSat.SelectedItem;
+      LoadTransponders(sat.FileName);
+      _transponders.Sort();
+      foreach (Transponder transponder in _transponders)
+      {
+        comboBox1.Items.Add(transponder);
+      }
+      comboBox1.SelectedIndex = 0;
+    }
+
+    private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      Transponder transponder = (Transponder)comboBox1.SelectedItem;
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+      DVBSChannel tuneChannel = new DVBSChannel();
+      tuneChannel.Frequency = transponder.CarrierFrequency;
+      tuneChannel.Polarisation = transponder.Polarisation;
+      tuneChannel.SymbolRate = transponder.SymbolRate;
+      tuneChannel.BandType = BandType.Universal;
+
+      tuneChannel.DisEqc = DisEqcType.SimpleA;
+      RemoteControl.Instance.TuneScan(card.IdCard, tuneChannel);
+
     }
   }
 }
