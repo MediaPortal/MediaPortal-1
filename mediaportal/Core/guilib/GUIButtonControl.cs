@@ -109,6 +109,17 @@ namespace MediaPortal.GUI.Library
       FinalizeConstruction();
     }
 
+    // allow overriding the textcolor if created by GUIMenuControl
+    public GUIButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, long ltextColor, long ltextcolorNoFocus, string strTextureFocus, string strTextureNoFocus)
+      : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
+    {
+      _focusedTextureName = strTextureFocus;
+      _nonFocusedTextureName = strTextureNoFocus;
+      _textColor = ltextColor;
+      _textColorNoFocus = ltextcolorNoFocus;
+      FinalizeConstruction();
+    }
+
     /// <summary>
     /// This method gets called when the control is created and all properties has been set
     /// It allows the control todo any initialization

@@ -45,6 +45,7 @@ namespace MediaPortal.GUI.Library
     #region Properties (Skin)    
     [XMLSkinElement("spaceBetweenButtons")]       protected int     _spaceBetweenButtons  = 8;
     [XMLSkinElement("textcolor")]                 protected long    _textColor            = 0xFFFFFFFF;
+    [XMLSkinElement("textColorNoFocus")]          protected long    _textColorNoFocus     = 0xFFFFFFFF;
     //[XMLSkinElement("textAlign")]                Alignment        _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("buttonWidth")]               protected int     _buttonWidth          = 60;
     [XMLSkinElement("buttonHeight")]              protected int     _buttonHeight         = 30;
@@ -560,13 +561,13 @@ namespace MediaPortal.GUI.Library
           if (_showAllHover)
           {
             //MessageBox.Show(info.HoverName + " " + info.NonFocusHoverName);
-            button = new GUIButtonControl(GetID, controlID, buttonX, buttonY, _buttonWidth, _buttonHeight,
+            button = new GUIButtonControl(GetID, controlID, buttonX, buttonY, _buttonWidth, _buttonHeight, _textColor, _textColorNoFocus,
                                       (info.HoverName != "") ? info.HoverName : _textureButtonFocus,
                                       (info.NonFocusHoverName != "") ? info.NonFocusHoverName : _textureHoverNoFocus);
           }
           else
           {
-            button = new GUIButtonControl(GetID, controlID, buttonX, buttonY, _buttonWidth, _buttonHeight,
+            button = new GUIButtonControl(GetID, controlID, buttonX, buttonY, _buttonWidth, _buttonHeight, _textColor, _textColorNoFocus,
                                       (info.FocusTextureName != "") ? info.FocusTextureName : _textureButtonFocus,
                                       (info.NonFocusTextureName != "") ? info.NonFocusTextureName : _textureButtonNoFocus);
           }
@@ -604,7 +605,7 @@ namespace MediaPortal.GUI.Library
             {
               fileName = info.HoverName;
               break;
-            }
+            }              
           }
           if (fileName != null)
           {
@@ -922,6 +923,7 @@ namespace MediaPortal.GUI.Library
       _hoverName = HoverName;
       _nonFocusHoverName = NonFocusHoverName;
     }
+
     public MenuButtonInfo(string Text, int PlugInID, string FocusTextureName, string NonFocusName, string HoverName)
     {
       _text = Text;
