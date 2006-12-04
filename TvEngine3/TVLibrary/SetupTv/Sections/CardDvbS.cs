@@ -863,7 +863,7 @@ namespace SetupTv.Sections
       if (checkBoxEnabled.Checked)
       {
         motor.ForceLimits = true;
-        Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "true");
+        Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "yes");
         setting.Value = "yes";
         setting.Persist();
       }
@@ -872,14 +872,14 @@ namespace SetupTv.Sections
         if (MessageBox.Show("Warning", "Disabling the east/west limits could damage your dish!!! Are you sure?", MessageBoxButtons.YesNo) == DialogResult.Yes)
         {
           motor.ForceLimits = false;
-          Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "true");
+          Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "yes");
           setting.Value = "no";
           setting.Persist();
         }
         else
         {
           motor.ForceLimits = true;
-          Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "true");
+          Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "yes");
           setting.Value = "yes";
           setting.Persist();
         }
@@ -889,7 +889,7 @@ namespace SetupTv.Sections
     void LoadMotorTransponder()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "true");
+      Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "yes");
       if (setting.Value == "yes")
         checkBoxEnabled.Checked = true;
       if (setting.Value == "no")
