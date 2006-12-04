@@ -744,13 +744,7 @@ namespace SetupTv.Sections
       //move motor west
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      IDiSEqCMotor motor = RemoteControl.Instance.GetDiSEqCMotor(card.IdCard);
-      if (motor == null)
-      {
-        MessageBox.Show("DiSEqC is not supported for this card");
-        return;
-      }
-      motor.DriveMotor(DiSEqCDirection.West, 1);
+      RemoteControl.Instance.DiSEqCDriveMotor(card.IdCard, DiSEqCDirection.West, 1);
     }
 
     private void buttonSetWestLimit_Click(object sender, EventArgs e)
@@ -758,13 +752,7 @@ namespace SetupTv.Sections
       //set motor west limit
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      IDiSEqCMotor motor = RemoteControl.Instance.GetDiSEqCMotor(card.IdCard);
-      if (motor == null)
-      {
-        MessageBox.Show("DiSEqC is not supported for this card");
-        return;
-      }
-      motor.SetWestLimit();
+      RemoteControl.Instance.DiSEqCSetWestLimit(card.IdCard);
     }
 
     private void tabPage2_Click(object sender, EventArgs e)
@@ -782,13 +770,30 @@ namespace SetupTv.Sections
       Int32.TryParse(setting.Value, out index);
       if (index <= 0) return;
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      IDiSEqCMotor motor = RemoteControl.Instance.GetDiSEqCMotor(card.IdCard);
-      if (motor == null)
+      RemoteControl.Instance.DiSEqCGotoPosition(card.IdCard, (byte)index);
+    }
+
+    private void buttonStore_Click(object sender, EventArgs e)
+    {
+      //store motor position..
+      Sattelite sat = (Sattelite)comboBoxSat.SelectedItem;
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting setting;
+      int index = 1;
+      for (int i = 0; i < comboBoxSat.Items.Count;++i )
       {
-        MessageBox.Show("DiSEqC is not supported for this card");
-        return;
+        Sattelite tmp = (Sattelite)comboBoxSat.Items[i];
+        setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + tmp.SatteliteName, "0");
+        if (setting.Value == "0") continue;
+        index++;
       }
-      motor.GotoPosition((byte)(index + 1));
+
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + sat.SatteliteName, "0");
+      setting.Value = index.ToString();
+      setting.Persist();
+
+      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+      RemoteControl.Instance.DiSEqCStorePosition(card.IdCard, (byte)(index ));
     }
 
     private void buttonMoveEast_Click(object sender, EventArgs e)
@@ -796,13 +801,7 @@ namespace SetupTv.Sections
       //move motor east
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      IDiSEqCMotor motor = RemoteControl.Instance.GetDiSEqCMotor(card.IdCard);
-      if (motor == null)
-      {
-        MessageBox.Show("DiSEqC is not supported for this card");
-        return;
-      }
-      motor.DriveMotor(DiSEqCDirection.East, 1);
+      RemoteControl.Instance.DiSEqCDriveMotor(card.IdCard, DiSEqCDirection.East, 1);
     }
 
     private void buttonSetEastLimit_Click(object sender, EventArgs e)
@@ -810,34 +809,7 @@ namespace SetupTv.Sections
       //set motor east limit
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      IDiSEqCMotor motor = RemoteControl.Instance.GetDiSEqCMotor(card.IdCard);
-      if (motor == null)
-      {
-        MessageBox.Show("DiSEqC is not supported for this card");
-        return;
-      }
-      motor.SetEastLimit();
-    }
-
-    private void buttonStore_Click(object sender, EventArgs e)
-    {
-      //store motor position..
-      Sattelite sat = (Sattelite)comboBoxSat.SelectedItem;
-      int index = comboBoxSat.SelectedIndex;
-      TvBusinessLayer layer = new TvBusinessLayer();
-
-      Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + sat.SatteliteName, index.ToString());
-      setting.Value = index.ToString();
-      setting.Persist();
-
-      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      IDiSEqCMotor motor = RemoteControl.Instance.GetDiSEqCMotor(card.IdCard);
-      if (motor == null)
-      {
-        MessageBox.Show("DiSEqC is not supported for this card");
-        return;
-      }
-      motor.StorePosition((byte)(index + 1));
+      RemoteControl.Instance.DiSEqCSetEastLimit(card.IdCard);
     }
 
     private void comboBoxSat_SelectedIndexChanged(object sender, EventArgs e)
@@ -854,15 +826,9 @@ namespace SetupTv.Sections
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      IDiSEqCMotor motor = RemoteControl.Instance.GetDiSEqCMotor(card.IdCard);
-      if (motor == null)
-      {
-        MessageBox.Show("DiSEqC is not supported for this card");
-        return;
-      }
       if (checkBoxEnabled.Checked)
       {
-        motor.ForceLimits = true;
+        RemoteControl.Instance.DiSEqCForceLimit(card.IdCard, true);
         Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "yes");
         setting.Value = "yes";
         setting.Persist();
@@ -871,14 +837,14 @@ namespace SetupTv.Sections
       {
         if (MessageBox.Show("Warning", "Disabling the east/west limits could damage your dish!!! Are you sure?", MessageBoxButtons.YesNo) == DialogResult.Yes)
         {
-          motor.ForceLimits = false;
+          RemoteControl.Instance.DiSEqCForceLimit(card.IdCard, false);
           Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "yes");
           setting.Value = "no";
           setting.Persist();
         }
         else
         {
-          motor.ForceLimits = true;
+          RemoteControl.Instance.DiSEqCForceLimit(card.IdCard, true);
           Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "yes");
           setting.Value = "yes";
           setting.Persist();
@@ -902,7 +868,7 @@ namespace SetupTv.Sections
       {
         comboBox1.Items.Add(transponder);
       }
-      if (comboBox1.Items.Count>0)
+      if (comboBox1.Items.Count > 0)
         comboBox1.SelectedIndex = 0;
     }
 

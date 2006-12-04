@@ -220,10 +220,6 @@ namespace TvLibrary.Implementations.DVB
         if (_twinhan != null)
         {
           _twinhan.SendDiseqCommand(channel);
-          if (_diSEqCMotor != null)
-          {
-            _diSEqCMotor.GetPosition();
-          }
         }
         if (_hauppauge != null)
         {

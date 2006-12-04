@@ -108,7 +108,7 @@ namespace TvControl
     /// Gets the server.
     /// </summary>
     /// <value>The server.</value>
-    int IdServer {get;}
+    int IdServer { get;}
 
     ///<summary>
     ///Gets the total number of tv-cards installed.
@@ -520,7 +520,16 @@ namespace TvControl
     #region streaming
     List<RtspClient> StreamingClients { get;}
 
-    IDiSEqCMotor GetDiSEqCMotor(int cardId);
+    #endregion
+    #region DiSEqC
+    void DiSEqCStopMotor(int cardId);
+    void DiSEqCSetEastLimit(int cardId);
+    void DiSEqCSetWestLimit(int cardId);
+    void DiSEqCForceLimit(int cardId, bool onoff);
+    void DiSEqCDriveMotor(int cardId, DiSEqCDirection direction, byte numberOfSeconds);
+    void DiSEqCStorePosition(int cardId, byte position);
+    void DiSEqCGotoReferencePosition(int cardId);
+    void DiSEqCGotoPosition(int cardId, byte position);
     #endregion
   }
 }

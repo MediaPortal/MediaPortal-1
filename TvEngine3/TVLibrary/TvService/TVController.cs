@@ -1542,7 +1542,7 @@ namespace TvService
           catch (Exception)
           {
             Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
-            return ;
+            return;
           }
         }
         _localCards[cardId].StopGraph();
@@ -2246,18 +2246,104 @@ namespace TvService
         return true;
       }
     }
-
-    public IDiSEqCMotor GetDiSEqCMotor(int cardId)
+    #region DiSEqC
+    public void DiSEqCStopMotor(int cardId)
     {
-      if (false == _allDbscards.ContainsKey(cardId)) return null;
+      if (false == _allDbscards.ContainsKey(cardId)) return;
       if (IsLocal(cardId) == false)
       {
-        return null;
+        return ;
       }
 
-      return _localCards[cardId].DiSEqCMotor;
+      IDiSEqCMotor motor = _localCards[cardId].DiSEqCMotor;
+      if (motor == null) return;
+      motor.StopMotor();
     }
+    public void DiSEqCSetEastLimit(int cardId)
+    {
+      if (false == _allDbscards.ContainsKey(cardId)) return;
+      if (IsLocal(cardId) == false)
+      {
+        return ;
+      }
 
+      IDiSEqCMotor motor = _localCards[cardId].DiSEqCMotor;
+      if (motor == null) return;
+      motor.SetEastLimit();
+    }
+    public void DiSEqCSetWestLimit(int cardId)
+    {
+      if (false == _allDbscards.ContainsKey(cardId)) return;
+      if (IsLocal(cardId) == false)
+      {
+        return ;
+      }
+
+      IDiSEqCMotor motor = _localCards[cardId].DiSEqCMotor;
+      if (motor == null) return;
+      motor.SetWestLimit();
+    }
+    public void DiSEqCForceLimit(int cardId, bool onOff)
+    {
+      if (false == _allDbscards.ContainsKey(cardId)) return ;
+      if (IsLocal(cardId) == false)
+      {
+        return ;
+      }
+
+      IDiSEqCMotor motor = _localCards[cardId].DiSEqCMotor;
+      if (motor == null) return;
+      motor.ForceLimits = onOff;
+    }
+    public void DiSEqCDriveMotor(int cardId, DiSEqCDirection direction, byte numberOfSeconds)
+    {
+      if (false == _allDbscards.ContainsKey(cardId)) return ;
+      if (IsLocal(cardId) == false)
+      {
+        return ;
+      }
+
+      IDiSEqCMotor motor = _localCards[cardId].DiSEqCMotor;
+      if (motor == null) return;
+      motor.DriveMotor(direction, numberOfSeconds);
+    }
+    public void DiSEqCStorePosition(int cardId, byte position)
+    {
+      if (false == _allDbscards.ContainsKey(cardId)) return ;
+      if (IsLocal(cardId) == false)
+      {
+        return ;
+      }
+
+      IDiSEqCMotor motor = _localCards[cardId].DiSEqCMotor;
+      if (motor == null) return;
+      motor.StorePosition(position);
+    }
+    public void DiSEqCGotoReferencePosition(int cardId)
+    {
+      if (false == _allDbscards.ContainsKey(cardId)) return ;
+      if (IsLocal(cardId) == false)
+      {
+        return ;
+      }
+
+      IDiSEqCMotor motor = _localCards[cardId].DiSEqCMotor;
+      if (motor == null) return;
+      motor.GotoReferencePosition();
+    }
+    public void DiSEqCGotoPosition(int cardId, byte position)
+    {
+      if (false == _allDbscards.ContainsKey(cardId)) return ;
+      if (IsLocal(cardId) == false)
+      {
+        return ;
+      }
+
+      IDiSEqCMotor motor = _localCards[cardId].DiSEqCMotor;
+      if (motor == null) return;
+      motor.GotoPosition(position);
+    }
+    #endregion
     /// <summary>
     /// Stops the grabbing epg.
     /// </summary>
