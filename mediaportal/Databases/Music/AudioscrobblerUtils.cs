@@ -1349,7 +1349,7 @@ namespace MediaPortal.Music.Database
               client.DownloadFile(imageUrl, tmpFile);
 
               //temp file downloaded - check if needed
-              if (System.IO.File.Exists(fullPath))
+              if (System.IO.File.Exists(fullLargePath))
               {
                 System.IO.FileInfo oldFile = new System.IO.FileInfo(fullLargePath);
                 System.IO.FileInfo newFile = new System.IO.FileInfo(tmpFile);
