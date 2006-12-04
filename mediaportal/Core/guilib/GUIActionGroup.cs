@@ -255,7 +255,6 @@ namespace MediaPortal.GUI.Library
 				}
 				_imageFocused.Render(timePassed);
 				GUIFontManager.Present();
-				base.Render(timePassed);
 			}
 			else
 			{
@@ -267,7 +266,8 @@ namespace MediaPortal.GUI.Library
 					}
 				}
 				_imageNonFocused.Render(timePassed);
-			}
+      }
+      base.Render(timePassed);
 		}
 
 		#endregion

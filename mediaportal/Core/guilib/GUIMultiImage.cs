@@ -58,7 +58,7 @@ namespace MediaPortal.GUI.Library
     #endregion
 
     #region ctor
-    
+
     public GUIMultiImage(int dwParentID)
       : base(dwParentID)
     {
@@ -160,6 +160,7 @@ namespace MediaPortal.GUI.Library
     {
       if (!IsVisible)
       {
+        base.Render(timePassed);
         return;
       }
 
@@ -227,7 +228,7 @@ namespace MediaPortal.GUI.Library
               m_fadeTimer.Stop();
               // swap images
               m_images[m_currentImage].FreeResources();
-              m_images[nextImage].ColourDiffuse= (m_images[nextImage].ColourDiffuse | (long)0xff000000);
+              m_images[nextImage].ColourDiffuse = (m_images[nextImage].ColourDiffuse | (long)0xff000000);
               m_currentImage = nextImage;
               // start the load timer
               m_imageTimer.StartZero();
@@ -287,7 +288,7 @@ namespace MediaPortal.GUI.Library
       for (int i = 0; i < m_files.Count; i++)
       {
         GUIImage pImage = new GUIImage(ParentID, GetID, _positionX, _positionY, _width, _height, m_files[i], 0);
-        
+
         m_images.Add(pImage);
       }
       // Load in the current image, and reset our timer

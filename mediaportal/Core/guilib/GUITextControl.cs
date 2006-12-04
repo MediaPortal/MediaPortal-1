@@ -123,7 +123,11 @@ namespace MediaPortal.GUI.Library
 			if (null==_font) return;
       if (GUIGraphicsContext.EditMode==false)
       {
-        if (!IsVisible) return;
+        if (!IsVisible)
+        {
+          base.Render(timePassed);
+          return;
+        }
       }
 
 			if (_containsProperty)

@@ -89,7 +89,11 @@ namespace MediaPortal.GUI.Library
 
     public override void Render(float timePassed)
     {
-      if (!IsVisible) return;
+      if (!IsVisible)
+      {
+        base.Render(timePassed);
+        return;
+      }
       if (_tagLine != String.Empty)
       {
         string percent = GUIPropertyManager.Parse(_tagLine);

@@ -503,10 +503,18 @@ namespace MediaPortal.GUI.Library
       _timeElapsed += timePassed;
       _currentFrame = (int)(_timeElapsed / TimeSlice);
 
-      if (null == _font) return;
+      if (null == _font)
+      {
+        base.Render(timePassed);
+        return;
+      }
       if (GUIGraphicsContext.EditMode == false)
       {
-        if (!IsVisible) return;
+        if (!IsVisible)
+        {
+          base.Render(timePassed);
+          return;
+        }
       }
 
       int dwPosY = 0;

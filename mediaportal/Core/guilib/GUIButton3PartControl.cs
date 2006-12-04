@@ -141,7 +141,11 @@ namespace MediaPortal.GUI.Library
     public override void Render(float timePassed)
     {
       // Do not render if not visible.
-      if (!IsVisible) return;
+      if (!IsVisible)
+      {
+        base.Render(timePassed);
+        return;
+      }
       _cachedTextLabel1 = _tagLabel1;
       _cachedTextLabel2 = _tagLabel2;
       if (_containsProperty1 && _property1Changed)

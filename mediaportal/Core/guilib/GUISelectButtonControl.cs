@@ -35,8 +35,8 @@ namespace MediaPortal.GUI.Library
   {
     [XMLSkinElement("textcolor")]
     protected long _textColor = 0xFFFFFFFF;
-		[XMLSkinElement("textcolorNoFocus")]
-		protected long _textColorNoFocus = 0xFFFFFFFF;
+    [XMLSkinElement("textcolorNoFocus")]
+    protected long _textColorNoFocus = 0xFFFFFFFF;
     [XMLSkinElement("disabledcolor")]
     protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("label")]
@@ -72,7 +72,7 @@ namespace MediaPortal.GUI.Library
     protected GUIAnimation _imageRightFocus = null;
     protected GUIAnimation _imageFocused = null;
     protected GUIAnimation _imageNonFocused = null;
-    
+
     [XMLSkinElement("textalign")]
     protected GUIControl.Alignment _textAlignment = GUIControl.Alignment.ALIGN_LEFT;
 
@@ -144,31 +144,31 @@ namespace MediaPortal.GUI.Library
       int x1 = 16;
       int y1 = 16;
       GUIGraphicsContext.ScalePosToScreenResolution(ref x1, ref y1);
-			_imageFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _textureFocusName);
+      _imageFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _textureFocusName);
       _imageFocused.ParentControl = this;
       _imageFocused.DimColor = DimColor;
 
-			_imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _textureNoFocusName);
+      _imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _textureNoFocusName);
       _imageNonFocused.ParentControl = this;
       _imageNonFocused.DimColor = DimColor;
 
-			_imageBackground = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _backgroundTextureName);
+      _imageBackground = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _backgroundTextureName);
       _imageBackground.ParentControl = this;
       _imageBackground.DimColor = DimColor;
 
-			_imageLeft = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _leftTextureName);
+      _imageLeft = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _leftTextureName);
       _imageLeft.DimColor = DimColor;
       _imageLeft.ParentControl = this;
 
-			_imageLeftFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _leftFocusName);
+      _imageLeftFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _leftFocusName);
       _imageLeftFocus.ParentControl = this;
       _imageLeftFocus.DimColor = DimColor;
 
-			_imageRight = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _rightTextureName);
+      _imageRight = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _rightTextureName);
       _imageRight.ParentControl = this;
       _imageRight.DimColor = DimColor;
 
-			_imageRightFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _rightFocusName);
+      _imageRightFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, x1, y1, _rightFocusName);
       _imageRightFocus.ParentControl = this;
       _imageRightFocus.DimColor = DimColor;
 
@@ -218,7 +218,11 @@ namespace MediaPortal.GUI.Library
     {
       if (GUIGraphicsContext.EditMode == false)
       {
-        if (!IsVisible) return;
+        if (!IsVisible)
+        {
+          base.Render(timePassed);
+          return;
+        }
       }
 
 
@@ -234,7 +238,7 @@ namespace MediaPortal.GUI.Library
 
         _imageBackground.Render(timePassed);
 
-        long dwTextColor = Focus ? _textColor: _textColorNoFocus;
+        long dwTextColor = Focus ? _textColor : _textColorNoFocus;
 
         //	User has moved left...
         if (_leftSelected)
@@ -293,10 +297,10 @@ namespace MediaPortal.GUI.Library
         {
           _labelControl.FontName = _font.FontName;
           if (_textAlignment == GUIControl.Alignment.ALIGN_RIGHT)
-          	_labelControl.SetPosition(_positionX + _width - _imageLeft.Width - _textOffsetX, _textOffsetY + _positionY);
+            _labelControl.SetPosition(_positionX + _width - _imageLeft.Width - _textOffsetX, _textOffsetY + _positionY);
           else
-          	_labelControl.SetPosition(_positionX + _imageLeft.Width + _textOffsetX, _textOffsetY + _positionY);
-          	
+            _labelControl.SetPosition(_positionX + _imageLeft.Width + _textOffsetX, _textOffsetY + _positionY);
+
           _labelControl.TextColor = dwTextColor;
           _labelControl.TextAlignment = _textAlignment;
           _labelControl.Label = (string)_subItemList[SelectedItem];
@@ -327,7 +331,11 @@ namespace MediaPortal.GUI.Library
       {
         //	No, render a normal button
 
-        if (!IsVisible) return;
+        if (!IsVisible)
+        {
+          base.Render(timePassed);
+          return;
+        }
 
         if (Focus)
         {/*
@@ -355,14 +363,14 @@ namespace MediaPortal.GUI.Library
         {
           _labelControl.FontName = _font.FontName;
           if (_textAlignment == GUIControl.Alignment.ALIGN_RIGHT)
-          	_labelControl.SetPosition(_positionX + _width - _textOffsetX2, _textOffsetY2 + _positionY);
+            _labelControl.SetPosition(_positionX + _width - _textOffsetX2, _textOffsetY2 + _positionY);
           else
-          	_labelControl.SetPosition(_textOffsetX2 + _positionX, _textOffsetY2 + _positionY);
-          	
+            _labelControl.SetPosition(_textOffsetX2 + _positionX, _textOffsetY2 + _positionY);
+
           if (Disabled || _subItemList.Count == 0)
             _labelControl.TextColor = _disabledColor;
           else
-            _labelControl.TextColor = Focus ? _textColor:_textColorNoFocus;
+            _labelControl.TextColor = Focus ? _textColor : _textColorNoFocus;
           _labelControl.TextAlignment = _textAlignment;
           _labelControl.Label = _label;
           _labelControl.Render(timePassed);

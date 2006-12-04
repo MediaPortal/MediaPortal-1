@@ -1059,9 +1059,15 @@ namespace MediaPortal.GUI.Library
     public override void Render(float timePassed)
     {
       if (!IsVisible)
+      {
+        base.Render(timePassed);
         return;
+      }
       if (!GUIGraphicsContext.ShowBackground && _isFullScreenImage)
+      {
+        base.Render(timePassed);
         return;
+      }
       if (_packedTextureNo >= 0 && _packedTexture != null)
       {
         if (_packedTexture.Disposed)
@@ -1069,6 +1075,7 @@ namespace MediaPortal.GUI.Library
           FreeResourcesAndRegEvent();
           AllocResources();
           _reCalculate = true;
+          base.Render(timePassed);
           return;
         }
       }
@@ -1090,6 +1097,7 @@ namespace MediaPortal.GUI.Library
           {
             // filename for new image is empty
             // no need to load it
+            base.Render(timePassed);
             return;
           }
           IsVisible = true;
@@ -1098,7 +1106,10 @@ namespace MediaPortal.GUI.Library
         }
       }
       if (!_allocated)
+      {
+        base.Render(timePassed);
         return;
+      }
 
       if (_reCalculate)
       {
@@ -1134,12 +1145,14 @@ namespace MediaPortal.GUI.Library
           {
             Cleanup();
             AllocResources();
+            base.Render(timePassed);
             return;
           }
           if (frame.Image == null)
           {
             Cleanup();
             AllocResources();
+            base.Render(timePassed);
             return;
           }
 

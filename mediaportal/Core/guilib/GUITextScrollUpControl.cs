@@ -89,10 +89,18 @@ namespace MediaPortal.GUI.Library
     public override void Render(float timePassed)
     {
       _invalidate = false;
-      if (null == _font) return;
+      if (null == _font)
+      {
+        base.Render(timePassed);
+        return;
+      }
       if (GUIGraphicsContext.EditMode == false)
       {
-        if (!IsVisible) return;
+        if (!IsVisible)
+        {
+          base.Render(timePassed);
+          return;
+        }
       }
 
       int dwPosY = _positionY;
@@ -164,8 +172,16 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        if (_width < 1) return;
-        if (_height < 1) return;
+        if (_width < 1)
+        {
+          base.Render(timePassed);
+          return;
+        }
+        if (_height < 1)
+        {
+          base.Render(timePassed);
+          return;
+        }
 
         Viewport newviewport = new Viewport();
         newviewport.X = _positionX + GUIGraphicsContext.OffsetX;

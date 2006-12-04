@@ -90,12 +90,21 @@ namespace MediaPortal.GUI.Library
     {
       if (GUIGraphicsContext.EditMode==false)
       {
-        if (!IsVisible) return;
-        if (Disabled) return;
+        if (!IsVisible)
+        {
+          base.Render(timePassed);
+          return;
+        }
+        if (Disabled)
+        {
+          base.Render(timePassed);
+          return;
+        }
       }
       if (!GUIGraphicsContext.MouseSupport)
       {
-        IsVisible=false;
+        IsVisible = false;
+        base.Render(timePassed);
         return;
       }
 

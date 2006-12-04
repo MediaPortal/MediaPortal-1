@@ -102,7 +102,11 @@ namespace MediaPortal.GUI.Library
     public override void Render(float timePassed)
     {
       // Do not render if not visible
-      if (!IsVisible) return;
+      if (!IsVisible)
+      {
+        base.Render(timePassed);
+        return;
+      }
       if (_containsProperty && _propertyHasChanged)
       {
         _propertyHasChanged = false;

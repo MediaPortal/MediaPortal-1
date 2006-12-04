@@ -107,7 +107,11 @@ namespace MediaPortal.GUI.Library
 			// Do not render if not visible.
 			if (GUIGraphicsContext.EditMode==false)
 			{
-				if (!IsVisible ) return;
+        if (!IsVisible)
+        {
+          base.Render(timePassed);
+          return;
+        }
 			}
 
 			// The GUIButtonControl has the focus
@@ -147,7 +151,7 @@ namespace MediaPortal.GUI.Library
 																_imageNonFocused.YPosition+ (_imageNonFocused.Height-_spinControlHeight)/2 );
 				_spinControl.Render(timePassed);
       }
-      //base.Render(timePassed);
+      base.Render(timePassed);
 		}
 		public override bool HitTest(int x, int y, out int controlID, out bool focused)
 		{

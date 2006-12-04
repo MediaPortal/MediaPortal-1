@@ -170,7 +170,11 @@ namespace MediaPortal.GUI.Library
 
     public override void Render(float timePassed)
     {
-      if (!IsVisible) return;
+      if (!IsVisible)
+      {
+        base.Render(timePassed);
+        return;
+      }
       ScrollToSelectedItem(timePassed);
       int offsetX = _positionX + _scrollPositionX;
       int offsetY = _positionY + _scrollPositionY;

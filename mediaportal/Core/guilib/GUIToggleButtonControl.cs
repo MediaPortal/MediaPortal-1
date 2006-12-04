@@ -106,7 +106,11 @@ namespace MediaPortal.GUI.Library
     {
       if (GUIGraphicsContext.EditMode == false)
       {
-        if (!IsVisible) return;
+        if (!IsVisible)
+        {
+          base.Render(timePassed);
+          return;
+        }
       }
 
       if (Focus)

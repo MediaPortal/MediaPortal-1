@@ -31,16 +31,16 @@ namespace MediaPortal.GUI.Library
   public class GUITVProgressControl : GUIControl
   {
     GUIAnimation _imageTop = null;
-		GUIAnimation _imageLogo = null;
-		GUIAnimation _imageBottom = null;
-		GUIAnimation _imageTick = null;
-		GUIAnimation _imageFillBackground = null;
-		GUIAnimation _imageFill1 = null;
-		GUIAnimation _imageFill2 = null;
-		GUIAnimation _imageFill3 = null;
-		GUIAnimation _imageLeft = null;
-		GUIAnimation _imageMid = null;
-		GUIAnimation _imageRight = null;
+    GUIAnimation _imageLogo = null;
+    GUIAnimation _imageBottom = null;
+    GUIAnimation _imageTick = null;
+    GUIAnimation _imageFillBackground = null;
+    GUIAnimation _imageFill1 = null;
+    GUIAnimation _imageFill2 = null;
+    GUIAnimation _imageFill3 = null;
+    GUIAnimation _imageLeft = null;
+    GUIAnimation _imageMid = null;
+    GUIAnimation _imageRight = null;
     int _percentage1 = 0;
     int _percentage2 = 0;
     int _percentage3 = 0;
@@ -140,15 +140,15 @@ namespace MediaPortal.GUI.Library
       if (_fillBackGroundTextureName == null) _fillBackGroundTextureName = String.Empty;
       if (_logoTextureName == null) _logoTextureName = String.Empty;
       _imageTop = LoadAnimationControl(_parentControlId, _controlId, 0, 0, 0, 0, _topTextureName);
-			_imageBottom = LoadAnimationControl(_parentControlId, _controlId, 0, 0, 0, 0, _bottomTextureName);
-			_imageLeft = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _leftTextureName);
-			_imageMid = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _midTextureName);
-			_imageRight = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _rightTextureName);
-			_imageTick = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickTextureName);
-			_imageFill1 = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickFill1TextureName);
-			_imageFill2 = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickFill2TextureName);
-			_imageFill3 = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickFill3TextureName);
-			_imageFillBackground = LoadAnimationControl(_parentControlId, _controlId, 0, 0, 0, 0, _fillBackGroundTextureName);
+      _imageBottom = LoadAnimationControl(_parentControlId, _controlId, 0, 0, 0, 0, _bottomTextureName);
+      _imageLeft = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _leftTextureName);
+      _imageMid = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _midTextureName);
+      _imageRight = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _rightTextureName);
+      _imageTick = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickTextureName);
+      _imageFill1 = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickFill1TextureName);
+      _imageFill2 = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickFill2TextureName);
+      _imageFill3 = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickFill3TextureName);
+      _imageFillBackground = LoadAnimationControl(_parentControlId, _controlId, 0, 0, 0, 0, _fillBackGroundTextureName);
       _imageTop.KeepAspectRatio = false;
       _imageBottom.KeepAspectRatio = false;
       _imageMid.KeepAspectRatio = false;
@@ -168,7 +168,7 @@ namespace MediaPortal.GUI.Library
       _imageFill2.ParentControl = this;
       _imageFill3.ParentControl = this;
       _imageFillBackground.ParentControl = this;
-			_imageLogo = LoadAnimationControl(_parentControlId, _controlId, 0, 0, 0, 0, _logoTextureName);
+      _imageLogo = LoadAnimationControl(_parentControlId, _controlId, 0, 0, 0, 0, _logoTextureName);
       _imageLogo.ParentControl = this;
       FontName = _fontName;
     }
@@ -182,32 +182,40 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScaleVertical(ref _topTextureOffsetY);
     }
 
-		public override bool Dimmed
-		{
-			get	{	return base.Dimmed;	}
-			set
-			{
-				base.Dimmed = value;
-				if (_imageTop != null)   _imageTop.Dimmed = value;
-				if (_imageLogo != null) _imageLogo.Dimmed = value;
-				if (_imageBottom != null) _imageBottom.Dimmed = value;
-				if (_imageTick != null) _imageTick.Dimmed = value;
-				if (_imageFillBackground != null) _imageFillBackground.Dimmed = value;
-				if (_imageFill1 != null) _imageFill1.Dimmed = value;
-				if (_imageFill2 != null) _imageFill2.Dimmed = value;
-				if (_imageFill3 != null) _imageFill3.Dimmed = value;
-				if (_imageLeft != null) _imageLeft.Dimmed = value;
-				if (_imageMid != null) _imageMid.Dimmed = value;
-				if (_imageRight != null) _imageRight.Dimmed = value;
-			}
-		}
+    public override bool Dimmed
+    {
+      get { return base.Dimmed; }
+      set
+      {
+        base.Dimmed = value;
+        if (_imageTop != null) _imageTop.Dimmed = value;
+        if (_imageLogo != null) _imageLogo.Dimmed = value;
+        if (_imageBottom != null) _imageBottom.Dimmed = value;
+        if (_imageTick != null) _imageTick.Dimmed = value;
+        if (_imageFillBackground != null) _imageFillBackground.Dimmed = value;
+        if (_imageFill1 != null) _imageFill1.Dimmed = value;
+        if (_imageFill2 != null) _imageFill2.Dimmed = value;
+        if (_imageFill3 != null) _imageFill3.Dimmed = value;
+        if (_imageLeft != null) _imageLeft.Dimmed = value;
+        if (_imageMid != null) _imageMid.Dimmed = value;
+        if (_imageRight != null) _imageRight.Dimmed = value;
+      }
+    }
 
     public override void Render(float timePassed)
     {
       if (GUIGraphicsContext.EditMode == false)
       {
-        if (!IsVisible) return;
-        if (Disabled) return;
+        if (!IsVisible)
+        {
+          base.Render(timePassed);
+          return;
+        }
+        if (Disabled)
+        {
+          base.Render(timePassed);
+          return;
+        }
       }
       if (_propertyLabel.Length > 0)
       {
@@ -296,7 +304,7 @@ namespace MediaPortal.GUI.Library
 
       // render first color
       int xoff = GUIGraphicsContext.ScaleHorizontal(3);
-     
+
       xPos = _positionX + _imageLeft.TextureWidth + _fillBackgroundOffsetX + xoff;
       int yPos = _imageFillBackground.YPosition + (_imageFillBackground.Height / 2) - (_fillBackgroundHeight / 2);
       if (yPos < _positionY) yPos = _positionY;
@@ -740,16 +748,16 @@ namespace MediaPortal.GUI.Library
       set
       {
         base.DimColor = value;
-        if (_imageTop  != null) _imageTop .DimColor = value;
-        if (_imageLogo  != null) _imageLogo .DimColor = value;
-        if (_imageBottom  != null) _imageBottom .DimColor = value;
-        if (_imageTick  != null) _imageTick .DimColor = value;
-        if (_imageFillBackground  != null) _imageFillBackground .DimColor = value;
+        if (_imageTop != null) _imageTop.DimColor = value;
+        if (_imageLogo != null) _imageLogo.DimColor = value;
+        if (_imageBottom != null) _imageBottom.DimColor = value;
+        if (_imageTick != null) _imageTick.DimColor = value;
+        if (_imageFillBackground != null) _imageFillBackground.DimColor = value;
         if (_imageFill1 != null) _imageFill1.DimColor = value;
         if (_imageFill2 != null) _imageFill2.DimColor = value;
         if (_imageFill3 != null) _imageFill3.DimColor = value;
         if (_imageLeft != null) _imageLeft.DimColor = value;
-        if (_imageMid  != null) _imageMid .DimColor = value;
+        if (_imageMid != null) _imageMid.DimColor = value;
         if (_imageRight != null) _imageRight.DimColor = value;
       }
     }

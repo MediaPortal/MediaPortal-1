@@ -136,6 +136,7 @@ namespace MediaPortal.GUI.Library
 			int sortImageIndex = _isAscending ? isFocused && _isSortImageHot ? 3 : 2 : isFocused && _isSortImageHot ? 1 : 0;
 
 			_sortImages[sortImageIndex].Render(timePassed);
+      base.Render(timePassed);
 		}
 
 		public override bool HitTest(int x, int y, out int controlID, out bool focused)

@@ -371,10 +371,16 @@ namespace MediaPortal.GUI.Library
     public override void Render(float timePassed)
     {
       if (_images == null)
+      {
+        base.Render(timePassed);
         return;
+      }
 
       if (_images.Length == 0)
+      {
+        base.Render(timePassed);
         return;
+      }
 
       if (_isFirstRender)
       {

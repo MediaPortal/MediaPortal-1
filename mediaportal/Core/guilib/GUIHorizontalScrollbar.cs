@@ -103,11 +103,20 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void Render(float timePassed)
     {
-      if (!IsVisible) return;
-      if (Disabled) return;
+      if (!IsVisible)
+      {
+        base.Render(timePassed);
+        return;
+      }
+      if (Disabled)
+      {
+        base.Render(timePassed);
+        return;
+      }
       if (!GUIGraphicsContext.MouseSupport)
       {
         IsVisible = false;
+        base.Render(timePassed);
         return;
       }
 

@@ -188,7 +188,11 @@ namespace MediaPortal.GUI.Library
       // Do not render if not visible.
       if (GUIGraphicsContext.EditMode == false)
       {
-        if (!IsVisible) return;
+        if (!IsVisible)
+        {
+          base.Render(timePassed);
+          return;
+        }
       }
 
       // The GUIButtonControl has the focus

@@ -37,8 +37,16 @@ namespace MediaPortal.GUI.Library
 
 		public override void Render(float timePassed)
 		{
-			if (!IsVisible) return;
-			if (_imageVolumeBar.TextureWidth<=0) return;
+      if (!IsVisible)
+      {
+        base.Render(timePassed);
+        return;
+      }
+      if (_imageVolumeBar.TextureWidth <= 0)
+      {
+        base.Render(timePassed);
+        return;
+      }
 			
 			try
 			{

@@ -518,7 +518,7 @@ namespace MediaPortal.GUI.Library
       if (pItem.Selected)
         dwColor = _selectedColor;
 
-			if (!Focus) dwColor &= DimColor;
+      if (!Focus) dwColor &= DimColor;
 
       dwPosX += _textOffsetX;
       bool bSelected = false;
@@ -543,7 +543,7 @@ namespace MediaPortal.GUI.Library
           if (pItem.IsDownloading) dwColor = _downloadColor;
         }
 
-				if (!Focus) dwColor &= DimColor;
+        if (!Focus) dwColor &= DimColor;
 
         int xpos = dwPosX;
         int ypos = dwPosY;
@@ -593,7 +593,7 @@ namespace MediaPortal.GUI.Library
         }
         if (!pItem.Selected && !gotFocus)
           dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-				if (!Focus) dwColor &= DimColor;
+        if (!Focus) dwColor &= DimColor;
 
         RenderText(timePassed, buttonNr, (float)dwPosX, (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, (float)dMaxWidth, dwColor, _textLine, bSelected);
       }
@@ -613,7 +613,7 @@ namespace MediaPortal.GUI.Library
           dwColor = _remoteColor;
           if (pItem.IsDownloading) dwColor = _downloadColor;
         }
-				if (!Focus) dwColor &= DimColor;
+        if (!Focus) dwColor &= DimColor;
 
         if (0 == _textOffsetX2)
           dwPosX = _positionX + _width - GUIGraphicsContext.ScaleHorizontal(16);
@@ -656,7 +656,7 @@ namespace MediaPortal.GUI.Library
           dwColor = _remoteColor;
           if (pItem.IsDownloading) dwColor = _downloadColor;
         }
-				if (!Focus) dwColor &= DimColor;
+        if (!Focus) dwColor &= DimColor;
 
         if (0 == _textOffsetX3)
           dwPosX = _positionX + _textOffsetX;
@@ -705,11 +705,19 @@ namespace MediaPortal.GUI.Library
       _currentFrame = (int)(_timeElapsed / TimeSlice);
 
       // If there is no font do not render.
-      if (null == _font) return;
+      if (null == _font)
+      {
+        base.Render(timePassed);
+        return;
+      }
       // If the control is not visible do not render.
       if (GUIGraphicsContext.EditMode == false)
       {
-        if (!IsVisible) return;
+        if (!IsVisible)
+        {
+          base.Render(timePassed);
+          return;
+        }
       }
 
       int dwPosY = _positionY;
@@ -741,28 +749,28 @@ namespace MediaPortal.GUI.Library
           bool gotFocus = false;
           if (_drawFocus && i == _cursorX && IsFocused && _listType == ListType.CONTROL_LIST)
             gotFocus = true;
-          
+
           int iconX;
           int labelX;
           int pinX;
-          
+
           int ten = 10;
           GUIGraphicsContext.ScaleHorizontal(ref ten);
 
           switch (_textAlignment)
           {
-          	case GUIControl.Alignment.ALIGN_RIGHT:
-          		iconX = dwPosX + _width - _iconOffsetX - _imageWidth;
-          		labelX = dwPosX;
-          		pinX = dwPosX + _width - PinIconWidth;
-          		break;
-          	default:
-          		iconX = dwPosX + _iconOffsetX;
-          		labelX = dwPosX + _imageWidth + ten;
-          		pinX = dwPosX;
-          		break;
+            case GUIControl.Alignment.ALIGN_RIGHT:
+              iconX = dwPosX + _width - _iconOffsetX - _imageWidth;
+              labelX = dwPosX;
+              pinX = dwPosX + _width - PinIconWidth;
+              break;
+            default:
+              iconX = dwPosX + _iconOffsetX;
+              labelX = dwPosX + _imageWidth + ten;
+              pinX = dwPosX;
+              break;
           }
-          
+
           // render the icon
           RenderIcon(timePassed, i, iconX, dwPosY + _iconOffsetY, gotFocus);
 
@@ -831,24 +839,24 @@ namespace MediaPortal.GUI.Library
         return;
 
       GUILabelControl label = _labelControls1[Item];
-      
+
       if (label == null) return;
-      float textWidth = 0 ;
-      float textHeight = 0 ;
+      float textWidth = 0;
+      float textHeight = 0;
       _font.GetTextExtent(label.Label, ref textWidth, ref textHeight);
-      
+
       if (_textAlignment == GUIControl.Alignment.ALIGN_RIGHT && textWidth < fMaxWidth)
-      	label.SetPosition((int)(fPosX + fMaxWidth), (int)fPosY);
+        label.SetPosition((int)(fPosX + fMaxWidth), (int)fPosY);
       else
-      	label.SetPosition((int)fPosX, (int)fPosY);
-      
+        label.SetPosition((int)fPosX, (int)fPosY);
+
       label.TextColor = dwTextColor;
       label.Label = strTextToRender;
       label.Width = (int)fMaxWidth;
       if (textWidth < fMaxWidth)
-      	label.TextAlignment = _textAlignment;
+        label.TextAlignment = _textAlignment;
       else
-      	label.TextAlignment = GUIControl.Alignment.ALIGN_LEFT;
+        label.TextAlignment = GUIControl.Alignment.ALIGN_LEFT;
       label.FontName = _fontName;
       RenderText(timePassed, Item, label, bScroll);
     }
@@ -1352,13 +1360,13 @@ namespace MediaPortal.GUI.Library
           {
             item.Selected = false;
           }
-					foreach (GUIListItem item in _listItems)
-					{
-						if (item.Path.Equals(message.Label, StringComparison.OrdinalIgnoreCase))
+          foreach (GUIListItem item in _listItems)
           {
-							item.Selected = true;
-							break;
-						}
+            if (item.Path.Equals(message.Label, StringComparison.OrdinalIgnoreCase))
+            {
+              item.Selected = true;
+              break;
+            }
           }
         }
       }
@@ -1414,7 +1422,7 @@ namespace MediaPortal.GUI.Library
 
       return false;
     }
-           
+
     /// <summary>
     /// Select the item and set the Page accordengly 
     /// </summary>
@@ -1443,7 +1451,7 @@ namespace MediaPortal.GUI.Library
         _upDownControl.Value = ((_offset + _cursorX) / _itemsPerPage) + 1;
       }
     }
-    
+
 
     /// <summary>
     /// Search for first item starting with searchkey
@@ -1848,7 +1856,7 @@ namespace MediaPortal.GUI.Library
         if ((_cursorX > _scrollStartOffset) || ((_cursorX > 0) && (_offset == 0)))
         {
           _cursorX--;
-          _upDownControl.Value = ((_offset + _cursorX)/ _itemsPerPage) + 1;
+          _upDownControl.Value = ((_offset + _cursorX) / _itemsPerPage) + 1;
           OnSelectionChanged();
         }
         else if (_cursorX <= _scrollStartOffset && _offset > 0)
@@ -2256,7 +2264,7 @@ namespace MediaPortal.GUI.Library
             _cursorX -= _itemsPerPage;
           }
           _upDownControl.Value = iPage;
-					SelectItem(value);
+          SelectItem(value);
           OnSelectionChanged();
         }
         _refresh = true;
@@ -2922,34 +2930,34 @@ namespace MediaPortal.GUI.Library
       return selectedItemIndex;
     }
 
-		public virtual int RemoveItem(int iItem)
-		{
-			int selectedItemIndex = -1;
+    public virtual int RemoveItem(int iItem)
+    {
+      int selectedItemIndex = -1;
 
-			if (iItem < 0 || iItem >= _listItems.Count)
-				return -1;
-						
-			try
-			{
-				//Log.Info("Moving List Item {0} up. Old index:{1}, new index{2}", item1.Path, iItem, iPreviousItem);
-				System.Threading.Monitor.Enter(this);
-				_listItems.RemoveAt(iItem);
-				if (selectedItemIndex >= _listItems.Count) selectedItemIndex = _listItems.Count - 1;
-			}
+      if (iItem < 0 || iItem >= _listItems.Count)
+        return -1;
 
-			catch (Exception ex)
-			{
-				Log.Info("GUIListControl.RemoveItem caused an exception: {0}", ex.Message);
-				selectedItemIndex = -1;
-			}
+      try
+      {
+        //Log.Info("Moving List Item {0} up. Old index:{1}, new index{2}", item1.Path, iItem, iPreviousItem);
+        System.Threading.Monitor.Enter(this);
+        _listItems.RemoveAt(iItem);
+        if (selectedItemIndex >= _listItems.Count) selectedItemIndex = _listItems.Count - 1;
+      }
 
-			finally
-			{
-				System.Threading.Monitor.Exit(this);
-			}
+      catch (Exception ex)
+      {
+        Log.Info("GUIListControl.RemoveItem caused an exception: {0}", ex.Message);
+        selectedItemIndex = -1;
+      }
 
-			return selectedItemIndex;
-		}
+      finally
+      {
+        System.Threading.Monitor.Exit(this);
+      }
+
+      return selectedItemIndex;
+    }
 
 
     public override int DimColor

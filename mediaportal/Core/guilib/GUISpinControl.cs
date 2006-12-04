@@ -142,6 +142,7 @@ namespace MediaPortal.GUI.Library
         if (!IsVisible)
         {
           _typed=String.Empty;
+          base.Render(timePassed);
           return;
         }
       }

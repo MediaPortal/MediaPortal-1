@@ -98,11 +98,11 @@ namespace MediaPortal.GUI.Library
       _imageBackGround.ParentControl = this;
       _imageBackGround.DimColor = DimColor;
 
-			_imageMid = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _sliderTextureName);
+      _imageMid = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _sliderTextureName);
       _imageMid.ParentControl = this;
       _imageMid.DimColor = DimColor;
 
-			_imageMidFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _sliderFocusTextureName);
+      _imageMidFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _sliderFocusTextureName);
       _imageMidFocus.ParentControl = this;
       _imageMidFocus.DimColor = DimColor;
     }
@@ -115,7 +115,11 @@ namespace MediaPortal.GUI.Library
     {
       if (GUIGraphicsContext.EditMode == false)
       {
-        if (!IsVisible) return;
+        if (!IsVisible)
+        {
+          base.Render(timePassed);
+          return;
+        }
       }
       string strValue = "";
       float fRange = 0.0f;
