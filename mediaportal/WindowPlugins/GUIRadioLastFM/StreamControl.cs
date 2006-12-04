@@ -159,8 +159,12 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       if (_currentUser.Length > 0)
       {
-        AudioscrobblerBase.DoRadioHandshake(true);       
-      }      
+        AudioscrobblerBase.DoRadioHandshake(true);
+      }
+      else
+      {
+        OnRadioLoginFailed();
+      }
     }
 
     private void OnRadioLoginSuccess()
