@@ -536,7 +536,7 @@ namespace SetupTv.Sections
       // 
       // buttonGoto
       // 
-      this.buttonGoto.Location = new System.Drawing.Point(288, 24);
+      this.buttonGoto.Location = new System.Drawing.Point(337, 26);
       this.buttonGoto.Name = "buttonGoto";
       this.buttonGoto.Size = new System.Drawing.Size(51, 23);
       this.buttonGoto.TabIndex = 7;
@@ -569,7 +569,7 @@ namespace SetupTv.Sections
       this.comboBoxSat.FormattingEnabled = true;
       this.comboBoxSat.Location = new System.Drawing.Point(91, 26);
       this.comboBoxSat.Name = "comboBoxSat";
-      this.comboBoxSat.Size = new System.Drawing.Size(180, 21);
+      this.comboBoxSat.Size = new System.Drawing.Size(240, 21);
       this.comboBoxSat.TabIndex = 4;
       this.comboBoxSat.SelectedIndexChanged += new System.EventHandler(this.comboBoxSat_SelectedIndexChanged);
       // 
@@ -628,7 +628,7 @@ namespace SetupTv.Sections
       this.comboBox1.FormattingEnabled = true;
       this.comboBox1.Location = new System.Drawing.Point(91, 51);
       this.comboBox1.Name = "comboBox1";
-      this.comboBox1.Size = new System.Drawing.Size(180, 21);
+      this.comboBox1.Size = new System.Drawing.Size(240, 21);
       this.comboBox1.TabIndex = 35;
       this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
       // 
