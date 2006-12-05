@@ -48,7 +48,7 @@
       <posY>30</posY>
       <label>#currentplaytime</label>
       <align>left</align>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
       <visible>no</visible>
@@ -61,7 +61,7 @@
       <posY>30</posY>
       <label>#currentremaining</label>
       <align>left</align>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
       <visible>no</visible>

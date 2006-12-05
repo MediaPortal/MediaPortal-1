@@ -39,7 +39,7 @@
       <label>652</label>
       <font>font16</font>
       <align>right</align>
-      <textcolor>ffffffff</textcolor>
+<!--       <textcolor>ffffffff</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -50,7 +50,7 @@
       <posX>260</posX>
       <posY>410</posY>
       <label>#itemcount</label>
-      <textcolor>ffffffff</textcolor>
+<!--       <textcolor>ffffffff</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -62,7 +62,7 @@
       <posY>70</posY>
       <label>#selecteditem</label>
       <align>right</align>
-      <disabledcolor>ff808080</disabledcolor>
+<!--       <disabledcolor>ff808080</disabledcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -109,8 +109,8 @@
         <onup>2</onup>
         <ondown>5</ondown>
         <label>620</label>
-        <disabledcolor>60ffffff</disabledcolor>
-        <textcolor>White</textcolor>
+<!--         <disabledcolor>60ffffff</disabledcolor>
+        <textcolor>White</textcolor> -->
       </control>
       <control>
         <type>button</type>
@@ -190,18 +190,18 @@
         <textXOff>50</textXOff>
         <itemHeight>35</itemHeight>
         <keepaspectratio>no</keepaspectratio>
-        <shadedColor>20ffffff</shadedColor>
+<!--         <shadedColor>20ffffff</shadedColor> -->
         <textXOff3>100</textXOff3>
         <textureHeight>50</textureHeight>
-        <selectedColor>FFF8BC70</selectedColor>
+<!--         <selectedColor>FFF8BC70</selectedColor> -->
         <itemWidth>35</itemWidth>
         <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
         <IconXOff>12</IconXOff>
         <spaceBetweenItems>5</spaceBetweenItems>
-        <spinColor>ffffffff</spinColor>
+<!--         <spinColor>ffffffff</spinColor> -->
         <spinPosY>418</spinPosY>
-        <textcolor2>ffffffff</textcolor2>
-        <textcolor3>ffffffff</textcolor3>
+<!--         <textcolor2>ffffffff</textcolor2>
+        <textcolor3>ffffffff</textcolor3> -->
         <textYOff2>29</textYOff2>
       </control>
       <control>
@@ -212,13 +212,13 @@
         <onright>2</onright>
         <onup>2</onup>
         <ondown>2</ondown>
-        <textcolor>FFFFFFFF</textcolor>
+<!--         <textcolor>FFFFFFFF</textcolor>
         <shadedColor>20ffffff</shadedColor>
-        <selectedColor>FFF8BC70</selectedColor>
-        <spinColor>FFFFFFFF</spinColor>
+        <selectedColor>FFF8BC70</selectedColor> -->
+<!--         <spinColor>FFFFFFFF</spinColor> -->
         <spinPosX>590</spinPosX>
-        <textcolor2>ffffffff</textcolor2>
-        <textcolor3>ffffffff</textcolor3>
+<!--         <textcolor2>ffffffff</textcolor2>
+        <textcolor3>ffffffff</textcolor3> -->
       </control>
       <control>
         <type>fadelabel</type>
@@ -227,7 +227,7 @@
         <posX>260</posX>
         <posY>440</posY>
         <label>#TV.RecordedTV.Title</label>
-        <disabledcolor>ff808080</disabledcolor>
+<!--         <disabledcolor>ff808080</disabledcolor> -->
       </control>
       <control>
         <type>label</type>
@@ -236,7 +236,7 @@
         <posX>260</posX>
         <posY>460</posY>
         <label>#TV.RecordedTV.Time</label>
-        <textcolor>ffb2d4f5</textcolor>
+<!--         <textcolor>ffb2d4f5</textcolor> -->
       </control>
       <control>
         <type>textboxscrollup</type>
@@ -248,7 +248,7 @@
         <height>65</height>
         <colordiffuse>ffffffff</colordiffuse>
         <label>#TV.RecordedTV.Description</label>
-        <textcolor>FFFFFFFF</textcolor>
+<!--         <textcolor>FFFFFFFF</textcolor> -->
       </control>
       <!--          <control>
             <type>label</type>

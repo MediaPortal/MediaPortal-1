@@ -79,7 +79,7 @@
       <posY>130</posY>
       <width>310</width>
       <textcolor>ffffffff</textcolor>
-      <textColorNoFocus>ffffffff</textColorNoFocus>
+      <textColorNoFocus>fffffff0</textColorNoFocus>
       <dimColor>80B36162</dimColor>
       <buttonTextXOff>40</buttonTextXOff>
       <buttonTextYOff>38</buttonTextYOff>
@@ -112,7 +112,7 @@
       <posY>160</posY>
       <label>#homedate</label>
       <align>left</align>
-      <textcolor>gray</textcolor>
+      <textcolor>9f778899</textcolor>
     </control>
     <control>
       <description>Time</description>
@@ -125,7 +125,7 @@
       <label>#time</label>
       <align>left</align>
       <font>font48</font>
-      <textcolor>80ffffff</textcolor>
+      <textcolor>FF6495ED</textcolor>
     </control>
     <!-- TOPBAR Buttons -->
     <control>

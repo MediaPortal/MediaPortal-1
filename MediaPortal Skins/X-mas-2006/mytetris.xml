@@ -44,7 +44,7 @@
         <posX>60</posX>
         <posY>322</posY>
         <texture>tetris\scoreboard.png</texture>
-        <colordiffuse>60ffffff</colordiffuse>
+<!--         <colordiffuse>60ffffff</colordiffuse> -->
       </control>
       <control>
         <description>Score: label</description>
@@ -53,6 +53,7 @@
         <posX>74</posX>
         <posY>410</posY>
         <label>19005</label>
+        <textcolor>FF000000</textcolor>
       </control>
       <control>
         <description>Score</description>
@@ -63,6 +64,7 @@
         <width>162</width>
         <align>right</align>
         <label>#tetris_score</label>
+        <textcolor>FF000000</textcolor>
       </control>
       <control>
         <description>Level: label</description>
@@ -71,6 +73,7 @@
         <posX>74</posX>
         <posY>444</posY>
         <label>19006</label>
+        <textcolor>FF000000</textcolor>
       </control>
       <control>
         <description>Level</description>
@@ -81,6 +84,7 @@
         <width>162</width>
         <align>right</align>
         <label>#tetris_level</label>
+        <textcolor>FF000000</textcolor>
       </control>
       <control>
         <description>Lines: label</description>
@@ -89,6 +93,7 @@
         <posX>74</posX>
         <posY>478</posY>
         <label>19007</label>
+        <textcolor>FF000000</textcolor>
       </control>
       <control>
         <description>Lines</description>
@@ -99,6 +104,7 @@
         <width>162</width>
         <align>right</align>
         <label>#tetris_lines</label>
+        <textcolor>FF000000</textcolor>
       </control>
       <control>
         <description>Highscore: label</description>
@@ -107,6 +113,7 @@
         <posX>74</posX>
         <posY>512</posY>
         <label>19008</label>
+        <textcolor>FF000000</textcolor>
       </control>
       <control>
         <description>Highscore</description>
@@ -116,6 +123,7 @@
         <posY>512</posY>
         <width>162</width>
         <align>right</align>
+        <textcolor>FF000000</textcolor> 
         <label>#tetris_highscore</label>
       </control>
     </control>
@@ -131,13 +139,13 @@
         <width>395</width>
         <height>450</height>
         <font>font16</font>
-        <textcolor>ffffffff</textcolor>
+        <textcolor>FF000000</textcolor>
         <onback>2</onback>
         <onleft>2</onleft>
         <onright>10</onright>
         <onup>10</onup>
         <ondown>10</ondown>
-        <colordiffuse>60ffffff</colordiffuse>
+<!--         <colordiffuse>60ffffff</colordiffuse> -->
         <texture>tetris\background.png</texture>
         <texturefocus>tetris\background_focus.png</texturefocus>
         <textureLeft>tetris\guide.png</textureLeft>

@@ -72,7 +72,6 @@
       <label>913</label>
       <font>font16</font>
       <align>right</align>
-      <textcolor>black</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -88,7 +87,7 @@
       <posY>130</posY>
       <width>310</width>
       <textcolor>ffffffff</textcolor>
-      <textColorNoFocus>ffffffff</textColorNoFocus>
+      <textColorNoFocus>fffffff0</textColorNoFocus>
       <dimColor>80B36162</dimColor>
       <buttonTextXOff>40</buttonTextXOff>
       <buttonTextYOff>38</buttonTextYOff>

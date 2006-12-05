@@ -34,7 +34,7 @@
       <posY>70</posY>
       <label>646</label>
       <align>right</align>
-      <textcolor>FFFFFFFF</textcolor>
+<!--       <textcolor>FFFFFFFF</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -46,7 +46,7 @@
       <posY>530</posY>
       <label>#itemcount</label>
       <align>left</align>
-      <textcolor>FFFFFFFF</textcolor>
+<!--       <textcolor>FFFFFFFF</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -59,7 +59,7 @@
       <width>400</width>
       <label>#selecteditem</label>
       <align>right</align>
-      <textcolor>ffffffff</textcolor>
+<!--       <textcolor>ffffffff</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -173,7 +173,7 @@
       <posY>440</posY>
       <width>250</width>
       <label>#TV.Scheduled.Title</label>
-      <textcolor>FFFFFFFF</textcolor>
+<!--       <textcolor>FFFFFFFF</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -185,7 +185,7 @@
       <posY>460</posY>
       <label>#TV.Scheduled.Time</label>
       <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
+<!--       <textcolor>FFB2D4F5</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -198,7 +198,7 @@
       <width>430</width>
       <height>65</height>
       <label>#TV.Scheduled.Description</label>
-      <textcolor>FFFFFFFF</textcolor>
+<!--       <textcolor>FFFFFFFF</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -210,7 +210,7 @@
       <posY>460</posY>
       <label>#TV.Scheduled.Genre</label>
       <align>right</align>
-      <textcolor>FFB2D4F5</textcolor>
+<!--       <textcolor>FFB2D4F5</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>

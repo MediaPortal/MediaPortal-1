@@ -14,7 +14,6 @@
       <posX>60</posX>
       <posY>20</posY>
       <font>font48</font>
-      <textcolor>33ffffff</textcolor>
       <label>#header.text</label>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -28,7 +27,6 @@
       <posY>70</posY>
       <font>font16</font>
       <align>right</align>
-      <textcolor>White</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -41,7 +39,6 @@
       <width>400</width>
       <label>#selecteditem</label>
       <font>font14</font>
-      <textcolor>White</textcolor>
       <align>right</align>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -63,7 +60,6 @@
       <posY>530</posY>
       <label>#itemcount</label>
       <align>left</align>
-      <textcolor>black</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -76,7 +72,6 @@
       <label>#date</label>
       <align>right</align>
       <font>font14</font>
-      <textcolor>ffa9d0f7</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -89,7 +84,6 @@
       <label>#time</label>
       <align>right</align>
       <font>font14</font>
-      <textcolor>ffa9d0f7</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>

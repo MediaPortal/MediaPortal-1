@@ -50,7 +50,7 @@
       <ondown>104</ondown>
       <onleft>101</onleft>
       <onright>101</onright>
-      <textcolor>FFFFFFFF</textcolor>
+<!--       <textcolor>FFFFFFFF</textcolor> -->
       <showrange>no</showrange>
       <subitems>
         <subitem>2077</subitem>

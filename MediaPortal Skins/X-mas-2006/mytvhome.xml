@@ -60,9 +60,6 @@
         <description>TV On/Off button</description>
         <type>togglebutton</type>
         <id>8</id>
-        <textcolor>White</textcolor>
-        <colordiffuse>White</colordiffuse>
-        <disabledcolor>#60ffffff</disabledcolor>
         <label>707</label>
         <onup>7</onup>
         <ondown>9</ondown>
@@ -72,9 +69,6 @@
         <description>Timeshifting On/Off button</description>
         <type>togglebutton</type>
         <id>9</id>
-        <textcolor>White</textcolor>
-        <colordiffuse>White</colordiffuse>
-        <disabledcolor>60ffffff</disabledcolor>
         <label>708</label>
         <onup>8</onup>
         <ondown>10</ondown>
@@ -155,7 +149,6 @@
       <posY>415</posY>
       <width>250</width>
       <label>#TV.View.title</label>
-      <textcolor>red</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -167,7 +160,6 @@
       <posY>415</posY>
       <label>602</label>
       <align>right</align>
-      <textcolor>black</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -179,7 +171,6 @@
       <posY>435</posY>
       <label>#TV.View.start-#TV.View.stop</label>
       <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -192,7 +183,6 @@
       <width>90</width>
       <label>#TV.View.channel</label>
       <align>right</align>
-      <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -266,7 +256,6 @@
       <height>30</height>
       <posX>85</posX>
       <label>#TV.Record.channel\r#TV.Record.title\r#TV.Record.start-#TV.Record.stop</label>
-      <textcolor>White</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>

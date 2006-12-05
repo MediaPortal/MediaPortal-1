@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <controls>
     <skin>
         <width>720</width>
@@ -50,14 +50,15 @@
         <posY>200</posY>
         <width>190</width>
         <height>32</height>
-        <textXOff>10</textXOff>
-        <textYOff>5</textYOff>
+        <textXOff>14</textXOff>
+        <textYOff>6</textYOff>
         <textureFocus>menu_list_focus.png</textureFocus>
         <textureNoFocus>menu_list_nofocus.png</textureNoFocus>
         <font>font13</font>
-        <textcolor>FFFFFFF0</textcolor>
+        <textcolor>FFFFFFFF</textcolor>
+        <textcolorNoFocus>79FFFFF0</textcolorNoFocus>
         <colordiffuse>FFFFFFFF</colordiffuse>
-        <disabledcolor>ffB36162</disabledcolor>
+        <disabledcolor>80FFFFF0</disabledcolor>
         <!--     <selectedColor>FFFFFFFF</selectedColor> -->
         <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
         <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
@@ -70,14 +71,15 @@
         <posY>200</posY>
         <width>190</width>
         <height>32</height>
-        <textXOff>10</textXOff>
-        <textYOff>5</textYOff>
+        <textXOff>14</textXOff>
+        <textYOff>6</textYOff>
         <textureFocus>menu_list_focus.png</textureFocus>
         <textureNoFocus>menu_list_nofocus.png</textureNoFocus>
         <font>font13</font>
-        <textcolor>FFFFFFF0</textcolor>
+        <textcolor>FFFFFFFF</textcolor>
+        <textcolorNoFocus>79FFFFF0</textcolorNoFocus>
         <colordiffuse>FFFFFFFF</colordiffuse>
-        <disabledcolor>ffB36162</disabledcolor>
+        <disabledcolor>90FFFFF0</disabledcolor>
         <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
         <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
     </control>
@@ -91,8 +93,8 @@
         <height>32</height>
         <label>457</label>
         <font>font13</font>
-        <textXOff>15</textXOff>
-        <textYOff>5</textYOff>
+        <textXOff>14</textXOff>
+        <textYOff>6</textYOff>
         <textXOff2>10</textXOff2>
         <textYOff2>5</textYOff2>
         <textureFocus>menu_list_focus.png</textureFocus>
@@ -103,9 +105,10 @@
         <textureRight>arrow_round_right_nofocus.png</textureRight>
         <textureRightFocus>arrow_round_right_focus.png</textureRightFocus>
         <font>font13</font>
-        <textcolor>FFFFFFF0</textcolor>
+        <textcolor>FFFFFFFF</textcolor>
+        <textcolorNoFocus>79FFFFF0</textcolorNoFocus>
         <colordiffuse>FFFFFFFF</colordiffuse>
-        <disabledcolor>ffB36162</disabledcolor>
+        <disabledcolor>90FFFFF0</disabledcolor>
         <onleft>50</onleft>
         <onright>50</onright>
         <onup>3</onup>
@@ -121,8 +124,8 @@
         <posY>100</posY>
         <width>425</width>
         <height>38</height>
-        <textXOff>10</textXOff>
-        <textYOff>5</textYOff>
+        <textXOff>14</textXOff>
+        <textYOff>6</textYOff>
         <upBtnWidth>25</upBtnWidth>
         <downBtnWidth>25</downBtnWidth>
         <deleteBtnWidth>28</deleteBtnWidth>
@@ -144,9 +147,10 @@
         <textureDelete>playlist_item_delete_nofocus.png</textureDelete>
         <textureDeleteFocused>playlist_item_delete_focus.png</textureDeleteFocused>
         <font>font13</font>
-        <textcolor>FFFFFFF0</textcolor>
+        <textcolor>FFFFFFFF</textcolor>
+        <textcolorNoFocus>79FFFFF0</textcolorNoFocus>
         <colordiffuse>FFFFFFFF</colordiffuse>
-        <disabledcolor>ffB36162</disabledcolor>
+        <disabledcolor>90FFFFF0</disabledcolor>
         <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
         <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
     </control>
@@ -158,17 +162,18 @@
         <posY>200</posY>
         <width>190</width>
         <height>32</height>
-        <textXOff>10</textXOff>
-        <textYOff>5</textYOff>
+        <textXOff>14</textXOff>
+        <textYOff>6</textYOff>
         <textureFocus>togglebutton-on-focus.png</textureFocus>
         <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
         <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
         <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
         <label>-</label>
         <font>font13</font>
-        <textcolor>FFFFFFF0</textcolor>
+        <textcolor>FFFFFFFF</textcolor>
+        <textcolorNoFocus>79FFFFF0</textcolorNoFocus>
         <colordiffuse>FFFFFFFF</colordiffuse>
-        <disabledcolor>ffB36162</disabledcolor>
+        <disabledcolor>90FFFFF0</disabledcolor>
         <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
         <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
     </control>
@@ -178,8 +183,8 @@
         <id>3</id>
         <width>190</width>
         <height>32</height>
-        <textXOff>10</textXOff>
-        <textYOff>5</textYOff>
+        <textXOff>14</textXOff>
+        <textYOff>6</textYOff>
         <textureFocus>menu_list_focus.png</textureFocus>
         <textureNoFocus>menu_list_nofocus.png</textureNoFocus>
         <textureAscending>arrow_round_up_nofocus.png</textureAscending>
@@ -189,9 +194,10 @@
         <offsetSortButtonX>165</offsetSortButtonX>
         <offsetSortButtonY>8</offsetSortButtonY>
         <font>font13</font>
-        <textcolor>FFFFFFF0</textcolor>
+        <textcolor>FFFFFFFF</textcolor>
+        <textcolorNoFocus>79FFFFF0</textcolorNoFocus>
         <colordiffuse>FFFFFFFF</colordiffuse>
-        <disabledcolor>ffB36162</disabledcolor>
+        <disabledcolor>90FFFFF0</disabledcolor>
         <label>103</label>
         <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
         <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
@@ -345,7 +351,7 @@
         <textureHeight>32</textureHeight>
         <image>folder_focus.png</image>
         <font>font13</font>
-        <selectedColor>ffB36162</selectedColor>
+        <selectedColor>FFFFFFF0</selectedColor>
         <textcolor>FFFFFFF0</textcolor>
         <textcolor2>FFFFFFF0</textcolor2>
         <textcolor3>FFFFFFF0</textcolor3>
@@ -514,6 +520,19 @@
         <colordiffuse>ffffffff</colordiffuse>
     </control>
     <control>
+        <description>default scrolling textarea</description>
+        <type>textboxscrollup</type>
+        <id>506</id>
+        <posX>262</posX>
+        <posY>350</posY>
+        <width>430</width>
+        <height>180</height>
+        <label>-</label>
+        <seperator>----------------------------------------------------------------------------------------------</seperator>
+        <textcolor>ffB36162</textcolor>
+        <colordiffuse>ffffffff</colordiffuse>
+    </control>    
+    <control>
         <description>default progress control</description>
         <type>progress</type>
         <id>20</id>
@@ -563,8 +582,8 @@
         <height>16</height>
         <font>font13</font>
         <reverse>yes</reverse>
-        <textcolor>FFFFFFF0</textcolor>
-        <disabledcolor>ffB36162</disabledcolor>
+        <textcolor>ffB36162</textcolor>
+        <disabledcolor>FFFFFFF0</disabledcolor>
         <spintype>text</spintype>
         <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
         <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>

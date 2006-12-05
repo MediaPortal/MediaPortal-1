@@ -47,7 +47,7 @@
       <label>-</label>
       <font>font16</font>
       <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
+<!--       <textcolor>FFB2D4F5</textcolor> -->
     </control>
     <control>
       <description>Number of Files Label</description>
@@ -57,7 +57,7 @@
       <posY>306</posY>
       <label>#itemcount</label>
       <align>left</align>
-      <textcolor>ffffffff</textcolor>
+<!--       <textcolor>ffffffff</textcolor> -->
     </control>
     <control>
       <description>Selected item Label</description>
@@ -68,7 +68,7 @@
       <width>400</width>
       <label>#selecteditem</label>
       <align>right</align>
-      <textcolor>ffffffff</textcolor>
+<!--       <textcolor>ffffffff</textcolor> -->
     </control>
     <control>
       <type>group</type>
@@ -122,8 +122,8 @@
         <onup>50</onup>
         <ondown>50</ondown>
         <spinPosY>306</spinPosY>
-        <spinColor>FFFFFFFF</spinColor>
-        <textcolor>FFFFFFFF</textcolor>
+<!--         <spinColor>FFFFFFFF</spinColor>
+        <textcolor>FFFFFFFF</textcolor> -->
       </control>
       <control>
         <description>Chosen Story description</description>
@@ -131,11 +131,10 @@
         <id>506</id>
         <posX>262</posX>
         <posY>350</posY>
-        <width>430</width>
+<!--         <width>430</width>
         <height>180</height>
         <label>-</label>
-        <seperator>----------------------------------------------------------------------------------------------</seperator>
-        <textcolor>FFFFFFFF</textcolor>
+        <textcolor>FFFFFFFF</textcolor> -->
       </control>
     </control>
   </controls>

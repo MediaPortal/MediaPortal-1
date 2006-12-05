@@ -17,7 +17,6 @@
       <label>#currentsleeptime</label>
       <align>left</align>
       <font>font72</font>
-      <textcolor>20ffffff</textcolor>
     </control>
     <control>
       <description>SleepTimer On/Off button</description>
@@ -25,9 +24,6 @@
       <id>3</id>
       <posX>60</posX>
       <posY>97</posY>
-      <textcolor>ffffffff</textcolor>
-      <colordiffuse>ffffffff</colordiffuse>
-      <disabledcolor>60ffffff</disabledcolor>
       <label>856</label>
       <onright>4</onright>
       <onup>17</onup>
@@ -52,7 +48,6 @@
       <posY>97</posY>
       <label>865</label>
       <align>left</align>
-      <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
       <description>alarm time minutes</description>
@@ -68,7 +63,6 @@
       <ondown>5</ondown>
       <onleft>3</onleft>
       <onright>5</onright>
-      <textcolor>FFFFFFFF</textcolor>
       <textureUp>arrow_round_up_nofocus.png</textureUp>
       <textureDown>arrow_round_down_nofocus.png</textureDown>
       <textureUpFocus>arrow_round_up_focus.png</textureUpFocus>

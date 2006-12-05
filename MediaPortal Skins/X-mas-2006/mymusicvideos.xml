@@ -15,6 +15,7 @@
       <description>group element</description>
       <layout>StackLayout(2)</layout>
       <posX>60</posX>
+      <posY>97</posY>
       <control>
         <type>button</type>
         <description>Top Videos button</description>

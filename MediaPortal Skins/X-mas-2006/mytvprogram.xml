@@ -49,9 +49,6 @@
         <type>togglebutton</type>
         <id>5</id>
         <label>1040</label>
-        <textcolor>White</textcolor>
-        <colordiffuse>White</colordiffuse>
-        <disabledcolor>#60ffffff</disabledcolor>
         <onup>4</onup>
         <ondown>6</ondown>
         <onright>10</onright>
@@ -101,7 +98,7 @@
       <posY>280</posY>
       <label>1041</label>
       <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
+<!--       <textcolor>FFB2D4F5</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -146,7 +143,7 @@
       <posY>100</posY>
       <width>250</width>
       <label />
-      <textcolor>FFFFFFFF</textcolor>
+<!--       <textcolor>FFFFFFFF</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -158,7 +155,7 @@
       <posY>120</posY>
       <label />
       <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
+<!--       <textcolor>FFB2D4F5</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -171,7 +168,7 @@
       <width>430</width>
       <height>130</height>
       <label>#TV.RecordedTV.Description</label>
-      <textcolor>FFFFFFFF</textcolor>
+<!--       <textcolor>FFFFFFFF</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -183,7 +180,7 @@
       <posY>120</posY>
       <label />
       <align>right</align>
-      <textcolor>FFB2D4F5</textcolor>
+<!--       <textcolor>FFB2D4F5</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -222,7 +219,7 @@
       <width>250</width>
       <label />
       <font>font14</font>
-      <textcolor>FFFFFFFF</textcolor>
+<!--       <textcolor>FFFFFFFF</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -234,7 +231,7 @@
       <posY>460</posY>
       <label />
       <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
+<!--       <textcolor>FFB2D4F5</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -247,7 +244,7 @@
       <width>430</width>
       <height>65</height>
       <label />
-      <textcolor>FFFFFFFF</textcolor>
+<!--       <textcolor>FFFFFFFF</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -259,7 +256,7 @@
       <posY>460</posY>
       <label />
       <align>right</align>
-      <textcolor>FFB2D4F5</textcolor>
+<!--       <textcolor>FFB2D4F5</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>

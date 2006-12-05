@@ -13,6 +13,7 @@
       <description>group element</description>
       <layout>StackLayout</layout>
       <posX>60</posX>
+      <posY>97</posY>
       <control>
         <description>New button</description>
         <type>button</type>

@@ -64,7 +64,6 @@
       <posX>394</posX>
       <posY>150</posY>
       <label>Temp</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>current feels like static label</description>
@@ -73,7 +72,6 @@
       <posX>394</posX>
       <posY>175</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>current UV Index static label</description>
@@ -82,7 +80,6 @@
       <posX>394</posX>
       <posY>200</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>current wind static label</description>
@@ -91,7 +88,6 @@
       <posX>394</posX>
       <posY>225</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>current dew static label</description>
@@ -100,7 +96,6 @@
       <posX>394</posX>
       <posY>250</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>current humidity static label</description>
@@ -109,7 +104,6 @@
       <posX>394</posX>
       <posY>275</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>sun rise label</description>
@@ -118,7 +112,6 @@
       <posX>500</posX>
       <posY>300</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>sun rise static label</description>
@@ -127,7 +120,6 @@
       <posX>394</posX>
       <posY>300</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>sun set label</description>
@@ -136,7 +128,6 @@
       <posX>500</posX>
       <posY>325</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>sun set static label</description>
@@ -145,7 +136,6 @@
       <posX>394</posX>
       <posY>325</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>location label</description>
@@ -155,7 +145,6 @@
       <posY>70</posY>
       <label>-</label>
       <align>right</align>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>update time label</description>
@@ -164,7 +153,6 @@
       <posX>394</posX>
       <posY>115</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>current weather icon</description>
@@ -183,7 +171,6 @@
       <posX>250</posX>
       <posY>275</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>current temp label</description>
@@ -191,8 +178,7 @@
       <id>23</id>
       <posX>500</posX>
       <posY>150</posY>
-      <label>-</label>
-      <textcolor>White</textcolor>
+      <label>-</label>>
     </control>
     <control>
       <description>current feels like label</description>
@@ -201,7 +187,6 @@
       <posX>500</posX>
       <posY>175</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>current UV Index label</description>
@@ -210,7 +195,6 @@
       <posX>500</posX>
       <posY>200</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>current wind label</description>
@@ -219,7 +203,6 @@
       <posX>500</posX>
       <posY>225</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>current dew label</description>
@@ -228,7 +211,6 @@
       <posX>500</posX>
       <posY>250</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>current humidity label</description>
@@ -237,7 +219,6 @@
       <posX>500</posX>
       <posY>275</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>day 0 label</description>
@@ -246,7 +227,6 @@
       <posX>200</posX>
       <posY>330</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>day 0 Hi label</description>
@@ -255,7 +235,6 @@
       <posX>200</posX>
       <posY>355</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>day 0 low label</description>
@@ -264,7 +243,6 @@
       <posX>200</posX>
       <posY>380</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>day 0 general weather label</description>
@@ -273,7 +251,6 @@
       <posX>200</posX>
       <posY>480</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>day 0 icon</description>
@@ -292,7 +269,6 @@
       <posX>325</posX>
       <posY>330</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>day 1 Hi label</description>
@@ -301,7 +277,6 @@
       <posX>325</posX>
       <posY>355</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>day 1 low label</description>
@@ -310,7 +285,6 @@
       <posX>325</posX>
       <posY>380</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>day 1 general weather label</description>
@@ -319,7 +293,6 @@
       <posX>325</posX>
       <posY>480</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>day 1 icon</description>
@@ -338,7 +311,6 @@
       <posX>450</posX>
       <posY>330</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>day 2 Hi label</description>
@@ -346,8 +318,7 @@
       <id>52</id>
       <posX>450</posX>
       <posY>355</posY>
-      <label>-</label>
-      <textcolor>White</textcolor>
+      <label>-</label>>
     </control>
     <control>
       <description>day 2 low label</description>
@@ -356,7 +327,6 @@
       <posX>450</posX>
       <posY>380</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>day 2 general weather label</description>
@@ -365,7 +335,6 @@
       <posX>450</posX>
       <posY>480</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>day 2 icon</description>
@@ -384,7 +353,6 @@
       <posX>575</posX>
       <posY>330</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>day 3 Hi label</description>
@@ -393,7 +361,6 @@
       <posX>575</posX>
       <posY>355</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>day 3 low label</description>
@@ -402,7 +369,6 @@
       <posX>575</posX>
       <posY>380</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>day 3 general weather label</description>
@@ -411,7 +377,6 @@
       <posX>575</posX>
       <posY>480</posY>
       <label>-</label>
-      <textcolor>White</textcolor>
     </control>
     <control>
       <description>day 3 icon</description>

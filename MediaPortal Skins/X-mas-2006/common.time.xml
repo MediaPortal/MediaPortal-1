@@ -9,7 +9,7 @@
       <posY>50</posY>
       <label>#date</label>
       <align>right</align>
-      <textcolor>red</textcolor>
+      <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -21,7 +21,7 @@
       <posY>70</posY>
       <label>#time</label>
       <align>right</align>
-      <textcolor>black</textcolor>
+      <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
