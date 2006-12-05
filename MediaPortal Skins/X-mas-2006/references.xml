@@ -41,7 +41,7 @@
         <font>font13</font>
         <textcolor>ffB36162</textcolor>
         <disabledcolor>FFFFFFF0</disabledcolor>
-    </control>    
+    </control>
     <control>
         <description>default button</description>
         <type>button</type>
@@ -56,7 +56,7 @@
         <textureNoFocus>menu_list_nofocus.png</textureNoFocus>
         <font>font13</font>
         <textcolor>FFFFFFFF</textcolor>
-        <textcolorNoFocus>79FFFFF0</textcolorNoFocus>
+        <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
         <colordiffuse>FFFFFFFF</colordiffuse>
         <disabledcolor>80FFFFF0</disabledcolor>
         <!--     <selectedColor>FFFFFFFF</selectedColor> -->
@@ -77,7 +77,7 @@
         <textureNoFocus>menu_list_nofocus.png</textureNoFocus>
         <font>font13</font>
         <textcolor>FFFFFFFF</textcolor>
-        <textcolorNoFocus>79FFFFF0</textcolorNoFocus>
+        <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
         <colordiffuse>FFFFFFFF</colordiffuse>
         <disabledcolor>90FFFFF0</disabledcolor>
         <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
@@ -106,7 +106,7 @@
         <textureRightFocus>arrow_round_right_focus.png</textureRightFocus>
         <font>font13</font>
         <textcolor>FFFFFFFF</textcolor>
-        <textcolorNoFocus>79FFFFF0</textcolorNoFocus>
+        <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
         <colordiffuse>FFFFFFFF</colordiffuse>
         <disabledcolor>90FFFFF0</disabledcolor>
         <onleft>50</onleft>
@@ -148,7 +148,7 @@
         <textureDeleteFocused>playlist_item_delete_focus.png</textureDeleteFocused>
         <font>font13</font>
         <textcolor>FFFFFFFF</textcolor>
-        <textcolorNoFocus>79FFFFF0</textcolorNoFocus>
+        <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
         <colordiffuse>FFFFFFFF</colordiffuse>
         <disabledcolor>90FFFFF0</disabledcolor>
         <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
@@ -171,7 +171,7 @@
         <label>-</label>
         <font>font13</font>
         <textcolor>FFFFFFFF</textcolor>
-        <textcolorNoFocus>79FFFFF0</textcolorNoFocus>
+        <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
         <colordiffuse>FFFFFFFF</colordiffuse>
         <disabledcolor>90FFFFF0</disabledcolor>
         <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
@@ -195,7 +195,7 @@
         <offsetSortButtonY>8</offsetSortButtonY>
         <font>font13</font>
         <textcolor>FFFFFFFF</textcolor>
-        <textcolorNoFocus>79FFFFF0</textcolorNoFocus>
+        <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
         <colordiffuse>FFFFFFFF</colordiffuse>
         <disabledcolor>90FFFFF0</disabledcolor>
         <label>103</label>
@@ -223,15 +223,15 @@
         <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
         <textureHeight>32</textureHeight>
         <image>folder_focus.png</image>
-        <font>font13</font>        
+        <font>font13</font>
         <selectedColor>FFFFFFF0</selectedColor>
         <playedColor>FFFFDAB9</playedColor>
-        <textcolor>FFFFFFF0</textcolor>
-        <textcolor2>FFFFFFF0</textcolor2>
-        <textcolor3>FFFFFFF0</textcolor3>
+        <textcolor>FFFFFFFF</textcolor>
+        <textcolor2>FFFFFFFF</textcolor2>
+        <textcolor3>FFFFFFFF</textcolor3>
         <shadedColor>90ffffff</shadedColor>
         <dimColor>90fffff0</dimColor>
-        <unfocusedAlpha>220</unfocusedAlpha>        
+        <unfocusedAlpha>220</unfocusedAlpha>
         <colordiffuse>ffffffff</colordiffuse>
         <remoteColor>ffFFA075</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
@@ -266,12 +266,12 @@
         <image>folder_focus.png</image>
         <font>font13</font>
         <selectedColor>ffB36162</selectedColor>
-        <textcolor>FFFFFFF0</textcolor>
-        <textcolor2>FFFFFFF0</textcolor2>
-        <textcolor3>FFFFFFF0</textcolor3>
+        <textcolor>FFFFFFFF</textcolor>
+        <textcolor2>FFFFFFFF</textcolor2>
+        <textcolor3>FFFFFFFF</textcolor3>
         <shadedColor>90ffffff</shadedColor>
         <dimColor>90fffff0</dimColor>
-        <unfocusedAlpha>220</unfocusedAlpha>                        
+        <unfocusedAlpha>220</unfocusedAlpha>
         <colordiffuse>ffffffff</colordiffuse>
         <remoteColor>ffFFA075</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
@@ -312,12 +312,12 @@
         <image>folder_focus.png</image>
         <font>font13</font>
         <selectedColor>ffB36162</selectedColor>
-        <textcolor>FFFFFFF0</textcolor>
-        <textcolor2>FFFFFFF0</textcolor2>
-        <textcolor3>FFFFFFF0</textcolor3>
+        <textcolor>FFFFFFFF</textcolor>
+        <textcolor2>FFFFFFFF</textcolor2>
+        <textcolor3>FFFFFFFF</textcolor3>
         <shadedColor>90ffffff</shadedColor>
         <dimColor>90fffff0</dimColor>
-        <unfocusedAlpha>220</unfocusedAlpha>        
+        <unfocusedAlpha>220</unfocusedAlpha>
         <colordiffuse>ffffffff</colordiffuse>
         <remoteColor>ffFFA075</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
@@ -352,12 +352,12 @@
         <image>folder_focus.png</image>
         <font>font13</font>
         <selectedColor>FFFFFFF0</selectedColor>
-        <textcolor>FFFFFFF0</textcolor>
-        <textcolor2>FFFFFFF0</textcolor2>
-        <textcolor3>FFFFFFF0</textcolor3>
+        <textcolor>FFFFFFFF</textcolor>
+        <textcolor2>FFFFFFFF</textcolor2>
+        <textcolor3>FFFFFFFF</textcolor3>
         <shadedColor>90ffffff</shadedColor>
         <dimColor>90fffff0</dimColor>
-        <unfocusedAlpha>220</unfocusedAlpha>        
+        <unfocusedAlpha>220</unfocusedAlpha>
         <colordiffuse>ffffffff</colordiffuse>
         <remoteColor>ffFFA075</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
@@ -421,7 +421,7 @@
         <textcolor>ffB36162</textcolor>
         <shadedColor>90ffffff</shadedColor>
         <dimColor>90fffff0</dimColor>
-        <unfocusedAlpha>220</unfocusedAlpha>        
+        <unfocusedAlpha>220</unfocusedAlpha>
         <colordiffuse>ffffffff</colordiffuse>
         <remoteColor>ffFFA075</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
@@ -470,7 +470,7 @@
         <textcolor>ffB36162</textcolor>
         <shadedColor>90ffffff</shadedColor>
         <dimColor>90fffff0</dimColor>
-        <unfocusedAlpha>220</unfocusedAlpha>        
+        <unfocusedAlpha>220</unfocusedAlpha>
         <colordiffuse>ffffffff</colordiffuse>
         <remoteColor>ffFFA075</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
@@ -531,7 +531,7 @@
         <seperator>----------------------------------------------------------------------------------------------</seperator>
         <textcolor>ffB36162</textcolor>
         <colordiffuse>ffffffff</colordiffuse>
-    </control>    
+    </control>
     <control>
         <description>default progress control</description>
         <type>progress</type>

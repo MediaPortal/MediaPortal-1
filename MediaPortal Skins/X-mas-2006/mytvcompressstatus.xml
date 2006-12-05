@@ -16,7 +16,7 @@
       <posY>30</posY>
       <label>#date</label>
       <align>right</align>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -28,7 +28,7 @@
       <posY>50</posY>
       <label>#time</label>
       <align>right</align>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -40,7 +40,7 @@
       <posY>410</posY>
       <label>#itemcount</label>
       <align>left</align>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -53,7 +53,7 @@
       <width>400</width>
       <label>#selecteditem</label>
       <align>right</align>
-      <textcolor>ffffffff</textcolor>
+     <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -138,8 +138,8 @@
         <onright>2</onright>
         <onup>2</onup>
         <ondown>2</ondown>
-        <spinColor>FFFFFFFF</spinColor>
-        <textcolor>FFFFFFFF</textcolor>
+        <spinColor>ffB36162</spinColor>
+        <textcolor>ffB36162</textcolor>
       </control>
       <control>
         <description>Current program title</description>
@@ -149,7 +149,7 @@
         <posY>440</posY>
         <width>250</width>
         <label>#TV.RecordedTV.Title</label>
-        <textcolor>FFFFFFFF</textcolor>
+        <textcolor>ffB36162</textcolor>
       </control>
       <control>
         <description>Current program time</description>
@@ -159,7 +159,7 @@
         <posY>460</posY>
         <label>#TV.RecordedTV.Time</label>
         <align>left</align>
-        <textcolor>FFB2D4F5</textcolor>
+        <textcolor>ffB36162</textcolor>
       </control>
       <control>
         <description>Description1</description>
@@ -170,7 +170,7 @@
         <width>430</width>
         <height>65</height>
         <label>#TV.RecordedTV.Description</label>
-        <textcolor>FFFFFFFF</textcolor>
+       <textcolor>ffB36162</textcolor>
       </control>
       <control>
         <description>genre</description>
@@ -180,7 +180,7 @@
         <posY>460</posY>
         <label>#TV.RecordedTV.Genre</label>
         <align>right</align>
-        <textcolor>FFB2D4F5</textcolor>
+        <textcolor>ffB36162</textcolor>
       </control>
     </control>
     <control>

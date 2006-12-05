@@ -16,7 +16,7 @@
       <posY>30</posY>
       <label>#date</label>
       <align>right</align>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -28,7 +28,7 @@
       <posY>50</posY>
       <label>#time</label>
       <align>right</align>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -39,7 +39,7 @@
       <posX>288</posX>
       <posY>97</posY>
       <label>146</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -54,7 +54,7 @@
       <onleft>3</onleft>
       <onright>3</onright>
       <align>right</align>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>ffB36162</textcolor>
       <showrange>no</showrange>
       <subitems>
         <subitem>898</subitem>
@@ -75,7 +75,7 @@
       <posX>288</posX>
       <posY>135</posY>
       <label>988</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -90,7 +90,7 @@
       <onleft>5</onleft>
       <onright>5</onright>
       <align>right</align>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>ffB36162</textcolor>
       <showrange>no</showrange>
       <subitems>
         <subitem>893</subitem>
@@ -113,7 +113,7 @@
       <posX>288</posX>
       <posY>169</posY>
       <label>289</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -128,7 +128,7 @@
       <onleft>7</onleft>
       <onright>7</onright>
       <align>right</align>
-      <textcolor>FFFFFFFF</textcolor>
+     <textcolor>ffB36162</textcolor>
       <showrange>no</showrange>
       <subitems>
         <subitem>1024x768</subitem>
@@ -157,7 +157,7 @@
       <posX>288</posX>
       <posY>203</posY>
       <label>989</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -172,7 +172,7 @@
       <onleft>9</onleft>
       <onright>9</onright>
       <align>right</align>
-      <textcolor>FFFFFFFF</textcolor>
+     <textcolor>ffB36162</textcolor>
       <showrange>no</showrange>
       <subitems>
         <subitem>15 FPS</subitem>
@@ -193,7 +193,7 @@
       <posX>288</posX>
       <posY>237</posY>
       <label>990</label>
-      <textcolor>FFFFFFFF</textcolor>
+     <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -208,7 +208,7 @@
       <onleft>11</onleft>
       <onright>11</onright>
       <align>right</align>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>ffB36162</textcolor>
       <showrange>no</showrange>
       <subitems>
         <subitem>100 Kbps</subitem>
@@ -230,7 +230,7 @@
       <posX>288</posX>
       <posY>271</posY>
       <label>991</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -245,7 +245,7 @@
       <onleft>13</onleft>
       <onright>13</onright>
       <align>right</align>
-      <textcolor>FFFFFFFF</textcolor>
+     <textcolor>ffB36162</textcolor>
       <showrange>no</showrange>
       <subitems>
         <subitem>747</subitem>
@@ -265,7 +265,7 @@
       <posX>288</posX>
       <posY>305</posY>
       <label>992</label>
-      <textcolor>FFFFFFFF</textcolor>
+     <textcolor>ffB36162</textcolor>
       <onleft>15</onleft>
       <onright>15</onright>
       <onup>13</onup>

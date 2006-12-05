@@ -63,9 +63,9 @@
             <type>image</type>
             <description>album art image</description>
             <id>112</id>
-            <posX>415</posX>
+            <posX>405</posX>
             <posY>108</posY>
-            <width>250</width>
+            <width>270</width>
             <height>243</height>
             <texture>-</texture>
             <keepaspectratio>no</keepaspectratio>

@@ -16,7 +16,7 @@
       <posY>100</posY>
       <label>999</label>
       <align>left</align>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -28,7 +28,7 @@
       <posY>116</posY>
       <label>1000</label>
       <align>left</align>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -40,7 +40,7 @@
       <posY>132</posY>
       <label>1001</label>
       <align>left</align>
-      <textcolor>ffa9d0f7</textcolor>
+     <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -52,7 +52,7 @@
       <posY>148</posY>
       <label>1002</label>
       <align>left</align>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -64,7 +64,7 @@
       <posY>164</posY>
       <label>1003</label>
       <align>left</align>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -76,7 +76,7 @@
       <posY>30</posY>
       <label>#date</label>
       <align>right</align>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -88,7 +88,7 @@
       <posY>50</posY>
       <label>#time</label>
       <align>right</align>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>

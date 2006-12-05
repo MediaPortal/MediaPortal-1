@@ -196,7 +196,7 @@
       <height>90</height>
       <seperator>----------------------------------------------------------------------------------------------</seperator>
       <label>#TV.View.description</label>
-      <textcolor>White</textcolor>
+      <textcolor>ffB36162</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
