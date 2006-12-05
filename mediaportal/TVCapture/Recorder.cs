@@ -67,6 +67,7 @@ namespace MediaPortal.TV.Recording
 
     #region variables
     // recorder state
+    static bool noPrePostWithinBlock;
     static State _state = State.None;
     static DateTime _progressBarTimer = DateTime.Now;
     // vmr9 osd class 
@@ -148,8 +149,11 @@ namespace MediaPortal.TV.Recording
       RecorderProperties.Init();
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
+        noPrePostWithinBlock = xmlreader.GetValueAsBool("mytv", "noprepostwithinblock", false);
         if (_commandProcessor != null) _commandProcessor.TVChannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
       }
+
+
 
       //import any recordings which are on disk, but not in the tv database
       RecordingImporterWorker.ImportDvrMsFiles();
@@ -386,6 +390,9 @@ namespace MediaPortal.TV.Recording
     {
       List<TVRecording> recs = new List<TVRecording>();
       TVDatabase.GetRecordings(ref recs);
+      
+      Recorder.AddNoPrePost(ref rec);
+
       recs.Sort(new TVRecording.PriorityComparer(true));
       int prio = Int32.MaxValue;
       foreach (TVRecording recording in recs)
@@ -408,6 +415,7 @@ namespace MediaPortal.TV.Recording
     /// <param name="rec">recording to stop</param>
     static public void StopRecording(TVRecording rec)
     {
+      RemoveNoPrePost(ref rec);
       if (!Running) return;
       //add a new RecorderCommand which holds 'rec'
       //and tell the process thread to handle it
@@ -1004,6 +1012,60 @@ namespace MediaPortal.TV.Recording
         reEntrantStartViewing = false;
       }
       return true;
+    }
+
+    static public void AddNoPrePost(ref TVRecording rec)
+    {
+      if (!noPrePostWithinBlock)
+        return;
+      List<TVRecording> recs = new List<TVRecording>();
+      TVDatabase.GetRecordings(ref recs);
+      foreach (TVRecording recording in recs)
+      {
+        if (rec.Channel == recording.Channel && rec.EndTime == recording.StartTime)
+        {
+          Log.Debug("blockrecording add {0} before {1}", rec.Title, recording.Title);
+          Log.Debug("blockrecording update {0}", recording.Title);
+          rec.PaddingEnd = -2;
+          recording.PaddingFront = -2;
+          TVDatabase.UpdateRecording(recording, TVDatabase.RecordingChange.Modified);
+        }
+        if (rec.Channel == recording.Channel && rec.StartTime == recording.EndTime)
+        {
+          Log.Debug("blockrecording add {0} after {1}", rec.Title, recording.Title);
+          Log.Debug("blockrecording update {0}", recording.Title);
+          rec.PaddingFront = -2;
+          recording.PaddingEnd = -2;
+          TVDatabase.UpdateRecording(recording, TVDatabase.RecordingChange.Modified);
+        }
+      }
+    }
+
+    static public void RemoveNoPrePost(ref TVRecording rec)
+    {
+      if (!noPrePostWithinBlock)
+        return;
+      List<TVRecording> recs = new List<TVRecording>();
+      TVDatabase.GetRecordings(ref recs);
+      foreach (TVRecording recording in recs)
+      {
+        if (rec.Channel == recording.Channel && rec.EndTime == recording.StartTime)
+        {
+          Log.Debug("blockrecording remove {0} before {1}", rec.Title, recording.Title);
+          Log.Debug("blockrecording update {0}", recording.Title);
+          rec.PaddingEnd = -1;
+          recording.PaddingFront = -1;
+          TVDatabase.UpdateRecording(recording, TVDatabase.RecordingChange.Modified);
+        }
+        if (rec.Channel == recording.Channel && rec.StartTime == recording.EndTime)
+        {
+          Log.Debug("blockrecording remove {0} after {1}", rec.Title, recording.Title);
+          Log.Debug("blockrecording update {0}", recording.Title);
+          rec.PaddingFront = -1;
+          recording.PaddingEnd = -1;
+          TVDatabase.UpdateRecording(recording, TVDatabase.RecordingChange.Modified);
+        }
+      }
     }
 
 
