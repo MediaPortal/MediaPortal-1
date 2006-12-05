@@ -427,10 +427,47 @@ GO
 --- version 12 ----
 GO
 
+GO
+--- version 15 ----
+GO
 ---- update version -----
 GO
 
+
+CREATE TABLE Satellite(
+	idSatellite int IDENTITY(1,1) NOT NULL,
+	satelliteName varchar(200) NOT NULL,
+	transponderFileName varchar(200) NOT NULL,
+ CONSTRAINT PK_Satellite PRIMARY KEY CLUSTERED 
+(
+	idSatellite ASC
+)
+)
+GO
+CREATE TABLE DisEqcMotor(
+	idDiSEqCMotor int IDENTITY(1,1) NOT NULL,
+	idCard int NOT NULL,
+	idSatellite int NOT NULL,
+	position int NOT NULL,
+ CONSTRAINT PK_DisEqcMotor PRIMARY KEY CLUSTERED 
+(
+	idDiSEqCMotor ASC
+) 
+) 
+GO
+ALTER TABLE DisEqcMotor  WITH CHECK ADD  CONSTRAINT FK_DisEqcMotor_Satellite FOREIGN KEY(idSatellite)
+REFERENCES Satellite (idSatellite)
+GO
+ALTER TABLE DisEqcMotor CHECK CONSTRAINT FK_DisEqcMotor_Satellite
+GO
+ALTER TABLE DisEqcMotor  WITH CHECK ADD  CONSTRAINT FK_DisEqcMotor_Card FOREIGN KEY(idCard)
+REFERENCES Card (idCard)
+GO
+ALTER TABLE DisEqcMotor CHECK CONSTRAINT FK_DisEqcMotor_Card
+GO
+--- version 15 ----
+GO
 delete from version
 GO
-insert into version(versionNumber) values(14)
+insert into version(versionNumber) values(15)
 GO

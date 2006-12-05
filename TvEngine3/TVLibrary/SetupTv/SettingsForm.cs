@@ -137,6 +137,7 @@ namespace SetupTv
               case CardType.DvbT:
                 cardName = String.Format("{0} DVB-T {1}", cardNo, cardName);
                 AddChildSection(cardPage, new CardDvbT(cardName, dbsCard.IdCard));
+                //AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard));
                 break;
               case CardType.DvbC:
                 cardName = String.Format("{0} DVB-C {1}", cardNo, cardName);
