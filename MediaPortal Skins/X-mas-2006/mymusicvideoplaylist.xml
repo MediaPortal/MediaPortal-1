@@ -29,7 +29,7 @@
       <label>136</label>
       <font>font16</font>
       <align>right</align>
-      <textcolor>ffffffff</textcolor>
+<!--       <textcolor>ffffffff</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -41,7 +41,7 @@
       <posY>530</posY>
       <label>#itemcount</label>
       <align>left</align>
-      <textcolor>ffffffff</textcolor>
+<!--       <textcolor>ffffffff</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -54,7 +54,7 @@
       <width>400</width>
       <label>#selecteditem</label>
       <align>right</align>
-      <textcolor>ffffffff</textcolor>
+<!--       <textcolor>ffffffff</textcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -175,10 +175,10 @@
           <subtype>album</subtype>
           <id>52</id>
           <font2>font13</font2>
-          <selectedColor>FFFF6600</selectedColor>
+<!--           <selectedColor>FFFF6600</selectedColor>
           <textcolor>FFB2D4F5</textcolor>
           <selectedColor2>FFFF6600</selectedColor2>
-          <textcolor2>FFB2D4F5</textcolor2>
+          <textcolor2>FFB2D4F5</textcolor2> -->
           <textXOff2>420</textXOff2>
           <textYOff2>60</textYOff2>
           <itemWidth>81</itemWidth>
@@ -198,7 +198,7 @@
           <onright>53</onright>
           <onup>2</onup>
           <ondown>2</ondown>
-          <textcolor>FFFFFFFF</textcolor>
+<!--           <textcolor>FFFFFFFF</textcolor> -->
         </control>
       </control>
     </control>

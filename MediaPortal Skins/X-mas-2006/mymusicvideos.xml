@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>4734</id>
-  <defaultcontrol>1000</defaultcontrol>
+  <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <define>#header.label:30000</define>
   <define>#header.image:logo_music videos.png</define>
@@ -162,6 +162,7 @@
       <id>36</id>
       <posX>65</posX>
       <posY>369</posY>
+      <texture></texture>
     </control>
   </controls>
 </window>

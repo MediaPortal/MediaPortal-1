@@ -5,8 +5,11 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
+			<posX>0</posX>
+			<posY>0</posY>
       <width>720</width>
       <height>576</height>
+			<texture>background.GIF</texture>
     </control>
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>
