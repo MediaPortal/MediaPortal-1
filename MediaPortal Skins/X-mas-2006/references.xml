@@ -28,7 +28,7 @@
         <label>6</label>
         <font>font13</font>
         <textcolor>ffB36162</textcolor>
-        <disabledcolor>FFFFFFFF</disabledcolor>
+        <disabledcolor>FFFFFFF0</disabledcolor>
     </control>
     <control>
         <description>default fadelabel</description>
@@ -40,8 +40,8 @@
         <align>left</align>
         <font>font13</font>
         <textcolor>ffB36162</textcolor>
-        <disabledcolor>FFFFFFFF</disabledcolor>
-    </control>
+        <disabledcolor>FFFFFFF0</disabledcolor>
+    </control>    
     <control>
         <description>default button</description>
         <type>button</type>
@@ -55,7 +55,7 @@
         <textureFocus>menu_list_focus.png</textureFocus>
         <textureNoFocus>menu_list_nofocus.png</textureNoFocus>
         <font>font13</font>
-        <textcolor>FFFFFFFF</textcolor>
+        <textcolor>FFFFFFF0</textcolor>
         <colordiffuse>FFFFFFFF</colordiffuse>
         <disabledcolor>ffB36162</disabledcolor>
         <!--     <selectedColor>FFFFFFFF</selectedColor> -->
@@ -75,7 +75,7 @@
         <textureFocus>menu_list_focus.png</textureFocus>
         <textureNoFocus>menu_list_nofocus.png</textureNoFocus>
         <font>font13</font>
-        <textcolor>FFFFFFFF</textcolor>
+        <textcolor>FFFFFFF0</textcolor>
         <colordiffuse>FFFFFFFF</colordiffuse>
         <disabledcolor>ffB36162</disabledcolor>
         <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
@@ -103,7 +103,7 @@
         <textureRight>arrow_round_right_nofocus.png</textureRight>
         <textureRightFocus>arrow_round_right_focus.png</textureRightFocus>
         <font>font13</font>
-        <textcolor>FFFFFFFF</textcolor>
+        <textcolor>FFFFFFF0</textcolor>
         <colordiffuse>FFFFFFFF</colordiffuse>
         <disabledcolor>ffB36162</disabledcolor>
         <onleft>50</onleft>
@@ -144,7 +144,7 @@
         <textureDelete>playlist_item_delete_nofocus.png</textureDelete>
         <textureDeleteFocused>playlist_item_delete_focus.png</textureDeleteFocused>
         <font>font13</font>
-        <textcolor>FFFFFFFF</textcolor>
+        <textcolor>FFFFFFF0</textcolor>
         <colordiffuse>FFFFFFFF</colordiffuse>
         <disabledcolor>ffB36162</disabledcolor>
         <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
@@ -166,7 +166,7 @@
         <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
         <label>-</label>
         <font>font13</font>
-        <textcolor>FFFFFFFF</textcolor>
+        <textcolor>FFFFFFF0</textcolor>
         <colordiffuse>FFFFFFFF</colordiffuse>
         <disabledcolor>ffB36162</disabledcolor>
         <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
@@ -189,7 +189,7 @@
         <offsetSortButtonX>165</offsetSortButtonX>
         <offsetSortButtonY>8</offsetSortButtonY>
         <font>font13</font>
-        <textcolor>FFFFFFFF</textcolor>
+        <textcolor>FFFFFFF0</textcolor>
         <colordiffuse>FFFFFFFF</colordiffuse>
         <disabledcolor>ffB36162</disabledcolor>
         <label>103</label>
@@ -217,13 +217,15 @@
         <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
         <textureHeight>32</textureHeight>
         <image>folder_focus.png</image>
-        <font>font13</font>
-        <shadedColor>20ffffff</shadedColor>
-        <selectedColor>FFFFFFFF</selectedColor>
+        <font>font13</font>        
+        <selectedColor>FFFFFFF0</selectedColor>
         <playedColor>FFFFDAB9</playedColor>
-        <textcolor>FFFFFFFF</textcolor>
-        <textcolor2>FFFFFFFF</textcolor2>
-        <textcolor3>FFFFFFFF</textcolor3>
+        <textcolor>FFFFFFF0</textcolor>
+        <textcolor2>FFFFFFF0</textcolor2>
+        <textcolor3>FFFFFFF0</textcolor3>
+        <shadedColor>90ffffff</shadedColor>
+        <dimColor>90fffff0</dimColor>
+        <unfocusedAlpha>220</unfocusedAlpha>        
         <colordiffuse>ffffffff</colordiffuse>
         <remoteColor>ffFFA075</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
@@ -257,11 +259,13 @@
         <textureHeight>32</textureHeight>
         <image>folder_focus.png</image>
         <font>font13</font>
-        <shadedColor>20ffffff</shadedColor>
         <selectedColor>ffB36162</selectedColor>
-        <textcolor>FFFFFFFF</textcolor>
-        <textcolor2>FFFFFFFF</textcolor2>
-        <textcolor3>FFFFFFFF</textcolor3>
+        <textcolor>FFFFFFF0</textcolor>
+        <textcolor2>FFFFFFF0</textcolor2>
+        <textcolor3>FFFFFFF0</textcolor3>
+        <shadedColor>90ffffff</shadedColor>
+        <dimColor>90fffff0</dimColor>
+        <unfocusedAlpha>220</unfocusedAlpha>                        
         <colordiffuse>ffffffff</colordiffuse>
         <remoteColor>ffFFA075</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
@@ -301,11 +305,13 @@
         <textureHeight>32</textureHeight>
         <image>folder_focus.png</image>
         <font>font13</font>
-        <shadedColor>20ffffff</shadedColor>
         <selectedColor>ffB36162</selectedColor>
-        <textcolor>FFFFFFFF</textcolor>
-        <textcolor2>FFFFFFFF</textcolor2>
-        <textcolor3>FFFFFFFF</textcolor3>
+        <textcolor>FFFFFFF0</textcolor>
+        <textcolor2>FFFFFFF0</textcolor2>
+        <textcolor3>FFFFFFF0</textcolor3>
+        <shadedColor>90ffffff</shadedColor>
+        <dimColor>90fffff0</dimColor>
+        <unfocusedAlpha>220</unfocusedAlpha>        
         <colordiffuse>ffffffff</colordiffuse>
         <remoteColor>ffFFA075</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
@@ -339,11 +345,13 @@
         <textureHeight>32</textureHeight>
         <image>folder_focus.png</image>
         <font>font13</font>
-        <shadedColor>20ffffff</shadedColor>
         <selectedColor>ffB36162</selectedColor>
-        <textcolor>FFFFFFFF</textcolor>
-        <textcolor2>FFFFFFFF</textcolor2>
-        <textcolor3>FFFFFFFF</textcolor3>
+        <textcolor>FFFFFFF0</textcolor>
+        <textcolor2>FFFFFFF0</textcolor2>
+        <textcolor3>FFFFFFF0</textcolor3>
+        <shadedColor>90ffffff</shadedColor>
+        <dimColor>90fffff0</dimColor>
+        <unfocusedAlpha>220</unfocusedAlpha>        
         <colordiffuse>ffffffff</colordiffuse>
         <remoteColor>ffFFA075</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
@@ -405,6 +413,9 @@
         <font>font13</font>
         <selectedColor>ffB36162</selectedColor>
         <textcolor>ffB36162</textcolor>
+        <shadedColor>90ffffff</shadedColor>
+        <dimColor>90fffff0</dimColor>
+        <unfocusedAlpha>220</unfocusedAlpha>        
         <colordiffuse>ffffffff</colordiffuse>
         <remoteColor>ffFFA075</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
@@ -451,6 +462,9 @@
         <font>font13</font>
         <selectedColor>ffB36162</selectedColor>
         <textcolor>ffB36162</textcolor>
+        <shadedColor>90ffffff</shadedColor>
+        <dimColor>90fffff0</dimColor>
+        <unfocusedAlpha>220</unfocusedAlpha>        
         <colordiffuse>ffffffff</colordiffuse>
         <remoteColor>ffFFA075</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
@@ -549,7 +563,7 @@
         <height>16</height>
         <font>font13</font>
         <reverse>yes</reverse>
-        <textcolor>FFFFFFFF</textcolor>
+        <textcolor>FFFFFFF0</textcolor>
         <disabledcolor>ffB36162</disabledcolor>
         <spintype>text</spintype>
         <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
@@ -561,7 +575,7 @@
         <id>4</id>
         <posX>208</posX>
         <posY>166</posY>
-        <textcolor>FFFFFFFF</textcolor>
+        <textcolor>FFFFFFF0</textcolor>
         <disabledcolor>ffB36162</disabledcolor>
         <font>font13</font>
         <label>167</label>
