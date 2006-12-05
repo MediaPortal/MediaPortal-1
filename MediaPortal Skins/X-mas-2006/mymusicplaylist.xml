@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>500</id>
   <defaultcontrol>2</defaultcontrol>
@@ -14,11 +14,10 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="slide" time="250" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="500" end="800,0" >WindowClose</animation>
+      <animation effect="slide" time="500" end="800,0">WindowClose</animation>
       <layout>StackLayout(2)</layout>
       <posX>60</posX>
       <posY>97</posY>
-
       <control>
         <description>View-As button</description>
         <type>button</type>
@@ -60,7 +59,7 @@
         <onup>21</onup>
         <ondown>28</ondown>
       </control>
-<!--       <control>
+      <!--       <control>
         <description>Play button</description>
         <type>button</type>
         <id>23</id>
@@ -70,7 +69,6 @@
         <onup>22</onup>
         <ondown>28</ondown>
       </control> -->
-
       <control>
         <description>scrobble mode button</description>
         <type>button</type>
@@ -81,7 +79,6 @@
         <onup>22</onup>
         <ondown>29</ondown>
       </control>
-
       <control>
         <description>scrobble user button</description>
         <type>button</type>
@@ -92,7 +89,6 @@
         <onup>28</onup>
         <ondown>27</ondown>
       </control>
-
       <control>
         <description>last.fm button</description>
         <type>togglebutton</type>
@@ -103,7 +99,6 @@
         <onup>29</onup>
         <ondown>26</ondown>
       </control>
-
       <control>
         <description>Now Playing button</description>
         <type>button</type>
@@ -116,8 +111,6 @@
         <hyperlink>510</hyperlink>
       </control>
     </control>
-
     <import>common.facade.playlist.xml</import>
-
   </controls>
 </window>

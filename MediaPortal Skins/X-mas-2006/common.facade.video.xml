@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <controls>
     <control>
       <type>group</type>
       <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="400" end="800,0" >WindowClose</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <description>group element</description>
@@ -19,7 +19,6 @@
           <scrollOffset>2</scrollOffset>
         </control>
         <control>
-          
           <description>Thumbnail Panel</description>
           <type>thumbnailpanel</type>
           <id>50</id>
@@ -27,9 +26,7 @@
           <onleft>2</onleft>
           <onright>2</onright>
           <itemWidth>72</itemWidth>
-          <itemHeight>108</itemHeight>
           <textureWidth>58</textureWidth>
-          <textureHeight>80</textureHeight>
           <thumbWidth>44</thumbWidth>
           <thumbHeight>62</thumbHeight>
           <thumbPosX>7</thumbPosX>
@@ -55,7 +52,6 @@
           <backgroundy>99</backgroundy>
           <backgroundwidth>218</backgroundwidth>
           <backgroundheight>316</backgroundheight>
-          <InfoImage>-</InfoImage>
           <InfoImagex>366</InfoImagex>
           <InfoImagey>118</InfoImagey>
           <InfoImagewidth>187</InfoImagewidth>

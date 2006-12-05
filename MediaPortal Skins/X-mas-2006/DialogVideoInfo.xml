@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>2003</id>
   <defaultcontrol>2</defaultcontrol>
@@ -8,8 +8,6 @@
       <description>background image</description>
       <type>image</type>
       <id>1</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
       <texture>background.png</texture>
@@ -32,7 +30,6 @@
       <width>400</width>
       <label>#title</label>
       <font>font18</font>
-      <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -46,7 +43,6 @@
       <width>400</width>
       <label>(#mpaarating)</label>
       <font>font12</font>
-      <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -58,9 +54,7 @@
       <posX>60</posX>
       <posY>97</posY>
       <width>120</width>
-      <height>32</height>
       <label>208</label>
-      <font>font13</font>
       <onleft>22</onleft>
       <onright>22</onright>
       <onup>7</onup>
@@ -75,9 +69,7 @@
       <posX>60</posX>
       <posY>131</posY>
       <width>120</width>
-      <height>32</height>
       <label>207</label>
-      <font>font13</font>
       <onleft>22</onleft>
       <onright>22</onright>
       <onup>2</onup>
@@ -92,9 +84,7 @@
       <posX>60</posX>
       <posY>165</posY>
       <width>120</width>
-      <height>32</height>
       <label>206</label>
-      <font>font13</font>
       <onleft>22</onleft>
       <onright>22</onright>
       <onup>3</onup>
@@ -102,7 +92,6 @@
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-
     <control>
       <description>Refresh</description>
       <type>button</type>
@@ -110,7 +99,6 @@
       <posX>60</posX>
       <posY>199</posY>
       <width>120</width>
-      <height>32</height>
       <label>184</label>
       <onleft>22</onleft>
       <onright>22</onright>
@@ -119,7 +107,6 @@
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-
     <control>
       <description>Watched</description>
       <type>togglebutton</type>
@@ -127,7 +114,6 @@
       <posX>60</posX>
       <posY>233</posY>
       <width>120</width>
-      <height>32</height>
       <label>1010</label>
       <onleft>22</onleft>
       <onright>22</onright>
@@ -136,7 +122,6 @@
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-
     <control>
       <description>image title:</description>
       <type>label</type>
@@ -144,7 +129,6 @@
       <posX>60</posX>
       <posY>270</posY>
       <label>734</label>
-      <font>font13</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
@@ -168,7 +152,6 @@
       <posX>60</posX>
       <posY>315</posY>
       <label>427</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -179,7 +162,6 @@
       <id>11</id>
       <posX>60</posX>
       <posY>337</posY>
-      <reverse>yes</reverse>
       <onup>10</onup>
       <ondown>2</ondown>
       <onleft>5</onleft>
@@ -204,7 +186,6 @@
         <subitem>star.png</subitem>
       </subitems>
       <orientation>horizontal</orientation>
-      <align>left</align>
       <percentage>#rating</percentage>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -216,7 +197,6 @@
       <posX>400</posX>
       <posY>115</posY>
       <label>205</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -228,7 +208,6 @@
       <posX>400</posX>
       <posY>130</posY>
       <label>#votes</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -240,7 +219,6 @@
       <posX>400</posX>
       <posY>160</posY>
       <label>174</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -252,7 +230,6 @@
       <posX>400</posX>
       <posY>175</posY>
       <label>#genre</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -264,7 +241,6 @@
       <posX>400</posX>
       <posY>205</posY>
       <label>199</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -276,7 +252,6 @@
       <posX>400</posX>
       <posY>220</posY>
       <label>#director</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -288,7 +263,6 @@
       <posX>400</posX>
       <posY>250</posY>
       <label>201</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -300,7 +274,6 @@
       <posX>400</posX>
       <posY>265</posY>
       <label>#year</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -312,7 +285,6 @@
       <posX>400</posX>
       <posY>295</posY>
       <label>299</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -324,7 +296,6 @@
       <posX>400</posX>
       <posY>310</posY>
       <label>#runtime</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -338,7 +309,6 @@
       <width>420</width>
       <height>120</height>
       <label>#plot</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>

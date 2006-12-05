@@ -1,14 +1,13 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>610</id>
   <defaultcontrol>3</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-	<define>#header.label:5</define>
-	<define>#header.image:television_logo.png</define>
-	<define>#header.hover:hover_my tv.png</define>
+  <define>#header.label:5</define>
+  <define>#header.image:television_logo.png</define>
+  <define>#header.hover:hover_my tv.png</define>
   <controls>
-	    <import>common.window.xml</import>
-
+    <import>common.window.xml</import>
     <control>
       <description>Date</description>
       <type>label</type>
@@ -17,7 +16,6 @@
       <posY>30</posY>
       <label>#date</label>
       <align>right</align>
-      <font>font13</font>
       <textcolor>ffa9d0f7</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -30,12 +28,10 @@
       <posY>50</posY>
       <label>#time</label>
       <align>right</align>
-      <font>font13</font>
       <textcolor>ffa9d0f7</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-
     <control>
       <description>Type label</description>
       <type>label</type>
@@ -43,7 +39,6 @@
       <posX>288</posX>
       <posY>97</posY>
       <label>146</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -54,7 +49,6 @@
       <id>3</id>
       <posX>550</posX>
       <posY>101</posY>
-      <reverse>yes</reverse>
       <onup>17</onup>
       <ondown>5</ondown>
       <onleft>3</onleft>
@@ -62,7 +56,6 @@
       <align>right</align>
       <textcolor>FFFFFFFF</textcolor>
       <showrange>no</showrange>
-      <spintype>text</spintype>
       <subitems>
         <subitem>898</subitem>
         <subitem>899</subitem>
@@ -75,7 +68,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-
     <control>
       <description>Quality label</description>
       <type>label</type>
@@ -83,7 +75,6 @@
       <posX>288</posX>
       <posY>135</posY>
       <label>988</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -94,7 +85,6 @@
       <id>5</id>
       <posX>550</posX>
       <posY>139</posY>
-      <reverse>yes</reverse>
       <onup>3</onup>
       <ondown>7</ondown>
       <onleft>5</onleft>
@@ -102,7 +92,6 @@
       <align>right</align>
       <textcolor>FFFFFFFF</textcolor>
       <showrange>no</showrange>
-      <spintype>text</spintype>
       <subitems>
         <subitem>893</subitem>
         <subitem>883</subitem>
@@ -124,7 +113,6 @@
       <posX>288</posX>
       <posY>169</posY>
       <label>289</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -135,7 +123,6 @@
       <id>7</id>
       <posX>550</posX>
       <posY>173</posY>
-      <reverse>yes</reverse>
       <onup>5</onup>
       <ondown>9</ondown>
       <onleft>7</onleft>
@@ -143,7 +130,6 @@
       <align>right</align>
       <textcolor>FFFFFFFF</textcolor>
       <showrange>no</showrange>
-      <spintype>text</spintype>
       <subitems>
         <subitem>1024x768</subitem>
         <subitem>720x576</subitem>
@@ -164,7 +150,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-
     <control>
       <description>FPS label</description>
       <type>label</type>
@@ -172,7 +157,6 @@
       <posX>288</posX>
       <posY>203</posY>
       <label>989</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -183,7 +167,6 @@
       <id>9</id>
       <posX>550</posX>
       <posY>207</posY>
-      <reverse>yes</reverse>
       <onup>7</onup>
       <ondown>11</ondown>
       <onleft>9</onleft>
@@ -191,7 +174,6 @@
       <align>right</align>
       <textcolor>FFFFFFFF</textcolor>
       <showrange>no</showrange>
-      <spintype>text</spintype>
       <subitems>
         <subitem>15 FPS</subitem>
         <subitem>25 FPS</subitem>
@@ -204,8 +186,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-
-
     <control>
       <description>Bitrate label</description>
       <type>label</type>
@@ -213,7 +193,6 @@
       <posX>288</posX>
       <posY>237</posY>
       <label>990</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -224,7 +203,6 @@
       <id>11</id>
       <posX>550</posX>
       <posY>241</posY>
-      <reverse>yes</reverse>
       <onup>9</onup>
       <ondown>13</ondown>
       <onleft>11</onleft>
@@ -232,7 +210,6 @@
       <align>right</align>
       <textcolor>FFFFFFFF</textcolor>
       <showrange>no</showrange>
-      <spintype>text</spintype>
       <subitems>
         <subitem>100 Kbps</subitem>
         <subitem>256 Kbps</subitem>
@@ -246,7 +223,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-
     <control>
       <description>Priority label</description>
       <type>label</type>
@@ -254,7 +230,6 @@
       <posX>288</posX>
       <posY>271</posY>
       <label>991</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -265,7 +240,6 @@
       <id>13</id>
       <posX>550</posX>
       <posY>275</posY>
-      <reverse>yes</reverse>
       <onup>9</onup>
       <ondown>15</ondown>
       <onleft>13</onleft>
@@ -273,7 +247,6 @@
       <align>right</align>
       <textcolor>FFFFFFFF</textcolor>
       <showrange>no</showrange>
-      <spintype>text</spintype>
       <subitems>
         <subitem>747</subitem>
         <subitem>746</subitem>
@@ -285,8 +258,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-
-
     <control>
       <description>Delete original file</description>
       <type>checkmark</type>
@@ -302,9 +273,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-
-
-
     <control>
       <description>Current program background</description>
       <type>image</type>

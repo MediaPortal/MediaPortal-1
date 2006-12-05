@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>758</id>
   <defaultcontrol>14</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <controls>
-	<import>common.dialog.xml</import>
+    <import>common.dialog.xml</import>
     <control>
       <type>image</type>
       <id>100</id>
@@ -20,8 +20,6 @@
       <posX>195</posX>
       <posY>300</posY>
       <width>367</width>
-      <height>25</height>
-      <visible>no</visible>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>

@@ -1,30 +1,27 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>601</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-	<define>#header.label:646</define>
- 	<define>#header.image:television_logo.png</define>
-	<define>#header.hover:hover_my tv.png</define>
+  <define>#header.label:646</define>
+  <define>#header.image:television_logo.png</define>
+  <define>#header.hover:hover_my tv.png</define>
   <controls>
-		<import>common.time.xml</import>
+    <import>common.time.xml</import>
     <control>
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
-      <texture>background.gif</texture>
     </control>
     <control>
       <type>image</type>
       <id>1</id>
-	<posX>77</posX>
-	<posY>400</posY>
-	<width>161</width>
-	<height>158</height>
+      <posX>77</posX>
+      <posY>400</posY>
+      <width>161</width>
+      <height>158</height>
       <texture>hover_my tv.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -48,7 +45,6 @@
       <posX>260</posX>
       <posY>530</posY>
       <label>#itemcount</label>
-      <font>font13</font>
       <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -62,7 +58,6 @@
       <posY>70</posY>
       <width>400</width>
       <label>#selecteditem</label>
-      <font>font13</font>
       <align>right</align>
       <textcolor>ffffffff</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -144,7 +139,6 @@
         <description>scheduler recordings listcontrol</description>
         <type>listcontrol</type>
         <id>10</id>
-        <width>425</width>
         <height>370</height>
         <textXOff>50</textXOff>
         <textYOff>2</textYOff>
@@ -153,10 +147,8 @@
         <textXOff3>100</textXOff3>
         <textYOff3>29</textYOff3>
         <IconXOff>12</IconXOff>
-        <IconYOff>8</IconYOff>
         <PinIconXOff>45</PinIconXOff>
         <PinIconYOff>19</PinIconYOff>
-        <spinPosX>606</spinPosX>
         <spinPosY>418</spinPosY>
         <itemWidth>35</itemWidth>
         <itemHeight>35</itemHeight>
@@ -181,8 +173,6 @@
       <posY>440</posY>
       <width>250</width>
       <label>#TV.Scheduled.Title</label>
-      <font>font13</font>
-      <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -195,7 +185,6 @@
       <posY>460</posY>
       <label>#TV.Scheduled.Time</label>
       <align>left</align>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -209,7 +198,6 @@
       <width>430</width>
       <height>65</height>
       <label>#TV.Scheduled.Description</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -222,7 +210,6 @@
       <posY>460</posY>
       <label>#TV.Scheduled.Genre</label>
       <align>right</align>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -247,7 +234,6 @@
       <posY>431</posY>
       <width>135</width>
       <height>108</height>
-      <colordiffuse>ffffffff</colordiffuse>
       <onup>7</onup>
       <textureFocus>tv_green_border.png</textureFocus>
       <action>18</action>

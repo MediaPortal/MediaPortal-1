@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>2014</id>
   <defaultcontrol>6</defaultcontrol>
@@ -8,8 +8,6 @@
       <description>background image</description>
       <type>image</type>
       <id>1</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
       <texture>background.png</texture>
@@ -43,7 +41,6 @@
       <posX>60</posX>
       <posY>100</posY>
       <label>9000</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -55,7 +52,6 @@
       <posX>60</posX>
       <posY>120</posY>
       <label>9001</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -67,7 +63,6 @@
       <posX>60</posX>
       <posY>140</posY>
       <label>9002</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -79,7 +74,6 @@
       <posX>60</posX>
       <posY>160</posY>
       <label>9003</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -91,7 +85,6 @@
       <posX>60</posX>
       <posY>180</posY>
       <label>9004</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -103,7 +96,6 @@
       <posX>60</posX>
       <posY>200</posY>
       <label>9005</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -115,7 +107,6 @@
       <posX>340</posX>
       <posY>180</posY>
       <label>9006</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -127,7 +118,6 @@
       <posX>340</posX>
       <posY>200</posY>
       <label>9007</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -139,7 +129,6 @@
       <posX>340</posX>
       <posY>100</posY>
       <label>9008</label>
-      <font>font13</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
@@ -152,7 +141,6 @@
       <posX>340</posX>
       <posY>120</posY>
       <label>9009</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -164,7 +152,6 @@
       <posX>340</posX>
       <posY>140</posY>
       <label>9010</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -176,7 +163,6 @@
       <posX>340</posX>
       <posY>160</posY>
       <label>9011</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -188,7 +174,6 @@
       <posX>200</posX>
       <posY>100</posY>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -200,7 +185,6 @@
       <posX>200</posX>
       <posY>120</posY>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -213,7 +197,6 @@
       <posY>140</posY>
       <width>130</width>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -226,7 +209,6 @@
       <posY>160</posY>
       <width>130</width>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -239,7 +221,6 @@
       <posY>180</posY>
       <width>400</width>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -252,7 +233,6 @@
       <posY>200</posY>
       <width>400</width>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -264,7 +244,6 @@
       <posX>480</posX>
       <posY>180</posY>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -276,7 +255,6 @@
       <posX>480</posX>
       <posY>200</posY>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -288,7 +266,6 @@
       <posX>480</posX>
       <posY>100</posY>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -301,7 +278,6 @@
       <posY>120</posY>
       <width>200</width>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -314,7 +290,6 @@
       <posY>140</posY>
       <width>200</width>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -326,7 +301,6 @@
       <posX>480</posX>
       <posY>160</posY>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>

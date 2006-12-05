@@ -1,29 +1,26 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-	<id>0</id>
-	<defaultcontrol>2</defaultcontrol>
-	<allowoverlay>yes</allowoverlay>
-	<define>#header.hover:hover_my tv series.png</define>
-	<controls>
-		<control>
-			<description>BG</description>
-			<type>image</type>
-			<id>1</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<width>720</width>
-			<height>576</height>
-			<texture>background.gif</texture>
-		</control>
-		<control>
-			<description>Number of Files Label</description>
-			<type>label</type>
-			<id>1</id>
-			<posX>260</posX>
-			<posY>530</posY>
-			<label>#itemcount</label>
-			<align>left</align>
-			<textcolor>White</textcolor>
+  <id>0</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.hover:hover_my tv series.png</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <width>720</width>
+      <height>576</height>
+    </control>
+    <control>
+      <description>Number of Files Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>260</posX>
+      <posY>530</posY>
+      <label>#itemcount</label>
+      <align>left</align>
+      <textcolor>White</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -177,7 +174,6 @@
 					<ondown>2</ondown>
 				</control>
 			</control>
-		</control>
-		<import>common.facade.xml</import>
-	</controls>
+    </control>
+  </controls>
 </window>

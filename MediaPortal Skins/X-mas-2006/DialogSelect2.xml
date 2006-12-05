@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>2009</id>
   <defaultcontrol>3</defaultcontrol>
@@ -7,8 +7,6 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
       <texture>black.bmp</texture>
@@ -25,7 +23,6 @@
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-
     <control>
       <type>image</type>
       <id>6</id>
@@ -44,7 +41,6 @@
       <posX>210</posX>
       <posY>250</posY>
       <label>181</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>

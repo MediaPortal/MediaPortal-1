@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>6</id>
   <defaultcontrol>2</defaultcontrol>
@@ -11,7 +11,7 @@
     <control>
       <type>group</type>
       <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300" >WindowClose</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <description>group element</description>

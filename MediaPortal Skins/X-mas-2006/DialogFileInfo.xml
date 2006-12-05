@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>1206</id>
   <defaultcontrol>8</defaultcontrol>
@@ -8,8 +8,6 @@
       <description>background image</description>
       <type>image</type>
       <id>1</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
       <texture>background.png</texture>
@@ -43,7 +41,6 @@
       <posX>60</posX>
       <posY>100</posY>
       <label>13000</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -55,7 +52,6 @@
       <posX>60</posX>
       <posY>120</posY>
       <label>13001</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -67,7 +63,6 @@
       <posX>60</posX>
       <posY>140</posY>
       <label>173</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -79,7 +74,6 @@
       <posX>60</posX>
       <posY>160</posY>
       <label>174</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -92,7 +86,6 @@
       <posY>100</posY>
       <width>410</width>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -105,7 +98,6 @@
       <posY>120</posY>
       <width>410</width>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -118,7 +110,6 @@
       <posY>140</posY>
       <width>410</width>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -131,7 +122,6 @@
       <posY>160</posY>
       <width>410</width>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -170,12 +160,9 @@
       <description>Overview</description>
       <type>textbox</type>
       <id>4</id>
-      <posX>220</posX>
       <posY>190</posY>
-      <width>410</width>
       <height>340</height>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <onleft>8</onleft>
       <onright>8</onright>
@@ -191,9 +178,7 @@
       <posX>60</posX>
       <posY>360</posY>
       <width>130</width>
-      <height>32</height>
       <label>184</label>
-      <font>font13</font>
       <onup>8</onup>
       <ondown>11</ondown>
       <onleft>4</onleft>
@@ -208,9 +193,7 @@
       <posX>60</posX>
       <posY>394</posY>
       <width>130</width>
-      <height>32</height>
       <label>13006</label>
-      <font>font13</font>
       <onup>12</onup>
       <ondown>7</ondown>
       <onleft>4</onleft>
@@ -225,9 +208,7 @@
       <posX>60</posX>
       <posY>428</posY>
       <width>130</width>
-      <height>32</height>
       <label>210</label>
-      <font>font13</font>
       <onup>11</onup>
       <ondown>9</ondown>
       <onleft>4</onleft>
@@ -242,9 +223,7 @@
       <posX>60</posX>
       <posY>462</posY>
       <width>130</width>
-      <height>32</height>
       <label>209</label>
-      <font>font13</font>
       <onup>7</onup>
       <ondown>8</ondown>
       <onleft>4</onleft>
@@ -259,9 +238,7 @@
       <posX>60</posX>
       <posY>496</posY>
       <width>130</width>
-      <height>32</height>
       <label>13002</label>
-      <font>font13</font>
       <onup>9</onup>
       <ondown>12</ondown>
       <onleft>4</onleft>

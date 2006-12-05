@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <controls>
     <control>
-		<description>progressbar background</description>
+      <description>progressbar background</description>
       <type>image</type>
       <id>104</id>
       <posX>20</posX>
@@ -15,7 +15,7 @@
       <animation effect="fade" time="250">windowopen</animation>
     </control>
     <control>
-		<description>background</description>
+      <description>background</description>
       <type>image</type>
       <id>105</id>
       <posX>86</posX>
@@ -36,16 +36,10 @@
       <width>470</width>
       <height>20</height>
       <texturebg>osd_progress_back.png</texturebg>
-      <lefttexture>osd_progress_left.png</lefttexture>
-      <midtexture>osd_progress_mid.png</midtexture>
-      <righttexture>osd_progress_right.png</righttexture>
-      <visible>no</visible>
       <label>#percentage</label>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
-
-
     <control>
       <description>Start Time Info</description>
       <type>label</type>
@@ -54,7 +48,6 @@
       <posY>30</posY>
       <label>#currentplaytime</label>
       <align>left</align>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
@@ -68,13 +61,11 @@
       <posY>30</posY>
       <label>#currentremaining</label>
       <align>left</align>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
       <visible>no</visible>
     </control>
-
     <!--         <control>
 		<description>Current Time Info</description>
 		<type>label</type>
@@ -86,6 +77,5 @@
 		<font>font13</font>
 		<textcolor>FF071422</textcolor>
 	</control> -->
-
   </controls>
 </window>

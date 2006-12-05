@@ -1,11 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <controls>
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
       <texture>black.bmp</texture>
@@ -30,7 +28,6 @@
       <posY>214</posY>
       <width>255</width>
       <label>0</label>
-      <font>font13</font>
       <textcolor>ffffffff</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -43,7 +40,6 @@
       <posY>242</posY>
       <label>0</label>
       <width>255</width>
-      <font>font13</font>
       <textcolor>ffffffff</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -56,7 +52,6 @@
       <posY>270</posY>
       <label>0</label>
       <width>255</width>
-      <font>font13</font>
       <textcolor>ffffffff</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -69,10 +64,9 @@
       <posY>290</posY>
       <label>0</label>
       <width>255</width>
-      <font>font13</font>
       <textcolor>ffffffff</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-   </controls>
- </window>
+  </controls>
+</window>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>2005</id>
   <defaultcontrol>13</defaultcontrol>
@@ -13,7 +13,6 @@
       <width>680</width>
       <height>40</height>
       <texture>osd_bg_top.png</texture>
-      <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -27,7 +26,6 @@
       <posY>30</posY>
       <label>-</label>
       <align>left</align>
-      <font>font13</font>
       <textcolor>Black</textcolor>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -40,7 +38,6 @@
       <posY>90</posY>
       <label>-</label>
       <align>left</align>
-      <font>font13</font>
       <textcolor>Black</textcolor>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -53,7 +50,6 @@
       <posY>150</posY>
       <label>-</label>
       <align>left</align>
-      <font>font13</font>
       <textcolor>Black</textcolor>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -68,7 +64,6 @@
       <height>34</height>
       <visible>no</visible>
       <texture>video-pause.png</texture>
-      <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
@@ -80,7 +75,6 @@
       <posY>17</posY>
       <visible>no</visible>
       <texture>video+2x.png</texture>
-      <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
@@ -92,7 +86,6 @@
       <posY>17</posY>
       <visible>no</visible>
       <texture>video+4x.png</texture>
-      <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
@@ -104,7 +97,6 @@
       <posY>17</posY>
       <visible>no</visible>
       <texture>video+8x.png</texture>
-      <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
@@ -116,7 +108,6 @@
       <posY>17</posY>
       <visible>no</visible>
       <texture>video+16x.png</texture>
-      <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
@@ -128,7 +119,6 @@
       <posY>17</posY>
       <visible>no</visible>
       <texture>video+32x.png</texture>
-      <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
@@ -140,7 +130,6 @@
       <posY>17</posY>
       <visible>no</visible>
       <texture>video-2x.png</texture>
-      <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
@@ -152,7 +141,6 @@
       <posY>17</posY>
       <visible>no</visible>
       <texture>video-4x.png</texture>
-      <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
@@ -164,7 +152,6 @@
       <posY>17</posY>
       <visible>no</visible>
       <texture>video-8x.png</texture>
-      <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
@@ -176,7 +163,6 @@
       <posY>17</posY>
       <visible>no</visible>
       <texture>video-16x.png</texture>
-      <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
@@ -188,7 +174,6 @@
       <posY>17</posY>
       <visible>no</visible>
       <texture>video-32x.png</texture>
-      <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
@@ -200,7 +185,6 @@
       <posY>474</posY>
       <width>600</width>
       <texture>dialog_osd_background.png</texture>
-      <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -259,7 +243,6 @@
       <posX>626</posX>
       <posY>96</posY>
       <texture>volume.states.mute.png</texture>
-      <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -273,7 +256,6 @@
       <height>16</height>
       <imageHeight>3</imageHeight>
       <texture>volume.states.png</texture>
-      <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>

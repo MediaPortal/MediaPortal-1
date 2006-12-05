@@ -1,4 +1,5 @@
-﻿<window>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
   <id>6661</id>
   <defaultcontrol>50</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
@@ -11,7 +12,6 @@
       <animation>FlyInFromLeft</animation>
       <layout>StackLayout</layout>
       <posX>60</posX>
-      <posY>97</posY>
     </control>
     <import>common.facade.xml</import>
   </controls>
