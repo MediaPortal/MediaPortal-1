@@ -101,6 +101,7 @@ namespace SetupTv.Sections
     int _radioChannelsUpdated = 0;
     bool _isScanning = false;
     bool _stopScanning = false;
+    bool _enableEvents = false;
 
     public CardDvbS()
       : this("DVBC")
@@ -700,10 +701,22 @@ namespace SetupTv.Sections
 
     void SetupMotor()
     {
+      _enableEvents = false;
+      TvBusinessLayer layer = new TvBusinessLayer();
+      comboBoxStepSize.Items.Clear();
+      for (int i = 1; i < 127; ++i)
+        comboBoxStepSize.Items.Add(i.ToString());
+
+      Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "motorStepSize", "10");
+      int stepsize = 10;
+      if (Int32.TryParse(setting.Value, out stepsize))
+        comboBoxStepSize.SelectedIndex = stepsize - 1;
+      else
+        comboBoxStepSize.SelectedIndex = 9;
+
       comboBoxSat.Items.Clear();
 
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "selectedMotorSat", "0");
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "selectedMotorSat", "0");
       int index = 0;
       Int32.TryParse(setting.Value, out index);
       string[] files = System.IO.Directory.GetFiles(System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters", "*.tpl");
@@ -729,6 +742,7 @@ namespace SetupTv.Sections
       else
         comboBoxSat.SelectedIndex = 0;
       LoadMotorTransponder();
+      _enableEvents = true;
     }
 
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -741,14 +755,16 @@ namespace SetupTv.Sections
 
     private void buttonMoveWest_Click(object sender, EventArgs e)
     {
+      if (_enableEvents == false) return;
       //move motor west
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      RemoteControl.Instance.DiSEqCDriveMotor(card.IdCard, DiSEqCDirection.West, 10);
+      RemoteControl.Instance.DiSEqCDriveMotor(card.IdCard, DiSEqCDirection.West, (byte)(1 + comboBoxStepSize.SelectedIndex));
     }
 
     private void buttonSetWestLimit_Click(object sender, EventArgs e)
     {
+      if (_enableEvents == false) return;
       //set motor west limit
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
@@ -762,6 +778,7 @@ namespace SetupTv.Sections
 
     private void button1_Click(object sender, EventArgs e)
     {
+      if (_enableEvents == false) return;
       //goto selected sat
       TvBusinessLayer layer = new TvBusinessLayer();
       Sattelite sat = (Sattelite)comboBoxSat.SelectedItem;
@@ -775,6 +792,7 @@ namespace SetupTv.Sections
 
     private void buttonStore_Click(object sender, EventArgs e)
     {
+      if (_enableEvents == false) return;
       //store motor position..
       Sattelite sat = (Sattelite)comboBoxSat.SelectedItem;
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -803,14 +821,16 @@ namespace SetupTv.Sections
 
     private void buttonMoveEast_Click(object sender, EventArgs e)
     {
+      if (_enableEvents == false) return;
       //move motor east
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      RemoteControl.Instance.DiSEqCDriveMotor(card.IdCard, DiSEqCDirection.East, 10);
+      RemoteControl.Instance.DiSEqCDriveMotor(card.IdCard, DiSEqCDirection.East, (byte)(1 + comboBoxStepSize.SelectedIndex));
     }
 
     private void buttonSetEastLimit_Click(object sender, EventArgs e)
     {
+      if (_enableEvents == false) return;
       //set motor east limit
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
@@ -819,6 +839,7 @@ namespace SetupTv.Sections
 
     private void comboBoxSat_SelectedIndexChanged(object sender, EventArgs e)
     {
+      if (_enableEvents == false) return;
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "selectedMotorSat", "0");
       setting.Value = comboBoxSat.SelectedIndex.ToString();
@@ -829,6 +850,7 @@ namespace SetupTv.Sections
 
     private void checkBoxEnabled_CheckedChanged(object sender, EventArgs e)
     {
+      if (_enableEvents == false) return;
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
       if (checkBoxEnabled.Checked)
@@ -879,6 +901,7 @@ namespace SetupTv.Sections
 
     private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
+      if (_enableEvents == false) return;
       Transponder transponder = (Transponder)comboBox1.SelectedItem;
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
@@ -895,6 +918,7 @@ namespace SetupTv.Sections
 
     private void buttonStop_Click(object sender, EventArgs e)
     {
+      if (_enableEvents == false) return;
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
       RemoteControl.Instance.DiSEqCStopMotor(card.IdCard);
@@ -902,9 +926,38 @@ namespace SetupTv.Sections
 
     private void buttonGotoStart_Click(object sender, EventArgs e)
     {
+      if (_enableEvents == false) return;
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
       RemoteControl.Instance.DiSEqCGotoReferencePosition(card.IdCard);
+
+    }
+
+    private void buttonUp_Click(object sender, EventArgs e)
+    {
+      if (_enableEvents == false) return;
+      //move motor up
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+      RemoteControl.Instance.DiSEqCDriveMotor(card.IdCard, DiSEqCDirection.Up, (byte)(1 + comboBoxStepSize.SelectedIndex));
+    }
+
+    private void buttonDown_Click(object sender, EventArgs e)
+    {
+      if (_enableEvents == false) return;
+      //move motor up
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+      RemoteControl.Instance.DiSEqCDriveMotor(card.IdCard, DiSEqCDirection.Down, (byte)(1 + comboBoxStepSize.SelectedIndex));
+    }
+
+    private void comboBoxStepSize_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (_enableEvents == false) return;
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "motorStepSize", "10");
+      setting.Value = String.Format("{0}",(1 + comboBoxStepSize.SelectedIndex)) ;
+      setting.Persist();
 
     }
   }

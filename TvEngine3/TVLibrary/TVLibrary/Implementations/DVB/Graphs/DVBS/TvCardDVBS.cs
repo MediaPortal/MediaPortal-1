@@ -358,6 +358,13 @@ namespace TvLibrary.Implementations.DVB
       SubmitTuneRequest(_tuneRequest);
 
 
+      if (_conditionalAccess != null)
+      {
+        if (dvbsChannel.SatelliteIndex > 0 && _conditionalAccess.DiSEqCMotor != null)
+        {
+          _conditionalAccess.DiSEqCMotor.GotoPosition((byte)dvbsChannel.SatelliteIndex);
+        }
+      }
 
       SetupPmtGrabber(dvbsChannel.PmtPid);
       return true;

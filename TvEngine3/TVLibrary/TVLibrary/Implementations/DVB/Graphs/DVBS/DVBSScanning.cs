@@ -111,6 +111,7 @@ namespace TvLibrary.Implementations.DVB
       dvbsChannel.DisEqc = tuningChannel.DisEqc;
       dvbsChannel.BandType = tuningChannel.BandType;
       dvbsChannel.FreeToAir = !info.scrambled;
+      dvbsChannel.SatelliteIndex = tuningChannel.SatelliteIndex;
       Log.Log.Write("Found: {0}", dvbsChannel);
       return dvbsChannel;
     }

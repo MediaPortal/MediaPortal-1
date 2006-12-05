@@ -83,6 +83,7 @@ namespace TvLibrary.Channels
     int _switchingFrequency;
     DisEqcType _disEqc;
     BandType _bandType;
+    int _satelliteIndex;
     #endregion
 
     /// <summary>
@@ -93,9 +94,24 @@ namespace TvLibrary.Channels
       SwitchingFrequency = 0;
       DisEqc = DisEqcType.SimpleA;
       _bandType = BandType.Universal;
+      _satelliteIndex = -1;
     }
 
     #region properties
+    /// <summary>
+    /// gets/sets the Satellite index for this channel
+    /// </summary>
+    public int SatelliteIndex
+    {
+      get
+      {
+        return _satelliteIndex;
+      }
+      set
+      {
+        _satelliteIndex = value;
+      }
+    }
     /// <summary>
     /// gets/sets the BandType for this channel
     /// </summary>
@@ -195,6 +211,7 @@ namespace TvLibrary.Channels
       if (!base.Equals(obj)) return false;
       DVBSChannel ch = obj as DVBSChannel;
       if (ch.Polarisation != Polarisation) return false;
+      if (ch.SatelliteIndex != SatelliteIndex) return false;
       if (ch.SymbolRate != SymbolRate) return false;
       if (ch.SwitchingFrequency != SwitchingFrequency) return false;
       if (ch.DisEqc != DisEqc) return false;
@@ -211,7 +228,8 @@ namespace TvLibrary.Channels
     public override int GetHashCode()
     {
       return base.GetHashCode() ^ _polarisation.GetHashCode() ^ _symbolRate.GetHashCode() ^
-             _switchingFrequency.GetHashCode() ^ _disEqc.GetHashCode() ^ _bandType.GetHashCode();
+             _switchingFrequency.GetHashCode() ^ _disEqc.GetHashCode() ^ _bandType.GetHashCode()
+             ^ SatelliteIndex.GetHashCode();
     }
   }
 }

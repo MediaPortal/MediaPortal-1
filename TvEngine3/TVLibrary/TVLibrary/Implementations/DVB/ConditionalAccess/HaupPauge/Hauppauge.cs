@@ -10,7 +10,7 @@ using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.DVB
 {
-  public class Hauppauge
+  public class Hauppauge : IDiSEqCController
   {
     #region enums
     enum BdaModes
@@ -223,5 +223,43 @@ namespace TvLibrary.Implementations.DVB
       int hr=_propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc, len, _ptrDiseqc, len);
       Log.Log.Info("hauppauge: setdiseqc returned:{0:X}", hr);
     }
+
+    #region IDiSEqCController Members
+
+    /// <summary>
+    /// Sends the DiSEqC command.
+    /// </summary>
+    /// <param name="diSEqC">The DiSEqC command.</param>
+    /// <returns>true if succeeded, otherwise false</returns>
+    public bool SendDiSEqCCommand(byte[] diSEqC)
+    {
+      int len = 188;//sizeof(DISEQC_MESSAGE_PARAMS);
+      for (int i=0; i < diSEqC.Length;++i)
+        Marshal.WriteByte(_ptrDiseqc, i, diSEqC[i]);
+      Marshal.WriteInt32(_ptrDiseqc, 160, (Int32)diSEqC.Length);//send_message_length
+      Marshal.WriteInt32(_ptrDiseqc, 164, (Int32)0);//receive_message_length
+      Marshal.WriteInt32(_ptrDiseqc, 168, (Int32)3);//amplitude_attenuation
+      Marshal.WriteByte(_ptrDiseqc, 172, 1);//tone_burst_modulated
+      Marshal.WriteByte(_ptrDiseqc, 176, (int)DisEqcVersion.DISEQC_VER_1X);
+      Marshal.WriteByte(_ptrDiseqc, 180, (int)RxMode.RXMODE_NOREPLY);
+      Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message
+
+      int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc, len, _ptrDiseqc, len);
+      Log.Log.Info("hauppauge: setdiseqc returned:{0:X}", hr);
+      return (hr == 0);
+    }
+
+    /// <summary>
+    /// gets the diseqc reply
+    /// </summary>
+    /// <param name="reply">The reply.</param>
+    /// <returns>true if succeeded, otherwise false</returns>
+    public bool ReadDiSEqCCommand(out byte[] reply)
+    {
+      reply = new byte[1];
+      return false;
+    }
+
+    #endregion
   }
 }

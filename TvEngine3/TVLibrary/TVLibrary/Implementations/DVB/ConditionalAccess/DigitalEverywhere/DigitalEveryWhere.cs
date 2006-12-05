@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using TvLibrary.Channels;
+using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -31,7 +32,7 @@ namespace TvLibrary.Implementations.DVB
   /// Handles the CI/CAM interface for FireDtv and FloppyDtv devices from 
   /// Digital Everywhere
   /// </summary>
-  public class DigitalEverywhere //: IksPropertyUtils
+  public class DigitalEverywhere : IDiSEqCController
   {
     #region structs
     [StructLayout(LayoutKind.Explicit, Size = 60), ComVisible(true)]
@@ -839,5 +840,62 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("FireDTV:SendDiseqcCommand() failed:{0:X}", hr);
       }
     }
+
+    #region IDiSEqCController Members
+
+    /// <summary>
+    /// Sends the DiSEqC command.
+    /// </summary>
+    /// <param name="diSEqC">The DiSEqC command.</param>
+    /// <returns>true if succeeded, otherwise false</returns>
+    public bool SendDiSEqCCommand(byte[] diSEqC)
+    {
+      Marshal.WriteByte(_ptrDataInstance, 0, 0xFF);//Voltage;
+      Marshal.WriteByte(_ptrDataInstance, 1, 0xFF);//ContTone;
+      Marshal.WriteByte(_ptrDataInstance, 2, 0xFF);//Burst;
+      Marshal.WriteByte(_ptrDataInstance, 3, 0x01);//NrDiseqcCmds;
+      Marshal.WriteByte(_ptrDataInstance, 4, (byte)diSEqC.Length);
+      for (int i = 0; i < diSEqC.Length; ++i)
+        Marshal.WriteByte(_ptrDataInstance, 5 + i, diSEqC[i]);
+
+      
+      Guid propertyGuid = KSPROPSETID_Firesat;
+      int propId = KSPROPERTY_FIRESAT_LNB_CONTROL;
+      DirectShowLib.IKsPropertySet propertySet = _filterTuner as DirectShowLib.IKsPropertySet;
+      KSPropertySupport isTypeSupported;
+      if (propertySet == null)
+      {
+        Log.Log.WriteFile("FireDTV:SendDiseqcCommand() properySet=null");
+        return false;
+      }
+
+      int hr = propertySet.QuerySupported(propertyGuid, propId, out isTypeSupported);
+      if (hr != 0 || (isTypeSupported & KSPropertySupport.Set) == 0)
+      {
+        Log.Log.WriteFile("FireDTV:SendDiseqcCommand() set is not supported {0:X} {1}", hr, (int)isTypeSupported);
+        return false;
+      }
+
+      hr = propertySet.Set(propertyGuid, propId, _ptrDataInstance, 25, _ptrDataInstance, 25); 
+      if (hr != 0)
+      {
+        Log.Log.WriteFile("FireDTV:SendDiseqcCommand() failed:{0:X}", hr);
+        return false;
+      }
+      return true;
+    }
+
+    /// <summary>
+    /// gets the diseqc reply
+    /// </summary>
+    /// <param name="reply">The reply.</param>
+    /// <returns>true if succeeded, otherwise false</returns>
+    public bool ReadDiSEqCCommand(out byte[] reply)
+    {
+      reply = new byte[1];
+      return false;
+    }
+
+    #endregion
   }
 }

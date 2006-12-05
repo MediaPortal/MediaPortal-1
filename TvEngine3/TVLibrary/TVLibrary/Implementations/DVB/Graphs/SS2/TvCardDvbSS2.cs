@@ -626,6 +626,14 @@ namespace TvLibrary.Implementations.DVB
       }
       _interfaceB2C2TunerCtrl.CheckLock();
 
+      if (_cardType == CardType.DvbS)
+      {
+        DVBSChannel dvbsChannel = channel as DVBSChannel;
+        if (dvbsChannel.SatelliteIndex > 0 && _conditionalAccess.DiSEqCMotor != null)
+        {
+          _conditionalAccess.DiSEqCMotor.GotoPosition((byte)dvbsChannel.SatelliteIndex);
+        }
+      }
       SetupPmtGrabber(pmtPid);
       Log.Log.WriteFile("ss2:tune done");
       return true;

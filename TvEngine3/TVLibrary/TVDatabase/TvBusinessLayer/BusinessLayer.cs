@@ -247,6 +247,7 @@ namespace TvDatabase
             dvbsChannel.SymbolRate = detail.Symbolrate;
             dvbsChannel.TransportId = detail.TransportId;
             dvbsChannel.BandType = (BandType)detail.Band;
+            dvbsChannel.SatelliteIndex = detail.SatIndex;
             return dvbsChannel;
           case 4: //DVBTChannel
             DVBTChannel dvbtChannel = new DVBTChannel();
@@ -352,6 +353,7 @@ namespace TvDatabase
             dvbsChannel.SymbolRate = detail.Symbolrate;
             dvbsChannel.TransportId = detail.TransportId;
             dvbsChannel.BandType = (BandType)detail.Band;
+            dvbsChannel.SatelliteIndex = detail.SatIndex;
             tvChannels.Add(dvbsChannel);
             break;
           case 4: //DVBTChannel
@@ -419,6 +421,7 @@ namespace TvDatabase
       int videoPid = -1;
       int audioPid = -1;
       int band = 0;
+      int satIndex = -1;
 
       AnalogChannel analogChannel = tvChannel as AnalogChannel;
       if (analogChannel != null)
@@ -460,6 +463,7 @@ namespace TvDatabase
         switchFrequency = dvbsChannel.SwitchingFrequency;
         diseqc = (int)dvbsChannel.DisEqc;
         band = (int)dvbsChannel.BandType;
+        satIndex = dvbsChannel.SatelliteIndex;
         channelType = 3;
       }
 
@@ -502,7 +506,8 @@ namespace TvDatabase
             tuningdetail.IsTv == isTv &&
             tuningdetail.ChannelType == channelType &&
             tuningdetail.IsRadio == isRadio &&
-            tuningdetail.Band == band)
+            tuningdetail.Band == band &&
+            tuningdetail.SatIndex == satIndex)
         {
           tuningdetail.Bandwidth = bandwidth;
           tuningdetail.CountryId = country;
@@ -520,6 +525,7 @@ namespace TvDatabase
           tuningdetail.VideoPid = videoPid;
           tuningdetail.AudioPid = audioPid;
           tuningdetail.Band = band;
+          tuningdetail.SatIndex = satIndex;
           tuningdetail.Persist();
           return tuningdetail;
         }
@@ -529,7 +535,7 @@ namespace TvDatabase
                               channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
                               networkId, transportId, serviceId, pmtPid, freeToAir,
                               modulation, polarisation, symbolRate, diseqc, switchFrequency,
-                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, tunerSource, videoPid, audioPid, band);
+                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, tunerSource, videoPid, audioPid, band,satIndex);
       detail.Persist();
       return detail;
     }

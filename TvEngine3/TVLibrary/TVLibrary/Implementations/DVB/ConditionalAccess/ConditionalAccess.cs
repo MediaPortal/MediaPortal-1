@@ -60,6 +60,7 @@ namespace TvLibrary.Implementations.DVB
         if (_digitalEveryWhere.IsDigitalEverywhere)
         {
           Log.Log.WriteFile("Digital Everywhere card detected");
+          _diSEqCMotor = new DiSEqCMotor(_digitalEveryWhere);
           //_digitalEveryWhere.ResetCAM();
           return;
         }
@@ -88,6 +89,7 @@ namespace TvLibrary.Implementations.DVB
         if (_hauppauge.IsHauppauge)
         {
           Log.Log.WriteFile("Hauppauge card detected");
+          _diSEqCMotor = new DiSEqCMotor(_hauppauge);
           return;
         }
         _hauppauge = null;
