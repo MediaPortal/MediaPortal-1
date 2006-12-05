@@ -144,6 +144,8 @@ namespace MediaPortal.Dialogs
 
     void Close()
     {
+      if (m_bRunning == false) return;
+      m_bRunning = false;
       GUIWindowManager.IsSwitchingToNewWindow = true;
       lock (this)
       {
