@@ -989,8 +989,7 @@ namespace SetupTv.Sections
       tuneChannel.Polarisation = transponder.Polarisation;
       tuneChannel.SymbolRate = transponder.SymbolRate;
       tuneChannel.BandType = BandType.Universal;
-
-      tuneChannel.DisEqc = DisEqcType.SimpleA;
+      tuneChannel.DisEqc = DisEqcType.None;
       RemoteControl.Instance.TuneScan(_cardNumber, tuneChannel);
 
     }
