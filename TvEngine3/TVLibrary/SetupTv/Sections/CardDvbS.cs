@@ -890,6 +890,9 @@ namespace SetupTv.Sections
         motor.Persist();
       }
       RemoteControl.Instance.DiSEqCStorePosition(_cardNumber, (byte)(index));
+      RemoteControl.Instance.DiSEqCStorePosition(_cardNumber, (byte)(index));
+      RemoteControl.Instance.DiSEqCStorePosition(_cardNumber, (byte)(index));
+      RemoteControl.Instance.DiSEqCStorePosition(_cardNumber, (byte)(index));
       MessageBox.Show("Satellite position stored to:" + index.ToString(), "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
     }

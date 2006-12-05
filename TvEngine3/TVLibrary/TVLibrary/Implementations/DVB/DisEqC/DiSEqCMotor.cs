@@ -243,7 +243,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Write("DiSEqC: store current position in {0}",position);
       byte[] cmd = new byte[4];
       cmd[0] = FramingByte;
-      cmd[1] = AllDirections;
+      cmd[1] = Azimutal;
       cmd[2] = (byte)DiSEqCCommands.StorePositions;
       cmd[3] = position;
       _controller.SendDiSEqCCommand(cmd);
@@ -257,7 +257,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Write("DiSEqC: goto reference position");
       byte[] cmd = new byte[4];
       cmd[0] = FramingByte;
-      cmd[1] = AllDirections;
+      cmd[1] = Azimutal;
       cmd[2] = (byte)DiSEqCCommands.GotoPosition;
       cmd[3] = 0;
       _controller.SendDiSEqCCommand(cmd);
@@ -272,7 +272,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Write("DiSEqC: goto position {0}", position);
       byte[] cmd = new byte[4];
       cmd[0] = FramingByte;
-      cmd[1] = AllDirections;
+      cmd[1] = Azimutal;
       cmd[2] = (byte)DiSEqCCommands.GotoPosition;
       cmd[3] = position;
       _controller.SendDiSEqCCommand(cmd);
