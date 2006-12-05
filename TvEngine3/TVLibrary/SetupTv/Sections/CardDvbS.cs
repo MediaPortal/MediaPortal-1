@@ -552,6 +552,20 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
 
+      int position = -1;
+      Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "motorEnabled", "no");
+      if (setting.Value == "yes")
+      {
+        foreach (DiSEqCMotor motor in card.ReferringDiSEqCMotor())
+        {
+          if (motor.IdSatellite == SatteliteContext.Satelite.IdSatellite)
+          {
+            position = motor.Position;
+            break;
+          }
+        }
+      }
+
       for (int index = 0; index < _channelCount; ++index)
       {
         if (_stopScanning) return;
@@ -566,6 +580,7 @@ namespace SetupTv.Sections
         tuneChannel.Polarisation = _transponders[index].Polarisation;
         tuneChannel.SymbolRate = _transponders[index].SymbolRate;
         tuneChannel.BandType = bandType;
+        tuneChannel.SatelliteIndex = position;
 
         tuneChannel.DisEqc = disEqc;
         string line = String.Format("lnb:{0} {1}tp- {2} {3} {4}", LNB, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate);
@@ -771,7 +786,7 @@ namespace SetupTv.Sections
       setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "selectedMotorSat", "0");
       int index = 0;
       Int32.TryParse(setting.Value, out index);
-      
+
       List<SatteliteContext> satellites = LoadSattelites();
 
       foreach (SatteliteContext sat in satellites)
@@ -823,7 +838,7 @@ namespace SetupTv.Sections
       //goto selected sat
       TvBusinessLayer layer = new TvBusinessLayer();
       SatteliteContext sat = (SatteliteContext)comboBoxSat.SelectedItem;
-      
+
       Card card = Card.Retrieve(_cardNumber);
       IList motorSettings = card.ReferringDiSEqCMotor();
       foreach (DiSEqCMotor motor in motorSettings)
@@ -894,7 +909,7 @@ namespace SetupTv.Sections
     private void checkBoxEnabled_CheckedChanged(object sender, EventArgs e)
     {
       if (_enableEvents == false) return;
-      TvBusinessLayer layer = new TvBusinessLayer(); 
+      TvBusinessLayer layer = new TvBusinessLayer();
       if (checkBoxEnabled.Checked)
       {
         RemoteControl.Instance.DiSEqCForceLimit(_cardNumber, true);
@@ -904,7 +919,7 @@ namespace SetupTv.Sections
       }
       else
       {
-        if (MessageBox.Show("Disabling the east/west limits could damage your dish!!! Are you sure?", "Warning", MessageBoxButtons.YesNo,MessageBoxIcon.Exclamation) == DialogResult.Yes)
+        if (MessageBox.Show("Disabling the east/west limits could damage your dish!!! Are you sure?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
         {
           RemoteControl.Instance.DiSEqCForceLimit(_cardNumber, false);
           Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "yes");
@@ -952,7 +967,7 @@ namespace SetupTv.Sections
     {
       if (_enableEvents == false) return;
       Transponder transponder = (Transponder)comboBox1.SelectedItem;
-      TvBusinessLayer layer = new TvBusinessLayer(); 
+      TvBusinessLayer layer = new TvBusinessLayer();
       DVBSChannel tuneChannel = new DVBSChannel();
       tuneChannel.Frequency = transponder.CarrierFrequency;
       tuneChannel.Polarisation = transponder.Polarisation;
