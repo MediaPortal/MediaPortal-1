@@ -243,7 +243,13 @@ namespace SetupTv.Sections
       {
         foreach (Satellite dbSat in dbSats)
         {
-          if (String.Compare(ts.SatteliteName, dbSat.SatelliteName, true) == 0)
+          string name = "";
+          for (int i = 0; i < ts.SatteliteName.Length; ++i)
+          {
+            if (ts.SatteliteName[i] >= (char)32 && ts.SatteliteName[i] < (char)127)
+              name += ts.SatteliteName[i];
+          }
+          if (String.Compare(name, dbSat.SatelliteName, true) == 0)
           {
             ts.Satelite = dbSat;
             break;
@@ -251,7 +257,13 @@ namespace SetupTv.Sections
         }
         if (ts.Satelite == null)
         {
-          ts.Satelite = new Satellite(ts.SatteliteName, ts.FileName);
+          string name = "";
+          for (int i = 0; i < ts.SatteliteName.Length; ++i)
+          {
+            if (ts.SatteliteName[i] >= (char)32 && ts.SatteliteName[i] < (char)127)
+              name += ts.SatteliteName[i];
+          }
+          ts.Satelite = new Satellite(name, ts.FileName);
           ts.Satelite.Persist();
         }
       }
@@ -836,8 +848,9 @@ namespace SetupTv.Sections
     {
       if (_enableEvents == false) return;
       //goto selected sat
+      if (comboBoxSat.SelectedIndex < 0) return;
       TvBusinessLayer layer = new TvBusinessLayer();
-      SatteliteContext sat = (SatteliteContext)comboBoxSat.SelectedItem;
+      SatteliteContext sat = (SatteliteContext)comboBoxSat.Items[comboBoxSat.SelectedIndex];
 
       Card card = Card.Retrieve(_cardNumber);
       IList motorSettings = card.ReferringDiSEqCMotor();
