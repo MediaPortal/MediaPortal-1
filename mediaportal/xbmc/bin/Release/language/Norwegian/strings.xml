@@ -4182,6 +4182,14 @@
 		<id>2145</id>
 		<value>Importer gjeldende spilleliste</value>
 	</string>
+	<string>
+		<id>2146</id>
+		<value>Ikke nok plass på CD-en</value>
+	</string>
+ 	<string>
+		<id>2147</id>
+		<value>Ikke nok plass på DVD-en</value>
+	</string>
 	<string Prefix="Min ">
 		<id>2200</id>
 		<value>Utforsker</value>
