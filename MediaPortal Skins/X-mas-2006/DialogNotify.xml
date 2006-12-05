@@ -10,7 +10,7 @@
       <width>720</width>
       <height>576</height>
       <texture>black.bmp</texture>
-      <colordiffuse>60ffffff</colordiffuse>
+<!--       <colordiffuse>60ffffff</colordiffuse> -->
     </control>
     <control>
       <type>group</type>
@@ -34,7 +34,7 @@
         <posY>420</posY>
         <label>181</label>
         <font>font10</font>
-        <textcolor>FFFFFFFF</textcolor>
+        <textcolor>FFFFFFF0</textcolor>
       </control>
       <control>
         <description>OK button</description>
@@ -60,8 +60,8 @@
         <width>70</width>
         <height>70</height>
         <texture>#thumb</texture>
-        <colorkey>FFFF00FF</colorkey>
-        <colordiffuse>FFFFFFFF</colordiffuse>
+<!--         <colorkey>FFFF00FF</colorkey>
+        <colordiffuse>FFFFFFFF</colordiffuse> -->
         <keepaspectratio>yes</keepaspectratio>
       </control>
       <control>
@@ -78,6 +78,7 @@
         <onright>4</onright>
         <onup>4</onup>
         <ondown>4</ondown>
+        <textcolor>FFFFFFF0</textcolor>
         <label>-</label>
       </control>
     </control>

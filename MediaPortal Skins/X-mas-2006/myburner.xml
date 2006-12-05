@@ -17,7 +17,6 @@
       <label>#burner_size</label>
       <font>font16</font>
       <align>left</align>
-      <textcolor>ffffffff</textcolor>
     </control>
     <control>
       <description>DVR Convert Info Label</description>
@@ -28,7 +27,6 @@
       <label>#convert_info</label>
       <font>font16</font>
       <align>left</align>
-      <textcolor>ffffffff</textcolor>
     </control>
     <control>
       <description>My burner Info Label</description>
@@ -39,7 +37,6 @@
       <label>#burner_info</label>
       <font>font16</font>
       <align>left</align>
-      <textcolor>ffffffff</textcolor>
     </control>
     <control>
       <description>Status Bar</description>
@@ -69,7 +66,6 @@
       <onright>3</onright>
       <onup>3</onup>
       <ondown>3</ondown>
-      <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
       <type>group</type>
