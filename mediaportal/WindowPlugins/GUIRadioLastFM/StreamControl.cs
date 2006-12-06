@@ -383,7 +383,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public void LoadConfig()
     {
-      //if (!_isInit)
         LoadSettings();
     }
 

@@ -461,29 +461,30 @@ namespace MediaPortal.Music.Database
       {
         // Parse handshake response
         success = GetResponse(url, "", false);
+
+        if (success)
+        {
+          if (!_signedIn)
+            _signedIn = true;
+
+          lastHandshake = DateTime.Now;
+          // reset to leave "safe mode"
+          _antiHammerCount = 0;
+
+          if (_useDebugLog)
+            Log.Debug("AudioscrobblerBase: {0}", "Handshake successful");
+
+          workerSuccess(ReasonForHandshake, lastHandshake);
+        }
+        else
+        {
+          Log.Warn("AudioscrobblerBase: {0}", "Handshake failed");
+          workerFailed(ReasonForHandshake, lastHandshake, errorReason);
+        }
       }
       catch (Exception ex)
       {
         errorReason = ex;
-      }
-
-      if (success)
-      {
-        if (!_signedIn)
-          _signedIn = true;
-
-        lastHandshake = DateTime.Now;
-        // reset to leave "safe mode"
-        _antiHammerCount = 0;
-
-        if (_useDebugLog)
-          Log.Debug("AudioscrobblerBase: {0}", "Handshake successful");
-
-        workerSuccess(ReasonForHandshake, lastHandshake);
-      }
-      else
-      {
-        Log.Warn("AudioscrobblerBase: {0}", "Handshake failed");
         workerFailed(ReasonForHandshake, lastHandshake, errorReason);
       }
     }
@@ -517,6 +518,7 @@ namespace MediaPortal.Music.Database
           break;
         case HandshakeType.PreRadio:
           Log.Warn("AudioscrobblerBase: {0}", "Handshake failed - not attempting radio login");
+          RadioHandshakeError();
           break;
         case HandshakeType.Submit:
           Log.Warn("AudioscrobblerBase: {0}", "Handshake failed - no submits");
