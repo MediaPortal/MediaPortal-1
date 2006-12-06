@@ -1055,9 +1055,27 @@ namespace SetupTv.Sections
       setting.Persist();
     }
 
+    bool reentrant = false;
+    DateTime _signalTimer = DateTime.MinValue;
     private void timer1_Tick(object sender, EventArgs e)
     {
-      UpdateStatus(1);
+      if (reentrant) return;
+      try
+      {
+        reentrant = true;
+        TimeSpan ts = DateTime.Now - _signalTimer;
+        if (ts.TotalMilliseconds > 500)
+        {
+          RemoteControl.Instance.UpdateSignalSate(_cardNumber);
+          _signalTimer = DateTime.Now;
+        }
+        UpdateStatus(1);
+        buttonStore.Text = DateTime.Now.Second.ToString();
+      }
+      finally
+      {
+        reentrant = false;
+      }
     }
     #endregion
   }

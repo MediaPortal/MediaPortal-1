@@ -300,6 +300,12 @@ namespace TvLibrary.Interfaces
     /// returns the signal level
     /// </summary>
     int SignalLevel { get;}
+
+    /// <summary>
+    /// Updates the signal state for a card.
+    /// </summary>
+    void ResetSignalUpdate();
+
     #endregion
 
     #region idisposable

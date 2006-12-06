@@ -792,6 +792,36 @@ namespace TvService
         return 0;
       }
     }
+    /// <summary>
+    /// Updates the signal state for a card.
+    /// </summary>
+    /// <param name="cardId">id of the card.</param>
+    public void UpdateSignalSate(int cardId)
+    {
+      try
+      {
+        if (_allDbscards[cardId].Enabled == false) return;
+        if (IsLocal(cardId) == false)
+        {
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            RemoteControl.Instance.UpdateSignalSate(cardId);
+            return;
+          }
+          catch (Exception)
+          {
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return;
+          }
+        }
+        _localCards[cardId].ResetSignalUpdate();
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
+    }
 
     /// <summary>
     /// Returns the current filename used for recording
@@ -2252,7 +2282,7 @@ namespace TvService
       if (false == _allDbscards.ContainsKey(cardId)) return;
       if (IsLocal(cardId) == false)
       {
-        return ;
+        return;
       }
 
       IDiSEqCMotor motor = _localCards[cardId].DiSEqCMotor;
@@ -2264,7 +2294,7 @@ namespace TvService
       if (false == _allDbscards.ContainsKey(cardId)) return;
       if (IsLocal(cardId) == false)
       {
-        return ;
+        return;
       }
 
       IDiSEqCMotor motor = _localCards[cardId].DiSEqCMotor;
@@ -2276,7 +2306,7 @@ namespace TvService
       if (false == _allDbscards.ContainsKey(cardId)) return;
       if (IsLocal(cardId) == false)
       {
-        return ;
+        return;
       }
 
       IDiSEqCMotor motor = _localCards[cardId].DiSEqCMotor;
@@ -2285,10 +2315,10 @@ namespace TvService
     }
     public void DiSEqCForceLimit(int cardId, bool onOff)
     {
-      if (false == _allDbscards.ContainsKey(cardId)) return ;
+      if (false == _allDbscards.ContainsKey(cardId)) return;
       if (IsLocal(cardId) == false)
       {
-        return ;
+        return;
       }
 
       IDiSEqCMotor motor = _localCards[cardId].DiSEqCMotor;
@@ -2297,10 +2327,10 @@ namespace TvService
     }
     public void DiSEqCDriveMotor(int cardId, DiSEqCDirection direction, byte numberOfSteps)
     {
-      if (false == _allDbscards.ContainsKey(cardId)) return ;
+      if (false == _allDbscards.ContainsKey(cardId)) return;
       if (IsLocal(cardId) == false)
       {
-        return ;
+        return;
       }
 
       IDiSEqCMotor motor = _localCards[cardId].DiSEqCMotor;
@@ -2309,10 +2339,10 @@ namespace TvService
     }
     public void DiSEqCStorePosition(int cardId, byte position)
     {
-      if (false == _allDbscards.ContainsKey(cardId)) return ;
+      if (false == _allDbscards.ContainsKey(cardId)) return;
       if (IsLocal(cardId) == false)
       {
-        return ;
+        return;
       }
 
       IDiSEqCMotor motor = _localCards[cardId].DiSEqCMotor;
@@ -2321,10 +2351,10 @@ namespace TvService
     }
     public void DiSEqCGotoReferencePosition(int cardId)
     {
-      if (false == _allDbscards.ContainsKey(cardId)) return ;
+      if (false == _allDbscards.ContainsKey(cardId)) return;
       if (IsLocal(cardId) == false)
       {
-        return ;
+        return;
       }
 
       IDiSEqCMotor motor = _localCards[cardId].DiSEqCMotor;
@@ -2333,10 +2363,10 @@ namespace TvService
     }
     public void DiSEqCGotoPosition(int cardId, byte position)
     {
-      if (false == _allDbscards.ContainsKey(cardId)) return ;
+      if (false == _allDbscards.ContainsKey(cardId)) return;
       if (IsLocal(cardId) == false)
       {
-        return ;
+        return;
       }
 
       IDiSEqCMotor motor = _localCards[cardId].DiSEqCMotor;

@@ -601,6 +601,12 @@ namespace TvLibrary.Implementations.Analog
         return null;
       }
     }
+    /// <summary>
+    /// Updates the signal state for a card.
+    /// </summary>
+    public void ResetSignalUpdate()
+    {
+    }
   }
 }
 

@@ -82,37 +82,96 @@ namespace TvLibrary.Implementations.DVB
       /// </summary>
       RecalculatePositions = 0x6f     //  4/6 bytes  
     }
+
     public enum DiSEqCPositionFlags : byte
     {
+      /// <summary>
+      /// last command has completed
+      /// </summary>
       CommandCompleted = 0x80,
+      /// <summary>
+      /// software limits are enabled
+      /// </summary>
       SoftwareLimitsEnabled = 0x40,
+      /// <summary>
+      /// last movement was west
+      /// </summary>
       DirectionWest = 0x20,
+      /// <summary>
+      /// motor is running
+      /// </summary>
       MotorRunning = 0x10,
+      /// <summary>
+      /// software limits are reached
+      /// </summary>
       SoftwareLimitReached = 0x8,
+      /// <summary>
+      /// power is not available
+      /// </summary>
       PowerNotAvailable = 0x4,
+      /// <summary>
+      /// hardware switch is activated
+      /// </summary>
       HardwareSwitchActivated = 0x2,
+      /// <summary>
+      /// reference position is corrupted or lost
+      /// </summary>
       PositionReferenceLost = 0x1,
+    }
+
+    enum DiSEqCFraming:byte
+    {
+      /// <summary>
+      /// diseqc framing byte, first transmission
+      /// </summary>
+      FirstTransmission = 0xe0,
+      /// <summary>
+      /// diseqc framing byte, repeated transmission
+      /// </summary>
+      RepeatedTransmission = 0xe1,
+      /// <summary>
+      /// diseqc framing byte first transmission, request a reply
+      /// </summary>
+      FirstTransmissionReply = 0xe2,
+      /// <summary>
+      /// diseqc framing byte repeated transmission, request a reply
+      /// </summary>
+      RepeatedTransmissionReply = 0xe3,
+      /// <summary>
+      /// diseqc reply ok, no errors detected
+      /// </summary>
+      ReplyOk = 0xe4,
+      /// <summary>
+      /// diseqc reply error, command not supported
+      /// </summary>
+      ReplyCommandNotSupported = 0xe5,
+      /// <summary>
+      /// diseqc reply error, parity error detected
+      /// </summary>
+      ReplyParityError = 0xe6,
+      /// <summary>
+      /// diseqc reply error, unknown command
+      /// </summary>
+      ReplyUnknownCommand = 0xe7
+    }
+
+    enum DiSEqCMovement:byte
+    {
+      /// <summary>
+      /// wildcard for both directions
+      /// </summary>
+      Both = 0x30,
+      /// <summary>
+      /// move along azimutal axis
+      /// </summary>
+      Azimutal = 0x31,
+      /// <summary>
+      /// move along elivation axis
+      /// </summary>
+      Elivation = 0x32
     }
     #endregion
 
-    #region constants
-    /// <summary>
-    /// move along the azimutal axis
-    /// </summary>
-    const byte Azimutal = 0x31;
-    /// <summary>
-    /// move along the elivation axis
-    /// </summary>
-    const byte Elivation = 0x32;
-    /// <summary>
-    /// apply to both directions
-    /// </summary>
-    const byte AllDirections = 0x30;
-    /// <summary>
-    /// diseqc framing byte
-    /// </summary>
-    const byte FramingByte = 0xe0;
-    #endregion
 
     #region variables
     IDiSEqCController _controller;
@@ -134,8 +193,8 @@ namespace TvLibrary.Implementations.DVB
     {
       Log.Log.Write("DiSEqC: stop motor");
       byte[] cmd = new byte[3];
-      cmd[0] = (byte)FramingByte;
-      cmd[1] = (byte)Azimutal;
+      cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
+      cmd[1] = (byte)DiSEqCMovement.Both;
       cmd[2] = (byte)DiSEqCCommands.Halt;
       _controller.SendDiSEqCCommand(cmd);
     }
@@ -147,8 +206,8 @@ namespace TvLibrary.Implementations.DVB
     {
       Log.Log.Write("DiSEqC: set east limit");
       byte[] cmd = new byte[3];
-      cmd[0] = FramingByte;
-      cmd[1] = AllDirections;
+      cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
+      cmd[1] = (byte)DiSEqCMovement.Both;
       cmd[2] = (byte)DiSEqCCommands.SetEastLimit;
       _controller.SendDiSEqCCommand(cmd);
     }
@@ -160,8 +219,8 @@ namespace TvLibrary.Implementations.DVB
     {
       Log.Log.Write("DiSEqC: set west limit");
       byte[] cmd = new byte[3];
-      cmd[0] = FramingByte;
-      cmd[1] = AllDirections;
+      cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
+      cmd[1] = (byte)DiSEqCMovement.Both;
       cmd[2] = (byte)DiSEqCCommands.SetWestLimit;
       _controller.SendDiSEqCCommand(cmd);
     }
@@ -178,8 +237,8 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.Write("DiSEqC: enable limits");
           byte[] cmd = new byte[4];
-          cmd[0] = FramingByte;
-          cmd[1] = AllDirections;
+          cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
+          cmd[1] = (byte)DiSEqCMovement.Both;
           cmd[2] = (byte)DiSEqCCommands.StorePositions;
           cmd[3] = 0;
           _controller.SendDiSEqCCommand(cmd);
@@ -188,8 +247,8 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.Write("DiSEqC: disable limits");
           byte[] cmd = new byte[3];
-          cmd[0] = FramingByte;
-          cmd[1] = AllDirections;
+          cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
+          cmd[1] = (byte)DiSEqCMovement.Both;
           cmd[2] = (byte)DiSEqCCommands.LimitsOff;
           _controller.SendDiSEqCCommand(cmd);
         }
@@ -200,32 +259,32 @@ namespace TvLibrary.Implementations.DVB
     /// Drives the motor.
     /// </summary>
     /// <param name="direction">The direction.</param>
-    /// <param name="numberOfSeconds">the number of seconds to move.</param>
+    /// <param name="steps">the number of steps to move.</param>
     public void DriveMotor(DiSEqCDirection direction, byte steps)
     {
       if (steps == 0) return;
       StopMotor();
       Log.Log.Write("DiSEqC: drive motor {0} for {1} steps", direction.ToString(), steps);
       byte[] cmd = new byte[4];
-      cmd[0] = FramingByte;
+      cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       if (direction == DiSEqCDirection.West)
       {
-        cmd[1] = Azimutal;
+        cmd[1] = (byte)DiSEqCMovement.Azimutal;
         cmd[2] = (byte)DiSEqCCommands.DriveWest;
       }
       else if (direction == DiSEqCDirection.East)
       {
-        cmd[1] = Azimutal;
+        cmd[1] = (byte)DiSEqCMovement.Azimutal;
         cmd[2] = (byte)DiSEqCCommands.DriveEast;
       }
       else if (direction == DiSEqCDirection.Up)
       {
-        cmd[1] = Elivation;
+        cmd[1] = (byte)DiSEqCMovement.Elivation;
         cmd[2] = (byte)DiSEqCCommands.DriveWest;
       }
       else if (direction == DiSEqCDirection.Down)
       {
-        cmd[1] = Elivation;
+        cmd[1] = (byte)DiSEqCMovement.Elivation;
         cmd[2] = (byte)DiSEqCCommands.DriveEast;
       }
       cmd[3] = (byte)(0x100 - steps);
@@ -242,8 +301,8 @@ namespace TvLibrary.Implementations.DVB
       if (position <= 0) throw new ArgumentException("position");
       Log.Log.Write("DiSEqC: store current position in {0}",position);
       byte[] cmd = new byte[4];
-      cmd[0] = FramingByte;
-      cmd[1] = AllDirections;
+      cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
+      cmd[1] = (byte)DiSEqCMovement.Both;
       cmd[2] = (byte)DiSEqCCommands.StorePositions;
       cmd[3] = position;
       _controller.SendDiSEqCCommand(cmd);
@@ -256,8 +315,8 @@ namespace TvLibrary.Implementations.DVB
     {
       Log.Log.Write("DiSEqC: goto reference position");
       byte[] cmd = new byte[4];
-      cmd[0] = FramingByte;
-      cmd[1] = AllDirections;
+      cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
+      cmd[1] = (byte)DiSEqCMovement.Both;
       cmd[2] = (byte)DiSEqCCommands.GotoPosition;
       cmd[3] = 0;
       _controller.SendDiSEqCCommand(cmd);
@@ -271,11 +330,13 @@ namespace TvLibrary.Implementations.DVB
       if (position <= 0) throw new ArgumentException("position");
       Log.Log.Write("DiSEqC: goto position {0}", position);
       byte[] cmd = new byte[4];
-      cmd[0] = FramingByte;
-      cmd[1] = AllDirections;
+      cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
+      cmd[1] = (byte)DiSEqCMovement.Both;
       cmd[2] = (byte)DiSEqCCommands.GotoPosition;
       cmd[3] = position;
       _controller.SendDiSEqCCommand(cmd);
+      System.Threading.Thread.Sleep(100);
+      
     }
 
     /// <summary>
@@ -285,8 +346,8 @@ namespace TvLibrary.Implementations.DVB
     {
       Log.Log.Write("DiSEqC: get current position (requires diSEqC 2.2)");
       byte[] cmd = new byte[3];
-      cmd[0] = FramingByte;
-      cmd[1] = AllDirections;
+      cmd[0] = (byte)DiSEqCFraming.FirstTransmissionReply;
+      cmd[1] = (byte)DiSEqCMovement.Both;
       cmd[2] = (byte)DiSEqCCommands.ReadPosition;
       if (_controller.SendDiSEqCCommand(cmd))
       {

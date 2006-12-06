@@ -216,6 +216,11 @@ namespace TvControl
     /// <returns>signal level (0-100)</returns>
     int SignalLevel(int cardId);
 
+    /// <summary>
+    /// Updates the signal state for a card.
+    /// </summary>
+    /// <param name="cardId">id of the card.</param>
+    void UpdateSignalSate(int cardId);
 
     /// <summary>
     /// Returns the current filename used for recording

@@ -557,6 +557,12 @@ namespace TvLibrary.Implementations.DVB
         Marshal.WriteByte(_ptrDiseqc, 4 + i, diSEqC[i]);
       }
 
+      string line = "";
+      for (int i = 0; i < disEqcLen; ++i)
+      {
+        byte k = Marshal.ReadByte(_ptrDiseqc, i);
+        line += String.Format("{0:X} ", k);
+      }
       Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
       Marshal.WriteInt16(_thbdaBuf, 4, 0x2017);
       Marshal.WriteInt16(_thbdaBuf, 6, 0x4b03);
@@ -586,11 +592,11 @@ namespace TvLibrary.Implementations.DVB
           int hr = propertySet.Set(propertyGuid, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
           if (hr != 0)
           {
-            Log.Log.WriteFile("TwinHan set DiSEqC failed 0x{0:X}", hr);
+            Log.Log.WriteFile("TwinHan DiSEqC cmd:{0} failed 0x{1:X}",line, hr);
           }
           else
           {
-            Log.Log.WriteFile("TwinHan set DiSEqC ok 0x{0:X}", hr);
+            Log.Log.WriteFile("TwinHan DiSEqC cmd:{0} succeeded", line);
             success = true;
           }
           Marshal.ReleaseComObject(propertySet);
