@@ -28,7 +28,7 @@
       <posX>100</posX>
       <posY>100</posY>
       <label>493</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -41,7 +41,7 @@
       <width>400</width>
       <label>#Actor.Name</label>
       <font>font16</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -52,7 +52,7 @@
       <posX>100</posX>
       <posY>120</posY>
       <label>686</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -76,8 +76,8 @@
       <posY>280</posY>
       <width>90</width>
       <label>1011</label>
-      <textcolor>ffffffff</textcolor>
-      <colordiffuse>ffffffff</colordiffuse>
+      <textcolor>FFFFFFF0</textcolor>
+      <colordiffuse>FFFFFFFF</colordiffuse>
       <disabledcolor>60ffffff</disabledcolor>
       <onleft>22</onleft>
       <onright>22</onright>
@@ -94,8 +94,8 @@
       <posY>316</posY>
       <width>90</width>
       <label>342</label>
-      <textcolor>ffffffff</textcolor>
-      <colordiffuse>ffffffff</colordiffuse>
+      <textcolor>FFFFFFF0</textcolor>
+      <colordiffuse>FFFFFFFF</colordiffuse>
       <disabledcolor>60ffffff</disabledcolor>
       <onleft>22</onleft>
       <onright>22</onright>
@@ -113,7 +113,7 @@
       <width>410</width>
       <height>400</height>
       <label>#Actor.Biography</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -143,6 +143,7 @@
       <onup>4</onup>
       <ondown>4</ondown>
       <label>#Actor.Movies</label>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>

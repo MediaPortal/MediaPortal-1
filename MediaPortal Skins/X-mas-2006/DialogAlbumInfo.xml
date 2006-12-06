@@ -30,7 +30,7 @@
       <label>-</label>
       <font>font16</font>
       <align>left</align>
-      <textcolor>FFFFFFFF</textcolor>
+<!--       <textcolor>FFFFFFFF</textcolor> -->
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -41,7 +41,7 @@
       <posX>100</posX>
       <posY>100</posY>
       <label>171</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -52,7 +52,7 @@
       <posX>100</posX>
       <posY>120</posY>
       <label>201</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -63,7 +63,7 @@
       <posX>100</posX>
       <posY>140</posY>
       <label>173</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -74,7 +74,7 @@
       <posX>100</posX>
       <posY>160</posY>
       <label>174</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -85,7 +85,7 @@
       <posX>100</posX>
       <posY>180</posY>
       <label>175</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -96,7 +96,7 @@
       <posX>100</posX>
       <posY>200</posY>
       <label>176</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -192,6 +192,7 @@
       <onright>5</onright>
       <onup>5</onup>
       <ondown>5</ondown>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>

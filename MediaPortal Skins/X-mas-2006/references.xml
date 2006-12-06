@@ -233,7 +233,7 @@
         <dimColor>90fffff0</dimColor>
         <unfocusedAlpha>220</unfocusedAlpha>
         <colordiffuse>ffffffff</colordiffuse>
-        <remoteColor>ffFFA075</remoteColor>
+        <remoteColor>FFFFD700</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
         <textXOff>5</textXOff>
         <textYOff>4</textYOff>
@@ -273,7 +273,7 @@
         <dimColor>90fffff0</dimColor>
         <unfocusedAlpha>220</unfocusedAlpha>
         <colordiffuse>ffffffff</colordiffuse>
-        <remoteColor>ffFFA075</remoteColor>
+        <remoteColor>FFFFD700</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
         <textureCheckmark>check-box.png</textureCheckmark>
         <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
@@ -319,7 +319,7 @@
         <dimColor>90fffff0</dimColor>
         <unfocusedAlpha>220</unfocusedAlpha>
         <colordiffuse>ffffffff</colordiffuse>
-        <remoteColor>ffFFA075</remoteColor>
+        <remoteColor>FFFFD700</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
         <textXOff>5</textXOff>
         <textYOff>4</textYOff>
@@ -359,7 +359,7 @@
         <dimColor>90fffff0</dimColor>
         <unfocusedAlpha>220</unfocusedAlpha>
         <colordiffuse>ffffffff</colordiffuse>
-        <remoteColor>ffFFA075</remoteColor>
+        <remoteColor>FFFFD700</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
         <textXOff>5</textXOff>
         <textYOff>4</textYOff>
@@ -423,7 +423,7 @@
         <dimColor>90fffff0</dimColor>
         <unfocusedAlpha>220</unfocusedAlpha>
         <colordiffuse>ffffffff</colordiffuse>
-        <remoteColor>ffFFA075</remoteColor>
+        <remoteColor>FFFFD700</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
         <suffix>|</suffix>
         <textureWidthBig>108</textureWidthBig>
@@ -472,7 +472,7 @@
         <dimColor>90fffff0</dimColor>
         <unfocusedAlpha>220</unfocusedAlpha>
         <colordiffuse>ffffffff</colordiffuse>
-        <remoteColor>ffFFA075</remoteColor>
+        <remoteColor>FFFFD700</remoteColor>
         <downloadColor>ff80ff80</downloadColor>
         <suffix>|</suffix>
         <textureWidthBig>108</textureWidthBig>

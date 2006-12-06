@@ -30,7 +30,7 @@
       <label>-</label>
       <font>font16</font>
       <align>right</align>
-      <textcolor>FFFFFFFF</textcolor>
+<!--       <textcolor>FFFFFFF0</textcolor> -->
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -41,7 +41,7 @@
       <posX>60</posX>
       <posY>100</posY>
       <label>9000</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -52,7 +52,7 @@
       <posX>60</posX>
       <posY>120</posY>
       <label>9001</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -63,7 +63,7 @@
       <posX>60</posX>
       <posY>140</posY>
       <label>9002</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -74,7 +74,7 @@
       <posX>60</posX>
       <posY>160</posY>
       <label>9003</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -85,7 +85,7 @@
       <posX>60</posX>
       <posY>180</posY>
       <label>9004</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -96,7 +96,7 @@
       <posX>60</posX>
       <posY>200</posY>
       <label>9005</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -107,7 +107,7 @@
       <posX>340</posX>
       <posY>180</posY>
       <label>9006</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -118,7 +118,7 @@
       <posX>340</posX>
       <posY>200</posY>
       <label>9007</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -130,7 +130,7 @@
       <posY>100</posY>
       <label>9008</label>
       <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -141,7 +141,7 @@
       <posX>340</posX>
       <posY>120</posY>
       <label>9009</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -152,7 +152,7 @@
       <posX>340</posX>
       <posY>140</posY>
       <label>9010</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -163,7 +163,7 @@
       <posX>340</posX>
       <posY>160</posY>
       <label>9011</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -174,7 +174,7 @@
       <posX>200</posX>
       <posY>100</posY>
       <label>-</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -185,7 +185,7 @@
       <posX>200</posX>
       <posY>120</posY>
       <label>-</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -197,7 +197,7 @@
       <posY>140</posY>
       <width>130</width>
       <label>-</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -209,7 +209,7 @@
       <posY>160</posY>
       <width>130</width>
       <label>-</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -221,7 +221,7 @@
       <posY>180</posY>
       <width>400</width>
       <label>-</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -233,7 +233,7 @@
       <posY>200</posY>
       <width>400</width>
       <label>-</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -244,7 +244,7 @@
       <posX>480</posX>
       <posY>180</posY>
       <label>-</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -255,7 +255,7 @@
       <posX>480</posX>
       <posY>200</posY>
       <label>-</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -266,7 +266,7 @@
       <posX>480</posX>
       <posY>100</posY>
       <label>-</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -278,7 +278,7 @@
       <posY>120</posY>
       <width>200</width>
       <label>-</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -290,7 +290,7 @@
       <posY>140</posY>
       <width>200</width>
       <label>-</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -301,7 +301,7 @@
       <posX>480</posX>
       <posY>160</posY>
       <label>-</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
