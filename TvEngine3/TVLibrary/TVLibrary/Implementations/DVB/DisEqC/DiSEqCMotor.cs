@@ -200,6 +200,9 @@ namespace TvLibrary.Implementations.DVB
 
     #region variables
     IDiSEqCController _controller;
+    int _currentPosition = -1;
+    int _currentStepsAzimuth = 0;
+    int _currentStepsElevation = 0;
     #endregion
 
     /// <summary>
@@ -343,21 +346,25 @@ namespace TvLibrary.Implementations.DVB
       {
         cmd[1] = (byte)DiSEqCMovement.Azimutal;
         cmd[2] = (byte)DiSEqCCommands.DriveWest;
+        _currentStepsAzimuth -= steps;
       }
       else if (direction == DiSEqCDirection.East)
       {
         cmd[1] = (byte)DiSEqCMovement.Azimutal;
         cmd[2] = (byte)DiSEqCCommands.DriveEast;
+        _currentStepsAzimuth += steps;
       }
       else if (direction == DiSEqCDirection.Up)
       {
         cmd[1] = (byte)DiSEqCMovement.Elivation;
         cmd[2] = (byte)DiSEqCCommands.DriveWest;
+        _currentStepsElevation -= steps;
       }
       else if (direction == DiSEqCDirection.Down)
       {
         cmd[1] = (byte)DiSEqCMovement.Elivation;
         cmd[2] = (byte)DiSEqCCommands.DriveEast;
+        _currentStepsElevation += steps;
       }
       cmd[3] = (byte)(0x100 - steps);
       _controller.SendDiSEqCCommand(cmd);
@@ -383,6 +390,9 @@ namespace TvLibrary.Implementations.DVB
       cmd[0] = (byte)DiSEqCFraming.RepeatedTransmission;
       _controller.SendDiSEqCCommand(cmd);
       System.Threading.Thread.Sleep(100);
+      _currentPosition = position;
+      _currentStepsAzimuth = 0;
+      _currentStepsElevation = 0;
     }
 
     /// <summary>
@@ -401,6 +411,9 @@ namespace TvLibrary.Implementations.DVB
       cmd[0] = (byte)DiSEqCFraming.RepeatedTransmission;
       _controller.SendDiSEqCCommand(cmd);
       System.Threading.Thread.Sleep(100);
+      _currentPosition = 0;
+      _currentStepsAzimuth = 0;
+      _currentStepsElevation = 0;
     }
 
     /// <summary>
@@ -409,6 +422,7 @@ namespace TvLibrary.Implementations.DVB
     public void GotoPosition(byte position)
     {
       if (position <= 0) throw new ArgumentException("position");
+      if (_currentStepsAzimuth == 0 && _currentStepsElevation == 0 && position == _currentPosition) return;
       Log.Log.Write("DiSEqC: goto position {0}", position);
       byte[] cmd = new byte[4];
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
@@ -420,51 +434,19 @@ namespace TvLibrary.Implementations.DVB
       cmd[0] = (byte)DiSEqCFraming.RepeatedTransmission;
       _controller.SendDiSEqCCommand(cmd);
       System.Threading.Thread.Sleep(100);
-      
+      _currentPosition = position;
+      _currentStepsAzimuth = 0;
+      _currentStepsElevation = 0;
     }
 
     /// <summary>
     /// Gets the current motor position.
     /// </summary>
-    public void GetPosition()
+    public void GetPosition(out int satellitePosition, out int stepsAzimuth, out int stepsElevation)
     {
-      Log.Log.Write("DiSEqC: get current position (requires diSEqC 2.2)");
-      byte[] cmd = new byte[3];
-      cmd[0] = (byte)DiSEqCFraming.FirstTransmissionReply;
-      cmd[1] = (byte)DiSEqCMovement.Both;
-      cmd[2] = (byte)DiSEqCCommands.ReadPosition;
-      if (_controller.SendDiSEqCCommand(cmd))
-      {
-        byte[] reply;
-        if (_controller.ReadDiSEqCCommand(out reply))
-        {
-          Log.Log.Error("DiSEqC motor: status:");
-          if ((reply[0] & (byte)DiSEqCPositionFlags.CommandCompleted) != 0)
-            Log.Log.Error("  command completed");
-          if ((reply[0] & (byte)DiSEqCPositionFlags.DirectionWest) != 0)
-            Log.Log.Error("  Last movement = west");
-          if ((reply[0] & (byte)DiSEqCPositionFlags.HardwareSwitchActivated) != 0)
-            Log.Log.Error("  Hardware switch is activated");
-          if ((reply[0] & (byte)DiSEqCPositionFlags.MotorRunning) != 0)
-            Log.Log.Error("  Motor is running");
-          if ((reply[0] & (byte)DiSEqCPositionFlags.PositionReferenceLost) != 0)
-            Log.Log.Error("  Position reference lost or corrupted");
-          if ((reply[0] & (byte)DiSEqCPositionFlags.PowerNotAvailable) != 0)
-            Log.Log.Error("  Power not available");
-          if ((reply[0] & (byte)DiSEqCPositionFlags.SoftwareLimitReached) != 0)
-            Log.Log.Error("  Software Limit Reached");
-          if ((reply[0] & (byte)DiSEqCPositionFlags.SoftwareLimitsEnabled) != 0)
-            Log.Log.Error("  Software Limit Enabled");
-        }
-        else
-        {
-          Log.Log.Error("DiSEqC motor: Unable to read current position");
-        }
-      }
-      else
-      {
-        Log.Log.Error("DiSEqC motor: unable to send cmd to get current position");
-      }
+      satellitePosition = _currentPosition;
+      stepsAzimuth = _currentStepsAzimuth;
+      stepsElevation = _currentStepsElevation;
     }
   }
 }

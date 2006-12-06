@@ -538,6 +538,7 @@ namespace TvControl
     void DiSEqCStorePosition(int cardId, byte position);
     void DiSEqCGotoReferencePosition(int cardId);
     void DiSEqCGotoPosition(int cardId, byte position);
+    void DiSEqCGetPosition(int cardId,out int satellitePosition, out int stepsAzimuth, out int stepsElevation);
     #endregion
   }
 }

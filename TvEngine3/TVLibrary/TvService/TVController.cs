@@ -2277,6 +2277,23 @@ namespace TvService
       }
     }
     #region DiSEqC
+
+    public void DiSEqCGetPosition(int cardId, out int satellitePosition, out int stepsAzimuth, out int stepsElevation)
+    {
+      satellitePosition=-1;
+      stepsAzimuth = 0;
+      stepsElevation = 0;
+      if (false == _allDbscards.ContainsKey(cardId)) return;
+      if (IsLocal(cardId) == false)
+      {
+        return;
+      }
+
+      IDiSEqCMotor motor = _localCards[cardId].DiSEqCMotor;
+      if (motor == null) return;
+      motor.GetPosition(out  satellitePosition, out  stepsAzimuth, out  stepsElevation);
+    }
+
     public void DiSEqCReset(int cardId)
     {
       if (false == _allDbscards.ContainsKey(cardId)) return;

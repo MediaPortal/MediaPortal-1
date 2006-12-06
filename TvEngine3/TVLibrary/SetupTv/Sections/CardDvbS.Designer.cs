@@ -64,6 +64,7 @@ namespace SetupTv.Sections
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.buttonReset = new System.Windows.Forms.Button();
       this.checkBox1 = new System.Windows.Forms.CheckBox();
       this.label11 = new System.Windows.Forms.Label();
       this.comboBoxStepSize = new System.Windows.Forms.ComboBox();
@@ -91,7 +92,8 @@ namespace SetupTv.Sections
       this.buttonMoveEast = new System.Windows.Forms.Button();
       this.buttonMoveWest = new System.Windows.Forms.Button();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
-      this.buttonReset = new System.Windows.Forms.Button();
+      this.label12 = new System.Windows.Forms.Label();
+      this.labelCurrentPosition = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -481,6 +483,8 @@ namespace SetupTv.Sections
       // 
       // tabPage2
       // 
+      this.tabPage2.Controls.Add(this.labelCurrentPosition);
+      this.tabPage2.Controls.Add(this.label12);
       this.tabPage2.Controls.Add(this.buttonReset);
       this.tabPage2.Controls.Add(this.checkBox1);
       this.tabPage2.Controls.Add(this.label11);
@@ -517,6 +521,16 @@ namespace SetupTv.Sections
       this.tabPage2.UseVisualStyleBackColor = true;
       this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
       // 
+      // buttonReset
+      // 
+      this.buttonReset.Location = new System.Drawing.Point(190, 362);
+      this.buttonReset.Name = "buttonReset";
+      this.buttonReset.Size = new System.Drawing.Size(53, 23);
+      this.buttonReset.TabIndex = 47;
+      this.buttonReset.Text = "Reset";
+      this.buttonReset.UseVisualStyleBackColor = true;
+      this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
+      // 
       // checkBox1
       // 
       this.checkBox1.AutoSize = true;
@@ -533,7 +547,7 @@ namespace SetupTv.Sections
       // label11
       // 
       this.label11.AutoSize = true;
-      this.label11.Location = new System.Drawing.Point(11, 97);
+      this.label11.Location = new System.Drawing.Point(11, 84);
       this.label11.Name = "label11";
       this.label11.Size = new System.Drawing.Size(55, 13);
       this.label11.TabIndex = 45;
@@ -543,7 +557,7 @@ namespace SetupTv.Sections
       // 
       this.comboBoxStepSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxStepSize.FormattingEnabled = true;
-      this.comboBoxStepSize.Location = new System.Drawing.Point(84, 94);
+      this.comboBoxStepSize.Location = new System.Drawing.Point(100, 81);
       this.comboBoxStepSize.Name = "comboBoxStepSize";
       this.comboBoxStepSize.Size = new System.Drawing.Size(92, 21);
       this.comboBoxStepSize.TabIndex = 44;
@@ -551,7 +565,7 @@ namespace SetupTv.Sections
       // 
       // buttonUp
       // 
-      this.buttonUp.Location = new System.Drawing.Point(213, 105);
+      this.buttonUp.Location = new System.Drawing.Point(210, 136);
       this.buttonUp.Name = "buttonUp";
       this.buttonUp.Size = new System.Drawing.Size(73, 23);
       this.buttonUp.TabIndex = 43;
@@ -561,7 +575,7 @@ namespace SetupTv.Sections
       // 
       // buttonDown
       // 
-      this.buttonDown.Location = new System.Drawing.Point(213, 189);
+      this.buttonDown.Location = new System.Drawing.Point(210, 220);
       this.buttonDown.Name = "buttonDown";
       this.buttonDown.Size = new System.Drawing.Size(73, 23);
       this.buttonDown.TabIndex = 42;
@@ -581,7 +595,7 @@ namespace SetupTv.Sections
       // 
       // buttonStop
       // 
-      this.buttonStop.Location = new System.Drawing.Point(213, 150);
+      this.buttonStop.Location = new System.Drawing.Point(210, 181);
       this.buttonStop.Name = "buttonStop";
       this.buttonStop.Size = new System.Drawing.Size(73, 23);
       this.buttonStop.TabIndex = 40;
@@ -633,7 +647,7 @@ namespace SetupTv.Sections
       // 
       this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBox1.FormattingEnabled = true;
-      this.comboBox1.Location = new System.Drawing.Point(84, 67);
+      this.comboBox1.Location = new System.Drawing.Point(100, 54);
       this.comboBox1.Name = "comboBox1";
       this.comboBox1.Size = new System.Drawing.Size(240, 21);
       this.comboBox1.TabIndex = 35;
@@ -642,7 +656,7 @@ namespace SetupTv.Sections
       // label4
       // 
       this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(8, 70);
+      this.label4.Location = new System.Drawing.Point(8, 57);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(70, 13);
       this.label4.TabIndex = 34;
@@ -650,14 +664,14 @@ namespace SetupTv.Sections
       // 
       // progressBarSatQuality
       // 
-      this.progressBarSatQuality.Location = new System.Drawing.Point(108, 250);
+      this.progressBarSatQuality.Location = new System.Drawing.Point(103, 272);
       this.progressBarSatQuality.Name = "progressBarSatQuality";
       this.progressBarSatQuality.Size = new System.Drawing.Size(328, 10);
       this.progressBarSatQuality.TabIndex = 33;
       // 
       // progressBarSatLevel
       // 
-      this.progressBarSatLevel.Location = new System.Drawing.Point(108, 227);
+      this.progressBarSatLevel.Location = new System.Drawing.Point(103, 249);
       this.progressBarSatLevel.Name = "progressBarSatLevel";
       this.progressBarSatLevel.Size = new System.Drawing.Size(328, 10);
       this.progressBarSatLevel.TabIndex = 32;
@@ -665,7 +679,7 @@ namespace SetupTv.Sections
       // label5
       // 
       this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(18, 247);
+      this.label5.Location = new System.Drawing.Point(13, 269);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(74, 13);
       this.label5.TabIndex = 31;
@@ -674,7 +688,7 @@ namespace SetupTv.Sections
       // label6
       // 
       this.label6.AutoSize = true;
-      this.label6.Location = new System.Drawing.Point(18, 224);
+      this.label6.Location = new System.Drawing.Point(13, 246);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(64, 13);
       this.label6.TabIndex = 30;
@@ -694,7 +708,7 @@ namespace SetupTv.Sections
       // 
       // buttonGoto
       // 
-      this.buttonGoto.Location = new System.Drawing.Point(338, 42);
+      this.buttonGoto.Location = new System.Drawing.Point(354, 29);
       this.buttonGoto.Name = "buttonGoto";
       this.buttonGoto.Size = new System.Drawing.Size(53, 23);
       this.buttonGoto.TabIndex = 7;
@@ -715,7 +729,7 @@ namespace SetupTv.Sections
       // label3
       // 
       this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(8, 45);
+      this.label3.Location = new System.Drawing.Point(8, 32);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(47, 13);
       this.label3.TabIndex = 5;
@@ -725,7 +739,7 @@ namespace SetupTv.Sections
       // 
       this.comboBoxSat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxSat.FormattingEnabled = true;
-      this.comboBoxSat.Location = new System.Drawing.Point(84, 42);
+      this.comboBoxSat.Location = new System.Drawing.Point(100, 29);
       this.comboBoxSat.Name = "comboBoxSat";
       this.comboBoxSat.Size = new System.Drawing.Size(240, 21);
       this.comboBoxSat.TabIndex = 4;
@@ -733,7 +747,7 @@ namespace SetupTv.Sections
       // 
       // buttonSetEastLimit
       // 
-      this.buttonSetEastLimit.Location = new System.Drawing.Point(297, 166);
+      this.buttonSetEastLimit.Location = new System.Drawing.Point(294, 197);
       this.buttonSetEastLimit.Name = "buttonSetEastLimit";
       this.buttonSetEastLimit.Size = new System.Drawing.Size(94, 23);
       this.buttonSetEastLimit.TabIndex = 3;
@@ -743,7 +757,7 @@ namespace SetupTv.Sections
       // 
       // buttonSetWestLimit
       // 
-      this.buttonSetWestLimit.Location = new System.Drawing.Point(103, 168);
+      this.buttonSetWestLimit.Location = new System.Drawing.Point(100, 199);
       this.buttonSetWestLimit.Name = "buttonSetWestLimit";
       this.buttonSetWestLimit.Size = new System.Drawing.Size(94, 23);
       this.buttonSetWestLimit.TabIndex = 2;
@@ -753,7 +767,7 @@ namespace SetupTv.Sections
       // 
       // buttonMoveEast
       // 
-      this.buttonMoveEast.Location = new System.Drawing.Point(297, 139);
+      this.buttonMoveEast.Location = new System.Drawing.Point(294, 170);
       this.buttonMoveEast.Name = "buttonMoveEast";
       this.buttonMoveEast.Size = new System.Drawing.Size(94, 23);
       this.buttonMoveEast.TabIndex = 1;
@@ -763,7 +777,7 @@ namespace SetupTv.Sections
       // 
       // buttonMoveWest
       // 
-      this.buttonMoveWest.Location = new System.Drawing.Point(103, 139);
+      this.buttonMoveWest.Location = new System.Drawing.Point(100, 170);
       this.buttonMoveWest.Name = "buttonMoveWest";
       this.buttonMoveWest.Size = new System.Drawing.Size(94, 23);
       this.buttonMoveWest.TabIndex = 0;
@@ -776,15 +790,23 @@ namespace SetupTv.Sections
       this.timer1.Interval = 1000;
       this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
       // 
-      // buttonReset
+      // label12
       // 
-      this.buttonReset.Location = new System.Drawing.Point(190, 362);
-      this.buttonReset.Name = "buttonReset";
-      this.buttonReset.Size = new System.Drawing.Size(53, 23);
-      this.buttonReset.TabIndex = 47;
-      this.buttonReset.Text = "Reset";
-      this.buttonReset.UseVisualStyleBackColor = true;
-      this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
+      this.label12.AutoSize = true;
+      this.label12.Location = new System.Drawing.Point(11, 111);
+      this.label12.Name = "label12";
+      this.label12.Size = new System.Drawing.Size(83, 13);
+      this.label12.TabIndex = 48;
+      this.label12.Text = "Current position:";
+      // 
+      // labelCurrentPosition
+      // 
+      this.labelCurrentPosition.AutoSize = true;
+      this.labelCurrentPosition.Location = new System.Drawing.Point(100, 111);
+      this.labelCurrentPosition.Name = "labelCurrentPosition";
+      this.labelCurrentPosition.Size = new System.Drawing.Size(83, 13);
+      this.labelCurrentPosition.TabIndex = 49;
+      this.labelCurrentPosition.Text = "Current position:";
       // 
       // CardDvbS
       // 
@@ -872,5 +894,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.CheckBox checkBox1;
     private System.Windows.Forms.Timer timer1;
     private System.Windows.Forms.Button buttonReset;
+    private System.Windows.Forms.Label label12;
+    private System.Windows.Forms.Label labelCurrentPosition;
   }
 }

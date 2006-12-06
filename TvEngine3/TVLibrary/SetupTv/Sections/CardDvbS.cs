@@ -449,6 +449,8 @@ namespace SetupTv.Sections
     {
       base.OnSectionActivated();
       UpdateStatus(1);
+      labelCurrentPosition.Text = "";
+      tabControl1_SelectedIndexChanged(null, null);
     }
 
 
@@ -1068,6 +1070,37 @@ namespace SetupTv.Sections
         {
           RemoteControl.Instance.UpdateSignalSate(_cardNumber);
           _signalTimer = DateTime.Now;
+          int satPos, stepsAzimuth, stepsElevation;
+          RemoteControl.Instance.DiSEqCGetPosition(_cardNumber, out satPos, out stepsAzimuth, out stepsElevation);
+          if (satPos < 0)
+            labelCurrentPosition.Text = "unknown";
+          else
+          {
+            string offset = "";
+            string satPosition = String.Format("Satellite postion:#{0}", satPos);
+            if (stepsAzimuth < 0)
+              offset = String.Format("{0} steps west", -stepsAzimuth);
+            else if (stepsAzimuth > 0)
+              offset = String.Format("{0} steps east", stepsAzimuth);
+            if (stepsElevation < 0)
+            {
+              if (offset.Length != 0)
+                offset = String.Format("{0}, {1} steps up", offset, -stepsElevation);
+              else
+                offset = String.Format("{0} steps up", -stepsElevation);
+            }
+            else if (stepsElevation > 0)
+            {
+              if (offset.Length != 0)
+                offset = String.Format("{0}, {1} steps down", offset, stepsElevation);
+              else
+                offset = String.Format("{0} steps down", stepsElevation);
+            }
+            if (offset.Length > 0)
+              labelCurrentPosition.Text = String.Format("{0} of {1}", offset, satPosition);
+            else
+              labelCurrentPosition.Text = satPosition;
+          }
         }
         UpdateStatus(1);
       }

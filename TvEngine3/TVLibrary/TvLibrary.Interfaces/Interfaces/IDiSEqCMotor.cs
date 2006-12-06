@@ -98,6 +98,6 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// Gets the current motor position.
     /// </summary>
-    void GetPosition();
+    void GetPosition(out int satellitePosition, out int stepsAzimuth, out int stepsElevation);
   }
 }
