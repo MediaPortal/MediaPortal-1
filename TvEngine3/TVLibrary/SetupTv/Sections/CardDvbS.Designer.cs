@@ -91,6 +91,7 @@ namespace SetupTv.Sections
       this.buttonMoveEast = new System.Windows.Forms.Button();
       this.buttonMoveWest = new System.Windows.Forms.Button();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
+      this.buttonReset = new System.Windows.Forms.Button();
       this.groupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -480,6 +481,7 @@ namespace SetupTv.Sections
       // 
       // tabPage2
       // 
+      this.tabPage2.Controls.Add(this.buttonReset);
       this.tabPage2.Controls.Add(this.checkBox1);
       this.tabPage2.Controls.Add(this.label11);
       this.tabPage2.Controls.Add(this.comboBoxStepSize);
@@ -518,7 +520,7 @@ namespace SetupTv.Sections
       // checkBox1
       // 
       this.checkBox1.AutoSize = true;
-      this.checkBox1.Location = new System.Drawing.Point(84, 19);
+      this.checkBox1.Location = new System.Drawing.Point(11, 6);
       this.checkBox1.Name = "checkBox1";
       this.checkBox1.Size = new System.Drawing.Size(134, 17);
       this.checkBox1.TabIndex = 46;
@@ -681,7 +683,7 @@ namespace SetupTv.Sections
       // checkBoxEnabled
       // 
       this.checkBoxEnabled.AutoSize = true;
-      this.checkBoxEnabled.Location = new System.Drawing.Point(96, 366);
+      this.checkBoxEnabled.Location = new System.Drawing.Point(11, 366);
       this.checkBoxEnabled.Name = "checkBoxEnabled";
       this.checkBoxEnabled.Size = new System.Drawing.Size(142, 17);
       this.checkBoxEnabled.TabIndex = 10;
@@ -774,6 +776,16 @@ namespace SetupTv.Sections
       this.timer1.Interval = 1000;
       this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
       // 
+      // buttonReset
+      // 
+      this.buttonReset.Location = new System.Drawing.Point(190, 362);
+      this.buttonReset.Name = "buttonReset";
+      this.buttonReset.Size = new System.Drawing.Size(53, 23);
+      this.buttonReset.TabIndex = 47;
+      this.buttonReset.Text = "Reset";
+      this.buttonReset.UseVisualStyleBackColor = true;
+      this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
+      // 
       // CardDvbS
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -859,5 +871,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ComboBox comboBoxStepSize;
     private System.Windows.Forms.CheckBox checkBox1;
     private System.Windows.Forms.Timer timer1;
+    private System.Windows.Forms.Button buttonReset;
   }
 }

@@ -61,6 +61,10 @@ namespace TvLibrary.Interfaces
     /// </summary>
     void StopMotor();
     /// <summary>
+    /// Reset.
+    /// </summary>
+    void Reset();
+    /// <summary>
     /// Sets the east limit.
     /// </summary>
     void SetEastLimit();

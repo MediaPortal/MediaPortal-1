@@ -1078,5 +1078,10 @@ namespace SetupTv.Sections
       }
     }
     #endregion
+
+    private void buttonReset_Click(object sender, EventArgs e)
+    {
+      RemoteControl.Instance.DiSEqCReset(_cardNumber);
+    }
   }
 }

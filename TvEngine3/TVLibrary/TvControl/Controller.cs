@@ -522,11 +522,14 @@ namespace TvControl
 
     List<string> ServerIpAdresses { get;}
     #endregion
+
     #region streaming
     List<RtspClient> StreamingClients { get;}
 
     #endregion
+
     #region DiSEqC
+    void DiSEqCReset(int cardId);
     void DiSEqCStopMotor(int cardId);
     void DiSEqCSetEastLimit(int cardId);
     void DiSEqCSetWestLimit(int cardId);

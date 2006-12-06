@@ -214,18 +214,22 @@ namespace TvLibrary.Implementations.DVB
         if (_digitalEveryWhere != null)
         {
           _digitalEveryWhere.SendDiseqcCommand(channel);
+          System.Threading.Thread.Sleep(100);
         }
         if (_technoTrend != null)
         {
           _technoTrend.SendDiseqCommand(channel);
+          System.Threading.Thread.Sleep(100);
         }
         if (_twinhan != null)
         {
           _twinhan.SendDiseqCommand(channel);
+          System.Threading.Thread.Sleep(100);
         }
         if (_hauppauge != null)
         {
           _hauppauge.SendDiseqCommand(channel);
+          System.Threading.Thread.Sleep(100);
         }
       }
       catch (Exception ex)
