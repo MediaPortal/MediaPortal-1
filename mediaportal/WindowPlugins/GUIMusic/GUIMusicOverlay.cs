@@ -62,7 +62,6 @@ namespace MediaPortal.GUI.Music
     PlayListPlayer playlistPlayer;
 
 
-
     public GUIMusicOverlay()
     {
       GetID = (int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY;
@@ -233,7 +232,7 @@ namespace MediaPortal.GUI.Music
     {
       if ((fileName == null) || (fileName == String.Empty))
         return;
-      // last.fm radio set's properties manually therefore do not overwrite them.
+      // last.fm radio sets properties manually therefore do not overwrite them.
       if (fileName.Contains(@"/last.mp3?"))
         return;
 
@@ -289,7 +288,7 @@ namespace MediaPortal.GUI.Music
       try
       {
         GUIPropertyManager.SetProperty("#Play.Next.File", System.IO.Path.GetFileName(fileName));
-        GUIPropertyManager.SetProperty("#Play.Next.Title", System.IO.Path.GetFileName(fileName));
+        GUIPropertyManager.SetProperty("#Play.Next.Title", MediaPortal.Util.Utils.GetFilename(fileName));
       }
       catch (Exception) { }
 
@@ -319,8 +318,6 @@ namespace MediaPortal.GUI.Music
         GUIPropertyManager.SetProperty("#Play.Next.Year", strYear);
         GUIPropertyManager.SetProperty("#Play.Next.Duration", strDuration);
       }
-
-
     }
 
     public override bool Focused
@@ -453,7 +450,7 @@ namespace MediaPortal.GUI.Music
       {
         if (tag.Album.Length > 0)
         {
-          string strThumb = GUIMusicFiles.GetCoverArt(false, fileName, tag);
+          string strThumb = GUIMusicFiles.GetCoverArt(false, fileName, tag);          
           if (strThumb != String.Empty)
           {
             thumb = strThumb;
@@ -462,6 +459,25 @@ namespace MediaPortal.GUI.Music
             if (System.IO.File.Exists(strLarge))
             {
               thumb = strLarge;
+            }
+          }
+        }
+        else
+        {
+          // no album info but Artist is known
+          if (tag.Artist.Length > 0)
+          {
+            //string strThumb = GUIMusicFiles.GetCoverArt(false, fileName, tag);
+            string strThumb = Util.Utils.GetCoverArt(Thumbs.MusicArtists, tag.Artist);
+            if (strThumb != String.Empty)
+            {
+              thumb = strThumb;
+              // let us test if there is a larger cover art image
+              string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(thumb);
+              if (System.IO.File.Exists(strLarge))
+              {
+                thumb = strLarge;
+              }
             }
           }
         }

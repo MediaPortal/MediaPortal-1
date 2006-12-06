@@ -765,9 +765,11 @@ namespace MediaPortal.GUI.Library
               }
               if (_currentState == State.Idle) _animationTime = _scrollTimeMax;
               _mouseState = State.Idle;
-              OnUp();              
+              OnUp();
+              return;  
             }
-            return;            
+            break;
+            // no return here to pass the base.action through (think of topbar) ;-)                         
           }
 
         case Action.ActionType.ACTION_MOVE_DOWN:
@@ -782,8 +784,9 @@ namespace MediaPortal.GUI.Library
               if (_currentState == State.Idle) _animationTime = _scrollTimeMax;
               _mouseState = State.Idle;
               OnDown();
+              return;
             }
-            return;
+            break; 
           }
 
         case Action.ActionType.ACTION_MOVE_LEFT:

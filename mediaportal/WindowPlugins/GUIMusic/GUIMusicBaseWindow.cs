@@ -1664,9 +1664,12 @@ namespace MediaPortal.GUI.Music
         return String.Empty;
       if (AlbumName == String.Empty)
         return String.Empty;
+      Util.Utils.RemoveStackEndings(ref AlbumName);
+
       string name = String.Format("{0}-{1}", ArtistName, AlbumName);
       return MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicAlbum, name);
     }
+
     protected virtual void AddSongToFavorites(GUIListItem item)
     {
       Song song = item.AlbumInfoTag as Song;

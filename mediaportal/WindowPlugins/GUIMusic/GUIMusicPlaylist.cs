@@ -109,7 +109,7 @@ namespace MediaPortal.GUI.Music
     string m_strCurrentFile = String.Empty;
     string _currentScrobbleUser = String.Empty;
     Song _scrobbleStartTrack;
-    VirtualDirectory m_directory = new VirtualDirectory();
+    VirtualDirectory _virtualDirectory = new VirtualDirectory();
     //const int MaxNumPShuffleSongPredict = 12;
     int _totalScrobbledSongs = 0;
     int _maxScrobbledSongsPerArtist = 1;
@@ -130,29 +130,22 @@ namespace MediaPortal.GUI.Music
     protected ScrobbleMode currentScrobbleMode = ScrobbleMode.Similar;
     protected offlineMode currentOfflineMode = offlineMode.random;
 
-    [SkinControlAttribute(20)]
-    protected GUIButtonControl btnShuffle = null;
-    [SkinControlAttribute(21)]
-    protected GUIButtonControl btnSave = null;
-    [SkinControlAttribute(22)]
-    protected GUIButtonControl btnClear = null;
+    [SkinControlAttribute(20)]    protected GUIButtonControl btnShuffle = null;
+    [SkinControlAttribute(21)]    protected GUIButtonControl btnSave = null;
+    [SkinControlAttribute(22)]    protected GUIButtonControl btnClear = null;
     //[SkinControlAttribute(23)]    protected GUIButtonControl btnPlay = null;
-    [SkinControlAttribute(26)]
-    protected GUIButtonControl btnNowPlaying = null;
-    [SkinControlAttribute(27)]
-    protected GUIToggleButtonControl btnScrobble = null;
-    [SkinControlAttribute(28)]
-    protected GUIButtonControl btnScrobbleMode = null;
-    [SkinControlAttribute(29)]
-    protected GUIButtonControl btnScrobbleUser = null;
+    [SkinControlAttribute(26)]    protected GUIButtonControl btnNowPlaying = null;
+    [SkinControlAttribute(27)]    protected GUIToggleButtonControl btnScrobble = null;
+    [SkinControlAttribute(28)]    protected GUIButtonControl btnScrobbleMode = null;
+    [SkinControlAttribute(29)]    protected GUIButtonControl btnScrobbleUser = null;
 
 
     public GUIMusicPlayList()
     {
       GetID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST;
 
-      m_directory.AddDrives();
-      m_directory.SetExtensions(MediaPortal.Util.Utils.AudioExtensions);
+      _virtualDirectory.AddDrives();
+      _virtualDirectory.SetExtensions(MediaPortal.Util.Utils.AudioExtensions);
     }
 
     private void LoadScrobbleUserSettings()
@@ -699,7 +692,6 @@ namespace MediaPortal.GUI.Music
         GUIWaitCursor.Show();
         try
         {
-
           TimeSpan totalPlayingTime = new TimeSpan();
           GUIListItem SelectedItem = facadeView.SelectedListItem;
           if (SelectedItem != null)

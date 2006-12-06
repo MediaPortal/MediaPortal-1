@@ -33,51 +33,26 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIButtonControl : GUIControl
   {
-    [XMLSkinElement("textureFocus")]
-    protected string _focusedTextureName = "";
-    [XMLSkinElement("textureNoFocus")]
-    protected string _nonFocusedTextureName = "";
-    [XMLSkinElement("font")]
-    protected string _fontName;
-    [XMLSkinElement("label")]
-    protected string _label = "";
-    [XMLSkinElement("textcolor")]
-    protected long _textColor = 0xFFFFFFFF;
-		[XMLSkinElement("textcolorNoFocus")]
-		protected long _textColorNoFocus = 0xFFFFFFFF;
-    [XMLSkinElement("disabledcolor")]
-    protected long _disabledColor = 0xFF606060;
-    [XMLSkinElement("hyperlink")]
-    protected int _hyperLinkWindowId = -1;
-    [XMLSkinElement("action")]
-    protected int _actionId = -1;
-    [XMLSkinElement("script")]
-    protected string _scriptAction = "";
-    [XMLSkinElement("textXOff")]
-    protected int _textOffsetX = 0;
-    [XMLSkinElement("textYOff")]
-    protected int _textOffsetY = 0;
-    [XMLSkinElement("textalign")]
-    protected GUIControl.Alignment _textAlignment = GUIControl.Alignment.ALIGN_LEFT;
-    [XMLSkinElement("application")]
-    protected string _application = "";
-    [XMLSkinElement("arguments")]
-    protected string _arguments = "";
-
-    [XMLSkinElement("hover")]
-    protected string _hoverFilename = string.Empty;
-
-    [XMLSkinElement("hoverX")]
-    protected int _hoverX;
-
-    [XMLSkinElement("hoverY")]
-    protected int _hoverY;
-
-    [XMLSkinElement("hoverWidth")]
-    protected int _hoverWidth;
-
-    [XMLSkinElement("hoverHeight")]
-    protected int _hoverHeight;
+    [XMLSkinElement("textureFocus")]                  protected string _focusedTextureName = "";
+    [XMLSkinElement("textureNoFocus")]                protected string _nonFocusedTextureName = "";
+    [XMLSkinElement("font")]                          protected string _fontName;
+    [XMLSkinElement("label")]                         protected string _label = "";
+    [XMLSkinElement("textcolor")]                     protected long _textColor = 0xFFFFFFFF;
+		[XMLSkinElement("textcolorNoFocus")]          		protected long _textColorNoFocus = 0xFFFFFFFF;
+    [XMLSkinElement("disabledcolor")]                 protected long _disabledColor = 0xFF606060;
+    [XMLSkinElement("hyperlink")]                     protected int _hyperLinkWindowId = -1;
+    [XMLSkinElement("action")]                        protected int _actionId = -1;
+    [XMLSkinElement("script")]                        protected string _scriptAction = "";
+    [XMLSkinElement("textXOff")]                      protected int _textOffsetX = 0;
+    [XMLSkinElement("textYOff")]                      protected int _textOffsetY = 0;
+    [XMLSkinElement("textalign")]                     protected GUIControl.Alignment _textAlignment = GUIControl.Alignment.ALIGN_LEFT;
+    [XMLSkinElement("application")]                   protected string _application = "";
+    [XMLSkinElement("arguments")]                     protected string _arguments = "";
+    [XMLSkinElement("hover")]                         protected string _hoverFilename = string.Empty;
+    [XMLSkinElement("hoverX")]                        protected int _hoverX;
+    [XMLSkinElement("hoverY")]                        protected int _hoverY;
+    [XMLSkinElement("hoverWidth")]                    protected int _hoverWidth;
+    [XMLSkinElement("hoverHeight")]                   protected int _hoverHeight;
 				
     protected int _frameCounter = 0;
     protected GUIAnimation _imageFocused = null;

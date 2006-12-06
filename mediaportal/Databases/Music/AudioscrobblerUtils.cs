@@ -1704,7 +1704,16 @@ namespace MediaPortal.Music.Database
           }
           AlbumInfoList.Add(nodeSong);
         }
-        fetchWebImage(tmpCover, tmpArtist + "-" + tmpAlbum + ".jpg", Thumbs.MusicAlbum);
+
+        artist_ = System.Web.HttpUtility.UrlDecode(artist_);
+        if (artist_.ToLowerInvariant() != tmpArtist.ToLowerInvariant())
+        {
+          Log.Info("AudioScrobblerUtils: alternative album artist spelling detected - try to fetch both thumbs (MP: {0} / official: {1})", artist_, tmpArtist);
+          fetchWebImage(tmpCover, tmpArtist + "-" + tmpAlbum + ".jpg", Thumbs.MusicAlbum);
+          fetchWebImage(tmpCover, artist_ + "-" + tmpAlbum + ".jpg", Thumbs.MusicAlbum);
+        }
+        else
+          fetchWebImage(tmpCover, tmpArtist + "-" + tmpAlbum + ".jpg", Thumbs.MusicAlbum);
       }
       catch
       {
