@@ -860,6 +860,7 @@ namespace SetupTv.Sections
         {
           RemoteControl.Instance.DiSEqCGotoPosition(_cardNumber, (byte)motor.Position);
           MessageBox.Show("Satellite moving to position:" + motor.Position.ToString(), "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+          comboBox1_SelectedIndexChanged(null, null);
           return;
         }
       }
@@ -889,9 +890,6 @@ namespace SetupTv.Sections
         DiSEqCMotor motor = new DiSEqCMotor(card.IdCard, sat.Satelite.IdSatellite, index);
         motor.Persist();
       }
-      RemoteControl.Instance.DiSEqCStorePosition(_cardNumber, (byte)(index));
-      RemoteControl.Instance.DiSEqCStorePosition(_cardNumber, (byte)(index));
-      RemoteControl.Instance.DiSEqCStorePosition(_cardNumber, (byte)(index));
       RemoteControl.Instance.DiSEqCStorePosition(_cardNumber, (byte)(index));
       MessageBox.Show("Satellite position stored to:" + index.ToString(), "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -998,12 +996,14 @@ namespace SetupTv.Sections
     {
       if (_enableEvents == false) return;
       RemoteControl.Instance.DiSEqCStopMotor(_cardNumber);
+      comboBox1_SelectedIndexChanged(null, null);
     }
 
     private void buttonGotoStart_Click(object sender, EventArgs e)
     {
       if (_enableEvents == false) return;
       RemoteControl.Instance.DiSEqCGotoReferencePosition(_cardNumber);
+      comboBox1_SelectedIndexChanged(null, null);
 
     }
 
@@ -1070,7 +1070,6 @@ namespace SetupTv.Sections
           _signalTimer = DateTime.Now;
         }
         UpdateStatus(1);
-        buttonStore.Text = DateTime.Now.Second.ToString();
       }
       finally
       {

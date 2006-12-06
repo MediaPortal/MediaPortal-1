@@ -106,6 +106,9 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.WriteFile("twinhan: CAM inserted");
           }
+          //SetLnbData(false, 9750, 10600, 11700, 1, 0);
+          //System.Threading.Thread.Sleep(100);
+          //SetLnbData(true, 9750, 10600, 11700, 1, 0);
         }
         return result;
       }
@@ -479,21 +482,23 @@ namespace TvLibrary.Implementations.DVB
           LNBLOFHiLoSW = 0;
           break;
       }
-      //LNBLOFLowBand *= 1000;//in Khz
-      //LNBLOFHighBand *= 1000;//in Khz
-      //LNBLOFHiLoSW *= 1000;//in Khz
-      Log.Log.WriteFile("Twinhan: Setdiseqc port:{0} 22khz:{1} low:{2} hi:{3} switch:{4}", disEqcPort, turnon22Khz, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW);
+      SetLnbData(true, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW, turnon22Khz, disEqcPort);
+    }
+
+    void SetLnbData(bool lnbPower, int LNBLOFLowBand, int LNBLOFHighBand, int LNBLOFHiLoSW, int turnon22Khz, int disEqcPort)
+    {
+      Log.Log.WriteFile("Twinhan: SetLnb diseqc port:{0} 22khz:{1} low:{2} hi:{3} switch:{4} power:{5}", disEqcPort, turnon22Khz, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW, lnbPower);
       int thbdaLen = 0x28;
       int disEqcLen = 20;
-      Marshal.WriteByte(_ptrDiseqc, 0, 1);              // 0: LNB_POWER
+      Marshal.WriteByte(_ptrDiseqc, 0,(byte) (lnbPower ? 1 : 0));              // 0: LNB_POWER
       Marshal.WriteByte(_ptrDiseqc, 1, 0);              // 1: Tone_Data_Burst (Tone_Data_OFF:0 | Tone_Burst_ON:1 | Data_Burst_ON:2)
       Marshal.WriteByte(_ptrDiseqc, 2, 0);
       Marshal.WriteByte(_ptrDiseqc, 3, 0);
       Marshal.WriteInt32(_ptrDiseqc, 4, LNBLOFLowBand); // 4: ulLNBLOFLowBand   LNBLOF LowBand MHz
       Marshal.WriteInt32(_ptrDiseqc, 8, LNBLOFHighBand);// 8: ulLNBLOFHighBand  LNBLOF HighBand MHz
       Marshal.WriteInt32(_ptrDiseqc, 12, LNBLOFHiLoSW); //12: ulLNBLOFHiLoSW   LNBLOF HiLoSW MHz
-      Marshal.WriteByte(_ptrDiseqc, 16, turnon22Khz);   //16: f22K_Output (F22K_Output_HiLo:0 | F22K_Output_Off:1 | F22K_Output_On:2
-      Marshal.WriteByte(_ptrDiseqc, 17, disEqcPort);    //17: DiSEqC_Port
+      Marshal.WriteByte(_ptrDiseqc, 16, (byte)turnon22Khz);   //16: f22K_Output (F22K_Output_HiLo:0 | F22K_Output_Off:1 | F22K_Output_On:2
+      Marshal.WriteByte(_ptrDiseqc, 17, (byte)disEqcPort);    //17: DiSEqC_Port
       Marshal.WriteByte(_ptrDiseqc, 18, 0);
       Marshal.WriteByte(_ptrDiseqc, 19, 0);
 
@@ -592,7 +597,7 @@ namespace TvLibrary.Implementations.DVB
           int hr = propertySet.Set(propertyGuid, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
           if (hr != 0)
           {
-            Log.Log.WriteFile("TwinHan DiSEqC cmd:{0} failed 0x{1:X}",line, hr);
+            Log.Log.WriteFile("TwinHan DiSEqC cmd:{0} failed 0x{1:X}", line, hr);
           }
           else
           {
@@ -619,7 +624,7 @@ namespace TvLibrary.Implementations.DVB
       int thbdaLen = 0x28;
       int disEqcLen = 16;
       for (int i = 0; i < 16; ++i)
-        Marshal.WriteByte(_ptrDiseqc,  i, 0);
+        Marshal.WriteByte(_ptrDiseqc, i, 0);
 
       Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
       Marshal.WriteInt16(_thbdaBuf, 4, 0x2017);
