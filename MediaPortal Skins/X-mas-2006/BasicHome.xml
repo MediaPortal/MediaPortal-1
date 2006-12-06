@@ -8,8 +8,11 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
+			<posX>0</posX>
+			<posY>0</posY>
       <width>720</width>
       <height>576</height>
+			<texture>background.GIF</texture>
     </control>
     <control>
       <description>Big text</description>
@@ -20,7 +23,6 @@
       <label>#highlightedbutton</label>
       <align>center</align>
       <font>dingbats</font>
-      <textcolor>40ffffff</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -30,10 +32,11 @@
       <id>2</id>
       <posX>49</posX>
       <posY>240</posY>
-      <width>135</width>
-      <height>195</height>
-      <textureFocus>Radio1.png</textureFocus>
-      <textureNoFocus>Radio0.png</textureNoFocus>
+      <width>120</width>
+      <height>120</height>
+      <!-- <textureFocus>Radio1.png</textureFocus> -->
+      <textureFocus>hover_my radio.png</textureFocus>
+      <textureNoFocus>hover_my radio.png</textureNoFocus>
       <thumbZoom>yes</thumbZoom>
       <hyperlink>30</hyperlink>
       <hover>-</hover>
@@ -42,16 +45,17 @@
       <hoverWidth>204</hoverWidth>
       <hoverHeight>230</hoverHeight>
       <label>665</label>
-      <textcolor>00ffffff</textcolor>
-      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <textcolor>00808080</textcolor>
+      <textcolorNoFocus>00808080</textcolorNoFocus>
+      <disabledcolor>FF808080</disabledcolor>
       <onleft>6</onleft>
       <onright>3</onright>
       <onup>21</onup>
       <ondown>2</ondown>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500">focus</animation>
-      <animation effect="zoom" start="130,130" end="100,100" center="0,0" time="500">nofocus</animation>
+      <animation effect="zoom" start="100,100" end="150,150" center="0,0" time="500">focus</animation>
+      <animation effect="zoom" start="150,150" end="100,100" center="0,0" time="500">nofocus</animation>
     </control>
     <control>
       <description>home BM Video</description>
@@ -59,10 +63,10 @@
       <id>3</id>
       <posX>152</posX>
       <posY>140</posY>
-      <width>135</width>
-      <height>195</height>
-      <textureFocus>Video1.png</textureFocus>
-      <textureNoFocus>Video0.png</textureNoFocus>
+      <width>120</width>
+      <height>120</height>
+      <textureFocus>hover_my videos.png</textureFocus>
+      <textureNoFocus>hover_my videos.png</textureNoFocus>
       <hyperlink>6</hyperlink>
       <hover>-</hover>
       <hoverX>265</hoverX>
@@ -70,16 +74,17 @@
       <hoverWidth>204</hoverWidth>
       <hoverHeight>230</hoverHeight>
       <label>3</label>
-      <textcolor>00ffffff</textcolor>
-      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <textcolor>00808080</textcolor>
+      <textcolorNoFocus>00808080</textcolorNoFocus>
+      <disabledcolor>FF808080</disabledcolor>
       <onleft>2</onleft>
       <onright>4</onright>
       <onup>21</onup>
       <ondown>3</ondown>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500">focus</animation>
-      <animation effect="zoom" start="130,130" end="100,100" center="0,0" time="500">nofocus</animation>
+      <animation effect="zoom" start="100,100" end="150,150" center="0,0" time="500">focus</animation>
+      <animation effect="zoom" start="150,150" end="100,100" center="0,0" time="500">nofocus</animation>
     </control>
     <control>
       <description>home BM FFS</description>
@@ -87,10 +92,10 @@
       <id>4</id>
       <posX>292</posX>
       <posY>85</posY>
-      <width>135</width>
-      <height>195</height>
-      <textureFocus>TV1.png</textureFocus>
-      <textureNoFocus>TV0.png</textureNoFocus>
+      <width>120</width>
+      <height>120</height>
+      <textureFocus>hover_my tv.png</textureFocus>
+      <textureNoFocus>hover_my tv.png</textureNoFocus>
       <hyperlink>1</hyperlink>
       <hover>-</hover>
       <hoverX>265</hoverX>
@@ -98,16 +103,17 @@
       <hoverWidth>204</hoverWidth>
       <hoverHeight>230</hoverHeight>
       <label>605</label>
-      <textcolor>00ffffff</textcolor>
-      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <textcolor>00808080</textcolor>
+      <textcolorNoFocus>00808080</textcolorNoFocus>
+      <disabledcolor>FF808080</disabledcolor>
       <onleft>3</onleft>
       <onright>5</onright>
       <onup>21</onup>
       <ondown>4</ondown>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500">focus</animation>
-      <animation effect="zoom" start="130,130" end="100,100" center="0,0" time="500">nofocus</animation>
+      <animation effect="zoom" start="100,100" end="150,150" center="0,0" time="500">focus</animation>
+      <animation effect="zoom" start="150,150" end="100,100" center="0,0" time="500">nofocus</animation>
     </control>
     <control>
       <description>home BM Music</description>
@@ -115,10 +121,10 @@
       <id>5</id>
       <posX>432</posX>
       <posY>140</posY>
-      <width>135</width>
-      <height>195</height>
-      <textureFocus>Music1.png</textureFocus>
-      <textureNoFocus>Music0.png</textureNoFocus>
+      <width>120</width>
+      <height>120</height>
+      <textureFocus>hover_my music.png</textureFocus>
+      <textureNoFocus>hover_my music.png</textureNoFocus>
       <hyperlink>501</hyperlink>
       <hover>-</hover>
       <hoverX>265</hoverX>
@@ -126,16 +132,17 @@
       <hoverWidth>204</hoverWidth>
       <hoverHeight>230</hoverHeight>
       <label>2</label>
-      <textcolor>00ffffff</textcolor>
-      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <textcolor>00808080</textcolor>
+      <textcolorNoFocus>00808080</textcolorNoFocus>
+      <disabledcolor>FF808080</disabledcolor>
       <onleft>4</onleft>
       <onright>6</onright>
       <onup>21</onup>
       <ondown>5</ondown>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500">focus</animation>
-      <animation effect="zoom" start="130,130" end="100,100" center="0,0" time="500">nofocus</animation>
+      <animation effect="zoom" start="100,100" end="150,150" center="0,0" time="500">focus</animation>
+      <animation effect="zoom" start="150,150" end="100,100" center="0,0" time="500">nofocus</animation>
     </control>
     <control>
       <description>home BM Pictures</description>
@@ -143,10 +150,10 @@
       <id>6</id>
       <posX>550</posX>
       <posY>240</posY>
-      <width>135</width>
-      <height>195</height>
-      <textureFocus>Pictures1.png</textureFocus>
-      <textureNoFocus>Pictures0.png</textureNoFocus>
+      <width>120</width>
+      <height>120</height>
+      <textureFocus>hover_my pictures.png</textureFocus>
+      <textureNoFocus>hover_my pictures.png</textureNoFocus>
       <hyperlink>2</hyperlink>
       <hover>-</hover>
       <hoverX>265</hoverX>
@@ -154,16 +161,17 @@
       <hoverWidth>204</hoverWidth>
       <hoverHeight>230</hoverHeight>
       <label>1</label>
-      <textcolor>00ffffff</textcolor>
-      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <textcolor>00808080</textcolor>
+      <textcolorNoFocus>00808080</textcolorNoFocus>
+      <disabledcolor>FF808080</disabledcolor>
       <onleft>5</onleft>
       <onright>2</onright>
       <onup>21</onup>
       <ondown>6</ondown>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500">focus</animation>
-      <animation effect="zoom" start="130,130" end="100,100" center="0,0" time="500">nofocus</animation>
+      <animation effect="zoom" start="100,100" end="150,150" center="0,0" time="500">focus</animation>
+      <animation effect="zoom" start="150,150" end="100,100" center="0,0" time="500">nofocus</animation>
     </control>
     <control>
       <description>Date</description>
@@ -173,7 +181,10 @@
       <posY>470</posY>
       <label>#homedate</label>
       <align>right</align>
-      <textcolor>ffa9d0f7</textcolor>
+			<font>font13</font>
+      <textcolor>FF808080</textcolor>
+      <textcolorNoFocus>FF808080</textcolorNoFocus>
+      <disabledcolor>FF808080</disabledcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -185,7 +196,10 @@
       <posY>470</posY>
       <label>#time</label>
       <align>left</align>
-      <textcolor>ffffffff</textcolor>
+			<font>font13</font>
+      <textcolor>FF808080</textcolor>
+      <textcolorNoFocus>FF808080</textcolorNoFocus>
+      <disabledcolor>FF808080</disabledcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
