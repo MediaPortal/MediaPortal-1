@@ -512,11 +512,19 @@ namespace MediaPortal.GUI.TV
             case TVRecording.RecordingType.WeekDays:
               goto case TVRecording.RecordingType.Once;
             case TVRecording.RecordingType.WeekEnds:
-              goto case TVRecording.RecordingType.Once;
+              if ((rec.Channel != currentRec.Channel)
+               || (rec.StartTime.TimeOfDay != currentRec.StartTime.TimeOfDay 
+               || (currentRec.StartTime.DayOfWeek != DayOfWeek.Saturday && currentRec.StartTime.DayOfWeek != DayOfWeek.Sunday)))
+                continue;
+              break;
             case TVRecording.RecordingType.Weekly:
-              goto case TVRecording.RecordingType.Once;
+              if ((rec.Channel != currentRec.Channel) || (rec.StartTime.TimeOfDay != currentRec.StartTime.TimeOfDay || rec.StartTime.DayOfWeek != currentRec.StartTime.DayOfWeek))
+                continue;
+              break;
             case TVRecording.RecordingType.EveryTimeOnThisChannel:
-              if (rec.Channel != currentRec.Channel)
+              if ((rec.Channel != currentRec.Channel)
+                // add a "softer" comparing here
+                ||(!rec.Title.Equals(currentShow)))
                 continue;
               break;
             case TVRecording.RecordingType.EveryTimeOnEveryChannel:
