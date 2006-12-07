@@ -73,14 +73,17 @@ namespace ProcessPlugins.TvMovie
       this.tabPageMapChannels = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.labelNote = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabPageSettings = new System.Windows.Forms.TabPage();
-      this.mpGroupBoxDescriptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxImport = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxSlowImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpGroupBoxGeneral = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxGeneral = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxAdditionalInfo = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxShowAudioFormat = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxUseShortDesc = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpBeveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-      this.checkBoxAdditionalInfo = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.groupBoxSpecial = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxUseDatabaseDate = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.label2 = new System.Windows.Forms.Label();
       this.groupBoxMapping.SuspendLayout();
       this.panelTimeSpan.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -88,8 +91,9 @@ namespace ProcessPlugins.TvMovie
       this.mpTabControl.SuspendLayout();
       this.tabPageMapChannels.SuspendLayout();
       this.tabPageSettings.SuspendLayout();
-      this.mpGroupBoxDescriptions.SuspendLayout();
-      this.mpGroupBoxGeneral.SuspendLayout();
+      this.groupBoxImport.SuspendLayout();
+      this.groupBoxGeneral.SuspendLayout();
+      this.groupBoxSpecial.SuspendLayout();
       this.SuspendLayout();
       // 
       // treeViewChannels
@@ -317,8 +321,9 @@ namespace ProcessPlugins.TvMovie
       // 
       // tabPageSettings
       // 
-      this.tabPageSettings.Controls.Add(this.mpGroupBoxDescriptions);
-      this.tabPageSettings.Controls.Add(this.mpGroupBoxGeneral);
+      this.tabPageSettings.Controls.Add(this.groupBoxSpecial);
+      this.tabPageSettings.Controls.Add(this.groupBoxImport);
+      this.tabPageSettings.Controls.Add(this.groupBoxGeneral);
       this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
       this.tabPageSettings.Name = "tabPageSettings";
       this.tabPageSettings.Padding = new System.Windows.Forms.Padding(3);
@@ -327,16 +332,16 @@ namespace ProcessPlugins.TvMovie
       this.tabPageSettings.Text = "Settings";
       this.tabPageSettings.UseVisualStyleBackColor = true;
       // 
-      // mpGroupBoxDescriptions
+      // groupBoxImport
       // 
-      this.mpGroupBoxDescriptions.Controls.Add(this.checkBoxSlowImport);
-      this.mpGroupBoxDescriptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBoxDescriptions.Location = new System.Drawing.Point(16, 139);
-      this.mpGroupBoxDescriptions.Name = "mpGroupBoxDescriptions";
-      this.mpGroupBoxDescriptions.Size = new System.Drawing.Size(472, 56);
-      this.mpGroupBoxDescriptions.TabIndex = 13;
-      this.mpGroupBoxDescriptions.TabStop = false;
-      this.mpGroupBoxDescriptions.Text = "Descriptions";
+      this.groupBoxImport.Controls.Add(this.checkBoxSlowImport);
+      this.groupBoxImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxImport.Location = new System.Drawing.Point(16, 124);
+      this.groupBoxImport.Name = "groupBoxImport";
+      this.groupBoxImport.Size = new System.Drawing.Size(472, 56);
+      this.groupBoxImport.TabIndex = 13;
+      this.groupBoxImport.TabStop = false;
+      this.groupBoxImport.Text = "Import";
       // 
       // checkBoxSlowImport
       // 
@@ -349,18 +354,30 @@ namespace ProcessPlugins.TvMovie
       this.checkBoxSlowImport.Text = "Slower import (uses less processing power to solve possible video stuttering)";
       this.checkBoxSlowImport.UseVisualStyleBackColor = true;
       // 
-      // mpGroupBoxGeneral
+      // groupBoxGeneral
       // 
-      this.mpGroupBoxGeneral.Controls.Add(this.checkBoxAdditionalInfo);
-      this.mpGroupBoxGeneral.Controls.Add(this.checkBoxShowAudioFormat);
-      this.mpGroupBoxGeneral.Controls.Add(this.checkBoxUseShortDesc);
-      this.mpGroupBoxGeneral.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBoxGeneral.Location = new System.Drawing.Point(16, 16);
-      this.mpGroupBoxGeneral.Name = "mpGroupBoxGeneral";
-      this.mpGroupBoxGeneral.Size = new System.Drawing.Size(472, 100);
-      this.mpGroupBoxGeneral.TabIndex = 0;
-      this.mpGroupBoxGeneral.TabStop = false;
-      this.mpGroupBoxGeneral.Text = "General";
+      this.groupBoxGeneral.Controls.Add(this.checkBoxAdditionalInfo);
+      this.groupBoxGeneral.Controls.Add(this.checkBoxShowAudioFormat);
+      this.groupBoxGeneral.Controls.Add(this.checkBoxUseShortDesc);
+      this.groupBoxGeneral.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxGeneral.Location = new System.Drawing.Point(16, 16);
+      this.groupBoxGeneral.Name = "groupBoxGeneral";
+      this.groupBoxGeneral.Size = new System.Drawing.Size(472, 100);
+      this.groupBoxGeneral.TabIndex = 0;
+      this.groupBoxGeneral.TabStop = false;
+      this.groupBoxGeneral.Text = "General";
+      // 
+      // checkBoxAdditionalInfo
+      // 
+      this.checkBoxAdditionalInfo.AutoSize = true;
+      this.checkBoxAdditionalInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxAdditionalInfo.Location = new System.Drawing.Point(16, 48);
+      this.checkBoxAdditionalInfo.Name = "checkBoxAdditionalInfo";
+      this.checkBoxAdditionalInfo.Size = new System.Drawing.Size(222, 17);
+      this.checkBoxAdditionalInfo.TabIndex = 13;
+      this.checkBoxAdditionalInfo.Text = "Put additional info into the description field";
+      this.checkBoxAdditionalInfo.UseVisualStyleBackColor = true;
+      this.checkBoxAdditionalInfo.CheckedChanged += new System.EventHandler(this.checkBoxAdditionalInfo_CheckedChanged);
       // 
       // checkBoxShowAudioFormat
       // 
@@ -401,17 +418,38 @@ namespace ProcessPlugins.TvMovie
       this.openFileDialog.Filter = "TV Movie Database|*.mdb";
       this.openFileDialog.RestoreDirectory = true;
       // 
-      // checkBoxAdditionalInfo
+      // groupBoxSpecial
       // 
-      this.checkBoxAdditionalInfo.AutoSize = true;
-      this.checkBoxAdditionalInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxAdditionalInfo.Location = new System.Drawing.Point(16, 48);
-      this.checkBoxAdditionalInfo.Name = "checkBoxAdditionalInfo";
-      this.checkBoxAdditionalInfo.Size = new System.Drawing.Size(222, 17);
-      this.checkBoxAdditionalInfo.TabIndex = 13;
-      this.checkBoxAdditionalInfo.Text = "Put additional info into the description field";
-      this.checkBoxAdditionalInfo.UseVisualStyleBackColor = true;
-      this.checkBoxAdditionalInfo.CheckedChanged += new System.EventHandler(this.checkBoxAdditionalInfo_CheckedChanged);
+      this.groupBoxSpecial.Controls.Add(this.label2);
+      this.groupBoxSpecial.Controls.Add(this.checkBoxUseDatabaseDate);
+      this.groupBoxSpecial.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxSpecial.Location = new System.Drawing.Point(16, 188);
+      this.groupBoxSpecial.Name = "groupBoxSpecial";
+      this.groupBoxSpecial.Size = new System.Drawing.Size(472, 80);
+      this.groupBoxSpecial.TabIndex = 14;
+      this.groupBoxSpecial.TabStop = false;
+      this.groupBoxSpecial.Text = "Special";
+      // 
+      // checkBoxUseDatabaseDate
+      // 
+      this.checkBoxUseDatabaseDate.AutoSize = true;
+      this.checkBoxUseDatabaseDate.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxUseDatabaseDate.Location = new System.Drawing.Point(16, 26);
+      this.checkBoxUseDatabaseDate.Name = "checkBoxUseDatabaseDate";
+      this.checkBoxUseDatabaseDate.Size = new System.Drawing.Size(248, 17);
+      this.checkBoxUseDatabaseDate.TabIndex = 11;
+      this.checkBoxUseDatabaseDate.Text = "Use ClickFinder 5.2 Beta (mind the note below!)";
+      this.checkBoxUseDatabaseDate.UseVisualStyleBackColor = true;
+      // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(32, 48);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(421, 13);
+      this.label2.TabIndex = 12;
+      this.label2.Text = "(Every use of the ClickFinder main application will result in an EPG import in Me" +
+          "diaPortal)";
       // 
       // TvMovieSettings
       // 
@@ -443,10 +481,12 @@ namespace ProcessPlugins.TvMovie
       this.tabPageMapChannels.ResumeLayout(false);
       this.tabPageMapChannels.PerformLayout();
       this.tabPageSettings.ResumeLayout(false);
-      this.mpGroupBoxDescriptions.ResumeLayout(false);
-      this.mpGroupBoxDescriptions.PerformLayout();
-      this.mpGroupBoxGeneral.ResumeLayout(false);
-      this.mpGroupBoxGeneral.PerformLayout();
+      this.groupBoxImport.ResumeLayout(false);
+      this.groupBoxImport.PerformLayout();
+      this.groupBoxGeneral.ResumeLayout(false);
+      this.groupBoxGeneral.PerformLayout();
+      this.groupBoxSpecial.ResumeLayout(false);
+      this.groupBoxSpecial.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -476,11 +516,14 @@ namespace ProcessPlugins.TvMovie
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseShortDesc;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowAudioFormat;
     private System.Windows.Forms.TabPage tabPageSettings;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBoxGeneral;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBoxDescriptions;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxGeneral;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxImport;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxSlowImport;
     private MediaPortal.UserInterface.Controls.MPLabel labelNote;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAdditionalInfo;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxSpecial;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseDatabaseDate;
+    private System.Windows.Forms.Label label2;
   }
 }
 

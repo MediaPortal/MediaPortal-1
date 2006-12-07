@@ -60,7 +60,7 @@ namespace ProcessPlugins.TvMovie
     public delegate void StationsChanged(int value, int maximum, string text);
     public event StationsChanged OnStationsChanged;
 
- 
+
     private struct Mapping
     {
       private string _channel;
@@ -544,7 +544,7 @@ namespace ProcessPlugins.TvMovie
               epgEntry.Description = sb.ToString();
             }
 
-						TVDatabase.SupressEvents = true;   // Bav - testing if this is root of powerscheduler problems
+            TVDatabase.SupressEvents = true;   // Bav - testing if this is root of powerscheduler problems
             TVDatabase.UpdateProgram(epgEntry);
             if (_slowImport)
               Thread.Sleep(50);
@@ -564,25 +564,40 @@ namespace ProcessPlugins.TvMovie
     {
       get
       {
-        long lastUpdate = 0;
-
-        using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\TVUpdate"))
-          if (rkey != null)
-          {
-            string regLastUpdate = string.Format("{0}", rkey.GetValue("LetztesTVUpdate"));
-            lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
-          }
-          else
-            return false;
-
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-          if (Convert.ToInt64(xmlreader.GetValueAsString("tvmovie", "lastupdate", "0")) == lastUpdate)
+          if (Convert.ToInt64(xmlreader.GetValueAsString("tvmovie", "lastupdate", "0")) == LastUpdate)
             return false;
 
         return true;
       }
     }
 
+    private long LastUpdate
+    {
+      get
+      {
+        long lastUpdate = 0;
+
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          if (xmlreader.GetValueAsBool("tvmovie", "usedatabasedate", false))
+          {
+            FileInfo mpFi = new FileInfo(DatabasePath);
+            DateTime dbUpdate = mpFi.LastWriteTime;
+            lastUpdate = Convert.ToInt64(string.Format("{0:D4}{1:D2}{2:D2}{3:D2}{4:D2}{5:D2}", dbUpdate.Year, dbUpdate.Month, dbUpdate.Day, dbUpdate.Hour, dbUpdate.Minute, dbUpdate.Second));
+          }
+          else
+          {
+            using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\TVUpdate"))
+              if (rkey != null)
+              {
+                string regLastUpdate = string.Format("{0}", rkey.GetValue("LetztesTVUpdate"));
+                lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
+              }
+          }
+
+        return lastUpdate;
+      }
+    }
 
     public void Import()
     {
@@ -657,17 +672,8 @@ namespace ProcessPlugins.TvMovie
 
       if (!_canceled)
       {
-        long lastUpdate = 0;
-
-        using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\TVUpdate"))
-          if (rkey != null)
-          {
-            string regLastUpdate = string.Format("{0}", rkey.GetValue("LetztesTVUpdate"));
-            lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
-          }
-
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-          xmlwriter.SetValue("tvmovie", "lastupdate", lastUpdate);
+          xmlwriter.SetValue("tvmovie", "lastupdate", LastUpdate);
 
         MediaPortal.Profile.Settings.SaveCache();
 
