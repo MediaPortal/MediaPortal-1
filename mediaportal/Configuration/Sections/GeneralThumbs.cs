@@ -55,6 +55,12 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel labelCurrentResolution;
     private MediaPortal.UserInterface.Controls.MPLabel labelRecommendedCurrent;
     private MediaPortal.UserInterface.Controls.MPLabel labelRecommendedHint;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxPictureThumbs;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxMusicThumbs;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxPicThumbOnDemand;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxFolderThumbOnDemand;
+    private MediaPortal.UserInterface.Controls.MPButton buttonClearMusicCache;
+    private MediaPortal.UserInterface.Controls.MPButton buttonClearPictureThumbs;
     private TabPage tabPageThumbQuality;
   
     public GeneralThumbs()
@@ -85,6 +91,8 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         trackBarQuality.Value = xmlreader.GetValueAsInt("thumbnails", "quality", 2);
+        checkBoxFolderThumbOnDemand.Checked = xmlreader.GetValueAsBool("thumbnails", "musicfolderondemand", false);
+        checkBoxPicThumbOnDemand.Checked = xmlreader.GetValueAsBool("thumbnails", "picturenolargethumbondemand", false);
       }
     }
 
@@ -93,6 +101,8 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("thumbnails", "quality", trackBarQuality.Value);
+        xmlwriter.SetValueAsBool("thumbnails", "musicfolderondemand", checkBoxFolderThumbOnDemand.Checked);
+        xmlwriter.SetValueAsBool("thumbnails", "picturelargethumbondemand", checkBoxPicThumbOnDemand.Checked);
       }
     }    
 
@@ -181,10 +191,18 @@ namespace MediaPortal.Configuration.Sections
       this.labelLow = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelQualityHint = new MediaPortal.UserInterface.Controls.MPLabel();
       this.trackBarQuality = new System.Windows.Forms.TrackBar();
+      this.groupBoxMusicThumbs = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxPictureThumbs = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxPicThumbOnDemand = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxFolderThumbOnDemand = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.buttonClearMusicCache = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonClearPictureThumbs = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabControlThumbnailSettings.SuspendLayout();
       this.tabPageThumbQuality.SuspendLayout();
       this.groupBoxThumbQuality.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.trackBarQuality)).BeginInit();
+      this.groupBoxMusicThumbs.SuspendLayout();
+      this.groupBoxPictureThumbs.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControlThumbnailSettings
@@ -198,6 +216,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageThumbQuality
       // 
+      this.tabPageThumbQuality.Controls.Add(this.groupBoxPictureThumbs);
+      this.tabPageThumbQuality.Controls.Add(this.groupBoxMusicThumbs);
       this.tabPageThumbQuality.Controls.Add(this.groupBoxThumbQuality);
       this.tabPageThumbQuality.Location = new System.Drawing.Point(4, 22);
       this.tabPageThumbQuality.Name = "tabPageThumbQuality";
@@ -361,10 +381,76 @@ namespace MediaPortal.Configuration.Sections
       this.trackBarQuality.Maximum = 4;
       this.trackBarQuality.Name = "trackBarQuality";
       this.trackBarQuality.Orientation = System.Windows.Forms.Orientation.Vertical;
-      this.trackBarQuality.Size = new System.Drawing.Size(40, 152);
+      this.trackBarQuality.Size = new System.Drawing.Size(45, 152);
       this.trackBarQuality.TabIndex = 0;
       this.trackBarQuality.Value = 2;
       this.trackBarQuality.ValueChanged += new System.EventHandler(this.trackBarQuality_ValueChanged);
+      // 
+      // groupBoxMusicThumbs
+      // 
+      this.groupBoxMusicThumbs.Controls.Add(this.buttonClearMusicCache);
+      this.groupBoxMusicThumbs.Controls.Add(this.checkBoxFolderThumbOnDemand);
+      this.groupBoxMusicThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxMusicThumbs.Location = new System.Drawing.Point(16, 245);
+      this.groupBoxMusicThumbs.Name = "groupBoxMusicThumbs";
+      this.groupBoxMusicThumbs.Size = new System.Drawing.Size(202, 89);
+      this.groupBoxMusicThumbs.TabIndex = 1;
+      this.groupBoxMusicThumbs.TabStop = false;
+      this.groupBoxMusicThumbs.Text = "Music thumbs";
+      // 
+      // groupBoxPictureThumbs
+      // 
+      this.groupBoxPictureThumbs.Controls.Add(this.buttonClearPictureThumbs);
+      this.groupBoxPictureThumbs.Controls.Add(this.checkBoxPicThumbOnDemand);
+      this.groupBoxPictureThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxPictureThumbs.Location = new System.Drawing.Point(242, 245);
+      this.groupBoxPictureThumbs.Name = "groupBoxPictureThumbs";
+      this.groupBoxPictureThumbs.Size = new System.Drawing.Size(202, 89);
+      this.groupBoxPictureThumbs.TabIndex = 2;
+      this.groupBoxPictureThumbs.TabStop = false;
+      this.groupBoxPictureThumbs.Text = "Picture thumbs";
+      // 
+      // checkBoxPicThumbOnDemand
+      // 
+      this.checkBoxPicThumbOnDemand.AutoSize = true;
+      this.checkBoxPicThumbOnDemand.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxPicThumbOnDemand.Location = new System.Drawing.Point(12, 25);
+      this.checkBoxPicThumbOnDemand.Name = "checkBoxPicThumbOnDemand";
+      this.checkBoxPicThumbOnDemand.Size = new System.Drawing.Size(164, 17);
+      this.checkBoxPicThumbOnDemand.TabIndex = 0;
+      this.checkBoxPicThumbOnDemand.Text = "Auto-create only small thumbs";
+      this.checkBoxPicThumbOnDemand.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxFolderThumbOnDemand
+      // 
+      this.checkBoxFolderThumbOnDemand.AutoSize = true;
+      this.checkBoxFolderThumbOnDemand.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxFolderThumbOnDemand.Location = new System.Drawing.Point(13, 25);
+      this.checkBoxFolderThumbOnDemand.Name = "checkBoxFolderThumbOnDemand";
+      this.checkBoxFolderThumbOnDemand.Size = new System.Drawing.Size(173, 17);
+      this.checkBoxFolderThumbOnDemand.TabIndex = 1;
+      this.checkBoxFolderThumbOnDemand.Text = "Create folder cache on demand";
+      this.checkBoxFolderThumbOnDemand.UseVisualStyleBackColor = true;
+      // 
+      // buttonClearMusicCache
+      // 
+      this.buttonClearMusicCache.Location = new System.Drawing.Point(13, 53);
+      this.buttonClearMusicCache.Name = "buttonClearMusicCache";
+      this.buttonClearMusicCache.Size = new System.Drawing.Size(173, 23);
+      this.buttonClearMusicCache.TabIndex = 2;
+      this.buttonClearMusicCache.Text = "Clear folder cache";
+      this.buttonClearMusicCache.UseVisualStyleBackColor = true;
+      this.buttonClearMusicCache.Click += new System.EventHandler(this.buttonClearMusicCache_Click);
+      // 
+      // buttonClearPictureThumbs
+      // 
+      this.buttonClearPictureThumbs.Location = new System.Drawing.Point(12, 53);
+      this.buttonClearPictureThumbs.Name = "buttonClearPictureThumbs";
+      this.buttonClearPictureThumbs.Size = new System.Drawing.Size(173, 23);
+      this.buttonClearPictureThumbs.TabIndex = 3;
+      this.buttonClearPictureThumbs.Text = "Clear picture cache";
+      this.buttonClearPictureThumbs.UseVisualStyleBackColor = true;
+      this.buttonClearPictureThumbs.Click += new System.EventHandler(this.buttonClearPictureThumbs_Click);
       // 
       // GeneralThumbs
       // 
@@ -376,8 +462,23 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxThumbQuality.ResumeLayout(false);
       this.groupBoxThumbQuality.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.trackBarQuality)).EndInit();
+      this.groupBoxMusicThumbs.ResumeLayout(false);
+      this.groupBoxMusicThumbs.PerformLayout();
+      this.groupBoxPictureThumbs.ResumeLayout(false);
+      this.groupBoxPictureThumbs.PerformLayout();
       this.ResumeLayout(false);
 
     }
+
+    private void buttonClearMusicCache_Click(object sender, EventArgs e)
+    {
+      Util.Utils.DeleteFiles(Thumbs.MusicFolder, String.Format(@"*{0}", Util.Utils.GetThumbExtension()));
+    }
+
+    private void buttonClearPictureThumbs_Click(object sender, EventArgs e)
+    {
+      Util.Utils.DeleteFiles(Thumbs.Pictures, String.Format(@"*{0}", Util.Utils.GetThumbExtension()));    
+    }
+
   }
 }

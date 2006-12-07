@@ -1554,7 +1554,7 @@
     <entry name="repeat">yes</entry>
     <entry name="showid3">no</entry>
     <entry name="autoshuffle">yes</entry>
-    <entry name="buildThumbs">no</entry>
+    <entry name="extractthumbs">yes</entry>
   </section>
   <section name="audioplayer">
     <entry name="player">Windows Media Player 9</entry>

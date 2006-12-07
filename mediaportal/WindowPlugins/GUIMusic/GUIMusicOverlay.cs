@@ -366,122 +366,118 @@ namespace MediaPortal.GUI.Music
       string skin = GUIGraphicsContext.Skin;
       thumb = String.Empty;
       MusicTag tag = null;
-      Song song = new Song();
-      bool bFound = false;
-      MusicDatabase dbs = new MusicDatabase();
-      bFound = dbs.GetSongByFileName(fileName, ref song);
+      //Song song = new Song();
+      //bool bFound = false;
+      //MusicDatabase dbs = new MusicDatabase();
+      //bFound = dbs.GetSongByFileName(fileName, ref song);
 
-      if (!bFound)
+      //if (!bFound)
+      //{
+      // no id3tag in the music database, check if we should re-scan for id3 tags
+      //if (_useID3)
+      //{
+      //  //yes, then try reading the tag from the file
+      //  tag = TagReader.TagReader.ReadTag(fileName);
+      //}
+      //if (tag == null)
+      //{
+
+      // if we're playing a radio
+      if (Recorder.IsRadio())
       {
-        // no id3tag in the music database, check if we should re-scan for id3 tags
-        if (_useID3)
+        tag = new MusicTag();
+        string cover = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, Recorder.RadioStationName());
+        if (cover != String.Empty)
+          thumb = cover;
+        tag.Title = Recorder.RadioStationName();
+      }
+      if (g_Player.IsRadio)
+      {
+        // then check which radio station we're playing
+        tag = new MusicTag();
+        ArrayList stations = new ArrayList();
+        RadioDatabase.GetStations(ref stations);
+        string strFName = g_Player.CurrentFile;
+        foreach (RadioStation station in stations)
         {
-          //yes, then try reading the tag from the file
-          tag = TagReader.TagReader.ReadTag(fileName);
-        }
-        if (tag == null)
-        {
-          // if we're playing a radio
-          if (Recorder.IsRadio())
+          string coverart;
+          if (strFName.IndexOf(".radio") > 0)
           {
-            tag = new MusicTag();
-            string cover = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, Recorder.RadioStationName());
-            if (cover != String.Empty)
-              thumb = cover;
-            tag.Title = Recorder.RadioStationName();
-          }
-          if (g_Player.IsRadio)
-          {
-            // then check which radio station we're playing
-            tag = new MusicTag();
-            ArrayList stations = new ArrayList();
-            RadioDatabase.GetStations(ref stations);
-            string strFName = g_Player.CurrentFile;
-            foreach (RadioStation station in stations)
+            string strChan = System.IO.Path.GetFileNameWithoutExtension(strFName);
+            if (station.Frequency.ToString().Equals(strChan))
             {
-              string coverart;
-              if (strFName.IndexOf(".radio") > 0)
-              {
-                string strChan = System.IO.Path.GetFileNameWithoutExtension(strFName);
-                if (station.Frequency.ToString().Equals(strChan))
-                {
-                  // got it, check if it has a thumbnail
-                  tag.Title = station.Name;
-                  coverart = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, station.Name);
-                  if (coverart != String.Empty)
-                    thumb = coverart;
-                }
-              }
-              else
-              {
-                if (station.URL.Equals(strFName))
-                {
-                  tag.Title = station.Name;
-                  coverart = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, station.Name);
-                  if (coverart != String.Empty)
-                    thumb = coverart;
-                }
-              }
-            } //foreach (RadioStation station in stations)
-          } //if (g_Player.IsRadio)
-        } //if (tag==null)
+              // got it, check if it has a thumbnail
+              tag.Title = station.Name;
+              coverart = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, station.Name);
+              if (coverart != String.Empty)
+                thumb = coverart;
+            }
+          }
+          else
+          {
+            if (station.URL.Equals(strFName))
+            {
+              tag.Title = station.Name;
+              coverart = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, station.Name);
+              if (coverart != String.Empty)
+                thumb = coverart;
+            }
+          }
+        } //foreach (RadioStation station in stations)
+      } //if (g_Player.IsRadio)
 
-        // if all fail check playlist for information
-        if (tag == null)
-        {
-          PlayListItem item = playlistPlayer.GetCurrentItem();
-          if (item != null)
-            tag = (MusicTag)item.MusicTag;
-        }
-      }// if (!bFound )
+      //} //if (tag==null)
+
+
+      // if all fail check playlist for information
+      //if (tag == null)
+      //{
+      //  PlayListItem item = playlistPlayer.GetCurrentItem();
+      //  if (item != null)
+      //    tag = (MusicTag)item.MusicTag;
+      //}
+
+      //}// if (!bFound )
+      //else
+      //{
+      //  // got the music tag
+      //  tag = new MusicTag();
+      //  tag.Album = song.Album;
+      //  tag.Artist = song.Artist;
+      //  tag.Duration = song.Duration;
+      //  tag.Genre = song.Genre;
+      //  tag.Title = song.Title;
+      //  tag.Track = song.Track;
+      //  tag.Year = song.Year;
+      //}
+
+      //if (tag != null)
+      //{
+
+      string strThumb = Util.Utils.GetLocalFolderThumb(fileName);
+      if (System.IO.File.Exists(strThumb))
+      {
+        thumb = strThumb;
+      }
       else
       {
-        // got the music tag
-        tag = new MusicTag();
-        tag.Album = song.Album;
-        tag.Artist = song.Artist;
-        tag.Duration = song.Duration;
-        tag.Genre = song.Genre;
-        tag.Title = song.Title;
-        tag.Track = song.Track;
-        tag.Year = song.Year;
+        // nothing locally - try the share itself
+        string strRemoteFolderThumb = String.Empty;
+        //strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(fileName));
+        strRemoteFolderThumb = Util.Utils.GetFolderThumb(fileName);
+
+        if (System.IO.File.Exists(strRemoteFolderThumb))
+          thumb = strRemoteFolderThumb;
       }
-      if (tag != null)
+
+      // let us test if there is a larger cover art image
+      string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(thumb);
+      if (System.IO.File.Exists(strLarge))
       {
-        if (tag.Album.Length > 0)
-        {
-          string strThumb = GUIMusicFiles.GetCoverArt(false, fileName, tag);          
-          if (strThumb != String.Empty)
-          {
-            thumb = strThumb;
-            // let us test if there is a larger cover art image
-            string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(thumb);
-            if (System.IO.File.Exists(strLarge))
-            {
-              thumb = strLarge;
-            }
-          }
-        }
-        else
-        {
-          // no album info but Artist is known
-          if (tag.Artist.Length > 0)
-          {
-            //string strThumb = GUIMusicFiles.GetCoverArt(false, fileName, tag);
-            string strThumb = Util.Utils.GetCoverArt(Thumbs.MusicArtists, tag.Artist);
-            if (strThumb != String.Empty)
-            {
-              thumb = strThumb;
-              // let us test if there is a larger cover art image
-              string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(thumb);
-              if (System.IO.File.Exists(strLarge))
-              {
-                thumb = strLarge;
-              }
-            }
-          }
-        }
+        //Log.Debug("GUIMusicOverlay: using larger thumb - {0}", strLarge);
+        thumb = strLarge;
       }
+
       return tag;
     }
 

@@ -84,17 +84,21 @@ namespace MediaPortal.Music.Database
       public int idArtist = 0;
     }
 
-    ArrayList m_artistCache = new ArrayList();
-    ArrayList m_genreCache = new ArrayList();
-    ArrayList m_pathCache = new ArrayList();
-    ArrayList m_albumCache = new ArrayList();
+    ArrayList _artistCache = new ArrayList();
+    ArrayList _genreCache = new ArrayList();
+    ArrayList _pathCache = new ArrayList();
+    ArrayList _albumCache = new ArrayList();
 
-    ArrayList m_pathids = new ArrayList();
-    ArrayList m_shares = new ArrayList();
+    //ArrayList _pathids = new ArrayList();
+    ArrayList _shares = new ArrayList();
 
-    static bool TreatFolderAsAlbum = false;
-    static bool ScanForVariousArtists = true;
-    static bool ExtractEmbededCoverArt = true;
+    static bool _treatFolderAsAlbum = false;
+    static bool _scanForVariousArtists = true;
+    static bool _extractEmbededCoverArt = true;
+
+    static bool _useFolderThumbs = true;
+    static bool _useFolderArtForArtistGenre = false;
+    
     //bool AppendPrefixToSortableNameEnd = true;
 
     string[] ArtistNamePrefixes = new string[]
@@ -136,9 +140,11 @@ namespace MediaPortal.Music.Database
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        TreatFolderAsAlbum = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
-        ScanForVariousArtists = xmlreader.GetValueAsBool("musicfiles", "scanForVariousArtists", true);
-        ExtractEmbededCoverArt = xmlreader.GetValueAsBool("musicfiles", "buildThumbs", true);
+        _treatFolderAsAlbum = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
+        _scanForVariousArtists = xmlreader.GetValueAsBool("musicfiles", "scanForVariousArtists", true);
+        _extractEmbededCoverArt = xmlreader.GetValueAsBool("musicfiles", "extractthumbs", true);
+        _useFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
+        _useFolderArtForArtistGenre = xmlreader.GetValueAsBool("musicfiles", "createartistgenrethumbs", false);
       }
       Open();
     }
@@ -287,7 +293,7 @@ namespace MediaPortal.Music.Database
         if (null == m_db)
           return -1;
 
-        foreach (CPathCache path in m_pathCache)
+        foreach (CPathCache path in _pathCache)
           if (path.strPath == strPath1)
             return path.idPath;
 
@@ -303,7 +309,7 @@ namespace MediaPortal.Music.Database
           CPathCache path = new CPathCache();
           path.idPath = m_db.LastInsertID();
           path.strPath = strPath1;
-          m_pathCache.Add(path);
+          _pathCache.Add(path);
           return path.idPath;
         }
         else
@@ -311,7 +317,7 @@ namespace MediaPortal.Music.Database
           CPathCache path = new CPathCache();
           path.idPath = DatabaseUtility.GetAsInt(results, 0, "idPath");
           path.strPath = strPath1;
-          m_pathCache.Add(path);
+          _pathCache.Add(path);
           return path.idPath;
         }
       }
@@ -335,7 +341,7 @@ namespace MediaPortal.Music.Database
           return -1;
         string name2 = strArtist1.ToLower().Trim();
         name2 = Regex.Replace(name2, @"[^a-z0-9]*", string.Empty);
-        foreach (CArtistCache artist in m_artistCache)
+        foreach (CArtistCache artist in _artistCache)
         {
           string name1 = artist.strArtist.ToLower().Trim();
           name1 = Regex.Replace(name1, @"[^a-z0-9]*", string.Empty);
@@ -353,7 +359,7 @@ namespace MediaPortal.Music.Database
           CArtistCache artist = new CArtistCache();
           artist.idArtist = m_db.LastInsertID();
           artist.strArtist = strArtist1;
-          m_artistCache.Add(artist);
+          _artistCache.Add(artist);
           return artist.idArtist;
         }
         else
@@ -361,7 +367,7 @@ namespace MediaPortal.Music.Database
           CArtistCache artist = new CArtistCache();
           artist.idArtist = DatabaseUtility.GetAsInt(results, 0, "idArtist");
           artist.strArtist = strArtist1;
-          m_artistCache.Add(artist);
+          _artistCache.Add(artist);
           return artist.idArtist;
         }
       }
@@ -395,12 +401,12 @@ namespace MediaPortal.Music.Database
               FixedTheCode = true;
             }
           }
-          Log.Info("Genre {0} veranderd in {1}", strGenre1, strGenre);
+          //Log.Debug("Genre {0} changed to {1}", strGenre1, strGenre);
         }
 
         if (null == m_db)
           return -1;
-        foreach (CGenreCache genre in m_genreCache)
+        foreach (CGenreCache genre in _genreCache)
         {
           if (genre.strGenre == strGenre1)
             return genre.idGenre;
@@ -417,7 +423,7 @@ namespace MediaPortal.Music.Database
           CGenreCache genre = new CGenreCache();
           genre.idGenre = m_db.LastInsertID();
           genre.strGenre = strGenre1;
-          m_genreCache.Add(genre);
+          _genreCache.Add(genre);
           return genre.idGenre;
         }
         else
@@ -425,7 +431,7 @@ namespace MediaPortal.Music.Database
           CGenreCache genre = new CGenreCache();
           genre.idGenre = DatabaseUtility.GetAsInt(results, 0, "idGenre");
           genre.strGenre = strGenre1;
-          m_genreCache.Add(genre);
+          _genreCache.Add(genre);
           return genre.idGenre;
         }
       }
@@ -703,7 +709,7 @@ namespace MediaPortal.Music.Database
           return -1;
         string name2 = strAlbum.ToLower().Trim();
         name2 = Regex.Replace(name2, @"[^a-z0-9]*", string.Empty);
-        foreach (AlbumInfoCache album in m_albumCache)
+        foreach (AlbumInfoCache album in _albumCache)
         {
           string name1 = album.Album.ToLower().Trim();
           name1 = Regex.Replace(name1, @"[^a-z0-9]*", string.Empty);
@@ -737,7 +743,7 @@ namespace MediaPortal.Music.Database
           album.idArtist = lArtistId;
           album.idPath = lPathId;
 
-          m_albumCache.Add(album);
+          _albumCache.Add(album);
           return album.idAlbum;
         }
         else
@@ -748,7 +754,7 @@ namespace MediaPortal.Music.Database
           album.idArtist = DatabaseUtility.GetAsInt(results, 0, "idArtist");
           album.idPath = lPathId;
 
-          m_albumCache.Add(album);
+          _albumCache.Add(album);
           return album.idAlbum;
         }
       }
@@ -762,10 +768,10 @@ namespace MediaPortal.Music.Database
 
     public void EmptyCache()
     {
-      m_artistCache.Clear();
-      m_genreCache.Clear();
-      m_pathCache.Clear();
-      m_albumCache.Clear();
+      _artistCache.Clear();
+      _genreCache.Clear();
+      _pathCache.Clear();
+      _albumCache.Clear();
     }
 
     public bool IsOpen
@@ -817,7 +823,7 @@ namespace MediaPortal.Music.Database
 
         int lAlbumId = -1;
 
-        if (TreatFolderAsAlbum)
+        if (_treatFolderAsAlbum)
           lAlbumId = AddAlbum(song.Album, lArtistId, lPathId);
 
         else
@@ -973,25 +979,25 @@ namespace MediaPortal.Music.Database
               m_db.Execute(strSQL);
 
               // remove from cache
-              //foreach (CPathCache path in m_pathCache)
+              //foreach (CPathCache path in _pathCache)
               //{
               //    if (path.idPath == lPathId)
               //    {
-              //        int iIndex = m_pathCache.IndexOf(path);
+              //        int iIndex = _pathCache.IndexOf(path);
               //        if (iIndex != -1)
               //        {
-              //            m_pathCache.RemoveAt(iIndex);
+              //            _pathCache.RemoveAt(iIndex);
               //        }
               //    }
               //}
 
               // remove from cache 
-              for (int i = 0; i < m_pathCache.Count; i++)
+              for (int i = 0; i < _pathCache.Count; i++)
               {
-                CPathCache path = (CPathCache)m_pathCache[i];
+                CPathCache path = (CPathCache)_pathCache[i];
                 if (path.idPath == lPathId)
                 {
-                  m_pathCache.RemoveAt(i);
+                  _pathCache.RemoveAt(i);
                   break;
                 }
               }
@@ -2533,10 +2539,10 @@ namespace MediaPortal.Music.Database
 
     public void CheckVariousArtistsAndCoverArt()
     {
-      if (m_albumCache.Count <= 0)
+      if (_albumCache.Count <= 0)
         return;
 
-      foreach (AlbumInfoCache album in m_albumCache)
+      foreach (AlbumInfoCache album in _albumCache)
       {
         int lAlbumId = album.idAlbum;
         int lArtistId = album.idArtist;
@@ -2586,7 +2592,7 @@ namespace MediaPortal.Music.Database
                 }*/
       }
 
-      m_albumCache.Clear();
+      _albumCache.Clear();
     }
 
     public void BeginTransaction()
@@ -2640,15 +2646,15 @@ namespace MediaPortal.Music.Database
 
     public int MusicDatabaseReorg(ArrayList shares)
     {
-      return MusicDatabaseReorg(shares, TreatFolderAsAlbum, ScanForVariousArtists);
+      return MusicDatabaseReorg(shares, _treatFolderAsAlbum, _scanForVariousArtists);
     }
 
     public int MusicDatabaseReorg(ArrayList shares, bool treatFolderAsAlbum, bool scanForVariousArtists)
     {
       // Make sure we use the selected settings if the user hasn't saved the
       // configuration...
-      TreatFolderAsAlbum = treatFolderAsAlbum;
-      ScanForVariousArtists = scanForVariousArtists;
+      _treatFolderAsAlbum = treatFolderAsAlbum;
+      _scanForVariousArtists = scanForVariousArtists;
 
       if (shares == null)
       {
@@ -2656,7 +2662,7 @@ namespace MediaPortal.Music.Database
       }
       else
       {
-        m_shares = (ArrayList)shares.Clone();
+        _shares = (ArrayList)shares.Clone();
       }
       DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
 
@@ -2878,16 +2884,17 @@ namespace MediaPortal.Music.Database
           song.Track = tag.Track;
           song.Duration = tag.Duration;
 
-          if (ExtractEmbededCoverArt)
+          char[] trimChars = { ' ', '\x00' };
+          String tagAlbumName = String.Format("{0}-{1}", tag.Artist.Trim(trimChars), tag.Album.Trim(trimChars));
+          string strSmallThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicAlbum, Util.Utils.MakeFileName(tagAlbumName));
+          string strLargeThumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, Util.Utils.MakeFileName(tagAlbumName));
+
+          if (_extractEmbededCoverArt)
           {
             if (tag.CoverArtImageBytes != null)
             {
               try
               {
-                char[] trimChars = { ' ', '\x00' };
-                String tagAlbumName = String.Format("{0}-{1}", tag.Artist.Trim(trimChars), tag.Album.Trim(trimChars));
-                string strSmallThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicAlbum, Util.Utils.MakeFileName(tagAlbumName));
-                string strLargeThumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, Util.Utils.MakeFileName(tagAlbumName));
                 bool extractFile = false;
                 if (!System.IO.File.Exists(strSmallThumb))
                   extractFile = true;
@@ -2908,92 +2915,18 @@ namespace MediaPortal.Music.Database
                     if (!MediaPortal.Util.Picture.CreateThumbnail(tag.CoverArtImage, strLargeThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0))
                       Log.Debug("Could not extract thumbnail from {0}", strPathSong);
                 }
-
-
-                string folderThumb = MediaPortal.Util.Utils.GetFolderThumb(strPathSong);
-                //string folderLThumb = folderThumb;
-                //folderLThumb = Util.Utils.ConvertToLargeCoverArt(folderLThumb);
-                string localFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumb(strPathSong);
-                string localFolderLThumb = localFolderThumb;
-                localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(localFolderLThumb);
-
-                try
-                {
-                  // we've embedded art but no folder.jpg --> create one and use a copy for cache and create a small cache thumb
-                  if (!System.IO.File.Exists(folderThumb))
-                  {
-                    MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, folderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
-
-                    if (!System.IO.File.Exists(localFolderThumb))
-                      MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
-                    if (!System.IO.File.Exists(localFolderLThumb))
-                      System.IO.File.Copy(folderThumb, localFolderLThumb, true);
-                  }
-                  else
-                  {
-                    if (!System.IO.File.Exists(localFolderThumb))
-                      MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
-                    if (!System.IO.File.Exists(localFolderLThumb))
-                      MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
-                  }
-                }
-                catch (Exception ex1)
-                {
-                  Log.Warn("Database: could not create folder thumb for {0} - {1}", strPathSong, ex1.Message);
-                }                
-
-                // Code for creating thumbs for genre and artists
-                // by using the thumb of the first item of a gerne / artist having a thumb
-
-                // The genre may contains unallowed chars
-                string strGenre = MediaPortal.Util.Utils.MakeFileName(song.Genre);
-
-                // Sometimes the genre contains a number code in brackets -> remove that
-                // (code borrowed from addGenre() method)
-                if (String.Compare(strGenre.Substring(0, 1), "(") == 0)
-                {
-                  bool FixedTheCode = false;
-                  for (int i = 1; (i < 10 && i < strGenre.Length & !FixedTheCode); ++i)
-                  {
-                    if (String.Compare(strGenre.Substring(i, 1), ")") == 0)
-                    {
-                      strGenre = strGenre.Substring(i + 1, (strGenre.Length - i - 1));
-                      FixedTheCode = true;
-                    }
-                  }
-                }
-                // Now the genre is clean and sober -> build a filename out of it
-                string genreThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicGenre, Util.Utils.MakeFileName(strGenre));
-
-                if (!System.IO.File.Exists(genreThumb))
-                {
-                  // thumb for this genre does not exist yet -> simply use the folderThumb from above
-                  // and copy it to thumbs\music\gerne\<genre>.jpg 
-                  try
-                  {
-                    MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, genreThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
-                    MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, Util.Utils.ConvertToLargeCoverArt(genreThumb), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
-                    //System.IO.File.Copy(strSmallThumb, genreThumb, true);
-                    //System.IO.File.SetAttributes(genreThumb, System.IO.File.GetAttributes(genreThumb) | System.IO.FileAttributes.Hidden);
-                  }
-                  catch (Exception) { }
-                }
-                // same logic for the artists thumbs 
-                string artistThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.MakeFileName(song.Artist));
-                if (!System.IO.File.Exists(artistThumb))
-                {
-                  try
-                  {
-                    MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, artistThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
-                    MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, Util.Utils.ConvertToLargeCoverArt(artistThumb), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
-                    //System.IO.File.Copy(strSmallThumb, artistThumb, true);
-                    //System.IO.File.SetAttributes(artistThumb, System.IO.File.GetAttributes(artistThumb) | System.IO.FileAttributes.Hidden);
-                  }
-                  catch (Exception) { }
-                }
               }
               catch (Exception) { }
             }
+          }
+
+          if (_useFolderThumbs)
+            CreateFolderThumbs(strPathSong, strSmallThumb);
+
+          if (_useFolderArtForArtistGenre)
+          {
+            CreateArtistThumbs(strSmallThumb, song.Artist);
+            CreateGenreThumbs(strSmallThumb, song.Genre);
           }
 
           string strPath, strFileName;
@@ -3028,7 +2961,7 @@ namespace MediaPortal.Music.Database
           idPath = AddPath(strPath);
           //Log.Write ("strPath= {0}",strPath);
 
-          if (TreatFolderAsAlbum)
+          if (_treatFolderAsAlbum)
             idAlbum = AddAlbum(tag.Album, idArtist, idPath);
 
           else
@@ -3074,6 +3007,95 @@ namespace MediaPortal.Music.Database
       return true;
     }
 
+    void CreateFolderThumbs(string strSongPath, string strSmallThumb)
+    {
+      string folderThumb = MediaPortal.Util.Utils.GetFolderThumb(strSongPath);
+      //string folderLThumb = folderThumb;
+      //folderLThumb = Util.Utils.ConvertToLargeCoverArt(folderLThumb);
+      string localFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumb(strSongPath);
+      string localFolderLThumb = localFolderThumb;
+      localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(localFolderLThumb);
+
+      try
+      {
+        // we've embedded art but no folder.jpg --> copy the large one for cache and create a small cache thumb
+        if (!System.IO.File.Exists(folderThumb))
+        {
+          MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, folderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+
+          if (!System.IO.File.Exists(localFolderThumb))
+            MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+          if (!System.IO.File.Exists(localFolderLThumb))
+            System.IO.File.Copy(folderThumb, localFolderLThumb, true);
+        }
+        else
+        {
+          if (!System.IO.File.Exists(localFolderThumb))
+            MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+          if (!System.IO.File.Exists(localFolderLThumb))
+            MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+        }
+      }
+      catch (Exception ex1)
+      {
+        Log.Warn("Database: could not create folder thumb for {0} - {1}", strSongPath, ex1.Message);
+      }
+    }
+
+    void CreateArtistThumbs(string strSmallThumb, string songArtist)
+    {
+      string artistThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.MakeFileName(songArtist));
+      if (!System.IO.File.Exists(artistThumb))
+      {
+        try
+        {
+          MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, artistThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+          MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, Util.Utils.ConvertToLargeCoverArt(artistThumb), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+          //System.IO.File.Copy(strSmallThumb, artistThumb, true);
+          //System.IO.File.SetAttributes(artistThumb, System.IO.File.GetAttributes(artistThumb) | System.IO.FileAttributes.Hidden);
+        }
+        catch (Exception) { }
+      }
+    }
+
+    void CreateGenreThumbs(string strSmallThumb, string songGenre)
+    {
+      // using the thumb of the first item of a gerne / artist having a thumb
+
+      // The genre may contains unallowed chars
+      string strGenre = MediaPortal.Util.Utils.MakeFileName(songGenre);
+
+      // Sometimes the genre contains a number code in brackets -> remove that
+      // (code borrowed from addGenre() method)
+      if (String.Compare(strGenre.Substring(0, 1), "(") == 0)
+      {
+        bool FixedTheCode = false;
+        for (int i = 1; (i < 10 && i < strGenre.Length & !FixedTheCode); ++i)
+        {
+          if (String.Compare(strGenre.Substring(i, 1), ")") == 0)
+          {
+            strGenre = strGenre.Substring(i + 1, (strGenre.Length - i - 1));
+            FixedTheCode = true;
+          }
+        }
+      }
+      // Now the genre is clean and sober -> build a filename out of it
+      string genreThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicGenre, Util.Utils.MakeFileName(strGenre));
+
+      if (!System.IO.File.Exists(genreThumb))
+      {
+        // thumb for this genre does not exist yet -> simply use the folderThumb from above
+        // and copy it to thumbs\music\gerne\<genre>.jpg 
+        try
+        {
+          MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, genreThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+          MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, Util.Utils.ConvertToLargeCoverArt(genreThumb), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+          //System.IO.File.Copy(strSmallThumb, genreThumb, true);
+          //System.IO.File.SetAttributes(genreThumb, System.IO.File.GetAttributes(genreThumb) | System.IO.FileAttributes.Hidden);
+        }
+        catch (Exception) { }
+      }
+    }
 
     int DeleteNonExistingSongs()
     {
@@ -3276,7 +3298,7 @@ namespace MediaPortal.Music.Database
           string SharePath = xmlreader.GetValueAsString("music", strSharePath, String.Empty);
 
           if (SharePath.Length > 0)
-            m_shares.Add(SharePath);
+            _shares.Add(SharePath);
         }
       }
       return 0;
@@ -3316,7 +3338,7 @@ namespace MediaPortal.Music.Database
         string PathId = DatabaseUtility.Get(PathResults, PathNum, "idPath");
         /// We now have a path, we will check it along all the shares
         bool Path_has_Share = false;
-        foreach (string Share in m_shares)
+        foreach (string Share in _shares)
         {
           ///Here we can check if the Path has an existing share
           if (Share.Length <= Path.Length)
@@ -3377,7 +3399,7 @@ namespace MediaPortal.Music.Database
       string MusicFilePath, MusicFileName;
       double NewProgress;
 
-      foreach (string Share in m_shares)
+      foreach (string Share in _shares)
       {
         ///Here we can check if the Path has an existing share
         CountFilesInPath(Share, ref totalFiles);
@@ -3466,7 +3488,7 @@ namespace MediaPortal.Music.Database
 
       int idAlbum = -1;
 
-      if (TreatFolderAsAlbum)
+      if (_treatFolderAsAlbum)
         idAlbum = AddAlbum(Strings.Unknown, idArtist, idPath);
 
       else
@@ -3575,12 +3597,12 @@ namespace MediaPortal.Music.Database
 
     public void UpdateAlbumArtistsCounts(int startProgress, int endProgress)
     {
-      if (m_albumCache.Count == 0)
+      if (_albumCache.Count == 0)
         return;
 
       DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
       int progressRange = endProgress - startProgress;
-      int totalAlbums = m_albumCache.Count;
+      int totalAlbums = _albumCache.Count;
       int albumCounter = 0;
       double newProgress = 0;
 
@@ -3592,9 +3614,9 @@ namespace MediaPortal.Music.Database
       try
       {
         // Process the array from the end, to have no troubles when removing processed items
-        for (int j = m_albumCache.Count - 1; j > -1; j--)
+        for (int j = _albumCache.Count - 1; j > -1; j--)
         {
-          AlbumInfoCache album = (AlbumInfoCache)m_albumCache[j];
+          AlbumInfoCache album = (AlbumInfoCache)_albumCache[j];
           artistCountTable.Clear();
 
           if (album.Album == Strings.Unknown)
@@ -3605,7 +3627,7 @@ namespace MediaPortal.Music.Database
 
           List<Song> songs = new List<Song>();
 
-          if (TreatFolderAsAlbum)
+          if (_treatFolderAsAlbum)
             GetSongsByPathId(album.idPath, ref songs);
 
           else
@@ -3641,9 +3663,9 @@ namespace MediaPortal.Music.Database
           m_db.Execute(strSQL);
 
           // Remove the processed Album from the cache
-          lock (m_albumCache)
+          lock (_albumCache)
           {
-            m_albumCache.RemoveAt(j);
+            _albumCache.RemoveAt(j);
           }
 
           if ((albumCounter % 10) == 0)
@@ -3656,7 +3678,7 @@ namespace MediaPortal.Music.Database
         }
 
         // Finally, set the artist id to the "Various Artists" id on all albums with more than one artist
-        if (ScanForVariousArtists && variousArtistsFound)
+        if (_scanForVariousArtists && variousArtistsFound)
         {
           string variousArtists = GUILocalizeStrings.Get(340);
 

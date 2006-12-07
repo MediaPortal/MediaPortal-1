@@ -148,6 +148,7 @@ namespace MediaPortal.GUI.Music
     string m_strDestination = String.Empty;
     bool m_bFileMenuEnabled = false;
     string m_strFileMenuPinCode = String.Empty;
+    static bool _createMissingFolderThumbs = false;
 
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
     private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
@@ -169,6 +170,7 @@ namespace MediaPortal.GUI.Music
       {
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
         MusicState.View = xmlreader.GetValueAsString("music", "startview", String.Empty);
+        _createMissingFolderThumbs = xmlreader.GetValueAsBool("thumbnails", "musicfolderondemand", false);
       }
 
       GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
@@ -1274,30 +1276,38 @@ namespace MediaPortal.GUI.Music
         if (System.IO.File.Exists(strFolderThumb))
         {
           return strFolderThumb;
-        }
-
-        // TO DO: add switch to decide whether bad scans should be compensated like this..
+        }        
         else
         {
-          string strRemoteFolderThumb = String.Empty;
-          strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
+          if (_createMissingFolderThumbs)
+          {            
+            string strRemoteFolderThumb = String.Empty;
+            strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
 
-          if (System.IO.File.Exists(strRemoteFolderThumb))
-          {
-            // if there was no cached thumb although there was a folder.jpg then the user didn't scan his collection:
-            // -- punish him with slowness and create the thumbs for the next time...
-            try
+            if (System.IO.File.Exists(strRemoteFolderThumb))
             {
-              string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(strFolderThumb);
+              //GUIWaitCursor.Show();
+              // if there was no cached thumb although there was a folder.jpg then the user didn't scan his collection:
+              // -- punish him with slowness and create the thumbs for the next time...
+              try
+              {
+                Log.Info("GUIMusicFiles: On-Demand-creating missing folder thumbs for {0}", strRemoteFolderThumb);
+                string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(strFolderThumb);
 
-              if (!System.IO.File.Exists(strFolderThumb))
-                MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
-              if (!System.IO.File.Exists(localFolderLThumb))
-                System.IO.File.Copy(strRemoteFolderThumb, localFolderLThumb, true);
+                if (!System.IO.File.Exists(strFolderThumb))
+                  MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+                if (!System.IO.File.Exists(localFolderLThumb))
+                  System.IO.File.Copy(strRemoteFolderThumb, localFolderLThumb, true);
 
-              return strFolderThumb;
+                //GUIWaitCursor.Hide();
+                return strFolderThumb;
+              }
+              catch (Exception) 
+              {
+                //GUIWaitCursor.Hide();
+                return string.Empty;
+              }
             }
-            catch (Exception) { }
           }
 
         }
