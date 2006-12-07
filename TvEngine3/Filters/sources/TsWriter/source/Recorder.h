@@ -66,15 +66,15 @@ public:
 	void Write(byte* buffer, int len);
 private:
   void WriteTs(byte* tsPacket);
-	CMultiplexer m_multiPlexer;
-	bool				 m_bRecording;
-	char				 m_szFileName[2048];
-  CTsHeader m_tsHeader;
-	FileWriter* m_pRecordFile;
+	CMultiplexer     m_multiPlexer;
+	bool				     m_bRecording;
+	char				     m_szFileName[2048];
+  CTsHeader        m_tsHeader;
+	HANDLE           m_hFile;
 	CCriticalSection m_section;
-  TimeShiftingMode     m_timeShiftMode;
+  TimeShiftingMode m_timeShiftMode;
 	vector<int>			 m_vecPids;
 	typedef vector<int>::iterator itvecPids;
-  byte*   m_pWriteBuffer;
-  int     m_iWriteBufferPos;
+  byte*            m_pWriteBuffer;
+  int              m_iWriteBufferPos;
 };

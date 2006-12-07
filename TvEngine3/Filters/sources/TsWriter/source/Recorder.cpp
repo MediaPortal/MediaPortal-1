@@ -39,13 +39,19 @@ CRecorder::CRecorder(LPUNKNOWN pUnk, HRESULT *phr)
 	strcpy(m_szFileName,"");
   m_timeShiftMode=ProgramStream;
 	m_bRecording=false;
-	m_pRecordFile=NULL;
+  m_hFile=INVALID_HANDLE_VALUE;
   m_pWriteBuffer = new byte[RECORD_BUFFER_SIZE];
   m_iWriteBufferPos=0;
 	m_multiPlexer.SetFileWriterCallBack(this);
+  
 }
 CRecorder::~CRecorder(void)
 {
+  if (m_hFile!=INVALID_HANDLE_VALUE)
+  {
+	  CloseHandle(m_hFile);
+	  m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
+  }
   delete [] m_pWriteBuffer;
 }
 
@@ -138,19 +144,26 @@ STDMETHODIMP CRecorder::StartRecord()
 	CEnterCriticalSection enter(m_section);
 	if (strlen(m_szFileName)==0) return E_FAIL;
 	::DeleteFile((LPCTSTR) m_szFileName);
-	WCHAR wstrFileName[2048];
-	MultiByteToWideChar(CP_ACP,0,m_szFileName,-1,wstrFileName,1+strlen(m_szFileName));
 
-	m_pRecordFile = new FileWriter();
-	m_pRecordFile->SetFileName( wstrFileName);
-	if (FAILED(m_pRecordFile->OpenFile())) 
+	if (m_hFile!=INVALID_HANDLE_VALUE)
 	{
-		m_pRecordFile->CloseFile();
-		delete m_pRecordFile;
-		m_pRecordFile=NULL;
+    CloseHandle(m_hFile);
+    m_hFile=INVALID_HANDLE_VALUE;
+  }
+	m_hFile = CreateFile(m_szFileName,      // The filename
+						 (DWORD) GENERIC_WRITE,         // File access
+						 (DWORD) FILE_SHARE_READ,       // Share access
+						 NULL,                  // Security
+						 (DWORD) OPEN_ALWAYS,           // Open flags
+//						 (DWORD) FILE_FLAG_RANDOM_ACCESS,
+//						 (DWORD) FILE_FLAG_WRITE_THROUGH,             // More flags
+						 (DWORD) 0,             // More flags
+						 NULL);                 // Template
+	if (m_hFile == INVALID_HANDLE_VALUE)
+	{
+    LogDebug("Recorder:unable to create file:'%s' %d",m_szFileName, GetLastError());
 		return E_FAIL;
 	}
-
 	LogDebug("Recorder:Start Recording:'%s'",m_szFileName);
   m_iWriteBufferPos=0;
 	m_bRecording=true;
@@ -165,16 +178,16 @@ STDMETHODIMP CRecorder::StopRecord()
 	  LogDebug("Recorder:Stop Recording:'%s'",m_szFileName);
 	m_bRecording=false;
 	m_multiPlexer.Reset();
-	if (m_pRecordFile!=NULL)
+	if (m_hFile!=INVALID_HANDLE_VALUE)
 	{
     if (m_iWriteBufferPos>0)
     {
-	    m_pRecordFile->Write(m_pWriteBuffer,m_iWriteBufferPos);
+	    DWORD written = 0;
+	    WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL);
       m_iWriteBufferPos=0;
     }
-		m_pRecordFile->CloseFile();
-		delete m_pRecordFile;
-		m_pRecordFile=NULL;
+		CloseHandle(m_hFile);
+		m_hFile=INVALID_HANDLE_VALUE;
 	}
 	return S_OK;
 }
@@ -190,9 +203,10 @@ void CRecorder::Write(byte* buffer, int len)
   {
 	  try
 	  {
-		  if (m_pRecordFile!=NULL)
+		  if (m_hFile!=INVALID_HANDLE_VALUE)
 		  {
-			  m_pRecordFile->Write(m_pWriteBuffer,m_iWriteBufferPos);
+	      DWORD written = 0;
+	      WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL);
         m_iWriteBufferPos=0;
 		  }
 	  }
