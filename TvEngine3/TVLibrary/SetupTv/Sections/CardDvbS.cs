@@ -29,6 +29,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Threading;
 using System.Xml;
+using System.Net;
 using DirectShowLib;
 
 
@@ -49,10 +50,12 @@ namespace SetupTv.Sections
     class SatteliteContext : IComparable<SatteliteContext>
     {
       public string SatteliteName;
+      public string Url;
       public string FileName;
       public Satellite Satelite;
       public SatteliteContext()
       {
+        Url = "";
         Satelite = null;
         FileName = "";
         SatteliteName = "";
@@ -135,43 +138,66 @@ namespace SetupTv.Sections
     #endregion
 
     #region helper methods
-    SatteliteContext LoadSatteliteName(string fileName)
+    void DownloadTransponder(SatteliteContext context)
     {
-      SatteliteContext ts = new SatteliteContext();
-      ts.FileName = @"Tuningparameters\" + fileName;
-      ts.SatteliteName = fileName;
-
-      string line;
-      System.IO.TextReader tin = System.IO.File.OpenText(@"Tuningparameters\" + fileName);
-      while (true)
+      string itemLine = String.Format("Downloading transponders for:{0}", context.SatteliteName);
+      ListViewItem item = listViewStatus.Items.Add(new ListViewItem(itemLine));
+      item.EnsureVisible();
+      Application.DoEvents();
+      try
       {
-        line = tin.ReadLine();
-        if (line == null) break;
-        string search = line.ToLower();
-        int pos = search.IndexOf("satname");
-        if (pos >= 0)
+        try
         {
-          pos = search.IndexOf("=");
-          if (pos > 0)
+          System.IO.File.Delete(context.FileName);
+        }
+        catch (Exception)
+        {
+        }
+        item.Text = itemLine + " connecting...";
+        Application.DoEvents();
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(context.Url);
+        item.Text = itemLine + " downloading...";
+        Application.DoEvents();
+        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+        {
+          item.Text = itemLine + " saving...";
+          Application.DoEvents();
+          using (Stream resStream = response.GetResponseStream())
           {
-            ts.SatteliteName = line.Substring(pos + 1);
-            ts.SatteliteName = ts.SatteliteName.Trim();
-            break;
+            using (System.IO.TextReader tin = new StreamReader(resStream))
+            {
+              using (System.IO.TextWriter tout = System.IO.File.CreateText(context.FileName))
+              {
+                while (true)
+                {
+                   string line = tin.ReadLine();
+                  if (line == null) break;
+                  tout.WriteLine(line);
+                }
+              }
+            }
           }
         }
+        item.Text =itemLine+ " done";
       }
-      tin.Close();
-
-      return ts;
+      catch (Exception)
+      {
+        item.Text = itemLine + " failed";
+      }
+      Application.DoEvents();
     }
-    void LoadTransponders(string SatteliteContextFileName)
+    void LoadTransponders(SatteliteContext context)
     {
+      if (!System.IO.File.Exists(context.FileName))
+      {
+        DownloadTransponder(context);
+      }
       _transponders.Clear();
       _channelCount = 0;
       string line;
       string[] tpdata;
       // load transponder list and start scan
-      System.IO.TextReader tin = System.IO.File.OpenText(SatteliteContextFileName);
+      System.IO.TextReader tin = System.IO.File.OpenText(context.FileName);
       int _count = 0;
       do
       {
@@ -187,6 +213,10 @@ namespace SetupTv.Sections
               tpdata = line.Split(new char[] { ';' });
             if (tpdata.Length == 3)
             {
+              if (tpdata[0].IndexOf("=") >= 0)
+              {
+                tpdata[0] = tpdata[0].Substring(tpdata[0].IndexOf("=")+1);
+              }
               try
               {
 
@@ -225,8 +255,23 @@ namespace SetupTv.Sections
     }
     List<SatteliteContext> LoadSattelites()
     {
-      string[] files = System.IO.Directory.GetFiles(System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters", "*.tpl");
       List<SatteliteContext> satellites = new List<SatteliteContext>();
+      XmlDocument doc = new XmlDocument();
+      doc.Load(System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters\satellites.xml");
+      XmlNodeList nodes = doc.SelectNodes("/satellites/satellite");
+      foreach (XmlNode node in nodes)
+      {
+        SatteliteContext ts = new SatteliteContext();
+        ts.SatteliteName = node.Attributes.GetNamedItem("name").Value;
+        ts.Url = node.Attributes.GetNamedItem("url").Value;
+        string name = Utils.FilterFileName(ts.SatteliteName);
+        ts.FileName = System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters\" + name + ".ini";
+        
+        satellites.Add(ts);
+      }
+
+      /*
+      string[] files = System.IO.Directory.GetFiles(System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters", "*.tpl");
 
       foreach (string file in files)
       {
@@ -236,8 +281,9 @@ namespace SetupTv.Sections
         {
           satellites.Add(ts);
         }
-      }
-      satellites.Sort();
+      }*/
+
+      //satellites.Sort();
       IList dbSats = Satellite.ListAll();
       foreach (SatteliteContext ts in satellites)
       {
@@ -367,7 +413,7 @@ namespace SetupTv.Sections
 
 
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      mpComboBoxCam.SelectedIndex = card.CamType;
+//      mpComboBoxCam.SelectedIndex = card.CamType;
     }
     public override void OnSectionDeActivated()
     {
@@ -557,9 +603,9 @@ namespace SetupTv.Sections
       }
     }
 
-    void Scan(int LNB, BandType bandType, DisEqcType disEqc, SatteliteContext SatteliteContext)
+    void Scan(int LNB, BandType bandType, DisEqcType disEqc, SatteliteContext context)
     {
-      LoadTransponders(SatteliteContext.FileName);
+      LoadTransponders(context);
       if (_channelCount == 0) return;
 
 
@@ -572,7 +618,7 @@ namespace SetupTv.Sections
       {
         foreach (DiSEqCMotor motor in card.ReferringDiSEqCMotor())
         {
-          if (motor.IdSatellite == SatteliteContext.Satelite.IdSatellite)
+          if (motor.IdSatellite == context.Satelite.IdSatellite)
           {
             position = motor.Position;
             break;
@@ -723,7 +769,7 @@ namespace SetupTv.Sections
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      card.CamType = mpComboBoxCam.SelectedIndex;
+      //card.CamType = mpComboBoxCam.SelectedIndex;
       card.Persist();
     }
 
@@ -965,7 +1011,7 @@ namespace SetupTv.Sections
         checkBoxEnabled.Checked = false;
       comboBox1.Items.Clear();
       SatteliteContext sat = (SatteliteContext)comboBoxSat.SelectedItem;
-      LoadTransponders(sat.FileName);
+      LoadTransponders(sat);
       _transponders.Sort();
       foreach (Transponder transponder in _transponders)
       {
@@ -1114,6 +1160,21 @@ namespace SetupTv.Sections
     private void buttonReset_Click(object sender, EventArgs e)
     {
       RemoteControl.Instance.DiSEqCReset(_cardNumber);
+    }
+
+    private void buttonUpdate_Click(object sender, EventArgs e)
+    {
+      listViewStatus.Items.Clear();
+      string itemLine = String.Format("Updating satellites...");
+      ListViewItem item = listViewStatus.Items.Add(new ListViewItem(itemLine));
+      Application.DoEvents();
+      List<SatteliteContext> sats=LoadSattelites();
+      foreach (SatteliteContext sat in sats)
+      {
+        DownloadTransponder(sat);
+      }
+       itemLine = String.Format("Update finished");
+      item = listViewStatus.Items.Add(new ListViewItem(itemLine));
     }
   }
 }

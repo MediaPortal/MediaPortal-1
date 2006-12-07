@@ -1,0 +1,56 @@
+<satellites>
+  <satellite name="2.0°E Astra 1C" url="http://en.kingofsat.net/dl.php?pos=2.0E"/>
+  <satellite name="4.0°E Hotbird 1" url="http://en.kingofsat.net/dl.php?pos=4.0E"/>
+  <satellite name="4.8°E Sirius 2" url="http://en.kingofsat.net/dl.php?pos=4.8E"/>
+  <satellite name="5.0°E Sirius 3" url="http://en.kingofsat.net/dl.php?pos=5.0E"/>
+  <satellite name="7.0°E Eutelsat W3A" url="http://en.kingofsat.net/dl.php?pos=7.0E"/>
+  <satellite name="10.0°E EuroBird 10" url="http://en.kingofsat.net/dl.php?pos=10.0E"/>
+  <satellite name="13.0°E Hotbird" url="http://en.kingofsat.net/dl.php?pos=13.0E"/>
+  <satellite name="16.0°E Eutelsat W2" url="http://en.kingofsat.net/dl.php?pos=16.0E"/>
+  <satellite name="19.2°E Astra 1C/1E/1F/1G/1H/2C" url="http://en.kingofsat.net/dl.php?pos=19.2E"/>
+  <satellite name="21.5°E Eutelsat W6" url="http://en.kingofsat.net/dl.php?pos=21.5E"/>
+  <satellite name="23.5°E Astra 1D" url="http://en.kingofsat.net/dl.php?pos=19.2E"/>
+  <satellite name="25.8°E Arabsat 2D/3A (26°E)" url="http://en.kingofsat.net/dl.php?pos=25.8E"/>
+  <satellite name="26.0°E Arabsat 2D/3A (26°E)" url="http://en.kingofsat.net/dl.php?pos=26.0E"/>
+  <satellite name="28.2°E Astra 2A/2B/2D, Eurobird 1 (28°E)" url="http://en.kingofsat.net/dl.php?pos=28.2E"/>
+  <satellite name="28.5°E EuroBird 1" url="http://en.kingofsat.net/dl.php?pos=28.5E"/>
+  <satellite name="31.5°E Optus A3" url="http://en.kingofsat.net/dl.php?pos=31.5E"/>
+  <satellite name="33.0°E EuroBird 3" url="http://en.kingofsat.net/dl.php?pos=33.0E"/>
+  <satellite name="36.0°E Eutelsat W4" url="http://en.kingofsat.net/dl.php?pos=36.0E"/>
+  <satellite name="39.0°E Hellas Sat 2" url="http://en.kingofsat.net/dl.php?pos=39.0E"/>
+  <satellite name="40.0°E Express AM1" url="http://en.kingofsat.net/dl.php?pos=40.0E"/>
+  <satellite name="42.0°E Turksat 1C/2A" url="http://en.kingofsat.net/dl.php?pos=42.0E"/>
+  <satellite name="45.0°E PanAmSat 12" url="http://en.kingofsat.net/dl.php?pos=45.0E"/>
+  <satellite name="53.0°E Express AM22" url="http://en.kingofsat.net/dl.php?pos=53.0E"/>
+  <satellite name="55.0°E Intelsat 702" url="http://en.kingofsat.net/dl.php?pos=55.0E"/>
+  <satellite name="57.0°E NSS 703" url="http://en.kingofsat.net/dl.php?pos=57.0E"/>
+  <satellite name="60.0°E Intelsat 904" url="http://en.kingofsat.net/dl.php?pos=60.0E"/>
+  <satellite name="62.0°E Intelsat 902" url="http://en.kingofsat.net/dl.php?pos=62.0E"/>
+  <satellite name="64.0°E Intelsat 906" url="http://en.kingofsat.net/dl.php?pos=64.0E"/>
+  <satellite name="68.5°E PanAmSat 7/10" url="http://en.kingofsat.net/dl.php?pos=68.5E"/>
+  <satellite name="70.5°E Eutelsat W5" url="http://en.kingofsat.net/dl.php?pos=70.5E"/>
+  <satellite name="72.0°E PanAmSat 4" url="http://en.kingofsat.net/dl.php?pos=72.0E"/>
+  <satellite name="75.0°E ABS-1" url="http://en.kingofsat.net/dl.php?pos=75.0E"/>
+  <satellite name="0.8°W Thor 2/3" url="http://en.kingofsat.net/dl.php?pos=0.8W"/>
+  <satellite name="1.0°W Intelsat 10-02/707" url="http://en.kingofsat.net/dl.php?pos=1.0W"/>
+  <satellite name="4.0°W Amos 1/2" url="http://en.kingofsat.net/dl.php?pos=4.0W"/>
+  <satellite name="5.0°W Atlantic Bird 3/Telecom 2C" url="http://en.kingofsat.net/dl.php?pos=5.0W"/>
+  <satellite name="7.0°W Atlantic Bird 4/Nilesat 101/102" url="http://en.kingofsat.net/dl.php?pos=7.0W"/>
+  <satellite name="8.0°W Atlantic Bird 2/Telecom 2D" url="http://en.kingofsat.net/dl.php?pos=8.0W"/>
+  <satellite name="11.0°W Express A3" url="http://en.kingofsat.net/dl.php?pos=11.0W"/>
+  <satellite name="12.5°W Atlantic Bird 1" url="http://en.kingofsat.net/dl.php?pos=12.5W"/>
+  <satellite name="14.0°W Express A4" url="http://en.kingofsat.net/dl.php?pos=14.0W"/>
+  <satellite name="15.0°W Telstar 12" url="http://en.kingofsat.net/dl.php?pos=15.0W"/>
+  <satellite name="18.0°W Intelsat 901" url="http://en.kingofsat.net/dl.php?pos=18.0W"/>
+  <satellite name="22.0°W NSS 7" url="http://en.kingofsat.net/dl.php?pos=22.0W"/>
+  <satellite name="24.5°W Intelsat 905" url="http://en.kingofsat.net/dl.php?pos=24.5W"/>
+  <satellite name="27.5°W Intelsat 907" url="http://en.kingofsat.net/dl.php?pos=27.5W"/>
+  <satellite name="30.0°W Hispasat 1B/C/D" url="http://en.kingofsat.net/dl.php?pos=30.0W"/>
+  <satellite name="31.5°W Intelsat 801" url="http://en.kingofsat.net/dl.php?pos=31.5W"/>
+  <satellite name="34.5°W Intelsat 903" url="http://en.kingofsat.net/dl.php?pos=34.5W"/>
+  <satellite name="37.5°W Telstar 11" url="http://en.kingofsat.net/dl.php?pos=37.5W"/>
+  <satellite name="43.0°W PanAmSat 3R" url="http://en.kingofsat.net/dl.php?pos=43.0W"/>
+  <satellite name="45.0°W PanAmSat 1R" url="http://en.kingofsat.net/dl.php?pos=45.0W"/>
+  <satellite name="58.0°W PanAmSat 9" url="http://en.kingofsat.net/dl.php?pos=58.0W"/>
+  <satellite name="61.0°W Amazonas" url="http://en.kingofsat.net/dl.php?pos=61.0W"/>
+</satellites>

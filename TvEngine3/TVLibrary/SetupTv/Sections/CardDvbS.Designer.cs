@@ -45,9 +45,7 @@ namespace SetupTv.Sections
       this.mpBand2 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpBand1 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLNB4 = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpComboBoxCam = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpTransponder4 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpDisEqc4 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLNB3 = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -64,6 +62,8 @@ namespace SetupTv.Sections
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.labelCurrentPosition = new System.Windows.Forms.Label();
+      this.label12 = new System.Windows.Forms.Label();
       this.buttonReset = new System.Windows.Forms.Button();
       this.checkBox1 = new System.Windows.Forms.CheckBox();
       this.label11 = new System.Windows.Forms.Label();
@@ -92,8 +92,7 @@ namespace SetupTv.Sections
       this.buttonMoveEast = new System.Windows.Forms.Button();
       this.buttonMoveWest = new System.Windows.Forms.Button();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
-      this.label12 = new System.Windows.Forms.Label();
-      this.labelCurrentPosition = new System.Windows.Forms.Label();
+      this.buttonUpdate = new System.Windows.Forms.Button();
       this.groupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -193,14 +192,13 @@ namespace SetupTv.Sections
       // 
       // groupBox1
       // 
+      this.groupBox1.Controls.Add(this.buttonUpdate);
       this.groupBox1.Controls.Add(this.mpBand4);
       this.groupBox1.Controls.Add(this.mpBand3);
       this.groupBox1.Controls.Add(this.mpBand2);
       this.groupBox1.Controls.Add(this.mpBand1);
       this.groupBox1.Controls.Add(this.mpLabel4);
-      this.groupBox1.Controls.Add(this.mpLabel3);
       this.groupBox1.Controls.Add(this.mpLNB4);
-      this.groupBox1.Controls.Add(this.mpComboBoxCam);
       this.groupBox1.Controls.Add(this.mpTransponder4);
       this.groupBox1.Controls.Add(this.mpDisEqc4);
       this.groupBox1.Controls.Add(this.mpLNB3);
@@ -289,15 +287,6 @@ namespace SetupTv.Sections
       this.mpLabel4.TabIndex = 76;
       this.mpLabel4.Text = "Band:";
       // 
-      // mpLabel3
-      // 
-      this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(30, 142);
-      this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(33, 13);
-      this.mpLabel3.TabIndex = 74;
-      this.mpLabel3.Text = "CAM:";
-      // 
       // mpLNB4
       // 
       this.mpLNB4.AutoSize = true;
@@ -309,22 +298,6 @@ namespace SetupTv.Sections
       this.mpLNB4.Text = "LNB#3";
       this.mpLNB4.UseVisualStyleBackColor = true;
       this.mpLNB4.CheckedChanged += new System.EventHandler(this.mpLNB4_CheckedChanged);
-      // 
-      // mpComboBoxCam
-      // 
-      this.mpComboBoxCam.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBoxCam.FormattingEnabled = true;
-      this.mpComboBoxCam.Items.AddRange(new object[] {
-            "default",
-            "viaccess",
-            "aston",
-            "conax",
-            "cryptoworks"});
-      this.mpComboBoxCam.Location = new System.Drawing.Point(69, 135);
-      this.mpComboBoxCam.Name = "mpComboBoxCam";
-      this.mpComboBoxCam.Size = new System.Drawing.Size(103, 21);
-      this.mpComboBoxCam.TabIndex = 73;
-      this.mpComboBoxCam.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxCam_SelectedIndexChanged);
       // 
       // mpTransponder4
       // 
@@ -520,6 +493,24 @@ namespace SetupTv.Sections
       this.tabPage2.Text = "DiSEqC Motor";
       this.tabPage2.UseVisualStyleBackColor = true;
       this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
+      // 
+      // labelCurrentPosition
+      // 
+      this.labelCurrentPosition.AutoSize = true;
+      this.labelCurrentPosition.Location = new System.Drawing.Point(100, 111);
+      this.labelCurrentPosition.Name = "labelCurrentPosition";
+      this.labelCurrentPosition.Size = new System.Drawing.Size(83, 13);
+      this.labelCurrentPosition.TabIndex = 49;
+      this.labelCurrentPosition.Text = "Current position:";
+      // 
+      // label12
+      // 
+      this.label12.AutoSize = true;
+      this.label12.Location = new System.Drawing.Point(11, 111);
+      this.label12.Name = "label12";
+      this.label12.Size = new System.Drawing.Size(83, 13);
+      this.label12.TabIndex = 48;
+      this.label12.Text = "Current position:";
       // 
       // buttonReset
       // 
@@ -790,23 +781,15 @@ namespace SetupTv.Sections
       this.timer1.Interval = 1000;
       this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
       // 
-      // label12
+      // buttonUpdate
       // 
-      this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(11, 111);
-      this.label12.Name = "label12";
-      this.label12.Size = new System.Drawing.Size(83, 13);
-      this.label12.TabIndex = 48;
-      this.label12.Text = "Current position:";
-      // 
-      // labelCurrentPosition
-      // 
-      this.labelCurrentPosition.AutoSize = true;
-      this.labelCurrentPosition.Location = new System.Drawing.Point(100, 111);
-      this.labelCurrentPosition.Name = "labelCurrentPosition";
-      this.labelCurrentPosition.Size = new System.Drawing.Size(83, 13);
-      this.labelCurrentPosition.TabIndex = 49;
-      this.labelCurrentPosition.Text = "Current position:";
+      this.buttonUpdate.Location = new System.Drawing.Point(300, 139);
+      this.buttonUpdate.Name = "buttonUpdate";
+      this.buttonUpdate.Size = new System.Drawing.Size(131, 23);
+      this.buttonUpdate.TabIndex = 81;
+      this.buttonUpdate.Text = "Update satellite list";
+      this.buttonUpdate.UseVisualStyleBackColor = true;
+      this.buttonUpdate.Click += new System.EventHandler(this.buttonUpdate_Click);
       // 
       // CardDvbS
       // 
@@ -855,8 +838,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox mpDisEqc4;
     private System.Windows.Forms.ListView listViewStatus;
     private System.Windows.Forms.ColumnHeader columnHeader1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxCam;
     private System.Windows.Forms.CheckBox checkBoxCreateGroups;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
     private MediaPortal.UserInterface.Controls.MPComboBox mpBand1;
@@ -896,5 +877,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Button buttonReset;
     private System.Windows.Forms.Label label12;
     private System.Windows.Forms.Label labelCurrentPosition;
+    private System.Windows.Forms.Button buttonUpdate;
   }
 }
