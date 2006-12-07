@@ -39,31 +39,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_0A890B05B4CF4E8B97FBB394ABC45E86"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_0E83BC566DB6408DB803DC953CF0D806"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_134E819AF9EC49108412D3701AB45E7E"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_135C734B8C6C40B6B023E471F1D22C56"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1843BC715DB7482BAE15367235F0CAC6"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -75,73 +51,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_222F7114388E4850B76436CC0CDBFDF6"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_262D6FAD2A6F48EB9C996CE97C5CE51C"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_26F6CF5AB8A34A7783D6A4DEC7A9929F"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_284FACE743E64562A66F331F567644C1"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_2BA1010FACFB4642BC59BD7AADBEF915"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_2DFC931E12534F5A9464D7D1EF0536D4"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_25525C2B072E442D8FD3C6C10BD0215B"
+        "OwnerKey" = "8:_9CCD9023620943089B74B25C0BBF5D12"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_30CCBC05973D4777AEDDCBF0FE11ABCC"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_34B76D2F854D4CBEB4F8070B37649062"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_34F448EDF78B43788DCC882A9DFFD093"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_395FF5BA80834DA6AAF4C4F2412680FF"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3D60E4A8C1F0404486D8519BA2C4F2A5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -201,12 +117,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_5193D0B1172C4856A9306D08874F810B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_51E3E70BDF99E93101F4C0CD3A436D8D"
         "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
         "MsmSig" = "8:_UNDEFINED"
@@ -237,19 +147,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_540E9B8E64094973AFF6EC915BF687A0"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_554620AFFA98471AA9267BAF3078BB45"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_5DA7F3E86A17484AA532C0EF58A05D68"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -261,19 +159,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_66705963F85444578734529B5D03DE36"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_68929A4786A24B75A873742446BDB93D"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_6962EB518F624B499CDF0624EE933589"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -298,12 +184,6 @@
         "Entry"
         {
         "MsmKey" = "8:_6BF8250FE7F5478C90D5B82A788E07A5"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7074A5BCCEB94A45867A646B8A8195A4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -347,12 +227,6 @@
         {
         "MsmKey" = "8:_7478CEFF1449EEF5E7DCE48AC7238B08"
         "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_74E523B71E824C86B3B5563929165457"
-        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -411,7 +285,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_7894D3476A3D4B51ADA85AF3100554CA"
+        "MsmKey" = "8:_79E3F969BBD348BC8E836E74CBD6C992"
         "OwnerKey" = "8:_554620AFFA98471AA9267BAF3078BB45"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -447,18 +321,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_7F1A9AD2C8C449E3B3CFAA7B8F949549"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_80C405A7F3824C30A640359FBE0DDFBE"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_8629AFF013B12BEC84576B48E6DCDDDF"
         "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
         "MsmSig" = "8:_UNDEFINED"
@@ -485,18 +347,6 @@
         {
         "MsmKey" = "8:_8629AFF013B12BEC84576B48E6DCDDDF"
         "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_875C72EC69704061B49BABB7CF8EC78A"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_8908F52AA0FC497ABA42B4C031D6D92F"
-        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -555,43 +405,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_93F64094C9644A8292148B3994DDB31F"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9BC90CC688064CE1BEC043A28BFA6865"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_9CCD9023620943089B74B25C0BBF5D12"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_A03D3DD351D24166885C9624376AFB45"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A39501C23172458C90B99860DD344E78"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_A4F62B2BD58249C0802E8158DC3DA02B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A55448052FB54402A58A2A7F12CCF501"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -615,31 +435,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_B9DD31823FE54043B1E98DA23B5C836D"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_BE9C5249E082410BBF5D688714732AEC"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C0707A46210747DD860C258AF2CD2029"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_C1E6D666EB6C4C4291B4C4722619B3D3"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C1F5EB668DDE4FEC8F9558D24658938C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -681,26 +477,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_CC6848F1103C42C48C7D414B06CC51B8"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_CD37CF20C3D64D3F80276AF4DAD3675F"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_CFCE02D3F711444C984134C6A6B35E1B"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_D205F1E327D6474CB5D632FCE1A6A2FD"
-        "OwnerKey" = "8:_9CCD9023620943089B74B25C0BBF5D12"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -712,18 +490,6 @@
         "Entry"
         {
         "MsmKey" = "8:_D48853ED23724041A4B407342DA75D5F"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_DA3B26DEDC204AB2AEDC6D423ACE767E"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_DA9043F6F0374750BB1288A0AF37A80B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -801,12 +567,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_F1DB983F504B4BB29628F9A35E12B94B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_F4E10B5A45494F439A073CBD0E3CD0E7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -851,6 +611,12 @@
         {
         "MsmKey" = "8:_F77C25B62EEB5CF86AFEEC61BEDB0244"
         "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F8F52733D4EF4B96AEEA340C3A4132F3"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1170,46 +936,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0A890B05B4CF4E8B97FBB394ABC45E86"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\34.5degreesWest.tpl"
-            "TargetName" = "8:34.5degreesWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0E83BC566DB6408DB803DC953CF0D806"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\0.8degressWest.tpl"
-            "TargetName" = "8:0.8degressWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_134E819AF9EC49108412D3701AB45E7E"
             {
             "SourcePath" = "8:..\\..\\Filters\\bin\\TSFileSource.ax"
@@ -1230,272 +956,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_135C734B8C6C40B6B023E471F1D22C56"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\5degreesEast.tpl"
-            "TargetName" = "8:5degreesEast.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1843BC715DB7482BAE15367235F0CAC6"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\156degreesEast.tpl"
-            "TargetName" = "8:156degreesEast.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_20BBAD8E20394BA68DBCCCD84A158057"
             {
             "SourcePath" = "8:..\\..\\Filters\\bin\\msvcr80.dll"
             "TargetName" = "8:msvcr80.dll"
             "Tag" = "8:"
             "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_222F7114388E4850B76436CC0CDBFDF6"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\4.8degreesEast.tpl"
-            "TargetName" = "8:4.8degreesEast.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_262D6FAD2A6F48EB9C996CE97C5CE51C"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\16degreesEast.tpl"
-            "TargetName" = "8:16degreesEast.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_26F6CF5AB8A34A7783D6A4DEC7A9929F"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\42degreesEast.tpl"
-            "TargetName" = "8:42degreesEast.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_284FACE743E64562A66F331F567644C1"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\7.0degressWest.tpl"
-            "TargetName" = "8:7.0degressWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2BA1010FACFB4642BC59BD7AADBEF915"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\26degreesEast.tpl"
-            "TargetName" = "8:26degreesEast.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2DFC931E12534F5A9464D7D1EF0536D4"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\24.5degreesWest.tpl"
-            "TargetName" = "8:24.5degreesWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_30CCBC05973D4777AEDDCBF0FE11ABCC"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\7degreesEast.tpl"
-            "TargetName" = "8:7degreesEast.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_34B76D2F854D4CBEB4F8070B37649062"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\5.0degressWest.tpl"
-            "TargetName" = "8:5.0degressWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_34F448EDF78B43788DCC882A9DFFD093"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\11.0degreesWest.tpl"
-            "TargetName" = "8:11.0degreesWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_395FF5BA80834DA6AAF4C4F2412680FF"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\91degreesWest.tpl"
-            "TargetName" = "8:91degreesWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3D60E4A8C1F0404486D8519BA2C4F2A5"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\30.0degreesWest.tpl"
-            "TargetName" = "8:30.0degreesWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1612,26 +1078,6 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5193D0B1172C4856A9306D08874F810B"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\36degreesEast.tpl"
-            "TargetName" = "8:36degreesEast.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_51E3E70BDF99E93101F4C0CD3A436D8D"
             {
             "AssemblyRegister" = "3:1"
@@ -1663,46 +1109,6 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_540E9B8E64094973AFF6EC915BF687A0"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\12.5degreesWest.tpl"
-            "TargetName" = "8:12.5degreesWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5DA7F3E86A17484AA532C0EF58A05D68"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\18.0degreesWest.tpl"
-            "TargetName" = "8:18.0degreesWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_65B181AA18E843D0AE51C27EB348E478"
             {
             "SourcePath" = "8:..\\..\\Filters\\bin\\mpFileWriter.ax"
@@ -1723,50 +1129,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_66705963F85444578734529B5D03DE36"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\23.5degreesEast.tpl"
-            "TargetName" = "8:23.5degreesEast.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_68929A4786A24B75A873742446BDB93D"
             {
             "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\The Netherlands-casema.dvbc"
             "TargetName" = "8:The Netherlands-casema.dvbc"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6962EB518F624B499CDF0624EE933589"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\160degreesEast.tpl"
-            "TargetName" = "8:160degreesEast.tpl"
             "Tag" = "8:"
             "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
@@ -1874,26 +1240,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7074A5BCCEB94A45867A646B8A8195A4"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\43.0degreesWest.tpl"
-            "TargetName" = "8:43.0degreesWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7136520B25894EF581B5263128D03069"
             {
             "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\The Netherlands-harderwijk.dvbc"
@@ -1943,26 +1289,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_74E523B71E824C86B3B5563929165457"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\22.0degreesWest.tpl"
-            "TargetName" = "8:22.0degreesWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_7564C9C20D5252A0CE73CD2D2837F9C5"
@@ -2127,46 +1453,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7F1A9AD2C8C449E3B3CFAA7B8F949549"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\27.5degreesWest.tpl"
-            "TargetName" = "8:27.5degreesWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_80C405A7F3824C30A640359FBE0DDFBE"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\119degreesWest.tpl"
-            "TargetName" = "8:119degreesWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_8629AFF013B12BEC84576B48E6DCDDDF"
             {
             "AssemblyRegister" = "3:1"
@@ -2196,46 +1482,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_875C72EC69704061B49BABB7CF8EC78A"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\152degreesEast.tpl"
-            "TargetName" = "8:152degreesEast.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8908F52AA0FC497ABA42B4C031D6D92F"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\45.0degreesWest.tpl"
-            "TargetName" = "8:45.0degreesWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_89ACBAD611D7356F993CD54B7F85E73E"
@@ -2289,110 +1535,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_93F64094C9644A8292148B3994DDB31F"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\13degreesEast.tpl"
-            "TargetName" = "8:13degreesEast.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9BC90CC688064CE1BEC043A28BFA6865"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\31.5degreesWest.tpl"
-            "TargetName" = "8:31.5degreesWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A03D3DD351D24166885C9624376AFB45"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\58.0degreesWest.tpl"
-            "TargetName" = "8:58.0degreesWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A39501C23172458C90B99860DD344E78"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\28degreesEast.tpl"
-            "TargetName" = "8:28degreesEast.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A4F62B2BD58249C0802E8158DC3DA02B"
             {
             "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\dvbc Symbolrate 6952.dvbc"
             "TargetName" = "8:dvbc Symbolrate 6952.dvbc"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A55448052FB54402A58A2A7F12CCF501"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\1.0degressWest.tpl"
-            "TargetName" = "8:1.0degressWest.tpl"
             "Tag" = "8:"
             "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
@@ -2469,66 +1615,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B9DD31823FE54043B1E98DA23B5C836D"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\10degreesEast.tpl"
-            "TargetName" = "8:10degreesEast.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BE9C5249E082410BBF5D688714732AEC"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\53.0degreesWest.tpl"
-            "TargetName" = "8:53.0degreesWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C0707A46210747DD860C258AF2CD2029"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\61.5degreesWest.tpl"
-            "TargetName" = "8:61.5degreesWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C1E6D666EB6C4C4291B4C4722619B3D3"
             {
             "AssemblyRegister" = "3:1"
@@ -2546,26 +1632,6 @@
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_01630B53CA394DC7A60C8672AD5D110A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C1F5EB668DDE4FEC8F9558D24658938C"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\19degreesEast.tpl"
-            "TargetName" = "8:19degreesEast.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2615,46 +1681,6 @@
             {
             "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\dvbc Symbolrate 6900.dvbc"
             "TargetName" = "8:dvbc Symbolrate 6900.dvbc"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CC6848F1103C42C48C7D414B06CC51B8"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\15.0degreesWest.tpl"
-            "TargetName" = "8:15.0degreesWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CD37CF20C3D64D3F80276AF4DAD3675F"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\8degreesWest.tpl"
-            "TargetName" = "8:8degreesWest.tpl"
             "Tag" = "8:"
             "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
@@ -2739,46 +1765,6 @@
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DA3B26DEDC204AB2AEDC6D423ACE767E"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\4.0degressWest.tpl"
-            "TargetName" = "8:4.0degressWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DA9043F6F0374750BB1288A0AF37A80B"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\37.5degreesWest.tpl"
-            "TargetName" = "8:37.5degreesWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2884,26 +1870,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F1DB983F504B4BB29628F9A35E12B94B"
-            {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\8.0degressWest.tpl"
-            "TargetName" = "8:8.0degressWest.tpl"
-            "Tag" = "8:"
-            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F4E10B5A45494F439A073CBD0E3CD0E7"
             {
             "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\The Netherlands-multikabel.dvbc"
@@ -2993,6 +1959,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F8F52733D4EF4B96AEEA340C3A4132F3"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\satellites.xml"
+            "TargetName" = "8:satellites.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F93C9471F3CD44B89A879FF2B6F072F3"
@@ -3692,6 +2678,20 @@
         }
         "MergeModule"
         {
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_25525C2B072E442D8FD3C6C10BD0215B"
+            {
+            "UseDynamicProperties" = "11:TRUE"
+            "IsDependency" = "11:TRUE"
+            "SourcePath" = "8:policy_8_0_microsoft_vc80_atl_x86.msm"
+                "Properties"
+                {
+                }
+            "LanguageId" = "3:0"
+            "Exclude" = "11:FALSE"
+            "Folder" = "8:"
+            "Feature" = "8:"
+            "IsolateTo" = "8:"
+            }
             "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_554620AFFA98471AA9267BAF3078BB45"
             {
             "UseDynamicProperties" = "11:TRUE"
@@ -3706,7 +2706,7 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_7894D3476A3D4B51ADA85AF3100554CA"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_79E3F969BBD348BC8E836E74CBD6C992"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
@@ -3734,26 +2734,12 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_D205F1E327D6474CB5D632FCE1A6A2FD"
-            {
-            "UseDynamicProperties" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:policy_8_0_microsoft_vc80_atl_x86.msm"
-                "Properties"
-                {
-                }
-            "LanguageId" = "3:0"
-            "Exclude" = "11:FALSE"
-            "Folder" = "8:"
-            "Feature" = "8:"
-            "IsolateTo" = "8:"
-            }
         }
         "ProjectOutput"
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_2F82617808CF42DE9255C338B0C4F778"
             {
-            "SourcePath" = "8:..\\SetupTv\\obj\\Release\\SetupTv.exe"
+            "SourcePath" = "8:..\\SetupTv\\obj\\Debug\\SetupTv.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
@@ -3781,7 +2767,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_899341C657B645F0881CFBDBFBBFFEAE"
             {
-            "SourcePath" = "8:..\\TvService\\obj\\Release\\TvService.exe"
+            "SourcePath" = "8:..\\TvService\\obj\\Debug\\TvService.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
