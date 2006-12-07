@@ -374,11 +374,11 @@ namespace MediaPortal.GUI.Music
       //if (!bFound)
       //{
       // no id3tag in the music database, check if we should re-scan for id3 tags
-      //if (_useID3)
-      //{
-      //  //yes, then try reading the tag from the file
-      //  tag = TagReader.TagReader.ReadTag(fileName);
-      //}
+      if (_useID3)
+      {
+        //yes, then try reading the tag from the file
+        tag = TagReader.TagReader.ReadTag(fileName);
+      }
       //if (tag == null)
       //{
 
@@ -430,29 +430,25 @@ namespace MediaPortal.GUI.Music
 
 
       // if all fail check playlist for information
-      //if (tag == null)
-      //{
-      //  PlayListItem item = playlistPlayer.GetCurrentItem();
-      //  if (item != null)
-      //    tag = (MusicTag)item.MusicTag;
-      //}
+      if (tag == null)
+      {
+        PlayListItem item = playlistPlayer.GetCurrentItem();
+        if (item != null)
+          tag = (MusicTag)item.MusicTag;
+      }
 
-      //}// if (!bFound )
-      //else
-      //{
-      //  // got the music tag
-      //  tag = new MusicTag();
-      //  tag.Album = song.Album;
-      //  tag.Artist = song.Artist;
-      //  tag.Duration = song.Duration;
-      //  tag.Genre = song.Genre;
-      //  tag.Title = song.Title;
-      //  tag.Track = song.Track;
-      //  tag.Year = song.Year;
+      //  if (tag != null)
+      //  {
+      //    // got the music tag
+      //    tag = new MusicTag();
+      //    tag.Album = song.Album;
+      //    tag.Artist = song.Artist;
+      //    tag.Duration = song.Duration;
+      //    tag.Genre = song.Genre;
+      //    tag.Title = song.Title;
+      //    tag.Track = song.Track;
+      //    tag.Year = song.Year;
       //}
-
-      //if (tag != null)
-      //{
 
       string strThumb = Util.Utils.GetLocalFolderThumb(fileName);
       if (System.IO.File.Exists(strThumb))
