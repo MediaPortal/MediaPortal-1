@@ -122,6 +122,7 @@ namespace MediaPortal.GUI.Pictures
     MapSettings mapSettings = new MapSettings();
     bool isFileMenuEnabled = false;
     string fileMenuPinCode = String.Empty;
+    bool _autocreateLargeThumbs = true;
 
     #endregion
 
@@ -211,6 +212,7 @@ namespace MediaPortal.GUI.Pictures
           if (lastFolder != "root")
             currentFolder = lastFolder;
         }
+        _autocreateLargeThumbs = xmlreader.GetValueAsBool("thumbnails", "picturenolargethumbondemand", false) ? true : false;
       }
     }
 
@@ -1504,12 +1506,15 @@ namespace MediaPortal.GUI.Pictures
                   System.Threading.Thread.Sleep(25);
                 }
 
-                thumbnailImage = GetLargeThumbnail(item.Path);
-                if (!System.IO.File.Exists(thumbnailImage))
+                if (_autocreateLargeThumbs)
                 {
-                  int iRotate = dbs.GetRotation(item.Path);
-                  Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, iRotate);
-                  System.Threading.Thread.Sleep(25);
+                  thumbnailImage = GetLargeThumbnail(item.Path);
+                  if (!System.IO.File.Exists(thumbnailImage))
+                  {
+                    int iRotate = dbs.GetRotation(item.Path);
+                    Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, iRotate);
+                    System.Threading.Thread.Sleep(25);
+                  }
                 }
               }
             }
