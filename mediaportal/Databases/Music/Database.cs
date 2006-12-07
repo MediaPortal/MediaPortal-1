@@ -2899,6 +2899,7 @@ namespace MediaPortal.Music.Database
                   if (span.Hours > 0)
                     extractFile = true;
                 }
+
                 if (extractFile)
                 {
                   if (!MediaPortal.Util.Picture.CreateThumbnail(tag.CoverArtImage, strSmallThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0))
@@ -2907,18 +2908,40 @@ namespace MediaPortal.Music.Database
                     if (!MediaPortal.Util.Picture.CreateThumbnail(tag.CoverArtImage, strLargeThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0))
                       Log.Debug("Could not extract thumbnail from {0}", strPathSong);
                 }
-                string folderThumb = MediaPortal.Util.Utils.GetFolderThumb(Util.Utils.MakeFileName(strPathSong));
-                if (!System.IO.File.Exists(folderThumb))
+
+
+                string folderThumb = MediaPortal.Util.Utils.GetFolderThumb(strPathSong);
+                //string folderLThumb = folderThumb;
+                //folderLThumb = Util.Utils.ConvertToLargeCoverArt(folderLThumb);
+                string localFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumb(strPathSong);
+                string localFolderLThumb = localFolderThumb;
+                localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(localFolderLThumb);
+
+                try
                 {
-                  try
+                  // we've embedded art but no folder.jpg --> create one and use a copy for cache and create a small cache thumb
+                  if (!System.IO.File.Exists(folderThumb))
                   {
-                    MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, folderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
-                    MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, Util.Utils.ConvertToLargeCoverArt(folderThumb), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
-                    //System.IO.File.Copy(strSmallThumb, folderThumb, true);
-                    //System.IO.File.SetAttributes(folderThumb, System.IO.File.GetAttributes(folderThumb) | System.IO.FileAttributes.Hidden);
+                    MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, folderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+
+                    if (!System.IO.File.Exists(localFolderThumb))
+                      MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+                    if (!System.IO.File.Exists(localFolderLThumb))
+                      System.IO.File.Copy(folderThumb, localFolderLThumb, true);
                   }
-                  catch (Exception) { }
+                  else
+                  {
+                    if (!System.IO.File.Exists(localFolderThumb))
+                      MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+                    if (!System.IO.File.Exists(localFolderLThumb))
+                      MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+                  }
                 }
+                catch (Exception ex1)
+                {
+                  Log.Warn("Database: could not create folder thumb for {0} - {1}", strPathSong, ex1.Message);
+                }                
+
                 // Code for creating thumbs for genre and artists
                 // by using the thumb of the first item of a gerne / artist having a thumb
 
@@ -3015,6 +3038,7 @@ namespace MediaPortal.Music.Database
           CRCTool crc = new CRCTool();
           crc.Init(CRCTool.CRCCode.CRC32);
           dwCRC = crc.calc(strPathSong);
+
           //SQLiteResultSet results;
 
           //Log.Write ("Song {0} will be updated with CRC={1}",song.FileName,dwCRC);

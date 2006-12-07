@@ -20,6 +20,7 @@
  */
 using System;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 using MediaPortal.Utils;       // for config provider
 using MediaPortal.GUI.Library; // for logging
@@ -59,6 +60,7 @@ namespace MediaPortal.Util
     static public readonly string TvRecordingSeriesIcon = "tvguide_recordserie_button.png";
     static public readonly string TvConflictRecordingIcon = "tvguide_recordconflict_button.png";
 
+    static public readonly string MusicFolder = Config.GetSubFolder(Config.Dir.Thumbs, @"music\folder");
     static public readonly string MusicAlbum = Config.GetSubFolder(Config.Dir.Thumbs, @"music\albums");
     static public readonly string MusicArtists = Config.GetSubFolder(Config.Dir.Thumbs, @"music\artists");
     static public readonly string MusicGenre = Config.GetSubFolder(Config.Dir.Thumbs, @"music\genre");
@@ -81,6 +83,7 @@ namespace MediaPortal.Util
 
     static public LargeThumbSize _currentLargeThumbSize = LargeThumbSize.average;
     static public ThumbSize _currentThumbSize = ThumbSize.average;
+    static public ImageFormat _currentThumbFormat = ImageFormat.Jpeg;
 
     static Thumbs()
     {
@@ -134,6 +137,7 @@ namespace MediaPortal.Util
         System.IO.Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Thumbs, "music"));
         System.IO.Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Thumbs, "videos"));
         System.IO.Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Thumbs, "tv"));
+        System.IO.Directory.CreateDirectory(MusicFolder);
         System.IO.Directory.CreateDirectory(MusicAlbum);
         System.IO.Directory.CreateDirectory(MusicArtists);
         System.IO.Directory.CreateDirectory(MusicGenre);
@@ -206,6 +210,14 @@ namespace MediaPortal.Util
       get
       {
         return _currentLargeThumbSize;        
+      }
+    }
+
+    static public ImageFormat ThumbFormat
+    {
+      get
+      {
+        return _currentThumbFormat;
       }
     }
     #endregion

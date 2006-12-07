@@ -1265,14 +1265,41 @@ namespace MediaPortal.GUI.Music
 
 
     static public string GetCoverArt(bool isfolder, string filename, MusicTag tag)
-    {      
+    {
       if (isfolder)
       {
-        string strFolderThumb = String.Empty;
-        strFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
+        string strFolderThumb = String.Empty;        
+        strFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumbForDir(filename);
+
         if (System.IO.File.Exists(strFolderThumb))
         {
           return strFolderThumb;
+        }
+
+        // TO DO: add switch to decide whether bad scans should be compensated like this..
+        else
+        {
+          string strRemoteFolderThumb = String.Empty;
+          strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
+
+          if (System.IO.File.Exists(strRemoteFolderThumb))
+          {
+            // if there was no cached thumb although there was a folder.jpg then the user didn't scan his collection:
+            // -- punish him with slowness and create the thumbs for the next time...
+            try
+            {
+              string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(strFolderThumb);
+
+              if (!System.IO.File.Exists(strFolderThumb))
+                MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+              if (!System.IO.File.Exists(localFolderLThumb))
+                System.IO.File.Copy(strRemoteFolderThumb, localFolderLThumb, true);
+
+              return strFolderThumb;
+            }
+            catch (Exception) { }
+          }
+
         }
         return string.Empty;
       }

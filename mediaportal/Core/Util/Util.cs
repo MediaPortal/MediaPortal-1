@@ -25,6 +25,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -37,7 +38,9 @@ using System.Runtime.InteropServices;
 using System.Xml;
 using System.ServiceProcess;
 using System.Windows.Forms;
+
 using Microsoft.Win32;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
 using MediaPortal.Player;
@@ -283,8 +286,8 @@ namespace MediaPortal.Util
       }
       catch (Exception) { }
       return false;
-
     }
+
     static public bool IsLiveRadio(string strPath)
     {
       if (strPath == null) return false;
@@ -302,7 +305,7 @@ namespace MediaPortal.Util
       if (strPath == null)                           return false;
       if (strPath.IndexOf(@"/last.mp3?") > 0)        return false;
       if (strPath.ToLower().IndexOf("rtsp:") >= 0)   return true;
-      if (strPath.ToLower().StartsWith("mms:") 
+      if (strPath.ToLower().StartsWith("mms:")
         && strPath.ToLower().EndsWith(".ymvp"))      return true;
       try
       {
@@ -866,16 +869,6 @@ namespace MediaPortal.Util
       }
     }
 
-    static public string GetFolderThumb(string strFile)
-    {
-      if (strFile == null) return "";
-      if (strFile.Length == 0) return "";
-      string strPath, strFileName;
-      Utils.Split(strFile, out strPath, out strFileName);
-      string strFolderJpg = String.Format(@"{0}\folder.jpg", strPath);
-      return strFolderJpg;
-    }
-
     static public bool EjectCDROM(string strDrive)
     {
       bool result = false;
@@ -1141,14 +1134,14 @@ namespace MediaPortal.Util
 
       if (strText == null) return String.Empty;
       if (strText.Length == 0) return String.Empty;
-      
+
       string strFName = strText.Replace(':', '_');
       strFName = strFName.Replace('/', '_');
       strFName = strFName.Replace('\\', '_');
       strFName = strFName.Replace('*', '_');
       strFName = strFName.Replace('?', '_');
       strFName = strFName.Replace('\"', '_');
-      strFName = strFName.Replace('<', '_');      
+      strFName = strFName.Replace('<', '_');
       strFName = strFName.Replace('>', '_');
       strFName = strFName.Replace('|', '_');
 
@@ -1190,7 +1183,7 @@ namespace MediaPortal.Util
       strFName = strFName.Replace(':', '_');
       strFName = strFName.Replace('?', '_');
       strFName = strFName.Replace('\"', '_');
-      strFName = strFName.Replace('<', '_'); ;
+      strFName = strFName.Replace('<', '_');
       strFName = strFName.Replace('>', '_');
       strFName = strFName.Replace('|', '_');
       return strFName;
@@ -1211,6 +1204,7 @@ namespace MediaPortal.Util
       }
       return false;
     }
+
     static public bool DirectoryDelete(string strDir)
     {
       if (strDir == null) return false;
@@ -1225,6 +1219,7 @@ namespace MediaPortal.Util
       }
       return false;
     }
+
     static public void DownLoadImage(string strURL, string strFile, System.Drawing.Imaging.ImageFormat imageFormat)
     {
       if (strURL == null) return;
@@ -1247,9 +1242,9 @@ namespace MediaPortal.Util
             if (extensionURL != extensionFile)
             {
               using (Image imgSrc = Image.FromFile(strLogo))
-                {
-                  imgSrc.Save(strFile, imageFormat);
-                }
+              {
+                imgSrc.Save(strFile, imageFormat);
+              }
               Utils.FileDelete(strLogo);
             }
             GUITextureManager.CleanupThumbs();
@@ -1261,7 +1256,6 @@ namespace MediaPortal.Util
         }
       }
     }
-
 
     static public void DownLoadAndCacheImage(string strURL, string strFile)
     {
@@ -1297,6 +1291,7 @@ namespace MediaPortal.Util
       }
 
     }
+
     static public void DownLoadImage(string strURL, string strFile)
     {
       if (strURL == null) return;
@@ -1359,6 +1354,7 @@ namespace MediaPortal.Util
       }
       return strPath;
     }
+
     static public void RGB2YUV(int R, int G, int B, out int Y, out int U, out int V)
     {
       Y = (int)(((float)R) * 0.257f + ((float)G) * 0.504f + ((float)B) * 0.098f + 16.0f);
@@ -1368,6 +1364,7 @@ namespace MediaPortal.Util
       U = U & 0xff;
       V = V & 0xff;
     }
+
     static public void RGB2YUV(int iRGB, out int YUV)
     {
       int Y, U, V;
@@ -1378,6 +1375,7 @@ namespace MediaPortal.Util
 
       YUV = Y + U + V;
     }
+
     static public string GetFilename(string strPath)
     {
       return GetFilename(strPath, false);
@@ -1460,6 +1458,7 @@ namespace MediaPortal.Util
       if (sSoundFile.Length == 0) return 0;
       return PlaySound(sSoundFile, bSynchronous, bIgnoreErrors, false, false, false);
     }
+
     public static int PlaySound(string sSoundFile, bool bSynchronous, bool bIgnoreErrors,
       bool bNoDefault, bool bLoop, bool bNoStop)
     {
@@ -1514,6 +1513,7 @@ namespace MediaPortal.Util
         }
       }
     }
+
     [DllImport("winmm.dll")]
     private static extern int sndPlaySoundA(string lpszSoundName, int uFlags);
     [DllImport("winmm.dll")]
@@ -1624,8 +1624,8 @@ namespace MediaPortal.Util
 
     static public string EncryptLine(string strLine)
     {
-      if (strLine == null) return String.Empty;
-      if (strLine.Length == 0) return String.Empty;
+      if (strLine == null)            return String.Empty;
+      if (strLine.Length == 0)        return String.Empty;
       if (String.Compare(Strings.Unknown, strLine, true) == 0) return String.Empty;
       CRCTool crc = new CRCTool();
       crc.Init(CRCTool.CRCCode.CRC32);
@@ -1634,14 +1634,48 @@ namespace MediaPortal.Util
       return strRet;
     }
 
+    static public string GetFolderThumb(string strFile)
+    {
+      if (strFile == null)              return String.Empty;
+      if (strFile.Length == 0)          return String.Empty;
+
+      string strPath, strFileName;
+      Utils.Split(strFile, out strPath, out strFileName);
+      string strFolderJpg = String.Format(@"{0}\folder.jpg", strPath);
+
+      return strFolderJpg;
+    }
+
+    static public string GetLocalFolderThumb(string strFile)
+    {
+      if (strFile == null)              return String.Empty;
+      if (strFile.Length == 0)          return String.Empty;
+
+      string strPath, strFileName;
+      Utils.Split(strFile, out strPath, out strFileName);
+      string strFolderJpg = String.Format(@"{0}\{1}{2}", Thumbs.MusicFolder, EncryptLine(strPath), GetThumbExtension());
+
+      return strFolderJpg;
+    }
+
+    static public string GetLocalFolderThumbForDir(string strDirPath)
+    {
+      if (strDirPath == null)              return String.Empty;
+      if (strDirPath.Length == 0)          return String.Empty;
+
+      string strFolderJpg = String.Format(@"{0}\{1}{2}", Thumbs.MusicFolder, EncryptLine(strDirPath), GetThumbExtension());
+
+      return strFolderJpg;
+    }
+
     static public string GetCoverArt(string strFolder, string strFileName)
     {
-      if (strFolder == null)           return String.Empty;
-      if (strFolder.Length == 0)       return String.Empty;
+      if (strFolder == null)             return String.Empty;
+      if (strFolder.Length == 0)         return String.Empty;
 
-      if (strFileName == null)         return String.Empty;
-      if (strFileName.Length == 0)     return String.Empty;
-      if (strFileName == String.Empty) return String.Empty;
+      if (strFileName == null)           return String.Empty;
+      if (strFileName.Length == 0)       return String.Empty;
+      if (strFileName == String.Empty)   return String.Empty;
 
       string strThumb = String.Format(@"{0}\{1}", strFolder, Utils.MakeFileName(strFileName));
 
@@ -1658,39 +1692,57 @@ namespace MediaPortal.Util
 
     static public string ConvertToLargeCoverArt(string smallArt)
     {
-      if (smallArt == null) return String.Empty;
-      if (smallArt.Length == 0) return String.Empty;
-      if (smallArt == String.Empty) return smallArt;
-      return smallArt.Replace(".jpg", "L.jpg");
+      if (smallArt == null)             return String.Empty;
+      if (smallArt.Length == 0)         return String.Empty;
+      if (smallArt == String.Empty)     return smallArt;
+
+      string smallExt = GetThumbExtension();
+      string LargeExt = String.Format(@"L{0}", GetThumbExtension());
+
+      return smallArt.Replace(smallExt, LargeExt);
     }
 
     static public string GetCoverArtName(string strFolder, string strFileName)
     {
-      if (strFolder == null) return String.Empty;
-      if (strFolder.Length == 0) return String.Empty;
+      if (strFolder == null)            return String.Empty;
+      if (strFolder.Length == 0)        return String.Empty;
 
-      if (strFileName == null) return String.Empty;
-      if (strFileName.Length == 0) return String.Empty;
+      if (strFileName == null)          return String.Empty;
+      if (strFileName.Length == 0)      return String.Empty;
 
       string strThumb = Utils.GetCoverArt(strFolder, strFileName);
       if (strThumb == string.Empty)
-      {
-        strThumb = String.Format(@"{0}\{1}.jpg", strFolder, Utils.MakeFileName(strFileName));
-      }
+        strThumb = String.Format(@"{0}\{1}{2}", strFolder, Utils.MakeFileName(strFileName), GetThumbExtension());
+
       return strThumb;
     }
 
     static public string GetLargeCoverArtName(string strFolder, string strFileName)
     {
-      if (strFolder == null) return String.Empty;
-      if (strFolder.Length == 0) return String.Empty;
+      if (strFolder == null)            return String.Empty;
+      if (strFolder.Length == 0)        return String.Empty;
 
-      if (strFileName == null) return String.Empty;
-      if (strFileName.Length == 0) return String.Empty;
+      if (strFileName == null)          return String.Empty;
+      if (strFileName.Length == 0)      return String.Empty;
 
       return Utils.GetCoverArtName(strFolder, strFileName + "L");
     }
 
+    static public string GetThumbExtension()
+    {
+      if (Thumbs.ThumbFormat == ImageFormat.Jpeg)
+        return ".jpg";
+      else if (Thumbs.ThumbFormat == ImageFormat.Png)
+        return ".png";
+      else if (Thumbs.ThumbFormat == ImageFormat.Gif)
+        return ".gif";
+      else if (Thumbs.ThumbFormat == ImageFormat.Icon)
+        return ".ico";
+      else if (Thumbs.ThumbFormat == ImageFormat.Bmp)
+        return ".bmp";
+
+      return ".jpg";
+    }
 
     static public void DeleteFiles(string strDir, string strPattern)
     {
