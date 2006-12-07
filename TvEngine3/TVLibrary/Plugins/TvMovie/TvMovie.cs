@@ -50,7 +50,7 @@ namespace TvEngine
       }
       catch (Exception)
       {
-        Log.Error("TVMovie: Import enabled, but the Clickfinder database was not found.");
+        Log.Error("TVMovie: Import enabled, but the ClickFinder database was not found.");
         return;
       }
 
@@ -86,7 +86,7 @@ namespace TvEngine
 
     public string Name
     {
-      get { return "TV Movie Clickfinder Import"; }
+      get { return "TV Movie ClickFinder Import"; }
     }
 
     public string Version

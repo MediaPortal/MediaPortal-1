@@ -58,6 +58,7 @@ namespace SetupTv.Sections
       this.tabPageSettings = new System.Windows.Forms.TabPage();
       this.groupBoxEnableTvMovie = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxEnableImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxUseDatabaseDate = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxInfos = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.linkLabelInfo = new System.Windows.Forms.LinkLabel();
       this.labelInfo = new System.Windows.Forms.Label();
@@ -80,6 +81,7 @@ namespace SetupTv.Sections
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.listView2 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.labelBetaMode = new System.Windows.Forms.Label();
       this.tabControlTvMovie.SuspendLayout();
       this.tabPageSettings.SuspendLayout();
       this.groupBoxEnableTvMovie.SuspendLayout();
@@ -131,10 +133,11 @@ namespace SetupTv.Sections
       this.groupBoxEnableTvMovie.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxEnableTvMovie.Controls.Add(this.checkBoxEnableImport);
+      this.groupBoxEnableTvMovie.Controls.Add(this.checkBoxUseDatabaseDate);
       this.groupBoxEnableTvMovie.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxEnableTvMovie.Location = new System.Drawing.Point(16, 8);
       this.groupBoxEnableTvMovie.Name = "groupBoxEnableTvMovie";
-      this.groupBoxEnableTvMovie.Size = new System.Drawing.Size(424, 48);
+      this.groupBoxEnableTvMovie.Size = new System.Drawing.Size(424, 72);
       this.groupBoxEnableTvMovie.TabIndex = 0;
       this.groupBoxEnableTvMovie.TabStop = false;
       // 
@@ -144,16 +147,30 @@ namespace SetupTv.Sections
       this.checkBoxEnableImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxEnableImport.Location = new System.Drawing.Point(16, 20);
       this.checkBoxEnableImport.Name = "checkBoxEnableImport";
-      this.checkBoxEnableImport.Size = new System.Drawing.Size(189, 17);
+      this.checkBoxEnableImport.Size = new System.Drawing.Size(192, 17);
       this.checkBoxEnableImport.TabIndex = 0;
-      this.checkBoxEnableImport.Text = "Enable TV Movie Clickfinder import";
+      this.checkBoxEnableImport.Text = "Enable TV Movie ClickFinder import";
       this.checkBoxEnableImport.UseVisualStyleBackColor = true;
       this.checkBoxEnableImport.CheckedChanged += new System.EventHandler(this.checkBoxEnableImport_CheckedChanged);
+      // 
+      // checkBoxUseDatabaseDate
+      // 
+      this.checkBoxUseDatabaseDate.AutoSize = true;
+      this.checkBoxUseDatabaseDate.Enabled = false;
+      this.checkBoxUseDatabaseDate.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxUseDatabaseDate.Location = new System.Drawing.Point(32, 44);
+      this.checkBoxUseDatabaseDate.Name = "checkBoxUseDatabaseDate";
+      this.checkBoxUseDatabaseDate.Size = new System.Drawing.Size(141, 17);
+      this.checkBoxUseDatabaseDate.TabIndex = 11;
+      this.checkBoxUseDatabaseDate.Text = "Use ClickFinder 5.2 Beta";
+      this.checkBoxUseDatabaseDate.UseVisualStyleBackColor = true;
+      this.checkBoxUseDatabaseDate.CheckedChanged += new System.EventHandler(this.checkBoxUseDatabaseDate_CheckedChanged);
       // 
       // groupBoxInfos
       // 
       this.groupBoxInfos.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxInfos.Controls.Add(this.labelBetaMode);
       this.groupBoxInfos.Controls.Add(this.linkLabelInfo);
       this.groupBoxInfos.Controls.Add(this.labelInfo);
       this.groupBoxInfos.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -180,9 +197,9 @@ namespace SetupTv.Sections
       this.labelInfo.AutoSize = true;
       this.labelInfo.Location = new System.Drawing.Point(16, 24);
       this.labelInfo.Name = "labelInfo";
-      this.labelInfo.Size = new System.Drawing.Size(330, 13);
+      this.labelInfo.Size = new System.Drawing.Size(333, 13);
       this.labelInfo.TabIndex = 0;
-      this.labelInfo.Text = "TV Movie Clickfinder is an EPG application for German TV channels.";
+      this.labelInfo.Text = "TV Movie ClickFinder is an EPG application for German TV channels.";
       // 
       // groupBoxImport
       // 
@@ -191,7 +208,7 @@ namespace SetupTv.Sections
       this.groupBoxImport.Controls.Add(this.checkBoxSlowImport);
       this.groupBoxImport.Enabled = false;
       this.groupBoxImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxImport.Location = new System.Drawing.Point(16, 156);
+      this.groupBoxImport.Location = new System.Drawing.Point(16, 180);
       this.groupBoxImport.Name = "groupBoxImport";
       this.groupBoxImport.Size = new System.Drawing.Size(424, 56);
       this.groupBoxImport.TabIndex = 2;
@@ -218,7 +235,7 @@ namespace SetupTv.Sections
       this.groupBoxDescriptions.Controls.Add(this.checkBoxUseShortDesc);
       this.groupBoxDescriptions.Enabled = false;
       this.groupBoxDescriptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxDescriptions.Location = new System.Drawing.Point(16, 61);
+      this.groupBoxDescriptions.Location = new System.Drawing.Point(16, 84);
       this.groupBoxDescriptions.Name = "groupBoxDescriptions";
       this.groupBoxDescriptions.Size = new System.Drawing.Size(424, 91);
       this.groupBoxDescriptions.TabIndex = 1;
@@ -426,6 +443,19 @@ namespace SetupTv.Sections
       this.columnHeader2.Text = "TV Movie Stations";
       this.columnHeader2.Width = 179;
       // 
+      // labelBetaMode
+      // 
+      this.labelBetaMode.AutoSize = true;
+      this.labelBetaMode.ForeColor = System.Drawing.Color.Red;
+      this.labelBetaMode.Location = new System.Drawing.Point(156, 48);
+      this.labelBetaMode.Name = "labelBetaMode";
+      this.labelBetaMode.Size = new System.Drawing.Size(258, 26);
+      this.labelBetaMode.TabIndex = 13;
+      this.labelBetaMode.Text = "Beta-Mode: Every use of the ClickFinder main\r\napplication will result in an EPG i" +
+          "mport in MediaPortal!";
+      this.labelBetaMode.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      this.labelBetaMode.Visible = false;
+      // 
       // TvMovieSetup
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -482,5 +512,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.LinkLabel linkLabelInfo;
     private System.Windows.Forms.Label labelInfo;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxEnableTvMovie;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseDatabaseDate;
+    private System.Windows.Forms.Label labelBetaMode;
   }
 }

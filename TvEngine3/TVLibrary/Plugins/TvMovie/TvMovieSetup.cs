@@ -116,6 +116,13 @@ namespace SetupTv.Sections
         setting.Value = "false";
       setting.Persist();
 
+      setting = layer.GetSetting("TvMovieUseDatabaseDate", "false");
+      if (checkBoxUseDatabaseDate.Checked)
+        setting.Value = "true";
+      else
+        setting.Value = "false";
+      setting.Persist();
+
       setting = layer.GetSetting("TvMovieShortProgramDesc", "false");
       if (checkBoxUseShortDesc.Checked)
         setting.Value = "true";
@@ -151,6 +158,7 @@ namespace SetupTv.Sections
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       checkBoxEnableImport.Checked = layer.GetSetting("TvMovieEnabled", "false").Value == "true";
+      checkBoxUseDatabaseDate.Checked = layer.GetSetting("TvMovieUseDatabaseDate", "false").Value == "true";
       checkBoxUseShortDesc.Checked = layer.GetSetting("TvMovieShortProgramDesc", "false").Value == "true";
       checkBoxAdditionalInfo.Checked = layer.GetSetting("TvMovieExtendDescription", "false").Value == "true";
       checkBoxShowAudioFormat.Checked = layer.GetSetting("TvMovieShowAudioFormat", "false").Value == "true";
@@ -464,7 +472,7 @@ namespace SetupTv.Sections
 
     private void checkBoxEnableImport_CheckedChanged(object sender, EventArgs e)
     {
-      groupBoxDescriptions.Enabled = groupBoxImport.Enabled = checkBoxEnableImport.Checked;
+      checkBoxUseDatabaseDate.Enabled = groupBoxDescriptions.Enabled = groupBoxImport.Enabled = checkBoxEnableImport.Checked;
 
       if (checkBoxEnableImport.Checked)
       {
@@ -482,6 +490,11 @@ namespace SetupTv.Sections
       }
       else
         SaveMapping();
+    }
+
+    private void checkBoxUseDatabaseDate_CheckedChanged(object sender, EventArgs e)
+    {
+      labelBetaMode.Visible = checkBoxUseDatabaseDate.Checked;
     }
   }
 }
