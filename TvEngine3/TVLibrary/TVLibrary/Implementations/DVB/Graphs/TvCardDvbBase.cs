@@ -2010,6 +2010,9 @@ namespace TvLibrary.Implementations.DVB
             {
               SetMpegPidMapping(_channelInfo);
             }
+            Log.Log.Info("dvb:stop tif");
+            if (_filterTIF != null)
+              _filterTIF.Stop();
           }
         }
       }
@@ -2311,6 +2314,9 @@ namespace TvLibrary.Implementations.DVB
           {
             SetMpegPidMapping(_channelInfo);
           }
+          Log.Log.Info("dvb:stop tif");
+          if (_filterTIF != null)
+            _filterTIF.Stop();
         }
         else
         {
@@ -2380,6 +2386,11 @@ namespace TvLibrary.Implementations.DVB
                 }
                 _pmtVersion = version;
 
+                return true;
+              }
+              else
+              {
+                //already received this pmt
                 return true;
               }
             }
