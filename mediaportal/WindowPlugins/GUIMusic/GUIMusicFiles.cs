@@ -505,15 +505,14 @@ namespace MediaPortal.GUI.Music
         case GUIMessage.MessageType.GUI_MSG_PLAY_AUDIO_CD:
           if (message.Label2 == "Ask")
           {
-            Log.Info("OnPlayCD (false), vragen dus.");
+            Log.Debug("GUIMusicFiles: OnPlayCD (false), asking now..");
             OnPlayCD(message.Label, false);
           }
           else
           {
-            Log.Info("OnPlayCD (true), niet vragen dus");
+            Log.Info("GUIMusicFiles: OnPlayCD (true), do not ask");
             OnPlayCD(message.Label, true);
           }
-
           break;
 
         case GUIMessage.MessageType.GUI_MSG_CD_REMOVED:
@@ -1217,7 +1216,7 @@ namespace MediaPortal.GUI.Music
 
         catch (Exception ex)
         {
-          Log.Info("GUIMusicFiles.AddItemToPlayList at itemlist.Sort: {0}", ex.Message);
+          Log.Error("GUIMusicFiles.AddItemToPlayList at itemlist.Sort: {0}", ex.Message);
         }
 
         foreach (GUIListItem item in itemlist)
@@ -1787,7 +1786,7 @@ namespace MediaPortal.GUI.Music
               catch (Exception e)
               {
                 // log the problem...
-                Log.Info("OnRetrieveMusicInfo: {0}", e.ToString());
+                Log.Error("GUIMusicFiles: OnRetrieveMusicInfo: {0}", e.ToString());
               }
             }
           }//if (!tag.Loaded() )

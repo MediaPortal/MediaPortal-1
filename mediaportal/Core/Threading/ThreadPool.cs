@@ -408,7 +408,7 @@ namespace MediaPortal.Threading
         inUse = Interlocked.Increment(ref _inUseThreads);
       else
         inUse = Interlocked.Decrement(ref _inUseThreads);
-      LogDebug("ThreadPool.HandleInUseThreadCount() {0} in use threads: {1} max: {2} increment: {3}", Thread.CurrentThread.Name, inUse, _startInfo.MaximumThreads, increment);
+      LogDebug("ThreadPool.HandleInUseThreadCount() : in use threads: {0} max: {1} increment: {2}", inUse, _startInfo.MaximumThreads, increment);
     }
 
     /// <summary>
@@ -485,7 +485,7 @@ namespace MediaPortal.Threading
 
           // Wait until we receive a work item
           IWork work;
-          LogDebug("ThreadPool.ProcessQueue() {0} : entering work dequeue...", Thread.CurrentThread.Name);
+//          LogDebug("ThreadPool.ProcessQueue() {0} : entering work dequeue...", Thread.CurrentThread.Name);
           work = _workQueue.Dequeue(_startInfo.ThreadIdleTimeout, _cancelWaitHandle);
 
           // Update time this thread was last alive
@@ -493,7 +493,7 @@ namespace MediaPortal.Threading
 
           if (work == null)
           {
-            LogDebug("ThreadPool.ProcessQueue() {0} : received NULL work", Thread.CurrentThread.Name);
+            LogDebug("ThreadPool.ProcessQueue() : received NULL work");
             // Dequeue has returned null or we should shutdown
             if (_threads.Count > _startInfo.MinimumThreads)
             {
@@ -501,7 +501,7 @@ namespace MediaPortal.Threading
               {
                 if (_threads.Count > _startInfo.MinimumThreads)
                 {
-                  LogDebug("ThreadPool.ProcessQueue() {0} : quitting (inUse:{1}, total:{2})", Thread.CurrentThread.Name, _inUseThreads, _threads.Count);
+                  LogDebug("ThreadPool.ProcessQueue() : quitting (inUse:{0}, total:{1})", _inUseThreads, _threads.Count);
                   // remove thread from the pool
                   if (_threads.Contains(Thread.CurrentThread))
                     _threads.Remove(Thread.CurrentThread);
@@ -517,7 +517,7 @@ namespace MediaPortal.Threading
             continue;
           }
 
-          LogDebug("ThreadPool.ProcessQueue() {0} : received valid work: {1}", Thread.CurrentThread.Name, work.State);
+//          LogDebug("ThreadPool.ProcessQueue() {0} : received valid work: {1}", Thread.CurrentThread.Name, work.State);
           try
           {
             // Only process items which have status INQUEUE (don't process CANCEL'ed items)
@@ -525,9 +525,9 @@ namespace MediaPortal.Threading
             {
               Thread.CurrentThread.Priority = work.ThreadPriority;
               HandleInUseThreadCount(true);
-              LogDebug("ThreadPool.ProcessQueue() {0} : processing work {1}", Thread.CurrentThread.Name, work.Description);
+//              LogDebug("ThreadPool.ProcessQueue() {0} : processing work {1}", Thread.CurrentThread.Name, work.Description);
               work.Process();
-              LogDebug("ThreadPool.ProcessQueue() {0} : finished processing work {1}", Thread.CurrentThread.Name, work.Description);
+//              LogDebug("ThreadPool.ProcessQueue() : finished processing work {0}", work.Description);
             }
           }
           catch (Exception e)
@@ -541,9 +541,9 @@ namespace MediaPortal.Threading
             if (work.State == WorkState.FINISHED || work.State == WorkState.ERROR)
             {
               Interlocked.Increment(ref _itemsProcessed);
-              LogDebug("ThreadPool.ProcessQueue() {0} : total items processed: {1}", Thread.CurrentThread.Name, _itemsProcessed);
+              LogDebug("ThreadPool.ProcessQueue() : total items processed: {0}", _itemsProcessed);
               HandleInUseThreadCount(false);
-              LogDebug("ThreadPool.ProcessQueue() {0} : finished processing work {1}", Thread.CurrentThread.Name, work.Description);
+//              LogDebug("ThreadPool.ProcessQueue() : finished processing work {0}", work.Description);
             }
             Thread.CurrentThread.Priority = _startInfo.DefaultThreadPriority;
             work = null;
@@ -577,7 +577,7 @@ namespace MediaPortal.Threading
         // doublecheck
         if (DateTime.Now.AddSeconds(-1) < _lastIntervalCheck)
           return;
-        LogDebug("ThreadPool.CheckForIntervalBasedWork()");
+//        LogDebug("ThreadPool.CheckForIntervalBasedWork()");
         // search for any interval which is due and not running already
         foreach (IWorkInterval iWrk in _intervalBasedWork)
         {
@@ -595,7 +595,7 @@ namespace MediaPortal.Threading
     /// <param name="intervalWork">IWorkInterval to run</param>
     private void RunIntervalBasedWork(IWorkInterval intervalWork)
     {
-      LogDebug("ThreadPool.RunIntervalBasedWork() {0} running interval based work ({1}) interval:{2}", Thread.CurrentThread.Name, intervalWork.Work.Description, intervalWork.WorkInterval);
+      LogDebug("ThreadPool.RunIntervalBasedWork() : running interval based work ({0}) interval:{1}", intervalWork.Work.Description, intervalWork.WorkInterval);
       intervalWork.ResetWorkState();
       intervalWork.LastRun = DateTime.Now;
       intervalWork.Running = true;

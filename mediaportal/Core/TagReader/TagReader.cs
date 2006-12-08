@@ -45,7 +45,7 @@ namespace MediaPortal.TagReader
     static TagReader()
     {
 
-      Log.Info("Loading tag reader plugins");
+      Log.Info("TagReader: Loading tag reader plugins");
       string[] strFiles = System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "tagreaders"), "*.dll");
       foreach (string strFile in strFiles)
       {
@@ -65,7 +65,7 @@ namespace MediaPortal.TagReader
                   if (t.GetInterface("ITag") != null)
                   {
                     object newObj = (object)Activator.CreateInstance(t);
-                    Log.Debug("  found plugin:{0} in {1}", t.ToString(), strFile);
+                    Log.Debug("  found plugin: {0} in {1}", t.ToString(), strFile);
                     ITag reader = (ITag)newObj;
                     m_readers.Add(reader);
                   }
@@ -136,7 +136,7 @@ namespace MediaPortal.TagReader
                 if (img == null)
                 {
                   musicTag.CoverArtImageBytes = null;
-                  Log.Info("Image probably corrupted: {0}", strFile);
+                  Log.Warn("TagReader: Image probably corrupted: {0}", strFile);
                 }
 
                 else
@@ -156,7 +156,7 @@ namespace MediaPortal.TagReader
             }
             else
             {
-              Log.Info("{0} does not contain valid tags. Using Filename as Title", strFile);
+              Log.Warn("TagReader: {0} does not contain valid tags. Using Filename as Title", strFile);
               musicTag.Title = System.IO.Path.GetFileNameWithoutExtension(strFile);
               // Set non Tag related values
               musicTag.Duration = (int)Math.Round(reader.LengthMS / 1000.00);
@@ -169,7 +169,7 @@ namespace MediaPortal.TagReader
         }
         catch (Exception ex)
         {
-          Log.Error("Tag reader generated exception on file {0}: {1}", strFile, ex.ToString());
+          Log.Error("TagReader: exception on file {0}: {1}", strFile, ex.ToString());
         }
         reader.Dispose();
       }
