@@ -518,7 +518,7 @@ namespace TvPlugin
         {
           if (!rec.ProgramName.Equals(currentShow)) continue;
           //@List<Schedule> recs = ConflictManager.Util.GetRecordingTimes(rec);
-          List<Schedule> recs = new List<Schedule>();
+          List<Schedule> recs = TVHome.Util.GetRecordingTimes(rec);
           if (recs.Count >= 1)
           {
             for (int x = 0; x < recs.Count; ++x)
@@ -531,10 +531,10 @@ namespace TvPlugin
               item.Label = recSeries.ProgramName;
               item.TVTag = recSeries;
               item.MusicTag = rec;
-              string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, recSeries.ReferencedChannel().Name);
-              if (!System.IO.File.Exists(strLogo))
+              string logo = Utils.GetCoverArt(Thumbs.TVChannel, recSeries.ReferencedChannel().Name);
+              if (!System.IO.File.Exists(logo))
               {
-                strLogo = "defaultVideoBig.png";
+                logo = "defaultVideoBig.png";
               }
               VirtualCard card;
               if (RemoteControl.Instance.IsRecordingSchedule(recSeries.IdSchedule, out card))
@@ -552,9 +552,9 @@ namespace TvPlugin
                 if (rec.ReferringConflicts().Count > 0)
                   item.PinImage = Thumbs.TvConflictRecordingIcon;
               }
-              item.ThumbnailImage = strLogo;
-              item.IconImageBig = strLogo;
-              item.IconImage = strLogo;
+              item.ThumbnailImage = logo;
+              item.IconImageBig = logo;
+              item.IconImage = logo;
               listSchedules.Add(item);
               total++;
             }
@@ -756,8 +756,8 @@ namespace TvPlugin
       }
       else
       {
-        dlg.AddLocalizedString(981);//Delete this recording
-        dlg.AddLocalizedString(982);//Delete series recording
+        dlg.AddLocalizedString(981);//Cancel this show
+        dlg.AddLocalizedString(982);//Delete this entire recording
         dlg.AddLocalizedString(888);//Episodes management
       }
       VirtualCard card;
@@ -789,7 +789,7 @@ namespace TvPlugin
           //GUITVPriorities.OnSetQuality(rec);
           break;
 
-        case 981: //Delete this recording only
+        case 981: //Cancel this show
           {
             if (RemoteControl.Instance.IsRecordingSchedule(rec.IdSchedule, out card))
             {
@@ -815,6 +815,7 @@ namespace TvPlugin
             else
             {
               RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
+              Log.Info("insert canceled schedule id:{0} starttime:{1}", rec.IdSchedule, rec.StartTime);
               CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule, rec.StartTime);
               schedule.Persist();
               RemoteControl.Instance.OnNewSchedule();
@@ -848,7 +849,9 @@ namespace TvPlugin
             }
             else
             {
+              rec = Schedule.Retrieve(rec.IdSchedule);
               rec.Delete();
+              currentShow = "";
               RemoteControl.Instance.OnNewSchedule();
 
             }
@@ -1212,7 +1215,8 @@ namespace TvPlugin
         if (rec.IsDone() || rec.Canceled != Schedule.MinSchedule)
         {
           iCleaned++;
-          rec.Delete();
+          Schedule r = Schedule.Retrieve(rec.IdSchedule);
+          r.Delete();
         }
       }
       GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);

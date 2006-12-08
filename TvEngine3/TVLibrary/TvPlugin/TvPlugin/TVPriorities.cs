@@ -799,6 +799,7 @@ namespace TvPlugin
 
     static public void OnSetEpisodesToKeep(Schedule rec)
     {
+      Schedule schedule = Schedule.Retrieve(rec.IdSchedule);
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;
       dlg.Reset();
@@ -807,17 +808,17 @@ namespace TvPlugin
       dlg.AddLocalizedString(889);//All episodes
       for (int i = 1; i < 40; ++i)
         dlg.Add(i.ToString() + " " + GUILocalizeStrings.Get(874));
-      if (rec.MaxAirings == Int32.MaxValue)
+      if (schedule.MaxAirings == Int32.MaxValue)
         dlg.SelectedLabel = 0;
       else
-        dlg.SelectedLabel = rec.MaxAirings;
+        dlg.SelectedLabel = schedule.MaxAirings;
 
       dlg.DoModal(GUIWindowManager.ActiveWindow);
       if (dlg.SelectedLabel == -1) return;
 
-      if (dlg.SelectedLabel == 0) rec.MaxAirings = Int32.MaxValue;
-      else rec.MaxAirings = dlg.SelectedLabel;
-      rec.Persist();
+      if (dlg.SelectedLabel == 0) schedule.MaxAirings = Int32.MaxValue;
+      else schedule.MaxAirings = dlg.SelectedLabel;
+      schedule.Persist();
       RemoteControl.Instance.OnNewSchedule();
     }
 

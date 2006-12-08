@@ -629,6 +629,8 @@ namespace TvDatabase
       Schedule schedule = new Schedule(IdChannel, scheduleType, ProgramName, StartTime, EndTime, MaxAirings, Priority, Directory, Quality, KeepMethod, KeepDate, PreRecordInterval, PostRecordInterval, Canceled);
 
       schedule._isSeries = _isSeries;
+      schedule.idSchedule = idSchedule;
+      schedule.isChanged = false;
       return schedule;
     }
   }

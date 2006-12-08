@@ -163,6 +163,7 @@ namespace TvPlugin
       lstUpcomingEpsiodes.Clear();
       if (currentProgram == null) return;
 
+      //set program description
       string strTime = String.Format("{0} {1} - {2}",
         Utils.GetShortDayString(currentProgram.StartTime),
         currentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
@@ -173,31 +174,32 @@ namespace TvPlugin
       lblProgramDescription.Label = currentProgram.Description;
       lblProgramTitle.Label = currentProgram.Title;
 
-      IList recordings = Schedule.ListAll();
-      bool bRecording = false;
-      bool bSeries = false;
-      foreach (Schedule record in recordings)
+      //check if we are recording this program
+      IList schedules = Schedule.ListAll();
+      bool isRecording = false;
+      bool isSeries = false;
+      foreach (Schedule schedule in schedules)
       {
-        if (record.Canceled != Schedule.MinSchedule) continue;
-        if (record.IsRecordingProgram(currentProgram, true))
+        if (schedule.Canceled != Schedule.MinSchedule) continue;
+        if (schedule.IsRecordingProgram(currentProgram, true))
         {
-          if (!record.IsSerieIsCanceled(currentProgram.StartTime))
+          if (!schedule.IsSerieIsCanceled(currentProgram.StartTime))
           {
-            if ((ScheduleRecordingType)record.ScheduleType != ScheduleRecordingType.Once)
-              bSeries = true;
-            bRecording = true;
+            if ((ScheduleRecordingType)schedule.ScheduleType != ScheduleRecordingType.Once)
+              isSeries = true;
+            isRecording = true;
             break;
           }
         }
       }
 
-      if (bRecording)
+      if (isRecording)
       {
         btnRecord.Label = GUILocalizeStrings.Get(1039);//dont record
         btnAdvancedRecord.Disabled = true;
         btnKeep.Disabled = false;
         btnQuality.Disabled = false;
-        btnEpisodes.Disabled = !bSeries;
+        btnEpisodes.Disabled = !isSeries;
         btnPreRecord.Disabled = false;
         btnPostRecord.Disabled = false;
       }
@@ -213,76 +215,65 @@ namespace TvPlugin
       }
       btnNotify.Selected = currentProgram.Notify;
 
+      //find upcoming episodes
       lstUpcomingEpsiodes.Clear();
       TvBusinessLayer layer = new TvBusinessLayer();
-      Schedule recTmp = new Schedule(currentProgram.IdChannel, currentProgram.Title, currentProgram.StartTime, currentProgram.EndTime);
-      recTmp.ScheduleType = (int)ScheduleRecordingType.EveryTimeOnThisChannel;
-      recTmp.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-      recTmp.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-      List<Schedule> recs = TVHome.Util.GetRecordingTimes(recTmp);
-      foreach (Schedule recSeries in recs)
+      DateTime dtDay = DateTime.Now;
+      IList episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), currentProgram.Title, null);
+      foreach (Program episode in episodes)
       {
         GUIListItem item = new GUIListItem();
-        item.Label = recSeries.ProgramName;
-        item.TVTag = recSeries;
-        item.MusicTag = null;
+        item.Label = episode.Title;
         item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, recSeries.ReferencedChannel().Name);
-        if (!System.IO.File.Exists(strLogo))
+        string logo = Utils.GetCoverArt(Thumbs.TVChannel, episode.ReferencedChannel().Name);
+        if (!System.IO.File.Exists(logo))
         {
-          strLogo = "defaultVideoBig.png";
+          logo = "defaultVideoBig.png";
         }
-        Schedule recOrg;
-        if (IsRecordingSchedule(recSeries, out recOrg, true))
+        Schedule recordingSchedule;
+        if (IsRecordingProgram(episode, out recordingSchedule, false))
         {
-          if (recOrg.ReferringConflicts().Count > 0)
+          if (false == recordingSchedule.IsSerieIsCanceled(episode.StartTime))
           {
-            item.PinImage = Thumbs.TvConflictRecordingIcon;
+            if (recordingSchedule.ReferringConflicts().Count > 0)
+            {
+              item.PinImage = Thumbs.TvConflictRecordingIcon;
+            }
+            else
+            {
+              item.PinImage = Thumbs.TvRecordingIcon;
+            }
           }
-          else
-          {
-            item.PinImage = Thumbs.TvRecordingIcon;
-          }
-          item.MusicTag = recOrg;
+          item.TVTag = recordingSchedule;
         }
-
-        item.ThumbnailImage = strLogo;
-        item.IconImageBig = strLogo;
-        item.IconImage = strLogo;
+        item.MusicTag = episode;
+        item.ThumbnailImage = logo;
+        item.IconImageBig = logo;
+        item.IconImage = logo;
         item.Label2 = String.Format("{0} {1} - {2}",
-                                  Utils.GetShortDayString(recSeries.StartTime),
-                                  recSeries.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                  recSeries.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat)); ;
+                                  Utils.GetShortDayString(episode.StartTime),
+                                  episode.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                  episode.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat)); ;
+
         lstUpcomingEpsiodes.Add(item);
       }
     }
-
-    bool IsRecordingSchedule(Schedule rec, out Schedule recOrg, bool filterOutCanceled)
+    bool IsRecordingProgram(Program program, out Schedule recordingSchedule, bool filterCanceledRecordings)
     {
-      recOrg = null;
-      IList recordings = Schedule.ListAll();
-
-      foreach (Schedule record in recordings)
+      recordingSchedule = null;
+      IList schedules = Schedule.ListAll();
+      foreach (Schedule schedule in schedules)
       {
-
-        if (record.Canceled != Schedule.MinSchedule) continue;
-        List<Schedule> recs = TVHome.Util.GetRecordingTimes(record);
-        foreach (Schedule recSeries in recs)
+        if (schedule.Canceled != Schedule.MinSchedule) continue;
+        if (schedule.IsRecordingProgram(program, filterCanceledRecordings))
         {
-          if (!record.IsSerieIsCanceled(recSeries.StartTime) || (filterOutCanceled == false))
-          {
-            if (rec.IdChannel == recSeries.IdChannel &&
-              rec.ProgramName == recSeries.ProgramName &&
-              rec.StartTime == recSeries.StartTime)
-            {
-              recOrg = record;
-              return true;
-            }
-          }
+          recordingSchedule = schedule;
+          return true;
         }
       }
       return false;
     }
+
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
@@ -307,34 +298,17 @@ namespace TvPlugin
         GUIListItem item = lstUpcomingEpsiodes.SelectedListItem;
         if (item != null)
         {
-          Schedule recSeries = item.TVTag as Schedule;
-          Schedule recOrg = item.MusicTag as Schedule;
-          OnRecordRecording(recSeries, recOrg);
+          Schedule schedule = item.TVTag as Schedule;
+          Program episode = item.MusicTag as Program;
+          OnEpisodeClicked(episode, schedule);
         }
       }
       base.OnClicked(controlId, control, actionType);
     }
     void OnPreRecordInterval()
     {
-      bool bRecording = false;
-      Schedule rec = null;
-      IList recordings = Schedule.ListAll();
-
-      foreach (Schedule record in recordings)
-      {
-
-        if (record.Canceled != Schedule.MinSchedule) continue;
-        if (record.IsRecordingProgram(currentProgram, true))
-        {
-          if (!record.IsSerieIsCanceled(currentProgram.StartTime))
-          {
-            bRecording = true;
-            rec = record;
-            break;
-          }
-        }
-      }
-      if (!bRecording) return;
+      Schedule rec;
+      if (false == IsRecordingProgram(currentProgram, out  rec, false)) return;
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
@@ -359,25 +333,8 @@ namespace TvPlugin
 
     void OnPostRecordInterval()
     {
-      bool bRecording = false;
-      Schedule rec = null;
-      IList recordings = Schedule.ListAll();
-
-      foreach (Schedule record in recordings)
-      {
-
-        if (record.Canceled != Schedule.MinSchedule) continue;
-        if (record.IsRecordingProgram(currentProgram, true))
-        {
-          if (!record.IsSerieIsCanceled(currentProgram.StartTime))
-          {
-            bRecording = true;
-            rec = record;
-            break;
-          }
-        }
-      }
-      if (!bRecording) return;
+      Schedule rec;
+      if (false == IsRecordingProgram(currentProgram, out  rec, false)) return;
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
@@ -401,83 +358,55 @@ namespace TvPlugin
 
     void OnSetQuality()
     {
-      bool bRecording = false;
-      Schedule rec = null;
-      IList recordings = Schedule.ListAll();
-
-      foreach (Schedule record in recordings)
-      {
-
-        if (record.Canceled != Schedule.MinSchedule) continue;
-        if (record.IsRecordingProgram(currentProgram, true))
-        {
-          if (!record.IsSerieIsCanceled(currentProgram.StartTime))
-          {
-            bRecording = true;
-            rec = record;
-            break;
-          }
-        }
-      }
-      if (!bRecording) return;
+      Schedule rec;
+      if (false == IsRecordingProgram(currentProgram, out  rec, false)) return;
       ///@
       ///GUITVPriorities.OnSetQuality(rec);
       Update();
     }
     void OnSetEpisodes()
     {
-      bool bRecording = false;
-      Schedule rec = null;
-      IList recordings = Schedule.ListAll();
+      Schedule rec;
+      if (false == IsRecordingProgram(currentProgram, out  rec, false)) return;
 
-      foreach (Schedule record in recordings)
-      {
-
-        if (record.Canceled != Schedule.MinSchedule) continue;
-        if (record.IsRecordingProgram(currentProgram, true))
-        {
-          if (!record.IsSerieIsCanceled(currentProgram.StartTime))
-          {
-            bRecording = true;
-            rec = record;
-            break;
-          }
-        }
-      }
-      if (!bRecording) return;
       TvPriorities.OnSetEpisodesToKeep(rec);
       Update();
     }
 
-    void OnRecordRecording(Schedule recSeries, Schedule rec)
+    void OnEpisodeClicked(Program episode, Schedule schedule)
     {
-      if (rec == null)
+      if (schedule != null)
       {
-        //not recording yet.
-        Schedule recOrg;
-        if (IsRecordingSchedule(recSeries, out recOrg, false))
+        //no schedule yet for this epsiode
+        if (schedule.IsSerieIsCanceled(episode.StartTime))
         {
-          recOrg.UnCancelSerie(recSeries.StartTime);
-          recOrg.Persist();
+          schedule.UnCancelSerie(episode.StartTime);
+          schedule.Persist();
           RemoteControl.Instance.OnNewSchedule();
+          Update();
         }
         else
         {
-          recSeries.ScheduleType = (int)ScheduleRecordingType.Once;
-          recSeries.Persist();
+          CanceledSchedule canceled = new CanceledSchedule(schedule.IdSchedule, episode.StartTime);
+          canceled.Persist();
           RemoteControl.Instance.OnNewSchedule();
+          Update();
         }
-        Update();
-        return;
       }
-      else
+    }
+
+    void OnRecordProgram(Program program)
+    {
+      Schedule recordingSchedule;
+      if (IsRecordingProgram(program, out  recordingSchedule, false))
       {
-        if (rec.ScheduleType != (int)ScheduleRecordingType.Once)
+        //already recording this program
+        if (recordingSchedule.ScheduleType != (int)ScheduleRecordingType.Once)
         {
           GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
           if (dlg == null) return;
           dlg.Reset();
-          dlg.SetHeading(rec.ProgramName);
+          dlg.SetHeading(program.Title);
           dlg.AddLocalizedString(981);//Delete this recording
           dlg.AddLocalizedString(982);//Delete series recording
           dlg.DoModal(GetID);
@@ -486,23 +415,23 @@ namespace TvPlugin
           {
             case 981: //Delete this recording only
               {
-                if (CheckIfRecording(rec))
+                if (CheckIfRecording(recordingSchedule))
                 {
                   //delete specific series
-                  CanceledSchedule canceledSerie = new CanceledSchedule(rec.IdSchedule, recSeries.StartTime);
-
-                  canceledSerie.Persist();
-                  RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
+                  CanceledSchedule canceledSchedule = new CanceledSchedule(recordingSchedule.IdSchedule, program.StartTime);
+                  canceledSchedule.Persist();
+                  RemoteControl.Instance.StopRecordingSchedule(recordingSchedule.IdSchedule);
                   RemoteControl.Instance.OnNewSchedule();
                 }
               }
               break;
             case 982: //Delete entire recording
               {
-                if (CheckIfRecording(rec))
+                if (CheckIfRecording(recordingSchedule))
                 {
-                  RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
-                  rec.Delete();
+                  //cancel recording
+                  RemoteControl.Instance.StopRecordingSchedule(recordingSchedule.IdSchedule);
+                  recordingSchedule.Delete();
                   RemoteControl.Instance.OnNewSchedule();
                 }
               }
@@ -511,122 +440,23 @@ namespace TvPlugin
         }
         else
         {
-          if (CheckIfRecording(rec))
+          if (CheckIfRecording(recordingSchedule))
           {
-            RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
-            rec.Delete();
+            RemoteControl.Instance.StopRecordingSchedule(recordingSchedule.IdSchedule);
+            recordingSchedule.Delete();
             RemoteControl.Instance.OnNewSchedule();
           }
         }
       }
-      Update();
-    }
-
-    void OnRecordProgram(Program program)
-    {
-      Log.Debug("OnRecordProgram");
-      bool bRecording = false;
-      Schedule rec = null;
-      IList recordings = Schedule.ListAll();
-      Log.Debug("{0} schedules", recordings.Count);
-      foreach (Schedule record in recordings)
+      else
       {
-
-        if (record.Canceled != Schedule.MinSchedule) continue;
-        if (record.IsRecordingProgram(program, true))
-        {
-          if (!record.IsSerieIsCanceled(program.StartTime))
-          {
-            bRecording = true;
-            rec = record;
-            break;
-          }
-        }
-      }
-
-      if (!bRecording)
-      {
-        Log.Debug("not recording");
-        foreach (Schedule record in recordings)
-        {
-          if (record.IsRecordingProgram(program, false))
-          {
-            if (record.Canceled != Schedule.MinSchedule)
-            {
-              record.ScheduleType = (int)ScheduleRecordingType.Once;
-              record.Canceled = Schedule.MinSchedule;
-              record.Persist();
-              RemoteControl.Instance.OnNewSchedule();
-            }
-            else if (record.IsSerieIsCanceled(program.StartTime))
-            {
-              record.UnCancelSerie(program.StartTime);
-              record.Persist();
-              RemoteControl.Instance.OnNewSchedule();
-            }
-            Update();
-            return;
-          }
-        }
+        //not recording this program
         TvBusinessLayer layer = new TvBusinessLayer();
-        rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
+        Schedule rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
         rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
         rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
         rec.Persist();
         RemoteControl.Instance.OnNewSchedule();
-      }
-      else
-      {
-        if (rec.IsRecordingProgram(program, true))
-        {
-          if (rec.ScheduleType != (int)ScheduleRecordingType.Once)
-          {
-
-            GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-            if (dlg == null) return;
-            dlg.Reset();
-            dlg.SetHeading(rec.ProgramName);
-            dlg.AddLocalizedString(981);//Delete this recording
-            dlg.AddLocalizedString(982);//Delete series recording
-            dlg.DoModal(GetID);
-            if (dlg.SelectedLabel == -1) return;
-            switch (dlg.SelectedId)
-            {
-              case 981: //Delete this recording only
-                {
-                  if (CheckIfRecording(rec))
-                  {
-                    //delete specific series
-                    CanceledSchedule canceledSchedule = new CanceledSchedule(rec.IdSchedule, program.StartTime);
-                    canceledSchedule.Persist();
-                    RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
-                    RemoteControl.Instance.OnNewSchedule();
-                  }
-                }
-                break;
-              case 982: //Delete entire recording
-                {
-                  if (CheckIfRecording(rec))
-                  {
-                    //cancel recording
-                    RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
-                    rec.Delete();
-                    RemoteControl.Instance.OnNewSchedule();
-                  }
-                }
-                break;
-            }
-          }
-          else
-          {
-            if (CheckIfRecording(rec))
-            {
-              RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
-              rec.Delete();
-              RemoteControl.Instance.OnNewSchedule();
-            }
-          }
-        }
       }
       Update();
     }
@@ -756,27 +586,9 @@ namespace TvPlugin
 
     void OnKeep()
     {
-      bool bRecording = false;
-      Schedule rec = null;
-      IList recordings = Schedule.ListAll();
+      Schedule rec;
+      if (false == IsRecordingProgram(currentProgram, out  rec, false)) return;
 
-      foreach (Schedule record in recordings)
-      {
-        if (record.IsRecordingProgram(currentProgram, true))
-        {
-          if (!record.IsSerieIsCanceled(currentProgram.StartTime))
-          {
-            bRecording = true;
-            rec = record;
-            break;
-          }
-        }
-      }
-
-      if (!bRecording)
-      {
-        return;
-      }
 
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;
