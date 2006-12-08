@@ -366,21 +366,12 @@ namespace MediaPortal.GUI.Music
       string skin = GUIGraphicsContext.Skin;
       thumb = String.Empty;
       MusicTag tag = null;
-      //Song song = new Song();
-      //bool bFound = false;
-      //MusicDatabase dbs = new MusicDatabase();
-      //bFound = dbs.GetSongByFileName(fileName, ref song);
 
-      //if (!bFound)
-      //{
-      // no id3tag in the music database, check if we should re-scan for id3 tags
       if (_useID3)
       {
         //yes, then try reading the tag from the file
         tag = TagReader.TagReader.ReadTag(fileName);
       }
-      //if (tag == null)
-      //{
 
       // if we're playing a radio
       if (Recorder.IsRadio())
@@ -426,10 +417,8 @@ namespace MediaPortal.GUI.Music
         } //foreach (RadioStation station in stations)
       } //if (g_Player.IsRadio)
 
-      //} //if (tag==null)
 
-
-      // if all fail check playlist for information
+      // check playlist for information
       if (tag == null)
       {
         PlayListItem item = playlistPlayer.GetCurrentItem();
@@ -437,41 +426,46 @@ namespace MediaPortal.GUI.Music
           tag = (MusicTag)item.MusicTag;
       }
 
-      //  if (tag != null)
-      //  {
-      //    // got the music tag
-      //    tag = new MusicTag();
-      //    tag.Album = song.Album;
-      //    tag.Artist = song.Artist;
-      //    tag.Duration = song.Duration;
-      //    tag.Genre = song.Genre;
-      //    tag.Title = song.Title;
-      //    tag.Track = song.Track;
-      //    tag.Year = song.Year;
-      //}
+      // efforts only for important track
+      bool isCurrent = (g_Player.CurrentFile == fileName);
+      string strThumb = String.Empty;
 
-      string strThumb = Util.Utils.GetLocalFolderThumb(fileName);
-      if (System.IO.File.Exists(strThumb))
+      if (isCurrent && tag != null)
       {
-        thumb = strThumb;
-      }
-      else
-      {
-        // nothing locally - try the share itself
-        string strRemoteFolderThumb = String.Empty;
-        //strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(fileName));
-        strRemoteFolderThumb = Util.Utils.GetFolderThumb(fileName);
-
-        if (System.IO.File.Exists(strRemoteFolderThumb))
-          thumb = strRemoteFolderThumb;
+        strThumb = GUIMusicFiles.GetAlbumThumbName(tag.Artist, tag.Album);
+        if (System.IO.File.Exists(strThumb))
+          thumb = strThumb;
       }
 
-      // let us test if there is a larger cover art image
-      string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(thumb);
-      if (System.IO.File.Exists(strLarge))
+      // no succes with album cover try folder cache
+      if (thumb == String.Empty)
       {
-        //Log.Debug("GUIMusicOverlay: using larger thumb - {0}", strLarge);
-        thumb = strLarge;
+        strThumb = Util.Utils.GetLocalFolderThumb(fileName);
+        if (System.IO.File.Exists(strThumb))
+        {
+          thumb = strThumb;
+        }
+        else
+        {
+          // nothing locally - try the share itself
+          string strRemoteFolderThumb = String.Empty;
+          //strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(fileName));
+          strRemoteFolderThumb = Util.Utils.GetFolderThumb(fileName);
+
+          if (System.IO.File.Exists(strRemoteFolderThumb))
+            thumb = strRemoteFolderThumb;
+        }
+      }
+
+      if (isCurrent)
+      {
+        // let us test if there is a larger cover art image
+        string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(thumb);
+        if (System.IO.File.Exists(strLarge))
+        {
+          //Log.Debug("GUIMusicOverlay: using larger thumb - {0}", strLarge);
+          thumb = strLarge;
+        }
       }
 
       return tag;
