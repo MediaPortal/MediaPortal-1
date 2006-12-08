@@ -29,19 +29,22 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Xml.Serialization;
 
+using MediaPortal.Database;
+using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+using MediaPortal.GUI.View;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
+// using MediaPortal.Services;
 using MediaPortal.TagReader;
-using MediaPortal.Database;
+//using MediaPortal.Threading;
+using MediaPortal.Util;
 using MediaPortal.Music.Database;
-using MediaPortal.Dialogs;
-using MediaPortal.GUI.View;
 
 
 namespace MediaPortal.GUI.Music
@@ -149,6 +152,7 @@ namespace MediaPortal.GUI.Music
     bool m_bFileMenuEnabled = false;
     string m_strFileMenuPinCode = String.Empty;
     static bool _createMissingFolderThumbs = false;
+    static object _workerLock;
 
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
     private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
@@ -300,6 +304,7 @@ namespace MediaPortal.GUI.Music
     public override bool Init()
     {
       currentFolder = String.Empty;
+      _workerLock = new object();
 
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mymusicsongs.xml");
       return bResult;
@@ -1095,7 +1100,6 @@ namespace MediaPortal.GUI.Music
 
     void DisplayFilesList(int searchKind, string strSearchText)
     {
-
       string strObjects = String.Empty;
       GUIControl.ClearControl(GetID, facadeView.GetID);
       List<GUIListItem> itemlist = new List<GUIListItem>();
@@ -1265,6 +1269,73 @@ namespace MediaPortal.GUI.Music
       }
     }
 
+    static private void StartMissingThumbCreation(string filename)
+    {
+      //Work mptw = new Work();
+      //mptw.Description = "FolderThumbWorker";
+      // EventArgs for filename needed..
+      //mptw.WorkLoad = new DoWorkHandler(this.FolderThumbWorker_DoWork); <-- param needed
+      // GlobalServiceProvider.Get<IThreadPool>().Add(mptw, QueuePriority.Low, System.Threading.ThreadPriority.Lowest);
+
+      Thread FolderThumbWorker = new Thread(new ParameterizedThreadStart(GUIMusicFiles.CreateMissingThumbs));
+      FolderThumbWorker.SetApartmentState(ApartmentState.STA);
+      FolderThumbWorker.IsBackground = true;
+      FolderThumbWorker.Priority = ThreadPriority.Lowest;
+      FolderThumbWorker.Start(filename);
+    }
+
+    private void FolderThumbWorker_DoWork() // <-- param needed
+    {
+      //string arg = (string)e.Argument;
+      //e.Result = CreateMissingThumbs(arg);
+      //if (mpw.CancellationPending)
+      //{
+      //  e.Cancel = true;
+      //}
+    }
+
+    static private void CreateMissingThumbs(object filenameObject)
+    {
+      lock (_workerLock)
+      {
+        string filename = (string)filenameObject;
+        string strFolderThumb = String.Empty;
+        strFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumbForDir(filename);
+
+        string strRemoteFolderThumb = String.Empty;
+        strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
+
+        if (System.IO.File.Exists(strRemoteFolderThumb))
+        {
+          // if there was no cached thumb although there was a folder.jpg then the user didn't scan his collection:
+          // -- punish him with slowness and create the thumbs for the next time...
+          try
+          {
+            Log.Info("GUIMusicFiles: On-Demand-Creating missing folder thumbs for {0}", strRemoteFolderThumb);
+            string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(strFolderThumb);
+
+            if (!System.IO.File.Exists(strFolderThumb))
+              MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+            if (!System.IO.File.Exists(localFolderLThumb))
+            {
+              // just copy the folder.jpg if it is reasonable in size - otherwise re-create it
+              System.IO.FileInfo fiRemoteFolderArt = new System.IO.FileInfo(strRemoteFolderThumb);
+              if (fiRemoteFolderArt.Length < 32000)
+                System.IO.File.Copy(strRemoteFolderThumb, localFolderLThumb, true);
+              else
+                MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+            }
+
+            return;
+          }
+          catch (Exception)
+          {
+            return;
+          }
+        }
+      }
+    }
+
 
     static public string GetCoverArt(bool isfolder, string filename, MusicTag tag)
     {
@@ -1280,36 +1351,9 @@ namespace MediaPortal.GUI.Music
         else
         {
           if (_createMissingFolderThumbs)
-          {            
-            string strRemoteFolderThumb = String.Empty;
-            strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
-
-            if (System.IO.File.Exists(strRemoteFolderThumb))
-            {
-              //GUIWaitCursor.Show();
-              // if there was no cached thumb although there was a folder.jpg then the user didn't scan his collection:
-              // -- punish him with slowness and create the thumbs for the next time...
-              try
-              {
-                Log.Info("GUIMusicFiles: On-Demand-creating missing folder thumbs for {0}", strRemoteFolderThumb);
-                string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(strFolderThumb);
-
-                if (!System.IO.File.Exists(strFolderThumb))
-                  MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
-                if (!System.IO.File.Exists(localFolderLThumb))
-                  System.IO.File.Copy(strRemoteFolderThumb, localFolderLThumb, true);
-
-                //GUIWaitCursor.Hide();
-                return strFolderThumb;
-              }
-              catch (Exception) 
-              {
-                //GUIWaitCursor.Hide();
-                return string.Empty;
-              }
-            }
+          { 
+            StartMissingThumbCreation(filename);
           }
-
         }
         return string.Empty;
       }

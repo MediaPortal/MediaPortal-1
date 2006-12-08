@@ -3035,7 +3035,14 @@ namespace MediaPortal.Music.Database
             if (!System.IO.File.Exists(localFolderThumb))
               MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
             if (!System.IO.File.Exists(localFolderLThumb))
-              MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+            {
+              // just copy the folder.jpg if it is reasonable in size - otherwise re-create it
+              System.IO.FileInfo fiRemoteFolderArt = new System.IO.FileInfo(folderThumb);
+              if (fiRemoteFolderArt.Length < 32000)
+                System.IO.File.Copy(folderThumb, localFolderLThumb, true);
+              else
+                MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);              
+            }
           }
         }
         catch (Exception ex1)

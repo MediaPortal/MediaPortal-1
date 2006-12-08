@@ -448,12 +448,21 @@ namespace MediaPortal.GUI.Music
         else
         {
           // nothing locally - try the share itself
-          string strRemoteFolderThumb = String.Empty;
-          //strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(fileName));
+          string strRemoteFolderThumb = String.Empty;          
           strRemoteFolderThumb = Util.Utils.GetFolderThumb(fileName);
 
           if (System.IO.File.Exists(strRemoteFolderThumb))
             thumb = strRemoteFolderThumb;
+          else
+          {
+            // last chance - maybe some other program left a "cover.jpg"
+            if (isCurrent)
+            {
+              strRemoteFolderThumb = strRemoteFolderThumb.Replace("folder.jpg", "cover.jpg");
+              if (System.IO.File.Exists(strRemoteFolderThumb))
+                thumb = strRemoteFolderThumb;
+            }
+          }
         }
       }
 
