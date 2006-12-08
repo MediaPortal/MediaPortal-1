@@ -128,6 +128,7 @@ namespace TvLibrary.Implementations.Analog
 
     protected IChannel _currentChannel;
     string _timeshiftFileName;
+    protected IVbiCallback _teletextCallback = null;
     #endregion
 
     #region ctor
@@ -2005,6 +2006,17 @@ namespace TvLibrary.Implementations.Analog
 
     #region ISampleGrabberCB Members
 
+    public IVbiCallback TeletextCallback 
+    {
+      get
+      {
+        return _teletextCallback;
+      }
+      set
+      {
+        _teletextCallback = value;
+      }
+    }
 
     /// <summary>
     /// callback from ISampleGrabber filter
@@ -2032,7 +2044,10 @@ namespace TvLibrary.Implementations.Analog
         {
           return 0;
         }
-
+        if (_teletextCallback!=null) 
+        {
+          _teletextCallback.OnVbiData( pBuffer, BufferLen, true);
+        }
         _teletextDecoder.SaveAnalogData(pBuffer, BufferLen);
       }
       catch (Exception ex)

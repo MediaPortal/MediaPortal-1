@@ -141,6 +141,7 @@ namespace TvLibrary.Implementations.DVB
     protected DVBAudioStream _currentAudioStream;
     protected BaseEpgGrabber _epgGrabberCallback = null;
     CamType _camType;
+    protected IVbiCallback _teletextCallback = null;
 
 
 
@@ -2046,6 +2047,17 @@ namespace TvLibrary.Implementations.DVB
 
     #region ITeletextCallBack Members
 
+    public IVbiCallback TeletextCallback
+    {
+      get
+      {
+        return _teletextCallback;
+      }
+      set
+      {
+        _teletextCallback = value;
+      }
+    }
     /// <summary>
     /// callback from the TsWriter filter when it received a new teletext packets
     /// </summary>
@@ -2056,6 +2068,10 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
+        if (_teletextCallback != null)
+        {
+          _teletextCallback.OnVbiData( data, packetCount, false);
+        }
         for (int i = 0; i < packetCount; ++i)
         {
           IntPtr packetPtr = new IntPtr(data.ToInt32() + i * 188);

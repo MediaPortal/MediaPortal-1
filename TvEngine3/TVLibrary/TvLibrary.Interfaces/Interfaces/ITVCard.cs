@@ -214,6 +214,8 @@ namespace TvLibrary.Interfaces
     /// Property which returns true when the current channel contains teletext
     /// </summary>
     bool HasTeletext { get;}
+
+    IVbiCallback TeletextCallback { get;set;}
     #endregion
 
     #region tuning & recording
