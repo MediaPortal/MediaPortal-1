@@ -180,10 +180,8 @@ namespace MediaPortal.Configuration
       Log.Info("  add music import section");
       AddChildSection(music, new MusicImport());
       AddChildSection(music, new MusicSort());
-
-      //SV No longer needed (now part of music.cs
-      //Log.Info("  add music misc section");
-      //AddChildSection(music, new MusicMisc());
+      Log.Info("  add music dsp section");
+      AddChildSection(music, new MusicDSP());
 
       Log.Info("add pictures section");
       SectionSettings picture = new Pictures();

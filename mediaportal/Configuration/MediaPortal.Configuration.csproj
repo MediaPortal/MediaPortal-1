@@ -164,6 +164,7 @@
     <Reference Include="AxInterop.X10, Version=1.0.0.0, Culture=neutral">
       <HintPath>.\AxInterop.X10.dll</HintPath>
     </Reference>
+    <Reference Include="Bass.Net, Version=2.3.0.5, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL" />
     <Reference Include="Interop.TunerLib">
       <Name>Interop.TunerLib</Name>
       <HintPath>..\Interop.TunerLib.dll</HintPath>
@@ -278,6 +279,12 @@
     </Compile>
     <Compile Include="Sections\GeneralThumbs.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\MusicDSP.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\MusicDSP.Designer.cs">
+      <DependentUpon>MusicDSP.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\MusicShares.cs">
       <SubType>UserControl</SubType>
@@ -581,6 +588,10 @@
     <EmbeddedResource Include="Sections\GeneralThumbs.resx">
       <SubType>Designer</SubType>
       <DependentUpon>GeneralThumbs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\MusicDSP.resx">
+      <DependentUpon>MusicDSP.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MusicShares.resx">
       <DependentUpon>MusicShares.cs</DependentUpon>

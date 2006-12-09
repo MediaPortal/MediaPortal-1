@@ -141,6 +141,9 @@ rem Begin BASS Music Engine dependancies
 copy ..\..\..\bass.dll .
 copy ..\..\..\Bass.Net.dll .
 copy ..\..\..\bass_vis.dll .
+copy ..\..\..\bass_fx.dll .
+copy ..\..\..\bass_vst.dll .
+copy ..\..\..\bass_wadsp.dll .
 copy ..\..\..\mpviz.dll .
 rem End BASS Music Engine dependancies
 

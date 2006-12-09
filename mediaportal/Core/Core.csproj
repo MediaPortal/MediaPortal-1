@@ -284,6 +284,12 @@
     <Compile Include="guilib\SkinSettings.cs" />
     <Compile Include="guilib\TransformMatrix.cs" />
     <Compile Include="guilib\VisualEffect.cs" />
+    <Compile Include="MusicPlayer\DSP\BassEffect.cs" />
+    <Compile Include="MusicPlayer\DSP\BassEffectParm.cs" />
+    <Compile Include="MusicPlayer\DSP\WinAmpPlugin.cs" />
+    <Compile Include="MusicPlayer\DSP\Settings.cs" />
+    <Compile Include="MusicPlayer\DSP\VSTPlugin.cs" />
+    <Compile Include="MusicPlayer\DSP\VSTPluginParm.cs" />
     <Compile Include="ServiceImplementations\LogImpl.cs" />
     <Compile Include="MusicPlayer\BASS\BassAudio.cs" />
     <Compile Include="MusicPlayer\Visualization\IVisualization.cs" />

@@ -515,6 +515,17 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
+    public override object GetSetting(string name)
+    {
+      switch (name.ToLower())
+      {
+        case "audioplayer":
+          return audioPlayerComboBox.SelectedItem.ToString();
+      }
+
+      return null;
+    }
+
     /// <summary>
     /// Clean up any resources being used.
     /// </summary>

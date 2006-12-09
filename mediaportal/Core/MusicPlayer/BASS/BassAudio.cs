@@ -27,9 +27,11 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Vis;
+using Un4seen.Bass.AddOn.Vst;
+using Un4seen.Bass.AddOn.Fx;
+using Un4seen.Bass.AddOn.Wa;
 using Un4seen.Bass.Misc;
-using Un4seen.Bass.AddOn.Tags;
-
+using MediaPortal.Player.DSP;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
 using MediaPortal.Visualization;
@@ -49,7 +51,7 @@ namespace MediaPortal.Player
       get
       {
         if (_Player == null)
-          _Player = new BassAudioEngine();
+           _Player = new BassAudioEngine();
 
         return _Player;
       }
@@ -99,9 +101,7 @@ namespace MediaPortal.Player
     private static void InternalCreatePlayerAsync()
     {
       if (_Player == null)
-      {
         _Player = new BassAudioEngine();
-      }
     }
   }
 
@@ -168,6 +168,22 @@ namespace MediaPortal.Player
 
     bool NeedUpdate = true;
     bool NotifyPlaying = true;
+
+    // DSP related variables
+    private bool _dspActive = false;
+    private DSP_Stacker _stacker = null;
+    private DSP_Gain _gain = null;
+    private BASS_FX_DSPDAMP _damp = null;
+    private BASS_FX_DSPCOMPRESSOR _comp = null;
+    private int _dampPrio = 3;
+    private int _compPrio = 2;
+    // VST Related variables
+    private List<string> _VSTPlugins = new List<string>();
+    private Dictionary<string, int> _vstHandles = new Dictionary<string, int>();
+    // Winamp related variables
+    private IntPtr _windowHandle;
+    private bool _waDspInitialised = false;
+    private Dictionary<string, int> _waDspPlugins = new Dictionary<string, int>();
 
     #region Properties
 
@@ -410,6 +426,21 @@ namespace MediaPortal.Player
 
     public void Dispose()
     {
+      // Clean up BASS Resources
+      try
+      {
+        // Some Winamp dsps might raise an exception when closing
+        //foreach (int waDspPlugin in _waDspPlugins.Values)
+        //{
+        //  BassWa.BASS_WADSP_Stop(waDspPlugin);
+        //  BassWa.BASS_WADSP_FreeDSP(waDspPlugin);
+        //}
+        BassWa.BASS_WADSP_Free();
+      }
+      catch (Exception ex)
+      {
+        Log.Error(ex.Message);
+      }
       Bass.BASS_Stop();
       Bass.BASS_Free();
 
@@ -450,6 +481,7 @@ namespace MediaPortal.Player
           StreamEventSyncHandles.Add(new List<int>());
 
           InitializeControls();
+          LoadDSPPlugins();
           Log.Info("BASS: Initialization done.");
 
           _Initialized = true;
@@ -728,6 +760,146 @@ namespace MediaPortal.Player
         Log.Error(@"BASS: No audio decoders were loaded. Confirm decoders are present in \musicplayer\plugins\audio decoders folder.");
     }
 
+    private void LoadDSPPlugins()
+    {
+      Log.Debug("BASS: Loading DSP plugins ...");
+      _dspActive = false;
+      // BASS DSP/FX
+      foreach (BassEffect basseffect in Settings.Instance.BassEffects)
+      {
+        _dspActive = true;
+        foreach (BassEffectParm parameter in basseffect.Parameter)
+        {
+          setBassDSP(basseffect.EffectName, parameter.Name, parameter.Value);
+        }
+      }
+
+      // VST Plugins
+      string vstPluginDir = Settings.Instance.VSTPluginDirectory;
+      int vstHandle = 0;
+      foreach (VSTPlugin plugins in Settings.Instance.VSTPlugins)
+      {
+        // Get the vst handle and enable it
+        string plugin = String.Format(@"{0}\{1}", vstPluginDir, plugins.PluginDll);
+        vstHandle = BassVst.BASS_VST_ChannelSetDSP(0, plugin, BASSVSTDsp.BASS_VST_DEFAULT, 1);
+        if (vstHandle > 0)
+        {
+          _dspActive = true;
+          _VSTPlugins.Add(plugins.PluginDll);
+          // Store the handle in the dictionary for later reference
+          _vstHandles[plugins.PluginDll] = vstHandle;
+          // Set all parameters for the plugin
+          foreach (VSTPluginParm paramter in plugins.Parameter)
+          {
+            System.Globalization.NumberFormatInfo format = new System.Globalization.NumberFormatInfo();
+            format.NumberDecimalSeparator = ".";
+            try
+            {
+              BassVst.BASS_VST_SetParam(vstHandle, paramter.Index, float.Parse(paramter.Value));
+            }
+            catch (Exception)
+            { }
+          }
+        }
+        else
+        {
+          Log.Debug("Couldn't load VST Plugin {0}. Error code: {1}", plugin, Bass.BASS_ErrorGetCode());
+        }
+      }
+
+      // WinAmp Plugins
+      string WinAmpPluginDir = Settings.Instance.WinAmpPluginDirectory;
+      int waDspPlugin = 0;
+
+      // Init Winamp DSP only if we got a winamo plugin actiavtes
+      if (Settings.Instance.WinAmpPlugins.Count > 0)
+        BassWa.BASS_WADSP_Init(GUIGraphicsContext.ActiveForm);
+
+      // Load the Plugin and store its handle for later reference
+      foreach (WinAmpPlugin plugins in Settings.Instance.WinAmpPlugins)
+      {
+        waDspPlugin = BassWa.BASS_WADSP_Load(plugins.PluginDll, 5, 5, 100, 100, null);
+        if (waDspPlugin > 0)
+        {
+          _dspActive = true;          
+          _waDspPlugins[plugins.PluginDll] = waDspPlugin;
+        }
+        else
+        {
+          Log.Debug("Couldn't load WinAmp Plugin {0}. Error code: {1}", plugins.PluginDll, Bass.BASS_ErrorGetCode());
+        }
+      }
+      Log.Debug("BASS: Finished loading DSP plugins ...");
+    }
+
+    /// <summary>
+    /// Sets the parameter for a given Bass effect
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="name"></param>
+    /// <param name="value"></param>
+    /// <param name="format"></param>
+    private void setBassDSP(string id, string name, string value)
+    {
+      switch (id)
+      {
+        case "Gain":
+          if (name == "Gain_dbV")
+          {
+            double gainDB = double.Parse(value);
+            if (_stacker == null)
+              _stacker = new DSP_Stacker();
+
+            if (_gain == null)
+              _gain = new DSP_Gain();
+
+            if (gainDB == 0.0)
+              _gain.SetBypass(true);
+            else
+            {
+              _gain.SetBypass(false);
+              _gain.Gain_dBV = gainDB;
+            }
+
+            // Do we have the gain already in the stacker?
+            if (_stacker.IndexOf(_gain) == -1)
+              _stacker.Add(_gain);
+          }
+          break;
+
+        case "DynAmp":
+          if (name == "Preset")
+          {
+            if (_damp == null)
+              _damp = new BASS_FX_DSPDAMP();
+
+            switch (Convert.ToInt32(value))
+            {
+              case 0:
+                _damp.Preset_Soft();
+                break;
+              case 1:
+                _damp.Preset_Medium();
+                break;
+              case 2:
+                _damp.Preset_Hard();
+                break;
+            }
+          }
+          break;
+
+        case "Compressor":
+          if (name == "Threshold")
+          {
+            if (_comp == null)
+              _comp = new BASS_FX_DSPCOMPRESSOR();
+
+            _comp.fThreshold = (float)Un4seen.Bass.Utils.DBToLevel(Convert.ToInt32(value) / 10d, 1.0);
+          }
+          break;
+      }
+    }
+
     public override bool Play(string filePath)
     {
       if (!_Initialized)
@@ -840,6 +1012,43 @@ namespace MediaPortal.Player
 
               // Fade in from 0 to 100 over the _CrossFadeIntervalMS duration 
               Bass.BASS_ChannelSlideAttributes(stream, -1, 100, -101, _CrossFadeIntervalMS); // will Fadeout a channel's volume over a period of 4 seconds.
+            }
+
+            // Attach active DSP effects to the Stream
+            if (_dspActive)
+            {
+              // BASS effects
+              if (_stacker != null)
+              {
+                _stacker.ChannelHandle = stream;
+                _stacker.Start();
+              }
+              if (_damp != null)
+              {
+                BassFx.BASS_FX_DSP_Set(stream, BASSFXDsp.BASS_FX_DSPFX_DAMP, _dampPrio);
+                BassFx.BASS_FX_DSP_SetParameters(stream, _damp);
+              }
+              if (_comp != null)
+              {
+                BassFx.BASS_FX_DSP_Set(stream, BASSFXDsp.BASS_FX_DSPFX_COMPRESSOR, _compPrio);
+                BassFx.BASS_FX_DSP_SetParameters(stream, _comp);
+              }
+
+              // VST Plugins
+              foreach (string plugin in _VSTPlugins)
+              {
+                int vstHandle = BassVst.BASS_VST_ChannelSetDSP(stream, plugin, BASSVSTDsp.BASS_VST_DEFAULT, 1);
+                // Copy the parameters of the plugin as loaded on from the settings
+                int vstParm = _vstHandles[plugin];
+                BassVst.BASS_VST_SetParamCopyParams(vstParm, vstHandle);
+              }
+
+              // Winamp DSP Plugins
+              foreach (int waDspPlugin in _waDspPlugins.Values)
+              {
+                BassWa.BASS_WADSP_Start(waDspPlugin, 0, 0);
+                BassWa.BASS_WADSP_ChannelSetDSP(waDspPlugin, stream, 1);
+              }
             }
           }
 
@@ -982,7 +1191,6 @@ namespace MediaPortal.Player
       if (syncHandle == 0)
       {
         int error = Bass.BASS_ErrorGetCode();
-        //                Console.WriteLine(Enum.GetName(typeof(BASSErrorCode), error));
       }
 
       return syncHandle;
@@ -1456,17 +1664,17 @@ namespace MediaPortal.Player
 
       if (VizManager == null)
         return;
-     
+
       if (GUIGraphicsContext.BlankScreen) //BAV || (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
       {
         //BAV if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
         {
-          
+
           if (VizWindow.Visible)
             VizWindow.Visible = false;
         }
       }
-      
+
       else if (!VizWindow.Visible)
       {
         NeedUpdate = true;
