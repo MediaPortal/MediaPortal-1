@@ -452,6 +452,22 @@ namespace MediaPortal.TV.Recording
       }
     }
 
+    /// <summary>
+    /// Checks if the current recording is still recording x minutes in the future 
+    /// </summary>
+    /// 
+    public bool IsRecordingAt(int minutes)
+    {
+      DateTime time= DateTime.Now;
+      if(_currentTvRecording == null) 
+        return false;
+
+      time.AddMinutes(minutes);
+
+      if (_currentTvRecording.IsRecordingAtTime(time, _currentTvProgramRecording, _preRecordInterval, _postRecordInterval))
+        return true;
+      return false;
+    }
 
     /// <summary>
     /// Property which returns true if this card is currently has a teletext
@@ -915,6 +931,12 @@ namespace MediaPortal.TV.Recording
       bool result = _currentGraph.GrabEpg(channel);
       _epgTimeOutTimer = DateTime.Now;
       return result;
+    }
+
+    public int PostRecord
+    {
+      set {_postRecordInterval = value;}
+      get { return _postRecordInterval;}
     }
 
     /// <summary>
