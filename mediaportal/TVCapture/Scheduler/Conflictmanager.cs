@@ -235,12 +235,19 @@ namespace MediaPortal.TV.Recording
     /// <returns>true : overlapping, false : no overlapping</returns>
     static private bool IsOverlap(TVRecording record_1, TVRecording record_2)
     {
+      DateTime Start1, Start2, End1, End2;
+
+      Start1 = record_1.StartTime.AddMinutes(-record_1.PreRecord);
+      Start2 = record_2.StartTime.AddMinutes(-record_2.PreRecord);
+      End1 = record_1.EndTime.AddMinutes(record_1.PostRecord);
+      End2 = record_2.EndTime.AddMinutes(record_2.PostRecord);
+
       // rec_1        s------------------------e
       // rec_2    ---------s-----------------------------
       // rec_2  ------------------e
-      if ((record_2.Start >= record_1.Start && record_2.Start < record_1.End) ||
-          (record_2.Start <= record_1.Start && record_2.End >= record_1.End) ||
-          (record_2.End > record_1.Start && record_2.End <= record_1.End)) return true;
+      if ((Start2 >= Start1 && Start2 < End1) ||
+          (Start2 <= Start1 && End2 >= End1) ||
+          (End2 > Start1 && End2 <= End1)) return true;
       return false;
     }
     /// <summary>Tries to assign a recording to a card</summary>
