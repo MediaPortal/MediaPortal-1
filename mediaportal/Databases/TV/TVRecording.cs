@@ -27,6 +27,56 @@ using MediaPortal.Util;
 
 namespace MediaPortal.TV.Database
 {
+  public class PrePostRecord
+  {
+    //specifies the number of minutes the notify should be send before a program starts
+    int _preRecordingWarningTime = 2;
+    // number of minutes we should start recording before the program starts
+    int _preRecordInterval = 0;
+    // number of minutes we keeprecording after the program starts
+    int _postRecordInterval = 0;
+
+    static PrePostRecord _instance;
+
+    private PrePostRecord()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        _preRecordInterval = xmlreader.GetValueAsInt("capture", "prerecord", 5);
+        _postRecordInterval = xmlreader.GetValueAsInt("capture", "postrecord", 5);
+        _preRecordingWarningTime = xmlreader.GetValueAsInt("mytv", "recordwarningtime", 2);
+      }
+    }
+
+    public static PrePostRecord Instance
+    {
+      get
+      {
+        if (_instance == null)
+          _instance = new PrePostRecord();
+        return _instance;
+      }
+    }
+
+    public int DefaultPreRecord
+    {
+      get { return _preRecordInterval; }
+      set { _preRecordInterval = value; }
+    }
+
+    public int DefaultPostRecord
+    {
+      get { return _postRecordInterval; }
+      set { _postRecordInterval = value; }
+    }
+
+    public int PreRecordingWarningTime
+    {
+      get { return _preRecordingWarningTime; }
+      set { _preRecordingWarningTime = value; }
+    }
+
+  }
   /// <summary>
   /// Class which contains all information about a scheduled recording
   /// </summary>
@@ -181,6 +231,32 @@ namespace MediaPortal.TV.Database
     {
       get { return _paddingEndInterval; }
       set { _paddingEndInterval = value; }
+    }
+
+    public int PreRecord
+    {
+      get 
+      {
+        if (_paddingFrontInterval == -1)
+          return PrePostRecord.Instance.DefaultPreRecord;
+        else if (_paddingFrontInterval == -2)
+          return 0;
+        else
+          return _paddingFrontInterval;
+      }
+    }
+
+    public int PostRecord
+    {
+      get 
+      {
+        if (_paddingEndInterval == -1)
+          return PrePostRecord.Instance.DefaultPostRecord;
+        else if (_paddingEndInterval == -2)
+          return 0;
+        else
+          return _paddingEndInterval; 
+      }
     }
 
     public bool IsAnnouncementSend
