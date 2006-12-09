@@ -117,7 +117,6 @@ namespace MediaPortal.PowerScheduler
 
 				_timerInterval     = xmlreader.GetValueAsInt("powerscheduler", "timerinterval", 30);
 				_wakeupInterval    = xmlreader.GetValueAsInt("powerscheduler", "wakeupinterval", 1);
-				_preRecordInterval = xmlreader.GetValueAsInt("capture", "prerecord", 5);
 				_reinitRecorder    = xmlreader.GetValueAsBool("powerscheduler", "reinitonresume", false);
 
 				if (_shutDownInterval < 1) ResetShutDown();   // be sure that we do no shutdown
@@ -130,7 +129,6 @@ namespace MediaPortal.PowerScheduler
 					Log.Info("   - ForceShutDown    = {0}", _forceShutDown);
 					Log.Info("   - TimerInterval    = {0}", _timerInterval);
 					Log.Info("   - WakeUpInterval   = {0}", _wakeupInterval);
-					Log.Info("   - PreRecordingInt  = {0}", _preRecordInterval);
 					Log.Info("   - ReinitRecorder   = {0}", _reinitRecorder);
 				}
 			}
@@ -335,7 +333,7 @@ namespace MediaPortal.PowerScheduler
           List<TVRecording> recs = ConflictManager.Util.GetRecordingTimes(rec);
           foreach (TVRecording foundRec in recs)
           {
-            DateTime startTime = foundRec.StartTime.AddMinutes(-_preRecordInterval);
+            DateTime startTime = foundRec.StartTime.AddMinutes(-foundRec.PreRecord);
             if ((startTime >= ealiestStartTime) && (startTime < nextRecTime))
             {
               nextRecTime = startTime;
@@ -347,7 +345,7 @@ namespace MediaPortal.PowerScheduler
       if ((nextRecTime < DateTime.MaxValue) && (nextRecTime > ealiestStartTime))
       {
         _nextRecordingTime = nextRecTime;
-        LogDebug("Next Recording for found at StartTime = {0}, {1} - {2}", nextRecTime, nextRec.Channel, nextRec.Title);
+        LogDebug("Next Recording found at StartTime = {0}, {1} - {2}", nextRecTime, nextRec.Channel, nextRec.Title);
       }
     }
 
