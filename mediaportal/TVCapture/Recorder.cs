@@ -304,8 +304,10 @@ namespace MediaPortal.TV.Recording
       for (int i = 0; i < _commandProcessor.TVCards.Count; ++i)
       {
         TVCaptureDevice dev = _commandProcessor.TVCards[i] as TVCaptureDevice;
+
+        Log.Info("NeedChannelSwitchForRecording {0} {1} {2}", dev.IsRecordingAt(PrePostRecord.Instance.PreRecordingWarningTime), dev.IsTimeShifting, dev.View);
         //is the card free?
-        if (!dev.IsRecording && !dev.IsTimeShifting && !dev.View)
+        if (!dev.IsRecordingAt(PrePostRecord.Instance.PreRecordingWarningTime) && !dev.IsTimeShifting && !dev.View)
         {
           //yes and can it receive the tv channel as well?
           if (TVDatabase.CanCardViewTVChannel(rec.Channel, dev.ID) || _commandProcessor.TVCards.Count == 1)
