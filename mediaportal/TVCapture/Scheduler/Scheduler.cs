@@ -53,13 +53,6 @@ namespace MediaPortal.TV.Recording
     //list of all tv channels present in tv database
     List<TVChannel> _tvChannelsList ;
 
-
-    //specifies the number of minutes the notify should be send before a program starts
-    int _preRecordingWarningTime = 2;
-    // number of minutes we should start recording before the program starts
-    int _preRecordInterval = 0;
-    // number of minutes we keeprecording after the program starts
-    int _postRecordInterval = 0;
     DateTime _scheduleTimer;
 
     public Scheduler()
@@ -74,18 +67,10 @@ namespace MediaPortal.TV.Recording
       _tvChannelsList = new List<TVChannel>();
       TVDatabase.GetChannels(ref _tvChannelsList);
 
-      _preRecordInterval = 0;
-      _postRecordInterval = 0;
-      //m_bAlwaysTimeshift=false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        _preRecordInterval = xmlreader.GetValueAsInt("capture", "prerecord", 5);
-        _postRecordInterval = xmlreader.GetValueAsInt("capture", "postrecord", 5);
-        _preRecordingWarningTime = xmlreader.GetValueAsInt("mytv", "recordwarningtime", 2);
-      }
       ResetTimer();
 
     }
+
     private void OnRecordingsChanged(TVDatabase.RecordingChange change)
     {
       Log.Info("Scheduler:Recordings changed");
@@ -169,9 +154,9 @@ namespace MediaPortal.TV.Recording
         TVChannel chan = _tvChannelsList[i];
 
         // get all programs running for this TV channel
-        // between  (now-4 hours) - (now+iPostRecordInterval+3 hours)
+        // between  (now-4 hours) - (now+PostRecordInterval+3 hours)
         DateTime dtStart = dtCurrentTime.AddHours(-4);
-        DateTime dtEnd = dtCurrentTime.AddMinutes(_postRecordInterval + 3 * 60);
+        DateTime dtEnd = dtCurrentTime.AddMinutes(PrePostRecord.Instance.DefaultPostRecord + 3 * 60);
         long iStartTime = MediaPortal.Util.Utils.datetolong(dtStart);
         long iEndTime = MediaPortal.Util.Utils.datetolong(dtEnd);
 
@@ -192,18 +177,8 @@ namespace MediaPortal.TV.Recording
             if (!handler.IsRecordingSchedule(rec, out card))
             {
               //no, then check if its time to record it
-              int paddingFront = rec.PaddingFront;
-              int paddingEnd = rec.PaddingEnd;
-
-              if (paddingFront == -1)
-                paddingFront = _preRecordInterval;
-              else if (paddingFront == -2)
-                paddingFront = 0;
-
-              if (paddingEnd == -1)
-                paddingEnd = _postRecordInterval;
-              else if (paddingEnd == -2)
-                paddingEnd = 0;
+              int paddingFront = rec.PreRecord;
+              int paddingEnd = rec.PostRecord;
 
               // check which program is current running on this channel
               TVProgram prog = chan.GetProgramAt(dtCurrentTime.AddMinutes(1 + paddingFront));
@@ -224,7 +199,7 @@ namespace MediaPortal.TV.Recording
                 if (!rec.IsAnnouncementSend)
                 {
                   //no, then check if a notification needs to be send
-                  DateTime dtTime = DateTime.Now.AddMinutes(_preRecordingWarningTime);
+                  DateTime dtTime = DateTime.Now.AddMinutes(PrePostRecord.Instance.PreRecordingWarningTime);
                   TVProgram prog2Min = chan.GetProgramAt(dtTime.AddMinutes(1 + paddingFront));
 
                   // if the recording should record the tv program
@@ -256,18 +231,8 @@ namespace MediaPortal.TV.Recording
         //if recording has been recorded already, then skip it
         if (rec.IsDone()) continue;
 
-        int paddingFront = rec.PaddingFront;
-        int paddingEnd = rec.PaddingEnd;
-
-        if (paddingFront == -1)
-          paddingFront = _preRecordInterval;
-        else if (paddingFront == -2)
-          paddingFront = 0;
-
-        if (paddingEnd == -1)
-          paddingEnd = _postRecordInterval;
-        else if (paddingEnd == -2)
-          paddingEnd = 0;
+        int paddingFront = rec.PreRecord;
+        int paddingEnd = rec.PostRecord;
 
         // 1st check if the recording itself should b recorded
         if (rec.IsRecordingProgramAtTime(DateTime.Now, null, paddingFront, paddingEnd))
@@ -291,7 +256,7 @@ namespace MediaPortal.TV.Recording
           if (!rec.IsAnnouncementSend)
           {
             //no, is the recording going to start within 2 mins?
-            DateTime dtTime = DateTime.Now.AddMinutes(_preRecordingWarningTime);
+            DateTime dtTime = DateTime.Now.AddMinutes(PrePostRecord.Instance.PreRecordingWarningTime);
             // if the recording should record the tv program
             if (rec.IsRecordingProgramAtTime(dtTime, null, paddingFront, paddingEnd))
             {
