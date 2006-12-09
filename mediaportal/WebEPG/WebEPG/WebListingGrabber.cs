@@ -110,8 +110,8 @@ namespace MediaPortal.WebEPG
 
       _reqData = _grabber.Listing.SearchParameters;
 
-
-      if (_grabber.Info.TimeZone != string.Empty)
+      _siteTimeZone = null;
+      if (_grabber.Info.TimeZone != null)
       {
         //_timeAdjustOnly = _xmlreader.GetValueAsBool("Info", "TimeAdjustOnly", false);
         _log.Info(LogType.WebEPG, "WebEPG: TimeZone, Local: {0}", TimeZone.CurrentTimeZone.StandardName);
@@ -127,8 +127,10 @@ namespace MediaPortal.WebEPG
           _siteTimeZone = null;
         }
       }
-      else
+      
+      if(_siteTimeZone == null)
       {
+        _log.Info(LogType.WebEPG, "WebEPG: No site TimeZone, using Local: {0}", TimeZone.CurrentTimeZone.StandardName);
         _siteTimeZone = new WorldTimeZone(TimeZone.CurrentTimeZone.StandardName);
       }
 
@@ -184,9 +186,9 @@ namespace MediaPortal.WebEPG
       //int offset = 0;
 
       _reqData.ChannelId = _grabber.GetChannel(strChannelID);
-      if (_reqData.ChannelId == string.Empty)
+      if (_reqData.ChannelId == null)
       {
-        _log.Info(LogType.WebEPG, "WebEPG: ChannelId: {0} not found!", strChannelID);
+        _log.Error(LogType.WebEPG, "WebEPG: ChannelId: {0} not found!", strChannelID);
         return null;
       }
 
