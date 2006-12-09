@@ -314,7 +314,7 @@ namespace ID3
       ID3v2TagSize = Utils.ReadUnsynchronizedData(Id3v2RawHeader.Size, 0, 4);
 
       if (!HasV2Header)
-        return GetMpegAudioFrameHeader(s);
+        return GetMpegAudioFrameHeader(s, false);
 
       HasExtendedHeader = Utils.IsFlagSet(Id3v2RawHeader.Flags, V2ExtendedHeaderFlag);
       HasFooter = Utils.IsFlagSet(Id3v2RawHeader.Flags, V2FooterPresentFlag);
@@ -354,6 +354,7 @@ namespace ID3
     private bool GetFrames(FileStream s)
     {
       bool result = true;
+      bool frameReadException = false;
       int currentLength = 0;
       long startingStreamPosition = s.Position;
 
@@ -373,22 +374,22 @@ namespace ID3
           break;
         }
 
-        catch (Exception ex)
+        catch (Exception)
         {
-          result = false;
-          Log.Error("ID3.GetFrames caused an exception: {0}", ex.Message);
+          Log.Warn("File contains invalid ID3 Tags. Please use a Tag Editor to correct the tags.: {0}", s.Name);
+          frameReadException = true;
+          break;
         }
 
       }
 
-      if (result)
-        result = GetMpegAudioFrameHeader(s);
+      result = GetMpegAudioFrameHeader(s, frameReadException);
 
       s.Position = startingStreamPosition + ID3v2TagSize;
       return result;
     }
 
-    private bool GetMpegAudioFrameHeader(FileStream s)
+    private bool GetMpegAudioFrameHeader(FileStream s, bool frameReadException)
     {
       bool result = true;
       int id3TagLength = HasV1Header ? 128 : 0;
@@ -420,7 +421,9 @@ namespace ID3
         // L: Original                  0000 0000 0000 0000 0000 0000 0000 0100
         // M: Emphasis                  0000 0000 0000 0000 0000 0000 0000 0011
 
-        s.Seek(id3v2TagLength, SeekOrigin.Begin);
+        // When we got a framereadexception, we had an invalid id3v2 length and need to search from the beginning of the file
+        if (!frameReadException)
+          s.Seek(id3v2TagLength, SeekOrigin.Begin);
 
         bool doAccurateDurationCalc = false;
 
@@ -433,6 +436,9 @@ namespace ID3
           if (IsValidHeader(mpegAudioFrameVal, mpegAudioFrameHeader))
           {
             foundValidHeader = true;
+            // if we had a framereadexception the Audio data length needs to be recalculated
+            if (frameReadException)
+              _AudioDataLen = (int)s.Length - (int)s.Position;
             break;
           }
 
@@ -504,7 +510,10 @@ namespace ID3
         // If no Xing header was found look for a Fraunhofer "VBRI" header
         if (!foundXingHeader)
         {
-          s.Seek(id3v2TagLength, SeekOrigin.Begin);
+          if (frameReadException)
+            s.Position = 0;
+          else
+            s.Seek(id3v2TagLength, SeekOrigin.Begin);
           foundFraunhoferHeader = ReadFraunhoferHeader(s);
         }
       }
