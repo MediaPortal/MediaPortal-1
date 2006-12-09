@@ -128,7 +128,7 @@ namespace MediaPortal.TV.Recording
       get
       {
         TimeSpan ts = DateTime.Now - _scheduleTimer;
-        if (ts.TotalSeconds < 60) return false;
+        if (ts.TotalSeconds < 30) return false;
         return true;
       }
     }
@@ -148,7 +148,7 @@ namespace MediaPortal.TV.Recording
       }//if (_recordingsListChanged)
 
       //for each tv channel
-      int card;
+      int cardNo;
       for (int i = 0; i < _tvChannelsList.Count; ++i)
       {
         TVChannel chan = _tvChannelsList[i];
@@ -174,20 +174,17 @@ namespace MediaPortal.TV.Recording
           if (rec.RecType == TVRecording.RecordingType.EveryTimeOnEveryChannel || chan.Name == rec.Channel)
           {
             //Are we already recording this recording?
-            if (!handler.IsRecordingSchedule(rec, out card))
+            if (!handler.IsRecordingSchedule(rec, out cardNo))
             {
-              //no, then check if its time to record it
-              int paddingFront = rec.PreRecord;
-              int paddingEnd = rec.PostRecord;
-
+              // no, then check if its time to record it
               // check which program is current running on this channel
-              TVProgram prog = chan.GetProgramAt(dtCurrentTime.AddMinutes(1 + paddingFront));
+              TVProgram prog = chan.GetProgramAt(dtCurrentTime.AddMinutes(1 + rec.PreRecord));
 
               // if the recording should record the tv program
-              if (rec.IsRecordingProgramAtTime(dtCurrentTime, prog, paddingFront, paddingEnd))
+              if (rec.IsRecordingProgramAtTime(dtCurrentTime, prog, rec.PreRecord, rec.PostRecord))
               {
                 // yes, then record it
-                if (Record(handler,dtCurrentTime, rec, prog, paddingFront, paddingEnd))
+                if (Record(handler, dtCurrentTime, rec, prog, rec.PreRecord, rec.PostRecord))
                 {
                   break;
                 }
@@ -200,10 +197,10 @@ namespace MediaPortal.TV.Recording
                 {
                   //no, then check if a notification needs to be send
                   DateTime dtTime = DateTime.Now.AddMinutes(PrePostRecord.Instance.PreRecordingWarningTime);
-                  TVProgram prog2Min = chan.GetProgramAt(dtTime.AddMinutes(1 + paddingFront));
+                  TVProgram prog2Min = chan.GetProgramAt(dtTime.AddMinutes(1 + rec.PreRecord));
 
                   // if the recording should record the tv program
-                  if (rec.IsRecordingProgramAtTime(dtTime, prog2Min, paddingFront, paddingEnd))
+                  if (rec.IsRecordingProgramAtTime(dtTime, prog2Min, rec.PreRecord, rec.PostRecord))
                   {
                     //then send the announcement that we are about to record this recording in 2 minutes from now
                     Log.WriteFile(LogType.Recorder, "Recorder: Send announcement for recording:{0}", rec.ToString());
@@ -215,7 +212,13 @@ namespace MediaPortal.TV.Recording
                   }
                 }
               }
-            }//if (!IsRecordingSchedule(rec, out card)) 
+            }
+            else //if (!IsRecordingSchedule(rec, out card)) 
+            {
+              // This is the only thing that can change for a ongoing recording
+              TVCaptureDevice card = handler.TVCards[cardNo];
+              card.PostRecord = rec.PostRecord;
+            }
           }//if (rec.RecType==TVRecording.RecordingType.EveryTimeOnEveryChannel || chan.Name==rec.Channel)
         } //for (int j=0; j < _recordingsList.Count;++j)
       }//for (int i=0; i < _tvChannelsList.Count;++i)
@@ -231,17 +234,14 @@ namespace MediaPortal.TV.Recording
         //if recording has been recorded already, then skip it
         if (rec.IsDone()) continue;
 
-        int paddingFront = rec.PreRecord;
-        int paddingEnd = rec.PostRecord;
-
         // 1st check if the recording itself should b recorded
-        if (rec.IsRecordingProgramAtTime(DateTime.Now, null, paddingFront, paddingEnd))
+        if (rec.IsRecordingProgramAtTime(DateTime.Now, null, rec.PreRecord, rec.PostRecord))
         {
           //yes, time to record it. Are we already recording it?
-          if (!handler.IsRecordingSchedule(rec, out card))
+          if (!handler.IsRecordingSchedule(rec, out cardNo))
           {
             // no, then start recording it now
-            if (Record(handler, dtCurrentTime, rec, null, paddingFront, paddingEnd))
+            if (Record(handler, dtCurrentTime, rec, null, rec.PreRecord, rec.PostRecord))
             {
               // recording it
             }
@@ -258,7 +258,7 @@ namespace MediaPortal.TV.Recording
             //no, is the recording going to start within 2 mins?
             DateTime dtTime = DateTime.Now.AddMinutes(PrePostRecord.Instance.PreRecordingWarningTime);
             // if the recording should record the tv program
-            if (rec.IsRecordingProgramAtTime(dtTime, null, paddingFront, paddingEnd))
+            if (rec.IsRecordingProgramAtTime(dtTime, null, rec.PreRecord, rec.PostRecord))
             {
               //yes, then send the announcement
               rec.IsAnnouncementSend = true;
