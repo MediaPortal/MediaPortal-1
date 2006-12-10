@@ -131,7 +131,7 @@ namespace MediaPortal.Utils.Web
         return string.Empty;
       }
 
-      string found = string.Empty;
+      string found = null;
       if (result.Success)
       {
         found = sectionSource.Substring(result.Index, result.Length);

@@ -195,7 +195,10 @@ namespace MediaPortal.Utils.Time
       {
         try
         {
-          _hour = int.Parse(strTime.Substring(0, sepPos));
+          int start = sepPos - 2;
+          if (start < 0)
+            start = 0;
+          _hour = int.Parse(strTime.Substring(start, sepPos-start));
           _minute = int.Parse(strTime.Substring(sepPos + 1, 2));
         }
         catch (Exception)

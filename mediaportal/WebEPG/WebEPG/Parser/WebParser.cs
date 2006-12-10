@@ -119,7 +119,8 @@ namespace MediaPortal.WebEPG.Parser
         {
           WebSearchData search = _template.searchList[i];
           string result = _listingParser.SearchRegex(index, search.Match, search.Remove);
-          searchData.SetElement(search.Field, result);
+          if (result != null)
+            searchData.SetElement(search.Field, result);
         }
       }
 

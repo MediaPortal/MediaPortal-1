@@ -37,6 +37,10 @@ namespace MediaPortal.Tests.WebEPG.Parser
       Assert.IsTrue(testData.EndTime.Hour == 0);        // is enough
       Assert.IsTrue(testData.EndTime.Minute == 30);     // as it exactly behaves as StartTime do
 
+      testData.SetElement("#END", "(02:30)");            
+      Assert.IsTrue(testData.EndTime.Hour == 2);       
+      Assert.IsTrue(testData.EndTime.Minute == 30);     
+
       testData.SetElement("#START", "10h30");
       Assert.IsTrue(testData.StartTime.Hour == 10);
       Assert.IsTrue(testData.StartTime.Minute == 30);
