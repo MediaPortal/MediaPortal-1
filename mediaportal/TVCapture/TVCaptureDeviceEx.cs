@@ -458,13 +458,9 @@ namespace MediaPortal.TV.Recording
     /// 
     public bool IsRecordingAt(int minutes)
     {
-      DateTime time= DateTime.Now;
       if(_currentTvRecording == null) 
         return false;
-
-      time.AddMinutes(minutes);
-
-      if (_currentTvRecording.IsRecordingAtTime(time, _currentTvProgramRecording, _preRecordInterval, _postRecordInterval))
+      if (_currentTvRecording.IsRecordingAtTime(DateTime.Now.AddMinutes(minutes), _currentTvProgramRecording, _preRecordInterval, _postRecordInterval))
         return true;
       return false;
     }
