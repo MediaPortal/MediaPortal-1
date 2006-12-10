@@ -48,25 +48,25 @@
       <Template name="default">
         <SectionTemplate tags="TP">
           <TemplateText>
-&lt;tr&gt;
-&lt;td&gt;
-&lt;p&gt;&lt;#START&gt;&lt;/p&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;p&gt;&lt;#TITLE&gt;&lt;/p&gt;
-&lt;/td&gt;
-    </TemplateText>
+            &lt;tr&gt;
+            &lt;td&gt;
+            &lt;p&gt;&lt;#START&gt;&lt;/p&gt;
+            &lt;/td&gt;
+            &lt;td&gt;
+            &lt;p&gt;&lt;#TITLE&gt;&lt;/p&gt;
+            &lt;/td&gt;
+          </TemplateText>
         </SectionTemplate>
       </Template>
       <Template name="Details">
-        <SectionTemplate tags="TP">
+        <SectionTemplate tags="TPS">
           <TemplateText>
-	&lt;TR&gt;
-        &lt;TD&gt;
-        &lt;P&gt;&lt;#DESCRIPTION&gt;&lt;/P&gt;
-        &lt;P&gt;&lt;/P&gt;
-        &lt;/TD&gt; 
-   </TemplateText>
+            &lt;tr&gt;
+            &lt;td&gt;
+            &lt;z(&gt;&lt;p&gt;&lt;#DESCRIPTION&gt;&lt;/p&gt;&lt;/z)?&gt;
+            &lt;p&gt;&lt;strong&gt;&lt;/strong&gt;&lt;#GENRE&gt;&lt;/p&gt;
+            &lt;/td&gt;
+          </TemplateText>
         </SectionTemplate>
       </Template>
       <Sublinks>
