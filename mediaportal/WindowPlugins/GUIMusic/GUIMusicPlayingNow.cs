@@ -34,14 +34,15 @@ using System.Timers;
 using System.Windows.Forms;
 using System.Drawing;
 
+using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+using MediaPortal.GUI.View;
+//using MediaPortal.Database;
+using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
-using MediaPortal.Music.Database;
 using MediaPortal.TagReader;
-using MediaPortal.Dialogs;
-using MediaPortal.GUI.View;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Music
 {
@@ -51,7 +52,7 @@ namespace MediaPortal.GUI.Music
     {
       unknown = 0,
       existent = 1,
-      known =2,
+      known = 2,
       famous = 3,
     }
 
@@ -97,7 +98,8 @@ namespace MediaPortal.GUI.Music
 
     public enum TrackProgressType
     {
-      Elapsed, CountDown
+      Elapsed,
+      CountDown
     }
 
     #region Properties
@@ -109,27 +111,27 @@ namespace MediaPortal.GUI.Music
 
     #endregion
 
-    [SkinControlAttribute((int)ControlIDs.LBL_CAPTION)]              protected GUILabelControl LblCaption = null;
-    [SkinControlAttribute((int)ControlIDs.IMG_COVERART)]             protected GUIImage ImgCoverArt = null;
-    [SkinControlAttribute((int)ControlIDs.PROG_TRACK)]               protected GUIProgressControl ProgTrack = null;
-    [SkinControlAttribute((int)ControlIDs.IMG_TRACK_PROGRESS_BG)]    protected GUIImage ImgTrackProgressBkGrnd = null;
-    [SkinControlAttribute((int)ControlIDs.LBL_UP_NEXT)]              protected GUILabelControl LblUpNext = null;
-    [SkinControlAttribute((int)ControlIDs.LIST_TAG_INFO)]            protected GUIListControl facadeTagInfo = null;
-    [SkinControlAttribute((int)ControlIDs.LIST_ALBUM_INFO)]          protected GUIListControl facadeAlbumInfo = null;
-    [SkinControlAttribute((int)ControlIDs.BEST_ALBUM_TRACKS)]        protected GUIFadeLabel LblBestAlbumTracks = null;
-    [SkinControlAttribute((int)ControlIDs.BEST_TAG_TRACKS)]          protected GUIFadeLabel LblBestTagTracks = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOWN_TRACK1)]   protected GUIImageList ImgListUnknownTrack1 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOWN_TRACK2)]   protected GUIImageList ImgListUnknownTrack2 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOWN_TRACK3)]   protected GUIImageList ImgListUnknownTrack3 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_EXISTENT_TRACK1)]  protected GUIImageList ImgListExistingTrack1 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_EXISTENT_TRACK2)]  protected GUIImageList ImgListExistingTrack2 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_EXISTENT_TRACK3)]  protected GUIImageList ImgListExistingTrack3 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_KNOWN_TRACK1)]     protected GUIImageList ImgListKnownTrack1 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_KNOWN_TRACK2)]     protected GUIImageList ImgListKnownTrack2 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_KNOWN_TRACK3)]     protected GUIImageList ImgListKnownTrack3 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK1)]    protected GUIImageList ImgListFamousTrack1 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK2)]    protected GUIImageList ImgListFamousTrack2 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK3)]    protected GUIImageList ImgListFamousTrack3 = null;
+    [SkinControlAttribute((int)ControlIDs.LBL_CAPTION)]             protected GUILabelControl LblCaption = null;
+    [SkinControlAttribute((int)ControlIDs.IMG_COVERART)]            protected GUIImage ImgCoverArt = null;
+    [SkinControlAttribute((int)ControlIDs.PROG_TRACK)]              protected GUIProgressControl ProgTrack = null;
+    [SkinControlAttribute((int)ControlIDs.IMG_TRACK_PROGRESS_BG)]   protected GUIImage ImgTrackProgressBkGrnd = null;
+    [SkinControlAttribute((int)ControlIDs.LBL_UP_NEXT)]             protected GUILabelControl LblUpNext = null;
+    [SkinControlAttribute((int)ControlIDs.LIST_TAG_INFO)]           protected GUIListControl facadeTagInfo = null;
+    [SkinControlAttribute((int)ControlIDs.LIST_ALBUM_INFO)]         protected GUIListControl facadeAlbumInfo = null;
+    [SkinControlAttribute((int)ControlIDs.BEST_ALBUM_TRACKS)]       protected GUIFadeLabel LblBestAlbumTracks = null;
+    [SkinControlAttribute((int)ControlIDs.BEST_TAG_TRACKS)]         protected GUIFadeLabel LblBestTagTracks = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOWN_TRACK1)]  protected GUIImageList ImgListUnknownTrack1 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOWN_TRACK2)]  protected GUIImageList ImgListUnknownTrack2 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOWN_TRACK3)]  protected GUIImageList ImgListUnknownTrack3 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_EXISTENT_TRACK1)] protected GUIImageList ImgListExistingTrack1 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_EXISTENT_TRACK2)] protected GUIImageList ImgListExistingTrack2 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_EXISTENT_TRACK3)] protected GUIImageList ImgListExistingTrack3 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_KNOWN_TRACK1)]    protected GUIImageList ImgListKnownTrack1 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_KNOWN_TRACK2)]    protected GUIImageList ImgListKnownTrack2 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_KNOWN_TRACK3)]    protected GUIImageList ImgListKnownTrack3 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK1)]   protected GUIImageList ImgListFamousTrack1 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK2)]   protected GUIImageList ImgListFamousTrack2 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK3)]   protected GUIImageList ImgListFamousTrack3 = null;
 
     private const int DISPLAY_LISTITEM_COUNT = 3;
 
@@ -157,6 +159,7 @@ namespace MediaPortal.GUI.Music
     private bool _doTrackTagLookups = true;
     private bool _usingBassEngine = false;
     private bool _showVisualization = false;
+    private bool _enqueueDefault = true;
 
 
     public GUIMusicPlayingNow()
@@ -176,6 +179,7 @@ namespace MediaPortal.GUI.Music
         _doArtistLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true);
         _doAlbumLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtopalbums", true);
         _doTrackTagLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true);
+        _enqueueDefault = xmlreader.GetValueAsBool("musicmisc", "enqueuenext", true);
       }
 
       _usingBassEngine = BassMusicPlayer.IsDefaultMusicPlayer;
@@ -281,7 +285,7 @@ namespace MediaPortal.GUI.Music
     {
       if (ImagePathContainer.Count <= 0)
       {
-        AddImageToImagePathContainer(GUIGraphicsContext.Skin + @"\Media\missing_coverart.png");
+        AddImageToImagePathContainer(GUIGraphicsContext.Skin + @"\media\missing_coverart.png");
       }
 
       if (g_Player.Duration > 0 && ImagePathContainer.Count > 1)
@@ -433,7 +437,7 @@ namespace MediaPortal.GUI.Music
             }
           }
           if (queueItem != null && queueItem.MusicTag != null)
-            if (AddSongToPlaylist(ref queueItem, true))
+            if (AddSongToPlaylist(ref queueItem, _enqueueDefault))
               Log.Info("GUIMusicPlayingNow: Song inserted: {0} - {1}", listTag.Artist, listTag.Title);
         }
         else
@@ -527,7 +531,7 @@ namespace MediaPortal.GUI.Music
       {
         GUIGraphicsContext.VideoWindow = new Rectangle(ImgCoverArt.XPosition, ImgCoverArt.YPosition, ImgCoverArt.Width, ImgCoverArt.Height);
       }
-  
+
       if (g_Player.Playing)
       {
         g_Player_PlayBackStarted(g_Player.MediaType.Music, g_Player.CurrentFile);
@@ -584,6 +588,9 @@ namespace MediaPortal.GUI.Music
 
       dlg.AddLocalizedString(930);        //Add to favorites
 
+      if (CurrentTrackTag.Album != null)
+        dlg.AddLocalizedString(33041);
+
       //dlg.AddLocalizedString(928);        // Find Coverart
       //dlg.AddLocalizedString(4521);       // Show Album Info
 
@@ -637,7 +644,7 @@ namespace MediaPortal.GUI.Music
             if (_MusicWindow != null)
               _MusicWindow.ShowAlbumInfo(GetID, false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
           }
-            break;
+          break;
 
 
         case 4554:      // Lookup CD info
@@ -679,6 +686,39 @@ namespace MediaPortal.GUI.Music
                 return;
               currentSong.Favorite = true;
               dbs.SetFavorite(currentSong);
+            }
+            break;
+          }
+        case 33041: //Play this album
+          {
+            try
+            {
+              if (CurrentTrackTag != null)
+              {
+                MusicDatabase dbs = new MusicDatabase();
+                ArrayList albumSongs = new ArrayList();
+                String strAlbum = CurrentTrackTag.Album;
+                //DatabaseUtility.RemoveInvalidChars(ref strAlbum);
+                //bool songFound = dbs.GetSongsByArtist(CurrentTrackTag.Artist, ref albumSongs);
+                bool albumSongsFound = dbs.GetSongsByAlbum(strAlbum, ref albumSongs);
+
+                if (albumSongsFound)
+                {
+                  for (int i = albumSongs.Count - 1; i >= 0; i--)
+                  {
+                    Song song = (Song)albumSongs[i];
+                    if (song.Title != CurrentTrackTag.Title && song.Artist == CurrentTrackTag.Artist)
+                    {
+                      AddSongToPlaylist(ref song, _enqueueDefault);
+                    }
+                  }
+                  OnSongInserted();
+                }
+              }
+            }
+            catch (Exception ex)
+            {
+              Log.Error("GUIMusicPlayingNow: error while adding album tracks for {0} - {1}", CurrentTrackTag.Album, ex.Message);
             }
             break;
           }
@@ -1170,6 +1210,14 @@ namespace MediaPortal.GUI.Music
       }
     }
 
+    private void OnSongInserted()
+    {
+      _trackChanged = true;
+      NextTrackFileName = PlaylistPlayer.GetNext();
+      GetTrackTags();
+      UpdateTrackInfo();
+    }
+
     private bool AddSongToPlaylist(ref GUIListItem song, bool enqueueNext_)
     {
       PlayList playlist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
@@ -1199,10 +1247,7 @@ namespace MediaPortal.GUI.Music
       else
         PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
 
-      _trackChanged = true;
-      NextTrackFileName = PlaylistPlayer.GetNext();
-      GetTrackTags();
-      UpdateTrackInfo();
+      OnSongInserted();
       return true;
     }
 
@@ -1233,10 +1278,6 @@ namespace MediaPortal.GUI.Music
       else
         PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
 
-      _trackChanged = true;
-      NextTrackFileName = PlaylistPlayer.GetNext();
-      GetTrackTags();
-      UpdateTrackInfo();
       return true;
     }
 
@@ -1392,9 +1433,6 @@ namespace MediaPortal.GUI.Music
         GUIListItem item = null;
         facadeAlbumInfo.Clear();
         ToggleTopTrackRatings(false, PopularityRating.unknown);
-        //GUIPropertyManager.SetProperty("#Lastfm.Rating.AlbumTrack1", "0");
-        //GUIPropertyManager.SetProperty("#Lastfm.Rating.AlbumTrack2", "0");
-        //GUIPropertyManager.SetProperty("#Lastfm.Rating.AlbumTrack3", "0");
 
         if (AlbumTracks.Count > 0)
         {
@@ -1439,7 +1477,7 @@ namespace MediaPortal.GUI.Music
             string currentTrackRatingProperty = "#Lastfm.Rating.AlbumTrack" + Convert.ToString(i + 1);
             try
             {
-              GUIPropertyManager.SetProperty(currentTrackRatingProperty, Convert.ToString(AlbumTracks[i].Rating));              
+              GUIPropertyManager.SetProperty(currentTrackRatingProperty, Convert.ToString(AlbumTracks[i].Rating));
             }
             catch (Exception ex)
             {
@@ -1471,16 +1509,14 @@ namespace MediaPortal.GUI.Music
                   ToggleTopTrackRatings(true, PopularityRating.unknown);
           }
 
-          //if (CurrentThumbFileName == GUIGraphicsContext.Skin + @"\media\missing_coverart.png")
-          //{
           CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
           if (CurrentThumbFileName.Length > 0)
           {
             // let us test if there is a larger cover art image
             string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(CurrentThumbFileName);
-            if (System.IO.File.Exists(strLarge))            
+            if (System.IO.File.Exists(strLarge))
               CurrentThumbFileName = strLarge;
-            
+
             AddImageToImagePathContainer(CurrentThumbFileName);
           }
           if (LblBestAlbumTracks != null)

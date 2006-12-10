@@ -1545,13 +1545,7 @@ namespace MediaPortal.GUI.Music
         }
 
         j++;
-        // avoid too many re-tries on existing songs.
-        //if (_preferCountForTracks == 3)
-        //{
-        //  if (j > songList.Count - 1)
-        //    break;
-        //}
-        //else
+
         if (j > songList.Count * 5)
           break;
       }
@@ -1590,24 +1584,10 @@ namespace MediaPortal.GUI.Music
             }
           }
 
-          //MusicTag checkTag = (MusicTag)item.MusicTag;
-          //if (checkTag.Title.IndexOf("unknown") > 0 || checkTag.Title == String.Empty || checkTag.Title == ("unknown"))
-          //{
-          //  string tmpFilename = System.IO.Path.GetFileNameWithoutExtension(item.Path);
-          //  item.Label = tmpFilename;
-          //  checkTag.Title = String.Empty;
-          //  checkTag.Artist = tmpFilename;
-          //  item.MusicTag = checkTag;
-          //}
-
           for (int i = 0; i < facadeView.Count; ++i)
           {
             GUIListItem item = facadeView[i];
-            //if (item.AlbumInfoTag == null)
-            //{
-            //  AlbumInfo tmpInfo = new AlbumInfo();
-            //  // Fill it..
-            //}
+
             handler.SetLabel(item.AlbumInfoTag as Song, ref item);
           }
         }

@@ -78,12 +78,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.DSPTabPg.BackColor = System.Drawing.SystemColors.Control;
       this.DSPTabPg.Controls.Add(this.label11);
-      this.DSPTabPg.Controls.Add(this.label17);
-      this.DSPTabPg.Controls.Add(this.buttonSetGain);
-      this.DSPTabPg.Controls.Add(this.textBoxGainDBValue);
-      this.DSPTabPg.Controls.Add(this.label23);
-      this.DSPTabPg.Controls.Add(this.label14);
-      this.DSPTabPg.Controls.Add(this.trackBarGain);
       this.DSPTabPg.Controls.Add(this.groupBoxGain);
       this.DSPTabPg.Controls.Add(this.groupBoxCompressor);
       this.DSPTabPg.Location = new System.Drawing.Point(4, 22);
@@ -104,7 +98,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label17
       // 
-      this.label17.Location = new System.Drawing.Point(92, 80);
+      this.label17.Location = new System.Drawing.Point(54, 79);
       this.label17.Name = "label17";
       this.label17.Size = new System.Drawing.Size(38, 23);
       this.label17.TabIndex = 69;
@@ -113,7 +107,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonSetGain
       // 
-      this.buttonSetGain.Location = new System.Drawing.Point(100, 242);
+      this.buttonSetGain.Location = new System.Drawing.Point(57, 234);
       this.buttonSetGain.Name = "buttonSetGain";
       this.buttonSetGain.Size = new System.Drawing.Size(54, 23);
       this.buttonSetGain.TabIndex = 67;
@@ -124,7 +118,7 @@ namespace MediaPortal.Configuration.Sections
       // textBoxGainDBValue
       // 
       this.textBoxGainDBValue.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxGainDBValue.Location = new System.Drawing.Point(59, 244);
+      this.textBoxGainDBValue.Location = new System.Drawing.Point(11, 236);
       this.textBoxGainDBValue.Name = "textBoxGainDBValue";
       this.textBoxGainDBValue.Size = new System.Drawing.Size(40, 20);
       this.textBoxGainDBValue.TabIndex = 66;
@@ -133,7 +127,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label23
       // 
-      this.label23.Location = new System.Drawing.Point(101, 144);
+      this.label23.Location = new System.Drawing.Point(62, 139);
       this.label23.Name = "label23";
       this.label23.Size = new System.Drawing.Size(38, 23);
       this.label23.TabIndex = 70;
@@ -142,7 +136,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label14
       // 
-      this.label14.Location = new System.Drawing.Point(96, 205);
+      this.label14.Location = new System.Drawing.Point(54, 199);
       this.label14.Name = "label14";
       this.label14.Size = new System.Drawing.Size(38, 23);
       this.label14.TabIndex = 68;
@@ -152,7 +146,7 @@ namespace MediaPortal.Configuration.Sections
       // trackBarGain
       // 
       this.trackBarGain.LargeChange = 100;
-      this.trackBarGain.Location = new System.Drawing.Point(66, 84);
+      this.trackBarGain.Location = new System.Drawing.Point(11, 79);
       this.trackBarGain.Maximum = 16000;
       this.trackBarGain.Minimum = -16000;
       this.trackBarGain.Name = "trackBarGain";
@@ -166,7 +160,13 @@ namespace MediaPortal.Configuration.Sections
       // groupBoxGain
       // 
       this.groupBoxGain.Controls.Add(this.comboBoxDynamicAmplification);
+      this.groupBoxGain.Controls.Add(this.buttonSetGain);
+      this.groupBoxGain.Controls.Add(this.label17);
+      this.groupBoxGain.Controls.Add(this.textBoxGainDBValue);
       this.groupBoxGain.Controls.Add(this.checkBoxDAmp);
+      this.groupBoxGain.Controls.Add(this.label23);
+      this.groupBoxGain.Controls.Add(this.trackBarGain);
+      this.groupBoxGain.Controls.Add(this.label14);
       this.groupBoxGain.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxGain.Location = new System.Drawing.Point(44, 6);
       this.groupBoxGain.Name = "groupBoxGain";
@@ -184,16 +184,16 @@ namespace MediaPortal.Configuration.Sections
             "Soft",
             "Medium",
             "Hard"});
-      this.comboBoxDynamicAmplification.Location = new System.Drawing.Point(7, 39);
+      this.comboBoxDynamicAmplification.Location = new System.Drawing.Point(11, 46);
       this.comboBoxDynamicAmplification.Name = "comboBoxDynamicAmplification";
-      this.comboBoxDynamicAmplification.Size = new System.Drawing.Size(121, 21);
+      this.comboBoxDynamicAmplification.Size = new System.Drawing.Size(127, 21);
       this.comboBoxDynamicAmplification.TabIndex = 72;
       // 
       // checkBoxDAmp
       // 
       this.checkBoxDAmp.AutoSize = true;
       this.checkBoxDAmp.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxDAmp.Location = new System.Drawing.Point(7, 18);
+      this.checkBoxDAmp.Location = new System.Drawing.Point(11, 23);
       this.checkBoxDAmp.Name = "checkBoxDAmp";
       this.checkBoxDAmp.Size = new System.Drawing.Size(127, 17);
       this.checkBoxDAmp.TabIndex = 72;
@@ -227,7 +227,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelCompThreshold
       // 
-      this.labelCompThreshold.Location = new System.Drawing.Point(12, 53);
+      this.labelCompThreshold.Location = new System.Drawing.Point(12, 46);
       this.labelCompThreshold.Name = "labelCompThreshold";
       this.labelCompThreshold.Size = new System.Drawing.Size(110, 23);
       this.labelCompThreshold.TabIndex = 75;
@@ -247,7 +247,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.checkBoxCompressor.AutoSize = true;
       this.checkBoxCompressor.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxCompressor.Location = new System.Drawing.Point(15, 14);
+      this.checkBoxCompressor.Location = new System.Drawing.Point(15, 23);
       this.checkBoxCompressor.Name = "checkBoxCompressor";
       this.checkBoxCompressor.Size = new System.Drawing.Size(79, 17);
       this.checkBoxCompressor.TabIndex = 72;
@@ -304,7 +304,7 @@ namespace MediaPortal.Configuration.Sections
       // label5
       // 
       this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(251, 281);
+      this.label5.Location = new System.Drawing.Point(249, 277);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(176, 13);
       this.label5.TabIndex = 20;
@@ -430,7 +430,7 @@ namespace MediaPortal.Configuration.Sections
       // label7
       // 
       this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(248, 277);
+      this.label7.Location = new System.Drawing.Point(249, 277);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(203, 13);
       this.label7.TabIndex = 29;
@@ -456,7 +456,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonWARemove
       // 
-      this.buttonWARemove.Location = new System.Drawing.Point(218, 169);
+      this.buttonWARemove.Location = new System.Drawing.Point(218, 178);
       this.buttonWARemove.Name = "buttonWARemove";
       this.buttonWARemove.Size = new System.Drawing.Size(28, 23);
       this.buttonWARemove.TabIndex = 26;
@@ -466,7 +466,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonWAAdd
       // 
-      this.buttonWAAdd.Location = new System.Drawing.Point(218, 118);
+      this.buttonWAAdd.Location = new System.Drawing.Point(218, 127);
       this.buttonWAAdd.Name = "buttonWAAdd";
       this.buttonWAAdd.Size = new System.Drawing.Size(28, 23);
       this.buttonWAAdd.TabIndex = 25;
@@ -524,7 +524,7 @@ namespace MediaPortal.Configuration.Sections
       // label6
       // 
       this.label6.AutoSize = true;
-      this.label6.Location = new System.Drawing.Point(15, 19);
+      this.label6.Location = new System.Drawing.Point(12, 20);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(55, 13);
       this.label6.TabIndex = 19;
@@ -592,7 +592,6 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(472, 400);
       this.Load += new System.EventHandler(this.MusicDSP_Load);
       this.DSPTabPg.ResumeLayout(false);
-      this.DSPTabPg.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.trackBarGain)).EndInit();
       this.groupBoxGain.ResumeLayout(false);
       this.groupBoxGain.PerformLayout();
