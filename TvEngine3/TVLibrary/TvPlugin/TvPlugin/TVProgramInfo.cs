@@ -393,6 +393,10 @@ namespace TvPlugin
           Update();
         }
       }
+      else
+      {
+        OnRecordProgram(episode);
+      }
     }
 
     void OnRecordProgram(Program program)
