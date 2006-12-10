@@ -27,14 +27,17 @@
       <Template name="default">
         <SectionTemplate tags="TI">
           <TemplateText>
-&lt;table&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;img&gt;&lt;/td&gt;
-&lt;td&gt;&lt;#START&gt; &lt;#TITLE&gt;&lt;/td&gt;
-&lt;/tr&gt;&lt;/table&gt;
-    </TemplateText>
+            &lt;table&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;img&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;#START&gt; &lt;#TITLE&gt;&lt;/td&gt;
+            &lt;/tr&gt;&lt;/table&gt;
+          </TemplateText>
         </SectionTemplate>
       </Template>
+      <Searches>
+        <Search match="\([0-9]{1,3}\)" field="#EPISODE" remove="true" />
+      </Searches>
     </Html>
   </Listing>
 </Grabber>
