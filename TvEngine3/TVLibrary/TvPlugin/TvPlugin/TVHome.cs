@@ -67,6 +67,7 @@ namespace TvPlugin
     static TVUtil _util;
     static VirtualCard _card = null;
     DateTime _updateTimer = DateTime.Now;
+    static DateTime _updateProgressTimer = DateTime.MinValue;
     bool _autoTurnOnTv = false;
     bool _settingsLoaded = false;
     DateTime _dtlastTime = DateTime.Now;
@@ -973,6 +974,11 @@ namespace TvPlugin
     /// </summary>
     static public void UpdateProgressPercentageBar()
     {
+      
+      TimeSpan ts = DateTime.Now-_updateProgressTimer;
+      if (ts.TotalMilliseconds<1000) return;
+      _updateProgressTimer=DateTime.MinValue;
+
       if (Navigator.Channel == null) return;
       try
       {
@@ -1033,7 +1039,7 @@ namespace TvPlugin
           GUIPropertyManager.SetProperty("#TV.Record.percent3", "0");
           return;
         }
-        TimeSpan ts = prog.EndTime - prog.StartTime;
+        ts = prog.EndTime - prog.StartTime;
         if (ts.TotalSeconds <= 0)
         {
           GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");

@@ -1409,7 +1409,31 @@ namespace TvPlugin
       dlg.AddLocalizedString(945); // Letterbox
       dlg.AddLocalizedString(946); // Pan and scan
       dlg.AddLocalizedString(947); // Zoom
-
+      dlg.AddLocalizedString(1190); //14:9
+      switch (GUIGraphicsContext.ARType)
+      {
+        case Geometry.Type.Stretch:
+          dlg.SelectedLabel = 0;
+          break;
+        case Geometry.Type.Normal:
+          dlg.SelectedLabel = 1;
+          break;
+        case Geometry.Type.Original:
+          dlg.SelectedLabel = 2;
+          break;
+        case Geometry.Type.LetterBox43:
+          dlg.SelectedLabel = 3;
+          break;
+        case Geometry.Type.PanScan43:
+          dlg.SelectedLabel = 4;
+          break;
+        case Geometry.Type.Zoom:
+          dlg.SelectedLabel = 5;
+          break;
+        case Geometry.Type.Zoom14to9:
+          dlg.SelectedLabel = 6;
+          break;
+      }
       _isDialogVisible = true;
 
       dlg.DoModal(GetID);
@@ -1508,6 +1532,7 @@ namespace TvPlugin
 
     public override void Process()
     {
+      TVHome.UpdateProgressPercentageBar();
       CheckTimeOuts();
       if (ScreenStateChanged())
       {
