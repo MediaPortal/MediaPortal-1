@@ -119,6 +119,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// Logical channel number
     /// </summary>
     public int LCN;
+    
 
     /// <summary>
     /// Initializes a new instance of the <see cref="T:ChannelInfo"/> class.
@@ -432,15 +433,8 @@ namespace TvLibrary.Implementations.DVB.Structures
                     //Log.Write("dvbsections: indicator {1} {0} found",(indicator==0x02?"for video":"for audio"),indicator);
                     break;
                   case 0x09:
-                    //Log.Log.Write("  descriptor2:{0:X} len:{1:X} {2:X} {3:X}",
-                    //    indicator,data.Length, buf[pointer], buf[pointer + 1]);
-                    
                     pmtEs.Descriptors.Add(data);
                     pmtEs.ElementaryStreamInfoLength+= data.Length;
-                    //caData.Add(data);
-                    //string tmpString = DVB_CADescriptor(data);
-                    //if (pidText.IndexOf(tmpString, 0) == -1)
-                    //  pidText += tmpString + ";";
                     break;
                   case 0x0A:
                     pmt.language = DVB_GetMPEGISO639Lang(data);

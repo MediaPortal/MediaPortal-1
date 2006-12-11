@@ -55,7 +55,40 @@ namespace TvLibrary.Implementations.DVB.Structures
       Descriptors = new List<byte[]>();
       CaPmtEsList = new List<CaPmtEs>();
     }
+    /// <summary>
+    /// Gets the CA system id.
+    /// </summary>
+    /// <param name="index">The index.</param>
+    /// <returns></returns>
+    public int GetCASystemId(int index)
+    {
+      if (Descriptors == null) return -1;
+      if (index >=Descriptors.Count ) return -1;
+      byte[] descriptor = Descriptors[index];
+      int systemId = (descriptor[2] << 8) + descriptor[3];
+      return systemId;
+    }
 
+    /// <summary>
+    /// Gets the CA pid.
+    /// </summary>
+    /// <param name="index">The index.</param>
+    /// <returns></returns>
+    public int GetCAPid(int index)
+    {
+      if (Descriptors == null) return -1;
+      if (index >= Descriptors.Count) return -1;
+      byte[] descriptor = Descriptors[index];
+      int caPid = ((descriptor[4] & 0x1f) << 8) + descriptor[5];
+      return caPid;
+    }
+
+
+    /// <summary>
+    /// Cas the PMT struct.
+    /// </summary>
+    /// <param name="length">The length.</param>
+    /// <returns></returns>
     public byte[] CaPmtStruct(out int length)
     {
       byte[] data = new byte[1024];
@@ -99,6 +132,9 @@ namespace TvLibrary.Implementations.DVB.Structures
       length = offset;
       return data;
     }
+    /// <summary>
+    /// Dumps ca pmt to the log file.
+    /// </summary>
     public void Dump()
     {
       Log.Log.Write("Ca pmt:");
