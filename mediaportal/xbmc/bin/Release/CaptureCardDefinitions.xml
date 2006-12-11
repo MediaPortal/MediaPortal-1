@@ -17952,4 +17952,149 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Z-Cyber Genie Ultra 23881" capturename="Z-Cyber Genie Ultra 23881 Video" devid="ven_14f1&amp;dev_8800&amp;subsys_00000000&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="Z-Cyber Genie Ultra 23881 Tuner"    checkdevice="true"/>
+        <filter cat="tvaudio"     name="Z-Cyber Genie Ultra 23881 TvAudio"	checkdevice="true"/>
+        <filter cat="crossbar"    name="Z-Cyber Genie Ultra 23881 Crossbar"	checkdevice="true"/>
+        <filter cat="capture"     name="Z-Cyber Genie Ultra 23881 Video"    checkdevice="true"/>
+        <filter cat="audcapture"  name="%soundcard%"                        checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"					            checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"					            checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"						              checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"	  sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture" sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"	      sinkpin="0"/>
+        <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"	      sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Geniatech DVB-T TV Stick T328" capturename="Geniatech AVStream TS Capture" devid="vid_04b4&amp;pid_0680&amp;mi_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="USB2.0 IPBOX Geniatech (BDA)"     checkdevice="true"/>
+        <filter cat="capture"         name="Geniatech AVStream TS Capture"    checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hama USB 300 DVB-T Stick with infrared receiver" capturename="BDA Digital Capture" devid="vid_1584&amp;pid_6004&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="BDA Digital Tuner"                checkdevice="true"/>
+        <filter cat="capture"         name="BDA Digital Capture"              checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge WinTV PCI-FM with btwincap driver" capturename="Connexant’s BtPCI Capture" devid="ven_109e&amp;dev_036e&amp;subsys_13eb0070&amp;rev_11">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="Connexant’s BtPCI Tv Tuner" checkdevice="true"/>
+        <filter cat="tvaudio"		  name="Connexant’s BtPCI Tv Audio"	checkdevice="true"/>
+        <filter cat="crossbar"		name="Connexant’s BtPCI Crossbar"	checkdevice="true"/>
+        <filter cat="capture"		  name="Connexant’s BtPCI Capture"	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"						    checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"					    checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"					    checkdevice="false"/>
+        <filter cat="mux"			    name="%mpegmux%"						      checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Dvico FusionHDTV DVB-T Dual Digital 4 (Tuner 1)" capturename="Bluebird, WDM TsCapture1" devid="vid_0fe9&amp;pid_db78">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Bluebird, BDA Tuner1"             checkdevice="true"/>
+        <filter cat="capture"         name="Bluebird, WDM TsCapture1"         checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Dvico FusionHDTV DVB-T Dual Digital 4 (Tuner 2)" capturename="Bluebird, WDM TsCapture2" devid="vid_0fe9&amp;pid_db78">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Bluebird, BDA Tuner2"             checkdevice="true"/>
+        <filter cat="capture"         name="Bluebird, WDM TsCapture2"         checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="ASUS P5RD1-V TV Tuner" capturename="ASUS Silicon WDM Video Capture" devid="ven_1131&amp;dev_7133&amp;subsys_81701043&amp;rev_d0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="ASUS WDM TVTUNER"               checkdevice="true"/>
+        <filter cat="tvaudio"     name="Cap713x TV Audio"               checkdevice="true"/>
+        <filter cat="crossbar"    name="Cap713x CrossBar"               checkdevice="true"/>
+        <filter cat="capture"     name="ASUS Silicon WDM Video Capture" checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"                 checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"                 checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"                      checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"	  sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
+        <connection sourcefilter="crossbar"   sourcepin="1" sinkfilter="capture"	  sinkpin="1"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"	      sinkpin="0"/>
+        <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"	      sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
