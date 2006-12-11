@@ -119,7 +119,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// Logical channel number
     /// </summary>
     public int LCN;
-    
+
 
     /// <summary>
     /// Initializes a new instance of the <see cref="T:ChannelInfo"/> class.
@@ -344,7 +344,7 @@ namespace TvLibrary.Implementations.DVB.Structures
 
         if (pointer + x > buf.Length) break;
         System.Array.Copy(buf, pointer, data, 0, x);
-       
+
         if (indicator == 0x9) //MPEG CA Descriptor
         {
           //Log.Log.Write("  descriptor1:{0:X} len:{1} {2:X} {3:X}", indicator,data.Length,buf[pointer],buf[pointer+1]);
@@ -381,7 +381,7 @@ namespace TvLibrary.Implementations.DVB.Structures
         catch
         {
         }
-        
+
         switch (pmt.stream_type)
         {
           case 0x1b://H.264
@@ -434,7 +434,7 @@ namespace TvLibrary.Implementations.DVB.Structures
                     break;
                   case 0x09:
                     pmtEs.Descriptors.Add(data);
-                    pmtEs.ElementaryStreamInfoLength+= data.Length;
+                    pmtEs.ElementaryStreamInfoLength += data.Length;
                     break;
                   case 0x0A:
                     pmt.language = DVB_GetMPEGISO639Lang(data);
@@ -601,6 +601,31 @@ namespace TvLibrary.Implementations.DVB.Structures
       if (ISO_639_language_code.Length >= 3)
         return ISO_639_language_code.Substring(0, 3);
       return "";
+    }
+
+    /// <summary>
+    /// Decodes the conditional access table
+    /// </summary>
+    /// <param name="cat">The conditional access table.</param>
+    /// <param name="catLen">The length of the conditional access table.</param>
+    public void DecodeCat(byte[] cat, int catLen)
+    {
+      if (catLen < 7) return;
+      int pos = 8;
+      while (pos + 2 < catLen)
+      {
+        byte descriptorTag = cat[pos];
+        byte descriptorLen = cat[pos + 1];
+        if (descriptorTag == 0x9)
+        {
+          byte[] data = new byte[descriptorLen];
+          for (int i = 0; i < descriptorLen; ++i)
+            data[i] = cat[pos + i + 2];
+          caPMT.Descriptors.Add(data);
+          caPMT.ProgramInfoLength += data.Length;
+        }
+        pos += descriptorLen;
+      }
     }
 
   }

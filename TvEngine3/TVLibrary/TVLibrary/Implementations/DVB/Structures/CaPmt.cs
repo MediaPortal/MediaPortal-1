@@ -65,7 +65,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       if (Descriptors == null) return -1;
       if (index >=Descriptors.Count ) return -1;
       byte[] descriptor = Descriptors[index];
-      int systemId = (descriptor[2] << 8) + descriptor[3];
+      int systemId = (descriptor[0] << 8) + descriptor[1];
       return systemId;
     }
 
@@ -79,7 +79,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       if (Descriptors == null) return -1;
       if (index >= Descriptors.Count) return -1;
       byte[] descriptor = Descriptors[index];
-      int caPid = ((descriptor[4] & 0x1f) << 8) + descriptor[5];
+      int caPid = ((descriptor[2] & 0x1f) << 8) + descriptor[3];
       return caPid;
     }
 
