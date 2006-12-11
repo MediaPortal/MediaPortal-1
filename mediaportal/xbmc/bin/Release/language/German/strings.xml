@@ -5395,6 +5395,14 @@
         <value>Scrobble: Offline</value>
     </string>
     <string>
+        <id>33008</id>
+        <value>Es ist keine Wiedergabeliste aktiv, der</value>
+    </string>
+    <string>
+        <id>33009</id>
+        <value>dieser Titel hinzugefügt werden könnte!</value>
+    </string>
+    <string>
         <id>33010</id>
         <value>Füge automatisch zur Liste hinzu:</value>
     </string>

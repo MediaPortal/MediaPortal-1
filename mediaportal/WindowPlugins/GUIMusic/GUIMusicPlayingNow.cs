@@ -412,40 +412,58 @@ namespace MediaPortal.GUI.Music
     {
       try
       {
-        MusicDatabase mdb = new MusicDatabase();
-        MusicTag listTag = new MusicTag();
-        List<GUIListItem> guiListItemList = new List<GUIListItem>();
-        GUIListItem queueItem = new GUIListItem();
-
-        listTag = (MusicTag)chosenTrack_.MusicTag;
-        guiListItemList.Add(chosenTrack_);
-
-        if (mdb.GetSongs(2, listTag.Title, ref guiListItemList))
+        PlayList currentPlaylist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+        if (currentPlaylist.Count > 0)
         {
-          MusicTag tempTag = new MusicTag();
+          MusicDatabase mdb = new MusicDatabase();
+          MusicTag listTag = new MusicTag();
+          List<GUIListItem> guiListItemList = new List<GUIListItem>();
+          GUIListItem queueItem = new GUIListItem();
 
-          foreach (GUIListItem alternativeSong in guiListItemList)
+          listTag = (MusicTag)chosenTrack_.MusicTag;
+          guiListItemList.Add(chosenTrack_);
+
+          if (mdb.GetSongs(2, listTag.Title, ref guiListItemList))
           {
-            tempTag = GetTrackTag(mdb, alternativeSong.Path, false);
-            if (tempTag != null && tempTag.Artist != String.Empty)
+            MusicTag tempTag = new MusicTag();
+
+            foreach (GUIListItem alternativeSong in guiListItemList)
             {
-              if (tempTag.Artist.ToUpperInvariant() == listTag.Artist.ToUpperInvariant())
+              tempTag = GetTrackTag(mdb, alternativeSong.Path, false);
+              if (tempTag != null && tempTag.Artist != String.Empty)
               {
-                queueItem = alternativeSong;
-                queueItem.MusicTag = tempTag;
+                if (tempTag.Artist.ToUpperInvariant() == listTag.Artist.ToUpperInvariant())
+                {
+                  queueItem = alternativeSong;
+                  queueItem.MusicTag = tempTag;
+                }
               }
             }
+            if (queueItem != null && queueItem.MusicTag != null)
+              if (AddSongToPlaylist(ref queueItem, _enqueueDefault))
+                Log.Info("GUIMusicPlayingNow: Song inserted: {0} - {1}", listTag.Artist, listTag.Title);
           }
-          if (queueItem != null && queueItem.MusicTag != null)
-            if (AddSongToPlaylist(ref queueItem, _enqueueDefault))
-              Log.Info("GUIMusicPlayingNow: Song inserted: {0} - {1}", listTag.Artist, listTag.Title);
+          else
+            Log.Info("GUIMusicPlayingNow: DB lookup for Song {0} unsuccessful", listTag.Artist + " - " + listTag.Title);
         }
         else
-          Log.Debug("GUIMusicPlayingNow: DB lookup for Song {0} unsuccessful", listTag.Artist + " - " + listTag.Title);
+        // not using playlists here...
+        {
+          Log.Warn("GUIMusicPlayingNow: You have to use a playlist to add songs to it - Press PLAY on a song or folder!");
+          GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+          if (dlg == null)
+            return;
+          //dlg. Reset();
+          dlg.SetHeading(502);     // Unable to complete action
+          dlg.SetLine(2, 33008);   // There is no playlist active 
+          dlg.SetLine(3, 33009);   // to insert or add the track!
+
+          dlg.DoModal(GetID);
+        }
       }
       catch (Exception ex)
       {
-        Log.Debug("GUIMusicPlayingNow: DB lookup for Song failed - {0}", ex.Message);
+        Log.Error("GUIMusicPlayingNow: DB lookup for Song failed - {0}", ex.Message);
       }
     }
 

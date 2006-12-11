@@ -492,17 +492,12 @@ namespace MediaPortal.Playlists
     {
       switch (nPlayList)
       {
-        case PlayListType.PLAYLIST_MUSIC:
-          return _musicPlayList;
+        case PlayListType.PLAYLIST_MUSIC:          return _musicPlayList;
 
-        case PlayListType.PLAYLIST_MUSIC_TEMP:
-          return _tempMusicPlayList;
-        case PlayListType.PLAYLIST_VIDEO:
-          return _videoPlayList;
-        case PlayListType.PLAYLIST_VIDEO_TEMP:
-          return _tempVideoPlayList;
-          case PlayListType.PLAYLIST_MUSIC_VIDEO:
-              return _musicVideoPlayList;
+        case PlayListType.PLAYLIST_MUSIC_TEMP:     return _tempMusicPlayList;
+        case PlayListType.PLAYLIST_VIDEO:          return _videoPlayList;
+        case PlayListType.PLAYLIST_VIDEO_TEMP:     return _tempVideoPlayList;
+          case PlayListType.PLAYLIST_MUSIC_VIDEO:  return _musicVideoPlayList;
         default:
           _emptyPlayList.Clear();
           return _emptyPlayList;

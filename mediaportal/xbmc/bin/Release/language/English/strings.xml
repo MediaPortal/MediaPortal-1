@@ -5394,6 +5394,14 @@
         <value>Scrobble: Offline</value>
     </string>
     <string>
+        <id>33008</id>
+        <value>There is no playlist active</value>
+    </string>
+    <string>
+        <id>33009</id>
+        <value>to insert or add the track!</value>
+    </string>
+    <string>
         <id>33010</id>
         <value>Automatically fill playlist with</value>
     </string>
