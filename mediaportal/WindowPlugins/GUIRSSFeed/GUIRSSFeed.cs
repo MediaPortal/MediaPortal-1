@@ -88,7 +88,7 @@ namespace MediaPortal.GUI.RSS
     string m_strSiteIcon = DEFAULT_NEWS_ICON;
     string m_strSiteName = "";
     string m_strSiteURL = "";
-    string m_strSiteEncoding = "windows-1252";
+    string m_strSiteEncoding = "ISO-8859-1";
     string m_strDescription = "";
     DateTime m_lRefreshTime = DateTime.Now.AddHours(-1);		//for autorefresh
     feed_details[] m_feed_details = new feed_details[NUM_STORIES];

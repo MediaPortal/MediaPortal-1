@@ -25,12 +25,15 @@
 
 using System;
 using System.Windows.Forms;
+
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.RSS;
 using MediaPortal.Util;
 
 namespace GUIRSSFeed
 {
+  [PluginIcons("WindowPlugins.GUIRSSFeed.rssicon.png", "WindowPlugins.GUIRSSFeed.rssicon_disabled.png")]  
   /// <summary>
   /// A setup form for the My News Plugin
   /// </summary>
@@ -199,6 +202,19 @@ namespace GUIRSSFeed
         checkAutoRefresh.Checked = false;
         if (xmlreader.GetValueAsInt("rss", "bAutoRefresh", 0) != 0) checkAutoRefresh.Checked = true;
       }
+    }
+
+    private void button3_Click(object sender, System.EventArgs e)
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        xmlwriter.SetValue("rss", "iRefreshTime", textRefreshInterval.Text);
+
+        int iAutoRefresh = 0;
+        if (checkAutoRefresh.Checked) iAutoRefresh = 1;
+        xmlwriter.SetValue("rss", "bAutoRefresh", iAutoRefresh.ToString());
+      }
+      this.Close();
     }
 
 
@@ -410,19 +426,6 @@ namespace GUIRSSFeed
 
     }
     #endregion
-
-    private void button3_Click(object sender, System.EventArgs e)
-    {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        xmlwriter.SetValue("rss", "iRefreshTime", textRefreshInterval.Text);
-
-        int iAutoRefresh = 0;
-        if (checkAutoRefresh.Checked) iAutoRefresh = 1;
-        xmlwriter.SetValue("rss", "bAutoRefresh", iAutoRefresh.ToString());
-      }
-      this.Close();
-    }
 
   }
 }

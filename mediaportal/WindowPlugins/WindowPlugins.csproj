@@ -1152,6 +1152,12 @@
   <ItemGroup>
     <EmbeddedResource Include="GUIRadioLastFM\BallonRadioDisabled.gif" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIRSSFeed\rssicon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIRSSFeed\rssicon_disabled.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
