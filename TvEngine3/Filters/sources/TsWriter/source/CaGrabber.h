@@ -39,7 +39,8 @@ DECLARE_INTERFACE_(ICACallback, IUnknown)
 DECLARE_INTERFACE_(ICaGrabber, IUnknown)
 {
 	STDMETHOD(SetCallBack)(THIS_ ICACallback* callback)PURE;
-	STDMETHOD(GetCaData) (THIS_ BYTE *pmtData)PURE;
+	STDMETHOD(GetCaData) (THIS_ BYTE *caData)PURE;
+	STDMETHOD(Reset)()PURE;
 };
 
 class CCaGrabber: public CUnknown, public CSectionDecoder, public ICaGrabber
@@ -51,6 +52,7 @@ public:
   DECLARE_IUNKNOWN
 	STDMETHODIMP SetCallBack( ICACallback* callback);
 	STDMETHODIMP GetCaData(BYTE *caData);
+	STDMETHODIMP Reset();
 
 	void OnTsPacket(byte* tsPacket);
   virtual void OnNewSection(CSection& section);

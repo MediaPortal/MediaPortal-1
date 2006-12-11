@@ -31,35 +31,52 @@
 
 
 extern void LogDebug(const char *fmt, ...) ;
-
+#ifdef DUMP_TS_STREAM
+FILE* fDump;
+#endif
 
 CCaGrabber::CCaGrabber(LPUNKNOWN pUnk, HRESULT *phr) 
 :CUnknown( NAME ("MpTsCaGrabber"), pUnk)
 {
+#ifdef DUMP_TS_STREAM
+  ::DeleteFile("C:\\dump.ts");
+  fDump=fopen("c:\\dump.ts","wb+");
+#endif
 	m_pCallback=NULL;
-	m_iCaVersion=-1;
-	memset(m_caPrevData,0,sizeof(m_caPrevData));
-	CSectionDecoder::Reset();
-	CSectionDecoder::SetPid(1);
-	CSectionDecoder::SetTableId(1);
+	Reset();
 }
 CCaGrabber::~CCaGrabber(void)
 {
+#ifdef DUMP_TS_STREAM
+  fclose(fDump);
+#endif
 }
 
 
-
+STDMETHODIMP CCaGrabber::Reset()
+{
+	LogDebug("cagrabber: reset");
+	CSectionDecoder::Reset();
+	CSectionDecoder::SetPid(1);
+	CSectionDecoder::SetTableId(1);
+	memset(m_caPrevData,0,sizeof(m_caPrevData));
+	m_iCaVersion=-1;
+	return S_OK;
+}
 STDMETHODIMP CCaGrabber::SetCallBack( ICACallback* callback)
 {
 	CEnterCriticalSection enter(m_section);
 	LogDebug("cagrabber: set callback:%x", callback);
-	m_pCallback=callback;
+  m_pCallback=callback;
 	return S_OK;
 }
 
 void CCaGrabber::OnTsPacket(byte* tsPacket)
 {
 	if (m_pCallback==NULL) return;
+#ifdef DUMP_TS_STREAM
+  fwrite(tsPacket,1,188,fDump);
+#endif
   int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
   if (pid != 1) return;
 	CEnterCriticalSection enter(m_section);
