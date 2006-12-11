@@ -102,7 +102,7 @@ namespace MediaPortal.Configuration.Sections
       {
         xmlwriter.SetValue("thumbnails", "quality", trackBarQuality.Value);
         xmlwriter.SetValueAsBool("thumbnails", "musicfolderondemand", checkBoxFolderThumbOnDemand.Checked);
-        xmlwriter.SetValueAsBool("thumbnails", "picturelargethumbondemand", checkBoxPicThumbOnDemand.Checked);
+        xmlwriter.SetValueAsBool("thumbnails", "picturenolargethumbondemand", checkBoxPicThumbOnDemand.Checked);
       }
     }    
 

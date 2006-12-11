@@ -495,7 +495,7 @@ public class MediaPortalApp : D3DApp, IRender
       {
         m_strSkin = xmlreader.GetValueAsString("skin", "name", "BlueTwo");
         m_strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
-        _autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", false);
+        //_autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", false);
         GUIGraphicsContext.MouseSupport = xmlreader.GetValueAsBool("general", "mousesupport", true);
         GUIGraphicsContext.DBLClickAsRightClick =
             xmlreader.GetValueAsBool("general", "dblclickasrightclick", false);

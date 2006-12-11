@@ -65,7 +65,8 @@ namespace MediaPortal.GUI.Music
         _filename = Filename;
         work = new Work(new DoWorkHandler(this.PerformRequest));
         work.ThreadPriority = ThreadPriority.Lowest;
-        GlobalServiceProvider.Get<IThreadPool>().Add(work);
+        //GlobalServiceProvider.Get<IThreadPool>().Add(work);
+        GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
       }
 
       /// <summary>
