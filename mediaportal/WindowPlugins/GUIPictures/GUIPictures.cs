@@ -888,11 +888,11 @@ namespace MediaPortal.GUI.Pictures
         dbs.SetRotation(item.Path, rotate);
       }
       string thumbnailImage = GetThumbnail(item.Path);
-      Util.Picture.CreateThumbnail(item.Path, thumbnailImage, 128, 128, rotate);
+      Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, rotate);
 
       thumbnailImage = GetLargeThumbnail(item.Path);
-      Util.Picture.CreateThumbnail(item.Path, thumbnailImage, 512, 512, rotate);
-      System.Threading.Thread.Sleep(100);
+      Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, rotate);
+      System.Threading.Thread.Sleep(50);
       GUIControl.RefreshControl(GetID, facadeView.GetID);
     }
 

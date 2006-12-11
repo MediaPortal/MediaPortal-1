@@ -1263,10 +1263,10 @@ namespace MediaPortal.Util
       if (strURL.Length == 0) return;
       if (strFile == null) return;
       if (strFile.Length == 0) return;
-      string url = String.Format("cache{0}", EncryptLine(strURL));
+      string url = String.Format("mpcache-{0}", EncryptLine(strURL));
 
-      string file = GetCoverArt("thumbs", url);
-      if (file != String.Empty)
+      string file = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
+      if (file != String.Empty && System.IO.File.Exists(file))
       {
         try
         {
@@ -1282,7 +1282,7 @@ namespace MediaPortal.Util
       {
         try
         {
-          file = GetCoverArtName("thumbs", url);
+          file = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
           System.IO.File.Copy(strFile, file, true);
         }
         catch (Exception)

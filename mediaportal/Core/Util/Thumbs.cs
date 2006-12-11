@@ -75,6 +75,7 @@ namespace MediaPortal.Util
     static public readonly string Radio = Config.GetSubFolder(Config.Dir.Thumbs, @"Radio");
     static public readonly string Pictures = Config.GetSubFolder(Config.Dir.Thumbs, @"Pictures");
     static public readonly string Yac = Config.GetSubFolder(Config.Dir.Thumbs, @"yac");
+    static public readonly string News = Config.GetSubFolder(Config.Dir.Thumbs, @"News");
 
     static public ThumbQuality _currentThumbQuality = ThumbQuality.average;
     static public CompositingQuality _currentCompositingQuality = CompositingQuality.Default;
@@ -149,6 +150,7 @@ namespace MediaPortal.Util
         System.IO.Directory.CreateDirectory(MovieTitle);
         System.IO.Directory.CreateDirectory(MovieActors);
         System.IO.Directory.CreateDirectory(Yac);
+        System.IO.Directory.CreateDirectory(News);
       }
       catch (Exception) { }
     }

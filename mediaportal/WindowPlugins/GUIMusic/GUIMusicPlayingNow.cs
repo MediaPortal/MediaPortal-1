@@ -1251,6 +1251,12 @@ namespace MediaPortal.GUI.Music
       return true;
     }
 
+    /// <summary>
+    /// Add or enque a song to the current playlist - call OnSongInserted() after this!!!
+    /// </summary>
+    /// <param name="song">the song to add</param>
+    /// <param name="enqueueNext_">if true the songs is inserted after the current track, otherwise added to the end of the list</param>
+    /// <returns>if the action was successful</returns>
     private bool AddSongToPlaylist(ref Song song, bool enqueueNext_)
     {
       PlayList playlist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);

@@ -453,7 +453,8 @@ namespace MediaPortal.GUI.RSS
 
           if (strImage.Length > 0)
           {
-            m_strSiteIcon = MediaPortal.Util.Utils.GetThumb(m_strSiteURL);
+            //m_strSiteIcon = MediaPortal.Util.Utils.GetThumb(m_strSiteURL);
+            m_strSiteIcon = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.News, m_strSiteURL);
             if (!System.IO.File.Exists(m_strSiteIcon))
             {
               string strExtension;
@@ -462,22 +463,26 @@ namespace MediaPortal.GUI.RSS
               {
                 string strTemp = "temp";
                 strTemp += strExtension;
+                strTemp = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), strTemp);
+                
                 MediaPortal.Util.Utils.FileDelete(strTemp);
-
                 MediaPortal.Util.Utils.DownLoadImage(strImage, strTemp);
+                //MediaPortal.Util.Utils.DownLoadAndCacheImage(strImage, strTemp);
+
                 if (System.IO.File.Exists(strTemp))
                 {
-                  MediaPortal.Util.Picture.CreateThumbnail(strTemp, m_strSiteIcon, 128, 128, 0);
+                  MediaPortal.Util.Picture.CreateThumbnail(strTemp, m_strSiteIcon, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
                 }
 
-                MediaPortal.Util.Utils.FileDelete(strTemp);
+                MediaPortal.Util.Utils.FileDelete(strTemp);                
               }//if ( strExtension.Length>0)
               else
               {
                 Log.Info("image has no extension:{0}", strImage);
               }
+              m_strSiteIcon = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.News, m_strSiteURL);
             }
-            m_strSiteIcon = MediaPortal.Util.Utils.GetThumb(m_strSiteURL);
+            //m_strSiteIcon = MediaPortal.Util.Utils.GetThumb(m_strSiteURL);            
           }
         }
 
