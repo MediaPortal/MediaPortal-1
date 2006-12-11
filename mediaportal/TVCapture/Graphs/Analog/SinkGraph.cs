@@ -1508,7 +1508,7 @@ namespace MediaPortal.TV.Recording
         bool enabled = xmlreader.GetValueAsBool("quality", "enabled", false);
         if ( !enabled )
           return;
-
+        int AudioQuality = xmlreader.GetValueAsInt("quality", "audioquality", 192);
         int defaultQuality = xmlreader.GetValueAsInt("quality", "default", 2);
         if ( Quality == 4 )
         {
@@ -1546,23 +1546,28 @@ namespace MediaPortal.TV.Recording
             case 0://Portable
               Log.Info("SinkGraph:Set quality:portable");
               props.SetVideoBitRate(portableMinKbps, portableMaxKbps, portableVBR);
+              props.SetAudioBitRate(AudioQuality);
               break;
             case 1://low
               Log.Info("SinkGraph:Set quality:low");
               props.SetVideoBitRate(lowMinKbps, lowMaxKbps, lowVBR);
+              props.SetAudioBitRate(AudioQuality);
               break;
             case 2://medium
               Log.Info("SinkGraph:Set quality:medium");
               props.SetVideoBitRate(mediumMinKbps, mediumMaxKbps, mediumVBR);
+              props.SetAudioBitRate(AudioQuality);
               break;
             case 3://hi
               Log.Info("SinkGraph:Set quality:high");
               props.SetVideoBitRate(highMinKbps, highMaxKbps, highVBR);
+              props.SetAudioBitRate(AudioQuality);
               break;
 
             default://
               Log.Info("SinkGraph:Set quality to default (medium)");
               props.SetVideoBitRate(mediumMinKbps, mediumMaxKbps, mediumVBR);
+              props.SetAudioBitRate(AudioQuality);
               break;
           }
           int minKbps, maxKbps;

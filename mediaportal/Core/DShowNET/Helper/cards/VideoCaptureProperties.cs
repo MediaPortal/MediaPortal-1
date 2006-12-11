@@ -60,6 +60,22 @@ namespace DShowNET.Helper
             get { return _twinhan.IsTwinhan; }
         }
 
+        public void SetAudioBitRate(int Kbps)
+        {
+         
+          if (_hauppauge.IsHauppage)
+          {
+            _hauppauge.SetAudioBitRate(Kbps);
+            return;
+          }
+          if (_ivac.IsIVAC)
+          {
+            _ivac.SetAudioBitRate(Kbps);
+            return;
+
+          }
+
+        }
         public void SetVideoBitRate(int minKbps, int maxKbps, bool isVBR)
         {
 

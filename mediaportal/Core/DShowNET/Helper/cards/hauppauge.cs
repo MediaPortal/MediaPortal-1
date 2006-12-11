@@ -180,7 +180,44 @@ namespace DShowNET
 			GetVideoBitRate(out minKbps,out maxKbps,out isVBR);
 
 		}
-		
+
+    public bool GetAudioBitRate(out int Kbps)
+    {
+      AudioBitRate bitrate = new AudioBitRate();
+      bitrate.size = (uint)Marshal.SizeOf(bitrate);
+      
+      try
+      {
+        object obj = GetStructure(HauppaugeGuid, (uint)PropertyId.AudioBitRate, typeof(AudioBitRate));
+        bitrate = (AudioBitRate)obj;
+        Log.Info("SetBitRate");
+      }
+      catch (Exception ex)
+      {
+        Log.Info("Set audio bit rate failed");
+      }
+     
+      Kbps = (int)bitrate.bitrate;
+     
+      Log.Info("hauppauge: current audiobitrate: {0} ", Kbps);
+      return true;
+    }
+
+    public void SetAudioBitRate(int Kbps)
+    {
+      Log.Info("hauppauge: setaudiobitrate {0}", Kbps);
+      AudioBitRate bitrate = new AudioBitRate();
+
+      bitrate.size = (uint)Marshal.SizeOf(typeof(AudioBitRate));
+      //Allow explicit setting of this in the future
+      bitrate.bitrate = AudioBitRateEnum.Khz192;
+      
+      SetStructure(HauppaugeGuid, (uint)PropertyId.AudioBitRate, typeof(AudioBitRate), (object)bitrate);
+
+      GetAudioBitRate(out Kbps);
+
+    }
+
 		public string VersionInfo
 		{
 			get

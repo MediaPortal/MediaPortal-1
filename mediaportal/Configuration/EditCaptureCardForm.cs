@@ -139,6 +139,8 @@ namespace MediaPortal.Configuration
     private MediaPortal.UserInterface.Controls.MPLabel cropBottomLabel;
     private MediaPortal.UserInterface.Controls.MPLabel cropTopLabel;
     private MediaPortal.UserInterface.Controls.MPNumericUpDown mpNumericUpDownRight;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
+    private ComboBox comboBoxAudioQuality;
     TVCaptureDevice prevDevice = null;
 
 
@@ -539,6 +541,8 @@ namespace MediaPortal.Configuration
       this.label12 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabPageAutotune = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.tabPageAutotuneRadio = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.comboBoxAudioQuality = new System.Windows.Forms.ComboBox();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.cropGroupBox.SuspendLayout();
@@ -1028,6 +1032,8 @@ namespace MediaPortal.Configuration
       // 
       // tabPage5
       // 
+      this.tabPage5.Controls.Add(this.mpLabel2);
+      this.tabPage5.Controls.Add(this.comboBoxAudioQuality);
       this.tabPage5.Controls.Add(this.groupBox7);
       this.tabPage5.Controls.Add(this.label18);
       this.tabPage5.Controls.Add(this.label25);
@@ -1062,7 +1068,7 @@ namespace MediaPortal.Configuration
       this.groupBox7.Controls.Add(this.tbPortMin);
       this.groupBox7.Controls.Add(this.label19);
       this.groupBox7.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox7.Location = new System.Drawing.Point(24, 144);
+      this.groupBox7.Location = new System.Drawing.Point(24, 182);
       this.groupBox7.Name = "groupBox7";
       this.groupBox7.Size = new System.Drawing.Size(456, 224);
       this.groupBox7.TabIndex = 11;
@@ -1239,7 +1245,7 @@ namespace MediaPortal.Configuration
       // 
       // label18
       // 
-      this.label18.Location = new System.Drawing.Point(24, 80);
+      this.label18.Location = new System.Drawing.Point(21, 107);
       this.label18.Name = "label18";
       this.label18.Size = new System.Drawing.Size(408, 72);
       this.label18.TabIndex = 10;
@@ -1333,6 +1339,27 @@ namespace MediaPortal.Configuration
       this.tabPageAutotuneRadio.Text = "Autotune Radio";
       this.tabPageAutotuneRadio.UseVisualStyleBackColor = true;
       this.tabPageAutotuneRadio.Enter += new System.EventHandler(this.tabPageAutotuneRadio_Enter);
+      // 
+      // comboBoxAudioQuality
+      // 
+      this.comboBoxAudioQuality.FormattingEnabled = true;
+      this.comboBoxAudioQuality.Items.AddRange(new object[] {
+            "192 Kbps",
+            "224 Kbps",
+            "256 Kbps",
+            "384 Kbps"});
+      this.comboBoxAudioQuality.Location = new System.Drawing.Point(128, 83);
+      this.comboBoxAudioQuality.Name = "comboBoxAudioQuality";
+      this.comboBoxAudioQuality.Size = new System.Drawing.Size(128, 21);
+      this.comboBoxAudioQuality.TabIndex = 12;
+      // 
+      // mpLabel2
+      // 
+      this.mpLabel2.Location = new System.Drawing.Point(42, 83);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(80, 16);
+      this.mpLabel2.TabIndex = 13;
+      this.mpLabel2.Text = "Audio Quality:";
       // 
       // EditCaptureCardForm
       // 
@@ -1443,8 +1470,8 @@ namespace MediaPortal.Configuration
           xmlwriter.SetValue("mapping", "audio2", comboBox2Audio.SelectedIndex);
           xmlwriter.SetValue("mapping", "audio3", comboBox3Audio.SelectedIndex);
           xmlwriter.SetValue("mapping", "audio4", cbRgbAudio.SelectedIndex);
-
-
+          xmlwriter.SetValue("quality", "audiodefault", comboBoxAudioQuality.SelectedIndex);
+          xmlwriter.SetValue("quality", "audioquality", comboBoxAudioQuality.SelectedItem.ToString().Substring(0, 3));
           xmlwriter.SetValue("mapping", "video1", comboBox1Video.SelectedIndex);
           xmlwriter.SetValue("mapping", "video2", comboBox2Video.SelectedIndex);
           xmlwriter.SetValue("mapping", "video3", comboBox3Video.SelectedIndex);
@@ -1695,7 +1722,7 @@ namespace MediaPortal.Configuration
               comboBox2Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio2", 1);
               comboBox3Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio3", 0);
               cbRgbAudio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio4", 0);
-
+              comboBoxAudioQuality.SelectedIndex = xmlreader.GetValueAsInt("quality", "audiodefault", 0);
 
               comboBox1Video.SelectedIndex = xmlreader.GetValueAsInt("mapping", "video1", 0);
               comboBox2Video.SelectedIndex = xmlreader.GetValueAsInt("mapping", "video2", 1);

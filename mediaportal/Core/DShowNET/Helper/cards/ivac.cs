@@ -35,6 +35,7 @@ namespace DShowNET
 			IVAC_BITRATE				= 1,		// Get & Set
 			IVAC_VIDEO_RESOLUTION		= 3,		// Get & Set
 			IVAC_TV_ENCODE_FORMAT		= 4,		// Get & Set
+      IVAC_AUDIO_DATARATE = 5,		// Get & Set
 			IVAC_GOP_SIZE				= 6,		// Get & Set
 			IVAC_CLOSED_GOP				= 7,		// Get & Set
 			IVAC_VERSION_INFO			= 27,		// Get only
@@ -59,8 +60,18 @@ namespace DShowNET
 		{
 			string DriverVersion; //xx.yy.zzz
 			string FWVersion; //xx.yy.zzz
-		} 
+		}
 
+    public enum AUDIO_DATARATE_LAYER_II : int
+    {
+      DATARATE_LAYERII_64 = 0x04,
+      DATARATE_LAYERII_128 = 0x08,
+      DATARATE_LAYERII_160 = 0x09,
+      DATARATE_LAYERII_192 = 0x0A,
+      DATARATE_LAYERII_224 = 0x0B,
+      DATARATE_LAYERII_256 = 0x0C,
+      DATARATE_LAYERII_384 = 0x0E
+    };
 
 		public enum eStreamOutput:int
 		{
@@ -125,10 +136,11 @@ namespace DShowNET
 			{ 
 				bitrate = (videoBitRate)obj ;
 			}
-			catch (Exception){}
+      catch (Exception) { }
 			isVBR = (bitrate.bEncodingMode==eBitRateMode.Vbr);
-			minKbps=(int)((bitrate.wBitrate*400)/1000);
+			minKbps=(int)((bitrate.wBitrate*2500)/1000);
 			maxKbps=(int)((bitrate.dwPeak*400)/1000);
+      Log.Info("Setbitratedebug: {0},{1},{2}", minKbps, maxKbps, isVBR);
 		}
 		
 		public void SetVideoBitRate(int minKbps, int maxKbps,bool isVBR)
@@ -138,13 +150,38 @@ namespace DShowNET
 			if (isVBR) bitrate.bEncodingMode=eBitRateMode.Vbr;
 			else bitrate.bEncodingMode=eBitRateMode.Cbr;
 
-			bitrate.wBitrate=(ushort)((minKbps*1000)/400);
+			bitrate.wBitrate=(ushort)((minKbps*1000)/2500);
 			bitrate.dwPeak=(uint)((maxKbps*1000)/400);
 			SetStructure(IvacGuid,(uint)PropertyId.IVAC_BITRATE, typeof(videoBitRate), (object)bitrate) ;
 
 			GetVideoBitRate(out minKbps, out maxKbps, out isVBR);
 		}
 
+    public void SetAudioBitRate(int Kbps)
+    {
+      Log.Info("IVAC: setaudiobitrate min:{0}", (int)AudioFormat);
+      
+      if(Kbps == 192)AudioFormat = AUDIO_DATARATE_LAYER_II.DATARATE_LAYERII_192;
+      if(Kbps == 224)AudioFormat = AUDIO_DATARATE_LAYER_II.DATARATE_LAYERII_224;
+      if(Kbps == 256) AudioFormat = AUDIO_DATARATE_LAYER_II.DATARATE_LAYERII_256;
+      if(Kbps == 384) AudioFormat = AUDIO_DATARATE_LAYER_II.DATARATE_LAYERII_384;
+
+    }
+    
+
+    AUDIO_DATARATE_LAYER_II AudioFormat
+    {
+      get
+      {
+        return (AUDIO_DATARATE_LAYER_II)GetIntValue(IVac.IvacGuid, (uint)IVac.PropertyId.IVAC_AUDIO_DATARATE);
+      }
+      set
+      {
+        int byValue = (int)value;
+        SetIntValue(IVac.IvacGuid, (uint)IVac.PropertyId.IVAC_AUDIO_DATARATE, byValue);
+
+      }
+    }
 
 		eVideoFormat VideoFormat
 		{
