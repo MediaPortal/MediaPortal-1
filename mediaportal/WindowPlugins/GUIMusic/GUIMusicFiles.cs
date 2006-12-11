@@ -40,9 +40,9 @@ using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
-// using MediaPortal.Services;
+using MediaPortal.Services;
 using MediaPortal.TagReader;
-//using MediaPortal.Threading;
+using MediaPortal.Threading;
 using MediaPortal.Util;
 using MediaPortal.Music.Database;
 
@@ -54,6 +54,66 @@ namespace MediaPortal.GUI.Music
   /// </summary>
   public class GUIMusicFiles : GUIMusicBaseWindow, ISetupForm, IShowPlugin
   {
+    #region ThumbCacher
+    public class FolderThumbCacher : MediaPortal.Threading.Work
+    {
+      static string _filename = String.Empty;
+
+      public FolderThumbCacher(string Filename)
+        : base(new DoWorkHandler(PerformRequest))
+      {
+        _filename = Filename;
+        ThreadPriority = ThreadPriority.Lowest;
+        GlobalServiceProvider.Get<IThreadPool>().Add(this);
+      }
+
+      /// <summary>
+      /// searches for folder.jpg in the mp3 directory and creates cached thumbs in MP's thumbs\folder dir
+      /// </summary>
+      static void PerformRequest()
+      {
+        lock (_workerLock) // opening a folder with lots of .folder.jpg you'll notice folderitem.count x threads are all fetching the same cover :S
+        {
+          string filename = _filename;
+          string strFolderThumb = String.Empty;
+          strFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumbForDir(filename);
+
+          string strRemoteFolderThumb = String.Empty;
+          strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
+
+          if (System.IO.File.Exists(strRemoteFolderThumb))
+          {
+            // if there was no cached thumb although there was a folder.jpg then the user didn't scan his collection:
+            // -- punish him with slowness and create the thumbs for the next time...
+            try
+            {
+              Log.Info("GUIMusicFiles: On-Demand-Creating missing folder thumbs for {0}", strRemoteFolderThumb);
+              string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(strFolderThumb);
+
+              if (!System.IO.File.Exists(strFolderThumb))
+                MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+              if (!System.IO.File.Exists(localFolderLThumb))
+              {
+                // just copy the folder.jpg if it is reasonable in size - otherwise re-create it
+                System.IO.FileInfo fiRemoteFolderArt = new System.IO.FileInfo(strRemoteFolderThumb);
+                if (fiRemoteFolderArt.Length < 32000)
+                  System.IO.File.Copy(strRemoteFolderThumb, localFolderLThumb, true);
+                else
+                  MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+              }
+
+              return;
+            }
+            catch (Exception)
+            {
+              return;
+            }
+          }
+        }
+      }
+    }
+    #endregion
+
     #region comparer
     class TrackComparer : IComparer<GUIListItem>
     {
@@ -1297,41 +1357,41 @@ namespace MediaPortal.GUI.Music
     {
       lock (_workerLock)
       {
-        string filename = (string)filenameObject;
-        string strFolderThumb = String.Empty;
-        strFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumbForDir(filename);
+        //string filename = (string)filenameObject;
+        //string strFolderThumb = String.Empty;
+        //strFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumbForDir(filename);
 
-        string strRemoteFolderThumb = String.Empty;
-        strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
+        //string strRemoteFolderThumb = String.Empty;
+        //strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
 
-        if (System.IO.File.Exists(strRemoteFolderThumb))
-        {
-          // if there was no cached thumb although there was a folder.jpg then the user didn't scan his collection:
-          // -- punish him with slowness and create the thumbs for the next time...
-          try
-          {
-            Log.Info("GUIMusicFiles: On-Demand-Creating missing folder thumbs for {0}", strRemoteFolderThumb);
-            string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(strFolderThumb);
+        //if (System.IO.File.Exists(strRemoteFolderThumb))
+        //{
+        //  // if there was no cached thumb although there was a folder.jpg then the user didn't scan his collection:
+        //  // -- punish him with slowness and create the thumbs for the next time...
+        //  try
+        //  {
+        //    Log.Info("GUIMusicFiles: On-Demand-Creating missing folder thumbs for {0}", strRemoteFolderThumb);
+        //    string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(strFolderThumb);
 
-            if (!System.IO.File.Exists(strFolderThumb))
-              MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
-            if (!System.IO.File.Exists(localFolderLThumb))
-            {
-              // just copy the folder.jpg if it is reasonable in size - otherwise re-create it
-              System.IO.FileInfo fiRemoteFolderArt = new System.IO.FileInfo(strRemoteFolderThumb);
-              if (fiRemoteFolderArt.Length < 32000)
-                System.IO.File.Copy(strRemoteFolderThumb, localFolderLThumb, true);
-              else
-                MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
-            }
+        //    if (!System.IO.File.Exists(strFolderThumb))
+        //      MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+        //    if (!System.IO.File.Exists(localFolderLThumb))
+        //    {
+        //      // just copy the folder.jpg if it is reasonable in size - otherwise re-create it
+        //      System.IO.FileInfo fiRemoteFolderArt = new System.IO.FileInfo(strRemoteFolderThumb);
+        //      if (fiRemoteFolderArt.Length < 32000)
+        //        System.IO.File.Copy(strRemoteFolderThumb, localFolderLThumb, true);
+        //      else
+        //        MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+        //    }
 
-            return;
-          }
-          catch (Exception)
-          {
-            return;
-          }
-        }
+        //    return;
+        //  }
+        //  catch (Exception)
+        //  {
+        //    return;
+        //  }
+        //}
       }
     }
 
@@ -1351,7 +1411,8 @@ namespace MediaPortal.GUI.Music
         {
           if (_createMissingFolderThumbs)
           { 
-            StartMissingThumbCreation(filename);
+            //StartMissingThumbCreation(filename);
+            FolderThumbCacher thumbworker = new FolderThumbCacher(filename);
           }
         }
         return string.Empty;
