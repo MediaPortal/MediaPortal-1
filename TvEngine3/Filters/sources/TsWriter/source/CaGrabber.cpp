@@ -31,25 +31,29 @@
 
 
 extern void LogDebug(const char *fmt, ...) ;
-#ifdef DUMP_TS_STREAM
-FILE* fDump;
-#endif
+
+FILE* fDump=NULL;
+
 
 CCaGrabber::CCaGrabber(LPUNKNOWN pUnk, HRESULT *phr) 
 :CUnknown( NAME ("MpTsCaGrabber"), pUnk)
 {
-#ifdef DUMP_TS_STREAM
-  ::DeleteFile("C:\\dump.ts");
-  fDump=fopen("c:\\dump.ts","wb+");
-#endif
+  FILE* fTest=fopen("dump.txt","r");
+  if (fTest!=NULL)
+  {
+    fclose(fTest);
+    ::DeleteFile("C:\\dump.ts");
+    fDump=fopen("c:\\dump.ts","wb+");
+  }
+
 	m_pCallback=NULL;
 	Reset();
 }
 CCaGrabber::~CCaGrabber(void)
 {
-#ifdef DUMP_TS_STREAM
-  fclose(fDump);
-#endif
+  if (fDump!=NULL)
+    fclose(fDump);
+  fDump=NULL;
 }
 
 
@@ -74,9 +78,12 @@ STDMETHODIMP CCaGrabber::SetCallBack( ICACallback* callback)
 void CCaGrabber::OnTsPacket(byte* tsPacket)
 {
 	if (m_pCallback==NULL) return;
-#ifdef DUMP_TS_STREAM
-  fwrite(tsPacket,1,188,fDump);
-#endif
+
+  if (fDump!=NULL)
+  {
+    fwrite(tsPacket,1,188,fDump);
+  }
+
   int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
   if (pid != 1) return;
 	CEnterCriticalSection enter(m_section);

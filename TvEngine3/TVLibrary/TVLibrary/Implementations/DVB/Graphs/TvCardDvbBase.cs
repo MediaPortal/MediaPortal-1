@@ -45,9 +45,8 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// base class for DVB cards
   /// </summary>
-  public class TvCardDvbBase : IDisposable, ITeletextCallBack, IPMTCallback
+  public class TvCardDvbBase : IDisposable, ITeletextCallBack, IPMTCallback, ICACallback
   {
-
     #region enums
     /// <summary>
     /// Different states of the card
@@ -73,6 +72,71 @@ namespace TvLibrary.Implementations.DVB
     }
     #endregion
 
+    #region MDAPI structs
+
+    #region Struct MDPlug
+    // ********************* MDPlug *************************
+    [StructLayout(LayoutKind.Sequential)]
+    public struct CA_System82
+    {
+      public ushort CA_Typ;
+      public ushort ECM;
+      public ushort EMM;
+      public uint Provider_Id;
+    }
+    // ********************* MDPlug *************************
+
+    #endregion
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct TProgram82
+    {
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
+      public byte[] Name;   // to simulate c++ char Name[30]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
+      public byte[] Provider;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
+      public byte[] Country;
+      public uint Freq;
+      public byte PType;
+      public byte Voltage;
+      public byte Afc;
+      public byte DiSEqC;
+      public uint Symbolrate;
+      public byte Qam;
+      public byte Fec;
+      public byte Norm;
+      public ushort Tp_id;
+      public ushort Video_pid;
+      public ushort Audio_pid;
+      public ushort TeleText_pid;          // Teletext PID 
+      public ushort PMT_pid;
+      public ushort PCR_pid;
+      public ushort ECM_PID;
+      public ushort SID_pid;
+      public ushort AC3_pid;
+      public byte TVType;           //  == 00 PAL ; 11 == NTSC    
+      public byte ServiceTyp;
+      public byte CA_ID;
+      public ushort Temp_Audio;
+      public ushort FilterNr;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+      public byte[] Filters;  // to simulate struct PIDFilters Filters[MAX_PID_IDS];
+      public ushort CA_Nr;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+      public CA_System82[] CA_System82;  // to simulate struct TCA_System CA_System[MAX_CA_SYSTEMS];
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+      public byte[] CA_Country;
+      public byte Marker;
+      public ushort Link_TP;
+      public ushort Link_SID;
+      public byte PDynamic;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+      public byte[] Extern_Buffer;
+    }
+
+    #endregion
+
     #region constants
 
     [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
@@ -87,6 +151,28 @@ namespace TvLibrary.Implementations.DVB
     [ComImport, Guid("3E8868CB-5FE8-402C-AA90-CB1AC6AE3240")]
     class CyberLinkDumpFilter { };
 
+    [ComImport, Guid("72E6DB8F-9F33-4D1C-A37C-DE8148C0BE74")]
+    protected class MDAPIFilter { };
+
+    #endregion
+
+    #region interfaces
+    [ComVisible(true), ComImport,
+    Guid("C3F5AA0D-C475-401B-8FC9-E33FB749CD85"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IChangeChannel
+    {
+      /// <summary>
+      /// Get the file name of media file.
+      /// </summary>
+      /// <param name="fn">The file name buffer.</param>
+      /// <returns></returns>
+      /// <remarks>fn should point to a buffer allocated to at least the length of MAX_PATH (=260)</remarks>
+      [PreserveSig]
+      int ChangeChannel(int frequency, int bandwidth, int polarity, int videopid, int audiopid, int ecmpid, int caid, int providerid);
+      int ChangeChannelTP82([In] IntPtr tp82);
+      //int ChangeChannel(IntPtr tp82);
+    }
     #endregion
 
     #region variables
@@ -132,6 +218,7 @@ namespace TvLibrary.Implementations.DVB
     protected ITsEpgScanner _interfaceEpgGrabber;
     protected ITsChannelScan _interfaceChannelScan;
     protected ITsPmtGrabber _interfacePmtGrabber;
+    protected ITsCaGrabber _interfaceCaGrabber;
 
     protected bool _epgGrabbing = false;
     protected bool _isScanning = false;
@@ -142,6 +229,9 @@ namespace TvLibrary.Implementations.DVB
     protected BaseEpgGrabber _epgGrabberCallback = null;
     CamType _camType;
     protected IVbiCallback _teletextCallback = null;
+    protected IBaseFilter _mdapiFilter = null;
+    protected IChangeChannel _changeChannel = null;
+    protected TProgram82 _mDPlugTProg82 = new TProgram82();
 
 
 
@@ -155,6 +245,7 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     protected bool _newPMT = false;
+    protected bool _newCA = false;
     System.Timers.Timer _pmtTimer = new System.Timers.Timer();
     bool _pmtTimerRentrant = false;
     #endregion
@@ -166,6 +257,14 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public TvCardDvbBase()
     {
+      _mDPlugTProg82.CA_Country = new byte[5];
+      _mDPlugTProg82.CA_System82 = new CA_System82[32];
+      _mDPlugTProg82.Country = new byte[30];
+      _mDPlugTProg82.Extern_Buffer = new byte[16];
+      _mDPlugTProg82.Filters = new byte[256];
+      _mDPlugTProg82.Name = new byte[30];
+      _mDPlugTProg82.Provider = new byte[30];
+
       _lastSignalUpdate = DateTime.MinValue;
       _pmtTimer.Enabled = false;
       _pmtTimer.Interval = 100;
@@ -257,6 +356,7 @@ namespace TvLibrary.Implementations.DVB
 
       _pmtVersion = -1;
       _newPMT = false;
+      _newCA = false;
     }
 
 
@@ -500,6 +600,7 @@ namespace TvLibrary.Implementations.DVB
       _teletextDecoder.ClearBuffer();
       _pmtVersion = -1;
       _newPMT = false;
+      _newCA = false;
 
       int hr = 0;
 
@@ -550,6 +651,7 @@ namespace TvLibrary.Implementations.DVB
       _startTimeShifting = false;
       _pmtVersion = -1;
       _newPMT = false;
+      _newCA = false;
       _recordingFileName = "";
       _channelInfo = new ChannelInfo();
       _currentChannel = null;
@@ -727,7 +829,7 @@ namespace TvLibrary.Implementations.DVB
           }
         }
       }
-      if (false==skipCaptureFilter)
+      if (false == skipCaptureFilter)
       {
         Log.Log.WriteFile("dvb:find bda receiver");
         // Then enumerate BDA Receiver Components category to found a filter connecting 
@@ -886,18 +988,50 @@ namespace TvLibrary.Implementations.DVB
     protected void ConnectMpeg2DemuxToInfTee()
     {
       //multi demux
-
-      //connect the inftee main -> TIF MPEG2 Demultiplexer
-      Log.Log.WriteFile("dvb:connect mpeg-2 demuxer to maintee");
-      IPin mainTeeOut = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 0);
-      IPin demuxPinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTif, PinDirection.Input, 0);
-      int hr = _graphBuilder.Connect(mainTeeOut, demuxPinIn);
-      Release.ComObject("maintee pin0", mainTeeOut);
-      Release.ComObject("tifdemux pinin", demuxPinIn);
-      if (hr != 0)
+      if (System.IO.Directory.Exists("MDPLUGINS"))
       {
-        Log.Log.Error("dvb:Add main InfTee returns:0x{0:X}", hr);
-        throw new TvException("Unable to add  mainInfTee");
+        _mdapiFilter = (IBaseFilter)new MDAPIFilter();
+        int hr = _graphBuilder.AddFilter(_mdapiFilter, "MDApi");
+
+        Log.Log.WriteFile("dvb:connect MDAPI filter to inftee ");
+        IPin mainTeeOut = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 0);
+        IPin mdapiPinIn = DsFindPin.ByDirection(_mdapiFilter, PinDirection.Input, 0);
+        hr = _graphBuilder.Connect(mainTeeOut, mdapiPinIn);
+        Release.ComObject("maintee pin0", mainTeeOut);
+        Release.ComObject("tifdemux pinin", mdapiPinIn);
+        if (hr != 0)
+        {
+          Log.Log.Error("dvb:Add mdapi returns:0x{0:X}", hr);
+          throw new TvException("Unable to add add mdapi");
+        }
+        //connect mdapi->mpeg2 demuxer
+        Log.Log.WriteFile("dvb:connect mpeg-2 demuxer to mdapi filter");
+        IPin mdApiOutPin = DsFindPin.ByDirection(_mdapiFilter, PinDirection.Output, 0);
+        IPin demuxPinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTif, PinDirection.Input, 0);
+        hr = _graphBuilder.Connect(mdApiOutPin, demuxPinIn);
+        Release.ComObject("maintee pin0", mdApiOutPin);
+        Release.ComObject("tifdemux pinin", demuxPinIn);
+        if (hr != 0)
+        {
+          Log.Log.Error("dvb:Add main InfTee returns:0x{0:X}", hr);
+          throw new TvException("Unable to add  mainInfTee");
+        }
+        _changeChannel = (IChangeChannel)_mdapiFilter;
+      }
+      else
+      {
+        //connect the inftee main -> TIF MPEG2 Demultiplexer
+        Log.Log.WriteFile("dvb:connect mpeg-2 demuxer to maintee");
+        IPin mainTeeOut = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 0);
+        IPin demuxPinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTif, PinDirection.Input, 0);
+        int hr = _graphBuilder.Connect(mainTeeOut, demuxPinIn);
+        Release.ComObject("maintee pin0", mainTeeOut);
+        Release.ComObject("tifdemux pinin", demuxPinIn);
+        if (hr != 0)
+        {
+          Log.Log.Error("dvb:Add main InfTee returns:0x{0:X}", hr);
+          throw new TvException("Unable to add  mainInfTee");
+        }
       }
 #if MULTI_DEMUX
       mainTeeOut = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 1);
@@ -968,6 +1102,7 @@ namespace TvLibrary.Implementations.DVB
         _interfaceChannelScan = (ITsChannelScan)_filterTsAnalyzer;
         _interfaceEpgGrabber = (ITsEpgScanner)_filterTsAnalyzer;
         _interfacePmtGrabber = (ITsPmtGrabber)_filterTsAnalyzer;
+        _interfaceCaGrabber = (ITsCaGrabber)_filterTsAnalyzer;
       }
     }
 
@@ -1097,16 +1232,16 @@ namespace TvLibrary.Implementations.DVB
       }
       Release.ComObject("IEnumMedia", enumPins);
       Release.ComObject("TIF pin in", pinInTif);
-     // Release.ComObject("mpeg2 sections&tables pin in", pinInSec);
+      // Release.ComObject("mpeg2 sections&tables pin in", pinInSec);
       if (tifConnected == false)
       {
         Log.Log.Error("    unable to connect transport information filter");
         //throw new TvException("unable to connect transport information filter");
       }
       // if (mpeg2SectionsConnected == false)
-     // {
-       // Log.Log.Error("    unable to connect mpeg 2 sections and tables filter");
-        //throw new TvException("unable to connect mpeg 2 sections and tables filter");
+      // {
+      // Log.Log.Error("    unable to connect mpeg 2 sections and tables filter");
+      //throw new TvException("unable to connect mpeg 2 sections and tables filter");
       //}
     }
 
@@ -1147,6 +1282,10 @@ namespace TvLibrary.Implementations.DVB
       _interfaceChannelScan = null;
       _interfaceEpgGrabber = null;
 
+      if (_mdapiFilter != null)
+      {
+        Release.ComObject("MDAPI filter", _mdapiFilter); _mdapiFilter = null;
+      }
 #if MULTI_DEMUX
       if (_filterMpeg2DemuxTs != null)
       {
@@ -1257,6 +1396,8 @@ namespace TvLibrary.Implementations.DVB
       {
         _interfacePmtGrabber.SetCallBack(this);
         _interfacePmtGrabber.SetPmtPid(pmtPid);
+        _interfaceCaGrabber.SetCallBack(this);
+        _interfaceCaGrabber.Reset();
       }
     }
 
@@ -1667,6 +1808,159 @@ namespace TvLibrary.Implementations.DVB
     }
 
 
+    /// <summary>
+    /// Gets/sets the card device
+    /// </summary>
+    public virtual string DevicePath
+    {
+      get
+      {
+        return _devicePath;
+      }
+    }
+    /// <summary>
+    /// gets the current filename used for timeshifting
+    /// </summary>
+    public string TimeShiftFileName
+    {
+      get
+      {
+        return _timeshiftFileName;
+      }
+    }
+
+    /// <summary>
+    /// returns true if card is currently grabbing the epg
+    /// </summary>
+    public bool IsEpgGrabbing
+    {
+      get
+      {
+        return _epgGrabbing;
+      }
+      set
+      {
+        if (_epgGrabbing && value == false) _interfaceEpgGrabber.Reset();
+        _epgGrabbing = value;
+      }
+    }
+
+    /// <summary>
+    /// returns true if card is currently scanning
+    /// </summary>
+    public bool IsScanning
+    {
+      get
+      {
+        return _isScanning;
+      }
+      set
+      {
+        _isScanning = value;
+        if (_isScanning)
+        {
+          _epgGrabbing = false;
+          if (_epgGrabberCallback != null && _epgGrabbing)
+          {
+            Log.Log.Epg("dvb:cancel epg->scanning");
+            _epgGrabberCallback.OnEpgCancelled();
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// returns the min/max channel numbers for analog cards
+    /// </summary>
+    public int MinChannel
+    {
+      get { return -1; }
+    }
+    /// <summary>
+    /// Gets the max channel.
+    /// </summary>
+    /// <value>The max channel.</value>
+    public int MaxChannel
+    {
+      get { return -1; }
+    }
+
+    /// <summary>
+    /// returns the date/time when timeshifting has been started for the card specified
+    /// </summary>
+    /// <returns>DateTime containg the date/time when timeshifting was started</returns>
+    public DateTime StartOfTimeShift
+    {
+      get
+      {
+        return _dateTimeShiftStarted;
+      }
+    }
+    /// <summary>
+    /// returns the date/time when recording has been started for the card specified
+    /// </summary>
+    /// <returns>DateTime containg the date/time when recording was started</returns>
+    public DateTime RecordingStarted
+    {
+      get
+      {
+        return _dateRecordingStarted;
+      }
+    }
+
+
+
+    /// <summary>
+    /// Gets or sets the type of the cam.
+    /// </summary>
+    /// <value>The type of the cam.</value>
+    public CamType CamType
+    {
+      get
+      {
+        return _camType;
+      }
+      set
+      {
+        _camType = value;
+      }
+    }
+
+    /// <summary>
+    /// Gets the interface for controlling the diseqc motor
+    /// </summary>
+    /// <value>Theinterface for controlling the diseqc motor.</value>
+    public IDiSEqCMotor DiSEqCMotor
+    {
+      get
+      {
+        if (_conditionalAccess == null) return null;
+        return _conditionalAccess.DiSEqCMotor;
+      }
+    }
+    /// <summary>
+    /// Returns true when unscrambled audio/video is received otherwise false
+    /// </summary>
+    /// <returns>true of false</returns>
+    public bool IsReceivingAudioVideo
+    {
+      get
+      {
+        if (_graphRunning == false) return false;
+        if (_filterTsAnalyzer == null) return false;
+        if (_currentChannel == null) return false;
+        ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_filterTsAnalyzer;
+        short audioEncrypted = 0;
+        short videoEncrypted = 0;
+        writer.IsAudioEncrypted(out audioEncrypted);
+        if (_currentChannel.IsTv)
+        {
+          writer.IsVideoEncrypted(out videoEncrypted);
+        }
+        return ((audioEncrypted == 0) && (videoEncrypted == 0));
+      }
+    }
+
     #endregion
 
     #region recording
@@ -2010,6 +2304,7 @@ namespace TvLibrary.Implementations.DVB
             if (_channelInfo != null)
             {
               SetMpegPidMapping(_channelInfo);
+              SetChannel2MDPlug();
             }
             Log.Log.Info("dvb:stop tif");
             if (_filterTIF != null)
@@ -2041,77 +2336,6 @@ namespace TvLibrary.Implementations.DVB
           //  _conditionalAccess.SendPids((DVBBaseChannel)_currentChannel, pids);
         }
         return;
-      }
-    }
-    #endregion
-
-    #region ITeletextCallBack Members
-
-    public IVbiCallback TeletextCallback
-    {
-      get
-      {
-        return _teletextCallback;
-      }
-      set
-      {
-        _teletextCallback = value;
-      }
-    }
-    /// <summary>
-    /// callback from the TsWriter filter when it received a new teletext packets
-    /// </summary>
-    /// <param name="data">teletext data</param>
-    /// <param name="packetCount">number of packets in data</param>
-    /// <returns></returns>
-    public int OnTeletextReceived(IntPtr data, short packetCount)
-    {
-      try
-      {
-        if (_teletextCallback != null)
-        {
-          _teletextCallback.OnVbiData( data, packetCount, false);
-        }
-        for (int i = 0; i < packetCount; ++i)
-        {
-          IntPtr packetPtr = new IntPtr(data.ToInt32() + i * 188);
-          ProcessPacket(packetPtr);
-        }
-
-      }
-      catch (Exception ex)
-      {
-        Log.Log.WriteFile(ex.ToString());
-      }
-      return 0;
-    }
-    /// <summary>
-    /// processes a single transport packet
-    /// Called from BufferCB
-    /// </summary>
-    /// <param name="ptr">pointer to the transport packet</param>
-    public void ProcessPacket(IntPtr ptr)
-    {
-      if (ptr == IntPtr.Zero) return;
-
-      _packetHeader = _tsHelper.GetHeader((IntPtr)ptr);
-      if (_packetHeader.SyncByte != 0x47)
-      {
-        Log.Log.Write("packet sync error");
-        return;
-      }
-      if (_packetHeader.TransportError == true)
-      {
-        Log.Log.Write("packet transport error");
-        return;
-      }
-      // teletext
-      if (_grabTeletext)
-      {
-        if (_teletextDecoder != null)
-        {
-          _teletextDecoder.SaveData((IntPtr)ptr);
-        }
       }
     }
     #endregion
@@ -2186,132 +2410,98 @@ namespace TvLibrary.Implementations.DVB
     }
     #endregion
 
+    #region tswriter callback handlers
 
-    /// <summary>
-    /// Gets/sets the card device
-    /// </summary>
-    public virtual string DevicePath
-    {
-      get
-      {
-        return _devicePath;
-      }
-    }
-    /// <summary>
-    /// gets the current filename used for timeshifting
-    /// </summary>
-    public string TimeShiftFileName
-    {
-      get
-      {
-        return _timeshiftFileName;
-      }
-    }
+    #region ITeletextCallBack Members
 
-    /// <summary>
-    /// returns true if card is currently grabbing the epg
-    /// </summary>
-    public bool IsEpgGrabbing
+    public IVbiCallback TeletextCallback
     {
       get
       {
-        return _epgGrabbing;
+        return _teletextCallback;
       }
       set
       {
-        if (_epgGrabbing && value == false) _interfaceEpgGrabber.Reset();
-        _epgGrabbing = value;
+        _teletextCallback = value;
       }
     }
-
     /// <summary>
-    /// returns true if card is currently scanning
+    /// callback from the TsWriter filter when it received a new teletext packets
     /// </summary>
-    public bool IsScanning
+    /// <param name="data">teletext data</param>
+    /// <param name="packetCount">number of packets in data</param>
+    /// <returns></returns>
+    public int OnTeletextReceived(IntPtr data, short packetCount)
     {
-      get
+      try
       {
-        return _isScanning;
-      }
-      set
-      {
-        _isScanning = value;
-        if (_isScanning)
+        if (_teletextCallback != null)
         {
-          _epgGrabbing = false;
-          if (_epgGrabberCallback != null && _epgGrabbing)
-          {
-            Log.Log.Epg("dvb:cancel epg->scanning");
-            _epgGrabberCallback.OnEpgCancelled();
-          }
+          _teletextCallback.OnVbiData(data, packetCount, false);
+        }
+        for (int i = 0; i < packetCount; ++i)
+        {
+          IntPtr packetPtr = new IntPtr(data.ToInt32() + i * 188);
+          ProcessPacket(packetPtr);
+        }
+
+      }
+      catch (Exception ex)
+      {
+        Log.Log.WriteFile(ex.ToString());
+      }
+      return 0;
+    }
+    /// <summary>
+    /// processes a single transport packet
+    /// Called from BufferCB
+    /// </summary>
+    /// <param name="ptr">pointer to the transport packet</param>
+    public void ProcessPacket(IntPtr ptr)
+    {
+      if (ptr == IntPtr.Zero) return;
+
+      _packetHeader = _tsHelper.GetHeader((IntPtr)ptr);
+      if (_packetHeader.SyncByte != 0x47)
+      {
+        Log.Log.Write("packet sync error");
+        return;
+      }
+      if (_packetHeader.TransportError == true)
+      {
+        Log.Log.Write("packet transport error");
+        return;
+      }
+      // teletext
+      if (_grabTeletext)
+      {
+        if (_teletextDecoder != null)
+        {
+          _teletextDecoder.SaveData((IntPtr)ptr);
         }
       }
     }
+    #endregion
+
+    #region ICaCallback Members
+    #region ICACallback Members
 
     /// <summary>
-    /// returns the min/max channel numbers for analog cards
+    /// Called when tswriter.ax has received a new ca section
     /// </summary>
-    public int MinChannel
+    /// <returns></returns>
+    public int OnCaReceived()
     {
-      get { return -1; }
-    }
-    /// <summary>
-    /// Gets the max channel.
-    /// </summary>
-    /// <value>The max channel.</value>
-    public int MaxChannel
-    {
-      get { return -1; }
+      _newCA = true;
+      Log.Log.WriteFile("dvb:OnCaReceived()");
+
+      return 0;
     }
 
-    /// <summary>
-    /// returns the date/time when timeshifting has been started for the card specified
-    /// </summary>
-    /// <returns>DateTime containg the date/time when timeshifting was started</returns>
-    public DateTime StartOfTimeShift
-    {
-      get
-      {
-        return _dateTimeShiftStarted;
-      }
-    }
-    /// <summary>
-    /// returns the date/time when recording has been started for the card specified
-    /// </summary>
-    /// <returns>DateTime containg the date/time when recording was started</returns>
-    public DateTime RecordingStarted
-    {
-      get
-      {
-        return _dateRecordingStarted;
-      }
-    }
+    #endregion
+    #endregion
 
     #region IPMTCallback Members
-
-    /// <summary>
-    /// Returns true when unscrambled audio/video is received otherwise false
-    /// </summary>
-    /// <returns>true of false</returns>
-    public bool IsReceivingAudioVideo
-    {
-      get
-      {
-        if (_graphRunning == false) return false;
-        if (_filterTsAnalyzer == null) return false;
-        if (_currentChannel == null) return false;
-        ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_filterTsAnalyzer;
-        short audioEncrypted = 0;
-        short videoEncrypted = 0;
-        writer.IsAudioEncrypted(out audioEncrypted);
-        if (_currentChannel.IsTv)
-        {
-          writer.IsVideoEncrypted(out videoEncrypted);
-        }
-        return ((audioEncrypted == 0) && (videoEncrypted == 0));
-      }
-    }
-
     #region IPMTCallback interface
     /// <summary>
     /// Called when tswriter.ax has received a new pmt
@@ -2329,6 +2519,7 @@ namespace TvLibrary.Implementations.DVB
           if (_channelInfo != null)
           {
             SetMpegPidMapping(_channelInfo);
+            SetChannel2MDPlug();
           }
           Log.Log.Info("dvb:stop tif");
           if (_filterTIF != null)
@@ -2354,6 +2545,10 @@ namespace TvLibrary.Implementations.DVB
     {
       lock (this)
       {
+        if (_mdapiFilter != null)
+        {
+          if (_newCA == false) return false;//cat not received yet
+        }
         if ((_currentChannel as ATSCChannel) != null) return true;
         DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
         if (channel == null) return true;
@@ -2361,7 +2556,7 @@ namespace TvLibrary.Implementations.DVB
         try
         {
           int pmtLength = _interfacePmtGrabber.GetPMTData(pmtMem);
-          if (pmtLength != -1)
+          if (pmtLength > 6)
           {
             byte[] pmt = new byte[pmtLength];
             int version = -1;
@@ -2376,6 +2571,11 @@ namespace TvLibrary.Implementations.DVB
                 _channelInfo.DecodePmt(pmt);
                 _channelInfo.network_pmt_PID = channel.PmtPid;
                 _channelInfo.pcr_pid = channel.PcrPid;
+
+                pmtLength = _interfaceCaGrabber.GetCaData(pmtMem);
+                Marshal.Copy(pmtMem, pmt, 0, pmtLength);
+                _channelInfo.DecodeCat(pmt, pmtLength);
+
 
                 Log.Log.WriteFile("dvb:SendPMT version:{0} len:{1} {2}", version, pmtLength, _channelInfo.caPMT.ProgramNumber);
                 if (_conditionalAccess != null)
@@ -2424,35 +2624,160 @@ namespace TvLibrary.Implementations.DVB
       return false;
     }
     #endregion
+    #endregion
 
-
-    /// <summary>
-    /// Gets or sets the type of the cam.
-    /// </summary>
-    /// <value>The type of the cam.</value>
-    public CamType CamType
+    #region MDAPI
+    private void SetChannel2MDPlug()
     {
-      get
-      {
-        return _camType;
-      }
-      set
-      {
-        _camType = value;
-      }
-    }
+      int Index;
+      int end_Index = 0;
+      //is mdapi installed?
+      if (_mdapiFilter == null) return; //nop, then return
 
-    /// <summary>
-    /// Gets the interface for controlling the diseqc motor
-    /// </summary>
-    /// <value>Theinterface for controlling the diseqc motor.</value>
-    public IDiSEqCMotor DiSEqCMotor
-    {
-      get
+      //did we already receive the pmt?
+      if (_channelInfo == null) return; //nop, then return
+      DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
+      if (dvbChannel == null) //not a DVB channel??
+        return;
+
+      if (_mDPlugTProg82.SID_pid == (ushort)dvbChannel.ServiceId)
+        return; //already tuned to this service?
+
+      //set channel name
+      if (dvbChannel.Name != null)
       {
-        if (_conditionalAccess == null) return null;
-        return _conditionalAccess.DiSEqCMotor;
+        end_Index = _mDPlugTProg82.Name.GetLength(0) - 1;
+
+        if (dvbChannel.Name.Length < end_Index)
+        {
+          end_Index = dvbChannel.Name.Length;
+        }
+        for (Index = 0; Index < end_Index; ++Index)
+        {
+          _mDPlugTProg82.Name[Index] = (byte)dvbChannel.Name[Index];
+        }
       }
+      else
+        end_Index = 0;
+      _mDPlugTProg82.Name[end_Index] = 0;
+
+      //set provide name
+      if (dvbChannel.Provider != null)
+      {
+        end_Index = _mDPlugTProg82.Provider.GetLength(0) - 1;
+        if (dvbChannel.Provider.Length < end_Index)
+          end_Index = dvbChannel.Provider.Length;
+        for (Index = 0; Index < end_Index; ++Index)
+        {
+          _mDPlugTProg82.Provider[Index] = (byte)dvbChannel.Provider[Index];
+        }
+      }
+      else
+        end_Index = 0;
+      _mDPlugTProg82.Provider[end_Index] = 0;
+
+      DVBSChannel dvbsChannel = _currentChannel as DVBSChannel;
+      //public byte[] Country;
+      _mDPlugTProg82.Freq = (uint)dvbChannel.Frequency;
+      //public byte PType = (byte);
+      if (dvbsChannel != null)
+      {
+        _mDPlugTProg82.Voltage = (byte)dvbsChannel.Polarisation;
+        _mDPlugTProg82.Afc = (byte)dvbsChannel.SwitchingFrequency;
+        _mDPlugTProg82.DiSEqC = (byte)dvbsChannel.DisEqc;
+        _mDPlugTProg82.Symbolrate = (ushort)dvbsChannel.SymbolRate;
+        //public byte Qam;
+      }
+      _mDPlugTProg82.Fec = (byte)FECMethod.MethodNotDefined;
+      //public byte Norm;
+      _mDPlugTProg82.Tp_id = (ushort)dvbChannel.TransportId;
+      _mDPlugTProg82.SID_pid = (ushort)dvbChannel.ServiceId;
+      _mDPlugTProg82.PMT_pid = (ushort)dvbChannel.PmtPid;
+      _mDPlugTProg82.PCR_pid = (ushort)dvbChannel.PcrPid;
+      if (_channelInfo != null)
+      {
+        foreach (PidInfo pid in _channelInfo.pids)
+        {
+          if (pid.isVideo)
+            _mDPlugTProg82.Video_pid = (ushort)pid.pid;
+          if (pid.isAudio)
+            _mDPlugTProg82.Audio_pid = (ushort)pid.pid;
+          if (pid.isTeletext)
+            _mDPlugTProg82.TeleText_pid = (ushort)pid.pid;
+          if (pid.isAC3Audio)
+            _mDPlugTProg82.AC3_pid = (ushort)pid.pid;
+        }
+        if (_currentChannel.IsRadio)
+          _mDPlugTProg82.ServiceTyp = (byte)1;
+        else
+          _mDPlugTProg82.ServiceTyp = (byte)2;
+      }
+      //public byte TVType;           //  == 00 PAL ; 11 == NTSC    
+      //public ushort Temp_Audio;
+      _mDPlugTProg82.FilterNr = (ushort)0; //to test
+      //public byte[] Filters;  // to simulate struct PIDFilters Filters[MAX_PID_IDS];
+      //public byte[] CA_Country;
+      //public byte Marker;
+      //public ushort Link_TP;
+      //public ushort Link_SID;
+      _mDPlugTProg82.PDynamic = (byte)0; //to test
+      //public byte[] Extern_Buffer;
+      if (_channelInfo.caPMT != null)
+      {
+        List<ECMEMM> emmList = _channelInfo.caPMT.GetEMM();
+        if (emmList.Count <= 0) return;
+        for (int i = 0; i < emmList.Count; ++i)
+        {
+          Log.Log.Info("EMM #{0} pid:0x{1:X} caid:0x{2:X}",i, emmList[i].Pid, emmList[i].CaId);
+        }
+
+        List<ECMEMM> ecmList = _channelInfo.caPMT.GetECM();
+        for (int i = 0; i < ecmList.Count; ++i)
+        {
+          Log.Log.Info("ECM pid:0x{0:X} caid:0x{1:X}", ecmList[i].Pid, ecmList[i].CaId);
+        }
+
+        _mDPlugTProg82.CA_Nr = (ushort)ecmList.Count;
+        for (int i = 0; i < ecmList.Count; ++i)
+        {
+          _mDPlugTProg82.CA_System82[i].CA_Typ = (ushort)ecmList[i].CaId;
+          _mDPlugTProg82.CA_System82[i].ECM = (ushort)ecmList[i].Pid;
+          _mDPlugTProg82.CA_System82[i].Provider_Id = 0;//???
+          for (int x = 0; x < emmList.Count; ++x)
+          {
+            if (emmList[x].CaId == ecmList[i].CaId)
+            {
+              _mDPlugTProg82.CA_System82[i].EMM = (ushort)emmList[x].Pid;
+              _mDPlugTProg82.ECM_PID = (ushort)ecmList[i].Pid;
+              _mDPlugTProg82.CA_ID = (byte)x;
+               Log.Log.Info("use EMM pid:0x{0:X} ECM pid:0x{1:X} catype:{2:X} caid:0x{3:X} nr:{4}",
+                        _mDPlugTProg82.CA_System82[i].EMM, 
+                        _mDPlugTProg82.ECM_PID, 
+                        _mDPlugTProg82.CA_System82[i].CA_Typ,
+                        _mDPlugTProg82.CA_ID, 
+                        _mDPlugTProg82.CA_Nr);
+            }
+          }
+        }
+      }
+
+
+      IntPtr lparam = Marshal.AllocHGlobal(Marshal.SizeOf(_mDPlugTProg82));
+      Marshal.StructureToPtr(_mDPlugTProg82, lparam, true);
+      try
+      {
+        if (_changeChannel != null)
+        {
+          Log.Log.Info("Send channel change to MDAPI filter");
+          _changeChannel.ChangeChannelTP82(lparam);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+      }
+      Marshal.FreeHGlobal(lparam);
     }
+    #endregion
   }
 }

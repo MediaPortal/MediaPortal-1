@@ -616,15 +616,15 @@ namespace TvLibrary.Implementations.DVB.Structures
       {
         byte descriptorTag = cat[pos];
         byte descriptorLen = cat[pos + 1];
+        //Log.Log.Info("tag:0x{0:X} len:{1:X}", descriptorTag, descriptorLen);
         if (descriptorTag == 0x9)
         {
           byte[] data = new byte[descriptorLen];
           for (int i = 0; i < descriptorLen; ++i)
             data[i] = cat[pos + i + 2];
-          caPMT.Descriptors.Add(data);
-          caPMT.ProgramInfoLength += data.Length;
+          caPMT.DescriptorsCat.Add(data);
         }
-        pos += descriptorLen;
+        pos += (descriptorLen+2);
       }
     }
 

@@ -22,6 +22,12 @@ namespace TvLibrary.Implementations.DVB.Structures
     NotSelected = 4
   };
 
+  public class ECMEMM
+  {
+    public int Number;
+    public int Pid;
+    public int CaId;
+  }
   public class CaPmtEs
   {
     public int StreamType;                          // 8 bit      0
@@ -49,38 +55,56 @@ namespace TvLibrary.Implementations.DVB.Structures
     public CommandIdType CommandId;       // 8  bit   6
     public List<byte[]> Descriptors;             // x  bit
     public List<CaPmtEs> CaPmtEsList;
+    public List<byte[]> DescriptorsCat;             // x  bit
 
     public CaPMT()
     {
       Descriptors = new List<byte[]>();
+      DescriptorsCat = new List<byte[]>();
       CaPmtEsList = new List<CaPmtEs>();
     }
-    /// <summary>
-    /// Gets the CA system id.
-    /// </summary>
-    /// <param name="index">The index.</param>
-    /// <returns></returns>
-    public int GetCASystemId(int index)
+
+    public List<ECMEMM> GetEMM()
     {
-      if (Descriptors == null) return -1;
-      if (index >=Descriptors.Count ) return -1;
-      byte[] descriptor = Descriptors[index];
-      int systemId = (descriptor[0] << 8) + descriptor[1];
-      return systemId;
+      List<ECMEMM> emms = new List<ECMEMM>();
+      if (DescriptorsCat == null) return emms;
+      for (int i = 0; i < DescriptorsCat.Count; ++i)
+      {
+        byte[] descriptor = DescriptorsCat[i];
+        int systemId = (descriptor[0] << 8) + descriptor[1];
+        int emmPid = ((descriptor[2] & 0x1f) << 8) + descriptor[3];
+        ECMEMM emm = new ECMEMM();
+        emm.Number = i;
+        emm.CaId = systemId;
+        emm.Pid = emmPid;
+        emms.Add(emm);
+      }
+      return emms;
     }
 
     /// <summary>
-    /// Gets the CA pid.
+    /// Gets the ECM pid.
     /// </summary>
     /// <param name="index">The index.</param>
     /// <returns></returns>
-    public int GetCAPid(int index)
+    public List<ECMEMM> GetECM()
     {
-      if (Descriptors == null) return -1;
-      if (index >= Descriptors.Count) return -1;
-      byte[] descriptor = Descriptors[index];
-      int caPid = ((descriptor[2] & 0x1f) << 8) + descriptor[3];
-      return caPid;
+      List<ECMEMM> ecms = new List<ECMEMM>();
+      if (Descriptors == null) return ecms;
+      for (int i = 0; i < Descriptors.Count; ++i)
+      {
+        byte[] descriptor = Descriptors[i];
+        string tmp = "";
+        for (int x=0; x < descriptor.Length;++x)
+          tmp += String.Format("{0:X} ", descriptor[x]);
+        Log.Log.Info("ecm len:{0:X} {1}", descriptor.Length,tmp);
+        ECMEMM ecm = new ECMEMM();
+        ecm.Number = i;
+        ecm.CaId = ((descriptor[2]) << 8) + descriptor[3];
+        ecm.Pid = ((descriptor[4] & 0x1f) << 8) + descriptor[5];
+        ecms.Add(ecm);
+      }
+      return ecms;
     }
 
 
@@ -109,12 +133,12 @@ namespace TvLibrary.Implementations.DVB.Structures
             data[offset++] = descriptor[count];
         }
       }
-      
+
       for (int esPmt = 0; esPmt < CaPmtEsList.Count; esPmt++)
       {
         CaPmtEs pmtEs = CaPmtEsList[esPmt];
         data[offset++] = (byte)(pmtEs.StreamType);
-        data[offset++] = (byte)(((pmtEs.ElementaryStreamPID >> 8) & 0x1f)+0xe0);
+        data[offset++] = (byte)(((pmtEs.ElementaryStreamPID >> 8) & 0x1f) + 0xe0);
         data[offset++] = (byte)((pmtEs.ElementaryStreamPID & 0xff));
         data[offset++] = (byte)((pmtEs.ElementaryStreamInfoLength >> 8) & 0xf);
         data[offset++] = (byte)((pmtEs.ElementaryStreamInfoLength & 0xff));
