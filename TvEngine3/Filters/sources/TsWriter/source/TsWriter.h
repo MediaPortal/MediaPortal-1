@@ -27,6 +27,7 @@
 #include "recorder.h"
 #include "timeshifting.h"
 #include "teletextgrabber.h"
+#include "cagrabber.h"
 #include "technotrend.h"
 
 #include <map>
@@ -125,4 +126,5 @@ private:
 		CTimeShifting*	m_pTimeShifting;
 		CTeletextGrabber*	m_pTeletextGrabber;
     CTechnotrend* m_pTechnoTrend;
+    CCaGrabber*   m_pCaGrabber;
 };

@@ -228,6 +228,10 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
+				RelativePath=".\source\CaGrabber.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\ChannelScan.cpp"
 				>
 			</File>
@@ -439,6 +443,10 @@
 			<Filter
 				Name="TS"
 				>
+				<File
+					RelativePath=".\source\CaGrabber.h"
+					>
+				</File>
 				<File
 					RelativePath=".\source\PacketSync.h"
 					>

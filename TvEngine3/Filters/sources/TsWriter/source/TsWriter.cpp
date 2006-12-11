@@ -345,6 +345,7 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr)
 		m_pRecorder = new CRecorder(GetOwner(),phr);
 		m_pTimeShifting= new CTimeShifting(GetOwner(),phr);
 		m_pTeletextGrabber= new CTeletextGrabber(GetOwner(),phr);
+    m_pCaGrabber= new CCaGrabber(GetOwner(),phr);
     m_pTechnoTrend= new CTechnotrend(GetOwner(),phr);
 }
 
@@ -364,6 +365,7 @@ CMpTs::~CMpTs()
 		delete m_pRecorder;
 		delete m_pTimeShifting;
 		delete m_pTeletextGrabber;
+    delete m_pCaGrabber;
     delete m_pTechnoTrend;
 }
 
@@ -427,6 +429,10 @@ STDMETHODIMP CMpTs::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
 	else if (riid == IID_ITeletextGrabber)
 	{
 		return GetInterface((ITeletextGrabber*)m_pTeletextGrabber, ppv);
+	}
+	else if (riid == IID_ICaGrabber)
+	{
+		return GetInterface((ICaGrabber*)m_pCaGrabber, ppv);
 	}
 	else if (riid == IID_ITechnoTrend)
 	{
@@ -492,6 +498,7 @@ void CMpTs::AnalyzeTsPacket(byte* tsPacket)
 		m_pRecorder->OnTsPacket(tsPacket);
 		m_pTimeShifting->OnTsPacket(tsPacket);
 		m_pTeletextGrabber->OnTsPacket(tsPacket);
+    m_pCaGrabber->OnTsPacket(tsPacket);
 	}
 	catch(...)
 	{
