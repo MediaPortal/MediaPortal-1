@@ -2434,7 +2434,6 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-
         string strAlbum = strAlbum1;
         //	musicdatabase always stores directories 
         //	without a slash at the end 
@@ -2911,9 +2910,8 @@ namespace MediaPortal.Music.Database
                 {
                   if (!MediaPortal.Util.Picture.CreateThumbnail(tag.CoverArtImage, strSmallThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0))
                     Log.Debug("Could not extract thumbnail from {0}", strPathSong);
-                  else
-                    if (!MediaPortal.Util.Picture.CreateThumbnail(tag.CoverArtImage, strLargeThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0))
-                      Log.Debug("Could not extract thumbnail from {0}", strPathSong);
+                  if (!MediaPortal.Util.Picture.CreateThumbnail(tag.CoverArtImage, strLargeThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0))
+                    Log.Debug("Could not extract thumbnail from {0}", strPathSong);
                 }
               }
               catch (Exception) { }
