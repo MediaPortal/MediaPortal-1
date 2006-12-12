@@ -83,7 +83,7 @@ namespace TestApp
         else
           labelChannel.Text = "";
         progressBarQuality.Value = quality;
-        buttonScan.Enabled = (_currentCard.IsTunerLocked);
+        buttonScan.Enabled = true;// (_currentCard.IsTunerLocked);
         buttonTimeShift.Enabled = (_currentCard.IsTunerLocked && (_currentCard.IsRecording == false));
         buttonRecord.Enabled = (_currentCard.IsTimeShifting || _currentCard.IsRecording);
         button3.Enabled = (_currentCard.IsTunerLocked && (_currentCard.IsRecording == false));

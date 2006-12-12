@@ -104,7 +104,7 @@ namespace TestApp
       this.textboxFreq.Name = "textboxFreq";
       this.textboxFreq.Size = new System.Drawing.Size(146, 20);
       this.textboxFreq.TabIndex = 28;
-      this.textboxFreq.Text = "11097000";
+      this.textboxFreq.Text = "12515000";
       // 
       // label4
       // 

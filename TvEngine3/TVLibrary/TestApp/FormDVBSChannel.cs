@@ -39,6 +39,9 @@ namespace TestApp
     {
       get
       {
+        _channel.BandType = BandType.Universal;
+        _channel.SwitchingFrequency = -1;
+
         return _channel;
       }
       set

@@ -19,7 +19,7 @@
  *
  */
 //#define FORM
-//
+
 
 using System;
 using System.Collections;
@@ -247,7 +247,11 @@ namespace TvLibrary.Implementations.DVB
 
     protected bool _newPMT = false;
     protected bool _newCA = false;
+#if FORM
+    System.Windows.Forms.Timer _pmtTimer = new System.Windows.Forms.Timer();
+#else
     System.Timers.Timer _pmtTimer = new System.Timers.Timer();
+#endif
     bool _pmtTimerRentrant = false;
     #endregion
 
