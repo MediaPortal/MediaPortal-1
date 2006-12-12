@@ -40,14 +40,14 @@ namespace ProcessPlugins.DiskSpace
   /// <summary>
   /// Summary description for DiskManagement.
   /// </summary>
-  public class DiskManagement : IPlugin, ISetupForm 
+  public class DiskManagement : IPlugin, ISetupForm
   {
     System.Windows.Forms.Timer _timer;
     public DiskManagement()
     {
 
       _timer = new System.Windows.Forms.Timer();
-      _timer.Interval = 15*60*1000;
+      _timer.Interval = 15 * 60 * 1000;
       _timer.Enabled = false;
       _timer.Tick += new EventHandler(OnTimerElapsed);
     }
@@ -156,7 +156,16 @@ namespace ProcessPlugins.DiskSpace
       //get disk quota to use
       if (!OutOfDiskSpace(drive)) return;
 
-      List<RecordingFileInfo> recordings = GetRecordingsOnDrive(drive);
+      List<RecordingFileInfo> recordings = null;
+
+      try
+      {
+        recordings = GetRecordingsOnDrive(drive);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("DiskManagement: An error occured while out of diskspace getting info about recordings - {0}", ex.Message);
+      }
       if (recordings.Count == 0) return;
 
       Log.WriteFile(LogType.Recorder, "Recorder: not enough free space on drive:{0}.", drive);
@@ -167,21 +176,26 @@ namespace ProcessPlugins.DiskSpace
       // until we have enough free disk space again
       recordings.Sort();
       while (OutOfDiskSpace(drive) && recordings.Count > 0)
-      {
-        RecordingFileInfo fi = (RecordingFileInfo)recordings[0];
-        if (fi.record.KeepRecordingMethod == TVRecorded.KeepMethod.UntilSpaceNeeded)
-        {
-          Log.WriteFile(LogType.Recorder, "Recorder: delete recording:{0} size:{1} date:{2} {3}",
-                                              fi.filename,
-                                              Utils.GetSize(fi.info.Length),
-                                              fi.info.CreationTime.ToShortDateString(), fi.info.CreationTime.ToShortTimeString());
-          Recorder.DeleteRecording(fi.record);
+      {        
+        try
+        {          
+          RecordingFileInfo fi = (RecordingFileInfo)recordings[0];
+          if (fi.record.KeepRecordingMethod == TVRecorded.KeepMethod.UntilSpaceNeeded)
+          {
+            Log.WriteFile(LogType.Recorder, "Recorder: delete recording:{0} size:{1} date:{2} {3}",
+                                                fi.filename,
+                                                Utils.GetSize(fi.info.Length),
+                                                fi.info.CreationTime.ToShortDateString(), fi.info.CreationTime.ToShortTimeString());
+            Recorder.DeleteRecording(fi.record);
+          }
+          recordings.RemoveAt(0);
         }
-        recordings.RemoveAt(0);
+        catch (Exception ex)
+        {
+          Log.Error("DiskManagement: An error occured while out of diskspace deleting a record: {0}", ex.Message);
+        }
       }//while ( OutOfDiskSpace(drive) && recordings.Count > 0)
     }
-
-  
 
     #region IPlugin Members
 
