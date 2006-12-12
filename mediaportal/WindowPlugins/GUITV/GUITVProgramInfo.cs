@@ -30,7 +30,6 @@ namespace MediaPortal.GUI.TV
     [SkinControlAttribute(9)]     protected GUIButtonControl btnPostRecord = null;
 
     static TVProgram currentProgram = null;
-    bool noPrePostWithinBlock = false;
     public GUITVProgramInfo()
     {
       GetID = (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO;//748
