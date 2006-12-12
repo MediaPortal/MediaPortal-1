@@ -188,6 +188,7 @@ namespace TvLibrary.Implementations.DVB
     protected IBaseFilter _filterMpeg2DemuxTs = null;
 #endif
     protected IBaseFilter _infTeeMain = null;
+    protected IBaseFilter _infTeeSecond = null;
     protected IBaseFilter _filterTuner = null;
     protected IBaseFilter _filterCapture = null;
     protected IBaseFilter _filterTIF = null;
@@ -743,7 +744,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("dvb:AddAndConnectBDABoardFilters");
       int hr = 0;
       DsDevice[] devices;
-
+      _rotEntry = new DsROTEntry(_graphBuilder);
 
       Log.Log.WriteFile("dvb: find bda tuner");
       // Enumerate BDA Source filters category and found one that can connect to the network provider
@@ -988,28 +989,45 @@ namespace TvLibrary.Implementations.DVB
     protected void ConnectMpeg2DemuxToInfTee()
     {
       //multi demux
+      int hr;
       if (System.IO.Directory.Exists("MDPLUGINS"))
       {
-        _mdapiFilter = (IBaseFilter)new MDAPIFilter();
-        int hr = _graphBuilder.AddFilter(_mdapiFilter, "MDApi");
-
-        Log.Log.WriteFile("dvb:connect MDAPI filter to inftee ");
-        IPin mainTeeOut = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 0);
-        IPin mdapiPinIn = DsFindPin.ByDirection(_mdapiFilter, PinDirection.Input, 0);
-        hr = _graphBuilder.Connect(mainTeeOut, mdapiPinIn);
-        Release.ComObject("maintee pin0", mainTeeOut);
-        Release.ComObject("tifdemux pinin", mdapiPinIn);
+        Log.Log.WriteFile("dvb:add 2nd Inf Tee filter");
+        _infTeeSecond = (IBaseFilter)new InfTee();
+        hr = _graphBuilder.AddFilter(_infTeeSecond, "Inf Tee 2");
         if (hr != 0)
         {
-          Log.Log.Error("dvb:Add mdapi returns:0x{0:X}", hr);
-          throw new TvException("Unable to add add mdapi");
+          Log.Log.Error("dvb:Add 2nd InfTee returns:0x{0:X}", hr);
+          throw new TvException("Unable to add  _infTeeSecond");
         }
-        //connect mdapi->mpeg2 demuxer
-        Log.Log.WriteFile("dvb:connect mpeg-2 demuxer to mdapi filter");
-        IPin mdApiOutPin = DsFindPin.ByDirection(_mdapiFilter, PinDirection.Output, 0);
+        //capture -> maintee -> mdapi -> secondtee-> demux
+        Log.Log.Info("dvb: add mdapi filter");
+        _mdapiFilter = (IBaseFilter)new MDAPIFilter();
+        hr = _graphBuilder.AddFilter(_mdapiFilter, "MDApi");
+
+        Log.Log.Info("dvb: connect maintee->mdapi");
+        IPin mainTeeOut = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 0);
+        IPin mdApiIn = DsFindPin.ByDirection(_mdapiFilter, PinDirection.Input, 0);
+        hr = _graphBuilder.Connect(mainTeeOut, mdApiIn);
+        if (hr != 0)
+        {
+          Log.Log.Info("unable to connect maintee->mdapi");
+        }
+        Log.Log.Info("dvb: connect mdapi->2nd tee");
+        IPin mdApiOut = DsFindPin.ByDirection(_mdapiFilter, PinDirection.Output, 0);
+        IPin secondTeeIn = DsFindPin.ByDirection(_infTeeSecond, PinDirection.Input, 0);
+        hr = _graphBuilder.Connect(mdApiOut, secondTeeIn);
+        if (hr != 0)
+        {
+          Log.Log.Info("unable to connect mdapi->2nd tee");
+        }
+
+        //connect the 2nd inftee main -> TIF MPEG2 Demultiplexer
+        Log.Log.WriteFile("dvb:connect mpeg-2 demuxer to 2ndtee");
+        mainTeeOut = DsFindPin.ByDirection(_infTeeSecond, PinDirection.Output, 0);
         IPin demuxPinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTif, PinDirection.Input, 0);
-        hr = _graphBuilder.Connect(mdApiOutPin, demuxPinIn);
-        Release.ComObject("maintee pin0", mdApiOutPin);
+        hr = _graphBuilder.Connect(mainTeeOut, demuxPinIn);
+        Release.ComObject("maintee pin0", mainTeeOut);
         Release.ComObject("tifdemux pinin", demuxPinIn);
         if (hr != 0)
         {
@@ -1024,7 +1042,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("dvb:connect mpeg-2 demuxer to maintee");
         IPin mainTeeOut = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 0);
         IPin demuxPinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTif, PinDirection.Input, 0);
-        int hr = _graphBuilder.Connect(mainTeeOut, demuxPinIn);
+        hr = _graphBuilder.Connect(mainTeeOut, demuxPinIn);
         Release.ComObject("maintee pin0", mainTeeOut);
         Release.ComObject("tifdemux pinin", demuxPinIn);
         if (hr != 0)
@@ -1073,7 +1091,10 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Error("dvb:Add main Ts Analyzer returns:0x{0:X}", hr);
           throw new TvException("Unable to add Ts Analyzer filter");
         }
-        IPin pinTee = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 1);
+        IBaseFilter tee = _infTeeMain;
+        if (_infTeeSecond != null)
+          tee = _infTeeSecond;
+        IPin pinTee = DsFindPin.ByDirection(tee, PinDirection.Output, 1);
         if (pinTee == null)
         {
           if (hr != 0)
@@ -1300,6 +1321,11 @@ namespace TvLibrary.Implementations.DVB
       if (_infTeeMain != null)
       {
         Release.ComObject("main inftee filter", _infTeeMain); _infTeeMain = null;
+      }
+
+      if (_infTeeSecond != null)
+      {
+        Release.ComObject("_infTeeSecond filter", _infTeeSecond); _infTeeSecond = null;
       }
       if (_filterMpeg2DemuxTif != null)
       {
@@ -2629,6 +2655,7 @@ namespace TvLibrary.Implementations.DVB
     #region MDAPI
     private void SetChannel2MDPlug()
     {
+      
       int Index;
       int end_Index = 0;
       //is mdapi installed?
@@ -2636,8 +2663,8 @@ namespace TvLibrary.Implementations.DVB
 
       //did we already receive the pmt?
       if (_channelInfo == null) return; //nop, then return
-      DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
-      if (dvbChannel == null) //not a DVB channel??
+      DVBSChannel dvbChannel = _currentChannel as DVBSChannel;
+      if (dvbChannel == null) //not a DVB-S channel??
         return;
 
       if (_mDPlugTProg82.SID_pid == (ushort)dvbChannel.ServiceId)
@@ -2676,19 +2703,15 @@ namespace TvLibrary.Implementations.DVB
         end_Index = 0;
       _mDPlugTProg82.Provider[end_Index] = 0;
 
-      DVBSChannel dvbsChannel = _currentChannel as DVBSChannel;
       //public byte[] Country;
       _mDPlugTProg82.Freq = (uint)dvbChannel.Frequency;
       //public byte PType = (byte);
-      if (dvbsChannel != null)
-      {
-        _mDPlugTProg82.Voltage = (byte)dvbsChannel.Polarisation;
-        _mDPlugTProg82.Afc = (byte)dvbsChannel.SwitchingFrequency;
-        _mDPlugTProg82.DiSEqC = (byte)dvbsChannel.DisEqc;
-        _mDPlugTProg82.Symbolrate = (ushort)dvbsChannel.SymbolRate;
-        //public byte Qam;
-      }
-      _mDPlugTProg82.Fec = (byte)FECMethod.MethodNotDefined;
+      _mDPlugTProg82.Afc = (byte)68;
+      _mDPlugTProg82.DiSEqC = (byte)dvbChannel.DisEqc;
+      _mDPlugTProg82.Symbolrate = (uint)dvbChannel.SymbolRate;
+      //public byte Qam;
+
+      _mDPlugTProg82.Fec = 0;
       //public byte Norm;
       _mDPlugTProg82.Tp_id = (ushort)dvbChannel.TransportId;
       _mDPlugTProg82.SID_pid = (ushort)dvbChannel.ServiceId;
@@ -2707,7 +2730,7 @@ namespace TvLibrary.Implementations.DVB
           if (pid.isAC3Audio)
             _mDPlugTProg82.AC3_pid = (ushort)pid.pid;
         }
-        if (_currentChannel.IsRadio)
+        if (_currentChannel.IsTv)
           _mDPlugTProg82.ServiceTyp = (byte)1;
         else
           _mDPlugTProg82.ServiceTyp = (byte)2;
@@ -2724,51 +2747,118 @@ namespace TvLibrary.Implementations.DVB
       //public byte[] Extern_Buffer;
       if (_channelInfo.caPMT != null)
       {
+        //get all EMM's (from CAT (pid 0x1))
         List<ECMEMM> emmList = _channelInfo.caPMT.GetEMM();
         if (emmList.Count <= 0) return;
         for (int i = 0; i < emmList.Count; ++i)
         {
-          Log.Log.Info("EMM #{0} pid:0x{1:X} caid:0x{2:X}",i, emmList[i].Pid, emmList[i].CaId);
+          Log.Log.Info("EMM #{0} CA:0x{1:X} EMM:0x{2:X} ID:0x{3:X}",
+                i, emmList[i].CaId, emmList[i].Pid, emmList[i].ProviderId);
         }
 
+        //get all ECM's for this service
         List<ECMEMM> ecmList = _channelInfo.caPMT.GetECM();
         for (int i = 0; i < ecmList.Count; ++i)
         {
-          Log.Log.Info("ECM pid:0x{0:X} caid:0x{1:X}", ecmList[i].Pid, ecmList[i].CaId);
+          Log.Log.Info("ECM #{0} CA:0x{1:X} ECM:0x{2:X} ID:0x{3:X}",
+                i, ecmList[i].CaId, ecmList[i].Pid, ecmList[i].ProviderId);
         }
+
 
         _mDPlugTProg82.CA_Nr = (ushort)ecmList.Count;
-        for (int i = 0; i < ecmList.Count; ++i)
+        int count=0;
+        for (int x = 0; x < ecmList.Count; ++x)
         {
-          _mDPlugTProg82.CA_System82[i].CA_Typ = (ushort)ecmList[i].CaId;
-          _mDPlugTProg82.CA_System82[i].ECM = (ushort)ecmList[i].Pid;
-          _mDPlugTProg82.CA_System82[i].Provider_Id = 0;//???
-          for (int x = 0; x < emmList.Count; ++x)
+          _mDPlugTProg82.CA_System82[x].CA_Typ = (ushort)ecmList[x].CaId;
+          _mDPlugTProg82.CA_System82[x].ECM = (ushort)ecmList[x].Pid;
+          _mDPlugTProg82.CA_System82[x].EMM = 0;
+          _mDPlugTProg82.CA_System82[x].Provider_Id = (uint)ecmList[x].ProviderId;
+          count++;
+        }
+
+        for (int i = 0; i < emmList.Count; ++i)
+        {
+          bool found = false;
+          for (int j = 0; j < count; ++j)
           {
-            if (emmList[x].CaId == ecmList[i].CaId)
+            if (emmList[i].ProviderId == _mDPlugTProg82.CA_System82[j].Provider_Id && emmList[i].CaId == _mDPlugTProg82.CA_System82[j].CA_Typ)
             {
-              _mDPlugTProg82.CA_System82[i].EMM = (ushort)emmList[x].Pid;
-              _mDPlugTProg82.ECM_PID = (ushort)ecmList[i].Pid;
-              _mDPlugTProg82.CA_ID = (byte)x;
-               Log.Log.Info("use EMM pid:0x{0:X} ECM pid:0x{1:X} catype:{2:X} caid:0x{3:X} nr:{4}",
-                        _mDPlugTProg82.CA_System82[i].EMM, 
-                        _mDPlugTProg82.ECM_PID, 
-                        _mDPlugTProg82.CA_System82[i].CA_Typ,
-                        _mDPlugTProg82.CA_ID, 
-                        _mDPlugTProg82.CA_Nr);
+              found = true;
+              _mDPlugTProg82.CA_System82[j].EMM = (ushort)emmList[i].Pid;
+              break;
             }
           }
+          if (!found)
+          {
+            _mDPlugTProg82.CA_System82[count].CA_Typ = (ushort)emmList[i].CaId;
+            _mDPlugTProg82.CA_System82[count].ECM = 0;
+            _mDPlugTProg82.CA_System82[count].EMM = (ushort)emmList[i].Pid;
+            _mDPlugTProg82.CA_System82[count].Provider_Id = (uint)emmList[i].ProviderId;
+            count++;
+          }
+        }
+
+        _mDPlugTProg82.CA_ID = (byte)0;
+        _mDPlugTProg82.CA_Nr = (ushort)count;
+        _mDPlugTProg82.ECM_PID = _mDPlugTProg82.CA_System82[0].ECM;
+
+        for (int i = 0; i < count; ++i)
+        {
+          Log.Log.Info("#{0} CA:0x{1:X} ECM:0x{2:X} EMM:0x{3:X}  provider:0x{4:X}",
+                  i,
+                  _mDPlugTProg82.CA_System82[i].CA_Typ,
+                  _mDPlugTProg82.CA_System82[i].ECM,
+                  _mDPlugTProg82.CA_System82[i].EMM,
+                  _mDPlugTProg82.CA_System82[i].Provider_Id);
         }
       }
+      //ca types:
+      //0xb00 : conax
+      //0x100 : seca
+      //0x500 : Viaccess
+      //0x622 : irdeto
+      //0x1801: Nagravision
+      /* C CINEMA PREMIERE 11856000 V 27500 1:1072:8206 video:165 audio:101 pcr:165 pmt:1285 emm:0 ecm:6664
+       *      CA  ECM     EMM     ProviderId
+              500 1a08     0      008100
+              500 1a06     0      008300
+              100 067e     0      0085
+              100 067d     0      0084
+              100 067c     0      0080
+              ecm:6664 ServiceTyp: 1 Volt: 0 Typ: V AFC: 68 fec: 0 srate: 158572
 
+        
+        NED 1 12515000 H 22000 53:1105:4011 video:517 audio:88 pcr:8190 pmt:2111 emm:310 ecm:1383
+              622  567   136      0
+              100  643    B6      6a
+              100  661    B6      6C
+              d02    0  1389      0
+              ecm:567 ServiceTyp: 1 Volt: 0 Typ: H AFC: 68 fec: 0 srate: 153072
+                        0 1 2 3 4  5  6 7  8  9 10
+              emm len:F 9 D 1 0 E0 B6 2 E0 B7 0 6A E0 B9 0 6C       
+                100  b6  6a
+                100  b6  6c
+              
+                
+        PLAYBOYTV 10876000 V 22000 1:1060:30603 video:173 audio:132 pcr:173 pmt:1027 emm:193 ecm:1564
+              100   61c    c1      4101
+              1801  72E    c5         0
+              1881  0      91         0
+              1882  0      c6         0
+              ecm:567 ServiceTyp: 1 Volt: 0 Typ: H AFC: 68 fec: 0 srate: 153072
 
+       * 
+      */
       IntPtr lparam = Marshal.AllocHGlobal(Marshal.SizeOf(_mDPlugTProg82));
       Marshal.StructureToPtr(_mDPlugTProg82, lparam, true);
       try
       {
         if (_changeChannel != null)
         {
-          Log.Log.Info("Send channel change to MDAPI filter");
+          Log.Log.Info("Send channel change to MDAPI filter Ca_Id:0x{0:X} CA_Nr:{1:X} ECM_PID:{2:X}",
+               _mDPlugTProg82.CA_ID,
+               _mDPlugTProg82.CA_Nr,
+               _mDPlugTProg82.ECM_PID);
           _changeChannel.ChangeChannelTP82(lparam);
         }
       }

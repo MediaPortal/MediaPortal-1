@@ -27,6 +27,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     public int Number;
     public int Pid;
     public int CaId;
+    public int ProviderId;
   }
   public class CaPmtEs
   {
@@ -64,6 +65,10 @@ namespace TvLibrary.Implementations.DVB.Structures
       CaPmtEsList = new List<CaPmtEs>();
     }
 
+    /// <summary>
+    /// Returns the EMM's found in the CAT.
+    /// </summary>
+    /// <returns></returns>
     public List<ECMEMM> GetEMM()
     {
       List<ECMEMM> emms = new List<ECMEMM>();
@@ -71,38 +76,138 @@ namespace TvLibrary.Implementations.DVB.Structures
       for (int i = 0; i < DescriptorsCat.Count; ++i)
       {
         byte[] descriptor = DescriptorsCat[i];
-        int systemId = (descriptor[0] << 8) + descriptor[1];
-        int emmPid = ((descriptor[2] & 0x1f) << 8) + descriptor[3];
-        ECMEMM emm = new ECMEMM();
-        emm.Number = i;
-        emm.CaId = systemId;
-        emm.Pid = emmPid;
-        emms.Add(emm);
+        string tmp = "";
+        for (int x = 0; x < descriptor.Length; ++x)
+          tmp += String.Format("{0:X} ", descriptor[x]);
+        Log.Log.Info("emm len:{0:X} {1}", descriptor.Length, tmp);
+        Parse(descriptor, ref emms);
       }
       return emms;
     }
 
+    void Add(ref List<ECMEMM> list, ECMEMM newEcm)
+    {
+      for (int i = 0; i < list.Count; ++i)
+      {
+        if (list[i].ProviderId == newEcm.ProviderId &&
+            list[i].Pid == newEcm.Pid &&
+            list[i].CaId == newEcm.CaId) return;
+      }
+      list.Add(newEcm);
+    }
     /// <summary>
-    /// Gets the ECM pid.
+    /// Returns the ECM's found in the PMT.
     /// </summary>
-    /// <param name="index">The index.</param>
     /// <returns></returns>
+    void Parse(byte[] descriptor, ref List<ECMEMM> newEcms)
+    {
+      ECMEMM ecm = new ECMEMM();
+      int off = 0;
+      while (off < descriptor.Length)
+      {
+        byte tag = descriptor[off];
+        byte len = descriptor[off + 1];
+        if (tag == 0x9)
+        {
+          int offset;
+          if (ecm.Pid != 0)
+            Add(ref newEcms,ecm);
+          ecm = new ECMEMM();
+          int caId = ecm.CaId = ((descriptor[off + 2]) << 8) + descriptor[off + 3];
+          ecm.Pid = ((descriptor[off + 4] & 0x1f) << 8) + descriptor[off + 5];
+          if (ecm.CaId == 0x100 && len >= 17)
+          {
+            if (descriptor[off + 8] == 0xff)
+            {
+              //0  1 2 3  4  5 6  7  8 9 10
+              //9 11 1 0 E6 43 0 6A FF 0  0 0 0 0 0 2 14 21 8C 
+              //
+              //
+              //0  1  2 3  4  5  6  7  8 9 10
+              //9 11  1 0 E6  1C 41 1 FF FF FF FF FF FF FF FF FF 21 8C 
+              int count = (len - 2) / 15;
+              for (int i = 0; i < count; ++i)
+              {
+                offset = off + i * 15;
+                if (offset >= descriptor.Length) break;
+                ecm = new ECMEMM();
+                ecm.CaId = caId;
+                ecm.Pid = ((descriptor[offset + 4] & 0x1f) << 8) + descriptor[offset + 5];
+                ecm.ProviderId = ((descriptor[offset + 6]) << 8) + descriptor[offset + 7];
+                Add(ref newEcms, ecm);
+                ecm = new ECMEMM();
+              }
+            }
+          }
+
+          if (ecm.CaId == 0x100 && len >=8)
+          {
+            if (descriptor[off + 7] == 0xe0 && descriptor[8]!=0xff)
+            {
+              //0  1 2 3  4  5 6  7 8  9  10
+              //9 11 1 0 E0 C1 3 E0 92 41  1 E0 93 40 1 E0 C4 0 64 
+              //9  D 1 0 E0 B6 2 E0 B7  0 6A E0 B9 0  6C 
+              if (descriptor[off + 6] > 0 || descriptor[off + 6] <= 9)
+              {
+                ecm.ProviderId = ((descriptor[off + 9]) << 8) + descriptor[off + 10];
+              }
+            }
+          }
+          offset = off + 6;
+          if (offset + 2 < descriptor.Length)
+          {
+            while (true)
+            {
+              byte tagInd = descriptor[offset];
+              byte tagLen = len = descriptor[offset + 1];
+              if (tagLen + off < descriptor.Length)
+              {
+                if (tagInd == 0x14)
+                {
+                  ecm.ProviderId = (descriptor[offset + 2] << 16) + (descriptor[offset + 3] << 8) + descriptor[offset + 4];
+                }
+              }
+              offset += (tagLen + 2);
+              if (offset >= descriptor.Length) break;
+            }
+          }
+        }
+        off += (len + 2);
+      }
+      if (ecm.Pid > 0) Add(ref newEcms, ecm);
+    }
+
     public List<ECMEMM> GetECM()
     {
       List<ECMEMM> ecms = new List<ECMEMM>();
-      if (Descriptors == null) return ecms;
-      for (int i = 0; i < Descriptors.Count; ++i)
+      if (Descriptors != null)
       {
-        byte[] descriptor = Descriptors[i];
-        string tmp = "";
-        for (int x=0; x < descriptor.Length;++x)
-          tmp += String.Format("{0:X} ", descriptor[x]);
-        Log.Log.Info("ecm len:{0:X} {1}", descriptor.Length,tmp);
-        ECMEMM ecm = new ECMEMM();
-        ecm.Number = i;
-        ecm.CaId = ((descriptor[2]) << 8) + descriptor[3];
-        ecm.Pid = ((descriptor[4] & 0x1f) << 8) + descriptor[5];
-        ecms.Add(ecm);
+        for (int i = 0; i < Descriptors.Count; ++i)
+        {
+          byte[] descriptor = Descriptors[i];
+          string tmp = "";
+          for (int x = 0; x < descriptor.Length; ++x)
+            tmp += String.Format("{0:X} ", descriptor[x]);
+          Log.Log.Info("ecm len:{0:X} {1}", descriptor.Length, tmp);
+          Parse(descriptor, ref ecms);
+        }
+      }
+
+      if (CaPmtEsList != null)
+      {
+        foreach (CaPmtEs pmtEs in CaPmtEsList)
+        {
+          if (pmtEs.Descriptors == null) continue;
+          for (int i = 0; i < pmtEs.Descriptors.Count; ++i)
+          {
+            byte[] descriptor = pmtEs.Descriptors[i];
+            string tmp = "";
+            for (int x = 0; x < descriptor.Length; ++x)
+              tmp += String.Format("{0:X} ", descriptor[x]);
+            Log.Log.Info("ecm len:{0:X} {1}", descriptor.Length, tmp);
+            Parse(descriptor, ref ecms);
+          }
+        }
       }
       return ecms;
     }

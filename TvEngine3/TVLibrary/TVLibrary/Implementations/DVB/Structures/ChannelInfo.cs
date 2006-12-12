@@ -353,6 +353,11 @@ namespace TvLibrary.Implementations.DVB.Structures
           //string tmpString = DVB_CADescriptor(data);
           //if (pidText.IndexOf(tmpString, 0) == -1)
           // pidText += tmpString + ";";
+
+          string tmp = "";
+          for (int teller = 0; teller < x; ++teller)
+            tmp += String.Format("{0:x} ", buf[pointer + teller]);
+          Log.Log.Info("descr1 len:{0:X} {1}", x, tmp);
         }
         len2 -= x;
         pointer += x;
@@ -421,6 +426,13 @@ namespace TvLibrary.Implementations.DVB.Structures
             {
               int indicator = buf[pointer];
               x = buf[pointer + 1] + 2;
+              if (indicator == 9)
+              {
+                string tmp = "";
+                for (int teller = 0; teller < x; ++teller)
+                  tmp += String.Format("{0:x} ", buf[pointer + teller]);
+                Log.Log.Info("descr2 pid:{0:X} len:{1:X} {2}", pmtEs.ElementaryStreamPID, x, tmp);
+              }
               //Log.Log.Write("  descriptor2:{0:X}", indicator);
               if (x + pointer < buf.Length) // parse descriptor data
               {
@@ -619,12 +631,12 @@ namespace TvLibrary.Implementations.DVB.Structures
         //Log.Log.Info("tag:0x{0:X} len:{1:X}", descriptorTag, descriptorLen);
         if (descriptorTag == 0x9)
         {
-          byte[] data = new byte[descriptorLen];
-          for (int i = 0; i < descriptorLen; ++i)
-            data[i] = cat[pos + i + 2];
+          byte[] data = new byte[2 + descriptorLen];
+          for (int i = 0; i < 2 + descriptorLen; ++i)
+            data[i] = cat[pos + i];
           caPMT.DescriptorsCat.Add(data);
         }
-        pos += (descriptorLen+2);
+        pos += (descriptorLen + 2);
       }
     }
 
