@@ -67,7 +67,7 @@ namespace MediaPortal.TV.Recording
 
     #region variables
     // recorder state
-    static bool noPrePostWithinBlock;
+    static bool automaticbacktoback;
     static State _state = State.None;
     static DateTime _progressBarTimer = DateTime.Now;
     // vmr9 osd class 
@@ -149,7 +149,7 @@ namespace MediaPortal.TV.Recording
       RecorderProperties.Init();
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        noPrePostWithinBlock = xmlreader.GetValueAsBool("mytv", "noprepostwithinblock", false);
+        automaticbacktoback = xmlreader.GetValueAsBool("mytv", "automaticbacktoback", false);
         if (_commandProcessor != null) _commandProcessor.TVChannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
       }
 
@@ -305,9 +305,9 @@ namespace MediaPortal.TV.Recording
       {
         TVCaptureDevice dev = _commandProcessor.TVCards[i] as TVCaptureDevice;
 
-        Log.Info("NeedChannelSwitchForRecording {0} {1} {2}", dev.IsRecordingAt(PrePostRecord.Instance.PreRecordingWarningTime), dev.IsTimeShifting, dev.View);
+        Log.Info("NeedChannelSwitchForRecording rec1={0} ts={1} view={2} rec2={3}", dev.IsRecordingAt(PrePostRecord.Instance.PreRecordingWarningTime), dev.IsTimeShifting, dev.View, dev.IsRecording);
         //is the card free?
-        if (!dev.IsRecordingAt(PrePostRecord.Instance.PreRecordingWarningTime) && !dev.IsTimeShifting && !dev.View)
+        if (!dev.IsRecordingAt(PrePostRecord.Instance.PreRecordingWarningTime) && !(dev.IsTimeShifting && !dev.IsRecording) && !dev.View)
         {
           //yes and can it receive the tv channel as well?
           if (TVDatabase.CanCardViewTVChannel(rec.Channel, dev.ID) || _commandProcessor.TVCards.Count == 1)
@@ -1018,7 +1018,7 @@ namespace MediaPortal.TV.Recording
 
     static public void AddNoPrePost(ref TVRecording rec)
     {
-      if (!noPrePostWithinBlock)
+      if (!automaticbacktoback)
         return;
       List<TVRecording> recs = new List<TVRecording>();
       TVDatabase.GetRecordings(ref recs);
@@ -1045,7 +1045,7 @@ namespace MediaPortal.TV.Recording
 
     static public void RemoveNoPrePost(ref TVRecording rec)
     {
-      if (!noPrePostWithinBlock)
+      if (!automaticbacktoback)
         return;
       List<TVRecording> recs = new List<TVRecording>();
       TVDatabase.GetRecordings(ref recs);
