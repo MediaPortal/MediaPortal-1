@@ -5394,34 +5394,50 @@
 		<id>33007</id>
 		<value>Scrobble: Frakoblet</value>
 	</string>
+    <string>
+        <id>33008</id>
+        <value>Ingen spilleliste er aktiv</value>
+    </string>
+    <string>
+        <id>33009</id>
+        <value>for å legge til dette sporet!</value>
+    </string>
 	<string>
 		<id>33010</id>
 		<value>Automatisk fyll spilleliste med</value>
 	</string>
 	<string>
 		<id>33011</id>
-		<value>Lignende spor</value>
+		<value>lignende spor</value>
 	</string>
 	<string>
 		<id>33012</id>
-		<value>Spor dine naboer liker</value>
+		<value>spor dine naboer liker</value>
 	</string>
 	<string>
 		<id>33013</id>
-		<value>Velg spor etter tag</value>
+		<value>velg spor etter tag</value>
 	</string>
 	<string>
 		<id>33014</id>
-		<value>Spor spilt i det siste</value>
+		<value>spor spilt i det siste</value>
 	</string>
 	<string>
 		<id>33016</id>
-		<value>Velg spor som en av dine venner liker</value>
+		<value>velg spor som en av dine venner liker</value>
 	</string>
 	<string>
 		<id>33017</id>
-		<value>Blandede spor</value>
+		<value>blandede spor</value>
 	</string>
+    <string>
+        <id>33018</id>
+        <value>blandede uspilte spor</value>
+    </string>
+    <string>
+        <id>33019</id>
+        <value>blandede favorittspor</value>
+    </string>
 	<string>
 		<id>33030</id>
 		<value>De beste albumsporene</value>
@@ -5434,6 +5450,10 @@
 		<id>33040</id>
 		<value>Kopier nå spilles spam til utklippstavlen</value>
 	</string>
+    <string>
+        <id>33041</id>
+        <value>Legg dette albumet til spillelisten</value>
+    </string>
 	<string Prefix="Min ">
 		<id>34000</id>
 		<value>Last.fm</value>
