@@ -430,17 +430,10 @@ namespace MediaPortal.Player
       try
       {
         // Some Winamp dsps might raise an exception when closing
-        //foreach (int waDspPlugin in _waDspPlugins.Values)
-        //{
-        //  BassWa.BASS_WADSP_Stop(waDspPlugin);
-        //  BassWa.BASS_WADSP_FreeDSP(waDspPlugin);
-        //}
         BassWa.BASS_WADSP_Free();
       }
-      catch (Exception ex)
-      {
-        Log.Error(ex.Message);
-      }
+      catch (Exception)
+      { }
       Bass.BASS_Stop();
       Bass.BASS_Free();
 
@@ -461,6 +454,7 @@ namespace MediaPortal.Player
         Log.Info("BASS: Initializing BASS audio engine...");
         LoadSettings();
 
+        BassRegistration.BassRegistration.Register();
         Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_GVOL_STREAM, _StreamVolume);
         Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, _BufferingMS);
 
@@ -807,28 +801,10 @@ namespace MediaPortal.Player
         }
       }
 
-      // WinAmp Plugins
-      string WinAmpPluginDir = Settings.Instance.WinAmpPluginDirectory;
-      int waDspPlugin = 0;
-
-      // Init Winamp DSP only if we got a winamo plugin actiavtes
+      // Winamp Plugins can only be loaded on play to prevent Crashes
       if (Settings.Instance.WinAmpPlugins.Count > 0)
-        BassWa.BASS_WADSP_Init(GUIGraphicsContext.ActiveForm);
+        _dspActive = true;          
 
-      // Load the Plugin and store its handle for later reference
-      foreach (WinAmpPlugin plugins in Settings.Instance.WinAmpPlugins)
-      {
-        waDspPlugin = BassWa.BASS_WADSP_Load(plugins.PluginDll, 5, 5, 100, 100, null);
-        if (waDspPlugin > 0)
-        {
-          _dspActive = true;          
-          _waDspPlugins[plugins.PluginDll] = waDspPlugin;
-        }
-        else
-        {
-          Log.Debug("Couldn't load WinAmp Plugin {0}. Error code: {1}", plugins.PluginDll, Bass.BASS_ErrorGetCode());
-        }
-      }
       Log.Debug("BASS: Finished loading DSP plugins ...");
     }
 
@@ -1043,11 +1019,30 @@ namespace MediaPortal.Player
                 BassVst.BASS_VST_SetParamCopyParams(vstParm, vstHandle);
               }
 
-              // Winamp DSP Plugins
-              foreach (int waDspPlugin in _waDspPlugins.Values)
+              // Init Winamp DSP only if we got a winamp plugin actiavtes
+              int waDspPlugin = 0;
+              if (Settings.Instance.WinAmpPlugins.Count > 0 && !_waDspInitialised)
               {
-                BassWa.BASS_WADSP_Start(waDspPlugin, 0, 0);
-                BassWa.BASS_WADSP_ChannelSetDSP(waDspPlugin, stream, 1);
+                BassWa.BASS_WADSP_Init(GUIGraphicsContext.ActiveForm);
+                _waDspInitialised = true;
+                foreach (WinAmpPlugin plugins in Settings.Instance.WinAmpPlugins)
+                {
+                  waDspPlugin = BassWa.BASS_WADSP_Load(plugins.PluginDll, 5, 5, 100, 100, null);
+                  if (waDspPlugin > 0)
+                  {
+                    _waDspPlugins[plugins.PluginDll] = waDspPlugin;
+                    BassWa.BASS_WADSP_Start(waDspPlugin, 0, 0);
+                  }
+                  else
+                  {
+                    Log.Debug("Couldn't load WinAmp Plugin {0}. Error code: {1}", plugins.PluginDll, Enum.GetName(typeof(BASSErrorCode),Bass.BASS_ErrorGetCode()));
+                  }
+                }
+              }
+
+              foreach (int waPluginHandle in _waDspPlugins.Values)
+              {
+                BassWa.BASS_WADSP_ChannelSetDSP(waPluginHandle, stream, 1);
               }
             }
           }
@@ -1459,6 +1454,18 @@ namespace MediaPortal.Player
 
         else
           Bass.BASS_ChannelStop(stream);
+
+        // Free Winamp resources
+        try
+        {
+          // Some Winamp dsps might raise an exception when closing
+          foreach (int waDspPlugin in _waDspPlugins.Values)
+          {
+            BassWa.BASS_WADSP_ChannelRemoveDSP(waDspPlugin);
+          }
+        }
+        catch (Exception)
+        { }
 
         PlayState oldState = _State;
         _State = PlayState.Ended;

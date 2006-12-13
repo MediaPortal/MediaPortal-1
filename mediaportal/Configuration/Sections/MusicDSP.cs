@@ -108,8 +108,6 @@ namespace MediaPortal.Configuration.Sections
       // WinAmp Page
       toolTip.SetToolTip(listBoxFoundWAPlugins, "Lists all Winamp DSP plugins found in the Plugin directory.");
       toolTip.SetToolTip(listBoxSelectedWAPlugins, "Lists all enabled Winamp DSP plugins.\r\nDouble click to open the plugin editor.\r\n(If the plugin offers one)");
-      // Remove the Winamp page, until the errors are fixed
-      MusicDSPTabCtl.Controls.Remove(WinampTabPg);
     }
 
     /// <summary>
@@ -459,11 +457,12 @@ namespace MediaPortal.Configuration.Sections
         _dsps = BassWa.BASS_WADSP_FindPlugins(textBoxWAPluginDir.Text);
         listBoxFoundWAPlugins.Items.AddRange(_dsps);
         // If plugins are already selected, remove them from the found plugin list
-        foreach (WINAMP_DSP dsp in listBoxSelectedWAPlugins.Items)
+        foreach (WINAMP_DSP dspSelected in listBoxSelectedWAPlugins.Items)
         {
           for (int i = 0; i < listBoxFoundWAPlugins.Items.Count; i++)
           {
-            if (dsp.file == (string)listBoxFoundWAPlugins.Items[i])
+            WINAMP_DSP dspFound = (WINAMP_DSP)listBoxFoundWAPlugins.Items[i];
+            if (dspSelected.file == dspFound.file)
             {
               listBoxFoundWAPlugins.Items.RemoveAt(i);
               break;
@@ -721,7 +720,7 @@ namespace MediaPortal.Configuration.Sections
               _waDspPlugin = BassWa.BASS_WADSP_Load(plugins.PluginDll, 5, 5, 100, 100, null);
               if (_waDspPlugin > 0)
               {
-                listBoxSelectedWAPlugins.Items.Add(dsps[i]);
+                listBoxSelectedWAPlugins.Items.Add(dsp);
                 _waDspPlugins[plugins.PluginDll] = _waDspPlugin;
                 break;
               }
