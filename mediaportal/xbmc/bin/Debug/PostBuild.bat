@@ -145,6 +145,7 @@ copy ..\..\..\bass_fx.dll .
 copy ..\..\..\bass_vst.dll .
 copy ..\..\..\bass_wadsp.dll .
 copy ..\..\..\mpviz.dll .
+copy ..\..\..\BassRegistration.dll .
 rem End BASS Music Engine dependancies
 
 rem MyDreambox plugin dependencies
