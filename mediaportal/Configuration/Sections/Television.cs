@@ -60,7 +60,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox cbTurnOnTimeShift;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox5;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbTurnOnTv;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbBackToBack;
     //string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
     string[] aspectRatio = { "normal", "original", "stretch", "zoom", "zoom149", "letterbox", "panscan" };
 
@@ -138,7 +137,6 @@ namespace MediaPortal.Configuration.Sections
       this.byIndexCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.cbTurnOnTv = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cbBackToBack = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.groupBox4.SuspendLayout();
       this.groupBox3.SuspendLayout();
@@ -335,7 +333,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox3.Controls.Add(this.cbBackToBack);
       this.groupBox3.Controls.Add(this.byIndexCheckBox);
       this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox3.Location = new System.Drawing.Point(0, 336);
@@ -380,17 +377,6 @@ namespace MediaPortal.Configuration.Sections
       this.cbTurnOnTv.Text = "Auto turn TV on when entering My TV ";
       this.cbTurnOnTv.UseVisualStyleBackColor = true;
       // 
-      // cbBackToBack
-      // 
-      this.cbBackToBack.AutoSize = true;
-      this.cbBackToBack.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbBackToBack.Location = new System.Drawing.Point(224, 24);
-      this.cbBackToBack.Name = "cbBackToBack";
-      this.cbBackToBack.Size = new System.Drawing.Size(189, 17);
-      this.cbBackToBack.TabIndex = 1;
-      this.cbBackToBack.Text = "Automatic back to back recordings";
-      this.cbBackToBack.UseVisualStyleBackColor = true;
-      // 
       // Television
       // 
       this.Controls.Add(this.groupBox5);
@@ -418,7 +404,7 @@ namespace MediaPortal.Configuration.Sections
       {
         cbTurnOnTv.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
         cbTurnOnTimeShift.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontimeshifting", false);
-        cbBackToBack.Checked = xmlreader.GetValueAsBool("mytv", "automaticbacktoback", false);
+        
         textBoxTimeShiftBuffer.Text = xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30).ToString();
         byIndexCheckBox.Checked = xmlreader.GetValueAsBool("mytv", "byindex", true);
         int DeInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 0);
@@ -510,7 +496,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("mytv", "autoturnontv", cbTurnOnTv.Checked);
         xmlwriter.SetValueAsBool("mytv", "autoturnontimeshifting", cbTurnOnTimeShift.Checked);
         xmlwriter.SetValueAsBool("mytv", "byindex", byIndexCheckBox.Checked);
-        xmlwriter.SetValueAsBool("mytv", "automaticbacktoback", cbBackToBack.Checked);
+        
         try
         {
           int buffer = Int32.Parse(textBoxTimeShiftBuffer.Text);

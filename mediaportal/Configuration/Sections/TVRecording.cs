@@ -72,6 +72,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel labelQuota;
     private TrackBar trackBar1;
     private MediaPortal.UserInterface.Controls.MPLabel label15;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbBackToBack;
     private string[] formatString = { string.Empty, string.Empty };
 
     public TVRecording()
@@ -136,6 +137,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageSettings = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbBackToBack = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabPage2 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -163,7 +165,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cbAddRecordingsToMovie.AutoSize = true;
       this.cbAddRecordingsToMovie.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbAddRecordingsToMovie.Location = new System.Drawing.Point(16, 104);
+      this.cbAddRecordingsToMovie.Location = new System.Drawing.Point(19, 134);
       this.cbAddRecordingsToMovie.Name = "cbAddRecordingsToMovie";
       this.cbAddRecordingsToMovie.Size = new System.Drawing.Size(185, 17);
       this.cbAddRecordingsToMovie.TabIndex = 7;
@@ -174,6 +176,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.endTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.endTextBox.BorderColor = System.Drawing.Color.Empty;
       this.endTextBox.Location = new System.Drawing.Point(94, 44);
       this.endTextBox.MaxLength = 3;
       this.endTextBox.Name = "endTextBox";
@@ -186,6 +189,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.startTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.startTextBox.BorderColor = System.Drawing.Color.Empty;
       this.startTextBox.Location = new System.Drawing.Point(94, 20);
       this.startTextBox.MaxLength = 3;
       this.startTextBox.Name = "startTextBox";
@@ -236,7 +240,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cbDeleteWatchedShows.AutoSize = true;
       this.cbDeleteWatchedShows.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbDeleteWatchedShows.Location = new System.Drawing.Point(16, 80);
+      this.cbDeleteWatchedShows.Location = new System.Drawing.Point(19, 110);
       this.cbDeleteWatchedShows.Name = "cbDeleteWatchedShows";
       this.cbDeleteWatchedShows.Size = new System.Drawing.Size(240, 17);
       this.cbDeleteWatchedShows.TabIndex = 6;
@@ -323,6 +327,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxSample.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxSample.BackColor = System.Drawing.SystemColors.ControlLight;
+      this.textBoxSample.BorderColor = System.Drawing.Color.Empty;
       this.textBoxSample.Cursor = System.Windows.Forms.Cursors.Default;
       this.textBoxSample.Location = new System.Drawing.Point(80, 112);
       this.textBoxSample.Name = "textBoxSample";
@@ -341,6 +346,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxRecording
       // 
+      this.comboBoxRecording.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxRecording.FormattingEnabled = true;
       this.comboBoxRecording.Items.AddRange(new object[] {
             "Movies",
@@ -374,6 +380,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.textBoxFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxFormat.BorderColor = System.Drawing.Color.Empty;
       this.textBoxFormat.Location = new System.Drawing.Point(80, 84);
       this.textBoxFormat.Name = "textBoxFormat";
       this.textBoxFormat.Size = new System.Drawing.Size(336, 20);
@@ -414,6 +421,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox3
       // 
+      this.groupBox3.Controls.Add(this.cbBackToBack);
       this.groupBox3.Controls.Add(this.cbAddRecordingsToMovie);
       this.groupBox3.Controls.Add(this.label1);
       this.groupBox3.Controls.Add(this.endTextBox);
@@ -425,9 +433,20 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox3.Location = new System.Drawing.Point(16, 16);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(432, 136);
+      this.groupBox3.Size = new System.Drawing.Size(432, 163);
       this.groupBox3.TabIndex = 1;
       this.groupBox3.TabStop = false;
+      // 
+      // cbBackToBack
+      // 
+      this.cbBackToBack.AutoSize = true;
+      this.cbBackToBack.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbBackToBack.Location = new System.Drawing.Point(19, 74);
+      this.cbBackToBack.Name = "cbBackToBack";
+      this.cbBackToBack.Size = new System.Drawing.Size(380, 17);
+      this.cbBackToBack.TabIndex = 8;
+      this.cbBackToBack.Text = "Ignore pre/post offset for back-to-back recordings (no conflict for one tuner)";
+      this.cbBackToBack.UseVisualStyleBackColor = true;
       // 
       // tabPage2
       // 
@@ -462,9 +481,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.Controls.Add(this.label5);
       this.groupBox4.Controls.Add(this.comboDrives);
       this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox4.Location = new System.Drawing.Point(3, 14);
+      this.groupBox4.Location = new System.Drawing.Point(16, 16);
       this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new System.Drawing.Size(446, 334);
+      this.groupBox4.Size = new System.Drawing.Size(432, 334);
       this.groupBox4.TabIndex = 0;
       this.groupBox4.TabStop = false;
       // 
@@ -483,7 +502,7 @@ namespace MediaPortal.Configuration.Sections
       this.trackBar1.Location = new System.Drawing.Point(30, 162);
       this.trackBar1.Maximum = 100;
       this.trackBar1.Name = "trackBar1";
-      this.trackBar1.Size = new System.Drawing.Size(340, 45);
+      this.trackBar1.Size = new System.Drawing.Size(340, 40);
       this.trackBar1.TabIndex = 7;
       this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
       // 
@@ -543,6 +562,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboDrives
       // 
+      this.comboDrives.BorderColor = System.Drawing.Color.Empty;
       this.comboDrives.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboDrives.FormattingEnabled = true;
       this.comboDrives.Location = new System.Drawing.Point(78, 20);
@@ -675,6 +695,7 @@ namespace MediaPortal.Configuration.Sections
         cbAddRecordingsToMovie.Checked = xmlreader.GetValueAsBool("capture", "addrecordingstomoviedatabase", true);
         formatString[0] = xmlreader.GetValueAsString("capture", "moviesformat", string.Empty);
         formatString[1] = xmlreader.GetValueAsString("capture", "seriesformat", string.Empty);
+        cbBackToBack.Checked = xmlreader.GetValueAsBool("mytv", "automaticbacktoback", false);
       }
       comboBoxRecording.SelectedIndex = 0;
       textBoxSample.Text = ShowExample(formatString[comboBoxRecording.SelectedIndex], comboBoxRecording.SelectedIndex);
@@ -700,6 +721,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("capture", "prerecord", startTextBox.Text);
         xmlwriter.SetValue("capture", "postrecord", endTextBox.Text);
 
+        xmlwriter.SetValueAsBool("mytv", "automaticbacktoback", cbBackToBack.Checked);
         xmlwriter.SetValueAsBool("capture", "deletewatchedshows", cbDeleteWatchedShows.Checked);
         xmlwriter.SetValueAsBool("capture", "addrecordingstomoviedatabase", cbAddRecordingsToMovie.Checked);
 
