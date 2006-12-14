@@ -269,7 +269,7 @@ namespace MediaPortal.Player
         if (strAudioRenderer.Length > 0)
           _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, false);
         if (enableDvbSubtitles == true)
-          _subtitleFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal DVB subtitles transform");
+          _subtitleFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal DVBSub");
 
         // FlipGer: add custom filters to graph
         customFilters = new IBaseFilter[intFilters];
@@ -536,10 +536,10 @@ namespace MediaPortal.Player
           hr = demuxer.CreateOutputPin(GetTSMedia(), "Subtitle", out _pinSubtitle);
           if (hr == 0)
           {
-            Log.Info("TSStreamBufferPlayer9:_pinPcr OK");
+            Log.Info("TSStreamBufferPlayer9:_pinSubtitle OK");
 
             IPin pDemuxerSubtitle = DsFindPin.ByName(_mpegDemux, "Subtitle");
-            IPin pSubtitle = DsFindPin.ByName(_subtitleFilter, "Subtitle");
+            IPin pSubtitle = DsFindPin.ByName(_subtitleFilter, "In");
             hr = _graphBuilder.Connect(pDemuxerSubtitle, pSubtitle);
           }
           else
