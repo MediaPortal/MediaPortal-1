@@ -197,7 +197,7 @@ namespace MediaPortal.TV.Recording
                 {
                   //no, then check if a notification needs to be send
                   DateTime dtTime = DateTime.Now.AddMinutes(PrePostRecord.Instance.PreRecordingWarningTime);
-                  TVProgram prog2Min = chan.GetProgramAt(dtTime.AddMinutes(PrePostRecord.Instance.PreRecordingWarningTime));
+                  TVProgram prog2Min = chan.GetProgramAt(dtTime.AddMinutes(PrePostRecord.Instance.PreRecordingWarningTime + rec.PreRecord));
 
                   // if the recording should record the tv program
                   if (rec.IsRecordingProgramAtTime(dtTime, prog2Min, rec.PreRecord, rec.PostRecord))
