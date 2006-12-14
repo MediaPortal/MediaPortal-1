@@ -2586,6 +2586,7 @@ namespace TvLibrary.Implementations.DVB
         DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
         if (channel == null) return true;
         IntPtr pmtMem = Marshal.AllocCoTaskMem(4096);// max. size for pmt
+        IntPtr catMem = Marshal.AllocCoTaskMem(4096);// max. size for cat
         try
         {
           int pmtLength = _interfacePmtGrabber.GetPMTData(pmtMem);
@@ -2605,9 +2606,10 @@ namespace TvLibrary.Implementations.DVB
                 _channelInfo.network_pmt_PID = channel.PmtPid;
                 _channelInfo.pcr_pid = channel.PcrPid;
 
-                pmtLength = _interfaceCaGrabber.GetCaData(pmtMem);
-                Marshal.Copy(pmtMem, pmt, 0, pmtLength);
-                _channelInfo.DecodeCat(pmt, pmtLength);
+                int catLength = _interfaceCaGrabber.GetCaData(catMem);
+                byte[] cat = new byte[catLength];
+                Marshal.Copy(pmtMem, cat, 0, catLength);
+                _channelInfo.DecodeCat(cat, catLength);
 
 
                 Log.Log.WriteFile("dvb:SendPMT version:{0} len:{1} {2}", version, pmtLength, _channelInfo.caPMT.ProgramNumber);
@@ -2652,6 +2654,7 @@ namespace TvLibrary.Implementations.DVB
         finally
         {
           Marshal.FreeCoTaskMem(pmtMem);
+          Marshal.FreeCoTaskMem(catMem);
         }
       }
       return false;
