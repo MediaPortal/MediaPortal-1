@@ -29,6 +29,7 @@
 
 #include "dvbsubs\dvbsubdecoder.h"
 #include "SubdecoderObserver.h"
+#include "SubtitleObserver.h"
 #include "PidObserver.h"
 
 class CSubtitleInputPin;
@@ -37,6 +38,7 @@ class CPcrInputPin;
 class CPMTInputPin;
 
 class CDVBSubDecoder;
+class MSubtitleObserver; 
 
 typedef __int64 int64_t;
 
@@ -44,9 +46,12 @@ typedef __int64 int64_t;
 DEFINE_GUID(CLSID_DVBSub, 
 	0x591ab987, 0x9689, 0x4c07, 0x84, 0x6d, 0x0, 0x6, 0xd5, 0xdd, 0x2b, 0xfd);
 
-DECLARE_INTERFACE_( IStreamAnalyzer, IUnknown )
+DECLARE_INTERFACE_( IDVBSubtitle, IUnknown )
 {
-   STDMETHOD(SetSubtitlePID) (THIS_ ULONG pPID ) PURE;
+  STDMETHOD(GetSubtitle) ( int place, CSubtitle *pSubtitle ) PURE;
+  STDMETHOD(SetCallback) ( MSubtitleObserver *pSubtitleObserver ) PURE;
+  STDMETHOD(GetSubtitleCount) ( int count ) PURE;
+  STDMETHOD(DiscardOldestSubtitle) () PURE;
 };
 
 class CDVBSub : public CBaseFilter, public MSubdecoderObserver, MPidObserver
@@ -70,7 +75,10 @@ public:
 	void Reset();
 
 	// Interface
-	STDMETHOD(SetSubtitlePID)( THIS_ ULONG pPID );
+	STDMETHOD (GetSubtitle)( int place, CSubtitle *pSubtitle );
+  STDMETHOD (SetCallback)( MSubtitleObserver *pSubtitle );
+  STDMETHOD (GetSubtitleCount)( int count );
+  STDMETHOD (DiscardOldestSubtitle)();
 
 	// From MSubdecoderObserver
 	void Notify();
@@ -94,6 +102,8 @@ private:
   unsigned char*      m_curSubtitleData;//[720*576*3];
   ULONGLONG           m_firstPTS;
   CSubtitle*          m_pSubtitle;
+
+  MSubtitleObserver*  m_pSubtitleObserver;
 
   int m_VideoPid;
 };

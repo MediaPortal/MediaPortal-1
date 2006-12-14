@@ -855,6 +855,11 @@ CSubtitle* CDVBSubDecoder::GetSubtitle( unsigned int place )
 	}
 }
 
+int CDVBSubDecoder::GetSubtitleCount()
+{
+  return m_RenderedSubtitles.size();
+}
+
 
 CSubtitle* CDVBSubDecoder::GetLatestSubtitle()
 {

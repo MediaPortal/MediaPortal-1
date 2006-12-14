@@ -77,6 +77,7 @@ public:
 
 	CSubtitle* GetSubtitle( unsigned int place );
 	CSubtitle* GetLatestSubtitle();
+  int GetSubtitleCount();
 	void ReleaseOldestSubtitle();
 
 	void Reset();
