@@ -1426,8 +1426,11 @@ namespace TvLibrary.Implementations.DVB
       {
         _interfacePmtGrabber.SetCallBack(this);
         _interfacePmtGrabber.SetPmtPid(pmtPid);
-        _interfaceCaGrabber.SetCallBack(this);
-        _interfaceCaGrabber.Reset();
+        if (_mdapiFilter != null)
+        {
+          _interfaceCaGrabber.SetCallBack(this);
+          _interfaceCaGrabber.Reset();
+        }
       }
     }
 
