@@ -2606,11 +2606,16 @@ namespace TvLibrary.Implementations.DVB
                 _channelInfo.network_pmt_PID = channel.PmtPid;
                 _channelInfo.pcr_pid = channel.PcrPid;
 
-                int catLength = _interfaceCaGrabber.GetCaData(catMem);
-                byte[] cat = new byte[catLength];
-                Marshal.Copy(pmtMem, cat, 0, catLength);
-                _channelInfo.DecodeCat(cat, catLength);
-
+                if (_mdapiFilter != null)
+                {
+                  int catLength = _interfaceCaGrabber.GetCaData(catMem);
+                  if (catLength > 0)
+                  {
+                    byte[] cat = new byte[catLength];
+                    Marshal.Copy(catMem, cat, 0, catLength);
+                    _channelInfo.DecodeCat(cat, catLength);
+                  }
+                }
 
                 Log.Log.WriteFile("dvb:SendPMT version:{0} len:{1} {2}", version, pmtLength, _channelInfo.caPMT.ProgramNumber);
                 if (_conditionalAccess != null)
