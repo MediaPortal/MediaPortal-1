@@ -661,6 +661,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
+      BassRegistration.BassRegistration.Register();
       // BASS DSP/FX
       foreach (BassEffect basseffect in Settings.Instance.BassEffects)
       {

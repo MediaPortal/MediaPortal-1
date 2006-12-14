@@ -165,6 +165,10 @@
       <HintPath>.\AxInterop.X10.dll</HintPath>
     </Reference>
     <Reference Include="Bass.Net, Version=2.3.0.9, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL" />
+    <Reference Include="BassRegistration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\BassRegistration.dll</HintPath>
+    </Reference>
     <Reference Include="Interop.TunerLib">
       <Name>Interop.TunerLib</Name>
       <HintPath>..\Interop.TunerLib.dll</HintPath>
