@@ -367,6 +367,10 @@ void CPatParser::OnNewSection(CSection& sections)
 	  int offset = (8 +(i * 4));
     int serviceId=((section[start+offset] /*& 0x1F*/)<<8) + section[start+offset+1];
 	  int pmtPid = ((section[start+offset+2] & 0x1F)<<8) + section[start+offset+3];
+		
+		//if (serviceId==0) pid = network pid
+	  //else pid = program map pid
+
 		//LogDebug("sid:%x pmt:%x", serviceId,pmtPid);
 	  if (pmtPid < 0x10 || pmtPid >=0x1fff) 
 	  {
