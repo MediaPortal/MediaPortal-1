@@ -1,16 +1,10 @@
 ==========
 BASS License Info
------------------
-Copyright, Disclaimer, and all that other jazz ==============================================
-The BASS library is free for non-commercial use. 
-If you are a non-commercial entity and are not charging for your software, and the software has no other commercial purpose (eg.
-advertising/promotion),
-then you can use BASS in it for free (a mention in the credits would be nice though!). 
-If you wish to use BASS in shareware or commercial products, then see the next section.
 
-This software is provided "as is", without warranty of ANY KIND, either expressed or implied, including but not limited to the implied warranties of merchantability and/or fitness for a particular purpose. The author shall NOT be held liable for ANY damage to you, your computer, or to anyone or anything else, that may result from its use, or misuse. Basically, you use it at YOUR OWN RISK.
+Copyright, disclaimer, and all that other jazz ==============================================
+The BASS library is free for non-commercial use. If you are a non- commercial entity and are not charging for your software, and the software has no other commercial purpose (eg. advertising/promotion), then you can use BASS in it for free. If you wish to use BASS in commercial products, then please see the next section.
 
-Reselling/sublicensing is not permitted.
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, BASS IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE. THE AUTHORS SHALL NOT BE HELD LIABLE FOR ANY DAMAGE THAT MAY RESULT FROM THE USE OF BASS. BASICALLY, YOU USE BASS ENTIRELY AT YOUR OWN RISK.
 
 Usage of BASS indicates that you agree to the above conditions.
 
@@ -19,25 +13,43 @@ You may freely distribute the BASS package as long as NO FEE is charged and all 
 All trademarks and other registered names contained in the BASS package are the property of their respective owners.
 
 
-BASS in shareware and commercial software?
-==========================================
-BASS is available for use in your shareware and commercial software.
-The license types available are as follows:
+BASS in commercial software?
+============================
+BASS is available for use in your commercial software. The license types available are as follows:
 
-SHAREWARE: Allows the usage of BASS in an unlimited number of your shareware products.
+SHAREWARE: Allows the usage of BASS in an unlimited number of your shareware products, which must sell for no more than 30 Euros ($40) each. If you're an individual making and selling your own software (and the price is within the limit), this is the license for you.
 
 SINGLE COMMERCIAL: Allows the usage of BASS in a single commercial product.
 
 UNLIMITED COMMERCIAL: Allows the usage of BASS in an unlimited number of your commercial products. This license is on a per site basis. So if your company has two sites and both use BASS, then two licenses are required.
 
-In all cases there are no royalties to pay, and you can use all future BASS updates without further cost. One license covers one person or entity and is not transferable.
+Please note that the "unlimited" licenses only cover your own software.
+not the publishing of other's software. If you publish other's software, its developers (or the software itself) will need to be licensed to use BASS.
 
-These licenses do not allow reselling of BASS, ie. as part of another development library. If none of these licenses match your requirements, or if you have any questions about using BASS in shareware/commercial software, then please get in touch (email: bass@un4seen.com).
+These licenses are on a per-platform basis, with reductions available when licensing for both platforms. In all cases there are no royalties to pay, and you can use future BASS updates without further cost. One license covers one person or entity and is not transferable.
 
-Visit the BASS website for the latest pricing:
+These licenses do not allow reselling/sublicensing of BASS. For example, if a licensed product is a development system, the users of said product are not licensed to use BASS in their productions - they will need their own licenses.
 
-        http://www.un4seen.com/
+If the standard licenses do not meet your requirements, or if you have any questions, please get in touch (email: bass@un4seen.com).
 
+Visit the BASS website for the latest pricing and updates:
+
+	www.un4seen.com
+
+
+MP3
+===
+MP3 technology is patented, and Thomson license the use of their and Fraunhofer's patents. The inclusion of an MP3 decoder (eg. BASS) in a commercial product requires an MP3 patent license. Contact Thomson for
+details:
+
+	www.mp3licensing.com
+
+Alternatively, the "MP3-FREE" BASS version doesn't include its own MP3 decoder but uses the already licensed Windows/OSX MP3 decoders instead.
+
+NOTE: When using the Windows/OSX MP3 decoders, BASS still does the file
+      handling so all the usual features are still supported, including
+      streaming, tag reading, pre-scanning, gapless playback, etc...
+-----------------
 ==========
 
 
