@@ -410,7 +410,7 @@ namespace TvLibrary.Implementations.DVB
           if (info.isVideo)
           {
             addPid = true;
-            if (info.stream_type == 0x10 || info.stream_type == 0x1b)
+            if (info.IsMpeg4Video || info.IsH264Video)
             {
               programStream = false;
             }
@@ -471,7 +471,7 @@ namespace TvLibrary.Implementations.DVB
         {
           if (info.isVideo)
           {
-            if (info.stream_type == 0x10 || info.stream_type == 0x1b) return true;
+            if (info.IsH264Video || info.IsMpeg4Video) return true;
           }
         }
         return false;
@@ -1489,7 +1489,10 @@ namespace TvLibrary.Implementations.DVB
                 _currentAudioStream = new DVBAudioStream();
                 _currentAudioStream.Pid = pidInfo.pid;
                 _currentAudioStream.Language = pidInfo.language;
-                _currentAudioStream.StreamType = AudioStreamType.Mpeg2;
+                if (pidInfo.IsMpeg1Audio)
+                  _currentAudioStream.StreamType = AudioStreamType.Mpeg1;
+                else if (pidInfo.IsMpeg3Audio)
+                  _currentAudioStream.StreamType = AudioStreamType.Mpeg3;
                 if (pidInfo.isAC3Audio)
                   _currentAudioStream.StreamType = AudioStreamType.AC3;
               }
@@ -2398,7 +2401,10 @@ namespace TvLibrary.Implementations.DVB
             DVBAudioStream stream = new DVBAudioStream();
             stream.Language = info.language;
             stream.Pid = info.pid;
-            stream.StreamType = AudioStreamType.Mpeg2;
+            if (info.IsMpeg1Audio)
+              stream.StreamType = AudioStreamType.Mpeg1;
+            else
+              stream.StreamType = AudioStreamType.Mpeg3;
             streams.Add(stream);
           }
         }
@@ -2424,17 +2430,6 @@ namespace TvLibrary.Implementations.DVB
         {
           ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_filterTsAnalyzer;
           writer.SetAudioPid((short)audioStream.Pid);
-          /*
-                    ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
-                    if (_currentAudioStream != null)
-                    {
-                      timeshift.RemoveStream((short)_currentAudioStream.Pid);
-                    }
-                    if (audioStream.StreamType == AudioStreamType.AC3)
-                      timeshift.AddStream((short)audioStream.Pid, 0x81,audioStream.Language);
-                    else
-                      timeshift.AddStream((short)audioStream.Pid, 3, audioStream.Language);
-          */
         }
         _currentAudioStream = audioStream;
         _pmtVersion = -1;
@@ -2670,7 +2665,7 @@ namespace TvLibrary.Implementations.DVB
     #region MDAPI
     private void SetChannel2MDPlug()
     {
-      
+
       int Index;
       int end_Index = 0;
       //is mdapi installed?
@@ -2781,7 +2776,7 @@ namespace TvLibrary.Implementations.DVB
 
 
         _mDPlugTProg82.CA_Nr = (ushort)ecmList.Count;
-        int count=0;
+        int count = 0;
         for (int x = 0; x < ecmList.Count; ++x)
         {
           _mDPlugTProg82.CA_System82[x].CA_Typ = (ushort)ecmList[x].CaId;

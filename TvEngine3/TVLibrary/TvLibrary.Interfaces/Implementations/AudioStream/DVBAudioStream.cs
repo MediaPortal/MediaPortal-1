@@ -45,7 +45,7 @@ namespace TvLibrary.Implementations.DVB
     public DVBAudioStream()
     {
       _language = "";
-      _streamType = AudioStreamType.Mpeg2;
+      _streamType = AudioStreamType.Mpeg3;
       _pid = 0;
     }
     #endregion

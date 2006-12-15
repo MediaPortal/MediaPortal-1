@@ -369,52 +369,52 @@ namespace TvLibrary.Implementations.DVB.Structures
         caPMT.ProgramInfoLength += 1;
       }
       //byte[] b = new byte[6];
-      PidInfo pmt;
+      PidInfo pidInfo;
       while (len1 > 4)
       {
         if (pointer + 5 > section_length) break;
-        pmt = new PidInfo();
+        pidInfo = new PidInfo();
         //System.Array.Copy(buf, pointer, b, 0, 5);
         try
         {
-          pmt.stream_type = buf[pointer];
-          pmt.reserved_1 = (buf[pointer + 1] >> 5) & 7;
-          pmt.pid = ((buf[pointer + 1] & 0x1F) << 8) + buf[pointer + 2];
-          pmt.reserved_2 = (buf[pointer + 3] >> 4) & 0xF;
-          pmt.ES_info_length = ((buf[pointer + 3] & 0xF) << 8) + buf[pointer + 4];
+          pidInfo.stream_type = buf[pointer];
+          pidInfo.reserved_1 = (buf[pointer + 1] >> 5) & 7;
+          pidInfo.pid = ((buf[pointer + 1] & 0x1F) << 8) + buf[pointer + 2];
+          pidInfo.reserved_2 = (buf[pointer + 3] >> 4) & 0xF;
+          pidInfo.ES_info_length = ((buf[pointer + 3] & 0xF) << 8) + buf[pointer + 4];
         }
         catch
         {
         }
 
-        switch (pmt.stream_type)
+        switch (pidInfo.stream_type)
         {
           case 0x1b://H.264
-            pmt.isVideo = true;
+            pidInfo.isVideo = true;
             break;
-          case 0x10://MPEG4
-            pmt.isVideo = true;
+          case 0x10://MPEG4 ISO/IEC 14496-2
+            pidInfo.isVideo = true;
             break;
-          case 0x1://MPEG-2 VIDEO
-            pmt.isVideo = true;
+          case 0x1://MPEG-1 VIDEO ISO/IEC 11172 
+            pidInfo.isVideo = true;
             break;
-          case 0x2://MPEG-2 VIDEO
-            pmt.isVideo = true;
+          case 0x2://MPEG-2 VIDEO ITU-T Rec. H.262 | ISO/IEC 13818-2 Video or ISO/IEC 11172-2 constrained parameter video stream
+            pidInfo.isVideo = true;
             break;
-          case 0x3://MPEG-2 AUDIO
-            pmt.isAudio = true;
+          case 0x3://MPEG-1 AUDIO ISO/IEC 11172 
+            pidInfo.isAudio = true;
             break;
-          case 0x4://MPEG-2 AUDIO
-            pmt.isAudio = true;
+          case 0x4://MPEG-3 AUDIO ISO/IEC 13818-3 
+            pidInfo.isAudio = true;
             break;
         }
         pointer += 5;
         len1 -= 5;
-        len2 = pmt.ES_info_length;
+        len2 = pidInfo.ES_info_length;
 
         CaPmtEs pmtEs = new CaPmtEs();
-        pmtEs.StreamType = pmt.stream_type;
-        pmtEs.ElementaryStreamPID = pmt.pid;
+        pmtEs.StreamType = pidInfo.stream_type;
+        pmtEs.ElementaryStreamPID = pidInfo.pid;
         pmtEs.CommandId = CommandIdType.Descrambling;
 
         if (len1 > 0)
@@ -449,38 +449,38 @@ namespace TvLibrary.Implementations.DVB.Structures
                     pmtEs.ElementaryStreamInfoLength += data.Length;
                     break;
                   case 0x0A:
-                    pmt.language = DVB_GetMPEGISO639Lang(data);
+                    pidInfo.language = DVB_GetMPEGISO639Lang(data);
                     break;
                   case 0x6A:
-                    pmt.isAudio = false;
-                    pmt.isVideo = false;
-                    pmt.isTeletext = false;
-                    pmt.isDVBSubtitle = true;
-                    pmt.isAC3Audio = true;
-                    pmt.stream_type = 0x81;
+                    pidInfo.isAudio = false;
+                    pidInfo.isVideo = false;
+                    pidInfo.isTeletext = false;
+                    pidInfo.isDVBSubtitle = true;
+                    pidInfo.isAC3Audio = true;
+                    pidInfo.stream_type = 0x81;
                     break;
                   case 0x56:
-                    pmt.isAC3Audio = false;
-                    pmt.isAudio = false;
-                    pmt.isVideo = false;
-                    pmt.isTeletext = true;
-                    pmt.teletextLANG = DVB_GetTeletextDescriptor(data);
+                    pidInfo.isAC3Audio = false;
+                    pidInfo.isAudio = false;
+                    pidInfo.isVideo = false;
+                    pidInfo.isTeletext = true;
+                    pidInfo.teletextLANG = DVB_GetTeletextDescriptor(data);
                     break;
                   //case 0xc2:
                   case 0x59:
-                    if (pmt.stream_type == 0x05 || pmt.stream_type == 0x06)
+                    if (pidInfo.stream_type == 0x05 || pidInfo.stream_type == 0x06)
                     {
-                      pmt.isAC3Audio = false;
-                      pmt.isAudio = false;
-                      pmt.isVideo = false;
-                      pmt.isTeletext = false;
-                      pmt.isDVBSubtitle = true;
-                      pmt.stream_type = 0x6;
-                      pmt.language = DVB_SubtitleDescriptior(data);
+                      pidInfo.isAC3Audio = false;
+                      pidInfo.isAudio = false;
+                      pidInfo.isVideo = false;
+                      pidInfo.isTeletext = false;
+                      pidInfo.isDVBSubtitle = true;
+                      pidInfo.stream_type = 0x6;
+                      pidInfo.language = DVB_SubtitleDescriptior(data);
                     }
                     break;
                   default:
-                    pmt.language = "";
+                    pidInfo.language = "";
                     break;
                 }
               }
@@ -494,7 +494,7 @@ namespace TvLibrary.Implementations.DVB.Structures
             pointer += x;
           }
         }
-        if (pmt.isVideo || pmt.isAC3Audio || pmt.isAudio)
+        if (pidInfo.isVideo || pidInfo.isAC3Audio || pidInfo.isAudio)
         {
           if (pmtEs.ElementaryStreamInfoLength > 0)
           {
@@ -503,7 +503,7 @@ namespace TvLibrary.Implementations.DVB.Structures
           }
           caPMT.CaPmtEsList.Add(pmtEs);
         }
-        pids.Add(pmt);
+        pids.Add(pidInfo);
       }
       //pat.pidCache = pidText;
       //caPMT.Dump();

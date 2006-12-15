@@ -44,7 +44,7 @@ namespace TvLibrary.Implementations.DVB
     public AnalogAudioStream()
     {
       _language = "";
-      _streamType = AudioStreamType.Mpeg2;
+      _streamType = AudioStreamType.Mpeg3;
       _audioMode = DirectShowLib.TVAudioMode.Stereo;
     }
     #endregion

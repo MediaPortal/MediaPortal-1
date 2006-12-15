@@ -34,9 +34,9 @@ namespace TvLibrary.Interfaces
     /// </summary>
     Mpeg1,
     /// <summary>
-    /// mpeg 2 audio
+    /// mpeg 3 audio
     /// </summary>
-    Mpeg2,
+    Mpeg3,
     /// <summary>
     /// ac3 audio
     /// </summary>

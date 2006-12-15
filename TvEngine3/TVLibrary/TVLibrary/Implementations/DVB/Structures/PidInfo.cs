@@ -123,6 +123,48 @@ namespace TvLibrary.Implementations.DVB.Structures
       isDVBSubtitle = true;
       stream_type = 5;
     }
+    public bool IsMpeg1Audio
+    {
+      get
+      {
+        return (isAudio && stream_type == 3);
+      }
+    }
+    public bool IsMpeg3Audio
+    {
+      get
+      {
+        return (isAudio && stream_type == 4);
+      }
+    }
+    public bool IsMpeg1Video
+    {
+      get
+      {
+        return (isVideo && stream_type == 1);
+      }
+    }
+    public bool IsMpeg2Video
+    {
+      get
+      {
+        return (isVideo && stream_type == 2);
+      }
+    }
+    public bool IsMpeg4Video
+    {
+      get
+      {
+        return (isVideo && stream_type == 0x10);
+      }
+    }
+    public bool IsH264Video
+    {
+      get
+      {
+        return (isVideo && stream_type == 0x1b);
+      }
+    }
     /// <summary>
     /// Returns the fully qualified type name of this instance.
     /// </summary>
@@ -131,9 +173,13 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// </returns>
     public override string ToString()
     {
-      if (isVideo) return String.Format("pid:{0:X} video type:{1:X}", pid, stream_type);
-      if (isAC3Audio) return String.Format("pid:{0:X} ac3 lang:{1} type:{2:X}", pid, language, stream_type);
-      if (isAudio) return String.Format("pid:{0:X} audio lang:{1} type:{2:X}", pid, language, stream_type);
+      if (IsH264Video) return String.Format("pid:{0:X} video type:H.264", pid);
+      if (IsMpeg4Video) return String.Format("pid:{0:X} video type:MPEG-4", pid);
+      if (IsMpeg2Video) return String.Format("pid:{0:X} video type:MPEG-2", pid);
+      if (IsMpeg1Video) return String.Format("pid:{0:X} video type:MPEG-1", pid);
+      if (isAC3Audio) return String.Format("pid:{0:X} audio lang:{1} type:AC3", pid, language);
+      if (IsMpeg3Audio) return String.Format("pid:{0:X} audio lang:{1} type:MPEG-3", pid, language);
+      if (IsMpeg1Audio) return String.Format("pid:{0:X} audio lang:{1} type:MPEG-2", pid, language);
       if (isTeletext) return String.Format("pid:{0:X} teletext type:{1:X}", pid, stream_type);
       if (isDVBSubtitle) return String.Format("pid:{0:X} subtitle type:{1:X}", pid, stream_type);
       return string.Format("pid:{0:X} type:{1:X}", pid, stream_type);

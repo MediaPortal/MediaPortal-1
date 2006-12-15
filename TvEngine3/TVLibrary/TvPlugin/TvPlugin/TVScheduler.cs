@@ -487,7 +487,6 @@ namespace TvPlugin
           VirtualCard card;
           if (RemoteControl.Instance.IsRecordingSchedule(rec.IdSchedule, out card))
           {
-            Log.Info("recording:{0}, {1} ", rec.IdSchedule, card.Name);
             if (rec.ScheduleType != (int)ScheduleRecordingType.Once)
               item.PinImage = Thumbs.TvRecordingSeriesIcon;
             else
@@ -495,7 +494,6 @@ namespace TvPlugin
           }
           else
           {
-            Log.Info("not recording:{0}", rec.IdSchedule);
             if (rec.ReferringConflicts().Count > 0)
               item.PinImage = Thumbs.TvConflictRecordingIcon;
 
@@ -815,7 +813,6 @@ namespace TvPlugin
             else
             {
               RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
-              Log.Info("insert canceled schedule id:{0} starttime:{1}", rec.IdSchedule, rec.StartTime);
               CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule, rec.StartTime);
               schedule.Persist();
               RemoteControl.Instance.OnNewSchedule();
