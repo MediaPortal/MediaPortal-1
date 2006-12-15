@@ -179,7 +179,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonAddFile;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonEnqueue;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPComboBox bassDeviceComboBox;
+    private MediaPortal.UserInterface.Controls.MPComboBox soundDeviceComboBox;
     private MediaPortal.UserInterface.Controls.MPComboBox autoPlayComboBox;
 
     #endregion
@@ -231,27 +231,28 @@ namespace MediaPortal.Configuration.Sections
         showID3CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "showid3", false);
         enableVisualisation.Checked = xmlreader.GetValueAsBool("musicfiles", "doVisualisation", true);
 
-        // disable the Sound Device selection box, when the player is not Bass
-        if (audioPlayerComboBox.SelectedIndex == 1)
-          bassDeviceComboBox.Enabled = false;
-
         // Call Bass Registration, since BASS is used here fo the first time
         BassRegistration.BassRegistration.Register();
         // Get all available devices and add them to the combo box
         string[] soundDevices = Bass.BASS_GetDeviceDescriptions();
 
-        
-        bassDeviceComboBox.Items.Add("Default Sound Device");
+        // For Directshow player, we need to have the exact wording here
+        if (audioPlayerComboBox.SelectedIndex == 1)
+          soundDeviceComboBox.Items.Add("Default DirectSound Device");
+        else
+          soundDeviceComboBox.Items.Add("Default Sound Device");
+
         // Fill the combo box, starting at 1 to skip the "No Sound" device
         for (int i = 1; i < soundDevices.Length; i++)
-          bassDeviceComboBox.Items.Add(soundDevices[i]);
+          soundDeviceComboBox.Items.Add(soundDevices[i]);
 
-        int soundDevice = xmlreader.GetValueAsInt("audioplayer", "sounddevice", -1);
+        string soundDevice = xmlreader.GetValueAsString("audioplayer", "sounddevice", "None");
 
-        if (soundDevice == -1)
-          bassDeviceComboBox.SelectedIndex = 0;
+        // On first usage, we don't have any sound device
+        if (soundDevice == "None")
+          soundDeviceComboBox.SelectedIndex = 0;
         else
-          bassDeviceComboBox.SelectedIndex = soundDevice;
+          soundDeviceComboBox.SelectedItem = soundDevice;
 
         int crossFadeMS = xmlreader.GetValueAsInt("audioplayer", "crossfade", 4000);
 
@@ -422,14 +423,9 @@ namespace MediaPortal.Configuration.Sections
       {
         // Player Settings
         xmlwriter.SetValue("audioplayer", "player", audioPlayerComboBox.Text);
+        xmlwriter.SetValue("audioplayer", "sounddevice", soundDeviceComboBox.Text);
         xmlwriter.SetValueAsBool("musicfiles", "showid3", showID3CheckBox.Checked);
         xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", enableVisualisation.Checked);
-
-        // Sound device
-        if (bassDeviceComboBox.SelectedIndex == 0)
-          xmlwriter.SetValue("audioplayer", "sounddevice", -1);
-        else
-          xmlwriter.SetValue("audioplayer", "sounddevice", bassDeviceComboBox.SelectedIndex);
 
         xmlwriter.SetValue("audioplayer", "crossfade", hScrollBarCrossFade.Value);
         xmlwriter.SetValue("audioplayer", "buffering", hScrollBarBuffering.Value);
@@ -611,7 +607,7 @@ namespace MediaPortal.Configuration.Sections
       this.CrossFadingLbl = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.bassDeviceComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.soundDeviceComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.enableVisualisation = new System.Windows.Forms.CheckBox();
       this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.showID3CheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -844,7 +840,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.mpLabel2);
-      this.mpGroupBox1.Controls.Add(this.bassDeviceComboBox);
+      this.mpGroupBox1.Controls.Add(this.soundDeviceComboBox);
       this.mpGroupBox1.Controls.Add(this.enableVisualisation);
       this.mpGroupBox1.Controls.Add(this.label2);
       this.mpGroupBox1.Controls.Add(this.showID3CheckBox);
@@ -866,16 +862,16 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel2.TabIndex = 4;
       this.mpLabel2.Text = "Sound Device:";
       // 
-      // bassDeviceComboBox
+      // soundDeviceComboBox
       // 
-      this.bassDeviceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.soundDeviceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.bassDeviceComboBox.BorderColor = System.Drawing.Color.Empty;
-      this.bassDeviceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.bassDeviceComboBox.Location = new System.Drawing.Point(87, 64);
-      this.bassDeviceComboBox.Name = "bassDeviceComboBox";
-      this.bassDeviceComboBox.Size = new System.Drawing.Size(289, 21);
-      this.bassDeviceComboBox.TabIndex = 5;
+      this.soundDeviceComboBox.BorderColor = System.Drawing.Color.Empty;
+      this.soundDeviceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.soundDeviceComboBox.Location = new System.Drawing.Point(87, 64);
+      this.soundDeviceComboBox.Name = "soundDeviceComboBox";
+      this.soundDeviceComboBox.Size = new System.Drawing.Size(289, 21);
+      this.soundDeviceComboBox.TabIndex = 5;
       // 
       // enableVisualisation
       // 
@@ -1503,7 +1499,14 @@ namespace MediaPortal.Configuration.Sections
       bool _useBassEngine = audioPlayerComboBox.SelectedIndex == 0;
       PlaybackSettingsGrpBox.Enabled = _useBassEngine;
       groupBoxVizOptions.Enabled = _useBassEngine;
-      bassDeviceComboBox.Enabled = _useBassEngine;
+      // Change the Text of Item 0 in the Sound device box
+      if (soundDeviceComboBox.Items.Count > 0)
+      {
+        if (_useBassEngine)
+          soundDeviceComboBox.Items[0] = "Default Sound Device";
+        else
+          soundDeviceComboBox.Items[0] = "Default DirectSound Device";
+      }
     }
 
     private void hScrollBarCrossFade_ValueChanged(object sender, EventArgs e)
