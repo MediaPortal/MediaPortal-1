@@ -150,6 +150,7 @@ namespace MediaPortal.Player
     private VisualizationInfo VizPluginInfo = null;
     private int VizFPS = 20;
 
+    private int _SoundDevice = -1;
     private int _CrossFadeIntervalMS = 4000;
     private int _BufferingMS = 5000;
     private bool _SoftStop = true;
@@ -458,7 +459,26 @@ namespace MediaPortal.Player
         Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_GVOL_STREAM, _StreamVolume);
         Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, _BufferingMS);
 
-        if (Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY, 0, null))
+        // Check if the specified Sounddevice still exists
+        if (_SoundDevice == -1)
+        {
+          Log.Info("BASS: Using default Sound Device");
+        }
+        else
+        {
+          string soundDeviceDescription = Bass.BASS_GetDeviceDescription(_SoundDevice);
+          if (soundDeviceDescription == null)
+          {
+            Log.Warn("BASS: specified Sound device does not exist. Using default Sound Device");
+            _SoundDevice = -1;
+          }
+          else
+          {
+            Log.Info("BASS: Using Sound Device {0}", soundDeviceDescription);
+          }
+        }
+
+        if (Bass.BASS_Init(_SoundDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY, 0, null))
         {
           for (int i = 0; i < MAXSTREAMS; i++)
             Streams.Add(0);
@@ -526,6 +546,7 @@ namespace MediaPortal.Player
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
+        _SoundDevice = xmlreader.GetValueAsInt("audioplayer", "sounddevice", -1);
         int vizType = xmlreader.GetValueAsInt("musicvisualization", "vizType", (int)VisualizationInfo.PluginType.None);
         string vizName = xmlreader.GetValueAsString("musicvisualization", "name", "");
         string vizPath = xmlreader.GetValueAsString("musicvisualization", "path", "");
