@@ -426,7 +426,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", enableVisualisation.Checked);
 
         // Sound device
-        if (bassDeviceComboBox.SelectedIndex == 1)
+        if (bassDeviceComboBox.SelectedIndex == 0)
           xmlwriter.SetValue("audioplayer", "sounddevice", -1);
         else
           xmlwriter.SetValue("audioplayer", "sounddevice", bassDeviceComboBox.SelectedIndex);
