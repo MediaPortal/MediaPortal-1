@@ -107,14 +107,14 @@
                 <texture>tetris\scoreboard.png</texture>
                 <colordiffuse>60ffffff</colordiffuse>
             </control>
-            <!--                       <control>
-                        <description>Time: label</description>
-                        <type>label</type>
-                        <id>21</id>
-                        <posX>142</posX>
-                        <posY>510</posY>
-                        <label>-</label>
-                      </control> -->
+            <control>
+                <description>Highscore: label</description>
+                <type>label</type>
+                <id>21</id>
+                <posX>142</posX>
+                <posY>510</posY>
+                <label>19008</label>
+            </control>
             <control>
                 <description>Time</description>
                 <type>label</type>
@@ -127,14 +127,6 @@
                 <textcolor>white</textcolor>
                 <label>#numberplace.time</label>
             </control>
-            <!--                       <control>
-                        <description>Highscore: label</description>
-                        <type>label</type>
-                        <id>23</id>
-                        <posX>142</posX>
-                        <posY>540</posY>
-                        <label>19008</label>
-                      </control> -->
             <control>
                 <description>Rank1: label</description>
                 <type>label</type>
@@ -190,7 +182,20 @@
                 <label>#numberplace.score3</label>
             </control>
         </control>
-
+<!--         <control>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="500">WindowClose</animation>
+            <description>Selected item Label</description>
+            <type>fadelabel</type>
+            <id>1</id>
+            <posX>340</posX>
+            <posY>70</posY>
+            <width>400</width>
+            <label>#numberplace.time</label>
+            <font>font14</font>
+            <align>right</align>
+            <textcolor>White</textcolor>
+        </control> -->
         <control>
             <type>group</type>
             <description>BarVerGroup</description>

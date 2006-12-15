@@ -191,17 +191,15 @@ namespace MediaPortal.GUI.NumberPlace
     protected static long m_dwCellIncorrectTextColor = 0xFFFF0000;
     protected static long m_dwTextColor = 0xFFFFFFFF;
 
-    private int nSeconds;
-    private int nMinutes;
-    private int gameRating;
-    private int totalSec = 0;
     private System.Timers.Timer timer = new System.Timers.Timer();
+    private TimeSpan totalTime = new TimeSpan(1000);
+    private DateTime startTime;
     private string strSeconds = "00";
     private string strMinutes = "00";
+    private string strHours = "";
+    private int gameRating;
     private bool gameRunning = false;
     private bool isScoreGame = false;
-
-    private DateTime startTime;
 
     Settings _Settings = new Settings();
 
@@ -279,7 +277,7 @@ namespace MediaPortal.GUI.NumberPlace
     protected override void OnPageLoad()
     {
       try
-      {        
+      {
         _Settings.Load();
         ShowInvalid();
 
@@ -446,7 +444,7 @@ namespace MediaPortal.GUI.NumberPlace
       {
         StopTimer();
         gameRunning = false;
-        int score = (100000000 / gameRating) / totalSec;
+        int score = (100000000 / gameRating) / (totalTime.Hours * 3600 + totalTime.Minutes * 60 + totalTime.Seconds);
 
         dlg.SetHeading(GUILocalizeStrings.Get(19111)); // Game Over
         dlg.SetLine(1, GUILocalizeStrings.Get(19112)); // Congratulation!
@@ -467,7 +465,7 @@ namespace MediaPortal.GUI.NumberPlace
           dlg.DoModal(GUIWindowManager.ActiveWindow);
         }
 
-        Log.Info("GUINumberPlace: Solved in: {0} game Rating: {2} Score: {1}", totalSec, score, gameRating);
+        Log.Info("GUINumberPlace: Solved in: {0} game Rating: {2} Score: {1}", (totalTime.Hours * 3600 + totalTime.Minutes * 60 + totalTime.Seconds), score, gameRating);
 
         //Utils.PlaySound("notify.wav", false, true);
       }
@@ -484,63 +482,46 @@ namespace MediaPortal.GUI.NumberPlace
     #region Timer Functions
     public void OnTimer_Tick(object sender, System.EventArgs e)
     {
-      if (nSeconds == 59)
-      {
-        nSeconds = 0;
-        nMinutes++;
-      }
-      else
-      {
-        nSeconds++;
-      }
+      if(gameRunning)
+        totalTime = DateTime.Now.Subtract(startTime);
 
       strSeconds = "";
       strMinutes = "";
-      if (nSeconds < 10)
+      strHours = "";
+      if (totalTime.Seconds < 10)
         strSeconds = "0";
-      strSeconds += nSeconds;
-      if (nMinutes < 10)
+      strSeconds += totalTime.Seconds;
+      if (totalTime.Minutes < 10)
         strMinutes = "0";
-      strMinutes += nMinutes;
+      strMinutes += totalTime.Minutes;
+      if (totalTime.Hours > 0)
+        strHours = totalTime.Hours.ToString();
     }
 
     private void ResumeTimer()
     {
       timer.Enabled = true;
-      startTime = DateTime.Now;
+      startTime = DateTime.Now.Subtract(totalTime);
     }
 
     private void StartTimer()
     {
       startTime = DateTime.Now;
-      timer.Interval = 1000;
+      timer.Interval = 500;
       timer.Enabled = true;
 
-      nSeconds = 0;
-      nMinutes = 0;
-      totalSec = 0;
+      totalTime = new TimeSpan(0);
+      strSeconds = "00";
+      strMinutes = "00";
+      strHours = "";
+      
     }
 
     private void StopTimer()
     {
       timer.Enabled = false;
+      OnTimer_Tick(null, null);
 
-      //calculate the correct needed time 
-      TimeSpan sub = DateTime.Now.Subtract(startTime);
-
-      nMinutes = sub.Minutes;
-      nSeconds = sub.Seconds;
-
-      strSeconds = "";
-      strMinutes = "";
-      if (nSeconds < 10)
-        strSeconds = "0";
-      strSeconds += nSeconds;
-      if (nMinutes < 10)
-        strMinutes = "0";
-      strMinutes += nMinutes;
-
-      totalSec += (nMinutes * 60) + nSeconds;
     }
     #endregion
 
@@ -787,58 +768,58 @@ namespace MediaPortal.GUI.NumberPlace
       else
         if (action.wID == Action.ActionType.ACTION_KEY_PRESSED ||
             (action.wID >= Action.ActionType.REMOTE_0 && action.wID <= Action.ActionType.REMOTE_9))
+      {
+        int controlId = GetFocusControlId();
+        if (controlId >= 1000 && controlId <= 9008)
         {
-          int controlId = GetFocusControlId();
-          if (controlId >= 1000 && controlId <= 9008)
+          CellControl cntlFoc = (CellControl)GetControl(controlId);
+          int row = (controlId / 1000) - 1;
+          int column = controlId % 1000;
+
+          if (cntlFoc != null)
           {
-            CellControl cntlFoc = (CellControl)GetControl(controlId);
-            int row = (controlId / 1000) - 1;
-            int column = controlId % 1000;
-
-            if (cntlFoc != null)
+            if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)
             {
-              if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)
+              if (action.m_key.KeyChar >= 49 && action.m_key.KeyChar <= 57)
               {
-                if (action.m_key.KeyChar >= 49 && action.m_key.KeyChar <= 57)
-                {
-                  int value = action.m_key.KeyChar - 48;
+                int value = action.m_key.KeyChar - 48;
 
-                  if (!_Settings.Block || cntlFoc.SolutionValue == value)
-                  {
-                    cntlFoc.CellValue = value;
-                    grid.cells[row, column] = value;
-                    if (this.GridIsComplete())
-                      this.Result();
-                  }
-                }
-                else if (action.m_key.KeyChar == 8)
-                {
-                  cntlFoc.CellValue = 0;
-                  grid.cells[row, column] = 0;
-                }
-              }
-              else if (action.wID >= Action.ActionType.REMOTE_0 && action.wID <= Action.ActionType.REMOTE_9)
-              {
-                int value = (action.wID - Action.ActionType.REMOTE_0);
-
-                if (value == 0 || !_Settings.Block || cntlFoc.SolutionValue == value)
+                if (!_Settings.Block || cntlFoc.SolutionValue == value)
                 {
                   cntlFoc.CellValue = value;
                   grid.cells[row, column] = value;
                   if (this.GridIsComplete())
-                  {
-
-                  }
-                  //this.Result();
+                    this.Result();
                 }
+              }
+              else if (action.m_key.KeyChar == 8)
+              {
+                cntlFoc.CellValue = 0;
+                grid.cells[row, column] = 0;
+              }
+            }
+            else if (action.wID >= Action.ActionType.REMOTE_0 && action.wID <= Action.ActionType.REMOTE_9)
+            {
+              int value = (action.wID - Action.ActionType.REMOTE_0);
+
+              if (value == 0 || !_Settings.Block || cntlFoc.SolutionValue == value)
+              {
+                cntlFoc.CellValue = value;
+                grid.cells[row, column] = value;
+                if (this.GridIsComplete())
+                {
+
+                }
+                //this.Result();
               }
             }
           }
         }
-        else if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
-        {
-          StopTimer();
-        }
+      }
+      else if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+      {
+        StopTimer();
+      }
       base.OnAction(action);
     }
 
@@ -851,8 +832,11 @@ namespace MediaPortal.GUI.NumberPlace
         if (!IsVisible) return;
       }
 
-      GUIPropertyManager.SetProperty("#numberplace.time", strMinutes + ":" + strSeconds);
-      GUIPropertyManager.SetProperty("#selecteditem", strMinutes + ":" + strSeconds);
+      if(!String.IsNullOrEmpty(strHours))
+        GUIPropertyManager.SetProperty("#numberplace.time", strHours + ":" + strMinutes + ":" + strSeconds);
+      else
+        GUIPropertyManager.SetProperty("#numberplace.time", strMinutes + ":" + strSeconds);
+      //GUIPropertyManager.SetProperty("#selecteditem", strMinutes + ":" + strSeconds);
 
       for (int i = 0; i < _Settings.HighScore.Count; i++)
       {
