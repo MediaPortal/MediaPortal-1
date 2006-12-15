@@ -36,6 +36,16 @@
 #define TABLE_ID_PAT 0
 #define TABLE_ID_SDT 0x42
 
+#define ADAPTION_FIELD_LENGTH_OFFSET        0x4
+#define PCR_FLAG_OFFSET                     0x5
+#define DISCONTINUITY_FLAG_BIT              0x80
+#define RANDOM_ACCESS_FLAG_BIT              0x40
+#define ES_PRIORITY_FLAG_BIT                0x20
+#define PCR_FLAG_BIT                        0x10
+#define OPCR_FLAG_BIT                       0x8
+#define SPLICING_FLAG_BIT                   0x4
+#define TRANSPORT_PRIVATE_DATA_FLAG_BIT     0x2
+#define ADAPTION_FIELD_EXTENSION_FLAG_BIT   0x1
 
 int FAKE_NETWORK_ID   = 0x456;
 int FAKE_TRANSPORT_ID = 0x4;
@@ -869,56 +879,38 @@ void CTimeShifting::WriteFakePMT()
 
 void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 {
-  if (header.PayLoadOnly()) return;
-	//LogDebug("pcr:%x: (%d) %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x ",header.Pid,header.PayLoadStart,tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5],tsPacket[6],tsPacket[7],tsPacket[8],tsPacket[9],tsPacket[10],tsPacket[11],tsPacket[12],tsPacket[13],tsPacket[14],tsPacket[15],tsPacket[16],tsPacket[17],tsPacket[18]);
-  if (tsPacket[4]<7) return; //adaptation field length
-  if ((tsPacket[5] & 0x10) ==0 ) return;
+  if (header.PayLoadOnly()) return; //no adaption field
+  if (tsPacket[ADAPTION_FIELD_LENGTH_OFFSET] < 7) return;        //adaptation field length
+  if ((tsPacket[PCR_FLAG_OFFSET] & PCR_FLAG_BIT) ==0 ) return;
+
+  // There's a PCR.  
+  // pcr reference base       33 bits  [6]      [7]        [8]     [9]     [10]     [11] 
+  // reserved                  6 bits pppppppp-pppppppp-pppppppp-pppppppp-prrrrrre-eeeeeeee
+  // pcr reference extension   9 bits
+	UINT64 pcrReferenceBase=0LL;
+	UINT64 k=tsPacket[6]; k<<=25LL;pcrReferenceBase+=k; // bit 25-32 
+	k=tsPacket[7]; k<<=17LL;pcrReferenceBase+=k;        // bit 17-24
+	k=tsPacket[8]; k<<=9LL;pcrReferenceBase+=k;         // bit 9-16
+	k=tsPacket[9]; k<<=1LL;pcrReferenceBase+=k;         // bit 1-8
+	k=((tsPacket[10]>>7)&0x1); pcrReferenceBase +=k;    // bit 0
 
 
-/*
-	char buf[1255];
-	strcpy(buf,"");
-	for (int i=0; i < 30;++i)
-	{
-		char tmp[200];
-		sprintf(tmp,"%02.2x ", tsPacket[i]);
-		strcat(buf,tmp);
-	}
-	LogDebug(buf);*/
-
-  // There's a PCR.  Get it
-	UINT64 pcrBaseHigh=0LL;
-	UINT64 k=tsPacket[6]; k<<=25LL;pcrBaseHigh+=k;
-	k=tsPacket[7]; k<<=17LL;pcrBaseHigh+=k;
-	k=tsPacket[8]; k<<=9LL;pcrBaseHigh+=k;
-	k=tsPacket[9]; k<<=1LL;pcrBaseHigh+=k;
-	k=((tsPacket[10]>>7)&0x1); pcrBaseHigh +=k;
-
-
-//  UINT64 pcrBaseHigh = (tsPacket[6]<<24)|(tsPacket[7]<<16)|(tsPacket[8]<<8)|tsPacket[9];
-//	pcrBaseHigh<<=1LL;
-//pcrBaseHigh += ((tsPacket[10]>>7)&0x1);
-//  double clock = pcrBaseHigh/45000.0;
-//  if ((tsPacket[10]&0x80) != 0) clock += 1/90000.0; // add in low-bit (if set)
-//  unsigned short pcrExt = ((tsPacket[10]&0x01)<<8) | tsPacket[11];
-//  clock += pcrExt/27000000.0;
-
-
-  UINT64 pcrNew=pcrBaseHigh;
+  UINT64 pcrNew=pcrReferenceBase;
   if (m_bDetermineNewStartPcr )
   {
-   if (pcrNew!=0LL) 
+    if (pcrNew!=0LL) 
     {
       m_bDetermineNewStartPcr=false;
-	    //correct pcr rollover
+
+      //correct pcr rollover
       UINT64 duration=m_highestPcr-m_startPcr;
-    
+
       LogDebug("Pcr change detected from:%I64d to:%I64d  duration:%I64d ", m_highestPcr, pcrNew,duration);
-	    UINT64 newStartPcr = pcrNew- (duration) ;
-	    LogDebug("Pcr new start pcr from:%I64d  to %I64d  ", m_startPcr,newStartPcr);
+      UINT64 newStartPcr = pcrNew- (duration) ;
+      LogDebug("Pcr new start pcr from:%I64d  to %I64d  ", m_startPcr,newStartPcr);
       m_startPcr=newStartPcr;
       m_highestPcr=newStartPcr;
-			
+    	
     }
   }
   
@@ -935,14 +927,7 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 	  m_highestPcr=pcrNew;
   }
 
-	//0  1  2  3  4  5  6  7   8  9  10 11 
-	//47 09 0e 36 07 10 1e 0e  6b c1 7e 6b 9e 5d bb 17
-	//  program_clock_reference:
-	//  baseH: 0 (0x00)
-	//  baseL: 1008523138 (0x3c1cd782)
-	//  reserved: 63 (0x3f)
-	//  extension: 107 (0x006b)
-
+  //set patched PCR in the ts packet
   UINT64 pcrHi=pcrNew - m_startPcr;
   tsPacket[6] = (byte)(((pcrHi>>25)&0xff));
   tsPacket[7] = (byte)(((pcrHi>>17)&0xff));
@@ -950,8 +935,6 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
   tsPacket[9] = (byte)(((pcrHi>>1)&0xff));
   tsPacket[10]=	(byte)( (pcrHi&0x1)) + 0x7e;
   tsPacket[11]=0;//extension
-	//LogDebug("pcr: org:%x new:%x start:%x", (DWORD)pcrBaseHigh,(DWORD)pcrHi,(DWORD)m_startPcr);
-	
 }
 
 void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr)
