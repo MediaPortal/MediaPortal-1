@@ -33,7 +33,12 @@ namespace TvLibrary
     int _index;
     string _name;
     string _code;
-
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Country"/> class.
+    /// </summary>
+    public Country()
+    {
+    }
     /// <summary>
     /// Initializes a new instance of the <see cref="T:Country"/> class.
     /// </summary>

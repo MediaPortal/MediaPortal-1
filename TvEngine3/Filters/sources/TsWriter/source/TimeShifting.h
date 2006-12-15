@@ -24,6 +24,8 @@
 #include "criticalsection.h"
 #include "entercriticalsection.h"
 #include "tsheader.h"
+#include "adaptionfield.h"
+#include "pcr.h"
 #include <vector>
 #include <map>
 using namespace std;
@@ -123,12 +125,9 @@ private:
 	void WriteTs(byte* tsPacket);
   void WriteFakePAT();  
   void WriteFakePMT();
-	void PatchPcr(byte* tsPacket);
-	void PatchPtsDts(byte* tsPacket);
 
-  bool GetPtsDts(byte* pesHeader, UINT64& pts, UINT64& dts);
   void PatchPcr(byte* tsPacket,CTsHeader& header);
-  void PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr);
+  void PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr);
 
 	MultiFileWriterParam m_params;
   TimeShiftingMode     m_timeShiftMode;
@@ -146,15 +145,16 @@ private:
 	int									 m_iPmtContinuityCounter;
 	int									 m_iPatContinuityCounter;
   
-  BOOL   m_bPaused;
-	UINT64 m_startPcr;
-	UINT64 m_highestPcr;
-  bool    m_bDetermineNewStartPcr;
-	bool		m_bStartPcrFound;
-  int     m_iPacketCounter;
-	int			m_iPatVersion;
-	int			m_iPmtVersion;
-  byte*   m_pWriteBuffer;
-  int     m_iWriteBufferPos;
-  CTsHeader m_tsHeader;
+  BOOL          m_bPaused;
+	CPcr          m_startPcr;
+	CPcr          m_highestPcr;
+  bool          m_bDetermineNewStartPcr;
+	bool		      m_bStartPcrFound;
+  int           m_iPacketCounter;
+	int			      m_iPatVersion;
+	int			      m_iPmtVersion;
+  byte*         m_pWriteBuffer;
+  int           m_iWriteBufferPos;
+  CTsHeader     m_tsHeader;
+  CAdaptionField m_adaptionField;
 };

@@ -20,6 +20,7 @@
  */
 #pragma warning(disable : 4995)
 #include <windows.h>
+#include <stdio.h>
 #include <math.h>
 #include "pcr.h" 
 #define MAX_CLOCK  95443.71768
@@ -56,8 +57,46 @@ void CPcr::Decode(byte* data)
 
   PcrReferenceExtension=0;
   k=(data[4]& 0x1);  k<<=8LL;PcrReferenceExtension+=k; // bit 8
-  k=data[5];                 PcrReferenceExtension+=k; // bit 0-7
-  
+  k=data[5];                 PcrReferenceExtension+=k; // bit 0-7 
+}
+
+bool CPcr::DecodeFromPesHeader(byte* pesHeader, CPcr& pts, CPcr& dts)
+{
+  pts.Reset();
+	dts.Reset();
+	bool ptsAvailable=false;
+	bool dtsAvailable=false;
+	if ( (pesHeader[7]&0x80)!=0) ptsAvailable=true;
+	if ( (pesHeader[7]&0x40)!=0) dtsAvailable=true;
+	if (ptsAvailable)
+	{	
+	  UINT64 ptsTicks=0LL;
+		ptsTicks += ((pesHeader[13]>>1)&0x7f);				// 7bits	7
+		ptsTicks +=(pesHeader[12]<<7);								// 8bits	15
+		ptsTicks +=((pesHeader[11]>>1)<<15);					// 7bits	22
+		ptsTicks +=((pesHeader[10])<<22);							// 8bits	30
+    UINT64 k=((pesHeader[9]>>1)&0x7);
+    k <<=30LL;
+		ptsTicks += k;			// 3bits
+		ptsTicks &= 0x1FFFFFFFFLL;
+    pts.PcrReferenceBase = ptsTicks;
+	}
+
+	if (dtsAvailable)
+	{
+	  UINT64 dtsTicks=0LL;
+		dtsTicks = (pesHeader[18]>>1);								// 7bits	7
+		dtsTicks +=(pesHeader[17]<<7);								// 8bits	15
+		dtsTicks +=((pesHeader[16]>>1)<<15);					// 7bits	22
+		dtsTicks +=((pesHeader[15])<<22);							// 8bits	30
+    UINT64 k=((pesHeader[14]>>1)&0x7);
+    k <<=30LL;
+		dtsTicks+=k;			// 3bits
+		dtsTicks &= 0x1FFFFFFFFLL;
+    dts.PcrReferenceBase = dtsTicks;
+	}
+	
+	return (ptsAvailable||dtsAvailable);
 }
 
 void CPcr::FromClock(double clock)
@@ -143,4 +182,17 @@ bool CPcr::operator==(const CPcr &other) const
 bool CPcr::operator!=(const CPcr &other) const 
 {
   return !(*this == other);
+}
+bool CPcr::operator>(const CPcr &other) const 
+{
+  double clock1=ToClock();
+  double clock2=other.ToClock();
+  return (clock1>clock2);
+}
+char* CPcr::ToString()
+{
+  int day, hour,  minutes,  seconds,  millsecs;
+  Time(day, hour,minutes, seconds,  millsecs);
+  sprintf(m_buffer,"%d days %02.2d:%02.2d:%02.2d", day,hour,minutes,seconds);
+  return m_buffer;
 }

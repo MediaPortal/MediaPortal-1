@@ -132,8 +132,8 @@ CTimeShifting::CTimeShifting(LPUNKNOWN pUnk, HRESULT *phr)
 	m_multiPlexer.SetFileWriterCallBack(this);
   
 	m_bStartPcrFound=false;
-  m_startPcr=0;
-  m_highestPcr=0;
+  m_startPcr.Reset();
+  m_highestPcr.Reset();
   m_bDetermineNewStartPcr=false;
 	m_iPatVersion=0;
 	m_iPmtVersion=0;
@@ -353,9 +353,9 @@ STDMETHODIMP CTimeShifting::SetTimeShiftingFileName(char* pszFileName)
     m_pmtPid=-1;
     m_pcrPid=-1;
     m_vecPids.clear();
-	  m_startPcr=0;
+	  m_startPcr.Reset();
 		m_bStartPcrFound=false;
-	  m_highestPcr=0;
+	  m_highestPcr.Reset();
     m_bDetermineNewStartPcr=false;
 		m_multiPlexer.Reset();
 		strcpy(m_szFileName,pszFileName);
@@ -392,9 +392,9 @@ STDMETHODIMP CTimeShifting::Start()
 		m_iPmtContinuityCounter=-1;
 		m_iPatContinuityCounter=-1;
     m_bDetermineNewStartPcr=false;
-		m_startPcr=0;
+		m_startPcr.Reset();
 		m_bStartPcrFound=false;
-		m_highestPcr=0;
+		m_highestPcr.Reset();
     m_iPacketCounter=0;
     m_iWriteBufferPos=0;
     LogDebug("Timeshifter:Start timeshifting:'%s'",m_szFileName);
@@ -430,9 +430,9 @@ STDMETHODIMP CTimeShifting::Reset()
     m_pmtPid=-1;
     m_pcrPid=-1;
     m_bDetermineNewStartPcr=false;
-	  m_startPcr=0;
+	  m_startPcr.Reset();
 		m_bStartPcrFound=false;
-	  m_highestPcr=0;
+	  m_highestPcr.Reset();
 		m_vecPids.clear();
 		m_multiPlexer.Reset();
 		FAKE_NETWORK_ID   = 0x456;
@@ -879,37 +879,22 @@ void CTimeShifting::WriteFakePMT()
 
 void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 {
-  if (header.PayLoadOnly()) return; //no adaption field
-  if (tsPacket[ADAPTION_FIELD_LENGTH_OFFSET] < 7) return;        //adaptation field length
-  if ((tsPacket[PCR_FLAG_OFFSET] & PCR_FLAG_BIT) ==0 ) return;
-
-  // There's a PCR.  
-  // pcr reference base       33 bits  [6]      [7]        [8]     [9]     [10]     [11] 
-  // reserved                  6 bits pppppppp-pppppppp-pppppppp-pppppppp-prrrrrre-eeeeeeee
-  // pcr reference extension   9 bits
-	UINT64 pcrReferenceBase=0LL;
-	UINT64 k=tsPacket[6]; k<<=25LL;pcrReferenceBase+=k; // bit 25-32 
-	k=tsPacket[7]; k<<=17LL;pcrReferenceBase+=k;        // bit 17-24
-	k=tsPacket[8]; k<<=9LL;pcrReferenceBase+=k;         // bit 9-16
-	k=tsPacket[9]; k<<=1LL;pcrReferenceBase+=k;         // bit 1-8
-	k=((tsPacket[10]>>7)&0x1); pcrReferenceBase +=k;    // bit 0
-
-
-  UINT64 pcrNew=pcrReferenceBase;
+  m_adaptionField.Decode(header,tsPacket);
+  if (m_adaptionField.PcrFlag==false) return;
+  CPcr pcrNew=m_adaptionField.Pcr;
   if (m_bDetermineNewStartPcr )
   {
-    if (pcrNew!=0LL) 
+    if (pcrNew.PcrReferenceBase!=0) 
     {
       m_bDetermineNewStartPcr=false;
 
-      //correct pcr rollover
-      UINT64 duration=m_highestPcr-m_startPcr;
+      CPcr duration=m_highestPcr - m_startPcr;
 
-      LogDebug("Pcr change detected from:%I64d to:%I64d  duration:%I64d ", m_highestPcr, pcrNew,duration);
-      UINT64 newStartPcr = pcrNew- (duration) ;
-      LogDebug("Pcr new start pcr from:%I64d  to %I64d  ", m_startPcr,newStartPcr);
-      m_startPcr=newStartPcr;
-      m_highestPcr=newStartPcr;
+      LogDebug("Pcr change detected from:%s to:%s  duration:%s ", m_highestPcr.ToString(), pcrNew.ToString(),duration.ToString());
+      CPcr newStartPcr = pcrNew- (duration) ;
+      LogDebug("Pcr new start pcr from:%s  to %s", m_startPcr.ToString(),newStartPcr.ToString());
+      m_startPcr  = newStartPcr;
+      m_highestPcr= newStartPcr;
     	
     }
   }
@@ -917,27 +902,27 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 	if (m_bStartPcrFound==false)
 	{
 		m_bStartPcrFound=true;
-		m_startPcr = pcrNew;
+		m_startPcr  = pcrNew;
     m_highestPcr=pcrNew;
-		LogDebug("Pcr new start pcr :%I64d", m_startPcr);
+		LogDebug("Pcr new start pcr :%s", m_startPcr.ToString());
 	} 
 
   if (pcrNew > m_highestPcr)
   {
-	  m_highestPcr=pcrNew;
+	  m_highestPcr = pcrNew;
   }
 
   //set patched PCR in the ts packet
-  UINT64 pcrHi=pcrNew - m_startPcr;
-  tsPacket[6] = (byte)(((pcrHi>>25)&0xff));
-  tsPacket[7] = (byte)(((pcrHi>>17)&0xff));
-  tsPacket[8] = (byte)(((pcrHi>>9)&0xff));
-  tsPacket[9] = (byte)(((pcrHi>>1)&0xff));
-  tsPacket[10]=	(byte)( (pcrHi&0x1)) + 0x7e;
-  tsPacket[11]=0;//extension
+  CPcr pcrHi=pcrNew - m_startPcr;
+  tsPacket[6] = (byte)(((pcrHi.PcrReferenceBase>>25)&0xff));
+  tsPacket[7] = (byte)(((pcrHi.PcrReferenceBase>>17)&0xff));
+  tsPacket[8] = (byte)(((pcrHi.PcrReferenceBase>>9)&0xff));
+  tsPacket[9] = (byte)(((pcrHi.PcrReferenceBase>>1)&0xff));
+  tsPacket[10]=	(byte)(((pcrHi.PcrReferenceBase&0x1)<<7) + 0x7e + ((pcrHi.PcrReferenceExtension>>8)&0x1));
+  tsPacket[11]= (byte)(pcrHi.PcrReferenceExtension&0xff);
 }
 
-void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr)
+void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 {
   if (false==header.PayloadUnitStart) return;
 
@@ -945,76 +930,37 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,UINT64 startPcr
   if (tsPacket[start] !=0 || tsPacket[start+1] !=0  || tsPacket[start+2] !=1) return; 
 
   byte* pesHeader=&tsPacket[start];
-	UINT64 pts=0LL;
-	UINT64 dts=0LL;
-	if (!GetPtsDts(pesHeader, pts, dts)) 
-	{
+	CPcr pts;
+	CPcr dts;
+  if (!CPcr::DecodeFromPesHeader(pesHeader,pts,dts))
+  {
 		return ;
 	}
-	if (pts>0LL)
+  if (pts.PcrReferenceBase!=0)
 	{
-		UINT64 ptsorg=pts;
-		if (pts > startPcr) 
-			pts = (UINT64)( ((UINT64)pts) - ((UINT64)startPcr) );
-		else pts=0LL;
+    CPcr ptsorg=pts;
+		pts -= startPcr ;
 		
-	//  LogDebug("pts: org:%x new:%x start:%x", (DWORD)ptsorg,(DWORD)pts,(DWORD)startPcr); 
+	//  LogDebug("pts: org:%f new:%f start:%f", ptsorg.ToClock(),pts.ToClock(),startPcr.ToClock()); 
 		byte marker=0x21;
-		if (dts!=0) marker=0x31;
-		pesHeader[13]=(byte)((((pts&0x7f)<<1)+1)); pts>>=7;
-		pesHeader[12]=(byte)( (pts&0xff));				  pts>>=8;
-		pesHeader[11]=(byte)((((pts&0x7f)<<1)+1)); pts>>=7;
-		pesHeader[10]=(byte)((pts&0xff));					pts>>=8;
-		pesHeader[9]=(byte)( (((pts&7)<<1)+marker)); 
+		if (dts.PcrReferenceBase!=0) marker=0x31;
+		pesHeader[13]=(byte)((( (pts.PcrReferenceBase&0x7f)<<1)+1));   pts.PcrReferenceBase>>=7;
+		pesHeader[12]=(byte)(   (pts.PcrReferenceBase&0xff));				   pts.PcrReferenceBase>>=8;
+		pesHeader[11]=(byte)((( (pts.PcrReferenceBase&0x7f)<<1)+1));   pts.PcrReferenceBase>>=7;
+		pesHeader[10]=(byte)(   (pts.PcrReferenceBase&0xff));					 pts.PcrReferenceBase>>=8;
+		pesHeader[9] =(byte)( (((pts.PcrReferenceBase&7)<<1)+marker)); 
     
 	}
-	if (dts >0LL)
+	if (dts.PcrReferenceBase!=0)
 	{
-		UINT64 dtsorg=dts;
-		if (dts > startPcr) 
-			dts = (UINT64)( ((UINT64)dts) - ((UINT64)startPcr) );
-		else dts=0LL;
-	 // LogDebug("dts: org:%x new:%x start:%x", (DWORD)dtsorg,(DWORD)dts,(DWORD)startPcr); 
-		pesHeader[18]=(byte)((((dts&0x7f)<<1)+1)); dts>>=7;
-		pesHeader[17]=(byte)( (dts&0xff));				  dts>>=8;
-		pesHeader[16]=(byte)((((dts&0x7f)<<1)+1)); dts>>=7;
-		pesHeader[15]=(byte)((dts&0xff));					dts>>=8;
-		pesHeader[14]=(byte)( (((dts&7)<<1)+0x11)); 
+		CPcr dtsorg=dts;
+		dts -= startPcr;
+	//  LogDebug("pts: org:%f new:%f start:%f", dtsorg.ToClock(),dts.ToClock(),startPcr.ToClock()); 
+		pesHeader[18]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
+		pesHeader[17]=(byte)(   (dts.PcrReferenceBase&0xff));				  dts.PcrReferenceBase>>=8;
+		pesHeader[16]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
+		pesHeader[15]=(byte)(   (dts.PcrReferenceBase&0xff));					dts.PcrReferenceBase>>=8;
+		pesHeader[14]=(byte)( (((dts.PcrReferenceBase&7)<<1)+0x11)); 
 	}
 }
 
-
-bool CTimeShifting::GetPtsDts(byte* pesHeader, UINT64& pts, UINT64& dts)
-{
-	pts=0LL;
-	dts=0LL;
-	bool ptsAvailable=false;
-	bool dtsAvailable=false;
-	if ( (pesHeader[7]&0x80)!=0) ptsAvailable=true;
-	if ( (pesHeader[7]&0x40)!=0) dtsAvailable=true;
-	if (ptsAvailable)
-	{	
-		pts+= ((pesHeader[13]>>1)&0x7f);				// 7bits	7
-		pts+=(pesHeader[12]<<7);								// 8bits	15
-		pts+=((pesHeader[11]>>1)<<15);					// 7bits	22
-		pts+=((pesHeader[10])<<22);							// 8bits	30
-    UINT64 k=((pesHeader[9]>>1)&0x7);
-    k <<=30LL;
-		pts+=k;			// 3bits
-		pts &= 0x1FFFFFFFFLL;
-	}
-	if (dtsAvailable)
-	{
-		dts= (pesHeader[18]>>1);								// 7bits	7
-		dts+=(pesHeader[17]<<7);								// 8bits	15
-		dts+=((pesHeader[16]>>1)<<15);					// 7bits	22
-		dts+=((pesHeader[15])<<22);							// 8bits	30
-    UINT64 k=((pesHeader[14]>>1)&0x7);
-    k <<=30LL;
-		dts+=k;			// 3bits
-		dts &= 0x1FFFFFFFFLL;
-	
-	}
-	
-	return (ptsAvailable||dtsAvailable);
-}
