@@ -21,7 +21,8 @@
 			ConfigurationType="2"
 			UseOfMFC="0"
 			UseOfATL="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
+			ATLMinimizesCRunTimeLibraryUsage="true"
+			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -52,7 +53,7 @@
 				AdditionalIncludeDirectories="C:\DXSDK\Samples\C++\DirectShow\BaseClasses,C:\DXSDK\Include"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;NDEBUG;"
 				StringPooling="false"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="false"
 				UsePrecompiledHeader="0"
@@ -78,6 +79,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				LinkLibraryDependencies="false"
 				UseLibraryDependencyInputs="false"
 				AdditionalDependencies="strmbase.lib winmm.lib strmiids.lib .\source\ttBdaDrvApi_Dll.lib"
 				ShowProgress="0"
@@ -85,7 +87,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=""
-				GenerateManifest="true"
+				GenerateManifest="false"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile=".\source\TsWriter.def"
@@ -94,12 +96,14 @@
 				StackReserveSize="2097152"
 				StackCommitSize="2097152"
 				TargetMachine="1"
+				AllowIsolation="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
 			/>
 			<Tool
 				Name="VCManifestTool"
+				EmbedManifest="false"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"

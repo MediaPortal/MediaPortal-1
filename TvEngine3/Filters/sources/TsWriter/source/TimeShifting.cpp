@@ -882,28 +882,33 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
   m_adaptionField.Decode(header,tsPacket);
   if (m_adaptionField.PcrFlag==false) return;
   CPcr pcrNew=m_adaptionField.Pcr;
-  if (m_bDetermineNewStartPcr )
-  {
-    if (pcrNew.PcrReferenceBase!=0) 
-    {
-      m_bDetermineNewStartPcr=false;
+	if (m_bStartPcrFound)
+	{
+		if (m_bDetermineNewStartPcr )
+		{
+			m_bDetermineNewStartPcr=false;
 
-      CPcr duration=m_highestPcr - m_startPcr;
+			CPcr duration=m_highestPcr ;
+			duration-= m_startPcr;
+			CPcr newStartPcr = pcrNew;
+			newStartPcr -=duration ;
+			LogDebug("Pcr start    :%s",m_startPcr.ToString());
+			LogDebug("Pcr high     :%s",m_highestPcr.ToString());
+			LogDebug("Pcr duration :%s",duration.ToString());
+			LogDebug("Pcr current  :%s",pcrNew.ToString());
+			LogDebug("Pcr newstart :%s",newStartPcr.ToString());
 
-      LogDebug("Pcr change detected from:%s to:%s  duration:%s ", m_highestPcr.ToString(), pcrNew.ToString(),duration.ToString());
-      CPcr newStartPcr = pcrNew- (duration) ;
-      LogDebug("Pcr new start pcr from:%s  to %s", m_startPcr.ToString(),newStartPcr.ToString());
-      m_startPcr  = newStartPcr;
-      m_highestPcr= newStartPcr;
-    	
-    }
-  }
+			m_startPcr  = newStartPcr;
+			m_highestPcr= newStartPcr;
+		}
+	}
   
 	if (m_bStartPcrFound==false)
 	{
+		m_bDetermineNewStartPcr=false;
 		m_bStartPcrFound=true;
 		m_startPcr  = pcrNew;
-    m_highestPcr=pcrNew;
+    m_highestPcr= pcrNew;
 		LogDebug("Pcr new start pcr :%s", m_startPcr.ToString());
 	} 
 
@@ -913,7 +918,8 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
   }
 
   //set patched PCR in the ts packet
-  CPcr pcrHi=pcrNew - m_startPcr;
+  CPcr pcrHi=pcrNew;
+	pcrHi -= m_startPcr;
   tsPacket[6] = (byte)(((pcrHi.PcrReferenceBase>>25)&0xff));
   tsPacket[7] = (byte)(((pcrHi.PcrReferenceBase>>17)&0xff));
   tsPacket[8] = (byte)(((pcrHi.PcrReferenceBase>>9)&0xff));
