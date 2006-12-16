@@ -1224,7 +1224,10 @@ namespace MediaPortal.GUI.Video
               }
             }
           }
-          pItem.IsPlayed = foundWatched;
+          if (!pItem.IsFolder)
+          {
+            pItem.IsPlayed = foundWatched;
+          }
         }
 
         if (System.IO.File.Exists(strThumb))
