@@ -100,7 +100,7 @@ namespace MediaPortal
     private bool isClosing = false; // Are we closing?
     private bool isChangingFormStyle = false; // Are we changing the forms style?
     private bool isWindowActive = true; // Are we waiting for got focus?
-    protected bool _showCursor = true;
+    protected bool _showCursor = false;
     protected bool _lastShowCursor = true;
     private bool UseMillisecondTiming = true;
 
