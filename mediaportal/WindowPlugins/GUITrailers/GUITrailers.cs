@@ -48,36 +48,21 @@ namespace MediaPortal.GUI.Video
   public class GUITrailers : GUIWindow
   {
     #region SkinControlAttributes
-    [SkinControlAttribute(3)]
-    protected GUISelectButtonControl btnletter = null;
-    [SkinControlAttribute(4)]
-    protected GUIListControl listview = null;
-    [SkinControlAttribute(5)]
-    protected GUIToggleButtonControl btntoggleplot = null;
-    [SkinControlAttribute(6)]
-    protected GUIToggleButtonControl btntogglecast = null;
-    [SkinControlAttribute(24)]
-    protected GUIImage poster = null;
-    [SkinControlAttribute(50)]
-    protected GUILabelControl label0 = null;
-    [SkinControlAttribute(51)]
-    protected GUIFadeLabel label1 = null;
-    [SkinControlAttribute(52)]
-    protected GUILabelControl label2 = null; //runtime
-    [SkinControlAttribute(53)]
-    protected GUILabelControl label3 = null;
-    [SkinControlAttribute(54)]
-    protected GUILabelControl label4 = null;
-    [SkinControlAttribute(55)]
-    protected GUILabelControl label5 = null;
-    [SkinControlAttribute(56)]
-    protected GUILabelControl label6 = null;
-    [SkinControlAttribute(57)]
-    protected GUITextScrollUpControl castarea = null;
-    [SkinControlAttribute(58)]
-    protected GUILabelControl label8 = null;
-    [SkinControlAttribute(59)]
-    protected GUITextScrollUpControl plotarea = null;
+    [SkinControlAttribute(3)]      protected GUISelectButtonControl btnletter = null;
+    [SkinControlAttribute(4)]      protected GUIListControl listview = null;
+    [SkinControlAttribute(5)]      protected GUIToggleButtonControl btntoggleplot = null;
+    [SkinControlAttribute(6)]      protected GUIToggleButtonControl btntogglecast = null;
+    [SkinControlAttribute(24)]     protected GUIImage poster = null;
+    [SkinControlAttribute(50)]     protected GUILabelControl label0 = null;
+    [SkinControlAttribute(51)]     protected GUIFadeLabel label1 = null;
+    [SkinControlAttribute(52)]     protected GUILabelControl label2 = null; //runtime
+    [SkinControlAttribute(53)]     protected GUILabelControl label3 = null;
+    [SkinControlAttribute(54)]     protected GUILabelControl label4 = null;
+    [SkinControlAttribute(55)]     protected GUILabelControl label5 = null;
+    [SkinControlAttribute(56)]     protected GUILabelControl label6 = null;
+    [SkinControlAttribute(57)]     protected GUITextScrollUpControl castarea = null;
+    [SkinControlAttribute(58)]     protected GUILabelControl label8 = null;
+    [SkinControlAttribute(59)]     protected GUITextScrollUpControl plotarea = null;
     //[SkinControlAttribute(60)]			protected GUIImageList labelrating =null;
     #endregion
     #region Variables
@@ -752,6 +737,7 @@ namespace MediaPortal.GUI.Video
         i++;
       }
     }
+
     public static void GetMMSURL(string url)
     {
       TempHTML = "";
@@ -778,6 +764,7 @@ namespace MediaPortal.GUI.Video
         dlg.DoModal(GUIWindowManager.ActiveWindow);
       }
     }
+
     public static void PlayTrailer(string url)
     {
       GetGUIProperties();
@@ -789,6 +776,7 @@ namespace MediaPortal.GUI.Video
         g_Player.FullScreen = true;
       }
     }
+
     void ShowLabelsFalse()
     {
       label0.Visible = false;
@@ -805,8 +793,8 @@ namespace MediaPortal.GUI.Video
       btntogglecast.Visible = false;
       //labelrating.Visible=false;
       btnletter.NavigateDown = 4;
-
     }
+
     void ShowLabelsTrue()
     {
       label0.Visible = true;
@@ -826,6 +814,7 @@ namespace MediaPortal.GUI.Video
       else
         ToggleButtonPlot();
     }
+
     public static void GetGUIProperties()
     {
       ptitle = GUIPropertyManager.GetProperty("#title");
@@ -845,6 +834,7 @@ namespace MediaPortal.GUI.Video
       }
       //float.Parse(prating) = GUIPropertyManager.GetProperty("#rating");
     }
+
     void SetGUIProperties()
     {
       GUIPropertyManager.SetProperty("#title", ptitle);
@@ -855,6 +845,7 @@ namespace MediaPortal.GUI.Video
       GUIPropertyManager.SetProperty("#cast", pcast);
       GUIPropertyManager.SetProperty("#rating", prating.ToString());
     }
+
     void LoadSettings()
     {
       if (YahooTrailers.tview == true)
@@ -896,8 +887,8 @@ namespace MediaPortal.GUI.Video
           TSRnmbOfResults = "&nmbOfResults=" + TSRnmbOfResults;
         YahooTrailers.server = xmlreader.GetValue("mytrailers", "YahooServer");
       }
-
     }
+
     public void ShowListView(string[] _TrailerName, bool show_poster)
     {
       if (show_poster == false)
@@ -921,6 +912,7 @@ namespace MediaPortal.GUI.Video
         i++;
       }
     }
+
     public void ShowListView(string[] _TrailerName, int _titlenumber)
     {
         if (TrailersUtility.interupted == true)
@@ -949,6 +941,7 @@ namespace MediaPortal.GUI.Video
         i++;
       }
     }
+
     public void ShowListView(string[] _TrailerName, string _titlename)
     {
       poster.SetFileName(GUIGraphicsContext.Skin + @"\media\" + backgroundposter);
@@ -972,6 +965,7 @@ namespace MediaPortal.GUI.Video
         i++;
       }
     }
+
     public void ShowListView(string[] _TrailerName, string _titlename, bool show_poster)
     {
       if (show_poster == false)
@@ -997,6 +991,7 @@ namespace MediaPortal.GUI.Video
         i++;
       }
     }
+
     public void ShowListView(string[] _TrailerName, string[] _TralerUrl, int _titlenumber)
     {
       poster.SetFileName(GUIGraphicsContext.Skin + @"\media\" + backgroundposter);
@@ -1032,6 +1027,7 @@ namespace MediaPortal.GUI.Video
         }
       }
     }
+
     // fe no movie review yet
     public void ShowListView(string[] _TrailerName, int _titlenumber, int _folderupnumber)
     {
@@ -1068,6 +1064,7 @@ namespace MediaPortal.GUI.Video
         }
       }
     }
+
     public void ShowListViewAndInfo(string _TrailerName, string _TralerUrl)
     {
       listview.Clear();
@@ -1110,15 +1107,18 @@ namespace MediaPortal.GUI.Video
           int i = moviename.IndexOf("opens");
           moviename = moviename.Remove(i);
         }
-
-        poster.SetFileName(@"thumbs\MPTemp -" + moviename + ".jpg");
+        
+//        poster.SetFileName(@"thumbs\MPTemp -" + moviename + ".jpg");
+        poster.SetFileName(System.IO.Path.Combine(Thumbs.Trailers, moviename + ".jpg"));
       }
     }
+
     public void ShowMovieInfo(string moviename, string posterurl)
     {
       ShowLabelsTrue();
       ShowPoster(posterurl, moviename);
     }
+
     public void ShowLetterListView(string[] movienames, string[] movieurls)
     {
       int i = 0;

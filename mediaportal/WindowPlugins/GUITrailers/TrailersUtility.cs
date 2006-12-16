@@ -33,89 +33,105 @@ using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Video
 {
-	/// <summary>
-	/// Summary description for TrailersUtility.
-	/// </summary>
-	public class TrailersUtility
-	{
-		string _downloadedText		= string.Empty;
+  /// <summary>
+  /// Summary description for TrailersUtility.
+  /// </summary>
+  public class TrailersUtility
+  {
+    string _downloadedText = string.Empty;
 
-		public void GetWebPage(string url, out string HTMLDownload) // Get url and put in string
-		{
-			if(_workerCompleted)
-			{
-				_workerCompleted = false;
+    public void GetWebPage(string url, out string HTMLDownload) // Get url and put in string
+    {
+      if (_workerCompleted)
+      {
+        _workerCompleted = false;
 
-				BackgroundWorker worker = new BackgroundWorker();
+        BackgroundWorker worker = new BackgroundWorker();
 
-				worker.DoWork += new DoWorkEventHandler(DownloadWorker);
-				worker.RunWorkerAsync(url);
+        worker.DoWork += new DoWorkEventHandler(DownloadWorker);
+        worker.RunWorkerAsync(url);
 
-				using(WaitCursor cursor = new WaitCursor())
-				{
-					while(_workerCompleted == false)
-						GUIWindowManager.Process();
-				}
+        using (WaitCursor cursor = new WaitCursor())
+        {
+          while (_workerCompleted == false)
+            GUIWindowManager.Process();
+        }
 
-				HTMLDownload = _downloadedText;
+        HTMLDownload = _downloadedText;
 
-				_downloadedText = null;
-			}
-			else
-			{
-				HTMLDownload = string.Empty;
-			}
-		}
+        _downloadedText = null;
+      }
+      else
+      {
+        HTMLDownload = string.Empty;
+      }
+    }
 
-		public void DownloadWorker(object sender, DoWorkEventArgs e)
-		{
-			WebClient wc = new WebClient();
+    public void DownloadWorker(object sender, DoWorkEventArgs e)
+    {
+      WebClient wc = new WebClient();
 
-			try
-			{
-				byte[] HTMLBuffer;
+      try
+      {
+        byte[] HTMLBuffer;
 
-				HTMLBuffer = wc.DownloadData((string)e.Argument);
+        HTMLBuffer = wc.DownloadData((string)e.Argument);
 
-                _downloadedText = Encoding.UTF8.GetString(HTMLBuffer);
-			}
-			catch(Exception ex)
-			{
+        _downloadedText = Encoding.UTF8.GetString(HTMLBuffer);
+      }
+      catch (Exception ex)
+      {
 
-				Log.Info("GUITrailers.DownloadWorker: {0}", ex.Message);
-			}
-			finally
-			{
-				wc.Dispose();
-			}
+        Log.Info("GUITrailers.DownloadWorker: {0}", ex.Message);
+      }
+      finally
+      {
+        wc.Dispose();
+      }
 
-			_workerCompleted = true;
-		}
+      _workerCompleted = true;
+    }
 
-		public static bool _workerCompleted = true;
-        public static bool interupted = false;
+    public static bool _workerCompleted = true;
+    public static bool interupted = false;
 
-		public void DownloadPoster(string downloadurl, string moviename)
-		{
-				using(WaitCursor cursor = new WaitCursor())
-				{
-					// Download Poster
-					WebClient wc = new WebClient();
-					moviename = moviename.Replace(":","-");
-                    if (moviename.Contains("opens"))
-                    {
-                      int i = moviename.IndexOf("opens");
-                      moviename = moviename.Remove(i);
-                    }
-					wc.DownloadFile(downloadurl, Config.GetFile(Config.Dir.Thumbs, "MPTemp -"+moviename + ".jpg"));
+    public void DownloadPoster(string downloadurl, string moviename)
+    {
+      if (!System.IO.File.Exists(System.IO.Path.Combine(Thumbs.Trailers, moviename + ".jpg")))
+      {
+        using (WaitCursor cursor = new WaitCursor())
+        {
+          try
+          {
+            // Download Poster
+            WebClient wc = new WebClient();
+            moviename = moviename.Replace(":", "-");
+            if (moviename.Contains("opens"))
+            {
+              int i = moviename.IndexOf("opens");
+              moviename = moviename.Remove(i);
+            }
+            Util.Utils.DownLoadAndCacheImage(downloadurl, System.IO.Path.Combine(Thumbs.Trailers, moviename + ".jpg"));
+            //wc.DownloadFile(downloadurl, Config.GetFile(Config.Dir.Thumbs, "MPTemp -" + moviename + ".jpg"));
 
-          while (System.IO.File.Exists(Config.GetFile(Config.Dir.Thumbs, "MPTemp -" + moviename + ".jpg")) != true)
-						GUIWindowManager.Process();
-				}
-		}
+            while (System.IO.File.Exists(System.IO.Path.Combine(Thumbs.Trailers, moviename + ".jpg")) != true)
+            {
+              Thread.Sleep(50);
+              GUIWindowManager.Process();
+            }
 
-        public TrailersUtility()
-		{
-		}
-	}
+          }
+          catch (Exception ex)
+          {
+            Log.Warn("TrailersUtility: an error occured downloading poster for {0} - {1}", moviename, ex.Message);
+          }
+
+        }
+      }
+    }
+
+    public TrailersUtility()
+    {
+    }
+  }
 }

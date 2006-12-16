@@ -984,6 +984,8 @@ namespace MediaPortal.Util
         return false;
       if (strFile == String.Empty || strThumb == String.Empty)
         return false;
+      if (!System.IO.File.Exists(strFile))
+        return false;
 
       Image theImage = null;
 

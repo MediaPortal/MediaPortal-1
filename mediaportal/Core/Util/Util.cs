@@ -1283,10 +1283,14 @@ namespace MediaPortal.Util
         try
         {
           file = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
-          System.IO.File.Copy(strFile, file, true);
+          Util.Picture.CreateThumbnail(file, strFile, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+          string fileL = ConvertToLargeCoverArt(file);
+          Util.Picture.CreateThumbnail(fileL, strFile, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+          //System.IO.File.Copy(strFile, file, true);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Warn("Util: error after downloading thumbnail {0} - {1}", strFile, ex.Message);
         }
       }
 
@@ -1300,7 +1304,6 @@ namespace MediaPortal.Util
       if (strFile.Length == 0) return;
       try
       {
-
         HttpWebRequest wr = (HttpWebRequest)WebRequest.Create(strURL);
         wr.Timeout = 5000;
         HttpWebResponse ws = (HttpWebResponse)wr.GetResponse();
