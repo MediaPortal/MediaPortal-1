@@ -545,16 +545,11 @@ namespace MediaPortal.GUI.Music
         ImageChangeTimer.Start();
       }
 
-      if (ImgCoverArt != null)
-      {
-        GUIGraphicsContext.VideoWindow = new Rectangle(ImgCoverArt.XPosition, ImgCoverArt.YPosition, ImgCoverArt.Width, ImgCoverArt.Height);
-      }
-
       if (g_Player.Playing)
       {
         g_Player_PlayBackStarted(g_Player.MediaType.Music, g_Player.CurrentFile);
 
-        //SetVisualizationWindow();
+        SetVisualizationWindow();
       }
       else
       {
@@ -1350,8 +1345,16 @@ namespace MediaPortal.GUI.Music
 
     private void SetVisualizationWindow()
     {
-      if (!ControlsInitialized || !_usingBassEngine || !_showVisualization)
+      if (!ControlsInitialized || !_showVisualization || !_usingBassEngine)
         return;
+      
+      // the solution below doesn't rotate e.g. artist pics.
+
+      //if (ImgCoverArt != null)
+      //{
+      //  GUIGraphicsContext.VideoWindow = new Rectangle(ImgCoverArt.XPosition, ImgCoverArt.YPosition, ImgCoverArt.Width, ImgCoverArt.Height);
+      //  return;
+      //}
 
       Visualization.VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
 
