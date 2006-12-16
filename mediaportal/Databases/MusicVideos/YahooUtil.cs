@@ -48,7 +48,8 @@ namespace MediaPortal.MusicVideos.Database
     private string HTMLdownload;										   // Hold HTML for parsing or misc
 
 
-    public Regex moSongRegex = new Regex(":play\\w+\\((\\d+)\\S+ class=\"listheader\" title=\"([^\"]*)");
+    //public Regex moSongRegex = new Regex(":play\\w+\\((\\d+)\\S+ class=\"listheader\" title=\"([^\"]*)");
+    public Regex moSongRegex = new Regex(":play\\w+\\((\\d+)\\S+(?:\\sclass=\"listheader\")?\\stitle=\"([^\"]*)");
     public Regex moSearchSongRegex = new Regex(":play\\w+\\((\\d+)\\S+ title=\"([^\"]*)");
     //private Regex moArtistRegex = new Regex("/ar-(\\d+)-+\\S+\" title=\"([^>\"]*)");
     public Regex moArtistRegex = new Regex("<td class=\"listitem\"><\\ba href=\"http://[\\.\\w]+/ar-(\\d*)-+[^\"]*\" title=\"([^\"]*)\\b*|\\bfont title=\"([^\"]*)\\b*");
