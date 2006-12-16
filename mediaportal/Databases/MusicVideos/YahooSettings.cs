@@ -65,7 +65,8 @@ namespace MediaPortal.MusicVideos.Database
             {
                 msDefaultCountryName = xmlreader.GetValueAsString("musicvideo", "country","USA");
                 msDefaultBitRate = xmlreader.GetValueAsString("musicvideo", "bitrate","768");
-                mbUseVMR9 = xmlreader.GetValueAsBool("musicvideo", "useVMR9",true);                
+                //mbUseVMR9 = xmlreader.GetValueAsBool("musicvideo", "useVMR9",true);                
+                mbUseVMR9 = xmlreader.GetValueAsBool("musicvideo", "useVMR9", false);                
             }
             XmlTextReader loXmlreader = null;
             try
