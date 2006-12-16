@@ -920,11 +920,12 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
   //set patched PCR in the ts packet
   CPcr pcrHi=pcrNew;
 	pcrHi -= m_startPcr;
+	//LogDebug("Pcr  :%s :%s :%s", pcrHi.ToString(),m_startPcr.ToString(), pcrNew.ToString());
   tsPacket[6] = (byte)(((pcrHi.PcrReferenceBase>>25)&0xff));
   tsPacket[7] = (byte)(((pcrHi.PcrReferenceBase>>17)&0xff));
   tsPacket[8] = (byte)(((pcrHi.PcrReferenceBase>>9)&0xff));
   tsPacket[9] = (byte)(((pcrHi.PcrReferenceBase>>1)&0xff));
-  tsPacket[10]=	(byte)(((pcrHi.PcrReferenceBase&0x1)<<7) + 0x7e + ((pcrHi.PcrReferenceExtension>>8)&0x1));
+  tsPacket[10]=	(byte)(((pcrHi.PcrReferenceBase&0x1)<<7) + 0x7e+ ((pcrHi.PcrReferenceExtension>>8)&0x1));
   tsPacket[11]= (byte)(pcrHi.PcrReferenceExtension&0xff);
 }
 
@@ -942,12 +943,14 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
   {
 		return ;
 	}
-  if (pts.PcrReferenceBase!=0)
+	if (pts.IsValid)
 	{
     CPcr ptsorg=pts;
 		pts -= startPcr ;
-		
-	//  LogDebug("pts: org:%f new:%f start:%f", ptsorg.ToClock(),pts.ToClock(),startPcr.ToClock()); 
+		// 9       10        11        12      13
+		//76543210 76543210 76543210 76543210 76543210
+		//0011pppM pppppppp pppppppM pppppppp pppppppM 
+//		LogDebug("pts: org:%s new:%s start:%s", ptsorg.ToString(),pts.ToString(),startPcr.ToString()); 
 		byte marker=0x21;
 		if (dts.PcrReferenceBase!=0) marker=0x31;
 		pesHeader[13]=(byte)((( (pts.PcrReferenceBase&0x7f)<<1)+1));   pts.PcrReferenceBase>>=7;
@@ -956,17 +959,28 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 		pesHeader[10]=(byte)(   (pts.PcrReferenceBase&0xff));					 pts.PcrReferenceBase>>=8;
 		pesHeader[9] =(byte)( (((pts.PcrReferenceBase&7)<<1)+marker)); 
     
-	}
-	if (dts.PcrReferenceBase!=0)
-	{
-		CPcr dtsorg=dts;
-		dts -= startPcr;
-	//  LogDebug("pts: org:%f new:%f start:%f", dtsorg.ToClock(),dts.ToClock(),startPcr.ToClock()); 
-		pesHeader[18]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
-		pesHeader[17]=(byte)(   (dts.PcrReferenceBase&0xff));				  dts.PcrReferenceBase>>=8;
-		pesHeader[16]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
-		pesHeader[15]=(byte)(   (dts.PcrReferenceBase&0xff));					dts.PcrReferenceBase>>=8;
-		pesHeader[14]=(byte)( (((dts.PcrReferenceBase&7)<<1)+0x11)); 
+	
+		if (dts.IsValid)
+		{
+			CPcr dtsorg=dts;
+			dts -= startPcr;
+			// 14       15        16        17      18
+			//76543210 76543210 76543210 76543210 76543210
+			//0001pppM pppppppp pppppppM pppppppp pppppppM 
+	//		LogDebug("dts: org:%s new:%s start:%s", dtsorg.ToString(),dts.ToString(),startPcr.ToString()); 
+			pesHeader[18]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
+			pesHeader[17]=(byte)(   (dts.PcrReferenceBase&0xff));				  dts.PcrReferenceBase>>=8;
+			pesHeader[16]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
+			pesHeader[15]=(byte)(   (dts.PcrReferenceBase&0xff));					dts.PcrReferenceBase>>=8;
+			pesHeader[14]=(byte)( (((dts.PcrReferenceBase&7)<<1)+0x11)); 
+		}
+	
+		//pts.Reset();
+		//dts.Reset();
+		//if (CPcr::DecodeFromPesHeader(pesHeader,pts,dts))
+		//{
+		//	LogDebug("pts:%s dts:%s", pts.ToString(),dts.ToString());
+		//}
 	}
 }
 
