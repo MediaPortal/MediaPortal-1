@@ -50,6 +50,8 @@ namespace MediaPortal.GUI.Library
 
     [XMLSkinElement("remoteColor")]
     protected long _remoteColor = 0xffff0000;
+    [XMLSkinElement("playedColor")]
+    protected long _playedColor = 0xffa0d0ff;
     [XMLSkinElement("downloadColor")]
     protected long _downloadColor = 0xff00ff00;
 
@@ -362,6 +364,7 @@ namespace MediaPortal.GUI.Library
 
       long dwColor = _textColor;
       if (pItem.Selected) dwColor = _selectedColor;
+      if (pItem.IsPlayed) dwColor = _playedColor;
       if (!bFocus && Focus) dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
 
       if (pItem.IsRemote)
