@@ -24,6 +24,7 @@
 #include <math.h>
 #include "pcr.h" 
 #define MAX_CLOCK  95443.71768
+extern void LogDebug(const char *fmt, ...) ;
 CPcr::CPcr()
 {
   Reset();
@@ -32,6 +33,7 @@ CPcr::CPcr(const CPcr& pcr)
 {
   PcrReferenceBase=pcr.PcrReferenceBase;
   PcrReferenceExtension=pcr.PcrReferenceExtension;
+	IsValid=pcr.IsValid;
 }
 CPcr::~CPcr(void)
 {
@@ -39,6 +41,7 @@ CPcr::~CPcr(void)
 
 void CPcr::Reset()
 {
+	IsValid=false;
   PcrReferenceBase=0LL;
   PcrReferenceExtension=0LL;
 }
@@ -58,6 +61,7 @@ void CPcr::Decode(byte* data)
   PcrReferenceExtension=0;
   k=(data[4]& 0x1);  k<<=8LL;PcrReferenceExtension+=k; // bit 8
   k=data[5];                 PcrReferenceExtension+=k; // bit 0-7 
+	IsValid=true;
 }
 
 bool CPcr::DecodeFromPesHeader(byte* pesHeader, CPcr& pts, CPcr& dts)
@@ -66,34 +70,42 @@ bool CPcr::DecodeFromPesHeader(byte* pesHeader, CPcr& pts, CPcr& dts)
 	dts.Reset();
 	bool ptsAvailable=false;
 	bool dtsAvailable=false;
-	if ( (pesHeader[7]&0x80)!=0) ptsAvailable=true;
-	if ( (pesHeader[7]&0x40)!=0) dtsAvailable=true;
+	if ( (pesHeader[7]&0x80)!=0) 
+	{
+		ptsAvailable=true;
+		if ( (pesHeader[7]&0x40)!=0) dtsAvailable=true;
+	}
 	if (ptsAvailable)
 	{	
+		
+		// 9       10        11        12      13
+		//76543210 76543210 76543210 76543210 76543210
+		//0011pppM pppppppp pppppppM pppppppp pppppppM 
 	  UINT64 ptsTicks=0LL;
-		ptsTicks += ((pesHeader[13]>>1)&0x7f);				// 7bits	7
-		ptsTicks +=(pesHeader[12]<<7);								// 8bits	15
-		ptsTicks +=((pesHeader[11]>>1)<<15);					// 7bits	22
-		ptsTicks +=((pesHeader[10])<<22);							// 8bits	30
-    UINT64 k=((pesHeader[9]>>1)&0x7);
-    k <<=30LL;
-		ptsTicks += k;			// 3bits
-		ptsTicks &= 0x1FFFFFFFFLL;
+		UINT64 k;
+		k=((pesHeader[9]>>1)&0x7); k <<=30; ptsTicks+=k;
+		k=  pesHeader[10];				 k <<=22; ptsTicks+=k;
+		k= (pesHeader[11]>>1);		 k <<=15; ptsTicks+=k;
+		k=  pesHeader[12];				 k <<=7;  ptsTicks+=k;
+		k= (pesHeader[13]>>1);		          ptsTicks+=k;
     pts.PcrReferenceBase = ptsTicks;
+		pts.IsValid=true;
 	}
 
 	if (dtsAvailable)
 	{
+		// 14       15        16        17      18
+		//76543210 76543210 76543210 76543210 76543210
+		//0001dddM dddddddd dddddddM dddddddd dddddddM 
 	  UINT64 dtsTicks=0LL;
-		dtsTicks = (pesHeader[18]>>1);								// 7bits	7
-		dtsTicks +=(pesHeader[17]<<7);								// 8bits	15
-		dtsTicks +=((pesHeader[16]>>1)<<15);					// 7bits	22
-		dtsTicks +=((pesHeader[15])<<22);							// 8bits	30
-    UINT64 k=((pesHeader[14]>>1)&0x7);
-    k <<=30LL;
-		dtsTicks+=k;			// 3bits
-		dtsTicks &= 0x1FFFFFFFFLL;
+		UINT64 k;
+		k=((pesHeader[14]>>1)&0x7); k <<=30; dtsTicks+=k;
+		k=  pesHeader[15];				  k <<=22; dtsTicks+=k;
+		k= (pesHeader[16]>>1);		  k <<=15; dtsTicks+=k;
+		k=  pesHeader[17];				  k <<=7;  dtsTicks+=k;
+		k= (pesHeader[18]>>1);		           dtsTicks+=k;
     dts.PcrReferenceBase = dtsTicks;
+		dts.IsValid=true;
 	}
 	
 	return (ptsAvailable||dtsAvailable);
@@ -105,12 +117,11 @@ void CPcr::FromClock(double clock)
   {
     clock -= MAX_CLOCK;
   }
-  while (clock < MAX_CLOCK)
+  while (clock < 0)
   {
     clock += MAX_CLOCK;
   }
-  UINT64 ticks= floor(clock);
-  PcrReferenceBase=ticks*90000LL;
+  PcrReferenceBase=(UINT64)fabs(clock*90000.0);
   PcrReferenceExtension=(UINT64)( ( clock-floor(clock) )*27000000.0);
 }
 
@@ -125,7 +136,7 @@ double CPcr::ToClock() const
   }
   while (clock < 0)
   {
-    clock += MAX_CLOCK;
+    clock += 0;
   }
   return clock;
 }
@@ -158,21 +169,21 @@ CPcr & CPcr::operator-=(const CPcr &rhs)
   FromClock(clock);
   return *this;
 }
-CPcr & CPcr::operator+(const CPcr &rhs) 
+CPcr  CPcr::operator+(const CPcr &rhs) 
 {    
   return (CPcr(*this) += rhs);
 }
-CPcr & CPcr::operator-(const CPcr &rhs) 
+CPcr  CPcr::operator-(const CPcr &rhs) 
 {
   return (CPcr(*this) -= rhs);      
 }
-CPcr & CPcr::operator=(const CPcr &rhs) 
+CPcr&  CPcr::operator=(const CPcr &rhs) 
 {
   if (this == &rhs)     
       return *this;      
   PcrReferenceBase=rhs.PcrReferenceBase;
   PcrReferenceExtension=rhs.PcrReferenceExtension;
-
+	IsValid=rhs.IsValid;
   return *this;
 }
 bool CPcr::operator==(const CPcr &other) const 
@@ -193,6 +204,6 @@ char* CPcr::ToString()
 {
   int day, hour,  minutes,  seconds,  millsecs;
   Time(day, hour,minutes, seconds,  millsecs);
-  sprintf(m_buffer,"%d days %02.2d:%02.2d:%02.2d", day,hour,minutes,seconds);
+  sprintf(m_buffer,"%d days %02.2d:%02.2d:%02.2d %d", day,hour,minutes,seconds,millsecs);
   return m_buffer;
 }

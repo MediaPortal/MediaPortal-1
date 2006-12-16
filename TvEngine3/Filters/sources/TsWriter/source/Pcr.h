@@ -38,8 +38,8 @@ public:
   
   CPcr& operator+=(const CPcr &rhs);
   CPcr& operator-=(const CPcr &rhs); 
-  CPcr& operator+(const CPcr &rhs); 
-  CPcr& operator-(const CPcr &rhs);
+  CPcr operator+(const CPcr &rhs); 
+  CPcr operator-(const CPcr &rhs);
   CPcr& operator=(const CPcr &rhs);
   bool operator==(const CPcr &other) const ;
   bool operator>(const CPcr &other) const ;
@@ -47,6 +47,7 @@ public:
 
   UINT64 PcrReferenceBase;
   UINT64 PcrReferenceExtension;
+	bool   IsValid;
 private:
   char m_buffer[100];
 };
