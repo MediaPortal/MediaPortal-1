@@ -1529,7 +1529,7 @@ namespace MediaPortal.GUI.Video
 
     private void OnPlayBackStopped(MediaPortal.Player.g_Player.MediaType type, int timeMovieStopped, string filename)
     {
-      if (type != g_Player.MediaType.Video) return;
+        if (type != g_Player.MediaType.Video || filename.EndsWith("&txe=.wmv")) return;
 
       // Handle all movie files from idMovie
       ArrayList movies = new ArrayList();
