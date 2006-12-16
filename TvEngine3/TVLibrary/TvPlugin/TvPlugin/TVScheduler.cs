@@ -412,8 +412,8 @@ namespace TvPlugin
           }
 
         case SortMethod.Type:
-          item1.Label2 = GetScheduleType(rec1.ScheduleType);
-          item2.Label2 = GetScheduleType(rec2.ScheduleType);
+          item1.Label2 = GetScheduleType(rec1,rec1.ScheduleType);
+          item2.Label2 = GetScheduleType(rec2,rec2.ScheduleType);
           if (rec1.ScheduleType != rec2.ScheduleType)
           {
             if (m_bSortAscending)
@@ -711,7 +711,7 @@ namespace TvPlugin
                 break;
               case ScheduleRecordingType.EveryTimeOnThisChannel:
                 item.Label = rec.ProgramName;
-                item.Label2 = GUILocalizeStrings.Get(650);
+                item.Label2 = String.Format(GUILocalizeStrings.Get(650), rec.ReferencedChannel().Name);
                 break;
               case ScheduleRecordingType.EveryTimeOnEveryChannel:
                 item.Label = rec.ProgramName;
@@ -1172,7 +1172,7 @@ namespace TvPlugin
       }
     }
 
-    string GetScheduleType(int type)
+    string GetScheduleType(Schedule schedule, int type)
     {
       ScheduleRecordingType ScheduleType = (ScheduleRecordingType)type;
       string strType = String.Empty;
@@ -1185,7 +1185,7 @@ namespace TvPlugin
           strType = GUILocalizeStrings.Get(651);//Everytime on any channel
           break;
         case ScheduleRecordingType.EveryTimeOnThisChannel:
-          strType = GUILocalizeStrings.Get(650);//Everytime on this channel
+          strType = String.Format(GUILocalizeStrings.Get(650), schedule.ReferencedChannel().Name); ;//Everytime on this channel
           break;
         case ScheduleRecordingType.Once:
           strType = GUILocalizeStrings.Get(647);//Once
