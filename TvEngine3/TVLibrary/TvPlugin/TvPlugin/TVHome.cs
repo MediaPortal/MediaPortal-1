@@ -72,6 +72,7 @@ namespace TvPlugin
     bool _settingsLoaded = false;
     DateTime _dtlastTime = DateTime.Now;
     TvCropManager _cropManager = new TvCropManager();
+    TvNotifyManager _notifyManager = new TvNotifyManager();
 
     [SkinControlAttribute(2)]
     protected GUIButtonControl btnTvGuide = null;

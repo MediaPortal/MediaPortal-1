@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using MediaPortal.Util;
+using MediaPortal.GUI.Library;
 
 using TvDatabase;
 using Gentle.Common;
@@ -172,9 +173,16 @@ namespace TvPlugin
 
       IList programs;
       if (rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel)
+      {
+        Log.Debug("get {0} {1} EveryTimeOnThisChannel", rec.ProgramName, rec.ReferencedChannel().Name);
         programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, rec.ReferencedChannel());
+      }
       else
+      {
+        Log.Debug("get {0} EveryTimeOnAllChannels", rec.ProgramName );
+
         programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, null);
+      }
       foreach (Program prog in programs)
       {
         if (rec.IsRecordingProgram(prog, false))

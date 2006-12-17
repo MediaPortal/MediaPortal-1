@@ -586,6 +586,7 @@ namespace TvPlugin
       currentProgram.Notify = !currentProgram.Notify;
       currentProgram.Persist();
       Update();
+      TvNotifyManager.OnNotifiesChanged();
     }
 
     void OnKeep()

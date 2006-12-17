@@ -68,7 +68,7 @@ namespace TvPlugin
     bool m_bSortAscending = true;
     int m_iSelectedItem = 0;
     bool needUpdate = false;
-    string currentShow = String.Empty;
+    Schedule selectedSchedule = null;
 
     public TvScheduler()
     {
@@ -162,7 +162,7 @@ namespace TvPlugin
           {
             if (item.IsFolder && item.Label == "..")
             {
-              currentShow = String.Empty;
+              selectedSchedule = null;
               LoadDirectory();
               return;
             }
@@ -412,8 +412,8 @@ namespace TvPlugin
           }
 
         case SortMethod.Type:
-          item1.Label2 = GetScheduleType(rec1,rec1.ScheduleType);
-          item2.Label2 = GetScheduleType(rec2,rec2.ScheduleType);
+          item1.Label2 = GetScheduleType(rec1, rec1.ScheduleType);
+          item2.Label2 = GetScheduleType(rec2, rec2.ScheduleType);
           if (rec1.ScheduleType != rec2.ScheduleType)
           {
             if (m_bSortAscending)
@@ -457,7 +457,7 @@ namespace TvPlugin
 
       IList itemlist = Schedule.ListAll();
       int total = 0;
-      if (currentShow == String.Empty)
+      if (selectedSchedule == null)
       {
         foreach (Schedule rec in itemlist)
         {
@@ -514,7 +514,7 @@ namespace TvPlugin
 
         foreach (Schedule rec in itemlist)
         {
-          if (!rec.ProgramName.Equals(currentShow)) continue;
+          if (selectedSchedule.IdSchedule != rec.IdSchedule) continue;
           //@List<Schedule> recs = ConflictManager.Util.GetRecordingTimes(rec);
           List<Schedule> recs = TVHome.Util.GetRecordingTimes(rec);
           if (recs.Count >= 1)
@@ -733,11 +733,11 @@ namespace TvPlugin
       {
         if (item.Label.Equals(".."))
         {
-          currentShow = String.Empty;
+          selectedSchedule = null;
           LoadDirectory();
           return;
         }
-        currentShow = rec.ProgramName;
+        selectedSchedule = rec;
         LoadDirectory();
         return;
       }
@@ -848,7 +848,7 @@ namespace TvPlugin
             {
               rec = Schedule.Retrieve(rec.IdSchedule);
               rec.Delete();
-              currentShow = "";
+              selectedSchedule = null;
               RemoteControl.Instance.OnNewSchedule();
 
             }
