@@ -92,8 +92,16 @@ namespace TvPlugin
           program.Notify = false;
           program.Persist();
 
+          MediaPortal.TV.Database.TVProgram tvProg = new MediaPortal.TV.Database.TVProgram();
+          tvProg.Channel = program.ReferencedChannel().Name;
+          tvProg.Title = program.Title;
+          tvProg.Description = program.Description;
+          tvProg.Genre = program.Genre;
+          tvProg.Start = Utils.datetolong(program.StartTime);
+          tvProg.End = Utils.datetolong(program.EndTime);
+
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM, 0, 0, 0, 0, 0, null);
-          msg.Object = program;
+          msg.Object = tvProg;
           GUIGraphicsContext.SendMessage(msg);
           msg = null;
           _notifiesList.Remove(program);
