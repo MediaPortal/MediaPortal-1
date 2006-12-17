@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <strings>
 	<characters>255</characters>
-	<string>
+	<string Prefix="Mina ">
 		<id>0</id>
-		<value>Mina Program</value>
+		<value>Program</value>
 	</string>
-	<string>
+	<string Prefix="Mina ">
 		<id>1</id>
-		<value>Mina Bilder</value>
+		<value>Bilder</value>
 	</string>
-	<string>
+	<string Prefix="Min ">
 		<id>2</id>
-		<value>Min Musik</value>
+		<value>Musik</value>
 	</string>
-	<string>
+	<string Prefix="Mina ">
 		<id>3</id>
-		<value>Mina Filmer</value>
+		<value>Filmer</value>
 	</string>
 	<string>
 		<id>4</id>
@@ -25,21 +25,21 @@
 		<id>5</id>
 		<value>Inställningar</value>
 	</string>
-	<string>
+	<string Prefix="Mina ">
 		<id>7</id>
-		<value>Mina Filer</value>
+		<value>Filer</value>
 	</string>
-	<string>
+	<string Prefix="Mitt ">
 		<id>8</id>
-		<value>Mitt Väder</value>
+		<value>Väder</value>
 	</string>
-	<string>
+	<string Prefix="Mina ">
 		<id>9</id>
-		<value>Mina Nyheter</value>
+		<value>Nyheter</value>
 	</string>
-	<string>
+	<string Prefix="Mina ">
 		<id>10</id>
-		<value>Mina Recept</value>
+		<value>Recept</value>
 	</string>
 	<string>
 		<id>11</id>
@@ -117,9 +117,9 @@
 		<id>32</id>
 		<value>december</value>
 	</string>
-	<string>
+    <string Prefix="Mina ">
 		<id>50</id>
-		<value>Mina DVD-filmer</value>
+		<value>DVD-filmer</value>
 	</string>
 	<string>
 		<id>100</id>
@@ -173,13 +173,13 @@
 		<id>112</id>
 		<value>PAUSAD</value>
 	</string>
-	<string>
+    <string Prefix="Mina ">
 		<id>113</id>
-		<value>Mina Filer : Källa</value>
+		<value>Filer : Källa</value>
 	</string>
-	<string>
+    <string Prefix="Mina ">
 		<id>114</id>
-		<value>Mina Filer : Destination</value>
+		<value>Filer : Destination</value>
 	</string>
 	<string>
 		<id>115</id>
@@ -1346,14 +1346,6 @@
 		<value>Luftfuktighet</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value>från</value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>på</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>Hämtar från Weather.com</value>
 	</string>
@@ -1385,21 +1377,21 @@
 		<id>417</id>
 		<value>Visa: Stora ikoner</value>
 	</string>
-	<string>
+    <string Prefix="Mina ">
 		<id>418</id>
-		<value>Mina filmer/Genrer</value>
+		<value>filmer/genrer</value>
 	</string>
-	<string>
+    <string Prefix="Mina ">
 		<id>419</id>
-		<value>Mina filmer/Skådespelare</value>
+		<value>filmer/skådespelare</value>
 	</string>
-	<string>
+    <string Prefix="Mina ">
 		<id>420</id>
-		<value>Mina filmer/År</value>
+		<value>filmer/år</value>
 	</string>
-	<string>
+    <string Prefix="Mina ">
 		<id>421</id>
-		<value>Mina filmer/Titel</value>
+		<value>filmer/titel</value>
 	</string>
 	<string>
 		<id>422</id>
@@ -1787,7 +1779,7 @@
 	</string>
 	<string>
 		<id>533</id>
-		<value>Guide</value>
+		<value>Radio-tablå</value>
 	</string>
 	<string>
 		<id>534</id>
@@ -1929,9 +1921,9 @@
 		<id>604</id>
 		<value>Inspelad TV</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>605</id>
-		<value>Min TV</value>
+		<value>TV</value>
 	</string>
 	<string>
 		<id>606</id>
@@ -2169,9 +2161,9 @@
 		<id>664</id>
 		<value>Radera denna bild?</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>665</id>
-		<value>Min Radio</value>
+		<value>Radio</value>
 	</string>
 	<string>
 		<id>666</id>
@@ -2889,9 +2881,9 @@
 		<id>912</id>
 		<value>Kunde inte ladda ner senaste nyheterna</value>
 	</string>
-	<string>
+    <string Prefix="Mina ">
 		<id>913</id>
-		<value>Mina Plugins</value>
+		<value>Plugins</value>
 	</string>
 	<string>
 		<id>914</id>
@@ -3305,9 +3297,9 @@
 		<id>1026</id>
 		<value>Detaljer finns i loggfilen</value>
 	</string>
-	<string>
+    <string Prefix="Mina ">
 		<id>1027</id>
-		<value>Mina DVD-filmer</value>
+		<value>DVD-filmer</value>
 	</string>
 	<string>
 		<id>1028</id>
@@ -3345,9 +3337,9 @@
 		<id>1036</id>
 		<value>Ingen videosignal</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>1037</id>
-		<value>Min TV - Programinformation</value>
+		<value>TV - Programinformation</value>
 	</string>
 	<string>
 		<id>1038</id>
@@ -3438,8 +3430,12 @@
 		<value>Zoom 14:9</value>
 	</string>
 	<string>
+        <id>1200</id>
+        <value>Setup guide</value>
+    </string>
+    <string Prefix="Min ">
 		<id>1440</id>
-		<value>Min text-TV</value>
+		<value>Text-TV</value>
 	</string>
 	<string>
 		<id>1441</id>
@@ -3481,9 +3477,9 @@
 		<id>1450</id>
 		<value>Är du säker på att du vill stoppa inspelningen?</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>1950</id>
-		<value>Min status</value>
+		<value>status</value>
 	</string>
 	<string>
 		<id>1951</id>
@@ -3933,9 +3929,9 @@
 		<id>2099</id>
 		<value>Nuvarande position:</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>2100</id>
-		<value>Min Brännare</value>
+		<value>Brännare</value>
 	</string>
 	<string>
 		<id>2101</id>
@@ -4310,8 +4306,28 @@
 		<id>2606</id>
 		<value>Italienska</value>
 	</string>
+    <string>
+        <id>2607</id>
+        <value>Spanska</value>
+    </string>
+    <string>
+        <id>2608</id>
+        <value>Portugisiska</value>
+    </string>
 	<!-- End of Wikipedia Strings -->
-	<string>
+    <string>
+        <id>2997</id>
+        <value>h.</value>
+    </string>
+    <string>
+        <id>2998</id>
+        <value>min.</value>
+    </string>
+    <string>
+        <id>2999</id>
+        <value>sek.</value>
+    </string>
+    <string>
 		<id>3000</id>
 		<value>Programalternativ</value>
 	</string>
@@ -4404,8 +4420,164 @@
 		<value>av</value>
 	</string>
 	<string>
+		<id>4000</id>
+		<value>Webbläsare</value>
+	</string>
+	<string>
+		<id>4001</id>
+		<value>Favoriter</value>
+	</string>
+	<string>
+		<id>4002</id>
+		<value>Kan inte ladda sida</value>
+	</string>
+	<string>
+		<id>4003</id>
+		<value>Ange din favoritmapp i inställningarna, tack.</value>
+	</string>
+	<string>
+		<id>4500</id>
+		<value>Hoppa över album som redan har omslagsbilder</value>
+	</string>
+	<string>
+		<id>4501</id>
+		<value>Spara omslagsbilder i albummappen</value>
+	</string>
+	<string>
+		<id>4502</id>
+		<value>Spara omslagsbilder i miniatyrmappen</value>
+	</string>
+	<string>
+		<id>4503</id>
+		<value>Räknar album. Var vänlig vänta...</value>
+	</string>
+	<string>
+		<id>4504</id>
+		<value>{0}% - {1} av {2}</value>
+	</string>
+	<string>
+		<id>4505</id>
+		<value>Söker {0}...</value>
+	</string>
+	<string>
+		<id>4506</id>
+		<value>[Tom]</value>
+	</string>
+	<string>
+		<id>4507</id>
+		<value>Hämtning av omslagsbilder avbröts</value>
+	</string>
+	<string>
+		<id>4508</id>
+		<value>Hämtning av omslagsbilder lyckades</value>
+	</string>
+	<string>
+		<id>4509</id>
+		<value>Hämtning av omslagbilder avslutad med fel</value>
+	</string>
+	<string>
+		<id>4510</id>
+		<value>{0} omslagsbilder uppdaterade</value>
+	</string>
+	<string>
+		<id>4511</id>
+		<value>Hämtning av omslagsbilder klar</value>
+	</string>
+	<string>
+		<id>4512</id>
+		<value>Alla omslagsbilder är uppdaterade</value>
+	</string>
+	<string>
+		<id>4513</id>
+		<value>Blandade</value>
+	</string>
+	<string>
+		<id>4514</id>
+		<value>Hämtning av omslagsbilder</value>
+	</string>
+	<string>
+		<id>4515</id>
+		<value>Sökresultat för omslagsbilder</value>
+	</string>
+	<string>
+		<id>4516</id>
+		<value>Inga omslagsbilder hittades</value>
+	</string>
+	<string>
+		<id>4517</id>
+		<value>Stäng</value>
+	</string>
+	<string>
+		<id>4518</id>
+		<value>Namn på album saknas\r\nFörsöker: {0}</value>
+	</string>
+	<string>
+		<id>4519</id>
+		<value>Nuvarande omslagsbild</value>
+	</string>
+	<string>
+		<id>4520</id>
+		<value>Hoppa över</value>
+	</string>
+	<string>
+		<id>4521</id>
+		<value>Visa albuminformation</value>
+	</string>
+	<string>
+		<id>4522</id>
+		<value>Fångar: {0}...</value>
+	</string>
+	<string>
+		<id>4540</id>
+		<value>Spelar</value>
+	</string>
+	<string>
+		<id>4541</id>
+		<value>Nästa spår</value>
+	</string>
+	<string>
+		<id>4542</id>
+		<value>Inga spellistor laddade</value>
+	</string>
+	<string>
+		<id>4543</id>
+		<value>Hittade ingen spårinformation</value>
+	</string>
+	<string>
+		<id>4550</id>
+		<value>Ställ i kö</value>
+	</string>
+	<string>
+		<id>4551</id>
+		<value>Spela som nästa spår</value>
+	</string>
+	<string>
+		<id>4552</id>
+		<value>Spela nu</value>
+	</string>
+	<string>
+		<id>4553</id>
+		<value>Visa spellista</value>
+	</string>
+	<string>
+		<id>4554</id>
+		<value>Sök CD-info</value>
+	</string>
+	<string>
+		<id>4555</id>
+		<value>Aktuell spellista</value>
+	</string>
+	<string>
+		<id>4556</id>
+		<value>Blandade artister</value>
+	</string>
+	<string>
+		<id>4557</id>
+		<value>Lägg till alla i spellistan</value>
+	</string>
+    <string Prefix="Mina ">
 		<id>5900</id>
-		<value>Mina Trailrar</value>
+		<value>Trailrar</value>
 	</string>
 	<string>
 		<id>5901</id>
@@ -4507,7 +4679,27 @@
 		<id>5925</id>
 		<value>Förbeställda DVD:er</value>
 	</string>
+		<string>
+		<id>6000</id>
+		<value>Videocodec</value>
+	</string>
 	<string>
+		<id>6001</id>
+		<value>Audiocodec</value>
+	</string>
+	<string>
+		<id>6002</id>
+		<value>Audiorenderare</value>
+	</string>
+	<string>
+		<id>6003</id>
+		<value>Deinterlacing</value>
+	</string>
+	<string>
+		<id>6004</id>
+		<value>Aspekt</value>
+	</string>
+		<string>
 		<id>6005</id>
 		<value>Timeshiftbuffer</value>
 	</string>
@@ -4516,8 +4708,20 @@
 		<value>Start av TV</value>
 	</string>
 	<string>
+		<id>6007</id>
+		<value>Inspelning</value>
+	</string>
+	<string>
 		<id>6008</id>
 		<value>Kanalordning</value>
+	</string>
+	<string>
+		<id>6018</id>
+		<value>minuter före programmet startar</value>
+	</string>
+	<string>
+		<id>6019</id>
+		<value>minuter efter programmet slutar</value>
 	</string>
 	<string>
 		<id>8000</id>
@@ -4683,10 +4887,58 @@
 		<id>9011</id>
 		<value>Visa kommentarer:</value>
 	</string>
-	<string>
-		<id>99845</id>
-		<value>Sök i TV.com</value>
+    <string>
+        <id>9997</id>
+        <value>Sekunder:</value>
+    </string>
+    <string>
+        <id>9998</id>
+        <value>Minuter:</value>
+    </string>
+    <string>
+        <id>9999</id>
+        <value>Timmar:</value>
+    </string>
+    <string>
+		<id>10100</id>
+		<value>Gömda minor</value>
 	</string>
+	<string>
+		<id>10101</id>
+		<value>Speltid</value>
+	</string>
+	<string>
+		<id>10102</id>
+		<value>Snabbast tid</value>
+	</string>
+    <string Prefix="Min ">
+		<id>10103</id>
+		<value>Minesweeper</value>
+	</string>
+	<string>
+		<id>10104</id>
+		<value>Liten TV-tablå</value>
+	</string>
+    <string>
+        <id>11000</id>
+        <value>Inställningar beskärning</value>
+    </string>
+    <string>
+        <id>11001</id>
+        <value>Övre:</value>
+    </string>
+    <string>
+        <id>11002</id>
+        <value>Nedre:</value>
+    </string>
+    <string>
+        <id>11003</id>
+        <value>Vänster:</value>
+    </string>
+    <string>
+        <id>11004</id>
+        <value>Höger:</value>
+    </string>
 	<string>
 		<id>12902</id>
 		<value>MSN Messenger OSD</value>
@@ -4771,13 +5023,9 @@
 		<id>16001</id>
 		<value>Partyblanda</value>
 	</string>
-	<string>
-		<id>25001</id>
-		<value>Väntar på sida {0:X}...!</value>
-	</string>
-	<string>
+    <string Prefix="Mitt ">
 		<id>19001</id>
-		<value>Mitt Tetris</value>
+		<value>Tetris</value>
 	</string>
 	<string>
 		<id>19002</id>
@@ -4826,34 +5074,369 @@
 	<string>
 		<id>19100</id>
 		<value>GeoClock</value>
-	</string>
+    </string>
+    <!--
+   Please be aware that Sudoku is a trademark in some
+   countries. Use "Nanpure" (like the playstation does)
+   if this applies for your country, too.
+-->
+    <string Prefix="Min ">
+        <id>19101</id>
+        <value>Sudoku</value>
+    </string>
+    <string>
+        <id>19102</id>
+        <value>New game</value>
+    </string>
+    <string>
+        <id>19103</id>
+        <value>Solve</value>
+    </string>
+    <string>
+        <id>19104</id>
+        <value>Clear</value>
+    </string>
+    <string>
+        <id>19105</id>
+        <value>Block invalid moves</value>
+    </string>
+    <string>
+        <id>19106</id>
+        <value>Show invalid moves</value>
+    </string>
+    <string>
+        <id>19107</id>
+        <value>Level: </value>
+    </string>
+    <string>
+        <id>19108</id>
+        <value>easy</value>
+    </string>
+    <string>
+        <id>19109</id>
+        <value>medium</value>
+    </string>
+    <string>
+        <id>19110</id>
+        <value>difficult</value>
+    </string>
+    <string>
+        <id>19111</id>
+        <value>Game Over</value>
+    </string>
+    <string>
+        <id>19112</id>
+        <value>Congratulation!</value>
+    </string>
+    <string>
+        <id>19113</id>
+        <value>You have solved the game correctly.</value>
+    </string>
+    <string>
+        <id>19114</id>
+        <value>Sorry, but your solution is wrong.</value>
+    </string>
+    <string>
+        <id>19115</id>
+        <value>kids</value>
+    </string>
+    <string>
+        <id>19116</id>
+        <value>Cell value</value>
+    </string>
+    <string>
+        <id>19117</id>
+        <value>Clear cell</value>
+    </string>
+    <string>
+        <id>19118</id>
+        <value>Help once</value>
+    </string>
+    <string>
+        <id>19119</id>
+        <value>Reset game</value>
+    </string>
+    <string>
+        <id>25001</id>
+        <value>Väntar på sida {0:X}...!</value>
+    </string>
+    <string Prefix="Mina ">
+        <id>30000</id>
+        <value>Musikvideos</value>
+    </string>
+    <string>
+        <id>30001</id>
+        <value>Most wanted</value>
+    </string>
+    <string>
+        <id>30002</id>
+        <value>New on Yahoo</value>
+    </string>
+    <string>
+        <id>30003</id>
+        <value>Play all</value>
+    </string>
+    <string>
+        <id>30004</id>
+        <value>Previous page</value>
+    </string>
+    <string>
+        <id>30005</id>
+        <value>Next page</value>
+    </string>
+    <string>
+        <id>30006</id>
+        <value>Stop</value>
+    </string>
+    <string>
+        <id>30007</id>
+        <value>Search other videos by this artist</value>
+    </string>
+    <string>
+        <id>30008</id>
+        <value>rank</value>
+    </string>
+    <string>
+        <id>30009</id>
+        <value>page</value>
+    </string>
+    <string>
+        <id>30010</id>
+        <value>Search results for {0} - page {1} </value>
+    </string>
+
+    <string>
+        <id>33000</id>
+        <value>Scrobble On</value>
+    </string>
+    <string>
+        <id>33001</id>
+        <value>Scrobble: Similar</value>
+    </string>
+    <string>
+        <id>33002</id>
+        <value>Scrobble: Neighbours</value>
+    </string>
+    <string>
+        <id>33003</id>
+        <value>Scrobble: Tags</value>
+    </string>
+    <string>
+        <id>33004</id>
+        <value>Scrobble: Recently</value>
+    </string>
+    <string>
+        <id>33005</id>
+        <value>Account: </value>
+    </string>
+    <string>
+        <id>33006</id>
+        <value>Scrobble: Friends</value>
+    </string>
+    <string>
+        <id>33007</id>
+        <value>Scrobble: Offline</value>
+    </string>
+    <string>
+        <id>33008</id>
+        <value>There is no playlist active</value>
+    </string>
+    <string>
+        <id>33009</id>
+        <value>to insert or add the track!</value>
+    </string>
+    <string>
+        <id>33010</id>
+        <value>Automatically fill playlist with</value>
+    </string>
+    <string>
+        <id>33011</id>
+        <value>similar tracks</value>
+    </string>
+    <string>
+        <id>33012</id>
+        <value>tracks your neighbours like</value>
+    </string>
+    <string>
+        <id>33013</id>
+        <value>tracks suiting configured tag</value>
+    </string>
+    <string>
+        <id>33014</id>
+        <value>tracks played recently</value>
+    </string>
+    <string>
+        <id>33016</id>
+        <value>tracks your friends like</value>
+    </string>
+    <string>
+        <id>33017</id>
+        <value>random tracks</value>
+    </string>
+    <string>
+        <id>33018</id>
+        <value>random unheard tracks</value>
+    </string>
+    <string>
+        <id>33019</id>
+        <value>random favorite tracks</value>
+    </string>
+    <string>
+        <id>33030</id>
+        <value>Top album tracks</value>
+    </string>
+    <string>
+        <id>33031</id>
+        <value>Other tracks tagged with: </value>
+    </string>
+    <string>
+        <id>33040</id>
+        <value>Copy now playing spam to clipboard</value>
+    </string>
+    <string>
+        <id>33041</id>
+        <value>Add this album to playlist</value>
+    </string>
+    <string Prefix="My ">
+        <id>34000</id>
+        <value>Last.fm</value>
+    </string>
+    <string>
+        <id>34001</id>
+        <value>Start / Change stream</value>
+    </string>
+    <string>
+        <id>34002</id>
+        <value>Friend: </value>
+    </string>
+    <string>
+        <id>34003</id>
+        <value>Neighbour: </value>
+    </string>
+    <string>
+        <id>34004</id>
+        <value>Group: </value>
+    </string>
+    <string>
+        <id>34010</id>
+        <value>Love</value>
+    </string>
+    <string>
+        <id>34011</id>
+        <value>Ban</value>
+    </string>
+    <string>
+        <id>34012</id>
+        <value>Skip</value>
+    </string>
+    <string>
+        <id>34013</id>
+        <value>Discovery mode</value>
+    </string>
+    <string>
+        <id>34014</id>
+        <value>Submit to profile</value>
+    </string>
+    <string>
+        <id>34020</id>
+        <value>Current stream: </value>
+    </string>
+    <string>
+        <id>34030</id>
+        <value>No tags</value>
+    </string>
+    <string>
+        <id>34031</id>
+        <value>No friends</value>
+    </string>
+    <string>
+        <id>34040</id>
+        <value>Recommendation radio</value>
+    </string>
+    <string>
+        <id>34041</id>
+        <value>Tune into chosen Tag: </value>
+    </string>
+    <string>
+        <id>34042</id>
+        <value>No tag has been chosen yet</value>
+    </string>
+    <string>
+        <id>34043</id>
+        <value>Personal radio of: </value>
+    </string>
+    <string>
+        <id>34044</id>
+        <value>Loved tracks of: </value>
+    </string>
+    <string>
+        <id>34045</id>
+        <value>No Friend has been chosen yet</value>
+    </string>
+    <string>
+        <id>34046</id>
+        <value>My personal radio</value>
+    </string>
+    <string>
+        <id>34047</id>
+        <value>My loved tracks</value>
+    </string>
+    <string>
+        <id>34048</id>
+        <value>My neighbour radio</value>
+    </string>
+    <string>
+        <id>34050</id>
+        <value>No stream active</value>
+    </string>
+    <string>
+        <id>34051</id>
+        <value>Stream ended!</value>
+    </string>
+    <string>
+        <id>34052</id>
+        <value>No more content or bad connection</value>
+    </string>
+    <string>
+        <id>34053</id>
+        <value>Playback of selected stream failed</value>
+    </string>
+    <string>
+        <id>34054</id>
+        <value>Radio handshake failed!</value>
+    </string>
+    <string>
+        <id>34055</id>
+        <value>Streams might be temporarily unavailable</value>
+    </string>	
+
 	<string>
 		<id>100000</id>
 		<value>Hem</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>100001</id>
-		<value>Mina Program</value>
+        <value>TV</value>
 	</string>
-	<string>
+    <string Prefix="Mina ">
 		<id>100002</id>
-		<value>Mina Bilder</value>
+		<value>Bilder</value>
 	</string>
-	<string>
+    <string Prefix="Mina ">
 		<id>100003</id>
-		<value>Mina Filer</value>
+		<value>Filer</value>
 	</string>
 	<string>
 		<id>100004</id>
 		<value>Inställningar</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>100005</id>
-		<value>Min Musik</value>
+		<value>Musik</value>
 	</string>
-	<string>
+    <string Prefix="Mina ">
 		<id>100006</id>
-		<value>Mina Filmer</value>
+		<value>Filmer</value>
 	</string>
 	<string>
 		<id>100007</id>
@@ -4955,9 +5538,9 @@
 		<id>100033</id>
 		<value>MSN Messenger chat</value>
 	</string>
-	<string>
+    <string Prefix="Mina ">
 		<id>100034</id>
-		<value>Mina Plugins</value>
+		<value>Plugins</value>
 	</string>
 	<string>
 		<id>100100</id>
@@ -4967,61 +5550,61 @@
 		<id>100101</id>
 		<value>Progress dialog</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>100500</id>
-		<value>Min Musik/spellista</value>
+		<value>Musik/spellista</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>100501</id>
-		<value>Min Musik/filer</value>
+		<value>Musik/filer</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>100502</id>
-		<value>Min Musik/album</value>
+		<value>Musik/album</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>100503</id>
-		<value>Min Musik/artister</value>
+		<value>Musik/artister</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>100504</id>
-		<value>Min Musik/genrer</value>
+		<value>Musik/genrer</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>100505</id>
-		<value>Min Musik/top100</value>
+		<value>Musik/top100</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>100506</id>
-		<value>Min Musik/Favoriter</value>
+		<value>Musik/Favoriter</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>100600</id>
-		<value>Min TV/Tablå</value>
+		<value>TV/Tablå</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>100601</id>
-		<value>Min TV/Planerade inspelningar</value>
+		<value>TV/Planerade inspelningar</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>100602</id>
-		<value>Min TV/Fullskärm</value>
+		<value>TV/Fullskärm</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>100603</id>
-		<value>Min TV/Inspelad TV</value>
+		<value>TV/Inspelad TV</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>100604</id>
-		<value>Min TV/Sök</value>
+		<value>TV/Sök</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>100605</id>
-		<value>Min TV/Inpelad Tv/Genre</value>
+		<value>TV/Inpelad Tv/Genre</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>100606</id>
-		<value>Min TV/Inspelad Tv/kanaler</value>
+		<value>TV/Inspelad Tv/kanaler</value>
 	</string>
 	<string>
 		<id>100607</id>
@@ -5199,11 +5782,19 @@
 		<id>100759</id>
 		<value>Inspelad TV-information</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>100760</id>
-		<value>Min Brännare</value>
+		<value>Brännare</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
+        <id>100761</id>
+        <value>TV-tablå</value>
+    </string>
+    <string Prefix="Min ">
+        <id>100762</id>
+        <value>Radio-tablå</value>
+    </string>
+    <string Prefix="Min ">
 		<id>100770</id>
 		<value>Utforskare</value>
 	</string>
@@ -5215,21 +5806,21 @@
 		<id>102000</id>
 		<value>Välj dialog</value>
 	</string>
-	<string>
+    <string Prefix="Min ">
 		<id>102001</id>
-		<value>Min Musik/info</value>
+		<value>Musik/info</value>
 	</string>
 	<string>
 		<id>102002</id>
 		<value>Dialog OK</value>
 	</string>
-	<string>
+    <string Prefix="Mina ">
 		<id>102003</id>
-		<value>Mina Filmer/info</value>
+		<value>Filmer/info</value>
 	</string>
-	<string>
+    <string Prefix="Mina ">
 		<id>102004</id>
-		<value>Mina Scripts/info</value>
+		<value>Scripts/info</value>
 	</string>
 	<string>
 		<id>102005</id>
@@ -5239,9 +5830,9 @@
 		<id>102006</id>
 		<value>Ljudvisualisering</value>
 	</string>
-	<string>
+    <string Prefix="Mina ">
 		<id>102007</id>
-		<value>Mina Bilder/bildspel</value>
+		<value>Bilder/bildspel</value>
 	</string>
 	<string>
 		<id>102008</id>
@@ -5436,10 +6027,6 @@
 		<value>På en PC bara för MediaPortal</value>
 	</string>
 	<string>
-		<id>200038</id>
-		<value>På en PC som även används till annat</value>
-	</string>
-	<string>
 		<id>200031</id>
 		<value>Ja</value>
 	</string>
@@ -5468,215 +6055,7 @@
 		<value>Hoppa över&gt;</value>
 	</string>
 	<string>
-		<id>4000</id>
-		<value>Webbläsare</value>
-	</string>
-	<string>
-		<id>4001</id>
-		<value>Favoriter</value>
-	</string>
-	<string>
-		<id>4002</id>
-		<value>Kan inte ladda sida</value>
-	</string>
-	<string>
-		<id>4003</id>
-		<value>Ange din favoritmapp i inställningarna, tack.</value>
-	</string>
-	<string>
-		<id>4500</id>
-		<value>Hoppa över album som redan har omslagsbilder</value>
-	</string>
-	<string>
-		<id>4501</id>
-		<value>Spara omslagsbilder i albummappen</value>
-	</string>
-	<string>
-		<id>4502</id>
-		<value>Spara omslagsbilder i miniatyrmappen</value>
-	</string>
-	<string>
-		<id>4503</id>
-		<value>Räknar album. Var vänlig vänta...</value>
-	</string>
-	<string>
-		<id>4504</id>
-		<value>{0}% - {1} av {2}</value>
-	</string>
-	<string>
-		<id>4505</id>
-		<value>Söker {0}...</value>
-	</string>
-	<string>
-		<id>4506</id>
-		<value>[Tom]</value>
-	</string>
-	<string>
-		<id>4507</id>
-		<value>Hämtning av omslagsbilder avbröts</value>
-	</string>
-	<string>
-		<id>4508</id>
-		<value>Hämtning av omslagsbilder lyckades</value>
-	</string>
-	<string>
-		<id>4509</id>
-		<value>Hämtning av omslagbilder avslutad med fel</value>
-	</string>
-	<string>
-		<id>4510</id>
-		<value>{0} omslagsbilder uppdaterade</value>
-	</string>
-	<string>
-		<id>4511</id>
-		<value>Hämtning av omslagsbilder klar</value>
-	</string>
-	<string>
-		<id>4512</id>
-		<value>Alla omslagsbilder är uppdaterade</value>
-	</string>
-	<string>
-		<id>4513</id>
-		<value>Blandade</value>
-	</string>
-	<string>
-		<id>4514</id>
-		<value>Hämtning av omslagsbilder</value>
-	</string>
-	<string>
-		<id>4515</id>
-		<value>Sökresultat för omslagsbilder</value>
-	</string>
-	<string>
-		<id>4516</id>
-		<value>Inga omslagsbilder hittades</value>
-	</string>
-	<string>
-		<id>4517</id>
-		<value>Stäng</value>
-	</string>
-	<string>
-		<id>4518</id>
-		<value>Namn på album saknas\r\nFörsöker: {0}</value>
-	</string>
-	<string>
-		<id>4519</id>
-		<value>Nuvarande omslagsbild</value>
-	</string>
-	<string>
-		<id>4520</id>
-		<value>Hoppa över</value>
-	</string>
-	<string>
-		<id>4521</id>
-		<value>Visa albuminformation</value>
-	</string>
-	<string>
-		<id>4522</id>
-		<value>Fångar: {0}...</value>
-	</string>
-	<string>
-		<id>4540</id>
-		<value>Spelar</value>
-	</string>
-	<string>
-		<id>4541</id>
-		<value>Nästa spår</value>
-	</string>
-	<string>
-		<id>4542</id>
-		<value>Inga spellistor laddade</value>
-	</string>
-	<string>
-		<id>4543</id>
-		<value>Hittade ingen spårinformation</value>
-	</string>
-	<string>
-		<id>4550</id>
-		<value>Ställ i kö</value>
-	</string>
-	<string>
-		<id>4551</id>
-		<value>Spela som nästa spår</value>
-	</string>
-	<string>
-		<id>4552</id>
-		<value>Spela nu</value>
-	</string>
-	<string>
-		<id>4553</id>
-		<value>Visa spellista</value>
-	</string>
-	<string>
-		<id>4554</id>
-		<value>Sök CD-info</value>
-	</string>
-	<string>
-		<id>4555</id>
-		<value>Aktuell spellista</value>
-	</string>
-	<string>
-		<id>4556</id>
-		<value>Blandade artister</value>
-	</string>
-	<string>
-		<id>4557</id>
-		<value>Lägg till alla i spellistan</value>
-	</string>
-	<string>
-		<id>6000</id>
-		<value>Videocodec</value>
-	</string>
-	<string>
-		<id>6001</id>
-		<value>Audiocodec</value>
-	</string>
-	<string>
-		<id>6002</id>
-		<value>Audiorenderare</value>
-	</string>
-	<string>
-		<id>6003</id>
-		<value>Deinterlacing</value>
-	</string>
-	<string>
-		<id>6004</id>
-		<value>Aspekt</value>
-	</string>
-	<string>
-		<id>6007</id>
-		<value>Inspelning</value>
-	</string>
-	<string>
-		<id>6018</id>
-		<value>minuter före programmet startar</value>
-	</string>
-	<string>
-		<id>6019</id>
-		<value>minuter efter programmet slutar</value>
-	</string>
-	<string>
-		<id>10100</id>
-		<value>Gömda minor</value>
-	</string>
-	<string>
-		<id>10101</id>
-		<value>Speltid</value>
-	</string>
-	<string>
-		<id>10102</id>
-		<value>Snabbast tid</value>
-	</string>
-	<string>
-		<id>10103</id>
-		<value>Minesweeper</value>
-	</string>
-	<string>
-		<id>10104</id>
-		<value>Liten TV-tablå</value>
-	</string>
-	<string>
-		<id>11000</id>
-		<value>Ändra beskärning</value>
+		<id>200038</id>
+		<value>På en PC som även används till annat</value>
 	</string>
 </strings>
