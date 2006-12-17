@@ -33,6 +33,7 @@ CMultiplexer::CMultiplexer()
 {
   m_pesBuffer = new byte[MAX_PES_BUFFER_LENGTH];
 	m_pCallback=NULL;
+	m_pcrPid=-1;
   Reset();
 }
 
@@ -52,7 +53,7 @@ void CMultiplexer::Reset()
 //	LogDebug("mux: reset");
 	m_videoPacketCounter= 0;
   m_audioPacketCounter=0;
-	m_pcrDecoder.Reset();
+	
 	ClearStreams();
 }
 
@@ -66,17 +67,19 @@ void CMultiplexer::ClearStreams()
 		delete decoder;
 	}
 	m_pesDecoders.clear();
+	m_pcrPid=-1;
+	m_adaptionField.Pcr.Reset();
 }
 
 void CMultiplexer::SetPcrPid(int pcrPid)
 {
 //	LogDebug("mux: set pcr pid:%x", pcrPid);
-	m_pcrDecoder.SetPcrPid(pcrPid);
+	m_pcrPid=pcrPid;
 }
 
 int CMultiplexer::GetPcrPid()
 {
-	return m_pcrDecoder.GetPcrPid();
+	return m_pcrPid;
 }
 
 void CMultiplexer::RemovePesStream(int pid)
@@ -142,9 +145,16 @@ void CMultiplexer::AddPesStream(int pid, bool isAudio, bool isVideo)
 
 void CMultiplexer::OnTsPacket(byte* tsPacket)
 {
-	m_pcrDecoder.OnTsPacket(tsPacket);
-	if (m_pcrDecoder.PcrHigh()== 0 && m_pcrDecoder.PcrLow()== 0) return;
-  
+	m_header.Decode(tsPacket);
+	if (m_header.Pid==m_pcrPid)
+	{
+		m_adaptionField.Decode(m_header,tsPacket);
+		if (m_adaptionField.PcrFlag)
+		{
+			m_pcr=m_adaptionField.Pcr;
+		}
+	}
+	if (m_pcr.PcrReferenceBase==0) return;
 
 	ivecPesDecoders it;
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
@@ -197,8 +207,8 @@ int CMultiplexer::OnNewPesPacket(int streamId,byte* header, int headerlen,byte* 
 int CMultiplexer::WritePackHeader()
 {
 
-	UINT64 pcrHi=m_pcrDecoder.PcrHigh();
-  int pcrLow=0;//m_pcrDecoder.PcrLow();	
+	UINT64 pcrHi=m_pcr.PcrReferenceBase;
+	UINT64 pcrLow=m_pcr.PcrReferenceExtension;
   int muxRate=(6*1024*1024)/50; //6MB/s
   byte pBuffer[0x20];
 	//pack header
@@ -208,14 +218,15 @@ int CMultiplexer::WritePackHeader()
 	pBuffer[3] = 0xba;
 	// 4             5     6         7      8       9        10        11       12       13
 	//76543210  76543210 76543210 76543210 76543210 76543210 76543210 76543210 76543210 76543210
-	//01PPPMPP  PPPPPPPP PPPPPMPP PPPPPPPP PPPPPMEE EEEEEEEM RRRRRRRR RRRRRRRR RRRRRRMM VVVVVSSS
+	//01PPPMPP  PPPPPPPP PPPPPMPP PPPPPPPP PPPPPMEE EEEEEEEM RRRRRRRR RRRRRRRR RRRRRRMM VVVVVSSS	 
 	//4..9 = pcr 33bits / 9 bits
-	pBuffer[4] = (byte)(((pcrHi >> 28)  & 0x3) + 4 + (((pcrHi >> 30) & 7) << 3)+ 0x40);
-	pBuffer[5] = (byte)((pcrHi >> 20)  & 0xff);
-	pBuffer[6] = (byte)(((pcrHi >> 13) & 0x3) + 4 + ( ( (pcrHi >> 15) & 0x1f) <<3));
-	pBuffer[7] = (byte)((pcrHi >> 5) & 0xff);
-	pBuffer[8] = (byte)(((pcrLow >> 7) & 3) + 4 + ((pcrLow & 0x1f)<<3));
-	pBuffer[9] = (byte)(((pcrLow & 0x7f) << 1) +1 );
+	pBuffer[9]=(byte)(1  + ((pcrLow&0x7f)<<1)); pcrLow>>=7;
+	pBuffer[8]=(byte)(4  +  (pcrLow&0x3) + ((pcrHi&0x1f)<<3)); pcrHi>>=5;
+	pBuffer[7]=(byte)(0  +  (pcrHi&0xff)); pcrHi>>=8;
+	pBuffer[6]=(byte)(4  +  (pcrHi&0x3));pcrHi>>=2; pBuffer[6]+=(byte)((pcrHi&0x1f)<<3);pcrHi>>=5;
+	pBuffer[5]=(byte)(0  +  (pcrHi&0xff));pcrHi>>=8;
+	pBuffer[4]=(byte)(0x44 + (pcrHi&0x3));pcrHi>>=2; pBuffer[4]+=(byte)((pcrHi&7)<<3);
+
 
 	//10..12 = mux rate
 	pBuffer[10] = (muxRate >> 14) & 0xff;

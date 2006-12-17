@@ -21,6 +21,9 @@
 #pragma once
 #include "pcrdecoder.h"
 #include "pesdecoder.h"
+#include "tsheader.h"
+#include "adaptionfield.h"
+#include "pcr.h"
 //#include "patparser.h"
 #include <vector>
 #include <map>
@@ -54,10 +57,14 @@ private:
   
 	vector<CPesDecoder*> m_pesDecoders;
 	typedef vector<CPesDecoder*>::iterator ivecPesDecoders;
-	CPcrDecoder m_pcrDecoder;
+	//CPcrDecoder m_pcrDecoder;
 	IFileWriter* m_pCallback;
+	CAdaptionField m_adaptionField;
+	CTsHeader m_header;
 	int m_videoPacketCounter;
 	int m_audioPacketCounter;
+	int m_pcrPid;
+	CPcr m_pcr;
 	bool  m_streams[255];
   byte* m_pesBuffer;
 };
