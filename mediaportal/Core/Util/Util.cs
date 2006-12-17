@@ -1277,15 +1277,15 @@ namespace MediaPortal.Util
         }
         return;
       }
-      DownLoadImage(strURL, strFile);
-      if (System.IO.File.Exists(strFile))
+      DownLoadImage(strURL, file);
+      if (System.IO.File.Exists(file))
       {
         try
         {
-          file = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
+          //file = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
           Util.Picture.CreateThumbnail(file, strFile, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
-          string fileL = ConvertToLargeCoverArt(file);
-          Util.Picture.CreateThumbnail(fileL, strFile, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+          string strFileL = ConvertToLargeCoverArt(strFile);
+          Util.Picture.CreateThumbnail(file, strFileL, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
           //System.IO.File.Copy(strFile, file, true);
         }
         catch (Exception ex)
