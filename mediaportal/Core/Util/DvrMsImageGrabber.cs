@@ -45,44 +45,60 @@ namespace MediaPortal.Util
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
     unsafe private static extern void GrabBitmaps(string fileName);
 
-    static public bool GrabFrame(string fileName,string imageFileName, System.Drawing.Imaging.ImageFormat format, int width, int height)
+    //static public bool GrabFrame(string fileName, string imageFileName, System.Drawing.Imaging.ImageFormat format, int width, int height)
+    static public bool GrabFrame(string fileName, string imageFileName)
     {
       try
       {
-        if (!System.IO.File.Exists(fileName)) return false;
+        if (!System.IO.File.Exists(fileName))
+        {
+          Log.Warn("DvrMsImageGrabber: failed to create thumbnail for {0} because the file was not found! (bogus DB entry?)", fileName);
+          return false;
+        }
+
         Utils.FileDelete("temp.bmp");
-        Log.Info("dvrms:create thumbnail for {0}", fileName);
+        Log.Info("DvrMsImageGrabber: create thumbnails for recorded tv - {0}", fileName);
+
+        // potential danger from relative path here - does also run infinitely on some files...
         GrabBitmaps(fileName);
 
         if (!System.IO.File.Exists("temp.bmp"))
         {
-          Log.Info("dvrms:failed to create thumbnail for {0}", fileName);
+          Log.Info("DvrMsImageGrabber: failed to create thumbnail for {0}", fileName);
           return false;
         }
-        using (Image bmp = Image.FromFile("temp.bmp"))
-        {
-          int arx = bmp.Width;
-          int ary = bmp.Height;
 
-          //keep aspect ratio:-)
-          float ar = ((float)ary) / ((float)arx);
-          height = (int)(((float)width) * ar);
+        Util.Picture.CreateThumbnail("temp.bmp", imageFileName, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+        string imageFileNameL = Util.Utils.ConvertToLargeCoverArt(imageFileName);
+        if (!Util.Picture.CreateThumbnail("temp.bmp", imageFileNameL, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0))
+          return false;
+        
+        return true;
 
-          Log.Info("dvrms:scale thumbnail {0}x{1}->{2}x{3}", arx,ary,width,height);
-          using (Bitmap result = new Bitmap(width, height))
-          {
-            using (Graphics g = Graphics.FromImage(result))
-            {
-              g.DrawImage(bmp, new Rectangle(0, 0, width, height));
-            }
-            result.Save(imageFileName, format);
-            return true;
-          }
-        }
+        //using (Image bmp = Image.FromFile("temp.bmp"))
+        //{
+        //  int arx = bmp.Width;
+        //  int ary = bmp.Height;
+
+        //  //keep aspect ratio:-)
+        //  float ar = ((float)ary) / ((float)arx);
+        //  height = (int)(((float)width) * ar);
+
+        //  Log.Info("dvrms:scale thumbnail {0}x{1}->{2}x{3}", arx, ary, width, height);
+        //  using (Bitmap result = new Bitmap(width, height))
+        //  {
+        //    using (Graphics g = Graphics.FromImage(result))
+        //    {
+        //      g.DrawImage(bmp, new Rectangle(0, 0, width, height));
+        //    }
+        //    result.Save(imageFileName, format);
+        //    return true;
+        //  }
+        //}
       }
       catch (Exception ex)
       {
-        Log.Error("dvrms:failed to create thumbnail for {0} {1} {2} {3}", fileName,ex.Message,ex.Source,ex.StackTrace);
+        Log.Error("DvrMsImageGrabber: failed to create thumbnail for {0} {1} {2} {3}", fileName, ex.Message, ex.Source, ex.StackTrace);
         return false;
       }
     }

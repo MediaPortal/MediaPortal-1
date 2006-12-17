@@ -834,6 +834,14 @@ namespace MediaPortal.Util
       return "000";
     }
 
+    static public string SplitFilename(string strFileNameAndPath)
+    {
+      string path = String.Empty;
+      string singlefilename = String.Empty;
+      Split(strFileNameAndPath, out path, out singlefilename);
+      return singlefilename;
+    }
+
     static public void Split(string strFileNameAndPath, out string strPath, out string strFileName)
     {
       strFileName = "";
