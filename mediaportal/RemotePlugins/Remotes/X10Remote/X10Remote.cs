@@ -45,6 +45,21 @@ namespace MediaPortal.InputDevices
     bool _x10Firefly = false;
     bool _x10UseChannelControl = false;
     int _x10Channel = 0;
+   
+    //This struct stores information needed to tell whether a key is a repeat (bug in X10 after standby)
+    public struct repeatpreventer
+    {
+      public string command;
+      public DateTime time;
+
+      public int span()
+      {
+        TimeSpan span = DateTime.Now - time;
+        return span.Milliseconds;
+      }
+    };
+
+    repeatpreventer preventdoublepress;
 
     public X10Remote()
     {
@@ -52,6 +67,7 @@ namespace MediaPortal.InputDevices
 
     public void Init(IntPtr hwnd)
     {
+      preventdoublepress = new repeatpreventer();
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _controlEnabled = xmlreader.GetValueAsBool("remote", "X10", false);
@@ -113,7 +129,7 @@ namespace MediaPortal.InputDevices
     {
       if (!_controlEnabled)
         return;
-
+      
       if (_x10Form != null)
       {
         _x10Form.Close();
@@ -146,11 +162,24 @@ namespace MediaPortal.InputDevices
       if (e.eKeyState.ToString() == "X10KEY_ON" || e.eKeyState.ToString() == "X10KEY_REPEAT")
       {
         if (_x10UseChannelControl && (e.lAddress != _x10Channel))
+        {
           return;
+        }
+
+        //Resuming from standby leads to double key presses. This is difficult to track down, 
+        //but trivial to account for. It is unclear whether this an MP problem or a X10 problem
+
+        if ((e.eCommand.ToString() == preventdoublepress.command))
+        {
+          if (preventdoublepress.span() < 50)
+            return;
+        }
 
         if (_inputHandler.MapAction((int)Enum.Parse(typeof(X10.EX10Command), e.eCommand.ToString())))
         {
           if (_logVerbose) Log.Info("X10Remote: Action mapped");
+          preventdoublepress.command = e.eCommand.ToString();
+          preventdoublepress.time = DateTime.Now;
         }
         else
         {
