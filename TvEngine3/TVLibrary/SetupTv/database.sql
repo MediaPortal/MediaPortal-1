@@ -187,6 +187,7 @@ CREATE TABLE GroupMap(
 	idMap int IDENTITY(1,1) NOT NULL,
 	idGroup int NOT NULL,
 	idChannel int NOT NULL,
+	SortOrder int NOT NULL,
  CONSTRAINT PK_GroupMap PRIMARY KEY  
 (
 	idMap ASC
@@ -469,5 +470,5 @@ GO
 GO
 delete from version
 GO
-insert into version(versionNumber) values(15)
+insert into version(versionNumber) values(16)
 GO

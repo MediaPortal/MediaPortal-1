@@ -110,7 +110,7 @@ namespace TvDatabase
       }
       if (!found)
       {
-        GroupMap map = new GroupMap(group.IdGroup, channel.IdChannel);
+        GroupMap map = new GroupMap(group.IdGroup, channel.IdChannel, channel.SortOrder);
         map.Persist();
       }
     }

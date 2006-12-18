@@ -145,5 +145,10 @@ namespace SetupTv.Sections
       //DatabaseManager.Instance.SaveChanges();
       RemoteControl.Instance.OnNewSchedule();
     }
+
+    private void mpListView1_ItemDrag(object sender, ItemDragEventArgs e)
+    {
+
+    }
   }
 }

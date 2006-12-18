@@ -174,6 +174,9 @@ namespace SetupTv.Sections
       this.mpListViewMapped.TabIndex = 12;
       this.mpListViewMapped.UseCompatibleStateImageBehavior = false;
       this.mpListViewMapped.View = System.Windows.Forms.View.Details;
+      this.mpListViewMapped.DragEnter += new System.Windows.Forms.DragEventHandler(this.mpListViewMapped_DragEnter);
+      this.mpListViewMapped.DragDrop += new System.Windows.Forms.DragEventHandler(this.mpListViewMapped_DragDrop);
+      this.mpListViewMapped.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.mpListViewMapped_ItemDrag);
       // 
       // columnHeader2
       // 
@@ -191,8 +194,7 @@ namespace SetupTv.Sections
       // 
       // mpListViewChannels
       // 
-      this.mpListViewChannels.AllowDrop = true;
-      this.mpListViewChannels.AllowRowReorder = true;
+      this.mpListViewChannels.AllowRowReorder = false;
       this.mpListViewChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader4});
       this.mpListViewChannels.Location = new System.Drawing.Point(10, 58);

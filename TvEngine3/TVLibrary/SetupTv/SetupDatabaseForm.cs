@@ -146,11 +146,17 @@ namespace SetupTv
             cmds[i] = cmds[i].Trim();
             if (cmds[i].Length > 0)
             {
-              SqlCommand cmd = connect.CreateCommand();
-              cmd.CommandText = cmds[i];
-              cmd.CommandType = CommandType.Text;
-              TvLibrary.Log.Log.Write("sql:{0}", cmds[i]);
-              cmd.ExecuteNonQuery();
+              try
+              {
+                SqlCommand cmd = connect.CreateCommand();
+                cmd.CommandText = cmds[i];
+                cmd.CommandType = CommandType.Text;
+                TvLibrary.Log.Log.Write("sql:{0}", cmds[i]);
+                cmd.ExecuteNonQuery();
+              }
+              catch (Exception)
+              {
+              }
             }
           }
         }
@@ -233,12 +239,13 @@ namespace SetupTv
                 int version = (int)reader["versionNumber"];
                 reader.Close();
                 connect.Close();
-                if (version != 15)
+                if (version != 16)
                 {
                   return true;
                 }
                 return false;
               }
+              else return true;
               connect.Close();
               reader.Close();
             }

@@ -931,5 +931,10 @@ namespace SetupTv.Sections
       previewWindow.Channel = channel;
       previewWindow.ShowDialog(this);
     }
+
+    private void mpListView1_ItemDrag(object sender, ItemDragEventArgs e)
+    {
+      ReOrder();
+    }
   }
 }

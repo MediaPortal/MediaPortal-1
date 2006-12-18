@@ -131,6 +131,7 @@ namespace TvDatabase
 
 			// where foreigntable.foreignkey = ourprimarykey
 			sb.AddConstraint(Operator.Equals, "idGroup", idGroup);
+      sb.AddOrderByField("SortOrder");
 
 			// passing true indicates that we'd like a list of elements, i.e. that no primary key
 			// constraints from the type being retrieved should be added to the statement

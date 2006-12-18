@@ -45,6 +45,7 @@ namespace SetupTv.Sections
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.mpButtonPreview = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.btnCombine = new System.Windows.Forms.Button();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -56,7 +57,6 @@ namespace SetupTv.Sections
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.mpComboBoxCard = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpButtonPreview = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -83,6 +83,7 @@ namespace SetupTv.Sections
       this.mpListView1.View = System.Windows.Forms.View.Details;
       this.mpListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView1_ColumnClick);
       this.mpListView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.mpListView1_AfterLabelEdit);
+      this.mpListView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.mpListView1_ItemDrag);
       // 
       // columnHeader7
       // 
@@ -219,6 +220,16 @@ namespace SetupTv.Sections
       this.tabPage1.Text = "Channels";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
+      // mpButtonPreview
+      // 
+      this.mpButtonPreview.Location = new System.Drawing.Point(221, 326);
+      this.mpButtonPreview.Name = "mpButtonPreview";
+      this.mpButtonPreview.Size = new System.Drawing.Size(54, 23);
+      this.mpButtonPreview.TabIndex = 8;
+      this.mpButtonPreview.Text = "Preview";
+      this.mpButtonPreview.UseVisualStyleBackColor = true;
+      this.mpButtonPreview.Click += new System.EventHandler(this.mpButtonPreview_Click);
+      // 
       // tabPage2
       // 
       this.tabPage2.Controls.Add(this.btnCombine);
@@ -325,16 +336,6 @@ namespace SetupTv.Sections
       this.mpLabel1.Size = new System.Drawing.Size(32, 13);
       this.mpLabel1.TabIndex = 9;
       this.mpLabel1.Text = "Card:";
-      // 
-      // mpButtonPreview
-      // 
-      this.mpButtonPreview.Location = new System.Drawing.Point(221, 326);
-      this.mpButtonPreview.Name = "mpButtonPreview";
-      this.mpButtonPreview.Size = new System.Drawing.Size(54, 23);
-      this.mpButtonPreview.TabIndex = 8;
-      this.mpButtonPreview.Text = "Preview";
-      this.mpButtonPreview.UseVisualStyleBackColor = true;
-      this.mpButtonPreview.Click += new System.EventHandler(this.mpButtonPreview_Click);
       // 
       // TvChannels
       // 

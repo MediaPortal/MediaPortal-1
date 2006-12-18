@@ -195,10 +195,17 @@ namespace SetupTv.Sections
 
 
       Dictionary<int, bool> channelsMapped = new Dictionary<int, bool>();
-      IList maps = g.Group.ReferringGroupMap();
+
+      sb = new SqlBuilder(StatementType.Select, typeof(GroupMap));
+      sb.AddConstraint(Operator.Equals, "idGroup", g.Group.IdGroup);
+      sb.AddOrderByField(true, "sortOrder");
+      stmt = sb.GetStatement(true);
+      IList maps = ObjectFactory.GetCollection(typeof(GroupMap), stmt.Execute());
+
       foreach (GroupMap map in maps)
       {
         Channel channel=map.ReferencedChannel();
+        if (channel.IsTv == false) continue;
         ListViewItem mappedItem = mpListViewMapped.Items.Add(channel.Name);
         mappedItem.Tag = map;
         channelsMapped[channel.IdChannel] = true;
@@ -229,7 +236,7 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in selectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        GroupMap newMap = new GroupMap(g.Group.IdGroup, channel.IdChannel);
+        GroupMap newMap = new GroupMap(g.Group.IdGroup, channel.IdChannel, channel.SortOrder);
         newMap.Persist();
 
         mpListViewChannels.Items.Remove(item);
@@ -296,6 +303,30 @@ namespace SetupTv.Sections
 
       // Perform the sort with these new sort options.
       this.mpListViewGroups.Sort();
+    }
+
+    private void mpListViewMapped_DragDrop(object sender, DragEventArgs e)
+    {
+      
+    }
+
+    private void mpListViewMapped_DragEnter(object sender, DragEventArgs e)
+    {
+
+    }
+
+    private void mpListViewMapped_ItemDrag(object sender, ItemDragEventArgs e)
+    {
+      ReOrder();
+    }
+    void ReOrder()
+    {
+      for (int i = 0; i < mpListViewMapped.Items.Count; ++i)
+      {
+        GroupMap map =(GroupMap) mpListViewMapped.Items[i].Tag;
+        map.SortOrder = i;
+        map.Persist();
+      }
     }
 
   }

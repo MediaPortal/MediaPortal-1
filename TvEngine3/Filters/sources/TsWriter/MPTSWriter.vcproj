@@ -81,7 +81,7 @@
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
 				UseLibraryDependencyInputs="false"
-				AdditionalDependencies="strmbase.lib winmm.lib strmiids.lib .\source\ttBdaDrvApi_Dll.lib"
+				AdditionalDependencies="strmbase.lib winmm.lib strmiids.lib .\source\ttBdaDrvApi_Dll.lib "
 				ShowProgress="0"
 				OutputFile="Release/TsWriter.ax"
 				LinkIncremental="1"
@@ -249,6 +249,14 @@
 			</File>
 			<File
 				RelativePath=".\source\Pcr.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\PesPacket.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\PesPacket.h"
 				>
 			</File>
 			<File

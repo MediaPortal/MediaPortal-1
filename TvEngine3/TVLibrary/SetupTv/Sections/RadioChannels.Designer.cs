@@ -72,6 +72,7 @@ namespace SetupTv.Sections
       this.mpListView1.TabIndex = 1;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
+      this.mpListView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.mpListView1_ItemDrag);
       // 
       // columnHeader1
       // 

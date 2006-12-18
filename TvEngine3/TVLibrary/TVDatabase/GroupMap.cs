@@ -22,29 +22,33 @@ namespace TvDatabase
 		[TableColumn("idGroup", NotNull = true), ForeignKey("ChannelGroup", "idGroup")]
 		private int idGroup;
 		[TableColumn("idChannel", NotNull = true), ForeignKey("Channel", "idChannel")]
-		private int idChannel;
+    private int idChannel;
+    [TableColumn("SortOrder", NotNull = true)]
+    private int sortOrder;
 		#endregion
 			
 		#region Constructors
 		/// <summary> 
 		/// Create a new object by specifying all fields (except the auto-generated primary key field). 
 		/// </summary> 
-		public GroupMap(int idGroup, int idChannel)
+		public GroupMap(int idGroup, int idChannel, int sortOrder)
 		{
 			isChanged = true;
 			this.idGroup = idGroup;
 			this.idChannel = idChannel;
+      this.sortOrder=sortOrder;
 		}
 			
 		/// <summary> 
 		/// Create an object from an existing row of data. This will be used by Gentle to 
 		/// construct objects from retrieved rows. 
 		/// </summary> 
-		public GroupMap(int idMap, int idGroup, int idChannel)
+		public GroupMap(int idMap, int idGroup, int idChannel, int sortOrder)
 		{
 			this.idMap = idMap;
 			this.idGroup = idGroup;
 			this.idChannel = idChannel;
+      this.sortOrder=sortOrder;
 		}
 		#endregion
 
@@ -81,6 +85,14 @@ namespace TvDatabase
 		{
 			get { return idChannel; }
 			set { isChanged |= idChannel != value; idChannel = value; }
+		}
+		/// <summary>
+		/// Property relating to database column SortOrder
+		/// </summary>
+		public int SortOrder
+		{
+			get { return sortOrder; }
+			set { isChanged |= sortOrder != value; sortOrder = value; }
 		}
 		#endregion
 

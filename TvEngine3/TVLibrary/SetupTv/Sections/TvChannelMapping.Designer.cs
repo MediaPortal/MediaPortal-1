@@ -61,8 +61,7 @@ namespace SetupTv.Sections
       // 
       // mpListViewChannels
       // 
-      this.mpListViewChannels.AllowDrop = true;
-      this.mpListViewChannels.AllowRowReorder = true;
+      this.mpListViewChannels.AllowRowReorder = false;
       this.mpListViewChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader4});
       this.mpListViewChannels.Location = new System.Drawing.Point(19, 74);
@@ -98,8 +97,7 @@ namespace SetupTv.Sections
       // 
       // mpListViewMapped
       // 
-      this.mpListViewMapped.AllowDrop = true;
-      this.mpListViewMapped.AllowRowReorder = true;
+      this.mpListViewMapped.AllowRowReorder = false;
       this.mpListViewMapped.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2});
       this.mpListViewMapped.Location = new System.Drawing.Point(261, 74);
