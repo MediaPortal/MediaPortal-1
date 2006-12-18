@@ -68,14 +68,14 @@ void CAdaptionField::Decode(CTsHeader& header,byte* tsPacket)
      return;
   }
 
-  DiscontinuityIndicator             = ((tsPacket[ADAPTION_FIELD_LENGTH_OFFSET] & DISCONTINUITY_FLAG_BIT)!=0);
-  RandomAccessInidicator             = ((tsPacket[ADAPTION_FIELD_LENGTH_OFFSET] & RANDOM_ACCESS_FLAG_BIT)!=0);
-  ElementaryStreamPriorityIndicator  = ((tsPacket[ADAPTION_FIELD_LENGTH_OFFSET] & ES_PRIORITY_FLAG_BIT)!=0);
-  PcrFlag                            = ((tsPacket[ADAPTION_FIELD_LENGTH_OFFSET] & PCR_FLAG_BIT)!=0);
-  OPcrFlag                           = ((tsPacket[ADAPTION_FIELD_LENGTH_OFFSET] & OPCR_FLAG_BIT)!=0);
-  SplicingPointFlag                  = ((tsPacket[ADAPTION_FIELD_LENGTH_OFFSET] & SPLICING_FLAG_BIT)!=0);
-  TransportPrivateDataFlag           = ((tsPacket[ADAPTION_FIELD_LENGTH_OFFSET] & TRANSPORT_PRIVATE_DATA_FLAG_BIT)!=0);
-  AdaptionFieldExtensionFlag         = ((tsPacket[ADAPTION_FIELD_LENGTH_OFFSET] & ADAPTION_FIELD_EXTENSION_FLAG_BIT)!=0);
+  DiscontinuityIndicator             = ((tsPacket[PCR_FLAG_OFFSET] & DISCONTINUITY_FLAG_BIT)!=0);
+  RandomAccessInidicator             = ((tsPacket[PCR_FLAG_OFFSET] & RANDOM_ACCESS_FLAG_BIT)!=0);
+  ElementaryStreamPriorityIndicator  = ((tsPacket[PCR_FLAG_OFFSET] & ES_PRIORITY_FLAG_BIT)!=0);
+  PcrFlag                            = ((tsPacket[PCR_FLAG_OFFSET] & PCR_FLAG_BIT)!=0);
+  OPcrFlag                           = ((tsPacket[PCR_FLAG_OFFSET] & OPCR_FLAG_BIT)!=0);
+  SplicingPointFlag                  = ((tsPacket[PCR_FLAG_OFFSET] & SPLICING_FLAG_BIT)!=0);
+  TransportPrivateDataFlag           = ((tsPacket[PCR_FLAG_OFFSET] & TRANSPORT_PRIVATE_DATA_FLAG_BIT)!=0);
+  AdaptionFieldExtensionFlag         = ((tsPacket[PCR_FLAG_OFFSET] & ADAPTION_FIELD_EXTENSION_FLAG_BIT)!=0);
   
   int offset=6;
   if (PcrFlag)

@@ -18,41 +18,27 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#pragma once
+#pragma warning(disable : 4995)
+#include <windows.h>
+#include <stdio.h>
+#include <math.h>
+#include "pespacket.h" 
 
-#include "tsHeader.h"
-#include "pespacket.h"
-
-#define MAX_PES_PACKET 0x80000
-class CPesDecoder;
-
-class CPesCallback
+CPesPacket::CPesPacket()
 {
-public:
-	virtual int OnNewPesPacket(CPesDecoder* decoder, byte* data, int len)=0;
-};
+  m_pData = new byte[40000];
+ Reset();
+}
 
-class CPesDecoder
+CPesPacket::~CPesPacket()
 {
-public:
-	CPesDecoder(CPesCallback* callback);
-	virtual ~CPesDecoder(void);
-	void					SetPid(int pid);
-	int						GetPid();
-	bool					OnTsPacket(byte* tsPacket);
-	void					Reset();
-	bool					IsAudio();
-	bool					IsVideo();
-	int						GetStreamId();
-	void					SetStreamId(int streamId);
-
-  CPesPacket    m_packet;
-  ULONG         packet_number;
-private:
-	CPesCallback* m_pCallback;
-	int					  m_pid;
-	byte*					m_pesBuffer;
-	int						m_iWritePos;
-	int						m_iStreamId;
-  CTsHeader     m_tsHeader;
-};
+  delete [] m_pData;
+}
+void CPesPacket::Reset()
+{
+  pts.Reset();
+  dts.Reset();
+  m_iFrameOffset=0;
+  buffer_ptr=0;
+  nb_frames=0;
+}

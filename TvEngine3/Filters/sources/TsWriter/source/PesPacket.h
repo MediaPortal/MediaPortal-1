@@ -19,40 +19,18 @@
  *
  */
 #pragma once
-
-#include "tsHeader.h"
-#include "pespacket.h"
-
-#define MAX_PES_PACKET 0x80000
-class CPesDecoder;
-
-class CPesCallback
+#include "pcr.h"
+class CPesPacket
 {
-public:
-	virtual int OnNewPesPacket(CPesDecoder* decoder, byte* data, int len)=0;
-};
+  public:
+    CPcr  pts;
+    CPcr  dts;
+    byte* m_pData;
+    int   m_iFrameOffset;
+    int   buffer_ptr;
+    ULONG nb_frames;
 
-class CPesDecoder
-{
-public:
-	CPesDecoder(CPesCallback* callback);
-	virtual ~CPesDecoder(void);
-	void					SetPid(int pid);
-	int						GetPid();
-	bool					OnTsPacket(byte* tsPacket);
-	void					Reset();
-	bool					IsAudio();
-	bool					IsVideo();
-	int						GetStreamId();
-	void					SetStreamId(int streamId);
-
-  CPesPacket    m_packet;
-  ULONG         packet_number;
-private:
-	CPesCallback* m_pCallback;
-	int					  m_pid;
-	byte*					m_pesBuffer;
-	int						m_iWritePos;
-	int						m_iStreamId;
-  CTsHeader     m_tsHeader;
+    CPesPacket();
+    virtual ~CPesPacket();
+    void Reset();
 };

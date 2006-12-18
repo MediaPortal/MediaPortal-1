@@ -28,19 +28,12 @@ extern void LogDebug(const char *fmt, ...) ;
 
 CPesDecoder::CPesDecoder(CPesCallback* callback)
 {
-	//LogDebug("pes decoder ctor");
 	m_pid=-1;
 	m_pesBuffer = new byte[MAX_PES_PACKET];
 	m_iWritePos=-1;
-	m_iMaxLength=MAX_PES_PACKET;
 	m_pCallback=callback;
 	m_iStreamId=-1;
-  m_iPesHeaderLen=0;
-}
-void CPesDecoder::SetMaxLength(int len)
-{
-//	LogDebug("pes decoder pid:%x set maxlen:%x",m_pid,len);
-	m_iMaxLength=len;
+  packet_number=0;
 }
 
 CPesDecoder::~CPesDecoder(void)
@@ -50,8 +43,9 @@ CPesDecoder::~CPesDecoder(void)
 
 void CPesDecoder::Reset()
 {
+  m_packet.Reset();
 	m_iWritePos=-1;
-  m_iPesHeaderLen=0;
+  packet_number=0;
 }
 
 int CPesDecoder::GetPid()
@@ -63,7 +57,6 @@ void CPesDecoder::SetPid(int pid)
 {
 	m_pid=pid;
 }
-
 
 bool CPesDecoder::IsAudio()
 {
@@ -94,7 +87,6 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 	}
   if (m_tsHeader.TransportError) 
 	{
-    m_bStart=false;
 		m_iWritePos=0;
 		//LogDebug("pesdecoder pid:%x transport error", m_pid);
 		return false;
@@ -112,32 +104,19 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 	bool result=false;
 	if (m_tsHeader.PayloadUnitStart)
 	{
-
 		if (m_iWritePos>0)
 		{
 			if (m_pCallback!=NULL)
 			{
-				//LogDebug(" pes %x start:%x", m_iStreamId,m_iWritePos);
-				int written=m_pCallback->OnNewPesPacket(m_iStreamId,m_pesHeader, m_iPesHeaderLen,  m_pesBuffer, m_iWritePos, m_bStart);
-        if (written>=0)
-        {
-				  //LogDebug(" pes %x written:%x", m_iStreamId,written);
-          m_bStart=false;
-				  m_iWritePos=0;
-        }
+				m_pCallback->OnNewPesPacket(this, m_pesBuffer, m_iWritePos);
+				m_iWritePos=0;
 			}
 		}
-
 		if (tsPacket[pos+0]==0 && tsPacket[pos+1]==0 && tsPacket[pos+2]==1)
 		{
 			if (m_iStreamId<0)
 				m_iStreamId=tsPacket[pos+3];
-			if (m_iWritePos<0) m_iWritePos=0;
-
-      m_iPesHeaderLen=tsPacket[pos+8]+9;
-      memcpy(m_pesHeader,&tsPacket[pos],m_iPesHeaderLen);
-      pos += (m_iPesHeaderLen);
-			m_bStart=true;
+			m_iWritePos=0;
 		}
 	}
 
@@ -146,20 +125,5 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 
 	memcpy(&m_pesBuffer[m_iWritePos], &tsPacket[pos], 188-pos);
 	m_iWritePos += (188-pos);
-	//LogDebug(" pes %x copy:%x len:%x maxlen:%x start:%d", m_iStreamId,m_iWritePos,(188-pos),m_iMaxLength,m_bStart);
-	if (m_iWritePos  >= m_iMaxLength)
-	{
-    int written=0;
-		if (m_pCallback!=NULL)
-		{
-			written=m_pCallback->OnNewPesPacket(m_iStreamId,m_pesHeader, m_iPesHeaderLen,  m_pesBuffer, m_iMaxLength, m_bStart);
-			//LogDebug(" pes %x next:%x written:%x", m_iStreamId,m_iWritePos,written);
-		}
-    m_bStart=false;
-
-		memcpy(m_pesBuffer, &m_pesBuffer[written] , m_iWritePos-written);
-		m_iWritePos -= written;
-		//LogDebug(" pes %x now:%x", m_iStreamId,m_iWritePos);
-	}
   return result;
 }

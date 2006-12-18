@@ -39,6 +39,7 @@ public:
 class CMultiplexer : public CPesCallback
 {
 public:
+
 	CMultiplexer(void);
 	virtual ~CMultiplexer(void);
 	void SetPcrPid(int pcrPid);
@@ -49,22 +50,27 @@ public:
 	void Reset();
 	void ClearStreams();
 	void SetFileWriterCallBack(IFileWriter* callback);
-	int OnNewPesPacket(int streamid,byte* header, int headerlen,byte* data, int len, bool isStart);
+	int OnNewPesPacket(CPesDecoder* decoder, byte* data, int len);
 
 private:
-  int  SplitPesPacket(int streamId,byte* header, int headerlen,byte* pesPacket, int nLen,bool isStart);
-	int  WritePackHeader();
-  
+	int  WritePackHeader(byte* buf);
+  int  WriteSystemHeader(byte* buf);
+  int  WritePaddingHeader(byte* buf, int full_padding_size);
+  int  WritePaddingPacket(byte* buf,int packet_bytes);
+  int  get_system_header_size();
+  int  get_packet_payload_size(CPesDecoder* decoder);
+  int  mpeg_mux_write_packet(CPesDecoder* decoder,const byte *buf, int size);
+  void flush_packet(CPesDecoder* decoder);
 	vector<CPesDecoder*> m_pesDecoders;
 	typedef vector<CPesDecoder*>::iterator ivecPesDecoders;
-	//CPcrDecoder m_pcrDecoder;
+  
+  vector<CPesPacket*> m_packets;
+	typedef vector<CPesPacket*>::iterator ivecPackets;
+
 	IFileWriter* m_pCallback;
 	CAdaptionField m_adaptionField;
 	CTsHeader m_header;
-	int m_videoPacketCounter;
-	int m_audioPacketCounter;
+  int m_system_header_size;
 	int m_pcrPid;
 	CPcr m_pcr;
-	bool  m_streams[255];
-  byte* m_pesBuffer;
 };
