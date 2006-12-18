@@ -530,53 +530,99 @@ namespace MediaPortal.GUI.TV
               break;
           }
 
+
         case Action.ActionType.ACTION_ASPECT_RATIO:
           {
             _statusVisible = true;
             _statusTimeOutTimer = DateTime.Now;
             string status = "";
+            List<MediaPortal.GUI.Library.Geometry.Type> allowedModes = new List<MediaPortal.GUI.Library.Geometry.Type>();
+
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            {
+              if (xmlreader.GetValueAsBool("mytv", "allowarzoom", true))
+              {
+                allowedModes.Add(MediaPortal.GUI.Library.Geometry.Type.Zoom);
+              }
+              if (xmlreader.GetValueAsBool("mytv", "allowarstretch", true))
+              {
+                allowedModes.Add(MediaPortal.GUI.Library.Geometry.Type.Stretch);
+              }
+              if (xmlreader.GetValueAsBool("mytv", "allowarnormal", true))
+              {
+                allowedModes.Add(MediaPortal.GUI.Library.Geometry.Type.Normal);
+              }
+              if (xmlreader.GetValueAsBool("mytv", "allowaroriginal", true))
+              {
+                allowedModes.Add(MediaPortal.GUI.Library.Geometry.Type.Original);
+              }
+              if (xmlreader.GetValueAsBool("mytv", "allowarletterbox", true))
+              {
+                allowedModes.Add(MediaPortal.GUI.Library.Geometry.Type.LetterBox43);
+              }
+              if (xmlreader.GetValueAsBool("mytv", "allowarpanscan", true))
+              {
+                allowedModes.Add(MediaPortal.GUI.Library.Geometry.Type.PanScan43);
+              }
+              if (xmlreader.GetValueAsBool("mytv", "allowarzoom149", true))
+              {
+                allowedModes.Add(MediaPortal.GUI.Library.Geometry.Type.Zoom14to9);
+              }
+            }
+
+            MediaPortal.GUI.Library.Geometry.Type arMode = GUIGraphicsContext.ARType;
+
+            bool foundMode = false;
+            for (int i = 0; i < allowedModes.Count; i++)
+            {
+              if (allowedModes[i] == arMode)
+              {
+                arMode = allowedModes[(i + 1) % allowedModes.Count]; // select next allowed mode
+                foundMode = true;
+                break;
+              }
+            }
+            if (!foundMode && allowedModes.Count > 0)
+            {
+              arMode = allowedModes[0];
+            }
+
+            GUIGraphicsContext.ARType = arMode;
+
             switch (GUIGraphicsContext.ARType)
             {
-              case MediaPortal.GUI.Library.Geometry.Type.Zoom:
-                GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
+              case MediaPortal.GUI.Library.Geometry.Type.Stretch:
                 status = GUILocalizeStrings.Get(942); // "Stretch";
                 break;
 
-              case MediaPortal.GUI.Library.Geometry.Type.Stretch:
-                GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Normal;
+              case MediaPortal.GUI.Library.Geometry.Type.Normal:
                 status = GUILocalizeStrings.Get(943); //"Normal";
                 break;
 
-              case MediaPortal.GUI.Library.Geometry.Type.Normal:
-                GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
+              case MediaPortal.GUI.Library.Geometry.Type.Original:
                 status = GUILocalizeStrings.Get(944); //"Original";
                 break;
 
-              case MediaPortal.GUI.Library.Geometry.Type.Original:
-                GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
+              case MediaPortal.GUI.Library.Geometry.Type.LetterBox43:
                 status = GUILocalizeStrings.Get(945); //"Letterbox 4:3";
                 break;
 
-              case MediaPortal.GUI.Library.Geometry.Type.LetterBox43:
-                GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
+              case MediaPortal.GUI.Library.Geometry.Type.PanScan43:
                 status = GUILocalizeStrings.Get(946); //"Pan and Scan 4:3";
                 break;
 
-              case MediaPortal.GUI.Library.Geometry.Type.PanScan43:
-                GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
-                status = GUILocalizeStrings.Get(1190); //"Zoom";
+              case MediaPortal.GUI.Library.Geometry.Type.Zoom:
+                status = GUILocalizeStrings.Get(947); //"Zoom";
                 break;
 
               case MediaPortal.GUI.Library.Geometry.Type.Zoom14to9:
-                GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
-                status = GUILocalizeStrings.Get(947); //"Zoom 14:9";
+                status = GUILocalizeStrings.Get(1190); //"Zoom 14:9";
                 break;
             }
 
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
             msg.Label = status;
             OnMessage(msg);
-
             SaveSettings();
           }
           break;

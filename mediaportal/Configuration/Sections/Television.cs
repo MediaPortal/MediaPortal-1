@@ -60,6 +60,15 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox cbTurnOnTimeShift;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox5;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbTurnOnTv;
+    private MediaPortal.UserInterface.Controls.MPGroupBox gAllowedModes;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowNormal;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowZoom149;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowOriginal;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowZoom;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowLetterbox;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowStretch;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowPanScan;
+
     //string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
     string[] aspectRatio = { "normal", "original", "stretch", "zoom", "zoom149", "letterbox", "panscan" };
 
@@ -137,10 +146,19 @@ namespace MediaPortal.Configuration.Sections
       this.byIndexCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.cbTurnOnTv = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.gAllowedModes = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbAllowNormal = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbAllowZoom149 = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbAllowOriginal = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbAllowZoom = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbAllowLetterbox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbAllowStretch = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbAllowPanScan = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.groupBox4.SuspendLayout();
       this.groupBox3.SuspendLayout();
       this.groupBox5.SuspendLayout();
+      this.gAllowedModes.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
@@ -293,7 +311,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox4.Location = new System.Drawing.Point(0, 222);
       this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new System.Drawing.Size(472, 106);
+      this.groupBox4.Size = new System.Drawing.Size(249, 106);
       this.groupBox4.TabIndex = 1;
       this.groupBox4.TabStop = false;
       this.groupBox4.Text = "Timeshifting";
@@ -317,7 +335,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxTimeShiftBuffer.BorderColor = System.Drawing.Color.Empty;
       this.textBoxTimeShiftBuffer.Location = new System.Drawing.Point(168, 64);
       this.textBoxTimeShiftBuffer.Name = "textBoxTimeShiftBuffer";
-      this.textBoxTimeShiftBuffer.Size = new System.Drawing.Size(288, 20);
+      this.textBoxTimeShiftBuffer.Size = new System.Drawing.Size(65, 20);
       this.textBoxTimeShiftBuffer.TabIndex = 3;
       this.textBoxTimeShiftBuffer.Text = "30";
       // 
@@ -337,7 +355,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox3.Location = new System.Drawing.Point(0, 336);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(472, 53);
+      this.groupBox3.Size = new System.Drawing.Size(249, 53);
       this.groupBox3.TabIndex = 2;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Misc";
@@ -361,7 +379,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox5.Location = new System.Drawing.Point(0, 158);
       this.groupBox5.Name = "groupBox5";
-      this.groupBox5.Size = new System.Drawing.Size(472, 58);
+      this.groupBox5.Size = new System.Drawing.Size(249, 58);
       this.groupBox5.TabIndex = 3;
       this.groupBox5.TabStop = false;
       this.groupBox5.Text = "Auto on";
@@ -377,8 +395,103 @@ namespace MediaPortal.Configuration.Sections
       this.cbTurnOnTv.Text = "Auto turn TV on when entering My TV ";
       this.cbTurnOnTv.UseVisualStyleBackColor = true;
       // 
+      // gAllowedModes
+      // 
+      this.gAllowedModes.Controls.Add(this.cbAllowNormal);
+      this.gAllowedModes.Controls.Add(this.cbAllowZoom149);
+      this.gAllowedModes.Controls.Add(this.cbAllowOriginal);
+      this.gAllowedModes.Controls.Add(this.cbAllowZoom);
+      this.gAllowedModes.Controls.Add(this.cbAllowLetterbox);
+      this.gAllowedModes.Controls.Add(this.cbAllowStretch);
+      this.gAllowedModes.Controls.Add(this.cbAllowPanScan);
+      this.gAllowedModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.gAllowedModes.Location = new System.Drawing.Point(270, 158);
+      this.gAllowedModes.Name = "gAllowedModes";
+      this.gAllowedModes.Size = new System.Drawing.Size(186, 231);
+      this.gAllowedModes.TabIndex = 7;
+      this.gAllowedModes.TabStop = false;
+      this.gAllowedModes.Text = "Allowed Zoom Modes";
+      // 
+      // cbAllowNormal
+      // 
+      this.cbAllowNormal.AutoSize = true;
+      this.cbAllowNormal.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAllowNormal.Location = new System.Drawing.Point(15, 15);
+      this.cbAllowNormal.Name = "cbAllowNormal";
+      this.cbAllowNormal.Size = new System.Drawing.Size(57, 17);
+      this.cbAllowNormal.TabIndex = 6;
+      this.cbAllowNormal.Text = "Normal";
+      this.cbAllowNormal.UseVisualStyleBackColor = true;
+      // 
+      // cbAllowZoom149
+      // 
+      this.cbAllowZoom149.AutoSize = true;
+      this.cbAllowZoom149.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAllowZoom149.Location = new System.Drawing.Point(15, 84);
+      this.cbAllowZoom149.Name = "cbAllowZoom149";
+      this.cbAllowZoom149.Size = new System.Drawing.Size(75, 17);
+      this.cbAllowZoom149.TabIndex = 3;
+      this.cbAllowZoom149.Text = "14:9 Zoom";
+      this.cbAllowZoom149.UseVisualStyleBackColor = true;
+      // 
+      // cbAllowOriginal
+      // 
+      this.cbAllowOriginal.AutoSize = true;
+      this.cbAllowOriginal.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAllowOriginal.Location = new System.Drawing.Point(15, 38);
+      this.cbAllowOriginal.Name = "cbAllowOriginal";
+      this.cbAllowOriginal.Size = new System.Drawing.Size(131, 17);
+      this.cbAllowOriginal.TabIndex = 5;
+      this.cbAllowOriginal.Text = "Original Source Format";
+      this.cbAllowOriginal.UseVisualStyleBackColor = true;
+      // 
+      // cbAllowZoom
+      // 
+      this.cbAllowZoom.AutoSize = true;
+      this.cbAllowZoom.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAllowZoom.Location = new System.Drawing.Point(15, 61);
+      this.cbAllowZoom.Name = "cbAllowZoom";
+      this.cbAllowZoom.Size = new System.Drawing.Size(51, 17);
+      this.cbAllowZoom.TabIndex = 0;
+      this.cbAllowZoom.Text = "Zoom";
+      this.cbAllowZoom.UseVisualStyleBackColor = true;
+      // 
+      // cbAllowLetterbox
+      // 
+      this.cbAllowLetterbox.AutoSize = true;
+      this.cbAllowLetterbox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAllowLetterbox.Location = new System.Drawing.Point(15, 153);
+      this.cbAllowLetterbox.Name = "cbAllowLetterbox";
+      this.cbAllowLetterbox.Size = new System.Drawing.Size(86, 17);
+      this.cbAllowLetterbox.TabIndex = 4;
+      this.cbAllowLetterbox.Text = "4:3 Letterbox";
+      this.cbAllowLetterbox.UseVisualStyleBackColor = true;
+      // 
+      // cbAllowStretch
+      // 
+      this.cbAllowStretch.AutoSize = true;
+      this.cbAllowStretch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAllowStretch.Location = new System.Drawing.Point(15, 107);
+      this.cbAllowStretch.Name = "cbAllowStretch";
+      this.cbAllowStretch.Size = new System.Drawing.Size(58, 17);
+      this.cbAllowStretch.TabIndex = 1;
+      this.cbAllowStretch.Text = "Stretch";
+      this.cbAllowStretch.UseVisualStyleBackColor = true;
+      // 
+      // cbAllowPanScan
+      // 
+      this.cbAllowPanScan.AutoSize = true;
+      this.cbAllowPanScan.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAllowPanScan.Location = new System.Drawing.Point(15, 130);
+      this.cbAllowPanScan.Name = "cbAllowPanScan";
+      this.cbAllowPanScan.Size = new System.Drawing.Size(110, 17);
+      this.cbAllowPanScan.TabIndex = 2;
+      this.cbAllowPanScan.Text = "4:3 Pan and Scan";
+      this.cbAllowPanScan.UseVisualStyleBackColor = true;
+      // 
       // Television
       // 
+      this.Controls.Add(this.gAllowedModes);
       this.Controls.Add(this.groupBox5);
       this.Controls.Add(this.groupBox3);
       this.Controls.Add(this.groupBox4);
@@ -392,6 +505,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.PerformLayout();
       this.groupBox5.ResumeLayout(false);
       this.groupBox5.PerformLayout();
+      this.gAllowedModes.ResumeLayout(false);
+      this.gAllowedModes.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -400,8 +515,17 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       if (_init == false) return;
+
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
+        cbAllowNormal.Checked = xmlreader.GetValueAsBool("mytv", "allowarnormal", true);
+        cbAllowOriginal.Checked = xmlreader.GetValueAsBool("mytv", "allowaroriginal", true);
+        cbAllowStretch.Checked = xmlreader.GetValueAsBool("mytv", "allowarstretch", true);
+        cbAllowZoom.Checked = xmlreader.GetValueAsBool("mytv", "allowarzoom", true);
+        cbAllowZoom149.Checked = xmlreader.GetValueAsBool("mytv", "allowarzoom149", true);
+        cbAllowLetterbox.Checked = xmlreader.GetValueAsBool("mytv", "allowarletterbox", true);
+        cbAllowPanScan.Checked = xmlreader.GetValueAsBool("mytv", "allowarpanscan", true);
+
         cbTurnOnTv.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
         cbTurnOnTimeShift.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontimeshifting", false);
         
@@ -511,6 +635,13 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("mytv", "videocodec", videoCodecComboBox.Text);
         xmlwriter.SetValue("mytv", "audiorenderer", audioRendererComboBox.Text);
 
+        xmlwriter.SetValueAsBool("mytv", "allowarnormal", cbAllowNormal.Checked);
+        xmlwriter.SetValueAsBool("mytv", "allowaroriginal", cbAllowOriginal.Checked);
+        xmlwriter.SetValueAsBool("mytv", "allowarstretch", cbAllowStretch.Checked);
+        xmlwriter.SetValueAsBool("mytv", "allowarzoom", cbAllowZoom.Checked);
+        xmlwriter.SetValueAsBool("mytv", "allowarzoom149", cbAllowZoom149.Checked);
+        xmlwriter.SetValueAsBool("mytv", "allowarletterbox", cbAllowLetterbox.Checked);
+        xmlwriter.SetValueAsBool("mytv", "allowarpanscan", cbAllowPanScan.Checked);
       }
     }
 

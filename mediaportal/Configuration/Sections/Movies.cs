@@ -65,6 +65,15 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox defaultSubtitleLanguageComboBox;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowWatched;
 
+    private MediaPortal.UserInterface.Controls.MPGroupBox gAllowedModes;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowNormal;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowZoom149;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowOriginal;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowZoom;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowLetterbox;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowStretch;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowPanScan;
+
     //string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
     string[] aspectRatio = { "normal", "original", "stretch", "zoom", "zoom149", "letterbox", "panscan" };
 
@@ -84,6 +93,14 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
+        cbAllowNormal.Checked = xmlreader.GetValueAsBool("movies", "allowarnormal", true);
+        cbAllowOriginal.Checked = xmlreader.GetValueAsBool("movies", "allowaroriginal", true);
+        cbAllowStretch.Checked = xmlreader.GetValueAsBool("movies", "allowarstretch", true);
+        cbAllowZoom.Checked = xmlreader.GetValueAsBool("movies", "allowarzoom", true);
+        cbAllowZoom149.Checked = xmlreader.GetValueAsBool("movies", "allowarzoom149", true);
+        cbAllowLetterbox.Checked = xmlreader.GetValueAsBool("movies", "allowarletterbox", true);
+        cbAllowPanScan.Checked = xmlreader.GetValueAsBool("movies", "allowarpanscan", true);
+
         string playListFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
         playListFolder += @"\My Playlists";
 
@@ -170,6 +187,14 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("subtitles", "fontsize", fontSize);
 
         xmlwriter.SetValue("movieplayer", "defaultar", aspectRatio[defaultZoomModeComboBox.SelectedIndex]);
+
+        xmlwriter.SetValueAsBool("movies", "allowarnormal", cbAllowNormal.Checked);
+        xmlwriter.SetValueAsBool("movies", "allowaroriginal", cbAllowOriginal.Checked);
+        xmlwriter.SetValueAsBool("movies", "allowarstretch", cbAllowStretch.Checked);
+        xmlwriter.SetValueAsBool("movies", "allowarzoom", cbAllowZoom.Checked);
+        xmlwriter.SetValueAsBool("movies", "allowarzoom149", cbAllowZoom149.Checked);
+        xmlwriter.SetValueAsBool("movies", "allowarletterbox", cbAllowLetterbox.Checked);
+        xmlwriter.SetValueAsBool("movies", "allowarpanscan", cbAllowPanScan.Checked);
       }
     }
 
@@ -217,6 +242,14 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.cbAllowZoom = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbAllowLetterbox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbAllowStretch = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbAllowPanScan = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbAllowNormal = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.gAllowedModes = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbAllowZoom149 = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbAllowOriginal = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
@@ -437,6 +470,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.gAllowedModes);
       this.tabPage1.Controls.Add(this.groupBox1);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
@@ -454,6 +488,102 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage3.TabIndex = 2;
       this.tabPage3.Text = "Subtitles";
       this.tabPage3.UseVisualStyleBackColor = true;
+
+      // 
+      // cbAllowZoom
+      // 
+      this.cbAllowZoom.AutoSize = true;
+      this.cbAllowZoom.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAllowZoom.Location = new System.Drawing.Point(15, 61);
+      this.cbAllowZoom.Name = "cbAllowZoom";
+      this.cbAllowZoom.Size = new System.Drawing.Size(51, 17);
+      this.cbAllowZoom.TabIndex = 0;
+      this.cbAllowZoom.Text = "Zoom";
+      this.cbAllowZoom.UseVisualStyleBackColor = true;
+      // 
+      // cbAllowLetterbox
+      // 
+      this.cbAllowLetterbox.AutoSize = true;
+      this.cbAllowLetterbox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAllowLetterbox.Location = new System.Drawing.Point(15, 153);
+      this.cbAllowLetterbox.Name = "cbAllowLetterbox";
+      this.cbAllowLetterbox.Size = new System.Drawing.Size(86, 17);
+      this.cbAllowLetterbox.TabIndex = 4;
+      this.cbAllowLetterbox.Text = "4:3 Letterbox";
+      this.cbAllowLetterbox.UseVisualStyleBackColor = true;
+      // 
+      // cbAllowStretch
+      // 
+      this.cbAllowStretch.AutoSize = true;
+      this.cbAllowStretch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAllowStretch.Location = new System.Drawing.Point(15, 107);
+      this.cbAllowStretch.Name = "cbAllowStretch";
+      this.cbAllowStretch.Size = new System.Drawing.Size(58, 17);
+      this.cbAllowStretch.TabIndex = 1;
+      this.cbAllowStretch.Text = "Stretch";
+      this.cbAllowStretch.UseVisualStyleBackColor = true;
+      // 
+      // cbAllowPanScan
+      // 
+      this.cbAllowPanScan.AutoSize = true;
+      this.cbAllowPanScan.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAllowPanScan.Location = new System.Drawing.Point(15, 130);
+      this.cbAllowPanScan.Name = "cbAllowPanScan";
+      this.cbAllowPanScan.Size = new System.Drawing.Size(110, 17);
+      this.cbAllowPanScan.TabIndex = 2;
+      this.cbAllowPanScan.Text = "4:3 Pan and Scan";
+      this.cbAllowPanScan.UseVisualStyleBackColor = true;
+      // 
+      // cbAllowNormal
+      // 
+      this.cbAllowNormal.AutoSize = true;
+      this.cbAllowNormal.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAllowNormal.Location = new System.Drawing.Point(15, 15);
+      this.cbAllowNormal.Name = "cbAllowNormal";
+      this.cbAllowNormal.Size = new System.Drawing.Size(57, 17);
+      this.cbAllowNormal.TabIndex = 6;
+      this.cbAllowNormal.Text = "Normal";
+      this.cbAllowNormal.UseVisualStyleBackColor = true;
+      // 
+      // gAllowedModes
+      // 
+      this.gAllowedModes.Controls.Add(this.cbAllowNormal);
+      this.gAllowedModes.Controls.Add(this.cbAllowZoom149);
+      this.gAllowedModes.Controls.Add(this.cbAllowOriginal);
+      this.gAllowedModes.Controls.Add(this.cbAllowZoom);
+      this.gAllowedModes.Controls.Add(this.cbAllowLetterbox);
+      this.gAllowedModes.Controls.Add(this.cbAllowStretch);
+      this.gAllowedModes.Controls.Add(this.cbAllowPanScan);
+      this.gAllowedModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.gAllowedModes.Location = new System.Drawing.Point(16, 178);
+      this.gAllowedModes.Name = "gAllowedModes";
+      this.gAllowedModes.Size = new System.Drawing.Size(186, 189);
+      this.gAllowedModes.TabIndex = 8;
+      this.gAllowedModes.TabStop = false;
+      this.gAllowedModes.Text = "Allowed Zoom Modes";
+      // 
+      // cbAllowZoom149
+      // 
+      this.cbAllowZoom149.AutoSize = true;
+      this.cbAllowZoom149.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAllowZoom149.Location = new System.Drawing.Point(15, 84);
+      this.cbAllowZoom149.Name = "cbAllowZoom149";
+      this.cbAllowZoom149.Size = new System.Drawing.Size(75, 17);
+      this.cbAllowZoom149.TabIndex = 3;
+      this.cbAllowZoom149.Text = "14:9 Zoom";
+      this.cbAllowZoom149.UseVisualStyleBackColor = true;
+      // 
+      // cbAllowOriginal
+      // 
+      this.cbAllowOriginal.AutoSize = true;
+      this.cbAllowOriginal.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAllowOriginal.Location = new System.Drawing.Point(15, 38);
+      this.cbAllowOriginal.Name = "cbAllowOriginal";
+      this.cbAllowOriginal.Size = new System.Drawing.Size(131, 17);
+      this.cbAllowOriginal.TabIndex = 5;
+      this.cbAllowOriginal.Text = "Original Source Format";
+      this.cbAllowOriginal.UseVisualStyleBackColor = true;
+
       // 
       // Movies
       // 
@@ -467,8 +597,9 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
       this.tabPage3.ResumeLayout(false);
+      this.gAllowedModes.ResumeLayout(false);
+      this.gAllowedModes.PerformLayout();
       this.ResumeLayout(false);
-
     }
     #endregion
 
