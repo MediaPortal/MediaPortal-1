@@ -49,6 +49,7 @@ copy ..\..\..\ttdvbacc.dll .
 regsvr32 /s TTPremiumSource.ax
 
 copy ..\..\..\core\directshowhelper\directshowhelper\release\dshowhelper.dll .
+copy ..\..\..\core\DXUtil\release\DXUtil.dll .
 copy ..\..\..\core\fontengine\fontengine\release\fontengine.dll .
 rem copy ..\..\..\Interop.DirectShowHelperLib.dll .
 rem copy ..\..\..\AxInterop.MOZILLACONTROLLib.dll .

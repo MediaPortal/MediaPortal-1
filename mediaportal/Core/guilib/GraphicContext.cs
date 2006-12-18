@@ -132,7 +132,7 @@ namespace MediaPortal.GUI.Library
     static Size videoSize;
     static bool hasFocus = false;
     static DateTime _lastActivity = DateTime.Now;
-
+    public static MediaPortal.Player.IAutoCrop autoCropper = null;
     const uint SC_MONITORPOWER = 0xF170;
     const uint WM_SYSCOMMAND = 0x0112;
     const int MONITOR_ON = -1;

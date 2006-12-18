@@ -170,7 +170,9 @@ namespace MediaPortal.GUI.Library
       ACTION_REMOTE_SUBPAGE_DOWN = 9980,
       ACTION_SHOW_VOLUME = 9981,
       ACTION_VOLUME_MUTE = 9982,
-      ACTION_SHOW_CURRENT_TV_INFO = 9983
+      ACTION_SHOW_CURRENT_TV_INFO = 9983,
+      ACTION_AUTOCROP = 9884,                 // If the AutoCropper is used, request new crop detection          
+      ACTION_TOGGLE_AUTOCROP = 9885           // Switch AutoCropper operating mode: off/auto/on request
     };
     #endregion
 

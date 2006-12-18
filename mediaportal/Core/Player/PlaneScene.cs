@@ -28,6 +28,7 @@ using Direct3D = Microsoft.DirectX.Direct3D;
 using System.Runtime.InteropServices;
 using DShowNET;
 using MediaPortal.Util;
+using System.Threading;
 
 namespace MediaPortal.Player
 {
@@ -73,7 +74,6 @@ namespace MediaPortal.Player
     unsafe private static extern void FontEngineDrawSurface(int fx, int fy, int nw, int nh,
                                                             int dstX, int dstY, int dstWidth, int dstHeight,
                                                             void* surface);
-
     #endregion
 
     #region variables
@@ -98,6 +98,7 @@ namespace MediaPortal.Player
     uint _surfaceAdress, _textureAddress;
 
     CropSettings _cropSettings;
+    bool updateCrop = false; // indicates that _cropSettings has been updated
     int _arVideoWidth = 4;
     int _arVideoHeight = 3;
     int _prevVideoWidth = 0;
@@ -108,6 +109,9 @@ namespace MediaPortal.Player
     bool _drawVideoAllowed = true;
     int _debugStep = 0;
     GUIImage _blackImage;
+
+    FrameGrabber grabber = FrameGrabber.GetInstance();
+
     #endregion
 
     #region ctor
@@ -164,8 +168,9 @@ namespace MediaPortal.Player
     public bool InTv
     {
       get
-      { int windowId = GUIWindowManager.ActiveWindow;
-        GUIWindow window=GUIWindowManager.GetWindow(windowId);
+      {
+        int windowId = GUIWindowManager.ActiveWindow;
+        GUIWindow window = GUIWindowManager.GetWindow(windowId);
         if (window.IsTv) return true;
         if (windowId == (int)GUIWindow.Window.WINDOW_TV ||
           windowId == (int)GUIWindow.Window.WINDOW_TVGUIDE ||
@@ -254,6 +259,8 @@ namespace MediaPortal.Player
         _blackImage.FreeResources();
         _blackImage = null;
       }
+
+      grabber.Clean();
     }
 
     /// <summary>
@@ -294,11 +301,11 @@ namespace MediaPortal.Player
     /// <param name="message">CropSettings</param>
     void Crop(CropSettings cs)
     {
-      _cropSettings = cs;
-      Log.Info("PlaneScene: Crop: top:{0}, bottom:{1}, left:{2}, right:{3}", cs.Top, cs.Bottom, cs.Left, cs.Right);
       lock (this)
       {
-        InternalPresentImage(_vmr9Util.VideoWidth, _vmr9Util.VideoHeight, _arVideoWidth, _arVideoHeight, false);
+        _cropSettings = cs;
+        Log.Info("PlaneScene: Crop: top:{0}, bottom:{1}, left:{2}, right:{3}", cs.Top, cs.Bottom, cs.Left, cs.Right);
+        updateCrop = true;
       }
     }
 
@@ -346,8 +353,8 @@ namespace MediaPortal.Player
           {
             //we are not in the my tv module
             //then check if a VideoWindow is defined or video/tv preview window is enable
-            System.Drawing.Rectangle rect = GUIGraphicsContext.VideoWindow; 
-//BAV: todo -> remove Overlay check -> should no longer be needed
+            System.Drawing.Rectangle rect = GUIGraphicsContext.VideoWindow;
+            //BAV: todo -> remove Overlay check -> should no longer be needed
             //if (((rect.Height < 1) && (rect.Width < 1)) || (!GUIGraphicsContext.Overlay)) return false; //not enabled, dont show tv
             if ((rect.Height < 1) && (rect.Width < 1)) return false;
           }
@@ -424,8 +431,8 @@ namespace MediaPortal.Player
 
         if (_sourceRect.Y == 0)
         {
-        //  _sourceRect.Y += 5;
-        //  _sourceRect.Height -= 10;
+          //  _sourceRect.Y += 5;
+          //  _sourceRect.Height -= 10;
         }
 
         //next calculate which part of the video texture should be copied
@@ -498,6 +505,7 @@ namespace MediaPortal.Player
       //			Log.Info("scene.repaint done");
     }
 
+
     #endregion
 
     #region IVMR9Callback Members
@@ -541,11 +549,25 @@ namespace MediaPortal.Player
       }
       return 0;
     }
+
     public int PresentSurface(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, uint pSurface)
     {
       try
       {
+        // if the update crop flag is set (indicating that _cropSettings has changed), call InternalPresentImage to 
+        // apply it
+        if (updateCrop)
+        {
+          updateCrop = false;
+          InternalPresentImage(_vmr9Util.VideoWidth, _vmr9Util.VideoHeight, _arVideoWidth, _arVideoHeight, false);
+        }
+
+        // Alert the frame grabber that it has a chance to grab a frame
+        // if it likes (method returns immediatly otherwise
+        grabber.OnFrame(width, height, arWidth, arHeight, pSurface);
+
         _surfaceAdress = pSurface;
+
         if (_vmr9Util.FrameCounter == 0)
         {
           //Log.Info("planescene: PresentSurface() ");
@@ -575,7 +597,7 @@ namespace MediaPortal.Player
         if (!_drawVideoAllowed || !_isEnabled)
         {
           Log.Info("planescene: PresentSurface() frame:{0} enabled:{1} allowed:{2} {3}x{4}",
-            _vmr9Util.FrameCounter, _isEnabled, _drawVideoAllowed,width,height);
+            _vmr9Util.FrameCounter, _isEnabled, _drawVideoAllowed, width, height);
           _vmr9Util.FrameCounter++;
           return 0;
         }
@@ -590,7 +612,9 @@ namespace MediaPortal.Player
 
     private void InternalPresentImage(int width, int height, int arWidth, int arHeight, bool isRepaint)
     {
-
+      //Log.Debug("InternalPresentImage called");
+      //lock (this)
+      //{
       if (_reEntrant)
       {
         Log.Error("PlaneScene: re-entrancy in presentimage");
@@ -690,11 +714,14 @@ namespace MediaPortal.Player
         _reEntrant = false;
         GUIGraphicsContext.InVmr9Render = false;
       }
+      //}
     }
 
 
     private void InternalPresentSurface(int width, int height, int arWidth, int arHeight, bool InRepaint)
     {
+      //lock (this)
+      //{
       if (_reEntrant)
       {
         Log.Error("PlaneScene: re-entrancy in PresentSurface");
@@ -806,6 +833,7 @@ namespace MediaPortal.Player
         _reEntrant = false;
         GUIGraphicsContext.InVmr9Render = false;
       }
+      //}
     }
 
     private void DrawTexture(uint texAddr, float fx, float fy, float nw, float nh, float uoff, float voff, float umax, float vmax, long lColorDiffuse)
@@ -892,7 +920,7 @@ namespace MediaPortal.Player
       }
       else
       {
-       // Log.Info("render black");
+        // Log.Info("render black");
         _blackImage.SetPosition((int)_fx, (int)_fy);
         _blackImage.Width = (int)_nw;
         _blackImage.Height = (int)_nh;

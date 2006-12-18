@@ -48,7 +48,9 @@ copy ..\..\..\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\debug\HCWHelper.exe 
 copy ..\..\..\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\debug\HCWHelper.pdb .
 copy ..\..\..\RemotePlugins\Remotes\X10Remote\AxInterop.X10.dll .
 copy ..\..\..\RemotePlugins\Remotes\X10Remote\Interop.X10.dll .
+
 copy ..\..\..\core\directshowhelper\directshowhelper\release\dshowhelper.dll .
+copy ..\..\..\core\DXUtil\release\DXUtil.dll .
 copy ..\..\..\core\fontengine\fontengine\debug\fontengine.dll .
 if exist ..\..\..\core\fontengine\fontengine\debug\fontengine.pdb copy ..\..\..\core\fontengine\fontengine\debug\fontengine.pdb .
 rem copy ..\..\..\Interop.DirectShowHelperLib.dll .

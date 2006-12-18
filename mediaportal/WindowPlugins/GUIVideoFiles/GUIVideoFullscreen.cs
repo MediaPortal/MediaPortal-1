@@ -395,7 +395,44 @@ namespace MediaPortal.GUI.Video
               _vmr9OSD.HideBitmap();
             return;
           }
+      case Action.ActionType.ACTION_AUTOCROP:
+          {
+              Log.Debug("ACTION_AUTOCROP");
+              _showStatus = true;
+              _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
 
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+              IAutoCrop cropper = GUIGraphicsContext.autoCropper;
+              if (cropper != null)
+              {
+                  msg.Label = cropper.Crop();
+                  if (msg.Label == null) msg.Label = "N/A";
+              }
+              else
+              {
+                  msg.Label = "N/A";
+              }
+    
+              OnMessage(msg);
+              break;
+          }
+      case Action.ActionType.ACTION_TOGGLE_AUTOCROP:
+          {
+              Log.Debug("ACTION_TOGGLE_AUTOCROP");
+              _showStatus = true;
+              _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+              IAutoCrop cropper = GUIGraphicsContext.autoCropper;
+
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+              msg.Label = "N/A";
+
+              if (cropper != null)
+              {
+                  msg.Label = cropper.ToggleMode();
+              }
+              OnMessage(msg);
+              break;
+          }
         case Action.ActionType.ACTION_ASPECT_RATIO:
           {
             _showStatus = true;
