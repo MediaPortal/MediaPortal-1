@@ -216,12 +216,12 @@
             <animation effect="fade" time="500">WindowClose</animation>
         </control>
         <control>
-            <description>genre</description>
+        		<description>channel</description>
             <type>label</type>
             <id>17</id>
             <posX>1252</posX>
             <posY>613</posY>
-            <label>#TV.Scheduled.Genre</label>
+            <label>#TV.Scheduled.Channel</label>
             <align>right</align>
             <font>font13</font>
             <textcolor>FFB2D4F5</textcolor>

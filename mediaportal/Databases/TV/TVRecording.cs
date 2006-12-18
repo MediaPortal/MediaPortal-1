@@ -1126,11 +1126,13 @@ namespace MediaPortal.TV.Database
       {
         GUIPropertyManager.SetProperty("#TV.Scheduled.Description", prog.Description);
         GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", prog.Genre);
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", prog.Channel);
       }
       else
       {
         GUIPropertyManager.SetProperty("#TV.Scheduled.Description", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", String.Empty);
       }
 
 

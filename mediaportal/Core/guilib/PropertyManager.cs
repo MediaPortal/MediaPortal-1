@@ -155,6 +155,7 @@ namespace MediaPortal.GUI.Library
       _properties["#TV.Scheduled.Description"] = String.Empty;
       _properties["#TV.Scheduled.thumb"] = String.Empty;
       _properties["#TV.Scheduled.Genre"] = String.Empty;
+      _properties["#TV.Scheduled.Channel"] = String.Empty;
 
       _properties["#TV.Search.Title"] = String.Empty;
       _properties["#TV.Search.Time"] = String.Empty;

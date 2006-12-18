@@ -1144,9 +1144,6 @@ namespace MediaPortal.GUI.TV
       dtNow = DateTime.Now.AddDays(day);
       rec.Start = MediaPortal.Util.Utils.datetolong(new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, hour, minute, 0, 0));
       rec.End = MediaPortal.Util.Utils.datetolong(rec.StartTime.AddMinutes(duration));
-      //rec.Title = GUILocalizeStrings.Get(413) + " (" + rec.Channel +")";
-      // somewhere the code must be foobar and do a string compare on rec.Title...
-      // recordings wouldn't start if no Guide data present
       rec.Title = GUILocalizeStrings.Get(413);
       Recorder.AddRecording(ref rec);
       LoadDirectory();
