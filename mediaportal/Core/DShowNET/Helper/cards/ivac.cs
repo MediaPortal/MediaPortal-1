@@ -75,7 +75,7 @@ namespace DShowNET
 
 		public enum eStreamOutput:int
 		{
-			Program       = 14,
+			Program       = 0,
 			Transport     = 1,
 			Mpeg1         = 2,
 			PES_AV        = 3,
