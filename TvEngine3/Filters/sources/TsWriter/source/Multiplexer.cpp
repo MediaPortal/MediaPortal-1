@@ -179,9 +179,10 @@ int CMultiplexer::OnNewPesPacket(CPesDecoder* decoder, byte* data, int len)
   int headerSize=data[8]+9;
   if (decoder->packet_number==0)
   {
-    if (data[headerSize]!= 0 || data[headerSize+1]!= 0 || data[headerSize+2]!= 1) return len;
     if (decoder->GetStreamId()>=0xe0)
     {
+      if (data[headerSize]!= 0 || data[headerSize+1]!= 0 || data[headerSize+2]!= 1) return len;
+
       if (data[headerSize+3]!=0xb3) return len;//sequence header
 			m_bVideoStartFound=true;
     }
