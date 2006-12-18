@@ -68,6 +68,8 @@ void CMultiplexer::ClearStreams()
 	m_pesDecoders.clear();
 	m_pcrPid=-1;
 	m_adaptionField.Pcr.Reset();
+	m_bVideoStartFound=false;
+	m_pcr.Reset();
 }
 
 void CMultiplexer::SetPcrPid(int pcrPid)
@@ -181,8 +183,10 @@ int CMultiplexer::OnNewPesPacket(CPesDecoder* decoder, byte* data, int len)
     if (decoder->GetStreamId()>=0xe0)
     {
       if (data[headerSize+3]!=0xb3) return len;//sequence header
+			m_bVideoStartFound=true;
     }
   }
+	if (m_bVideoStartFound==false) return len;
   mpeg_mux_write_packet(decoder,&data[headerSize],  len-headerSize);
 
   return len;

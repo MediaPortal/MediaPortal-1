@@ -73,4 +73,5 @@ private:
   int m_system_header_size;
 	int m_pcrPid;
 	CPcr m_pcr;
+	bool m_bVideoStartFound;
 };
