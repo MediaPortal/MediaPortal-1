@@ -301,10 +301,15 @@ namespace MediaPortal.GUI.Music
     private bool AddImageToImagePathContainer(string newImage)
     {
       string ImagePath = Convert.ToString(newImage);
+      if (ImagePath.IndexOf("missing_coverart") > 0)
+      {
+        Log.Debug("GUIMusicPlayingNow: Found placeholder - not inserting image {0}", ImagePath);
+        return false;
+      }
+
       // Check if we should let the visualization window handle image flipping
       if (_usingBassEngine && _showVisualization)
-      {
-        Log.Debug("GUIMusicPlayingNow: adding image to visualization - {0}", ImagePath);
+      {        
         Visualization.VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
 
         if (vizWindow != null)
@@ -313,6 +318,7 @@ namespace MediaPortal.GUI.Music
           {
             try
             {
+              Log.Debug("GUIMusicPlayingNow: adding image to visualization - {0}", ImagePath);
               vizWindow.AddImage(ImagePath);
               return true;
             }
@@ -331,30 +337,30 @@ namespace MediaPortal.GUI.Music
 
       bool success = false;
       if (ImagePathContainer != null)
-      {
-        Log.Debug("GUIMusicPlayingNow: adding image to container - {0}", ImagePath);
+      {        
         if (ImagePathContainer.Contains(ImagePath))
-          return false;
+          return false;        
 
-        // check for placeholder
-        int indexDel = 0;
-        bool found = false;
-        foreach (string pic in ImagePathContainer)
-        {
-          indexDel++;
-          if (pic.IndexOf("missing_coverart.png") > 0)
-          {
-            found = true;
-            break;
-          }
-        }
-        if (found)
-          ImagePathContainer.RemoveAt(indexDel - 1);
+        //// check for placeholder
+        //int indexDel = 0;
+        //bool found = false;
+        //foreach (string pic in ImagePathContainer)
+        //{
+        //  indexDel++;
+        //  if (pic.IndexOf("missing_coverart.png") > 0)
+        //  {
+        //    found = true;
+        //    break;
+        //  }
+        //}
+        //if (found)
+        //  ImagePathContainer.RemoveAt(indexDel - 1);
 
         if (System.IO.File.Exists(ImagePath))
         {
           try
           {
+            Log.Debug("GUIMusicPlayingNow: adding image to container - {0}", ImagePath);
             ImagePathContainer.Add(ImagePath);
             success = true;
           }
@@ -368,6 +374,7 @@ namespace MediaPortal.GUI.Music
             FlipPictures();
         }
       }
+
       return success;
     }
 
