@@ -22,6 +22,7 @@
 
 #include "tsHeader.h"
 #include "pespacket.h"
+#include "pcr.h"
 
 #define MAX_PES_PACKET 0x80000
 class CPesDecoder;
@@ -39,7 +40,7 @@ public:
 	virtual ~CPesDecoder(void);
 	void					SetPid(int pid);
 	int						GetPid();
-	bool					OnTsPacket(byte* tsPacket);
+	bool					OnTsPacket(byte* tsPacket,CPcr& pcr);
 	void					Reset();
 	bool					IsAudio();
 	bool					IsVideo();

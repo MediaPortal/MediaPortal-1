@@ -27,7 +27,7 @@ void LogDebug(const char *fmt, ...) ;
 #define PACK_HEADER_FREQUENCY           1
 #define SYSTEM_HEADER_FREQUENCY         40
 #define PACK_HEADER_SIZE                14
-#define MUX_RATE                        0x1EB85
+#define MUX_RATE                        0x8000
 #define PRIVATE_STREAM_1                0x1bd
 #define MAX_INPUT_BUFFER_SIZE_AUDIO     4096
 #define MAX_INPUT_BUFFER_SIZE_VIDEO     47104
@@ -154,13 +154,14 @@ void CMultiplexer::OnTsPacket(byte* tsPacket)
     // printf("pcr:%s\n", m_pcr.ToString());
 		}
 	}
-	if (m_pcr.PcrReferenceBase==0) return;
+	if (m_pcr.PcrReferenceBase==0)
+    return;
 
 	ivecPesDecoders it;
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 	{
 		CPesDecoder* decoder=*it;
-		decoder->OnTsPacket(tsPacket);
+		decoder->OnTsPacket(tsPacket,m_pcr);
 	}
 }
 
@@ -174,6 +175,14 @@ int CMultiplexer::OnNewPesPacket(CPesDecoder* decoder, byte* data, int len)
  // if (decoder->m_packet.pts.PcrReferenceBase!=0)
  //   printf("pts:%s\n", decoder->m_packet.pts.ToString());
   int headerSize=data[8]+9;
+  if (decoder->packet_number==0)
+  {
+    if (data[headerSize]!= 0 || data[headerSize+1]!= 0 || data[headerSize+2]!= 1) return len;
+    if (decoder->GetStreamId()>=0xe0)
+    {
+      if (data[headerSize+3]!=0xb3) return len;//sequence header
+    }
+  }
   mpeg_mux_write_packet(decoder,&data[headerSize],  len-headerSize);
 
   return len;
@@ -229,11 +238,12 @@ int CMultiplexer::get_system_header_size()
 }
    
 
-int CMultiplexer::WritePackHeader(byte* buf)
+int CMultiplexer::WritePackHeader(byte* buf, double clock)
 {
-
-	UINT64 pcrHi=m_pcr.PcrReferenceBase;
-	UINT64 pcrLow=m_pcr.PcrReferenceExtension;
+  CPcr pcr;
+  pcr.FromClock(clock);
+	UINT64 pcrHi=pcr.PcrReferenceBase;
+	UINT64 pcrLow=pcr.PcrReferenceExtension;
   int muxRate=MUX_RATE;
 	//pack header
 	buf[0] = 0;
@@ -312,15 +322,15 @@ int CMultiplexer::WriteSystemHeader(byte* buf)
     {
       /* audio */
       ULONG size=(MAX_INPUT_BUFFER_SIZE_AUDIO/128);
-      buf[offset]=(byte)(0xc0 + ((size>>8)&0x1f));offset++;
-      buf[offset]=(byte)(size&0xff); offset++;
+      buf[offset]=0xc0 + ((size>>8)&0x1f);offset++;
+      buf[offset]=(size&0xff); offset++;
     }
     else
     {
       /* video */
       ULONG size=(MAX_INPUT_BUFFER_SIZE_VIDEO/128);
-      buf[offset]=(byte)(0xe0 + ((size>>8)&0x1f));offset++;
-      buf[offset]=(byte)(size&0xff); offset++;
+      buf[offset]=0xe0 + ((size>>8)&0x1f);offset++;
+      buf[offset]=(size&0xff); offset++;
     }
   }
 
@@ -360,7 +370,18 @@ int CMultiplexer::mpeg_mux_write_packet(CPesDecoder* decoder,const byte *buf, in
 {
     int len, avail_size;
     CPesPacket& packet=decoder->m_packet;
+    double startClock=packet.startPcr.ToClock();
+    double endClock=m_pcr.ToClock();
+    double diff=endClock - startClock;
 
+    if (m_pcr.PcrReferenceBase==0)
+    {
+      int x=1;
+    }
+    if (packet.pts.PcrReferenceBase==0)
+    {
+      int x=1;
+    }
     /* we assume here that pts != AV_NOPTS_VALUE */
     /*
     new_start_pts = stream->start_pts;
@@ -380,7 +401,7 @@ int CMultiplexer::mpeg_mux_write_packet(CPesDecoder* decoder,const byte *buf, in
            padding.
            Note: this always happens for the first audio and video packet
            in a VCD file, since they do not carry any data.*/
-        flush_packet(decoder);
+      flush_packet(decoder,startClock);
         packet.buffer_ptr = 0;
     }
     //stream->start_pts = new_start_pts;
@@ -388,6 +409,10 @@ int CMultiplexer::mpeg_mux_write_packet(CPesDecoder* decoder,const byte *buf, in
     packet.nb_frames++;
     if (packet.m_iFrameOffset == 0)
         packet.m_iFrameOffset = packet.buffer_ptr;
+
+    int pktCount=size/0x7d2;
+    diff /= ((double)pktCount);
+
     while (size > 0) 
     {
         avail_size = get_packet_payload_size(decoder);
@@ -403,18 +428,19 @@ int CMultiplexer::mpeg_mux_write_packet(CPesDecoder* decoder,const byte *buf, in
           //update_scr(ctx,stream_index,stream->start_pts);
 
           /* if packet full, we send it now */
-          flush_packet(decoder);
+          flush_packet(decoder,startClock);
           packet.buffer_ptr = 0;
 
           /* Make sure only the FIRST pes packet for this frame has a timestamp */
           packet.pts.Reset();//stream->start_pts = AV_NOPTS_VALUE;
           packet.dts.Reset();//stream->start_dts = AV_NOPTS_VALUE;
+          startClock += diff;
         }
     }
     return 0;
 }
 
-void CMultiplexer::flush_packet(CPesDecoder* decoder)
+void CMultiplexer::flush_packet(CPesDecoder* decoder, double clock)
 {
   byte *buf_ptr;
   int size, payload_size, startcode, id, stuffing_size, i, header_len;
@@ -429,7 +455,7 @@ void CMultiplexer::flush_packet(CPesDecoder* decoder)
   if (((decoder->packet_number % PACK_HEADER_FREQUENCY) == 0)) 
   {
       /* output pack and systems header if needed */
-      size = WritePackHeader(buf_ptr);
+      size = WritePackHeader(buf_ptr,clock);
       buf_ptr += size;
 
       if ((decoder->packet_number % SYSTEM_HEADER_FREQUENCY) == 0) 

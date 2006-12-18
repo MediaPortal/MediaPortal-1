@@ -25,6 +25,7 @@ class CPesPacket
   public:
     CPcr  pts;
     CPcr  dts;
+    CPcr  startPcr;
     byte* m_pData;
     int   m_iFrameOffset;
     int   buffer_ptr;

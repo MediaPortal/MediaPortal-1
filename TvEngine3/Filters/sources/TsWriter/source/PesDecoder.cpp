@@ -74,7 +74,7 @@ int	CPesDecoder::GetStreamId()
 {
 	return m_iStreamId;
 }
-bool CPesDecoder::OnTsPacket(byte* tsPacket)
+bool CPesDecoder::OnTsPacket(byte* tsPacket, CPcr& pcr)
 {
   if (tsPacket==NULL) return false;
 	if (m_pid==-1) return false;
@@ -117,6 +117,7 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 			if (m_iStreamId<0)
 				m_iStreamId=tsPacket[pos+3];
 			m_iWritePos=0;
+      m_packet.startPcr=pcr;
 		}
 	}
 
