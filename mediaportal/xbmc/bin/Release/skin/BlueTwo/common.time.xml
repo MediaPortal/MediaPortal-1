@@ -5,7 +5,7 @@
 			<description>Date</description>
 			<type>label</type>
 			<id>200</id>
-			<posX>620</posX>
+			<posX>610</posX>
 			<posY>30</posY>
 			<label>#date</label>
 			<align>right</align>

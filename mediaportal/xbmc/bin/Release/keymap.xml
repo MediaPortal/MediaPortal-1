@@ -236,6 +236,12 @@
       <sound>photo.wav</sound>
       <description>Take Screenshot</description>
     </action>
+    <action>
+      <id>9885</id>
+      <key />
+      <sound />
+      <description>Toggle Autocrop</description>
+    </action>
   </global>
   <window>
     <id>603</id>
