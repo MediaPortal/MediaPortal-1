@@ -1,134 +1,129 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-    <id>34</id>
-    <defaultcontrol>2</defaultcontrol>
-    <allowoverlay>yes</allowoverlay>
-    <controls>
-        <control>
-            <description>background image</description>
-            <type>image</type>
-            <id>1</id>
-            <posX>0</posX>
-            <posY>0</posY>
-            <width>1366</width>
-            <height>768</height>
-            <texture>background.png</texture>
-        </control>
-        <control>
-            <description>menu background image</description>
-            <type>image</type>
-            <id>1</id>
-            <posX>701</posX>
-            <posY>173</posY>
-            <width>413</width>
-            <height>500</height>
-            <texture>background_glass_menu_area.png</texture>
-            <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
-        </control>
-        <control>
-            <description>menu background image</description>
-            <type>image</type>
-            <id>1</id>
-            <posX>0</posX>
-            <posY>160</posY>
-            <width>413</width>
-            <height>500</height>
-            <texture>background_glass_hoover_area.png</texture>
-            <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
-        </control>
-        <control>
-            <type>image</type>
-            <id>1</id>
-            <posX>246</posX>
-            <posY>53</posY>
-            <texture>hp_start.png</texture>
-            <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
-        </control>
-        <control>
-            <description>template for panel in which all buttons should b fitted</description>
-            <type>image</type>
-            <id>1002</id>
-            <posX>711</posX>
-            <posY>213</posY>
-            <width>400</width>
-            <height>366</height>
-            <texture>-</texture>
-            <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
-        </control>
-        <control>
-            <description>template for hover image</description>
-            <type>image</type>
-            <id>1000</id>
-            <posX>161</posX>
-            <posY>266</posY>
-            <align>center</align>
-            <texture>-</texture>
-            <visible>no</visible>
-            <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
-        </control>
-        <control>
-            <description>template for button</description>
-            <type>button</type>
-            <id>1001</id>
-            <posX>758</posX>
-            <posY>213</posY>
-            <width>300</width>
-            <textXOff>18</textXOff>
-            <textYOff>10</textYOff>
-            <height>65</height>
-            <label>605</label>
-            <font>font16</font>
-            <texture>hp_selectionbar.png</texture>
-            <textureFocus>hp_selectionbar.png</textureFocus>
-            <textureNoFocus>-</textureNoFocus>
-            <visible>no</visible>
-            <textcolor>ffffffff</textcolor>
-            <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
-        </control>
-        <control>
-            <description>template label for small font</description>
-            <type>label</type>
-            <id>1003</id>
-            <posX>1005</posX>
-            <posY>653</posY>
-            <align>left</align>
-            <font>font16</font>
-            <visible>no</visible>
-            <textcolor>ffffffff</textcolor>
-            <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
-        </control>
-        <control>
-            <description>Date</description>
-            <type>label</type>
-            <id>200</id>
-            <posX>436</posX>
-            <posY>226</posY>
-            <label>#date</label>
-            <align>right</align>
-            <font>font13</font>
-            <textcolor>ffa9d0f7</textcolor>
-            <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
-        </control>
-        <control>
-            <description>Time</description>
-            <type>label</type>
-            <id>201</id>
-            <posX>455</posX>
-            <posY>226</posY>
-            <label>#time</label>
-            <align>left</align>
-            <font>font13</font>
-            <textcolor>ffffffff</textcolor>
-            <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
-        </control>
-    </controls>
+  <id>34</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1366</width>
+      <height>768</height>
+    </control>
+    <control>
+      <description>menu background image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>701</posX>
+      <posY>173</posY>
+      <width>413</width>
+      <height>500</height>
+      <texture>background_glass_menu_area.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>menu background image</description>
+      <type>image</type>
+      <id>1</id>
+      <posY>160</posY>
+      <width>413</width>
+      <height>500</height>
+      <texture>background_glass_hoover_area.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>246</posX>
+      <posY>53</posY>
+      <texture>hp_start.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>template for panel in which all buttons should b fitted</description>
+      <type>image</type>
+      <id>1002</id>
+      <posX>711</posX>
+      <posY>213</posY>
+      <width>400</width>
+      <height>366</height>
+      <texture>-</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>template for hover image</description>
+      <type>image</type>
+      <id>1000</id>
+      <posX>161</posX>
+      <posY>266</posY>
+      <align>center</align>
+      <texture>-</texture>
+      <visible>no</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>template for button</description>
+      <type>button</type>
+      <id>1001</id>
+      <posX>758</posX>
+      <posY>213</posY>
+      <width>300</width>
+      <textYOff>10</textYOff>
+      <height>65</height>
+      <label>605</label>
+      <font>font16</font>
+      <texture>hp_selectionbar.png</texture>
+      <textureFocus>hp_selectionbar.png</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <visible>no</visible>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>template label for small font</description>
+      <type>label</type>
+      <id>1003</id>
+      <posX>1005</posX>
+      <posY>653</posY>
+      <align>left</align>
+      <font>font16</font>
+      <visible>no</visible>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>Date</description>
+      <type>label</type>
+      <id>200</id>
+      <posX>436</posX>
+      <posY>226</posY>
+      <label>#date</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>Time</description>
+      <type>label</type>
+      <id>201</id>
+      <posX>455</posX>
+      <posY>226</posY>
+      <label>#time</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+  </controls>
 </window>

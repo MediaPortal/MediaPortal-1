@@ -1,73 +1,60 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-    <controls>
+  <controls>
+    <control>
+      <type>group</type>
+      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <description>group element</description>
+      <control>
+        <description>composite control consisting of a list control and a thumbnail panel</description>
+        <type>facadeview</type>
+        <id>50</id>
         <control>
-            <type>group</type>
-            <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
-            <animation effect="slide" time="400" end="800,0" >WindowClose</animation>
-            <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
-            <description>group element</description>
-            <control>
-                <description>composite control consisting of a list control and a thumbnail panel</description>
-                <type>facadeview</type>
-                <id>50</id>
-                <control>
-                    <description>listcontrol</description>
-                    <type>listcontrol</type>
-                    <id>50</id>
-                    <scrollOffset>2</scrollOffset>
-                </control>
-                <control>
-
-                    <description>Thumbnail Panel</description>
-                    <type>thumbnailpanel</type>
-                    <id>50</id>
-                    <!--                     <scrollOffset>1</scrollOffset> -->
-                    <onleft>2</onleft>
-                    <onright>2</onright>
-                    <itemWidth>140</itemWidth>
-                    <itemHeight>192</itemHeight>
-                    <textureWidth>98</textureWidth>
-                    <textureHeight>138</textureHeight>
-                    <thumbWidth>70</thumbWidth>
-                    <thumbHeight>100</thumbHeight>
-                    <thumbPosX>14</thumbPosX>
-                    <thumbPosY>18</thumbPosY>
-                    <textureWidthBig>184</textureWidthBig>
-                    <textureHeightBig>260</textureHeightBig>
-                    <itemWidthBig>204</itemWidthBig>
-                    <itemHeightBig>290</itemHeightBig>
-                    <thumbWidthBig>140</thumbWidthBig>
-                    <thumbHeightBig>200</thumbHeightBig>
-                    <thumbPosXBig>20</thumbPosXBig>
-                    <thumbPosYBig>28</thumbPosYBig>
-                </control>
-                <control>
-                    <description>Filmstrip view</description>
-                    <type>filmstrip</type>
-                    <id>50</id>
-                    <onleft>2</onleft>
-                    <onright>2</onright>
-                    <onup>2</onup>
-                    <ondown>2</ondown>
-                    <backgroundx>722</backgroundx>
-                    <backgroundy>126</backgroundy>
-                    <backgroundwidth>314</backgroundwidth>
-                    <backgroundheight>446</backgroundheight>
-                    <InfoImage>-</InfoImage>
-                    <InfoImagex>742</InfoImagex>
-                    <InfoImagey>152</InfoImagey>
-                    <InfoImagewidth>266</InfoImagewidth>
-                    <InfoImageheight>375</InfoImageheight>
-                </control>
-                <control>
-                    <description>playlist listcontrol</description>
-                    <type>playlistcontrol</type>
-                    <id>50</id>
-                    <scrollOffset>1</scrollOffset>
-                </control>
-            </control>
+          <description>listcontrol</description>
+          <type>listcontrol</type>
+          <id>50</id>
+          <scrollOffset>2</scrollOffset>
         </control>
-    </controls>
+        <control>
+          <description>Thumbnail Panel</description>
+          <type>thumbnailpanel</type>
+          <id>50</id>
+          <!--                     <scrollOffset>1</scrollOffset> -->
+          <onleft>2</onleft>
+          <onright>2</onright>
+          <itemWidth>140</itemWidth>
+          <itemHeight>192</itemHeight>
+          <textureWidth>98</textureWidth>
+          <thumbWidth>70</thumbWidth>
+          <thumbPosX>14</thumbPosX>
+          <textureWidthBig>184</textureWidthBig>
+          <itemWidthBig>204</itemWidthBig>
+          <thumbWidthBig>140</thumbWidthBig>
+          <thumbPosXBig>20</thumbPosXBig>
+        </control>
+        <control>
+          <description>Filmstrip view</description>
+          <type>filmstrip</type>
+          <id>50</id>
+          <onleft>2</onleft>
+          <onright>2</onright>
+          <onup>2</onup>
+          <ondown>2</ondown>
+          <backgroundx>722</backgroundx>
+          <backgroundwidth>314</backgroundwidth>
+          <InfoImagex>742</InfoImagex>
+          <InfoImagewidth>266</InfoImagewidth>
+        </control>
+        <control>
+          <description>playlist listcontrol</description>
+          <type>playlistcontrol</type>
+          <id>50</id>
+          <scrollOffset>1</scrollOffset>
+        </control>
+      </control>
+    </control>
+  </controls>
 </window>
