@@ -171,7 +171,7 @@ namespace MediaPortal.InputDevices
 
         if ((e.eCommand.ToString() == preventdoublepress.command))
         {
-          if (preventdoublepress.span() < 50)
+          if (preventdoublepress.span() < 150)
             return;
         }
 
