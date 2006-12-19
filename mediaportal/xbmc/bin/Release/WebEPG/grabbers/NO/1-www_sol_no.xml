@@ -85,32 +85,34 @@
       <Template name="default">
         <SectionTemplate tags="T">
           <TemplateText>
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;&lt;tr&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;&lt;#START&gt;&lt;br&gt;&lt;#END&gt;&lt;br&gt;&lt;/td&gt;
-&lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;
-&lt;td&gt;&lt;#TITLE&gt;&lt;br&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
-    </TemplateText>
+            &lt;td&gt;&lt;/td&gt;
+            &lt;/tr&gt;&lt;tr&gt;
+            &lt;td&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;#START&gt;&lt;br&gt;&lt;#END&gt;&lt;br&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;#TITLE&gt;&lt;br&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
+          </TemplateText>
         </SectionTemplate>
       </Template>
       <Template name="Details">
         <SectionTemplate tags="T">
           <TemplateText>
-&lt;table&gt;
-&lt;tr&gt;&lt;td&gt;&lt;b&gt;&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;b&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;/td&gt;
-&lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;
-&lt;td&gt;&lt;b&gt;&lt;/b&gt;&lt;/td&gt;
-&lt;td&gt;&lt;br&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;&lt;/tr&gt;
-    </TemplateText>
+            &lt;table&gt;
+            &lt;tr&gt;&lt;td&gt;&lt;b&gt;&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;b&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;b&gt;&lt;/b&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;br&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;&lt;/tr&gt;
+          </TemplateText>
         </SectionTemplate>
       </Template>
       <Sublinks>
-        <Sublink search="tvguiden" template="Details" />
+        <Sublink search="tvguiden" template="Details">
+          <Link url="http://www.sol.no/underholdning/tv/guiden/expand.cgi?[1]" post="" external="false" encoding="" />
+        </Sublink>
       </Sublinks>
       <Searches>
         <Search match="\(R\)" field="#REPEAT" remove="true" />
