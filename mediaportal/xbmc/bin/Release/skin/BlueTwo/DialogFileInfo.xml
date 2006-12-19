@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>1206</id>
   <defaultcontrol>8</defaultcontrol>
@@ -8,11 +8,8 @@
       <description>background image</description>
       <type>image</type>
       <id>1</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
-      <texture>background.png</texture>
     </control>
     <control>
       <type>image</type>
@@ -170,9 +167,7 @@
       <description>Overview</description>
       <type>textbox</type>
       <id>4</id>
-      <posX>220</posX>
       <posY>190</posY>
-      <width>410</width>
       <height>340</height>
       <label>-</label>
       <font>font13</font>
@@ -191,7 +186,6 @@
       <posX>60</posX>
       <posY>360</posY>
       <width>130</width>
-      <height>32</height>
       <label>184</label>
       <font>font13</font>
       <onup>8</onup>
@@ -208,7 +202,6 @@
       <posX>60</posX>
       <posY>394</posY>
       <width>130</width>
-      <height>32</height>
       <label>13006</label>
       <font>font13</font>
       <onup>12</onup>
@@ -225,7 +218,6 @@
       <posX>60</posX>
       <posY>428</posY>
       <width>130</width>
-      <height>32</height>
       <label>210</label>
       <font>font13</font>
       <onup>11</onup>
@@ -242,7 +234,6 @@
       <posX>60</posX>
       <posY>462</posY>
       <width>130</width>
-      <height>32</height>
       <label>209</label>
       <font>font13</font>
       <onup>7</onup>
@@ -259,7 +250,6 @@
       <posX>60</posX>
       <posY>496</posY>
       <width>130</width>
-      <height>32</height>
       <label>13002</label>
       <font>font13</font>
       <onup>9</onup>

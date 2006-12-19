@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>2901</id>
   <defaultcontrol>213</defaultcontrol>
@@ -13,12 +14,9 @@
       <width>400</width>
       <height>230</height>
       <texture>osd_bg_video.png</texture>
-      <visible>yes</visible>
-      
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
-
     <control>
       <description>Current Time Info</description>
       <type>label</type>
@@ -29,11 +27,9 @@
       <align>left</align>
       <font>font13</font>
       <textcolor>FF071422</textcolor>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
-
     <control>
       <description>TV Logo</description>
       <type>image</type>
@@ -45,11 +41,9 @@
       <texture>#Play.Current.Thumb</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
-
     <control>
       <description>Movie Name</description>
       <id>36</id>
@@ -58,15 +52,12 @@
       <height>30</height>
       <posX>110</posX>
       <posY>350</posY>
-      <align>left</align>
       <font>font13</font>
       <label>#Play.Current.Title</label>
       <textcolor>FFB2D4F5</textcolor>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
-
     <control>
       <description>Plot</description>
       <type>textboxscrollup</type>
@@ -75,15 +66,12 @@
       <posY>375</posY>
       <width>290</width>
       <height>170</height>
-      <align>left</align>
       <label>#Play.Current.Plot</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
-
     <control>
       <description>Play</description>
       <type>togglebutton</type>
@@ -102,11 +90,9 @@
       <onright>213</onright>
       <onup>213</onup>
       <ondown>218</ondown>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
-
     <control>
       <description>Subtitles Menu</description>
       <type>togglebutton</type>
@@ -125,7 +111,6 @@
       <onright>218</onright>
       <onup>213</onup>
       <ondown>218</ondown>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -138,10 +123,7 @@
       <width>260</width>
       <height>230</height>
       <texture>osd_bg_settings.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>ffffffff</colordiffuse>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -155,12 +137,10 @@
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
-
-    <control>  
+    <control>
       <description>SubTitle Delay Slider</description>
       <type>slider</type>
       <id>800</id>
@@ -178,7 +158,6 @@
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
-                     
     <control>
       <description>SubTitles On/Off Checkbox</description>
       <type>checkmark</type>
@@ -209,8 +188,7 @@
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
-    </control>  
-
+    </control>
     <control>
       <description>Skip Bwd</description>
       <type>togglebutton</type>
@@ -230,7 +208,6 @@
       <onup>213</onup>
       <ondown>215</ondown>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -253,7 +230,6 @@
       <onup>218</onup>
       <ondown>212</ondown>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -274,7 +250,6 @@
       <onup>211</onup>
       <ondown>210</ondown>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -297,7 +272,6 @@
       <onup>219</onup>
       <ondown>216</ondown>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -320,7 +294,6 @@
       <onup>210</onup>
       <ondown>213</ondown>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -343,11 +316,9 @@
       <onup>214</onup>
       <ondown>210</ondown>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
-
     <control>
       <description>Bookmarks Menu</description>
       <type>togglebutton</type>
@@ -367,7 +338,6 @@
       <onup>215</onup>
       <ondown>214</ondown>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -378,10 +348,7 @@
       <posX>145</posX>
       <posY>315</posY>
       <texture>osd_dialog.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>ffffffff</colordiffuse>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -392,10 +359,7 @@
       <posX>145</posX>
       <posY>315</posY>
       <texture>osd_dialog.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>ffffffff</colordiffuse>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -406,10 +370,7 @@
       <posX>145</posX>
       <posY>315</posY>
       <texture>osd_dialog.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>ffffffff</colordiffuse>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -420,10 +381,7 @@
       <posX>145</posX>
       <posY>290</posY>
       <texture>osd_dialog_big.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>ffffffff</colordiffuse>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -434,10 +392,7 @@
       <posX>145</posX>
       <posY>315</posY>
       <texture>osd_dialog.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>ffffffff</colordiffuse>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -445,13 +400,8 @@
       <description>Sub Menu Nib</description>
       <type>image</type>
       <id>350</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <texture>-</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>ffffffff</colordiffuse>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -469,7 +419,6 @@
       <onleft>400</onleft>
       <onright>400</onright>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -483,7 +432,6 @@
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -502,7 +450,6 @@
       <onleft>501</onleft>
       <onright>501</onright>
       <visible>no</visible>
-
       <animation effect="fade" time="250">windowopen</animation>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
@@ -519,7 +466,6 @@
       <onup>501</onup>
       <ondown>501</ondown>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -533,7 +479,6 @@
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -552,7 +497,6 @@
       <onleft>700</onleft>
       <onright>702</onright>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -568,7 +512,6 @@
       <onleft>701</onleft>
       <onright>701</onright>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -584,7 +527,6 @@
       <onleft>701</onleft>
       <onright>702</onright>
       <visible>no</visible>
-      
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -600,7 +542,6 @@
       <onleft>703</onleft>
       <onright>702</onright>
       <visible>no</visible>
-      
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -614,7 +555,6 @@
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>no</visible>
-      
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -633,7 +573,6 @@
       <onleft>704</onleft>
       <onright>704</onright>
       <visible>no</visible>
-      
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -647,7 +586,6 @@
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>no</visible>
-      
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -666,7 +604,6 @@
       <onleft>705</onleft>
       <onright>705</onright>
       <visible>no</visible>
-      
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -680,7 +617,6 @@
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -699,7 +635,6 @@
       <onleft>706</onleft>
       <onright>706</onright>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -710,20 +645,17 @@
       <posX>185</posX>
       <posY>370</posY>
       <width>165</width>
-      <height>32</height>
       <textureFocus>button_green_focus_165x32.png</textureFocus>
       <textureNoFocus>button_green_nofocus_165x32.png</textureNoFocus>
       <label>294</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
       <colordiffuse>ffffffff</colordiffuse>
-      <disabledcolor>60ffffff</disabledcolor>
       <onleft>600</onleft>
       <onright>602</onright>
       <onup>600</onup>
       <ondown>601</ondown>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -734,20 +666,17 @@
       <posX>375</posX>
       <posY>370</posY>
       <width>165</width>
-      <height>32</height>
       <textureFocus>button_green_focus_165x32.png</textureFocus>
       <textureNoFocus>button_green_nofocus_165x32.png</textureNoFocus>
       <label>296</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
       <colordiffuse>ffffffff</colordiffuse>
-      <disabledcolor>60ffffff</disabledcolor>
       <onleft>600</onleft>
       <onright>601</onright>
       <onup>600</onup>
       <ondown>601</ondown>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -766,7 +695,6 @@
       <spinPosX>465</spinPosX>
       <spinPosY>480</spinPosY>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>

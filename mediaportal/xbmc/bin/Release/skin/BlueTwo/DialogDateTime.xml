@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>2010</id>
   <defaultcontrol>12</defaultcontrol>
@@ -7,8 +7,6 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
       <texture>black.bmp</texture>
@@ -44,7 +42,6 @@
       <id>1</id>
       <posX>240</posX>
       <posY>230</posY>
-      <reverse>yes</reverse>
       <showrange>no</showrange>
       <digits>3</digits>
       <onup>12</onup>
@@ -88,7 +85,6 @@
       <id>2</id>
       <posX>170</posX>
       <posY>305</posY>
-      <reverse>yes</reverse>
       <showrange>no</showrange>
       <onup>1</onup>
       <ondown>4</ondown>
@@ -111,7 +107,6 @@
       <id>3</id>
       <posX>220</posX>
       <posY>305</posY>
-      <reverse>yes</reverse>
       <showrange>no</showrange>
       <onup>2</onup>
       <ondown>4</ondown>
@@ -145,7 +140,6 @@
       <id>4</id>
       <posX>170</posX>
       <posY>360</posY>
-      <reverse>yes</reverse>
       <showrange>no</showrange>
       <onup>2</onup>
       <ondown>7</ondown>
@@ -167,7 +161,6 @@
       <id>5</id>
       <posX>220</posX>
       <posY>360</posY>
-      <reverse>yes</reverse>
       <showrange>no</showrange>
       <onup>2</onup>
       <ondown>7</ondown>
@@ -190,7 +183,6 @@
       <id>6</id>
       <posX>270</posX>
       <posY>360</posY>
-      <reverse>yes</reverse>
       <showrange>no</showrange>
       <onup>2</onup>
       <ondown>7</ondown>
@@ -237,7 +229,6 @@
       <id>7</id>
       <posX>380</posX>
       <posY>305</posY>
-      <reverse>yes</reverse>
       <showrange>no</showrange>
       <onup>4</onup>
       <ondown>9</ondown>
@@ -260,7 +251,6 @@
       <id>8</id>
       <posX>430</posX>
       <posY>305</posY>
-      <reverse>yes</reverse>
       <showrange>no</showrange>
       <onup>4</onup>
       <ondown>9</ondown>
@@ -294,7 +284,6 @@
       <id>9</id>
       <posX>380</posX>
       <posY>360</posY>
-      <reverse>yes</reverse>
       <showrange>no</showrange>
       <onup>7</onup>
       <ondown>12</ondown>
@@ -316,7 +305,6 @@
       <id>10</id>
       <posX>430</posX>
       <posY>360</posY>
-      <reverse>yes</reverse>
       <showrange>no</showrange>
       <onup>7</onup>
       <ondown>12</ondown>
@@ -339,7 +327,6 @@
       <id>11</id>
       <posX>480</posX>
       <posY>360</posY>
-      <reverse>yes</reverse>
       <showrange>no</showrange>
       <onup>7</onup>
       <ondown>12</ondown>

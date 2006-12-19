@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>2600</id>
   <defaultcontrol>2</defaultcontrol>
@@ -13,7 +13,7 @@
     <control>
       <type>group</type>
       <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300" >WindowClose</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <description>group element</description>
@@ -47,7 +47,6 @@
         <ondown>2</ondown>
       </control>
     </control>
-
     <control>
       <description>TWC Logo</description>
       <type>image</type>
@@ -459,7 +458,6 @@
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>White:#20</colordiffuse>
     </control>
-
     <control>
       <description>Satellite image</description>
       <type>image</type>
@@ -468,15 +466,13 @@
       <posY>97</posY>
       <width>415</width>
       <height>330</height>
-      <texture></texture>
+      <texture />
       <visible>no</visible>
       <colorkey>00000000</colorkey>
       <colordiffuse>White</colordiffuse>
-      <filtered>yes</filtered>
       <centered>yes</centered>
       <keepaspectratio>yes</keepaspectratio>
     </control>
-
     <control>
       <description>Sunclock image</description>
       <type>image</type>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>4734</id>
   <defaultcontrol>1000</defaultcontrol>
@@ -97,7 +97,6 @@
         <label>983</label>
       </control>
     </control>
-
     <control>
       <type>group</type>
       <description>group element</description>
@@ -129,7 +128,7 @@
       <control>
         <type>button</type>
         <description>list nav Button</description>
-        <id>35</id>>
+        <id>35</id>
         <onleft>50</onleft>
         <onright>50</onright>
         <onup>34</onup>
@@ -163,7 +162,7 @@
       <id>36</id>
       <posX>65</posX>
       <posY>369</posY>
-      <texture></texture>
+      <texture />
     </control>
   </controls>
 </window>

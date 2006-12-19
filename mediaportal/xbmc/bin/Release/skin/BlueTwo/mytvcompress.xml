@@ -1,14 +1,13 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>612</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-	<define>#header.label:896</define>
-	<define>#header.image:television_logo.png</define>
-	<define>#header.hover:hover_my tv.png</define>
+  <define>#header.label:896</define>
+  <define>#header.image:television_logo.png</define>
+  <define>#header.hover:hover_my tv.png</define>
   <controls>
-	    <import>common.window.xml</import>
-
+    <import>common.window.xml</import>
     <control>
       <description>Date</description>
       <type>label</type>
@@ -35,7 +34,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-
     <control>
       <description>Number of Files Label</description>
       <type>label</type>
@@ -136,7 +134,6 @@
         <description>scheduler recordings listcontrol</description>
         <type>checklistcontrol</type>
         <id>10</id>
-        <width>425</width>
         <height>370</height>
         <textXOff>50</textXOff>
         <textYOff>2</textYOff>
@@ -145,7 +142,6 @@
         <textXOff3>100</textXOff3>
         <textYOff3>29</textYOff3>
         <IconXOff>12</IconXOff>
-        <IconYOff>8</IconYOff>
         <spinPosX>606</spinPosX>
         <spinPosY>418</spinPosY>
         <itemWidth>35</itemWidth>
@@ -182,7 +178,6 @@
         <width>250</width>
         <label>#TV.RecordedTV.Title</label>
         <font>font13</font>
-        <align>left</align>
         <textcolor>FFFFFFFF</textcolor>
       </control>
       <control>

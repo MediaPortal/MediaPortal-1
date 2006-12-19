@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>2015</id>
   <defaultcontrol>3</defaultcontrol>
@@ -7,8 +7,6 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
       <texture>black.bmp</texture>
@@ -65,7 +63,6 @@
         <posX>610</posX>
         <posY>420</posY>
         <width>32</width>
-        <height>32</height>
         <textureFocus>dialogue_shutdown_focus.png</textureFocus>
         <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
         <label>-</label>

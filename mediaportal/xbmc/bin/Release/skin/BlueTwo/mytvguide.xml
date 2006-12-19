@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>600</id>
   <defaultcontrol>2</defaultcontrol>
@@ -8,11 +8,8 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
-      <texture>background.png</texture>
     </control>
     <control>
       <type>image</type>
@@ -26,8 +23,10 @@
     <control>
       <type>image</type>
       <id>1</id>
-      <posX>75</posX>
-      <posY>370</posY>
+      <posX>77</posX>
+      <posY>400</posY>
+      <width>161</width>
+      <height>158</height>
       <texture>hover_my tv.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -84,7 +83,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-
     <control>
       <description>Single Channel Label</description>
       <type>label</type>
@@ -106,13 +104,11 @@
       <width>40</width>
       <height>40</height>
       <keepaspectratio>yes</keepaspectratio>
-      <centered>no</centered>
       <zoom>yes</zoom>
       <texture>defaultVideoBig.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-
     <!-- Timeheader background must be dedfined before Timeheader label template -->
     <!-- b/c Timeheader is on the background and will be rendered first -->
     <control>
@@ -147,7 +143,6 @@
       <showrange>no</showrange>
       <orientation>horizontal</orientation>
       <align>center</align>
-      <reverse>yes</reverse>
       <onleft>6</onleft>
       <onright>8</onright>
       <textureUp>arrow_round_right_nofocus.png</textureUp>
@@ -157,8 +152,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-
-
     <control>
       <description>time interval spin control</description>
       <type>spincontrol</type>
@@ -168,7 +161,6 @@
       <showrange>no</showrange>
       <orientation>vertical</orientation>
       <align>center</align>
-      <reverse>yes</reverse>
       <textureUp>arrow_round_up_nofocus.png</textureUp>
       <textureDown>arrow_round_down_nofocus.png</textureDown>
       <textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
@@ -193,13 +185,9 @@
       <description>Channel image template</description>
       <type>image</type>
       <id>7</id>
-      <posX>0</posX>
-      <posY>0</posY>
-      <width>32</width>
-      <height>32</height>
-			<keepaspectratio>no</keepaspectratio>
-      <centered>no</centered>
-			<zoom>no</zoom>
+      <width>31</width>
+      <height>31</height>
+      <zoom>no</zoom>
       <texture>defaultVideoBig.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -224,7 +212,6 @@
       <posX>250</posX>
       <posY>420</posY>
       <width>350</width>
-      <align>left</align>
       <label>#TV.Guide.Title</label>
       <font>font16</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -287,7 +274,7 @@
       <visible>no</visible>
       <label>-</label>
       <font>font13</font>
-      <textcolor>FF101010</textcolor>
+      <textcolor>CF101010</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -310,7 +297,7 @@
       <id>26</id>
       <label>-</label>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>510</id>
   <defaultcontrol>33</defaultcontrol>
@@ -8,9 +8,6 @@
       <type>image</type>
       <description>background image</description>
       <id>0</id>
-      <posX>0</posX>
-      <posY>0</posY>
-      <texture>background.png</texture>
     </control>
     <control>
       <type>image</type>
@@ -52,7 +49,6 @@
       <width>307</width>
       <height>358</height>
       <texture>nowplaying_background.png</texture>
-      <keepaspectratio>no</keepaspectratio>
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
@@ -64,7 +60,6 @@
       <width>250</width>
       <height>250</height>
       <texture>-</texture>
-      <keepaspectratio>no</keepaspectratio>
       <centered>yes</centered>
       <zoom>yes</zoom>
     </control>
@@ -78,7 +73,6 @@
       <height>20</height>
       <label>#Play.Current.Title</label>
       <font>font18</font>
-      <align>left</align>
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
@@ -91,7 +85,6 @@
       <height>20</height>
       <label>#Play.Current.Artist</label>
       <font>font16</font>
-      <align>left</align>
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
@@ -104,11 +97,10 @@
       <height>20</height>
       <label>#Play.Current.Track</label>
       <font>font16</font>
-      <align>left</align>
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
-			<type>fadelabel</type>
+      <type>fadelabel</type>
       <description>year label</description>
       <id>0</id>
       <posX>676</posX>
@@ -117,7 +109,7 @@
       <label>#Play.Current.Year</label>
       <font>font14</font>
       <align>right</align>
-<!-- 			<textcolor>white</textcolor> -->
+      <!-- 			<textcolor>white</textcolor> -->
     </control>
     <control>
       <type>label</type>
@@ -129,7 +121,7 @@
       <label>#Play.Current.Album</label>
       <font>font14</font>
       <align>left</align>
-<!-- 			<textcolor>white</textcolor> -->
+      <!-- 			<textcolor>white</textcolor> -->
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
@@ -148,11 +140,6 @@
       <posX>438</posX>
       <posY>373</posY>
       <width>204</width>
-      <visible>no</visible>
-      <lefttexture>osd_progress_left.png</lefttexture>
-      <texturebg>progress_back.png</texturebg>
-      <midtexture>osd_progress_mid.png</midtexture>
-      <righttexture>osd_progress_right.png</righttexture>
     </control>
     <control>
       <type>label</type>
@@ -231,7 +218,6 @@
       <textureFocus>list_sub_focus_arrow_small.png</textureFocus>
       <textureNoFocus>-</textureNoFocus>
     </control>
-
     <control>
       <type>listcontrol</type>
       <description>list of best tag tracks</description>
@@ -254,7 +240,6 @@
       <textureFocus>list_sub_focus_arrow.png</textureFocus>
       <textcolor>White</textcolor>
     </control>
-
     <control>
       <description>unknown rating1</description>
       <type>imagelist</type>
@@ -274,7 +259,6 @@
       <percentage>#Lastfm.Rating.AlbumTrack1</percentage>
       <visible>no</visible>
     </control>
-
     <control>
       <description>unknown rating2</description>
       <type>imagelist</type>
@@ -294,7 +278,6 @@
       <percentage>#Lastfm.Rating.AlbumTrack2</percentage>
       <visible>no</visible>
     </control>
-
     <control>
       <description>unknown rating3</description>
       <type>imagelist</type>
@@ -314,7 +297,6 @@
       <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
       <visible>no</visible>
     </control>
-
     <control>
       <description>existent rating1</description>
       <type>imagelist</type>
@@ -334,7 +316,6 @@
       <percentage>#Lastfm.Rating.AlbumTrack1</percentage>
       <visible>no</visible>
     </control>
-
     <control>
       <description>existent rating2</description>
       <type>imagelist</type>
@@ -354,7 +335,6 @@
       <percentage>#Lastfm.Rating.AlbumTrack2</percentage>
       <visible>no</visible>
     </control>
-
     <control>
       <description>existent rating3</description>
       <type>imagelist</type>
@@ -374,8 +354,6 @@
       <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
       <visible>no</visible>
     </control>
-
-
     <control>
       <description>known rating1</description>
       <type>imagelist</type>
@@ -395,7 +373,6 @@
       <percentage>#Lastfm.Rating.AlbumTrack1</percentage>
       <visible>no</visible>
     </control>
-
     <control>
       <description>known rating2</description>
       <type>imagelist</type>
@@ -415,7 +392,6 @@
       <percentage>#Lastfm.Rating.AlbumTrack2</percentage>
       <visible>no</visible>
     </control>
-
     <control>
       <description>known rating3</description>
       <type>imagelist</type>
@@ -435,8 +411,6 @@
       <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
       <visible>no</visible>
     </control>
-
-
     <control>
       <description>famous rating1</description>
       <type>imagelist</type>
@@ -456,7 +430,6 @@
       <percentage>#Lastfm.Rating.AlbumTrack1</percentage>
       <visible>no</visible>
     </control>
-
     <control>
       <description>famous rating2</description>
       <type>imagelist</type>
@@ -476,7 +449,6 @@
       <percentage>#Lastfm.Rating.AlbumTrack2</percentage>
       <visible>no</visible>
     </control>
-
     <control>
       <description>famous rating3</description>
       <type>imagelist</type>
@@ -496,7 +468,6 @@
       <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
       <visible>no</visible>
     </control>
-
     <control>
       <type>fadelabel</type>
       <description>best album tracks label</description>
@@ -505,7 +476,7 @@
       <posY>114</posY>
       <width>280</width>
       <label>33030</label>
-<!-- 			<textcolor>80ffffff</textcolor> -->
+      <!-- 			<textcolor>80ffffff</textcolor> -->
     </control>
     <control>
       <type>fadelabel</type>
@@ -515,7 +486,7 @@
       <posY>266</posY>
       <width>280</width>
       <label>Top tracks for tag</label>
-<!-- 			<textcolor>80ffffff</textcolor> -->
+      <!-- 			<textcolor>80ffffff</textcolor> -->
     </control>
   </controls>
 </window>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>7890</id>
   <defaultcontrol>10</defaultcontrol>
@@ -8,13 +8,10 @@
       <type>image</type>
       <description>background image</description>
       <id>0</id>
-      <posX>0</posX>
-      <posY>0</posY>
-      <texture>background.png</texture>
     </control>
     <control>
       <type>image</type>
-			<description>OSD background image</description>
+      <description>OSD background image</description>
       <id>0</id>
       <posX>31</posX>
       <posY>425</posY>
@@ -26,7 +23,7 @@
     </control>
     <control>
       <type>image</type>
-			<description>background hover image</description>
+      <description>background hover image</description>
       <id>0</id>
       <posX>40</posX>
       <posY>443</posY>
@@ -55,7 +52,6 @@
       <width>307</width>
       <height>358</height>
       <texture>nowplaying_background.png</texture>
-      <keepaspectratio>no</keepaspectratio>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -69,7 +65,6 @@
       <height>250</height>
       <texture>#Play.Current.ArtistThumb</texture>
       <!-- <texture>F:\\Quellen\\Mediaportal-trunk\\xbmc\\bin\\Debug\\skin\\BlueTwo\\media\\missing_coverart.png</texture>  -->
-      <visible>yes</visible>
       <centered>yes</centered>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -117,7 +112,7 @@
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
-  		<type>fadelabel</type>
+      <type>fadelabel</type>
       <description>track label</description>
       <id>0</id>
       <posX>138</posX>
@@ -126,13 +121,12 @@
       <height>20</height>
       <label>#Play.Current.Title</label>
       <font>font18</font>
-      <align>left</align>
       <disabledcolor>ff800000</disabledcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
-  		<type>fadelabel</type>
+      <type>fadelabel</type>
       <description>artist label</description>
       <id>0</id>
       <posX>138</posX>
@@ -141,7 +135,6 @@
       <height>20</height>
       <label>#Play.Current.Artist</label>
       <font>font16</font>
-      <align>left</align>
       <disabledcolor>ff808080</disabledcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -160,7 +153,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-    
     <control>
       <type>label</type>
       <description>stream label</description>
@@ -215,7 +207,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-
     <control>
       <type>textbox</type>
       <description>Track tags box</description>
@@ -230,7 +221,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-
     <!--
       <control>
          <type>listcontrol</type>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>504</id>
   <defaultcontrol>2</defaultcontrol>
@@ -14,7 +14,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="500" end="0,-300" >WindowClose</animation>
+      <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
       <posX>60</posX>
       <posY>97</posY>
       <layout>StackLayout</layout>
@@ -124,7 +124,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="400" end="800,0" >WindowClose</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
       <control>
         <description>composite control consisting of a list control and a thumbnail panel</description>
         <type>facadeview</type>
@@ -149,13 +149,7 @@
           <id>52</id>
           <font>font13</font>
           <font2>font13</font2>
-          <selectedColor>FFF8BC70</selectedColor>
-          <textcolor>ffffffff</textcolor>
           <selectedColor2>FFF8BC70</selectedColor2>
-          <textcolor2>ffffffff</textcolor2>
-          <colordiffuse>ffffffff</colordiffuse>
-          <suffix>|</suffix>
-          <textXOff>5</textXOff>
           <textYOff>15</textYOff>
           <textXOff2>412</textXOff2>
           <textYOff2>60</textYOff2>

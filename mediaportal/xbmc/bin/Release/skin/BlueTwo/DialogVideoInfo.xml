@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>2003</id>
   <defaultcontrol>2</defaultcontrol>
@@ -8,11 +8,8 @@
       <description>background image</description>
       <type>image</type>
       <id>1</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
-      <texture>background.png</texture>
     </control>
     <control>
       <type>image</type>
@@ -32,7 +29,6 @@
       <width>400</width>
       <label>#title</label>
       <font>font18</font>
-      <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -46,7 +42,6 @@
       <width>400</width>
       <label>(#mpaarating)</label>
       <font>font12</font>
-      <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -58,7 +53,6 @@
       <posX>60</posX>
       <posY>97</posY>
       <width>120</width>
-      <height>32</height>
       <label>208</label>
       <font>font13</font>
       <onleft>22</onleft>
@@ -75,7 +69,6 @@
       <posX>60</posX>
       <posY>131</posY>
       <width>120</width>
-      <height>32</height>
       <label>207</label>
       <font>font13</font>
       <onleft>22</onleft>
@@ -92,7 +85,6 @@
       <posX>60</posX>
       <posY>165</posY>
       <width>120</width>
-      <height>32</height>
       <label>206</label>
       <font>font13</font>
       <onleft>22</onleft>
@@ -102,7 +94,6 @@
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-
     <control>
       <description>Refresh</description>
       <type>button</type>
@@ -110,7 +101,6 @@
       <posX>60</posX>
       <posY>199</posY>
       <width>120</width>
-      <height>32</height>
       <label>184</label>
       <onleft>22</onleft>
       <onright>22</onright>
@@ -119,7 +109,6 @@
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-
     <control>
       <description>Watched</description>
       <type>togglebutton</type>
@@ -127,7 +116,6 @@
       <posX>60</posX>
       <posY>233</posY>
       <width>120</width>
-      <height>32</height>
       <label>1010</label>
       <onleft>22</onleft>
       <onright>22</onright>
@@ -136,7 +124,6 @@
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-
     <control>
       <description>image title:</description>
       <type>label</type>
@@ -179,7 +166,6 @@
       <id>11</id>
       <posX>60</posX>
       <posY>337</posY>
-      <reverse>yes</reverse>
       <onup>10</onup>
       <ondown>2</ondown>
       <onleft>5</onleft>
@@ -204,7 +190,6 @@
         <subitem>star.png</subitem>
       </subitems>
       <orientation>horizontal</orientation>
-      <align>left</align>
       <percentage>#rating</percentage>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>7777</id>
   <defaultcontrol>2</defaultcontrol>
@@ -181,18 +181,18 @@
       </control>
     </control>
     <control>
-	<animation effect="fade" time="250">WindowOpen</animation>
-	<animation effect="fade" time="500">WindowClose</animation>
-	<description>Selected item Label</description>
-	<type>fadelabel</type>
-	<id>1</id>
-	<posX>340</posX>
-	<posY>70</posY>
-	<width>400</width>
-	<label>#numberplace.time</label>
-	<font>font14</font>
-	<align>right</align>
-	<textcolor>White</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>340</posX>
+      <posY>70</posY>
+      <width>400</width>
+      <label>#numberplace.time</label>
+      <font>font14</font>
+      <align>right</align>
+      <textcolor>White</textcolor>
     </control>
     <control>
       <type>group</type>
@@ -233,7 +233,6 @@
         <texture>bar_vert.png</texture>
       </control>
     </control>
-    
     <control>
       <type>group</type>
       <description>BarHorGroup</description>
@@ -243,7 +242,6 @@
       <width>400</width>
       <height>400</height>
       <animation>ZoomInFromMiddle</animation>
-      
       <control>
         <type>image</type>
         <id>976</id>
@@ -263,8 +261,6 @@
         <texture>bar_hor.png</texture>
       </control>
     </control>
-    
-    
     <control>
       <type>group</type>
       <description>TheButton</description>
@@ -285,7 +281,6 @@
           <left>0</left>
         </padding>
       </mpe>
-      
       <!-- row 1 -->
       <control>
         <type>cell</type>
@@ -336,7 +331,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <control>
         <type>cell</type>
         <id>1003</id>
@@ -385,7 +379,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <control>
         <type>cell</type>
         <id>1006</id>
@@ -434,7 +427,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <!-- row 2 -->
       <control>
         <type>cell</type>
@@ -484,7 +476,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <control>
         <type>cell</type>
         <id>2003</id>
@@ -533,7 +524,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <control>
         <type>cell</type>
         <id>2006</id>
@@ -582,7 +572,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <!-- row 3 -->
       <control>
         <type>cell</type>
@@ -632,7 +621,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <control>
         <type>cell</type>
         <id>3003</id>
@@ -681,7 +669,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <control>
         <type>cell</type>
         <id>3006</id>
@@ -730,7 +717,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <!-- row 4 -->
       <control>
         <type>cell</type>
@@ -780,7 +766,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <control>
         <type>cell</type>
         <id>4003</id>
@@ -829,7 +814,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <control>
         <type>cell</type>
         <id>4006</id>
@@ -878,7 +862,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <!-- row 5 -->
       <control>
         <type>cell</type>
@@ -928,7 +911,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <control>
         <type>cell</type>
         <id>5003</id>
@@ -977,7 +959,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <control>
         <type>cell</type>
         <id>5006</id>
@@ -1026,7 +1007,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <!-- row 6 -->
       <control>
         <type>cell</type>
@@ -1076,7 +1056,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <control>
         <type>cell</type>
         <id>6003</id>
@@ -1125,7 +1104,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <control>
         <type>cell</type>
         <id>6006</id>
@@ -1174,7 +1152,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <!-- row 7 -->
       <control>
         <type>cell</type>
@@ -1224,7 +1201,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <control>
         <type>cell</type>
         <id>7003</id>
@@ -1273,7 +1249,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <control>
         <type>cell</type>
         <id>7006</id>
@@ -1322,7 +1297,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <!-- row 8 -->
       <control>
         <type>cell</type>
@@ -1372,7 +1346,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <control>
         <type>cell</type>
         <id>8003</id>
@@ -1421,7 +1394,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <control>
         <type>cell</type>
         <id>8006</id>
@@ -1470,7 +1442,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <!-- row 9 -->
       <control>
         <type>cell</type>
@@ -1520,7 +1491,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <control>
         <type>cell</type>
         <id>9003</id>
@@ -1569,7 +1539,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-      
       <control>
         <type>cell</type>
         <id>9006</id>
@@ -1618,8 +1587,6 @@
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
-    
     </control>
   </controls>
-
 </window>

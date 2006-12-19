@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>501</id>
   <defaultcontrol>2</defaultcontrol>
@@ -13,8 +13,8 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="500" end="0,-300" >WindowClose</animation>
-      <description>group element</description> 
+      <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
+      <description>group element</description>
       <posX>60</posX>
       <posY>97</posY>
       <layout>StackLayout</layout>

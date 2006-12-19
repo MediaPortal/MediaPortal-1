@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>0</id>
   <defaultcontrol>50</defaultcontrol>
@@ -8,26 +9,20 @@
       <description>background image</description>
       <type>image</type>
       <id>1</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
-      <texture>background.png</texture>
     </control>
     <control>
       <description>background image</description>
       <type>image</type>
       <id>1</id>
-      <posX>0</posX>
       <posY>130</posY>
       <width>338</width>
-
       <height>375</height>
       <texture>background_glass_hoover_area.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-  
     <control>
       <description>Menu</description>
       <type>menu</type>
@@ -95,8 +90,8 @@
       <type>button</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="zoom" start="100,100" end="110,110" center="433,81"  time="300" >focus</animation>
-      <animation effect="zoom" start="110,110" end="100,100" center="433,81"  time="300" >unfocus</animation>
+      <animation effect="zoom" start="100,100" end="110,110" center="433,81" time="300">focus</animation>
+      <animation effect="zoom" start="110,110" end="100,100" center="433,81" time="300">unfocus</animation>
       <id>10</id>
       <posX>410</posX>
       <posY>40</posY>
@@ -116,8 +111,8 @@
       <type>button</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="zoom" start="100,100" end="110,110" center="493,81"  time="300" >focus</animation>
-      <animation effect="zoom" start="110,110" end="100,100" center="493,81"  time="300" >unfocus</animation>
+      <animation effect="zoom" start="100,100" end="110,110" center="493,81" time="300">focus</animation>
+      <animation effect="zoom" start="110,110" end="100,100" center="493,81" time="300">unfocus</animation>
       <id>11</id>
       <posX>470</posX>
       <posY>40</posY>
@@ -137,8 +132,8 @@
       <type>button</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="zoom" start="100,100" end="110,110" center="558,81"  time="300" >focus</animation>
-      <animation effect="zoom" start="110,110" end="100,100" center="558,81"  time="300" >unfocus</animation>
+      <animation effect="zoom" start="100,100" end="110,110" center="558,81" time="300">focus</animation>
+      <animation effect="zoom" start="110,110" end="100,100" center="558,81" time="300">unfocus</animation>
       <id>12</id>
       <posX>530</posX>
       <posY>40</posY>
@@ -158,8 +153,8 @@
       <type>button</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="zoom" start="100,100" end="110,110" center="618,81"  time="300" >focus</animation>
-      <animation effect="zoom" start="110,110" end="100,100" center="618,81"  time="300" >unfocus</animation>
+      <animation effect="zoom" start="100,100" end="110,110" center="618,81" time="300">focus</animation>
+      <animation effect="zoom" start="110,110" end="100,100" center="618,81" time="300">unfocus</animation>
       <id>13</id>
       <posX>590</posX>
       <posY>40</posY>
@@ -174,6 +169,5 @@
       <onup>13</onup>
       <ondown>50</ondown>
     </control>
-
   </controls>
 </window>

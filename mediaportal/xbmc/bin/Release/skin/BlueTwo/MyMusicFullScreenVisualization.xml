@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!-- 
 Notes:
 
@@ -86,7 +86,6 @@ including the text (the alpha component of textcolor is ignored)
     <font>font10</font>
     <textcolor>ffffffff</textcolor>
   </control>
-
   <control>
     <description>Pause Icon</description>
     <type>image</type>
@@ -97,7 +96,6 @@ including the text (the alpha component of textcolor is ignored)
     <height>73</height>
     <texture>logo_pause.png</texture>
   </control>
-
   <control>
     <description>Play Icon</description>
     <type>image</type>
@@ -108,7 +106,6 @@ including the text (the alpha component of textcolor is ignored)
     <height>69</height>
     <texture>logo_play.png</texture>
   </control>
-
   <control>
     <description>FF Icon</description>
     <type>image</type>
@@ -118,8 +115,7 @@ including the text (the alpha component of textcolor is ignored)
     <width>74</width>
     <height>69</height>
     <texture>logo_fastforward.png</texture>
-  </control>3:42 PM 9/4/2006
-
+  </control>
   <control>
     <description>Rew Icon</description>
     <type>image</type>
@@ -130,7 +126,6 @@ including the text (the alpha component of textcolor is ignored)
     <height>69</height>
     <texture>logo_rewind.png</texture>
   </control>
-
   <control>
     <description>Stop Icon</description>
     <type>image</type>

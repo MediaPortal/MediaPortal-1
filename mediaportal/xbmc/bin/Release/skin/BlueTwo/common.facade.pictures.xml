@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <controls>
     <control>
       <type>group</type>
       <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="400" end="800,0" >WindowClose</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <description>group element</description>
@@ -28,11 +28,8 @@
           <textureWidthBig>125</textureWidthBig>
           <textureHeightBig>98</textureHeightBig>
           <itemWidthBig>136</itemWidthBig>
-          <itemHeightBig>142</itemHeightBig>
           <thumbWidthBig>100</thumbWidthBig>
           <thumbHeightBig>75</thumbHeightBig>
-          <thumbPosXBig>12</thumbPosXBig>
-          <thumbPosYBig>12</thumbPosYBig>
           <!--onup>2</onup>
                     <ondown>2</ondown-->
         </control>
@@ -48,7 +45,6 @@
           <backgroundy>99</backgroundy>
           <backgroundwidth>402</backgroundwidth>
           <backgroundheight>315</backgroundheight>
-          <InfoImage>-</InfoImage>
           <InfoImagex>289</InfoImagex>
           <InfoImagey>117</InfoImagey>
           <InfoImagewidth>353</InfoImagewidth>

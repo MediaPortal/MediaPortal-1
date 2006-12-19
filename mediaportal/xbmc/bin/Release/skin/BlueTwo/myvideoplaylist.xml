@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>28</id>
   <defaultcontrol>2</defaultcontrol>
@@ -12,7 +12,7 @@
       <type>group</type>
       <description>group element</description>
       <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="400" end="800,0" >WindowClose</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <control>
@@ -110,7 +110,7 @@
       <type>group</type>
       <description>group element</description>
       <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="400" end="800,0" >WindowClose</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <control>

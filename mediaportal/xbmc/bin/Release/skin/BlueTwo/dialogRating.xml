@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>2013</id>
   <defaultcontrol>10</defaultcontrol>
@@ -7,8 +7,6 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
       <texture>black.bmp</texture>
@@ -59,7 +57,7 @@
       <height>27</height>
       <textureFocus>arrow_round_right_focus.png</textureFocus>
       <textureNoFocus>arrow_round_right_nofocus.png</textureNoFocus>
-      <label></label>
+      <label />
       <onleft>11</onleft>
       <onright>10</onright>
       <onup>13</onup>
@@ -77,7 +75,7 @@
       <height>27</height>
       <textureFocus>arrow_round_left_focus.png</textureFocus>
       <textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
-      <label></label>
+      <label />
       <onleft>11</onleft>
       <onright>10</onright>
       <onup>13</onup>
@@ -91,7 +89,6 @@
       <id>12</id>
       <posX>530</posX>
       <posY>235</posY>
-      <textXOff>10</textXOff>
       <textYOff>7</textYOff>
       <width>44</width>
       <height>44</height>
@@ -115,7 +112,7 @@
       <height>27</height>
       <textureFocus>arrow_round_right_focus.png</textureFocus>
       <textureNoFocus>arrow_round_right_nofocus.png</textureNoFocus>
-      <label></label>
+      <label />
       <onleft>14</onleft>
       <onright>12</onright>
       <onup>10</onup>
@@ -152,7 +149,7 @@
       <height>27</height>
       <textureFocus>arrow_round_left_focus.png</textureFocus>
       <textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
-      <label></label>
+      <label />
       <onleft>15</onleft>
       <onright>14</onright>
       <onup>10</onup>

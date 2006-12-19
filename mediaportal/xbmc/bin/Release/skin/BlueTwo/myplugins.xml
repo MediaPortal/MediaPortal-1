@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>34</id>
   <defaultcontrol>2</defaultcontrol>
@@ -8,11 +8,8 @@
       <description>background image</description>
       <type>image</type>
       <id>1</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
-      <texture>background.png</texture>
     </control>
     <control>
       <description>menu background image</description>
@@ -30,7 +27,6 @@
       <description>menu background image</description>
       <type>image</type>
       <id>1</id>
-      <posX>0</posX>
       <posY>120</posY>
       <width>310</width>
       <height>375</height>
@@ -78,7 +74,6 @@
       <posX>400</posX>
       <posY>160</posY>
       <width>225</width>
-      <textXOff>10</textXOff>
       <textYOff>8</textYOff>
       <height>49</height>
       <label>605</label>
@@ -97,7 +92,7 @@
       <id>1003</id>
       <posX>530</posX>
       <posY>490</posY>
-      <label></label>
+      <label />
       <align>left</align>
       <font>font16</font>
       <visible>no</visible>
