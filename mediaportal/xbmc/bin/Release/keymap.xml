@@ -238,7 +238,7 @@
     </action>
     <action>
       <id>9885</id>
-      <key />
+      <key>F4</key>
       <sound />
       <description>Toggle Autocrop</description>
     </action>
