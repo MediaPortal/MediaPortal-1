@@ -511,6 +511,8 @@ namespace MediaPortal.Configuration
       this.label16 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label17 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabPage5 = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxAudioQuality = new System.Windows.Forms.ComboBox();
       this.groupBox7 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.cbHighVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tbHighMax = new MediaPortal.UserInterface.Controls.MPTextBox();
@@ -541,8 +543,6 @@ namespace MediaPortal.Configuration
       this.label12 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabPageAutotune = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.tabPageAutotuneRadio = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.comboBoxAudioQuality = new System.Windows.Forms.ComboBox();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.cropGroupBox.SuspendLayout();
@@ -1046,6 +1046,27 @@ namespace MediaPortal.Configuration
       this.tabPage5.Text = "Quality";
       this.tabPage5.UseVisualStyleBackColor = true;
       // 
+      // mpLabel2
+      // 
+      this.mpLabel2.Location = new System.Drawing.Point(42, 83);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(80, 16);
+      this.mpLabel2.TabIndex = 13;
+      this.mpLabel2.Text = "Audio Quality:";
+      // 
+      // comboBoxAudioQuality
+      // 
+      this.comboBoxAudioQuality.FormattingEnabled = true;
+      this.comboBoxAudioQuality.Items.AddRange(new object[] {
+            "192 Kbps",
+            "224 Kbps",
+            "256 Kbps",
+            "384 Kbps"});
+      this.comboBoxAudioQuality.Location = new System.Drawing.Point(128, 83);
+      this.comboBoxAudioQuality.Name = "comboBoxAudioQuality";
+      this.comboBoxAudioQuality.Size = new System.Drawing.Size(128, 21);
+      this.comboBoxAudioQuality.TabIndex = 12;
+      // 
       // groupBox7
       // 
       this.groupBox7.Controls.Add(this.cbHighVBR);
@@ -1245,9 +1266,9 @@ namespace MediaPortal.Configuration
       // 
       // label18
       // 
-      this.label18.Location = new System.Drawing.Point(21, 107);
+      this.label18.Location = new System.Drawing.Point(21, 114);
       this.label18.Name = "label18";
-      this.label18.Size = new System.Drawing.Size(408, 72);
+      this.label18.Size = new System.Drawing.Size(408, 60);
       this.label18.TabIndex = 10;
       this.label18.Text = resources.GetString("label18.Text");
       // 
@@ -1339,27 +1360,6 @@ namespace MediaPortal.Configuration
       this.tabPageAutotuneRadio.Text = "Autotune Radio";
       this.tabPageAutotuneRadio.UseVisualStyleBackColor = true;
       this.tabPageAutotuneRadio.Enter += new System.EventHandler(this.tabPageAutotuneRadio_Enter);
-      // 
-      // comboBoxAudioQuality
-      // 
-      this.comboBoxAudioQuality.FormattingEnabled = true;
-      this.comboBoxAudioQuality.Items.AddRange(new object[] {
-            "192 Kbps",
-            "224 Kbps",
-            "256 Kbps",
-            "384 Kbps"});
-      this.comboBoxAudioQuality.Location = new System.Drawing.Point(128, 83);
-      this.comboBoxAudioQuality.Name = "comboBoxAudioQuality";
-      this.comboBoxAudioQuality.Size = new System.Drawing.Size(128, 21);
-      this.comboBoxAudioQuality.TabIndex = 12;
-      // 
-      // mpLabel2
-      // 
-      this.mpLabel2.Location = new System.Drawing.Point(42, 83);
-      this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(80, 16);
-      this.mpLabel2.TabIndex = 13;
-      this.mpLabel2.Text = "Audio Quality:";
       // 
       // EditCaptureCardForm
       // 
