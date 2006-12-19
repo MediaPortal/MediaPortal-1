@@ -1,6 +1,8 @@
+#region Copyright (C) 2005-2007 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005-2006 Media Portal
- *	http://mediaportal.sourceforge.net
+ *	Copyright (C) 2005-2007 Team MediaPortal
+ *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections.Generic;

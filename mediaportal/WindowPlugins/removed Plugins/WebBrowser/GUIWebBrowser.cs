@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2007 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -16,7 +18,12 @@
  *  along with GNU Make; see the file COPYING.  If not, write to
  *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
  *  http://www.gnu.org/copyleft/gpl.html
- * 
+ *
+ */
+
+#endregion
+
+/* 
  * 
  * Thanks to Adam Lock for making the Mozilla ActiveX Control
  * Licensed under the MPL - http://www.mozilla.org/MPL/MPL-1.1.txt

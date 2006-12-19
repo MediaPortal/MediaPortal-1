@@ -1,6 +1,7 @@
-//#define LOGPROPERTIES  
+#region Copyright (C) 2005-2007 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +20,11 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
+//#define LOGPROPERTIES  
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
