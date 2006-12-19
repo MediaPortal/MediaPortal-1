@@ -3,9 +3,12 @@
   <id>602</id>
   <defaultcontrol>13</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <define>#percentage:#TV.View.Percentage</define>
+  <define>#currentplaytime:#TV.View.start</define>
+  <define>#currentremaining:#TV.View.stop</define>
   <controls>
     <control>
-      <description>progressbar background</description>
+      <description>bar image</description>
       <type>image</type>
       <id>0</id>
       <posX>20</posX>
@@ -15,7 +18,6 @@
       <texture>osd_bg_top.png</texture>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
     </control>
     <import>common.progressbar.xml</import>
     <control>
@@ -170,6 +172,20 @@
       <texture>video-32x.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
+<!--    <control>
+      <description>bar image</description>
+      <type>image</type>
+      <id>105</id>
+      <posX>173</posX>
+      <posY>632</posY>
+      <width>1000</width>
+      <height>89</height>
+      <texture>osd_bg_top.png</texture>
+      <colordiffuse>White</colordiffuse>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>  
+-->      
     <control>
       <description>TV Progress Bar</description>
       <type>tvprogress</type>
@@ -201,8 +217,6 @@
       <toplabel />
       <font>font13</font>
       <textcolor>FF000000</textcolor>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
     </control>
     <control>
       <description>rec logo</description>
@@ -212,7 +226,6 @@
       <posY>500</posY>
       <texture>rec.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
     </control>
     <control>
       <description>MSGBox</description>
