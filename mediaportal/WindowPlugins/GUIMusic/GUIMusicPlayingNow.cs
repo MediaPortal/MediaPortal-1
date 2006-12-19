@@ -160,6 +160,7 @@ namespace MediaPortal.GUI.Music
     private bool _usingBassEngine = false;
     private bool _showVisualization = false;
     private bool _enqueueDefault = true;
+    private object _imageMutex = null;
 
 
     public GUIMusicPlayingNow()
@@ -167,6 +168,7 @@ namespace MediaPortal.GUI.Music
       GetID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
       PlaylistPlayer = PlayListPlayer.SingletonPlayer;
       ImagePathContainer = new List<string>();
+      _imageMutex = new object();
 
       g_Player.PlayBackStarted += new g_Player.StartedHandler(g_Player_PlayBackStarted);
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
@@ -285,7 +287,14 @@ namespace MediaPortal.GUI.Music
     {
       if (ImagePathContainer.Count <= 0)
       {
-        AddImageToImagePathContainer(GUIGraphicsContext.Skin + @"\media\missing_coverart.png");
+        try
+        {
+          ImgCoverArt.SetFileName(GUIGraphicsContext.Skin + @"\media\missing_coverart.png");
+        }
+        catch (Exception ex)
+        {
+          Log.Debug("GUIMusicPlayingNow: could not set default image - {0}", ex.Message);
+        }
       }
 
       if (g_Player.Duration > 0 && ImagePathContainer.Count > 1)
@@ -300,82 +309,85 @@ namespace MediaPortal.GUI.Music
 
     private bool AddImageToImagePathContainer(string newImage)
     {
-      string ImagePath = Convert.ToString(newImage);
-      if (ImagePath.IndexOf("missing_coverart") > 0)
+      lock (_imageMutex)
       {
-        Log.Debug("GUIMusicPlayingNow: Found placeholder - not inserting image {0}", ImagePath);
-        return false;
-      }
-
-      // Check if we should let the visualization window handle image flipping
-      if (_usingBassEngine && _showVisualization)
-      {        
-        Visualization.VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
-
-        if (vizWindow != null)
+        string ImagePath = Convert.ToString(newImage);
+        if (ImagePath.IndexOf(@"missing_coverart") > 0)// && (ImagePathContainer.Count > 0))
         {
+          Log.Debug("GUIMusicPlayingNow: Found placeholder - not inserting image {0}", ImagePath);
+          return false;
+        }
+
+        // Check if we should let the visualization window handle image flipping
+        if (_usingBassEngine && _showVisualization)
+        {
+          Visualization.VisualizationWindow vizWindow = BassMusicPlayer.Player.VisualizationWindow;
+
+          if (vizWindow != null)
+          {
+            if (System.IO.File.Exists(ImagePath))
+            {
+              try
+              {
+                Log.Debug("GUIMusicPlayingNow: adding image to visualization - {0}", ImagePath);
+                vizWindow.AddImage(ImagePath);
+                return true;
+              }
+              catch (Exception ex)
+              {
+                Log.Error("GUIMusicPlayingNow: error adding image ({0}) - {1}", ImagePath, ex.Message);
+              }
+            }
+            else
+            {
+              Log.Warn("GUIMusicPlayingNow: could not use image - {0}", ImagePath);
+              return false;
+            }
+          }
+        }
+
+        bool success = false;
+        if (ImagePathContainer != null)
+        {
+          if (ImagePathContainer.Contains(ImagePath))
+            return false;
+
+          //// check for placeholder
+          //int indexDel = 0;
+          //bool found = false;
+          //foreach (string pic in ImagePathContainer)
+          //{
+          //  indexDel++;
+          //  if (pic.IndexOf("missing_coverart.png") > 0)
+          //  {
+          //    found = true;
+          //    break;
+          //  }
+          //}
+          //if (found)
+          //  ImagePathContainer.RemoveAt(indexDel - 1);
+
           if (System.IO.File.Exists(ImagePath))
           {
             try
             {
-              Log.Debug("GUIMusicPlayingNow: adding image to visualization - {0}", ImagePath);
-              vizWindow.AddImage(ImagePath);
-              return true;
+              Log.Debug("GUIMusicPlayingNow: adding image to container - {0}", ImagePath);
+              ImagePathContainer.Add(ImagePath);
+              success = true;
             }
             catch (Exception ex)
             {
               Log.Error("GUIMusicPlayingNow: error adding image ({0}) - {1}", ImagePath, ex.Message);
             }
-          }
-          else
-          {
-            Log.Warn("GUIMusicPlayingNow: could not use image - {0}", ImagePath);
-            return false;
+
+            // display the first pic automatically
+            if (ImagePathContainer.Count == 1)
+              FlipPictures();
           }
         }
+
+        return success;
       }
-
-      bool success = false;
-      if (ImagePathContainer != null)
-      {        
-        if (ImagePathContainer.Contains(ImagePath))
-          return false;        
-
-        //// check for placeholder
-        //int indexDel = 0;
-        //bool found = false;
-        //foreach (string pic in ImagePathContainer)
-        //{
-        //  indexDel++;
-        //  if (pic.IndexOf("missing_coverart.png") > 0)
-        //  {
-        //    found = true;
-        //    break;
-        //  }
-        //}
-        //if (found)
-        //  ImagePathContainer.RemoveAt(indexDel - 1);
-
-        if (System.IO.File.Exists(ImagePath))
-        {
-          try
-          {
-            Log.Debug("GUIMusicPlayingNow: adding image to container - {0}", ImagePath);
-            ImagePathContainer.Add(ImagePath);
-            success = true;
-          }
-          catch (Exception ex)
-          {
-            Log.Error("GUIMusicPlayingNow: error adding image ({0}) - {1}", ImagePath, ex.Message);
-          }
-
-          // display the first pic automatically
-          if (ImagePathContainer.Count == 1)
-            FlipPictures();
-        }
-      }
-
-      return success;
     }
 
     private void FlipPictures()
