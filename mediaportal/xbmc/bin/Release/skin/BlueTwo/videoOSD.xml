@@ -159,7 +159,8 @@
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
-    <control>
+
+    <control>  
       <description>SubTitle Delay Slider</description>
       <type>slider</type>
       <id>800</id>
@@ -170,14 +171,14 @@
       <textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
       <textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
       <onup>801</onup>
-      <ondown>800</ondown>
-      <onleft>218</onleft>
+      <ondown>802</ondown>
+      <onleft>800</onleft>
       <onright>800</onright>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
+                     
     <control>
       <description>SubTitles On/Off Checkbox</description>
       <type>checkmark</type>
@@ -187,10 +188,9 @@
       <label>305</label>
       <onup>801</onup>
       <ondown>800</ondown>
-      <onleft>218</onleft>
+      <onleft>801</onleft>
       <onright>801</onright>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -200,21 +200,16 @@
       <id>802</id>
       <posX>470</posX>
       <posY>455</posY>
-      <width>220</width>
+      <width>200</width>
       <height>100</height>
-      <onleft>801</onleft>
-      <onright>800</onright>
-      <onup>802</onup>
+      <onleft>802</onleft>
+      <onright>802</onright>
+      <onup>800</onup>
       <ondown>802</ondown>
       <visible>no</visible>
-
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
-    </control>
-
-
-
-
+    </control>  
 
     <control>
       <description>Skip Bwd</description>
