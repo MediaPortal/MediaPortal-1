@@ -133,6 +133,7 @@
       <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
       <spaceBetweenItems>6</spaceBetweenItems>
       <textureHeight>66</textureHeight>
+      <textureWidth>616</textureWidth>
       <keepaspectratio>no</keepaspectratio>
       <font2>font10</font2>
       <font3>font10</font3>

@@ -173,7 +173,7 @@
       <posX>150</posX>
       <posY>516</posY>
       <align>left</align>
-      <font>font13</font>
+      <font>font12</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
@@ -189,7 +189,7 @@
       <align>left</align>
       <label>#TV.View.description</label>
       <font>font10</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>EFFFFFF0</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -202,8 +202,8 @@
       <posX>150</posX>
       <posY>658</posY>
       <align>left</align>
-      <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <font>font12</font>
+      <textcolor>AFB2D4F5</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>

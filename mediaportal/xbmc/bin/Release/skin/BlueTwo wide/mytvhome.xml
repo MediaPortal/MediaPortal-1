@@ -182,7 +182,7 @@
       <type>label</type>
       <id>13</id>
       <posX>550</posX>
-      <posY>580</posY>
+      <posY>588</posY>
       <label>#TV.View.start-#TV.View.stop</label>
       <font>font13</font>
       <align>left</align>
@@ -195,7 +195,7 @@
       <type>fadelabel</type>
       <id>13</id>
       <posX>1212</posX>
-      <posY>580</posY>
+      <posY>588</posY>
       <width>120</width>
       <label>#TV.View.channel</label>
       <font>font13</font>
@@ -209,12 +209,12 @@
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>550</posX>
-      <posY>606</posY>
-      <width>466</width>
+      <posY>622</posY>
+      <width>666</width>
       <height>120</height>
       <seperator>----------------------------------------------------------------------------------------------</seperator>
       <label>#TV.View.description</label>
-      <font>font13</font>
+      <font>font12</font>
       <textcolor>White</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
