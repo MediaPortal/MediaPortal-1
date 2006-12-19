@@ -40,7 +40,7 @@ namespace MediaPortal.WebEPG.Config.Grabber
     public string search;
     [XmlAttribute("template")]
     public string template;
-    [XmlElement("Url")]
+    [XmlElement("Link")]
     public HTTPRequest url;
   }
 }

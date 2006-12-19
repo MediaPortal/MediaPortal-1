@@ -157,40 +157,41 @@ namespace MediaPortal.Utils.Web
 
       string result = SearchRegex(index, regex, false);
 
+      if (result == null)
+        return false;
+
       bool linkFound = false;
       string strLinkURL = string.Empty;
 
-      if (result != "")
-      {
-        int start = -1;
-        char delim = '>';
+      int start = -1;
+      char delim = '>';
 
-        if ((start = result.IndexOf("=")) != -1)
+      if ((start = result.IndexOf("=")) != -1)
+      {
+        for (int i = 0; i < result.Length - start; i++)
         {
-          for (int i = 0; i < result.Length - start; i++)
+          if (result[start + i] == '\"' || result[start + i] == '\'')
           {
-            if (result[start + i] == '\"' || result[start + i] == '\'')
-            {
-              delim = result[start + i];
-              break;
-            }
+            delim = result[start + i];
+            break;
           }
         }
-
-        int end = -1;
-        if (delim != '>')
-        {
-          start = -1;
-          start = result.IndexOf(delim);
-        }
-        if (start != -1)
-          end = result.IndexOf(delim, ++start);
-        if (end != -1)
-        {
-          strLinkURL = result.Substring(start, end - start);
-          linkFound = true;
-        }
       }
+
+      int end = -1;
+      if (delim != '>')
+      {
+        start = -1;
+        start = result.IndexOf(delim);
+      }
+      if (start != -1)
+        end = result.IndexOf(delim, ++start);
+      if (end != -1)
+      {
+        strLinkURL = result.Substring(start, end - start);
+        linkFound = true;
+      }
+
 
       //if(strLinkURL.ToLower().IndexOf("http") == -1)
       //{
