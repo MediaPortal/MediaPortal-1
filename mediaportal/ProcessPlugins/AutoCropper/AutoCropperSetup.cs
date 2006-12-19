@@ -60,7 +60,7 @@ namespace ProcessPlugins.AutoCropper
     private MediaPortal.UserInterface.Controls.MPNumericUpDown bottomScanStartInput;
     private MediaPortal.UserInterface.Controls.MPNumericUpDown topScanStartInput;
     private MediaPortal.UserInterface.Controls.MPNumericUpDown manualSampleLengthInput;
-    private MediaPortal.UserInterface.Controls.MPButton applyButton;
+    private MediaPortal.UserInterface.Controls.MPButton okButton;
     private MediaPortal.UserInterface.Controls.MPButton defaultsButton;
     private MediaPortal.UserInterface.Controls.MPLabel minSubtitleHeightLabel;
     private MediaPortal.UserInterface.Controls.MPNumericUpDown minSubtitleHeightInput;
@@ -75,6 +75,7 @@ namespace ProcessPlugins.AutoCropper
     private MediaPortal.UserInterface.Controls.MPCheckBox cbUseForVideos;
     private MediaPortal.UserInterface.Controls.MPLabel labelWarning;
     private LinkLabel linkHelp;
+    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
     private MediaPortal.UserInterface.Controls.MPNumericUpDown sampleIntervalInput;
 
     public AutoCropperConfig(string name)
@@ -145,13 +146,14 @@ namespace ProcessPlugins.AutoCropper
       this.autoSampleIntervalLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.enableMoveSubs = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.enableAutoMode = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.applyButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.defaultsButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.rbDefaultManual = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.rbDefaultAutomatic = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.groupDefaultMode = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.labelWarning = new MediaPortal.UserInterface.Controls.MPLabel();
       this.linkHelp = new System.Windows.Forms.LinkLabel();
+      this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.Parameters.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.minSubtitleHeightInput)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.bottomScanEndInput)).BeginInit();
@@ -437,23 +439,23 @@ namespace ProcessPlugins.AutoCropper
       this.enableAutoMode.UseVisualStyleBackColor = true;
       this.enableAutoMode.CheckedChanged += new System.EventHandler(this.OnChange);
       // 
-      // applyButton
+      // okButton
       // 
-      this.applyButton.Location = new System.Drawing.Point(327, 369);
-      this.applyButton.Name = "applyButton";
-      this.applyButton.Size = new System.Drawing.Size(125, 27);
-      this.applyButton.TabIndex = 4;
-      this.applyButton.Text = "Apply";
-      this.applyButton.UseVisualStyleBackColor = true;
-      this.applyButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnApply);
+      this.okButton.Location = new System.Drawing.Point(265, 369);
+      this.okButton.Name = "okButton";
+      this.okButton.Size = new System.Drawing.Size(93, 27);
+      this.okButton.TabIndex = 4;
+      this.okButton.Text = "Ok";
+      this.okButton.UseVisualStyleBackColor = true;
+      this.okButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnOk);
       // 
       // defaultsButton
       // 
-      this.defaultsButton.Location = new System.Drawing.Point(196, 369);
+      this.defaultsButton.Location = new System.Drawing.Point(159, 369);
       this.defaultsButton.Name = "defaultsButton";
-      this.defaultsButton.Size = new System.Drawing.Size(125, 27);
+      this.defaultsButton.Size = new System.Drawing.Size(100, 27);
       this.defaultsButton.TabIndex = 5;
-      this.defaultsButton.Text = "Load Defaults";
+      this.defaultsButton.Text = "Defaults";
       this.defaultsButton.UseVisualStyleBackColor = true;
       this.defaultsButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnDefaults);
       // 
@@ -507,22 +509,33 @@ namespace ProcessPlugins.AutoCropper
       // linkHelp
       // 
       this.linkHelp.AutoSize = true;
-      this.linkHelp.Location = new System.Drawing.Point(14, 376);
+      this.linkHelp.Location = new System.Drawing.Point(9, 376);
       this.linkHelp.Name = "linkHelp";
-      this.linkHelp.Size = new System.Drawing.Size(149, 13);
+      this.linkHelp.Size = new System.Drawing.Size(125, 13);
       this.linkHelp.TabIndex = 20;
       this.linkHelp.TabStop = true;
-      this.linkHelp.Text = "Click here for more information";
-      this.linkHelp.Click += new EventHandler(linkHelp_Click);
+      this.linkHelp.Text = "Click for more information";
+      this.linkHelp.Click += new System.EventHandler(this.OnHelp);
+      // 
+      // cancelButton
+      // 
+      this.cancelButton.Location = new System.Drawing.Point(364, 369);
+      this.cancelButton.Name = "cancelButton";
+      this.cancelButton.Size = new System.Drawing.Size(87, 27);
+      this.cancelButton.TabIndex = 21;
+      this.cancelButton.Text = "Cancel";
+      this.cancelButton.UseVisualStyleBackColor = true;
+      this.cancelButton.Click += new System.EventHandler(this.OnCancel);
       // 
       // AutoCropperConfig
       // 
       this.ClientSize = new System.Drawing.Size(464, 403);
+      this.Controls.Add(this.cancelButton);
       this.Controls.Add(this.linkHelp);
       this.Controls.Add(this.labelWarning);
       this.Controls.Add(this.groupDefaultMode);
       this.Controls.Add(this.defaultsButton);
-      this.Controls.Add(this.applyButton);
+      this.Controls.Add(this.okButton);
       this.Controls.Add(this.automodeGroup);
       this.Controls.Add(this.manualModeGroup);
       this.Controls.Add(this.enableAutoCropper);
@@ -550,7 +563,12 @@ namespace ProcessPlugins.AutoCropper
 
     }
 
-    void linkHelp_Click(object sender, EventArgs e)
+    void OnCancel(object sender, EventArgs e)
+    {
+      this.Close();      
+    }
+
+    void OnHelp(object sender, EventArgs e)
     {
       try
       {
@@ -563,9 +581,10 @@ namespace ProcessPlugins.AutoCropper
     }
     #endregion
 
-    public void OnApply(object o, MouseEventArgs args)
+    public void OnOk(object o, MouseEventArgs args)
     {
       SaveSettings();
+      this.Close();
     }
 
     public void OnDefaults(object o, MouseEventArgs args)

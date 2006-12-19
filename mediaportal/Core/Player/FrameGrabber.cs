@@ -71,7 +71,7 @@ namespace MediaPortal
       try
       {
 
-        Log.Debug("GetCurrentImage called");
+        //Log.Debug("GetCurrentImage called");
 
         lock (grabNotifier)
         {
