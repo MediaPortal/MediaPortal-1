@@ -511,6 +511,31 @@ namespace TvLibrary.Implementations.DVB
       {
         BuildGraph();
       }
+      //from submittunerequest
+      if (_graphState == GraphState.TimeShifting)
+      {
+        if (_filterTsAnalyzer != null)
+        {
+          ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
+          if (timeshift != null)
+          {
+            timeshift.Pause(1);
+          }
+        }
+      }
+      Log.Log.WriteFile("dvb:SubmitTuneRequest");
+      _startTimeShifting = false;
+      _channelInfo = new ChannelInfo();
+      _pmtTimer.Enabled = false;
+      _hasTeletext = false;
+      _currentAudioStream = null;
+
+      //Log.Log.WriteFile("dvb:SubmitTuneRequest");
+      if (_interfaceEpgGrabber != null)
+      {
+        _interfaceEpgGrabber.Reset();
+      }
+      //from submittunerequest
 
 
       if (frequency > 13000)
@@ -634,6 +659,28 @@ namespace TvLibrary.Implementations.DVB
           _conditionalAccess.DiSEqCMotor.GotoPosition((byte)dvbsChannel.SatelliteIndex);
         }
       }
+
+      //from submittunerequest
+      _pmtTimer.Enabled = true;
+      _lastSignalUpdate = DateTime.MinValue;
+      ArrayList pids = new ArrayList();
+      pids.Add((ushort)0x0);//pat
+      pids.Add((ushort)0x11);//sdt
+      pids.Add((ushort)0x1fff);//padding stream
+      if (_currentChannel != null)
+      {
+        DVBBaseChannel ch = (DVBBaseChannel)_currentChannel;
+        if (ch.PmtPid > 0)
+        {
+          pids.Add((ushort)ch.PmtPid);//sdt
+        }
+      }
+      SendHwPids(pids);
+
+      _pmtVersion = -1;
+      _newPMT = false;
+      _newCA = false;
+      //from submittunerequest
       SetupPmtGrabber(pmtPid);
       Log.Log.WriteFile("ss2:tune done");
       return true;
