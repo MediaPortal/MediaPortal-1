@@ -525,6 +525,7 @@ namespace TvLibrary.Implementations.DVB
       }
       Log.Log.WriteFile("dvb:SubmitTuneRequest");
       _startTimeShifting = false;
+      _startRecording = false; 
       _channelInfo = new ChannelInfo();
       _pmtTimer.Enabled = false;
       _hasTeletext = false;

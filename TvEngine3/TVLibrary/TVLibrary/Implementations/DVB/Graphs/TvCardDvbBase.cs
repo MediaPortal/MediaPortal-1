@@ -226,6 +226,7 @@ namespace TvLibrary.Implementations.DVB
     string _timeshiftFileName = "";
     protected GraphState _graphState = GraphState.Idle;
     protected bool _startTimeShifting = false;
+    protected bool _startRecording = false;
     protected DVBAudioStream _currentAudioStream;
     protected BaseEpgGrabber _epgGrabberCallback = null;
     CamType _camType;
@@ -323,6 +324,7 @@ namespace TvLibrary.Implementations.DVB
       }
       Log.Log.WriteFile("dvb:SubmitTuneRequest");
       _startTimeShifting = false;
+      _startRecording = false;
       _channelInfo = new ChannelInfo();
       _pmtTimer.Enabled = false;
       _hasTeletext = false;
@@ -654,6 +656,7 @@ namespace TvLibrary.Implementations.DVB
       (_graphBuilder as IMediaControl).GetState(10, out state);
       _pmtTimer.Enabled = false;
       _startTimeShifting = false;
+      _startRecording = false; 
       _pmtVersion = -1;
       _newPMT = false;
       _newCA = false;
@@ -1531,6 +1534,19 @@ namespace TvLibrary.Implementations.DVB
           SetTimeShiftPids();
           timeshift.Start();
         }
+        if (_startRecording)
+        {
+          _startRecording = false;
+          SetRecorderPids();
+
+          ITsRecorder record = _filterTsAnalyzer as ITsRecorder;
+          int hr = record.StartRecord();
+          if (hr != 0)
+          {
+            Log.Log.Error("dvb:StartRecord failed:{0:X}", hr);
+          }
+          _dateRecordingStarted = DateTime.Now;
+        }
         else if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording)
         {
           SetTimeShiftPids();
@@ -2016,21 +2032,29 @@ namespace TvLibrary.Implementations.DVB
       int hr;
       if (_filterTsAnalyzer != null)
       {
-        Log.Log.WriteFile("dvb:SetRecordingFileName: uses .mpg");
         ITsRecorder record = _filterTsAnalyzer as ITsRecorder;
         hr = record.SetRecordingFileName(fileName);
         if (hr != 0)
         {
           Log.Log.Error("dvb:SetRecordingFileName failed:{0:X}", hr);
         }
-        SetRecorderPids();
-        hr = record.StartRecord();
-        if (hr != 0)
+        if (_channelInfo.pids.Count == 0)
         {
-          Log.Log.Error("dvb:StartRecord failed:{0:X}", hr);
+          Log.Log.WriteFile("dvb:StartRecord no pmt received yet");
+          _startRecording = true;
+        }
+        else
+        {
+          Log.Log.WriteFile("dvb:StartRecording...");
+          SetRecorderPids();
+          hr = record.StartRecord();
+          if (hr != 0)
+          {
+            Log.Log.Error("dvb:StartRecord failed:{0:X}", hr);
+          }
+          _dateRecordingStarted = DateTime.Now;
         }
       }
-      _dateRecordingStarted = DateTime.Now;
     }
 
 
@@ -2049,6 +2073,7 @@ namespace TvLibrary.Implementations.DVB
         record.StopRecord();
 
       }
+      _startRecording = false;
       _recordingFileName = "";
     }
     #endregion
