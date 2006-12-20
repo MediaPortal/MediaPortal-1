@@ -112,7 +112,7 @@ namespace MediaPortal.Configuration.Sections
       new string[] { "general", "turnmonitoronafterresume", "false" },
       new string[] { "general", "enables3trick","true" },
       new string[] { "general", "autosize", "false" },
-      new string[] { "general", "userenderthread", "true" }
+      //new string[] { "general", "userenderthread", "true" }
       //new string[] { "general", "allowfocus", "false" }
       };
 
@@ -293,11 +293,10 @@ namespace MediaPortal.Configuration.Sections
             "Start with basic home screen",
             "Turn monitor/tv on when resuming from standby",
             "Allow S3 standby although wake up devices are present",
-            "Autosize window mode to skin",
-            "Use separate thread to render the GUI"});
+            "Autosize window mode to skin"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 319);
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 304);
       this.settingsCheckedListBox.TabIndex = 0;
       // 
       // General

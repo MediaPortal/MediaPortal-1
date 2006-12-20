@@ -465,7 +465,9 @@ public class MediaPortalApp : D3DApp, IRender
       timeScreenSaver = xmlreader.GetValueAsInt("general", "screensavertime", 60);
       clientSizeX = xmlreader.GetValueAsInt("general", "sizex", clientSizeX);
       clientSizeY = xmlreader.GetValueAsInt("general", "sizey", clientSizeY);
-      GUIGraphicsContext.UseSeparateRenderThread = xmlreader.GetValueAsBool("general", "userenderthread", true);
+      //GUIGraphicsContext.UseSeparateRenderThread = xmlreader.GetValueAsBool("general", "userenderthread", true);
+      // BAV: to be fixed -> until then deactivated to save user aggrivation 
+      GUIGraphicsContext.UseSeparateRenderThread = false;
     }
 
     // check if MediaPortal is already running...

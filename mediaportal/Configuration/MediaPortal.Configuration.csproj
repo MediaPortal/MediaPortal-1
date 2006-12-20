@@ -176,6 +176,8 @@
     <Reference Include="Interop.X10, Version=1.0.0.0, Culture=neutral">
       <HintPath>.\Interop.X10.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.ReportViewer.Common, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="Microsoft.ReportViewer.WinForms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -194,6 +196,8 @@
     <Reference Include="System.Runtime.Serialization.Formatters.Soap">
       <Name>System.Runtime.Serialization.Formatters.Soap</Name>
     </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
