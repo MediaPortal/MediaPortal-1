@@ -1427,10 +1427,12 @@ namespace TvLibrary.Implementations.DVB
       }
       else
       {
+        Log.Log.Write("dvb: set pmt grabber pmt:{0:X}", pmtPid);
         _interfacePmtGrabber.SetCallBack(this);
         _interfacePmtGrabber.SetPmtPid(pmtPid);
         if (_mdapiFilter != null)
         {
+          Log.Log.Write("dvb: set ca grabber ");
           _interfaceCaGrabber.SetCallBack(this);
           _interfaceCaGrabber.Reset();
         }
@@ -2388,7 +2390,7 @@ namespace TvLibrary.Implementations.DVB
     /// Sends the hw pids.
     /// </summary>
     /// <param name="pids">The pids.</param>
-    public void SendHwPids(ArrayList pids)
+    public virtual void SendHwPids(ArrayList pids)
     {
       //if (System.IO.File.Exists("usehwpids.txt"))
       {

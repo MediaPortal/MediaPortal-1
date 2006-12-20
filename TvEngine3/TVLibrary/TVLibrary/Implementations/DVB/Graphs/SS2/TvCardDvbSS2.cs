@@ -683,7 +683,7 @@ namespace TvLibrary.Implementations.DVB
       _newCA = false;
       //from submittunerequest
       SetupPmtGrabber(pmtPid);
-      Log.Log.WriteFile("ss2:tune done");
+      Log.Log.WriteFile("ss2:tune done:{0:X}",pmtPid);
       return true;
     }
 
@@ -697,7 +697,7 @@ namespace TvLibrary.Implementations.DVB
       try
       {
 
-        Log.Log.WriteFile("dvbc:StartTimeShifting()");
+        Log.Log.WriteFile("ss2:StartTimeShifting()");
 
         if (!CheckThreadId()) return false;
         if (_graphState == GraphState.TimeShifting)
@@ -712,14 +712,14 @@ namespace TvLibrary.Implementations.DVB
 
         if (_currentChannel == null)
         {
-          Log.Log.Error("dvbc:StartTimeShifting not tuned to a channel");
+          Log.Log.Error("ss2:StartTimeShifting not tuned to a channel");
           throw new TvException("StartTimeShifting not tuned to a channel");
         }
 
         DVBBaseChannel channel = (DVBBaseChannel)_currentChannel;
         if (channel.NetworkId == -1 || channel.TransportId == -1 || channel.ServiceId == -1)
         {
-          Log.Log.Error("dvbc:StartTimeShifting not tuned to a channel but to a transponder");
+          Log.Log.Error("ss2:StartTimeShifting not tuned to a channel but to a transponder");
           throw new TvException("StartTimeShifting not tuned to a channel but to a transponder");
         }
 
@@ -738,7 +738,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Write(ex);
         throw ex;
       }
-      //Log.Log.WriteFile("dvbc:StartTimeShifting() done");
+      //Log.Log.WriteFile("ss2:StartTimeShifting() done");
     }
 
     /// <summary>
@@ -750,7 +750,7 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         if (!CheckThreadId()) return false;
-        Log.Log.WriteFile("dvbc:StopTimeShifting()");
+        Log.Log.WriteFile("ss2:StopTimeShifting()");
         if (_graphState != GraphState.TimeShifting)
         {
           return true;
@@ -780,7 +780,7 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         if (!CheckThreadId()) return false;
-        Log.Log.WriteFile("dvbc:StartRecording to {0}", fileName);
+        Log.Log.WriteFile("ss2:StartRecording to {0}", fileName);
 
         if (_graphState == GraphState.Recording) return false;
 
@@ -792,7 +792,7 @@ namespace TvLibrary.Implementations.DVB
         StartRecord(fileName, recordingType, ref startTime);
 
         _recordingFileName = fileName;
-        Log.Log.WriteFile("dvbc:Started recording on {0}", startTime);
+        Log.Log.WriteFile("ss2:Started recording on {0}", startTime);
 
         return true;
       }
@@ -813,7 +813,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (!CheckThreadId()) return false;
         if (_graphState != GraphState.Recording) return false;
-        Log.Log.WriteFile("dvbc:StopRecording");
+        Log.Log.WriteFile("ss2:StopRecording");
         _graphState = GraphState.TimeShifting;
         StopRecord();
         return true;
@@ -974,7 +974,7 @@ namespace TvLibrary.Implementations.DVB
 
       AddTsAnalyzerToGraph();
 
-      SendHWPids(new ArrayList());
+      SendHwPids(new ArrayList());
       _graphState = GraphState.Created;
     }
 
@@ -1012,7 +1012,7 @@ namespace TvLibrary.Implementations.DVB
     /// Sends the HW pids.
     /// </summary>
     /// <param name="pids">The pids.</param>
-    public void SendHWPids(ArrayList pids)
+    public override void SendHwPids(ArrayList pids)
     {
       const int PID_CAPTURE_ALL_INCLUDING_NULLS = 0x2000;//Enables reception of all PIDs in the transport stream including the NULL PID
       // const int PID_CAPTURE_ALL_EXCLUDING_NULLS = 0x2001;//Enables reception of all PIDs in the transport stream excluding the NULL PID.

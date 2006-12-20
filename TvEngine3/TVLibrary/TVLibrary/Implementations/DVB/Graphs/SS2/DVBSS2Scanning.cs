@@ -84,7 +84,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pids">The pids.</param>
     protected override void SetHwPids(ArrayList pids)
     {
-      _card.SendHWPids(pids);
+      _card.SendHwPids(pids);
     }
 
     /// <summary>
