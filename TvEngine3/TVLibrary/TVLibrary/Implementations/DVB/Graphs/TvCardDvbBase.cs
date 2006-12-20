@@ -1540,7 +1540,7 @@ namespace TvLibrary.Implementations.DVB
           SetRecorderPids();
 
           ITsRecorder record = _filterTsAnalyzer as ITsRecorder;
-          int hr = record.StartRecord();
+          int                                  hr = record.StartRecord();
           if (hr != 0)
           {
             Log.Log.Error("dvb:StartRecord failed:{0:X}", hr);

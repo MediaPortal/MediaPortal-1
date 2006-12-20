@@ -178,7 +178,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       if (IsMpeg2Video) return String.Format("pid:{0:X} video type:MPEG-2", pid);
       if (IsMpeg1Video) return String.Format("pid:{0:X} video type:MPEG-1", pid);
       if (isAC3Audio) return String.Format("pid:{0:X} audio lang:{1} type:AC3", pid, language);
-      if (IsMpeg3Audio) return String.Format("pid:{0:X} audio lang:{1} type:MPEG-3", pid, language);
+      if (IsMpeg3Audio) return String.Format("pid:{0:X} audio lang:{1} type:MPEG-2", pid, language);
       if (IsMpeg1Audio) return String.Format("pid:{0:X} audio lang:{1} type:MPEG-2", pid, language);
       if (isTeletext) return String.Format("pid:{0:X} teletext type:{1:X}", pid, stream_type);
       if (isDVBSubtitle) return String.Format("pid:{0:X} subtitle type:{1:X}", pid, stream_type);
