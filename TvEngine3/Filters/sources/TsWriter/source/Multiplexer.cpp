@@ -399,6 +399,7 @@ void CMultiplexer::flush_packet(CPesPacket& packet, int streamId)
   int bytesRead;
   int pktLen=packet_size-6;
   byte* ptrSize=&buf_ptr[4];
+  byte* ptrStreamId=&buf_ptr[3];
   bool isstart=false;
   if (packet.IsStart()==false)
   {
@@ -422,6 +423,7 @@ void CMultiplexer::flush_packet(CPesPacket& packet, int streamId)
   
   bytesRead=packet.Read(buf_ptr,packet_size);
   buf_ptr+=bytesRead;
+	ptrStreamId[0]=(byte)streamId;
   ptrSize[0]=(byte)((pktLen>>8)&0xff); //4
   ptrSize[1]=(byte)(pktLen&0xff);      //5
 
