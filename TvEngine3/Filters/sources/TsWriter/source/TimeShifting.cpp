@@ -271,6 +271,7 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
 			info.fakePid=FAKE_AUDIO_PID;
 			info.seenStart=false;
 			info.serviceType=serviceType;
+			info.ContintuityCounter=0;
 			strcpy(info.language,language);
 			m_vecPids.push_back(info);
 			
@@ -290,6 +291,7 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
 			info.fakePid=FAKE_VIDEO_PID;
 			info.seenStart=false;
 			info.serviceType=serviceType;
+			info.ContintuityCounter=0;
 			strcpy(info.language,language);
 			m_vecPids.push_back(info);
 			LogDebug("Timeshifter:add video stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
@@ -303,6 +305,7 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
 			info.fakePid=FAKE_SUBTITLE_PID;
 			info.seenStart=false;
 			info.serviceType=serviceType;
+			info.ContintuityCounter=0;
 			strcpy(info.language,language);
 			m_vecPids.push_back(info);
 			LogDebug("Timeshifter:add subtitle stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
@@ -316,6 +319,7 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
 			info.fakePid=pid;
 			info.serviceType=serviceType;
 			info.seenStart=false;
+			info.ContintuityCounter=0;
 			strcpy(info.language,language);
 			LogDebug("Timeshifter:add stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
 			m_vecPids.push_back(info);
@@ -611,9 +615,13 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 
 
 	itvecPids it=m_vecPids.begin();
+	itvecPids itPcr=m_vecPids.end();
 	while (it!=m_vecPids.end())
 	{
 		PidInfo& info=*it;
+		if (info.fakePid==FAKE_PCR_PID)
+			itPcr=it;
+
 		if (m_tsHeader.Pid==info.realPid)
 		{
 			if (info.serviceType==SERVICE_TYPE_VIDEO_MPEG1 || info.serviceType==SERVICE_TYPE_VIDEO_MPEG2||info.serviceType==SERVICE_TYPE_VIDEO_MPEG4||info.serviceType==SERVICE_TYPE_VIDEO_H264)
@@ -628,6 +636,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 					}
 				}
 				if (!info.seenStart) return;
+				//LogDebug("vid:%x->%x %x %x", info.realPid,info.fakePid,m_tsHeader.ContinuityCounter,m_tsHeader.AdaptionControl);
 				byte pkt[200];
 				memcpy(pkt,tsPacket,188);
 				int pid=info.fakePid;
@@ -637,6 +646,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				{
 				  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);
+					info.ContintuityCounter=m_tsHeader.ContinuityCounter;
 					Write(pkt,188);
           m_iPacketCounter++;
 				}
@@ -666,6 +676,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				{
 				  if (PayLoadUnitStart)  PatchPtsDts(pkt,m_tsHeader,m_startPcr);
+					info.ContintuityCounter=m_tsHeader.ContinuityCounter;
 					Write(pkt,188);
           m_iPacketCounter++;
 				}
@@ -684,6 +695,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				{
 				  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);
+					info.ContintuityCounter=m_tsHeader.ContinuityCounter;
 					Write(pkt,188);
           m_iPacketCounter++;
 				}
@@ -699,6 +711,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 			if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
 			if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 			{
+				info.ContintuityCounter=m_tsHeader.ContinuityCounter;
 				Write(pkt,188);
         m_iPacketCounter++;
 			}
@@ -720,6 +733,13 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 
     if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 		{
+			if(itPcr!=m_vecPids.end())
+			{
+				PidInfo& info=*itPcr;
+				pkt[3] &=0xf0;
+				pkt[3] += (info.ContintuityCounter&0xf);
+				//LogDebug("pcr:%x->%x %d", m_pcrPid,FAKE_PCR_PID,info.ContintuityCounter);
+			}
 			Write(pkt,188);
       m_iPacketCounter++;
 		}

@@ -2066,13 +2066,16 @@ namespace TvPlugin
       m_currentChannel = GetChannel(m_currentchannel);
       if (m_currentChannel == null)
       {
-        ChannelGroup group = (ChannelGroup)m_groups[m_currentgroup];
-        if (group.ReferringGroupMap().Count > 0)
+        if (m_currentgroup < m_groups.Count )
         {
-          GroupMap gm = (GroupMap)group.ReferringGroupMap()[0];
-          m_currentchannel = gm.ReferencedChannel().Name;
+          ChannelGroup group = (ChannelGroup)m_groups[m_currentgroup];
+          if (group.ReferringGroupMap().Count > 0)
+          {
+            GroupMap gm = (GroupMap)group.ReferringGroupMap()[0];
+            m_currentchannel = gm.ReferencedChannel().Name;
+          }
+          m_currentChannel = GetChannel(m_currentchannel);
         }
-        m_currentChannel = GetChannel(m_currentchannel);
       }
     }
 

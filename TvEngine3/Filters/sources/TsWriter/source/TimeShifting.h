@@ -87,6 +87,7 @@ public:
 		int  serviceType;
 		bool seenStart;
 		char language[255];
+		int  ContintuityCounter;
 	};
 	CTimeShifting(LPUNKNOWN pUnk, HRESULT *phr);
 	~CTimeShifting(void);
