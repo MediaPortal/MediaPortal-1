@@ -27,7 +27,7 @@ void LogDebug(const char *fmt, ...) ;
 #define PACK_HEADER_FREQUENCY           1
 #define SYSTEM_HEADER_FREQUENCY         40
 #define PACK_HEADER_SIZE                14
-#define MUX_RATE                        0x8000
+#define MUX_RATE                        25961
 #define PRIVATE_STREAM_1                0x1bd
 #define MAX_INPUT_BUFFER_SIZE_AUDIO     4096
 #define MAX_INPUT_BUFFER_SIZE_VIDEO     47104
@@ -168,58 +168,59 @@ void CMultiplexer::OnTsPacket(byte* tsPacket)
 }
 
 
-int CMultiplexer::OnNewPesPacket(CPesDecoder* decoder, byte* data, int len)
+int CMultiplexer::OnNewPesPacket(CPesDecoder* decoder)
 {
-	if (len<=0) return 0;
-
-  CPcr::DecodeFromPesHeader(data, decoder->m_packet.pts, decoder->m_packet.dts);
-  if (decoder->packet_number==0 && decoder->m_packet.pts.PcrReferenceBase==0) return len;
- // if (decoder->m_packet.pts.PcrReferenceBase!=0)
- //   printf("pts:%s\n", decoder->m_packet.pts.ToString());
-  int headerSize=data[8]+9;
-  if (decoder->packet_number==0)
-  {
-    if (decoder->GetStreamId()>=0xe0)
+  int streamId=-1;
+  CPcr pcr;
+	ivecPesDecoders it;
+	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
+	{
+		CPesDecoder* decoder=*it;
+    CPesPacket& packet=decoder->m_packet;
+    if (packet.IsAvailable(800)==false) return 0;
+    
+    if (pcr > packet.Pcr()  || streamId<0)
     {
-      if (data[headerSize]!= 0 || data[headerSize+1]!= 0 || data[headerSize+2]!= 1) return len;
-
-      if (data[headerSize+3]!=0xb3) return len;//sequence header
-			m_bVideoStartFound=true;
+      streamId=decoder->GetStreamId();
+      pcr=packet.Pcr();
     }
   }
-	if (m_bVideoStartFound==false) return len;
-  mpeg_mux_write_packet(decoder,&data[headerSize],  len-headerSize);
-
-  return len;
+  if (streamId==decoder->GetStreamId())
+  {
+    CPesPacket& packet=decoder->m_packet;
+    mpeg_mux_write_packet(packet,decoder->GetStreamId());
+  }
+  return 0;
 }
 
-int CMultiplexer::get_packet_payload_size(CPesDecoder* decoder)
+int CMultiplexer::get_packet_payload_size(CPesPacket& packet)
 {
-  CPesPacket& packet=decoder->m_packet;
   int buf_index=0;
-  if (((decoder->packet_number % PACK_HEADER_FREQUENCY) == 0)) 
+  if (((packet.packet_number % PACK_HEADER_FREQUENCY) == 0)) 
   {
       /* pack header size */
       buf_index += PACK_HEADER_SIZE;
 
-      if ((decoder->packet_number % SYSTEM_HEADER_FREQUENCY) == 0)
+      if ((packet.packet_number % SYSTEM_HEADER_FREQUENCY) == 0)
           buf_index += m_system_header_size;
   }
 
-
-  /* packet header size */
-  buf_index += 6;
-
-  buf_index += 3;
-  if (packet.pts.PcrReferenceBase != 0) 
+  if (!packet.IsStart())
   {
-    if (packet.pts != packet.dts && packet.dts.PcrReferenceBase!=0)
-        buf_index += PTS_DTS_LENGTH + PTS_DTS_LENGTH;
-    else
-        buf_index += PTS_DTS_LENGTH;
+    /* packet header size */
+    buf_index += 6;
 
-  } 
-    
+    buf_index += 3;
+    bool pts, dts;
+    packet.NextPacketHasPtsDts(pts, dts);
+    if (pts != 0) 
+    {
+      if (dts)
+          buf_index += PTS_DTS_LENGTH + PTS_DTS_LENGTH;
+      else
+          buf_index += PTS_DTS_LENGTH;
+    } 
+  }
   return PACK_SIZE - buf_index;
 }
 
@@ -243,10 +244,8 @@ int CMultiplexer::get_system_header_size()
 }
    
 
-int CMultiplexer::WritePackHeader(byte* buf, double clock)
-{
-  CPcr pcr;
-  pcr.FromClock(clock);
+int CMultiplexer::WritePackHeader(byte* buf, CPcr& pcr)
+{;
 	UINT64 pcrHi=pcr.PcrReferenceBase;
 	UINT64 pcrLow=pcr.PcrReferenceExtension;
   int muxRate=MUX_RATE;
@@ -371,99 +370,23 @@ int CMultiplexer::WritePaddingPacket(byte* buf,int packet_bytes)
   return packet_bytes;
 }
 
-int CMultiplexer::mpeg_mux_write_packet(CPesDecoder* decoder,const byte *buf, int size)
-{
-    int len, avail_size;
-    CPesPacket& packet=decoder->m_packet;
-    double startClock=packet.startPcr.ToClock();
-    double endClock=m_pcr.ToClock();
-    double diff=endClock - startClock;
 
-    if (m_pcr.PcrReferenceBase==0)
-    {
-      int x=1;
-    }
-    if (packet.pts.PcrReferenceBase==0)
-    {
-      int x=1;
-    }
-    /* we assume here that pts != AV_NOPTS_VALUE */
-    /*
-    new_start_pts = stream->start_pts;
-    new_start_dts = stream->start_dts;
-
-    if (stream->start_pts == AV_NOPTS_VALUE)
-    {
-        new_start_pts = pts;
-        new_start_dts = dts;
-    }*/
-    avail_size = get_packet_payload_size(decoder);
-    if (packet.buffer_ptr >= avail_size) 
-    {
-        /* unlikely case: outputing the pts or dts increase the packet
-           size so that we cannot write the start of the next
-           packet. In this case, we must flush the current packet with
-           padding.
-           Note: this always happens for the first audio and video packet
-           in a VCD file, since they do not carry any data.*/
-      flush_packet(decoder,startClock);
-        packet.buffer_ptr = 0;
-    }
-    //stream->start_pts = new_start_pts;
-    //stream->start_dts = new_start_dts;
-    packet.nb_frames++;
-    if (packet.m_iFrameOffset == 0)
-        packet.m_iFrameOffset = packet.buffer_ptr;
-
-    int pktCount=size/0x7d2;
-    diff /= ((double)pktCount);
-
-    while (size > 0) 
-    {
-        avail_size = get_packet_payload_size(decoder);
-        len = avail_size - packet.buffer_ptr;
-        if (len > size)
-            len = size;
-        memcpy(packet.m_pData + packet.buffer_ptr, buf, len);
-        packet.buffer_ptr += len;
-        buf += len;
-        size -= len;
-        if (packet.buffer_ptr >= avail_size) 
-        {
-          //update_scr(ctx,stream_index,stream->start_pts);
-
-          /* if packet full, we send it now */
-          flush_packet(decoder,startClock);
-          packet.buffer_ptr = 0;
-
-          /* Make sure only the FIRST pes packet for this frame has a timestamp */
-          packet.pts.Reset();//stream->start_pts = AV_NOPTS_VALUE;
-          packet.dts.Reset();//stream->start_dts = AV_NOPTS_VALUE;
-          startClock += diff;
-        }
-    }
-    return 0;
-}
-
-void CMultiplexer::flush_packet(CPesDecoder* decoder, double clock)
+void CMultiplexer::flush_packet(CPesPacket& packet, int streamId)
 {
   byte *buf_ptr;
-  int size, payload_size, startcode, id, stuffing_size, i, header_len;
+  int size, payload_size, startcode,  stuffing_size, i, header_len;
   int packet_size;
   byte buffer[PACK_SIZE];
   int zero_trail_bytes = 0;
   int pad_packet_bytes = 0;
-  id = decoder->GetStreamId();
   buf_ptr = buffer;
-  CPesPacket& packet=decoder->m_packet;
 
-  if (((decoder->packet_number % PACK_HEADER_FREQUENCY) == 0)) 
+  if (((packet.packet_number % PACK_HEADER_FREQUENCY) == 0)) 
   {
-      /* output pack and systems header if needed */
-      size = WritePackHeader(buf_ptr,clock);
+      size = WritePackHeader(buf_ptr, packet.Pcr());
       buf_ptr += size;
 
-      if ((decoder->packet_number % SYSTEM_HEADER_FREQUENCY) == 0) 
+      if ((packet.packet_number % SYSTEM_HEADER_FREQUENCY) == 0) 
       {
           size = WriteSystemHeader(buf_ptr);
           buf_ptr += size;
@@ -471,158 +394,56 @@ void CMultiplexer::flush_packet(CPesDecoder* decoder, double clock)
       
   }
   size = buf_ptr - buffer;
-  //put_buffer(&ctx->pb, buffer, size);
 
   packet_size = PACK_SIZE - size;
-
- 
-  packet_size -= pad_packet_bytes + zero_trail_bytes;
-
-  if (packet_size > 0) 
+  int bytesRead;
+  int pktLen=packet_size-6;
+  byte* ptrSize=&buf_ptr[4];
+  bool isstart=false;
+  if (packet.IsStart()==false)
   {
-      /* packet header size */
-      packet_size -= 6;
+    //add pes header
+    packet_size-=9;
+    buf_ptr[0]=0;buf_ptr++;                               //0
+    buf_ptr[0]=0;buf_ptr++;                               //1
+    buf_ptr[0]=1;buf_ptr++;                               //2
+    buf_ptr[0]=streamId;buf_ptr++;                        //3
+    buf_ptr[0]=(byte)((pktLen>>8)&0xff);buf_ptr++; //4
+    buf_ptr[0]=(byte)(pktLen&0xff);buf_ptr++;      //5
+    buf_ptr[0]=(byte)(0x80);buf_ptr++;                    //6
+    buf_ptr[0]=(byte)(0);buf_ptr++;                       //7
+    buf_ptr[0]=(byte)(0);buf_ptr++;                       //8
+  }
+  else
+  {
+    isstart=true;
+  }
+   
+  
+  bytesRead=packet.Read(buf_ptr,packet_size);
+  buf_ptr+=bytesRead;
+  ptrSize[0]=(byte)((pktLen>>8)&0xff); //4
+  ptrSize[1]=(byte)(pktLen&0xff);      //5
 
-      /* packet header */
-      header_len = 3;
-      
-      if (packet.pts.PcrReferenceBase != 0) 
+  if (bytesRead!=packet_size)
+  {
+    int padding_bytes=packet_size-bytesRead;
+    if (padding_bytes >=6)
+    {
+      WritePaddingPacket(buf_ptr, padding_bytes);
+      pktLen-=padding_bytes;
+    }
+    else
+    {
+      pktLen-=padding_bytes;
+      for (int i=0; i <padding_bytes;++i)
       {
-        if (packet.dts != packet.pts && packet.dts.PcrReferenceBase!=0)
-              header_len += PTS_DTS_LENGTH + PTS_DTS_LENGTH;
-          else
-              header_len += PTS_DTS_LENGTH;
-      } 
-
-      payload_size = packet_size - header_len;
-      if (id < 0xc0) 
-      {
-          startcode = PRIVATE_STREAM_1;
-          payload_size -= 4;
-          if (id >= 0xa0)
-              payload_size -= 3;
-      } 
-      else 
-      {
-          startcode = 0x100 + id;
-      }
-
-      stuffing_size = payload_size - packet.buffer_ptr;
-      if (stuffing_size < 0)
-          stuffing_size = 0;
-
-      //put_be32(&ctx->pb, startcode);
-      buf_ptr[0]=0;buf_ptr++;
-      buf_ptr[0]=0;buf_ptr++;
-      buf_ptr[0]=1;buf_ptr++;
-      buf_ptr[0]=(byte)(startcode&0xff);buf_ptr++;
-
-
-      //put_be16(&ctx->pb, packet_size);
-      buf_ptr[0]=((packet_size>>8)&0xff);buf_ptr++;
-      buf_ptr[0]=(packet_size&0xff);buf_ptr++;
-
-
-      //put_byte(&ctx->pb, 0x80); /* mpeg2 id */
-      buf_ptr[0]=0x80;buf_ptr++;
-
-      if (packet.pts.PcrReferenceBase != 0) 
-      {
-        if (packet.dts != packet.pts&& packet.dts.PcrReferenceBase!=0) 
-          {
-            byte marker=0x31;
-            UINT64 pts=packet.pts.PcrReferenceBase;
-            UINT64 dts=packet.dts.PcrReferenceBase;
-            //put_byte(&ctx->pb, 0xc0); /* flags */
-            //put_byte(&ctx->pb, header_len - 3 + stuffing_size);
-            buf_ptr[0]=0xc0;buf_ptr++;
-            buf_ptr[0]=(header_len - 3 + stuffing_size);buf_ptr++;
-	          buf_ptr[4]=(byte)((((pts&0x7f)<<1)+1)); pts>>=7;
-	          buf_ptr[3]=(byte)( (pts&0xff));				  pts>>=8;
-	          buf_ptr[2]=(byte)((((pts&0x7f)<<1)+1)); pts>>=7;
-	          buf_ptr[1]=(byte)((pts&0xff));					pts>>=8;
-	          buf_ptr[0]=(byte)( (((pts&7)<<1)+marker)); 
-            
-	          buf_ptr[9]=(byte)((((dts&0x7f)<<1)+1)); dts>>=7;
-	          buf_ptr[8]=(byte)( (dts&0xff));				  dts>>=8;
-	          buf_ptr[7]=(byte)((((dts&0x7f)<<1)+1)); dts>>=7;
-	          buf_ptr[6]=(byte)((dts&0xff));					dts>>=8;
-	          buf_ptr[5]=(byte)( (((dts&7)<<1)+0x11)); 
-            buf_ptr+=10;
-
-            //put_timestamp(&ctx->pb, 0x03, pts);
-            //put_timestamp(&ctx->pb, 0x01, dts);
-          } 
-          else 
-          {
-            byte marker=0x21;
-            UINT64 pts=packet.pts.PcrReferenceBase;
-            //put_byte(&ctx->pb, 0x80); /* flags */
-            //put_byte(&ctx->pb, header_len - 3 + stuffing_size);
-            buf_ptr[0]=0x80;buf_ptr++;
-            buf_ptr[0]=(header_len - 3 + stuffing_size);buf_ptr++;
-           // put_timestamp(&ctx->pb, 0x02, pts);
-	          buf_ptr[4]=(byte)((((pts&0x7f)<<1)+1)); pts>>=7;
-	          buf_ptr[3]=(byte)( (pts&0xff));				  pts>>=8;
-	          buf_ptr[2]=(byte)((((pts&0x7f)<<1)+1)); pts>>=7;
-	          buf_ptr[1]=(byte)((pts&0xff));					pts>>=8;
-	          buf_ptr[0]=(byte)( (((pts&7)<<1)+marker)); 
-            buf_ptr+=5;
-          }
-      } 
-      else 
-      {
-          //put_byte(&ctx->pb, 0x00); /* flags */
-          //put_byte(&ctx->pb, header_len - 3 + stuffing_size);
-          buf_ptr[0]=0x0;buf_ptr++;
-          buf_ptr[0]=(header_len - 3 + stuffing_size);buf_ptr++;
-      }
-       
-/*
-      if (startcode == PRIVATE_STREAM_1) 
-      {
-          put_byte(&ctx->pb, id);
-          if (id >= 0xa0) 
-          {
-              // LPCM (XXX: check nb_frames) 
-              put_byte(&ctx->pb, 7);
-              put_be16(&ctx->pb, 4); // skip 3 header bytes 
-              put_byte(&ctx->pb, stream->lpcm_header[0]);
-              put_byte(&ctx->pb, stream->lpcm_header[1]);
-              put_byte(&ctx->pb, stream->lpcm_header[2]);
-          } 
-          else 
-          {
-              // AC3 
-              put_byte(&ctx->pb, packet.nb_frames);
-              put_be16(&ctx->pb, packet.frame_start_offset);
-          }
-      }
-*/
-      for(i=0;i<stuffing_size;i++)
-      {
-        //put_byte(&ctx->pb, 0xff);
         buf_ptr[0]=0xff;buf_ptr++;
       }
+    }
+    ptrSize[0]=(byte)((pktLen>>8)&0xff); //4
+    ptrSize[1]=(byte)(pktLen&0xff);      //5
 
-      /* output data */
-      //put_buffer(&ctx->pb, packet.m_pData, payload_size - stuffing_size);
-      for (int i=0; i < payload_size - stuffing_size;++i)
-      {
-          buf_ptr[0]=packet.m_pData[i];
-          buf_ptr++;
-      }
-  }
-
-  if (pad_packet_bytes > 0)
-  {
-    WritePaddingPacket(buf_ptr, pad_packet_bytes);
-  }
-
-  for(int i=0;i<zero_trail_bytes;i++)
-  {
-    buf_ptr[0]=0x00;
-    buf_ptr++;
   }
 
   if (m_pCallback!=NULL)
@@ -630,7 +451,17 @@ void CMultiplexer::flush_packet(CPesDecoder* decoder, double clock)
     m_pCallback->Write(buffer,PACK_SIZE);
   }
 
-  decoder->packet_number++;
-  packet.nb_frames = 0;
-  packet.m_iFrameOffset = 0;
+  packet.packet_number++;
+  //packet.nb_frames = 0;
+  //packet.m_iFrameOffset = 0;
+}
+
+int CMultiplexer::mpeg_mux_write_packet(CPesPacket& packet, int streamId)
+{
+  int avail_size = get_packet_payload_size(packet);
+  if (packet.IsAvailable(avail_size) )
+  {
+   flush_packet(packet,streamId);
+  }
+  return 0;
 }

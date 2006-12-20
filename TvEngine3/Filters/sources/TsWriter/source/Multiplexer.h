@@ -50,17 +50,17 @@ public:
 	void Reset();
 	void ClearStreams();
 	void SetFileWriterCallBack(IFileWriter* callback);
-	int OnNewPesPacket(CPesDecoder* decoder, byte* data, int len);
+	int OnNewPesPacket(CPesDecoder* decoder);
 
 private:
-	int  WritePackHeader(byte* buf, double clock);
+	int  WritePackHeader(byte* buf, CPcr& pcr);
   int  WriteSystemHeader(byte* buf);
   int  WritePaddingHeader(byte* buf, int full_padding_size);
   int  WritePaddingPacket(byte* buf,int packet_bytes);
   int  get_system_header_size();
-  int  get_packet_payload_size(CPesDecoder* decoder);
-  int  mpeg_mux_write_packet(CPesDecoder* decoder,const byte *buf, int size);
-  void flush_packet(CPesDecoder* decoder, double clock);
+  int  get_packet_payload_size(CPesPacket& packet);
+  int  mpeg_mux_write_packet(CPesPacket& packet, int streamId);
+  void flush_packet(CPesPacket& packet, int streamId);
 	vector<CPesDecoder*> m_pesDecoders;
 	typedef vector<CPesDecoder*>::iterator ivecPesDecoders;
   

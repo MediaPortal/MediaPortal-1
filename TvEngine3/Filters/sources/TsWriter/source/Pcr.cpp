@@ -77,17 +77,25 @@ bool CPcr::DecodeFromPesHeader(byte* pesHeader, CPcr& pts, CPcr& dts)
 	}
 	if (ptsAvailable)
 	{	
-		
+		//if (PTS_DTS_flags =='10' ) {
+    //  '0010'        4 bslbf       0010                9
+    //  PTS [32..30]  3 bslbf           111             9
+    //  marker_bit    1 bslbf              1            9
+    //  PTS [29..15] 15 bslbf       001100011001000    10/11
+    //  marker_bit    1 bslbf                         1 11
+    //  PTS [14..0]  15 bslbf       110000111101011    12/13
+    //  marker_bit    1 bslbf                         1 13        | 111001100011001000110000111101011 = 1CC6461EB
+    //  }
 		// 9       10        11        12      13
 		//76543210 76543210 76543210 76543210 76543210
 		//0011pppM pppppppp pppppppM pppppppp pppppppM 
 	  UINT64 ptsTicks=0LL;
 		UINT64 k;
-		k=((pesHeader[9]>>1)&0x7); k <<=30; ptsTicks+=k;
-		k=  pesHeader[10];				 k <<=22; ptsTicks+=k;
-		k= (pesHeader[11]>>1);		 k <<=15; ptsTicks+=k;
-		k=  pesHeader[12];				 k <<=7;  ptsTicks+=k;
-		k= (pesHeader[13]>>1);		          ptsTicks+=k;
+		k=((pesHeader[9]>>1)&0x7); k <<=30; ptsTicks+=k;      //9: 00101111
+		k=  pesHeader[10];				 k <<=22; ptsTicks+=k;      //10:00110001
+		k= (pesHeader[11]>>1);		 k <<=15; ptsTicks+=k;      //11:10010001
+		k=  pesHeader[12];				 k <<=7;  ptsTicks+=k;      //12:11000011
+		k= (pesHeader[13]>>1);		          ptsTicks+=k;      //13:11010111
     pts.PcrReferenceBase = ptsTicks;
 		pts.IsValid=true;
 	}

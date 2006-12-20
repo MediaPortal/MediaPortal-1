@@ -29,23 +29,18 @@ extern void LogDebug(const char *fmt, ...) ;
 CPesDecoder::CPesDecoder(CPesCallback* callback)
 {
 	m_pid=-1;
-	m_pesBuffer = new byte[MAX_PES_PACKET];
-	m_iWritePos=-1;
 	m_pCallback=callback;
 	m_iStreamId=-1;
-  packet_number=0;
 }
 
 CPesDecoder::~CPesDecoder(void)
 {
-	delete[] m_pesBuffer; 
 }
 
 void CPesDecoder::Reset()
 {
   m_packet.Reset();
-	m_iWritePos=-1;
-  packet_number=0;
+  m_bStartFound=false;
 }
 
 int CPesDecoder::GetPid()
@@ -87,7 +82,6 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket, CPcr& pcr)
 	}
   if (m_tsHeader.TransportError) 
 	{
-		m_iWritePos=0;
 		//LogDebug("pesdecoder pid:%x transport error", m_pid);
 		return false;
 	}
@@ -104,27 +98,14 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket, CPcr& pcr)
 	bool result=false;
 	if (m_tsHeader.PayloadUnitStart)
 	{
-		if (m_iWritePos>0)
-		{
-			if (m_pCallback!=NULL)
-			{
-				m_pCallback->OnNewPesPacket(this, m_pesBuffer, m_iWritePos);
-				m_iWritePos=0;
-			}
-		}
-		if (tsPacket[pos+0]==0 && tsPacket[pos+1]==0 && tsPacket[pos+2]==1)
-		{
-			if (m_iStreamId<0)
-				m_iStreamId=tsPacket[pos+3];
-			m_iWritePos=0;
-      m_packet.startPcr=pcr;
-		}
+    m_bStartFound=true;
 	}
 
-	if (m_iWritePos < 0) return false;
-	if (m_iStreamId <= 0) return false;
-
-	memcpy(&m_pesBuffer[m_iWritePos], &tsPacket[pos], 188-pos);
-	m_iWritePos += (188-pos);
+	if (m_bStartFound==false) return false;
+  m_packet.Write( &tsPacket[pos], 188-pos, m_tsHeader.PayloadUnitStart,pcr);
+  if (m_packet.InUse() > 10 && m_pCallback!=NULL)
+  {
+    m_pCallback->OnNewPesPacket(this);
+  }
   return result;
 }

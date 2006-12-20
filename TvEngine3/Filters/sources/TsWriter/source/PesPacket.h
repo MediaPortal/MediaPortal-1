@@ -20,18 +20,56 @@
  */
 #pragma once
 #include "pcr.h"
+
+class CBuffer
+{
+  public:
+    CBuffer();
+    virtual ~CBuffer();
+    int Write(byte* data, int len, bool isStart,CPcr& pcr);
+    int Read(byte* data, int len);
+    int Size();
+    void HasPtsDts(bool& pts, bool &dts);
+    bool IsStart();
+    void Reset();
+    CPcr& Pcr();
+    CPcr& Pts();
+    CPcr& Dts();
+
+  private:
+    BYTE* m_pData;
+    int   m_iReadPtr;
+    int   m_iSize;
+    bool  m_bIsStart;
+    CPcr  m_pcr;
+    CPcr  m_dts;
+    CPcr  m_pts;
+};
+#define MAX_BUFFERS 3000
 class CPesPacket
 {
   public:
-    CPcr  pts;
-    CPcr  dts;
-    CPcr  startPcr;
-    byte* m_pData;
-    int   m_iFrameOffset;
-    int   buffer_ptr;
-    ULONG nb_frames;
-
     CPesPacket();
     virtual ~CPesPacket();
     void Reset();
+
+    void Write(byte* data, int len, bool isStart,CPcr& pcr);
+    int  Read(byte* data, int len);
+    bool IsAvailable(int size);
+    bool IsStart();
+    void NextPacketHasPtsDts(bool& pts, bool &dts);
+    CPcr& Pcr();
+    CPcr& Pts();
+    CPcr& Dts();
+    int   InUse();
+    ULONG         packet_number;
+
+  private:
+    CBuffer m_buffers[MAX_BUFFERS];
+    int    m_iCurrentWriteBuffer;
+    int    m_iCurrentReadBuffer;
+    UINT64 m_totalSize;
+    int    m_inUse;
+    int    m_maxInUse;
+    
 };

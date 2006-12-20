@@ -24,21 +24,189 @@
 #include <math.h>
 #include "pespacket.h" 
 
+
+CBuffer::CBuffer()
+{
+  m_pData = new byte[200];
+  m_iReadPtr=0;
+  m_iSize=0;
+  m_bIsStart=false;
+}
+
+CBuffer::~CBuffer()
+{
+  delete[] m_pData;
+}
+
+void CBuffer::Reset()
+{
+  m_iReadPtr=0;
+  m_iSize=0;
+  m_bIsStart=false;
+  m_pcr.Reset();
+  m_dts.Reset();
+  m_pts.Reset();
+}
+
+int CBuffer::Write(byte* data, int len, bool isStart,CPcr& pcr)
+{
+  if (isStart)
+  {
+    CPcr::DecodeFromPesHeader(data,m_pts,m_dts);
+  }
+  else
+  {
+    m_pts.Reset();
+    m_dts.Reset();
+  }
+    
+  memcpy(m_pData,data,len);
+  m_bIsStart=isStart;
+  m_pcr=pcr;
+  m_iSize=len;
+  m_iReadPtr=0;
+  return m_iSize;
+}
+int CBuffer::Read(byte* data, int len)
+{
+  int available=m_iSize-m_iReadPtr;
+  if (available==0)
+  {
+    int x=1;
+  }
+  if (len>available) len=available;
+  memcpy(data,&m_pData[m_iReadPtr],len);
+  m_iReadPtr+=len;
+  return len;
+}
+int CBuffer::Size()
+{
+  return (m_iSize-m_iReadPtr);
+}
+
+void CBuffer::HasPtsDts(bool& pts, bool &dts)
+{
+  pts=dts=false;
+  if (m_pts.PcrReferenceBase!=0)
+  {
+    pts=true;
+    if (m_dts.PcrReferenceBase!=0)
+    {
+      dts=true;
+    }
+  }
+}
+bool CBuffer::IsStart()
+{
+  return m_bIsStart;
+}
+
+CPcr& CBuffer::Pcr()
+{
+  return m_pcr;
+}
+
+CPcr& CBuffer::Pts()
+{
+  return m_pts;
+}
+CPcr& CBuffer::Dts()
+{
+  return m_dts;
+}
 CPesPacket::CPesPacket()
 {
-  m_pData = new byte[40000];
  Reset();
 }
 
 CPesPacket::~CPesPacket()
 {
-  delete [] m_pData;
 }
+
 void CPesPacket::Reset()
 {
-  pts.Reset();
-  dts.Reset();
-  m_iFrameOffset=0;
-  buffer_ptr=0;
-  nb_frames=0;
+  packet_number=0;
+  m_totalSize=0;
+  m_iCurrentWriteBuffer=0;
+  m_iCurrentReadBuffer=0;
+  m_inUse=m_maxInUse=0;
+  for (int i=0; i < MAX_BUFFERS;++i)
+  {
+    m_buffers[i].Reset();
+  }
+}
+
+bool CPesPacket::IsStart()
+{
+  return m_buffers[m_iCurrentReadBuffer].IsStart();
+}
+CPcr& CPesPacket::Pcr()
+{
+  return m_buffers[m_iCurrentReadBuffer].Pcr();
+}
+CPcr& CPesPacket::Pts()
+{
+  return m_buffers[m_iCurrentReadBuffer].Pts();
+}
+CPcr& CPesPacket::Dts()
+{
+  return m_buffers[m_iCurrentReadBuffer].Dts();
+}
+
+void CPesPacket::Write(byte* data, int len, bool isStart,CPcr& pcr)
+{
+  m_inUse++;
+  if (m_inUse>m_maxInUse)
+  {
+    m_maxInUse=m_inUse;
+    printf("inuse:%d\n",m_maxInUse);
+  }
+  m_totalSize+=m_buffers[m_iCurrentWriteBuffer].Write(data, len, isStart,pcr);
+  m_iCurrentWriteBuffer++;
+  if (m_iCurrentWriteBuffer>=MAX_BUFFERS) m_iCurrentWriteBuffer=0;
+  if (m_iCurrentWriteBuffer==m_iCurrentReadBuffer)
+  {
+    int x=1;
+  }
+}
+
+int CPesPacket::InUse()
+{
+  return m_inUse;
+}
+void CPesPacket::NextPacketHasPtsDts(bool& pts, bool &dts)
+{
+   m_buffers[m_iCurrentReadBuffer].HasPtsDts(pts, dts);
+}
+
+int CPesPacket::Read(byte* data, int len)
+{
+  int off=0;
+  int bytesRead=0;
+  while (len>0)
+  {
+    int read=m_buffers[m_iCurrentReadBuffer].Read( &data[off],len);
+    off+=read;
+    len-=read;
+    m_totalSize-=read;
+    bytesRead+=read;
+    if (m_buffers[m_iCurrentReadBuffer].Size()==0 || read==0) 
+    {
+      m_inUse--;
+      if (m_inUse>m_maxInUse)
+      {
+        m_maxInUse=m_inUse;
+        printf("inuse:%d\n",m_maxInUse);
+      }
+      m_iCurrentReadBuffer++;
+      if (m_iCurrentReadBuffer>=MAX_BUFFERS) m_iCurrentReadBuffer=0;
+      if (IsStart()) return bytesRead;
+    }
+  }
+  return bytesRead;
+}
+
+bool CPesPacket::IsAvailable(int size)
+{
+  return (m_totalSize>size);
 }

@@ -30,7 +30,7 @@ class CPesDecoder;
 class CPesCallback
 {
 public:
-	virtual int OnNewPesPacket(CPesDecoder* decoder, byte* data, int len)=0;
+	virtual int OnNewPesPacket(CPesDecoder* decoder)=0;
 };
 
 class CPesDecoder
@@ -48,12 +48,10 @@ public:
 	void					SetStreamId(int streamId);
 
   CPesPacket    m_packet;
-  ULONG         packet_number;
 private:
 	CPesCallback* m_pCallback;
 	int					  m_pid;
-	byte*					m_pesBuffer;
-	int						m_iWritePos;
 	int						m_iStreamId;
   CTsHeader     m_tsHeader;
+  bool          m_bStartFound;
 };
