@@ -148,21 +148,15 @@ namespace MediaPortal.GUI.Video
         m_iMaxTimeOSDOnscreen = 1000 * xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
         _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 10);
         _playNotifyBeep = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
+        
         string strValue = xmlreader.GetValueAsString(key, "defaultar", "normal");
-        if (strValue.Equals("zoom"))
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
-        if (strValue.Equals("stretch"))
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
-        if (strValue.Equals("normal"))
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Normal;
-        if (strValue.Equals("original"))
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
-        if (strValue.Equals("letterbox"))
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
-        if (strValue.Equals("panscan"))
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
-        if (strValue.Equals("zoom149"))
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
+        if (strValue.Equals("zoom"))             GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
+        if (strValue.Equals("stretch"))          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
+        if (strValue.Equals("normal"))           GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Normal;
+        if (strValue.Equals("original"))         GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
+        if (strValue.Equals("letterbox"))        GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
+        if (strValue.Equals("panscan"))          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
+        if (strValue.Equals("zoom149"))          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
       }
     }
 
@@ -1287,8 +1281,7 @@ namespace MediaPortal.GUI.Video
       }
       RenderVolume(_isVolumeVisible);
     }
-
-
+    
     void CheckTimeOuts()
     {
       if (_vmr9OSD != null)
@@ -1320,8 +1313,6 @@ namespace MediaPortal.GUI.Video
           return;
         }
       }
-
-
 
       // OSD Timeout?
       if (_isOsdVisible && m_iMaxTimeOSDOnscreen > 0)
@@ -1562,7 +1553,6 @@ namespace MediaPortal.GUI.Video
       return base.GetControl(iControlId);
     }
     #endregion
-
 
     #region IRenderLayer
     public bool ShouldRenderLayer()

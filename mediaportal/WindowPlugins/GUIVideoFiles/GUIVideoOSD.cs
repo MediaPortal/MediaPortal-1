@@ -201,7 +201,6 @@ namespace MediaPortal.GUI.Video
             return;
           }
 
-
         case Action.ActionType.ACTION_STOP:
           {
             // push a message through to this window to handle the remote control button
@@ -209,8 +208,6 @@ namespace MediaPortal.GUI.Video
             OnMessage(msgSet);
             return;
           }
-
-
         case Action.ActionType.ACTION_FORWARD:
           {
             // push a message through to this window to handle the remote control button
@@ -218,8 +215,6 @@ namespace MediaPortal.GUI.Video
             OnMessage(msgSet);
             return;
           }
-
-
         case Action.ActionType.ACTION_REWIND:
           {
             // push a message through to this window to handle the remote control button
@@ -228,7 +223,6 @@ namespace MediaPortal.GUI.Video
             return;
           }
 
-
         case Action.ActionType.ACTION_OSD_SHOW_VALUE_PLUS:
           {
             // push a message through to this window to handle the remote control button
@@ -236,7 +230,6 @@ namespace MediaPortal.GUI.Video
             OnMessage(msgSet);
             return;
           }
-
         case Action.ActionType.ACTION_OSD_SHOW_VALUE_MIN:
           {
             // push a message through to this window to handle the remote control button
@@ -245,7 +238,6 @@ namespace MediaPortal.GUI.Video
             return;
           }
       }
-
       base.OnAction(action);
     }
 
@@ -264,8 +256,6 @@ namespace MediaPortal.GUI.Video
             GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + message.Param1));
             return true;
           }
-
-
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:	// fired when OSD is shown
           {
             // following line should stay. Problems with OSD not
@@ -285,7 +275,6 @@ namespace MediaPortal.GUI.Video
               ShowControl(GetID, i);
             return true;
           }
-
         case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
           goto case GUIMessage.MessageType.GUI_MSG_LOSTFOCUS;
 
@@ -294,7 +283,6 @@ namespace MediaPortal.GUI.Video
             if (message.SenderControlId == 13) return true;
           }
           break;
-
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           {
             int iControl = message.SenderControlId;		// get the ID of the control sending us a message
@@ -422,13 +410,6 @@ namespace MediaPortal.GUI.Video
 
             }
 
-            /* not used
-            if (iControl == (int)Controls.OSD_SYNC)
-            {
-              ToggleSubMenu(iControl, Controls.OSD_SUBMENU_BG_SYNC);		// hide or show the sub-menu
-            }
-            */
-
             if (iControl == (int)Controls.OSD_SUBTITLES)
             {
 
@@ -537,20 +518,16 @@ namespace MediaPortal.GUI.Video
       SetSliderValue(0.0f, 100.0f, (float)fGamma, (int)Controls.OSD_GAMMA);
     }
 
-
     void SetVideoProgress()
     {
 
       if (g_Player.Playing)
       {
-
-
         int iValue = g_Player.Volume;
         GUISliderControl pSlider = (GUISliderControl)GetControl((int)Controls.OSD_VOLUMESLIDER);
         if (null != pSlider) pSlider.Percentage = iValue;			// Update our progress bar accordingly ...
       }
     }
-
 
     void ToggleButton(int iButtonID, bool bSelected)
     {
@@ -720,7 +697,6 @@ namespace MediaPortal.GUI.Video
             }
           }
           break;
-
         case (int)Controls.OSD_VIDEOPOS:
           {
             GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
@@ -731,7 +707,6 @@ namespace MediaPortal.GUI.Video
             }
           }
           break;
-
         case (int)Controls.OSD_BRIGHTNESS:
           {
             GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
@@ -781,49 +756,6 @@ namespace MediaPortal.GUI.Video
             }
           }
           break;
-        /*
-                case Controls.OSD_AVDELAY:
-                {
-                  GUISliderControl pControl=(GUISliderControl)GetControl(iControlID);
-                  if (pControl)
-                  {
-                    // Set the AV Delay
-                    g_application.m_pPlayer.SetAVDelay(pControl.GetFloatValue());
-                  }
-                }
-                break;
-
-                case Controls.OSD_NONINTERLEAVED:
-                {
-                  g_stSettings.m_bNonInterleaved=!g_stSettings.m_bNonInterleaved;
-                  m_bSubMenuOn = false;										// hide the sub menu
-                  m_bNeedRefresh=true;
-                  g_application.m_guiWindowFullScreen.m_bOSDVisible = false;	// toggle the OSD off so parent window can de-init
-                  g_application.Restart(true);								// restart to make the new setting active
-                }
-                break;
-
-                case Controls.OSD_NOCACHE:
-                {
-                  g_stSettings.m_bNoCache=!g_stSettings.m_bNoCache;
-                  m_bSubMenuOn = false;										// hide the sub menu
-                  m_bNeedRefresh=true;
-                  g_application.m_guiWindowFullScreen.m_bOSDVisible = false;	// toggle the OSD off so parent window can de-init
-                  g_application.Restart(true);								// restart to make the new setting active
-                }
-                break;
-
-                case Controls.OSD_ADJFRAMERATE:
-                {
-                  g_stSettings.m_bFrameRateConversions=!g_stSettings.m_bFrameRateConversions;
-                  m_bSubMenuOn = false;										// hide the sub menu
-                  m_bNeedRefresh=true;
-                  OutputDebugString("OSD:RESTART4\n");
-                  g_application.m_guiWindowFullScreen.m_bOSDVisible = false;	// toggle the OSD off so parent window can de-init
-                  g_application.Restart(true);								// restart to make the new setting active
-                }
-                break;
-        */
         case (int)Controls.OSD_CREATEBOOKMARK:
           {
             double dCurTime = g_Player.CurrentPosition;			// get the current playing time position
@@ -832,7 +764,6 @@ namespace MediaPortal.GUI.Video
             PopulateBookmarks();										// refresh our list control
           }
           break;
-
         case (int)Controls.OSD_BOOKMARKS_LIST:
           {
             if (wID != 0)	// check to see if list control has an action ID, remote can cause 0 based events
@@ -850,7 +781,6 @@ namespace MediaPortal.GUI.Video
             }
           }
           break;
-
         case (int)Controls.OSD_CLEARBOOKMARKS:
           {
             VideoDatabase.ClearBookMarksOfMovie(g_Player.CurrentFile);					// empty the bookmarks table for this movie
@@ -875,7 +805,6 @@ namespace MediaPortal.GUI.Video
             g_Player.EnableSubtitle = !g_Player.EnableSubtitle;
           }
           break;
-
         case (int)Controls.OSD_SUBTITLE_LIST:
           {
             if (wID != 0)	// check to see if list control has an action ID, remote can cause 0 based events
@@ -934,7 +863,6 @@ namespace MediaPortal.GUI.Video
 
     void PopulateAudioStreams()
     {
-
       // get the number of audio strams for the current movie
       int iValue = g_Player.AudioStreams;
 
@@ -983,7 +911,6 @@ namespace MediaPortal.GUI.Video
 
     void PopulateSubTitles()
     {
-
       // get the number of subtitles in the current movie
       int iValue = g_Player.SubtitleStreams;
 
@@ -1080,13 +1007,11 @@ namespace MediaPortal.GUI.Video
     void Reset()
     {
       // Set all sub menu controls to hidden
-
       HideControl(GetID, (int)Controls.OSD_SUBMENU_BG_AUDIO);
       HideControl(GetID, (int)Controls.OSD_SUBMENU_BG_VIDEO);
       HideControl(GetID, (int)Controls.OSD_SUBMENU_BG_BOOKMARKS);
       HideControl(GetID, (int)Controls.OSD_SUBMENU_BG_SUBTITLES);
       HideControl(GetID, (int)Controls.OSD_SUBMENU_BG_VOL);
-
 
       HideControl(GetID, (int)Controls.OSD_VOLUMESLIDER);
       HideControl(GetID, (int)Controls.OSD_VIDEOPOS);
@@ -1132,8 +1057,8 @@ namespace MediaPortal.GUI.Video
       ToggleButton((int)Controls.OSD_MUTE, false);		// their up state
 
       ShowControl(GetID, (int)Controls.OSD_VIDEOPROGRESS);
-
     }
+
     public override bool NeedRefresh()
     {
       if (m_bNeedRefresh)
@@ -1143,6 +1068,7 @@ namespace MediaPortal.GUI.Video
       }
       return false;
     }
+
     public bool InWindow(int x, int y)
     {
       for (int i = 0; i < controlList.Count; ++i)

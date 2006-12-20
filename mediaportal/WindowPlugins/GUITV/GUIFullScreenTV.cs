@@ -2490,7 +2490,6 @@ namespace MediaPortal.GUI.TV
           imgVolumeBar.Image1 = 2;
           imgVolumeBar.Image2 = 1;
         }
-
       }
     }
 
