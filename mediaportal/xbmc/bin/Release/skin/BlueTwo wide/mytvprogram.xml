@@ -175,9 +175,9 @@
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>493</posX>
-      <posY>186</posY>
-      <width>573</width>
-      <height>173</height>
+      <posY>190</posY>
+      <width>673</width>
+      <height>170</height>
       <label>#TV.RecordedTV.Description</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
