@@ -228,7 +228,7 @@ namespace MediaPortal.Configuration.Sections
       {
         // Player Settings
         audioPlayerComboBox.SelectedItem = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
-        showID3CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "showid3", false);
+        showID3CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
         enableVisualisation.Checked = xmlreader.GetValueAsBool("musicfiles", "doVisualisation", true);
 
         // Call Bass Registration, since BASS is used here fo the first time
@@ -294,7 +294,7 @@ namespace MediaPortal.Configuration.Sections
         else
           VizPluginInfo = new VisualizationInfo((VisualizationInfo.PluginType)vizType, vizPath, vizName, vizClsid, vizPreset);
 
-        int fps = xmlreader.GetValueAsInt("musicvisualization", "fps", 30);
+        int fps = xmlreader.GetValueAsInt("musicvisualization", "fps", 25);
 
         if (fps < (int)VisualizationFpsNud.Minimum)
           fps = (int)VisualizationFpsNud.Minimum;

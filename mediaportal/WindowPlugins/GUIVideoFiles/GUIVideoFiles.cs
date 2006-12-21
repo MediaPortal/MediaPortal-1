@@ -73,28 +73,23 @@ namespace MediaPortal.GUI.Video
         _SortAscending = true;
       }
 
-
       [XmlElement("SortBy")]
       public int SortBy
       {
         get { return _SortBy; }
         set { _SortBy = value; }
       }
-
       [XmlElement("ViewAs")]
       public int ViewAs
       {
         get { return _ViewAs; }
         set { _ViewAs = value; }
       }
-
       [XmlElement("Stack")]
       public bool Stack
-      {
-        get { return _Stack; }
+      {        get { return _Stack; }
         set { _Stack = value; }
       }
-
       [XmlElement("SortAscending")]
       public bool SortAscending
       {
@@ -132,8 +127,6 @@ namespace MediaPortal.GUI.Video
     public GUIVideoFiles()
     {
       GetID = (int)GUIWindow.Window.WINDOW_VIDEOS;
-
-
     }
 
     protected override bool CurrentSortAsc
@@ -1529,18 +1522,21 @@ namespace MediaPortal.GUI.Video
 
     private void OnPlayBackStopped(MediaPortal.Player.g_Player.MediaType type, int timeMovieStopped, string filename)
     {
-        if (type != g_Player.MediaType.Video || filename.EndsWith("&txe=.wmv")) return;
+      if (type != g_Player.MediaType.Video || filename.EndsWith("&txe=.wmv"))
+        return;
 
       // Handle all movie files from idMovie
       ArrayList movies = new ArrayList();
       int iidMovie = VideoDatabase.GetMovieId(filename);
       VideoDatabase.GetFiles(iidMovie, ref movies);
-      if (movies.Count <= 0) return;
+      if (movies.Count <= 0)
+        return;
       for (int i = 0; i < movies.Count; i++)
       {
         string strFilePath = (string)movies[i];
         int idFile = VideoDatabase.GetFileId(strFilePath);
-        if (idFile < 0) break;
+        if (idFile < 0)
+          break;
         if ((filename == strFilePath) && (timeMovieStopped > 0))
         {
           byte[] resumeData = null;
@@ -1554,20 +1550,21 @@ namespace MediaPortal.GUI.Video
       }
       if (_markWatchedFiles) // save a little performance
       {
-        if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO &&
-            GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_HOME)
+        // only reload the share if we're watching it.
+        if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && GUIWindowManager.ActiveWindow == GetID)
         {
           LoadDirectory(_currentFolder);
           UpdateButtonStates();
         }
         else
-          Log.Debug("GUIVideoFiles: No LoadDirectory needed in fullscreen");
+          Log.Debug("GUIVideoFiles: No LoadDirectory needed OnPlaybackStopped");
       }
     }
 
     private void OnPlayBackEnded(MediaPortal.Player.g_Player.MediaType type, string filename)
     {
-      if (type != g_Player.MediaType.Video) return;
+      if (type != g_Player.MediaType.Video)
+        return;
 
       // Handle all movie files from idMovie
       ArrayList movies = new ArrayList();
@@ -1600,15 +1597,16 @@ namespace MediaPortal.GUI.Video
       }
       if (_markWatchedFiles) // save a little performance
       {
-        if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
+        if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && GUIWindowManager.ActiveWindow == GetID)
         {
           LoadDirectory(_currentFolder);
           UpdateButtonStates();
         }
         else
-          Log.Debug("GUIVideoFiles: No LoadDirectory needed in fullscreen");
+          Log.Debug("GUIVideoFiles: No LoadDirectory needed OnPlaybackEnded");
       }
     }
+
     private void OnPlayBackStarted(MediaPortal.Player.g_Player.MediaType type, string filename)
     {
       if (type != g_Player.MediaType.Video) return;
