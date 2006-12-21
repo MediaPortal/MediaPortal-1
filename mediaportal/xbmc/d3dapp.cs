@@ -342,6 +342,8 @@ namespace MediaPortal
       clipCursorWhenFullscreen = true;
 #endif
       InitializeComponent();
+      if (!GUIGraphicsContext.UseSeparateRenderThread)
+        this.timer.Tick += new System.EventHandler(this.timer_Tick);
       if (debugChangeDeviceHack)
       {
         this.menuItemFile.MenuItems.Clear();
@@ -809,7 +811,6 @@ namespace MediaPortal
         { }
 
       }
-
       GUIGraphicsContext.DX9Device.DeviceReset += new EventHandler(this.OnDeviceReset);
 
       if (windowed)
@@ -1917,7 +1918,11 @@ namespace MediaPortal
       this.menuItemTelevision.Index = 4;
       this.menuItemTelevision.Text = "Television";
       this.menuItemTelevision.Click += new System.EventHandler(this.televisionMenuItem_Click);
- 
+      // 
+      // menuItemChangeDevice
+      // 
+      this.menuItemChangeDevice.Index = -1;
+      this.menuItemChangeDevice.Text = "";
       // 
       // menuBreakFile
       // 
@@ -1953,8 +1958,6 @@ namespace MediaPortal
       // 
       this.timer.Enabled = true;
       this.timer.Interval = 300;
-      if (!GUIGraphicsContext.UseSeparateRenderThread)
-        this.timer.Tick += new System.EventHandler(this.timer_Tick);
       // 
       // D3DApp
       // 
