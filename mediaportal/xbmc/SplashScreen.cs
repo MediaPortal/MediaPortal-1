@@ -255,11 +255,11 @@ namespace MediaPortal
         this.versionLabel.Font =
           new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
                                   ((byte)(0)));
-        this.versionLabel.Location = new System.Drawing.Point(262, 79);
+        this.versionLabel.Location = new System.Drawing.Point(267, 79);
         this.versionLabel.Name = "versionLabel";
         this.versionLabel.Size = new System.Drawing.Size(100, 16);
         this.versionLabel.TabIndex = 5;
-        this.versionLabel.Text = "Version";
+        this.versionLabel.Text = "";
         this.versionLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
         // 
         // cvsLabel
@@ -272,7 +272,7 @@ namespace MediaPortal
         this.cvsLabel.Font =
           new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
                                   ((byte)(0)));
-        this.cvsLabel.Location = new System.Drawing.Point(30, 79);
+        this.cvsLabel.Location = new System.Drawing.Point(24, 79);
         this.cvsLabel.Name = "cvsLabel";
         this.cvsLabel.Size = new System.Drawing.Size(180, 16);
         this.cvsLabel.TabIndex = 5;
@@ -285,9 +285,9 @@ namespace MediaPortal
         this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
         this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
         this.pictureBox1.Image = global::MediaPortal.Properties.Resources.mplogo_new;
-        this.pictureBox1.Location = new System.Drawing.Point(25, 14);
+        this.pictureBox1.Location = new System.Drawing.Point(16, 12);
         this.pictureBox1.Name = "pictureBox1";
-        this.pictureBox1.Size = new System.Drawing.Size(338, 65);
+        this.pictureBox1.Size = new System.Drawing.Size(356, 65);
         this.pictureBox1.TabIndex = 3;
         this.pictureBox1.TabStop = false;
         // 
