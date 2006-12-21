@@ -486,8 +486,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("remote", "X10UseChannelControl", checkBoxX10ChannelControl.Checked);
         xmlwriter.SetValue("remote", "X10Channel", x10Channel);
 
-        //if(x10Form != null)
-        //  x10Form.Dispose();
+        
 
         #endregion
 
