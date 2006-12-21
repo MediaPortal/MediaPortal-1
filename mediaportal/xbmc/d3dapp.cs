@@ -1932,7 +1932,7 @@ namespace MediaPortal
       // notifyIcon
       // 
       this.notifyIcon.ContextMenu = this.contextMenu;
-      this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
+      this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.notifyIcon.Text = "MediaPortal";
       this.notifyIcon.DoubleClick += new System.EventHandler(this.Restore_OnClick);
       // 
