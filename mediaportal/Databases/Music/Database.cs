@@ -2888,9 +2888,10 @@ namespace MediaPortal.Music.Database
           string strSmallThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicAlbum, Util.Utils.MakeFileName(tagAlbumName));
           string strLargeThumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, Util.Utils.MakeFileName(tagAlbumName));
 
-          if (_extractEmbededCoverArt)
+
+          if (tag.CoverArtImageBytes != null)
           {
-            if (tag.CoverArtImageBytes != null)
+            if (_extractEmbededCoverArt)
             {
               try
               {
@@ -2899,7 +2900,7 @@ namespace MediaPortal.Music.Database
                   extractFile = true;
                 else
                 {
-                  // Prevent creation of the thumbnai multiple times, when all songs of an album contain coverart
+                  // Prevent creation of the thumbnail multiple times, when all songs of an album contain coverart
                   System.DateTime fileDate = System.IO.File.GetLastWriteTime(strSmallThumb);
                   System.TimeSpan span = currentDate - fileDate;
                   if (span.Hours > 0)
@@ -2917,7 +2918,25 @@ namespace MediaPortal.Music.Database
               catch (Exception) { }
             }
           }
+          // no mp3 coverart - use folder art if present to get an album thumb
+          if (_useFolderThumbs)
+          {
+            // only create for the first file
+            if (!System.IO.File.Exists(strSmallThumb))
+            {
+              string sharefolderThumb = MediaPortal.Util.Utils.GetFolderThumb(strPathSong);
+              if (System.IO.File.Exists(sharefolderThumb))
+              {
+                if (!MediaPortal.Util.Picture.CreateThumbnail(sharefolderThumb, strSmallThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0))
+                  Log.Debug("Could not create album thumb from folder {0}", strPathSong);
+                if (!MediaPortal.Util.Picture.CreateThumbnail(sharefolderThumb, strLargeThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0))
+                  Log.Debug("Could not create large album thumb from folder {0}", strPathSong);
+              }
+            }
+          }
+          
 
+          // create the local folder thumb cache and folder.jpg itself if not present
           if (_useFolderThumbs)
             CreateFolderThumbs(strPathSong, strSmallThumb);
 
@@ -3024,7 +3043,7 @@ namespace MediaPortal.Music.Database
             MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, folderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
 
             if (!System.IO.File.Exists(localFolderThumb))
-              MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+              MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
             if (!System.IO.File.Exists(localFolderLThumb))
               System.IO.File.Copy(folderThumb, localFolderLThumb, true);
           }
