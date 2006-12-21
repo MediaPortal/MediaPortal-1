@@ -38,6 +38,7 @@ using MediaPortal.Profile;
 using MediaPortal.RemoteControls.FireDTV;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
+using MediaPortal.Remotes.X10Remote;
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
@@ -133,7 +134,6 @@ namespace MediaPortal.Configuration.Sections
     private MPGroupBox groupBoxIrTransSettings;
     private MPCheckBox checkBoxHidGlobal;
 
-    private X10RemoteForm x10Form = null;
 
     private enum hcwRepeatSpeed
     {
@@ -142,6 +142,7 @@ namespace MediaPortal.Configuration.Sections
       fast
     } ;
 
+    X10Remote X10Remote = null;
     private int x10Channel = 0;
 
     private const string errHcwNotInstalled =
@@ -351,6 +352,31 @@ namespace MediaPortal.Configuration.Sections
           buttonX10Mapping.Enabled = groupBoxX10Settings.Enabled = checkBoxX10Enabled.Checked;
         buttonX10LearnChannel.Enabled = checkBoxX10ChannelControl.Enabled && checkBoxX10ChannelControl.Checked;
 
+        //See if the X10 driver is installed
+        try
+        {
+          if (X10Remote == null)
+          {
+            X10Remote = new X10Remote();
+            X10Remote.Init();
+          }
+        }
+        catch (COMException)
+        {
+          Log.Warn("x10Remote: Can't initialize");
+          labelX10DriverInfo.Visible = true;
+          labelX10DriverInfo.ForeColor = Color.Red;
+          labelX10DriverInfo.Text = "The X10 Driver is not installed.\nYou have to use the driver below, or your remote might not work with MediaPortal.";
+          linkLabelDownloadX10.Visible = true;
+          labelX10Status.Visible = false;
+          buttonX10LearnChannel.Enabled = false;
+
+        }
+        Log.Info("x10Remote:Initialized");
+        labelX10DriverInfo.Visible = false;
+        linkLabelDownloadX10.Visible = true;
+        labelX10Status.Visible = true;
+        labelX10Status.Text = "The X10 Driver is installed. If you experience problems with this driver,\nuninstall your current driver and download the version below";
         #endregion
 
         #region General HID
@@ -459,6 +485,9 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("remote", "X10VerboseLog", checkBoxX10ExtendedLogging.Checked);
         xmlwriter.SetValueAsBool("remote", "X10UseChannelControl", checkBoxX10ChannelControl.Checked);
         xmlwriter.SetValue("remote", "X10Channel", x10Channel);
+
+        //if(x10Form != null)
+        //  x10Form.Dispose();
 
         #endregion
 
@@ -1151,7 +1180,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxX10Status.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxX10Status.Location = new System.Drawing.Point(12, 232);
       this.groupBoxX10Status.Name = "groupBoxX10Status";
-      this.groupBoxX10Status.Size = new System.Drawing.Size(440, 80);
+      this.groupBoxX10Status.Size = new System.Drawing.Size(440, 101);
       this.groupBoxX10Status.TabIndex = 2;
       this.groupBoxX10Status.TabStop = false;
       this.groupBoxX10Status.Text = "Status";
@@ -1169,7 +1198,7 @@ namespace MediaPortal.Configuration.Sections
       // linkLabelDownloadX10
       // 
       this.linkLabelDownloadX10.AutoSize = true;
-      this.linkLabelDownloadX10.Location = new System.Drawing.Point(16, 44);
+      this.linkLabelDownloadX10.Location = new System.Drawing.Point(16, 64);
       this.linkLabelDownloadX10.Name = "linkLabelDownloadX10";
       this.linkLabelDownloadX10.Size = new System.Drawing.Size(222, 13);
       this.linkLabelDownloadX10.TabIndex = 1;
@@ -1274,7 +1303,7 @@ namespace MediaPortal.Configuration.Sections
       // buttonX10Defaults
       // 
       this.buttonX10Defaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonX10Defaults.Location = new System.Drawing.Point(364, 328);
+      this.buttonX10Defaults.Location = new System.Drawing.Point(364, 343);
       this.buttonX10Defaults.Name = "buttonX10Defaults";
       this.buttonX10Defaults.Size = new System.Drawing.Size(72, 22);
       this.buttonX10Defaults.TabIndex = 3;
@@ -1984,7 +2013,16 @@ namespace MediaPortal.Configuration.Sections
 
     private void linkLabelDownloadX10_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      Process.Start("http://www1.medion.de/downloads/download.pl?id=1675&type=treiber&filename=remote_x10.exe&lang=de");
+      Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
+      string language = xmlreader.GetValueAsString("skin", "language", "");
+      if (language == "English")
+      {
+        Process.Start("http://www.snapstream.net/download/Firefly_Drivers.aspx");
+      }
+      else
+      {
+        Process.Start("http://www1.medion.de/downloads/download.pl?id=1675&type=treiber&filename=remote_x10.exe&lang=de");
+      }
     }
 
     private void checkBoxX10ChannelControl_CheckedChanged(object sender, EventArgs e)
@@ -1994,44 +2032,32 @@ namespace MediaPortal.Configuration.Sections
 
     private void buttonX10LearnChannel_Click(object sender, EventArgs e)
     {
-      buttonX10LearnChannel.Enabled = false;
-      try
+      X10Learn TeachX10;
+      //buttonX10LearnChannel.Enabled = false;
+      if (radioButtonX10Medion.Checked)
       {
-        if (x10Form == null)
-        {
-          x10Form = new X10RemoteForm(new _DIX10InterfaceEvents_X10CommandEventHandler(IX10_X10Command));
-        }
+        TeachX10 = new X10Learn("Medion X10");
       }
-      catch (COMException)
+      else if (radioButtonX10Ati.Checked)
       {
-        Log.Warn("x10Remote: Can't initialize");
-        x10Form = null;
-        labelX10DriverInfo.Visible = false;
-        linkLabelDownloadX10.Visible = false;
-        labelX10Status.Visible = true;
-        labelX10Status.Text = "X10 driver is not installed.";
-        buttonX10LearnChannel.Enabled = true;
-        return;
+        TeachX10 = new X10Learn("ATI X10");
       }
-      labelX10DriverInfo.Visible = false;
-      linkLabelDownloadX10.Visible = false;
-      labelX10Status.Visible = true;
-      labelX10Status.Text = "Press a button on your remote control.";
+      else if (radioButtonX10Firefly.Checked)
+      {
+        TeachX10 = new X10Learn("Firefly X10");
+      }
+      else
+      {
+        TeachX10 = new X10Learn("Other X10");
+      }
+     
+      TeachX10.ShowDialog(this);
+      
     }
 
     #region Helper methods/commands X10
 
-    public void IX10_X10Command(object sender, _DIX10InterfaceEvents_X10CommandEvent e)
-    {
-      if (e.eKeyState.ToString() == "X10KEY_ON" || e.eKeyState.ToString() == "X10KEY_REPEAT")
-      {
-        x10Channel = e.lAddress;
-        buttonX10LearnChannel.Enabled = true;
-        labelX10Status.Text = "Remote control successfully set to channel " + x10Channel.ToString() + ".";
-        x10Form = null;
-      }
-    }
-
+  
     #endregion
 
     #endregion
