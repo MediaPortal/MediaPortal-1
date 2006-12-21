@@ -6,8 +6,7 @@
     <ProjectGuid>{68168FAA-A363-4F64-981C-32629A537900}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>config.ico</ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>Configuration</AssemblyName>
@@ -176,8 +175,6 @@
     <Reference Include="Interop.X10, Version=1.0.0.0, Culture=neutral">
       <HintPath>.\Interop.X10.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.ReportViewer.Common, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <Reference Include="Microsoft.ReportViewer.WinForms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -196,8 +193,6 @@
     <Reference Include="System.Runtime.Serialization.Formatters.Soap">
       <Name>System.Runtime.Serialization.Formatters.Soap</Name>
     </Reference>
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
@@ -562,12 +557,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="editName.resx">
       <DependentUpon>editName.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="EditRadioStationForm.resx">
       <DependentUpon>EditRadioStationForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="EditShareForm.resx">
       <DependentUpon>EditShareForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="EditTVChannelForm.resx">
       <DependentUpon>EditTVChannelForm.cs</DependentUpon>
@@ -575,6 +573,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="EditWeatherCityForm.resx">
       <DependentUpon>EditWeatherCityForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ParameterForm.resx">
       <DependentUpon>ParameterForm.cs</DependentUpon>
@@ -859,6 +858,7 @@
       <DependentUpon>X10RemoteForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <Content Include="config.ico" />
     <Content Include="Wizards\DVD.xml" />
     <Content Include="Wizards\FirstTimeSetup.xml" />
     <Content Include="Wizards\Movies.xml" />

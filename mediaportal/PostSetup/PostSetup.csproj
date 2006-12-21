@@ -182,15 +182,19 @@
     </Compile>
     <EmbeddedResource Include="MP3PartFFDShow.resx">
       <DependentUpon>MP3PartFFDShow.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MP3PartInstaller.resx">
       <DependentUpon>MP3PartInstaller.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MP3PartVobSub.resx">
       <DependentUpon>MP3PartVobSub.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MP3PartXMLTV.resx">
       <DependentUpon>MP3PartXMLTV.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MPRecommendations.resx">
       <DependentUpon>MPRecommendations.cs</DependentUpon>
