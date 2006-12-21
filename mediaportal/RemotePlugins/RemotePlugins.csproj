@@ -96,7 +96,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AxInterop.X10, Version=1.0.0.0, Culture=neutral" />
     <Reference Include="Interop.X10, Version=1.0.0.0, Culture=neutral" />
     <Reference Include="Microsoft.DirectX">
       <Name>Microsoft.DirectX</Name>
@@ -244,10 +243,14 @@
       <SubType>Form</SubType>
     </None>
     <Compile Include="ControlDevices\Devices\USBUIRT\USBUIRTSettings.cs" />
-    <Compile Include="Remotes\X10Remote\X10RemoteForm.cs">
+    <Compile Include="Remotes\X10Remote\X10Learn.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Remotes\X10Remote\X10Learn.Designer.cs">
+      <DependentUpon>X10Learn.cs</DependentUpon>
+    </Compile>
     <Compile Include="Remotes\X10Remote\X10Remote.cs" />
+    <Compile Include="Remotes\X10Remote\X10Sink.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ControlDevices\Util\LearnCodePanel.resx">
@@ -274,14 +277,12 @@
       <DependentUpon>NewButtonForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Remotes\X10Remote\X10RemoteForm.resx">
-      <DependentUpon>X10RemoteForm.cs</DependentUpon>
+    <EmbeddedResource Include="Remotes\X10Remote\X10Learn.resx">
       <SubType>Designer</SubType>
+      <DependentUpon>X10Learn.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Remotes\X10Remote\AxInterop.X10.dll">
-    </Content>
     <Content Include="Remotes\X10Remote\Interop.X10.dll">
     </Content>
   </ItemGroup>

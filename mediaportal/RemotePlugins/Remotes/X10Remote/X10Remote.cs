@@ -1,7 +1,6 @@
-#region Copyright (C) 2005-2007 Team MediaPortal
-
+#region Copyright (C) 2005-2006 Team MediaPortal - CoolHammer, mPod
 /* 
- *	Copyright (C) 2005-2007 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal - Author: CoolHammer, mPod
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -158,7 +157,7 @@ namespace MediaPortal.InputDevices
         Log.Info("X10Remote: lSequence    = {0}", e.lSequence.ToString());
         Log.Info("X10Remote: varTimestamp = {0}", e.varTimestamp.ToString());
         Log.Info("X10Remote: Command End ----------------------------------------------");
-      }
+     }
 
       if (e.eKeyState.ToString() == "X10KEY_ON" || e.eKeyState.ToString() == "X10KEY_REPEAT")
       {
@@ -173,7 +172,15 @@ namespace MediaPortal.InputDevices
         if ((e.eCommand.ToString() == preventdoublepress.command))
         {
           if (preventdoublepress.span() < 150)
+          {
+            Log.Info("X10 debug - Caught double press - {0} ms", preventdoublepress.span());
             return;
+          }
+          else
+          {
+            Log.Info("X10 debug - Missed double press - {0} ms", preventdoublepress.span());
+          }
+
         }
 
         if (_inputHandler.MapAction((int)Enum.Parse(typeof(X10.EX10Command), e.eCommand.ToString())))

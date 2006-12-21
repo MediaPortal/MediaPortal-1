@@ -30,9 +30,14 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Xml;
 using System.IO;
+using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using System.Threading;
+using MediaPortal.InputDevices;
+using MediaPortal.Remotes.X10Remote;
+
+
 
 namespace MediaPortal.InputDevices
 {
@@ -47,7 +52,7 @@ namespace MediaPortal.InputDevices
 
     Array nativeActionList = Enum.GetValues(typeof(Action.ActionType));
     ArrayList actionList = new ArrayList();
-
+  
     string[] layerList = new string[] { "all", "1", "2" };
     string[] fullScreenList = new string[] { "Fullscreen", "No Fullscreen" };
 
@@ -68,8 +73,9 @@ namespace MediaPortal.InputDevices
                                               "{ADD}", "{SUBTRACT}", "{MULTIPLY}", "{DIVIDE}"};
 
     string inputClassName;
-
     bool changedSettings = false;
+    
+
 
 
     class Data
@@ -215,6 +221,7 @@ namespace MediaPortal.InputDevices
       inputClassName = name;
       LoadMapping(inputClassName + ".xml", false);
       headerLabel.Caption = inputClassName;
+
     }
 
     /// <summary>
@@ -229,6 +236,7 @@ namespace MediaPortal.InputDevices
           components.Dispose();
         }
       }
+      
       base.Dispose(disposing);
     }
 
@@ -289,7 +297,7 @@ namespace MediaPortal.InputDevices
       this.treeMapping.HideSelection = false;
       this.treeMapping.Location = new System.Drawing.Point(16, 56);
       this.treeMapping.Name = "treeMapping";
-      this.treeMapping.Size = new System.Drawing.Size(312, 330);
+      this.treeMapping.Size = new System.Drawing.Size(312, 335);
       this.treeMapping.TabIndex = 1;
       this.treeMapping.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeMapping_AfterSelect);
       // 
@@ -306,7 +314,7 @@ namespace MediaPortal.InputDevices
       // buttonDefault
       // 
       this.buttonDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonDefault.Location = new System.Drawing.Point(268, 437);
+      this.buttonDefault.Location = new System.Drawing.Point(268, 442);
       this.buttonDefault.Name = "buttonDefault";
       this.buttonDefault.Size = new System.Drawing.Size(75, 23);
       this.buttonDefault.TabIndex = 28;
@@ -317,7 +325,7 @@ namespace MediaPortal.InputDevices
       // buttonRemove
       // 
       this.buttonRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonRemove.Location = new System.Drawing.Point(272, 392);
+      this.buttonRemove.Location = new System.Drawing.Point(272, 397);
       this.buttonRemove.Name = "buttonRemove";
       this.buttonRemove.Size = new System.Drawing.Size(56, 20);
       this.buttonRemove.TabIndex = 27;
@@ -328,7 +336,7 @@ namespace MediaPortal.InputDevices
       // buttonNew
       // 
       this.buttonNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonNew.Location = new System.Drawing.Point(144, 392);
+      this.buttonNew.Location = new System.Drawing.Point(144, 397);
       this.buttonNew.Name = "buttonNew";
       this.buttonNew.Size = new System.Drawing.Size(56, 20);
       this.buttonNew.TabIndex = 26;
@@ -339,7 +347,7 @@ namespace MediaPortal.InputDevices
       // buttonDown
       // 
       this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonDown.Location = new System.Drawing.Point(80, 392);
+      this.buttonDown.Location = new System.Drawing.Point(80, 397);
       this.buttonDown.Name = "buttonDown";
       this.buttonDown.Size = new System.Drawing.Size(56, 20);
       this.buttonDown.TabIndex = 24;
@@ -350,7 +358,7 @@ namespace MediaPortal.InputDevices
       // buttonUp
       // 
       this.buttonUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonUp.Location = new System.Drawing.Point(16, 392);
+      this.buttonUp.Location = new System.Drawing.Point(16, 397);
       this.buttonUp.Name = "buttonUp";
       this.buttonUp.Size = new System.Drawing.Size(56, 20);
       this.buttonUp.TabIndex = 23;
@@ -362,15 +370,15 @@ namespace MediaPortal.InputDevices
       // 
       this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.beveledLine1.Location = new System.Drawing.Point(8, 427);
+      this.beveledLine1.Location = new System.Drawing.Point(8, 432);
       this.beveledLine1.Name = "beveledLine1";
-      this.beveledLine1.Size = new System.Drawing.Size(574, 2);
+      this.beveledLine1.Size = new System.Drawing.Size(572, 2);
       this.beveledLine1.TabIndex = 21;
       // 
       // buttonApply
       // 
       this.buttonApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonApply.Location = new System.Drawing.Point(348, 437);
+      this.buttonApply.Location = new System.Drawing.Point(346, 442);
       this.buttonApply.Name = "buttonApply";
       this.buttonApply.Size = new System.Drawing.Size(75, 23);
       this.buttonApply.TabIndex = 20;
@@ -381,7 +389,7 @@ namespace MediaPortal.InputDevices
       // buttonOk
       // 
       this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonOk.Location = new System.Drawing.Point(428, 437);
+      this.buttonOk.Location = new System.Drawing.Point(426, 442);
       this.buttonOk.Name = "buttonOk";
       this.buttonOk.Size = new System.Drawing.Size(75, 23);
       this.buttonOk.TabIndex = 19;
@@ -393,7 +401,7 @@ namespace MediaPortal.InputDevices
       // 
       this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.buttonCancel.Location = new System.Drawing.Point(507, 437);
+      this.buttonCancel.Location = new System.Drawing.Point(505, 442);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
       this.buttonCancel.TabIndex = 18;
@@ -411,7 +419,7 @@ namespace MediaPortal.InputDevices
       this.headerLabel.Location = new System.Drawing.Point(16, 16);
       this.headerLabel.Name = "headerLabel";
       this.headerLabel.PaddingLeft = 2;
-      this.headerLabel.Size = new System.Drawing.Size(560, 24);
+      this.headerLabel.Size = new System.Drawing.Size(558, 24);
       this.headerLabel.TabIndex = 17;
       this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
       this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -433,7 +441,7 @@ namespace MediaPortal.InputDevices
       this.groupBoxAction.Controls.Add(this.comboBoxCmdProperty);
       this.groupBoxAction.Enabled = false;
       this.groupBoxAction.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxAction.Location = new System.Drawing.Point(352, 216);
+      this.groupBoxAction.Location = new System.Drawing.Point(350, 221);
       this.groupBoxAction.Name = "groupBoxAction";
       this.groupBoxAction.Size = new System.Drawing.Size(224, 192);
       this.groupBoxAction.TabIndex = 16;
@@ -587,7 +595,7 @@ namespace MediaPortal.InputDevices
       this.groupBoxCondition.Controls.Add(this.comboBoxCondProperty);
       this.groupBoxCondition.Enabled = false;
       this.groupBoxCondition.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxCondition.Location = new System.Drawing.Point(352, 108);
+      this.groupBoxCondition.Location = new System.Drawing.Point(350, 110);
       this.groupBoxCondition.Name = "groupBoxCondition";
       this.groupBoxCondition.Size = new System.Drawing.Size(224, 100);
       this.groupBoxCondition.TabIndex = 15;
@@ -661,7 +669,7 @@ namespace MediaPortal.InputDevices
       this.groupBoxLayer.Controls.Add(this.labelLayer);
       this.groupBoxLayer.Enabled = false;
       this.groupBoxLayer.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxLayer.Location = new System.Drawing.Point(352, 48);
+      this.groupBoxLayer.Location = new System.Drawing.Point(350, 48);
       this.groupBoxLayer.Name = "groupBoxLayer";
       this.groupBoxLayer.Size = new System.Drawing.Size(224, 52);
       this.groupBoxLayer.TabIndex = 22;
@@ -691,7 +699,7 @@ namespace MediaPortal.InputDevices
       // buttonEdit
       // 
       this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonEdit.Location = new System.Drawing.Point(208, 392);
+      this.buttonEdit.Location = new System.Drawing.Point(208, 397);
       this.buttonEdit.Name = "buttonEdit";
       this.buttonEdit.Size = new System.Drawing.Size(56, 20);
       this.buttonEdit.TabIndex = 30;
@@ -703,7 +711,7 @@ namespace MediaPortal.InputDevices
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.AutoScroll = true;
-      this.ClientSize = new System.Drawing.Size(592, 470);
+      this.ClientSize = new System.Drawing.Size(590, 475);
       this.Controls.Add(this.buttonEdit);
       this.Controls.Add(this.labelExpand);
       this.Controls.Add(this.treeMapping);
@@ -1582,6 +1590,7 @@ namespace MediaPortal.InputDevices
         NewButtonForm newButtonForm = new NewButtonForm();
         newButtonForm.ButtonName = (string)data.Parameter;
         newButtonForm.ButtonCode = (string)data.Value;
+       
         newButtonForm.ShowDialog();
         if (newButtonForm.Accepted)
         {
@@ -1843,5 +1852,7 @@ namespace MediaPortal.InputDevices
     //    {
     //      e.Effect=DragDropEffects.Move;
     //    }
+
+
   }
 }

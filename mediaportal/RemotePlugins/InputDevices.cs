@@ -55,7 +55,7 @@ namespace MediaPortal.InputDevices
       MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
       FireDTVRemote.Init(GUIGraphicsContext.ActiveForm);
       HCWRemote.Init(GUIGraphicsContext.ActiveForm);
-      X10Remote.Init(GUIGraphicsContext.ActiveForm);
+      X10Remote.Init();
       IrTrans.Init(GUIGraphicsContext.ActiveForm);
       //Keyboard.Init(GUIGraphicsContext.ActiveForm);
     }
@@ -72,7 +72,6 @@ namespace MediaPortal.InputDevices
       MCE2005Remote.DeInit();
       FireDTVRemote.DeInit();
       HCWRemote.DeInit();
-      X10Remote.DeInit();
       IrTrans.DeInit();
       //Keyboard.DeInit();
       diRemote.Stop();
