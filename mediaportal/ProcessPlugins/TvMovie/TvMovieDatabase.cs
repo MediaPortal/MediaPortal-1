@@ -579,7 +579,7 @@ namespace ProcessPlugins.TvMovie
         long lastUpdate = 0;
 
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-          if (xmlreader.GetValueAsBool("tvmovie", "usedatabasedate", false))
+          if (xmlreader.GetValueAsBool("tvmovie", "usedatabasedate", true))
           {
             FileInfo mpFi = new FileInfo(DatabasePath);
             DateTime dbUpdate = mpFi.LastWriteTime;
