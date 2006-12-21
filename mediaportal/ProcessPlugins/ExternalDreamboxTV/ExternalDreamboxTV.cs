@@ -128,8 +128,6 @@ namespace ProcessPlugins.ExternalDreamboxTV
 
         void _SyncTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            Log.Info("DreamboxTV: Timer Tick!");
-
             // check for last time
             string sLastEPGSync = "";
             System.DateTime lastEPGSync = System.DateTime.Now.AddDays(-1);
@@ -149,17 +147,16 @@ namespace ProcessPlugins.ExternalDreamboxTV
             System.DateTime test = lastEPGSync.AddHours(_SyncHours);
             if (test < System.DateTime.Now)
             {
-                // Get EPG
-                Log.Info("DreamboxTV: Get EPG");
-                if (!this._EPGbackgroundWorker.IsBusy)
-                    this._EPGbackgroundWorker.RunWorkerAsync();
-                //this.ImportEPG();
-
                 // Save new Sync Data
                 using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
                 {
                     xmlwriter.SetValue("Dreambox", "LastEPGSync", System.DateTime.Now.ToString());
                 }
+
+                // Get EPG
+                Log.Info("DreamboxTV: Get EPG");
+                if (!this._EPGbackgroundWorker.IsBusy)
+                    this._EPGbackgroundWorker.RunWorkerAsync();
             }
 
 
@@ -172,7 +169,8 @@ namespace ProcessPlugins.ExternalDreamboxTV
             {
                     
                 case GUIMessage.MessageType.GUI_MSG_TUNE_EXTERNAL_CHANNEL:
-                    Log.Info("DreamboxTV: Changing channel");
+
+                    Log.Info("DreamboxTV: Changing channel to");
                     bool bIsInteger;
                     double retNum;
                     bIsInteger = Double.TryParse(message.Label, System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
@@ -210,7 +208,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
         public void ChangeTunerChannel(string channel_data)
         {
             Log.Info("ExternalDreamboxTV processing external tuner cmd: {0}", channel_data);
-            // ZAP
+            // ZAP (no need to put this on a thread, it JUST need to take control and do it's thing
             Zap(channel_data);
         }
 
@@ -224,7 +222,7 @@ namespace ProcessPlugins.ExternalDreamboxTV
                     dreambox.Remote.Zap(reference);
                     Log.Info("ExternalDreamboxTV ZAP: {0}\r\n", reference);
                 }
-                else
+                else // Error! Config data missing
                     Log.Info("ExternalDreamboxTV Error: {0}\r\n", "Could not zap because IP address of dreambox not set.");
 
             }

@@ -275,13 +275,14 @@ namespace MediaPortal.VideoLanPlugin
 
         void Player_playEvent()
         {
-            Log.Write("VideoLanPlugin: Playback started: {0}, {1}", vlcControl.Player.MRL, vlcControl.Player.Length);
+            
+            Log.Info("VideoLanPlugin: Playback started: {0}, {1}", vlcControl.Player.MRL, vlcControl.Player.Length);
             _started = true;
         }
 
         void Player_stopEvent()
         {
-            Log.Write("VideoLanPlugin: Playback stopped: {0}, {1}", vlcControl.Player.MRL, vlcControl.Player.Length);
+            Log.Info("VideoLanPlugin: Playback stopped: {0}, {1}", vlcControl.Player.MRL, vlcControl.Player.Length);
             vlcControl.Player.stop();
             _ended = true;
         }
@@ -473,7 +474,7 @@ namespace MediaPortal.VideoLanPlugin
                         msg.Label = CurrentFile;
 
                     GUIWindowManager.SendThreadMessage(msg);
-                    Log.Write("Message Playing 10 sec sent");
+                    Log.Info("Message Playing 10 sec sent");
                 }
             }
         }
