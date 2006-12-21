@@ -1461,70 +1461,145 @@ namespace MediaPortal.Configuration
 
       if (CaptureCard != null && CaptureCard.FriendlyName != String.Empty)
       {
-        string filename = String.Format(Config.GetFile(Config.Dir.Database,"card_{0}.xml"), CaptureCard.FriendlyName);
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))
+        try
         {
-          xmlwriter.SetValueAsBool("quality", "enabled", checkBoxHiQuality.Checked);
-          xmlwriter.SetValue("quality", "default", comboBoxQuality.SelectedIndex);
-          xmlwriter.SetValue("mapping", "audio1", comboBox1Audio.SelectedIndex);
-          xmlwriter.SetValue("mapping", "audio2", comboBox2Audio.SelectedIndex);
-          xmlwriter.SetValue("mapping", "audio3", comboBox3Audio.SelectedIndex);
-          xmlwriter.SetValue("mapping", "audio4", cbRgbAudio.SelectedIndex);
-          xmlwriter.SetValue("quality", "audiodefault", comboBoxAudioQuality.SelectedIndex);
-          xmlwriter.SetValue("quality", "audioquality", comboBoxAudioQuality.SelectedItem.ToString().Substring(0, 3));
-          xmlwriter.SetValue("mapping", "video1", comboBox1Video.SelectedIndex);
-          xmlwriter.SetValue("mapping", "video2", comboBox2Video.SelectedIndex);
-          xmlwriter.SetValue("mapping", "video3", comboBox3Video.SelectedIndex);
-          xmlwriter.SetValue("mapping", "video4", cbRgbVideo.SelectedIndex);
-
-
-          xmlwriter.SetValue("quality", "portLow", tbPortMin.Text);
-          xmlwriter.SetValue("quality", "portMax", tbPortMax.Text);
-          xmlwriter.SetValueAsBool("quality", "portVBR", cbPortVBR.Checked);
-
-
-          xmlwriter.SetValue("quality", "LowLow", tbLowMin.Text);
-          xmlwriter.SetValue("quality", "LowMax", tbLowMax.Text);
-          xmlwriter.SetValueAsBool("quality", "LowVBR", cbLowVBR.Checked);
-
-          xmlwriter.SetValue("quality", "MedLow", tbMedMin.Text);
-          xmlwriter.SetValue("quality", "MedMax", tbMedMax.Text);
-          xmlwriter.SetValueAsBool("quality", "MedVBR", cbMedVBR.Checked);
-
-
-          xmlwriter.SetValue("quality", "HighLow", tbHighMin.Text);
-          xmlwriter.SetValue("quality", "HighMax", tbHighMax.Text);
-          xmlwriter.SetValueAsBool("quality", "HighVBR", cbHighVBR.Checked);
-          if (checkBoxHWPidFiltering.Visible)
-            xmlwriter.SetValueAsBool("general", "hwfiltering", checkBoxHWPidFiltering.Checked);
-          if (comboBoxCAM.Visible)
-            xmlwriter.SetValue("dvbs", "cam", comboBoxCAM.SelectedItem);
-          if (comboBoxFrameRate.Visible)
-            xmlwriter.SetValue("analog", "framerate", comboBoxFrameRate.Text);
-          if (comboBoxFrameSize.Visible)
-            xmlwriter.SetValue("analog", "framesize", comboBoxFrameSize.Text);
-          if (checkBox5vAntennae.Visible)
-            xmlwriter.SetValueAsBool("general", "Antennae5v", checkBox5vAntennae.Checked);
-        }
-        IEnumerator enumerator = this.tabPageAutotune.Controls.GetEnumerator();
-        if (enumerator.MoveNext())
-        {
-          Sections.Wizard_ScanBase currentDialog = (Sections.Wizard_ScanBase)enumerator.Current;
-          if (currentDialog != null)
+          string filename = String.Format(Config.GetFile(Config.Dir.Database, "card_{0}.xml"), CaptureCard.FriendlyName);
+          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))
           {
-            currentDialog.SaveSettings();
+            Log.Debug("*** HiQuality {0}", Convert.ToString(checkBoxHiQuality.Checked));
+            xmlwriter.SetValueAsBool("quality", "enabled", checkBoxHiQuality.Checked);
+
+            Log.Debug("*** quality {0}", Convert.ToString(comboBoxQuality.SelectedIndex));
+            xmlwriter.SetValue("quality", "default", comboBoxQuality.SelectedIndex);
+
+            Log.Debug("*** audio1 {0}", Convert.ToString(comboBox1Audio.SelectedIndex));
+            xmlwriter.SetValue("mapping", "audio1", comboBox1Audio.SelectedIndex);
+
+            Log.Debug("*** audio2 {0}", Convert.ToString(comboBox2Audio.SelectedIndex));
+            xmlwriter.SetValue("mapping", "audio2", comboBox2Audio.SelectedIndex);
+
+            Log.Debug("*** audio3 {0}", Convert.ToString(comboBox3Audio.SelectedIndex));
+            xmlwriter.SetValue("mapping", "audio3", comboBox3Audio.SelectedIndex);
+
+            Log.Debug("*** audio4 {0}", Convert.ToString(cbRgbAudio.SelectedIndex));
+            xmlwriter.SetValue("mapping", "audio4", cbRgbAudio.SelectedIndex);
+
+            Log.Debug("*** audiodefault {0}", Convert.ToString(comboBoxAudioQuality.SelectedIndex));
+            xmlwriter.SetValue("quality", "audiodefault", comboBoxAudioQuality.SelectedIndex);
+
+            Log.Debug("*** audioquality {0}", comboBoxAudioQuality.SelectedItem.ToString().Substring(0, 3));
+            xmlwriter.SetValue("quality", "audioquality", comboBoxAudioQuality.SelectedItem.ToString().Substring(0, 3));
+
+            Log.Debug("*** video1 {0}", Convert.ToString(comboBox1Video.SelectedIndex));
+            xmlwriter.SetValue("mapping", "video1", comboBox1Video.SelectedIndex);
+
+            Log.Debug("*** video2 {0}", Convert.ToString(comboBox2Video.SelectedIndex));
+            xmlwriter.SetValue("mapping", "video2", comboBox2Video.SelectedIndex);
+
+            Log.Debug("*** video3 {0}", Convert.ToString(comboBox3Video.SelectedIndex));
+            xmlwriter.SetValue("mapping", "video3", comboBox3Video.SelectedIndex);
+
+            Log.Debug("*** video4 {0}", Convert.ToString(cbRgbVideo.SelectedIndex));
+            xmlwriter.SetValue("mapping", "video4", cbRgbVideo.SelectedIndex);
+
+
+            Log.Debug("*** portLow {0}", tbPortMin.Text);
+            xmlwriter.SetValue("quality", "portLow", tbPortMin.Text);
+
+            Log.Debug("*** portMax {0}", tbPortMax.Text);
+            xmlwriter.SetValue("quality", "portMax", tbPortMax.Text);
+
+            Log.Debug("*** portVBR {0}", Convert.ToString(cbPortVBR.Checked));
+            xmlwriter.SetValueAsBool("quality", "portVBR", cbPortVBR.Checked);
+
+
+            Log.Debug("*** LowLow {0}", tbLowMin.Text);
+            xmlwriter.SetValue("quality", "LowLow", tbLowMin.Text);
+
+            Log.Debug("*** LowMax {0}", tbLowMax.Text);
+            xmlwriter.SetValue("quality", "LowMax", tbLowMax.Text);
+
+            Log.Debug("*** LowVBR {0}", Convert.ToString(cbLowVBR.Checked));
+            xmlwriter.SetValueAsBool("quality", "LowVBR", cbLowVBR.Checked);
+
+            Log.Debug("*** MedLow {0}", tbMedMin.Text);
+            xmlwriter.SetValue("quality", "MedLow", tbMedMin.Text);
+
+            Log.Debug("*** MedMax {0}", tbMedMax.Text);
+            xmlwriter.SetValue("quality", "MedMax", tbMedMax.Text);
+
+            Log.Debug("*** MedVBR {0}", Convert.ToString(cbMedVBR.Checked));
+            xmlwriter.SetValueAsBool("quality", "MedVBR", cbMedVBR.Checked);
+
+
+            Log.Debug("*** HighLow {0}", tbHighMin.Text);
+            xmlwriter.SetValue("quality", "HighLow", tbHighMin.Text);
+
+            Log.Debug("*** HighMax {0}", tbHighMax.Text);
+            xmlwriter.SetValue("quality", "HighMax", tbHighMax.Text);
+
+            Log.Debug("*** HighVBR {0}", Convert.ToString(cbHighVBR.Checked));
+            xmlwriter.SetValueAsBool("quality", "HighVBR", cbHighVBR.Checked);
+
+            Log.Debug("*** hwfiltering {0}", Convert.ToString(checkBoxHWPidFiltering.Checked));
+            if (checkBoxHWPidFiltering.Visible)
+              xmlwriter.SetValueAsBool("general", "hwfiltering", checkBoxHWPidFiltering.Checked);
+
+            Log.Debug("*** cam {0}", Convert.ToString(comboBoxCAM.SelectedItem));
+            if (comboBoxCAM.Visible)
+              xmlwriter.SetValue("dvbs", "cam", comboBoxCAM.SelectedItem);
+
+            Log.Debug("*** framerate {0}", comboBoxFrameRate.Text);
+            if (comboBoxFrameRate.Visible)
+              xmlwriter.SetValue("analog", "framerate", comboBoxFrameRate.Text);
+
+            Log.Debug("*** framesize {0}", comboBoxFrameSize.Text);
+            if (comboBoxFrameSize.Visible)
+              xmlwriter.SetValue("analog", "framesize", comboBoxFrameSize.Text);
+
+            Log.Debug("*** Antennae5v {0}", Convert.ToString(checkBox5vAntennae.Checked));
+            if (checkBox5vAntennae.Visible)
+              xmlwriter.SetValueAsBool("general", "Antennae5v", checkBox5vAntennae.Checked);
           }
         }
-        // save crop settings
-        MediaPortal.Player.CropSettings cropSettings = new MediaPortal.Player.CropSettings(
-                    Convert.ToInt32(mpNumericUpDownTop.Value),
-                    Convert.ToInt32(mpNumericUpDownBottom.Value),
-                    Convert.ToInt32(mpNumericUpDownLeft.Value),
-                    Convert.ToInt32(mpNumericUpDownRight.Value)
-                    );
-        CaptureCard.CropSettings = cropSettings;
-      }
+        catch (Exception ex)
+        {
+          Log.Error("EditCaptureCardForm: ERROR saving card {0} - {1} , {2} , {3}", CaptureCard.FriendlyName, ex.Message, ex.Source, ex.StackTrace);
+        }
 
+        try
+        {
+          IEnumerator enumerator = this.tabPageAutotune.Controls.GetEnumerator();
+          if (enumerator.MoveNext())
+          {
+            Sections.Wizard_ScanBase currentDialog = (Sections.Wizard_ScanBase)enumerator.Current;
+            if (currentDialog != null)
+            {
+              currentDialog.SaveSettings();
+            }
+          }
+        }
+        catch (Exception ex2)
+        {
+          Log.Error("EditCaptureCardForm: ERROR in Wizard_ScanBase dialog {0} , {1} , {2}", ex2.Message, ex2.Source, ex2.StackTrace);
+        }
+
+        try
+        {
+          // save crop settings
+          MediaPortal.Player.CropSettings cropSettings = new MediaPortal.Player.CropSettings(
+                      Convert.ToInt32(mpNumericUpDownTop.Value),
+                      Convert.ToInt32(mpNumericUpDownBottom.Value),
+                      Convert.ToInt32(mpNumericUpDownLeft.Value),
+                      Convert.ToInt32(mpNumericUpDownRight.Value)
+                      );
+          CaptureCard.CropSettings = cropSettings;
+        }
+        catch (Exception ex3)
+        {
+          Log.Error("EditCaptureCardForm: ERROR saving crop settings {0} , {1} , {2}", ex3.Message, ex3.Source, ex3.StackTrace);
+        }
+      }
     }
 
     /// <summary>
