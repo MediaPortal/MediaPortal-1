@@ -179,6 +179,18 @@
     <Compile Include="Sections\CardDvbT.Designer.cs">
       <DependentUpon>CardDvbT.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\ChannelsInGroupControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\ChannelsInGroupControl.Designer.cs">
+      <DependentUpon>ChannelsInGroupControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\Combinations.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\Combinations.Designer.cs">
+      <DependentUpon>Combinations.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\FormEditChannel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -340,6 +352,14 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Sections\ChannelsInGroupControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ChannelsInGroupControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\Combinations.resx">
+      <DependentUpon>Combinations.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\FormEditChannel.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FormEditChannel.cs</DependentUpon>

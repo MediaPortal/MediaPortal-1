@@ -158,6 +158,7 @@ namespace SetupTv
 
         TvChannels tvChannels = new TvChannels();
         AddSection(tvChannels);
+        AddChildSection(tvChannels, new TvCombinations());
         AddChildSection(tvChannels, new TvChannelMapping());
         AddChildSection(tvChannels, new TvEpgGrabber());
         AddChildSection(tvChannels, new TvGroups());
