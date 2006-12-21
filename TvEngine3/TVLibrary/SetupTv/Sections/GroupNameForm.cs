@@ -44,6 +44,7 @@ namespace SetupTv.Sections
 
     private void mpButton1_Click(object sender, EventArgs e)
     {
+      DialogResult = DialogResult.OK;
       _groupName = mpTextBox1.Text;
       Close();
     }

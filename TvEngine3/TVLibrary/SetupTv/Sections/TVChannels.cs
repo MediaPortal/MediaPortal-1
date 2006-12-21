@@ -73,13 +73,13 @@ namespace SetupTv.Sections
         AsString,
         AsValue
       };
-      public int SortColumn=0;
+      public int SortColumn = 0;
       public SortOrder Order = SortOrder.Ascending;
       public OrderTypes OrderType = OrderTypes.AsString;
 
       public int Compare(object x, object y)
       {
-        int compareResult=0;
+        int compareResult = 0;
         ListViewItem listviewX, listviewY;
         // Cast the objects to be compared to ListViewItem objects
         listviewX = (ListViewItem)x;
@@ -165,6 +165,7 @@ namespace SetupTv.Sections
 
     public override void OnSectionDeActivated()
     {
+
       for (int i = 0; i < mpListView1.Items.Count; ++i)
       {
         Channel ch = (Channel)mpListView1.Items[i].Tag;
@@ -180,8 +181,25 @@ namespace SetupTv.Sections
       RemoteControl.Instance.OnNewSchedule();
       base.OnSectionDeActivated();
     }
+    void UpdateMenu()
+    {
+      addToFavoritesToolStripMenuItem.DropDownItems.Clear();
+      IList groups = ChannelGroup.ListAll();
+      foreach (ChannelGroup group in groups)
+      {
+        ToolStripMenuItem item = new ToolStripMenuItem(group.GroupName);
+        item.Tag = group;
+        item.Click += new EventHandler(OnAddToFavoritesMenuItem_Click);
+        addToFavoritesToolStripMenuItem.DropDownItems.Add(item);
+      }
+      ToolStripMenuItem itemNew = new ToolStripMenuItem("New...");
+      itemNew.Click += new EventHandler(OnAddToFavoritesMenuItem_Click);
+      addToFavoritesToolStripMenuItem.DropDownItems.Add(itemNew);
+    }
+
     public override void OnSectionActivated()
     {
+      UpdateMenu();
       _redrawTab1 = false;
       mpComboBoxCard.Items.Clear();
       IList dbsCards = Card.ListAll();
@@ -285,6 +303,36 @@ namespace SetupTv.Sections
       mpListView1.Items.AddRange(items.ToArray());
       mpListView1.EndUpdate();
       mpLabelChannelCount.Text = String.Format("Total channels:{0}", channelCount);
+    }
+
+    void OnAddToFavoritesMenuItem_Click(object sender, EventArgs e)
+    {
+      ChannelGroup group;
+      ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
+      if (menuItem.Tag == null)
+      {
+        GroupNameForm dlg = new GroupNameForm();
+        if (dlg.ShowDialog(this) != DialogResult.OK)
+        {
+          return;
+        }
+        group = new ChannelGroup(dlg.GroupName);
+        group.Persist();
+        UpdateMenu();
+      }
+      else
+      {
+        group = (ChannelGroup)menuItem.Tag;
+      }
+      ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
+      if (indexes.Count == 0) return;
+      TvBusinessLayer layer = new TvBusinessLayer();
+      for (int i = 0; i < indexes.Count; ++i)
+      {
+        ListViewItem item = mpListView1.Items[indexes[i]];
+        Channel channel = (Channel)item.Tag;
+        layer.AddChannelToGroup(channel, group.GroupName);
+      }
     }
 
     private void mpButtonClear_Click(object sender, EventArgs e)
@@ -888,7 +936,7 @@ namespace SetupTv.Sections
         groupMap.IdChannel = selectedChannel.IdChannel;
         groupMap.Persist();
       }
-      foreach(Program program in selectedChannel2.ReferringProgram())
+      foreach (Program program in selectedChannel2.ReferringProgram())
       {
         program.IdChannel = selectedChannel.IdChannel;
         program.Persist();

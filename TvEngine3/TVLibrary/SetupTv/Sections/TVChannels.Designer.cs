@@ -28,6 +28,7 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
@@ -57,9 +58,12 @@ namespace SetupTv.Sections
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.mpComboBoxCard = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+      this.addToFavoritesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
+      this.contextMenuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
       // mpListView1
@@ -73,6 +77,7 @@ namespace SetupTv.Sections
             this.columnHeader3,
             this.columnHeader2,
             this.columnHeader4});
+      this.mpListView1.ContextMenuStrip = this.contextMenuStrip1;
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.LabelEdit = true;
       this.mpListView1.Location = new System.Drawing.Point(13, 41);
@@ -337,6 +342,19 @@ namespace SetupTv.Sections
       this.mpLabel1.TabIndex = 9;
       this.mpLabel1.Text = "Card:";
       // 
+      // contextMenuStrip1
+      // 
+      this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addToFavoritesToolStripMenuItem});
+      this.contextMenuStrip1.Name = "contextMenuStrip1";
+      this.contextMenuStrip1.Size = new System.Drawing.Size(159, 26);
+      // 
+      // addToFavoritesToolStripMenuItem
+      // 
+      this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
+      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+      this.addToFavoritesToolStripMenuItem.Text = "Add to favorites";
+      // 
       // TvChannels
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -350,6 +368,7 @@ namespace SetupTv.Sections
       this.tabPage1.PerformLayout();
       this.tabPage2.ResumeLayout(false);
       this.tabPage2.PerformLayout();
+      this.contextMenuStrip1.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -385,5 +404,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader8;
     private System.Windows.Forms.Button btnCombine;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonPreview;
+    private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+    private System.Windows.Forms.ToolStripMenuItem addToFavoritesToolStripMenuItem;
   }
 }
