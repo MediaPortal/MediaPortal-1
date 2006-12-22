@@ -6,6 +6,19 @@
   <controls>
     <import>common.progressbar.xml</import>
     <control>
+      <description>Current Time Info</description>
+      <type>label</type>
+      <id>110</id>
+      <posX>650</posX>
+      <posY>40</posY>
+      <label>#time</label>
+      <align>center</align>
+      <font>font13</font>
+      <textcolor>FF071422</textcolor>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
       <description>background</description>
       <type>image</type>
       <id>0</id>
@@ -14,19 +27,6 @@
       <width>400</width>
       <height>230</height>
       <texture>osd_bg_video.png</texture>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
-    </control>
-    <control>
-      <description>Current Time Info</description>
-      <type>label</type>
-      <id>110</id>
-      <posX>630</posX>
-      <posY>30</posY>
-      <label>#time</label>
-      <align>left</align>
-      <font>font13</font>
-      <textcolor>FF071422</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
