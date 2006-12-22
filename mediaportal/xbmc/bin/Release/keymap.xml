@@ -242,6 +242,12 @@
       <sound />
       <description>Toggle Autocrop</description>
     </action>
+    <action>
+      <id>115</id>
+      <key>H</key>
+      <sound>back.wav</sound>
+      <description>TGB - Switch home</description>
+    </action>
   </global>
   <window>
     <id>603</id>

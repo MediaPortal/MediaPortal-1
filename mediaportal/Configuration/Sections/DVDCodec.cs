@@ -123,7 +123,7 @@ namespace MediaPortal.Configuration.Sections
         string dvdNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
         checkBoxAC3.Checked = xmlreader.GetValueAsBool("dvdplayer", "ac3", false);
         //checkBoxRGB.Checked = xmlreader.GetValueAsBool("dvdplayer", "usergbmode", false);
-        checkBoxDXVA.Checked = xmlreader.GetValueAsBool("dvdplayer", "turnoffdxva", false);
+        checkBoxDXVA.Checked = xmlreader.GetValueAsBool("dvdplayer", "turnoffdxva", true);
 
         audioRendererComboBox.SelectedItem = audioRenderer;
         dvdNavigatorComboBox.SelectedItem = dvdNavigator;

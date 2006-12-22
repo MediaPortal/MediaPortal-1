@@ -42,7 +42,6 @@
         <type>button</type>
         <id>30</id>
         <label>492</label>
-        <onup>17</onup>
       </control>
     </control>
   </controls>
