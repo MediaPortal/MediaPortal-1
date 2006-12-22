@@ -31,7 +31,6 @@ using System.IO;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using AxX10;
 using MediaPortal.GUI.Library;
 using MediaPortal.InputDevices;
 using MediaPortal.Profile;
@@ -360,6 +359,28 @@ namespace MediaPortal.Configuration.Sections
             X10Remote = new X10Remote();
             X10Remote.Init();
           }
+
+          if (X10Remote._controlEnabled == false)
+          {
+              Log.Warn("x10Remote: Can't initialize");
+              labelX10DriverInfo.Visible = true;
+              labelX10DriverInfo.ForeColor = Color.Red;
+              labelX10DriverInfo.Text = "The X10 Driver is not installed.\nYou have to use the driver below, or your remote might not work with MediaPortal.";
+              linkLabelDownloadX10.Visible = true;
+              labelX10Status.Visible = false;
+              buttonX10LearnChannel.Enabled = false;
+              checkBoxX10Enabled.Checked = false;
+              checkBoxX10Enabled.Enabled = false;
+          }
+          else
+          {
+              Log.Info("x10Remote:Initialized");
+              labelX10DriverInfo.Visible = false;
+              linkLabelDownloadX10.Visible = true;
+              labelX10Status.Visible = true;
+              labelX10Status.Text = "The X10 Driver is installed. If you experience problems with this driver,\nuninstall your current driver and download the version below";
+          }
+
         }
         catch (COMException)
         {
@@ -372,11 +393,7 @@ namespace MediaPortal.Configuration.Sections
           buttonX10LearnChannel.Enabled = false;
 
         }
-        Log.Info("x10Remote:Initialized");
-        labelX10DriverInfo.Visible = false;
-        linkLabelDownloadX10.Visible = true;
-        labelX10Status.Visible = true;
-        labelX10Status.Text = "The X10 Driver is installed. If you experience problems with this driver,\nuninstall your current driver and download the version below";
+        
         #endregion
 
         #region General HID

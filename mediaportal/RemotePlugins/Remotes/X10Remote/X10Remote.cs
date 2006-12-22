@@ -47,7 +47,7 @@ namespace MediaPortal.InputDevices
     X10Sink X10Sink = null;
     int cookie = 0;
     InputHandler _inputHandler = null;
-    bool _controlEnabled = false;
+    public bool _controlEnabled = false;
     bool _logVerbose = false;
     bool _x10Medion = true;
     bool _x10Ati = false;
@@ -66,8 +66,6 @@ namespace MediaPortal.InputDevices
 
     public void Init()
     {
-      //IX10Interface test = new IX10Interface();
-      
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _controlEnabled = xmlreader.GetValueAsBool("remote", "X10", false);
@@ -115,6 +113,11 @@ namespace MediaPortal.InputDevices
           if (X10Inter == null)
           {
             X10Inter = new X10Interface();
+            if (X10Inter == null)
+            {
+                Log.Info("X10 debug: Could not get interface");
+                return;
+            }
             X10Sink = new X10Sink(_inputHandler, _logVerbose);
             icpc = (IConnectionPointContainer)X10Inter;
             Guid IID_InterfaceEvents = typeof(_DIX10InterfaceEvents).GUID;
@@ -124,6 +127,7 @@ namespace MediaPortal.InputDevices
         }
         catch (System.Runtime.InteropServices.COMException)
         {
+            Log.Info("X10 Debug: Com error");
         }
       }
       
