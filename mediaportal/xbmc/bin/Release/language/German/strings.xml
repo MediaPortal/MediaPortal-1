@@ -5312,6 +5312,10 @@
         <id>19119</id>
         <value>Von vorne beginnen</value>
     </string>
+    <string>
+        <id>19121</id>
+        <value>Zeit: </value>
+    </string>
 
     <string>
         <id>25001</id>

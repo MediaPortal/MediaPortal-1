@@ -20,7 +20,7 @@
       <id>105</id>
       <posX>196</posX>
       <posY>25</posY>
-      <width>780</width>
+      <width>825</width>
       <height>30</height>
       <texture>osd_progress_background.png</texture>
       <visible>no</visible>
@@ -33,7 +33,7 @@
       <id>1</id>
       <posX>185</posX>
       <posY>33</posY>
-      <width>814</width>
+      <width>859</width>
       <height>14</height>
       <label>#percentage</label>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -43,10 +43,10 @@
       <description>Start Time Info</description>
       <type>label</type>
       <id>101</id>
-      <posX>100</posX>
-      <posY>27</posY>
+      <posX>130</posX>
+      <posY>43</posY>
       <label>#currentplaytime</label>
-      <align>left</align>
+      <align>center</align>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -57,26 +57,30 @@
       <description>End Time Info</description>
       <type>label</type>
       <id>102</id>
-      <posX>1032</posX>
-      <posY>27</posY>
+      <posX>1085</posX>
+      <posY>43</posY>
       <label>#currentremaining</label>
-      <align>left</align>
+      <align>center</align>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
       <visible>no</visible>
     </control>
-    <!-- 	<control>
-		<description>Current Time Info</description>
-		<type>label</type>
-		<id>0</id>
-		<posX>1186</posX>
-		<posY>29</posY>
-		<label>#time</label>
-		<align>left</align>
-		<font>font13</font>
-		<textcolor>FF071422</textcolor>
-	</control> -->
+    <!--
+    <control>
+      <description>Current Time Info</description>
+      <type>label</type>
+      <id>110</id>
+      <posX>1221</posX>
+      <posY>43</posY>
+      <label>#time</label>
+      <align>center</align>
+      <font>font13</font>
+      <textcolor>FF071422</textcolor>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    -->
   </controls>
 </window>

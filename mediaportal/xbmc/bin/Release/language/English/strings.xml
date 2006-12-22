@@ -5313,6 +5313,10 @@
         <value>Reset game</value>
     </string>
     <string>
+        <id>19121</id>
+        <value>Time: </value>
+    </string>
+    <string>
         <id>25001</id>
         <value>Waiting for Page {0:X}...!</value>
     </string>
