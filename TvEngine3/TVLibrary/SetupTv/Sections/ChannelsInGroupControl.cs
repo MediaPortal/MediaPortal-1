@@ -120,7 +120,6 @@ namespace SetupTv.Sections
 
     private void mpButtonDel_Click(object sender, EventArgs e)
     {
-      listView1.BeginUpdate();
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
       if (indexes.Count == 0) return;
       for (int i = indexes.Count - 1; i >= 0; i--)
@@ -135,7 +134,6 @@ namespace SetupTv.Sections
         }
       }
       ReOrder();
-      listView1.EndUpdate();
     }
 
   }

@@ -28,7 +28,7 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.listView1 = new System.Windows.Forms.ListView();
+      this.listView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
@@ -118,7 +118,7 @@ namespace SetupTv.Sections
 
     #endregion
 
-    private System.Windows.Forms.ListView listView1;
+    private MediaPortal.UserInterface.Controls.MPListView listView1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private System.Windows.Forms.ColumnHeader columnHeader3;
