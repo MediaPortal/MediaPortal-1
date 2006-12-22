@@ -193,13 +193,8 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
   BYTE v1,v2,v3,v4;
   bdaapiGetDrvVersion(m_hBdaApi,&v1,&v2,&v3,&v4);
   LogDebug("Technotrend: initalized id:%x, driver version:%d.%d.%d.%d",deviceId,v1,v2,v3,v4);
-  TS_FilterNames filterNames;
-  bdaapiGetDevNameAndFEType(m_hBdaApi,&filterNames);
-  LogDebug("Technotrend: type:%d", filterNames.FeType);
-  LogDebug("Technotrend: analog tuner filter:%s", filterNames.szAnlgTunerFilterName);
-  LogDebug("Technotrend: analog capture filter:%s", filterNames.szAnlgCaptureFilterName);
-  LogDebug("Technotrend: tuner filter:%s", filterNames.szTunerFilterName);
-  LogDebug("Technotrend: capture filter:%s", filterNames.szCaptureFilterName);
+	
+
   return S_OK;
 }
 
@@ -279,6 +274,8 @@ STDMETHODIMP CTechnotrend::SetDisEqc(int diseqcType, int hiband, int vertical)
 
   HRESULT hr=bdaapiSetDiSEqCMsg(m_hBdaApi,&data[0],4,0,0,polarity);
   LogDebug("TechnoTrend:SetDiseqc:%x %x", diseqc,hr);
+	bdaapiCIGetSlotStatus(m_hBdaApi,0);
+	
   return S_OK;
 }
 
@@ -288,8 +285,9 @@ STDMETHODIMP CTechnotrend::DescrambleService( int serviceId,BOOL* succeeded)
   *succeeded=FALSE;
   BOOL enabled=FALSE;
   m_ciStatus=-1;
+	bdaapiCIGetSlotStatus(m_hBdaApi,0);
 	LogDebug("TechnoTrend: DescrambleService:0x%x (%d) (%d)",serviceId,serviceId,m_slotStatus);
-  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK)
+	if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK )
   {
     hr = bdaapiCIReadPSIFastDrvDemux(m_hBdaApi, (WORD)serviceId);
     if (hr==RET_SUCCESS)
@@ -310,6 +308,12 @@ STDMETHODIMP CTechnotrend::DescrambleService( int serviceId,BOOL* succeeded)
       LogDebug("TechnoTrend: service not decoded:%x",hr);
     }    
   }
+	else if (m_slotStatus==CI_SLOT_UNKNOWN_STATE || m_slotStatus==CI_SLOT_EMPTY)
+	{
+		//no CAM inserted
+      LogDebug("TechnoTrend: no cam detected:%d",m_slotStatus);
+    *succeeded=TRUE;
+	}
   
   return S_OK;
 }
@@ -361,6 +365,7 @@ bool CTechnotrend::GetDeviceID(IBaseFilter* tunerFilter, UINT& deviceId)
 
 void CTechnotrend::OnCaChange(BYTE  nSlot,BYTE  nReplyTag,WORD  wStatus)
 {
+	LogDebug("$ OnCaChange slot:%d reply:%d status:%d",nSlot,nReplyTag,wStatus);
 	switch(nReplyTag)	
 	{
 		case CI_PSI_COMPLETE:
@@ -403,6 +408,7 @@ void CTechnotrend::OnSlotChange(BYTE nSlot,BYTE nStatus,TYP_SLOT_INFO* csInfo)
   else if (nStatus==4) LogDebug("Technotrend: slot:%d dbg msg",nSlot);
   else  LogDebug("Technotrend: slot:%d unknown state:%x",nSlot,nStatus);
   m_slotStatus=nStatus;
+	
   if (csInfo!=NULL)
   {
     LogDebug("Technotrend:    CI status:%d ",csInfo->nStatus);

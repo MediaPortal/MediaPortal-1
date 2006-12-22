@@ -2652,6 +2652,7 @@ namespace TvLibrary.Implementations.DVB
                   {
                     _pmtVersion = version;
                     Log.Log.WriteFile("dvb:cam flags:{0}", _conditionalAccess.IsCamReady());
+                    _pmtTimer.Interval = 100;
                     return true;
                   }
                   else
@@ -2659,9 +2660,11 @@ namespace TvLibrary.Implementations.DVB
                     //cam is not ready yet
                     Log.Log.WriteFile("dvb:SendPmt failed cam flags:{0}", _conditionalAccess.IsCamReady());
                     _pmtVersion = -1;
+                    _pmtTimer.Interval = 3000;
                     return false;
                   }
                 }
+                _pmtTimer.Interval = 100;
                 _pmtVersion = version;
 
                 return true;
