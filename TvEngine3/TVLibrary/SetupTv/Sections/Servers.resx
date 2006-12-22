@@ -117,4 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <metadata name="imageList1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="imageList1.ImageStream" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
+        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
+        ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAADy
+        AQAAAk1TRnQBSQFMAwEBAAEFAQABBAEAARABAAEQAQAE/wEZAQAI/wFCAU0BNgcAATYDAAEoAwABQAMA
+        ARADAAEBAQABGAYAAQwwAAOABsADgJYAA4Ab/wOABv8DwAOAlgAGgAP/AwADgAP/AwADgAP/AwAM/wOA
+        lgAD/wPAA4AYwAP/A4ADwJYAA/8PwA+AA8ADgJkAJP8DgLoAA4ADwJwAA4AbwAaAnAADgAPAAYACAAGA
+        AgABgAIAAYACAAGAAgABgAIAAYACAAPAA4CfAAOAA8AB/wIAAf8CAAH/AgAB/wIAAf8CAAH/AgABgAIA
+        A8ADgJ8AA4ADwAH/AgAB/wIAAf8CAAH/AgAB/wIAAf8CAAGAAgADwAOAnwADgAPAAf8CAAH/AgAB/wIA
+        Af8CAAH/AgAB/wIAAYACAAPAA4CfAAOAA8AB/wIAAf8CAAH/AgAB/wIAAf8CAAH/AgABgAIAA8ADgJ8A
+        A4ADwBWAA8ADgKIAG/8DgKUAG4CWAAFCAU0BPgcAAT4DAAEoAwABQAMAARADAAEBAQABAQUAAYAXAAP/
+        AQABgAEBDgABgAcAAcAHAAHABwABwAcAAeAHAAHgAQEGAAHgAQMGAAHgAQMGAAHgAQMGAAHgAQMGAAHg
+        AQMGAAHgAQMGAAHwAQMGAAH4AQMGAAs=
+</value>
+  </data>
 </root>

@@ -71,6 +71,7 @@ namespace SetupTv
         // 
         linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://www.team-mediaportal.com/donate.html");
 
+        
         CheckForIllegalCrossThreadCalls = false;
         //
         // Set caption
@@ -121,7 +122,7 @@ namespace SetupTv
         {
           int cardNo = 1;
           TvCards cardPage = new TvCards(server.HostName);
-          AddChildSection(servers, cardPage);
+          AddChildSection(servers, cardPage,0);
           foreach (Card dbsCard in server.ReferringCard())
           {
 
@@ -131,25 +132,25 @@ namespace SetupTv
             {
               case CardType.Analog:
                 cardName = String.Format("{0} Analog {1}", cardNo, cardName);
-                AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard));
+                AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard),1);
                 break;
 
               case CardType.DvbT:
                 cardName = String.Format("{0} DVB-T {1}", cardNo, cardName);
-                AddChildSection(cardPage, new CardDvbT(cardName, dbsCard.IdCard));
+                AddChildSection(cardPage, new CardDvbT(cardName, dbsCard.IdCard),1);
                 //AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard));
                 break;
               case CardType.DvbC:
                 cardName = String.Format("{0} DVB-C {1}", cardNo, cardName);
-                AddChildSection(cardPage, new CardDvbC(cardName, dbsCard.IdCard));
+                AddChildSection(cardPage, new CardDvbC(cardName, dbsCard.IdCard), 1);
                 break;
               case CardType.DvbS:
                 cardName = String.Format("{0} DVB-S {1}", cardNo, cardName);
-                AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard));
+                AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard), 1);
                 break;
               case CardType.Atsc:
                 cardName = String.Format("{0} ATSC {1}", cardNo, cardName);
-                AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard));
+                AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard), 1);
                 break;
             }
             cardNo++;
@@ -206,6 +207,48 @@ namespace SetupTv
     {
       AddChildSection(null, section);
     }
+    public  void AddSection(SectionSettings section, int imageIndex)
+    {
+      AddChildSection(null, section, imageIndex);
+    }
+    public  void AddChildSection(SectionSettings parentSection, SectionSettings section, int imageIndex)
+    {
+      //
+      // Make sure this section doesn't already exist
+      //
+
+      //
+      // Add section to tree
+      //
+      SectionTreeNode treeNode = new SectionTreeNode(section);
+
+      if (parentSection == null)
+      {
+        //
+        // Add to the root
+        //
+        treeNode.ImageIndex = imageIndex;
+        treeNode.SelectedImageIndex = imageIndex;
+        sectionTree.Nodes.Add(treeNode);
+      }
+      else
+      {
+        //
+        // Add to the parent node
+        //
+        SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
+
+        treeNode.ImageIndex = imageIndex;
+        treeNode.SelectedImageIndex = imageIndex;
+        parentTreeNode.Nodes.Add(treeNode);
+
+      }
+
+      settingSections.Add(section.Text, treeNode);
+
+      //treeNode.EnsureVisible();
+    }
+
 
     /// <summary>
     /// 

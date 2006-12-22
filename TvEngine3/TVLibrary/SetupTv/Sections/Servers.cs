@@ -53,7 +53,7 @@ namespace SetupTv.Sections
       mpListView1.Items.Clear();
       foreach (Server server in servers)
       {
-        ListViewItem item = mpListView1.Items.Add(server.HostName);
+        ListViewItem item = mpListView1.Items.Add(server.HostName,0);
         if (server.IsMaster)
         {
           item.SubItems.Add("Master");
@@ -131,6 +131,11 @@ namespace SetupTv.Sections
         RemoteControl.Instance.Restart();
         MessageBox.Show(this,"Changes made require TvService to restart. Please restart the tvservice");
       }
+
+    }
+
+    private void mpListView1_SelectedIndexChanged(object sender, EventArgs e)
+    {
 
     }
   }

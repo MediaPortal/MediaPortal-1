@@ -28,12 +28,15 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Servers));
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.buttonDelete = new System.Windows.Forms.Button();
       this.buttonMaster = new System.Windows.Forms.Button();
       this.button1 = new System.Windows.Forms.Button();
+      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.SuspendLayout();
       // 
       // mpListView1
@@ -44,12 +47,15 @@ namespace SetupTv.Sections
             this.columnHeader1,
             this.columnHeader2});
       this.mpListView1.FullRowSelect = true;
+      this.mpListView1.LargeImageList = this.imageList1;
       this.mpListView1.Location = new System.Drawing.Point(3, 3);
       this.mpListView1.Name = "mpListView1";
       this.mpListView1.Size = new System.Drawing.Size(458, 192);
+      this.mpListView1.SmallImageList = this.imageList1;
       this.mpListView1.TabIndex = 1;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
+      this.mpListView1.SelectedIndexChanged += new System.EventHandler(this.mpListView1_SelectedIndexChanged);
       // 
       // columnHeader1
       // 
@@ -90,6 +96,12 @@ namespace SetupTv.Sections
       this.button1.UseVisualStyleBackColor = true;
       this.button1.Click += new System.EventHandler(this.button1_Click);
       // 
+      // imageList1
+      // 
+      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+      this.imageList1.Images.SetKeyName(0, "computer.gif");
+      // 
       // Servers
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -113,5 +125,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private System.Windows.Forms.Button buttonMaster;
     private System.Windows.Forms.Button button1;
+    private System.Windows.Forms.ImageList imageList1;
   }
 }

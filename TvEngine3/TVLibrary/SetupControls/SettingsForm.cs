@@ -62,6 +62,7 @@ namespace SetupTv
 
     protected static Hashtable settingSections = new Hashtable();
     protected MPButton buttonViewLog;
+    private System.ComponentModel.IContainer components;
     protected MPButton applyButton;
     //private System.ComponentModel.IContainer components;
 
@@ -217,6 +218,7 @@ namespace SetupTv
       this.holderPanel.Name = "holderPanel";
       this.holderPanel.Size = new System.Drawing.Size(472, 428);
       this.holderPanel.TabIndex = 5;
+      this.holderPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.holderPanel_Paint);
       // 
       // beveledLine1
       // 
@@ -274,7 +276,6 @@ namespace SetupTv
       this.Closed += new System.EventHandler(this.SettingsForm_Closed);
       this.Load += new System.EventHandler(this.SettingsForm_Load);
       this.ResumeLayout(false);
-      this.PerformLayout();
 
     }
 
@@ -367,6 +368,11 @@ namespace SetupTv
 
     public virtual void buttonViewLog_Click(object sender, EventArgs e)
     {
+    }
+
+    private void holderPanel_Paint(object sender, PaintEventArgs e)
+    {
+
     }
 
 

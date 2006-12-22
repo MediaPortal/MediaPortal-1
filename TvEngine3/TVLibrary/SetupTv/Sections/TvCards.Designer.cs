@@ -28,13 +28,16 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvCards));
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.buttonDown = new System.Windows.Forms.Button();
       this.buttonUp = new System.Windows.Forms.Button();
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.SuspendLayout();
       // 
       // mpListView1
@@ -48,13 +51,21 @@ namespace SetupTv.Sections
             this.columnHeader2,
             this.columnHeader4});
       this.mpListView1.FullRowSelect = true;
+      this.mpListView1.LargeImageList = this.imageList1;
       this.mpListView1.Location = new System.Drawing.Point(3, 3);
       this.mpListView1.Name = "mpListView1";
       this.mpListView1.Size = new System.Drawing.Size(458, 322);
+      this.mpListView1.SmallImageList = this.imageList1;
       this.mpListView1.TabIndex = 0;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
       this.mpListView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.mpListView1_ItemChecked);
+      this.mpListView1.SelectedIndexChanged += new System.EventHandler(this.mpListView1_SelectedIndexChanged);
+      // 
+      // columnHeader3
+      // 
+      this.columnHeader3.Text = "Enabled";
+      this.columnHeader3.Width = 110;
       // 
       // columnHeader1
       // 
@@ -68,6 +79,12 @@ namespace SetupTv.Sections
       // 
       this.columnHeader4.Text = "Name";
       this.columnHeader4.Width = 200;
+      // 
+      // imageList1
+      // 
+      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+      this.imageList1.Images.SetKeyName(0, "card.gif");
       // 
       // buttonDown
       // 
@@ -88,10 +105,6 @@ namespace SetupTv.Sections
       this.buttonUp.Text = "Up";
       this.buttonUp.UseVisualStyleBackColor = true;
       this.buttonUp.Click += new System.EventHandler(this.buttonUp_Click);
-      // 
-      // columnHeader3
-      // 
-      this.columnHeader3.Text = "Enabled";
       // 
       // TvCards
       // 
@@ -115,5 +128,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Button buttonDown;
     private System.Windows.Forms.Button buttonUp;
     private System.Windows.Forms.ColumnHeader columnHeader3;
+    private System.Windows.Forms.ImageList imageList1;
   }
 }

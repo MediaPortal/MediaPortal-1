@@ -90,7 +90,7 @@ namespace SetupTv.Sections
           {
             cardType = cardTypes[card.DevicePath].ToString();
           }
-          ListViewItem item = mpListView1.Items.Add("");
+          ListViewItem item = mpListView1.Items.Add("",0);
           item.SubItems.Add(card.Priority.ToString());
           if (card.Enabled)
           {
@@ -180,6 +180,11 @@ namespace SetupTv.Sections
         e.Item.Font = new Font(e.Item.Font, FontStyle.Regular);
       else
         e.Item.Font = new Font(e.Item.Font, FontStyle.Strikeout);
+    }
+
+    private void mpListView1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
     }
   }
 }
