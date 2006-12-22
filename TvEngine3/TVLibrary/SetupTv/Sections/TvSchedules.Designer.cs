@@ -28,6 +28,8 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvSchedules));
       this.listView1 = new System.Windows.Forms.ListView();
       this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
@@ -36,6 +38,7 @@ namespace SetupTv.Sections
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.PreRecord = new System.Windows.Forms.ColumnHeader();
       this.PostRecord = new System.Windows.Forms.ColumnHeader();
+      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.SuspendLayout();
       // 
       // listView1
@@ -48,9 +51,11 @@ namespace SetupTv.Sections
             this.columnHeader3,
             this.PreRecord,
             this.PostRecord});
+      this.listView1.LargeImageList = this.imageList1;
       this.listView1.Location = new System.Drawing.Point(13, 19);
       this.listView1.Name = "listView1";
       this.listView1.Size = new System.Drawing.Size(455, 399);
+      this.listView1.SmallImageList = this.imageList1;
       this.listView1.TabIndex = 0;
       this.listView1.UseCompatibleStateImageBehavior = false;
       this.listView1.View = System.Windows.Forms.View.Details;
@@ -83,6 +88,13 @@ namespace SetupTv.Sections
       // 
       this.PostRecord.Text = "PostRecord";
       // 
+      // imageList1
+      // 
+      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+      this.imageList1.Images.SetKeyName(0, "tvguide_recordserie_button.png");
+      this.imageList1.Images.SetKeyName(1, "tvguide_record_button.png");
+      // 
       // TvSchedules
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -104,5 +116,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader5;
     private System.Windows.Forms.ColumnHeader PreRecord;
     private System.Windows.Forms.ColumnHeader PostRecord;
+    private System.Windows.Forms.ImageList imageList1;
   }
 }

@@ -206,7 +206,7 @@ namespace SetupTv.Sections
       {
         Channel channel=map.ReferencedChannel();
         if (channel.IsTv == false) continue;
-        ListViewItem mappedItem = mpListViewMapped.Items.Add(channel.Name);
+        ListViewItem mappedItem = mpListViewMapped.Items.Add(channel.Name,1);
         mappedItem.Tag = map;
         channelsMapped[channel.IdChannel] = true;
       }
@@ -215,7 +215,7 @@ namespace SetupTv.Sections
       foreach (Channel channel in channels)
       {
         if (channelsMapped.ContainsKey(channel.IdChannel)) continue;
-        ListViewItem newItem = new ListViewItem(channel.Name);
+        ListViewItem newItem = new ListViewItem(channel.Name, 1);
         newItem.Tag = channel;
         items.Add(newItem);
       }
@@ -241,7 +241,7 @@ namespace SetupTv.Sections
 
         mpListViewChannels.Items.Remove(item);
 
-        ListViewItem newItem = mpListViewMapped.Items.Add(channel.Name);
+        ListViewItem newItem = mpListViewMapped.Items.Add(channel.Name, 1);
         newItem.Tag = newMap;
       }
       mpListViewMapped.Sort();
@@ -262,7 +262,7 @@ namespace SetupTv.Sections
         mpListViewMapped.Items.Remove(item);
 
 
-        ListViewItem newItem = mpListViewChannels.Items.Add(map.ReferencedChannel().Name);
+        ListViewItem newItem = mpListViewChannels.Items.Add(map.ReferencedChannel().Name, 1);
         newItem.Tag = map.ReferencedChannel();
 
 

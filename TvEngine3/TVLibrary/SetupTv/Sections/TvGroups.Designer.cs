@@ -28,6 +28,8 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvGroups));
       this.mpTabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.mpButtonAddGroup = new MediaPortal.UserInterface.Controls.MPButton();
@@ -40,6 +42,7 @@ namespace SetupTv.Sections
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpListViewMapped = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpListViewChannels = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
@@ -168,9 +171,11 @@ namespace SetupTv.Sections
       this.mpListViewMapped.AllowRowReorder = true;
       this.mpListViewMapped.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2});
+      this.mpListViewMapped.LargeImageList = this.imageList1;
       this.mpListViewMapped.Location = new System.Drawing.Point(252, 58);
       this.mpListViewMapped.Name = "mpListViewMapped";
       this.mpListViewMapped.Size = new System.Drawing.Size(193, 282);
+      this.mpListViewMapped.SmallImageList = this.imageList1;
       this.mpListViewMapped.TabIndex = 12;
       this.mpListViewMapped.UseCompatibleStateImageBehavior = false;
       this.mpListViewMapped.View = System.Windows.Forms.View.Details;
@@ -183,6 +188,15 @@ namespace SetupTv.Sections
       this.columnHeader2.Text = "Name";
       this.columnHeader2.Width = 180;
       // 
+      // imageList1
+      // 
+      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+      this.imageList1.Images.SetKeyName(0, "radio_scrambled.png");
+      this.imageList1.Images.SetKeyName(1, "tv_fta_.png");
+      this.imageList1.Images.SetKeyName(2, "tv_scrambled.png");
+      this.imageList1.Images.SetKeyName(3, "radio_fta_.png");
+      // 
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
@@ -194,12 +208,15 @@ namespace SetupTv.Sections
       // 
       // mpListViewChannels
       // 
+      this.mpListViewChannels.AllowDrop = true;
       this.mpListViewChannels.AllowRowReorder = false;
       this.mpListViewChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader4});
+      this.mpListViewChannels.LargeImageList = this.imageList1;
       this.mpListViewChannels.Location = new System.Drawing.Point(10, 58);
       this.mpListViewChannels.Name = "mpListViewChannels";
       this.mpListViewChannels.Size = new System.Drawing.Size(193, 282);
+      this.mpListViewChannels.SmallImageList = this.imageList1;
       this.mpListViewChannels.TabIndex = 10;
       this.mpListViewChannels.UseCompatibleStateImageBehavior = false;
       this.mpListViewChannels.View = System.Windows.Forms.View.Details;
@@ -262,5 +279,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxGroup;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
+    private System.Windows.Forms.ImageList imageList1;
   }
 }

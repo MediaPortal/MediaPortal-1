@@ -70,30 +70,37 @@ namespace SetupTv.Sections
         switch ((ScheduleRecordingType)schedule.ScheduleType)
         {
           case ScheduleRecordingType.Daily:
+            item.ImageIndex = 0;
             item.SubItems.Add("Daily");
             item.SubItems.Add(String.Format("{0}", schedule.StartTime.ToString("HH:mm:ss", mmddFormat)));
             break;
           case ScheduleRecordingType.Weekly:
+            item.ImageIndex = 0;
             item.SubItems.Add("Weekly");
             item.SubItems.Add(String.Format("{0} {1}", schedule.StartTime.DayOfWeek.ToString(), schedule.StartTime.ToString("HH:mm:ss", mmddFormat)));
             break;
           case ScheduleRecordingType.Weekends:
+            item.ImageIndex = 0;
             item.SubItems.Add("Weekends");
             item.SubItems.Add(String.Format("{0}", schedule.StartTime.ToString("HH:mm:ss", mmddFormat)));
             break;
           case ScheduleRecordingType.WorkingDays:
+            item.ImageIndex = 0;
             item.SubItems.Add("Mon-Fri");
             item.SubItems.Add(String.Format("{0}", schedule.StartTime.ToString("HH:mm:ss", mmddFormat)));
             break;
           case ScheduleRecordingType.Once:
+            item.ImageIndex = 1;
             item.SubItems.Add("Once");
             item.SubItems.Add(String.Format("{0}", schedule.StartTime.ToString("dd-MM-yyyy HH:mm:ss", mmddFormat)));
             break;
           case ScheduleRecordingType.EveryTimeOnThisChannel:
+            item.ImageIndex = 0;
             item.SubItems.Add("Always");
             item.SubItems.Add("");
             break;
           case ScheduleRecordingType.EveryTimeOnEveryChannel:
+            item.ImageIndex = 0;
             item.SubItems.Add("Always");
             item.SubItems.Add("All channels");
             break;

@@ -28,6 +28,7 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvRecording));
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -83,6 +84,7 @@ namespace SetupTv.Sections
       this.textBoxComSkip = new System.Windows.Forms.TextBox();
       this.checkBoxComSkipEnabled = new System.Windows.Forms.CheckBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -94,6 +96,7 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.trackBarDisk)).BeginInit();
       this.tabPage4.SuspendLayout();
       this.tabPage5.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -482,6 +485,7 @@ namespace SetupTv.Sections
       // 
       // tabPage4
       // 
+      this.tabPage4.Controls.Add(this.pictureBox1);
       this.tabPage4.Controls.Add(this.buttonBrowse);
       this.tabPage4.Controls.Add(this.label13);
       this.tabPage4.Controls.Add(this.textBoxFolder);
@@ -524,7 +528,7 @@ namespace SetupTv.Sections
       // label12
       // 
       this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(20, 30);
+      this.label12.Location = new System.Drawing.Point(49, 27);
       this.label12.Name = "label12";
       this.label12.Size = new System.Drawing.Size(32, 13);
       this.label12.TabIndex = 1;
@@ -534,7 +538,7 @@ namespace SetupTv.Sections
       // 
       this.comboBoxCards.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCards.FormattingEnabled = true;
-      this.comboBoxCards.Location = new System.Drawing.Point(69, 22);
+      this.comboBoxCards.Location = new System.Drawing.Point(98, 19);
       this.comboBoxCards.Name = "comboBoxCards";
       this.comboBoxCards.Size = new System.Drawing.Size(284, 21);
       this.comboBoxCards.TabIndex = 0;
@@ -667,6 +671,16 @@ namespace SetupTv.Sections
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
       // 
+      // pictureBox1
+      // 
+      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+      this.pictureBox1.Location = new System.Drawing.Point(10, 19);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(33, 23);
+      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+      this.pictureBox1.TabIndex = 18;
+      this.pictureBox1.TabStop = false;
+      // 
       // TvRecording
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -691,6 +705,7 @@ namespace SetupTv.Sections
       this.tabPage4.PerformLayout();
       this.tabPage5.ResumeLayout(false);
       this.tabPage5.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -752,5 +767,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label21;
     private System.Windows.Forms.LinkLabel linkLabel1;
     private System.Windows.Forms.OpenFileDialog openFileDialog1;
+    private System.Windows.Forms.PictureBox pictureBox1;
   }
 }

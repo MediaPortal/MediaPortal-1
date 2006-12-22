@@ -117,6 +117,29 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="pictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        R0lGODlhIQAXAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwE9lfYOZsV8/P38/P58/P78/P98/P/8/
+        Pz9fP19fP39fP59fP79fP99fP/9fPz9/P19/P39/P59/P79/P99/P/9/Pz+fP1+fP3+fP5+fP7+fP9+f
+        P/+fPz+/P1+/P3+/P5+/P7+/P9+/P/+/Pz/fP1/fP3/fP5/fP7/fP9/fP//fPz//P1//P3//P5//P7//
+        P9//P///Pz8/X18/X38/X58/X78/X98/X/8/Xz9fX19fX39fX59fX79fX99fX/9fXz9/X19/X39/X59/
+        X79/X99/X/9/Xz+fX1+fX3+fX5+fX7+fX9+fX/+fXz+/X1+/X3+/X5+/X7+/X9+/X/+/Xz/fX1/fX3/f
+        X5/fX7/fX9/fX//fXz//X1//X3//X5//X7//X9//X///Xz8/f18/f38/f58/f78/f98/f/8/fz9ff19f
+        f39ff59ff79ff99ff/9ffz9/f19/f39/f59/f79/f99/f/9/fz+ff1+ff3+ff5+ff7+ff9+ff/+ffz+/
+        f1+/f3+/f5+/f7+/f9+/f/+/fz/ff1/ff3/ff5/ff7/ff9/ff//ffz//f1//f3//f5//f7//f9//f///
+        fz8/n18/n38/n58/n78/n98/n/8/nz9fn19fn39fn59fn79fn99fn/9fnz9/n19/n39/n59/n79/n99/
+        n/9/nz+fn1+fn3+fn5+fn7+fn9+fn/+fnz+/n1+/n3+/n5+/n7+/n9+/n/+/nz/fn1/fn3/fn5/fn7/f
+        n9/fn//fnz//n1//n3//n5//n7//n9//n///nz8/v18/v38/v58/v78/v98/v/8/vz9fv19fv39fv59f
+        v79fv99fv/9fvz9/v19/v39/v59/v79/v99/v/9/vz+fv1+fv3+fv5+fv7+fv9+fv/+fvz+/v1+/v3+/
+        v5+/v7+/v9+/v/+/vz/fv1/fv3/fv5/fv7/fv9/fv8HM2aCgpICAgP8AAAD/AP//AAAA//8A/wD/////
+        /yH5BAEAAAcALAAAAAAhABcAAAjqAA8IHEiwoMGDBfEpXMiwocOH+AAMxPcPocWLEgVSFMDxAMeOHz3q
+        O6BPwMiPAjwKyHiAYj6QIWOmlAmT5UYBFQ8AwClwp0qVOXWm7Bmx5b+OCn0mncm05VKVAP5JdLkSgNWq
+        V38ifcpR4tSjKMN2HLg14lCdaG/m3LmW6UercJl6NfrSqVKzKsXKnHsT7k6/Z0kKHCkYalqwemkmfnuY
+        Y9u2ee2mXLqy8WS8XLvGBYzVqOargPMu7joRsdumKANwVC2AdWWNEGPLLtrTr22/+Pbp3s3b9sWDuXkL
+        Z/kbuPDhxS3evp28efKAADs=
+</value>
+  </data>
   <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>

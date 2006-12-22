@@ -130,7 +130,7 @@ namespace SetupTv.Sections
         bool dvbs = false;
         bool atsc = false;
         if (ch.IsTv == false) continue;
-        ListViewItem item = mpListView1.Items.Add(ch.Name);
+        ListViewItem item = mpListView1.Items.Add(ch.Name,1);
         foreach (ChannelMap map in ch.ReferringChannelMap())
         {
           if (cards.ContainsKey(map.ReferencedCard().DevicePath))

@@ -29,6 +29,7 @@ namespace SetupTv.Sections
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvChannels));
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
@@ -37,6 +38,8 @@ namespace SetupTv.Sections
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.addToFavoritesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.deleteThisChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.editChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.mpButtonClear = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpLabelChannelCount = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpButtonDel = new MediaPortal.UserInterface.Controls.MPButton();
@@ -49,8 +52,7 @@ namespace SetupTv.Sections
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.mpButtonPreview = new MediaPortal.UserInterface.Controls.MPButton();
-      this.deleteThisChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.editChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.contextMenuStrip1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -70,9 +72,11 @@ namespace SetupTv.Sections
       this.mpListView1.ContextMenuStrip = this.contextMenuStrip1;
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.LabelEdit = true;
+      this.mpListView1.LargeImageList = this.imageList1;
       this.mpListView1.Location = new System.Drawing.Point(13, 41);
       this.mpListView1.Name = "mpListView1";
       this.mpListView1.Size = new System.Drawing.Size(438, 284);
+      this.mpListView1.SmallImageList = this.imageList1;
       this.mpListView1.TabIndex = 0;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
@@ -111,13 +115,27 @@ namespace SetupTv.Sections
             this.deleteThisChannelToolStripMenuItem,
             this.editChannelToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(177, 92);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(177, 70);
       // 
       // addToFavoritesToolStripMenuItem
       // 
       this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
-      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
       this.addToFavoritesToolStripMenuItem.Text = "Add to favorites";
+      // 
+      // deleteThisChannelToolStripMenuItem
+      // 
+      this.deleteThisChannelToolStripMenuItem.Name = "deleteThisChannelToolStripMenuItem";
+      this.deleteThisChannelToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+      this.deleteThisChannelToolStripMenuItem.Text = "Delete this channel";
+      this.deleteThisChannelToolStripMenuItem.Click += new System.EventHandler(this.deleteThisChannelToolStripMenuItem_Click);
+      // 
+      // editChannelToolStripMenuItem
+      // 
+      this.editChannelToolStripMenuItem.Name = "editChannelToolStripMenuItem";
+      this.editChannelToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+      this.editChannelToolStripMenuItem.Text = "Edit channel";
+      this.editChannelToolStripMenuItem.Click += new System.EventHandler(this.editChannelToolStripMenuItem_Click);
       // 
       // mpButtonClear
       // 
@@ -241,19 +259,14 @@ namespace SetupTv.Sections
       this.mpButtonPreview.UseVisualStyleBackColor = true;
       this.mpButtonPreview.Click += new System.EventHandler(this.mpButtonPreview_Click);
       // 
-      // deleteThisChannelToolStripMenuItem
+      // imageList1
       // 
-      this.deleteThisChannelToolStripMenuItem.Name = "deleteThisChannelToolStripMenuItem";
-      this.deleteThisChannelToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
-      this.deleteThisChannelToolStripMenuItem.Text = "Delete this channel";
-      this.deleteThisChannelToolStripMenuItem.Click += new System.EventHandler(this.deleteThisChannelToolStripMenuItem_Click);
-      // 
-      // editChannelToolStripMenuItem
-      // 
-      this.editChannelToolStripMenuItem.Name = "editChannelToolStripMenuItem";
-      this.editChannelToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
-      this.editChannelToolStripMenuItem.Text = "Edit channel";
-      this.editChannelToolStripMenuItem.Click += new System.EventHandler(this.editChannelToolStripMenuItem_Click);
+      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+      this.imageList1.Images.SetKeyName(0, "radio_scrambled.png");
+      this.imageList1.Images.SetKeyName(1, "tv_fta_.png");
+      this.imageList1.Images.SetKeyName(2, "tv_scrambled.png");
+      this.imageList1.Images.SetKeyName(3, "radio_fta_.png");
       // 
       // TvChannels
       // 
@@ -295,5 +308,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ToolStripMenuItem addToFavoritesToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem deleteThisChannelToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem editChannelToolStripMenuItem;
+    private System.Windows.Forms.ImageList imageList1;
   }
 }

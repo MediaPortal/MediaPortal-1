@@ -64,6 +64,7 @@ namespace SetupTv.Sections
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.labelCurrentPosition = new System.Windows.Forms.Label();
       this.label12 = new System.Windows.Forms.Label();
       this.buttonReset = new System.Windows.Forms.Button();
@@ -94,7 +95,6 @@ namespace SetupTv.Sections
       this.buttonMoveEast = new System.Windows.Forms.Button();
       this.buttonMoveWest = new System.Windows.Forms.Button();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
-      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.groupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -508,6 +508,17 @@ namespace SetupTv.Sections
       this.tabPage2.UseVisualStyleBackColor = true;
       this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
       // 
+      // pictureBox1
+      // 
+      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+      this.pictureBox1.InitialImage = null;
+      this.pictureBox1.Location = new System.Drawing.Point(347, 84);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(60, 60);
+      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+      this.pictureBox1.TabIndex = 50;
+      this.pictureBox1.TabStop = false;
+      // 
       // labelCurrentPosition
       // 
       this.labelCurrentPosition.AutoSize = true;
@@ -794,16 +805,6 @@ namespace SetupTv.Sections
       // 
       this.timer1.Interval = 1000;
       this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-      // 
-      // pictureBox1
-      // 
-      this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-      this.pictureBox1.Location = new System.Drawing.Point(307, 84);
-      this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(100, 50);
-      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.pictureBox1.TabIndex = 50;
-      this.pictureBox1.TabStop = false;
       // 
       // CardDvbS
       // 

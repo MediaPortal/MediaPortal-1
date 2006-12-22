@@ -224,7 +224,7 @@ namespace SetupTv.Sections
       {
         Channel channel = map.ReferencedChannel();
         if (channel.IsTv == false) continue;
-        ListViewItem item = new ListViewItem(channel.Name);
+        ListViewItem item = new ListViewItem(channel.Name,1);
         item.Tag = channel;
         items.Add(item);
       }
@@ -260,7 +260,7 @@ namespace SetupTv.Sections
         float result = comparer.getSimilarity(selectedChannel.Name, channel.Name);
 
 
-        ListViewItem item = new ListViewItem((result * 100f).ToString("f2") + "%");
+        ListViewItem item = new ListViewItem((result * 100f).ToString("f2") + "%", 1);
         item.Tag = channel;
         item.SubItems.Add(channel.Name);
         items.Add(item);
@@ -333,6 +333,11 @@ namespace SetupTv.Sections
           OnSectionActivated();
         }
       }
+    }
+
+    private void mpListViewMapped_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
     }
   }
 }

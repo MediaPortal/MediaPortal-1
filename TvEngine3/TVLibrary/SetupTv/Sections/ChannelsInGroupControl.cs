@@ -55,7 +55,7 @@ namespace SetupTv.Sections
           Channel channel = map.ReferencedChannel();
           if (channel.IsTv == false) continue;
           int index = listView1.Items.Count + 1;
-          ListViewItem item = listView1.Items.Add(index.ToString());
+          ListViewItem item = listView1.Items.Add(index.ToString(),1);
           item.SubItems.Add(channel.Name);
           item.Checked = channel.VisibleInGuide;
           item.Tag = map;

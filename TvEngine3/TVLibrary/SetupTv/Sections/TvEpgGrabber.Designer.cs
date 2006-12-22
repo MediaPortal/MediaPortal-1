@@ -28,6 +28,8 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvEpgGrabber));
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
@@ -39,6 +41,7 @@ namespace SetupTv.Sections
       this.mpButtonNone = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonAllChannels = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonNoneChannels = new MediaPortal.UserInterface.Controls.MPButton();
+      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.SuspendLayout();
       // 
       // mpListView1
@@ -50,9 +53,11 @@ namespace SetupTv.Sections
             this.columnHeader1,
             this.columnHeader3});
       this.mpListView1.FullRowSelect = true;
+      this.mpListView1.LargeImageList = this.imageList1;
       this.mpListView1.Location = new System.Drawing.Point(14, 41);
       this.mpListView1.Name = "mpListView1";
       this.mpListView1.Size = new System.Drawing.Size(208, 306);
+      this.mpListView1.SmallImageList = this.imageList1;
       this.mpListView1.TabIndex = 1;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
@@ -146,6 +151,15 @@ namespace SetupTv.Sections
       this.mpButtonNoneChannels.UseVisualStyleBackColor = true;
       this.mpButtonNoneChannels.Click += new System.EventHandler(this.mpButtonNoneChannels_Click);
       // 
+      // imageList1
+      // 
+      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+      this.imageList1.Images.SetKeyName(0, "radio_scrambled.png");
+      this.imageList1.Images.SetKeyName(1, "tv_fta_.png");
+      this.imageList1.Images.SetKeyName(2, "tv_scrambled.png");
+      this.imageList1.Images.SetKeyName(3, "radio_fta_.png");
+      // 
       // TvEpgGrabber
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -178,6 +192,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonAllChannels;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonNoneChannels;
+    private System.Windows.Forms.ImageList imageList1;
 
   }
 }

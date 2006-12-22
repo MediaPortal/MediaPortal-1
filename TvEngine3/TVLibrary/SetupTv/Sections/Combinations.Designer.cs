@@ -29,6 +29,7 @@ namespace SetupTv.Sections
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvCombinations));
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.addToFavoritesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -39,14 +40,17 @@ namespace SetupTv.Sections
       this.mpListViewMapped = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpListViewChannels = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.mpComboBoxCard = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.contextMenuStrip1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage2.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.SuspendLayout();
       // 
       // contextMenuStrip1
@@ -54,12 +58,12 @@ namespace SetupTv.Sections
       this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addToFavoritesToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(159, 26);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(164, 26);
       // 
       // addToFavoritesToolStripMenuItem
       // 
       this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
-      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
       this.addToFavoritesToolStripMenuItem.Text = "Add to favorites";
       // 
       // openFileDialog1
@@ -78,6 +82,7 @@ namespace SetupTv.Sections
       // 
       // tabPage2
       // 
+      this.tabPage2.Controls.Add(this.pictureBox1);
       this.tabPage2.Controls.Add(this.btnCombine);
       this.tabPage2.Controls.Add(this.mpLabel3);
       this.tabPage2.Controls.Add(this.mpListViewMapped);
@@ -119,12 +124,15 @@ namespace SetupTv.Sections
       this.mpListViewMapped.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader8,
             this.columnHeader5});
+      this.mpListViewMapped.LargeImageList = this.imageList1;
       this.mpListViewMapped.Location = new System.Drawing.Point(243, 67);
       this.mpListViewMapped.Name = "mpListViewMapped";
       this.mpListViewMapped.Size = new System.Drawing.Size(204, 274);
+      this.mpListViewMapped.SmallImageList = this.imageList1;
       this.mpListViewMapped.TabIndex = 12;
       this.mpListViewMapped.UseCompatibleStateImageBehavior = false;
       this.mpListViewMapped.View = System.Windows.Forms.View.Details;
+      this.mpListViewMapped.SelectedIndexChanged += new System.EventHandler(this.mpListViewMapped_SelectedIndexChanged);
       // 
       // columnHeader8
       // 
@@ -134,6 +142,15 @@ namespace SetupTv.Sections
       // 
       this.columnHeader5.Text = "Name";
       this.columnHeader5.Width = 120;
+      // 
+      // imageList1
+      // 
+      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+      this.imageList1.Images.SetKeyName(0, "radio_scrambled.png");
+      this.imageList1.Images.SetKeyName(1, "tv_fta_.png");
+      this.imageList1.Images.SetKeyName(2, "tv_scrambled.png");
+      this.imageList1.Images.SetKeyName(3, "radio_fta_.png");
       // 
       // mpLabel2
       // 
@@ -151,9 +168,11 @@ namespace SetupTv.Sections
       this.mpListViewChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader6});
       this.mpListViewChannels.HideSelection = false;
+      this.mpListViewChannels.LargeImageList = this.imageList1;
       this.mpListViewChannels.Location = new System.Drawing.Point(12, 67);
       this.mpListViewChannels.Name = "mpListViewChannels";
       this.mpListViewChannels.Size = new System.Drawing.Size(193, 274);
+      this.mpListViewChannels.SmallImageList = this.imageList1;
       this.mpListViewChannels.TabIndex = 10;
       this.mpListViewChannels.UseCompatibleStateImageBehavior = false;
       this.mpListViewChannels.View = System.Windows.Forms.View.Details;
@@ -168,7 +187,7 @@ namespace SetupTv.Sections
       // 
       this.mpComboBoxCard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxCard.FormattingEnabled = true;
-      this.mpComboBoxCard.Location = new System.Drawing.Point(67, 10);
+      this.mpComboBoxCard.Location = new System.Drawing.Point(89, 9);
       this.mpComboBoxCard.Name = "mpComboBoxCard";
       this.mpComboBoxCard.Size = new System.Drawing.Size(249, 21);
       this.mpComboBoxCard.TabIndex = 8;
@@ -177,11 +196,21 @@ namespace SetupTv.Sections
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(9, 13);
+      this.mpLabel1.Location = new System.Drawing.Point(51, 14);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(32, 13);
       this.mpLabel1.TabIndex = 9;
       this.mpLabel1.Text = "Card:";
+      // 
+      // pictureBox1
+      // 
+      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+      this.pictureBox1.Location = new System.Drawing.Point(12, 9);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(33, 23);
+      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+      this.pictureBox1.TabIndex = 15;
+      this.pictureBox1.TabStop = false;
       // 
       // TvCombinations
       // 
@@ -195,6 +224,7 @@ namespace SetupTv.Sections
       this.tabControl1.ResumeLayout(false);
       this.tabPage2.ResumeLayout(false);
       this.tabPage2.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -216,5 +246,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Button btnCombine;
     private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
     private System.Windows.Forms.ToolStripMenuItem addToFavoritesToolStripMenuItem;
+    private System.Windows.Forms.ImageList imageList1;
+    private System.Windows.Forms.PictureBox pictureBox1;
   }
 }

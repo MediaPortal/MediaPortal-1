@@ -124,7 +124,7 @@ namespace SetupTv.Sections
         bool dvbs = false;
         bool atsc = false;
         if (ch.IsRadio == false) continue;
-        ListViewItem item = mpListView1.Items.Add(ch.Name);
+        ListViewItem item = mpListView1.Items.Add(ch.Name,3);
         foreach (ChannelMap map in ch.ReferringChannelMap())
         {
           if (cards.ContainsKey(map.ReferencedCard().DevicePath))
@@ -249,6 +249,11 @@ namespace SetupTv.Sections
     }
 
     private void mpLabel2_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void mpListView1_SelectedIndexChanged(object sender, EventArgs e)
     {
 
     }
