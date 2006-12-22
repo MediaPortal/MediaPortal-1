@@ -49,6 +49,8 @@ namespace SetupTv.Sections
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.mpButtonPreview = new MediaPortal.UserInterface.Controls.MPButton();
+      this.deleteThisChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.editChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.contextMenuStrip1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -74,6 +76,8 @@ namespace SetupTv.Sections
       this.mpListView1.TabIndex = 0;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
+      this.mpListView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mpListView1_MouseDoubleClick);
+      this.mpListView1.SelectedIndexChanged += new System.EventHandler(this.mpListView1_SelectedIndexChanged);
       this.mpListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView1_ColumnClick);
       this.mpListView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.mpListView1_AfterLabelEdit);
       this.mpListView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.mpListView1_ItemDrag);
@@ -103,14 +107,16 @@ namespace SetupTv.Sections
       // contextMenuStrip1
       // 
       this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addToFavoritesToolStripMenuItem});
+            this.addToFavoritesToolStripMenuItem,
+            this.deleteThisChannelToolStripMenuItem,
+            this.editChannelToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(159, 26);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(177, 92);
       // 
       // addToFavoritesToolStripMenuItem
       // 
       this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
-      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
       this.addToFavoritesToolStripMenuItem.Text = "Add to favorites";
       // 
       // mpButtonClear
@@ -235,6 +241,20 @@ namespace SetupTv.Sections
       this.mpButtonPreview.UseVisualStyleBackColor = true;
       this.mpButtonPreview.Click += new System.EventHandler(this.mpButtonPreview_Click);
       // 
+      // deleteThisChannelToolStripMenuItem
+      // 
+      this.deleteThisChannelToolStripMenuItem.Name = "deleteThisChannelToolStripMenuItem";
+      this.deleteThisChannelToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+      this.deleteThisChannelToolStripMenuItem.Text = "Delete this channel";
+      this.deleteThisChannelToolStripMenuItem.Click += new System.EventHandler(this.deleteThisChannelToolStripMenuItem_Click);
+      // 
+      // editChannelToolStripMenuItem
+      // 
+      this.editChannelToolStripMenuItem.Name = "editChannelToolStripMenuItem";
+      this.editChannelToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+      this.editChannelToolStripMenuItem.Text = "Edit channel";
+      this.editChannelToolStripMenuItem.Click += new System.EventHandler(this.editChannelToolStripMenuItem_Click);
+      // 
       // TvChannels
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -273,5 +293,7 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPButton mpButtonPreview;
     private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
     private System.Windows.Forms.ToolStripMenuItem addToFavoritesToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem deleteThisChannelToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem editChannelToolStripMenuItem;
   }
 }

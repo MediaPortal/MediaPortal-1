@@ -28,6 +28,7 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
       this.listView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
@@ -35,16 +36,24 @@ namespace SetupTv.Sections
       this.buttonDown = new System.Windows.Forms.Button();
       this.buttonUtp = new System.Windows.Forms.Button();
       this.mpButtonDel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+      this.addToFavoritesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.deleteThisChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.removeEntireGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.editChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.contextMenuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
       // listView1
       // 
       this.listView1.AllowDrop = true;
+      this.listView1.AllowRowReorder = true;
       this.listView1.CheckBoxes = true;
       this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3});
+      this.listView1.ContextMenuStrip = this.contextMenuStrip1;
       this.listView1.FullRowSelect = true;
       this.listView1.HideSelection = false;
       this.listView1.Location = new System.Drawing.Point(0, 0);
@@ -53,6 +62,7 @@ namespace SetupTv.Sections
       this.listView1.TabIndex = 0;
       this.listView1.UseCompatibleStateImageBehavior = false;
       this.listView1.View = System.Windows.Forms.View.Details;
+      this.listView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDoubleClick);
       this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
       this.listView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listView1_ItemDrag);
       // 
@@ -101,6 +111,44 @@ namespace SetupTv.Sections
       this.mpButtonDel.UseVisualStyleBackColor = true;
       this.mpButtonDel.Click += new System.EventHandler(this.mpButtonDel_Click);
       // 
+      // contextMenuStrip1
+      // 
+      this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addToFavoritesToolStripMenuItem,
+            this.deleteThisChannelToolStripMenuItem,
+            this.removeEntireGroupToolStripMenuItem,
+            this.editChannelToolStripMenuItem});
+      this.contextMenuStrip1.Name = "contextMenuStrip1";
+      this.contextMenuStrip1.Size = new System.Drawing.Size(187, 92);
+      // 
+      // addToFavoritesToolStripMenuItem
+      // 
+      this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
+      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+      this.addToFavoritesToolStripMenuItem.Text = "Remove from Group";
+      this.addToFavoritesToolStripMenuItem.Click += new System.EventHandler(this.addToFavoritesToolStripMenuItem_Click);
+      // 
+      // deleteThisChannelToolStripMenuItem
+      // 
+      this.deleteThisChannelToolStripMenuItem.Name = "deleteThisChannelToolStripMenuItem";
+      this.deleteThisChannelToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+      this.deleteThisChannelToolStripMenuItem.Text = "Delete this channel";
+      this.deleteThisChannelToolStripMenuItem.Click += new System.EventHandler(this.deleteThisChannelToolStripMenuItem_Click);
+      // 
+      // removeEntireGroupToolStripMenuItem
+      // 
+      this.removeEntireGroupToolStripMenuItem.Name = "removeEntireGroupToolStripMenuItem";
+      this.removeEntireGroupToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+      this.removeEntireGroupToolStripMenuItem.Text = "Remove entire group";
+      this.removeEntireGroupToolStripMenuItem.Click += new System.EventHandler(this.removeEntireGroupToolStripMenuItem_Click);
+      // 
+      // editChannelToolStripMenuItem
+      // 
+      this.editChannelToolStripMenuItem.Name = "editChannelToolStripMenuItem";
+      this.editChannelToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+      this.editChannelToolStripMenuItem.Text = "Edit channel";
+      this.editChannelToolStripMenuItem.Click += new System.EventHandler(this.editChannelToolStripMenuItem_Click);
+      // 
       // ChannelsInGroupControl
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -112,6 +160,7 @@ namespace SetupTv.Sections
       this.Name = "ChannelsInGroupControl";
       this.Size = new System.Drawing.Size(457, 374);
       this.Load += new System.EventHandler(this.ChannelsInGroupControl_Load);
+      this.contextMenuStrip1.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -125,5 +174,10 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Button buttonDown;
     private System.Windows.Forms.Button buttonUtp;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonDel;
+    private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+    private System.Windows.Forms.ToolStripMenuItem addToFavoritesToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem deleteThisChannelToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem removeEntireGroupToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem editChannelToolStripMenuItem;
   }
 }

@@ -877,5 +877,25 @@ namespace SetupTv.Sections
     {
       ReOrder();
     }
+
+    private void mpListView1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void mpListView1_MouseDoubleClick(object sender, MouseEventArgs e)
+    {
+      mpButtonEdit_Click(null, null);
+    }
+
+    private void deleteThisChannelToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      mpButtonDel_Click(null, null);
+    }
+
+    private void editChannelToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      mpButtonEdit_Click(null, null);
+    }
   }
 }

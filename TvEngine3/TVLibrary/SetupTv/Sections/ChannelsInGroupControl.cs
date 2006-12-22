@@ -42,21 +42,24 @@ namespace SetupTv.Sections
     public void OnActivated()
     {
       listView1.Items.Clear();
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(GroupMap));
-      sb.AddConstraint(Operator.Equals, "idGroup", Group.IdGroup);
-      sb.AddOrderByField(true, "sortOrder");
-      SqlStatement stmt = sb.GetStatement(true);
-      IList maps = ObjectFactory.GetCollection(typeof(GroupMap), stmt.Execute());
-      
-      foreach (GroupMap map in maps)
+      if (Group != null)
       {
-        Channel channel = map.ReferencedChannel();
-        if (channel.IsTv == false) continue;
-        int index = listView1.Items.Count + 1;
-        ListViewItem item = listView1.Items.Add(index.ToString());
-        item.SubItems.Add(channel.Name);
-        item.Checked = channel.VisibleInGuide;
-        item.Tag = map;
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(GroupMap));
+        sb.AddConstraint(Operator.Equals, "idGroup", Group.IdGroup);
+        sb.AddOrderByField(true, "sortOrder");
+        SqlStatement stmt = sb.GetStatement(true);
+        IList maps = ObjectFactory.GetCollection(typeof(GroupMap), stmt.Execute());
+
+        foreach (GroupMap map in maps)
+        {
+          Channel channel = map.ReferencedChannel();
+          if (channel.IsTv == false) continue;
+          int index = listView1.Items.Count + 1;
+          ListViewItem item = listView1.Items.Add(index.ToString());
+          item.SubItems.Add(channel.Name);
+          item.Checked = channel.VisibleInGuide;
+          item.Tag = map;
+        }
       }
     }
 
@@ -134,6 +137,65 @@ namespace SetupTv.Sections
         }
       }
       ReOrder();
+    }
+
+    private void addToFavoritesToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      mpButtonDel_Click(null, null);
+    }
+
+    private void deleteThisChannelToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
+      if (indexes.Count == 0) return;
+      for (int i = indexes.Count - 1; i >= 0; i--)
+      {
+        int index = indexes[i];
+        if (index > 0 && index + 1 < listView1.Items.Count)
+        {
+          ListViewItem item = listView1.Items[index];
+          listView1.Items.RemoveAt(index);
+          GroupMap map = (GroupMap)item.Tag;
+          Channel channel = map.ReferencedChannel();
+          channel.Delete();
+        }
+      }
+      ReOrder();
+      OnActivated();
+    }
+
+    private void removeEntireGroupToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      Group.Delete();
+      Group=null;
+      OnActivated();
+      
+    }
+
+    private void editChannelToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
+      if (indexes.Count == 0) return;
+      for (int i = indexes.Count - 1; i >= 0; i--)
+      {
+        int index = indexes[i];
+        if (index > 0 && index + 1 < listView1.Items.Count)
+        {
+          ListViewItem item = listView1.Items[index];
+          GroupMap map = (GroupMap)item.Tag;
+          Channel channel = map.ReferencedChannel();
+          FormEditChannel dlg = new FormEditChannel();
+          dlg.Channel = channel;
+          dlg.ShowDialog();
+          return;
+        }
+      }
+      ReOrder();
+    }
+
+    private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
+    {
+      editChannelToolStripMenuItem_Click(null, null);
     }
 
   }
