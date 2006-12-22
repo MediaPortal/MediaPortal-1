@@ -188,7 +188,7 @@ namespace SetupTv.Sections
           item.SubItems.Add(channel.Name);
           mpListView1.EnsureVisible(mpListView1.Items.Count - 1);
 
-          Channel dbChannel = layer.AddChannel(channel.Name);
+          Channel dbChannel = layer.AddChannel("",channel.Name);
           dbChannel.IsTv = channel.IsTv;
           dbChannel.IsRadio = channel.IsRadio;
           dbChannel.Persist();
@@ -315,7 +315,7 @@ namespace SetupTv.Sections
 
 
             channel.Name = String.Format("{0}", freq);
-            Channel dbChannel = layer.AddChannel(channel.Name);
+            Channel dbChannel = layer.AddChannel("",channel.Name);
             dbChannel.IsTv = channel.IsTv;
             dbChannel.IsRadio = channel.IsRadio;
             dbChannel.Persist();
@@ -357,7 +357,7 @@ namespace SetupTv.Sections
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      Channel dbChannel = layer.AddChannel("CVBS#1 on " + card.IdCard.ToString());
+      Channel dbChannel = layer.AddChannel("", "CVBS#1 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
       dbChannel.Persist();
       AnalogChannel tuningDetail = new AnalogChannel();
@@ -367,7 +367,7 @@ namespace SetupTv.Sections
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel);
 
-      dbChannel = layer.AddChannel("CVBS#2 on " + card.IdCard.ToString());
+      dbChannel = layer.AddChannel("", "CVBS#2 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
       dbChannel.Persist();
       tuningDetail = new AnalogChannel();
@@ -377,7 +377,7 @@ namespace SetupTv.Sections
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel);
 
-      dbChannel = layer.AddChannel("CVBS#3 on " + card.IdCard.ToString());
+      dbChannel = layer.AddChannel("", "CVBS#3 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
       dbChannel.Persist();
       tuningDetail = new AnalogChannel();
@@ -387,7 +387,7 @@ namespace SetupTv.Sections
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel);
 
-      dbChannel = layer.AddChannel("SVHS#1 on " + card.IdCard.ToString());
+      dbChannel = layer.AddChannel("", "SVHS#1 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
       dbChannel.Persist();
       tuningDetail = new AnalogChannel();
@@ -397,7 +397,7 @@ namespace SetupTv.Sections
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel);
 
-      dbChannel = layer.AddChannel("SVHS#2 on " + card.IdCard.ToString());
+      dbChannel = layer.AddChannel("", "SVHS#2 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
       dbChannel.Persist();
       tuningDetail = new AnalogChannel();
@@ -407,7 +407,7 @@ namespace SetupTv.Sections
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel);
 
-      dbChannel = layer.AddChannel("SVHS#3 on " + card.IdCard.ToString());
+      dbChannel = layer.AddChannel("", "SVHS#3 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
       dbChannel.Persist();
       tuningDetail = new AnalogChannel();
@@ -417,7 +417,7 @@ namespace SetupTv.Sections
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel);
 
-      dbChannel = layer.AddChannel("RGB#1 on " + card.IdCard.ToString());
+      dbChannel = layer.AddChannel("", "RGB#1 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
       dbChannel.Persist();
       tuningDetail = new AnalogChannel();
@@ -427,7 +427,7 @@ namespace SetupTv.Sections
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel);
 
-      dbChannel = layer.AddChannel("RGB#2 on " + card.IdCard.ToString());
+      dbChannel = layer.AddChannel("", "RGB#2 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
       dbChannel.Persist();
       tuningDetail = new AnalogChannel();
@@ -437,7 +437,7 @@ namespace SetupTv.Sections
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel);
 
-      dbChannel = layer.AddChannel("RGB#3 on " + card.IdCard.ToString());
+      dbChannel = layer.AddChannel("", "RGB#3 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
       dbChannel.Persist();
       tuningDetail = new AnalogChannel();

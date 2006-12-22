@@ -409,7 +409,7 @@ namespace SetupTv.Sections
       mpLNB4_CheckedChanged(null, null); ;
 
 
-      checkBoxCreateGroups.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "creategroups", "true").Value == "true");
+      checkBoxCreateGroups.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "creategroups", "false").Value == "true");
 
 
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
@@ -681,12 +681,13 @@ namespace SetupTv.Sections
         for (int i = 0; i < channels.Length; ++i)
         {
           DVBSChannel channel = (DVBSChannel)channels[i];
-          Channel dbChannel = layer.GetChannelByName(channel.Name);
+          Channel dbChannel = layer.GetChannelByName(channel.Provider, channel.Name);
           bool exists = (dbChannel != null);
           if (!exists)
           {
-            dbChannel = layer.AddChannel(channel.Name);
+            dbChannel = layer.AddChannel(channel.Provider, channel.Name);
           }
+
           dbChannel.IsTv = channel.IsTv;
           dbChannel.IsRadio = channel.IsRadio;
           if (dbChannel.IsRadio)

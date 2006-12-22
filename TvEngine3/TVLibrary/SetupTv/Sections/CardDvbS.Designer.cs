@@ -29,6 +29,7 @@ namespace SetupTv.Sections
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CardDvbS));
       this.progressBarQuality = new System.Windows.Forms.ProgressBar();
       this.progressBarLevel = new System.Windows.Forms.ProgressBar();
       this.label2 = new System.Windows.Forms.Label();
@@ -40,6 +41,7 @@ namespace SetupTv.Sections
       this.mpLNB1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpTransponder1 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.buttonUpdate = new System.Windows.Forms.Button();
       this.mpBand4 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpBand3 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpBand2 = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -92,11 +94,12 @@ namespace SetupTv.Sections
       this.buttonMoveEast = new System.Windows.Forms.Button();
       this.buttonMoveWest = new System.Windows.Forms.Button();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
-      this.buttonUpdate = new System.Windows.Forms.Button();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.groupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.SuspendLayout();
       // 
       // progressBarQuality
@@ -218,6 +221,16 @@ namespace SetupTv.Sections
       this.groupBox1.TabIndex = 66;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "LNB Setup";
+      // 
+      // buttonUpdate
+      // 
+      this.buttonUpdate.Location = new System.Drawing.Point(300, 139);
+      this.buttonUpdate.Name = "buttonUpdate";
+      this.buttonUpdate.Size = new System.Drawing.Size(131, 23);
+      this.buttonUpdate.TabIndex = 81;
+      this.buttonUpdate.Text = "Update satellite list";
+      this.buttonUpdate.UseVisualStyleBackColor = true;
+      this.buttonUpdate.Click += new System.EventHandler(this.buttonUpdate_Click);
       // 
       // mpBand4
       // 
@@ -456,6 +469,7 @@ namespace SetupTv.Sections
       // 
       // tabPage2
       // 
+      this.tabPage2.Controls.Add(this.pictureBox1);
       this.tabPage2.Controls.Add(this.labelCurrentPosition);
       this.tabPage2.Controls.Add(this.label12);
       this.tabPage2.Controls.Add(this.buttonReset);
@@ -556,7 +570,7 @@ namespace SetupTv.Sections
       // 
       // buttonUp
       // 
-      this.buttonUp.Location = new System.Drawing.Point(210, 136);
+      this.buttonUp.Location = new System.Drawing.Point(210, 157);
       this.buttonUp.Name = "buttonUp";
       this.buttonUp.Size = new System.Drawing.Size(73, 23);
       this.buttonUp.TabIndex = 43;
@@ -566,7 +580,7 @@ namespace SetupTv.Sections
       // 
       // buttonDown
       // 
-      this.buttonDown.Location = new System.Drawing.Point(210, 220);
+      this.buttonDown.Location = new System.Drawing.Point(210, 215);
       this.buttonDown.Name = "buttonDown";
       this.buttonDown.Size = new System.Drawing.Size(73, 23);
       this.buttonDown.TabIndex = 42;
@@ -586,7 +600,7 @@ namespace SetupTv.Sections
       // 
       // buttonStop
       // 
-      this.buttonStop.Location = new System.Drawing.Point(210, 181);
+      this.buttonStop.Location = new System.Drawing.Point(210, 186);
       this.buttonStop.Name = "buttonStop";
       this.buttonStop.Size = new System.Drawing.Size(73, 23);
       this.buttonStop.TabIndex = 40;
@@ -598,7 +612,7 @@ namespace SetupTv.Sections
       // 
       this.label10.AutoSize = true;
       this.label10.ForeColor = System.Drawing.Color.Red;
-      this.label10.Location = new System.Drawing.Point(15, 341);
+      this.label10.Location = new System.Drawing.Point(15, 336);
       this.label10.Name = "label10";
       this.label10.Size = new System.Drawing.Size(51, 13);
       this.label10.TabIndex = 39;
@@ -608,7 +622,7 @@ namespace SetupTv.Sections
       // 
       this.label9.AutoSize = true;
       this.label9.ForeColor = System.Drawing.Color.Red;
-      this.label9.Location = new System.Drawing.Point(15, 325);
+      this.label9.Location = new System.Drawing.Point(15, 320);
       this.label9.Name = "label9";
       this.label9.Size = new System.Drawing.Size(382, 13);
       this.label9.TabIndex = 38;
@@ -618,7 +632,7 @@ namespace SetupTv.Sections
       // 
       this.label8.AutoSize = true;
       this.label8.ForeColor = System.Drawing.Color.Red;
-      this.label8.Location = new System.Drawing.Point(15, 309);
+      this.label8.Location = new System.Drawing.Point(15, 304);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(385, 13);
       this.label8.TabIndex = 37;
@@ -628,7 +642,7 @@ namespace SetupTv.Sections
       // 
       this.label7.AutoSize = true;
       this.label7.ForeColor = System.Drawing.Color.Red;
-      this.label7.Location = new System.Drawing.Point(15, 292);
+      this.label7.Location = new System.Drawing.Point(15, 287);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(397, 13);
       this.label7.TabIndex = 36;
@@ -647,7 +661,7 @@ namespace SetupTv.Sections
       // label4
       // 
       this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(8, 57);
+      this.label4.Location = new System.Drawing.Point(11, 57);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(70, 13);
       this.label4.TabIndex = 34;
@@ -655,14 +669,14 @@ namespace SetupTv.Sections
       // 
       // progressBarSatQuality
       // 
-      this.progressBarSatQuality.Location = new System.Drawing.Point(103, 272);
+      this.progressBarSatQuality.Location = new System.Drawing.Point(103, 267);
       this.progressBarSatQuality.Name = "progressBarSatQuality";
       this.progressBarSatQuality.Size = new System.Drawing.Size(328, 10);
       this.progressBarSatQuality.TabIndex = 33;
       // 
       // progressBarSatLevel
       // 
-      this.progressBarSatLevel.Location = new System.Drawing.Point(103, 249);
+      this.progressBarSatLevel.Location = new System.Drawing.Point(103, 244);
       this.progressBarSatLevel.Name = "progressBarSatLevel";
       this.progressBarSatLevel.Size = new System.Drawing.Size(328, 10);
       this.progressBarSatLevel.TabIndex = 32;
@@ -670,7 +684,7 @@ namespace SetupTv.Sections
       // label5
       // 
       this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(13, 269);
+      this.label5.Location = new System.Drawing.Point(13, 264);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(74, 13);
       this.label5.TabIndex = 31;
@@ -679,7 +693,7 @@ namespace SetupTv.Sections
       // label6
       // 
       this.label6.AutoSize = true;
-      this.label6.Location = new System.Drawing.Point(13, 246);
+      this.label6.Location = new System.Drawing.Point(13, 241);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(64, 13);
       this.label6.TabIndex = 30;
@@ -720,7 +734,7 @@ namespace SetupTv.Sections
       // label3
       // 
       this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(8, 32);
+      this.label3.Location = new System.Drawing.Point(11, 32);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(47, 13);
       this.label3.TabIndex = 5;
@@ -738,7 +752,7 @@ namespace SetupTv.Sections
       // 
       // buttonSetEastLimit
       // 
-      this.buttonSetEastLimit.Location = new System.Drawing.Point(294, 197);
+      this.buttonSetEastLimit.Location = new System.Drawing.Point(294, 336);
       this.buttonSetEastLimit.Name = "buttonSetEastLimit";
       this.buttonSetEastLimit.Size = new System.Drawing.Size(94, 23);
       this.buttonSetEastLimit.TabIndex = 3;
@@ -748,7 +762,7 @@ namespace SetupTv.Sections
       // 
       // buttonSetWestLimit
       // 
-      this.buttonSetWestLimit.Location = new System.Drawing.Point(100, 199);
+      this.buttonSetWestLimit.Location = new System.Drawing.Point(190, 336);
       this.buttonSetWestLimit.Name = "buttonSetWestLimit";
       this.buttonSetWestLimit.Size = new System.Drawing.Size(94, 23);
       this.buttonSetWestLimit.TabIndex = 2;
@@ -758,7 +772,7 @@ namespace SetupTv.Sections
       // 
       // buttonMoveEast
       // 
-      this.buttonMoveEast.Location = new System.Drawing.Point(294, 170);
+      this.buttonMoveEast.Location = new System.Drawing.Point(289, 186);
       this.buttonMoveEast.Name = "buttonMoveEast";
       this.buttonMoveEast.Size = new System.Drawing.Size(94, 23);
       this.buttonMoveEast.TabIndex = 1;
@@ -768,7 +782,7 @@ namespace SetupTv.Sections
       // 
       // buttonMoveWest
       // 
-      this.buttonMoveWest.Location = new System.Drawing.Point(100, 170);
+      this.buttonMoveWest.Location = new System.Drawing.Point(100, 186);
       this.buttonMoveWest.Name = "buttonMoveWest";
       this.buttonMoveWest.Size = new System.Drawing.Size(94, 23);
       this.buttonMoveWest.TabIndex = 0;
@@ -781,15 +795,15 @@ namespace SetupTv.Sections
       this.timer1.Interval = 1000;
       this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
       // 
-      // buttonUpdate
+      // pictureBox1
       // 
-      this.buttonUpdate.Location = new System.Drawing.Point(300, 139);
-      this.buttonUpdate.Name = "buttonUpdate";
-      this.buttonUpdate.Size = new System.Drawing.Size(131, 23);
-      this.buttonUpdate.TabIndex = 81;
-      this.buttonUpdate.Text = "Update satellite list";
-      this.buttonUpdate.UseVisualStyleBackColor = true;
-      this.buttonUpdate.Click += new System.EventHandler(this.buttonUpdate_Click);
+      this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
+      this.pictureBox1.Location = new System.Drawing.Point(307, 84);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(100, 50);
+      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+      this.pictureBox1.TabIndex = 50;
+      this.pictureBox1.TabStop = false;
       // 
       // CardDvbS
       // 
@@ -807,6 +821,7 @@ namespace SetupTv.Sections
       this.tabPage1.PerformLayout();
       this.tabPage2.ResumeLayout(false);
       this.tabPage2.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -878,5 +893,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label12;
     private System.Windows.Forms.Label labelCurrentPosition;
     private System.Windows.Forms.Button buttonUpdate;
+    private System.Windows.Forms.PictureBox pictureBox1;
   }
 }

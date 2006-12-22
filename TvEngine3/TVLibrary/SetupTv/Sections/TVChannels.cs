@@ -689,7 +689,7 @@ namespace SetupTv.Sections
           DateTime totalTimeWatched = DateTime.ParseExact(nodeChannel.Attributes["TotalTimeWatched"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
           bool visibileInGuide = (nodeChannel.Attributes["VisibleInGuide"].Value == "True");
 
-          Channel dbChannel = layer.AddChannel(name);
+          Channel dbChannel = layer.AddChannel("",name);
           dbChannel.GrabEpg = grabEpg;
           dbChannel.IsRadio = isRadio;
           dbChannel.IsTv = isTv;

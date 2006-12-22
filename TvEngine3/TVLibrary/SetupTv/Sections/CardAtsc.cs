@@ -172,8 +172,8 @@ namespace SetupTv.Sections
           {
             ATSCChannel channel = (ATSCChannel)channels[i];
 
-            bool exists = (layer.GetChannelByName(channel.Name) != null);
-            Channel dbChannel = layer.AddChannel(channel.Name);
+            bool exists = (layer.GetChannelByName(channel.Provider,channel.Name) != null);
+            Channel dbChannel = layer.AddChannel(channel.Provider, channel.Name);
             dbChannel.IsTv = channel.IsTv;
             dbChannel.IsRadio = channel.IsRadio;
             if (dbChannel.IsRadio)

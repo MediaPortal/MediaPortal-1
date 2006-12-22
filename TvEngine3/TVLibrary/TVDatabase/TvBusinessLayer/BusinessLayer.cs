@@ -69,9 +69,9 @@ namespace TvDatabase
 
     #region channels
 
-    public Channel AddChannel(string name)
+    public Channel AddChannel(string provider,string name)
     {
-      Channel channel = GetChannelByName(name);
+      Channel channel = GetChannelByName(provider,name);
       if (channel != null)
       {
         channel.Name = name;
@@ -137,6 +137,19 @@ namespace TvDatabase
       if (channels == null) return null;
       if (channels.Count == 0) return null;
       return (Channel)channels[0];
+    }
+
+    public Channel GetChannelByName(string provider, string name)
+    {
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TuningDetail));
+      sb.AddConstraint(Operator.Like, "name", name);
+      sb.AddConstraint(Operator.Like, "provider", provider);
+      SqlStatement stmt = sb.GetStatement(true);
+      IList details = ObjectFactory.GetCollection(typeof(TuningDetail), stmt.Execute());
+      if (details == null) return null;
+      if (details.Count == 0) return null;
+      TuningDetail detail = (TuningDetail)details[0];
+      return detail.ReferencedChannel();
     }
 
     public Setting GetSetting(string tagName, string defaultValue)

@@ -236,7 +236,7 @@ namespace SetupTv.Sections
 
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
       mpComboBox1Cam.SelectedIndex = card.CamType;
-      checkBoxCreateGroups.Checked = (layer.GetSetting("dvbc" + _cardNumber.ToString() + "creategroups", "true").Value == "true");
+      checkBoxCreateGroups.Checked = (layer.GetSetting("dvbc" + _cardNumber.ToString() + "creategroups", "false").Value == "true");
 
 
     }
@@ -347,11 +347,11 @@ namespace SetupTv.Sections
           {
             DVBCChannel channel = (DVBCChannel)channels[i];
 
-            Channel dbChannel = layer.GetChannelByName(channel.Name);
+            Channel dbChannel = layer.GetChannelByName(channel.Provider, channel.Name);
             bool exists = (dbChannel != null);
             if (!exists)
             {
-              dbChannel = layer.AddChannel(channel.Name);
+              dbChannel = layer.AddChannel(channel.Provider, channel.Name);
             }
             dbChannel.IsTv = channel.IsTv;
             dbChannel.IsRadio = channel.IsRadio;
