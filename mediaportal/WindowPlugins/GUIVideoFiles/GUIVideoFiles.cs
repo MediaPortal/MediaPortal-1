@@ -1245,8 +1245,8 @@ namespace MediaPortal.GUI.Video
         movieDetails.Watched = 0;
         VideoDatabase.SetWatched(movieDetails);
       }
-      int fileId = VideoDatabase.GetFileId(movieFileName);
-      VideoDatabase.DeleteMovieStopTime(fileId);
+      int idFile = VideoDatabase.GetFileId(movieFileName);
+      VideoDatabase.DeleteMovieStopTime(idFile);
     }
 
     public bool CheckMovie(string movieFileName)
@@ -1575,19 +1575,14 @@ namespace MediaPortal.GUI.Video
         for (int i = 0; i < movies.Count; i++)
         {
           string strFilePath = (string)movies[i];
+          byte[] resumeData = null;
           int idFile = VideoDatabase.GetFileId(strFilePath);
           if (idFile < 0)
             break;
-          // only delete stop time if there's a movie info for "watched" status as SetWatched() will fail otherwhise
-          if (VideoDatabase.HasMovieInfo(strFilePath))
-            VideoDatabase.DeleteMovieStopTime(idFile);
-          else
-          {
-            byte[] resumeData = null;
-            int stops = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
-            stops++;
-            VideoDatabase.SetMovieStopTimeAndResumeData(idFile, stops, resumeData);
-          }
+          // Set resumedata to zero
+          VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
+          VideoDatabase.SetMovieStopTimeAndResumeData(idFile, -1, resumeData);
+
         }
 
         IMDBMovie details = new IMDBMovie();
