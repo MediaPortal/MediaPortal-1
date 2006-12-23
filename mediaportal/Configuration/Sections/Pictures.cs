@@ -67,14 +67,14 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         durationTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("pictures", "speed", 3));
-        transitionTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("pictures", "transition", 20));
-        kenburnsTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("pictures", "kenburnsspeed", 20));
+        transitionTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("pictures", "transition", 15));
+        kenburnsTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("pictures", "kenburnsspeed", 15));
         radioButtonRandom.Checked = xmlreader.GetValueAsBool("pictures", "random", false);
-        radioButtonKenBurns.Checked = xmlreader.GetValueAsBool("pictures", "kenburns", true);
+        radioButtonKenBurns.Checked = xmlreader.GetValueAsBool("pictures", "kenburns", false);
         radioButtonXFade.Checked = !radioButtonRandom.Checked && !radioButtonKenBurns.Checked;
 
         autoShuffleCheckBox.Checked = xmlreader.GetValueAsBool("pictures", "autoShuffle", false);
-        repeatSlideshowCheckBox.Checked = xmlreader.GetValueAsBool("pictures", "autoRepeat", false);
+        repeatSlideshowCheckBox.Checked = xmlreader.GetValueAsBool("pictures", "autoRepeat", true);
       }
     }
 

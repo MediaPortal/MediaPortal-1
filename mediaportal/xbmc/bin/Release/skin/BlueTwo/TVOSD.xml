@@ -51,9 +51,9 @@
       <description>TV Progress Bar</description>
       <type>tvprogress</type>
       <id>101</id>
-      <posX>75</posX>
+      <posX>98</posX>
       <posY>30</posY>
-      <width>470</width>
+      <width>402</width>
       <height>20</height>
       <toptexture>osd_progress_indicator.png</toptexture>
       <TextureOffsetY>22</TextureOffsetY>

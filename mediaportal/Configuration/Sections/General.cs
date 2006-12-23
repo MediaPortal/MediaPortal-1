@@ -96,23 +96,23 @@ namespace MediaPortal.Configuration.Sections
       new string[] { "general", "minimizeonstartup", "false" },
       new string[] { "general", "minimizeonexit", "false" },
       new string[] { "general", "autohidemouse", "true" },
-	    new string[] { "general", "mousesupport", "true" }, 
+	  new string[] { "general", "mousesupport", "false" }, 
       new string[] { "general", "hideextensions", "true" },
       new string[] { "general", "animations", "true" },
-	    new string[] { "general", "autostart", "false" },
-	    new string[] { "general", "baloontips", "false" },
-	    new string[] { "general", "dblclickasrightclick", "false" },
-	    new string[] { "general", "hidetaskbar", "false" },
-	    new string[] { "general", "alwaysontop", "false" },
-	    new string[] { "general", "exclusivemode", "true" },
-	    new string[] { "general", "enableguisounds", "true" },
-	    new string[] { "general", "screensaver", "false" },
+	  new string[] { "general", "autostart", "false" },
+	  new string[] { "general", "baloontips", "false" },
+	  new string[] { "general", "dblclickasrightclick", "false" },
+	  new string[] { "general", "hidetaskbar", "false" },
+	  new string[] { "general", "alwaysontop", "false" },
+	  new string[] { "general", "exclusivemode", "true" },
+	  new string[] { "general", "enableguisounds", "true" },
+	  new string[] { "general", "screensaver", "false" },
       new string[] { "general", "turnoffmonitor", "false" },
-	    new string[] { "general", "startbasichome", "false" },
+	  new string[] { "general", "startbasichome", "false" },
       new string[] { "general", "turnmonitoronafterresume", "false" },
       new string[] { "general", "enables3trick","true" },
       new string[] { "general", "autosize", "false" },
-      //new string[] { "general", "userenderthread", "true" }
+      // new string[] { "general", "userenderthread", "true" }
       //new string[] { "general", "allowfocus", "false" }
       };
 
@@ -138,7 +138,7 @@ namespace MediaPortal.Configuration.Sections
           settingsCheckedListBox.SetItemChecked(index, xmlreader.GetValueAsBool(currentSection[0], currentSection[1], bool.Parse(currentSection[2])));
         }
 
-        loglevel = xmlreader.GetValueAsString("general", "loglevel", "3");
+        loglevel = xmlreader.GetValueAsString("general", "loglevel", "2");
         cbDebug.SelectedIndex = Convert.ToInt16(loglevel);
 
         //numericUpDown1.Value=xmlreader.GetValueAsInt("vmr9OSDSkin","alphaValue",10);

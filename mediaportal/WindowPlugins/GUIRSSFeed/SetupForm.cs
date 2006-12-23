@@ -297,7 +297,7 @@ namespace GUIRSSFeed
 
     public bool ShowDefaultHome()
     {
-      return true;
+      return false;
     }
 
     #endregion

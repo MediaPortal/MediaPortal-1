@@ -102,6 +102,7 @@ namespace MediaPortal.Configuration
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxPASV = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.comboBox1 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label9 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxRemoteFolder = new MediaPortal.UserInterface.Controls.MPTextBox();
@@ -125,7 +126,6 @@ namespace MediaPortal.Configuration
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-      this.checkBoxPASV = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -163,6 +163,18 @@ namespace MediaPortal.Configuration
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Folder settings";
       this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+      // 
+      // checkBoxPASV
+      // 
+      this.checkBoxPASV.AutoSize = true;
+      this.checkBoxPASV.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxPASV.Location = new System.Drawing.Point(343, 241);
+      this.checkBoxPASV.Name = "checkBoxPASV";
+      this.checkBoxPASV.Size = new System.Drawing.Size(52, 17);
+      this.checkBoxPASV.TabIndex = 26;
+      this.checkBoxPASV.Text = "PASV";
+      this.checkBoxPASV.UseVisualStyleBackColor = true;
+      this.checkBoxPASV.Visible = false;
       // 
       // comboBox1
       // 
@@ -210,7 +222,7 @@ namespace MediaPortal.Configuration
       // label8
       // 
       this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(288, 224);
+      this.label8.Location = new System.Drawing.Point(288, 222);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(68, 13);
       this.label8.TabIndex = 22;
@@ -224,6 +236,7 @@ namespace MediaPortal.Configuration
       this.textBoxPort.Size = new System.Drawing.Size(38, 20);
       this.textBoxPort.TabIndex = 7;
       this.textBoxPort.Text = "21";
+      this.textBoxPort.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // textBoxPassword
       // 
@@ -270,7 +283,7 @@ namespace MediaPortal.Configuration
       // label5
       // 
       this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(16, 224);
+      this.label5.Location = new System.Drawing.Point(16, 222);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(135, 13);
       this.label5.TabIndex = 15;
@@ -379,18 +392,6 @@ namespace MediaPortal.Configuration
       this.okButton.Text = "OK";
       this.okButton.UseVisualStyleBackColor = true;
       this.okButton.Click += new System.EventHandler(this.okButton_Click);
-      // 
-      // checkBoxPASV
-      // 
-      this.checkBoxPASV.AutoSize = true;
-      this.checkBoxPASV.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxPASV.Location = new System.Drawing.Point(340, 241);
-      this.checkBoxPASV.Name = "checkBoxPASV";
-      this.checkBoxPASV.Size = new System.Drawing.Size(52, 17);
-      this.checkBoxPASV.TabIndex = 26;
-      this.checkBoxPASV.Text = "PASV";
-      this.checkBoxPASV.UseVisualStyleBackColor = true;
-      this.checkBoxPASV.Visible = false;
       // 
       // EditShareForm
       // 

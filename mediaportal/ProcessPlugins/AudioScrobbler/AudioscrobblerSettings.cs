@@ -249,7 +249,7 @@ namespace MediaPortal.AudioScrobbler
       MusicDatabase mdb = new MusicDatabase();
       int usedebuglog = 0;
       int submitsenabled = 1;
-      int scrobbledefault = 0;
+      int scrobbledefault = 1;
       int randomness = 77;
       int artisttoadd = 3;
       int trackstoadd = 1;
