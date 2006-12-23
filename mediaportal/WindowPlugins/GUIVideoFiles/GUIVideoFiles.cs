@@ -1583,7 +1583,7 @@ namespace MediaPortal.GUI.Video
             break;
           // Set resumedata to zero
           VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
-          VideoDatabase.SetMovieStopTimeAndResumeData(idFile, -1, resumeData);
+          VideoDatabase.SetMovieStopTimeAndResumeData(idFile, 0, resumeData);
 
         }
 
