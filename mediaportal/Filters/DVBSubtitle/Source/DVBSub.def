@@ -1,4 +1,4 @@
-LIBRARY MPSubTrans.ax
+LIBRARY DVBSub.ax
 EXPORTS 
     DllGetClassObject   PRIVATE
     DllCanUnloadNow     PRIVATE

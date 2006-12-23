@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2006-2007 Team MediaPortal
  *  Author: tourettes
  *	http://www.team-mediaportal.com
  *
@@ -90,7 +90,7 @@ HRESULT CPMTInputPin::CompleteConnect( IPin *pPin )
   if( hr == S_OK )
   {
     hr = MapPidToDemuxer( PMT_PID, m_pDemuxerPin, MEDIA_TRANSPORT_PACKET );
-  
+
     if( hr == S_OK )
       hr = FindVideoPID();
   }
@@ -110,7 +110,7 @@ void CPMTInputPin::SetVideoPid( int videoPid )
 STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
 {
   CheckPointer( pSample, E_POINTER );
-  
+
   if( m_bReset )
   {
     FindVideoPID();
@@ -122,9 +122,9 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
 	long lDataLen=0;
 
   HRESULT hr = pSample->GetPointer( &pbData );
-  if( FAILED(hr) ) 
+  if( FAILED(hr) )
     return hr;
-	
+
 	lDataLen = pSample->GetActualDataLength();
 
 	if( lDataLen > 5 )
@@ -142,7 +142,7 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
       {
         pidTable = m_pPatParser->m_pmtParsers[i]->GetPidInfo();
         videoPid = pidTable.VideoPid;
-        
+
         if( m_streamVideoPid == videoPid && m_pPidObserver != NULL )
         {
           if( m_pcrPid == -1 && pidTable.PcrPid > 0)
@@ -150,7 +150,7 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
 			      m_pcrPid = pidTable.PcrPid;
             m_pPidObserver->SetPcrPid( m_pcrPid  );
           }
-          if( m_subtitlePid == -1 && pidTable.SubtitlePid > 0) 
+          if( m_subtitlePid == -1 && pidTable.SubtitlePid > 0)
           {
             m_subtitlePid = pidTable.SubtitlePid;
             m_pPidObserver->SetSubtitlePid( m_subtitlePid );
@@ -167,9 +167,9 @@ HRESULT CPMTInputPin::FindVideoPID()
   HRESULT hr;
   IFilterGraph *pGraph = m_pFilter->GetFilterGraph();
   IBaseFilter *pDemuxer = NULL;;
-  
+
   hr = pGraph->FindFilterByName( L"MPEG-2 Demultiplexer", &pDemuxer );
-  
+
   if( hr != S_OK )
   {
     LogDebug( "Unable to find demuxer!" );
@@ -243,14 +243,14 @@ void CPMTInputPin::OnTsPacket( byte* tsPacket )
   unsigned int count = m_pPatParser->m_pmtParsers.size();
   if( count > 0 )
   {
-    // Map all PMT pids 
-    if( count > mappedPids.size() ) 
+    // Map all PMT pids
+    if( count > mappedPids.size() )
     {
       for( unsigned int i = 0 ; i < count ; i++ )
       {
         bool alreadyMapped = false;
         int pid = m_pPatParser->m_pmtParsers[i]->GetPid();
-        
+
         for( unsigned int j = 0 ; j < mappedPids.size() ; j++ )
         {
           if( mappedPids[j] == pid )
@@ -259,7 +259,7 @@ void CPMTInputPin::OnTsPacket( byte* tsPacket )
             break;
           }
         }
-        
+
         if( !alreadyMapped )
         {
           MapPidToDemuxer( pid, m_pDemuxerPin, MEDIA_TRANSPORT_PACKET );

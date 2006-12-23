@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006 Team MediaPortal
+ *	Copyright (C) 2006-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -29,7 +29,6 @@
 
 #include "dvbsubs\dvbsubdecoder.h"
 #include "SubdecoderObserver.h"
-#include "SubtitleObserver.h"
 #include "PidObserver.h"
 
 class CSubtitleInputPin;
@@ -38,7 +37,6 @@ class CPcrInputPin;
 class CPMTInputPin;
 
 class CDVBSubDecoder;
-class MSubtitleObserver; 
 
 typedef __int64 int64_t;
 
@@ -49,7 +47,7 @@ DEFINE_GUID(CLSID_DVBSub,
 DECLARE_INTERFACE_( IDVBSubtitle, IUnknown )
 {
   STDMETHOD(GetSubtitle) ( int place, CSubtitle *pSubtitle ) PURE;
-  STDMETHOD(SetCallback) ( MSubtitleObserver *pSubtitleObserver ) PURE;
+  STDMETHOD(SetCallback) ( void(*pSubtitleObserver)() ) PURE;
   STDMETHOD(GetSubtitleCount) ( int count ) PURE;
   STDMETHOD(DiscardOldestSubtitle) () PURE;
 };
@@ -61,18 +59,13 @@ public:
   CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock );
   ~CDVBSub();
 
+  // Methods from directshow base classes 
   HRESULT CheckConnect( PIN_DIRECTION dir, IPin *pPin );
-  
   STDMETHODIMP Run( REFERENCE_TIME tStart );
 	STDMETHODIMP Pause();
 	STDMETHODIMP Stop();
-
   CBasePin * GetPin( int n );
   int GetPinCount();
-
-  static CUnknown * WINAPI CreateInstance(LPUNKNOWN pUnk, HRESULT *pHr);
-
-	void Reset();
 
 	// Interface
 	STDMETHOD (GetSubtitle)( int place, CSubtitle *pSubtitle );
@@ -87,6 +80,10 @@ public:
   void SetPcrPid( LONG pid );
 	void SetSubtitlePid( LONG pid );
 
+  static CUnknown * WINAPI CreateInstance(LPUNKNOWN pUnk, HRESULT *pHr);
+
+	void Reset();
+
 private:
 
   CSubtitleInputPin*  m_pSubtitleInputPin;
@@ -94,16 +91,14 @@ private:
 	CPcrInputPin*		    m_pPcrPin;
   CPMTInputPin*       m_pPMTPin;
 
+  int m_VideoPid;     
+
   CDVBSubDecoder*     m_pSubDecoder;
 
-  CCritSec            m_Lock;				    // Main renderer critical section
-  CCritSec            m_ReceiveLock;		// Sublock for received samples
+  CCritSec            m_Lock;				      // Main renderer critical section
+  CCritSec            m_ReceiveLock;		  // Sublock for received samples
 
-  unsigned char*      m_curSubtitleData;//[720*576*3];
   ULONGLONG           m_firstPTS;
-  CSubtitle*          m_pSubtitle;
 
   void                (*m_pSubtitleObserver) (); 
-
-  int m_VideoPid;
 };

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006 Team MediaPortal
+ *	Copyright (C) 2006-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -28,8 +28,6 @@
 #include <commctrl.h>
 #include <initguid.h>
 
-//#include "MPDVBSub.h"
-//#include "proppage.h"
 #include "SubtitleOutputPin.h"
 
 extern void LogDebug( const char *fmt, ... );
