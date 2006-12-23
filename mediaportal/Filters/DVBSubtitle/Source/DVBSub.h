@@ -76,7 +76,7 @@ public:
 
 	// Interface
 	STDMETHOD (GetSubtitle)( int place, CSubtitle *pSubtitle );
-  STDMETHOD (SetCallback)( MSubtitleObserver *pSubtitle );
+  STDMETHOD (SetCallback)( void(*pSubtitleObserver)() );
   STDMETHOD (GetSubtitleCount)( int count );
   STDMETHOD (DiscardOldestSubtitle)();
 
@@ -103,7 +103,7 @@ private:
   ULONGLONG           m_firstPTS;
   CSubtitle*          m_pSubtitle;
 
-  MSubtitleObserver*  m_pSubtitleObserver;
+  void                (*m_pSubtitleObserver) (); 
 
   int m_VideoPid;
 };
