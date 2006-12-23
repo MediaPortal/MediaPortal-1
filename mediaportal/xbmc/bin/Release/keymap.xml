@@ -117,13 +117,13 @@
       <description>Next page</description>
     </action>
     <action>
-      <id>109</id>
+      <id>110</id>
       <key>home</key>
       <sound>cursor.wav</sound>
       <description>Select first item</description>
     </action>
     <action>
-      <id>110</id>
+      <id>109</id>
       <key>end</key>
       <sound>cursor.wav</sound>
       <description>Select last item</description>

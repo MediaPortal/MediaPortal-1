@@ -79,7 +79,7 @@ namespace MediaPortal.Configuration.Sections
         _useCustomLevel.Checked = startupStyle == 2;
         _customLevel = reader.GetValueAsInt("volume", "startuplevel", 52428);
 
-        bool isDigital = reader.GetValueAsBool("volume", "digital", false);
+        bool isDigital = reader.GetValueAsBool("volume", "digital", true);
         _useMasterVolume.Checked = !isDigital;
         _useWave.Checked = isDigital;
       }
@@ -114,7 +114,7 @@ namespace MediaPortal.Configuration.Sections
         else if (_useCustomLevel.Checked)
           writer.SetValue("volume", "startupstyle", 2);
 
-        writer.SetValue("volume", "digital", _useWave.Checked ? "yes" : "no");
+        writer.SetValueAsBool("volume", "digital", _useWave.Checked);
         writer.SetValue("volume", "table", _customText);
         writer.SetValue("volume", "startuplevel", _customLevel);
       }

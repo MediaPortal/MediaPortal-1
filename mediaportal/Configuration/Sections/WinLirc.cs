@@ -84,7 +84,7 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        inputCheckBox.Checked = xmlreader.GetValueAsString("WINLIRC", "enabled", "true") == "true";
+        inputCheckBox.Checked = xmlreader.GetValueAsBool("WINLIRC", "enabled", false);
         pathToWinlircTextBox.Text = xmlreader.GetValueAsString("WINLIRC", "winlircpath", "");
         IRDelayTextBox.Text = xmlreader.GetValueAsString("WINLIRC", "delay", "300");
         //useMultipleCheckBox.Checked = xmlreader.GetValueAsString("WINLIRC", "use_multiple_remotes", "true") == "true";
@@ -100,7 +100,7 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        xmlwriter.SetValue("WINLIRC", "enabled", inputCheckBox.Checked ? "true" : "false");
+        xmlwriter.SetValueAsBool("WINLIRC", "enabled", inputCheckBox.Checked);
         xmlwriter.SetValue("WINLIRC", "winlircpath", pathToWinlircTextBox.Text);
         if (IsInteger(IRDelayTextBox.Text) == false)
           IRDelayTextBox.Text = "300";
