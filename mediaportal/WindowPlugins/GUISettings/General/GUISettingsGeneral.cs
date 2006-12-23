@@ -221,13 +221,13 @@ namespace WindowPlugins.GUISettings
 
     void OnSkinChanged()
     {
-      SaveSettings();
+      int selectedLangIndex = btnLanguage.SelectedItem;
       int selectedSkinIndex = btnSkin.SelectedItem;
+      
+      // Set the skin to the selected skin and reload GUI
       GUIGraphicsContext.Skin = btnSkin.SelectedLabel;
-
-      //FreeResources();
+      SaveSettings();
       GUITextureManager.Clear();
-      //AllocResources();
       GUITextureManager.Init();
       GUIFontManager.LoadFonts(GUIGraphicsContext.Skin + @"\fonts.xml");
       GUIFontManager.InitializeDeviceObjects();
@@ -243,7 +243,10 @@ namespace WindowPlugins.GUISettings
       GUIWindowManager.OnResize();
       GUIWindowManager.ActivateWindow(GetID);
       GUIControl.FocusControl(GetID, btnSkin.GetID);
+      
+      // Apply the selected buttons agian, since they are cleared when we reload
       GUIControl.SelectItemControl(GetID, btnSkin.GetID, selectedSkinIndex);
+      GUIControl.SelectItemControl(GetID, btnLanguage.GetID, selectedLangIndex);
     }
 
     void OnLanguageChanged()
