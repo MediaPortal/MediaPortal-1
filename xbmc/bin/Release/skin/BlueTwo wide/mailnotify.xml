@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>8002</id>
+  <allowoverlay>yes</allowoverlay>
+  <defaultcontrol>2</defaultcontrol>
+  <controls>
+    <control>
+      <description>info label</description>
+      <type>fadelabel</type>
+      <id>2</id>
+      <posX>151</posX>
+      <posY>106</posY>
+      <width>160</width>
+      <label>8004</label>
+      <font>font16</font>
+      <textcolor>A0ff1010</textcolor>
+    </control>
+  </controls>
+</window>

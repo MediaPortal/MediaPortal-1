@@ -1,0 +1,95 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{96B7452E-8D2B-4EAE-8300-153CCB6C5109}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TagReaderPlugins</RootNamespace>
+    <AssemblyName>TagReaderPlugins</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="APE\ApeTag.cs" />
+    <Compile Include="APE\ApeTagField.cs" />
+    <Compile Include="FlacTag\FlacTag.cs" />
+    <Compile Include="ID3\FrameNames.cs" />
+    <Compile Include="ID3\ID3.cs" />
+    <Compile Include="ID3\ID3Frame.cs" />
+    <Compile Include="MP3\Mp3Tag.cs" />
+    <Compile Include="MP4\MP4Atom.cs" />
+    <Compile Include="MP4\MP4Parser.cs" />
+    <Compile Include="MP4\Mp4Tag.cs" />
+    <Compile Include="MP4\utils\BigEndianBitConverter.cs" />
+    <Compile Include="MP4\utils\DoubleConverter.cs" />
+    <Compile Include="MP4\utils\EndianBitConverter.cs" />
+    <Compile Include="MP4\utils\Endianness.cs" />
+    <Compile Include="MP4\utils\LittleEndianBitConverter.cs" />
+    <Compile Include="MPC\MpcTag.cs" />
+    <Compile Include="OGG\OggCRC32.cs" />
+    <Compile Include="OGG\OggTag.cs" />
+    <Compile Include="OGG\VorbisComment.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TagBase.cs" />
+    <Compile Include="WavPack\WavPackTag.cs" />
+    <Compile Include="WMA\WmaTag.cs" />
+    <Compile Include="WMA\WMFAttribute.cs" />
+    <Compile Include="WMA\WMFSdkWrapper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

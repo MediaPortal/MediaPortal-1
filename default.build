@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<project name="MediaPortal" default="debug">
+  <target name="debug" depends="build,test" />
+  <target name="build">
+	<exec program="msbuild">
+		<arg value="mediaportal.sln" />
+	</exec>
+  </target>
+  <target name="test">
+	<nunit2>
+		<formatter type="Plain" />
+		<test assemblyname="MediaPortal.Tests\bin\Debug\MediaPortal.Tests.dll"
+			  appconfig="test.config" />/>
+	</nunit2>
+  </target>
+</project> 

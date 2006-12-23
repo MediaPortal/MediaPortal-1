@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="de" availableDays="7" timezone="W. Europe Standard Time" />
+  <Channels>
+    <Channel id="ard.de" siteId="ARD" />
+    <Channel id="pro-sieben.de" siteId="PRO+7" />
+    <Channel id="3sat.de" siteId="3SAT" />
+    <Channel id="sat1.de" siteId="SAT.1" />
+    <Channel id="arte-tv.com" siteId="ARTE" />
+    <Channel id="rtl.de" siteId="RTL" />
+    <Channel id="rtl2.de" siteId="RTL+2" />
+    <Channel id="super-rtl.de" siteId="SUPER+RTL" />
+    <Channel id="kabel1.de" siteId="KABEL+1" />
+    <Channel id="vox.de" siteId="VOX" />
+    <Channel id="zdf.de" siteId="ZDF" />
+    <Channel id="dsf.de" siteId="DSF" />
+    <Channel id="wdr.de" siteId="WEST" />
+    <Channel id="swr.de" siteId="SW+III" />
+    <Channel id="br-online.de" siteId="BAYERN" />
+    <Channel id="rbb-online.de" siteId="RBB" />
+    <Channel id="tvb.de" siteId="TV+BERLIN" />
+    <Channel id="hamburg1.de" siteId="HAMBURG+1" />
+    <Channel id="hr-online.de" siteId="HESSEN" />
+    <Channel id="ndrtv.de" siteId="NDR" />
+    <Channel id="mdr.de" siteId="MDR" />
+    <Channel id="phoenix.de" siteId="PHOENIX" />
+    <Channel id="neunlive.de" siteId="NEUNLIVE" />
+    <Channel id="kika.de" siteId="KINDER+KANAL" />
+    <Channel id="n24.de" siteId="N24" />
+    <Channel id="n-tv.de" siteId="N-TV" />
+    <Channel id="viva.tv" siteId="VIVA" />
+    <Channel id="vivaplus.tv" siteId="VIVAPLUS" />
+    <Channel id="mtv.de" siteId="MTV" />
+    <Channel id="tele5.de" siteId="TELE5" />
+    <Channel id="xxp.tv" siteId="XXP" />
+    <Channel id="das-vierte.de" siteId="Das+Vierte" />
+    <Channel id="premiere.de" siteId="PREMIERE" />
+    <Channel id="serie@premiere.de" siteId="premserie" />
+    <Channel id="krimi@premiere.de" siteId="krimi" />
+    <Channel id="nost@premiere.de" siteId="premnostalgie" />
+    <Channel id="scifi@premiere.de" siteId="premscifi" />
+    <Channel id="at@premiere.de" siteId="premaustria" />
+    <Channel id="prem1@premiere.de" siteId="prem1" />
+    <Channel id="prem2@premiere.de" siteId="prem2" />
+    <Channel id="prem3@premiere.de" siteId="prem3" />
+    <Channel id="prem4@premiere.de" siteId="prem4" />
+    <Channel id="prem5@premiere.de" siteId="prem5" />
+    <Channel id="prem6@premiere.de" siteId="prem6" />
+    <Channel id="prem7@premiere.de" siteId="prem7" />
+    <Channel id="dir1@premiere.de" siteId="premdirekt" />
+    <Channel id="sport1@premiere.de" siteId="premspo" />
+    <Channel id="13thstreet.de" siteId="street" />
+    <Channel id="discovery.de" siteId="discov" />
+    <Channel id="disney.de" siteId="disney" />
+    <Channel id="junior.tv" siteId="junior" />
+    <Channel id="beate-uhse.tv" siteId="uhsetv" />
+    <Channel id="animalplanet.de" siteId="animal" />
+    <Channel id="mgm.com" siteId="mgm" />
+    <Channel id="classic@premiere.de" siteId="classic" />
+    <Channel id="hit24.tv" siteId="hit24" />
+    <Channel id="goldstar-tv.de" siteId="goldstar" />
+    <Channel id="heimatkanal.de" siteId="heimat" />
+    <Channel id="exrta@ard-digital.de" siteId="extra" />
+    <Channel id="fest@ard-digital.de" siteId="festival" />
+    <Channel id="zdfdoku@zdf.de" siteId="doku" />
+    <Channel id="zdfinfo@zdf.de" siteId="info" />
+    <Channel id="zdftheater@zdf.de" siteId="theater" />
+    <Channel id="sf1@sfdrs.ch" siteId="SF1" />
+    <Channel id="sf2@sfdrs.ch" siteId="SF2" />
+    <Channel id="orf1@orf.at" siteId="ORF+1" />
+    <Channel id="orf2@orf.at" siteId="ORF+2" />
+    <Channel id="ned1@omroep.nl" siteId="HOLLAND+1" />
+    <Channel id="ned2@omroep.nl" siteId="HOLLAND+2" />
+    <Channel id="ned3@omroep.nl" siteId="HOLLAND+3" />
+    <Channel id="bbcworld.com" siteId="BBCWORLD" />
+    <Channel id="eurosport@eurosport.com" siteId="EUROSPORT" />
+    <Channel id="euronews.net" siteId="EURONEWS" />
+    <Channel id="cnni-emea@cnn.com" siteId="CNN" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.tvtoday.de/tv/programm/programm.php?ztag=[DAY_OFFSET]&amp;sparte=alle&amp;uhrzeit=05%3A00%3A00&amp;sender=[ID]&amp;von=[LIST_OFFSET]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="&lt;!--LISTING ANFANG--&gt;" end="&lt;!--INHALT ENDE--&gt;">
+        <SectionTemplate tags="T">
+          <TemplateText>
+	&lt;table&gt;
+	&lt;tr&gt;
+	&lt;td&gt;&lt;/td&gt;
+	&lt;td&gt;&lt;#START&gt;&lt;/td&gt;
+	&lt;td&gt;&lt;#TITLE&gt;( &lt;br&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;/table&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

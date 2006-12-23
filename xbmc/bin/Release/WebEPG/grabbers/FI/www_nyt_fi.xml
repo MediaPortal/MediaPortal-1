@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="fi" availableDays="7" timezone="" />
+  <Channels>
+    <Channel id="tv1@yle.fi" siteId="1076152536046" />
+    <Channel id="tv2@yle.fi" siteId="1076152536062" />
+    <Channel id="mtv3@mtv3.fi" siteId="1076152536012" />
+    <Channel id="nelonen@nelonen.fi" siteId="1076152536037" />
+    <Channel id="subtv.fi" siteId="1076152536083" />
+    <Channel id="fst.fi" siteId="1076152536074" />
+    <Channel id="yleteema@yle.fi" siteId="1076152536130" />
+    <Channel id="yle24@yle.fi" siteId="1076152536134" />
+    <Channel id="urheilukanava.fi" siteId="1076152536114" />
+    <Channel id="mtv3+@mtv3.fi" siteId="1076152569751" />
+    <Channel id="nelonenplus@nelonen.fi" siteId="1076152569766" />
+    <Channel id="thevoice.fi" siteId="1101978368206" />
+    <Channel id="canalplus@canalplus.fi" siteId="1076152569706" />
+    <Channel id="canalplusfilm1@canalplus.fi" siteId="1076152569708" />
+    <Channel id="canalplusfilm2@canalplus.fi" siteId="1076152569710" />
+    <Channel id="canalplussport@canalplus.fi" siteId="1101978367954" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://nyt.hs.fi/televisio/[ID]/[DAY_NAME]" post="" external="false" encoding="" />
+    <Search startOffset="0" maxlistings="0" startPage="0">
+      <DayNames>
+        <Day>tanaan</Day>
+        <Day>huomenna</Day>
+        <Day>ylihuomenna</Day>
+        <Day>plus3</Day>
+        <Day>plus4</Day>
+        <Day>plus5</Day>
+        <Day>plus6</Day>
+      </DayNames>
+    </Search>
+    <Html>
+      <Template name="default" start="pieni_webkuva">
+        <SectionTemplate tags="T">
+          <TemplateText>
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#START&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#TITLE&gt;&lt;br&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

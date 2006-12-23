@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info availableDays="0" timezone="" />
+  <Channels>
+    <Channel id="abc1@disney.co.uk" siteId="abc1" />
+    <Channel id="bbc1@bbc.co.uk" siteId="bbc1" />
+    <Channel id="bbc1sc@bbc.co.uk" siteId="bbc1_scotland" />
+    <Channel id="bbc1wa@bbc.co.uk" siteId="bbc1_wales" />
+    <Channel id="bbc2@bbc.co.uk" siteId="bbc2" />
+    <Channel id="bbc2sc@bbc.co.uk" siteId="bbc2_scotland" />
+    <Channel id="bbc2wa@bbc.co.uk" siteId="bbc2_wales" />
+    <Channel id="bbc3@bbc.co.uk" siteId="bbc3" />
+    <Channel id="bbc4@bbc.co.uk" siteId="bbc4" />
+    <Channel id="bbcn@bbc.co.uk" siteId="bbc_news24" />
+    <Channel id="bbcp@bbc.co.uk" siteId="bbc_parliament" />
+    <Channel id="boom@cartoon-network.co.uk" siteId="boomerang" />
+    <Channel id="bravo.co.uk" siteId="bravo" />
+    <Channel id="cartoon-network.co.uk" siteId="cartoon_network" />
+    <Channel id="cbbc@bbc.co.uk" siteId="cbbc" />
+    <Channel id="cbeeb@bbc.co.uk" siteId="cbeebies" />
+    <Channel id="challengetv.co.uk" siteId="challenge" />
+    <Channel id="channel4.com" siteId="ch4" />
+    <Channel id="discoverychannel.co.uk" siteId="discovery" />
+    <Channel id="disneychannel.co.uk" siteId="disney" />
+    <Channel id="e4@channel4.com" siteId="e4" />
+    <Channel id="more4@channel4.com" siteId="more4" />
+    <Channel id="eurosport.co.uk" siteId="british_eurosport" />
+    <Channel id="film4@channel4.com" siteId="film_four" />
+    <Channel id="five" siteId="five" />
+    <Channel id="ftn.tv" siteId="ftn" />
+    <Channel id="itv1an@itv.com" siteId="itv1" />
+    <Channel id="itv1be@itv.com" siteId="itv1" />
+    <Channel id="itv1bs@itv.com" siteId="itv1" />
+    <Channel id="itv1ce@itv.com" siteId="itv1" />
+    <Channel id="itv1gr@itv.com" siteId="itv1" />
+    <Channel id="itv1lo@itv.com" siteId="itv1" />
+    <Channel id="itv1me@itv.com" siteId="itv1" />
+    <Channel id="itv1tt@itv.com" siteId="itv1" />
+    <Channel id="itv1wa@itv.com" siteId="itv1" />
+    <Channel id="itv1wc@itv.com" siteId="itv1" />
+    <Channel id="itv1we@itv.com" siteId="itv1" />
+    <Channel id="itv1yo@itv.com" siteId="itv1" />
+    <Channel id="itv2@itv.com" siteId="itv2" />
+    <Channel id="itv3@itv.com" siteId="itv3" />
+    <Channel id="itv4@itv.com" siteId="itv4" />
+    <Channel id="jr@nick.co.uk" siteId="nick_juniour" />
+    <Channel id="livingtv.co.uk" siteId="living_tv" />
+    <Channel id="menmot@itv.com" siteId="men_and_motors" />
+    <Channel id="mtv.co.uk" siteId="mtv" />
+    <Channel id="nick.co.uk" siteId="nickelodeon" />
+    <Channel id="pa2@paramountcomedy.com" siteId="paramount2" />
+    <Channel id="paramountcomedy.com" siteId="paramount" />
+    <Channel id="s4c.co.uk" siteId="s4c" />
+    <Channel id="scifi.com" siteId="scifi" />
+    <Channel id="skycinema1@sky.com" siteId="sky_cinema1" />
+    <Channel id="skycinema2@sky.com" siteId="sky_cinema2" />
+    <Channel id="skymovies1@sky.com" siteId="sky_movies1" />
+    <Channel id="skymovies2@sky.com" siteId="sky_movies2" />
+    <Channel id="skymovies3@sky.com" siteId="sky_movies3" />
+    <Channel id="skymovies4@sky.com" siteId="sky_movies4" />
+    <Channel id="skymovies5@sky.com" siteId="sky_movies5" />
+    <Channel id="skymovies6@sky.com" siteId="sky_movies6" />
+    <Channel id="skymovies7@sky.com" siteId="sky_movies7" />
+    <Channel id="skymovies8@sky.com" siteId="sky_movies8" />
+    <Channel id="skymovies9@sky.com" siteId="sky_movies9" />
+    <Channel id="skyone@sky.com" siteId="sky_one" />
+    <Channel id="skyonemix@sky.com" siteId="sky_one_mix" />
+    <Channel id="skysports1@sky.com" siteId="sky_sports1" />
+    <Channel id="skysports2@sky.com" siteId="sky_sports2" />
+    <Channel id="skysports3@sky.com" siteId="sky_sports3" />
+    <Channel id="skysportsne@sky.com" siteId="sky_sports_news" />
+    <Channel id="skysportsx@sky.com" siteId="sky_sports_xtra" />
+    <Channel id="skytravel@sky.com" siteId="sky_travel" />
+    <Channel id="tcmonline.co.uk" siteId="tcm" />
+    <Channel id="uktvbrighti@uktv.co.uk" siteId="uk_bright_ideas" />
+    <Channel id="uktvdoc@uktv.co.uk" siteId="uktv_documentary" />
+    <Channel id="uktvdrama@uktv.co.uk" siteId="uk_drama" />
+    <Channel id="uktvgold@uktv.co.uk" siteId="uk_gold" />
+    <Channel id="uktvhist@uktv.co.uk" siteId="uk_history" />
+    <Channel id="uktvpeople@uktv.co.uk" siteId="uktv_people" />
+    <Channel id="uktvstyle@uktv.co.uk" siteId="uk_style" />
+    <Channel id="vh1.co.uk" siteId="vh1" />
+  </Channels>
+  <Listing type="Xml">
+    <Site url="http://www.bleb.org/tv/data/listings/[DAY_OFFSET]/[ID].xml?WebEPG" post="" external="false" encoding="" delay="2000" />
+    <Xml xpath="//programme" channel="">
+      <Fields>
+        <Field name="#START" xmlname="start" />
+        <Field name="#END" xmlname="end" />
+        <Field name="#TITLE" xmlname="title" />
+        <Field name="#SUBTITLE" xmlname="subtitle" />
+        <Field name="#DESCRIPTION" xmlname="desc" />
+        <Field name="#GENRE" xmlname="type" />
+      </Fields>
+    </Xml>
+  </Listing>
+</Grabber>

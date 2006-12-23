@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="fr" availableDays="14" timezone="" />
+  <Channels>
+    <Channel id="tf1.fr" siteId="1" />
+    <Channel id="france2.fr" siteId="2" />
+    <Channel id="france3.fr" siteId="3" />
+    <Channel id="france4.tv" siteId="10" />
+    <Channel id="france5.fr" siteId="7" />
+    <Channel id="m6.fr" siteId="6" />
+    <Channel id="tmc.com" siteId="9" />
+    <Channel id="cplus.fr" siteId="4" />
+    <Channel id="arte-tv.com" siteId="5" />
+    <Channel id="direct8.fr" siteId="11" />
+    <Channel id="lcp@assemblee-nat.fr" siteId="12" />
+    <Channel id="nrj12.fr" siteId="13" />
+    <Channel id="nt1.tv" siteId="14" />
+    <Channel id="w9.fr" siteId="15" />
+    <Channel id="bfmtv.fr" siteId="16" />
+    <Channel id="europe2tv.fr" siteId="17" />
+    <Channel id="gullitv.fr" siteId="18" />
+    <Channel id="itelevision.fr" siteId="19" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.programme-television.org/moteur.php?numpage=" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default">
+        <SectionTemplate tags="TAI">
+          <TemplateText>
+	&lt;tr&gt;
+	&lt;td&gt;&lt;#TITLE&gt;&lt;I&gt;&lt;#GENRE&gt;&lt;/I&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+	&lt;td&gt;&lt;a&gt;à&lt;#START&gt;&lt;/a&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Template name="Details" start="SOIREE">
+        <SectionTemplate tags="T">
+          <TemplateText>
+
+	&lt;TABLE&gt;&lt;TR&gt;&lt;TD&gt;&lt;/TD&gt;&lt;TD&gt;&lt;/TD&gt;&lt;/TR&gt;&lt;/TABLE&gt;
+	&lt;TABLE&gt;&lt;TR&gt;&lt;TD&gt;&lt;/TD&gt;&lt;/TR&gt;&lt;TR&gt;&lt;TD&gt;&lt;#DESCRIPTION&gt;&lt;/TD&gt;&lt;/TR&gt;&lt;/TABLE&gt;
+
+    	</TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Sublinks>
+        <Sublink search="description" template="Details" />
+      </Sublinks>
+    </Html>
+  </Listing>
+</Grabber>

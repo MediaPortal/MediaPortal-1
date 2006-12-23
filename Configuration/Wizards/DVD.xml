@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<wizard>
+   <caption>MediaPortal - DVD Wizard</caption>
+   <sections>
+      <section>
+         <description>Welcome screen</description>
+         <name>Wizard_Welcome</name>
+         <topic>MediaPortal Wizard</topic>
+         <information></information>
+         <header>Welcome to the DVD Player setup wizard</header>
+         <body>This wizard will take you through the steps needed to configure MediaPortals DVD-playback. Take your time to read the information on each page carefully for a successful setup.</body>
+         <image>wizards/wizard_dvd.png</image>
+      </section>
+      <section>
+         <description></description>
+         <name>DVD</name>
+         <topic>General DVD Settings</topic>
+         <information>Please select the default language and subtitle settings for the DVD-playback. Note that these settings only affect the internal DVD player.</information>
+      </section>
+      <section>
+         <description></description>
+         <name>DVDCodec</name>
+         <topic>DVD CODEC Settings</topic>
+         <information>Please select the desired CODECS used for the DVD-playback with the internal player.</information>
+      </section>
+      <section>
+         <description></description>
+         <name>DVDPlayer</name>
+         <topic>External Player Settings</topic>
+         <information>If you would like to use other DVD player than the internal one, select the checkbox, navigate to and select the external DVD player, and add player-specific parameters. By checking the auto play checkbox MediaPortal will automatically try to play an inserted DVD.</information>
+      </section>
+      <section>
+         <description>Wizard done screen</description>
+         <name>Wizard_Finished</name>
+         <topic>Congratulations!</topic>
+         <information></information>
+         <header>This Modules Configuration is Complete!</header>
+         <body>You have now finished the configuration of this Wizard. If at anytime, you wish to alter any of these settings, press F2 from within MediaPortal. Please consult the appropriate MediaPortal documentation for further explanation of each setting.</body>
+         <image>wizards/wizard_done.png</image>
+      </section>
+   </sections>
+</wizard>

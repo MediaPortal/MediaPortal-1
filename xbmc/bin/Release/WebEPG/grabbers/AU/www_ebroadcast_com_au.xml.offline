@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- www_ebroadcast_com_au  Version 1.0 -->
+<!-- Updated by SiLenTYL -->
+<profile>
+  <section name="ChannelList">
+
+<!-- NSW Metro / Sydney Analogue -->
+	<entry name="NSWSabc@abc.com.au">chan=2&amp;state=Sydney</entry>			<!-- ABC Metro NSW -->
+	<entry name="NSWS7@seven.com.au">chan=7&amp;state=Sydney</entry>	 		<!-- Seven Metro NSW -->
+	<entry name="NSWS9@ninemsn.com.au">chan=9&amp;state=Sydney</entry>	 	<!-- Nine Metro NSW -->
+	<entry name="NSWS10@ten.com.au">chan=10&amp;state=Sydney</entry>	 		<!-- Ten Metro NSW -->
+	<entry name="NSWSsbs@sbs.com.au">chan=SBS&amp;state=Sydney</entry>	 	<!-- SBS Metro NSW -->
+	
+<!-- NSW Metro / Sydney Digital SD -->
+	<entry name="NSWSabc-digi@abc.com.au">chan=2&amp;state=Sydney</entry>		<!-- ABC Metro NSW -->
+	<entry name="NSWSabc2-digi@abc.com.au">chan=ABC2&amp;state=Sydney</entry>	<!-- ABC2 Metro NSW -->
+	<entry name="NSWS7-digi@seven.com.au">chan=7&amp;state=Sydney</entry>	 	<!-- Seven Metro NSW -->
+	<entry name="NSWS9-digi@ninemsn.com.au">chan=9&amp;state=Sydney</entry>	 	<!-- Nine Metro NSW -->
+	<entry name="NSWS10-digi@ten.com.au">chan=10&amp;state=Sydney</entry>	 	<!-- Ten Metro NSW -->
+	<entry name="NSWSsbs-digi@sbs.com.au">chan=SBS&amp;state=Sydney</entry>	 	<!-- SBS Metro NSW -->
+	<entry name="NSWSsbsd-digi@sbs.com.au">chan=SBSD&amp;state=Sydney</entry>	<!-- SBSD Metro NSW -->
+
+<!-- NSW Regional Analogue -->
+	<entry name="NSWRabc@abc.com.au">chan=2&amp;state=NSWReg</entry>			<!-- ABC Regional NSW -->
+	<entry name="NSWRn@primetv.com.au">chan=PrimN&amp;state=NSWReg</entry>		<!-- Seven(Prime North) Regional NSW -->
+	<entry name="NSWRs@primetv.com.au">chan=PrimS&amp;state=NSWReg</entry>		<!-- Seven(Prime South) Regional NSW -->
+	<entry name="NSWRnbn@nbntv.com.au">chan=NBN&amp;state=NSWReg</entry>		<!-- Nine(NBN) Regional NSW -->
+	<entry name="NSWRwin@wintv.com.au">chan=WIN&amp;state=NSWReg</entry>		<!-- Nine(WIN) Regional NSW -->  
+	<entry name="NSWR10c@ten.com.au">chan=10Cap&amp;state=NSWReg</entry>	 	<!-- Ten Regional NSW -->
+	<entry name="NSWR10n@ten.com.au">chan=10Nth&amp;state=NSWReg</entry> 		<!-- Ten Northern Regional NSW -->
+	<entry name="NSWRsbs@sbs.com.au">chan=SBS&amp;state=NSWReg</entry>	 	<!-- SBS Regional NSW -->
+	
+<!-- NSW Regional Digital SD -->
+	<entry name="NSWRabc-digi@abc.com.au">chan=2&amp;state=NSWReg</entry>		<!-- ABC Regional NSW -->
+	<entry name="NSWRabc2-digi@abc.com.au">chan=ABC2&amp;state=NSWReg</entry>	<!-- ABC2 Regional NSW -->
+	<entry name="NSWRn-digi@primetv.com.au">chan=PrimN&amp;state=NSWReg</entry>	<!-- Seven(Prime North) Regional NSW -->
+	<entry name="NSWRs-digi@primetv.com.au">chan=PrimS&amp;state=NSWReg</entry>	<!-- Seven(Prime South) Regional NSW -->
+	<entry name="NSWRnbn-digi@nbntv.com.au">chan=NBN&amp;state=NSWReg</entry>	<!-- Nine(NBN) Regional NSW -->
+	<entry name="NSWRwin-digi@wintv.com.au">chan=WIN&amp;state=NSWReg</entry>	<!-- Nine(WIN) Regional NSW -->  
+	<entry name="NSWR10c-digi@ten.com.au">chan=10Cap&amp;state=NSWReg</entry>	<!-- Ten Regional NSW -->
+	<entry name="NSWR10n-digi@ten.com.au">chan=10Nth&amp;state=NSWReg</entry> 	<!-- Ten Northern Regional NSW -->
+	<entry name="NSWRsbs-digi@sbs.com.au">chan=SBS&amp;state=NSWReg</entry>	 	<!-- SBS Regional NSW -->
+	<entry name="NSWRsbsd-digi@sbs.com.au">chan=SBSD&amp;state=NSWReg</entry>	<!-- SBSD Regional NSW -->
+
+<!-- VIC Metro / Melbourne Analogue -->
+	<entry name="VICMabc@abc.com.au">chan=2&amp;state=Melbourne</entry>		<!-- ABC Metro VIC -->
+	<entry name="VICM7@seven.com.au">chan=7&amp;state=Melbourne</entry>		<!-- Seven Metro VIC -->
+	<entry name="VICM9@ninemsn.com.au">chan=9&amp;state=Melbourne</entry>		<!-- Nine Metro VIC -->
+	<entry name="VICM10@ten.com.au">chan=10&amp;state=Melbourne</entry>		<!-- Ten Regional VIC -->
+	<entry name="VICMsbs@sbs.com.au">chan=SBS&amp;state=Melbourne</entry>		<!-- SBS Metro VIC -->
+	<entry name="VICM31@31.org.au">chan=31&amp;state=Melbourne</entry>		<!-- 31 Metro VIC -->
+
+<!-- VIC Metro / Melbourne Digital SD -->
+	<entry name="VICMabc-digi@abc.com.au">chan=2&amp;state=Melbourne</entry>	<!-- ABC Metro VIC -->
+	<entry name="VICMabc2-digi@abc.com.au">chan=ABC2&amp;state=Melbourne</entry>	<!-- ABC2 Metro VIC -->
+	<entry name="VICM7-digi@seven.com.au">chan=7&amp;state=Melbourne</entry>	<!-- Seven Metro VIC -->
+	<entry name="VICM9-digi@ninemsn.com.au">chan=9&amp;state=Melbourne</entry>	<!-- Nine Metro VIC -->
+	<entry name="VICM10-digi@ten.com.au">chan=10&amp;state=Melbourne</entry>	<!-- Ten Regional VIC -->
+	<entry name="VICMsbs-digi@sbs.com.au">chan=SBS&amp;state=Melbourne</entry>	<!-- SBS Metro VIC -->
+	<entry name="VICMsbsd-digi@sbs.com.au">chan=SBSD&amp;state=Melbourne</entry>	<!-- SBSD Metro VIC -->
+
+<!-- VIC Regional Analogue -->
+	<entry name="VICRabc@abc.com.au">chan=2&amp;state=VICReg</entry>			<!-- ABC Regional VIC -->
+	<entry name="VICRP@seven.com.au">chan=2&amp;state=VICReg</entry>			<!-- Seven(Prime) Regional VIC -->
+	<entry name="VICRwin@ninemsn.com.au">chan=2&amp;state=VICReg</entry>		<!-- Nine(WIN) Regional VIC -->
+	<entry name="VICRwinsa@ninemsn.com.au">chan=2&amp;state=VICReg</entry>		<!-- Nine(WIN SA) Regional VIC / SA -->
+	<entry name="VICR10@ten.com.au">chan=2&amp;state=VICReg</entry>			<!-- Ten Regional VIC -->
+	<entry name="VICRsbs@sbs.com.au">chan=2&amp;state=VICReg</entry>			<!-- SBS Regional VIC -->
+	
+<!-- VIC Regional Digital SD -->
+	<entry name="VICRabc-digi@abc.com.au">2</entry>						<!-- ABC Regional VIC -->
+	<entry name="VICRabc2-digi@abc.com.au">ABC2</entry>					<!-- ABC2 Regional VIC -->
+	<entry name="VICRP-digi@seven.com.au">Prime</entry>					<!-- Seven(Prime) Regional VIC -->
+	<entry name="VICRwin-digi@ninemsn.com.au">WIN</entry>					<!-- Nine(WIN) Regional VIC -->
+	<entry name="VICRwinsa-digi@ninemsn.com.au">WinSA</entry>				<!-- Nine(WIN SA) Regional VIC / SA -->
+	<entry name="VICR10-digi@ten.com.au">10</entry>						<!-- Ten Regional VIC -->
+	<entry name="VICRsbs-digi@sbs.com.au">SBS</entry>					<!-- SBS Regional VIC -->
+	<entry name="VICRsbsd-digi@sbs.com.au">SBSD</entry>					<!-- SBSD Regional VIC -->
+
+<!-- QLD Metro / Brisbane Analogue -->
+	<entry name="QLDBabc@abc.com.au">2</entry>						<!-- ABC Metro QLD -->
+	<entry name="QLDB7@seven.com.au">7</entry>						<!-- Seven Metro QLD -->
+	<entry name="QLDB9@ninemsn.com.au">9</entry>						<!-- Nine Metro QLD -->
+	<entry name="QLDB10@ten.com.au">10</entry>						<!-- Ten Metro QLD -->
+	<entry name="QLDBsbs@sbs.com.au">SBS</entry>						<!-- SBS Metro QLD -->
+	<entry name="QLDB31@31.com.au">31</entry>							<!-- 31 Metro QLD -->
+
+<!-- QLD Metro / Brisbane Digital -->
+	<entry name="QLDBabc-digi@abc.com.au">2</entry>						<!-- ABC Metro QLD -->
+	<entry name="QLDBabc2-digi@abc.com.au">ABC2</entry>					<!-- ABC2 Metro QLD -->
+	<entry name="QLDB7-digi@seven.com.au">7</entry>						<!-- Seven Metro QLD -->
+	<entry name="QLDB9-digi@ninemsn.com.au">9</entry>					<!-- Nine Metro QLD -->
+	<entry name="QLDB10-digi@ten.com.au">10</entry>						<!-- Ten Metro QLD -->
+	<entry name="QLDBsbs-digi@sbs.com.au">SBS</entry>					<!-- SBS Metro QLD -->
+	<entry name="QLDBsbsd-digi@sbs.com.au">SBS</entry>					<!-- SBSD Metro QLD -->
+	
+<!-- QLD Regional Analogue -->
+	<entry name="QLDRabc@abc.com.au">2</entry>						<!-- ABC Regional QLD -->
+	<entry name="QLDR7@seven.com.au">7C</entry>						<!-- Seven(Central) Regional QLD -->
+	<entry name="QLDRimp@ninemsnIMP.com.au">Imp</entry>					<!-- Nine(Imparja) Regional QLD -->
+	<entry name="QLDRwin@ninemsnWIN.com.au">WIN</entry>					<!-- Nine(WIN) Regional QLD -->
+	<entry name="QLDR10@ten.com.au">10</entry>						<!-- Ten Regional QLD -->
+	<entry name="QLDRsbs@sbs.com.au">SBS</entry>						<!-- SBS Regional QLD -->
+	
+<!-- QLD Regional Digital -->
+	<entry name="QLDRabc-digi@abc.com.au">2</entry>						<!-- ABC Regional QLD -->
+	<entry name="QLDRabc2-digi@abc.com.au">ABC2</entry>					<!-- ABC2 Regional QLD -->
+	<entry name="QLDR7-digi@seven.com.au">7C</entry>					<!-- Seven(Central) Regional QLD -->
+	<entry name="QLDRimp-digi@ninemsnIMP.com.au">Imp</entry>				<!-- Nine(Imparja) Regional QLD -->
+	<entry name="QLDRwin-digi@ninemsnWIN.com.au">WIN</entry>				<!-- Nine(WIN) Regional QLD -->
+	<entry name="QLDR10-digi@ten.com.au">10</entry>						<!-- Ten Regional QLD -->
+	<entry name="QLDRsbs-digi@sbs.com.au">SBS</entry>					<!-- SBS Regional QLD -->
+	<entry name="QLDRsbsd-digi@sbs.com.au">SBSD</entry>					<!-- SBSD Regional QLD -->
+
+<!-- ACT Metro / Canberra Analogue -->
+	<entry name="ACTCabc@abc.com.au">2</entry>						<!-- ABC Metro ACT -->
+	<entry name="ACTCPs@seven.com.au">PrimS</entry>						<!-- Seven(Prime South) Metro ACT -->
+	<entry name="ACTCwin@ninemsn.com.au">WIN</entry>					<!-- Nine(WIN) Metro ACT -->
+	<entry name="ACTC10@ten.com.au">10Cap</entry>						<!-- Ten Metro ACT -->
+	<entry name="ACTCsbs@sbs.com.au">SBS</entry>						<!-- SBS Metro ACT -->
+	
+<!-- ACT Metro / Canberra Digital -->
+	<entry name="ACTCabc-digi@abc.com.au">2</entry>						<!-- ABC Metro ACT -->
+	<entry name="ACTCabc2-digi@abc.com.au">ABC2</entry>					<!-- ABC2 Metro ACT -->
+	<entry name="ACTCPs-digi@seven.com.au">PrimS</entry>					<!-- Seven(Prime South) Metro ACT -->
+	<entry name="ACTCwin-digi@ninemsn.com.au">WIN</entry>					<!-- Nine(WIN) Metro ACT -->
+	<entry name="ACTC10-digi@ten.com.au">10Cap</entry>					<!-- Ten Metro ACT -->
+	<entry name="ACTCsbs-digi@sbs.com.au">SBS</entry>					<!-- SBS Metro ACT -->
+	<entry name="ACTCsbsd-digi@sbs.com.au">SBSD</entry>					<!-- SBSD Metro ACT -->
+
+<!-- TAS Metro / Hobart Analogue-->
+	<entry name="TASHabc@abc.com.au">2</entry>						<!-- ABC Metro TAS -->
+	<entry name="TASH7@seven.com.au">SC</entry>						<!-- Seven(Central) Metro TAS -->
+	<entry name="TASHwin@ninemsn.com.au">WIN</entry>					<!-- Nine(WIN) Metro TAS -->
+	<entry name="TASHtdt@ten.com.au">TDT</entry>						<!-- Ten(TDT) Metro TAS -->
+	<entry name="TASHsbs@sbs.com.au">SBS</entry>						<!-- SBS Metro TAS -->
+	
+<!-- TAS Metro / Hobart Digital-->
+	<entry name="TASHabc-digi@abc.com.au">2</entry>						<!-- ABC Metro TAS -->
+	<entry name="TASHabc2-digi@abc.com.au">ABC2</entry>					<!-- ABC2 Metro TAS -->
+	<entry name="TASH7-digi@seven.com.au">SC</entry>					<!-- Seven(Central) Metro TAS -->
+	<entry name="TASHwin-digi@ninemsn.com.au">WIN</entry>					<!-- Nine(WIN) Metro TAS -->
+	<entry name="TASHtdt-digi@ten.com.au">TDT</entry>					<!-- Ten(TDT) Metro TAS -->
+	<entry name="TASHsbs-digi@sbs.com.au">SBS</entry>					<!-- SBS Metro TAS -->
+	<entry name="TASHsbsd-digi@sbs.com.au">SBSD</entry>					<!-- SBSD Metro TAS -->
+	
+<!-- TAS Regional Analogue -->
+	<entry name="TASRabc@abc.com.au">2</entry>						<!-- ABC Regional TAS -->
+	<entry name="TASR7@seven.com.au">SC</entry>						<!-- Seven(Central) Regional TAS -->
+	<entry name="TASRwin@ninemsn.com.au">WIN</entry>					<!-- Nine(WIN) Regional TAS -->
+	<entry name="TASRtdt@ten.com.au">TDT</entry>						<!-- Ten(TDT) Regional TAS -->
+	<entry name="TASRsbs@sbs.com.au">SBS</entry>						<!-- SBS Regional TAS -->
+	
+<!-- TAS Regional Digital -->
+	<entry name="TASRabc-digi@abc.com.au">2</entry>						<!-- ABC Regional TAS -->
+	<entry name="TASRabc2-digi@abc.com.au">ABC2</entry>					<!-- ABC2 Regional TAS -->
+	<entry name="TASR7-digi@seven.com.au">SC</entry>					<!-- Seven(Central) Regional TAS -->
+	<entry name="TASRwin-digi@ninemsn.com.au">WIN</entry>					<!-- Nine(WIN) Regional TAS -->
+	<entry name="TASRtdt-digi@ten.com.au">TDT</entry>					<!-- Ten(TDT) Regional TAS -->
+	<entry name="TASRsbs-digi@sbs.com.au">SBS</entry>					<!-- SBS Regional TAS -->
+	<entry name="TASRsbsd-digi@sbs.com.au">SBSD</entry>					<!-- SBSD Regional TAS -->
+
+<!-- SA Metro / Adelaide Analogue -->
+	<entry name="SAAabc@abc.com.au">2</entry>							<!-- ABC Metro SA -->
+	<entry name="SAA7@seven.com.au">7</entry>							<!-- Seven Metro SA -->
+	<entry name="SAA9@ninemsn.com.au">9</entry>						<!-- Nine Metro SA -->
+	<entry name="SAA10@ten.com.au">10</entry>							<!-- Ten Metro SA -->
+	<entry name="SAAsbs@sbs.com.au">SBS</entry>						<!-- SBS Metro SA -->
+	<entry name="SAA31@31.com.au">31</entry>							<!-- 31 Metro SA -->
+
+<!-- SA Metro / Adelaide Digital -->
+	<entry name="SAAabc-digi@abc.com.au">2</entry>						<!-- ABC Metro SA -->
+	<entry name="SAAabc2-digi@abc.com.au">ABC2</entry>					<!-- ABC2 Metro SA -->
+	<entry name="SAA7-digi@seven.com.au">7</entry>						<!-- Seven Metro SA -->
+	<entry name="SAA9-digi@ninemsn.com.au">9</entry>					<!-- Nine Metro SA -->
+	<entry name="SAA10-digi@ten.com.au">10</entry>						<!-- Ten Metro SA -->
+	<entry name="SAAsbs-digi@sbs.com.au">SBS</entry>					<!-- SBS Metro SA -->
+	<entry name="SAAsbsd-digi@sbsd.com.au">SBSD</entry>					<!-- SBSD Metro SA -->
+	
+<!-- SA Regional Analogue -->
+	<entry name="SARabc@abc.com.au">2</entry>							<!-- ABC Regional SA -->
+	<entry name="SAR7@seven.com.au">7C</entry>						<!-- Seven(Central) Regional SA -->
+	<entry name="SARimp@ninemsn.com.au">Imp</entry>						<!-- Nine(Imparja) Regional SA -->
+	<entry name="SARwin@ninemsn.com.au">WIN</entry>						<!-- Nine(WIN) Regional SA -->
+	<entry name="SAR10@ten.com.au">10</entry>							<!-- Ten Regional SA -->
+	<entry name="SARsbs@sbs.com.au">SBS</entry>						<!-- SBS Regional SA -->
+	
+<!-- SA Regional Digital -->
+	<entry name="SARabc-digi@abc.com.au">2</entry>						<!-- ABC Regional SA -->
+	<entry name="SARabc2-digi@abc.com.au">ABC2</entry>					<!-- ABC2 Regional SA -->
+	<entry name="SAR7-digi@seven.com.au">7C</entry>						<!-- Seven(Central) Regional SA -->
+	<entry name="SARimp-digi@ninemsn.com.au">Imp</entry>					<!-- Nine(Imparja) Regional SA -->
+	<entry name="SARwin-digi@ninemsn.com.au">WIN</entry>					<!-- Nine(WIN) Regional SA -->
+	<entry name="SAR10-digi@ten.com.au">10</entry>						<!-- Ten Regional SA -->
+	<entry name="SARsbs-digi@sbs.com.au">SBS</entry>					<!-- SBS Regional SA -->
+	<entry name="SARsbsd-digi@sbs.com.au">SBSD</entry>					<!-- SBSD Regional SA -->
+
+<!-- NT Metro / Darwin Analogue -->
+	<entry name="NTDabc@abc.com.au">2</entry>							<!-- ABC Metro NT -->
+	<entry name="NTD7@seven.com.au">7</entry>							<!-- Seven Metro NT -->
+	<entry name="NTD9@ninemsn.com.au">9</entry>						<!-- Nine Metro NT -->
+	<entry name="NTDsbs@sbs.com.au">SBS</entry>						<!-- SBS Metro NT -->
+	
+<!-- NT Metro / Darwin Digital -->
+	<entry name="NTDabc-digi@abc.com.au">2</entry>						<!-- ABC Metro NT -->
+	<entry name="NTDabc2-digi@abc.com.au">ABC2</entry>					<!-- ABC2 Metro NT -->
+	<entry name="NTD7-digi@seven.com.au">7</entry>						<!-- Seven Metro NT -->
+	<entry name="NTD9-digi@ninemsn.com.au">9</entry>					<!-- Nine Metro NT -->
+	<entry name="NTDsbs-digi@sbs.com.au">SBS</entry>					<!-- SBS Metro NT -->
+	<entry name="NTDsbsd-digi@sbsd.com.au">SBSD</entry>					<!-- SBSD Metro NT -->
+
+<!-- NT Regional Analogue -->
+	<entry name="NTRabc@abc.com.au">2</entry>							<!-- ABC Regional NT -->
+	<entry name="NTR7@seven.com.au">7C</entry>						<!-- Seven(Central) Regional NT -->
+	<entry name="NTRimp@ninemsn.com.au">Imp</entry>						<!-- Nine(Imparja) Regional NT -->
+	<entry name="NTRwin@ninemsn.com.au">WIN</entry>						<!-- Nine(WIN) Regional NT -->
+	<entry name="NTRsbs@sbs.com.au">SBS</entry>						<!-- SBS Regional NT -->
+	
+<!-- NT Regional Digital -->
+	<entry name="NTRabc-digi@abc.com.au">2</entry>						<!-- ABC Regional NT -->
+	<entry name="NTRabc2-digi@abc.com.au">ABC2</entry>					<!-- ABC2 Regional NT -->
+	<entry name="NTR7-digi@seven.com.au">7C</entry>						<!-- Seven(Central) Regional NT -->
+	<entry name="NTRimp-digi@ninemsn.com.au">Imp</entry>					<!-- Nine(Imparja) Regional NT -->
+	<entry name="NTRwin-digi@ninemsn.com.au">WIN</entry>					<!-- Nine(WIN) Regional NT -->
+	<entry name="NTRsbs-digi@sbs.com.au">SBS</entry>					<!-- SBS Regional NT -->
+	<entry name="NTRsbsd-digi@sbs.com.au">SBSD</entry>					<!-- SBSD Regional NT -->
+
+<!-- WA Metro / Perth Analgoue -->
+	<entry name="WAPabc@abc.com.au">2</entry>							<!-- ABC Metro WA -->
+	<entry name="WAP7@seven.com.au">7</entry>							<!-- Seven Metro WA -->
+	<entry name="WAP9@ninemsn.com.au">9</entry>						<!-- Nine Metro WA -->
+	<entry name="WAP10@ten.com.au">10</entry>							<!-- Ten Metro WA -->
+	<entry name="WAPsbs@sbs.com.au">SBS</entry>						<!-- SBS Metro WA -->
+	<entry name="WAP31@31.com.au">31</entry>							<!-- 31 Metro WA -->
+
+<!-- WA Metro / Perth Digital -->
+	<entry name="WAPabc-digi@abc.com.au">2</entry>						<!-- ABC Metro WA -->
+	<entry name="WAPabc2-digi@abc.com.au">ABC2</entry>					<!-- ABC2 Metro WA -->
+	<entry name="WAP7-digi@seven.com.au">7</entry>						<!-- Seven Metro WA -->
+	<entry name="WAP9-digi@ninemsn.com.au">9</entry>					<!-- Nine Metro WA -->
+	<entry name="WAP10-digi@ten.com.au">10</entry>						<!-- Ten Metro WA -->
+	<entry name="WAPsbs-digi@sbs.com.au">SBS</entry>					<!-- SBS Metro WA -->
+	<entry name="WAPsbsd-digi@sbsd.com.au">SBSD</entry>					<!-- SBSD Metro WA -->
+	
+<!-- WA Regional Analogue -->
+	<entry name="WARabc@abc.com.au">2</entry>		 	<!-- ABC Regional WA -->
+	<entry name="WARgwn@seven.com.au">GWN</entry> 		<!-- Seven(GWN) Regional WA -->
+	<entry name="WARwin@ninemsn.com.au">WIN</entry>		<!-- Nine(WIN) Regional WA -->
+	<entry name="WARsbs@sbs.com.au">SBS</entry>	 	<!-- SBS Regional WA -->
+	
+<!-- WA Regional Digital -->
+	<entry name="WARabc-digi@abc.com.au">2</entry>		 	<!-- ABC Regional WA -->
+	<entry name="WARabc2-digi@abc.com.au">ABC2</entry>	 	<!-- ABC2 Regional WA -->
+	<entry name="WARgwn-digi@seven.com.au">GWN</entry> 		<!-- Seven(GWN) Regional WA -->
+	<entry name="WARwin-digi@ninemsn.com.au">WIN</entry>		<!-- Nine(WIN) Regional WA -->
+	<entry name="WARsbs-digi@sbs.com.au">SBS</entry>	 	<!-- SBS Regional WA -->
+	<entry name="WARsbsd-digi@sbsd.com.au">SBSD</entry>	 	<!-- SBSD Regional WA -->
+
+  </section>
+<!-- Formating of Listing -->
+  <section name="Listing"> 
+    <entry name="BaseURL">http://www.ebroadcast.com.au/cgi-bin/TV/</entry>
+    <entry name="SearchURL">byChannel?date=#WEEKDAY_#_D_#MONTH&amp;#ID&amp;fta=1&amp;fox=1&amp;opt=0</entry>
+
+<!-- Unique Listing Start string -->
+    <entry name="Start">Selected channel:</entry>
+
+<!-- Unique Listing End string -->
+    <entry name="End">start subfooter</entry>
+
+<!-- Template of the Listing information -->
+    <entry name="Template">
+	&#60;TR&#62;
+	&#60;TD&#62;&#60;#START&#62;&#60;/TD&#62;
+	&#60;TD&#62;&#60;#TITLE&#62;&#60;br&#62;&#60;#DESCRIPTION&#62;&#60;/TD&#62;&#60;/TR&#62;
+    </entry>
+  </section>
+</profile>
