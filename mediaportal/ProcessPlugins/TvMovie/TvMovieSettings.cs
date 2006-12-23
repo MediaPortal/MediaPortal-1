@@ -142,7 +142,7 @@ namespace ProcessPlugins.TvMovie
         checkBoxAdditionalInfo.Checked = xmlreader.GetValueAsBool("tvmovie", "extenddescription", false);
         checkBoxShowAudioFormat.Checked = xmlreader.GetValueAsBool("tvmovie", "showaudioformat", false);
         checkBoxSlowImport.Checked = xmlreader.GetValueAsBool("tvmovie", "slowimport", false);
-        checkBoxUseDatabaseDate.Checked = xmlreader.GetValueAsBool("tvmovie", "usedatabasedate", false);
+        checkBoxUseDatabaseDate.Checked = xmlreader.GetValueAsBool("tvmovie", "usedatabasedate", true);
       }
     }
 
