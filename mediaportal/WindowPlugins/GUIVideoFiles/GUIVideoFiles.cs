@@ -435,7 +435,7 @@ namespace MediaPortal.GUI.Video
 
     protected override void LoadDirectory(string newFolderName)
     {
-      if ((newFolderName == null) || (newFolderName == String.Empty)) return;
+      if (newFolderName == null) return;
       
       GUIWaitCursor.Show();
 
