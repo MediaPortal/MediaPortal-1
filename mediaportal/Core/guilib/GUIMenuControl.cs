@@ -121,8 +121,11 @@ namespace MediaPortal.GUI.Library
         _buttonList[_focusPosition].Focus = false;
         _focusPosition = value;
         _buttonList[_focusPosition].Focus = oldFocus;
-        if (!_horizontal) _focusImage.SetPosition(_focusImage._positionX, _buttonList[_focusPosition]._positionY);
-        else _focusImage.SetPosition(_buttonList[_focusPosition]._positionX, _focusImage._positionY);
+        if (_focusImage != null)
+        {
+          if (!_horizontal) _focusImage.SetPosition(_focusImage._positionX, _buttonList[_focusPosition]._positionY);
+          else _focusImage.SetPosition(_buttonList[_focusPosition]._positionX, _focusImage._positionY);
+        }
       }
     }
 
@@ -213,7 +216,7 @@ namespace MediaPortal.GUI.Library
       _buttonList[_focusPosition].Focus = false;  // hide button focus for animation
       if (!_horizontal) _buttonList[_focusPosition]._positionY += _spaceAfterSelected;
       else _buttonList[_focusPosition]._positionX += _spaceAfterSelected;
-      _focusImage.Visible = true;                 // show Image for animation 
+      if (_focusImage != null) _focusImage.Visible = true;                 // show Image for animation 
       _currentState = State.ScrollUp;
       InitMovement();
       _nextState = State.Idle;
@@ -231,7 +234,7 @@ namespace MediaPortal.GUI.Library
       _buttonList[_focusPosition].Focus = false;  // hide button focus for animation
       if (!_horizontal) _buttonList[_focusPosition + 1]._positionY -= _spaceAfterSelected;
       else _buttonList[_focusPosition + 1]._positionX -= _spaceAfterSelected;
-      _focusImage.Visible = true;                 // show Image for animation 
+      if (_focusImage != null) _focusImage.Visible = true;                 // show Image for animation 
       _currentState = State.ScrollDown;
       InitMovement();
       _nextState = State.Idle;
@@ -345,7 +348,7 @@ namespace MediaPortal.GUI.Library
       _lastButtonValue = (int)_scrollButton.Value;
       int increment = _lastButtonValue - tmpValue;
       if ((_currentState == State.ScrollUp) || (_currentState == State.ScrollUpFinal)) increment = -increment;
-      if (!_fixedScroll)  // scrollbar can move 
+      if ((!_fixedScroll) && (_focusImage != null))  // scrollbar can move 
       {
         if (!_horizontal) _focusImage.SetPosition(_focusImage._positionX, _focusImage._positionY + increment);
         else _focusImage.SetPosition(_focusImage._positionX + increment, _focusImage._positionY);
@@ -378,7 +381,7 @@ namespace MediaPortal.GUI.Library
       if ((_scrollButton.Running != false) || (_scrollText.Running != false)) return;
 
       _buttonList[FocusedButton].Focus = false;  // unfocus before any changes
-      _focusImage.Visible = false;
+      if (_focusImage != null) _focusImage.Visible = false;
       if (!_horizontal && _buttonList[1]._positionY < _positionY)  // Are there two buttons on top not visible?
       {
         // move the top element to the end
@@ -424,8 +427,11 @@ namespace MediaPortal.GUI.Library
             break;
         }
       }
-      if (!_horizontal) _focusImage.SetPosition(_focusImage._positionX, _buttonList[FocusedButton]._positionY);
-      else _focusImage.SetPosition(_buttonList[FocusedButton]._positionX, _focusImage._positionY);
+      if (_focusImage != null)
+      {
+        if (!_horizontal) _focusImage.SetPosition(_focusImage._positionX, _buttonList[FocusedButton]._positionY);
+        else _focusImage.SetPosition(_buttonList[FocusedButton]._positionX, _focusImage._positionY);
+      }
       _buttonList[FocusedButton].Focus = true;                                             // focus after all changes
       //LoadHoverImage(FocusedButton);
       if (_scrollButton.Count > 0) _scrollButton.Clear();
@@ -589,10 +595,15 @@ namespace MediaPortal.GUI.Library
       _backgroundImage.AllocResources();
       controlID++;
 
-      if (!_horizontal) _focusImage = LoadAnimationControl(GetID, controlID, buttonX, _buttonList[FocusedButton]._positionY, _buttonWidth, _buttonHeight, _textureButtonFocus);
-      else _focusImage = LoadAnimationControl(GetID, controlID, _buttonList[FocusedButton]._positionX, buttonY, _buttonWidth, _buttonHeight, _textureButtonFocus);
-      _focusImage.AllocResources();
-      _focusImage.Visible = false;
+      if (_buttonList.Count > FocusedButton)
+      {
+        if (!_horizontal) _focusImage = LoadAnimationControl(GetID, controlID, buttonX, _buttonList[FocusedButton]._positionY, _buttonWidth, _buttonHeight, _textureButtonFocus);
+        else _focusImage = LoadAnimationControl(GetID, controlID, _buttonList[FocusedButton]._positionX, buttonY, _buttonWidth, _buttonHeight, _textureButtonFocus);
+
+        _focusImage.AllocResources();
+        _focusImage.Visible = false;
+      }
+      else _focusImage = null;
 
       if ((_hoverHeight > 0) && (_hoverWidth > 0))
       {
@@ -854,15 +865,15 @@ namespace MediaPortal.GUI.Library
       _oldViewport = GUIGraphicsContext.DX9Device.Viewport;
       if (!_horizontal)
       {
-        _newViewport.X = _positionX;
-        _newViewport.Y = _positionY + _buttonOffset;
+        _newViewport.X = _positionX + GUIGraphicsContext.OffsetX;
+        _newViewport.Y = _positionY + _buttonOffset + GUIGraphicsContext.OffsetY;
         _newViewport.Width = Width;
         _newViewport.Height = Height - 2 * _buttonOffset;
       }
       else
       {
-        _newViewport.X = _positionX + _buttonOffset;
-        _newViewport.Y = _positionY;
+        _newViewport.X = _positionX + _buttonOffset + GUIGraphicsContext.OffsetX;
+        _newViewport.Y = _positionY + GUIGraphicsContext.OffsetY;
         _newViewport.Width = Width - 2 * _buttonOffset;
         _newViewport.Height = Height;
       }
@@ -871,7 +882,7 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.DX9Device.Viewport = _newViewport;
 
       if (_currentState != State.Idle) AnimationMovement(timePassed);
-      if (Focus) _focusImage.Render(timePassed);
+      if ((Focus) && (_focusImage != null)) _focusImage.Render(timePassed);
       foreach (GUIButtonControl button in _buttonList)
       {
         button.Render(timePassed);
