@@ -897,5 +897,12 @@ namespace SetupTv.Sections
     {
       mpButtonEdit_Click(null, null);
     }
+
+    private void mpButtonAdd_Click(object sender, EventArgs e)
+    {
+      FormEditChannel dlg = new FormEditChannel();
+      dlg.Channel = null;
+      dlg.ShowDialog(this);
+    }
   }
 }

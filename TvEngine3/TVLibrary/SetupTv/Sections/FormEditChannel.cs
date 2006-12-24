@@ -34,6 +34,7 @@ using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
 using DirectShowLib;
 using DirectShowLib.BDA;
+using TvLibrary.Channels;
 
 namespace SetupTv.Sections
 {
@@ -44,6 +45,7 @@ namespace SetupTv.Sections
     bool _dvbc = false;
     bool _dvbs = false;
     bool _atsc = false;
+    bool _newChannel = false;
     Channel _channel;
     public FormEditChannel()
     {
@@ -72,6 +74,112 @@ namespace SetupTv.Sections
 
       comboBoxBandWidth.SelectedIndex = 1;
 
+      if (_newChannel)
+      {
+        if (textBoxName.Text.Length == 0)
+        {
+          MessageBox.Show("Please enter a name for this channel");
+          return;
+        }
+        _channel.Name = textBoxName.Text;
+        _channel.VisibleInGuide = checkBoxVisibleInTvGuide.Checked;
+        _channel.IsTv = true;
+        _channel.Persist();
+
+        //analog
+        TvBusinessLayer layer = new TvBusinessLayer();
+        if (textBoxChannel.Text.Length != 0)
+        {
+          AnalogChannel analogChannel = new AnalogChannel();
+          analogChannel.IsTv = true;
+          analogChannel.Name = _channel.Name;
+          analogChannel.ChannelNumber = Int32.Parse(textBoxChannel.Text);
+          analogChannel.Country = countries.GetTunerCountryFromID(comboBoxCountry.SelectedIndex);
+          if (comboBoxInput.SelectedIndex == 1)
+            analogChannel.TunerSource = TunerInputType.Cable;
+          else
+            analogChannel.TunerSource = TunerInputType.Antenna;
+          analogChannel.VideoSource = (AnalogChannel.VideoInputType)comboBoxVideoSource.SelectedIndex;
+          analogChannel.Frequency = (int)GetFrequency(textBoxAnalogFrequency.Text);
+          layer.AddTuningDetails(_channel, analogChannel);
+
+          //atsc
+          if (textBoxProgram.Text.Length != 0)
+          {
+            ATSCChannel atscChannel = new ATSCChannel();
+            analogChannel.IsTv = true;
+            analogChannel.Name = _channel.Name;
+            atscChannel.PhysicalChannel = Int32.Parse(textBoxProgram.Text);
+            atscChannel.MajorChannel = Int32.Parse(textBoxMajor.Text);
+            atscChannel.MinorChannel = Int32.Parse(textBoxMinor.Text);
+            atscChannel.AudioPid = Int32.Parse(textBoxAudioPid.Text);
+            atscChannel.VideoPid = Int32.Parse(textBoxVideoPid.Text);
+            layer.AddTuningDetails(_channel, atscChannel);
+          }
+          //dvbc
+          if (textboxFreq.Text.Length != 0)
+          {
+            DVBCChannel dvbcChannel = new DVBCChannel();
+            dvbcChannel.IsTv = true;
+            dvbcChannel.Name = _channel.Name;
+            dvbcChannel.Frequency = Int32.Parse(textboxFreq.Text);
+            dvbcChannel.NetworkId = Int32.Parse(textBoxONID.Text);
+            dvbcChannel.TransportId = Int32.Parse(textBoxTSID.Text);
+            dvbcChannel.ServiceId = Int32.Parse(textBoxSID.Text);
+            dvbcChannel.SymbolRate = Int32.Parse(textBoxSymbolRate.Text);
+            layer.AddTuningDetails(_channel, dvbcChannel);
+          }
+          //dvbs
+          if (textBox5.Text.Length != 0)
+          {
+            DVBSChannel dvbsChannel = new DVBSChannel();
+            dvbsChannel.IsTv = true;
+            dvbsChannel.Name = _channel.Name;
+            dvbsChannel.Frequency = Int32.Parse(textBox5.Text);
+            dvbsChannel.NetworkId = Int32.Parse(textBox4.Text);
+            dvbsChannel.TransportId = Int32.Parse(textBox3.Text);
+            dvbsChannel.ServiceId = Int32.Parse(textBox2.Text);
+            dvbsChannel.SymbolRate = Int32.Parse(textBox1.Text);
+            dvbsChannel.SwitchingFrequency = Int32.Parse(textBoxSwitch.Text);
+            switch (comboBoxPol.SelectedIndex)
+            {
+              case 0:
+                dvbsChannel.Polarisation = Polarisation.LinearH;
+                break;
+              case 1:
+                dvbsChannel.Polarisation = Polarisation.LinearV;
+                break;
+              case 2:
+                dvbsChannel.Polarisation = Polarisation.CircularL;
+                break;
+              case 3:
+                dvbsChannel.Polarisation = Polarisation.CircularR;
+                break;
+            }
+            dvbsChannel.DisEqc = (DisEqcType)comboBoxDisEqc.SelectedIndex;
+            layer.AddTuningDetails(_channel, dvbsChannel);
+          }
+
+          //dvbt
+          if (textBox9.Text.Length != 0)
+          {
+            DVBTChannel dvbtChannel = new DVBTChannel();
+            dvbtChannel.IsTv = true;
+            dvbtChannel.Name = _channel.Name;
+            dvbtChannel.Frequency = Int32.Parse(textBox9.Text);
+            dvbtChannel.NetworkId = Int32.Parse(textBox8.Text);
+            dvbtChannel.TransportId = Int32.Parse(textBox7.Text);
+            dvbtChannel.ServiceId = Int32.Parse(textBox6.Text);
+            if (comboBoxBandWidth.SelectedIndex == 0)
+              dvbtChannel.BandWidth = 7;
+            else
+              dvbtChannel.BandWidth = 8;
+            layer.AddTuningDetails(_channel, dvbtChannel);
+          }
+          this.Close();
+        }
+        return;
+      }
       //general tab
       _channel.Name = textBoxName.Text;
       _channel.VisibleInGuide = checkBoxVisibleInTvGuide.Checked;
@@ -163,6 +271,12 @@ namespace SetupTv.Sections
 
     private void FormEditChannel_Load(object sender, EventArgs e)
     {
+      _newChannel = false;
+      if (Channel == null)
+      {
+        _newChannel = true;
+        Channel = new Channel("", false, true, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "");
+      }
       CountryCollection countries = new CountryCollection();
       for (int i = 0; i < countries.Countries.Length; ++i)
       {
@@ -180,11 +294,25 @@ namespace SetupTv.Sections
       textBoxName.Text = _channel.Name;
       checkBoxVisibleInTvGuide.Checked = _channel.VisibleInGuide;
 
+      if (_newChannel)
+      {
+        bool _analog = true;
+        bool _dvbt = true;
+        bool _dvbc = true;
+        bool _dvbs = true;
+        bool _atsc = true;
+        textBoxChannel.Text = "";
+        textBoxProgram.Text = "";
+        textboxFreq.Text = "";
+        textBox5.Text = "";
+        textBox9.Text = "";
+        return;
+      }
       foreach (TuningDetail detail in _channel.ReferringTuningDetail())
       {
 
         //analog tab
-        if (detail.ChannelType == 0)
+        if (detail.ChannelType == 0 || _newChannel)
         {
           _analog = true;
           textBoxChannel.Text = detail.ChannelNumber.ToString();
@@ -196,7 +324,7 @@ namespace SetupTv.Sections
         }
 
         //ATSC tab
-        if (detail.ChannelType == 1)
+        if (detail.ChannelType == 1 || _newChannel)
         {
           _atsc = true;
           textBoxProgram.Text = detail.ChannelNumber.ToString();
@@ -207,7 +335,7 @@ namespace SetupTv.Sections
         }
 
         //DVBC tab
-        if (detail.ChannelType == 2)
+        if (detail.ChannelType == 2 || _newChannel)
         {
           _dvbc = true;
           textboxFreq.Text = detail.Frequency.ToString();
@@ -218,7 +346,7 @@ namespace SetupTv.Sections
         }
 
         //dvbs tab
-        if (detail.ChannelType == 3)
+        if (detail.ChannelType == 3 || _newChannel)
         {
           _dvbs = true;
           textBox5.Text = detail.Frequency.ToString();
@@ -229,24 +357,24 @@ namespace SetupTv.Sections
           textBoxSwitch.Text = detail.SwitchingFrequency.ToString();
           switch ((Polarisation)detail.Polarisation)
           {
-            case Polarisation.LinearH: 
-            comboBoxPol.SelectedIndex = 0;
-            break;
-            case Polarisation.LinearV: 
-            comboBoxPol.SelectedIndex = 1;
-            break;
-            case Polarisation.CircularL: 
-            comboBoxPol.SelectedIndex = 2;
-            break;
-            case Polarisation.CircularR: 
-            comboBoxPol.SelectedIndex = 2;
-            break;
+            case Polarisation.LinearH:
+              comboBoxPol.SelectedIndex = 0;
+              break;
+            case Polarisation.LinearV:
+              comboBoxPol.SelectedIndex = 1;
+              break;
+            case Polarisation.CircularL:
+              comboBoxPol.SelectedIndex = 2;
+              break;
+            case Polarisation.CircularR:
+              comboBoxPol.SelectedIndex = 2;
+              break;
           }
           comboBoxDisEqc.SelectedIndex = (int)detail.Diseqc;
         }
 
         //dvbt tab
-        if (detail.ChannelType == 4)
+        if (detail.ChannelType == 4 || _newChannel)
         {
           _dvbt = true;
           textBox9.Text = detail.Frequency.ToString();
