@@ -296,11 +296,11 @@ namespace SetupTv.Sections
 
       if (_newChannel)
       {
-        bool _analog = true;
-        bool _dvbt = true;
-        bool _dvbc = true;
-        bool _dvbs = true;
-        bool _atsc = true;
+         _analog = true;
+         _dvbt = true;
+         _dvbc = true;
+         _dvbs = true;
+         _atsc = true;
         textBoxChannel.Text = "";
         textBoxProgram.Text = "";
         textboxFreq.Text = "";
