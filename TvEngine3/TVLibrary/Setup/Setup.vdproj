@@ -15,25 +15,79 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_01F2D78A1886B6C827B14F4CC2B3E1AB"
-        "OwnerKey" = "8:_C502C84B5A9945D3A91B49AC6A30462D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_01F2D78A1886B6C827B14F4CC2B3E1AB"
-        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_01F2D78A1886B6C827B14F4CC2B3E1AB"
+        "MsmKey" = "8:_00831F4B0816618DB8E8A60C286757BA"
         "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
+        "MsmKey" = "8:_00831F4B0816618DB8E8A60C286757BA"
+        "OwnerKey" = "8:_D26282653A0F4D64A3B58C2378AA2CB9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_00831F4B0816618DB8E8A60C286757BA"
+        "OwnerKey" = "8:_C1E6D666EB6C4C4291B4C4722619B3D3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_00831F4B0816618DB8E8A60C286757BA"
+        "OwnerKey" = "8:_7A5008A2F71E41C5A59DF0F0518198F6"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_00831F4B0816618DB8E8A60C286757BA"
+        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_02CBAABD95BD4389A51F5B7F792A820E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_039550289D9E471990EEF7A1EEDEC27C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_07293E3086AD4FC89EA0E2BB7DF9083F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_0BCA2EA746164FFC9892C2D3D99EF9BE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_0D4D24932E834680922312DFF115F75D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_105F888BEA204CE5935159D57DE77462"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_10C46FB9774A4DBDB2E8782323B87DBC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1257A8B33E90433A8D8E9E6405BB5459"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -45,19 +99,133 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_179167D1FF4A43469A1D19AE0A7D13DB"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_17A8FD119DE64ACFB9C015E62AEA2678"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_20630098032B40E3BFBFB42B0D324BE7"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_20BBAD8E20394BA68DBCCCD84A158057"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_25525C2B072E442D8FD3C6C10BD0215B"
-        "OwnerKey" = "8:_9CCD9023620943089B74B25C0BBF5D12"
+        "MsmKey" = "8:_215DB59AF87044A283489B467F330967"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_234A7C013C464AC599D4704C895D5752"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2779386A96B14338B311650C8FB11BE3"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2F85274D6A034D0FA6DBEB785DAAF338"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2FD3B6AA783744B59929DD65F9355514"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_31258DF3B2951FAB5C058BFF5E9AF9AC"
+        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_31258DF3B2951FAB5C058BFF5E9AF9AC"
+        "OwnerKey" = "8:_93EB69E690BEAD18BB6E018FBD521E59"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_31258DF3B2951FAB5C058BFF5E9AF9AC"
+        "OwnerKey" = "8:_A6B2D5FBFE3F9D70900EFAE5D81F3470"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_31258DF3B2951FAB5C058BFF5E9AF9AC"
+        "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_31258DF3B2951FAB5C058BFF5E9AF9AC"
+        "OwnerKey" = "8:_9F9F6F08A2AC037D1108FE9ED3D14A64"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_357A855CF9FBFB12586FF85660143318"
+        "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_357A855CF9FBFB12586FF85660143318"
+        "OwnerKey" = "8:_F44E962856EB80FC60BE13C501FDCC08"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_357A855CF9FBFB12586FF85660143318"
+        "OwnerKey" = "8:_D26282653A0F4D64A3B58C2378AA2CB9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_357A855CF9FBFB12586FF85660143318"
+        "OwnerKey" = "8:_C1E6D666EB6C4C4291B4C4722619B3D3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_357A855CF9FBFB12586FF85660143318"
+        "OwnerKey" = "8:_7A5008A2F71E41C5A59DF0F0518198F6"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3695E1BE67D841DBA2C9352377A078ED"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_38FCA6A69F8E4147A911F1A4ACEED202"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -69,14 +237,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_488B0E82BD612D500B7D0BE41BFD1F45"
-        "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_488B0E82BD612D500B7D0BE41BFD1F45"
-        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
+        "MsmKey" = "8:_42D1534E5BD0438199F08407A9CE8589"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -87,67 +249,55 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_516250906A23280630333245325A23DD"
-        "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
+        "MsmKey" = "8:_4B15BABF15144F89A203410E37248D8D"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_516250906A23280630333245325A23DD"
-        "OwnerKey" = "8:_F93C9471F3CD44B89A879FF2B6F072F3"
+        "MsmKey" = "8:_4CA2E83D6706466F8FB8361F1FC69B62"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_516250906A23280630333245325A23DD"
-        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_516250906A23280630333245325A23DD"
-        "OwnerKey" = "8:_51E3E70BDF99E93101F4C0CD3A436D8D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_516250906A23280630333245325A23DD"
-        "OwnerKey" = "8:_EB3E547624758F7C6572A63DFAF6685D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_51E3E70BDF99E93101F4C0CD3A436D8D"
-        "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_51E3E70BDF99E93101F4C0CD3A436D8D"
-        "OwnerKey" = "8:_D26282653A0F4D64A3B58C2378AA2CB9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_51E3E70BDF99E93101F4C0CD3A436D8D"
-        "OwnerKey" = "8:_C1E6D666EB6C4C4291B4C4722619B3D3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_51E3E70BDF99E93101F4C0CD3A436D8D"
-        "OwnerKey" = "8:_7A5008A2F71E41C5A59DF0F0518198F6"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_51E3E70BDF99E93101F4C0CD3A436D8D"
-        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
+        "MsmKey" = "8:_540DB22D536C4310A414FBABC2C41A21"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_554620AFFA98471AA9267BAF3078BB45"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_56A9D72D1F944FDAAA9467CF9CEA54E3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6148EFA4699C4EE6B61C73E3DD143E82"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_63321BD9C9AC4910BF20896BE54E3173"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6408A8D0C15A487D8BD9BBD58AFCA4C7"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_64B74F79A0FF4A7786CEAFB81F48F32E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -177,12 +327,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_6BEAE01DFF649D8CA9C0DCDF303D102A"
-        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_6BF8250FE7F5478C90D5B82A788E07A5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -195,86 +339,14 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_7478CEFF1449EEF5E7DCE48AC7238B08"
-        "OwnerKey" = "8:_8629AFF013B12BEC84576B48E6DCDDDF"
+        "MsmKey" = "8:_71701BC5F7FA4412A1DA45D804D699D7"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_7478CEFF1449EEF5E7DCE48AC7238B08"
-        "OwnerKey" = "8:_D26282653A0F4D64A3B58C2378AA2CB9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7478CEFF1449EEF5E7DCE48AC7238B08"
-        "OwnerKey" = "8:_C1E6D666EB6C4C4291B4C4722619B3D3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7478CEFF1449EEF5E7DCE48AC7238B08"
-        "OwnerKey" = "8:_7A5008A2F71E41C5A59DF0F0518198F6"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7478CEFF1449EEF5E7DCE48AC7238B08"
-        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7478CEFF1449EEF5E7DCE48AC7238B08"
-        "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7564C9C20D5252A0CE73CD2D2837F9C5"
-        "OwnerKey" = "8:_89ACBAD611D7356F993CD54B7F85E73E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7564C9C20D5252A0CE73CD2D2837F9C5"
-        "OwnerKey" = "8:_D26282653A0F4D64A3B58C2378AA2CB9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7564C9C20D5252A0CE73CD2D2837F9C5"
-        "OwnerKey" = "8:_C1E6D666EB6C4C4291B4C4722619B3D3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7564C9C20D5252A0CE73CD2D2837F9C5"
-        "OwnerKey" = "8:_7A5008A2F71E41C5A59DF0F0518198F6"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7564C9C20D5252A0CE73CD2D2837F9C5"
-        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7564C9C20D5252A0CE73CD2D2837F9C5"
-        "OwnerKey" = "8:_51E3E70BDF99E93101F4C0CD3A436D8D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7564C9C20D5252A0CE73CD2D2837F9C5"
-        "OwnerKey" = "8:_488B0E82BD612D500B7D0BE41BFD1F45"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7564C9C20D5252A0CE73CD2D2837F9C5"
-        "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
+        "MsmKey" = "8:_723915E9C5DC4295A6C4301195F9D6F1"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -285,8 +357,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_79E3F969BBD348BC8E836E74CBD6C992"
-        "OwnerKey" = "8:_554620AFFA98471AA9267BAF3078BB45"
+        "MsmKey" = "8:_799C87436D024544A78E9E6CB999F0F3"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -321,32 +393,26 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_8629AFF013B12BEC84576B48E6DCDDDF"
-        "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
+        "MsmKey" = "8:_827A4CA9955542E7BDB3D4073DDD16DE"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_8629AFF013B12BEC84576B48E6DCDDDF"
-        "OwnerKey" = "8:_D26282653A0F4D64A3B58C2378AA2CB9"
+        "MsmKey" = "8:_83F84921E8FC478F837BDA8C547693E6"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_8629AFF013B12BEC84576B48E6DCDDDF"
-        "OwnerKey" = "8:_C1E6D666EB6C4C4291B4C4722619B3D3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_8629AFF013B12BEC84576B48E6DCDDDF"
-        "OwnerKey" = "8:_7A5008A2F71E41C5A59DF0F0518198F6"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_8629AFF013B12BEC84576B48E6DCDDDF"
+        "MsmKey" = "8:_84B3FDCB88A77FFFD3475A8DC8677B56"
         "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_880F05439F2A4408B895EA32182214B8"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -357,49 +423,55 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_89ACBAD611D7356F993CD54B7F85E73E"
-        "OwnerKey" = "8:_8629AFF013B12BEC84576B48E6DCDDDF"
+        "MsmKey" = "8:_90BC1AB0413643559C7F0AE06B2DAB9D"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_89ACBAD611D7356F993CD54B7F85E73E"
-        "OwnerKey" = "8:_D26282653A0F4D64A3B58C2378AA2CB9"
+        "MsmKey" = "8:_9146B12FCB164BEAB7945CB07ABCB6A6"
+        "OwnerKey" = "8:_9CCD9023620943089B74B25C0BBF5D12"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_89ACBAD611D7356F993CD54B7F85E73E"
-        "OwnerKey" = "8:_C1E6D666EB6C4C4291B4C4722619B3D3"
+        "MsmKey" = "8:_9235ECE5CB9947C09CA21917C885DE55"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_89ACBAD611D7356F993CD54B7F85E73E"
-        "OwnerKey" = "8:_7A5008A2F71E41C5A59DF0F0518198F6"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_89ACBAD611D7356F993CD54B7F85E73E"
-        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_89ACBAD611D7356F993CD54B7F85E73E"
-        "OwnerKey" = "8:_51E3E70BDF99E93101F4C0CD3A436D8D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_89ACBAD611D7356F993CD54B7F85E73E"
+        "MsmKey" = "8:_93EB69E690BEAD18BB6E018FBD521E59"
         "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_90BC1AB0413643559C7F0AE06B2DAB9D"
+        "MsmKey" = "8:_93EB69E690BEAD18BB6E018FBD521E59"
+        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_94612C76D3664BB8B953E054A4FA8210"
+        "OwnerKey" = "8:_554620AFFA98471AA9267BAF3078BB45"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9490F5BDCFE64C10B61AFFC268286271"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9662A6DEAB1C3223304C065CB2C1324A"
+        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9C732C395B0F47AD8A59EB18AE2AF91E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -411,8 +483,146 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_9F9F6F08A2AC037D1108FE9ED3D14A64"
+        "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9F9F6F08A2AC037D1108FE9ED3D14A64"
+        "OwnerKey" = "8:_F44E962856EB80FC60BE13C501FDCC08"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9F9F6F08A2AC037D1108FE9ED3D14A64"
+        "OwnerKey" = "8:_D26282653A0F4D64A3B58C2378AA2CB9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9F9F6F08A2AC037D1108FE9ED3D14A64"
+        "OwnerKey" = "8:_C1E6D666EB6C4C4291B4C4722619B3D3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9F9F6F08A2AC037D1108FE9ED3D14A64"
+        "OwnerKey" = "8:_7A5008A2F71E41C5A59DF0F0518198F6"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9F9F6F08A2AC037D1108FE9ED3D14A64"
+        "OwnerKey" = "8:_00831F4B0816618DB8E8A60C286757BA"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9F9F6F08A2AC037D1108FE9ED3D14A64"
+        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A293AC71875A4037B03B8B53F727BEC0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A2A1657FE49D4F868281C7507BBCDD9A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A3D1186DA289440DA4D61205E4E7FB27"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A4EACBD72DC54B9FA27178A7FDA87410"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_A4F62B2BD58249C0802E8158DC3DA02B"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A6B2D5FBFE3F9D70900EFAE5D81F3470"
+        "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A6B2D5FBFE3F9D70900EFAE5D81F3470"
+        "OwnerKey" = "8:_D26282653A0F4D64A3B58C2378AA2CB9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A6B2D5FBFE3F9D70900EFAE5D81F3470"
+        "OwnerKey" = "8:_C1E6D666EB6C4C4291B4C4722619B3D3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A6B2D5FBFE3F9D70900EFAE5D81F3470"
+        "OwnerKey" = "8:_9F9F6F08A2AC037D1108FE9ED3D14A64"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A6B2D5FBFE3F9D70900EFAE5D81F3470"
+        "OwnerKey" = "8:_93EB69E690BEAD18BB6E018FBD521E59"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A6B2D5FBFE3F9D70900EFAE5D81F3470"
+        "OwnerKey" = "8:_7A5008A2F71E41C5A59DF0F0518198F6"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A6B2D5FBFE3F9D70900EFAE5D81F3470"
+        "OwnerKey" = "8:_00831F4B0816618DB8E8A60C286757BA"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A6B2D5FBFE3F9D70900EFAE5D81F3470"
+        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A7D1D46D9B7F4388AC099DA78CF5BBAE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_ADAC65DAC730F51AC7F2064BE853E8E9"
+        "OwnerKey" = "8:_31258DF3B2951FAB5C058BFF5E9AF9AC"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_ADAC65DAC730F51AC7F2064BE853E8E9"
+        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_ADAC65DAC730F51AC7F2064BE853E8E9"
+        "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -429,8 +639,62 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_B3864F90EC974F8CA5831A04938421CE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_B97E5FAC78864F4D89B02AAB5EE105EC"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B9D6FA0F5BDE4A29AF91A71B49D74929"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BABDEB185EC542B4BBF16619A2341829"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BFC7BCB1AA717D9C1B1B25AD62DBD6E3"
+        "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BFC7BCB1AA717D9C1B1B25AD62DBD6E3"
+        "OwnerKey" = "8:_F44E962856EB80FC60BE13C501FDCC08"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BFC7BCB1AA717D9C1B1B25AD62DBD6E3"
+        "OwnerKey" = "8:_D26282653A0F4D64A3B58C2378AA2CB9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BFC7BCB1AA717D9C1B1B25AD62DBD6E3"
+        "OwnerKey" = "8:_C1E6D666EB6C4C4291B4C4722619B3D3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BFC7BCB1AA717D9C1B1B25AD62DBD6E3"
+        "OwnerKey" = "8:_7A5008A2F71E41C5A59DF0F0518198F6"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BFC7BCB1AA717D9C1B1B25AD62DBD6E3"
+        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -441,32 +705,62 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_C502C84B5A9945D3A91B49AC6A30462D"
-        "OwnerKey" = "8:_89ACBAD611D7356F993CD54B7F85E73E"
+        "MsmKey" = "8:_C417FE80F1AC4AF5B65EC1DC1909F121"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_C502C84B5A9945D3A91B49AC6A30462D"
-        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C502C84B5A9945D3A91B49AC6A30462D"
-        "OwnerKey" = "8:_488B0E82BD612D500B7D0BE41BFD1F45"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C502C84B5A9945D3A91B49AC6A30462D"
+        "MsmKey" = "8:_C710AF4977934B2BC9F3BBC9B4E9D92B"
         "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_C502C84B5A9945D3A91B49AC6A30462D"
-        "OwnerKey" = "8:_7564C9C20D5252A0CE73CD2D2837F9C5"
+        "MsmKey" = "8:_C710AF4977934B2BC9F3BBC9B4E9D92B"
+        "OwnerKey" = "8:_F44E962856EB80FC60BE13C501FDCC08"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C710AF4977934B2BC9F3BBC9B4E9D92B"
+        "OwnerKey" = "8:_D26282653A0F4D64A3B58C2378AA2CB9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C710AF4977934B2BC9F3BBC9B4E9D92B"
+        "OwnerKey" = "8:_C1E6D666EB6C4C4291B4C4722619B3D3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C710AF4977934B2BC9F3BBC9B4E9D92B"
+        "OwnerKey" = "8:_BFC7BCB1AA717D9C1B1B25AD62DBD6E3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C710AF4977934B2BC9F3BBC9B4E9D92B"
+        "OwnerKey" = "8:_84B3FDCB88A77FFFD3475A8DC8677B56"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C710AF4977934B2BC9F3BBC9B4E9D92B"
+        "OwnerKey" = "8:_7A5008A2F71E41C5A59DF0F0518198F6"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C710AF4977934B2BC9F3BBC9B4E9D92B"
+        "OwnerKey" = "8:_00831F4B0816618DB8E8A60C286757BA"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C710AF4977934B2BC9F3BBC9B4E9D92B"
+        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -495,62 +789,74 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D66150309062437FB3CF59473DA51A65"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D9F5507929D843B4B2C456B51E776CA5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_DC0536A2C82C4DB298909A5F87C076C1"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_EB3E547624758F7C6572A63DFAF6685D"
-        "OwnerKey" = "8:_7478CEFF1449EEF5E7DCE48AC7238B08"
+        "MsmKey" = "8:_DE6B64EDBDE14A07886A1435158AB942"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_EB3E547624758F7C6572A63DFAF6685D"
-        "OwnerKey" = "8:_D26282653A0F4D64A3B58C2378AA2CB9"
+        "MsmKey" = "8:_DF391855BC7C4484B134C942540984B8"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_EB3E547624758F7C6572A63DFAF6685D"
-        "OwnerKey" = "8:_C1E6D666EB6C4C4291B4C4722619B3D3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_EB3E547624758F7C6572A63DFAF6685D"
-        "OwnerKey" = "8:_7A5008A2F71E41C5A59DF0F0518198F6"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_EB3E547624758F7C6572A63DFAF6685D"
-        "OwnerKey" = "8:_F93C9471F3CD44B89A879FF2B6F072F3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_EB3E547624758F7C6572A63DFAF6685D"
-        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_EB3E547624758F7C6572A63DFAF6685D"
+        "MsmKey" = "8:_E19719C432444F30D6787E5425BB817F"
         "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_EB3E547624758F7C6572A63DFAF6685D"
-        "OwnerKey" = "8:_51E3E70BDF99E93101F4C0CD3A436D8D"
+        "MsmKey" = "8:_E19719C432444F30D6787E5425BB817F"
+        "OwnerKey" = "8:_84B3FDCB88A77FFFD3475A8DC8677B56"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_EB3E547624758F7C6572A63DFAF6685D"
-        "OwnerKey" = "8:_8629AFF013B12BEC84576B48E6DCDDDF"
+        "MsmKey" = "8:_E19719C432444F30D6787E5425BB817F"
+        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E19719C432444F30D6787E5425BB817F"
+        "OwnerKey" = "8:_C710AF4977934B2BC9F3BBC9B4E9D92B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E19719C432444F30D6787E5425BB817F"
+        "OwnerKey" = "8:_00831F4B0816618DB8E8A60C286757BA"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E63891792F0544288679FAB9864A352A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E94A80750F694356AB06F79BD905B64B"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -563,6 +869,36 @@
         {
         "MsmKey" = "8:_EE949910FDBB4D3DB816D3A25E8BBE0E"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F44E962856EB80FC60BE13C501FDCC08"
+        "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F44E962856EB80FC60BE13C501FDCC08"
+        "OwnerKey" = "8:_D26282653A0F4D64A3B58C2378AA2CB9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F44E962856EB80FC60BE13C501FDCC08"
+        "OwnerKey" = "8:_C1E6D666EB6C4C4291B4C4722619B3D3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F44E962856EB80FC60BE13C501FDCC08"
+        "OwnerKey" = "8:_7A5008A2F71E41C5A59DF0F0518198F6"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F44E962856EB80FC60BE13C501FDCC08"
+        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -585,32 +921,14 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_F77C25B62EEB5CF86AFEEC61BEDB0244"
-        "OwnerKey" = "8:_8629AFF013B12BEC84576B48E6DCDDDF"
+        "MsmKey" = "8:_F79CF026B03B46419D94EE61D2123C1B"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_F77C25B62EEB5CF86AFEEC61BEDB0244"
-        "OwnerKey" = "8:_D26282653A0F4D64A3B58C2378AA2CB9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_F77C25B62EEB5CF86AFEEC61BEDB0244"
-        "OwnerKey" = "8:_C1E6D666EB6C4C4291B4C4722619B3D3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_F77C25B62EEB5CF86AFEEC61BEDB0244"
-        "OwnerKey" = "8:_7A5008A2F71E41C5A59DF0F0518198F6"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_F77C25B62EEB5CF86AFEEC61BEDB0244"
-        "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
+        "MsmKey" = "8:_F825EDF12F76415FAF807ED673F3AAB3"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -621,8 +939,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_F93C9471F3CD44B89A879FF2B6F072F3"
-        "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
+        "MsmKey" = "8:_FC30CB7B96594121AADADD631032864A"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -658,13 +976,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_F93C9471F3CD44B89A879FF2B6F072F3"
+        "OwnerKey" = "8:_84B3FDCB88A77FFFD3475A8DC8677B56"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_6BEAE01DFF649D8CA9C0DCDF303D102A"
+        "OwnerKey" = "8:_9662A6DEAB1C3223304C065CB2C1324A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -676,67 +994,67 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_51E3E70BDF99E93101F4C0CD3A436D8D"
+        "OwnerKey" = "8:_C710AF4977934B2BC9F3BBC9B4E9D92B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_488B0E82BD612D500B7D0BE41BFD1F45"
+        "OwnerKey" = "8:_00831F4B0816618DB8E8A60C286757BA"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_8629AFF013B12BEC84576B48E6DCDDDF"
+        "OwnerKey" = "8:_93EB69E690BEAD18BB6E018FBD521E59"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_89ACBAD611D7356F993CD54B7F85E73E"
+        "OwnerKey" = "8:_A6B2D5FBFE3F9D70900EFAE5D81F3470"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_7564C9C20D5252A0CE73CD2D2837F9C5"
+        "OwnerKey" = "8:_9F9F6F08A2AC037D1108FE9ED3D14A64"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C502C84B5A9945D3A91B49AC6A30462D"
+        "OwnerKey" = "8:_BFC7BCB1AA717D9C1B1B25AD62DBD6E3"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_01F2D78A1886B6C827B14F4CC2B3E1AB"
+        "OwnerKey" = "8:_357A855CF9FBFB12586FF85660143318"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_7478CEFF1449EEF5E7DCE48AC7238B08"
+        "OwnerKey" = "8:_F44E962856EB80FC60BE13C501FDCC08"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_EB3E547624758F7C6572A63DFAF6685D"
+        "OwnerKey" = "8:_31258DF3B2951FAB5C058BFF5E9AF9AC"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_F77C25B62EEB5CF86AFEEC61BEDB0244"
+        "OwnerKey" = "8:_ADAC65DAC730F51AC7F2064BE853E8E9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_516250906A23280630333245325A23DD"
+        "OwnerKey" = "8:_E19719C432444F30D6787E5425BB817F"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -885,20 +1203,20 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_01F2D78A1886B6C827B14F4CC2B3E1AB"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_00831F4B0816618DB8E8A60C286757BA"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:log4net, Version=1.2.9.0, Culture=neutral, PublicKeyToken=b32731d11ce58905"
+            "AssemblyAsmDisplayName" = "8:TvBusinessLayer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_01F2D78A1886B6C827B14F4CC2B3E1AB"
+                    "_00831F4B0816618DB8E8A60C286757BA"
                     {
-                    "Name" = "8:log4net.dll"
+                    "Name" = "8:TvBusinessLayer.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:log4net.dll"
+            "SourcePath" = "8:TvBusinessLayer.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
@@ -916,12 +1234,152 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_02CBAABD95BD4389A51F5B7F792A820E"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\70.5°E Eutelsat W5.ini"
+            "TargetName" = "8:70.5°E Eutelsat W5.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_039550289D9E471990EEF7A1EEDEC27C"
             {
             "SourcePath" = "8:..\\TvService\\Gentle.config"
             "TargetName" = "8:Gentle.config"
             "Tag" = "8:"
             "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_07293E3086AD4FC89EA0E2BB7DF9083F"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\16.0°E Eutelsat W2.ini"
+            "TargetName" = "8:16.0°E Eutelsat W2.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0BCA2EA746164FFC9892C2D3D99EF9BE"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\61.0°W Amazonas.ini"
+            "TargetName" = "8:61.0°W Amazonas.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0D4D24932E834680922312DFF115F75D"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\4.0°W Amos 1_2.ini"
+            "TargetName" = "8:4.0°W Amos 1_2.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_105F888BEA204CE5935159D57DE77462"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\12.5°W Atlantic Bird 1.ini"
+            "TargetName" = "8:12.5°W Atlantic Bird 1.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_10C46FB9774A4DBDB2E8782323B87DBC"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\62.0°E Intelsat 902.ini"
+            "TargetName" = "8:62.0°E Intelsat 902.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1257A8B33E90433A8D8E9E6405BB5459"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\34.5°W Intelsat 903.ini"
+            "TargetName" = "8:34.5°W Intelsat 903.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -956,12 +1414,274 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_179167D1FF4A43469A1D19AE0A7D13DB"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\25.8°E Arabsat 2D_3A (26°E).ini"
+            "TargetName" = "8:25.8°E Arabsat 2D_3A (26°E).ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_17A8FD119DE64ACFB9C015E62AEA2678"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\7.0°W Atlantic Bird 4_Nilesat 101_102.ini"
+            "TargetName" = "8:7.0°W Atlantic Bird 4_Nilesat 101_102.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_20630098032B40E3BFBFB42B0D324BE7"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\1.0°W Intelsat 10-02_707.ini"
+            "TargetName" = "8:1.0°W Intelsat 10-02_707.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_20BBAD8E20394BA68DBCCCD84A158057"
             {
             "SourcePath" = "8:..\\..\\Filters\\bin\\msvcr80.dll"
             "TargetName" = "8:msvcr80.dll"
             "Tag" = "8:"
             "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_215DB59AF87044A283489B467F330967"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\13.0°E Hotbird.ini"
+            "TargetName" = "8:13.0°E Hotbird.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_234A7C013C464AC599D4704C895D5752"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\57.0°E NSS 703.ini"
+            "TargetName" = "8:57.0°E NSS 703.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2779386A96B14338B311650C8FB11BE3"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\45.0°W PanAmSat 1R.ini"
+            "TargetName" = "8:45.0°W PanAmSat 1R.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2F85274D6A034D0FA6DBEB785DAAF338"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\26.0°E Arabsat 2D_3A (26°E).ini"
+            "TargetName" = "8:26.0°E Arabsat 2D_3A (26°E).ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2FD3B6AA783744B59929DD65F9355514"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\27.5°W Intelsat 907.ini"
+            "TargetName" = "8:27.5°W Intelsat 907.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_31258DF3B2951FAB5C058BFF5E9AF9AC"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Gentle.Common, Version=1.2.9.18127, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_31258DF3B2951FAB5C058BFF5E9AF9AC"
+                    {
+                    "Name" = "8:Gentle.Common.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Gentle.Common.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_357A855CF9FBFB12586FF85660143318"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:SetupControls, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_357A855CF9FBFB12586FF85660143318"
+                    {
+                    "Name" = "8:SetupControls.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:SetupControls.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3695E1BE67D841DBA2C9352377A078ED"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\39.0°E Hellas Sat 2.ini"
+            "TargetName" = "8:39.0°E Hellas Sat 2.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_38FCA6A69F8E4147A911F1A4ACEED202"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\4.0°E Hotbird 1.ini"
+            "TargetName" = "8:4.0°E Hotbird 1.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -996,23 +1716,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_488B0E82BD612D500B7D0BE41BFD1F45"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_42D1534E5BD0438199F08407A9CE8589"
             {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Gentle.Provider.SQLServer, Version=1.2.9.18176, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_488B0E82BD612D500B7D0BE41BFD1F45"
-                    {
-                    "Name" = "8:Gentle.Provider.SQLServer.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Gentle.Provider.SQLServer.dll"
-            "TargetName" = "8:"
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\31.5°E Optus A3.ini"
+            "TargetName" = "8:31.5°E Optus A3.ini"
             "Tag" = "8:"
-            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1024,7 +1733,7 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4AF3223B15C344DBB66C9213973E5BED"
@@ -1047,23 +1756,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_516250906A23280630333245325A23DD"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4B15BABF15144F89A203410E37248D8D"
             {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:DirectShowLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_516250906A23280630333245325A23DD"
-                    {
-                    "Name" = "8:DirectShowLib.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:DirectShowLib.dll"
-            "TargetName" = "8:"
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\2.0°E Astra 1C.ini"
+            "TargetName" = "8:2.0°E Astra 1C.ini"
             "Tag" = "8:"
-            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1075,26 +1773,15 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_51E3E70BDF99E93101F4C0CD3A436D8D"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4CA2E83D6706466F8FB8361F1FC69B62"
             {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TvBusinessLayer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_51E3E70BDF99E93101F4C0CD3A436D8D"
-                    {
-                    "Name" = "8:TvBusinessLayer.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:TvBusinessLayer.dll"
-            "TargetName" = "8:"
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\5.0°W Atlantic Bird 3_Telecom 2C.ini"
+            "TargetName" = "8:5.0°W Atlantic Bird 3_Telecom 2C.ini"
             "Tag" = "8:"
-            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1106,7 +1793,127 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_540DB22D536C4310A414FBABC2C41A21"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\43.0°W PanAmSat 3R.ini"
+            "TargetName" = "8:43.0°W PanAmSat 3R.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_56A9D72D1F944FDAAA9467CF9CEA54E3"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\45.0°E PanAmSat 12.ini"
+            "TargetName" = "8:45.0°E PanAmSat 12.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6148EFA4699C4EE6B61C73E3DD143E82"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\40.0°E Express AM1.ini"
+            "TargetName" = "8:40.0°E Express AM1.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_63321BD9C9AC4910BF20896BE54E3173"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\7.0°E Eutelsat W3A.ini"
+            "TargetName" = "8:7.0°E Eutelsat W3A.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6408A8D0C15A487D8BD9BBD58AFCA4C7"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\60.0°E Intelsat 904.ini"
+            "TargetName" = "8:60.0°E Intelsat 904.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_64B74F79A0FF4A7786CEAFB81F48F32E"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\55.0°E Intelsat 702.ini"
+            "TargetName" = "8:55.0°E Intelsat 702.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_65B181AA18E843D0AE51C27EB348E478"
@@ -1189,37 +1996,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_6BEAE01DFF649D8CA9C0DCDF303D102A"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:SetupControls, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_6BEAE01DFF649D8CA9C0DCDF303D102A"
-                    {
-                    "Name" = "8:SetupControls.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:SetupControls.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6BF8250FE7F5478C90D5B82A788E07A5"
             {
             "SourcePath" = "8:..\\..\\Filters\\bin\\RtspSource.ax"
@@ -1260,23 +2036,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_7478CEFF1449EEF5E7DCE48AC7238B08"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_71701BC5F7FA4412A1DA45D804D699D7"
             {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TvControl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_7478CEFF1449EEF5E7DCE48AC7238B08"
-                    {
-                    "Name" = "8:TvControl.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:TvControl.dll"
-            "TargetName" = "8:"
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\28.5°E EuroBird 1.ini"
+            "TargetName" = "8:28.5°E EuroBird 1.ini"
             "Tag" = "8:"
-            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1288,26 +2053,15 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_7564C9C20D5252A0CE73CD2D2837F9C5"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_723915E9C5DC4295A6C4301195F9D6F1"
             {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Gentle.Framework, Version=1.2.9.18134, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_7564C9C20D5252A0CE73CD2D2837F9C5"
-                    {
-                    "Name" = "8:Gentle.Framework.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Gentle.Framework.dll"
-            "TargetName" = "8:"
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\18.0°W Intelsat 901.ini"
+            "TargetName" = "8:18.0°W Intelsat 901.ini"
             "Tag" = "8:"
-            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1319,7 +2073,7 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_779E8AB08DCE4C54979914449A8F3EC7"
@@ -1338,6 +2092,26 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:4"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_799C87436D024544A78E9E6CB999F0F3"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\11.0°W Express A3.ini"
+            "TargetName" = "8:11.0°W Express A3.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
@@ -1453,20 +2227,60 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_8629AFF013B12BEC84576B48E6DCDDDF"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_827A4CA9955542E7BDB3D4073DDD16DE"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\5.0°E Sirius 3.ini"
+            "TargetName" = "8:5.0°E Sirius 3.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_83F84921E8FC478F837BDA8C547693E6"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\28.2°E Astra 2A_2B_2D, Eurobird 1 (28°E).ini"
+            "TargetName" = "8:28.2°E Astra 2A_2B_2D, Eurobird 1 (28°E).ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_84B3FDCB88A77FFFD3475A8DC8677B56"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:PluginBase, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:TVLibrary, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_8629AFF013B12BEC84576B48E6DCDDDF"
+                    "_84B3FDCB88A77FFFD3475A8DC8677B56"
                     {
-                    "Name" = "8:PluginBase.dll"
+                    "Name" = "8:TVLibrary.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:PluginBase.dll"
+            "SourcePath" = "8:TVLibrary.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
@@ -1484,14 +2298,176 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_89ACBAD611D7356F993CD54B7F85E73E"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_880F05439F2A4408B895EA32182214B8"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\31.5°W Intelsat 801.ini"
+            "TargetName" = "8:31.5°W Intelsat 801.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_90BC1AB0413643559C7F0AE06B2DAB9D"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\dvbc Symbolrate 5156.dvbc"
+            "TargetName" = "8:dvbc Symbolrate 5156.dvbc"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9235ECE5CB9947C09CA21917C885DE55"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\8.0°W Atlantic Bird 2_Telecom 2D.ini"
+            "TargetName" = "8:8.0°W Atlantic Bird 2_Telecom 2D.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_93EB69E690BEAD18BB6E018FBD521E59"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Gentle.Provider.SQLServer, Version=1.2.9.18176, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_93EB69E690BEAD18BB6E018FBD521E59"
+                    {
+                    "Name" = "8:Gentle.Provider.SQLServer.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Gentle.Provider.SQLServer.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9490F5BDCFE64C10B61AFFC268286271"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\24.5°W Intelsat 905.ini"
+            "TargetName" = "8:24.5°W Intelsat 905.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_9662A6DEAB1C3223304C065CB2C1324A"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:SetupControls, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_9662A6DEAB1C3223304C065CB2C1324A"
+                    {
+                    "Name" = "8:SetupControls.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:SetupControls.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9C732C395B0F47AD8A59EB18AE2AF91E"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\21.5°E Eutelsat W6.ini"
+            "TargetName" = "8:21.5°E Eutelsat W6.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_9F9F6F08A2AC037D1108FE9ED3D14A64"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:TVDatabase, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_89ACBAD611D7356F993CD54B7F85E73E"
+                    "_9F9F6F08A2AC037D1108FE9ED3D14A64"
                     {
                     "Name" = "8:TVDatabase.dll"
                     "Attributes" = "3:512"
@@ -1515,10 +2491,70 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_90BC1AB0413643559C7F0AE06B2DAB9D"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A293AC71875A4037B03B8B53F727BEC0"
             {
-            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\dvbc Symbolrate 5156.dvbc"
-            "TargetName" = "8:dvbc Symbolrate 5156.dvbc"
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\75.0°E ABS-1.ini"
+            "TargetName" = "8:75.0°E ABS-1.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A2A1657FE49D4F868281C7507BBCDD9A"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\30.0°W Hispasat 1B_C_D.ini"
+            "TargetName" = "8:30.0°W Hispasat 1B_C_D.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A3D1186DA289440DA4D61205E4E7FB27"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\23.5°E Astra 1D.ini"
+            "TargetName" = "8:23.5°E Astra 1D.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A4EACBD72DC54B9FA27178A7FDA87410"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\37.5°W Telstar 11.ini"
+            "TargetName" = "8:37.5°W Telstar 11.ini"
             "Tag" = "8:"
             "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
@@ -1553,6 +2589,88 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A6B2D5FBFE3F9D70900EFAE5D81F3470"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Gentle.Framework, Version=1.2.9.18134, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_A6B2D5FBFE3F9D70900EFAE5D81F3470"
+                    {
+                    "Name" = "8:Gentle.Framework.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Gentle.Framework.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A7D1D46D9B7F4388AC099DA78CF5BBAE"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\36.0°E Eutelsat W4.ini"
+            "TargetName" = "8:36.0°E Eutelsat W4.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_ADAC65DAC730F51AC7F2064BE853E8E9"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:log4net, Version=1.2.9.0, Culture=neutral, PublicKeyToken=b32731d11ce58905"
+                "ScatterAssemblies"
+                {
+                    "_ADAC65DAC730F51AC7F2064BE853E8E9"
+                    {
+                    "Name" = "8:log4net.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:log4net.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B17188E00C194BAAAB4F9D74CFD2ED68"
@@ -1595,6 +2713,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B3864F90EC974F8CA5831A04938421CE"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\0.8°W Thor 2_3.ini"
+            "TargetName" = "8:0.8°W Thor 2_3.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B97E5FAC78864F4D89B02AAB5EE105EC"
             {
             "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\Telewest UK.dvbc"
@@ -1613,6 +2751,77 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B9D6FA0F5BDE4A29AF91A71B49D74929"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\68.5°E PanAmSat 7_10.ini"
+            "TargetName" = "8:68.5°E PanAmSat 7_10.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BABDEB185EC542B4BBF16619A2341829"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\64.0°E Intelsat 906.ini"
+            "TargetName" = "8:64.0°E Intelsat 906.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_BFC7BCB1AA717D9C1B1B25AD62DBD6E3"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:TvControl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_BFC7BCB1AA717D9C1B1B25AD62DBD6E3"
+                    {
+                    "Name" = "8:TvControl.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:TvControl.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C1E6D666EB6C4C4291B4C4722619B3D3"
@@ -1646,20 +2855,40 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C502C84B5A9945D3A91B49AC6A30462D"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C417FE80F1AC4AF5B65EC1DC1909F121"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\15.0°W Telstar 12.ini"
+            "TargetName" = "8:15.0°W Telstar 12.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C710AF4977934B2BC9F3BBC9B4E9D92B"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Gentle.Common, Version=1.2.9.18127, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:TvLibrary.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_C502C84B5A9945D3A91B49AC6A30462D"
+                    "_C710AF4977934B2BC9F3BBC9B4E9D92B"
                     {
-                    "Name" = "8:Gentle.Common.dll"
+                    "Name" = "8:TvLibrary.Interfaces.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:Gentle.Common.dll"
+            "SourcePath" = "8:TvLibrary.Interfaces.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
@@ -1779,6 +3008,46 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D66150309062437FB3CF59473DA51A65"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\58.0°W PanAmSat 9.ini"
+            "TargetName" = "8:58.0°W PanAmSat 9.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D9F5507929D843B4B2C456B51E776CA5"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\42.0°E Turksat 1C_2A.ini"
+            "TargetName" = "8:42.0°E Turksat 1C_2A.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DC0536A2C82C4DB298909A5F87C076C1"
             {
             "SourcePath" = "8:..\\..\\Filters\\bin\\TsWriter.ax"
@@ -1799,20 +3068,60 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_EB3E547624758F7C6572A63DFAF6685D"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DE6B64EDBDE14A07886A1435158AB942"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\19.2°E Astra 1C_1E_1F_1G_1H_2C.ini"
+            "TargetName" = "8:19.2°E Astra 1C_1E_1F_1G_1H_2C.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DF391855BC7C4484B134C942540984B8"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\4.8°E Sirius 2.ini"
+            "TargetName" = "8:4.8°E Sirius 2.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E19719C432444F30D6787E5425BB817F"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TvLibrary.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:DirectShowLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_EB3E547624758F7C6572A63DFAF6685D"
+                    "_E19719C432444F30D6787E5425BB817F"
                     {
-                    "Name" = "8:TvLibrary.Interfaces.dll"
+                    "Name" = "8:DirectShowLib.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:TvLibrary.Interfaces.dll"
+            "SourcePath" = "8:DirectShowLib.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
@@ -1828,6 +3137,46 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E63891792F0544288679FAB9864A352A"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\10.0°E EuroBird 10.ini"
+            "TargetName" = "8:10.0°E EuroBird 10.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E94A80750F694356AB06F79BD905B64B"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\72.0°E PanAmSat 4.ini"
+            "TargetName" = "8:72.0°E PanAmSat 4.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EE32DFA9F378446BBDCABD7BD550F050"
@@ -1868,6 +3217,37 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F44E962856EB80FC60BE13C501FDCC08"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:PluginBase, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_F44E962856EB80FC60BE13C501FDCC08"
+                    {
+                    "Name" = "8:PluginBase.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:PluginBase.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F4E10B5A45494F439A073CBD0E3CD0E7"
@@ -1930,23 +3310,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F77C25B62EEB5CF86AFEEC61BEDB0244"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F79CF026B03B46419D94EE61D2123C1B"
             {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:SetupControls, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_F77C25B62EEB5CF86AFEEC61BEDB0244"
-                    {
-                    "Name" = "8:SetupControls.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:SetupControls.dll"
-            "TargetName" = "8:"
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\33.0°E EuroBird 3.ini"
+            "TargetName" = "8:33.0°E EuroBird 3.ini"
             "Tag" = "8:"
-            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1958,7 +3327,27 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F825EDF12F76415FAF807ED673F3AAB3"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\14.0°W Express A4.ini"
+            "TargetName" = "8:14.0°W Express A4.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F8F52733D4EF4B96AEEA340C3A4132F3"
@@ -1981,23 +3370,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F93C9471F3CD44B89A879FF2B6F072F3"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FC30CB7B96594121AADADD631032864A"
             {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TVLibrary, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_F93C9471F3CD44B89A879FF2B6F072F3"
-                    {
-                    "Name" = "8:TVLibrary.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:TVLibrary.dll"
-            "TargetName" = "8:"
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\53.0°E Express AM22.ini"
+            "TargetName" = "8:53.0°E Express AM22.ini"
             "Tag" = "8:"
-            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2009,7 +3387,7 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
         }
@@ -2678,20 +4056,6 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_25525C2B072E442D8FD3C6C10BD0215B"
-            {
-            "UseDynamicProperties" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:policy_8_0_microsoft_vc80_atl_x86.msm"
-                "Properties"
-                {
-                }
-            "LanguageId" = "3:0"
-            "Exclude" = "11:FALSE"
-            "Folder" = "8:"
-            "Feature" = "8:"
-            "IsolateTo" = "8:"
-            }
             "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_554620AFFA98471AA9267BAF3078BB45"
             {
             "UseDynamicProperties" = "11:TRUE"
@@ -2706,7 +4070,21 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_79E3F969BBD348BC8E836E74CBD6C992"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_9146B12FCB164BEAB7945CB07ABCB6A6"
+            {
+            "UseDynamicProperties" = "11:TRUE"
+            "IsDependency" = "11:TRUE"
+            "SourcePath" = "8:policy_8_0_microsoft_vc80_atl_x86.msm"
+                "Properties"
+                {
+                }
+            "LanguageId" = "3:0"
+            "Exclude" = "11:FALSE"
+            "Folder" = "8:"
+            "Feature" = "8:"
+            "IsolateTo" = "8:"
+            }
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_94612C76D3664BB8B953E054A4FA8210"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
@@ -2739,7 +4117,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_2F82617808CF42DE9255C338B0C4F778"
             {
-            "SourcePath" = "8:..\\SetupTv\\obj\\Debug\\SetupTv.exe"
+            "SourcePath" = "8:..\\SetupTv\\obj\\Release\\SetupTv.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
@@ -2767,7 +4145,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_899341C657B645F0881CFBDBFBBFFEAE"
             {
-            "SourcePath" = "8:..\\TvService\\obj\\Debug\\TvService.exe"
+            "SourcePath" = "8:..\\TvService\\obj\\Release\\TvService.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
@@ -2793,9 +4171,6 @@
                 {
                 }
             }
-        }
-        "VJSharpPlugin"
-        {
         }
     }
 }
