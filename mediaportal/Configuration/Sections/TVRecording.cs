@@ -445,7 +445,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbBackToBack.Name = "cbBackToBack";
       this.cbBackToBack.Size = new System.Drawing.Size(380, 17);
       this.cbBackToBack.TabIndex = 8;
-      this.cbBackToBack.Text = "Ignore pre/post offset for back-to-back recordings (no conflict for one tuner)";
+      this.cbBackToBack.Text = "Ignore pre/post recording within block for back-to-back recordings";
       this.cbBackToBack.UseVisualStyleBackColor = true;
       // 
       // tabPage2
