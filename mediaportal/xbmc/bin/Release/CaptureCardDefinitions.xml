@@ -18126,4 +18126,126 @@
       </connections>
     </tv>
   </capturecard>
+  
+  <capturecard commercialname="Terratec Cinergy Hybrid T USB XS (Digital)" capturename="Cinergy Hybrid T USB XS Digital Capture" devid="vid_0ccd&amp;pid_0042&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"          checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Cinergy Hybrid T USB XS Digital Tuner"    checkdevice="true"/>
+        <filter cat="capture"         name="Cinergy Hybrid T USB XS Digital Capture"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Terratec Cinergy Hybrid T USB XS (Analog)" capturename="Cinergy Hybrid T USB XS (Analog)" devid="vid_0ccd&amp;pid_0042&amp;mi_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="Cinergy Hybrid T USB XS Analog Tuner"     checkdevice="true"/>
+        <filter cat="tvaudio"     name="Cinergy Hybrid T USB XS Analog TV Audio"  checkdevice="true"/>
+        <filter cat="crossbar"    name="Cinergy Hybrid T USB XS Analog Crossbar"  checkdevice="true"/>
+        <filter cat="capture"     name="Cinergy Hybrid T USB XS (Analog)"         checkdevice="true"/>
+        <filter cat="audcapture"  name="%soundcard%"                              checkdevice="true"/>
+        <filter cat="videncoder"  name="%videoencoder%"                           checkdevice="false"/>
+        <filter cat="audencoder"  name="%audioencoder%"                           checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"                                checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"   sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"    sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"   sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"    sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder" sinkpin="0"/>
+        <connection sourcefilter="audcapture" sourcepin="0" sinkfilter="audencoder" sinkpin="0"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
+        <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"        sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV 310i DVBT" capturename="Pinnacle PCTV 310i BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_002f11bd&amp;rev_d1">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Pinnacle PCTV 310i BDA DVBT Tuner"      checkdevice="true"/>
+        <filter cat="capture"         name="Pinnacle PCTV 310i BDA Digital Capture" checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0"  sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0"  sinkfilter="capture"      sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge HVR-1100 Analogue" capturename="Hauppauge WinTV-HVR 713X BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_67010070&amp;rev_d1">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="Hauppauge WinTV-HVR 713X BDA Analog TV Tuner"			  checkdevice="true"/>
+        <filter cat="tvaudio"		  name="Hauppauge WinTV-HVR 713X BDA Analog TV Audio"			  checkdevice="true"/>
+        <filter cat="crossbar"		name="Hauppauge WinTV-HVR 713X BDA Analog Xbar"			      checkdevice="true"/>
+        <filter cat="capture"		  name="Hauppauge WinTV-HVR 713X BDA Analog Capture"	      checkdevice="true"/>
+        <filter cat="audcapture"	name="Hauppauge WinTV-HVR 713X BDA Analog Audio Capture"	checkdevice="false"/>
+        <filter cat="mux"			    name="MainConcept (Hauppauge) MPEG Multiplexer"           checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="2" sinkfilter="audcapture"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge WinTV Nova-T-USB (Stick)" capturename="WinTV Nova-T Stick DVB-T Capture (Dev1 Path0) " devid="vid_2040&amp;pid_7050">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	              checkdevice="false"/>
+        <filter cat="tunerdevice"		  name="WinTV Nova-T Stick DVB-T Tuner (Dev1 Path0) "	  checkdevice="true"/>
+        <filter cat="capture"			    name="WinTV Nova-T Stick DVB-T Capture (Dev1 Path0) "	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AVerMedia AVerTV MCE 116 Plus" capturename="AVerMedia AVerTV Video Capture (AF2)" devid="ven_4444&amp;dev_0016&amp;subsys_c4391461&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="AVerMedia AVerTV Tuner (AF2)"					checkdevice="true"/>
+        <filter cat="tvaudio"  name="AVerMedia AVerTV TvAudio (AF2)"				checkdevice="true"/>
+        <filter cat="crossbar" name="AVerMedia AVerTV Crossbar (AF2)"				checkdevice="true"/>
+        <filter cat="capture"  name="AVerMedia AVerTV Video Capture (AF2)"  checkdevice="true"/>
+        <filter cat="encoder"  name="AVerMedia AVerTV Encoder (AF2)"				checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"	sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
