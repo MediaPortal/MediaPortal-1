@@ -26,10 +26,11 @@ class CBuffer
   public:
     CBuffer();
     virtual ~CBuffer();
-    int Write(byte* data, int len, bool isStart,CPcr& pcr);
-    int Read(byte* data, int len);
-    int Size();
+    int  Write(byte* data, int len, bool isStart,CPcr& pcr);
+    int  Read(byte* data, int len);
+    int  Size();
     void HasPtsDts(bool& pts, bool &dts);
+		bool HasSequenceHeader();
     bool IsStart();
     void Reset();
     CPcr& Pcr();
@@ -41,6 +42,7 @@ class CBuffer
     int   m_iReadPtr;
     int   m_iSize;
     bool  m_bIsStart;
+		bool  m_bSequenceHeader;
     CPcr  m_pcr;
     CPcr  m_dts;
     CPcr  m_pts;
@@ -58,10 +60,12 @@ class CPesPacket
     bool IsAvailable(int size);
     bool IsStart();
     void NextPacketHasPtsDts(bool& pts, bool &dts);
+		void Skip();
     CPcr& Pcr();
     CPcr& Pts();
     CPcr& Dts();
     int   InUse();
+		bool  HasSequenceHeader();
     ULONG         packet_number;
 
   private:

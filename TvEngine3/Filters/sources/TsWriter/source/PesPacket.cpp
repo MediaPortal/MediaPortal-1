@@ -31,6 +31,7 @@ CBuffer::CBuffer()
   m_iReadPtr=0;
   m_iSize=0;
   m_bIsStart=false;
+	m_bSequenceHeader=false;
 }
 
 CBuffer::~CBuffer()
@@ -43,6 +44,7 @@ void CBuffer::Reset()
   m_iReadPtr=0;
   m_iSize=0;
   m_bIsStart=false;
+	m_bSequenceHeader=false;
   m_pcr.Reset();
   m_dts.Reset();
   m_pts.Reset();
@@ -50,9 +52,21 @@ void CBuffer::Reset()
 
 int CBuffer::Write(byte* data, int len, bool isStart,CPcr& pcr)
 {
+		for (int i=0; i < len-4;++i)
+		{
+			if (data[i]==0 && data[i+1]==0 && data[i+2]==1 && data[i+3]==0xba)
+			{
+				int x=1;
+			}
+		}
+  m_bSequenceHeader=false;
   if (isStart)
   {
     CPcr::DecodeFromPesHeader(data,m_pts,m_dts);
+		int pos=data[8]+9;
+		if (data[pos]==0 && data[pos+1]==0 && data[pos+2]==1 && data[pos+3]==0xb3)
+			m_bSequenceHeader=true;
+
   }
   else
   {
@@ -96,6 +110,12 @@ void CBuffer::HasPtsDts(bool& pts, bool &dts)
     }
   }
 }
+
+bool CBuffer::HasSequenceHeader()
+{
+	return m_bSequenceHeader;
+}
+
 bool CBuffer::IsStart()
 {
   return m_bIsStart;
@@ -151,6 +171,16 @@ CPcr& CPesPacket::Pts()
 CPcr& CPesPacket::Dts()
 {
   return m_buffers[m_iCurrentReadBuffer].Dts();
+}
+bool CPesPacket::HasSequenceHeader()
+{
+	return m_buffers[m_iCurrentReadBuffer].HasSequenceHeader();
+}
+
+void CPesPacket::Skip()
+{
+  m_iCurrentReadBuffer++;
+  if (m_iCurrentReadBuffer>=MAX_BUFFERS) m_iCurrentReadBuffer=0;
 }
 
 void CPesPacket::Write(byte* data, int len, bool isStart,CPcr& pcr)

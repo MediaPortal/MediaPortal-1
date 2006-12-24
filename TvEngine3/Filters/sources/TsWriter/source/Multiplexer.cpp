@@ -185,9 +185,23 @@ int CMultiplexer::OnNewPesPacket(CPesDecoder* decoder)
       pcr=packet.Pcr();
     }
   }
+
   if (streamId==decoder->GetStreamId())
   {
-    CPesPacket& packet=decoder->m_packet;
+		CPesPacket& packet=decoder->m_packet;
+		if (!m_bVideoStartFound)
+		{
+			if (decoder->GetStreamId()==0xe0)
+			{
+				if (packet.HasSequenceHeader())
+					m_bVideoStartFound=true;
+			}
+		}
+		if (!m_bVideoStartFound)
+		{
+			packet.Skip();
+			return 0; 
+		}
     mpeg_mux_write_packet(packet,decoder->GetStreamId());
   }
   return 0;
@@ -374,13 +388,15 @@ int CMultiplexer::WritePaddingPacket(byte* buf,int packet_bytes)
 void CMultiplexer::flush_packet(CPesPacket& packet, int streamId)
 {
   byte *buf_ptr;
-  int size, payload_size, startcode,  stuffing_size, i, header_len;
+  int size;
   int packet_size;
   byte buffer[PACK_SIZE];
   int zero_trail_bytes = 0;
   int pad_packet_bytes = 0;
   buf_ptr = buffer;
 
+	
+	
   if (((packet.packet_number % PACK_HEADER_FREQUENCY) == 0)) 
   {
       size = WritePackHeader(buf_ptr, packet.Pcr());
@@ -404,25 +420,28 @@ void CMultiplexer::flush_packet(CPesPacket& packet, int streamId)
   if (packet.IsStart()==false)
   {
     //add pes header
-    packet_size-=9;
+    packet_size-=10;
     buf_ptr[0]=0;buf_ptr++;                               //0
     buf_ptr[0]=0;buf_ptr++;                               //1
     buf_ptr[0]=1;buf_ptr++;                               //2
     buf_ptr[0]=streamId;buf_ptr++;                        //3
-    buf_ptr[0]=(byte)((pktLen>>8)&0xff);buf_ptr++; //4
-    buf_ptr[0]=(byte)(pktLen&0xff);buf_ptr++;      //5
+    buf_ptr[0]=(byte)((pktLen>>8)&0xff);buf_ptr++; 				//4
+    buf_ptr[0]=(byte)(pktLen&0xff);buf_ptr++;      				//5
     buf_ptr[0]=(byte)(0x80);buf_ptr++;                    //6
-    buf_ptr[0]=(byte)(0);buf_ptr++;                       //7
-    buf_ptr[0]=(byte)(0);buf_ptr++;                       //8
+    buf_ptr[0]=(byte)(4);buf_ptr++;                       //7
+		//buf_ptr[0]=(byte)(0);buf_ptr++;                       //7
+		//buf_ptr[0]=(byte)(0);buf_ptr++;                       //8
+    buf_ptr[0]=(byte)(1);buf_ptr++;                       //8
+    buf_ptr[0]=(byte)(0x80);buf_ptr++;                    //9
   }
   else
   {
     isstart=true;
   }
    
-  
-  bytesRead=packet.Read(buf_ptr,packet_size);
-  buf_ptr+=bytesRead;
+
+	bytesRead=packet.Read(buf_ptr,packet_size);
+	buf_ptr+=bytesRead;
 	ptrStreamId[0]=(byte)streamId;
   ptrSize[0]=(byte)((pktLen>>8)&0xff); //4
   ptrSize[1]=(byte)(pktLen&0xff);      //5
@@ -461,7 +480,7 @@ void CMultiplexer::flush_packet(CPesPacket& packet, int streamId)
 int CMultiplexer::mpeg_mux_write_packet(CPesPacket& packet, int streamId)
 {
   int avail_size = get_packet_payload_size(packet);
-  if (packet.IsAvailable(avail_size) )
+  if (packet.IsAvailable(2*avail_size) )
   {
    flush_packet(packet,streamId);
   }
