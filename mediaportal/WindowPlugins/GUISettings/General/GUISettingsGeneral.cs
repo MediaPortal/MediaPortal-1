@@ -223,6 +223,8 @@ namespace WindowPlugins.GUISettings
     {
       int selectedLangIndex = btnLanguage.SelectedItem;
       int selectedSkinIndex = btnSkin.SelectedItem;
+      bool selectedFullScreen = btnFullscreen.Selected;
+      bool selectedScreenSaver = btnScreenSaver.Selected;
       
       // Set the skin to the selected skin and reload GUI
       GUIGraphicsContext.Skin = btnSkin.SelectedLabel;
@@ -244,21 +246,32 @@ namespace WindowPlugins.GUISettings
       GUIWindowManager.ActivateWindow(GetID);
       GUIControl.FocusControl(GetID, btnSkin.GetID);
       
-      // Apply the selected buttons agian, since they are cleared when we reload
+      // Apply the selected buttons again, since they are cleared when we reload
       GUIControl.SelectItemControl(GetID, btnSkin.GetID, selectedSkinIndex);
       GUIControl.SelectItemControl(GetID, btnLanguage.GetID, selectedLangIndex);
+      if(selectedFullScreen)
+        GUIControl.SelectControl(GetID, btnFullscreen.GetID);
+      if(selectedScreenSaver)
+        GUIControl.SelectControl(GetID, btnScreenSaver.GetID);
     }
 
     void OnLanguageChanged()
     {
-      int oldLang = btnLanguage.SelectedItem;
+      int selectedLangIndex = btnLanguage.SelectedItem;
+      bool selectedFullScreen = btnFullscreen.Selected;
+      bool selectedScreenSaver = btnScreenSaver.Selected;
+
       SaveSettings();
       GUILocalizeStrings.Clear();
       GUILocalizeStrings.Load(Config.GetFile(Config.Dir.Language, btnLanguage.SelectedLabel + @"\strings.xml"));
       GUIWindowManager.OnResize();
       GUIWindowManager.ActivateWindow(GetID); // without this you cannot change skins / lang any more..
       GUIControl.FocusControl(GetID, btnLanguage.GetID);
-      GUIControl.SelectItemControl(GetID, btnLanguage.GetID, oldLang);
+      GUIControl.SelectItemControl(GetID, btnLanguage.GetID, selectedLangIndex);
+      if (selectedFullScreen)
+        GUIControl.SelectControl(GetID, btnFullscreen.GetID);
+      if (selectedScreenSaver)
+        GUIControl.SelectControl(GetID, btnScreenSaver.GetID);
     }
   }
 }
