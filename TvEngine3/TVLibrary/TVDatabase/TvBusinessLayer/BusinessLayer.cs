@@ -142,8 +142,8 @@ namespace TvDatabase
     public Channel GetChannelByName(string provider, string name)
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TuningDetail));
-      sb.AddConstraint(Operator.Like, "name", name);
-      sb.AddConstraint(Operator.Like, "provider", provider);
+      sb.AddConstraint(Operator.Equals, "name", name);
+      sb.AddConstraint(Operator.Equals, "provider", provider);
       SqlStatement stmt = sb.GetStatement(true);
       IList details = ObjectFactory.GetCollection(typeof(TuningDetail), stmt.Execute());
       if (details == null) return null;
