@@ -159,10 +159,15 @@ namespace MediaPortal.Player
           b = (ushort)0xfffff845;
         }
         Guid classID = new Guid(0x9852a670, b, 0x491b, 0x9b, 0xe6, 0xeb, 0xd8, 0x41, 0xb8, 0xa6, 0x13);
-        IBaseFilter filter;
-        DirectShowUtil.FindFilterByClassID(graphBuilder, classID, out filter);
+
+        if (vob != null)
+        {
+          Marshal.ReleaseComObject(vob);
+          vob = null;
+          DirectShowUtil.FindFilterByClassID(graphBuilder, classID, out vob);
+        }
         vobSub = null;
-        vobSub = filter as IDirectVobSub;
+        vobSub = (IDirectVobSub)vob;
         if (vobSub != null)
         {
           string defaultLanguage;
@@ -206,10 +211,7 @@ namespace MediaPortal.Player
             }
           }
         }
-        if (filter != null)
-          Marshal.ReleaseComObject(filter); filter = null;
-
-
+       
         if (!Vmr9.IsVMR9Connected)
         {
           //VMR9 is not supported, switch to overlay
@@ -319,6 +321,8 @@ namespace MediaPortal.Player
           while ((hr = Marshal.ReleaseComObject(vobSub)) > 0) ;
           vobSub = null;
         }
+
+        if (vob != null) Marshal.ReleaseComObject(vob); vob = null;
         //	DsUtils.RemoveFilters(graphBuilder);
 
         if (_rotEntry != null)

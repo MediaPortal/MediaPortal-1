@@ -156,8 +156,8 @@ namespace MediaPortal.Player
     protected IBaseFilter audioCodecFilter = null;
     protected IBaseFilter audioRendererFilter = null;
     protected IBaseFilter[] customFilters; // FlipGer: array for custom directshow filters
-
-    protected IDirectVobSub vobSub;
+    protected IBaseFilter vob = null;
+    protected IDirectVobSub vobSub = null;
     DateTime elapsedTimer = DateTime.Now;
 
     /// <summary> audio interface used to control volume. </summary>
@@ -878,17 +878,23 @@ namespace MediaPortal.Player
           Marshal.ThrowExceptionForHR(hr);
 
 
-        IBaseFilter filter;
+        
         ushort b;
         unchecked
         {
           b = (ushort)0xfffff845;
         }
         Guid classID = new Guid(0x9852a670, b, 0x491b, 0x9b, 0xe6, 0xeb, 0xd8, 0x41, 0xb8, 0xa6, 0x13);
-        DirectShowUtil.FindFilterByClassID(graphBuilder, classID, out filter);
+
+        if (vob != null)
+        {
+          Marshal.ReleaseComObject(vob);
+          vob = null;
+          DirectShowUtil.FindFilterByClassID(graphBuilder, classID, out vob);
+        }
 
         vobSub = null;
-        vobSub = filter as IDirectVobSub;
+        vobSub = (IDirectVobSub)vob;
         if (vobSub != null)
         {
           using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -930,8 +936,7 @@ namespace MediaPortal.Player
             }
           }
         }
-        if (filter != null)
-          Marshal.ReleaseComObject(filter); filter = null;
+        
 
         mediaCtrl = (IMediaControl)graphBuilder;
         mediaEvt = (IMediaEventEx)graphBuilder;
@@ -987,6 +992,7 @@ namespace MediaPortal.Player
         if (videoCodecFilter != null) Marshal.ReleaseComObject(videoCodecFilter); videoCodecFilter = null;
         if (audioCodecFilter != null) Marshal.ReleaseComObject(audioCodecFilter); audioCodecFilter = null;
         if (audioRendererFilter != null) Marshal.ReleaseComObject(audioRendererFilter); audioRendererFilter = null;
+        
         // FlipGer: release custom filters
         for (int i = 0; i < customFilters.Length; i++)
         {
@@ -998,10 +1004,13 @@ namespace MediaPortal.Player
         }
         if (vobSub != null)
         {
-          while ((hr = Marshal.ReleaseComObject(vobSub)) > 0) ;
+          while ((hr = Marshal.ReleaseComObject(vobSub)) > 0)
+          {
+            Log.Info("VobSub test release");
+          }
           vobSub = null;
         }
-
+        if (vob != null) Marshal.ReleaseComObject(vob); vob = null;
         DirectShowUtil.RemoveFilters(graphBuilder);
 
         if (_rotEntry != null)
