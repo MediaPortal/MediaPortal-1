@@ -269,13 +269,60 @@ namespace SetupTv.Sections
           for (int i = 0; i < channels.Length; ++i)
           {
             DVBTChannel channel = (DVBTChannel)channels[i];
-
-
-            Channel dbChannel = layer.GetChannelByName(channel.Provider, channel.Name);
-            bool exists = (dbChannel != null);
-            if (!exists)
+            IList channelList = layer.GetChannelsByName(channel.Name);
+            Channel dbChannel = null;
+            TuningDetail currentDetail = null;
+            bool exists = false;
+            if (channelList == null)
             {
+              //channel does not exists. Add it
               dbChannel = layer.AddChannel(channel.Provider, channel.Name);
+            }
+            else
+            {
+              //one or more channel with name exists, check if provider exists also
+              foreach (Channel ch in channelList)
+              {
+                TuningDetail detail = ch.ContainsProvider(channel.Provider);
+                if (detail != null)
+                {
+                  dbChannel = ch;
+                  if (detail.ChannelType == 4)
+                  {
+                    //provider exists for this type of transmission
+                    currentDetail = detail;
+                    exists = true;
+                  }
+                }
+              }
+              if (currentDetail != null)
+              {
+                //update tuning information
+              }
+              else if (dbChannel != null)
+              {
+                //add tuning detail
+              }
+              else
+              {
+                //add new channel
+                bool channelTypeExists = false;
+                foreach (Channel ch in channelList)
+                {
+                  if (ch.ContainsChannelType(4))
+                  {
+                    channelTypeExists = true;
+                  }
+                }
+                if (channelTypeExists)
+                {
+                  dbChannel = layer.AddChannel(channel.Provider, channel.Name);
+                }
+                else
+                {
+                  dbChannel = (Channel)channelList[0];
+                }
+              }
             }
 
             dbChannel.IsTv = channel.IsTv;
@@ -285,16 +332,25 @@ namespace SetupTv.Sections
               dbChannel.GrabEpg = false;
             }
             dbChannel.SortOrder = 10000;
-            if (channel.LogicalChannelNumber >= 0)
+            if (channel.LogicalChannelNumber >= 1)
             {
               dbChannel.SortOrder = channel.LogicalChannelNumber;
             }
             dbChannel.Persist();
+
             if (checkBoxCreateGroups.Checked)
             {
               layer.AddChannelToGroup(dbChannel, channel.Provider);
             }
-            layer.AddTuningDetails(dbChannel, channel);
+            if (currentDetail == null)
+            {
+              layer.AddTuningDetails(dbChannel, channel);
+            }
+            else
+            {
+              //update tuning details...
+              layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
+            }
 
             if (channel.IsTv)
             {

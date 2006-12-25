@@ -128,6 +128,16 @@ namespace TvDatabase
       channel.Remove();
     }
 
+    public IList GetChannelsByName(string name)
+    {
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      sb.AddConstraint(Operator.Equals, "name", name);
+      SqlStatement stmt = sb.GetStatement(true);
+      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+      if (channels == null) return null;
+      if (channels.Count == 0) return null;
+      return channels;
+    }
     public Channel GetChannelByName(string name)
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
@@ -496,52 +506,142 @@ namespace TvDatabase
         freeToAir = dvbChannel.FreeToAir;
       }
 
-      IList tuningDetails = channel.ReferringTuningDetail();
-      for (int i = 0; i < tuningDetails.Count; ++i)
-      {
-        TuningDetail tuningdetail = (TuningDetail)tuningDetails[i];
-        if (tuningdetail.Name == channelName &&
-            tuningdetail.Provider == provider &&
-            tuningdetail.NetworkId == networkId &&
-            tuningdetail.TransportId == transportId &&
-            tuningdetail.ServiceId == serviceId &&
-            tuningdetail.Frequency == channelFrequency &&
-            tuningdetail.MinorChannel == minorChannel &&
-            tuningdetail.MajorChannel == majorChannel &&
-            tuningdetail.ChannelNumber == channelNumber &&
-            tuningdetail.IsTv == isTv &&
-            tuningdetail.ChannelType == channelType &&
-            tuningdetail.IsRadio == isRadio &&
-            tuningdetail.Band == band &&
-            tuningdetail.SatIndex == satIndex)
-        {
-          tuningdetail.Bandwidth = bandwidth;
-          tuningdetail.CountryId = country;
-          tuningdetail.Diseqc = diseqc;
-          tuningdetail.FreeToAir = freeToAir;
-          tuningdetail.Modulation = modulation;
-          tuningdetail.PcrPid = pcrPid;
-          tuningdetail.PmtPid = pmtPid;
-          tuningdetail.Polarisation = polarisation;
-          tuningdetail.SwitchingFrequency = switchFrequency;
-          tuningdetail.Symbolrate = symbolRate;
-          tuningdetail.VideoSource = videoInputType;
-          tuningdetail.TuningSource = tunerSource;
-          tuningdetail.ChannelType = channelType;
-          tuningdetail.VideoPid = videoPid;
-          tuningdetail.AudioPid = audioPid;
-          tuningdetail.Band = band;
-          tuningdetail.SatIndex = satIndex;
-          tuningdetail.Persist();
-          return tuningdetail;
-        }
-      }
 
       TuningDetail detail = new TuningDetail(channel.IdChannel, channelName, provider,
                               channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
                               networkId, transportId, serviceId, pmtPid, freeToAir,
                               modulation, polarisation, symbolRate, diseqc, switchFrequency,
                               bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, tunerSource, videoPid, audioPid, band,satIndex);
+      detail.Persist();
+      return detail;
+    }
+
+    public TuningDetail UpdateTuningDetails(Channel channel, IChannel tvChannel, TuningDetail detail)
+    {
+      string channelName = "";
+      long channelFrequency = 0;
+      int channelNumber = 0;
+      int country = 31;
+      bool isRadio = false;
+      bool isTv = false;
+      int tunerSource = 0;
+      int videoInputType = 0;
+      int symbolRate = 0;
+      int modulation = 0;
+      int polarisation = 0;
+      int switchFrequency = 0;
+      int diseqc = 0;
+      int bandwidth = 8;
+      bool freeToAir = true;
+      int pcrPid = -1;
+      int pmtPid = -1;
+      int networkId = -1;
+      int serviceId = -1;
+      int transportId = -1;
+      int minorChannel = -1;
+      int majorChannel = -1;
+      string provider = "";
+      int channelType = 0;
+      int videoPid = -1;
+      int audioPid = -1;
+      int band = 0;
+      int satIndex = -1;
+
+      AnalogChannel analogChannel = tvChannel as AnalogChannel;
+      if (analogChannel != null)
+      {
+        channelName = analogChannel.Name;
+        channelFrequency = analogChannel.Frequency;
+        channelNumber = analogChannel.ChannelNumber;
+        country = analogChannel.Country.Index;
+        isRadio = analogChannel.IsRadio;
+        isTv = analogChannel.IsTv;
+        tunerSource = (int)analogChannel.TunerSource;
+        videoInputType = (int)analogChannel.VideoSource;
+        channelType = 0;
+      }
+      ATSCChannel atscChannel = tvChannel as ATSCChannel;
+      if (atscChannel != null)
+      {
+        majorChannel = atscChannel.MajorChannel;
+        minorChannel = atscChannel.MinorChannel;
+        channelNumber = atscChannel.PhysicalChannel;
+        videoPid = atscChannel.VideoPid;
+        audioPid = atscChannel.AudioPid;
+        channelType = 1;
+      }
+
+      DVBCChannel dvbcChannel = tvChannel as DVBCChannel;
+      if (dvbcChannel != null)
+      {
+        symbolRate = dvbcChannel.SymbolRate;
+        modulation = (int)dvbcChannel.ModulationType;
+        channelType = 2;
+      }
+
+      DVBSChannel dvbsChannel = tvChannel as DVBSChannel;
+      if (dvbsChannel != null)
+      {
+        symbolRate = dvbsChannel.SymbolRate;
+        polarisation = (int)dvbsChannel.Polarisation;
+        switchFrequency = dvbsChannel.SwitchingFrequency;
+        diseqc = (int)dvbsChannel.DisEqc;
+        band = (int)dvbsChannel.BandType;
+        satIndex = dvbsChannel.SatelliteIndex;
+        channelType = 3;
+      }
+
+      DVBTChannel dvbtChannel = tvChannel as DVBTChannel;
+      if (dvbtChannel != null)
+      {
+        bandwidth = dvbtChannel.BandWidth;
+        channelType = 4;
+      }
+
+      DVBBaseChannel dvbChannel = tvChannel as DVBBaseChannel;
+      if (dvbChannel != null)
+      {
+        pcrPid = dvbChannel.PcrPid;
+        pmtPid = dvbChannel.PmtPid;
+        networkId = dvbChannel.NetworkId;
+        serviceId = dvbChannel.ServiceId;
+        transportId = dvbChannel.TransportId;
+        channelName = dvbChannel.Name;
+        provider = dvbChannel.Provider;
+        channelFrequency = dvbChannel.Frequency;
+        isRadio = dvbChannel.IsRadio;
+        isTv = dvbChannel.IsTv;
+        freeToAir = dvbChannel.FreeToAir;
+      }
+
+      detail.Name = channelName;
+      detail.Provider = provider;
+      detail.ChannelType = channelType;
+      detail.ChannelNumber = channelNumber;
+      detail.Frequency = (int)channelFrequency;
+      detail.CountryId = country;
+      detail.IsRadio = isRadio;
+      detail.IsTv = isTv;
+      detail.NetworkId = networkId;
+      detail.TransportId = transportId;
+      detail.ServiceId = serviceId;
+      detail.PmtPid = pmtPid;
+      detail.FreeToAir = freeToAir;
+      detail.Modulation = modulation;
+      detail.Polarisation = polarisation;
+      detail.Symbolrate = symbolRate;
+      detail.Diseqc = diseqc;
+      detail.SwitchingFrequency = switchFrequency;
+      detail.Bandwidth = bandwidth;
+      detail.MajorChannel = majorChannel;
+      detail.MinorChannel = minorChannel;
+      detail.PcrPid = pcrPid;
+      detail.VideoSource = videoInputType;
+      detail.TuningSource = tunerSource;
+      detail.VideoPid = videoPid;
+      detail.AudioPid = audioPid;
+      detail.Band = band;
+      detail.SatIndex = satIndex;
       detail.Persist();
       return detail;
     }

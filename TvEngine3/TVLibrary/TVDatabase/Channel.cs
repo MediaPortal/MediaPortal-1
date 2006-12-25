@@ -304,7 +304,7 @@ namespace TvDatabase
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(GroupMap), this );
     }
-    
+
     /// <summary>
     /// Get a list of Program referring to the current entity.
     /// </summary>
@@ -491,6 +491,23 @@ namespace TvDatabase
       foreach (TuningDetail detail in list)
         detail.Remove();
       Remove();
+    }
+
+    public TuningDetail ContainsProvider(string providerName)
+    {
+      foreach (TuningDetail detail in ReferringTuningDetail())
+      {
+        if (String.Compare(detail.Provider, providerName, true) == 0) return detail;
+      }
+      return null;
+    }
+    public bool ContainsChannelType(int channelType)
+    {
+      foreach (TuningDetail detail in ReferringTuningDetail())
+      {
+        if (detail.ChannelType == channelType) return true;
+      }
+      return false;
     }
   }
 }

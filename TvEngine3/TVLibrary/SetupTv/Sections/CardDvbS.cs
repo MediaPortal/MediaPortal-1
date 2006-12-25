@@ -170,7 +170,7 @@ namespace SetupTv.Sections
               {
                 while (true)
                 {
-                   string line = tin.ReadLine();
+                  string line = tin.ReadLine();
                   if (line == null) break;
                   tout.WriteLine(line);
                 }
@@ -178,7 +178,7 @@ namespace SetupTv.Sections
             }
           }
         }
-        item.Text =itemLine+ " done";
+        item.Text = itemLine + " done";
       }
       catch (Exception)
       {
@@ -215,7 +215,7 @@ namespace SetupTv.Sections
             {
               if (tpdata[0].IndexOf("=") >= 0)
               {
-                tpdata[0] = tpdata[0].Substring(tpdata[0].IndexOf("=")+1);
+                tpdata[0] = tpdata[0].Substring(tpdata[0].IndexOf("=") + 1);
               }
               try
               {
@@ -266,7 +266,7 @@ namespace SetupTv.Sections
         ts.Url = node.Attributes.GetNamedItem("url").Value;
         string name = Utils.FilterFileName(ts.SatteliteName);
         ts.FileName = System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters\" + name + ".ini";
-        
+
         satellites.Add(ts);
       }
 
@@ -413,7 +413,7 @@ namespace SetupTv.Sections
 
 
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-//      mpComboBoxCam.SelectedIndex = card.CamType;
+      //      mpComboBoxCam.SelectedIndex = card.CamType;
     }
     public override void OnSectionDeActivated()
     {
@@ -681,11 +681,60 @@ namespace SetupTv.Sections
         for (int i = 0; i < channels.Length; ++i)
         {
           DVBSChannel channel = (DVBSChannel)channels[i];
-          Channel dbChannel = layer.GetChannelByName(channel.Provider, channel.Name);
-          bool exists = (dbChannel != null);
-          if (!exists)
+          IList channelList = layer.GetChannelsByName(channel.Name);
+          Channel dbChannel = null;
+          TuningDetail currentDetail = null;
+          bool exists = false;
+          if (channelList == null)
           {
+            //channel does not exists. Add it
             dbChannel = layer.AddChannel(channel.Provider, channel.Name);
+          }
+          else
+          {
+            //one or more channel with name exists, check if provider exists also
+            foreach (Channel ch in channelList)
+            {
+              TuningDetail detail = ch.ContainsProvider(channel.Provider);
+              if (detail != null)
+              {
+                dbChannel = ch;
+                if (detail.ChannelType == 3)
+                {
+                  //provider exists for this type of transmission
+                  currentDetail = detail;
+                  exists = true;
+                }
+              }
+            }
+            if (currentDetail != null)
+            {
+              //update tuning information
+            }
+            else if (dbChannel != null)
+            {
+              //add tuning detail
+            }
+            else
+            {
+              //add new channel
+              bool channelTypeExists = false;
+              foreach (Channel ch in channelList)
+              {
+                if (ch.ContainsChannelType(3))
+                {
+                  channelTypeExists = true;
+                }
+              }
+              if (channelTypeExists)
+              {
+                dbChannel = layer.AddChannel(channel.Provider, channel.Name);
+              }
+              else
+              {
+                dbChannel = (Channel)channelList[0];
+              }
+            }
           }
 
           dbChannel.IsTv = channel.IsTv;
@@ -705,7 +754,16 @@ namespace SetupTv.Sections
           {
             layer.AddChannelToGroup(dbChannel, channel.Provider);
           }
-          layer.AddTuningDetails(dbChannel, channel);
+          if (currentDetail == null)
+          {
+            layer.AddTuningDetails(dbChannel, channel);
+          }
+          else
+          {
+            //update tuning details...
+            layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
+          }
+
           if (channel.IsTv)
           {
             if (exists)
@@ -1169,12 +1227,12 @@ namespace SetupTv.Sections
       string itemLine = String.Format("Updating satellites...");
       ListViewItem item = listViewStatus.Items.Add(new ListViewItem(itemLine));
       Application.DoEvents();
-      List<SatteliteContext> sats=LoadSattelites();
+      List<SatteliteContext> sats = LoadSattelites();
       foreach (SatteliteContext sat in sats)
       {
         DownloadTransponder(sat);
       }
-       itemLine = String.Format("Update finished");
+      itemLine = String.Format("Update finished");
       item = listViewStatus.Items.Add(new ListViewItem(itemLine));
     }
   }
