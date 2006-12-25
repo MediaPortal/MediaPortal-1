@@ -294,11 +294,14 @@ namespace SetupTv.Sections
         }
         ListViewItem item = new ListViewItem((items.Count + 1).ToString(), 1);
         item.SubItems.Add(ch.Name);
+        item.SubItems.Add("-");
         item.Checked = ch.VisibleInGuide;
         item.Tag = ch;
         item.SubItems.Add(builder.ToString());
+        string provider = "";
         foreach (TuningDetail detail in ch.ReferringTuningDetail())
         {
+          provider += String.Format("{0},", detail.Provider);
           float frequency;
           switch (detail.ChannelType)
           {
@@ -306,7 +309,7 @@ namespace SetupTv.Sections
               if (detail.VideoSource == (int)AnalogChannel.VideoInputType.Tuner)
               {
                 frequency = detail.Frequency;
-                frequency /= 1000000.0f;
+                frequency /= 1000.0f;
                 item.SubItems.Add(String.Format("{0} {1} MHz", detail.ChannelNumber, frequency.ToString("f2")));
               }
               else
@@ -321,23 +324,25 @@ namespace SetupTv.Sections
 
             case 2:// DVBC
               frequency = detail.Frequency;
-              frequency /= 1000000.0f;
-              item.SubItems.Add(String.Format("{0} MHz SR:{1}", detail.Frequency, detail.Symbolrate ));
+              frequency /= 1000.0f;
+              item.SubItems.Add(String.Format("{0} MHz SR:{1}", frequency.ToString("f2"), detail.Symbolrate));
               break;
 
             case 3:// DVBS
               frequency = detail.Frequency;
-              frequency /= 1000000.0f;
-              item.SubItems.Add(String.Format("{0} MHz {1}", detail.Frequency, (((Polarisation)detail.Polarisation))));
+              frequency /= 1000.0f; 
+              item.SubItems.Add(String.Format("{0} MHz {1}", frequency.ToString("f2"), (((Polarisation)detail.Polarisation))));
               break;
 
             case 4:// DVBT
               frequency = detail.Frequency;
-              frequency /= 1000000.0f;
-              item.SubItems.Add(String.Format("{0} MHz BW:{1}", detail.Frequency, detail.Bandwidth));
+              frequency /= 1000.0f; 
+              item.SubItems.Add(String.Format("{0} MHz BW:{1}", frequency.ToString("f2"), detail.Bandwidth));
               break;
           }
         }
+        if (provider.Length > 1) provider = provider.Substring(0, provider.Length - 1);
+        item.SubItems[2].Text = (provider);
         items.Add(item);
       }
       mpListView1.Items.AddRange(items.ToArray());
