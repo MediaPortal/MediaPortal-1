@@ -110,7 +110,6 @@ namespace SetupTv
         dlg.CreateDatabase();
 
       }
-
       int cards = 0;
       try
       {

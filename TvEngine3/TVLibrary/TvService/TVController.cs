@@ -2280,7 +2280,7 @@ namespace TvService
 
     public void DiSEqCGetPosition(int cardId, out int satellitePosition, out int stepsAzimuth, out int stepsElevation)
     {
-      satellitePosition=-1;
+      satellitePosition = -1;
       stepsAzimuth = 0;
       stepsElevation = 0;
       if (false == _allDbscards.ContainsKey(cardId)) return;
@@ -2481,7 +2481,7 @@ namespace TvService
           return cardsAvailable;
         }
 
-        IList tuningDetails = layer.GetTuningChannelByName(channelName);
+        List<IChannel> tuningDetails = layer.GetTuningChannelByName(dbChannel);
         if (tuningDetails == null)
         {
           Log.Write("Controller:  No tuning details for channel:{0}", channelName);
@@ -2497,8 +2497,12 @@ namespace TvService
         }
 
         int cardsFound = 0;
+        int number = 0;
+        Log.Write("Controller:   got {0} tuning details for {1}", tuningDetails.Count, channelName);
         foreach (IChannel tuningDetail in tuningDetails)
         {
+          number++;
+          Log.Write("Controller:   tuning detail #{0} {1} ", number, tuningDetail.ToString());
           Dictionary<int, Card>.Enumerator enumerator = _allDbscards.GetEnumerator();
 
           //for each card...
@@ -2541,7 +2545,11 @@ namespace TvService
                 break;
               }
             }
-            if (null == channelMap) continue;
+            if (null == channelMap)
+            {
+              Log.Write("Controller:    card:{0} type:{1} channel not mapped", keyPair.Value.IdCard, Type(keyPair.Value.IdCard));
+              continue;
+            }
 
             cardsFound++;
             //check if card is in use

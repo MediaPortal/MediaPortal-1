@@ -281,16 +281,9 @@ namespace TvDatabase
       }
       return null;
     }
-    public IList GetTuningChannelByName(string name)
+    public List<IChannel> GetTuningChannelByName(Channel channel)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
-      sb.AddConstraint(Operator.Equals, "name", name);
-      SqlStatement stmt = sb.GetStatement(true);
-      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
-      if (channels == null) return null;
-      if (channels.Count == 0) return null;
       List<IChannel> tvChannels = new List<IChannel>();
-      Channel channel = (Channel)channels[0];
       CountryCollection collection = new CountryCollection();
       IList tuningDetails = channel.ReferringTuningDetail();
       for (int i = 0; i < tuningDetails.Count; ++i)

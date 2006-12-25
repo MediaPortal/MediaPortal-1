@@ -52,8 +52,9 @@ namespace SetupTv.Sections
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.mpButtonPreview = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonAdd = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonPreview = new MediaPortal.UserInterface.Controls.MPButton();
+      this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
       this.contextMenuStrip1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -69,7 +70,8 @@ namespace SetupTv.Sections
             this.columnHeader1,
             this.columnHeader3,
             this.columnHeader2,
-            this.columnHeader4});
+            this.columnHeader4,
+            this.columnHeader5});
       this.mpListView1.ContextMenuStrip = this.contextMenuStrip1;
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.LabelEdit = true;
@@ -260,6 +262,16 @@ namespace SetupTv.Sections
       this.tabPage1.Text = "Channels";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
+      // mpButtonAdd
+      // 
+      this.mpButtonAdd.Location = new System.Drawing.Point(221, 351);
+      this.mpButtonAdd.Name = "mpButtonAdd";
+      this.mpButtonAdd.Size = new System.Drawing.Size(54, 23);
+      this.mpButtonAdd.TabIndex = 9;
+      this.mpButtonAdd.Text = "Add";
+      this.mpButtonAdd.UseVisualStyleBackColor = true;
+      this.mpButtonAdd.Click += new System.EventHandler(this.mpButtonAdd_Click);
+      // 
       // mpButtonPreview
       // 
       this.mpButtonPreview.Location = new System.Drawing.Point(221, 326);
@@ -270,15 +282,9 @@ namespace SetupTv.Sections
       this.mpButtonPreview.UseVisualStyleBackColor = true;
       this.mpButtonPreview.Click += new System.EventHandler(this.mpButtonPreview_Click);
       // 
-      // mpButtonAdd
+      // columnHeader5
       // 
-      this.mpButtonAdd.Location = new System.Drawing.Point(221, 351);
-      this.mpButtonAdd.Name = "mpButtonAdd";
-      this.mpButtonAdd.Size = new System.Drawing.Size(54, 23);
-      this.mpButtonAdd.TabIndex = 9;
-      this.mpButtonAdd.Text = "Add";
-      this.mpButtonAdd.UseVisualStyleBackColor = true;
-      this.mpButtonAdd.Click += new System.EventHandler(this.mpButtonAdd_Click);
+      this.columnHeader5.Text = "Details";
       // 
       // TvChannels
       // 
@@ -322,5 +328,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ToolStripMenuItem editChannelToolStripMenuItem;
     private System.Windows.Forms.ImageList imageList1;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonAdd;
+    private System.Windows.Forms.ColumnHeader columnHeader5;
   }
 }

@@ -292,13 +292,53 @@ namespace SetupTv.Sections
           if (builder.Length > 0) builder.Append(",");
           builder.Append("ATSC");
         }
-        ListViewItem item = new ListViewItem((items.Count + 1).ToString(),1);
+        ListViewItem item = new ListViewItem((items.Count + 1).ToString(), 1);
         item.SubItems.Add(ch.Name);
         item.Checked = ch.VisibleInGuide;
         item.Tag = ch;
         item.SubItems.Add(builder.ToString());
-        items.Add(item);
+        foreach (TuningDetail detail in ch.ReferringTuningDetail())
+        {
+          float frequency;
+          switch (detail.ChannelType)
+          {
+            case 0://analog
+              if (detail.VideoSource == (int)AnalogChannel.VideoInputType.Tuner)
+              {
+                frequency = detail.Frequency;
+                frequency /= 1000000.0f;
+                item.SubItems.Add(String.Format("{0} {1} MHz", detail.ChannelNumber, frequency.ToString("f2")));
+              }
+              else
+              {
+                item.SubItems.Add(detail.VideoSource.ToString());
+              }
+              break;
 
+            case 1://ATSC
+              item.SubItems.Add(String.Format("{0} {1}:{2}", detail.ChannelNumber, detail.MajorChannel, detail.MinorChannel));
+              break;
+
+            case 2:// DVBC
+              frequency = detail.Frequency;
+              frequency /= 1000000.0f;
+              item.SubItems.Add(String.Format("{0} MHz SR:{1}", detail.Frequency, detail.Symbolrate ));
+              break;
+
+            case 3:// DVBS
+              frequency = detail.Frequency;
+              frequency /= 1000000.0f;
+              item.SubItems.Add(String.Format("{0} MHz {1}", detail.Frequency, (((Polarisation)detail.Polarisation))));
+              break;
+
+            case 4:// DVBT
+              frequency = detail.Frequency;
+              frequency /= 1000000.0f;
+              item.SubItems.Add(String.Format("{0} MHz BW:{1}", detail.Frequency, detail.Bandwidth));
+              break;
+          }
+        }
+        items.Add(item);
       }
       mpListView1.Items.AddRange(items.ToArray());
       mpListView1.EndUpdate();
@@ -689,7 +729,7 @@ namespace SetupTv.Sections
           DateTime totalTimeWatched = DateTime.ParseExact(nodeChannel.Attributes["TotalTimeWatched"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
           bool visibileInGuide = (nodeChannel.Attributes["VisibleInGuide"].Value == "True");
 
-          Channel dbChannel = layer.AddChannel("",name);
+          Channel dbChannel = layer.AddChannel("", name);
           dbChannel.GrabEpg = grabEpg;
           dbChannel.IsRadio = isRadio;
           dbChannel.IsTv = isTv;
