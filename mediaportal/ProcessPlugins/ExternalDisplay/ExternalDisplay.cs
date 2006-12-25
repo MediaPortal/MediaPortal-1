@@ -61,8 +61,7 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     public void Start()
     {
-      //Subscribe to the PowerModeChanged event
-      SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
+
       if (Settings.Instance.ShowPropertyBrowser)
       {
         browser = new PropertyBrowser();
@@ -129,6 +128,11 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     public void Run()
     {
+      //Subscribe to the PowerModeChanged event
+      // It appears that subscription must be done in the scope of the created thread, otherwise
+      // the event in not received when MP is shutdown by powerscheduler (after idle time)
+
+      SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
       bool doLog = Settings.Instance.ExtensiveLogging;
       if (doLog)
       {
@@ -463,6 +467,7 @@ namespace ProcessPlugins.ExternalDisplay
           break;
         case PowerModes.Resume:
           Log.Info("ExternalDisplay: Resume from Suspend or Hibernation detected, starting plugin");
+          SystemEvents.PowerModeChanged -= new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
           DoStart();
           break;
       }
