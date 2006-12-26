@@ -5314,6 +5314,10 @@
 		<id>19119</id>
 		<value>Nullstill</value>
 	</string>
+  <string>
+    <id>19121</id>
+    <value>Tid: </value>
+  </string>
 	<string>
 		<id>25001</id>
 		<value>Venter på side {0:X}...!</value>
