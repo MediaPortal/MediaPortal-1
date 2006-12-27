@@ -42,9 +42,13 @@ namespace MediaPortal.GUI.NumberPlace
 
     GUIImage m_imgFocus = null;
     GUIImage m_imgNoFocus = null;
+    GUIImage _colorOverlay = null;
+    GUIImage[] m_imgOverlay = new GUIImage[9];
     GUILabelControl m_label = null;
 
-
+    bool[] _isCandidate = new bool[9];
+    bool _displayColourOverlay = false;
+    bool _showCandidates = false;
 
     public int SolutionValue = 0;
     public bool editable = true;
@@ -86,13 +90,23 @@ namespace MediaPortal.GUI.NumberPlace
 
     }
 
-    public long M_dwDisabledColor 
- 	{	
-        get { return m_dwDisabledColor;	}
- 		
-        set { m_dwDisabledColor = value;}
- 	}
-    
+    public long M_dwDisabledColor
+    {
+      get { return m_dwDisabledColor; }
+
+      set { m_dwDisabledColor = value; }
+    }
+
+    public bool ShowCandidates
+    {
+      set { _showCandidates = value; }
+    }
+
+    public bool Highlight
+    {
+      set { _displayColourOverlay = value; }
+    }
+
     public CellControl(int dwParentID)
       : base(dwParentID)
     {
@@ -102,6 +116,7 @@ namespace MediaPortal.GUI.NumberPlace
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTextureFocus, strTextureNoFocus)
     {
     }
+
     public override void AllocResources()
     {
       base.AllocResources();
@@ -110,7 +125,14 @@ namespace MediaPortal.GUI.NumberPlace
       m_imgFocus.AllocResources();
       m_imgNoFocus = new GUIImage(GetID, GetID * 100, _positionX, _positionY, this.Width, this.Height, "icon_empty_nofocus.png", 0xFFFFFFFF);
       m_imgNoFocus.AllocResources();
+      for (int i = 0; i < 9; i++)
+      {
+        m_imgOverlay[i] = new GUIImage(GetID, GetID * 1000 + i, _positionX, _positionY, this.Width, this.Height, string.Format("icon_numberplace_overlay_{0}.png", i + 1), 0xFFFFFFFF);
+        m_imgOverlay[i].AllocResources();
+      }
       m_label = new GUILabelControl(GetID, GetID * 1000, _positionX, _positionY, this.Width, this.Height, "font18", String.Empty, 0xFFFFFFFF, GUIControl.Alignment.ALIGN_CENTER, false);
+      _colorOverlay = new GUIImage(GetID, GetID * 10, _positionX, _positionY, this.Width, this.Height, "icon_numberplace_colouroverlay.png", 0xFFFFFFFF);
+      _colorOverlay.AllocResources();
 
     }
 
@@ -165,6 +187,64 @@ namespace MediaPortal.GUI.NumberPlace
       m_label.SetPosition(XPosition, YPosition + m_iTextOffsetY);
       m_label.Render(timePassed);
 
+      if (_showCandidates)
+      {
+        if (_displayColourOverlay && editable && (m_label.Label == string.Empty))
+          _colorOverlay.Render(timePassed);
+
+        if (m_label.Label == string.Empty)
+        {
+          for (int i = 0; i < 9; i++)
+          {
+            if (_isCandidate[i])
+              m_imgOverlay[i].Render(timePassed);
+          }
+        }
+      }
+    }
+
+    public void SetCandidate(int number)
+    {
+      if ((cellValue == 0) && editable)
+      {
+        _isCandidate[number - 1] = true;
+      }
+    }
+
+    public void RemoveCandidate(int number)
+    {
+      _isCandidate[number - 1] = false;
+    }
+
+    public void ClearCandidates()
+    {
+      for (int i = 1; i <= 9; i++)
+      {
+        RemoveCandidate(i);
+      }
+    }
+
+    public bool IsCandidate(int number)
+    {
+      return (_isCandidate[number - 1]);
+    }
+
+    public void HighlightCandidate(int number)
+    {
+      if (number == -1)
+      {
+        _displayColourOverlay = false;
+      }
+      else if (number == 0)
+      {
+        _displayColourOverlay = false;
+      }
+      else if (_isCandidate[number - 1])
+      {
+        _displayColourOverlay = true;
+      }
+      else
+        _displayColourOverlay = false;
     }
   }
 }

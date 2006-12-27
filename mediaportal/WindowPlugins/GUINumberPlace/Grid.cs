@@ -38,11 +38,13 @@ namespace MediaPortal.GUI.NumberPlace
     {
       get { return blocksAcross; }
     }
+
     private int cellsInRow;
     public int CellsInRow
     {
       get { return cellsInRow; }
     }
+
     public int[,] cells;
 
     private const int EMPTY = 0;

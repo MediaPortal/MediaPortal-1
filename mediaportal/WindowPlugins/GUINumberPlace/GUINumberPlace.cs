@@ -100,6 +100,8 @@ namespace MediaPortal.GUI.NumberPlace
       protected bool m_bShow;
       protected bool m_bBlock;
       protected int m_bLevel;
+      protected int _filter;
+      protected bool _showCandidates;
       protected List<Highscore> m_highScore = new List<Highscore>();
 
       public Settings()
@@ -107,6 +109,8 @@ namespace MediaPortal.GUI.NumberPlace
         m_bShow = false;
         m_bBlock = false;
         m_bLevel = (int)LevelName.Easy;
+        _filter = -1;
+        _showCandidates = false;
       }
 
       [XmlElement("Show")]
@@ -138,6 +142,20 @@ namespace MediaPortal.GUI.NumberPlace
         set { m_highScore = value; }
       }
 
+      [XmlElement("Filter")]
+      public int Filter
+      {
+        get { return _filter; }
+        set { _filter = value; }
+      }
+
+      [XmlElement("ShowCandidates")]
+      public bool ShowCandidates
+      {
+        get { return _showCandidates; }
+        set { _showCandidates = value; }
+      }
+
       public void Load()
       {
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -145,6 +163,7 @@ namespace MediaPortal.GUI.NumberPlace
           m_bShow = xmlreader.GetValueAsBool("NumberPlace", "showerrormoves", false);
           m_bBlock = xmlreader.GetValueAsBool("NumberPlace", "blockerrormoves", false);
           m_bLevel = xmlreader.GetValueAsInt("NumberPlace", "level", 1);
+          _showCandidates = xmlreader.GetValueAsBool("NumberPlace", "showcandidates", false);
           m_highScore.Clear();
           for (int i = 1; i < 4; i++)
           {
@@ -163,6 +182,7 @@ namespace MediaPortal.GUI.NumberPlace
           xmlwriter.SetValueAsBool("NumberPlace", "showerrormoves", m_bShow);
           xmlwriter.SetValueAsBool("NumberPlace", "blockerrormoves", m_bBlock);
           xmlwriter.SetValue("NumberPlace", "level", m_bLevel);
+          xmlwriter.SetValueAsBool("NumberPlace", "showcandidates", _showCandidates);
           for (int i = 1; i <= m_highScore.Count && i < 4; i++)
           {
             xmlwriter.SetValue("NumberPlace", "name" + i, m_highScore[i - 1].Name);
@@ -177,14 +197,22 @@ namespace MediaPortal.GUI.NumberPlace
     private Grid grid = new Grid(3);
     private static Random random = new Random(DateTime.Now.Millisecond);
 
-    [SkinControlAttribute((int)SkinControlIDs.BTN_NEW_GAME)]               protected GUIButtonControl btnNewGame = null;
-    [SkinControlAttribute((int)SkinControlIDs.BTN_HELP_ONCE)]              protected GUIButtonControl btnHelpOnce = null;
-    [SkinControlAttribute((int)SkinControlIDs.BTN_RESET_GAME)]             protected GUIButtonControl btnResetGame = null;
-    [SkinControlAttribute((int)SkinControlIDs.BTN_SOLVE)]                  protected GUIButtonControl btnSolve = null;
-    [SkinControlAttribute((int)SkinControlIDs.BTN_BLOCK_INVALID_MOVES)]    protected GUIToggleButtonControl btnBlockInvalidMoves = null;
-    [SkinControlAttribute((int)SkinControlIDs.BTN_SHOW_INVALID_MOVES)]     protected GUIToggleButtonControl btnShowInvalidMoves = null;
-    [SkinControlAttribute((int)SkinControlIDs.BTN_LEVEL)]                  protected GUIButtonControl btnLevel = null;
-    [SkinControlAttribute((int)SkinControlIDs.BTN_CLEAR)]                  protected GUIButtonControl btnClear = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_NEW_GAME)]
+    protected GUIButtonControl btnNewGame = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_HELP_ONCE)]
+    protected GUIButtonControl btnHelpOnce = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_RESET_GAME)]
+    protected GUIButtonControl btnResetGame = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_SOLVE)]
+    protected GUIButtonControl btnSolve = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_BLOCK_INVALID_MOVES)]
+    protected GUIToggleButtonControl btnBlockInvalidMoves = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_SHOW_INVALID_MOVES)]
+    protected GUIToggleButtonControl btnShowInvalidMoves = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_LEVEL)]
+    protected GUIButtonControl btnLevel = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_CLEAR)]
+    protected GUIButtonControl btnClear = null;
 
 
     static private readonly string pluginConfigFileName = "mynumberplace";
@@ -201,6 +229,8 @@ namespace MediaPortal.GUI.NumberPlace
     private int gameRating;
     private bool gameRunning = false;
     private bool isScoreGame = false;
+    private bool _nextNumberIsToggle = false;
+    private bool _nextNumberIsFilter = false;
 
     Settings _Settings = new Settings();
 
@@ -337,6 +367,70 @@ namespace MediaPortal.GUI.NumberPlace
       }
     }
 
+    private void ResetCandidates()
+    {
+      for (int row = 0; row < grid.CellsInRow; row++)
+      {
+        for (int column = 0; column < grid.CellsInRow; column++)
+        {
+          int cellControlId = (1000 * (row + 1)) + column;
+          CellControl cntlFoc = (CellControl)GetControl(cellControlId);
+          cntlFoc.ClearCandidates();
+          //if (cntlFoc.CellValue == 0)
+          {
+            for (int i = 1; i <= 9; i++)
+            {
+              cntlFoc.SetCandidate(i);
+            }
+            cntlFoc.ShowCandidates = _Settings.ShowCandidates;
+          }
+        }
+      }
+      CheckCandidates();
+    }
+
+    private void ClearCandidates()
+    {
+      for (int row = 0; row < grid.CellsInRow; row++)
+      {
+        for (int column = 0; column < grid.CellsInRow; column++)
+        {
+          int cellControlId = (1000 * (row + 1)) + column;
+          CellControl cntlFoc = (CellControl)GetControl(cellControlId);
+          cntlFoc.ClearCandidates();
+        }
+      }
+      CheckCandidates();
+    }
+
+    private void CheckCandidates()
+    {
+      for (int row = 0; row < grid.CellsInRow; row++)
+      {
+        for (int column = 0; column < grid.CellsInRow; column++)
+        {
+          int cellControlId = (1000 * (row + 1)) + column;
+          CellControl cntlFoc = (CellControl)GetControl(cellControlId);
+          if (cntlFoc.CellValue == 0)
+          {
+            IList candidates = grid.Possibilities(row, column);
+            for (int i = 1; i <= 9; i++)
+            //foreach (int candidate in candidates)
+            {
+              if (!candidates.Contains(i))
+                cntlFoc.RemoveCandidate(i);
+            }
+            cntlFoc.HighlightCandidate(_Settings.Filter);
+
+            if ((_Settings.Filter == 0) && (candidates.Count == 2))
+              cntlFoc.Highlight = true;
+
+            cntlFoc.ShowCandidates = _Settings.ShowCandidates;
+          }
+        }
+      }
+    }
+
     private bool GridIsComplete()
     {
       for (int row = 0; row < grid.CellsInRow; row++)
@@ -402,7 +496,7 @@ namespace MediaPortal.GUI.NumberPlace
 
     private void UpdateButtonStates()
     {
-      string textLine = GUILocalizeStrings.Get(19107);
+      string textLine = GUILocalizeStrings.Get(19107); // Level:
       switch ((LevelName)_Settings.Level)
       {
         case LevelName.Kids:
@@ -436,6 +530,7 @@ namespace MediaPortal.GUI.NumberPlace
           }
         }
       }
+      ResetCandidates();
     }
 
     private void Result()
@@ -483,7 +578,7 @@ namespace MediaPortal.GUI.NumberPlace
     #region Timer Functions
     public void OnTimer_Tick(object sender, System.EventArgs e)
     {
-      if(gameRunning)
+      if (gameRunning)
         totalTime = DateTime.Now.Subtract(startTime);
 
       strSeconds = "";
@@ -515,7 +610,7 @@ namespace MediaPortal.GUI.NumberPlace
       strSeconds = "00";
       strMinutes = "00";
       strHours = "";
-      
+
     }
 
     private void StopTimer()
@@ -622,6 +717,7 @@ namespace MediaPortal.GUI.NumberPlace
           }
         }
         grid = puzzle;
+        ResetCandidates();
         GUIWaitCursor.Hide();
         StartTimer();
         gameRunning = true;
@@ -644,6 +740,7 @@ namespace MediaPortal.GUI.NumberPlace
       else if (control == btnClear)
       {
         ClearGrid();
+        ResetCandidates();
       }
       else if (control == btnShowInvalidMoves)
       {
@@ -699,8 +796,8 @@ namespace MediaPortal.GUI.NumberPlace
               }
             }
           }
+          CheckCandidates();
         }
-
       }
       else if (control == btnResetGame)
       {
@@ -730,13 +827,13 @@ namespace MediaPortal.GUI.NumberPlace
             if (dlg != null)
             {
               dlg.Reset();
-              dlg.SetHeading(GUILocalizeStrings.Get(19116));
+              dlg.SetHeading(GUILocalizeStrings.Get(19116));  // Cell value
 
               for (int index = 1; index < 10; index++)
               {
                 dlg.Add("");
               }
-              dlg.Add(GUILocalizeStrings.Get(19117));
+              dlg.Add(GUILocalizeStrings.Get(19117)); // Clear cell
               dlg.SelectedLabel = cntlFoc.CellValue - 1;
               dlg.DoModal(GetWindowId());
               if (dlg.SelectedLabel < 0)
@@ -756,18 +853,18 @@ namespace MediaPortal.GUI.NumberPlace
                   {
                     cntlFoc.CellValue = dlg.SelectedId;
                     grid.cells[row, column] = dlg.SelectedId;
+
                     if (this.GridIsComplete())
                       this.Result();
                   }
                 }
               }
             }
+            CheckCandidates();
           }
-
         }
       }
-      else
-        if (action.wID == Action.ActionType.ACTION_KEY_PRESSED ||
+      else if (action.wID == Action.ActionType.ACTION_KEY_PRESSED ||
             (action.wID >= Action.ActionType.REMOTE_0 && action.wID <= Action.ActionType.REMOTE_9))
       {
         int controlId = GetFocusControlId();
@@ -781,39 +878,54 @@ namespace MediaPortal.GUI.NumberPlace
           {
             if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)
             {
-              if (action.m_key.KeyChar >= 49 && action.m_key.KeyChar <= 57)
-              {
-                int value = action.m_key.KeyChar - 48;
-
-                if (!_Settings.Block || cntlFoc.SolutionValue == value)
-                {
-                  cntlFoc.CellValue = value;
-                  grid.cells[row, column] = value;
-                  if (this.GridIsComplete())
-                    this.Result();
-                }
-              }
-              else if (action.m_key.KeyChar == 8)
+              if (action.m_key.KeyChar == 8)
               {
                 cntlFoc.CellValue = 0;
                 grid.cells[row, column] = 0;
+              }
+              else if (action.m_key.KeyChar == 35)  // #
+              {
+                _nextNumberIsToggle = true;
+              }
+              else if (action.m_key.KeyChar == 42)  // *
+              {
+                _nextNumberIsFilter = true;
               }
             }
             else if (action.wID >= Action.ActionType.REMOTE_0 && action.wID <= Action.ActionType.REMOTE_9)
             {
               int value = (action.wID - Action.ActionType.REMOTE_0);
 
-              if (value == 0 || !_Settings.Block || cntlFoc.SolutionValue == value)
+              if (!_nextNumberIsToggle && !_nextNumberIsFilter)
               {
-                cntlFoc.CellValue = value;
-                grid.cells[row, column] = value;
-                if (this.GridIsComplete())
+                if (value == 0 || !_Settings.Block || cntlFoc.SolutionValue == value)
                 {
+                  cntlFoc.CellValue = value;
+                  grid.cells[row, column] = value;
 
+                  if (this.GridIsComplete())
+                    this.Result();
                 }
-                //this.Result();
+              }
+              else if (_nextNumberIsToggle)
+              {
+                if (value > 0)
+                {
+                  if (cntlFoc.IsCandidate(value))
+                    cntlFoc.RemoveCandidate(value);
+                  else
+                    cntlFoc.SetCandidate(value);
+                }
+                _nextNumberIsToggle = false;
+              }
+              else if (_nextNumberIsFilter)
+              {
+                _Settings.Filter = value;
+                _Settings.ShowCandidates = true;
+                _nextNumberIsFilter = false;
               }
             }
+            CheckCandidates();
           }
         }
       }
@@ -821,7 +933,172 @@ namespace MediaPortal.GUI.NumberPlace
       {
         StopTimer();
       }
+      else if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
+      {
+        ShowContextMenu();
+      }
+      else if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+      {
+        StopTimer();
+      }
       base.OnAction(action);
+    }
+
+    void ShowFilterMenu()
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+        return;
+      dlg.Reset();
+      dlg.SetHeading(19120); // Filter Candidates
+
+      dlg.Add(GUILocalizeStrings.Get(19122)); // Filter 1
+      dlg.Add(GUILocalizeStrings.Get(19123)); // Filter 2
+      dlg.Add(GUILocalizeStrings.Get(19124)); // Filter 3
+      dlg.Add(GUILocalizeStrings.Get(19125)); // Filter 4
+      dlg.Add(GUILocalizeStrings.Get(19126)); // Filter 5
+      dlg.Add(GUILocalizeStrings.Get(19127)); // Filter 6
+      dlg.Add(GUILocalizeStrings.Get(19128)); // Filter 7
+      dlg.Add(GUILocalizeStrings.Get(19129)); // Filter 8
+      dlg.Add(GUILocalizeStrings.Get(19130)); // Filter 9
+      dlg.Add(GUILocalizeStrings.Get(19131)); // Filter pairs
+      dlg.Add(GUILocalizeStrings.Get(19132)); // Filter off
+
+      dlg.DoModal(GetID);
+
+      if (dlg.SelectedId == -1)
+        return;
+      switch (dlg.SelectedId)
+      {
+        case 10:
+          _Settings.Filter = 0;
+          break;
+        case 11:
+          _Settings.Filter = -1;
+          _Settings.ShowCandidates = true;
+          break;
+        default:
+          _Settings.Filter = dlg.SelectedId;
+          _Settings.ShowCandidates = true;
+          break;
+      }
+      CheckCandidates();
+    }
+
+    void ShowToggleCandidatesMenu()
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+        return;
+      dlg.Reset();
+      dlg.SetHeading(19133); // Add/Remove Candidate
+
+      dlg.Add(GUILocalizeStrings.Get(19134)); // Toggle 1
+      dlg.Add(GUILocalizeStrings.Get(19135)); // Toggle 2
+      dlg.Add(GUILocalizeStrings.Get(19136)); // Toggle 3
+      dlg.Add(GUILocalizeStrings.Get(19137)); // Toggle 4
+      dlg.Add(GUILocalizeStrings.Get(19138)); // Toggle 5
+      dlg.Add(GUILocalizeStrings.Get(19139)); // Toggle 6
+      dlg.Add(GUILocalizeStrings.Get(19140)); // Toggle 7
+      dlg.Add(GUILocalizeStrings.Get(19141)); // Toggle 8
+      dlg.Add(GUILocalizeStrings.Get(19142)); // Toggle 9
+
+      dlg.DoModal(GetID);
+
+      if (dlg.SelectedId == -1)
+        return;
+
+      int controlId = GetFocusControlId();
+      if (controlId >= 1000 && controlId <= 9008)
+      {
+        CellControl cntlFoc = (CellControl)GetControl(controlId);
+
+        if (cntlFoc != null)
+        {
+          if (cntlFoc.IsCandidate(dlg.SelectedId))
+            cntlFoc.RemoveCandidate(dlg.SelectedId);
+          else
+            cntlFoc.SetCandidate(dlg.SelectedId);
+        }
+      }
+
+      CheckCandidates();
+    }
+
+    void ShowCandidatesMenu()
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+        return;
+      dlg.Reset();
+      dlg.SetHeading(19143); // Candidates
+
+      dlg.Add(GUILocalizeStrings.Get(19144)); // Show candidates
+      dlg.Add(GUILocalizeStrings.Get(19145)); // Hide candidates
+      dlg.Add(GUILocalizeStrings.Get(19146)); // Clear candidates
+      dlg.Add(GUILocalizeStrings.Get(19147)); // Reset candidates
+
+      int controlId = GetFocusControlId();
+      if (controlId >= 1000 && controlId <= 9008)
+      {
+        CellControl cntlFoc = (CellControl)GetControl(controlId);
+        if (cntlFoc != null)
+        {
+          dlg.Add(GUILocalizeStrings.Get(19151)); // Add/remove candidates
+        }
+      }
+
+      dlg.DoModal(GetID);
+
+      if (dlg.SelectedId == -1)
+        return;
+      switch (dlg.SelectedId)
+      {
+        case 1:
+          _Settings.ShowCandidates = true;
+          _Settings.Save();
+          break;
+        case 2:
+          _Settings.ShowCandidates = false;
+          _Settings.Save();
+          break;
+        case 3:
+          ClearCandidates();
+          break;
+        case 4:
+          ResetCandidates();
+          break;
+        case 5:
+          ShowToggleCandidatesMenu();
+          break;
+      }
+      CheckCandidates();
+    }
+
+    void ShowContextMenu()
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+        return;
+      dlg.Reset();
+      dlg.SetHeading(19148); // Assistance
+
+      dlg.Add(GUILocalizeStrings.Get(19149)); // Filters
+      dlg.Add(GUILocalizeStrings.Get(19150)); // Candidates
+
+      dlg.DoModal(GetID);
+
+      if (dlg.SelectedId == -1)
+        return;
+      switch (dlg.SelectedId)
+      {
+        case 1:
+          ShowFilterMenu();
+          break;
+        case 2:
+          ShowCandidatesMenu();
+          break;
+      }
     }
 
     public override void Render(float timePassed)
@@ -833,7 +1110,7 @@ namespace MediaPortal.GUI.NumberPlace
         if (!IsVisible) return;
       }
 
-      if(!String.IsNullOrEmpty(strHours))
+      if (!String.IsNullOrEmpty(strHours))
         GUIPropertyManager.SetProperty("#numberplace.time", strHours + ":" + strMinutes + ":" + strSeconds);
       else
         GUIPropertyManager.SetProperty("#numberplace.time", strMinutes + ":" + strSeconds);
@@ -859,12 +1136,12 @@ namespace MediaPortal.GUI.NumberPlace
 
     public string Description()
     {
-      return "Play a Sudoku during commercials!";
+      return "Play Sudoku during commercials!";
     }
 
     public string Author()
     {
-      return "Cosmo/IMOON/rtv";
+      return "Cosmo/IMOON/rtv/mPod";
     }
 
     public bool CanEnable()
@@ -887,7 +1164,7 @@ namespace MediaPortal.GUI.NumberPlace
     #region IShowPlugin Members
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {
-      strButtonText = GUILocalizeStrings.Get(19101);
+      strButtonText = GUILocalizeStrings.Get(19101);  // Sudoku
       strButtonImage = String.Empty;
       strButtonImageFocus = String.Empty;
       strPictureImage = "hover_" + pluginConfigFileName + ".png";
