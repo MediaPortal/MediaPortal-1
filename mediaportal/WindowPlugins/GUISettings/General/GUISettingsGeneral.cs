@@ -50,6 +50,11 @@ namespace WindowPlugins.GUISettings
     [SkinControlAttribute(20)]
     protected GUIImage imgSkinPreview = null;
 
+    int selectedLangIndex;
+    int selectedSkinIndex;
+    bool selectedFullScreen;
+    bool selectedScreenSaver;
+
     class CultureComparer : IComparer
     {
       #region IComparer Members
@@ -214,6 +219,24 @@ namespace WindowPlugins.GUISettings
       }
     }
 
+    void BackupButtons()
+    {
+      selectedLangIndex = btnLanguage.SelectedItem;
+      selectedSkinIndex = btnSkin.SelectedItem;
+      selectedFullScreen = btnFullscreen.Selected;
+      selectedScreenSaver = btnScreenSaver.Selected;
+    }
+
+    void RestoreButtons()
+    {
+      GUIControl.SelectItemControl(GetID, btnLanguage.GetID, selectedLangIndex);
+      GUIControl.SelectItemControl(GetID, btnSkin.GetID, selectedSkinIndex);
+      if (selectedFullScreen)
+        GUIControl.SelectControl(GetID, btnFullscreen.GetID);
+      if (selectedScreenSaver)
+        GUIControl.SelectControl(GetID, btnScreenSaver.GetID);
+    }
+
     void RefreshSkinPreview(object sender, EventArgs e)
     {
       imgSkinPreview.SetFileName(Config.GetFile(Config.Dir.Skin, btnSkin.SelectedLabel, @"media\preview.png"));
@@ -221,11 +244,10 @@ namespace WindowPlugins.GUISettings
 
     void OnSkinChanged()
     {
-      int selectedLangIndex = btnLanguage.SelectedItem;
-      int selectedSkinIndex = btnSkin.SelectedItem;
-      bool selectedFullScreen = btnFullscreen.Selected;
-      bool selectedScreenSaver = btnScreenSaver.Selected;
-      
+
+      // Backup the buttons, needed later
+      BackupButtons();
+
       // Set the skin to the selected skin and reload GUI
       GUIGraphicsContext.Skin = btnSkin.SelectedLabel;
       SaveSettings();
@@ -247,31 +269,21 @@ namespace WindowPlugins.GUISettings
       GUIControl.FocusControl(GetID, btnSkin.GetID);
       
       // Apply the selected buttons again, since they are cleared when we reload
-      GUIControl.SelectItemControl(GetID, btnSkin.GetID, selectedSkinIndex);
-      GUIControl.SelectItemControl(GetID, btnLanguage.GetID, selectedLangIndex);
-      if(selectedFullScreen)
-        GUIControl.SelectControl(GetID, btnFullscreen.GetID);
-      if(selectedScreenSaver)
-        GUIControl.SelectControl(GetID, btnScreenSaver.GetID);
+      RestoreButtons();
     }
 
     void OnLanguageChanged()
     {
-      int selectedLangIndex = btnLanguage.SelectedItem;
-      bool selectedFullScreen = btnFullscreen.Selected;
-      bool selectedScreenSaver = btnScreenSaver.Selected;
-
+      // Backup the buttons, needed later
+      BackupButtons();
       SaveSettings();
       GUILocalizeStrings.Clear();
       GUILocalizeStrings.Load(Config.GetFile(Config.Dir.Language, btnLanguage.SelectedLabel + @"\strings.xml"));
       GUIWindowManager.OnResize();
       GUIWindowManager.ActivateWindow(GetID); // without this you cannot change skins / lang any more..
       GUIControl.FocusControl(GetID, btnLanguage.GetID);
-      GUIControl.SelectItemControl(GetID, btnLanguage.GetID, selectedLangIndex);
-      if (selectedFullScreen)
-        GUIControl.SelectControl(GetID, btnFullscreen.GetID);
-      if (selectedScreenSaver)
-        GUIControl.SelectControl(GetID, btnScreenSaver.GetID);
+      // Apply the selected buttons again, since they are cleared when we reload
+      RestoreButtons();
     }
   }
 }
