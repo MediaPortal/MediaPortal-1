@@ -275,7 +275,7 @@ namespace SetupTv.Sections
       if (Channel == null)
       {
         _newChannel = true;
-        Channel = new Channel("", false, true, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "");
+        Channel = new Channel("", false, true, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "",true);
       }
       CountryCollection countries = new CountryCollection();
       for (int i = 0; i < countries.Countries.Length; ++i)

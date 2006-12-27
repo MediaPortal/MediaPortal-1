@@ -267,6 +267,7 @@ namespace TvLibrary.Implementations.DVB
               info.service_provider_name = Marshal.PtrToStringAnsi(providerName);
               info.service_name = Marshal.PtrToStringAnsi(serviceName);
               info.pcr_pid = pcrPid;
+              info.scrambled = (freeCAMode != 0);
               
               info.network_pmt_PID = pmtPid;
 

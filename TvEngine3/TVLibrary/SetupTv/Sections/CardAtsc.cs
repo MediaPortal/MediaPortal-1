@@ -229,6 +229,7 @@ namespace SetupTv.Sections
 
             dbChannel.IsTv = channel.IsTv;
             dbChannel.IsRadio = channel.IsRadio;
+            dbChannel.FreeToAir = channel.FreeToAir;
             if (dbChannel.IsRadio)
             {
               dbChannel.GrabEpg = false;

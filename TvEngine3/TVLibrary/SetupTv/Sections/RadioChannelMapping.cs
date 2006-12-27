@@ -105,8 +105,11 @@ namespace SetupTv.Sections
         Channel channel = (Channel)item.Tag;
         ChannelMap map = layer.MapChannelToCard(card, channel);
         mpListViewChannels.Items.Remove(item);
+        int imageIndex = 3;
+        if (channel.FreeToAir == false)
+          imageIndex = 0;
 
-        ListViewItem newItem = mpListViewMapped.Items.Add(channel.Name,3);
+        ListViewItem newItem = mpListViewMapped.Items.Add(channel.Name, imageIndex);
         newItem.Tag = map;
       }
       mpListViewChannels.EndUpdate();
@@ -127,7 +130,10 @@ namespace SetupTv.Sections
         mpListViewMapped.Items.Remove(item);
 
 
-        ListViewItem newItem = mpListViewChannels.Items.Add(map.ReferencedChannel().Name,3);
+        int imageIndex = 3;
+        if (map.ReferencedChannel().FreeToAir == false)
+          imageIndex = 0;
+        ListViewItem newItem = mpListViewChannels.Items.Add(map.ReferencedChannel().Name, imageIndex);
         newItem.Tag = map.ReferencedChannel();
 
 
@@ -162,7 +168,10 @@ namespace SetupTv.Sections
       {
         Channel channel = map.ReferencedChannel();
         if (channel.IsRadio == false) continue;
-        ListViewItem item = new ListViewItem(channel.Name,3);
+        int imageIndex = 3;
+        if (channel.FreeToAir == false)
+          imageIndex = 0;
+        ListViewItem item = new ListViewItem(channel.Name, imageIndex);
         item.Tag = map;
         items.Add(item);
         bool remove = false;
@@ -185,7 +194,10 @@ namespace SetupTv.Sections
       foreach (Channel channel in channels)
       {
         if (channel.IsRadio == false) continue;
-        ListViewItem item = new ListViewItem(channel.Name, 3);
+        int imageIndex = 3;
+        if (channel.FreeToAir == false)
+          imageIndex = 0;
+        ListViewItem item = new ListViewItem(channel.Name, imageIndex);
         item.Tag = channel;
         items.Add(item);
       }

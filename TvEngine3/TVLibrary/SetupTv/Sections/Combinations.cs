@@ -224,7 +224,10 @@ namespace SetupTv.Sections
       {
         Channel channel = map.ReferencedChannel();
         if (channel.IsTv == false) continue;
-        ListViewItem item = new ListViewItem(channel.Name,1);
+        int imageIndex = 1;
+        if (channel.FreeToAir == false)
+          imageIndex = 2;
+        ListViewItem item = new ListViewItem(channel.Name, imageIndex);
         item.Tag = channel;
         items.Add(item);
       }
@@ -260,7 +263,10 @@ namespace SetupTv.Sections
         float result = comparer.getSimilarity(selectedChannel.Name, channel.Name);
 
 
-        ListViewItem item = new ListViewItem((result * 100f).ToString("f2") + "%", 1);
+        int imageIndex = 1;
+        if (channel.FreeToAir == false)
+          imageIndex = 2;
+        ListViewItem item = new ListViewItem((result * 100f).ToString("f2") + "%", imageIndex);
         item.Tag = channel;
         item.SubItems.Add(channel.Name);
         items.Add(item);

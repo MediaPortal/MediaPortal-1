@@ -58,10 +58,11 @@ namespace SetupTv.Sections
       this.listView1.ContextMenuStrip = this.contextMenuStrip1;
       this.listView1.FullRowSelect = true;
       this.listView1.HideSelection = false;
+      this.listView1.LargeImageList = this.imageList1;
       this.listView1.Location = new System.Drawing.Point(0, 0);
       this.listView1.Name = "listView1";
       this.listView1.Size = new System.Drawing.Size(454, 313);
-      this.listView1.StateImageList = this.imageList1;
+      this.listView1.SmallImageList = this.imageList1;
       this.listView1.TabIndex = 0;
       this.listView1.UseCompatibleStateImageBehavior = false;
       this.listView1.View = System.Windows.Forms.View.Details;
@@ -92,33 +93,33 @@ namespace SetupTv.Sections
             this.removeEntireGroupToolStripMenuItem,
             this.editChannelToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(187, 92);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(186, 92);
       // 
       // addToFavoritesToolStripMenuItem
       // 
       this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
-      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
       this.addToFavoritesToolStripMenuItem.Text = "Remove from Group";
       this.addToFavoritesToolStripMenuItem.Click += new System.EventHandler(this.addToFavoritesToolStripMenuItem_Click);
       // 
       // deleteThisChannelToolStripMenuItem
       // 
       this.deleteThisChannelToolStripMenuItem.Name = "deleteThisChannelToolStripMenuItem";
-      this.deleteThisChannelToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+      this.deleteThisChannelToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
       this.deleteThisChannelToolStripMenuItem.Text = "Delete this channel";
       this.deleteThisChannelToolStripMenuItem.Click += new System.EventHandler(this.deleteThisChannelToolStripMenuItem_Click);
       // 
       // removeEntireGroupToolStripMenuItem
       // 
       this.removeEntireGroupToolStripMenuItem.Name = "removeEntireGroupToolStripMenuItem";
-      this.removeEntireGroupToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+      this.removeEntireGroupToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
       this.removeEntireGroupToolStripMenuItem.Text = "Remove entire group";
       this.removeEntireGroupToolStripMenuItem.Click += new System.EventHandler(this.removeEntireGroupToolStripMenuItem_Click);
       // 
       // editChannelToolStripMenuItem
       // 
       this.editChannelToolStripMenuItem.Name = "editChannelToolStripMenuItem";
-      this.editChannelToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+      this.editChannelToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
       this.editChannelToolStripMenuItem.Text = "Edit channel";
       this.editChannelToolStripMenuItem.Click += new System.EventHandler(this.editChannelToolStripMenuItem_Click);
       // 

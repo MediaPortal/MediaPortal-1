@@ -1205,9 +1205,10 @@ namespace TvPlugin
           g_Player.Stop();
         }
         */
+        bool useRtsp = System.IO.File.Exists("usertsp.txt");
         if (g_Player.Playing)
         {
-          if (System.IO.File.Exists(TVHome.Card.TimeShiftFileName))
+          if (System.IO.File.Exists(TVHome.Card.TimeShiftFileName) && !useRtsp)
           {
             if (g_Player.CurrentFile != TVHome.Card.TimeShiftFileName)
             {
@@ -1425,7 +1426,9 @@ namespace TvPlugin
       g_Player.MediaType mediaType = g_Player.MediaType.TV;
       if (channel.IsRadio)
         mediaType = g_Player.MediaType.Radio;
-      if (System.IO.File.Exists(timeshiftFileName))
+
+      bool useRtsp = System.IO.File.Exists("usertsp.txt");
+      if (System.IO.File.Exists(timeshiftFileName) && !useRtsp)
       {
         MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0}", timeshiftFileName);
         g_Player.Play(timeshiftFileName, mediaType);
@@ -1441,7 +1444,8 @@ namespace TvPlugin
     static void SeekToEnd()
     {
       string timeshiftFileName = TVHome.Card.TimeShiftFileName;
-      if (System.IO.File.Exists(timeshiftFileName))
+      bool useRtsp = System.IO.File.Exists("usertsp.txt");
+      if (System.IO.File.Exists(timeshiftFileName) && !useRtsp)
       {
         if (g_Player.IsRadio == false)
         {

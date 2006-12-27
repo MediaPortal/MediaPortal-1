@@ -177,6 +177,7 @@ namespace SetupTv.Sections
           channel.IsTv = true;
           channel.IsRadio = false;
 
+
           IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, channel);
           UpdateStatus();
           if (channels == null) continue;
@@ -191,6 +192,7 @@ namespace SetupTv.Sections
           Channel dbChannel = layer.AddChannel("",channel.Name);
           dbChannel.IsTv = channel.IsTv;
           dbChannel.IsRadio = channel.IsRadio;
+          dbChannel.FreeToAir = false;
           dbChannel.Persist();
           layer.AddTuningDetails(dbChannel, channel);
 
@@ -318,6 +320,7 @@ namespace SetupTv.Sections
             Channel dbChannel = layer.AddChannel("",channel.Name);
             dbChannel.IsTv = channel.IsTv;
             dbChannel.IsRadio = channel.IsRadio;
+            dbChannel.FreeToAir = false;
             dbChannel.Persist();
             layer.AddChannelToGroup(dbChannel, "Analog channels");
             layer.AddTuningDetails(dbChannel, channel);

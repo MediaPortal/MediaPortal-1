@@ -42,13 +42,15 @@ namespace TvDatabase
     private bool visibleInGuide;
     [TableColumn("externalId", NotNull = true)]
     private string externalId;
+    [TableColumn("freetoair", NotNull = true)]
+    private bool freetoair;
     #endregion
 
     #region Constructors
     /// <summary> 
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
-    public Channel(string name, bool isRadio, bool isTv, int timesWatched, DateTime totalTimeWatched, bool grabEpg, DateTime lastGrabTime, int sortOrder, bool visibleInGuide, string externalId)
+    public Channel(string name, bool isRadio, bool isTv, int timesWatched, DateTime totalTimeWatched, bool grabEpg, DateTime lastGrabTime, int sortOrder, bool visibleInGuide, string externalId, bool freetoair)
     {
       isChanged = true;
       this.name = name;
@@ -61,13 +63,14 @@ namespace TvDatabase
       this.sortOrder = sortOrder;
       this.visibleInGuide = visibleInGuide;
       this.externalId = externalId;
+      this.freetoair = freetoair;
     }
 
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
     /// construct objects from retrieved rows. 
     /// </summary> 
-    public Channel(int idChannel, string name, bool isRadio, bool isTv, int timesWatched, DateTime totalTimeWatched, bool grabEpg, DateTime lastGrabTime, int sortOrder, bool visibleInGuide, string externalId)
+    public Channel(int idChannel, string name, bool isRadio, bool isTv, int timesWatched, DateTime totalTimeWatched, bool grabEpg, DateTime lastGrabTime, int sortOrder, bool visibleInGuide, string externalId, bool freetoair)
     {
       this.idChannel = idChannel;
       this.name = name;
@@ -80,6 +83,7 @@ namespace TvDatabase
       this.sortOrder = sortOrder;
       this.visibleInGuide = visibleInGuide;
       this.externalId = externalId;
+      this.freetoair = freetoair;
     }
     #endregion
 
@@ -107,6 +111,14 @@ namespace TvDatabase
     {
       get { return name; }
       set { isChanged |= name != value; name = value; }
+    }
+    /// <summary>
+    /// Property relating to database column freetoair
+    /// </summary>
+    public bool FreeToAir
+    {
+      get { return freetoair; }
+      set { isChanged |= freetoair != value; freetoair = value; }
     }
 
     /// <summary>

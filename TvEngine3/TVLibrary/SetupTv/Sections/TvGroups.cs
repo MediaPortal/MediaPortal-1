@@ -206,7 +206,10 @@ namespace SetupTv.Sections
       {
         Channel channel=map.ReferencedChannel();
         if (channel.IsTv == false) continue;
-        ListViewItem mappedItem = mpListViewMapped.Items.Add(channel.Name,1);
+        int imageIndex = 1;
+        if (channel.FreeToAir == false)
+          imageIndex = 2;
+        ListViewItem mappedItem = mpListViewMapped.Items.Add(channel.Name, imageIndex);
         mappedItem.Tag = map;
         channelsMapped[channel.IdChannel] = true;
       }
@@ -215,7 +218,10 @@ namespace SetupTv.Sections
       foreach (Channel channel in channels)
       {
         if (channelsMapped.ContainsKey(channel.IdChannel)) continue;
-        ListViewItem newItem = new ListViewItem(channel.Name, 1);
+        int imageIndex = 1;
+        if (channel.FreeToAir == false)
+          imageIndex = 2;
+        ListViewItem newItem = new ListViewItem(channel.Name, imageIndex);
         newItem.Tag = channel;
         items.Add(newItem);
       }
@@ -241,7 +247,10 @@ namespace SetupTv.Sections
 
         mpListViewChannels.Items.Remove(item);
 
-        ListViewItem newItem = mpListViewMapped.Items.Add(channel.Name, 1);
+        int imageIndex = 1;
+        if (channel.FreeToAir == false)
+          imageIndex = 2;
+        ListViewItem newItem = mpListViewMapped.Items.Add(channel.Name, imageIndex);
         newItem.Tag = newMap;
       }
       mpListViewMapped.Sort();
@@ -262,7 +271,10 @@ namespace SetupTv.Sections
         mpListViewMapped.Items.Remove(item);
 
 
-        ListViewItem newItem = mpListViewChannels.Items.Add(map.ReferencedChannel().Name, 1);
+        int imageIndex = 1;
+        if (map.ReferencedChannel().FreeToAir == false)
+          imageIndex = 2;
+        ListViewItem newItem = mpListViewChannels.Items.Add(map.ReferencedChannel().Name, imageIndex);
         newItem.Tag = map.ReferencedChannel();
 
 

@@ -78,7 +78,10 @@ namespace SetupTv.Sections
         bool dvbs = false;
         bool atsc = false;
         if (ch.IsRadio == false) continue;
-        ListViewItem item = mpListView1.Items.Add(ch.Name,3);
+        int imageIndex = 3;
+        if (ch.FreeToAir == false)
+          imageIndex = 0;
+        ListViewItem item = mpListView1.Items.Add(ch.Name, imageIndex);
         foreach (ChannelMap map in ch.ReferringChannelMap())
         {
           if (cards.ContainsKey(map.ReferencedCard().DevicePath))

@@ -55,7 +55,10 @@ namespace SetupTv.Sections
           Channel channel = map.ReferencedChannel();
           if (channel.IsTv == false) continue;
           int index = listView1.Items.Count + 1;
-          ListViewItem item = listView1.Items.Add(index.ToString(),1);
+          int imageIndex = 1;
+          if (channel.FreeToAir == false)
+            imageIndex = 2;
+          ListViewItem item = listView1.Items.Add(index.ToString(), imageIndex);
           item.SubItems.Add(channel.Name);
           item.Checked = channel.VisibleInGuide;
           item.Tag = map;
@@ -167,9 +170,9 @@ namespace SetupTv.Sections
     private void removeEntireGroupToolStripMenuItem_Click(object sender, EventArgs e)
     {
       Group.Delete();
-      Group=null;
+      Group = null;
       OnActivated();
-      
+
     }
 
     private void editChannelToolStripMenuItem_Click(object sender, EventArgs e)

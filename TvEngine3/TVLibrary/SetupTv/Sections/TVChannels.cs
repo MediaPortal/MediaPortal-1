@@ -292,7 +292,10 @@ namespace SetupTv.Sections
           if (builder.Length > 0) builder.Append(",");
           builder.Append("ATSC");
         }
-        ListViewItem item = new ListViewItem((items.Count + 1).ToString(), 1);
+        int imageIndex = 1;
+        if (ch.FreeToAir == false)
+          imageIndex = 2;
+        ListViewItem item = new ListViewItem((items.Count + 1).ToString(), imageIndex);
         item.SubItems.Add(ch.Name);
         item.SubItems.Add("-");
         item.Checked = ch.VisibleInGuide;
