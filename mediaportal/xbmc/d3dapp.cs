@@ -1358,7 +1358,8 @@ namespace MediaPortal
 
       try
       {
-        if (!GUIGraphicsContext.Vmr9Active)
+        //if (!GUIGraphicsContext.Vmr9Active)
+        if (!GUIGraphicsContext.Vmr9Active && !deviceLost)
           Render(GUIGraphicsContext.TimePassed);
       }
       catch (Exception ex)
