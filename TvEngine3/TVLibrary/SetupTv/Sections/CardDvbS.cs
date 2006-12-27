@@ -649,7 +649,7 @@ namespace SetupTv.Sections
 
         if (index == 0)
         {
-          RemoteControl.Instance.Tune(_cardNumber, tuneChannel);
+          RemoteControl.Instance.Tune(_cardNumber, tuneChannel, -1);
         }
         UpdateStatus(LNB);
 
@@ -1095,7 +1095,7 @@ namespace SetupTv.Sections
       tuneChannel.SymbolRate = transponder.SymbolRate;
       tuneChannel.BandType = BandType.Universal;
       tuneChannel.DisEqc = DisEqcType.None;
-      RemoteControl.Instance.TuneScan(_cardNumber, tuneChannel);
+      RemoteControl.Instance.TuneScan(_cardNumber, tuneChannel, -1);
 
     }
 

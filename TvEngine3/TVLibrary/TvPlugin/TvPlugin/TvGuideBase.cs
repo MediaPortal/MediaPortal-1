@@ -2286,8 +2286,8 @@ namespace TvPlugin
           case 938: // view channel
 
             Log.Debug("viewch channel:{0}", _currentChannel);
-            TVHome.ViewChannelAndCheck(_currentChannel);
-            if (TVHome.Card.IsTimeShifting && TVHome.Card.ChannelName == _currentProgram.ReferencedChannel().Name)
+            TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
+            if (TVHome.Card.IsTimeShifting && TVHome.Card.IdChannel == _currentProgram.ReferencedChannel().IdChannel)
             {
               GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
             }
@@ -2395,7 +2395,7 @@ namespace TvPlugin
                         break;
 
                       case 980: // Play recording from live point
-                        TVHome.ViewChannel(rec.ReferencedChannel().Name);
+                        TVHome.ViewChannel(rec.ReferencedChannel());
                         if (g_Player.Playing)
                         {
                           Log.Info("TVGuide: Show recording {0} at live point", _currentTitle);
@@ -2411,7 +2411,7 @@ namespace TvPlugin
               }
               if (recMatchFound == false)
               {
-                TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel().Name);
+                TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
                 if (g_Player.Playing)
                 {
                   GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
@@ -2420,7 +2420,7 @@ namespace TvPlugin
             }
             else
             {
-              TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel().Name);
+              TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
               if (g_Player.Playing)
               {
                 GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);

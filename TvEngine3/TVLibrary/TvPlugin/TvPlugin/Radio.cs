@@ -357,7 +357,7 @@ namespace TvPlugin
             if (ch.IsRadio == false) continue;
             if (ch.Name == message.Label)
             {
-              TVHome.ViewChannelAndCheck(ch.Name);
+              TVHome.ViewChannelAndCheck(ch);
             }
           }
 

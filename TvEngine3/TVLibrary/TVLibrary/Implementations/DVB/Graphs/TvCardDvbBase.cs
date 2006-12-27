@@ -234,6 +234,7 @@ namespace TvLibrary.Implementations.DVB
     protected IBaseFilter _mdapiFilter = null;
     protected IChangeChannel _changeChannel = null;
     protected TProgram82 _mDPlugTProg82 = new TProgram82();
+    protected object m_context;
 
 
 
@@ -646,6 +647,7 @@ namespace TvLibrary.Implementations.DVB
           _epgGrabberCallback.OnEpgCancelled();
         }
       }
+      m_context = null;
       _graphRunning = false;
       _epgGrabbing = false;
       _isScanning = false;
@@ -663,6 +665,7 @@ namespace TvLibrary.Implementations.DVB
       _recordingFileName = "";
       _channelInfo = new ChannelInfo();
       _currentChannel = null;
+      m_context = null;
 
       if (_filterTsAnalyzer != null)
       {
@@ -1739,6 +1742,18 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region properties
+
+    public object Context 
+    {
+      get
+      {
+        return m_context;
+      }
+      set
+      {
+        m_context = value;
+      }
+    }
     /// <summary>
     /// Turn on/off teletext grabbing
     /// </summary>

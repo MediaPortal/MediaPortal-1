@@ -36,7 +36,7 @@ namespace TvService
   {
     #region variables
     Schedule _schedule;
-    string _channel;
+    Channel _channel;
     string _fileName;
     DateTime _endTime;
     TvDatabase.Program _program;
@@ -52,7 +52,7 @@ namespace TvService
     /// <param name="channel">Channel on which the recording is done</param>
     /// <param name="endTime">Date/Time the recording should start without pre-record interval</param>
     /// <param name="endTime">Date/Time the recording should stop with post record interval</param>
-    public RecordingDetail(Schedule schedule, string channel, DateTime startTime, DateTime endTime)
+    public RecordingDetail(Schedule schedule, Channel channel, DateTime startTime, DateTime endTime)
     {
       _schedule = schedule;
       _channel = channel;
@@ -126,7 +126,7 @@ namespace TvService
     /// <summary>
     /// gets the Channel which is being recorded
     /// </summary>
-    public string Channel
+    public Channel Channel
     {
       get
       {

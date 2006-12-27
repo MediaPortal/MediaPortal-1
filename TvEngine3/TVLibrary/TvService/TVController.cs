@@ -662,6 +662,38 @@ namespace TvService
         return null;
       }
     }
+    /// <summary>
+    /// Gets the current channel.
+    /// </summary>
+    /// <param name="cardId">id of the card.</param>
+    /// <returns>id of database channel</returns>
+    public int CurrentDbChannel(int cardId)
+    {
+      try
+      {
+        if (_allDbscards[cardId].Enabled == false) return -1;
+        if (IsLocal(cardId) == false)
+        {
+          try
+          {
+            RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
+            return RemoteControl.Instance.CurrentDbChannel(cardId);
+          }
+          catch (Exception)
+          {
+            Log.Error("Controller: unable to connect to slave controller at:{0}", _allDbscards[cardId].ReferencedServer().HostName);
+            return -1;
+          }
+        }
+        if (_localCards[cardId].Context == null) return -1;
+        return (int)_localCards[cardId].Context;
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+        return -1;
+      }
+    }
 
     /// <summary>
     /// Gets the current channel name.
@@ -1282,7 +1314,7 @@ namespace TvService
     /// <param name="cardId">id of the card.</param>
     /// <param name="channel">The channel.</param>
     /// <returns></returns>
-    public bool Tune(int cardId, IChannel channel)
+    public bool Tune(int cardId, IChannel channel, int idChannel)
     {
       try
       {
@@ -1296,7 +1328,7 @@ namespace TvService
             try
             {
               RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-              return RemoteControl.Instance.Tune(cardId, channel);
+              return RemoteControl.Instance.Tune(cardId, channel, idChannel);
             }
             catch (Exception)
             {
@@ -1304,13 +1336,14 @@ namespace TvService
               return false;
             }
           }
-          if (CurrentChannel(cardId) != null)
+          if (CurrentDbChannel(cardId) == idChannel)
           {
-            if (CurrentChannel(cardId).Equals(channel)) return true;
+            return true;
           }
           Card card = Card.Retrieve(cardId);
           _localCards[cardId].CamType = (CamType)card.CamType;
           bool result = _localCards[cardId].Tune(channel);
+          _localCards[cardId].Context = idChannel;
           Log.Write("Controller: Tuner locked:{0} signal strength:{1} signal quality:{2}",
              _localCards[cardId].IsTunerLocked, _localCards[cardId].SignalLevel, _localCards[cardId].SignalQuality);
 
@@ -1328,7 +1361,7 @@ namespace TvService
       }
     }
 
-    public bool TuneScan(int cardId, IChannel channel)
+    public bool TuneScan(int cardId, IChannel channel, int idChannel)
     {
       try
       {
@@ -1342,7 +1375,7 @@ namespace TvService
             try
             {
               RemoteControl.HostName = _allDbscards[cardId].ReferencedServer().HostName;
-              return RemoteControl.Instance.TuneScan(cardId, channel);
+              return RemoteControl.Instance.TuneScan(cardId, channel, idChannel);
             }
             catch (Exception)
             {
@@ -1353,6 +1386,7 @@ namespace TvService
           Card card = Card.Retrieve(cardId);
           _localCards[cardId].CamType = (CamType)card.CamType;
           bool result = _localCards[cardId].TuneScan(channel);
+          _localCards[cardId].Context = idChannel;
           Log.Write("Controller: Tuner locked:{0} signal strength:{1} signal quality:{2}",
              _localCards[cardId].IsTunerLocked, _localCards[cardId].SignalLevel, _localCards[cardId].SignalQuality);
           return result;
@@ -1513,6 +1547,7 @@ namespace TvService
           {
             Log.Write("Controller: channel is scrambled");
             _localCards[cardId].StopGraph();
+
             return TvResult.ChannelIsScrambled;
           }
 
@@ -1985,7 +2020,23 @@ namespace TvService
     /// <returns>TvResult indicating whether method succeeded</returns>
     public TvResult StartTimeShifting(string channelName, User user, out VirtualCard card)
     {
-      Log.Write("Controller: StartTimeShifting {0}", channelName);
+      card = null;
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Channel ch = layer.GetChannelByName(channelName);
+      if (ch == null) return TvResult.UnknownChannel;
+      return StartTimeShifting(ch.IdChannel, user, out card);
+
+    }
+    /// <summary>
+    /// Start timeshifting on a specific channel
+    /// </summary>
+    /// <param name="channelName">Name of the channel</param>
+    /// <param name="card">returns card for which timeshifting is started</param>
+    /// <returns>TvResult indicating whether method succeeded</returns>
+    public TvResult StartTimeShifting(int idChannel, User user, out VirtualCard card)
+    {
+      Channel channel = Channel.Retrieve(idChannel);
+      Log.Write("Controller: StartTimeShifting {0}", channel.Name);
       card = null;
       try
       {
@@ -1996,7 +2047,7 @@ namespace TvService
           KeyValuePair<int, Card> keyPair = enumerator.Current;
           if (IsTimeShifting(keyPair.Value.IdCard))
           {
-            if (CurrentChannelName(keyPair.Value.IdCard) == channelName)
+            if (CurrentDbChannel(keyPair.Value.IdCard) == channel.IdChannel)
             {
               card = new VirtualCard(keyPair.Value.IdCard, Dns.GetHostName());
               card.RecordingFolder = keyPair.Value.RecordingFolder;
@@ -2006,7 +2057,7 @@ namespace TvService
         }
 
         TvResult result;
-        List<CardDetail> freeCards = GetFreeCardsForChannelName(channelName, user, out result);
+        List<CardDetail> freeCards = GetFreeCardsForChannel(channel, user, out result);
         if (freeCards.Count == 0)
         {
           Log.Write("Controller: StartTimeShifting failed:{0}", result);
@@ -2014,7 +2065,7 @@ namespace TvService
         }
         CardDetail cardInfo = freeCards[0];
         int cardId = cardInfo.Id;
-        IChannel channel = cardInfo.TuningDetail;
+        IChannel tuneChannel = cardInfo.TuningDetail;
         if (cardInfo.Card.RecordingFolder == String.Empty)
           cardInfo.Card.RecordingFolder = System.IO.Directory.GetCurrentDirectory();
         if (!IsTimeShifting(cardId))
@@ -2023,7 +2074,7 @@ namespace TvService
         }
         string timeshiftFileName = String.Format(@"{0}\live{1}.ts", cardInfo.Card.RecordingFolder, cardId);
 
-        result = CardTune(cardId, channel);
+        result = CardTune(cardId, tuneChannel, channel);
         if (result != TvResult.Succeeded)
         {
           return result;
@@ -2465,40 +2516,33 @@ namespace TvService
     /// </summary>
     /// <param name="channelName">Name of the channel.</param>
     /// <returns>list containg all free cards which can receive the channel</returns>
-    public List<CardDetail> GetFreeCardsForChannelName(string channelName, User user, out TvResult result)
+    public List<CardDetail> GetFreeCardsForChannel(Channel dbChannel, User user, out TvResult result)
     {
       try
       {
         List<CardDetail> cardsAvailable = new List<CardDetail>();
 
-        Log.Write("Controller: find free card for channel {0}", channelName);
+        Log.Write("Controller: find free card for channel {0}", dbChannel.Name);
         TvBusinessLayer layer = new TvBusinessLayer();
-        Channel dbChannel = layer.GetChannelByName(channelName);
-        if (dbChannel == null)
-        {
-          Log.Write("Controller:  channel {0} is not found in the database", channelName);
-          result = TvResult.UnknownChannel;
-          return cardsAvailable;
-        }
 
         List<IChannel> tuningDetails = layer.GetTuningChannelByName(dbChannel);
         if (tuningDetails == null)
         {
-          Log.Write("Controller:  No tuning details for channel:{0}", channelName);
+          Log.Write("Controller:  No tuning details for channel:{0}", dbChannel.Name);
           result = TvResult.NoTuningDetails;
           return cardsAvailable;
         }
 
         if (tuningDetails.Count == 0)
         {
-          Log.Write("Controller:  No tuning details for channel:{0}", channelName);
+          Log.Write("Controller:  No tuning details for channel:{0}", dbChannel.Name);
           result = TvResult.NoTuningDetails;
           return cardsAvailable;
         }
 
         int cardsFound = 0;
         int number = 0;
-        Log.Write("Controller:   got {0} tuning details for {1}", tuningDetails.Count, channelName);
+        Log.Write("Controller:   got {0} tuning details for {1}", tuningDetails.Count, dbChannel.Name);
         foreach (IChannel tuningDetail in tuningDetails)
         {
           number++;
@@ -2568,7 +2612,7 @@ namespace TvService
             //check if card is recording
             if (IsRecording(keyPair.Value.IdCard))
             {
-              if (CurrentChannelName(keyPair.Value.IdCard) != channelName)
+              if (CurrentDbChannel(keyPair.Value.IdCard) != dbChannel.IdChannel)
               {
                 Log.Write("Controller:    card:{0} type:{1} is recording:{2}", keyPair.Value.IdCard, Type(keyPair.Value.IdCard), CurrentChannelName(keyPair.Value.IdCard));
                 continue;
@@ -2576,7 +2620,6 @@ namespace TvService
             }
 
             Log.Write("Controller:    card:{0} type:{1} is free priority:{2}", keyPair.Value.IdCard, Type(keyPair.Value.IdCard), channelMap.ReferencedCard().Priority);
-
 
             cardsAvailable.Add(new CardDetail(keyPair.Value.IdCard, channelMap.ReferencedCard(), tuningDetail));
           }
@@ -2609,7 +2652,7 @@ namespace TvService
     /// <param name="idCard">The id card.</param>
     /// <param name="channel">The channel.</param>
     /// <returns>TvResult indicating whether method succeeded</returns>
-    TvResult CardTune(int idCard, IChannel channel)
+    TvResult CardTune(int idCard, IChannel channel, Channel dbChannel)
     {
       try
       {
@@ -2618,15 +2661,15 @@ namespace TvService
         Log.WriteFile("Controller: CardTune {0} {1}", idCard, channel.Name);
         if (IsScrambled(idCard))
         {
-          result = TuneScan(idCard, channel);
+          result = TuneScan(idCard, channel, dbChannel.IdChannel);
           if (result == false) return TvResult.UnableToStartGraph;
           return TvResult.Succeeded;
         }
-        if (CurrentChannel(idCard) != null)
+        if (CurrentDbChannel(idCard) == dbChannel.IdChannel)
         {
-          if (CurrentChannel(idCard).Equals(channel)) return TvResult.Succeeded;
+          return TvResult.Succeeded;
         }
-        result = TuneScan(idCard, channel);
+        result = TuneScan(idCard, channel, dbChannel.IdChannel);
         if (result == false) return TvResult.UnableToStartGraph;
         return TvResult.Succeeded;
       }

@@ -308,6 +308,7 @@ namespace TvLibrary.Interfaces
     /// </summary>
     void ResetSignalUpdate();
 
+    object Context { get;set;}
     #endregion
 
     #region idisposable

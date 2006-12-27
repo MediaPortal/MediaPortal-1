@@ -125,7 +125,7 @@ namespace TvLibrary.Implementations.Analog
     protected bool _isScanning = false;
     protected DateTime _dateTimeShiftStarted = DateTime.MinValue;
     protected DateTime _dateRecordingStarted = DateTime.MinValue;
-
+    protected object m_context;
     protected IChannel _currentChannel;
     string _timeshiftFileName;
     protected IVbiCallback _teletextCallback = null;
@@ -1828,6 +1828,7 @@ namespace TvLibrary.Implementations.Analog
 
       Log.Log.WriteFile("analog: StopGraph");
       _teletextDecoder.ClearBuffer();
+      m_context = null;
       _isScanning = false;
       _recordingFileName = "";
       _timeshiftFileName = "";
@@ -2342,6 +2343,17 @@ namespace TvLibrary.Implementations.Analog
       }
       set
       {
+      }
+    }
+    public object Context
+    {
+      get
+      {
+        return m_context;
+      }
+      set
+      {
+        m_context = value;
       }
     }
   }

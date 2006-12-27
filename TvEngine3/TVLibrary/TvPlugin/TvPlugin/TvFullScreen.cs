@@ -827,7 +827,8 @@ namespace TvPlugin
           // check if recorder has to start timeshifting for this recording
           if (_isStartingTSForRecording)
           {
-            TVHome.ViewChannel(channel);
+            Channel ch = Channel.Retrieve(TVHome.Card.IdChannel);
+            TVHome.ViewChannel(ch);
             _isStartingTSForRecording = false;
           }
 

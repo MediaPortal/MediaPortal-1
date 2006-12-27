@@ -163,7 +163,7 @@ namespace TvControl
     /// <param name="cardId">id of the card.</param>
     /// <returns>IChannel</returns>
     IChannel CurrentChannel(int cardId);
-
+    int CurrentDbChannel(int cardId);
     /// <summary>
     /// Gets the name of the tv/radio channel on which the card is currently tuned
     /// </summary>
@@ -185,7 +185,7 @@ namespace TvControl
     /// <param name="cardId">id of the card.</param>
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded</returns>
-    bool TuneScan(int cardId, IChannel channel);
+    bool TuneScan(int cardId, IChannel channel, int idChannel);
 
     /// <summary>
     /// Tune the the specified card to the channel.
@@ -193,7 +193,7 @@ namespace TvControl
     /// <param name="cardId">id of the card.</param>
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded</returns>
-    bool Tune(int cardId, IChannel channel);
+    bool Tune(int cardId, IChannel channel, int idChannel);
 
     /// <summary>
     /// Returns if the tuner is locked onto a signal or not
@@ -463,6 +463,15 @@ namespace TvControl
     /// <param name="user">user credentials.</param>
     /// <returns>TvResult indicating whether method succeeded</returns>
     TvResult StartTimeShifting(string channelName, User user, out VirtualCard card);
+
+    /// <summary>
+    /// Start timeshifting on a specific channel
+    /// </summary>
+    /// <param name="channelName">Name of the channel</param>
+    /// <param name="card">returns on which card timeshifting is started</param>
+    /// <param name="user">user credentials.</param>
+    /// <returns>TvResult indicating whether method succeeded</returns>
+    TvResult StartTimeShifting(int idChannel, User user, out VirtualCard card);
 
     /// <summary>
     /// Checks if the channel specified is being recorded and ifso

@@ -157,7 +157,7 @@ namespace SetupTv.Sections
         UpdateStatus();
         mpListView1.Items.Clear();
         CountryCollection countries = new CountryCollection();
-        RemoteControl.Instance.Tune(_cardNumber, new AnalogChannel());
+        RemoteControl.Instance.Tune(_cardNumber, new AnalogChannel(), -1);
         int minChannel = RemoteControl.Instance.MinChannel(_cardNumber);
         int maxChannel = RemoteControl.Instance.MaxChannel(_cardNumber);
         for (int channelNr = minChannel; channelNr <= maxChannel; channelNr++)
@@ -305,7 +305,7 @@ namespace SetupTv.Sections
           channel.IsTv = false;
           channel.IsRadio = true;
 
-          RemoteControl.Instance.TuneScan(_cardNumber, channel);
+          RemoteControl.Instance.TuneScan(_cardNumber, channel, -1);
           UpdateStatus();
           System.Threading.Thread.Sleep(2000);
           if (SignalStrength(sensitivity) == 100)

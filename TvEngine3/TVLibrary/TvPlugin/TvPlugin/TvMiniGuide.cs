@@ -146,7 +146,7 @@ namespace TvPlugin
               if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
               {
                 // switching logic
-                TVHome.Navigator.ZapToChannel(lstChannels.SelectedListItem.Label2, false);
+                TVHome.Navigator.ZapToChannel(tvChannelList[lstChannels.SelectedListItemIndex], false);
                 TVHome.Navigator.ZapNow();
                 Close();
               }
@@ -256,7 +256,9 @@ namespace TvPlugin
       tvChannelList = new List<Channel>();
       foreach (GroupMap map in TVHome.Navigator.CurrentGroup.ReferringGroupMap())
       {
-        tvChannelList.Add(map.ReferencedChannel());
+        Channel ch = map.ReferencedChannel();
+        if (ch.VisibleInGuide)
+          tvChannelList.Add(ch);
       }
       lstChannels.Clear();
       Channel current = null;

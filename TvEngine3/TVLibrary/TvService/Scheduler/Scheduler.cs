@@ -220,7 +220,7 @@ namespace TvService
             currentTime <= schedule.EndTime.AddMinutes(_postRecordInterval))
         {
 
-          newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name,schedule.StartTime, schedule.EndTime.AddMinutes(_postRecordInterval));
+          newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), schedule.StartTime, schedule.EndTime.AddMinutes(_postRecordInterval));
           return true;
         }
         return false;
@@ -235,7 +235,7 @@ namespace TvService
         {
           if (!schedule.IsSerieIsCanceled(start))
           {
-            newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name,start, end.AddMinutes(_postRecordInterval));
+            newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end.AddMinutes(_postRecordInterval));
             return true;
           }
         }
@@ -254,7 +254,7 @@ namespace TvService
 
             if (!schedule.IsSerieIsCanceled(start))
             {
-              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name, start,end.AddMinutes(_postRecordInterval));
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end.AddMinutes(_postRecordInterval));
               return true;
             }
           }
@@ -272,7 +272,7 @@ namespace TvService
           {
             if (!schedule.IsSerieIsCanceled(start))
             {
-              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name,start, end.AddMinutes(_postRecordInterval));
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end.AddMinutes(_postRecordInterval));
               return true;
             }
           }
@@ -291,7 +291,7 @@ namespace TvService
           {
             if (!schedule.IsSerieIsCanceled(start))
             {
-              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel().Name, start,end.AddMinutes(_postRecordInterval));
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end.AddMinutes(_postRecordInterval));
               return true;
             }
           }
@@ -311,7 +311,7 @@ namespace TvService
             {
               if (!schedule.IsSerieIsCanceled(current.StartTime))
               {
-                newRecording = new RecordingDetail(schedule, current.ReferencedChannel().Name,current.StartTime, current.EndTime.AddMinutes(_postRecordInterval));
+                newRecording = new RecordingDetail(schedule, current.ReferencedChannel(), current.StartTime, current.EndTime.AddMinutes(_postRecordInterval));
                 return true;
               }
             }
@@ -325,7 +325,7 @@ namespace TvService
             {
               if (!schedule.IsSerieIsCanceled(next.StartTime))
               {
-                newRecording = new RecordingDetail(schedule, next.ReferencedChannel().Name,next.StartTime, next.EndTime.AddMinutes(_postRecordInterval));
+                newRecording = new RecordingDetail(schedule, next.ReferencedChannel(), next.StartTime, next.EndTime.AddMinutes(_postRecordInterval));
                 return true;
               }
             }
@@ -347,7 +347,7 @@ namespace TvService
               {
                 if (!schedule.IsSerieIsCanceled(current.StartTime))
                 {
-                  newRecording = new RecordingDetail(schedule, current.ReferencedChannel().Name,current.StartTime, current.EndTime.AddMinutes(_postRecordInterval));
+                  newRecording = new RecordingDetail(schedule, current.ReferencedChannel(), current.StartTime, current.EndTime.AddMinutes(_postRecordInterval));
                   return true;
                 }
               }
@@ -361,7 +361,7 @@ namespace TvService
               {
                 if (!schedule.IsSerieIsCanceled(next.StartTime))
                 {
-                  newRecording = new RecordingDetail(schedule, next.ReferencedChannel().Name,next.StartTime, next.EndTime.AddMinutes(_postRecordInterval));
+                  newRecording = new RecordingDetail(schedule, next.ReferencedChannel(), next.StartTime, next.EndTime.AddMinutes(_postRecordInterval));
                   return true;
                 }
               }
@@ -381,7 +381,7 @@ namespace TvService
     {
       Log.Write("Scheduler : time to record {0} {1}-{2} {3}", recording.Channel, DateTime.Now, recording.EndTime, recording.Schedule.ProgramName);
       TvResult result;
-      List<CardDetail> freeCards = _tvController.GetFreeCardsForChannelName(recording.Channel, user, out result);
+      List<CardDetail> freeCards = _tvController.GetFreeCardsForChannel(recording.Channel, user, out result);
       if (freeCards.Count == 0) return false;
       CardDetail cardInfo = null;
 
@@ -395,7 +395,7 @@ namespace TvService
           //when card is idle we can use it
           //when card is busy, but already tuned to the correct channel then we can use it also
           User byUser;
-          if ((_tvController.IsCardInUse(card.Id, out byUser) == false) || _tvController.CurrentChannelName(card.Id) == recording.Channel)
+          if ((_tvController.IsCardInUse(card.Id, out byUser) == false) || _tvController.CurrentDbChannel(card.Id) == recording.Channel.IdChannel)
           {
             // use the recommended card.
             cardInfo = card;
@@ -429,7 +429,7 @@ namespace TvService
         //all cards in use, check if a card is already tuned to the channel we want to record
         foreach (CardDetail card in freeCards)
         {
-          if (_tvController.CurrentChannelName(card.Id) == recording.Channel)
+          if (_tvController.CurrentDbChannel(card.Id) == recording.Channel.IdChannel)
           {
             cardInfo = card;
             Log.Write("Scheduler : record on card:{0} priority:{1} which is tuned to {2}", cardInfo.Id, cardInfo.Card.Priority, recording.Channel);
@@ -461,7 +461,7 @@ namespace TvService
           cardInfo.Card.RecordingFolder = System.IO.Directory.GetCurrentDirectory();
 
         Log.Write("Scheduler : record, first tune to channel");
-        if (false == _controller.TuneScan(cardInfo.Id, cardInfo.TuningDetail))
+        if (false == _controller.TuneScan(cardInfo.Id, cardInfo.TuningDetail, recording.Channel.IdChannel))
         {
           if (lockedCard) _tvController.UnlockCard(cardInfo.Id);
           return false;

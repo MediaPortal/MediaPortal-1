@@ -38,7 +38,7 @@ namespace TvControl
   public class VirtualCard
   {
     #region variables
-    int _cardId=-1;
+    int _cardId = -1;
     string _server;
     string _recordingFolder;
     #endregion
@@ -477,6 +477,20 @@ namespace TvControl
         return RemoteControl.Instance.CurrentChannel(_cardId);
       }
     }
+    /// <summary>
+    /// returns the database channel
+    /// </summary>
+    /// <returns>int</returns>
+    [XmlIgnore]
+    public int IdChannel
+    {
+      get
+      {
+        if (_cardId < 0) return -1;
+        RemoteControl.HostName = _server;
+        return RemoteControl.Instance.CurrentDbChannel(_cardId);
+      }
+    }
 
     /// <summary>
     /// Returns the signal level 
@@ -523,7 +537,7 @@ namespace TvControl
       return RemoteControl.Instance.GetTeletextPage(_cardId, pageNumber, subPageNumber);
     }
 
-    
+
     /// <summary>
     /// scans current transponder for channels.
     /// </summary>
@@ -574,7 +588,7 @@ namespace TvControl
     {
       if (_cardId < 0) return false;
       RemoteControl.HostName = _server;
-      return RemoteControl.Instance.StartRecording(_cardId,ref fileName, contentRecording, startTime);
+      return RemoteControl.Instance.StartRecording(_cardId, ref fileName, contentRecording, startTime);
     }
 
     /// <summary>

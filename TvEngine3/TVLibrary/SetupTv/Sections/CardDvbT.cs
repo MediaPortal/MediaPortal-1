@@ -221,7 +221,7 @@ namespace SetupTv.Sections
           item.EnsureVisible();
           if (index == 0)
           {
-            RemoteControl.Instance.Tune(_cardNumber, tuneChannel);
+            RemoteControl.Instance.Tune(_cardNumber, tuneChannel,-1);
           }
           IChannel[] channels;
           channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);

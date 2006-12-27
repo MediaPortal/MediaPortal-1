@@ -270,8 +270,13 @@ namespace TvPlugin
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO:
-          TVHome.ViewChannelAndCheck(message.Label);
-          break;
+          {
+            TvBusinessLayer layer = new TvBusinessLayer();
+            Channel channel = layer.GetChannelByName(message.Label);
+            if (channel != null)
+              TVHome.ViewChannelAndCheck(channel);
+            break;
+          }
       }
     }
 
@@ -480,8 +485,8 @@ namespace TvPlugin
 
       // start viewing tv... 
       GUIGraphicsContext.IsFullScreenVideo = false;
-      string channelName = Navigator.CurrentChannel;
-      if (Navigator.CurrentChannel == String.Empty)
+      Channel channel = Navigator.Channel;
+      if (channel == null)
       {
         if (Navigator.CurrentGroup == null && Navigator.Groups.Count > 0)
         {
@@ -492,23 +497,27 @@ namespace TvPlugin
           if (Navigator.CurrentGroup.ReferringGroupMap().Count > 0)
           {
             GroupMap gm = (GroupMap)Navigator.CurrentGroup.ReferringGroupMap()[0];
-            channelName = gm.ReferencedChannel().Name;
+            channel = gm.ReferencedChannel();
           }
         }
       }
 
-      if (channelName != String.Empty)
+      if (channel != null)
       {
         if (TVHome.Card.IsTimeShifting)
         {
-          channelName = TVHome.Card.ChannelName;
+          int id = TVHome.Card.IdChannel;
+          if (id >= 0)
+          {
+            channel = Channel.Retrieve(id);
+          }
         }
-        MediaPortal.GUI.Library.Log.Info("tv home init:{0}", channelName);
+        MediaPortal.GUI.Library.Log.Info("tv home init:{0}", channel.Name);
         if (_autoTurnOnTv || TVHome.Card.IsTimeShifting)
         {
-          ViewChannelAndCheck(channelName);
+          ViewChannelAndCheck(channel);
         }
-        MediaPortal.GUI.Library.Log.Info("tv home init:{0} done", channelName);
+        MediaPortal.GUI.Library.Log.Info("tv home init:{0} done", channel.Name);
       }
     }
 
@@ -552,7 +561,7 @@ namespace TvPlugin
         if (Navigator.CurrentGroup.ReferringGroupMap().Count > 0)
         {
           GroupMap gm = (GroupMap)Navigator.CurrentGroup.ReferringGroupMap()[0];
-          ViewChannelAndCheck(gm.ReferencedChannel().Name);
+          ViewChannelAndCheck(gm.ReferencedChannel());
         }
       }
     }
@@ -565,6 +574,7 @@ namespace TvPlugin
       dlg.SetHeading(891); // Select TV channel
       int selected = 0;
       IList groups = Navigator.CurrentGroup.ReferringGroupMap();
+      List<Channel> channels = new List<Channel>();
       for (int i = 0; i < groups.Count; ++i)
       {
         GroupMap gm = (GroupMap)groups[i];
@@ -572,9 +582,10 @@ namespace TvPlugin
         if (channel.IsTv == false) continue;
         if (channel.VisibleInGuide == false) continue;
         dlg.Add(channel.Name);
-        if (Navigator.CurrentChannel != null)
+        channels.Add(channel);
+        if (Navigator.Channel != null)
         {
-          if (channel.Name == Navigator.CurrentChannel)
+          if (channel.IdChannel == Navigator.Channel.IdChannel)
           {
             selected = i;
           }
@@ -587,7 +598,7 @@ namespace TvPlugin
         MediaPortal.GUI.Library.Log.Info("TVHome:nothing selected");
         return;
       }
-      ViewChannelAndCheck(dlg.SelectedLabelText);
+      ViewChannelAndCheck(channels[dlg.SelectedLabel]);
     }
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
@@ -628,7 +639,7 @@ namespace TvPlugin
         }
 
         // turn tv on/off
-        ViewChannelAndCheck(Navigator.CurrentChannel);
+        ViewChannelAndCheck(Navigator.Channel);
         UpdateStateOfButtons();
         UpdateProgressPercentageBar();
       }
@@ -666,20 +677,28 @@ namespace TvPlugin
             {
               //restart viewing...  
               MediaPortal.GUI.Library.Log.Info("tv home msg resume tv:{0}", Navigator.CurrentChannel);
-              ViewChannel(Navigator.CurrentChannel);
+              ViewChannel(Navigator.Channel);
             }
           }
           break;
         case GUIMessage.MessageType.GUI_MSG_RECORDER_VIEW_CHANNEL:
           MediaPortal.GUI.Library.Log.Info("tv home msg view chan:{0}", message.Label);
-          ViewChannel(message.Label);
-          Navigator.UpdateCurrentChannel();
+          {
+            TvBusinessLayer layer = new TvBusinessLayer();
+            Channel ch = layer.GetChannelByName(message.Label);
+            ViewChannel(ch);
+            Navigator.UpdateCurrentChannel();
+          }
           break;
 
         case GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_VIEWING:
-          MediaPortal.GUI.Library.Log.Info("tv home msg stop chan:{0}", message.Label);
-          ViewChannel(message.Label);
-          Navigator.UpdateCurrentChannel();
+          {
+            MediaPortal.GUI.Library.Log.Info("tv home msg stop chan:{0}", message.Label);
+            TvBusinessLayer layer = new TvBusinessLayer();
+            Channel ch = layer.GetChannelByName(message.Label);
+            ViewChannel(ch);
+            Navigator.UpdateCurrentChannel();
+          }
           break;
       }
       return base.OnMessage(message);
@@ -777,7 +796,7 @@ namespace TvPlugin
       int selected = 0;
 
       IList cards = TvDatabase.Card.ListAll();
-      List<string> channels = new List<string>();
+      List<Channel> channels = new List<Channel>();
       int count = 0;
       foreach (Card card in cards)
       {
@@ -789,13 +808,14 @@ namespace TvPlugin
         if (isRecording || isTimeShifting)
         {
           User user;
-          string channelName = RemoteControl.Instance.CurrentChannelName(card.IdCard);
+          int idChannel = RemoteControl.Instance.CurrentDbChannel(card.IdCard);
           RemoteControl.Instance.IsCardInUse(card.IdCard, out user);
-          channels.Add(channelName);
+          Channel ch = Channel.Retrieve(idChannel);
+          channels.Add(ch);
           GUIListItem item = new GUIListItem();
-          item.Label = channelName;
+          item.Label = ch.Name;
           item.Label2 = user.Name;
-          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channelName);
+          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.Name);
           if (!System.IO.File.Exists(strLogo))
           {
             strLogo = "defaultVideoBig.png";
@@ -806,7 +826,7 @@ namespace TvPlugin
           else
             item.PinImage = "";
           dlg.Add(item);
-          if (TVHome.Card != null && TVHome.Card.ChannelName == channelName)
+          if (TVHome.Card != null && TVHome.Card.IdChannel == idChannel)
           {
             selected = count;
           }
@@ -902,7 +922,7 @@ namespace TvPlugin
 
           // and re-start viewing.... 
           MediaPortal.GUI.Library.Log.Info("tv home stoprecording chan:{0}", Navigator.CurrentChannel);
-          ViewChannel(Navigator.CurrentChannel);
+          ViewChannel(Navigator.Channel);
           Navigator.UpdateCurrentChannel();
         }
       }
@@ -975,10 +995,10 @@ namespace TvPlugin
     /// </summary>
     static public void UpdateProgressPercentageBar()
     {
-      
-      TimeSpan ts = DateTime.Now-_updateProgressTimer;
-      if (ts.TotalMilliseconds<1000) return;
-      _updateProgressTimer=DateTime.MinValue;
+
+      TimeSpan ts = DateTime.Now - _updateProgressTimer;
+      if (ts.TotalMilliseconds < 1000) return;
+      _updateProgressTimer = DateTime.MinValue;
 
       if (Navigator.Channel == null) return;
       try
@@ -1113,9 +1133,13 @@ namespace TvPlugin
       Navigator.ZapToPreviousChannel(false);
     }
 
-    static public bool ViewChannelAndCheck(string channel)
+    static public bool ViewChannelAndCheck(Channel channel)
     {
-      MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel);
+      if (channel == null)
+      {
+        return false;
+      }
+      MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.Name);
       if (g_Player.Playing)
       {
         if (g_Player.IsTVRecording) return true;
@@ -1124,15 +1148,15 @@ namespace TvPlugin
         if ((g_Player.IsMusic && g_Player.HasVideo)) return true;
       }
 
-      if (channel != Navigator.CurrentChannel)
-        Navigator.LastViewedChannel = Navigator.CurrentChannel;
+      if (channel.IdChannel != Navigator.Channel.IdChannel)
+        Navigator.LastViewedChannel = Navigator.Channel;
 
       string errorMessage;
       TvResult succeeded;
       if (TVHome.Card != null)
       {
         //if we're already watching this channel, then simply return
-        if (TVHome.Card.IsTimeShifting == true && TVHome.Card.ChannelName == channel)
+        if (TVHome.Card.IsTimeShifting == true && TVHome.Card.IdChannel == channel.IdChannel)
         {
           return true;
         }
@@ -1157,7 +1181,7 @@ namespace TvPlugin
 
       //Start timeshifting the new tv channel
       VirtualCard card;
-      succeeded = RemoteControl.Instance.StartTimeShifting(channel, new User(), out card);
+      succeeded = RemoteControl.Instance.StartTimeShifting(channel.IdChannel, new User(), out card);
       TVHome.Card = card;
       MediaPortal.GUI.Library.Log.Info("succeeded:{0} scrambled:{1}", succeeded, TVHome.Card.IsScrambled);
       if (succeeded == TvResult.Succeeded)
@@ -1181,7 +1205,7 @@ namespace TvPlugin
           g_Player.Stop();
         }
         */
-        if (g_Player.Playing) 
+        if (g_Player.Playing)
         {
           if (System.IO.File.Exists(TVHome.Card.TimeShiftFileName))
           {
@@ -1272,45 +1296,10 @@ namespace TvPlugin
       return false;
     }
 
-    static public void ViewChannel(string channel)
+    static public void ViewChannel(Channel channel)
     {
       ViewChannelAndCheck(channel);
       return;
-      if (g_Player.Playing)
-      {
-        if (g_Player.IsTVRecording) return;
-        if (g_Player.IsVideo) return;
-        if (g_Player.IsDVD) return;
-        if ((g_Player.IsMusic && g_Player.HasVideo)) return;
-      }
-      MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannel(): View channel={0}", channel);
-
-      if (channel != Navigator.CurrentChannel)
-        Navigator.LastViewedChannel = Navigator.CurrentChannel;
-
-      if (TVHome.Card.IsTimeShifting == false || TVHome.Card.ChannelName != channel)
-      {
-        if (g_Player.Playing)
-        {
-          SeekToEnd();
-        }
-        VirtualCard card;
-        TvResult succeeded = RemoteControl.Instance.StartTimeShifting(channel, new User(), out card);
-        TVHome.Card = card;
-        if (succeeded == TvResult.Succeeded)
-        {
-          if (g_Player.Playing && g_Player.CurrentFile != TVHome.Card.TimeShiftFileName)
-          {
-            g_Player.Stop();
-          }
-          if (!g_Player.Playing) StartPlay();
-          return;
-        }
-        else
-        {
-          g_Player.Stop();
-        }
-      }
     }
 
     /// <summary>
@@ -1436,7 +1425,7 @@ namespace TvPlugin
       g_Player.MediaType mediaType = g_Player.MediaType.TV;
       if (channel.IsRadio)
         mediaType = g_Player.MediaType.Radio;
-      if ( System.IO.File.Exists(timeshiftFileName))
+      if (System.IO.File.Exists(timeshiftFileName))
       {
         MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0}", timeshiftFileName);
         g_Player.Play(timeshiftFileName, mediaType);
@@ -1514,9 +1503,9 @@ namespace TvPlugin
     private string m_currentchannel = String.Empty;
     private DateTime m_zaptime;
     private long m_zapdelay;
-    private string m_zapchannel = null;
+    private Channel m_zapchannel = null;
     private int m_zapgroup = -1;
-    private string _lastViewedChannel = string.Empty; // saves the last viewed Channel  // mPod
+    private Channel _lastViewedChannel = null; // saves the last viewed Channel  // mPod
     private Channel m_currentChannel = null;
     private IList channels = new ArrayList();
     private bool reentrant = false;
@@ -1650,7 +1639,7 @@ namespace TvPlugin
     /// Gets and sets the last viewed channel
     /// Returns empty string if no zap occurred before
     /// </summary>
-    public string LastViewedChannel
+    public Channel LastViewedChannel
     {
       get { return _lastViewedChannel; }
       set { _lastViewedChannel = value; }
@@ -1676,12 +1665,12 @@ namespace TvPlugin
     /// <summary>
     /// Gets the channel that we will zap to. Contains the current channel if not zapping to anything.
     /// </summary>
-    public string ZapChannel
+    public Channel ZapChannel
     {
       get
       {
         if (m_zapchannel == null)
-          return m_currentchannel;
+          return m_currentChannel;
         return m_zapchannel;
       }
     }
@@ -1745,7 +1734,7 @@ namespace TvPlugin
             {
               GroupMap gm = (GroupMap)CurrentGroup.ReferringGroupMap()[0];
               Channel chan = (Channel)gm.ReferencedChannel();
-              m_zapchannel = chan.Name;
+              m_zapchannel = chan;
             }
           }
           m_zapgroup = -1;
@@ -1753,9 +1742,9 @@ namespace TvPlugin
           //if (m_zapchannel != m_currentchannel)
           //  lastViewedChannel = m_currentchannel;
           // Zap to desired channel
-          string zappingTo = m_zapchannel;
+          Channel zappingTo = m_zapchannel;
           m_zapchannel = null;
-          MediaPortal.GUI.Library.Log.Info("Channel change:{0}", zappingTo);
+          MediaPortal.GUI.Library.Log.Info("Channel change:{0}", zappingTo.Name);
           TVHome.ViewChannel(zappingTo);
           reentrant = false;
           return true;
@@ -1817,9 +1806,9 @@ namespace TvPlugin
     /// </summary>
     /// <param name="channelName">The channel to switch to.</param>
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
-    public void ZapToChannel(string channelName, bool useZapDelay)
+    public void ZapToChannel(Channel channel, bool useZapDelay)
     {
-      m_zapchannel = channelName;
+      m_zapchannel = channel;
 
       if (useZapDelay)
         m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
@@ -1846,7 +1835,7 @@ namespace TvPlugin
           chan = (Channel)gm.ReferencedChannel();
           if (chan.SortOrder == channelNr)
           {
-            ZapToChannel(chan.Name, useZapDelay);
+            ZapToChannel(chan, useZapDelay);
             found = true;
           }
           else
@@ -1868,7 +1857,7 @@ namespace TvPlugin
       {
         GroupMap gm = (GroupMap)channels[channelNr];
         Channel chan = gm.ReferencedChannel();
-        ZapToChannel(chan.Name, useZapDelay);
+        ZapToChannel(chan, useZapDelay);
       }
     }
 
@@ -1878,17 +1867,17 @@ namespace TvPlugin
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
     public void ZapToNextChannel(bool useZapDelay)
     {
-      string currentChan = String.Empty;
+      Channel currentChan = null;
       int currindex;
       if (m_zapchannel == null)
       {
-        currindex = GetChannelIndex(CurrentChannel);
-        currentChan = CurrentChannel;
+        currindex = GetChannelIndex(Channel);
+        currentChan = Channel;
       }
       else
       {
         currindex = GetChannelIndex(m_zapchannel); // Zap from last zap channel
-        currentChan = CurrentChannel;
+        currentChan = Channel;
       }
       // Step to next channel
       currindex++;
@@ -1896,9 +1885,9 @@ namespace TvPlugin
         currindex = 0;
       GroupMap gm = (GroupMap)CurrentGroup.ReferringGroupMap()[currindex];
       Channel chan = (Channel)gm.ReferencedChannel();
-      m_zapchannel = chan.Name;
+      m_zapchannel = chan;
 
-      MediaPortal.GUI.Library.Log.Info("Navigator:ZapNext {0}->{1}", currentChan, m_zapchannel);
+      MediaPortal.GUI.Library.Log.Info("Navigator:ZapNext {0}->{1}", currentChan.Name, m_zapchannel.Name);
       if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
       {
         if (useZapDelay)
@@ -1918,12 +1907,12 @@ namespace TvPlugin
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
     public void ZapToPreviousChannel(bool useZapDelay)
     {
-      string currentChan = String.Empty;
+      Channel currentChan = null;
       int currindex;
       if (m_zapchannel == null)
       {
-        currentChan = CurrentChannel;
-        currindex = GetChannelIndex(CurrentChannel);
+        currentChan = Channel;
+        currindex = GetChannelIndex(Channel);
       }
       else
       {
@@ -1938,9 +1927,9 @@ namespace TvPlugin
 
       GroupMap gm = (GroupMap)CurrentGroup.ReferringGroupMap()[currindex];
       Channel chan = (Channel)gm.ReferencedChannel();
-      m_zapchannel = chan.Name;
+      m_zapchannel = chan;
 
-      MediaPortal.GUI.Library.Log.Info("Navigator:ZapPrevious {0}->{1}", currentChan, m_zapchannel);
+      MediaPortal.GUI.Library.Log.Info("Navigator:ZapPrevious {0}->{1}", currentChan.Name, m_zapchannel.Name);
       if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
       {
         if (useZapDelay)
@@ -1997,7 +1986,7 @@ namespace TvPlugin
     /// </summary>
     public void ZapToLastViewedChannel()
     {
-      if (_lastViewedChannel != string.Empty)
+      if (_lastViewedChannel != null)
       {
         m_zapchannel = _lastViewedChannel;
         m_zaptime = DateTime.Now;
@@ -2012,14 +2001,14 @@ namespace TvPlugin
     /// Retrieves the index of the current channel.
     /// </summary>
     /// <returns></returns>
-    private int GetChannelIndex(string channelName)
+    private int GetChannelIndex(Channel ch)
     {
       IList groupMaps = CurrentGroup.ReferringGroupMap();
       for (int i = 0; i < groupMaps.Count; i++)
       {
         GroupMap gm = (GroupMap)groupMaps[i];
         Channel chan = (Channel)gm.ReferencedChannel();
-        if (chan.Name == channelName)
+        if (chan.IdChannel == ch.IdChannel)
           return i;
       }
       return 0; // Not found, return first channel index
@@ -2066,7 +2055,7 @@ namespace TvPlugin
       m_currentChannel = GetChannel(m_currentchannel);
       if (m_currentChannel == null)
       {
-        if (m_currentgroup < m_groups.Count )
+        if (m_currentgroup < m_groups.Count)
         {
           ChannelGroup group = (ChannelGroup)m_groups[m_currentgroup];
           if (group.ReferringGroupMap().Count > 0)

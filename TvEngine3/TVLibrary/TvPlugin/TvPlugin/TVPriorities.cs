@@ -498,7 +498,7 @@ namespace TvPlugin
             g_Player.Stop();
           }
           //TVHome.IsTVOn = true;
-          TVHome.ViewChannel(rec.ReferencedChannel().Name);
+          TVHome.ViewChannel(rec.ReferencedChannel());
           g_Player.SeekAbsolute(0);
           if (TVHome.Card.IsTimeShifting)
           {
@@ -509,7 +509,7 @@ namespace TvPlugin
 
         case 980: // Play recording from live point
           //TVHome.IsTVOn = true;
-          TVHome.ViewChannel(rec.ReferencedChannel().Name);
+          TVHome.ViewChannel(rec.ReferencedChannel());
           if (TVHome.Card.IsTimeShifting)
           {
             if (g_Player.Playing)
