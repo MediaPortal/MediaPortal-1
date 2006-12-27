@@ -6,6 +6,7 @@ extern void Log(const char *fmt, ...) ;
 CRTSPClient::CRTSPClient(CMemoryBuffer& buffer)
 :m_buffer(buffer)
 {
+	Log("CRTSPClient::CRTSPClient()");
   allowProxyServers = False;
   controlConnectionUsesTCP = True;
   supportCodecSelection = False;
@@ -29,16 +30,19 @@ CRTSPClient::CRTSPClient(CMemoryBuffer& buffer)
 
 CRTSPClient::~CRTSPClient()
 {
+	Log("CRTSPClient::~CRTSPClient()");
 }
 
 
 Medium* CRTSPClient::createClient(UsageEnvironment& env,int verbosityLevel, char const* applicationName) 
 {
+	Log("CRTSPClient::createClient()");
   return RTSPClient::createNew(env, verbosityLevel, applicationName,tunnelOverHTTPPortNum);
 }
 
 char* CRTSPClient::getOptionsResponse(Medium* client, char const* url,char* username, char* password) 
 {
+	Log("CRTSPClient::getOptionsResponse()");
   RTSPClient* rtspClient = (RTSPClient*)client;
   return rtspClient->sendOptionsCmd(url, username, password);
 }
@@ -49,6 +53,7 @@ char* CRTSPClient::getSDPDescriptionFromURL(Medium* client, char const* url,
 			       unsigned short /*proxyServerPortNum*/,
 			       unsigned short /*clientStartPort*/) 
 {
+	Log("CRTSPClient::getSDPDescriptionFromURL()");
   RTSPClient* rtspClient = (RTSPClient*)client;
   char* result;
   if (username != NULL && password != NULL) 
@@ -66,6 +71,7 @@ char* CRTSPClient::getSDPDescriptionFromURL(Medium* client, char const* url,
 
 Boolean CRTSPClient::clientSetupSubsession(Medium* client, MediaSubsession* subsession,Boolean streamUsingTCP) 
 {
+	Log("CRTSPClient::clientSetupSubsession()");
   if (client == NULL || subsession == NULL) return False;
   RTSPClient* rtspClient = (RTSPClient*)client;
   return rtspClient->setupMediaSubsession(*subsession,False, streamUsingTCP);
@@ -73,6 +79,7 @@ Boolean CRTSPClient::clientSetupSubsession(Medium* client, MediaSubsession* subs
 
 Boolean CRTSPClient::clientStartPlayingSession(Medium* client,MediaSession* session) 
 {
+	Log("CRTSPClient::clientStartPlayingSession()");
   if (client == NULL || session == NULL) return False;
   RTSPClient* rtspClient = (RTSPClient*)client;
   return rtspClient->playMediaSession(*session,m_fStart);
@@ -81,6 +88,7 @@ Boolean CRTSPClient::clientStartPlayingSession(Medium* client,MediaSession* sess
 
 Boolean CRTSPClient::clientTearDownSession(Medium* client,MediaSession* session) 
 {
+	Log("CRTSPClient::clientTearDownSession()");
   if (client == NULL || session == NULL) return False;
   RTSPClient* rtspClient = (RTSPClient*)client;
   return rtspClient->teardownMediaSession(*session);
@@ -88,14 +96,17 @@ Boolean CRTSPClient::clientTearDownSession(Medium* client,MediaSession* session)
 
 void subsessionAfterPlaying(void* clientData) 
 {
+	Log("CRTSPClient::subsessionAfterPlaying()");
 }
 void subsessionByeHandler(void* clientData) 
 {
+	Log("CRTSPClient::subsessionByeHandler()");
 }
 
 void CRTSPClient::closeMediaSinks() 
 {
   if (m_session == NULL) return;
+	Log("CRTSPClient::closeMediaSinks()");
   MediaSubsessionIterator iter(*m_session);
   MediaSubsession* subsession;
   while ((subsession = iter.next()) != NULL) 
@@ -108,12 +119,14 @@ void CRTSPClient::closeMediaSinks()
 void CRTSPClient::tearDownStreams() 
 {
   if (m_session == NULL) return;
+	Log("CRTSPClient::tearDownStreams()");
 
   clientTearDownSession(m_ourClient, m_session);
 }
 bool CRTSPClient::setupStreams()
 {
 	//setup streams
+	Log("CRTSPClient::setupStreams()");
 	Boolean madeProgress=False;
 	MediaSubsessionIterator iter(*m_session);
 	MediaSubsession *subsession;
@@ -142,6 +155,7 @@ bool CRTSPClient::setupStreams()
 
 bool CRTSPClient::startPlayingStreams() 
 {
+	Log("CRTSPClient::startPlayingStreams()");
   if (!clientStartPlayingSession(m_ourClient, m_session)) 
   {
     Log("Failed to start playing session:%s " ,m_env ->getResultMsg() );
@@ -157,6 +171,7 @@ bool CRTSPClient::startPlayingStreams()
 
 void CRTSPClient::shutdown()
 {
+	Log("CRTSPClient::shutdown()");
   if (m_env != NULL) 
   {
     //m_env->taskScheduler().unscheduleDelayedTask(sessionTimerTask);
@@ -180,6 +195,7 @@ void CRTSPClient::shutdown()
 
 bool CRTSPClient::Initialize()
 {
+	Log("CRTSPClient::Initialize()");
 	m_duration=7200*1000;
 	TaskScheduler* scheduler = BasicTaskScheduler::createNew();
   m_env = BasicUsageEnvironment::createNew(*scheduler);
@@ -196,6 +212,7 @@ bool CRTSPClient::Initialize()
 
 bool CRTSPClient::OpenStream(char* url)
 {
+	Log("CRTSPClient::OpenStream()");
 	m_session=NULL;
 	
 	strcpy(m_url,url);
@@ -391,18 +408,18 @@ void CRTSPClient::Stop()
 
 void CRTSPClient::StartBufferThread()
 {
-	Log("StartBufferThread");
+	Log("CRTSPClient::StartBufferThread");
   if (!m_BufferThreadActive)
 	{
 		StartThread();
 		m_BufferThreadActive = true;
 	}
-	Log("StartBufferThread done");
+	Log("CRTSPClient::StartBufferThread done");
 }
 
 void CRTSPClient::StopBufferThread()
 {
-	Log("StopBufferThread");
+	Log("CRTSPClient::StopBufferThread");
 	m_bRunning=false;
 	if (!m_BufferThreadActive)
 		return;
@@ -410,7 +427,7 @@ void CRTSPClient::StopBufferThread()
 	StopThread(20000);
 
 	m_BufferThreadActive = false;
-	Log("StopBufferThread done");
+	Log("CRTSPClient::StopBufferThread done");
 }
 
 bool CRTSPClient::IsRunning()
@@ -423,14 +440,14 @@ long CRTSPClient::Duration()
 }
 void CRTSPClient::FillBuffer(DWORD byteCount)
 {	
-	Log("Fillbuffer...%d\n",byteCount);
+	Log("CRTSPClient::Fillbuffer...%d\n",byteCount);
   DWORD tickCount=GetTickCount();
 	while ( IsRunning() && m_buffer.Size() < byteCount)
 	{
 		Sleep(5);
     if (GetTickCount()-tickCount > 3000) break;
 	}
-	Log("Fillbuffer...%d/%d\n",byteCount,m_buffer.Size() );
+	Log("CRTSPClient::Fillbuffer...%d/%d\n",byteCount,m_buffer.Size() );
 	
 }
 void CRTSPClient::ThreadProc()
@@ -439,7 +456,7 @@ void CRTSPClient::ThreadProc()
 	m_BufferThreadActive = TRUE;
 	m_bRunning=true;
 	::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_ABOVE_NORMAL);
-  Log("rtsp thread started");
+	Log("CRTSPClient:: thread started:%d", GetCurrentThreadId());
 	while (m_env!=NULL && !ThreadIsStopping(0))
 	{
 		for (int i=0; i < 10;++i)
@@ -449,22 +466,24 @@ void CRTSPClient::ThreadProc()
 		}
 		if (m_bRunning==false) break;
 	}
-  Log("rtsp thread stopped");
+  Log("CRTSPClient:: thread stopped:%d", GetCurrentThreadId());
 	m_BufferThreadActive = false;
 	return;
 }
 
 bool CRTSPClient::Run()
 {
+	Log("CRTSPClient::Run()");
 	return true;
 }
 bool CRTSPClient::Pause()
 {
+	Log("CRTSPClient::Pause()");
 	return true;
 }
 bool CRTSPClient::Play(float fStart)
 {
-	Log("Play from %f", fStart);
+	Log("CRTSPClient::Play from %f", fStart);
 	m_fStart=fStart;
 	if (m_BufferThreadActive)
 	{

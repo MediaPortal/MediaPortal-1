@@ -26,9 +26,20 @@
 #include <vector>
 using namespace std;
 
+class IPatParserCallback
+{
+public:
+	virtual void OnNewChannel(CChannelInfo& info)=0;
+};
+
 class CPatParser : public CSectionDecoder
 {
 public:
+	enum PatState
+	{
+		Idle,
+		Parsing,
+	};
   CPatParser(void);
   virtual ~CPatParser(void);
   void        SkipPacketsAtStart(__int64 packets);
@@ -38,9 +49,13 @@ public:
   int         Count();
   bool        GetChannel(int index, CChannelInfo& info);
   void        Dump();
+	void        SetCallBack(IPatParserCallback* callback);
 private:
   void        CleanUp();
+	IPatParserCallback* m_pCallback;
   vector<CPmtParser*> m_pmtParsers;
   __int64     m_packetsReceived;
   __int64     m_packetsToSkip;
+	int					m_iPatTableVersion;
+	PatState		m_iState;
 };

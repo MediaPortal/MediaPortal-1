@@ -119,7 +119,8 @@ HRESULT COutputPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES
 }
 
 HRESULT COutputPin::BreakConnect()
-{
+{	
+	Log("COutputPin::BreakConnect()");
 	HRESULT hr = CBaseOutputPin::BreakConnect();
 	if (FAILED(hr))
 		return hr;
@@ -131,6 +132,7 @@ HRESULT COutputPin::BreakConnect()
 }
 HRESULT COutputPin::CheckConnect(IPin *pReceivePin)
 {
+	Log("COutputPin::CheckConnect()");
 	if(!pReceivePin)
 		return E_INVALIDARG;
 
@@ -174,6 +176,7 @@ HRESULT COutputPin::CheckConnect(IPin *pReceivePin)
 }
 HRESULT COutputPin::CompleteConnect(IPin *pReceivePin)
 {
+	Log("COutputPin::CompleteConnect()");
 	HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
 	if (SUCCEEDED(hr))
 	{
@@ -188,12 +191,21 @@ HRESULT COutputPin::CompleteConnect(IPin *pReceivePin)
 HRESULT COutputPin::FillBuffer(IMediaSample *pSample)
 {
 	CAutoLock lock(&m_FillLock);
-  if (!m_pFilter->IsClientRunning()) return S_OK;
+  if (!m_pFilter->IsClientRunning()) 
+	{
+		pSample->SetActualDataLength(0);
+		return S_OK;
+	}
 
   BYTE* pBuffer;
   pSample->GetPointer(&pBuffer);
 	long lDataLength = BUFFER_SIZE;//pSample->GetActualDataLength();
   DWORD bytesRead=m_pFilter->GetData(pBuffer,lDataLength);
+	if (bytesRead==0)
+	{
+		Sleep(10);
+		return S_OK;
+	}
   pSample->SetActualDataLength(bytesRead);
 
   if (m_bIsTimeShifting)
@@ -212,23 +224,27 @@ HRESULT COutputPin::FillBuffer(IMediaSample *pSample)
 }
 HRESULT COutputPin::ChangeStart()
 {
+	Log("COutputPin::ChangeStart()");
 	m_bSeeking = false;
   return S_OK;
 }
 
 HRESULT COutputPin::ChangeStop()
 {
+	Log("COutputPin::ChangeStop()");
 	m_bSeeking = false;
 	return S_OK;
 }
 
 HRESULT COutputPin::ChangeRate()
 {
+	Log("COutputPin::ChangeRate()");
 	return S_OK;
 }
 
 HRESULT COutputPin::Run(REFERENCE_TIME tStart)
 {
+	Log("COutputPin::Run()");
 	//CAutoLock fillLock(&m_FillLock);
 	//CAutoLock seekLock(&m_SeekLock);
   m_pFilter->ResetStreamTime();
@@ -242,6 +258,7 @@ HRESULT COutputPin::Run(REFERENCE_TIME tStart)
 }
 HRESULT COutputPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags)
 {
+	Log("COutputPin::SetPositions()");
 	if(!m_rtDuration)
 		return E_FAIL;
 
@@ -298,6 +315,7 @@ HRESULT COutputPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLON
 
 HRESULT COutputPin::SetAccuratePos(REFERENCE_TIME seektime)
 {
+	Log("COutputPin::SetAccuratePos()");
 	m_pFilter->ResetStreamTime();
 	m_pFilter->Seek(m_rtStart);
 	return S_OK;
@@ -306,6 +324,7 @@ HRESULT COutputPin::OnThreadStartPlay(void)
 {
 	CAutoLock fillLock(&m_FillLock);
 	CAutoLock lock(&m_SeekLock);
+	Log("COutputPin::OnThreadStartPlay()");
   DeliverNewSegment(m_rtStart, m_rtStop, 1.0 );
 	return CSourceStream::OnThreadStartPlay( );
 }
@@ -313,6 +332,7 @@ HRESULT COutputPin::OnThreadStartPlay(void)
 void COutputPin::UpdateStopStart()
 {
 	CAutoLock lock(&m_SeekLock);
+	Log("COutputPin::UpdateStopStart()");
 	m_pFilter->GetStartStop(m_rtStart, m_rtDuration);
 	m_rtDurationAtStart=m_rtDuration;
 	m_tickCount=GetTickCount();
@@ -322,6 +342,7 @@ void COutputPin::UpdateStopStart()
 
 HRESULT COutputPin::SetDemuxClock(IReferenceClock *pClock)
 {
+	Log("COutputPin::SetDemuxClock()");
 	// Parse only the existing Mpeg2 Demultiplexer Filter
 	// in the filter graph, we do this by looking for filters
 	// that implement the IMpeg2Demultiplexer interface while
@@ -380,6 +401,7 @@ HRESULT COutputPin::SetDemuxClock(IReferenceClock *pClock)
 
 HRESULT COutputPin::DisconnectDemux()
 {
+	Log("COutputPin::DisconnectDemux()");
 	// Parse only the existing Mpeg2 Demultiplexer Filter
 	// in the filter graph, we do this by looking for filters
 	// that implement the IMpeg2Demultiplexer interface while
@@ -433,6 +455,7 @@ HRESULT COutputPin::DisconnectDemux()
 
 HRESULT COutputPin::DisconnectOutputPins(IBaseFilter *pFilter)
 {
+	Log("COutputPin::DisconnectOutputPins()");
 	CComPtr<IPin> pOPin;
 	PIN_DIRECTION  direction;
 	// Enumerate the Demux pins

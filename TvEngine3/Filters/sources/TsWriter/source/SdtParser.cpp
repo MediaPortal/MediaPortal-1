@@ -94,6 +94,7 @@ void  CSdtParser::OnNewSection(CSection& sections)
 	  EIT_schedule_flag = (section[start+pointer+2]>>1) & 1;
 	  EIT_present_following_flag = section[start+pointer+2] & 1;
 	  running_status = (section[start+pointer+3]>>5) & 7;
+		
 	  free_CA_mode = (section[start+pointer+3]>>4) &1;
 	  descriptors_loop_length = ((section[start+pointer+3] & 0xF)<<8)+section[start+pointer+4];
 	  

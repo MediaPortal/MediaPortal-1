@@ -25,11 +25,12 @@
 #include "pidinfo.h"
 #include "packetsync.h"
 #include "patparser.h"
+#include "TSThread.h"
 
 // {DF5ACC0A-5612-44ba-963B-C757298F4030}
 DEFINE_GUID(CLSID_RtspSource,0xdf5acc0a, 0x5612, 0x44ba, 0x96, 0x3b, 0xc7, 0x57, 0x29, 0x8f, 0x40, 0x30);
 class COutputPin;
-class CRtspSourceFilter: public CSource,public IFileSourceFilter, public IAMFilterMiscFlags, public CPacketSync, public IMemoryCallback
+class CRtspSourceFilter: public CSource,public IFileSourceFilter, public IAMFilterMiscFlags, public CPacketSync, public IMemoryCallback, public IPatParserCallback,public TSThread
 {
 public:
 		DECLARE_IUNKNOWN
@@ -62,8 +63,10 @@ public:
 	CFilterList m_FilterRefList;	// List to hold the Removed filters.string
 	virtual void OnTsPacket(byte* tsPacket);
 	virtual void OnRawDataReceived(BYTE *pbData, long lDataLength);
-  
-  BOOL IsClientRunning(void);
+
+	void OnNewChannel(CChannelInfo& info);  
+  BOOL IsClientRunning(void); 
+	void ThreadProc();
 private:
   Demux*          m_pDemux;
   PidInfo         m_pids;
@@ -74,4 +77,5 @@ private:
   CMemoryBuffer m_buffer;
 	CRefTime			m_rtStartFrom;
   CPatParser    m_patParser;
+	bool				  m_bReconfigureDemux;
 };

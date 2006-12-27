@@ -38,12 +38,14 @@ DWORD CMemoryBuffer::Size()
 void CMemoryBuffer::Run(bool onOff)
 {
   m_bRunning=onOff;
+	if (m_bRunning==false) Clear();
   Log("buffer running:%d", onOff);
 }
 
 DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset)
 {	
 	if (lDataLength<0) return 0;
+  if (!m_bRunning) return 0;
   while (m_BytesInBuffer < lDataLength)
   {	
     if (!m_bRunning) return 0;

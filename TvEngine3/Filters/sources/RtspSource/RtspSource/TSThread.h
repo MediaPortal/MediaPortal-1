@@ -38,7 +38,7 @@ public:
 	HRESULT StopThread(DWORD dwTimeoutMilliseconds = 1000);
 
 	BOOL ThreadIsStopping(DWORD dwTimeoutMilliseconds = 10);
-
+	bool IsRunning();
 protected:
 	void InternalThreadProc();
 
@@ -47,6 +47,7 @@ private:
 	HANDLE m_hStopEvent;
 	HANDLE m_threadHandle;
 	static  void __cdecl thread_function(void* p);
+	bool   m_bThreadRunning;
 };
 
 #endif

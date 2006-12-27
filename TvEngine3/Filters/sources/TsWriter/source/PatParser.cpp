@@ -422,9 +422,9 @@ void CPatParser::Dump()
   while (it!=m_mapChannels.end()) 
   {
     CChannelInfo& info=it->second;
-		LogDebug("%4d)  p:%-15s s:%-25s  onid:%4x tsid:%4x sid:%4x major:%3d minor:%3x freq:%3x type:%3d pcr:%4x pmt:%4x v:%4x a1:%4x a2:%4x a3:%4x ac3:%4x ttx:%4x sub:%4x othermux:%d",i,
+		LogDebug("%4d)  p:%-15s s:%-25s  onid:%4x tsid:%4x sid:%4x major:%3d minor:%3x freq:%3x type:%3d pcr:%4x pmt:%4x v:%4x a1:%4x a2:%4x a3:%4x ac3:%4x ttx:%4x sub:%4x othermux:%d freeca:%d",i,
             info.ProviderName,info.ServiceName,info.NetworkId,info.TransportId,info.ServiceId,info.MajorChannel,info.MinorChannel,info.Frequency,
-            info.ServiceType,info.PidTable.PcrPid,info.PidTable.PmtPid,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AudioPid2,info.PidTable.AudioPid3,info.PidTable.AC3Pid,info.PidTable.TeletextPid,info.PidTable.SubtitlePid,info.OtherMux);
+						info.ServiceType,info.PidTable.PcrPid,info.PidTable.PmtPid,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AudioPid2,info.PidTable.AudioPid3,info.PidTable.AC3Pid,info.PidTable.TeletextPid,info.PidTable.SubtitlePid,info.OtherMux,info.FreeCAMode);
 
     it++;
     i++;

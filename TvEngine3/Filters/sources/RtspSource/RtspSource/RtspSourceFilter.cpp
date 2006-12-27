@@ -79,10 +79,13 @@ CRtspSourceFilter::CRtspSourceFilter(IUnknown *pUnk, HRESULT *phr)
   m_pOutputPin = new COutputPin(GetOwner(), this, phr, &m_section);
 	m_pDemux = new Demux(&m_pids, this, &m_FilterRefList);
 	m_rtStartFrom=0;
+	m_bReconfigureDemux=false;
+	StartThread();
 }
 
 CRtspSourceFilter::~CRtspSourceFilter(void)
 {
+	StopThread(100);
 	m_pOutputPin->Disconnect();
 	delete m_pOutputPin;
   delete m_pDemux;
@@ -132,13 +135,75 @@ void CRtspSourceFilter::ResetStreamTime()
 	m_tStart = REFERENCE_TIME(m_tStart) + REFERENCE_TIME(cTime);
 }
 
+void CRtspSourceFilter::ThreadProc()
+{
+	while (IsRunning())
+	{
+		if (m_bReconfigureDemux)
+		{
+			m_pDemux->AOnConnect();
+			m_pDemux->SetRefClock();
+			m_patParser.SetCallBack(this);
+			m_buffer.Clear();
+			m_bReconfigureDemux=false;
+		}
+		Sleep(10);
+	}
+}
+void CRtspSourceFilter::OnNewChannel(CChannelInfo& info)
+{
+	Log("Filter::OnNewChannel()");
+  CPidTable pids=info.PidTable;
+	if (  m_pids.aud==pids.AudioPid1 &&
+				m_pids.aud2==pids.AudioPid2 &&
+				m_pids.ac3==pids.AC3Pid &&
+				m_pids.pcr==pids.PcrPid &&
+				m_pids.pmt==pids.PmtPid &&
+				m_pids.sub==pids.SubtitlePid)
+	{
+		if ( pids.videoServiceType==0x1b && m_pids.h264==pids.VideoPid) return;
+		if ( pids.videoServiceType==0x10 && m_pids.mpeg4==pids.VideoPid) return;
+		if ( m_pids.vid==pids.VideoPid) return;
+	}
+
+
+  m_pids.Clear();
+  m_pids.aud=pids.AudioPid1;
+  m_pids.aud2=pids.AudioPid2;
+  m_pids.ac3=pids.AC3Pid;
+  m_pids.pcr=pids.PcrPid;
+  m_pids.pmt=pids.PmtPid;
+	m_pids.sub=pids.SubtitlePid;
+	if ( pids.videoServiceType==0x1b)
+	{
+		Log("Filter:OnNewChannel, audio1:%x audio2:%x ac3:%x h264 video:%x pcr:%x pmt:%x sub:%x",
+			pids.AudioPid1,pids.AudioPid2,pids.AC3Pid,pids.VideoPid,pids.PcrPid,pids.PmtPid,pids.SubtitlePid);
+		m_pids.h264=pids.VideoPid;
+	}
+	else if (pids.videoServiceType==0x10)
+	{
+	  Log("Filter:OnNewChannel, audio1:%x audio2:%x ac3:%x mpeg4 video:%x pcr:%x pmt:%x sub:%x",
+				  pids.AudioPid1,pids.AudioPid2,pids.AC3Pid,pids.VideoPid,pids.PcrPid,pids.PmtPid,pids.SubtitlePid);
+		m_pids.mpeg4=pids.VideoPid;
+	}
+	else
+	{
+	  Log("Filter:OnNewChannel, audio1:%x audio2:%x ac3:%x mpeg2 video:%x pcr:%x pmt:%x",
+				  pids.AudioPid1,pids.AudioPid2,pids.AC3Pid,pids.VideoPid,pids.PcrPid,pids.PmtPid);
+		m_pids.vid=pids.VideoPid;
+	}
+	m_bReconfigureDemux=true;
+}
+
 HRESULT CRtspSourceFilter::OnConnect()
 {	
+	m_bReconfigureDemux=false;
 	Log("Filter:OnConnect, find pat/pmt...");
   m_buffer.SetCallback(this);
   m_buffer.Run(true);
   m_patParser.SkipPacketsAtStart(500);
   m_patParser.Reset();
+	m_patParser.SetCallBack(NULL);
   if (m_client.Play(0.0f))
   {
 		Log("Filter:OnConnect, wait for pat/pmt...");
@@ -201,6 +266,7 @@ HRESULT CRtspSourceFilter::OnConnect()
 	m_pDemux->set_AC3Mode(TRUE);
   m_pDemux->AOnConnect();
   m_pDemux->SetRefClock();
+	m_patParser.SetCallBack(this);
 	Log("Filter:connect done...");
   return S_OK;
 }
@@ -208,40 +274,49 @@ HRESULT CRtspSourceFilter::OnConnect()
 STDMETHODIMP CRtspSourceFilter::Run(REFERENCE_TIME tStart)
 {
   m_pDemux->SetRefClock();
-	Log("Filter:run()");
-	float milliSecs=m_rtStartFrom.Millisecs();
-	milliSecs/=1000.0f;
-
-	m_buffer.Clear();
-  m_buffer.Run(true);
-	Log("Filter:play stream() from %f",milliSecs);
-  if (m_client.Play(milliSecs))
+	if (m_bReconfigureDemux==false)
 	{
-		Log("Filter:buffer...");
-		m_pOutputPin->UpdateStopStart();
-		m_client.FillBuffer( BUFFER_BEFORE_PLAY_SIZE);
-		Log("Filter:playing...");
+		Log("Filter:run()");
+		float milliSecs=m_rtStartFrom.Millisecs();
+		milliSecs/=1000.0f;
+
+		m_buffer.Clear();
+		m_buffer.Run(true);
+		Log("Filter:play stream() from %f",milliSecs);
+		if (m_client.Play(milliSecs))
+		{
+			Log("Filter:buffer...");
+			m_pOutputPin->UpdateStopStart();
+			m_client.FillBuffer( BUFFER_BEFORE_PLAY_SIZE);
+			Log("Filter:playing...");
+		}
+		else 
+		{	
+			Log("Filter:failed to play stream()");
+			m_buffer.Run(false);
+			return E_FAIL;
+		}
+		m_client.Run();
 	}
-	else 
-	{	
-		Log("Filter:failed to play stream()");
-    m_buffer.Run(false);
-		return E_FAIL;
-	}
-	m_client.Run();
 	return CSource::Run(tStart);
 }
 
 STDMETHODIMP CRtspSourceFilter::Stop()
 {
-	m_buffer.Run(false);
-  Log("Filter:stop client...");
-  m_client.Stop();
+	if (m_bReconfigureDemux==false)
+	{
+		m_buffer.Run(false);
+		Log("Filter:stop client...");
+		m_client.Stop();
+	}
 	Log("Filter:stop playing...");
 	HRESULT hr=CSource::Stop();
-	Log("Filter:clear buffer...");
-  m_buffer.Clear();
-	Log("Filter:stop done...%x",hr);
+	if (m_bReconfigureDemux==false)
+	{
+		Log("Filter:clear buffer...");
+		m_buffer.Clear();
+		Log("Filter:stop done...%x",hr);
+	}
 	return hr;
 }
 
@@ -269,6 +344,7 @@ void CRtspSourceFilter::GetStartStop(CRefTime &m_rtStart,CRefTime  &m_rtStop)
 
 void CRtspSourceFilter::Seek(CRefTime start)
 {
+	Log("CRtspSourceFilter::Seek()");
 	m_rtStartFrom=start;
 }
 
@@ -287,7 +363,7 @@ STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *
 	if (wcsstr(m_fileName,L"rtsp://")==NULL)
 	{
 		Log("Filter:using defailt filename");
-		wcscpy(m_fileName,L"rtsp://pcebeckers/stream1");
+		wcscpy(m_fileName,L"rtsp://192.168.100.102/stream1");
 	}
   if (wcsstr(m_fileName,L"stream")!=NULL)
   {
@@ -349,6 +425,7 @@ ULONG CRtspSourceFilter::GetMiscFlags()
 
 LONG CRtspSourceFilter::GetData(BYTE* pData, long size)
 {
+	if (m_bReconfigureDemux) return 0;
 	if (!m_client.IsRunning()) return 0;
   DWORD bytesRead= m_buffer.ReadFromBuffer(pData, size, 0);
   return bytesRead;
@@ -362,9 +439,10 @@ void CRtspSourceFilter::OnTsPacket(byte* tsPacket)
 
 void CRtspSourceFilter::OnRawDataReceived(BYTE *pbData, long lDataLength)
 {
-  if (m_State == State_Running) return;
+ // if (m_State == State_Running) return;
 	OnRawData(pbData, lDataLength);
 }
+
 ////////////////////////////////////////////////////////////////////////
 //
 // Exported entry points for registration and unregistration 
@@ -405,4 +483,3 @@ BOOL APIENTRY DllMain(HANDLE hModule,
 {
 	return DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
 }
-

@@ -33,9 +33,11 @@ CPatParser::CPatParser(void)
 {
   m_packetsToSkip=0;
   m_packetsReceived=0;
+	m_pCallback=NULL;
   Reset();
   SetTableId(0);
   SetPid(0);
+	m_iState=Idle;
 }
 
 CPatParser::~CPatParser(void)
@@ -43,7 +45,12 @@ CPatParser::~CPatParser(void)
   CleanUp();
 }
 
-void  CPatParser::CleanUp()
+void CPatParser::SetCallBack(IPatParserCallback* callback)
+{
+	m_pCallback=callback;
+}
+
+void CPatParser::CleanUp()
 {
   for (int i=0; i < m_pmtParsers.size();++i)
   {
@@ -51,6 +58,7 @@ void  CPatParser::CleanUp()
     delete parser;
   }
   m_pmtParsers.clear();
+	m_iPatTableVersion=-1;
 }
 
 void  CPatParser::Reset()
@@ -60,6 +68,7 @@ void  CPatParser::Reset()
 	CSectionDecoder::Reset();
   CleanUp();
   m_packetsReceived=0;
+	m_iState=Parsing;
 }
 
  
@@ -94,6 +103,7 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
 	}
 
   info.PidTable=parser->GetPidInfo();
+	m_iState=Idle;
 	return true;
 }
 
@@ -115,6 +125,16 @@ void CPatParser::OnTsPacket(byte* tsPacket)
     CSectionDecoder::OnTsPacket(tsPacket);
   }
 	
+	if (m_iState==Parsing && m_pCallback!=NULL)
+	{
+		CChannelInfo info;
+		if (GetChannel(0, info))
+		{
+			m_iState=Idle;
+			m_pCallback->OnNewChannel(info);
+			return ;
+		}
+	}
 }
 
 void CPatParser::OnNewSection(CSection& sections)
@@ -133,6 +153,13 @@ void CPatParser::OnNewSection(CSection& sections)
   int section_number = section[start+6];
   int last_section_number = section[start+7];
 
+	if (version_number!=m_iPatTableVersion)
+	{
+		Log("PatParser: new pat table %d->%d", m_iPatTableVersion,version_number);
+		CleanUp();
+		m_iPatTableVersion=version_number;
+		m_iState=Parsing;	
+	}
 //	  Log("DecodePat  %d section:%d lastsection:%d sectionlen:%d",
 //						  version_number,section_number,last_section_number,section_length);
 
@@ -166,7 +193,7 @@ void CPatParser::OnNewSection(CSection& sections)
 		  pmtParser->SetPid(pmtPid);
 			//pmtParser->SetPmtCallBack(this);
 		  m_pmtParsers.push_back( pmtParser );
-			Log("  add pmt# %d pid: %x",m_pmtParsers.size(), pmtPid);
+			Log("PatParser:  add pmt# %d pid: %x",m_pmtParsers.size(), pmtPid);
 			newPmtsAdded=true;
 	  }
   }
