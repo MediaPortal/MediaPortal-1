@@ -363,14 +363,20 @@ HRESULT Demux::UpdateDemuxPins(IBaseFilter* pDemux)
 			if (FAILED(CheckVideoPin(pDemux))){
 				// if we can't change the pin type to the new video make a new pin
 				muxInterface->DeleteOutputPin(PinName);
-				hr = NewVideoPin(muxInterface, PinName);
+				if (m_pids->vid!=0 || m_pids->mpeg4!=0 || m_pids->h264!=0)
+				{
+					hr = NewVideoPin(muxInterface, PinName);
+				}
 			}
 			if (connect){
 				// If old pin was already connected
 				IPin* pIPin;
 				if (SUCCEEDED(pDemux->FindPin(PinName, &pIPin))){
 					// Reconnect pin
-					RenderFilterPin(pIPin);
+					if (m_pids->vid!=0 || m_pids->mpeg4!=0 || m_pids->h264!=0)
+					{
+						RenderFilterPin(pIPin);
+					}
 					pIPin->Release();
 				}
 			}

@@ -212,7 +212,7 @@ HRESULT CRtspSourceFilter::OnConnect()
     {
       Sleep(10);
       DWORD elapsed=GetTickCount()-tickStart;
-      if (elapsed>3000)
+      if (elapsed>10000)
       {
 		    Log("Filter:OnConnect, no pat/pmt received in 3 secs...");
         m_client.Stop();
