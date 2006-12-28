@@ -302,7 +302,7 @@ namespace TvLibrary.Implementations.DVB
       _currentChannel = channel;
       SubmitTuneRequest(_tuneRequest);
 
-      SetupPmtGrabber(dvbcChannel.PmtPid);
+      //SetupPmtGrabber(dvbcChannel.PmtPid);
       return true;
     }
 

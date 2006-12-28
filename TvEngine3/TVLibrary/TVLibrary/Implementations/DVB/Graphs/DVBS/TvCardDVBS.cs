@@ -366,7 +366,7 @@ namespace TvLibrary.Implementations.DVB
         }
       }
 
-      SetupPmtGrabber(dvbsChannel.PmtPid);
+      //SetupPmtGrabber(dvbsChannel.PmtPid);
       return true;
     }
     /// <summary>

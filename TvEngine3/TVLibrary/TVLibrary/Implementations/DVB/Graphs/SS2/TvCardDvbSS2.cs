@@ -682,7 +682,7 @@ namespace TvLibrary.Implementations.DVB
       _newPMT = false;
       _newCA = false;
       //from submittunerequest
-      SetupPmtGrabber(pmtPid);
+//      SetupPmtGrabber(pmtPid);
       Log.Log.WriteFile("ss2:tune done:{0:X}",pmtPid);
       return true;
     }

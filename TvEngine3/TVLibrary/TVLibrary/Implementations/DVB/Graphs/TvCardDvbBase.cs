@@ -2376,17 +2376,21 @@ namespace TvLibrary.Implementations.DVB
 
         if (_newPMT)
         {
-          if (SendPmtToCam())
+          bool updatePids;
+          if (SendPmtToCam(out updatePids))
           {
             _newPMT = false;
-            if (_channelInfo != null)
+            if (updatePids)
             {
-              SetMpegPidMapping(_channelInfo);
-              SetChannel2MDPlug();
+              if (_channelInfo != null)
+              {
+                SetMpegPidMapping(_channelInfo);
+                SetChannel2MDPlug();
+              }
+              Log.Log.Info("dvb:stop tif");
+              if (_filterTIF != null)
+                _filterTIF.Stop();
             }
-            Log.Log.Info("dvb:stop tif");
-            if (_filterTIF != null)
-              _filterTIF.Stop();
           }
         }
       }
@@ -2475,7 +2479,8 @@ namespace TvLibrary.Implementations.DVB
         }
         _currentAudioStream = audioStream;
         _pmtVersion = -1;
-        SendPmtToCam();
+        bool updatePids;
+        SendPmtToCam(out updatePids);
       }
     }
     #endregion
@@ -2584,16 +2589,20 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("dvb:OnPMTReceived()");
         _newPMT = false;
         if (_graphRunning == false) return 0;
-        if (SendPmtToCam())
+        bool updatePids;
+        if (SendPmtToCam(out updatePids))
         {
-          if (_channelInfo != null)
+          if (updatePids)
           {
-            SetMpegPidMapping(_channelInfo);
-            SetChannel2MDPlug();
+            if (_channelInfo != null)
+            {
+              SetMpegPidMapping(_channelInfo);
+              SetChannel2MDPlug();
+            }
+            Log.Log.Info("dvb:stop tif");
+            if (_filterTIF != null)
+              _filterTIF.Stop();
           }
-          Log.Log.Info("dvb:stop tif");
-          if (_filterTIF != null)
-            _filterTIF.Stop();
         }
         else
         {
@@ -2611,10 +2620,11 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Sends the PMT to cam.
     /// </summary>
-    protected bool SendPmtToCam()
+    protected bool SendPmtToCam(out bool updatePids)
     {
       lock (this)
       {
+        updatePids = false;
         if (_mdapiFilter != null)
         {
           if (_newCA == false) return false;//cat not received yet
@@ -2654,6 +2664,7 @@ namespace TvLibrary.Implementations.DVB
                   }
                 }
 
+                updatePids = true;
                 Log.Log.WriteFile("dvb:SendPMT version:{0} len:{1} {2}", version, pmtLength, _channelInfo.caPMT.ProgramNumber);
                 if (_conditionalAccess != null)
                 {

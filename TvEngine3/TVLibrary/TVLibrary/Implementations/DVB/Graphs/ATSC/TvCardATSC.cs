@@ -313,7 +313,7 @@ namespace TvLibrary.Implementations.DVB
 
         _currentChannel = channel;
         SubmitTuneRequest(_tuneRequest);
-        SetupPmtGrabber(atscChannel.PmtPid);
+//        SetupPmtGrabber(atscChannel.PmtPid);
       }
       catch (Exception ex)
       {

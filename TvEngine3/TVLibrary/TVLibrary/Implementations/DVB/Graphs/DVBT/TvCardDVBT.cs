@@ -307,7 +307,7 @@ namespace TvLibrary.Implementations.DVB
         _currentChannel = channel;
         SubmitTuneRequest(_tuneRequest);
 
-        SetupPmtGrabber(dvbtChannel.PmtPid);
+//        SetupPmtGrabber(dvbtChannel.PmtPid);
       }
       catch (Exception ex)
       {
