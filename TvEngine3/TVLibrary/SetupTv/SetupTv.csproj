@@ -191,6 +191,9 @@
     <Compile Include="Sections\Combinations.Designer.cs">
       <DependentUpon>Combinations.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\ComboBoxEx .cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Sections\FormEditChannel.cs">
       <SubType>Form</SubType>
     </Compile>

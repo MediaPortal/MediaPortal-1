@@ -29,6 +29,7 @@ namespace SetupTv.Sections
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestService));
       this.progressBarQuality = new System.Windows.Forms.ProgressBar();
       this.progressBarLevel = new System.Windows.Forms.ProgressBar();
       this.label2 = new System.Windows.Forms.Label();
@@ -42,7 +43,7 @@ namespace SetupTv.Sections
       this.mpLabelTimeShift = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpCheckBoxTimeShift = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpCheckBoxRec = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpComboBoxChannels = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpComboBoxChannels = new ComboBoxEx();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpButtonTimeShift = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonRec = new MediaPortal.UserInterface.Controls.MPButton();
@@ -54,9 +55,10 @@ namespace SetupTv.Sections
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
       this.User = new System.Windows.Forms.ColumnHeader();
+      this.cardName = new System.Windows.Forms.ColumnHeader();
       this.buttonRestart = new System.Windows.Forms.Button();
       this.mpButtonReGrabEpg = new MediaPortal.UserInterface.Controls.MPButton();
-      this.cardName = new System.Windows.Forms.ColumnHeader();
+      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -283,6 +285,11 @@ namespace SetupTv.Sections
       this.User.Text = "User";
       this.User.Width = 100;
       // 
+      // cardName
+      // 
+      this.cardName.Text = "Card Name";
+      this.cardName.Width = 120;
+      // 
       // buttonRestart
       // 
       this.buttonRestart.Location = new System.Drawing.Point(250, 374);
@@ -303,10 +310,14 @@ namespace SetupTv.Sections
       this.mpButtonReGrabEpg.UseVisualStyleBackColor = true;
       this.mpButtonReGrabEpg.Click += new System.EventHandler(this.mpButtonReGrabEpg_Click);
       // 
-      // cardName
+      // imageList1
       // 
-      this.cardName.Text = "Card Name";
-      this.cardName.Width = 120;
+      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+      this.imageList1.Images.SetKeyName(0, "radio_scrambled.png");
+      this.imageList1.Images.SetKeyName(1, "tv_fta_.png");
+      this.imageList1.Images.SetKeyName(2, "tv_scrambled.png");
+      this.imageList1.Images.SetKeyName(3, "radio_fta_.png");
       // 
       // TestService
       // 
@@ -341,7 +352,7 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabelChannel;
     private System.Windows.Forms.Label label12;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxChannels;
+    private ComboBoxEx mpComboBoxChannels;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPCheckBox mpCheckBoxTimeShift;
     private MediaPortal.UserInterface.Controls.MPCheckBox mpCheckBoxRec;
@@ -360,5 +371,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader5;
     private System.Windows.Forms.ColumnHeader User;
     private System.Windows.Forms.ColumnHeader cardName;
+    private System.Windows.Forms.ImageList imageList1;
   }
 }

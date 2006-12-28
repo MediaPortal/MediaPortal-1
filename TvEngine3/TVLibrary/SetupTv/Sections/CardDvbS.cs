@@ -144,6 +144,7 @@ namespace SetupTv.Sections
     {
       if (context.Url == null) return;
       if (context.Url.Length == 0) return;
+      if (!context.Url.ToLower().StartsWith("http://")) return;
       string itemLine = String.Format("Downloading transponders for:{0}", context.SatteliteName);
       ListViewItem item = listViewStatus.Items.Add(new ListViewItem(itemLine));
       item.EnsureVisible();

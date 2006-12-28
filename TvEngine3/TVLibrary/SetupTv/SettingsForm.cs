@@ -174,7 +174,7 @@ namespace SetupTv
         AddSection(new TvSchedules());
         AddSection(new StreamingServer());
 
-        AddSection(new TestService());
+        AddSection(new TestService("Manual Control"));
 
         SectionSettings pluginsRoot = new SectionSettings("Plugins");
         AddSection(pluginsRoot);

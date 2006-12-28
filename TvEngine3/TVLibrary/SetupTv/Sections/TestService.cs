@@ -47,6 +47,7 @@ namespace SetupTv.Sections
       : base(name)
     {
       InitializeComponent();
+      mpComboBoxChannels.ImageList = imageList1;
     }
 
 
@@ -64,7 +65,11 @@ namespace SetupTv.Sections
       foreach (Channel ch in channels)
       {
         if (ch.IsTv == false) continue;
-        mpComboBoxChannels.Items.Add(ch.Name);
+        int imageIndex = 1;
+        if (ch.FreeToAir == false)
+          imageIndex = 2;
+        ComboBoxExItem item = new ComboBoxExItem(ch.Name, imageIndex);
+        mpComboBoxChannels.Items.Add(item);
 
       }
       if (mpComboBoxChannels.Items.Count > 0)
