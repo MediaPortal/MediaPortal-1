@@ -270,7 +270,7 @@ namespace SetupTv.Sections
         if (notmapped)
         {
           if (builder.Length > 0) builder.Append(",");
-          builder.Append("No tuning information");
+          builder.Append("Channel not mapped to a card");
         }
         if (dvbc)
         {
@@ -961,6 +961,7 @@ namespace SetupTv.Sections
       FormEditChannel dlg = new FormEditChannel();
       dlg.Channel = null;
       dlg.ShowDialog(this);
+      OnSectionActivated();
     }
   }
 }

@@ -90,96 +90,184 @@ namespace SetupTv.Sections
         TvBusinessLayer layer = new TvBusinessLayer();
         if (textBoxChannel.Text.Length != 0)
         {
-          AnalogChannel analogChannel = new AnalogChannel();
-          analogChannel.IsTv = true;
-          analogChannel.Name = _channel.Name;
-          analogChannel.ChannelNumber = Int32.Parse(textBoxChannel.Text);
-          analogChannel.Country = countries.GetTunerCountryFromID(comboBoxCountry.SelectedIndex);
-          if (comboBoxInput.SelectedIndex == 1)
-            analogChannel.TunerSource = TunerInputType.Cable;
-          else
-            analogChannel.TunerSource = TunerInputType.Antenna;
-          analogChannel.VideoSource = (AnalogChannel.VideoInputType)comboBoxVideoSource.SelectedIndex;
-          analogChannel.Frequency = (int)GetFrequency(textBoxAnalogFrequency.Text);
-          layer.AddTuningDetails(_channel, analogChannel);
-
-          //atsc
-          if (textBoxProgram.Text.Length != 0)
+          if (comboBoxCountry.SelectedIndex >= 0 && comboBoxVideoSource.SelectedIndex >= 0)
           {
-            ATSCChannel atscChannel = new ATSCChannel();
-            analogChannel.IsTv = true;
-            analogChannel.Name = _channel.Name;
-            atscChannel.PhysicalChannel = Int32.Parse(textBoxProgram.Text);
-            atscChannel.MajorChannel = Int32.Parse(textBoxMajor.Text);
-            atscChannel.MinorChannel = Int32.Parse(textBoxMinor.Text);
-            atscChannel.AudioPid = Int32.Parse(textBoxAudioPid.Text);
-            atscChannel.VideoPid = Int32.Parse(textBoxVideoPid.Text);
-            layer.AddTuningDetails(_channel, atscChannel);
-          }
-          //dvbc
-          if (textboxFreq.Text.Length != 0)
-          {
-            DVBCChannel dvbcChannel = new DVBCChannel();
-            dvbcChannel.IsTv = true;
-            dvbcChannel.Name = _channel.Name;
-            dvbcChannel.Frequency = Int32.Parse(textboxFreq.Text);
-            dvbcChannel.NetworkId = Int32.Parse(textBoxONID.Text);
-            dvbcChannel.TransportId = Int32.Parse(textBoxTSID.Text);
-            dvbcChannel.ServiceId = Int32.Parse(textBoxSID.Text);
-            dvbcChannel.SymbolRate = Int32.Parse(textBoxSymbolRate.Text);
-            layer.AddTuningDetails(_channel, dvbcChannel);
-          }
-          //dvbs
-          if (textBox5.Text.Length != 0)
-          {
-            DVBSChannel dvbsChannel = new DVBSChannel();
-            dvbsChannel.IsTv = true;
-            dvbsChannel.Name = _channel.Name;
-            dvbsChannel.Frequency = Int32.Parse(textBox5.Text);
-            dvbsChannel.NetworkId = Int32.Parse(textBox4.Text);
-            dvbsChannel.TransportId = Int32.Parse(textBox3.Text);
-            dvbsChannel.ServiceId = Int32.Parse(textBox2.Text);
-            dvbsChannel.SymbolRate = Int32.Parse(textBox1.Text);
-            dvbsChannel.SwitchingFrequency = Int32.Parse(textBoxSwitch.Text);
-            switch (comboBoxPol.SelectedIndex)
+            int channelNumber;
+            if (Int32.TryParse(textBoxChannel.Text, out channelNumber))
             {
-              case 0:
-                dvbsChannel.Polarisation = Polarisation.LinearH;
-                break;
-              case 1:
-                dvbsChannel.Polarisation = Polarisation.LinearV;
-                break;
-              case 2:
-                dvbsChannel.Polarisation = Polarisation.CircularL;
-                break;
-              case 3:
-                dvbsChannel.Polarisation = Polarisation.CircularR;
-                break;
-            }
-            dvbsChannel.DisEqc = (DisEqcType)comboBoxDisEqc.SelectedIndex;
-            layer.AddTuningDetails(_channel, dvbsChannel);
-          }
+              AnalogChannel analogChannel = new AnalogChannel();
+              analogChannel.IsTv = true;
+              analogChannel.Name = _channel.Name;
+              analogChannel.ChannelNumber = channelNumber;
+              analogChannel.Country = countries.Countries[comboBoxCountry.SelectedIndex];
+              if (comboBoxInput.SelectedIndex == 1)
+                analogChannel.TunerSource = TunerInputType.Cable;
+              else
+                analogChannel.TunerSource = TunerInputType.Antenna;
+              analogChannel.VideoSource = (AnalogChannel.VideoInputType)comboBoxVideoSource.SelectedIndex;
+              analogChannel.Frequency = (int)GetFrequency(textBoxAnalogFrequency.Text);
 
-          //dvbt
-          if (textBox9.Text.Length != 0)
-          {
-            DVBTChannel dvbtChannel = new DVBTChannel();
-            dvbtChannel.IsTv = true;
-            dvbtChannel.Name = _channel.Name;
-            dvbtChannel.Frequency = Int32.Parse(textBox9.Text);
-            dvbtChannel.NetworkId = Int32.Parse(textBox8.Text);
-            dvbtChannel.TransportId = Int32.Parse(textBox7.Text);
-            dvbtChannel.ServiceId = Int32.Parse(textBox6.Text);
-            if (comboBoxBandWidth.SelectedIndex == 0)
-              dvbtChannel.BandWidth = 7;
-            else
-              dvbtChannel.BandWidth = 8;
-            layer.AddTuningDetails(_channel, dvbtChannel);
+              layer.AddTuningDetails(_channel, analogChannel);
+            }
           }
-          this.Close();
         }
+        //atsc
+
+        if (textBoxProgram.Text.Length != 0)
+        {
+          int physical, major, minor, audio, video;
+          if (Int32.TryParse(textBoxProgram.Text, out physical))
+          {
+            if (Int32.TryParse(textBoxMajor.Text, out major))
+            {
+              if (Int32.TryParse(textBoxMinor.Text, out minor))
+              {
+                if (Int32.TryParse(textBoxAudioPid.Text, out audio))
+                {
+                  if (Int32.TryParse(textBoxVideoPid.Text, out video))
+                  {
+                    if (physical > 0 && major >= 0 && minor >= 0)
+                    {
+                      ATSCChannel atscChannel = new ATSCChannel();
+                      atscChannel.IsTv = true;
+                      atscChannel.Name = _channel.Name;
+                      atscChannel.PhysicalChannel = physical;
+                      atscChannel.MajorChannel = major;
+                      atscChannel.MinorChannel = minor;
+                      atscChannel.AudioPid = audio;
+                      atscChannel.VideoPid = video;
+                      layer.AddTuningDetails(_channel, atscChannel);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        //dvbc
+        if (textboxFreq.Text.Length != 0)
+        {
+          int freq, onid, tsid, sid, symbolrate;
+          if (Int32.TryParse(textboxFreq.Text, out freq))
+          {
+            if (Int32.TryParse(textBoxONID.Text, out onid))
+            {
+              if (Int32.TryParse(textBoxTSID.Text, out tsid))
+              {
+                if (Int32.TryParse(textBoxSID.Text, out sid))
+                {
+                  if (Int32.TryParse(textBoxSymbolRate.Text, out symbolrate))
+                  {
+                    if (onid > 0 && tsid >= 0 && sid >= 0)
+                    {
+                      DVBCChannel dvbcChannel = new DVBCChannel();
+                      dvbcChannel.IsTv = true;
+                      dvbcChannel.Name = _channel.Name;
+                      dvbcChannel.Frequency = freq;
+                      dvbcChannel.NetworkId = onid;
+                      dvbcChannel.TransportId = tsid;
+                      dvbcChannel.ServiceId = sid;
+                      dvbcChannel.SymbolRate = symbolrate;
+                      layer.AddTuningDetails(_channel, dvbcChannel);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        //dvbs
+
+        if (textBox5.Text.Length != 0)
+        {
+          int freq, onid, tsid, sid, symbolrate, switchfreq;
+          if (Int32.TryParse(textBox5.Text, out freq))
+          {
+            if (Int32.TryParse(textBox4.Text, out onid))
+            {
+              if (Int32.TryParse(textBox3.Text, out tsid))
+              {
+                if (Int32.TryParse(textBox2.Text, out sid))
+                {
+                  if (Int32.TryParse(textBox1.Text, out symbolrate))
+                  {
+                    if (Int32.TryParse(textBoxSwitch.Text, out switchfreq))
+                    {
+                      if (onid > 0 && tsid >= 0 && sid >= 0)
+                      {
+                        DVBSChannel dvbsChannel = new DVBSChannel();
+                        dvbsChannel.IsTv = true;
+                        dvbsChannel.Name = _channel.Name;
+                        dvbsChannel.Frequency = freq;
+                        dvbsChannel.NetworkId = onid;
+                        dvbsChannel.TransportId = tsid;
+                        dvbsChannel.ServiceId = sid;
+                        dvbsChannel.SymbolRate = symbolrate;
+                        dvbsChannel.SwitchingFrequency = switchfreq;
+                        switch (comboBoxPol.SelectedIndex)
+                        {
+                          case 0:
+                            dvbsChannel.Polarisation = Polarisation.LinearH;
+                            break;
+                          case 1:
+                            dvbsChannel.Polarisation = Polarisation.LinearV;
+                            break;
+                          case 2:
+                            dvbsChannel.Polarisation = Polarisation.CircularL;
+                            break;
+                          case 3:
+                            dvbsChannel.Polarisation = Polarisation.CircularR;
+                            break;
+                        }
+                        dvbsChannel.DisEqc = (DisEqcType)comboBoxDisEqc.SelectedIndex;
+                        layer.AddTuningDetails(_channel, dvbsChannel);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        //dvbt
+        if (textBox9.Text.Length != 0)
+        {
+          int freq, onid, tsid, sid;
+          if (Int32.TryParse(textBox9.Text, out freq))
+          {
+            if (Int32.TryParse(textBox8.Text, out onid))
+            {
+              if (Int32.TryParse(textBox7.Text, out tsid))
+              {
+                if (Int32.TryParse(textBox6.Text, out sid))
+                {
+                  if (onid > 0 && tsid >= 0 && sid >= 0)
+                  {
+                    DVBTChannel dvbtChannel = new DVBTChannel();
+                    dvbtChannel.IsTv = true;
+                    dvbtChannel.Name = _channel.Name;
+                    dvbtChannel.Frequency = freq;
+                    dvbtChannel.NetworkId = onid;
+                    dvbtChannel.TransportId = tsid;
+                    dvbtChannel.ServiceId = sid;
+                    if (comboBoxBandWidth.SelectedIndex == 0)
+                      dvbtChannel.BandWidth = 7;
+                    else
+                      dvbtChannel.BandWidth = 8;
+                    layer.AddTuningDetails(_channel, dvbtChannel);
+                  }
+                }
+              }
+            }
+          }
+        }
+        this.Close();
         return;
       }
+
+
       //general tab
       _channel.Name = textBoxName.Text;
       _channel.VisibleInGuide = checkBoxVisibleInTvGuide.Checked;
@@ -190,7 +278,7 @@ namespace SetupTv.Sections
         if (detail.ChannelType == 0)
         {
           detail.ChannelNumber = Int32.Parse(textBoxChannel.Text);
-          detail.CountryId = comboBoxCountry.SelectedIndex;
+          detail.CountryId = countries.Countries[comboBoxCountry.SelectedIndex].Id;
           if (comboBoxInput.SelectedIndex == 1)
             detail.TuningSource = (int)TunerInputType.Cable;
           else
@@ -275,7 +363,7 @@ namespace SetupTv.Sections
       if (Channel == null)
       {
         _newChannel = true;
-        Channel = new Channel("", false, true, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "",true);
+        Channel = new Channel("", false, true, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "", true);
       }
       CountryCollection countries = new CountryCollection();
       for (int i = 0; i < countries.Countries.Length; ++i)
@@ -296,11 +384,11 @@ namespace SetupTv.Sections
 
       if (_newChannel)
       {
-         _analog = true;
-         _dvbt = true;
-         _dvbc = true;
-         _dvbs = true;
-         _atsc = true;
+        _analog = true;
+        _dvbt = true;
+        _dvbc = true;
+        _dvbs = true;
+        _atsc = true;
         textBoxChannel.Text = "";
         textBoxProgram.Text = "";
         textboxFreq.Text = "";
