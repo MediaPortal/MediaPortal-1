@@ -46,11 +46,25 @@ namespace SetupTv.Sections
     bool _dvbs = false;
     bool _atsc = false;
     bool _newChannel = false;
+    bool _isTv = true;
     Channel _channel;
     public FormEditChannel()
     {
       InitializeComponent();
     }
+
+    public bool IsTv
+    {
+      get
+      {
+        return _isTv;
+      }
+      set
+      {
+        _isTv = value;
+      }
+    }
+
 
     public Channel Channel
     {
@@ -83,7 +97,8 @@ namespace SetupTv.Sections
         }
         _channel.Name = textBoxName.Text;
         _channel.VisibleInGuide = checkBoxVisibleInTvGuide.Checked;
-        _channel.IsTv = true;
+        _channel.IsTv = _isTv;
+        _channel.IsRadio = !_isTv;
         _channel.Persist();
 
         //analog
@@ -96,7 +111,8 @@ namespace SetupTv.Sections
             if (Int32.TryParse(textBoxChannel.Text, out channelNumber))
             {
               AnalogChannel analogChannel = new AnalogChannel();
-              analogChannel.IsTv = true;
+              analogChannel.IsTv = _isTv;
+              analogChannel.IsRadio = !_isTv;
               analogChannel.Name = _channel.Name;
               analogChannel.ChannelNumber = channelNumber;
               analogChannel.Country = countries.Countries[comboBoxCountry.SelectedIndex];
@@ -129,7 +145,8 @@ namespace SetupTv.Sections
                     if (physical > 0 && major >= 0 && minor >= 0)
                     {
                       ATSCChannel atscChannel = new ATSCChannel();
-                      atscChannel.IsTv = true;
+                      atscChannel.IsTv = _isTv;
+                      atscChannel.IsRadio = !_isTv;
                       atscChannel.Name = _channel.Name;
                       atscChannel.PhysicalChannel = physical;
                       atscChannel.MajorChannel = major;
@@ -162,7 +179,8 @@ namespace SetupTv.Sections
                     if (onid > 0 && tsid >= 0 && sid >= 0)
                     {
                       DVBCChannel dvbcChannel = new DVBCChannel();
-                      dvbcChannel.IsTv = true;
+                      dvbcChannel.IsTv = _isTv;
+                      dvbcChannel.IsRadio = !_isTv;
                       dvbcChannel.Name = _channel.Name;
                       dvbcChannel.Frequency = freq;
                       dvbcChannel.NetworkId = onid;
@@ -197,7 +215,8 @@ namespace SetupTv.Sections
                       if (onid > 0 && tsid >= 0 && sid >= 0)
                       {
                         DVBSChannel dvbsChannel = new DVBSChannel();
-                        dvbsChannel.IsTv = true;
+                        dvbsChannel.IsTv = _isTv;
+                        dvbsChannel.IsRadio = !_isTv;
                         dvbsChannel.Name = _channel.Name;
                         dvbsChannel.Frequency = freq;
                         dvbsChannel.NetworkId = onid;
@@ -251,7 +270,8 @@ namespace SetupTv.Sections
                   if (onid > 0 && tsid >= 0 && sid >= 0)
                   {
                     DVBTChannel dvbtChannel = new DVBTChannel();
-                    dvbtChannel.IsTv = true;
+                    dvbtChannel.IsTv = _isTv;
+                    dvbtChannel.IsRadio = !_isTv;
                     dvbtChannel.Name = _channel.Name;
                     dvbtChannel.Frequency = freq;
                     dvbtChannel.NetworkId = onid;

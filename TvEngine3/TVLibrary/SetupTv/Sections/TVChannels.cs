@@ -967,5 +967,20 @@ namespace SetupTv.Sections
       dlg.ShowDialog(this);
       OnSectionActivated();
     }
+
+    private void mpButtonDeleteEncrypted_Click(object sender, EventArgs e)
+    {
+      foreach (ListViewItem item in mpListView1.SelectedItems)
+      {
+        Channel channel = (Channel)item.Tag;
+        if (channel.FreeToAir == false)
+        {
+          channel.Delete();
+          mpListView1.Items.Remove(item);
+        }
+      }
+      ReOrder();
+      RemoteControl.Instance.OnNewSchedule();
+    }
   }
 }

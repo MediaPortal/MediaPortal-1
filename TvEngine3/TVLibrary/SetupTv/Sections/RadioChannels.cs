@@ -135,6 +135,7 @@ namespace SetupTv.Sections
         item.SubItems.Add(details[3]);
       }
       mpListView1.EndUpdate();
+      ReOrder();
     }
 
     private void buttonDelete_Click(object sender, EventArgs e)
@@ -146,12 +147,115 @@ namespace SetupTv.Sections
         mpListView1.Items.Remove(item);
       }
       //DatabaseManager.Instance.SaveChanges();
+      ReOrder();
       RemoteControl.Instance.OnNewSchedule();
     }
 
     private void mpListView1_ItemDrag(object sender, ItemDragEventArgs e)
     {
+      ReOrder();
+    }
 
+    private void buttonUtp_Click(object sender, EventArgs e)
+    {
+      mpListView1.BeginUpdate();
+      ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
+      if (indexes.Count == 0) return;
+      for (int i = 0; i < indexes.Count; ++i)
+      {
+        int index = indexes[i];
+        if (index > 0)
+        {
+          ListViewItem item = mpListView1.Items[index];
+          mpListView1.Items.RemoveAt(index);
+          mpListView1.Items.Insert(index - 1, item);
+        }
+      }
+      ReOrder();
+      mpListView1.EndUpdate();
+    }
+
+    void ReOrder()
+    {
+      for (int i = 0; i < mpListView1.Items.Count; ++i)
+      {
+        mpListView1.Items[i].Text = (i + 1).ToString();
+
+        Channel channel = (Channel)mpListView1.Items[i].Tag;
+        if (channel.SortOrder != i)
+        {
+          channel.SortOrder = i;
+          channel.Persist();
+        }
+      }
+    }
+
+    private void mpButtonEdit_Click(object sender, EventArgs e)
+    {
+      ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
+      if (indexes.Count == 0) return;
+      Channel channel = (Channel)mpListView1.Items[indexes[0]].Tag;
+      FormEditChannel dlg = new FormEditChannel();
+      dlg.Channel = channel;
+      dlg.ShowDialog(this);
+      channel.Persist();
+      OnSectionActivated();
+    }
+
+    private void buttonDown_Click(object sender, EventArgs e)
+    {
+      mpListView1.BeginUpdate();
+      ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
+      if (indexes.Count == 0) return;
+      for (int i = indexes.Count - 1; i >= 0; i--)
+      {
+        int index = indexes[i];
+        if (index > 0 && index + 1 < mpListView1.Items.Count)
+        {
+          ListViewItem item = mpListView1.Items[index];
+          mpListView1.Items.RemoveAt(index);
+          mpListView1.Items.Insert(index + 1, item);
+        }
+      }
+      ReOrder();
+      mpListView1.EndUpdate();
+    }
+
+    private void mpButtonDel_Click(object sender, EventArgs e)
+    {
+      mpListView1.BeginUpdate();
+      foreach (ListViewItem item in mpListView1.SelectedItems)
+      {
+        Channel channel = (Channel)item.Tag;
+        channel.Delete();
+        mpListView1.Items.Remove(item);
+      }
+      mpListView1.EndUpdate();
+      ReOrder();
+    }
+
+    private void mpButtonAdd_Click(object sender, EventArgs e)
+    {
+      FormEditChannel dlg = new FormEditChannel();
+      dlg.Channel = null;
+      dlg.IsTv = false;
+      dlg.ShowDialog(this);
+      OnSectionActivated();
+    }
+
+    private void mpButtonDeleteEncrypted_Click(object sender, EventArgs e)
+    {
+      foreach (ListViewItem item in mpListView1.SelectedItems)
+      {
+        Channel channel = (Channel)item.Tag;
+        if (channel.FreeToAir == false)
+        {
+          channel.Delete();
+          mpListView1.Items.Remove(item);
+        }
+      }
+      ReOrder();
+      RemoteControl.Instance.OnNewSchedule();
     }
   }
 }

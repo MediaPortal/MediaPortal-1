@@ -33,6 +33,7 @@ namespace SetupTv.Sections
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.hdrhekje = new System.Windows.Forms.ColumnHeader();
       this.hdrName = new System.Windows.Forms.ColumnHeader();
+      this.hdrProvider = new System.Windows.Forms.ColumnHeader();
       this.hdrTypes = new System.Windows.Forms.ColumnHeader();
       this.hdrDetail1 = new System.Windows.Forms.ColumnHeader();
       this.hdrDetail2 = new System.Windows.Forms.ColumnHeader();
@@ -55,7 +56,7 @@ namespace SetupTv.Sections
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.mpButtonAdd = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonPreview = new MediaPortal.UserInterface.Controls.MPButton();
-      this.hdrProvider = new System.Windows.Forms.ColumnHeader();
+      this.mpButtonDeleteEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
       this.contextMenuStrip1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -99,6 +100,10 @@ namespace SetupTv.Sections
       // 
       this.hdrName.Text = "Name";
       this.hdrName.Width = 100;
+      // 
+      // hdrProvider
+      // 
+      this.hdrProvider.Text = "Provider";
       // 
       // hdrTypes
       // 
@@ -157,7 +162,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonClear
       // 
-      this.mpButtonClear.Location = new System.Drawing.Point(394, 328);
+      this.mpButtonClear.Location = new System.Drawing.Point(394, 327);
       this.mpButtonClear.Name = "mpButtonClear";
       this.mpButtonClear.Size = new System.Drawing.Size(51, 23);
       this.mpButtonClear.TabIndex = 1;
@@ -249,6 +254,7 @@ namespace SetupTv.Sections
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.mpButtonDeleteEncrypted);
       this.tabPage1.Controls.Add(this.mpButtonAdd);
       this.tabPage1.Controls.Add(this.mpButtonPreview);
       this.tabPage1.Controls.Add(this.mpListView1);
@@ -288,9 +294,15 @@ namespace SetupTv.Sections
       this.mpButtonPreview.UseVisualStyleBackColor = true;
       this.mpButtonPreview.Click += new System.EventHandler(this.mpButtonPreview_Click);
       // 
-      // hdrProvider
+      // mpButtonDeleteEncrypted
       // 
-      this.hdrProvider.Text = "Provider";
+      this.mpButtonDeleteEncrypted.Location = new System.Drawing.Point(342, 351);
+      this.mpButtonDeleteEncrypted.Name = "mpButtonDeleteEncrypted";
+      this.mpButtonDeleteEncrypted.Size = new System.Drawing.Size(103, 23);
+      this.mpButtonDeleteEncrypted.TabIndex = 10;
+      this.mpButtonDeleteEncrypted.Text = "Delete Scrambled";
+      this.mpButtonDeleteEncrypted.UseVisualStyleBackColor = true;
+      this.mpButtonDeleteEncrypted.Click += new System.EventHandler(this.mpButtonDeleteEncrypted_Click);
       // 
       // TvChannels
       // 
@@ -336,5 +348,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPButton mpButtonAdd;
     private System.Windows.Forms.ColumnHeader hdrDetail3;
     private System.Windows.Forms.ColumnHeader hdrProvider;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonDeleteEncrypted;
   }
 }

@@ -37,8 +37,14 @@ namespace SetupTv.Sections
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-      this.buttonDelete = new System.Windows.Forms.Button();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+      this.buttonDelete = new System.Windows.Forms.Button();
+      this.mpButtonAdd = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonDel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonEdit = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonDown = new System.Windows.Forms.Button();
+      this.buttonUtp = new System.Windows.Forms.Button();
+      this.mpButtonDeleteEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
       // columnHeader4
@@ -72,7 +78,7 @@ namespace SetupTv.Sections
       this.mpListView1.LargeImageList = this.imageList1;
       this.mpListView1.Location = new System.Drawing.Point(14, 30);
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(438, 309);
+      this.mpListView1.Size = new System.Drawing.Size(438, 302);
       this.mpListView1.SmallImageList = this.imageList1;
       this.mpListView1.TabIndex = 1;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
@@ -89,16 +95,6 @@ namespace SetupTv.Sections
       this.columnHeader3.Text = "Types";
       this.columnHeader3.Width = 90;
       // 
-      // buttonDelete
-      // 
-      this.buttonDelete.Location = new System.Drawing.Point(377, 345);
-      this.buttonDelete.Name = "buttonDelete";
-      this.buttonDelete.Size = new System.Drawing.Size(75, 23);
-      this.buttonDelete.TabIndex = 2;
-      this.buttonDelete.Text = "Delete";
-      this.buttonDelete.UseVisualStyleBackColor = true;
-      this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
-      // 
       // imageList1
       // 
       this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
@@ -108,10 +104,86 @@ namespace SetupTv.Sections
       this.imageList1.Images.SetKeyName(2, "tv_scrambled.png");
       this.imageList1.Images.SetKeyName(3, "radio_fta_.png");
       // 
+      // buttonDelete
+      // 
+      this.buttonDelete.Location = new System.Drawing.Point(131, 338);
+      this.buttonDelete.Name = "buttonDelete";
+      this.buttonDelete.Size = new System.Drawing.Size(75, 23);
+      this.buttonDelete.TabIndex = 2;
+      this.buttonDelete.Text = "Delete";
+      this.buttonDelete.UseVisualStyleBackColor = true;
+      this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
+      // 
+      // mpButtonAdd
+      // 
+      this.mpButtonAdd.Location = new System.Drawing.Point(131, 363);
+      this.mpButtonAdd.Name = "mpButtonAdd";
+      this.mpButtonAdd.Size = new System.Drawing.Size(54, 23);
+      this.mpButtonAdd.TabIndex = 14;
+      this.mpButtonAdd.Text = "Add";
+      this.mpButtonAdd.UseVisualStyleBackColor = true;
+      this.mpButtonAdd.Click += new System.EventHandler(this.mpButtonAdd_Click);
+      // 
+      // mpButtonDel
+      // 
+      this.mpButtonDel.Location = new System.Drawing.Point(67, 362);
+      this.mpButtonDel.Name = "mpButtonDel";
+      this.mpButtonDel.Size = new System.Drawing.Size(54, 23);
+      this.mpButtonDel.TabIndex = 10;
+      this.mpButtonDel.Text = "Delete";
+      this.mpButtonDel.UseVisualStyleBackColor = true;
+      this.mpButtonDel.Click += new System.EventHandler(this.mpButtonDel_Click);
+      // 
+      // mpButtonEdit
+      // 
+      this.mpButtonEdit.Location = new System.Drawing.Point(67, 338);
+      this.mpButtonEdit.Name = "mpButtonEdit";
+      this.mpButtonEdit.Size = new System.Drawing.Size(58, 23);
+      this.mpButtonEdit.TabIndex = 13;
+      this.mpButtonEdit.Text = "Edit";
+      this.mpButtonEdit.UseVisualStyleBackColor = true;
+      this.mpButtonEdit.Click += new System.EventHandler(this.mpButtonEdit_Click);
+      // 
+      // buttonDown
+      // 
+      this.buttonDown.Location = new System.Drawing.Point(17, 362);
+      this.buttonDown.Name = "buttonDown";
+      this.buttonDown.Size = new System.Drawing.Size(44, 23);
+      this.buttonDown.TabIndex = 12;
+      this.buttonDown.Text = "Down";
+      this.buttonDown.UseVisualStyleBackColor = true;
+      this.buttonDown.Click += new System.EventHandler(this.buttonDown_Click);
+      // 
+      // buttonUtp
+      // 
+      this.buttonUtp.Location = new System.Drawing.Point(17, 338);
+      this.buttonUtp.Name = "buttonUtp";
+      this.buttonUtp.Size = new System.Drawing.Size(44, 23);
+      this.buttonUtp.TabIndex = 11;
+      this.buttonUtp.Text = "Up";
+      this.buttonUtp.UseVisualStyleBackColor = true;
+      this.buttonUtp.Click += new System.EventHandler(this.buttonUtp_Click);
+      // 
+      // mpButtonDeleteEncrypted
+      // 
+      this.mpButtonDeleteEncrypted.Location = new System.Drawing.Point(212, 338);
+      this.mpButtonDeleteEncrypted.Name = "mpButtonDeleteEncrypted";
+      this.mpButtonDeleteEncrypted.Size = new System.Drawing.Size(103, 23);
+      this.mpButtonDeleteEncrypted.TabIndex = 15;
+      this.mpButtonDeleteEncrypted.Text = "Delete Scrambled";
+      this.mpButtonDeleteEncrypted.UseVisualStyleBackColor = true;
+      this.mpButtonDeleteEncrypted.Click += new System.EventHandler(this.mpButtonDeleteEncrypted_Click);
+      // 
       // RadioChannels
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.mpButtonDeleteEncrypted);
+      this.Controls.Add(this.mpButtonAdd);
+      this.Controls.Add(this.mpButtonDel);
+      this.Controls.Add(this.mpButtonEdit);
+      this.Controls.Add(this.buttonDown);
+      this.Controls.Add(this.buttonUtp);
       this.Controls.Add(this.buttonDelete);
       this.Controls.Add(this.mpListView1);
       this.Name = "RadioChannels";
@@ -131,5 +203,11 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader3;
     private System.Windows.Forms.Button buttonDelete;
     private System.Windows.Forms.ImageList imageList1;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonAdd;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonDel;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonEdit;
+    private System.Windows.Forms.Button buttonDown;
+    private System.Windows.Forms.Button buttonUtp;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonDeleteEncrypted;
   }
 }
