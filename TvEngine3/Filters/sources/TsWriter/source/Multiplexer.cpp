@@ -189,6 +189,7 @@ int CMultiplexer::OnNewPesPacket(CPesDecoder* decoder)
   if (streamId==decoder->GetStreamId())
   {
 		CPesPacket& packet=decoder->m_packet;
+		/*
 		if (!m_bVideoStartFound)
 		{
 			if (decoder->GetStreamId()==0xe0)
@@ -201,7 +202,7 @@ int CMultiplexer::OnNewPesPacket(CPesDecoder* decoder)
 		{
 			packet.Skip();
 			return 0; 
-		}
+		}*/
     mpeg_mux_write_packet(packet,decoder->GetStreamId());
   }
   return 0;
