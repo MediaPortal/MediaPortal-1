@@ -1137,6 +1137,7 @@ namespace TvPlugin
     {
       if (channel == null)
       {
+        MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): channel==null");
         return false;
       }
       MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.Name);
@@ -1148,9 +1149,15 @@ namespace TvPlugin
         if ((g_Player.IsMusic && g_Player.HasVideo)) return true;
       }
 
-      if (channel.IdChannel != Navigator.Channel.IdChannel)
-        Navigator.LastViewedChannel = Navigator.Channel;
-
+      if (Navigator.Channel != null)
+      {
+        if (channel.IdChannel != Navigator.Channel.IdChannel)
+          Navigator.LastViewedChannel = Navigator.Channel;
+      }
+      else
+      {
+        MediaPortal.GUI.Library.Log.Info("Navigator.Channel==null");
+      }
       string errorMessage;
       TvResult succeeded;
       if (TVHome.Card != null)
@@ -1183,7 +1190,7 @@ namespace TvPlugin
       VirtualCard card;
       succeeded = RemoteControl.Instance.StartTimeShifting(channel.IdChannel, new User(), out card);
       TVHome.Card = card;
-      MediaPortal.GUI.Library.Log.Info("succeeded:{0} scrambled:{1}", succeeded, TVHome.Card.IsScrambled);
+      MediaPortal.GUI.Library.Log.Info("succeeded:{0} ", succeeded);
       if (succeeded == TvResult.Succeeded)
       {
         //timeshifting succeeded
@@ -1504,7 +1511,6 @@ namespace TvPlugin
 
     private List<ChannelGroup> m_groups = new List<ChannelGroup>(); // Contains all channel groups (including an "all channels" group)
     private int m_currentgroup = 0;
-    private string m_currentchannel = String.Empty;
     private DateTime m_zaptime;
     private long m_zapdelay;
     private Channel m_zapchannel = null;
@@ -1632,7 +1638,10 @@ namespace TvPlugin
     /// </summary>
     public string CurrentChannel
     {
-      get { return m_currentchannel; }
+      get {
+        if (m_currentChannel == null) return null;
+        return m_currentChannel.Name; 
+      }
     }
     public Channel Channel
     {
@@ -1772,16 +1781,14 @@ namespace TvPlugin
     /// </summary>
     public void UpdateCurrentChannel()
     {
-      string newChannel = String.Empty;
+      Channel newChannel = null;
       //if current card is watching tv then use that channel
-      if (TVHome.Card.IsTimeShifting)
+      int id;
+      if (TVHome.Card.IsTimeShifting || TVHome.Card.IsRecording)
       {
-        newChannel = TVHome.Card.ChannelName;
-      }
-      else if (TVHome.Card.IsRecording)
-      {
-        // else if current card is recording, then use that channel
-        newChannel = TVHome.Card.ChannelName;
+        id = TVHome.Card.IdChannel;
+        if (id >= 0)
+          newChannel = Channel.Retrieve(id);
       }
       else
       {
@@ -1789,19 +1796,20 @@ namespace TvPlugin
         // then get & use that channel
         for (int i = 0; i < RemoteControl.Instance.Cards; ++i)
         {
-          int id = RemoteControl.Instance.CardId(i);
+          id = RemoteControl.Instance.CardId(i);
           if (RemoteControl.Instance.IsRecording(id))
           {
-            newChannel = RemoteControl.Instance.CurrentChannel(id).Name;
+            id = TVHome.Card.IdChannel;
+            if (id >= 0)
+              newChannel = Channel.Retrieve(id);
           }
         }
       }
-      if (newChannel == String.Empty)
-        newChannel = m_currentchannel;
-      if (m_currentchannel != newChannel && newChannel != String.Empty)
+      if (newChannel == null)
+        newChannel = m_currentChannel;
+      if (m_currentChannel != newChannel && newChannel != null)
       {
-        m_currentchannel = newChannel;
-        m_currentChannel = GetChannel(m_currentchannel);
+        m_currentChannel = newChannel;
       }
     }
 
@@ -2049,14 +2057,14 @@ namespace TvPlugin
     public void LoadSettings(MediaPortal.Profile.Settings xmlreader)
     {
       MediaPortal.GUI.Library.Log.Info("ChannelNavigator::LoadSettings()");
-      m_currentchannel = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
+      string currentchannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
       m_zapdelay = 1000 * xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2);
       string groupname = xmlreader.GetValueAsString("mytv", "group", GUILocalizeStrings.Get(972));
       m_currentgroup = GetGroupIndex(groupname);
       if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count)		// Group no longer exists?
         m_currentgroup = 0;
 
-      m_currentChannel = GetChannel(m_currentchannel);
+      m_currentChannel = GetChannel(currentchannelName);
       if (m_currentChannel == null)
       {
         if (m_currentgroup < m_groups.Count)
@@ -2065,19 +2073,17 @@ namespace TvPlugin
           if (group.ReferringGroupMap().Count > 0)
           {
             GroupMap gm = (GroupMap)group.ReferringGroupMap()[0];
-            m_currentchannel = gm.ReferencedChannel().Name;
+            m_currentChannel = gm.ReferencedChannel();
           }
-          m_currentChannel = GetChannel(m_currentchannel);
         }
       }
     }
 
     public void SaveSettings(MediaPortal.Profile.Settings xmlwriter)
     {
-      if (m_currentchannel != null)
+      if (m_currentChannel != null)
       {
-        if (m_currentchannel.Trim() != String.Empty)
-          xmlwriter.SetValue("mytv", "channel", m_currentchannel);
+        xmlwriter.SetValue("mytv", "channel", m_currentChannel.Name);
       }
       if (CurrentGroup != null)
       {
