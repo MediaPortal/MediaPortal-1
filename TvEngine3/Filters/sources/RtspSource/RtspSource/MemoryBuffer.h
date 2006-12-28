@@ -23,8 +23,8 @@ public:
   CMemoryBuffer(void);
   virtual ~CMemoryBuffer(void);
   void  SetCallback(IMemoryCallback* callback);
-	DWORD ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset);
-	HRESULT PutBuffer(BYTE *pbData, long lDataLength, long lOffset);
+	DWORD ReadFromBuffer(BYTE *pbData, long lDataLength);
+	HRESULT PutBuffer(BYTE *pbData, long lDataLength);
 	void Clear();
   DWORD Size();
   void Run(bool onOff);

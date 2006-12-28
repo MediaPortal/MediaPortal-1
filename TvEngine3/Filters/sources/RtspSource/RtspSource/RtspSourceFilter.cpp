@@ -141,6 +141,7 @@ void CRtspSourceFilter::ThreadProc()
 	{
 		if (m_bReconfigureDemux)
 		{
+			Log("Reconfigure mux");
 			m_pDemux->AOnConnect();
 			m_pDemux->SetRefClock();
 			m_patParser.SetCallBack(this);
@@ -427,7 +428,7 @@ LONG CRtspSourceFilter::GetData(BYTE* pData, long size)
 {
 	if (m_bReconfigureDemux) return 0;
 	if (!m_client.IsRunning()) return 0;
-  DWORD bytesRead= m_buffer.ReadFromBuffer(pData, size, 0);
+  DWORD bytesRead= m_buffer.ReadFromBuffer(pData, size);
   return bytesRead;
 }
 

@@ -29,5 +29,6 @@ private: // redefined virtual functions:
 	CCritSec m_BufferLock;
 	byte* m_pSubmitBuffer;
 	int   m_iSubmitBufferPos;
+	bool  m_bReEntrant;
 	
 };

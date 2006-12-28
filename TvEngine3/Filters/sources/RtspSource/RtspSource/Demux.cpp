@@ -81,7 +81,7 @@ HRESULT Demux::GetPeerFilters(
     PIN_DIRECTION Dir,    // Direction to search (upstream or downstream)
     CFilterList &FilterList)  // Collect the results in this list.
 {
-		Log("Demux::GetPeerFilters()");
+		//Log("Demux::GetPeerFilters()");
     if (!pFilter) return E_POINTER;
 
     IEnumPins *pEnum = 0;
@@ -131,7 +131,7 @@ HRESULT Demux::GetPeerFilters(
 
 void Demux::AddFilterUnique(CFilterList &FilterList, IBaseFilter *pNew)
 {
-		Log("Demux::AddFilterUnique()");
+		//Log("Demux::AddFilterUnique()");
     if (pNew == NULL) return;
 
     POSITION pos = FilterList.GetHeadPosition();
@@ -153,7 +153,7 @@ HRESULT Demux::GetNextFilter(
     PIN_DIRECTION Dir,    // Direction to search (upstream or downstream)
     IBaseFilter **ppNext) // Receives a pointer to the next filter.
 {	
-		Log("Demux::GetNextFilter()");
+		//Log("Demux::GetNextFilter()");
     if (!pFilter || !ppNext) return E_POINTER;
 
     IEnumPins *pEnum = 0;
@@ -596,7 +596,7 @@ HRESULT Demux::UpdateDemuxPins(IBaseFilter* pDemux)
 
 HRESULT Demux::CheckDemuxPin(IBaseFilter* pDemux, AM_MEDIA_TYPE pintype, IPin** pIPin)
 {
-	Log("Demux::CheckDemuxPin()");
+	//Log("Demux::CheckDemuxPin()");
 	CAutoLock demuxlock(&m_DemuxLock);
 	HRESULT hr = E_INVALIDARG;
 
@@ -650,7 +650,7 @@ HRESULT Demux::CheckDemuxPin(IBaseFilter* pDemux, AM_MEDIA_TYPE pintype, IPin** 
 
 HRESULT Demux::CheckVideoPin(IBaseFilter* pDemux)
 {
-	Log("Demux::CheckVideoPin()");
+	//Log("Demux::CheckVideoPin()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pDemux == NULL)
@@ -713,7 +713,7 @@ HRESULT Demux::CheckVideoPin(IBaseFilter* pDemux)
 
 HRESULT Demux::CheckAudioPin(IBaseFilter* pDemux)
 {
-	Log("Demux::CheckAudioPin()");
+	//Log("Demux::CheckAudioPin()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pDemux == NULL)
@@ -750,7 +750,7 @@ HRESULT Demux::CheckAudioPin(IBaseFilter* pDemux)
 
 HRESULT Demux::CheckAACPin(IBaseFilter* pDemux)
 {
-	Log("Demux::CheckAACPin()");
+	//Log("Demux::CheckAACPin()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pDemux == NULL)
@@ -774,7 +774,7 @@ HRESULT Demux::CheckAACPin(IBaseFilter* pDemux)
 
 HRESULT Demux::CheckDTSPin(IBaseFilter* pDemux)
 {
-	Log("Demux::CheckDTSPin()");
+	//Log("Demux::CheckDTSPin()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pDemux == NULL)
@@ -798,7 +798,7 @@ HRESULT Demux::CheckDTSPin(IBaseFilter* pDemux)
 
 HRESULT Demux::CheckAC3Pin(IBaseFilter* pDemux)
 {
-	Log("Demux::CheckAC3Pin()");
+	//Log("Demux::CheckAC3Pin()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pDemux == NULL)
@@ -822,7 +822,7 @@ HRESULT Demux::CheckAC3Pin(IBaseFilter* pDemux)
 
 HRESULT Demux::CheckTelexPin(IBaseFilter* pDemux)
 {
-	Log("Demux::CheckTelexPin()");
+	//Log("Demux::CheckTelexPin()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pDemux == NULL)
@@ -846,7 +846,7 @@ HRESULT Demux::CheckTelexPin(IBaseFilter* pDemux)
 
 HRESULT Demux::CheckSubtitlePin(IBaseFilter* pDemux)
 {
-	Log("Demux::CheckSubtitlePin()");
+	//Log("Demux::CheckSubtitlePin()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pDemux == NULL)
@@ -870,7 +870,7 @@ HRESULT Demux::CheckSubtitlePin(IBaseFilter* pDemux)
 
 HRESULT Demux::CheckTsPin(IBaseFilter* pDemux)
 {
-	Log("Demux::CheckTsPin()");
+	//Log("Demux::CheckTsPin()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pDemux == NULL)
@@ -893,7 +893,7 @@ HRESULT Demux::CheckTsPin(IBaseFilter* pDemux)
 
 HRESULT Demux::NewTsPin(IMpeg2Demultiplexer* muxInterface, LPWSTR pinName)
 {
-	Log("Demux::NewTsPin()");
+	//Log("Demux::NewTsPin()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(muxInterface == NULL)
@@ -996,7 +996,7 @@ HRESULT Demux::NewTsPin(IMpeg2Demultiplexer* muxInterface, LPWSTR pinName)
 
 HRESULT Demux::NewVideoPin(IMpeg2Demultiplexer* muxInterface, LPWSTR pinName)
 {
-	Log("Demux::NewVideoPin()");
+	//Log("Demux::NewVideoPin()");
 	USHORT pPid;
 	AM_MEDIA_TYPE type;
 	ZeroMemory(&type, sizeof(AM_MEDIA_TYPE));
@@ -1115,7 +1115,7 @@ HRESULT Demux::NewVideoPin(IMpeg2Demultiplexer* muxInterface, LPWSTR pinName)
 
 HRESULT Demux::NewAudioPin(IMpeg2Demultiplexer* muxInterface, LPWSTR pinName)
 {
-	Log("Demux::NewAudioPin()");
+	//Log("Demux::NewAudioPin()");
 	USHORT pPid;
 	pPid = get_MP2AudioPid();
 
@@ -1229,7 +1229,7 @@ HRESULT Demux::NewAudioPin(IMpeg2Demultiplexer* muxInterface, LPWSTR pinName)
 
 HRESULT Demux::NewAC3Pin(IMpeg2Demultiplexer* muxInterface, LPWSTR pinName)
 {
-	Log("Demux::NewAC3Pin()");
+	//Log("Demux::NewAC3Pin()");
 	USHORT pPid;
 	pPid = get_AC3_AudioPid();
 
@@ -1337,7 +1337,7 @@ HRESULT Demux::NewAC3Pin(IMpeg2Demultiplexer* muxInterface, LPWSTR pinName)
 
 HRESULT Demux::NewAACPin(IMpeg2Demultiplexer* muxInterface, LPWSTR pinName)
 {
-	Log("Demux::NewAACPin()");
+	//Log("Demux::NewAACPin()");
 	USHORT pPid;
 	pPid = get_AAC_AudioPid();
 
@@ -1444,7 +1444,7 @@ HRESULT Demux::NewAACPin(IMpeg2Demultiplexer* muxInterface, LPWSTR pinName)
 
 HRESULT Demux::NewDTSPin(IMpeg2Demultiplexer* muxInterface, LPWSTR pinName)
 {
-	Log("Demux::NewDTSPin()");
+	//Log("Demux::NewDTSPin()");
 	USHORT pPid;
 	pPid = get_DTS_AudioPid();
 
@@ -1551,7 +1551,7 @@ HRESULT Demux::NewDTSPin(IMpeg2Demultiplexer* muxInterface, LPWSTR pinName)
 
 HRESULT Demux::NewTelexPin(IMpeg2Demultiplexer* muxInterface, LPWSTR pinName)
 {
-	Log("Demux::NewTelexPin()");
+	//Log("Demux::NewTelexPin()");
 	USHORT pPid;
 	pPid = m_pids->txt;
 
@@ -1658,7 +1658,7 @@ HRESULT Demux::NewTelexPin(IMpeg2Demultiplexer* muxInterface, LPWSTR pinName)
 
 HRESULT Demux::NewSubtitlePin(IMpeg2Demultiplexer* muxInterface, LPWSTR pinName)
 {
-	Log("Demux::NewSubtitlePin()");
+	//Log("Demux::NewSubtitlePin()");
 	USHORT pPid;
 	pPid = m_pids->sub;
 
@@ -1765,7 +1765,7 @@ HRESULT Demux::NewSubtitlePin(IMpeg2Demultiplexer* muxInterface, LPWSTR pinName)
 
 HRESULT Demux::LoadTsPin(IPin* pIPin)
 {
-	Log("Demux::LoadTsPin()");
+	//Log("Demux::LoadTsPin()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pIPin == NULL)
@@ -1787,7 +1787,7 @@ HRESULT Demux::LoadTsPin(IPin* pIPin)
 
 HRESULT Demux::LoadVideoPin(IPin* pIPin, ULONG pid)
 {
-	Log("Demux::LoadVideoPin()");
+	//Log("Demux::LoadVideoPin()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pIPin == NULL)
@@ -1830,7 +1830,7 @@ HRESULT Demux::LoadVideoPin(IPin* pIPin, ULONG pid)
 
 HRESULT Demux::LoadAudioPin(IPin* pIPin, ULONG pid)
 {
-	Log("Demux::LoadAudioPin()");
+	//Log("Demux::LoadAudioPin()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pIPin == NULL)
@@ -1883,7 +1883,7 @@ HRESULT Demux::LoadAudioPin(IPin* pIPin, ULONG pid)
 
 HRESULT Demux::LoadTelexPin(IPin* pIPin, ULONG pid)
 {
-	Log("Demux::LoadTelexPin()");
+	//Log("Demux::LoadTelexPin()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pIPin == NULL)
@@ -1923,7 +1923,7 @@ HRESULT Demux::LoadTelexPin(IPin* pIPin, ULONG pid)
 HRESULT Demux::LoadSubtitlePin(IPin* pIPin, ULONG pid)
 {
 	HRESULT hr = E_INVALIDARG;
-	Log("Demux::LoadSubtitlePin()");
+	//Log("Demux::LoadSubtitlePin()");
 
 	if(pIPin == NULL)
 		return hr;
@@ -1961,7 +1961,7 @@ HRESULT Demux::LoadSubtitlePin(IPin* pIPin, ULONG pid)
 
 HRESULT Demux::VetDemuxPin(IPin* pIPin, ULONG pid)
 {
-	Log("Demux::VetDemuxPin()");
+	//Log("Demux::VetDemuxPin()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pIPin == NULL)
@@ -2011,7 +2011,7 @@ HRESULT Demux::VetDemuxPin(IPin* pIPin, ULONG pid)
 HRESULT Demux::ClearDemuxPin(IPin* pIPin)
 {
 	HRESULT hr = E_INVALIDARG;
-	Log("Demux::ClearDemuxPin()");
+	//Log("Demux::ClearDemuxPin()");
 
 	if(pIPin == NULL)
 		return hr;
@@ -2052,7 +2052,7 @@ HRESULT Demux::ClearDemuxPin(IPin* pIPin)
 
 HRESULT Demux::CheckDemuxPids(void)
 {
-	Log("Demux::CheckDemuxPids()");
+	//Log("Demux::CheckDemuxPids()");
 	HRESULT hr = S_OK;
 
 	if ((m_SelTelexPid != m_pids->txt) && m_bCreateTxtPinOnDemux)
@@ -2086,7 +2086,7 @@ HRESULT Demux::CheckDemuxPids(void)
 
 HRESULT Demux::ChangeDemuxPin(IBaseFilter* pDemux, LPWSTR* pPinName, BOOL* pConnect)
 {
-	Log("Demux::ChangeDemuxPin()");
+	//Log("Demux::ChangeDemuxPin()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pDemux == NULL || pConnect == NULL || pPinName == NULL)
@@ -2783,7 +2783,7 @@ HRESULT Demux::ChangeDemuxPin(IBaseFilter* pDemux, LPWSTR* pPinName, BOOL* pConn
 
 HRESULT Demux::GetAC3Media(AM_MEDIA_TYPE *pintype)
 {
-		Log("Demux::GetAC3Media()");
+		//Log("Demux::GetAC3Media()");
 
 	HRESULT hr = E_INVALIDARG;
 
@@ -2806,7 +2806,7 @@ HRESULT Demux::GetAC3Media(AM_MEDIA_TYPE *pintype)
 
 HRESULT Demux::GetMP2Media(AM_MEDIA_TYPE *pintype)
 {
-		Log("Demux::GetMP2Media()");
+		//Log("Demux::GetMP2Media()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pintype == NULL)
@@ -2828,7 +2828,7 @@ HRESULT Demux::GetMP2Media(AM_MEDIA_TYPE *pintype)
 
 HRESULT Demux::GetMP1Media(AM_MEDIA_TYPE *pintype)
 {
-		Log("Demux::GetMP1Media()");
+		//Log("Demux::GetMP1Media()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pintype == NULL)
@@ -2850,7 +2850,7 @@ HRESULT Demux::GetMP1Media(AM_MEDIA_TYPE *pintype)
 
 HRESULT Demux::GetAACMedia(AM_MEDIA_TYPE *pintype)
 {
-		Log("Demux::GetAACMedia()");
+		//Log("Demux::GetAACMedia()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pintype == NULL)
@@ -2872,7 +2872,7 @@ HRESULT Demux::GetAACMedia(AM_MEDIA_TYPE *pintype)
 
 HRESULT Demux::GetDTSMedia(AM_MEDIA_TYPE *pintype)
 {
-		Log("Demux::GetDTSMedia()");
+		//Log("Demux::GetDTSMedia()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pintype == NULL)
@@ -2894,7 +2894,7 @@ HRESULT Demux::GetDTSMedia(AM_MEDIA_TYPE *pintype)
 
 HRESULT Demux::GetVideoMedia(AM_MEDIA_TYPE *pintype)
 {
-		Log("Demux::GetVideoMedia()");
+		//Log("Demux::GetVideoMedia()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pintype == NULL)
@@ -2928,7 +2928,7 @@ static GUID H264_SubType = {0x8D2D71CB, 0x243F, 0x45E3, {0xB2, 0xD8, 0x5F, 0xD7,
 HRESULT Demux::GetH264Media(AM_MEDIA_TYPE *pintype)
 
 {
-		Log("Demux::GetH264Media()");
+		//Log("Demux::GetH264Media()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pintype == NULL)
@@ -2950,7 +2950,7 @@ HRESULT Demux::GetH264Media(AM_MEDIA_TYPE *pintype)
 
 HRESULT Demux::GetMpeg4Media(AM_MEDIA_TYPE *pintype)
 {
-		Log("Demux::GetMpeg4Media()");
+		//Log("Demux::GetMpeg4Media()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pintype == NULL)
@@ -2974,7 +2974,7 @@ HRESULT Demux::GetMpeg4Media(AM_MEDIA_TYPE *pintype)
 HRESULT Demux::GetTelexMedia(AM_MEDIA_TYPE *pintype)
 
 {
-		Log("Demux::GetTelexMedia()");
+		//Log("Demux::GetTelexMedia()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pintype == NULL)
@@ -2990,7 +2990,7 @@ HRESULT Demux::GetTelexMedia(AM_MEDIA_TYPE *pintype)
 
 HRESULT Demux::GetSubtitleMedia(AM_MEDIA_TYPE *pintype)
 {
-		Log("Demux::GetSubtitleMedia()");
+		//Log("Demux::GetSubtitleMedia()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pintype == NULL)
@@ -3007,7 +3007,7 @@ HRESULT Demux::GetSubtitleMedia(AM_MEDIA_TYPE *pintype)
 HRESULT Demux::GetTSMedia(AM_MEDIA_TYPE *pintype)
 
 {
-		Log("Demux::GetTSMedia()");
+		//Log("Demux::GetTSMedia()");
 	HRESULT hr = E_INVALIDARG;
 
 	if(pintype == NULL)
@@ -3152,7 +3152,7 @@ HRESULT Demux::IsPaused()
 */
 HRESULT Demux::IsStopped()
 {
-	Log("Demux::IsStopped()");
+	//Log("Demux::IsStopped()");
 	HRESULT hr = S_FALSE;
 
 	FILTER_STATE state = State_Stopped;
@@ -3200,7 +3200,7 @@ HRESULT Demux::IsPlaying()
 
 	FILTER_STATE state = State_Stopped;
 
-	Log("Demux::IsPlaying()");
+	//Log("Demux::IsPlaying()");
 	FILTER_INFO Info;
 	if (SUCCEEDED(m_pTSFileSourceFilter->QueryFilterInfo(&Info)) && Info.pGraph != NULL)
 	{
@@ -3244,7 +3244,7 @@ HRESULT Demux::IsPaused()
 {
 	HRESULT hr = S_FALSE;
 
-	Log("Demux::IsPaused()");
+	//Log("Demux::IsPaused()");
 	FILTER_STATE state = State_Stopped;
 
 	FILTER_INFO Info;
@@ -3533,7 +3533,7 @@ void Demux::set_ClockMode(int clockMode)
 
 HRESULT Demux::RemoveFilterChain(IBaseFilter *pStartFilter, IBaseFilter *pEndFilter)
 {
-		Log("Demux::RemoveFilterChain()");
+		//Log("Demux::RemoveFilterChain()");
 	HRESULT hr = E_FAIL;
 
 	FILTER_INFO Info;
@@ -3553,7 +3553,7 @@ HRESULT Demux::RemoveFilterChain(IBaseFilter *pStartFilter, IBaseFilter *pEndFil
 
 HRESULT Demux::RenderFilterPin(IPin *pIPin)
 {
-		Log("Demux::RenderFilterPin()");
+		//Log("Demux::RenderFilterPin()");
 	HRESULT hr = E_FAIL;
 
 	FILTER_INFO Info;
@@ -3573,7 +3573,7 @@ HRESULT Demux::RenderFilterPin(IPin *pIPin)
 
 HRESULT Demux::ReconnectFilterPin(IPin *pIPin)
 {
-		Log("Demux::ReconnectFilterPin()");
+		//Log("Demux::ReconnectFilterPin()");
 	HRESULT hr = E_FAIL;
 
 	FILTER_INFO Info;
@@ -3587,7 +3587,7 @@ HRESULT Demux::ReconnectFilterPin(IPin *pIPin)
 
 HRESULT Demux::GetReferenceClock(IBaseFilter *pFilter, IReferenceClock **ppClock)
 {
-		Log("Demux::GetReferenceClock()");
+		//Log("Demux::GetReferenceClock()");
 	HRESULT hr;
 
 	FILTER_INFO Info;
@@ -3610,7 +3610,7 @@ HRESULT Demux::GetReferenceClock(IBaseFilter *pFilter, IReferenceClock **ppClock
 
 HRESULT Demux::SetReferenceClock(IBaseFilter *pFilter)
 {
-		Log("Demux::SetReferenceClock()");
+		//Log("Demux::SetReferenceClock()");
 	HRESULT hr;
 	FILTER_INFO Info;
 	if (SUCCEEDED(m_pTSFileSourceFilter->QueryFilterInfo(&Info)))
@@ -3650,7 +3650,7 @@ HRESULT Demux::SetReferenceClock(IBaseFilter *pFilter)
 
 void Demux::SetRefClock()
 {
-		Log("Demux::SetRefClock()");
+		//Log("Demux::SetRefClock()");
 	if (m_ClockMode == 0)
 	{
 		//Let the filter graph choose the best clock

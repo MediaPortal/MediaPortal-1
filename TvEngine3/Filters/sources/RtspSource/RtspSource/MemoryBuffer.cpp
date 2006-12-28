@@ -18,6 +18,7 @@ CMemoryBuffer::~CMemoryBuffer()
 {
   Clear();
 }
+
 void CMemoryBuffer::Clear()
 {
 	CAutoLock BufferLock(&m_BufferLock);
@@ -31,6 +32,7 @@ void CMemoryBuffer::Clear()
 	m_Array.clear();
   m_BytesInBuffer=0;
 }
+
 DWORD CMemoryBuffer::Size()
 {
   return m_BytesInBuffer;
@@ -38,13 +40,17 @@ DWORD CMemoryBuffer::Size()
 void CMemoryBuffer::Run(bool onOff)
 {
   m_bRunning=onOff;
-	if (m_bRunning==false) Clear();
-  Log("buffer running:%d", onOff);
+	if (m_bRunning==false) 
+	{
+		Clear();
+	}
+	Log("memorybuffer: running:%d", onOff);
 }
 
-DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset)
+DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength)
 {	
-	if (lDataLength<0) return 0;
+	if (pbData==NULL) return 0;
+	if (lDataLength<=0) return 0;
   if (!m_bRunning) return 0;
   while (m_BytesInBuffer < lDataLength)
   {	
@@ -61,7 +67,7 @@ DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset
 	{
 		if(!m_Array.size() || m_Array.size() <= 0)
     {
-			::OutputDebugStringA("read:empty buffer\n");
+			Log("memorybuffer: read:empty buffer\n");
 			return 0;
     }
 		BUFFERITEM *item = m_Array.at(0);
@@ -83,28 +89,27 @@ DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset
 	return bytesWritten;
 }
 
-HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength, long lOffset)
+HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength)
 {
   if (lDataLength<=0) return E_FAIL;
-  if (lOffset<0) return E_FAIL;
   if (pbData==NULL) return E_FAIL;
 
   BUFFERITEM* item = new BUFFERITEM();
   item->nOffset=0;
-  item->nDataLength=(lDataLength-lOffset);
-  item->data = new byte[item->nDataLength];
-  memcpy(item->data, &pbData[lOffset], item->nDataLength);
+  item->nDataLength=lDataLength;
+  item->data = new byte[lDataLength];
+  memcpy(item->data, pbData, lDataLength);
   bool sleep=false;
   {
 	  CAutoLock BufferLock(&m_BufferLock);
     m_Array.push_back(item);
-    m_BytesInBuffer+=item->nDataLength;
+    m_BytesInBuffer+=lDataLength;
 
 	  //Log("add..%d/%d",lDataLength,m_BytesInBuffer);
     while (m_BytesInBuffer > MAX_MEMORY_BUFFER_SIZE)
     {
       sleep=true;
-		  Log("add: full buffer (%d)",m_BytesInBuffer);
+		  Log("memorybuffer:put full buffer (%d)",m_BytesInBuffer);
 		  BUFFERITEM *item = m_Array.at(0);
       int copyLength=item->nDataLength - item->nOffset;
 
@@ -120,7 +125,7 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength, long lOffset)
   }
   if (m_pcallback)
   {
-    m_pcallback->OnRawDataReceived(&pbData[lOffset],lDataLength);
+    m_pcallback->OnRawDataReceived(pbData,lDataLength);
   }
   if (sleep)
   {
