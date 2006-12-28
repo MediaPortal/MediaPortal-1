@@ -689,6 +689,7 @@ namespace SetupTv.Sections
           AddAttribute(nodeTune, "VideoPid", (int)detail.VideoPid);
           AddAttribute(nodeTune, "VideoSource", (int)detail.VideoSource);
           AddAttribute(nodeTune, "SatIndex", (int)detail.SatIndex);
+          AddAttribute(nodeTune, "InnerFecRate", (int)detail.InnerFecRate);
           nodeTuningDetails.AppendChild(nodeTune);
         }
         nodechannel.AppendChild(nodeTuningDetails);
@@ -790,6 +791,7 @@ namespace SetupTv.Sections
             int videoPid = Int32.Parse(nodeTune.Attributes["VideoPid"].Value);
             int videoSource = Int32.Parse(nodeTune.Attributes["VideoSource"].Value);
             int SatIndex = Int32.Parse(nodeTune.Attributes["SatIndex"].Value);
+            int InnerFecRate = Int32.Parse(nodeTune.Attributes["InnerFecRate"].Value);
 
             switch (channelType)
             {
@@ -861,6 +863,8 @@ namespace SetupTv.Sections
                 dvbsChannel.SymbolRate = symbolrate;
                 dvbsChannel.TransportId = transportId;
                 dvbsChannel.SatelliteIndex = SatIndex;
+                dvbsChannel.ModulationType = (ModulationType)modulation;
+                dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)InnerFecRate;
                 layer.AddTuningDetails(dbChannel, dvbsChannel);
                 break;
               case 4: //DVBTChannel

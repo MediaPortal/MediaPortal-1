@@ -97,6 +97,10 @@ namespace SetupTv.Sections
       this.label22 = new System.Windows.Forms.Label();
       this.label23 = new System.Windows.Forms.Label();
       this.label24 = new System.Windows.Forms.Label();
+      this.comboBoxModulation = new System.Windows.Forms.ComboBox();
+      this.label32 = new System.Windows.Forms.Label();
+      this.comboBoxInnerFecRate = new System.Windows.Forms.ComboBox();
+      this.label33 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -108,7 +112,7 @@ namespace SetupTv.Sections
       // 
       // buttonOk
       // 
-      this.buttonOk.Location = new System.Drawing.Point(349, 269);
+      this.buttonOk.Location = new System.Drawing.Point(377, 343);
       this.buttonOk.Name = "buttonOk";
       this.buttonOk.Size = new System.Drawing.Size(75, 23);
       this.buttonOk.TabIndex = 49;
@@ -127,7 +131,7 @@ namespace SetupTv.Sections
       this.tabControl1.Location = new System.Drawing.Point(12, 12);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(412, 251);
+      this.tabControl1.Size = new System.Drawing.Size(412, 325);
       this.tabControl1.TabIndex = 50;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
@@ -425,6 +429,10 @@ namespace SetupTv.Sections
       // 
       // tabPage4
       // 
+      this.tabPage4.Controls.Add(this.comboBoxInnerFecRate);
+      this.tabPage4.Controls.Add(this.label33);
+      this.tabPage4.Controls.Add(this.comboBoxModulation);
+      this.tabPage4.Controls.Add(this.label32);
       this.tabPage4.Controls.Add(this.textBoxSwitch);
       this.tabPage4.Controls.Add(this.label9);
       this.tabPage4.Controls.Add(this.comboBoxDisEqc);
@@ -443,7 +451,7 @@ namespace SetupTv.Sections
       this.tabPage4.Controls.Add(this.label16);
       this.tabPage4.Location = new System.Drawing.Point(4, 22);
       this.tabPage4.Name = "tabPage4";
-      this.tabPage4.Size = new System.Drawing.Size(404, 225);
+      this.tabPage4.Size = new System.Drawing.Size(404, 299);
       this.tabPage4.TabIndex = 3;
       this.tabPage4.Text = "DVB-S";
       this.tabPage4.UseVisualStyleBackColor = true;
@@ -811,11 +819,61 @@ namespace SetupTv.Sections
       this.label24.TabIndex = 19;
       this.label24.Text = "Channel:";
       // 
+      // comboBoxModulation
+      // 
+      this.comboBoxModulation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxModulation.FormattingEnabled = true;
+      this.comboBoxModulation.Items.AddRange(new object[] {
+            "QPSK",
+            "8PSK"});
+      this.comboBoxModulation.Location = new System.Drawing.Point(99, 216);
+      this.comboBoxModulation.Name = "comboBoxModulation";
+      this.comboBoxModulation.Size = new System.Drawing.Size(146, 21);
+      this.comboBoxModulation.TabIndex = 58;
+      // 
+      // label32
+      // 
+      this.label32.AutoSize = true;
+      this.label32.Location = new System.Drawing.Point(21, 221);
+      this.label32.Name = "label32";
+      this.label32.Size = new System.Drawing.Size(62, 13);
+      this.label32.TabIndex = 57;
+      this.label32.Text = "Modulation:";
+      // 
+      // comboBoxInnerFecRate
+      // 
+      this.comboBoxInnerFecRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxInnerFecRate.FormattingEnabled = true;
+      this.comboBoxInnerFecRate.Items.AddRange(new object[] {
+            "Default",
+            "Undefined",
+            "1/2",
+            "2/3",
+            "3/4",
+            "3/5",
+            "4/5",
+            "5/6",
+            "5/11",
+            "7/8"});
+      this.comboBoxInnerFecRate.Location = new System.Drawing.Point(99, 243);
+      this.comboBoxInnerFecRate.Name = "comboBoxInnerFecRate";
+      this.comboBoxInnerFecRate.Size = new System.Drawing.Size(146, 21);
+      this.comboBoxInnerFecRate.TabIndex = 60;
+      // 
+      // label33
+      // 
+      this.label33.AutoSize = true;
+      this.label33.Location = new System.Drawing.Point(21, 248);
+      this.label33.Name = "label33";
+      this.label33.Size = new System.Drawing.Size(75, 13);
+      this.label33.TabIndex = 59;
+      this.label33.Text = "InnerFecRate:";
+      // 
       // FormEditChannel
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(436, 315);
+      this.ClientSize = new System.Drawing.Size(464, 378);
       this.Controls.Add(this.tabControl1);
       this.Controls.Add(this.buttonOk);
       this.Name = "FormEditChannel";
@@ -909,5 +967,9 @@ namespace SetupTv.Sections
     private System.Windows.Forms.TextBox textBoxAnalogFrequency;
     private System.Windows.Forms.Label label29;
     private System.Windows.Forms.Label label31;
+    private System.Windows.Forms.ComboBox comboBoxInnerFecRate;
+    private System.Windows.Forms.Label label33;
+    private System.Windows.Forms.ComboBox comboBoxModulation;
+    private System.Windows.Forms.Label label32;
   }
 }

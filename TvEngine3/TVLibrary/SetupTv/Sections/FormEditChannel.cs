@@ -205,6 +205,11 @@ namespace SetupTv.Sections
                         dvbsChannel.ServiceId = sid;
                         dvbsChannel.SymbolRate = symbolrate;
                         dvbsChannel.SwitchingFrequency = switchfreq;
+                        dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
+                        if (comboBoxModulation.SelectedIndex == 1)
+                          dvbsChannel.ModulationType = ModulationType.Mod8Vsb;
+                        else
+                          dvbsChannel.ModulationType = ModulationType.ModQpsk;
                         switch (comboBoxPol.SelectedIndex)
                         {
                           case 0:
@@ -320,6 +325,11 @@ namespace SetupTv.Sections
           detail.ServiceId = Int32.Parse(textBox2.Text);
           detail.Symbolrate = Int32.Parse(textBox1.Text);
           detail.SwitchingFrequency = Int32.Parse(textBoxSwitch.Text);
+          detail.InnerFecRate = (int)(BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
+          if (comboBoxModulation.SelectedIndex == 1)
+            detail.Modulation = (int)ModulationType.Mod8Vsb;
+          else
+            detail.Modulation =(int) ModulationType.ModQpsk;
           switch (comboBoxPol.SelectedIndex)
           {
             case 0:
@@ -377,7 +387,8 @@ namespace SetupTv.Sections
       comboBoxDisEqc.SelectedIndex = 0;
       comboBoxPol.SelectedIndex = 0;
       comboBoxBandWidth.SelectedIndex = 1;
-
+      comboBoxModulation.SelectedIndex = 0;
+      comboBoxInnerFecRate.SelectedIndex = 0;
       //general tab
       textBoxName.Text = _channel.Name;
       checkBoxVisibleInTvGuide.Checked = _channel.VisibleInGuide;
@@ -458,6 +469,10 @@ namespace SetupTv.Sections
               comboBoxPol.SelectedIndex = 2;
               break;
           }
+          if (((ModulationType)detail.Modulation) == ModulationType.Mod8Vsb)
+            comboBoxModulation.SelectedIndex = 1;
+          
+          comboBoxInnerFecRate.SelectedIndex = 1+detail.InnerFecRate;
           comboBoxDisEqc.SelectedIndex = (int)detail.Diseqc;
         }
 

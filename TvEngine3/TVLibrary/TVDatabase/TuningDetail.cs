@@ -77,13 +77,15 @@ namespace TvDatabase
     private int band;
     [TableColumn("satIndex", NotNull = true)]
     private int satIndex;
+    [TableColumn("innerFecRate", NotNull = true)]
+    private int innerFecRate;
     #endregion
 
     #region Constructors
     /// <summary> 
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
-    public TuningDetail(int idChannel, string name, string provider, int channelType, int channelNumber, int frequency, int countryId, bool isRadio, bool isTv, int networkId, int transportId, int serviceId, int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate, int diseqc, int switchingFrequency, int bandwidth, int majorChannel, int minorChannel, int pcrPid, int videoSource, int tuningSource, int videoPid, int audioPid, int band, int satIndex)
+    public TuningDetail(int idChannel, string name, string provider, int channelType, int channelNumber, int frequency, int countryId, bool isRadio, bool isTv, int networkId, int transportId, int serviceId, int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate, int diseqc, int switchingFrequency, int bandwidth, int majorChannel, int minorChannel, int pcrPid, int videoSource, int tuningSource, int videoPid, int audioPid, int band, int satIndex, int innerFecRate)
     {
       isChanged = true;
       this.idChannel = idChannel;
@@ -115,13 +117,14 @@ namespace TvDatabase
       this.videoPid = videoPid;
       this.band = band;
       this.satIndex = satIndex;
+      this.innerFecRate = innerFecRate;
     }
 
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
     /// construct objects from retrieved rows. 
     /// </summary> 
-    public TuningDetail(int idTuning, int idChannel, string name, string provider, int channelType, int channelNumber, int frequency, int countryId, bool isRadio, bool isTv, int networkId, int transportId, int serviceId, int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate, int diseqc, int switchingFrequency, int bandwidth, int majorChannel, int minorChannel, int pcrPid, int videoSource, int tuningSource, int videoPid, int audioPid, int band, int satIndex)
+    public TuningDetail(int idTuning, int idChannel, string name, string provider, int channelType, int channelNumber, int frequency, int countryId, bool isRadio, bool isTv, int networkId, int transportId, int serviceId, int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate, int diseqc, int switchingFrequency, int bandwidth, int majorChannel, int minorChannel, int pcrPid, int videoSource, int tuningSource, int videoPid, int audioPid, int band, int satIndex, int innerFecRate)
     {
       this.idTuning = idTuning;
       this.idChannel = idChannel;
@@ -153,6 +156,7 @@ namespace TvDatabase
       this.videoPid = videoPid;
       this.band = band;
       this.satIndex = satIndex;
+      this.innerFecRate = innerFecRate;
     }
     #endregion
 
@@ -173,6 +177,14 @@ namespace TvDatabase
       get { return idTuning; }
     }
 
+    /// <summary>
+    /// Property relating to database column innerFecRate
+    /// </summary>
+    public int InnerFecRate
+    {
+      get { return innerFecRate; }
+      set { isChanged |= innerFecRate != value; innerFecRate = value; }
+    }
     /// <summary>
     /// Property relating to database column idChannel
     /// </summary>

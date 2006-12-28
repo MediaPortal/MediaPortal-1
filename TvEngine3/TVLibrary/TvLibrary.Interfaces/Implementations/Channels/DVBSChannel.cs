@@ -83,6 +83,8 @@ namespace TvLibrary.Channels
     int _switchingFrequency;
     DisEqcType _disEqc;
     BandType _bandType;
+    ModulationType _modulation = ModulationType.ModQpsk;
+    BinaryConvolutionCodeRate _innerFecRate = BinaryConvolutionCodeRate.RateNotSet;
     int _satelliteIndex;
     #endregion
 
@@ -95,9 +97,39 @@ namespace TvLibrary.Channels
       DisEqc = DisEqcType.SimpleA;
       _bandType = BandType.Universal;
       _satelliteIndex = -1;
+      _modulation = ModulationType.ModQpsk;
+      _innerFecRate = BinaryConvolutionCodeRate.RateNotSet;
     }
 
     #region properties
+    /// <summary>
+    /// gets/sets the Satellite index for this channel
+    /// </summary>
+    public BinaryConvolutionCodeRate InnerFecRate
+    {
+      get
+      {
+        return _innerFecRate;
+      }
+      set
+      {
+        _innerFecRate = value;
+      }
+    }
+    /// <summary>
+    /// gets/sets the Satellite index for this channel
+    /// </summary>
+    public ModulationType ModulationType
+    {
+      get
+      {
+        return _modulation;
+      }
+      set
+      {
+        _modulation = value;
+      }
+    }
     /// <summary>
     /// gets/sets the Satellite index for this channel
     /// </summary>
@@ -193,8 +225,8 @@ namespace TvLibrary.Channels
     /// </returns>
     public override string ToString()
     {
-      string line = String.Format("DVBS:{0} SymbolRate:{1} Polarisation:{2} DisEqc:{3} band:{4}",
-          base.ToString(), SymbolRate, Polarisation, DisEqc, BandType);
+      string line = String.Format("DVBS:{0} SymbolRate:{1} Modulation:{2} Polarisation:{3} InnerFecRate:{4} DisEqc:{5} band:{6}",
+          base.ToString(), SymbolRate, ModulationType, Polarisation, InnerFecRate, DisEqc, BandType);
       return line;
     }
 
@@ -216,6 +248,8 @@ namespace TvLibrary.Channels
       if (ch.SwitchingFrequency != SwitchingFrequency) return false;
       if (ch.DisEqc != DisEqc) return false;
       if (ch.BandType != BandType) return false;
+      if (ch.ModulationType != ModulationType) return false;
+      if (ch.InnerFecRate != InnerFecRate) return false;
 
       return true;
     }
@@ -229,7 +263,7 @@ namespace TvLibrary.Channels
     {
       return base.GetHashCode() ^ _polarisation.GetHashCode() ^ _symbolRate.GetHashCode() ^
              _switchingFrequency.GetHashCode() ^ _disEqc.GetHashCode() ^ _bandType.GetHashCode()
-             ^ SatelliteIndex.GetHashCode();
+             ^ SatelliteIndex.GetHashCode() ^ _modulation.GetHashCode() ^ _innerFecRate.GetHashCode();
     }
   }
 }

@@ -271,6 +271,8 @@ namespace TvDatabase
             dvbsChannel.TransportId = detail.TransportId;
             dvbsChannel.BandType = (BandType)detail.Band;
             dvbsChannel.SatelliteIndex = detail.SatIndex;
+            dvbsChannel.ModulationType = (ModulationType)detail.Modulation;
+            dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)detail.InnerFecRate;
             return dvbsChannel;
           case 4: //DVBTChannel
             DVBTChannel dvbtChannel = new DVBTChannel();
@@ -370,6 +372,8 @@ namespace TvDatabase
             dvbsChannel.TransportId = detail.TransportId;
             dvbsChannel.BandType = (BandType)detail.Band;
             dvbsChannel.SatelliteIndex = detail.SatIndex;
+            dvbsChannel.ModulationType = (ModulationType)detail.Modulation;
+            dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)detail.InnerFecRate;
             tvChannels.Add(dvbsChannel);
             break;
           case 4: //DVBTChannel
@@ -438,6 +442,7 @@ namespace TvDatabase
       int audioPid = -1;
       int band = 0;
       int satIndex = -1;
+      int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
 
       AnalogChannel analogChannel = tvChannel as AnalogChannel;
       if (analogChannel != null)
@@ -480,6 +485,8 @@ namespace TvDatabase
         diseqc = (int)dvbsChannel.DisEqc;
         band = (int)dvbsChannel.BandType;
         satIndex = dvbsChannel.SatelliteIndex;
+        modulation = (int)dvbsChannel.ModulationType;
+        innerFecRate = (int)dvbsChannel.InnerFecRate;
         channelType = 3;
       }
 
@@ -511,7 +518,7 @@ namespace TvDatabase
                               channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
                               networkId, transportId, serviceId, pmtPid, freeToAir,
                               modulation, polarisation, symbolRate, diseqc, switchFrequency,
-                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, tunerSource, videoPid, audioPid, band,satIndex);
+                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, tunerSource, videoPid, audioPid, band,satIndex,innerFecRate);
       detail.Persist();
       return detail;
     }
@@ -546,6 +553,7 @@ namespace TvDatabase
       int audioPid = -1;
       int band = 0;
       int satIndex = -1;
+      int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
 
       AnalogChannel analogChannel = tvChannel as AnalogChannel;
       if (analogChannel != null)
@@ -588,6 +596,8 @@ namespace TvDatabase
         diseqc = (int)dvbsChannel.DisEqc;
         band = (int)dvbsChannel.BandType;
         satIndex = dvbsChannel.SatelliteIndex;
+        modulation = (int)dvbsChannel.ModulationType;
+        innerFecRate = (int)dvbsChannel.InnerFecRate;
         channelType = 3;
       }
 
@@ -642,6 +652,7 @@ namespace TvDatabase
       detail.AudioPid = audioPid;
       detail.Band = band;
       detail.SatIndex = satIndex;
+      detail.InnerFecRate = innerFecRate;
       detail.Persist();
       return detail;
     }

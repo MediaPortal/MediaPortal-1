@@ -85,6 +85,8 @@ namespace SetupTv.Sections
       public int CarrierFrequency; // frequency
       public Polarisation Polarisation;  // polarisation 0=hori, 1=vert
       public int SymbolRate; // symbol rate
+      public ModulationType Modulation = ModulationType.ModNotSet;
+      public BinaryConvolutionCodeRate InnerFecRate = BinaryConvolutionCodeRate.RateNotSet;
 
       public int CompareTo(Transponder other)
       {
@@ -98,7 +100,7 @@ namespace SetupTv.Sections
       }
       public override string ToString()
       {
-        return String.Format("{0} {1} {2}", CarrierFrequency, SymbolRate, Polarisation);
+        return String.Format("{0} {1} {2} {3} {4}", CarrierFrequency, SymbolRate, Polarisation, Modulation,InnerFecRate);
       }
     }
     #endregion
@@ -140,6 +142,8 @@ namespace SetupTv.Sections
     #region helper methods
     void DownloadTransponder(SatteliteContext context)
     {
+      if (context.Url == null) return;
+      if (context.Url.Length == 0) return;
       string itemLine = String.Format("Downloading transponders for:{0}", context.SatteliteName);
       ListViewItem item = listViewStatus.Items.Add(new ListViewItem(itemLine));
       item.EnsureVisible();
@@ -204,14 +208,14 @@ namespace SetupTv.Sections
         line = null;
         line = tin.ReadLine();
         if (line != null)
+        {
+          line = line.Trim();
           if (line.Length > 0)
           {
             if (line.StartsWith(";"))
               continue;
             tpdata = line.Split(new char[] { ',' });
-            if (tpdata.Length != 3)
-              tpdata = line.Split(new char[] { ';' });
-            if (tpdata.Length == 3)
+            if (tpdata.Length >= 3)
             {
               if (tpdata[0].IndexOf("=") >= 0)
               {
@@ -241,6 +245,26 @@ namespace SetupTv.Sections
                     break;
                 }
                 transponder.SymbolRate = Int32.Parse(tpdata[2]);
+                if (tpdata.Length >= 4)
+                {
+                  tpdata[3] = tpdata[3].ToLower();
+                  if (tpdata[3] == "8psk") transponder.Modulation = ModulationType.Mod8Vsb;
+                  if (tpdata[3] == "qpsk") transponder.Modulation = ModulationType.ModQpsk;
+
+                  if (tpdata.Length >= 5)
+                  {
+                    tpdata[4] = tpdata[4].ToLower();
+                    if (tpdata[4] == "1/2") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_2;
+                    if (tpdata[4] == "2/3") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_3;
+                    if (tpdata[4] == "3/4") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_4;
+                    if (tpdata[4] == "3/5") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_5;
+                    if (tpdata[4] == "4/5") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate4_5;
+                    if (tpdata[4] == "5/11") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_11;
+                    if (tpdata[4] == "5/6") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_6;
+                    if (tpdata[4] == "7/8") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate7_8;
+                    if (tpdata[4] == "9/10") transponder.InnerFecRate = BinaryConvolutionCodeRate.RateNotDefined;
+                  }
+                }
                 _transponders.Add(transponder);
                 _count += 1;
               }
@@ -248,6 +272,7 @@ namespace SetupTv.Sections
               { }
             }
           }
+        }
       } while (!(line == null));
       tin.Close();
       _channelCount = _count;
@@ -641,6 +666,9 @@ namespace SetupTv.Sections
         tuneChannel.SymbolRate = _transponders[index].SymbolRate;
         tuneChannel.BandType = bandType;
         tuneChannel.SatelliteIndex = position;
+        tuneChannel.ModulationType = _transponders[index].Modulation;
+        tuneChannel.InnerFecRate = _transponders[index].InnerFecRate;
+        
 
         tuneChannel.DisEqc = disEqc;
         string line = String.Format("lnb:{0} {1}tp- {2} {3} {4}", LNB, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate);
@@ -654,6 +682,7 @@ namespace SetupTv.Sections
         UpdateStatus(LNB);
 
         IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
+        
         UpdateStatus(LNB);
 
         if (channels == null || channels.Length == 0)

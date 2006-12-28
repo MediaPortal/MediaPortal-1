@@ -342,6 +342,8 @@ namespace TvLibrary.Implementations.DVB
       IDVBSLocator dvbsLocator = (IDVBSLocator)locator;
       int hr = dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
       hr = dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
+      dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
+      dvbsLocator.put_Modulation(dvbsChannel.ModulationType);
       hr = _tuneRequest.put_ONID(dvbsChannel.NetworkId);
       hr = _tuneRequest.put_SID(dvbsChannel.ServiceId);
       hr = _tuneRequest.put_TSID(dvbsChannel.TransportId);
