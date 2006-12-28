@@ -645,6 +645,7 @@ namespace SetupTv.Sections
         AddAttribute(nodechannel, "TimesWatched", channel.TimesWatched);
         AddAttribute(nodechannel, "TotalTimeWatched", String.Format("{0}-{1}-{2} {3}:{4}:{5}", channel.TotalTimeWatched.Year, channel.TotalTimeWatched.Month, channel.TotalTimeWatched.Day, channel.TotalTimeWatched.Hour, channel.TotalTimeWatched.Minute, channel.TotalTimeWatched.Second));
         AddAttribute(nodechannel, "VisibleInGuide", channel.VisibleInGuide);
+        AddAttribute(nodechannel, "FreeToAir", channel.FreeToAir);
 
         XmlNode nodeMaps = xmlDoc.CreateElement("mappings");
         foreach (ChannelMap map in channel.ReferringChannelMap())
@@ -687,6 +688,7 @@ namespace SetupTv.Sections
           AddAttribute(nodeTune, "TuningSource", (int)detail.TuningSource);
           AddAttribute(nodeTune, "VideoPid", (int)detail.VideoPid);
           AddAttribute(nodeTune, "VideoSource", (int)detail.VideoSource);
+          AddAttribute(nodeTune, "SatIndex", (int)detail.SatIndex);
           nodeTuningDetails.AppendChild(nodeTune);
         }
         nodechannel.AppendChild(nodeTuningDetails);
@@ -716,6 +718,7 @@ namespace SetupTv.Sections
       if (openFileDialog1.ShowDialog(this) != DialogResult.OK) return;
       CountryCollection collection = new CountryCollection();
       TvBusinessLayer layer = new TvBusinessLayer();
+      int channelCount = 0;
       try
       {
         XmlDocument doc = new XmlDocument();
@@ -725,6 +728,7 @@ namespace SetupTv.Sections
         XmlNodeList cardList = doc.SelectNodes("/tvserver/servers/servers/cards/card");
         foreach (XmlNode nodeChannel in channelList)
         {
+          channelCount++;
           XmlNodeList tuningList = nodeChannel.SelectNodes("TuningDetails/tune");
           XmlNodeList mappingList = nodeChannel.SelectNodes("mappings/map");
           string name = nodeChannel.Attributes["Name"].Value;
@@ -736,6 +740,7 @@ namespace SetupTv.Sections
           int timesWatched = Int32.Parse(nodeChannel.Attributes["TimesWatched"].Value);
           DateTime totalTimeWatched = DateTime.ParseExact(nodeChannel.Attributes["TotalTimeWatched"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
           bool visibileInGuide = (nodeChannel.Attributes["VisibleInGuide"].Value == "True");
+          bool FreeToAir = (nodeChannel.Attributes["FreeToAir"].Value == "True");
 
           Channel dbChannel = layer.AddChannel("", name);
           dbChannel.GrabEpg = grabEpg;
@@ -746,6 +751,7 @@ namespace SetupTv.Sections
           dbChannel.TimesWatched = timesWatched;
           dbChannel.TotalTimeWatched = totalTimeWatched;
           dbChannel.VisibleInGuide = visibileInGuide;
+          dbChannel.FreeToAir = FreeToAir;
           dbChannel.Persist();
           foreach (XmlNode nodeMap in mappingList)
           {
@@ -783,6 +789,8 @@ namespace SetupTv.Sections
             int tuningSource = Int32.Parse(nodeTune.Attributes["TuningSource"].Value);
             int videoPid = Int32.Parse(nodeTune.Attributes["VideoPid"].Value);
             int videoSource = Int32.Parse(nodeTune.Attributes["VideoSource"].Value);
+            int SatIndex = Int32.Parse(nodeTune.Attributes["SatIndex"].Value);
+
             switch (channelType)
             {
               case 0: //AnalogChannel
@@ -852,6 +860,7 @@ namespace SetupTv.Sections
                 dvbsChannel.ServiceId = serviceId;
                 dvbsChannel.SymbolRate = symbolrate;
                 dvbsChannel.TransportId = transportId;
+                dvbsChannel.SatelliteIndex = SatIndex;
                 layer.AddTuningDetails(dbChannel, dvbsChannel);
                 break;
               case 4: //DVBTChannel
@@ -874,6 +883,7 @@ namespace SetupTv.Sections
             }
           }
         }
+        MessageBox.Show(String.Format("Imported {0} channels", channelCount));
       }
       catch (Exception)
       {
