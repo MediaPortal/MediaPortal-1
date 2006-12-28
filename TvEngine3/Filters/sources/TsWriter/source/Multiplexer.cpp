@@ -177,7 +177,7 @@ int CMultiplexer::OnNewPesPacket(CPesDecoder* decoder)
 	{
 		CPesDecoder* decoder=*it;
     CPesPacket& packet=decoder->m_packet;
-    if (packet.IsAvailable(800)==false) return 0;
+    if (packet.IsAvailable(1024)==false) return 0;
     
     if (pcr > packet.Pcr()  || streamId<0)
     {
@@ -457,10 +457,13 @@ void CMultiplexer::flush_packet(CPesPacket& packet, int streamId)
     else
     {
       pktLen-=padding_bytes;
-      for (int i=0; i <padding_bytes;++i)
-      {
-        buf_ptr[0]=0xff;buf_ptr++;
-      }
+			if (padding_bytes>0)
+			{
+				for (int i=0; i <padding_bytes;++i)
+				{
+					buf_ptr[0]=0xff;buf_ptr++;
+				}
+			}
     }
     ptrSize[0]=(byte)((pktLen>>8)&0xff); //4
     ptrSize[1]=(byte)(pktLen&0xff);      //5

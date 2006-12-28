@@ -94,7 +94,17 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket, CPcr& pcr)
 	}
  
 	int pos = m_tsHeader.PayLoadStart;
-
+	if (pos >=188)
+	{
+		LogDebug("PesDecoder: pid:%x payload starts at:%d", m_pid,pos);
+		return false;
+	}
+	int len=188-pos;
+	if (len <=0)
+	{
+		LogDebug("PesDecoder: pid:%x no payload:%d", m_pid,pos);
+		return false;
+	}
 	bool result=false;
 	if (m_tsHeader.PayloadUnitStart)
 	{
