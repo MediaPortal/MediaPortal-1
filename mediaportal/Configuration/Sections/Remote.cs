@@ -217,7 +217,7 @@ namespace MediaPortal.Configuration.Sections
       {
         #region MCE
 
-        checkBoxMceEnabled.Checked = xmlreader.GetValueAsBool("remote", "MCE", true);
+        checkBoxMceEnabled.Checked = xmlreader.GetValueAsBool("remote", "MCE", false);
         checkBoxMceExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "MCEVerboseLog", false);
 
         groupBoxMceSettings.Enabled = buttonMceMapping.Enabled = checkBoxMceEnabled.Checked;
@@ -337,7 +337,7 @@ namespace MediaPortal.Configuration.Sections
         #region X10
 
         checkBoxX10Enabled.Checked = xmlreader.GetValueAsBool("remote", "X10", false);
-        radioButtonX10Medion.Checked = xmlreader.GetValueAsBool("remote", "X10Medion", true);
+        radioButtonX10Medion.Checked = xmlreader.GetValueAsBool("remote", "X10Medion", false);
         radioButtonX10Ati.Checked = xmlreader.GetValueAsBool("remote", "X10ATI", false);
         radioButtonX10Firefly.Checked = xmlreader.GetValueAsBool("remote", "X10Firefly", false);
         radioButtonX10Other.Checked = (!radioButtonX10Medion.Checked && !radioButtonX10Ati.Checked && !radioButtonX10Firefly.Checked);
@@ -360,7 +360,7 @@ namespace MediaPortal.Configuration.Sections
             X10Remote.Init();
           }
 
-          if (X10Remote._controlEnabled == false)
+          if (X10Remote._remotefound == false)
           {
               Log.Warn("x10Remote: Can't initialize");
               labelX10DriverInfo.Visible = true;
@@ -391,6 +391,8 @@ namespace MediaPortal.Configuration.Sections
           linkLabelDownloadX10.Visible = true;
           labelX10Status.Visible = false;
           buttonX10LearnChannel.Enabled = false;
+          checkBoxX10Enabled.Checked = false;
+          checkBoxX10Enabled.Enabled = false;
 
         }
         
@@ -2071,10 +2073,7 @@ namespace MediaPortal.Configuration.Sections
       
     }
 
-    #region Helper methods/commands X10
-
-  
-    #endregion
+    
 
     #endregion
 

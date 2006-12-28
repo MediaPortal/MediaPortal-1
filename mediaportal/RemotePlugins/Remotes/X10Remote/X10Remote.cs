@@ -47,14 +47,14 @@ namespace MediaPortal.InputDevices
     X10Sink X10Sink = null;
     int cookie = 0;
     InputHandler _inputHandler = null;
-    public bool _controlEnabled = false;
+    bool _controlEnabled = false;
     bool _logVerbose = false;
     bool _x10Medion = true;
     bool _x10Ati = false;
     bool _x10Firefly = false;
     bool _x10UseChannelControl = false;
     int _x10Channel = 0;
-   
+    public bool _remotefound = false;
     //This struct stores information needed to tell whether a key is a repeat (bug in X10 after standby)
     
     
@@ -68,14 +68,40 @@ namespace MediaPortal.InputDevices
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
+        Log.Info("X10 Remote Debug: {0}",Config.Dir.Config.ToString());
         _controlEnabled = xmlreader.GetValueAsBool("remote", "X10", false);
-        _x10Medion = xmlreader.GetValueAsBool("remote", "X10Medion", true);
-        _x10Ati = xmlreader.GetValueAsBool("remote", "X10ATI", true);
-        _x10Firefly = xmlreader.GetValueAsBool("remote", "X10Firefly", true);
+        _x10Medion = xmlreader.GetValueAsBool("remote", "X10Medion", false);
+        _x10Ati = xmlreader.GetValueAsBool("remote", "X10ATI",false);
+        _x10Firefly = xmlreader.GetValueAsBool("remote", "X10Firefly", false);
         _logVerbose = xmlreader.GetValueAsBool("remote", "X10VerboseLog", false);
         _x10UseChannelControl = xmlreader.GetValueAsBool("remote", "X10UseChannelControl", false);
         _x10Channel = xmlreader.GetValueAsInt("remote", "X10Channel", 0);
       }
+
+      //Setup the X10 Remote
+      try
+      {
+        if (X10Inter == null)
+        {
+          X10Inter = new X10Interface();
+          if (X10Inter == null)
+          {
+            Log.Info("X10 debug: Could not get interface");
+            return;
+          }
+          X10Sink = new X10Sink(_inputHandler, _logVerbose);
+          icpc = (IConnectionPointContainer)X10Inter;
+          Guid IID_InterfaceEvents = typeof(_DIX10InterfaceEvents).GUID;
+          icpc.FindConnectionPoint(ref IID_InterfaceEvents, out icp);
+          icp.Advise(X10Sink, out cookie);
+          _remotefound = true;
+        }
+      }
+      catch (System.Runtime.InteropServices.COMException)
+      {
+        Log.Info("X10 Debug: Com error");
+      }
+
       if (_inputHandler == null)
       {
         if (_controlEnabled)
@@ -108,28 +134,10 @@ namespace MediaPortal.InputDevices
           else
             Log.Info("X10Remote: Start Other");
         }
-        try
-        {
-          if (X10Inter == null)
-          {
-            X10Inter = new X10Interface();
-            if (X10Inter == null)
-            {
-                Log.Info("X10 debug: Could not get interface");
-                return;
-            }
-            X10Sink = new X10Sink(_inputHandler, _logVerbose);
-            icpc = (IConnectionPointContainer)X10Inter;
-            Guid IID_InterfaceEvents = typeof(_DIX10InterfaceEvents).GUID;
-            icpc.FindConnectionPoint(ref IID_InterfaceEvents, out icp);
-            icp.Advise(X10Sink, out cookie);
-          }
-        }
-        catch (System.Runtime.InteropServices.COMException)
-        {
-            Log.Info("X10 Debug: Com error");
-        }
+       
       }
+
+     
       
     }
 
