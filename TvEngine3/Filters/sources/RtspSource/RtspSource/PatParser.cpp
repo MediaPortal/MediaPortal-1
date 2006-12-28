@@ -52,7 +52,7 @@ void CPatParser::SetCallBack(IPatParserCallback* callback)
 
 void CPatParser::CleanUp()
 {
-  for (int i=0; i < m_pmtParsers.size();++i)
+  for (int i=0; i < (int)m_pmtParsers.size();++i)
   {
     CPmtParser* parser=m_pmtParsers[i];
     delete parser;
@@ -77,7 +77,7 @@ int CPatParser::Count()
   int count= m_pmtParsers.size();
   if (count>0)
   {
-    for (int i=0; i < m_pmtParsers.size();++i)
+    for (int i=0; i < (int)m_pmtParsers.size();++i)
     {
       CPmtParser* parser=m_pmtParsers[i];
 	    if (false==parser->Ready()) 
@@ -117,7 +117,7 @@ void CPatParser::OnTsPacket(byte* tsPacket)
   m_packetsReceived++;
   if (m_packetsReceived > m_packetsToSkip)
   {
-    for (int i=0; i < m_pmtParsers.size();++i)
+    for (int i=0; i < (int)m_pmtParsers.size();++i)
     {
       CPmtParser* parser=m_pmtParsers[i];
       parser->OnTsPacket(tsPacket);
@@ -177,7 +177,7 @@ void CPatParser::OnNewSection(CSection& sections)
 	  }
 
 	  bool found=false;
-	  for (int idx=0; idx < m_pmtParsers.size(); idx++)
+	  for (int idx=0; idx < (int)m_pmtParsers.size(); idx++)
 	  {
 		  CPmtParser* pmtParser = m_pmtParsers[idx];
 		  if (pmtParser->GetPid() == pmtPid)
