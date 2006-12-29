@@ -51,36 +51,25 @@ namespace MediaPortal.GUI.Library
       SEARCH_NEXT
     } ;
 
-    [XMLSkinElement("spaceBetweenItems")]
-    protected int _spaceBetweenItems = 2;
+    [XMLSkinElement("spaceBetweenItems")]    protected int _spaceBetweenItems = 2;
     protected int _offset = 0;
     protected int _itemsPerPage = 10;
     protected int _lastItemPageValue = 0;
 
-    [XMLSkinElement("textureHeight")]
-    protected int _itemHeight = 10;
+    [XMLSkinElement("textureHeight")]        protected int _itemHeight = 10;
     protected ListType _listType = ListType.CONTROL_LIST;
     protected int _cursorX = 0;
-    [XMLSkinElement("textXOff")]
-    protected int _textOffsetX;
-    [XMLSkinElement("textYOff")]
-    protected int _textOffsetY;
-    [XMLSkinElement("textXOff2")]
-    protected int _textOffsetX2;
-    [XMLSkinElement("textYOff2")]
-    protected int _textOffsetY2;
-    [XMLSkinElement("textXOff3")]
-    protected int _textOffsetX3;
-    [XMLSkinElement("textYOff3")]
-    protected int _textOffsetY3;
+    [XMLSkinElement("textXOff")]             protected int _textOffsetX;
+    [XMLSkinElement("textYOff")]             protected int _textOffsetY;
+    [XMLSkinElement("textXOff2")]            protected int _textOffsetX2;
+    [XMLSkinElement("textYOff2")]            protected int _textOffsetY2;
+    [XMLSkinElement("textXOff3")]            protected int _textOffsetX3;
+    [XMLSkinElement("textYOff3")]            protected int _textOffsetY3;
 
-    [XMLSkinElement("itemWidth")]
-    protected int _imageWidth = 16;
-    [XMLSkinElement("itemHeight")]
-    protected int _imageHeight = 16;
+    [XMLSkinElement("itemWidth")]            protected int _imageWidth = 16;
+    [XMLSkinElement("itemHeight")]           protected int _imageHeight = 16;
     protected bool _upDownControlVisible = true;
-    [XMLSkinElement("textalign")]
-    protected GUIControl.Alignment _textAlignment = GUIControl.Alignment.ALIGN_LEFT;
+    [XMLSkinElement("textalign")]            protected GUIControl.Alignment _textAlignment = GUIControl.Alignment.ALIGN_LEFT;
 
     protected GUIFont _font = null;
     protected GUIFont _font2 = null;
@@ -94,34 +83,23 @@ namespace MediaPortal.GUI.Library
     protected List<GUILabelControl> _labelControls2 = new List<GUILabelControl>();
     protected List<GUILabelControl> _labelControls3 = new List<GUILabelControl>();
 
-    [XMLSkinElement("remoteColor")]
-    protected long _remoteColor = 0xffff0000;
-    [XMLSkinElement("playedColor")]
-    protected long _playedColor = 0xffa0d0ff;
-    [XMLSkinElement("downloadColor")]
-    protected long _downloadColor = 0xff00ff00;
-    [XMLSkinElement("shadedColor")]
-    protected long _shadedColor = 0x20ffffff;
-    [XMLSkinElement("textvisible1")]
-    protected bool _text1Visible = true;
-    [XMLSkinElement("textvisible2")]
-    protected bool _text2Visible = true;
-    [XMLSkinElement("textvisible3")]
-    protected bool _text3Visible = true;
-    [XMLSkinElement("PinIconXOff")]
-    protected int _xOffsetPinIcon = 100;
-    [XMLSkinElement("PinIconYOff")]
-    protected int _yOffsetPinIcon = 10;
+    [XMLSkinElement("remoteColor")]          protected long _remoteColor = 0xffff0000;
+    [XMLSkinElement("playedColor")]          protected long _playedColor = 0xffa0d0ff;
+    [XMLSkinElement("downloadColor")]        protected long _downloadColor = 0xff00ff00;
+    [XMLSkinElement("shadedColor")]          protected long _shadedColor = 0x20ffffff;
+    [XMLSkinElement("textvisible1")]         protected bool _text1Visible = true;
+    [XMLSkinElement("textvisible2")]         protected bool _text2Visible = true;
+    [XMLSkinElement("textvisible3")]         protected bool _text3Visible = true;
+    [XMLSkinElement("PinIconXOff")]          protected int _xOffsetPinIcon = 100;
+    [XMLSkinElement("PinIconYOff")]          protected int _yOffsetPinIcon = 10;
     protected int _widthPinIcon = 0;
     protected int _heightPinIcon = 0;
     protected bool _refresh = false;
     protected string _textLine;
     protected string _textLine2;
     protected string _brackedText;
-    [XMLSkinElement("IconXOff")]
-    protected int _iconOffsetX = 8;
-    [XMLSkinElement("IconYOff")]
-    protected int _iconOffsetY = 5;
+    [XMLSkinElement("IconXOff")]             protected int _iconOffsetX = 8;
+    [XMLSkinElement("IconYOff")]             protected int _iconOffsetY = 5;
 
     protected int _scrollPosition = 0;
     protected int _scrollPosititionX = 0;
@@ -131,8 +109,7 @@ namespace MediaPortal.GUI.Library
     protected int _currentFrame = 0;
     protected double _timeElapsed = 0.0f;
     protected bool _scrollContinuosly = false;
-    [XMLSkinElement("scrollOffset")]
-    protected int _scrollStartOffset = 0;  // this is the offset from the first or last element on screen when scrolling should start
+    [XMLSkinElement("scrollOffset")]        protected int _scrollStartOffset = 0;  // this is the offset from the first or last element on screen when scrolling should start
     protected int _loopDelay = 100;        // wait at the last item this amount of msec until loop to the first item
     protected double _lastCommandTime = 0;
 
@@ -141,68 +118,40 @@ namespace MediaPortal.GUI.Library
       get { return 0.01f + ((11 - GUIGraphicsContext.ScrollSpeedHorizontal) * 0.01f); }
     }
 
-    [XMLSkinElement("keepaspectratio")]
-    protected bool _keepAspectRatio = false;
+    [XMLSkinElement("keepaspectratio")]     protected bool _keepAspectRatio = false;
     protected bool _drawFocus = true;
-    [XMLSkinElement("suffix")]
-    protected string _suffix = "|";
-    [XMLSkinElement("font")]
-    protected string _fontName = "";
-    [XMLSkinElement("font2")]
-    protected string _fontName2Name = "";
-    [XMLSkinElement("font3")]
-    protected string _fontName3Name = "";
-    [XMLSkinElement("textcolor")]
-    protected long _textColor = 0xFFFFFFFF;
-    [XMLSkinElement("textcolor2")]
-    protected long _textColor2 = 0xFFFFFFFF;
-    [XMLSkinElement("textcolor3")]
-    protected long _textColor3 = 0xFFFFFFFF;
-    [XMLSkinElement("selectedColor")]
-    protected long _selectedColor = 0xFFFFFFFF;
-    [XMLSkinElement("selectedColor2")]
-    protected long _selectedColor2 = 0xFFFFFFFF;
-    [XMLSkinElement("selectedColor3")]
-    protected long _selectedColor3 = 0xFFFFFFFF;
+    [XMLSkinElement("suffix")]              protected string _suffix = "|";
+    [XMLSkinElement("font")]                protected string _fontName = "";
+    [XMLSkinElement("font2")]               protected string _fontName2Name = "";
+    [XMLSkinElement("font3")]               protected string _fontName3Name = "";
+    [XMLSkinElement("textcolor")]           protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor2")]          protected long _textColor2 = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor3")]          protected long _textColor3 = 0xFFFFFFFF;
+    [XMLSkinElement("selectedColor")]       protected long _selectedColor = 0xFFFFFFFF;
+    [XMLSkinElement("selectedColor2")]      protected long _selectedColor2 = 0xFFFFFFFF;
+    [XMLSkinElement("selectedColor3")]      protected long _selectedColor3 = 0xFFFFFFFF;
 
-    [XMLSkinElement("folderPrefix")]
-    protected string _folderPrefix = "[";
-    [XMLSkinElement("folderSuffix")]
-    protected string _folderSuffix = "]";
+    [XMLSkinElement("folderPrefix")]        protected string _folderPrefix = "[";
+    [XMLSkinElement("folderSuffix")]        protected string _folderSuffix = "]";
 
-    [XMLSkinElement("textureUp")]
-    protected string _upTextureName = "";
-    [XMLSkinElement("textureDown")]
-    protected string _downTextureName = "";
-    [XMLSkinElement("textureUpFocus")]
-    protected string _upTextureNameFocus = "";
-    [XMLSkinElement("textureDownFocus")]
-    protected string _downTextureNameFocus = "";
-    [XMLSkinElement("textureNoFocus")]
-    protected string _buttonNonFocusName = "";
-    [XMLSkinElement("textureFocus")]
-    protected string _buttonFocusName = "";
+    [XMLSkinElement("textureUp")]           protected string _upTextureName = "";
+    [XMLSkinElement("textureDown")]         protected string _downTextureName = "";
+    [XMLSkinElement("textureUpFocus")]      protected string _upTextureNameFocus = "";
+    [XMLSkinElement("textureDownFocus")]    protected string _downTextureNameFocus = "";
+    [XMLSkinElement("textureNoFocus")]      protected string _buttonNonFocusName = "";
+    [XMLSkinElement("textureFocus")]        protected string _buttonFocusName = "";
 
-    [XMLSkinElement("scrollbarbg")]
-    protected string _scrollbarBackgroundName = "";
-    [XMLSkinElement("scrollbartop")]
-    protected string _scrollbarTopName = "";
-    [XMLSkinElement("scrollbarbottom")]
-    protected string _scrollbarBottomName = "";
+    [XMLSkinElement("scrollbarbg")]         protected string _scrollbarBackgroundName = "";
+    [XMLSkinElement("scrollbartop")]        protected string _scrollbarTopName = "";
+    [XMLSkinElement("scrollbarbottom")]     protected string _scrollbarBottomName = "";
 
-    [XMLSkinElement("spinColor")]
-    protected long _colorSpinColor;
-    [XMLSkinElement("spinHeight")]
-    protected int _spinControlHeight;
-    [XMLSkinElement("spinWidth")]
-    protected int _spinControlWidth;
-    [XMLSkinElement("spinPosX")]
-    protected int _spinControlPositionX;
-    [XMLSkinElement("spinPosY")]
-    protected int _spinControlPositionY;
+    [XMLSkinElement("spinColor")]           protected long _colorSpinColor;
+    [XMLSkinElement("spinHeight")]          protected int _spinControlHeight;
+    [XMLSkinElement("spinWidth")]           protected int _spinControlWidth;
+    [XMLSkinElement("spinPosX")]            protected int _spinControlPositionX;
+    [XMLSkinElement("spinPosY")]            protected int _spinControlPositionY;
 
-    [XMLSkinElement("unfocusedAlpha")]
-    protected int _unfocusedAlpha = 0xFF;
+    [XMLSkinElement("unfocusedAlpha")]      protected int _unfocusedAlpha = 0xFF;
 
     bool _wordWrapping = false;
 

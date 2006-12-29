@@ -374,6 +374,7 @@
         <thumbPosXBig>28</thumbPosXBig>
         <thumbPosYBig>28</thumbPosYBig>
         <thumbZoom>no</thumbZoom>
+        <enableFocusZoom>yes</enableFocusZoom>
         <textXOff>0</textXOff>
         <textYOff>0</textYOff>
     </control>
@@ -419,6 +420,7 @@
         <thumbHeightBig>112</thumbHeightBig>
         <thumbPosXBig>22</thumbPosXBig>
         <thumbPosYBig>16</thumbPosYBig>
+        <enableFocusZoom>yes</enableFocusZoom>
         <background>filmstrip_bg.png</background>
         <backgroundx>672</backgroundx>
         <backgroundy>126</backgroundy>

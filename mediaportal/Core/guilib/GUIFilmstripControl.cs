@@ -49,110 +49,63 @@ namespace MediaPortal.GUI.Library
       SEARCH_NEXT
     } ;
 
-    [XMLSkinElement("remoteColor")]
-    protected long _remoteColor = 0xffff0000;
-    [XMLSkinElement("playedColor")]
-    protected long _playedColor = 0xffa0d0ff;
-    [XMLSkinElement("downloadColor")]
-    protected long _downloadColor = 0xff00ff00;
-    [XMLSkinElement("thumbPosXBig")]
-    protected int _positionXThumbBig = 0;
-    [XMLSkinElement("thumbPosYBig")]
-    protected int _positionYThumbBig = 0;
-    [XMLSkinElement("thumbWidthBig")]
-    protected int _widthThumbBig = 0;
-    [XMLSkinElement("thumbHeightBig")]
-    protected int _heightThumbBig = 0;
+    [XMLSkinElement("remoteColor")]        protected long _remoteColor = 0xffff0000;
+    [XMLSkinElement("playedColor")]        protected long _playedColor = 0xffa0d0ff;
+    [XMLSkinElement("downloadColor")]      protected long _downloadColor = 0xff00ff00;
+    [XMLSkinElement("thumbPosXBig")]       protected int _positionXThumbBig = 0;
+    [XMLSkinElement("thumbPosYBig")]       protected int _positionYThumbBig = 0;
+    [XMLSkinElement("thumbWidthBig")]      protected int _widthThumbBig = 0;
+    [XMLSkinElement("thumbHeightBig")]     protected int _heightThumbBig = 0;
 
-    [XMLSkinElement("imageFolder")]
-    protected string _imageFolderName = "";
-    [XMLSkinElement("imageFolderFocus")]
-    protected string _imageFolderNameFocus = "";
+    [XMLSkinElement("imageFolder")]        protected string _imageFolderName = "";
+    [XMLSkinElement("imageFolderFocus")]   protected string _imageFolderNameFocus = "";
 
-    [XMLSkinElement("textureUp")]
-    protected string _upTextureName = "";
-    [XMLSkinElement("textureDown")]
-    protected string _downTextureName = "";
-    [XMLSkinElement("textureUpFocus")]
-    protected string _upTextureNameFocus = "";
-    [XMLSkinElement("textureDownFocus")]
-    protected string _downTextureNameFocus = "";
-    [XMLSkinElement("spinColor")]
-    protected long _colorSpinColor;
-    [XMLSkinElement("spinHeight")]
-    protected int _spinControlHeight;
-    [XMLSkinElement("spinWidth")]
-    protected int _spinControlWidth;
-    [XMLSkinElement("spinPosX")]
-    protected int _spinControlPositionX;
-    [XMLSkinElement("spinPosY")]
-    protected int _spinControlPositionY;
-    [XMLSkinElement("itemHeight")]
-    protected int _itemHeight;
-    [XMLSkinElement("itemWidth")]
-    protected int _itemWidth;
-    [XMLSkinElement("texturelowHeight")]
-    protected int _textureLowHeight;
-    [XMLSkinElement("textureLowWidth")]
-    protected int _textureLowWidth;
-    [XMLSkinElement("textureWidth")]
-    protected int _textureWidth = 80;
-    [XMLSkinElement("textureHeight")]
-    protected int _textureHeight = 80;
-    [XMLSkinElement("thumbPosX")]
-    protected int _thumbNailPositionX = 8;
-    [XMLSkinElement("thumbPosY")]
-    protected int _thumbNailPositionY = 8;
-    [XMLSkinElement("thumbWidth")]
-    protected int _thumbNailWidth = 64;
-    [XMLSkinElement("thumbHeight")]
-    protected int _thumbNailHeight = 64;
-    [XMLSkinElement("font")]
-    protected string _fontName = "";
-    [XMLSkinElement("textcolor")]
-    protected long _textColor = 0xFFFFFFFF;
-    [XMLSkinElement("selectedColor")]
-    protected long _selectedColor = 0xFFFFFFFF;
+    [XMLSkinElement("enableFocusZoom")]    protected bool _enableFocusZoom = true;
 
-    [XMLSkinElement("scrollbarbg")]
-    protected string _scrollbarBackgroundName = "";
-    [XMLSkinElement("scrollbartop")]
-    protected string _scrollbarTopName = "";
-    [XMLSkinElement("scrollbarbottom")]
-    protected string _scrollbarBottomName = "";
+    [XMLSkinElement("textureUp")]          protected string _upTextureName = "";
+    [XMLSkinElement("textureDown")]        protected string _downTextureName = "";
+    [XMLSkinElement("textureUpFocus")]     protected string _upTextureNameFocus = "";
+    [XMLSkinElement("textureDownFocus")]   protected string _downTextureNameFocus = "";
+    [XMLSkinElement("spinColor")]          protected long _colorSpinColor;
+    [XMLSkinElement("spinHeight")]         protected int _spinControlHeight;
+    [XMLSkinElement("spinWidth")]          protected int _spinControlWidth;
+    [XMLSkinElement("spinPosX")]           protected int _spinControlPositionX;
+    [XMLSkinElement("spinPosY")]           protected int _spinControlPositionY;
+    [XMLSkinElement("itemHeight")]         protected int _itemHeight;
+    [XMLSkinElement("itemWidth")]          protected int _itemWidth;
+    [XMLSkinElement("texturelowHeight")]   protected int _textureLowHeight;
+    [XMLSkinElement("textureLowWidth")]    protected int _textureLowWidth;
+    [XMLSkinElement("textureWidth")]       protected int _textureWidth = 80;
+    [XMLSkinElement("textureHeight")]      protected int _textureHeight = 80;
+    [XMLSkinElement("thumbPosX")]          protected int _thumbNailPositionX = 8;
+    [XMLSkinElement("thumbPosY")]          protected int _thumbNailPositionY = 8;
+    [XMLSkinElement("thumbWidth")]         protected int _thumbNailWidth = 64;
+    [XMLSkinElement("thumbHeight")]        protected int _thumbNailHeight = 64;
+    [XMLSkinElement("font")]               protected string _fontName = "";
+    [XMLSkinElement("textcolor")]          protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("selectedColor")]      protected long _selectedColor = 0xFFFFFFFF;
 
-    [XMLSkinElement("folderPrefix")]
-    protected string _folderPrefix = "[";
-    [XMLSkinElement("folderSuffix")]
-    protected string _folderSuffix = "]";
+    [XMLSkinElement("scrollbarbg")]        protected string _scrollbarBackgroundName = "";
+    [XMLSkinElement("scrollbartop")]       protected string _scrollbarTopName = "";
+    [XMLSkinElement("scrollbarbottom")]    protected string _scrollbarBottomName = "";
 
-    [XMLSkinElement("backgroundheight")]
-    protected int _backGroundHeight;
-    [XMLSkinElement("backgroundwidth")]
-    protected int _backGroundWidth;
-    [XMLSkinElement("backgroundx")]
-    protected int _backGroundPositionX;
-    [XMLSkinElement("backgroundy")]
-    protected int _backGroundPositionY;
-    [XMLSkinElement("backgrounddiffuse")]
-    protected int _backGroundDiffuseColor;
-    [XMLSkinElement("background")]
-    protected string _backgroundTextureName;
+    [XMLSkinElement("folderPrefix")]       protected string _folderPrefix = "[";
+    [XMLSkinElement("folderSuffix")]       protected string _folderSuffix = "]";
 
-    [XMLSkinElement("InfoImageheight")]
-    protected int _infoImageHeight;
-    [XMLSkinElement("InfoImagewidth")]
-    protected int _infoImageWidth;
-    [XMLSkinElement("InfoImagex")]
-    protected int _infoImagePositionX;
-    [XMLSkinElement("InfoImagey")]
-    protected int _infoImagePositionY;
-    [XMLSkinElement("InfoImagediffuse")]
-    protected int _infoImageDiffuseColor;
-    [XMLSkinElement("InfoImage")]
-    protected string _infoImageName;
-    [XMLSkinElement("unfocusedAlpha")]
-    protected int _unfocusedAlpha = 0xFF;
+    [XMLSkinElement("backgroundheight")]   protected int _backGroundHeight;
+    [XMLSkinElement("backgroundwidth")]    protected int _backGroundWidth;
+    [XMLSkinElement("backgroundx")]        protected int _backGroundPositionX;
+    [XMLSkinElement("backgroundy")]        protected int _backGroundPositionY;
+    [XMLSkinElement("backgrounddiffuse")]  protected int _backGroundDiffuseColor;
+    [XMLSkinElement("background")]         protected string _backgroundTextureName;
+
+    [XMLSkinElement("InfoImageheight")]    protected int _infoImageHeight;
+    [XMLSkinElement("InfoImagewidth")]     protected int _infoImageWidth;
+    [XMLSkinElement("InfoImagex")]         protected int _infoImagePositionX;
+    [XMLSkinElement("InfoImagey")]         protected int _infoImagePositionY;
+    [XMLSkinElement("InfoImagediffuse")]   protected int _infoImageDiffuseColor;
+    [XMLSkinElement("InfoImage")]          protected string _infoImageName;
+    [XMLSkinElement("unfocusedAlpha")]     protected int _unfocusedAlpha = 0xFF;
 
     int _itemLowHeight;
     int _itemLowWidth;
@@ -401,7 +354,8 @@ namespace MediaPortal.GUI.Library
 
       // Set oversized value
       int iOverSized = 0;
-      if (bFocus && Focus)
+      
+      if (bFocus && Focus && _enableFocusZoom)
       {
         iOverSized = (_thumbNailWidth + _thumbNailHeight) / THUMBNAIL_OVERSIZED_DIVIDER;
       }

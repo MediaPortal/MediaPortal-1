@@ -48,94 +48,59 @@ namespace MediaPortal.GUI.Library
       SEARCH_NEXT
     } ;
 
-    [XMLSkinElement("remoteColor")]
-    protected long _remoteColor = 0xffff0000;
-    [XMLSkinElement("playedColor")]
-    protected long _playedColor = 0xffa0d0ff;
-    [XMLSkinElement("downloadColor")]
-    protected long _downloadColor = 0xff00ff00;
+    [XMLSkinElement("remoteColor")]      protected long _remoteColor = 0xffff0000;
+    [XMLSkinElement("playedColor")]      protected long _playedColor = 0xffa0d0ff;
+    [XMLSkinElement("downloadColor")]    protected long _downloadColor = 0xff00ff00;
 
-    [XMLSkinElement("thumbPosX")]
-    protected int _xPositionThumbNail = 8;
-    [XMLSkinElement("thumbPosY")]
-    protected int _yPositionThumbNail = 8;
-    [XMLSkinElement("thumbWidth")]
-    protected int _thumbNailWidth = 64;
-    [XMLSkinElement("thumbHeight")]
-    protected int _thumbNailHeight = 64;
+    [XMLSkinElement("thumbPosX")]        protected int _xPositionThumbNail = 8;
+    [XMLSkinElement("thumbPosY")]        protected int _yPositionThumbNail = 8;
+    [XMLSkinElement("thumbWidth")]       protected int _thumbNailWidth = 64;
+    [XMLSkinElement("thumbHeight")]      protected int _thumbNailHeight = 64;
 
-    [XMLSkinElement("itemHeight")]
-    protected int _itemHeight;
-    [XMLSkinElement("itemWidth")]
-    protected int _itemWidth;
-    /*"itemHeight"*/
-    protected int _lowItemHeight;
-    /*"itemWidth"*/
-    protected int _lowItemWidth;
-    [XMLSkinElement("textureHeight")]
-    protected int _textureHeight;
-    [XMLSkinElement("textureWidth")]
-    protected int _textureWidth;
-    /*"textureHeight"*/
-    protected int _lowTextureHeight;
-    /*"textureWidth"*/
-    protected int _lowTextureWidth;
+    [XMLSkinElement("itemHeight")]       protected int _itemHeight;
+    [XMLSkinElement("itemWidth")]        protected int _itemWidth;
 
-    [XMLSkinElement("itemHeightBig")]
-    protected int _bigItemHeight = 150;
-    [XMLSkinElement("itemWidthBig")]
-    protected int _bigItemWidth = 150;
-    [XMLSkinElement("thumbWidthBig")]
-    protected int _bigThumbWidth = 80;
-    [XMLSkinElement("thumbHeightBig")]
-    protected int _bigThumbHeight = 80;
-    [XMLSkinElement("thumbZoom")]
-    protected bool _zoom = false;
-    [XMLSkinElement("textureHeightBig")]
-    protected int _bigTextureHeight = 128;
-    [XMLSkinElement("textureWidthBig")]
-    protected int _bigTextureWidth = 128;
+                                         protected int _lowItemHeight;
+                                         protected int _lowItemWidth;
 
-    [XMLSkinElement("font")]
-    protected string _fontName = "";
-    [XMLSkinElement("textcolor")]
-    protected long _textColor = 0xFFFFFFFF;
-    [XMLSkinElement("selectedColor")]
-    protected long _selectedColor = 0xFFFFFFFF;
-    [XMLSkinElement("spinColor")]
-    protected long _colorSpinColor;
-    [XMLSkinElement("spinHeight")]
-    protected int _spinControlHeight;
-    [XMLSkinElement("spinWidth")]
-    protected int _spinControlWidth;
-    [XMLSkinElement("spinPosX")]
-    protected int _spinControlPositionX;
-    [XMLSkinElement("spinPosY")]
-    protected int _spinControlPositionY;
+    [XMLSkinElement("textureHeight")]    protected int _textureHeight;
+    [XMLSkinElement("textureWidth")]     protected int _textureWidth;
 
-    [XMLSkinElement("scrollbarbg")]
-    protected string _scrollbarBackGroundTextureName = "";
-    [XMLSkinElement("scrollbartop")]
-    protected string _scrollbarTopTextureName = "";
-    [XMLSkinElement("scrollbarbottom")]
-    protected string _scrollbarBottomTextureName = "";
-    [XMLSkinElement("scrollOffset")]
-    protected int _scrollStartOffset = 0;  // this is the offset from the first or last element on screen when scrolling should start
-    protected int _loopDelay = 250;        // wait at the last item this amount of msec until loop to the first item
-    protected double _lastCommandTime = 0;
+                                         protected int _lowTextureHeight;
+                                         protected int _lowTextureWidth;
 
-    [XMLSkinElement("textureUp")]
-    protected string _upTextureName = "";
-    [XMLSkinElement("textureDown")]
-    protected string _downTextureName = "";
-    [XMLSkinElement("textureUpFocus")]
-    protected string _upTextureNameFocus = "";
-    [XMLSkinElement("textureDownFocus")]
-    protected string _downTextureNameFocus = "";
-    [XMLSkinElement("imageFolder")]
-    protected string _imageFolderName = "";
-    [XMLSkinElement("imageFolderFocus")]
-    protected string _imageFolderNameFocus = "";
+    [XMLSkinElement("itemHeightBig")]    protected int _bigItemHeight = 150;
+    [XMLSkinElement("itemWidthBig")]     protected int _bigItemWidth = 150;
+    [XMLSkinElement("thumbWidthBig")]    protected int _bigThumbWidth = 80;
+    [XMLSkinElement("thumbHeightBig")]   protected int _bigThumbHeight = 80;
+    [XMLSkinElement("thumbZoom")]        protected bool _zoom = false;
+    [XMLSkinElement("enableFocusZoom")]  protected bool _enableFocusZoom = true;
+    [XMLSkinElement("textureHeightBig")] protected int _bigTextureHeight = 128;
+    [XMLSkinElement("textureWidthBig")]  protected int _bigTextureWidth = 128;
+
+    [XMLSkinElement("font")]             protected string _fontName = "";
+    [XMLSkinElement("textcolor")]        protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("selectedColor")]    protected long _selectedColor = 0xFFFFFFFF;
+    [XMLSkinElement("spinColor")]        protected long _colorSpinColor;
+    [XMLSkinElement("spinHeight")]       protected int _spinControlHeight;
+    [XMLSkinElement("spinWidth")]        protected int _spinControlWidth;
+    [XMLSkinElement("spinPosX")]         protected int _spinControlPositionX;
+    [XMLSkinElement("spinPosY")]         protected int _spinControlPositionY;
+
+    [XMLSkinElement("scrollbarbg")]      protected string _scrollbarBackGroundTextureName = "";
+    [XMLSkinElement("scrollbartop")]     protected string _scrollbarTopTextureName = "";
+    [XMLSkinElement("scrollbarbottom")]  protected string _scrollbarBottomTextureName = "";
+
+    [XMLSkinElement("scrollOffset")]     protected int _scrollStartOffset = 0;  // this is the offset from the first or last element on screen when scrolling should start
+                                         protected int _loopDelay = 250;        // wait at the last item this amount of msec until loop to the first item
+                                         protected double _lastCommandTime = 0;
+
+    [XMLSkinElement("textureUp")]        protected string _upTextureName = "";
+    [XMLSkinElement("textureDown")]      protected string _downTextureName = "";
+    [XMLSkinElement("textureUpFocus")]   protected string _upTextureNameFocus = "";
+    [XMLSkinElement("textureDownFocus")] protected string _downTextureNameFocus = "";
+    [XMLSkinElement("imageFolder")]      protected string _imageFolderName = "";
+    [XMLSkinElement("imageFolderFocus")] protected string _imageFolderNameFocus = "";
     protected List<GUIButtonControl> _listButtons = null;
 
     int _xPositionThumbNailLow = 0;
@@ -143,27 +108,18 @@ namespace MediaPortal.GUI.Library
     int _widthThumbNailLow = 0;
     int _heightThumbNailLow = 0;
 
-    [XMLSkinElement("thumbPosXBig")]
-    protected int _positionXThumbBig = 0;
-    [XMLSkinElement("thumbPosYBig")]
-    protected int _positionYThumbBig = 0;
-    [XMLSkinElement("thumbWidthBig")]
-    protected int _widthThumbBig = 0;
-    [XMLSkinElement("thumbHeightBig")]
-    protected int _heightThumbBig = 0;
+    [XMLSkinElement("thumbPosXBig")]     protected int _positionXThumbBig = 0;
+    [XMLSkinElement("thumbPosYBig")]     protected int _positionYThumbBig = 0;
+    [XMLSkinElement("thumbWidthBig")]    protected int _widthThumbBig = 0;
+    [XMLSkinElement("thumbHeightBig")]   protected int _heightThumbBig = 0;
 
-    [XMLSkinElement("folderPrefix")]
-    protected string _folderPrefix = "[";
-    [XMLSkinElement("folderSuffix")]
-    protected string _folderSuffix = "]";
+    [XMLSkinElement("folderPrefix")]     protected string _folderPrefix = "[";
+    [XMLSkinElement("folderSuffix")]     protected string _folderSuffix = "]";
 
-    [XMLSkinElement("textXOff")]
-    protected int _textXOff = 0;
-    [XMLSkinElement("textYOff")]
-    protected int _textYOff = 0;
+    [XMLSkinElement("textXOff")]         protected int _textXOff = 0;
+    [XMLSkinElement("textYOff")]         protected int _textYOff = 0;
 
-    [XMLSkinElement("unfocusedAlpha")]
-    protected int _unfocusedAlpha = 0xFF;
+    [XMLSkinElement("unfocusedAlpha")]   protected int _unfocusedAlpha = 0xFF;
 
     bool _showTexture = true;
     int _offset = 0;
@@ -401,7 +357,7 @@ namespace MediaPortal.GUI.Library
 
       // Set oversized value
       int iOverSized = 0;
-      if (bFocus && Focus)
+      if (bFocus && Focus && _enableFocusZoom)
       {
         iOverSized = (_thumbNailWidth + _thumbNailHeight) / THUMBNAIL_OVERSIZED_DIVIDER;
       }
