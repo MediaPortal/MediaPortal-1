@@ -324,7 +324,8 @@ int GrabBitmaps(TCHAR * szFile )
 		CComQIPtr< IMediaEvent, &IID_IMediaEvent > pEvent( pGraph );
 		long EvCode = 0;
 
-		hr = pEvent->WaitForCompletion( INFINITE, &EvCode );
+    // 15 sec timeout
+		hr = pEvent->WaitForCompletion( 15*1000, &EvCode );
 
 		Log("grab:done.");
 		// callback wrote the sample
