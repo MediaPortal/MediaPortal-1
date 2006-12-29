@@ -61,6 +61,7 @@ private:
   int  get_packet_payload_size(CPesPacket& packet);
   int  mpeg_mux_write_packet(CPesPacket& packet, int streamId);
   void flush_packet(CPesPacket& packet, int streamId);
+	void PatchPtsDts(byte* pesPacket,CPcr& startPcr);
 	vector<CPesDecoder*> m_pesDecoders;
 	typedef vector<CPesDecoder*>::iterator ivecPesDecoders;
   
@@ -73,6 +74,7 @@ private:
   int m_system_header_size;
 	int m_pcrPid;
 	CPcr m_pcr;
+	CPcr m_pcrStart;
 	bool m_bVideoStartFound;
 	bool m_bFirstPacket;
 };

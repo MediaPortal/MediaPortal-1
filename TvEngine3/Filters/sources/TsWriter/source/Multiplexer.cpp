@@ -71,6 +71,7 @@ void CMultiplexer::ClearStreams()
 	m_bVideoStartFound=false;
 	m_bFirstPacket=true;
 	m_pcr.Reset();
+	m_pcrStart.Reset();
 }
 
 void CMultiplexer::SetPcrPid(int pcrPid)
@@ -154,7 +155,6 @@ void CMultiplexer::OnTsPacket(byte* tsPacket)
 		if (m_adaptionField.PcrFlag)
 		{
 			m_pcr=m_adaptionField.Pcr;
-    // printf("pcr:%s\n", m_pcr.ToString());
 		}
 	}
 	if (m_pcr.PcrReferenceBase==0)
@@ -293,9 +293,12 @@ int CMultiplexer::get_system_header_size()
    
 
 int CMultiplexer::WritePackHeader(byte* buf, CPcr& pcr)
-{;
-	UINT64 pcrHi=pcr.PcrReferenceBase;
-	UINT64 pcrLow=pcr.PcrReferenceExtension;
+{
+	if (m_pcrStart.PcrReferenceBase==0)
+		m_pcrStart=pcr;
+	CPcr correctedpcr=pcr-m_pcrStart;
+	UINT64 pcrHi=correctedpcr.PcrReferenceBase;
+	UINT64 pcrLow=correctedpcr.PcrReferenceExtension;
   int muxRate=MUX_RATE;
 	//pack header
 	buf[0] = 0;
@@ -454,6 +457,7 @@ void CMultiplexer::flush_packet(CPesPacket& packet, int streamId)
   int pktLen=packet_size-6;
   byte* ptrSize=&buf_ptr[4];
   byte* ptrStreamId=&buf_ptr[3];
+	byte* ptrPesStart=&buf_ptr[0];
   bool isstart=false;
   if (packet.IsStart()==false)
   {
@@ -510,6 +514,7 @@ void CMultiplexer::flush_packet(CPesPacket& packet, int streamId)
 
   if (m_pCallback!=NULL)
   {
+		PatchPtsDts(ptrPesStart,m_pcrStart);
     m_pCallback->Write(buffer,PACK_SIZE);
   }
 	m_bFirstPacket=false;
@@ -518,6 +523,55 @@ void CMultiplexer::flush_packet(CPesPacket& packet, int streamId)
   //packet.nb_frames = 0;
   //packet.m_iFrameOffset = 0;
 }
+void CMultiplexer::PatchPtsDts(byte* pesHeader,CPcr& startPcr)
+{
+	CPcr pts;
+	CPcr dts;
+  if (!CPcr::DecodeFromPesHeader(pesHeader,pts,dts))
+  {
+		return ;
+	}
+	if (pts.IsValid)
+	{
+    CPcr ptsorg=pts;
+		pts -= startPcr ;
+		// 9       10        11        12      13
+		//76543210 76543210 76543210 76543210 76543210
+		//0011pppM pppppppp pppppppM pppppppp pppppppM 
+//		LogDebug("pts: org:%s new:%s start:%s", ptsorg.ToString(),pts.ToString(),startPcr.ToString()); 
+		byte marker=0x21;
+		if (dts.PcrReferenceBase!=0) marker=0x31;
+		pesHeader[13]=(byte)((( (pts.PcrReferenceBase&0x7f)<<1)+1));   pts.PcrReferenceBase>>=7;
+		pesHeader[12]=(byte)(   (pts.PcrReferenceBase&0xff));				   pts.PcrReferenceBase>>=8;
+		pesHeader[11]=(byte)((( (pts.PcrReferenceBase&0x7f)<<1)+1));   pts.PcrReferenceBase>>=7;
+		pesHeader[10]=(byte)(   (pts.PcrReferenceBase&0xff));					 pts.PcrReferenceBase>>=8;
+		pesHeader[9] =(byte)( (((pts.PcrReferenceBase&7)<<1)+marker)); 
+    
+	
+		if (dts.IsValid)
+		{
+			CPcr dtsorg=dts;
+			dts -= startPcr;
+			// 14       15        16        17      18
+			//76543210 76543210 76543210 76543210 76543210
+			//0001pppM pppppppp pppppppM pppppppp pppppppM 
+	//		LogDebug("dts: org:%s new:%s start:%s", dtsorg.ToString(),dts.ToString(),startPcr.ToString()); 
+			pesHeader[18]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
+			pesHeader[17]=(byte)(   (dts.PcrReferenceBase&0xff));				  dts.PcrReferenceBase>>=8;
+			pesHeader[16]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
+			pesHeader[15]=(byte)(   (dts.PcrReferenceBase&0xff));					dts.PcrReferenceBase>>=8;
+			pesHeader[14]=(byte)( (((dts.PcrReferenceBase&7)<<1)+0x11)); 
+		}
+	
+		//pts.Reset();
+		//dts.Reset();
+		//if (CPcr::DecodeFromPesHeader(pesHeader,pts,dts))
+		//{
+		//	LogDebug("pts:%s dts:%s", pts.ToString(),dts.ToString());
+		//}
+	}
+}
+
 
 int CMultiplexer::mpeg_mux_write_packet(CPesPacket& packet, int streamId)
 {
