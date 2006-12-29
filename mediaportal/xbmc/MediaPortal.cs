@@ -97,6 +97,7 @@ public class MediaPortalApp : D3DApp, IRender
   private bool _startWithBasicHome = false;
   private bool _suspended = false;
   private bool _onResumeRunning = false;
+  protected string _dateFormat = String.Empty;
 #if AUTOUPDATE
   string m_strNewVersion = "";
     bool m_bNewVersionAvailable = false;
@@ -928,6 +929,8 @@ public class MediaPortalApp : D3DApp, IRender
 
     using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
     {
+      _dateFormat = xmlreader.GetValueAsString("home", "dateformat", "<Day> <Month> <DD>");
+
       string strDefault = xmlreader.GetValueAsString("myradio", "default", "");
       if (strDefault != "")
       {
@@ -2761,6 +2764,9 @@ GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
   /// <returns>A string containing the localized version of the date.</returns>
   protected string GetDate()
   {
+    string dateString = _dateFormat;
+    if ((dateString == null) || (dateString.Length == 0)) return String.Empty;
+
     DateTime cur = DateTime.Now;
     string day;
     switch (cur.DayOfWeek)
@@ -2829,12 +2835,19 @@ GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
         break;
     }
 
-    string strDate = String.Format("{0} {1} {2}", day, cur.Day, month);
-    if (m_iDateLayout == 1)
-    {
-      strDate = String.Format("{0} {1} {2}", day, month, cur.Day);
-    }
-    return strDate;
+    dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<Day>", day, "unknown");
+    dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<DD>", cur.Day.ToString(), "unknown");
+
+    dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<Month>", month, "unknown");
+    dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<MM>", cur.Month.ToString(), "unknown");
+
+    dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<Year>", cur.Year.ToString(), "unknown");
+    dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<YY>", (cur.Year - 2000).ToString("00"), "unknown");
+
+    GUIPropertyManager.SetProperty("#date", dateString);
+
+    return dateString;
+
   }
 
   /// <summary>

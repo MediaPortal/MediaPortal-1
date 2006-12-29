@@ -56,7 +56,6 @@ namespace MediaPortal.GUI.Home
 		protected bool _useMyPlugins = true;
     protected bool _fixedScroll = true;  // fix scrollbar in the middle of menu
     protected bool _enableAnimation = true;
-    protected string _dateFormat = String.Empty;
     protected DateTime _updateTimer = DateTime.MinValue;
     protected int  _notifyTVTimeout = 15;
     protected bool _playNotifyBeep = true;
@@ -85,7 +84,6 @@ namespace MediaPortal.GUI.Home
       {
         _fixedScroll     = xmlreader.GetValueAsBool("home", "scrollfixed", true);		      // fix scrollbar in the middle of menu
         _useMyPlugins    = xmlreader.GetValueAsBool("home", "usemyplugins", true);		    // use previous menu handling
-        _dateFormat      = xmlreader.GetValueAsString("home", "dateformat", "<Day> <Month> <DD>");
         _enableAnimation = xmlreader.GetValueAsBool("home", "enableanimation", true);
         _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 15);
         _playNotifyBeep  = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
@@ -131,7 +129,7 @@ namespace MediaPortal.GUI.Home
 			switch (message.Message)
 			{
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-          if (lblDate != null) lblDate.Label = GetDate();
+          if (lblDate != null) lblDate.Label = GUIPropertyManager.GetProperty("#date");
           if (lblTime != null) lblTime.Label = GUIPropertyManager.GetProperty("#time");
           break;
         
@@ -149,7 +147,7 @@ namespace MediaPortal.GUI.Home
       if (DateTime.Now.Minute != _updateTimer.Minute)
       {
         _updateTimer = DateTime.Now;
-        if (lblDate != null) lblDate.Label = GetDate();
+        if (lblDate != null) lblDate.Label = GUIPropertyManager.GetProperty("#date");
         if (lblTime != null) lblTime.Label = GUIPropertyManager.GetProperty("#time");
       }
     }
@@ -210,56 +208,6 @@ namespace MediaPortal.GUI.Home
       if (System.IO.File.Exists(filename)) return "media\\" +   System.IO.Path.GetFileName(filename);
 
       return String.Empty;
-    }
-    
-    protected string GetDate()
-    {
-      string dateString = _dateFormat;
-      if ((dateString == null) || (dateString.Length == 0)) return String.Empty;
-
-      DateTime cur = DateTime.Now;
-      string day;
-      switch (cur.DayOfWeek)
-      {
-        case DayOfWeek.Monday: day = GUILocalizeStrings.Get(11); break;
-        case DayOfWeek.Tuesday: day = GUILocalizeStrings.Get(12); break;
-        case DayOfWeek.Wednesday: day = GUILocalizeStrings.Get(13); break;
-        case DayOfWeek.Thursday: day = GUILocalizeStrings.Get(14); break;
-        case DayOfWeek.Friday: day = GUILocalizeStrings.Get(15); break;
-        case DayOfWeek.Saturday: day = GUILocalizeStrings.Get(16); break;
-        default: day = GUILocalizeStrings.Get(17); break;
-      }
-
-      string month;
-      switch (cur.Month)
-      {
-        case 1: month = GUILocalizeStrings.Get(21); break;
-        case 2: month = GUILocalizeStrings.Get(22); break;
-        case 3: month = GUILocalizeStrings.Get(23); break;
-        case 4: month = GUILocalizeStrings.Get(24); break;
-        case 5: month = GUILocalizeStrings.Get(25); break;
-        case 6: month = GUILocalizeStrings.Get(26); break;
-        case 7: month = GUILocalizeStrings.Get(27); break;
-        case 8: month = GUILocalizeStrings.Get(28); break;
-        case 9: month = GUILocalizeStrings.Get(29); break;
-        case 10: month = GUILocalizeStrings.Get(30); break;
-        case 11: month = GUILocalizeStrings.Get(31); break;
-        default: month = GUILocalizeStrings.Get(32); break;
-      }
-
-      
-      dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<Day>", day, "unknown");
-      dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<DD>", cur.Day.ToString(), "unknown");
-
-      dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<Month>", month, "unknown");
-      dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<MM>", cur.Month.ToString(), "unknown");
-
-      dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<Year>", cur.Year.ToString(), "unknown");
-      dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<YY>", (cur.Year - 2000).ToString("00"), "unknown");
-
-      GUIPropertyManager.SetProperty("#homedate", dateString);
-
-      return dateString;
     }
     #endregion
 
