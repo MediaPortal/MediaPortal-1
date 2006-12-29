@@ -717,7 +717,7 @@ public class MediaPortalApp : D3DApp, IRender
         return true;
       }
 
-      if (Recorder.IsRecording()) // if we are recording then deny request
+      if (Recorder.IsAnyCardRecording()) // if we are recording then deny request
       {
         msg.Result = new IntPtr(BROADCAST_QUERY_DENY);
         Log.Info("Main: TVRecording running -> Suspend stopped");
