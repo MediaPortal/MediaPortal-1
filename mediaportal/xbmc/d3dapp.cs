@@ -150,7 +150,6 @@ namespace MediaPortal
     protected string deviceStats; // String to hold D3D device stats
     protected string frameStats; // String to hold frame stats
 
-    protected bool deviceLost = false;
     protected bool m_bNeedReset = false;
     // Overridable variables for the app
     private int minDepthBits; // Minimum number of bits needed in depth buffer
@@ -1240,7 +1239,7 @@ namespace MediaPortal
         try
         {
 #endif
-          if ((deviceLost) || (ActiveForm != this))
+        if ((GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) || (ActiveForm != this))
           {
             // Yield some CPU time to other processes
 #if !PROFILING
@@ -1290,24 +1289,21 @@ namespace MediaPortal
 
     public void RecoverDevice()
     {
-      if (deviceLost)
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
       {
         try
         {
-          Log.Debug("d3dapp: RecoverDevice called");
+          //Log.Debug("d3dapp: RecoverDevice called");
           // Test the cooperative level to see if it's okay to render
-          //Log.Info("app.TestCooperativeLevel()");
           GUIGraphicsContext.DX9Device.TestCooperativeLevel();
-          //Log.Info("app.TestCooperativeLevel() succeeded");
-          //Log.Info("app.InitializeDeviceObjects()");
+
         }
         catch (DeviceLostException)
         {
-          //Log.Info("app.TestCooperativeLevel()->DeviceLostException");
           // If the device was lost, do not render until we get it back
           isHandlingSizeChanges = false;
           isWindowActive = false;
-          Log.Debug("d3dapp: DeviceLostException");
+          //Log.Debug("d3dapp: DeviceLostException");
 
           return;
           //m_bNeedReset = true;
@@ -1345,7 +1341,7 @@ namespace MediaPortal
           EnvironmentResized(GUIGraphicsContext.DX9Device, new CancelEventArgs());
           //InitializeDeviceObjects();
         }
-        deviceLost = false;
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
       }
     }
 
@@ -1359,7 +1355,7 @@ namespace MediaPortal
       try
       {
         //if (!GUIGraphicsContext.Vmr9Active)
-        if (!GUIGraphicsContext.Vmr9Active && !deviceLost)
+        if (!GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
           Render(GUIGraphicsContext.TimePassed);
       }
       catch (Exception ex)

@@ -792,19 +792,20 @@ public class MediaPortalApp : D3DApp, IRender
       InputDevices.Init();
 
       _onResumeRunning = false;
-      deviceLost = true;  // reset device
-			_suspended = false;
-			if (_startWithBasicHome)
-			{
+
+      GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+      if (_startWithBasicHome)
+      {
         Log.Info("Main: OnResume - Switch to basic home screen");
-				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
-			}
-			else
-			{
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+      }
+      else
+      {
         Log.Info("Main: OnResume - Switch to home screen");
-				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
-			}
-			Log.Info("Main: OnResume - Done");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+      }
+      _suspended = false;
+      Log.Info("Main: OnResume - Done");
     }
   }
 
@@ -842,7 +843,7 @@ public class MediaPortalApp : D3DApp, IRender
       if (GUIGraphicsContext.UseSeparateRenderThread)
       {        
         // the part of FullRender() [ from Render3DEnvironment(); ] which is needed on Resume...
-        if (deviceLost)
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
         {
           RecoverDevice();
         }        
@@ -1268,7 +1269,7 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Error(ex);
         //Log.Info("device lost exception {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);//remove
         g_Player.Stop();
-        deviceLost = true;
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
       }
       /*
   catch (Exception ex) // remove
