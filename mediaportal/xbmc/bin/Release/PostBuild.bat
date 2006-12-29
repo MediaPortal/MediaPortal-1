@@ -25,12 +25,12 @@ copy ..\..\..\RemotePlugins\Remotes\X10Remote\AxInterop.X10.dll .
 copy ..\..\..\RemotePlugins\Remotes\X10Remote\Interop.X10.dll .
 copy ..\..\..\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\Release\MusicShareWatcherHelper.dll .
 copy ..\..\..\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\Release\MusicShareWatcher.exe .
-if exist ..\..\..\lame_enc.dll copy ..\..\..\lame_enc.dll .
-copy ..\..\..\MPSA.ax .
-copy ..\..\..\TSFileSource.ax .
-copy ..\..\..\MPTSWriter.ax .
-copy ..\..\..\cdxareader.ax .
-copy ..\..\..\ttBdaDrvApi_Dll.dll .
+if exist ..\..\..\MediaPortal.Base\lame_enc.dll copy ..\..\..\MediaPortal.Base\lame_enc.dll .
+copy ..\..\..\MediaPortal.Base\MPSA.ax .
+copy ..\..\..\MediaPortal.Base\TSFileSource.ax .
+copy ..\..\..\MediaPortal.Base\MPTSWriter.ax .
+copy ..\..\..\MediaPortal.Base\cdxareader.ax .
+copy ..\..\..\MediaPortal.Base\ttBdaDrvApi_Dll.dll .
 regsvr32 /s MPSA.ax
 regsvr32 /s TSFileSource.ax
 regsvr32 /s MPTSWriter.ax
@@ -44,50 +44,50 @@ copy ..\..\..\TTPremiumBoot\*.* TTPremiumBoot\.
 copy ..\..\..\TTPremiumBoot\21\*.* TTPremiumBoot\21\.
 copy ..\..\..\TTPremiumBoot\24\*.* TTPremiumBoot\24\.
 copy ..\..\..\TTPremiumBoot\24Data\*.* TTPremiumBoot\24Data\.
-copy ..\..\..\TTPremiumSource.ax .
-copy ..\..\..\ttdvbacc.dll .
+copy ..\..\..\MediaPortal.Base\TTPremiumSource.ax .
+copy ..\..\..\MediaPortal.Base\ttdvbacc.dll .
 regsvr32 /s TTPremiumSource.ax
 
 copy ..\..\..\core\directshowhelper\directshowhelper\release\dshowhelper.dll .
 copy ..\..\..\core\DXUtil\release\DXUtil.dll .
 copy ..\..\..\core\fontengine\fontengine\release\fontengine.dll .
-rem copy ..\..\..\Interop.DirectShowHelperLib.dll .
-rem copy ..\..\..\AxInterop.MOZILLACONTROLLib.dll .
-rem copy ..\..\..\Interop.MOZILLACONTROLLib.dll .
-copy ..\..\..\mfc71.dll .
-copy ..\..\..\msvcp71.dll .
-copy ..\..\..\msvcr71.dll .
-copy ..\..\..\Microsoft.ApplicationBlocks*.dll .
-copy ..\..\..\d3dx9_26.dll .
-copy ..\..\..\Microsoft.DirectX.Direct3D.dll .
-copy ..\..\..\Microsoft.DirectX.Direct3DX.dll .
-copy ..\..\..\Microsoft.DirectX.DirectDraw.dll .
-copy ..\..\..\Microsoft.DirectX.dll .
-copy ..\..\..\Microsoft.DirectX.DirectInput.dll .
+rem copy ..\..\..\MediaPortal.Base\Interop.DirectShowHelperLib.dll .
+rem copy ..\..\..\MediaPortal.Base\AxInterop.MOZILLACONTROLLib.dll .
+rem copy ..\..\..\MediaPortal.Base\Interop.MOZILLACONTROLLib.dll .
+copy ..\..\..\MediaPortal.Base\mfc71.dll .
+copy ..\..\..\MediaPortal.Base\msvcp71.dll .
+copy ..\..\..\MediaPortal.Base\msvcr71.dll .
+copy ..\..\..\MediaPortal.Base\Microsoft.ApplicationBlocks*.dll .
+copy ..\..\..\MediaPortal.Base\d3dx9_26.dll .
+copy ..\..\..\MediaPortal.Base\Microsoft.DirectX.Direct3D.dll .
+copy ..\..\..\MediaPortal.Base\Microsoft.DirectX.Direct3DX.dll .
+copy ..\..\..\MediaPortal.Base\Microsoft.DirectX.DirectDraw.dll .
+copy ..\..\..\MediaPortal.Base\Microsoft.DirectX.dll .
+copy ..\..\..\MediaPortal.Base\Microsoft.DirectX.DirectInput.dll .
 rem ExternalDisplay plugin LCD driver DLLs
 
 rem usbuirt driver should only reside in windows\system32
-rem copy ..\..\..\FTD2XX.DLL .
-copy ..\..\..\SG_VFD.dll .
-copy ..\..\..\dlportio.dll .
+rem copy ..\..\..\MediaPortal.Base\FTD2XX.DLL .
+copy ..\..\..\MediaPortal.Base\SG_VFD.dll .
+copy ..\..\..\MediaPortal.Base\dlportio.dll .
 rem if not exist LUI\. mkdir LUI
-rem copy ..\..\..\LUI.dll LUI\.
-copy ..\..\..\Communications.dll .
-copy ..\..\..\Interop.GIRDERLib.dll .
-copy ..\..\..\MediaPadLayer.dll .
+rem copy ..\..\..\MediaPortal.Base\LUI.dll LUI\.
+copy ..\..\..\MediaPortal.Base\Communications.dll .
+copy ..\..\..\MediaPortal.Base\Interop.GIRDERLib.dll .
+copy ..\..\..\MediaPortal.Base\MediaPadLayer.dll .
 rem 
-copy ..\..\..\KCS.Utilities.dll .
-rem copy ..\..\..\X10Plugin.* .
-copy ..\..\..\X10Unified.* .
-copy ..\..\..\xAPMessage.dll .
-copy ..\..\..\xAPTransport.dll .
-rem copy ..\..\..\ECP2Assembly.dll .
-copy ..\..\..\edtftpnet-1.2.2.dll .
-copy ..\..\..\dvblib.dll .
-copy ..\..\..\Interop.WMEncoderLib.dll .
-copy ..\..\..\Interop.TunerLib.dll .
-copy ..\..\..\Interop.iTunesLib.dll .
-copy ..\..\..\Microsoft.Office.Interop.Outlook.dll .
+copy ..\..\..\MediaPortal.Base\KCS.Utilities.dll .
+rem copy ..\..\..\MediaPortal.Base\X10Plugin.* .
+copy ..\..\..\MediaPortal.Base\X10Unified.* .
+copy ..\..\..\MediaPortal.Base\xAPMessage.dll .
+copy ..\..\..\MediaPortal.Base\xAPTransport.dll .
+rem copy ..\..\..\MediaPortal.Base\ECP2Assembly.dll .
+copy ..\..\..\MediaPortal.Base\edtftpnet-1.2.2.dll .
+copy ..\..\..\MediaPortal.Base\dvblib.dll .
+copy ..\..\..\MediaPortal.Base\Interop.WMEncoderLib.dll .
+copy ..\..\..\MediaPortal.Base\Interop.TunerLib.dll .
+copy ..\..\..\MediaPortal.Base\Interop.iTunesLib.dll .
+copy ..\..\..\MediaPortal.Base\Microsoft.Office.Interop.Outlook.dll .
 
 copy ..\..\..\Configuration\Wizards\*.* Wizards
 copy ..\..\..\Configuration\bin\Release\Configuration.exe .
@@ -102,15 +102,15 @@ copy ..\..\..\SubtitlePlugins\bin\release\SubtitlePlugins.dll plugins\subtitle
 copy ..\..\..\TagReaderPlugins\bin\release\TagReaderPlugins.dll plugins\TagReaders
 copy ..\..\..\ExternalPlayers\bin\release\ExternalPlayers.dll plugins\ExternalPlayers
 copy ..\..\..\WindowPlugins\bin\release\WindowPlugins.dll plugins\Windows
-copy ..\..\..\XihSolutions.DotMSN.dll plugins\Windows
+copy ..\..\..\MediaPortal.Base\XihSolutions.DotMSN.dll plugins\Windows
 copy ..\..\..\ProcessPlugins\bin\release\ProcessPlugins.dll plugins\process\
 copy ..\..\..\Dialogs\bin\release\Dialogs.dll plugins\Windows
 copy ..\..\..\RemotePlugins\bin\release\RemotePlugins.dll .
-copy ..\..\..\sqlite.dll .
-copy ..\..\..\TaskScheduler.dll .
-copy ..\..\..\AxInterop.WMPLib.dll .
-copy ..\..\..\Interop.WMPLib.dll .
-copy ..\..\..\dxerr9.dll .
+copy ..\..\..\MediaPortal.Base\sqlite.dll .
+copy ..\..\..\MediaPortal.Base\TaskScheduler.dll .
+copy ..\..\..\MediaPortal.Base\AxInterop.WMPLib.dll .
+copy ..\..\..\MediaPortal.Base\Interop.WMPLib.dll .
+copy ..\..\..\MediaPortal.Base\dxerr9.dll .
 
 copy ..\..\..\WebEPG\WebEPG\bin\Release\WebEPG.dll .
 copy ..\..\..\Utils\bin\Release\Utils.dll .
@@ -120,14 +120,14 @@ copy ..\..\..\WebEPG\WebEPG-conf\bin\Release\WebEPG-conf.exe .
 copy ..\..\..\WebEPG\WebEPG-channels\bin\Release\WebEPG-channels.exe .
 
 rem Begin BASS Music Engine dependancies
-copy ..\..\..\bass.dll .
-copy ..\..\..\Bass.Net.dll .
-copy ..\..\..\bass_vis.dll .
-copy ..\..\..\bass_fx.dll .
-copy ..\..\..\bass_vst.dll .
-copy ..\..\..\bass_wadsp.dll .
-copy ..\..\..\mpviz.dll .
-copy ..\..\..\BassRegistration.dll .
+copy ..\..\..\MediaPortal.Base\bass.dll .
+copy ..\..\..\MediaPortal.Base\Bass.Net.dll .
+copy ..\..\..\MediaPortal.Base\bass_vis.dll .
+copy ..\..\..\MediaPortal.Base\bass_fx.dll .
+copy ..\..\..\MediaPortal.Base\bass_vst.dll .
+copy ..\..\..\MediaPortal.Base\bass_wadsp.dll .
+copy ..\..\..\MediaPortal.Base\mpviz.dll .
+copy ..\..\..\MediaPortal.Base\BassRegistration.dll .
 rem End BASS Music Engine dependancies
 
 rem MyDreambox plugin dependencies
