@@ -6,6 +6,7 @@
   <define>#header.image:television_logo.png</define>
   <define>#header.label:1037</define>
   <define>#header.hover:hover_my tv.png</define>
+  <define>#selecteditem:</define>
   <controls>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
@@ -98,7 +99,7 @@
       <description>upcoming episodes label</description>
       <type>label</type>
       <id>11</id>
-      <posX>260</posX>
+      <posX>270</posX>
       <posY>280</posY>
       <label>1041</label>
       <align>left</align>
@@ -112,11 +113,11 @@
       <type>listcontrol</type>
       <id>10</id>
       <posY>300</posY>
-      <width>450</width>
+      <width>428</width>
       <height>250</height>
       <textXOff>50</textXOff>
       <textYOff>2</textYOff>
-      <textXOff2>420</textXOff2>
+      <textXOff2>418</textXOff2>
       <textYOff2>29</textYOff2>
       <textXOff3>100</textXOff3>
       <textYOff3>29</textYOff3>
@@ -144,9 +145,9 @@
       <description>Current program title</description>
       <type>fadelabel</type>
       <id>13</id>
-      <posX>260</posX>
+      <posX>270</posX>
       <posY>100</posY>
-      <width>250</width>
+      <width>266</width>
       <label />
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -157,7 +158,7 @@
       <description>Current program time</description>
       <type>label</type>
       <id>14</id>
-      <posX>260</posX>
+      <posX>270</posX>
       <posY>120</posY>
       <label />
       <align>left</align>
@@ -165,12 +166,12 @@
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-    </control>
+    </control>    
     <control>
       <description>Description1</description>
       <type>textboxscrollup</type>
       <id>15</id>
-      <posX>260</posX>
+      <posX>270</posX>
       <posY>140</posY>
       <width>430</width>
       <height>130</height>
@@ -181,10 +182,24 @@
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
+      <description>Current program channel</description>
+      <type>fadelabel</type>
+      <id>16</id>
+      <posX>680</posX>
+      <posY>100</posY>
+      <width>128</width>
+      <label></label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>    
+    <control>
       <description>genre</description>
       <type>label</type>
       <id>17</id>
-      <posX>660</posX>
+      <posX>680</posX>
       <posY>120</posY>
       <label />
       <align>right</align>
@@ -216,59 +231,6 @@
       <onup>5</onup>
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>Current program title</description>
-      <type>fadelabel</type>
-      <id>13</id>
-      <posX>260</posX>
-      <posY>440</posY>
-      <width>250</width>
-      <label />
-      <font>font14</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>Current program time</description>
-      <type>label</type>
-      <id>14</id>
-      <posX>260</posX>
-      <posY>460</posY>
-      <label />
-      <align>left</align>
-      <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>Description1</description>
-      <type>textboxscrollup</type>
-      <id>15</id>
-      <posX>260</posX>
-      <posY>485</posY>
-      <width>430</width>
-      <height>65</height>
-      <label />
-      <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>genre</description>
-      <type>label</type>
-      <id>17</id>
-      <posX>660</posX>
-      <posY>460</posY>
-      <label />
-      <align>right</align>
-      <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>

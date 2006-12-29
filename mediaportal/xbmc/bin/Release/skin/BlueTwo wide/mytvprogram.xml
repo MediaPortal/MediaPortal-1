@@ -6,6 +6,7 @@
   <define>#header.image:television_logo.png</define>
   <define>#header.label:1037</define>
   <define>#header.hover:hover_my tv.png</define>
+  <define>#selecteditem:</define>
   <controls>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
@@ -114,11 +115,11 @@
       <id>10</id>
       <posX>493</posX>
       <posY>400</posY>
-      <width>770</width>
+      <width>789</width>
       <height>333</height>
       <textXOff>55</textXOff>
       <textYOff>4</textYOff>
-      <textXOff2>737</textXOff2>
+      <textXOff2>766</textXOff2>
       <textYOff2>36</textYOff2>
       <textXOff3>189</textXOff3>
       <textYOff3>38</textYOff3>
@@ -169,14 +170,14 @@
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-    </control>
+    </control>    
     <control>
       <description>Description1</description>
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>493</posX>
       <posY>195</posY>
-      <width>777</width>
+      <width>789</width>
       <height>165</height>
       <label>#TV.RecordedTV.Description</label>
       <font>font13</font>
@@ -185,10 +186,24 @@
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
+      <description>Current program channel</description>
+      <type>fadelabel</type>
+      <id>16</id>
+      <posX>1271</posX>
+      <posY>133</posY>
+      <width>150</width>
+      <label></label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>      
+    <control>
       <description>genre</description>
       <type>label</type>
       <id>17</id>
-      <posX>1252</posX>
+      <posX>1271</posX>
       <posY>160</posY>
       <label />
       <align>right</align>
