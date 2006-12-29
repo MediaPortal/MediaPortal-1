@@ -117,7 +117,7 @@ copy ..\..\..\sqlite.dll .
 copy ..\..\..\TaskScheduler.dll .
 copy ..\..\..\AxInterop.WMPLib.dll .
 copy ..\..\..\Interop.WMPLib.dll .
-
+copy ..\..\..\dxerr9.dll .
 
 copy ..\..\..\WebEPG\WebEPG\bin\debug\WebEPG.dll .
 copy ..\..\..\Utils\bin\debug\Utils.dll .
