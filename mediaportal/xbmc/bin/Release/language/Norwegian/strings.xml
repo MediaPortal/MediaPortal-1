@@ -5211,7 +5211,7 @@
 	</string>
 	<string>
 		<id>19008</id>
-		<value>Høyeste poengsum</value>
+		<value>Høyeste poengsum </value>
 	</string>
 	<string>
 		<id>19009</id>
@@ -5314,10 +5314,134 @@
 		<id>19119</id>
 		<value>Nullstill</value>
 	</string>
+	<string>
+		<id>19120</id>
+		<value>Filtrer Kandidater</value>
+	</string>
   <string>
     <id>19121</id>
     <value>Tid: </value>
   </string>
+	<string>
+		<id>19122</id>
+		<value>Filtrer 1</value>
+	</string>
+	<string>
+		<id>19123</id>
+		<value>Filtrer 2</value>
+	</string>
+	<string>
+		<id>19124</id>
+		<value>Filtrer 3</value>
+	</string>
+	<string>
+		<id>19125</id>
+		<value>Filtrer 4</value>
+	</string>
+	<string>
+		<id>19126</id>
+		<value>Filtrer 5</value>
+	</string>
+	<string>
+		<id>19127</id>
+		<value>Filtrer 6</value>
+	</string>
+	<string>
+		<id>19128</id>
+		<value>Filtrer 7</value>
+	</string>
+	<string>
+		<id>19129</id>
+		<value>Filtrer 8</value>
+	</string>
+	<string>
+		<id>19130</id>
+		<value>Filtrer 9</value>
+	</string>
+	<string>
+		<id>19131</id>
+		<value>Filtrer par</value>
+	</string>
+	<string>
+		<id>19132</id>
+		<value>Filtrer av</value>
+	</string>
+	<string>
+		<id>19133</id>
+		<value>Legg til/Fjern Kandidater</value>
+	</string>
+	<string>
+		<id>19134</id>
+		<value>Bytt 1</value>
+	</string>
+	<string>
+		<id>19135</id>
+		<value>Bytt 2</value>
+	</string>
+	<string>
+		<id>19136</id>
+		<value>Bytt 3</value>
+	</string>
+	<string>
+		<id>19137</id>
+		<value>Bytt 4</value>
+	</string>
+	<string>
+		<id>19138</id>
+		<value>Bytt 5</value>
+	</string>
+	<string>
+		<id>19139</id>
+		<value>Bytt 6</value>
+	</string>
+	<string>
+		<id>19140</id>
+		<value>Bytt 7</value>
+	</string>
+	<string>
+		<id>19141</id>
+		<value>Bytt 8</value>
+	</string>
+	<string>
+		<id>19142</id>
+		<value>Bytt 9</value>
+	</string>
+	<string>
+		<id>19143</id>
+		<value>Kandidat</value>
+	</string>
+	<string>
+		<id>19144</id>
+		<value>Vis kandidater</value>
+	</string>
+	<string>
+		<id>19145</id>
+		<value>Skjul kandidater</value>
+	</string>
+	<string>
+		<id>19146</id>
+		<value>Fjern kandidater</value>
+	</string>
+	<string>
+		<id>19147</id>
+		<value>Reset Kandidater</value>
+	</string>
+	<string>
+		<id>19148</id>
+		<value>Assistanse</value>
+	</string>
+	<string>
+		<id>19149</id>
+		<value>Filtrer</value>
+	</string>
+	<string>
+		<id>19150</id>
+		<value>Kandidater</value>
+	</string>
+	<string>
+		<id>19151</id>
+		<value>Legg til/Fjern kandidater</value>
+	</string>
 	<string>
 		<id>25001</id>
 		<value>Venter på side {0:X}...!</value>
