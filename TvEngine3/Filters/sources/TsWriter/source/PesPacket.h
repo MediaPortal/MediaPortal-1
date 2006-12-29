@@ -66,7 +66,7 @@ class CPesPacket
     CPcr& Dts();
     int   InUse();
 		bool  HasSequenceHeader();
-    ULONG         packet_number;
+    ULONG packet_number;
 
   private:
     CBuffer m_buffers[MAX_BUFFERS];

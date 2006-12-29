@@ -190,7 +190,8 @@ bool CPesPacket::HasSequenceHeader()
 }
 
 void CPesPacket::Skip()
-{
+{			
+	m_totalSize-=m_buffers[m_iCurrentReadBuffer].Size();
   m_iCurrentReadBuffer++;
   if (m_iCurrentReadBuffer>=MAX_BUFFERS) m_iCurrentReadBuffer=0;
 }

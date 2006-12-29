@@ -69,6 +69,7 @@ void CMultiplexer::ClearStreams()
 	m_pcrPid=-1;
 	m_adaptionField.Pcr.Reset();
 	m_bVideoStartFound=false;
+	m_bFirstPacket=true;
 	m_pcr.Reset();
 }
 
@@ -173,12 +174,56 @@ int CMultiplexer::OnNewPesPacket(CPesDecoder* decoder)
   int streamId=-1;
   CPcr pcr;
 	ivecPesDecoders it;
+	if (!m_bVideoStartFound)
+	{
+		for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
+		{
+			CPesDecoder* decoder=*it;
+			CPesPacket& packet=decoder->m_packet;
+			while (packet.IsAvailable(800))
+			{
+				if (packet.IsStart()==false)
+				{	
+					packet.Skip();
+				}
+				else 
+				{
+					if (decoder->GetStreamId()>=0xe0 && packet.HasSequenceHeader()==false)
+					{
+						packet.Skip();
+					}
+					else
+					{
+						break;
+					}
+				}
+			}
+		}
+		for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
+		{
+			CPesDecoder* decoder=*it;
+			CPesPacket& packet=decoder->m_packet;
+			if (packet.IsAvailable(1024)==false) return 0;
+			if (packet.IsStart()==false) return 0;
+		}
+		for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
+		{
+			CPesDecoder* decoder=*it;
+			CPesPacket& packet=decoder->m_packet;
+			if (decoder->GetStreamId()>=0xe0 && packet.HasSequenceHeader())
+			{
+				m_bVideoStartFound=true;
+			}
+		}
+	}
+	if (!m_bVideoStartFound) return 0;
+
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 	{
 		CPesDecoder* decoder=*it;
     CPesPacket& packet=decoder->m_packet;
     if (packet.IsAvailable(1024)==false) return 0;
-    
+		bool start=packet.IsStart();
     if (pcr > packet.Pcr()  || streamId<0)
     {
       streamId=decoder->GetStreamId();
@@ -189,20 +234,7 @@ int CMultiplexer::OnNewPesPacket(CPesDecoder* decoder)
   if (streamId==decoder->GetStreamId())
   {
 		CPesPacket& packet=decoder->m_packet;
-		/*
-		if (!m_bVideoStartFound)
-		{
-			if (decoder->GetStreamId()==0xe0)
-			{
-				if (packet.HasSequenceHeader())
-					m_bVideoStartFound=true;
-			}
-		}
-		if (!m_bVideoStartFound)
-		{
-			packet.Skip();
-			return 0; 
-		}*/
+		
     mpeg_mux_write_packet(packet,decoder->GetStreamId());
   }
   return 0;
@@ -216,7 +248,8 @@ int CMultiplexer::get_packet_payload_size(CPesPacket& packet)
       /* pack header size */
       buf_index += PACK_HEADER_SIZE;
 
-      if ((packet.packet_number % SYSTEM_HEADER_FREQUENCY) == 0)
+      //if ((packet.packet_number % SYSTEM_HEADER_FREQUENCY) == 0)
+			if (m_bFirstPacket)
           buf_index += m_system_header_size;
   }
 
@@ -314,11 +347,14 @@ int CMultiplexer::WriteSystemHeader(byte* buf)
   buf[3]=0xbb;
   buf[4]=0;
   buf[5]=0;
+	//  6       7         8        9        10
+	//76543210 76543210 76543210 76543210 76543210
+	//mrrrrrrr rrrrrrrr rrrrrrrm aaaaaafc llmvvvvv
   buf[6]=(byte)(0x80 + ( (muxRate>>15)&0x7f ) );
   buf[7]=(byte)( (muxRate>>7)&0xff ) ;
   buf[8]=(byte)( 1+ (muxRate&0x7f<<1) );
   buf[9]=(byte)( ((audioBound&0x3f)<<2)) ; 
-  buf[10]=(byte) (0x20+ (videoBound&0x1f));
+  buf[10]=(byte) (0xe0+ (videoBound&0x1f));
   buf[11]=0xff;
 
   // 76543210 76543210 76543210
@@ -340,14 +376,14 @@ int CMultiplexer::WriteSystemHeader(byte* buf)
     if (id < 0xe0)
     {
       /* audio */
-      ULONG size=(MAX_INPUT_BUFFER_SIZE_AUDIO/128);
+      ULONG size=0;//(MAX_INPUT_BUFFER_SIZE_AUDIO/128);
       buf[offset]=0xc0 + ((size>>8)&0x1f);offset++;
       buf[offset]=(size&0xff); offset++;
     }
     else
     {
       /* video */
-      ULONG size=(MAX_INPUT_BUFFER_SIZE_VIDEO/128);
+      ULONG size=0;//(MAX_INPUT_BUFFER_SIZE_VIDEO/128);
       buf[offset]=0xe0 + ((size>>8)&0x1f);offset++;
       buf[offset]=(size&0xff); offset++;
     }
@@ -403,7 +439,8 @@ void CMultiplexer::flush_packet(CPesPacket& packet, int streamId)
       size = WritePackHeader(buf_ptr, packet.Pcr());
       buf_ptr += size;
 
-      if ((packet.packet_number % SYSTEM_HEADER_FREQUENCY) == 0) 
+      //if ((packet.packet_number % SYSTEM_HEADER_FREQUENCY) == 0) 
+			if (m_bFirstPacket)
       {
           size = WriteSystemHeader(buf_ptr);
           buf_ptr += size;
@@ -475,6 +512,7 @@ void CMultiplexer::flush_packet(CPesPacket& packet, int streamId)
   {
     m_pCallback->Write(buffer,PACK_SIZE);
   }
+	m_bFirstPacket=false;
 
   packet.packet_number++;
   //packet.nb_frames = 0;

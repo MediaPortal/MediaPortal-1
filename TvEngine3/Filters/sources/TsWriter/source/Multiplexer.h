@@ -74,4 +74,5 @@ private:
 	int m_pcrPid;
 	CPcr m_pcr;
 	bool m_bVideoStartFound;
+	bool m_bFirstPacket;
 };
