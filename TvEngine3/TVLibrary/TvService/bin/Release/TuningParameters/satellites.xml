@@ -1,4 +1,4 @@
-<satellites>
+﻿<satellites>
   <satellite name="2.0°E Astra 1C" url="http://en.kingofsat.net/dl.php?pos=2.0E"/>
   <satellite name="4.0°E Hotbird 1" url="http://en.kingofsat.net/dl.php?pos=4.0E"/>
   <satellite name="4.8°E Sirius 2" url="http://en.kingofsat.net/dl.php?pos=4.8E"/>
@@ -15,6 +15,7 @@
   <satellite name="26.0°E Arabsat 2D/3A (26°E)" url="http://en.kingofsat.net/dl.php?pos=26.0E"/>
   <satellite name="28.2°E Astra 2A/2B/2D, Eurobird 1 (28°E)" url="http://en.kingofsat.net/dl.php?pos=28.2E"/>
   <satellite name="28.5°E EuroBird 1" url="http://en.kingofsat.net/dl.php?pos=28.5E"/>
+  <satellite name="28.2°E Sky HD" url=""/>  
   <satellite name="31.5°E Optus A3" url="http://en.kingofsat.net/dl.php?pos=31.5E"/>
   <satellite name="33.0°E EuroBird 3" url="http://en.kingofsat.net/dl.php?pos=33.0E"/>
   <satellite name="36.0°E Eutelsat W4" url="http://en.kingofsat.net/dl.php?pos=36.0E"/>
