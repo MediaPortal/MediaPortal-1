@@ -175,37 +175,37 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>GUIMyDreambox\AxInterop.AXVLC.dll</HintPath>
     </Reference>
-    <Reference Include="Communications">
-      <Name>Communications</Name>
-      <HintPath>..\Communications.dll</HintPath>
+    <Reference Include="Communications, Version=0.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Communications.dll</HintPath>
     </Reference>
     <Reference Include="Interop.AXVLC, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>GUIMyDreambox\Interop.AXVLC.dll</HintPath>
     </Reference>
-    <Reference Include="Interop.TunerLib">
-      <Name>Interop.TunerLib</Name>
-      <HintPath>..\Interop.TunerLib.dll</HintPath>
+    <Reference Include="Interop.TunerLib, Version=1.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Interop.TunerLib.dll</HintPath>
     </Reference>
-    <Reference Include="KCS.Utilities">
-      <Name>KCS.Utilities</Name>
-      <HintPath>..\KCS.Utilities.dll</HintPath>
+    <Reference Include="KCS.Utilities, Version=1.1.1.2, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\KCS.Utilities.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.DirectX">
-      <Name>Microsoft.DirectX</Name>
-      <HintPath>..\Microsoft.DirectX.dll</HintPath>
+    <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Microsoft.DirectX.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.DirectX.Direct3D">
-      <Name>Microsoft.DirectX.Direct3D</Name>
-      <HintPath>..\Microsoft.DirectX.Direct3D.dll</HintPath>
+    <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Microsoft.DirectX.Direct3D.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.DirectX.Direct3DX">
-      <Name>Microsoft.DirectX.Direct3DX</Name>
-      <HintPath>..\Microsoft.DirectX.Direct3DX.dll</HintPath>
+    <Reference Include="Microsoft.DirectX.Direct3DX, Version=1.0.2906.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Microsoft.DirectX.Direct3DX.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.DirectX.DirectDraw">
-      <Name>Microsoft.DirectX.DirectDraw</Name>
-      <HintPath>..\Microsoft.DirectX.DirectDraw.dll</HintPath>
+    <Reference Include="Microsoft.DirectX.DirectDraw, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Microsoft.DirectX.DirectDraw.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -234,21 +234,21 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="X10Unified">
-      <Name>X10Unified</Name>
-      <HintPath>..\X10Unified.dll</HintPath>
+    <Reference Include="X10Unified, Version=0.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\X10Unified.dll</HintPath>
     </Reference>
-    <Reference Include="xAPMessage">
-      <Name>xAPMessage</Name>
-      <HintPath>..\xAPMessage.dll</HintPath>
+    <Reference Include="xAPMessage, Version=1.2.9.8, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\xAPMessage.dll</HintPath>
     </Reference>
-    <Reference Include="xAPTransport">
-      <Name>xAPTransport</Name>
-      <HintPath>..\xAPTransport.dll</HintPath>
+    <Reference Include="xAPTransport, Version=1.2.9.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\xAPTransport.dll</HintPath>
     </Reference>
     <Reference Include="XihSolutions.DotMSN, Version=2.0.1.15051, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\XihSolutions.DotMSN.dll</HintPath>
+      <HintPath>..\MediaPortal.Base\XihSolutions.DotMSN.dll</HintPath>
     </Reference>
     <Reference Include="XPBurnComponent, Version=1.0.1.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>

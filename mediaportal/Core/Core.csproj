@@ -198,43 +198,43 @@
   <ItemGroup>
     <Reference Include="AxInterop.WMPLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\AxInterop.WMPLib.dll</HintPath>
+      <HintPath>..\MediaPortal.Base\AxInterop.WMPLib.dll</HintPath>
     </Reference>
-    <Reference Include="Bass.Net, Version=2.3.0.2, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
+    <Reference Include="Bass.Net, Version=2.3.0.9, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Bass.Net.dll</HintPath>
+      <HintPath>..\MediaPortal.Base\Bass.Net.dll</HintPath>
     </Reference>
     <Reference Include="BassRegistration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\BassRegistration.dll</HintPath>
+      <HintPath>..\MediaPortal.Base\BassRegistration.dll</HintPath>
     </Reference>
     <Reference Include="edtftpnet-1.2.2, Version=1.2.2.0, Culture=neutral, PublicKeyToken=4b0c991f43097782">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\edtftpnet-1.2.2.dll</HintPath>
+      <HintPath>..\MediaPortal.Base\edtftpnet-1.2.2.dll</HintPath>
     </Reference>
     <Reference Include="Interop.TunerLib, Version=1.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Interop.TunerLib.dll</HintPath>
+      <HintPath>..\MediaPortal.Base\Interop.TunerLib.dll</HintPath>
     </Reference>
     <Reference Include="Interop.WMPLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Interop.WMPLib.dll</HintPath>
+      <HintPath>..\MediaPortal.Base\Interop.WMPLib.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.DirectX">
-      <Name>Microsoft.DirectX</Name>
-      <HintPath>..\Microsoft.DirectX.dll</HintPath>
+    <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Microsoft.DirectX.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.DirectX.Direct3D">
-      <Name>Microsoft.DirectX.Direct3D</Name>
-      <HintPath>..\Microsoft.DirectX.Direct3D.dll</HintPath>
+    <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Microsoft.DirectX.Direct3D.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.DirectX.Direct3DX">
-      <Name>Microsoft.DirectX.Direct3DX</Name>
-      <HintPath>..\Microsoft.DirectX.Direct3DX.dll</HintPath>
+    <Reference Include="Microsoft.DirectX.Direct3DX, Version=1.0.2906.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Microsoft.DirectX.Direct3DX.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.DirectX.DirectDraw">
-      <Name>Microsoft.DirectX.DirectDraw</Name>
-      <HintPath>..\Microsoft.DirectX.DirectDraw.dll</HintPath>
+    <Reference Include="Microsoft.DirectX.DirectDraw, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Microsoft.DirectX.DirectDraw.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>

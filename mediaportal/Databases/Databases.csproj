@@ -174,9 +174,9 @@
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
     </ProjectReference>
-    <Reference Include="Interop.TunerLib">
-      <Name>Interop.TunerLib</Name>
-      <HintPath>..\Interop.TunerLib.dll</HintPath>
+    <Reference Include="Interop.TunerLib, Version=1.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Interop.TunerLib.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>

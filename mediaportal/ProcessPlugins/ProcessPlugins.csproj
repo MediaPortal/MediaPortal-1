@@ -204,17 +204,17 @@
       <Project>{C6564AA7-976B-43EF-9E35-7E607EE1DD12}</Project>
       <Name>MusicShareWatcherHelper</Name>
     </ProjectReference>
-    <Reference Include="Communications">
-      <Name>Communications</Name>
-      <HintPath>..\Communications.dll</HintPath>
+    <Reference Include="Communications, Version=0.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Communications.dll</HintPath>
     </Reference>
-    <Reference Include="Interop.GIRDERLib">
-      <Name>Interop.GIRDERLib</Name>
-      <HintPath>..\Interop.GIRDERLib.dll</HintPath>
+    <Reference Include="Interop.GIRDERLib, Version=1.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Interop.GIRDERLib.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Office.Interop.Outlook">
-      <Name>Microsoft.Office.Interop.Outlook</Name>
-      <HintPath>..\Microsoft.Office.Interop.Outlook.dll</HintPath>
+    <Reference Include="Microsoft.Office.Interop.Outlook, Version=10.0.4504.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Microsoft.Office.Interop.Outlook.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>

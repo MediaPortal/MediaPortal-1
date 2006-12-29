@@ -169,7 +169,7 @@
     </Reference>
     <Reference Include="Interop.iTunesLib, Version=1.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Interop.iTunesLib.dll</HintPath>
+      <HintPath>..\MediaPortal.Base\Interop.iTunesLib.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
