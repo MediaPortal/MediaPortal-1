@@ -207,7 +207,7 @@ STDMETHODIMP CTechnotrend::IsTechnoTrend( BOOL* yesNo)
 STDMETHODIMP CTechnotrend::IsCamReady( BOOL* yesNo)
 {
   *yesNo=FALSE;
-  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK)
+  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK||m_slotStatus==CI_SLOT_DBG_MSG)
   {
     *yesNo=TRUE;
   }
@@ -287,7 +287,7 @@ STDMETHODIMP CTechnotrend::DescrambleService( int serviceId,BOOL* succeeded)
   m_ciStatus=-1;
 	bdaapiCIGetSlotStatus(m_hBdaApi,0);
 	LogDebug("TechnoTrend: DescrambleService:0x%x (%d) (%d)",serviceId,serviceId,m_slotStatus);
-	if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK )
+	if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK||m_slotStatus==CI_SLOT_DBG_MSG )
   {
     hr = bdaapiCIReadPSIFastDrvDemux(m_hBdaApi, (WORD)serviceId);
     if (hr==RET_SUCCESS)
@@ -300,6 +300,7 @@ STDMETHODIMP CTechnotrend::DescrambleService( int serviceId,BOOL* succeeded)
       }
       else
       {
+        *succeeded=TRUE;
         LogDebug("TechnoTrend: service decoded:%x %d",hr,m_ciStatus);
       }
     }
