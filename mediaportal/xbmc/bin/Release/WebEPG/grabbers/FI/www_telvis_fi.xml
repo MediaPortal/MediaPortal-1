@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="fi" availableDays="7" timezone="" />
+  <Channels>
+    <Channel id="tv1@yle.fi" siteId="tv1" />
+    <Channel id="tv2@yle.fi" siteId="tv2" />
+    <Channel id="mtv3@mtv3.fi" siteId="mtv3" />
+    <Channel id="nelonen@nelonen.fi" siteId="nelonen" />
+    <Channel id="subtv.fi" siteId="subtv" />
+    <Channel id="fst.fi" siteId="fst5" />
+    <Channel id="yleteema@yle.fi" siteId="yleteema" />
+    <Channel id="yle24@yle.fi" siteId="yle24" />
+    <Channel id="nelonenplus@nelonen.fi" siteId="nelonenplus" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.telvis.fi/tvopas/?vw=channel&amp;ch=[ID]&amp;sh=all&amp;dy=[DD].[MM].[YYYY]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default">
+        <SectionTemplate tags="DSPH">
+          <TemplateText>
+            &lt;div&gt;&lt;div&gt;
+            &lt;h4&gt;
+            &lt;span&gt;&lt;#START&gt;&lt;/span&gt;
+            &lt;#TITLE&gt;
+            &lt;/h4&gt;
+            &lt;p&gt;
+            &lt;#DESCRIPTION&gt;
+            &lt;script&gt;&lt;/script&gt;
+            &lt;/p&gt;
+            &lt;/div&gt;&lt;/div&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>
