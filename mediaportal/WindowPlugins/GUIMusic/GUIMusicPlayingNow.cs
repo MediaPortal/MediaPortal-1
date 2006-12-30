@@ -172,7 +172,7 @@ namespace MediaPortal.GUI.Music
 
       g_Player.PlayBackStarted += new g_Player.StartedHandler(g_Player_PlayBackStarted);
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
-      g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);
+      g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);      
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -185,16 +185,46 @@ namespace MediaPortal.GUI.Music
       }
 
       _usingBassEngine = BassMusicPlayer.IsDefaultMusicPlayer;
+
+      if (_usingBassEngine)
+        BassMusicPlayer.Player.PlaybackStateChanged += new BassAudioEngine.PlaybackStateChangedDelegate(BassPlayer_PlaybackStateChanged);
+    }
+
+    void BassPlayer_PlaybackStateChanged(object sender, BassAudioEngine.PlayState oldState, BassAudioEngine.PlayState newState)
+    {
+      Log.Debug("GUIMusicPlayingNow: BassPlayer_PlaybackStateChanged from {0} to {1}", oldState.ToString(), newState.ToString());
+      if (!ControlsInitialized)
+        return;
+
+      if (GUIWindowManager.ActiveWindow == GetID)
+      {
+        // due to crossfading options we sometimes won't get g_Player_PlayBackEnded
+        if (oldState == BassAudioEngine.PlayState.Playing && newState == BassAudioEngine.PlayState.Ended)
+        {
+          Action action = new Action();
+          action.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
+          GUIGraphicsContext.OnAction(action);
+        }
+      }
     }
 
     void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
     {
+      Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackEnded for {0}", filename);
       if (!ControlsInitialized)
         return;
+
+      if (GUIWindowManager.ActiveWindow == GetID)
+      {
+        Action action = new Action();
+        action.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
+        GUIGraphicsContext.OnAction(action);
+      }      
     }
 
     void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
     {
+      Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackStopped for {0} - stoptime: {1}", filename, stoptime);
       if (!ControlsInitialized)
         return;
 
@@ -220,6 +250,7 @@ namespace MediaPortal.GUI.Music
       if (_lastTagRequest != null)
         InfoScrobbler.RemoveRequest(_lastTagRequest);
 
+
       ImagePathContainer.Clear();
       ClearVisualizationImages();
 
@@ -241,7 +272,11 @@ namespace MediaPortal.GUI.Music
       UpdateImagePathContainer();
       UpdateTrackInfo();
       UpdateTrackPosition();
-      SetVisualizationWindow();
+
+      if (GUIWindowManager.ActiveWindow == GetID)
+      {
+        SetVisualizationWindow();
+      }
     }
 
     public override bool Init()
@@ -278,6 +313,11 @@ namespace MediaPortal.GUI.Music
             {
               LoadAndStartPlayList();
             }
+            break;
+          }
+        case Action.ActionType.ACTION_SHOW_INFO:
+          {
+            OnShowContextMenu();
             break;
           }
       }
@@ -514,6 +554,7 @@ namespace MediaPortal.GUI.Music
             }
           }
           break;
+
         //case GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS:
         //  {
         //    //_currentPlaying = message.Label;
