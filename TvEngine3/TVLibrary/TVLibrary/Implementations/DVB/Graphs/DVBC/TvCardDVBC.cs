@@ -280,6 +280,7 @@ namespace TvLibrary.Implementations.DVB
       {
         BuildGraph();
       }
+      _pmtPid = -1;
       if (!CheckThreadId()) return false;
       ILocator locator;
       _tuningSpace.get_DefaultLocator(out locator);

@@ -511,6 +511,7 @@ namespace TvLibrary.Implementations.DVB
       {
         BuildGraph();
       }
+      _pmtPid = -1;
       //from submittunerequest
       if (_graphState == GraphState.TimeShifting)
       {

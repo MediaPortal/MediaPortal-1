@@ -294,6 +294,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (!CheckThreadId()) return false;
 
+        _pmtPid = -1;
         ILocator locator;
         _tuningSpace.get_DefaultLocator(out locator);
         IDVBTLocator dvbtLocator = (IDVBTLocator)locator;

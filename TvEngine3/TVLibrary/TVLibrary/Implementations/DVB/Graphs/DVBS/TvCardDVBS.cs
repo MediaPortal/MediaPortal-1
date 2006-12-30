@@ -302,6 +302,7 @@ namespace TvLibrary.Implementations.DVB
       {
         BuildGraph();
       }
+      _pmtPid = -1;
       ILocator locator;
 
       if (!CheckThreadId()) return false;
