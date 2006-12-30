@@ -354,6 +354,7 @@
     </Compile>
     <Compile Include="Util\Config.cs" />
     <Compile Include="Util\EncryptDecrypt.cs" />
+    <Compile Include="Util\HResult.cs" />
     <Compile Include="Util\HTMLParser.cs" />
     <Compile Include="Util\IMPawardsSearch.cs" />
     <Compile Include="Util\PRNG.cs" />

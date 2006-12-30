@@ -93,12 +93,6 @@ namespace MediaPortal.Util
     [DllImport("kernel32.dll", SetLastError = true)]
     static extern bool CloseHandle(IntPtr hObject);
 
-    [DllImport("Dxerr9.dll", EntryPoint = "GetDXErrorString", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public static extern string GetDXErrorString(int HRESULT);
-
-    [DllImport("Dxerr9.dll", EntryPoint = "GetDXErrorDescription", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public static extern string GetDXErrorDescription(int HRESULT);
-
     public delegate void UtilEventHandler(Process proc, bool waitForExit);
     static public event UtilEventHandler OnStartExternal = null;	// Event: Start external process / waeberd & mPod
     static public event UtilEventHandler OnStopExternal = null;		// Event: Stop external process	/ waeberd & mPod
