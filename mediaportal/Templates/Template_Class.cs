@@ -27,6 +27,9 @@ using System;
 
 namespace MediaPortal
 {
+  /// <summary>
+  ///  This is a MediaPortal Class.
+  /// </summary>
   public class Template_Class 
   {
     #region Imports
