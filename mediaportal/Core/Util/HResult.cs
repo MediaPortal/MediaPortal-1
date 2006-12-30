@@ -213,6 +213,19 @@ namespace MediaPortal.Util
       return !(a == b);
 
     }
+
+    public override bool Equals(Object obj)
+    {
+      // Check for null values and compare run-time types.
+      if (obj == null || GetType() != obj.GetType())
+        return false;
+      return this._hresult == ((HRESULT)obj)._hresult;
+    }
+
+    public override int GetHashCode()
+    {
+      return _hresult.GetHashCode();
+    }
     #endregion
   }
 }
