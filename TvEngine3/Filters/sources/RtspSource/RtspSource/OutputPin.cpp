@@ -39,12 +39,9 @@ COutputPin::COutputPin(LPUNKNOWN pUnk, CRtspSourceFilter *pFilter, HRESULT *phr,
 	AM_SEEKING_CanGetDuration	|
 	AM_SEEKING_Source;
 	m_rtDuration=CRefTime(7200L*1000L);
-	m_rtDurationAtStart=CRefTime(7200L*1000L);
 	m_bSeeking = false;
   m_DemuxLock=false;
   m_biMpegDemux=false;
-	m_tickCount=GetTickCount();
-	m_tickUpdateCount=GetTickCount();
   m_bIsTimeShifting=true;
 }
 
@@ -207,19 +204,6 @@ HRESULT COutputPin::FillBuffer(IMediaSample *pSample)
 		return S_OK;
 	}
   pSample->SetActualDataLength(bytesRead);
-
-  if (m_bIsTimeShifting)
-  {
-	  long ticks=GetTickCount()-m_tickUpdateCount;
-    if (ticks>1000 && m_pFilter->IsClientRunning())
-	  {
-		  ticks=GetTickCount()-m_tickCount;
-      CRefTime refAdd(ticks);
-      m_rtDuration = refAdd+m_rtDurationAtStart;
-      m_pFilter->NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
-      m_tickUpdateCount=GetTickCount();
-	  }
-  }
   return S_OK;
 }
 HRESULT COutputPin::ChangeStart()
@@ -329,13 +313,10 @@ HRESULT COutputPin::OnThreadStartPlay(void)
 	return CSourceStream::OnThreadStartPlay( );
 }
 
-void COutputPin::UpdateStopStart()
+
+void COutputPin::SetDuration(CRefTime& duration)
 {
-	CAutoLock lock(&m_SeekLock);
-	Log("COutputPin::UpdateStopStart()");
-	m_pFilter->GetStartStop(m_rtStart, m_rtDuration);
-	m_rtDurationAtStart=m_rtDuration;
-	m_tickCount=GetTickCount();
+	m_rtDuration=duration;
 }
 
 

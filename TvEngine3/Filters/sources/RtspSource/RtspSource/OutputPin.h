@@ -45,7 +45,7 @@ public:
 	STDMETHODIMP SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags);
 
 	virtual HRESULT OnThreadStartPlay(void) ;
-	void UpdateStopStart();
+	void SetDuration(CRefTime& duration);
   void IsTimeShifting(bool onOff);
 protected:
   HRESULT DisconnectOutputPins(IBaseFilter *pFilter);
@@ -61,7 +61,4 @@ protected:
   bool m_bSeeking;
   bool m_biMpegDemux;
   bool m_bIsTimeShifting;
-	DWORD m_tickCount;
-	DWORD m_tickUpdateCount;
-	CRefTime m_rtDurationAtStart;
 };
