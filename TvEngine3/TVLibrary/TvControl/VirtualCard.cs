@@ -41,9 +41,23 @@ namespace TvControl
     int _cardId = -1;
     string _server;
     string _recordingFolder;
+    string _timeShiftFolder;
+    int _recordingFormat=0;
     #endregion
 
     #region ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VirtualCard"/> class.
+    /// </summary>
+    /// <param name="cardId">The card id.</param>
+    /// <param name="server">The server.</param>
+    public VirtualCard(int cardId, string server, int recordingFormat)
+    {
+      _cardId = cardId;
+      _server = server;
+      _recordingFolder = System.IO.Directory.GetCurrentDirectory();
+      _recordingFormat = recordingFormat;
+    }
     /// <summary>
     /// Initializes a new instance of the <see cref="VirtualCard"/> class.
     /// </summary>
@@ -100,6 +114,21 @@ namespace TvControl
       {
         return _server;
       }
+      set
+      {
+        _server = value;
+      }
+    }
+    public int RecordingFormat
+    {
+      get
+      {
+        return _recordingFormat;
+      }
+      set
+      {
+        _recordingFormat = value;
+      }
     }
 
     /// <summary>
@@ -117,6 +146,25 @@ namespace TvControl
         _recordingFolder = value;
         if (_recordingFolder == String.Empty)
           _recordingFolder = System.IO.Directory.GetCurrentDirectory();
+
+      }
+    }
+
+    /// <summary>
+    /// gets/sets the recording folder for the card
+    /// </summary>
+    [XmlIgnore]
+    public string TimeshiftFolder
+    {
+      get
+      {
+        return _timeShiftFolder;
+      }
+      set
+      {
+        _timeShiftFolder = value;
+        if (_timeShiftFolder == String.Empty)
+          _timeShiftFolder = System.IO.Directory.GetCurrentDirectory();
 
       }
     }

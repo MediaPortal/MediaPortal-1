@@ -287,8 +287,8 @@ namespace SetupTv.Sections
 
       textBoxPreInterval.Text = layer.GetSetting("preRecordInterval", "5").Value;
       textBoxPostInterval.Text = layer.GetSetting("postRecordInterval", "5").Value;
-      formatString[0] = layer.GetSetting("moviesformat", "").Value;
-      formatString[1] = layer.GetSetting("seriesformat", "").Value;
+      formatString[0] = layer.GetSetting("moviesformat", @"%title%\%title%").Value;
+      formatString[1] = layer.GetSetting("seriesformat", @"%title%\%date%\%title%-%start%").Value;
 
       checkBoxComSkipEnabled.Checked = (layer.GetSetting("comskipEnabled", "no").Value == "yes");
       textBoxComSkip.Text = layer.GetSetting("comskipLocation", "").Value;
@@ -395,9 +395,23 @@ namespace SetupTv.Sections
     {
       CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
       textBoxFolder.Text = info.card.RecordingFolder;
+      textBoxTimeShiftFolder.Text = info.card.TimeShiftFolder;
       if (textBoxFolder.Text == "")
       {
         textBoxFolder.Text = System.IO.Directory.GetCurrentDirectory();
+      }
+      if (textBoxTimeShiftFolder.Text == "")
+      {
+        textBoxTimeShiftFolder.Text = System.IO.Directory.GetCurrentDirectory();
+      }
+      switch (info.card.RecordingFormat)
+      {
+        case 0:
+          comboBoxRecordingFormat.SelectedIndex = 0;
+          break;
+        case 1:
+          comboBoxRecordingFormat.SelectedIndex = 1;
+          break;
       }
     }
 
@@ -411,9 +425,13 @@ namespace SetupTv.Sections
       {
         textBoxFolder.Text = dlg.SelectedPath;
         CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-        info.card.RecordingFolder = textBoxFolder.Text;
-        info.card.Persist();
-        RemoteControl.Instance.ClearCache();
+        if (info.card.RecordingFolder != textBoxFolder.Text)
+        {
+          info.card.RecordingFolder = textBoxFolder.Text;
+          info.card.Persist();
+          RemoteControl.Instance.ClearCache();
+          RemoteControl.Instance.Restart();
+        }
       }
     }
 
@@ -460,14 +478,63 @@ namespace SetupTv.Sections
     private void textBoxFolder_TextChanged(object sender, EventArgs e)
     {
       CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-      info.card.RecordingFolder = textBoxFolder.Text;
-      info.card.Persist();
-      RemoteControl.Instance.ClearCache();
+      if (info.card.RecordingFolder != textBoxFolder.Text)
+      {
+        info.card.RecordingFolder = textBoxFolder.Text;
+        info.card.Persist();
+        RemoteControl.Instance.ClearCache();
+        RemoteControl.Instance.Restart();
+      }
     }
 
     private void label19_Click(object sender, EventArgs e)
     {
 
+    }
+
+    private void buttonTimeShiftBrowse_Click(object sender, EventArgs e)
+    {
+      FolderBrowserDialog dlg = new FolderBrowserDialog();
+      dlg.SelectedPath = textBoxTimeShiftFolder.Text;
+      dlg.Description = "Specify timeshift folder";
+      dlg.ShowNewFolderButton = true;
+      if (dlg.ShowDialog(this) == DialogResult.OK)
+      {
+        textBoxTimeShiftFolder.Text = dlg.SelectedPath;
+        CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
+        if (info.card.RecordingFolder != textBoxFolder.Text)
+        {
+          info.card.RecordingFolder = textBoxFolder.Text;
+          info.card.TimeShiftFolder = textBoxTimeShiftFolder.Text;
+          info.card.Persist();
+          RemoteControl.Instance.ClearCache();
+          RemoteControl.Instance.Restart();
+        }
+      }
+    }
+
+    private void textBoxTimeShiftFolder_TextChanged(object sender, EventArgs e)
+    {
+      CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
+      if (info.card.TimeShiftFolder != textBoxTimeShiftFolder.Text)
+      {
+        info.card.TimeShiftFolder = textBoxTimeShiftFolder.Text;
+        info.card.Persist();
+        RemoteControl.Instance.ClearCache();
+        RemoteControl.Instance.Restart();
+      }
+    }
+
+    private void comboBox1_SelectedIndexChanged_1(object sender, EventArgs e)
+    {
+      CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
+      if (info.card.RecordingFormat != comboBoxRecordingFormat.SelectedIndex)
+      {
+        info.card.RecordingFormat = comboBoxRecordingFormat.SelectedIndex;
+        info.card.Persist();
+        RemoteControl.Instance.ClearCache();
+        RemoteControl.Instance.Restart();
+      }
     }
   }
 }

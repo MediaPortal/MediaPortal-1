@@ -459,6 +459,8 @@ namespace TvService
 
         if (cardInfo.Card.RecordingFolder == String.Empty)
           cardInfo.Card.RecordingFolder = System.IO.Directory.GetCurrentDirectory();
+        if (cardInfo.Card.TimeShiftFolder == String.Empty)
+          cardInfo.Card.TimeShiftFolder = System.IO.Directory.GetCurrentDirectory();
 
         Log.Write("Scheduler : record, first tune to channel");
         if (false == _controller.TuneScan(cardInfo.Id, cardInfo.TuningDetail, recording.Channel.IdChannel))
@@ -467,7 +469,7 @@ namespace TvService
           return false;
         }
         Log.Write("Scheduler : record, now start timeshift");
-        string timeshiftFileName = String.Format(@"{0}\live{1}.ts", cardInfo.Card.RecordingFolder, cardInfo.Id);
+        string timeshiftFileName = String.Format(@"{0}\live{1}.ts", cardInfo.Card.TimeShiftFolder, cardInfo.Id);
         if (TvResult.Succeeded != _controller.StartTimeShifting(cardInfo.Id, timeshiftFileName))
         {
           if (lockedCard) _tvController.UnlockCard(cardInfo.Id);

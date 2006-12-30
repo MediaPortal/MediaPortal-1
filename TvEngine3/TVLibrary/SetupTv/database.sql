@@ -108,6 +108,8 @@ CREATE TABLE Card(
 	idServer int NOT NULL,
 	enabled bit NOT NULL,
 	camType int NOT NULL,
+	timeshiftingFolder varchar(256) NOT NULL,
+	recordingFormat int NOT NULL,
  CONSTRAINT PK_Cards PRIMARY KEY  
 (
 	idCard ASC
@@ -472,5 +474,5 @@ GO
 GO
 delete from version
 GO
-insert into version(versionNumber) values(18)
+insert into version(versionNumber) values(19)
 GO

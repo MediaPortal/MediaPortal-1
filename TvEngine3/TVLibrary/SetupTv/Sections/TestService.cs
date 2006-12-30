@@ -199,7 +199,8 @@ namespace SetupTv.Sections
         card = GetCardTimeShiftingChannel(channel);
         if (card != null)
         {
-          string fileName = String.Format(@"{0}\{1}.mpg", card.RecordingFolder, Utils.MakeFileName(channel));
+          string fileName ;
+          fileName = String.Format(@"{0}\{1}.mpg", card.RecordingFolder, Utils.MakeFileName(channel));
           card.StartRecording(ref fileName, true, 0);
         }
       }

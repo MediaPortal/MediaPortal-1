@@ -37,13 +37,17 @@ namespace TvDatabase
     private bool enabled;
     [TableColumn("camType", NotNull = true)]
     private int camType;
+    [TableColumn("timeshiftingFolder", NotNull = true)]
+    private string timeshiftingFolder;
+    [TableColumn("recordingFormat", NotNull = true)]
+    private int recordingFormat;
     #endregion
 
     #region Constructors
     /// <summary> 
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
-    public Card(string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab, string recordingFolder, int idServer, bool enabled, int camType)
+    public Card(string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab, string recordingFolder, int idServer, bool enabled, int camType, string timeshiftingFolder, int recordingFormat)
     {
       isChanged = true;
       this.devicePath = devicePath;
@@ -55,13 +59,15 @@ namespace TvDatabase
       this.idServer = idServer;
       this.enabled = enabled;
       this.camType = camType;
+      this.timeshiftingFolder = timeshiftingFolder;
+      this.recordingFormat = recordingFormat;
     }
 
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
     /// construct objects from retrieved rows. 
     /// </summary> 
-    public Card(int idCard, string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab, string recordingFolder, int idServer, bool enabled, int camType)
+    public Card(int idCard, string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab, string recordingFolder, int idServer, bool enabled, int camType, string timeshiftingFolder, int recordingFormat)
     {
       this.idCard = idCard;
       this.devicePath = devicePath;
@@ -73,6 +79,8 @@ namespace TvDatabase
       this.idServer = idServer;
       this.enabled = enabled;
       this.camType = camType;
+      this.timeshiftingFolder = timeshiftingFolder;
+      this.recordingFormat = recordingFormat;
     }
     #endregion
 
@@ -93,6 +101,14 @@ namespace TvDatabase
       get { return idCard; }
     }
 
+    /// <summary>
+    /// Property relating to database column recordingFormat
+    /// </summary>
+    public int RecordingFormat
+    {
+      get { return recordingFormat; }
+      set { isChanged |= recordingFormat != value; recordingFormat = value; }
+    }
     /// <summary>
     /// Property relating to database column devicePath
     /// </summary>
@@ -145,6 +161,14 @@ namespace TvDatabase
     {
       get { return recordingFolder; }
       set { isChanged |= recordingFolder != value; recordingFolder = value; }
+    }
+    /// <summary>
+    /// Property relating to database column timeshiftingFolder
+    /// </summary>
+    public string TimeShiftFolder
+    {
+      get { return timeshiftingFolder; }
+      set { isChanged |= timeshiftingFolder != value; timeshiftingFolder = value; }
     }
 
     /// <summary>

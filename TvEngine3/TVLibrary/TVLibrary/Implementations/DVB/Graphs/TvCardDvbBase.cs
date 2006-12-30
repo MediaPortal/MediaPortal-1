@@ -227,6 +227,7 @@ namespace TvLibrary.Implementations.DVB
     protected GraphState _graphState = GraphState.Idle;
     protected bool _startTimeShifting = false;
     protected bool _startRecording = false;
+    protected bool _recordTransportStream = false;
     protected DVBAudioStream _currentAudioStream;
     protected BaseEpgGrabber _epgGrabberCallback = null;
     CamType _camType;
@@ -434,7 +435,7 @@ namespace TvLibrary.Implementations.DVB
           }
         }
       }
-      if (programStream == false)
+      if (programStream == false || _recordTransportStream)
       {
         recorder.AddStream((short)0x11, false, false);//sdt
         recorder.AddStream((short)dvbChannel.PmtPid, false, false);
@@ -666,6 +667,7 @@ namespace TvLibrary.Implementations.DVB
       _channelInfo = new ChannelInfo();
       _currentChannel = null;
       m_context = null;
+      _recordTransportStream = false;
 
       if (_filterTsAnalyzer != null)
       {
@@ -1545,7 +1547,7 @@ namespace TvLibrary.Implementations.DVB
           SetRecorderPids();
 
           ITsRecorder record = _filterTsAnalyzer as ITsRecorder;
-          int                                  hr = record.StartRecord();
+          int hr = record.StartRecord();
           if (hr != 0)
           {
             Log.Log.Error("dvb:StartRecord failed:{0:X}", hr);
@@ -2041,11 +2043,11 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="fileName">filename to which to recording should be saved</param>
     /// <param name="startTime">time the recording should start (0=now)</param>
     /// <returns></returns>
-    protected void StartRecord(string fileName, RecordingType recordingType, ref long startTime)
+    protected void StartRecord(bool transportStream,string fileName)
     {
       if (!CheckThreadId()) return;
       Log.Log.WriteFile("dvb:StartRecord({0})", fileName);
-
+      _recordTransportStream = transportStream;
       int hr;
       if (_filterTsAnalyzer != null)
       {
@@ -2091,6 +2093,7 @@ namespace TvLibrary.Implementations.DVB
 
       }
       _startRecording = false;
+      _recordTransportStream = false;
       _recordingFileName = "";
     }
     #endregion

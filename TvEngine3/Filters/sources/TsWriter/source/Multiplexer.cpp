@@ -350,15 +350,15 @@ int CMultiplexer::WriteSystemHeader(byte* buf)
   buf[3]=0xbb;
   buf[4]=0;
   buf[5]=0;
-	//  6       7         8        9        10
-	//76543210 76543210 76543210 76543210 76543210
-	//mrrrrrrr rrrrrrrr rrrrrrrm aaaaaafc llmvvvvv
+	//  6       7         8        9        10			11
+	//76543210 76543210 76543210 76543210 76543210 76543210
+	//mrrrrrrr rrrrrrrr rrrrrrrm aaaaaafc llmvvvvv pRRRRRRR
   buf[6]=(byte)(0x80 + ( (muxRate>>15)&0x7f ) );
   buf[7]=(byte)( (muxRate>>7)&0xff ) ;
   buf[8]=(byte)( 1+ (muxRate&0x7f<<1) );
-  buf[9]=(byte)( ((audioBound&0x3f)<<2)) ; 
-  buf[10]=(byte) (0xe0+ (videoBound&0x1f));
-  buf[11]=0xff;
+  buf[9]=(byte)( 3+((audioBound&0x3f)<<2)) ; //fixed_flag + CSPS_flag
+  buf[10]=(byte) (0xe0+ (videoBound&0x1f));	 //system_audio_lock_flag+system_video_lock_flag+markerbit
+  buf[11]=0x7f;
 
   // 76543210 76543210 76543210
   // iiiiiiii 11bsssss ssssssss

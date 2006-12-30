@@ -296,7 +296,7 @@ namespace TestApp
         {
           System.IO.File.Delete(fileName);
         }
-        _currentCard.StartRecording(DirectShowLib.SBE.RecordingType.Content, fileName, 0);
+        _currentCard.StartRecording(false, fileName);
         MessageBox.Show(this,"Recording to:" + fileName);
       }
     }
@@ -382,7 +382,7 @@ namespace TestApp
         MessageBox.Show(this,"Stopped recording");
         return;
       }
-      _currentCard.StartRecording(DirectShowLib.SBE.RecordingType.Content, "recording.mpg", 0);
+      _currentCard.StartRecording(false, "recording.mpg");
       button2.Text = "Stop .mpg record";
       MessageBox.Show(this,"Recording to recording.mpg");
     }

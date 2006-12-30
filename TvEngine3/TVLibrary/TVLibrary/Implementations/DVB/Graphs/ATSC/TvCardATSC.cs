@@ -389,7 +389,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="fileName">filename to which to recording should be saved</param>
     /// <param name="startTime">time the recording should start (0=now)</param>
     /// <returns></returns>
-    public bool StartRecording(RecordingType recordingType, string fileName, long startTime)
+    public bool StartRecording(bool transportStream, string fileName)
     {
       if (!CheckThreadId()) return false;
       Log.Log.WriteFile("atsc:tartRecording to {0}", fileName);
@@ -400,8 +400,8 @@ namespace TvLibrary.Implementations.DVB
       _recordingFileName = fileName;
 
       _graphState = GraphState.Recording;
-      StartRecord(fileName, recordingType, ref startTime);
-      Log.Log.WriteFile("atsc:Started recording on {0}", startTime);
+      StartRecord(transportStream, fileName);
+      Log.Log.WriteFile("atsc:Started recording");
       return true;
     }
     /// <summary>

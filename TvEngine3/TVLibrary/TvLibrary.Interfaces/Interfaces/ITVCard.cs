@@ -249,11 +249,10 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// Starts recording
     /// </summary>
-    /// <param name="recordingType">unused</param>
+    /// <param name="transportStream">if true, then record transport stream</param>
     /// <param name="fileName">filename to which to recording should be saved</param>
-    /// <param name="startTime">unused</param>
     /// <returns>true if succeeded else false</returns>
-    bool StartRecording(RecordingType recordingType,  string fileName, long startTime);
+    bool StartRecording(bool transportStream,  string fileName);
 
     /// <summary>
     /// Stop recording

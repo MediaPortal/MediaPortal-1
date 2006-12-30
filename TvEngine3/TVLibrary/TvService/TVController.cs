@@ -1319,7 +1319,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return false;
-        Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, new VirtualCard(cardId), GetUserForCard(cardId), channel));
+        Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(cardId), GetUserForCard(cardId), channel));
         Log.Write("Controller:Tune {0} to {1}", cardId, channel.Name);
         lock (this)
         {
@@ -1357,7 +1357,7 @@ namespace TvService
       }
       finally
       {
-        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, new VirtualCard(cardId), GetUserForCard(cardId), channel));
+        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(cardId), GetUserForCard(cardId), channel));
       }
     }
 
@@ -1366,7 +1366,7 @@ namespace TvService
       try
       {
         if (_allDbscards[cardId].Enabled == false) return false;
-        Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, new VirtualCard(cardId), GetUserForCard(cardId), channel));
+        Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(cardId), GetUserForCard(cardId), channel));
         Log.Write("Controller:TuneScan {0} to {1}", cardId, channel.Name);
         lock (this)
         {
@@ -1399,7 +1399,7 @@ namespace TvService
       }
       finally
       {
-        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, new VirtualCard(cardId), GetUserForCard(cardId), channel));
+        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(cardId), GetUserForCard(cardId), channel));
       }
     }
 
@@ -1723,7 +1723,7 @@ namespace TvService
             }
           }
 
-          if (_localCards[cardId].IsRecordingTransportStream)
+          if (_localCards[cardId].IsRecordingTransportStream || (_allDbscards[cardId].RecordingFormat==1))
           {
             fileName = System.IO.Path.ChangeExtension(fileName, ".ts");
           }
@@ -1732,7 +1732,7 @@ namespace TvService
             fileName = System.IO.Path.ChangeExtension(fileName, ".mpg");
           }
           Log.Write("Controller: StartRecording {0} {1}", cardId, fileName);
-          return _localCards[cardId].StartRecording(recType, fileName, startTime);
+          return _localCards[cardId].StartRecording((_allDbscards[cardId].RecordingFormat==1), fileName);
         }
       }
       catch (Exception ex)
@@ -2049,8 +2049,7 @@ namespace TvService
           {
             if (CurrentDbChannel(keyPair.Value.IdCard) == channel.IdChannel)
             {
-              card = new VirtualCard(keyPair.Value.IdCard, Dns.GetHostName());
-              card.RecordingFolder = keyPair.Value.RecordingFolder;
+              card = GetVirtualCard(keyPair.Value.IdCard);
               return TvResult.Succeeded;
             }
           }
@@ -2068,11 +2067,13 @@ namespace TvService
         IChannel tuneChannel = cardInfo.TuningDetail;
         if (cardInfo.Card.RecordingFolder == String.Empty)
           cardInfo.Card.RecordingFolder = System.IO.Directory.GetCurrentDirectory();
+        if (cardInfo.Card.TimeShiftFolder == String.Empty)
+          cardInfo.Card.TimeShiftFolder = System.IO.Directory.GetCurrentDirectory();
         if (!IsTimeShifting(cardId))
         {
-          CleanTimeShiftFiles(cardInfo.Card.RecordingFolder, String.Format("live{0}.ts", cardId));
+          CleanTimeShiftFiles(cardInfo.Card.TimeShiftFolder, String.Format("live{0}.ts", cardId));
         }
-        string timeshiftFileName = String.Format(@"{0}\live{1}.ts", cardInfo.Card.RecordingFolder, cardId);
+        string timeshiftFileName = String.Format(@"{0}\live{1}.ts", cardInfo.Card.TimeShiftFolder, cardId);
 
         result = CardTune(cardId, tuneChannel, channel);
         if (result != TvResult.Succeeded)
@@ -2087,8 +2088,7 @@ namespace TvService
         }
         LockCard(cardId, user);
         Log.Write("Controller: StartTimeShifting started on card:{0} to {1}", cardId, timeshiftFileName);
-        card = new VirtualCard(cardId, Dns.GetHostName());
-        card.RecordingFolder = _allDbscards[cardId].RecordingFolder;
+        card = GetVirtualCard(cardId);
         return TvResult.Succeeded;
       }
       catch (Exception ex)
@@ -2119,8 +2119,7 @@ namespace TvService
           {
             if (CurrentChannelName(keyPair.Value.IdCard) == channel)
             {
-              card = new VirtualCard(keyPair.Value.IdCard, Dns.GetHostName());
-              card.RecordingFolder = keyPair.Value.RecordingFolder;
+              card = GetVirtualCard(keyPair.Value.IdCard);
               return true;
             }
           }
@@ -2150,8 +2149,7 @@ namespace TvService
         int cardId;
         if (!_scheduler.IsRecordingSchedule(idSchedule, out cardId)) return false;
 
-        card = new VirtualCard(cardId, Dns.GetHostName());
-        card.RecordingFolder = _allDbscards[cardId].RecordingFolder;
+        card = GetVirtualCard(cardId);
         return true;
       }
       catch (Exception ex)
@@ -2846,5 +2844,14 @@ namespace TvService
     }
     #endregion
 
+    VirtualCard GetVirtualCard(int cardId)
+    {
+      VirtualCard card = new VirtualCard(cardId);
+      card.RecordingFormat = _allDbscards[cardId].RecordingFormat;
+      card.RecordingFolder = _allDbscards[cardId].RecordingFolder;
+      card.TimeshiftFolder = _allDbscards[cardId].TimeShiftFolder;
+      card.RemoteServer = Dns.GetHostName();
+      return card;
+    }
   }
 }

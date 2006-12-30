@@ -775,7 +775,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="fileName">filename to which to recording should be saved</param>
     /// <param name="startTime">time the recording should start (0=now)</param>
     /// <returns></returns>
-    public bool StartRecording(RecordingType recordingType, string fileName, long startTime)
+    public bool StartRecording(bool transportStream, string fileName)
     {
       try
       {
@@ -789,10 +789,10 @@ namespace TvLibrary.Implementations.DVB
           throw new TvException("Card must be timeshifting before starting recording");
         }
         _graphState = GraphState.Recording;
-        StartRecord(fileName, recordingType, ref startTime);
+        StartRecord(transportStream, fileName);
 
         _recordingFileName = fileName;
-        Log.Log.WriteFile("ss2:Started recording on {0}", startTime);
+        Log.Log.WriteFile("ss2:Started recording");
 
         return true;
       }

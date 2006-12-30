@@ -1753,7 +1753,7 @@ namespace TvLibrary.Implementations.Analog
     /// <param name="fileName">filename to which to recording should be saved</param>
     /// <param name="startTime">time the recording should start (0=now)</param>
     /// <returns></returns>
-    protected void StartRecord(string fileName, RecordingType recordingType, ref long startTime)
+    protected void StartRecord(bool transportStream,string fileName)
     {
       if (!CheckThreadId()) return;
       Log.Log.WriteFile("analog:StartRecord({0})", fileName);

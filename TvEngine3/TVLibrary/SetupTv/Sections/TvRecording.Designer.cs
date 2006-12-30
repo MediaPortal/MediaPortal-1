@@ -67,6 +67,12 @@ namespace SetupTv.Sections
       this.comboBoxDrive = new System.Windows.Forms.ComboBox();
       this.label9 = new System.Windows.Forms.Label();
       this.tabPage4 = new System.Windows.Forms.TabPage();
+      this.label23 = new System.Windows.Forms.Label();
+      this.comboBoxRecordingFormat = new System.Windows.Forms.ComboBox();
+      this.buttonTimeShiftBrowse = new System.Windows.Forms.Button();
+      this.label22 = new System.Windows.Forms.Label();
+      this.textBoxTimeShiftFolder = new System.Windows.Forms.TextBox();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.buttonBrowse = new System.Windows.Forms.Button();
       this.label13 = new System.Windows.Forms.Label();
       this.textBoxFolder = new System.Windows.Forms.TextBox();
@@ -84,7 +90,6 @@ namespace SetupTv.Sections
       this.textBoxComSkip = new System.Windows.Forms.TextBox();
       this.checkBoxComSkipEnabled = new System.Windows.Forms.CheckBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -95,8 +100,8 @@ namespace SetupTv.Sections
       this.groupBox4.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.trackBarDisk)).BeginInit();
       this.tabPage4.SuspendLayout();
-      this.tabPage5.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+      this.tabPage5.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -485,6 +490,11 @@ namespace SetupTv.Sections
       // 
       // tabPage4
       // 
+      this.tabPage4.Controls.Add(this.label23);
+      this.tabPage4.Controls.Add(this.comboBoxRecordingFormat);
+      this.tabPage4.Controls.Add(this.buttonTimeShiftBrowse);
+      this.tabPage4.Controls.Add(this.label22);
+      this.tabPage4.Controls.Add(this.textBoxTimeShiftFolder);
       this.tabPage4.Controls.Add(this.pictureBox1);
       this.tabPage4.Controls.Add(this.buttonBrowse);
       this.tabPage4.Controls.Add(this.label13);
@@ -498,9 +508,68 @@ namespace SetupTv.Sections
       this.tabPage4.Text = "Recording folders";
       this.tabPage4.UseVisualStyleBackColor = true;
       // 
+      // label23
+      // 
+      this.label23.AutoSize = true;
+      this.label23.Location = new System.Drawing.Point(20, 52);
+      this.label23.Name = "label23";
+      this.label23.Size = new System.Drawing.Size(91, 13);
+      this.label23.TabIndex = 23;
+      this.label23.Text = "Recording format:";
+      // 
+      // comboBoxRecordingFormat
+      // 
+      this.comboBoxRecordingFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxRecordingFormat.FormattingEnabled = true;
+      this.comboBoxRecordingFormat.Items.AddRange(new object[] {
+            "MPEG (.mpg)",
+            "Transport Stream (.ts)"});
+      this.comboBoxRecordingFormat.Location = new System.Drawing.Point(69, 72);
+      this.comboBoxRecordingFormat.Name = "comboBoxRecordingFormat";
+      this.comboBoxRecordingFormat.Size = new System.Drawing.Size(284, 21);
+      this.comboBoxRecordingFormat.TabIndex = 22;
+      this.comboBoxRecordingFormat.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged_1);
+      // 
+      // buttonTimeShiftBrowse
+      // 
+      this.buttonTimeShiftBrowse.Location = new System.Drawing.Point(359, 191);
+      this.buttonTimeShiftBrowse.Name = "buttonTimeShiftBrowse";
+      this.buttonTimeShiftBrowse.Size = new System.Drawing.Size(23, 23);
+      this.buttonTimeShiftBrowse.TabIndex = 21;
+      this.buttonTimeShiftBrowse.Text = "...";
+      this.buttonTimeShiftBrowse.UseVisualStyleBackColor = true;
+      this.buttonTimeShiftBrowse.Click += new System.EventHandler(this.buttonTimeShiftBrowse_Click);
+      // 
+      // label22
+      // 
+      this.label22.AutoSize = true;
+      this.label22.Location = new System.Drawing.Point(20, 166);
+      this.label22.Name = "label22";
+      this.label22.Size = new System.Drawing.Size(81, 13);
+      this.label22.TabIndex = 20;
+      this.label22.Text = "Timeshift folder:";
+      // 
+      // textBoxTimeShiftFolder
+      // 
+      this.textBoxTimeShiftFolder.Location = new System.Drawing.Point(69, 191);
+      this.textBoxTimeShiftFolder.Name = "textBoxTimeShiftFolder";
+      this.textBoxTimeShiftFolder.Size = new System.Drawing.Size(284, 20);
+      this.textBoxTimeShiftFolder.TabIndex = 19;
+      this.textBoxTimeShiftFolder.TextChanged += new System.EventHandler(this.textBoxTimeShiftFolder_TextChanged);
+      // 
+      // pictureBox1
+      // 
+      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+      this.pictureBox1.Location = new System.Drawing.Point(10, 19);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(33, 23);
+      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+      this.pictureBox1.TabIndex = 18;
+      this.pictureBox1.TabStop = false;
+      // 
       // buttonBrowse
       // 
-      this.buttonBrowse.Location = new System.Drawing.Point(359, 99);
+      this.buttonBrowse.Location = new System.Drawing.Point(359, 132);
       this.buttonBrowse.Name = "buttonBrowse";
       this.buttonBrowse.Size = new System.Drawing.Size(23, 23);
       this.buttonBrowse.TabIndex = 4;
@@ -511,7 +580,7 @@ namespace SetupTv.Sections
       // label13
       // 
       this.label13.AutoSize = true;
-      this.label13.Location = new System.Drawing.Point(20, 77);
+      this.label13.Location = new System.Drawing.Point(20, 110);
       this.label13.Name = "label13";
       this.label13.Size = new System.Drawing.Size(88, 13);
       this.label13.TabIndex = 3;
@@ -519,7 +588,7 @@ namespace SetupTv.Sections
       // 
       // textBoxFolder
       // 
-      this.textBoxFolder.Location = new System.Drawing.Point(69, 102);
+      this.textBoxFolder.Location = new System.Drawing.Point(69, 135);
       this.textBoxFolder.Name = "textBoxFolder";
       this.textBoxFolder.Size = new System.Drawing.Size(284, 20);
       this.textBoxFolder.TabIndex = 2;
@@ -538,7 +607,7 @@ namespace SetupTv.Sections
       // 
       this.comboBoxCards.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCards.FormattingEnabled = true;
-      this.comboBoxCards.Location = new System.Drawing.Point(98, 19);
+      this.comboBoxCards.Location = new System.Drawing.Point(127, 19);
       this.comboBoxCards.Name = "comboBoxCards";
       this.comboBoxCards.Size = new System.Drawing.Size(284, 21);
       this.comboBoxCards.TabIndex = 0;
@@ -671,16 +740,6 @@ namespace SetupTv.Sections
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
       // 
-      // pictureBox1
-      // 
-      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-      this.pictureBox1.Location = new System.Drawing.Point(10, 19);
-      this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(33, 23);
-      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.pictureBox1.TabIndex = 18;
-      this.pictureBox1.TabStop = false;
-      // 
       // TvRecording
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -703,9 +762,9 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.trackBarDisk)).EndInit();
       this.tabPage4.ResumeLayout(false);
       this.tabPage4.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.tabPage5.ResumeLayout(false);
       this.tabPage5.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -768,5 +827,10 @@ namespace SetupTv.Sections
     private System.Windows.Forms.LinkLabel linkLabel1;
     private System.Windows.Forms.OpenFileDialog openFileDialog1;
     private System.Windows.Forms.PictureBox pictureBox1;
+    private System.Windows.Forms.Button buttonTimeShiftBrowse;
+    private System.Windows.Forms.Label label22;
+    private System.Windows.Forms.TextBox textBoxTimeShiftFolder;
+    private System.Windows.Forms.Label label23;
+    private System.Windows.Forms.ComboBox comboBoxRecordingFormat;
   }
 }
