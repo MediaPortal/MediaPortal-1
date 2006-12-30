@@ -78,32 +78,9 @@ namespace MediaPortal.InputDevices
         _x10Channel = xmlreader.GetValueAsInt("remote", "X10Channel", 0);
       }
 
-      //Setup the X10 Remote
-      try
-      {
-        if (X10Inter == null)
-        {
-          X10Inter = new X10Interface();
-          if (X10Inter == null)
-          {
-            Log.Info("X10 debug: Could not get interface");
-            return;
-          }
-          X10Sink = new X10Sink(_inputHandler, _logVerbose);
-          icpc = (IConnectionPointContainer)X10Inter;
-          Guid IID_InterfaceEvents = typeof(_DIX10InterfaceEvents).GUID;
-          icpc.FindConnectionPoint(ref IID_InterfaceEvents, out icp);
-          icp.Advise(X10Sink, out cookie);
-          _remotefound = true;
-        }
-      }
-      catch (System.Runtime.InteropServices.COMException)
-      {
-        Log.Info("X10 Debug: Com error");
-      }
-
       if (_inputHandler == null)
       {
+        Log.Info("X10 enabled control : {0}", _controlEnabled.ToString());
         if (_controlEnabled)
           if (_x10Medion)
             _inputHandler = new InputHandler("Medion X10");
@@ -134,12 +111,34 @@ namespace MediaPortal.InputDevices
           else
             Log.Info("X10Remote: Start Other");
         }
-       
+
       }
 
-     
-      
-    }
+      //Setup the X10 Remote
+      try
+      {
+        if (X10Inter == null)
+        {
+          X10Inter = new X10Interface();
+          if (X10Inter == null)
+          {
+            Log.Info("X10 debug: Could not get interface");
+            return;
+          }
+          X10Sink = new X10Sink(_inputHandler, _logVerbose);
+          icpc = (IConnectionPointContainer)X10Inter;
+          Guid IID_InterfaceEvents = typeof(_DIX10InterfaceEvents).GUID;
+          icpc.FindConnectionPoint(ref IID_InterfaceEvents, out icp);
+          icp.Advise(X10Sink, out cookie);
+          _remotefound = true;
+        }
+      }
+      catch (System.Runtime.InteropServices.COMException)
+      {
+        Log.Info("X10 Debug: Com error");
+      }
+
+   }
 
     public void DeInit()
     {
