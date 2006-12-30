@@ -2738,7 +2738,7 @@ namespace TvService
     /// <returns>true if channel is unscrambled else false</returns>
     bool WaitForUnScrambledSignal(int cardId)
     {
-      //return true;
+      return true;
       if (_allDbscards[cardId].Enabled == false) return false;
       Log.Write("Controller: WaitForUnScrambledSignal");
       DateTime timeStart = DateTime.Now;
