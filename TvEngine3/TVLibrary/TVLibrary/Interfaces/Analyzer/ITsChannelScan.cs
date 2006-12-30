@@ -97,10 +97,14 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="audio1Pid">The audio1 pid.</param>
     /// <param name="audio2Pid">The audio2 pid.</param>
     /// <param name="audio3Pid">The audio3 pid.</param>
+    /// <param name="audio4Pid">The audio4 pid.</param>
+    /// <param name="audio5Pid">The audio5 pid.</param>
     /// <param name="ac3Pid">The ac3 pid.</param>
     /// <param name="audioLanguage1">The audio language1.</param>
     /// <param name="audioLanguage2">The audio language2.</param>
     /// <param name="audioLanguage3">The audio language3.</param>
+    /// <param name="audioLanguage4">The audio language4.</param>
+    /// <param name="audioLanguage5">The audio language5.</param>
     /// <param name="teletextPid">The teletext pid.</param>
     /// <param name="subtitlePid">The subtitle pid.</param>
     /// <param name="subtitleLanguage">The subtitle language.</param>
@@ -129,10 +133,14 @@ namespace TvLibrary.Interfaces.Analyzer
                        out short audio1Pid,
                        out short audio2Pid,
                        out short audio3Pid,
+                       out short audio4Pid,
+                       out short audio5Pid,
                        out short ac3Pid,
                        out IntPtr audioLanguage1,
                        out IntPtr audioLanguage2,
                        out IntPtr audioLanguage3,
+                       out IntPtr audioLanguage4,
+                       out IntPtr audioLanguage5,
                        out short teletextPid,
                        out short subtitlePid,
                        out IntPtr subtitleLanguage,

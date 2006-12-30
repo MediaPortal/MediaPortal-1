@@ -135,13 +135,20 @@ void CPmtParser::OnNewSection(CSection& sections)
 				  audioToSet=2;
 				  pidInfo.AudioPid2=elementary_PID;
 			  }
-			  else
+			  else if(pidInfo.AudioPid3==0)
 			  {
-				  if(pidInfo.AudioPid3==0)
-				  {
-					  audioToSet=3;
-					  pidInfo.AudioPid3=elementary_PID;
-				  }
+				  audioToSet=3;
+				  pidInfo.AudioPid3=elementary_PID;
+			  }
+				else if(pidInfo.AudioPid4==0)
+			  {
+				  audioToSet=4;
+				  pidInfo.AudioPid4=elementary_PID;
+			  }
+				else if(pidInfo.AudioPid5==0)
+			  {
+				  audioToSet=5;
+				  pidInfo.AudioPid5=elementary_PID;
 			  }
 		  }
 	  }
@@ -198,6 +205,18 @@ void CPmtParser::OnNewSection(CSection& sections)
 				  pidInfo.Lang3_1=d[0];
 				  pidInfo.Lang3_2=d[1];
 				  pidInfo.Lang3_3=d[2];
+			  }
+			  if(audioToSet==4)
+			  {
+				  pidInfo.Lang4_1=d[0];
+				  pidInfo.Lang4_2=d[1];
+				  pidInfo.Lang4_3=d[2];
+			  }
+			  if(audioToSet==5)
+			  {
+				  pidInfo.Lang5_1=d[0];
+				  pidInfo.Lang5_2=d[1];
+				  pidInfo.Lang5_3=d[2];
 			  }
 
 		  }

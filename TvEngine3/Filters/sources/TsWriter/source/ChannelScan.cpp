@@ -146,10 +146,14 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 									 int* audio1Pid,
 									 int* audio2Pid,
 									 int* audio3Pid,
+									 int* audio4Pid,
+									 int* audio5Pid,
 									 int* ac3Pid,
 									 char** audioLanguage1,
 									 char** audioLanguage2,
 									 char** audioLanguage3,
+									 char** audioLanguage4,
+									 char** audioLanguage5,
 									 int* teletextPid,
 									 int* subtitlePid,
 									 char** subLanguage1,
@@ -160,6 +164,8 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 	static char sAudioLang1[10];
 	static char sAudioLang2[10];
 	static char sAudioLang3[10];
+	static char sAudioLang4[10];
+	static char sAudioLang5[10];
 	static char ssubLanguage1[10];
 	CEnterCriticalSection enter(m_section);
 	try
@@ -169,6 +175,8 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 		strcpy(sAudioLang1,"");
 		strcpy(sAudioLang2,"");
 		strcpy(sAudioLang3,"");
+		strcpy(sAudioLang4,"");
+		strcpy(sAudioLang5,"");
     strcpy(ssubLanguage1,"");
 		*networkId=0;
 		*transportId=0;
@@ -195,6 +203,17 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 			sAudioLang3[1]=info.PidTable.Lang3_2;
 			sAudioLang3[2]=info.PidTable.Lang3_3;
 			sAudioLang3[3]=0;
+			
+			sAudioLang4[0]=info.PidTable.Lang4_1;
+			sAudioLang4[1]=info.PidTable.Lang4_2;
+			sAudioLang4[2]=info.PidTable.Lang4_3;
+			sAudioLang4[3]=0;
+
+			sAudioLang5[0]=info.PidTable.Lang5_1;
+			sAudioLang5[1]=info.PidTable.Lang5_2;
+			sAudioLang5[2]=info.PidTable.Lang5_3;
+			sAudioLang5[3]=0;
+
       ssubLanguage1[0]=info.PidTable.SubLang1_1;
       ssubLanguage1[1]=info.PidTable.SubLang1_2;
       ssubLanguage1[2]=info.PidTable.SubLang1_3;
@@ -221,6 +240,8 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 			*audio1Pid=info.PidTable.AudioPid1;
 			*audio2Pid=info.PidTable.AudioPid2;
 			*audio3Pid=info.PidTable.AudioPid3;
+			*audio4Pid=info.PidTable.AudioPid4;
+			*audio5Pid=info.PidTable.AudioPid5;
 			*ac3Pid=info.PidTable.AC3Pid;
 
 			*audioLanguage1=sAudioLang1;

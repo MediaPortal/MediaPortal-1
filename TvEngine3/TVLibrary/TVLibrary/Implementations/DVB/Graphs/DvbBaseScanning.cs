@@ -207,16 +207,22 @@ namespace TvLibrary.Implementations.DVB
           short audio1Pid;
           short audio2Pid;
           short audio3Pid;
+          short audio4Pid;
+          short audio5Pid;
           short ac3Pid;
           IntPtr audioLanguage1;
           IntPtr audioLanguage2;
           IntPtr audioLanguage3;
+          IntPtr audioLanguage4;
+          IntPtr audioLanguage5;
           IntPtr subtitleLanguage;
           short teletextPid;
           short subtitlePid;
           string strAudioLanguage1 = "";
           string strAudioLanguage2 = "";
           string strAudioLanguage3 = "";
+          string strAudioLanguage4 = "";
+          string strAudioLanguage5 = "";
           short videoStreamType;
           int found = 0;
           short lcn = -1;
@@ -235,8 +241,9 @@ namespace TvLibrary.Implementations.DVB
                   out networkId, out transportId, out serviceId, out majorChannel, out minorChannel,
                   out frequency, out lcn, out EIT_schedule_flag, out EIT_present_following_flag, out runningStatus,
                   out freeCAMode, out serviceType, out modulation, out providerName, out serviceName,
-                  out pcrPid, out pmtPid, out videoPid, out audio1Pid, out audio2Pid, out audio3Pid,
-                  out ac3Pid, out  audioLanguage1, out audioLanguage2, out audioLanguage3, out teletextPid, out subtitlePid, out subtitleLanguage, out videoStreamType);
+                  out pcrPid, out pmtPid, out videoPid, out audio1Pid, out audio2Pid, out audio3Pid, out audio4Pid, out audio5Pid,
+                  out ac3Pid, out  audioLanguage1, out audioLanguage2, out audioLanguage3, out audioLanguage4, out audioLanguage5, 
+                  out teletextPid, out subtitlePid, out subtitleLanguage, out videoStreamType);
             bool isValid = ((networkId != 0 || transportId != 0 || serviceId != 0) && pmtPid != 0);
             string name = Marshal.PtrToStringAnsi(serviceName);
             //Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} v:{6:X} a:{7:X} ac3:{8:X} type:{9:X}", 
@@ -274,6 +281,8 @@ namespace TvLibrary.Implementations.DVB
               strAudioLanguage1 = Marshal.PtrToStringAnsi(audioLanguage1);
               strAudioLanguage2 = Marshal.PtrToStringAnsi(audioLanguage2);
               strAudioLanguage3 = Marshal.PtrToStringAnsi(audioLanguage3);
+              strAudioLanguage4 = Marshal.PtrToStringAnsi(audioLanguage4);
+              strAudioLanguage5 = Marshal.PtrToStringAnsi(audioLanguage5);
 
               bool hasVideo = false;
               bool hasAudio = false;
@@ -302,6 +311,20 @@ namespace TvLibrary.Implementations.DVB
               {
                 PidInfo pidInfo = new PidInfo();
                 pidInfo.AudioPid(audio3Pid, strAudioLanguage3);
+                info.AddPid(pidInfo);
+                hasAudio = true;
+              }
+              if (audio4Pid > 0)
+              {
+                PidInfo pidInfo = new PidInfo();
+                pidInfo.AudioPid(audio4Pid, strAudioLanguage4);
+                info.AddPid(pidInfo);
+                hasAudio = true;
+              }
+              if (audio5Pid > 0)
+              {
+                PidInfo pidInfo = new PidInfo();
+                pidInfo.AudioPid(audio5Pid, strAudioLanguage5);
                 info.AddPid(pidInfo);
                 hasAudio = true;
               }
