@@ -236,6 +236,7 @@ namespace TvLibrary.Implementations.DVB
     protected IChangeChannel _changeChannel = null;
     protected TProgram82 _mDPlugTProg82 = new TProgram82();
     protected object m_context;
+    protected int _pmtPid = -1;
 
 
 
@@ -285,6 +286,7 @@ namespace TvLibrary.Implementations.DVB
       _packetHeader = new TSHelperTools.TSHeader();
       _tsHelper = new TSHelperTools();
       _channelInfo = new ChannelInfo();
+      _pmtPid = -1;
 
 
     }
@@ -649,6 +651,7 @@ namespace TvLibrary.Implementations.DVB
         }
       }
       m_context = null;
+      _pmtPid = -1;
       _graphRunning = false;
       _epgGrabbing = false;
       _isScanning = false;
@@ -1410,6 +1413,8 @@ namespace TvLibrary.Implementations.DVB
     protected void SetupPmtGrabber(int pmtPid)
     {
       if (pmtPid < 0) return;
+      if (pmtPid == _pmtPid) return;
+      _pmtPid = pmtPid;
       if (!CheckThreadId()) return;
 
 
