@@ -146,6 +146,10 @@ namespace ProcessPlugins.AutoCropper
 
     public void OnVideoStarted(g_Player.MediaType type, string s)
     {
+      // do not handle e.g. visualization window, last.fm player, etc
+      if (type == g_Player.MediaType.Music)
+        return;
+
       if (verboseLog) Log.Debug("AutoCropper: On Video Started");
       if (mode == Mode.DYNAMIC)
       {

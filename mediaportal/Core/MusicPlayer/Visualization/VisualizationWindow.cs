@@ -1075,6 +1075,9 @@ namespace MediaPortal.Visualization
 
           CurrentFilePath = filename;
           PlayListItem curPlaylistItem = PlaylistPlayer.GetCurrentItem();
+          if (curPlaylistItem == null)
+            return;
+
           CurrentTrackTag = (MusicTag)curPlaylistItem.MusicTag;
 
           // Make sure that Status Overlay gets displayed for new tracks
