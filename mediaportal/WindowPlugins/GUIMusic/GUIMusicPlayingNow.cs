@@ -201,9 +201,12 @@ namespace MediaPortal.GUI.Music
         // due to crossfading options we sometimes won't get g_Player_PlayBackEnded
         if (oldState == BassAudioEngine.PlayState.Playing && newState == BassAudioEngine.PlayState.Ended)
         {
-          Action action = new Action();
-          action.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
-          GUIGraphicsContext.OnAction(action);
+          if (!g_Player.Playing && NextTrackTag == null)
+          {
+            Action action = new Action();
+            action.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
+            GUIGraphicsContext.OnAction(action);
+          }
         }
       }
     }
@@ -211,7 +214,7 @@ namespace MediaPortal.GUI.Music
     void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
     {
       Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackEnded for {0}", filename);
-      if (!ControlsInitialized)
+      if (!ControlsInitialized || _usingBassEngine)
         return;
 
       if (GUIWindowManager.ActiveWindow == GetID)
@@ -317,7 +320,9 @@ namespace MediaPortal.GUI.Music
           }
         case Action.ActionType.ACTION_SHOW_INFO:
           {
-            OnShowContextMenu();
+            //OnShowContextMenu();
+            UpdateTagInfo();
+            FlipPictures();
             break;
           }
       }

@@ -1324,6 +1324,8 @@ namespace MediaPortal.Player
 
       Bass.BASS_ChannelSlideAttributes(stream, -1, -2, -101, _CrossFadeIntervalMS);
       bool removed = Bass.BASS_ChannelRemoveSync(stream, handle);
+      if (removed)
+        Log.Debug("BassAudio: *** BASS_ChannelRemoveSync in PlaybackFadeOutProc");
     }
 
     private void PlaybackEndProc(int handle, int stream, int data, int userData)
@@ -1341,6 +1343,9 @@ namespace MediaPortal.Player
         PlaybackStateChanged(this, oldState, _State);
 
       bool removed = Bass.BASS_ChannelRemoveSync(stream, handle);
+      if (removed)
+        Log.Debug("BassAudio: *** BASS_ChannelRemoveSync in PlaybackEndProc");
+
       HandleSongEnded(false);
     }
 
