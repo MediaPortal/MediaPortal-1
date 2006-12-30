@@ -333,13 +333,13 @@ namespace SetupTv.Sections
 
             case 3:// DVBS
               frequency = detail.Frequency;
-              frequency /= 1000.0f; 
+              frequency /= 1000.0f;
               item.SubItems.Add(String.Format("{0} MHz {1}", frequency.ToString("f2"), (((Polarisation)detail.Polarisation))));
               break;
 
             case 4:// DVBT
               frequency = detail.Frequency;
-              frequency /= 1000.0f; 
+              frequency /= 1000.0f;
               item.SubItems.Add(String.Format("{0} MHz BW:{1}", frequency.ToString("f2"), detail.Bandwidth));
               break;
           }
@@ -970,15 +970,18 @@ namespace SetupTv.Sections
 
     private void mpButtonDeleteEncrypted_Click(object sender, EventArgs e)
     {
-      foreach (ListViewItem item in mpListView1.SelectedItems)
+      List<ListViewItem> itemsToRemove = new List<ListViewItem>();
+      foreach (ListViewItem item in mpListView1.Items)
       {
         Channel channel = (Channel)item.Tag;
         if (channel.FreeToAir == false)
         {
           channel.Delete();
-          mpListView1.Items.Remove(item);
+          itemsToRemove.Add(item);
         }
       }
+      foreach (ListViewItem item in itemsToRemove)
+        mpListView1.Items.Remove(item);
       ReOrder();
       RemoteControl.Instance.OnNewSchedule();
     }

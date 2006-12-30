@@ -245,15 +245,18 @@ namespace SetupTv.Sections
 
     private void mpButtonDeleteEncrypted_Click(object sender, EventArgs e)
     {
-      foreach (ListViewItem item in mpListView1.SelectedItems)
+      List<ListViewItem> itemsToRemove = new List<ListViewItem>();
+      foreach (ListViewItem item in mpListView1.Items)
       {
         Channel channel = (Channel)item.Tag;
         if (channel.FreeToAir == false)
         {
           channel.Delete();
-          mpListView1.Items.Remove(item);
+          itemsToRemove.Add(item);
         }
       }
+      foreach (ListViewItem item in itemsToRemove)
+        mpListView1.Items.Remove(item);
       ReOrder();
       RemoteControl.Instance.OnNewSchedule();
     }
