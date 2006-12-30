@@ -1050,6 +1050,85 @@ static char* createRangeString(float start, float end) {
       
 static char const* NoSessionErr = "No RTSP session is currently in progress\n";
 
+Boolean RTSPClient::continueMediaSession(MediaSession& session)
+{
+#ifdef SUPPORT_REAL_RTSP
+  if (session.isRealNetworksRDT) {
+    // This is a RealNetworks stream; set the "Subscribe" parameter before proceeding:
+    char* streamRuleString = RealGetSubscribeRuleString(&session);
+    setMediaSessionParameter(session, "Subscribe", streamRuleString);
+    delete[] streamRuleString;
+  }
+#endif
+  char* cmd = NULL;
+  do {
+    // First, make sure that we have a RTSP session in progress
+    if (fLastSessionId == NULL) {
+      envir().setResultMsg(NoSessionErr);
+      break;
+    }
+
+    // Send the PLAY command:
+
+    // First, construct an authenticator string:
+    char* authenticatorStr
+      = createAuthenticatorString(&fCurrentAuthenticator, "PLAY", fBaseURL);
+
+    char* const cmdFmt =
+      "PLAY %s RTSP/1.0\r\n"
+      "CSeq: %d\r\n"
+      "Session: %s\r\n"
+      "%s"
+      "%s"
+      "\r\n";
+
+    unsigned cmdSize = strlen(cmdFmt)
+      + strlen(fBaseURL)
+      + 20 /* max int len */
+      + strlen(fLastSessionId)
+      + strlen(authenticatorStr)
+      + fUserAgentHeaderStrSize;
+    cmd = new char[cmdSize];
+    sprintf(cmd, cmdFmt,
+	    fBaseURL,
+	    ++fCSeq,
+	    fLastSessionId,
+	    authenticatorStr,
+	    fUserAgentHeaderStr);
+    delete[] authenticatorStr;
+
+    if (!sendRequest(cmd, "PLAY")) break;
+
+    // Get the response from the server:
+    unsigned bytesRead; unsigned responseCode;
+    char* firstLine; char* nextLineStart;
+    if (!getResponse("PLAY", bytesRead, responseCode, firstLine, nextLineStart)) break;
+
+    // Look for various headers that we understand:
+    char* lineStart;
+    while (1) {
+      lineStart = nextLineStart;
+      if (lineStart == NULL) break;
+
+      nextLineStart = getLine(lineStart);
+
+      if (parseScaleHeader(lineStart, session.scale())) break;
+    }
+
+    if (fTCPStreamIdCount == 0) { // we're not receiving RTP-over-TCP
+      // Arrange to handle incoming requests sent by the server
+      envir().taskScheduler().turnOnBackgroundReadHandling(fInputSocketNum,
+	   (TaskScheduler::BackgroundHandlerProc*)&incomingRequestHandler, this);
+    }
+
+    delete[] cmd;
+    return True;
+  } while (0);
+
+  delete[] cmd;
+  return False;
+}
+
 Boolean RTSPClient::playMediaSession(MediaSession& session,
 				     float start, float end, float scale) {
 #ifdef SUPPORT_REAL_RTSP

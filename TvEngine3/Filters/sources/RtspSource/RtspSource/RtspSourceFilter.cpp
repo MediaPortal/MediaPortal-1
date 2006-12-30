@@ -79,6 +79,7 @@ CRtspSourceFilter::CRtspSourceFilter(IUnknown *pUnk, HRESULT *phr)
   m_pOutputPin = new COutputPin(GetOwner(), this, phr, &m_section);
 	m_pDemux = new Demux(&m_pids, this, &m_FilterRefList);
 	m_rtStartFrom=0;
+	m_bPaused=false;
 	m_bReconfigureDemux=false;
 	StartThread();
 }
@@ -274,31 +275,39 @@ HRESULT CRtspSourceFilter::OnConnect()
 
 STDMETHODIMP CRtspSourceFilter::Run(REFERENCE_TIME tStart)
 {
-  m_pDemux->SetRefClock();
-	if (m_bReconfigureDemux==false)
+	if (m_bPaused)
 	{
-		Log("Filter:run()");
-		float milliSecs=m_rtStartFrom.Millisecs();
-		milliSecs/=1000.0f;
-
-		m_buffer.Clear();
-		m_buffer.Run(true);
-		Log("Filter:play stream() from %f",milliSecs);
-		if (m_client.Play(milliSecs))
-		{
-			Log("Filter:buffer...");
-			m_pOutputPin->UpdateStopStart();
-			m_client.FillBuffer( BUFFER_BEFORE_PLAY_SIZE);
-			Log("Filter:playing...");
-		}
-		else 
-		{	
-			Log("Filter:failed to play stream()");
-			m_buffer.Run(false);
-			return E_FAIL;
-		}
-		m_client.Run();
+		m_client.Continue();
+		m_bPaused=false;
 	}
+	else
+	{
+		m_pDemux->SetRefClock();
+		if (m_bReconfigureDemux==false)
+		{
+			Log("Filter:run()");
+			float milliSecs=m_rtStartFrom.Millisecs();
+			milliSecs/=1000.0f;
+
+			m_buffer.Clear();
+			m_buffer.Run(true);
+			Log("Filter:play stream() from %f",milliSecs);
+			if (m_client.Play(milliSecs))
+			{
+				Log("Filter:buffer...");
+				m_pOutputPin->UpdateStopStart();
+				m_client.FillBuffer( BUFFER_BEFORE_PLAY_SIZE);
+				Log("Filter:playing...");
+			}
+			else 
+			{	
+				Log("Filter:failed to play stream()");
+				m_buffer.Run(false);
+				return E_FAIL;
+			}
+			m_client.Run();
+		}
+	}	
 	return CSource::Run(tStart);
 }
 
@@ -318,14 +327,27 @@ STDMETHODIMP CRtspSourceFilter::Stop()
 		m_buffer.Clear();
 		Log("Filter:stop done...%x",hr);
 	}
+	m_bPaused=false;
 	return hr;
 }
 
 STDMETHODIMP CRtspSourceFilter::Pause()
 {
 	Log("Filter:pause playing...");
-	m_client.Pause();
-  return CSource::Pause();
+	HRESULT hr=CSource::Pause();
+	if (m_client.IsRunning())
+	{
+		if (m_bPaused)
+		{
+			m_client.Continue();
+		}
+		else
+		{
+			m_client.Pause();
+			m_bPaused=true;
+		}
+	}
+  return hr;
 }
 
 BOOL CRtspSourceFilter::IsClientRunning(void)
@@ -359,6 +381,8 @@ STDMETHODIMP CRtspSourceFilter::GetDuration(REFERENCE_TIME *dur)
 
 STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 {
+	
+	m_bPaused=false;
 	Log("------------------");
 	wcscpy(m_fileName,pszFileName);
 	if (wcsstr(m_fileName,L"rtsp://")==NULL)

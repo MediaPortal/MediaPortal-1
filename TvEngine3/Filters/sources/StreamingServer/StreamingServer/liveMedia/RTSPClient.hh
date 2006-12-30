@@ -101,6 +101,7 @@ public:
       // Returns True iff this command succeeds
       // (Note: start=-1 means 'resume'; end=-1 means 'play to end')
 
+	Boolean continueMediaSession(MediaSession& session);
   Boolean pauseMediaSession(MediaSession& session);
       // Issues an aggregate RTSP "PAUSE" command on "session".
       // Returns True iff this command succeeds

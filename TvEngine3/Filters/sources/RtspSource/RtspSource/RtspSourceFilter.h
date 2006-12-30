@@ -78,4 +78,5 @@ private:
 	CRefTime			m_rtStartFrom;
   CPatParser    m_patParser;
 	bool				  m_bReconfigureDemux;
+	bool					m_bPaused;
 };

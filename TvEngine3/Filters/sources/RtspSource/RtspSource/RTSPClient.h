@@ -20,6 +20,7 @@ public:
 	long Duration();
 	bool Run();
 	bool Pause();
+	void Continue();
 	void FillBuffer(DWORD byteCount);
 protected:
   CMemoryBuffer& m_buffer;

@@ -474,11 +474,29 @@ void CRTSPClient::ThreadProc()
 bool CRTSPClient::Run()
 {
 	Log("CRTSPClient::Run()");
+
 	return true;
+}
+void CRTSPClient::Continue()
+{
+	if (m_ourClient!=NULL && m_session!=NULL)
+	{
+		RTSPClient* rtspClient=(RTSPClient*)m_ourClient;
+		rtspClient->continueMediaSession(*m_session);
+		StartBufferThread();
+		int x=1;
+	}
 }
 bool CRTSPClient::Pause()
 {
 	Log("CRTSPClient::Pause()");
+	if (m_ourClient!=NULL && m_session!=NULL)
+	{
+		StopThread(100);
+		RTSPClient* rtspClient=(RTSPClient*)m_ourClient;
+		rtspClient->pauseMediaSession(*m_session);
+		int x=1;
+	}
 	return true;
 }
 bool CRTSPClient::Play(float fStart)
