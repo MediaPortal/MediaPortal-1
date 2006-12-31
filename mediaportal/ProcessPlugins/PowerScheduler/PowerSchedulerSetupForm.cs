@@ -222,7 +222,7 @@ namespace MediaPortal.PowerScheduler
       this.cbxReinit.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbxReinit.Location = new System.Drawing.Point(13, 65);
       this.cbxReinit.Name = "cbxReinit";
-      this.cbxReinit.Size = new System.Drawing.Size(138, 17);
+      this.cbxReinit.Size = new System.Drawing.Size(230, 17);
       this.cbxReinit.TabIndex = 18;
       this.cbxReinit.Text = "Re-init tuners on resume (may cause issues)";
       this.cbxReinit.UseVisualStyleBackColor = true;
@@ -294,6 +294,8 @@ namespace MediaPortal.PowerScheduler
         if (SaveSettings()) this.Close();
       }
     }
+
+
 
   }
 }

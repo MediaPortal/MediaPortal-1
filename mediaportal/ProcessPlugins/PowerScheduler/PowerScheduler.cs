@@ -122,6 +122,11 @@ namespace MediaPortal.PowerScheduler
 				_reinitRecorder    = xmlreader.GetValueAsBool("powerscheduler", "reinitonresume", false);
 
 				if (_shutDownInterval < 1) ResetShutDown();   // be sure that we do no shutdown
+        if (_wakeupInterval > 0)
+        {
+          if (_wakeupInterval >= _shutDownInterval)            
+            _shutDownInterval = _wakeupInterval + 1;  // ensure that shutDownIntervall is longer then wakeUpIntervall -> to avoid shutdown before recordings starts        
+        }
 
 				if (_extensiveLogging)
 				{
@@ -294,9 +299,6 @@ namespace MediaPortal.PowerScheduler
       MediaPortal.GUI.Library.Log.Debug(PluginName() + "." + sf.GetMethod().Name + ": " + format, arg);
     }
 
-    void LogExtensive(string format, params object[] arg)
-    {
-    }
     #endregion
 
     #region TVDatabase change events
@@ -321,6 +323,7 @@ namespace MediaPortal.PowerScheduler
       DateTime ealiestStartTime = EarliestStartTime;
       if (_shutDownTime < DateTime.MaxValue)
         ealiestStartTime = _shutDownTime;
+      _nextRecordingTime = DateTime.MaxValue;
       DateTime nextRecTime = DateTime.MaxValue;
       TVRecording nextRec = null;
       ArrayList recList = new ArrayList();
@@ -425,7 +428,7 @@ namespace MediaPortal.PowerScheduler
     /// </summary>
     public void Start()
     {
-      LogDebug("Starting - Version: " + _version);
+      Log.Info(PluginName() + ".Start() - Version: " + _version);
       OnActivateWindow(GUIWindowManager.ActiveWindow);  // SetShutDown is called when needed
       CheckNextRecoring();                              // checks when the next recording takes place 
       SetWakeUpTime();                                  // sets the next wakeup time 
@@ -497,8 +500,10 @@ namespace MediaPortal.PowerScheduler
     #region IWakeable Interface
     public DateTime GetNextEvent(DateTime earliestWakeuptime)
     {
+      if (_wakeupInterval < 1) return DateTime.MaxValue;   // function disabled
+
       DateTime recordingTime = _nextRecordingTime.AddMinutes(-_wakeupInterval); 
-			if (recordingTime < earliestWakeuptime) recordingTime = earliestWakeuptime; 
+			if (recordingTime < earliestWakeuptime) recordingTime = DateTime.MaxValue;   // no recording planed
 			return recordingTime;
     }
 
