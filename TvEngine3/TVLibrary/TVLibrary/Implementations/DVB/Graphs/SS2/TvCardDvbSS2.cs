@@ -41,7 +41,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles the SkyStar 2 DVB-S card
   /// </summary>
-  public class TvCardDvbSS2 : TvCardDvbBase, IDisposable, ITVCard
+  public class TvCardDvbSS2 : TvCardDvbBase, IDisposable, ITVCard, IDiSEqCController
   {
     #region imports
 
@@ -159,6 +159,8 @@ namespace TvLibrary.Implementations.DVB
     DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 _interfaceB2C2DataCtrl;
     DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 _interfaceB2C2TunerCtrl;
 
+    IntPtr _ptrDisEqc;
+    DiSEqCMotor _disEqcMotor;
 
     #endregion
 
@@ -186,6 +188,8 @@ namespace TvLibrary.Implementations.DVB
     {
       _conditionalAccess = new ConditionalAccess(null, null);
       _tunerDevice = device;
+      _ptrDisEqc = Marshal.AllocCoTaskMem(20);
+      _disEqcMotor = new DiSEqCMotor(this);
       GetTunerCapabilities();
     }
     #endregion
@@ -300,6 +304,7 @@ namespace TvLibrary.Implementations.DVB
       SS2DisEqcType disType = SS2DisEqcType.None;
       int switchFreq = 0;
       int pmtPid = 0;
+      int satelliteIndex = 0;
 
       Log.Log.WriteFile("ss2:Tune({0})", channel);
       if (_epgGrabbing)
@@ -330,7 +335,7 @@ namespace TvLibrary.Implementations.DVB
           }
           frequency = (int)dvbsChannel.Frequency;
           symbolRate = dvbsChannel.SymbolRate;
-
+          satelliteIndex = dvbsChannel.SatelliteIndex;
           switch (dvbsChannel.BandType)
           {
             case BandType.Universal:
@@ -630,6 +635,10 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Error("ss2:SetLnbFrequency() failed:0x{0:X}", hr);
             return false;
           }
+          if (satelliteIndex > 0)
+          {
+            DisEqcGotoPosition((byte)satelliteIndex);
+          }
           break;
       }
 
@@ -653,14 +662,6 @@ namespace TvLibrary.Implementations.DVB
       }
       _interfaceB2C2TunerCtrl.CheckLock();
 
-      if (_cardType == CardType.DvbS)
-      {
-        DVBSChannel dvbsChannel = channel as DVBSChannel;
-        if (dvbsChannel.SatelliteIndex > 0 && _conditionalAccess.DiSEqCMotor != null)
-        {
-          _conditionalAccess.DiSEqCMotor.GotoPosition((byte)dvbsChannel.SatelliteIndex);
-        }
-      }
 
       //from submittunerequest
       _pmtTimer.Enabled = true;
@@ -1266,6 +1267,40 @@ namespace TvLibrary.Implementations.DVB
         _teletextDecoder.ClearBuffer();
         _teletextDecoder = null;
       }
+    }
+
+    #endregion
+
+    #region IDiSEqCController Members
+
+    void DisEqcGotoPosition(byte position)
+    {
+      _disEqcMotor.GotoPosition(position);
+    }
+    public override IDiSEqCMotor DiSEqCMotor 
+    {
+      get
+      {
+        return _disEqcMotor;
+      }
+    }
+
+    public bool SendDiSEqCCommand(byte[] diSEqC)
+    {
+      DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl4 tuner4 = _filterB2C2Adapter as DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl4;
+      if (tuner4 == null) return false;
+      for (int i = 0; i < diSEqC.Length; ++i)
+      {
+        Marshal.WriteByte(_ptrDisEqc, i, diSEqC[i]);
+      }
+      tuner4.SendDiSEqCCommand(diSEqC.Length, _ptrDisEqc);
+      return true;
+    }
+
+    public bool ReadDiSEqCCommand(out byte[] reply)
+    {
+      reply = new byte[1];
+      return false;
     }
 
     #endregion

@@ -2006,7 +2006,7 @@ namespace TvLibrary.Implementations.DVB
     /// Gets the interface for controlling the diseqc motor
     /// </summary>
     /// <value>Theinterface for controlling the diseqc motor.</value>
-    public IDiSEqCMotor DiSEqCMotor
+    public virtual IDiSEqCMotor DiSEqCMotor
     {
       get
       {
