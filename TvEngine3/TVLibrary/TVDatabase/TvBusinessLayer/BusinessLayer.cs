@@ -734,21 +734,16 @@ namespace TvDatabase
 
     public IList GetGenres()
     {
-      /*
       List<string> genres = new List<string>();
-      ICollection<IDataSourceKey> coll = DatabaseManager.Instance.DataSourceResolver.DataSourceKeys;
-      IEnumerator<IDataSourceKey> enumer = coll.GetEnumerator();
-      enumer.MoveNext();
-      RdbKey key = (RdbKey)enumer.Current;
-      string connectString = key.ConnectionString;
-      using (OleDbConnection connect = new OleDbConnection(connectString))
+      string connectString = Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
+      using (System.Data.OleDb.OleDbConnection connect = new System.Data.OleDb.OleDbConnection("Provider=SQLOLEDB;"+connectString))
       {
         connect.Open();
-        using (OleDbCommand cmd = connect.CreateCommand())
+        using (System.Data.OleDb.OleDbCommand cmd = connect.CreateCommand())
         {
           cmd.CommandText = "select distinct(genre) from program order by genre";
-          cmd.CommandType = CommandType.Text;
-          using (IDataReader reader = cmd.ExecuteReader())
+          cmd.CommandType = System.Data.CommandType.Text;
+          using (System.Data.IDataReader reader = cmd.ExecuteReader())
           {
             while (reader.Read())
             {
@@ -759,8 +754,7 @@ namespace TvDatabase
         }
         connect.Close();
       }
-      return genres;*/
-      return null;
+      return genres;
     }
 
     public IList SearchProgramsPerGenre(string currentGenre, string currentSearchCriteria)
