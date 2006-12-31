@@ -56,7 +56,7 @@ namespace MediaPortal.PowerScheduler
     private const int PBT_APMPOWERSTATUSCHANGE = 0x000A;
     private const int PBT_APMOEMEVENT = 0x000B;
     private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
-    private const string _version = "v0.0.7";
+    private const string _version = "v0.0.8";
     #endregion
 
     #region Protected Variables
@@ -87,7 +87,7 @@ namespace MediaPortal.PowerScheduler
     #region Constructors/Destructors
     public PowerScheduler()
     {
-      LogDebug("Init");
+      LogExtensive("Init");
       LoadSettings();
       PowerManager.OnPowerUp += new PowerManager.ResumeHandler(this.OnWakeupTimer);
       _wakeupTimer.OnTimerExpired += new WaitableTimer.TimerExpiredHandler(PowerManager.OnResume);
@@ -174,13 +174,13 @@ namespace MediaPortal.PowerScheduler
     private void SetShutDown()
     {
       _shutDownTime = DateTime.Now.AddMinutes(_shutDownInterval);
-      LogDebug("Next ShutDown in {0} minutes -> " + _shutDownTime.ToLongTimeString(), _shutDownInterval);
+      LogExtensive("Next ShutDown in {0} minutes -> " + _shutDownTime.ToLongTimeString(), _shutDownInterval);
     }
 
     private void ResetShutDown()
     {
       if (_shutDownTime == DateTime.MaxValue)  return;  // no display message
-      LogDebug("ShutDownTimer disabled");
+      LogExtensive("ShutDownTimer disabled");
       _shutDownTime = DateTime.MaxValue;
     }
 
@@ -191,7 +191,7 @@ namespace MediaPortal.PowerScheduler
         _Timer.Interval = _timerInterval * 1000;  // interval in milliseconds
         _Timer.Tick += new EventHandler(OnTimer);
         _Timer.Start();
-        //LogDebug("Timer started");
+        //LogExtensive("Timer started");
       }
     }
 
@@ -201,7 +201,7 @@ namespace MediaPortal.PowerScheduler
       {
         _Timer.Stop();
         _Timer.Tick -= new EventHandler(OnTimer);
-        //LogDebug("Timer stopped");
+        //LogExtensive("Timer stopped");
       }
     }
 
@@ -210,7 +210,7 @@ namespace MediaPortal.PowerScheduler
       StopTimer();
       if (_extensiveLogging)
       {
-        LogDebug("-- OnTimerCall -- ");
+        Log.Info("-- OnTimerCall -- ");
         Log.Info("   - Recorder.IsAnyCardRecording() = " + Recorder.IsAnyCardRecording().ToString());
         Log.Info("   - Recorder.IsRadio()     = " + Recorder.IsRadio().ToString());
         Log.Info("   - g_Player.Playing       = " + g_Player.Playing.ToString());
@@ -233,10 +233,13 @@ namespace MediaPortal.PowerScheduler
       {
 				ResetShutDown();                                  // ensure that the assumptions about EarliestStartTime are true.
 				CheckNextRecoring();                              // checks when the next recording takes place 
-        SetWakeUpTime();                                  // set the WakeUp Timer
+ //       SetWakeUpTime();                                  // set the WakeUp Timer
         _rescanTVDatabase = false;
-				OnActivateWindow(GUIWindowManager.ActiveWindow);  // SetShutDown is called when needed 
+ //				OnActivateWindow(GUIWindowManager.ActiveWindow);  // SetShutDown is called when needed 
       }
+
+      SetWakeUpTime();
+      //OnActivateWindow(GUIWindowManager.ActiveWindow);  // SetShutDown is called when needed 
 
       if (_shutDownTime > DateTime.Now)
       {
@@ -292,11 +295,14 @@ namespace MediaPortal.PowerScheduler
     #endregion
 
     #region Logging
-    void LogDebug(string format, params object[] arg)
+    void LogExtensive(string format, params object[] arg)
     {
-      StackTrace st = new StackTrace();
-      StackFrame sf = st.GetFrame(1);
-      MediaPortal.GUI.Library.Log.Debug(PluginName() + "." + sf.GetMethod().Name + ": " + format, arg);
+      if (_extensiveLogging)
+      {
+        StackTrace st = new StackTrace();
+        StackFrame sf = st.GetFrame(1);
+        MediaPortal.GUI.Library.Log.Info(PluginName() + "." + sf.GetMethod().Name + ": " + format, arg);
+      }
     }
 
     #endregion
@@ -334,7 +340,7 @@ namespace MediaPortal.PowerScheduler
         {
           if ((rec.Canceled > 0) || (rec.IsDone()))
             continue;
-          LogDebug("Recording: " + rec.ToString());
+          LogExtensive("Recording: " + rec.ToString());
           List<TVRecording> recs = ConflictManager.Util.GetRecordingTimes(rec);
           foreach (TVRecording foundRec in recs)
           {
@@ -350,7 +356,7 @@ namespace MediaPortal.PowerScheduler
       if ((nextRecTime < DateTime.MaxValue) && (nextRecTime > ealiestStartTime))
       {
         _nextRecordingTime = nextRecTime;
-        LogDebug("Next Recording found at StartTime = {0}, {1} - {2}", nextRecTime, nextRec.Channel, nextRec.Title);
+        LogExtensive("Next Recording found at StartTime = {0}, {1} - {2}", nextRecTime, nextRec.Channel, nextRec.Title);
       }
     }
 
@@ -369,23 +375,23 @@ namespace MediaPortal.PowerScheduler
         {
           nextWakeUpTime = pluginTime;
         }
-        LogDebug("Plugin: {0},  Time: {1}", wakeable.PluginName(), pluginTime);
+        LogExtensive("Plugin: {0},  Time: {1}", wakeable.PluginName(), pluginTime);
       }
 			
       if ((nextWakeUpTime > DateTime.Now) && (nextWakeUpTime < DateTime.Now.AddMonths(3)))
       {
         if (nextWakeUpTime != _wakeupTime)      // only set it when it is different
         {
-          LogDebug("WakeUp Timer set to {0}", nextWakeUpTime);
+          LogExtensive("WakeUp Timer set to {0}", nextWakeUpTime);
           _wakeupTime = nextWakeUpTime;
           TimeSpan tDelta = _wakeupTime.Subtract(DateTime.Now);
           _wakeupTimer.SecondsToWait = tDelta.TotalSeconds;
-          LogDebug("    ==> Seconds to wakeup = {0}", tDelta.TotalSeconds);
+          LogExtensive("    ==> Seconds to wakeup = {0}", tDelta.TotalSeconds);
         }
       }
       else
       {
-        LogDebug("WakeUp Timer deactivated (no valid Time found)");
+        LogExtensive("WakeUp Timer deactivated (no valid Time found)");
         _wakeupTime = DateTime.MaxValue;
         _wakeupTimer.SecondsToWait = -1;
       }
@@ -396,7 +402,7 @@ namespace MediaPortal.PowerScheduler
     /// </summary>
     void OnWakeupTimer()
     {
-      LogDebug("Wakeup timer expired");
+      LogExtensive("Wakeup timer expired");
     }
 
     void OnResume()
@@ -405,14 +411,14 @@ namespace MediaPortal.PowerScheduler
       {
         if (Recorder.IsAnyCardRecording())
         {
-          LogDebug("Reinit Recorder cancled due to running Recording");
+          LogExtensive("Reinit Recorder cancled due to running Recording");
         }
         else
         {
-          LogDebug("Reinit Recorder -> Start");
+          LogExtensive("Reinit Recorder -> Start");
           Recorder.Stop();
           Recorder.Start();
-          LogDebug("Reinit Recorder -> Done");
+          LogExtensive("Reinit Recorder -> Done");
         }
       }
     }
@@ -441,7 +447,7 @@ namespace MediaPortal.PowerScheduler
     /// </summary>
     public void Stop()
     {
-      LogDebug("Stopping");
+      LogExtensive("Stopping");
       StopTimer();
       _wakeupTime = DateTime.MaxValue;
       _wakeupTimer.SecondsToWait = -1;
@@ -455,7 +461,7 @@ namespace MediaPortal.PowerScheduler
     {
       if (msg.Msg == WM_POWERBROADCAST)
       {
-        LogDebug("WM_POWERBROADCAST: {0}", msg.WParam.ToInt32());
+        LogExtensive("WM_POWERBROADCAST: {0}", msg.WParam.ToInt32());
         switch (msg.WParam.ToInt32())
         {
           //The PBT_APMQUERYSUSPEND message is sent to request permission to suspend the computer.
@@ -467,7 +473,7 @@ namespace MediaPortal.PowerScheduler
           //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
           case PBT_APMQUERYSTANDBY:
           case PBT_APMSUSPEND:
-            LogDebug("OnSuspend->StopTimer");
+            LogExtensive("OnSuspend->StopTimer");
             StopTimer();
             _onResumeRunning = false;
             break;
@@ -486,7 +492,7 @@ namespace MediaPortal.PowerScheduler
             if (!_onResumeRunning)
             {
               _onResumeRunning = true;
-              LogDebug("OnResume->Start");
+              LogExtensive("OnResume->Start");
               OnResume();
               Start();
             }
