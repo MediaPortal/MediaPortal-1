@@ -1562,7 +1562,7 @@ namespace TvPlugin
         SqlStatement stmt = sb.GetStatement(true);
         channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
         MediaPortal.GUI.Library.Log.Info("found:{0} tv channels", channels.Count);
-
+        TvNotifyManager.OnNotifiesChanged();
         m_groups.Clear();
 
         MediaPortal.GUI.Library.Log.Info("get all groups from database");

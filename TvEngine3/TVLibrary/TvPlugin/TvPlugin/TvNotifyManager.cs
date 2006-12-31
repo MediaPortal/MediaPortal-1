@@ -63,15 +63,27 @@ namespace TvPlugin
 
     static public void OnNotifiesChanged()
     {
+      Log.Info("TvNotify:OnNotifiesChanged");
       _notifiesListChanged = true;
     }
 
     void LoadNotifies()
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
-      sb.AddConstraint(Operator.Equals, "notify", "1");
-      SqlStatement stmt = sb.GetStatement(true);
-      _notifiesList = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      try
+      {
+        Log.Info("TvNotify:LoadNotifies");
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+        sb.AddConstraint(Operator.Equals, "notify", 1);
+        SqlStatement stmt = sb.GetStatement(true);
+        _notifiesList = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+        if (_notifiesList != null)
+        {
+          Log.Info("TvNotify: {0} notifies", _notifiesList.Count);
+        }
+      }
+      catch (Exception ex)
+      {
+      }
     }
 
 
@@ -89,6 +101,7 @@ namespace TvPlugin
       {
         if (preNotifySecs > program.StartTime)
         {
+          Log.Info("Notify {0} on {1} start {2}", program.Title, program.ReferencedChannel().Name, program.StartTime);
           program.Notify = false;
           program.Persist();
 
@@ -100,11 +113,13 @@ namespace TvPlugin
           tvProg.Start = Utils.datetolong(program.StartTime);
           tvProg.End = Utils.datetolong(program.EndTime);
 
+          _notifiesList.Remove(program);
+          Log.Info("send notify");
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM, 0, 0, 0, 0, 0, null);
           msg.Object = tvProg;
           GUIGraphicsContext.SendMessage(msg);
           msg = null;
-          _notifiesList.Remove(program);
+          Log.Info("send notify done");
           return;
         }
       }
