@@ -1216,12 +1216,12 @@ namespace MediaPortal.GUI.Alarm
     /// <returns>DateTime</returns>
     public static DateTime GetNextAlarmDateTime(DateTime earliestStartTime)
     {
-      if (_Alarms == null) return new DateTime(2100, 1, 1, 1, 0, 0, 0);
+      if (_Alarms == null) return DateTime.MaxValue;
 
       DateTime NextStartTime = new DateTime();
 
       //make the starting off nextdatetime a year away so earlier (real alarm trigger) times can be compared
-      NextStartTime = DateTime.Now.AddYears(1);
+      NextStartTime = DateTime.MaxValue;
 
       foreach (Alarm a in _Alarms)
       {
