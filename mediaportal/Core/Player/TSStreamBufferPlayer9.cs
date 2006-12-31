@@ -315,7 +315,7 @@ namespace MediaPortal.Player
               // 2=demux             
               // 3=audio renderer    
               settings.SetValue("clockType", clockType, RegistryValueKind.Binary);
-              settings.SetValue("enableAC3", valueOne, RegistryValueKind.Binary);//prefer AC3
+              settings.SetValue("enableAC3", valueZero, RegistryValueKind.Binary);//prefer AC3
               settings.SetValue("enableAudio2", valueZero, RegistryValueKind.Binary);
 
               if (demuxControl == false)
@@ -355,6 +355,12 @@ namespace MediaPortal.Player
           Log.Error("TSStreamBufferPlayer9:Failed to add SBE to graph");
           return false;
         }
+        ITSFileSource source = _fileSource as ITSFileSource;
+        source.SetMP2Mode(0);
+        source.SetAC3Mode(0);
+        source.SetFixedAspectRatio(1);
+        //source.SetAutoMode(1);
+        source.SetClockMode(3);
 
         #endregion
 
@@ -393,6 +399,7 @@ namespace MediaPortal.Player
         }
         #endregion
 
+
         #region load file in tsfilesource
         //call the load() on tsfilesource. This is needed so tsfilesource will configure itself
         //to mpeg-2 program stream mode instead of mpeg-2 transport stream mode.
@@ -429,8 +436,6 @@ namespace MediaPortal.Player
           Log.Error("TSStreamBufferPlayer9:Failed to open file:{0} :0x{1:x}", filename, hr);
           return false;
         }
-        ITSFileSource source = _fileSource as ITSFileSource;
-        source.SetAC3Mode(1);
         
         #endregion
 
