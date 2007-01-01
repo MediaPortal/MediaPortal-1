@@ -1238,7 +1238,7 @@ namespace TvPlugin
         }
         else if (wasPlaying)
         {
-          SeekToEnd();
+          SeekToEnd(true);
         }
 
         return true;
@@ -1439,7 +1439,7 @@ namespace TvPlugin
       {
         MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0}", timeshiftFileName);
         g_Player.Play(timeshiftFileName, mediaType);
-        SeekToEnd();
+        SeekToEnd(false);
       }
       else
       {
@@ -1448,7 +1448,7 @@ namespace TvPlugin
         g_Player.Play(timeshiftFileName, mediaType);
       }
     }
-    static void SeekToEnd()
+    static void SeekToEnd(bool zapping)
     {
       string timeshiftFileName = TVHome.Card.TimeShiftFileName;
       bool useRtsp = System.IO.File.Exists("usertsp.txt");
@@ -1457,17 +1457,30 @@ namespace TvPlugin
         if (g_Player.IsRadio == false)
         {
           double duration = g_Player.Duration;
-          //if (duration < 5) return;
-          //duration -= 2;
-          if (duration < 0) duration = 0;
           double position = g_Player.CurrentPosition;
           MediaPortal.GUI.Library.Log.Info("tvhome:seektoend dur:{0} pos:{1} {2}", g_Player.Duration, g_Player.CurrentPosition, g_Player.IsRadio);
           g_Player.SeekAbsolute(duration);
           MediaPortal.GUI.Library.Log.Info("tvhome:seektoend  done dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
-
         }
       }
-
+      else
+      {
+        //streaming....
+        if (zapping)
+        {
+          double duration = g_Player.Duration;
+          double position = g_Player.CurrentPosition;
+          if (duration > 0 && position > 0)
+          {
+            if (Math.Abs(duration - position) >= 10)
+            {
+              MediaPortal.GUI.Library.Log.Info("tvhome:seektoend dur:{0} pos:{1} {2}", g_Player.Duration, g_Player.CurrentPosition, g_Player.IsRadio);
+              g_Player.SeekAbsolute(duration);
+              MediaPortal.GUI.Library.Log.Info("tvhome:seektoend  done dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
+            }
+          }
+        }
+      }
     }
   }
 
