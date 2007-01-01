@@ -4879,6 +4879,14 @@
 		<id>6029</id>
 		<value>Change</value>
 	</string>
+  <string>
+    <id>6030</id>
+    <value>Today</value>
+  </string>
+  <string>
+    <id>6031</id>
+    <value>Tomorrow</value>
+  </string>
 	<string Prefix="My ">
 		<id>8000</id>
 		<value>Mail</value>
