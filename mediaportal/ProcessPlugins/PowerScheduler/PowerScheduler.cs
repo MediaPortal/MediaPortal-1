@@ -235,7 +235,7 @@ namespace MediaPortal.PowerScheduler
 				CheckNextRecoring();                              // checks when the next recording takes place 
  //       SetWakeUpTime();                                  // set the WakeUp Timer
         _rescanTVDatabase = false;
- //				OnActivateWindow(GUIWindowManager.ActiveWindow);  // SetShutDown is called when needed 
+ 				OnActivateWindow(GUIWindowManager.ActiveWindow);  // SetShutDown is called when needed 
       }
 
       SetWakeUpTime();
