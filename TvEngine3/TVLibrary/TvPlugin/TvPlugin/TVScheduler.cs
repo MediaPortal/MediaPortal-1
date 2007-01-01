@@ -430,7 +430,10 @@ namespace TvPlugin
           item.ThumbnailImage = strLogo;
           item.IconImageBig = strLogo;
           item.IconImage = strLogo;
-          item.PinImage = Thumbs.TvRecordingIcon;
+          if (rec.ScheduleType != (int)(ScheduleRecordingType.Once))
+            item.PinImage = Thumbs.TvRecordingSeriesIcon;
+          else
+            item.PinImage = Thumbs.TvRecordingIcon;
           listSchedules.Add(item);
           total++;
         }
