@@ -2379,27 +2379,28 @@ namespace TvPlugin
                     Log.Info("TVGuide: Found current program {0} in recording list", _currentTitle);
                     switch (dlg.SelectedId)
                     {
-                      case 979: // Play recording from beginning                          
-                        //@todo:
-                        //string filename = Recorder.GetRecordingFileName(rec);
-                        //if (filename != String.Empty)
-                        //{
-                        //  Log.Info("TVGuide: Play recording {0} from start", _currentTitle);
-                        //  g_Player.Play(filename);
-                        //  if (g_Player.Playing)
-                        //  {
-                        //    GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-                        //    return;
-                        //  }
-                        //}
+                      case 979: // Play recording from beginning 
+                        g_Player.Stop();
+                        TVHome.ViewChannel(_currentProgram.ReferencedChannel());
+                        if (g_Player.Playing)
+                        {
+                          DateTime startTime = TVHome.Card.RecordingStarted;
+                          TimeSpan seekBack = DateTime.Now - startTime;
+                          double duration = g_Player.Duration;
+                          duration -= seekBack.TotalSeconds;
+                          if (duration < 0) duration = 0;
+                          g_Player.SeekAbsolute(duration);
+                        }
+                        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+
                         break;
 
                       case 980: // Play recording from live point
-                        TVHome.ViewChannel(rec.ReferencedChannel());
+                        g_Player.Stop();
+                        TVHome.ViewChannel(_currentProgram.ReferencedChannel());
                         if (g_Player.Playing)
                         {
                           Log.Info("TVGuide: Show recording {0} at live point", _currentTitle);
-                          g_Player.SeekAsolutePercentage(99);
                         }
                         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
                         return;
@@ -2614,7 +2615,7 @@ namespace TvPlugin
 
       if (_channelList.Count == 0)
       {
-        Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true, "",true);
+        Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true, "", true);
         for (int i = 0; i < 10; ++i)
           _channelList.Add(newChannel);
       }

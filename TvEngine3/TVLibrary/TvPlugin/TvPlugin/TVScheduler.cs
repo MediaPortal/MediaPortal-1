@@ -68,7 +68,7 @@ namespace TvPlugin
     bool m_bSortAscending = true;
     int m_iSelectedItem = 0;
     bool needUpdate = false;
-    
+
 
     public TvScheduler()
     {
@@ -206,7 +206,7 @@ namespace TvPlugin
     {
       base.OnClicked(controlId, control, actionType);
 
-      if (control == btnSeries) 
+      if (control == btnSeries)
       {
         LoadDirectory();
         return;
@@ -416,7 +416,7 @@ namespace TvPlugin
             if (showSeries) break;
           }
         } //if (recs.Count > 1 && currentSortMethod == SortMethod.Date)
-        else if (showSeries==false)
+        else if (showSeries == false)
         {
           //single recording
           item.Label = rec.ProgramName;
@@ -628,28 +628,28 @@ namespace TvPlugin
           break;
 
         case 979: // Play recording from beginning
-
-          string filename = TVHome.Card.RecordingFileName;
-          if (filename != String.Empty)
-          {
-            g_Player.Play(filename);
-            if (g_Player.Playing)
-            {
-              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-              return;
-            }
-          }
-          break;
-
-        case 980: // Play recording from live point
-
+          g_Player.Stop();
           TVHome.ViewChannel(rec.ReferencedChannel());
           if (TVHome.Card.IsTimeShifting)
           {
             if (g_Player.Playing)
             {
-              g_Player.SeekAsolutePercentage(99);
+              DateTime startTime = TVHome.Card.RecordingStarted;
+              TimeSpan seekBack = DateTime.Now - startTime;
+              double duration = g_Player.Duration;
+              duration -= seekBack.TotalSeconds;
+              if (duration < 0) duration = 0;
+              g_Player.SeekAbsolute(duration);
             }
+            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+          }
+          return;
+
+        case 980: // Play recording from live point
+          g_Player.Stop();
+          TVHome.ViewChannel(rec.ReferencedChannel());
+          if (TVHome.Card.IsTimeShifting)
+          {
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
             return;
           }

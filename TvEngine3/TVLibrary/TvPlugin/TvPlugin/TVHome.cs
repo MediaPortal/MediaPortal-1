@@ -1162,10 +1162,13 @@ namespace TvPlugin
       TvResult succeeded;
       if (TVHome.Card != null)
       {
-        //if we're already watching this channel, then simply return
-        if (TVHome.Card.IsTimeShifting == true && TVHome.Card.IdChannel == channel.IdChannel)
+        if (g_Player.Playing)
         {
-          return true;
+          //if we're already watching this channel, then simply return
+          if (TVHome.Card.IsTimeShifting == true && TVHome.Card.IdChannel == channel.IdChannel)
+          {
+            return true;
+          }
         }
       }
       /*
