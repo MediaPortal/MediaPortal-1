@@ -4879,6 +4879,14 @@
         <id>6029</id>
         <value>Ändern</value>
     </string>
+    <string>
+        <id>6030</id>
+        <value>Heute</value>
+    </string>
+    <string>
+        <id>6031</id>
+        <value>Morgen</value>
+    </string>    
     <string Prefix="Meine ">
         <id>8000</id>
         <value>E-Mails</value>
@@ -5313,10 +5321,133 @@
         <value>Von vorne beginnen</value>
     </string>
     <string>
+        <id>19120</id>
+        <value>Kandidaten filtern</value>
+    </string>    
+    <string>
         <id>19121</id>
         <value>Zeit: </value>
     </string>
-
+    <string>
+        <id>19122</id>
+        <value>Filtere 1</value>
+    </string>
+    <string>
+        <id>19123</id>
+        <value>Filtere 2</value>
+    </string>
+    <string>
+        <id>19124</id>
+        <value>Filtere 3</value>
+    </string>
+    <string>
+        <id>19125</id>
+        <value>Filtere 4</value>
+    </string>
+    <string>
+        <id>19126</id>
+        <value>Filtere 5</value>
+    </string>
+    <string>
+        <id>19127</id>
+        <value>Filtere 6</value>
+    </string>
+    <string>
+        <id>19128</id>
+        <value>Filtere 7</value>
+    </string>
+    <string>
+        <id>19129</id>
+        <value>Filtere 8</value>
+    </string>
+    <string>
+        <id>19130</id>
+        <value>Filtere 9</value>
+    </string>
+    <string>
+        <id>19131</id>
+        <value>Filtere Paare</value>
+    </string>
+    <string>
+        <id>19132</id>
+        <value>Filter aus</value>
+    </string>
+    <string>
+        <id>19133</id>
+        <value>Kandidat hinzufügen/entfernen</value>
+    </string>
+    <string>
+        <id>19134</id>
+        <value> 1</value>
+    </string>
+    <string>
+        <id>19135</id>
+        <value> 2</value>
+    </string>
+    <string>
+        <id>19136</id>
+        <value> 3</value>
+    </string>
+    <string>
+        <id>19137</id>
+        <value> 4</value>
+    </string>
+    <string>
+        <id>19138</id>
+        <value> 5</value>
+    </string>
+    <string>
+        <id>19139</id>
+        <value> 6</value>
+    </string>
+    <string>
+        <id>19140</id>
+        <value> 7</value>
+    </string>
+    <string>
+        <id>19141</id>
+        <value> 8</value>
+    </string>
+    <string>
+        <id>19142</id>
+        <value> 9</value>
+    </string>
+    <string>
+        <id>19143</id>
+        <value>Kandidaten</value>
+    </string>
+    <string>
+        <id>19144</id>
+        <value>Kandidaten anzeigen</value>
+    </string>
+    <string>
+        <id>19145</id>
+        <value>Kandidaten ausblenden</value>
+    </string>
+    <string>
+        <id>19146</id>
+        <value>Kandidaten löschen</value>
+    </string>
+    <string>
+        <id>19147</id>
+        <value>Kandidaten zurücksetzen</value>
+    </string>
+    <string>
+        <id>19148</id>
+        <value>Hilfe</value>
+    </string>
+    <string>
+        <id>19149</id>
+        <value>Filter</value>
+    </string>
+    <string>
+        <id>19150</id>
+        <value>Kandidaten</value>
+    </string>
+    <string>
+        <id>19151</id>
+        <value>Kandidaten hinzufügen/entfernen</value>
+    </string>
     <string>
         <id>25001</id>
         <value>Warte auf Seite {0:X}...!</value>
