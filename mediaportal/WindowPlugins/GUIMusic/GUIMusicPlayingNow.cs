@@ -321,6 +321,7 @@ namespace MediaPortal.GUI.Music
         case Action.ActionType.ACTION_SHOW_INFO:
           {
             //OnShowContextMenu();
+            facadeTagInfo.Clear();
             UpdateTagInfo();
             FlipPictures();
             break;
