@@ -627,8 +627,8 @@ namespace MediaPortal.Player
         Log.Info("RTSPPlayer:Duration:{0}", m_dDuration);
         if (_mediaType == g_Player.MediaType.TV)
         {
-          if (m_dDuration < 1) m_dDuration = 1;
-          SeekAbsolute(m_dDuration - 1);
+          //if (m_dDuration < 1) m_dDuration = 1;
+          //SeekAbsolute(m_dDuration - 1);
         }
         else
         {
@@ -1022,11 +1022,11 @@ namespace MediaPortal.Player
           if (dTime < 0.0d) dTime = 0.0d;
           if (dTime < Duration)
           {
-            Log.Info("seekabs:{0}", dTime);
+            Log.Info("rtspplayer: seekabs:{0}", dTime);
             if (Vmr9 != null)
               Vmr9.FrameCounter = 123;
             mediaPos.put_CurrentPosition(dTime);
-            Log.Info("seekabs:{0} done", dTime);
+            Log.Info("rtspplayer: seekabs:{0} done", dTime);
             if (Vmr9 != null)
               Vmr9.FrameCounter = 123;
           }
