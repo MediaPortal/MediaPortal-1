@@ -4183,6 +4183,14 @@
         <value>Import playlist courante</value>
     </string>
     <string>
+        <id>2146</id>
+        <value>Pas assez de place sur le CD</value>
+    </string>
+    <string>
+        <id>2147</id>
+        <value>Pas assez de place sur le DVD</value>
+    </string>
+    <string>
         <id>2200</id>
         <value>Explorateur</value>
     </string>
@@ -5386,6 +5394,14 @@
         <value>Scrobble: Déconnecté</value>
     </string>
     <string>
+        <id>33008</id>
+        <value>Pas de playlist active</value>
+    </string>
+    <string>
+        <id>33009</id>
+        <value>pour inserer ou ajouter la piste</value>
+    </string>
+    <string>
         <id>33010</id>
         <value>Remplir automatiquent la liste de lecture avec</value>
     </string>
@@ -5414,6 +5430,14 @@
         <value>Pistes aléatoires</value>
     </string>
     <string>
+        <id>33018</id>
+        <value>Pistes non écoutées</value>
+    </string>
+    <string>
+        <id>33019</id>
+        <value>Pistes favorites</value>
+    </string>
+    <string>
         <id>33030</id>
         <value>Pistes Top album</value>
     </string>
@@ -5424,6 +5448,10 @@
     <string>
         <id>33040</id>
         <value>Copier joué maintenant spam au presse-papier</value>
+    </string>
+    <string>
+        <id>33041</id>
+        <value>Ajouter cet album à la playlist</value>
     </string>
     <string>
         <id>34000</id>
@@ -6267,4 +6295,3 @@
         <value>Sur un PC de bureau partagé avec d'autres applications</value>
     </string>
 </strings>
-
