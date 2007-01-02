@@ -37,7 +37,8 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.Dialogs;
-using MediaPortal.Utils.Services;
+using MediaPortal.Configuration;
+//using MediaPortal.Utils.Services;
 
 using TvDatabase;
 using TvControl;

@@ -30,6 +30,7 @@ using System.Windows.Forms;
 
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 using Gentle.Common;
 using Gentle.Framework;

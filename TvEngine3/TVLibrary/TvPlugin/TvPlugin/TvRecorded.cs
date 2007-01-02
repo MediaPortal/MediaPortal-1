@@ -35,6 +35,7 @@ using MediaPortal.Player;
 using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 ///@using MediaPortal.Video.Database;
 using Toub.MediaCenter.Dvrms.Metadata;
 ///@using MediaPortal.TV.DiskSpace;

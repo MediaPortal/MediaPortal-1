@@ -2,6 +2,7 @@ using System;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using System.Text;
 using TvControl;
 
