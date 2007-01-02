@@ -35,10 +35,13 @@ using MediaPortal.TV.Database;
 using MediaPortal.WebEPG;
 using MediaPortal.Utils;
 using MediaPortal.Utils.Time;
-using MediaPortal.Utils.Services;
+using MediaPortal.Utils.Web;
 
 namespace MediaPortal.EPG
 {
+  /// <summary>
+  /// Gets the EPG data from one or more web sites.
+  /// </summary>
   public class WebEPG
   {
     #region Private Structs
@@ -90,8 +93,7 @@ namespace MediaPortal.EPG
     #region Constructors/Destructors
     public WebEPG(string configFile, string xmltvDirectory, string baseDirectory)
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
+      _log = GlobalServiceProvider.Get<ILog>();
 
       _configFile = configFile; 
       _xmltvDirectory = xmltvDirectory;
@@ -100,15 +102,22 @@ namespace MediaPortal.EPG
     #endregion
 
     #region Public Methods
+    /// <summary>
+    /// Starts the importation process
+    /// </summary>
+    /// <returns>bool - sucess/fail</returns>
     public bool Import()
     {
       if (!LoadConfig())
         return false;
 
-
+      // Open XMLTV output file
       XMLTVExport xmltv = new XMLTVExport(_xmltvDirectory);
-
       xmltv.Open();
+
+      // Collect HttpStatistic
+      HttpStatistics httpStats = new HttpStatistics();
+      GlobalServiceProvider.Add<IHttpStatistics>(httpStats);
 
       for (int i = 0; i < _channels.Count; i++)
       {
@@ -196,11 +205,21 @@ namespace MediaPortal.EPG
 
       xmltv.Close();
 
+      for (int i = 0; i < httpStats.Count; i++)
+      {
+        SiteStatistics site = httpStats.GetbyIndex(i);
+        _log.Info(LogType.WebEPG, "HTTP Statistics: {0}", site.ToString());
+      }
+
       return true;
     }
     #endregion
 
     #region Private Methods
+    /// <summary>
+    /// Loads the config.
+    /// </summary>
+    /// <returns>bool - success/fail</returns>
     private bool LoadConfig()
     {
       string grabberDir;
@@ -225,14 +244,18 @@ namespace MediaPortal.EPG
       _epgGrabber = new WebListingGrabber(maxGrabDays, grabberDir);
 
       int AuthCount = _xmlreader.GetValueAsInt("AuthSites", "Count", 0);
-
-      for (int i = 1; i <= AuthCount; i++)
+      if (AuthCount > 0)
       {
-        string site = _xmlreader.GetValueAsString("Auth" + i.ToString(), "Site", "");
-        string login = _xmlreader.GetValueAsString("Auth" + i.ToString(), "Login", "");
-        string password = _xmlreader.GetValueAsString("Auth" + i.ToString(), "Password", "");
-        NetworkCredential auth = new NetworkCredential(login, password);
-        MediaPortal.Utils.Web.HTTPAuth.Add(site, auth);
+        HTTPAuth authService = new HTTPAuth();
+        for (int i = 1; i <= AuthCount; i++)
+        {
+          string site = _xmlreader.GetValueAsString("Auth" + i.ToString(), "Site", "");
+          string login = _xmlreader.GetValueAsString("Auth" + i.ToString(), "Login", "");
+          string password = _xmlreader.GetValueAsString("Auth" + i.ToString(), "Password", "");
+          NetworkCredential auth = new NetworkCredential(login, password);
+          authService.Add(site, auth);
+        }
+        GlobalServiceProvider.Add<IHttpAuthentication>(authService);
       }
 
       int MergeCount = _xmlreader.GetValueAsInt("MergeChannels", "Count", 0);

@@ -34,7 +34,7 @@ namespace MediaPortal.Utils.Web
   /// 
   /// Stores the NetworkCredentials for each site.
   /// </summary>
-  public class HTTPAuth : IHttpAuth
+  public class HTTPAuth : IHttpAuthentication
   {
     #region Variables
     private Dictionary<string, NetworkCredential> _authList;

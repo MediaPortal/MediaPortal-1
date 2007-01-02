@@ -159,7 +159,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Web\http\IHtmlCache.cs" />
-    <Compile Include="Web\http\IHttpAuth.cs" />
+    <Compile Include="Web\http\IHttpAuthentication.cs" />
     <Compile Include="Web\http\SiteStatistics.cs" />
     <Compile Include="Web\Parser\HtmlSectionMatch.cs" />
     <Compile Include="Web\Parser\HtmlSectionTemplate.cs" />

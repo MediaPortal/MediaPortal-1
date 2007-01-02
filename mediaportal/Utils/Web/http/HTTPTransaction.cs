@@ -55,7 +55,7 @@ namespace MediaPortal.Utils.Web
     string _error = string.Empty;
     int blockSize = 8196;
     byte[] _data;
-    IHttpAuth _auth;
+    IHttpAuthentication _auth;
     IHttpStatistics _stats;
     #endregion
 
@@ -65,7 +65,7 @@ namespace MediaPortal.Utils.Web
     /// </summary>
     public HTTPTransaction()
     {
-      _auth = GlobalServiceProvider.Get<IHttpAuth>();
+      _auth = GlobalServiceProvider.Get<IHttpAuthentication>();
       _stats = GlobalServiceProvider.Get<IHttpStatistics>();
     }
 
