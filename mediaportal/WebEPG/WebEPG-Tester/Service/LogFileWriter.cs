@@ -27,7 +27,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace MediaPortal.Utils.Services
+namespace MediaPortal.EPG.WebEPGTester
 {
   public class LogFileWriter : StreamWriter
   {
