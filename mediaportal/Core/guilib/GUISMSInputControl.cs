@@ -36,6 +36,8 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUISMSInputControl : GUIControl
   {
+    public delegate void OnTextChangedHandler();
+    public event OnTextChangedHandler OnTextChanged;
     // How often (per second) the caret blinks
     const float fCARET_BLINK_RATE = 1.0f;
     // During the blink period, the amount the caret is visible. 0.5 equals
@@ -148,6 +150,17 @@ namespace MediaPortal.GUI.Library
     {
       return true;
     }
+    public string Text
+    {
+      get
+      {
+        return _lineData;
+      }
+      set
+      {
+        _lineData = value;
+      }
+    }
 
     //TODO: add implementation
     public override void OnAction(Action action)
@@ -195,6 +208,7 @@ namespace MediaPortal.GUI.Library
               _position = 0;
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED, WindowId, GetID, ParentID, 0, 0, null);
               msg.Label = _lineData;
+              if (OnTextChanged != null) OnTextChanged();
               _lineData = "";
               GUIGraphicsContext.SendMessage(msg);
               return;
@@ -203,6 +217,7 @@ namespace MediaPortal.GUI.Library
             if ((action.m_key.KeyChar >= 32) || (action.m_key.KeyChar == (int)Keys.Back))
             {
               Press((char)action.m_key.KeyChar);
+              if (OnTextChanged != null) OnTextChanged();
               return;
             }
           }
