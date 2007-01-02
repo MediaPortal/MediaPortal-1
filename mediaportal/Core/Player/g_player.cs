@@ -30,6 +30,7 @@ using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Subtitle;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Player
 {

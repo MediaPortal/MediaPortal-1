@@ -32,6 +32,7 @@ using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Pictures;
 using MediaPortal.Database;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Picture.Database
 {

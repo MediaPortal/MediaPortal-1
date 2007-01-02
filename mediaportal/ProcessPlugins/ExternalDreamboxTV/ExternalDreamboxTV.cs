@@ -29,7 +29,6 @@ using System.Windows.Forms;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-
 using DreamBox;
 using System.IO;
 using System.Runtime.Serialization;
@@ -39,7 +38,7 @@ using MediaPortal.TV.Recording;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using System.ComponentModel;
-
+using MediaPortal.Configuration;
 
 namespace ProcessPlugins.ExternalDreamboxTV
 {

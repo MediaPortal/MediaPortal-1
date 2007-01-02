@@ -32,6 +32,7 @@ using System.Text;
 using MediaPortal.GUI.Library;
 using System.Xml;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using Rss;
 using System.Text.RegularExpressions;

@@ -32,6 +32,7 @@ using System.Text;
 using System.IO;
 using Microsoft.Win32;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.FoobarPlugin
 {

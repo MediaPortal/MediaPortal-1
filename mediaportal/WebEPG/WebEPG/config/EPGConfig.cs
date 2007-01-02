@@ -26,7 +26,6 @@
 using System;
 using System.Collections;
 using MediaPortal.Services;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.EPG.config
 {

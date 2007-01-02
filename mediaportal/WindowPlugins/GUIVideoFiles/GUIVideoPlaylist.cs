@@ -32,7 +32,7 @@ using MediaPortal.Playlists;
 using MediaPortal.Dialogs;
 using MediaPortal.Video.Database;
 using MediaPortal.MusicVideos.Database;
-
+using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Video
 {

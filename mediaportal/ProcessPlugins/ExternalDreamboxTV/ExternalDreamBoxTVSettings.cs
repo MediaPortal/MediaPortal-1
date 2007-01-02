@@ -34,6 +34,7 @@ using DirectShowLib;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using System.Collections;
 using DShowNET;
 using DreamBox;

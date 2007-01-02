@@ -34,6 +34,7 @@ using System.Runtime.Serialization.Formatters.Soap;
 using NUnit.Framework;
 using ProcessPlugins.DiskSpace;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.Player;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;

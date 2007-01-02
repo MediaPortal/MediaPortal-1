@@ -29,12 +29,12 @@ using System.IO;
 using System.Drawing;
 using System.Collections;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
 using MediaPortal.Dialogs;
 using MediaPortal.TV.Database;
 using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.Topbar;
+using MediaPortal.Configuration;
 #endregion
 
 namespace MediaPortal.GUI.Home

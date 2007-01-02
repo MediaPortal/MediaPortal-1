@@ -34,6 +34,7 @@ using MediaPortal.Util;
 using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Music.Database
 {

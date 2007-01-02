@@ -30,7 +30,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using MediaPortal.Util;
-
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Player.DSP
 {

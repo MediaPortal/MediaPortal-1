@@ -28,7 +28,6 @@ using System.Text;
 using System.Xml;
 using MediaPortal.Services;
 using MediaPortal.Utils.Web;
-using MediaPortal.Utils.Services;
 using MediaPortal.Webepg.TV.Database;
 using MediaPortal.WebEPG.Config.Grabber;
 

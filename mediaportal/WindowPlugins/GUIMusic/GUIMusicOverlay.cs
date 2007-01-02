@@ -31,6 +31,7 @@ using MediaPortal.Video.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.TagReader;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;

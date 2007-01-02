@@ -28,6 +28,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.Player;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;

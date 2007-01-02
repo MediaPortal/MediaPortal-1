@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Xml;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace WindowPlugins.GUISettings.Wizard.Analog
 {

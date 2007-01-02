@@ -37,7 +37,6 @@ using MediaPortal.TV.Database;
 using MediaPortal.WebEPG;
 using MediaPortal.Utils.Web;
 using MediaPortal.Utils.Time;
-using MediaPortal.Utils.Services;
 using MediaPortal.EPG.config;
 using MediaPortal.WebEPG.Parser;
 using MediaPortal.WebEPG.Config.Grabber;

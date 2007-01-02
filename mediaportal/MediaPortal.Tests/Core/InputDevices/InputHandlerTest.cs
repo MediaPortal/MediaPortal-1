@@ -26,6 +26,7 @@
 using MediaPortal.InputDevices;
 using NUnit.Framework;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Tests.Core.InputDevices
 {

@@ -34,6 +34,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using MediaPortal.Playlists;

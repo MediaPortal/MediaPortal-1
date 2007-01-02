@@ -33,6 +33,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.Topbar;
+using MediaPortal.Configuration;
 
 namespace MyMail
 {

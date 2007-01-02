@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Settings.Wizard;

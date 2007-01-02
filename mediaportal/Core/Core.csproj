@@ -297,7 +297,6 @@
     <Compile Include="MusicPlayer\DSP\VSTPlugin.cs" />
     <Compile Include="MusicPlayer\DSP\VSTPluginParm.cs" />
     <Compile Include="Player\IAutoCrop.cs" />
-    <Compile Include="ServiceImplementations\LogImpl.cs" />
     <Compile Include="MusicPlayer\BASS\BassAudio.cs" />
     <Compile Include="MusicPlayer\Visualization\IVisualization.cs" />
     <Compile Include="MusicPlayer\Visualization\IVisualizationManager.cs" />
@@ -320,23 +319,8 @@
     <Compile Include="Player\DummyPlayerFactory.cs" />
     <Compile Include="Player\IPlayerFactory.cs" />
     <Compile Include="Player\RTSPPlayer.cs" />
-    <Compile Include="Services\GlobalServiceProvider.cs" />
-    <Compile Include="Services\ILog.cs" />
-    <Compile Include="Services\Level.cs" />
-    <Compile Include="Services\LogType.cs" />
-    <Compile Include="Services\ServiceCreatorCallback.cs" />
-    <Compile Include="Services\ServiceProvider.cs" />
     <Compile Include="TagReader\ITag.cs" />
     <Compile Include="TagReader\Utils.cs" />
-    <Compile Include="Threading\Interfaces\IThreadPool.cs" />
-    <Compile Include="Threading\Interfaces\IWork.cs" />
-    <Compile Include="Threading\Interfaces\IWorkInterval.cs" />
-    <Compile Include="Threading\IntervalWork.cs" />
-    <Compile Include="Threading\ThreadPool.cs" />
-    <Compile Include="Threading\ThreadPoolStartInfo.cs" />
-    <Compile Include="Threading\Work.cs" />
-    <Compile Include="Threading\WorkEventArgs.cs" />
-    <Compile Include="Threading\WorkQueue.cs" />
     <Compile Include="ThumbDbLib\Thumbnail.cs" />
     <Compile Include="ThumbDbLib\ThumbnailCreator.cs" />
     <Compile Include="ThumbDbLib\ThumbnailCreatorNet.cs" />
@@ -352,7 +336,6 @@
     <Compile Include="UserInterfaceControls\MPToolTip.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Util\Config.cs" />
     <Compile Include="Util\EncryptDecrypt.cs" />
     <Compile Include="Util\HResult.cs" />
     <Compile Include="Util\HTMLParser.cs" />
@@ -736,7 +719,6 @@
     <Compile Include="guilib\CachedTexture.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="guilib\CacheSettingsProvider.cs" />
     <Compile Include="guilib\CPosition.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -908,8 +890,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="guilib\IRenderLayer.cs" />
-    <Compile Include="guilib\ISettingsPrefetchable.cs" />
-    <Compile Include="guilib\ISettingsProvider.cs" />
     <Compile Include="guilib\ISetupForm.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -931,7 +911,6 @@
     <Compile Include="guilib\PropertyManager.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="guilib\Settings.cs" />
     <Compile Include="guilib\SkinControlAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -962,7 +941,6 @@
     <Compile Include="guilib\Win32Support.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="guilib\XmlSettingsProvider.cs" />
     <Compile Include="guilib\XMLSkinElementAttribute.cs">
       <SubType>Code</SubType>
     </Compile>

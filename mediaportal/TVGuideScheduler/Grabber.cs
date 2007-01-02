@@ -26,6 +26,7 @@
 using System;
 using System.Text;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.TVGuideScheduler
 {

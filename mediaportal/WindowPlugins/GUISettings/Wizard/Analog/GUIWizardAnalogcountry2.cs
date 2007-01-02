@@ -28,6 +28,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using DShowNET;
 namespace WindowPlugins.GUISettings.Wizard.Analog

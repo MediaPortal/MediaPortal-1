@@ -36,6 +36,7 @@ using Microsoft.Win32;
 using MediaPortal.RemoteControls.FireDTV;
 using MediaPortal.InputDevices;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.RemoteControls
 {

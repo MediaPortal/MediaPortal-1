@@ -35,7 +35,6 @@ using MediaPortal.Util;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using System.IO;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Tests.TVCapture
 {

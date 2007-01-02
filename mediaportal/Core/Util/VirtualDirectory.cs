@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
 using MediaPortal.Player;
+using MediaPortal.Configuration;
 using System.Management;
 using System.IO;
 using EnterpriseDT.Net.Ftp;

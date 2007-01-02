@@ -34,7 +34,7 @@ using MediaPortal.TV.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Ripper;
-
+using MediaPortal.Configuration;
 
 namespace MediaPortal.PowerScheduler
 {

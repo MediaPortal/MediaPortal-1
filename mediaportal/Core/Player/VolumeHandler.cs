@@ -31,6 +31,7 @@ using MediaPortal.Player;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using Microsoft.Win32;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Player
 {

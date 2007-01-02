@@ -32,6 +32,7 @@ using System.Text.RegularExpressions;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.Playlists;
 using System.Xml;

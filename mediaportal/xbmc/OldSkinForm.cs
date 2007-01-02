@@ -26,6 +26,7 @@
 using System.IO;
 using System.Xml;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal
 {

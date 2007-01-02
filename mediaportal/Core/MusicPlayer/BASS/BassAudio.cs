@@ -41,6 +41,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
 using MediaPortal.Visualization;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Player
 {

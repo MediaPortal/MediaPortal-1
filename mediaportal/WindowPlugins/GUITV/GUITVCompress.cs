@@ -29,12 +29,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.Player;
 using MediaPortal.Video.Database;
 using Toub.MediaCenter.Dvrms.Metadata;
+
 namespace MediaPortal.GUI.TV
 {
   /// <summary>

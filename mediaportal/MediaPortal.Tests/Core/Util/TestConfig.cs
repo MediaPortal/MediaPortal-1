@@ -25,6 +25,7 @@
 
 using System;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using NUnit.Framework;
 
 namespace MediaPortal.Tests.Core.Util

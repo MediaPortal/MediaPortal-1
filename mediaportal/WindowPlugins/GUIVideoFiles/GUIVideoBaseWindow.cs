@@ -34,6 +34,7 @@ using MediaPortal.Playlists;
 using MediaPortal.Video.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.View;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Video
 {

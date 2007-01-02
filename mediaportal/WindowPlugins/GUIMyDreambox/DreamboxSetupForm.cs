@@ -30,6 +30,7 @@ using System.IO;
 using System.Windows.Forms;
 using MediaPortal.Profile;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Dreambox
 {

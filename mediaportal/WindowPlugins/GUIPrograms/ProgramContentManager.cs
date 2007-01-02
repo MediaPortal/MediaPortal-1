@@ -29,6 +29,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using ProgramsDatabase;
 using Programs.Utils;
+using MediaPortal.Configuration;
 
 namespace WindowPlugins.GUIPrograms
 {

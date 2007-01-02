@@ -24,6 +24,7 @@
 #endregion
 
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.ControlDevices
 {

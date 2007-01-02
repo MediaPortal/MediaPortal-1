@@ -32,7 +32,6 @@ using System.Collections;
 using System.Windows.Forms;
 using MediaPortal.Services;
 using MediaPortal.Utils.Web;
-using MediaPortal.Utils.Services;
 using MediaPortal.EPG;
 using MediaPortal.WebEPG;
 using MediaPortal.TV.Database;
@@ -62,7 +61,9 @@ namespace MediaPortal.EPG.WebEPGTester
 
       MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(testDir + "\\GrabberTests.xml");
 
-      HTMLCache.WebCacheInitialise();
+      HTMLCache cache = new HTMLCache();
+      cache.WebCacheInitialise();
+      GlobalServiceProvider.Add<IHtmlCache>(cache);
 
       if (!System.IO.Directory.Exists(testDir))
         System.IO.Directory.CreateDirectory(testDir);
@@ -114,12 +115,12 @@ namespace MediaPortal.EPG.WebEPGTester
                 long dtLong = GetLongDateTime(grabDateTime);
                 xmlreader.SetValue("Grabbers", countryGrabber, dtLong.ToString());
                 xmlreader.Save();
-                HTMLCache.CacheMode = HTMLCache.Mode.Replace;
+                cache.CacheMode = HTMLCache.Mode.Replace;
               }
               else
               {
                 grabDateTime = GetDateTime(long.Parse(grabTimeStr));
-                HTMLCache.CacheMode = HTMLCache.Mode.Enabled;
+                cache.CacheMode = HTMLCache.Mode.Enabled;
               }
 
               if (m_EPGGrabber.Initalise(countryGrabber))

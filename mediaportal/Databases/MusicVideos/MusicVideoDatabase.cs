@@ -34,6 +34,7 @@ using System.Xml;
 using System.IO;
 using MediaPortal.MusicVideos;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.MusicVideos.Database
 {

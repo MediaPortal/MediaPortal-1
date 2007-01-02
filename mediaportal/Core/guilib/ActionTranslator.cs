@@ -28,6 +28,7 @@ using System.Collections;
 using System.Xml;
 using System.Windows.Forms;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Library
 {

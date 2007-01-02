@@ -42,6 +42,7 @@ using DShowNET.Helper;
 using DirectShowLib;
 using DirectShowLib.Dvd;
 using Microsoft.Win32;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Player
 {

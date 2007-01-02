@@ -31,7 +31,6 @@ using System.Text;
 using System.Collections;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
 using MediaPortal.InputDevices;
 using MediaPortal.ControlDevices;
 

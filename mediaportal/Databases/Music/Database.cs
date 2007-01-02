@@ -37,6 +37,7 @@ using MediaPortal.TagReader;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Globalization;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Music.Database
 {

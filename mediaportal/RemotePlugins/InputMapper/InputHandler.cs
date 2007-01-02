@@ -33,7 +33,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.TV.Recording;
-
+using MediaPortal.Configuration;
 
 namespace MediaPortal.InputDevices
 {

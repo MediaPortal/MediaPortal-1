@@ -27,6 +27,7 @@ using System;
 using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using DShowNET;
 using DShowNET.Helper;

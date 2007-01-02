@@ -30,6 +30,7 @@ using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using Microsoft.DirectX.DirectInput;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.InputDevices
 {

@@ -31,7 +31,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using X10;
-
+using MediaPortal.Configuration;
 
 namespace MediaPortal.InputDevices
 {

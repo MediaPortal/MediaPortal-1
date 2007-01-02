@@ -41,7 +41,7 @@ using MediaPortal.Util;
 using MediaPortal.Services;
 using MediaPortal.Player;
 using MediaPortal.Threading;
-
+using MediaPortal.Configuration;
 using MediaPortal.Picture.Database;
 
 namespace MediaPortal.GUI.Pictures

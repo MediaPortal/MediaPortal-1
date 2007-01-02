@@ -56,6 +56,7 @@ using SurfaceDescription = Microsoft.DirectX.DirectDraw.SurfaceDescription;
 using Timer = System.Windows.Forms.Timer;
 using MediaPortal.TV.Recording;
 using MediaPortal.Video.Database;
+using MediaPortal.Configuration;
 
 namespace MediaPortal
 {

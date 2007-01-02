@@ -31,6 +31,7 @@ using System.IO;
 using MediaPortal.GUI.Library;
 using System.Diagnostics;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.GUIBurner
 {

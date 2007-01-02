@@ -31,6 +31,7 @@ using DirectShowLib.SBE;
 using DShowNET.Helper;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Core.Transcoding
 {

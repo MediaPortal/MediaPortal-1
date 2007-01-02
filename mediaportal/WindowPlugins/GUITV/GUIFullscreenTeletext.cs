@@ -35,6 +35,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.Player;
+using MediaPortal.Configuration;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
 using MediaPortal.GUI.Pictures;

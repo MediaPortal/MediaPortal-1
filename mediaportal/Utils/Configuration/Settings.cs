@@ -29,7 +29,7 @@ using System.Text;
 using System.Xml;
 using System.Collections;
 using System.Reflection;
-using MediaPortal.GUI.Library;
+//using MediaPortal.GUI.Library;
 using System.Globalization;
 
 namespace MediaPortal.Profile

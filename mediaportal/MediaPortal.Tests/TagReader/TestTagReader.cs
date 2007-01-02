@@ -31,7 +31,6 @@ using NUnit.Framework;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
 using MediaPortal.Services;
-using MediaPortal.Utils.Services;
 using MediaPortal.Tests.MockObjects;
 
 namespace MediaPortal.Tests.TagReader

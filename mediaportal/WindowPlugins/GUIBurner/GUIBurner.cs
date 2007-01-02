@@ -37,6 +37,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using MediaPortal.Ripper;

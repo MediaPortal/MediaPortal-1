@@ -37,7 +37,7 @@ using MediaPortal.TagReader;
 using MediaPortal.Database;
 using MediaPortal.Music.Database;
 using MediaPortal.Util;
-
+using MediaPortal.Configuration;
 
 namespace MediaPortal.MusicShareWatcher
 {

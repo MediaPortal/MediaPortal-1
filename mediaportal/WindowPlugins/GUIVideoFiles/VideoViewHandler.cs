@@ -33,6 +33,7 @@ using MediaPortal.GUI.View;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Video
 {

@@ -28,6 +28,7 @@ using System.Collections;
 using System.Reflection;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Player
 {

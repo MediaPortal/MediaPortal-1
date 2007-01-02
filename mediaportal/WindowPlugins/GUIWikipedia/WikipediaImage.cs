@@ -33,6 +33,7 @@ using System.Threading;
 using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace Wikipedia
 {

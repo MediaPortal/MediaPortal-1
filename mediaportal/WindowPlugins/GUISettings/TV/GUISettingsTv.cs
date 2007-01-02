@@ -31,6 +31,7 @@ using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace WindowPlugins.GUISettings.TV
 {

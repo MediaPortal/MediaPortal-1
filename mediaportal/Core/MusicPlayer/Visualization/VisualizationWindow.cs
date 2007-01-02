@@ -40,6 +40,7 @@ using MediaPortal.Player;
 using MediaPortal.TagReader;
 using MediaPortal.Playlists;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Visualization
 {

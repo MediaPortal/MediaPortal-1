@@ -32,6 +32,7 @@ using MediaPortal.TV.Database;
 using MediaPortal.Core.Transcoding;
 using MediaPortal.Util;
 using MediaPortal.TV.DiskSpace;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.TV.Recording
 {

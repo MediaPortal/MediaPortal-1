@@ -36,6 +36,7 @@ using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Services;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.TV.Database
 {

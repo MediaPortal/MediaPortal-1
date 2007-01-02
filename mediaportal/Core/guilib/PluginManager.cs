@@ -27,6 +27,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Library
 {

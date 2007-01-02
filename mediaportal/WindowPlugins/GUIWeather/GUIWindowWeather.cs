@@ -33,6 +33,7 @@ using System.Drawing;
 using MediaPortal.GUI.Library;
 using System.Xml;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 
 using System.ComponentModel;

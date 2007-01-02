@@ -27,7 +27,7 @@ using System;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
-using MediaPortal.Utils;       // for config provider
+using MediaPortal.Configuration;  // for config provider
 using MediaPortal.GUI.Library; // for logging
 
 namespace MediaPortal.Util

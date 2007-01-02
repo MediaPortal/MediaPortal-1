@@ -53,6 +53,7 @@ using System.Xml;
 using MediaPortal.Radio.Database;
 using Toub.MediaCenter.Dvrms.Metadata;
 using MediaPortal.TV.BDA;
+using MediaPortal.Configuration;
 #endregion
 
 namespace MediaPortal.TV.Recording

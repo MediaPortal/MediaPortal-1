@@ -29,13 +29,12 @@ using System;
 using System.Text;
 using System.Threading;
 using System.Collections.Generic;
-
+using MediaPortal.Configuration;
 using MediaPortal.Util;
 using MediaPortal.Profile;
 using MediaPortal.Services;
 using MediaPortal.GUI.Library;
 //using MediaPortal.Webepg.TV.Database;
-
 #endregion
 
 namespace MediaPortal.ProcessPlugins.WebEPG

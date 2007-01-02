@@ -31,44 +31,53 @@ using System.Web;
 
 namespace MediaPortal.Utils.Web
 {
-	public class HTMLCache
+	public class HTMLCache : IHtmlCache
 	{
-		const string CACHE_DIR = "WebCache";
-    static bool _initialised = false;
-    static Mode _cacheMode = Mode.Disabled;
-		static string _strPageSource;
-
+    #region Enums
     public enum Mode
     {
       Disabled = 0,
       Enabled = 1,
       Replace = 2
     }
+    #endregion
 
-		static HTMLCache()
+    #region Variables
+		const string CACHE_DIR = "WebCache";
+    static bool _initialised = false;
+    static Mode _cacheMode = Mode.Disabled;
+		static string _strPageSource;
+    #endregion
+
+    #region Constructors/Destructors
+    public HTMLCache()
 		{
-		}
+    }
+    #endregion
 
-		static public void WebCacheInitialise()
+    #region Properties
+    public bool Initialised
+    {
+      get { return _initialised; }
+    }
+
+    public Mode CacheMode
+    {
+      get { return _cacheMode; }
+      set { _cacheMode = value; }
+    }
+    #endregion
+
+    #region Public Methods
+    public void WebCacheInitialise()
 		{
 			if(!System.IO.Directory.Exists(CACHE_DIR))
 				System.IO.Directory.CreateDirectory(CACHE_DIR);
 
       _initialised = true;
-		}
-
-    static public bool Initialised
-    {
-      get { return _initialised; }
     }
 
-    static public Mode CacheMode
-    {
-      get { return _cacheMode; }
-      set { _cacheMode = value; }
-    }
-
-    static public void DeleteCachePage(Uri pageUri)
+    public void DeleteCachePage(Uri pageUri)
 		{
 			string file = GetCacheFileName(pageUri);
 
@@ -76,7 +85,7 @@ namespace MediaPortal.Utils.Web
 				System.IO.File.Delete(file);
 		}
 
-		static public bool LoadPage(Uri pageUri)
+		public bool LoadPage(Uri pageUri)
 		{
 			if(_cacheMode == Mode.Enabled)
 			{
@@ -86,18 +95,20 @@ namespace MediaPortal.Utils.Web
 			return false;
     }
 
-		static public void SavePage(Uri pageUri, string strSource)
+		public void SavePage(Uri pageUri, string strSource)
 		{
 			if(_cacheMode != Mode.Disabled)
 				SaveCacheFile(GetCacheFileName(pageUri), strSource);
 		}
 
-    static public string GetPage() //string strURL, string strEncode)
+    public string GetPage() //string strURL, string strEncode)
     {
       return _strPageSource;
     }
+    #endregion
 
-		static private bool LoadCacheFile(string file)
+    #region Private Methods
+    private bool LoadCacheFile(string file)
 		{
 			if(System.IO.File.Exists(file))
 			{
@@ -111,7 +122,7 @@ namespace MediaPortal.Utils.Web
 			return false;
 		}
 
-		static private void SaveCacheFile(string file, string source)
+		private void SaveCacheFile(string file, string source)
 		{
 			if(System.IO.File.Exists(file))
 				System.IO.File.Delete(file);
@@ -126,6 +137,7 @@ namespace MediaPortal.Utils.Web
 			uint hash = (uint) Page.GetHashCode();
 				
 			return CACHE_DIR + "/" + Page.Host + "_" + hash.ToString() + ".html";
-		}
+    }
+    #endregion
   }
 }

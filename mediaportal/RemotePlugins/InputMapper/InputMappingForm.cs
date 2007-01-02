@@ -36,7 +36,7 @@ using MediaPortal.Util;
 using System.Threading;
 using MediaPortal.InputDevices;
 using MediaPortal.Remotes.X10Remote;
-
+using MediaPortal.Configuration;
 
 
 namespace MediaPortal.InputDevices

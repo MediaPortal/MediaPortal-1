@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
 
 namespace ProcessPlugins.AutoCropper
 {
@@ -67,7 +68,7 @@ namespace ProcessPlugins.AutoCropper
     private void LoadSettings()
     {
       if (verboseLog) Log.Debug("AutoCropper: Loading settings");
-      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(MediaPortal.Util.Config.GetFile(MediaPortal.Util.Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         verboseLog = reader.GetValueAsBool(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmVerboseLog, false);
         topScanStartFraction = reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmTopStartSetting, 35) / 100.0f;

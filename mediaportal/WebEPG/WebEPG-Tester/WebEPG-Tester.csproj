@@ -52,6 +52,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Service\LogFile.cs" />
+    <Compile Include="Service\LogFileWriter.cs" />
+    <Compile Include="Service\LogSharedFileWriter.cs" />
     <Compile Include="TestLog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

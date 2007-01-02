@@ -32,6 +32,7 @@ using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using Programs.Utils;
 using ProgramsDatabase;
 

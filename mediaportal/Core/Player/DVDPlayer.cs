@@ -43,6 +43,7 @@ using DirectShowLib;
 using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib.Dvd;
+using MediaPortal.Configuration;
 
 // OK: 720x576 Windowed Mode, 
 //     Use PixelRatio correction = no

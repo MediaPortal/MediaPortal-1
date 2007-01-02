@@ -28,6 +28,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using iTunesLib;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.ITunesPlayer
 {

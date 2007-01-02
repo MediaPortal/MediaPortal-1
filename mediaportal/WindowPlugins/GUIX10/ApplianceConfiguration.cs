@@ -26,6 +26,7 @@
 using System;
 using System.Collections;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.X10Plugin
 {

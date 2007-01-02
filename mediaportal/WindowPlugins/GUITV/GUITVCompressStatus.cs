@@ -35,6 +35,8 @@ using MediaPortal.TV.Recording;
 using MediaPortal.Player;
 using MediaPortal.Video.Database;
 using Toub.MediaCenter.Dvrms.Metadata;
+using MediaPortal.Configuration;
+
 namespace MediaPortal.GUI.TV
 {
   /// <summary>

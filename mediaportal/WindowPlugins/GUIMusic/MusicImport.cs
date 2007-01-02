@@ -33,6 +33,7 @@ using MediaPortal.Ripper;
 using MediaPortal.Music.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using Yeti.MMedia;
 using Yeti.MMedia.Mp3;
 using Yeti.Lame;

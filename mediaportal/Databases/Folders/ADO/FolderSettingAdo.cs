@@ -34,6 +34,7 @@ using System.Xml.Serialization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Database;
+using MediaPortal.Configuration;
 
 namespace Databases.Folders.SqlServer
 {

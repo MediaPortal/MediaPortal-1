@@ -31,6 +31,7 @@ using MediaPortal.Util;
 using System.Threading;
 using System.Collections;
 using System.IO;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.InputDevices
 {

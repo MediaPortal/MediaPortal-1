@@ -37,6 +37,7 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using DShowNET.Helper;
 using DShowNET.TsFileSink;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Player
 {

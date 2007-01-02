@@ -32,6 +32,7 @@ using System.Threading;
 using System.Windows.Media.Animation;
 using MediaPortal.Drawing;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Library
 {

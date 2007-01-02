@@ -32,11 +32,10 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
 using MediaPortal.Util;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
-
+using MediaPortal.Configuration;
 #endregion
 
 namespace MediaPortal.ProcessPlugins.WebEPG

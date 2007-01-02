@@ -26,9 +26,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 using System.IO;
-using MediaPortal.GUI.Library;
+using MediaPortal.ServiceImplementations;
 
 namespace MediaPortal.Profile
 {

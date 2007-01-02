@@ -34,7 +34,7 @@ using System.Threading;
 using System.Timers;
 using System.Text;
 using System.Xml;
-
+using MediaPortal.Configuration;
 using MediaPortal.Util;
 using MediaPortal.Music.Database;
 using MediaPortal.GUI.Library;

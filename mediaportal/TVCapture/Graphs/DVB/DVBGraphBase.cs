@@ -59,6 +59,7 @@ using Toub.MediaCenter.Dvrms.Metadata;
 using MediaPortal.TV.BDA;
 using DShowNET.TsFileSink;
 using MediaPortal.TV.Scanning;
+using MediaPortal.Configuration;
 #endregion
 
 #pragma warning disable 618

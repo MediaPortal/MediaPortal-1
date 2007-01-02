@@ -25,6 +25,7 @@
 
 using System;
 using System.Text;
+using System.Globalization;
 using System.Collections.Generic;
 using MediaPortal.Services;
 using MediaPortal.Utils.Web;
@@ -93,16 +94,23 @@ namespace MediaPortal.WebEPG.Parser
       set { _channelId = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the title.
+    /// </summary>
+    /// <remarks>
+    /// If the case of title being set is all UPPER case then it is converted to proper case.
+    /// </remarks>
+    /// <value>The title.</value>
     public string Title
     {
       get { return _title; }
-      set { _title = value; }
+      set { _title = ProperCase(value); }
     }
 
     public string SubTitle
     {
       get { return _subTitle; }
-      set { _subTitle = value; }
+      set { _subTitle = ProperCase(value); }
     }
 
     public string Description
@@ -114,7 +122,7 @@ namespace MediaPortal.WebEPG.Parser
     public string Genre
     {
       get { return _genre; }
-      set { _genre = value; }
+      set { _genre = ProperCase(value); }
     }
 
     public WorldDateTime StartTime
@@ -420,6 +428,24 @@ namespace MediaPortal.WebEPG.Parser
         _startTime.Month = Int32.Parse(element.Substring(start, pos - start));
       }
     }
+
+    /// <summary>
+    /// Converts string which are all in UPPER case to proper case.
+    /// </summary>
+    /// <param name="value">The string.</param>
+    /// <returns>string</returns>
+    private string ProperCase(string value)
+    {
+      // test if value is all in UPPER case
+      if (value == value.ToUpper())
+      {
+        // convert to Title case - dependant on culture
+        TextInfo text = CultureInfo.CurrentCulture.TextInfo;
+        return text.ToTitleCase(value);
+      }
+
+      return value;
+    }
     #endregion
 
     #region IParserData Implementations
@@ -471,13 +497,13 @@ namespace MediaPortal.WebEPG.Parser
             _startTime.Month = GetMonth(element.Trim(' ', '\n', '\t'));
             break;
           case "#TITLE":
-            _title = element.Trim(' ', '\n', '\t');
+            Title = element.Trim(' ', '\n', '\t');
             break;
           case "#SUBTITLE":
-            _subTitle = element.Trim(' ', '\n', '\t');
+            SubTitle = element.Trim(' ', '\n', '\t');
             break;
           case "#GENRE":
-            _genre = element.Trim(' ', '\n', '\t');
+            Genre = element.Trim(' ', '\n', '\t');
             break;
           case "#ACTORS":
             _actors = GetActors(element);

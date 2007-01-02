@@ -32,6 +32,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Database;
 using MediaPortal.TV.Database;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Radio.Database
 {

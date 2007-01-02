@@ -30,11 +30,24 @@ using System.Net;
 using System.Web;
 using System.Collections;
 using System.Threading;
+using MediaPortal.Services; // for Service Framework
 
 namespace MediaPortal.Utils.Web
 {
+  /// <summary>
+  /// Creates an HTTP request and gets response data from web site.
+  /// 
+  /// Supports both GET and POST opterations
+  /// </summary>
+  /// <remarks>
+  /// Will use the following Services if they are reqistered:
+  /// 
+  /// - IHttpAuth for NetworkCredentials (site authenication)
+  /// - IHttpStats for Site statistics.
+  /// </remarks>
   public class HTTPTransaction
   {
+    #region Variables
     string _agent = "Mozilla/4.0 (compatible; MSIE 6.0;  WindowsNT 5.0; .NET CLR 1 .1.4322)";
     string _postType = "application/x-www-form-urlencoded";
     CookieCollection _cookies;
@@ -42,42 +55,85 @@ namespace MediaPortal.Utils.Web
     string _error = string.Empty;
     int blockSize = 8196;
     byte[] _data;
+    IHttpAuth _auth;
+    IHttpStatistics _stats;
+    #endregion
 
+    #region Constructors/Destructors
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HTTPTransaction"/> class.
+    /// </summary>
     public HTTPTransaction()
     {
+      _auth = GlobalServiceProvider.Get<IHttpAuth>();
+      _stats = GlobalServiceProvider.Get<IHttpStatistics>();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HTTPTransaction"/> class and performs HTTPRequest.
+    /// </summary>
+    /// <param name="request">The request.</param>
     public HTTPTransaction(HTTPRequest request)
     {
       Transaction(request);
     }
+    #endregion
 
+    #region Public Methods
+    /// <summary>
+    /// Performs HTTPRequest
+    /// </summary>
+    /// <param name="request">The request.</param>
+    /// <returns></returns>
     public bool HTTPGet(HTTPRequest request)
     {
       return Transaction(request);
     }
 
+    /// <summary>
+    /// Sets the agent used for HTTP requests.
+    /// </summary>
+    /// <param name="newAgent">The new agent.</param>
     public void SetAgent(string newAgent)
     {
       _agent = newAgent;
     }
 
+    /// <summary>
+    /// Gets the error.
+    /// </summary>
+    /// <returns>error string</returns>
     public string GetError()
     {
       return _error;
     }
 
+    /// <summary>
+    /// Gets or sets the cookies.
+    /// </summary>
+    /// <value>The cookies.</value>
     public CookieCollection Cookies
     {
-      get { return _cookies;}
-      set { _cookies=value;}
+      get { return _cookies; }
+      set { _cookies = value; }
     }
 
+    /// <summary>
+    /// Gets the data transfered from the web site.
+    /// </summary>
+    /// <returns>the data</returns>
     public byte[] GetData() //string strURL, string strEncode)
     {
       return _data;
     }
+    #endregion
 
+    #region Private Methods
+    /// <summary>
+    /// Performs HTTP transactions for the specified page request.
+    /// </summary>
+    /// <param name="pageRequest">The page request.</param>
+    /// <returns>bool - Success/fail</returns>
     private bool Transaction(HTTPRequest pageRequest)
     {
       ArrayList Blocks = new ArrayList();
@@ -85,21 +141,23 @@ namespace MediaPortal.Utils.Web
       byte[] readBlock;
       int size;
       int totalSize;
+      DateTime startTime = DateTime.Now;
 
-      if(pageRequest.Delay > 0)
+      if (pageRequest.Delay > 0)
         Thread.Sleep(pageRequest.Delay);
 
+      Uri pageUri = pageRequest.Uri;
       try
       {
         // Make the Webrequest
         // Create the request header
-        Uri pageUri = pageRequest.Uri;
-        HttpWebRequest request = (HttpWebRequest) WebRequest.Create(pageUri);
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(pageUri);
         request.UserAgent = _agent;
         if (pageRequest.PostQuery == string.Empty)
         {
           // GET request
-          request.Credentials = HTTPAuth.Get(pageUri.Host);
+          if (_auth != null)
+            request.Credentials = _auth.Get(pageUri.Host);
           request.CookieContainer = new CookieContainer();
           if (_cookies != null)
             request.CookieContainer.Add(_cookies);
@@ -126,7 +184,7 @@ namespace MediaPortal.Utils.Web
           }
         }
 
-        _response = (HttpWebResponse) request.GetResponse();
+        _response = (HttpWebResponse)request.GetResponse();
         if (request.CookieContainer != null)
         {
           _response.Cookies = request.CookieContainer.GetCookies(request.RequestUri);
@@ -138,23 +196,23 @@ namespace MediaPortal.Utils.Web
         Block = new byte[blockSize];
         totalSize = 0;
 
-        while( (size = ReceiveStream.Read(Block, 0, blockSize) ) > 0)
+        while ((size = ReceiveStream.Read(Block, 0, blockSize)) > 0)
         {
           readBlock = new byte[size];
           Array.Copy(Block, readBlock, size);
-          Blocks.Add( readBlock );
+          Blocks.Add(readBlock);
           totalSize += size;
         }
 
         ReceiveStream.Close();
         _response.Close();
 
-        int pos=0;
-        _data = new byte[ totalSize ];
+        int pos = 0;
+        _data = new byte[totalSize];
 
-        for(int i = 0; i< Blocks.Count; i++)
+        for (int i = 0; i < Blocks.Count; i++)
         {
-          Block = (byte[]) Blocks[i];
+          Block = (byte[])Blocks[i];
           Block.CopyTo(_data, pos);
           pos += Block.Length;
         }
@@ -165,7 +223,18 @@ namespace MediaPortal.Utils.Web
         _error = ex.Message;
         return false;
       }
+
+      // Collect sits statistics
+      if (_stats != null)
+      {
+        DateTime endTime = DateTime.Now;
+        TimeSpan duration = endTime - startTime;
+        float rate = _data.Length / (float) duration.TotalSeconds;
+        _stats.Add(pageUri.Host, 1, _data.Length, rate);
+      }
+
       return true;
     }
+    #endregion
   }
 }

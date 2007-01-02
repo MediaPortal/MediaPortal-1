@@ -27,10 +27,10 @@
 using System;
 using System.Collections;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
 using MediaPortal.Dialogs;
 using MediaPortal.TV.Database;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.Player;
 using MediaPortal.Topbar;
 #endregion

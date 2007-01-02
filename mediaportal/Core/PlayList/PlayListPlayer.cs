@@ -30,6 +30,7 @@ using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Profile;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Playlists
 {

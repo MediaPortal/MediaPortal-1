@@ -40,6 +40,7 @@ using MediaPortal.Playlists;
 using MediaPortal.Picture.Database;
 using MediaPortal.Music.Database;
 using MediaPortal.Dialogs;
+using MediaPortal.Configuration;
 
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;

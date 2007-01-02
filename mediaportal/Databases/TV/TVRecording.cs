@@ -29,6 +29,7 @@ using System.Collections;
 using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.TV.Database
 {

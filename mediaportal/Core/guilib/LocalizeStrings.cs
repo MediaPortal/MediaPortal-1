@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Library
 {

@@ -32,6 +32,7 @@ using SQLite.NET;
 using WindowPlugins.GUIPrograms;
 using MediaPortal.Database;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace ProgramsDatabase
 {

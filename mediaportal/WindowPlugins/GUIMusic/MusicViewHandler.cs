@@ -33,6 +33,7 @@ using SQLite.NET;
 using MediaPortal.GUI.View;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.Music.Database;
 
 namespace MediaPortal.GUI.Music

@@ -32,6 +32,7 @@ using MediaPortal.Util;
 using SQLite.NET;
 using MediaPortal.Database;
 using MediaPortal.TV.Database;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Radio.Database
 {

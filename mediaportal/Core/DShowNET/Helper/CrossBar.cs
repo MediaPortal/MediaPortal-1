@@ -29,6 +29,7 @@ using System.Text;
 using DirectShowLib;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace DShowNET.Helper
 {

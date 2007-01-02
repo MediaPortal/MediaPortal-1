@@ -30,7 +30,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
+using MediaPortal.Configuration;
 //using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 

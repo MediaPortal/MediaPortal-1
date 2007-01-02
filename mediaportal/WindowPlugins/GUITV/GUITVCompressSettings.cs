@@ -25,9 +25,10 @@
 
 using System;
 using MediaPortal.GUI.Library;
-using MediaPortal.Player ;
+using MediaPortal.Player;
 using MediaPortal.TV.Recording;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.TV
 {

@@ -32,6 +32,7 @@ using DShowNET;
 using DShowNET.Helper;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.TV.Recording;
 using TVCapture;
 

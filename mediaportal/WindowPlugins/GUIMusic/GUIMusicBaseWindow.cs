@@ -37,6 +37,7 @@ using MediaPortal.TagReader;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.View;
 using MediaPortal.MusicImport;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Music
 {

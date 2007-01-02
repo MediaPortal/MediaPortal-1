@@ -28,7 +28,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 //using System.Threading;
-
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -39,7 +38,7 @@ using MediaPortal.TV.DiskSpace;
 using MediaPortal.TV.Recording;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
-
+using MediaPortal.Configuration;
 
 using Toub.MediaCenter.Dvrms.Metadata;
 

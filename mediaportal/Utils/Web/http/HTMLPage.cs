@@ -31,6 +31,7 @@ using System.Net;
 using System.Web;
 using mshtml;
 using SHDocVw;
+using MediaPortal.Services;
 
 namespace MediaPortal.Utils.Web
 {
@@ -42,9 +43,11 @@ namespace MediaPortal.Utils.Web
     string _pageEncodingMessage = string.Empty;
     string _encoding = string.Empty;
     string _error;
+    IHtmlCache _cache;
 
     public HTMLPage()
     {
+      _cache = GlobalServiceProvider.Get<IHtmlCache>();
     }
 
     public HTMLPage(HTTPRequest page)
@@ -77,11 +80,11 @@ namespace MediaPortal.Utils.Web
 
     public bool LoadPage(HTTPRequest page)
     {
-      if (HTMLCache.Initialised)
+      if (_cache != null && _cache.Initialised)
       {
-        if (HTMLCache.LoadPage(page.Uri))
+        if (_cache.LoadPage(page.Uri))
         {
-          _strPageSource = HTMLCache.GetPage();
+          _strPageSource = _cache.GetPage();
           return true;
         }
       }
@@ -99,8 +102,8 @@ namespace MediaPortal.Utils.Web
 
       if (success)
       {
-        if (HTMLCache.Initialised)
-          HTMLCache.SavePage(page.Uri, _strPageSource);
+        if (_cache != null && _cache.Initialised)
+          _cache.SavePage(page.Uri, _strPageSource);
 
         return true;
       }

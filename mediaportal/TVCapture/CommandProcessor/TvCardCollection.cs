@@ -44,6 +44,7 @@ using MediaPortal.Player;
 using MediaPortal.Dialogs;
 using MediaPortal.TV.Teletext;
 using MediaPortal.TV.DiskSpace;
+using MediaPortal.Configuration;
 #endregion
 
 namespace MediaPortal.TV.Recording

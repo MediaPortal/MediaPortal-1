@@ -31,7 +31,6 @@ using MediaPortal.Tests.MockObjects;
 using NUnit.Framework;
 using MediaPortal.WebEPG.Parser;
 using System.IO;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Tests.WebEPG.Parser
 {

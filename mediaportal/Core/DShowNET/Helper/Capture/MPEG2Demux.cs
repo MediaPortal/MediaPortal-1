@@ -34,6 +34,7 @@ using Toub.MediaCenter.Dvrms.Metadata;
 using DirectShowLib;
 using DirectShowLib.SBE;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace DShowNET.Helper
 {

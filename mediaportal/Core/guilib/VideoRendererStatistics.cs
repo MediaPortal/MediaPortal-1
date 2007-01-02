@@ -27,6 +27,7 @@ using System;
 using DirectShowLib;
 using MediaPortal.Profile;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Library
 {

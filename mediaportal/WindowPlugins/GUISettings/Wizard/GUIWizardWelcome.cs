@@ -28,7 +28,9 @@ using System.Globalization;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using DShowNET;
+
 namespace MediaPortal.GUI.Settings
 {
   /// <summary>

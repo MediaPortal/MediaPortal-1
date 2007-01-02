@@ -31,6 +31,7 @@ using System.Xml.Serialization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using System.IO;
 using XihSolutions.DotMSN;
 using XihSolutions.DotMSN.Core;

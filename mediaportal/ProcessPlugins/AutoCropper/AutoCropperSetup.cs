@@ -34,6 +34,7 @@ using DShowNET.Helper;
 using DirectShowLib;
 using System.Diagnostics;
 using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
 
 #pragma warning disable 108
 namespace ProcessPlugins.AutoCropper

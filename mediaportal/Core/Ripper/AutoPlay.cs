@@ -31,6 +31,7 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Util;
 using Win32.Utils.Cd;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Ripper
 {

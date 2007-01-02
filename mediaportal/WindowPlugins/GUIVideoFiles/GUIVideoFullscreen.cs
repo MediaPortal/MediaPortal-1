@@ -32,6 +32,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
 using Microsoft.DirectX;

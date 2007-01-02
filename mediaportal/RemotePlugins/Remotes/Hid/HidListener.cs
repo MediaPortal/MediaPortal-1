@@ -31,6 +31,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Util;
 using MediaPortal.Hooks;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.InputDevices
 {

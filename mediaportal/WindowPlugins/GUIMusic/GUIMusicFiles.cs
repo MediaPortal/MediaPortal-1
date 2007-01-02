@@ -44,6 +44,7 @@ using MediaPortal.Services;
 using MediaPortal.TagReader;
 using MediaPortal.Threading;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.Music.Database;
 
 

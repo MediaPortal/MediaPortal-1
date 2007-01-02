@@ -110,11 +110,32 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\CacheSettingsProvider.cs" />
+    <Compile Include="Configuration\Config.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\ISettingsPrefetchable.cs" />
+    <Compile Include="Configuration\ISettingsProvider.cs" />
     <Compile Include="Configuration\PluginIconsAttribute.cs" />
-    <Compile Include="Service\LogSharedFileWriter.cs" />
-    <Compile Include="Service\LogFile.cs" />
-    <Compile Include="Service\Log.cs" />
-    <Compile Include="Service\LogFileWriter.cs" />
+    <Compile Include="Configuration\Settings.cs" />
+    <Compile Include="Configuration\XmlSettingsProvider.cs" />
+    <Compile Include="ServiceImplementations\Log.cs" />
+    <Compile Include="ServiceImplementations\LogImpl.cs" />
+    <Compile Include="Services\GlobalServiceProvider.cs" />
+    <Compile Include="Services\ILog.cs" />
+    <Compile Include="Services\Level.cs" />
+    <Compile Include="Services\LogType.cs" />
+    <Compile Include="Services\ServiceCreatorCallback.cs" />
+    <Compile Include="Services\ServiceProvider.cs" />
+    <Compile Include="Threading\Interfaces\IThreadPool.cs" />
+    <Compile Include="Threading\Interfaces\IWork.cs" />
+    <Compile Include="Threading\Interfaces\IWorkInterval.cs" />
+    <Compile Include="Threading\IntervalWork.cs" />
+    <Compile Include="Threading\ThreadPool.cs" />
+    <Compile Include="Threading\ThreadPoolStartInfo.cs" />
+    <Compile Include="Threading\Work.cs" />
+    <Compile Include="Threading\WorkEventArgs.cs" />
+    <Compile Include="Threading\WorkQueue.cs" />
     <Compile Include="Time\BasicTime.cs" />
     <Compile Include="Time\TimeRange.cs" />
     <Compile Include="Time\WorldDateTime.cs" />
@@ -124,6 +145,7 @@
     <Compile Include="Web\html\HtmlString.cs" />
     <Compile Include="Web\html\MatchTag.cs" />
     <Compile Include="Web\http\AsyncGetRequest.cs" />
+    <Compile Include="Web\http\IHttpStatistics.cs" />
     <Compile Include="Web\http\HTTPRequest.cs" />
     <Compile Include="Web\http\HTTPAuth.cs" />
     <Compile Include="Web\http\HTMLCache.cs">
@@ -132,9 +154,13 @@
     <Compile Include="Web\http\HTMLPage.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Web\http\HttpStatistics.cs" />
     <Compile Include="Web\http\HTTPTransaction.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Web\http\IHtmlCache.cs" />
+    <Compile Include="Web\http\IHttpAuth.cs" />
+    <Compile Include="Web\http\SiteStatistics.cs" />
     <Compile Include="Web\Parser\HtmlSectionMatch.cs" />
     <Compile Include="Web\Parser\HtmlSectionTemplate.cs" />
     <Compile Include="Web\Parser\HtmlParserTemplate.cs" />

@@ -32,6 +32,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
 using MediaPortal.Profile;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using Microsoft.DirectX.Direct3D;
 using Programs.Utils;
 using ProgramsDatabase;

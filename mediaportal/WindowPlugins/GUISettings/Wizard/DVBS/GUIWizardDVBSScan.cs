@@ -33,6 +33,7 @@ using MediaPortal.TV.Recording;
 using MediaPortal.TV.Scanning;
 using MediaPortal.Util;
 using MediaPortal.GUI.Settings.Wizard;
+using MediaPortal.Configuration;
 
 namespace WindowPlugins.GUISettings.Wizard.DVBS
 {

@@ -40,6 +40,7 @@ using MediaPortal.TV.Database;
 using MediaPortal.Radio.Database;
 using Toub.MediaCenter.Dvrms.Metadata;
 using MediaPortal.TV.Teletext;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.TV.Recording
 {

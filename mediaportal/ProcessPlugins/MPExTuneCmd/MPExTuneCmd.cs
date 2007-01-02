@@ -33,6 +33,7 @@ using System.IO;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.MPExTuneCmd
 {

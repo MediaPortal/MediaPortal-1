@@ -37,6 +37,7 @@ using Microsoft.Win32;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.GUI.Library;
 using DirectShowLib;
+using MediaPortal.Configuration;
 
 
 namespace MediaPortal.Player

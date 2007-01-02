@@ -29,7 +29,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
-
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.TV.Recording;

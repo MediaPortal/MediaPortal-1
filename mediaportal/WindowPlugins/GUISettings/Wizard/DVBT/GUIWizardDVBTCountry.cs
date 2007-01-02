@@ -29,6 +29,7 @@ using System.Xml.XPath;
 using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace WindowPlugins.GUISettings.Wizard.DVBT
 {

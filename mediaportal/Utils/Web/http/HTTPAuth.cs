@@ -24,38 +24,62 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Net;
 
 namespace MediaPortal.Utils.Web
 {
-  public class HTTPAuth
+  /// <summary>
+  /// Service Class that provided Authenication details for HTTP requests/transactions
+  /// 
+  /// Stores the NetworkCredentials for each site.
+  /// </summary>
+  public class HTTPAuth : IHttpAuth
   {
-    static Hashtable _AuthList;
+    #region Variables
+    private Dictionary<string, NetworkCredential> _authList;
+    #endregion
 
-    static HTTPAuth()
+    #region Constructors/Destructors
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HTTPAuth"/> class.
+    /// </summary>
+    public HTTPAuth()
     {
     }
+    #endregion
 
-    public static NetworkCredential Get(string site)
+    #region Public Methods
+    /// <summary>
+    /// Gets the Network Credentials for a specified site.
+    /// </summary>
+    /// <param name="site">The site.</param>
+    /// <returns>The Network Credentials</returns>
+    public NetworkCredential Get(string site)
     {
       NetworkCredential login = null;
 
-      if (_AuthList != null)
+      if (_authList != null)
       {
-        login = (NetworkCredential)_AuthList[site];
+        login = _authList[site];
       }
 
       return login;
     }
 
-    public static void Add(string site, NetworkCredential login)
+    /// <summary>
+    /// Adds the Network Credentials for a specified site.
+    /// </summary>
+    /// <param name="site">The site.</param>
+    /// <param name="login">The login.</param>
+    public void Add(string site, NetworkCredential login)
     {
-      if (_AuthList == null)
-        _AuthList = new Hashtable();
+      if (_authList == null)
+        _authList = new Dictionary<string, NetworkCredential>();
 
-      _AuthList.Add(site, login);
+      _authList.Add(site, login);
     }
+    #endregion
   }
 }
 

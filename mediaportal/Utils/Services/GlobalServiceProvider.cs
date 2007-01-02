@@ -36,8 +36,11 @@ namespace MediaPortal.Services
   /// </remarks>
   public static class GlobalServiceProvider
   {
+    #region Variables
     private static readonly ServiceProvider _instance;
+    #endregion
 
+    #region Constructors/Destructors
     static GlobalServiceProvider()
     {
       _instance = new ServiceProvider();
@@ -45,7 +48,20 @@ namespace MediaPortal.Services
       _instance.Add<MediaPortal.Threading.IThreadPool>(
         new ServiceCreatorCallback<MediaPortal.Threading.IThreadPool>(ThreadPoolServiceRequested));
     }
+    #endregion
 
+    #region Properties
+    /// <summary>
+    /// Gets the ServiceProvider instance.
+    /// </summary>
+    /// <value>The instance.</value>
+    public static ServiceProvider Instance
+    {
+      get { return _instance; }
+    }
+    #endregion
+
+    #region Public Methods
     /// <summary>
     /// Gets the implementation of the requested service type.
     /// </summary>
@@ -56,11 +72,26 @@ namespace MediaPortal.Services
       return _instance.Get<T>();
     }
 
-    public static ServiceProvider Instance
+    /// <summary>
+    /// Replaces the specified service.
+    /// </summary>
+    /// <param name="service">The new service.</param>
+    public static void Replace<T>(T service)
     {
-      get { return _instance; }
+      _instance.Replace<T>(service);
     }
 
+    /// <summary>
+    /// Adds the specified service.
+    /// </summary>
+    /// <param name="service">The service.</param>
+    public static void Add<T>(T service)
+    {
+      _instance.Add<T>(service);
+    }
+    #endregion
+
+    #region Private Methods
     private static ILog LogServiceRequested(ServiceProvider services)
     {
       ILog log = new LogImpl();
@@ -78,15 +109,6 @@ namespace MediaPortal.Services
       services.Add<MediaPortal.Threading.IThreadPool>(pool);
       return pool;
     }
-
-    public static void Replace<T>(T service)
-    {
-      _instance.Replace<T>(service);
-    }
-
-    public static void Add<T>(T service)
-    {
-      _instance.Add<T>(service);
-    }
+    #endregion
   }
 }

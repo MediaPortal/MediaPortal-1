@@ -33,6 +33,7 @@ using SQLite.NET;
 using DShowNET;
 using DirectShowLib;
 using MediaPortal.Database;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.TV.Database
 {

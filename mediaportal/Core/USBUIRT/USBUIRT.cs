@@ -34,6 +34,7 @@ using System.Xml;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.IR
 {

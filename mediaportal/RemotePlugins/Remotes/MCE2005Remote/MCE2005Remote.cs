@@ -30,6 +30,7 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Hardware;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.InputDevices
 {

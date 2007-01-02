@@ -33,7 +33,6 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using MediaPortal.Services;
 using MediaPortal.TV.Database;
-using MediaPortal.Utils.Services;
 using MediaPortal.Util;
 using MediaPortal.WebEPG.Config.Grabber;
 

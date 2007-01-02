@@ -31,6 +31,7 @@ using System.Windows.Forms;
 using System.Text;
 using System.IO;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.MPExTuneCmd
 {

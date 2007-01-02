@@ -32,6 +32,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 
 namespace MediaPortal.Video.Database

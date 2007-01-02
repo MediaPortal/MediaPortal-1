@@ -27,7 +27,6 @@ using System;
 using System.IO;
 using System.Threading;
 using MediaPortal.Services;
-using MediaPortal.Utils.Services;
 
 namespace MediaPortal.EPG.WebEPGTester
 {

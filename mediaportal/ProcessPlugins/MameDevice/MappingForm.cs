@@ -32,6 +32,7 @@ using System.Xml;
 using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.InputDevices
 {

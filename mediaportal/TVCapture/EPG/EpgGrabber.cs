@@ -39,6 +39,7 @@ using MediaPortal.Services;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.TV.Epg
 {

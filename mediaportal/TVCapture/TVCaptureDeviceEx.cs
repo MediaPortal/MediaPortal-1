@@ -47,6 +47,7 @@ using TVCapture;
 //using DirectX.Capture;
 using Toub.MediaCenter.Dvrms.Metadata;
 using System.Threading;
+using MediaPortal.Configuration;
 #endregion
 
 namespace MediaPortal.TV.Recording

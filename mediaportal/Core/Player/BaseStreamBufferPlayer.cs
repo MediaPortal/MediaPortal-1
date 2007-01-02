@@ -37,6 +37,7 @@ using MediaPortal.GUI.Library;
 using DShowNET.Helper;
 using DirectShowLib;
 using DirectShowLib.SBE;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Player
 {

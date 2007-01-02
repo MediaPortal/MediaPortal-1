@@ -32,6 +32,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Services;
 using MediaPortal.TV.Database;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.TV.Recording
 {

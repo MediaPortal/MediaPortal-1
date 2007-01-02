@@ -39,6 +39,7 @@ using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
 using MediaPortal.GUI.Pictures;
 using MediaPortal.TV.Teletext;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.TV
 {

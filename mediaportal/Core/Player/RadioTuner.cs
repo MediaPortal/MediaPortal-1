@@ -33,10 +33,10 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.Util;
-
-
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using DirectShowLib;
+
 namespace MediaPortal.Player
 {
   /// <summary>

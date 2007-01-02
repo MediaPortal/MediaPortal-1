@@ -32,6 +32,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using DirectShowLib.SBE;
 using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;

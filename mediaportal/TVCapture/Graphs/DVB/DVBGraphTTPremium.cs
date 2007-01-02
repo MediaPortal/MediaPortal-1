@@ -50,6 +50,7 @@ using System.Xml;
 using MediaPortal.Radio.Database;
 using Toub.MediaCenter.Dvrms.Metadata;
 using MediaPortal.TV.BDA;
+using MediaPortal.Configuration;
 #endregion
 #pragma warning disable 618
 

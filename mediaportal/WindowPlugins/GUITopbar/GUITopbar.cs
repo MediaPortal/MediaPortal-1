@@ -27,6 +27,7 @@ using System;
 using System.Xml;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Topbar
 {

@@ -27,10 +27,10 @@
 using System;
 using System.Collections;
 using MediaPortal.GUI.Library;
-using MediaPortal.Utils.Services;
 using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.Topbar;
+using MediaPortal.Configuration;
 #endregion
 
 namespace MediaPortal.GUI.Home
@@ -40,7 +40,6 @@ namespace MediaPortal.GUI.Home
 	/// </summary>
 	public class GUIPlugIns : GUIHomeBaseWindow
 	{
-    	
 		#region Constructor
 		public GUIPlugIns()
 		{

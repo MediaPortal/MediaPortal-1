@@ -33,6 +33,7 @@ using Direct3D = Microsoft.DirectX.Direct3D;
 using AMS.Profile;
 using System.Runtime.InteropServices;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Library
 {

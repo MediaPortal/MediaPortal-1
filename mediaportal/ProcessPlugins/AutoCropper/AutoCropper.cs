@@ -215,7 +215,7 @@ namespace ProcessPlugins.AutoCropper
     /// <returns>False if the autocropper has no allowed modes and true otherwise</returns>
     private bool LoadSettings()
     {
-      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(MediaPortal.Util.Config.GetFile(MediaPortal.Util.Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
       {
         //bool enabled = reader.GetValueAsBool(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.enableAutoCropSetting, false);
         verboseLog = reader.GetValueAsBool(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmVerboseLog, false);

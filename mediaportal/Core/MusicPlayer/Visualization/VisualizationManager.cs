@@ -31,14 +31,12 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Threading;
 using Microsoft.Win32;
-
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Vis;
 using Un4seen.Bass.Misc;
 using Un4seen.Bass.AddOn.Tags;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-//using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Visualization
 {

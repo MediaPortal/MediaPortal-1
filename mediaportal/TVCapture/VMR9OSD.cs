@@ -32,6 +32,7 @@ using DShowNET;
 using MediaPortal.TV.Database;
 using MediaPortal.Player;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.TV.Recording
 {

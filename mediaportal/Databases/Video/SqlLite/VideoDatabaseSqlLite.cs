@@ -29,6 +29,7 @@ using SQLite.NET;
 using MediaPortal.Util;
 using MediaPortal.Database;
 using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Video.Database
 {

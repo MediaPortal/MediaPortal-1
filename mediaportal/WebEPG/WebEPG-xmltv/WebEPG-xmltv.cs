@@ -31,7 +31,6 @@ using System.Text;
 using System.Windows.Forms;
 using MediaPortal.EPG;
 using MediaPortal.Services;
-using MediaPortal.Utils.Services;
 using MediaPortal.Webepg.TV.Database;
 using MediaPortal.Util;
 

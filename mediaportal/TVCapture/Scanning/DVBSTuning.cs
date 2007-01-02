@@ -33,6 +33,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.TV.Recording;
 using MediaPortal.Util;
 using System.Xml;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.TV.Scanning
 {

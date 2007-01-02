@@ -44,6 +44,7 @@ using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
 using MediaPortal.Player;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Util
 {

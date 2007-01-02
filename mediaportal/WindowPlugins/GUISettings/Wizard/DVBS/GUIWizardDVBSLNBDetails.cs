@@ -26,6 +26,7 @@
 using System;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.TV.Recording;
 
 namespace WindowPlugins.GUISettings.Wizard.DVBS

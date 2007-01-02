@@ -34,6 +34,7 @@ using MediaPortal.Util;
 using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
 using MediaPortal.TV.Recording;
+using MediaPortal.Configuration;
 
 namespace ProcessPlugins.DiskSpace
 {

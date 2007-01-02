@@ -55,6 +55,7 @@ using MediaPortal.Util;
 using MediaPortal.WINLIRC;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
+using MediaPortal.Configuration;
 using Geometry = MediaPortal.GUI.Library.Geometry;
 using Timer = System.Timers.Timer;
 

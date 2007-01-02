@@ -31,6 +31,7 @@ using System.Windows.Forms;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
+using MediaPortal.Configuration;
 
 namespace WindowPlugins.GUISettings
 {
