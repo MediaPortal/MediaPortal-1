@@ -56,7 +56,7 @@ namespace MediaPortal.PowerScheduler
     private const int PBT_APMPOWERSTATUSCHANGE = 0x000A;
     private const int PBT_APMOEMEVENT = 0x000B;
     private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
-    private const string _version = "v0.0.8";
+    private const string _version = "v0.0.9";
     #endregion
 
     #region Protected Variables
@@ -84,6 +84,38 @@ namespace MediaPortal.PowerScheduler
     // Public Variables
     #endregion
 
+    #region Properties
+    // Public Properties
+    public DateTime EarliestStartTime
+    {
+      get { return DateTime.Now; }
+    }
+    #endregion
+
+    #region events
+    /// <summary>
+    /// Recordings has been changed, flag for a rescan
+    /// </summary>
+    void OnRecordingsChanged(TVDatabase.RecordingChange change)
+    {
+      _rescanTVDatabase = true;
+    }
+
+    /// <summary>
+    /// Programs has been changed, flag for a rescan
+    /// </summary>
+    void OnProgramsChanged()
+    {
+      _rescanTVDatabase = true;
+    }
+
+    void OnTvRecordingStarted(string recordingFilename, TVRecording recording, TVProgram program)
+    {
+      _rescanTVDatabase = true;
+    }
+
+    #endregion
+
     #region Constructors/Destructors
     public PowerScheduler()
     {
@@ -94,14 +126,7 @@ namespace MediaPortal.PowerScheduler
       GUIWindowManager.OnActivateWindow += new GUIWindowManager.WindowActivationHandler(OnActivateWindow);
       TVDatabase.OnRecordingsChanged += new MediaPortal.TV.Database.TVDatabase.OnRecordingChangedHandler(this.OnRecordingsChanged);
       TVDatabase.OnProgramsChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(this.OnProgramsChanged);
-    }
-    #endregion
-
-    #region Properties
-    // Public Properties
-    public DateTime EarliestStartTime
-    {
-      get { return DateTime.Now.AddSeconds(60 - DateTime.Now.Second + 60 * _shutDownInterval); }
+      Recorder.OnTvRecordingStarted += new Recorder.OnTvRecordingHandler(this.OnTvRecordingStarted);
     }
     #endregion
 
@@ -307,23 +332,7 @@ namespace MediaPortal.PowerScheduler
 
     #endregion
 
-    #region TVDatabase change events
-    /// <summary>
-    /// Recordings has been changed, flag for a rescan
-    /// </summary>
-    void OnRecordingsChanged(TVDatabase.RecordingChange change)
-    {
-      _rescanTVDatabase = true;
-    }
-
-    /// <summary>
-    /// Programs has been changed, flag for a rescan
-    /// </summary>
-    void OnProgramsChanged()
-    {
-      _rescanTVDatabase = true;
-    }
-
+    #region CheckNextRecording
     void CheckNextRecoring()
     {
       DateTime ealiestStartTime = EarliestStartTime;
@@ -362,7 +371,7 @@ namespace MediaPortal.PowerScheduler
 
     #endregion
 
-    #region WakeUp/resume roitines
+    #region WakeUp/resume routines
     void SetWakeUpTime()
     {
       DateTime nextWakeUpTime = DateTime.MaxValue;
