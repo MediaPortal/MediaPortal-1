@@ -1080,6 +1080,7 @@ namespace MediaPortal.Player
       _mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
       fCurrentPos = lStreamPos;
       fCurrentPos /= 10000000d;
+      _currentPos = fCurrentPos;
 
       long lContentStart, lContentEnd;
       double fContentStart, fContentEnd;
@@ -1088,43 +1089,12 @@ namespace MediaPortal.Player
       fContentEnd = lContentEnd;
       fContentStart /= 10000000d;
       fContentEnd /= 10000000d;
-      double fPos = _currentPos;
-      fCurrentPos -= fContentStart;
-      _currentPos = fCurrentPos;
-      // Log.Info("Position:{0}", _currentPos.ToString("f2"));
-      _contentStart = fContentStart;
-#if DEBUG
-      TimeSpan ts = DateTime.Now - dtStart;
-      if ( ts.TotalMilliseconds >= 1000 )
-      {
-        long lDuration;
-        double fDuration;
-        _mediaSeeking.GetDuration(out lDuration);
-        fDuration = lDuration;
-        fDuration /= 10000000d;
-
-        //Log.Info("pos:{0} content:{1}-{2} duration:{3} stream:{4}",_currentPos,fContentStart,fContentEnd,fDuration,fPos);
-
-        dtStart = DateTime.Now;
-      }
-#endif
+     // Log.Info("{0} {1} {2}  ({3})", fCurrentPos, fContentStart, fContentEnd, _currentPos);
+      fContentEnd -= fContentStart;
+      _duration = fContentEnd;
     }
     void UpdateDuration()
     {
-      if (_mediaSeeking == null)
-        return;
-      //GetDuration(): Returns (content start – content stop). 
-      //content start: The time of the earliest available content. 
-      //               For live content, the value starts at zero and increases whenever the 
-      //               Stream Buffer Engine deletes an old file. 				
-      //content stop : The time of the latest available content. For live content, this value starts at zero 
-      //               and increases continuously.
-
-      long lDuration;
-      _mediaSeeking.GetDuration(out lDuration);
-      _duration = lDuration;
-      _duration /= 10000000d;
-      //Log.Info("Duration:{0} pos:{1}", _duration.ToString("f2"), CurrentPosition.ToString("f2"));
     }
 
     /// <summary> create the used COM components and get the interfaces. </summary>
