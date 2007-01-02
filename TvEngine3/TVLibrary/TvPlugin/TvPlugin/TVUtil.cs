@@ -201,6 +201,6 @@ namespace TvPlugin
       return recordings;
     }
 
-    bool _isSeries = false;
+    //bool _isSeries = false;
   }
 }

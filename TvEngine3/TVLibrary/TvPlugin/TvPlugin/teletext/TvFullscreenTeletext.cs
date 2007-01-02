@@ -53,7 +53,7 @@ namespace TvPlugin
     string inputLine = String.Empty;
     int acutalPageNumber = 0x100;
     int actualSubPageNumber = 0;
-    bool isPageDirty = false;
+    //bool isPageDirty = false;
     bool _isFullScreenVideo = false;
 
     bool _waiting = false;

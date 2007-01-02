@@ -310,7 +310,7 @@ namespace TvPlugin
       else if (!item1.IsFolder && item2.IsFolder) return 1;
 
       int iComp = 0;
-      TimeSpan ts;
+      //TimeSpan ts;
       Schedule rec1 = (Schedule)item1.TVTag;
       Schedule rec2 = (Schedule)item2.TVTag;
 

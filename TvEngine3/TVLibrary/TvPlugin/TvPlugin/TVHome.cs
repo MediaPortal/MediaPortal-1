@@ -968,7 +968,7 @@ namespace TvPlugin
       // if we're recording tv, update gui with info
       if (TVHome.Card.IsRecording)
       {
-        int card;
+        //int card;
         int scheduleId = TVHome.Card.RecordingScheduleId;
         if (scheduleId > 0)
         {

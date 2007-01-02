@@ -100,7 +100,7 @@ namespace TvDatabase
       ScheduleType = (int)ScheduleRecordingType.Once;
       Series = false;
       StartTime = startTime;
-      this.recommendedCard = recommendedCard;
+      this.recommendedCard = -1;
     }
 
     /// <summary> 
@@ -123,7 +123,7 @@ namespace TvDatabase
       this.preRecordInterval = preRecordInterval;
       this.postRecordInterval = postRecordInterval;
       this.canceled = canceled;
-      this.recommendedCard = recommendedCard;
+      this.recommendedCard = -1;
     }
 
     /// <summary> 
@@ -147,7 +147,7 @@ namespace TvDatabase
       this.preRecordInterval = preRecordInterval;
       this.postRecordInterval = postRecordInterval;
       this.canceled = canceled;
-      this.recommendedCard = recommendedCard;
+      this.recommendedCard = -1;
     }
     #endregion
 

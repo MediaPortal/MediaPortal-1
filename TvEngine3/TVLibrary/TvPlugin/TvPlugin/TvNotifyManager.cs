@@ -81,7 +81,7 @@ namespace TvPlugin
           Log.Info("TvNotify: {0} notifies", _notifiesList.Count);
         }
       }
-      catch (Exception ex)
+      catch (Exception )
       {
       }
     }
