@@ -1461,7 +1461,7 @@ namespace TvPlugin
         {
           double duration = g_Player.Duration;
           double position = g_Player.CurrentPosition;
-          MediaPortal.GUI.Library.Log.Info("tvhome:seektoend dur:{0} pos:{1} {2}", g_Player.Duration, g_Player.CurrentPosition, g_Player.IsRadio);
+          MediaPortal.GUI.Library.Log.Info("tvhome:seektoend dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
           g_Player.SeekAbsolute(duration);
           MediaPortal.GUI.Library.Log.Info("tvhome:seektoend  done dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
         }
@@ -1477,9 +1477,9 @@ namespace TvPlugin
           {
             if (Math.Abs(duration - position) >= 10)
             {
-              MediaPortal.GUI.Library.Log.Info("tvhome:seektoend dur:{0} pos:{1} {2}", g_Player.Duration, g_Player.CurrentPosition, g_Player.IsRadio);
+              MediaPortal.GUI.Library.Log.Info("tvhome:seektoend zap dur:{0} pos:{1}", duration, g_Player.CurrentPosition);
               g_Player.SeekAbsolute(duration);
-              MediaPortal.GUI.Library.Log.Info("tvhome:seektoend  done dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
+              MediaPortal.GUI.Library.Log.Info("tvhome:seektoend zap done dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
             }
           }
         }
@@ -1654,9 +1654,10 @@ namespace TvPlugin
     /// </summary>
     public string CurrentChannel
     {
-      get {
+      get
+      {
         if (m_currentChannel == null) return null;
-        return m_currentChannel.Name; 
+        return m_currentChannel.Name;
       }
     }
     public Channel Channel
