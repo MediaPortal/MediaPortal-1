@@ -30,6 +30,7 @@ using System.Xml;
 
 namespace MediaPortal.Util
 {
+  [Obsolete("Please use MediaPortal.Configuration.Config in the Utils project, this will be removed in the future")]
   public class Config
   {
     #region Enums
