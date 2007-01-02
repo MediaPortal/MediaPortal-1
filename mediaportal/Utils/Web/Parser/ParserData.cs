@@ -29,7 +29,7 @@ using System.Collections.Generic;
 namespace MediaPortal.Utils.Web
 {
   /// <summary>
-  /// Class generic for parser data.
+  /// Simple Parser Data class. Stores any Element tag and value in a dictionary.
   /// </summary>
   public class ParserData : IParserData
   {
@@ -38,6 +38,9 @@ namespace MediaPortal.Utils.Web
     #endregion
 
     #region Constructors/Destructors
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParserData"/> class.
+    /// </summary>
     public ParserData()
     {
       _data = new Dictionary<string, string>();
@@ -45,6 +48,10 @@ namespace MediaPortal.Utils.Web
     #endregion
 
     #region Properties
+    /// <summary>
+    /// Gets the number of elements stored.
+    /// </summary>
+    /// <value>The count.</value>
     public int Count
     {
       get { return _data.Count; }
@@ -52,12 +59,22 @@ namespace MediaPortal.Utils.Web
     #endregion
 
     #region Public Methods
-    public string GetElement(string tag)
+    /// <summary>
+    /// Gets an element by tag name.
+    /// </summary>
+    /// <param name="name">The name.</param>
+    /// <returns>element value</returns>
+    public string GetElement(string name)
     {
-      return _data[tag];
+      return _data[name];
     }
 
-    public string GetKey(int index)
+    /// <summary>
+    /// Gets the Element name by index number.
+    /// </summary>
+    /// <param name="index">The index.</param>
+    /// <returns>tag</returns>
+    public string GetElementName(int index)
     {
       Dictionary<string, string>.Enumerator enumerator = _data.GetEnumerator();
 
@@ -68,7 +85,12 @@ namespace MediaPortal.Utils.Web
       return enumerator.Current.Key;
     }
 
-    public string GetData(int index)
+    /// <summary>
+    /// Gets the Element data by index number.
+    /// </summary>
+    /// <param name="index">The index.</param>
+    /// <returns>value</returns>
+    public string GetElementValue(int index)
     {
       Dictionary<string, string>.Enumerator enumerator = _data.GetEnumerator();
 
@@ -81,6 +103,11 @@ namespace MediaPortal.Utils.Web
     #endregion
 
     #region IParserData Implementations
+    /// <summary>
+    /// Sets an element.
+    /// </summary>
+    /// <param name="tag">Element tag.</param>
+    /// <param name="value">Element value.</param>
     public void SetElement(string tag, string value)
     {
       _data.Add(tag, value);

@@ -30,7 +30,7 @@ using System.Text.RegularExpressions;
 namespace MediaPortal.Utils.Web
 {
   /// <summary>
-  /// Summary description for Class1.
+  /// Parses a section of HTML source for elements from a given template
   /// </summary>
   public class HtmlSectionParser
   {
@@ -75,6 +75,10 @@ namespace MediaPortal.Utils.Web
     #endregion
 
     #region Constructors/Destructors
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HtmlSectionParser"/> class.
+    /// </summary>
+    /// <param name="template">The template.</param>
     public HtmlSectionParser(HtmlSectionTemplate template)
     {
       _template = template;
@@ -84,7 +88,12 @@ namespace MediaPortal.Utils.Web
     #endregion
 
     #region Public Methods
-
+    /// <summary>
+    /// Parses the section.
+    /// </summary>
+    /// <param name="source">The source.</param>
+    /// <param name="data">The data.</param>
+    /// <returns>bool - success/fail</returns>
     public bool ParseSection(string source, ref IParserData data)
     {
       Sections sourceData = GetSections(source);
@@ -187,6 +196,11 @@ namespace MediaPortal.Utils.Web
     #endregion
 
     #region Private Methods
+    /// <summary>
+    /// Strips the unwanted HTML tags.
+    /// </summary>
+    /// <param name="source">The source.</param>
+    /// <returns>stripped source</returns>
     private string StripTags(string source)
     {
       string stripped = string.Empty;
@@ -223,6 +237,11 @@ namespace MediaPortal.Utils.Web
       return stripped;
     }
 
+    /// <summary>
+    /// Gets the sections.
+    /// </summary>
+    /// <param name="source">The source.</param>
+    /// <returns></returns>
     private Sections GetSections(string source)
     {
       source = StripTags(source);
@@ -327,6 +346,11 @@ namespace MediaPortal.Utils.Web
       return data;
     }
 
+    /// <summary>
+    /// Gets the elements.
+    /// </summary>
+    /// <param name="source">The source.</param>
+    /// <returns>array of elements</returns>
     private ArrayList GetElements(string source)
     {
       ArrayList elements = new ArrayList();
@@ -375,6 +399,14 @@ namespace MediaPortal.Utils.Web
       return elements;
     }
 
+    /// <summary>
+    /// Determines whether the specified tag is the *MATCH tag.
+    /// </summary>
+    /// <param name="tag">The tag.</param>
+    /// <param name="match">The match.</param>
+    /// <returns>
+    /// 	<c>true</c> if the specified tag is *MATCH; otherwise, <c>false</c>.
+    /// </returns>
     private bool IsMatch(string tag, string match)
     {
       if (tag == "*MATCH")

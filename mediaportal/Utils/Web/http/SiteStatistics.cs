@@ -96,7 +96,7 @@ namespace MediaPortal.Utils.Web
     /// <returns>
     /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </returns>
-    public string ToString()
+    new public string ToString()
     {
       if(_rate > 1000)
       return String.Format("Site {0} : Pages {1} : Bytes {2} : Av. Rate {3} KBps", _site, _pages, _bytes, _rate/1000);

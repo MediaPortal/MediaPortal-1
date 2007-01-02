@@ -30,6 +30,9 @@ using System.Collections;
 
 namespace MediaPortal.Utils.Web
 {
+  /// <summary>
+  /// Builds a profiles of HTML source for paring
+  /// </summary>
   public class HtmlProfiler
   {
     #region Private Struct
@@ -49,6 +52,10 @@ namespace MediaPortal.Utils.Web
     #endregion
 
     #region Constructors/Destructors
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HtmlProfiler"/> class.
+    /// </summary>
+    /// <param name="template">The template.</param>
     public HtmlProfiler(HtmlSectionTemplate template)
     {
       _sectionTemplate = template;
@@ -57,6 +64,11 @@ namespace MediaPortal.Utils.Web
     #endregion
 
     #region Public Methods
+    /// <summary>
+    /// Get the number of matches.
+    /// </summary>
+    /// <param name="source">The source.</param>
+    /// <returns></returns>
     public int MatchCount(string source)
     {
       _pageSource = source;
@@ -75,6 +87,11 @@ namespace MediaPortal.Utils.Web
       return _matches.Count;
     }
 
+    /// <summary>
+    /// Get the source by index.
+    /// </summary>
+    /// <param name="index">The index.</param>
+    /// <returns>source section</returns>
     public string GetSource(int index)
     {
       string source = string.Empty;
@@ -95,6 +112,11 @@ namespace MediaPortal.Utils.Web
     #endregion
 
     #region Private Methods
+    /// <summary>
+    /// Builds the profile.
+    /// </summary>
+    /// <param name="source">The source.</param>
+    /// <returns>the profile</returns>
     private Profile BuildProfile(string source)
     {
       Profile build = new Profile();

@@ -28,10 +28,15 @@ using System;
 namespace MediaPortal.Utils.Web
 {
 	/// <summary>
-	/// This is an interface class for parser data.
+	/// Interface for Storing the Parser Data
 	/// </summary>
 	public interface IParserData
 	{
+    /// <summary>
+    /// Sets and element.
+    /// </summary>
+    /// <param name="tag">Element tag.</param>
+    /// <param name="value">Element value.</param>
     void SetElement(string tag, string value);
 	}
 }

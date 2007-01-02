@@ -31,7 +31,7 @@ using System.Xml.Serialization;
 namespace MediaPortal.Utils.Web
 {
 	/// <summary>
-	/// Class generic for parser data.
+  /// Xml Serializable Class for Section Match data.
 	/// </summary>
   [Serializable]
 	public class HtmlSectionMatch

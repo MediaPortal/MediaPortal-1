@@ -29,25 +29,31 @@ using System.Text.RegularExpressions;
 namespace MediaPortal.Utils.Web
 {
   /// <summary>
-  /// Summary description for Class1.
+  /// Parses HTML site from given Template
   /// </summary>
   public class HtmlParser
   {
     #region Variables
-    HtmlParserTemplate _template;
-    HtmlProfiler _profiler;
-    HtmlSectionParser _sectionParser;
-    string _sectionSource;
-    Type _dataType;
-    object[] _dataArgs;
+    private HtmlParserTemplate _template;
+    private HtmlProfiler _profiler;
+    private HtmlSectionParser _sectionParser;
+    private string _sectionSource;
+    private Type _dataType;
+    private object[] _dataArgs;
     #endregion
 
     #region Constructors/Destructors
-    public HtmlParser(HtmlParserTemplate template, Type dataType, params object[] dataArgs)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HtmlParser"/> class.
+    /// </summary>
+    /// <param name="template">The template.</param>
+    /// <param name="parserDataType">Type of the parser data.</param>
+    /// <param name="parserDataArgs">The parser data args.</param>
+    public HtmlParser(HtmlParserTemplate template, Type parserDataType, params object[] parserDataArgs)
     {
       _template = template;
-      _dataType = dataType;
-      _dataArgs = dataArgs;
+      _dataType = parserDataType;
+      _dataArgs = parserDataArgs;
       _sectionSource = string.Empty;
       _profiler = new HtmlProfiler(_template.SectionTemplate);
       _sectionParser = new HtmlSectionParser(_template.SectionTemplate);
@@ -55,6 +61,11 @@ namespace MediaPortal.Utils.Web
     #endregion
 
     #region Public Methods
+    /// <summary>
+    /// Parses the URL and returns the number of instances of the template found on this site
+    /// </summary>
+    /// <param name="site">The site.</param>
+    /// <returns>count</returns>
     public int ParseUrl(HTTPRequest site)
     {
       HTMLPage webPage = new HTMLPage(site);
@@ -89,6 +100,11 @@ namespace MediaPortal.Utils.Web
       return count;
     }
 
+    /// <summary>
+    /// Gets the data.
+    /// </summary>
+    /// <param name="index">The index.</param>
+    /// <returns>Parser Data</returns>
     public IParserData GetData(int index)
     {
       string sectionSource;
@@ -102,12 +118,20 @@ namespace MediaPortal.Utils.Web
         sectionSource = _profiler.GetSource(index);
       }
 
+      // create a new IParserData object from the type and arguments given to the constructor
       IParserData sectionData = (IParserData)Activator.CreateInstance(_dataType, _dataArgs);
       if (_sectionParser.ParseSection(sectionSource, ref sectionData))
         return sectionData;
       return null;
     }
 
+    /// <summary>
+    /// Searches the regex.
+    /// </summary>
+    /// <param name="index">The index.</param>
+    /// <param name="regex">The regex.</param>
+    /// <param name="remove">if set to <c>true</c> [remove].</param>
+    /// <returns>string found</returns>
     public string SearchRegex(int index, string regex, bool remove)
     {
       string sectionSource;
@@ -150,6 +174,13 @@ namespace MediaPortal.Utils.Web
       return found;
     }
 
+    /// <summary>
+    /// Gets the hyper link.
+    /// </summary>
+    /// <param name="index">The index.</param>
+    /// <param name="match">The match.</param>
+    /// <param name="linkURL">The link URL.</param>
+    /// <returns>bool - success/fail</returns>
     public bool GetHyperLink(int index, string match, ref HTTPRequest linkURL)
     {
 
@@ -218,33 +249,14 @@ namespace MediaPortal.Utils.Web
 
       return linkFound;
     }
-
-    //public ParserDataCollection ParseUrl(HTTPRequest site)
-    //{
-    //  ParserDataCollection sectionList = new ParserDataCollection();
-
-    //  HTMLPage webPage = new HTMLPage(site);
-    //  string pageSource = webPage.GetPage();
-
-    //  if (pageSource != null)
-    //  {
-    //    int count = _profiler.MatchCount(pageSource);
-
-    //    for (int i = 0; i < count; i++)
-    //    {
-    //      string sectionSource = _profiler.GetSource(i);
-
-    //      IParserData sectionData = (IParserData ) Activator.CreateInstance(_dataType);
-    //      if (_sectionParser.ParseSection(sectionSource, ref sectionData))
-    //        sectionList.Add(sectionData);
-    //    }
-    //  }
-
-    //  return sectionList;
-    //}
     #endregion
 
     #region Private Methods
+    /// <summary>
+    /// Gets the java sub link params.
+    /// </summary>
+    /// <param name="link">The link.</param>
+    /// <returns>params</returns>
     private string[] GetJavaSubLinkParams(string link)
     {
 
