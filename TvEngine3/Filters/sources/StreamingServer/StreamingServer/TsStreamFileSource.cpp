@@ -39,6 +39,12 @@ TsStreamFileSource::createNew(UsageEnvironment& env, char const* fileName,
   if (strstr(fileName,".tsbuffer")!=NULL)
   {
     reader = new MultiFileReader();
+		__int64 fileSize= reader->GetFileSize();
+		__int64 offset=100*1024;
+		if (fileSize > offset)
+		{
+			reader->SetFilePointer(-offset, FILE_END);
+		}
   }
   else
   {
@@ -49,9 +55,7 @@ TsStreamFileSource::createNew(UsageEnvironment& env, char const* fileName,
   
 
   Boolean deleteFidOnClose = true;
-  TsStreamFileSource* newSource
-    = new TsStreamFileSource(env, (FILE*)reader, deleteFidOnClose,
-			       preferredFrameSize, playTimePerFrame);
+  TsStreamFileSource* newSource = new TsStreamFileSource(env, (FILE*)reader, deleteFidOnClose, preferredFrameSize, playTimePerFrame);
   newSource->fFileSize = reader->GetFileSize();
 	Log("ts:size %d",(DWORD)newSource->fFileSize);  
   return newSource;

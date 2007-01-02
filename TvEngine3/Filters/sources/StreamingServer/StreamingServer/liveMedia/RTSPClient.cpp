@@ -1368,6 +1368,62 @@ Boolean RTSPClient::pauseMediaSession(MediaSession& session) {
   delete[] cmd;
   return False;
 }
+Boolean RTSPClient::statsMediaSession(MediaSession& session) 
+{
+  char* cmd = NULL;
+  do {
+    // First, make sure that we have a RTSP session in progress
+    if (fLastSessionId == NULL) {
+      envir().setResultMsg(NoSessionErr);
+      break;
+    }
+
+    // Send the PAUSE command:
+
+    // First, construct an authenticator string:
+    char* authenticatorStr
+      = createAuthenticatorString(&fCurrentAuthenticator, "PAUSE", fBaseURL);
+
+    char* const cmdFmt =
+      "STATS %s RTSP/1.0\r\n"
+      "CSeq: %d\r\n"
+      "Session: %s\r\n"
+      "%s"
+      "%s"
+      "\r\n";
+
+    unsigned cmdSize = strlen(cmdFmt)
+      + strlen(fBaseURL)
+      + 20 /* max int len */
+      + strlen(fLastSessionId)
+      + strlen(authenticatorStr)
+      + fUserAgentHeaderStrSize;
+    cmd = new char[cmdSize];
+    sprintf(cmd, cmdFmt,
+	    fBaseURL,
+	    ++fCSeq,
+	    fLastSessionId,
+	    authenticatorStr,
+	    fUserAgentHeaderStr);
+    delete[] authenticatorStr;
+
+    if (!sendRequest(cmd, "STATS")) break;
+
+    if (fTCPStreamIdCount == 0) 
+		{ // When TCP streaming, don't look for a response
+      // Get the response from the server:
+      unsigned bytesRead; unsigned responseCode;
+      char* firstLine; char* nextLineStart;
+      if (!getResponse("STATS", bytesRead, responseCode, firstLine, nextLineStart)) break;
+    }
+
+    delete[] cmd;
+    return True;
+  } while (0);
+
+  delete[] cmd;
+  return False;
+}
 
 Boolean RTSPClient::pauseMediaSubsession(MediaSubsession& subsession) {
   char* cmd = NULL;

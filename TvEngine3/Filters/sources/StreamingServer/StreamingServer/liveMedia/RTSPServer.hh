@@ -139,6 +139,8 @@ public:
 			char const* cseq, char const* fullRequestStr);
     void handleCmd_PAUSE(ServerMediaSubsession* subsession,
 			 char const* cseq);
+    void handleCmd_STATS(ServerMediaSubsession* subsession,
+			 char const* cseq);
     void handleCmd_GET_PARAMETER(ServerMediaSubsession* subsession,
 				 char const* cseq, char const* fullRequestStr);
     Boolean authenticationOK(char const* cmdName, char const* cseq,

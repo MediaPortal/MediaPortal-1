@@ -103,6 +103,7 @@ public:
 
 	Boolean continueMediaSession(MediaSession& session);
   Boolean pauseMediaSession(MediaSession& session);
+	Boolean statsMediaSession(MediaSession& session) ;
       // Issues an aggregate RTSP "PAUSE" command on "session".
       // Returns True iff this command succeeds
   Boolean pauseMediaSubsession(MediaSubsession& subsession);

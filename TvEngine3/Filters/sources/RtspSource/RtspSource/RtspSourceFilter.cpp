@@ -29,7 +29,7 @@
 #include "ChannelInfo.h"
 extern void Log(const char *fmt, ...) ;
 
-#define BUFFER_BEFORE_PLAY_SIZE (1024L*200) //200Kb
+#define BUFFER_BEFORE_PLAY_SIZE (1024L*100) //100Kb
 
 const AMOVIESETUP_MEDIATYPE acceptOutputPinTypes =
 {

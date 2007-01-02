@@ -389,6 +389,7 @@ void RTSPServer::RTSPClientSession::incomingRequestHandler1() {
     } else if (strcmp(cmdName, "TEARDOWN") == 0
 	       || strcmp(cmdName, "PLAY") == 0
 	       || strcmp(cmdName, "PAUSE") == 0
+	       || strcmp(cmdName, "STATS") == 0
 	       || strcmp(cmdName, "GET_PARAMETER") == 0) {
       handleCmd_withinSession(cmdName, urlPreSuffix, urlSuffix, cseq,
 			      (char const*)fRequestBuffer);
@@ -444,7 +445,7 @@ static char const* dateHeader() {
 }
 
 static char const* allowedCommandNames
-  = "OPTIONS, DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE";
+  = "OPTIONS, DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE, STATS";
 
 void RTSPServer::RTSPClientSession::handleCmd_bad(char const* /*cseq*/) {
   // Don't do anything with "cseq", because it might be nonsense
@@ -876,6 +877,8 @@ void RTSPServer::RTSPClientSession
     handleCmd_PLAY(subsession, cseq, fullRequestStr);
   } else if (strcmp(cmdName, "PAUSE") == 0) {
     handleCmd_PAUSE(subsession, cseq);
+  } else if (strcmp(cmdName, "STATS") == 0) {
+    handleCmd_STATS(subsession, cseq);
   } else if (strcmp(cmdName, "GET_PARAMETER") == 0) {
     handleCmd_GET_PARAMETER(subsession, cseq, fullRequestStr);
   }
@@ -1077,6 +1080,25 @@ void RTSPServer::RTSPClientSession
   snprintf((char*)fResponseBuffer, sizeof fResponseBuffer,
 	   "RTSP/1.0 200 OK\r\nCSeq: %s\r\n%sSession: %d\r\n\r\n",
 	   cseq, dateHeader(), fOurSessionId);
+}
+
+void RTSPServer::RTSPClientSession
+  ::handleCmd_STATS(ServerMediaSubsession* subsession, char const* cseq) 
+{
+	float duration =0;
+  for (unsigned i = 0; i < fNumStreamStates; ++i) 
+	{
+    if (subsession == NULL || subsession == fStreamStates[i].subsession) 
+		{
+			if (subsession !=NULL)
+			{
+				duration =subsession->duration();
+			}
+    }
+  }
+  snprintf((char*)fResponseBuffer, sizeof fResponseBuffer,
+		"RTSP/1.0 200 OK\r\nCSeq: %s\r\n%sSession: %d\r\nDuration:%4.2f\r\n\r\n",
+	   cseq, dateHeader(), fOurSessionId,duration);
 }
 
 void RTSPServer::RTSPClientSession
