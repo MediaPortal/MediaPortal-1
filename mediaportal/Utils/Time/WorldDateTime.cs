@@ -31,6 +31,9 @@ namespace MediaPortal.Utils.Time
 {
   public class WorldDateTime : IComparable
   {
+    /// <summary>
+    /// Date Time with WorldTimeZone
+    /// </summary>
     #region Variables
     //private DateTime _dt;
     private int _year;
@@ -43,6 +46,9 @@ namespace MediaPortal.Utils.Time
     #endregion
 
     #region Constructors
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WorldDateTime"/> class.
+    /// </summary>
     public WorldDateTime()
     {
       _year = 0;
@@ -53,11 +59,23 @@ namespace MediaPortal.Utils.Time
       _second = 0;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WorldDateTime"/> class.
+    /// </summary>
+    /// <param name="datetime">The datetime.</param>
     public WorldDateTime(DateTime datetime)
     {
       SetFromDateTime(datetime);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WorldDateTime"/> class.
+    /// </summary>
+    /// <param name="year">The year.</param>
+    /// <param name="month">The month.</param>
+    /// <param name="day">The day.</param>
+    /// <param name="hour">The hour.</param>
+    /// <param name="minute">The minute.</param>
     public WorldDateTime(int year, int month, int day, int hour, int minute)
     {
       _year = year;
@@ -79,6 +97,11 @@ namespace MediaPortal.Utils.Time
       DateTime dt = new DateTime(_year, _month, _day, _hour, _minute, _second, 0);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WorldDateTime"/> class.
+    /// </summary>
+    /// <param name="dateTimeGmt">The date time GMT.</param>
+    /// <param name="useOffset">if set to <c>true</c> [use offset].</param>
     public WorldDateTime(string dateTimeGmt, bool useOffset)
     {
       dateTimeGmt = dateTimeGmt.Trim();
@@ -105,6 +128,10 @@ namespace MediaPortal.Utils.Time
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WorldDateTime"/> class.
+    /// </summary>
+    /// <param name="dateTimeGmt">The date time GMT.</param>
     public WorldDateTime(string dateTimeGmt)
       : this(dateTimeGmt, true)
     {
@@ -113,48 +140,79 @@ namespace MediaPortal.Utils.Time
     #endregion
 
     #region Properties
-
+    /// <summary>
+    /// Gets the date time.
+    /// </summary>
+    /// <value>The date time.</value>
     public DateTime DateTime
     {
       get { return new DateTime(_year, _month, _day, _hour, _minute, _second); }
     }
 
+    /// <summary>
+    /// Gets or sets the year.
+    /// </summary>
+    /// <value>The year.</value>
     public int Year
     {
       set { _year = value; }
       get { return _year; }
     }
 
+    /// <summary>
+    /// Gets or sets the month.
+    /// </summary>
+    /// <value>The month.</value>
     public int Month
     {
       set { _month = value;  }
       get { return _month; }
     }
 
+    /// <summary>
+    /// Gets or sets the day.
+    /// </summary>
+    /// <value>The day.</value>
     public int Day
     {
       set { _day = value; }
       get { return _day; }
     }
 
+    /// <summary>
+    /// Gets or sets the hour.
+    /// </summary>
+    /// <value>The hour.</value>
     public int Hour
     {
       set { _hour = value; }
       get { return _hour; }
     }
 
+    /// <summary>
+    /// Gets or sets the minute.
+    /// </summary>
+    /// <value>The minute.</value>
     public int Minute
     {
       set { _minute = value; }
       get { return _minute; }
     }
 
+    /// <summary>
+    /// Gets or sets the second.
+    /// </summary>
+    /// <value>The second.</value>
     public int Second
     {
       set { _second = value; }
       get { return _second; }
     }
 
+    /// <summary>
+    /// Gets or sets the time zone.
+    /// </summary>
+    /// <value>The time zone.</value>
     public WorldTimeZone TimeZone
     {
       set { _timeZone = value; }
@@ -184,6 +242,11 @@ namespace MediaPortal.Utils.Time
     //  return new WorldDateTime(_dt.Add(value));
     //}
 
+    /// <summary>
+    /// Adds the days.
+    /// </summary>
+    /// <param name="days">The days.</param>
+    /// <returns></returns>
     public WorldDateTime AddDays(double days)
     {
       DateTime dt = this.DateTime;
@@ -285,6 +348,10 @@ namespace MediaPortal.Utils.Time
     #endregion
 
     #region Private Methods
+    /// <summary>
+    /// Sets from date time.
+    /// </summary>
+    /// <param name="datetime">The datetime.</param>
     private void SetFromDateTime(DateTime datetime)
     {
       _year = datetime.Year;
@@ -371,7 +438,12 @@ namespace MediaPortal.Utils.Time
     #endregion
 
     #region Operators
-
+    /// <summary>
+    /// Operator &gt;=s the specified LHS.
+    /// </summary>
+    /// <param name="lhs">The LHS.</param>
+    /// <param name="rhs">The RHS.</param>
+    /// <returns></returns>
     public static bool operator >=(WorldDateTime lhs, WorldDateTime rhs)
     {
       return lhs.DateTime >= rhs.DateTime;
@@ -382,6 +454,12 @@ namespace MediaPortal.Utils.Time
       return lhs.DateTime <= rhs.DateTime;
     }
 
+    /// <summary>
+    /// Operator &gt;s the specified LHS.
+    /// </summary>
+    /// <param name="lhs">The LHS.</param>
+    /// <param name="rhs">The RHS.</param>
+    /// <returns></returns>
     public static bool operator >(WorldDateTime lhs, WorldDateTime rhs)
     {
       return lhs.DateTime > rhs.DateTime;
@@ -394,7 +472,14 @@ namespace MediaPortal.Utils.Time
     #endregion
 
     #region IComparable Members
-
+    /// <summary>
+    /// Compares the current instance with another object of the same type.
+    /// </summary>
+    /// <param name="obj">An object to compare with this instance.</param>
+    /// <returns>
+    /// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has these meanings: Value Meaning Less than zero This instance is less than obj. Zero This instance is equal to obj. Greater than zero This instance is greater than obj.
+    /// </returns>
+    /// <exception cref="T:System.ArgumentException">obj is not the same type as this instance. </exception>
     public int CompareTo(object obj)
     {
       WorldDateTime compareObj = (WorldDateTime)obj;

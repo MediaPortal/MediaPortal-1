@@ -31,6 +31,9 @@ using Microsoft.Win32;
 
 namespace MediaPortal.Utils.Time
 {
+  /// <summary>
+  /// A World Time Zone
+  /// </summary>
   public class WorldTimeZone : TimeZone
   {
     #region Variables
@@ -81,10 +84,10 @@ namespace MediaPortal.Utils.Time
     #endregion
 
     #region Constructors/Destructors
-    private WorldTimeZone()
-    {
-    }
-
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WorldTimeZone"/> class.
+    /// </summary>
+    /// <param name="TimeZone">The time zone.</param>
     public WorldTimeZone(string TimeZone)
     {
       string TimeZoneName = string.Empty;
@@ -118,6 +121,12 @@ namespace MediaPortal.Utils.Time
     #endregion
 
     #region Public Methods
+    /// <summary>
+    /// Determines whether [is local time zone].
+    /// </summary>
+    /// <returns>
+    /// 	<c>true</c> if [is local time zone]; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsLocalTimeZone()
     {
       if (TimeZone.CurrentTimeZone.StandardName == this.StandardName)
@@ -126,6 +135,11 @@ namespace MediaPortal.Utils.Time
       return false;
     }
 
+    /// <summary>
+    /// Converts DateTime to the local time.
+    /// </summary>
+    /// <param name="time">The time.</param>
+    /// <returns>Local DateTime</returns>
     public DateTime FromLocalTime(DateTime time)
     {
       if (time.Kind != DateTimeKind.Unspecified)
@@ -136,6 +150,12 @@ namespace MediaPortal.Utils.Time
     #endregion
 
     #region Private Methods
+    /// <summary>
+    /// Gets the date time.
+    /// </summary>
+    /// <param name="TimeChange">The time change.</param>
+    /// <param name="year">The year.</param>
+    /// <returns></returns>
     private DateTime GetDateTime(TimeZoneDate TimeChange, int year)
     {
       DateTime ChangeDay;
@@ -179,6 +199,9 @@ namespace MediaPortal.Utils.Time
       return ChangeDay;
     }
 
+    /// <summary>
+    /// Loads the registry time zones.
+    /// </summary>
     private void LoadRegistryTimeZones()
     {
       RegistryKey RegKeyRoot = null;
@@ -233,6 +256,12 @@ namespace MediaPortal.Utils.Time
       }
     }
 
+    /// <summary>
+    /// Gets the date.
+    /// </summary>
+    /// <param name="bytes">The bytes.</param>
+    /// <param name="index">The index.</param>
+    /// <returns>TimeZoneDate</returns>
     private TimeZoneDate GetDate(byte[] bytes, Int32 index)
     {
       TimeZoneDate TimeChange = new TimeZoneDate();
@@ -266,22 +295,34 @@ namespace MediaPortal.Utils.Time
     #endregion
 
     #region TimeZone Overloads
+    /// <summary>
+    /// Gets the daylight saving time zone name.
+    /// </summary>
+    /// <value></value>
+    /// <returns>The daylight saving time zone name.</returns>
     public override string DaylightName
     {
-      get
-      {
-        return _TimeZone.DltName;
-      }
+      get { return _TimeZone.DltName; }
     }
 
+    /// <summary>
+    /// Gets the standard time zone name.
+    /// </summary>
+    /// <value></value>
+    /// <returns>The standard time zone name.</returns>
+    /// <exception cref="T:System.ArgumentNullException">Attempted to set this property to null. </exception>
     public override string StandardName
     {
-      get
-      {
-        return _TimeZone.StdName;
-      }
+      get { return _TimeZone.StdName; }
     }
 
+    /// <summary>
+    /// Returns a value indicating whether the specified date and time is within a daylight saving time period.
+    /// </summary>
+    /// <param name="time">A date and time.</param>
+    /// <returns>
+    /// true if time is in a daylight saving time period; false otherwise, or if time is null.
+    /// </returns>
     public override bool IsDaylightSavingTime(DateTime time)
     {
       if (_TimeZone.DltDate.Month == 0)   // Never Dlt time;
@@ -302,6 +343,14 @@ namespace MediaPortal.Utils.Time
       return false;
     }
 
+    /// <summary>
+    /// Returns the daylight saving time period for a particular year.
+    /// </summary>
+    /// <param name="year">The year to which the daylight saving time period applies.</param>
+    /// <returns>
+    /// A <see cref="T:System.Globalization.DaylightTime"></see> instance containing the start and end date for daylight saving time in year.
+    /// </returns>
+    /// <exception cref="T:System.ArgumentOutOfRangeException">year is less than 1 or greater than 9999. </exception>
     public override DaylightTime GetDaylightChanges(int year)
     {
       DaylightTime DLTime = null;
@@ -317,11 +366,25 @@ namespace MediaPortal.Utils.Time
       return DLTime;
     }
 
+    /// <summary>
+    /// Returns the coordinated universal time (UTC) that corresponds to a specified local time.
+    /// </summary>
+    /// <param name="time">The local date and time.</param>
+    /// <returns>
+    /// A <see cref="T:System.DateTime"></see> instance whose value is the UTC time that corresponds to time.
+    /// </returns>
     public override DateTime ToUniversalTime(DateTime time)
     {
       return time.Add(-GetUtcOffset(time));
     }
 
+    /// <summary>
+    /// Returns the local time that corresponds to a specified coordinated universal time (UTC).
+    /// </summary>
+    /// <param name="time">A UTC time.</param>
+    /// <returns>
+    /// A <see cref="T:System.DateTime"></see> instance whose value is the local time that corresponds to time.
+    /// </returns>
     public override DateTime ToLocalTime(DateTime time)
     {
       if (time.Kind != DateTimeKind.Unspecified)
@@ -330,6 +393,13 @@ namespace MediaPortal.Utils.Time
       return time.Add(System.TimeZone.CurrentTimeZone.GetUtcOffset(time) - GetUtcOffset(time));
     }
 
+    /// <summary>
+    /// Returns the coordinated universal time (UTC) offset for the specified local time.
+    /// </summary>
+    /// <param name="time">The local date and time.</param>
+    /// <returns>
+    /// The UTC offset from time, measured in ticks.
+    /// </returns>
     public override TimeSpan GetUtcOffset(DateTime time)
     {
       int UtcOffset = _TimeZone.Offset;

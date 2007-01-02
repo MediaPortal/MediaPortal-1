@@ -30,16 +30,26 @@ using System.Collections;
 
 namespace MediaPortal.Utils.Web
 {
+  /// <summary>
+  /// Class of static HTML helper methods
+  /// </summary>
   public class HtmlString
   {
     #region Constructors/Destructors
+    /// <summary>
+    /// Private constructor
+    /// </summary>
     private HtmlString()
     {
     }
     #endregion
 
     #region Public Static Methods
-
+    /// <summary>
+    /// Tags the list.
+    /// </summary>
+    /// <param name="source">The source.</param>
+    /// <returns></returns>
     public static MatchTagCollection TagList(string source)
     {
       MatchTagCollection list = new MatchTagCollection();
@@ -48,7 +58,7 @@ namespace MediaPortal.Utils.Web
       {
         if (source[i] == '<')
         {
-          int length = TagLength(source, i);
+          int length = GetTagLength(source, i);
 
           // check if tag is too short or comment
           // min lenght for a tag is 3 <x>
@@ -68,6 +78,11 @@ namespace MediaPortal.Utils.Web
       return list;
     }
 
+    /// <summary>
+    /// Turns an HTML string into ASCII
+    /// </summary>
+    /// <param name="source">The source.</param>
+    /// <returns>processed string</returns>
     public static string ToAscii(string source)
     {
       string stripped;
@@ -78,6 +93,11 @@ namespace MediaPortal.Utils.Web
       return stripped;
     }
 
+    /// <summary>
+    /// Decodes the special character in HTML source ie &amp; -> &
+    /// </summary>
+    /// <param name="source">The source.</param>
+    /// <returns>decoded source</returns>
     public static string Decode(string source)
     {
       string stripped = source;
@@ -92,6 +112,13 @@ namespace MediaPortal.Utils.Web
       return stripped;
     }
 
+    /// <summary>
+    /// Process the newline characters.
+    /// First removes all \n, \r and \t from the HTML source.
+    /// Then converts all \<br\> tags into newline (\n) character
+    /// </summary>
+    /// <param name="source">The source.</param>
+    /// <returns>processed source</returns>
     public static string NewLines(string source)
     {
       string stripped = source;
@@ -106,8 +133,13 @@ namespace MediaPortal.Utils.Web
     #endregion
 
     #region Private Static Methods
-
-    private static int TagLength(string strSource, int StartPos)
+    /// <summary>
+    /// Gets the length of a tag, give the source and start position
+    /// </summary>
+    /// <param name="strSource">The source.</param>
+    /// <param name="StartPos">The start pos.</param>
+    /// <returns></returns>
+    private static int GetTagLength(string strSource, int StartPos)
     {
       int index = 0;
       int nesting = 0;

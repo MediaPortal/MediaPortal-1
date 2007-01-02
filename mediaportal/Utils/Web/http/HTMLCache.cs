@@ -31,8 +31,11 @@ using System.Web;
 
 namespace MediaPortal.Utils.Web
 {
-	public class HTMLCache : IHtmlCache
-	{
+  /// <summary>
+  /// Class provides HTML caching
+  /// </summary>
+  public class HTMLCache : IHtmlCache
+  {
     #region Enums
     public enum Mode
     {
@@ -43,19 +46,26 @@ namespace MediaPortal.Utils.Web
     #endregion
 
     #region Variables
-		const string CACHE_DIR = "WebCache";
+    const string CACHE_DIR = "WebCache";
     static bool _initialised = false;
     static Mode _cacheMode = Mode.Disabled;
-		static string _strPageSource;
+    static string _strPageSource;
     #endregion
 
     #region Constructors/Destructors
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HTMLCache"/> class.
+    /// </summary>
     public HTMLCache()
-		{
+    {
     }
     #endregion
 
     #region Properties
+    /// <summary>
+    /// Gets a value indicating whether this <see cref="IHtmlCache"/> is initialised.
+    /// </summary>
+    /// <value><c>true</c> if initialised; otherwise, <c>false</c>.</value>
     public bool Initialised
     {
       get { return _initialised; }
@@ -69,38 +79,59 @@ namespace MediaPortal.Utils.Web
     #endregion
 
     #region Public Methods
+    /// <summary>
+    /// Initialises the WebCache.
+    /// </summary>
     public void WebCacheInitialise()
-		{
-			if(!System.IO.Directory.Exists(CACHE_DIR))
-				System.IO.Directory.CreateDirectory(CACHE_DIR);
+    {
+      if (!System.IO.Directory.Exists(CACHE_DIR))
+        System.IO.Directory.CreateDirectory(CACHE_DIR);
 
       _initialised = true;
     }
 
+    /// <summary>
+    /// Deletes a cached page.
+    /// </summary>
+    /// <param name="pageUri">The page URI.</param>
     public void DeleteCachePage(Uri pageUri)
-		{
-			string file = GetCacheFileName(pageUri);
+    {
+      string file = GetCacheFileName(pageUri);
 
-			if(System.IO.File.Exists(file))
-				System.IO.File.Delete(file);
-		}
-
-		public bool LoadPage(Uri pageUri)
-		{
-			if(_cacheMode == Mode.Enabled)
-			{
-				if(LoadCacheFile(GetCacheFileName(pageUri)))
-					return true;
-			}
-			return false;
+      if (System.IO.File.Exists(file))
+        System.IO.File.Delete(file);
     }
 
-		public void SavePage(Uri pageUri, string strSource)
-		{
-			if(_cacheMode != Mode.Disabled)
-				SaveCacheFile(GetCacheFileName(pageUri), strSource);
-		}
+    /// <summary>
+    /// Loads a page from cache.
+    /// </summary>
+    /// <param name="pageUri">The page URI.</param>
+    /// <returns>bool - true if the page is in the cache</returns>
+    public bool LoadPage(Uri pageUri)
+    {
+      if (_cacheMode == Mode.Enabled)
+      {
+        if (LoadCacheFile(GetCacheFileName(pageUri)))
+          return true;
+      }
+      return false;
+    }
 
+    /// <summary>
+    /// Saves a page to the cache.
+    /// </summary>
+    /// <param name="pageUri">The page URI.</param>
+    /// <param name="strSource">The HTML source.</param>
+    public void SavePage(Uri pageUri, string strSource)
+    {
+      if (_cacheMode != Mode.Disabled)
+        SaveCacheFile(GetCacheFileName(pageUri), strSource);
+    }
+
+    /// <summary>
+    /// Gets the page source of the current loaded page.
+    /// </summary>
+    /// <returns>HTML source as a string</returns>
     public string GetPage() //string strURL, string strEncode)
     {
       return _strPageSource;
@@ -108,35 +139,50 @@ namespace MediaPortal.Utils.Web
     #endregion
 
     #region Private Methods
+    /// <summary>
+    /// Loads the cache file.
+    /// </summary>
+    /// <param name="file">The file.</param>
+    /// <returns></returns>
     private bool LoadCacheFile(string file)
-		{
-			if(System.IO.File.Exists(file))
-			{
-				TextReader CacheFile = new StreamReader(file);
-				_strPageSource = CacheFile.ReadToEnd();
-				CacheFile.Close();
+    {
+      if (System.IO.File.Exists(file))
+      {
+        TextReader CacheFile = new StreamReader(file);
+        _strPageSource = CacheFile.ReadToEnd();
+        CacheFile.Close();
 
-				return true;
-			}
+        return true;
+      }
 
-			return false;
-		}
+      return false;
+    }
 
-		private void SaveCacheFile(string file, string source)
-		{
-			if(System.IO.File.Exists(file))
-				System.IO.File.Delete(file);
+    /// <summary>
+    /// Saves the cache file.
+    /// </summary>
+    /// <param name="file">The file.</param>
+    /// <param name="source">The source.</param>
+    private void SaveCacheFile(string file, string source)
+    {
+      if (System.IO.File.Exists(file))
+        System.IO.File.Delete(file);
 
-			TextWriter CacheFile = new StreamWriter(file);
-			CacheFile.Write(source);
-			CacheFile.Close();
-		}
+      TextWriter CacheFile = new StreamWriter(file);
+      CacheFile.Write(source);
+      CacheFile.Close();
+    }
 
+    /// <summary>
+    /// Gets the name of the cache file.
+    /// </summary>
+    /// <param name="Page">The page.</param>
+    /// <returns>filename</returns>
     static private string GetCacheFileName(Uri Page)
-		{
-			uint hash = (uint) Page.GetHashCode();
-				
-			return CACHE_DIR + "/" + Page.Host + "_" + hash.ToString() + ".html";
+    {
+      uint hash = (uint)Page.GetHashCode();
+
+      return CACHE_DIR + "/" + Page.Host + "_" + hash.ToString() + ".html";
     }
     #endregion
   }

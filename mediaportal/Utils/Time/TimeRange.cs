@@ -29,10 +29,18 @@ namespace MediaPortal.Utils.Time
 {
   public class TimeRange
   {
+    #region Variables
     private BasicTime _start;
     private BasicTime _end;
     private bool _overMidnight;
+    #endregion
 
+    #region Constructors/Destructors
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TimeRange"/> class.
+    /// </summary>
+    /// <param name="start">The start.</param>
+    /// <param name="end">The end.</param>
     public TimeRange(DateTime start, DateTime end)
     {
       _start = new BasicTime(start);
@@ -43,6 +51,11 @@ namespace MediaPortal.Utils.Time
         _overMidnight = true;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TimeRange"/> class.
+    /// </summary>
+    /// <param name="start">The start.</param>
+    /// <param name="end">The end.</param>
     public TimeRange(string start, string end)
     {
       _start = new BasicTime(start);
@@ -52,7 +65,16 @@ namespace MediaPortal.Utils.Time
       if (_end.Hour < _start.Hour)
         _overMidnight = true;
     }
+    #endregion
 
+    #region Public Methods
+    /// <summary>
+    /// Determines whether [is in range] [the specified check time].
+    /// </summary>
+    /// <param name="checkTime">The check time.</param>
+    /// <returns>
+    /// 	<c>true</c> if [is in range] [the specified check time]; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsInRange(DateTime checkTime)
     {
       if (_overMidnight)
@@ -63,12 +85,19 @@ namespace MediaPortal.Utils.Time
       }
       else
       {
-        if (_start < checkTime  && _end  > checkTime)
+        if (_start < checkTime && _end > checkTime)
           return true;
       }
       return false;
     }
 
+    /// <summary>
+    /// Determines whether [is in range] [the specified time].
+    /// </summary>
+    /// <param name="time">The time.</param>
+    /// <returns>
+    /// 	<c>true</c> if [is in range] [the specified time]; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsInRange(long time)
     {
       BasicTime checkTime = new BasicTime(time);
@@ -86,6 +115,6 @@ namespace MediaPortal.Utils.Time
       }
       return false;
     }
-
+    #endregion
   }
 }

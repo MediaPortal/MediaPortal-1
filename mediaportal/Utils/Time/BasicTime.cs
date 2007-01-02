@@ -27,47 +27,87 @@ using System;
 
 namespace MediaPortal.Utils.Time
 {
+  /// <summary>
+  /// Basic time class has only hours and mintues.
+  /// </summary>
   public class BasicTime
   {
+    #region Variables
     private int _hour = 0;
     private int _minute = 0;
+    #endregion
 
+    #region Constructors/Destructors
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BasicTime"/> class.
+    /// </summary>
+    /// <param name="hour">The hour.</param>
+    /// <param name="minute">The minute.</param>
     public BasicTime(int hour, int minute)
     {
       _hour = hour;
       _minute = minute;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BasicTime"/> class.
+    /// </summary>
+    /// <param name="time">The time as a DateTime</param>
     public BasicTime(DateTime time)
     {
       _hour = time.Hour;
       _minute = time.Minute;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BasicTime"/> class.
+    /// </summary>
+    /// <param name="time">The time as a string</param>
     public BasicTime(string time)
     {
       ParseTimeString(time);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BasicTime"/> class.
+    /// </summary>
+    /// <param name="time">The time as a long</param>
     public BasicTime(long time)
     {
       time /= 100L;
       _minute = (int)(time % 100L);
       time /= 100L;
-      _hour = (int)(time % 100L); 
+      _hour = (int)(time % 100L);
     }
+    #endregion
 
+    #region Properties
+    /// <summary>
+    /// Gets the minute.
+    /// </summary>
+    /// <value>The minute.</value>
     public int Minute
     {
       get { return _minute; }
     }
 
+    /// <summary>
+    /// Gets the hour.
+    /// </summary>
+    /// <value>The hour.</value>
     public int Hour
     {
       get { return _hour; }
     }
+    #endregion
 
     #region operators
+    /// <summary>
+    /// Operator &gt;s the specified time1.
+    /// </summary>
+    /// <param name="time1">The time1.</param>
+    /// <param name="time2">The time2.</param>
+    /// <returns></returns>
     public static bool operator >(BasicTime time1, BasicTime time2)
     {
       if (time1.Hour > time2.Hour)
@@ -90,6 +130,12 @@ namespace MediaPortal.Utils.Time
       return false;
     }
 
+    /// <summary>
+    /// Operator &gt;=s the specified time1.
+    /// </summary>
+    /// <param name="time1">The time1.</param>
+    /// <param name="time2">The time2.</param>
+    /// <returns></returns>
     public static bool operator >=(BasicTime time1, BasicTime time2)
     {
       if (time1.Hour == time2.Hour)
@@ -124,6 +170,12 @@ namespace MediaPortal.Utils.Time
       return false;
     }
 
+    /// <summary>
+    /// Operator &gt;s the specified time1.
+    /// </summary>
+    /// <param name="time1">The time1.</param>
+    /// <param name="time2">The time2.</param>
+    /// <returns></returns>
     public static bool operator >(BasicTime time1, DateTime time2)
     {
       if (time1.Hour > time2.Hour)
@@ -146,6 +198,12 @@ namespace MediaPortal.Utils.Time
       return false;
     }
 
+    /// <summary>
+    /// Operator &gt;=s the specified time1.
+    /// </summary>
+    /// <param name="time1">The time1.</param>
+    /// <param name="time2">The time2.</param>
+    /// <returns></returns>
     public static bool operator >=(BasicTime time1, DateTime time2)
     {
       if (time1.Hour == time2.Hour)
@@ -181,6 +239,11 @@ namespace MediaPortal.Utils.Time
     }
     #endregion
 
+    #region Private Methods
+    /// <summary>
+    /// Parses a time string.
+    /// </summary>
+    /// <param name="strTime">The time as a string</param>
     private void ParseTimeString(string strTime)
     {
       strTime = strTime.Replace(" ", "");
@@ -238,5 +301,6 @@ namespace MediaPortal.Utils.Time
       if (_hour == 24)
         _hour = 0;
     }
+    #endregion
   }
 }
