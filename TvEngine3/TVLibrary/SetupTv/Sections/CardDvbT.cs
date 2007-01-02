@@ -101,7 +101,8 @@ namespace SetupTv.Sections
       base.OnSectionActivated();
       UpdateStatus();
       TvBusinessLayer layer = new TvBusinessLayer();
-      mpComboBoxCountry.SelectedIndex = Int32.Parse(layer.GetSetting("dvbt" + _cardNumber.ToString() + "Country", "0").Value);
+      int index=  Int32.Parse(layer.GetSetting("dvbt" + _cardNumber.ToString() + "Country", "0").Value);
+      if (index < mpComboBoxCountry.Items.Count) mpComboBoxCountry.SelectedIndex=index;
 
 
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));

@@ -89,6 +89,8 @@
     <Compile Include="TVGuideDialog.cs" />
     <Compile Include="TVHome.cs" />
     <Compile Include="TvMiniGuide.cs" />
+    <Compile Include="TvNewScheduleSearch.cs" />
+    <Compile Include="TvNewScheduleSearchType.cs" />
     <Compile Include="TvNotifyManager.cs" />
     <Compile Include="TvOSD.cs" />
     <Compile Include="TVOverlay.cs" />
