@@ -1228,11 +1228,11 @@ namespace TvPlugin
           }
           else
           {
-            if (g_Player.CurrentFile != TVHome.Card.RTSPUrl)
-            {
-              Log.Info("stop player: url changed:{0}-{1}", g_Player.CurrentFile, TVHome.Card.RTSPUrl);
+            //if (g_Player.CurrentFile != TVHome.Card.RTSPUrl)
+            //{
+            //  Log.Info("stop player: url changed:{0}-{1}", g_Player.CurrentFile, TVHome.Card.RTSPUrl);
               g_Player.Stop();
-            }
+              //}
           }
         }
         if (!g_Player.Playing)
