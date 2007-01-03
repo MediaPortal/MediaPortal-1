@@ -371,12 +371,12 @@ namespace MediaPortal.GUI.Music
       string skin = GUIGraphicsContext.Skin;
       thumb = String.Empty;
       MusicTag tag = null;
-
-      if (_useID3)
-      {
+      
+      //if (_useID3)  // <-- always use it since one file lookup isn't a performance issue (especially with the new tagreader and it's < 0.1 seconds)
+      //{
         //yes, then try reading the tag from the file
         tag = TagReader.TagReader.ReadTag(fileName);
-      }
+      //}
 
       // if we're playing a radio
       if (Recorder.IsRadio())
@@ -423,16 +423,23 @@ namespace MediaPortal.GUI.Music
       } //if (g_Player.IsRadio)
 
 
+      // efforts only for important track
+      bool isCurrent = (g_Player.CurrentFile == fileName);
+
       // check playlist for information
       if (tag == null)
       {
-        PlayListItem item = playlistPlayer.GetCurrentItem();
+        PlayListItem item = null;
+
+        if (isCurrent)
+          item = playlistPlayer.GetCurrentItem();
+        else
+          item = playlistPlayer.GetNextItem();
+
         if (item != null)
           tag = (MusicTag)item.MusicTag;
       }
 
-      // efforts only for important track
-      bool isCurrent = (g_Player.CurrentFile == fileName);
       string strThumb = String.Empty;
 
       if (isCurrent && tag != null)

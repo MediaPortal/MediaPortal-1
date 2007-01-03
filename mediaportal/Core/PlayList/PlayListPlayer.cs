@@ -260,12 +260,12 @@ namespace MediaPortal.Playlists
       return playlist[_currentSong];
     }
 
-    public string GetNext()
+    public PlayListItem GetNextItem()
     {
-      if (_currentPlayList == PlayListType.PLAYLIST_NONE) return String.Empty;
+      if (_currentPlayList == PlayListType.PLAYLIST_NONE) return null;
 
       PlayList playlist = GetPlaylist(_currentPlayList);
-      if (playlist.Count <= 0) return String.Empty;
+      if (playlist.Count <= 0) return null;
       int iSong = _currentSong;
       iSong++;
 
@@ -273,19 +273,25 @@ namespace MediaPortal.Playlists
       {
         //	Is last element of video stacking playlist?
         if (_currentPlayList == PlayListType.PLAYLIST_VIDEO_TEMP)
-        {
-          return String.Empty;
-        }
+          return null;
 
         if (!_repeatPlayList)
-        {
-          return String.Empty; ;
-        }
+          return null;
+
         iSong = 0;
       }
 
       PlayListItem item = playlist[iSong];
-      return item.FileName;
+      return item;
+    }
+
+    public string GetNext()
+    {
+      PlayListItem resultingItem = GetNextItem();
+      if (resultingItem != null)
+        return resultingItem.FileName;
+      else
+        return String.Empty;
     }
 
     public void PlayNext()
