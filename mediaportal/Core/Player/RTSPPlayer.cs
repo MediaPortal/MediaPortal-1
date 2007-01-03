@@ -59,14 +59,15 @@ namespace MediaPortal.Player
     protected bool _updateNeeded = false;
     protected MediaPortal.GUI.Library.Geometry.Type m_ar = MediaPortal.GUI.Library.Geometry.Type.Normal;
     protected bool m_bFullScreen = true;
-    protected PlayState m_state = PlayState.Init;
+    protected PlayState _state = PlayState.Init;
     protected int m_iVolume = 100;
     protected IGraphBuilder graphBuilder;
     protected long m_speedRate = 10000;
-    protected double m_dCurrentPos;
-    protected double m_dDuration;
+    protected double _currentPos;
+    protected double _duration;
     protected int m_aspectX = 1;
     protected int m_aspectY = 1;
+    IBaseFilter _rtspSource;
 
     IPin _pinPcr = null;
     IPin _pinSubtitle = null;
@@ -77,13 +78,13 @@ namespace MediaPortal.Player
     protected DsROTEntry _rotEntry = null;
 
     /// <summary> control interface. </summary>
-    protected IMediaControl mediaCtrl;
+    protected IMediaControl _mediaCtrl;
 
     /// <summary> graph event interface. </summary>
     protected IMediaEventEx mediaEvt;
 
     /// <summary> seek interface for positioning in stream. </summary>
-    protected IMediaSeeking mediaSeek;
+    protected IMediaSeeking _mediaSeeking;
     /// <summary> seek interface to set position in stream. </summary>
     protected IMediaPosition mediaPos;
     /// <summary> video preview window interface. </summary>
@@ -169,8 +170,8 @@ namespace MediaPortal.Player
         _mpegDemux = (IBaseFilter)new MPEG2Demultiplexer();
         graphBuilder.AddFilter(_mpegDemux, "MPEG-2 Demultiplexer");
 
-        IBaseFilter rtspSource = (IBaseFilter)new RtpSourceFilter();
-        int hr = graphBuilder.AddFilter((IBaseFilter)rtspSource, "RTSP Source Filter");
+        _rtspSource = (IBaseFilter)new RtpSourceFilter();
+        int hr = graphBuilder.AddFilter((IBaseFilter)_rtspSource, "RTSP Source Filter");
         if (hr != 0)
         {
           Log.Error("RTSPPlayer:unable to add RTSP source filter:{0:X}", hr);
@@ -223,7 +224,7 @@ namespace MediaPortal.Player
 
 
         Log.Info("RTSPPlayer: load:{0}", m_strCurrentFile);
-        IFileSourceFilter interfaceFile = (IFileSourceFilter)rtspSource;
+        IFileSourceFilter interfaceFile = (IFileSourceFilter)_rtspSource;
         if (interfaceFile == null)
         {
           Log.Error("RTSPPlayer:Failed to get IFileSourceFilter");
@@ -242,7 +243,7 @@ namespace MediaPortal.Player
 
         #region connect rtspsource->demux
         Log.Info("RTSPPlayer:connect rtspsource->mpeg2 demux");
-        IPin pinTsOut = DsFindPin.ByDirection((IBaseFilter)rtspSource, PinDirection.Output, 0);
+        IPin pinTsOut = DsFindPin.ByDirection((IBaseFilter)_rtspSource, PinDirection.Output, 0);
         if (pinTsOut == null)
         {
           Log.Info("RTSPPlayer:failed to find output pin of tsfilesource");
@@ -369,7 +370,7 @@ namespace MediaPortal.Player
           {
             //VMR9 is not supported, switch to overlay
             Log.Info("RTSPPlayer: vmr9 not connected");
-            mediaCtrl = null;
+            _mediaCtrl = null;
             Cleanup();
             return false;
           }
@@ -377,9 +378,9 @@ namespace MediaPortal.Player
         }
 
 
-        mediaCtrl = (IMediaControl)graphBuilder;
+        _mediaCtrl = (IMediaControl)graphBuilder;
         mediaEvt = (IMediaEventEx)graphBuilder;
-        mediaSeek = (IMediaSeeking)graphBuilder;
+        _mediaSeeking = (IMediaSeeking)graphBuilder;
         mediaPos = (IMediaPosition)graphBuilder;
         basicAudio = graphBuilder as IBasicAudio;
         //DirectShowUtil.SetARMode(graphBuilder,AspectRatioMode.Stretched);
@@ -391,12 +392,12 @@ namespace MediaPortal.Player
         }
         if (audioRendererFilter != null)
         {
-          Log.Info("TSStreamBufferPlayer9:set reference clock");
+          Log.Info("RTSPPlayer9:set reference clock");
           IMediaFilter mp = graphBuilder as IMediaFilter;
           IReferenceClock clock = audioRendererFilter as IReferenceClock;
           hr = mp.SetSyncSource(null);
           hr = mp.SetSyncSource(clock);
-          Log.Info("TSStreamBufferPlayer9:set reference clock:{0:X}", hr);
+          Log.Info("RTSPPlayer9:set reference clock:{0:X}", hr);
         }
         Log.Info("RTSPPlayer: graph build successfull");
         return true;
@@ -438,7 +439,7 @@ namespace MediaPortal.Player
         {
           Vmr9.Enable(false);
         }
-        if (mediaCtrl != null)
+        if (_mediaCtrl != null)
         {
 
           int counter = 0;
@@ -448,11 +449,11 @@ namespace MediaPortal.Player
             System.Threading.Thread.Sleep(1);
             if (counter > 200) break;
           }
-          hr = mediaCtrl.Stop();
+          hr = _mediaCtrl.Stop();
           FilterState state;
-          hr = mediaCtrl.GetState(10, out state);
+          hr = _mediaCtrl.GetState(10, out state);
           Log.Info("state:{0} {1:X}", state.ToString(), hr);
-          mediaCtrl = null;
+          _mediaCtrl = null;
         }
         mediaEvt = null;
 
@@ -463,7 +464,7 @@ namespace MediaPortal.Player
           Vmr9 = null;
         }
 
-        mediaSeek = null;
+        _mediaSeeking = null;
         mediaPos = null;
         basicAudio = null;
         basicVideo = null;
@@ -474,6 +475,12 @@ namespace MediaPortal.Player
           while ((hr = Marshal.ReleaseComObject(_mpegDemux)) > 0)
             ;
           _mpegDemux = null;
+        }
+        if (_rtspSource != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(_rtspSource)) > 0)
+            ;
+          _rtspSource = null;
         }
         if (videoCodecFilter != null)
         {
@@ -525,7 +532,7 @@ namespace MediaPortal.Player
         }
 
         GUIGraphicsContext.form.Invalidate(true);
-        m_state = PlayState.Init;
+        _state = PlayState.Init;
         GC.Collect();
       }
       catch (Exception ex)
@@ -571,7 +578,7 @@ namespace MediaPortal.Player
       m_speedRate = 10000;
       m_bVisible = false;
       m_iVolume = 100;
-      m_state = PlayState.Init;
+      _state = PlayState.Init;
       m_strCurrentFile = strFile;
       m_bFullScreen = true;
       m_ar = GUIGraphicsContext.ARType;
@@ -603,7 +610,7 @@ namespace MediaPortal.Player
         _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
 
         // DsUtils.DumpFilters(graphBuilder);
-        hr = mediaCtrl.Run();
+        hr = _mediaCtrl.Run();
         if (hr < 0)
         {
           Error.SetError("Unable to play movie", "Unable to start movie");
@@ -614,7 +621,7 @@ namespace MediaPortal.Player
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
         msg.Label = strFile;
         GUIWindowManager.SendThreadMessage(msg);
-        m_state = PlayState.Playing;
+        _state = PlayState.Playing;
         //Brutus GUIGraphicsContext.IsFullScreenVideo=true;
         m_iPositionX = GUIGraphicsContext.VideoWindow.X;
         m_iPositionY = GUIGraphicsContext.VideoWindow.Y;
@@ -623,8 +630,8 @@ namespace MediaPortal.Player
         m_ar = GUIGraphicsContext.ARType;
         _updateNeeded = true;
         SetVideoWindow();
-        mediaPos.get_Duration(out m_dDuration);
-        Log.Info("RTSPPlayer:Duration:{0}", m_dDuration);
+        mediaPos.get_Duration(out _duration);
+        Log.Info("RTSPPlayer:Duration:{0}", _duration);
         if (_mediaType == g_Player.MediaType.TV)
         {
           //if (m_dDuration < 1) m_dDuration = 1;
@@ -659,11 +666,35 @@ namespace MediaPortal.Player
       if (!bManualStop)
       {
         CloseInterfaces();
-        m_state = PlayState.Ended;
+        _state = PlayState.Ended;
         GUIGraphicsContext.IsPlaying = false;
       }
     }
 
+    protected void UpdateCurrentPosition()
+    {
+      if (_mediaSeeking == null)
+        return;
+      //GetCurrentPosition(): Returns stream position. 
+      //Stream position:The current playback position, relative to the content start
+      long lStreamPos;
+      double fCurrentPos;
+      _mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
+      fCurrentPos = lStreamPos;
+      fCurrentPos /= 10000000d;
+      _currentPos = fCurrentPos;
+
+      long lContentStart, lContentEnd;
+      double fContentStart, fContentEnd;
+      _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
+      fContentStart = lContentStart;
+      fContentEnd = lContentEnd;
+      fContentStart /= 10000000d;
+      fContentEnd /= 10000000d;
+      // Log.Info("{0} {1} {2}  ({3})", fCurrentPos, fContentStart, fContentEnd, _currentPos);
+      fContentEnd -= fContentStart;
+      _duration = fContentEnd;
+    }
 
     public override void Process()
     {
@@ -673,13 +704,8 @@ namespace MediaPortal.Player
       TimeSpan ts = DateTime.Now - updateTimer;
       if (ts.TotalMilliseconds >= 800 || m_speedRate != 1)
       {
-        if (mediaPos != null)
-        {
-          mediaPos.get_Duration(out m_dDuration);
-          mediaPos.get_CurrentPosition(out m_dCurrentPos);
-          //Log.Info("rtsp: pos:{0} duration:{1}", m_dCurrentPos, m_dDuration);
-        }
-
+        UpdateCurrentPosition();
+        updateTimer = DateTime.Now;
         if (GUIGraphicsContext.BlankScreen || (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
         {
           if (m_bVisible)
@@ -783,9 +809,9 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (m_state != PlayState.Init)
+        if (_state != PlayState.Init)
         {
-          return m_dDuration;
+          return _duration;
         }
         return 0.0d;
       }
@@ -795,9 +821,9 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (m_state != PlayState.Init)
+        if (_state != PlayState.Init)
         {
-          return m_dCurrentPos;
+          return _currentPos;
         }
         return 0.0d;
       }
@@ -836,16 +862,16 @@ namespace MediaPortal.Player
 
     public override void Pause()
     {
-      if (m_state == PlayState.Paused)
+      if (_state == PlayState.Paused)
       {
         m_speedRate = 10000;
-        mediaCtrl.Run();
-        m_state = PlayState.Playing;
+        _mediaCtrl.Run();
+        _state = PlayState.Playing;
       }
-      else if (m_state == PlayState.Playing)
+      else if (_state == PlayState.Playing)
       {
-        m_state = PlayState.Paused;
-        mediaCtrl.Pause();
+        _state = PlayState.Paused;
+        _mediaCtrl.Pause();
       }
     }
 
@@ -853,7 +879,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        return (m_state == PlayState.Paused);
+        return (_state == PlayState.Paused);
       }
     }
 
@@ -861,7 +887,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        return (m_state == PlayState.Playing || m_state == PlayState.Paused);
+        return (_state == PlayState.Playing || _state == PlayState.Paused);
       }
     }
 
@@ -869,7 +895,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        return (m_state == PlayState.Init);
+        return (_state == PlayState.Init);
       }
     }
 
@@ -880,12 +906,12 @@ namespace MediaPortal.Player
 
     public override void Stop()
     {
-      if (m_state != PlayState.Init)
+      if (_state != PlayState.Init)
       {
         Log.Info("RTSPPlayer:ended {0}", m_strCurrentFile);
         m_strCurrentFile = "";
         CloseInterfaces();
-        m_state = PlayState.Init;
+        _state = PlayState.Init;
         GUIGraphicsContext.IsPlaying = false;
 
       }
@@ -895,8 +921,8 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (m_state == PlayState.Init) return 1;
-        if (mediaSeek == null) return 1;
+        if (_state == PlayState.Init) return 1;
+        if (_mediaSeeking == null) return 1;
         switch (m_speedRate)
         {
           case -10000:
@@ -928,9 +954,9 @@ namespace MediaPortal.Player
       }
       set
       {
-        if (m_state != PlayState.Init)
+        if (_state != PlayState.Init)
         {
-          if (mediaSeek != null)
+          if (_mediaSeeking != null)
           {
             switch ((int)value)
             {
@@ -943,7 +969,7 @@ namespace MediaPortal.Player
 
               case 1:
                 m_speedRate = 10000;
-                mediaCtrl.Run();
+                _mediaCtrl.Run();
                 break;
               case 2: m_speedRate = 15000; break;
               case 4: m_speedRate = 30000; break;
@@ -966,7 +992,7 @@ namespace MediaPortal.Player
         if (m_iVolume != value)
         {
           m_iVolume = value;
-          if (m_state != PlayState.Init)
+          if (_state != PlayState.Init)
           {
             if (basicAudio != null)
             {
@@ -995,9 +1021,9 @@ namespace MediaPortal.Player
 
     public override void SeekRelative(double dTime)
     {
-      if (m_state != PlayState.Init)
+      if (_state != PlayState.Init)
       {
-        if (mediaCtrl != null && mediaPos != null)
+        if (_mediaCtrl != null && mediaPos != null)
         {
 
           double dCurTime;
@@ -1013,56 +1039,83 @@ namespace MediaPortal.Player
       }
     }
 
-    public override void SeekAbsolute(double dTime)
+
+    public override void SeekAbsolute(double dTimeInSecs)
     {
-      if (m_state != PlayState.Init)
+      Log.Info("SeekAbsolute:seekabs:{0}", dTimeInSecs);
+
+
+      if (_state != PlayState.Init)
       {
-        if (mediaCtrl != null && mediaPos != null)
+        if (_mediaCtrl!= null && _mediaSeeking != null)
         {
-          if (dTime < 0.0d) dTime = 0.0d;
-          if (dTime < Duration)
+          if (dTimeInSecs < 0.0d)
+            dTimeInSecs = 0.0d;
+          if (dTimeInSecs > Duration)
+            dTimeInSecs = Duration;
+          dTimeInSecs = Math.Floor(dTimeInSecs);
+          Log.Info("RTSPPlayer: seekabs: {0} duration:{1} current pos:{2}", dTimeInSecs, Duration, CurrentPosition);
+          dTimeInSecs *= 10000000d;
+          long pStop = 0;
+          long lContentStart, lContentEnd;
+          double fContentStart, fContentEnd;
+          Log.Info("get available");
+          _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
+          Log.Info("get available done");
+          fContentStart = lContentStart;
+          fContentEnd = lContentEnd;
+
+          dTimeInSecs += fContentStart;
+          long lTime = (long)dTimeInSecs;
+          Log.Info("set positions");
+          if (VMR9Util.g_vmr9 != null)
+            VMR9Util.g_vmr9.FrameCounter = 123;
+          int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+
+          if (VMR9Util.g_vmr9 != null)
+            VMR9Util.g_vmr9.FrameCounter = 123;
+          Log.Info("set positions done");
+          if (hr != 0)
           {
-            Log.Info("rtspplayer: seekabs:{0}", dTime);
-            if (Vmr9 != null)
-              Vmr9.FrameCounter = 123;
-            mediaPos.put_CurrentPosition(dTime);
-            Log.Info("rtspplayer: seekabs:{0} done", dTime);
-            if (Vmr9 != null)
-              Vmr9.FrameCounter = 123;
+            Log.Error("seek failed->seek to 0 0x:{0:X}", hr);
           }
         }
+        UpdateCurrentPosition();
+        Log.Info("RTSPPlayer: current pos:{0}", CurrentPosition);
+
       }
     }
 
     public override void SeekRelativePercentage(int iPercentage)
     {
-      if (m_state != PlayState.Init)
+      if (_state != PlayState.Init)
       {
-        if (mediaCtrl != null && mediaPos != null)
+        if (_mediaCtrl!= null && _mediaSeeking != null)
         {
-          double dCurrentPos;
-          mediaPos.get_CurrentPosition(out dCurrentPos);
+          double dCurrentPos = this.CurrentPosition;
           double dDuration = Duration;
 
           double fCurPercent = (dCurrentPos / Duration) * 100.0d;
           double fOnePercent = Duration / 100.0d;
           fCurPercent = fCurPercent + (double)iPercentage;
           fCurPercent *= fOnePercent;
-          if (fCurPercent < 0.0d) fCurPercent = 0.0d;
+          if (fCurPercent < 0.0d)
+            fCurPercent = 0.0d;
           if (fCurPercent < Duration)
           {
-            mediaPos.put_CurrentPosition(fCurPercent);
+            SeekAbsolute(fCurPercent);
           }
         }
       }
     }
 
 
+
     public override void SeekAsolutePercentage(int iPercentage)
     {
-      if (m_state != PlayState.Init)
+      if (_state != PlayState.Init)
       {
-        if (mediaCtrl != null && mediaPos != null)
+        if (_mediaCtrl != null && mediaPos != null)
         {
           if (iPercentage < 0) iPercentage = 0;
           if (iPercentage >= 100) iPercentage = 100;
@@ -1081,7 +1134,7 @@ namespace MediaPortal.Player
 
     public override bool Ended
     {
-      get { return m_state == PlayState.Ended; }
+      get { return _state == PlayState.Ended; }
     }
 
 
@@ -1122,15 +1175,15 @@ namespace MediaPortal.Player
       if (!Playing)
         return;
 
-      if ((m_speedRate == 10000) || (mediaSeek == null))
+      if ((m_speedRate == 10000) || (_mediaSeeking == null))
         return;
 
       TimeSpan ts = DateTime.Now - elapsedTimer;
       if (ts.TotalMilliseconds < 100) return;
       long earliest, latest, current, stop, rewind, pStop;
 
-      mediaSeek.GetAvailable(out earliest, out latest);
-      mediaSeek.GetPositions(out current, out stop);
+      _mediaSeeking.GetAvailable(out earliest, out latest);
+      _mediaSeeking.GetPositions(out current, out stop);
 
       // Log.Info("earliest:{0} latest:{1} current:{2} stop:{3} speed:{4}, total:{5}",
       //         earliest/10000000,latest/10000000,current/10000000,stop/10000000,m_speedRate, (latest-earliest)/10000000);
@@ -1153,8 +1206,8 @@ namespace MediaPortal.Player
         m_speedRate = 10000;
         rewind = earliest;
         //Log.Info(" seek back:{0}",rewind/10000000);
-        hr = mediaSeek.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-        mediaCtrl.Run();
+        hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+        _mediaCtrl.Run();
         return;
       }
       // if we end up at the end of time then just
@@ -1164,15 +1217,15 @@ namespace MediaPortal.Player
         m_speedRate = 10000;
         rewind = latest - 100000;
         //Log.Info(" seek ff:{0}",rewind/10000000);
-        hr = mediaSeek.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-        mediaCtrl.Run();
+        hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+        _mediaCtrl.Run();
         return;
       }
 
       //seek to new moment in time
       //Log.Info(" seek :{0}",rewind/10000000);
-      hr = mediaSeek.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-      mediaCtrl.Pause();
+      hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+      _mediaCtrl.Pause();
     }
 
     #region IDisposable Members
