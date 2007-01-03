@@ -133,6 +133,7 @@ namespace MediaPortal.GUI.Pictures
     }
   }
   #endregion
+
   /// <summary>
   /// Summary description for Class1.
   /// </summary>

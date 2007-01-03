@@ -25,16 +25,20 @@
 
 using System;
 using System.Drawing;
-using MediaPortal.Video.Database;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Dialogs;
-using System.Web;
 using System.Net;
+using System.Threading;
+using System.Web;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
-using System.Threading;
+
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+//using MediaPortal.Services;
+//using MediaPortal.Threading;
+using MediaPortal.Util;
+using MediaPortal.Video.Database;
+
 namespace MediaPortal.GUI.Video
 {
   /// <summary>
@@ -54,6 +58,9 @@ namespace MediaPortal.GUI.Video
     [SkinControlAttribute(22)]   protected GUITextControl tbTextArea = null;
     [SkinControlAttribute(30)]   protected GUILabelControl lblImage = null;
     [SkinControlAttribute(100)]  protected GUILabelControl lblDisc = null;
+
+    public delegate void AmazonLookupCompleted();
+    public event AmazonLookupCompleted AmazonImagesDownloaded;
 
     enum ViewMode
     {
@@ -75,6 +82,7 @@ namespace MediaPortal.GUI.Video
 
     public override bool Init()
     {
+      AmazonImagesDownloaded +=new AmazonLookupCompleted(OnAmazonImagesDownloaded);
       return Load(GUIGraphicsContext.Skin + @"\DialogVideoInfo.xml");
     }
 
@@ -96,13 +104,15 @@ namespace MediaPortal.GUI.Video
       imdbCoverArtUrl = currentMovie.ThumbURL;
       coverArtUrls = new string[1];
       coverArtUrls[0] = imdbCoverArtUrl;
-      spinImages.Reset();
-      spinImages.SetReverse(true);
-      spinImages.SetRange(1, 1);
-      spinImages.Value = 1;
+      //spinImages.Reset();
+      //spinImages.SetReverse(true);
+      //spinImages.SetRange(1, 1);
+      //spinImages.Value = 1;
 
-      spinImages.ShowRange = true;
-      spinImages.UpDownType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
+      //spinImages.ShowRange = true;
+      //spinImages.UpDownType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
+
+      ResetSpinControl();
 
       spinDisc.Reset();
       viewmode = ViewMode.Image;
@@ -189,12 +199,15 @@ namespace MediaPortal.GUI.Video
           imdbCoverArtUrl = currentMovie.ThumbURL;
           coverArtUrls = new string[1];
           coverArtUrls[0] = imdbCoverArtUrl;
-          spinImages.Reset();
-          spinImages.SetReverse(true);
-          spinImages.SetRange(1, 1);
-          spinImages.Value = 1;
-          spinImages.ShowRange = true;
-          spinImages.UpDownType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
+          //spinImages.Reset();
+          //spinImages.SetReverse(true);
+          //spinImages.SetRange(1, 1);
+          //spinImages.Value = 1;
+          //spinImages.ShowRange = true;
+          //spinImages.UpDownType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
+
+          ResetSpinControl();
+
           Refresh();
           Update();
           imageSearchThread = new Thread(new ThreadStart(AmazonLookupThread));
@@ -329,8 +342,9 @@ namespace MediaPortal.GUI.Video
         string imageUrl = currentMovie.ThumbURL;
         if (imageUrl.Length > 0)
         {
-          string largeCoverArtImage = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
           coverArtImage = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
+          string largeCoverArtImage = MediaPortal.Util.Utils.ConvertToLargeCoverArt(coverArtImage);
+          
           if (!System.IO.File.Exists(coverArtImage))
           {
             string imageExtension;
@@ -391,21 +405,20 @@ namespace MediaPortal.GUI.Video
         AmazonImageSearch amazonSearch = new AmazonImageSearch();
         amazonSearch.Search(movie.Title);
         int thumb = 0;
+
         if (movie.ThumbURL != string.Empty)
-        {
           thumb = 1;
-        }
+
         int pictureCount = amazonSearch.Count + impSearch.Count + thumb;
         if (pictureCount == 0)
-        {
           return;
-        }
+
         int pictureIndex = 0;
         coverArtUrls = new string[pictureCount];
+
         if (movie.ThumbURL != string.Empty)
-        {
           coverArtUrls[pictureIndex++] = movie.ThumbURL;
-        }
+
         if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
         {
           for (int i = 0; i < impSearch.Count; ++i)
@@ -413,6 +426,7 @@ namespace MediaPortal.GUI.Video
             coverArtUrls[pictureIndex++] = impSearch[i];
           }
         }
+
         if (amazonSearch.Count > 0)
         {
           for (int i = 0; i < amazonSearch.Count; ++i)
@@ -420,14 +434,8 @@ namespace MediaPortal.GUI.Video
             coverArtUrls[pictureIndex++] = amazonSearch[i];
           }
         }
-        
-        spinImages.Reset();
-        spinImages.SetReverse(true);
-        spinImages.SetRange(1, pictureCount);
-        spinImages.Value = 1;
 
-        spinImages.ShowRange = true;
-        spinImages.UpDownType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
+        AmazonImagesDownloaded();
       }
       catch (ThreadAbortException)
       {
@@ -436,6 +444,23 @@ namespace MediaPortal.GUI.Video
       {
         imageSearchThread = null;
       }
+    }
+
+    private void ResetSpinControl()
+    {
+      spinImages.Reset();
+      //spinImages.SetReverse(true);
+      //spinImages.SetRange(1, pictureCount);
+      spinImages.SetRange(1, coverArtUrls.Length);
+      spinImages.Value = 1;
+
+      spinImages.ShowRange = true;
+      spinImages.UpDownType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
+    }
+
+    private void OnAmazonImagesDownloaded()
+    {
+      ResetSpinControl();
     }
 
     #region IMDB.IProgress

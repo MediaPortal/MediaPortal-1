@@ -1,7 +1,5 @@
-#region Copyright (C) 2005-2007 Team MediaPortal
-
 /* 
- *	Copyright (C) 2005-2007 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -21,8 +19,6 @@
  *
  */
 
-#endregion
-
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -31,9 +27,8 @@ using System.Collections;
 using SQLite.NET;
 using MediaPortal.GUI.View;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Video.Database;
 using MediaPortal.Configuration;
+using MediaPortal.Video.Database;
 
 namespace MediaPortal.GUI.Video
 {
@@ -42,8 +37,6 @@ namespace MediaPortal.GUI.Video
 	/// </summary>
 	public class VideoViewHandler
 	{
-
-
 		ViewDefinition currentView;
 		int						 currentLevel=0;
 		ArrayList      views=new ArrayList();
@@ -206,10 +199,10 @@ namespace MediaPortal.GUI.Video
 			ArrayList movies=new ArrayList();
 			string whereClause=String.Empty;
 			string orderClause=String.Empty;
-			string fromClause="movie,movieinfo,path";
+			string fromClause="actors,movie,movieinfo,path";
 			if (CurrentLevel >0)
 			{
-				whereClause="where movieinfo.idmovie=movie.idmovie and movie.idpath=path.idpath";
+				whereClause="where actors.idactor=movieinfo.idDirector and movieinfo.idmovie=movie.idmovie and movie.idpath=path.idpath";
 			}
 
 			for (int i=0; i < CurrentLevel;++i)
@@ -259,7 +252,7 @@ namespace MediaPortal.GUI.Video
 				}
 				else
 				{
-					whereClause="where movieinfo.idmovie=movie.idmovie and movie.idpath=path.idpath";
+					whereClause="where actors.idActor=movieinfo.idDirector and movieinfo.idmovie=movie.idmovie and movie.idpath=path.idpath";
 					BuildRestriction(defRoot,ref whereClause);
 					sql=String.Format("select * from {0} {1} {2}",
 						fromClause,whereClause,orderClause);
@@ -281,7 +274,7 @@ namespace MediaPortal.GUI.Video
 			}
 			else
 			{
-				sql=String.Format("select * from {0} {1} {2}",
+				sql=String.Format("select movieinfo.fRating,actors.strActor,movieinfo.strCredits,movieinfo.strTagLine,movieinfo.strPlotOutline,movieinfo.strPlot,movieinfo.strVotes,movieinfo.strCast,movieinfo.iYear,movieinfo.strGenre,movieinfo.strPictureURL,movieinfo.strTitle,path.strPath,movie.discid,movieinfo.IMDBID,movieinfo.idMovie,path.cdlabel,movieinfo.mpaa,movieinfo.runtime,movieinfo.iswatched from {0} {1} {2}",
 					fromClause,whereClause,orderClause);
 				VideoDatabase.GetMoviesByFilter(sql, out movies,true, true, true);
 			}
@@ -305,8 +298,8 @@ namespace MediaPortal.GUI.Video
 			}
 			if (useActorsTable)
 			{
-				fromClause+=String.Format(",actors,actorlinkmovie");
-				whereClause+=" and actors.idActor=actorlinkmovie.idActor and actorlinkmovie.idMovie=movieinfo.idMovie";
+				fromClause+=String.Format(",actors castactors,actorlinkmovie");
+				whereClause+=" and castactors.idActor=actorlinkmovie.idActor and actorlinkmovie.idMovie=movieinfo.idMovie";
 			}
 		}
 		void BuildRestriction(FilterDefinition filter,ref string whereClause)
@@ -377,7 +370,7 @@ namespace MediaPortal.GUI.Video
 		string GetFieldId(string where)
 		{
 			if (where=="watched") return "movieinfo.idMovie";
-			if (where=="actor") return "actors.idActor";
+			if (where=="actor") return "castactors.idActor";
 			if (where=="title") return "movieinfo.idMovie";
 			if (where=="genre") return "genre.idGenre";
 			if (where=="year") return "movieinfo.iYear";
@@ -431,3 +424,5 @@ namespace MediaPortal.GUI.Video
 		}
 	}
 }
+
+ 	  	 
