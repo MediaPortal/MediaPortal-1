@@ -40,11 +40,6 @@ TsStreamFileSource::createNew(UsageEnvironment& env, char const* fileName,
   {
     reader = new MultiFileReader();
 		__int64 fileSize= reader->GetFileSize();
-		__int64 offset=100*1024;
-		if (fileSize > offset)
-		{
-			reader->SetFilePointer(-offset, FILE_END);
-		}
   }
   else
   {
