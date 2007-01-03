@@ -4881,6 +4881,30 @@
 		<id>6029</id>
 		<value>Endre</value>
 	</string>
+  <string>
+    <id>6030</id>
+    <value>Idag</value>
+  </string>
+  <string>
+    <id>6031</id>
+    <value>Imorgen</value>
+  </string>
+  <string>
+    <id>6032</id>
+    <value>Søk etter tittel</value>
+  </string>
+  <string>
+    <id>6033</id>
+    <value>Søk etter n›kkelord</value>
+  </string>
+  <string>
+    <id>6034</id>
+    <value>Søk etter sjanger</value>
+  </string>
+  <string>
+    <id>6035</id>
+    <value>Legg til en oppgave</value>
+  </string>
 	<string Prefix="Min ">
 		<id>8000</id>
 		<value>Epost</value>
