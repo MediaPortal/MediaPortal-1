@@ -3,7 +3,7 @@
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <define>#header.image:television_logo.png</define>
-  <define>#header.label:6034</define>
+  <define>#header.label:6035</define>
   <define>#header.hover:hover_my tv.png</define>
   <controls>
     <import>common.window.xml</import>
