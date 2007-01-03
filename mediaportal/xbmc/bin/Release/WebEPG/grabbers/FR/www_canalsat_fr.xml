@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="fr" availableDays="14" timezone="W. Europe Standard Time" />
+  <Channels>
+    <Channel id="tf1.fr" siteId="91" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.canalsat.fr/index.php?tpl=217&amp;DAY=[DD]-[MM]-[YYYY]&amp;cha=[ID]&amp;tra=[PAGE_OFFSET]&amp;multi=2" post="" external="false" encoding="" />
+    <Search startPage="1" endPage="5" />
+    <Html>
+      <Template name="default" start="id=&quot;wn1&quot;" end="id=&quot;wn2&quot;">
+        <SectionTemplate tags="DP">
+          <TemplateText>
+            &lt;div&gt;&lt;#START&gt;&lt;/div&gt;
+            &lt;div&gt;&lt;/div&gt;
+            &lt;div&gt;&lt;p&gt;
+            &lt;a href&gt;&lt;#TITLE&gt;&lt;/a&gt;
+            &lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div&gt;&lt;/div&gt;
+            &lt;div&gt;
+            &lt;p&gt;
+            &lt;span&gt;&lt;/span&gt;à&lt;#END&gt;&lt;br /&gt;&lt;br /&gt;&lt;#GENRE&gt;&lt;br /&gt;&lt;br /&gt;
+            &lt;/p&gt;
+            &lt;/div&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

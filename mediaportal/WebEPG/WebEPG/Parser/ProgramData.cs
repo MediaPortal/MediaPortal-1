@@ -441,7 +441,7 @@ namespace MediaPortal.WebEPG.Parser
       {
         // convert to Title case - dependant on culture
         TextInfo text = CultureInfo.CurrentCulture.TextInfo;
-        return text.ToTitleCase(value);
+        return text.ToTitleCase(value.ToLower());
       }
 
       return value;

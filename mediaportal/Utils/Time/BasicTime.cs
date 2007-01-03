@@ -252,7 +252,7 @@ namespace MediaPortal.Utils.Time
 
       int sepPos;
 
-      char[] timeSeperators = { ':', '.', 'h' };
+      char[] timeSeperators = { ':', '.', 'h', 'H' };
 
       if ((sepPos = strTime.IndexOfAny(timeSeperators)) != -1)
       {

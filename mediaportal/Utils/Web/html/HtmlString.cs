@@ -127,6 +127,7 @@ namespace MediaPortal.Utils.Web
       stripped = stripped.Replace("\r", "");
       stripped = stripped.Replace("\t", "");
       stripped = stripped.Replace("<br>", "\n");
+      stripped = stripped.Replace("<br />", "\n");
 
       return stripped;
     }
