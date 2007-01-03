@@ -201,5 +201,24 @@ namespace SetupTv.Sections
       editChannelToolStripMenuItem_Click(null, null);
     }
 
+    private void listView1_AfterLabelEdit(object sender, LabelEditEventArgs e)
+    {
+      try
+      {
+        int oldIndex = e.Item;
+        ListViewItem item = listView1.Items[oldIndex];
+        int newIndex = (Int32.Parse(e.Label) - 1);
+        if (newIndex == oldIndex) return;
+
+        listView1.Items.RemoveAt(oldIndex);
+        listView1.Items.Insert(newIndex, item);
+        ReOrder();
+        e.CancelEdit = true;
+      }
+      catch (Exception)
+      {
+      }
+    }
+
   }
 }
