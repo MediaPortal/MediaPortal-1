@@ -4881,6 +4881,26 @@
         <value>Change</value>
     </string>
     <string>
+        <id>6030</id>
+        <value>Aujourd'hui</value>
+    </string>
+    <string>
+        <id>6031</id>
+        <value>Demain</value>
+    </string>
+    <string>
+        <id>6032</id>
+        <value>Recherche par titre</value>
+    </string>
+    <string>
+        <id>6033</id>
+        <value>Recherche par mot-clé</value>
+    </string>
+    <string>
+        <id>6034</id>
+        <value>Recherche par genre</value>
+    </string>
+    <string>
         <id>8000</id>
         <value>Messages</value>
     </string>
@@ -5312,6 +5332,134 @@
     <string>
         <id>19119</id>
         <value>Recommencer la partie</value>
+    </string>
+    <string>
+        <id>19120</id>
+        <value>Filtre Candidats</value>
+    </string>
+    <string>
+        <id>19121</id>
+        <value>Heure: </value>
+    </string>
+    <string>
+        <id>19122</id>
+        <value>Filtre 1</value>
+    </string>
+    <string>
+        <id>19123</id>
+        <value>Filtre 2</value>
+    </string>
+    <string>
+        <id>19124</id>
+        <value>Filtre 3</value>
+    </string>
+    <string>
+        <id>19125</id>
+        <value>Filtre 4</value>
+    </string>
+    <string>
+        <id>19126</id>
+        <value>Filtre 5</value>
+    </string>
+    <string>
+        <id>19127</id>
+        <value>Filtre 6</value>
+    </string>
+    <string>
+        <id>19128</id>
+        <value>Filtre 7</value>
+    </string>
+    <string>
+        <id>19129</id>
+        <value>Filtre 8</value>
+    </string>
+    <string>
+        <id>19130</id>
+        <value>Filtre 9</value>
+    </string>
+    <string>
+        <id>19131</id>
+        <value>Filtre pairs</value>
+    </string>
+    <string>
+        <id>19132</id>
+        <value>Filtre off</value>
+    </string>
+    <string>
+        <id>19133</id>
+        <value>Ajout/Supprime Candidats</value>
+    </string>
+    <string>
+        <id>19134</id>
+        <value>Toggle 1</value>
+    </string>
+    <string>
+        <id>19135</id>
+        <value>Toggle 2</value>
+    </string>
+    <string>
+        <id>19136</id>
+        <value>Toggle 3</value>
+    </string>
+    <string>
+        <id>19137</id>
+        <value>Toggle 4</value>
+    </string>
+    <string>
+        <id>19138</id>
+        <value>Toggle 5</value>
+    </string>
+    <string>
+        <id>19139</id>
+        <value>Toggle 6</value>
+    </string>
+    <string>
+        <id>19140</id>
+        <value>Toggle 7</value>
+    </string>
+    <string>
+        <id>19141</id>
+        <value>Toggle 8</value>
+    </string>
+    <string>
+        <id>19142</id>
+        <value>Toggle 9</value>
+    </string>
+    <string>
+        <id>19143</id>
+        <value>Candidats</value>
+    </string>
+    <string>
+        <id>19144</id>
+        <value>Montre candidats</value>
+    </string>
+    <string>
+        <id>19145</id>
+        <value>Cache candidats</value>
+    </string>
+    <string>
+        <id>19146</id>
+        <value>Efface candidats</value>
+    </string>
+    <string>
+        <id>19147</id>
+        <value>Init. candidats</value>
+    </string>
+    <string>
+        <id>19148</id>
+        <value>Assistance</value>
+    </string>
+    <string>
+        <id>19149</id>
+        <value>Filtres</value>
+    </string>
+    <string>
+        <id>19150</id>
+        <value>Candidats</value>
+    </string>
+    <string>
+        <id>19151</id>
+        <value>Ajout/Supprime candidats</value>
     </string>
     <string>
         <id>25001</id>
@@ -6294,4 +6442,4 @@
         <id>200038</id>
         <value>Sur un PC de bureau partagé avec d'autres applications</value>
     </string>
-</strings>
+</strings>	  	 
