@@ -427,6 +427,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="TvMovie\TvMovieSchedules.cs" />
     <Compile Include="TvMovie\TvMovieSettings.cs">
       <SubType>Form</SubType>
     </Compile>

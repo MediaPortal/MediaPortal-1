@@ -42,18 +42,16 @@ namespace ProcessPlugins.TvMovie
 {
   class TvMovieDatabase
   {
-    private OleDbConnection _databaseConnection = null;
-    private bool _canceled = false;
-    private ArrayList _stations = null;
-    private ArrayList _channelList = null;
+    private static OleDbConnection _databaseConnection = null;
+    private static bool _canceled = false;
+    private static ArrayList _stationsList = null;
+    private static ArrayList _channelList = null;
+    private static ArrayList _mappingList = null;
     private int _programsCounter = 0;
     private bool _useShortProgramDesc = false;
     private bool _extendDescription = false;
     private bool _showAudioFormat = false;
     private bool _slowImport = false;
-
-    static string _xmlFile;
-
 
     public delegate void ProgramsChanged(int value, int maximum, string text);
     public event ProgramsChanged OnProgramsChanged;
@@ -126,7 +124,7 @@ namespace ProcessPlugins.TvMovie
 
     public ArrayList Stations
     {
-      get { return _stations; }
+      get { return GetStationsList(); }
     }
 
 
@@ -235,102 +233,144 @@ namespace ProcessPlugins.TvMovie
         _slowImport = xmlreader.GetValueAsBool("tvmovie", "slowimport", false);
       }
 
-      _xmlFile = Config.GetFile(Config.Dir.Config, "TVMovieMapping.xml");
 
-      string dataProviderString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0}";
 
-      //Log.Debug("TVMovie: DB path: {0}", DatabasePath);
-
-      if (DatabasePath != string.Empty)
-        dataProviderString = string.Format(dataProviderString, DatabasePath);
-      else
-        return;
-
-      _databaseConnection = new OleDbConnection(dataProviderString);
-
-      string sqlSelect = "SELECT Sender.SenderKennung FROM Sender WHERE (((Sender.Favorit)=-1)) ORDER BY Sender.SenderKennung DESC;";
-
-      OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection);
-      OleDbDataAdapter databaseAdapter = new OleDbDataAdapter(databaseCommand);
-      DataSet tvMovieTable = new DataSet();
-
-      try
-      {
-        _databaseConnection.Open();
-        databaseAdapter.Fill(tvMovieTable, "Sender");
-      }
-      catch (System.Data.OleDb.OleDbException ex)
-      {
-        Log.Error("TVMovie: Error accessing TV Movie Clickfinder database while reading stations");
-        Log.Error("TVMovie: Exception: {0}", ex);
-        _canceled = true;
-        return;
-      }
-      finally
-      {
-        _databaseConnection.Close();
-      }
-
-      _stations = new ArrayList();
-      foreach (DataRow sender in tvMovieTable.Tables["Sender"].Rows)
-        _stations.Add(sender["Senderkennung"]);
-
-      _channelList = new ArrayList();
-      TVDatabase.GetChannels(ref _channelList);
+      
     }
 
 
-    private ArrayList GetMappingList()
+    private static ArrayList GetStationsList()
     {
-      if (!File.Exists(_xmlFile))
+      if (_stationsList == null)
       {
-        Log.Error("TVMovie: Mapping file \"{0}\" does not exist", _xmlFile);
-        return null;
-      }
-      ArrayList mappingList = new ArrayList();
+        string dataProviderString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0}";
 
-      try
-      {
-        XmlDocument doc = new XmlDocument();
-        doc.Load(_xmlFile);
-        XmlNodeList listChannels = doc.DocumentElement.SelectNodes("/channellist/channel");
-        foreach (XmlNode channel in listChannels)
+        //Log.Debug("TVMovie: DB path: {0}", DatabasePath);
+
+        if (DatabasePath != string.Empty)
+          dataProviderString = string.Format(dataProviderString, DatabasePath);
+        else
+          return null;
+
+        _databaseConnection = new OleDbConnection(dataProviderString);
+
+        string sqlSelect = "SELECT Sender.SenderKennung FROM Sender WHERE (((Sender.Favorit)=-1)) ORDER BY Sender.SenderKennung DESC;";
+
+        OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection);
+        OleDbDataAdapter databaseAdapter = new OleDbDataAdapter(databaseCommand);
+        DataSet tvMovieTable = new DataSet();
+
+        try
         {
-          XmlNodeList listStations = channel.SelectNodes("station");
-          foreach (XmlNode station in listStations)
-          {
-            if (station != null)
-            {
-              XmlNode timesharing = station.SelectSingleNode("timesharing");
-              string newStart = timesharing.Attributes["start"].Value;
-              string newEnd = timesharing.Attributes["end"].Value;
-              string newChannel = (string)channel.Attributes["name"].Value;
-              string newStation = (string)station.Attributes["name"].Value;
+          _databaseConnection.Open();
+          databaseAdapter.Fill(tvMovieTable, "Sender");
+        }
+        catch (System.Data.OleDb.OleDbException ex)
+        {
+          Log.Error("TVMovie: Error accessing TV Movie ClickFinder database while reading stations");
+          Log.Error("TVMovie: Exception: {0}", ex);
+          _canceled = true;
+          return null;
+        }
+        finally
+        {
+          _databaseConnection.Close();
+        }
 
-              if (CheckChannel(newChannel) && CheckStation(newStation))
-                mappingList.Add(new TvMovieDatabase.Mapping(newChannel, newStation, newStart, newEnd));
+        _stationsList = new ArrayList();
+        foreach (DataRow sender in tvMovieTable.Tables["Sender"].Rows)
+          _stationsList.Add(sender["Senderkennung"]);
+      }
+      return _stationsList;
+    }
+
+
+    private static ArrayList GetChannelList()
+    {
+      if (_channelList == null)
+      {
+        _channelList = new ArrayList();
+        TVDatabase.GetChannels(ref _channelList);
+      }
+      return _channelList;
+    }
+
+
+    private static ArrayList GetMappingList()
+    {
+      if (_mappingList == null)
+      {
+        string xmlFile = Config.GetFile(Config.Dir.Config, "TVMovieMapping.xml");
+        if (!File.Exists(xmlFile))
+        {
+          Log.Error("TVMovie: Mapping file \"{0}\" does not exist", xmlFile);
+          return null;
+        }
+        _mappingList = new ArrayList();
+
+        try
+        {
+          XmlDocument doc = new XmlDocument();
+          doc.Load(xmlFile);
+          XmlNodeList listChannels = doc.DocumentElement.SelectNodes("/channellist/channel");
+          foreach (XmlNode channel in listChannels)
+          {
+            XmlNodeList listStations = channel.SelectNodes("station");
+            foreach (XmlNode station in listStations)
+            {
+              if (station != null)
+              {
+                XmlNode timesharing = station.SelectSingleNode("timesharing");
+                string newStart = timesharing.Attributes["start"].Value;
+                string newEnd = timesharing.Attributes["end"].Value;
+                string newChannel = (string)channel.Attributes["name"].Value;
+                string newStation = (string)station.Attributes["name"].Value;
+                int newChannelId = MediaPortal.TV.Database.TVDatabase.GetChannelId(newChannel);
+
+                if (CheckChannel(newChannel) && CheckStation(newStation))
+                  _mappingList.Add(new TvMovieDatabase.Mapping(newChannel, newStation, newStart, newEnd));
+              }
             }
           }
         }
-      }
-      catch (System.Xml.XmlException ex)
-      {
-        Log.Error("TVMovie: The mapping file \"{0}\" seems to be corrupt", _xmlFile);
-        Log.Error("TVMovie: {0}", ex.Message);
-        return null;
+        catch (System.Xml.XmlException ex)
+        {
+          Log.Error("TVMovie: The mapping file \"{0}\" seems to be corrupt", xmlFile);
+          Log.Error("TVMovie: {0}", ex.Message);
+          return null;
+        }
+        catch (Exception)
+        {
+          Log.Error("EX");
+        }
       }
 
-      if (mappingList.Count > 0)
-        return mappingList;
+      if (_mappingList.Count > 0)
+        return _mappingList;
       else
         return null;
     }
 
 
-    private bool CheckChannel(string channelName)
+    public static string GetChannelName(string stationName)
     {
-      if (_channelList != null)
-        foreach (TVChannel channel in _channelList)
+      ArrayList mappingList = GetMappingList();
+
+      foreach (Mapping mapping in mappingList)
+      {
+        if (mapping.Station == stationName)
+          return mapping.Channel;
+      }
+      return string.Empty;
+    }
+
+
+    private static bool CheckChannel(string channelName)
+    {
+      ArrayList channelList = GetChannelList();
+
+      if (channelList != null)
+        foreach (TVChannel channel in channelList)
           if (channel.Name == channelName)
             return true;
 
@@ -338,10 +378,12 @@ namespace ProcessPlugins.TvMovie
     }
 
 
-    private bool CheckStation(string stationName)
+    private static bool CheckStation(string stationName)
     {
-      if (_stations != null)
-        foreach (string station in _stations)
+      ArrayList stationsList = GetStationsList();
+
+      if (stationsList != null)
+        foreach (string station in stationsList)
           if (station == stationName)
             return true;
 
@@ -466,7 +508,7 @@ namespace ProcessPlugins.TvMovie
         if (_canceled)
           break;
 
-        string channel = stationName;                                     // idChannel (table channel) ==> Senderkennung match strChannel
+        //string channel = stationName;                                     // idChannel (table channel) ==> Senderkennung match strChannel
         string classification = guideEntry["FSK"].ToString();             // strClassification ==> FSK
         string date = guideEntry["Herstellungsjahr"].ToString();          // strDate ==> Herstellungsjahr
         string description;
@@ -623,8 +665,10 @@ namespace ProcessPlugins.TvMovie
 
       int maximum = 0;
 
+      ArrayList stationsList = GetStationsList();
+
       //Log.Debug("TVMovie: Calculating stations");
-      foreach (string station in _stations)
+      foreach (string station in stationsList)
         foreach (Mapping mapping in mappingList)
           if (mapping.Station == station)
           {
@@ -639,7 +683,7 @@ namespace ProcessPlugins.TvMovie
 
       //Log.Debug("TVMovie: Importing stations");
 
-      foreach (string station in _stations)
+      foreach (string station in stationsList)
       {
         if (_canceled)
           return;

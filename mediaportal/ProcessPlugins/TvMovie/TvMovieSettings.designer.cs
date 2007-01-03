@@ -73,10 +73,7 @@ namespace ProcessPlugins.TvMovie
       this.tabPageMapChannels = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.labelNote = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabPageSettings = new System.Windows.Forms.TabPage();
-      this.groupBoxSpecial = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.checkBoxUseDatabaseDate = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBoxImport = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxPerformance = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxSlowImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxGeneral = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxAdditionalInfo = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -84,6 +81,7 @@ namespace ProcessPlugins.TvMovie
       this.checkBoxUseShortDesc = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpBeveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+      this.checkBoxImportSchedules = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxMapping.SuspendLayout();
       this.panelTimeSpan.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -91,8 +89,7 @@ namespace ProcessPlugins.TvMovie
       this.mpTabControl.SuspendLayout();
       this.tabPageMapChannels.SuspendLayout();
       this.tabPageSettings.SuspendLayout();
-      this.groupBoxSpecial.SuspendLayout();
-      this.groupBoxImport.SuspendLayout();
+      this.groupBoxPerformance.SuspendLayout();
       this.groupBoxGeneral.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -321,8 +318,7 @@ namespace ProcessPlugins.TvMovie
       // 
       // tabPageSettings
       // 
-      this.tabPageSettings.Controls.Add(this.groupBoxSpecial);
-      this.tabPageSettings.Controls.Add(this.groupBoxImport);
+      this.tabPageSettings.Controls.Add(this.groupBoxPerformance);
       this.tabPageSettings.Controls.Add(this.groupBoxGeneral);
       this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
       this.tabPageSettings.Name = "tabPageSettings";
@@ -332,50 +328,16 @@ namespace ProcessPlugins.TvMovie
       this.tabPageSettings.Text = "Settings";
       this.tabPageSettings.UseVisualStyleBackColor = true;
       // 
-      // groupBoxSpecial
+      // groupBoxPerformance
       // 
-      this.groupBoxSpecial.Controls.Add(this.label2);
-      this.groupBoxSpecial.Controls.Add(this.checkBoxUseDatabaseDate);
-      this.groupBoxSpecial.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxSpecial.Location = new System.Drawing.Point(16, 188);
-      this.groupBoxSpecial.Name = "groupBoxSpecial";
-      this.groupBoxSpecial.Size = new System.Drawing.Size(472, 80);
-      this.groupBoxSpecial.TabIndex = 14;
-      this.groupBoxSpecial.TabStop = false;
-      this.groupBoxSpecial.Text = "Special";
-      this.groupBoxSpecial.Visible = false;
-      // 
-      // label2
-      // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(32, 48);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(421, 13);
-      this.label2.TabIndex = 12;
-      this.label2.Text = "(Every use of the ClickFinder main application will result in an EPG import in Me" +
-          "diaPortal)";
-      // 
-      // checkBoxUseDatabaseDate
-      // 
-      this.checkBoxUseDatabaseDate.AutoSize = true;
-      this.checkBoxUseDatabaseDate.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxUseDatabaseDate.Location = new System.Drawing.Point(16, 26);
-      this.checkBoxUseDatabaseDate.Name = "checkBoxUseDatabaseDate";
-      this.checkBoxUseDatabaseDate.Size = new System.Drawing.Size(248, 17);
-      this.checkBoxUseDatabaseDate.TabIndex = 11;
-      this.checkBoxUseDatabaseDate.Text = "Use ClickFinder 5.2 Beta (mind the note below!)";
-      this.checkBoxUseDatabaseDate.UseVisualStyleBackColor = true;
-      // 
-      // groupBoxImport
-      // 
-      this.groupBoxImport.Controls.Add(this.checkBoxSlowImport);
-      this.groupBoxImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxImport.Location = new System.Drawing.Point(16, 124);
-      this.groupBoxImport.Name = "groupBoxImport";
-      this.groupBoxImport.Size = new System.Drawing.Size(472, 56);
-      this.groupBoxImport.TabIndex = 13;
-      this.groupBoxImport.TabStop = false;
-      this.groupBoxImport.Text = "Import";
+      this.groupBoxPerformance.Controls.Add(this.checkBoxSlowImport);
+      this.groupBoxPerformance.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxPerformance.Location = new System.Drawing.Point(16, 152);
+      this.groupBoxPerformance.Name = "groupBoxPerformance";
+      this.groupBoxPerformance.Size = new System.Drawing.Size(472, 56);
+      this.groupBoxPerformance.TabIndex = 13;
+      this.groupBoxPerformance.TabStop = false;
+      this.groupBoxPerformance.Text = "Performance";
       // 
       // checkBoxSlowImport
       // 
@@ -390,13 +352,14 @@ namespace ProcessPlugins.TvMovie
       // 
       // groupBoxGeneral
       // 
+      this.groupBoxGeneral.Controls.Add(this.checkBoxImportSchedules);
       this.groupBoxGeneral.Controls.Add(this.checkBoxAdditionalInfo);
       this.groupBoxGeneral.Controls.Add(this.checkBoxShowAudioFormat);
       this.groupBoxGeneral.Controls.Add(this.checkBoxUseShortDesc);
       this.groupBoxGeneral.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxGeneral.Location = new System.Drawing.Point(16, 16);
       this.groupBoxGeneral.Name = "groupBoxGeneral";
-      this.groupBoxGeneral.Size = new System.Drawing.Size(472, 100);
+      this.groupBoxGeneral.Size = new System.Drawing.Size(472, 128);
       this.groupBoxGeneral.TabIndex = 0;
       this.groupBoxGeneral.TabStop = false;
       this.groupBoxGeneral.Text = "General";
@@ -417,7 +380,7 @@ namespace ProcessPlugins.TvMovie
       // 
       this.checkBoxShowAudioFormat.AutoSize = true;
       this.checkBoxShowAudioFormat.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxShowAudioFormat.Location = new System.Drawing.Point(16, 71);
+      this.checkBoxShowAudioFormat.Location = new System.Drawing.Point(16, 72);
       this.checkBoxShowAudioFormat.Name = "checkBoxShowAudioFormat";
       this.checkBoxShowAudioFormat.Size = new System.Drawing.Size(112, 17);
       this.checkBoxShowAudioFormat.TabIndex = 12;
@@ -452,6 +415,17 @@ namespace ProcessPlugins.TvMovie
       this.openFileDialog.Filter = "TV Movie Database|*.mdb";
       this.openFileDialog.RestoreDirectory = true;
       // 
+      // checkBoxImportSchedules
+      // 
+      this.checkBoxImportSchedules.AutoSize = true;
+      this.checkBoxImportSchedules.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxImportSchedules.Location = new System.Drawing.Point(16, 96);
+      this.checkBoxImportSchedules.Name = "checkBoxImportSchedules";
+      this.checkBoxImportSchedules.Size = new System.Drawing.Size(298, 17);
+      this.checkBoxImportSchedules.TabIndex = 16;
+      this.checkBoxImportSchedules.Text = "Import recording schedules from ClickFinder (Experimental)";
+      this.checkBoxImportSchedules.UseVisualStyleBackColor = true;
+      // 
       // TvMovieSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -482,10 +456,8 @@ namespace ProcessPlugins.TvMovie
       this.tabPageMapChannels.ResumeLayout(false);
       this.tabPageMapChannels.PerformLayout();
       this.tabPageSettings.ResumeLayout(false);
-      this.groupBoxSpecial.ResumeLayout(false);
-      this.groupBoxSpecial.PerformLayout();
-      this.groupBoxImport.ResumeLayout(false);
-      this.groupBoxImport.PerformLayout();
+      this.groupBoxPerformance.ResumeLayout(false);
+      this.groupBoxPerformance.PerformLayout();
       this.groupBoxGeneral.ResumeLayout(false);
       this.groupBoxGeneral.PerformLayout();
       this.ResumeLayout(false);
@@ -518,13 +490,11 @@ namespace ProcessPlugins.TvMovie
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowAudioFormat;
     private System.Windows.Forms.TabPage tabPageSettings;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxGeneral;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxImport;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxPerformance;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxSlowImport;
     private MediaPortal.UserInterface.Controls.MPLabel labelNote;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAdditionalInfo;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxSpecial;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseDatabaseDate;
-    private System.Windows.Forms.Label label2;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxImportSchedules;
   }
 }
 

@@ -346,6 +346,7 @@ namespace MediaPortal.TV.Database
     public DateTime StartTime
     {
       get { return MediaPortal.Util.Utils.longtodate(_startTime); }
+      set { _startTime = MediaPortal.Util.Utils.datetolong(value); }
     }
 
     /// <summary>
@@ -354,6 +355,7 @@ namespace MediaPortal.TV.Database
     public DateTime EndTime
     {
       get { return MediaPortal.Util.Utils.longtodate(_endTime); }
+      set { _endTime = MediaPortal.Util.Utils.datetolong(value); }
     }
 
     #endregion

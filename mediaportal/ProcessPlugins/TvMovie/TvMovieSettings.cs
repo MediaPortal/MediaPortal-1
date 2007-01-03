@@ -130,6 +130,64 @@ namespace ProcessPlugins.TvMovie
     }
 
 
+    private void maskedTextBoxTimeStart_Validated(object sender, EventArgs e)
+    {
+      ChannelInfo channelInfo = (ChannelInfo)treeViewChannels.SelectedNode.Tag;
+      channelInfo.Start = CleanInput(maskedTextBoxTimeStart.Text);
+      maskedTextBoxTimeStart.Text = CleanInput(maskedTextBoxTimeStart.Text);
+      treeViewChannels.SelectedNode.Tag = channelInfo;
+      if (channelInfo.Start != "00:00" || channelInfo.End != "00:00")
+        treeViewChannels.SelectedNode.Text = string.Format("{0} ({1}-{2})", channelInfo.Name, channelInfo.Start, channelInfo.End);
+      else
+        treeViewChannels.SelectedNode.Text = string.Format("{0}", channelInfo.Name);
+    }
+
+
+    private void maskedTextBoxTimeEnd_Validated(object sender, EventArgs e)
+    {
+      ChannelInfo channelInfo = (ChannelInfo)treeViewChannels.SelectedNode.Tag;
+      channelInfo.End = CleanInput(maskedTextBoxTimeEnd.Text);
+      maskedTextBoxTimeEnd.Text = CleanInput(maskedTextBoxTimeEnd.Text);
+      treeViewChannels.SelectedNode.Tag = channelInfo;
+      if (channelInfo.Start != "00:00" || channelInfo.End != "00:00")
+        treeViewChannels.SelectedNode.Text = string.Format("{0} ({1}-{2})", channelInfo.Name, channelInfo.Start, channelInfo.End);
+      else
+        treeViewChannels.SelectedNode.Text = string.Format("{0}", channelInfo.Name);
+    }
+
+
+    private void checkBoxUseShortDesc_CheckedChanged(object sender, EventArgs e)
+    {
+      if (checkBoxUseShortDesc.Checked)
+      {
+        checkBoxAdditionalInfo.Checked = false;
+        checkBoxAdditionalInfo.Enabled = false;
+      }
+      checkBoxAdditionalInfo.Enabled = true;
+    }
+
+
+    private void checkBoxAdditionalInfo_CheckedChanged(object sender, EventArgs e)
+    {
+      if (checkBoxAdditionalInfo.Checked)
+        checkBoxUseShortDesc.Checked = false;
+    }
+
+
+    private void treeViewChannels_AfterSelect(object sender, TreeViewEventArgs e)
+    {
+      if (e.Node.Parent == null || e.Node.Tag == null)
+      {
+        panelTimeSpan.Visible = false;
+        return;
+      }
+      panelTimeSpan.Visible = true;
+      ChannelInfo channelInfo = (ChannelInfo)e.Node.Tag;
+      maskedTextBoxTimeStart.Text = channelInfo.Start;
+      maskedTextBoxTimeEnd.Text = channelInfo.End;
+    }
+
+
     #endregion
 
     #region Implementation
@@ -143,7 +201,7 @@ namespace ProcessPlugins.TvMovie
         checkBoxAdditionalInfo.Checked = xmlreader.GetValueAsBool("tvmovie", "extenddescription", false);
         checkBoxShowAudioFormat.Checked = xmlreader.GetValueAsBool("tvmovie", "showaudioformat", false);
         checkBoxSlowImport.Checked = xmlreader.GetValueAsBool("tvmovie", "slowimport", false);
-        checkBoxUseDatabaseDate.Checked = xmlreader.GetValueAsBool("tvmovie", "usedatabasedate", true);
+        checkBoxImportSchedules.Checked = xmlreader.GetValueAsBool("tvmovie", "importschedules", true);
       }
     }
 
@@ -156,7 +214,7 @@ namespace ProcessPlugins.TvMovie
         xmlwriter.SetValueAsBool("tvmovie", "extenddescription", checkBoxAdditionalInfo.Checked);
         xmlwriter.SetValueAsBool("tvmovie", "showaudioformat", checkBoxShowAudioFormat.Checked);
         xmlwriter.SetValueAsBool("tvmovie", "slowimport", checkBoxSlowImport.Checked);
-        xmlwriter.SetValueAsBool("tvmovie", "usedatabasedate", checkBoxUseDatabaseDate.Checked);
+        xmlwriter.SetValueAsBool("tvmovie", "importschedules", checkBoxImportSchedules.Checked);
       }
     }
 
@@ -391,29 +449,12 @@ namespace ProcessPlugins.TvMovie
     }
 
 
-    #endregion
-
-
     private void ColorNode(TreeNode channelNode, Color color)
     {
       foreach (TreeNode stationNode in channelNode.Nodes)
       {
         stationNode.ForeColor = color;
       }
-    }
-
-
-    private void treeViewChannels_AfterSelect(object sender, TreeViewEventArgs e)
-    {
-      if (e.Node.Parent == null || e.Node.Tag == null)
-      {
-        panelTimeSpan.Visible = false;
-        return;
-      }
-      panelTimeSpan.Visible = true;
-      ChannelInfo channelInfo = (ChannelInfo)e.Node.Tag;
-      maskedTextBoxTimeStart.Text = channelInfo.Start;
-      maskedTextBoxTimeEnd.Text = channelInfo.End;
     }
 
 
@@ -438,46 +479,7 @@ namespace ProcessPlugins.TvMovie
     }
 
 
-    private void maskedTextBoxTimeStart_Validated(object sender, EventArgs e)
-    {
-      ChannelInfo channelInfo = (ChannelInfo)treeViewChannels.SelectedNode.Tag;
-      channelInfo.Start = CleanInput(maskedTextBoxTimeStart.Text);
-      maskedTextBoxTimeStart.Text = CleanInput(maskedTextBoxTimeStart.Text);
-      treeViewChannels.SelectedNode.Tag = channelInfo;
-      if (channelInfo.Start != "00:00" || channelInfo.End != "00:00")
-        treeViewChannels.SelectedNode.Text = string.Format("{0} ({1}-{2})", channelInfo.Name, channelInfo.Start, channelInfo.End);
-      else
-        treeViewChannels.SelectedNode.Text = string.Format("{0}", channelInfo.Name);
-    }
-
-
-    private void maskedTextBoxTimeEnd_Validated(object sender, EventArgs e)
-    {
-      ChannelInfo channelInfo = (ChannelInfo)treeViewChannels.SelectedNode.Tag;
-      channelInfo.End = CleanInput(maskedTextBoxTimeEnd.Text);
-      maskedTextBoxTimeEnd.Text = CleanInput(maskedTextBoxTimeEnd.Text);
-      treeViewChannels.SelectedNode.Tag = channelInfo;
-      if (channelInfo.Start != "00:00" || channelInfo.End != "00:00")
-        treeViewChannels.SelectedNode.Text = string.Format("{0} ({1}-{2})", channelInfo.Name, channelInfo.Start, channelInfo.End);
-      else
-        treeViewChannels.SelectedNode.Text = string.Format("{0}", channelInfo.Name);
-    }
-
-    private void checkBoxUseShortDesc_CheckedChanged(object sender, EventArgs e)
-    {
-      if (checkBoxUseShortDesc.Checked)
-      {
-        checkBoxAdditionalInfo.Checked = false;
-        checkBoxAdditionalInfo.Enabled = false;
-      }
-      checkBoxAdditionalInfo.Enabled = true;
-    }
-
-    private void checkBoxAdditionalInfo_CheckedChanged(object sender, EventArgs e)
-    {
-      if (checkBoxAdditionalInfo.Checked)
-        checkBoxUseShortDesc.Checked = false;
-    }
+    #endregion
 
   }
 }

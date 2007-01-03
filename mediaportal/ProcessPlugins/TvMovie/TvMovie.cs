@@ -39,7 +39,8 @@ namespace ProcessPlugins.TvMovie
   public class TvMovie : ISetupForm, IPlugin
   {
     private TvMovieDatabase _database;
-    private System.Threading.Timer _stateTimer;
+    private TvMovieSchedules _schedules;
+    private System.Threading.Timer _epgImportTimer;
     private bool _isImporting = false;
 
     private void ImportThread()
@@ -154,7 +155,10 @@ namespace ProcessPlugins.TvMovie
     public void Start()
     {
       TimerCallback timerCallBack = new TimerCallback(StartImportThread);
-      _stateTimer = new System.Threading.Timer(timerCallBack, null, 10000, 1800000);
+      _epgImportTimer = new System.Threading.Timer(timerCallBack, null, 10000, 1800000);
+
+      _schedules = new TvMovieSchedules();
+      _schedules.Start();
     }
 
 
@@ -162,7 +166,8 @@ namespace ProcessPlugins.TvMovie
     {
       if (_database != null)
         _database.Canceled = true;
-      _stateTimer.Dispose();
+      _epgImportTimer.Dispose();
+      _schedules.Stop();
     }
 
 
