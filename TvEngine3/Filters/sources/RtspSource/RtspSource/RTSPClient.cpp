@@ -82,6 +82,7 @@ Boolean CRTSPClient::clientStartPlayingSession(Medium* client,MediaSession* sess
 	Log("CRTSPClient::clientStartPlayingSession()");
   if (client == NULL || session == NULL) return False;
   RTSPClient* rtspClient = (RTSPClient*)client;
+
   return rtspClient->playMediaSession(*session,m_fStart);
 
 }
@@ -398,9 +399,12 @@ bool CRTSPClient::OpenStream(char* url)
 
 void CRTSPClient::Stop()
 {
-  if (m_BufferThreadActive==false) return;
 	Log("CRTSPClient:Stop");
-  StopBufferThread();
+  
+  if (m_BufferThreadActive) 
+  {
+    StopBufferThread();
+  }
   shutdown();
   m_buffer.Clear();
 	Log("CRTSPClient:Stop done");

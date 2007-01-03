@@ -63,26 +63,29 @@ TsStreamFileSource::createNew(UsageEnvironment& env, FILE* fid,
 				unsigned playTimePerFrame) {
   if (fid == NULL) return NULL;
 
-  TsStreamFileSource* newSource
-    = new TsStreamFileSource(env, fid, deleteFidOnClose,
-			       preferredFrameSize, playTimePerFrame);
+  TsStreamFileSource* newSource = new TsStreamFileSource(env, fid, deleteFidOnClose, preferredFrameSize, playTimePerFrame);
   MultiFileReader* reader = (MultiFileReader*)fid;
   newSource->fFileSize = reader->GetFileSize();
-	Log("ts:size %d",(DWORD)newSource->fFileSize);  
+	Log("ts:createNew size %d",(DWORD)newSource->fFileSize);  
 
   return newSource;
 }
 
-void TsStreamFileSource::seekToByteAbsolute(u_int64_t byteNumber) {
+void TsStreamFileSource::seekToByteAbsolute(u_int64_t byteNumber) 
+{
 	Log("ts:seek %d",(DWORD)byteNumber);  
   MultiFileReader* reader = (MultiFileReader*)fFid;
+  byteNumber/=188LL;
+  byteNumber*=188LL;
   reader->SetFilePointer( (int64_t)byteNumber, FILE_BEGIN);
 }
 
 void TsStreamFileSource::seekToByteRelative(int64_t offset) 
 {
-	Log("ts:seek rel %d",(DWORD)offset);  
   MultiFileReader* reader = (MultiFileReader*)fFid;
+	Log("ts:seek rel %d/%d",(DWORD)offset, (DWORD)reader->GetFileSize());  
+  offset/=188LL;
+  offset*=188LL;
   reader->SetFilePointer((int64_t)offset, FILE_CURRENT);
 }
 
@@ -92,10 +95,14 @@ TsStreamFileSource::TsStreamFileSource(UsageEnvironment& env, FILE* fid,
 					   unsigned playTimePerFrame)
   : FramedFileSource(env, fid), fPreferredFrameSize(preferredFrameSize),
     fPlayTimePerFrame(playTimePerFrame), fLastPlayTime(0), fFileSize(0),
-    fDeleteFidOnClose(deleteFidOnClose) {
+    fDeleteFidOnClose(deleteFidOnClose) 
+{
+	Log("ts:ctor");  
 }
 
-TsStreamFileSource::~TsStreamFileSource() {
+TsStreamFileSource::~TsStreamFileSource() 
+{
+	Log("ts:dtor");  
   if (fDeleteFidOnClose && fFid != NULL) 
   {
     MultiFileReader* reader = (MultiFileReader*)fFid;
@@ -121,6 +128,7 @@ void TsStreamFileSource::doGetNextFrame() {
   ULONG dwRead=0;
   if (reader->Read(fTo,fMaxSize,&dwRead)==S_FALSE)
   {
+	  Log("ts:eof reached");  
     handleClosure(this);
     return;
   }

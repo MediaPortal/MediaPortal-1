@@ -42,6 +42,7 @@ public:
 	HRESULT ChangeStart();
 	HRESULT ChangeStop();
 	HRESULT ChangeRate();
+  STDMETHODIMP GetDuration(LONGLONG *pDuration);
 	STDMETHODIMP SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags);
 
 	virtual HRESULT OnThreadStartPlay(void) ;

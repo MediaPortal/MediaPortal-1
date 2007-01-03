@@ -156,6 +156,7 @@ void CRtspSourceFilter::ThreadProc()
 		  ticks=GetTickCount()-m_tickCount;
 			CRefTime duration= CRefTime(m_client.Duration());
       CRefTime refAdd(ticks);
+      duration+=refAdd;
 			m_pOutputPin->SetDuration( duration);
       NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
       m_tickUpdateCount=GetTickCount();
@@ -214,10 +215,12 @@ HRESULT CRtspSourceFilter::OnConnect()
 	Log("Filter:OnConnect, find pat/pmt...");
   m_buffer.SetCallback(this);
   m_buffer.Run(true);
-  m_patParser.SkipPacketsAtStart(500);
+  m_patParser.SkipPacketsAtStart(0);
   m_patParser.Reset();
 	m_patParser.SetCallBack(NULL);
-  if (m_client.Play(0.0f))
+  float milliSecs=0;
+
+  if (m_client.Play(milliSecs))
   {
 		Log("Filter:OnConnect, wait for pat/pmt...");
     DWORD tickStart=GetTickCount();
@@ -227,7 +230,7 @@ HRESULT CRtspSourceFilter::OnConnect()
       DWORD elapsed=GetTickCount()-tickStart;
       if (elapsed>10000)
       {
-		    Log("Filter:OnConnect, no pat/pmt received in 3 secs...");
+		    Log("Filter:OnConnect, no pat/pmt received in 10 secs...");
         m_client.Stop();
         return E_FAIL;
       }
@@ -270,7 +273,8 @@ HRESULT CRtspSourceFilter::OnConnect()
   }
 	
 	Log("Filter:setup demuxer...");
-  m_client.Stop();
+  m_client.Pause();
+  m_bPaused=true;
   m_pDemux->set_ClockMode(3);
   m_pDemux->set_Auto(TRUE);
   m_pDemux->set_FixedAspectRatio(TRUE);
@@ -311,7 +315,7 @@ STDMETHODIMP CRtspSourceFilter::Run(REFERENCE_TIME tStart)
 			CRefTime reftime(m_client.Duration());
 			m_pOutputPin->SetDuration(reftime);
 			m_tickCount=GetTickCount();
-			m_client.FillBuffer( BUFFER_BEFORE_PLAY_SIZE);
+			//m_client.FillBuffer( BUFFER_BEFORE_PLAY_SIZE);
 			Log("Filter:playing...");
 		}
 		else 
@@ -409,14 +413,14 @@ STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *
 	if (wcsstr(m_fileName,L"rtsp://")==NULL)
 	{
 		Log("Filter:using defailt filename");
-		wcscpy(m_fileName,L"rtsp://192.168.100.102/stream1");
+		wcscpy(m_fileName,L"rtsp://192.168.1.58/stream5");
 	}
   if (wcsstr(m_fileName,L"stream")!=NULL)
   {
-    m_pOutputPin->IsTimeShifting(true);
+    m_pOutputPin->IsTimeShifting(true); 
   }
   else
-  {
+  { 
     m_pOutputPin->IsTimeShifting(false);
   }
 

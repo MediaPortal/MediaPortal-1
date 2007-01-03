@@ -9,6 +9,7 @@ extern void Log(const char *fmt, ...) ;
 CMemoryBuffer::CMemoryBuffer(void)
 :m_event(NULL,FALSE,FALSE,NULL)
 {
+  Log("CMemoryBuffer::ctor");
   m_bRunning=true;
   m_BytesInBuffer=0;
   m_pcallback=NULL;
@@ -16,6 +17,7 @@ CMemoryBuffer::CMemoryBuffer(void)
 
 CMemoryBuffer::~CMemoryBuffer()
 {
+  Log("CMemoryBuffer::dtor");
   Clear();
 }
 

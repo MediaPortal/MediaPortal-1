@@ -68,6 +68,7 @@ void  CPatParser::Reset()
 	CSectionDecoder::Reset();
   CleanUp();
   m_packetsReceived=0;
+  m_iPatTableVersion=-1;
 	m_iState=Parsing;
 }
 

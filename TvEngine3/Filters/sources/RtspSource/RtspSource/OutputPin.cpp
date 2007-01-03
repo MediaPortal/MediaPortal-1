@@ -240,6 +240,15 @@ HRESULT COutputPin::Run(REFERENCE_TIME tStart)
 	}
 	return CBaseOutputPin::Run(tStart);
 }
+HRESULT COutputPin::GetDuration(LONGLONG *pDuration)
+{
+  Log("COutputPin::GetDuration(%d)",(m_rtDuration.Millisecs()/1000));
+    CheckPointer(pDuration, E_POINTER);
+//    CAutoLock lock(m_pLock);
+    *pDuration = m_rtDuration;
+    return S_OK;
+}
+
 HRESULT COutputPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags)
 {
 	Log("COutputPin::SetPositions()");
@@ -308,7 +317,7 @@ HRESULT COutputPin::OnThreadStartPlay(void)
 {
 	CAutoLock fillLock(&m_FillLock);
 	CAutoLock lock(&m_SeekLock);
-	Log("COutputPin::OnThreadStartPlay()");
+	//Log("COutputPin::OnThreadStartPlay()");
   DeliverNewSegment(m_rtStart, m_rtStop, 1.0 );
 	return CSourceStream::OnThreadStartPlay( );
 }
@@ -316,9 +325,9 @@ HRESULT COutputPin::OnThreadStartPlay(void)
 
 void COutputPin::SetDuration(CRefTime& duration)
 {
+//  Log("COutputPin::SetDuration(%d)",(duration.Millisecs()/1000));
 	m_rtDuration=duration;
 }
-
 
 
 HRESULT COutputPin::SetDemuxClock(IReferenceClock *pClock)
