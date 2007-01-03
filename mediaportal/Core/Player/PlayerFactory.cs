@@ -47,8 +47,8 @@ namespace MediaPortal.Player
     public enum StreamingPlayers : int
     {
       BASS = 0,
-      WMP9 =1,
-      VMR7 =2,
+      WMP9 = 1,
+      VMR7 = 2,
       RTSP = 3,
     }
 
@@ -122,6 +122,10 @@ namespace MediaPortal.Player
 
     public IPlayer Create(string fileName)
     {
+      // Free BASS to avoid problems with Digital Audio, when watching movies
+      if (!MediaPortal.Util.Utils.IsAudio(fileName))
+        BassMusicPlayer.Player.FreeBass();
+
       IPlayer newPlayer = null;
       if (fileName.ToLower().IndexOf("rtsp:") >= 0)
       {
@@ -129,19 +133,19 @@ namespace MediaPortal.Player
       }
       if (fileName.StartsWith("mms:") && fileName.EndsWith(".ymvp"))
       {
-          bool useVMR9;
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-          {
-              useVMR9 = xmlreader.GetValueAsBool("musicvideo", "useVMR9", true);
-          }
-          if (useVMR9)
-          {
-              return new VideoPlayerVMR9();
-          }
-          else
-          {
-              return new AudioPlayerWMP9();
-          }
+        bool useVMR9;
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        {
+          useVMR9 = xmlreader.GetValueAsBool("musicvideo", "useVMR9", true);
+        }
+        if (useVMR9)
+        {
+          return new VideoPlayerVMR9();
+        }
+        else
+        {
+          return new AudioPlayerWMP9();
+        }
       }
       string extension = System.IO.Path.GetExtension(fileName).ToLower();
       if (extension != ".tv" && extension != ".sbe" && extension != ".dvr-ms"
@@ -239,13 +243,16 @@ namespace MediaPortal.Player
 
           if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
           {
-              return BassMusicPlayer.Player;
+            if (BassMusicPlayer.BassFreed)
+              BassMusicPlayer.Player.InitBass();
+
+            return BassMusicPlayer.Player;
           }
 
           else if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)
           {
-              newPlayer = new Player.AudioPlayerWMP9();
-              return newPlayer;
+            newPlayer = new Player.AudioPlayerWMP9();
+            return newPlayer;
           }
           newPlayer = new Player.AudioPlayerVMR7();
           return newPlayer;
@@ -259,6 +266,10 @@ namespace MediaPortal.Player
 
     public IPlayer Create(string fileName, g_Player.MediaType type)
     {
+      // Free BASS to avoid problems with Digital Audio, when watching movies
+      if (!MediaPortal.Util.Utils.IsAudio(fileName))
+        BassMusicPlayer.Player.FreeBass();
+
       IPlayer newPlayer = null;
       if (fileName.ToLower().IndexOf("rtsp:") >= 0)
       {
@@ -350,6 +361,9 @@ namespace MediaPortal.Player
 
           if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
           {
+            if (BassMusicPlayer.BassFreed)
+              BassMusicPlayer.Player.InitBass();
+
             return BassMusicPlayer.Player;
           }
           else if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)

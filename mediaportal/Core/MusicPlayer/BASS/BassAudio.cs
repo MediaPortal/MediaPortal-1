@@ -57,7 +57,7 @@ namespace MediaPortal.Player
       get
       {
         if (_Player == null)
-           _Player = new BassAudioEngine();
+          _Player = new BassAudioEngine();
 
         return _Player;
       }
@@ -87,6 +87,19 @@ namespace MediaPortal.Player
 
         return _IsDefaultMusicPlayer;
       }
+    }
+
+    public static bool BassFreed
+    {
+      get { return _Player.BassFreed; }
+    }
+
+    public static void FreeBass()
+    {
+      if (_Player == null)
+        return;
+
+      _Player.FreeBass();
     }
 
     // Singleton -- make sure we can't instantiate this class
@@ -161,6 +174,7 @@ namespace MediaPortal.Player
     private int _BufferingMS = 5000;
     private bool _SoftStop = true;
     private bool _Initialized = false;
+    private bool _BassFreed = false;
     private int _StreamVolume = 40;
     private System.Timers.Timer UpdateTimer = new System.Timers.Timer();
     private VisualizationWindow VizWindow = null;
@@ -188,7 +202,6 @@ namespace MediaPortal.Player
     private List<string> _VSTPlugins = new List<string>();
     private Dictionary<string, int> _vstHandles = new Dictionary<string, int>();
     // Winamp related variables
-    private IntPtr _windowHandle;
     private bool _waDspInitialised = false;
     private Dictionary<string, int> _waDspPlugins = new Dictionary<string, int>();
 
@@ -399,6 +412,10 @@ namespace MediaPortal.Player
       get { return _CrossFadeIntervalMS > 0; }
     }
 
+    public bool BassFreed
+    {
+      get { return _BassFreed; }
+    }
     #endregion
 
     public BassAudioEngine()
@@ -458,65 +475,60 @@ namespace MediaPortal.Player
     {
       try
       {
-        Log.Info("BASS: Initializing BASS audio engine...");
+        Log.Info("BASS: Initialize BASS environment ...");
         LoadSettings();
 
         BassRegistration.BassRegistration.Register();
         Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_GVOL_STREAM, _StreamVolume);
         Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, _BufferingMS);
 
-        int soundDevice = -1;
-        // Check if the specified Sounddevice still exists
-        if (_SoundDevice == "Default Sound Device")
-        {
-          Log.Info("BASS: Using default Sound Device");
-          soundDevice = -1;
-        }
-        else
-        {
-          string[] soundDeviceDescriptions = Bass.BASS_GetDeviceDescriptions();
-          bool foundDevice = false;
-          for (int i = 0; i < soundDeviceDescriptions.Length; i++)
-          {
-            if (soundDeviceDescriptions[i] == _SoundDevice)
-            {
-              foundDevice = true;
-              soundDevice = i;
-              break;
-            }
-          }
-          if (!foundDevice)
-          {
-            Log.Warn("BASS: specified Sound device does not exist. Using default Sound Device");
-            soundDevice = -1;
-          }
-          else
-          {
-            Log.Info("BASS: Using Sound Device {0}", _SoundDevice);
-          }
-        }
+        for (int i = 0; i < MAXSTREAMS; i++)
+          Streams.Add(0);
+
+        PlaybackFadeOutProcDelegate = new SYNCPROC(PlaybackFadeOutProc);
+        PlaybackEndProcDelegate = new SYNCPROC(PlaybackEndProc);
+        PlaybackStreamFreedProcDelegate = new SYNCPROC(PlaybackStreamFreedProc);
+
+        StreamEventSyncHandles.Add(new List<int>());
+        StreamEventSyncHandles.Add(new List<int>());
+
+        InitializeControls();
+        LoadAudioDecoderPlugins();
+        LoadDSPPlugins();
+        Log.Info("BASS: Initializing BASS environment done.");
+
+        _Initialized = true;
+        _BassFreed = true;
+      }
+
+      catch (Exception ex)
+      {
+        Log.Error("BASS: Initialize thread failed.  Reason: {0}", ex.Message);
+      }
+    }
+
+    public void FreeBass()
+    {
+      if (!_BassFreed)
+      {
+        Log.Info("BASS: Freeing BASS. None Audio media playback requested.");
+        Bass.BASS_Free();
+        _BassFreed = true;
+      }
+    }
+
+    public void InitBass()
+    {
+      try
+      {
+        Log.Info("BASS: Initializing BASS audio engine...");
+        int soundDevice = GetSoundDevice();
 
         if (Bass.BASS_Init(soundDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY, 0, null))
         {
-          for (int i = 0; i < MAXSTREAMS; i++)
-            Streams.Add(0);
-
-          LoadAudioDecoderPlugins();
-
-          Log.Debug("BASS: Creating event procs...");
-          PlaybackFadeOutProcDelegate = new SYNCPROC(PlaybackFadeOutProc);
-          PlaybackEndProcDelegate = new SYNCPROC(PlaybackEndProc);
-          PlaybackStreamFreedProcDelegate = new SYNCPROC(PlaybackStreamFreedProc);
-          Log.Debug("BASS: Event procs created successfully.");
-
-          StreamEventSyncHandles.Add(new List<int>());
-          StreamEventSyncHandles.Add(new List<int>());
-
-          InitializeControls();
-          LoadDSPPlugins();
           Log.Info("BASS: Initialization done.");
-
           _Initialized = true;
+          _BassFreed = false;
         }
 
         else
@@ -525,11 +537,45 @@ namespace MediaPortal.Player
           Log.Error("BASS: Error initializing BASS audio engine {0}", Enum.GetName(typeof(BASSErrorCode), error));
         }
       }
-
       catch (Exception ex)
       {
-        Log.Error("BASS: Initialize failed.  Reason: {0}", ex.Message);
+        Log.Error("BASS: Initialize failed. Reason: {0}", ex.Message);
       }
+    }
+
+    private int GetSoundDevice()
+    {
+      int sounddevice = -1;
+      // Check if the specified Sounddevice still exists
+      if (_SoundDevice == "Default Sound Device")
+      {
+        Log.Info("BASS: Using default Sound Device");
+        sounddevice = -1;
+      }
+      else
+      {
+        string[] soundDeviceDescriptions = Bass.BASS_GetDeviceDescriptions();
+        bool foundDevice = false;
+        for (int i = 0; i < soundDeviceDescriptions.Length; i++)
+        {
+          if (soundDeviceDescriptions[i] == _SoundDevice)
+          {
+            foundDevice = true;
+            sounddevice = i;
+            break;
+          }
+        }
+        if (!foundDevice)
+        {
+          Log.Warn("BASS: specified Sound device does not exist. Using default Sound Device");
+          sounddevice = -1;
+        }
+        else
+        {
+          Log.Info("BASS: Using Sound Device {0}", _SoundDevice);
+        }
+      }
+      return sounddevice;
     }
 
     private void InitializeControls()
@@ -842,7 +888,7 @@ namespace MediaPortal.Player
 
       // Winamp Plugins can only be loaded on play to prevent Crashes
       if (Settings.Instance.WinAmpPlugins.Count > 0)
-        _dspActive = true;          
+        _dspActive = true;
 
       Log.Debug("BASS: Finished loading DSP plugins ...");
     }
@@ -1074,7 +1120,7 @@ namespace MediaPortal.Player
                   }
                   else
                   {
-                    Log.Debug("Couldn't load WinAmp Plugin {0}. Error code: {1}", plugins.PluginDll, Enum.GetName(typeof(BASSErrorCode),Bass.BASS_ErrorGetCode()));
+                    Log.Debug("Couldn't load WinAmp Plugin {0}. Error code: {1}", plugins.PluginDll, Enum.GetName(typeof(BASSErrorCode), Bass.BASS_ErrorGetCode()));
                   }
                 }
               }
