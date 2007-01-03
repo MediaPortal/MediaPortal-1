@@ -31,15 +31,16 @@ namespace MediaPortal.TV.Teletext
 {
   public class Hamming
   {
+    // Subtract four from ETSI Byte number to get MP byte offset
     #region constants
-    const int ERASE_BIT_OFFSET = 5;
+    const int ERASE_BYTE = 5; // Byte 9
     const int ERASE_BIT = 8;
     
-    const int SUBTITLE_BIT_OFFSET = 7;
-    const int SUBTITLE_BIT = 4;
+    const int SUBTITLE_BYTE = 7; // Byte 11
+    const int SUBTITLE_BIT = 8; // Subtitle(8)
 
-    const int BOXED_BIT_OFFSET = 5;
-    const int BOXED_BIT = 12;
+    const int BOXED_BYTE = 7; // Byte 11
+    const int BOXED_BITS = 12; // Newsflash(4) + Subtitle(8)
     #endregion
 
     #region hamming tables
@@ -100,22 +101,30 @@ namespace MediaPortal.TV.Teletext
 
     static public bool IsEraseBitSet(int offset, ref byte[] rowData)
     {
-      int controlByte = Decode[rowData[offset + ERASE_BIT_OFFSET]];
+      int controlByte = Decode[rowData[offset + ERASE_BYTE]];
+      if (controlByte == 0xFF) // Decode error
+        return false;
       controlByte &= ERASE_BIT;
       return (controlByte != 0);
     }
     static public bool IsSubtitleBitSet(int offset, ref byte[] rowData)
     {
-      int controlByte = Decode[rowData[offset + SUBTITLE_BIT_OFFSET]];
+      int controlByte = Decode[rowData[offset + SUBTITLE_BYTE]];
+      if (controlByte == 0xFF) // Decode error
+        return false;
       controlByte &= SUBTITLE_BIT;
       return (controlByte != 0);
+
     }
 
     static public bool IsBoxed(int offset, ref byte[] rowData)
     {
-      int controlByte = Decode[rowData[offset + BOXED_BIT_OFFSET]];
-      controlByte &= BOXED_BIT;
+      int controlByte = Decode[rowData[offset + BOXED_BYTE]];
+      if (controlByte == 0xFF) // Decode error
+        return false;
+      controlByte &= BOXED_BITS;
       return (controlByte != 0);
+
     }
 
 
