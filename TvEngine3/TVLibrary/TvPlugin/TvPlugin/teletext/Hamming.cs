@@ -30,8 +30,8 @@ namespace TvLibrary.Teletext
     const int ERASE_BIT_OFFSET = 5;
     const int ERASE_BIT = 8;
     
-    const int SUBTITLE_BIT_OFFSET = 7;
-    const int SUBTITLE_BIT = 4;
+    const int SUBTITLE_BIT_OFFSET = 8;
+    const int SUBTITLE_BIT = 11;
 
     const int BOXED_BIT_OFFSET = 5;
     const int BOXED_BIT = 12;
