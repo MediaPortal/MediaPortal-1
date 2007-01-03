@@ -1176,7 +1176,7 @@ namespace MediaPortal.Music.Database
               if (index > 0)
                 if (index > lastIndex)
                 {
-                  if (index < urlString.Length - 1)
+                  if (index < urlString.Length)
                   {
                     lastIndex = index;
                     outString = urlString.Insert(index + 1, "+");
@@ -1187,7 +1187,7 @@ namespace MediaPortal.Music.Database
                   break;
               if (failSafe > 500)
               {
-                Log.Error("*****AudioscrobblerUtils: Possible race condition cleaning string: {0}", urlString);
+                Log.Error("*****AudioscrobblerBase: Possible race condition cleaning string: {0}", urlString);
                 return String.Empty;
               }
             }

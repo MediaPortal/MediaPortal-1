@@ -411,7 +411,7 @@ namespace MediaPortal.Music.Database
   public class AudioscrobblerUtils
   {
     private bool _useDebugLog = false;
-    private bool _doCoverLookups = true;
+    private bool _doCoverLookups = true;    
     private string _defaultUser = "";
     private Object LookupLock;
 
@@ -633,7 +633,7 @@ namespace MediaPortal.Music.Database
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))        
       {
         _defaultUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
-        _doCoverLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true);
+        _doCoverLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true);        
       }
       MusicDatabase mdb = new MusicDatabase();
       _currentNeighbourMode = lastFMFeed.weeklyartistchart;
@@ -1712,14 +1712,17 @@ namespace MediaPortal.Music.Database
         }
 
         artist_ = System.Web.HttpUtility.UrlDecode(artist_);
-        if (artist_.ToLowerInvariant() != tmpArtist.ToLowerInvariant())
+        string thumbPath = artist_ + "-" + tmpAlbum + Util.Utils.GetThumbExtension();
+
+        if (artist_.ToLowerInvariant() != tmpArtist.ToLowerInvariant())        
         {
+          string thumbPathAlternative = tmpArtist + "-" + tmpAlbum + Util.Utils.GetThumbExtension();
           Log.Info("AudioScrobblerUtils: alternative album artist spelling detected - try to fetch both thumbs (MP: {0} / official: {1})", artist_, tmpArtist);
-          fetchWebImage(tmpCover, tmpArtist + "-" + tmpAlbum + ".jpg", Thumbs.MusicAlbum);
-          fetchWebImage(tmpCover, artist_ + "-" + tmpAlbum + ".jpg", Thumbs.MusicAlbum);
+          fetchWebImage(tmpCover, thumbPathAlternative, Thumbs.MusicAlbum);
+          fetchWebImage(tmpCover, thumbPath, Thumbs.MusicAlbum);
         }
         else
-          fetchWebImage(tmpCover, tmpArtist + "-" + tmpAlbum + ".jpg", Thumbs.MusicAlbum);
+          fetchWebImage(tmpCover, thumbPath, Thumbs.MusicAlbum);
       }
       catch
       {

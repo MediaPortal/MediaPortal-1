@@ -99,6 +99,7 @@ namespace MediaPortal.Music.Database
 
     static bool _useFolderThumbs = true;
     static bool _useFolderArtForArtistGenre = false;
+    static bool _createMissingFolderThumbs = false;
     
     //bool AppendPrefixToSortableNameEnd = true;
 
@@ -145,7 +146,8 @@ namespace MediaPortal.Music.Database
         _scanForVariousArtists = xmlreader.GetValueAsBool("musicfiles", "scanForVariousArtists", true);
         _extractEmbededCoverArt = xmlreader.GetValueAsBool("musicfiles", "extractthumbs", true);
         _useFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
-        _useFolderArtForArtistGenre = xmlreader.GetValueAsBool("musicfiles", "createartistgenrethumbs", false);
+        _createMissingFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", false);
+        _useFolderArtForArtistGenre = xmlreader.GetValueAsBool("musicfiles", "createartistgenrethumbs", false);        
       }
       Open();
     }
@@ -2937,8 +2939,8 @@ namespace MediaPortal.Music.Database
           }
           
 
-          // create the local folder thumb cache and folder.jpg itself if not present
-          if (_useFolderThumbs)
+          // create the local folder thumb cache / and folder.jpg itself if not present
+          if (_useFolderThumbs || _createMissingFolderThumbs)
             CreateFolderThumbs(strPathSong, strSmallThumb);
 
           if (_useFolderArtForArtistGenre)
@@ -3041,25 +3043,34 @@ namespace MediaPortal.Music.Database
           // we've embedded art but no folder.jpg --> copy the large one for cache and create a small cache thumb
           if (!System.IO.File.Exists(folderThumb))
           {
-            MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, folderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+            if (_createMissingFolderThumbs)
+            {
+              MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, folderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
 
-            if (!System.IO.File.Exists(localFolderThumb))
-              MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
-            if (!System.IO.File.Exists(localFolderLThumb))
-              System.IO.File.Copy(folderThumb, localFolderLThumb, true);
+              if (_useFolderThumbs)
+              {
+                if (!System.IO.File.Exists(localFolderThumb))
+                  MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+                if (!System.IO.File.Exists(localFolderLThumb))
+                  System.IO.File.Copy(folderThumb, localFolderLThumb, true);
+              }
+            }
           }
           else
           {
-            if (!System.IO.File.Exists(localFolderThumb))
-              MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
-            if (!System.IO.File.Exists(localFolderLThumb))
+            if (_useFolderThumbs)
             {
-              // just copy the folder.jpg if it is reasonable in size - otherwise re-create it
-              System.IO.FileInfo fiRemoteFolderArt = new System.IO.FileInfo(folderThumb);
-              if (fiRemoteFolderArt.Length < 32000)
-                System.IO.File.Copy(folderThumb, localFolderLThumb, true);
-              else
-                MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);              
+              if (!System.IO.File.Exists(localFolderThumb))
+                MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+              if (!System.IO.File.Exists(localFolderLThumb))
+              {
+                // just copy the folder.jpg if it is reasonable in size - otherwise re-create it
+                System.IO.FileInfo fiRemoteFolderArt = new System.IO.FileInfo(folderThumb);
+                if (fiRemoteFolderArt.Length < 32000)
+                  System.IO.File.Copy(folderThumb, localFolderLThumb, true);
+                else
+                  MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+              }
             }
           }
         }
