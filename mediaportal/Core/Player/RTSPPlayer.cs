@@ -634,8 +634,8 @@ namespace MediaPortal.Player
         Log.Info("RTSPPlayer:Duration:{0}", _duration);
         if (_mediaType == g_Player.MediaType.TV)
         {
-          //if (m_dDuration < 1) m_dDuration = 1;
-          //SeekAbsolute(m_dDuration - 1);
+          if (_duration < 1) _duration = 1;
+          SeekAbsolute(_duration - 1);
         }
         else
         {
@@ -684,14 +684,19 @@ namespace MediaPortal.Player
       fCurrentPos /= 10000000d;
       _currentPos = fCurrentPos;
 
-      long lContentStart, lContentEnd;
-      double fContentStart, fContentEnd;
+      long lContentStart, lContentEnd, lDuration;
+      double fContentStart, fContentEnd, duration;
       _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
+      //_mediaSeeking.GetDuration(out  lDuration);
+      //mediaPos.get_Duration(out duration);
+      
       fContentStart = lContentStart;
       fContentEnd = lContentEnd;
       fContentStart /= 10000000d;
       fContentEnd /= 10000000d;
-      // Log.Info("{0} {1} {2}  ({3})", fCurrentPos, fContentStart, fContentEnd, _currentPos);
+      //duration=lDuration;
+      //duration /= 10000000d;
+      //Log.Info("{0} {1} {2}  ({3}) {4} {5}", fCurrentPos, fContentStart, fContentEnd, _currentPos, lDuration,duration);
       fContentEnd -= fContentStart;
       _duration = fContentEnd;
     }
