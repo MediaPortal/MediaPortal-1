@@ -9,7 +9,7 @@
     <Search startPage="1" endPage="5" />
     <Html>
       <Template name="default" start="id=&quot;wn1&quot;" end="id=&quot;wn2&quot;">
-        <SectionTemplate tags="DP">
+        <SectionTemplate tags="DPS">
           <TemplateText>
             &lt;div&gt;&lt;#START&gt;&lt;/div&gt;
             &lt;div&gt;&lt;/div&gt;
