@@ -359,6 +359,9 @@ namespace MediaPortal.Player
     {
       try
       {
+        // Stop the BASS engine to avoid problems with Digital Audio
+        BassMusicPlayer.Player.FreeBass();
+
         Starting = true;
         //stop playing radio
 
