@@ -215,7 +215,7 @@ HRESULT CRtspSourceFilter::OnConnect()
 	Log("Filter:OnConnect, find pat/pmt...");
   m_buffer.SetCallback(this);
   m_buffer.Run(true);
-  m_patParser.SkipPacketsAtStart(0);
+  m_patParser.SkipPacketsAtStart(500);
   m_patParser.Reset();
 	m_patParser.SetCallBack(NULL);
   float milliSecs=0;
