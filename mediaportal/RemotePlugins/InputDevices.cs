@@ -55,7 +55,6 @@ namespace MediaPortal.InputDevices
       MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
       FireDTVRemote.Init(GUIGraphicsContext.ActiveForm);
       HCWRemote.Init(GUIGraphicsContext.ActiveForm);
-      X10Remote.Init();
       IrTrans.Init(GUIGraphicsContext.ActiveForm);
       //Keyboard.Init(GUIGraphicsContext.ActiveForm);
     }
@@ -129,7 +128,7 @@ namespace MediaPortal.InputDevices
     static DirectInputHandler diRemote = new DirectInputHandler();
     static IrTrans IrTrans = new IrTrans();
     //static Keyboard Keyboard = new Keyboard();
-    static RemoteControls.FireDTVRemote FireDTVRemote = new RemoteControls.FireDTVRemote();
+    static FireDTVRemote FireDTVRemote = new FireDTVRemote();
     static AppCommands _lastHidRequest;
     static int _lastHidRequestTick;
     static bool _initialized = false;

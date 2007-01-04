@@ -52,7 +52,6 @@ using MediaPortal.Ripper;
 using MediaPortal.SerialIR;
 using MediaPortal.TV.Recording;
 using MediaPortal.Util;
-using MediaPortal.WINLIRC;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
 using MediaPortal.Configuration;

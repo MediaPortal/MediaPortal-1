@@ -28,7 +28,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using MediaPortal.WINLIRC;
+using MediaPortal.InputDevices;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 

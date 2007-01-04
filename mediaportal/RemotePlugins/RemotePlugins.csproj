@@ -243,6 +243,7 @@
       <SubType>Form</SubType>
     </None>
     <Compile Include="ControlDevices\Devices\USBUIRT\USBUIRTSettings.cs" />
+    <Compile Include="Remotes\WinLirc.cs" />
     <Compile Include="Remotes\X10Remote\X10Learn.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -250,7 +251,6 @@
       <DependentUpon>X10Learn.cs</DependentUpon>
     </Compile>
     <Compile Include="Remotes\X10Remote\X10Remote.cs" />
-    <Compile Include="Remotes\X10Remote\X10Sink.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ControlDevices\Util\LearnCodePanel.resx">

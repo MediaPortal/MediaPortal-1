@@ -1,6 +1,6 @@
-namespace MediaPortal.Remotes.X10Remote
+namespace MediaPortal.InputDevices
 {
-  partial class X10Learn
+  partial class RemoteLearn
   {
     /// <summary>
     /// Required designer variable.
@@ -28,10 +28,7 @@ namespace MediaPortal.Remotes.X10Remote
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(X10Learn));
-      this.label1 = new System.Windows.Forms.Label();
-      this.mpChannelReadout = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.ButtonSetChannel = new MediaPortal.UserInterface.Controls.MPButton();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RemoteLearn));
       this.ButtonStartLearn = new MediaPortal.UserInterface.Controls.MPButton();
       this.ButtonEndLearn = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpCancel = new MediaPortal.UserInterface.Controls.MPButton();
@@ -42,34 +39,6 @@ namespace MediaPortal.Remotes.X10Remote
       this.columnHeaderMPAction = new System.Windows.Forms.ColumnHeader();
       this.columnHeaderX10Key = new System.Windows.Forms.ColumnHeader();
       this.SuspendLayout();
-      // 
-      // label1
-      // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(322, 219);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(86, 13);
-      this.label1.TabIndex = 9;
-      this.label1.Text = "Channel Number";
-      // 
-      // mpChannelReadout
-      // 
-      this.mpChannelReadout.Location = new System.Drawing.Point(325, 236);
-      this.mpChannelReadout.Name = "mpChannelReadout";
-      this.mpChannelReadout.Size = new System.Drawing.Size(100, 20);
-      this.mpChannelReadout.TabIndex = 8;
-      this.mpChannelReadout.Text = "128";
-      this.mpChannelReadout.Value = 128;
-      // 
-      // ButtonSetChannel
-      // 
-      this.ButtonSetChannel.Location = new System.Drawing.Point(325, 169);
-      this.ButtonSetChannel.Name = "ButtonSetChannel";
-      this.ButtonSetChannel.Size = new System.Drawing.Size(84, 23);
-      this.ButtonSetChannel.TabIndex = 7;
-      this.ButtonSetChannel.Text = "Set Channel";
-      this.ButtonSetChannel.UseVisualStyleBackColor = true;
-      this.ButtonSetChannel.Click += new System.EventHandler(this.ButtonSetChannel_Click);
       // 
       // ButtonStartLearn
       // 
@@ -103,7 +72,7 @@ namespace MediaPortal.Remotes.X10Remote
       // 
       // buttonOK
       // 
-      this.buttonOK.Location = new System.Drawing.Point(245, 339);
+      this.buttonOK.Location = new System.Drawing.Point(150, 339);
       this.buttonOK.Name = "buttonOK";
       this.buttonOK.Size = new System.Drawing.Size(75, 23);
       this.buttonOK.TabIndex = 2;
@@ -121,7 +90,7 @@ namespace MediaPortal.Remotes.X10Remote
       // 
       // mpApply
       // 
-      this.mpApply.Location = new System.Drawing.Point(153, 338);
+      this.mpApply.Location = new System.Drawing.Point(245, 339);
       this.mpApply.Name = "mpApply";
       this.mpApply.Size = new System.Drawing.Size(75, 23);
       this.mpApply.TabIndex = 1;
@@ -158,9 +127,6 @@ namespace MediaPortal.Remotes.X10Remote
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(441, 374);
-      this.Controls.Add(this.label1);
-      this.Controls.Add(this.mpChannelReadout);
-      this.Controls.Add(this.ButtonSetChannel);
       this.Controls.Add(this.ButtonStartLearn);
       this.Controls.Add(this.ButtonEndLearn);
       this.Controls.Add(this.mpCancel);
@@ -174,7 +140,6 @@ namespace MediaPortal.Remotes.X10Remote
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Teach X10 Remote Control";
       this.ResumeLayout(false);
-      this.PerformLayout();
 
     }
 
@@ -187,9 +152,6 @@ namespace MediaPortal.Remotes.X10Remote
     private MediaPortal.UserInterface.Controls.MPButton mpCancel;
     private MediaPortal.UserInterface.Controls.MPButton ButtonEndLearn;
     private MediaPortal.UserInterface.Controls.MPButton ButtonStartLearn;
-    private MediaPortal.UserInterface.Controls.MPButton ButtonSetChannel;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox mpChannelReadout;
-    private System.Windows.Forms.Label label1;
     private System.Windows.Forms.ColumnHeader columnHeaderMPAction;
     private System.Windows.Forms.ColumnHeader columnHeaderX10Key;
   }

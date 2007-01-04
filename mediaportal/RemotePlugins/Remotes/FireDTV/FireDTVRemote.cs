@@ -30,15 +30,14 @@ using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using System.Reflection;
-using MediaPortal.RemoteControls;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
-using MediaPortal.RemoteControls.FireDTV;
+using MediaPortal.InputDevices.FireDTV;
 using MediaPortal.InputDevices;
 using MediaPortal.Util;
 using MediaPortal.Configuration;
 
-namespace MediaPortal.RemoteControls
+namespace MediaPortal.InputDevices
 {
   /// <summary>
   /// Summary description for FireDTVRemote.

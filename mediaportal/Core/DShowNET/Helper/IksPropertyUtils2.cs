@@ -169,8 +169,8 @@ namespace DShowNET
       Guid propertyGuid=guidPropSet;
       IKsPropertySet propertySet= captureFilter as IKsPropertySet;
       string returnedText = String.Empty;
-      uint IsTypeSupported=0;
-      uint uiSize;
+   //   uint IsTypeSupported=0;
+   //   uint uiSize;
     //  if (propertySet==null) 
     //  {
     //    Log.Info("GetString() properySet=null");
@@ -242,29 +242,29 @@ namespace DShowNET
 		{
 			Guid propertyGuid=guidPropSet;
 			IKsPropertySet propertySet= captureFilter as IKsPropertySet;
-			uint IsTypeSupported=0;
-      //if (propertySet==null) 
-      //{
-      //  Log.Info("SetStructure() properySet=null");
-      //  return ;
-      //}
+			KSPropertySupport IsTypeSupported=0;
+      if (propertySet == null)
+      {
+        Log.Info("SetStructure() properySet=null");
+        return;
+      }
 
-      //int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
-      //if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Set)==0) 
-      //{
-      //  Log.Info("GetString() GetStructure is not supported");
-      //  return ;
-      //}
+      int hr = propertySet.QuerySupported( propertyGuid, (int)propId, out IsTypeSupported);
+      if (hr != 0 && ((int)IsTypeSupported & (int)KSPropertySupport.Set) == 0)
+      {
+        Log.Info("GetString() GetStructure is not supported");
+        return;
+      }
 
-      //int iSize=Marshal.SizeOf(structureType);
-      //IntPtr pDataReturned = Marshal.AllocCoTaskMem(iSize);
-      //Marshal.StructureToPtr(structValue,pDataReturned,true);
-      //hr=propertySet.Set(ref propertyGuid,propId,pDataReturned,(uint)iSize, pDataReturned,(uint)iSize );
-      //if (hr!=0)
-      //{
-      //  Log.Info("SetStructure() failed 0x{0:X}",hr);
-      //}
-      //Marshal.FreeCoTaskMem(pDataReturned);
+      int iSize = Marshal.SizeOf(structureType);
+      IntPtr pDataReturned = Marshal.AllocCoTaskMem(iSize);
+      Marshal.StructureToPtr(structValue, pDataReturned, true);
+      hr = propertySet.Set(propertyGuid, (int)propId, pDataReturned, iSize, pDataReturned,iSize);
+      if (hr != 0)
+      {
+        Log.Info("SetStructure() failed 0x{0:X}", hr);
+      }
+      Marshal.FreeCoTaskMem(pDataReturned);
 		}
 
 

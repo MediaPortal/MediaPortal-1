@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2006 Team MediaPortal - CoolHammer, mPod
+#region Copyright (C) 2005-2006 Team MediaPortal - CoolHammer, mPod, diehard2
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal - Author: CoolHammer, mPod
+ *	Copyright (C) 2005-2006 Team MediaPortal - Author: CoolHammer, mPod, diehard2
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -23,11 +23,8 @@
 #endregion
 
 using System;
-using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using MediaPortal.Player;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using X10;
@@ -36,16 +33,18 @@ using MediaPortal.Configuration;
 namespace MediaPortal.InputDevices
 {
   /// <summary>
-  /// 
+  /// This class initializes the x10 remotes and implements a sink to catch commands. A delegate is provided
+  /// so that external classes can be made aware of events - mainly useful for learning.
   /// </summary>
-  public class X10Remote
+  public class X10Remote: _DIX10InterfaceEvents
   {
+    #region Member Variables
 
-    X10.X10Interface X10Inter = null;
+    X10Interface X10Inter = null;
     IConnectionPointContainer icpc = null;
     IConnectionPoint icp = null;
-    X10Sink X10Sink = null;
     int cookie = 0;
+  
     InputHandler _inputHandler = null;
     bool _controlEnabled = false;
     bool _logVerbose = false;
@@ -55,23 +54,26 @@ namespace MediaPortal.InputDevices
     bool _x10UseChannelControl = false;
     int _x10Channel = 0;
     public bool _remotefound = false;
-    //This struct stores information needed to tell whether a key is a repeat (bug in X10 after standby)
     
-    
+    #endregion
+
+    #region Callback
+
+    //Sets up callback so that other forms can catch a key press
+    public delegate void X10Event(int keypress);
+    public event X10Event X10KeyPressed;
+
+    #endregion
+
+    #region Constructor
 
     public X10Remote()
     {
-      
-    }
-
-    public void Init()
-    {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        Log.Info("X10 Remote Debug: {0}",Config.Dir.Config.ToString());
         _controlEnabled = xmlreader.GetValueAsBool("remote", "X10", false);
         _x10Medion = xmlreader.GetValueAsBool("remote", "X10Medion", false);
-        _x10Ati = xmlreader.GetValueAsBool("remote", "X10ATI",false);
+        _x10Ati = xmlreader.GetValueAsBool("remote", "X10ATI", false);
         _x10Firefly = xmlreader.GetValueAsBool("remote", "X10Firefly", false);
         _logVerbose = xmlreader.GetValueAsBool("remote", "X10VerboseLog", false);
         _x10UseChannelControl = xmlreader.GetValueAsBool("remote", "X10UseChannelControl", false);
@@ -80,7 +82,6 @@ namespace MediaPortal.InputDevices
 
       if (_inputHandler == null)
       {
-        Log.Info("X10 enabled control : {0}", _controlEnabled.ToString());
         if (_controlEnabled)
           if (_x10Medion)
             _inputHandler = new InputHandler("Medion X10");
@@ -125,34 +126,52 @@ namespace MediaPortal.InputDevices
             Log.Info("X10 debug: Could not get interface");
             return;
           }
-          X10Sink = new X10Sink(_inputHandler, _logVerbose);
+          _remotefound = true;
           icpc = (IConnectionPointContainer)X10Inter;
           Guid IID_InterfaceEvents = typeof(_DIX10InterfaceEvents).GUID;
           icpc.FindConnectionPoint(ref IID_InterfaceEvents, out icp);
-          icp.Advise(X10Sink, out cookie);
-          _remotefound = true;
+          icp.Advise(this, out cookie);
         }
       }
       catch (System.Runtime.InteropServices.COMException)
       {
         Log.Info("X10 Debug: Com error");
       }
+    }
+   
+    #endregion
 
-   }
+    #region _DIX10InterfaceEvents Members
 
-    public void DeInit()
+    public void X10Command(string bszCommand, EX10Command eCommand, int lAddress, EX10Key EKeyState, int lSequence, EX10Comm eCommandType, object varTimestamp)
     {
-      if (!_controlEnabled)
-        return;
-      
-      
-      _inputHandler = null;
+      if (EKeyState == X10.EX10Key.X10KEY_ON || EKeyState == X10.EX10Key.X10KEY_REPEAT)
+      {
+        _inputHandler.MapAction((int)Enum.Parse(typeof(X10.EX10Command), eCommand.ToString()));
+        X10KeyPressed((int)Enum.Parse(typeof(X10.EX10Command), eCommand.ToString()));
 
-      if (_logVerbose)
-        Log.Info("X10Remote: Stop");
+        if (_logVerbose)
+        {
+          Log.Info("X10Remote: Command Start --------------------------------------------");
+          Log.Info("X10Remote: bszCommand   = {0}", bszCommand.ToString());
+          Log.Info("X10Remote: eCommand     = {0} - {1}", (int)Enum.Parse(typeof(X10.EX10Command), eCommand.ToString()), eCommand.ToString());
+          Log.Info("X10Remote: eCommandType = {0}", eCommandType.ToString());
+          Log.Info("X10Remote: eKeyState    = {0}", EKeyState.ToString());
+          Log.Info("X10Remote: lAddress     = {0}", lAddress.ToString());
+          Log.Info("X10Remote: lSequence    = {0}", lSequence.ToString());
+          Log.Info("X10Remote: varTimestamp = {0}", varTimestamp.ToString());
+          Log.Info("X10Remote: Command End ----------------------------------------------");
+        }
+
+      }
     }
 
-   
+    public void X10HelpEvent(int hwndDialog, int lHelpID)
+    {
+      throw new Exception("The method or operation is not implemented.");
+    }
+
+    #endregion
 
   }
 }

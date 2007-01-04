@@ -9,33 +9,60 @@ using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using System.Threading;
+using System.Runtime.InteropServices.ComTypes;
 using MediaPortal.InputDevices;
-using MediaPortal.Remotes.X10Remote;
 using MediaPortal.Configuration;
 
 
-namespace MediaPortal.Remotes.X10Remote
+namespace MediaPortal.InputDevices
 {
-  public partial class X10Learn : Form
+  public partial class RemoteLearn : Form
   {
 
     string m_sRemoteModel;
     bool m_bchangedsettings = false;
+    bool m_bLearn = false;
+    object X10Inter = null;
+ 
 
-    public X10Learn(string Remotemodel)
+    public RemoteLearn(string Remotemodel, object Remote)
     {
       m_sRemoteModel = Remotemodel;
       LoadMapping(Remotemodel + ".xml", false);
       Log.Info("X10Learn: Loaded Remote Mapping");
       InitializeComponent();
-      InitializeListView(); 
+      InitializeListView();
+
+      if (Remote == null)
+      {
+        MessageBox.Show("Could not initialize device");
+        return;
+      }
+      else
+      {
+        //This will be eventually setup for all remotes
+
+        try
+        {
+          X10Inter = (X10Remote) Remote;
+          ((X10Remote)X10Inter).X10KeyPressed += new X10Remote.X10Event(CatchKeyPress);
+        }
+        catch (Exception ex)
+        {
+
+          Log.Info("Could not cast to X10 object - {0}", ex.GetBaseException());
+        }
+      }
+
     }
 
     //Initialize the listview
 
     private void InitializeListView()
     {
-     // this.mpListView1.
+        
+      
+      // this.mpListView1.
 
     }
 
@@ -44,7 +71,7 @@ namespace MediaPortal.Remotes.X10Remote
     //Button control
     private void mpOK_Click(object sender, EventArgs e)
     {
-      if(m_bchangedsettings)
+      if (m_bchangedsettings)
         SaveMapping(m_sRemoteModel + ".xml");
 
       this.Close();
@@ -55,8 +82,6 @@ namespace MediaPortal.Remotes.X10Remote
       if (m_bchangedsettings)
         SaveMapping(m_sRemoteModel + ".xml");
 
-      this.Close();
-
     }
 
     private void mpCancel_Click(object sender, EventArgs e)
@@ -66,109 +91,109 @@ namespace MediaPortal.Remotes.X10Remote
 
     private void ButtonStartLearn_Click(object sender, EventArgs e)
     {
-
+      m_bLearn = true;
     }
 
     private void ButtonEndLearn_Click(object sender, EventArgs e)
     {
-
+      m_bLearn = false;
     }
 
-    private void ButtonSetChannel_Click(object sender, EventArgs e)
+        
+    void CatchKeyPress(int keypress)
     {
 
+      MessageBox.Show("Pressed Key");
     }
-
-
     //Input mapping functions
 
     void LoadMapping(string xmlFile, bool defaults)
     {
       try
       {
-        
-      //  XmlDocument doc = new XmlDocument();
-      //  string path = "InputDeviceMappings\\defaults\\" + xmlFile;
-      //  if (!defaults && File.Exists(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile)))
-      //    path = Config.GetFile(Config.Dir.CustomInputDevice, xmlFile);
-      //  if (!File.Exists(path))
-      //  {
-      //    MessageBox.Show("Can't locate mapping file " + xmlFile + "\n\nMake sure it exists in /InputDeviceMappings/defaults", "Mapping file missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
-      //    this.ShowInTaskbar = true;
-      //    this.WindowState = FormWindowState.Minimized;
-      //    return;
-      //  }
-      //  doc.Load(path);
 
-      //  XmlNodeList listRemotes = doc.DocumentElement.SelectNodes("/mappings/remote");
+        //  XmlDocument doc = new XmlDocument();
+        //  string path = "InputDeviceMappings\\defaults\\" + xmlFile;
+        //  if (!defaults && File.Exists(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile)))
+        //    path = Config.GetFile(Config.Dir.CustomInputDevice, xmlFile);
+        //  if (!File.Exists(path))
+        //  {
+        //    MessageBox.Show("Can't locate mapping file " + xmlFile + "\n\nMake sure it exists in /InputDeviceMappings/defaults", "Mapping file missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    this.ShowInTaskbar = true;
+        //    this.WindowState = FormWindowState.Minimized;
+        //    return;
+        //  }
+        //  doc.Load(path);
 
-      //  foreach (XmlNode nodeRemote in listRemotes)
-      //  {
-      //    TreeNode remoteNode = new TreeNode(nodeRemote.Attributes["family"].Value);
-      //    remoteNode.Tag = new Data("REMOTE", null, nodeRemote.Attributes["family"].Value);
-      //    XmlNodeList listButtons = nodeRemote.SelectNodes("button");
-      //    foreach (XmlNode nodeButton in listButtons)
-      //    {
-      //      TreeNode buttonNode = new TreeNode((string)nodeButton.Attributes["name"].Value);
-      //      buttonNode.Tag = new Data("BUTTON", nodeButton.Attributes["name"].Value, nodeButton.Attributes["code"].Value);
-      //      remoteNode.Nodes.Add(buttonNode);
+        //  XmlNodeList listRemotes = doc.DocumentElement.SelectNodes("/mappings/remote");
 
-      //      TreeNode layer1Node = new TreeNode("Layer 1");
-      //      TreeNode layer2Node = new TreeNode("Layer 2");
-      //      TreeNode layerAllNode = new TreeNode("All Layers");
-      //      layer1Node.Tag = new Data("LAYER", null, "1");
-      //      layer2Node.Tag = new Data("LAYER", null, "2");
-      //      layerAllNode.Tag = new Data("LAYER", null, "0");
-      //      layer1Node.ForeColor = Color.DimGray;
-      //      layer2Node.ForeColor = Color.DimGray;
-      //      layerAllNode.ForeColor = Color.DimGray;
+        //  foreach (XmlNode nodeRemote in listRemotes)
+        //  {
+        //    TreeNode remoteNode = new TreeNode(nodeRemote.Attributes["family"].Value);
+        //    remoteNode.Tag = new Data("REMOTE", null, nodeRemote.Attributes["family"].Value);
+        //    XmlNodeList listButtons = nodeRemote.SelectNodes("button");
+        //    foreach (XmlNode nodeButton in listButtons)
+        //    {
+        //      TreeNode buttonNode = new TreeNode((string)nodeButton.Attributes["name"].Value);
+        //      buttonNode.Tag = new Data("BUTTON", nodeButton.Attributes["name"].Value, nodeButton.Attributes["code"].Value);
+        //      remoteNode.Nodes.Add(buttonNode);
 
-      //      XmlNodeList listActions = nodeButton.SelectNodes("action");
+        //      TreeNode layer1Node = new TreeNode("Layer 1");
+        //      TreeNode layer2Node = new TreeNode("Layer 2");
+        //      TreeNode layerAllNode = new TreeNode("All Layers");
+        //      layer1Node.Tag = new Data("LAYER", null, "1");
+        //      layer2Node.Tag = new Data("LAYER", null, "2");
+        //      layerAllNode.Tag = new Data("LAYER", null, "0");
+        //      layer1Node.ForeColor = Color.DimGray;
+        //      layer2Node.ForeColor = Color.DimGray;
+        //      layerAllNode.ForeColor = Color.DimGray;
 
-      //      foreach (XmlNode nodeAction in listActions)
-      //      {
-      //        string conditionString = string.Empty;
-      //        string commandString = string.Empty;
+        //      XmlNodeList listActions = nodeButton.SelectNodes("action");
 
-      //        string condition = nodeAction.Attributes["condition"].Value.ToUpper();
-      //        string conProperty = nodeAction.Attributes["conproperty"].Value.ToUpper();
-      //        string command = nodeAction.Attributes["command"].Value.ToUpper();
-      //        string cmdProperty = nodeAction.Attributes["cmdproperty"].Value.ToUpper();
-      //        string sound = string.Empty;
-      //        XmlAttribute soundAttribute = nodeAction.Attributes["sound"];
-      //        if (soundAttribute != null)
-      //          sound = soundAttribute.Value;
-      //        bool gainFocus = false;
-      //        XmlAttribute focusAttribute = nodeAction.Attributes["focus"];
-      //        if (focusAttribute != null)
-      //          gainFocus = Convert.ToBoolean(focusAttribute.Value);
-      //        int layer = Convert.ToInt32(nodeAction.Attributes["layer"].Value);
-      //      }
-      //    }
-      //  }
-        
-       
-      
-      //  changedSettings = false;
+        //      foreach (XmlNode nodeAction in listActions)
+        //      {
+        //        string conditionString = string.Empty;
+        //        string commandString = string.Empty;
+
+        //        string condition = nodeAction.Attributes["condition"].Value.ToUpper();
+        //        string conProperty = nodeAction.Attributes["conproperty"].Value.ToUpper();
+        //        string command = nodeAction.Attributes["command"].Value.ToUpper();
+        //        string cmdProperty = nodeAction.Attributes["cmdproperty"].Value.ToUpper();
+        //        string sound = string.Empty;
+        //        XmlAttribute soundAttribute = nodeAction.Attributes["sound"];
+        //        if (soundAttribute != null)
+        //          sound = soundAttribute.Value;
+        //        bool gainFocus = false;
+        //        XmlAttribute focusAttribute = nodeAction.Attributes["focus"];
+        //        if (focusAttribute != null)
+        //          gainFocus = Convert.ToBoolean(focusAttribute.Value);
+        //        int layer = Convert.ToInt32(nodeAction.Attributes["layer"].Value);
+        //      }
+        //    }
+        //  }
+
+
+
+        //  changedSettings = false;
       }
       catch (Exception ex)
-     {
+      {
         Log.Error(ex);
-      //  File.Delete(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile));
-      //  LoadMapping(xmlFile, true);
+        //  File.Delete(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile));
+        //  LoadMapping(xmlFile, true);
       }
     }
 
     bool SaveMapping(string xmlFile)
     {
-     try
-     {
-       DirectoryInfo dir = Directory.CreateDirectory(Config.GetFolder(Config.Dir.CustomInputDevice));
-     }
-     catch
-     {
-       Log.Info("MAP: Error accessing directory \"InputDeviceMappings\\custom\"");
-     }
+      try
+      {
+        DirectoryInfo dir = Directory.CreateDirectory(Config.GetFolder(Config.Dir.CustomInputDevice));
+      }
+      catch
+      {
+        Log.Info("MAP: Error accessing directory \"InputDeviceMappings\\custom\"");
+      }
 
       ////try
 
@@ -277,9 +302,9 @@ namespace MediaPortal.Remotes.X10Remote
       //  changedSettings = false;
       //  return true;
       //}
-     return true;
+      return true;
 
     }
 
   }
-}
+ }

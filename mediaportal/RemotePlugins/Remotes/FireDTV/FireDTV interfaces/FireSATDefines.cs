@@ -29,7 +29,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
 
-namespace MediaPortal.RemoteControls.FireDTV
+namespace MediaPortal.InputDevices.FireDTV
 {
   public class FireDTVConstants
   {

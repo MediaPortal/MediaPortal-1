@@ -172,6 +172,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\Interop.TunerLib.dll</HintPath>
     </Reference>
+    <Reference Include="Interop.X10, Version=1.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\RemotePlugins\Remotes\X10Remote\Interop.X10.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>

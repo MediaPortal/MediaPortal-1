@@ -34,7 +34,7 @@ using System.IO;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 
-namespace MediaPortal.RemoteControls.FireDTV
+namespace MediaPortal.InputDevices.FireDTV
 {
   public class FireDTVSourceFilterInfo
   {
