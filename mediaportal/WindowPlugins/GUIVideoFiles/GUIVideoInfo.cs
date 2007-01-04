@@ -168,7 +168,7 @@ namespace MediaPortal.GUI.Video
         //2=DVD#001
         GUIControl.SelectItemControl(GetID, spinDisc.GetID, iItem);
       }
-      Refresh();
+      Refresh(false);
       Update();
       imageSearchThread = new Thread(new ThreadStart(AmazonLookupThread));
       imageSearchThread.Start();
@@ -208,7 +208,7 @@ namespace MediaPortal.GUI.Video
 
           ResetSpinControl();
 
-          Refresh();
+          Refresh(false);
           Update();
           imageSearchThread = new Thread(new ThreadStart(AmazonLookupThread));
           imageSearchThread.Start();
@@ -230,7 +230,7 @@ namespace MediaPortal.GUI.Video
         string largeCoverArtImage = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
         MediaPortal.Util.Utils.FileDelete(coverArtImage);
         MediaPortal.Util.Utils.FileDelete(largeCoverArtImage);
-        Refresh();
+        Refresh(true);
         Update();
         int idMovie = currentMovie.ID;
         if (idMovie >= 0)
@@ -333,12 +333,11 @@ namespace MediaPortal.GUI.Video
     }
 
 
-    void Refresh()
+    void Refresh(bool forceFolderThumb)
     {
       string coverArtImage = String.Empty;
       try
       {
-
         string imageUrl = currentMovie.ThumbURL;
         if (imageUrl.Length > 0)
         {
@@ -369,26 +368,40 @@ namespace MediaPortal.GUI.Video
               Log.Info("image has no extension:{0}", imageUrl);
             }
           }
-          if ((System.IO.File.Exists(coverArtImage))&&(FolderForThumbs != string.Empty))
+
+          if (((System.IO.File.Exists(coverArtImage)) && (FolderForThumbs != string.Empty)) || forceFolderThumb)
           {
             // copy icon to folder also;
-            string strFolderImage = System.IO.Path.GetFullPath(FolderForThumbs);
+            string strFolderImage = String.Empty;              
+            if (forceFolderThumb)
+              strFolderImage = System.IO.Path.GetFullPath(currentMovie.Path);
+            else
+              strFolderImage = System.IO.Path.GetFullPath(FolderForThumbs);
+
             strFolderImage += "\\folder.jpg"; //TODO                  
             try
             {
               MediaPortal.Util.Utils.FileDelete(strFolderImage);
-              System.IO.File.Copy(coverArtImage, strFolderImage);
+              if (forceFolderThumb)
+              {
+                if (System.IO.File.Exists(largeCoverArtImage))
+                  System.IO.File.Copy(largeCoverArtImage, strFolderImage, true);
+                else
+                  System.IO.File.Copy(coverArtImage, strFolderImage, true);
+              }
+              else
+                System.IO.File.Copy(coverArtImage, strFolderImage, false);
             }
-            catch (Exception)
+            catch (Exception ex1)
             {
+              Log.Error("GUIVideoInfo: Error creating folder thumb {0}", ex1.Message);
             }
           }
         }
-
-
       }
-      catch (Exception)
+      catch (Exception ex2)
       {
+        Log.Error("GUIVideoInfo: Error creating new thumbs for {0} - {1}", currentMovie.ThumbURL, ex2.Message);
       }
       currentMovie.SetProperties();
     }
