@@ -1,0 +1,6445 @@
+<?xml version="1.0" encoding="iso-8859-5"?>
+<strings>
+  <characters>512</characters>
+  <string Prefix="Мои ">
+    <id>0</id>
+    <value>Программы</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>1</id>
+    <value>Изображения</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>2</id>
+    <value>Музыка</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>3</id>
+    <value>Видео</value>
+  </string>
+  <string>
+    <id>4</id>
+    <value>Телепрограмма</value>
+  </string>
+  <string>
+    <id>5</id>
+    <value>Настройка</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>7</id>
+    <value>Файлы</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>8</id>
+    <value>Погода</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>9</id>
+    <value>RSS</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>10</id>
+    <value>Рецепты</value>
+  </string>
+  <string>
+    <id>11</id>
+    <value>Понедельник</value>
+  </string>
+  <string>
+    <id>12</id>
+    <value>Вторник</value>
+  </string>
+  <string>
+    <id>13</id>
+    <value>Среда</value>
+  </string>
+  <string>
+    <id>14</id>
+    <value>Четверг</value>
+  </string>
+  <string>
+    <id>15</id>
+    <value>Пятница</value>
+  </string>
+  <string>
+    <id>16</id>
+    <value>Суббота</value>
+  </string>
+  <string>
+    <id>17</id>
+    <value>Воскресенье</value>
+  </string>
+  <string>
+    <id>21</id>
+    <value>Январь</value>
+  </string>
+  <string>
+    <id>22</id>
+    <value>Февраль</value>
+  </string>
+  <string>
+    <id>23</id>
+    <value>Март</value>
+  </string>
+  <string>
+    <id>24</id>
+    <value>Апрель</value>
+  </string>
+  <string>
+    <id>25</id>
+    <value>Май</value>
+  </string>
+  <string>
+    <id>26</id>
+    <value>Июнь</value>
+  </string>
+  <string>
+    <id>27</id>
+    <value>Июль</value>
+  </string>
+  <string>
+    <id>28</id>
+    <value>Август</value>
+  </string>
+  <string>
+    <id>29</id>
+    <value>Сентябрь</value>
+  </string>
+  <string>
+    <id>30</id>
+    <value>Октябрь</value>
+  </string>
+  <string>
+    <id>31</id>
+    <value>Ноябрь</value>
+  </string>
+  <string>
+    <id>32</id>
+    <value>Декабрь</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>50</id>
+    <value>DVD</value>
+  </string>
+  <string>
+    <id>100</id>
+    <value>Вид: Иконки</value>
+  </string>
+  <string>
+    <id>101</id>
+    <value>Вид: Список</value>
+  </string>
+  <string>
+    <id>102</id>
+    <value>Сканировать</value>
+  </string>
+  <string>
+    <id>103</id>
+    <value>Сорт. по: Имени</value>
+  </string>
+  <string>
+    <id>104</id>
+    <value>Сорт. по: Дате</value>
+  </string>
+  <string>
+    <id>105</id>
+    <value>Сорт. по: Размеру</value>
+  </string>
+  <string>
+    <id>106</id>
+    <value>Нет</value>
+  </string>
+  <string>
+    <id>107</id>
+    <value>Да</value>
+  </string>
+  <string>
+    <id>108</id>
+    <value>Показ слайдов</value>
+  </string>
+  <string>
+    <id>109</id>
+    <value>Создать миниатюры</value>
+  </string>
+  <string>
+    <id>110</id>
+    <value>Создать миниатюры</value>
+  </string>
+  <string>
+    <id>111</id>
+    <value>Ярлыки</value>
+  </string>
+  <string>
+    <id>112</id>
+    <value>ПАУЗА</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>113</id>
+    <value>Файлы : Источник</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>114</id>
+    <value>Файлы : Назначение</value>
+  </string>
+  <string>
+    <id>115</id>
+    <value>Копировать</value>
+  </string>
+  <string>
+    <id>116</id>
+    <value>Переместить</value>
+  </string>
+  <string>
+    <id>117</id>
+    <value>Удалить</value>
+  </string>
+  <string>
+    <id>118</id>
+    <value>Переименовать</value>
+  </string>
+  <string>
+    <id>119</id>
+    <value>Новый каталог</value>
+  </string>
+  <string>
+    <id>120</id>
+    <value>Подтверждение копирования файла</value>
+  </string>
+  <string>
+    <id>121</id>
+    <value>Подтверждение переноса файла</value>
+  </string>
+  <string>
+    <id>122</id>
+    <value>Подтверждение удаления файла</value>
+  </string>
+  <string>
+    <id>123</id>
+    <value>Скопировать эти файлы?</value>
+  </string>
+  <string>
+    <id>124</id>
+    <value>Переместить эти файлы?</value>
+  </string>
+  <string>
+    <id>125</id>
+    <value>Удалить эти файлы?</value>
+  </string>
+  <string>
+    <id>126</id>
+    <value>Статус</value>
+  </string>
+  <string>
+    <id>127</id>
+    <value>Объекта(ов)</value>
+  </string>
+  <string>
+    <id>128</id>
+    <value>Главное</value>
+  </string>
+  <string>
+    <id>129</id>
+    <value>Слайдшоу</value>
+  </string>
+  <string>
+    <id>130</id>
+    <value>Информация о системе</value>
+  </string>
+  <string>
+    <id>131</id>
+    <value>Экран</value>
+  </string>
+  <string>
+    <id>132</id>
+    <value>Альбомы</value>
+  </string>
+  <string>
+    <id>133</id>
+    <value>Исполнители</value>
+  </string>
+  <string>
+    <id>134</id>
+    <value>Каталог</value>
+  </string>
+  <string>
+    <id>135</id>
+    <value>Жанры</value>
+  </string>
+  <string>
+    <id>136</id>
+    <value>Плейлист</value>
+  </string>
+  <string>
+    <id>137</id>
+    <value>Поиск</value>
+  </string>
+  <string>
+    <id>138</id>
+    <value>ИНФОРМАЦИЯ О СИСТЕМЕ</value>
+  </string>
+  <string>
+    <id>139</id>
+    <value>Температура:</value>
+  </string>
+  <string>
+    <id>140</id>
+    <value>CPU:</value>
+  </string>
+  <string>
+    <id>141</id>
+    <value>GPU:</value>
+  </string>
+  <string>
+    <id>142</id>
+    <value>Время:</value>
+  </string>
+  <string>
+    <id>143</id>
+    <value>Текущий:</value>
+  </string>
+  <string>
+    <id>144</id>
+    <value>Сборка:</value>
+  </string>
+  <string>
+    <id>145</id>
+    <value>Сеть:</value>
+  </string>
+  <string>
+    <id>146</id>
+    <value>Тип:</value>
+  </string>
+  <string>
+    <id>147</id>
+    <value>Статичное</value>
+  </string>
+  <string>
+    <id>148</id>
+    <value>DHCP</value>
+  </string>
+  <string>
+    <id>149</id>
+    <value>MAC</value>
+  </string>
+  <string>
+    <id>150</id>
+    <value>IP:</value>
+  </string>
+  <string>
+    <id>151</id>
+    <value>Ссылка:</value>
+  </string>
+  <string>
+    <id>152</id>
+    <value>Полудуплекс</value>
+  </string>
+  <string>
+    <id>153</id>
+    <value>Дуплекс</value>
+  </string>
+  <string>
+    <id>154</id>
+    <value>Хранилище</value>
+  </string>
+  <string>
+    <id>155</id>
+    <value>Диск</value>
+  </string>
+  <string>
+    <id>156</id>
+    <value>Свободно</value>
+  </string>
+  <string>
+    <id>157</id>
+    <value>Видео</value>
+  </string>
+  <string>
+    <id>158</id>
+    <value>Свободная память</value>
+  </string>
+  <string>
+    <id>159</id>
+    <value>Нет ссылки</value>
+  </string>
+  <string>
+    <id>160</id>
+    <value>Свободно</value>
+  </string>
+  <string>
+    <id>161</id>
+    <value>Недоступно</value>
+  </string>
+  <string>
+    <id>162</id>
+    <value>Лоток открыт</value>
+  </string>
+  <string>
+    <id>163</id>
+    <value>Чтение</value>
+  </string>
+  <string>
+    <id>164</id>
+    <value>Нет диска</value>
+  </string>
+  <string>
+    <id>165</id>
+    <value>Диск установлен</value>
+  </string>
+  <string>
+    <id>166</id>
+    <value>Скин:</value>
+  </string>
+  <string>
+    <id>167</id>
+    <value>FTP сервер:</value>
+  </string>
+  <string>
+    <id>168</id>
+    <value>Время синхронизации:</value>
+  </string>
+  <string>
+    <id>169</id>
+    <value>Разрешение:</value>
+  </string>
+  <string>
+    <id>170</id>
+    <value>Альбом:</value>
+  </string>
+  <string>
+    <id>171</id>
+    <value>Исполнитель:</value>
+  </string>
+  <string>
+    <id>172</id>
+    <value>Дата выпуска:</value>
+  </string>
+  <string>
+    <id>173</id>
+    <value>Рейтинг:</value>
+  </string>
+  <string>
+    <id>174</id>
+    <value>Жанр:</value>
+  </string>
+  <string>
+    <id>175</id>
+    <value>Ноты:</value>
+  </string>
+  <string>
+    <id>176</id>
+    <value>Стили:</value>
+  </string>
+  <string>
+    <id>177</id>
+    <value>Рецензия:</value>
+  </string>
+  <string>
+    <id>178</id>
+    <value>Треки:</value>
+  </string>
+  <string>
+    <id>179</id>
+    <value>Песня</value>
+  </string>
+  <string>
+    <id>180</id>
+    <value>Длительность</value>
+  </string>
+  <string>
+    <id>181</id>
+    <value>Выберите альбом</value>
+  </string>
+  <string>
+    <id>182</id>
+    <value>Треки</value>
+  </string>
+  <string>
+    <id>183</id>
+    <value>Рецензия</value>
+  </string>
+  <string>
+    <id>184</id>
+    <value>Обновить</value>
+  </string>
+  <string>
+    <id>185</id>
+    <value>Поиск альбома</value>
+  </string>
+  <string>
+    <id>186</id>
+    <value>OK</value>
+  </string>
+  <string>
+    <id>187</id>
+    <value>Альбомы не найдены!</value>
+  </string>
+  <string>
+    <id>188</id>
+    <value>Выбрать все</value>
+  </string>
+  <string>
+    <id>189</id>
+    <value>Сканирование информации</value>
+  </string>
+  <string>
+    <id>190</id>
+    <value>Сохранить</value>
+  </string>
+  <string>
+    <id>191</id>
+    <value>Перемешать</value>
+  </string>
+  <string>
+    <id>192</id>
+    <value>Очистить</value>
+  </string>
+  <string>
+    <id>193</id>
+    <value>Сканировать</value>
+  </string>
+  <string>
+    <id>194</id>
+    <value>Поиск...</value>
+  </string>
+  <string>
+    <id>195</id>
+    <value>IMDB не обнаружена!</value>
+  </string>
+  <string>
+    <id>196</id>
+    <value>Выберите фильм:</value>
+  </string>
+  <string>
+    <id>197</id>
+    <value>Запрос к IMDB</value>
+  </string>
+  <string>
+    <id>198</id>
+    <value>Загрузка информации о фильме</value>
+  </string>
+  <string>
+    <id>199</id>
+    <value>Режиссер:</value>
+  </string>
+  <string>
+    <id>200</id>
+    <value>Сценарист:</value>
+  </string>
+  <string>
+    <id>201</id>
+    <value>Год:</value>
+  </string>
+  <string>
+    <id>202</id>
+    <value>Информация:</value>
+  </string>
+  <string>
+    <id>203</id>
+    <value>Содержание:</value>
+  </string>
+  <string>
+    <id>204</id>
+    <value>Рейтинг:</value>
+  </string>
+  <string>
+    <id>205</id>
+    <value>Голоса:</value>
+  </string>
+  <string>
+    <id>206</id>
+    <value>Актеры</value>
+  </string>
+  <string>
+    <id>207</id>
+    <value>Описание</value>
+  </string>
+  <string>
+    <id>208</id>
+    <value>Играть</value>
+  </string>
+  <string>
+    <id>209</id>
+    <value>Вперед</value>
+  </string>
+  <string>
+    <id>210</id>
+    <value>Назад</value>
+  </string>
+  <string>
+    <id>211</id>
+    <value>Поиск приложений</value>
+  </string>
+  <string>
+    <id>212</id>
+    <value>приложения найдены</value>
+  </string>
+  <string>
+    <id>213</id>
+    <value>Калибровка интерфейса</value>
+  </string>
+  <string>
+    <id>214</id>
+    <value>Калибровка экрана</value>
+  </string>
+  <string>
+    <id>215</id>
+    <value>Смягчение</value>
+  </string>
+  <string>
+    <id>216</id>
+    <value>Масштаб</value>
+  </string>
+  <string>
+    <id>217</id>
+    <value>Растянуть</value>
+  </string>
+  <string>
+    <id>218</id>
+    <value>DVD</value>
+  </string>
+  <string>
+    <id>219</id>
+    <value>Вставьте диск</value>
+  </string>
+  <string>
+    <id>220</id>
+    <value>Удаленный каталог</value>
+  </string>
+  <string>
+    <id>221</id>
+    <value>Сеть не подключена</value>
+  </string>
+  <string>
+    <id>222</id>
+    <value>Отмена</value>
+  </string>
+  <string>
+    <id>223</id>
+    <value>Переключаться в широкоформатный режим</value>
+  </string>
+  <string>
+    <id>224</id>
+    <value>Скорость</value>
+  </string>
+  <string>
+    <id>225</id>
+    <value>Время показа</value>
+  </string>
+  <string>
+    <id>226</id>
+    <value>Включить PAL60</value>
+  </string>
+  <string>
+    <id>227</id>
+    <value>Включить CDDB</value>
+  </string>
+  <string>
+    <id>228</id>
+    <value>Перемешивать плейлист при загрузке</value>
+  </string>
+  <string>
+    <id>229</id>
+    <value>Время отключения жесткого диска (мин)</value>
+  </string>
+  <string>
+    <id>230</id>
+    <value>Фильтры</value>
+  </string>
+  <string>
+    <id>231</id>
+    <value>Нет</value>
+  </string>
+  <string>
+    <id>232</id>
+    <value>Точка</value>
+  </string>
+  <string>
+    <id>233</id>
+    <value>Линейное</value>
+  </string>
+  <string>
+    <id>234</id>
+    <value>Анизотропное</value>
+  </string>
+  <string>
+    <id>235</id>
+    <value>Quincunx</value>
+  </string>
+  <string>
+    <id>236</id>
+    <value>Gaussian Cubic</value>
+  </string>
+  <string>
+    <id>237</id>
+    <value>Уменьшение:</value>
+  </string>
+  <string>
+    <id>238</id>
+    <value>Увеличение:</value>
+  </string>
+  <string>
+    <id>240</id>
+    <value>Автозапуск Видео-DVD</value>
+  </string>
+  <string>
+    <id>241</id>
+    <value>Автозапуск VCD/SVCD</value>
+  </string>
+  <string>
+    <id>242</id>
+    <value>Автозапуск Аудио-CD</value>
+  </string>
+  <string>
+    <id>243</id>
+    <value>Автозапуск игр XBOX</value>
+  </string>
+  <string>
+    <id>244</id>
+    <value>Автозапуск видео</value>
+  </string>
+  <string>
+    <id>245</id>
+    <value>Автозапуск музыки</value>
+  </string>
+  <string>
+    <id>246</id>
+    <value>Автозапуск изображений</value>
+  </string>
+  <string>
+    <id>247</id>
+    <value>Скрипты</value>
+  </string>
+  <string>
+    <id>248</id>
+    <value>Язык</value>
+  </string>
+  <string>
+    <id>249</id>
+    <value>Музыка</value>
+  </string>
+  <string>
+    <id>250</id>
+    <value>Визуализация</value>
+  </string>
+  <string>
+    <id>251</id>
+    <value>Выберите каталог</value>
+  </string>
+  <string>
+    <id>252</id>
+    <value>Вывод на все колонки</value>
+  </string>
+  <string>
+    <id>253</id>
+    <value>Количество каналов</value>
+  </string>
+  <string>
+    <id>254</id>
+    <value>DD Stereo Passthrough</value>
+  </string>
+  <string>
+    <id>255</id>
+    <value>CDDB</value>
+  </string>
+  <string>
+    <id>256</id>
+    <value>Запрос freedb из CDDB</value>
+  </string>
+  <string>
+    <id>257</id>
+    <value>Ошибка</value>
+  </string>
+  <string>
+    <id>258</id>
+    <value>Включить ID3 теги</value>
+  </string>
+  <string>
+    <id>259</id>
+    <value>Открытие</value>
+  </string>
+  <string>
+    <id>260</id>
+    <value> Shoutcast</value>
+  </string>
+  <string>
+    <id>261</id>
+    <value>Ждем начала....</value>
+  </string>
+  <string>
+    <id>262</id>
+    <value>Вывод скриптов</value>
+  </string>
+  <string>
+    <id>263</id>
+    <value>HTTP сервер:</value>
+  </string>
+  <string>
+    <id>264</id>
+    <value>Запись</value>
+  </string>
+  <string>
+    <id>265</id>
+    <value>Остановить запись.</value>
+  </string>
+  <string>
+    <id>266</id>
+    <value>Сорт. по: Трекам</value>
+  </string>
+  <string>
+    <id>267</id>
+    <value>Сорт. по: Времени</value>
+  </string>
+  <string>
+    <id>268</id>
+    <value>Сорт. по: Заголовкам</value>
+  </string>
+  <string>
+    <id>269</id>
+    <value>Сорт. по: Исполнителям</value>
+  </string>
+  <string>
+    <id>270</id>
+    <value>Сорт. по: Альбомам</value>
+  </string>
+  <string>
+    <id>271</id>
+    <value>Топ 100</value>
+  </string>
+  <string>
+    <id>272</id>
+    <value>Левый верхний угол экрана</value>
+  </string>
+  <string>
+    <id>273</id>
+    <value>Правый верхний угол экрана</value>
+  </string>
+  <string>
+    <id>274</id>
+    <value>Положение субтитров</value>
+  </string>
+  <string>
+    <id>275</id>
+    <value>Регулировка соотношения пикселей</value>
+  </string>
+  <string>
+    <id>276</id>
+    <value>-ВНИМАНИЕ!- Оставьте 0,0 для лучшего качества.</value>
+  </string>
+  <string>
+    <id>277</id>
+    <value>Перемещайте панель для изменения позиции субтитров</value>
+  </string>
+  <string>
+    <id>278</id>
+    <value>-Важно!- для лучшего качества, придайте прямоугольнику квадратную форму</value>
+  </string>
+  <string>
+    <id>279</id>
+    <value>Не удалось загрузить настройки</value>
+  </string>
+  <string>
+    <id>280</id>
+    <value>используются стандартные настройки</value>
+  </string>
+  <string>
+    <id>281</id>
+    <value>Проверьте .xml файлы</value>
+  </string>
+  <string>
+    <id>282</id>
+    <value>найдено %i элементов</value>
+  </string>
+  <string>
+    <id>283</id>
+    <value>Результаты поиска</value>
+  </string>
+  <string>
+    <id>284</id>
+    <value>Ничего не найдено</value>
+  </string>
+  <string>
+    <id>285</id>
+    <value>Фильтр деинтерлейсинга</value>
+  </string>
+  <string>
+    <id>286</id>
+    <value>Фильтры постобработки</value>
+  </string>
+  <string>
+    <id>287</id>
+    <value>Субтитры</value>
+  </string>
+  <string>
+    <id>288</id>
+    <value>Шрифт</value>
+  </string>
+  <string>
+    <id>289</id>
+    <value>Размер</value>
+  </string>
+  <string>
+    <id>290</id>
+    <value>Увеличение громкости (дБ)</value>
+  </string>
+  <string>
+    <id>291</id>
+    <value>Видео</value>
+  </string>
+  <string>
+    <id>292</id>
+    <value>Аудио</value>
+  </string>
+  <string>
+    <id>293</id>
+    <value>Субтитры</value>
+  </string>
+  <string>
+    <id>294</id>
+    <value>Создать закладку</value>
+  </string>
+  <string>
+    <id>295</id>
+    <value>Перемещаться по закладкам</value>
+  </string>
+  <string>
+    <id>296</id>
+    <value>Очистить закладки</value>
+  </string>
+  <string>
+    <id>297</id>
+    <value>AVDelay</value>
+  </string>
+  <string>
+    <id>298</id>
+    <value>Ползунок</value>
+  </string>
+  <string>
+    <id>299</id>
+    <value>Длительность:</value>
+  </string>
+  <string>
+    <id>300</id>
+    <value>1. Язык</value>
+  </string>
+  <string>
+    <id>301</id>
+    <value>2. Громкость</value>
+  </string>
+  <string>
+    <id>302</id>
+    <value>3. Поток</value>
+  </string>
+  <string>
+    <id>303</id>
+    <value>Задержка</value>
+  </string>
+  <string>
+    <id>304</id>
+    <value>Язык</value>
+  </string>
+  <string>
+    <id>305</id>
+    <value>Включено</value>
+  </string>
+  <string>
+    <id>306</id>
+    <value> Non-Interleaved</value>
+  </string>
+  <string>
+    <id>307</id>
+    <value>Авто</value>
+  </string>
+  <string>
+    <id>308</id>
+    <value>фильтр вертикального деблокинга</value>
+  </string>
+  <string>
+    <id>309</id>
+    <value>фильтр горизонтального деблокинга</value>
+  </string>
+  <string>
+    <id>310</id>
+    <value>Авто яркость/контраст</value>
+  </string>
+  <string>
+    <id>311</id>
+    <value> Dering</value>
+  </string>
+  <string>
+    <id>312</id>
+    <value>(0=авто)</value>
+  </string>
+  <string>
+    <id>313</id>
+    <value>Обновление базы</value>
+  </string>
+  <string>
+    <id>314</id>
+    <value>Подготовка...</value>
+  </string>
+  <string>
+    <id>315</id>
+    <value>Ошибка базы</value>
+  </string>
+  <string>
+    <id>316</id>
+    <value>Поиск песен...</value>
+  </string>
+  <string>
+    <id>317</id>
+    <value>Обновление завершено</value>
+  </string>
+  <string>
+    <id>318</id>
+    <value>Пометка удаленных песен</value>
+  </string>
+  <string>
+    <id>319</id>
+    <value>Ошибка при обновлении песен</value>
+  </string>
+  <string>
+    <id>320</id>
+    <value>Поиск исполнителей...</value>
+  </string>
+  <string>
+    <id>321</id>
+    <value>Ошибка при обновлении исполнителей</value>
+  </string>
+  <string>
+    <id>322</id>
+    <value>Поиск жанров...</value>
+  </string>
+  <string>
+    <id>323</id>
+    <value>Ошибка при обновлении жанров</value>
+  </string>
+  <string>
+    <id>324</id>
+    <value>Поиск путей...</value>
+  </string>
+  <string>
+    <id>325</id>
+    <value>Ошибка при обновлении путей</value>
+  </string>
+  <string>
+    <id>326</id>
+    <value>Поиск альбомов...</value>
+  </string>
+  <string>
+    <id>327</id>
+    <value>Ошибка при обновлении альбомов</value>
+  </string>
+  <string>
+    <id>328</id>
+    <value>Запись изменений...</value>
+  </string>
+  <string>
+    <id>329</id>
+    <value>Ошибка при записи изменений</value>
+  </string>
+  <string>
+    <id>330</id>
+    <value>Это может занять некоторое время...</value>
+  </string>
+  <string>
+    <id>331</id>
+    <value>Сжатие базы...</value>
+  </string>
+  <string>
+    <id>332</id>
+    <value>Ошибка при сжатии базы</value>
+  </string>
+  <string>
+    <id>333</id>
+    <value>Вы хотите обновить музыкальную базу?</value>
+  </string>
+  <string>
+    <id>334</id>
+    <value>Обновление музыкальной базы</value>
+  </string>
+  <string>
+    <id>335</id>
+    <value>Старт</value>
+  </string>
+  <string>
+    <id>336</id>
+    <value>Сред. частота кадров</value>
+  </string>
+  <string>
+    <id>337</id>
+    <value>Аудио выход:</value>
+  </string>
+  <string>
+    <id>338</id>
+    <value>Аналоговый</value>
+  </string>
+  <string>
+    <id>339</id>
+    <value>Цифровой</value>
+  </string>
+  <string>
+    <id>340</id>
+    <value>Разные исполнители</value>
+  </string>
+  <string>
+    <id>341</id>
+    <value>Играть DVD</value>
+  </string>
+  <string>
+    <id>342</id>
+    <value>Фильм</value>
+  </string>
+  <string>
+    <id>343</id>
+    <value>Средняя частота кадров</value>
+  </string>
+  <string>
+    <id>344</id>
+    <value>Актеры</value>
+  </string>
+  <string>
+    <id>345</id>
+    <value>Год</value>
+  </string>
+  <string>
+    <id>346</id>
+    <value> Stack</value>
+  </string>
+  <string>
+    <id>347</id>
+    <value> Unstack</value>
+  </string>
+  <string>
+    <id>348</id>
+    <value>Плоское дерево каталогов</value>
+  </string>
+  <string>
+    <id>349</id>
+    <value>Показывать только Default.xbe</value>
+  </string>
+  <string>
+    <id>350</id>
+    <value>Программы</value>
+  </string>
+  <string>
+    <id>351</id>
+    <value>Выкл.</value>
+  </string>
+  <string>
+    <id>352</id>
+    <value> Dim</value>
+  </string>
+  <string>
+    <id>353</id>
+    <value>Черный</value>
+  </string>
+  <string>
+    <id>354</id>
+    <value> Matrix Trails</value>
+  </string>
+  <string>
+    <id>355</id>
+    <value>Интервал для заставки</value>
+  </string>
+  <string>
+    <id>356</id>
+    <value>Режим заставки</value>
+  </string>
+  <string>
+    <id>357</id>
+    <value>Интервал выключения</value>
+  </string>
+  <string>
+    <id>358</id>
+    <value>Все альбомы</value>
+  </string>
+  <string>
+    <id>359</id>
+    <value>Новые альбомы</value>
+  </string>
+  <string>
+    <id>360</id>
+    <value>Заставка</value>
+  </string>
+  <string>
+    <id>361</id>
+    <value>Случ. слайдшоу</value>
+  </string>
+  <string>
+    <id>362</id>
+    <value>Уровень затухания заставки (%)</value>
+  </string>
+  <string>
+    <id>363</id>
+    <value>Сорт. по: Файлу</value>
+  </string>
+  <string>
+    <id>364</id>
+    <value> DD/DTS Multichannel Passthrough</value>
+  </string>
+  <string>
+    <id>365</id>
+    <value>Сорт. по: Имени</value>
+  </string>
+  <string>
+    <id>366</id>
+    <value>Сорт. по: Году</value>
+  </string>
+  <string>
+    <id>367</id>
+    <value>Сорт. по: Рейтингу</value>
+  </string>
+  <string>
+    <id>368</id>
+    <value>IMDB</value>
+  </string>
+  <string>
+    <id>369</id>
+    <value>Название</value>
+  </string>
+  <string>
+    <id>370</id>
+    <value> T-Storms</value>
+  </string>
+  <string>
+    <id>371</id>
+    <value>Частичная</value>
+  </string>
+  <string>
+    <id>372</id>
+    <value>Обычная</value>
+  </string>
+  <string>
+    <id>373</id>
+    <value>Солнечно</value>
+  </string>
+  <string>
+    <id>374</id>
+    <value>Облачно</value>
+  </string>
+  <string>
+    <id>375</id>
+    <value>Снег</value>
+  </string>
+  <string>
+    <id>376</id>
+    <value>Дождь</value>
+  </string>
+  <string>
+    <id>377</id>
+    <value>Ясно</value>
+  </string>
+  <string>
+    <id>378</id>
+    <value>ДП</value>
+  </string>
+  <string>
+    <id>379</id>
+    <value>ПП</value>
+  </string>
+  <string>
+    <id>380</id>
+    <value>Осадки</value>
+  </string>
+  <string>
+    <id>381</id>
+    <value>Немного</value>
+  </string>
+  <string>
+    <id>382</id>
+    <value>Редкий</value>
+  </string>
+  <string>
+    <id>383</id>
+    <value>Ветер</value>
+  </string>
+  <string>
+    <id>384</id>
+    <value>Сильный</value>
+  </string>
+  <string>
+    <id>385</id>
+    <value>Слабый</value>
+  </string>
+  <string>
+    <id>386</id>
+    <value>Ясно</value>
+  </string>
+  <string>
+    <id>387</id>
+    <value>Ранний</value>
+  </string>
+  <string>
+    <id>388</id>
+    <value>и</value>
+  </string>
+  <string>
+    <id>389</id>
+    <value>Туман</value>
+  </string>
+  <string>
+    <id>390</id>
+    <value>Изморозь</value>
+  </string>
+  <string>
+    <id>391</id>
+    <value>Ветренно</value>
+  </string>
+  <string>
+    <id>392</id>
+    <value>Мелкий дождь</value>
+  </string>
+  <string>
+    <id>393</id>
+    <value>Заморозки</value>
+  </string>
+  <string>
+    <id>394</id>
+    <value>Нет</value>
+  </string>
+  <string>
+    <id>395</id>
+    <value>Пасмурно</value>
+  </string>
+  <string>
+    <id>396</id>
+    <value>Выберите место</value>
+  </string>
+  <string>
+    <id>397</id>
+    <value>Время обновления</value>
+  </string>
+  <string>
+    <id>398</id>
+    <value>Ед. температуры</value>
+  </string>
+  <string>
+    <id>399</id>
+    <value>Ед. скорости</value>
+  </string>
+  <string>
+    <id>400</id>
+    <value>Погода</value>
+  </string>
+  <string>
+    <id>401</id>
+    <value>Темп.</value>
+  </string>
+  <string>
+    <id>402</id>
+    <value>Комфорт</value>
+  </string>
+  <string>
+    <id>403</id>
+    <value>UV индекс</value>
+  </string>
+  <string>
+    <id>404</id>
+    <value>Ветер</value>
+  </string>
+  <string>
+    <id>405</id>
+    <value>Точка росы</value>
+  </string>
+  <string>
+    <id>406</id>
+    <value>Влажность</value>
+  </string>
+  <string>
+    <id>410</id>
+    <value>Подключение к Weather.com</value>
+  </string>
+  <string>
+    <id>411</id>
+    <value>Загрузка погоды с:</value>
+  </string>
+  <string>
+    <id>412</id>
+    <value>Не удалось загрузить погоду</value>
+  </string>
+  <string>
+    <id>413</id>
+    <value>Вручную</value>
+  </string>
+  <string>
+    <id>414</id>
+    <value>Для этого альбома нет рецензии</value>
+  </string>
+  <string>
+    <id>415</id>
+    <value>Загрузка миниатюры...</value>
+  </string>
+  <string>
+    <id>416</id>
+    <value>Недоступно</value>
+  </string>
+  <string>
+    <id>417</id>
+    <value>Вид: Большие иконки</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>418</id>
+    <value>Видео/Жанры</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>419</id>
+    <value>Видео/Исполнители</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>420</id>
+    <value>Видео/Годы</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>421</id>
+    <value>Видео/Название</value>
+  </string>
+  <string>
+    <id>422</id>
+    <value>Удалить информацию об альбоме</value>
+  </string>
+  <string>
+    <id>423</id>
+    <value>Удалить CDDB информацию</value>
+  </string>
+  <string>
+    <id>424</id>
+    <value>Выбор</value>
+  </string>
+  <string>
+    <id>425</id>
+    <value>Информация об альбоме не обнаружена.</value>
+  </string>
+  <string>
+    <id>426</id>
+    <value>CDDB информация не обнаружена.</value>
+  </string>
+  <string>
+    <id>427</id>
+    <value>Диск:</value>
+  </string>
+  <string>
+    <id>428</id>
+    <value>Вставьте правильный CD/DVD</value>
+  </string>
+  <string>
+    <id>429</id>
+    <value>Вставьте следующий CD/DVD</value>
+  </string>
+  <string>
+    <id>430</id>
+    <value>Сорт. по: DVD#</value>
+  </string>
+  <string>
+    <id>431</id>
+    <value>Без кеша</value>
+  </string>
+  <string>
+    <id>432</id>
+    <value>Удалить фильм из базы</value>
+  </string>
+  <string>
+    <id>433</id>
+    <value>Вы уверены что хотите</value>
+  </string>
+  <string>
+    <id>434</id>
+    <value>удалить этот фильм?</value>
+  </string>
+  <string>
+    <id>435</id>
+    <value>Трек:</value>
+  </string>
+  <string>
+    <id>436</id>
+    <value>Год:</value>
+  </string>
+  <string>
+    <id>437</id>
+    <value>Длина:</value>
+  </string>
+  <string>
+    <id>438</id>
+    <value>Открытие файла</value>
+  </string>
+  <string>
+    <id>439</id>
+    <value>Кеш</value>
+  </string>
+  <string>
+    <id>440</id>
+    <value>Жесткий диск</value>
+  </string>
+  <string>
+    <id>441</id>
+    <value>UDF</value>
+  </string>
+  <string>
+    <id>442</id>
+    <value>LAN</value>
+  </string>
+  <string>
+    <id>443</id>
+    <value>Интернет</value>
+  </string>
+  <string>
+    <id>444</id>
+    <value>видео</value>
+  </string>
+  <string>
+    <id>445</id>
+    <value>аудио</value>
+  </string>
+  <string>
+    <id>446</id>
+    <value>DVD</value>
+  </string>
+  <string>
+    <id>447</id>
+    <value>Автозапуск</value>
+  </string>
+  <string>
+    <id>448</id>
+    <value>LCD</value>
+  </string>
+  <string>
+    <id>449</id>
+    <value>Включено</value>
+  </string>
+  <string>
+    <id>450</id>
+    <value>Колонки</value>
+  </string>
+  <string>
+    <id>451</id>
+    <value>Ряд 1 адрес:</value>
+  </string>
+  <string>
+    <id>452</id>
+    <value>Ряд 2 адрес:</value>
+  </string>
+  <string>
+    <id>453</id>
+    <value>Ряд 3 адрес:</value>
+  </string>
+  <string>
+    <id>454</id>
+    <value>Ряд 4 адрес:</value>
+  </string>
+  <string>
+    <id>455</id>
+    <value>Ряды:</value>
+  </string>
+  <string>
+    <id>456</id>
+    <value>Режим:</value>
+  </string>
+  <string>
+    <id>457</id>
+    <value>Переключить вид</value>
+  </string>
+  <string>
+    <id>458</id>
+    <value> B/Mark</value>
+  </string>
+  <string>
+    <id>459</id>
+    <value> Subs</value>
+  </string>
+  <string>
+    <id>460</id>
+    <value>Аудио поток</value>
+  </string>
+  <string>
+    <id>461</id>
+    <value>[активно]</value>
+  </string>
+  <string>
+    <id>462</id>
+    <value>Субтитры</value>
+  </string>
+  <string>
+    <id>463</id>
+    <value>Подсветка</value>
+  </string>
+  <string>
+    <id>464</id>
+    <value>Яркость</value>
+  </string>
+  <string>
+    <id>465</id>
+    <value>Контраст</value>
+  </string>
+  <string>
+    <id>466</id>
+    <value>Гамма</value>
+  </string>
+  <string>
+    <id>467</id>
+    <value>Тип</value>
+  </string>
+  <string>
+    <id>468</id>
+    <value>Перемещайте панель для изменения положения osd</value>
+  </string>
+  <string>
+    <id>469</id>
+    <value>Положение OSD</value>
+  </string>
+  <string>
+    <id>470</id>
+    <value>Авторы</value>
+  </string>
+  <string>
+    <id>471</id>
+    <value> Modchip</value>
+  </string>
+  <string>
+    <id>472</id>
+    <value>Задержка OSD</value>
+  </string>
+  <string>
+    <id>473</id>
+    <value> High Quality Resampling</value>
+  </string>
+  <string>
+    <id>474</id>
+    <value>Выкл</value>
+  </string>
+  <string>
+    <id>475</id>
+    <value>Только музыка</value>
+  </string>
+  <string>
+    <id>476</id>
+    <value>Музыка &amp; Видео</value>
+  </string>
+  <string>
+    <id>477</id>
+    <value>Не удалось загрузить плейлист</value>
+  </string>
+  <string>
+    <id>478</id>
+    <value>OSD</value>
+  </string>
+  <string>
+    <id>479</id>
+    <value>Скин для языка</value>
+  </string>
+  <string>
+    <id>480</id>
+    <value>Интерфейс пользователя</value>
+  </string>
+  <string>
+    <id>481</id>
+    <value>Настройка аудио</value>
+  </string>
+  <string>
+    <id>482</id>
+    <value>О XBMC</value>
+  </string>
+  <string>
+    <id>483</id>
+    <value>Альбом</value>
+  </string>
+  <string>
+    <id>484</id>
+    <value>Исполнитель</value>
+  </string>
+  <string>
+    <id>485</id>
+    <value>Удалить альбом</value>
+  </string>
+  <string>
+    <id>486</id>
+    <value>Повторяющийся</value>
+  </string>
+  <string>
+    <id>487</id>
+    <value>Повторить один раз</value>
+  </string>
+  <string>
+    <id>488</id>
+    <value> Repeat folder playlist</value>
+  </string>
+  <string>
+    <id>489</id>
+    <value> Use playlist in songs</value>
+  </string>
+  <string>
+    <id>490</id>
+    <value> Auto switch list and icons in songs</value>
+  </string>
+  <string>
+    <id>491</id>
+    <value>Использовать большие иконки</value>
+  </string>
+  <string>
+    <id>492</id>
+    <value>Язык аудио</value>
+  </string>
+  <string>
+    <id>493</id>
+    <value>Исполнитель:</value>
+  </string>
+  <string>
+    <id>500</id>
+    <value>Файл</value>
+  </string>
+  <string>
+    <id>501</id>
+    <value>Установить как назначение</value>
+  </string>
+  <string>
+    <id>502</id>
+    <value>Не удалось завершите действие</value>
+  </string>
+  <string>
+    <id>503</id>
+    <value>Удалить этот каталог</value>
+  </string>
+  <string>
+    <id>504</id>
+    <value>Перейти к назначению</value>
+  </string>
+  <string>
+    <id>505</id>
+    <value>Подсчет</value>
+  </string>
+  <string>
+    <id>506</id>
+    <value>Вы уверены?</value>
+  </string>
+  <string>
+    <id>507</id>
+    <value>элементы</value>
+  </string>
+  <string>
+    <id>508</id>
+    <value>в</value>
+  </string>
+  <string>
+    <id>509</id>
+    <value>Файл уже существует. Заменить?</value>
+  </string>
+  <string>
+    <id>510</id>
+    <value>Отмена</value>
+  </string>
+  <string>
+    <id>511</id>
+    <value>Всегда</value>
+  </string>
+  <string>
+    <id>512</id>
+    <value>Никогда</value>
+  </string>
+  <string>
+    <id>513</id>
+    <value>Элемент защищен, действие не завершено</value>
+  </string>
+  <string>
+    <id>514</id>
+    <value>Ошибка при создании каталога, действие не завершено</value>
+  </string>
+  <string>
+    <id>515</id>
+    <value>Ошибка при удалении каталога, действие не завершено</value>
+  </string>
+  <string>
+    <id>516</id>
+    <value>Не удалось удалить файл, действие не завершено</value>
+  </string>
+  <string>
+    <id>517</id>
+    <value>Фатальная ошибка, действие не завершено</value>
+  </string>
+  <string>
+    <id>518</id>
+    <value>Удалить эту песню?</value>
+  </string>
+  <string>
+    <id>519</id>
+    <value>Субтитры выкл</value>
+  </string>
+  <string>
+    <id>529</id>
+    <value>Вид: Большие иконки</value>
+  </string>
+  <string>
+    <id>530</id>
+    <value>Вставлен фото-диск, хотите его открыть?</value>
+  </string>
+  <string>
+    <id>531</id>
+    <value>Вставлен видео-диск, хотите его воспроизвести?</value>
+  </string>
+  <string>
+    <id>532</id>
+    <value>Вставлен аудио-диск, хотите его воспроизвести?</value>
+  </string>
+  <string>
+    <id>533</id>
+    <value>Программа</value>
+  </string>
+  <string>
+    <id>534</id>
+    <value> Moderate</value>
+  </string>
+  <string>
+    <id>535</id>
+    <value>С</value>
+  </string>
+  <string>
+    <id>536</id>
+    <value>В</value>
+  </string>
+  <string>
+    <id>537</id>
+    <value>Ю</value>
+  </string>
+  <string>
+    <id>538</id>
+    <value>З</value>
+  </string>
+  <string>
+    <id>539</id>
+    <value>СВ</value>
+  </string>
+  <string>
+    <id>540</id>
+    <value>ЮВ</value>
+  </string>
+  <string>
+    <id>541</id>
+    <value>ЮЗ</value>
+  </string>
+  <string>
+    <id>542</id>
+    <value>СЗ</value>
+  </string>
+  <string>
+    <id>543</id>
+    <value>Гром</value>
+  </string>
+  <string>
+    <id>544</id>
+    <value>ССЕ</value>
+  </string>
+  <string>
+    <id>545</id>
+    <value>ВСВ</value>
+  </string>
+  <string>
+    <id>546</id>
+    <value>ВЮВ</value>
+  </string>
+  <string>
+    <id>547</id>
+    <value>ЮЮВ</value>
+  </string>
+  <string>
+    <id>548</id>
+    <value>ЮЮЗ</value>
+  </string>
+  <string>
+    <id>549</id>
+    <value>ЗЮЗ</value>
+  </string>
+  <string>
+    <id>550</id>
+    <value>Обрезка</value>
+  </string>
+  <string>
+    <id>551</id>
+    <value>ЗСЗ</value>
+  </string>
+  <string>
+    <id>552</id>
+    <value>ССЗ</value>
+  </string>
+  <string>
+    <id>553</id>
+    <value>Поздно</value>
+  </string>
+  <string>
+    <id>554</id>
+    <value>очень</value>
+  </string>
+  <string>
+    <id>555</id>
+    <value>{0} {1} {2}</value>
+  </string>
+  <string>
+    <id>556</id>
+    <value>переменная</value>
+  </string>
+  <string>
+    <id>557</id>
+    <value>штиль</value>
+  </string>
+  <string>
+    <id>558</id>
+    <value>Без ветра</value>
+  </string>
+  <string>
+    <id>559</id>
+    <value>в окрестности</value>
+  </string>
+  <string>
+    <id>560</id>
+    <value>Очистка</value>
+  </string>
+  <string>
+    <id>590</id>
+    <value>P. 100</value>
+  </string>
+  <string>
+    <id>591</id>
+    <value>P. 200</value>
+  </string>
+  <string>
+    <id>592</id>
+    <value>P. 300</value>
+  </string>
+  <string>
+    <id>593</id>
+    <value>Скрытый</value>
+  </string>
+  <string>
+    <id>594</id>
+    <value>Подстраница</value>
+  </string>
+  <string>
+    <id>595</id>
+    <value>На весь экран</value>
+  </string>
+  <string>
+    <id>596</id>
+    <value> Waiting for Page {0}/{1}...</value>
+  </string>
+  <string>
+    <id>599</id>
+    <value>Гроза</value>
+  </string>
+  <string>
+    <id>600</id>
+    <value>Телепрограмма</value>
+  </string>
+  <string>
+    <id>601</id>
+    <value>Начать запись</value>
+  </string>
+  <string>
+    <id>602</id>
+    <value>Канал</value>
+  </string>
+  <string>
+    <id>603</id>
+    <value>Расписание</value>
+  </string>
+  <string>
+    <id>604</id>
+    <value>Записанные передачи</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>605</id>
+    <value>ТВ</value>
+  </string>
+  <string>
+    <id>606</id>
+    <value>Загрузка новой телепрограммы</value>
+  </string>
+  <string>
+    <id>607</id>
+    <value>Загрузка</value>
+  </string>
+  <string>
+    <id>608</id>
+    <value>Ошибка импорта телепрограммы</value>
+  </string>
+  <string>
+    <id>609</id>
+    <value>Импорт телепрограммы завершен</value>
+  </string>
+  <string>
+    <id>610</id>
+    <value>Не записывать</value>
+  </string>
+  <string>
+    <id>611</id>
+    <value>Записать один раз</value>
+  </string>
+  <string>
+    <id>612</id>
+    <value>Постоянно записывать на этом канале</value>
+  </string>
+  <string>
+    <id>613</id>
+    <value>Постоянно записывать на любом канале</value>
+  </string>
+  <string>
+    <id>614</id>
+    <value>Записывать каждую неделю в это время</value>
+  </string>
+  <string>
+    <id>615</id>
+    <value>Записывать каждый день в это время</value>
+  </string>
+  <string>
+    <id>616</id>
+    <value>Выбор типа записи</value>
+  </string>
+  <string>
+    <id>617</id>
+    <value>Создать</value>
+  </string>
+  <string>
+    <id>618</id>
+    <value>Удалить</value>
+  </string>
+  <string>
+    <id>619</id>
+    <value>Редактировать дату/время</value>
+  </string>
+  <string>
+    <id>620</id>
+    <value>Сорт. по: Каналу</value>
+  </string>
+  <string>
+    <id>621</id>
+    <value>Сорт. по: Дате</value>
+  </string>
+  <string>
+    <id>622</id>
+    <value>Сорт. по: Имени</value>
+  </string>
+  <string>
+    <id>623</id>
+    <value>Сорт. по: Типу</value>
+  </string>
+  <string>
+    <id>624</id>
+    <value>Очистка</value>
+  </string>
+  <string>
+    <id>625</id>
+    <value>Удалено из расписания: </value>
+  </string>
+  <string>
+    <id>626</id>
+    <value>Изменит тип</value>
+  </string>
+  <string>
+    <id>627</id>
+    <value>Каналы:</value>
+  </string>
+  <string>
+    <id>628</id>
+    <value>Программы:</value>
+  </string>
+  <string>
+    <id>629</id>
+    <value>Остановить запись</value>
+  </string>
+  <string>
+    <id>630</id>
+    <value>Хотите перезагрузить компьютер?</value>
+  </string>
+  <string>
+    <id>631</id>
+    <value>Хотите выключить компьютер?</value>
+  </string>
+  <string>
+    <id>632</id>
+    <value>Объект(ов)</value>
+  </string>
+  <string>
+    <id>633</id>
+    <value>Начало Дата/Время</value>
+  </string>
+  <string>
+    <id>634</id>
+    <value>Конец Дата/Время</value>
+  </string>
+  <string>
+    <id>635</id>
+    <value>Время</value>
+  </string>
+  <string>
+    <id>636</id>
+    <value>Дата</value>
+  </string>
+  <string>
+    <id>637</id>
+    <value>Редактировать запись</value>
+  </string>
+  <string>
+    <id>638</id>
+    <value>Новая запись</value>
+  </string>
+  <string>
+    <id>639</id>
+    <value>Альбомы</value>
+  </string>
+  <string>
+    <id>640</id>
+    <value>Насыщенность</value>
+  </string>
+  <string>
+    <id>641</id>
+    <value>Резкость</value>
+  </string>
+  <string>
+    <id>642</id>
+    <value>Загрузка телеканалов</value>
+  </string>
+  <string>
+    <id>643</id>
+    <value>Загрузка телепрограмм</value>
+  </string>
+  <string>
+    <id>644</id>
+    <value>Сортировка телепрограмм</value>
+  </string>
+  <string>
+    <id>645</id>
+    <value>Загрузка XML файла</value>
+  </string>
+  <string>
+    <id>646</id>
+    <value>Запланированные записи</value>
+  </string>
+  <string>
+    <id>647</id>
+    <value>Однократный</value>
+  </string>
+  <string>
+    <id>648</id>
+    <value>Ежедневно</value>
+  </string>
+  <string>
+    <id>649</id>
+    <value>Каждый</value>
+  </string>
+  <string>
+    <id>650</id>
+    <value>Всегда на {0}</value>
+  </string>
+  <string>
+    <id>651</id>
+    <value>Всегда на любом канале</value>
+  </string>
+  <string>
+    <id>652</id>
+    <value>Записанные передачи</value>
+  </string>
+  <string>
+    <id>653</id>
+    <value>Удалить эту запись?</value>
+  </string>
+  <string>
+    <id>654</id>
+    <value>Извлечь</value>
+  </string>
+  <string>
+    <id>655</id>
+    <value>Воспроизвести записанную передачу</value>
+  </string>
+  <string>
+    <id>656</id>
+    <value>Удалить записанную передачу</value>
+  </string>
+  <string>
+    <id>657</id>
+    <value>Пн</value>
+  </string>
+  <string>
+    <id>658</id>
+    <value>Вт</value>
+  </string>
+  <string>
+    <id>659</id>
+    <value>Ср</value>
+  </string>
+  <string>
+    <id>660</id>
+    <value>Чт</value>
+  </string>
+  <string>
+    <id>661</id>
+    <value>Пт</value>
+  </string>
+  <string>
+    <id>662</id>
+    <value>Сб</value>
+  </string>
+  <string>
+    <id>663</id>
+    <value>Вс</value>
+  </string>
+  <string>
+    <id>664</id>
+    <value>Удалить это изображение?</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>665</id>
+    <value>Радио</value>
+  </string>
+  <string>
+    <id>666</id>
+    <value>Станции</value>
+  </string>
+  <string>
+    <id>667</id>
+    <value>Авто-настройка</value>
+  </string>
+  <string>
+    <id>668</id>
+    <value>Сорт. по: Типу</value>
+  </string>
+  <string>
+    <id>669</id>
+    <value>Сорт. по: Жанру</value>
+  </string>
+  <string>
+    <id>670</id>
+    <value>Сорт. по: Качеству</value>
+  </string>
+  <string>
+    <id>671</id>
+    <value>Сорт. по: Просмотренным</value>
+  </string>
+  <string>
+    <id>672</id>
+    <value>Записывать Пн-Пт</value>
+  </string>
+  <string>
+    <id>673</id>
+    <value>Скорость прокрутки</value>
+  </string>
+  <string>
+    <id>674</id>
+    <value>Настройка GUI</value>
+  </string>
+  <string>
+    <id>675</id>
+    <value>Пример:</value>
+  </string>
+  <string>
+    <id>676</id>
+    <value>Удалить просмотренные записи?</value>
+  </string>
+  <string>
+    <id>677</id>
+    <value>время</value>
+  </string>
+  <string>
+    <id>678</id>
+    <value>Сорт. по: Жанру</value>
+  </string>
+  <string>
+    <id>679</id>
+    <value>Еженедельно</value>
+  </string>
+  <string>
+    <id>680</id>
+    <value>Пн-Пт</value>
+  </string>
+  <string>
+    <id>681</id>
+    <value>Ожидание</value>
+  </string>
+  <string>
+    <id>682</id>
+    <value>Запись</value>
+  </string>
+  <string>
+    <id>683</id>
+    <value>Завершено</value>
+  </string>
+  <string>
+    <id>684</id>
+    <value>Отменено</value>
+  </string>
+  <string>
+    <id>685</id>
+    <value>Сорт. по: Статусу</value>
+  </string>
+  <string>
+    <id>686</id>
+    <value>Родился</value>
+  </string>
+  <string>
+    <id>687</id>
+    <value>Годы работы</value>
+  </string>
+  <string>
+    <id>688</id>
+    <value>Инструменты</value>
+  </string>
+  <string>
+    <id>689</id>
+    <value>Био.</value>
+  </string>
+  <string>
+    <id>690</id>
+    <value>Дискография (Альбомы)</value>
+  </string>
+  <string>
+    <id>691</id>
+    <value>Дискография (Сборники)</value>
+  </string>
+  <string>
+    <id>692</id>
+    <value> TV-Streams</value>
+  </string>
+  <string>
+    <id>700</id>
+    <value>Дискография (Синглы, прочее)</value>
+  </string>
+  <string>
+    <id>701</id>
+    <value>Дискография (видео, интервью)</value>
+  </string>
+  <string>
+    <id>702</id>
+    <value>Исполнители не найдены!</value>
+  </string>
+  <string>
+    <id>703</id>
+    <value>Отсутствует подключение к интернету!</value>
+  </string>
+  <string>
+    <id>704</id>
+    <value>Лента восстановлена</value>
+  </string>
+  <string>
+    <id>705</id>
+    <value>Получение RSS с</value>
+  </string>
+  <string>
+    <id>706</id>
+    <value>Выберите ленту</value>
+  </string>
+  <string>
+    <id>707</id>
+    <value>ТВ Вкл</value>
+  </string>
+  <string>
+    <id>708</id>
+    <value>Timeshifting</value>
+  </string>
+  <string>
+    <id>709</id>
+    <value>Автоматическое обновление</value>
+  </string>
+  <string>
+    <id>710</id>
+    <value>Доступна новая версия</value>
+  </string>
+  <string>
+    <id>711</id>
+    <value>Обновить v#old -&gt;v#new ?</value>
+  </string>
+  <string>
+    <id>712</id>
+    <value>Назад</value>
+  </string>
+  <string>
+    <id>713</id>
+    <value>Автозапуск</value>
+  </string>
+  <string>
+    <id>714</id>
+    <value>Вставлен диск, хотите запустить его?</value>
+  </string>
+  <string>
+    <id>715</id>
+    <value>Вставлен CD, хотите запустить его?</value>
+  </string>
+  <string>
+    <id>716</id>
+    <value>Спутник</value>
+  </string>
+  <string>
+    <id>717</id>
+    <value>Погода</value>
+  </string>
+  <string>
+    <id>718</id>
+    <value>Очистить Топ100</value>
+  </string>
+  <string>
+    <id>719</id>
+    <value>Вы точно хотите очистить Топ100?</value>
+  </string>
+  <string>
+    <id>720</id>
+    <value>Показать: Длительность</value>
+  </string>
+  <string>
+    <id>721</id>
+    <value>Показать: Кол-во воспроизведений</value>
+  </string>
+  <string>
+    <id>722</id>
+    <value>Не удалось воспроизвести диск</value>
+  </string>
+  <string>
+    <id>723</id>
+    <value>Вы вставили диск?</value>
+  </string>
+  <string>
+    <id>724</id>
+    <value>Поиск в телепрограмме</value>
+  </string>
+  <string>
+    <id>725</id>
+    <value>Жанры</value>
+  </string>
+  <string>
+    <id>726</id>
+    <value>Название</value>
+  </string>
+  <string>
+    <id>727</id>
+    <value>ТВ на заднем плане</value>
+  </string>
+  <string>
+    <id>728</id>
+    <value>Видео/ТВ не воспроизводится</value>
+  </string>
+  <string>
+    <id>729</id>
+    <value>Убедитесь, что вы используете VMR9 и что-нибудь воспроизводится</value>
+  </string>
+  <string>
+    <id>730</id>
+    <value>Это расписание уже записывается. Если вы его удалите,</value>
+  </string>
+  <string>
+    <id>731</id>
+    <value>то запись будет остановлена.</value>
+  </string>
+  <string>
+    <id>732</id>
+    <value>Вы уверены?</value>
+  </string>
+  <string>
+    <id>733</id>
+    <value>Вид: Предпросмотр</value>
+  </string>
+  <string>
+    <id>734</id>
+    <value>Изображение:</value>
+  </string>
+  <string>
+    <id>735</id>
+    <value>Повернуть</value>
+  </string>
+  <string>
+    <id>736</id>
+    <value>Данные недоступны</value>
+  </string>
+  <string>
+    <id>737</id>
+    <value>Вид: Спутник</value>
+  </string>
+  <string>
+    <id>738</id>
+    <value>Вид: Температура</value>
+  </string>
+  <string>
+    <id>739</id>
+    <value>Вид: UV индекс</value>
+  </string>
+  <string>
+    <id>740</id>
+    <value>Вид: Ветер</value>
+  </string>
+  <string>
+    <id>741</id>
+    <value>Вид: Влажность</value>
+  </string>
+  <string>
+    <id>742</id>
+    <value>Вид: Осадки</value>
+  </string>
+  <string>
+    <id>743</id>
+    <value>На 4 дня</value>
+  </string>
+  <string>
+    <id>744</id>
+    <value>Восход</value>
+  </string>
+  <string>
+    <id>745</id>
+    <value>Закат</value>
+  </string>
+  <string>
+    <id>746</id>
+    <value>макс.</value>
+  </string>
+  <string>
+    <id>747</id>
+    <value>мин.</value>
+  </string>
+  <string>
+    <id>748</id>
+    <value>Осадки</value>
+  </string>
+  <string>
+    <id>750</id>
+    <value>Изображения</value>
+  </string>
+  <string>
+    <id>751</id>
+    <value>Показать все песни этого исполнителя</value>
+  </string>
+  <string>
+    <id>752</id>
+    <value>Ничего не записывается</value>
+  </string>
+  <string>
+    <id>753</id>
+    <value>Тюнер не установлен</value>
+  </string>
+  <string>
+    <id>754</id>
+    <value>Ни один тюнер не записывает эту передачу</value>
+  </string>
+  <string>
+    <id>755</id>
+    <value>Ни один тюнер не показывает ТВ</value>
+  </string>
+  <string>
+    <id>756</id>
+    <value>Ни один тюнер не может получить:{0}</value>
+  </string>
+  <string>
+    <id>757</id>
+    <value>Все тюнеры заняты</value>
+  </string>
+  <string>
+    <id>758</id>
+    <value>Тюнер не записывает</value>
+  </string>
+  <string>
+    <id>759</id>
+    <value>Не удалось начать timeshifting</value>
+  </string>
+  <string>
+    <id>760</id>
+    <value>Нет доступного тюнера для timeshifting'а</value>
+  </string>
+  <string>
+    <id>761</id>
+    <value>Не удалось остановить timeshifting</value>
+  </string>
+  <string>
+    <id>762</id>
+    <value>Не удалось включить ТВ</value>
+  </string>
+  <string>
+    <id>763</id>
+    <value>Рекордер занят</value>
+  </string>
+  <string>
+    <id>764</id>
+    <value>Рекордер на паузе</value>
+  </string>
+  <string>
+    <id>765</id>
+    <value>Нет места на диске</value>
+  </string>
+  <string>
+    <id>766</id>
+    <value>уже импортируется...</value>
+  </string>
+  <string>
+    <id>767</id>
+    <value>Ошибочный XMLТВ файл</value>
+  </string>
+  <string>
+    <id>768</id>
+    <value>Каналы не найдены</value>
+  </string>
+  <string>
+    <id>769</id>
+    <value>Программы не найдены</value>
+  </string>
+  <string>
+    <id>770</id>
+    <value>xmltv файл не найден</value>
+  </string>
+  <string>
+    <id>771</id>
+    <value>Введенный PIN не может быть принят</value>
+  </string>
+  <string>
+    <id>772</id>
+    <value>Хотите попробовать еще раз?</value>
+  </string>
+  <string>
+    <id>773</id>
+    <value>НАЧАЛО</value>
+  </string>
+  <string>
+    <id>774</id>
+    <value>КОНЕЦ</value>
+  </string>
+  <string>
+    <id>775</id>
+    <value>Запускать ТВ в разделе "Мое ТВ" автоматически</value>
+  </string>
+  <string>
+    <id>776</id>
+    <value>Не начинать / автоматически переключаться на ТВ</value>
+  </string>
+  <string>
+    <id>777</id>
+    <value>Настройка Timeshift'а</value>
+  </string>
+  <string>
+    <id>778</id>
+    <value>Начинать с включенным timeshift'ом</value>
+  </string>
+  <string>
+    <id>779</id>
+    <value>Включать timeshift вручную</value>
+  </string>
+  <string>
+    <id>780</id>
+    <value>Выберите режим планировщика</value>
+  </string>
+  <string>
+    <id>781</id>
+    <value>Быстрая запись</value>
+  </string>
+  <string>
+    <id>782</id>
+    <value>Продвинутая запись</value>
+  </string>
+  <string>
+    <id>789</id>
+    <value>Сейчас: </value>
+  </string>
+  <string>
+    <id>790</id>
+    <value>Далее: </value>
+  </string>
+  <string>
+    <id>798</id>
+    <value>низкий</value>
+  </string>
+  <string>
+    <id>799</id>
+    <value>высокий</value>
+  </string>
+  <string>
+    <id>800</id>
+    <value>Начинать с</value>
+  </string>
+  <string>
+    <id>801</id>
+    <value> Contains</value>
+  </string>
+  <string>
+    <id>802</id>
+    <value> Ends with</value>
+  </string>
+  <string>
+    <id>803</id>
+    <value> Is</value>
+  </string>
+  <string>
+    <id>804</id>
+    <value>Готово</value>
+  </string>
+  <string>
+    <id>805</id>
+    <value>Очистить</value>
+  </string>
+  <string>
+    <id>806</id>
+    <value>Название</value>
+  </string>
+  <string>
+    <id>807</id>
+    <value>Результат</value>
+  </string>
+  <string>
+    <id>808</id>
+    <value>Ингридиенты</value>
+  </string>
+  <string>
+    <id>809</id>
+    <value>Инструкция</value>
+  </string>
+  <string>
+    <id>810</id>
+    <value>Карта</value>
+  </string>
+  <string>
+    <id>820</id>
+    <value>Удалить непросмотренные записи?</value>
+  </string>
+  <string>
+    <id>830</id>
+    <value> Reset watched status</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>850</id>
+    <value>Напоминания</value>
+  </string>
+  <string>
+    <id>851</id>
+    <value>Плейлист</value>
+  </string>
+  <string>
+    <id>852</id>
+    <value>Напоминание вкл</value>
+  </string>
+  <string>
+    <id>853</id>
+    <value>Имя:</value>
+  </string>
+  <string>
+    <id>854</id>
+    <value>Включать в эти дни</value>
+  </string>
+  <string>
+    <id>855</id>
+    <value>Время напоминания</value>
+  </string>
+  <string>
+    <id>856</id>
+    <value>Sleep-таймер Вкл.</value>
+  </string>
+  <string>
+    <id>857</id>
+    <value> Snooze For</value>
+  </string>
+  <string>
+    <id>858</id>
+    <value> Dismiss</value>
+  </string>
+  <string>
+    <id>859</id>
+    <value>Sleep-Таймер</value>
+  </string>
+  <string>
+    <id>860</id>
+    <value>Нарастание громкости</value>
+  </string>
+  <string>
+    <id>861</id>
+    <value>Настройка напоминания</value>
+  </string>
+  <string>
+    <id>862</id>
+    <value>Радио</value>
+  </string>
+  <string>
+    <id>863</id>
+    <value>Файл</value>
+  </string>
+  <string>
+    <id>864</id>
+    <value>Тип данных</value>
+  </string>
+  <string>
+    <id>865</id>
+    <value>Время:</value>
+  </string>
+  <string>
+    <id>866</id>
+    <value>Уменьшить звук</value>
+  </string>
+  <string>
+    <id>867</id>
+    <value>Выключить компьютер</value>
+  </string>
+  <string>
+    <id>868</id>
+    <value>Сброс</value>
+  </string>
+  <string>
+    <id>869</id>
+    <value>Новое напоминание</value>
+  </string>
+  <string>
+    <id>870</id>
+    <value>Повторный</value>
+  </string>
+  <string>
+    <id>871</id>
+    <value>Разбудить компьютер для этого напоминания</value>
+  </string>
+  <string>
+    <id>872</id>
+    <value>Начинать с</value>
+  </string>
+  <string>
+    <id>873</id>
+    <value>Телепрограмма</value>
+  </string>
+  <string>
+    <id>874</id>
+    <value>Эпизод</value>
+  </string>
+  <string>
+    <id>875</id>
+    <value>Текущая программа</value>
+  </string>
+  <string>
+    <id>876</id>
+    <value>До ручного отключения записи</value>
+  </string>
+  <string>
+    <id>877</id>
+    <value>Приоритеты</value>
+  </string>
+  <string>
+    <id>878</id>
+    <value>Архив</value>
+  </string>
+  <string>
+    <id>879</id>
+    <value>Конфликт записей</value>
+  </string>
+  <string>
+    <id>880</id>
+    <value>Время записи:</value>
+  </string>
+  <string>
+    <id>881</id>
+    <value>Выберите запись для остановки:</value>
+  </string>
+  <string>
+    <id>882</id>
+    <value>Настройка качества</value>
+  </string>
+  <string>
+    <id>883</id>
+    <value>Низкое</value>
+  </string>
+  <string>
+    <id>884</id>
+    <value>Среднее</value>
+  </string>
+  <string>
+    <id>885</id>
+    <value>Высокое</value>
+  </string>
+  <string>
+    <id>886</id>
+    <value>По умолчанию</value>
+  </string>
+  <string>
+    <id>887</id>
+    <value>Указать количество эпизодов для записи</value>
+  </string>
+  <string>
+    <id>888</id>
+    <value>Управление эпизодами</value>
+  </string>
+  <string>
+    <id>889</id>
+    <value>Все эпизоды</value>
+  </string>
+  <string>
+    <id>890</id>
+    <value>Играть CD</value>
+  </string>
+  <string>
+    <id>891</id>
+    <value>Выберите телеканал</value>
+  </string>
+  <string>
+    <id>892</id>
+    <value>Конфликты</value>
+  </string>
+  <string>
+    <id>893</id>
+    <value>Портативное</value>
+  </string>
+  <string>
+    <id>894</id>
+    <value>Сжатие записанных телепрограмм</value>
+  </string>
+  <string>
+    <id>895</id>
+    <value>Автоматическое сжатие</value>
+  </string>
+  <string>
+    <id>896</id>
+    <value>Сжатие</value>
+  </string>
+  <string>
+    <id>897</id>
+    <value>Настройка</value>
+  </string>
+  <string>
+    <id>898</id>
+    <value>MPEG-2</value>
+  </string>
+  <string>
+    <id>899</id>
+    <value>WMV</value>
+  </string>
+  <string>
+    <id>900</id>
+    <value>Начать с прерванного момента?</value>
+  </string>
+  <string>
+    <id>901</id>
+    <value>MSN Messenger</value>
+  </string>
+  <string>
+    <id>902</id>
+    <value>Сетевые контакты</value>
+  </string>
+  <string>
+    <id>903</id>
+    <value>Подписаться</value>
+  </string>
+  <string>
+    <id>904</id>
+    <value>Отписаться</value>
+  </string>
+  <string>
+    <id>905</id>
+    <value>Сначала вам нужно настроить этот плагин</value>
+  </string>
+  <string>
+    <id>906</id>
+    <value>Введите Ваш почтовый адрес при установке</value>
+  </string>
+  <string>
+    <id>907</id>
+    <value>Не удалось подключиться к MSN</value>
+  </string>
+  <string>
+    <id>908</id>
+    <value>пишет сообщение...</value>
+  </string>
+  <string>
+    <id>909</id>
+    <value>Подключение...</value>
+  </string>
+  <string>
+    <id>910</id>
+    <value>Идет подписка...</value>
+  </string>
+  <string>
+    <id>911</id>
+    <value>Нет каналов</value>
+  </string>
+  <string>
+    <id>912</id>
+    <value>Не удалось загрузить RSS</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>913</id>
+    <value>Плагины</value>
+  </string>
+  <string>
+    <id>914</id>
+    <value>Записи</value>
+  </string>
+  <string>
+    <id>915</id>
+    <value>Телеканалы</value>
+  </string>
+  <string>
+    <id>916</id>
+    <value>Удаленный файл</value>
+  </string>
+  <string>
+    <id>917</id>
+    <value>Этот файл находится на удаленном сервере</value>
+  </string>
+  <string>
+    <id>918</id>
+    <value>Надо ли загрузить его на</value>
+  </string>
+  <string>
+    <id>919</id>
+    <value>на локальный компьютер?</value>
+  </string>
+  <string>
+    <id>920</id>
+    <value>Не удалось загрузить файл</value>
+  </string>
+  <string>
+    <id>921</id>
+    <value>Файл уже скачан</value>
+  </string>
+  <string>
+    <id>922</id>
+    <value>Описание</value>
+  </string>
+  <string>
+    <id>923</id>
+    <value>Показ</value>
+  </string>
+  <string>
+    <id>924</id>
+    <value>Меню</value>
+  </string>
+  <string>
+    <id>925</id>
+    <value>Удалить этот фильм</value>
+  </string>
+  <string>
+    <id>926</id>
+    <value>Добавить в плейлист</value>
+  </string>
+  <string>
+    <id>927</id>
+    <value>Внимание</value>
+  </string>
+  <string>
+    <id>928</id>
+    <value>Найти обложку</value>
+  </string>
+  <string>
+    <id>929</id>
+    <value>Закрыть меню</value>
+  </string>
+  <string>
+    <id>930</id>
+    <value>Добавить в избранное</value>
+  </string>
+  <string>
+    <id>931</id>
+    <value>Рейтинг</value>
+  </string>
+  <string>
+    <id>932</id>
+    <value>Избранное</value>
+  </string>
+  <string>
+    <id>933</id>
+    <value>Удалить из избранного</value>
+  </string>
+  <string>
+    <id>934</id>
+    <value>Установить рейтинг</value>
+  </string>
+  <string>
+    <id>935</id>
+    <value>Показать: Рейтинг</value>
+  </string>
+  <string>
+    <id>936</id>
+    <value>Продолжить с:</value>
+  </string>
+  <string>
+    <id>937</id>
+    <value>Импортировать телепрограмму</value>
+  </string>
+  <string>
+    <id>938</id>
+    <value>Смотреть этот канал</value>
+  </string>
+  <string>
+    <id>939</id>
+    <value>Сменить режим</value>
+  </string>
+  <string>
+    <id>940</id>
+    <value>Свойства</value>
+  </string>
+  <string>
+    <id>941</id>
+    <value>Изменить соотношение сторон</value>
+  </string>
+  <string>
+    <id>942</id>
+    <value>Растянуть</value>
+  </string>
+  <string>
+    <id>943</id>
+    <value>Норма</value>
+  </string>
+  <string>
+    <id>944</id>
+    <value>Оригинальное</value>
+  </string>
+  <string>
+    <id>945</id>
+    <value>Почтовый ящик</value>
+  </string>
+  <string>
+    <id>946</id>
+    <value>Получить / Сканировать</value>
+  </string>
+  <string>
+    <id>947</id>
+    <value>Масштаб</value>
+  </string>
+  <string>
+    <id>948</id>
+    <value>Активно</value>
+  </string>
+  <string>
+    <id>949</id>
+    <value>Занято</value>
+  </string>
+  <string>
+    <id>950</id>
+    <value> Be Right Back</value>
+  </string>
+  <string>
+    <id>951</id>
+    <value> Away</value>
+  </string>
+  <string>
+    <id>952</id>
+    <value>Телефон</value>
+  </string>
+  <string>
+    <id>953</id>
+    <value>Ланч</value>
+  </string>
+  <string>
+    <id>954</id>
+    <value>Скрытый</value>
+  </string>
+  <string>
+    <id>955</id>
+    <value> Idle</value>
+  </string>
+  <string>
+    <id>956</id>
+    <value>Активно</value>
+  </string>
+  <string>
+    <id>957</id>
+    <value>MSN Messenger</value>
+  </string>
+  <string>
+    <id>958</id>
+    <value>Говорить с</value>
+  </string>
+  <string>
+    <id>959</id>
+    <value>присоединился к обсуждению</value>
+  </string>
+  <string>
+    <id>960</id>
+    <value>покинул обсуждение</value>
+  </string>
+  <string>
+    <id>961</id>
+    <value>MSN Статус</value>
+  </string>
+  <string>
+    <id>970</id>
+    <value>Предыдущее окно</value>
+  </string>
+  <string>
+    <id>971</id>
+    <value>Группа</value>
+  </string>
+  <string>
+    <id>972</id>
+    <value>Все каналы</value>
+  </string>
+  <string>
+    <id>973</id>
+    <value>Максимальное FPS</value>
+  </string>
+  <string>
+    <id>974</id>
+    <value>Главное меню</value>
+  </string>
+  <string>
+    <id>975</id>
+    <value>Предыдущая глава</value>
+  </string>
+  <string>
+    <id>976</id>
+    <value>Следующая глава</value>
+  </string>
+  <string>
+    <id>977</id>
+    <value>Для просмотра этого канала</value>
+  </string>
+  <string>
+    <id>978</id>
+    <value>отсутствует свободная карта</value>
+  </string>
+  <string>
+    <id>979</id>
+    <value>Воспроизводить запись с начала</value>
+  </string>
+  <string>
+    <id>980</id>
+    <value>Воспроизводить запись с текущей точки</value>
+  </string>
+  <string>
+    <id>981</id>
+    <value>Отменить этот показ</value>
+  </string>
+  <string>
+    <id>982</id>
+    <value>Удалить эту запись</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>983</id>
+    <value>Плейлисты</value>
+  </string>
+  <string>
+    <id>984</id>
+    <value>Загружается список фильмов</value>
+  </string>
+  <string>
+    <id>985</id>
+    <value>Загружается информация о фильмах</value>
+  </string>
+  <string>
+    <id>986</id>
+    <value>Загружаются актеры</value>
+  </string>
+  <string>
+    <id>987</id>
+    <value>Годы</value>
+  </string>
+  <string>
+    <id>988</id>
+    <value>Качество</value>
+  </string>
+  <string>
+    <id>989</id>
+    <value>FPS</value>
+  </string>
+  <string>
+    <id>990</id>
+    <value>Битрейт</value>
+  </string>
+  <string>
+    <id>991</id>
+    <value>Приоритет</value>
+  </string>
+  <string>
+    <id>992</id>
+    <value>Удалить исходный файл</value>
+  </string>
+  <string>
+    <id>993</id>
+    <value> Custom</value>
+  </string>
+  <string>
+    <id>994</id>
+    <value>Включить автом. сжатие</value>
+  </string>
+  <string>
+    <id>995</id>
+    <value>Вы уверены, что нужно</value>
+  </string>
+  <string>
+    <id>996</id>
+    <value>сжать эту запись?</value>
+  </string>
+  <string>
+    <id>997</id>
+    <value>Завершено</value>
+  </string>
+  <string>
+    <id>998</id>
+    <value>XviD</value>
+  </string>
+  <string>
+    <id>999</id>
+    <value>Этот плагин позволит вам перекодировать ваши</value>
+  </string>
+  <string>
+    <id>1000</id>
+    <value>записи из dvr-ms в mpg, xvid или wmv</value>
+  </string>
+  <string>
+    <id>1001</id>
+    <value>Вам необходимо установить</value>
+  </string>
+  <string>
+    <id>1002</id>
+    <value>Elecard MPEG2 video decoder</value>
+  </string>
+  <string>
+    <id>1003</id>
+    <value>для перекодирования в xvid</value>
+  </string>
+  <string>
+    <id>1004</id>
+    <value> About to start recording</value>
+  </string>
+  <string>
+    <id>1005</id>
+    <value>на канале</value>
+  </string>
+  <string>
+    <id>1006</id>
+    <value> Allow recording to begin</value>
+  </string>
+  <string>
+    <id>1007</id>
+    <value> Cancel recording and maintain watching tv</value>
+  </string>
+  <string>
+    <id>1008</id>
+    <value>Очередь</value>
+  </string>
+  <string>
+    <id>1009</id>
+    <value>Загрузка обложки</value>
+  </string>
+  <string>
+    <id>1010</id>
+    <value>Просмотрено</value>
+  </string>
+  <string>
+    <id>1011</id>
+    <value>Биография</value>
+  </string>
+  <string>
+    <id>1012</id>
+    <value>Эта программа была прервана</value>
+  </string>
+  <string>
+    <id>1013</id>
+    <value>Вы все равно хотите загрузить вторую часть?</value>
+  </string>
+  <string>
+    <id>1014</id>
+    <value>Предупреждать меня о начале программы</value>
+  </string>
+  <string>
+    <id>1015</id>
+    <value>Не предупреждать меня о начале программы</value>
+  </string>
+  <string>
+    <id>1016</id>
+    <value>Программа начнется через 5 минут</value>
+  </string>
+  <string>
+    <id>1017</id>
+    <value>Сорт. по: Длительность</value>
+  </string>
+  <string>
+    <id>1018</id>
+    <value>Программа начнется через {0} минут</value>
+  </string>
+  <string>
+    <id>1019</id>
+    <value>Программа скоро начнется</value>
+  </string>
+  <string>
+    <id>1020</id>
+    <value>Информация</value>
+  </string>
+  <string>
+    <id>1021</id>
+    <value>Нажмите Alt+Enter для возвращения</value>
+  </string>
+  <string>
+    <id>1022</id>
+    <value>в оконный режим.</value>
+  </string>
+  <string>
+    <id>1023</id>
+    <value>Исходящий звонок</value>
+  </string>
+  <string>
+    <id>1024</id>
+    <value>от</value>
+  </string>
+  <string>
+    <id>1025</id>
+    <value>Произошла ошибка.</value>
+  </string>
+  <string>
+    <id>1026</id>
+    <value>Просмотрите лог для подробностей.</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>1027</id>
+    <value>DVD</value>
+  </string>
+  <string>
+    <id>1028</id>
+    <value>Город</value>
+  </string>
+  <string>
+    <id>1029</id>
+    <value>Язык субтитров</value>
+  </string>
+  <string>
+    <id>1030</id>
+    <value>Выключение</value>
+  </string>
+  <string>
+    <id>1031</id>
+    <value>Перезапуск</value>
+  </string>
+  <string>
+    <id>1032</id>
+    <value>Спящий режим</value>
+  </string>
+  <string>
+    <id>1033</id>
+    <value> Shows are being recorded right now</value>
+  </string>
+  <string>
+    <id>1034</id>
+    <value>Сигнал не обнаружен!</value>
+  </string>
+  <string>
+    <id>1035</id>
+    <value>Канал зашифрован!</value>
+  </string>
+  <string>
+    <id>1036</id>
+    <value>Видео не найдено</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>1037</id>
+    <value>Информация о телепрограмме</value>
+  </string>
+  <string>
+    <id>1038</id>
+    <value>Продвинутая запись</value>
+  </string>
+  <string>
+    <id>1039</id>
+    <value>Не записывать</value>
+  </string>
+  <string>
+    <id>1040</id>
+    <value>Напоминать</value>
+  </string>
+  <string>
+    <id>1041</id>
+    <value>Следующие эпизоды</value>
+  </string>
+  <string>
+    <id>1042</id>
+    <value>Хранить до</value>
+  </string>
+  <string>
+    <id>1043</id>
+    <value>До просмотра</value>
+  </string>
+  <string>
+    <id>1044</id>
+    <value>Пока есть место</value>
+  </string>
+  <string>
+    <id>1045</id>
+    <value>До опр. даты</value>
+  </string>
+  <string>
+    <id>1046</id>
+    <value>Постоянно</value>
+  </string>
+  <string>
+    <id>1047</id>
+    <value>Полноэкранный режим</value>
+  </string>
+  <string>
+    <id>1048</id>
+    <value>Настройка</value>
+  </string>
+  <string>
+    <id>1049</id>
+    <value>Спящий режим</value>
+  </string>
+  <string>
+    <id>1050</id>
+    <value>Сб-Вс</value>
+  </string>
+  <string>
+    <id>1051</id>
+    <value>Записывать Сб-Вс</value>
+  </string>
+  <string>
+    <id>1052</id>
+    <value>Песни</value>
+  </string>
+  <string>
+    <id>1100</id>
+    <value>Импортировать CD</value>
+  </string>
+  <string>
+    <id>1101</id>
+    <value>Импортировать выбранные треки</value>
+  </string>
+  <string>
+    <id>1102</id>
+    <value>Отменить импорт CD</value>
+  </string>
+  <string>
+    <id>1103</id>
+    <value>Импортирование трека</value>
+  </string>
+  <string>
+    <id>1104</id>
+    <value>всего</value>
+  </string>
+  <string>
+    <id>1105</id>
+    <value>Импортирование треков</value>
+  </string>
+  <string>
+    <id>1190</id>
+    <value>Масштаб 14:9</value>
+  </string>
+  <string>
+    <id>1200</id>
+    <value>Мастер настроек</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>1440</id>
+    <value>Телетекст</value>
+  </string>
+  <string>
+    <id>1441</id>
+    <value>Телетекст</value>
+  </string>
+  <string>
+    <id>1442</id>
+    <value>Скорость прокрутки (гор.)</value>
+  </string>
+  <string>
+    <id>1443</id>
+    <value>Скорость прокрутки (верт.)</value>
+  </string>
+  <string>
+    <id>1444</id>
+    <value>Записать до</value>
+  </string>
+  <string>
+    <id>1445</id>
+    <value>Записать после</value>
+  </string>
+  <string>
+    <id>1446</id>
+    <value>Начало записи:</value>
+  </string>
+  <string>
+    <id>1447</id>
+    <value>Конец записи:</value>
+  </string>
+  <string>
+    <id>1448</id>
+    <value>Ничего не выбирать</value>
+  </string>
+  <string>
+    <id>1449</id>
+    <value>Остановить запись</value>
+  </string>
+  <string>
+    <id>1450</id>
+    <value>Вы точно хотите остановить запись?</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>1950</id>
+    <value>Статус</value>
+  </string>
+  <string>
+    <id>1951</id>
+    <value>Жесткий диск</value>
+  </string>
+  <string>
+    <id>1952</id>
+    <value>Вентилятор</value>
+  </string>
+  <string>
+    <id>1953</id>
+    <value>свободно</value>
+  </string>
+  <string>
+    <id>1954</id>
+    <value>Температура</value>
+  </string>
+  <string>
+    <id>1955</id>
+    <value>C</value>
+  </string>
+  <string>
+    <id>1956</id>
+    <value>Выберите звук напоминания</value>
+  </string>
+  <string>
+    <id>1957</id>
+    <value>Настройка</value>
+  </string>
+  <string>
+    <id>1958</id>
+    <value>Использование CPU</value>
+  </string>
+  <string>
+    <id>1959</id>
+    <value>Напряжение</value>
+  </string>
+  <string>
+    <id>1960</id>
+    <value>Вольт</value>
+  </string>
+  <string>
+    <id>1961</id>
+    <value>Частота часов</value>
+  </string>
+  <string>
+    <id>1962</id>
+    <value>Настройка</value>
+  </string>
+  <string>
+    <id>1963</id>
+    <value>Данные сенсоров</value>
+  </string>
+  <string>
+    <id>1964</id>
+    <value>Тревога датчиков</value>
+  </string>
+  <string>
+    <id>1965</id>
+    <value>Наибольшее значение</value>
+  </string>
+  <string>
+    <id>1966</id>
+    <value>Наименьшее значение</value>
+  </string>
+  <string>
+    <id>1967</id>
+    <value>верхний порог тревоги</value>
+  </string>
+  <string>
+    <id>1968</id>
+    <value>нижний порог тревоги</value>
+  </string>
+  <string>
+    <id>1969</id>
+    <value>Тест звука</value>
+  </string>
+  <string>
+    <id>1970</id>
+    <value>Длительность сигнала (сек.)</value>
+  </string>
+  <string>
+    <id>1971</id>
+    <value>Выкл. при тревоге</value>
+  </string>
+  <string>
+    <id>1972</id>
+    <value>Подробный статус</value>
+  </string>
+  <string>
+    <id>1973</id>
+    <value>из</value>
+  </string>
+  <string>
+    <id>1974</id>
+    <value>Память</value>
+  </string>
+  <string>
+    <id>1975</id>
+    <value>Следующая страница</value>
+  </string>
+  <string>
+    <id>1976</id>
+    <value>rpm</value>
+  </string>
+  <string>
+    <id>1977</id>
+    <value>Файловая система</value>
+  </string>
+  <string>
+    <id>1978</id>
+    <value>Виртуальная память</value>
+  </string>
+  <string>
+    <id>2005</id>
+    <value>Удалить</value>
+  </string>
+  <string>
+    <id>2006</id>
+    <value>Заголовок</value>
+  </string>
+  <string>
+    <id>2007</id>
+    <value>Результат</value>
+  </string>
+  <string>
+    <id>2008</id>
+    <value>Ингридиенты</value>
+  </string>
+  <string>
+    <id>2009</id>
+    <value>Инструкция</value>
+  </string>
+  <string>
+    <id>2010</id>
+    <value>Карта</value>
+  </string>
+  <string>
+    <id>2011</id>
+    <value>Печать</value>
+  </string>
+  <string>
+    <id>2012</id>
+    <value>Удалить</value>
+  </string>
+  <string>
+    <id>2013</id>
+    <value>Избранное</value>
+  </string>
+  <string>
+    <id>2014</id>
+    <value>Неизвестный</value>
+  </string>
+  <string>
+    <id>2015</id>
+    <value> per Serving</value>
+  </string>
+  <string>
+    <id>2016</id>
+    <value>маленький</value>
+  </string>
+  <string>
+    <id>2017</id>
+    <value>жидкая унция</value>
+  </string>
+  <string>
+    <id>2018</id>
+    <value>чашка</value>
+  </string>
+  <string>
+    <id>2019</id>
+    <value>пинта</value>
+  </string>
+  <string>
+    <id>2020</id>
+    <value>средний</value>
+  </string>
+  <string>
+    <id>2021</id>
+    <value>большой</value>
+  </string>
+  <string>
+    <id>2022</id>
+    <value> can</value>
+  </string>
+  <string>
+    <id>2023</id>
+    <value>пакет</value>
+  </string>
+  <string>
+    <id>2024</id>
+    <value>щепотка</value>
+  </string>
+  <string>
+    <id>2025</id>
+    <value>капля</value>
+  </string>
+  <string>
+    <id>2026</id>
+    <value>смешивать</value>
+  </string>
+  <string>
+    <id>2027</id>
+    <value>картон</value>
+  </string>
+  <string>
+    <id>2028</id>
+    <value>пучок</value>
+  </string>
+  <string>
+    <id>2029</id>
+    <value>ломтик</value>
+  </string>
+  <string>
+    <id>2030</id>
+    <value>каждый</value>
+  </string>
+  <string>
+    <id>2031</id>
+    <value>чайная ложка</value>
+  </string>
+  <string>
+    <id>2032</id>
+    <value>чайная ложка</value>
+  </string>
+  <string>
+    <id>2033</id>
+    <value>столовая ложка</value>
+  </string>
+  <string>
+    <id>2034</id>
+    <value>столовая ложка</value>
+  </string>
+  <string>
+    <id>2035</id>
+    <value>кварта</value>
+  </string>
+  <string>
+    <id>2036</id>
+    <value>галлон</value>
+  </string>
+  <string>
+    <id>2037</id>
+    <value>унция</value>
+  </string>
+  <string>
+    <id>2038</id>
+    <value>фунт</value>
+  </string>
+  <string>
+    <id>2039</id>
+    <value>миллилитр</value>
+  </string>
+  <string>
+    <id>2040</id>
+    <value>миллилитр</value>
+  </string>
+  <string>
+    <id>2041</id>
+    <value>сантилитр</value>
+  </string>
+  <string>
+    <id>2042</id>
+    <value>децилитр</value>
+  </string>
+  <string>
+    <id>2043</id>
+    <value>литр</value>
+  </string>
+  <string>
+    <id>2044</id>
+    <value>миллиграмм</value>
+  </string>
+  <string>
+    <id>2045</id>
+    <value>сантиграмм</value>
+  </string>
+  <string>
+    <id>2046</id>
+    <value>дециграмм</value>
+  </string>
+  <string>
+    <id>2047</id>
+    <value>грамм</value>
+  </string>
+  <string>
+    <id>2048</id>
+    <value>килограмм</value>
+  </string>
+  <string>
+    <id>2049</id>
+    <value>Удалить этот рецепт?</value>
+  </string>
+  <string>
+    <id>2050</id>
+    <value>Удалить эту категорию?</value>
+  </string>
+  <string>
+    <id>2051</id>
+    <value>Поиск по названию</value>
+  </string>
+  <string>
+    <id>2052</id>
+    <value>Поиск по рецепту</value>
+  </string>
+  <string>
+    <id>2053</id>
+    <value>Категория</value>
+  </string>
+  <string>
+    <id>2054</id>
+    <value>Нет!</value>
+  </string>
+  <string>
+    <id>2065</id>
+    <value>Пожалуйста, выберите mpeg файл, который вы хотите конвертировать в divx:</value>
+  </string>
+  <string>
+    <id>2066</id>
+    <value>Mpeg в divx</value>
+  </string>
+  <string>
+    <id>2067</id>
+    <value>Пожалуйста, выберите dvr-ms файл, который вы хотите конвертировать в divx:</value>
+  </string>
+  <string>
+    <id>2068</id>
+    <value>Dvr-ms в divx</value>
+  </string>
+  <string>
+    <id>2069</id>
+    <value>Закончено объединение видео файлов</value>
+  </string>
+  <string>
+    <id>2070</id>
+    <value>Закончено конвертирование видео файлов</value>
+  </string>
+  <string>
+    <id>2071</id>
+    <value>Dvr-ms в mpeg</value>
+  </string>
+  <string>
+    <id>2072</id>
+    <value>Начать конвертирование</value>
+  </string>
+  <string>
+    <id>2073</id>
+    <value>Пожалуйста, выберите dvr-ms файл, который вы хотите конвертировать:</value>
+  </string>
+  <string>
+    <id>2074</id>
+    <value>Пожалуйста, выберите файлы, которые вы хотите объединить:</value>
+  </string>
+  <string>
+    <id>2075</id>
+    <value>Задайте новую точку разреза</value>
+  </string>
+  <string>
+    <id>2076</id>
+    <value>Правка</value>
+  </string>
+  <string>
+    <id>2077</id>
+    <value>Резать</value>
+  </string>
+  <string>
+    <id>2078</id>
+    <value>Объединить</value>
+  </string>
+  <string>
+    <id>2079</id>
+    <value>Начать объединение</value>
+  </string>
+  <string>
+    <id>2080</id>
+    <value>Этот тип файла не поддерживается</value>
+  </string>
+  <string>
+    <id>2081</id>
+    <value>Нельзя разрезать</value>
+  </string>
+  <string>
+    <id>2082</id>
+    <value>Закончено разрезание видео файла</value>
+  </string>
+  <string>
+    <id>2083</id>
+    <value>Хотите удалить исходный файл?</value>
+  </string>
+  <string>
+    <id>2084</id>
+    <value>начало</value>
+  </string>
+  <string>
+    <id>2085</id>
+    <value>конец</value>
+  </string>
+  <string>
+    <id>2086</id>
+    <value>вперед</value>
+  </string>
+  <string>
+    <id>2087</id>
+    <value>назад</value>
+  </string>
+  <string>
+    <id>2088</id>
+    <value>Список разрезов:</value>
+  </string>
+  <string>
+    <id>2089</id>
+    <value>среднее качество</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>2090</id>
+    <value>Редактор видео</value>
+  </string>
+  <string>
+    <id>2091</id>
+    <value>Процесс был отменен</value>
+  </string>
+  <string>
+    <id>2092</id>
+    <value>Пожалуйста, выберите файл для редактирования:</value>
+  </string>
+  <string>
+    <id>2093</id>
+    <value>добавить</value>
+  </string>
+  <string>
+    <id>2094</id>
+    <value>Список видео</value>
+  </string>
+  <string>
+    <id>2095</id>
+    <value>Резать</value>
+  </string>
+  <string>
+    <id>2097</id>
+    <value>старая длина:</value>
+  </string>
+  <string>
+    <id>2098</id>
+    <value>новая длина:</value>
+  </string>
+  <string>
+    <id>2099</id>
+    <value>текущая позиция:</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>2100</id>
+    <value>Запись дисков</value>
+  </string>
+  <string>
+    <id>2101</id>
+    <value>Копировать CD/DVD</value>
+  </string>
+  <string>
+    <id>2102</id>
+    <value>Создать Аудио-CD</value>
+  </string>
+  <string>
+    <id>2103</id>
+    <value>Создать Видео-CD</value>
+  </string>
+  <string>
+    <id>2104</id>
+    <value>Создать Видео-DVD</value>
+  </string>
+  <string>
+    <id>2105</id>
+    <value>Создать CD с данными</value>
+  </string>
+  <string>
+    <id>2106</id>
+    <value>Создать DVD с данными</value>
+  </string>
+  <string>
+    <id>2107</id>
+    <value>Начать копирование</value>
+  </string>
+  <string>
+    <id>2108</id>
+    <value>Вставьте пустой CD/DVD</value>
+  </string>
+  <string>
+    <id>2109</id>
+    <value>и нажмите OK</value>
+  </string>
+  <string>
+    <id>2110</id>
+    <value>Вставьте исходный CD/DVD</value>
+  </string>
+  <string>
+    <id>2111</id>
+    <value>Завершено !</value>
+  </string>
+  <string>
+    <id>2112</id>
+    <value>Ждите CD/DVD</value>
+  </string>
+  <string>
+    <id>2113</id>
+    <value>Копировать все</value>
+  </string>
+  <string>
+    <id>2114</id>
+    <value>Очистить диск</value>
+  </string>
+  <string>
+    <id>2115</id>
+    <value>Вставьте CD/DVD RW</value>
+  </string>
+  <string>
+    <id>2116</id>
+    <value>Привод не готов</value>
+  </string>
+  <string>
+    <id>2117</id>
+    <value>произошла ошибка!</value>
+  </string>
+  <string>
+    <id>2118</id>
+    <value>Конвертирование DVR-MS</value>
+  </string>
+  <string>
+    <id>2119</id>
+    <value>Начать конвертирование</value>
+  </string>
+  <string>
+    <id>2120</id>
+    <value>Конвертирование файла(ов)...</value>
+  </string>
+  <string>
+    <id>2121</id>
+    <value>Нельзя конвертировать файл(ы)!</value>
+  </string>
+  <string>
+    <id>2122</id>
+    <value>начало!</value>
+  </string>
+  <string>
+    <id>2123</id>
+    <value>Информация о диске</value>
+  </string>
+  <string>
+    <id>2124</id>
+    <value>Нельзя очистить: диск не для записи</value>
+  </string>
+  <string>
+    <id>2125</id>
+    <value>Очистка диска....</value>
+  </string>
+  <string>
+    <id>2126</id>
+    <value>Извлечь CD</value>
+  </string>
+  <string>
+    <id>2127</id>
+    <value>Компакт-диск не для записи</value>
+  </string>
+  <string>
+    <id>2128</id>
+    <value>Подготовка к записи: осталось:</value>
+  </string>
+  <string>
+    <id>2129</id>
+    <value>Подготовка к записи</value>
+  </string>
+  <string>
+    <id>2130</id>
+    <value>Блок</value>
+  </string>
+  <string>
+    <id>2131</id>
+    <value>из</value>
+  </string>
+  <string>
+    <id>2132</id>
+    <value>Закрытие диска: осталось:</value>
+  </string>
+  <string>
+    <id>2133</id>
+    <value>ТВ-Записи</value>
+  </string>
+  <string>
+    <id>2134</id>
+    <value>Видео</value>
+  </string>
+  <string>
+    <id>2135</id>
+    <value>Аудио</value>
+  </string>
+  <string>
+    <id>2136</id>
+    <value>Данные</value>
+  </string>
+  <string>
+    <id>2137</id>
+    <value>Конвертировать</value>
+  </string>
+  <string>
+    <id>2138</id>
+    <value>Резать</value>
+  </string>
+  <string>
+    <id>2139</id>
+    <value>Сделать MP3-CD</value>
+  </string>
+  <string>
+    <id>2140</id>
+    <value>Сделать MP3-DVD</value>
+  </string>
+  <string>
+    <id>2141</id>
+    <value>MPEG2 -&gt; DivX</value>
+  </string>
+  <string>
+    <id>2142</id>
+    <value>MPEG2 -&gt; MPEG4</value>
+  </string>
+  <string>
+    <id>2143</id>
+    <value>Главная</value>
+  </string>
+  <string>
+    <id>2144</id>
+    <value>Начать запись</value>
+  </string>
+  <string>
+    <id>2145</id>
+    <value>Импортировать текущий плейлист</value>
+  </string>
+  <string>
+    <id>2146</id>
+    <value>Не хватает места на CD</value>
+  </string>
+  <string>
+    <id>2147</id>
+    <value>Не хватает места на DVD</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>2200</id>
+    <value>Проводник</value>
+  </string>
+  <string>
+    <id>2201</id>
+    <value>Выберите источник</value>
+  </string>
+  <string>
+    <id>2202</id>
+    <value>Выберите назначение</value>
+  </string>
+  <string>
+    <id>2203</id>
+    <value>Копировать данные</value>
+  </string>
+  <string>
+    <id>2204</id>
+    <value>Создать каталог</value>
+  </string>
+  <string>
+    <id>2205</id>
+    <value>Восстановить выделение</value>
+  </string>
+  <string>
+    <id>2206</id>
+    <value>Выделить все</value>
+  </string>
+  <string>
+    <id>2207</id>
+    <value>Хотите создать</value>
+  </string>
+  <string>
+    <id>2208</id>
+    <value>каталог?</value>
+  </string>
+  <string>
+    <id>2209</id>
+    <value>Хотите скопировать эти файлы?</value>
+  </string>
+  <string>
+    <id>2210</id>
+    <value>Файлы скопированы!</value>
+  </string>
+  <string>
+    <id>2211</id>
+    <value>Подождите, файлы копируются.</value>
+  </string>
+  <string>
+    <id>2212</id>
+    <value>Удалить</value>
+  </string>
+  <string>
+    <id>2213</id>
+    <value>Переместить</value>
+  </string>
+  <string>
+    <id>2214</id>
+    <value>Хотите переместить выделенные файлы?</value>
+  </string>
+  <string>
+    <id>2215</id>
+    <value>Подождите, файлы перемещаются.</value>
+  </string>
+  <string>
+    <id>2216</id>
+    <value>Перемещение завершено!</value>
+  </string>
+  <string>
+    <id>2217</id>
+    <value>Файл уже существует!</value>
+  </string>
+  <string>
+    <id>2218</id>
+    <value>Заменить файл?</value>
+  </string>
+  <string>
+    <id>2219</id>
+    <value>Нельзя переместить с выбранного диска!</value>
+  </string>
+  <string>
+    <id>2220</id>
+    <value>Скопировать выбранный файл?</value>
+  </string>
+  <string>
+    <id>2221</id>
+    <value>Хотите удалить выбранные файлы?</value>
+  </string>
+  <string>
+    <id>2222</id>
+    <value>Файлы удалены!</value>
+  </string>
+  <string>
+    <id>2223</id>
+    <value>Корзина</value>
+  </string>
+  <string>
+    <id>2224</id>
+    <value>Каталог уже существует!</value>
+  </string>
+  <string>
+    <id>2225</id>
+    <value>Каталог создан</value>
+  </string>
+  <!-- Wikipedia Strings -->
+  <string>
+    <id>2500</id>
+    <value>Запрос не введен!</value>
+  </string>
+  <string>
+    <id>2501</id>
+    <value>Введите правильный запрос!</value>
+  </string>
+  <string>
+    <id>2502</id>
+    <value>Выберите Вашу локальную Wikipedia:</value>
+  </string>
+  <string>
+    <id>2503</id>
+    <value>Выберите Wikipedia:</value>
+  </string>
+  <string>
+    <id>2504</id>
+    <value>Извините, статья не найдена...</value>
+  </string>
+  <string>
+    <id>2505</id>
+    <value>Ссылки на другие статьи:</value>
+  </string>
+  <string>
+    <id>2506</id>
+    <value>У этой статьи нет ссылок.</value>
+  </string>
+  <string>
+    <id>2507</id>
+    <value>Изображения из этой статьи:</value>
+  </string>
+  <string>
+    <id>2508</id>
+    <value>Для этой статьи нет изображений.</value>
+  </string>
+  <string>
+    <id>2509</id>
+    <value>Эта страница только указывает на другую.</value>
+  </string>
+  <string>
+    <id>2510</id>
+    <value>Выберите ссылку.</value>
+  </string>
+  <string>
+    <id>2511</id>
+    <value>Ссылки</value>
+  </string>
+  <string>
+    <id>2512</id>
+    <value>Изображение не может быть отображено.</value>
+  </string>
+  <string>
+    <id>2513</id>
+    <value>Посмотрите лог</value>
+  </string>
+  <string>
+    <id>2514</id>
+    <value>Вернуться к тексту</value>
+  </string>
+  <string>
+    <id>2515</id>
+    <value>Изображения</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>2516</id>
+    <value>Wikipedia</value>
+  </string>
+  <string>
+    <id>2600</id>
+    <value>Английский</value>
+  </string>
+  <string>
+    <id>2601</id>
+    <value>Немецкий</value>
+  </string>
+  <string>
+    <id>2602</id>
+    <value>Французкий</value>
+  </string>
+  <string>
+    <id>2603</id>
+    <value>Голландский</value>
+  </string>
+  <string>
+    <id>2604</id>
+    <value>Норвежский</value>
+  </string>
+  <string>
+    <id>2605</id>
+    <value>Шведский</value>
+  </string>
+  <string>
+    <id>2606</id>
+    <value>Итальянский</value>
+  </string>
+  <string>
+    <id>2607</id>
+    <value>Испанский</value>
+  </string>
+  <string>
+    <id>2608</id>
+    <value>Португальский</value>
+  </string>
+  <!-- End of Wikipedia Strings -->
+  <string>
+    <id>2997</id>
+    <value>ч</value>
+  </string>
+  <string>
+    <id>2998</id>
+    <value>мин</value>
+  </string>
+  <string>
+    <id>2999</id>
+    <value>сек</value>
+  </string>
+  <string>
+    <id>3000</id>
+    <value>Настройка программы</value>
+  </string>
+  <string>
+    <id>3001</id>
+    <value>Час</value>
+  </string>
+  <string>
+    <id>3002</id>
+    <value>Часов</value>
+  </string>
+  <string>
+    <id>3003</id>
+    <value>Минута</value>
+  </string>
+  <string>
+    <id>3004</id>
+    <value>Минут</value>
+  </string>
+  <string>
+    <id>3005</id>
+    <value>Час назад</value>
+  </string>
+  <string>
+    <id>3006</id>
+    <value>Часов назад</value>
+  </string>
+  <string>
+    <id>3007</id>
+    <value>Минуту назад</value>
+  </string>
+  <string>
+    <id>3008</id>
+    <value>Минут назад</value>
+  </string>
+  <string>
+    <id>3009</id>
+    <value>Стартовал в</value>
+  </string>
+  <string>
+    <id>3010</id>
+    <value>Осталось минут</value>
+  </string>
+  <string>
+    <id>3011</id>
+    <value>Остался час</value>
+  </string>
+  <string>
+    <id>3012</id>
+    <value>Осталось часов</value>
+  </string>
+  <string>
+    <id>3013</id>
+    <value>Стартует сейчас</value>
+  </string>
+  <string>
+    <id>3014</id>
+    <value>День</value>
+  </string>
+  <string>
+    <id>3015</id>
+    <value>Дней</value>
+  </string>
+  <string>
+    <id>3016</id>
+    <value>Уже завершилось</value>
+  </string>
+  <string>
+    <id>3017</id>
+    <value>Началось</value>
+  </string>
+  <string>
+    <id>3018</id>
+    <value>Осталась минута</value>
+  </string>
+  <string>
+    <id>3019</id>
+    <value>Серии</value>
+  </string>
+  <string>
+    <id>3020</id>
+    <value>Эпизод</value>
+  </string>
+  <string>
+    <id>3021</id>
+    <value>Часть</value>
+  </string>
+  <string>
+    <id>3022</id>
+    <value>из</value>
+  </string>
+  <string>
+    <id>4000</id>
+    <value>Web Browser</value>
+  </string>
+  <string>
+    <id>4001</id>
+    <value>Избранное</value>
+  </string>
+  <string>
+    <id>4002</id>
+    <value>Не удалось загрузить URL</value>
+  </string>
+  <string>
+    <id>4003</id>
+    <value>Пожалуйста, укажите любимый каталог в настройках.</value>
+  </string>
+  <string>
+    <id>4500</id>
+    <value>Пропустить альбомы, для которых есть обложка</value>
+  </string>
+  <string>
+    <id>4501</id>
+    <value>Сохранить обложку в каталоге альбома</value>
+  </string>
+  <string>
+    <id>4502</id>
+    <value>Сохранить обложку в каталоге миниатюр</value>
+  </string>
+  <string>
+    <id>4503</id>
+    <value>Получение количества альбомов. Подождите...</value>
+  </string>
+  <string>
+    <id>4504</id>
+    <value>{0}% - {1} из {2}</value>
+  </string>
+  <string>
+    <id>4505</id>
+    <value>Поиск {0}...</value>
+  </string>
+  <string>
+    <id>4506</id>
+    <value>[Пусто]</value>
+  </string>
+  <string>
+    <id>4507</id>
+    <value>Поиск обложек был прерван пользователем</value>
+  </string>
+  <string>
+    <id>4508</id>
+    <value>Поиск обложек был завершен</value>
+  </string>
+  <string>
+    <id>4509</id>
+    <value>Поиск обложек был завершен с ошибками</value>
+  </string>
+  <string>
+    <id>4510</id>
+    <value>{0} изображения обложек обновлены</value>
+  </string>
+  <string>
+    <id>4511</id>
+    <value>Поиск обложек был успешно завершен</value>
+  </string>
+  <string>
+    <id>4512</id>
+    <value> All covers up to date</value>
+  </string>
+  <string>
+    <id>4513</id>
+    <value>Различный</value>
+  </string>
+  <string>
+    <id>4514</id>
+    <value>Поиск обложек</value>
+  </string>
+  <string>
+    <id>4515</id>
+    <value>Результаты поиска обложек</value>
+  </string>
+  <string>
+    <id>4516</id>
+    <value>Обложки не найдены</value>
+  </string>
+  <string>
+    <id>4517</id>
+    <value>Закрыть</value>
+  </string>
+  <string>
+    <id>4518</id>
+    <value>Заголовок альбома не найден\r\nПопытка: {0}</value>
+  </string>
+  <string>
+    <id>4519</id>
+    <value>Текущая обложка</value>
+  </string>
+  <string>
+    <id>4520</id>
+    <value>Пропустить</value>
+  </string>
+  <string>
+    <id>4521</id>
+    <value>Показать информацию об альбоме</value>
+  </string>
+  <string>
+    <id>4522</id>
+    <value>Поиск: {0}...</value>
+  </string>
+  <string>
+    <id>4540</id>
+    <value>Сейчас играет</value>
+  </string>
+  <string>
+    <id>4541</id>
+    <value>Воспроизвести следующим</value>
+  </string>
+  <string>
+    <id>4542</id>
+    <value>Плейлисты не загружены</value>
+  </string>
+  <string>
+    <id>4543</id>
+    <value>Информация о треке недоступна</value>
+  </string>
+  <string>
+    <id>4550</id>
+    <value>В очередь</value>
+  </string>
+  <string>
+    <id>4551</id>
+    <value>Играть следующим</value>
+  </string>
+  <string>
+    <id>4552</id>
+    <value>Воспроизвести</value>
+  </string>
+  <string>
+    <id>4553</id>
+    <value>Показать плейлист</value>
+  </string>
+  <string>
+    <id>4554</id>
+    <value>Поиск информации о CD</value>
+  </string>
+  <string>
+    <id>4555</id>
+    <value>Текущий плейлист</value>
+  </string>
+  <string>
+    <id>4557</id>
+    <value>Добавить все в плейлист</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>5900</id>
+    <value>Трейлеры</value>
+  </string>
+  <string>
+    <id>5901</id>
+    <value>Показать фильмы</value>
+  </string>
+  <string>
+    <id>5902</id>
+    <value>Какие фильмы показать?</value>
+  </string>
+  <string>
+    <id>5903</id>
+    <value>Новые трейлеры</value>
+  </string>
+  <string>
+    <id>5904</id>
+    <value>Лучшие трейлеры</value>
+  </string>
+  <string>
+    <id>5905</id>
+    <value>Все трейлеры</value>
+  </string>
+  <string>
+    <id>5906</id>
+    <value>Трейлеры</value>
+  </string>
+  <string>
+    <id>5907</id>
+    <value>Клипы</value>
+  </string>
+  <string>
+    <id>5908</id>
+    <value>Больше</value>
+  </string>
+  <string>
+    <id>5909</id>
+    <value>Нельзя показать фильм!</value>
+  </string>
+  <string>
+    <id>5910</id>
+    <value>Получение информации о фильме</value>
+  </string>
+  <string>
+    <id>5911</id>
+    <value>Новое в театрах</value>
+  </string>
+  <string>
+    <id>5912</id>
+    <value>Предыдущая неделя</value>
+  </string>
+  <string>
+    <id>5913</id>
+    <value>Эта неделя</value>
+  </string>
+  <string>
+    <id>5914</id>
+    <value>Следующая неделя</value>
+  </string>
+  <string>
+    <id>5915</id>
+    <value>Пока нет обзора</value>
+  </string>
+  <string>
+    <id>5916</id>
+    <value>Трейлеры не найдены.</value>
+  </string>
+  <string>
+    <id>5917</id>
+    <value>Немецкие трейлеры</value>
+  </string>
+  <string>
+    <id>5918</id>
+    <value> T&#195;&#169;l&#195;&#169;vision Suisse Romande VOD</value>
+  </string>
+  <string>
+    <id>5919</id>
+    <value>Weekend box office</value>
+  </string>
+  <string>
+    <id>5920</id>
+    <value>Фильмы, вышедшие на этой неделе</value>
+  </string>
+  <string>
+    <id>5921</id>
+    <value>Фильмы, готовящиеся к премьере</value>
+  </string>
+  <string>
+    <id>5922</id>
+    <value>Самые продаваемые DVD</value>
+  </string>
+  <string>
+    <id>5923</id>
+    <value>DVD, вышедшие на этой неделе</value>
+  </string>
+  <string>
+    <id>5924</id>
+    <value>DVD, выходящие на следующей неделе</value>
+  </string>
+  <string>
+    <id>5925</id>
+    <value>Предварительный заказ DVD</value>
+  </string>
+  <string>
+    <id>6000</id>
+    <value>Видео кодек</value>
+  </string>
+  <string>
+    <id>6001</id>
+    <value>Аудио кодек</value>
+  </string>
+  <string>
+    <id>6002</id>
+    <value>Аудио рендеринг</value>
+  </string>
+  <string>
+    <id>6003</id>
+    <value>Деинтерлейсинг</value>
+  </string>
+  <string>
+    <id>6004</id>
+    <value>Соотношение сторон</value>
+  </string>
+  <string>
+    <id>6005</id>
+    <value>Буфер Timeshift'а</value>
+  </string>
+  <string>
+    <id>6006</id>
+    <value>Включение ТВ</value>
+  </string>
+  <string>
+    <id>6007</id>
+    <value>Настройка записи</value>
+  </string>
+  <string>
+    <id>6008</id>
+    <value>Сортировка каналов</value>
+  </string>
+  <string>
+    <id>6009</id>
+    <value>DVB Программа</value>
+  </string>
+  <string>
+    <id>6010</id>
+    <value>XMLТВ EPG грабер</value>
+  </string>
+  <string>
+    <id>6011</id>
+    <value>DVB EPG:</value>
+  </string>
+  <string>
+    <id>6012</id>
+    <value>Обновить телепрограмму из следующего DVB канала:</value>
+  </string>
+  <string>
+    <id>6013</id>
+    <value>Вручную</value>
+  </string>
+  <string>
+    <id>6014</id>
+    <value>Настройка ТВ</value>
+  </string>
+  <string>
+    <id>6015</id>
+    <value>Настройка DVD</value>
+  </string>
+  <string>
+    <id>6016</id>
+    <value>Автоматически удалять записи после просмотра</value>
+  </string>
+  <string>
+    <id>6017</id>
+    <value>Добавлять записи в базу видео</value>
+  </string>
+  <string>
+    <id>6018</id>
+    <value>минут перед началом программы</value>
+  </string>
+  <string>
+    <id>6019</id>
+    <value>минут после завершения программы</value>
+  </string>
+  <string>
+    <id>6020</id>
+    <value>Повторят слайдшоу</value>
+  </string>
+  <string>
+    <id>6021</id>
+    <value>Перемешивать слайдшоу</value>
+  </string>
+  <string>
+    <id>6022</id>
+    <value>Настройка видео</value>
+  </string>
+  <string>
+    <id>6023</id>
+    <value>Настройка экрана</value>
+  </string>
+  <string>
+    <id>6024</id>
+    <value>Прокрутка</value>
+  </string>
+  <string>
+    <id>6025</id>
+    <value>Настройка прокрутки</value>
+  </string>
+  <string>
+    <id>6026</id>
+    <value>Укажите IP-адрес и имя хоста</value>
+  </string>
+  <string>
+    <id>6027</id>
+    <value>главного ТВ-сервера</value>
+  </string>
+  <string>
+    <id>6028</id>
+    <value>Текущие установки:</value>
+  </string>
+  <string>
+    <id>6029</id>
+    <value>Изменить</value>
+  </string>
+  <string>
+    <id>6030</id>
+    <value>Сегодня</value>
+  </string>
+  <string>
+    <id>6031</id>
+    <value>Завтра</value>
+  </string>
+  <string>
+    <id>6032</id>
+    <value>Поиск по заголовку</value>
+  </string>
+  <string>
+    <id>6033</id>
+    <value>Поиск по ключ. слову</value>
+  </string>
+  <string>
+    <id>6034</id>
+    <value>Поиск по жанру</value>
+  </string>
+  <string>
+    <id>6035</id>
+    <value>Добавить расписание</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>8000</id>
+    <value>Почта</value>
+  </string>
+  <string>
+    <id>8001</id>
+    <value>Проверить почту</value>
+  </string>
+  <string>
+    <id>8002</id>
+    <value>Автопроверка выкл</value>
+  </string>
+  <string>
+    <id>8003</id>
+    <value>Автопроверка вкл</value>
+  </string>
+  <string>
+    <id>8004</id>
+    <value>Есть новые письма!</value>
+  </string>
+  <string>
+    <id>8005</id>
+    <value>Проверить почту</value>
+  </string>
+  <string>
+    <id>8007</id>
+    <value>Автопроверка</value>
+  </string>
+  <string>
+    <id>8008</id>
+    <value>Назад</value>
+  </string>
+  <string>
+    <id>8009</id>
+    <value>Пометить все как непрочитанные</value>
+  </string>
+  <string>
+    <id>8010</id>
+    <value>Почтовый ящик не определен</value>
+  </string>
+  <string>
+    <id>8011</id>
+    <value>Установите в настройке хотя бы один </value>
+  </string>
+  <string>
+    <id>8012</id>
+    <value>почтовый ящик для использования плагина.</value>
+  </string>
+  <string>
+    <id>8013</id>
+    <value>Нет ответа от сервера</value>
+  </string>
+  <string>
+    <id>8014</id>
+    <value>Сервер '{0}' не отвечает!</value>
+  </string>
+  <string>
+    <id>8015</id>
+    <value>Проверьте конфигурацию почтового ящика '{0}'</value>
+  </string>
+  <string>
+    <id>8016</id>
+    <value>От</value>
+  </string>
+  <string>
+    <id>8017</id>
+    <value>Кому</value>
+  </string>
+  <string>
+    <id>8018</id>
+    <value>Тема</value>
+  </string>
+  <string>
+    <id>8019</id>
+    <value>Сообщение</value>
+  </string>
+  <string>
+    <id>8020</id>
+    <value>Удалить письмо</value>
+  </string>
+  <string>
+    <id>8021</id>
+    <value>Отметь как прочитанное</value>
+  </string>
+  <string>
+    <id>8022</id>
+    <value>Показать вложения</value>
+  </string>
+  <string>
+    <id>8023</id>
+    <value>Пришло новое сообщение</value>
+  </string>
+  <string>
+    <id>8024</id>
+    <value>Показать сообщение</value>
+  </string>
+  <string>
+    <id>8025</id>
+    <value>Анализ сообщения</value>
+  </string>
+  <string>
+    <id>8030</id>
+    <value>Подключение к серверу</value>
+  </string>
+  <string>
+    <id>8031</id>
+    <value>Загрузка заголовков писем</value>
+  </string>
+  <string>
+    <id>8033</id>
+    <value>Прогресс</value>
+  </string>
+  <string>
+    <id>8034</id>
+    <value>Показать HTML</value>
+  </string>
+  <string>
+    <id>9000</id>
+    <value>Размер:</value>
+  </string>
+  <string>
+    <id>9001</id>
+    <value>Разрешение:</value>
+  </string>
+  <string>
+    <id>9002</id>
+    <value>Флэш:</value>
+  </string>
+  <string>
+    <id>9003</id>
+    <value>Режим обмена:</value>
+  </string>
+  <string>
+    <id>9004</id>
+    <value>Компенсация:</value>
+  </string>
+  <string>
+    <id>9005</id>
+    <value>скорость затвора:</value>
+  </string>
+  <string>
+    <id>9006</id>
+    <value>Снято:</value>
+  </string>
+  <string>
+    <id>9007</id>
+    <value>Fstop:</value>
+  </string>
+  <string>
+    <id>9008</id>
+    <value>Время экспозиции:</value>
+  </string>
+  <string>
+    <id>9009</id>
+    <value>Модель фотоаппарата:</value>
+  </string>
+  <string>
+    <id>9010</id>
+    <value>Оборудование:</value>
+  </string>
+  <string>
+    <id>9011</id>
+    <value>Показать комментарии:</value>
+  </string>
+  <string>
+    <id>9997</id>
+    <value>Секунды:</value>
+  </string>
+  <string>
+    <id>9998</id>
+    <value>Минуты:</value>
+  </string>
+  <string>
+    <id>9999</id>
+    <value>Часы:</value>
+  </string>
+  <string>
+    <id>10100</id>
+    <value>Осталось мин</value>
+  </string>
+  <string>
+    <id>10101</id>
+    <value>Время игры</value>
+  </string>
+  <string>
+    <id>10102</id>
+    <value>Лучшее время</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>10103</id>
+    <value>Сапер</value>
+  </string>
+  <string>
+    <id>10104</id>
+    <value>Мини EPG</value>
+  </string>
+  <string>
+    <id>11000</id>
+    <value>Настройка обрезки</value>
+  </string>
+  <string>
+    <id>11001</id>
+    <value>Сверху:</value>
+  </string>
+  <string>
+    <id>11002</id>
+    <value>Снизу:</value>
+  </string>
+  <string>
+    <id>11003</id>
+    <value>Слева:</value>
+  </string>
+  <string>
+    <id>11004</id>
+    <value>Справа:</value>
+  </string>
+  <string>
+    <id>12902</id>
+    <value>MSN Messenger OSD</value>
+  </string>
+  <string>
+    <id>13000</id>
+    <value>Система:</value>
+  </string>
+  <string>
+    <id>13001</id>
+    <value>Производитель:</value>
+  </string>
+  <string>
+    <id>13002</id>
+    <value>Запуск</value>
+  </string>
+  <string>
+    <id>13003</id>
+    <value>Импорт *.mlf файла</value>
+  </string>
+  <string>
+    <id>13004</id>
+    <value>Импорт *.my файла</value>
+  </string>
+  <string>
+    <id>13005</id>
+    <value>Последний импортированный файл:</value>
+  </string>
+  <string>
+    <id>13006</id>
+    <value>Маленькая картинка</value>
+  </string>
+  <string>
+    <id>13007</id>
+    <value>Большая картинка</value>
+  </string>
+  <string>
+    <id>13008</id>
+    <value>Эффекты</value>
+  </string>
+  <string>
+    <id>13009</id>
+    <value>Случайные эффекты</value>
+  </string>
+  <string>
+    <id>13010</id>
+    <value>Затухание</value>
+  </string>
+  <string>
+    <id>13011</id>
+    <value>Скорость эффектов</value>
+  </string>
+  <string>
+    <id>13012</id>
+    <value>Загружается картинка, подождите</value>
+  </string>
+  <string>
+    <id>13013</id>
+    <value>Загружается видео, подождите</value>
+  </string>
+  <string>
+    <id>13014</id>
+    <value>Сканирование каталога</value>
+  </string>
+  <string>
+    <id>13015</id>
+    <value>Импорт игровой базы</value>
+  </string>
+  <string>
+    <id>13016</id>
+    <value>Сорт. по: Запускам</value>
+  </string>
+  <string>
+    <id>13017</id>
+    <value>Сорт. по: Новым</value>
+  </string>
+  <string>
+    <id>13018</id>
+    <value>Сорт. по: Рейтингу</value>
+  </string>
+  <string>
+    <id>16001</id>
+    <value>Изменять сторону</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>19001</id>
+    <value>Тетрис</value>
+  </string>
+  <string>
+    <id>19002</id>
+    <value>Новая игра</value>
+  </string>
+  <string>
+    <id>19003</id>
+    <value>Музыка</value>
+  </string>
+  <string>
+    <id>19004</id>
+    <value>Звук</value>
+  </string>
+  <string>
+    <id>19005</id>
+    <value>Счет</value>
+  </string>
+  <string>
+    <id>19006</id>
+    <value>Уровень</value>
+  </string>
+  <string>
+    <id>19007</id>
+    <value>Линии</value>
+  </string>
+  <string>
+    <id>19008</id>
+    <value>Рекорд</value>
+  </string>
+  <string>
+    <id>19009</id>
+    <value>Далее</value>
+  </string>
+  <string>
+    <id>19010</id>
+    <value>Нажмите любую клавишу для начала...</value>
+  </string>
+  <string>
+    <id>19011</id>
+    <value>Пауза</value>
+  </string>
+  <string>
+    <id>19012</id>
+    <value>Конец игры</value>
+  </string>
+  <string>
+    <id>19100</id>
+    <value>GetClock</value>
+  </string>
+  <!--
+   Please be aware that Sudoku is a trademark in some
+   countries. Use "Nanpure" (like the playstation does)
+   if this applies for your country, too.
+-->
+  <string Prefix="Мое ">
+    <id>19101</id>
+    <value>Sudoku</value>
+  </string>
+  <string>
+    <id>19102</id>
+    <value>Новая игра</value>
+  </string>
+  <string>
+    <id>19103</id>
+    <value>Решить</value>
+  </string>
+  <string>
+    <id>19104</id>
+    <value>Очистить</value>
+  </string>
+  <string>
+    <id>19105</id>
+    <value>Неверный ход</value>
+  </string>
+  <string>
+    <id>19106</id>
+    <value>Показать неверные ходы</value>
+  </string>
+  <string>
+    <id>19107</id>
+    <value>Уровень: </value>
+  </string>
+  <string>
+    <id>19108</id>
+    <value>простой</value>
+  </string>
+  <string>
+    <id>19109</id>
+    <value>средний</value>
+  </string>
+  <string>
+    <id>19110</id>
+    <value>сложный</value>
+  </string>
+  <string>
+    <id>19111</id>
+    <value>Конец игры</value>
+  </string>
+  <string>
+    <id>19112</id>
+    <value>Поздравляем!</value>
+  </string>
+  <string>
+    <id>19113</id>
+    <value>Вы правильно решили головоломку.</value>
+  </string>
+  <string>
+    <id>19114</id>
+    <value>Извините, Ваше решенее неверно.</value>
+  </string>
+  <string>
+    <id>19115</id>
+    <value>дети</value>
+  </string>
+  <string>
+    <id>19116</id>
+    <value>Значение клетки</value>
+  </string>
+  <string>
+    <id>19117</id>
+    <value>Очистить клетку</value>
+  </string>
+  <string>
+    <id>19118</id>
+    <value>Помощь</value>
+  </string>
+  <string>
+    <id>19119</id>
+    <value>Начать заново</value>
+  </string>
+  <string>
+    <id>19120</id>
+    <value>Фильтр кандидатов</value>
+  </string>
+  <string>
+    <id>19121</id>
+    <value>Время: </value>
+  </string>
+  <string>
+    <id>19122</id>
+    <value>Фильтр 1</value>
+  </string>
+  <string>
+    <id>19123</id>
+    <value>Фильтр 2</value>
+  </string>
+  <string>
+    <id>19124</id>
+    <value>Фильтр 3</value>
+  </string>
+  <string>
+    <id>19125</id>
+    <value>Фильтр 4</value>
+  </string>
+  <string>
+    <id>19126</id>
+    <value>Фильтр 5</value>
+  </string>
+  <string>
+    <id>19127</id>
+    <value>Фильтр 6</value>
+  </string>
+  <string>
+    <id>19128</id>
+    <value>Фильтр 7</value>
+  </string>
+  <string>
+    <id>19129</id>
+    <value>Фильтр 8</value>
+  </string>
+  <string>
+    <id>19130</id>
+    <value>Фильтр 9</value>
+  </string>
+  <string>
+    <id>19131</id>
+    <value>Фильтр pairs</value>
+  </string>
+  <string>
+    <id>19132</id>
+    <value>Фильтр выкл</value>
+  </string>
+  <string>
+    <id>19133</id>
+    <value>Добавить удалить кандидата</value>
+  </string>
+  <string>
+    <id>19134</id>
+    <value>Тумблер 1</value>
+  </string>
+  <string>
+    <id>19135</id>
+    <value>Тумблер 2</value>
+  </string>
+  <string>
+    <id>19136</id>
+    <value>Тумблер 3</value>
+  </string>
+  <string>
+    <id>19137</id>
+    <value>Тумблер 4</value>
+  </string>
+  <string>
+    <id>19138</id>
+    <value>Тумблер 5</value>
+  </string>
+  <string>
+    <id>19139</id>
+    <value>Тумблер 6</value>
+  </string>
+  <string>
+    <id>19140</id>
+    <value>Тумблер 7</value>
+  </string>
+  <string>
+    <id>19141</id>
+    <value>Тумблер 8</value>
+  </string>
+  <string>
+    <id>19142</id>
+    <value>Тумблер 9</value>
+  </string>
+  <string>
+    <id>19143</id>
+    <value>Кандидаты</value>
+  </string>
+  <string>
+    <id>19144</id>
+    <value>Показать кандидатов</value>
+  </string>
+  <string>
+    <id>19145</id>
+    <value>Скрыть кандидатов</value>
+  </string>
+  <string>
+    <id>19146</id>
+    <value>Удалить кандидатов</value>
+  </string>
+  <string>
+    <id>19147</id>
+    <value>Переустановить кандидатов</value>
+  </string>
+  <string>
+    <id>19148</id>
+    <value>Помощь</value>
+  </string>
+  <string>
+    <id>19149</id>
+    <value>Фильтры</value>
+  </string>
+  <string>
+    <id>19150</id>
+    <value>Кандидаты</value>
+  </string>
+  <string>
+    <id>19151</id>
+    <value>Добавить/удалить кандидатов</value>
+  </string>
+  <string>
+    <id>25001</id>
+    <value>Ждем страницу {0:X}...!</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>30000</id>
+    <value>Клипы</value>
+  </string>
+  <string>
+    <id>30001</id>
+    <value>Самые разыскиваемые</value>
+  </string>
+  <string>
+    <id>30002</id>
+    <value>Новое на Yahoo</value>
+  </string>
+  <string>
+    <id>30003</id>
+    <value>Играть все</value>
+  </string>
+  <string>
+    <id>30004</id>
+    <value>Предыдущая страница</value>
+  </string>
+  <string>
+    <id>30005</id>
+    <value>Следующая страница</value>
+  </string>
+  <string>
+    <id>30006</id>
+    <value>Стоп</value>
+  </string>
+  <string>
+    <id>30007</id>
+    <value>Искать другое видео этого исполнителя</value>
+  </string>
+  <string>
+    <id>30008</id>
+    <value>ранг</value>
+  </string>
+  <string>
+    <id>30009</id>
+    <value>страница</value>
+  </string>
+  <string>
+    <id>30010</id>
+    <value>Результаты поиска {0} - страница {1} </value>
+  </string>
+  <string>
+    <id>33000</id>
+    <value>Scrobble Вкл</value>
+  </string>
+  <string>
+    <id>33001</id>
+    <value>Scrobble: Похожие</value>
+  </string>
+  <string>
+    <id>33002</id>
+    <value>Scrobble: Соседние</value>
+  </string>
+  <string>
+    <id>33003</id>
+    <value>Scrobble: Метки</value>
+  </string>
+  <string>
+    <id>33004</id>
+    <value>Scrobble: Просмотренные</value>
+  </string>
+  <string>
+    <id>33005</id>
+    <value>Учетная запись: </value>
+  </string>
+  <string>
+    <id>33006</id>
+    <value>Scrobble: Друзья</value>
+  </string>
+  <string>
+    <id>33007</id>
+    <value>Scrobble: Offline</value>
+  </string>
+  <string>
+    <id>33008</id>
+    <value>Нет активного плейлиста</value>
+  </string>
+  <string>
+    <id>33009</id>
+    <value>для вставки трека!</value>
+  </string>
+  <string>
+    <id>33010</id>
+    <value>Автоматически заполнить плейлист</value>
+  </string>
+  <string>
+    <id>33011</id>
+    <value>похожими треками</value>
+  </string>
+  <string>
+    <id>33012</id>
+    <value>треки, похожие на ваши любимые</value>
+  </string>
+  <string>
+    <id>33013</id>
+    <value> tracks suiting configured tag</value>
+  </string>
+  <string>
+    <id>33014</id>
+    <value>треки, воспроизведенные недавно</value>
+  </string>
+  <string>
+    <id>33016</id>
+    <value>любимые треки ваших друзей</value>
+  </string>
+  <string>
+    <id>33017</id>
+    <value>случайными треками</value>
+  </string>
+  <string>
+    <id>33018</id>
+    <value>случайные непрослушанные треки</value>
+  </string>
+  <string>
+    <id>33019</id>
+    <value>случайные любимые треки</value>
+  </string>
+  <string>
+    <id>33030</id>
+    <value>Лучшие треки альбома</value>
+  </string>
+  <string>
+    <id>33031</id>
+    <value>Прочие треки, помеченные: </value>
+  </string>
+  <string>
+    <id>33040</id>
+    <value>Копировать название композиции в буфер обмена</value>
+  </string>
+  <string>
+    <id>33041</id>
+    <value>Добавить этот альбом в плейлист</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>34000</id>
+    <value>Last.fm</value>
+  </string>
+  <string>
+    <id>34001</id>
+    <value>Начать / Изменить поток</value>
+  </string>
+  <string>
+    <id>34002</id>
+    <value>Друг: </value>
+  </string>
+  <string>
+    <id>34003</id>
+    <value>Близкий: </value>
+  </string>
+  <string>
+    <id>34004</id>
+    <value>Группа: </value>
+  </string>
+  <string>
+    <id>34010</id>
+    <value>Любовь</value>
+  </string>
+  <string>
+    <id>34011</id>
+    <value>Запрет</value>
+  </string>
+  <string>
+    <id>34012</id>
+    <value>Пропустить</value>
+  </string>
+  <string>
+    <id>34013</id>
+    <value>Режим поиска</value>
+  </string>
+  <string>
+    <id>34014</id>
+    <value> Submit to profile</value>
+  </string>
+  <string>
+    <id>34020</id>
+    <value>Текущий поток: </value>
+  </string>
+  <string>
+    <id>34030</id>
+    <value>Без метки</value>
+  </string>
+  <string>
+    <id>34031</id>
+    <value>Нет друзей</value>
+  </string>
+  <string>
+    <id>34040</id>
+    <value>Рекомендованное радио</value>
+  </string>
+  <string>
+    <id>34041</id>
+    <value> Tune into chosen Tag: </value>
+  </string>
+  <string>
+    <id>34042</id>
+    <value> No tag has been chosen yet</value>
+  </string>
+  <string>
+    <id>34043</id>
+    <value>Личное радио: </value>
+  </string>
+  <string>
+    <id>34044</id>
+    <value>Любимые треки: </value>
+  </string>
+  <string>
+    <id>34045</id>
+    <value> No Friend has been chosen yet</value>
+  </string>
+  <string>
+    <id>34046</id>
+    <value>Мое личное радио</value>
+  </string>
+  <string>
+    <id>34047</id>
+    <value>Мои любимые треки</value>
+  </string>
+  <string>
+    <id>34048</id>
+    <value> My neighbour radio</value>
+  </string>
+  <string>
+    <id>34050</id>
+    <value> No stream active</value>
+  </string>
+  <string>
+    <id>34051</id>
+    <value>Поток закончен!</value>
+  </string>
+  <string>
+    <id>34052</id>
+    <value> No more content or bad connection</value>
+  </string>
+  <string>
+    <id>34053</id>
+    <value> Playback of selected stream failed</value>
+  </string>
+  <string>
+    <id>34054</id>
+    <value> Radio handshake failed!</value>
+  </string>
+  <string>
+    <id>34055</id>
+    <value> Streams might be temporarily unavailable</value>
+  </string>
+  <string>
+    <id>100000</id>
+    <value>Главная</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100001</id>
+    <value>ТВ</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>100002</id>
+    <value>Изображения</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>100003</id>
+    <value>Файлы</value>
+  </string>
+  <string>
+    <id>100004</id>
+    <value>Настройка</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>100005</id>
+    <value>Музыка</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100006</id>
+    <value>Видео</value>
+  </string>
+  <string>
+    <id>100007</id>
+    <value>Информация о системе</value>
+  </string>
+  <string>
+    <id>100008</id>
+    <value>Настройка-&gt;Главное</value>
+  </string>
+  <string>
+    <id>100009</id>
+    <value>Настройка-&gt;Экран</value>
+  </string>
+  <string>
+    <id>100010</id>
+    <value>Настройка-&gt;Экран-&gt;Калибровка интерфейса</value>
+  </string>
+  <string>
+    <id>100011</id>
+    <value>Настройка-&gt;Экран-&gt;Калибровка экрана</value>
+  </string>
+  <string>
+    <id>100012</id>
+    <value>Настройка-&gt;Слайдшоу</value>
+  </string>
+  <string>
+    <id>100013</id>
+    <value>Настройка-&gt;Экран-&gt;Фильтры</value>
+  </string>
+  <string>
+    <id>100014</id>
+    <value>Настройка-&gt;Музыка</value>
+  </string>
+  <string>
+    <id>100015</id>
+    <value>Настройка-&gt;Экран-&gt;Субтитры</value>
+  </string>
+  <string>
+    <id>100016</id>
+    <value>Настройка-&gt;Экран-&gt;Заставка</value>
+  </string>
+  <string>
+    <id>100017</id>
+    <value>Настройка-&gt;Погода</value>
+  </string>
+  <string>
+    <id>100020</id>
+    <value>Настройка-&gt;Скрипты</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100021</id>
+    <value>Видео/Жанр</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100022</id>
+    <value>Видео/Исполнитель</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100023</id>
+    <value>Видео/Год</value>
+  </string>
+  <string>
+    <id>100024</id>
+    <value>Настройка-&gt;Программы</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100025</id>
+    <value>Видео/Заголовок</value>
+  </string>
+  <string>
+    <id>100026</id>
+    <value>Настройка-&gt;Главное-&gt;Кеш</value>
+  </string>
+  <string>
+    <id>100027</id>
+    <value>Настройка-&gt;Главное-&gt;Автозапуск</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100028</id>
+    <value>Видео/Плейлист</value>
+  </string>
+  <string>
+    <id>100029</id>
+    <value>Настройка-&gt;Главное-&gt;LCD</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100030</id>
+    <value>Радио</value>
+  </string>
+  <string>
+    <id>100031</id>
+    <value>Настройка-&gt;Экран-&gt;Скорость прокрутки</value>
+  </string>
+  <string>
+    <id>100032</id>
+    <value>MSN Messenger</value>
+  </string>
+  <string>
+    <id>100033</id>
+    <value>Чат MSN Messenger</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>100034</id>
+    <value>Плагины</value>
+  </string>
+  <string>
+    <id>100035</id>
+    <value>Простое главное меню</value>
+  </string>
+  <string>
+    <id>100100</id>
+    <value>Да/нет диалог</value>
+  </string>
+  <string>
+    <id>100101</id>
+    <value>Диалог прогресса</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>100500</id>
+    <value>Музыка/Плейлист</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>100501</id>
+    <value>Музыка/Каталог</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>100502</id>
+    <value>Музыка/Альбомы</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>100503</id>
+    <value>Музыка/Исполнители</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>100504</id>
+    <value>Музыка/Жанры</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>100505</id>
+    <value>Музыка/Топ100</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>100506</id>
+    <value>Музыка/Избранное</value>
+  </string>
+  <string Prefix="Моя">
+    <id>100507</id>
+    <value>Музыка/Годы</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>100508</id>
+    <value>Музыка/Поиск/Результаты</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>100509</id>
+    <value>Музыка/Поиск/Прогресс</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>100510</id>
+    <value>Музыка/Сейчас играет</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>100511</id>
+    <value>Музыка/Полноэкранная</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100600</id>
+    <value>ТВ/Программа</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100601</id>
+    <value>ТВ/Расписание</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100602</id>
+    <value>ТВ/Полноэкранное</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100603</id>
+    <value>ТВ/Записанное ТВ</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100604</id>
+    <value>ТВ/Поиск</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100605</id>
+    <value>ТВ/Записанное ТВ/Жанр</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100606</id>
+    <value>ТВ/Записанное ТВ/Каналы</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100607</id>
+    <value>ТВ/Расписание/Приоритеты</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100608</id>
+    <value>ТВ/Расписание/Конфликты</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100609</id>
+    <value>ТВ/Сжатие/Главное</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100610</id>
+    <value>ТВ/Сжатие/Настройка</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100611</id>
+    <value>ТВ/Сжатие/Авто</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100612</id>
+    <value>ТВ/Сжатие/Сжатие</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100613</id>
+    <value>ТВ/Сжатие/Статус</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100614</id>
+    <value>Видео/Исполнитель/Инфо</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100615</id>
+    <value>Помощник/Приветствие</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100616</id>
+    <value>Помощник/Найденные карты</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100617</id>
+    <value>Помощник/Страна</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100618</id>
+    <value>Помощник/Сканирование</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100619</id>
+    <value>Помощник/DVBC/Страна</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100620</id>
+    <value>Помощник/DVBC/Сканирование</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100621</id>
+    <value>Помощник/DVBS/LNB</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100622</id>
+    <value>Помощник/DVBS/LNB Настройка</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100623</id>
+    <value>Помощник/DVBS/Ретранслятор</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100624</id>
+    <value>Помощник/DVBS/Сканирование</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100625</id>
+    <value>Помощник/ATSC/Сканирование</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100626</id>
+    <value>Помощник/Аналог/Страна</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100627</id>
+    <value>Помощник/Аналог/Город</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100628</id>
+    <value>Помощник/Аналог/Импорт</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100629</id>
+    <value>Помощник/Аналог/Вручную</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100630</id>
+    <value>Помощник/Аналог/Сканирование</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100631</id>
+    <value>Помощник/Аналог/Переименование</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100632</id>
+    <value>Помощник/Аналог/Радио</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100633</id>
+    <value>Помощник/Аналог/Переименование радио</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100634</id>
+    <value>Помощник/Пульт</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100635</id>
+    <value>Помощник/EPG</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100636</id>
+    <value>Помощник/Главное</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100699</id>
+    <value>Помощник/Завершение</value>
+  </string>
+  <string Prefix="">
+    <id>100700</id>
+    <value>Настройка-&gt;ТВ</value>
+  </string>
+  <string Prefix="">
+    <id>100701</id>
+    <value>Настройка-&gt;Запись ТВ</value>
+  </string>
+  <string Prefix="">
+    <id>100702</id>
+    <value>ТВ-&gt;Сортировка каналов</value>
+  </string>
+  <string Prefix="">
+    <id>100703</id>
+    <value>Настройка-&gt;Видео</value>
+  </string>
+  <string Prefix="">
+    <id>100704</id>
+    <value>Настройка-&gt;DVD</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>100705</id>
+    <value>Настройка-&gt;Скины</value>
+  </string>
+  <string Prefix="">
+    <id>100706</id>
+    <value>Настройка-&gt;EPG</value>
+  </string>
+  <string Prefix="">
+    <id>100707</id>
+    <value>EPG-&gt;Карта каналов</value>
+  </string>
+  <string Prefix="">
+    <id>100708</id>
+    <value>Настройка-&gt;Прокрутка</value>
+  </string>
+  <string Prefix="">
+    <id>100709</id>
+    <value>Настройка-&gt;Сервер ТВ</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>100748</id>
+    <value>Программы/Инфо</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>100749</id>
+    <value>ТВ/Нет сигнала</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>100750</id>
+    <value>Рецепты</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100755</id>
+    <value>Статус</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>100756</id>
+    <value>Статус/Подробности</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>100757</id>
+    <value>Статус/Настройка</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100758</id>
+    <value>Диалог "Файл"</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>100759</id>
+    <value>Информация о записях</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>100760</id>
+    <value>Запись дисков</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>100761</id>
+    <value>Телепрограмма</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>100762</id>
+    <value>Радиопрограмма</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>100770</id>
+    <value>Проводник</value>
+  </string>
+  <string>
+    <id>101000</id>
+    <value>клавиатура</value>
+  </string>
+  <string>
+    <id>102000</id>
+    <value>Диалог выбора</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>102001</id>
+    <value>Музыка/Инфо</value>
+  </string>
+  <string>
+    <id>102002</id>
+    <value>Диалог OK</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>102003</id>
+    <value>Видео/Инфо</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>102004</id>
+    <value>Скрипты/Инфо</value>
+  </string>
+  <string>
+    <id>102005</id>
+    <value>Полноэкранное видео</value>
+  </string>
+  <string>
+    <id>102006</id>
+    <value>Аудио визуализация</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>102007</id>
+    <value>Изображение/слайдшоу</value>
+  </string>
+  <string>
+    <id>102008</id>
+    <value> Filestacking dialog</value>
+  </string>
+  <string>
+    <id>102009</id>
+    <value>Диалог выбора</value>
+  </string>
+  <string>
+    <id>102010</id>
+    <value>Дата/время</value>
+  </string>
+  <string>
+    <id>102011</id>
+    <value>Информация об исполнителе</value>
+  </string>
+  <string>
+    <id>102012</id>
+    <value>Контекстное меню</value>
+  </string>
+  <string>
+    <id>102013</id>
+    <value>Установить рейтинг</value>
+  </string>
+  <string>
+    <id>102014</id>
+    <value>Информация о изображении</value>
+  </string>
+  <string>
+    <id>102015</id>
+    <value>Мини меню</value>
+  </string>
+  <string>
+    <id>102016</id>
+    <value>Извещение</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>102600</id>
+    <value>Погода</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>102700</id>
+    <value>RSS</value>
+  </string>
+  <string>
+    <id>102900</id>
+    <value>Заставка</value>
+  </string>
+  <string>
+    <id>102901</id>
+    <value>Полноэкранное OSD</value>
+  </string>
+  <string Prefix="Мой ">
+    <id>102959</id>
+    <value>Редактор видео</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>103001</id>
+    <value>DVD</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>103003</id>
+    <value>ТВ/OSD</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>103006</id>
+    <value>ТВ/MSN OSD</value>
+  </string>
+  <string Prefix="!NEW My ">
+    <id>103007</id>
+    <value>TV/Zap OSD</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>103009</id>
+    <value>ТВ/Мини EPG</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>103011</id>
+    <value>ТВ/Настройка обрезки</value>
+  </string>
+  <string Prefix="Моя ">
+    <id>104711</id>
+    <value>Wikipedia</value>
+  </string>
+  <string Prefix="Мои ">
+    <id>105900</id>
+    <value>Трейлеры</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>107700</id>
+    <value>ТВ/Телетекст</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>107701</id>
+    <value>ТВ/Телетекст</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>107777</id>
+    <value>Sudoku</value>
+  </string>
+  <string Prefix="Мое ">
+    <id>107890</id>
+    <value>Радио Last.fm</value>
+  </string>
+  <string>
+    <id>200000</id>
+    <value>Выберите Ваш EPG граббер. Если Ваша страна не указана</value>
+  </string>
+  <string>
+    <id>200001</id>
+    <value>в списке, то вам придеться загружать EPG самостоятельно.</value>
+  </string>
+  <string>
+    <id>200002</id>
+    <value>Теперь вы можете назначить EPG каналы вашим телеканалам</value>
+  </string>
+  <string>
+    <id>200003</id>
+    <value>выберите канал и нажмите Enter для смены раскладки</value>
+  </string>
+  <string>
+    <id>200004</id>
+    <value>Ручная установка tvguide.xml</value>
+  </string>
+  <string>
+    <id>200005</id>
+    <value>Выберите ваш пульт:</value>
+  </string>
+  <string>
+    <id>200006</id>
+    <value>Нажмите кнопку Далее для продолжения настройки:</value>
+  </string>
+  <string>
+    <id>200007</id>
+    <value>&lt; Назад</value>
+  </string>
+  <string>
+    <id>200008</id>
+    <value>Настройка - Пульт</value>
+  </string>
+  <string>
+    <id>200009</id>
+    <value>Далее &gt;</value>
+  </string>
+  <string>
+    <id>200010</id>
+    <value>MediaPortal превращает Ваш компьютер в продвинутый мультимедиа-цент / HTPC.</value>
+  </string>
+  <string>
+    <id>200011</id>
+    <value>С MediaPortal вы можете прослушивать Вашу любимую музыку, радио, просматривать фотографии, </value>
+  </string>
+  <string>
+    <id>200012</id>
+    <value>видео, DVD, телевидение, и делать массу других вещей.</value>
+  </string>
+  <string>
+    <id>200013</id>
+    <value>Этот мастер поможет вам быстро и просто настроить Mediaportal.</value>
+  </string>
+  <string>
+    <id>200014</id>
+    <value>Для начала, укажите Вашу страну и язык интерфейса:</value>
+  </string>
+  <string>
+    <id>200015</id>
+    <value>Нажмите кнопку Далее для начала настройки</value>
+  </string>
+  <string>
+    <id>200017</id>
+    <value>Добро пожаловать в MediaPortal.</value>
+  </string>
+  <string>
+    <id>200018</id>
+    <value>Поздравляем. Mediaportal теперь настроен и готов к работе.</value>
+  </string>
+  <string>
+    <id>200019</id>
+    <value>Нажмите кнопку Закрыть для завершения этого мастера.</value>
+  </string>
+  <string>
+    <id>200020</id>
+    <value>Закрыть</value>
+  </string>
+  <string>
+    <id>200021</id>
+    <value>Настройка ТВ - EPG</value>
+  </string>
+  <string>
+    <id>200022</id>
+    <value>MediaPortal обнаружил следующие ТВ-карты:</value>
+  </string>
+  <string>
+    <id>200023</id>
+    <value>Нажмите кнопку Далее для настройки этой карты</value>
+  </string>
+  <string>
+    <id>200024</id>
+    <value>Настройка ТВ</value>
+  </string>
+  <string>
+    <id>200025</id>
+    <value>Язык</value>
+  </string>
+  <string>
+    <id>200026</id>
+    <value>Страна</value>
+  </string>
+  <string>
+    <id>200027</id>
+    <value>Настройка - Главное</value>
+  </string>
+  <string>
+    <id>200028</id>
+    <value>Ваш компьютер имеет постоянный доступ к интернету?</value>
+  </string>
+  <string>
+    <id>200029</id>
+    <value>Как вы будете использовать MediaPortal?</value>
+  </string>
+  <string>
+    <id>200030</id>
+    <value>На отдельном компьютере</value>
+  </string>
+  <string>
+    <id>200031</id>
+    <value>Да</value>
+  </string>
+  <string>
+    <id>200032</id>
+    <value>Нет</value>
+  </string>
+  <string>
+    <id>200033</id>
+    <value>Настройка ТВ - Аналоговое ТВ</value>
+  </string>
+  <string>
+    <id>200034</id>
+    <value>Выберите Ваш город.</value>
+  </string>
+  <string>
+    <id>200035</id>
+    <value>Если Ваш город не указан в списке, то необходима ручная настройка.</value>
+  </string>
+  <string>
+    <id>200036</id>
+    <value>Вручную</value>
+  </string>
+  <string>
+    <id>200037</id>
+    <value>Пропуск &gt;</value>
+  </string>
+  <string>
+    <id>200038</id>
+    <value>На настольном компьютере вместе с другими приложениями</value>
+  </string>
+</strings>
+
+
