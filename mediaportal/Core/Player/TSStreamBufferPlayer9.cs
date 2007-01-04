@@ -353,16 +353,22 @@ namespace MediaPortal.Player
         int hr = _graphBuilder.AddFilter((IBaseFilter)_fileSource, "TsFileSource");
         if (hr != 0)
         {
-          Log.Error("TSStreamBufferPlayer9:Failed to add SBE to graph");
+          Log.Error("TSStreamBufferPlayer9:Failed to add TsFileSource to graph");
           return false;
         }
         ITSFileSource source = _fileSource as ITSFileSource;
-        source.SetMP2Mode(0);
-        source.SetAC3Mode(0);
-        source.SetFixedAspectRatio(1);
-        //source.SetAutoMode(1);
-        source.SetClockMode(3);
-
+        if (source != null)
+        {
+          source.SetMP2Mode(0);
+          source.SetAC3Mode(0);
+          //source.SetFixedAspectRatio(1);
+          //source.SetAutoMode(1);
+          source.SetClockMode(3);
+        }
+        else
+        {
+          Log.Error("TSStreamBufferPlayer9:unable to get ITSFileSource interface");
+        }
         #endregion
 
         #region add mpeg-2 demux filter

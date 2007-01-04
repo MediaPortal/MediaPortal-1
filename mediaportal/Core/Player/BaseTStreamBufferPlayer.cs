@@ -131,11 +131,13 @@ namespace MediaPortal.Player
 
     protected bool _startingUp;
     protected bool _isRadio = false;
+    protected g_Player.MediaType _mediaType;
     #endregion
 
     #region ctor/dtor
     public BaseTStreamBufferPlayer()
     {
+      _mediaType = g_Player.MediaType.Video;
     }
     public BaseTStreamBufferPlayer(g_Player.MediaType type)
     {
@@ -144,6 +146,7 @@ namespace MediaPortal.Player
       {
         _isRadio = true;
       }
+      _mediaType = type;
     }
     #endregion
 
@@ -270,7 +273,7 @@ namespace MediaPortal.Player
       long dur=0;
       _mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
       _mediaCtrl.Run(); 
-      //_mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
+      _mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
       UpdateCurrentPosition();
       UpdateDuration();
       OnInitialized();
@@ -495,7 +498,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        return (_isRadio == false);
+        return (_mediaType == g_Player.MediaType.TV || _mediaType == g_Player.MediaType.Recording);
       }
     }
     public override bool IsTimeShifting

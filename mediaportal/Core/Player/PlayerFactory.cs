@@ -179,7 +179,7 @@ namespace MediaPortal.Player
           return newPlayer;
         }
       }
-      if (extension == ".tsbuffer" || extension == ".ts")
+      if (extension == ".tsbuffer" || extension == ".ts" || extension == ".mpg" || extension == ".mpeg")
       {
         if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
           return new Player.BaseTStreamBufferPlayer();
@@ -307,7 +307,7 @@ namespace MediaPortal.Player
           return newPlayer;
         }
       }
-      if (extension == ".tsbuffer" || extension == ".ts")
+      if (extension == ".tsbuffer" || extension == ".ts" || extension == ".mpg" || extension == ".mpeg")
       {
         if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
           return new Player.BaseTStreamBufferPlayer(type);
