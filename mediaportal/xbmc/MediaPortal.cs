@@ -952,35 +952,42 @@ public class MediaPortalApp : D3DApp, IRender
       }
     }
 
-    //SV Added by SteveV 2006-09-07
     // Asynchronously pre-initialize the music engine if we're using the BassMusicPlayer
     if (BassMusicPlayer.IsDefaultMusicPlayer)
       BassMusicPlayer.CreatePlayerAsync();
 
-    GUIPropertyManager.SetProperty("#date", GetDate());
-    GUIPropertyManager.SetProperty("#time", GetTime());
-
-    GUIPropertyManager.SetProperty("#Day", GetDay());                   // 01
-    GUIPropertyManager.SetProperty("#SDOW", GetShortDayOfWeek());       // Sun
-    GUIPropertyManager.SetProperty("#DOW", GetDayOfWeek());             // Sunday
-    GUIPropertyManager.SetProperty("#Month", GetMonth());               // 01
-    GUIPropertyManager.SetProperty("#SMOY", GetShortMonthOfYear());     // Jan
-    GUIPropertyManager.SetProperty("#MOY", GetMonthOfYear());           // January
-    GUIPropertyManager.SetProperty("#SY", GetShortYear());              // 80
-    GUIPropertyManager.SetProperty("#Year", GetYear());                 // 1980
-    JobDispatcher.Init();
-    //
-    // Kill the splash screen
-    //
-    if (splashScreen != null)
+    try
     {
-      splashScreen.Stop();
-      Activate();
-      while (!splashScreen.isStopped())
+      GUIPropertyManager.SetProperty("#date", GetDate());
+      GUIPropertyManager.SetProperty("#time", GetTime());
+
+      GUIPropertyManager.SetProperty("#Day", GetDay());                   // 01
+      GUIPropertyManager.SetProperty("#SDOW", GetShortDayOfWeek());       // Sun
+      GUIPropertyManager.SetProperty("#DOW", GetDayOfWeek());             // Sunday
+      GUIPropertyManager.SetProperty("#Month", GetMonth());               // 01
+      GUIPropertyManager.SetProperty("#SMOY", GetShortMonthOfYear());     // Jan
+      GUIPropertyManager.SetProperty("#MOY", GetMonthOfYear());           // January
+      GUIPropertyManager.SetProperty("#SY", GetShortYear());              // 80
+      GUIPropertyManager.SetProperty("#Year", GetYear());                 // 1980
+
+      JobDispatcher.Init();
+      //
+      // Kill the splash screen
+      //
+      if (splashScreen != null)
       {
-        Thread.Sleep(100);
+        splashScreen.Stop();
+        Activate();
+        while (!splashScreen.isStopped())
+        {
+          Thread.Sleep(100);
+        }
+        splashScreen = null;
       }
-      splashScreen = null;
+    }
+    catch (Exception ex)
+    {
+      Log.Error("MediaPortalApp: Error setting date and time properties - {0}", ex.Message);
     }
   }
 

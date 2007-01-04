@@ -916,13 +916,13 @@ namespace MediaPortal.GUI.Music
         item.ThumbnailImage = strThumb;
         item.IconImageBig = strThumb;
         item.IconImage = strThumb;
-        
-        //// let us test if there is a larger cover art image
-        //string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(strThumb);
-        //if (System.IO.File.Exists(strLarge))
-        //{
-        //  item.ThumbnailImage = strLarge;
-        //}
+
+        // let us test if there is a larger cover art image
+        string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(strThumb);
+        if (System.IO.File.Exists(strLarge))
+        {
+          item.ThumbnailImage = strLarge;
+        }
       }
     }
 
