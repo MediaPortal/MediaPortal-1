@@ -179,7 +179,7 @@ namespace MediaPortal.Player
           return newPlayer;
         }
       }
-      if (extension == ".tsbuffer" || extension == ".ts" || extension == ".mpg" || extension == ".mpeg")
+      if (extension == ".tsbuffer" || extension == ".ts")
       {
         if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
           return new Player.BaseTStreamBufferPlayer();
@@ -210,16 +210,6 @@ namespace MediaPortal.Player
       {
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          //SV
-          ////string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Windows Media Player 9");
-          ////if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)
-          ////{
-          ////  newPlayer = new Player.AudioPlayerWMP9();
-          ////  return newPlayer;
-          ////}
-          ////newPlayer = new Player.AudioPlayerVMR7();
-          ////return newPlayer;
-
           string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
           int streamPlayer = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
 
@@ -229,6 +219,8 @@ namespace MediaPortal.Player
             switch (streamPlayer)
             {
               case 0:
+                if (BassMusicPlayer.BassFreed)
+                  BassMusicPlayer.Player.InitBass();
                 return BassMusicPlayer.Player;
               case 1:
                 return new Player.AudioPlayerWMP9();
@@ -237,6 +229,8 @@ namespace MediaPortal.Player
               case 3:
                 return new RTSPPlayer();
               default:
+                if (BassMusicPlayer.BassFreed)
+                  BassMusicPlayer.Player.InitBass();
                 return BassMusicPlayer.Player;
             }
           }
@@ -307,7 +301,7 @@ namespace MediaPortal.Player
           return newPlayer;
         }
       }
-      if (extension == ".tsbuffer" || extension == ".ts" || extension == ".mpg" || extension == ".mpeg")
+      if (extension == ".tsbuffer" || extension == ".ts")
       {
         if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
           return new Player.BaseTStreamBufferPlayer(type);
@@ -347,6 +341,8 @@ namespace MediaPortal.Player
             switch (streamPlayer)
             {
               case 0:
+                if (BassMusicPlayer.BassFreed)
+                  BassMusicPlayer.Player.InitBass();
                 return BassMusicPlayer.Player;
               case 1:
                 return new Player.AudioPlayerWMP9();
@@ -355,6 +351,8 @@ namespace MediaPortal.Player
               case 3:
                 return new RTSPPlayer();
               default:
+                if (BassMusicPlayer.BassFreed)
+                  BassMusicPlayer.Player.InitBass();
                 return BassMusicPlayer.Player;
             }
           }
@@ -376,10 +374,8 @@ namespace MediaPortal.Player
         }
       }
 
-
       newPlayer = new Player.AudioPlayerWMP9();
       return newPlayer;
-
     }
   }
 }
