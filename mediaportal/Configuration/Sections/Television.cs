@@ -249,17 +249,17 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label5.Location = new System.Drawing.Point(16, 24);
       this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(72, 16);
+      this.label5.Size = new System.Drawing.Size(88, 17);
       this.label5.TabIndex = 0;
-      this.label5.Text = "Video codec:";
+      this.label5.Text = "Video decoder";
       // 
       // label3
       // 
       this.label3.Location = new System.Drawing.Point(16, 48);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(72, 16);
+      this.label3.Size = new System.Drawing.Size(88, 17);
       this.label3.TabIndex = 2;
-      this.label3.Text = "Audio codec:";
+      this.label3.Text = "Audio decoder";
       // 
       // audioCodecComboBox
       // 
