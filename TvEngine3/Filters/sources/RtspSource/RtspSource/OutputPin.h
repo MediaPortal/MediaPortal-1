@@ -62,4 +62,5 @@ protected:
   bool m_bSeeking;
   bool m_biMpegDemux;
   bool m_bIsTimeShifting;
+  bool m_bDisContinuity;
 };

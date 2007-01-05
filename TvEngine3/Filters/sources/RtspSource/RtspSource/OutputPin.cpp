@@ -204,6 +204,12 @@ HRESULT COutputPin::FillBuffer(IMediaSample *pSample)
 		return S_OK;
 	}
   pSample->SetActualDataLength(bytesRead);
+  if (m_bDisContinuity) 
+  {
+    pSample->SetDiscontinuity(TRUE);
+    m_bDisContinuity=false;
+
+  }
   return S_OK;
 }
 HRESULT COutputPin::ChangeStart()
@@ -232,6 +238,7 @@ HRESULT COutputPin::Run(REFERENCE_TIME tStart)
 	//CAutoLock fillLock(&m_FillLock);
 	//CAutoLock seekLock(&m_SeekLock);
   m_pFilter->ResetStreamTime();
+  m_bDisContinuity=true;
 	if (!m_bSeeking && !m_DemuxLock)
 	{	
 		CComPtr<IReferenceClock> pClock;
@@ -318,6 +325,7 @@ HRESULT COutputPin::OnThreadStartPlay(void)
 	CAutoLock fillLock(&m_FillLock);
 	CAutoLock lock(&m_SeekLock);
 	//Log("COutputPin::OnThreadStartPlay()");
+  m_bDisContinuity=true;
   DeliverNewSegment(m_rtStart, m_rtStop, 1.0 );
 	return CSourceStream::OnThreadStartPlay( );
 }
