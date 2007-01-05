@@ -81,7 +81,7 @@ namespace SetupTv.Sections
         int imageIndex = 3;
         if (ch.FreeToAir == false)
           imageIndex = 0;
-        ListViewItem item = mpListView1.Items.Add(ch.Name, imageIndex);
+        ListViewItem item = mpListView1.Items.Add((mpListView1.Items.Count + 1).ToString(), imageIndex);
         foreach (ChannelMap map in ch.ReferringChannelMap())
         {
           if (cards.ContainsKey(map.ReferencedCard().DevicePath))
@@ -99,7 +99,7 @@ namespace SetupTv.Sections
         }
         string line = "";
         string[] details = new string[4];
-        details[0] = "";
+        details[0] = ch.Name;
         details[1] = "";
         details[2] = "";
         details[3] = "";
@@ -128,8 +128,8 @@ namespace SetupTv.Sections
           line += "ATSC";
         }
         item.Tag = ch;
-        item.SubItems.Add(line);
         item.SubItems.Add(details[0]);
+        item.SubItems.Add(line);
         item.SubItems.Add(details[1]);
         item.SubItems.Add(details[2]);
         item.SubItems.Add(details[3]);

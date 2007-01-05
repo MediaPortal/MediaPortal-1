@@ -35,8 +35,8 @@ namespace SetupTv.Sections
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.hdrName = new System.Windows.Forms.ColumnHeader("(none)");
+      this.hdrTypes = new System.Windows.Forms.ColumnHeader();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.buttonDelete = new System.Windows.Forms.Button();
       this.mpButtonAdd = new MediaPortal.UserInterface.Controls.MPButton();
@@ -45,6 +45,7 @@ namespace SetupTv.Sections
       this.buttonDown = new System.Windows.Forms.Button();
       this.buttonUtp = new System.Windows.Forms.Button();
       this.mpButtonDeleteEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
+      this.hdrHekje = new System.Windows.Forms.ColumnHeader();
       this.SuspendLayout();
       // 
       // columnHeader4
@@ -68,8 +69,9 @@ namespace SetupTv.Sections
       this.mpListView1.AllowDrop = true;
       this.mpListView1.AllowRowReorder = true;
       this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader3,
+            this.hdrHekje,
+            this.hdrName,
+            this.hdrTypes,
             this.columnHeader2,
             this.columnHeader4,
             this.columnHeader5,
@@ -85,15 +87,15 @@ namespace SetupTv.Sections
       this.mpListView1.View = System.Windows.Forms.View.Details;
       this.mpListView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.mpListView1_ItemDrag);
       // 
-      // columnHeader1
+      // hdrName
       // 
-      this.columnHeader1.Text = "Name";
-      this.columnHeader1.Width = 100;
+      this.hdrName.Text = "Name";
+      this.hdrName.Width = 100;
       // 
-      // columnHeader3
+      // hdrTypes
       // 
-      this.columnHeader3.Text = "Types";
-      this.columnHeader3.Width = 90;
+      this.hdrTypes.Text = "Types";
+      this.hdrTypes.Width = 90;
       // 
       // imageList1
       // 
@@ -174,6 +176,10 @@ namespace SetupTv.Sections
       this.mpButtonDeleteEncrypted.UseVisualStyleBackColor = true;
       this.mpButtonDeleteEncrypted.Click += new System.EventHandler(this.mpButtonDeleteEncrypted_Click);
       // 
+      // hdrHekje
+      // 
+      this.hdrHekje.Text = "#";
+      // 
       // RadioChannels
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -199,8 +205,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader6;
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private MediaPortal.UserInterface.Controls.MPListView mpListView1;
-    private System.Windows.Forms.ColumnHeader columnHeader1;
-    private System.Windows.Forms.ColumnHeader columnHeader3;
+    private System.Windows.Forms.ColumnHeader hdrName;
+    private System.Windows.Forms.ColumnHeader hdrTypes;
     private System.Windows.Forms.Button buttonDelete;
     private System.Windows.Forms.ImageList imageList1;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonAdd;
@@ -209,5 +215,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Button buttonDown;
     private System.Windows.Forms.Button buttonUtp;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonDeleteEncrypted;
+    private System.Windows.Forms.ColumnHeader hdrHekje;
   }
 }
