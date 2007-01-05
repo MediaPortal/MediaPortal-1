@@ -69,7 +69,7 @@ namespace MediaPortal.Utils.Time
 
     private struct TimeZoneInfo
     {
-      public int Index;
+      //public int Index;
       public string Display;
       public string StdName;
       public string DltName;
@@ -90,6 +90,9 @@ namespace MediaPortal.Utils.Time
     /// <param name="TimeZone">The time zone.</param>
     public WorldTimeZone(string TimeZone)
     {
+      if (TimeZone == string.Empty)
+        throw new ArgumentException("TimeZone Not valid");
+
       string TimeZoneName = string.Empty;
 
       if (_TimeZoneList == null)
@@ -228,7 +231,7 @@ namespace MediaPortal.Utils.Time
             {
               TimeZoneInfo TZInfo = new TimeZoneInfo();
 
-              TZInfo.Index = (int)TZKey.GetValue(VALUE_INDEX);
+              //TZInfo.Index = (int)TZKey.GetValue(VALUE_INDEX);
               TZInfo.Display = (string)TZKey.GetValue(VALUE_DISPLAY_NAME);
               TZInfo.StdName = (string)TZKey.GetValue(VALUE_STANDARD_NAME);
               TZInfo.DltName = (string)TZKey.GetValue(VALUE_DAYLIGHT_NAME);
