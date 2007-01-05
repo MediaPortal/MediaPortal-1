@@ -51,6 +51,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_0F1EAFAD3334419881BC13D0F56BBEE1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_17BF44C2E5BF2D66B0526B7B6FA375A0"
         "OwnerKey" = "8:_A987C233BAE14CE1A50509BEB71AD2A4"
         "MsmSig" = "8:_UNDEFINED"
@@ -261,6 +267,24 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_9D03242BBD9BF6998671C7AB61FE03F3"
+        "OwnerKey" = "8:_CD2C9FE9EF5475C8D31023BDC3A5F1E8"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9D03242BBD9BF6998671C7AB61FE03F3"
+        "OwnerKey" = "8:_A987C233BAE14CE1A50509BEB71AD2A4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9D03242BBD9BF6998671C7AB61FE03F3"
+        "OwnerKey" = "8:_17BF44C2E5BF2D66B0526B7B6FA375A0"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_9F82085541ADEC95BED6DFA56656B5C6"
         "OwnerKey" = "8:_CD2C9FE9EF5475C8D31023BDC3A5F1E8"
         "MsmSig" = "8:_UNDEFINED"
@@ -335,6 +359,12 @@
         {
         "MsmKey" = "8:_BD20A459C85AD4858305EE6824D6270F"
         "OwnerKey" = "8:_A51C94F3759D278E29E9D8E2495E394F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C561567280FF483FBF0E62A616F725F4"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -491,6 +521,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_8CC5185B308148443B2890E70DD55786"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_9D03242BBD9BF6998671C7AB61FE03F3"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -730,11 +766,31 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0F1EAFAD3334419881BC13D0F56BBEE1"
+            {
+            "SourcePath" = "8:..\\skin\\BlueTwo Wide\\mytvschedulerserverSearch.xml"
+            "TargetName" = "8:mytvschedulerserverSearch.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_828CD969DEEA40DCA723A64FFAA303AC"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_17BF44C2E5BF2D66B0526B7B6FA375A0"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Databases, Version=1.0.2558.19774, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:Databases, Version=1.0.2559.15531, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_17BF44C2E5BF2D66B0526B7B6FA375A0"
@@ -1166,7 +1222,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:DirectShowLib, Version=1.4.0.16781, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:DirectShowLib, Version=1.4.0.30026, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_6DAABE9D08B5AA777D54E8BA2C07EF53"
@@ -1340,6 +1396,37 @@
                     }
                 }
             "SourcePath" = "8:BassRegistration.DLL"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_E88C006BAD524657A925AC041F38E802"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_9D03242BBD9BF6998671C7AB61FE03F3"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Utils, Version=1.0.2558.30026, Culture=neutral, processorArchitecture=x86"
+                "ScatterAssemblies"
+                {
+                    "_9D03242BBD9BF6998671C7AB61FE03F3"
+                    {
+                    "Name" = "8:Utils.DLL"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Utils.DLL"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_E88C006BAD524657A925AC041F38E802"
@@ -1563,6 +1650,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C561567280FF483FBF0E62A616F725F4"
+            {
+            "SourcePath" = "8:..\\skin\\BlueTwo Wide\\mytvschedulerserverSearchType.xml"
+            "TargetName" = "8:mytvschedulerserverSearchType.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_828CD969DEEA40DCA723A64FFAA303AC"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C5FE318D416D4459916DA524598E4663"
             {
             "SourcePath" = "8:..\\TvPlugin\\Gentle.config"
@@ -1587,7 +1694,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Core, Version=1.0.2558.19773, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:Core, Version=1.0.2559.17225, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_CD2C9FE9EF5475C8D31023BDC3A5F1E8"
