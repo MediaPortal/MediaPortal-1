@@ -49,6 +49,7 @@ void CProgramToTransportStream::Initialize(char* fileNameOut)
     *m_env << "Unable to open file \"" << fileNameOut << "\" as a file sink\n";
     return;
   }
+  m_iPacketsToSkip=500;
   StartBufferThread();
   m_bRunning=true;
 }
@@ -62,6 +63,11 @@ void CProgramToTransportStream::Write(byte* data, int len)
 { 
   if (m_bRunning)
   {
+    if (m_iPacketsToSkip>0) 
+    {
+      m_iPacketsToSkip--;
+      return;
+    }
     m_buffer.PutBuffer(data, len, 1);
   }
 }

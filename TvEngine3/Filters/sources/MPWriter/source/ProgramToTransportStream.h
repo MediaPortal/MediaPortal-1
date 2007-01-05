@@ -28,4 +28,5 @@ private:
   CMemoryStreamSource* m_inputSource;
   FramedSource* m_tsFrames;
   bool m_bRunning;
+  int  m_iPacketsToSkip;
 };
