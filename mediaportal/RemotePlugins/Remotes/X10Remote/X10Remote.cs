@@ -80,6 +80,29 @@ namespace MediaPortal.InputDevices
         _x10Channel = xmlreader.GetValueAsInt("remote", "X10Channel", 0);
       }
 
+      //Setup the X10 Remote
+      try
+      {
+        if (X10Inter == null)
+        {
+          X10Inter = new X10Interface();
+          if (X10Inter == null)
+          {
+            Log.Info("X10 debug: Could not get interface");
+            return;
+          }
+          _remotefound = true;
+          icpc = (IConnectionPointContainer)X10Inter;
+          Guid IID_InterfaceEvents = typeof(_DIX10InterfaceEvents).GUID;
+          icpc.FindConnectionPoint(ref IID_InterfaceEvents, out icp);
+          icp.Advise(this, out cookie);
+        }
+      }
+      catch (System.Runtime.InteropServices.COMException)
+      {
+        Log.Info("X10 Debug: Com error");
+      }
+
       if (_inputHandler == null)
       {
         if (_controlEnabled)
@@ -115,28 +138,7 @@ namespace MediaPortal.InputDevices
 
       }
 
-      //Setup the X10 Remote
-      try
-      {
-        if (X10Inter == null)
-        {
-          X10Inter = new X10Interface();
-          if (X10Inter == null)
-          {
-            Log.Info("X10 debug: Could not get interface");
-            return;
-          }
-          _remotefound = true;
-          icpc = (IConnectionPointContainer)X10Inter;
-          Guid IID_InterfaceEvents = typeof(_DIX10InterfaceEvents).GUID;
-          icpc.FindConnectionPoint(ref IID_InterfaceEvents, out icp);
-          icp.Advise(this, out cookie);
-        }
-      }
-      catch (System.Runtime.InteropServices.COMException)
-      {
-        Log.Info("X10 Debug: Com error");
-      }
+     
     }
    
     #endregion
@@ -147,22 +149,25 @@ namespace MediaPortal.InputDevices
     {
       if (EKeyState == X10.EX10Key.X10KEY_ON || EKeyState == X10.EX10Key.X10KEY_REPEAT)
       {
-        _inputHandler.MapAction((int)Enum.Parse(typeof(X10.EX10Command), eCommand.ToString()));
-        X10KeyPressed((int)Enum.Parse(typeof(X10.EX10Command), eCommand.ToString()));
+          X10KeyPressed((int)Enum.Parse(typeof(X10.EX10Command), eCommand.ToString()));
+          if (_inputHandler != null)
+          {
+            _inputHandler.MapAction((int)Enum.Parse(typeof(X10.EX10Command), eCommand.ToString()));
 
-        if (_logVerbose)
-        {
-          Log.Info("X10Remote: Command Start --------------------------------------------");
-          Log.Info("X10Remote: bszCommand   = {0}", bszCommand.ToString());
-          Log.Info("X10Remote: eCommand     = {0} - {1}", (int)Enum.Parse(typeof(X10.EX10Command), eCommand.ToString()), eCommand.ToString());
-          Log.Info("X10Remote: eCommandType = {0}", eCommandType.ToString());
-          Log.Info("X10Remote: eKeyState    = {0}", EKeyState.ToString());
-          Log.Info("X10Remote: lAddress     = {0}", lAddress.ToString());
-          Log.Info("X10Remote: lSequence    = {0}", lSequence.ToString());
-          Log.Info("X10Remote: varTimestamp = {0}", varTimestamp.ToString());
-          Log.Info("X10Remote: Command End ----------------------------------------------");
-        }
+          }
 
+          if (_logVerbose)
+          {
+            Log.Info("X10Remote: Command Start --------------------------------------------");
+            Log.Info("X10Remote: bszCommand   = {0}", bszCommand.ToString());
+            Log.Info("X10Remote: eCommand     = {0} - {1}", (int)Enum.Parse(typeof(X10.EX10Command), eCommand.ToString()), eCommand.ToString());
+            Log.Info("X10Remote: eCommandType = {0}", eCommandType.ToString());
+            Log.Info("X10Remote: eKeyState    = {0}", EKeyState.ToString());
+            Log.Info("X10Remote: lAddress     = {0}", lAddress.ToString());
+            Log.Info("X10Remote: lSequence    = {0}", lSequence.ToString());
+            Log.Info("X10Remote: varTimestamp = {0}", varTimestamp.ToString());
+            Log.Info("X10Remote: Command End ----------------------------------------------");
+          }
       }
     }
 
