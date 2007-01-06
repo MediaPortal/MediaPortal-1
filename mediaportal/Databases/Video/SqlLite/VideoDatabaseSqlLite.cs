@@ -290,7 +290,12 @@ namespace MediaPortal.Video.Database
         DatabaseUtility.RemoveInvalidChars(ref cdlabel);
 
         strPath = strPath.Trim();
-        strSQL = String.Format("select * from path where strPath like '{0}' and cdlabel like '{1}'", strPath, cdlabel);
+				if (MediaPortal.Util.Utils.IsDVD(strPath))
+				{
+					// It's a DVD! Any drive letter should be OK as long as the label and rest of the path matches
+					strPath = strPath.Replace(strPath.Substring(0, 1), "_");
+				} 
+				strSQL = String.Format("select * from path where strPath like '{0}' and cdlabel like '{1}'", strPath, cdlabel);
         SQLiteResultSet results;
         results = m_db.Execute(strSQL);
         if (results.Rows.Count > 0)
