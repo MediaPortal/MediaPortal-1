@@ -21,6 +21,7 @@
     <bitrate >56</bitrate>
     <bitrate >128</bitrate>
     <bitrate >300</bitrate>
+    <bitrate >512</bitrate>
     <bitrate >768</bitrate>
   </bitrates>
 </settings>

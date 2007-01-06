@@ -90,11 +90,11 @@ namespace MediaPortal.GUI.MusicVideos
       }
       if (loSettings.mbUseVMR9)
       {
-          VMR9CheckBox.Checked = true;
+        VMR9CheckBox.Checked = true;
       }
       else
       {
-          VMR9CheckBox.Checked = false;
+        VMR9CheckBox.Checked = false;
       }
 
     }
@@ -114,15 +114,26 @@ namespace MediaPortal.GUI.MusicVideos
       {
         loSettings.msDefaultBitRate = "300";
       }
+      else if (bitrate512.Checked)
+      {
+        loSettings.msDefaultBitRate = "512";
+      }
       else if (bitrate768.Checked)
       {
         loSettings.msDefaultBitRate = "768";
       }
+
       String lsSelCountry = Convert.ToString(countryList.SelectedItem);
 
       loSettings.msDefaultCountryName = lsSelCountry;
       loSettings.mbUseVMR9 = VMR9CheckBox.Checked;
       loSettings.saveSettings();
+      this.Close();
+    }
+
+
+    private void buttonCancel_Click(object sender, EventArgs e)
+    {
       this.Close();
     }
 
@@ -199,10 +210,11 @@ namespace MediaPortal.GUI.MusicVideos
       }
     }
 
-      private void label2_Click(object sender, EventArgs e)
-      {
+    private void label2_Click(object sender, EventArgs e)
+    {
 
-      }
+    }
+
 
   }
 }
