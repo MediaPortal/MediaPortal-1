@@ -37,7 +37,7 @@ namespace MediaPortal.Utils.Time
   public class WorldTimeZone : TimeZone
   {
     #region Variables
-    private const string VALUE_INDEX = "Index";
+    //private const string VALUE_INDEX = "Index";
     private const string VALUE_DISPLAY_NAME = "Display";
     private const string VALUE_STANDARD_NAME = "Std";
     private const string VALUE_DAYLIGHT_NAME = "Dlt";

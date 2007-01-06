@@ -20,12 +20,24 @@
             &lt;div&gt;&lt;/div&gt;
             &lt;div&gt;
             &lt;p&gt;
-            &lt;span&gt;&lt;/span&gt;à&lt;#END&gt;&lt;br /&gt;&lt;br /&gt;&lt;#GENRE&gt;&lt;br /&gt;&lt;br /&gt;
-            &lt;/p&gt;
+            &lt;span&gt;&lt;/span&gt;à&lt;#END&gt;&lt;br /&gt;&lt;br /&gt;&lt;#GENRE&gt;&lt;br /&gt;&lt;/p&gt;
             &lt;/div&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>
+    <Template name="Details" start="&lt;div id=&#34;divContent_2&#34;" stop="&lt;table">
+        <SectionTemplate tags="DP">
+          <TemplateText>
+            &lt;div&gt;&lt;p&gt;&lt;#DESCRIPTION&gt;&lt;/p&gt;&lt;/div&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Sublinks>
+        <Sublink search="popup" template="Details" />
+      </Sublinks>
+      <Searches>
+        <Search match="Rediffusion" field="#REPEAT" remove="false" />
+      </Searches>
     </Html>
   </Listing>
 </Grabber>

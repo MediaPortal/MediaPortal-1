@@ -75,26 +75,24 @@
       <Template name="default">
         <SectionTemplate tags="T">
           <TemplateText>
-	&lt;tr&gt;
-	&lt;th&gt;&lt;#START&gt; - &lt;#END&gt;&lt;/th&gt;
-	&lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;/td&gt;
-	&lt;/tr&gt;
-    </TemplateText>
+            &lt;tr&gt;
+            &lt;th&gt;&lt;#START&gt; - &lt;#END&gt;&lt;/th&gt;
+            &lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+          </TemplateText>
         </SectionTemplate>
       </Template>
       <Template name="Details" start="progDetail">
         <SectionTemplate tags="TAP">
           <TemplateText>
-	&lt;td&gt;
-	&lt;p&gt;&lt;#SUBTITLE&gt;&lt;/p&gt;
-	&lt;p&gt;&lt;#DESCRIPTION&gt;&lt;/p&gt;
-	&lt;p&gt;&lt;/p&gt;
-	&lt;p&gt;&lt;a href&gt;&lt;/a&gt;&lt;a href="/zoeken/?genre=&lt;#GENRE:genre=,&gt;"&gt;&lt;/a&gt;&lt;/p&gt;
-	&lt;p&gt;&lt;a href&gt;&lt;/a&gt;&lt;/p&gt;
-	&lt;/td&gt;
-    </TemplateText>
+            &lt;td&gt;
+            &lt;p&gt;&lt;#SUBTITLE&gt;&lt;/p&gt;
+            &lt;p&gt;&lt;#DESCRIPTION&gt;&lt;/p&gt;
+            &lt;p&gt;&lt;/p&gt;
+            &lt;p&gt;&lt;a href&gt;&lt;/a&gt;&lt;a href="/zoeken/?genre=&lt;#GENRE:genre=,&gt;"&gt;&lt;/a&gt;
+          </TemplateText>
         </SectionTemplate>
       </Template>
       <Sublinks>

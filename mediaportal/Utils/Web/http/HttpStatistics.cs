@@ -108,8 +108,15 @@ namespace MediaPortal.Utils.Web
       }
       else
       {
-        stats = _siteList[site];
-        _siteList.Remove(site);
+        if (_siteList.ContainsKey(site))
+        {
+          stats = _siteList[site];
+          _siteList.Remove(site);
+        }
+        else
+        {
+          stats = new SiteStatistics(site);
+        }
       }
       stats.Add(pages, bytes, rate);
 

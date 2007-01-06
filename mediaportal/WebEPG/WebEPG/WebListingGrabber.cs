@@ -68,6 +68,7 @@ namespace MediaPortal.WebEPG
 
     int _dbLastProg;
     int _maxGrabDays;
+    int _discarded;
     ILog _log;
     #endregion
 
@@ -329,7 +330,10 @@ namespace MediaPortal.WebEPG
       guideData.ChannelId = _strID;
 
       if (_grabber.Actions != null && guideData.IsRemoved(_grabber.Actions))
+      {
+        _discarded++;
         return null;
+      }
 
       //_log.Debug(LogType.WebEPG, "WebEPG: Guide, Program title: {0}", guideData.Title);
       //_log.Debug(LogType.WebEPG, "WebEPG: Guide, Program start: {0}:{1} - {2}/{3}/{4}", guideData.StartTime.Hour, guideData.StartTime.Minute, guideData.StartTime.Day, guideData.StartTime.Month, guideData.StartTime.Year);
@@ -342,7 +346,10 @@ namespace MediaPortal.WebEPG
       if (guideData.StartTime.Day == 0 || guideData.StartTime.Month == 0 || guideData.StartTime.Year == 0)
       {
         if (!_timeControl.CheckAdjustTime(ref guideData))
+        {
+          _discarded++;
           return null;
+        }
       }
 
       //Set TimeZone
@@ -360,6 +367,7 @@ namespace MediaPortal.WebEPG
       if (guideData.StartTime.ToLocalTime() < _grabStart.AddHours(-2))
       {
         _log.Info(LogType.WebEPG, "WebEPG: Program starts in the past, ignoring it.");
+        _discarded++;
         return null;
       }
 
@@ -432,19 +440,21 @@ namespace MediaPortal.WebEPG
         if (_reqBuilder.IsMaxListing(listingCount) || !_reqBuilder.IsLastPage())
           bMore = true;
 
+        _discarded = 0;
+        programCount = 0;
         for (int i = 0; i < listingCount; i++)
         {
           TVProgram program = GetProgram(i);
           if (program != null)
           {
             _programs.Add(program);
+            programCount++;
           }
         }
 
-        if(_programs.Count - programCount < listingCount)
-          _log.Warn(LogType.WebEPG, "WebEPG: Program Count ({0}) < Listing Count ({1}), possible template error", _programs.Count - programCount, listingCount);
-
-        programCount = _programs.Count;
+        _log.Debug(LogType.WebEPG, "WebEPG: Program Count ({0}), Listing Count ({1}), Discard Count ({2})", programCount, listingCount, _discarded);
+        if(programCount < (listingCount - _discarded))
+          _log.Warn(LogType.WebEPG, "WebEPG: Program Count ({0}) < Listing Count ({1}) - Discard Count ({2}), possible template error", programCount, listingCount, _discarded);
 
         if (_timeControl.GrabDay > _maxGrabDays) //_GrabDay > _maxGrabDays)
           bMore = false;
