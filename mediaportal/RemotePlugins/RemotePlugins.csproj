@@ -243,7 +243,7 @@
       <SubType>Form</SubType>
     </None>
     <Compile Include="ControlDevices\Devices\USBUIRT\USBUIRTSettings.cs" />
-    <Compile Include="Remotes\WinLirc.cs" />
+    <Compile Include="Remotes\WinLirc\WinLirc.cs" />
     <Compile Include="Remotes\X10Remote\X10Learn.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -35,7 +35,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Configuration;
 
-namespace MediaPortal.WINLIRC
+namespace MediaPortal.InputDevices
 {
 	/// <summary>
 	/// Summary description for WinLirc.
