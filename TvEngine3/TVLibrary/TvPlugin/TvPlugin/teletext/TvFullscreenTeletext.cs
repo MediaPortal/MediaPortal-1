@@ -214,11 +214,15 @@ namespace TvPlugin
 
     void GetNewPage()
     {
-
-      byte[] page = TVHome.Card.GetTeletextPage(acutalPageNumber, actualSubPageNumber);
+      int sub = actualSubPageNumber;
+      int maxSubs = TVHome.Card.SubPageCount(acutalPageNumber);
+      if (maxSubs <= 0) return;
+      if (sub >= maxSubs)
+        sub = maxSubs - 1;
+      byte[] page = TVHome.Card.GetTeletextPage(acutalPageNumber, sub);
       if (page != null)
       {
-        bmpTeletextPage = _renderer.RenderPage(page, acutalPageNumber, actualSubPageNumber);
+        bmpTeletextPage = _renderer.RenderPage(page, acutalPageNumber, sub);
         Redraw();
         _waiting = false;
         Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", acutalPageNumber, actualSubPageNumber);

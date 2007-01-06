@@ -141,7 +141,7 @@ namespace TvPlugin
     protected override void OnPageDestroy(int newWindowId)
     {
 
-      TVHome.Card.GrabTeletext= false;
+      TVHome.Card.GrabTeletext = false;
       //@TeletextGrabber.TeletextCache.PageUpdatedEvent-=new MediaPortal.TV.Teletext.DVBTeletext.PageUpdated(dvbTeletextParser_PageUpdatedEvent);
 
       if (!GUIGraphicsContext.IsTvWindow(newWindowId))
@@ -162,7 +162,7 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-      TVHome.Card.GrabTeletext=true;
+      TVHome.Card.GrabTeletext = true;
       btnSubPage.RestoreSelection = false;
       currentPageNumber = 0x100;
       currentSubPageNumber = 0;
@@ -240,15 +240,18 @@ namespace TvPlugin
 
     void GetNewPage()
     {
-
-      
-      byte[] page = TVHome.Card.GetTeletextPage(currentPageNumber, currentSubPageNumber);
-      if (page != null && page.Length>1)
+      int sub = currentSubPageNumber;
+      int maxSubs = TVHome.Card.SubPageCount(currentPageNumber);
+      if (maxSubs <= 0) return;
+      if (sub >= maxSubs)
+        sub = maxSubs - 1;
+      byte[] page = TVHome.Card.GetTeletextPage(currentPageNumber, sub);
+      if (page != null && page.Length > 1)
       {
-        bitmapTeletextPage = _renderer.RenderPage(page, currentPageNumber, currentSubPageNumber);
+        bitmapTeletextPage = _renderer.RenderPage(page, currentPageNumber, sub);
         Redraw();
         _waiting = false;
-        Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
+        Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, sub);
       }
       else
       {
@@ -410,7 +413,7 @@ namespace TvPlugin
         _startTime = DateTime.Now;
         return;
       }
-      TimeSpan tsRotation=TVHome.Card.TeletextRotation(currentPageNumber);
+      TimeSpan tsRotation = TVHome.Card.TeletextRotation(currentPageNumber);
       if (ts.TotalMilliseconds < tsRotation.TotalMilliseconds) return;
       _startTime = DateTime.Now;
 
@@ -423,7 +426,7 @@ namespace TvPlugin
         currentSubPageNumber++;
         while ((currentSubPageNumber & 0xf) > 9) currentSubPageNumber++;
       }
-      if (currentSubPageNumber >  NumberOfSubpages)
+      if (currentSubPageNumber > NumberOfSubpages)
         currentSubPageNumber = 0;
 
       Log.Info("dvb-teletext page updated. {0:X}/{1:X} total:{2} rotspeed:{3}", currentPageNumber, currentSubPageNumber, NumberOfSubpages, tsRotation.TotalMilliseconds);

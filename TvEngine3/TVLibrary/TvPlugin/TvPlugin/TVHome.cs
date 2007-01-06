@@ -1461,9 +1461,15 @@ namespace TvPlugin
         {
           double duration = g_Player.Duration;
           double position = g_Player.CurrentPosition;
-          MediaPortal.GUI.Library.Log.Info("tvhome:seektoend dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
-          g_Player.SeekAbsolute(duration);
-          MediaPortal.GUI.Library.Log.Info("tvhome:seektoend  done dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
+          if (duration > 0 && position > 0)
+          {
+            if (Math.Abs(duration - position) >= 10)
+            {
+              MediaPortal.GUI.Library.Log.Info("tvhome:seektoend dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
+              g_Player.SeekAbsolute(duration);
+              MediaPortal.GUI.Library.Log.Info("tvhome:seektoend  done dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
+            }
+          }
         }
       }
       else

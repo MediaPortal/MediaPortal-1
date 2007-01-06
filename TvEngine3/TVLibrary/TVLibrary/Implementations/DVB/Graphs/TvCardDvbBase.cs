@@ -1788,16 +1788,19 @@ namespace TvLibrary.Implementations.DVB
 
           if (teletextPid == -1)
           {
+            Log.Log.Info("dvb: stop grabbing teletext");
             grabber.Stop();
             _grabTeletext = false;
             return;
           }
+          Log.Log.Info("dvb: start grabbing teletext");
           grabber.SetCallBack(this);
           grabber.SetTeletextPid((short)teletextPid);
           grabber.Start();
         }
         else
         {
+          Log.Log.Info("dvb: stop grabbing teletext");
           grabber.Stop();
         }
       }
