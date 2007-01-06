@@ -65,7 +65,6 @@ namespace SetupTv.Sections
       int index = 0;
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("epgLanguages");
-      Log.WriteFile("tvsetup:epggrabber:loadlanguages: epglang={0}", setting.Value);
 
       string values = "";
       foreach (string lang in list)
@@ -202,6 +201,7 @@ namespace SetupTv.Sections
       List<String> codes = languages.GetLanguageCodes();
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("epgLanguages");
+      setting.Value="";
       foreach (string code in codes)
       {
         setting.Value += code;
@@ -243,7 +243,6 @@ namespace SetupTv.Sections
 
         }
       }
-      Log.WriteFile("tvsetup:epggrabber:savesettings: epglang={0}", setting.Value);
       setting.Persist();
       base.SaveSettings();
     }

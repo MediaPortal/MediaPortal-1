@@ -40,6 +40,7 @@ namespace SetupTv.Sections
 {
   public partial class RadioEpgGrabber : SectionSettings
   {
+    bool _loaded = false;
     public RadioEpgGrabber()
       : this("Radio Epg grabber")
     {
@@ -54,15 +55,18 @@ namespace SetupTv.Sections
 
     void LoadLanguages()
     {
+      _loaded = true;
       mpListView2.BeginUpdate();
       mpListView2.Items.Clear();
       TvLibrary.Epg.Languages languages = new TvLibrary.Epg.Languages();
       List<String> codes = languages.GetLanguageCodes();
       List<String> list = languages.GetLanguages();
 
+
       int index = 0;
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("radioLanguages");
+
       string values = "";
       foreach (string lang in list)
       {
@@ -89,13 +93,15 @@ namespace SetupTv.Sections
       {
         setting.Value = values;
         setting.Persist();
+        //DatabaseManager.Instance.SaveChanges();
       }
     }
     public override void OnSectionDeActivated()
     {
-      base.OnSectionDeActivated();
       SaveSettings();
+      base.OnSectionDeActivated();
     }
+
     public override void OnSectionActivated()
     {
       LoadLanguages();
@@ -182,6 +188,7 @@ namespace SetupTv.Sections
       Channel channel = e.Item.Tag as Channel;
       if (channel == null) return;
       channel.GrabEpg = e.Item.Checked;
+      channel.Persist();
     }
 
     private void mpButtonAll_Click(object sender, EventArgs e)
@@ -190,6 +197,16 @@ namespace SetupTv.Sections
       for (int i = 0; i < mpListView2.Items.Count; ++i)
       {
         mpListView2.Items[i].Checked = true;
+      }
+      TvLibrary.Epg.Languages languages = new TvLibrary.Epg.Languages();
+      List<String> codes = languages.GetLanguageCodes();
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting setting = layer.GetSetting("radioLanguages");
+      setting.Value = "";
+      foreach (string code in codes)
+      {
+        setting.Value += code;
+        setting.Value += ",";
       }
       mpListView1.EndUpdate();
     }
@@ -202,12 +219,17 @@ namespace SetupTv.Sections
       {
         mpListView2.Items[i].Checked = false;
       }
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting setting = layer.GetSetting("radioLanguages");
+      setting.Value = ",";
+      setting.Persist();
       mpListView1.EndUpdate();
     }
 
 
     public override void SaveSettings()
     {
+      if (false == _loaded) return;
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("radioLanguages");
       setting.Value = ",";
@@ -257,6 +279,11 @@ namespace SetupTv.Sections
     }
 
     private void mpListView1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void mpListView2_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
 
     }
