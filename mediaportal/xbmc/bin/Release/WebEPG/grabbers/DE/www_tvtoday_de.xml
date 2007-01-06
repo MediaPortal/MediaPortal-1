@@ -79,20 +79,84 @@
   </Channels>
   <Listing type="Html">
     <Site url="http://www.tvtoday.de/tv/programm/programm.php?ztag=[DAY_OFFSET]&amp;sparte=alle&amp;uhrzeit=05%3A00%3A00&amp;sender=[ID]&amp;von=[LIST_OFFSET]" post="" external="false" encoding="" />
+    <Search maxlistings="12" />
     <Html>
       <Template name="default" start="&lt;!--LISTING ANFANG--&gt;" end="&lt;!--INHALT ENDE--&gt;">
-        <SectionTemplate tags="T">
+        <SectionTemplate tags="TI">
           <TemplateText>
-	&lt;table&gt;
-	&lt;tr&gt;
-	&lt;td&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;#START&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;#TITLE&gt;( &lt;br&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
-	&lt;/tr&gt;
-	&lt;/table&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td &gt;&lt;img&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span&gt;&lt;#START&gt;&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span&gt;&lt;#TITLE&gt;(&lt;/span&gt;&lt;span&gt;&lt;i&gt;bis&lt;#END&gt;&lt;/i&gt;&lt;br&gt;&lt;/span&gt;
+&lt;span&gt;&lt;#GENRE&gt;-&lt;#DESCRIPTION&gt;&lt;br&gt; &lt;/span&gt;&lt;br&gt;&lt;/td&gt;
+&lt;/tr&gt;&lt;/table&gt;
     </TemplateText>
         </SectionTemplate>
       </Template>
+      <Template name="Details" start="FILMBESCHREIBUNG">
+        <SectionTemplate tags="TS">
+          <TemplateText>
+&lt;tr&gt;
+&lt;td&gt;&lt;img&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;img&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;img&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;span&gt;ShowView:&lt;/span&gt;&lt;br&gt;&lt;span class="text"&gt;4-478-750&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;img&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;span&gt;Genre:&lt;/span&gt;&lt;br&gt;&lt;span&gt;&lt;#GENRE&gt;&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;img&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;span&gt;Regie:&lt;/span&gt;&lt;br&gt;&lt;span class="text"&gt;Jill Hayworth&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;img&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;span&gt;Darsteller:&lt;/span&gt;&lt;br&gt;&lt;span&gt;Duggan Hayes, Duggan Hayes ( = Daniel Anderson), Hal Hutton, Jay Stewart, Jesse Coleman, Justin Carroll (= Hal Hutton), Kim Dawson, Kira Reed, Regina Russell, Robert Donovan, Shauna O‘Brien, Steve Curtis&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;img&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;td&gt;&lt;img&gt;&lt;/td&gt;
+&lt;td&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;img&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;img&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span&gt;&lt;br&gt;&lt;/span&gt;
+&lt;span&gt;&lt;#TITLE&gt;&lt;br&gt;&lt;br&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;span&gt;&lt;#DESCRIPTION&gt;&lt;/span&gt;&lt;br&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+   </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <DataPreference>
+        <Preference template="default" title="1" subtitle="0" genre="1" description="1" />
+        <Preference template="Details" title="0" subtitle="0" genre="2" description="2" />
+      </DataPreference>
+      <Sublinks>
+        <Sublink search="program" template="Details" />
+      </Sublinks>
     </Html>
   </Listing>
 </Grabber>
