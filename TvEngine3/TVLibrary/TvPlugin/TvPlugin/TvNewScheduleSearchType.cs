@@ -224,7 +224,8 @@ namespace TvPlugin
       rec.EndTime = rec.StartTime.AddMinutes(duration);
       rec.ProgramName = GUILocalizeStrings.Get(413) + " (" + rec.ReferencedChannel().Name + ")";
       rec.Persist();
-      RemoteControl.Instance.OnNewSchedule();
+      TvServer server = new TvServer();
+      server.OnNewSchedule();
       GUIWindowManager.ShowPreviousWindow();
     }
 
@@ -368,7 +369,8 @@ namespace TvPlugin
       rec.EndTime = rec.StartTime.AddMinutes(duration);
       rec.ProgramName = GUILocalizeStrings.Get(413) + " (" + rec.ReferencedChannel().Name + ")";
       rec.Persist();
-      RemoteControl.Instance.OnNewSchedule();
+      TvServer server = new TvServer();
+      server.OnNewSchedule();
       GUIWindowManager.ShowPreviousWindow();
     }
   }

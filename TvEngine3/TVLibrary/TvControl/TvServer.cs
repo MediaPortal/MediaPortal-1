@@ -30,6 +30,11 @@ namespace TvControl
   public class TvServer
   {
 
+    void HandleFailure(Exception ex)
+    {
+      RemoteControl.Clear();
+    }
+
     #region public interface
     /// <summary>
     /// Returns the number of cards found
@@ -38,7 +43,15 @@ namespace TvControl
     {
       get
       {
-        return RemoteControl.Instance.Cards;
+        try
+        {
+          return RemoteControl.Instance.Cards;
+        }
+        catch (Exception ex)
+        {
+          HandleFailure(ex);
+        }
+        return 0;
       }
     }
 
@@ -48,9 +61,18 @@ namespace TvControl
     /// </summary>
     /// <param name="index">index of card</param>
     /// <returns></returns>
-    public VirtualCard Card(int index)
+    public VirtualCard CardByIndex(int index)
     {
-      return new VirtualCard(index, RemoteControl.HostName);
+      try
+      {
+        int id = RemoteControl.Instance.CardId(index);
+        return new VirtualCard(id, RemoteControl.HostName);
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+      return null;
     }
 
     /// <summary>
@@ -59,12 +81,41 @@ namespace TvControl
     /// <returns>true if any card is recording, otherwise false</returns>
     public bool IsAnyCardRecording()
     {
-      for (int i = 0; i < RemoteControl.Instance.Cards; ++i)
+      try
       {
-        int id=RemoteControl.Instance.CardId(i);
-        if (RemoteControl.Instance.IsRecording(id)) return true;
+        for (int i = 0; i < RemoteControl.Instance.Cards; ++i)
+        {
+          int id = RemoteControl.Instance.CardId(i);
+          if (RemoteControl.Instance.IsRecording(id)) return true;
+        }
       }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+
       return false;
+    }
+
+    /// <summary>
+    /// Start timeshifting on a specific channel
+    /// </summary>
+    /// <param name="idChannel">id of the channel</param>
+    /// <param name="card">returns on which card timeshifting is started</param>
+    /// <returns>TvResult indicating whether method succeeded</returns>
+    public TvResult StartTimeShifting(int idChannel, out VirtualCard card)
+    {
+      card = null;
+      try
+      {
+        TvResult result = RemoteControl.Instance.StartTimeShifting(idChannel, new User(), out card);
+        return result;
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+      return TvResult.UnknownError;
     }
 
     /// <summary>
@@ -75,8 +126,17 @@ namespace TvControl
     /// <returns>TvResult indicating whether method succeeded</returns>
     public TvResult StartTimeShifting(string channelName, out VirtualCard card)
     {
-      TvResult result= RemoteControl.Instance.StartTimeShifting(channelName, new User(),out card);
-      return result;
+      card = null;
+      try
+      {
+        TvResult result = RemoteControl.Instance.StartTimeShifting(channelName, new User(), out card);
+        return result;
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+      return TvResult.UnknownError;
     }
 
     /// <summary>
@@ -88,7 +148,17 @@ namespace TvControl
     /// <returns>true if a card is recording the channel, otherwise false</returns>
     public bool IsRecording(string channelName, out VirtualCard card)
     {
-      return RemoteControl.Instance.IsRecording(channelName, out  card);
+      card = null;
+      try
+      {
+        return RemoteControl.Instance.IsRecording(channelName, out  card);
+
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+      return false;
     }
 
     /// <summary>
@@ -100,7 +170,17 @@ namespace TvControl
     /// <returns>true if a card is recording the schedule, otherwise false</returns>
     public bool IsRecordingSchedule(int idSchedule, out VirtualCard card)
     {
-      return RemoteControl.Instance.IsRecordingSchedule(idSchedule, out  card);
+      card = null;
+      try
+      {
+        return RemoteControl.Instance.IsRecordingSchedule(idSchedule, out  card);
+
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+      return false;
     }
 
     /// <summary>
@@ -110,7 +190,15 @@ namespace TvControl
     /// <returns></returns>
     public void StopRecordingSchedule(int idSchedule)
     {
-      RemoteControl.Instance.StopRecordingSchedule(idSchedule);
+      try
+      {
+        RemoteControl.Instance.StopRecordingSchedule(idSchedule);
+
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
     }
 
     /// <summary>
@@ -119,7 +207,14 @@ namespace TvControl
     /// </summary>
     public void OnNewSchedule()
     {
-      RemoteControl.Instance.OnNewSchedule();
+      try
+      {
+        RemoteControl.Instance.OnNewSchedule();
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
     }
 
     /// <summary>
@@ -129,11 +224,26 @@ namespace TvControl
     {
       get
       {
-        return RemoteControl.Instance.EpgGrabberEnabled;
+        try
+        {
+          return RemoteControl.Instance.EpgGrabberEnabled;
+        }
+        catch (Exception ex)
+        {
+          HandleFailure(ex);
+        }
+        return false;
       }
       set
       {
-        RemoteControl.Instance.EpgGrabberEnabled = value;
+        try
+        {
+          RemoteControl.Instance.EpgGrabberEnabled = value;
+        }
+        catch (Exception ex)
+        {
+          HandleFailure(ex);
+        }
       }
     }
 
@@ -144,7 +254,15 @@ namespace TvControl
     {
       get
       {
-        return RemoteControl.Instance.DatabaseConnectionString;
+        try
+        {
+          return RemoteControl.Instance.DatabaseConnectionString;
+        }
+        catch (Exception ex)
+        {
+          HandleFailure(ex);
+        }
+        return "";
       }
     }
 
@@ -156,7 +274,15 @@ namespace TvControl
     /// <returns>URL containing the RTSP adress on which the card transmits its stream</returns>
     public string GetStreamUrlForFileName(int idRecording)
     {
-      return RemoteControl.Instance.GetRecordingUrl(idRecording);
+      try
+      {
+        return RemoteControl.Instance.GetRecordingUrl(idRecording);
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+      return "";
     }
     #endregion
   }

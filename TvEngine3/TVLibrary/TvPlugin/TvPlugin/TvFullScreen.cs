@@ -726,7 +726,8 @@ namespace TvPlugin
 
         Program prog = TVHome.Navigator.GetChannel(channel).CurrentProgram;
         VirtualCard card;
-        if (RemoteControl.Instance.IsRecording(channel, out card))
+        TvServer server = new TvServer();
+        if (server.IsRecording(channel, out card))
         {
           _dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
           _dlgYesNo.SetHeading(1449); // stop recording
@@ -795,7 +796,7 @@ namespace TvPlugin
                   rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
 
                   rec.Persist();
-                  RemoteControl.Instance.OnNewSchedule();
+                  server.OnNewSchedule();
                   break;
 
                 case 876:
@@ -806,7 +807,7 @@ namespace TvPlugin
                   rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                   rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
                   rec.Persist();
-                  RemoteControl.Instance.OnNewSchedule();
+                  server.OnNewSchedule();
                   break;
                 default:
                   return true;
@@ -822,7 +823,7 @@ namespace TvPlugin
             rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
 
             rec.Persist();
-            RemoteControl.Instance.OnNewSchedule();
+            server.OnNewSchedule();
           }
 
           // check if recorder has to start timeshifting for this recording
@@ -1687,7 +1688,8 @@ namespace TvPlugin
 
           // Set recorder status
           VirtualCard card;
-          if (RemoteControl.Instance.IsRecording(TVHome.Navigator.CurrentChannel, out card))
+          TvServer server = new TvServer();
+          if (server.IsRecording(TVHome.Navigator.CurrentChannel, out card))
           {
             ShowControl(GetID, (int)Control.REC_LOGO);
           }

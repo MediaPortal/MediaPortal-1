@@ -183,7 +183,7 @@ namespace TvPlugin
       {
         if (_card == null)
         {
-          _card = TvServer.Card(-1);
+          _card = TvServer.CardByIndex(0);
         }
         return _card;
       }
@@ -314,12 +314,13 @@ namespace TvPlugin
             //yes, are we recording this channel already ?
             Program prog = Navigator.GetChannel(channel).CurrentProgram;
             bool isRecording = false;
-            for (int i = 0; i < RemoteControl.Instance.Cards; ++i)
+            TvServer server = new TvServer();
+            for (int i = 0; i < server.Count; ++i)
             {
-              int id = RemoteControl.Instance.CardId(i);
-              if (RemoteControl.Instance.IsRecording(id))
+              VirtualCard card = server.CardByIndex(i);
+              if (card.IsRecording)
               {
-                if (RemoteControl.Instance.CurrentChannel(id).Name == channel)
+                if (card.Channel.Name == channel)
                 {
                   isRecording = true;
                   break;
@@ -349,7 +350,7 @@ namespace TvPlugin
                         newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                         newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
                         newSchedule.Persist();
-                        RemoteControl.Instance.OnNewSchedule();
+                        server.OnNewSchedule();
                       }
                       break;
 
@@ -361,7 +362,7 @@ namespace TvPlugin
                         newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
 
                         newSchedule.Persist();
-                        RemoteControl.Instance.OnNewSchedule();
+                        server.OnNewSchedule();
                       }
                       break;
                   }
@@ -375,7 +376,7 @@ namespace TvPlugin
                 newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
 
                 newSchedule.Persist();
-                RemoteControl.Instance.OnNewSchedule();
+                server.OnNewSchedule();
               }
             }
             else
@@ -798,18 +799,20 @@ namespace TvPlugin
       IList cards = TvDatabase.Card.ListAll();
       List<Channel> channels = new List<Channel>();
       int count = 0;
+      TvServer server = new TvServer();
       foreach (Card card in cards)
       {
         if (card.Enabled == false) continue;
         bool isRecording;
         bool isTimeShifting;
-        isRecording = RemoteControl.Instance.IsRecording(card.IdCard);
-        isTimeShifting = RemoteControl.Instance.IsTimeShifting(card.IdCard);
+        VirtualCard tvcard = new VirtualCard(card.IdCard);
+        isRecording = tvcard.IsRecording;
+        isTimeShifting = tvcard.IsTimeShifting;
         if (isRecording || isTimeShifting)
         {
           User user;
-          int idChannel = RemoteControl.Instance.CurrentDbChannel(card.IdCard);
-          RemoteControl.Instance.IsCardInUse(card.IdCard, out user);
+          int idChannel = tvcard.IdChannel;
+          user = tvcard.User;
           Channel ch = Channel.Retrieve(idChannel);
           channels.Add(ch);
           GUIListItem item = new GUIListItem();
@@ -878,7 +881,8 @@ namespace TvPlugin
                   newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
 
                   newSchedule.Persist();
-                  RemoteControl.Instance.OnNewSchedule();
+                  TvServer server = new TvServer();
+                  server.OnNewSchedule();
                 }
                 break;
 
@@ -890,7 +894,8 @@ namespace TvPlugin
                   newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
 
                   newSchedule.Persist();
-                  RemoteControl.Instance.OnNewSchedule();
+                  TvServer server = new TvServer();
+                  server.OnNewSchedule();
                 }
                 break;
             }
@@ -905,7 +910,8 @@ namespace TvPlugin
           newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
 
           newSchedule.Persist();
-          RemoteControl.Instance.OnNewSchedule();
+          TvServer server = new TvServer();
+          server.OnNewSchedule();
         }
       }
       else
@@ -1190,8 +1196,9 @@ namespace TvPlugin
       bool wasPlaying = g_Player.Playing && g_Player.IsTimeShifting && g_Player.IsTV;
 
       //Start timeshifting the new tv channel
+      TvServer server = new TvServer();
       VirtualCard card;
-      succeeded = RemoteControl.Instance.StartTimeShifting(channel.IdChannel, new User(), out card);
+      succeeded = server.StartTimeShifting(channel.IdChannel, out card);
       TVHome.Card = card;
       MediaPortal.GUI.Library.Log.Info("succeeded:{0} ", succeeded);
       if (succeeded == TvResult.Succeeded)
@@ -1817,14 +1824,21 @@ namespace TvPlugin
       {
         // else if any card is recording
         // then get & use that channel
-        for (int i = 0; i < RemoteControl.Instance.Cards; ++i)
+        TvServer server = new TvServer();
+        if (server.IsAnyCardRecording())
         {
-          id = RemoteControl.Instance.CardId(i);
-          if (RemoteControl.Instance.IsRecording(id))
+          for (int i = 0; i < server.Count; ++i)
           {
-            id = TVHome.Card.IdChannel;
-            if (id >= 0)
-              newChannel = Channel.Retrieve(id);
+            VirtualCard card = server.CardByIndex(i);
+            if (card.IsRecording)
+            {
+              id = card.IdChannel;
+              if (id >= 0)
+              {
+                newChannel = Channel.Retrieve(id);
+                break;
+              }
+            }
           }
         }
       }

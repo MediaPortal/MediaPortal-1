@@ -1296,7 +1296,8 @@ namespace TvPlugin
       if (imgRecIcon != null)
       {
         VirtualCard card;
-        imgRecIcon.Visible = RemoteControl.Instance.IsRecording(GetChannelName(), out card);
+        TvServer server = new TvServer();
+        imgRecIcon.Visible=server.IsRecording(GetChannelName(), out card);
       }
 
       // Channel icon

@@ -99,9 +99,10 @@ namespace TvPlugin
 
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalMilliseconds < 1000) return _lastStatus;
+      TvServer server = new TvServer();
       if (TVHome.Connected)
       {
-        _lastStatus = RemoteControl.Instance.IsAnyCardRecording;
+        _lastStatus = server.IsAnyCardRecording();
       }
       else
       {

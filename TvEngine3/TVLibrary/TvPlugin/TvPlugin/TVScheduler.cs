@@ -531,7 +531,8 @@ namespace TvPlugin
         dlg.AddLocalizedString(888);//Episodes management
       }
       VirtualCard card;
-      if (RemoteControl.Instance.IsRecordingSchedule(rec.IdSchedule, out card))
+      TvServer server = new TvServer();
+      if (server.IsRecordingSchedule(rec.IdSchedule, out card))
       {
         dlg.AddLocalizedString(979); //Play recording from beginning
         dlg.AddLocalizedString(980); //Play recording from live point
@@ -561,7 +562,7 @@ namespace TvPlugin
 
         case 981: //Cancel this show
           {
-            if (RemoteControl.Instance.IsRecordingSchedule(rec.IdSchedule, out card))
+            if (server.IsRecordingSchedule(rec.IdSchedule, out card))
             {
               GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
               if (null != dlgYesNo)
@@ -575,19 +576,19 @@ namespace TvPlugin
 
                 if (dlgYesNo.IsConfirmed)
                 {
-                  RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
+                  server.StopRecordingSchedule(rec.IdSchedule);
                   CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule, rec.StartTime);
                   schedule.Persist();
-                  RemoteControl.Instance.OnNewSchedule();
+                  server.OnNewSchedule();
                 }
               }
             }
             else
             {
-              RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
+              server.StopRecordingSchedule(rec.IdSchedule);
               CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule, rec.StartTime);
               schedule.Persist();
-              RemoteControl.Instance.OnNewSchedule();
+              server.OnNewSchedule();
             }
             LoadDirectory();
           }
@@ -598,7 +599,7 @@ namespace TvPlugin
 
         case 618: // delete entire recording
           {
-            if (RemoteControl.Instance.IsRecordingSchedule(rec.IdSchedule, out card))
+            if (server.IsRecordingSchedule(rec.IdSchedule, out card))
             {
               GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
               if (null != dlgYesNo)
@@ -612,7 +613,7 @@ namespace TvPlugin
 
                 if (dlgYesNo.IsConfirmed)
                 {
-                  RemoteControl.Instance.StopRecordingSchedule(rec.IdSchedule);
+                  server.StopRecordingSchedule(rec.IdSchedule);
                 }
               }
             }
@@ -620,7 +621,7 @@ namespace TvPlugin
             {
               rec = Schedule.Retrieve(rec.IdSchedule);
               rec.Delete();
-              RemoteControl.Instance.OnNewSchedule();
+              server.OnNewSchedule();
 
             }
             LoadDirectory();
@@ -735,7 +736,8 @@ namespace TvPlugin
             break;
         }
         rec.Persist();
-        RemoteControl.Instance.OnNewSchedule();
+        TvServer server = new TvServer();
+        server.OnNewSchedule();
         LoadDirectory();
 
       }
@@ -758,7 +760,8 @@ namespace TvPlugin
         dlg.Items.Clear();
         dlg.EnableChannel = true;
         dlg.EnableStartTime = true;
-        if (RemoteControl.Instance.IsRecordingSchedule(rec.IdSchedule, out card))
+        TvServer server = new TvServer();
+        if (server.IsRecordingSchedule(rec.IdSchedule, out card))
         {
           dlg.EnableChannel = false;
           dlg.EnableStartTime = false;
@@ -777,7 +780,7 @@ namespace TvPlugin
           rec.EndTime = dlg.EndDateTime;
           rec.Canceled = Schedule.MinSchedule;
           rec.Persist();
-          RemoteControl.Instance.OnNewSchedule();
+          server.OnNewSchedule();
           LoadDirectory();
         }
       }

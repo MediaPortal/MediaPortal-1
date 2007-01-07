@@ -326,7 +326,8 @@ namespace TvPlugin
         if (dlg.SelectedLabel < 0) return;
         rec.PreRecordInterval = dlg.SelectedLabel - 1;
         rec.Persist();
-        RemoteControl.Instance.OnNewSchedule();
+        TvServer server = new TvServer();
+        server.OnNewSchedule();
       }
       Update();
     }
@@ -382,14 +383,16 @@ namespace TvPlugin
         {
           schedule.UnCancelSerie(episode.StartTime);
           schedule.Persist();
-          RemoteControl.Instance.OnNewSchedule();
+          TvServer server = new TvServer();
+          server.OnNewSchedule();
           Update();
         }
         else
         {
           CanceledSchedule canceled = new CanceledSchedule(schedule.IdSchedule, episode.StartTime);
           canceled.Persist();
-          RemoteControl.Instance.OnNewSchedule();
+          TvServer server = new TvServer();
+          server.OnNewSchedule();
           Update();
         }
       }
@@ -424,8 +427,9 @@ namespace TvPlugin
                   //delete specific series
                   CanceledSchedule canceledSchedule = new CanceledSchedule(recordingSchedule.IdSchedule, program.StartTime);
                   canceledSchedule.Persist();
-                  RemoteControl.Instance.StopRecordingSchedule(recordingSchedule.IdSchedule);
-                  RemoteControl.Instance.OnNewSchedule();
+                  TvServer server = new TvServer();
+                  server.StopRecordingSchedule(recordingSchedule.IdSchedule);
+                  server.OnNewSchedule();
                 }
               }
               break;
@@ -434,9 +438,10 @@ namespace TvPlugin
                 if (CheckIfRecording(recordingSchedule))
                 {
                   //cancel recording
-                  RemoteControl.Instance.StopRecordingSchedule(recordingSchedule.IdSchedule);
+                  TvServer server = new TvServer();
+                  server.StopRecordingSchedule(recordingSchedule.IdSchedule);
                   recordingSchedule.Delete();
-                  RemoteControl.Instance.OnNewSchedule();
+                  server.OnNewSchedule();
                 }
               }
               break;
@@ -446,9 +451,10 @@ namespace TvPlugin
         {
           if (CheckIfRecording(recordingSchedule))
           {
-            RemoteControl.Instance.StopRecordingSchedule(recordingSchedule.IdSchedule);
+            TvServer server = new TvServer();
+            server.StopRecordingSchedule(recordingSchedule.IdSchedule);
             recordingSchedule.Delete();
-            RemoteControl.Instance.OnNewSchedule();
+            server.OnNewSchedule();
           }
         }
       }
@@ -460,7 +466,8 @@ namespace TvPlugin
         rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
         rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
         rec.Persist();
-        RemoteControl.Instance.OnNewSchedule();
+        TvServer server = new TvServer();
+        server.OnNewSchedule();
       }
       Update();
     }
@@ -519,7 +526,8 @@ namespace TvPlugin
         rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
         rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
         rec.Persist();
-        RemoteControl.Instance.OnNewSchedule();
+        TvServer server = new TvServer();
+        server.OnNewSchedule();
 
         //check if this program is interrupted (for example by a news bulletin)
         //ifso ask the user if he wants to record the 2nd part also
@@ -551,7 +559,7 @@ namespace TvPlugin
                 rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                 rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
                 rec.Persist();
-                RemoteControl.Instance.OnNewSchedule();
+                server.OnNewSchedule();
               }
             }
           }
@@ -565,7 +573,8 @@ namespace TvPlugin
     {
 
       VirtualCard card;
-      if (!RemoteControl.Instance.IsRecordingSchedule(rec.IdSchedule, out card)) return true;
+      TvServer server = new TvServer();
+      if (!server.IsRecordingSchedule(rec.IdSchedule, out card)) return true;
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo) return true;
       dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));//Delete this recording?
@@ -652,7 +661,8 @@ namespace TvPlugin
           break;
       }
       rec.Persist();
-      RemoteControl.Instance.OnNewSchedule();
+      TvServer server = new TvServer();
+      server.OnNewSchedule();
 
     }
 

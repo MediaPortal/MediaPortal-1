@@ -984,6 +984,7 @@ namespace TvPlugin
 
     void OnRecord(Program program)
     {
+      TvServer server = new TvServer();
       if (program == null) return;
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
@@ -1021,18 +1022,18 @@ namespace TvPlugin
                 if (rec1.ScheduleType != (int)ScheduleRecordingType.Once)
                 {
                   //delete specific series
-                  RemoteControl.Instance.StopRecordingSchedule(rec1.IdSchedule);
+                  server.StopRecordingSchedule(rec1.IdSchedule);
                   CanceledSchedule schedule = new CanceledSchedule(rec1.IdSchedule, program.StartTime);
                   schedule.Persist();
-                  RemoteControl.Instance.OnNewSchedule();
+                  server.OnNewSchedule();
                 }
                 else
                 {
                   //cancel recording
                   rec1.Canceled = DateTime.Now;
-                  RemoteControl.Instance.StopRecordingSchedule(rec1.IdSchedule);
+                  server.StopRecordingSchedule(rec1.IdSchedule);
                   rec1.Persist();
-                  RemoteControl.Instance.OnNewSchedule();
+                  server.OnNewSchedule();
                 }
 
               }
@@ -1063,7 +1064,7 @@ namespace TvPlugin
             break;
         }
         rec.Persist();
-        RemoteControl.Instance.OnNewSchedule();
+        server.OnNewSchedule();
         listRecordings = Schedule.ListAll();
         Update();
       }
