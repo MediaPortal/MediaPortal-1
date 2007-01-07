@@ -83,7 +83,7 @@ namespace SetupTv.Sections
         TvServer server = new TvServer();
         foreach (Card dbsCard in cards)
         {
-          VirtualCard vcard = server.Card(dbsCard.IdCard);
+          VirtualCard vcard = new VirtualCard(dbsCard.IdCard, RemoteControl.HostName);
           CardType type = vcard.Type;
           string name = vcard.Name;
           ListViewItem item = mpListView1.Items.Add((mpListView1.Items.Count + 1).ToString());
@@ -111,7 +111,7 @@ namespace SetupTv.Sections
       }
       catch (Exception)
       {
-        MessageBox.Show(this,"Unable to access service. Is the TvService running??");
+        MessageBox.Show(this, "Unable to access service. Is the TvService running??");
         return;
       }
     }
@@ -152,31 +152,31 @@ namespace SetupTv.Sections
           switch (result)
           {
             case TvResult.CardIsDisabled:
-              MessageBox.Show(this,"Card is not enabled");
+              MessageBox.Show(this, "Card is not enabled");
               break;
             case TvResult.AllCardsBusy:
-              MessageBox.Show(this,"All cards are busy");
+              MessageBox.Show(this, "All cards are busy");
               break;
             case TvResult.ChannelIsScrambled:
-              MessageBox.Show(this,"Channel is scrambled");
+              MessageBox.Show(this, "Channel is scrambled");
               break;
             case TvResult.NoVideoAudioDetected:
-              MessageBox.Show(this,"No Video/Audio detected");
+              MessageBox.Show(this, "No Video/Audio detected");
               break;
             case TvResult.UnableToStartGraph:
-              MessageBox.Show(this,"Unable to create/start graph");
+              MessageBox.Show(this, "Unable to create/start graph");
               break;
             case TvResult.ChannelNotMappedToAnyCard:
-              MessageBox.Show(this,"Channel is not mapped to any card");
+              MessageBox.Show(this, "Channel is not mapped to any card");
               break;
             case TvResult.NoTuningDetails:
-              MessageBox.Show(this,"No tuning information available for this channel");
+              MessageBox.Show(this, "No tuning information available for this channel");
               break;
             case TvResult.UnknownChannel:
-              MessageBox.Show(this,"Unknown channel");
+              MessageBox.Show(this, "Unknown channel");
               break;
             case TvResult.UnknownError:
-              MessageBox.Show(this,"Unknown error occured");
+              MessageBox.Show(this, "Unknown error occured");
               break;
           }
         }
@@ -199,7 +199,7 @@ namespace SetupTv.Sections
         card = GetCardTimeShiftingChannel(channel);
         if (card != null)
         {
-          string fileName ;
+          string fileName;
           fileName = String.Format(@"{0}\{1}.mpg", card.RecordingFolder, Utils.MakeFileName(channel));
           card.StartRecording(ref fileName, true, 0);
         }
@@ -318,7 +318,7 @@ namespace SetupTv.Sections
       }
       catch (Exception)
       {
-        MessageBox.Show(this,"Unable to access service. Is the TvService running??");
+        MessageBox.Show(this, "Unable to access service. Is the TvService running??");
       }
     }
 
