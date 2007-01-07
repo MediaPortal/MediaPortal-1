@@ -90,6 +90,7 @@ namespace MediaPortal.WebEPG
     #region Public Methods
     public bool Initalise(string File)
     {
+      // Load configuration file
       _log.Info(LogType.WebEPG, "WebEPG: Opening {0}", File);
 
       try
@@ -112,15 +113,15 @@ namespace MediaPortal.WebEPG
 
       _reqData = _grabber.Listing.SearchParameters;
 
+      // Setup timezone
+      _log.Info(LogType.WebEPG, "WebEPG: TimeZone, Local: {0}", TimeZone.CurrentTimeZone.StandardName);
+
       _siteTimeZone = null;
-      if (_grabber.Info.TimeZone != null)
+      if (_grabber.Info.TimeZone != null && _grabber.Info.TimeZone != string.Empty)
       {
-        //_timeAdjustOnly = _xmlreader.GetValueAsBool("Info", "TimeAdjustOnly", false);
-        _log.Info(LogType.WebEPG, "WebEPG: TimeZone, Local: {0}", TimeZone.CurrentTimeZone.StandardName);
         try
         {
           _log.Info(LogType.WebEPG, "WebEPG: TimeZone, Site : {0}", _grabber.Info.TimeZone);
-          //_log.Info(false, "[Debug] WebEPG: TimeZone, debug: {0}", _timeAdjustOnly);
           _siteTimeZone = new WorldTimeZone(_grabber.Info.TimeZone);
         }
         catch (ArgumentException)
