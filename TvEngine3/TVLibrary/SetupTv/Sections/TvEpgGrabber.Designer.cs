@@ -33,6 +33,7 @@ namespace SetupTv.Sections
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpListView2 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
@@ -41,7 +42,6 @@ namespace SetupTv.Sections
       this.mpButtonNone = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonAllChannels = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonNoneChannels = new MediaPortal.UserInterface.Controls.MPButton();
-      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.SuspendLayout();
       // 
       // mpListView1
@@ -72,6 +72,15 @@ namespace SetupTv.Sections
       // 
       this.columnHeader3.Text = "Types";
       this.columnHeader3.Width = 90;
+      // 
+      // imageList1
+      // 
+      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+      this.imageList1.Images.SetKeyName(0, "radio_scrambled.png");
+      this.imageList1.Images.SetKeyName(1, "tv_fta_.png");
+      this.imageList1.Images.SetKeyName(2, "tv_scrambled.png");
+      this.imageList1.Images.SetKeyName(3, "radio_fta_.png");
       // 
       // mpLabel1
       // 
@@ -150,15 +159,6 @@ namespace SetupTv.Sections
       this.mpButtonNoneChannels.Text = "None";
       this.mpButtonNoneChannels.UseVisualStyleBackColor = true;
       this.mpButtonNoneChannels.Click += new System.EventHandler(this.mpButtonNoneChannels_Click);
-      // 
-      // imageList1
-      // 
-      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-      this.imageList1.Images.SetKeyName(0, "radio_scrambled.png");
-      this.imageList1.Images.SetKeyName(1, "tv_fta_.png");
-      this.imageList1.Images.SetKeyName(2, "tv_scrambled.png");
-      this.imageList1.Images.SetKeyName(3, "radio_fta_.png");
       // 
       // TvEpgGrabber
       // 

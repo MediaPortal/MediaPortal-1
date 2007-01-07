@@ -54,9 +54,9 @@ namespace SetupTv.Sections
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.mpButtonDeleteEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonAdd = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonPreview = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonDeleteEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
       this.contextMenuStrip1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -274,6 +274,16 @@ namespace SetupTv.Sections
       this.tabPage1.Text = "Channels";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
+      // mpButtonDeleteEncrypted
+      // 
+      this.mpButtonDeleteEncrypted.Location = new System.Drawing.Point(342, 351);
+      this.mpButtonDeleteEncrypted.Name = "mpButtonDeleteEncrypted";
+      this.mpButtonDeleteEncrypted.Size = new System.Drawing.Size(103, 23);
+      this.mpButtonDeleteEncrypted.TabIndex = 10;
+      this.mpButtonDeleteEncrypted.Text = "Delete Scrambled";
+      this.mpButtonDeleteEncrypted.UseVisualStyleBackColor = true;
+      this.mpButtonDeleteEncrypted.Click += new System.EventHandler(this.mpButtonDeleteEncrypted_Click);
+      // 
       // mpButtonAdd
       // 
       this.mpButtonAdd.Location = new System.Drawing.Point(221, 351);
@@ -293,16 +303,6 @@ namespace SetupTv.Sections
       this.mpButtonPreview.Text = "Preview";
       this.mpButtonPreview.UseVisualStyleBackColor = true;
       this.mpButtonPreview.Click += new System.EventHandler(this.mpButtonPreview_Click);
-      // 
-      // mpButtonDeleteEncrypted
-      // 
-      this.mpButtonDeleteEncrypted.Location = new System.Drawing.Point(342, 351);
-      this.mpButtonDeleteEncrypted.Name = "mpButtonDeleteEncrypted";
-      this.mpButtonDeleteEncrypted.Size = new System.Drawing.Size(103, 23);
-      this.mpButtonDeleteEncrypted.TabIndex = 10;
-      this.mpButtonDeleteEncrypted.Text = "Delete Scrambled";
-      this.mpButtonDeleteEncrypted.UseVisualStyleBackColor = true;
-      this.mpButtonDeleteEncrypted.Click += new System.EventHandler(this.mpButtonDeleteEncrypted_Click);
       // 
       // TvChannels
       // 

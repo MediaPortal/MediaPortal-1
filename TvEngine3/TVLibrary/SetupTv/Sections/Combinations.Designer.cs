@@ -35,6 +35,7 @@ namespace SetupTv.Sections
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.btnCombine = new System.Windows.Forms.Button();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpListViewMapped = new MediaPortal.UserInterface.Controls.MPListView();
@@ -46,7 +47,6 @@ namespace SetupTv.Sections
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.mpComboBoxCard = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.contextMenuStrip1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -58,12 +58,12 @@ namespace SetupTv.Sections
       this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addToFavoritesToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(164, 26);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(159, 26);
       // 
       // addToFavoritesToolStripMenuItem
       // 
       this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
-      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
       this.addToFavoritesToolStripMenuItem.Text = "Add to favorites";
       // 
       // openFileDialog1
@@ -97,6 +97,16 @@ namespace SetupTv.Sections
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Combinations";
       this.tabPage2.UseVisualStyleBackColor = true;
+      // 
+      // pictureBox1
+      // 
+      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+      this.pictureBox1.Location = new System.Drawing.Point(12, 9);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(33, 23);
+      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+      this.pictureBox1.TabIndex = 15;
+      this.pictureBox1.TabStop = false;
       // 
       // btnCombine
       // 
@@ -201,16 +211,6 @@ namespace SetupTv.Sections
       this.mpLabel1.Size = new System.Drawing.Size(32, 13);
       this.mpLabel1.TabIndex = 9;
       this.mpLabel1.Text = "Card:";
-      // 
-      // pictureBox1
-      // 
-      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-      this.pictureBox1.Location = new System.Drawing.Point(12, 9);
-      this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(33, 23);
-      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.pictureBox1.TabIndex = 15;
-      this.pictureBox1.TabStop = false;
       // 
       // TvCombinations
       // 

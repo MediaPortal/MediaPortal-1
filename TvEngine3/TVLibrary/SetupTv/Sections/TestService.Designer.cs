@@ -43,7 +43,7 @@ namespace SetupTv.Sections
       this.mpLabelTimeShift = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpCheckBoxTimeShift = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpCheckBoxRec = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpComboBoxChannels = new ComboBoxEx();
+      this.mpComboBoxChannels = new SetupTv.Sections.ComboBoxEx();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpButtonTimeShift = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonRec = new MediaPortal.UserInterface.Controls.MPButton();
@@ -196,8 +196,10 @@ namespace SetupTv.Sections
       // 
       // mpComboBoxChannels
       // 
+      this.mpComboBoxChannels.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this.mpComboBoxChannels.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxChannels.FormattingEnabled = true;
+      this.mpComboBoxChannels.ImageList = null;
       this.mpComboBoxChannels.Location = new System.Drawing.Point(84, 216);
       this.mpComboBoxChannels.Name = "mpComboBoxChannels";
       this.mpComboBoxChannels.Size = new System.Drawing.Size(146, 21);
