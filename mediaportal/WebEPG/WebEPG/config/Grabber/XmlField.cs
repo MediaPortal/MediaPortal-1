@@ -29,6 +29,9 @@ using System.Xml.Serialization;
 
 namespace MediaPortal.WebEPG.Config.Grabber
 {
+  /// <summary>
+  ///  Xml Parser field
+  /// </summary>
   public class XmlField
   {
     #region Variables

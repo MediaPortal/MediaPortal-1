@@ -30,15 +30,17 @@ using System.Xml.Serialization;
 namespace MediaPortal.WebEPG.Config.Grabber
 {
 	/// <summary>
-	/// Summary description for Class1.
+	/// Search data
 	/// </summary>
 	public class WebSearchData
 	{
+    #region Variables
     [XmlAttribute("match")]
     public string Match;
     [XmlAttribute("field")]
     public string Field;
     [XmlAttribute("remove")]
     public bool Remove;
+    #endregion
   }
 }

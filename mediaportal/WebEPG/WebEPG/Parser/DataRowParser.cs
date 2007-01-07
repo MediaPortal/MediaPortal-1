@@ -31,7 +31,7 @@ using MediaPortal.Utils.Web;
 namespace MediaPortal.WebEPG.Parser
 {
   /// <summary>
-  /// Summary description for Class1.
+  /// Parses a single data row
   /// </summary>
   public class DataRowParser
   {

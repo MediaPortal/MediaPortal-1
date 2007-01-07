@@ -66,7 +66,7 @@ namespace MediaPortal.Utils.Web
     /// <param name="pages">The pages.</param>
     /// <param name="bytes">The bytes.</param>
     /// <param name="rate">The rate.</param>
-    void Add(string site, int pages, int bytes, float rate, TimeSpan time);
+    void Add(string site, int pages, int bytes, TimeSpan time);
     #endregion
   }
 }

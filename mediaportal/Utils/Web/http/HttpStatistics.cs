@@ -97,7 +97,7 @@ namespace MediaPortal.Utils.Web
     /// <param name="site">The site.</param>
     /// <param name="pages">The pages.</param>
     /// <param name="bytes">The bytes.</param>
-    public void Add(string site, int pages, int bytes, float rate, TimeSpan time)
+    public void Add(string site, int pages, int bytes, TimeSpan time)
     {
       SiteStatistics stats;
 
@@ -118,7 +118,7 @@ namespace MediaPortal.Utils.Web
           stats = new SiteStatistics(site);
         }
       }
-      stats.Add(pages, bytes, rate, time);
+      stats.Add(pages, bytes, time);
 
       _siteList.Add(site, stats);
     }

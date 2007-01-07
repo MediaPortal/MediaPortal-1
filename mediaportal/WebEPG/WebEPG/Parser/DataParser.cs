@@ -30,6 +30,9 @@ using MediaPortal.WebEPG.Config.Grabber;
 
 namespace MediaPortal.WebEPG.Parser
 {
+  /// <summary>
+  ///  Parser class for delimited EPG data
+  /// </summary>
   public class DataParser : IParser
   {
     #region Variables

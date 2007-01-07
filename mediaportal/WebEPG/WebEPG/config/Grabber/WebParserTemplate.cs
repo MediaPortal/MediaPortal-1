@@ -31,11 +31,12 @@ using MediaPortal.Utils.Web;
 namespace MediaPortal.WebEPG.Config.Grabber
 {
 	/// <summary>
-	/// Summary description for Class1.
+	/// WebParser information.
 	/// </summary>
   [Serializable]
 	public class WebParserTemplate
 	{
+    #region Variables
     [XmlElement("Template")]
     public List<HtmlParserTemplate> Templates;
     [XmlArray("DataPreference")]
@@ -50,8 +51,14 @@ namespace MediaPortal.WebEPG.Config.Grabber
     [XmlArray("DateTime")]
     [XmlArrayItem("Month")]
     public string[] months;
+    #endregion
 
-
+    #region Public Methods
+    /// <summary>
+    /// Gets the template.
+    /// </summary>
+    /// <param name="name">The template name.</param>
+    /// <returns></returns>
     public HtmlParserTemplate GetTemplate(string name)
     {
       for (int i = 0; i < Templates.Count; i++)
@@ -62,6 +69,11 @@ namespace MediaPortal.WebEPG.Config.Grabber
       return null;
     }
 
+    /// <summary>
+    /// Gets the preference.
+    /// </summary>
+    /// <param name="name">The template name.</param>
+    /// <returns>data preference</returns>
     public DataPreference GetPreference(string name)
     {
       for (int i = 0; i < preferences.Count; i++)
@@ -71,5 +83,6 @@ namespace MediaPortal.WebEPG.Config.Grabber
       }
       return null;
     }
+    #endregion
   }
 }

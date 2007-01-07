@@ -35,6 +35,9 @@ using MediaPortal.WebEPG.Config.Grabber;
 
 namespace MediaPortal.WebEPG.Parser
 {
+  /// <summary>
+  /// Program data used by IParses to stored the data for each program
+  /// </summary>
   public class ProgramData : IParserData
   {
     #region Variables

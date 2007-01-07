@@ -31,16 +31,18 @@ using MediaPortal.Utils.Web;
 namespace MediaPortal.WebEPG.Config.Grabber
 {
 	/// <summary>
-	/// Summary description for Class1.
+	/// Sublink information.
 	/// </summary>
   [Serializable]
   public class SublinkInfo
   {
+    #region Variables
     [XmlAttribute("search")]
     public string search;
     [XmlAttribute("template")]
     public string template;
     [XmlElement("Link")]
     public HTTPRequest url;
+    #endregion
   }
 }

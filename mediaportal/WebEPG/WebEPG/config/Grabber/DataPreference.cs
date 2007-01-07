@@ -29,7 +29,7 @@ using System.Xml.Serialization;
 namespace MediaPortal.WebEPG.Config.Grabber
 {
   /// <summary>
-  /// Summary description for Class1.
+  /// The information for DataPreferences
   /// </summary>
   public class DataPreference
   {

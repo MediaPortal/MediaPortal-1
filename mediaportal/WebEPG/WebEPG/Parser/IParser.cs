@@ -29,7 +29,7 @@ using MediaPortal.Utils.Web;
 namespace MediaPortal.WebEPG.Parser
 {
 	/// <summary>
-	/// Summary description for Class1.
+	/// Parser Interface
 	/// </summary>
 	public interface IParser
 	{

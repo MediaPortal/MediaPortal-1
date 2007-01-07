@@ -30,6 +30,9 @@ using System.Xml.Serialization;
 
 namespace MediaPortal.WebEPG.Config.Grabber
 {
+  /// <summary>
+  /// Request Search Data
+  /// </summary>
   public class RequestData
   {
     #region Variables

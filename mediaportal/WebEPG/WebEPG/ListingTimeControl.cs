@@ -31,6 +31,9 @@ using MediaPortal.WebEPG.Parser;
 
 namespace MediaPortal.WebEPG
 {
+  /// <summary>
+  /// Controls the time in EPG listings
+  /// </summary>
   public class ListingTimeControl
   {
     #region Enums

@@ -45,6 +45,7 @@ namespace MediaPortal.EPG
   public class WebEPG
   {
     #region Private Structs
+    // hold information from config file.
     private struct GrabberInfo
     {
       public string id;
@@ -93,8 +94,10 @@ namespace MediaPortal.EPG
     #region Constructors/Destructors
     public WebEPG(string configFile, string xmltvDirectory, string baseDirectory)
     {
+      // get logging service
       _log = GlobalServiceProvider.Get<ILog>();
 
+      // set config directories and files.
       _configFile = configFile; 
       _xmltvDirectory = xmltvDirectory;
       _baseDirectory = baseDirectory;
@@ -119,6 +122,7 @@ namespace MediaPortal.EPG
       HttpStatistics httpStats = new HttpStatistics();
       GlobalServiceProvider.Add<IHttpStatistics>(httpStats);
 
+      // for each normal channel write info xmltv file.
       for (int i = 0; i < _channels.Count; i++)
       {
         GrabberInfo channel = (GrabberInfo)_channels[i];
@@ -126,6 +130,7 @@ namespace MediaPortal.EPG
           xmltv.WriteChannel(channel.id, channel.name);
       }
 
+      // for each merged channel write info in xmltv file.
       if (_mergedList != null)
       {
         for (int i = 0; i < _mergedList.Length; i++)
@@ -134,11 +139,13 @@ namespace MediaPortal.EPG
         }
       }
 
+
       string grabberLast = "";
       ArrayList programs;
       //ArrayList mergedPrograms;
       bool initResult = false;
 
+      // For each channel get listing
       for (int i = 0; i < _channels.Count; i++)
       {
         _log.Info(LogType.WebEPG, "WebEPG: Getting Channel {0} of {1}", i + 1, _channels.Count);
@@ -146,11 +153,12 @@ namespace MediaPortal.EPG
 
         if (channel.iscopy)
         {
+          // if channel is a copy of another channel no need to get data twice.
           _log.Info(LogType.WebEPG, "WebEPG: Channel is a copy of Channel {0}", channel.copies + 1);
-
         }
         else
         {
+          // if graber is the same as the current no need re-create
           if (channel.grabber != grabberLast)
             initResult = _epgGrabber.Initalise(channel.grabber);
 
@@ -158,16 +166,20 @@ namespace MediaPortal.EPG
 
           if (initResult)
           {
+            // Get channel lising
             programs = _epgGrabber.GetGuide(channel.id, channel.Linked, channel.linkStart, channel.linkEnd);
             if (programs != null)
             {
               if (channel.isMerged)
               {
+                // if channel is merged change id to the merged id.
                 MergeChannelLocation mergedPos = (MergeChannelLocation)_mergedChannels[channel.id];
                 _mergedList[mergedPos.mergeNum].channels[mergedPos.mergeChannel].programs = programs;
+                // the data for merged channels is written later once all part channels have been grabbed
               }
               else
               {
+                // write channel data to xmltv file - including any copies.
                 for (int c = 0; c <= channel.copies; c++)
                 {
                   for (int p = 0; p < programs.Count; p++)
@@ -185,6 +197,7 @@ namespace MediaPortal.EPG
         }
       }
 
+      // Write merged channel data to xmltv file
       if (_mergedList != null && _mergedList.Length > 0)
       {
         for (int i = 0; i < _mergedList.Length; i++)
@@ -205,6 +218,7 @@ namespace MediaPortal.EPG
 
       xmltv.Close();
 
+      // log Http statistics
       for (int i = 0; i < httpStats.Count; i++)
       {
         SiteStatistics site = httpStats.GetbyIndex(i);

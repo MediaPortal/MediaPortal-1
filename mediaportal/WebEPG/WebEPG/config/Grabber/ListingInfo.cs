@@ -33,7 +33,7 @@ using MediaPortal.WebEPG;
 namespace MediaPortal.WebEPG.Config.Grabber
 {
   /// <summary>
-  /// Summary description for ChannelInfo.
+  /// Information about the listing
   /// </summary>
   public class ListingInfo
   {

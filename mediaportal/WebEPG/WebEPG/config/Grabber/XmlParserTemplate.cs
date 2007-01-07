@@ -30,6 +30,9 @@ using System.Xml.Serialization;
 
 namespace MediaPortal.WebEPG.Config.Grabber
 {
+  /// <summary>
+  ///  Xml Parser Template
+  /// </summary>
   public class XmlParserTemplate
   {
     #region Variables

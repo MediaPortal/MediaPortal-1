@@ -44,7 +44,7 @@ using MediaPortal.WebEPG.Config.Grabber;
 namespace MediaPortal.WebEPG
 {
   /// <summary>
-  /// Summary description for Class1
+  /// Get the listing for a given Channel
   /// </summary>
   public class WebListingGrabber
   {
@@ -88,6 +88,11 @@ namespace MediaPortal.WebEPG
     #endregion
 
     #region Public Methods
+    /// <summary>
+    /// Initalises the ListingGrabber class with a grabber config file
+    /// </summary>
+    /// <param name="File">The grabber config file file.</param>
+    /// <returns>bool - success/fail loading the config file</returns>
     public bool Initalise(string File)
     {
       // Load configuration file
@@ -175,11 +180,29 @@ namespace MediaPortal.WebEPG
       return true;
     }
 
+    /// <summary>
+    /// Gets the guide for a given channel.
+    /// </summary>
+    /// <param name="strChannelID">The channel ID.</param>
+    /// <param name="Linked">if set to <c>true</c> get [linked] pages.</param>
+    /// <param name="linkStart">The start time to get link pages.</param>
+    /// <param name="linkEnd">The end time to get linked pages.</param>
+    /// <returns>list of programs</returns>
     public ArrayList GetGuide(string strChannelID, bool Linked, int linkStart, int linkEnd)
     {
+      // Grab with start time Now
       return GetGuide(strChannelID, Linked, linkStart, linkEnd, DateTime.Now);
     }
 
+    /// <summary>
+    /// Gets the guide for a given channel.
+    /// </summary>
+    /// <param name="strChannelID">The channel ID.</param>
+    /// <param name="Linked">if set to <c>true</c> get [linked] pages.</param>
+    /// <param name="linkStart">The start time to get link pages.</param>
+    /// <param name="linkEnd">The end time to get linked pages.</param>
+    /// <param name="startDateTime">The start date time for grabbing.</param>
+    /// <returns>list of programs</returns>
     public ArrayList GetGuide(string strChannelID, bool Linked, int linkStart, int linkEnd, DateTime startDateTime)
     {
       _strID = strChannelID;
@@ -288,6 +311,12 @@ namespace MediaPortal.WebEPG
     #endregion
 
     #region Private Methods
+    /// <summary>
+    /// Check the TV database for a program.
+    /// </summary>
+    /// <param name="Title">The program title.</param>
+    /// <param name="Start">The program start time.</param>
+    /// <returns>The program record from the TV database</returns>
     private TVProgram dbProgram(string Title, long Start)
     {
       if (_dbPrograms.Count > 0)
@@ -317,6 +346,11 @@ namespace MediaPortal.WebEPG
       return null;
     }
 
+    /// <summary>
+    /// Gets the program given index number.
+    /// </summary>
+    /// <param name="index">The index.</param>
+    /// <returns>the tv program data</returns>
     private TVProgram GetProgram(int index)
     {
       ProgramData guideData = (ProgramData)_parser.GetData(index);
@@ -407,6 +441,11 @@ namespace MediaPortal.WebEPG
       return guideData.ToTvProgram();
     }
 
+    /// <summary>
+    /// Gets the channel listing.
+    /// </summary>
+    /// <param name="error">if set to <c>true</c> [error].</param>
+    /// <returns>bool - more data exist</returns>
     private bool GetListing(out bool error)
     {
       int listingCount = 0;

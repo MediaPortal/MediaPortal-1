@@ -30,7 +30,7 @@ using System.Xml.Serialization;
 namespace MediaPortal.WebEPG.Config.Grabber
 {
   /// <summary>
-  /// Summary description for ChannelInfo.
+  /// The information for a Channel.
   /// </summary>
   public class ChannelInfo
   {

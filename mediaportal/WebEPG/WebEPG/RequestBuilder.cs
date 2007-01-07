@@ -32,6 +32,9 @@ using MediaPortal.WebEPG.Config.Grabber;
 
 namespace MediaPortal.WebEPG
 {
+  /// <summary>
+  /// Builds HTTP requests
+  /// </summary>
   public class RequestBuilder
   {
     #region Variables

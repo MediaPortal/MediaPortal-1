@@ -31,7 +31,7 @@ using MediaPortal.WebEPG.Config.Grabber;
 namespace MediaPortal.WebEPG.Parser
 {
   /// <summary>
-  /// Summary description for Class1.
+  /// Parser for EPG data on the web
   /// </summary>
   public class WebParser : IParser
   {

@@ -38,7 +38,6 @@ namespace MediaPortal.Utils.Web
     private string _site;
     private int _pages = 0;
     private int _bytes = 0;
-    private float _rate = 0; // Average transfer rate
     private TimeSpan _totalTime;
     #endregion
 
@@ -74,6 +73,15 @@ namespace MediaPortal.Utils.Web
       get { return _bytes; }
       set { _bytes = value; }
     }
+
+    /// <summary>
+    /// Gets the total time.
+    /// </summary>
+    /// <value>The total time.</value>
+    public TimeSpan TotalTime
+    {
+      get { return _totalTime; }
+    }
     #endregion
 
     #region Public Methods
@@ -82,15 +90,11 @@ namespace MediaPortal.Utils.Web
     /// </summary>
     /// <param name="pages">The pages.</param>
     /// <param name="bytes">The bytes.</param>
-    public void Add(int pages, int bytes, float rate, TimeSpan time)
+    public void Add(int pages, int bytes, TimeSpan time)
     {
       _pages += pages;
       _bytes += bytes;
       _totalTime = _totalTime.Add(time);
-      if (_rate == 0)
-        _rate = rate;
-      else
-        _rate = (_rate + rate) / 2;
     }
 
     /// <summary>
@@ -101,10 +105,11 @@ namespace MediaPortal.Utils.Web
     /// </returns>
     new public string ToString()
     {
-      if(_rate > 1000)
-      return String.Format("Site {0} : Pages {1} : Bytes {2} : Av. Rate {3} KBps", _site, _pages, _bytes, _rate/1000);
+      float rate = _bytes / (float) _totalTime.TotalSeconds;
+      if (rate > 1000)
+        return String.Format("Site {0} : Pages {1} : Bytes {2} : Total Time {3} : Av. Rate {4} KBps", _site, _pages, _bytes, _totalTime.ToString(), rate / 1000);
       else
-      return String.Format("Site {0} : Pages {1} : Bytes {2} : Av. Rate {3} Bps", _site, _pages, _bytes, _rate);
+        return String.Format("Site {0} : Pages {1} : Bytes {2} : Total Time {3} : Av. Rate {4} Bps", _site, _pages, _bytes, _totalTime.ToString(), rate);
 
     }
     #endregion

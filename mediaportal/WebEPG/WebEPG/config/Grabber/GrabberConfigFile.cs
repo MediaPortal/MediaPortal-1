@@ -32,7 +32,7 @@ using MediaPortal.WebEPG.Parser;
 namespace MediaPortal.WebEPG.Config.Grabber
 {
   /// <summary>
-  /// GrabberConfig
+  /// The Grabber Config information.
   /// </summary>
   [XmlRoot("Grabber")]
   public class GrabberConfigFile
@@ -50,6 +50,12 @@ namespace MediaPortal.WebEPG.Config.Grabber
     public List<ModifyInfo> Actions;
     #endregion
 
+    #region Public Methods
+    /// <summary>
+    /// Gets the site id for a channel.
+    /// </summary>
+    /// <param name="id">The site id.</param>
+    /// <returns></returns>
     public string GetChannel(string id)
     {
       for (int i = 0; i < Channels.Count; i++)
@@ -60,5 +66,6 @@ namespace MediaPortal.WebEPG.Config.Grabber
 
       return null;
     }
+    #endregion
   }
 }

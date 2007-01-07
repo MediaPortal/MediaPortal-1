@@ -30,16 +30,23 @@ using MediaPortal.Utils.Web;
 
 namespace MediaPortal.WebEPG.Parser
 {
+  /// <summary>
+  ///  Finds the rows in source data
+  /// </summary>
   public class DataRows
   {
+    #region Variables
     MatchCollection _rows;
     string _source;
     string _rowDelimiter;
+    #endregion
 
+    #region Constructors/Destructors
     public DataRows(string delimiter)
     {
       _rowDelimiter = delimiter;
     }
+    #endregion
 
     #region Public Methods
     public int RowCount(string source)

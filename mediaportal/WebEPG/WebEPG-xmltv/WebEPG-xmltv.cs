@@ -39,25 +39,34 @@ namespace MediaPortal.EPG.TestWebEPG
   public class Program
   {
     /// <summary>
-    /// The main entry point for the application.
+    /// The main entry point for the WebEPG application as external exe.
     /// </summary>
     [STAThread]
     static void Main()
     {
+      // setup logging service
       ILog _log = GlobalServiceProvider.Get<ILog>();
       _log.BackupLogFiles();
       _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG: Starting");
+
+      // set process priority lower
       System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
 
-        
+      // try to catch all exceptions .. disabled in debug mode.
 #if !DEBUG
       try
       {
 #endif
+      // Set location of directories and config file
       string configFile = Environment.CurrentDirectory + "\\WebEPG\\WebEPG.xml";
       string xmltvDirectory = Environment.CurrentDirectory + "\\xmltv\\";
+
+      // Create main class and import guide
       WebEPG epg = new WebEPG(configFile, xmltvDirectory, Environment.CurrentDirectory);
-        epg.Import();
+      epg.Import();
+
+      // If not in debug mode - Catch all Exceptions and log as Fatal errors
+      // Program crashes cleanly without the MS message.
 #if !DEBUG
       }
       // Catch and log all exceptions - fail cleanly
@@ -68,7 +77,7 @@ namespace MediaPortal.EPG.TestWebEPG
       }
 #endif
 
-        _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG: Finished");
+      _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG: Finished");
     }
   }
 }
