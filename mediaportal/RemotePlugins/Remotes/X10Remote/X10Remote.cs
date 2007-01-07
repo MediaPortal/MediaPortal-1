@@ -149,12 +149,15 @@ namespace MediaPortal.InputDevices
     {
       if (EKeyState == X10.EX10Key.X10KEY_ON || EKeyState == X10.EX10Key.X10KEY_REPEAT)
       {
+        if (X10KeyPressed != null)
+        {
           X10KeyPressed((int)Enum.Parse(typeof(X10.EX10Command), eCommand.ToString()));
-          if (_inputHandler != null)
-          {
-            _inputHandler.MapAction((int)Enum.Parse(typeof(X10.EX10Command), eCommand.ToString()));
+        }
+        if (_inputHandler != null)
+        {
+          _inputHandler.MapAction((int)Enum.Parse(typeof(X10.EX10Command), eCommand.ToString()));
 
-          }
+        }
 
           if (_logVerbose)
           {
