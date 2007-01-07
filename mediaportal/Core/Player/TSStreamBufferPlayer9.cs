@@ -793,8 +793,8 @@ namespace MediaPortal.Player
         {
           if (dTimeInSecs < 0.0d)
             dTimeInSecs = 0.0d;
-          if (dTimeInSecs > Duration)
-            dTimeInSecs = Duration;
+          //if (dTimeInSecs > Duration)
+          //  dTimeInSecs = Duration;
           dTimeInSecs = Math.Floor(dTimeInSecs);
           //Log.Info("StreamBufferPlayer: seekabs: {0} duration:{1} current pos:{2}", dTimeInSecs,Duration, CurrentPosition);
           dTimeInSecs *= 10000000d;
@@ -814,7 +814,7 @@ namespace MediaPortal.Player
           }
         }
         UpdateCurrentPosition();
-        Log.Info("StreamBufferPlayer: current pos:{0}", CurrentPosition);
+        Log.Info("StreamBufferPlayer: current pos:{0} {1}", CurrentPosition,Duration);
 
       }
     }
