@@ -230,7 +230,7 @@ namespace MediaPortal.Utils.Web
         DateTime endTime = DateTime.Now;
         TimeSpan duration = endTime - startTime;
         float rate = _data.Length / (float) duration.TotalSeconds;
-        _stats.Add(pageUri.Host, 1, _data.Length, rate);
+        _stats.Add(pageUri.Host, 1, _data.Length, rate, duration);
       }
 
       return true;

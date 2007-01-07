@@ -45,5 +45,23 @@ namespace MediaPortal.WebEPG.Config.Grabber
     [XmlAttribute("description")]
     public int Description = 0;
     #endregion
+
+    #region Constructors/Destructors
+    public DataPreference()
+    {
+    }
+
+    public DataPreference(DataPreference preference)
+    {
+      if (preference != null)
+      {
+        Template = preference.Template;
+        Title = preference.Title;
+        Subtitle = preference.Subtitle;
+        Genre = preference.Genre;
+        Description = preference.Description;
+      }
+    }
+    #endregion
   }
 }

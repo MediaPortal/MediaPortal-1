@@ -129,7 +129,7 @@ namespace MediaPortal.WebEPG.Parser
       ProgramData data = ((ProgramData)_listingParser.GetData(index));
       if (data != null)
       {
-        data.Preference = _listingPreference;
+        data.Preference = new DataPreference(_listingPreference);
         if (searchData != null)
           data.Merge(searchData);
         if (_sublinkParser != null)

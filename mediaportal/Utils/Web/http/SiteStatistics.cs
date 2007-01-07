@@ -39,6 +39,7 @@ namespace MediaPortal.Utils.Web
     private int _pages = 0;
     private int _bytes = 0;
     private float _rate = 0; // Average transfer rate
+    private TimeSpan _totalTime;
     #endregion
 
     #region Constructors/Destructors
@@ -49,6 +50,7 @@ namespace MediaPortal.Utils.Web
     public SiteStatistics(string site)
     {
       _site = site;
+      _totalTime = new TimeSpan();
     }
     #endregion
 
@@ -80,10 +82,11 @@ namespace MediaPortal.Utils.Web
     /// </summary>
     /// <param name="pages">The pages.</param>
     /// <param name="bytes">The bytes.</param>
-    public void Add(int pages, int bytes, float rate)
+    public void Add(int pages, int bytes, float rate, TimeSpan time)
     {
       _pages += pages;
       _bytes += bytes;
+      _totalTime = _totalTime.Add(time);
       if (_rate == 0)
         _rate = rate;
       else
