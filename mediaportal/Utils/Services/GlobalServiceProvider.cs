@@ -89,6 +89,17 @@ namespace MediaPortal.Services
     {
       _instance.Add<T>(service);
     }
+
+    /// <summary>
+    /// Determines whether this instance is registered.
+    /// </summary>
+    /// <returns>
+    /// 	<c>true</c> if this instance is registered; otherwise, <c>false</c>.
+    /// </returns>
+    public static bool IsRegistered<T>()
+    {
+      return _instance.IsRegistered<T>();
+    }
     #endregion
 
     #region Private Methods

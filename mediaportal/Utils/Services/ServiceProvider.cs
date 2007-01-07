@@ -30,13 +30,27 @@ namespace MediaPortal.Services
 {
   public class ServiceProvider
   {
+    #region Variables
     private Dictionary<Type, object> services;
+    #endregion
 
+    #region Constructors/Destructors
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ServiceProvider"/> class.
+    /// </summary>
     public ServiceProvider()
     {
       services = new Dictionary<Type, object>();
     }
+    #endregion
 
+    #region Public Methods
+    /// <summary>
+    /// Determines whether this instance is registered.
+    /// </summary>
+    /// <returns>
+    /// 	<c>true</c> if this instance is registered; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsRegistered<T>()
     {
       return services.ContainsKey(typeof(T));
@@ -140,5 +154,6 @@ namespace MediaPortal.Services
       Remove<T>();
       Add<T>(callback);
     }
+    #endregion
   }
 }

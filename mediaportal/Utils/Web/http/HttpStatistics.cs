@@ -53,11 +53,17 @@ namespace MediaPortal.Utils.Web
     /// <value>The count.</value>
     public int Count
     {
-      get { return _siteList.Count; }
+      get
+      {
+        if (_siteList != null)
+          return _siteList.Count;
+        else
+          return 0;
+      }
     }
     #endregion
 
-    #region Public Methods
+    #region <IHttpStatistics> Implementations
     /// <summary>
     /// Getbies the index.
     /// </summary>
@@ -66,7 +72,7 @@ namespace MediaPortal.Utils.Web
     public SiteStatistics GetbyIndex(int index)
     {
       Dictionary<string, SiteStatistics>.Enumerator listEnumerator = _siteList.GetEnumerator();
-      
+
       listEnumerator.MoveNext();
       for (int i = 0; i < index; i++)
         listEnumerator.MoveNext();
@@ -92,6 +98,21 @@ namespace MediaPortal.Utils.Web
     }
 
     /// <summary>
+    /// Clears the statistics for a specified site.
+    /// </summary>
+    /// <param name="site">The site.</param>
+    public void Clear(string site)
+    {
+      if (_siteList.ContainsKey(site))
+      {
+        //_siteList.Remove(site);
+        SiteStatistics stats = _siteList[site];
+        stats.Clear();
+
+      }
+    }
+
+    /// <summary>
     /// Adds to the statistics for a specified site.
     /// </summary>
     /// <param name="site">The site.</param>
@@ -102,25 +123,19 @@ namespace MediaPortal.Utils.Web
       SiteStatistics stats;
 
       if (_siteList == null)
-      {
         _siteList = new Dictionary<string, SiteStatistics>();
-        stats = new SiteStatistics(site);
+
+      if (_siteList.ContainsKey(site))
+      {
+        stats = _siteList[site];
+        stats.Add(pages, bytes, time);
       }
       else
       {
-        if (_siteList.ContainsKey(site))
-        {
-          stats = _siteList[site];
-          _siteList.Remove(site);
-        }
-        else
-        {
-          stats = new SiteStatistics(site);
-        }
+        stats = new SiteStatistics(site);
+        stats.Add(pages, bytes, time);
+        _siteList.Add(site, stats);
       }
-      stats.Add(pages, bytes, time);
-
-      _siteList.Add(site, stats);
     }
     #endregion
   }

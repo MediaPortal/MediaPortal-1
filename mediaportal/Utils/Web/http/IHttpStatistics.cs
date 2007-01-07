@@ -60,6 +60,12 @@ namespace MediaPortal.Utils.Web
     SiteStatistics Get(string site);
 
     /// <summary>
+    /// Clears the statistics for a specified site.
+    /// </summary>
+    /// <param name="site">The site.</param>
+    void Clear(string site);
+
+    /// <summary>
     /// Adds to the statistics for a specified site.
     /// </summary>
     /// <param name="site">The site.</param>

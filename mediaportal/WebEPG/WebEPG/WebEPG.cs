@@ -119,8 +119,16 @@ namespace MediaPortal.EPG
       xmltv.Open();
 
       // Collect HttpStatistic
-      HttpStatistics httpStats = new HttpStatistics();
-      GlobalServiceProvider.Add<IHttpStatistics>(httpStats);
+      IHttpStatistics httpStats;
+      if (GlobalServiceProvider.IsRegistered<IHttpStatistics>())
+      {
+        httpStats = GlobalServiceProvider.Get<IHttpStatistics>();
+      }
+      else
+      {
+        httpStats = new HttpStatistics();
+        GlobalServiceProvider.Add<IHttpStatistics>(httpStats);
+      }
 
       // for each normal channel write info xmltv file.
       for (int i = 0; i < _channels.Count; i++)
@@ -223,6 +231,7 @@ namespace MediaPortal.EPG
       {
         SiteStatistics site = httpStats.GetbyIndex(i);
         _log.Info(LogType.WebEPG, "HTTP Statistics: {0}", site.ToString());
+        httpStats.Clear(site.Site);
       }
 
       return true;

@@ -36,8 +36,8 @@ namespace MediaPortal.Utils.Web
   {
     #region Variables
     private string _site;
-    private int _pages = 0;
-    private int _bytes = 0;
+    private int _pages;
+    private int _bytes;
     private TimeSpan _totalTime;
     #endregion
 
@@ -49,7 +49,7 @@ namespace MediaPortal.Utils.Web
     public SiteStatistics(string site)
     {
       _site = site;
-      _totalTime = new TimeSpan();
+      Clear();
     }
     #endregion
 
@@ -82,6 +82,15 @@ namespace MediaPortal.Utils.Web
     {
       get { return _totalTime; }
     }
+
+    /// <summary>
+    /// Gets the site.
+    /// </summary>
+    /// <value>The site.</value>
+    public string Site
+    {
+      get { return _site; }
+    }
     #endregion
 
     #region Public Methods
@@ -95,6 +104,16 @@ namespace MediaPortal.Utils.Web
       _pages += pages;
       _bytes += bytes;
       _totalTime = _totalTime.Add(time);
+    }
+
+    /// <summary>
+    /// Clears the statistics.
+    /// </summary>
+    public void Clear()
+    {
+      _pages = 0;
+      _bytes = 0;
+      _totalTime = new TimeSpan();
     }
 
     /// <summary>
