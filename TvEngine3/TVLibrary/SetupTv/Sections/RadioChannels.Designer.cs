@@ -35,6 +35,7 @@ namespace SetupTv.Sections
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
+      this.hdrHekje = new System.Windows.Forms.ColumnHeader();
       this.hdrName = new System.Windows.Forms.ColumnHeader("(none)");
       this.hdrTypes = new System.Windows.Forms.ColumnHeader();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
@@ -45,7 +46,6 @@ namespace SetupTv.Sections
       this.buttonDown = new System.Windows.Forms.Button();
       this.buttonUtp = new System.Windows.Forms.Button();
       this.mpButtonDeleteEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
-      this.hdrHekje = new System.Windows.Forms.ColumnHeader();
       this.SuspendLayout();
       // 
       // columnHeader4
@@ -85,7 +85,12 @@ namespace SetupTv.Sections
       this.mpListView1.TabIndex = 1;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
+      this.mpListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView1_ColumnClick);
       this.mpListView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.mpListView1_ItemDrag);
+      // 
+      // hdrHekje
+      // 
+      this.hdrHekje.Text = "#";
       // 
       // hdrName
       // 
@@ -175,10 +180,6 @@ namespace SetupTv.Sections
       this.mpButtonDeleteEncrypted.Text = "Delete Scrambled";
       this.mpButtonDeleteEncrypted.UseVisualStyleBackColor = true;
       this.mpButtonDeleteEncrypted.Click += new System.EventHandler(this.mpButtonDeleteEncrypted_Click);
-      // 
-      // hdrHekje
-      // 
-      this.hdrHekje.Text = "#";
       // 
       // RadioChannels
       // 
