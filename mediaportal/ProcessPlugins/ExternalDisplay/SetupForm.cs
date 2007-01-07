@@ -27,6 +27,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using MediaPortal.UserInterface.Controls;
+using System.Drawing;
 
 namespace ProcessPlugins.ExternalDisplay
 {
@@ -67,7 +68,7 @@ namespace ProcessPlugins.ExternalDisplay
     private MPCheckBox ckForceGraphicText;
     private MPTextBox txtFontSize;
     private MPLabel mpLabel2;
-    private MPTextBox txtFont;
+    private MPComboBox txtFont;
     private MPLabel mpLabel1;
     private MPTextBox txtScrollDelay;
     private MPLabel mpLabel3;
@@ -147,7 +148,7 @@ namespace ProcessPlugins.ExternalDisplay
       this.ckForceGraphicText = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.txtFontSize = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.txtFont = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.txtFont = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label8 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.txtTimG = new MediaPortal.UserInterface.Controls.MPTextBox();
@@ -262,7 +263,7 @@ namespace ProcessPlugins.ExternalDisplay
       this.tbContrast.Location = new System.Drawing.Point(4, 266);
       this.tbContrast.Maximum = 255;
       this.tbContrast.Name = "tbContrast";
-      this.tbContrast.Size = new System.Drawing.Size(160, 45);
+      this.tbContrast.Size = new System.Drawing.Size(160, 42);
       this.tbContrast.TabIndex = 73;
       this.tbContrast.TickFrequency = 8;
       this.tbContrast.TickStyle = System.Windows.Forms.TickStyle.None;
@@ -606,6 +607,7 @@ namespace ProcessPlugins.ExternalDisplay
       this.Controls.Add(this.groupBox1);
       this.Name = "SetupForm";
       this.Text = "ExternalDisplay Configuration";
+      this.Load += new System.EventHandler(this.SetupForm_Load);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).EndInit();
@@ -661,6 +663,15 @@ namespace ProcessPlugins.ExternalDisplay
       gbGraphMode.Visible = lcd.SupportsGraphics;
       gbTextMode.Visible = lcd.SupportsText;
       Settings.Instance.LCDType = lcd;
+    }
+
+    private void SetupForm_Load(object sender, EventArgs e)
+    {
+      foreach (FontFamily oneFontFamily in FontFamily.Families)
+      {
+        txtFont.Items.Add(oneFontFamily.Name);
+      }
+
     }
   }
 }

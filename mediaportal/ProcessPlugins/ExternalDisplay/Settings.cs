@@ -444,10 +444,10 @@ namespace ProcessPlugins.ExternalDisplay
     private static Settings Load()
     {
       Settings settings;
-      if (File.Exists("ExternalDisplay.xml"))
+      if (File.Exists(Config.GetFile(Config.Dir.Config, "ExternalDisplay.xml")))
       {
         XmlSerializer ser = new XmlSerializer(typeof(Settings));
-        XmlTextReader rdr = new XmlTextReader("ExternalDisplay.xml");
+        XmlTextReader rdr = new XmlTextReader(Config.GetFile(Config.Dir.Config, "ExternalDisplay.xml"));
         settings = (Settings) ser.Deserialize(rdr);
         rdr.Close();
         return settings;
@@ -466,7 +466,7 @@ namespace ProcessPlugins.ExternalDisplay
     public static void Save()
     {
       XmlSerializer ser = new XmlSerializer(typeof(Settings));
-      XmlTextWriter w = new XmlTextWriter("ExternalDisplay.xml", Encoding.UTF8);
+      XmlTextWriter w = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "ExternalDisplay.xml"), Encoding.UTF8);
       w.Formatting = Formatting.Indented;
       w.Indentation = 2;
       ser.Serialize(w, Instance);
