@@ -386,36 +386,70 @@ namespace MediaPortal.GUI.Music
         do
         {
           shouldContinue = false;
+
           switch (CurrentSortMethod)
           {
             case MusicSort.SortMethod.Name:
-              CurrentSortMethod = MusicSort.SortMethod.Date;
+              CurrentSortMethod = MusicSort.SortMethod.Artist;
               break;
-            case MusicSort.SortMethod.Date:
-              CurrentSortMethod = MusicSort.SortMethod.Size;
-              break;
-            case MusicSort.SortMethod.Size:
-              CurrentSortMethod = MusicSort.SortMethod.Track;
-              break;
-            case MusicSort.SortMethod.Track:
-              CurrentSortMethod = MusicSort.SortMethod.Duration;
-              break;
-            case MusicSort.SortMethod.Duration:
+            case MusicSort.SortMethod.Artist:
               CurrentSortMethod = MusicSort.SortMethod.Title;
               break;
             case MusicSort.SortMethod.Title:
               CurrentSortMethod = MusicSort.SortMethod.Album;
               break;
             case MusicSort.SortMethod.Album:
-              CurrentSortMethod = MusicSort.SortMethod.Filename;
+              CurrentSortMethod = MusicSort.SortMethod.Track;
               break;
-            case MusicSort.SortMethod.Filename:
+            case MusicSort.SortMethod.Track:
               CurrentSortMethod = MusicSort.SortMethod.Rating;
               break;
             case MusicSort.SortMethod.Rating:
+              CurrentSortMethod = MusicSort.SortMethod.Date;
+              break;
+            case MusicSort.SortMethod.Date:
+              CurrentSortMethod = MusicSort.SortMethod.Size;
+              break;
+            case MusicSort.SortMethod.Size:
+              CurrentSortMethod = MusicSort.SortMethod.Duration;
+              break;
+            case MusicSort.SortMethod.Duration:
+              CurrentSortMethod = MusicSort.SortMethod.Filename;
+              break;
+            case MusicSort.SortMethod.Filename:
               CurrentSortMethod = MusicSort.SortMethod.Name;
               break;
           }
+          //          switch (CurrentSortMethod)
+          //{
+          //  case MusicSort.SortMethod.Name:
+          //    CurrentSortMethod = MusicSort.SortMethod.Date;
+          //    break;
+          //  case MusicSort.SortMethod.Date:
+          //    CurrentSortMethod = MusicSort.SortMethod.Size;
+          //    break;
+          //  case MusicSort.SortMethod.Size:
+          //    CurrentSortMethod = MusicSort.SortMethod.Track;
+          //    break;
+          //  case MusicSort.SortMethod.Track:
+          //    CurrentSortMethod = MusicSort.SortMethod.Duration;
+          //    break;
+          //  case MusicSort.SortMethod.Duration:
+          //    CurrentSortMethod = MusicSort.SortMethod.Title;
+          //    break;
+          //  case MusicSort.SortMethod.Title:
+          //    CurrentSortMethod = MusicSort.SortMethod.Album;
+          //    break;
+          //  case MusicSort.SortMethod.Album:
+          //    CurrentSortMethod = MusicSort.SortMethod.Filename;
+          //    break;
+          //  case MusicSort.SortMethod.Filename:
+          //    CurrentSortMethod = MusicSort.SortMethod.Rating;
+          //    break;
+          //  case MusicSort.SortMethod.Rating:
+          //    CurrentSortMethod = MusicSort.SortMethod.Name;
+          //    break;
+          //}
           if (!AllowSortMethod(CurrentSortMethod))
             shouldContinue = true;
         } while (shouldContinue);
