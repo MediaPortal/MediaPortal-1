@@ -122,6 +122,7 @@ namespace MediaPortal.GUI.TV
     SortMethod currentSortMethod = SortMethod.Date;
     bool m_bSortAscending = true;
     bool _deleteWatchedShows = false;
+    bool _createRecordedThumbs = true;
     int m_iSelectedItem = 0;
     string currentShow = String.Empty;
     //bool _creatingThumbNails = false;
@@ -165,6 +166,7 @@ namespace MediaPortal.GUI.TV
 
         m_bSortAscending = xmlreader.GetValueAsBool("tvrecorded", "sortascending", true);
         _deleteWatchedShows = xmlreader.GetValueAsBool("capture", "deletewatchedshows", false);
+        _createRecordedThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
       }
       thumbworker = null;
     }
@@ -325,7 +327,10 @@ namespace MediaPortal.GUI.TV
       //if (GlobalServiceProvider.Get<IThreadPool>().BusyThreadCount == 0)
       //{
       if (thumbworker == null)
-        thumbworker = new RecordingThumbCacher();
+      {
+        if (_createRecordedThumbs)
+          thumbworker = new RecordingThumbCacher();
+      }
       else
         Log.Debug("GUIRecordedTV: thumbworker already running - didn't start another one");
       //}
