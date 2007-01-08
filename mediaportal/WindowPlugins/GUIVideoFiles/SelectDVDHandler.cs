@@ -47,12 +47,14 @@ namespace MediaPortal.GUI.Video
         GUIVideoFiles videoFiles = (GUIVideoFiles)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEOS);
         if (null == videoFiles)
           return null;
+
         videoFiles.SetIMDBThumbs(rootDrives);
+
         GUIDialogSelect2 dlgSel = (GUIDialogSelect2)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT2);
         dlgSel.Reset();
         for (int i = 0; i < rootDrives.Count; i++)
         {
-          dlgSel.Add(rootDrives[i].ToString());
+          dlgSel.Add((GUIListItem)rootDrives[i]);
         }
         dlgSel.SetHeading(196); // Choose movie
         dlgSel.DoModal(parentId);
