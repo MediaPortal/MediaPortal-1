@@ -69,7 +69,7 @@ namespace ProcessPlugins.DiskSpace
       {
         if (!rec.ShouldBeDeleted) continue;
 
-        Log.WriteFile(LogType.Recorder, "Recorder: delete old recording:{0} date:{1}",
+        Log.Info("RecordingManagement: delete old recording: {0} date: {1}",
                           rec.FileName,
                           rec.StartTime.ToShortDateString());
         Recorder.DeleteRecording(rec);

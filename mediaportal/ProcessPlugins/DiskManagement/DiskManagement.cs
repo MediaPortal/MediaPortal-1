@@ -167,10 +167,11 @@ namespace ProcessPlugins.DiskSpace
       {
         Log.Error("DiskManagement: An error occured while out of diskspace getting info about recordings - {0}", ex.Message);
       }
+
       if (recordings.Count == 0) return;
 
-      Log.WriteFile(LogType.Recorder, "Recorder: not enough free space on drive:{0}.", drive);
-      Log.WriteFile(LogType.Recorder, "Recorder: found {0} recordings on drive:{0}", recordings.Count, drive);
+      Log.Warn("DiskManagement: not enough free space on drive: {0}.", drive);
+      Log.Warn("DiskManagement: found {0} recordings on drive: {1}", recordings.Count, drive);
 
       // Not enough free diskspace
       // start deleting recordings (oldest ones first)
@@ -183,7 +184,7 @@ namespace ProcessPlugins.DiskSpace
           RecordingFileInfo fi = (RecordingFileInfo)recordings[0];
           if (fi.record.KeepRecordingMethod == TVRecorded.KeepMethod.UntilSpaceNeeded)
           {
-            Log.WriteFile(LogType.Recorder, "Recorder: delete recording:{0} size:{1} date:{2} {3}",
+            Log.Info("Recorder: delete recording:{0} size:{1} date:{2} {3}",
                                                 fi.filename,
                                                 Utils.GetSize(fi.info.Length),
                                                 fi.info.CreationTime.ToShortDateString(), fi.info.CreationTime.ToShortTimeString());

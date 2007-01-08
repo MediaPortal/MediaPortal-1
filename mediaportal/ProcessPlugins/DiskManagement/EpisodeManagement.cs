@@ -75,7 +75,7 @@ namespace ProcessPlugins.DiskSpace
     #region episode disk management
     private void OnTvRecordingEnded(string recordingFilename, TVRecording recording, TVProgram program)
     {
-      Log.WriteFile(LogType.Recorder, "diskmanagement: recording {0} ended. type:{1} max episodes:{2}",
+      Log.Info("EpisodeManagement: recording {0} ended. type: {1} max episodes: {2}",
                 recording.Title, recording.RecType.ToString(), recording.EpisodesToKeep);
 
       CheckEpsiodesForRecording(recording);
@@ -95,7 +95,7 @@ namespace ProcessPlugins.DiskSpace
 
         TVRecorded oldestEpisode = GetOldestEpisode(episodes);
         if (oldestEpisode == null) return;
-        Log.WriteFile(LogType.Recorder, false, "diskmanagement:   Delete episode {0} {1} {2} {3}",
+        Log.Info("EpisodeManagement: Delete episode {0} {1} {2} {3}",
                              oldestEpisode.Channel,
                              oldestEpisode.Title,
                              oldestEpisode.StartTime.ToLongDateString(),
