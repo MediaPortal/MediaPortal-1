@@ -1104,12 +1104,15 @@ namespace MediaPortal.Visualization
             NewTrack = true;
           }
 
-          string thumbPath = GetAlbumThumbName(filename, CurrentTrackTag.Artist, CurrentTrackTag.Album);
-
-          if (thumbPath.ToLower().CompareTo(CurrentThumbPath) != 0)
+          if (CurrentTrackTag != null)
           {
-            CurrentThumbPath = thumbPath.ToLower();
-            CoverArtNeedsRefresh = true;
+            string thumbPath = GetAlbumThumbName(filename, CurrentTrackTag.Artist, CurrentTrackTag.Album);
+
+            if (thumbPath.ToLower().CompareTo(CurrentThumbPath) != 0)
+            {
+              CurrentThumbPath = thumbPath.ToLower();
+              CoverArtNeedsRefresh = true;
+            }
           }
         }
       }

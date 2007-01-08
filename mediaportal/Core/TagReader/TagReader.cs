@@ -103,6 +103,7 @@ namespace MediaPortal.TagReader
       ITag reader = null;
       int prio = -1;
       if (strFile == null) return null;
+      if (strFile.StartsWith(@"http://")) return null;  // Don't try to read tags for streams
       foreach (ITag tmpReader in m_readers)
       {
         if (tmpReader.SupportsFile(strFile) && tmpReader.Priority > prio)

@@ -957,6 +957,7 @@ namespace MediaPortal.GUI.Music
             //if (handler != null && handler.CurrentView == "Top100") return;
           }
           string strFile = message.Label;
+          if (strFile.StartsWith(@"http://")) break;  // Don't try increasing the Top100 for streams
           if (MediaPortal.Util.Utils.IsAudio(strFile))
           {
             MusicDatabase dbs = new MusicDatabase();
@@ -968,8 +969,6 @@ namespace MediaPortal.GUI.Music
                 Log.Debug("MyMusic: failed to increase Top100 counter for {0}", strFile);
             }
           }
-          else
-            Log.Debug("MyMusic: did not increase Top100 counter because {0} is no audiofile", strFile);
           break;
       }
     }
