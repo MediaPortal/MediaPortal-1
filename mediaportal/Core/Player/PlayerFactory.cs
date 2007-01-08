@@ -123,8 +123,11 @@ namespace MediaPortal.Player
     public IPlayer Create(string fileName)
     {
       // Free BASS to avoid problems with Digital Audio, when watching movies
-      if (!MediaPortal.Util.Utils.IsAudio(fileName))
-        BassMusicPlayer.Player.FreeBass();
+      if (BassMusicPlayer.IsDefaultMusicPlayer)
+      {
+        if (!MediaPortal.Util.Utils.IsAudio(fileName))
+          BassMusicPlayer.Player.FreeBass();
+      }
 
       IPlayer newPlayer = null;
       if (fileName.ToLower().IndexOf("rtsp:") >= 0)
