@@ -1015,9 +1015,10 @@ namespace MediaPortal.Player
 
           if (oldStreamDuration - (oldStreamElapsedSeconds + crossFadeSeconds) > 0)
           {
-            //                        Console.WriteLine("*** Doing FadeOutStop ***");
             FadeOutStop(oldStream);
           }
+          else
+            Bass.BASS_ChannelStop(oldStream);
 
           doFade = true;
           stream = GetNextStream();
