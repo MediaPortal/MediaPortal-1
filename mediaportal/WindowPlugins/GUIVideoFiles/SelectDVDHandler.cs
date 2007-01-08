@@ -43,7 +43,8 @@ namespace MediaPortal.GUI.Video
         {
           if (rootDrives.Count == 1)
           {
-            return Convert.ToString(rootDrives[0]); // Only one DVD available, play it!
+            GUIListItem ritem = (GUIListItem)rootDrives[0];
+            return ritem.Path; // Only one DVD available, play it!
           }
           // Display a dialog with all drives to select from
           GUIVideoFiles videoFiles = (GUIVideoFiles)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEOS);
@@ -56,7 +57,8 @@ namespace MediaPortal.GUI.Video
           dlgSel.Reset();
           for (int i = 0; i < rootDrives.Count; i++)
           {
-            dlgSel.Add((GUIListItem)rootDrives[i]);
+            GUIListItem dlgItem = (GUIListItem)rootDrives[i];
+            dlgSel.Add(dlgItem.Path);
           }
           dlgSel.SetHeading(196); // Choose movie
           dlgSel.DoModal(parentId);
@@ -81,6 +83,7 @@ namespace MediaPortal.GUI.Video
       dlgOk.SetHeading(3);//my videos
       dlgOk.SetLine(1, 219);//no disc
       dlgOk.DoModal(parentId);
+      Log.Info("SelectDVDHandler: did not find a movie");
       return null;
     }
 
