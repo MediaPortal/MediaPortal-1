@@ -39,37 +39,43 @@ namespace MediaPortal.GUI.Video
 
       if (rootDrives.Count > 0)
       {
-        if (rootDrives.Count == 1)
+        try
         {
-          return (string)rootDrives[0]; // Only one DVD available, play it!
+          if (rootDrives.Count == 1)
+          {
+            return Convert.ToString(rootDrives[0]); // Only one DVD available, play it!
+          }
+          // Display a dialog with all drives to select from
+          GUIVideoFiles videoFiles = (GUIVideoFiles)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEOS);
+          if (null == videoFiles)
+            return null;
+
+          videoFiles.SetIMDBThumbs(rootDrives);
+
+          GUIDialogSelect2 dlgSel = (GUIDialogSelect2)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT2);
+          dlgSel.Reset();
+          for (int i = 0; i < rootDrives.Count; i++)
+          {
+            dlgSel.Add((GUIListItem)rootDrives[i]);
+          }
+          dlgSel.SetHeading(196); // Choose movie
+          dlgSel.DoModal(parentId);
+
+          if (dlgSel.SelectedLabel != -1)
+          {
+            return dlgSel.SelectedLabelText.Substring(1, 2);
+          }
+          else
+          {
+            return null;
+          }
         }
-        // Display a dialog with all drives to select from
-        GUIVideoFiles videoFiles = (GUIVideoFiles)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEOS);
-        if (null == videoFiles)
+        catch (Exception ex)
+        {
+          Log.Warn("SelectDVDHandler: could not determine dvd path - {0},{1}", ex.Message, ex.StackTrace);
           return null;
-
-        videoFiles.SetIMDBThumbs(rootDrives);
-
-        GUIDialogSelect2 dlgSel = (GUIDialogSelect2)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT2);
-        dlgSel.Reset();
-        for (int i = 0; i < rootDrives.Count; i++)
-        {
-          dlgSel.Add((GUIListItem)rootDrives[i]);
         }
-        dlgSel.SetHeading(196); // Choose movie
-        dlgSel.DoModal(parentId);
-
-        if (dlgSel.SelectedLabel != -1)
-        {
-          return dlgSel.SelectedLabelText.Substring(1, 2);
-        }
-        else
-        {
-          return null;
-        }
-
       }
-
       //no disc in drive...
       GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
       dlgOk.SetHeading(3);//my videos
