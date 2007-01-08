@@ -762,6 +762,12 @@ namespace MediaPortal.Player
         }
         if (!MediaPortal.Util.Utils.IsAVStream(strFile) && MediaPortal.Util.Utils.IsVideo(strFile))
         {
+          // Free BASS to avoid problems with Digital Audio, when watching movies
+          if (BassMusicPlayer.IsDefaultMusicPlayer)
+          {
+              BassMusicPlayer.Player.FreeBass();
+          }
+
           if (MediaPortal.Util.Utils.PlayMovie(strFile))
           {
             _isInitalized = false;
