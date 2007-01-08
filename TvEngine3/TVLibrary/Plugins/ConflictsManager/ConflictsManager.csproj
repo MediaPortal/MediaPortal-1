@@ -54,6 +54,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CMSetup.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CMSetup.Designer.cs">
+      <DependentUpon>CMSetup.cs</DependentUpon>
+    </Compile>
     <Compile Include="ConflictsManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -82,5 +88,11 @@
       <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>
       <Name>PluginBase</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CMSetup.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CMSetup.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
