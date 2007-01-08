@@ -805,7 +805,7 @@ namespace TvPlugin
         if (card.Enabled == false) continue;
         bool isRecording;
         bool isTimeShifting;
-        VirtualCard tvcard = new VirtualCard(card.IdCard);
+        VirtualCard tvcard = new VirtualCard(card.IdCard,RemoteControl.HostName);
         isRecording = tvcard.IsRecording;
         isTimeShifting = tvcard.IsTimeShifting;
         if (isRecording || isTimeShifting)
