@@ -336,10 +336,15 @@ namespace MediaPortal.GUI.RADIOLASTFM
           default:
             return;
         }
-        if (LastFMStation.CurrentStreamState == StreamPlaybackState.nocontent)
-          LastFMStation.CurrentStreamState = StreamPlaybackState.initialized;
+        //if (LastFMStation.CurrentStreamState == StreamPlaybackState.nocontent)
+        //  LastFMStation.CurrentStreamState = StreamPlaybackState.initialized;
 
-        g_Player.Stop();
+        if (LastFMStation.CurrentStreamState != StreamPlaybackState.offline)
+        {
+          OnPlaybackStopped();
+          g_Player.Stop();
+        }
+
         // LastFMStation.CurrentTuneType = TuneIntoSelected;
         switch (TuneIntoSelected)
         {

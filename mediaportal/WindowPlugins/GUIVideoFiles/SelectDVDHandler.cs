@@ -57,7 +57,9 @@ namespace MediaPortal.GUI.Video
           dlgSel.Reset();
           for (int i = 0; i < rootDrives.Count; i++)
           {
-            GUIListItem dlgItem = (GUIListItem)rootDrives[i];
+            GUIListItem dlgItem = new GUIListItem();
+            dlgItem = (GUIListItem)rootDrives[i];
+            Log.Debug("SelectDVDHandler: adding path of possible playback location - {0}", dlgItem.Path);
             dlgSel.Add(dlgItem.Path);
           }
           dlgSel.SetHeading(196); // Choose movie
