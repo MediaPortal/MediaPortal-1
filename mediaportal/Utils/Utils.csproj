@@ -123,6 +123,7 @@
     <Compile Include="ServiceImplementations\LogImpl.cs" />
     <Compile Include="Services\GlobalServiceProvider.cs" />
     <Compile Include="Services\ILog.cs" />
+    <Compile Include="Services\ISelectDVDHandler.cs" />
     <Compile Include="Services\Level.cs" />
     <Compile Include="Services\LogType.cs" />
     <Compile Include="Services\ServiceCreatorCallback.cs" />

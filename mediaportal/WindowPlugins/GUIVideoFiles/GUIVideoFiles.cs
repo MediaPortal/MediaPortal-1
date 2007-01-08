@@ -1140,7 +1140,7 @@ namespace MediaPortal.GUI.Video
 
 
 
-    void SetIMDBThumbs(ArrayList items)
+    public void SetIMDBThumbs(ArrayList items)
     {
       GUIListItem pItem;
       IMDBMovie movieDetails = new IMDBMovie();

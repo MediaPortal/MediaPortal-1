@@ -618,6 +618,7 @@ namespace MediaPortal.GUI.Video
       }
       return true;
     }
+
     public bool OnSelectMovie(IMDBFetcher fetcher, out int selectedMovie)
     {
       GUIDialogSelect pDlgSelect = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
@@ -648,6 +649,7 @@ namespace MediaPortal.GUI.Video
         return true;
       }
     }
+
     public bool OnScanStart(int total)
     {
       return true;

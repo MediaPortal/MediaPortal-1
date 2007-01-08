@@ -35,6 +35,7 @@ using MediaPortal.Video.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.View;
 using MediaPortal.Configuration;
+using MediaPortal.Services;
 
 namespace MediaPortal.GUI.Video
 {
@@ -64,13 +65,13 @@ namespace MediaPortal.GUI.Video
     protected string _lastFolder = String.Empty;
 
 
-    [SkinControlAttribute(50)]    protected GUIFacadeControl facadeView = null;
-    [SkinControlAttribute(2)]     protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]     protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(5)]     protected GUIButtonControl btnViews = null;
-    [SkinControlAttribute(6)]     protected GUIButtonControl btnPlayDVD = null;
-    [SkinControlAttribute(8)]     protected GUIButtonControl btnTrailers = null;
-    [SkinControlAttribute(9)]     protected GUIButtonControl btnPlaylistFolder = null;
+    [SkinControlAttribute(50)]   protected GUIFacadeControl facadeView = null;
+    [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(5)]    protected GUIButtonControl btnViews = null;
+    [SkinControlAttribute(6)]    protected GUIButtonControl btnPlayDVD = null;
+    [SkinControlAttribute(8)]    protected GUIButtonControl btnTrailers = null;
+    [SkinControlAttribute(9)]    protected GUIButtonControl btnPlaylistFolder = null;
 
     protected PlayListPlayer playlistPlayer;
 
@@ -255,6 +256,7 @@ namespace MediaPortal.GUI.Video
         GUIControl.FocusControl(GetID, control.GetID);
       }//if (control==btnSortBy)
 
+
       if (control == btnViews)
       {
         OnShowViews();
@@ -263,27 +265,21 @@ namespace MediaPortal.GUI.Video
 
       if (control == btnPlayDVD)
       {
-        //check if dvd is inserted
-        string[] drives = Environment.GetLogicalDrives();
-
-        foreach (string drive in drives)
+        ISelectDVDHandler selectDVDHandler;
+        if (GlobalServiceProvider.IsRegistered<ISelectDVDHandler>())
         {
-          if (Util.Utils.getDriveType(drive) == 5) //cd or dvd drive
-          {
-            string driverLetter = drive.Substring(0, 1);
-            string fileName = String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter);
-            if (System.IO.File.Exists(fileName))
-            {
-              OnPlayDVD(drive);
-              return;
-            }
-          }
+          selectDVDHandler = GlobalServiceProvider.Get<ISelectDVDHandler>();
         }
-        //no disc in drive...
-        GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-        dlgOk.SetHeading(3);//my videos
-        dlgOk.SetLine(1, 219);//no disc
-        dlgOk.DoModal(GetID);
+        else
+        {
+          selectDVDHandler = new SelectDVDHandler();
+          GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
+        }
+        string dvdToPlay = selectDVDHandler.ShowSelectDVDDialog(GetID);
+        if (dvdToPlay != null)
+        {
+          OnPlayDVD(dvdToPlay);
+        }
         return;
       }
 
@@ -404,6 +400,7 @@ namespace MediaPortal.GUI.Video
     protected virtual void OnClick(int item)
     {
     }
+
     protected virtual void OnQueueItem(int item)
     {
     }
@@ -421,6 +418,7 @@ namespace MediaPortal.GUI.Video
         btnSortBy.SortChanged += new SortEventHandler(SortChanged);
       base.OnPageLoad();
     }
+
     protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();
@@ -438,7 +436,7 @@ namespace MediaPortal.GUI.Video
     protected virtual void OnSort()
     {
       SetLabels();
-      facadeView.Sort(new VideoSort(CurrentSortMethod, CurrentSortAsc));      
+      facadeView.Sort(new VideoSort(CurrentSortMethod, CurrentSortAsc));
       UpdateButtonStates();
     }
 
@@ -504,7 +502,7 @@ namespace MediaPortal.GUI.Video
           break;
         case View.FilmStrip:
           facadeView.View = GUIFacadeControl.ViewMode.Filmstrip;
-          break;          
+          break;
       }
     }
 
@@ -571,6 +569,7 @@ namespace MediaPortal.GUI.Video
         }
       }
     }
+
     protected virtual void LoadDirectory(string path)
     {
     }
@@ -587,12 +586,19 @@ namespace MediaPortal.GUI.Video
     {
     }
 
-    public  bool OnPlayDVD(String drive)
+    public bool OnPlayDVD(String drive)
     {
       Log.Info("GUIVideoBaseWindow: playing DVD {0}", drive);
       if (g_Player.Playing && g_Player.IsDVD)
       {
-        return true;
+        if (g_Player.CurrentFile.Equals(drive + @"\VIDEO_TS\VIDEO_TS.IFO"))
+        {
+          return true;
+        }
+        else
+        {
+          g_Player.Stop();
+        }
       }
       if (g_Player.Playing && !g_Player.IsDVD)
       {
@@ -636,7 +642,7 @@ namespace MediaPortal.GUI.Video
             }
           }
 
-          g_Player.PlayDVD();
+          g_Player.PlayDVD(drive + @"\VIDEO_TS\VIDEO_TS.IFO");
           if (g_Player.Playing && timeMovieStopped > 0)
           {
             if (g_Player.IsDVD)

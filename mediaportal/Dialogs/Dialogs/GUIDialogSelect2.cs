@@ -211,11 +211,18 @@ namespace MediaPortal.Dialogs
       GUIListItem pItem = new GUIListItem(strLabel);
       m_vecList.Add(pItem);
     }
+
+    public void Add(GUIListItem pItem)
+    {
+      m_vecList.Add(pItem);
+    }
+
     public int SelectedLabel
     {
       get { return m_iSelected; }
       set { m_iSelected = value; }
     }
+
     public string SelectedLabelText
     {
       get { return m_strSelected; }
@@ -235,7 +242,6 @@ namespace MediaPortal.Dialogs
     {
       SetHeading(GUILocalizeStrings.Get(iString));
     }
-
 
     GUIListItem GetSelectedItem()
     {
@@ -272,22 +278,25 @@ namespace MediaPortal.Dialogs
       OnMessage(msg);
     }
 
-    void AddListItemControl(int iWindowId, int iControlId,GUIListItem item)
+    void AddListItemControl(int iWindowId, int iControlId, GUIListItem item)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_ADD, iWindowId, 0, iControlId, 0, 0, item);
       OnMessage(msg);
     }
-    void SetControlLabel(int iWindowId, int iControlId,string strText)
+
+    void SetControlLabel(int iWindowId, int iControlId, string strText)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, iWindowId, 0, iControlId, 0, 0, null);
       msg.Label = strText;
       OnMessage(msg);
     }
+
     void HideControl(int iWindowId, int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_HIDDEN, iWindowId, 0, iControlId, 0, 0, null);
       OnMessage(msg);
     }
+
     void ShowControl(int iWindowId, int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE, iWindowId, 0, iControlId, 0, 0, null);
@@ -299,12 +308,12 @@ namespace MediaPortal.Dialogs
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLED, iWindowId, 0, iControlId, 0, 0, null);
       OnMessage(msg);
     }
+
     void EnableControl(int iWindowId, int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLED, iWindowId, 0, iControlId, 0, 0, null);
       OnMessage(msg);
     }
-
 
     #region IRenderLayer
     public bool ShouldRenderLayer()

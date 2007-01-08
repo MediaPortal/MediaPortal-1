@@ -26,6 +26,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Collections;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
@@ -35,7 +36,7 @@ using MediaPortal.Util;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
-
+using MediaPortal.Services;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
@@ -59,54 +60,45 @@ namespace MediaPortal.GUI.Video
       return true;
     }
 
-    public override bool OnMessage(GUIMessage message)
-    {
-      Log.Info("DVDFullscreen: Message: {0}", message.Message.ToString());
-      if (message.Message == GUIMessage.MessageType.GUI_MSG_WINDOW_INIT)
-      {
-        GUIWindowManager.ReplaceWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-        if (!OnPlayDVD())
-        {
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, this.GetID, 0, 0, GetID, 0, null);
-          return this.OnMessage(msg);	// Send a de-init msg
-        }
-        return true;
-      }
-      return base.OnMessage(message);
-    }
+		public override bool OnMessage(GUIMessage message)
+		{
+			Log.Info("DVDFullscreen: Message: {0}", message.Message.ToString());
+			if (message.Message == GUIMessage.MessageType.GUI_MSG_WINDOW_INIT)
+			{
+				GUIWindowManager.ReplaceWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+				ISelectDVDHandler selectDVDHandler;
+				if (GlobalServiceProvider.IsRegistered<ISelectDVDHandler>())
+				{
+					selectDVDHandler = GlobalServiceProvider.Get<ISelectDVDHandler>();
+				}
+				else
+				{
+					selectDVDHandler = new SelectDVDHandler();
+					GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
+				}
+				string dvdToPlay = selectDVDHandler.ShowSelectDVDDialog(GetID);
+				if (dvdToPlay == null || !OnPlayDVD(dvdToPlay))
+				{
+					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, this.GetID, 0, 0, GetID, 0, null);
+					return this.OnMessage(msg);	// Send a de-init msg
+				}
+				return true;
+			}
+			return base.OnMessage(message);
+		}
 
     public override void Process()
     {
     }
 
-    protected bool OnPlayDVD()
+    protected bool OnPlayDVD(string dvd)
     {
       Log.Info("DVDFullscreen: Play DVD");
       GUIVideoFiles videoFiles = (GUIVideoFiles)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEOS);
       if (null == videoFiles)
         return false;
-      //check if dvd is inserted
-      string[] drives = Environment.GetLogicalDrives();
-
-      foreach (string drive in drives)
-      {
-        if (Util.Utils.getDriveType(drive) == 5) //cd or dvd drive
-        {
-          string driverLetter = drive.Substring(0, 1);
-          string fileName = String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter);
-          if (System.IO.File.Exists(fileName))
-          {
-            return videoFiles.OnPlayDVD(drive);
-          }
-        }
-      }
-      //no disc in drive...
-      GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-      dlgOk.SetHeading(3);//my videos
-      dlgOk.SetLine(1, 219);//no disc
-      dlgOk.DoModal(GetID);
-      return false;
-    }
+			return videoFiles.OnPlayDVD(dvd);
+		}
 
     #region ISetupForm Members
 
