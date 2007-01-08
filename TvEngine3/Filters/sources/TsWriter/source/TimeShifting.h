@@ -123,6 +123,7 @@ public:
 	void Write(byte* buffer, int len);
 
 private:
+  void Flush();
 	void WriteTs(byte* tsPacket);
   void WriteFakePAT();  
   void WriteFakePMT();

@@ -30,7 +30,7 @@
 #include "timeshifting.h"
 #include "pmtparser.h"
 
-#define WRITE_BUFFER_SIZE 32768
+#define WRITE_BUFFER_SIZE 32900
 
 #define PID_PAT   0
 #define TABLE_ID_PAT 0
@@ -119,9 +119,9 @@ CTimeShifting::CTimeShifting(LPUNKNOWN pUnk, HRESULT *phr)
 :CUnknown( NAME ("MpTsTimeshifting"), pUnk)
 {
   m_bPaused=FALSE;
-	m_params.chunkSize=1024*1024*256;
+	m_params.chunkSize=268435424;
 	m_params.maxFiles=20;
-	m_params.maxSize=1024*1024*256;
+	m_params.maxSize=268435424;
 	m_params.minFiles=6;
   
   m_pmtPid=-1;
@@ -172,7 +172,11 @@ STDMETHODIMP CTimeShifting::Pause( BYTE onOff)
 	if (m_bPaused)
     LogDebug("Timeshifter:paused:yes"); 
   else
+  {
     LogDebug("Timeshifter:paused:no"); 
+    Flush();
+    m_iPacketCounter=200;//write fake pat/pmt
+  }
   return S_OK;
 }
 
@@ -483,6 +487,24 @@ STDMETHODIMP CTimeShifting::Stop()
 }
 
 
+void CTimeShifting::Flush()
+{
+  try
+  {
+    if (m_iWriteBufferPos>0)
+    {
+	    if (m_pTimeShiftFile!=NULL)
+	    {
+		    m_pTimeShiftFile->Write(m_pWriteBuffer,m_iWriteBufferPos);
+        m_iWriteBufferPos=0;
+	    }
+    }
+  }
+  catch(...)
+  {
+	  LogDebug("Timeshifter:Write exception");
+  }
+}
 void CTimeShifting::Write(byte* buffer, int len)
 {
   if (!m_bTimeShifting) return;
@@ -491,18 +513,7 @@ void CTimeShifting::Write(byte* buffer, int len)
 	CEnterCriticalSection enter(m_section);
   if (len + m_iWriteBufferPos >= WRITE_BUFFER_SIZE)
   {
-	  try
-	  {
-		  if (m_pTimeShiftFile!=NULL)
-		  {
-			  m_pTimeShiftFile->Write(m_pWriteBuffer,m_iWriteBufferPos);
-        m_iWriteBufferPos=0;
-		  }
-	  }
-	  catch(...)
-	  {
-		  LogDebug("Timeshifter:Write exception");
-	  }
+	  Flush();
   }
   memcpy(&m_pWriteBuffer[m_iWriteBufferPos],buffer,len);
   m_iWriteBufferPos+=len;
@@ -594,7 +605,6 @@ STDMETHODIMP CTimeShifting::GetFileBufferSize(__int64 *lpllsize)
 	m_pTimeShiftFile->GetFileSize(lpllsize);
 	return NOERROR;
 }
-
 
 void CTimeShifting::WriteTs(byte* tsPacket)
 {

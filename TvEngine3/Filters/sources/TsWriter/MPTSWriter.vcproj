@@ -89,7 +89,7 @@
 				AdditionalLibraryDirectories=""
 				GenerateManifest="false"
 				IgnoreAllDefaultLibraries="false"
-				IgnoreDefaultLibraryNames=""
+				IgnoreDefaultLibraryNames="libcmt.lib;altmincrt.lib"
 				ModuleDefinitionFile=".\source\TsWriter.def"
 				ProgramDatabaseFile=".\Release/TsWriter.pdb"
 				SubSystem="2"
