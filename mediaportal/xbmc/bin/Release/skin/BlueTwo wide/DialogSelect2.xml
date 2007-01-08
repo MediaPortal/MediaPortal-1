@@ -17,7 +17,7 @@
       <id>0</id>
       <posX>335</posX>
       <posY>300</posY>
-      <width>545</width>
+      <width>634</width>
       <height>269</height>
       <texture>dialog_background.png</texture>
       <animation effect="fade" time="200">WindowOpen</animation>
@@ -28,7 +28,7 @@
       <id>6</id>
       <posX>335</posX>
       <posY>300</posY>
-      <width>545</width>
+      <width>634</width>
       <height>269</height>
       <texture>dialog_background.png</texture>
       <animation effect="fade" time="200">WindowOpen</animation>

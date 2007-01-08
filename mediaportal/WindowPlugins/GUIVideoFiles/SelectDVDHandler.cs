@@ -67,7 +67,7 @@ namespace MediaPortal.GUI.Video
 
           if (dlgSel.SelectedLabel != -1)
           {
-            return dlgSel.SelectedLabelText.Substring(1, 2);
+            return dlgSel.SelectedLabelText; //.Substring(1, 2);
           }
           else
           {
