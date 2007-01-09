@@ -231,8 +231,6 @@ namespace MediaPortal.Configuration.Sections
         showID3CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
         enableVisualisation.Checked = xmlreader.GetValueAsBool("musicfiles", "doVisualisation", true);
 
-        // Call Bass Registration, since BASS is used here fo the first time
-        BassRegistration.BassRegistration.Register();
         // Get all available devices and add them to the combo box
         string[] soundDevices = Bass.BASS_GetDeviceDescriptions();
 

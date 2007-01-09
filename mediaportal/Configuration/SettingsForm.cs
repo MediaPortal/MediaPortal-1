@@ -119,6 +119,9 @@ namespace MediaPortal.Configuration
       }
       GUILocalizeStrings.Load(Config.GetFile(Config.Dir.Language,  strLanguage , "strings.xml"));
 
+      // Register Bass.Net
+      BassRegistration.BassRegistration.Register();
+
       Log.Info("add project section");
       Project project = new Project();
       AddSection(project);
@@ -584,6 +587,12 @@ namespace MediaPortal.Configuration
     /// <param name="e"></param>
     private void SettingsForm_Load(object sender, EventArgs e)
     {
+      GUIGraphicsContext.form = this;
+
+      // Asynchronously pre-initialize the music engine if we're using the BassMusicPlayer
+      if (MediaPortal.Player.BassMusicPlayer.IsDefaultMusicPlayer)
+        MediaPortal.Player.BassMusicPlayer.CreatePlayerAsync();
+
       Log.Info("Load settings");
       foreach (TreeNode treeNode in sectionTree.Nodes)
       {
@@ -595,7 +604,6 @@ namespace MediaPortal.Configuration
         LoadSectionSettings(treeNode);
       }
       Log.Info("Load settings done");
-      GUIGraphicsContext.form = this;
     }
 
     /// <summary>
