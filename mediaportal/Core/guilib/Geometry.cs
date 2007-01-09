@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using MediaPortal.Player;
 
 namespace MediaPortal.GUI.Library
 {
@@ -124,14 +125,22 @@ namespace MediaPortal.GUI.Library
     public void GetWindow( out System.Drawing.Rectangle rSource, out System.Drawing.Rectangle rDest )
     {
       float fSourceFrameRatio = CalculateFrameAspectRatio();
-      GetWindow(fSourceFrameRatio, out rSource, out rDest);
+      CropSettings cropSettings = new CropSettings();
+      GetWindow(fSourceFrameRatio, out rSource, out rDest, cropSettings);
     }
-    public void GetWindow( int arVideoWidth, int arVideoHeight, out System.Drawing.Rectangle rSource, out System.Drawing.Rectangle rDest )
+
+    public void GetWindow(int arVideoWidth, int arVideoHeight, out System.Drawing.Rectangle rSource, out System.Drawing.Rectangle rDest)
+    {
+      CropSettings cropSettings = new CropSettings();
+      GetWindow(arVideoHeight, arVideoHeight, out rSource, out rDest, cropSettings);
+    }
+    public void GetWindow( int arVideoWidth, int arVideoHeight, out System.Drawing.Rectangle rSource, out System.Drawing.Rectangle rDest, CropSettings cropSettings )
     {
       float fSourceFrameRatio = (float)arVideoWidth / (float)arVideoHeight;
-      GetWindow(fSourceFrameRatio, out rSource, out rDest);
+      GetWindow(fSourceFrameRatio, out rSource, out rDest, cropSettings);
     }
-    public void GetWindow( float fSourceFrameRatio, out System.Drawing.Rectangle rSource, out System.Drawing.Rectangle rDest )
+
+    public void GetWindow( float fSourceFrameRatio, out System.Drawing.Rectangle rSource, out System.Drawing.Rectangle rDest, CropSettings cropSettings )
     {
       float fOutputFrameRatio = fSourceFrameRatio / PixelRatio;
 
@@ -141,6 +150,7 @@ namespace MediaPortal.GUI.Library
           {
             rSource = new System.Drawing.Rectangle(0, 0, ImageWidth, ImageHeight);
             rDest = new System.Drawing.Rectangle(0, 0, ScreenWidth, ScreenHeight);
+            AdjustForCropping(ref rSource, cropSettings);
           }
           break;
 
@@ -170,6 +180,7 @@ namespace MediaPortal.GUI.Library
                                                  (int)( (float)ImageWidth - 2.0f * fHorzBorder ),
                                                  (int)( (float)ImageHeight - 2.0f * fVertBorder ));
             rDest = new System.Drawing.Rectangle(0, 0, ScreenWidth, ScreenHeight);
+            AdjustForCropping(ref rSource, cropSettings);
           }
           break;
 
@@ -198,6 +209,8 @@ namespace MediaPortal.GUI.Library
 
             rSource = new System.Drawing.Rectangle(0, 0, ImageWidth, ImageHeight);
             rDest = new System.Drawing.Rectangle((int)iPosX, (int)iPosY, (int)( fNewWidth + 0.5f ), (int)( fNewHeight + 0.5f ));
+
+            AdjustForCropping(ref rSource, ref rDest, cropSettings, true);
           }
           break;
 
@@ -225,6 +238,8 @@ namespace MediaPortal.GUI.Library
 
             rSource = new System.Drawing.Rectangle(0, 0, ImageWidth, ImageHeight);
             rDest = new System.Drawing.Rectangle((int)iPosX, (int)iPosY, (int)( fNewWidth + 0.5f ), (int)( fNewHeight + 0.5f ));
+
+            // The original zoom mode ignores cropping parameters so done now
           }
           break;
 
@@ -255,7 +270,7 @@ namespace MediaPortal.GUI.Library
 
             rSource = new System.Drawing.Rectangle(0, 0, ImageWidth, ImageHeight);
             rDest = new System.Drawing.Rectangle((int)iPosX, (int)iPosY, (int)( fNewWidth + 0.5f ), (int)( fNewHeight + 0.5f ));
-
+            AdjustForCropping(ref rSource, cropSettings);
           }
           break;
 
@@ -284,6 +299,7 @@ namespace MediaPortal.GUI.Library
                                                   (int)( (float)ImageWidth - 2.0f * fHorzBorder ),
                                                   (int)( (float)ImageHeight - 2.0f * fVertBorder ));
             rDest = new System.Drawing.Rectangle(0, 0, ScreenWidth, ScreenHeight);
+            AdjustForCropping(ref rSource, cropSettings);
           }
           break;
 
@@ -335,6 +351,7 @@ namespace MediaPortal.GUI.Library
                                                  (int)( (float)ImageWidth - 2.0f * fHorzBorder ),
                                                  (int)( (float)ImageHeight - 2.0f * fVertBorder ));
             rDest = new System.Drawing.Rectangle((int)iPosX, (int)iPosY, (int)( fNewWidth - ( 2.0f * fHorzBorder * fFactor ) + 0.5f ), (int)( fNewHeight - ( 2.0f * fVertBorder * fFactor ) + 0.5f ));
+            AdjustForCropping(ref rSource, cropSettings);
           }
           break;
 
@@ -347,6 +364,93 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Adjusts the source and destination rectangles according to the cropping parameters, maintaining the RATIO between the source and destination
+    /// aspect ratio.
+    /// 
+    /// Note:
+    /// Only used for the normal aspect right now, so could as well be coded directly into that zoom mode. 
+    /// But maybe it could be useful elsewhere as well and no changes have had to be made to the zoom mode code.
+    /// </summary>
+    /// <param name="rSource"></param>
+    /// <param name="rDest"></param>
+    /// <param name="cropSettings"></param>
+    void AdjustForCropping(ref System.Drawing.Rectangle rSource, ref System.Drawing.Rectangle rDest, CropSettings cropSettings, bool strictKeepAspect)
+    {
+      float destAspect = rDest.Width / (float)rDest.Height;
+      float sourceAspect = rSource.Width / (float)rSource.Height;
+      float croppedSourceAspect = (rSource.Width - cropSettings.Right - cropSettings.Left) / (float)(rSource.Height - cropSettings.Top - cropSettings.Bottom);     
+      float originalAspectChange = destAspect / sourceAspect;
+
+      float newDestAspect = croppedSourceAspect * originalAspectChange;
+
+      //Log.Debug("newDestAspect: " + newDestAspect);
+
+      if (newDestAspect > destAspect) {
+        //Log.Debug("CROPADJUST : DEST NOT WIDE ENOUGH ");
+        // destination needs to be wider
+
+        // width needed to preserve height
+        float widthNeeded = rDest.Height * newDestAspect;
+
+        if (widthNeeded > ScreenWidth && strictKeepAspect)
+        {
+          // decrease height
+          //Log.Info("CROPADJUST : NOT ENOUGH WIDTH, needs " + widthNeeded);
+          // take all the width we can
+          rDest.Width = ScreenWidth;
+          // and reduce height for the rest
+          rDest.Height = (int)(rDest.Width / newDestAspect); ;
+          Log.Info("New height : " + rDest.Height);
+        }
+        else 
+        {
+          //Log.Info("CROPADJUST : ENOUGH WIDTH");
+          rDest.Width = (int)widthNeeded;
+        }
+      }
+      else if (newDestAspect < destAspect)
+      {
+        // destination needs to be taller
+        //Log.Info("CROPADJUST : DEST TOO WIDE");
+
+        int heightNeeded = (int)(rDest.Width * newDestAspect);
+        int heightIncrease = heightNeeded - rDest.Height;
+
+        //Log.Info("HeightNeeded = " + heightNeeded);
+        //Log.Info("heightIncrease= " + heightIncrease);
+
+        if (heightNeeded > ScreenHeight && strictKeepAspect)
+        {
+          //Log.Info("CROPADJUST: NOT ENOUGH HEIGHT, ADJUSTING WIDTH");
+          rDest.Height = ScreenHeight;
+          int newWidth = (int)(newDestAspect * rDest.Height);
+          rDest.Width = newWidth;
+        }
+        else{
+          rDest.Height = heightNeeded;
+        }
+      }
+
+      rDest.Y = ScreenHeight / 2 - rDest.Height / 2;
+      rDest.X = ScreenWidth / 2 - rDest.Width / 2;
+      AdjustForCropping(ref rSource, cropSettings);
+    }
+
+    /// <summary>
+    /// Adjusts only the source rectangle according to the cropping parameters.
+    /// </summary>
+    /// <param name="rSource"></param>
+    /// <param name="cropSettings"></param>
+    void AdjustForCropping(ref System.Drawing.Rectangle rSource, CropSettings cropSettings) {
+      rSource.Y += cropSettings.Top;
+      rSource.Height -= cropSettings.Top;
+      rSource.Height -= cropSettings.Bottom;
+
+      rSource.X += cropSettings.Left;
+      rSource.Width -= cropSettings.Left;
+      rSource.Width -= cropSettings.Right;
+    }
 
     /// <summary>
     /// Calculates the aspect ratio for the current image/video window

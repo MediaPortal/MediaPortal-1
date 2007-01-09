@@ -370,7 +370,7 @@ namespace MediaPortal.Player
 
         //did the video window,aspect ratio change? if not
         //then we dont need to recalculate and just return the previous settings
-        if (x == _rectPrevious.X && y == _rectPrevious.Y &&
+        if (!updateCrop && x == _rectPrevious.X && y == _rectPrevious.Y &&
           nw == _rectPrevious.Width && nh == _rectPrevious.Height &&
           GUIGraphicsContext.ARType == _aspectRatioType &&
           GUIGraphicsContext.Overlay == _lastOverlayVisible && _renderTexture &&
@@ -400,7 +400,8 @@ namespace MediaPortal.Player
         _geometry.ScreenHeight = (int)nh;
         _geometry.ARType = GUIGraphicsContext.ARType;
         _geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
-        _geometry.GetWindow(_arVideoWidth, _arVideoHeight, out _sourceRect, out _destinationRect);
+
+        _geometry.GetWindow(_arVideoWidth, _arVideoHeight, out _sourceRect, out _destinationRect, _cropSettings);
         _destinationRect.X += (int)x;
         _destinationRect.Y += (int)y;
 
@@ -410,16 +411,6 @@ namespace MediaPortal.Player
         if (_sourceRect.Width < 10) return false;
         if (_sourceRect.Height < 10) return false;
 
-        // Some capture cards capture too much of the video source
-        // Remove unwanted video by croping the picture
-
-        _sourceRect.Y += _cropSettings.Top;
-        _sourceRect.Height -= _cropSettings.Top;
-        _sourceRect.Height -= _cropSettings.Bottom;
-
-        _sourceRect.X += _cropSettings.Left;
-        _sourceRect.Width -= _cropSettings.Left;
-        _sourceRect.Width -= _cropSettings.Right;
         Log.Info("PlaneScene: crop T, B  : {0}, {1}", _cropSettings.Top, _cropSettings.Bottom);
         Log.Info("PlaneScene: crop L, R  : {0}, {1}", _cropSettings.Left, _cropSettings.Right);
 
@@ -562,8 +553,8 @@ namespace MediaPortal.Player
         // apply it
         if (updateCrop)
         {
-          updateCrop = false;
           InternalPresentImage(_vmr9Util.VideoWidth, _vmr9Util.VideoHeight, _arVideoWidth, _arVideoHeight, false);
+          updateCrop = false;
         }
 
         // Alert the frame grabber that it has a chance to grab a frame
@@ -916,6 +907,7 @@ namespace MediaPortal.Player
         if (_surfaceAdress != 0)
         {
           DrawSurface(_surfaceAdress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
+          
         }
         if (_textureAddress != 0)
         {
