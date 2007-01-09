@@ -106,6 +106,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("InfoImagediffuse")]   protected int _infoImageDiffuseColor;
     [XMLSkinElement("InfoImage")]          protected string _infoImageName;
     [XMLSkinElement("unfocusedAlpha")]     protected int _unfocusedAlpha = 0xFF;
+    [XMLSkinElement("frame")]              protected string _frameName = "";
+    [XMLSkinElement("frameFocus")]         protected string _frameFocusName = "";
 
     int _itemLowHeight;
     int _itemLowWidth;
@@ -152,6 +154,8 @@ namespace MediaPortal.GUI.Library
     protected int _currentFrame = 0;
     protected double _timeElapsed = 0.0f;
     protected bool _scrollContinuosly = false;
+    protected GUIAnimation _frameControl = null;
+    protected GUIAnimation _frameFocusControl = null;
 
     public double TimeSlice
     {
@@ -203,6 +207,15 @@ namespace MediaPortal.GUI.Library
 			_imageFolderFocus = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight, _imageFolderNameFocus);
       _imageFolderFocus.ParentControl = this;
       _imageFolderFocus.DimColor = DimColor;
+
+      _frameControl = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight, _frameName);
+      _frameControl.ParentControl = this;
+      _frameControl.DimColor = DimColor;
+
+      _frameFocusControl = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight, _frameFocusName);
+      _frameFocusControl.ParentControl = this;
+      _frameFocusControl.DimColor = DimColor;
+      
 
       _upDownControl = new GUISpinControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _spinControlWidth, _spinControlHeight, _upTextureName, _downTextureName, _upTextureNameFocus, _downTextureNameFocus, _fontName, _colorSpinColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, GUIControl.Alignment.ALIGN_LEFT);
       _upDownControl.ParentControl = this;
@@ -398,6 +411,21 @@ namespace MediaPortal.GUI.Library
           else pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
           pImage.Render(timePassed);
         }
+
+        if (bFocus == true && Focus && _listType == GUIListControl.ListType.CONTROL_LIST)
+        {
+          if (_frameFocusControl != null)
+          {
+            _frameFocusControl.SetPosition(dwPosX, dwPosY);
+            _frameFocusControl.Render(timePassed);
+          }
+        }
+        else if (_frameControl != null)
+        {
+          _frameControl.SetPosition(dwPosX, dwPosY);
+          _frameControl.Render(timePassed);
+        }
+        
       }
       else
       {
@@ -434,8 +462,22 @@ namespace MediaPortal.GUI.Library
             else pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
             pImage.Render(timePassed);
           }
+          if (bFocus == true && Focus && _listType == GUIListControl.ListType.CONTROL_LIST)
+          {
+            if (_frameFocusControl != null)
+            {
+              _frameFocusControl.SetPosition(dwPosX, dwPosY);
+              _frameFocusControl.Render(timePassed);
+            }
+          }
+          else if (_frameControl != null)
+          {
+            _frameControl.SetPosition(dwPosX, dwPosY);
+            _frameControl.Render(timePassed);
+          }
         }
       }
+      
     }
 
     /// <summary>
@@ -1202,6 +1244,8 @@ namespace MediaPortal.GUI.Library
       if (_upDownControl != null) _upDownControl.PreAllocResources();
       if (_imageFolder != null) _imageFolder.PreAllocResources();
       if (_imageFolderFocus != null) _imageFolderFocus.PreAllocResources();
+      if (_frameControl != null) _frameControl.PreAllocResources();
+      if (_frameFocusControl != null) _frameFocusControl.PreAllocResources();
       if (_horizontalScrollbar != null) _horizontalScrollbar.PreAllocResources();
       if (_imageBackground != null) _imageBackground.PreAllocResources();
       if (_imageInfo != null) _imageInfo.PreAllocResources();
@@ -1225,6 +1269,18 @@ namespace MediaPortal.GUI.Library
       {
         _imageFolderFocus.Width = _textureWidth;
         _imageFolderFocus.Height = _textureHeight;
+      }
+
+      if (_frameControl != null)
+      {
+        _frameControl.Width = _textureWidth;
+        _frameControl.Height = _textureHeight;
+      }
+
+      if (_frameFocusControl != null)
+      {
+        _frameFocusControl.Width = _textureWidth;
+        _frameFocusControl.Height = _textureHeight;
       }
 
       float fWidth = 0, fHeight = 0;
@@ -1260,6 +1316,8 @@ namespace MediaPortal.GUI.Library
       if (_upDownControl != null) _upDownControl.AllocResources();
       if (_imageFolder != null) _imageFolder.AllocResources();
       if (_imageFolderFocus != null) _imageFolderFocus.AllocResources();
+      if (_frameControl != null) _frameControl.AllocResources();
+      if (_frameFocusControl != null) _frameFocusControl.AllocResources();
       if (_horizontalScrollbar != null) _horizontalScrollbar.AllocResources();
       Calculate();
 
@@ -1279,6 +1337,8 @@ namespace MediaPortal.GUI.Library
       if (_upDownControl != null) _upDownControl.FreeResources();
       if (_imageFolder != null) _imageFolder.FreeResources();
       if (_imageFolderFocus != null) _imageFolderFocus.FreeResources();
+      if (_frameControl != null) _frameControl.FreeResources();
+      if (_frameFocusControl != null) _frameFocusControl.FreeResources();
       if (_horizontalScrollbar != null) _horizontalScrollbar.FreeResources();
     }
 
@@ -1649,6 +1709,18 @@ namespace MediaPortal.GUI.Library
         _imageFolderFocus.Refresh();
       }
 
+      if (_frameControl != null)
+      {
+        _frameControl.Width = _textureWidth;
+        _frameControl.Height = _textureHeight;
+        _frameControl.Refresh();
+      }
+      if (_frameFocusControl != null)
+      {
+        _frameFocusControl.Width = _textureWidth;
+        _frameFocusControl.Height = _textureHeight;
+        _frameFocusControl.Refresh();
+      }
     }
 
     public void SetThumbDimensions(int iXpos, int iYpos, int iWidth, int iHeight)
@@ -2284,6 +2356,8 @@ namespace MediaPortal.GUI.Library
       if (_imageBackground != null) _imageBackground.StorePosition();
       if (_imageFolder != null) _imageFolder.StorePosition();
       if (_imageFolderFocus != null) _imageFolderFocus.StorePosition();
+      if (_frameControl != null) _frameControl.StorePosition();
+      if (_frameFocusControl != null) _frameFocusControl.StorePosition();
       if (_horizontalScrollbar != null) _horizontalScrollbar.StorePosition();
 
       base.StorePosition();
@@ -2299,6 +2373,8 @@ namespace MediaPortal.GUI.Library
       if (_imageBackground != null) _imageBackground.ReStorePosition();
       if (_imageFolder != null) _imageFolder.ReStorePosition();
       if (_imageFolderFocus != null) _imageFolderFocus.ReStorePosition();
+      if (_frameControl != null) _frameControl.ReStorePosition();
+      if (_frameFocusControl != null) _frameFocusControl.ReStorePosition();
       if (_horizontalScrollbar != null) _horizontalScrollbar.ReStorePosition();
 
       if (_imageInfo != null) _imageInfo.GetRect(out _infoImagePositionX, out _infoImagePositionY, out _infoImageWidth, out _infoImageHeight);
@@ -2397,6 +2473,8 @@ namespace MediaPortal.GUI.Library
         if (_upDownControl != null) _upDownControl.DimColor = value;
         if (_imageFolder != null) _imageFolder.DimColor = value;
         if (_imageFolderFocus != null) _imageFolderFocus.DimColor = value;
+        if (_frameControl != null) _frameControl.DimColor = value;
+        if (_frameFocusControl != null) _frameFocusControl.DimColor = value;
         if (_horizontalScrollbar != null) _horizontalScrollbar.DimColor = value;
         foreach (GUIListItem item in _listItems) item.DimColor = value;
       }
