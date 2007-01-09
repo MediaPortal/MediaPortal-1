@@ -39,16 +39,11 @@ namespace MediaPortal.GUI.TV
   /// </summary>
   public class GUITvRecordedInfo : GUIWindow
   {
-    [SkinControlAttribute(17)]
-    protected GUILabelControl lblProgramGenre = null;
-    [SkinControlAttribute(15)]
-    protected GUITextScrollUpControl lblProgramDescription = null;
-    [SkinControlAttribute(14)]
-    protected GUILabelControl lblProgramTime = null;
-    [SkinControlAttribute(13)]
-    protected GUIFadeLabel lblProgramTitle = null;
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnKeep = null;
+		[SkinControlAttribute(17)]			  protected GUILabelControl					lblProgramGenre=null;
+		[SkinControlAttribute(15)]			  protected GUITextScrollUpControl	lblProgramDescription=null;
+		[SkinControlAttribute(14)]			  protected GUILabelControl					lblProgramTime=null;
+		[SkinControlAttribute(13)]			  protected GUIFadeLabel						lblProgramTitle=null;
+		[SkinControlAttribute(2)]					protected GUIButtonControl				btnKeep=null;
 
     static TVRecorded currentProgram = null;
 

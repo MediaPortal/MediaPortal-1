@@ -90,8 +90,8 @@ namespace MediaPortal.GUI.TV
       OSD_SUBMENU_BG_VIDEO = 304,
       OSD_SUBMENU_BG_AUDIO = 305,
       OSD_SUBMENU_NIB = 350,
-      Panel1=101,
-      Panel2=150
+      Panel1 = 101,
+      Panel2 = 150
     };
 
     [SkinControlAttribute(36)]
@@ -446,7 +446,7 @@ namespace MediaPortal.GUI.TV
                 ToggleSubMenu(0, m_iActiveMenu);						// hide the currently active sub-menu
               }
               //g_application.m_guiWindowFullScreen.m_bOSDVisible = false;	// toggle the OSD off so parent window can de-init
-              Log.Info("TVOSD:stop");
+              Log.Debug("TVOSD: stop");
               if (Recorder.IsRecording())
               {
                 Recorder.StopRecording();
@@ -1199,7 +1199,7 @@ namespace MediaPortal.GUI.TV
 
     private void OnPreviousChannel()
     {
-      Log.Info("GUITV OSD: OnPreviousChannel");
+      Log.Debug("GUITV OSD: OnPreviousChannel");
       if (!Recorder.View) return;
       GUITVHome.Navigator.ZapToPreviousChannel(false);
 
@@ -1209,7 +1209,7 @@ namespace MediaPortal.GUI.TV
 
     private void OnNextChannel()
     {
-      Log.Info("GUITV OSD: OnNextChannel");
+      Log.Debug("GUITV OSD: OnNextChannel");
       if (!Recorder.View) return;
 
       GUITVHome.Navigator.ZapToNextChannel(false);

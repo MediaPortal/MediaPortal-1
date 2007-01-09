@@ -46,8 +46,8 @@ namespace MediaPortal.GUI.TV
 
     public override bool Init()
     {
-      bool bResult=Load (GUIGraphicsContext.Skin+@"\tvOverlay.xml");
-      GetID=(int)GUIWindow.Window.WINDOW_TV_OVERLAY;
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\tvOverlay.xml");
+      GetID = (int)GUIWindow.Window.WINDOW_TV_OVERLAY;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.TvOverlay);
       return bResult;
     }

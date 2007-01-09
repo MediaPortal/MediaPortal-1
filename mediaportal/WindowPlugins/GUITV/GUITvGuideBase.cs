@@ -629,27 +629,13 @@ namespace MediaPortal.GUI.TV
                 string day;
                 switch (dtTemp.DayOfWeek)
                 {
-                  case DayOfWeek.Monday:
-                    day = GUILocalizeStrings.Get(657);
-                    break;
-                  case DayOfWeek.Tuesday:
-                    day = GUILocalizeStrings.Get(658);
-                    break;
-                  case DayOfWeek.Wednesday:
-                    day = GUILocalizeStrings.Get(659);
-                    break;
-                  case DayOfWeek.Thursday:
-                    day = GUILocalizeStrings.Get(660);
-                    break;
-                  case DayOfWeek.Friday:
-                    day = GUILocalizeStrings.Get(661);
-                    break;
-                  case DayOfWeek.Saturday:
-                    day = GUILocalizeStrings.Get(662);
-                    break;
-                  default:
-                    day = GUILocalizeStrings.Get(663);
-                    break;
+                    case DayOfWeek.Monday: day = GUILocalizeStrings.Get(657); break;
+                    case DayOfWeek.Tuesday: day = GUILocalizeStrings.Get(658); break;
+                    case DayOfWeek.Wednesday: day = GUILocalizeStrings.Get(659); break;
+                    case DayOfWeek.Thursday: day = GUILocalizeStrings.Get(660); break;
+                    case DayOfWeek.Friday: day = GUILocalizeStrings.Get(661); break;
+                    case DayOfWeek.Saturday: day = GUILocalizeStrings.Get(662); break;
+                    default: day = GUILocalizeStrings.Get(663); break;
                 }
                 day = String.Format("{0} {1}-{2}", day, dtTemp.Day, dtTemp.Month);
                 cntlDay.AddLabel(day, iDay);
@@ -1003,27 +989,13 @@ namespace MediaPortal.GUI.TV
         string day;
         switch (_viewingTime.DayOfWeek)
         {
-          case DayOfWeek.Monday:
-            day = GUILocalizeStrings.Get(657);
-            break;
-          case DayOfWeek.Tuesday:
-            day = GUILocalizeStrings.Get(658);
-            break;
-          case DayOfWeek.Wednesday:
-            day = GUILocalizeStrings.Get(659);
-            break;
-          case DayOfWeek.Thursday:
-            day = GUILocalizeStrings.Get(660);
-            break;
-          case DayOfWeek.Friday:
-            day = GUILocalizeStrings.Get(661);
-            break;
-          case DayOfWeek.Saturday:
-            day = GUILocalizeStrings.Get(662);
-            break;
-          default:
-            day = GUILocalizeStrings.Get(663);
-            break;
+          case DayOfWeek.Monday: day = GUILocalizeStrings.Get(657); break;
+          case DayOfWeek.Tuesday: day = GUILocalizeStrings.Get(658); break;
+          case DayOfWeek.Wednesday: day = GUILocalizeStrings.Get(659); break;
+          case DayOfWeek.Thursday: day = GUILocalizeStrings.Get(660); break;
+          case DayOfWeek.Friday: day = GUILocalizeStrings.Get(661); break;
+          case DayOfWeek.Saturday: day = GUILocalizeStrings.Get(662); break;
+          default: day = GUILocalizeStrings.Get(663); break;
         }
         day = String.Format("{0} {1}-{2}", day, _viewingTime.Day, _viewingTime.Month);
         GUIPropertyManager.SetProperty("#TV.Guide.Day", day);
@@ -1095,6 +1067,7 @@ namespace MediaPortal.GUI.TV
           }
 
           // update selected channel 
+          _singleChannelNumber = _cursorX + _channelOffset;
           if (_singleChannelNumber >= _channelList.Count)
             _singleChannelNumber -= _channelList.Count;
           GUIButton3PartControl img = (GUIButton3PartControl)GetControl(_cursorX + (int)Controls.IMG_CHAN1);
@@ -1250,8 +1223,7 @@ namespace MediaPortal.GUI.TV
           TVChannel tvChan = (TVChannel)_channelList[chan];
 
           strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, tvChan.Name);
-
-          if (strLogo != String.Empty)
+          if (System.IO.File.Exists(strLogo))
           {
             GUIButton3PartControl img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
             if (img != null)
@@ -2922,7 +2894,7 @@ namespace MediaPortal.GUI.TV
 
     private void UpdateVerticalScrollbar()
     {
-      if (_channelList.Count == 0)
+      if (_channelList == null || _channelList.Count == 0)
         return;
       int channel = _cursorX + _channelOffset;
       while (channel > 0 && channel >= _channelList.Count)
@@ -2952,6 +2924,7 @@ namespace MediaPortal.GUI.TV
 
     private void UpdateHorizontalScrollbar()
     {
+      if (_channelList == null) return;
       GUIHorizontalScrollbar scrollbar = GetControl((int)Controls.HORZ_SCROLLBAR) as GUIHorizontalScrollbar;
       if (scrollbar != null)
       {

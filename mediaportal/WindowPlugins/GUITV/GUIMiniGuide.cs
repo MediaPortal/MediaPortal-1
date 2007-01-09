@@ -74,11 +74,7 @@ namespace MediaPortal.GUI.TV
       {
         _altLayout = xmlreader.GetValueAsBool("mytv", "altminiguide", true);
       }
-      bool bResult = false;
-      //if (_altLayout)
-      //  bResult = Load(GUIGraphicsContext.Skin + @"\mytvMiniGuide.xml");
-      //else
-      bResult = Load(GUIGraphicsContext.Skin + @"\TVMiniGuide.xml");
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\TVMiniGuide.xml");
 
       GetID = (int)GUIWindow.Window.WINDOW_MINI_GUIDE;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
@@ -107,6 +103,7 @@ namespace MediaPortal.GUI.TV
     /// </summary>
     void Close()
     {
+      Log.Debug("miniguide:close()");
       GUIWindowManager.IsSwitchingToNewWindow = true;
       lock (this)
       {
@@ -199,6 +196,7 @@ namespace MediaPortal.GUI.TV
     /// <param name="new_windowId"></param>
     protected override void OnPageDestroy(int new_windowId)
     {
+      Log.Debug("miniguide OnPageDestroy");
       base.OnPageDestroy(new_windowId);
       m_bRunning = false;
     }
@@ -208,12 +206,11 @@ namespace MediaPortal.GUI.TV
     /// </summary>
     protected override void OnPageLoad()
     {
+      Log.Debug("miniguide onpageload");
       // following line should stay. Problems with OSD not
       // appearing are already fixed elsewhere
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
       AllocResources();
-      //if (_altLayout)
-      //  lstChannels.
       ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
       FillChannelList();
       FillGroupList();
@@ -377,11 +374,12 @@ namespace MediaPortal.GUI.TV
     /// <param name="dwParentId"></param>
     public void DoModal(int dwParentId)
     {
-
+      Log.Debug("miniguide domodal");
       m_dwParentWindowID = dwParentId;
       m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
       if (null == m_pParentWindow)
       {
+        Log.Debug("parentwindow=0");
         m_dwParentWindowID = 0;
         return;
       }
@@ -403,6 +401,8 @@ namespace MediaPortal.GUI.TV
           System.Threading.Thread.Sleep(50);
       }
       GUILayerManager.UnRegisterLayer(this);
+
+      Log.Debug("miniguide closed");
     }
 
     // Overlay IRenderLayer members
