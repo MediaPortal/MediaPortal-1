@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2006 Team MediaPortal
+#region Copyright (C) 2005-2007 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -51,19 +51,15 @@ namespace TvPlugin
 {
   public class TvEpgSettings : GUIWindow
   {
-    [SkinControlAttribute(10)]
-    protected GUICheckListControl listChannels = null;
-
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnSelectAll = null;
-
-    [SkinControlAttribute(3)]
-    protected GUIButtonControl btnSelectNone = null;
+    [SkinControlAttribute(10)]    protected GUICheckListControl listChannels = null;
+    [SkinControlAttribute(2)]     protected GUIButtonControl btnSelectAll = null;
+    [SkinControlAttribute(3)]     protected GUIButtonControl btnSelectNone = null;
 
     public TvEpgSettings()
     {
       GetID = (int)GUIWindow.Window.WINDOW_SETTINGS_TV_EPG;
     }
+
     public override void OnAdded()
     {
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_SETTINGS_TV_EPG, this);
@@ -82,6 +78,7 @@ namespace TvPlugin
       base.OnPageLoad();
       Update();
     }
+
     void Update()
     {
       listChannels.Clear();

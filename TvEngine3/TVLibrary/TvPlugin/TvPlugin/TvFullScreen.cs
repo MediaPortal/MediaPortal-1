@@ -1,7 +1,6 @@
-#region Copyright (C) 2005-2006 Team MediaPortal
-
+#region Copyright (C) 2005-2007 Team MediaPortal
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -212,7 +211,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _useVMR9Zap = xmlreader.GetValueAsBool("general", "useVMR9ZapOSD", false);
         _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 10);
@@ -228,7 +227,7 @@ namespace TvPlugin
     #region serialisation
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _isMsnChatPopup = (xmlreader.GetValueAsInt("MSNmessenger", "popupwindow", 0) == 1);
         _timeOsdOnscreen = 1000 * xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
@@ -259,7 +258,7 @@ namespace TvPlugin
     //		}
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         TVHome.Navigator.SaveSettings(xmlwriter);
         switch (GUIGraphicsContext.ARType)

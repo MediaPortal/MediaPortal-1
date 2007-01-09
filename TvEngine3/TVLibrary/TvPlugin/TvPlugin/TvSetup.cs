@@ -11,13 +11,11 @@ namespace TvPlugin
   public class TvSetup : GUIWindow
   {
     string _hostName;
-    [SkinControlAttribute(24)]
-    protected GUIButtonControl btnChange = null;
-    [SkinControlAttribute(30)]
-    protected GUILabelControl lblHostName = null;
+    [SkinControlAttribute(24)]    protected GUIButtonControl btnChange = null;
+    [SkinControlAttribute(30)]    protected GUILabelControl lblHostName = null;
+    
     public TvSetup()
-		{
-			
+		{			
 			GetID=(int)GUIWindow.Window.WINDOW_SETTINGS_TVENGINE;
 		}
 

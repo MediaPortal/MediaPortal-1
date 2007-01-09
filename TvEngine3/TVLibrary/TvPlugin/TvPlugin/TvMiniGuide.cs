@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2006 Team MediaPortal
+#region Copyright (C) 2005-2007 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -24,10 +24,12 @@
 #endregion
 
 using System;
-using System.Globalization;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
+using System.Text;
+using System.Windows.Forms;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Util;
@@ -46,14 +48,12 @@ namespace TvPlugin
   public class TvMiniGuide : GUIWindow, IRenderLayer
   {
     // Member variables                                  
-    [SkinControlAttribute(34)]
-    protected GUIButtonControl cmdExit = null;
-    [SkinControlAttribute(35)]
-    protected GUIListControl lstChannels = null;
-    [SkinControlAttribute(36)]
-    protected GUISpinControl spinGroup = null;
+    [SkinControlAttribute(34)]    protected GUIButtonControl cmdExit = null;
+    [SkinControlAttribute(35)]    protected GUIListControl lstChannels = null;
+    [SkinControlAttribute(36)]    protected GUISpinControl spinGroup = null;
 
     bool m_bRunning = false;
+    bool _altLayout = false;
     int m_dwParentWindowID = 0;
     GUIWindow m_pParentWindow = null;
     List<Channel> tvChannelList = null;
@@ -95,9 +95,13 @@ namespace TvPlugin
     /// <returns></returns>
     public override bool Init()
     {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        _altLayout = xmlreader.GetValueAsBool("mytv", "altminiguide", true);
+      }
       bool bResult = Load(GUIGraphicsContext.Skin + @"\TVMiniGuide.xml");
-      GetID = (int)GUIWindow.Window.WINDOW_MINI_GUIDE;
 
+      GetID = (int)GUIWindow.Window.WINDOW_MINI_GUIDE;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
       return bResult;
     }
@@ -146,8 +150,12 @@ namespace TvPlugin
               if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
               {
                 // switching logic
-                TVHome.Navigator.ZapToChannel(tvChannelList[lstChannels.SelectedListItemIndex], false);
-                TVHome.Navigator.ZapNow();
+                string selectedChan = (string)lstChannels.SelectedListItem.TVTag;                
+                if (TVHome.Navigator.CurrentChannel != selectedChan)
+                {
+                  TVHome.Navigator.ZapToChannel(tvChannelList[lstChannels.SelectedListItemIndex], false);
+                  TVHome.Navigator.ZapNow();
+                }
                 Close();
               }
             }
@@ -271,10 +279,15 @@ namespace TvPlugin
       for (int i = 0; i < tvChannelList.Count; i++)
       {
         current = tvChannelList[i];
+        StringBuilder sb = new StringBuilder();
+
         if (current.VisibleInGuide)
         {
           item = new GUIListItem("");
-          item.Label2 = current.Name;
+          // store here as it is not needed right now - please beat me later..
+          item.TVTag = current.Name;
+          if (!_altLayout)
+            item.Label2 = current.Name;
           logo = Utils.GetCoverArt(Thumbs.TVChannel, current.Name);
 
           // if we are watching this channel mark it
@@ -295,16 +308,33 @@ namespace TvPlugin
             item.IconImage = string.Empty;
           }
           prog = GetCurrentProgram(current);
+
+          if (prog == null || prog.Title == String.Empty)
+            item.Label2 = current.Name;
+
           if (prog != null)
           {
             //                    item.Label3 = prog.Title + " [" + prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "-" + prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "]";
+            if (_altLayout)
+            {
+              item.Label3 = GUILocalizeStrings.Get(789) + prog.Title;
+              sb.Append(current.Name);
+              sb.Append(" - ");
+              sb.Append(CalculateProgress(prog).ToString());
+              sb.Append("%");
+              item.Label2 = sb.ToString();
+            }
+            else
             item.Label3 = prog.Title + ": " + CalculateProgress(prog).ToString() + "%";
           }
           prognext = GetNextProgram(current, prog);
           if (prognext != null)
           {
             //                    item.Label = prognext.Title + " [" + prognext.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "-" + prognext.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "]";
-            item.Label = prognext.Title;
+            if (!_altLayout)
+              item.Label = prognext.Title;
+            else
+              item.Label = GUILocalizeStrings.Get(790) + prognext.Title;
           }
           lstChannels.Add(item);
           lstChannels.SelectedListItemIndex = selected;
@@ -325,7 +355,8 @@ namespace TvPlugin
       {
         double fprogress = (passed.TotalMinutes / length.TotalMinutes) * 100;
         fprogress = Math.Floor(fprogress);
-        if (fprogress > 100.0f) return 100.0f;
+        if (fprogress > 100.0f)
+          return 100.0f;
         return fprogress;
       }
       else
@@ -354,7 +385,8 @@ namespace TvPlugin
     /// <returns></returns>
     private Program GetNextProgram(Channel channel, Program based)
     {
-      if (based == null) return null;
+      if (based == null)
+        return null;
       Program prognext = channel.GetProgramAt(based.EndTime.AddMinutes(1));
       return prognext;
     }

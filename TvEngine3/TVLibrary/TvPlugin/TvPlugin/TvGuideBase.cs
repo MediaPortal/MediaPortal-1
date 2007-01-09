@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2006 Team MediaPortal
+#region Copyright (C) 2005-2007 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -34,10 +34,12 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 using System.Globalization;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.Player;
+using MediaPortal.Configuration;
 
 using TvDatabase;
 using Gentle.Common;
@@ -166,7 +168,7 @@ namespace TvPlugin
     #region Serialisation
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _currentChannel = xmlreader.GetValueAsString("tvguide", "channel", String.Empty);
         _cursorX = xmlreader.GetValueAsInt("tvguide", "ypos", 0);
@@ -176,7 +178,7 @@ namespace TvPlugin
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("tvguide", "channel", _currentChannel);
         xmlwriter.SetValue("tvguide", "ypos", _cursorX.ToString());
@@ -199,7 +201,7 @@ namespace TvPlugin
     {
       Log.Debug("StartImportXML: Initialize");
       _tvGuideFileName = "xmltv";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _tvGuideFileName = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
         _tvGuideFileName = Utils.RemoveTrailingSlash(_tvGuideFileName);
@@ -279,10 +281,12 @@ namespace TvPlugin
                     _cursorX = control.GetID - (int)Controls.IMG_CHAN1;
                     _cursorY = 0;
 
-                    if (_singleChannelNumber != _cursorX + _channelOffset) Update(false);
+                    if (_singleChannelNumber != _cursorX + _channelOffset)
+                      Update(false);
                     UpdateCurrentProgram();
                     UpdateHorizontalScrollbar();
                     UpdateVerticalScrollbar();
+                    updateSingleChannelNumber();
                     return;
                   }
                 }
@@ -311,6 +315,7 @@ namespace TvPlugin
                           SetFocus();
                           UpdateHorizontalScrollbar();
                           UpdateVerticalScrollbar();
+                          updateSingleChannelNumber();
                           return;
                         }
                         return;
@@ -358,10 +363,12 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_PAGE_UP:
           OnPageUp();
+          updateSingleChannelNumber();
           break;
 
         case Action.ActionType.ACTION_PAGE_DOWN:
           OnPageDown();
+          updateSingleChannelNumber();
           break;
 
         case Action.ActionType.ACTION_MOVE_LEFT:
@@ -369,6 +376,7 @@ namespace TvPlugin
             if (_cursorX >= 0)
             {
               OnLeft();
+              updateSingleChannelNumber();
               UpdateHorizontalScrollbar();
               return;
             }
@@ -389,6 +397,7 @@ namespace TvPlugin
             if (_cursorX >= 0)
             {
               OnUp(true);
+              updateSingleChannelNumber();
               UpdateVerticalScrollbar();
               return;
             }
@@ -399,6 +408,7 @@ namespace TvPlugin
             if (_cursorX >= 0)
             {
               OnDown(true);
+              updateSingleChannelNumber();
               UpdateVerticalScrollbar();
             }
             else
@@ -418,7 +428,8 @@ namespace TvPlugin
         case Action.ActionType.ACTION_INCREASE_TIMEBLOCK:
           {
             _timePerBlock += 15;
-            if (_timePerBlock > 60) _timePerBlock = 60;
+            if (_timePerBlock > 60)
+              _timePerBlock = 60;
             Update(false);
             SetFocus();
           }
@@ -441,7 +452,8 @@ namespace TvPlugin
           break;
         case Action.ActionType.ACTION_DECREASE_TIMEBLOCK:
           {
-            if (_timePerBlock > 15) _timePerBlock -= 15;
+            if (_timePerBlock > 15)
+              _timePerBlock -= 15;
             Update(false);
             SetFocus();
           }
@@ -626,7 +638,8 @@ namespace TvPlugin
               GUISpinControl cntlTimeInterval = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL) as GUISpinControl;
               if (cntlTimeInterval != null)
               {
-                for (int i = 1; i <= 4; i++) cntlTimeInterval.AddLabel(String.Empty, i);
+                for (int i = 1; i <= 4; i++)
+                  cntlTimeInterval.AddLabel(String.Empty, i);
                 cntlTimeInterval.Value = 1;
               }
               if (message.Param1 != (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO)
@@ -667,7 +680,8 @@ namespace TvPlugin
             {
               GUISpinControl cntlTimeInt = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL) as GUISpinControl;
               int iInterval = (cntlTimeInt.Value) + 1;
-              if (iInterval > 4) iInterval = 4;
+              if (iInterval > 4)
+                iInterval = 4;
               _timePerBlock = iInterval * 15;
               Update(false);
               SetFocus();
@@ -751,7 +765,8 @@ namespace TvPlugin
             if (ts.TotalMinutes >= 1)
               Update(false);
           }
-          else vertLine.IsVisible = false;
+          else
+            vertLine.IsVisible = false;
         }
       }
     }
@@ -774,7 +789,7 @@ namespace TvPlugin
     protected void CheckNewTVGuide()
     {
       bool shouldImportTvGuide = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string strTmp = String.Empty;
         strTmp = xmlreader.GetValueAsString("tvguide", "date", String.Empty);
@@ -826,7 +841,8 @@ namespace TvPlugin
         GUIImage cntlChannelTemplate = (GUIImage)GetControl((int)Controls.CHANNEL_TEMPLATE);
 
         _showChannelLogos = cntlChannelImg != null;
-        if (_showChannelLogos) cntlChannelImg.IsVisible = false;
+        if (_showChannelLogos)
+          cntlChannelImg.IsVisible = false;
         cntlChannelLabel.IsVisible = false;
         cntlHeaderBkgImg.IsVisible = false;
         labelTime.IsVisible = false;
@@ -902,7 +918,8 @@ namespace TvPlugin
           if (imgBut == null)
           {
             string strChannelImageFileName = String.Empty;
-            if (_showChannelLogos) strChannelImageFileName = cntlChannelImg.FileName;
+            if (_showChannelLogos)
+              strChannelImageFileName = cntlChannelImg.FileName;
             imgBut = new GUIButton3PartControl(GetID, (int)Controls.IMG_CHAN1 + iChan, xpos, ypos,
               cntlChannelTemplate.Width - 2, cntlChannelTemplate.Height - 2,
               "tvguide_button_selected_left.png",
@@ -917,7 +934,8 @@ namespace TvPlugin
             Add(ref cntl);
           }
 
-          if (_showChannelLogos) imgBut.TexutureIcon = cntlChannelImg.FileName;
+          if (_showChannelLogos)
+            imgBut.TexutureIcon = cntlChannelImg.FileName;
           imgBut.Width = cntlChannelTemplate.Width - 2;//labelTime.XPosition-cntlChannelImg.XPosition;
           imgBut.Height = cntlChannelTemplate.Height - 2;//iItemHeight-2;
           imgBut.SetPosition(xpos, ypos);
@@ -1023,14 +1041,16 @@ namespace TvPlugin
               RenderChannel(iChannel, channel, iStart, iEnd, selectCurrentShow);
             }
             chan++;
-            if (chan >= _channelList.Count) chan = 0;
+            if (chan >= _channelList.Count)
+              chan = 0;
           }
 
           // update selected channel 
           _singleChannelNumber = _cursorX + _channelOffset;
           if (_singleChannelNumber >= _channelList.Count) _singleChannelNumber -= _channelList.Count;
           GUIButton3PartControl img = (GUIButton3PartControl)GetControl(_cursorX + (int)Controls.IMG_CHAN1);
-          if (null != img) _currentChannel = img.Label1;
+          if (null != img)
+            _currentChannel = img.Label1;
         }
         UpdateVerticalScrollbar();
       }
@@ -1038,8 +1058,10 @@ namespace TvPlugin
 
     void SetProperties()
     {
-      if (_channelList == null) return;
-      if (_channelList.Count == 0) return;
+      if (_channelList == null)
+        return;
+      if (_channelList.Count == 0)
+        return;
       int channel = _cursorX + _channelOffset;
       while (channel >= _channelList.Count) channel -= _channelList.Count;
       if (channel < 0) channel = 0;
@@ -1070,6 +1092,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.Guide.Classification", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Guide.Duration", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Guide.TimeFromNow", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.thumb", strLogo);
         _currentStartTime = 0;
         _currentEndTime = 0;
         _currentTitle = String.Empty;
@@ -1106,6 +1129,11 @@ namespace TvPlugin
         if (_currentProgram.Classification == "-") GUIPropertyManager.SetProperty("#TV.Guide.Classification", String.Empty);
         else GUIPropertyManager.SetProperty("#TV.Guide.Classification", _currentProgram.Classification);
         GUIPropertyManager.SetProperty("#TV.Guide.EpisodeDetail", _currentProgram.EpisodeDetails);
+        if (!System.IO.File.Exists(strLogo))
+        {
+          strLogo = "defaultVideoBig.png";
+        }
+        GUIPropertyManager.SetProperty("#TV.Guide.thumb", strLogo);
          */
         _currentStartTime = Utils.datetolong(_currentProgram.StartTime);
         _currentEndTime = Utils.datetolong(_currentProgram.EndTime);
@@ -1164,7 +1192,8 @@ namespace TvPlugin
             GUIButton3PartControl img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
             if (img != null)
             {
-              if (_showChannelLogos) img.TexutureIcon = strLogo;
+              if (_showChannelLogos)
+                img.TexutureIcon = strLogo;
               img.Label1 = tvChan.Name;
               img.IsVisible = true;
             }
@@ -1174,14 +1203,16 @@ namespace TvPlugin
             GUIButton3PartControl img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
             if (img != null)
             {
-              if (_showChannelLogos) img.TexutureIcon = "defaultVideoBig.png";
+              if (_showChannelLogos)
+                img.TexutureIcon = "defaultVideoBig.png";
               img.Label1 = tvChan.Name;
               img.IsVisible = true;
             }
           }
         }
         chan++;
-        if (chan >= _channelList.Count) chan = 0;
+        if (chan >= _channelList.Count)
+          chan = 0;
       }
 
       IList programs = new ArrayList();
@@ -1194,7 +1225,8 @@ namespace TvPlugin
       programs = layer.GetPrograms(channel, dtStart, dtEnd);
 
       _totalProgramCount = programs.Count;
-      if (_totalProgramCount == 0) _totalProgramCount = _channelCount;
+      if (_totalProgramCount == 0)
+        _totalProgramCount = _channelCount;
 
       GUILabelControl channelLabel = GetControl((int)Controls.SINGLE_CHANNEL_LABEL) as GUILabelControl;
       GUIImage channelImage = GetControl((int)Controls.SINGLE_CHANNEL_IMAGE) as GUIImage;
@@ -1413,7 +1445,8 @@ namespace TvPlugin
         GUIButton3PartControl img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
         if (img != null)
         {
-          if (_showChannelLogos) img.TexutureIcon = strLogo;
+          if (_showChannelLogos)
+            img.TexutureIcon = strLogo;
           img.Label1 = channel.Name;
           img.IsVisible = true;
         }
@@ -1423,7 +1456,8 @@ namespace TvPlugin
         GUIButton3PartControl img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
         if (img != null)
         {
-          if (_showChannelLogos) img.TexutureIcon = "defaultVideoBig.png";
+          if (_showChannelLogos)
+            img.TexutureIcon = "defaultVideoBig.png";
           img.Label1 = channel.Name;
           img.IsVisible = true;
         }
@@ -1503,7 +1537,8 @@ namespace TvPlugin
                 int iEndMin = _timePerBlock - (dtSpan.Minutes);
 
                 fWidthEnd = (((float)iEndMin) / ((float)_timePerBlock)) * ((float)(width));
-                if (bEndsAfter) fWidthEnd = (float)width;
+                if (bEndsAfter)
+                  fWidthEnd = (float)width;
               }
 
               if (iStartXPos == 0)
@@ -1511,10 +1546,12 @@ namespace TvPlugin
                 TimeSpan ts = program.StartTime - dtBlokStart;
                 int iStartMin = ts.Hours * 60;
                 iStartMin += ts.Minutes;
-                if (ts.Seconds == 59) iStartMin += 1;
+                if (ts.Seconds == 59)
+                  iStartMin += 1;
                 float fWidth = (((float)iStartMin) / ((float)_timePerBlock)) * ((float)(width));
 
-                if (bStartsBefore) fWidth = 0;
+                if (bStartsBefore)
+                  fWidth = 0;
 
                 iStartXPos = GetControl(iBlok + (int)Controls.LABEL_TIME1).XPosition;
                 iStartXPos += (int)fWidth;
@@ -1530,15 +1567,19 @@ namespace TvPlugin
 
           if (iStartXPos >= 0)
           {
-            if (iPreviousEndXPos > iStartXPos) iStartXPos = iPreviousEndXPos;
-            if (iEndXPos <= iStartXPos + 5) iEndXPos = iStartXPos + 6; // at least 1 pixel width
+            if (iPreviousEndXPos > iStartXPos)
+              iStartXPos = iPreviousEndXPos;
+            if (iEndXPos <= iStartXPos + 5)
+              iEndXPos = iStartXPos + 6; // at least 1 pixel width
 
             int ypos = GetControl(iChannel + (int)Controls.IMG_CHAN1).YPosition;
             int iControlId = 100 + iChannel * RowID + iProgram * ColID;
             GUIButton3PartControl img = (GUIButton3PartControl)GetControl(iControlId);
             int iWidth = iEndXPos - iStartXPos;
-            if (iWidth > 3) iWidth -= 3;
-            else iWidth = 1;
+            if (iWidth > 3)
+              iWidth -= 3;
+            else
+              iWidth = 1;
             if (img == null)
             {
               img = new GUIButton3PartControl(GetID, iControlId, iStartXPos, ypos, iWidth, height - 2,
@@ -1583,13 +1624,15 @@ namespace TvPlugin
                 img.TexutureIcon = Thumbs.TvRecordingIcon;
             }
 
-            img.Data = program;
+            img.Data = program.Clone();
             img.ColourDiffuse = GetColorForGenre(program.Genre);
             height = height - 10;
             height /= 2;
             iWidth = iEndXPos - iStartXPos;
-            if (iWidth > 10) iWidth -= 10;
-            else iWidth = 1;
+            if (iWidth > 10)
+              iWidth -= 10;
+            else
+              iWidth = 1;
 
             DateTime dt = DateTime.Now;
 
@@ -1680,8 +1723,10 @@ namespace TvPlugin
       {
         int iControlId = 100 + iChannel * RowID + iProgram * ColID;
         GUIControl cntl = GetControl(iControlId);
-        if (cntl != null && cntl.IsVisible) iProgramCount++;
-        else return iProgramCount;
+        if (cntl != null && cntl.IsVisible)
+          iProgramCount++;
+        else
+          return iProgramCount;
       }
       return iProgramCount;
     }
@@ -1689,7 +1734,8 @@ namespace TvPlugin
 
     void OnDown(bool updateScreen)
     {
-      if (updateScreen) UnFocus();
+      if (updateScreen)
+        UnFocus();
       if (_cursorX < 0)
       {
         _cursorY = 0;
@@ -1707,7 +1753,8 @@ namespace TvPlugin
         if (_cursorX + 1 < _channelCount)
         {
           _cursorX++;
-          if (updateScreen) Update(false);
+          if (updateScreen)
+            Update(false);
         }
         else
         {
@@ -1715,7 +1762,8 @@ namespace TvPlugin
           if (_cursorX + _programOffset + 1 < _totalProgramCount)
           {
             _programOffset++;
-            if (updateScreen) Update(false);
+            if (updateScreen)
+              Update(false);
           }
         }
         if (updateScreen)
@@ -1733,13 +1781,16 @@ namespace TvPlugin
         if (_cursorX + 1 < _channelCount)
         {
           _cursorX++;
-          if (updateScreen) Update(false);
+          if (updateScreen)
+            Update(false);
         }
         else
         {
           _channelOffset++;
-          if (_channelOffset > 0 && _channelOffset >= _channelList.Count) _channelOffset -= _channelList.Count;
-          if (updateScreen) Update(false);
+          if (_channelOffset > 0 && _channelOffset >= _channelList.Count)
+            _channelOffset -= _channelList.Count;
+          if (updateScreen)
+            Update(false);
         }
         if (updateScreen)
         {
@@ -1754,7 +1805,8 @@ namespace TvPlugin
       //      int iNewWidth=0;
       int iControlId = 100 + _cursorX * RowID + (_cursorY - 1) * ColID;
       GUIControl control = GetControl(iControlId);
-      if (control == null) return;
+      if (control == null)
+        return;
       iX1 = control.XPosition;
       iX2 = control.XPosition + control.Width;
 
@@ -1770,8 +1822,10 @@ namespace TvPlugin
         else
         {
           _channelOffset++;
-          if (_channelOffset > 0 && _channelOffset >= _channelList.Count) _channelOffset -= _channelList.Count;
-          if (updateScreen) Update(false);
+          if (_channelOffset > 0 && _channelOffset >= _channelList.Count)
+            _channelOffset -= _channelList.Count;
+          if (updateScreen)
+            Update(false);
         }
 
         for (int x = 1; x < ColID; x++)
@@ -1819,7 +1873,8 @@ namespace TvPlugin
 
     void OnUp(bool updateScreen)
     {
-      if (updateScreen) UnFocus();
+      if (updateScreen)
+        UnFocus();
       if (!_singleChannelView && _cursorY == 0 && _cursorX == 0 && _channelOffset == 0)
       {
         _cursorX = -1;
@@ -1855,13 +1910,15 @@ namespace TvPlugin
           if (_channelOffset > 0)
           {
             _channelOffset--;
-            if (updateScreen) Update(false);
+            if (updateScreen)
+              Update(false);
           }
         }
         else
         {
           _cursorX--;
-          if (updateScreen) Update(false);
+          if (updateScreen)
+            Update(false);
         }
         if (updateScreen)
         {
@@ -1876,7 +1933,8 @@ namespace TvPlugin
       int iX1, iX2;
       int iControlId = 100 + _cursorX * RowID + (_cursorY - 1) * ColID;
       GUIControl control = GetControl(iControlId);
-      if (control == null) return;
+      if (control == null)
+        return;
       iX1 = control.XPosition;
       iX2 = control.XPosition + control.Width;
 
@@ -1890,9 +1948,11 @@ namespace TvPlugin
           if (_channelOffset > 0)
           {
             _channelOffset--;
-            if (updateScreen) Update(false);
+            if (updateScreen)
+              Update(false);
           }
-          else break;
+          else
+            break;
         }
         else
         {
@@ -1938,6 +1998,7 @@ namespace TvPlugin
         {
           Correct();
           UpdateCurrentProgram();
+
           return;
         }
 
@@ -1949,7 +2010,8 @@ namespace TvPlugin
 
     void OnLeft()
     {
-      if (_cursorX < 0) return;
+      if (_cursorX < 0)
+        return;
       UnFocus();
       if (_cursorY == 0)
       {
@@ -1972,19 +2034,23 @@ namespace TvPlugin
         _cursorY--;
         Correct();
         UpdateCurrentProgram();
-        if (_currentProgram != null) m_dtStartTime = _currentProgram.StartTime;
+        if (_currentProgram != null)
+          m_dtStartTime = _currentProgram.StartTime;
         return;
       }
       Correct();
       Update(false);
       SetFocus();
-      if (_currentProgram != null) m_dtStartTime = _currentProgram.StartTime;
+      if (_currentProgram != null)
+        m_dtStartTime = _currentProgram.StartTime;
     }
 
     void UpdateCurrentProgram()
     {
-      if (_cursorX < 0) return;
-      if (_cursorY < 0) return;
+      if (_cursorX < 0)
+        return;
+      if (_cursorY < 0)
+        return;
       if (_cursorY == 0)
       {
         SetProperties();
@@ -2004,14 +2070,16 @@ namespace TvPlugin
 
     void OnRight()
     {
-      if (_cursorX < 0) return;
+      if (_cursorX < 0)
+        return;
       UnFocus();
       if (_cursorY < ProgramCount(_cursorX))
       {
         _cursorY++;
         Correct();
         UpdateCurrentProgram();
-        if (_currentProgram != null) m_dtStartTime = _currentProgram.StartTime;
+        if (_currentProgram != null)
+          m_dtStartTime = _currentProgram.StartTime;
         return;
       }
       else
@@ -2025,12 +2093,30 @@ namespace TvPlugin
       Correct();
       Update(false);
       SetFocus();
-      if (_currentProgram != null) m_dtStartTime = _currentProgram.StartTime;
+      if (_currentProgram != null)
+        m_dtStartTime = _currentProgram.StartTime;
+    }
+
+    void updateSingleChannelNumber()
+    {
+      // update selected channel 
+      if (!_singleChannelView)
+      {
+        _singleChannelNumber = _cursorX + _channelOffset;
+        if (_singleChannelNumber < 0)
+          _singleChannelNumber = 0;
+        if (_singleChannelNumber >= _channelList.Count)
+          _singleChannelNumber -= _channelList.Count;
+        GUIButton3PartControl img = (GUIButton3PartControl)GetControl(_cursorX + (int)Controls.IMG_CHAN1);
+        if (null != img)
+          _currentChannel = img.Label1;
+      }
     }
 
     void UnFocus()
     {
-      if (_cursorX < 0) return;
+      if (_cursorX < 0)
+        return;
       if (_cursorY == 0)
       {
         int controlid = (int)Controls.IMG_CHAN1 + _cursorX;
@@ -2051,7 +2137,8 @@ namespace TvPlugin
     }
     void SetFocus()
     {
-      if (_cursorX < 0) return;
+      if (_cursorX < 0)
+        return;
       if (_cursorY == 0)
       {
         GUIControl.UnfocusControl(GetID, (int)Controls.SPINCONTROL_DAY);
@@ -2086,9 +2173,12 @@ namespace TvPlugin
         {
           iControlId = 100 + _cursorX * RowID + (_cursorY - 1) * ColID;
           GUIControl cntl = GetControl(iControlId);
-          if (cntl == null) _cursorY--;
-          else if (!cntl.IsVisible) _cursorY--;
-          else break;
+          if (cntl == null)
+            _cursorY--;
+          else if (!cntl.IsVisible)
+            _cursorY--;
+          else
+            break;
         }
       }
       if (_cursorX < 0)
@@ -2099,9 +2189,12 @@ namespace TvPlugin
         {
           iControlId = 100 + _cursorX * RowID + (0) * ColID;
           GUIControl cntl = GetControl(iControlId);
-          if (cntl == null) _cursorX--;
-          else if (!cntl.IsVisible) _cursorX--;
-          else break;
+          if (cntl == null)
+            _cursorX--;
+          else if (!cntl.IsVisible)
+            _cursorX--;
+          else
+            break;
         }
       }
     }
@@ -2222,7 +2315,7 @@ namespace TvPlugin
         //
         if (File.Exists(_tvGuideFileName))
         {
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
             string strFileTime = System.IO.File.GetLastWriteTime(_tvGuideFileName).ToString();
             xmlreader.SetValue("tvguide", "date", strFileTime);
@@ -2255,11 +2348,12 @@ namespace TvPlugin
         {
           dlg.AddLocalizedString(264);// Record
         }
-        dlg.AddLocalizedString(937);// Reload tvguide
+        //dlg.AddLocalizedString(937);// Reload tvguide
         dlg.AddLocalizedString(971);// Group
 
         dlg.DoModal(GetID);
-        if (dlg.SelectedLabel == -1) return;
+        if (dlg.SelectedLabel == -1)
+          return;
         switch (dlg.SelectedId)
         {
           case 971: //group
@@ -2328,7 +2422,8 @@ namespace TvPlugin
     }
     void ShowProgramInfo()
     {
-      if (_currentProgram == null) return;
+      if (_currentProgram == null)
+        return;
 
       TVProgramInfo.CurrentProgram = _currentProgram;
       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
@@ -2336,10 +2431,12 @@ namespace TvPlugin
 
     void OnSelectItem(bool isItemSelected)
     {
-      if (_currentProgram == null) return;
+      if (_currentProgram == null)
+        return;
       if (isItemSelected)
       {
-        if (_currentProgram.IsRunningAt(DateTime.Now) || _currentProgram.EndTime <= DateTime.Now)
+        if (_currentProgram.IsRunningAt(DateTime.Now) ||
+            _currentProgram.EndTime <= DateTime.Now)
         {
           //view this channel
           if (g_Player.Playing && g_Player.IsTVRecording)
@@ -2376,7 +2473,7 @@ namespace TvPlugin
                     return;
                   if (_recordingList != null)
                   {
-                    Log.Info("TVGuide: Found current program {0} in recording list", _currentTitle);
+                    Log.Debug("TVGuide: Found current program {0} in recording list", _currentTitle);
                     switch (dlg.SelectedId)
                     {
                       case 979: // Play recording from beginning 
@@ -2469,7 +2566,8 @@ namespace TvPlugin
     /// </summary>
     void OnRecordContext()
     {
-      if (_currentProgram == null) return;
+      if (_currentProgram == null)
+        return;
       ShowProgramInfo();
     }
 
@@ -2480,7 +2578,8 @@ namespace TvPlugin
     void OnPageUp()
     {
       UnFocus();
-      for (int i = 0; i < _channelCount; ++i) OnUp(false);
+      for (int i = 0; i < _channelCount; ++i)
+        OnUp(false);
       Correct();
       Update(false);
       SetFocus();
@@ -2488,7 +2587,8 @@ namespace TvPlugin
     void OnPageDown()
     {
       UnFocus();
-      for (int i = 0; i < _channelCount; ++i) OnDown(false);
+      for (int i = 0; i < _channelCount; ++i)
+        OnDown(false);
       Correct();
       Update(false);
       SetFocus();
@@ -2531,7 +2631,8 @@ namespace TvPlugin
 
     void OnKeyTimeout()
     {
-      if (_lineInput.Length == 0) return;
+      if (_lineInput.Length == 0)
+        return;
       TimeSpan ts = DateTime.Now - _keyPressedTimer;
       if (ts.TotalMilliseconds >= 1000)
       {
@@ -2552,7 +2653,8 @@ namespace TvPlugin
           _lineInput = String.Empty;
         }
         _keyPressedTimer = DateTime.Now;
-        if (chKey == '0' && _lineInput.Length == 0) return;
+        if (chKey == '0' && _lineInput.Length == 0)
+          return;
         _lineInput += chKey;
         if (_lineInput.Length == 2)
         {
@@ -2640,10 +2742,11 @@ namespace TvPlugin
 
     private void UpdateVerticalScrollbar()
     {
-      if (_channelList == null) return;
-      if (_channelList.Count == 0) return;
+      if (_channelList == null || _channelList.Count == 0)
+        return;
       int channel = _cursorX + _channelOffset;
-      while (channel > 0 && channel >= _channelList.Count) channel -= _channelList.Count;
+      while (channel > 0 && channel >= _channelList.Count)
+        channel -= _channelList.Count;
       float current = (float)(_cursorX + _channelOffset);
       float total = (float)_channelList.Count;
 
@@ -2652,11 +2755,14 @@ namespace TvPlugin
         current = (float)(_cursorX + _channelOffset);
         total = (float)_totalProgramCount;
       }
-      if (total == 0) total = _channelCount;
+      if (total == 0)
+        total = _channelCount;
 
       float percentage = (current / total) * 100.0f;
-      if (percentage < 0) percentage = 0;
-      if (percentage > 100) percentage = 100;
+      if (percentage < 0)
+        percentage = 0;
+      if (percentage > 100)
+        percentage = 100;
       GUIverticalScrollbar scrollbar = GetControl((int)Controls.VERT_SCROLLBAR) as GUIverticalScrollbar;
       if (scrollbar != null)
       {
@@ -2673,9 +2779,12 @@ namespace TvPlugin
         float percentage = (float)_viewingTime.Hour * 60 + _viewingTime.Minute + (float)_timePerBlock * ((float)_viewingTime.Hour / 24.0f);
         percentage /= (24.0f * 60.0f);
         percentage *= 100.0f;
-        if (percentage < 0) percentage = 0;
-        if (percentage > 100) percentage = 100;
-        if (_singleChannelView) percentage = 0;
+        if (percentage < 0)
+          percentage = 0;
+        if (percentage > 100)
+          percentage = 100;
+        if (_singleChannelView)
+          percentage = 0;
 
         if ((int)percentage != (int)scrollbar.Percentage)
         {
@@ -2879,7 +2988,6 @@ namespace TvPlugin
         channelImage.Visible = visible;
 
     }
-
 
   }
 }

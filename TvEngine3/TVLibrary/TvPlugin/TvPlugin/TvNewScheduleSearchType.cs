@@ -1,7 +1,6 @@
-#region Copyright (C) 2005-2006 Team MediaPortal
-
+#region Copyright (C) 2005-2007 Team MediaPortal
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -43,18 +42,13 @@ namespace TvPlugin
 {
   public class TvNewScheduleSearchType : GUIWindow
   {
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnQuickRecord = null;
-    [SkinControlAttribute(3)]
-    protected GUIButtonControl btnAdvancedRecord = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnTvGuide = null;
-    [SkinControlAttribute(7)]
-    protected GUIButtonControl btnSearchTitle = null;
-    [SkinControlAttribute(8)]
-    protected GUIButtonControl btnSearchKeyword = null;
-    [SkinControlAttribute(9)]
-    protected GUIButtonControl btnSearchGenre = null;
+    [SkinControlAttribute(2)]    protected GUIButtonControl btnQuickRecord = null;
+    [SkinControlAttribute(3)]    protected GUIButtonControl btnAdvancedRecord = null;
+    [SkinControlAttribute(6)]    protected GUIButtonControl btnTvGuide = null;
+    [SkinControlAttribute(7)]    protected GUIButtonControl btnSearchTitle = null;
+    [SkinControlAttribute(8)]    protected GUIButtonControl btnSearchKeyword = null;
+    [SkinControlAttribute(9)]    protected GUIButtonControl btnSearchGenre = null;
+
     public TvNewScheduleSearchType()
     {
       Log.Info("newsearch ctor");
@@ -71,6 +65,7 @@ namespace TvPlugin
         return true;
       }
     }
+
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvschedulerserverSearchType.xml");
@@ -90,6 +85,7 @@ namespace TvPlugin
       }
       base.OnAction(action);
     }
+
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == btnSearchTitle)
@@ -128,6 +124,7 @@ namespace TvPlugin
       }
       base.OnClicked(controlId, control, actionType);
     }
+
     void OnQuickRecord()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);

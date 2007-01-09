@@ -1,7 +1,6 @@
-#region Copyright (C) 2005-2006 Team MediaPortal
-
+#region Copyright (C) 2005-2007 Team MediaPortal
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -54,10 +53,8 @@ namespace TvPlugin
 
     #region variables
     static SearchType _searchType = SearchType.Title;
-    [SkinControlAttribute(50)]
-    protected GUIListControl listResults = null;
-    [SkinControlAttribute(51)]
-    protected GUISMSInputControl smsInputControl = null;
+    [SkinControlAttribute(50)]    protected GUIListControl listResults = null;
+    [SkinControlAttribute(51)]    protected GUISMSInputControl smsInputControl = null;
     public string _searchKeyword = "";
     public bool _refreshList = false;
     #endregion

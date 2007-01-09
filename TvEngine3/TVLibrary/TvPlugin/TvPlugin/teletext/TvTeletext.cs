@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2007 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -31,6 +35,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.Player;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Pictures;
 
 using TvDatabase;
@@ -44,22 +49,14 @@ namespace TvPlugin
   /// </summary>
   public class TVTeletext : GUIWindow
   {
-    [SkinControlAttribute(27)]
-    protected GUILabelControl lblMessage = null;
-    [SkinControlAttribute(500)]
-    protected GUIImage imgTeletextPage = null;
-    [SkinControlAttribute(502)]
-    protected GUIButtonControl btnPage100 = null;
-    [SkinControlAttribute(503)]
-    protected GUIButtonControl btnPage200 = null;
-    [SkinControlAttribute(504)]
-    protected GUIButtonControl btnPage300 = null;
-    [SkinControlAttribute(505)]
-    protected GUIToggleButtonControl btnHidden = null;
-    [SkinControlAttribute(506)]
-    protected GUISelectButtonControl btnSubPage = null;
-    [SkinControlAttribute(507)]
-    protected GUIButtonControl btnFullscreen = null;
+		[SkinControlAttribute(27)]				protected GUILabelControl lblMessage=null;
+		[SkinControlAttribute(500)]				protected GUIImage imgTeletextPage=null;
+		[SkinControlAttribute(502)]				protected GUIButtonControl btnPage100=null;
+		[SkinControlAttribute(503)]				protected GUIButtonControl btnPage200=null;
+		[SkinControlAttribute(504)]				protected GUIButtonControl btnPage300=null;
+		[SkinControlAttribute(505)]				protected GUIToggleButtonControl btnHidden=null;
+		[SkinControlAttribute(506)]				protected GUISelectButtonControl btnSubPage=null;
+    [SkinControlAttribute(507)]       protected GUIButtonControl btnFullscreen = null;
 
     Bitmap bitmapTeletextPage;
     string inputLine = "";
@@ -98,14 +95,14 @@ namespace TvPlugin
     #region Serialisation
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
       }
     }
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
       }
     }

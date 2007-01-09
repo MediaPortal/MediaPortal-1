@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2006 Team MediaPortal
+#region Copyright (C) 2005-2007 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.Player;
-
+using MediaPortal.Configuration;
 
 using TvDatabase;
 using TvControl;
@@ -99,7 +99,7 @@ namespace TvPlugin
     #region Serialisation
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string strTmp = String.Empty;
         strTmp = (string)xmlreader.GetValue("tvscheduler", "sort");
@@ -115,7 +115,7 @@ namespace TvPlugin
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         switch (currentSortMethod)
         {

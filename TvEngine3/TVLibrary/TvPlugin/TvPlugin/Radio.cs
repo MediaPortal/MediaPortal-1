@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2006 Team MediaPortal
+#region Copyright (C) 2005-2007 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -28,7 +28,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Globalization;
+
 using MediaPortal;
+using MediaPortal.Configuration;
 using MediaPortal.Player;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -55,20 +57,13 @@ namespace TvPlugin
   /// </summary>
   public class Radio : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]
-    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnPrevious = null;
-    [SkinControlAttribute(7)]
-    protected GUIButtonControl btnNext = null;
-    [SkinControlAttribute(50)]
-    protected GUIListControl listView = null;
-    [SkinControlAttribute(51)]
-    protected GUIThumbnailPanel thumbnailView = null;
-
-
+    [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(6)]    protected GUIButtonControl btnPrevious = null;
+    [SkinControlAttribute(7)]    protected GUIButtonControl btnNext = null;
+    [SkinControlAttribute(50)]   protected GUIListControl listView = null;
+    [SkinControlAttribute(51)]   protected GUIThumbnailPanel thumbnailView = null;
+    
     enum SortMethod
     {
       Name = 0,
@@ -142,7 +137,7 @@ namespace TvPlugin
     #region Serialisation
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         currentRadioFolder = xmlreader.GetValueAsString("radio", "folder", String.Empty);
 
@@ -172,7 +167,7 @@ namespace TvPlugin
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         switch (currentView)
         {

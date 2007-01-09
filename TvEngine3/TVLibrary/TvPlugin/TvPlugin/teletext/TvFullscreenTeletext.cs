@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2007 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -32,6 +36,7 @@ using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using MediaPortal.GUI.Pictures;
+using MediaPortal.Configuration;
 
 using TvDatabase;
 using Gentle.Common;
@@ -88,14 +93,14 @@ namespace TvPlugin
     #region Serialisation
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
       }
     }
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
       }
     }

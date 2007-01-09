@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2006 Team MediaPortal
+#region Copyright (C) 2005-2007 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -210,7 +210,7 @@ namespace TvPlugin
     {
       if (_settingsLoaded) return;
       _settingsLoaded = true;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_navigator.LoadSettings(xmlreader);
         _autoTurnOnTv = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
@@ -229,7 +229,7 @@ namespace TvPlugin
     {
       if (m_navigator != null)
       {
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           m_navigator.SaveSettings(xmlwriter);
         }

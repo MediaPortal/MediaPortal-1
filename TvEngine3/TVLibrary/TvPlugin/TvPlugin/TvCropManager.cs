@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2006 Team MediaPortal
+#region Copyright (C) 2005-2007 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -30,17 +30,16 @@ using System.Threading;
 using System.Text;
 using System.Collections.Generic;
 
-using MediaPortal.Player;
 using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
+using MediaPortal.Player;
 
 #endregion
-
 
 namespace TvPlugin
 {
   class TvCropManager
   {
-
     #region Ctor/Dtor
 
     public TvCropManager()
@@ -60,7 +59,7 @@ namespace TvPlugin
     {
       get
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           CropSettings cropSettings = new CropSettings(
                                            xmlreader.GetValueAsInt("tv", "croptop", 0),
@@ -74,7 +73,7 @@ namespace TvPlugin
       set
       {
         CropSettings cropSettings = value;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           xmlwriter.SetValue("tv", "croptop", cropSettings.Top);
           xmlwriter.SetValue("tv", "cropbottom", cropSettings.Bottom);

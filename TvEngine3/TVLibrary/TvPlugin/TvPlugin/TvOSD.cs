@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2006 Team MediaPortal
+#region Copyright (C) 2005-2007 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -1080,6 +1080,7 @@ namespace TvPlugin
       string strActiveLabel = GUILocalizeStrings.Get(461);		// "[active]"
 
       // cycle through each subtitle and add it to our list control
+      int currentSubtitleStream = g_Player.CurrentSubtitleStream;
       for (int i = 0; i < iValue; ++i)
       {
         string strItem;
@@ -1388,14 +1389,14 @@ namespace TvPlugin
       if (previousProgram == null)
       {
         m_dateTime = DateTime.Now;
-        previousProgram = prog;
+        previousProgram = prog.Clone();
         ShowPrograms();
         updateProperties = true;
       }
       else if (previousProgram.StartTime != prog.StartTime || previousProgram.IdChannel != prog.IdChannel)
       {
         m_dateTime = DateTime.Now;
-        previousProgram = prog;
+        previousProgram = prog.Clone();
         ShowPrograms();
         updateProperties = true;
       }

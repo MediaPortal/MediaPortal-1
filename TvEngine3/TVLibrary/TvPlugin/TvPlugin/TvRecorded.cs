@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2006 Team MediaPortal
+#region Copyright (C) 2005-2007 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -119,6 +119,7 @@ namespace TvPlugin
     SortMethod currentSortMethod = SortMethod.Date;
     bool m_bSortAscending = true;
     bool _deleteWatchedShows = false;
+    bool _createRecordedThumbs = true;
     int m_iSelectedItem = 0;
     string currentShow = String.Empty;
     //bool _creatingThumbNails = false;
@@ -181,6 +182,7 @@ namespace TvPlugin
 
         m_bSortAscending = xmlreader.GetValueAsBool("tvrecorded", "sortascending", true);
         _deleteWatchedShows = xmlreader.GetValueAsBool("capture", "deletewatchedshows", false);
+        _createRecordedThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
       }
       thumbworker = null;
     }
@@ -332,7 +334,10 @@ namespace TvPlugin
       //if (GlobalServiceProvider.Get<IThreadPool>().BusyThreadCount == 0)
       //{
       if (thumbworker == null)
-        thumbworker = new RecordingThumbCacher();
+      {
+        if (_createRecordedThumbs)
+          thumbworker = new RecordingThumbCacher();
+      }
       else
         Log.Debug("GUIRecordedTV: thumbworker already running - didn't start another one");
       //}
@@ -364,6 +369,7 @@ namespace TvPlugin
         LoadDirectory();
       }
 
+
       if (control == btnSortBy) // sort by
       {
         switch (currentSortMethod)
@@ -390,10 +396,13 @@ namespace TvPlugin
         OnSort();
       }
 
+
       if (control == btnCleanup)
       {
         OnDeleteWatchedRecordings();
       }
+
+
       if (control == listAlbums || control == listViews)
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0, null);
@@ -445,24 +454,18 @@ namespace TvPlugin
       switch (dlg.SelectedId)
       {
         case 656: // delete
-          {
             OnDeleteRecording(iItem);
-          }
-          break;
+            break;
 
         case 655: // play
-          {
             if (OnPlayRecording(iItem))
               return;
-          }
-          break;
+            break;
 
         case 1048: // Settings
-          {
             TvRecordedInfo.CurrentProgram = rec;
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_RECORDED_INFO, true);
-          }
-          break;
+            break;
 
         //case 830: // Reset watched status
         //  {
@@ -1190,38 +1193,5 @@ namespace TvPlugin
       m_bSortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
       OnSort();
     }
-
-    //void CreateThumbnails()
-    //{
-    //if (_creatingThumbNails) return;
-    //Thread WorkerThread = new Thread(new ThreadStart(WorkerThreadFunction));
-    //WorkerThread.SetApartmentState(ApartmentState.STA);
-    //WorkerThread.IsBackground = true;
-    //WorkerThread.Priority = ThreadPriority.BelowNormal;
-    //WorkerThread.Start();
-    //}
-
-    //void WorkerThreadFunction()
-    //{
-    //if (_creatingThumbNails) return;
-    //try
-    //{
-    //  _creatingThumbNails = true;
-    //  List<TVRecorded> recordings = new List<TVRecorded>();
-    //  TVDatabase.GetRecordedTV(ref recordings);
-    //  foreach (TVRecorded rec in recordings)
-    //  {
-    //    string thumbNail = Utils.GetCoverArt(Thumbs.TVRecorded, System.IO.Path.ChangeExtension(rec.FileName, Utils.GetThumbExtension()));
-    //    if (!System.IO.File.Exists(thumbNail))
-    //    {
-    //      DvrMsImageGrabber.GrabFrame(rec.FileName, thumbNail);
-    //    }
-    //  }
-    //}
-    //finally
-    //{
-    //  _creatingThumbNails = false;
-    //}
-    //}
   }
 }

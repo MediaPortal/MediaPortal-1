@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2006 Team MediaPortal
+#region Copyright (C) 2005-2007 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -54,14 +54,10 @@ namespace TvPlugin
   /// </summary>
   public class TvRecordingSettings : GUIWindow
   {
-    [SkinControlAttribute(4)]
-    protected GUICheckMarkControl cbAutoDeleteRecordings = null;
-    [SkinControlAttribute(5)]
-    protected GUICheckMarkControl cbAddRecordingsToDbs = null;
-    [SkinControlAttribute(27)]
-    protected GUISpinControl spinPreRecord = null;
-    [SkinControlAttribute(30)]
-    protected GUISpinControl spinPostRecord = null;
+    [SkinControlAttribute(4)]    protected GUICheckMarkControl cbAutoDeleteRecordings = null;
+    [SkinControlAttribute(5)]    protected GUICheckMarkControl cbAddRecordingsToDbs = null;
+    [SkinControlAttribute(27)]   protected GUISpinControl spinPreRecord = null;
+    [SkinControlAttribute(30)]   protected GUISpinControl spinPostRecord = null;
 
     public TvRecordingSettings()
     {

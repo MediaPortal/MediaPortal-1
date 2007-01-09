@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2006 Team MediaPortal
+#region Copyright (C) 2005-2007 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -43,33 +43,20 @@ namespace TvPlugin
   /// </summary>
   public class TVProgramInfo : GUIWindow
   {
-    [SkinControlAttribute(17)]
-    protected GUILabelControl lblProgramGenre = null;
-    [SkinControlAttribute(15)]
-    protected GUITextScrollUpControl lblProgramDescription = null;
-    [SkinControlAttribute(14)]
-    protected GUILabelControl lblProgramTime = null;
-    [SkinControlAttribute(13)]
-    protected GUIFadeLabel lblProgramTitle = null;
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnRecord = null;
-    [SkinControlAttribute(3)]
-    protected GUIButtonControl btnAdvancedRecord = null;
-    [SkinControlAttribute(4)]
-    protected GUIButtonControl btnKeep = null;
-    [SkinControlAttribute(5)]
-    protected GUIToggleButtonControl btnNotify = null;
-    [SkinControlAttribute(10)]
-    protected GUIListControl lstUpcomingEpsiodes = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnQuality = null;
-    [SkinControlAttribute(7)]
-    protected GUIButtonControl btnEpisodes = null;
-    [SkinControlAttribute(8)]
-    protected GUIButtonControl btnPreRecord = null;
-    [SkinControlAttribute(9)]
-    protected GUIButtonControl btnPostRecord = null;
-
+    [SkinControlAttribute(17)]     protected GUILabelControl lblProgramGenre = null;
+    [SkinControlAttribute(15)]     protected GUITextScrollUpControl lblProgramDescription = null;
+    [SkinControlAttribute(14)]     protected GUILabelControl lblProgramTime = null;
+    [SkinControlAttribute(13)]     protected GUIFadeLabel lblProgramTitle = null;
+    [SkinControlAttribute(16)]     protected GUIFadeLabel lblProgramChannel = null;
+    [SkinControlAttribute(2)]      protected GUIButtonControl btnRecord = null;
+    [SkinControlAttribute(3)]      protected GUIButtonControl btnAdvancedRecord = null;
+    [SkinControlAttribute(4)]      protected GUIButtonControl btnKeep = null;
+    [SkinControlAttribute(5)]      protected GUIToggleButtonControl btnNotify = null;
+    [SkinControlAttribute(10)]     protected GUIListControl lstUpcomingEpsiodes = null;
+    [SkinControlAttribute(6)]      protected GUIButtonControl btnQuality = null;
+    [SkinControlAttribute(7)]      protected GUIButtonControl btnEpisodes = null;
+    [SkinControlAttribute(8)]      protected GUIButtonControl btnPreRecord = null;
+    [SkinControlAttribute(9)]      protected GUIButtonControl btnPostRecord = null;
     static Program currentProgram = null;
 
     public TVProgramInfo()
@@ -85,6 +72,7 @@ namespace TvPlugin
       PreInit();
       ResetAllControls();
     }
+
     public override bool IsTv
     {
       get
@@ -92,11 +80,13 @@ namespace TvPlugin
         return true;
       }
     }
+
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvprogram.xml");
       return bResult;
     }
+
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
@@ -108,6 +98,7 @@ namespace TvPlugin
       get { return currentProgram; }
       set { currentProgram = value; }
     }
+
     static public Schedule CurrentRecording
     {
       set
@@ -411,13 +402,15 @@ namespace TvPlugin
         if (recordingSchedule.ScheduleType != (int)ScheduleRecordingType.Once)
         {
           GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-          if (dlg == null) return;
+          if (dlg == null)
+            return;
           dlg.Reset();
           dlg.SetHeading(program.Title);
           dlg.AddLocalizedString(981);//Delete this recording
           dlg.AddLocalizedString(982);//Delete series recording
           dlg.DoModal(GetID);
-          if (dlg.SelectedLabel == -1) return;
+          if (dlg.SelectedLabel == -1)
+            return;
           switch (dlg.SelectedId)
           {
             case 981: //Delete this recording only
@@ -474,7 +467,8 @@ namespace TvPlugin
 
     void OnAdvancedRecord()
     {
-      if (currentProgram == null) return;
+      if (currentProgram == null)
+        return;
 
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg != null)

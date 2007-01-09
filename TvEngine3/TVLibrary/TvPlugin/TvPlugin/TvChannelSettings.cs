@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2006 Team MediaPortal
+#region Copyright (C) 2005-2007 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -51,10 +51,8 @@ namespace TvPlugin
 {
   public class ChannelSettings : GUIWindow, IComparer<Channel>
   {
-    [SkinControlAttribute(24)]
-    protected GUIButtonControl btnTvGroup = null;
-    [SkinControlAttribute(10)]
-    protected GUIUpDownListControl listChannels = null;
+    [SkinControlAttribute(24)]    protected GUIButtonControl btnTvGroup = null;
+    [SkinControlAttribute(10)]    protected GUIUpDownListControl listChannels = null;
 
     ChannelGroup _currentGroup = null;
     public ChannelSettings()
@@ -66,6 +64,7 @@ namespace TvPlugin
     {
       return Load(GUIGraphicsContext.Skin + @"\settings_tvSort.xml");
     }
+
     public override void OnAdded()
     {
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_SETTINGS_SORT_CHANNELS, this);
@@ -73,12 +72,14 @@ namespace TvPlugin
       PreInit();
       ResetAllControls();
     }
+
     protected override void OnPageLoad()
     {
       _currentGroup = null;
       base.OnPageLoad();
       UpdateList();
     }
+
     protected override void OnPageDestroy(int new_windowId)
     {
       base.OnPageDestroy(new_windowId);
