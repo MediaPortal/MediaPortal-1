@@ -862,7 +862,11 @@ namespace MediaPortal.GUI.RADIOLASTFM
       GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", thumb);
 
       if (imgArtistArt != null)
+      {
+        imgArtistArt.FreeResources();
         imgArtistArt.SetFileName(thumb);
+        imgArtistArt.AllocResources();
+      }
     }
     #endregion
 

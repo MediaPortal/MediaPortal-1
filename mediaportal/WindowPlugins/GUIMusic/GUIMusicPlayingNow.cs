@@ -445,6 +445,7 @@ namespace MediaPortal.GUI.Music
 
       if (ImgCoverArt != null)
       {
+        ImgCoverArt.FreeResources();
         if (ImagePathContainer.Count > 0)
         {
           if (ImagePathContainer.Count > 1)
@@ -466,6 +467,7 @@ namespace MediaPortal.GUI.Music
           else
             ImgCoverArt.SetFileName(ImagePathContainer[0]);
         }
+        ImgCoverArt.AllocResources();
       }
     }
 
