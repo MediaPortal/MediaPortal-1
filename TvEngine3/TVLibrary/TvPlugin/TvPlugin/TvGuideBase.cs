@@ -2518,10 +2518,47 @@ namespace TvPlugin
             }
             else
             {
-              TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
-              if (g_Player.Playing)
+              // clicked the show we're currently watching
+              if (TVHome.Navigator.CurrentChannel == _currentChannel)
               {
-                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                Log.Debug("TVGuide: clicked on a currently running show");
+                GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+                if (dlg == null)
+                  return;
+
+                dlg.Reset();
+                dlg.SetHeading(_currentProgram.Title);
+                dlg.AddLocalizedString(938);  //View this channel
+                dlg.AddLocalizedString(1041); //Upcoming episodes
+                dlg.DoModal(GetID);
+
+                if (dlg.SelectedLabel == -1)
+                  return;
+
+                switch (dlg.SelectedId)
+                {
+                  case 1041:
+                    ShowProgramInfo();
+                    Log.Debug("TVGuide: show episodes or repeatings for current show");
+                    break;
+                  case 938:
+                    Log.Debug("TVGuide: switch currently running show to fullscreen");
+                    TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
+                    if (g_Player.Playing)
+                      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                    else
+                      Log.Debug("TVGuide: no show currently running to switch to fullscreen");
+                    break;
+                }
+              }
+              else
+              {
+                // zap to selected show's channel
+                TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
+                if (g_Player.Playing)
+                {
+                  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                }
               }
             }
           }
