@@ -303,7 +303,7 @@ namespace SetupTv.Sections
         if (detail.ChannelType == 0)
         {
           detail.ChannelNumber = Int32.Parse(textBoxChannel.Text);
-          detail.CountryId = countries.Countries[comboBoxCountry.SelectedIndex].Id;
+          detail.CountryId =  comboBoxCountry.SelectedIndex;
           if (comboBoxInput.SelectedIndex == 1)
             detail.TuningSource = (int)TunerInputType.Cable;
           else
@@ -438,7 +438,7 @@ namespace SetupTv.Sections
           if (detail.TuningSource == (int)TunerInputType.Cable)
             comboBoxInput.SelectedIndex = 1;
           CountryCollection collection = new CountryCollection();
-          comboBoxCountry.SelectedIndex = collection.GetTunerCountryFromID(detail.CountryId).Index;
+          comboBoxCountry.SelectedIndex = detail.CountryId;
           comboBoxVideoSource.SelectedIndex = detail.VideoSource;
           textBoxAnalogFrequency.Text = SetFrequency(detail.Frequency);
         }

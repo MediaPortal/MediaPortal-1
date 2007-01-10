@@ -799,7 +799,7 @@ namespace SetupTv.Sections
               case 0: //AnalogChannel
                 AnalogChannel analogChannel = new AnalogChannel();
                 analogChannel.ChannelNumber = channelNumber;
-                analogChannel.Country = collection.GetTunerCountryFromID(countryId);
+                analogChannel.Country = collection.Countries[countryId];
                 analogChannel.Frequency = frequency;
                 analogChannel.IsRadio = isRadio;
                 analogChannel.IsTv = isTv;

@@ -190,7 +190,6 @@ namespace TvService
     public void LockCard(int cardId, User user)
     {
       _cardsInUse[cardId] = user;
-      Log.Info("card:{0} locked by:{1}", cardId, user.Name);
     }
 
     /// <summary>
@@ -201,7 +200,6 @@ namespace TvService
     {
       if (false == _cardsInUse.ContainsKey(cardId)) return;
       _cardsInUse.Remove(cardId);
-      Log.Info("card:{0} unlocked", cardId);
     }
 
 
@@ -357,7 +355,7 @@ namespace TvService
             if (_localCards.ContainsKey(card.IdCard))
             {
               _localCards[card.IdCard].IsHybrid = true;
-              hybridCard.Add(_localCards[card.IdCard]);
+              hybridCard.Add(card.IdCard,_localCards[card.IdCard]);
               _localCards[card.IdCard] = hybridCard;
             }
           }

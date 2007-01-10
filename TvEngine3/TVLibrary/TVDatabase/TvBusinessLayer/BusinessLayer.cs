@@ -450,7 +450,7 @@ namespace TvDatabase
         channelName = analogChannel.Name;
         channelFrequency = analogChannel.Frequency;
         channelNumber = analogChannel.ChannelNumber;
-        country = analogChannel.Country.Id;
+        country = analogChannel.Country.Index;
         isRadio = analogChannel.IsRadio;
         isTv = analogChannel.IsTv;
         tunerSource = (int)analogChannel.TunerSource;

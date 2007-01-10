@@ -38,16 +38,28 @@ namespace TvLibrary.Implementations.Hybrid
   public class HybridCard : ITVCard
   {
     List<ITVCard> _cards = new List<ITVCard>();
+    List<int> _idCards = new List<int>();
     int _currentCardIndex = 0;
+    protected bool _isHybrid = false;
 
     public HybridCard()
     {
     }
     
-    protected bool _isHybrid = false;
-    public void Add(ITVCard card)
+
+    public void Add(int idCard,ITVCard card)
     {
+      _idCards.Add(idCard);
       _cards.Add(card);
+    }
+
+    public bool Contains(int idCard)
+    {
+      for (int i = 0; i < _idCards.Count; ++i)
+      {
+        if (_idCards[i] == idCard) return true;
+      }
+      return false;
     }
 
     public int Count
