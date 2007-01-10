@@ -267,7 +267,7 @@ namespace MediaPortal.Player
         if (strAudioCodec.Length > 0)
           _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
         if (strAudioRenderer.Length > 0)
-          _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, false);
+          _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, true);
         if (enableDvbSubtitles == true)
           _subtitleFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal DVBSub");
 

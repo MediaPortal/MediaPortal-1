@@ -241,7 +241,10 @@ namespace MediaPortal.Util
     /// </returns>
     public string ToDXString()
     {
-      return String.Format("{0} - Error: {1}, Description:{2}", this.ToString(), DXErrorString, DXErrorDescription);
+      if(_hresult == 0)
+        return String.Format("No DX Error");
+      else
+        return String.Format("DX Error: {0} - Error: {1}, Description:{2}", this.ToString(), DXErrorString, DXErrorDescription);
     }
 
     /// <summary>
@@ -260,6 +263,39 @@ namespace MediaPortal.Util
         return false;
 
     }
+
+    public static bool operator <(HResult a, int b)
+    {
+      if (a._hresult < b)
+        return true;
+      else 
+        return false;
+    }
+
+    public static bool operator > (HResult a, int b)
+    {
+      if (a._hresult > b)
+        return true;
+      else
+        return false;
+    }
+    public static bool operator <= (HResult a, int b)
+    {
+      if (a._hresult <= b)
+        return true;
+      else
+        return false;
+    }
+
+    public static bool operator >= (HResult a, int b)
+    {
+      if (a._hresult >= b)
+        return true;
+      else
+        return false;
+    }
+
+
 
     /// <summary>
     /// Operator !=s the specified a.
