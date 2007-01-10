@@ -32,6 +32,7 @@ using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations.Analog;
 using TvLibrary.Implementations.DVB;
+using TvLibrary.Implementations.Hybrid;
 using TvLibrary.Channels;
 using TvLibrary.Epg;
 using TvLibrary.Log;
@@ -341,6 +342,23 @@ namespace TvService
                 _localCards[card.IdCard] = localCardCollection.Cards[x];
                 break;
               }
+            }
+          }
+        }
+
+        Log.WriteFile("Controller: setup hybrid cards");
+        IList cardgroups = CardGroup.ListAll();
+        foreach (CardGroup group in cardgroups)
+        {
+          IList cards = group.CardGroupMaps();
+          HybridCard hybridCard = new HybridCard();
+          foreach (CardGroupMap card in cards)
+          {
+            if (_localCards.ContainsKey(card.IdCard))
+            {
+              _localCards[card.IdCard].IsHybrid = true;
+              hybridCard.Add(_localCards[card.IdCard]);
+              _localCards[card.IdCard] = hybridCard;
             }
           }
         }

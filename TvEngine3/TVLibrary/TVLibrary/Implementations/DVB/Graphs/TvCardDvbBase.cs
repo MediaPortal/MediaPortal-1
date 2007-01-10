@@ -1323,16 +1323,16 @@ namespace TvLibrary.Implementations.DVB
       {
         Release.ComObject("MDAPI filter", _mdapiFilter); _mdapiFilter = null;
       }
-#if MULTI_DEMUX
-      if (_filterMpeg2DemuxTs != null)
+
+       
+      if (_filterMpeg2DemuxTif != null)
       {
-        Release.ComObject("MPG MPEG2 demux filter", _filterMpeg2DemuxTs); _filterMpeg2DemuxTs = null;
+        Release.ComObject("_filterMpeg2DemuxTif filter", _filterMpeg2DemuxTif); _filterMpeg2DemuxTif = null;
       }
-      if (_filterMpeg2DemuxAnalyzer != null)
+      if (_filterNetworkProvider != null)
       {
-        Release.ComObject("Analyzer MPEG2 demux filter", _filterMpeg2DemuxAnalyzer); _filterMpeg2DemuxAnalyzer = null;
+        Release.ComObject("_filterNetworkProvider filter", _filterNetworkProvider); _filterNetworkProvider = null;
       }
-#endif
 
       if (_infTeeMain != null)
       {
@@ -1349,11 +1349,13 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_filterTuner != null)
       {
-        Release.ComObject("tuner filter", _filterTuner); _filterTuner = null;
+        while (Marshal.ReleaseComObject(_filterTuner) > 0) ;
+         _filterTuner = null;
       }
       if (_filterCapture != null)
       {
-        Release.ComObject("capture filter", _filterCapture); _filterCapture = null;
+        while (Marshal.ReleaseComObject(_filterCapture) > 0) ;
+        _filterCapture = null;
       }
       if (_filterTIF != null)
       {
@@ -1385,6 +1387,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("  free devices...");
       if (_tunerDevice != null)
       {
+        
         DevicesInUse.Instance.Remove(_tunerDevice);
         _tunerDevice = null;
       }
@@ -1397,10 +1400,20 @@ namespace TvLibrary.Implementations.DVB
       if (_teletextDecoder != null)
       {
         _teletextDecoder.ClearBuffer();
-        _teletextDecoder = null;
       }
+      if (_tunerStatistics != null)
+      {
+        for (int i = 0; i < _tunerStatistics.Count; i++)
+        {
+          IBDA_SignalStatistics stat = (IBDA_SignalStatistics)_tunerStatistics[i];
+          while (Marshal.ReleaseComObject(stat) > 0) ;
+        }
+        _tunerStatistics.Clear();
+      }
+      _conditionalAccess = null;
 
       Log.Log.WriteFile("  decompose done...");
+      _graphState = GraphState.Idle;
     }
 
     #endregion

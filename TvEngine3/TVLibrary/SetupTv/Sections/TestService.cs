@@ -297,6 +297,7 @@ namespace SetupTv.Sections
           item.SubItems[2].Text = tmp;
 
 
+          item.SubItems[1].Text = card.Type.ToString();
           if (card.IsScrambled) tmp = "yes";
           else tmp = "no";
           item.SubItems[4].Text = tmp;

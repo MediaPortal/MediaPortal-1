@@ -1862,31 +1862,35 @@ namespace TvLibrary.Implementations.Analog
       int hr = (_graphBuilder as IMediaControl).Stop();
 
       FilterGraphTools.RemoveAllFilters(_graphBuilder);
-
+      
 
       if (_filterTvTuner != null)
       {
-        Release.ComObject("tuner filter", _filterTvTuner);
+        while (Marshal.ReleaseComObject(_filterTvTuner)>0);
         _filterTvTuner = null;
       }
       if (_filterTvAudioTuner != null)
       {
-        Release.ComObject("audiotvtuner filter", _filterTvAudioTuner);
+        while (Marshal.ReleaseComObject(_filterTvAudioTuner)>0);
+        //Release.ComObject("audiotvtuner filter", _filterTvAudioTuner);
         _filterTvAudioTuner = null;
       }
       if (_filterCapture != null)
       {
-        Release.ComObject("capture filter", _filterCapture);
+        while (Marshal.ReleaseComObject(_filterCapture)>0);
+        //Release.ComObject("capture filter", _filterCapture);
         _filterCapture = null;
       }
       if (_filterVideoEncoder != null)
       {
-        Release.ComObject("video encoder filter", _filterVideoEncoder);
+        while (Marshal.ReleaseComObject(_filterVideoEncoder) > 0) ;
+        //Release.ComObject("video encoder filter", _filterVideoEncoder);
         _filterVideoEncoder = null;
       }
       if (_filterAudioEncoder != null)
       {
-        Release.ComObject("audio encoder filter", _filterAudioEncoder);
+        while (Marshal.ReleaseComObject(_filterAudioEncoder) > 0) ;
+        //Release.ComObject("audio encoder filter", _filterAudioEncoder);
         _filterAudioEncoder = null;
       }
       if (_filterMpeg2Demux != null)
@@ -2001,6 +2005,7 @@ namespace TvLibrary.Implementations.Analog
         DevicesInUse.Instance.Remove(_multiplexerDevice);
         _multiplexerDevice = null;
       }
+      _graphState = GraphState.Idle;
     }
 
     #endregion
