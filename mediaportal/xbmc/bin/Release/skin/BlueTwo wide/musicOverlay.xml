@@ -20,10 +20,10 @@
       <description>music rectangle</description>
       <type>image</type>
       <id>0</id>
-      <posX>142</posX>
-      <posY>532</posY>
-      <width>220</width>
-      <height>182</height>
+      <posX>152</posX>
+      <posY>494</posY>
+      <width>214</width>
+      <height>224</height>
       <texture>playback_background.png</texture>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -32,10 +32,10 @@
       <description>music logo</description>
       <type>image</type>
       <id>1</id>
-      <posX>160</posX>
-      <posY>548</posY>
-      <width>180</width>
-      <height>144</height>
+      <posX>169</posX>
+      <posY>515</posY>
+      <width>175</width>
+      <height>175</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <texture>#Play.Current.Thumb</texture>
