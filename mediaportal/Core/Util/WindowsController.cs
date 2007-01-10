@@ -27,7 +27,9 @@ using System;
 using System.Text;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using MediaPortal.GUI.Library;
 using Utils = MediaPortal.Util.Utils;
+
 
 namespace MediaPortal.Util 
 {
@@ -216,7 +218,7 @@ namespace MediaPortal.Util
 					//SuspendSystem(true, force);
 					break;
 				default:
-					ExitWindows((int)how, force);
+          ExitWindows((int)how, force);
 					break;
 			}
 		}
@@ -228,7 +230,8 @@ namespace MediaPortal.Util
 		/// <remarks>This method cannot hibernate or suspend the system.</remarks>
 		/// <exception cref="PrivilegeException">There was an error while requesting a required privilege.</exception>
 		protected static void ExitWindows(int how , bool force) {
-			EnableToken("SeShutdownPrivilege");
+      Log.Info("--Exit Windows - ", how.ToString() + ", " + force.ToString());
+      EnableToken("SeShutdownPrivilege");
 			if (force)
 				how = how | EWX_FORCE;
 			if (ExitWindowsEx(how, 0) == 0)
@@ -265,7 +268,8 @@ namespace MediaPortal.Util
 		/// <param name="force">True if the exit has to be forced, false otherwise.</param>
 		/// <exception cref="PlatformNotSupportedException">The requested exit method is not supported on this platform.</exception>
 		protected static void SuspendSystem(bool hibernate , bool force  ){
-			if (!CheckEntryPoint("powrprof.dll", "SetSuspendState"))
+      Log.Info("--SuspendSystem - ", hibernate.ToString());
+      if (!CheckEntryPoint("powrprof.dll", "SetSuspendState"))
 				throw new PlatformNotSupportedException("The SetSuspendState method is not supported on this system!");
 			SetSuspendState((int)(hibernate ? 1 : 0), (int)(force ? 1 : 0), 0);
 		}
