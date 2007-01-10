@@ -292,6 +292,7 @@ namespace TvLibrary.Implementations.Analog
         {
           tvTuner.put_TuningSpace(analogChannel.Country.Id);
           tvTuner.put_CountryCode(analogChannel.Country.Id);
+          
         }
         if (analogChannel.TunerSource != _previousChannel.TunerSource)
         {

@@ -19,6 +19,7 @@
  *
  */
 using System;
+using DirectShowLib;
 
 namespace TvLibrary
 {
@@ -33,6 +34,7 @@ namespace TvLibrary
     int _index;
     string _name;
     string _code;
+    AnalogVideoStandard _standard;
     /// <summary>
     /// Initializes a new instance of the <see cref="Country"/> class.
     /// </summary>
@@ -45,11 +47,12 @@ namespace TvLibrary
     /// <param name="id">The id.</param>
     /// <param name="country">The country.</param>
     /// <param name="code">The code.</param>
-    public Country(int id, string country, string code)
+    public Country(int id, string country, string code, AnalogVideoStandard standard)
     {
       _id = id;
       _name = country;
       _code = code;
+      _standard = standard;
     }
 
     /// <summary>
@@ -123,6 +126,18 @@ namespace TvLibrary
       get
       {
         return _code;
+      }
+    }
+
+    public AnalogVideoStandard VideoStandard
+    {
+      get
+      {
+        return _standard;
+      }
+      set
+      {
+        _standard = value;
       }
     }
   }
