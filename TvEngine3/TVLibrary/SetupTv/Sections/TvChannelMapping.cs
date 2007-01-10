@@ -84,7 +84,8 @@ namespace SetupTv.Sections
         if (card.Enabled == false) continue;
         mpComboBoxCard.Items.Add(new CardInfo(card));
       }
-      mpComboBoxCard.SelectedIndex = 0;
+      if (mpComboBoxCard.Items.Count > 0)
+        mpComboBoxCard.SelectedIndex = 0;
     }
 
     private void mpButtonMap_Click(object sender, EventArgs e)
@@ -162,7 +163,7 @@ namespace SetupTv.Sections
       foreach (ChannelMap map in maps)
       {
         Channel channel = map.ReferencedChannel();
-        if (channel.IsTv == false) continue; 
+        if (channel.IsTv == false) continue;
         int imageIndex = 1;
         if (channel.FreeToAir == false)
           imageIndex = 2;
