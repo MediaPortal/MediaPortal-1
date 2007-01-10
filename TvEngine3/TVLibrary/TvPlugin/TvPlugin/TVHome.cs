@@ -1263,38 +1263,38 @@ namespace TvPlugin
       GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
       if (pDlgOK != null)
       {
-        errorMessage = "Unable to start timeshifting";
+        errorMessage = GUILocalizeStrings.Get(1500);
         switch (succeeded)
         {
           case TvResult.CardIsDisabled:
-            errorMessage += "\rCard is disabled\r";
+            errorMessage += "\r" + GUILocalizeStrings.Get(1501) + "\r";
             break;
           case TvResult.AllCardsBusy:
-            errorMessage += "\rNo free card available\r";
+            errorMessage += "\r" + GUILocalizeStrings.Get(1502) + "\r";
             break;
           case TvResult.ChannelIsScrambled:
-            errorMessage += "\rChannel is scrambled\r";
+            errorMessage += "\r" + GUILocalizeStrings.Get(1503) + "\r";
             break;
           case TvResult.NoVideoAudioDetected:
-            errorMessage += "\rNo video/audio detected\r";
+            errorMessage += "\r" + GUILocalizeStrings.Get(1504) + "\r";
             break;
           case TvResult.UnableToStartGraph:
-            errorMessage += "\rUnable to start graph\r";
+            errorMessage += "\r" + GUILocalizeStrings.Get(1505) + "\r";
             break;
           case TvResult.UnknownError:
-            errorMessage += "\rUnknown error occured\r";
+            errorMessage += "\r" + GUILocalizeStrings.Get(1506) + "\r";
             break;
           case TvResult.UnknownChannel:
-            errorMessage += "\rUnknown channel\r";
+            errorMessage += "\r" + GUILocalizeStrings.Get(1507) + "\r";
             break;
           case TvResult.ChannelNotMappedToAnyCard:
-            errorMessage += "\rChannel not mapped to any card\r";
+            errorMessage += "\r" + GUILocalizeStrings.Get(1508) + "\r";
             break;
           case TvResult.NoTuningDetails:
-            errorMessage += "\rNo tuning details for the channel\r";
+            errorMessage += "\r" + GUILocalizeStrings.Get(1509) + "\r";
             break;
           default:
-            errorMessage += "\rUnknown error occured\r";
+            errorMessage += "\r" + GUILocalizeStrings.Get(1506) + "\r";
             break;
         }
         string[] lines = errorMessage.Split('\r');
