@@ -72,6 +72,7 @@
     <Compile Include="Implementations\Helper\FilterGraphTools.cs" />
     <Compile Include="Implementations\Helper\Release.cs" />
     <Compile Include="Implementations\Helper\SidHelper.cs" />
+    <Compile Include="Implementations\Hybrid\HybridCard.cs" />
     <Compile Include="Implementations\TvCardCollection.cs" />
     <Compile Include="Interfaces\Analyzer\ITsCaGrabber.cs" />
     <Compile Include="Interfaces\Analyzer\IMPRecord.cs">
