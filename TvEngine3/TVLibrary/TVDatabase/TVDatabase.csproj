@@ -64,6 +64,8 @@
     <Compile Include="TuningDetail.cs" />
     <Compile Include="TvMovieMapping.cs" />
     <Compile Include="Version.cs" />
+    <Compile Include="CardGroup.cs" />
+    <Compile Include="CardGroupMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

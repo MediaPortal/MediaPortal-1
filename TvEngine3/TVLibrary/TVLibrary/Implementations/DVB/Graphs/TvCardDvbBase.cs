@@ -237,6 +237,7 @@ namespace TvLibrary.Implementations.DVB
     protected TProgram82 _mDPlugTProg82 = new TProgram82();
     protected object m_context;
     protected int _pmtPid = -1;
+    protected bool _isHybrid = false;
 
 
 
@@ -1749,6 +1750,18 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region properties
+
+    public bool IsHybrid 
+    {
+      get
+      {
+        return _isHybrid;
+      }
+      set
+      {
+        _isHybrid = false;
+      }
+    }
 
     public object Context 
     {

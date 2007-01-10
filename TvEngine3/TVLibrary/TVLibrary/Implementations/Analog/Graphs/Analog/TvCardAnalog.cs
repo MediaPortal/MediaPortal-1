@@ -42,6 +42,7 @@ namespace TvLibrary.Implementations.Analog
   public class TvCardAnalog : TvCardAnalogBase, IDisposable, ITVCard, ISampleGrabberCB
   {
     AnalogChannel _previousChannel;
+    protected bool _isHybrid = false;
     #region ctor
 
     /// <summary>
@@ -489,6 +490,17 @@ namespace TvLibrary.Implementations.Analog
     #endregion
 
     #region properties
+    public bool IsHybrid
+    {
+      get
+      {
+        return _isHybrid;
+      }
+      set
+      {
+        _isHybrid = false;
+      }
+    }
     /// <summary>
     /// When the tuner is locked onto a signal this property will return true
     /// otherwise false

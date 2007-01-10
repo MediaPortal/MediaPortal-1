@@ -47,7 +47,54 @@ namespace SetupTv.Sections
     {
       InitializeComponent();
     }
+    void UpdateMenu()
+    {
+      placeInHybridCardToolStripMenuItem.DropDownItems.Clear();
+      IList groups = CardGroup.ListAll();
+      foreach (CardGroup group in groups)
+      {
+        ToolStripMenuItem item = new ToolStripMenuItem(group.Name);
+        item.Tag = group;
+        item.Click += new EventHandler(placeInHybridCardToolStripMenuItem_Click);
+        placeInHybridCardToolStripMenuItem.DropDownItems.Add(item);
+      }
+      ToolStripMenuItem itemNew = new ToolStripMenuItem("New...");
+      itemNew.Click += new EventHandler(placeInHybridCardToolStripMenuItem_Click);
+      placeInHybridCardToolStripMenuItem.DropDownItems.Add(itemNew);
+    }
 
+    void placeInHybridCardToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
+      CardGroup group;
+      if (menuItem.Tag == null)
+      {
+        GroupNameForm dlg = new GroupNameForm();
+        if (dlg.ShowDialog(this) != DialogResult.OK)
+        {
+          return;
+        }
+        group = new CardGroup(dlg.GroupName);
+        group.Persist();
+        UpdateMenu();
+      }
+      else
+      {
+        group = (CardGroup)menuItem.Tag;
+      }
+
+      ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
+      if (indexes.Count == 0) return;
+      for (int i = 0; i < indexes.Count; ++i)
+      {
+        ListViewItem item = mpListView1.Items[indexes[i]];
+        Card card = (Card)item.Tag;
+        CardGroupMap map = new CardGroupMap(card.IdCard, group.IdCardGroup);
+        map.Persist();
+      }
+      UpdateHybrids();
+
+    }
     public override void OnSectionDeActivated()
     {
       ReOrder();
@@ -114,6 +161,8 @@ namespace SetupTv.Sections
         MessageBox.Show(this,"Unable to access service. Is the TvService running??");
       }
       ReOrder();
+      UpdateHybrids();
+      UpdateMenu();
     }
 
     private void buttonUp_Click(object sender, EventArgs e)
@@ -184,6 +233,58 @@ namespace SetupTv.Sections
 
     private void mpListView1_SelectedIndexChanged(object sender, EventArgs e)
     {
+
+    }
+
+    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+    }
+    void UpdateHybrids()
+    {
+      treeView1.Nodes.Clear();
+      IList cardGroups = CardGroup.ListAll();
+      foreach (CardGroup group in cardGroups)
+      {
+        TreeNode node = treeView1.Nodes.Add(group.Name);
+        node.Tag = group;
+        IList cards = group.CardGroupMaps();
+        foreach (CardGroupMap map in cards)
+        {
+          Card card = map.ReferringCard();
+          TreeNode cardNode=node.Nodes.Add(card.Name);
+          cardNode.Tag = card;
+        }
+      }
+    }
+
+    private void deleteCardToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      TreeNode node = treeView1.SelectedNode;
+      if (node == null) return;
+      Card card = node.Tag as Card;
+      if (card == null) return;
+      CardGroup group = node.Parent.Tag as CardGroup;
+      IList cards = group.CardGroupMaps();
+      foreach (CardGroupMap map in cards)
+      {
+        if (map.IdCard == card.IdCard)
+        {
+          map.Remove();
+          break;
+        }
+      }
+      UpdateHybrids();
+    }
+
+    private void deleteEntireHybridCardToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      TreeNode node = treeView1.SelectedNode;
+      if (node == null) return;
+      CardGroup group = node.Tag as CardGroup;
+      if (group == null) return;
+      group.Delete();
+      UpdateHybrids();
 
     }
   }

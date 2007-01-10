@@ -372,6 +372,7 @@ namespace SetupTv.Sections
       {
         group = (ChannelGroup)menuItem.Tag;
       }
+
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
       if (indexes.Count == 0) return;
       TvBusinessLayer layer = new TvBusinessLayer();

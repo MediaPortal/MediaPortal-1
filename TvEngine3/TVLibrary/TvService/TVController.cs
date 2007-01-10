@@ -88,6 +88,7 @@ namespace TvService
     /// </summary>
     PluginLoader _plugins = null;
     #endregion
+
     #region events
     public event TvServerEventHandler OnTvServerEvent;
     #endregion

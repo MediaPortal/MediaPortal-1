@@ -472,7 +472,53 @@ ALTER TABLE DisEqcMotor CHECK CONSTRAINT FK_DisEqcMotor_Card
 GO
 --- version 15 ----
 GO
+--- version 20 ----
+GO
+CREATE TABLE CardGroup (
+	idCardGroup int IDENTITY (1, 1) NOT NULL ,
+	name varchar (255) NOT NULL 
+) 
+GO
+
+CREATE TABLE CardGroupMap (
+	idMapping int IDENTITY (1, 1) NOT NULL ,
+	idCard int NOT NULL ,
+	idCardGroup int NOT NULL 
+) 
+GO
+
+ALTER TABLE CardGroup WITH NOCHECK ADD 
+	CONSTRAINT PK_CardGroup PRIMARY KEY  CLUSTERED 
+	(
+		idCardGroup
+	)   
+GO
+
+ALTER TABLE CardGroupMap WITH NOCHECK ADD 
+	CONSTRAINT PK_CardGroupMap PRIMARY KEY  CLUSTERED 
+	(
+		idMapping
+	)  
+GO
+
+ALTER TABLE CardGroupMap ADD 
+	CONSTRAINT FK_CardGroupMap_Card FOREIGN KEY 
+	(
+		idCard
+	) REFERENCES Card (
+		idCard
+	),
+	CONSTRAINT FK_CardGroupMap_CardGroup FOREIGN KEY 
+	(
+		idCardGroup
+	) REFERENCES CardGroup (
+		idCardGroup
+	)
+GO
+
+
+GO
 delete from version
 GO
-insert into version(versionNumber) values(19)
+insert into version(versionNumber) values(20)
 GO

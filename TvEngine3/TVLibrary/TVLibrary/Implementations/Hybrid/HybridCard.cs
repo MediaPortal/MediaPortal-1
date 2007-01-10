@@ -43,7 +43,8 @@ namespace TvLibrary.Implementations.Hybrid
     public HybridCard()
     {
     }
-
+    
+    protected bool _isHybrid = false;
     public void Add(ITVCard card)
     {
       _cards.Add(card);
@@ -70,6 +71,20 @@ namespace TvLibrary.Implementations.Hybrid
     }
 
     #region ITVCard Members
+
+    /// <summary>
+    /// Returns if the tuner belongs to a hybrid card
+    /// </summary>
+    public bool IsHybrid 
+    {
+      get
+      {
+        return false;
+      }
+      set
+      {
+      }
+    }
 
     public string Name
     {

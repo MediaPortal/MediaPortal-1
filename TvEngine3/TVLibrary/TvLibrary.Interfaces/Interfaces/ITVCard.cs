@@ -287,6 +287,11 @@ namespace TvLibrary.Interfaces
 
     #region properties
     /// <summary>
+    /// Returns if the tuner belongs to a hybrid card
+    /// </summary>
+    bool IsHybrid { get;set;}
+
+    /// <summary>
     /// When the tuner is locked onto a signal this property will return true
     /// otherwise false
     /// </summary>
