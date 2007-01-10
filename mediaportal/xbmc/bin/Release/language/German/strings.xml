@@ -3545,6 +3545,48 @@
         <id>1450</id>
         <value>Aufnahme wirklich beenden?</value>
     </string>
+
+    <string>
+        <id>1500</id>
+        <value>Timeshift konnte nicht gestarted werden</value>
+    </string>
+    <string>
+        <id>1501</id>
+        <value>Die Karte ist deaktiviert</value>
+    </string>
+    <string>
+        <id>1502</id>
+        <value>Keine freie Karte verfügbar</value>
+    </string>
+    <string>
+        <id>1503</id>
+        <value>Der Kanal ist verschlüsselt</value>
+    </string>
+    <string>
+        <id>1504</id>
+        <value>Kein Video/Audio gefunden</value>
+    </string>
+    <string>
+        <id>1505</id>
+        <value>Graph konnte nicht gestarted werden</value>
+    </string>
+    <string>
+        <id>1506</id>
+        <value>Ein unbekannter Fehler ist aufgetreten</value>
+    </string>
+    <string>
+        <id>1507</id>
+        <value>Unbekannter Kanal</value>
+    </string>
+    <string>
+        <id>1508</id>
+        <value>Kanal wurde keiner Karte zugewiesen</value>
+    </string>
+    <string>
+        <id>1509</id>
+        <value>Keine Tuning-Details für diesen Kanal</value>
+    </string>	
+
     <string Prefix="Mein ">
         <id>1950</id>
         <value>Status</value>
