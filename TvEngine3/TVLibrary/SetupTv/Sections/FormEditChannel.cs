@@ -437,7 +437,8 @@ namespace SetupTv.Sections
           textBoxChannel.Text = detail.ChannelNumber.ToString();
           if (detail.TuningSource == (int)TunerInputType.Cable)
             comboBoxInput.SelectedIndex = 1;
-          comboBoxCountry.SelectedIndex = detail.CountryId;
+          CountryCollection collection = new CountryCollection();
+          comboBoxCountry.SelectedIndex = collection.GetTunerCountryFromID(detail.CountryId).Index;
           comboBoxVideoSource.SelectedIndex = detail.VideoSource;
           textBoxAnalogFrequency.Text = SetFrequency(detail.Frequency);
         }
