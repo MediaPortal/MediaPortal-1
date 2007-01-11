@@ -27,15 +27,47 @@ using TvDatabase;
 
 namespace TvEngine.Events
 {
+  /// <summary>
+  /// Enum for the different event types
+  /// </summary>
   public enum TvServerEventType
   {
+    /// <summary>
+    /// Event indicating that the tvserver is going to zap to a different channel
+    /// </summary>
     StartZapChannel,
+    /// <summary>
+    /// Event indicating that the tvserver is has zapped to a different channel
+    /// </summary>
     EndZapChannel,
+    /// <summary>
+    /// Event indicating that the tvserver is going to start recording
+    /// </summary>
     StartRecording,
+    /// <summary>
+    /// Event indicating that the tvserver is recording has begun
+    /// </summary>
     RecordingStarted,
+    /// <summary>
+    /// Event indicating that the tvserver is recording has stopped
+    /// </summary>
     RecordingEnded,
+    /// <summary>
+    /// Event indicating that a new schedule has been added
+    /// </summary>
     ScheduledAdded,
-    ScheduleDeleted
+    /// <summary>
+    /// Event indicating that a  schedule has been deleted
+    /// </summary>
+    ScheduleDeleted,
+    /// <summary>
+    /// Event indicating that a new conflict has been added
+    /// </summary>
+    ConflictAdded,
+    /// <summary>
+    /// Event indicating that a  conflict has been deleted
+    /// </summary>
+    ConflictDeleted,
   };
 
   public class TvServerEventArgs : EventArgs
@@ -49,6 +81,7 @@ namespace TvEngine.Events
     //TuningDetail _tuningDetail = null;
     Schedule _schedule = null;
     Recording _recording = null;
+    Conflict _conflict = null;
     TvServerEventType _eventType;
     #endregion
 
@@ -67,7 +100,7 @@ namespace TvEngine.Events
     /// <param name="eventType">Type of the _event.</param>
     /// <param name="card">The card.</param>
     /// <param name="user">The user.</param>
-    public TvServerEventArgs(TvServerEventType eventType,VirtualCard card,User user)
+    public TvServerEventArgs(TvServerEventType eventType, VirtualCard card, User user)
     {
       _eventType = eventType;
       _card = card;
@@ -103,6 +136,22 @@ namespace TvEngine.Events
       _channel = channel;
       _schedule = schedule;
       _recording = recording;
+    }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvServerEventArgs"/> class.
+    /// </summary>
+    /// <param name="eventType">Type of the event.</param>
+    /// <param name="card">The card.</param>
+    /// <param name="user">The user.</param>
+    /// <param name="schedule">The schedule.</param>
+    /// <param name="conflict">The conflict.</param>
+    public TvServerEventArgs(TvServerEventType eventType, VirtualCard card, User user, Conflict conflict)
+    {
+      _eventType = eventType;
+      _card = card;
+      _user = user;
+      _channel = channel;
+      _conflict = conflict;
     }
     #endregion
 
@@ -162,6 +211,22 @@ namespace TvEngine.Events
       get
       {
         return _recording;
+      }
+    }
+
+    /// <summary>
+    /// Gets the conflict.
+    /// </summary>
+    /// <value>The conflict.</value>
+    public Conflict Conflict
+    {
+      get
+      {
+        return _conflict;
+      }
+      set
+      {
+        _conflict = value;
       }
     }
 
