@@ -160,12 +160,15 @@ namespace SetupTv.Sections
         RemoteControl.Instance.Tune(_cardNumber, new AnalogChannel(), -1);
         int minChannel = RemoteControl.Instance.MinChannel(_cardNumber);
         int maxChannel = RemoteControl.Instance.MaxChannel(_cardNumber);
+        if (maxChannel < 0) maxChannel = 128;
+        if (minChannel < 0) minChannel = 1;
         for (int channelNr = minChannel; channelNr <= maxChannel; channelNr++)
         {
           if (_stopScanning) return;
           float percent = ((float)((channelNr - minChannel)) / (maxChannel - minChannel));
           percent *= 100f;
           if (percent > 100f) percent = 100f;
+          if (percent < 0) percent = 0f;
           progressBar1.Value = (int)percent;
           AnalogChannel channel = new AnalogChannel();
           if (mpComboBoxSource.SelectedIndex == 0)

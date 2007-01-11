@@ -1025,7 +1025,7 @@ namespace TvService
               return false;
             }
           }
-          if (CurrentDbChannel == idChannel)
+          if (CurrentDbChannel == idChannel && idChannel>=0)
           {
             return true;
           }
@@ -1722,7 +1722,7 @@ namespace TvService
           if (result == false) return TvResult.UnableToStartGraph;
           return TvResult.Succeeded;
         }
-        if (CurrentDbChannel == dbChannel.IdChannel)
+        if (CurrentDbChannel == dbChannel.IdChannel && dbChannel.IdChannel >= 0)
         {
           return TvResult.Succeeded;
         }
