@@ -344,7 +344,7 @@ namespace MediaPortal.Music.Database
         Log.Debug("AudioscrobblerBase: {0}", logmessage);
 
       // Enqueue the song.
-      song_.AudioScrobblerStatus = SongStatus.Cached;
+      //song_.AudioScrobblerStatus = SongStatus.Cached;
       lock (queueLock)
       {
         queue.Add(song_);
