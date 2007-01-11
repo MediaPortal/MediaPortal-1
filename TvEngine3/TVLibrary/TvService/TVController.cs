@@ -808,7 +808,7 @@ namespace TvService
         if (_cards[cardId].DataBaseCard.Enabled == false) return false;
         Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(cardId), GetUserForCard(cardId), channel));
         Log.Write("Controller:TuneScan {0} to {1}", cardId, channel.Name);
-        return _cards[cardId].Tune(channel, idChannel);
+        return _cards[cardId].TuneScan(channel, idChannel);
       }
       finally
       {
