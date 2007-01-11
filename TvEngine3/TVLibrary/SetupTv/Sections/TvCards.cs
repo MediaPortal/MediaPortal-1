@@ -93,6 +93,7 @@ namespace SetupTv.Sections
         map.Persist();
       }
       UpdateHybrids();
+      RemoteControl.Instance.Restart();
 
     }
     public override void OnSectionDeActivated()
@@ -275,6 +276,7 @@ namespace SetupTv.Sections
         }
       }
       UpdateHybrids();
+      RemoteControl.Instance.Restart();
     }
 
     private void deleteEntireHybridCardToolStripMenuItem_Click(object sender, EventArgs e)
@@ -285,6 +287,7 @@ namespace SetupTv.Sections
       if (group == null) return;
       group.Delete();
       UpdateHybrids();
+      RemoteControl.Instance.Restart();
 
     }
   }
