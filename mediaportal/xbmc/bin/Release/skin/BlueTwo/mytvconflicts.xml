@@ -3,7 +3,12 @@
   <id>608</id>
   <defaultcontrol>10</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <define>#header.label:892</define>
+  <define>#header.image:television_logo.png</define>
+  <define>#header.hover:hover_my tv.png</define>
   <controls>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
       <description>BG</description>
       <type>image</type>
@@ -11,7 +16,7 @@
       <width>720</width>
       <height>576</height>
     </control>
-    <control>
+<!--     <control>
       <type>image</type>
       <id>1</id>
       <posX>60</posX>
@@ -93,7 +98,7 @@
       <textcolor>ffffffff</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-    </control>
+    </control> -->
     <control>
       <type>group</type>
       <description>group element</description>
