@@ -37,22 +37,41 @@ namespace TvLibrary.Implementations.Hybrid
 {
   public class HybridCard : ITVCard
   {
+    #region variables
     List<ITVCard> _cards = new List<ITVCard>();
     List<int> _idCards = new List<int>();
     int _currentCardIndex = 0;
-    protected bool _isHybrid = false;
+    #endregion
 
+    #region ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HybridCard"/> class.
+    /// </summary>
     public HybridCard()
     {
     }
-    
+    #endregion
 
-    public void Add(int idCard,ITVCard card)
+
+    #region methods
+    /// <summary>
+    /// Adds the specified id card.
+    /// </summary>
+    /// <param name="idCard">The id card.</param>
+    /// <param name="card">The card.</param>
+    public void Add(int idCard, ITVCard card)
     {
       _idCards.Add(idCard);
       _cards.Add(card);
     }
 
+    /// <summary>
+    /// Determines whether [contains] [the specified id card].
+    /// </summary>
+    /// <param name="idCard">The id card.</param>
+    /// <returns>
+    /// 	<c>true</c> if [contains] [the specified id card]; otherwise, <c>false</c>.
+    /// </returns>
     public bool Contains(int idCard)
     {
       for (int i = 0; i < _idCards.Count; ++i)
@@ -62,6 +81,26 @@ namespace TvLibrary.Implementations.Hybrid
       return false;
     }
 
+    /// <summary>
+    /// Gets the by id.
+    /// </summary>
+    /// <param name="idCard">The id card.</param>
+    /// <returns></returns>
+    public ITVCard GetById(int idCard)
+    {
+      for (int i = 0; i < _idCards.Count; ++i)
+      {
+        if (_idCards[i] == idCard) return _cards[i];
+      }
+      return null;
+    }
+    #endregion
+
+    #region properties
+    /// <summary>
+    /// Gets the count.
+    /// </summary>
+    /// <value>The count.</value>
     public int Count
     {
       get
@@ -70,6 +109,10 @@ namespace TvLibrary.Implementations.Hybrid
       }
     }
 
+    /// <summary>
+    /// Gets or sets the <see cref="TvLibrary.Interfaces.ITVCard"/> at the specified index.
+    /// </summary>
+    /// <value></value>
     public ITVCard this[int index]
     {
       get
@@ -81,13 +124,14 @@ namespace TvLibrary.Implementations.Hybrid
         _cards[index] = value;
       }
     }
+    #endregion
 
     #region ITVCard Members
 
     /// <summary>
     /// Returns if the tuner belongs to a hybrid card
     /// </summary>
-    public bool IsHybrid 
+    public bool IsHybrid
     {
       get
       {
@@ -662,7 +706,10 @@ namespace TvLibrary.Implementations.Hybrid
       }
       set
       {
-        _cards[_currentCardIndex].Context = value;
+        for (int i = 0; i < _cards.Count; ++i)
+        {
+          _cards[i].Context = value;
+        }
       }
     }
 

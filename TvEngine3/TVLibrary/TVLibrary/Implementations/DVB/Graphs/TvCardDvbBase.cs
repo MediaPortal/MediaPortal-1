@@ -235,7 +235,7 @@ namespace TvLibrary.Implementations.DVB
     protected IBaseFilter _mdapiFilter = null;
     protected IChangeChannel _changeChannel = null;
     protected TProgram82 _mDPlugTProg82 = new TProgram82();
-    protected object m_context;
+    protected object m_context=null;
     protected int _pmtPid = -1;
     protected bool _isHybrid = false;
 
@@ -651,7 +651,7 @@ namespace TvLibrary.Implementations.DVB
           _epgGrabberCallback.OnEpgCancelled();
         }
       }
-      m_context = null;
+
       _pmtPid = -1;
       _graphRunning = false;
       _epgGrabbing = false;
@@ -670,7 +670,6 @@ namespace TvLibrary.Implementations.DVB
       _recordingFileName = "";
       _channelInfo = new ChannelInfo();
       _currentChannel = null;
-      m_context = null;
       _recordTransportStream = false;
 
       if (_filterTsAnalyzer != null)
