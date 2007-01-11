@@ -21,7 +21,7 @@
       <type>image</type>
       <id>0</id>
       <posX>152</posX>
-      <posY>494</posY>
+      <posY>517</posY>
       <width>214</width>
       <height>224</height>
       <texture>playback_background.png</texture>
@@ -33,7 +33,7 @@
       <type>image</type>
       <id>1</id>
       <posX>169</posX>
-      <posY>515</posY>
+      <posY>538</posY>
       <width>175</width>
       <height>175</height>
       <keepaspectratio>yes</keepaspectratio>
@@ -88,7 +88,7 @@
       <width>180</width>
       <height>40</height>
       <posX>170</posX>
-      <posY>705</posY>
+      <posY>710</posY>
       <font>font13</font>
       <label>#Play.Current.Title\r#Play.Current.Artist\r#Play.Current.Album\r#Play.Current.Duration</label>
       <textcolor>FFFFFFFF</textcolor>

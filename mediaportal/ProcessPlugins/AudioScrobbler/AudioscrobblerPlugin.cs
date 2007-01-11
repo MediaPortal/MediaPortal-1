@@ -193,7 +193,7 @@ namespace MediaPortal.Audioscrobbler
 
       if (songFound)
       {
-        // playback couuuuld be stopped in theory
+        // playback couuuuld be stopped in theory - sometimes g_player's IsPlaying status isn't set in time (e.g. crossfading)
         if (g_Player.CurrentPosition > 0)
         {
           //_currentSong.AudioScrobblerStatus = SongStatus.Loaded;
@@ -224,7 +224,10 @@ namespace MediaPortal.Audioscrobbler
       {
         _lastPosition = Convert.ToInt32(g_Player.CurrentPosition);
         if (_currentSong.AudioScrobblerStatus == SongStatus.Loaded)
-          Log.Info("Audioscrobbler plugin: {0}", "track paused - avoid skip protection");
+          if (g_Player.Paused)
+            Log.Info("Audioscrobbler plugin: {0}", "track paused - avoid skip protection");
+          else
+            Log.Info("Audioscrobbler plugin: {0}", "continue track - cancel skip protection");
       }
     }
 
@@ -240,13 +243,6 @@ namespace MediaPortal.Audioscrobbler
         position = Convert.ToInt32(g_Player.Player.CurrentPosition);
         if (_currentSong != null)
         {
-          //// manually skipped song with "SELECT" action
-          //if (g_Player.CurrentFile != _currentSong.FileName)
-          //{
-          //  OnStateChangedEvent(true);
-          //  return;
-          //}
-
           if (!queued)
           {
             if (_alertTime < INFINITE_TIME && position > (_lastPosition + _skipThreshold + _timerTickSecs))
