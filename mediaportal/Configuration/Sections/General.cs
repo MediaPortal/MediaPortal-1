@@ -171,7 +171,7 @@ namespace MediaPortal.Configuration.Sections
       {
         if (settingsCheckedListBox.GetItemChecked(7))
         {
-          string fileName = String.Format("\"{0}\"", System.IO.Path.GetFullPath("mediaportal.exe"));
+          string fileName = Config.GetFile(Config.Dir.Base, "MediaPortal.exe");
           using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
             subkey.SetValue("MediaPortal", fileName);
         }
