@@ -56,7 +56,7 @@ namespace MediaPortal.PowerScheduler
     private const int PBT_APMPOWERSTATUSCHANGE = 0x000A;
     private const int PBT_APMOEMEVENT = 0x000B;
     private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
-    private const string _version = "v0.0.9";
+    private const string _version = "v0.1.0";
     #endregion
 
     #region Protected Variables
