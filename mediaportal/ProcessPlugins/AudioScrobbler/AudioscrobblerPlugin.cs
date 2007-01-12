@@ -264,7 +264,8 @@ namespace MediaPortal.Audioscrobbler
         }
         else // Playing but no Song? Event missed! (Or manually started via "SELECT" action)
           //OnStateChangedEvent(true);
-          Log.Warn("Audioscrobbler plugin: OnTick - playing but no current song! (check events)");
+          if (g_Player.IsMusic)
+            Log.Warn("Audioscrobbler plugin: OnTick - playing but no current song! (check events)");
       }
     }
     #endregion
