@@ -1652,7 +1652,16 @@ namespace TvService
     /// <returns>TvResult indicating whether method succeeded</returns>
     TvResult CardTune(int idCard, IChannel channel, Channel dbChannel)
     {
-      return _cards[idCard].CardTune(channel, dbChannel);
+      try
+      {
+        if (_cards[idCard].DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;
+        Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(idCard), GetUserForCard(idCard), channel));
+        return _cards[idCard].CardTune(channel, dbChannel);
+      }
+      finally
+      {
+        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(idCard), GetUserForCard(idCard), channel));
+      }
     }
 
     /// <summary>
