@@ -87,7 +87,6 @@ namespace SetupTv.Sections
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
       this.mpListView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mpListView1_MouseDoubleClick);
-      this.mpListView1.SelectedIndexChanged += new System.EventHandler(this.mpListView1_SelectedIndexChanged);
       this.mpListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView1_ColumnClick);
       this.mpListView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.mpListView1_AfterLabelEdit);
       this.mpListView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.mpListView1_ItemDrag);
@@ -95,11 +94,12 @@ namespace SetupTv.Sections
       // hdrhekje
       // 
       this.hdrhekje.Text = "#";
+      this.hdrhekje.Width = 53;
       // 
       // hdrName
       // 
       this.hdrName.Text = "Name";
-      this.hdrName.Width = 100;
+      this.hdrName.Width = 114;
       // 
       // hdrProvider
       // 
@@ -108,19 +108,22 @@ namespace SetupTv.Sections
       // hdrTypes
       // 
       this.hdrTypes.Text = "Types";
-      this.hdrTypes.Width = 90;
+      this.hdrTypes.Width = 50;
       // 
       // hdrDetail1
       // 
       this.hdrDetail1.Text = "Details";
+      this.hdrDetail1.Width = 55;
       // 
       // hdrDetail2
       // 
       this.hdrDetail2.Text = "Details";
+      this.hdrDetail2.Width = 50;
       // 
       // hdrDetail3
       // 
       this.hdrDetail3.Text = "Details";
+      this.hdrDetail3.Width = 52;
       // 
       // contextMenuStrip1
       // 
@@ -129,25 +132,25 @@ namespace SetupTv.Sections
             this.deleteThisChannelToolStripMenuItem,
             this.editChannelToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(175, 70);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(166, 70);
       // 
       // addToFavoritesToolStripMenuItem
       // 
       this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
-      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
       this.addToFavoritesToolStripMenuItem.Text = "Add to favorites";
       // 
       // deleteThisChannelToolStripMenuItem
       // 
       this.deleteThisChannelToolStripMenuItem.Name = "deleteThisChannelToolStripMenuItem";
-      this.deleteThisChannelToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+      this.deleteThisChannelToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
       this.deleteThisChannelToolStripMenuItem.Text = "Delete this channel";
       this.deleteThisChannelToolStripMenuItem.Click += new System.EventHandler(this.deleteThisChannelToolStripMenuItem_Click);
       // 
       // editChannelToolStripMenuItem
       // 
       this.editChannelToolStripMenuItem.Name = "editChannelToolStripMenuItem";
-      this.editChannelToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+      this.editChannelToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
       this.editChannelToolStripMenuItem.Text = "Edit channel";
       this.editChannelToolStripMenuItem.Click += new System.EventHandler(this.editChannelToolStripMenuItem_Click);
       // 
@@ -164,7 +167,7 @@ namespace SetupTv.Sections
       // 
       this.mpButtonClear.Location = new System.Drawing.Point(394, 327);
       this.mpButtonClear.Name = "mpButtonClear";
-      this.mpButtonClear.Size = new System.Drawing.Size(51, 23);
+      this.mpButtonClear.Size = new System.Drawing.Size(55, 23);
       this.mpButtonClear.TabIndex = 1;
       this.mpButtonClear.Text = "Clear";
       this.mpButtonClear.UseVisualStyleBackColor = true;
@@ -180,9 +183,9 @@ namespace SetupTv.Sections
       // 
       // mpButtonDel
       // 
-      this.mpButtonDel.Location = new System.Drawing.Point(66, 350);
+      this.mpButtonDel.Location = new System.Drawing.Point(77, 350);
       this.mpButtonDel.Name = "mpButtonDel";
-      this.mpButtonDel.Size = new System.Drawing.Size(54, 23);
+      this.mpButtonDel.Size = new System.Drawing.Size(55, 23);
       this.mpButtonDel.TabIndex = 1;
       this.mpButtonDel.Text = "Delete";
       this.mpButtonDel.UseVisualStyleBackColor = true;
@@ -192,7 +195,7 @@ namespace SetupTv.Sections
       // 
       this.buttonUtp.Location = new System.Drawing.Point(16, 326);
       this.buttonUtp.Name = "buttonUtp";
-      this.buttonUtp.Size = new System.Drawing.Size(44, 23);
+      this.buttonUtp.Size = new System.Drawing.Size(55, 23);
       this.buttonUtp.TabIndex = 3;
       this.buttonUtp.Text = "Up";
       this.buttonUtp.UseVisualStyleBackColor = true;
@@ -202,7 +205,7 @@ namespace SetupTv.Sections
       // 
       this.buttonDown.Location = new System.Drawing.Point(16, 350);
       this.buttonDown.Name = "buttonDown";
-      this.buttonDown.Size = new System.Drawing.Size(44, 23);
+      this.buttonDown.Size = new System.Drawing.Size(55, 23);
       this.buttonDown.TabIndex = 4;
       this.buttonDown.Text = "Down";
       this.buttonDown.UseVisualStyleBackColor = true;
@@ -210,9 +213,9 @@ namespace SetupTv.Sections
       // 
       // mpButtonEdit
       // 
-      this.mpButtonEdit.Location = new System.Drawing.Point(66, 326);
+      this.mpButtonEdit.Location = new System.Drawing.Point(77, 326);
       this.mpButtonEdit.Name = "mpButtonEdit";
-      this.mpButtonEdit.Size = new System.Drawing.Size(58, 23);
+      this.mpButtonEdit.Size = new System.Drawing.Size(55, 23);
       this.mpButtonEdit.TabIndex = 5;
       this.mpButtonEdit.Text = "Edit";
       this.mpButtonEdit.UseVisualStyleBackColor = true;
@@ -222,7 +225,7 @@ namespace SetupTv.Sections
       // 
       this.mpButtonExpert.Location = new System.Drawing.Point(142, 350);
       this.mpButtonExpert.Name = "mpButtonExpert";
-      this.mpButtonExpert.Size = new System.Drawing.Size(54, 23);
+      this.mpButtonExpert.Size = new System.Drawing.Size(55, 23);
       this.mpButtonExpert.TabIndex = 6;
       this.mpButtonExpert.Text = "Export";
       this.mpButtonExpert.UseVisualStyleBackColor = true;
@@ -232,7 +235,7 @@ namespace SetupTv.Sections
       // 
       this.mpButtonImport.Location = new System.Drawing.Point(142, 326);
       this.mpButtonImport.Name = "mpButtonImport";
-      this.mpButtonImport.Size = new System.Drawing.Size(54, 23);
+      this.mpButtonImport.Size = new System.Drawing.Size(55, 23);
       this.mpButtonImport.TabIndex = 7;
       this.mpButtonImport.Text = "Import";
       this.mpButtonImport.UseVisualStyleBackColor = true;
@@ -276,9 +279,9 @@ namespace SetupTv.Sections
       // 
       // mpButtonDeleteEncrypted
       // 
-      this.mpButtonDeleteEncrypted.Location = new System.Drawing.Point(342, 351);
+      this.mpButtonDeleteEncrypted.Location = new System.Drawing.Point(339, 351);
       this.mpButtonDeleteEncrypted.Name = "mpButtonDeleteEncrypted";
-      this.mpButtonDeleteEncrypted.Size = new System.Drawing.Size(103, 23);
+      this.mpButtonDeleteEncrypted.Size = new System.Drawing.Size(110, 23);
       this.mpButtonDeleteEncrypted.TabIndex = 10;
       this.mpButtonDeleteEncrypted.Text = "Delete Scrambled";
       this.mpButtonDeleteEncrypted.UseVisualStyleBackColor = true;
@@ -288,7 +291,7 @@ namespace SetupTv.Sections
       // 
       this.mpButtonAdd.Location = new System.Drawing.Point(221, 351);
       this.mpButtonAdd.Name = "mpButtonAdd";
-      this.mpButtonAdd.Size = new System.Drawing.Size(54, 23);
+      this.mpButtonAdd.Size = new System.Drawing.Size(55, 23);
       this.mpButtonAdd.TabIndex = 9;
       this.mpButtonAdd.Text = "Add";
       this.mpButtonAdd.UseVisualStyleBackColor = true;
@@ -298,7 +301,7 @@ namespace SetupTv.Sections
       // 
       this.mpButtonPreview.Location = new System.Drawing.Point(221, 326);
       this.mpButtonPreview.Name = "mpButtonPreview";
-      this.mpButtonPreview.Size = new System.Drawing.Size(54, 23);
+      this.mpButtonPreview.Size = new System.Drawing.Size(55, 23);
       this.mpButtonPreview.TabIndex = 8;
       this.mpButtonPreview.Text = "Preview";
       this.mpButtonPreview.UseVisualStyleBackColor = true;

@@ -67,6 +67,8 @@ namespace SetupTv.Sections
       this.comboBoxDrive = new System.Windows.Forms.ComboBox();
       this.label9 = new System.Windows.Forms.Label();
       this.tabPage4 = new System.Windows.Forms.TabPage();
+      this.labelTSFolder = new System.Windows.Forms.Label();
+      this.labelRecFormat = new System.Windows.Forms.Label();
       this.label23 = new System.Windows.Forms.Label();
       this.comboBoxRecordingFormat = new System.Windows.Forms.ComboBox();
       this.buttonTimeShiftBrowse = new System.Windows.Forms.Button();
@@ -90,8 +92,6 @@ namespace SetupTv.Sections
       this.textBoxComSkip = new System.Windows.Forms.TextBox();
       this.checkBoxComSkipEnabled = new System.Windows.Forms.CheckBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-      this.labelRecFormat = new System.Windows.Forms.Label();
-      this.labelTSFolder = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -125,7 +125,7 @@ namespace SetupTv.Sections
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(423, 338);
+      this.tabPage1.Size = new System.Drawing.Size(423, 340);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Settings";
       this.tabPage1.UseVisualStyleBackColor = true;
@@ -512,10 +512,30 @@ namespace SetupTv.Sections
       this.tabPage4.Text = "Recording folders";
       this.tabPage4.UseVisualStyleBackColor = true;
       // 
+      // labelTSFolder
+      // 
+      this.labelTSFolder.AutoSize = true;
+      this.labelTSFolder.Location = new System.Drawing.Point(27, 298);
+      this.labelTSFolder.Name = "labelTSFolder";
+      this.labelTSFolder.Size = new System.Drawing.Size(358, 26);
+      this.labelTSFolder.TabIndex = 25;
+      this.labelTSFolder.Text = "Using a Timeshift folder on a dedicated disk will improve your performance \r\n(e.g" +
+          ". with many simultaneous clients / recordings)";
+      // 
+      // labelRecFormat
+      // 
+      this.labelRecFormat.AutoSize = true;
+      this.labelRecFormat.Location = new System.Drawing.Point(30, 124);
+      this.labelRecFormat.Name = "labelRecFormat";
+      this.labelRecFormat.Size = new System.Drawing.Size(355, 26);
+      this.labelRecFormat.TabIndex = 24;
+      this.labelRecFormat.Text = "Use the slightly larger .ts format if you want to keep all stream informations \r\n" +
+          "for further editing or if you get issues with the recorded .mpg files";
+      // 
       // label23
       // 
       this.label23.AutoSize = true;
-      this.label23.Location = new System.Drawing.Point(27, 78);
+      this.label23.Location = new System.Drawing.Point(27, 75);
       this.label23.Name = "label23";
       this.label23.Size = new System.Drawing.Size(91, 13);
       this.label23.TabIndex = 23;
@@ -547,7 +567,7 @@ namespace SetupTv.Sections
       // label22
       // 
       this.label22.AutoSize = true;
-      this.label22.Location = new System.Drawing.Point(27, 249);
+      this.label22.Location = new System.Drawing.Point(27, 247);
       this.label22.Name = "label22";
       this.label22.Size = new System.Drawing.Size(81, 13);
       this.label22.TabIndex = 20;
@@ -584,7 +604,7 @@ namespace SetupTv.Sections
       // label13
       // 
       this.label13.AutoSize = true;
-      this.label13.Location = new System.Drawing.Point(27, 193);
+      this.label13.Location = new System.Drawing.Point(27, 191);
       this.label13.Name = "label13";
       this.label13.Size = new System.Drawing.Size(88, 13);
       this.label13.TabIndex = 3;
@@ -743,26 +763,6 @@ namespace SetupTv.Sections
       // openFileDialog1
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
-      // 
-      // labelRecFormat
-      // 
-      this.labelRecFormat.AutoSize = true;
-      this.labelRecFormat.Location = new System.Drawing.Point(30, 124);
-      this.labelRecFormat.Name = "labelRecFormat";
-      this.labelRecFormat.Size = new System.Drawing.Size(355, 26);
-      this.labelRecFormat.TabIndex = 24;
-      this.labelRecFormat.Text = "Use the slightly larger .ts format if you want to keep all stream informations \r\n" +
-          "for further editing or if you get issues with the recorded .mpg files";
-      // 
-      // labelTSFolder
-      // 
-      this.labelTSFolder.AutoSize = true;
-      this.labelTSFolder.Location = new System.Drawing.Point(27, 298);
-      this.labelTSFolder.Name = "labelTSFolder";
-      this.labelTSFolder.Size = new System.Drawing.Size(358, 26);
-      this.labelTSFolder.TabIndex = 25;
-      this.labelTSFolder.Text = "Using a Timeshift folder on a dedicated disk will improve your performance \r\n(e.g" +
-          ". with many simultaneous clients / recordings)";
       // 
       // TvRecording
       // 
