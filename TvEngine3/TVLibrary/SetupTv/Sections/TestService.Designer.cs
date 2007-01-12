@@ -81,9 +81,9 @@ namespace SetupTv.Sections
       this.label2.AutoSize = true;
       this.label2.Location = new System.Drawing.Point(21, 104);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(74, 13);
+      this.label2.Size = new System.Drawing.Size(72, 13);
       this.label2.TabIndex = 50;
-      this.label2.Text = "Signal Quality:";
+      this.label2.Text = "Signal quality:";
       // 
       // label1
       // 
@@ -170,28 +170,28 @@ namespace SetupTv.Sections
       // mpCheckBoxTimeShift
       // 
       this.mpCheckBoxTimeShift.AutoSize = true;
-      this.mpCheckBoxTimeShift.CheckAlign = System.Drawing.ContentAlignment.TopRight;
       this.mpCheckBoxTimeShift.Enabled = false;
       this.mpCheckBoxTimeShift.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxTimeShift.Location = new System.Drawing.Point(21, 134);
+      this.mpCheckBoxTimeShift.Location = new System.Drawing.Point(113, 132);
       this.mpCheckBoxTimeShift.Name = "mpCheckBoxTimeShift";
-      this.mpCheckBoxTimeShift.Size = new System.Drawing.Size(82, 17);
+      this.mpCheckBoxTimeShift.Size = new System.Drawing.Size(80, 17);
       this.mpCheckBoxTimeShift.TabIndex = 54;
-      this.mpCheckBoxTimeShift.Text = "TimeShifting";
+      this.mpCheckBoxTimeShift.Text = "Timeshifting";
+      this.mpCheckBoxTimeShift.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.mpCheckBoxTimeShift.UseVisualStyleBackColor = true;
       this.mpCheckBoxTimeShift.CheckedChanged += new System.EventHandler(this.mpCheckBoxTimeShift_CheckedChanged);
       // 
       // mpCheckBoxRec
       // 
       this.mpCheckBoxRec.AutoSize = true;
-      this.mpCheckBoxRec.CheckAlign = System.Drawing.ContentAlignment.TopRight;
       this.mpCheckBoxRec.Enabled = false;
       this.mpCheckBoxRec.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxRec.Location = new System.Drawing.Point(21, 157);
+      this.mpCheckBoxRec.Location = new System.Drawing.Point(113, 155);
       this.mpCheckBoxRec.Name = "mpCheckBoxRec";
       this.mpCheckBoxRec.Size = new System.Drawing.Size(76, 17);
       this.mpCheckBoxRec.TabIndex = 53;
       this.mpCheckBoxRec.Text = "Recording:";
+      this.mpCheckBoxRec.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.mpCheckBoxRec.UseVisualStyleBackColor = true;
       // 
       // mpComboBoxChannels
@@ -200,7 +200,7 @@ namespace SetupTv.Sections
       this.mpComboBoxChannels.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxChannels.FormattingEnabled = true;
       this.mpComboBoxChannels.ImageList = null;
-      this.mpComboBoxChannels.Location = new System.Drawing.Point(84, 216);
+      this.mpComboBoxChannels.Location = new System.Drawing.Point(95, 211);
       this.mpComboBoxChannels.Name = "mpComboBoxChannels";
       this.mpComboBoxChannels.Size = new System.Drawing.Size(146, 21);
       this.mpComboBoxChannels.TabIndex = 54;
@@ -208,7 +208,7 @@ namespace SetupTv.Sections
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(18, 219);
+      this.mpLabel1.Location = new System.Drawing.Point(33, 214);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(49, 13);
       this.mpLabel1.TabIndex = 55;
@@ -216,9 +216,9 @@ namespace SetupTv.Sections
       // 
       // mpButtonTimeShift
       // 
-      this.mpButtonTimeShift.Location = new System.Drawing.Point(249, 214);
+      this.mpButtonTimeShift.Location = new System.Drawing.Point(256, 209);
       this.mpButtonTimeShift.Name = "mpButtonTimeShift";
-      this.mpButtonTimeShift.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonTimeShift.Size = new System.Drawing.Size(100, 23);
       this.mpButtonTimeShift.TabIndex = 56;
       this.mpButtonTimeShift.Text = "TimeShift";
       this.mpButtonTimeShift.UseVisualStyleBackColor = true;
@@ -226,9 +226,9 @@ namespace SetupTv.Sections
       // 
       // mpButtonRec
       // 
-      this.mpButtonRec.Location = new System.Drawing.Point(344, 214);
+      this.mpButtonRec.Location = new System.Drawing.Point(362, 209);
       this.mpButtonRec.Name = "mpButtonRec";
-      this.mpButtonRec.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonRec.Size = new System.Drawing.Size(100, 23);
       this.mpButtonRec.TabIndex = 57;
       this.mpButtonRec.Text = "Record";
       this.mpButtonRec.UseVisualStyleBackColor = true;
@@ -254,7 +254,7 @@ namespace SetupTv.Sections
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.Location = new System.Drawing.Point(12, 243);
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(450, 125);
+      this.mpListView1.Size = new System.Drawing.Size(450, 152);
       this.mpListView1.TabIndex = 58;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
@@ -294,9 +294,9 @@ namespace SetupTv.Sections
       // 
       // buttonRestart
       // 
-      this.buttonRestart.Location = new System.Drawing.Point(250, 374);
+      this.buttonRestart.Location = new System.Drawing.Point(256, 407);
       this.buttonRestart.Name = "buttonRestart";
-      this.buttonRestart.Size = new System.Drawing.Size(103, 23);
+      this.buttonRestart.Size = new System.Drawing.Size(100, 23);
       this.buttonRestart.TabIndex = 59;
       this.buttonRestart.Text = "Restart Service";
       this.buttonRestart.UseVisualStyleBackColor = true;
@@ -304,9 +304,9 @@ namespace SetupTv.Sections
       // 
       // mpButtonReGrabEpg
       // 
-      this.mpButtonReGrabEpg.Location = new System.Drawing.Point(371, 374);
+      this.mpButtonReGrabEpg.Location = new System.Drawing.Point(362, 407);
       this.mpButtonReGrabEpg.Name = "mpButtonReGrabEpg";
-      this.mpButtonReGrabEpg.Size = new System.Drawing.Size(91, 23);
+      this.mpButtonReGrabEpg.Size = new System.Drawing.Size(100, 23);
       this.mpButtonReGrabEpg.TabIndex = 60;
       this.mpButtonReGrabEpg.Text = "Refresh EPG";
       this.mpButtonReGrabEpg.UseVisualStyleBackColor = true;

@@ -191,6 +191,7 @@ namespace SetupTv.Sections
         e.Handled = true;
       }
     }
+
     void UpdateDriveInfo(bool save)
     {
       string drive = (string)comboBoxDrive.SelectedItem;
@@ -275,6 +276,7 @@ namespace SetupTv.Sections
         e.Handled = true;
       }
     }
+
     public override void LoadSettings()
     {
       textBoxPreInterval.Text = "5";
@@ -287,8 +289,8 @@ namespace SetupTv.Sections
 
       textBoxPreInterval.Text = layer.GetSetting("preRecordInterval", "5").Value;
       textBoxPostInterval.Text = layer.GetSetting("postRecordInterval", "5").Value;
-      formatString[0] = layer.GetSetting("moviesformat", @"%title%\%title%").Value;
-      formatString[1] = layer.GetSetting("seriesformat", @"%title%\%date%\%title%-%start%").Value;
+      formatString[0] = layer.GetSetting("moviesformat", @"%title%\%title%-%date%").Value;
+      formatString[1] = layer.GetSetting("seriesformat", @"%title%-%channel%\%title%-%date%").Value;
 
       checkBoxComSkipEnabled.Checked = (layer.GetSetting("comskipEnabled", "no").Value == "yes");
       textBoxComSkip.Text = layer.GetSetting("comskipLocation", "").Value;
