@@ -3546,6 +3546,46 @@
 		<id>1450</id>
 		<value>Er du sikker på at du vil stoppe opptaket?</value>
 	</string>
+  <string>
+     <id>1500</id>
+     <value>Kan ikke starte tidsskifting</value>
+  </string>
+  <string>
+      <id>1501</id>
+      <value>TV-korter er fra koblet</value>
+  </string>
+  <string>
+      <id>1502</id>
+      <value>Ingen ledige kort tilgjengelig</value>
+  </string>
+  <string>
+      <id>1503</id>
+      <value>Kanalen er kodet</value>
+  </string>
+  <string>
+      <id>1504</id>
+      <value>Ingen video/lyd funnet</value>
+  </string>
+  <string>
+      <id>1505</id>
+      <value>Kan ikke starte graphen</value>
+  </string>
+  <string>
+      <id>1506</id>
+      <value>En ukjent feil oppstod</value>
+  </string>
+  <string>
+      <id>1507</id>
+      <value>Ukjent kanal</value>
+  </string>
+  <string>
+      <id>1508</id>
+      <value>Kanalen er ikke satt opp mot noen tuner</value>
+  </string>
+  <string>
+      <id>1509</id>
+      <value>Ingen kanal-informasjon for denne kanalen</value>
+  </string>
 	<string Prefix="Min ">
 		<id>1950</id>
 		<value>Status</value>
@@ -5321,6 +5361,7 @@
 	<string>
 		<id>19115</id>
 		<value>barn</value>
+
 	</string>
 	<string>
 		<id>19116</id>
