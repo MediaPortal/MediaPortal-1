@@ -235,6 +235,8 @@ namespace MediaPortal.PowerScheduler
 
     private void OnTimer(Object sender, EventArgs e)
     {
+      PowerManager.ForbidHibernation();  // must be called periodically to tell windows that the system is required
+
       StopTimer();
       if (_extensiveLogging)
       {
