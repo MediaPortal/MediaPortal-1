@@ -111,6 +111,13 @@ namespace MediaPortal.PowerScheduler
 		{
 		}
 
+    static public void SystemBusy()
+    {
+      // Let the system know we are busy and so not to hibernate
+      SetThreadExecutionState(ExecutionState.SystemRequired);
+    }
+     
+
 		/// <summary>
 		/// Forbid hibernation. The caller must make sure that for each call
 		/// of this method a call to <see cref="AllowHibernation"/> follows.

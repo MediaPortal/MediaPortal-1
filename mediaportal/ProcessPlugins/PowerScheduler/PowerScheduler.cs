@@ -56,7 +56,7 @@ namespace MediaPortal.PowerScheduler
     private const int PBT_APMPOWERSTATUSCHANGE = 0x000A;
     private const int PBT_APMOEMEVENT = 0x000B;
     private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
-    private const string _version = "v0.1.0";
+    private const string _version = "v0.1.1";
     #endregion
 
     #region Protected Variables
@@ -235,7 +235,7 @@ namespace MediaPortal.PowerScheduler
 
     private void OnTimer(Object sender, EventArgs e)
     {
-      PowerManager.ForbidHibernation();  // must be called periodically to tell windows that the system is required
+      PowerManager.SystemBusy();  // must be called periodically to tell windows that the system is required
 
       StopTimer();
       if (_extensiveLogging)
