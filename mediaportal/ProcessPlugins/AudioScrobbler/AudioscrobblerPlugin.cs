@@ -134,7 +134,7 @@ namespace MediaPortal.Audioscrobbler
     // the player is not playing)...     
     void OnNewAction(Action action)
     {
-      if (action.wID == Action.ActionType.ACTION_PAUSE)
+      if (action.wID == Action.ActionType.ACTION_PAUSE && g_Player.IsMusic)
         OnPause();
 
       //if (action.wID == Action.ActionType.ACTION_NEXT_ITEM || action.wID == Action.ActionType.ACTION_PREV_ITEM)
@@ -223,7 +223,7 @@ namespace MediaPortal.Audioscrobbler
       if (g_Player.Playing && g_Player.CurrentPosition > 0)
       {
         _lastPosition = Convert.ToInt32(g_Player.CurrentPosition);
-        if (_currentSong.AudioScrobblerStatus == SongStatus.Loaded)
+        if (_currentSong != null && _currentSong.AudioScrobblerStatus == SongStatus.Loaded)
           if (g_Player.Paused)
             Log.Info("Audioscrobbler plugin: {0}", "track paused - avoid skip protection");
           else
