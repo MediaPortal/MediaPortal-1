@@ -214,12 +214,12 @@ namespace MediaPortal.GUI.Music
 
     void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
     {
-      Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackEnded for {0}", filename);
-      if (!ControlsInitialized || _usingBassEngine)
+      if (!ControlsInitialized || _usingBassEngine || type != g_Player.MediaType.Music)
         return;
 
       if (GUIWindowManager.ActiveWindow == GetID)
       {
+        Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackEnded for {0}", filename);
         Action action = new Action();
         action.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
         GUIGraphicsContext.OnAction(action);
@@ -227,13 +227,13 @@ namespace MediaPortal.GUI.Music
     }
 
     void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
-    {
-      Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackStopped for {0} - stoptime: {1}", filename, stoptime);
-      if (!ControlsInitialized)
+    {      
+      if (!ControlsInitialized || type != g_Player.MediaType.Music)
         return;
 
       if (GUIWindowManager.ActiveWindow == GetID)
       {
+        Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackStopped for {0} - stoptime: {1}", filename, stoptime);
         Action action = new Action();
         action.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
         GUIGraphicsContext.OnAction(action);
@@ -242,10 +242,10 @@ namespace MediaPortal.GUI.Music
 
     void g_Player_PlayBackStarted(g_Player.MediaType type, string filename)
     {
-      Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackStarted for {0}", filename);
-      if (!ControlsInitialized)
+      if (!ControlsInitialized || type != g_Player.MediaType.Music)
         return;
 
+      Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackStarted for {0}", filename);
       // Remove pending requests from the request queue
       if (_lastAlbumRequest != null)
         InfoScrobbler.RemoveRequest(_lastAlbumRequest);
