@@ -182,7 +182,6 @@ namespace TvLibrary.Streaming
       if (_initialized == false) return;
       if (_streams.ContainsKey(stream.Name))
       {
-        Log.Log.WriteFile("RTSP: add stream {0} already added");
         return;
       }
       if (System.IO.File.Exists(stream.FileName))

@@ -867,10 +867,10 @@ namespace TvService
         TvResult result = _cards[cardId].StartTimeShifting(fileName);
         if (result == TvResult.Succeeded)
         {
-          if (System.IO.File.Exists(fileName))
+          if (System.IO.File.Exists(fileName + ".tsbuffer"))
           {
             _streamer.Start();
-            RtspStream stream = new RtspStream(String.Format("stream{0}", cardId), fileName, _cards[cardId].Card);
+            RtspStream stream = new RtspStream(String.Format("stream{0}", cardId), fileName + ".tsbuffer", _cards[cardId].Card);
             _streamer.AddStream(stream);
           }
           else
@@ -1172,7 +1172,7 @@ namespace TvService
           return result;
         }
 
-        result = CardTimeShift(cardId, timeshiftFileName);
+        result = StartTimeShifting(cardId, timeshiftFileName);
         if (result != TvResult.Succeeded)
         {
           return result;
