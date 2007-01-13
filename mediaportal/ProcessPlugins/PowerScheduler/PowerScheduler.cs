@@ -417,10 +417,23 @@ namespace MediaPortal.PowerScheduler
     void OnWakeupTimer()
     {
       LogExtensive("Wakeup timer expired");
+      if (_Timer.Enabled)  // did we shut down correctly?
+      {
+        Log.Info("PowerScheduler: did not shut down correctly -> resync");
+        OnSuspend();
+      }
+    }
+
+    void OnSuspend()
+    {
+      LogExtensive("OnSuspend->StopTimer");
+      StopTimer();
+      _onResumeRunning = false;
     }
 
     void OnResume()
     {
+      LogExtensive("OnResume");
       if (_reinitRecorder)
       {
         if (Recorder.IsAnyCardRecording())
@@ -487,9 +500,7 @@ namespace MediaPortal.PowerScheduler
           //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
           case PBT_APMQUERYSTANDBY:
           case PBT_APMSUSPEND:
-            LogExtensive("OnSuspend->StopTimer");
-            StopTimer();
-            _onResumeRunning = false;
+            OnSuspend();
             break;
 
           //The PBT_APMRESUMECRITICAL event is broadcast as a notification that the system has resumed operation. 
