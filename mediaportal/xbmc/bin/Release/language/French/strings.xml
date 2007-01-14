@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <strings>
-    <characters>255</characters>
+    <characters>512</characters>
     <string>
         <id>0</id>
         <value>Programmes</value>
@@ -227,7 +227,7 @@
     </string>
     <string>
         <id>126</id>
-        <value>État</value>
+        <value>Etat</value>
     </string>
     <string>
         <id>127</id>
@@ -1707,7 +1707,7 @@
     </string>
     <string>
         <id>506</id>
-        <value>Etes-vous sur ?</value>
+        <value>Etes-vous sûr ?</value>
     </string>
     <string>
         <id>507</id>
@@ -2451,7 +2451,7 @@
     </string>
     <string>
         <id>739</id>
-        <value>Vue : UV Index</value>
+        <value>Vue : Index UV</value>
     </string>
     <string>
         <id>740</id>
@@ -2471,11 +2471,11 @@
     </string>
     <string>
         <id>744</id>
-        <value>Levé Soleil</value>
+        <value>Lever Soleil</value>
     </string>
     <string>
         <id>745</id>
-        <value>Couché Soleil</value>
+        <value>Coucher Soleil</value>
     </string>
     <string>
         <id>746</id>
@@ -2556,7 +2556,7 @@
     </string>
     <string>
         <id>766</id>
-        <value>déjà importé&#8230;</value>
+        <value>déjà importé...</value>
     </string>
     <string>
         <id>767</id>
@@ -2612,7 +2612,7 @@
     </string>
     <string>
         <id>780</id>
-        <value>sélectionné la méthode de programmation</value>
+        <value>Sélectionner la méthode de programmation</value>
     </string>
     <string>
         <id>781</id>
@@ -2620,7 +2620,7 @@
     </string>
     <string>
         <id>782</id>
-        <value>Enregistrement avançé</value>
+        <value>Enregistrement avancé</value>
     </string>
     <string>
         <id>789</id>
@@ -3428,7 +3428,7 @@
     </string>
     <string>
         <id>1042</id>
-        <value>Conserver jusque à</value>
+        <value>Conserver jusqu'à</value>
     </string>
     <string>
         <id>1043</id>
@@ -3545,6 +3545,46 @@
     <string>
         <id>1450</id>
         <value>Etes-vous sûr de vouloir arrêter l'enregistrement ?</value>
+    </string>
+    <string>
+        <id>1500</id>
+        <value>Pas de timeshifting</value>
+    </string>
+    <string>
+        <id>1501</id>
+        <value>Carte désactivée</value>
+    </string>
+    <string>
+        <id>1502</id>
+        <value>Pas de carte disponible</value>
+    </string>
+    <string>
+        <id>1503</id>
+        <value>La chaîne est cryptée</value>
+    </string>
+    <string>
+        <id>1504</id>
+        <value>Pas de signal detecté</value>
+    </string>
+    <string>
+        <id>1505</id>
+        <value>Pas de graphe</value>
+    </string>
+    <string>
+        <id>1506</id>
+        <value>Erreur inconnue</value>
+    </string>
+    <string>
+        <id>1507</id>
+        <value>Chaîne inconnue</value>
+    </string>
+    <string>
+        <id>1508</id>
+        <value>Chaîne définie sur aucune carte</value>
+    </string>
+    <string>
+        <id>1509</id>
+        <value>Pas de fréquence pour cette chaîne</value>
     </string>
     <string>
         <id>1950</id>
@@ -4068,7 +4108,7 @@
     </string>
     <string>
         <id>2117</id>
-        <value>une erreur fatale s'est produite !</value>
+        <value>Une erreur fatale s'est produite !</value>
     </string>
     <string>
         <id>2118</id>
@@ -4132,7 +4172,7 @@
     </string>
     <string>
         <id>2133</id>
-        <value>Impossible de convertir DVR-MS en MPG</value>
+        <value>Enregistrements TV</value>
     </string>
     <string>
         <id>2134</id>
@@ -4156,19 +4196,19 @@
     </string>
     <string>
         <id>2139</id>
-        <value>Faire un MP3-CD</value>
+        <value>Faire un CD-MP3</value>
     </string>
     <string>
         <id>2140</id>
-        <value>Faire un MP3-DVD</value>
+        <value>Faire un DVD-MP3</value>
     </string>
     <string>
         <id>2141</id>
-        <value>MPEG2 -&gt;DivX</value>
+        <value>MPEG2 -> DivX</value>
     </string>
     <string>
         <id>2142</id>
-        <value>MPEG2 -&gt;MPEG4</value>
+        <value>MPEG2 -> MPEG4</value>
     </string>
     <string>
         <id>2143</id>
@@ -4381,7 +4421,7 @@
     </string>
     <string>
         <id>2604</id>
-        <value>Norwégien</value>
+        <value>Norvégien</value>
     </string>
     <string>
         <id>2605</id>
@@ -4458,7 +4498,7 @@
     </string>
     <string>
         <id>3011</id>
-        <value>Heure Restant</value>
+        <value>Heure Restante</value>
     </string>
     <string>
         <id>3012</id>
@@ -4550,7 +4590,7 @@
     </string>
     <string>
         <id>4507</id>
-        <value>Récupération annulé par l'utilisateur</value>
+        <value>Récupération annulée par l'utilisateur</value>
     </string>
     <string>
         <id>4508</id>
@@ -4622,7 +4662,7 @@
     </string>
     <string>
         <id>4542</id>
-        <value>Aucunes playlists chargés</value>
+        <value>Aucune playlist chargée</value>
     </string>
     <string>
         <id>4543</id>
@@ -4654,7 +4694,7 @@
     </string>
     <string>
         <id>4557</id>
-        <value>Ajouter tous au playlist</value>
+        <value>Ajouter tout à playlist</value>
     </string>
     <string>
         <id>5900</id>
@@ -4758,7 +4798,7 @@
     </string>
     <string>
         <id>5925</id>
-        <value>précommande de DVD</value>
+        <value>Précommande de DVD</value>
     </string>
     <string>
         <id>6000</id>
@@ -4782,7 +4822,7 @@
     </string>
     <string>
         <id>6005</id>
-        <value>Timeshift tampon</value>
+        <value>Tampon timeshift</value>
     </string>
     <string>
         <id>6006</id>
@@ -4802,7 +4842,7 @@
     </string>
     <string>
         <id>6010</id>
-        <value>grabber EPG XMLTV</value>
+        <value>Grabber EPG XMLTV</value>
     </string>
     <string>
         <id>6011</id>
@@ -4846,7 +4886,7 @@
     </string>
     <string>
         <id>6021</id>
-        <value>diaporama aléatoir</value>
+        <value>Diaporama aléatoire</value>
     </string>
     <string>
         <id>6022</id>
@@ -4858,11 +4898,11 @@
     </string>
     <string>
         <id>6024</id>
-        <value>Étapes de saut</value>
+        <value>Etapes de saut</value>
     </string>
     <string>
         <id>6025</id>
-        <value>Configuration Étapes de saut</value>
+        <value>Configuration étapes de saut</value>
     </string>
     <string>
         <id>6026</id>
@@ -4901,12 +4941,16 @@
         <value>Recherche par genre</value>
     </string>
     <string>
+        <id>6035</id>
+        <value>Ajouter programme</value>
+    </string>
+    <string>
         <id>8000</id>
         <value>Messages</value>
     </string>
     <string>
         <id>8001</id>
-        <value>Récupérer Mails</value>
+        <value>Vérifier boîte aux lettres</value>
     </string>
     <string>
         <id>8002</id>
@@ -4922,7 +4966,7 @@
     </string>
     <string>
         <id>8005</id>
-        <value>Récupérer Mails</value>
+        <value>Actualiser boîte aux lettres</value>
     </string>
     <string>
         <id>8007</id>
@@ -5010,7 +5054,7 @@
     </string>
     <string>
         <id>8033</id>
-        <value>Avancement</value>
+        <value>Progression</value>
     </string>
     <string>
         <id>8034</id>
@@ -5487,7 +5531,7 @@
     </string>
     <string>
         <id>30005</id>
-        <value>Prochaine page</value>
+        <value>Page suivante</value>
     </string>
     <string>
         <id>30006</id>
@@ -5499,11 +5543,11 @@
     </string>
     <string>
         <id>30008</id>
-        <value>rang </value>
+        <value>Rang </value>
     </string>
     <string>
         <id>30009</id>
-        <value>page </value>
+        <value>Page </value>
     </string>
     <string>
         <id>30010</id>
@@ -5655,7 +5699,7 @@
     </string>
     <string>
         <id>34040</id>
-        <value>Radio recommandé</value>
+        <value>Radio recommandée</value>
     </string>
     <string>
         <id>34041</id>
@@ -5712,18 +5756,15 @@
     <string>
         <id>34055</id>
         <value>Les flux peuvent être indisponibles</value>
-    </string>	
-    <string>
-        <id>99845</id>
-        <value>Recherche sur TV.com</value>
     </string>
+
     <string>
         <id>100000</id>
         <value>Accueil</value>
     </string>
     <string>
         <id>100001</id>
-        <value>Programmes</value>
+        <value>Télé</value>
     </string>
     <string>
         <id>100002</id>
@@ -5751,47 +5792,47 @@
     </string>
     <string>
         <id>100008</id>
-        <value>Réglages-&gt;Général</value>
+        <value>Réglages->Général</value>
     </string>
     <string>
         <id>100009</id>
-        <value>Réglages-&gt;Ecran</value>
+        <value>Réglages->Ecran</value>
     </string>
     <string>
         <id>100010</id>
-        <value>Réglages-&gt;Ecran-&gt;Calibration IU</value>
+        <value>Réglages->Ecran->Calibration IU</value>
     </string>
     <string>
         <id>100011</id>
-        <value>Réglages-&gt;Ecran-&gt;Calibrationécran</value>
+        <value>Réglages->Ecran->Calibrationécran</value>
     </string>
     <string>
         <id>100012</id>
-        <value>Réglages-&gt;Diaporamas</value>
+        <value>Réglages->Diaporamas</value>
     </string>
     <string>
         <id>100013</id>
-        <value>Réglages-&gt;Ecran-&gt;Filtres</value>
+        <value>Réglages->Ecran->Filtres</value>
     </string>
     <string>
         <id>100014</id>
-        <value>Réglages-&gt;Musique</value>
+        <value>Réglages->Musique</value>
     </string>
     <string>
         <id>100015</id>
-        <value>Réglages-&gt;Ecran-&gt;Sous-titres</value>
+        <value>Réglages->Ecran->Sous-titres</value>
     </string>
     <string>
         <id>100016</id>
-        <value>Réglages-&gt;Ecran-&gt;Economiseur d'écran</value>
+        <value>Réglages->Ecran->Economiseur d'écran</value>
     </string>
     <string>
         <id>100017</id>
-        <value>Réglages-&gt;Météo</value>
+        <value>Réglages->Météo</value>
     </string>
     <string>
         <id>100020</id>
-        <value>Réglages-&gt;Scripts</value>
+        <value>Réglages->Scripts</value>
     </string>
     <string>
         <id>100021</id>
@@ -5807,7 +5848,7 @@
     </string>
     <string>
         <id>100024</id>
-        <value>Réglages-&gt;Programmes</value>
+        <value>Réglages->Programmes</value>
     </string>
     <string>
         <id>100025</id>
@@ -5815,11 +5856,11 @@
     </string>
     <string>
         <id>100026</id>
-        <value>Réglages-&gt;Général-&gt;Cache</value>
+        <value>Réglages->Général->Cache</value>
     </string>
     <string>
         <id>100027</id>
-        <value>Réglages-&gt;Général-&gt;Lanceur auto</value>
+        <value>Réglages->Général->Lanceur auto</value>
     </string>
     <string>
         <id>100028</id>
@@ -5827,7 +5868,7 @@
     </string>
     <string>
         <id>100029</id>
-        <value>Réglages-&gt;Général-&gt;LCD</value>
+        <value>Réglages->Général->LCD</value>
     </string>
     <string>
         <id>100030</id>
@@ -5835,7 +5876,7 @@
     </string>
     <string>
         <id>100031</id>
-        <value>Réglages-&gt;Ecran-&gt;Vitesse défilement</value>
+        <value>Réglages->Ecran->Vitesse défilement</value>
     </string>
     <string>
         <id>100032</id>
@@ -5867,7 +5908,7 @@
     </string>
     <string>
         <id>100501</id>
-        <value>Musique/fichiers</value>
+        <value>Musique/partages</value>
     </string>
     <string>
         <id>100502</id>
@@ -6095,7 +6136,6 @@
     </string>
     <string>
         <id>100708</id>
-        <value>Skip step settings</value>
         <value>Sauter les réglages</value>
     </string>
     <string>
@@ -6236,7 +6276,7 @@
     </string>
     <string>
         <id>102901</id>
-        <value>OSD pleinécran</value>
+        <value>OSD plein écran</value>
     </string>
     <string>
         <id>102959</id>
@@ -6443,3 +6483,5 @@
         <value>Sur un PC de bureau partagé avec d'autres applications</value>
     </string>
 </strings>	  	 
+
+ 	  	 
