@@ -2422,12 +2422,28 @@ namespace MediaPortal.GUI.TV
         if (!_disableXMLTVImportOption)
           dlg.AddLocalizedString(937);// Reload tvguide
         dlg.AddLocalizedString(971);// Group
+        dlg.AddLocalizedString(724);// TVGuide search
+        dlg.AddLocalizedString(603);// Scheduled TV
+        dlg.AddLocalizedString(652);// Recorded TV
+
 
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1)
           return;
         switch (dlg.SelectedId)
         {
+          case 652: //Recorded TV
+            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_RECORDEDTV);
+            break;
+
+          case 603: //Scheduled TV
+            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SCHEDULER);
+            break;
+
+          case 724: //TVGuide search
+            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SEARCHTV);
+            break;
+
           case 971: //group
             dlg.Reset();
             dlg.SetHeading(GUILocalizeStrings.Get(971));//Group
