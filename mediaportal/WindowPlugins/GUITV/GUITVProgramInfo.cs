@@ -551,9 +551,18 @@ namespace MediaPortal.GUI.TV
           }
         }
       }
-
       if (!bRecording) // Not recording this program, add it.
       {
+        // check if this program is conflicting with any other already scheduled recording
+        rec = new TVRecording();
+        rec.Title = program.Title;
+        rec.Channel = program.Channel;
+        rec.Start = program.Start;
+        rec.End = program.End;
+        rec.RecType = TVRecording.RecordingType.Once;
+        
+        if (SkipForConflictingRecording(rec)) return;
+                
         foreach (TVRecording record in recordings)
         {
           if (record.IsRecordingProgram(program, false))
@@ -573,12 +582,6 @@ namespace MediaPortal.GUI.TV
             return;
           }
         }
-        rec = new TVRecording();
-        rec.Title = program.Title;
-        rec.Channel = program.Channel;
-        rec.Start = program.Start;
-        rec.End = program.End;
-        rec.RecType = TVRecording.RecordingType.Once;
         Recorder.AddRecording(ref rec);
       }
       else
@@ -692,6 +695,8 @@ namespace MediaPortal.GUI.TV
             rec.RecType = TVRecording.RecordingType.WeekEnds;
             break;
         }
+        // check if we get any conflicts
+        if (SkipForConflictingRecording(rec)) return;
         Recorder.AddRecording(ref rec);
 
         //check if this program is interrupted (for example by a news bulletin)
@@ -731,6 +736,36 @@ namespace MediaPortal.GUI.TV
       }
       Update();
     }
+
+    bool SkipForConflictingRecording(TVRecording rec)
+    {
+      TVRecording[] conflicts = ConflictManager.GetConflictingRecordings(rec);
+      if (conflicts.Length > 0)
+      {
+        GUIDialogTVConflict dlg = (GUIDialogTVConflict)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TVCONFLICT);
+        if (dlg != null)
+        {
+          dlg.Reset();
+          dlg.SetHeading(GUILocalizeStrings.Get(879));   // "recording conflict"
+          dlg.AddConflictRecordings(conflicts);
+          dlg.DoModal(GetID);
+          switch (dlg.SelectedLabel)
+          {
+            case 1:         // Don't record the already scheduled one(s)
+              {
+                foreach (TVRecording conflict in conflicts)
+                {
+                  OnRecordRecording(null, conflict);
+                }
+                break;
+              }
+            default: return true;   // Skip new Recording
+          }
+        }
+      }
+      return false;
+    }
+
 
     bool CheckIfRecording(TVRecording rec)
     {
