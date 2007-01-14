@@ -389,15 +389,19 @@ namespace MediaPortal.GUI.Library
       strTest = strTest.TrimEnd(new char[] { ' ' });
       bool bNegate = strTest[0] == '!';
       int ret = 0;
+      string strCategory="";
 
       if (bNegate)
         strTest = strTest.Remove(0, 1);
 
-      string strCategory = strTest.Substring(0, strTest.IndexOf("."));
-
       // translate conditions...
-      if (strTest == "false" || strTest == "no" || strTest == "off" || strTest == "disabled") ret = SYSTEM_ALWAYS_FALSE;
-      else if (strTest == "true" || strTest == "yes" || strTest == "on" || strTest == "enabled") ret = SYSTEM_ALWAYS_TRUE;
+      if (strTest == "false" || strTest == "no" || strTest == "off" || strTest == "disabled") 
+        ret = SYSTEM_ALWAYS_FALSE;
+      else if (strTest == "true" || strTest == "yes" || strTest == "on" || strTest == "enabled") 
+        ret = SYSTEM_ALWAYS_TRUE;
+      else
+        strCategory = strTest.Substring(0, strTest.IndexOf("."));
+
       if (strCategory == "player")
       {
         if (strTest == "player.hasmedia") ret = PLAYER_HAS_MEDIA;
@@ -633,50 +637,57 @@ namespace MediaPortal.GUI.Library
         else if (strTest.Substring(0, 14) == "skin.hastheme(")
           ret = SKIN_HAS_THEME_START + ConditionalStringParameter(strTest.Substring(14, strTest.Length - 15));
       }
-      else if (strTest.Substring(0, 16) == "window.isactive(")
+      else if (strCategory == "window")
       {
-        int winID = TranslateWindowString(strTest.Substring(16, strTest.Length - 17));
-        if (winID != (int)GUIWindow.Window.WINDOW_INVALID)
-          ret = winID;
+        if (strTest.Substring(0, 16) == "window.isactive(")
+        {
+          int winID = TranslateWindowString(strTest.Substring(16, strTest.Length - 17));
+          if (winID != (int)GUIWindow.Window.WINDOW_INVALID)
+            ret = winID;
+        }
+        else if (strTest == "window.ismedia") 
+          return WINDOW_IS_MEDIA;
+        else if (strTest.Substring(0, 17) == "window.istopmost(")
+        {
+          int winID = TranslateWindowString(strTest.Substring(17, strTest.Length - 18));
+          if (winID != (int)GUIWindow.Window.WINDOW_INVALID)
+            return AddMultiInfo(new GUIInfo(bNegate ? -WINDOW_IS_TOPMOST : WINDOW_IS_TOPMOST, winID, 0));
+        }
+        else if (strTest.Substring(0, 17) == "window.isvisible(")
+        {
+          int winID = TranslateWindowString(strTest.Substring(17, strTest.Length - 18));
+          if (winID != (int)GUIWindow.Window.WINDOW_INVALID)
+            return AddMultiInfo(new GUIInfo(bNegate ? -WINDOW_IS_VISIBLE : WINDOW_IS_VISIBLE, winID, 0));
+        }
+        else if (strTest.Substring(0, 16) == "window.previous(")
+        {
+          int winID = TranslateWindowString(strTest.Substring(16, strTest.Length - 17));
+          if (winID != (int)GUIWindow.Window.WINDOW_INVALID)
+            return AddMultiInfo(new GUIInfo(bNegate ? -WINDOW_PREVIOUS : WINDOW_PREVIOUS, winID, 0));
+        }
+        else if (strTest.Substring(0, 12) == "window.next(")
+        {
+          int winID = TranslateWindowString(strTest.Substring(12, strTest.Length - 13));
+          if (winID != (int)GUIWindow.Window.WINDOW_INVALID)
+            return AddMultiInfo(new GUIInfo(bNegate ? -WINDOW_NEXT : WINDOW_NEXT, winID, 0));
+        }
       }
-      else if (strTest == "window.ismedia") return WINDOW_IS_MEDIA;
-      else if (strTest.Substring(0, 17) == "window.istopmost(")
+      else if (strCategory == "control")
       {
-        int winID = TranslateWindowString(strTest.Substring(17, strTest.Length - 18));
-        if (winID != (int)GUIWindow.Window.WINDOW_INVALID)
-          return AddMultiInfo(new GUIInfo(bNegate ? -WINDOW_IS_TOPMOST : WINDOW_IS_TOPMOST, winID, 0));
+        if (strTest.Substring(0, 17) == "control.hasfocus(")
+        {
+          int controlID = Int32.Parse(strTest.Substring(17, strTest.Length - 18));
+          if (controlID != 0)
+            return AddMultiInfo(new GUIInfo(bNegate ? -CONTROL_HAS_FOCUS : CONTROL_HAS_FOCUS, controlID, 0));
+        }
+        else if (strTest.Substring(0, 18) == "control.isvisible(")
+        {
+          int controlID = Int32.Parse(strTest.Substring(18, strTest.Length - 19));
+          if (controlID != 0)
+            return AddMultiInfo(new GUIInfo(bNegate ? -CONTROL_IS_VISIBLE : CONTROL_IS_VISIBLE, controlID, 0));
+        }
       }
-      else if (strTest.Substring(0, 17) == "window.isvisible(")
-      {
-        int winID = TranslateWindowString(strTest.Substring(17, strTest.Length - 18));
-        if (winID != (int)GUIWindow.Window.WINDOW_INVALID)
-          return AddMultiInfo(new GUIInfo(bNegate ? -WINDOW_IS_VISIBLE : WINDOW_IS_VISIBLE, winID, 0));
-      }
-      else if (strTest.Substring(0, 16) == "window.previous(")
-      {
-        int winID = TranslateWindowString(strTest.Substring(16, strTest.Length - 17));
-        if (winID != (int)GUIWindow.Window.WINDOW_INVALID)
-          return AddMultiInfo(new GUIInfo(bNegate ? -WINDOW_PREVIOUS : WINDOW_PREVIOUS, winID, 0));
-      }
-      else if (strTest.Substring(0, 12) == "window.next(")
-      {
-        int winID = TranslateWindowString(strTest.Substring(12, strTest.Length - 13));
-        if (winID != (int)GUIWindow.Window.WINDOW_INVALID)
-          return AddMultiInfo(new GUIInfo(bNegate ? -WINDOW_NEXT : WINDOW_NEXT, winID, 0));
-      }
-      else if (strTest.Substring(0, 17) == "control.hasfocus(")
-      {
-        int controlID = Int32.Parse(strTest.Substring(17, strTest.Length - 18));
-        if (controlID != 0)
-          return AddMultiInfo(new GUIInfo(bNegate ? -CONTROL_HAS_FOCUS : CONTROL_HAS_FOCUS, controlID, 0));
-      }
-      else if (strTest.Substring(0, 18) == "control.isvisible(")
-      {
-        int controlID = Int32.Parse(strTest.Substring(18, strTest.Length - 19));
-        if (controlID != 0)
-          return AddMultiInfo(new GUIInfo(bNegate ? -CONTROL_IS_VISIBLE : CONTROL_IS_VISIBLE, controlID, 0));
-      }
-      else if (strTest.Substring(0, 13) == "controlgroup(")
+      else if (strTest.Length >=13 && strTest.Substring(0, 13) == "controlgroup(")
       {
         int groupID = Int32.Parse(strTest.Substring(13));
         int controlID = 0;
@@ -688,7 +699,7 @@ namespace MediaPortal.GUI.Library
           return AddMultiInfo(new GUIInfo(bNegate ? -CONTROL_GROUP_HAS_FOCUS : CONTROL_GROUP_HAS_FOCUS, groupID, controlID));
         }
       }
-      else if (strTest.Substring(0, 24) == "buttonscroller.hasfocus(")
+      else if (strTest.Length >=24 && strTest.Substring(0, 24) == "buttonscroller.hasfocus(")
       {
         int controlID = Int32.Parse(strTest.Substring(24, strTest.Length - 24));
         if (controlID != 0)
