@@ -22,6 +22,7 @@
 
 
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -235,7 +236,7 @@ namespace TvLibrary.Implementations.DVB
     protected IBaseFilter _mdapiFilter = null;
     protected IChangeChannel _changeChannel = null;
     protected TProgram82 _mDPlugTProg82 = new TProgram82();
-    protected object m_context=null;
+    protected object m_context = null;
     protected int _pmtPid = -1;
     protected bool _isHybrid = false;
 
@@ -663,7 +664,7 @@ namespace TvLibrary.Implementations.DVB
       (_graphBuilder as IMediaControl).GetState(10, out state);
       _pmtTimer.Enabled = false;
       _startTimeShifting = false;
-      _startRecording = false; 
+      _startRecording = false;
       _pmtVersion = -1;
       _newPMT = false;
       _newCA = false;
@@ -1323,7 +1324,7 @@ namespace TvLibrary.Implementations.DVB
         Release.ComObject("MDAPI filter", _mdapiFilter); _mdapiFilter = null;
       }
 
-       
+
       if (_filterMpeg2DemuxTif != null)
       {
         Release.ComObject("_filterMpeg2DemuxTif filter", _filterMpeg2DemuxTif); _filterMpeg2DemuxTif = null;
@@ -1349,7 +1350,7 @@ namespace TvLibrary.Implementations.DVB
       if (_filterTuner != null)
       {
         while (Marshal.ReleaseComObject(_filterTuner) > 0) ;
-         _filterTuner = null;
+        _filterTuner = null;
       }
       if (_filterCapture != null)
       {
@@ -1386,7 +1387,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("  free devices...");
       if (_tunerDevice != null)
       {
-        
+
         DevicesInUse.Instance.Remove(_tunerDevice);
         _tunerDevice = null;
       }
@@ -1430,7 +1431,54 @@ namespace TvLibrary.Implementations.DVB
       _pmtPid = pmtPid;
       if (!CheckThreadId()) return;
 
+      DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
+      if (channel != null)
+      {
+        string fileName = String.Format(@"pmt\{0}{1}{2}{3}.dat", channel.Frequency, channel.NetworkId, channel.TransportId, channel.ServiceId);
 
+        lock (this)
+        {
+          Log.Log.Info("load:{0}", fileName);
+          try
+          {
+            if (File.Exists(fileName))
+            {
+              using (Stream stream = new FileStream(fileName, FileMode.Open))
+              {
+                using (BinaryReader reader = new BinaryReader(stream))
+                {
+                  int len = (int)stream.Length;
+                  byte[] pmt = reader.ReadBytes(len);
+
+                  bool updatePids;
+                  if (SendPmtToCam(pmt,out updatePids))
+                  {
+                    _newPMT = false;
+                    if (updatePids)
+                    {
+                      if (_channelInfo != null)
+                      {
+                        SetMpegPidMapping(_channelInfo);
+                      }
+                      Log.Log.Info("dvb:stop tif");
+                      if (_filterTIF != null)
+                        _filterTIF.Stop();
+                    }
+                  }
+                }
+              }
+            }
+            else
+            {
+              Log.Log.Info("load:{0} file not found", fileName);
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Log.Write(ex);
+          }
+        }
+      }
       if ((_currentChannel as ATSCChannel) != null)
       {
         ATSCChannel atscChannel = (ATSCChannel)_currentChannel;
@@ -1460,6 +1508,7 @@ namespace TvLibrary.Implementations.DVB
           _interfaceCaGrabber.Reset();
         }
       }
+
     }
 
 
@@ -1763,7 +1812,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region properties
 
-    public bool IsHybrid 
+    public bool IsHybrid
     {
       get
       {
@@ -1775,7 +1824,7 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    public object Context 
+    public object Context
     {
       get
       {
@@ -2076,7 +2125,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="fileName">filename to which to recording should be saved</param>
     /// <param name="startTime">time the recording should start (0=now)</param>
     /// <returns></returns>
-    protected void StartRecord(bool transportStream,string fileName)
+    protected void StartRecord(bool transportStream, string fileName)
     {
       if (!CheckThreadId()) return;
       Log.Log.WriteFile("dvb:StartRecord({0})", fileName);
@@ -2684,6 +2733,30 @@ namespace TvLibrary.Implementations.DVB
             {
               if (_pmtVersion != version)
               {
+                string fileName = String.Format(@"pmt\{0}{1}{2}{3}.dat", channel.Frequency,channel.NetworkId,channel.TransportId,channel.ServiceId);
+                Log.Log.Info("save:{0}", fileName);
+                try
+                {
+                  try
+                  {
+                    System.IO.File.Delete(fileName);
+                  }
+                  catch (Exception)
+                  {
+                  }
+                  using (Stream stream = new FileStream(fileName, FileMode.OpenOrCreate))
+                  {
+                    using (BinaryWriter writer = new BinaryWriter(stream))
+                    {
+                      writer.Write(pmt);
+                      writer.Flush();
+                    }
+                    stream.Flush();
+                  }
+                }
+                catch (Exception ex)
+                {
+                }
                 _channelInfo = new ChannelInfo();
                 _channelInfo.DecodePmt(pmt);
                 _channelInfo.network_pmt_PID = channel.PmtPid;
@@ -2747,6 +2820,85 @@ namespace TvLibrary.Implementations.DVB
         {
           Marshal.FreeCoTaskMem(pmtMem);
           Marshal.FreeCoTaskMem(catMem);
+        }
+      }
+      return false;
+    }
+
+
+    /// <summary>
+    /// Sends the PMT to cam.
+    /// </summary>
+    protected bool SendPmtToCam(byte[] pmt, out bool updatePids)
+    {
+      lock (this)
+      {
+        updatePids = false;
+        if ((_currentChannel as ATSCChannel) != null) return true;
+        DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
+        if (channel == null) return true;
+        try
+        {
+          if (pmt.Length > 6)
+          {
+            int version = -1;
+            version = ((pmt[5] >> 1) & 0x1F);
+            int pmtProgramNumber = (pmt[3] << 8) + pmt[4];
+            if (pmtProgramNumber == channel.ServiceId)
+            {
+              if (_pmtVersion != version)
+              {
+                _channelInfo = new ChannelInfo();
+                _channelInfo.DecodePmt(pmt);
+                _channelInfo.network_pmt_PID = channel.PmtPid;
+                _channelInfo.pcr_pid = channel.PcrPid;
+
+                int pmtLength = pmt.Length;
+                updatePids = true;
+                Log.Log.WriteFile("dvb:SendPMT version:{0} len:{1} {2}", version, pmtLength, _channelInfo.caPMT.ProgramNumber);
+                if (_conditionalAccess != null)
+                {
+                  int audioPid = -1;
+                  if (_currentAudioStream != null)
+                  {
+                    audioPid = _currentAudioStream.Pid;
+                  }
+
+                  if (_conditionalAccess.SendPMT(_camType, (DVBBaseChannel)Channel, pmt, pmtLength, audioPid))
+                  {
+                    _pmtVersion = version;
+                    Log.Log.WriteFile("dvb:cam flags:{0}", _conditionalAccess.IsCamReady());
+                    _pmtTimer.Interval = 100;
+                    return true;
+                  }
+                  else
+                  {
+                    //cam is not ready yet
+                    Log.Log.WriteFile("dvb:SendPmt failed cam flags:{0}", _conditionalAccess.IsCamReady());
+                    _pmtVersion = -1;
+                    _pmtTimer.Interval = 3000;
+                    return false;
+                  }
+                }
+                _pmtTimer.Interval = 100;
+                _pmtVersion = version;
+
+                return true;
+              }
+              else
+              {
+                //already received this pmt
+                return true;
+              }
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Log.Write(ex);
+        }
+        finally
+        {
         }
       }
       return false;

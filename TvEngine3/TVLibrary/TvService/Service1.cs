@@ -69,7 +69,15 @@ namespace TvService
       Process currentProcess = Process.GetCurrentProcess();
       //currentProcess.PriorityClass = ProcessPriorityClass.High;
       _controller = new TVController();
+      try
+      {
+        System.IO.Directory.CreateDirectory("pmt");
+      }
+      catch (Exception)
+      {
+      }
       StartRemoting();
+      
 
     }
 
