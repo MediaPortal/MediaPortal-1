@@ -44,32 +44,62 @@ using TvEngine.Events;
 
 namespace TvService
 {
+  /// <summary>
+  /// Class which holds the context for a specific card
+  /// </summary>
   public class TvCardContext
   {
+    #region variables
     User _user;
     int _idChannel;
+    #endregion
 
+    #region ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvCardContext"/> class.
+    /// </summary>
     public TvCardContext()
     {
       _user = null;
       _idChannel = -1;
     }
+    #endregion
+
+    #region public methods
+    /// <summary>
+    /// Locks the card for the user specifies
+    /// </summary>
+    /// <param name="user">The user.</param>
     public void Lock(User user)
     {
       _user = user;
     }
 
+    /// <summary>
+    /// Unlocks this card.
+    /// </summary>
     public void Unlock()
     {
       _user = null;
     }
 
+    /// <summary>
+    /// Determines whether the the card is locked and ifso returns by which used.
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <returns>
+    /// 	<c>true</c> if the specified user is locked; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsLocked(out User user)
     {
       user = _user;
       return (_user != null);
     }
 
+    /// <summary>
+    /// Gets or sets the database id of the tv/radio channel we are currently tuned on
+    /// </summary>
+    /// <value>The id channel.</value>
     public int IdChannel
     {
       get
@@ -81,5 +111,7 @@ namespace TvService
         _idChannel = value;
       }
     }
+    #endregion
+
   }
 }

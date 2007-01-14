@@ -4,17 +4,35 @@ using System.Text;
 
 namespace TvLibrary.Interfaces.Interfaces
 {
+  /// <summary>
+  /// Represents special tv channels
+  /// </summary>
   public class SpecialChannel
   {
+    #region variables
     public string Name;
     public long Frequency;
     public int Number;
+    #endregion
+
+    #region ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SpecialChannel"/> class.
+    /// </summary>
+    /// <param name="name">The name.</param>
+    /// <param name="frequency">The frequency.</param>
+    /// <param name="number">The number.</param>
     public SpecialChannel(string name, long frequency, int number)
     {
       Name = name;
       Frequency = frequency;
       Number = number;
     }
+    #endregion
+
+    /// <summary>
+    /// All special channels
+    /// </summary>
     public static SpecialChannel[] SpecialChannels = 
 		{
 			new SpecialChannel("K2",48250000L,2),

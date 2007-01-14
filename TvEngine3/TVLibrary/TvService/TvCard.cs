@@ -53,6 +53,9 @@ namespace TvService
     #endregion
 
     #region ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvCard"/> class.
+    /// </summary>
     public TvCard()
     {
       _card = null;
@@ -61,6 +64,10 @@ namespace TvService
     #endregion
 
     #region properties
+    /// <summary>
+    /// Locks the card to the user specified
+    /// </summary>
+    /// <param name="user">The user.</param>
     public void Lock(User user)
     {
       if (Card != null)
@@ -70,6 +77,9 @@ namespace TvService
       }
     }
 
+    /// <summary>
+    /// Unlocks this card.
+    /// </summary>
     public void Unlock()
     {
       if (Card != null)
@@ -79,6 +89,13 @@ namespace TvService
       }
     }
 
+    /// <summary>
+    /// Determines whether the card is locked and ifso returns by which user
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <returns>
+    /// 	<c>true</c> if the specified card is locked; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsLocked(out User user)
     {
       user = null;
@@ -91,6 +108,10 @@ namespace TvService
       return false;
     }
 
+    /// <summary>
+    /// Gets or sets the reference to the ITVCard interface
+    /// </summary>
+    /// <value>The card.</value>
     public ITVCard Card
     {
       get
@@ -107,6 +128,10 @@ namespace TvService
       }
     }
 
+    /// <summary>
+    /// Gets or sets the reference the Card database record 
+    /// </summary>
+    /// <value>The card record from the database.</value>
     public Card DataBaseCard
     {
       get
@@ -119,6 +144,10 @@ namespace TvService
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether this card is in the local pc or remote.
+    /// </summary>
+    /// <value><c>true</c> if this card is local; otherwise, <c>false</c>.</value>
     public bool IsLocal
     {
       get
@@ -562,6 +591,10 @@ namespace TvService
       }
     }
 
+    /// <summary>
+    /// Gets the name of the time shift file.
+    /// </summary>
+    /// <value>The name of the time shift file.</value>
     public string TimeShiftFileName
     {
       get
@@ -967,6 +1000,10 @@ namespace TvService
       }
     }
 
+    /// <summary>
+    /// Gets the max channel to which we can tune.
+    /// </summary>
+    /// <value>The max channel.</value>
     public int MaxChannel
     {
 
@@ -1046,6 +1083,12 @@ namespace TvService
       }
     }
 
+    /// <summary>
+    /// Tunes the the specified card to the channel.
+    /// </summary>
+    /// <param name="cardId">id of the card.</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns></returns>
     public bool TuneScan(IChannel channel, int idChannel)
     {
       try
@@ -1257,6 +1300,9 @@ namespace TvService
       return TvResult.UnknownError;
     }
 
+    /// <summary>
+    /// Stops the card.
+    /// </summary>
     public void StopCard()
     {
       try
@@ -1486,6 +1532,10 @@ namespace TvService
         return false;
       }
     }
+    /// <summary>
+    /// Gets the epg.
+    /// </summary>
+    /// <value>The epg.</value>
     public List<EpgChannel> Epg
     {
       get
@@ -1504,6 +1554,10 @@ namespace TvService
 
 
     #region audio streams
+    /// <summary>
+    /// Gets the available audio streams.
+    /// </summary>
+    /// <value>The available audio streams.</value>
     public IAudioStream[] AvailableAudioStreams
     {
       get
@@ -1527,6 +1581,10 @@ namespace TvService
       }
     }
 
+    /// <summary>
+    /// Gets the current audio stream.
+    /// </summary>
+    /// <returns></returns>
     public IAudioStream GetCurrentAudioStream()
     {
       if (_dbsCard.Enabled == false) return null;
@@ -1546,6 +1604,10 @@ namespace TvService
       return _card.CurrentAudioStream;
     }
 
+    /// <summary>
+    /// Sets the current audio stream.
+    /// </summary>
+    /// <param name="stream">The stream.</param>
     public void SetCurrentAudioStream(IAudioStream stream)
     {
       if (_dbsCard.Enabled == false) return;
@@ -1570,6 +1632,12 @@ namespace TvService
 
     #region DiSEqC
 
+    /// <summary>
+    /// returns the current diseqc motor position
+    /// </summary>
+    /// <param name="satellitePosition">The satellite position.</param>
+    /// <param name="stepsAzimuth">The steps azimuth.</param>
+    /// <param name="stepsElevation">The steps elevation.</param>
     public void DiSEqCGetPosition(out int satellitePosition, out int stepsAzimuth, out int stepsElevation)
     {
       satellitePosition = -1;
@@ -1585,6 +1653,9 @@ namespace TvService
       motor.GetPosition(out  satellitePosition, out  stepsAzimuth, out  stepsElevation);
     }
 
+    /// <summary>
+    /// resets the diseqc motor.
+    /// </summary>
     public void DiSEqCReset()
     {
       if (IsLocal == false)
@@ -1596,6 +1667,9 @@ namespace TvService
       if (motor == null) return;
       motor.Reset();
     }
+    /// <summary>
+    /// stops the diseqc motor
+    /// </summary>
     public void DiSEqCStopMotor()
     {
       if (IsLocal == false)
@@ -1607,6 +1681,9 @@ namespace TvService
       if (motor == null) return;
       motor.StopMotor();
     }
+    /// <summary>
+    /// sets the east limit of the diseqc motor
+    /// </summary>
     public void DiSEqCSetEastLimit()
     {
       if (IsLocal == false)
@@ -1618,6 +1695,9 @@ namespace TvService
       if (motor == null) return;
       motor.SetEastLimit();
     }
+    /// <summary>
+    /// sets the west limit of the diseqc motor
+    /// </summary>
     public void DiSEqCSetWestLimit()
     {
       if (IsLocal == false)
@@ -1629,6 +1709,10 @@ namespace TvService
       if (motor == null) return;
       motor.SetWestLimit();
     }
+    /// <summary>
+    /// Enables or disables the use of the west/east limits
+    /// </summary>
+    /// <param name="onOff">if set to <c>true</c> [on off].</param>
     public void DiSEqCForceLimit(bool onOff)
     {
       if (IsLocal == false)
@@ -1640,6 +1724,11 @@ namespace TvService
       if (motor == null) return;
       motor.ForceLimits = onOff;
     }
+    /// <summary>
+    /// Drives the diseqc motor in the direction specified by the number of steps
+    /// </summary>
+    /// <param name="direction">The direction.</param>
+    /// <param name="numberOfSteps">The number of steps.</param>
     public void DiSEqCDriveMotor(DiSEqCDirection direction, byte numberOfSteps)
     {
       if (IsLocal == false)
@@ -1651,6 +1740,10 @@ namespace TvService
       if (motor == null) return;
       motor.DriveMotor(direction, numberOfSteps);
     }
+    /// <summary>
+    /// Stores the current diseqc motor position
+    /// </summary>
+    /// <param name="position">The position.</param>
     public void DiSEqCStorePosition(byte position)
     {
       if (IsLocal == false)
@@ -1662,6 +1755,9 @@ namespace TvService
       if (motor == null) return;
       motor.StorePosition(position);
     }
+    /// <summary>
+    /// Drives the diseqc motor to the reference positition
+    /// </summary>
     public void DiSEqCGotoReferencePosition()
     {
       if (IsLocal == false)
@@ -1673,6 +1769,10 @@ namespace TvService
       if (motor == null) return;
       motor.GotoReferencePosition();
     }
+    /// <summary>
+    /// Drives the diseqc motor to the specified position
+    /// </summary>
+    /// <param name="position">The position.</param>
     public void DiSEqCGotoPosition(byte position)
     {
       if (IsLocal == false)
@@ -1857,6 +1957,10 @@ namespace TvService
       return false;
     }
 
+    /// <summary>
+    /// returns a virtual card for this tvcard
+    /// </summary>
+    /// <returns></returns>
     public VirtualCard GetVirtualCard()
     {
       VirtualCard card = new VirtualCard(_dbsCard.IdCard);
@@ -1867,6 +1971,9 @@ namespace TvService
       return card;
     }
 
+    /// <summary>
+    /// Disposes this instance.
+    /// </summary>
     public void Dispose()
     {
       if (IsLocal)

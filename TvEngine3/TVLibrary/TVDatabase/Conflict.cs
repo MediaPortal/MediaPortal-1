@@ -153,7 +153,6 @@ namespace TvDatabase
     public static Conflict ComplexRetrieve(int id)
 		{
 			throw new NotImplementedException("Gentle.NET Business Entity script: Generation of complex retrieve function (multiple primary keys) is not implemented yet.");
-			return null;
 		}
 		
 		public override void Persist()

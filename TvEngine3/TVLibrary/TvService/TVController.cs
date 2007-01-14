@@ -1460,6 +1460,7 @@ namespace TvService
       _cards[cardId].DiSEqCGotoPosition(position);
     }
     #endregion
+
     /// <summary>
     /// Stops the grabbing epg.
     /// </summary>
@@ -1504,6 +1505,7 @@ namespace TvService
       }
     }
     #endregion
+
     #endregion
 
     #region private members
@@ -1708,6 +1710,12 @@ namespace TvService
     }
 
 
+
+    /// <summary>
+    /// Fires an ITvServerEvent to plugins.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     public void Fire(object sender, EventArgs args)
     {
       try
@@ -1720,8 +1728,12 @@ namespace TvService
         Log.Write(ex);
       }
     }
-    #endregion
-
+    
+    /// <summary>
+    /// returns a virtual card for the card specified.
+    /// </summary>
+    /// <param name="cardId">The card id.</param>
+    /// <returns></returns>
     VirtualCard GetVirtualCard(int cardId)
     {
       VirtualCard card = new VirtualCard(cardId);
@@ -1731,5 +1743,7 @@ namespace TvService
       card.RemoteServer = Dns.GetHostName();
       return card;
     }
+    #endregion
+
   }
 }

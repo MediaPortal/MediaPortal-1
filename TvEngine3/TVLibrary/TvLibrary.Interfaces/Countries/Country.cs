@@ -61,7 +61,7 @@ namespace TvLibrary
     /// <param name="id">The id.</param>
     /// <param name="country">The country.</param>
     /// <param name="code">The code.</param>
-    /// <param name="code">country index.</param>
+    /// <param name="index">The index.</param>
     public Country(int id, string country, string code, int index)
     {
       _id = id;

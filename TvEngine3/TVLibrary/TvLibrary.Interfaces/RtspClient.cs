@@ -5,16 +5,18 @@ using System.Text;
 namespace TvLibrary.Streaming
 {
   [Serializable]
-  ///
   ///class holding the details about a single rtsp streaming client
   public class RtspClient
   {
+    #region variables
     bool _isActive;
     string _ipAdress;
     string _streamName;
     DateTime _dateTimeStarted;
     string _description;
+    #endregion
 
+    #region ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="RtspClient"/> class.
     /// </summary>
@@ -37,7 +39,9 @@ namespace TvLibrary.Streaming
       _dateTimeStarted = started;
       _description = description;
     }
+    #endregion
 
+    #region properties
     /// <summary>
     /// Gets the description.
     /// </summary>
@@ -97,5 +101,6 @@ namespace TvLibrary.Streaming
         return _streamName;
       }
     }
+    #endregion
   }
 }
