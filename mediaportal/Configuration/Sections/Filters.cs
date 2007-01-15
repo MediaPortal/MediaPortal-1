@@ -37,7 +37,7 @@ namespace MediaPortal.Configuration.Sections
 		//private MediaPortal.UserInterface.Controls.MPLabel label4;
 		//private System.ComponentModel.IContainer components = null;
 
-		public FiltersSection() : this("Decoder Filters")
+		public FiltersSection() : this("DirectShow Filter Control")
 		{
 		}
 

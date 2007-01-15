@@ -89,7 +89,7 @@ namespace MediaPortal.Configuration.Sections
       base.Dispose(disposing);
     }
 
-    string loglevel = "3";  // Degub is default
+    string loglevel = "3";  // Debug is default
 
     string[][] sectionEntries = new string[][] { 
       new string[] { "general", "startfullscreen", "false" },
@@ -104,8 +104,7 @@ namespace MediaPortal.Configuration.Sections
 	  new string[] { "general", "dblclickasrightclick", "false" },
 	  new string[] { "general", "hidetaskbar", "false" },
 	  new string[] { "general", "alwaysontop", "false" },
-	  new string[] { "general", "exclusivemode", "true" },
-	  new string[] { "general", "enableguisounds", "true" },
+	 	  new string[] { "general", "enableguisounds", "true" },
 	  new string[] { "general", "screensaver", "false" },
       new string[] { "general", "turnoffmonitor", "false" },
 	  new string[] { "general", "startbasichome", "false" },
@@ -186,7 +185,7 @@ namespace MediaPortal.Configuration.Sections
         using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer", true))
           subkey.SetValue("EnableBalloonTips", iValue);
 
-        if (settingsCheckedListBox.GetItemChecked(settingsCheckedListBox.Items.Count - 1))
+        if (settingsCheckedListBox.GetItemChecked(settingsCheckedListBox.Items.Count - 2))
           using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true))
             subkey.SetValue("ForegroundLockTimeout", 0);
 
@@ -286,7 +285,6 @@ namespace MediaPortal.Configuration.Sections
             "Use mouse left double click as right click",
             "Hide taskbar in fullscreen mode",
             "MediaPortal always on top",
-            "Use Exclusive DirectX mode - avoids tearing",
             "Enable GUI sound effects",
             "Blank screen in fullscreen mode when MediaPortal is idle",
             "Turn off monitor when blanking screen",

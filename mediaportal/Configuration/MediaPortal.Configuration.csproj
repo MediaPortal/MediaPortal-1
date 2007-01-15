@@ -323,6 +323,12 @@
     <Compile Include="Sections\PureVideoDecoderFilters.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Sections\VMR9Config.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\VMR9Config.Designer.cs">
+      <DependentUpon>VMR9Config.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\WinDVD7DecoderFilters.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -637,6 +643,10 @@
     <EmbeddedResource Include="Sections\PureVideoDecoderFilters.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PureVideoDecoderFilters.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\VMR9Config.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>VMR9Config.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\WinDVD7DecoderFilters.resx">
       <DependentUpon>WinDVD7DecoderFilters.cs</DependentUpon>
