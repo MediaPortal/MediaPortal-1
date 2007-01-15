@@ -595,6 +595,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected void RunGraph()
     {
+      DateTime dtNow;
       if (!CheckThreadId()) return;
       FilterState state;
       (_graphBuilder as IMediaControl).GetState(10, out state);
@@ -606,6 +607,14 @@ namespace TvLibrary.Implementations.DVB
         if (channel != null)
         {
           SetupPmtGrabber(channel.PmtPid);
+          dtNow = DateTime.Now;
+          while (_pmtVersion < 0)
+          {
+            Log.Log.Write("wait for pmt");
+            System.Threading.Thread.Sleep(20);
+            TimeSpan ts = DateTime.Now - dtNow;
+            if (ts.TotalMilliseconds >= 2000) break;
+          }
         }
         return;
       }
@@ -635,6 +644,14 @@ namespace TvLibrary.Implementations.DVB
       _pmtTimer.Enabled = true;
       _graphRunning = true;
 
+      dtNow = DateTime.Now;
+      while (_pmtVersion < 0)
+      {
+        Log.Log.Write("wait for pmt");
+        System.Threading.Thread.Sleep(20);
+        TimeSpan ts = DateTime.Now - dtNow;
+        if (ts.TotalMilliseconds >= 2000) break;
+      }
     }
 
     /// <summary>
@@ -1430,7 +1447,7 @@ namespace TvLibrary.Implementations.DVB
       if (pmtPid == _pmtPid) return;
       _pmtPid = pmtPid;
       if (!CheckThreadId()) return;
-
+      /*
       DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
       if (channel != null)
       {
@@ -1478,7 +1495,7 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Write(ex);
           }
         }
-      }
+      }*/
       if ((_currentChannel as ATSCChannel) != null)
       {
         ATSCChannel atscChannel = (ATSCChannel)_currentChannel;
@@ -1508,7 +1525,6 @@ namespace TvLibrary.Implementations.DVB
           _interfaceCaGrabber.Reset();
         }
       }
-
     }
 
 
@@ -2733,6 +2749,7 @@ namespace TvLibrary.Implementations.DVB
             {
               if (_pmtVersion != version)
               {
+                /*
                 string fileName = String.Format(@"pmt\{0}{1}{2}{3}.dat", channel.Frequency,channel.NetworkId,channel.TransportId,channel.ServiceId);
                 Log.Log.Info("save:{0}", fileName);
                 try
@@ -2756,7 +2773,7 @@ namespace TvLibrary.Implementations.DVB
                 }
                 catch (Exception ex)
                 {
-                }
+                }*/
                 _channelInfo = new ChannelInfo();
                 _channelInfo.DecodePmt(pmt);
                 _channelInfo.network_pmt_PID = channel.PmtPid;
