@@ -21,9 +21,9 @@
       <type>image</type>
       <id>0</id>
       <posX>77</posX>
-      <posY>398</posY>
-      <width>155</width>
-      <height>158</height>
+      <posY>402</posY>
+      <width>150</width>
+      <height>153</height>
       <texture>playback_background.png</texture>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -33,7 +33,7 @@
       <type>image</type>
       <id>1</id>
       <posX>90</posX>
-      <posY>412</posY>
+      <posY>416</posY>
       <width>125</width>
       <height>125</height>
       <keepaspectratio>yes</keepaspectratio>
@@ -85,10 +85,10 @@
     <control>
       <description>album/artist/genre etc info label</description>
       <type>fadelabel</type>
-      <width>135</width>
+      <width>140</width>
       <height>30</height>
-      <posX>90</posX>
-      <posY>535</posY>
+      <posX>80</posX>
+      <posY>557</posY>
       <font>font12</font>
       <label>#Play.Current.Title\r#Play.Current.Artist\r#Play.Current.Album\r#Play.Current.Duration</label>
       <textcolor>EFFFFFFF</textcolor>
