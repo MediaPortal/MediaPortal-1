@@ -39,9 +39,9 @@ DECLARE_INTERFACE_(ITSChannelScan, IUnknown)
 	STDMETHOD(GetCount)(THIS_ int* channelCount)PURE;
 	STDMETHOD(IsReady)(THIS_ BOOL* yesNo)PURE;
 	STDMETHOD(GetChannel)(THIS_ int index,
-										 int* networkId,
-										 int* transportId,
-										 int* serviceId,
+										 long* networkId,
+										 long* transportId,
+										 long* serviceId,
 										 int* majorChannel,
 										 int* minorChannel,
 										 int* frequency,
@@ -91,9 +91,9 @@ public:
 	STDMETHODIMP GetCount(int* channelCount);
 	STDMETHODIMP IsReady( BOOL* yesNo);
 	STDMETHODIMP GetChannel(int index,
-										 int* networkId,
-										 int* transportId,
-										 int* serviceId,
+										 long* networkId,
+										 long* transportId,
+										 long* serviceId,
 										 int* majorChannel,
 										 int* minorChannel,
 										 int* frequency,

@@ -187,9 +187,9 @@ namespace TvLibrary.Implementations.DVB
 
           _event.WaitOne(10000, true);
 
-          short networkId;
-          short transportId;
-          short serviceId;
+          int networkId;
+          int transportId;
+          int serviceId;
           short majorChannel;
           short minorChannel;
           short frequency;

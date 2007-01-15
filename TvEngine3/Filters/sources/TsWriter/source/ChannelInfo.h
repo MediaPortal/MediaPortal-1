@@ -27,9 +27,9 @@ public:
   CChannelInfo(void);
   virtual ~CChannelInfo(void);
   void Reset();
-  int NetworkId;
-  int TransportId;
-  int ServiceId;
+  long NetworkId;
+  long TransportId;
+  long ServiceId;
   int MajorChannel;
   int MinorChannel;
   int Frequency;

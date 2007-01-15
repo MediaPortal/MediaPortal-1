@@ -112,9 +112,9 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int GetChannel(short index,
-                       out short networkId,
-                       out short transportId,
-                       out short serviceId,
+                       out int networkId,
+                       out int transportId,
+                       out int serviceId,
                        out short majorChannel,
                        out short minorChannel,
                        out short frequency,

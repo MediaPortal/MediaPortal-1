@@ -62,14 +62,14 @@ void  CSdtParser::OnNewSection(CSection& sections)
   int section_syntax_indicator = (section[start+1]>>7) & 1;
   int section_length = ((section[start+1]& 0xF)<<8) + section[start+2];
   
-  int transport_stream_id = (section[start+3]<<8)+section[start+4];
+  long transport_stream_id = (section[start+3]<<8)+section[start+4];
   int version_number = ((section[start+5]>>1)&0x1F);
 
 
   int current_next_indicator = section[start+5] & 1;
   int section_number = section[start+6];
   int last_section_number = section[start+7];
-  int original_network_id = ((section[start+8])<<8)+section[start+9];
+  long original_network_id = ((section[start+8])<<8)+section[start+9];
  // LogDebug("decodeSDTTable len=%d section no:%d last section no:%d cni:%d version:%d si:%d", 
 	//	  section_length,section_number,last_section_number,current_next_indicator,version_number,section_syntax_indicator);
 
@@ -78,7 +78,7 @@ void  CSdtParser::OnNewSection(CSection& sections)
   int len1 = section_length - 11 - 4;
   int descriptors_loop_length;
   int len2;
-  int service_id;
+  long service_id;
   int EIT_schedule_flag;
   int free_CA_mode;
   int running_status;

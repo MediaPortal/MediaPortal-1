@@ -125,9 +125,9 @@ STDMETHODIMP CChannelScan::IsReady( BOOL* yesNo)
 	return S_OK;
 }
 STDMETHODIMP CChannelScan::GetChannel(int index,
-									 int* networkId,
-									 int* transportId,
-									 int* serviceId,
+									 long* networkId,
+									 long* transportId,
+									 long* serviceId,
 									 int* majorChannel,
 									 int* minorChannel,
 									 int* frequency,
