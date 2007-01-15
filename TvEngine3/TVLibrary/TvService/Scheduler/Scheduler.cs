@@ -53,8 +53,6 @@ namespace TvService
     DateTime _scheduleCheckTimer;
     List<RecordingDetail> _recordingsInProgressList;
     IList _channels;
-    int _preRecordInterval = 5;
-    int _postRecordInterval = 5;
     #endregion
 
     #region ctor
@@ -154,8 +152,6 @@ namespace TvService
     void DoSchedule()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      _preRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-      _postRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
 
       DateTime now = DateTime.Now;
       IList schedules = Schedule.ListAll();
@@ -216,11 +212,11 @@ namespace TvService
       ScheduleRecordingType type = (ScheduleRecordingType)schedule.ScheduleType;
       if (type == ScheduleRecordingType.Once)
       {
-        if (currentTime >= schedule.StartTime.AddMinutes(-_preRecordInterval) &&
-            currentTime <= schedule.EndTime.AddMinutes(_postRecordInterval))
+        if (currentTime >= schedule.StartTime.AddMinutes(-schedule.PreRecordInterval) &&
+            currentTime <= schedule.EndTime.AddMinutes(schedule.PostRecordInterval))
         {
 
-          newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), schedule.StartTime, schedule.EndTime.AddMinutes(_postRecordInterval));
+          newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), schedule.StartTime, schedule.EndTime);
           return true;
         }
         return false;
@@ -230,12 +226,12 @@ namespace TvService
       {
         DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
         DateTime end = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
-        if (currentTime >= start.AddMinutes(-_preRecordInterval) &&
-            currentTime <= end.AddMinutes(_postRecordInterval))
+        if (currentTime >= start.AddMinutes(-schedule.PreRecordInterval) &&
+            currentTime <= end.AddMinutes(schedule.PostRecordInterval))
         {
           if (!schedule.IsSerieIsCanceled(start))
           {
-            newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end.AddMinutes(_postRecordInterval));
+            newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end);
             return true;
           }
         }
@@ -248,13 +244,13 @@ namespace TvService
         {
           DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
           DateTime end = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
-          if (currentTime >= start.AddMinutes(-_preRecordInterval) &&
-              currentTime <= end.AddMinutes(_postRecordInterval))
+          if (currentTime >= start.AddMinutes(-schedule.PreRecordInterval) &&
+              currentTime <= end.AddMinutes(schedule.PostRecordInterval))
           {
 
             if (!schedule.IsSerieIsCanceled(start))
             {
-              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end.AddMinutes(_postRecordInterval));
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end);
               return true;
             }
           }
@@ -267,12 +263,12 @@ namespace TvService
         {
           DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
           DateTime end = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
-          if (currentTime >= start.AddMinutes(-_preRecordInterval) &&
-              currentTime <= end.AddMinutes(_postRecordInterval))
+          if (currentTime >= start.AddMinutes(-schedule.PreRecordInterval) &&
+              currentTime <= end.AddMinutes(schedule.PostRecordInterval))
           {
             if (!schedule.IsSerieIsCanceled(start))
             {
-              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end.AddMinutes(_postRecordInterval));
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end);
               return true;
             }
           }
@@ -286,12 +282,12 @@ namespace TvService
         {
           DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
           DateTime end = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
-          if (currentTime >= start.AddMinutes(-_preRecordInterval) &&
-              currentTime <= end.AddMinutes(_postRecordInterval))
+          if (currentTime >= start.AddMinutes(-schedule.PreRecordInterval) &&
+              currentTime <= end.AddMinutes(schedule.PostRecordInterval))
           {
             if (!schedule.IsSerieIsCanceled(start))
             {
-              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end.AddMinutes(_postRecordInterval));
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end);
               return true;
             }
           }
@@ -305,13 +301,13 @@ namespace TvService
         TvDatabase.Program next = schedule.ReferencedChannel().NextProgram;
         if (current != null)
         {
-          if (currentTime >= current.StartTime.AddMinutes(-_preRecordInterval) && currentTime <= current.EndTime.AddMinutes(_postRecordInterval))
+          if (currentTime >= current.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= current.EndTime.AddMinutes(schedule.PostRecordInterval))
           {
             if (String.Compare(current.Title, schedule.ProgramName, true) == 0)
             {
               if (!schedule.IsSerieIsCanceled(current.StartTime))
               {
-                newRecording = new RecordingDetail(schedule, current.ReferencedChannel(), current.StartTime, current.EndTime.AddMinutes(_postRecordInterval));
+                newRecording = new RecordingDetail(schedule, current.ReferencedChannel(), current.StartTime, current.EndTime);
                 return true;
               }
             }
@@ -319,13 +315,13 @@ namespace TvService
         }
         if (next != null)
         {
-          if (currentTime >= next.StartTime.AddMinutes(-_preRecordInterval) && currentTime <= next.EndTime.AddMinutes(_postRecordInterval))
+          if (currentTime >= next.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= next.EndTime.AddMinutes(schedule.PostRecordInterval))
           {
             if (String.Compare(next.Title, schedule.ProgramName, true) == 0)
             {
               if (!schedule.IsSerieIsCanceled(next.StartTime))
               {
-                newRecording = new RecordingDetail(schedule, next.ReferencedChannel(), next.StartTime, next.EndTime.AddMinutes(_postRecordInterval));
+                newRecording = new RecordingDetail(schedule, next.ReferencedChannel(), next.StartTime, next.EndTime);
                 return true;
               }
             }
@@ -341,13 +337,13 @@ namespace TvService
           TvDatabase.Program next = channel.NextProgram;
           if (current != null)
           {
-            if (currentTime >= current.StartTime.AddMinutes(-_preRecordInterval) && currentTime <= current.EndTime.AddMinutes(_postRecordInterval))
+            if (currentTime >= current.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= current.EndTime.AddMinutes(schedule.PostRecordInterval))
             {
               if (String.Compare(current.Title, schedule.ProgramName, true) == 0)
               {
                 if (!schedule.IsSerieIsCanceled(current.StartTime))
                 {
-                  newRecording = new RecordingDetail(schedule, current.ReferencedChannel(), current.StartTime, current.EndTime.AddMinutes(_postRecordInterval));
+                  newRecording = new RecordingDetail(schedule, current.ReferencedChannel(), current.StartTime, current.EndTime);
                   return true;
                 }
               }
@@ -355,13 +351,13 @@ namespace TvService
           }
           if (next != null)
           {
-            if (currentTime >= next.StartTime.AddMinutes(-_preRecordInterval) && currentTime <= next.EndTime.AddMinutes(_postRecordInterval))
+            if (currentTime >= next.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= next.EndTime.AddMinutes(schedule.PostRecordInterval))
             {
               if (String.Compare(next.Title, schedule.ProgramName, true) == 0)
               {
                 if (!schedule.IsSerieIsCanceled(next.StartTime))
                 {
-                  newRecording = new RecordingDetail(schedule, next.ReferencedChannel(), next.StartTime, next.EndTime.AddMinutes(_postRecordInterval));
+                  newRecording = new RecordingDetail(schedule, next.ReferencedChannel(), next.StartTime, next.EndTime);
                   return true;
                 }
               }
