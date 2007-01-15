@@ -608,7 +608,7 @@ namespace TvLibrary.Implementations.DVB
         {
           SetupPmtGrabber(channel.PmtPid);
           dtNow = DateTime.Now;
-          while (_pmtVersion < 0)
+          while (_pmtVersion < 0 && channel.PmtPid > 0)
           {
             Log.Log.Write("wait for pmt");
             System.Threading.Thread.Sleep(20);
@@ -643,14 +643,19 @@ namespace TvLibrary.Implementations.DVB
       }
       _pmtTimer.Enabled = true;
       _graphRunning = true;
-
-      dtNow = DateTime.Now;
-      while (_pmtVersion < 0)
+      if (dvbChannel != null)
       {
-        Log.Log.Write("wait for pmt");
-        System.Threading.Thread.Sleep(20);
-        TimeSpan ts = DateTime.Now - dtNow;
-        if (ts.TotalMilliseconds >= 2000) break;
+        if (dvbChannel.PmtPid >= 0)
+        {
+          dtNow = DateTime.Now;
+          while (_pmtVersion < 0)
+          {
+            Log.Log.Write("wait for pmt");
+            System.Threading.Thread.Sleep(20);
+            TimeSpan ts = DateTime.Now - dtNow;
+            if (ts.TotalMilliseconds >= 2000) break;
+          }
+        }
       }
     }
 
