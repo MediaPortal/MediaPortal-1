@@ -39,21 +39,6 @@ namespace MediaPortal.Dialogs
 
   public abstract class GUIDialogWindow : GUIWindow, IRenderLayer
   {
-    #region Imports
-    #endregion
-
-    #region Enums
-    #endregion
-
-    #region Delegates
-    #endregion
-
-    #region Events
-    #endregion
-
-    #region <skin> Variables
-    #endregion
-
     #region Variables
     // Private Variables
     private Object thisLock = new Object();      // used in Close
@@ -64,10 +49,6 @@ namespace MediaPortal.Dialogs
     protected bool _prevOverlay = false;
     protected bool _running = false;
     // Public Variables
-    #endregion
-
-    #region Constructors/Destructors
-
     #endregion
 
     #region Properties
@@ -163,10 +144,6 @@ namespace MediaPortal.Dialogs
 
     #endregion
 
-    #region Private Methods
-    
-    #endregion
-
     #region <Base class> Overloads
     #region SupportsDelayedLoad
     public override bool SupportsDelayedLoad
@@ -242,26 +219,15 @@ namespace MediaPortal.Dialogs
   
   public class GUIDialogTVConflict : GUIDialogWindow
   {
-    #region Imports
-    #endregion
-
     #region Enums
     enum Controls
     {
       LIST = 3,
       HEADING = 4,
       BUTTON_NEW_REC = 11,
-      BUTTON_CONFLICT_REC = 12
+      BUTTON_CONFLICT_REC = 12,
+      BUTTON_KEEP_CONFLICT = 13
     };
-    #endregion
-
-    #region Delegates
-    #endregion
-
-    #region Events
-    #endregion
-
-    #region <skin> Variables
     #endregion
 
     #region Variables
@@ -276,10 +242,6 @@ namespace MediaPortal.Dialogs
       GetID = (int)GUIWindow.Window.WINDOW_DIALOG_TVCONFLICT;
     }
 
-    #endregion
-
-    #region Properties
-    // Public Properties
     #endregion
 
     #region Public Methods
@@ -317,7 +279,6 @@ namespace MediaPortal.Dialogs
        
     #endregion
 
-   
     #region Private Methods
     private void OnListItemSelected(GUIListItem item, GUIControl parent)
     {
@@ -357,6 +318,11 @@ namespace MediaPortal.Dialogs
             SelectedLabel = 1;
             Close();
           }
+          else if ((int)Controls.BUTTON_KEEP_CONFLICT == iControl)
+          {
+            SelectedLabel = 2;
+            Close();
+          }
           break;
       }
       return base.OnMessage(message);
@@ -364,9 +330,6 @@ namespace MediaPortal.Dialogs
    
     #endregion
 
-    #region <Interface> Implementations
-   
-    #endregion
   }
 
 }

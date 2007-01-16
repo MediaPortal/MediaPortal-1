@@ -3502,7 +3502,10 @@
       <id>1111</id>
       <value>Skip conflicting recording(s)</value>
     </string>
-
+  <string>
+    <id>1112</id>
+    <value>Keep conflict</value>
+  </string>
     <string>
         <id>1190</id>
         <value>Zoom 14:9</value>

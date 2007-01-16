@@ -751,15 +751,19 @@ namespace MediaPortal.GUI.TV
           dlg.DoModal(GetID);
           switch (dlg.SelectedLabel)
           {
-            case 1:         // Don't record the already scheduled one(s)
+            case 0: return true;   // Skip new Recording
+            case 1:                // Don't record the already scheduled one(s)
               {
                 foreach (TVRecording conflict in conflicts)
                 {
-                  OnRecordRecording(null, conflict);
+                  TVProgram prog = new TVProgram(conflict.Channel, conflict.StartTime, conflict.EndTime, conflict.Title);
+                  OnRecordProgram(prog);
+                  //OnRecordRecording(null, conflict);
                 }
                 break;
               }
-            default: return true;   // Skip new Recording
+            case 2: return false;   // No Skipping new Recording
+            default: return true;   // Skipping new Recording
           }
         }
       }
