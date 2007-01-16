@@ -120,6 +120,7 @@ namespace TvLibrary.Implementations.DVB
       }
       short isVertical = 0;
       if (channel.Polarisation == Polarisation.LinearV) isVertical = 1;
+      if (channel.Polarisation == Polarisation.CircularR) isVertical = 1;
       _technoTrendInterface.SetDisEqc((short)channel.DisEqc, isHiBand, isVertical);
     }
 

@@ -745,10 +745,10 @@ namespace TvLibrary.Implementations.DVB
         case DisEqcType.Level1AA: // Level 1 A/A
           antennaNr = 1;
           break;
-        case DisEqcType.Level1BA: // Level 1 B/A
+        case DisEqcType.Level1AB: // Level 1 A/B
           antennaNr = 2;
           break;
-        case DisEqcType.Level1AB: // Level 1 A/B
+        case DisEqcType.Level1BA: // Level 1 B/A
           antennaNr = 3;
           break;
         case DisEqcType.Level1BB: // Level 1 B/B
@@ -767,12 +767,16 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteByte(_ptrDataInstance, 6, 0x10);//diseqc command 1. uAddress=0x10
       Marshal.WriteByte(_ptrDataInstance, 7, 0x38);//diseqc command 1. uCommand=0x38
 
-      // for the write to port group 0 command:
-      // data 0 : low nibble specifies the values of each bit
-      //		bit		0    :  (1)      0= low band,   1 = high band
-      //    bit   1    :  (2)      0= horizontal, 1 = vertical
-      //    bits  2..3 :  (4.8.10) antenna number (0-3)
-      //    bit   4-7  :           specifices which bits are valid , 0XF means all bits are valid and should be set)
+
+      //bit 0	(1)	: 0=low band, 1 = hi band
+      //bit 1 (2) : 0=vertical, 1 = horizontal
+      //bit 3 (4) : 0=satellite position A, 1=satellite position B
+      //bit 4 (8) : 0=switch option A, 1=switch option  B
+      // LNB    option  position
+      // 1        A         A
+      // 2        A         B
+      // 3        B         A
+      // 4        B         B
       int lnbFrequency = 10600000;
       bool hiBand = true;
       switch (channel.BandType)

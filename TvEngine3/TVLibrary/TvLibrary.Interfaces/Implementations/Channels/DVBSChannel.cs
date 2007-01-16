@@ -39,36 +39,36 @@ namespace TvLibrary.Channels
   /// <summary>
   /// enum describing the different DisEqc type
   /// </summary>
-  public enum DisEqcType
+  public enum DisEqcType : int
   {
     /// <summary>
     /// diseqc not used
     /// </summary>
-    None,
+    None = 0,
     /// <summary>
     /// Simple A
     /// </summary>
-    SimpleA,
+    SimpleA = 1,
     /// <summary>
     /// Simple B
     /// </summary>
-    SimpleB,
+    SimpleB = 2,
     /// <summary>
     /// Level 1 A/A
     /// </summary>
-    Level1AA,
-    /// <summary>
-    /// Level 1 B/A
-    /// </summary>
-    Level1BA,
+    Level1AA = 3,
     /// <summary>
     /// Level 1 A/B
     /// </summary>
-    Level1AB,
+    Level1AB = 4,
+    /// <summary>
+    /// Level 1 B/A
+    /// </summary>
+    Level1BA = 5,
     /// <summary>
     /// Level 1 B/B
     /// </summary>
-    Level1BB,
+    Level1BB = 6,
   };
 
   /// <summary>

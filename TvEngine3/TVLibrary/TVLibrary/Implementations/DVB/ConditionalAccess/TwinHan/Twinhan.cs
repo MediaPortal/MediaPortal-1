@@ -439,10 +439,10 @@ namespace TvLibrary.Implementations.DVB
         case DisEqcType.Level1AA://Level 1 A/A
           disEqcPort = 1;
           break;
-        case DisEqcType.Level1BA://Level 1 B/A
+        case DisEqcType.Level1AB://Level 1 A/B
           disEqcPort = 2;
           break;
-        case DisEqcType.Level1AB://Level 1 A/B
+        case DisEqcType.Level1BA://Level 1 B/A
           disEqcPort = 3;
           break;
         case DisEqcType.Level1BB://Level 1 B/B

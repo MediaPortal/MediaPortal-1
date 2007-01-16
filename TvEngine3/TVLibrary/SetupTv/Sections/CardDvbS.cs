@@ -373,8 +373,8 @@ namespace SetupTv.Sections
       mpDisEqc1.Items.Add(DisEqcType.SimpleA);
       mpDisEqc1.Items.Add(DisEqcType.SimpleB);
       mpDisEqc1.Items.Add(DisEqcType.Level1AA);
-      mpDisEqc1.Items.Add(DisEqcType.Level1BA);
       mpDisEqc1.Items.Add(DisEqcType.Level1AB);
+      mpDisEqc1.Items.Add(DisEqcType.Level1BA);
       mpDisEqc1.Items.Add(DisEqcType.Level1BB);
       mpDisEqc1.SelectedIndex = 0;
 
@@ -383,8 +383,8 @@ namespace SetupTv.Sections
       mpDisEqc2.Items.Add(DisEqcType.SimpleA);
       mpDisEqc2.Items.Add(DisEqcType.SimpleB);
       mpDisEqc2.Items.Add(DisEqcType.Level1AA);
-      mpDisEqc2.Items.Add(DisEqcType.Level1BA);
       mpDisEqc2.Items.Add(DisEqcType.Level1AB);
+      mpDisEqc2.Items.Add(DisEqcType.Level1BA);
       mpDisEqc2.Items.Add(DisEqcType.Level1BB);
       mpDisEqc2.SelectedIndex = 0;
 
@@ -393,8 +393,8 @@ namespace SetupTv.Sections
       mpDisEqc3.Items.Add(DisEqcType.SimpleA);
       mpDisEqc3.Items.Add(DisEqcType.SimpleB);
       mpDisEqc3.Items.Add(DisEqcType.Level1AA);
-      mpDisEqc3.Items.Add(DisEqcType.Level1BA);
       mpDisEqc3.Items.Add(DisEqcType.Level1AB);
+      mpDisEqc3.Items.Add(DisEqcType.Level1BA);
       mpDisEqc3.Items.Add(DisEqcType.Level1BB);
       mpDisEqc3.SelectedIndex = 0;
 
@@ -403,8 +403,8 @@ namespace SetupTv.Sections
       mpDisEqc4.Items.Add(DisEqcType.SimpleA);
       mpDisEqc4.Items.Add(DisEqcType.SimpleB);
       mpDisEqc4.Items.Add(DisEqcType.Level1AA);
-      mpDisEqc4.Items.Add(DisEqcType.Level1BA);
       mpDisEqc4.Items.Add(DisEqcType.Level1AB);
+      mpDisEqc4.Items.Add(DisEqcType.Level1BA);
       mpDisEqc4.Items.Add(DisEqcType.Level1BB);
       mpDisEqc4.SelectedIndex = 0;
 

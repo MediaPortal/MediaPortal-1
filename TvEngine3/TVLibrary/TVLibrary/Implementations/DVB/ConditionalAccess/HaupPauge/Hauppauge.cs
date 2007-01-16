@@ -170,11 +170,11 @@ namespace TvLibrary.Implementations.DVB
           position = 0;
           option = 0;
           break;
-        case DisEqcType.Level1BA://Level 1 B/A
+        case DisEqcType.Level1AB://Level 1 A/B
           position = 1;
           option = 0;
           break;
-        case DisEqcType.Level1AB://Level 1 A/B
+        case DisEqcType.Level1BA://Level 1 B/A
           position = 0;
           option = 1;
           break;
@@ -183,6 +183,15 @@ namespace TvLibrary.Implementations.DVB
           option = 1;
           break;
       }
+      //bit 0	(1)	: 0=low band, 1 = hi band
+      //bit 1 (2) : 0=vertical, 1 = horizontal
+      //bit 3 (4) : 0=satellite position A, 1=satellite position B
+      //bit 4 (8) : 0=switch option A, 1=switch option  B
+      // LNB    option  position
+      // 1        A         A
+      // 2        A         B
+      // 3        B         A
+      // 4        B         B
       bool vertical = (channel.Polarisation == Polarisation.LinearV);
       uint diseqc = 0xE01038F0;
       if (hiBand)                 // high band

@@ -241,10 +241,10 @@ STDMETHODIMP CTechnotrend::SetDisEqc(int diseqcType, int hiband, int vertical)
     case 3://Level 1 A/A
       antennaNr = 1;
       break;
-    case 4://Level 1 B/A
+    case 4://Level 1 A/B
       antennaNr = 2;
       break;
-    case 5://Level 1 A/B
+    case 5://Level 1 B/A
       antennaNr = 3;
       break;
     case 6://Level 1 B/B
@@ -252,6 +252,16 @@ STDMETHODIMP CTechnotrend::SetDisEqc(int diseqcType, int hiband, int vertical)
       break;
   }
   ULONG diseqc = 0xE01038F0;
+	//bit 0	(1)	: 0=low band, 1 = hi band
+	//bit 1 (2) : 0=vertical, 1 = horizontal
+	//bit 3 (4) : 0=satellite position A, 1=satellite position B
+	//bit 4 (8) : 0=switch option A, 1=switch option  B
+	// LNB    option  position
+	// 1        A         A
+	// 2        A         B
+	// 3        B         A
+	// 4        B         B
+
   if (hiband!=0)              // high band
     diseqc |= 0x00000001;
 
