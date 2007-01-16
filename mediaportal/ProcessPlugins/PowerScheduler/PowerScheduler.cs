@@ -417,11 +417,14 @@ namespace MediaPortal.PowerScheduler
     void OnWakeupTimer()
     {
       LogExtensive("Wakeup timer expired");
-      if (_Timer.Enabled)  // did we shut down correctly?
+     /* undo because of OnWakeUpTimer calls when user is not in home for the recording
+      * if (_Timer.Enabled)  // did we shut down correctly?
       {
         Log.Info("PowerScheduler: did not shut down correctly -> resync");
         OnSuspend();
       }
+       
+      */
     }
 
     void OnSuspend()
