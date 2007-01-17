@@ -50,7 +50,7 @@ namespace TvLibrary.Implementations.Analog
     public static readonly Guid AMKSMultiplexer = new Guid("7A5DE1D3-01A1-452c-B481-4FA2B96271E8");
     public static readonly Guid AudioCompressorCategory = new Guid(0x33d9a761, 0x90c8, 0x11d0, 0xbd, 0x43, 0x0, 0xa0, 0xc9, 0x11, 0xce, 0x86);
     public static readonly Guid VideoCompressorCategory = new Guid(0x33d9a760, 0x90c8, 0x11d0, 0xbd, 0x43, 0x0, 0xa0, 0xc9, 0x11, 0xce, 0x86);
-
+    public static readonly Guid LegacyAmFilterCategory = new Guid(0x083863F1, 0x70DE, 0x11d0, 0xBD, 0x40, 0x00, 0xA0, 0xC9, 0x11, 0xCE, 0x86);
     #endregion
 
     #region imports
@@ -283,18 +283,22 @@ namespace TvLibrary.Implementations.Analog
           // looks like this is a s/w encoding card
           if (!FindAudioVideoPins())
           {
+            Log.Log.WriteFile("analog:   failed to find audio/video pins");
             throw new Exception("No analog audio/video pins found");
           }
           if (!AddAudioCompressor())
           {
+            Log.Log.WriteFile("analog:   failed to add audio compressor");
             throw new Exception("No audio compressor filter found");
           }
           if (!AddVideoCompressor())
           {
+            Log.Log.WriteFile("analog:   failed to add video compressor");
             throw new Exception("No video compressor filter found");
           }
           if (!AddAnalogMuxer())
           {
+            Log.Log.WriteFile("analog:   failed to add analog muxer");
             throw new Exception("No analog muxer filter found");
           }
         }
@@ -914,7 +918,6 @@ namespace TvLibrary.Implementations.Analog
         if (fetched != 1) break;
 
         //first check if the pindirection matches
-        Log.Log.WriteFile("analog: FindCapturePin pin:{0}", FilterGraphTools.LogPinInfo(pins[0]));
         PinDirection pinDirection;
         pins[0].QueryDirection(out pinDirection);
         if (pinDirection != PinDirection.Output) continue;
@@ -928,13 +931,14 @@ namespace TvLibrary.Implementations.Analog
         {
           enumMedia.Next(1, media, out fetchedMedia);
           if (fetchedMedia != 1) break;
-          Log.Log.WriteFile("analog: FindCapturePin   major:{0} sub:{1}", media[0].majorType, media[0].subType);
           if (media[0].majorType == mediaType)
           {
             if (media[0].subType == mediaSubtype || mediaSubtype == MediaSubType.Null)
             {
               //it does... we're done
               _pinCapture = pins[0];
+              Log.Log.WriteFile("analog: FindCapturePin pin:{0}", FilterGraphTools.LogPinInfo(pins[0]));
+              Log.Log.WriteFile("analog: FindCapturePin   major:{0} sub:{1}", media[0].majorType, media[0].subType);
               Log.Log.WriteFile("analog: FindCapturePin succeeded");
               DsUtils.FreeAMMediaType(media[0]);
               return;
@@ -1234,7 +1238,7 @@ namespace TvLibrary.Implementations.Analog
         }
 
         //if we only have a single video encoder
-        if (_filterAudioEncoder == null || _filterVideoEncoder != null)
+        if (_filterAudioEncoder == null && _filterVideoEncoder != null)
         {
           //option 1, connect the multiplexer to a single encoder filter
           Log.Log.WriteFile("analog: ConnectMultiplexer to encoder filter");
@@ -2013,18 +2017,18 @@ namespace TvLibrary.Implementations.Analog
       filter.EnumPins(out enumPins);
 
       // loop through all pins
+      int pinNr = -1;
       while (true)
       {
         IPin[] pins = new IPin[2];
         int fetched;
         enumPins.Next(1, pins, out fetched);
         if (fetched != 1) break;
-
         //first check if the pindirection matches
-        Log.Log.WriteFile("analog: FindMediaPin pin:{0}", FilterGraphTools.LogPinInfo(pins[0]));
         PinDirection pinDirection;
         pins[0].QueryDirection(out pinDirection);
         if (pinDirection != PinDirection.Output) continue;
+        pinNr++;
 
         //next check if the pin supports the media type requested
         IEnumMediaTypes enumMedia;
@@ -2035,12 +2039,13 @@ namespace TvLibrary.Implementations.Analog
         {
           enumMedia.Next(1, media, out fetchedMedia);
           if (fetchedMedia != 1) break;
-          Log.Log.WriteFile("analog: FindMediaPin   major:{0} sub:{1}", media[0].majorType, media[0].subType);
           if (media[0].majorType == mediaType)
           {
             if (media[0].subType == mediaSubtype || mediaSubtype == MediaSubType.Null)
             {
               //it does... we're done
+              Log.Log.WriteFile("analog: FindMediaPin pin:#{0} {1}", pinNr,FilterGraphTools.LogPinInfo(pins[0]));
+              Log.Log.WriteFile("analog: FindMediaPin   major:{0} sub:{1}", media[0].majorType, media[0].subType);
               Log.Log.WriteFile("analog: FindMediaPin succeeded");
               DsUtils.FreeAMMediaType(media[0]);
               return pins[0];
@@ -2059,8 +2064,10 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     bool FindAudioVideoPins()
     {
+      Log.Log.WriteFile("analog: FindAudioVideoPins");
       if (_filterMultiplexer != null)
       {
+        Log.Log.WriteFile("analog:   find pins on multiplexer");
         if (_pinAnalogAudio == null)
           _pinAnalogAudio = FindMediaPin(_filterMultiplexer, MediaType.Audio, MediaSubType.Null);
         if (_pinAnalogVideo == null)
@@ -2068,6 +2075,7 @@ namespace TvLibrary.Implementations.Analog
       }
       if (_filterVideoEncoder != null)
       {
+        Log.Log.WriteFile("analog:   find pins on video encoder");
         if (_pinAnalogAudio == null)
           _pinAnalogAudio = FindMediaPin(_filterVideoEncoder, MediaType.Audio, MediaSubType.Null);
         if (_pinAnalogVideo == null)
@@ -2075,6 +2083,7 @@ namespace TvLibrary.Implementations.Analog
       }
       if (_filterAudioEncoder != null)
       {
+        Log.Log.WriteFile("analog:   find pins on audio encoder");
         if (_pinAnalogAudio == null)
           _pinAnalogAudio = FindMediaPin(_filterAudioEncoder, MediaType.Audio, MediaSubType.Null);
         if (_pinAnalogVideo == null)
@@ -2082,6 +2091,7 @@ namespace TvLibrary.Implementations.Analog
       }
       if (_filterCapture != null)
       {
+        Log.Log.WriteFile("analog:   find pins on capture filter");
         if (_pinAnalogAudio == null)
           _pinAnalogAudio = FindMediaPin(_filterCapture, MediaType.Audio, MediaSubType.Null);
         if (_pinAnalogVideo == null)
@@ -2100,45 +2110,54 @@ namespace TvLibrary.Implementations.Analog
     bool AddAudioCompressor()
     {
       if (!CheckThreadId()) return false;
-      Log.Log.WriteFile("analog: AddAudioCompressor");
-      bool finished = false;
-      DsDevice[] devices = null;
+      Log.Log.WriteFile("analog: AddAudioCompressor {0}", FilterGraphTools.LogPinInfo(_pinAnalogAudio));
+      DsDevice[] devices1 = DsDevice.GetDevicesOfCat(AudioCompressorCategory);
+      DsDevice[] devices2 = DsDevice.GetDevicesOfCat(LegacyAmFilterCategory);
+      string[] audioEncoders = new string[] { "InterVideo Audio Encoder", "Ulead MPEG Audio Encoder", "MainConcept MPEG Audio Encoder", "MainConcept Demo MPEG Audio Encoder", "CyberLink Audio Encoder", "CyberLink Audio Encoder(Twinhan)" };
+      DsDevice[] audioDevices = new DsDevice[audioEncoders.Length];
+      for (int x = 0; x < audioEncoders.Length; ++x)
+      {
+        audioDevices[x] = null;
+      }
+
+      for (int i = 0; i < devices1.Length; i++)
+      {
+        for (int x = 0; x < audioEncoders.Length; ++x)
+        {
+          if (audioEncoders[x] == devices1[i].Name)
+          {
+            audioDevices[x] = devices1[i];
+            break;
+          }
+        }
+      }
+      for (int i = 0; i < devices2.Length; i++)
+      {
+        for (int x = 0; x < audioEncoders.Length; ++x)
+        {
+          if (audioEncoders[x] == devices2[i].Name)
+          {
+            audioDevices[x] = devices2[i];
+            break;
+          }
+        }
+      }
       IBaseFilter tmp;
-      // first get all audio compressor available on this system
-      try
-      {
-        devices = DsDevice.GetDevicesOfCat(AudioCompressorCategory);
-        devices = DeviceSorter.Sort(devices, _tunerDevice, _audioDevice, _crossBarDevice, _captureDevice, _videoEncoderDevice, _audioEncoderDevice, _multiplexerDevice);
-      }
-      catch (Exception)
-      {
-        Log.Log.WriteFile("analog: AddAudioCompressor no compressor found");
-        return false;
-      }
-      if (devices == null)
-      {
-        Log.Log.WriteFile("analog: AddAudioCompressor no compressor found");
-        return false;
-      }
-      if (devices.Length == 0)
-      {
-        Log.Log.WriteFile("analog: AddTvEncoderFilter no compressor found");
-        return false;
-      }
       //for each compressor
-      Log.Log.WriteFile("analog: AddAudioCompressor found:{0} compressor", devices.Length);
-      for (int i = 0; i < devices.Length; i++)
+      Log.Log.WriteFile("analog: AddAudioCompressor found:{0} compressor", audioDevices.Length);
+      for (int i = 0; i < audioDevices.Length; ++i)
       {
-        Log.Log.WriteFile("analog:  try compressor:{0}", devices[i].Name);
+        if (audioDevices[i] == null) continue;
+        Log.Log.WriteFile("analog:  try compressor:{0}", audioDevices[i].Name);
         int hr;
         try
         {
           //add compressor filter to graph
-          hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
+          hr = _graphBuilder.AddSourceFilterForMoniker(audioDevices[i].Mon, null, audioDevices[i].Name, out tmp);
         }
         catch (Exception)
         {
-          Log.Log.WriteFile("analog: cannot add filter {0} to graph", devices[i].Name);
+          Log.Log.WriteFile("analog: cannot add filter {0} to graph", audioDevices[i].Name);
           continue;
         }
 
@@ -2155,19 +2174,12 @@ namespace TvLibrary.Implementations.Analog
         }
         if (tmp == null) continue;
 
+        Log.Log.WriteFile("analog: connect audio pin->audio compressor");
         // check if this compressor filter has an mpeg audio output pin
-        IPin pinAudio = FindMediaPin(tmp, MediaType.Audio, MediaSubType.MPEG1Audio);
+        IPin pinAudio = DsFindPin.ByDirection(tmp, PinDirection.Input, 0);
         if (pinAudio == null)
         {
-          pinAudio = FindMediaPin(tmp, MediaType.Audio, MediaSubType.MPEG1AudioPayload);
-          if (pinAudio == null)
-          {
-            pinAudio = FindMediaPin(tmp, MediaType.Audio, MediaSubType.Mpeg2Audio);
-          }
-        }
-        if (pinAudio == null)
-        {
-          //compressor does not output mpeg audio, remove it and continue with next compressor
+          Log.Log.WriteFile("analog: cannot find audio pin on compressor");
           hr = _graphBuilder.RemoveFilter(tmp);
           Release.ComObject("audiocompressor", tmp);
           tmp = null;
@@ -2178,12 +2190,14 @@ namespace TvLibrary.Implementations.Analog
         hr = _graphBuilder.Connect(_pinAnalogAudio, pinAudio);
         if (hr != 0)
         {
+          Log.Log.WriteFile("analog: failed to connect audio pin->audio compressor:{0:X}",hr);
           //unable to connec the pin, remove it and continue with next compressor
           hr = _graphBuilder.RemoveFilter(tmp);
           Release.ComObject("audiocompressor", tmp);
           tmp = null;
           continue;
         }
+        Log.Log.WriteFile("analog: connected audio pin->audio compressor");
         //succeeded.
         _filterAudioCompressor = tmp;
         return true;
@@ -2199,44 +2213,54 @@ namespace TvLibrary.Implementations.Analog
     {
       if (!CheckThreadId()) return false;
       Log.Log.WriteFile("analog: AddVideoCompressor");
-      bool finished = false;
-      DsDevice[] devices = null;
-      IBaseFilter tmp;
-      // first get all audio compressor available on this system
-      try
+
+      DsDevice[] devices1 = DsDevice.GetDevicesOfCat(VideoCompressorCategory);
+      DsDevice[] devices2 = DsDevice.GetDevicesOfCat(LegacyAmFilterCategory);
+      string[] videoEncoders = new string[] { "InterVideo Video Encoder", "Ulead MPEG Encoder", "MainConcept MPEG Video Encoder", "MainConcept Demo MPEG Video Encoder", "CyberLink MPEG Video Encoder", "CyberLink MPEG Video Encoder(Twinhan)" };
+      DsDevice[] videoDevices = new DsDevice[videoEncoders.Length];
+      for (int x = 0; x < videoEncoders.Length; ++x)
       {
-        devices = DsDevice.GetDevicesOfCat(VideoCompressorCategory);
-        devices = DeviceSorter.Sort(devices, _tunerDevice, _audioDevice, _crossBarDevice, _captureDevice, _videoEncoderDevice, _audioEncoderDevice, _multiplexerDevice);
+        videoDevices[x] = null;
       }
-      catch (Exception)
+
+      for (int i = 0; i < devices1.Length; i++)
       {
-        Log.Log.WriteFile("analog: AddVideoCompressor no compressor found");
-        return false;
+        for (int x = 0; x < videoEncoders.Length; ++x)
+        {
+          if (videoEncoders[x] == devices1[i].Name)
+          {
+            videoDevices[x] = devices1[i];
+            break;
+          }
+        }
       }
-      if (devices == null)
+      for (int i = 0; i < devices2.Length; i++)
       {
-        Log.Log.WriteFile("analog: AddVideoCompressor no compressor found");
-        return false;
-      }
-      if (devices.Length == 0)
-      {
-        Log.Log.WriteFile("analog: AddVideoCompressor no compressor found");
-        return false;
+        for (int x = 0; x < videoEncoders.Length; ++x)
+        {
+          if (videoEncoders[x] == devices2[i].Name)
+          {
+            videoDevices[x] = devices2[i];
+            break;
+          }
+        }
       }
       //for each compressor
-      Log.Log.WriteFile("analog: AddVideoCompressor found:{0} compressor", devices.Length);
-      for (int i = 0; i < devices.Length; i++)
+      IBaseFilter tmp;
+      Log.Log.WriteFile("analog: AddVideoCompressor found:{0} compressor", videoDevices.Length);
+      for (int i = 0; i < videoDevices.Length; i++)
       {
-        Log.Log.WriteFile("analog:  try compressor:{0}", devices[i].Name);
+        if (videoDevices[i] == null) continue;
+        Log.Log.WriteFile("analog:  try compressor:{0}", videoDevices[i].Name);
         int hr;
         try
         {
           //add compressor filter to graph
-          hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
+          hr = _graphBuilder.AddSourceFilterForMoniker(videoDevices[i].Mon, null, videoDevices[i].Name, out tmp);
         }
         catch (Exception)
         {
-          Log.Log.WriteFile("analog: cannot add filter {0} to graph", devices[i].Name);
+          Log.Log.WriteFile("analog: cannot add filter {0} to graph", videoDevices[i].Name);
           continue;
         }
 
@@ -2254,24 +2278,14 @@ namespace TvLibrary.Implementations.Analog
         if (tmp == null) continue;
 
         // check if this compressor filter has an mpeg audio output pin
-        IPin pinVideo = FindMediaPin(tmp, MediaType.Video, MediaSubType.Mpeg2Video);
-        if (pinVideo == null)
-        {
-          pinVideo = FindMediaPin(tmp, MediaType.Video, MediaSubType.MPEG1Video);
-        }
-        if (pinVideo == null)
-        {
-          //compressor does not output mpeg audio, remove it and continue with next compressor
-          hr = _graphBuilder.RemoveFilter(tmp);
-          Release.ComObject("videocompressor", tmp);
-          tmp = null;
-          continue;
-        }
+        Log.Log.WriteFile("analog:  connect video pin->video compressor");
+        IPin pinVideo = DsFindPin.ByDirection(tmp,PinDirection.Input,0);
 
         // we found a nice compressor, lets try to connect the analog video pin to the compressor
         hr = _graphBuilder.Connect(_pinAnalogVideo, pinVideo);
         if (hr != 0)
         {
+          Log.Log.WriteFile("analog: failed to connect video pin->video compressor");
           //unable to connec the pin, remove it and continue with next compressor
           hr = _graphBuilder.RemoveFilter(tmp);
           Release.ComObject("videocompressor", tmp);
