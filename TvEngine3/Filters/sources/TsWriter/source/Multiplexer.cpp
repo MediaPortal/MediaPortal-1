@@ -174,8 +174,12 @@ int CMultiplexer::OnNewPesPacket(CPesDecoder* decoder)
   int streamId=-1;
   CPcr pcr;
 	ivecPesDecoders it;
+  //did we see the start of a new video frame already ?
 	if (!m_bVideoStartFound)
 	{
+    //then for each stream, check that
+    //- 1st packet contains the start of a pes packet
+    //- for the video stream, 1st packet should also contain the start of a  new video frame
 		for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 		{
 			CPesDecoder* decoder=*it;
@@ -184,28 +188,55 @@ int CMultiplexer::OnNewPesPacket(CPesDecoder* decoder)
 			{
 				if (packet.IsStart()==false)
 				{	
+          //packet does not contain the start of a new pes packet. so skip it
 					packet.Skip();
 				}
 				else 
 				{
-					if (decoder->GetStreamId()>=0xe0 && packet.HasSequenceHeader()==false)
-					{
-						packet.Skip();
-					}
-					else
-					{
-						break;
-					}
+          //packet contains start of a pes packet. 
+          if (decoder->GetStreamId()>=0xe0 && decoder->GetStreamId() <=0xef )
+          {
+            // video stream
+            // does it also contain the start of a new video frame
+					  if ( packet.HasSequenceHeader()==false)
+					  {
+              //no, then skip this packet too
+						  packet.Skip();
+					  }
+					  else
+					  {
+              //packet holds the start of a new video frame 
+						  break;
+					  }
+          }
+          else
+          {
+            //audio or private stream
+            if (packet.Pts().PcrReferenceBase!=0)
+            {
+              //packet contains a pts timestamp
+              break;
+            }
+            else
+            {
+						  packet.Skip();
+            }
+          }
 				}
 			}
 		}
+
+    //next check if the first packet for all streams contains the start of a pes packet.
 		for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 		{
 			CPesDecoder* decoder=*it;
 			CPesPacket& packet=decoder->m_packet;
-			if (packet.IsAvailable(1024)==false) return 0;
-			if (packet.IsStart()==false) return 0;
+			if (packet.IsAvailable(1024)==false) return 0; // no data available for this stream
+			if (packet.IsStart()==false) return 0;  // packet does not contain a start of pes packet
+      if (packet.Pts().PcrReferenceBase==0) return 0;//no pts timestamp
 		}
+    
+    //next check first video packet contains start of video
 		for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 		{
 			CPesDecoder* decoder=*it;
