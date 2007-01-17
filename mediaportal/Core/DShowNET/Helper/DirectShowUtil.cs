@@ -85,8 +85,8 @@ namespace DShowNET.Helper
 
     static public IBaseFilter AddAudioRendererToGraph(IGraphBuilder graphBuilder, string strFilterName, bool setAsReferenceClock)
     {
-      //try
-      //{
+      try
+      {
        
         IPin pinOut = null;
         IBaseFilter NewFilter = null;
@@ -131,11 +131,17 @@ namespace DShowNET.Helper
              
               Guid classId1;
               Guid classId2;
+
               pBasefilter[0].GetClassID(out classId1);
+              //Log.Info("Filter Moniker string -  " + filter.Name);
               if (filter.Name == "ReClock Audio Renderer")
               {
-                Log.Warn("Reclock is installed - if this method fails, reinstall and unregister reclock");
+                Log.Warn("Reclock is installed - if this method fails, reinstall and regsvr32 /u reclock and then uninstall");
+             //   return null;
+            
               }
+              IBaseFilter test;
+           
               NewFilter = (IBaseFilter)Marshal.BindToMoniker(filter.MonikerString);
               if (NewFilter == null)
                 Log.Info("NewFilter = null");
@@ -211,12 +217,12 @@ namespace DShowNET.Helper
         {
           Log.Error("failed filter:{0} not found", strFilterName);
         }
-      //}
-      //catch (Exception ex)
-      //{
-      //  Log.Error("DirectshowUtil. Failed to add filter:{0} to graph :{1} {2} {3}",
-      //        strFilterName, ex.Message, ex.Source, ex.StackTrace);
-      //}
+      }
+      catch (Exception ex)
+      {
+        Log.Error("DirectshowUtil. Failed to add filter:{0} to graph :{1} {2} {3}",
+              strFilterName, ex.Message, ex.Source, ex.StackTrace);
+      }
       return null;
     }
 
