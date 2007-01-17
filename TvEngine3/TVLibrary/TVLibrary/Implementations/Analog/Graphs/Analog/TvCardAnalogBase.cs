@@ -2113,7 +2113,7 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("analog: AddAudioCompressor {0}", FilterGraphTools.LogPinInfo(_pinAnalogAudio));
       DsDevice[] devices1 = DsDevice.GetDevicesOfCat(AudioCompressorCategory);
       DsDevice[] devices2 = DsDevice.GetDevicesOfCat(LegacyAmFilterCategory);
-      string[] audioEncoders = new string[] { "InterVideo Audio Encoder", "Ulead MPEG Audio Encoder", "MainConcept MPEG Audio Encoder", "MainConcept Demo MPEG Audio Encoder", "CyberLink Audio Encoder", "CyberLink Audio Encoder(Twinhan)" };
+      string[] audioEncoders = new string[] { "InterVideo Audio Encoder", "Ulead MPEG Audio Encoder", "MainConcept MPEG Audio Encoder", "MainConcept Demo MPEG Audio Encoder", "CyberLink Audio Encoder", "CyberLink Audio Encoder(Twinhan)","Pinnacle MPEG Layer-2 Audio Encoder","MainConcept (Hauppauge) MPEG Audio Encoder" };
       DsDevice[] audioDevices = new DsDevice[audioEncoders.Length];
       for (int x = 0; x < audioEncoders.Length; ++x)
       {
@@ -2216,7 +2216,7 @@ namespace TvLibrary.Implementations.Analog
 
       DsDevice[] devices1 = DsDevice.GetDevicesOfCat(VideoCompressorCategory);
       DsDevice[] devices2 = DsDevice.GetDevicesOfCat(LegacyAmFilterCategory);
-      string[] videoEncoders = new string[] { "InterVideo Video Encoder", "Ulead MPEG Encoder", "MainConcept MPEG Video Encoder", "MainConcept Demo MPEG Video Encoder", "CyberLink MPEG Video Encoder", "CyberLink MPEG Video Encoder(Twinhan)" };
+      string[] videoEncoders = new string[] { "InterVideo Video Encoder", "Ulead MPEG Encoder", "MainConcept MPEG Video Encoder", "MainConcept Demo MPEG Video Encoder", "CyberLink MPEG Video Encoder", "CyberLink MPEG Video Encoder(Twinhan)","MainConcept (Hauppauge) MPEG Video Encoder","nanocosmos MPEG Video Encoder","Pinnacle MPEG 2 Encoder" };
       DsDevice[] videoDevices = new DsDevice[videoEncoders.Length];
       for (int x = 0; x < videoEncoders.Length; ++x)
       {
