@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -197,7 +198,7 @@ namespace TestApp
     {
       if ((_currentCard as TvCardAnalog) != null)
       {
-        MessageBox.Show(this,"Scanning is not possible for analog tv cards");
+        MessageBox.Show(this, "Scanning is not possible for analog tv cards");
         return;
       }
       timer1.Enabled = false;
@@ -230,13 +231,13 @@ namespace TestApp
     {
       if ((_currentCard as TvCardAnalog) != null)
       {
-        MessageBox.Show(this,"EPG grabbing is not possible for analog tv cards");
+        MessageBox.Show(this, "EPG grabbing is not possible for analog tv cards");
         return;
       }
-     // ITVEPG epgGrabber = _currentCard.EpgInterface;
+      // ITVEPG epgGrabber = _currentCard.EpgInterface;
       // epgGrabber.OnEpgReceived += new EpgReceivedHandler(epgGrabber_OnEpgReceived);
       //epgGrabber.GrabEpg();
-      MessageBox.Show(this,"Grabbing epg...");
+      MessageBox.Show(this, "Grabbing epg...");
     }
 
     void epgGrabber_OnEpgReceived(object sender, List<EpgChannel> epg)
@@ -260,7 +261,7 @@ namespace TestApp
           }
         }
       }
-      MessageBox.Show(this,"Epg grabbed and save to epg.xml...");
+      MessageBox.Show(this, "Epg grabbed and save to epg.xml...");
     }
 
     private void buttonTimeShift_Click(object sender, EventArgs e)
@@ -268,7 +269,7 @@ namespace TestApp
       if (_currentCard.IsTimeShifting)
       {
         _currentCard.StopTimeShifting();
-        MessageBox.Show(this,"Timeshifting stopped");
+        MessageBox.Show(this, "Timeshifting stopped");
       }
       else
       {
@@ -278,7 +279,7 @@ namespace TestApp
           System.IO.File.Delete(fileName);
         }
         _currentCard.StartTimeShifting(fileName);
-        MessageBox.Show(this,"Timeshifting to:" + fileName);
+        MessageBox.Show(this, "Timeshifting to:" + fileName);
       }
     }
 
@@ -287,7 +288,7 @@ namespace TestApp
       if (_currentCard.IsRecording)
       {
         _currentCard.StopRecording();
-        MessageBox.Show(this,"Recording stopped");
+        MessageBox.Show(this, "Recording stopped");
       }
       else
       {
@@ -297,7 +298,7 @@ namespace TestApp
           System.IO.File.Delete(fileName);
         }
         _currentCard.StartRecording(false, fileName);
-        MessageBox.Show(this,"Recording to:" + fileName);
+        MessageBox.Show(this, "Recording to:" + fileName);
       }
     }
 
@@ -331,16 +332,52 @@ namespace TestApp
       _currentCard.GrabTeletext = true;
       if (_currentCard.TeletextDecoder == null || _currentCard.GrabTeletext == false)
       {
-        MessageBox.Show(this,"This card does not support teletext");
+        MessageBox.Show(this, "This card does not support teletext");
         return;
       }
-      _currentCard.TeletextDecoder.SetPageSize(400, 300);
-      if (_currentCard.TeletextDecoder.NumberOfSubpages(0x100) < 0)
+      _currentCard.TeletextDecoder.SetPageSize(400, 400);
+      _currentCard.TeletextDecoder.OnPageDeleted += new TvLibrary.Teletext.PageEventHandler(TeletextDecoder_OnPageDeleted);
+      _currentCard.TeletextDecoder.OnPageAdded += new TvLibrary.Teletext.PageEventHandler(TeletextDecoder_OnPageAdded);
+      _currentCard.TeletextDecoder.OnPageUpdated += new TvLibrary.Teletext.PageEventHandler(TeletextDecoder_OnPageUpdated);
+    }
+
+    void TeletextDecoder_OnPageDeleted(int pageNumber, int subPageNumber)
+    {
+    }
+    int updatectr=0;
+    void UpdatePage(int pageNumber, int subPageNumber)
+    {
+      if (pageNumber < 0x600) return;
+      if (pageNumber > 0x603) return;
+      /*
+      if (pageNumber == 0x600)
       {
-        MessageBox.Show(this,"Page 100/0 not found (yet)");
-        return;
-      }
-      pictureBox1.Image = _currentCard.TeletextDecoder.GetPage(0x100, 0);
+        byte[] page = _currentCard.TeletextDecoder.GetRawPage(pageNumber, subPageNumber);
+
+        using (FileStream stream = new FileStream(fileName, FileMode.OpenOrCreate))
+        {
+          stream.Write(page, 0, 1008);
+        }
+      }*/
+      //if (pageNumber == 0x600)
+      //  pictureBox1.Image = _currentCard.TeletextDecoder.GetPage(pageNumber, subPageNumber);
+      // if (pageNumber == 0x601)
+     //   pictureBox2.Image = _currentCard.TeletextDecoder.GetPage(pageNumber, subPageNumber);
+      if (pageNumber == 0x602)
+        pictureBox3.Image = _currentCard.TeletextDecoder.GetPage(pageNumber, subPageNumber);
+     // if (pageNumber == 0x603)
+     //   pictureBox4.Image = _currentCard.TeletextDecoder.GetPage(pageNumber, subPageNumber);
+
+    }
+
+    void TeletextDecoder_OnPageUpdated(int pageNumber, int subPageNumber)
+    {
+        UpdatePage(pageNumber, subPageNumber);
+    }
+
+    void TeletextDecoder_OnPageAdded(int pageNumber, int subPageNumber)
+    {
+      UpdatePage(pageNumber, subPageNumber);
     }
 
     private void button3_Click(object sender, EventArgs e)
@@ -352,7 +389,7 @@ namespace TestApp
         _currentCard.StopTimeShifting();
         _stopStreaming = true;
         button3.Text = "Timeshift .ts";
-        MessageBox.Show(this,"Stopped .ts timeshifting");
+        MessageBox.Show(this, "Stopped .ts timeshifting");
         return;
       }
       _currentCard.StartTimeShifting("live.ts");
@@ -360,7 +397,7 @@ namespace TestApp
 
       //_player = new Player();
       //_player.Play(_currentCard.TimeShiftFileName,this);
-      if (_streamingRunning==false)
+      if (_streamingRunning == false)
       {
         _stopStreaming = false;
         _streamingRunning = true;
@@ -379,12 +416,12 @@ namespace TestApp
       {
         _currentCard.StopRecording();
         button2.Text = "Record .mpg";
-        MessageBox.Show(this,"Stopped recording");
+        MessageBox.Show(this, "Stopped recording");
         return;
       }
       _currentCard.StartRecording(false, "recording.mpg");
       button2.Text = "Stop .mpg record";
-      MessageBox.Show(this,"Recording to recording.mpg");
+      MessageBox.Show(this, "Recording to recording.mpg");
     }
 
     protected void workerThread()
@@ -404,6 +441,11 @@ namespace TestApp
 
       }
       _streamingRunning = false;
+    }
+
+    private void pictureBox3_Click(object sender, EventArgs e)
+    {
+
     }
   }
 }

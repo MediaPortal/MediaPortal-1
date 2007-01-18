@@ -19,6 +19,7 @@
  *
  */
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -120,6 +121,7 @@ namespace TvLibrary.Teletext
     }
     public void ClearPage(int pageNumber, int subPageNumber)
     {
+      //if (pageNumber == 0x600) Trace.WriteLine(String.Format("ClearPage {0:X}/{1:X}", pageNumber, subPageNumber));
       if (subPageNumber > 0)
       {
         subPageNumber--;
@@ -134,7 +136,7 @@ namespace TvLibrary.Teletext
 
     public void DeletePage(int pageNumber, int subPageNumber)
     {
-      
+      //if (pageNumber == 0x600) Trace.WriteLine(String.Format("DeletePage {0:X}/{1:X}", pageNumber, subPageNumber));
       if (subPageNumber > 0)
       {
         subPageNumber--;
@@ -157,8 +159,9 @@ namespace TvLibrary.Teletext
       }
     }
 
-    public void PageReceived(int pageNumber, int subPageNumber, byte[] pageData)
+    public void PageReceived(int pageNumber, int subPageNumber,  byte[] pageData)
     {
+      //if (pageNumber == 0x600) Trace.WriteLine(String.Format("PageReceived {0:X}/{1:X}", pageNumber, subPageNumber));
       if (pageNumber < MIN_PAGE || pageNumber >= MAX_PAGE)
         throw new ArgumentOutOfRangeException("page");
 
@@ -188,7 +191,7 @@ namespace TvLibrary.Teletext
         subPageNumber--;
       }
       bool isUpdate, isNew, isDeleted;
-      _pageCache[pageNumber].SubPageReceived(pageNumber,subPageNumber, pageData, out isUpdate, out isNew, out isDeleted);
+      _pageCache[pageNumber].SubPageReceived(pageNumber,subPageNumber,ref pageData, out isUpdate, out isNew, out isDeleted);
       if (isNew)
       {
         if (OnPageAdded != null)
@@ -203,7 +206,7 @@ namespace TvLibrary.Teletext
           OnPageDeleted(pageNumber, subPageNumber);
         }
       }
-      if (isUpdate)
+      if (isUpdate || pageNumber>=0x600 && pageNumber<=0x604)
       {
         if (OnPageUpdated != null)
         {
@@ -219,10 +222,8 @@ namespace TvLibrary.Teletext
         ts = DateTime.Now - _pageCache[pageNumber].LastTimeReceived;
         if (ts.TotalSeconds >= 120)
         {
-          //if (pageNumber == 0x100)
-            //{
-            //Log.Log.WriteFile("timeout on 100");
-          //}
+          //if (pageNumber == 0x600)
+          //  Trace.WriteLine("timeout on 600");
           _pageCache[pageNumber].Dispose();
           _pageCache[pageNumber] = null;
           if (OnPageDeleted != null)

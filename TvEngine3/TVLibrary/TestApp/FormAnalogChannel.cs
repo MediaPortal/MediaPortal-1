@@ -19,6 +19,9 @@ namespace TestApp
     CountryCollection countries = new CountryCollection();
     public FormAnalogChannel()
     {
+      _channel.Country = countries.GetTunerCountryFromID(31);
+      _channel.ChannelNumber = 25;
+      _channel.TunerSource = TunerInputType.Antenna;
       InitializeComponent();
       comboBoxInput.SelectedIndex = 0;
       for (int i = 0; i < countries.Countries.Length; ++i)
@@ -55,6 +58,7 @@ namespace TestApp
 
     private void FormAnalogChannel_Load(object sender, EventArgs e)
     {
+      Channel = _channel;
     }
 
     private void buttonOk_Click(object sender, EventArgs e)

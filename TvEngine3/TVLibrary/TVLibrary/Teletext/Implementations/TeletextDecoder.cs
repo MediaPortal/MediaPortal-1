@@ -114,7 +114,7 @@ namespace TvLibrary.Teletext
         }
       }
       System.Diagnostics.Trace.WriteLine(_line);
-      return;*/
+      */
       _line = "";
       try
       {
@@ -252,7 +252,7 @@ namespace TvLibrary.Teletext
 
             if (Hamming.IsEraseBitSet(off, ref rowData))   /* C4 -> erase page */
             {
-              //_pageCache.ClearPage(_magazineCurrentPageNr[magazine], _magazineCurrentSubPage[magazine]);
+              _pageCache.ClearPage(_magazineCurrentPageNr[magazine], _magazineCurrentSubPage[magazine]);
             }
             copyData = true;
             _magazineLastRow[magazine] = 0;
@@ -376,7 +376,7 @@ namespace TvLibrary.Teletext
     #region private members
 
     void Dump(int mag)
-    {
+    {/*
       for (int row = 0; row <= 23; row++)
       {
         string line = "";
@@ -386,15 +386,15 @@ namespace TvLibrary.Teletext
           if (k < 32) k = 32;
           line += (char)k;
         }
-        Log.Log.WriteFile(String.Format("  dec row:{0} {1} ", row, line));
-        //System.Diagnostics.Trace.WriteLine(line);
-      }
+       // Log.Log.WriteFile(String.Format("  dec row:{0} {1} ", row, line));
+        System.Diagnostics.Trace.WriteLine(line);
+      }*/
     }
     void UpdatePage(int magazine)
     {
-      if (_magazineCurrentPageNr[magazine] == 0x102)
+      if (_magazineCurrentPageNr[magazine] == 0x600)
       {
-        //Dump(magazine);
+        Dump(magazine);
       }
 
       //page header

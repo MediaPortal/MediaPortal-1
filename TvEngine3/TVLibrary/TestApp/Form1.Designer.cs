@@ -53,7 +53,13 @@ namespace TestApp
       this.button3 = new System.Windows.Forms.Button();
       this.label7 = new System.Windows.Forms.Label();
       this.labelScrambled = new System.Windows.Forms.Label();
+      this.pictureBox2 = new System.Windows.Forms.PictureBox();
+      this.pictureBox3 = new System.Windows.Forms.PictureBox();
+      this.pictureBox4 = new System.Windows.Forms.PictureBox();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
       this.SuspendLayout();
       // 
       // comboBoxCards
@@ -77,7 +83,7 @@ namespace TestApp
       // 
       // buttonScan
       // 
-      this.buttonScan.Location = new System.Drawing.Point(611, 12);
+      this.buttonScan.Location = new System.Drawing.Point(389, 12);
       this.buttonScan.Name = "buttonScan";
       this.buttonScan.Size = new System.Drawing.Size(158, 23);
       this.buttonScan.TabIndex = 2;
@@ -87,7 +93,7 @@ namespace TestApp
       // 
       // buttonTune
       // 
-      this.buttonTune.Location = new System.Drawing.Point(611, 41);
+      this.buttonTune.Location = new System.Drawing.Point(389, 36);
       this.buttonTune.Name = "buttonTune";
       this.buttonTune.Size = new System.Drawing.Size(158, 23);
       this.buttonTune.TabIndex = 3;
@@ -97,7 +103,7 @@ namespace TestApp
       // 
       // btnEPG
       // 
-      this.btnEPG.Location = new System.Drawing.Point(611, 70);
+      this.btnEPG.Location = new System.Drawing.Point(389, 63);
       this.btnEPG.Name = "btnEPG";
       this.btnEPG.Size = new System.Drawing.Size(158, 23);
       this.btnEPG.TabIndex = 4;
@@ -107,7 +113,7 @@ namespace TestApp
       // 
       // buttonTimeShift
       // 
-      this.buttonTimeShift.Location = new System.Drawing.Point(574, 99);
+      this.buttonTimeShift.Location = new System.Drawing.Point(553, 10);
       this.buttonTimeShift.Name = "buttonTimeShift";
       this.buttonTimeShift.Size = new System.Drawing.Size(94, 23);
       this.buttonTimeShift.TabIndex = 5;
@@ -117,7 +123,7 @@ namespace TestApp
       // 
       // buttonRecord
       // 
-      this.buttonRecord.Location = new System.Drawing.Point(674, 99);
+      this.buttonRecord.Location = new System.Drawing.Point(653, 10);
       this.buttonRecord.Name = "buttonRecord";
       this.buttonRecord.Size = new System.Drawing.Size(96, 23);
       this.buttonRecord.TabIndex = 6;
@@ -185,7 +191,7 @@ namespace TestApp
       // 
       this.listViewChannels.Location = new System.Drawing.Point(12, 257);
       this.listViewChannels.Name = "listViewChannels";
-      this.listViewChannels.Size = new System.Drawing.Size(439, 190);
+      this.listViewChannels.Size = new System.Drawing.Size(328, 245);
       this.listViewChannels.TabIndex = 13;
       this.listViewChannels.UseCompatibleStateImageBehavior = false;
       this.listViewChannels.View = System.Windows.Forms.View.List;
@@ -220,7 +226,7 @@ namespace TestApp
       // 
       // button1
       // 
-      this.button1.Location = new System.Drawing.Point(611, 157);
+      this.button1.Location = new System.Drawing.Point(553, 68);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(158, 23);
       this.button1.TabIndex = 17;
@@ -230,16 +236,15 @@ namespace TestApp
       // 
       // pictureBox1
       // 
-      this.pictureBox1.Location = new System.Drawing.Point(468, 202);
+      this.pictureBox1.Location = new System.Drawing.Point(389, 96);
       this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(301, 245);
-      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+      this.pictureBox1.Size = new System.Drawing.Size(422, 366);
       this.pictureBox1.TabIndex = 18;
       this.pictureBox1.TabStop = false;
       // 
       // button2
       // 
-      this.button2.Location = new System.Drawing.Point(673, 128);
+      this.button2.Location = new System.Drawing.Point(653, 36);
       this.button2.Name = "button2";
       this.button2.Size = new System.Drawing.Size(96, 23);
       this.button2.TabIndex = 20;
@@ -249,7 +254,7 @@ namespace TestApp
       // 
       // button3
       // 
-      this.button3.Location = new System.Drawing.Point(573, 128);
+      this.button3.Location = new System.Drawing.Point(553, 39);
       this.button3.Name = "button3";
       this.button3.Size = new System.Drawing.Size(94, 23);
       this.button3.TabIndex = 19;
@@ -276,11 +281,39 @@ namespace TestApp
       this.labelScrambled.Tag = "";
       this.labelScrambled.Text = "-";
       // 
+      // pictureBox2
+      // 
+      this.pictureBox2.Location = new System.Drawing.Point(817, 96);
+      this.pictureBox2.Name = "pictureBox2";
+      this.pictureBox2.Size = new System.Drawing.Size(422, 366);
+      this.pictureBox2.TabIndex = 23;
+      this.pictureBox2.TabStop = false;
+      // 
+      // pictureBox3
+      // 
+      this.pictureBox3.Location = new System.Drawing.Point(389, 468);
+      this.pictureBox3.Name = "pictureBox3";
+      this.pictureBox3.Size = new System.Drawing.Size(422, 366);
+      this.pictureBox3.TabIndex = 24;
+      this.pictureBox3.TabStop = false;
+      this.pictureBox3.Click += new System.EventHandler(this.pictureBox3_Click);
+      // 
+      // pictureBox4
+      // 
+      this.pictureBox4.Location = new System.Drawing.Point(817, 468);
+      this.pictureBox4.Name = "pictureBox4";
+      this.pictureBox4.Size = new System.Drawing.Size(422, 366);
+      this.pictureBox4.TabIndex = 25;
+      this.pictureBox4.TabStop = false;
+      // 
       // Form1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(790, 459);
+      this.ClientSize = new System.Drawing.Size(1253, 876);
+      this.Controls.Add(this.pictureBox4);
+      this.Controls.Add(this.pictureBox3);
+      this.Controls.Add(this.pictureBox2);
       this.Controls.Add(this.labelScrambled);
       this.Controls.Add(this.label7);
       this.Controls.Add(this.button2);
@@ -308,6 +341,9 @@ namespace TestApp
       this.Text = "TvLibrary test application";
       this.Load += new System.EventHandler(this.Form1_Load);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -339,6 +375,9 @@ namespace TestApp
     private System.Windows.Forms.Button button3;
     private System.Windows.Forms.Label label7;
     private System.Windows.Forms.Label labelScrambled;
+    private System.Windows.Forms.PictureBox pictureBox2;
+    private System.Windows.Forms.PictureBox pictureBox3;
+    private System.Windows.Forms.PictureBox pictureBox4;
   }
 }
 
