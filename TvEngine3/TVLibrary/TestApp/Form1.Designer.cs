@@ -56,6 +56,7 @@ namespace TestApp
       this.pictureBox2 = new System.Windows.Forms.PictureBox();
       this.pictureBox3 = new System.Windows.Forms.PictureBox();
       this.pictureBox4 = new System.Windows.Forms.PictureBox();
+      this.textBoxPageNr = new System.Windows.Forms.TextBox();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -230,7 +231,7 @@ namespace TestApp
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(158, 23);
       this.button1.TabIndex = 17;
-      this.button1.Text = "Grab Teletext Page 100";
+      this.button1.Text = "Grab Teletext Page";
       this.button1.UseVisualStyleBackColor = true;
       this.button1.Click += new System.EventHandler(this.button1_Click);
       // 
@@ -306,11 +307,21 @@ namespace TestApp
       this.pictureBox4.TabIndex = 25;
       this.pictureBox4.TabStop = false;
       // 
+      // textBoxPageNr
+      // 
+      this.textBoxPageNr.Location = new System.Drawing.Point(717, 70);
+      this.textBoxPageNr.Name = "textBoxPageNr";
+      this.textBoxPageNr.Size = new System.Drawing.Size(100, 20);
+      this.textBoxPageNr.TabIndex = 26;
+      this.textBoxPageNr.Text = "600";
+      this.textBoxPageNr.TextChanged += new System.EventHandler(this.textBoxPageNr_TextChanged);
+      // 
       // Form1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(1253, 876);
+      this.Controls.Add(this.textBoxPageNr);
       this.Controls.Add(this.pictureBox4);
       this.Controls.Add(this.pictureBox3);
       this.Controls.Add(this.pictureBox2);
@@ -378,6 +389,7 @@ namespace TestApp
     private System.Windows.Forms.PictureBox pictureBox2;
     private System.Windows.Forms.PictureBox pictureBox3;
     private System.Windows.Forms.PictureBox pictureBox4;
+    private System.Windows.Forms.TextBox textBoxPageNr;
   }
 }
 

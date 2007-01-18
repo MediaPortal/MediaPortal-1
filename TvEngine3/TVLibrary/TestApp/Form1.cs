@@ -38,6 +38,7 @@ namespace TestApp
     ITVCard _currentCard;
     bool _stopStreaming = false;
     bool _streamingRunning = false;
+    int _currentPageNumber=0x600;
     //Player _player;
 
     public Form1()
@@ -347,8 +348,7 @@ namespace TestApp
     int updatectr=0;
     void UpdatePage(int pageNumber, int subPageNumber)
     {
-      if (pageNumber < 0x600) return;
-      if (pageNumber > 0x603) return;
+      if (pageNumber ==_currentPageNumber) return;
       /*
       if (pageNumber == 0x600)
       {
@@ -446,6 +446,18 @@ namespace TestApp
     private void pictureBox3_Click(object sender, EventArgs e)
     {
 
+    }
+
+    private void textBoxPageNr_TextChanged(object sender, EventArgs e)
+    {
+      int pageNumber;
+      try
+      {
+          pageNumber=Convert.ToInt32(textBoxPageNr.Text,16);
+          _currentPageNumber = pageNumber;
+        pictureBox3.Image = _currentCard.TeletextDecoder.GetPage(_currentPageNumber, 0);
+      }catch(Exception){}
+      
     }
   }
 }
