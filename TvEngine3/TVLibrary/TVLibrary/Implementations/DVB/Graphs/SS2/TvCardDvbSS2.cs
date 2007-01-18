@@ -505,28 +505,11 @@ namespace TvLibrary.Implementations.DVB
       {
         BuildGraph();
       }
-      //_pmtPid = -1;
-      //from submittunerequest
-      if (_graphState == GraphState.TimeShifting)
-      {
-        if (_filterTsWriter != null)
-        {
-          ITsTimeShift timeshift = _filterTsWriter as ITsTimeShift;
-          if (timeshift != null)
-          {
-            timeshift.Pause(1);
-          }
-        }
-      }
-      Log.Log.WriteFile("dvb:SubmitTuneRequest");
       _channelManager.OnBeforeTune();
-
-      //Log.Log.WriteFile("dvb:SubmitTuneRequest");
       if (_interfaceEpgGrabber != null)
       {
         _interfaceEpgGrabber.Reset();
       }
-      //from submittunerequest
 
 
       if (frequency > 13000)
@@ -648,6 +631,8 @@ namespace TvLibrary.Implementations.DVB
 
 
       //from submittunerequest
+      _lastSignalUpdate = DateTime.MinValue;
+      SendHwPids(new ArrayList());
       _channelManager.OnAfterTune();
       //from submittunerequest
 //      SetupPmtGrabber(pmtPid);

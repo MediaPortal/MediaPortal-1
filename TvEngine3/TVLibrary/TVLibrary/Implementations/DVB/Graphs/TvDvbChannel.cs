@@ -43,7 +43,7 @@ using TvLibrary.Helper;
 
 namespace TvLibrary.Implementations.DVB
 {
-  public class TvDvbChannel: ITeletextCallBack, IPMTCallback, ICACallback
+  public class TvDvbChannel : ITeletextCallBack, IPMTCallback, ICACallback
   {
     #region enums
     /// <summary>
@@ -451,10 +451,11 @@ namespace TvLibrary.Implementations.DVB
         }
       }
     }
+
     public void OnGraphStart()
     {
       DateTime dtNow;
-      
+
       FilterState state;
       (_graphBuilder as IMediaControl).GetState(10, out state);
       if (state == FilterState.Running)
@@ -478,11 +479,10 @@ namespace TvLibrary.Implementations.DVB
       }
       Log.Log.WriteFile("dvb:RunGraph");
       _teletextDecoder.ClearBuffer();
+      _pmtPid = -1;
       _pmtVersion = -1;
       _newPMT = false;
       _newCA = false;
-
-      int hr = 0;
     }
 
     public void OnGraphStarted()
@@ -555,59 +555,11 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pmtPid">pid of the PMT</param>
     protected void SetupPmtGrabber(int pmtPid)
     {
+      Log.Log.Info("SetupPmtGrabber:{0:X} {1:X}", _pmtPid, pmtPid);
       if (pmtPid < 0) return;
       if (pmtPid == _pmtPid) return;
+      _pmtVersion = -1;
       _pmtPid = pmtPid;
-      
-      /*
-      DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
-      if (channel != null)
-      {
-        string fileName = String.Format(@"pmt\{0}{1}{2}{3}.dat", channel.Frequency, channel.NetworkId, channel.TransportId, channel.ServiceId);
-
-        lock (this)
-        {
-          Log.Log.Info("load:{0}", fileName);
-          try
-          {
-            if (File.Exists(fileName))
-            {
-              using (Stream stream = new FileStream(fileName, FileMode.Open))
-              {
-                using (BinaryReader reader = new BinaryReader(stream))
-                {
-                  int len = (int)stream.Length;
-                  byte[] pmt = reader.ReadBytes(len);
-
-                  bool updatePids;
-                  if (SendPmtToCam(pmt,out updatePids))
-                  {
-                    _newPMT = false;
-                    if (updatePids)
-                    {
-                      if (_channelInfo != null)
-                      {
-                        SetMpegPidMapping(_channelInfo);
-                      }
-                      Log.Log.Info("dvb:stop tif");
-                      if (_filterTIF != null)
-                        _filterTIF.Stop();
-                    }
-                  }
-                }
-              }
-            }
-            else
-            {
-              Log.Log.Info("load:{0} file not found", fileName);
-            }
-          }
-          catch (Exception ex)
-          {
-            Log.Log.Write(ex);
-          }
-        }
-      }*/
       if ((_currentChannel as ATSCChannel) != null)
       {
         ATSCChannel atscChannel = (ATSCChannel)_currentChannel;
@@ -725,7 +677,7 @@ namespace TvLibrary.Implementations.DVB
         if (info.network_pmt_PID >= 0 && ((DVBBaseChannel)_currentChannel).ServiceId >= 0)
         {
           hwPids.Add((ushort)info.network_pmt_PID);
-         // SendHwPids(hwPids);
+          // SendHwPids(hwPids);
         }
 
         if (_startTimeShifting)
@@ -906,7 +858,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public void StartRecord(bool transportStream, string fileName)
     {
-      
+
       Log.Log.WriteFile("dvb:StartRecord({0})", fileName);
       _recordTransportStream = transportStream;
       int hr;
@@ -945,7 +897,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public void StopRecord()
     {
-      
+
       Log.Log.WriteFile("dvb:StopRecord()");
 
       if (_filterTsWriter != null)
@@ -1026,7 +978,7 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        
+
         List<IAudioStream> streams = new List<IAudioStream>();
         foreach (PidInfo info in _channelInfo.pids)
         {
@@ -1065,7 +1017,7 @@ namespace TvLibrary.Implementations.DVB
       }
       set
       {
-        
+
         List<IAudioStream> streams = AvailableAudioStreams;
         DVBAudioStream audioStream = (DVBAudioStream)value;
         if (_filterTsWriter != null)
@@ -1182,7 +1134,7 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
-        Log.Log.WriteFile("dvb:OnPMTReceived()");
+        Log.Log.WriteFile("dvb:OnPMTReceived() {0}", _graphRunning);
         _newPMT = false;
         if (_graphRunning == false) return 0;
         bool updatePids;
@@ -1223,11 +1175,23 @@ namespace TvLibrary.Implementations.DVB
         updatePids = false;
         if (_mdapiFilter != null)
         {
-          if (_newCA == false) return false;//cat not received yet
+          if (_newCA == false)
+          {
+            Log.Log.Info("SendPmt:wait for ca");
+            return false;//cat not received yet
+          }
         }
-        if ((_currentChannel as ATSCChannel) != null) return true;
+        if ((_currentChannel as ATSCChannel) != null)
+        {
+          _pmtVersion = 1;
+          return true;
+        }
         DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
-        if (channel == null) return true;
+        if (channel == null)
+        {
+          Log.Log.Info("SendPmt:no channel set");
+          return true;
+        }
         IntPtr pmtMem = Marshal.AllocCoTaskMem(4096);// max. size for pmt
         IntPtr catMem = Marshal.AllocCoTaskMem(4096);// max. size for cat
         try
@@ -1240,35 +1204,11 @@ namespace TvLibrary.Implementations.DVB
             Marshal.Copy(pmtMem, pmt, 0, pmtLength);
             version = ((pmt[5] >> 1) & 0x1F);
             int pmtProgramNumber = (pmt[3] << 8) + pmt[4];
+            Log.Log.Info("SendPmt:{0:X} {1:X} {2:X} {3:X}", pmtProgramNumber, channel.ServiceId, _pmtVersion, version);
             if (pmtProgramNumber == channel.ServiceId)
             {
               if (_pmtVersion != version)
               {
-                /*
-                string fileName = String.Format(@"pmt\{0}{1}{2}{3}.dat", channel.Frequency,channel.NetworkId,channel.TransportId,channel.ServiceId);
-                Log.Log.Info("save:{0}", fileName);
-                try
-                {
-                  try
-                  {
-                    System.IO.File.Delete(fileName);
-                  }
-                  catch (Exception)
-                  {
-                  }
-                  using (Stream stream = new FileStream(fileName, FileMode.OpenOrCreate))
-                  {
-                    using (BinaryWriter writer = new BinaryWriter(stream))
-                    {
-                      writer.Write(pmt);
-                      writer.Flush();
-                    }
-                    stream.Flush();
-                  }
-                }
-                catch (Exception ex)
-                {
-                }*/
                 _channelInfo = new ChannelInfo();
                 _channelInfo.DecodePmt(pmt);
                 _channelInfo.network_pmt_PID = channel.PmtPid;
