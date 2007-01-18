@@ -472,7 +472,7 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Write("wait for pmt");
             System.Threading.Thread.Sleep(20);
             TimeSpan ts = DateTime.Now - dtNow;
-            if (ts.TotalMilliseconds >= 2000) break;
+            if (ts.TotalMilliseconds >= 10000) break;
           }
         }
         return;
@@ -505,7 +505,7 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Write("wait for pmt");
             System.Threading.Thread.Sleep(20);
             TimeSpan ts = DateTime.Now - dtNow;
-            if (ts.TotalMilliseconds >= 2000) break;
+            if (ts.TotalMilliseconds >= 10000) break;
           }
         }
       }
@@ -1205,7 +1205,7 @@ namespace TvLibrary.Implementations.DVB
             version = ((pmt[5] >> 1) & 0x1F);
             int pmtProgramNumber = (pmt[3] << 8) + pmt[4];
             Log.Log.Info("SendPmt:{0:X} {1:X} {2:X} {3:X}", pmtProgramNumber, channel.ServiceId, _pmtVersion, version);
-            if (true || pmtProgramNumber == channel.ServiceId)
+            if (pmtProgramNumber == channel.ServiceId)
             {
               if (_pmtVersion != version)
               {
