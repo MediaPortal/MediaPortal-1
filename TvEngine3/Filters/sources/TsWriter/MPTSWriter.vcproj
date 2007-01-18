@@ -89,7 +89,7 @@
 				AdditionalLibraryDirectories=""
 				GenerateManifest="false"
 				IgnoreAllDefaultLibraries="false"
-				IgnoreDefaultLibraryNames="libcmt.lib"
+				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile=".\source\TsWriter.def"
 				ProgramDatabaseFile=".\Release/TsWriter.pdb"
 				SubSystem="2"
@@ -277,6 +277,14 @@
 			</File>
 			<File
 				RelativePath=".\source\TimeShifting.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TsChannel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TsChannel.h"
 				>
 			</File>
 			<File

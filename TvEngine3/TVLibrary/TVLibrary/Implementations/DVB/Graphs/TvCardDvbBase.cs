@@ -221,6 +221,7 @@ namespace TvLibrary.Implementations.DVB
     protected ITsChannelScan _interfaceChannelScan;
     protected ITsPmtGrabber _interfacePmtGrabber;
     protected ITsCaGrabber _interfaceCaGrabber;
+    protected ITsChannel _interfaceTsChannel;
 
     protected bool _epgGrabbing = false;
     protected bool _isScanning = false;
@@ -321,7 +322,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_filterTsAnalyzer != null)
         {
-          ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
+          ITsTimeShift timeshift = _interfaceTsChannel as ITsTimeShift;
           if (timeshift != null)
           {
             timeshift.Pause(1);
@@ -382,7 +383,7 @@ namespace TvLibrary.Implementations.DVB
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
       if (dvbChannel == null) return;
 
-      ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
+      ITsTimeShift timeshift = _interfaceTsChannel as ITsTimeShift;
       timeshift.Pause(1);
       timeshift.SetPcrPid((short)dvbChannel.PcrPid);
       timeshift.SetPmtPid((short)dvbChannel.PmtPid);
@@ -406,7 +407,7 @@ namespace TvLibrary.Implementations.DVB
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
       if (dvbChannel == null) return;
 
-      ITsRecorder recorder = _filterTsAnalyzer as ITsRecorder;
+      ITsRecorder recorder = _interfaceTsChannel as ITsRecorder;
       recorder.SetPcrPid((short)dvbChannel.PcrPid);
       bool programStream = true;
       bool audioPidSet = false;
@@ -497,7 +498,7 @@ namespace TvLibrary.Implementations.DVB
       //int hr;
       if (_filterTsAnalyzer != null)
       {
-        ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
+        ITsTimeShift timeshift = _interfaceTsChannel as ITsTimeShift;
         timeshift.SetTimeShiftingFileName(fileName);
         timeshift.SetMode(TimeShiftingMode.TransportStream);
         if (_channelInfo.pids.Count == 0)
@@ -697,9 +698,9 @@ namespace TvLibrary.Implementations.DVB
 
       if (_filterTsAnalyzer != null)
       {
-        ITsRecorder recorder = _filterTsAnalyzer as ITsRecorder;
+        ITsRecorder recorder = _interfaceTsChannel as ITsRecorder;
         recorder.StopRecord();
-        ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
+        ITsTimeShift timeshift = _interfaceTsChannel as ITsTimeShift;
         timeshift.Stop();
       }
       if (_teletextDecoder != null)
@@ -946,7 +947,7 @@ namespace TvLibrary.Implementations.DVB
           Release.ComObject("tuner pin out", pinOut);
           Log.Log.WriteFile("dvb:  using only tv tuner ifilter...");
           ConnectMpeg2DemuxToInfTee();
-          AddTsAnalyzerToGraph();
+          AddMpWriterFilterToGraph();
           _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsAnalyzer);
           return;
         }
@@ -956,7 +957,7 @@ namespace TvLibrary.Implementations.DVB
         throw new TvException("No Tv Receiver filter found");
       }
       ConnectMpeg2DemuxToInfTee();
-      AddTsAnalyzerToGraph();
+      AddMpWriterFilterToGraph();
       _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsAnalyzer);
     }
 
@@ -1116,7 +1117,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Gets the video audio pins.
     /// </summary>
-    protected void AddTsAnalyzerToGraph()
+    protected void AddMpWriterFilterToGraph()
     {
 
       if (_filterTsAnalyzer == null)
@@ -1158,10 +1159,13 @@ namespace TvLibrary.Implementations.DVB
           throw new TvException("unable to connect inftee to analyzer filter");
         }
 
+        _interfaceTsChannel = null;
+        ITsFilter tsfilter = (ITsFilter)_filterTsAnalyzer;
+        tsfilter.AddChannel(out _interfaceTsChannel);
         _interfaceChannelScan = (ITsChannelScan)_filterTsAnalyzer;
         _interfaceEpgGrabber = (ITsEpgScanner)_filterTsAnalyzer;
-        _interfacePmtGrabber = (ITsPmtGrabber)_filterTsAnalyzer;
-        _interfaceCaGrabber = (ITsCaGrabber)_filterTsAnalyzer;
+        _interfacePmtGrabber = (ITsPmtGrabber)_interfaceTsChannel;
+        _interfaceCaGrabber = (ITsCaGrabber)_interfaceTsChannel;
       }
     }
 
@@ -1544,7 +1548,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.WriteFile("dvb:SetMpegPidMapping");
 
-        ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_filterTsAnalyzer;
+        ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_interfaceTsChannel;
         ArrayList hwPids = new ArrayList();
         hwPids.Add((ushort)0x0);//PAT
         hwPids.Add((ushort)0x1);//CAT
@@ -1574,7 +1578,7 @@ namespace TvLibrary.Implementations.DVB
               Log.Log.WriteFile("    map {0}", pidInfo);
               if (GrabTeletext)
               {
-                ITsTeletextGrabber grabber = (ITsTeletextGrabber)_filterTsAnalyzer;
+                ITsTeletextGrabber grabber = (ITsTeletextGrabber)_interfaceTsChannel;
                 grabber.SetTeletextPid((short)pidInfo.pid);
               }
               hwPids.Add((ushort)pidInfo.pid);
@@ -1624,7 +1628,7 @@ namespace TvLibrary.Implementations.DVB
         if (_startTimeShifting)
         {
           _startTimeShifting = false;
-          ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
+          ITsTimeShift timeshift = _interfaceTsChannel as ITsTimeShift;
           timeshift.Reset();
           SetTimeShiftPids();
           timeshift.Start();
@@ -1634,7 +1638,7 @@ namespace TvLibrary.Implementations.DVB
           _startRecording = false;
           SetRecorderPids();
 
-          ITsRecorder record = _filterTsAnalyzer as ITsRecorder;
+          ITsRecorder record = _interfaceTsChannel as ITsRecorder;
           int hr = record.StartRecord();
           if (hr != 0)
           {
@@ -1868,7 +1872,7 @@ namespace TvLibrary.Implementations.DVB
       set
       {
         _grabTeletext = value;
-        ITsTeletextGrabber grabber = (ITsTeletextGrabber)_filterTsAnalyzer;
+        ITsTeletextGrabber grabber = (ITsTeletextGrabber)_interfaceTsChannel;
         if (_grabTeletext)
         {
           int teletextPid = -1;
@@ -2123,7 +2127,7 @@ namespace TvLibrary.Implementations.DVB
         if (_graphRunning == false) return false;
         if (_filterTsAnalyzer == null) return false;
         if (_currentChannel == null) return false;
-        ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_filterTsAnalyzer;
+        ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_interfaceTsChannel;
         short audioEncrypted = 0;
         short videoEncrypted = 0;
         writer.IsAudioEncrypted(out audioEncrypted);
@@ -2154,7 +2158,7 @@ namespace TvLibrary.Implementations.DVB
       int hr;
       if (_filterTsAnalyzer != null)
       {
-        ITsRecorder record = _filterTsAnalyzer as ITsRecorder;
+        ITsRecorder record = _interfaceTsChannel as ITsRecorder;
         hr = record.SetRecordingFileName(fileName);
         if (hr != 0)
         {
@@ -2191,7 +2195,7 @@ namespace TvLibrary.Implementations.DVB
 
       if (_filterTsAnalyzer != null)
       {
-        ITsRecorder record = _filterTsAnalyzer as ITsRecorder;
+        ITsRecorder record = _interfaceTsChannel as ITsRecorder;
         record.StopRecord();
 
       }
@@ -2580,7 +2584,7 @@ namespace TvLibrary.Implementations.DVB
         DVBAudioStream audioStream = (DVBAudioStream)value;
         if (_filterTsAnalyzer != null)
         {
-          ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_filterTsAnalyzer;
+          ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_interfaceTsChannel;
           writer.SetAudioPid((short)audioStream.Pid);
         }
         _currentAudioStream = audioStream;

@@ -29,8 +29,10 @@
 #include "teletextgrabber.h"
 #include "cagrabber.h"
 #include "technotrend.h"
+#include "tschannel.h"
 
 #include <map>
+#include <vector>
 using namespace std;
 
 class CMpTsFilterPin;
@@ -38,6 +40,18 @@ class CMpTs;
 class CMpTsFilter;
 
 DEFINE_GUID(CLSID_MpTsFilter, 0xfc50bed6, 0xfe38, 0x42d3, 0xb8, 0x31, 0x77, 0x16, 0x90, 0x9, 0x1a, 0x6e);
+
+// {5EB9F392-E7FD-4071-8E44-3590E5E767BA}
+DEFINE_GUID(IID_TSFilter, 0x5eb9f392, 0xe7fd, 0x4071, 0x8e, 0x44, 0x35, 0x90, 0xe5, 0xe7, 0x67, 0xba);
+
+DECLARE_INTERFACE_(ITSFilter, IUnknown)
+{
+  STDMETHOD(AddChannel)(THIS_ ITSChannel** instance)PURE;
+  STDMETHOD(DeleteChannel)(THIS_ ITSChannel* instance)PURE;
+  STDMETHOD(GetChannel)(THIS_ int index, ITSChannel** instance)PURE;
+  STDMETHOD(GetChannelCount)(THIS_ int* count)PURE;
+  STDMETHOD(DeleteAllChannels)()PURE;
+};
 
 // Main filter object
 
@@ -97,7 +111,7 @@ private:
 
 //  CMpTs object which has filter and pin members
 
-class CMpTs : public CUnknown
+class CMpTs : public CUnknown, public ITSFilter
 {
 
     friend class CMpTsFilter;
@@ -109,22 +123,23 @@ class CMpTs : public CUnknown
 public:
     DECLARE_IUNKNOWN
 
+    STDMETHODIMP AddChannel( ITSChannel** instance);
+    STDMETHODIMP DeleteChannel( ITSChannel* instance);
+    STDMETHODIMP GetChannel( int index, ITSChannel** instance);
+    STDMETHODIMP GetChannelCount( int* count);
+    STDMETHODIMP DeleteAllChannels();
+
     CMpTs(LPUNKNOWN pUnk, HRESULT *phr);
     ~CMpTs();
-
     static CUnknown * WINAPI CreateInstance(LPUNKNOWN punk, HRESULT *phr);
-
 		void AnalyzeTsPacket(byte* tsPacket);
+
 private:
     // Overriden to say what interfaces we support where
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
-		CVideoAnalyzer* m_pVideoAnalyzer;
 		CChannelScan*   m_pChannelScanner;
 		CEpgScanner*		m_pEpgScanner;
-		CPmtGrabber*		m_pPmtGrabber;
-		CRecorder*			m_pRecorder;
-		CTimeShifting*	m_pTimeShifting;
-		CTeletextGrabber*	m_pTeletextGrabber;
-    CTechnotrend* m_pTechnoTrend;
-    CCaGrabber*   m_pCaGrabber;
+    CTechnotrend*   m_pTechnoTrend;
+    vector<CTsChannel*> m_vecChannels;
+    typedef vector<CTsChannel*>::iterator ivecChannels;
 };

@@ -82,6 +82,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Interfaces\Analyzer\ITechnoTrend.cs" />
+    <Compile Include="Interfaces\Analyzer\ITsChannel.cs" />
+    <Compile Include="Interfaces\Analyzer\ITsFilter.cs" />
     <Compile Include="Interfaces\Analyzer\ITsRecorder.cs" />
     <Compile Include="Interfaces\Analyzer\ITsChannelScan.cs" />
     <Compile Include="Interfaces\Analyzer\ITsEpgScanner.cs" />

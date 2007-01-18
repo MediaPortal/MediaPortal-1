@@ -974,7 +974,7 @@ namespace TvLibrary.Implementations.DVB
       ConnectInfTeeToSS2();
       ConnectMpeg2DemuxToInfTee();
 
-      AddTsAnalyzerToGraph();
+      AddMpWriterFilterToGraph();
 
       SendHwPids(new ArrayList());
       _graphState = GraphState.Created;

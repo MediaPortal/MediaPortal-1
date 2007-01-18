@@ -338,14 +338,8 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr)
         return;
     }
 
-		m_pVideoAnalyzer = new CVideoAnalyzer(GetOwner(),phr);
 		m_pChannelScanner= new CChannelScan(GetOwner(),phr,m_pFilter);
 		m_pEpgScanner = new CEpgScanner(GetOwner(),phr);
-		m_pPmtGrabber = new CPmtGrabber(GetOwner(),phr);
-		m_pRecorder = new CRecorder(GetOwner(),phr);
-		m_pTimeShifting= new CTimeShifting(GetOwner(),phr);
-		m_pTeletextGrabber= new CTeletextGrabber(GetOwner(),phr);
-    m_pCaGrabber= new CCaGrabber(GetOwner(),phr);
     m_pTechnoTrend= new CTechnotrend(GetOwner(),phr);
 }
 
@@ -356,17 +350,16 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr)
 
 CMpTs::~CMpTs()
 {
-    delete m_pPin;
-    delete m_pFilter;
-		delete m_pVideoAnalyzer;
-		delete m_pChannelScanner;
-		delete m_pEpgScanner;
-		delete m_pPmtGrabber;
-		delete m_pRecorder;
-		delete m_pTimeShifting;
-		delete m_pTeletextGrabber;
-    delete m_pCaGrabber;
-    delete m_pTechnoTrend;
+  delete m_pPin;
+  delete m_pFilter;
+	delete m_pChannelScanner;
+	delete m_pEpgScanner;
+  delete m_pTechnoTrend;
+  for (int i=0; i < (int)m_vecChannels.size();++i)
+  {
+    delete m_vecChannels[i];
+  }
+  m_vecChannels.clear();
 }
 
 
@@ -402,47 +395,41 @@ STDMETHODIMP CMpTs::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
     CAutoLock lock(&m_Lock);
 
     // Do we have this interface
-	if (riid == IID_ITSVideoAnalyzer)
+	if (riid == IID_ITSChannelScan)
 	{
-		return GetInterface((ITsVideoAnalyzer*)m_pVideoAnalyzer, ppv);
-	}
-	else if (riid == IID_ITSChannelScan)
-	{
+		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITSChannelScan");
 		return GetInterface((ITSChannelScan*)m_pChannelScanner, ppv);
 	}
 	else if (riid == IID_ITsEpgScanner)
 	{
+		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITsEpgScanner");
 		return GetInterface((ITsEpgScanner*)m_pEpgScanner, ppv);
 	}
-	else if (riid == IID_IPmtGrabber)
+	else if (riid == IID_TSFilter)
 	{
-		return GetInterface((IPmtGrabber*)m_pPmtGrabber, ppv);
-	}
-	else if (riid == IID_ITsRecorder)
-	{
-		return GetInterface((ITsRecorder*)m_pRecorder, ppv);
-	}
-	else if (riid == IID_ITsTimeshifting)
-	{
-		return GetInterface((ITsTimeshifting*)m_pTimeShifting, ppv);
-	}
-	else if (riid == IID_ITeletextGrabber)
-	{
-		return GetInterface((ITeletextGrabber*)m_pTeletextGrabber, ppv);
-	}
-	else if (riid == IID_ICaGrabber)
-	{
-		return GetInterface((ICaGrabber*)m_pCaGrabber, ppv);
+		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_TSFilter");
+		return GetInterface((ITSFilter*)this, ppv);
 	}
 	else if (riid == IID_ITechnoTrend)
 	{
+		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITechnoTrend");
 		return GetInterface((ITechnoTrend*)m_pTechnoTrend, ppv);
 	}
   else if (riid == IID_IBaseFilter || riid == IID_IMediaFilter || riid == IID_IPersist) 
 	{
+		//LogDebug("CMpTs:NonDelegatingQueryInterface other");
       return m_pFilter->NonDelegatingQueryInterface(riid, ppv);
   } 
-
+	if (riid == IID_TSChannel)
+	{
+		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_TSChannel");
+	}
+	else
+	{
+		//LogDebug("CMpTs:NonDelegatingQueryInterface unknown %04.4x-%04.4x-%04.4x-%02.2x-%02.2x-%02.2x-%02.2x-%02.2x-%02.2x-%02.2x-%02.2x",
+		//	riid.Data1,riid.Data2,riid.Data3,
+		//	riid.Data4[0],riid.Data4[1],riid.Data4[2],riid.Data4[3],riid.Data4[4],riid.Data4[5],riid.Data4[6],riid.Data4[7]);
+	}
   return CUnknown::NonDelegatingQueryInterface(riid, ppv);
 
 } // NonDelegatingQueryInterface
@@ -491,17 +478,73 @@ void CMpTs::AnalyzeTsPacket(byte* tsPacket)
 {
 	try
 	{
-		m_pVideoAnalyzer->OnTsPacket(tsPacket);
+    CAutoLock lock(&m_Lock);
+    for (int i=0; i < (int)m_vecChannels.size();++i)
+    {
+        m_vecChannels[i]->OnTsPacket(tsPacket);
+    }
 		m_pChannelScanner->OnTsPacket(tsPacket);
 		m_pEpgScanner->OnTsPacket(tsPacket);
-		m_pPmtGrabber->OnTsPacket(tsPacket);
-		m_pRecorder->OnTsPacket(tsPacket);
-		m_pTimeShifting->OnTsPacket(tsPacket);
-		m_pTeletextGrabber->OnTsPacket(tsPacket);
-    m_pCaGrabber->OnTsPacket(tsPacket);
 	}
 	catch(...)
 	{
 		LogDebug("exception in AnalyzeTsPacket");
 	}
+}
+
+
+STDMETHODIMP CMpTs::AddChannel( ITSChannel** instance)
+{
+  CAutoLock lock(&m_Lock);
+  LogDebug("--AddChannel");
+  HRESULT hr;
+	
+  CTsChannel* channel = new CTsChannel(GetOwner(), &hr);
+  m_vecChannels.push_back(channel);
+  *instance=(ITSChannel*)channel;
+  return S_OK;
+}
+
+STDMETHODIMP CMpTs::DeleteChannel( ITSChannel* instance)
+{
+  CAutoLock lock(&m_Lock);
+  LogDebug("--DeleteChannel");
+  ivecChannels it = m_vecChannels.begin();
+  while (it != m_vecChannels.end())
+  {
+    if (*it == instance)
+    {
+      delete *it;
+      m_vecChannels.erase(it);
+      return S_OK;
+    }
+    ++it;
+  }
+  return S_OK;
+}
+
+STDMETHODIMP CMpTs::GetChannel( int index, ITSChannel** instance)
+{
+  CAutoLock lock(&m_Lock);
+  *instance=(ITSChannel*)m_vecChannels[index];
+  return S_OK;
+}
+
+STDMETHODIMP CMpTs::GetChannelCount( int* count)
+{
+  CAutoLock lock(&m_Lock);
+  *count = m_vecChannels.size();
+  return S_OK;
+}
+
+STDMETHODIMP CMpTs::DeleteAllChannels()
+{
+  CAutoLock lock(&m_Lock);
+  LogDebug("--delete all channels");
+  for (int i=0; i < (int)m_vecChannels.size();++i)
+  {
+    delete m_vecChannels[i];
+  }
+  m_vecChannels.clear();
+  return S_OK;
 }

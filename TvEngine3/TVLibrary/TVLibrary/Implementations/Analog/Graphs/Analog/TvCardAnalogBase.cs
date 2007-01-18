@@ -199,6 +199,7 @@ namespace TvLibrary.Implementations.Analog
         _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
         _capBuilder.SetFiltergraph(_graphBuilder);
 
+
         //add the wdm tv tuner device
         AddTvTunerFilter();
         if (_filterTvTuner == null)
