@@ -31,9 +31,10 @@ using System.IO;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using Un4seen.Bass;
+using Un4seen.Bass.AddOn.Fx;
+using Un4seen.Bass.AddOn.Mix;
 using Un4seen.Bass.AddOn.Vis;
 using Un4seen.Bass.AddOn.Vst;
-using Un4seen.Bass.AddOn.Fx;
 using Un4seen.Bass.AddOn.Wa;
 using Un4seen.Bass.Misc;
 using MediaPortal.Player.DSP;
@@ -45,13 +46,29 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.Player
 {
+  /// <summary>
+  /// This singleton class is responsible for managing the BASS audio Engine object. 
+  /// </summary>
   public class BassMusicPlayer
   {
+    #region Variables
     internal static BassAudioEngine _Player;
     private static System.Threading.Thread BassAsyncLoadThread = null;
     private static bool _IsDefaultMusicPlayer = false;
     private static bool SettingsLoaded = false;
+    #endregion
 
+    #region Constructors/Destructors
+    // Singleton -- make sure we can't instantiate this class
+    private BassMusicPlayer()
+    {
+    }
+    #endregion
+
+    #region Properties
+    /// <summary>
+    /// Returns the BassAudioEngine Object
+    /// </summary>
     public static BassAudioEngine Player
     {
       get
@@ -63,6 +80,9 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Returns a Boolean if the BASS Audio Engine is initialised
+    /// </summary>
     public static bool Initialized
     {
       get
@@ -71,6 +91,9 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Returns a Boolean if the BASS Audio Engine is the Default Player selected in Configuration
+    /// </summary>
     public static bool IsDefaultMusicPlayer
     {
       get
@@ -89,24 +112,19 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Is the BASS Engine Freed?
+    /// </summary>
     public static bool BassFreed
     {
       get { return _Player.BassFreed; }
     }
+    #endregion
 
-    public static void FreeBass()
-    {
-      if (_Player == null)
-        return;
-
-      _Player.FreeBass();
-    }
-
-    // Singleton -- make sure we can't instantiate this class
-    private BassMusicPlayer()
-    {
-    }
-
+    #region Public Methods
+    /// <summary>
+    /// Create the BASS Audio Engine Objects
+    /// </summary>
     public static void CreatePlayerAsync()
     {
       if (_Player != null)
@@ -117,15 +135,39 @@ namespace MediaPortal.Player
       BassAsyncLoadThread.Start();
     }
 
+    /// <summary>
+    /// Frees, the BASS Audio Engine.
+    /// </summary>
+    public static void FreeBass()
+    {
+      if (_Player == null)
+        return;
+
+      _Player.FreeBass();
+    }
+    #endregion
+
+    #region Private Methods
+    /// <summary>
+    /// Thread for Creating the BASS Audio Engine objects.
+    /// </summary>
     private static void InternalCreatePlayerAsync()
     {
       if (_Player == null)
         _Player = new BassAudioEngine();
     }
+    #endregion
   }
 
+  /// <summary>
+  /// Handles playback of Audio files and Internet streams via the BASS Audio Engine.
+  /// </summary>
   public class BassAudioEngine : IPlayer, IDisposable
   {
+    #region Enums
+    /// <summary>
+    /// The various States for Playback
+    /// </summary>
     public enum PlayState
     {
       Init,
@@ -133,7 +175,9 @@ namespace MediaPortal.Player
       Paused,
       Ended
     }
+    #endregion
 
+    #region Delegates
     public delegate void PlaybackStartHandler(object sender, float duration);
     public event PlaybackStartHandler PlaybackStart;
 
@@ -157,7 +201,9 @@ namespace MediaPortal.Player
     private SYNCPROC PlaybackFadeOutProcDelegate = null;
     private SYNCPROC PlaybackEndProcDelegate = null;
     private SYNCPROC PlaybackStreamFreedProcDelegate = null;
+    #endregion
 
+    #region Variables
     private const int MAXSTREAMS = 2;
     private List<int> Streams = new List<int>(MAXSTREAMS);
     private List<List<int>> StreamEventSyncHandles = new List<List<int>>();
@@ -171,6 +217,7 @@ namespace MediaPortal.Player
 
     private string _SoundDevice = "";
     private int _CrossFadeIntervalMS = 4000;
+    private int _DefaultCrossFadeIntervalMS = 4000;
     private int _BufferingMS = 5000;
     private bool _SoftStop = true;
     private bool _Initialized = false;
@@ -180,6 +227,7 @@ namespace MediaPortal.Player
     private VisualizationWindow VizWindow = null;
     private VisualizationManager VizManager = null;
     private bool _CrossFading = false;
+    private bool _Mixing = false;
 
     private bool _IsFullScreen = false;
     private int _VideoPositionX = 10;
@@ -205,13 +253,24 @@ namespace MediaPortal.Player
     private bool _waDspInitialised = false;
     private Dictionary<string, int> _waDspPlugins = new Dictionary<string, int>();
 
+    private int _mixer = 0;
+    // Mixing Matrix
+    private float[,] _MixingMatrix = new float[8, 2]{
+        {1, 0}, // left front out = left in
+        {0, 1}, // right front out = right in
+        {1, 0}, // centre out = left in
+        {0, 1}, // LFE out = right in
+        {1, 0}, // left rear/side out = left in
+        {0, 1}, // right rear/side out = right in
+        {1, 0}, // left-rear center out = left in
+        {0, 1}  // right-rear center out = right in
+    };
+    #endregion
+
     #region Properties
-
-    public override bool Ended
-    {
-      get { return _State == PlayState.Ended; }
-    }
-
+    /// <summary>
+    /// Returns the Duration of an Audio Stream
+    /// </summary>
     public override double Duration
     {
       get
@@ -226,6 +285,9 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Returns the Current Position in the Stream
+    /// </summary>
     public override double CurrentPosition
     {
       get
@@ -241,37 +303,66 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Returns the Current Play State
+    /// </summary>
     public PlayState State
     {
       get { return _State; }
     }
 
+    /// <summary>
+    /// Has the Playback Ended?
+    /// </summary>
+    public override bool Ended
+    {
+      get { return _State == PlayState.Ended; }
+    }
+
+    /// <summary>
+    /// Is Playback Paused?
+    /// </summary>
     public override bool Paused
     {
       get { return (_State == PlayState.Paused); }
     }
 
+    /// <summary>
+    /// Is the Player Playing?
+    /// </summary>
     public override bool Playing
     {
       get { return (_State == PlayState.Playing || _State == PlayState.Paused); }
     }
 
+    /// <summary>
+    /// Is Player Stopped?
+    /// </summary>
     public override bool Stopped
     {
       get { return (_State == PlayState.Init); }
     }
 
+    /// <summary>
+    /// Returns the File, currently played
+    /// </summary>
     public override string CurrentFile
     {
       get { return FilePath; }
     }
 
+    /// <summary>
+    /// Gets/Sets the FPS for Visualisation
+    /// </summary>
     public int TargetFPS
     {
       get { return VizManager.TargetFPS; }
       set { VizManager.TargetFPS = value; }
     }
 
+    /// <summary>
+    /// Gets/Sets the Playback Volume
+    /// </summary>
     public override int Volume
     {
       get { return _StreamVolume; }
@@ -292,18 +383,27 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Returns the Playback Speed
+    /// </summary>
     public override int Speed
     {
       get { return 1; }
       set { }
     }
 
+    /// <summary>
+    /// Gets/Sets the Crossfading Interval
+    /// </summary>
     public int CrossFadeIntervalMS
     {
       get { return _CrossFadeIntervalMS; }
       set { _CrossFadeIntervalMS = value; }
     }
 
+    /// <summary>
+    /// Gets/Sets the Buffering of BASS Streams
+    /// </summary>
     public int BufferingMS
     {
       get { return _BufferingMS; }
@@ -318,16 +418,23 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Returns the instance of the Visualisation Manager
+    /// </summary>
     public Visualization.IVisualizationManager IVizManager
     {
       get { return VizManager; }
     }
+
 
     public override bool HasVideo
     {
       get { return true; }
     }
 
+    /// <summary>
+    /// Gets/Sets Fullscreen Status
+    /// </summary>
     public override bool FullScreen
     {
       get { return GUIGraphicsContext.IsFullScreenVideo; }
@@ -341,6 +448,9 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Gets/sets the X Coordiante for Video
+    /// </summary>
     public override int PositionX
     {
       get { return _VideoPositionX; }
@@ -354,6 +464,9 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Gets/sets the Y Coordinate for Video
+    /// </summary>
     public override int PositionY
     {
       get { return _VideoPositionY; }
@@ -367,6 +480,9 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Gets/Sets the Width of the Video
+    /// </summary>
     public override int RenderWidth
     {
       get { return _VideoWidth; }
@@ -379,6 +495,10 @@ namespace MediaPortal.Player
         }
       }
     }
+
+    /// <summary>
+    /// Gets/sets the Height of the Video
+    /// </summary>
     public override int RenderHeight
     {
       get { return _VideoHeight; }
@@ -392,38 +512,56 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Returns the instance of the Video Window
+    /// </summary>
     public VisualizationWindow VisualizationWindow
     {
       get { return VizWindow; }
     }
 
+    /// <summary>
+    /// Is the Audio Engine initialised
+    /// </summary>
     public bool Initialized
     {
       get { return _Initialized; }
     }
 
+    /// <summary>
+    /// Is Crossfading enabled
+    /// </summary>
     public bool CrossFading
     {
       get { return _CrossFading; }
     }
 
+    /// <summary>
+    /// Is Crossfading enabled
+    /// </summary>
     public bool CrossFadingEnabled
     {
       get { return _CrossFadeIntervalMS > 0; }
     }
 
+    /// <summary>
+    /// Is BASS freed?
+    /// </summary>
     public bool BassFreed
     {
       get { return _BassFreed; }
     }
     #endregion
 
+    #region Constructors/Destructors
     public BassAudioEngine()
     {
       Initialize();
       GUIGraphicsContext.OnNewAction += new OnActionHandler(OnNewAction);
     }
+    #endregion
 
+    #region ActionHandler
     void OnNewAction(Action action)
     {
       switch (action.wID)
@@ -448,6 +586,21 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// The Main Form is disposed, so dispose the player
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    void OnAppFormDisposed(object sender, EventArgs e)
+    {
+      Dispose();
+    }
+    #endregion
+
+    #region Methods
+    /// <summary>
+    /// Dispose the BASS Audio engine. Free all BASS and Visualisation related resources
+    /// </summary>
     public void Dispose()
     {
       // Clean up BASS Resources
@@ -471,6 +624,10 @@ namespace MediaPortal.Player
       VizWindow.Dispose();
     }
 
+    /// <summary>
+    /// Initialise the Visualisation Window and Load Decoder/DSP Plugins
+    /// The BASS engine itself is not initialised at this stage, since it may cause S/PDIF for Movies not working on some systems.
+    /// </summary>
     private void Initialize()
     {
       try
@@ -507,6 +664,9 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Free BASS, when not playing Audio content, as it might cause S/PDIF output stop working
+    /// </summary>
     public void FreeBass()
     {
       if (!_BassFreed)
@@ -517,6 +677,9 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Init BASS, when a Audio file is to be played
+    /// </summary>
     public void InitBass()
     {
       try
@@ -543,6 +706,10 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Get the Sound devive as set in the Configuartion
+    /// </summary>
+    /// <returns></returns>
     private int GetSoundDevice()
     {
       int sounddevice = -1;
@@ -578,6 +745,9 @@ namespace MediaPortal.Player
       return sounddevice;
     }
 
+    /// <summary>
+    /// Initialise Visulaisation Controls and Create the Visualisation selected in the Configuration
+    /// </summary>
     private void InitializeControls()
     {
       if (GUIGraphicsContext.form.InvokeRequired)
@@ -593,10 +763,6 @@ namespace MediaPortal.Player
       VizManager = new Visualization.VisualizationManager(this, VizWindow);
       TargetFPS = VizFPS;
 
-      BASS_INFO info = new BASS_INFO();
-      Bass.BASS_GetInfo(info);
-      //            Console.WriteLine(info.ToString());
-
       if (VizManager != null)
       {
         if (VizPluginInfo != null)
@@ -606,6 +772,9 @@ namespace MediaPortal.Player
       SetVisualizationWindow();
     }
 
+    /// <summary>
+    /// Load Settings 
+    /// </summary>
     private void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -637,25 +806,22 @@ namespace MediaPortal.Player
         else if (_CrossFadeIntervalMS > 16000)
           _CrossFadeIntervalMS = 16000;
 
+        _DefaultCrossFadeIntervalMS = _CrossFadeIntervalMS;
+
         bool doGaplessPlayback = xmlreader.GetValueAsBool("audioplayer", "gaplessPlayback", false);
 
         if (doGaplessPlayback)
           _CrossFadeIntervalMS = 200;
 
         _SoftStop = xmlreader.GetValueAsBool("audioplayer", "fadeOnStartStop", true);
+
+        _Mixing = xmlreader.GetValueAsBool("audioplayer", "mixing", false);
       }
     }
 
-    public List<VisualizationInfo> GetVisualizationPluginsInfo()
-    {
-      return VizManager.GetVisualizationPluginsInfo();
-    }
-
-    void OnAppFormDisposed(object sender, EventArgs e)
-    {
-      Dispose();
-    }
-
+    /// <summary>
+    /// Setup the Visualisation Window and add it to the Main Form control collection
+    /// </summary>
     private void SetVisualizationWindow()
     {
       GUIGraphicsContext.form.SuspendLayout();
@@ -693,6 +859,10 @@ namespace MediaPortal.Player
       GUIGraphicsContext.form.ResumeLayout();
     }
 
+    /// <summary>
+    /// Start the thread for Creating the Visualisation async
+    /// </summary>
+    /// <param name="visPath"></param>
     public void AsyncCreateVisualization(string visPath)
     {
       System.Threading.Thread createVizThread;
@@ -700,11 +870,20 @@ namespace MediaPortal.Player
       createVizThread.Start(visPath);
     }
 
+    /// <summary>
+    /// Thread for creating the Visualisation
+    /// </summary>
+    /// <param name="vizPluginInfo"></param>
     private void InternalCreateVisualization(object vizPluginInfo)
     {
       CreateVisualization((VisualizationInfo)vizPluginInfo);
     }
 
+    /// <summary>
+    /// Create the Visualisation 
+    /// </summary>
+    /// <param name="vizPluginInfo"></param>
+    /// <returns></returns>
     public bool CreateVisualization(VisualizationInfo vizPluginInfo)
     {
       if (vizPluginInfo == null || VizWindow == null)
@@ -730,6 +909,32 @@ namespace MediaPortal.Player
       return result;
     }
 
+    /// <summary>
+    /// Return the BASS Stream to be used for Visualisation purposes.
+    /// We will extract the WAVE and FFT data to be provided to the Visualisation Plugins
+    /// In case of Mixer active, we need to return the Mixer Stream. 
+    /// In all other cases the current actove stream is used.
+    /// </summary>
+    /// <returns></returns>
+    internal int GetCurrentVizStream()
+    {
+      if (Streams.Count == 0)
+        return -1;
+
+      if (_Mixing)
+      {
+        return _mixer;
+      }
+      else
+      {
+        return GetCurrentStream();
+      }
+    }
+
+    /// <summary>
+    /// Returns the Current Stream 
+    /// </summary>
+    /// <returns></returns>
     internal int GetCurrentStream()
     {
       if (Streams.Count == 0)
@@ -744,6 +949,10 @@ namespace MediaPortal.Player
       return Streams[CurrentStreamIndex];
     }
 
+    /// <summary>
+    /// Returns the Next Stream
+    /// </summary>
+    /// <returns></returns>
     private int GetNextStream()
     {
       int currentStream = GetCurrentStream();
@@ -762,15 +971,11 @@ namespace MediaPortal.Player
       return Streams[CurrentStreamIndex];
     }
 
-    private int PeekNextStream()
-    {
-      int curStreamIndex = CurrentStreamIndex;
-      if (++curStreamIndex >= Streams.Count)
-        curStreamIndex = 0;
-
-      return Streams[curStreamIndex];
-    }
-
+    /// <summary>
+    /// Timer to update the Plaback Process
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     void OnUpdateTimerTick(object sender, System.Timers.ElapsedEventArgs e)
     {
       int stream = GetCurrentStream();
@@ -792,6 +997,9 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Load External BASS Audio Decoder Plugins
+    /// </summary>
     private void LoadAudioDecoderPlugins()
     {
       Log.Info("BASS: Loading audio decoder add-ins...");
@@ -839,6 +1047,9 @@ namespace MediaPortal.Player
         Log.Error(@"BASS: No audio decoders were loaded. Confirm decoders are present in \musicplayer\plugins\audio decoders folder.");
     }
 
+    /// <summary>
+    /// Load BASS DSP Plugins specified setup in the Configuration
+    /// </summary>
     private void LoadDSPPlugins()
     {
       Log.Debug("BASS: Loading DSP plugins ...");
@@ -961,6 +1172,11 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Starts Plaback of the given file
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <returns></returns>
     public override bool Play(string filePath)
     {
       if (!_Initialized)
@@ -998,7 +1214,11 @@ namespace MediaPortal.Player
 
           else
           {
-            result = Bass.BASS_ChannelPlay(stream, true);
+            // When Upmixing has been selected start the playback on the Mixer Stream
+            if (_Mixing)
+              result = Bass.BASS_ChannelPlay(_mixer, true);
+            else
+              result = Bass.BASS_ChannelPlay(stream, true);
             return result;
           }
         }
@@ -1013,12 +1233,19 @@ namespace MediaPortal.Player
           if (crossFadeSeconds > 0)
             crossFadeSeconds = crossFadeSeconds / 1000f;
 
-          if (oldStreamDuration - (oldStreamElapsedSeconds + crossFadeSeconds) > 0)
+          if (oldStreamDuration - (oldStreamElapsedSeconds + crossFadeSeconds) > -1)
           {
             FadeOutStop(oldStream);
           }
           else
-            Bass.BASS_ChannelStop(oldStream);
+          {
+            if (_Mixing)
+            {
+              Bass.BASS_ChannelStop(_mixer);
+            }
+            else
+              Bass.BASS_ChannelStop(oldStream);
+          }
 
           doFade = true;
           stream = GetNextStream();
@@ -1051,12 +1278,25 @@ namespace MediaPortal.Player
           // create the stream
           if (filePath.Contains(@"http://"))
           {
+            // Create an Internet Stream
             stream = Bass.BASS_StreamCreateURL(filePath, 0, BASSStream.BASS_SAMPLE_SOFTWARE | BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE, null, 0);
             Log.Debug("BASSAudio: Webstream found - trying to fetch stream {0}", Convert.ToString(stream));
           }
           else if (IsMODFile(filePath))
+            // Load a Mod file
             stream = Bass.BASS_MusicLoad(filePath, 0, 0, BASSMusic.BASS_SAMPLE_SOFTWARE | BASSMusic.BASS_SAMPLE_FLOAT | BASSMusic.BASS_MUSIC_AUTOFREE | BASSMusic.BASS_MUSIC_PRESCAN, 0);
+          else if (_Mixing)
+          {
+            // Do an upmix of the stereo according to the matrix. 
+            // Create an 8 Channel Mixer and assign it to the stream
+            _mixer = BassMix.BASS_Mixer_StreamCreate(44100, 8, BASSStream.BASS_MIXER_END | BASSStream.BASS_STREAM_AUTOFREE);
+            stream = Bass.BASS_StreamCreateFile(filePath, 0, 0, BASSStream.BASS_STREAM_DECODE | BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE);
+            // Now Plugin the stream to the mixer and set the mixing matrix
+            BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream, BASSStream.BASS_MIXER_MATRIX);
+            BassMix.BASS_Mixer_ChannelSetMatrix(stream, ref _MixingMatrix[0, 0]);
+          }
           else
+            // Create a Standard Stream
             stream = Bass.BASS_StreamCreateFile(filePath, 0, 0, BASSStream.BASS_SAMPLE_SOFTWARE | BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE);
 
           Streams[CurrentStreamIndex] = stream;
@@ -1133,7 +1373,13 @@ namespace MediaPortal.Player
             }
           }
 
-          if (stream != 0 && Bass.BASS_ChannelPlay(stream, false))
+          bool playbackStarted = false;
+          if (_Mixing)
+            playbackStarted = Bass.BASS_ChannelPlay(_mixer, false);
+          else
+            playbackStarted = Bass.BASS_ChannelPlay(stream, false);
+
+          if (stream != 0 && playbackStarted)
           {
             Log.Info("BASS: playback started");
 
@@ -1185,7 +1431,11 @@ namespace MediaPortal.Player
       return result;
     }
 
-    // Checks to see, if we got a MOD File
+    /// <summary>
+    /// Is this a MOD file?
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <returns></returns>
     private bool IsMODFile(string filePath)
     {
       string ext = Path.GetExtension(filePath).ToLower();
@@ -1206,6 +1456,12 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Register the various Playback Events
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="streamIndex"></param>
+    /// <returns></returns>
     private List<int> RegisterPlaybackEvents(int stream, int streamIndex)
     {
       if (stream == 0)
@@ -1219,6 +1475,13 @@ namespace MediaPortal.Player
       return syncHandles;
     }
 
+    /// <summary>
+    /// Register the Fade out Event
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="streamIndex"></param>
+    /// <param name="fadeOutMS"></param>
+    /// <returns></returns>
     private int RegisterPlaybackFadeOutEvent(int stream, int streamIndex, int fadeOutMS)
     {
       int syncHandle = 0;
@@ -1239,12 +1502,17 @@ namespace MediaPortal.Player
       if (syncHandle == 0)
       {
         int error = Bass.BASS_ErrorGetCode();
-        //                Console.WriteLine(Enum.GetName(typeof(BASSErrorCode), error));
       }
 
       return syncHandle;
     }
 
+    /// <summary>
+    /// Register the Playback end Event
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="streamIndex"></param>
+    /// <returns></returns>
     private int RegisterPlaybackEndEvent(int stream, int streamIndex)
     {
       int syncHandle = 0;
@@ -1257,12 +1525,16 @@ namespace MediaPortal.Player
       if (syncHandle == 0)
       {
         int error = Bass.BASS_ErrorGetCode();
-        //                Console.WriteLine(Enum.GetName(typeof(BASSErrorCode), error));
       }
 
       return syncHandle;
     }
 
+    /// <summary>
+    /// Register Stream Free Event
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <returns></returns>
     private int RegisterStreamFreedEvent(int stream)
     {
       int syncHandle = 0;
@@ -1277,6 +1549,12 @@ namespace MediaPortal.Player
       return syncHandle;
     }
 
+    /// <summary>
+    /// Unregister the Playback Events
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="syncHandles"></param>
+    /// <returns></returns>
     private bool UnregisterPlaybackEvents(int stream, List<int> syncHandles)
     {
       try
@@ -1296,6 +1574,10 @@ namespace MediaPortal.Player
       return true;
     }
 
+    /// <summary>
+    /// Free a Stream
+    /// </summary>
+    /// <param name="stream"></param>
     private void FreeStream(int stream)
     {
       int streamIndex = -1;
@@ -1323,11 +1605,21 @@ namespace MediaPortal.Player
       stream = 0;
     }
 
+    /// <summary>
+    /// Is stream Playing?
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <returns></returns>
     private bool StreamIsPlaying(int stream)
     {
       return stream != 0 && (Bass.BASS_ChannelIsActive(stream) == (int)BASSActive.BASS_ACTIVE_PLAYING);
     }
 
+    /// <summary>
+    /// Get Total Seconds of the Stream
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <returns></returns>
     private float GetTotalStreamSeconds(int stream)
     {
       if (stream == 0)
@@ -1341,11 +1633,20 @@ namespace MediaPortal.Player
       return totaltime;
     }
 
+    /// <summary>
+    /// Retrieve the elapsed time
+    /// </summary>
+    /// <returns></returns>
     private float GetStreamElapsedTime()
     {
       return GetStreamElapsedTime(GetCurrentStream());
     }
 
+    /// <summary>
+    /// Retrieve the elapsed time
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <returns></returns>
     private float GetStreamElapsedTime(int stream)
     {
       if (stream == 0)
@@ -1359,9 +1660,15 @@ namespace MediaPortal.Player
       return elapsedtime;
     }
 
+    /// <summary>
+    /// Fade Out  Procedure
+    /// </summary>
+    /// <param name="handle"></param>
+    /// <param name="stream"></param>
+    /// <param name="data"></param>
+    /// <param name="userData"></param>
     private void PlaybackFadeOutProc(int handle, int stream, int data, int userData)
     {
-      //Console.WriteLine("PlaybackFadeOutProc");
       Log.Debug("BASS: PlaybackFadeOutProc of stream {0}", stream);
       _CrossFading = true;
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING, 0, 0, 0, 0, 0, null);
@@ -1376,9 +1683,15 @@ namespace MediaPortal.Player
         Log.Debug("BassAudio: *** BASS_ChannelRemoveSync in PlaybackFadeOutProc");
     }
 
+    /// <summary>
+    /// Playback end Procedure
+    /// </summary>
+    /// <param name="handle"></param>
+    /// <param name="stream"></param>
+    /// <param name="data"></param>
+    /// <param name="userData"></param>
     private void PlaybackEndProc(int handle, int stream, int data, int userData)
     {
-      //Console.WriteLine("PlaybackEndProc");
       Log.Debug("BASS: PlaybackEndProc of stream {0}", stream);
 
       if (TrackPlaybackCompleted != null)
@@ -1397,6 +1710,13 @@ namespace MediaPortal.Player
       HandleSongEnded(false);
     }
 
+    /// <summary>
+    /// Stream Freed Proc
+    /// </summary>
+    /// <param name="handle"></param>
+    /// <param name="stream"></param>
+    /// <param name="data"></param>
+    /// <param name="userData"></param>
     private void PlaybackStreamFreedProc(int handle, int stream, int data, int userData)
     {
       //Console.WriteLine("PlaybackStreamFreedProc");
@@ -1413,9 +1733,12 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Handle Stop of a song
+    /// </summary>
+    /// <param name="bManualStop"></param>
     private void HandleSongEnded(bool bManualStop)
     {
-      //Console.WriteLine("BassAudioEngine.HandleSongEnded  manualStop:{0}  CrossFading:{1}", bManualStop, _CrossFading);
       Log.Debug("BASS: HandleSongEnded - manualStop: {0}, CrossFading: {1}", bManualStop, _CrossFading);
       PlayState oldState = _State;
 
@@ -1448,6 +1771,10 @@ namespace MediaPortal.Player
         PlaybackStateChanged(this, oldState, _State);
     }
 
+    /// <summary>
+    /// Fade out Song
+    /// </summary>
+    /// <param name="stream"></param>
     private void FadeOutStop(int stream)
     {
       Log.Debug("BASS: FadeOutStop of stream {0}", stream);
@@ -1460,6 +1787,9 @@ namespace MediaPortal.Player
       Bass.BASS_ChannelSlideAttributes(stream, -1, -2, -101, _CrossFadeIntervalMS);
     }
 
+    /// <summary>
+    /// Pause Playback
+    /// </summary>
     public override void Pause()
     {
       _CrossFading = false;
@@ -1524,6 +1854,9 @@ namespace MediaPortal.Player
 
     }
 
+    /// <summary>
+    /// Stopping Playback
+    /// </summary>
     public override void Stop()
     {
       _CrossFading = false;
@@ -1540,11 +1873,19 @@ namespace MediaPortal.Player
           while ((Bass.BASS_ChannelIsSliding(stream) & (int)BASSSlide.BASS_SLIDE_VOL) != 0)
             System.Threading.Thread.Sleep(20);
 
-          Bass.BASS_ChannelStop(stream);
+          if (_Mixing)
+            Bass.BASS_ChannelStop(_mixer);
+          else
+            Bass.BASS_ChannelStop(stream);
         }
 
         else
-          Bass.BASS_ChannelStop(stream);
+        {
+          if (_Mixing)
+            Bass.BASS_ChannelStop(_mixer);
+          else
+            Bass.BASS_ChannelStop(stream);
+        }
 
         // Free Winamp resources
         try
@@ -1576,11 +1917,20 @@ namespace MediaPortal.Player
       NotifyPlaying = false;
     }
 
+    /// <summary>
+    /// Is Seeking enabled 
+    /// </summary>
+    /// <returns></returns>
     public override bool CanSeek()
     {
       return true;
     }
 
+    /// <summary>
+    /// Seek Forward in the Stream
+    /// </summary>
+    /// <param name="ms"></param>
+    /// <returns></returns>
     public bool SeekForward(int ms)
     {
       Log.Debug("BASS: SeekForward for {0} ms", Convert.ToString(ms));
@@ -1599,7 +1949,12 @@ namespace MediaPortal.Player
         int stream = GetCurrentStream();
         long len = Bass.BASS_ChannelGetLength(stream);                 // length in bytes
         float totaltime = Bass.BASS_ChannelBytes2Seconds(stream, len); // the total time length
-        long pos = Bass.BASS_ChannelGetPosition(stream);               // position in bytes
+
+        long pos = 0;                                                  // position in bytes
+        if (_Mixing)
+          pos = BassMix.BASS_Mixer_ChannelGetPosition(_mixer);
+        else
+          pos = Bass.BASS_ChannelGetPosition(stream);
 
         float timePos = Bass.BASS_ChannelBytes2Seconds(stream, pos);
         float offsetSecs = (float)ms / 1000f;
@@ -1607,7 +1962,10 @@ namespace MediaPortal.Player
         if (timePos + offsetSecs >= totaltime)
           return false;
 
-        Bass.BASS_ChannelSetPosition(stream, (float)(timePos + offsetSecs)); // the elapsed time length
+        if (_Mixing)
+          BassMix.BASS_Mixer_ChannelSetPosition(stream, Bass.BASS_ChannelSeconds2Bytes(stream, timePos + offsetSecs)); // the elapsed time length
+        else
+          Bass.BASS_ChannelSetPosition(stream, (float)(timePos + offsetSecs)); // the elapsed time length
       }
 
       catch
@@ -1618,6 +1976,11 @@ namespace MediaPortal.Player
       return result;
     }
 
+    /// <summary>
+    /// Seek Backwards within the stream
+    /// </summary>
+    /// <param name="ms"></param>
+    /// <returns></returns>
     public bool SeekReverse(int ms)
     {
       Log.Debug("BASS: SeekReverse for {0} ms", Convert.ToString(ms));
@@ -1635,7 +1998,12 @@ namespace MediaPortal.Player
       try
       {
         long len = Bass.BASS_ChannelGetLength(stream);                 // length in bytes
-        long pos = Bass.BASS_ChannelGetPosition(stream);               // position in bytes
+
+        long pos = 0;                                                  // position in bytes
+        if (_Mixing)
+          pos = BassMix.BASS_Mixer_ChannelGetPosition(_mixer);
+        else
+          pos = Bass.BASS_ChannelGetPosition(stream);
 
         float timePos = Bass.BASS_ChannelBytes2Seconds(stream, pos);
         float offsetSecs = (float)ms / 1000f;
@@ -1643,7 +2011,10 @@ namespace MediaPortal.Player
         if (timePos - offsetSecs <= 0)
           return false;
 
-        Bass.BASS_ChannelSetPosition(stream, (float)(timePos - offsetSecs)); // the elapsed time length
+        if (_Mixing)
+          BassMix.BASS_Mixer_ChannelSetPosition(stream, Bass.BASS_ChannelSeconds2Bytes(stream, timePos - offsetSecs)); // the elapsed time length
+        else
+          Bass.BASS_ChannelSetPosition(stream, (float)(timePos - offsetSecs)); // the elapsed time length
       }
 
       catch
@@ -1654,6 +2025,11 @@ namespace MediaPortal.Player
       return result;
     }
 
+    /// <summary>
+    /// Seek to a specific position in the stream
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns></returns>
     public bool SeekToTimePosition(int position)
     {
       Log.Debug("BASS: SeekToTimePosition: {0} ", Convert.ToString(position));
@@ -1667,7 +2043,10 @@ namespace MediaPortal.Player
 
         if (StreamIsPlaying(streamIndex))
         {
-          Bass.BASS_ChannelSetPosition(streamIndex, (float)position);
+          if (_Mixing)
+            BassMix.BASS_Mixer_ChannelSetPosition(streamIndex, Bass.BASS_ChannelSeconds2Bytes(streamIndex, position));
+          else
+            Bass.BASS_ChannelSetPosition(streamIndex, (float)position);
         }
       }
 
@@ -1679,6 +2058,10 @@ namespace MediaPortal.Player
       return result;
     }
 
+    /// <summary>
+    /// Seek Relative in the Stream
+    /// </summary>
+    /// <param name="dTime"></param>
     public override void SeekRelative(double dTime)
     {
       _CrossFading = false;
@@ -1697,6 +2080,10 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Seek Absoluet in the Stream
+    /// </summary>
+    /// <param name="dTime"></param>
     public override void SeekAbsolute(double dTime)
     {
       _CrossFading = false;
@@ -1711,6 +2098,10 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Seek Relative Percentage
+    /// </summary>
+    /// <param name="iPercentage"></param>
     public override void SeekRelativePercentage(int iPercentage)
     {
       _CrossFading = false;
@@ -1734,7 +2125,10 @@ namespace MediaPortal.Player
       }
     }
 
-
+    /// <summary>
+    /// Seek Absolute Percentage
+    /// </summary>
+    /// <param name="iPercentage"></param>
     public override void SeekAsolutePercentage(int iPercentage)
     {
       _CrossFading = false;
@@ -1755,6 +2149,9 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Process Method
+    /// </summary>
     public override void Process()
     {
       if (!Playing)
@@ -1792,6 +2189,9 @@ namespace MediaPortal.Player
         SetVideoWindow();
     }
 
+    /// <summary>
+    /// Sets the Video Window
+    /// </summary>
     public override void SetVideoWindow()
     {
       if (GUIGraphicsContext.IsFullScreenVideo != _IsFullScreen)
@@ -1840,6 +2240,10 @@ namespace MediaPortal.Player
 
     private delegate void ShowVisualizationWindowDelegate(bool visible);
 
+    /// <summary>
+    /// Show the Visualisation Window
+    /// </summary>
+    /// <param name="visible"></param>
     private void ShowVisualizationWindow(bool visible)
     {
       if (VizWindow == null)
@@ -1855,6 +2259,9 @@ namespace MediaPortal.Player
         VizWindow.Visible = visible;
     }
 
+    /// <summary>
+    /// Release the Video Window
+    /// </summary>
     public override void Release()
     {
       if (VizWindow != null)
@@ -1862,5 +2269,6 @@ namespace MediaPortal.Player
 
       Stop();
     }
+    #endregion
   }
 }

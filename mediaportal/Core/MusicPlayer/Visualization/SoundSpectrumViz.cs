@@ -322,7 +322,7 @@ namespace MediaPortal.Visualization
                 bool hasData = false;
 
                 if (!_IsPreviewVisualization)
-                    stream = (int)Bass.GetCurrentStream();
+                  stream = (int)Bass.GetCurrentVizStream();
 
                 if (soundDataParams.inN > 0)
                 {

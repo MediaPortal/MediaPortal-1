@@ -180,6 +180,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPComboBox soundDeviceComboBox;
     private CheckBox enableVisualisation;
+    private CheckBox enableMixing;
     private MediaPortal.UserInterface.Controls.MPComboBox autoPlayComboBox;
 
     #endregion
@@ -230,6 +231,7 @@ namespace MediaPortal.Configuration.Sections
         audioPlayerComboBox.SelectedItem = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
         showID3CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
         enableVisualisation.Checked = xmlreader.GetValueAsBool("musicfiles", "doVisualisation", true);
+        enableMixing.Checked = xmlreader.GetValueAsBool("audioplayer", "mixing", false);
 
         // Get all available devices and add them to the combo box
         string[] soundDevices = Bass.BASS_GetDeviceDescriptions();
@@ -424,6 +426,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("audioplayer", "sounddevice", soundDeviceComboBox.Text);
         xmlwriter.SetValueAsBool("musicfiles", "showid3", showID3CheckBox.Checked);
         xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", enableVisualisation.Checked);
+        xmlwriter.SetValueAsBool("audioplayer", "mixing", enableMixing.Checked);
 
         xmlwriter.SetValue("audioplayer", "crossfade", hScrollBarCrossFade.Value);
         xmlwriter.SetValue("audioplayer", "buffering", hScrollBarBuffering.Value);
@@ -593,6 +596,7 @@ namespace MediaPortal.Configuration.Sections
       this.MusicSettingsTabCtl = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.PlayerTabPg = new System.Windows.Forms.TabPage();
       this.PlaybackSettingsGrpBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.enableVisualisation = new System.Windows.Forms.CheckBox();
       this.hScrollBarBuffering = new System.Windows.Forms.HScrollBar();
       this.hScrollBarCrossFade = new System.Windows.Forms.HScrollBar();
       this.GaplessPlaybackChkBox = new System.Windows.Forms.CheckBox();
@@ -651,7 +655,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.labelAutoPlay = new MediaPortal.UserInterface.Controls.MPLabel();
       this.autoPlayComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.enableVisualisation = new System.Windows.Forms.CheckBox();
+      this.enableMixing = new System.Windows.Forms.CheckBox();
       this.MusicSettingsTabCtl.SuspendLayout();
       this.PlayerTabPg.SuspendLayout();
       this.PlaybackSettingsGrpBox.SuspendLayout();
@@ -706,6 +710,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // PlaybackSettingsGrpBox
       // 
+      this.PlaybackSettingsGrpBox.Controls.Add(this.enableMixing);
       this.PlaybackSettingsGrpBox.Controls.Add(this.enableVisualisation);
       this.PlaybackSettingsGrpBox.Controls.Add(this.hScrollBarBuffering);
       this.PlaybackSettingsGrpBox.Controls.Add(this.hScrollBarCrossFade);
@@ -724,6 +729,17 @@ namespace MediaPortal.Configuration.Sections
       this.PlaybackSettingsGrpBox.TabIndex = 1;
       this.PlaybackSettingsGrpBox.TabStop = false;
       this.PlaybackSettingsGrpBox.Text = "Playback settings (BASS player only)";
+      // 
+      // enableVisualisation
+      // 
+      this.enableVisualisation.AutoSize = true;
+      this.enableVisualisation.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.enableVisualisation.Location = new System.Drawing.Point(87, 23);
+      this.enableVisualisation.Name = "enableVisualisation";
+      this.enableVisualisation.Size = new System.Drawing.Size(202, 17);
+      this.enableVisualisation.TabIndex = 12;
+      this.enableVisualisation.Text = "Enable visualization (Bass player only)";
+      this.enableVisualisation.UseVisualStyleBackColor = true;
       // 
       // hScrollBarBuffering
       // 
@@ -758,7 +774,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.GaplessPlaybackChkBox.AutoSize = true;
       this.GaplessPlaybackChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.GaplessPlaybackChkBox.Location = new System.Drawing.Point(87, 119);
+      this.GaplessPlaybackChkBox.Location = new System.Drawing.Point(87, 124);
       this.GaplessPlaybackChkBox.Name = "GaplessPlaybackChkBox";
       this.GaplessPlaybackChkBox.Size = new System.Drawing.Size(108, 17);
       this.GaplessPlaybackChkBox.TabIndex = 3;
@@ -786,7 +802,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // StreamOutputLevelNud
       // 
-      this.StreamOutputLevelNud.Location = new System.Drawing.Point(87, 69);
+      this.StreamOutputLevelNud.Location = new System.Drawing.Point(87, 76);
       this.StreamOutputLevelNud.Name = "StreamOutputLevelNud";
       this.StreamOutputLevelNud.Size = new System.Drawing.Size(52, 20);
       this.StreamOutputLevelNud.TabIndex = 1;
@@ -800,7 +816,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.FadeOnStartStopChkbox.AutoSize = true;
       this.FadeOnStartStopChkbox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.FadeOnStartStopChkbox.Location = new System.Drawing.Point(87, 98);
+      this.FadeOnStartStopChkbox.Location = new System.Drawing.Point(87, 103);
       this.FadeOnStartStopChkbox.Name = "FadeOnStartStopChkbox";
       this.FadeOnStartStopChkbox.Size = new System.Drawing.Size(185, 17);
       this.FadeOnStartStopChkbox.TabIndex = 2;
@@ -819,7 +835,7 @@ namespace MediaPortal.Configuration.Sections
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(16, 71);
+      this.mpLabel1.Location = new System.Drawing.Point(16, 78);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(67, 13);
       this.mpLabel1.TabIndex = 0;
@@ -1384,16 +1400,16 @@ namespace MediaPortal.Configuration.Sections
       this.autoPlayComboBox.Size = new System.Drawing.Size(293, 21);
       this.autoPlayComboBox.TabIndex = 1;
       // 
-      // enableVisualisation
+      // enableMixing
       // 
-      this.enableVisualisation.AutoSize = true;
-      this.enableVisualisation.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.enableVisualisation.Location = new System.Drawing.Point(87, 32);
-      this.enableVisualisation.Name = "enableVisualisation";
-      this.enableVisualisation.Size = new System.Drawing.Size(202, 17);
-      this.enableVisualisation.TabIndex = 12;
-      this.enableVisualisation.Text = "Enable visualization (Bass player only)";
-      this.enableVisualisation.UseVisualStyleBackColor = true;
+      this.enableMixing.AutoSize = true;
+      this.enableMixing.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.enableMixing.Location = new System.Drawing.Point(87, 50);
+      this.enableMixing.Name = "enableMixing";
+      this.enableMixing.Size = new System.Drawing.Size(146, 17);
+      this.enableMixing.TabIndex = 13;
+      this.enableMixing.Text = "Upmix Stereo to 5.1 /  7.1";
+      this.enableMixing.UseVisualStyleBackColor = true;
       // 
       // Music
       // 

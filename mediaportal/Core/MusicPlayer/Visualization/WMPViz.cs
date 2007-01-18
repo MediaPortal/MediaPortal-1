@@ -222,7 +222,7 @@ namespace MediaPortal.Visualization
 
             if (!_IsPreviewVisualization)
             {
-                int stream = (int)Bass.GetCurrentStream();
+              int stream = (int)Bass.GetCurrentVizStream();
 
                 if (stream == 0)
                     return false;
@@ -299,7 +299,7 @@ namespace MediaPortal.Visualization
 
             if(!_IsPreviewVisualization)
             {
-                int stream = (int)Bass.GetCurrentStream();
+              int stream = (int)Bass.GetCurrentVizStream();
 
                 if (stream == 0)
                     return false;

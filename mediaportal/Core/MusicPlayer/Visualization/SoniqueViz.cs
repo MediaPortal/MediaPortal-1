@@ -115,7 +115,7 @@ namespace MediaPortal.Visualization
         int stream = 0;
 
         if (Bass != null)
-          stream = (int)Bass.GetCurrentStream();
+          stream = (int)Bass.GetCurrentVizStream();
 
         if (VisualizationWindow.OutputContextType == OutputContextType.DeviceContext)
           hdc = VisualizationWindow.CompatibleDC;
