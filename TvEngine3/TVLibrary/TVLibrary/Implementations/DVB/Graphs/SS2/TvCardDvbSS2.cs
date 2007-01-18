@@ -635,8 +635,8 @@ namespace TvLibrary.Implementations.DVB
       SendHwPids(new ArrayList());
       _channelManager.OnAfterTune();
       //from submittunerequest
-//      SetupPmtGrabber(pmtPid);
-      Log.Log.WriteFile("ss2:tune done:{0:X}",pmtPid);
+      //      SetupPmtGrabber(pmtPid);
+      Log.Log.WriteFile("ss2:tune done:{0:X}", pmtPid);
       return true;
     }
 
@@ -928,6 +928,7 @@ namespace TvLibrary.Implementations.DVB
 
       SendHwPids(new ArrayList());
       _graphState = GraphState.Created;
+      _channelManager = new TvDvbChannel(_graphBuilder, ref _conditionalAccess, _mdapiFilter, _filterTIF, _filterTsWriter);
     }
 
     /// <summary>
@@ -1223,7 +1224,7 @@ namespace TvLibrary.Implementations.DVB
     {
       _disEqcMotor.GotoPosition(position);
     }
-    public override IDiSEqCMotor DiSEqCMotor 
+    public override IDiSEqCMotor DiSEqCMotor
     {
       get
       {

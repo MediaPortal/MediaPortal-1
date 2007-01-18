@@ -486,30 +486,33 @@ namespace TvLibrary.Implementations.DVB
     public void OnGraphStart()
     {
       DateTime dtNow;
-
-      FilterState state;
-      (_graphBuilder as IMediaControl).GetState(10, out state);
-      if (state == FilterState.Running)
+      if (_graphBuilder != null)
       {
-        Log.Log.WriteFile("dvb:RunGraph: already running");
-        //_pmtVersion = -1;
-        DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
-        if (channel != null)
+        FilterState state;
+        (_graphBuilder as IMediaControl).GetState(10, out state);
+        if (state == FilterState.Running)
         {
-          SetupPmtGrabber(channel.PmtPid);
-          dtNow = DateTime.Now;
-          while (_pmtVersion < 0 && channel.PmtPid > 0)
+          Log.Log.WriteFile("dvb:RunGraph: already running");
+          //_pmtVersion = -1;
+          DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
+          if (channel != null)
           {
-            Log.Log.Write("wait for pmt");
-            System.Threading.Thread.Sleep(20);
-            TimeSpan ts = DateTime.Now - dtNow;
-            if (ts.TotalMilliseconds >= 10000) break;
+            SetupPmtGrabber(channel.PmtPid);
+            dtNow = DateTime.Now;
+            while (_pmtVersion < 0 && channel.PmtPid > 0)
+            {
+              Log.Log.Write("wait for pmt");
+              System.Threading.Thread.Sleep(20);
+              TimeSpan ts = DateTime.Now - dtNow;
+              if (ts.TotalMilliseconds >= 10000) break;
+            }
           }
+          return;
         }
-        return;
       }
       Log.Log.WriteFile("dvb:RunGraph");
-      _teletextDecoder.ClearBuffer();
+      if (_teletextDecoder!=null)
+        _teletextDecoder.ClearBuffer();
       _pmtPid = -1;
       _pmtVersion = -1;
       _newPMT = false;
