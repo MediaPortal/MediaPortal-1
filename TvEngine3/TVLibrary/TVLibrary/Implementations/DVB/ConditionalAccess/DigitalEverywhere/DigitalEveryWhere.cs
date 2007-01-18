@@ -330,7 +330,7 @@ namespace TvLibrary.Implementations.DVB
         log += String.Format("0x{0:X} ", byData[i]);
       }
 
-      //      Log.Log.WriteFile(log);
+            Log.Log.WriteFile(log);
       hr = propertySet.Set(propertyGuid, propId, _ptrDataInstance, 1036, _ptrDataReturned, 1036);
 
       if (hr != 0)

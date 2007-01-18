@@ -1205,7 +1205,7 @@ namespace TvLibrary.Implementations.DVB
             version = ((pmt[5] >> 1) & 0x1F);
             int pmtProgramNumber = (pmt[3] << 8) + pmt[4];
             Log.Log.Info("SendPmt:{0:X} {1:X} {2:X} {3:X}", pmtProgramNumber, channel.ServiceId, _pmtVersion, version);
-            if (pmtProgramNumber == channel.ServiceId)
+            if (true || pmtProgramNumber == channel.ServiceId)
             {
               if (_pmtVersion != version)
               {
@@ -1251,6 +1251,10 @@ namespace TvLibrary.Implementations.DVB
                     return false;
                   }
                 }
+                else
+                {
+                  Log.Log.Info("No cam in use");
+                }
                 _pmtTimer.Interval = 100;
                 _pmtVersion = version;
 
@@ -1277,7 +1281,7 @@ namespace TvLibrary.Implementations.DVB
       return false;
     }
 
-
+#if notused
     /// <summary>
     /// Sends the PMT to cam.
     /// </summary>
@@ -1355,6 +1359,7 @@ namespace TvLibrary.Implementations.DVB
       }
       return false;
     }
+#endif
     #endregion
     #endregion
 

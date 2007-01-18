@@ -590,6 +590,7 @@ namespace TvLibrary.Implementations.DVB
           ConnectMpeg2DemuxToInfTee();
           AddTsWriterFilterToGraph();
           _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter);
+          _channelManager = new TvDvbChannel(_graphBuilder, ref _conditionalAccess, _mdapiFilter, _filterTIF, _filterTsWriter);
           return;
         }
         Release.ComObject("tuner pin out", pinOut);
@@ -600,6 +601,7 @@ namespace TvLibrary.Implementations.DVB
       ConnectMpeg2DemuxToInfTee();
       AddTsWriterFilterToGraph();
       _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter);
+      _channelManager = new TvDvbChannel(_graphBuilder, ref _conditionalAccess, _mdapiFilter, _filterTIF, _filterTsWriter);
     }
 
     #region IDisposable
@@ -799,7 +801,6 @@ namespace TvLibrary.Implementations.DVB
 
         _interfaceChannelScan = (ITsChannelScan)_filterTsWriter;
         _interfaceEpgGrabber = (ITsEpgScanner)_filterTsWriter;
-        _channelManager = new TvDvbChannel(_graphBuilder, ref _conditionalAccess, _mdapiFilter, _filterTIF, _filterTsWriter);
       }
     }
 

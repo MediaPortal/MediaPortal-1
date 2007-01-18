@@ -172,7 +172,7 @@ namespace TvLibrary.Implementations.DVB
           };
 
 
-    static byte[] AC3AudioFormat  = {
+    static byte[] AC3AudioFormat = {
       0x00, 0x20,				//wFormatTag
       0x06, 0x00,				//nChannels
       0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
@@ -182,7 +182,7 @@ namespace TvLibrary.Implementations.DVB
       0x00, 0x00				//cbSize
     };
 
-    static byte[] AACAudioFormat  = {
+    static byte[] AACAudioFormat = {
       0xFF, 0x00,				//wFormatTag
       0x02, 0x00,				//nChannels
       0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
@@ -193,7 +193,7 @@ namespace TvLibrary.Implementations.DVB
       0x11, 0x90
     };
 
-    static byte[] AACAudioFormat2  = {
+    static byte[] AACAudioFormat2 = {
 	    0xFF, 0x00,				//wFormatTag
 	    0x02, 0x00,				//nChannels
 	    0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
@@ -989,17 +989,17 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pinSource">souce pin</param>
     /// <param name="filterDest">destination filter</param>
     /// <param name="destPinIndex">input pin index</param>
-    public static void ConnectPin(IGraphBuilder graphBuilder, IPin pinSource, IBaseFilter filterDest, int destPinIndex)
+    public static bool ConnectPin(IGraphBuilder graphBuilder, IPin pinSource, IBaseFilter filterDest, int destPinIndex)
     {
       IPin pin;
       pinSource.ConnectedTo(out pin);
       if (pin != null)
       {
         Release.ComObject("Connect Pin", pin);
-        return;
+        return false;
       }
       IPin pinDest = DsFindPin.ByDirection(filterDest, PinDirection.Input, destPinIndex);
-      if (pinDest == null) return;
+      if (pinDest == null) return false;
 
       int hr = graphBuilder.Connect(pinSource, pinDest);
       if (hr != 0)
@@ -1008,6 +1008,7 @@ namespace TvLibrary.Implementations.DVB
         throw new TvException("Unable to connect pins");
       }
       Release.ComObject("Connect Pin", pinDest);
+      return true;
     }
 
     /// <summary>
