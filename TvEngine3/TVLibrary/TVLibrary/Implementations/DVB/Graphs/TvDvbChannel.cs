@@ -206,6 +206,9 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvDvbChannel"/> class.
+    /// </summary>
     public TvDvbChannel()
     {
       _isATSC = false;
@@ -234,6 +237,14 @@ namespace TvLibrary.Implementations.DVB
       _pmtPid = -1;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvDvbChannel"/> class.
+    /// </summary>
+    /// <param name="graphBuilder">The graph builder.</param>
+    /// <param name="ca">The ca.</param>
+    /// <param name="mdapiFilter">The mdapi filter.</param>
+    /// <param name="tif">The tif filter.</param>
+    /// <param name="tsWriter">The ts writer filter.</param>
     public TvDvbChannel(IFilterGraph2 graphBuilder, ref ConditionalAccess ca, IBaseFilter mdapiFilter, IBaseFilter tif, IBaseFilter tsWriter)
     {
       _isATSC = false;
@@ -277,6 +288,10 @@ namespace TvLibrary.Implementations.DVB
 
     #region public methods
 
+    /// <summary>
+    /// Should be called before tuning to a new channel
+    /// resets the state
+    /// </summary>
     public void OnBeforeTune()
     {
       if (_graphState == GraphState.TimeShifting)
@@ -299,6 +314,10 @@ namespace TvLibrary.Implementations.DVB
       _currentAudioStream = null;
     }
 
+    /// <summary>
+    /// Should be called when the graph is tuned to the new channel
+    /// resets the state
+    /// </summary>
     public void OnAfterTune()
     {
       _pmtTimer.Enabled = true;
@@ -322,6 +341,9 @@ namespace TvLibrary.Implementations.DVB
       _newCA = false;
     }
 
+    /// <summary>
+    /// Sets the pids for the timeshifter
+    /// </summary>
     void SetTimeShiftPids()
     {
       if (_channelInfo == null) return;
@@ -346,6 +368,9 @@ namespace TvLibrary.Implementations.DVB
       timeshift.Pause(0);
     }
 
+    /// <summary>
+    /// Sets the pids for the recorded.
+    /// </summary>
     void SetRecorderPids()
     {
       if (_channelInfo == null) return;
@@ -452,6 +477,12 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Should be called when the graph is about to start
+    /// Resets the state 
+    /// If graph is already running, starts the pmt grabber to grab the
+    /// pmt for the new channel
+    /// </summary>
     public void OnGraphStart()
     {
       DateTime dtNow;
@@ -485,6 +516,10 @@ namespace TvLibrary.Implementations.DVB
       _newCA = false;
     }
 
+    /// <summary>
+    /// Should be called when the graph has been started
+    /// sets up the pmt grabber to grab the pmt of the channel
+    /// </summary>
     public void OnGraphStarted()
     {
       _graphRunning = true;
@@ -510,6 +545,10 @@ namespace TvLibrary.Implementations.DVB
         }
       }
     }
+    /// <summary>
+    /// Should be called when graph is about to stop.
+    /// stops any timeshifting/recording on this channel
+    /// </summary>
     public void OnGraphStop()
     {
       _pmtPid = -1;
@@ -539,6 +578,10 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// should be called when graph has been stopped
+    /// Resets the graph state
+    /// </summary>
     public void OnGraphStopped()
     {
       _graphRunning = false;
@@ -1166,7 +1209,7 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     /// <summary>
-    /// Sends the PMT to cam.
+    /// Decodes the PMT and sends the PMT to cam.
     /// </summary>
     protected bool SendPmtToCam(out bool updatePids)
     {
@@ -1364,6 +1407,9 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region MDAPI
+    /// <summary>
+    /// Sends the current channel to the mdapi filter
+    /// </summary>
     private void SetChannel2MDPlug()
     {
 
@@ -1581,6 +1627,10 @@ namespace TvLibrary.Implementations.DVB
     }
     #endregion
 
+    /// <summary>
+    /// Gets or sets the current channel.
+    /// </summary>
+    /// <value>The current channel.</value>
     public IChannel CurrentChannel
     {
       get
@@ -1605,6 +1655,9 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// disposes this channel
+    /// </summary>
     public void Decompose()
     {
       _pmtTimer.Enabled = false;
