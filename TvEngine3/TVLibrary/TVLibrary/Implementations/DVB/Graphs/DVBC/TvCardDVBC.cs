@@ -194,18 +194,6 @@ namespace TvLibrary.Implementations.DVB
         _name = value;
       }
     }
-
-    /// <summary>
-    /// gets the current filename used for recording
-    /// </summary>
-    /// <value></value>
-    public string FileName
-    {
-      get
-      {
-        return _recordingFileName;
-      }
-    }
     /// <summary>
     /// returns true if card is currently recording
     /// </summary>
@@ -271,8 +259,8 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("dvbc:Channel is not a DVBC channel!!! {0}", channel.GetType().ToString());
         return false;
       }
-      DVBCChannel oldChannel = _currentChannel as DVBCChannel;
-      if (_currentChannel != null)
+      DVBCChannel oldChannel = CurrentChannel as DVBCChannel;
+      if (CurrentChannel != null)
       {
         if (oldChannel.Equals(channel)) return true;
       }
@@ -280,7 +268,7 @@ namespace TvLibrary.Implementations.DVB
       {
         BuildGraph();
       }
-      _pmtPid = -1;
+      //_pmtPid = -1;
       if (!CheckThreadId()) return false;
       ILocator locator;
       _tuningSpace.get_DefaultLocator(out locator);
@@ -300,7 +288,7 @@ namespace TvLibrary.Implementations.DVB
 
       _tuneRequest.put_Locator(locator);
 
-      _currentChannel = channel;
+      CurrentChannel = channel;
       SubmitTuneRequest(_tuneRequest);
 
       //SetupPmtGrabber(dvbcChannel.PmtPid);
@@ -330,13 +318,13 @@ namespace TvLibrary.Implementations.DVB
           BuildGraph();
         }
 
-        if (_currentChannel == null)
+        if (CurrentChannel == null)
         {
           Log.Log.Error("dvbc:StartTimeShifting not tuned to a channel");
           throw new TvException("StartTimeShifting not tuned to a channel");
         }
 
-        DVBBaseChannel channel = (DVBBaseChannel)_currentChannel;
+        DVBBaseChannel channel = (DVBBaseChannel)CurrentChannel;
         if (channel.NetworkId == -1 || channel.TransportId == -1 || channel.ServiceId == -1)
         {
           Log.Log.Error("dvbc:StartTimeShifting not tuned to a channel but to a transponder");
@@ -411,7 +399,6 @@ namespace TvLibrary.Implementations.DVB
         _graphState = GraphState.Recording;
         StartRecord(transportStream, fileName);
 
-        _recordingFileName = fileName;
         Log.Log.WriteFile("dvbc:Started recording");
 
         return true;

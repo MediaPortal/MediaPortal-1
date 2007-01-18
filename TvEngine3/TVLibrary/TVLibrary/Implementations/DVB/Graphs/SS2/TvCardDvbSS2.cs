@@ -210,17 +210,6 @@ namespace TvLibrary.Implementations.DVB
       }
     }
     /// <summary>
-    /// gets the current filename used for recording
-    /// </summary>
-    /// <value></value>
-    public string FileName
-    {
-      get
-      {
-        return _recordingFileName;
-      }
-    }
-    /// <summary>
     /// returns true if card is currently recording
     /// </summary>
     /// <value></value>
@@ -324,8 +313,8 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Error("Channel is not a DVBS channel!!! {0}", channel.GetType().ToString());
             return false;
           }
-          DVBSChannel oldChannels = _currentChannel as DVBSChannel;
-          if (_currentChannel != null)
+          DVBSChannel oldChannels = CurrentChannel as DVBSChannel;
+          if (CurrentChannel != null)
           {
             if (oldChannels.Equals(channel))
             {
@@ -432,8 +421,8 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Error("Channel is not a DVBT channel!!! {0}", channel.GetType().ToString());
             return false;
           }
-          DVBTChannel oldChannelt = _currentChannel as DVBTChannel;
-          if (_currentChannel != null)
+          DVBTChannel oldChannelt = CurrentChannel as DVBTChannel;
+          if (CurrentChannel != null)
           {
             if (oldChannelt.Equals(channel))
             {
@@ -452,8 +441,8 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Error("Channel is not a DVBC channel!!! {0}", channel.GetType().ToString());
             return false;
           }
-          DVBCChannel oldChannelc = _currentChannel as DVBCChannel;
-          if (_currentChannel != null)
+          DVBCChannel oldChannelc = CurrentChannel as DVBCChannel;
+          if (CurrentChannel != null)
           {
             if (oldChannelc.Equals(channel))
             {
@@ -490,8 +479,8 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Error("Channel is not a ATSC channel!!! {0}", channel.GetType().ToString());
             return false;
           }
-          ATSCChannel oldChannela = _currentChannel as ATSCChannel;
-          if (_currentChannel != null)
+          ATSCChannel oldChannela = CurrentChannel as ATSCChannel;
+          if (CurrentChannel != null)
           {
             if (oldChannela.Equals(channel))
             {
@@ -511,18 +500,18 @@ namespace TvLibrary.Implementations.DVB
           pmtPid = dvbaChannel.PmtPid;
           break;
       }
-      _currentChannel = channel;
+      CurrentChannel = channel;
       if (_graphState == GraphState.Idle)
       {
         BuildGraph();
       }
-      _pmtPid = -1;
+      //_pmtPid = -1;
       //from submittunerequest
       if (_graphState == GraphState.TimeShifting)
       {
-        if (_filterTsAnalyzer != null)
+        if (_filterTsWriter != null)
         {
-          ITsTimeShift timeshift = _filterTsAnalyzer as ITsTimeShift;
+          ITsTimeShift timeshift = _filterTsWriter as ITsTimeShift;
           if (timeshift != null)
           {
             timeshift.Pause(1);
@@ -530,12 +519,7 @@ namespace TvLibrary.Implementations.DVB
         }
       }
       Log.Log.WriteFile("dvb:SubmitTuneRequest");
-      _startTimeShifting = false;
-      _startRecording = false; 
-      _channelInfo = new ChannelInfo();
-      _pmtTimer.Enabled = false;
-      _hasTeletext = false;
-      _currentAudioStream = null;
+      _channelManager.OnBeforeTune();
 
       //Log.Log.WriteFile("dvb:SubmitTuneRequest");
       if (_interfaceEpgGrabber != null)
@@ -664,25 +648,7 @@ namespace TvLibrary.Implementations.DVB
 
 
       //from submittunerequest
-      _pmtTimer.Enabled = true;
-      _lastSignalUpdate = DateTime.MinValue;
-      ArrayList pids = new ArrayList();
-      pids.Add((ushort)0x0);//pat
-      pids.Add((ushort)0x11);//sdt
-      pids.Add((ushort)0x1fff);//padding stream
-      if (_currentChannel != null)
-      {
-        DVBBaseChannel ch = (DVBBaseChannel)_currentChannel;
-        if (ch.PmtPid > 0)
-        {
-          pids.Add((ushort)ch.PmtPid);//sdt
-        }
-      }
-      SendHwPids(pids);
-
-      _pmtVersion = -1;
-      _newPMT = false;
-      _newCA = false;
+      _channelManager.OnAfterTune();
       //from submittunerequest
 //      SetupPmtGrabber(pmtPid);
       Log.Log.WriteFile("ss2:tune done:{0:X}",pmtPid);
@@ -712,13 +678,13 @@ namespace TvLibrary.Implementations.DVB
           BuildGraph();
         }
 
-        if (_currentChannel == null)
+        if (CurrentChannel == null)
         {
           Log.Log.Error("ss2:StartTimeShifting not tuned to a channel");
           throw new TvException("StartTimeShifting not tuned to a channel");
         }
 
-        DVBBaseChannel channel = (DVBBaseChannel)_currentChannel;
+        DVBBaseChannel channel = (DVBBaseChannel)CurrentChannel;
         if (channel.NetworkId == -1 || channel.TransportId == -1 || channel.ServiceId == -1)
         {
           Log.Log.Error("ss2:StartTimeShifting not tuned to a channel but to a transponder");
@@ -793,7 +759,6 @@ namespace TvLibrary.Implementations.DVB
         _graphState = GraphState.Recording;
         StartRecord(transportStream, fileName);
 
-        _recordingFileName = fileName;
         Log.Log.WriteFile("ss2:Started recording");
 
         return true;
@@ -974,7 +939,7 @@ namespace TvLibrary.Implementations.DVB
       ConnectInfTeeToSS2();
       ConnectMpeg2DemuxToInfTee();
 
-      AddMpWriterFilterToGraph();
+      AddTsWriterFilterToGraph();
 
       SendHwPids(new ArrayList());
       _graphState = GraphState.Created;
@@ -1211,6 +1176,7 @@ namespace TvLibrary.Implementations.DVB
       // Decompose the graph
       //hr = (_graphBuilder as IMediaControl).StopWhenReady();
       hr = (_graphBuilder as IMediaControl).Stop();
+      _channelManager.Decompose();
 
       FilterGraphTools.RemoveAllFilters(_graphBuilder);
 
@@ -1237,9 +1203,9 @@ namespace TvLibrary.Implementations.DVB
       //}
 
 
-      if (_filterTsAnalyzer != null)
+      if (_filterTsWriter != null)
       {
-        Release.ComObject("_filterMpTsAnalyzer", _filterTsAnalyzer); _filterTsAnalyzer = null;
+        Release.ComObject("_filterMpTsAnalyzer", _filterTsWriter); _filterTsWriter = null;
       }
       if (_infTeeMain != null)
       {
@@ -1262,11 +1228,6 @@ namespace TvLibrary.Implementations.DVB
         _tunerDevice = null;
       }
 
-      if (_teletextDecoder != null)
-      {
-        _teletextDecoder.ClearBuffer();
-        _teletextDecoder = null;
-      }
     }
 
     #endregion

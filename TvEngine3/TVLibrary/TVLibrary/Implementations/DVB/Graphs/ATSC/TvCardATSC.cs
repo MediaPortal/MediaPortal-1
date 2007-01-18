@@ -204,17 +204,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// gets the current filename used for recording
-    /// </summary>
-    /// <value></value>
-    public string FileName
-    {
-      get
-      {
-        return _recordingFileName;
-      }
-    }
-    /// <summary>
     /// returns true if card is currently recording
     /// </summary>
     /// <value></value>
@@ -273,7 +262,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("atsc:Tune:{0}", channel);
       try
       {
-        _pmtVersion = -1;
+        //_pmtVersion = -1;
         ATSCChannel atscChannel = channel as ATSCChannel;
 
         if (atscChannel == null)
@@ -281,8 +270,8 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("atsc:Channel is not a ATSC channel!!! {0}", channel.GetType().ToString());
           return false;
         }
-        ATSCChannel oldChannel = _currentChannel as ATSCChannel;
-        if (_currentChannel != null)
+        ATSCChannel oldChannel = CurrentChannel as ATSCChannel;
+        if (CurrentChannel != null)
         {
           if (oldChannel.Equals(channel))
           {
@@ -311,7 +300,7 @@ namespace TvLibrary.Implementations.DVB
         hr = _tuneRequest.put_Channel(atscChannel.MajorChannel);
         _tuneRequest.put_Locator(locator);
 
-        _currentChannel = channel;
+        CurrentChannel = channel;
         SubmitTuneRequest(_tuneRequest);
 //        SetupPmtGrabber(atscChannel.PmtPid);
       }
@@ -340,12 +329,12 @@ namespace TvLibrary.Implementations.DVB
         BuildGraph();
       }
 
-      if (_currentChannel == null)
+      if (CurrentChannel == null)
       {
         Log.Log.Error("atsc:StartTimeShifting not tuned to a channel");
         throw new TvException("StartTimeShifting not tuned to a channel");
       }
-      ATSCChannel channel = (ATSCChannel)_currentChannel;
+      ATSCChannel channel = (ATSCChannel)CurrentChannel;
       if (channel.MajorChannel == -1 || channel.MinorChannel == -1)
       {
         Log.Log.Error("atsc:StartTimeShifting not tuned to a channel but to a transponder");
@@ -397,7 +386,6 @@ namespace TvLibrary.Implementations.DVB
       {
         throw new TvException("Card must be timeshifting before starting recording");
       }
-      _recordingFileName = fileName;
 
       _graphState = GraphState.Recording;
       StartRecord(transportStream, fileName);

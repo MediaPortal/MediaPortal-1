@@ -213,17 +213,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// gets the current filename used for recording
-    /// </summary>
-    /// <value></value>
-    public string FileName
-    {
-      get
-      {
-        return _recordingFileName;
-      }
-    }
-    /// <summary>
     /// returns true if card is currently recording
     /// </summary>
     /// <value></value>
@@ -288,8 +277,8 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("Channel is not a DVBS channel!!! {0}", channel.GetType().ToString());
         return false;
       }
-      DVBSChannel oldChannel = _currentChannel as DVBSChannel;
-      if (_currentChannel != null)
+      DVBSChannel oldChannel = CurrentChannel as DVBSChannel;
+      if (CurrentChannel != null)
       {
         if (oldChannel.Equals(channel)) return true;
       }
@@ -302,7 +291,7 @@ namespace TvLibrary.Implementations.DVB
       {
         BuildGraph();
       }
-      _pmtPid = -1;
+      //_pmtPid = -1;
       ILocator locator;
 
       if (!CheckThreadId()) return false;
@@ -357,7 +346,7 @@ namespace TvLibrary.Implementations.DVB
       {
         _conditionalAccess.SendDiseqcCommand(dvbsChannel);
       }
-      _currentChannel = channel;
+      CurrentChannel = channel;
       SubmitTuneRequest(_tuneRequest);
 
 
@@ -395,13 +384,13 @@ namespace TvLibrary.Implementations.DVB
           BuildGraph();
         }
 
-        if (_currentChannel == null)
+        if (CurrentChannel == null)
         {
           Log.Log.Error("dvbt:StartTimeShifting not tuned to a channel");
           throw new TvException("StartTimeShifting not tuned to a channel");
         }
 
-        DVBBaseChannel channel = (DVBBaseChannel)_currentChannel;
+        DVBBaseChannel channel = (DVBBaseChannel)CurrentChannel;
         if (channel.NetworkId == -1 || channel.TransportId == -1 || channel.ServiceId == -1)
         {
           Log.Log.Error("dvbt:StartTimeShifting not tuned to a channel but to a transponder");
@@ -477,7 +466,6 @@ namespace TvLibrary.Implementations.DVB
         _graphState = GraphState.Recording;
         StartRecord(transportStream,fileName);
 
-        _recordingFileName = fileName;
         Log.Log.WriteFile("Started recording");
 
         return true;
