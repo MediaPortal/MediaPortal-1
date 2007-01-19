@@ -289,6 +289,24 @@ namespace TvDatabase
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(ChannelMap), this );
     }
+    public IList ReferringCardGroupMap()
+    {
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(CardGroupMap));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "idCard", idCard);
+
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      return ObjectFactory.GetCollection(typeof(CardGroupMap), stmt.Execute());
+
+      // TODO In the end, a GentleList should be returned instead of an arraylist
+      //return new GentleList( typeof(ChannelMap), this );
+    }
 
     /// <summary>
     /// Get a list of ChannelMap referring to the current entity.
@@ -326,6 +344,10 @@ namespace TvDatabase
       IList list = ReferringChannelMap();
       foreach (ChannelMap map in list)
         map.Delete();
+
+      list = ReferringCardGroupMap();
+      foreach (CardGroupMap cardGroupMap in list)
+        cardGroupMap.Remove();
 
       list = ReferringDiSEqCMotor();
       foreach (DiSEqCMotor disEqc in list)

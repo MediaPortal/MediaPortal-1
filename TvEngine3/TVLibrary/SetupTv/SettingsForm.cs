@@ -81,120 +81,142 @@ namespace SetupTv
         //
         // Build options tree
         //
-        XmlDocument doc = new XmlDocument();
         string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-        doc.Load(fname);
-        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-        XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
+        try
+        {
+          XmlDocument doc = new XmlDocument();
+          doc.Load(fname);
+          XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
+          XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
 
-        Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(node.InnerText);
+          Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(node.InnerText);
+        }
+        catch (Exception ex)
+        {
+          MessageBox.Show("Unable to open:" + fname);
+          Log.Write(ex);
+        }
+        IList dbsServers=null;
 
-        IList dbsServers = Server.ListAll();
+        try
+        {
+          dbsServers = Server.ListAll();
+        }
+        catch (Exception ex)
+        {
+          MessageBox.Show("Failed to open database");
+          Log.Error("Unable to get list of servers");
+          Log.Write(ex);
+        }
 
         TvBusinessLayer layer = new TvBusinessLayer();
         Servers servers = new Servers();
         AddSection(servers);
         dbsServers = Server.ListAll();
 
-        foreach (Server server in dbsServers)
+        if (dbsServers != null)
         {
-          if (server.IsMaster)
+          foreach (Server server in dbsServers)
           {
-            RemoteControl.HostName = server.HostName;
-            if (server.ReferringCard().Count > 0)
+            if (server.IsMaster)
             {
-              try
+              RemoteControl.HostName = server.HostName;
+              if (server.ReferringCard().Count > 0)
               {
-                Card c = (Card)server.ReferringCard()[0];
-                CardType type = RemoteControl.Instance.Type(c.IdCard);
+                try
+                {
+                  Card c = (Card)server.ReferringCard()[0];
+                  CardType type = RemoteControl.Instance.Type(c.IdCard);
+                }
+                catch
+                {
+                  MessageBox.Show(this, "Unable to connect to " + RemoteControl.HostName);
+                }
               }
-              catch
-              {
-                MessageBox.Show(this, "Unable to connect to " + RemoteControl.HostName);
-              }
+              break;
             }
-            break;
           }
-        }
 
-        IList cards = Card.ListAll();
-        foreach (Server server in dbsServers)
-        {
-          int cardNo = 1;
-          TvCards cardPage = new TvCards(server.HostName);
-          AddChildSection(servers, cardPage,0);
-          foreach (Card dbsCard in server.ReferringCard())
+          IList cards = Card.ListAll();
+          foreach (Server server in dbsServers)
           {
-
-            CardType type = RemoteControl.Instance.Type(dbsCard.IdCard);
-            string cardName = dbsCard.Name;
-            switch (type)
+            int cardNo = 1;
+            TvCards cardPage = new TvCards(server.HostName);
+            AddChildSection(servers, cardPage, 0);
+            foreach (Card dbsCard in server.ReferringCard())
             {
-              case CardType.Analog:
-                cardName = String.Format("{0} Analog {1}", cardNo, cardName);
-                AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard),1);
-                break;
 
-              case CardType.DvbT:
-                cardName = String.Format("{0} DVB-T {1}", cardNo, cardName);
-                AddChildSection(cardPage, new CardDvbT(cardName, dbsCard.IdCard),1);
-                //AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard));
-                break;
-              case CardType.DvbC:
-                cardName = String.Format("{0} DVB-C {1}", cardNo, cardName);
-                AddChildSection(cardPage, new CardDvbC(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.DvbS:
-                cardName = String.Format("{0} DVB-S {1}", cardNo, cardName);
-                AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.Atsc:
-                cardName = String.Format("{0} ATSC {1}", cardNo, cardName);
-                AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard), 1);
-                break;
+              CardType type = RemoteControl.Instance.Type(dbsCard.IdCard);
+              string cardName = dbsCard.Name;
+              switch (type)
+              {
+                case CardType.Analog:
+                  cardName = String.Format("{0} Analog {1}", cardNo, cardName);
+                  AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
+                  break;
+
+                case CardType.DvbT:
+                  cardName = String.Format("{0} DVB-T {1}", cardNo, cardName);
+                  AddChildSection(cardPage, new CardDvbT(cardName, dbsCard.IdCard), 1);
+                  //AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard));
+                  break;
+                case CardType.DvbC:
+                  cardName = String.Format("{0} DVB-C {1}", cardNo, cardName);
+                  AddChildSection(cardPage, new CardDvbC(cardName, dbsCard.IdCard), 1);
+                  break;
+                case CardType.DvbS:
+                  cardName = String.Format("{0} DVB-S {1}", cardNo, cardName);
+                  AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard), 1);
+                  break;
+                case CardType.Atsc:
+                  cardName = String.Format("{0} ATSC {1}", cardNo, cardName);
+                  AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard), 1);
+                  break;
+              }
+              cardNo++;
             }
-            cardNo++;
           }
-        }
 
-        TvChannels tvChannels = new TvChannels();
-        AddSection(tvChannels);
-        AddChildSection(tvChannels, new TvCombinations());
-        AddChildSection(tvChannels, new TvChannelMapping());
-        AddChildSection(tvChannels, new TvEpgGrabber());
-        AddChildSection(tvChannels, new TvGroups());
+          TvChannels tvChannels = new TvChannels();
+          AddSection(tvChannels);
+          AddChildSection(tvChannels, new TvCombinations());
+          AddChildSection(tvChannels, new TvChannelMapping());
+          AddChildSection(tvChannels, new TvEpgGrabber());
+          AddChildSection(tvChannels, new TvGroups());
 
-        RadioChannels radioChannels = new RadioChannels();
-        AddSection(radioChannels);
+          RadioChannels radioChannels = new RadioChannels();
+          AddSection(radioChannels);
 
-        AddChildSection(radioChannels, new RadioChannelMapping());
-        AddChildSection(radioChannels, new RadioEpgGrabber());
+          AddChildSection(radioChannels, new RadioChannelMapping());
+          AddChildSection(radioChannels, new RadioEpgGrabber());
 
-        AddSection(new TvRecording());
-        AddSection(new TvSchedules());
-        AddSection(new StreamingServer());
+          AddSection(new TvRecording());
+          AddSection(new TvSchedules());
+          AddSection(new StreamingServer());
 
-        AddSection(new TestService("Manual Control"));
+          AddSection(new TestService("Manual Control"));
 
-        SectionSettings pluginsRoot = new SectionSettings("Plugins");
-        AddSection(pluginsRoot);
+          SectionSettings pluginsRoot = new SectionSettings("Plugins");
+          AddSection(pluginsRoot);
 
-        _pluginLoader.Load();
-        foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
-        {
-          SectionSettings settings = plugin.Setup;
-          if (settings != null)
+          _pluginLoader.Load();
+          foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
           {
-            settings.Text = plugin.Name;
-            AddChildSection(pluginsRoot, settings);
+            SectionSettings settings = plugin.Setup;
+            if (settings != null)
+            {
+              settings.Text = plugin.Name;
+              AddChildSection(pluginsRoot, settings);
+            }
           }
+          sectionTree.SelectedNode = sectionTree.Nodes[0];
+          // make sure window is in front of mediaportal
         }
-        sectionTree.SelectedNode = sectionTree.Nodes[0];
-        // make sure window is in front of mediaportal
         BringToFront();
       }
       catch (Exception ex)
       {
+        Log.Error("Failed to startup cause of exception");
         Log.Write(ex);
       }
     }
@@ -207,11 +229,11 @@ namespace SetupTv
     {
       AddChildSection(null, section);
     }
-    public  void AddSection(SectionSettings section, int imageIndex)
+    public void AddSection(SectionSettings section, int imageIndex)
     {
       AddChildSection(null, section, imageIndex);
     }
-    public  void AddChildSection(SectionSettings parentSection, SectionSettings section, int imageIndex)
+    public void AddChildSection(SectionSettings parentSection, SectionSettings section, int imageIndex)
     {
       //
       // Make sure this section doesn't already exist

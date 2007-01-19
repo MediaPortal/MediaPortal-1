@@ -96,20 +96,26 @@ namespace SetupTv
     [STAThread]
     public static void Main(string[] arguments)
     {
-      
+      Log.Info("---- start setuptv ----");
       Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
       //test connection with database
+      Log.Info("---- check connection with database ----");
       SetupDatabaseForm dlg = new SetupDatabaseForm();
       if (!dlg.TestConnection())
       {
+        Log.Info("---- ask user for connection details ----");
         dlg.ShowDialog();
       }
+
+      Log.Info("---- check if database needs to be updated/created ----");
       if (dlg.ShouldDoUpgrade())
       {
-
+        Log.Info("---- update/create database ----");
         dlg.CreateDatabase();
 
       }
+
+      Log.Info("---- check if tvservice is running ----");
       int cards = 0;
       try
       {
@@ -117,8 +123,10 @@ namespace SetupTv
       }
       catch (Exception)
       {
+        Log.Info("---- tvservice is not running ----");
         DialogResult result=MessageBox.Show("The Tv service is not running\rShould I start the tvservice?","Mediaportal Tv Server",MessageBoxButtons.YesNo);
         if (result != DialogResult.Yes) return;
+        Log.Info("---- start tvservice----");
         ServiceHelper.Restart();
         try
         {
@@ -128,6 +136,8 @@ namespace SetupTv
         }
         catch (Exception ex)
         {
+          Log.Info("---- Unable to start tv service----");
+          Log.Write(ex);
           MessageBox.Show("Failed to startup tvservice"+ex.ToString());
           return;
         }
@@ -140,6 +150,10 @@ namespace SetupTv
         System.Windows.Forms.Application.DoEvents();
 
         new Startup(arguments).Start();
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
       }
       finally
       {
