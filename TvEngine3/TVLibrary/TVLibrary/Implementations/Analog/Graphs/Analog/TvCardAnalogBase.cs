@@ -23,6 +23,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 using System.Text;
+using System.Drawing;
+using System.Reflection;
 using DirectShowLib;
 using TvLibrary.Implementations;
 using DirectShowLib.SBE;
@@ -41,7 +43,17 @@ namespace TvLibrary.Implementations.Analog
   /// </summary>
   public class TvCardAnalogBase : ISampleGrabberCB
   {
+    public struct MPEG2VideoInfo		//  MPEG2VideoInfo
+    {
+      public VideoInfoHeader2 hdr;
+      public UInt32 dwStartTimeCode;
+      public UInt32 cbSequenceHeader;
+      public UInt32 dwProfile;
+      public UInt32 dwLevel;
+      public UInt32 dwFlags;
+      public UInt32 dwSequenceHeader;
 
+    }
     #region constants
 
     //KSCATEGORY_ENCODER
@@ -136,6 +148,7 @@ namespace TvLibrary.Implementations.Analog
     protected IChannel _currentChannel;
     string _timeshiftFileName;
     protected IVbiCallback _teletextCallback = null;
+    private IAMStreamConfig _interfaceStreamConfigVideoCapture = null;
     #endregion
 
     #region ctor
@@ -951,8 +964,267 @@ namespace TvLibrary.Implementations.Analog
       }
     }
 
+
+    object getStreamConfigSetting(IAMStreamConfig streamConfig, string fieldName)
+    {
+      object returnValue = null;
+      try
+      {
+        if (streamConfig == null)
+          throw new NotSupportedException();
+
+        IntPtr pmt = IntPtr.Zero;
+        AMMediaType mediaType = new AMMediaType();
+
+        try
+        {
+          // Get the current format info
+          mediaType.formatType = FormatType.VideoInfo2;
+          int hr = streamConfig.GetFormat(out mediaType);
+          if (hr != 0)
+          {
+            Log.Log.Info("VideoCaptureDevice:getStreamConfigSetting() FAILED to get:{0} (not supported)", fieldName);
+            Marshal.ThrowExceptionForHR(hr);
+          }
+          // The formatPtr member points to different structures
+          // dependingon the formatType
+          object formatStruct;
+          //Log.Info("  VideoCaptureDevice.getStreamConfigSetting() find formattype"); 
+          if (mediaType.formatType == FormatType.WaveEx)
+            formatStruct = new WaveFormatEx();
+          else if (mediaType.formatType == FormatType.VideoInfo)
+            formatStruct = new VideoInfoHeader();
+          else if (mediaType.formatType == FormatType.VideoInfo2)
+            formatStruct = new VideoInfoHeader2();
+          else if (mediaType.formatType == FormatType.Mpeg2Video)
+            formatStruct = new MPEG2VideoInfo();
+          else if (mediaType.formatType == FormatType.None)
+          {
+            //Log.Info("VideoCaptureDevice:getStreamConfigSetting() FAILED no format returned");
+            //throw new NotSupportedException("This device does not support a recognized format block.");
+            return null;
+          }
+          else
+          {
+            //Log.Info("VideoCaptureDevice:getStreamConfigSetting() FAILED unknown fmt:{0} {1} {2}", mediaType.formatType, mediaType.majorType, mediaType.subType);
+            //throw new NotSupportedException("This device does not support a recognized format block.");
+            return null;
+          }
+
+          //Log.Info("  VideoCaptureDevice.getStreamConfigSetting() get formatptr");
+          // Retrieve the nested structure
+          Marshal.PtrToStructure(mediaType.formatPtr, formatStruct);
+
+          // Find the required field
+          //Log.Info("  VideoCaptureDevice.getStreamConfigSetting() get field");
+          Type structType = formatStruct.GetType();
+          FieldInfo fieldInfo = structType.GetField(fieldName);
+          if (fieldInfo == null)
+          {
+            //Log.Info("VideoCaptureDevice.getStreamConfigSetting() FAILED to to find member:{0}", fieldName);
+            //throw new NotSupportedException("VideoCaptureDevice:FAILED to find the member '" + fieldName + "' in the format block.");
+            return null;
+          }
+
+          // Extract the field's current value
+          //Log.Info("  VideoCaptureDevice.getStreamConfigSetting() get value");
+          returnValue = fieldInfo.GetValue(formatStruct);
+          //Log.Info("  VideoCaptureDevice.getStreamConfigSetting() done");	
+        }
+        finally
+        {
+          Marshal.FreeCoTaskMem(pmt);
+        }
+      }
+      catch (Exception)
+      {
+        Log.Log.Info("  VideoCaptureDevice.getStreamConfigSetting() FAILED ");
+      }
+      return (returnValue);
+    }
+
+
+    object setStreamConfigSetting(IAMStreamConfig streamConfig, string fieldName, object newValue)
+    {
+      try
+      {
+        object returnValue = null;
+        IntPtr pmt = IntPtr.Zero;
+        AMMediaType mediaType = new AMMediaType();
+
+        try
+        {
+          // Get the current format info
+          int hr = streamConfig.GetFormat(out mediaType);
+          if (hr != 0)
+          {
+            Log.Log.Info("  VideoCaptureDevice:setStreamConfigSetting() FAILED to set:{0} (getformat) hr:{1}", fieldName, hr);
+            return null;//Marshal.ThrowExceptionForHR(hr);
+          }
+          //Log.Info("  VideoCaptureDevice:setStreamConfigSetting() get formattype");
+          // The formatPtr member points to different structures
+          // dependingon the formatType
+          object formatStruct;
+          if (mediaType.formatType == FormatType.WaveEx)
+            formatStruct = new WaveFormatEx();
+          else if (mediaType.formatType == FormatType.VideoInfo)
+            formatStruct = new VideoInfoHeader();
+          else if (mediaType.formatType == FormatType.VideoInfo2)
+            formatStruct = new VideoInfoHeader2();
+          else if (mediaType.formatType == FormatType.Mpeg2Video)
+            formatStruct = new MPEG2VideoInfo();
+          else if (mediaType.formatType == FormatType.None)
+          {
+            Log.Log.Info("  VideoCaptureDevice:setStreamConfigSetting() FAILED no format returned");
+            return null;// throw new NotSupportedException("This device does not support a recognized format block.");
+          }
+          else
+          {
+            Log.Log.Info("  VideoCaptureDevice:setStreamConfigSetting() FAILED unknown fmt");
+            return null;//throw new NotSupportedException("This device does not support a recognized format block.");
+          }
+          //Log.Info("  VideoCaptureDevice.setStreamConfigSetting() get formatptr");
+          // Retrieve the nested structure
+          Marshal.PtrToStructure(mediaType.formatPtr, formatStruct);
+
+          // Find the required field
+          //Log.Info("  VideoCaptureDevice.setStreamConfigSetting() get field");
+          Type structType = formatStruct.GetType();
+          FieldInfo fieldInfo = structType.GetField(fieldName);
+          if (fieldInfo == null)
+          {
+            Log.Log.Info("  VideoCaptureDevice:setStreamConfigSetting() FAILED to to find member:{0}", fieldName);
+            throw new NotSupportedException("FAILED to find the member '" + fieldName + "' in the format block.");
+          }
+          //Log.Info("  VideoCaptureDevice.setStreamConfigSetting() set value");
+          // Update the value of the field
+          fieldInfo.SetValue(formatStruct, newValue);
+
+          // PtrToStructure copies the data so we need to copy it back
+          Marshal.StructureToPtr(formatStruct, mediaType.formatPtr, false);
+
+          //Log.Info("  VideoCaptureDevice.setStreamConfigSetting() set format");
+          // Save the changes
+          hr = streamConfig.SetFormat(mediaType);
+          if (hr != 0)
+          {
+            Log.Log.Info("  VideoCaptureDevice:setStreamConfigSetting() FAILED to set:{0} {1}", fieldName, hr);
+            return null;//Marshal.ThrowExceptionForHR(hr);
+          }
+          //else Log.Info("  VideoCaptureDevice.setStreamConfigSetting() set:{0}",fieldName);
+          //Log.Info("  VideoCaptureDevice.setStreamConfigSetting() done");
+        }
+        finally
+        {
+          Marshal.FreeCoTaskMem(pmt);
+        }
+        return (returnValue);
+      }
+      catch (Exception)
+      {
+        Log.Log.Info("  VideoCaptureDevice.:setStreamConfigSetting() FAILED ");
+      }
+      return null;
+    }
+
+
+
+    public Size GetFrameSize()
+    {
+      if (_interfaceStreamConfigVideoCapture != null)
+      {
+        try
+        {
+          BitmapInfoHeader bmiHeader;
+          object obj = getStreamConfigSetting(_interfaceStreamConfigVideoCapture, "BmiHeader");
+          if (obj != null)
+          {
+            bmiHeader = (BitmapInfoHeader)obj;
+            return new Size(bmiHeader.Width, bmiHeader.Height);
+          }
+        }
+        catch (Exception)
+        {
+        }
+      }
+      return new Size(720, 576);
+    }
+
+    public void SetFrameSize(Size FrameSize)
+    {
+      if (FrameSize.Width > 0 && FrameSize.Height > 0)
+      {
+        if (_interfaceStreamConfigVideoCapture != null)
+        {
+          try
+          {
+            BitmapInfoHeader bmiHeader;
+            object obj = getStreamConfigSetting(_interfaceStreamConfigVideoCapture, "BmiHeader");
+            if (obj != null)
+            {
+              bmiHeader = (BitmapInfoHeader)obj;
+              Log.Log.Info("VideoCaptureDevice:change capture Framesize :{0}x{1} ->{2}x{3}", bmiHeader.Width, bmiHeader.Height, FrameSize.Width, FrameSize.Height);
+              bmiHeader.Width = FrameSize.Width;
+              bmiHeader.Height = FrameSize.Height;
+              setStreamConfigSetting(_interfaceStreamConfigVideoCapture, "BmiHeader", bmiHeader);
+            }
+          }
+          catch (Exception)
+          {
+            Log.Log.Info("VideoCaptureDevice:FAILED:could not set capture  Framesize to {0}x{1}!", FrameSize.Width, FrameSize.Height);
+          }
+        }
+
+      }
+    }
+
+    public void SetFrameRate(double FrameRate)
+    {
+      // set the framerate
+      if (FrameRate >= 1d && FrameRate < 30d)
+      {
+        if (_interfaceStreamConfigVideoCapture != null)
+        {
+          try
+          {
+            Log.Log.Info("SWGraph:capture FrameRate set to {0}", FrameRate);
+            long avgTimePerFrame = (long)(10000000d / FrameRate);
+            setStreamConfigSetting(_interfaceStreamConfigVideoCapture, "AvgTimePerFrame", avgTimePerFrame);
+            Log.Log.Info("VideoCaptureDevice: capture FrameRate done :{0}", FrameRate);
+          }
+          catch (Exception)
+          {
+            Log.Log.Info("VideoCaptureDevice:captureFAILED:could not set FrameRate to {0}!", FrameRate);
+          }
+        }
+
+      }
+    }
     void SetupCaptureFormat()
     {
+      if (_pinCapture == null) return;
+      if (_pinAnalogAudio == null) return;
+      if (_pinAnalogVideo == null) return;
+
+      Log.Log.Info("VideoCaptureDevice:get Video stream control interface (IAMStreamConfig)");
+      DsGuid cat = new DsGuid(PinCategory.Capture);
+      Guid iid = typeof(IAMStreamConfig).GUID;
+      object o;
+      int hr = _capBuilder.FindInterface(cat, null, (IBaseFilter)_filterCapture, iid, out o);
+      if (hr == 0)
+      {
+        _interfaceStreamConfigVideoCapture = o as IAMStreamConfig;
+        if (_interfaceStreamConfigVideoCapture != null)
+        {
+          SetFrameRate(25d);
+          SetFrameSize(new Size(720, 576));
+          Size size=GetFrameSize();
+          if (size.Width != 720 || size.Height != 576)
+          {
+            SetFrameSize(new Size(640,480));
+          }
+        }
+      }
       return;
       /*
       IVideoEncoder encoder = null;
