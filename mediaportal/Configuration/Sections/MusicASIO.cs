@@ -74,7 +74,7 @@ namespace MediaPortal.Configuration.Sections
 
         // Get all available ASIO devices and add them to the combo box
         string[] asioDevices = BassAsio.BASS_ASIO_GetDeviceDescriptions();
-        if (asioDevices == null)
+        if (asioDevices.Length == 0)
         {
           MessageBox.Show(this, "No ASIO Devices available in the system.",
                           "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
