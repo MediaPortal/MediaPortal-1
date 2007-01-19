@@ -145,6 +145,7 @@ copy ..\..\..\MediaPortal.Base\Bass.Net.dll .
 copy ..\..\..\MediaPortal.Base\bass_vis.dll .
 copy ..\..\..\MediaPortal.Base\bass_fx.dll .
 copy ..\..\..\MediaPortal.Base\bassmix.dll .
+copy ..\..\..\MediaPortal.Base\bassasio.dll .
 copy ..\..\..\MediaPortal.Base\bass_vst.dll .
 copy ..\..\..\MediaPortal.Base\bass_wadsp.dll .
 copy ..\..\..\MediaPortal.Base\mpviz.dll .

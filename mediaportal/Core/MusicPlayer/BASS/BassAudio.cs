@@ -31,6 +31,7 @@ using System.IO;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using Un4seen.Bass;
+using Un4seen.BassAsio;
 using Un4seen.Bass.AddOn.Fx;
 using Un4seen.Bass.AddOn.Mix;
 using Un4seen.Bass.AddOn.Vis;
@@ -238,6 +239,13 @@ namespace MediaPortal.Player
     bool NeedUpdate = true;
     bool NotifyPlaying = true;
 
+    private bool _useASIO = false;
+    private string _asioDevice = String.Empty;
+    private int _asioDeviceNumber = -1;
+    private int _asioNumberChannels = 2;
+    private double _asioBalance = 0.00;
+    private BassAsioHandler _asioHandler = null; // Make it Global to prevent GC stealing the object
+
     // DSP related variables
     private bool _dspActive = false;
     private DSP_Stacker _stacker = null;
@@ -265,6 +273,8 @@ namespace MediaPortal.Player
         {1, 0}, // left-rear center out = left in
         {0, 1}  // right-rear center out = right in
     };
+
+    private DSP_StreamCopy _streamcopy;
     #endregion
 
     #region Properties
@@ -611,6 +621,11 @@ namespace MediaPortal.Player
       }
       catch (Exception)
       { }
+      if (_useASIO)
+      {
+        BassAsio.BASS_ASIO_Stop();
+        BassAsio.BASS_ASIO_Free();
+      }
       Bass.BASS_Stop();
       Bass.BASS_Free();
 
@@ -671,7 +686,12 @@ namespace MediaPortal.Player
     {
       if (!_BassFreed)
       {
-        Log.Info("BASS: Freeing BASS. None Audio media playback requested.");
+        Log.Info("BASS: Freeing BASS. Non-audio media playback requested.");
+        if (_useASIO)
+        {
+          BassAsio.BASS_ASIO_Stop();
+          BassAsio.BASS_ASIO_Free();
+        }
         Bass.BASS_Free();
         _BassFreed = true;
       }
@@ -685,19 +705,68 @@ namespace MediaPortal.Player
       try
       {
         Log.Info("BASS: Initializing BASS audio engine...");
-        int soundDevice = GetSoundDevice();
+        // We need to clone the stream for visualisation
+        _streamcopy = new DSP_StreamCopy();
+        bool initOK = false;
+        if (_useASIO)
+        {
+          Log.Info("BASS: Using ASIO device: {0}", _asioDevice);
+          string[] asioDevices = BassAsio.BASS_ASIO_GetDeviceDescriptions();
+          // Check if the ASIO device read is amongst the one retrieved
+          for (int i = 0; i < asioDevices.Length; i++)
+          {
+            if (asioDevices[i] == _asioDevice)
+            {
+              _asioDeviceNumber = i;
+              break;
+            }
+          }
+          if (_asioDeviceNumber > -1)
+          {
+            // not playing anything via BASS, so don't need an update thread
+            Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATEPERIOD, 0);
+            // setup BASS - "no sound" device but 48000 (default for ASIO)
+            initOK = (Bass.BASS_Init(0, 48000, 0, 0, null) && BassAsio.BASS_ASIO_Init(_asioDeviceNumber));
 
-        if (Bass.BASS_Init(soundDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY, 0, null))
+            // Get number of available output Channels
+            BASS_ASIO_INFO info = BassAsio.BASS_ASIO_GetInfo();
+            if (info != null)
+              _asioNumberChannels = info.outputs;
+
+            Log.Info("BASS: ASIO output to {0} channels", _asioNumberChannels);
+
+            // When used in config the ASIO_INIT fails. Ignore it here, to be able using the visualisations
+            if (Application.ExecutablePath.Contains("Configuration"))
+              initOK = true;
+          }
+          else
+          {
+            initOK = false;
+            Log.Error("BASS: Specified ASIO device not found. BASS is disabled.");
+          }
+        }
+        else
+        {
+          int soundDevice = GetSoundDevice();
+
+          initOK = (Bass.BASS_Init(soundDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY, 0, null));
+        }
+        if (initOK)
         {
           Log.Info("BASS: Initialization done.");
           _Initialized = true;
           _BassFreed = false;
         }
-
         else
         {
           int error = Bass.BASS_ErrorGetCode();
-          Log.Error("BASS: Error initializing BASS audio engine {0}", Enum.GetName(typeof(BASSErrorCode), error));
+          if (_useASIO)
+          {
+            int errorasio = BassAsio.BASS_ASIO_ErrorGetCode();
+            Log.Error("BASS: Error initializing BASS audio engine {0} Asio: {1}", Enum.GetName(typeof(BASSErrorCode), error), Enum.GetName(typeof(BASSErrorCode), errorasio));
+          }
+          else
+            Log.Error("BASS: Error initializing BASS audio engine {0}", Enum.GetName(typeof(BASSErrorCode), error));
         }
       }
       catch (Exception ex)
@@ -816,6 +885,10 @@ namespace MediaPortal.Player
         _SoftStop = xmlreader.GetValueAsBool("audioplayer", "fadeOnStartStop", true);
 
         _Mixing = xmlreader.GetValueAsBool("audioplayer", "mixing", false);
+
+        _useASIO = xmlreader.GetValueAsBool("audioplayer", "asio", false);
+        _asioDevice = xmlreader.GetValueAsString("audioplayer", "asiodevice", "None");
+        _asioBalance = (double)xmlreader.GetValueAsInt("audioplayer", "asiobalance", 0) / 100.00;
       }
     }
 
@@ -920,6 +993,10 @@ namespace MediaPortal.Player
     {
       if (Streams.Count == 0)
         return -1;
+
+      // In case od ASIO return the clone of the stream, because for a decoding channel, we can't get data from the original stream
+      if (_useASIO)
+        return _streamcopy.DSPHandle;
 
       if (_Mixing)
       {
@@ -1173,7 +1250,7 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
-    /// Starts Plaback of the given file
+    /// Starts Playback of the given file
     /// </summary>
     /// <param name="filePath"></param>
     /// <returns></returns>
@@ -1273,13 +1350,20 @@ namespace MediaPortal.Player
 
         if (filePath != String.Empty)
         {
+          // We need different flags for standard BASS and ASIO / Mixing
+          BASSStream streamFlags;
+          if (_useASIO || _Mixing)
+            streamFlags = BASSStream.BASS_STREAM_DECODE | BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE;
+          else
+            streamFlags = BASSStream.BASS_SAMPLE_SOFTWARE | BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE;
+
           FilePath = filePath;
 
           // create the stream
           if (filePath.Contains(@"http://"))
           {
             // Create an Internet Stream
-            stream = Bass.BASS_StreamCreateURL(filePath, 0, BASSStream.BASS_SAMPLE_SOFTWARE | BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE, null, 0);
+            stream = Bass.BASS_StreamCreateURL(filePath, 0, streamFlags, null, 0);
             Log.Debug("BASSAudio: Webstream found - trying to fetch stream {0}", Convert.ToString(stream));
           }
           else if (IsMODFile(filePath))
@@ -1290,14 +1374,14 @@ namespace MediaPortal.Player
             // Do an upmix of the stereo according to the matrix. 
             // Create an 8 Channel Mixer and assign it to the stream
             _mixer = BassMix.BASS_Mixer_StreamCreate(44100, 8, BASSStream.BASS_MIXER_END | BASSStream.BASS_STREAM_AUTOFREE);
-            stream = Bass.BASS_StreamCreateFile(filePath, 0, 0, BASSStream.BASS_STREAM_DECODE | BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE);
+            stream = Bass.BASS_StreamCreateFile(filePath, 0, 0, streamFlags);
             // Now Plugin the stream to the mixer and set the mixing matrix
             BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream, BASSStream.BASS_MIXER_MATRIX);
             BassMix.BASS_Mixer_ChannelSetMatrix(stream, ref _MixingMatrix[0, 0]);
           }
           else
             // Create a Standard Stream
-            stream = Bass.BASS_StreamCreateFile(filePath, 0, 0, BASSStream.BASS_SAMPLE_SOFTWARE | BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE);
+            stream = Bass.BASS_StreamCreateFile(filePath, 0, 0, streamFlags);
 
           Streams[CurrentStreamIndex] = stream;
 
@@ -1376,6 +1460,18 @@ namespace MediaPortal.Player
           bool playbackStarted = false;
           if (_Mixing)
             playbackStarted = Bass.BASS_ChannelPlay(_mixer, false);
+          else if (_useASIO)
+          {
+            // In order to provide data for visualisation we need to clone the stream
+            _streamcopy.ChannelHandle = stream;
+            // assign ASIO and assume the ASIO format, samplerate and number of channels from the BASS stream
+            _asioHandler = new BassAsioHandler(false, _asioDeviceNumber, 0, _asioNumberChannels, BASSASIOFormat.BASS_ASIO_FORMAT_FLOAT, -1);
+            _asioHandler.BassChannel = stream;
+            _asioHandler.Volume = (double)_StreamVolume / 100.00;
+            _asioHandler.Pan = _asioBalance;
+            BassAsio.BASS_ASIO_Stop();
+            playbackStarted = BassAsio.BASS_ASIO_Start(0);
+          }
           else
             playbackStarted = Bass.BASS_ChannelPlay(stream, false);
 
@@ -1886,6 +1982,9 @@ namespace MediaPortal.Player
           else
             Bass.BASS_ChannelStop(stream);
         }
+
+        if (_useASIO)
+          BassAsio.BASS_ASIO_Stop();
 
         // Free Winamp resources
         try

@@ -185,6 +185,8 @@ namespace MediaPortal.Configuration
       AddChildSection(music, new MusicSort());
       Log.Info("  add music dsp section");
       AddChildSection(music, new MusicDSP());
+      Log.Info("  add music asio section");
+      AddChildSection(music, new MusicASIO());
 
       Log.Info("add pictures section");
       SectionSettings picture = new Pictures();

@@ -556,6 +556,9 @@ namespace MediaPortal.Configuration.Sections
       {
         case "audioplayer":
           return audioPlayerComboBox.SelectedItem.ToString();
+
+        case "mixing":
+          return enableMixing.Checked;
       }
 
       return null;
@@ -596,6 +599,7 @@ namespace MediaPortal.Configuration.Sections
       this.MusicSettingsTabCtl = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.PlayerTabPg = new System.Windows.Forms.TabPage();
       this.PlaybackSettingsGrpBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.enableMixing = new System.Windows.Forms.CheckBox();
       this.enableVisualisation = new System.Windows.Forms.CheckBox();
       this.hScrollBarBuffering = new System.Windows.Forms.HScrollBar();
       this.hScrollBarCrossFade = new System.Windows.Forms.HScrollBar();
@@ -655,7 +659,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.labelAutoPlay = new MediaPortal.UserInterface.Controls.MPLabel();
       this.autoPlayComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.enableMixing = new System.Windows.Forms.CheckBox();
       this.MusicSettingsTabCtl.SuspendLayout();
       this.PlayerTabPg.SuspendLayout();
       this.PlaybackSettingsGrpBox.SuspendLayout();
@@ -729,6 +732,18 @@ namespace MediaPortal.Configuration.Sections
       this.PlaybackSettingsGrpBox.TabIndex = 1;
       this.PlaybackSettingsGrpBox.TabStop = false;
       this.PlaybackSettingsGrpBox.Text = "Playback settings (BASS player only)";
+      // 
+      // enableMixing
+      // 
+      this.enableMixing.AutoSize = true;
+      this.enableMixing.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.enableMixing.Location = new System.Drawing.Point(87, 50);
+      this.enableMixing.Name = "enableMixing";
+      this.enableMixing.Size = new System.Drawing.Size(146, 17);
+      this.enableMixing.TabIndex = 13;
+      this.enableMixing.Text = "Upmix Stereo to 5.1 /  7.1";
+      this.enableMixing.UseVisualStyleBackColor = true;
+      this.enableMixing.CheckedChanged += new System.EventHandler(this.enableMixing_CheckedChanged);
       // 
       // enableVisualisation
       // 
@@ -1400,17 +1415,6 @@ namespace MediaPortal.Configuration.Sections
       this.autoPlayComboBox.Size = new System.Drawing.Size(293, 21);
       this.autoPlayComboBox.TabIndex = 1;
       // 
-      // enableMixing
-      // 
-      this.enableMixing.AutoSize = true;
-      this.enableMixing.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.enableMixing.Location = new System.Drawing.Point(87, 50);
-      this.enableMixing.Name = "enableMixing";
-      this.enableMixing.Size = new System.Drawing.Size(146, 17);
-      this.enableMixing.TabIndex = 13;
-      this.enableMixing.Text = "Upmix Stereo to 5.1 /  7.1";
-      this.enableMixing.UseVisualStyleBackColor = true;
-      // 
       // Music
       // 
       this.Controls.Add(this.MusicSettingsTabCtl);
@@ -1641,6 +1645,26 @@ namespace MediaPortal.Configuration.Sections
     private void EnableStatusOverlaysChkBox_CheckedChanged(object sender, EventArgs e)
     {
       ShowTrackInfoChkBox.Enabled = EnableStatusOverlaysChkBox.Checked;
+    }
+
+    private void enableMixing_CheckedChanged(object sender, EventArgs e)
+    {
+      if (enableMixing.Checked)
+      {
+        // We must not have checked the "ASIO" at the same time
+        SectionSettings section = SectionSettings.GetSection("Music ASIO");
+
+        if (section != null)
+        {
+          bool asio = (bool)section.GetSetting("useasio");
+          if (asio)
+          {
+            enableMixing.Checked = false;
+            MessageBox.Show(this, "Upmixing and ASIO must not be used at the same time",
+                "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          }
+        }
+      }
     }
 
     private void InitializeVizEngine()
