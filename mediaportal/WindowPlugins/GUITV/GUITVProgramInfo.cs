@@ -737,10 +737,16 @@ namespace MediaPortal.GUI.TV
       Update();
     }
 
+    
+
+
+
     bool SkipForConflictingRecording(TVRecording rec)
     {
-      TVRecording[] conflicts = ConflictManager.GetConflictingRecordings(rec);
-      if (conflicts.Length > 0)
+      List<TVRecording> conflicts = new List<TVRecording>();
+      ConflictManager.GetConflictingSeries2(rec, conflicts);
+
+      if (conflicts.Count > 0)
       {
         GUIDialogTVConflict dlg = (GUIDialogTVConflict)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TVCONFLICT);
         if (dlg != null)

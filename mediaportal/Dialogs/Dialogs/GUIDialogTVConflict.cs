@@ -249,10 +249,10 @@ namespace MediaPortal.Dialogs
     {
       SetControlLabel(GetID, (int)Controls.HEADING, HeadingText);
     }
-       
-    public void AddConflictRecordings(TVRecording[] conflicts)
+
+    public void AddConflictRecordings(List<TVRecording> conflicts)
     {
-      if ((conflicts == null) || (conflicts.Length < 1)) return;
+      if ((conflicts == null) || (conflicts.Count < 1)) return;
       GUIListControl list = (GUIListControl)GetControl((int)Controls.LIST);
 
       if (list != null)

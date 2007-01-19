@@ -177,6 +177,47 @@ namespace MediaPortal.TV.Recording
       }
     }
 
+    static public void GetConflictingSeries2(TVRecording rec, List<TVRecording> recSeries)
+    {
+      recSeries.Clear();
+      if (Recorder.Count <= 0) return;
+
+      if (_recordings == null || _util == null)
+      {
+        Initialize();
+      }
+      List<TVRecording>[] _cardrecordings = new List<TVRecording>[Recorder.Count];
+      for (int i = 0; i < Recorder.Count; i++) _cardrecordings[i] = new List<TVRecording>();
+      if (_recordings.Count == 0) return;
+
+      List<TVRecording> episodes = _util.GetRecordingTimes(rec);
+      foreach (TVRecording episode in episodes)
+      {
+        if (episode.Canceled != 0) continue;
+
+        freeCardsRecordings(_cardrecordings);
+        AssignRecToCard(episode, _cardrecordings);
+        foreach (TVRecording otherRecording in _recordings)
+        {
+          List<TVRecording> otherEpisodes = _util.GetRecordingTimes(otherRecording);
+          foreach (TVRecording otherEpisode in otherEpisodes)
+          {
+            if (otherEpisode.Canceled != 0) continue;
+            if (isSameRecordings(episode, otherEpisode)) continue;
+
+            if (IsOverlap(episode, otherEpisode))
+            {
+              if (!AssignRecToCard(otherEpisode, _cardrecordings))
+              {
+                recSeries.Add(otherEpisode);
+              }
+            }
+          }
+        }
+      }
+    }
+
+
     static public TVRecording[] GetConflictingRecordings(TVRecording episode)
     {
       if (Recorder.Count <= 0) return null;
