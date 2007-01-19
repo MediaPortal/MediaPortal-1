@@ -473,6 +473,7 @@ namespace TvLibrary.Implementations.DVB
           _startTimeShifting = false;
           SetTimeShiftPids();
           timeshift.Start();
+          _graphState = GraphState.TimeShifting;
         }
       }
     }
@@ -574,6 +575,7 @@ namespace TvLibrary.Implementations.DVB
         recorder.StopRecord();
         ITsTimeShift timeshift = _interfaceTsChannel as ITsTimeShift;
         timeshift.Stop();
+        _graphState = GraphState.Created;
       }
       if (_teletextDecoder != null)
       {
@@ -733,6 +735,7 @@ namespace TvLibrary.Implementations.DVB
           timeshift.Reset();
           SetTimeShiftPids();
           timeshift.Start();
+          _graphState = GraphState.TimeShifting;
         }
         if (_startRecording)
         {
@@ -746,6 +749,7 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Error("dvb:StartRecord failed:{0:X}", hr);
           }
           _dateRecordingStarted = DateTime.Now;
+          _graphState = GraphState.Recording;
         }
         else if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording)
         {
@@ -931,6 +935,7 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Error("dvb:StartRecord failed:{0:X}", hr);
           }
           _dateRecordingStarted = DateTime.Now;
+          _graphState = GraphState.Recording;
         }
       }
       _recordingFileName = fileName;
@@ -950,6 +955,7 @@ namespace TvLibrary.Implementations.DVB
       {
         ITsRecorder record = _interfaceTsChannel as ITsRecorder;
         record.StopRecord();
+        _graphState = GraphState.TimeShifting;
 
       }
       _startRecording = false;
