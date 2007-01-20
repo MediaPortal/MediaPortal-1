@@ -427,9 +427,12 @@ namespace TvService
         {
           if (_tvController.CurrentDbChannel(card.Id) == recording.Channel.IdChannel)
           {
-            cardInfo = card;
-            Log.Write("Scheduler : record on card:{0} priority:{1} which is tuned to {2}", cardInfo.Id, cardInfo.Card.Priority, recording.Channel);
-            break;
+            if (_tvController.IsRecording(card.Id)==false)
+            {
+              cardInfo = card;
+              Log.Write("Scheduler : record on card:{0} priority:{1} which is tuned to {2}", cardInfo.Id, cardInfo.Card.Priority, recording.Channel.Name) ;
+              break;
+            }
           }
         }
       }
@@ -437,8 +440,16 @@ namespace TvService
       if (cardInfo == null)
       {
         //all cards in use, no card tuned to the channel, use the first one.
-        cardInfo = freeCards[0];
-        Log.Write("Scheduler : no card is tuned to the correct channel. record on card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
+        
+        if (_tvController.IsRecording(freeCards[0].Id)==false)
+        {
+          cardInfo = freeCards[0];
+          Log.Write("Scheduler : no card is tuned to the correct channel. record on card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
+        }
+        else
+        {
+          return false;
+        }
       }
 
       bool lockedCard = false;
