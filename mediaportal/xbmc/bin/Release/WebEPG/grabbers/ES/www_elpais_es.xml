@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info availableDays="0" timezone="" />
+  <Info availableDays="3" timezone="" />
   <Channels>
     <Channel id="antena3tv.es" siteId="3-Antena+3" />
     <Channel id="rtvcanal9.com" siteId="8-Canal+9" />

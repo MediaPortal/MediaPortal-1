@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info availableDays="0" timezone="" />
+  <Info availableDays="7" timezone="" />
   <Channels>
     <Channel id="tve1@tve.es" siteId="tve1" />
     <Channel id="tve2@tve.es" siteId="la2" />
