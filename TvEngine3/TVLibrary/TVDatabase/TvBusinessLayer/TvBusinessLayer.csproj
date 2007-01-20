@@ -36,9 +36,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\references\Gentle.Framework.dll</HintPath>
     </Reference>
+    <Reference Include="Gentle.Provider.MySQL, Version=1.2.9.1288, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\references\Gentle.Provider.MySQL.dll</HintPath>
+    </Reference>
     <Reference Include="Gentle.Provider.SQLServer, Version=1.2.9.1289, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\references\Gentle.Provider.SQLServer.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=1.0.7.30072, Culture=neutral, PublicKeyToken=c5687fc88969c44d">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\references\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
