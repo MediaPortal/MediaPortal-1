@@ -1875,7 +1875,7 @@ namespace MediaPortal.GUI.Music
                   }
                   bNewFile = true;
                   pItem.MusicTag = tag;
-                  pItem.Path = strCDROMPath; // to be stored in the database
+                  //pItem.Path = strCDROMPath; // to be stored in the database
                 }
                 else if (bFound)
                 {
@@ -1888,7 +1888,7 @@ namespace MediaPortal.GUI.Music
                   tag.Track = song.Track;
                   pItem.MusicTag = tag;
                   pItem.Label = song.Title;
-                  pItem.Path = strCDROMPath;
+                  //pItem.Path = strCDROMPath;
                 }
 
               }// end of try

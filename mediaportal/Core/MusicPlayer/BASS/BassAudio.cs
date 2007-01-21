@@ -32,6 +32,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using Un4seen.Bass;
 using Un4seen.BassAsio;
+using Un4seen.Bass.AddOn.Cd;
 using Un4seen.Bass.AddOn.Fx;
 using Un4seen.Bass.AddOn.Mix;
 using Un4seen.Bass.AddOn.Vis;
@@ -1360,7 +1361,13 @@ namespace MediaPortal.Player
           FilePath = filePath;
 
           // create the stream
-          if (filePath.Contains(@"http://"))
+          if (MediaPortal.Util.Utils.IsCDDA(filePath))
+          {
+            stream = BassCd.BASS_CD_StreamCreateFile(filePath, streamFlags);
+            if (stream == 0)
+              Log.Error("BASS: CD: {0}.", Enum.GetName(typeof(BASSErrorCode), Bass.BASS_ErrorGetCode()));
+          }
+          else if (filePath.Contains(@"http://"))
           {
             // Create an Internet Stream
             stream = Bass.BASS_StreamCreateURL(filePath, 0, streamFlags, null, 0);
