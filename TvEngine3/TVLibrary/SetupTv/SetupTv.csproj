@@ -38,10 +38,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\TVDatabase\references\Gentle.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="Gentle.Provider.MySQL, Version=1.2.9.1288, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TVDatabase\references\Gentle.Provider.MySQL.dll</HintPath>
-    </Reference>
     <Reference Include="Gentle.Provider.SQLServer, Version=1.2.9.1289, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\TVDatabase\references\Gentle.Provider.SQLServer.dll</HintPath>
@@ -49,10 +45,6 @@
     <Reference Include="log4net, Version=1.2.9.0, Culture=neutral, PublicKeyToken=b32731d11ce58905">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\TVDatabase\references\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="MySql.Data, Version=1.0.7.30072, Culture=neutral, PublicKeyToken=c5687fc88969c44d">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TVDatabase\references\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
