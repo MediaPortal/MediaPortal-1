@@ -39,7 +39,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="pmtPid">The PMT pid.</param>
     /// <returns></returns>
     [PreserveSig]
-    int SetPmtPid(int pmtPid);
+    int SetPmtPid(short pmtPid, int serviceId);
 
     /// <summary>
     /// Sets the call back to be called when PMT is received.

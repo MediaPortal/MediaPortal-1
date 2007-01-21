@@ -498,7 +498,7 @@ namespace TvLibrary.Implementations.DVB
           DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
           if (channel != null)
           {
-            SetupPmtGrabber(channel.PmtPid);
+            SetupPmtGrabber(channel.PmtPid, channel.ServiceId);
             dtNow = DateTime.Now;
             while (_pmtVersion < 0 && channel.PmtPid > 0)
             {
@@ -512,7 +512,7 @@ namespace TvLibrary.Implementations.DVB
         }
       }
       Log.Log.WriteFile("dvb:RunGraph");
-      if (_teletextDecoder!=null)
+      if (_teletextDecoder != null)
         _teletextDecoder.ClearBuffer();
       _pmtPid = -1;
       _pmtVersion = -1;
@@ -531,7 +531,7 @@ namespace TvLibrary.Implementations.DVB
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
       if (dvbChannel != null)
       {
-        SetupPmtGrabber(dvbChannel.PmtPid);
+        SetupPmtGrabber(dvbChannel.PmtPid, dvbChannel.ServiceId);
       }
       _pmtTimer.Enabled = true;
       if (dvbChannel != null)
@@ -601,7 +601,7 @@ namespace TvLibrary.Implementations.DVB
     /// Instructs the ts analyzer filter to start grabbing the PMT
     /// </summary>
     /// <param name="pmtPid">pid of the PMT</param>
-    protected void SetupPmtGrabber(int pmtPid)
+    protected void SetupPmtGrabber(int pmtPid, int serviceId)
     {
       Log.Log.Info("SetupPmtGrabber:{0:X} {1:X}", _pmtPid, pmtPid);
       if (pmtPid < 0) return;
@@ -629,7 +629,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Write("dvb: set pmt grabber pmt:{0:X}", pmtPid);
         _interfacePmtGrabber.SetCallBack(this);
-        _interfacePmtGrabber.SetPmtPid(pmtPid);
+        _interfacePmtGrabber.SetPmtPid((short)pmtPid, serviceId);
         if (_mdapiFilter != null)
         {
           Log.Log.Write("dvb: set ca grabber ");
