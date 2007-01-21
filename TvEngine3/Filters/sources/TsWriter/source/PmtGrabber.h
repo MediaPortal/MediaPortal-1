@@ -38,7 +38,7 @@ DECLARE_INTERFACE_(IPMTCallback, IUnknown)
 
 DECLARE_INTERFACE_(IPmtGrabber, IUnknown)
 {
-	STDMETHOD(SetPmtPid)(THIS_ int pmtPid)PURE;
+	STDMETHOD(SetPmtPid)(THIS_ int pmtPid, long serviceId)PURE;
 	STDMETHOD(SetCallBack)(THIS_ IPMTCallback* callback)PURE;
 	STDMETHOD(GetPMTData) (THIS_ BYTE *pmtData)PURE;
 };
@@ -50,7 +50,7 @@ public:
 	~CPmtGrabber(void);
 
   DECLARE_IUNKNOWN
-	STDMETHODIMP SetPmtPid( int pmtPid);
+	STDMETHODIMP SetPmtPid( int pmtPid, long serviceId);
 	STDMETHODIMP SetCallBack( IPMTCallback* callback);
 	STDMETHODIMP GetPMTData(BYTE *pmtData);
 
@@ -62,6 +62,7 @@ private:
 	byte					m_pmtPrevData[MAX_SECTION_LENGTH];
 	int						m_iPmtVersion;
 	int						m_iPmtLength;
+	int						m_iServiceId;
   CTsHeader     m_tsHeader;
 	CCriticalSection m_section;
 };

@@ -38,6 +38,7 @@ CPmtGrabber::CPmtGrabber(LPUNKNOWN pUnk, HRESULT *phr)
 {
 	m_pCallback=NULL;
 	m_iPmtVersion=-1;
+	m_iServiceId=0;
 	memset(m_pmtPrevData,0,sizeof(m_pmtPrevData));
 }
 CPmtGrabber::~CPmtGrabber(void)
@@ -45,7 +46,7 @@ CPmtGrabber::~CPmtGrabber(void)
 }
 
 
-STDMETHODIMP CPmtGrabber::SetPmtPid( int pmtPid)
+STDMETHODIMP CPmtGrabber::SetPmtPid( int pmtPid, long serviceId)
 {
 	try
 	{
@@ -55,6 +56,7 @@ STDMETHODIMP CPmtGrabber::SetPmtPid( int pmtPid)
 		CSectionDecoder::SetPid(pmtPid);
 		CSectionDecoder::SetTableId(2);
 		m_iPmtVersion=-1;
+		m_iServiceId=serviceId;
 		memset(m_pmtPrevData,0,sizeof(m_pmtPrevData));
 	}
 	catch(...)
@@ -96,6 +98,9 @@ void CPmtGrabber::OnNewSection(CSection& section)
     int table_id = section.Data[start];
 	  if (table_id!=2) return;
     if (section.SectionLength<0 || section.SectionLength>=MAX_SECTION_LENGTH) return;
+
+    long serviceId = (section.Data[start+3] << 8) + section.Data[start+4];
+		if (serviceId!=m_iServiceId) return;
 
 		LogDebug("pmtgrabber: got pmt version:%d %d", section.Version,m_iPmtVersion);
 		m_iPmtVersion=section.Version;
