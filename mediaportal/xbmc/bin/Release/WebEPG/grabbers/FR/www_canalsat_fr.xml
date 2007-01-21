@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="fr" availableDays="14" timezone="Paris, Madrid" />
+  <Info language="fr" availableDays="14" timezone="Romance Standard Time" />
   <Channels>
     <Channel id="tf1.fr" siteId="91" />
     <Channel id="france2.fr" siteId="92" />
