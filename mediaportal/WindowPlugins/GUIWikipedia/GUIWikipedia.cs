@@ -189,7 +189,6 @@ namespace Wikipedia
         {
           Log.Info("Wikipedia: Searchterm gotten from OSD keyboard: {0}", searchterm);
           GetAndDisplayArticle(searchterm);
-          GUIPropertyManager.SetProperty("#selecteditem", searchterm);
         }
         // Else display an error dialog.
         else
