@@ -67,6 +67,7 @@
     <Channel id="prime-can@seven.com.au" siteId="Prime-Can" />
     <Channel id="prime-gc@seven.com.au" siteId="Prime-GC" />
     <Channel id="prime-vic@seven.com.au" siteId="Prime-Vic" />
+    <Channel id="primen@seven.com.au" siteId="PrimeN" />
     <Channel id="channel31-adl@channel31.com.au" siteId="31-Adl" />
     <Channel id="channel31-mel@channel31.com.au" siteId="31-Mel" />
     <Channel id="channel31-per@channel31.com.au" siteId="31-Per" />
@@ -131,6 +132,7 @@
     <Channel id="historychannel@foxtel.com.au" siteId="HIST" />
     <Channel id="historychannel+2@foxtel.com.au" siteId="HIST%2B2" />
     <Channel id="discoveryscience@foxtel.com.au" siteId="SCIENCE" />
+    <Channel id="nbn@ninemsn.com.au" siteId="NBN" />
   </Channels>
   <Listing type="Xml">
     <Site url="http://xml.oztivo.net/cgi-bin/xmlguide.pl?station=[ID]" post="" external="false" encoding="" />
