@@ -1369,19 +1369,20 @@ namespace MediaPortal.Player
           else if (IsMODFile(filePath))
             // Load a Mod file
             stream = Bass.BASS_MusicLoad(filePath, 0, 0, BASSMusic.BASS_SAMPLE_SOFTWARE | BASSMusic.BASS_SAMPLE_FLOAT | BASSMusic.BASS_MUSIC_AUTOFREE | BASSMusic.BASS_MUSIC_PRESCAN, 0);
-          else if (_Mixing)
+          else
+            // Create a Standard Stream
+            stream = Bass.BASS_StreamCreateFile(filePath, 0, 0, streamFlags);
+
+          // Is Mixing enabled, then we create a mixer channel and assign the stream to the mixer
+          if (_Mixing && stream != 0)
           {
             // Do an upmix of the stereo according to the matrix. 
             // Create an 8 Channel Mixer and assign it to the stream
             _mixer = BassMix.BASS_Mixer_StreamCreate(44100, 8, BASSStream.BASS_MIXER_END | BASSStream.BASS_STREAM_AUTOFREE);
-            stream = Bass.BASS_StreamCreateFile(filePath, 0, 0, streamFlags);
             // Now Plugin the stream to the mixer and set the mixing matrix
             BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream, BASSStream.BASS_MIXER_MATRIX);
             BassMix.BASS_Mixer_ChannelSetMatrix(stream, ref _MixingMatrix[0, 0]);
           }
-          else
-            // Create a Standard Stream
-            stream = Bass.BASS_StreamCreateFile(filePath, 0, 0, streamFlags);
 
           Streams[CurrentStreamIndex] = stream;
 
