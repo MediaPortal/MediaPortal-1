@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <profile>
   <section name="ChannelInfo">
     <entry name="TotalChannels">1258</entry>
@@ -101,7 +101,7 @@
   </section>
   <section name="24">
     <entry name="ChannelID">3plus.dk</entry>
-    <entry name="FullName">3+ Danmark</entry>
+    <entry name="FullName">TV3+</entry>
   </section>
   <section name="25">
     <entry name="ChannelID">3sat.de</entry>
@@ -1425,7 +1425,7 @@
   </section>
   <section name="355">
     <entry name="ChannelID">dk4.dk</entry>
-    <entry name="FullName">DK4</entry>
+    <entry name="FullName">DK 4</entry>
   </section>
   <section name="356">
     <entry name="ChannelID">dois.tv</entry>
@@ -1437,11 +1437,11 @@
   </section>
   <section name="358">
     <entry name="ChannelID">dr1@dr.dk</entry>
-    <entry name="FullName">DR1</entry>
+    <entry name="FullName">DR 1</entry>
   </section>
   <section name="359">
     <entry name="ChannelID">dr2@dr.dk</entry>
-    <entry name="FullName">DR2</entry>
+    <entry name="FullName">DR 2</entry>
   </section>
   <section name="360">
     <entry name="ChannelID">DRS</entry>
@@ -4497,11 +4497,11 @@
   </section>
   <section name="1123">
     <entry name="ChannelID">tv2.no</entry>
-    <entry name="FullName">TV2  Norge</entry>
+    <entry name="FullName">TV2 Norge</entry>
   </section>
   <section name="1124">
     <entry name="ChannelID">tv2@tv2.dk</entry>
-    <entry name="FullName">TV2 Dansk</entry>
+    <entry name="FullName">TV 2</entry>
   </section>
   <section name="1125">
     <entry name="ChannelID">tv2@tvnz.co.nz</entry>
@@ -4513,7 +4513,7 @@
   </section>
   <section name="1127">
     <entry name="ChannelID">tv2charlie@tv2.dk</entry>
-    <entry name="FullName">TV2 charlie</entry>
+    <entry name="FullName">TV 2 Charlie</entry>
   </section>
   <section name="1128">
     <entry name="ChannelID">tv2xtra.no</entry>
@@ -4521,7 +4521,7 @@
   </section>
   <section name="1129">
     <entry name="ChannelID">tv2zulu@tv2.dk</entry>
-    <entry name="FullName">TV2 zulu</entry>
+    <entry name="FullName">TV 2 Zulu</entry>
   </section>
   <section name="1130">
     <entry name="ChannelID">tv3.co.nz</entry>
@@ -4529,7 +4529,7 @@
   </section>
   <section name="1131">
     <entry name="ChannelID">tv3.dk</entry>
-    <entry name="FullName">Dansk TV3</entry>
+    <entry name="FullName">TV3</entry>
   </section>
   <section name="1132">
     <entry name="ChannelID">tv3.ie</entry>
@@ -5035,6 +5035,10 @@
     <entry name="ChannelID">ztv.se</entry>
     <entry name="FullName">ZTV Sverige</entry>
   </section>
+  <section name="1258">
+    <entry name="ChannelID">tv2news@tv2.dk</entry>
+    <entry name="FullName">TV 2 News</entry>
+  </section>
   <section name=".svn">
     <entry name="TotalChannels">0</entry>
   </section>
@@ -5437,7 +5441,7 @@
     <entry name="137">1254</entry>
   </section>
   <section name="DK">
-    <entry name="TotalChannels">47</entry>
+    <entry name="TotalChannels">48</entry>
     <entry name="0">86</entry>
     <entry name="1">154</entry>
     <entry name="2">156</entry>
@@ -5485,6 +5489,7 @@
     <entry name="44">1210</entry>
     <entry name="45">1211</entry>
     <entry name="46">1212</entry>
+    <entry name="47">1258</entry>
   </section>
   <section name="ES">
     <entry name="TotalChannels">19</entry>

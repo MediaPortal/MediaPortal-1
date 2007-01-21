@@ -1,15 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Grabber>
   <Info language="da" availableDays="6" timezone="W. Europe Standard Time" />
   <Channels>
     <Channel id="tv2@tv2.dk" siteId="Region=1&amp;KanalID=1" />
     <Channel id="tv2zulu@tv2.dk" siteId="Region=1&amp;KanalID=2" />
     <Channel id="tv2charlie@tv2.dk" siteId="Region=1&amp;KanalID=152" />
+    <Channel id="tv2news@tv2.dk" siteId="Region=1&amp;KanalID=225" />
+    <Channel id="tv2film@tv2.dk" siteId="Region=1&amp;KanalID=153" />
     <Channel id="dr1@dr.dk" siteId="Region=1&amp;KanalID=3" />
     <Channel id="dr2@dr.dk" siteId="Region=1&amp;KanalID=4" />
     <Channel id="tv3@tv3.dk" siteId="Region=1&amp;KanalID=6" />
     <Channel id="tv3+@tv3.dk" siteId="Region=1&amp;KanalID=5" />
-    <Channel id="tvdanmark2@tvdanmark.dk" siteId="Region=1&amp;KanalID=8" />
+    <Channel id="kanal4.dk" siteId="Region=1&amp;KanalID=8" />
     <Channel id="kanal5.dk" siteId="Region=1&amp;KanalID=7" />
     <Channel id="canal+@canalplus.dk" siteId="Region=1&amp;KanalID=9" />
     <Channel id="canal+film1@canalplus.dk" siteId="Region=1&amp;KanalID=10" />
