@@ -77,6 +77,7 @@ namespace MediaPortal.Configuration
     public Startup(string[] arguments)
     {
       Thread.CurrentThread.Name = "Config Main";
+      Thread.CurrentThread.Priority = ThreadPriority.Highest;
       // Logger should write into Configuration.log
       Log.SetConfigurationMode();
       Log.BackupLogFile(LogType.Config);
