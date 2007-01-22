@@ -44,15 +44,37 @@ typedef __int64 int64_t;
 DEFINE_GUID(CLSID_DVBSub, 
 	0x591ab987, 0x9689, 0x4c07, 0x84, 0x6d, 0x0, 0x6, 0xd5, 0xdd, 0x2b, 0xfd);
 
-DECLARE_INTERFACE_( IDVBSubtitle, IUnknown )
-{
-  STDMETHOD(GetSubtitle) ( int place, CSubtitle *pSubtitle ) PURE;
-  STDMETHOD(SetCallback) ( void(*pSubtitleObserver)() ) PURE;
-  STDMETHOD(GetSubtitleCount) ( int count ) PURE;
-  STDMETHOD(DiscardOldestSubtitle) () PURE;
+// C19647D5-A861-4845-97A6-EBD0A135D0BF
+DEFINE_GUID(IID_IDVBSubtitle, 
+0xc19647d5, 0xa861, 0x4845, 0x97, 0xa6, 0xeb, 0xd0, 0xa1, 0x35, 0xd0, 0xbf);
+
+
+// structure used to communicate subtitles to MediaPortals managed code
+struct SUBTITLE{
+	LONG        bmType;
+    LONG        bmWidth;
+    LONG        bmHeight;
+    LONG        bmWidthBytes;
+    WORD        bmPlanes;
+    WORD        bmBitsPixel;
+    LPVOID      bmBits;
+
+	unsigned __int64 timeOut;
 };
 
-class CDVBSub : public CBaseFilter, public MSubdecoderObserver, MPidObserver
+DECLARE_INTERFACE_( IDVBSubtitle, IUnknown )
+{
+  STDMETHOD(GetSubtitle) ( int place, SUBTITLE* pSubtitle ) PURE;
+  STDMETHOD(GetSubtitleCount) ( int* count ) PURE;
+  STDMETHOD(SetCallback) ( int (CALLBACK *pSubtitleObserver)() ) PURE;
+  STDMETHOD(DiscardOldestSubtitle) () PURE;
+  STDMETHOD(Test)(int status) PURE;
+};
+
+
+extern void LogDebug(const char *fmt, ...);
+
+class CDVBSub : public CBaseFilter, public MSubdecoderObserver, MPidObserver, IDVBSubtitle
 {
 public:
   // Constructor & destructor
@@ -67,13 +89,43 @@ public:
   CBasePin * GetPin( int n );
   int GetPinCount();
 
-	// Interface
-	STDMETHOD (GetSubtitle)( int place, CSubtitle *pSubtitle );
-  STDMETHOD (SetCallback)( void(*pSubtitleObserver)() );
-  STDMETHOD (GetSubtitleCount)( int count );
-  STDMETHOD (DiscardOldestSubtitle)();
+  // IDVBSubtitle
+  virtual HRESULT STDMETHODCALLTYPE GetSubtitle( int place, SUBTITLE* pSubtitle );
+  virtual HRESULT STDMETHODCALLTYPE SetCallback( int (CALLBACK *pSubtitleObserver)() );
+  virtual HRESULT STDMETHODCALLTYPE GetSubtitleCount( int* count );
+  virtual HRESULT STDMETHODCALLTYPE DiscardOldestSubtitle();
 
-	// From MSubdecoderObserver
+  virtual HRESULT STDMETHODCALLTYPE Test(int status);
+
+  // IUnknown
+  DECLARE_IUNKNOWN;
+
+  /*
+      STDMETHODIMP QueryInterface(REFIID riid, void **ppv) {
+		  	if(riid == IID_IBaseFilter){
+		LogDebug("riid = Trying basefilter");
+	}
+	else if(riid == IID_IDVBSubtitle){
+		LogDebug("riid = IID_IDVBSubtitle");
+	}
+	else if(riid == IID_IUnknown){
+		LogDebug("riid = IID_IUnknown");
+	}
+
+        return GetOwner()->QueryInterface(riid,ppv);            
+    };                                                          
+    STDMETHODIMP_(ULONG) AddRef() {
+		//LogDebug("Before AddRef : %i", this->m_cRef);
+        return GetOwner()->AddRef();                            
+    };                                                          
+    STDMETHODIMP_(ULONG) Release() {       
+		//LogDebug("Before Release : %i", this->m_cRef);
+        return GetOwner()->Release();                           
+    };*/
+
+  STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
+	
+  // From MSubdecoderObserver
 	void Notify();
 
   // From MPidObserver
@@ -85,7 +137,6 @@ public:
 	void Reset();
 
 private:
-
   CSubtitleInputPin*  m_pSubtitleInputPin;
   CSubtitleOutputPin* m_pSubtitleOutputPin;
 	CPcrInputPin*		    m_pPcrPin;
@@ -100,5 +151,5 @@ private:
 
   ULONGLONG           m_firstPTS;
 
-  void                (*m_pSubtitleObserver) (); 
+  int                (CALLBACK *m_pSubtitleObserver) (); 
 };

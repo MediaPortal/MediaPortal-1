@@ -32,11 +32,12 @@ CSubtitle::CSubtitle( int width, int height )
 {
 	m_Data = new unsigned char[ height * width * 3 ];
 
+	m_Bitmap.bmType			= 0;
 	m_Bitmap.bmBitsPixel	= 24;
 	m_Bitmap.bmWidth		= width;
 	m_Bitmap.bmHeight		= height;
 	m_Bitmap.bmPlanes		= 1;
-	m_Bitmap.bmWidthBytes	= height * width;
+	m_Bitmap.bmWidthBytes	= width * 3; // I changed this from height * width because it is the stride and not the size (Ziphnor)
 	m_Bitmap.bmBits			= (LPVOID)m_Data;
 
 	ZeroMemory( m_Data, width * height * 3 );

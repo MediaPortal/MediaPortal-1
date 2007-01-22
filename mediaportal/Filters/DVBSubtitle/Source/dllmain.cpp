@@ -67,6 +67,10 @@ BOOL APIENTRY DllMain(HANDLE hModule,
 	return DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
 }
 
+#ifndef DEBUG
+#define DEBUG
+#endif
+
 // Logging 
 #ifdef DEBUG
 char *logbuffer=NULL; 
@@ -85,7 +89,8 @@ void LogDebug(const char *fmt, ...)
   TCHAR fileName[MAX_PATH];
   ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
   sprintf(fileName,"%s\\MediaPortal\\log\\MPDVBSubs.Log",folder);
-  FILE* fp = fopen(fileName,"a+");
+  //FILE* fp = fopen(fileName,"a+");
+  FILE* fp = fopen("C:\\DVBSUB.log","a+");
 	if (fp!=NULL)
 	{
 		SYSTEMTIME systemTime;
