@@ -107,94 +107,114 @@ namespace MediaPortal.Player
       return instance;
     }
 
+    private SUBTITLE sub = new SUBTITLE();
+    byte[] srcData = null;
+
     /// <summary>
     /// Callback from subtitle filter, alerting us that a new subtitle is available
     /// </summary>
     /// <returns></returns>
     public int OnSubtitle()
     {
-      try
+      lock (alert)
       {
-        SUBTITLE sub = new SUBTITLE();
-        
-        subFilter.GetSubtitle(0, ref sub);
-        
-        Log.Debug("Subtitle Bitmap: bpp=" + sub.bmBitsPixel + " planes " + sub.bmPlanes + " dim = " + sub.bmWidth + " x " + sub.bmHeight + " stride : " + sub.bmWidthBytes);
-
-        int size = sub.bmWidthBytes * sub.bmHeight;
-        byte[] srcData = new byte[size];
-        Marshal.Copy(sub.bmBits, srcData, 0, size);
-
-        int srcbpp = sub.bmBitsPixel / 8;
-        int dstbpp = srcbpp + 1; // an extra byte for alpha channel
-
-        // allocate a new image with an alpha channel
-        Bitmap bitmap = new Bitmap(sub.bmWidth, sub.bmHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-        // get bits of allocated image
-        BitmapData bmData = bitmap.LockBits(new Rectangle(0, 0, sub.bmWidth, sub.bmHeight), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
-
-        int newSize = bmData.Stride * sub.bmHeight;
-        byte[] dstData = new byte[newSize];
-
-        // add alpha channel data
-        for (int x = 0; x < sub.bmWidth; x++)
+        try
         {
-          for (int y = 0; y < sub.bmHeight; y++)
-          {
-            int dstLineOffset = y * bmData.Stride;
-            int srcLineOffset = y * sub.bmWidthBytes;
+          sub = new SUBTITLE();
+          subFilter.GetSubtitle(0, ref sub);
+          Log.Debug("Subtitle Bitmap: bpp=" + sub.bmBitsPixel + " planes " + sub.bmPlanes + " dim = " + sub.bmWidth + " x " + sub.bmHeight + " stride : " + sub.bmWidthBytes);
+          int size = sub.bmWidthBytes * sub.bmHeight;
+          srcData = new byte[size];
+          Marshal.Copy(sub.bmBits, srcData, 0, size);
 
-            byte Y = srcData[srcbpp * x + srcLineOffset];
-            byte U = srcData[srcbpp * x + 1 + srcLineOffset];
-            byte V = srcData[srcbpp * x + 2 + srcLineOffset];
-
-            // convert YUV -> RGB
-            byte R = (byte)(Y + 1.402 * (V - 128));
-            byte G = (byte)(Y - 0.34414 * (U - 128) - 0.71414 * (V - 128));
-            byte B = (byte)(Y + 1.772 * (U - 128));
-
-            if ((Y | U | V) == 0)
-            {
-              dstData[dstbpp * x + 0 + dstLineOffset] = 0; // Blue
-              dstData[dstbpp * x + 1 + dstLineOffset] = 0; // Green
-              dstData[dstbpp * x + 2 + dstLineOffset] = 0; // Red
-              dstData[dstbpp * x + 3 + dstLineOffset] = 0; // Alpha
-            }
-            else
-            {
-              dstData[dstbpp * x + 0 + dstLineOffset] = B;
-              dstData[dstbpp * x + 1 + dstLineOffset] = G;
-              dstData[dstbpp * x + 2 + dstLineOffset] = R;
-              dstData[dstbpp * x + 3 + dstLineOffset] = 255;
-            }
-          }
+          // the subfilter caches subtitles, so ask it to remove the sub it just gave us
+          subFilter.DiscardOldestSubtitle();
+          Monitor.Pulse(alert);
         }
-
-        // copy image data
-        Marshal.Copy(dstData, 0, bmData.Scan0, newSize);
-        bitmap.UnlockBits(bmData);
-
-        //bitmap.Save("C:\\sub" + count + ".bmp");
-        //count++;
-
-        // replace the current subtitle with the new one
-        SetSubtitle(bitmap);
-
-        // the texture copies the bitmap, so get rid of it
-        bitmap.Dispose();
-
-        // the subfilter caches subtitles, so ask it to remove the sub it just gave us
-        subFilter.DiscardOldestSubtitle();
-
-      }
-      catch (Exception e)
-      {
-        Log.Error(e);
+        catch (Exception e)
+        {
+          Log.Error(e);
+        }
+        
       }
       return 0;
     }
 
+    public void WorkerThread()
+    {
+      while (true)
+      {
+        lock (alert)
+        {
+          Monitor.Wait(alert);
+        try{
+            int srcbpp = sub.bmBitsPixel / 8;
+            int dstbpp = srcbpp + 1; // an extra byte for alpha channel
+            int size = sub.bmWidthBytes * sub.bmHeight;
+            // allocate a new image with an alpha channel
+            Bitmap bitmap = new Bitmap(sub.bmWidth, sub.bmHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            // get bits of allocated image
+            BitmapData bmData = bitmap.LockBits(new Rectangle(0, 0, sub.bmWidth, sub.bmHeight), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+
+            int newSize = bmData.Stride * sub.bmHeight;
+            byte[] dstData = new byte[newSize];
+
+            // add alpha channel data
+            for (int x = 0; x < sub.bmWidth; x++)
+            {
+              for (int y = 0; y < sub.bmHeight; y++)
+              {
+                int dstLineOffset = y * bmData.Stride;
+                int srcLineOffset = y * sub.bmWidthBytes;
+
+                byte Y = srcData[srcbpp * x + srcLineOffset];
+                byte U = srcData[srcbpp * x + 1 + srcLineOffset];
+                byte V = srcData[srcbpp * x + 2 + srcLineOffset];
+
+                // convert YUV -> RGB
+                byte R = (byte)(Y + 1.402 * (V - 128));
+                byte G = (byte)(Y - 0.34414 * (U - 128) - 0.71414 * (V - 128));
+                byte B = (byte)(Y + 1.772 * (U - 128));
+
+                if ((Y | U | V) == 0)
+                {
+                  dstData[dstbpp * x + 0 + dstLineOffset] = 0; // Blue
+                  dstData[dstbpp * x + 1 + dstLineOffset] = 0; // Green
+                  dstData[dstbpp * x + 2 + dstLineOffset] = 0; // Red
+                  dstData[dstbpp * x + 3 + dstLineOffset] = 0; // Alpha
+                }
+                else
+                {
+                  dstData[dstbpp * x + 0 + dstLineOffset] = R;// B;
+                  dstData[dstbpp * x + 1 + dstLineOffset] = G; //G;
+                  dstData[dstbpp * x + 2 + dstLineOffset] = B; //R;
+                  dstData[dstbpp * x + 3 + dstLineOffset] = 255;
+                }
+              }
+            }
+
+            // copy image data
+            Marshal.Copy(dstData, 0, bmData.Scan0, newSize);
+            bitmap.UnlockBits(bmData);
+
+            //bitmap.Save("C:\\sub" + count + ".bmp");
+            //count++;
+
+            // replace the current subtitle with the new one
+            SetSubtitle(bitmap);
+
+            // the texture copies the bitmap, so get rid of it
+            bitmap.Dispose();
+
+          }
+          catch (Exception e)
+          {
+            Log.Error(e);
+          }
+        }
+      }
+    }
     /// <summary>
     /// Cleans up resources
     /// </summary>
@@ -206,7 +226,11 @@ namespace MediaPortal.Player
         {
           subTexture.Dispose();
           subTexture = null;
-          subFilter = null;
+          lock (alert)
+          {
+            subFilter = null;
+          }
+          
         }
       }
     }
@@ -264,6 +288,11 @@ namespace MediaPortal.Player
       CreateFilter(_graphBuilder);
       IntPtr pCallback = Marshal.GetFunctionPointerForDelegate(callBack);
       subFilter.SetCallback(pCallback);
+
+      ThreadStart ts = new ThreadStart(WorkerThread);
+      Thread t = new Thread(ts);
+      t.IsBackground = true;
+      t.Start();
       return filter;
     }
 
@@ -271,16 +300,16 @@ namespace MediaPortal.Player
     {
       try
       {
-        lock (alert)
-        {
+        //lock (alert)
+        //{
           IGraphBuilder _graphBuilder = o as IGraphBuilder;
           filter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal DVBSub");
           subFilter = filter as IDVBSubtitle;
 
           subFilter.Test(600);
-          Monitor.Pulse(alert);
+       //   Monitor.Pulse(alert);
           Log.Debug("CreateFilter success: " + (filter != null) + " & " + (subFilter != null));
-        }
+       // }
       }
       catch (Exception e)
       {
