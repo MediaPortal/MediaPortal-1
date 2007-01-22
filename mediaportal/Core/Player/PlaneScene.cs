@@ -265,6 +265,7 @@ namespace MediaPortal.Player
       }
 
       grabber.Clean();
+      SubtitleRenderer.GetInstance().Clear();
     }
 
     /// <summary>
@@ -904,11 +905,17 @@ namespace MediaPortal.Player
       {
         //Render video texture
         if (_renderTexture == false) return;
+
         if (_surfaceAdress != 0)
         {
           DrawSurface(_surfaceAdress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
-          
         }
+
+ 
+
+        //Texture tt = TextureLoader.FromFile(GUIGraphicsContext.DX9Device, "C:\\test.bmp");
+        //DrawTexture(tt, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
+
         if (_textureAddress != 0)
         {
           DrawTexture(_textureAddress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
@@ -922,7 +929,9 @@ namespace MediaPortal.Player
         _blackImage.Height = (int)_nh;
         _blackImage.Render(timePassed);
       }
+      SubtitleRenderer.GetInstance().Render();
     }
+
     public bool ShouldRenderLayer()
     {
       return true;

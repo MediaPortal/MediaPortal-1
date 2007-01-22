@@ -269,8 +269,19 @@ namespace MediaPortal.Player
         if (strAudioRenderer.Length > 0)
           _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, true);
         if (enableDvbSubtitles == true)
-          _subtitleFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal DVBSub");
+        {
+          try
+          {
+            _subtitleFilter = SubtitleRenderer.GetInstance().AddSubtitleFilter(_graphBuilder);
+          }
+          catch (Exception e)
+          {
+            Log.Error(e);
+          }
 
+        }
+
+        Log.Debug("Is subtitle fitler null? {0}",(_subtitleFilter == null));
         // FlipGer: add custom filters to graph
         customFilters = new IBaseFilter[intFilters];
         string[] arrFilters = strFilters.Split(';');
