@@ -217,9 +217,9 @@ namespace MediaPortal.TV.Recording
       int pos1 = monikerName.IndexOf("#");
       if (pos1 < 0)
         return 0;
+      int pos2 = monikerName.LastIndexOf("#");
       if (pos2 == pos1)
         return 0;
-      int pos2 = monikerName.LastIndexOf("#");
       string left = monikerName.Substring(0, pos1);
       string mid = monikerName.Substring(pos1 + 1, (pos2 - pos1) - 1);
       mid = mid.Replace("#", "/");

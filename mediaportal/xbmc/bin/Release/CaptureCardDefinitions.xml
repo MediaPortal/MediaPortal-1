@@ -18478,4 +18478,20 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Pinnacle DVB-T PCI 250i" capturename="Pinnacle RoyalTS Capture" devid="ven_11bd&amp;dev_0040&amp;subsys_004711bd&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="4" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Pinnacle RoyalTS Tuner"             checkdevice="true"/>
+        <filter cat="capture"         name="Pinnacle RoyalTS Capture"           checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"    sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
