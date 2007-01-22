@@ -319,6 +319,7 @@
     <Compile Include="Player\DummyPlayerFactory.cs" />
     <Compile Include="Player\IPlayerFactory.cs" />
     <Compile Include="Player\RTSPPlayer.cs" />
+    <Compile Include="Player\SubtitleRenderer.cs" />
     <Compile Include="TagReader\ITag.cs" />
     <Compile Include="TagReader\Utils.cs" />
     <Compile Include="ThumbDbLib\Thumbnail.cs" />
