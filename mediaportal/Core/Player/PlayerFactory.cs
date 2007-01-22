@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Collections;
 using System.Reflection;
 using MediaPortal.Util;
@@ -51,7 +52,31 @@ namespace MediaPortal.Player
       VMR7 = 2,
       RTSP = 3,
     }
-
+    private bool CheckMpgFile(string fileName)
+    {
+      try
+      {
+        if (!System.IO.File.Exists(fileName)) return false;
+        using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.ReadWrite))
+        {
+          using (BinaryReader reader = new BinaryReader(stream))
+          {
+            stream.Seek(0, SeekOrigin.Begin);
+            byte[] header = reader.ReadBytes(4);
+            if (header[0] != 0 || header[1] != 0 || header[2] != 1 || header[3] != 0xba) return false;
+            stream.Seek(0x800, SeekOrigin.Begin); header = reader.ReadBytes(4);
+            if (header[0] != 0 || header[1] != 0 || header[2] != 1 || header[3] != 0xba) return false;
+            stream.Seek(0x8000, SeekOrigin.Begin); header = reader.ReadBytes(4);
+            if (header[0] != 0 || header[1] != 0 || header[2] != 1 || header[3] != 0xba) return false;
+            return true;
+          }
+        }
+      }
+      catch (Exception)
+      {
+      }
+      return false;
+    }
     private void LoadExternalPlayers()
     {
       Log.Info("Loading external players plugins");
@@ -188,11 +213,19 @@ namespace MediaPortal.Player
       //resulting in video, but no audio!!
       if (extension == ".tsbuffer" || extension == ".ts" || extension == ".mpg" || extension == ".mpeg")
       {
-        if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
-          return new Player.BaseTStreamBufferPlayer();
+        bool mpgGood = true;
+        if (extension == ".mpg" || extension == ".mpeg")
+        {
+          mpgGood = CheckMpgFile(fileName);
+        }
+        if (mpgGood)
+        {
+          if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
+            return new Player.BaseTStreamBufferPlayer();
 
-        newPlayer = new Player.TStreamBufferPlayer9();
-        return newPlayer;
+          newPlayer = new Player.TStreamBufferPlayer9();
+          return newPlayer;
+        }
       }
       if (!MediaPortal.Util.Utils.IsAVStream(fileName) && MediaPortal.Util.Utils.IsVideo(fileName))
       {
@@ -326,11 +359,19 @@ namespace MediaPortal.Player
       //resulting in video, but no audio!!
       if (extension == ".tsbuffer" || extension == ".ts" || extension == ".mpg" || extension == ".mpeg")
       {
-        if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
-          return new Player.BaseTStreamBufferPlayer(type);
+        bool mpgGood = true;
+        if (extension == ".mpg" || extension == ".mpeg")
+        {
+          mpgGood = CheckMpgFile(fileName);
+        }
+        if (mpgGood)
+        {
+          if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
+            return new Player.BaseTStreamBufferPlayer(type);
 
-        newPlayer = new Player.TStreamBufferPlayer9(type);
-        return newPlayer;
+          newPlayer = new Player.TStreamBufferPlayer9(type);
+          return newPlayer;
+        }
       }
       if (!MediaPortal.Util.Utils.IsAVStream(fileName) && MediaPortal.Util.Utils.IsVideo(fileName))
       {
