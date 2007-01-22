@@ -153,7 +153,7 @@ public class MediaPortalApp : D3DApp, IRender
 
   //NProf doesnt work if the [STAThread] attribute is set
   //but is needed when you want to play music or video
-  [STAThread]
+  //[STAThread] <- Outcommented by Ziphnor 22/01/07 due to conflict with DVBSub stuff, please notify if problematic
   public static void Main(string[] args)
   {
     Thread.CurrentThread.Name = "MPMain";
