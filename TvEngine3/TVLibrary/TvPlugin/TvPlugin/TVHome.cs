@@ -32,6 +32,7 @@ using System.Globalization;
 using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
+using System.Xml;
 using AMS.Profile;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -489,7 +490,7 @@ namespace TvPlugin
       Channel channel = Navigator.Channel;
       if (channel == null)
       {
-        if (Navigator.CurrentGroup == null && Navigator.Groups.Count > 0)
+        if (Navigator.CurrentGroup != null && Navigator.Groups.Count > 0)
         {
           Navigator.SetCurrentGroup(Navigator.Groups[0].GroupName);
         }
@@ -1583,9 +1584,28 @@ namespace TvPlugin
     {
       try
       {
+        string connectionString, provider;
+        RemoteControl.Instance.GetDatabaseConnectionString(out connectionString, out provider);
+
+        try
+        {
+          XmlDocument doc = new XmlDocument();
+          doc.Load("gentle.config");
+          XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
+          XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
+          XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
+          node.InnerText=connectionString;
+          nodeProvider.InnerText=provider;
+          doc.Save("gentle.config");
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Unable to create/modify gentle.config");
+          Log.Write(ex);
+        }
         MediaPortal.GUI.Library.Log.Info("ChannelNavigator::Reload()");
-        MediaPortal.GUI.Library.Log.Info("ChannelNavigator::database:{0}", RemoteControl.Instance.DatabaseConnectionString);
-        Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(RemoteControl.Instance.DatabaseConnectionString);
+        Gentle.Framework.ProviderFactory.ResetGentle(true);
+        Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
         MediaPortal.GUI.Library.Log.Info("get channels from database");
         SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
         sb.AddConstraint(Operator.Equals, "isTv", 1);
@@ -2131,20 +2151,6 @@ namespace TvPlugin
       }
     }
 
-    void CreateDatabaseConfigFile(string connectionString)
-    {
-      MediaPortal.GUI.Library.Log.Info("Remote control:sql server :{0}", connectionString);
-      using (FileStream stream = new FileStream("ideablade.ibconfig", FileMode.OpenOrCreate, FileAccess.ReadWrite))
-      {
-        using (StreamWriter writer = new StreamWriter(stream))
-        {
-          string configFile = ConfigFileXml;
-          configFile = configFile.Replace("[CONNECTION]", connectionString);
-          configFile = configFile.Replace("|", "\"");
-          writer.WriteLine(configFile);
-        }
-      }
-    }
     #endregion
   }
 
