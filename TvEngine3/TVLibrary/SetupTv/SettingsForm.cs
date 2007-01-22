@@ -84,11 +84,20 @@ namespace SetupTv
         string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
         try
         {
+          System.IO.File.Copy(fname, "gentle.config", true);
+        }
+        catch (Exception) { }
+        try
+        {
           XmlDocument doc = new XmlDocument();
           doc.Load(fname);
           XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
           XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
+          XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
 
+          Gentle.Framework.ProviderFactory.ResetGentle(true);
+          Gentle.Framework.GentleSettings.DefaultProviderName = nodeProvider.InnerText;
+          Gentle.Framework.IGentleProvider prov = Gentle.Framework.ProviderFactory.GetDefaultProvider();
           Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(node.InnerText);
         }
         catch (Exception ex)

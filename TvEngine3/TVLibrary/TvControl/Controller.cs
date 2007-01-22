@@ -521,7 +521,8 @@ namespace TvControl
     /// <summary>
     /// Returns the SQl connection string to the database
     /// </summary>
-    string DatabaseConnectionString { get;set;}
+    void GetDatabaseConnectionString(out string connectionString, out string provider);
+    void SetDatabaseConnectionString(string connectionString, string provider);
 
     /// <summary>
     /// Restarts the service.

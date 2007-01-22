@@ -142,7 +142,7 @@ namespace SetupTv
           return;
         }
       }
-
+      
       try
       {
         AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);

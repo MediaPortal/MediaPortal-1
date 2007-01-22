@@ -204,7 +204,10 @@ namespace TvService
       {
         //load the database connection string from the config file
         Log.WriteFile(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-        Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(DatabaseConnectionString);
+        string connectionString, provider;
+        GetDatabaseConnectionString(out connectionString, out provider);
+        Log.Info("database connection:{0} {1}", provider, connectionString);
+        Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
 
         _cards = new Dictionary<int, TvCard>();
         TvCardCollection localCardCollection = new TvCardCollection();
@@ -1356,44 +1359,60 @@ namespace TvService
     /// <summary>
     /// Returns the SQl connection string to the database
     /// </summary>
-    public string DatabaseConnectionString
+    public void GetDatabaseConnectionString(out string connectionString, out string provider)
     {
-      get
+      connectionString = "";
+      provider = "";
+      try
       {
+        string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
         try
         {
-          XmlDocument doc = new XmlDocument();
-          doc.Load(String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
-          XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-          XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); ;
-          return node.InnerText;
+          System.IO.File.Copy(fname, "gentle.config", true);
         }
-        catch (Exception ex)
-        {
-          Log.Write(ex);
-          return "";
-        }
+        catch (Exception) { }
+        XmlDocument doc = new XmlDocument();
+        doc.Load(String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
+        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
+        XmlNode nodeConnection = nodeKey.Attributes.GetNamedItem("connectionString"); ;
+        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name"); ;
+        connectionString = nodeConnection.InnerText;
+        provider = nodeProvider.InnerText;
       }
-      set
+      catch (Exception ex)
       {
+        Log.Write(ex);
+      }
+    }
+    public void SetDatabaseConnectionString(string connectionString, string provider)
+    {
+      try
+      {
+
+        XmlDocument doc = new XmlDocument();
+        doc.Load(String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
+        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
+        XmlNode nodeConnection = nodeKey.Attributes.GetNamedItem("connectionString"); ;
+        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
+        nodeProvider.InnerText = connectionString;
+        nodeConnection.InnerText = provider;
+        doc.Save(String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
+
+        string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
         try
         {
-          XmlDocument doc = new XmlDocument();
-          doc.Load(String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
-
-          XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-          XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); ;
-          node.InnerText = value;
-          doc.Save(String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
-          Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(value);
-          DeInit();
-          Init();
+          System.IO.File.Copy(fname, "gentle.config", true);
         }
-        catch (Exception ex)
-        {
-          Log.Write(ex);
-          return;
-        }
+        catch (Exception) { }
+        Gentle.Framework.ProviderFactory.ResetGentle(true);
+        Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
+        DeInit();
+        Init();
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+        return;
       }
     }
     /// <summary>
@@ -1728,7 +1747,7 @@ namespace TvService
         Log.Write(ex);
       }
     }
-    
+
     /// <summary>
     /// returns a virtual card for the card specified.
     /// </summary>

@@ -250,19 +250,17 @@ namespace TvControl
     /// <summary>
     /// Returns the SQl connection string to the database
     /// </summary>
-    public string DatabaseConnectionString
+    public void GetDatabaseConnectionString(out string connectionString, out string provider)
     {
-      get
+      connectionString = "";
+      provider = "";
+      try
       {
-        try
-        {
-          return RemoteControl.Instance.DatabaseConnectionString;
-        }
-        catch (Exception ex)
-        {
-          HandleFailure(ex);
-        }
-        return "";
+        RemoteControl.Instance.GetDatabaseConnectionString(out connectionString, out provider);
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
       }
     }
 
