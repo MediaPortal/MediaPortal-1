@@ -62,6 +62,7 @@ namespace MediaPortal.Player
 
   class SubtitleRenderer
   {
+    
     private static SubtitleRenderer instance = null;
     private IDVBSubtitle subFilter = null;
 
@@ -159,53 +160,53 @@ namespace MediaPortal.Player
 
             int newSize = bmData.Stride * sub.bmHeight;
             byte[] dstData = new byte[newSize];
-
-            // add alpha channel data
-            for (int x = 0; x < sub.bmWidth; x++)
-            {
-              for (int y = 0; y < sub.bmHeight; y++)
+              // add alpha channel data
+              for (int x = 0; x < sub.bmWidth; x++)
               {
-                int dstLineOffset = y * bmData.Stride;
-                int srcLineOffset = y * sub.bmWidthBytes;
-
-                byte Y = srcData[srcbpp * x + srcLineOffset];
-                byte U = srcData[srcbpp * x + 1 + srcLineOffset];
-                byte V = srcData[srcbpp * x + 2 + srcLineOffset];
-
-                // convert YUV -> RGB
-                byte R = (byte)(Y + 1.402 * (V - 128));
-                byte G = (byte)(Y - 0.34414 * (U - 128) - 0.71414 * (V - 128));
-                byte B = (byte)(Y + 1.772 * (U - 128));
-
-                if ((Y | U | V) == 0)
+                for (int y = 0; y < sub.bmHeight; y++)
                 {
-                  dstData[dstbpp * x + 0 + dstLineOffset] = 0; // Blue
-                  dstData[dstbpp * x + 1 + dstLineOffset] = 0; // Green
-                  dstData[dstbpp * x + 2 + dstLineOffset] = 0; // Red
-                  dstData[dstbpp * x + 3 + dstLineOffset] = 0; // Alpha
-                }
-                else
-                {
-                  dstData[dstbpp * x + 0 + dstLineOffset] = R;// B;
-                  dstData[dstbpp * x + 1 + dstLineOffset] = G; //G;
-                  dstData[dstbpp * x + 2 + dstLineOffset] = B; //R;
-                  dstData[dstbpp * x + 3 + dstLineOffset] = 255;
+                  int dstLineOffset = y * bmData.Stride;
+                  int srcLineOffset = y * sub.bmWidthBytes;
+
+                  byte Y = srcData[srcbpp * x + srcLineOffset];
+                  byte U = srcData[srcbpp * x + 1 + srcLineOffset];
+                  byte V = srcData[srcbpp * x + 2 + srcLineOffset];
+
+                  // convert YUV -> RGB
+                  byte R = (byte)(Y + 1.402 * (V - 128));
+                  byte G = (byte)(Y - 0.34414 * (U - 128) - 0.71414 * (V - 128));
+                  byte B = (byte)(Y + 1.772 * (U - 128));
+
+                  if ((Y | U | V) == 0)
+                  {
+                    dstData[dstbpp * x + 0 + dstLineOffset] = 0; // Blue
+                    dstData[dstbpp * x + 1 + dstLineOffset] = 0; // Green
+                    dstData[dstbpp * x + 2 + dstLineOffset] = 0; // Red
+                    dstData[dstbpp * x + 3 + dstLineOffset] = 0; // Alpha
+                  }
+                  else
+                  {
+                    dstData[dstbpp * x + 0 + dstLineOffset] = R;// B;
+                    dstData[dstbpp * x + 1 + dstLineOffset] = G; //G;
+                    dstData[dstbpp * x + 2 + dstLineOffset] = B; //R;
+                    dstData[dstbpp * x + 3 + dstLineOffset] = 255;
+                  }
                 }
               }
-            }
 
-            // copy image data
-            Marshal.Copy(dstData, 0, bmData.Scan0, newSize);
+              // copy image data
+              Marshal.Copy(dstData, 0, bmData.Scan0, newSize);
+
             bitmap.UnlockBits(bmData);
 
-            //bitmap.Save("C:\\sub" + count + ".bmp");
-            //count++;
+              //bitmap.Save("C:\\sub" + count + ".bmp");
+              //count++;
 
-            // replace the current subtitle with the new one
-            SetSubtitle(bitmap);
-
+              // replace the current subtitle with the new one
+             SetSubtitle(bitmap);
+          
             // the texture copies the bitmap, so get rid of it
-            bitmap.Dispose();
+              bitmap.Dispose();
 
           }
           catch (Exception e)
@@ -242,11 +243,24 @@ namespace MediaPortal.Player
     private void SetSubtitle(Bitmap bitmap)
     {
       Log.Debug("Subtitle: SetSubtitle");
-      Texture newTexture = null;
+      Texture texture = null;
       try
       {
         // allocate new texture
-        newTexture = Texture.FromBitmap(GUIGraphicsContext.DX9Device, bitmap, Usage.None, Pool.Managed);
+        texture = new Texture(GUIGraphicsContext.DX9Device, bitmap.Width, bitmap.Height, 1, Usage.Dynamic, Format.A8R8G8B8, Pool.Default);
+        int pitch;
+        Microsoft.DirectX.GraphicsStream a = texture.LockRectangle(0, LockFlags.None, out pitch);
+        System.Drawing.Imaging.BitmapData bd = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+        unsafe
+        {
+          byte* to = (byte*)a.InternalDataPointer;
+          byte* from = (byte*)bd.Scan0.ToPointer();
+          for (int y = 0; y < bd.Height; ++y)
+            for (int x = 0; x < bd.Width * 4; ++x)
+              to[pitch * y + x] = from[y * bd.Stride + x];
+        }
+        texture.UnlockRectangle(0);
+        bitmap.UnlockBits(bd);
       }
       catch (Exception e)
       {
@@ -263,7 +277,7 @@ namespace MediaPortal.Player
           subTexture = null;
         }
         // set new subtitle
-        subTexture = newTexture;
+        subTexture = texture;
       }
 
     }
@@ -393,8 +407,8 @@ namespace MediaPortal.Player
          // Log.Debug("Subtitle render target: wx = {0} wy = {1} ww = {2} wh = {3}", wx, wy, wwidth, wheight);
 
           // enable alpha testing so that the subtitle is rendered with transparent background
-          GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable, false);
-          GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaTestEnable, true);
+          GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable, true);
+          GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaTestEnable, false);
 
           GUIGraphicsContext.DX9Device.SetStreamSource(0, vertexBuffer, 0);
           GUIGraphicsContext.DX9Device.SetTexture(0, subTexture);
