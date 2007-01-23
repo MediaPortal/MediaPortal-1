@@ -177,6 +177,16 @@ namespace MediaPortal.Player
       Paused,
       Ended
     }
+
+    /// <summary>
+    /// States, how the Playback is handled
+    /// </summary>
+    private enum PlayBackType : int
+    {
+      NORMAL = 0,
+      GAPLESS = 1,
+      CROSSFADE = 2
+    }
     #endregion
 
     #region Delegates
@@ -230,6 +240,7 @@ namespace MediaPortal.Player
     private VisualizationManager VizManager = null;
     private bool _CrossFading = false;
     private bool _Mixing = false;
+    private int _playBackType;
 
     private bool _IsFullScreen = false;
     private int _VideoPositionX = 10;
@@ -594,6 +605,35 @@ namespace MediaPortal.Player
             //Console.WriteLine(strStatus);
             break;
           }
+        case Action.ActionType.ACTION_TOGGLE_MUSIC_GAP:
+          {
+            _playBackType++;
+            if (_playBackType > 2)
+              _playBackType = 0;
+
+            VizWindow.SelectedPlaybackType = _playBackType;
+
+            string type = "";
+            switch (_playBackType)
+            {
+              case (int)PlayBackType.NORMAL:
+                _CrossFadeIntervalMS = 0;
+                type = "Normal";
+                break;
+
+              case (int)PlayBackType.GAPLESS:
+                _CrossFadeIntervalMS = 200;
+                type = "Gapless";
+                break;
+
+              case (int)PlayBackType.CROSSFADE:
+                _CrossFadeIntervalMS = _DefaultCrossFadeIntervalMS;
+                type = "Crossfading";
+                break;
+            }
+            Log.Info("BASS: Playback changed to {0}", type);
+            break;
+          }
       }
     }
 
@@ -879,7 +919,20 @@ namespace MediaPortal.Player
         bool doGaplessPlayback = xmlreader.GetValueAsBool("audioplayer", "gaplessPlayback", false);
 
         if (doGaplessPlayback)
+        {
           _CrossFadeIntervalMS = 200;
+          _playBackType = (int)PlayBackType.GAPLESS;
+        }
+        else
+        {
+          if (_CrossFadeIntervalMS == 0)
+          {
+            _playBackType = (int)PlayBackType.NORMAL;
+            _CrossFadeIntervalMS = 0;
+          }
+          else
+            _playBackType = (int)PlayBackType.CROSSFADE;
+        }
 
         _SoftStop = xmlreader.GetValueAsBool("audioplayer", "fadeOnStartStop", true);
 

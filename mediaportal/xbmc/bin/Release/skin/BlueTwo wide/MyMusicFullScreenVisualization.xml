@@ -136,4 +136,34 @@ including the text (the alpha component of textcolor is ignored)
     <height>86</height>
     <texture>logo_stop.png</texture>
   </control>
+  <control>
+    <description>Crossfade Icon</description>
+    <type>image</type>
+    <id>13</id>
+    <posX>94</posX>
+    <posY>620</posY>
+    <width>54</width>
+    <height>54</height>
+    <texture>logo_crossfade.png</texture>
+  </control>
+  <control>
+    <description>Gap Icon</description>
+    <type>image</type>
+    <id>14</id>
+    <posX>94</posX>
+    <posY>620</posY>
+    <width>54</width>
+    <height>54</height>
+    <texture>logo_gap.png</texture>
+  </control>
+  <control>
+    <description>Gapless Icon</description>
+    <type>image</type>
+    <id>15</id>
+    <posX>94</posX>
+    <posY>620</posY>
+    <width>54</width>
+    <height>54</height>
+    <texture>logo_gapless.png</texture>
+  </control>
 </controls>

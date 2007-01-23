@@ -201,6 +201,7 @@
 			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9978" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9978" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="122" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="511" command="ACTION" cmdproperty="9886" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="19" sound="click.wav" />
 		</button>
 	</remote>

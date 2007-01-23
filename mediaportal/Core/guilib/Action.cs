@@ -172,7 +172,8 @@ namespace MediaPortal.GUI.Library
       ACTION_VOLUME_MUTE = 9982,
       ACTION_SHOW_CURRENT_TV_INFO = 9983,
       ACTION_AUTOCROP = 9884,                 // If the AutoCropper is used, request new crop detection          
-      ACTION_TOGGLE_AUTOCROP = 9885           // Switch AutoCropper operating mode: off/auto/on request
+      ACTION_TOGGLE_AUTOCROP = 9885,          // Switch AutoCropper operating mode: off/auto/on request
+      ACTION_TOGGLE_MUSIC_GAP = 9886          // Toggles Music Playback Normal -> Gapless -> Crossfade -> Normal    
     };
     #endregion
 

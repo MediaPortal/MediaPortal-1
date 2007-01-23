@@ -87,6 +87,7 @@ namespace MediaPortal.Visualization
 
     #endregion
 
+    #region enums
     private enum ControlID
     {
       OverlayImage = 1,
@@ -101,7 +102,18 @@ namespace MediaPortal.Visualization
       FFIcon = 10,
       RewIcon = 11,
       StopIcon = 12,
+      CrossfadeIcon = 13,
+      GapIcon = 14,
+      GaplessIcon =15,
     };
+
+    private enum PlayBackType
+    {
+      NORMAL = 0,
+      GAPLESS = 1,
+      CROSSFADE = 2
+    }
+    #endregion
 
     #region Variables
 
@@ -119,6 +131,7 @@ namespace MediaPortal.Visualization
     private int ShowVisualizationFrameCount = 150;
     private const int TrackInfoDisplayMS = 5 * 1000;
     private int ShowTrackInfoFrameCount = 250;
+    private int _playBackType;
 
     private int ShowPlayStateFrameCount = 30;
     private const int PlayStateDisplayMS = 1 * 1000;
@@ -127,6 +140,7 @@ namespace MediaPortal.Visualization
     private bool SeekingFF = false;
     private bool SeekingRew = false;
     private bool NewPlay = false;
+    private bool PlayBackTypeChanged = false;
 
     #region Overlay Image Variables
 
@@ -225,6 +239,42 @@ namespace MediaPortal.Visualization
     private int DefaultStopImageHeight = 0;
     private int DefaultStopImageX = 0;
     private int DefaultStopImageY = 0;
+
+    private string CrossfadeImageName = "logo_crossfade.png";
+    private Image CrossfadeImage = null;
+    private int CrossfadeImageWidth = 54;
+    private int CrossfadeImageHeight = 54;
+    private int CrossfadeImageX = 28;
+    private int CrossfadeImageY = 702;
+
+    private int DefaultCrossfadeImageWidth = 0;
+    private int DefaultCrossfadeImageHeight = 0;
+    private int DefaultCrossfadeImageX = 0;
+    private int DefaultCrossfadeImageY = 0;
+
+    private string GapImageName = "logo_gap.png";
+    private Image GapImage = null;
+    private int GapImageWidth = 54;
+    private int GapImageHeight = 54;
+    private int GapImageX = 28;
+    private int GapImageY = 702;
+
+    private int DefaultGapImageWidth = 0;
+    private int DefaultGapImageHeight = 0;
+    private int DefaultGapImageX = 0;
+    private int DefaultGapImageY = 0;
+
+    private string GaplessImageName = "logo_gapless.png";
+    private Image GaplessImage = null;
+    private int GaplessImageWidth = 54;
+    private int GaplessImageHeight = 54;
+    private int GaplessImageX = 28;
+    private int GaplessImageY = 702;
+
+    private int DefaultGaplessImageWidth = 0;
+    private int DefaultGaplessImageHeight = 0;
+    private int DefaultGaplessImageX = 0;
+    private int DefaultGaplessImageY = 0;
 
     private string MissingCoverArtImageName = "missing_coverart.png";
     private Image MissingCoverArtImage = null;
@@ -402,6 +452,13 @@ namespace MediaPortal.Visualization
       get { return _CoverArtImages; }
     }
 
+    public int SelectedPlaybackType
+    {
+      set { 
+        _playBackType = value;
+        PlayBackTypeChanged = true;
+      }
+    }
     #endregion
 
     public VisualizationWindow()
@@ -448,6 +505,7 @@ namespace MediaPortal.Visualization
                 SeekingRew = false;
                 NewPlay = false;
                 NewTrack = true;
+                PlayBackTypeChanged = false;
               }
             }
 
@@ -461,6 +519,7 @@ namespace MediaPortal.Visualization
             SeekingFF = false;
             SeekingRew = false;
             NewPlay = false;
+            PlayBackTypeChanged = false;
             break;
           }
 
@@ -470,6 +529,7 @@ namespace MediaPortal.Visualization
             SeekingFF = false;
             SeekingRew = false;
             NewPlay = false;
+            PlayBackTypeChanged = false;
             break;
           }
 
@@ -480,6 +540,7 @@ namespace MediaPortal.Visualization
             SeekingFF = false;
             SeekingRew = false;
             NewPlay = true;
+            PlayBackTypeChanged = false;
             break;
           }
 
@@ -490,6 +551,7 @@ namespace MediaPortal.Visualization
             SeekingRew = false;
             SeekingFF = true;
             NewPlay = false;
+            PlayBackTypeChanged = false;
             break;
           }
 
@@ -500,6 +562,7 @@ namespace MediaPortal.Visualization
             SeekingFF = false;
             SeekingRew = true;
             NewPlay = false;
+            PlayBackTypeChanged = false;
             break;
           }
 
@@ -510,30 +573,11 @@ namespace MediaPortal.Visualization
             SeekingFF = false;
             SeekingRew = false;
             NewPlay = true;
+            PlayBackTypeChanged = false;
             break;
           }
       }
     }
-
-    ////void OnAppFormResize(object sender, EventArgs e)
-    ////{
-    ////    FormWindowState curWindowState = GUIGraphicsContext.form.WindowState;
-
-    ////    if (LastWindowState != curWindowState)
-    ////    {
-    ////        if (curWindowState == FormWindowState.Maximized || FullScreen)
-    ////            Size = GUIGraphicsContext.form.ClientSize;
-
-    ////        LastWindowState = curWindowState;
-    ////    }
-
-    ////    // Don't call DoResize unless the window size has really changed
-    ////    if (!NeedsResize())
-    ////        return;
-
-    ////    OldSize = Size;
-    ////    DoResize();
-    ////}
 
     ~VisualizationWindow()
     {
@@ -645,6 +689,9 @@ namespace MediaPortal.Visualization
           case (int)ControlID.FFIcon:
           case (int)ControlID.RewIcon:
           case (int)ControlID.StopIcon:
+          case (int)ControlID.CrossfadeIcon:
+          case (int)ControlID.GapIcon:
+          case (int)ControlID.GaplessIcon:
             LoadPlayStateImage(node, ctrlID);
             break;
         }
@@ -924,6 +971,63 @@ namespace MediaPortal.Visualization
         DefaultStopImageWidth = imgWidth;
         DefaultStopImageHeight = imgHeight;
         StopImage = img;
+      }
+
+      else if (ctrlID == (int)ControlID.CrossfadeIcon)
+      {
+        if (CrossfadeImage != null)
+        {
+          CrossfadeImage.Dispose();
+          CrossfadeImage = null;
+        }
+
+        if (img == null)
+          return;
+
+        CrossfadeImageName = imgName;
+        DefaultCrossfadeImageX = CrossfadeImageX = imgX;
+        DefaultCrossfadeImageY = CrossfadeImageY = imgY;
+        DefaultCrossfadeImageWidth = imgWidth;
+        DefaultCrossfadeImageHeight = imgHeight;
+        CrossfadeImage = img;
+      }
+
+      else if (ctrlID == (int)ControlID.GapIcon)
+      {
+        if (GapImage != null)
+        {
+          GapImage.Dispose();
+          GapImage = null;
+        }
+
+        if (img == null)
+          return;
+
+        GapImageName = imgName;
+        DefaultGapImageX = GapImageX = imgX;
+        DefaultGapImageY = GapImageY = imgY;
+        DefaultGapImageWidth = imgWidth;
+        DefaultGapImageHeight = imgHeight;
+        GapImage = img;
+      }
+
+      else if (ctrlID == (int)ControlID.GaplessIcon)
+      {
+        if (GaplessImage != null)
+        {
+          GaplessImage.Dispose();
+          GaplessImage = null;
+        }
+
+        if (img == null)
+          return;
+
+        GaplessImageName = imgName;
+        DefaultGaplessImageX = GaplessImageX = imgX;
+        DefaultGaplessImageY = GaplessImageY = imgY;
+        DefaultGaplessImageWidth = imgWidth;
+        DefaultGaplessImageHeight = imgHeight;
+        GaplessImage = img;
       }
     }
 
@@ -1286,6 +1390,21 @@ namespace MediaPortal.Visualization
           StopImageX = DefaultStopImageX;
           StopImageY = DefaultStopImageY;
 
+          CrossfadeImageWidth = DefaultCrossfadeImageWidth;
+          CrossfadeImageHeight = DefaultCrossfadeImageHeight;
+          CrossfadeImageX = DefaultCrossfadeImageX;
+          CrossfadeImageY = DefaultCrossfadeImageY;
+
+          GapImageWidth = DefaultGapImageWidth;
+          GapImageHeight = DefaultGapImageHeight;
+          GapImageX = DefaultGapImageX;
+          GapImageY = DefaultGapImageY;
+
+          GaplessImageWidth = DefaultGaplessImageWidth;
+          GaplessImageHeight = DefaultGaplessImageHeight;
+          GaplessImageX = DefaultGaplessImageX;
+          GaplessImageY = DefaultGaplessImageY;
+
           Label1PosX = DefaultLabel1PosX;
           Label1PosY = DefaultLabel1PosY;
 
@@ -1334,6 +1453,21 @@ namespace MediaPortal.Visualization
           GUIGraphicsContext.ScalePosToScreenResolution(ref StopImageWidth, ref StopImageHeight);
           GUIGraphicsContext.ScaleHorizontal(ref StopImageX);
           GUIGraphicsContext.ScaleVertical(ref StopImageY);
+
+          // Crossfade Image
+          GUIGraphicsContext.ScalePosToScreenResolution(ref CrossfadeImageWidth, ref CrossfadeImageHeight);
+          GUIGraphicsContext.ScaleHorizontal(ref CrossfadeImageX);
+          GUIGraphicsContext.ScaleVertical(ref CrossfadeImageY);
+
+          // Gap Image
+          GUIGraphicsContext.ScalePosToScreenResolution(ref GapImageWidth, ref GapImageHeight);
+          GUIGraphicsContext.ScaleHorizontal(ref GapImageX);
+          GUIGraphicsContext.ScaleVertical(ref GapImageY);
+
+          // Gapless Image
+          GUIGraphicsContext.ScalePosToScreenResolution(ref GaplessImageWidth, ref GaplessImageHeight);
+          GUIGraphicsContext.ScaleHorizontal(ref GaplessImageX);
+          GUIGraphicsContext.ScaleVertical(ref GaplessImageY);
 
           // Label1
           GUIGraphicsContext.ScaleHorizontal(ref Label1PosX);
@@ -1997,53 +2131,6 @@ namespace MediaPortal.Visualization
       }
     }
 
-    //private void DrawThumbnailOverlay(Graphics g, float opacity)
-    //{
-    //    try
-    //    {
-    //        if (UpdatingCoverArtImage || UpdatingCoverArtImageList)
-    //            return;
-
-    //        if (CurrentThumbImage == null && _CoverArtImages.Count == 0)
-    //            return;
-
-    //        Rectangle rect = new Rectangle(0, 0, Width, Height);
-    //        SolidBrush fillBrush = new SolidBrush(Color.FromArgb((int)(255f * opacity), Color.Black));
-    //        g.FillRectangle(fillBrush, rect);
-    //        fillBrush.Dispose();
-
-    //        ////int imgHeight = Height;
-    //        ////int imgWidth = imgHeight;
-
-    //        int imgHeight = Height;
-    //        int imgWidth = imgHeight;
-
-    //        if (!_KeepCoverArtAspectRatio)
-    //            imgWidth = Width;
-
-    //        int left = (Width - imgHeight) / 2;
-
-    //        float[][] matrixItems ={ 
-    //           new float[] {1, 0, 0, 0, 0},
-    //           new float[] {0, 1, 0, 0, 0},
-    //           new float[] {0, 0, 1, 0, 0},
-    //           new float[] {0, 0, 0, opacity, 0}, 
-    //           new float[] {0, 0, 0, 0, 1}};
-
-    //        ColorMatrix colorMatrix = new ColorMatrix(matrixItems);
-    //        ImageAttributes imgAttrib = new ImageAttributes();
-    //        imgAttrib.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-
-    //        g.DrawImage(CurrentThumbImage, new Rectangle(left, 0, imgWidth, imgHeight), 0, 0,
-    //            CurrentThumbImage.Width, CurrentThumbImage.Height, GraphicsUnit.Pixel, imgAttrib);
-    //    }
-
-    //    catch (Exception ex)
-    //    {
-    //        Console.WriteLine("DrawThumbnailOverlay caused an exception:{0}", ex);
-    //    }
-    //}
-
     private void DrawThumbnailOverlay(Graphics g, float opacity)
     {
       try
@@ -2163,7 +2250,7 @@ namespace MediaPortal.Visualization
 
       else
       {
-        if (!SeekingFF && !SeekingRew && !NewPlay)
+        if (!SeekingFF && !SeekingRew && !NewPlay && !PlayBackTypeChanged)
           return;
 
         ++CurrentPlayStateFrame;
@@ -2189,6 +2276,7 @@ namespace MediaPortal.Visualization
           SeekingFF = false;
           SeekingRew = false;
           NewPlay = false;
+          PlayBackTypeChanged = false;
           return;
         }
 
@@ -2271,6 +2359,59 @@ namespace MediaPortal.Visualization
 
           else
             DoPlayStateIconFading(g, opacity, RewImage, RewImageX, RewImageY, RewImageWidth, RewImageHeight);
+        }
+        
+        
+        else if (PlayBackTypeChanged)
+        {
+          Image img = null;
+          int imgX = 0;
+          int imgY = 0;
+          int imgWidth = 0;
+          int imgHeight = 0;
+
+          switch (_playBackType)
+          {
+            case (int)PlayBackType.CROSSFADE:
+              {
+                img = CrossfadeImage;
+                imgX = CrossfadeImageX;
+                imgY = CrossfadeImageY;
+                imgWidth = CrossfadeImageWidth;
+                imgHeight = CrossfadeImageHeight;
+                break;
+              }
+            case (int)PlayBackType.GAPLESS:
+              {
+                img = GaplessImage;
+                imgX = GaplessImageX;
+                imgY = GaplessImageY;
+                imgWidth = GaplessImageWidth;
+                imgHeight = GaplessImageHeight;
+                break;
+              }
+            case (int)PlayBackType.NORMAL:
+              {
+                img = GapImage;
+                imgX = GapImageX;
+                imgY = GapImageY;
+                imgWidth = GapImageWidth;
+                imgHeight = GapImageHeight;
+                break;
+              }
+          }
+
+          if (img == null)
+            return;
+
+          if (!doFade)
+          {
+            g.DrawImage(img, new Rectangle(imgX, imgY, imgWidth, imgHeight), 0, 0,
+                img.Width, img.Height, GraphicsUnit.Pixel);
+          }
+
+          else
+            DoPlayStateIconFading(g, opacity, img, imgX, imgY, imgWidth, imgHeight);
         }
       }
     }

@@ -1141,4 +1141,14 @@
       <description>Skip Next</description>
     </action>
   </window>
+  <window>
+    <id>511</id>
+    <description>MyMusic FullScreen</description>
+    <action>
+      <id>9886</id>
+      <key>G</key>
+      <sound />
+      <description>Toggle Gap</description>
+    </action>
+  </window>
 </keymap>
