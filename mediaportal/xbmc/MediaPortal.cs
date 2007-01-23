@@ -1119,7 +1119,10 @@ public class MediaPortalApp : D3DApp, IRender
           Size = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
       }
       else
+      {
         GUIGraphicsContext.Load();
+        GUIWindowManager.OnResize();
+      }
     }    
 
     Log.Info("Main: Initializing windowmanager");
