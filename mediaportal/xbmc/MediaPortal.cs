@@ -1066,57 +1066,47 @@ public class MediaPortalApp : D3DApp, IRender
     GUITextureManager.Dispose();
 
     if (splashScreen != null)
-    {
       splashScreen.SetInformation("Loading keymap.xml...");
-    }
+
     ActionTranslator.Load();
 
     if (splashScreen != null)
-    {
       splashScreen.SetInformation("Loading strings...");
-    }
+
     GUIGraphicsContext.Skin = m_strSkin;
     GUIGraphicsContext.ActiveForm = Handle;
     GUILocalizeStrings.Load(Config.GetFile(Config.Dir.Language, m_strLanguage, "strings.xml"));
 
     if (splashScreen != null)
-    {
       splashScreen.SetInformation("Initialize texture manager...");
-    }
+
     GUITextureManager.Init();
     if (splashScreen != null)
-    {
       splashScreen.SetInformation("Loading fonts...");
-    }
+    
     GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
 
     if (splashScreen != null)
-    {
       splashScreen.SetInformation("Initializing fonts...");
-    }
+    
     GUIFontManager.InitializeDeviceObjects();
 
     if (splashScreen != null)
-    {
       splashScreen.SetInformation("Loading skin...");
-    }
+    
     Log.Info("Main: Loading {0} skin", m_strSkin);
     GUIWindowManager.Initialize();
 
     if (splashScreen != null)
-    {
       splashScreen.SetInformation("Loading window plugins...");
-    }
+    
     PluginManager.LoadWindowPlugins();
 
-
     Log.Info("Main: Loading windowmanager");
-    GUIGraphicsContext.Load();
 
     if (splashScreen != null)
-    {
       splashScreen.SetInformation("Initializing skin...");
-    }
+
     Log.Info("Main: Resizing windowmanager");
     using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
     {
@@ -1127,10 +1117,11 @@ public class MediaPortalApp : D3DApp, IRender
           Size = new Size(GUIGraphicsContext.SkinSize.Width + 8, GUIGraphicsContext.SkinSize.Height + 54);
         else
           Size = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
-        //GUIWindowManager.OnResize();
       }
-    }
-    
+      else
+        GUIGraphicsContext.Load();
+    }    
+
     Log.Info("Main: Initializing windowmanager");
     GUIWindowManager.PreInit();
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
@@ -1141,16 +1132,14 @@ public class MediaPortalApp : D3DApp, IRender
     {
       _startWithBasicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
     }
-    if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml")))
-    {
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
-    }
-    else
-    {
-      GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
-    }
 
+    if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml")))
+      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);    
+    else    
+      GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
+    
     Log.Info("Main: Initialized skin");
+
     if (GUIGraphicsContext.DX9Device != null)
     {
       Log.Info("Main: DX9 size: {0}x{1}", GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth,

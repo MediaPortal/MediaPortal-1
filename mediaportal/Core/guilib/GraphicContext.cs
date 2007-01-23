@@ -286,6 +286,8 @@ namespace MediaPortal.GUI.Library
         int intPixelRatio = (int)pixelRatio;
         xmlWriter.SetValue("screen", "pixelratio", intPixelRatio.ToString());
         xmlWriter.SetValue("screen", "subtitles", m_iSubtitles.ToString());
+
+        Log.Debug("GraphicContext: Settings saved to {0}", strFileName);
       }
     }
 
@@ -310,29 +312,40 @@ namespace MediaPortal.GUI.Library
       else
         strFileName += ".xml";
 
-      Log.Info("  load {0}", strFileName);
+      if (!System.IO.File.Exists(strFileName))
+        Log.Warn("GraphicContext: NO screen calibration file found for resolution {0}x{1}!", Width, Height);
+      else
+        Log.Debug("GraphicContext: Loading settings from {0}", strFileName);
+
       using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(strFileName))
       {
-        m_iOffsetX = xmlReader.GetValueAsInt("screen", "offsetx", 0);
-        m_iOffsetY = xmlReader.GetValueAsInt("screen", "offsety", 0);
+        try
+        {
+          m_iOffsetX = xmlReader.GetValueAsInt("screen", "offsetx", 0);
+          m_iOffsetY = xmlReader.GetValueAsInt("screen", "offsety", 0);
 
-        m_iOSDOffset = xmlReader.GetValueAsInt("screen", "offsetosd", 0);
-        m_iOverScanLeft = xmlReader.GetValueAsInt("screen", "overscanleft", 0);
-        m_iOverScanTop = xmlReader.GetValueAsInt("screen", "overscantop", 0);
-        m_iOverScanWidth = xmlReader.GetValueAsInt("screen", "overscanwidth", Width);
-        m_iOverScanHeight = xmlReader.GetValueAsInt("screen", "overscanheight", Height);
-        m_iSubtitles = xmlReader.GetValueAsInt("screen", "subtitles", Height - 50);
-        int intPixelRation = xmlReader.GetValueAsInt("screen", "pixelratio", 10000);
-        m_fPixelRatio = (float)intPixelRation;
-        m_fPixelRatio /= 10000f;
+          m_iOSDOffset = xmlReader.GetValueAsInt("screen", "offsetosd", 0);
+          m_iOverScanLeft = xmlReader.GetValueAsInt("screen", "overscanleft", 0);
+          m_iOverScanTop = xmlReader.GetValueAsInt("screen", "overscantop", 0);
+          m_iOverScanWidth = xmlReader.GetValueAsInt("screen", "overscanwidth", Width);
+          m_iOverScanHeight = xmlReader.GetValueAsInt("screen", "overscanheight", Height);
+          m_iSubtitles = xmlReader.GetValueAsInt("screen", "subtitles", Height - 50);
+          int intPixelRation = xmlReader.GetValueAsInt("screen", "pixelratio", 10000);
+          m_fPixelRatio = (float)intPixelRation;
+          m_fPixelRatio /= 10000f;
 
-        int intZoomHorizontal = xmlReader.GetValueAsInt("screen", "zoomhorizontal", 10000);
-        m_fZoomHorizontal = (float)intZoomHorizontal;
-        m_fZoomHorizontal /= 10000f;
+          int intZoomHorizontal = xmlReader.GetValueAsInt("screen", "zoomhorizontal", 10000);
+          m_fZoomHorizontal = (float)intZoomHorizontal;
+          m_fZoomHorizontal /= 10000f;
 
-        int intZoomVertical = xmlReader.GetValueAsInt("screen", "zoomvertical", 10000);
-        m_fZoomVertical = (float)intZoomVertical;
-        m_fZoomVertical /= 10000f;
+          int intZoomVertical = xmlReader.GetValueAsInt("screen", "zoomvertical", 10000);
+          m_fZoomVertical = (float)intZoomVertical;
+          m_fZoomVertical /= 10000f;
+        }
+        catch (Exception ex)
+        {
+          Log.Error("GraphicContext: Error loading settings from {0} - {1}", strFileName, ex.Message);
+        }
       }
 
       using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -343,6 +356,8 @@ namespace MediaPortal.GUI.Library
         m_iScrollSpeedHorizontal = xmlReader.GetValueAsInt("general", "scrollspeedhorizontal", 8);
         m_bAnimations = xmlReader.GetValueAsBool("general", "animations", true);
         turnOffMonitor = xmlReader.GetValueAsBool("general", "turnoffmonitor", false);
+
+        Log.Info("GraphicContext: MP will render at {0} FPS, use animations={1}", m_iMaxFPS, Convert.ToString(m_bAnimations));
       }
     }
 

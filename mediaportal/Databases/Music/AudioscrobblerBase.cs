@@ -1187,7 +1187,7 @@ namespace MediaPortal.Music.Database
                   break;
               if (failSafe > 500)
               {
-                Log.Error("*****AudioscrobblerBase: Possible race condition cleaning string: {0}", urlString);
+                Log.Error("*****AudioscrobblerBase: Possible race condition cleaning string - {0}", urlString);
                 return String.Empty;
               }
             }
@@ -1199,7 +1199,7 @@ namespace MediaPortal.Music.Database
         }
         catch (Exception ex)
         {
-          Log.Error("Audioscrobber: Error while building valid url string {0}", ex.Message);
+          Log.Error("AudioscrobblerBase: Error while building valid url string - {0}", ex.Message);
           return urlString;
         }
         return outString;
