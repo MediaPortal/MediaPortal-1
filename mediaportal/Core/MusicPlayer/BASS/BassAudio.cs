@@ -706,8 +706,6 @@ namespace MediaPortal.Player
       try
       {
         Log.Info("BASS: Initializing BASS audio engine...");
-        // We need to clone the stream for visualisation
-        _streamcopy = new DSP_StreamCopy();
         bool initOK = false;
         if (_useASIO)
         {
@@ -997,7 +995,7 @@ namespace MediaPortal.Player
 
       // In case od ASIO return the clone of the stream, because for a decoding channel, we can't get data from the original stream
       if (_useASIO)
-        return _streamcopy.DSPHandle;
+        return _streamcopy.StreamCopy;
 
       if (_Mixing)
       {
@@ -1471,13 +1469,18 @@ namespace MediaPortal.Player
           else if (_useASIO)
           {
             // In order to provide data for visualisation we need to clone the stream
+            _streamcopy = new DSP_StreamCopy();
             _streamcopy.ChannelHandle = stream;
+            _streamcopy.StreamDevice = 0;                            // Use the No output device to prevent playback of the cloned stream.
+            _streamcopy.StreamFlags = BASSStream.BASS_STREAM_DECODE; // decode the channel, so that we have a Streamcopy
+
             // assign ASIO and assume the ASIO format, samplerate and number of channels from the BASS stream
             _asioHandler = new BassAsioHandler(false, _asioDeviceNumber, 0, _asioNumberChannels, BASSASIOFormat.BASS_ASIO_FORMAT_FLOAT, -1);
             _asioHandler.BassChannel = stream;
             _asioHandler.Volume = (double)_StreamVolume / 100.00;
             _asioHandler.Pan = _asioBalance;
             BassAsio.BASS_ASIO_Stop();
+            _streamcopy.Start();   // start the cloned stream
             playbackStarted = BassAsio.BASS_ASIO_Start(0);
           }
           else
