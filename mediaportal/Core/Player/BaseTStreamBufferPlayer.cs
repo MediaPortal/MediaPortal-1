@@ -439,13 +439,14 @@ namespace MediaPortal.Player
         {
           Log.Info("BaseTSStreamBufferPlayer: stop FFWD since end of timeshiftbuffer reached");
           Speed = 1;
-          SeekAsolutePercentage(99);
+          UpdateDuration();
+          SeekAbsolute(Duration);
         }
         if (Speed < 0 && CurrentPosition < 5d)
         {
           Log.Info("BaseTSStreamBufferPlayer: stop RWD since begin of timeshiftbuffer reached");
           Speed = 1;
-          SeekAsolutePercentage(0);
+          SeekAbsolute(0d);
         }/*
 				if (Speed<0 && CurrentPosition > _lastPosition)
 				{
