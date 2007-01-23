@@ -3494,6 +3494,18 @@
         <value>Importiere Titel</value>
     </string>
     <string>
+        <id>1110</id>
+        <value>Verzichte auf diese neue Aufnahme</value>
+    </string>
+    <string>
+        <id>1111</id>
+        <value>Verzichte auf überschneidende Aufnahme(n)</value>
+    </string>
+    <string>
+        <id>1112</id>
+        <value>Ignoriere Überschneidung</value>
+    </string>    
+    <string>
         <id>1190</id>
         <value>Zoom 14:9</value>
     </string>
