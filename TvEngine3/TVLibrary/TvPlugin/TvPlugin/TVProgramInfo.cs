@@ -118,8 +118,10 @@ namespace TvPlugin
       }
     }
 
-    void UpdateProgramDescription(Schedule rec)
+    void UpdateProgramDescription(Schedule rec, Program program)
     {
+      if (program == null) return;
+      /*
       if (rec == null) return;
       IList progs = new ArrayList();
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -146,7 +148,16 @@ namespace TvPlugin
         lblProgramTime.Label = strTime;
         lblProgramDescription.Label = currentProgram.Description;
         lblProgramTitle.Label = currentProgram.Title;
-      }
+      }*/
+      string strTime = String.Format("{0} {1} - {2}",
+        Utils.GetShortDayString(program.StartTime),
+        program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+        program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+
+      lblProgramGenre.Label = program.Genre;
+      lblProgramTime.Label = strTime;
+      lblProgramDescription.Label = program.Description;
+      lblProgramTitle.Label = program.Title;
     }
 
     void Update()
@@ -219,6 +230,7 @@ namespace TvPlugin
         string logo = Utils.GetCoverArt(Thumbs.TVChannel, episode.ReferencedChannel().Name);
         if (!System.IO.File.Exists(logo))
         {
+          item.Label = String.Format("{0} {1}", episode.ReferencedChannel().Name,episode.Title);
           logo = "defaultVideoBig.png";
         }
         Schedule recordingSchedule;
@@ -662,7 +674,7 @@ namespace TvPlugin
 
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
-      UpdateProgramDescription(item.TVTag as Schedule);
+      UpdateProgramDescription(item.TVTag as Schedule, item.MusicTag as Program);
     }
   }
 }

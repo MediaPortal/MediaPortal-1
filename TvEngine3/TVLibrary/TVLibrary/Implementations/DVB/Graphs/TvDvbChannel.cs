@@ -465,6 +465,11 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void Decompose()
     {
+      if (_graphState == GraphState.Recording)
+        StopRecord();
+      if (_graphState == GraphState.TimeShifting)
+        StopTimeshifting();
+
       _pmtTimer.Enabled = false;
       _graphRunning = false;
       if (_teletextDecoder != null)
@@ -553,19 +558,40 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public void StopRecord()
     {
-
-      Log.Log.WriteFile("dvb:StopRecord()");
-
-      if (_filterTsWriter != null)
+      if (_graphState == GraphState.Recording)
       {
-        ITsRecorder record = _interfaceTsChannel as ITsRecorder;
-        record.StopRecord();
-        _graphState = GraphState.TimeShifting;
+        Log.Log.WriteFile("dvb:StopRecord()");
 
+        if (_filterTsWriter != null)
+        {
+          ITsRecorder record = _interfaceTsChannel as ITsRecorder;
+          record.StopRecord();
+          _graphState = GraphState.TimeShifting;
+        }
       }
       _startRecording = false;
       _recordTransportStream = false;
       _recordingFileName = "";
+    }
+
+    /// <summary>
+    /// Stop recording
+    /// </summary>
+    /// <returns></returns>
+    public void StopTimeshifting()
+    {
+      if (_graphState == GraphState.TimeShifting)
+      {
+        Log.Log.WriteFile("dvb:StopTimeshifting()");
+        if (_filterTsWriter != null)
+        {
+          ITsTimeShift timeshift = _interfaceTsChannel as ITsTimeShift;
+          timeshift.Stop();
+        }
+        _graphState = GraphState.Created;
+      }
+      _startTimeShifting = false;
+      _timeshiftFileName = "";
     }
     #endregion
 

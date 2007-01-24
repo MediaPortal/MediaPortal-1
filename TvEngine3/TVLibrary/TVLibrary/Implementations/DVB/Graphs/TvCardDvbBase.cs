@@ -137,6 +137,8 @@ namespace TvLibrary.Implementations.DVB
     protected ITsEpgScanner _interfaceEpgGrabber;
     protected ITsChannelScan _interfaceChannelScan;
     protected TvDvbChannel _channelManager=null;
+    protected int _subChannelId = 0;
+    protected Dictionary<int, TvDvbChannel> _mapSubChannels;
     #endregion
 
     #endregion
@@ -149,6 +151,47 @@ namespace TvLibrary.Implementations.DVB
     {
       _lastSignalUpdate = DateTime.MinValue;
       _channelManager = new TvDvbChannel();
+      _mapSubChannels = new Dictionary<int, TvDvbChannel>();
+    }
+    #endregion
+    #region subchannel management
+    /// <summary>
+    /// Allocates a new instance of TvDvbChannel which handles the new subchannel
+    /// </summary>
+    /// <returns>handle for to the subchannel</returns>
+    int GetNewSubChannel()
+    {
+      int id = _subChannelId++;
+      TvDvbChannel subChannel = new TvDvbChannel(_graphBuilder, ref _conditionalAccess, _mdapiFilter, _filterTIF, _filterTsWriter);
+      _mapSubChannels[id] = subChannel;
+      return id;
+    }
+
+    /// <summary>
+    /// Frees the sub channel.
+    /// </summary>
+    /// <param name="id">Handle to the subchannel.</param>
+    void FreeSubChannel(int id)
+    {
+      if (_mapSubChannels.ContainsKey(id))
+      {
+        _mapSubChannels[id].Decompose();
+        _mapSubChannels.Remove(id);
+      }
+    }
+
+    /// <summary>
+    /// Frees all sub channels.
+    /// </summary>
+    void FreeAllSubChannels()
+    {
+      Dictionary<int, TvDvbChannel>.Enumerator en= _mapSubChannels.GetEnumerator();
+      while (en.MoveNext())
+      {
+        en.Current.Value.Decompose();
+      }
+      _mapSubChannels.Clear();
+      _subChannelId = 0;
     }
     #endregion
 
@@ -1669,11 +1712,9 @@ namespace TvLibrary.Implementations.DVB
           throw new TvException("StartTimeShifting not tuned to a channel but to a transponder");
         }
 
-        //RunGraph();
-        //Tune(Channel);
         if (_graphState == GraphState.Created)
         {
-          SetTimeShiftFileName(fileName);
+          _channelManager.SetTimeShiftFileName(fileName);
         }
         _graphState = GraphState.TimeShifting;
         return true;
@@ -1769,14 +1810,6 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    /// <summary>
-    /// Sets the name of the time shift file.
-    /// </summary>
-    /// <param name="fileName">Name of the file.</param>
-    protected void SetTimeShiftFileName(string fileName)
-    {
-      _channelManager.SetTimeShiftFileName(fileName);
-    }
 
     /// <summary>
     /// Starts recording
