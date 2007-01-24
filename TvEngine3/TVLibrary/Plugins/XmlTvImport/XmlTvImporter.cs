@@ -36,6 +36,7 @@ namespace TvEngine
     bool _workerThreadRunning = false;
     System.Timers.Timer _timer1;
     #endregion
+
     #region properties
     /// <summary>
     /// returns the name of the plugin
@@ -152,6 +153,7 @@ namespace TvEngine
         StartImportXML();
       }
     }
+
     protected void StartImportXML()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -172,6 +174,7 @@ namespace TvEngine
         Log.Error(@"plugin:xmltv StartImportXML - Exception " + fileName);
         return;
       }
+
       if (!_workerThreadRunning)
       {
         _workerThreadRunning = true;

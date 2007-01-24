@@ -92,7 +92,7 @@ namespace SetupTv.Sections
     #endregion
 
     public TvMovieSetup()
-      : this("TV Movie Clickfinder Import")
+      : this("TV Movie Clickfinder EPG import")
     {
     }
 
@@ -158,7 +158,7 @@ namespace SetupTv.Sections
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       checkBoxEnableImport.Checked = layer.GetSetting("TvMovieEnabled", "false").Value == "true";
-      checkBoxUseDatabaseDate.Checked = layer.GetSetting("TvMovieUseDatabaseDate", "false").Value == "true";
+      checkBoxUseDatabaseDate.Checked = layer.GetSetting("TvMovieUseDatabaseDate", "true").Value == "true";
       checkBoxUseShortDesc.Checked = layer.GetSetting("TvMovieShortProgramDesc", "false").Value == "true";
       checkBoxAdditionalInfo.Checked = layer.GetSetting("TvMovieExtendDescription", "false").Value == "true";
       checkBoxShowAudioFormat.Checked = layer.GetSetting("TvMovieShowAudioFormat", "false").Value == "true";
@@ -296,42 +296,53 @@ namespace SetupTv.Sections
           childNode.Remove();
       }
 
-      IList mappingDb = TvMovieMapping.ListAll();
-
-      foreach (TvMovieMapping mapping in mappingDb)
+      try
       {
-        string channelName = Channel.Retrieve(mapping.IdChannel).Name;
-        TreeNode channelNode = FindChannel(channelName);
-        if (channelNode != null)
+        IList mappingDb = TvMovieMapping.ListAll();
+        if (mappingDb != null && mappingDb.Count > 0)
         {
-          string stationName = mapping.StationName;
-          if (FindStation(stationName) != null)
+          foreach (TvMovieMapping mapping in mappingDb)
           {
-            TreeNode stationNode = (TreeNode)FindStation(stationName).Clone();
-            ChannelInfo channelInfo = new ChannelInfo();
-            if (stationNode != null)
+            string channelName = Channel.Retrieve(mapping.IdChannel).Name;
+            TreeNode channelNode = FindChannel(channelName);
+            if (channelNode != null)
             {
-              string start = mapping.TimeSharingStart;
-              string end = mapping.TimeSharingEnd;
+              string stationName = mapping.StationName;
+              if (FindStation(stationName) != null)
+              {
+                TreeNode stationNode = (TreeNode)FindStation(stationName).Clone();
+                ChannelInfo channelInfo = new ChannelInfo();
+                if (stationNode != null)
+                {
+                  string start = mapping.TimeSharingStart;
+                  string end = mapping.TimeSharingEnd;
 
-              if (start != "00:00" || end != "00:00")
-                stationNode.Text = string.Format("{0} ({1}-{2})", stationName, start, end);
+                  if (start != "00:00" || end != "00:00")
+                    stationNode.Text = string.Format("{0} ({1}-{2})", stationName, start, end);
+                  else
+                    stationNode.Text = string.Format("{0}", stationName);
+
+                  channelInfo.Start = start;
+                  channelInfo.End = end;
+                  channelInfo.Name = stationName;
+
+                  stationNode.Tag = channelInfo;
+
+                  channelNode.Nodes.Add(stationNode);
+                  channelNode.Expand();
+                }
+              }
               else
-                stationNode.Text = string.Format("{0}", stationName);
-
-              channelInfo.Start = start;
-              channelInfo.End = end;
-              channelInfo.Name = stationName;
-
-              stationNode.Tag = channelInfo;
-
-              channelNode.Nodes.Add(stationNode);
-              channelNode.Expand();
+                Log.Debug("TVMovie plugin: Channel {0} no longer present in Database - ignoring", stationName);
             }
           }
-          else
-            Log.Debug("TVMovie plugin: Channel {0} no longer present in Database - ignoring", stationName);
         }
+        else
+          Log.Debug("TVMovie plugin: LoadMapping failed - no TV channels found!");
+      }
+      catch (Exception ex)
+      {
+        Log.Debug("TVMovie plugin: LoadMapping failed - {0},{1}", ex.Message, ex.StackTrace);
       }
       ColorTree();
       treeViewChannels.EndUpdate();
@@ -479,13 +490,36 @@ namespace SetupTv.Sections
         try
         {
           LoadStations();
-          TvMovieSql.CheckDatabase();
+        }
+        catch (Exception ex1)
+        {
+          MessageBox.Show(this, "Please make sure a supported TV Movie Clickfinder release has been successfully installed.", "Error loading TV Movie stations", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          checkBoxEnableImport.Checked = false;
+          Log.Debug("TVMovie plugin: Error enabling TV Movie import in LoadStations() - {0},{1}", ex1.Message, ex1.StackTrace);
+          return;
+        }
+
+        //try
+        //{
+        //  TvMovieSql.CheckDatabase();
+        //}
+        //catch (Exception)
+        //{
+        //  MessageBox.Show(this, "Please make sure TV Movie Clickfinder has been installed and licensed locally.", "Error loading TV Movie database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //  checkBoxEnableImport.Checked = false;
+        //  return;
+        //}
+
+        try
+        {
           LoadMapping();
         }
-        catch (Exception)
+        catch (Exception ex2)
         {
-          MessageBox.Show(this, "Please make sure TV Movie Clickfinder has been installed and licensed locally.", "Error loading TV Movie database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show(this, "Please make sure your using a valid channel mapping.", "Error loading TVM <-> MP channel mapping", MessageBoxButtons.OK, MessageBoxIcon.Error);
           checkBoxEnableImport.Checked = false;
+          Log.Debug("TVMovie plugin: Error enabling TV Movie import in LoadMapping() - {0},{1}", ex2.Message, ex2.StackTrace);
+          return;
         }
       }
       else

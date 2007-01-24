@@ -238,6 +238,19 @@ CREATE TABLE Schedule(
 )
 ) 
 
+CREATE TABLE TvMovieMapping(
+	idMapping int IDENTITY(1,1) NOT NULL,
+	idChannel int NOT NULL,
+	stationName varchar(200) NOT NULL,
+	timeSharingStart varchar(200) NOT NULL,
+	timeSharingEnd varchar(200) NOT NULL
+ CONSTRAINT PK_TvMovieMapping PRIMARY KEY  
+(
+	idMapping ASC
+)
+) 
+GO
+
 GO
 ALTER TABLE Favorite  WITH CHECK ADD  CONSTRAINT FK_Favorites_Programs FOREIGN KEY(idProgram)
 REFERENCES Program (idProgram)
@@ -299,6 +312,14 @@ REFERENCES Channel (idChannel)
 GO
 ALTER TABLE Schedule CHECK CONSTRAINT FK_Schedule_Channel
 GO
+ALTER TABLE TvMovieMapping  WITH CHECK ADD  CONSTRAINT FK_TvMovieMapping_Channel FOREIGN KEY(idChannel)
+REFERENCES Channel (idChannel)
+GO
+ALTER TABLE TvMovieMapping CHECK CONSTRAINT FK_TvMovieMapping_Channel
+GO
+
+
+
 ---- create indexes -----
 GO
 CREATE STATISTICS _dta_stat_645577338_4_3 ON Program(endTime, startTime)

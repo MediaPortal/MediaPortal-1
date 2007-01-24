@@ -1356,6 +1356,7 @@ namespace TvService
         return;
       }
     }
+
     /// <summary>
     /// Returns the SQl connection string to the database
     /// </summary>
@@ -1384,6 +1385,7 @@ namespace TvService
         Log.Write(ex);
       }
     }
+
     public void SetDatabaseConnectionString(string connectionString, string provider)
     {
       try
@@ -1415,6 +1417,7 @@ namespace TvService
         return;
       }
     }
+
     /// <summary>
     /// Gets a value indicating whether all cards are idle.
     /// </summary>

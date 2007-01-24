@@ -91,7 +91,6 @@ namespace TvEngine
 
     public XMLTVImport(int backgroundDelay)
     {
-
       _backgroundDelay = backgroundDelay;
     }
 
@@ -104,6 +103,7 @@ namespace TvEngine
     {
       get { return _status; }
     }
+
     public bool Import(string fileName, bool showProgress)
     {
       Dictionary<int, DateTime> lastProgramForChannel = new Dictionary<int, DateTime>();

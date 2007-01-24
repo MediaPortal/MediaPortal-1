@@ -149,8 +149,7 @@ namespace TvDatabase
 		}
 
 		#endregion
-
-
+    
 		#region Relations
 		/// <summary>
 		///

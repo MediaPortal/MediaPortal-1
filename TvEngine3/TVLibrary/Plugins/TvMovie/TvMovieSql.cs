@@ -43,89 +43,90 @@ namespace TvEngine
 
     private static void LoadConnectionString(bool lookupMachineName)
     {
-      try
-      {
-        XmlDocument doc = new XmlDocument();
-        string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-        doc.Load(fname);
-        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-        XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
-        string text = node.InnerText;
-        string[] parts = text.Split(';');
-        for (int i = 0; i < parts.Length; ++i)
-        {
-          string part = parts[i];
-          string[] keyValue = part.Split('=');
-          if (keyValue[0].ToLower() == "password")
-          {
-            _password = keyValue[1];
-          }
-          if (keyValue[0].ToLower() == "user id")
-          {
-            _userId = keyValue[1];
-          }
-          if (keyValue[0].ToLower() == "data source")
-          {
-            if (keyValue[1].Length == 0 || keyValue[1] == "-")
-            {
-              if (lookupMachineName)
-              {
-                keyValue[1] = Dns.GetHostName() + @"\SQLEXPRESS";
-              }
-            }
-            _server = keyValue[1];
-          }
-        }
-      }
-      catch (Exception)
-      {
-        Log.Error("TVMovie: gentle.config not found");
-      }
+      
+      //try
+      //{
+      //  XmlDocument doc = new XmlDocument();
+      //  string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+      //  doc.Load(fname);
+      //  XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
+      //  XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
+      //  string text = node.InnerText;
+      //  string[] parts = text.Split(';');
+      //  for (int i = 0; i < parts.Length; ++i)
+      //  {
+      //    string part = parts[i];
+      //    string[] keyValue = part.Split('=');
+      //    if (keyValue[0].ToLower() == "password")
+      //    {
+      //      _password = keyValue[1];
+      //    }
+      //    if (keyValue[0].ToLower() == "user id")
+      //    {
+      //      _userId = keyValue[1];
+      //    }
+      //    if (keyValue[0].ToLower() == "data source")
+      //    {
+      //      if (keyValue[1].Length == 0 || keyValue[1] == "-")
+      //      {
+      //        if (lookupMachineName)
+      //        {
+      //          keyValue[1] = Dns.GetHostName() + @"\SQLEXPRESS";
+      //        }
+      //      }
+      //      _server = keyValue[1];
+      //    }
+      //  }
+      //}
+      //catch (Exception)
+      //{
+      //  Log.Error("TVMovie: gentle.config not found");
+      //}
     }
 
     private static void RunSqlCheckQuery()
     {
       try
       {
-        Assembly assm = Assembly.GetExecutingAssembly();
-        string[] names = assm.GetManifestResourceNames();
-        Stream stream = assm.GetManifestResourceStream("TvMovie.TvMovieSql.sql");
-        StreamReader reader = new StreamReader(stream);
-        string sql = reader.ReadToEnd();
-        string connectionString = String.Format("Provider=SQLOLEDB.1;Password={0};Persist Security Info=True;User ID={1};Initial Catalog=master;Data Source={2}",
-                _password, _userId, _server);
-        string currentDir = System.IO.Directory.GetCurrentDirectory();
-        currentDir += @"\";
-        sql = sql.Replace(@"C:\Program Files\Microsoft SQL Server\MSSQL\data\", currentDir);
-        sql = sql.Replace("GO\r\n", "!");
-        sql = sql.Replace("\r\n", " ");
-        sql = sql.Replace("\t", " ");
-        string[] cmds = sql.Split('!');
+        //Assembly assm = Assembly.GetExecutingAssembly();
+        //string[] names = assm.GetManifestResourceNames();
+        //Stream stream = assm.GetManifestResourceStream("TvMovie.TvMovieSql.sql");
+        //StreamReader reader = new StreamReader(stream);
+        //string sql = reader.ReadToEnd();
+        //string connectionString = String.Format("Provider=SQLOLEDB.1;Password={0};Persist Security Info=True;User ID={1};Initial Catalog=master;Data Source={2}",
+        //        _password, _userId, _server);
+        //string currentDir = System.IO.Directory.GetCurrentDirectory();
+        //currentDir += @"\";
+        //sql = sql.Replace(@"C:\Program Files\Microsoft SQL Server\MSSQL\data\", currentDir);
+        //sql = sql.Replace("GO\r\n", "!");
+        //sql = sql.Replace("\r\n", " ");
+        //sql = sql.Replace("\t", " ");
+        //string[] cmds = sql.Split('!');
 
-        connectionString = String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog=master;Data Source={2}",
-                _password, _userId, _server);
-        using (SqlConnection connect = new SqlConnection(connectionString))
-        {
-          connect.Open();
-          for (int i = 0; i < cmds.Length; ++i)
-          {
-            cmds[i] = cmds[i].Trim();
-            if (cmds[i].Length > 0)
-            {
-              SqlCommand cmd = connect.CreateCommand();
-              cmd.CommandText = cmds[i];
-              cmd.CommandType = CommandType.Text;
-              //TvLibrary.Log.Log.Write("sql:{0}", cmds[i]);
-              cmd.ExecuteNonQuery();
-            }
-          }
-        }
+        //connectionString = String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog=master;Data Source={2}",
+        //        _password, _userId, _server);
+        //using (SqlConnection connect = new SqlConnection(connectionString))
+        //{
+        //  connect.Open();
+        //  for (int i = 0; i < cmds.Length; ++i)
+        //  {
+        //    cmds[i] = cmds[i].Trim();
+        //    if (cmds[i].Length > 0)
+        //    {
+        //      SqlCommand cmd = connect.CreateCommand();
+        //      cmd.CommandText = cmds[i];
+        //      cmd.CommandType = CommandType.Text;
+        //      //TvLibrary.Log.Log.Write("sql:{0}", cmds[i]);
+        //      cmd.ExecuteNonQuery();
+        //    }
+        //  }
+        //}
       }
       catch (Exception ex)
       {
         Log.Error(string.Format("TVMovie: Unable to create database - {0}", ex.Message));
       }
-      SqlConnection.ClearAllPools();
+      //SqlConnection.ClearAllPools();
     }
 
     public static void CheckDatabase()
