@@ -1,8 +1,8 @@
 #region Copyright (C) 2005-2007 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2007 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2005-2007 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -377,6 +377,13 @@ namespace MediaPortal.GUI.Video
           break;
 
         case GUIMessage.MessageType.GUI_MSG_SHOW_DIRECTORY:
+          // Make sure file view is the current window
+          if (VideoState.StartWindow != GetID)
+          {
+            VideoState.StartWindow = GetID;
+            GUIVideoFiles.Reset();
+            GUIWindowManager.ReplaceWindow(GetID);
+          } 
           _currentFolder = message.Label;
           LoadDirectory(_currentFolder);
           break;
