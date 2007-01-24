@@ -243,7 +243,7 @@ CREATE TABLE TvMovieMapping(
 	idChannel int NOT NULL,
 	stationName varchar(200) NOT NULL,
 	timeSharingStart varchar(200) NOT NULL,
-	timeSharingEnd varchar(200) NOT NULL
+	timeSharingEnd varchar(200) NOT NULL,
  CONSTRAINT PK_TvMovieMapping PRIMARY KEY  
 (
 	idMapping ASC

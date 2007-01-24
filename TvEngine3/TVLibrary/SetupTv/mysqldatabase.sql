@@ -360,6 +360,23 @@ CREATE TABLE `tuningdetail` (
   KEY `IDX_TuningDetail1` (`idChannel`)
 ) ENGINE=MyISAM AUTO_INCREMENT=396 DEFAULT CHARSET=latin1;
 #
+
+--
+-- Definition of table `TvMovieMapping`
+--
+
+DROP TABLE IF EXISTS `TvMovieMapping`;
+CREATE TABLE `TvMovieMapping`(
+	`idMapping` int(11) NOT NULL,
+	`idChannel` int(11) NOT NULL,
+	`stationName` varchar(200) NOT NULL,
+	`timeSharingStart` varchar(200) NOT NULL,
+	`timeSharingEnd` varchar(200) NOT NULL,
+  PRIMARY KEY  (`idMapping`),
+  KEY `FK_TvMovieMapping_Channel` (`idChannel`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+#
+
 --
 -- Definition of table `version`
 --

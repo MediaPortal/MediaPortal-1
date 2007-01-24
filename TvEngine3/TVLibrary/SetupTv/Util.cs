@@ -42,7 +42,6 @@ using Microsoft.Win32;
 
 namespace SetupTv
 {
-
   /// <summary>
   /// 
   /// </summary>
@@ -98,6 +97,7 @@ namespace SetupTv
     private Utils()
     {
     }
+
     static public string GetDriveSerial(string drive)
     {
       if (drive == null) return String.Empty;
@@ -118,6 +118,7 @@ namespace SetupTv
       }
       else return "";
     }
+
     static public string GetDriveName(string drive)
     {
       if (drive == null) return String.Empty;
@@ -138,6 +139,7 @@ namespace SetupTv
       }
       else return "";
     }
+
     static public int getDriveType(string drive)
     {
       if (drive == null) return 2;
@@ -148,6 +150,7 @@ namespace SetupTv
       if ((GetDriveType(drive) & 6) == 6) return 6;//ram disk
       return 0;
     }
+
     static public long GetDiskSize(string drive)
     {
       long diskSize = 0;
@@ -248,6 +251,7 @@ namespace SetupTv
       string stripped = Regex.Replace(strHTML, @"<(.|\n)*?>", string.Empty);
       return stripped.Trim();
     }
+
     static public bool IsNetwork(string strPath)
     {
       if (strPath == null) return false;
@@ -302,6 +306,7 @@ namespace SetupTv
       strLabel = GetDriveName(strDrive);
       return true;
     }
+
     static public bool ShouldStack(string strFile1, string strFile2)
     {
       if (strFile1 == null) return false;
@@ -346,7 +351,6 @@ namespace SetupTv
 
     static public void RemoveStackEndings(ref string strFileName)
     {
-
       if (strFileName == null) return;
       string[] pattern = {"\\[[0-9]{1,2}-[0-9]{1,2}\\]",
 													 "[-_ ](CD|cd|DISC|disc)[-_ ]{0,1}[0-9]{1,2}"};
@@ -359,8 +363,7 @@ namespace SetupTv
         }
       }
     }
-
-
+    
     static public void Split(string strFileNameAndPath, out string strPath, out string strFileName)
     {
       strFileName = "";
@@ -425,17 +428,24 @@ namespace SetupTv
     {
       mciSendString("set cdaudio door open", null, 0, IntPtr.Zero);
     }
-static public DateTime longtodate(long ldate)
+
+    static public DateTime longtodate(long ldate)
     {
       try
       {
-        if (ldate < 0) return DateTime.MinValue;
+        if (ldate < 0)
+          return DateTime.MinValue;
         int year, month, day, hour, minute, sec;
-        sec = (int)(ldate % 100L); ldate /= 100L;
-        minute = (int)(ldate % 100L); ldate /= 100L;
-        hour = (int)(ldate % 100L); ldate /= 100L;
-        day = (int)(ldate % 100L); ldate /= 100L;
-        month = (int)(ldate % 100L); ldate /= 100L;
+        sec = (int)(ldate % 100L);
+        ldate /= 100L;
+        minute = (int)(ldate % 100L);
+        ldate /= 100L;
+        hour = (int)(ldate % 100L);
+        ldate /= 100L;
+        day = (int)(ldate % 100L);
+        ldate /= 100L;
+        month = (int)(ldate % 100L);
+        ldate /= 100L;
         year = (int)ldate;
         DateTime dt = new DateTime(year, month, day, hour, minute, 0, 0);
         return dt;
@@ -516,6 +526,7 @@ static public DateTime longtodate(long ldate)
       }
       return false;
     }
+
     static public bool DirectoryDelete(string strDir)
     {
       if (strDir == null) return false;
@@ -530,7 +541,6 @@ static public DateTime longtodate(long ldate)
       }
       return false;
     }
-
 
     static public string RemoveTrailingSlash(string strLine)
     {
@@ -547,6 +557,7 @@ static public DateTime longtodate(long ldate)
       }
       return strPath;
     }
+
     static public void RGB2YUV(int R, int G, int B, out int Y, out int U, out int V)
     {
       Y = (int)(((float)R) * 0.257f + ((float)G) * 0.504f + ((float)B) * 0.098f + 16.0f);
@@ -556,6 +567,7 @@ static public DateTime longtodate(long ldate)
       U = U & 0xff;
       V = V & 0xff;
     }
+
     static public void RGB2YUV(int iRGB, out int YUV)
     {
       int Y, U, V;
@@ -566,6 +578,7 @@ static public DateTime longtodate(long ldate)
 
       YUV = Y + U + V;
     }
+
     static public string FilterFileName(string strName)
     {
       if (strName == null) return String.Empty;
@@ -699,6 +712,7 @@ static public DateTime longtodate(long ldate)
     {
       return ReplaceTag(line, tag, value, string.Empty);
     }
+
     public static ulong GetFreeDiskSpace(string drive)
     {
       ulong freeBytesAvailable = 0;
