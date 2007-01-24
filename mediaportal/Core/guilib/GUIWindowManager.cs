@@ -595,6 +595,7 @@ namespace MediaPortal.GUI.Library
             {
               newWindow = _listWindows[i];
               newWindowIndex = i;
+              break; // Optimize -- DalaNorth
             }
             catch (Exception ex)
             {
