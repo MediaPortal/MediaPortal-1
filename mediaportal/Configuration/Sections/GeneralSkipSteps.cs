@@ -64,8 +64,12 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxTimeout;
     private MediaPortal.UserInterface.Controls.MPLabel labelSkipTimeout;
     private MediaPortal.UserInterface.Controls.MPNumericUpDown numericUpDownSkipTimeout;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxManualSkipSteps;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private Label labelError;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPageSteps;
-
+    private SortedList _stepList = new SortedList();
+    const string DEFAULT_SETTING = "15,30,60,180,300,600,900,1800,3600,7200";
 
     public GeneralSkipSteps()
       : this("Skip steps")
@@ -89,35 +93,17 @@ namespace MediaPortal.Configuration.Sections
       {
         try
         {
-          regValue = xmlreader.GetValueAsString("movieplayer", "skipsteps", "0;1;1;0;1;1;1;0;1;1;1;0;1;0;1;0");
+          regValue = xmlreader.GetValueAsString("movieplayer", "skipsteps", DEFAULT_SETTING);
           if (regValue == String.Empty) // config after wizard run 1st
           {
-            regValue = "0;1;1;0;1;1;1;0;1;1;1;0;1;0;1;0";
+            regValue = DEFAULT_SETTING;
             Log.Info("GeneralSkipSteps - creating new Skip-Settings {0}", "");
           }
-          foreach (string token in regValue.Split(new char[] { ',', ';', ' ' }))
+          else if (OldStyle(regValue))
           {
-            if (token == string.Empty)
-              StepArray.Add(0);
-            else
-              StepArray.Add(Convert.ToInt16(token));
+            regValue = ConvertToNewStyle(regValue);
           }
-          checkBoxStep1.Checked = Convert.ToBoolean(StepArray[0]);
-          checkBoxStep2.Checked = Convert.ToBoolean(StepArray[1]);
-          checkBoxStep3.Checked = Convert.ToBoolean(StepArray[2]);
-          checkBoxStep4.Checked = Convert.ToBoolean(StepArray[3]);
-          checkBoxStep5.Checked = Convert.ToBoolean(StepArray[4]);
-          checkBoxStep6.Checked = Convert.ToBoolean(StepArray[5]);
-          checkBoxStep7.Checked = Convert.ToBoolean(StepArray[6]);
-          checkBoxStep8.Checked = Convert.ToBoolean(StepArray[7]);
-          checkBoxStep9.Checked = Convert.ToBoolean(StepArray[8]);
-          checkBoxStep10.Checked = Convert.ToBoolean(StepArray[9]);
-          checkBoxStep11.Checked = Convert.ToBoolean(StepArray[10]);
-          checkBoxStep12.Checked = Convert.ToBoolean(StepArray[11]);
-          checkBoxStep13.Checked = Convert.ToBoolean(StepArray[12]);
-          checkBoxStep14.Checked = Convert.ToBoolean(StepArray[13]);
-          checkBoxStep15.Checked = Convert.ToBoolean(StepArray[14]);
-          checkBoxStep16.Checked = Convert.ToBoolean(StepArray[15]);
+          textBoxManualSkipSteps.Text = regValue;
         }
         catch (Exception ex)
         {
@@ -137,23 +123,11 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string skipSteps = (Convert.ToInt16(checkBoxStep1.Checked)).ToString() + ";" +
-                           (Convert.ToInt16(checkBoxStep2.Checked)).ToString() + ";" +
-                           (Convert.ToInt16(checkBoxStep3.Checked)).ToString() + ";" +
-                           (Convert.ToInt16(checkBoxStep4.Checked)).ToString() + ";" +
-                           (Convert.ToInt16(checkBoxStep5.Checked)).ToString() + ";" +
-                           (Convert.ToInt16(checkBoxStep6.Checked)).ToString() + ";" +
-                           (Convert.ToInt16(checkBoxStep7.Checked)).ToString() + ";" +
-                           (Convert.ToInt16(checkBoxStep8.Checked)).ToString() + ";" +
-                           (Convert.ToInt16(checkBoxStep9.Checked)).ToString() + ";" +
-                           (Convert.ToInt16(checkBoxStep10.Checked)).ToString() + ";" +
-                           (Convert.ToInt16(checkBoxStep11.Checked)).ToString() + ";" +
-                           (Convert.ToInt16(checkBoxStep12.Checked)).ToString() + ";" +
-                           (Convert.ToInt16(checkBoxStep13.Checked)).ToString() + ";" +
-                           (Convert.ToInt16(checkBoxStep14.Checked)).ToString() + ";" +
-                           (Convert.ToInt16(checkBoxStep15.Checked)).ToString() + ";" +
-                           (Convert.ToInt16(checkBoxStep16.Checked)).ToString();
-        xmlwriter.SetValue("movieplayer", "skipsteps", skipSteps);
+        if (labelError.Text != String.Empty)
+        {
+          textBoxManualSkipSteps.Text = DEFAULT_SETTING;
+        }
+        xmlwriter.SetValue("movieplayer", "skipsteps", textBoxManualSkipSteps.Text);
         xmlwriter.SetValue("movieplayer", "skipsteptimeout", numericUpDownSkipTimeout.Value);
       }
     }
@@ -172,22 +146,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void buttonResetSkipSteps_Click(object sender, EventArgs e)
     {
-      checkBoxStep1.Checked = false;
-      checkBoxStep2.Checked = true;
-      checkBoxStep3.Checked = true;
-      checkBoxStep4.Checked = false;
-      checkBoxStep5.Checked = true;
-      checkBoxStep6.Checked = true;
-      checkBoxStep7.Checked = true;
-      checkBoxStep8.Checked = false;
-      checkBoxStep9.Checked = true;
-      checkBoxStep10.Checked = true;
-      checkBoxStep11.Checked = true;
-      checkBoxStep12.Checked = false;
-      checkBoxStep13.Checked = true;
-      checkBoxStep14.Checked = false;
-      checkBoxStep15.Checked = true;
-      checkBoxStep16.Checked = false;
+      textBoxManualSkipSteps.Text = DEFAULT_SETTING;
       numericUpDownSkipTimeout.Value = 1500;
     }
 
@@ -200,6 +159,9 @@ namespace MediaPortal.Configuration.Sections
       this.labelSkipTimeout = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonResetSkipSteps = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBoxSkipSteps = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labelError = new System.Windows.Forms.Label();
+      this.textBoxManualSkipSteps = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxStep16 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxStep4 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxStep15 = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -249,7 +211,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBoxTimeout.Controls.Add(this.numericUpDownSkipTimeout);
       this.groupBoxTimeout.Controls.Add(this.labelSkipTimeout);
-      this.groupBoxTimeout.Location = new System.Drawing.Point(16, 248);
+      this.groupBoxTimeout.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxTimeout.Location = new System.Drawing.Point(16, 274);
       this.groupBoxTimeout.Name = "groupBoxTimeout";
       this.groupBoxTimeout.Size = new System.Drawing.Size(424, 64);
       this.groupBoxTimeout.TabIndex = 1;
@@ -299,6 +262,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxSkipSteps
       // 
+      this.groupBoxSkipSteps.Controls.Add(this.labelError);
+      this.groupBoxSkipSteps.Controls.Add(this.textBoxManualSkipSteps);
+      this.groupBoxSkipSteps.Controls.Add(this.label1);
       this.groupBoxSkipSteps.Controls.Add(this.checkBoxStep16);
       this.groupBoxSkipSteps.Controls.Add(this.checkBoxStep4);
       this.groupBoxSkipSteps.Controls.Add(this.checkBoxStep15);
@@ -318,10 +284,36 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxSkipSteps.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxSkipSteps.Location = new System.Drawing.Point(16, 16);
       this.groupBoxSkipSteps.Name = "groupBoxSkipSteps";
-      this.groupBoxSkipSteps.Size = new System.Drawing.Size(428, 223);
+      this.groupBoxSkipSteps.Size = new System.Drawing.Size(428, 252);
       this.groupBoxSkipSteps.TabIndex = 0;
       this.groupBoxSkipSteps.TabStop = false;
       this.groupBoxSkipSteps.Text = "Skip steps (left / right)";
+      // 
+      // labelError
+      // 
+      this.labelError.Location = new System.Drawing.Point(210, 206);
+      this.labelError.Name = "labelError";
+      this.labelError.Size = new System.Drawing.Size(212, 16);
+      this.labelError.TabIndex = 53;
+      // 
+      // textBoxManualSkipSteps
+      // 
+      this.textBoxManualSkipSteps.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxManualSkipSteps.Location = new System.Drawing.Point(158, 222);
+      this.textBoxManualSkipSteps.Name = "textBoxManualSkipSteps";
+      this.textBoxManualSkipSteps.Size = new System.Drawing.Size(264, 20);
+      this.textBoxManualSkipSteps.TabIndex = 52;
+      this.textBoxManualSkipSteps.Text = "15,30,60,180,300,600,900,1800,3600,7200";
+      this.textBoxManualSkipSteps.TextChanged += new System.EventHandler(this.textBoxManualSkipSteps_TextChanged);
+      // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(17, 225);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(135, 13);
+      this.label1.TabIndex = 51;
+      this.label1.Text = "Define skip steps manually:";
       // 
       // checkBoxStep16
       // 
@@ -333,6 +325,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep16.TabIndex = 50;
       this.checkBoxStep16.Text = "+/- 3 h";
       this.checkBoxStep16.UseVisualStyleBackColor = true;
+      this.checkBoxStep16.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep4
       // 
@@ -344,6 +337,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep4.TabIndex = 48;
       this.checkBoxStep4.Text = "+/- 45 sec";
       this.checkBoxStep4.UseVisualStyleBackColor = true;
+      this.checkBoxStep4.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep15
       // 
@@ -357,6 +351,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep15.TabIndex = 47;
       this.checkBoxStep15.Text = "+/- 2 h";
       this.checkBoxStep15.UseVisualStyleBackColor = true;
+      this.checkBoxStep15.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep12
       // 
@@ -368,6 +363,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep12.TabIndex = 46;
       this.checkBoxStep12.Text = "+/- 45 min";
       this.checkBoxStep12.UseVisualStyleBackColor = true;
+      this.checkBoxStep12.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep11
       // 
@@ -381,6 +377,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep11.TabIndex = 45;
       this.checkBoxStep11.Text = "+/- 30 min";
       this.checkBoxStep11.UseVisualStyleBackColor = true;
+      this.checkBoxStep11.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep10
       // 
@@ -394,6 +391,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep10.TabIndex = 44;
       this.checkBoxStep10.Text = "+/- 15 min";
       this.checkBoxStep10.UseVisualStyleBackColor = true;
+      this.checkBoxStep10.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep9
       // 
@@ -407,6 +405,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep9.TabIndex = 43;
       this.checkBoxStep9.Text = "+/- 10 min";
       this.checkBoxStep9.UseVisualStyleBackColor = true;
+      this.checkBoxStep9.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep5
       // 
@@ -420,6 +419,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep5.TabIndex = 42;
       this.checkBoxStep5.Text = "+/- 1 min";
       this.checkBoxStep5.UseVisualStyleBackColor = true;
+      this.checkBoxStep5.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep6
       // 
@@ -433,6 +433,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep6.TabIndex = 41;
       this.checkBoxStep6.Text = "+/- 3 min";
       this.checkBoxStep6.UseVisualStyleBackColor = true;
+      this.checkBoxStep6.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep14
       // 
@@ -444,6 +445,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep14.TabIndex = 40;
       this.checkBoxStep14.Text = "+/- 1,5 h";
       this.checkBoxStep14.UseVisualStyleBackColor = true;
+      this.checkBoxStep14.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep8
       // 
@@ -455,6 +457,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep8.TabIndex = 39;
       this.checkBoxStep8.Text = "+/- 7 min";
       this.checkBoxStep8.UseVisualStyleBackColor = true;
+      this.checkBoxStep8.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep13
       // 
@@ -468,6 +471,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep13.TabIndex = 38;
       this.checkBoxStep13.Text = "+/- 1 h";
       this.checkBoxStep13.UseVisualStyleBackColor = true;
+      this.checkBoxStep13.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep7
       // 
@@ -481,6 +485,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep7.TabIndex = 37;
       this.checkBoxStep7.Text = "+/- 5 min";
       this.checkBoxStep7.UseVisualStyleBackColor = true;
+      this.checkBoxStep7.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep3
       // 
@@ -494,6 +499,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep3.TabIndex = 36;
       this.checkBoxStep3.Text = "+/- 30 sec";
       this.checkBoxStep3.UseVisualStyleBackColor = true;
+      this.checkBoxStep3.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep2
       // 
@@ -507,6 +513,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep2.TabIndex = 35;
       this.checkBoxStep2.Text = "+/- 15 sec";
       this.checkBoxStep2.UseVisualStyleBackColor = true;
+      this.checkBoxStep2.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep1
       // 
@@ -518,6 +525,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep1.TabIndex = 34;
       this.checkBoxStep1.Text = "+/- 5 sec";
       this.checkBoxStep1.UseVisualStyleBackColor = true;
+      this.checkBoxStep1.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // GeneralSkipSteps
       // 
@@ -534,5 +542,325 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
+
+    private void textBoxManualSkipSteps_TextChanged(object sender, EventArgs e)
+    {
+      bool errorfound = false;
+      bool check1 = false, check2 = false, check3 = false, check4 = false, check5 = false, check6 = false;
+      bool check7 = false, check8 = false, check9 = false, check10 = false, check11 = false, check12 = false;
+      bool check13 = false, check14 = false, check15 = false, check16 = false;
+      foreach (string token in textBoxManualSkipSteps.Text.Split(new char[] { ',', ';', ' ' }))
+      {
+        if (token == string.Empty) continue;
+        try
+        {
+          int step = Convert.ToInt16(token);
+          if (step < 0)
+          {
+            SetError("Postive values only!");
+            errorfound = true;
+          }
+          else if (step == 0)
+          {
+            SetError("Zero skip is not allowed!");
+            errorfound = true;
+          }
+          else if (step > 10800)
+          {
+            SetError("3 hour skip is maximum!");
+            errorfound = true;
+          }
+          else
+          {
+            // Check that whole minutes are entered
+            if (step > 60 && (step % 60) != 0)
+            {
+              SetError("Enter whole minutes only!");
+              errorfound = true;
+            }
+          }
+
+          switch (step)
+          {
+            case 5: check1 = true; break;
+            case 15: check2 = true; break;
+            case 30: check3 = true; break;
+            case 45: check4 = true; break;
+            case 60: check5 = true; break;
+            case 180: check6 = true; break;
+            case 300: check7 = true; break;
+            case 420: check8 = true; break;
+            case 600: check9 = true; break;
+            case 900: check10 = true; break;
+            case 1800: check11 = true; break;
+            case 2700: check12 = true; break;
+            case 3600: check13 = true; break;
+            case 5400: check14 = true; break;
+            case 7200: check15 = true; break;
+            case 10800: check16 = true; break;
+            default: break; // Do nothing
+          }
+        }
+        catch (Exception ex)
+        {
+          SetError("Invalid value: " + token);
+          errorfound = true;
+        }
+      }
+      if (!errorfound)
+      {
+        if (!CheckForDoubles() || !CheckOrder())
+        {
+          return;
+        }
+        SetError(null);
+        checkBoxStep1.Checked = check1;
+        checkBoxStep2.Checked = check2;
+        checkBoxStep3.Checked = check3;
+        checkBoxStep4.Checked = check4;
+        checkBoxStep5.Checked = check5;
+        checkBoxStep6.Checked = check6;
+        checkBoxStep7.Checked = check7;
+        checkBoxStep8.Checked = check8;
+        checkBoxStep9.Checked = check9;
+        checkBoxStep10.Checked = check10;
+        checkBoxStep11.Checked = check11;
+        checkBoxStep12.Checked = check12;
+        checkBoxStep13.Checked = check13;
+        checkBoxStep14.Checked = check14;
+        checkBoxStep15.Checked = check15;
+        checkBoxStep16.Checked = check16;
+      }
+    }
+
+    private bool CheckForDoubles()
+    {
+      _stepList.Clear();
+      foreach (string token in textBoxManualSkipSteps.Text.Split(new char[] { ',', ';', ' ' }))
+      {
+        if (token == string.Empty) continue;
+        int value;
+        try
+        {
+          value = Convert.ToInt16(token);
+        }
+        catch (Exception ex)
+        {
+          SetError("Invalid value: " + token);
+          return false;
+        }
+        try
+        {
+          _stepList.Add(value, value);
+        }
+        catch (ArgumentException argEx)
+        {
+          SetError("Value already exists: " + token);
+          return false;
+        }
+      }
+      return true;
+    }
+
+    private bool CheckOrder()
+    {
+      IList orderedList = _stepList.GetValueList();
+      int index = 0;
+      foreach (string token in textBoxManualSkipSteps.Text.Split(new char[] { ',', ';', ' ' }))
+      {
+        if (token == string.Empty) continue;
+        int value;
+        try
+        {
+          value = Convert.ToInt16(token);
+        }
+        catch (Exception ex)
+        {
+          SetError("Invalid value: " + token);
+          return false;
+        }
+        int tempVal = (int)orderedList[index++];
+        if (tempVal != value)
+        {
+          SetError("Place values in correct order!");
+          return false;
+        }
+      }
+      return true;
+    }
+
+    private void checkBoxStep_Click(object sender, EventArgs e)
+    {
+      int stepSize = 5;
+      if (sender == checkBoxStep1) stepSize = 5;
+      else if (sender == checkBoxStep2) stepSize = 15;
+      else if (sender == checkBoxStep3) stepSize = 30;
+      else if (sender == checkBoxStep4) stepSize = 45;
+      else if (sender == checkBoxStep5) stepSize = 60;
+      else if (sender == checkBoxStep6) stepSize = 180;
+      else if (sender == checkBoxStep7) stepSize = 300;
+      else if (sender == checkBoxStep8) stepSize = 420;
+      else if (sender == checkBoxStep9) stepSize = 600;
+      else if (sender == checkBoxStep10) stepSize = 900;
+      else if (sender == checkBoxStep11) stepSize = 1800;
+      else if (sender == checkBoxStep12) stepSize = 2700;
+      else if (sender == checkBoxStep13) stepSize = 3600;
+      else if (sender == checkBoxStep14) stepSize = 5400;
+      else if (sender == checkBoxStep15) stepSize = 7200;
+      else if (sender == checkBoxStep16) stepSize = 10800;
+
+      if (!((MediaPortal.UserInterface.Controls.MPCheckBox)sender).Checked)
+      {
+        RemoveStep(stepSize);
+      }
+      else
+      {
+        AddStep(stepSize);
+      }
+    }
+
+    private void RemoveStep(int stepsize)
+    {
+      string newText = String.Empty;
+      foreach (string token in textBoxManualSkipSteps.Text.Split(new char[] { ',', ';', ' ' }))
+      {
+        if (token == string.Empty) continue;
+        try
+        {
+          if (Convert.ToInt16(token) != stepsize)
+          {
+            newText += token;
+            newText += ",";
+          }
+        }
+        catch (Exception ex)
+        {
+          return;
+        }
+      }
+      textBoxManualSkipSteps.Text = (newText.Length > 0 ? newText.Substring(0, newText.Length - 1) : String.Empty);
+    }
+
+    private void AddStep(int stepsize)
+    {
+      string newText = String.Empty;
+      bool stepAdded = false;
+      foreach (string token in textBoxManualSkipSteps.Text.Split(new char[] { ',', ';', ' ' }))
+      {
+        if (token == string.Empty) continue;
+        try
+        {
+          int curInt = Convert.ToInt16(token);
+          if (stepsize < curInt && !stepAdded)
+          {
+            newText += Convert.ToString(stepsize);
+            newText += ",";
+            stepAdded = true;
+          }
+          else if (stepsize == curInt)
+          {
+            stepAdded = true; // Should never get here, but just in case...
+          }
+          newText += token;
+          newText += ",";
+        }
+        catch (Exception ex)
+        {
+          return;
+        }
+      }
+      if (!stepAdded)
+      {
+        newText += Convert.ToString(stepsize);
+        newText += ",";
+      }
+      textBoxManualSkipSteps.Text = (newText.Length > 0 ? newText.Substring(0, newText.Length - 1) : String.Empty);
+    }
+
+    private void SetError(string errorText)
+    {
+      if (errorText == null)
+      {
+        textBoxManualSkipSteps.BackColor = Color.White;
+        labelError.Text = String.Empty;
+      }
+      else
+      {
+        textBoxManualSkipSteps.BackColor = Color.Red;
+        labelError.Text = errorText;
+      }
+    }
+
+    private bool OldStyle(string strSteps)
+    {
+      int count = 0;
+      bool foundOtherThanZeroOrOne = false;
+      foreach (string token in strSteps.Split(new char[] { ',', ';', ' ' }))
+      {
+        if (token == string.Empty) continue;
+        try
+        {
+          int curInt = Convert.ToInt16(token);
+          if (curInt != 0 && curInt != 1)
+          {
+            foundOtherThanZeroOrOne = true;
+          }
+          count++;
+        }
+        catch (Exception ex)
+        {
+          return true;
+        }
+      }
+      return (count == 16 && !foundOtherThanZeroOrOne);
+    }
+
+    private string ConvertToNewStyle(string strSteps)
+    {
+      int count = 0;
+      string newStyle = String.Empty;
+      foreach (string token in strSteps.Split(new char[] { ',', ';', ' ' }))
+      {
+        if (token == string.Empty)
+        {
+          count++;
+          continue;
+        }
+        try
+        {
+          int curInt = Convert.ToInt16(token);
+          count++;
+          if (curInt == 1)
+          {
+            switch (count)
+            {
+              case 1: newStyle += "5,"; break;
+              case 2: newStyle += "15,"; break;
+              case 3: newStyle += "30,"; break;
+              case 4: newStyle += "45,"; break;
+              case 5: newStyle += "60,"; break;
+              case 6: newStyle += "180,"; break;
+              case 7: newStyle += "300,"; break;
+              case 8: newStyle += "420,"; break;
+              case 9: newStyle += "600,"; break;
+              case 10: newStyle += "900,"; break;
+              case 11: newStyle += "1800,"; break;
+              case 12: newStyle += "2700,"; break;
+              case 13: newStyle += "3600,"; break;
+              case 14: newStyle += "5400,"; break;
+              case 15: newStyle += "7200,"; break;
+              case 16: newStyle += "10800,"; break;
+              default: break; // Do nothing
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          return DEFAULT_SETTING;
+        }
+      }
+      return (newStyle == String.Empty ? String.Empty : newStyle.Substring(0, newStyle.Length - 1));
+    }
+
   }
 }

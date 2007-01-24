@@ -6495,4 +6495,12 @@
         <id>200038</id>
         <value>On a desktop PC shared with other applications</value>
     </string>
+    <string>
+	    <id>200039</id>
+	    <value>Add skip step</value>
+    </string>
+    <string>
+	    <id>200040</id>
+	    <value>Remove skip step</value>
+    </string>    
 </strings>

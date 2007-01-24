@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>708</id>
-  <defaultcontrol>2</defaultcontrol>
+  <defaultcontrol>19</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <controls>
     <control>
@@ -36,18 +36,52 @@
       <texture>hover_settings.png</texture>
     </control>
     <control>
-      <description>reset button</description>
+      <description>add button</description>
       <type>button</type>
-      <id>18</id>
-      <label>886</label>
-      <posX>273</posX>
-      <posY>258</posY>
-      <width>120</width>
-      <height>44</height>
+      <id>19</id>
+      <label>200039</label>
+      <posX>253</posX>
+      <posY>194</posY>
+      <width>140</width>
+      <height>33</height>
       <align>center</align>
       <textureFocus>button_small_settings_focus.png</textureFocus>
       <textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
       <onup>99</onup>
+      <ondown>20</ondown>
+      <onleft>2</onleft>
+      <onright>2</onright>
+    </control>
+    <control>
+      <description>remove button</description>
+      <type>button</type>
+      <id>20</id>
+      <label>200040</label>
+      <posX>253</posX>
+      <posY>234</posY>
+      <width>140</width>
+      <height>33</height>
+      <align>center</align>
+      <textureFocus>button_small_settings_focus.png</textureFocus>
+      <textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
+      <onup>19</onup>
+      <ondown>18</ondown>
+      <onleft>2</onleft>
+      <onright>2</onright>
+    </control>
+    <control>
+      <description>reset button</description>
+      <type>button</type>
+      <id>18</id>
+      <label>886</label>
+      <posX>253</posX>
+      <posY>274</posY>
+      <width>140</width>
+      <height>44</height>
+      <align>center</align>
+      <textureFocus>button_small_settings_focus.png</textureFocus>
+      <textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
+      <onup>20</onup>
       <ondown>2</ondown>
       <onleft>2</onleft>
       <onright>2</onright>
@@ -276,6 +310,24 @@
       <onright>2</onright>
       <ondown>14</ondown>
       <align>right</align>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Current config static</description>
+      <id>1</id>
+      <posX>546</posX>
+      <posY>563</posY>
+      <label>143</label>
+      <font>font18</font>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Current config dynamic</description>
+      <id>21</id>
+      <posX>546</posX>
+      <posY>603</posY>
+      <label>15,30,60,300</label>
+      <font>font12</font>
     </control>
   </controls>
 </window>

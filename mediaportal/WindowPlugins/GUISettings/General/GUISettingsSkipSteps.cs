@@ -72,7 +72,14 @@ namespace WindowPlugins.GUISettings
     protected GUICheckMarkControl checkMarkButtonStep16 = null;
     [SkinControlAttribute(18)]
     protected GUIButtonControl buttonReset = null;
+    [SkinControlAttribute(19)]
+    protected GUIButtonControl buttonAdd = null;
+    [SkinControlAttribute(20)]
+    protected GUIButtonControl buttonRemove = null;
+    [SkinControlAttribute(21)]
+    protected GUILabelControl labelCurrent = null;
     #endregion
+    const string DEFAULT_SETTING = "15,30,60,180,300,600,900,1800,3600,7200";
 
     public GUISettingsSkipSteps()
     {
@@ -84,43 +91,46 @@ namespace WindowPlugins.GUISettings
       return Load(GUIGraphicsContext.Skin + @"\settingsSkipSteps.xml");
     }
 
+    #region loading
+
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
       //Load settings
       Log.Info("GUISkipSteps: {0}", "Load settings");
-      ArrayList StepArray = new ArrayList();
+      string regValue = String.Empty;
 
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-        foreach ( string token in ( xmlreader.GetValueAsString("movieplayer", "skipsteps", "0;1;1;0;1;1;1;0;1;1;1;0;1;0;1;0").Split(new char[] { ',', ';', ' ' }) ) )
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        try
         {
-          if ( token == string.Empty )
-            StepArray.Add(0);
-          else
-            StepArray.Add(Convert.ToInt32(token));
+          regValue = xmlreader.GetValueAsString("movieplayer", "skipsteps", DEFAULT_SETTING);
+          if (regValue == String.Empty) // config after wizard run 1st
+          {
+            regValue = DEFAULT_SETTING;
+            Log.Info("GeneralSkipSteps - creating new Skip-Settings {0}", "");
+          }
+          else if (OldStyle(regValue))
+          {
+            regValue = ConvertToNewStyle(regValue);
+          }
+          labelCurrent.Label = regValue;
         }
-      //Log.Info("DEBUG - GUISkipSteps: Step 1 = {0}", Convert.ToString(StepArray[0]));
-      checkMarkButtonStep1.Selected = ( (int)StepArray[0] == 1 ) ? true : false;
-      checkMarkButtonStep2.Selected = ( (int)StepArray[1] == 1 ) ? true : false;
-      checkMarkButtonStep3.Selected = ( (int)StepArray[2] == 1 ) ? true : false;
-      checkMarkButtonStep4.Selected = ( (int)StepArray[3] == 1 ) ? true : false;
-      checkMarkButtonStep5.Selected = ( (int)StepArray[4] == 1 ) ? true : false;
-      checkMarkButtonStep6.Selected = ( (int)StepArray[5] == 1 ) ? true : false;
-      checkMarkButtonStep7.Selected = ( (int)StepArray[6] == 1 ) ? true : false;
-      checkMarkButtonStep8.Selected = ( (int)StepArray[7] == 1 ) ? true : false;
-      checkMarkButtonStep9.Selected = ( (int)StepArray[8] == 1 ) ? true : false;
-      checkMarkButtonStep10.Selected = ( (int)StepArray[9] == 1 ) ? true : false;
-      checkMarkButtonStep11.Selected = ( (int)StepArray[10] == 1 ) ? true : false;
-      checkMarkButtonStep12.Selected = ( (int)StepArray[11] == 1 ) ? true : false;
-      checkMarkButtonStep13.Selected = ( (int)StepArray[12] == 1 ) ? true : false;
-      checkMarkButtonStep14.Selected = ( (int)StepArray[13] == 1 ) ? true : false;
-      checkMarkButtonStep15.Selected = ( (int)StepArray[14] == 1 ) ? true : false;
-      checkMarkButtonStep16.Selected = ( (int)StepArray[15] == 1 ) ? true : false;
+        catch (Exception ex)
+        {
+          Log.Info("GeneralSkipSteps - Exception while loading Skip-Settings: {0}", ex.ToString());
+        }
+      }
+      SetCheckMarksBasedOnString(regValue);
 
       GUIControl.FocusControl(GetID, checkMarkButtonStep1.GetID);
     }
 
-    protected override void OnPageDestroy( int newWindowId )
+    #endregion
+
+    #region saving
+
+    protected override void OnPageDestroy(int newWindowId)
     {
       base.OnPageDestroy(newWindowId);
       SaveSettings();
@@ -130,53 +140,429 @@ namespace WindowPlugins.GUISettings
     {
       Log.Info("GUISkipSteps: {0}", "Save settings");
 
-      string skipSteps = ( Convert.ToInt16(checkMarkButtonStep1.Selected) ).ToString() + ";" +
-                         ( Convert.ToInt16(checkMarkButtonStep2.Selected) ).ToString() + ";" +
-                         ( Convert.ToInt16(checkMarkButtonStep3.Selected) ).ToString() + ";" +
-                         ( Convert.ToInt16(checkMarkButtonStep4.Selected) ).ToString() + ";" +
-                         ( Convert.ToInt16(checkMarkButtonStep5.Selected) ).ToString() + ";" +
-                         ( Convert.ToInt16(checkMarkButtonStep6.Selected) ).ToString() + ";" +
-                         ( Convert.ToInt16(checkMarkButtonStep7.Selected) ).ToString() + ";" +
-                         ( Convert.ToInt16(checkMarkButtonStep8.Selected) ).ToString() + ";" +
-                         ( Convert.ToInt16(checkMarkButtonStep9.Selected) ).ToString() + ";" +
-                         ( Convert.ToInt16(checkMarkButtonStep10.Selected) ).ToString() + ";" +
-                         ( Convert.ToInt16(checkMarkButtonStep11.Selected) ).ToString() + ";" +
-                         ( Convert.ToInt16(checkMarkButtonStep12.Selected) ).ToString() + ";" +
-                         ( Convert.ToInt16(checkMarkButtonStep13.Selected) ).ToString() + ";" +
-                         ( Convert.ToInt16(checkMarkButtonStep14.Selected) ).ToString() + ";" +
-                         ( Convert.ToInt16(checkMarkButtonStep15.Selected) ).ToString() + ";" +
-                         ( Convert.ToInt16(checkMarkButtonStep16.Selected) ).ToString();
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        xmlwriter.SetValue("movieplayer", "skipsteps", skipSteps);
+        xmlwriter.SetValue("movieplayer", "skipsteps", labelCurrent.Label);
       }
       g_Player.configLoaded = false;
       Log.Info("GUISkipSteps: {0}", "reset g_player settings");
     }
 
-    protected override void OnClicked( int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType )
+    #endregion
+
+    private void SetCheckMarksBasedOnString(string s)
     {
-      if ( control == buttonReset )
+      bool check1 = false, check2 = false, check3 = false, check4 = false, check5 = false, check6 = false;
+      bool check7 = false, check8 = false, check9 = false, check10 = false, check11 = false, check12 = false;
+      bool check13 = false, check14 = false, check15 = false, check16 = false;
+      foreach (string token in s.Split(new char[] { ',', ';', ' ' }))
       {
-        checkMarkButtonStep1.Selected = false;
-        checkMarkButtonStep2.Selected = true;
-        checkMarkButtonStep3.Selected = true;
-        checkMarkButtonStep4.Selected = false;
-        checkMarkButtonStep5.Selected = true;
-        checkMarkButtonStep6.Selected = true;
-        checkMarkButtonStep7.Selected = true;
-        checkMarkButtonStep8.Selected = false;
-        checkMarkButtonStep9.Selected = true;
-        checkMarkButtonStep10.Selected = true;
-        checkMarkButtonStep11.Selected = true;
-        checkMarkButtonStep12.Selected = false;
-        checkMarkButtonStep13.Selected = true;
-        checkMarkButtonStep14.Selected = false;
-        checkMarkButtonStep15.Selected = true;
-        checkMarkButtonStep16.Selected = false;
+        if (token == string.Empty) continue;
+        try
+        {
+          int step = Convert.ToInt16(token);
+          switch (step)
+          {
+            case 5: check1 = true; break;
+            case 15: check2 = true; break;
+            case 30: check3 = true; break;
+            case 45: check4 = true; break;
+            case 60: check5 = true; break;
+            case 180: check6 = true; break;
+            case 300: check7 = true; break;
+            case 420: check8 = true; break;
+            case 600: check9 = true; break;
+            case 900: check10 = true; break;
+            case 1800: check11 = true; break;
+            case 2700: check12 = true; break;
+            case 3600: check13 = true; break;
+            case 5400: check14 = true; break;
+            case 7200: check15 = true; break;
+            case 10800: check16 = true; break;
+            default: break; // Do nothing
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Invalid skip step configuration in MediaPortal.xml");
+        }
+      }
+      checkMarkButtonStep1.Selected = check1;
+      checkMarkButtonStep2.Selected = check2;
+      checkMarkButtonStep3.Selected = check3;
+      checkMarkButtonStep4.Selected = check4;
+      checkMarkButtonStep5.Selected = check5;
+      checkMarkButtonStep6.Selected = check6;
+      checkMarkButtonStep7.Selected = check7;
+      checkMarkButtonStep8.Selected = check8;
+      checkMarkButtonStep9.Selected = check9;
+      checkMarkButtonStep10.Selected = check10;
+      checkMarkButtonStep11.Selected = check11;
+      checkMarkButtonStep12.Selected = check12;
+      checkMarkButtonStep13.Selected = check13;
+      checkMarkButtonStep14.Selected = check14;
+      checkMarkButtonStep15.Selected = check15;
+      checkMarkButtonStep16.Selected = check16;
+    }
+
+    #region event handling
+
+    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    {
+      if (control == buttonReset)
+      {
+        labelCurrent.Label = DEFAULT_SETTING;
+        SetCheckMarksBasedOnString(DEFAULT_SETTING);
+      }
+      else if (control == buttonAdd)
+      {
+        VirtualKeyboard vk = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+        vk.Reset();
+        vk.DoModal(GetID);
+        string newStep = vk.Text;
+        if (newStep == String.Empty || newStep == null) return;
+        string error = verifySkipStep(newStep);
+        if (error != null)
+        {
+          GUIDialogOK errDialog = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+          errDialog.SetHeading(257);
+          errDialog.SetLine(1, error);
+          errDialog.DoModal(GetID);
+        }
+        else
+        {
+          AddStep(Convert.ToInt16(newStep)); // Already verifed, so no numberformatexception can occur
+        }
+      }
+      else if (control == buttonRemove)
+      {
+        GUIDialogSelect2 dlgSel = (GUIDialogSelect2)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT2);
+        dlgSel.Reset();
+
+        foreach (string token in labelCurrent.Label.Split(new char[] { ',', ';', ' ' }))
+        {
+          if (token == string.Empty) continue;
+          dlgSel.Add(token);
+        }
+
+        dlgSel.SetHeading(200040); // Remove skip step
+        dlgSel.DoModal(GetID);
+        if (dlgSel.SelectedLabel != -1)
+        {
+          try
+          {
+            RemoveStep(Convert.ToInt16(dlgSel.SelectedLabelText));
+          }
+          catch (Exception ex)
+          {
+            // Should never happen
+          }
+        }
+      }
+      else if (control is GUICheckMarkControl)
+      {
+        int stepSize = 5;
+        if (control == checkMarkButtonStep1) stepSize = 5;
+        else if (control == checkMarkButtonStep2) stepSize = 15;
+        else if (control == checkMarkButtonStep3) stepSize = 30;
+        else if (control == checkMarkButtonStep4) stepSize = 45;
+        else if (control == checkMarkButtonStep5) stepSize = 60;
+        else if (control == checkMarkButtonStep6) stepSize = 180;
+        else if (control == checkMarkButtonStep7) stepSize = 300;
+        else if (control == checkMarkButtonStep8) stepSize = 420;
+        else if (control == checkMarkButtonStep9) stepSize = 600;
+        else if (control == checkMarkButtonStep10) stepSize = 900;
+        else if (control == checkMarkButtonStep11) stepSize = 1800;
+        else if (control == checkMarkButtonStep12) stepSize = 2700;
+        else if (control == checkMarkButtonStep13) stepSize = 3600;
+        else if (control == checkMarkButtonStep14) stepSize = 5400;
+        else if (control == checkMarkButtonStep15) stepSize = 7200;
+        else if (control == checkMarkButtonStep16) stepSize = 10800;
+
+        if (!((GUICheckMarkControl)control).Selected)
+        {
+          RemoveStep(stepSize);
+        }
+        else
+        {
+          AddStep(stepSize);
+        }
       }
       base.OnClicked(controlId, control, actionType);
     }
 
+    #endregion
+
+    #region Verification
+
+    /// <summary>
+    /// Verify that the entered skip step is valid to add
+    /// </summary>
+    /// <param name="newStep">Entered text</param>
+    /// <returns>null if the entered text is a valid, new skip step, otherwise a string describing what's wrong with it</returns>
+    private string verifySkipStep(string newStep)
+    {
+      int step;
+      //int multiplyer = 1;
+      //if (newStep.IndexOf('s') == (newStep.Length - 1) || newStep.IndexOf('S') == (newStep.Length - 1))
+      //{
+      //  newStep = newStep.Substring(0, newStep.Length - 1);
+      //}
+      //else if (newStep.IndexOf('m') == (newStep.Length - 1) || newStep.IndexOf('M') == (newStep.Length - 1))
+      //{
+      //  newStep = newStep.Substring(0, newStep.Length - 1);
+      //  multiplyer = 60;
+      //}
+      //else if (newStep.IndexOf('m') == (newStep.Length - 1) || newStep.IndexOf('M') == (newStep.Length - 1))
+      //{
+      //  newStep = newStep.Substring(0, newStep.Length - 1);
+      //  multiplyer = 3600;
+      //} -- This doesn't really help the user a lot, so it's not worth the trouble
+      try
+      {
+        step = Convert.ToInt16(newStep);
+      }
+      catch (Exception ex)
+      {
+        return "Not a valid integer";
+      }
+      //step *= multiplyer;
+      if (step < 0)
+      {
+        return "Postive values only!";
+      }
+      else if (step == 0)
+      {
+        return "Zero skip is not allowed!";
+      }
+      else if (step > 10800)
+      {
+        return "3 hour skip is maximum!";
+      }
+      else
+      {
+        // Check that whole minutes are entered
+        if (step > 60 && (step % 60) != 0)
+        {
+          return "Enter whole minutes only!";
+        }
+      }
+      if (CheckExists(step))
+      {
+        return "Skip step already defined";
+      }
+      return null;
+
+    }
+
+    /// <summary>
+    /// Check that the given step isn't already defined
+    /// </summary>
+    /// <param name="step">Step to check</param>
+    /// <returns>True if it already exists, else false</returns>
+    private bool CheckExists(int step)
+    {
+      foreach (string token in labelCurrent.Label.Split(new char[] { ',', ';', ' ' }))
+      {
+        if (token == string.Empty) continue;
+        int value;
+        try
+        {
+          value = Convert.ToInt16(token);
+          if (value == step)
+          {
+            return true;
+          }
+        }
+        catch (Exception ex)
+        {
+          // Should never happen
+          return false;
+        }
+      }
+
+      return false;
+    }
+
+    #endregion
+
+    #region add/remove steps
+
+    private void AddStep(int stepsize)
+    {
+      switch (stepsize)
+      {
+        case 5: checkMarkButtonStep1.Selected = true; break;
+        case 15: checkMarkButtonStep2.Selected = true; break;
+        case 30: checkMarkButtonStep3.Selected = true; break;
+        case 45: checkMarkButtonStep4.Selected = true; break;
+        case 60: checkMarkButtonStep5.Selected = true; break;
+        case 180: checkMarkButtonStep6.Selected = true; break;
+        case 300: checkMarkButtonStep7.Selected = true; break;
+        case 420: checkMarkButtonStep8.Selected = true; break;
+        case 600: checkMarkButtonStep9.Selected = true; break;
+        case 900: checkMarkButtonStep10.Selected = true; break;
+        case 1800: checkMarkButtonStep11.Selected = true; break;
+        case 2700: checkMarkButtonStep12.Selected = true; break;
+        case 3600: checkMarkButtonStep13.Selected = true; break;
+        case 5400: checkMarkButtonStep14.Selected = true; break;
+        case 7200: checkMarkButtonStep15.Selected = true; break;
+        case 10800: checkMarkButtonStep16.Selected = true; break;
+        default: break; // Do nothing
+      }
+
+      string newText = String.Empty;
+      bool stepAdded = false;
+      foreach (string token in labelCurrent.Label.Split(new char[] { ',', ';', ' ' }))
+      {
+        if (token == string.Empty) continue;
+        try
+        {
+          int curInt = Convert.ToInt16(token);
+          if (stepsize < curInt && !stepAdded)
+          {
+            newText += Convert.ToString(stepsize);
+            newText += ",";
+            stepAdded = true;
+          }
+          else if (stepsize == curInt)
+          {
+            stepAdded = true; // Should never get here, but just in case...
+          }
+          newText += token;
+          newText += ",";
+        }
+        catch (Exception ex)
+        {
+          return;
+        }
+      }
+      if (!stepAdded)
+      {
+        newText += Convert.ToString(stepsize);
+        newText += ",";
+      }
+      labelCurrent.Label = (newText.Length > 0 ? newText.Substring(0, newText.Length - 1) : String.Empty);
+    }
+
+    private void RemoveStep(int stepsize)
+    {
+      switch (stepsize)
+      {
+        case 5: checkMarkButtonStep1.Selected = false; break;
+        case 15: checkMarkButtonStep2.Selected = false; break;
+        case 30: checkMarkButtonStep3.Selected = false; break;
+        case 45: checkMarkButtonStep4.Selected = false; break;
+        case 60: checkMarkButtonStep5.Selected = false; break;
+        case 180: checkMarkButtonStep6.Selected = false; break;
+        case 300: checkMarkButtonStep7.Selected = false; break;
+        case 420: checkMarkButtonStep8.Selected = false; break;
+        case 600: checkMarkButtonStep9.Selected = false; break;
+        case 900: checkMarkButtonStep10.Selected = false; break;
+        case 1800: checkMarkButtonStep11.Selected = false; break;
+        case 2700: checkMarkButtonStep12.Selected = false; break;
+        case 3600: checkMarkButtonStep13.Selected = false; break;
+        case 5400: checkMarkButtonStep14.Selected = false; break;
+        case 7200: checkMarkButtonStep15.Selected = false; break;
+        case 10800: checkMarkButtonStep16.Selected = false; break;
+        default: break; // Do nothing
+      }
+
+      string newText = String.Empty;
+      foreach (string token in labelCurrent.Label.Split(new char[] { ',', ';', ' ' }))
+      {
+        if (token == string.Empty) continue;
+        try
+        {
+          if (Convert.ToInt16(token) != stepsize)
+          {
+            newText += token;
+            newText += ",";
+          }
+        }
+        catch (Exception ex)
+        {
+          return;
+        }
+      }
+      labelCurrent.Label = (newText.Length > 0 ? newText.Substring(0, newText.Length - 1) : String.Empty);
+    }
+
+    #endregion
+
+    #region backward compatibility
+
+    private bool OldStyle(string strSteps)
+    {
+      int count = 0;
+      bool foundOtherThanZeroOrOne = false;
+      foreach (string token in strSteps.Split(new char[] { ',', ';', ' ' }))
+      {
+        if (token == string.Empty) continue;
+        try
+        {
+          int curInt = Convert.ToInt16(token);
+          if (curInt != 0 && curInt != 1)
+          {
+            foundOtherThanZeroOrOne = true;
+          }
+          count++;
+        }
+        catch (Exception ex)
+        {
+          return true;
+        }
+      }
+      return (count == 16 && !foundOtherThanZeroOrOne);
+    }
+
+    private string ConvertToNewStyle(string strSteps)
+    {
+      int count = 0;
+      string newStyle = String.Empty;
+      foreach (string token in strSteps.Split(new char[] { ',', ';', ' ' }))
+      {
+        if (token == string.Empty)
+        {
+          count++;
+          continue;
+        }
+        try
+        {
+          int curInt = Convert.ToInt16(token);
+          count++;
+          if (curInt == 1)
+          {
+            switch (count)
+            {
+              case 1: newStyle += "5,"; break;
+              case 2: newStyle += "15,"; break;
+              case 3: newStyle += "30,"; break;
+              case 4: newStyle += "45,"; break;
+              case 5: newStyle += "60,"; break;
+              case 6: newStyle += "180,"; break;
+              case 7: newStyle += "300,"; break;
+              case 8: newStyle += "420,"; break;
+              case 9: newStyle += "600,"; break;
+              case 10: newStyle += "900,"; break;
+              case 11: newStyle += "1800,"; break;
+              case 12: newStyle += "2700,"; break;
+              case 13: newStyle += "3600,"; break;
+              case 14: newStyle += "5400,"; break;
+              case 15: newStyle += "7200,"; break;
+              case 16: newStyle += "10800,"; break;
+              default: break; // Do nothing
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          return DEFAULT_SETTING;
+        }
+      }
+      return (newStyle == String.Empty ? String.Empty : newStyle.Substring(0, newStyle.Length - 1));
+    }
+
+    #endregion
   }
 }
