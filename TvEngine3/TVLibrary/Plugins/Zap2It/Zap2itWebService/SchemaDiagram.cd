@@ -1,0 +1,225 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Tahoma" Size="8.25" />
+  <Class Name="Zap2it.SoapEntities.XTVD">
+    <Position X="4.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Zap2itWebService\SoapEntities.cs</FileName>
+      <HashCode>AiAAAAgAAAAAAAAAAAIAAAAAAEgIAAAgAAAACBAAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="Stations" />
+      <Field Name="Lineups" />
+      <Field Name="Schedules" />
+      <Field Name="Programs" />
+      <Field Name="Crews" />
+      <Field Name="Genres" />
+    </ShowAsAssociation>
+    <AssociationLine Name="Lineups" Type="Zap2it.SoapEntities.TVLineups" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.406" Y="3.75" />
+        <Point X="5.406" Y="2.16" />
+        <Point X="12.25" Y="2.16" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Schedules" Type="Zap2it.SoapEntities.TVSchedules" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.75" Y="4.369" />
+        <Point X="6.125" Y="4.369" />
+        <Point X="6.125" Y="2.992" />
+        <Point X="9.75" Y="2.992" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Crews" Type="Zap2it.SoapEntities.TVCrews" ManuallyRouted="true">
+      <Path>
+        <Point X="4.469" Y="5.442" />
+        <Point X="4.469" Y="6.061" />
+        <Point X="2.75" Y="6.061" />
+      </Path>
+    </AssociationLine>
+  </Class>
+  <Class Name="Zap2it.SoapEntities.TVStations">
+    <Position X="1.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Zap2itWebService\SoapEntities.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAgAABAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="List" />
+    </ShowAsCollectionAssociation>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+  </Class>
+  <Class Name="Zap2it.SoapEntities.TVStation" BaseTypeListCollapsed="true">
+    <Position X="1.25" Y="3.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>Zap2itWebService\SoapEntities.cs</FileName>
+      <HashCode>AAAgAAAAAAAAgAQAAAAAAAQAAAAAAAgAAAQAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Zap2it.SoapEntities.TVLineups">
+    <Position X="12.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Zap2itWebService\SoapEntities.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAABAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="List" />
+    </ShowAsCollectionAssociation>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+  </Class>
+  <Class Name="Zap2it.SoapEntities.TVLineup">
+    <Position X="12.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Zap2itWebService\SoapEntities.cs</FileName>
+      <HashCode>AAAAAAAAAAAAggAIIAIAAAQAAAAAABBAAQAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="StationMap" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Zap2it.SoapEntities.TVStationMap">
+    <Position X="12.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Zap2itWebService\SoapEntities.cs</FileName>
+      <HashCode>AAAAgAAgAAAAAAAAAAAAgAAAAAAAAAAAACACAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Zap2it.SoapEntities.TVSchedules" Collapsed="true">
+    <Position X="9.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Zap2itWebService\SoapEntities.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="List" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Zap2it.SoapEntities.TVSchedule">
+    <Position X="9.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Zap2itWebService\SoapEntities.cs</FileName>
+      <HashCode>AAAAAAAAIEACBAAQEQAoAEAAAAAAAAAIAAIAAQAAAEA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="Part" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Zap2it.SoapEntities.TVPart">
+    <Position X="9.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Zap2itWebService\SoapEntities.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Zap2it.SoapEntities.TVPrograms" Collapsed="true">
+    <Position X="7.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Zap2itWebService\SoapEntities.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAACAAAAAAAABAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="List" />
+    </ShowAsCollectionAssociation>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+  </Class>
+  <Class Name="Zap2it.SoapEntities.TVProgram">
+    <Position X="7.25" Y="5.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>Zap2itWebService\SoapEntities.cs</FileName>
+      <HashCode>AAAAAAAAJAAgwEAAQEAAAAkACAAAAAAACACAAAABAAE=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="Advisories" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Zap2it.SoapEntities.TVAdvisory">
+    <Position X="7.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Zap2itWebService\SoapEntities.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Zap2it.SoapEntities.TVCrews" Collapsed="true">
+    <Position X="1.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Zap2itWebService\SoapEntities.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="List" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Zap2it.SoapEntities.TVCrew">
+    <Position X="1.25" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Zap2itWebService\SoapEntities.cs</FileName>
+      <HashCode>AAAAAQAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="Member" />
+    </ShowAsCollectionAssociation>
+    <AssociationLine Name="Member" Type="Zap2it.SoapEntities.TVMember" FixedToPoint="true">
+      <Path>
+        <Point X="2.125" Y="7.981" />
+        <Point X="2.125" Y="8.5" />
+      </Path>
+    </AssociationLine>
+  </Class>
+  <Class Name="Zap2it.SoapEntities.TVMember">
+    <Position X="1.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Zap2itWebService\SoapEntities.cs</FileName>
+      <HashCode>AAAAAAAAAgAAAIAAEAAAAAAABAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Zap2it.SoapEntities.TVGenres">
+    <Position X="4.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Zap2itWebService\SoapEntities.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAABAAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="List" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Zap2it.SoapEntities.ProgramGenre">
+    <Position X="4.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Zap2itWebService\SoapEntities.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="List" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Zap2it.SoapEntities.TVGenre">
+    <Position X="4.75" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Zap2itWebService\SoapEntities.cs</FileName>
+      <HashCode>CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Zap2it.SoapEntities.DownloadResults">
+    <Position X="4.25" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Zap2itWebService\SoapEntities.cs</FileName>
+      <HashCode>AAAAAAAABAAAAAAAAAAAAAAAAAAAABAAEAAIAQQAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Data" />
+    </ShowAsAssociation>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+  </Struct>
+</ClassDiagram>

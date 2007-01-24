@@ -1,0 +1,138 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0E544B1F-BF42-4F46-BBC4-6A9032D80545}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ProcessPlugins.EpgGrabber</RootNamespace>
+    <AssemblyName>Zap2itPlugin</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\MediaPortal\xbmc\bin\Release\plugins\process\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Gentle.Common, Version=1.2.9.1285, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TVDatabase\references\Gentle.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Gentle.Framework, Version=1.2.9.1286, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TVDatabase\references\Gentle.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
+    <Reference Include="TvBusinessLayer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TVDatabase\TvBusinessLayer\bin\Release\TvBusinessLayer.dll</HintPath>
+    </Reference>
+    <Reference Include="TvControl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TvControl\bin\Release\TvControl.dll</HintPath>
+    </Reference>
+    <Reference Include="TVDatabase, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TVDatabase\bin\Release\TVDatabase.dll</HintPath>
+    </Reference>
+    <Reference Include="TvLibrary.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Import\ChannelSorter.cs" />
+    <Compile Include="Import\LineupManager.cs" />
+    <Compile Include="Import\WebEntities.cs" />
+    <Compile Include="Plugin\NotifyWindowForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Plugin\NotifyWindowForm.Designer.cs">
+      <DependentUpon>NotifyWindowForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Plugin\PluginSettings.cs" />
+    <Compile Include="Plugin\PluginSetup.cs" />
+    <Compile Include="Plugin\Zap2itPluginConfig.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Plugin\Zap2itPluginConfig.Designer.cs">
+      <DependentUpon>Zap2itPluginConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Plugin\Zap2itPlugin.cs" />
+    <Compile Include="Import\EpgListingsImporter.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Import\GenreMap.cs" />
+    <Compile Include="Zap2itWebService\SoapEntities.cs" />
+    <Compile Include="Zap2itWebService\Zap2itWebService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Plugin\NotifyWindowForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>NotifyWindowForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Plugin\Zap2itPluginConfig.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Zap2itPluginConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Zap2itWebService\SchemaDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\zap2itlogo_45x40.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\DirectShowLib\DirectShowLib.csproj">
+      <Project>{0D1BA455-CE59-4133-8EAA-1A1E82F8AA12}</Project>
+      <Name>DirectShowLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SetupControls\SetupControls.csproj">
+      <Project>{A2792D3C-04C1-4A92-9383-A33D59C54D8D}</Project>
+      <Name>SetupControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PluginBase\PluginBase.csproj">
+      <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>
+      <Name>PluginBase</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
