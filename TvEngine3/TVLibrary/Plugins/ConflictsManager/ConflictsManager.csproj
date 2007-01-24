@@ -39,11 +39,11 @@
   </Target>
   -->
   <ItemGroup>
-    <Reference Include="Gentle.Common, Version=1.2.9.18127, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Gentle.Common, Version=1.2.9.1285, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\TVDatabase\references\Gentle.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gentle.Framework, Version=1.2.9.18134, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Gentle.Framework, Version=1.2.9.1286, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\TVDatabase\references\Gentle.Framework.dll</HintPath>
     </Reference>
