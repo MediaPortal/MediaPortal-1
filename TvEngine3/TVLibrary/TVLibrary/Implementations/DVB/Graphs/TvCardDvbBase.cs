@@ -92,7 +92,6 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
-
     #region variables
     #region global variables
     protected ConditionalAccess _conditionalAccess = null;
@@ -142,8 +141,7 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
-    #region graph building
-
+    #region ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="TvCardDvbBase"/> class.
     /// </summary>
@@ -151,7 +149,16 @@ namespace TvLibrary.Implementations.DVB
     {
       _lastSignalUpdate = DateTime.MinValue;
       _channelManager = new TvDvbChannel();
+    }
+    #endregion
 
+    #region graph building
+
+    /// <summary>
+    /// Builds the graph.
+    /// </summary>
+    public virtual void BuildGraph()
+    {
     }
     /// <summary>
     /// Checks the thread id.
@@ -162,17 +169,6 @@ namespace TvLibrary.Implementations.DVB
       return true;
     }
 
-    public IChannel CurrentChannel
-    {
-      get
-      {
-        return _channelManager.CurrentChannel;
-      }
-      set
-      {
-        _channelManager.CurrentChannel = value;
-      }
-    }
     /// <summary>
     /// submits a tune request to the card. 
     /// throws an TvException if card cannot tune to the channel requested
@@ -197,33 +193,6 @@ namespace TvLibrary.Implementations.DVB
       }
       _lastSignalUpdate = DateTime.MinValue;
       _channelManager.OnAfterTune();
-    }
-
-    /// <summary>
-    /// returns true if we timeshift in transport stream mode
-    /// false we timeshift in program stream mode
-    /// </summary>
-    /// <value>true for transport stream, false for program stream.</value>
-    public bool IsTimeshiftingTransportStream
-    {
-      get
-      {
-        return true;
-      }
-    }
-
-    /// <summary>
-    /// returns true if we record in transport stream mode
-    /// false we record in program stream mode
-    /// </summary>
-    /// <value>true for transport stream, false for program stream.</value>
-    public bool IsRecordingTransportStream
-    {
-      get
-      {
-        if (_channelManager == null) return false;
-        return _channelManager.IsRecordingTransportStream;
-      }
     }
 
 
@@ -604,16 +573,6 @@ namespace TvLibrary.Implementations.DVB
       _channelManager = new TvDvbChannel(_graphBuilder, ref _conditionalAccess, _mdapiFilter, _filterTIF, _filterTsWriter);
     }
 
-    #region IDisposable
-
-    /// <summary>
-    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    /// </summary>
-    public virtual void Dispose()
-    {
-      Decompose();
-    }
-    #endregion
 
     /// <summary>
     /// adds the mpeg-2 demultiplexer filter and inftee filter to the graph
@@ -804,8 +763,6 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-
-
     /// <summary>
     /// adds the BDA Transport Information Filter  and the
     /// MPEG-2 sections and tables filter to the graph 
@@ -944,6 +901,32 @@ namespace TvLibrary.Implementations.DVB
     }
 
 
+
+    /// <summary>
+    /// Sends the hw pids.
+    /// </summary>
+    /// <param name="pids">The pids.</param>
+    public virtual void SendHwPids(ArrayList pids)
+    {
+      //if (System.IO.File.Exists("usehwpids.txt"))
+      {
+        if (_conditionalAccess != null)
+        {
+          //  _conditionalAccess.SendPids((DVBBaseChannel)_currentChannel, pids);
+        }
+        return;
+      }
+    }
+
+    #region IDisposable
+
+    /// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>
+    public virtual void Dispose()
+    {
+      Decompose();
+    }
     /// <summary>
     /// destroys the graph and cleans up any resources
     /// </summary>
@@ -1072,24 +1055,8 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("  decompose done...");
       _graphState = GraphState.Idle;
     }
-
-    /// <summary>
-    /// Sends the hw pids.
-    /// </summary>
-    /// <param name="pids">The pids.</param>
-    public virtual void SendHwPids(ArrayList pids)
-    {
-      //if (System.IO.File.Exists("usehwpids.txt"))
-      {
-        if (_conditionalAccess != null)
-        {
-          //  _conditionalAccess.SendPids((DVBBaseChannel)_currentChannel, pids);
-        }
-        return;
-      }
-    }
     #endregion
-
+    #endregion
 
     #region signal quality, level etc
 
@@ -1270,6 +1237,26 @@ namespace TvLibrary.Implementations.DVB
 
     #region properties
 
+    /// <summary>
+    /// Gets or sets the current channel.
+    /// </summary>
+    /// <value>The current channel.</value>
+    public IChannel CurrentChannel
+    {
+      get
+      {
+        return _channelManager.CurrentChannel;
+      }
+      set
+      {
+        _channelManager.CurrentChannel = value;
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether this instance is hybrid.
+    /// </summary>
+    /// <value><c>true</c> if this instance is hybrid; otherwise, <c>false</c>.</value>
     public bool IsHybrid
     {
       get
@@ -1282,6 +1269,10 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Gets or sets the context.
+    /// </summary>
+    /// <value>The context.</value>
     public object Context
     {
       get
@@ -1331,6 +1322,10 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Gets or sets the teletext callback.
+    /// </summary>
+    /// <value>The teletext callback.</value>
     public IVbiCallback TeletextCallback
     {
       get
@@ -1398,7 +1393,7 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return _channelManager.Channel;
+        return _channelManager.CurrentChannel;
       }
     }
 
@@ -1479,11 +1474,6 @@ namespace TvLibrary.Implementations.DVB
     {
       get { return -1; }
     }
-
-    protected void SetTimeShiftFileName(string fileName)
-    {
-      _channelManager.SetTimeShiftFileName(fileName);
-    }
     /// <summary>
     /// returns the date/time when timeshifting has been started for the card specified
     /// </summary>
@@ -1507,6 +1497,32 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// returns true if we timeshift in transport stream mode
+    /// false we timeshift in program stream mode
+    /// </summary>
+    /// <value>true for transport stream, false for program stream.</value>
+    public bool IsTimeshiftingTransportStream
+    {
+      get
+      {
+        return true;
+      }
+    }
+
+    /// <summary>
+    /// returns true if we record in transport stream mode
+    /// false we record in program stream mode
+    /// </summary>
+    /// <value>true for transport stream, false for program stream.</value>
+    public bool IsRecordingTransportStream
+    {
+      get
+      {
+        if (_channelManager == null) return false;
+        return _channelManager.IsRecordingTransportStream;
+      }
+    }
 
 
     /// <summary>
@@ -1550,22 +1566,6 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    #endregion
-
-    #region recording
-
-    /// <summary>
-    /// Starts recording
-    /// </summary>
-    /// <param name="recordingType">Recording type (content or reference)</param>
-    /// <param name="fileName">filename to which to recording should be saved</param>
-    /// <param name="startTime">time the recording should start (0=now)</param>
-    /// <returns></returns>
-    protected void StartRecord(bool transportStream, string fileName)
-    {
-      _channelManager.StartRecord(transportStream, fileName);
-    }
-
     /// <summary>
     /// gets the current filename used for recording
     /// </summary>
@@ -1574,10 +1574,220 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return _channelManager.FileName;
+        return _channelManager.RecordingFileName;
       }
     }
 
+    /// <summary>
+    /// returns true if card is currently recording
+    /// </summary>
+    /// <value>true if recording otherwise false</value>
+    public bool IsRecording
+    {
+      get
+      {
+        return (_graphState == GraphState.Recording);
+      }
+    }
+    /// <summary>
+    /// returns true if card is currently timeshifting
+    /// </summary>
+    /// <value></value>
+    public bool IsTimeShifting
+    {
+      get
+      {
+        return (_graphState == GraphState.TimeShifting);
+      }
+    }
+    /// <summary>
+    /// Gets/sets the card cardType
+    /// </summary>
+    public int cardType
+    {
+      get
+      {
+        return 0; // Only to handle cards without BDA driver
+      }
+      set
+      {
+      }
+    }
+
+    /// <summary>
+    /// Gets/sets the card name
+    /// </summary>
+    /// <value></value>
+    public string Name
+    {
+      get
+      {
+        return _name;
+      }
+      set
+      {
+        _name = value;
+      }
+    }
+    #endregion
+
+    #region recording and timeshifting
+
+    /// <summary>
+    /// Starts timeshifting. Note card has to be tuned first
+    /// </summary>
+    /// <param name="fileName">filename used for the timeshiftbuffer</param>
+    /// <returns></returns>
+    public bool StartTimeShifting(string fileName)
+    {
+      try
+      {
+
+        Log.Log.WriteFile("dvbc:StartTimeShifting()");
+
+        if (!CheckThreadId()) return false;
+        if (_graphState == GraphState.TimeShifting)
+        {
+          return true;
+        }
+
+        if (_graphState == GraphState.Idle)
+        {
+          BuildGraph();
+        }
+
+        if (CurrentChannel == null)
+        {
+          Log.Log.Error("dvbc:StartTimeShifting not tuned to a channel");
+          throw new TvException("StartTimeShifting not tuned to a channel");
+        }
+
+        DVBBaseChannel channel = (DVBBaseChannel)CurrentChannel;
+        if (channel.NetworkId == -1 || channel.TransportId == -1 || channel.ServiceId == -1)
+        {
+          Log.Log.Error("dvbc:StartTimeShifting not tuned to a channel but to a transponder");
+          throw new TvException("StartTimeShifting not tuned to a channel but to a transponder");
+        }
+
+        //RunGraph();
+        //Tune(Channel);
+        if (_graphState == GraphState.Created)
+        {
+          SetTimeShiftFileName(fileName);
+        }
+        _graphState = GraphState.TimeShifting;
+        return true;
+
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+        throw ex;
+      }
+      //Log.Log.WriteFile("dvbc:StartTimeShifting() done");
+    }
+
+    /// <summary>
+    /// Stops timeshifting
+    /// </summary>
+    /// <returns></returns>
+    public bool StopTimeShifting()
+    {
+      try
+      {
+        if (!CheckThreadId()) return false;
+        Log.Log.WriteFile("dvbc:StopTimeShifting()");
+        if (_graphState != GraphState.TimeShifting)
+        {
+          return true;
+        }
+        StopGraph();
+
+        _graphState = GraphState.Created;
+
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+        throw ex;
+      }
+      return true;
+    }
+
+    /// <summary>
+    /// Starts recording
+    /// </summary>
+    /// <param name="transportStream">if set to <c>true</c> then record as .ts file otherwise as .mpg.</param>
+    /// <param name="fileName">filename to which to recording should be saved</param>
+    /// <returns></returns>
+    public bool StartRecording(bool transportStream, string fileName)
+    {
+      try
+      {
+        if (!CheckThreadId()) return false;
+        Log.Log.WriteFile("dvbc:StartRecording to {0}", fileName);
+
+        if (_graphState == GraphState.Recording) return false;
+
+        if (_graphState != GraphState.TimeShifting)
+        {
+          throw new TvException("Card must be timeshifting before starting recording");
+        }
+        _graphState = GraphState.Recording;
+        StartRecord(transportStream, fileName);
+
+        Log.Log.WriteFile("dvbc:Started recording");
+
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+        throw ex;
+      }
+    }
+
+    /// <summary>
+    /// Stop recording
+    /// </summary>
+    /// <returns></returns>
+    public bool StopRecording()
+    {
+      try
+      {
+        if (!CheckThreadId()) return false;
+        if (_graphState != GraphState.Recording) return false;
+        Log.Log.WriteFile("dvbc:StopRecording");
+        _graphState = GraphState.TimeShifting;
+        StopRecord();
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+        throw ex;
+      }
+    }
+
+    /// <summary>
+    /// Sets the name of the time shift file.
+    /// </summary>
+    /// <param name="fileName">Name of the file.</param>
+    protected void SetTimeShiftFileName(string fileName)
+    {
+      _channelManager.SetTimeShiftFileName(fileName);
+    }
+
+    /// <summary>
+    /// Starts recording
+    /// </summary>
+    /// <param name="transportStream">if set to <c>true</c> then record as transport stream.</param>
+    /// <param name="fileName">filename to which to recording should be saved</param>
+    protected void StartRecord(bool transportStream, string fileName)
+    {
+      _channelManager.StartRecord(transportStream, fileName);
+    }
+    
     /// <summary>
     /// Stop recording
     /// </summary>

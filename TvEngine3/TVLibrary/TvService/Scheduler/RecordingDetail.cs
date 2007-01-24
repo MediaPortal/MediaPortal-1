@@ -264,14 +264,27 @@ namespace TvService
                                   DateTime.Now.Minute, DateTime.Now.Second);
       }
       fileName = Utils.MakeFileName(fileName);
-      if (System.IO.File.Exists(fullPath + "\\" + fileName + recEngineExt))
+      if (DoesFileExist(fullPath + "\\" + fileName))
       {
         int i = 1;
-        while (System.IO.File.Exists(fullPath + "\\" + fileName + "_" + i.ToString() + recEngineExt))
+        while (DoesFileExist(fullPath + "\\" + fileName + "_" + i.ToString() ))
           ++i;
         fileName += "_" + i.ToString();
       }
       _fileName = fullPath + "\\" + fileName + recEngineExt;
+    }
+
+    /// <summary>
+    /// checks if a recording with the specified filename exists
+    /// either as .mpg or as .ts
+    /// </summary>
+    /// <param name="fileName">full path and filename expect the extension.</param>
+    /// <returns>true if file exists, otherwise false</returns>
+    bool DoesFileExist(string fileName)
+    {
+      if (System.IO.File.Exists(fileName + ".mpg")) return true;
+      if (System.IO.File.Exists(fileName + ".ts")) return true;
+      return false;
     }
     #endregion
   }
