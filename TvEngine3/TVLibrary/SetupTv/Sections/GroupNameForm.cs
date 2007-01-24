@@ -60,5 +60,15 @@ namespace SetupTv.Sections
         _groupName = value;
       }
     }
+
+    private void mpTextBox1_KeyUp(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Enter)
+      {
+        DialogResult = DialogResult.OK;
+        _groupName = mpTextBox1.Text;
+        Close();
+      }
+    }
   }
 }

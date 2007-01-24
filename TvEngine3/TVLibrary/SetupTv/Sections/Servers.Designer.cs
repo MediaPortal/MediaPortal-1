@@ -33,10 +33,10 @@ namespace SetupTv.Sections
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.buttonDelete = new System.Windows.Forms.Button();
       this.buttonMaster = new System.Windows.Forms.Button();
       this.button1 = new System.Windows.Forms.Button();
-      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.SuspendLayout();
       // 
       // mpListView1
@@ -66,6 +66,12 @@ namespace SetupTv.Sections
       // 
       this.columnHeader2.Text = "Type";
       // 
+      // imageList1
+      // 
+      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+      this.imageList1.Images.SetKeyName(0, "computer.gif");
+      // 
       // buttonDelete
       // 
       this.buttonDelete.Location = new System.Drawing.Point(386, 201);
@@ -78,7 +84,7 @@ namespace SetupTv.Sections
       // 
       // buttonMaster
       // 
-      this.buttonMaster.Location = new System.Drawing.Point(252, 201);
+      this.buttonMaster.Location = new System.Drawing.Point(266, 201);
       this.buttonMaster.Name = "buttonMaster";
       this.buttonMaster.Size = new System.Drawing.Size(114, 23);
       this.buttonMaster.TabIndex = 4;
@@ -88,19 +94,13 @@ namespace SetupTv.Sections
       // 
       // button1
       // 
-      this.button1.Location = new System.Drawing.Point(192, 201);
+      this.button1.Location = new System.Drawing.Point(206, 201);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(54, 23);
       this.button1.TabIndex = 5;
       this.button1.Text = "Edit";
       this.button1.UseVisualStyleBackColor = true;
       this.button1.Click += new System.EventHandler(this.button1_Click);
-      // 
-      // imageList1
-      // 
-      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-      this.imageList1.Images.SetKeyName(0, "computer.gif");
       // 
       // Servers
       // 

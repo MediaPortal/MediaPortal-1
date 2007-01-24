@@ -79,9 +79,9 @@ namespace SetupTv.Sections
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.LabelEdit = true;
       this.mpListView1.LargeImageList = this.imageList1;
-      this.mpListView1.Location = new System.Drawing.Point(13, 41);
+      this.mpListView1.Location = new System.Drawing.Point(9, 11);
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(438, 284);
+      this.mpListView1.Size = new System.Drawing.Size(438, 311);
       this.mpListView1.SmallImageList = this.imageList1;
       this.mpListView1.TabIndex = 0;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
@@ -94,7 +94,7 @@ namespace SetupTv.Sections
       // hdrhekje
       // 
       this.hdrhekje.Text = "#";
-      this.hdrhekje.Width = 53;
+      this.hdrhekje.Width = 41;
       // 
       // hdrName
       // 
@@ -113,7 +113,7 @@ namespace SetupTv.Sections
       // hdrDetail1
       // 
       this.hdrDetail1.Text = "Details";
-      this.hdrDetail1.Width = 55;
+      this.hdrDetail1.Width = 66;
       // 
       // hdrDetail2
       // 
@@ -123,7 +123,7 @@ namespace SetupTv.Sections
       // hdrDetail3
       // 
       this.hdrDetail3.Text = "Details";
-      this.hdrDetail3.Width = 52;
+      this.hdrDetail3.Width = 50;
       // 
       // contextMenuStrip1
       // 
@@ -132,25 +132,25 @@ namespace SetupTv.Sections
             this.deleteThisChannelToolStripMenuItem,
             this.editChannelToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(166, 70);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(177, 70);
       // 
       // addToFavoritesToolStripMenuItem
       // 
       this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
-      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
       this.addToFavoritesToolStripMenuItem.Text = "Add to favorites";
       // 
       // deleteThisChannelToolStripMenuItem
       // 
       this.deleteThisChannelToolStripMenuItem.Name = "deleteThisChannelToolStripMenuItem";
-      this.deleteThisChannelToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+      this.deleteThisChannelToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
       this.deleteThisChannelToolStripMenuItem.Text = "Delete this channel";
       this.deleteThisChannelToolStripMenuItem.Click += new System.EventHandler(this.deleteThisChannelToolStripMenuItem_Click);
       // 
       // editChannelToolStripMenuItem
       // 
       this.editChannelToolStripMenuItem.Name = "editChannelToolStripMenuItem";
-      this.editChannelToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+      this.editChannelToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
       this.editChannelToolStripMenuItem.Text = "Edit channel";
       this.editChannelToolStripMenuItem.Click += new System.EventHandler(this.editChannelToolStripMenuItem_Click);
       // 
@@ -183,7 +183,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonDel
       // 
-      this.mpButtonDel.Location = new System.Drawing.Point(77, 350);
+      this.mpButtonDel.Location = new System.Drawing.Point(76, 350);
       this.mpButtonDel.Name = "mpButtonDel";
       this.mpButtonDel.Size = new System.Drawing.Size(55, 23);
       this.mpButtonDel.TabIndex = 1;
@@ -193,7 +193,7 @@ namespace SetupTv.Sections
       // 
       // buttonUtp
       // 
-      this.buttonUtp.Location = new System.Drawing.Point(16, 326);
+      this.buttonUtp.Location = new System.Drawing.Point(9, 326);
       this.buttonUtp.Name = "buttonUtp";
       this.buttonUtp.Size = new System.Drawing.Size(55, 23);
       this.buttonUtp.TabIndex = 3;
@@ -203,7 +203,7 @@ namespace SetupTv.Sections
       // 
       // buttonDown
       // 
-      this.buttonDown.Location = new System.Drawing.Point(16, 350);
+      this.buttonDown.Location = new System.Drawing.Point(9, 350);
       this.buttonDown.Name = "buttonDown";
       this.buttonDown.Size = new System.Drawing.Size(55, 23);
       this.buttonDown.TabIndex = 4;
@@ -213,7 +213,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonEdit
       // 
-      this.mpButtonEdit.Location = new System.Drawing.Point(77, 326);
+      this.mpButtonEdit.Location = new System.Drawing.Point(76, 326);
       this.mpButtonEdit.Name = "mpButtonEdit";
       this.mpButtonEdit.Size = new System.Drawing.Size(55, 23);
       this.mpButtonEdit.TabIndex = 5;

@@ -54,9 +54,9 @@ namespace SetupTv.Sections
             this.columnHeader3});
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.LargeImageList = this.imageList1;
-      this.mpListView1.Location = new System.Drawing.Point(14, 41);
+      this.mpListView1.Location = new System.Drawing.Point(11, 26);
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(208, 306);
+      this.mpListView1.Size = new System.Drawing.Size(208, 347);
       this.mpListView1.SmallImageList = this.imageList1;
       this.mpListView1.TabIndex = 1;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
@@ -85,7 +85,7 @@ namespace SetupTv.Sections
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(11, 15);
+      this.mpLabel1.Location = new System.Drawing.Point(8, 6);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(119, 13);
       this.mpLabel1.TabIndex = 2;
@@ -98,9 +98,9 @@ namespace SetupTv.Sections
       this.mpListView2.CheckBoxes = true;
       this.mpListView2.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2});
-      this.mpListView2.Location = new System.Drawing.Point(244, 41);
+      this.mpListView2.Location = new System.Drawing.Point(255, 26);
       this.mpListView2.Name = "mpListView2";
-      this.mpListView2.Size = new System.Drawing.Size(205, 306);
+      this.mpListView2.Size = new System.Drawing.Size(208, 347);
       this.mpListView2.TabIndex = 3;
       this.mpListView2.UseCompatibleStateImageBehavior = false;
       this.mpListView2.View = System.Windows.Forms.View.Details;
@@ -114,15 +114,15 @@ namespace SetupTv.Sections
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(244, 15);
+      this.mpLabel2.Location = new System.Drawing.Point(252, 6);
       this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(183, 13);
+      this.mpLabel2.Size = new System.Drawing.Size(131, 13);
       this.mpLabel2.TabIndex = 4;
-      this.mpLabel2.Text = "Grab epg for the following languages:";
+      this.mpLabel2.Text = "Filter for these languages: ";
       // 
       // mpButtonAll
       // 
-      this.mpButtonAll.Location = new System.Drawing.Point(293, 353);
+      this.mpButtonAll.Location = new System.Drawing.Point(255, 379);
       this.mpButtonAll.Name = "mpButtonAll";
       this.mpButtonAll.Size = new System.Drawing.Size(75, 23);
       this.mpButtonAll.TabIndex = 5;
@@ -132,7 +132,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonNone
       // 
-      this.mpButtonNone.Location = new System.Drawing.Point(374, 353);
+      this.mpButtonNone.Location = new System.Drawing.Point(336, 379);
       this.mpButtonNone.Name = "mpButtonNone";
       this.mpButtonNone.Size = new System.Drawing.Size(75, 23);
       this.mpButtonNone.TabIndex = 6;
@@ -142,7 +142,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonAllChannels
       // 
-      this.mpButtonAllChannels.Location = new System.Drawing.Point(66, 353);
+      this.mpButtonAllChannels.Location = new System.Drawing.Point(11, 379);
       this.mpButtonAllChannels.Name = "mpButtonAllChannels";
       this.mpButtonAllChannels.Size = new System.Drawing.Size(75, 23);
       this.mpButtonAllChannels.TabIndex = 5;
@@ -152,7 +152,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonNoneChannels
       // 
-      this.mpButtonNoneChannels.Location = new System.Drawing.Point(147, 353);
+      this.mpButtonNoneChannels.Location = new System.Drawing.Point(92, 379);
       this.mpButtonNoneChannels.Name = "mpButtonNoneChannels";
       this.mpButtonNoneChannels.Size = new System.Drawing.Size(75, 23);
       this.mpButtonNoneChannels.TabIndex = 6;
@@ -173,7 +173,7 @@ namespace SetupTv.Sections
       this.Controls.Add(this.mpLabel1);
       this.Controls.Add(this.mpListView1);
       this.Name = "TvEpgGrabber";
-      this.Size = new System.Drawing.Size(467, 388);
+      this.Size = new System.Drawing.Size(474, 412);
       this.ResumeLayout(false);
       this.PerformLayout();
 

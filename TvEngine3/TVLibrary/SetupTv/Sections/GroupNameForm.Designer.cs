@@ -48,6 +48,7 @@ namespace SetupTv.Sections
       this.mpTextBox1.Name = "mpTextBox1";
       this.mpTextBox1.Size = new System.Drawing.Size(238, 20);
       this.mpTextBox1.TabIndex = 1;
+      this.mpTextBox1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.mpTextBox1_KeyUp);
       // 
       // mpButton1
       // 
@@ -59,7 +60,7 @@ namespace SetupTv.Sections
       this.mpButton1.UseVisualStyleBackColor = true;
       this.mpButton1.Click += new System.EventHandler(this.mpButton1_Click);
       // 
-      // GroupName
+      // GroupNameForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -67,7 +68,7 @@ namespace SetupTv.Sections
       this.Controls.Add(this.mpButton1);
       this.Controls.Add(this.mpTextBox1);
       this.Controls.Add(this.mpLabel1);
-      this.Name = "GroupName";
+      this.Name = "GroupNameForm";
       this.Text = "Enter name for new group";
       this.Load += new System.EventHandler(this.GroupName_Load);
       this.ResumeLayout(false);

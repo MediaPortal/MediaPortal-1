@@ -116,7 +116,7 @@ namespace SetupTv.Sections
       this.tabControl1.Location = new System.Drawing.Point(3, 3);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(431, 366);
+      this.tabControl1.Size = new System.Drawing.Size(465, 400);
       this.tabControl1.TabIndex = 0;
       // 
       // tabPage1
@@ -125,7 +125,7 @@ namespace SetupTv.Sections
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(423, 340);
+      this.tabPage1.Size = new System.Drawing.Size(457, 374);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Settings";
       this.tabPage1.UseVisualStyleBackColor = true;
@@ -140,9 +140,9 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.textBoxPreInterval);
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.Location = new System.Drawing.Point(6, 6);
+      this.groupBox1.Location = new System.Drawing.Point(6, 3);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(411, 326);
+      this.groupBox1.Size = new System.Drawing.Size(445, 365);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       // 
@@ -178,7 +178,7 @@ namespace SetupTv.Sections
       // label3
       // 
       this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(148, 35);
+      this.label3.Location = new System.Drawing.Point(148, 27);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(151, 13);
       this.label3.TabIndex = 4;
@@ -195,7 +195,7 @@ namespace SetupTv.Sections
       // 
       // textBoxPreInterval
       // 
-      this.textBoxPreInterval.Location = new System.Drawing.Point(110, 28);
+      this.textBoxPreInterval.Location = new System.Drawing.Point(110, 24);
       this.textBoxPreInterval.Name = "textBoxPreInterval";
       this.textBoxPreInterval.Size = new System.Drawing.Size(32, 20);
       this.textBoxPreInterval.TabIndex = 2;
@@ -214,7 +214,7 @@ namespace SetupTv.Sections
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(28, 35);
+      this.label1.Location = new System.Drawing.Point(27, 27);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(76, 13);
       this.label1.TabIndex = 0;
@@ -226,7 +226,7 @@ namespace SetupTv.Sections
       this.tabPage2.Location = new System.Drawing.Point(4, 22);
       this.tabPage2.Name = "tabPage2";
       this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(423, 340);
+      this.tabPage2.Size = new System.Drawing.Size(457, 374);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Custom paths and filenames";
       this.tabPage2.UseVisualStyleBackColor = true;
@@ -244,7 +244,7 @@ namespace SetupTv.Sections
       this.groupBox2.Controls.Add(this.comboBoxMovies);
       this.groupBox2.Location = new System.Drawing.Point(6, 3);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(411, 332);
+      this.groupBox2.Size = new System.Drawing.Size(445, 365);
       this.groupBox2.TabIndex = 0;
       this.groupBox2.TabStop = false;
       // 
@@ -253,9 +253,9 @@ namespace SetupTv.Sections
       this.label15.AutoSize = true;
       this.label15.Location = new System.Drawing.Point(85, 132);
       this.label15.Name = "label15";
-      this.label15.Size = new System.Drawing.Size(211, 26);
+      this.label15.Size = new System.Drawing.Size(318, 13);
       this.label15.TabIndex = 8;
-      this.label15.Text = "Use blockquotes[] to specify optional fields \r\nand \\ for relative paths";
+      this.label15.Text = "Use blockquotes[] to specify optional fields and \\ for relative paths";
       // 
       // groupBox3
       // 
@@ -263,9 +263,9 @@ namespace SetupTv.Sections
       this.groupBox3.Controls.Add(this.mpLabel2);
       this.groupBox3.Controls.Add(this.mpLabel3);
       this.groupBox3.Controls.Add(this.mpLabel4);
-      this.groupBox3.Location = new System.Drawing.Point(27, 168);
+      this.groupBox3.Location = new System.Drawing.Point(29, 174);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(336, 155);
+      this.groupBox3.Size = new System.Drawing.Size(387, 165);
       this.groupBox3.TabIndex = 7;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Available tags";
@@ -273,7 +273,7 @@ namespace SetupTv.Sections
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(260, 16);
+      this.mpLabel1.Location = new System.Drawing.Point(284, 22);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(66, 130);
       this.mpLabel1.TabIndex = 19;
@@ -283,7 +283,7 @@ namespace SetupTv.Sections
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(94, 16);
+      this.mpLabel2.Location = new System.Drawing.Point(94, 22);
       this.mpLabel2.Name = "mpLabel2";
       this.mpLabel2.Size = new System.Drawing.Size(82, 130);
       this.mpLabel2.TabIndex = 17;
@@ -293,7 +293,7 @@ namespace SetupTv.Sections
       // mpLabel3
       // 
       this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(20, 16);
+      this.mpLabel3.Location = new System.Drawing.Point(20, 22);
       this.mpLabel3.Name = "mpLabel3";
       this.mpLabel3.Size = new System.Drawing.Size(70, 130);
       this.mpLabel3.TabIndex = 16;
@@ -304,7 +304,7 @@ namespace SetupTv.Sections
       // mpLabel4
       // 
       this.mpLabel4.AutoSize = true;
-      this.mpLabel4.Location = new System.Drawing.Point(172, 16);
+      this.mpLabel4.Location = new System.Drawing.Point(196, 22);
       this.mpLabel4.Name = "mpLabel4";
       this.mpLabel4.Size = new System.Drawing.Size(81, 130);
       this.mpLabel4.TabIndex = 18;
@@ -318,7 +318,7 @@ namespace SetupTv.Sections
       this.textBoxSample.Location = new System.Drawing.Point(88, 106);
       this.textBoxSample.Name = "textBoxSample";
       this.textBoxSample.ReadOnly = true;
-      this.textBoxSample.Size = new System.Drawing.Size(277, 20);
+      this.textBoxSample.Size = new System.Drawing.Size(328, 20);
       this.textBoxSample.TabIndex = 6;
       // 
       // label8
@@ -343,7 +343,7 @@ namespace SetupTv.Sections
       // 
       this.textBoxFormat.Location = new System.Drawing.Point(88, 80);
       this.textBoxFormat.Name = "textBoxFormat";
-      this.textBoxFormat.Size = new System.Drawing.Size(277, 20);
+      this.textBoxFormat.Size = new System.Drawing.Size(328, 20);
       this.textBoxFormat.TabIndex = 3;
       this.textBoxFormat.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxFormat_KeyPress);
       this.textBoxFormat.TextChanged += new System.EventHandler(this.textBoxFormat_TextChanged);
@@ -351,7 +351,7 @@ namespace SetupTv.Sections
       // label6
       // 
       this.label6.AutoSize = true;
-      this.label6.Location = new System.Drawing.Point(85, 44);
+      this.label6.Location = new System.Drawing.Point(85, 48);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(204, 13);
       this.label6.TabIndex = 2;
@@ -360,7 +360,7 @@ namespace SetupTv.Sections
       // label5
       // 
       this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(27, 23);
+      this.label5.Location = new System.Drawing.Point(27, 27);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(56, 13);
       this.label5.TabIndex = 1;
@@ -373,9 +373,9 @@ namespace SetupTv.Sections
       this.comboBoxMovies.Items.AddRange(new object[] {
             "Movies",
             "Series"});
-      this.comboBoxMovies.Location = new System.Drawing.Point(88, 20);
+      this.comboBoxMovies.Location = new System.Drawing.Point(88, 24);
       this.comboBoxMovies.Name = "comboBoxMovies";
-      this.comboBoxMovies.Size = new System.Drawing.Size(277, 21);
+      this.comboBoxMovies.Size = new System.Drawing.Size(328, 21);
       this.comboBoxMovies.TabIndex = 0;
       this.comboBoxMovies.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
       // 
@@ -384,7 +384,7 @@ namespace SetupTv.Sections
       this.tabPage3.Controls.Add(this.groupBox4);
       this.tabPage3.Location = new System.Drawing.Point(4, 22);
       this.tabPage3.Name = "tabPage3";
-      this.tabPage3.Size = new System.Drawing.Size(423, 340);
+      this.tabPage3.Size = new System.Drawing.Size(457, 374);
       this.tabPage3.TabIndex = 2;
       this.tabPage3.Text = "Disk quota";
       this.tabPage3.UseVisualStyleBackColor = true;
@@ -402,7 +402,7 @@ namespace SetupTv.Sections
       this.groupBox4.Controls.Add(this.label9);
       this.groupBox4.Location = new System.Drawing.Point(6, 3);
       this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new System.Drawing.Size(411, 332);
+      this.groupBox4.Size = new System.Drawing.Size(445, 365);
       this.groupBox4.TabIndex = 0;
       this.groupBox4.TabStop = false;
       // 
@@ -420,7 +420,7 @@ namespace SetupTv.Sections
       // 
       this.trackBarDisk.Location = new System.Drawing.Point(30, 185);
       this.trackBarDisk.Name = "trackBarDisk";
-      this.trackBarDisk.Size = new System.Drawing.Size(349, 40);
+      this.trackBarDisk.Size = new System.Drawing.Size(391, 40);
       this.trackBarDisk.TabIndex = 7;
       this.trackBarDisk.Scroll += new System.EventHandler(this.trackBarDisk_Scroll);
       // 
@@ -436,7 +436,7 @@ namespace SetupTv.Sections
       // labelFreeDiskspace
       // 
       this.labelFreeDiskspace.AutoSize = true;
-      this.labelFreeDiskspace.Location = new System.Drawing.Point(148, 109);
+      this.labelFreeDiskspace.Location = new System.Drawing.Point(148, 90);
       this.labelFreeDiskspace.Name = "labelFreeDiskspace";
       this.labelFreeDiskspace.Size = new System.Drawing.Size(41, 13);
       this.labelFreeDiskspace.TabIndex = 5;
@@ -445,7 +445,7 @@ namespace SetupTv.Sections
       // labelTotalDiskSpace
       // 
       this.labelTotalDiskSpace.AutoSize = true;
-      this.labelTotalDiskSpace.Location = new System.Drawing.Point(146, 83);
+      this.labelTotalDiskSpace.Location = new System.Drawing.Point(146, 64);
       this.labelTotalDiskSpace.Name = "labelTotalDiskSpace";
       this.labelTotalDiskSpace.Size = new System.Drawing.Size(43, 13);
       this.labelTotalDiskSpace.TabIndex = 4;
@@ -454,7 +454,7 @@ namespace SetupTv.Sections
       // label11
       // 
       this.label11.AutoSize = true;
-      this.label11.Location = new System.Drawing.Point(27, 109);
+      this.label11.Location = new System.Drawing.Point(27, 90);
       this.label11.Name = "label11";
       this.label11.Size = new System.Drawing.Size(82, 13);
       this.label11.TabIndex = 3;
@@ -464,7 +464,7 @@ namespace SetupTv.Sections
       // label10
       // 
       this.label10.AutoSize = true;
-      this.label10.Location = new System.Drawing.Point(27, 83);
+      this.label10.Location = new System.Drawing.Point(27, 64);
       this.label10.Name = "label10";
       this.label10.Size = new System.Drawing.Size(85, 13);
       this.label10.TabIndex = 2;
@@ -475,7 +475,7 @@ namespace SetupTv.Sections
       // 
       this.comboBoxDrive.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDrive.FormattingEnabled = true;
-      this.comboBoxDrive.Location = new System.Drawing.Point(68, 40);
+      this.comboBoxDrive.Location = new System.Drawing.Point(68, 24);
       this.comboBoxDrive.Name = "comboBoxDrive";
       this.comboBoxDrive.Size = new System.Drawing.Size(121, 21);
       this.comboBoxDrive.TabIndex = 1;
@@ -484,7 +484,7 @@ namespace SetupTv.Sections
       // label9
       // 
       this.label9.AutoSize = true;
-      this.label9.Location = new System.Drawing.Point(27, 43);
+      this.label9.Location = new System.Drawing.Point(27, 27);
       this.label9.Name = "label9";
       this.label9.Size = new System.Drawing.Size(35, 13);
       this.label9.TabIndex = 0;
@@ -507,7 +507,7 @@ namespace SetupTv.Sections
       this.tabPage4.Controls.Add(this.comboBoxCards);
       this.tabPage4.Location = new System.Drawing.Point(4, 22);
       this.tabPage4.Name = "tabPage4";
-      this.tabPage4.Size = new System.Drawing.Size(423, 340);
+      this.tabPage4.Size = new System.Drawing.Size(457, 374);
       this.tabPage4.TabIndex = 3;
       this.tabPage4.Text = "Recording folders";
       this.tabPage4.UseVisualStyleBackColor = true;
@@ -651,7 +651,7 @@ namespace SetupTv.Sections
       this.tabPage5.Controls.Add(this.checkBoxComSkipEnabled);
       this.tabPage5.Location = new System.Drawing.Point(4, 22);
       this.tabPage5.Name = "tabPage5";
-      this.tabPage5.Size = new System.Drawing.Size(423, 340);
+      this.tabPage5.Size = new System.Drawing.Size(457, 374);
       this.tabPage5.TabIndex = 4;
       this.tabPage5.Text = "Commercials";
       this.tabPage5.UseVisualStyleBackColor = true;
@@ -752,7 +752,7 @@ namespace SetupTv.Sections
       // checkBoxComSkipEnabled
       // 
       this.checkBoxComSkipEnabled.AutoSize = true;
-      this.checkBoxComSkipEnabled.Location = new System.Drawing.Point(30, 18);
+      this.checkBoxComSkipEnabled.Location = new System.Drawing.Point(27, 27);
       this.checkBoxComSkipEnabled.Name = "checkBoxComSkipEnabled";
       this.checkBoxComSkipEnabled.Size = new System.Drawing.Size(324, 17);
       this.checkBoxComSkipEnabled.TabIndex = 0;
@@ -770,7 +770,7 @@ namespace SetupTv.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
       this.Name = "TvRecording";
-      this.Size = new System.Drawing.Size(449, 415);
+      this.Size = new System.Drawing.Size(474, 412);
       this.tabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
       this.groupBox1.ResumeLayout(false);

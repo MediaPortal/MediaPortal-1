@@ -49,16 +49,16 @@ namespace SetupTv.Sections
       // 
       this.mpComboBoxCard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxCard.FormattingEnabled = true;
-      this.mpComboBoxCard.Location = new System.Drawing.Point(96, 16);
+      this.mpComboBoxCard.Location = new System.Drawing.Point(88, 13);
       this.mpComboBoxCard.Name = "mpComboBoxCard";
-      this.mpComboBoxCard.Size = new System.Drawing.Size(249, 21);
+      this.mpComboBoxCard.Size = new System.Drawing.Size(366, 21);
       this.mpComboBoxCard.TabIndex = 0;
       this.mpComboBoxCard.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxCard_SelectedIndexChanged);
       // 
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(58, 19);
+      this.mpLabel1.Location = new System.Drawing.Point(50, 16);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(32, 13);
       this.mpLabel1.TabIndex = 1;
@@ -71,9 +71,9 @@ namespace SetupTv.Sections
       this.mpListViewChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader4});
       this.mpListViewChannels.LargeImageList = this.imageList1;
-      this.mpListViewChannels.Location = new System.Drawing.Point(19, 74);
+      this.mpListViewChannels.Location = new System.Drawing.Point(11, 64);
       this.mpListViewChannels.Name = "mpListViewChannels";
-      this.mpListViewChannels.Size = new System.Drawing.Size(193, 297);
+      this.mpListViewChannels.Size = new System.Drawing.Size(193, 338);
       this.mpListViewChannels.SmallImageList = this.imageList1;
       this.mpListViewChannels.TabIndex = 2;
       this.mpListViewChannels.UseCompatibleStateImageBehavior = false;
@@ -97,16 +97,16 @@ namespace SetupTv.Sections
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(16, 55);
+      this.mpLabel2.Location = new System.Drawing.Point(8, 46);
       this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(54, 13);
+      this.mpLabel2.Size = new System.Drawing.Size(99, 13);
       this.mpLabel2.TabIndex = 3;
-      this.mpLabel2.Text = "Channels:";
+      this.mpLabel2.Text = "Available channels:";
       // 
       // mpLabel3
       // 
       this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(258, 55);
+      this.mpLabel3.Location = new System.Drawing.Point(258, 46);
       this.mpLabel3.Name = "mpLabel3";
       this.mpLabel3.Size = new System.Drawing.Size(131, 13);
       this.mpLabel3.TabIndex = 5;
@@ -119,9 +119,9 @@ namespace SetupTv.Sections
       this.mpListViewMapped.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2});
       this.mpListViewMapped.LargeImageList = this.imageList1;
-      this.mpListViewMapped.Location = new System.Drawing.Point(261, 74);
+      this.mpListViewMapped.Location = new System.Drawing.Point(261, 64);
       this.mpListViewMapped.Name = "mpListViewMapped";
-      this.mpListViewMapped.Size = new System.Drawing.Size(193, 297);
+      this.mpListViewMapped.Size = new System.Drawing.Size(193, 338);
       this.mpListViewMapped.SmallImageList = this.imageList1;
       this.mpListViewMapped.TabIndex = 4;
       this.mpListViewMapped.UseCompatibleStateImageBehavior = false;
@@ -134,7 +134,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonMap
       // 
-      this.mpButtonMap.Location = new System.Drawing.Point(228, 114);
+      this.mpButtonMap.Location = new System.Drawing.Point(219, 88);
       this.mpButtonMap.Name = "mpButtonMap";
       this.mpButtonMap.Size = new System.Drawing.Size(27, 23);
       this.mpButtonMap.TabIndex = 6;
@@ -144,7 +144,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonUnmap
       // 
-      this.mpButtonUnmap.Location = new System.Drawing.Point(228, 143);
+      this.mpButtonUnmap.Location = new System.Drawing.Point(219, 117);
       this.mpButtonUnmap.Name = "mpButtonUnmap";
       this.mpButtonUnmap.Size = new System.Drawing.Size(27, 23);
       this.mpButtonUnmap.TabIndex = 7;
@@ -155,7 +155,7 @@ namespace SetupTv.Sections
       // pictureBox1
       // 
       this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-      this.pictureBox1.Location = new System.Drawing.Point(19, 16);
+      this.pictureBox1.Location = new System.Drawing.Point(11, 9);
       this.pictureBox1.Name = "pictureBox1";
       this.pictureBox1.Size = new System.Drawing.Size(33, 23);
       this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -176,7 +176,7 @@ namespace SetupTv.Sections
       this.Controls.Add(this.mpLabel1);
       this.Controls.Add(this.mpComboBoxCard);
       this.Name = "TvChannelMapping";
-      this.Size = new System.Drawing.Size(467, 388);
+      this.Size = new System.Drawing.Size(474, 412);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
