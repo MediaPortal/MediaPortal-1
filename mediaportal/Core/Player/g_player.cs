@@ -27,10 +27,12 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Collections;
+using System.Text;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Subtitle;
 using MediaPortal.Configuration;
+using Un4seen.Bass.AddOn.Cd;
 
 namespace MediaPortal.Player
 {
@@ -55,6 +57,11 @@ namespace MediaPortal.Player
     static ArrayList _seekStepList = new ArrayList();
     static int _seekStepTimeout;
     static public bool configLoaded = false;
+    static string[] _driveSpeeds;
+    static int _driveCount = 0;
+    static string _driveLetters;
+    static bool driveSpeedLoaded = false;
+    static bool driveSpeedReduced = false;
     #endregion
 
     #region events
@@ -88,6 +95,55 @@ namespace MediaPortal.Player
     #endregion
 
     #region Serialisation
+    /// <summary>
+    /// Retrieve the CD/DVD Speed set in the config file
+    /// </summary>
+    public static void LoadDriveSpeed()
+    {
+      // if BASS is not the default audio engine, we need to load the CD Plugin first
+      if (!BassMusicPlayer.IsDefaultMusicPlayer)
+      {
+        // Load the CD Plugin
+        string appPath = System.Windows.Forms.Application.StartupPath;
+        string decoderFolderPath = System.IO.Path.Combine(appPath, @"musicplayer\plugins\audio decoders");
+
+        BassRegistration.BassRegistration.Register();
+        int pluginHandle = Un4seen.Bass.Bass.BASS_PluginLoad(decoderFolderPath + "\\basscd.dll");
+      }
+
+      // Get the number of CD/DVD drives
+      _driveCount = BassCd.BASS_CD_GetDriveCount();
+
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        string speedTable = xmlreader.GetValueAsString("cdspeed", "drivespeed", String.Empty);
+        StringBuilder builderDriveLetter = new StringBuilder();
+        // Get Drive letters assigned
+        for (int i = 0; i < _driveCount; i++)
+        {
+          builderDriveLetter.Append(BassCd.BASS_CD_GetDriveLetterChar(i));
+        }
+        _driveLetters = builderDriveLetter.ToString();
+
+        if (speedTable == String.Empty)
+        {
+          StringBuilder builder = new StringBuilder();
+          for (int i = 0; i < _driveCount; i++)
+          {
+            if (builder.Length != 0)
+              builder.Append(",");
+
+            float maxspeed = BassCd.BASS_CD_GetSpeedFactor(i);
+            builder.Append(Convert.ToInt32(maxspeed).ToString());
+          }
+          speedTable = builder.ToString();
+        }
+
+        _driveSpeeds = speedTable.Split(',');
+
+        driveSpeedLoaded = true;
+      }
+    }
 
     /// <summary>
     /// Read the configuration file to get the skip steps
@@ -266,6 +322,19 @@ namespace MediaPortal.Player
 
     public static void Stop()
     {
+      if (driveSpeedReduced)
+      {
+        // Set the CD/DVD Speed back to Max Speed
+        BASS_CD_INFO cdinfo = new BASS_CD_INFO();
+
+        for (int i = 0; i < _driveCount; i++)
+        {
+          BassCd.BASS_CD_GetInfo(i, cdinfo);
+          int maxspeed = (int)(cdinfo.maxspeed / 176.4);
+          BassCd.BASS_CD_SetSpeed(i, maxspeed);
+        }
+      }
+
       if (_player != null)
       {
         Log.Info("g_Player.Stop()");
@@ -395,6 +464,18 @@ namespace MediaPortal.Player
       {
         // Stop the BASS engine to avoid problems with Digital Audio
         BassMusicPlayer.Player.FreeBass();
+
+        // is the DVD inserted in a Drive for which we need to control the speed
+        if (!driveSpeedLoaded)
+          LoadDriveSpeed();
+
+        int driveindex = _driveLetters.IndexOf(System.IO.Path.GetPathRoot(strPath).Substring(0, 1));
+        if (driveindex > -1)
+        {
+          BassCd.BASS_CD_SetSpeed(driveindex, Convert.ToSingle(_driveSpeeds[driveindex]));
+
+          driveSpeedReduced = true;
+        }
 
         Starting = true;
         //stop playing radio
@@ -627,6 +708,18 @@ namespace MediaPortal.Player
     {
       try
       {
+        // is the DVD inserted in a Drive for which we need to control the speed
+        if (!driveSpeedLoaded)
+          LoadDriveSpeed();
+
+        int driveindex = _driveLetters.IndexOf(System.IO.Path.GetPathRoot(strFile).Substring(0, 1));
+        if (driveindex > -1)
+        {
+          BassCd.BASS_CD_SetSpeed(driveindex, Convert.ToSingle(_driveSpeeds[driveindex]));
+
+          driveSpeedReduced = true;
+        }
+
         Starting = true;
 
         //stop radio
@@ -736,6 +829,18 @@ namespace MediaPortal.Player
     {
       try
       {
+        // is the DVD inserted in a Drive for which we need to control the speed
+        if (!driveSpeedLoaded)
+          LoadDriveSpeed();
+
+        int driveindex = _driveLetters.IndexOf(System.IO.Path.GetPathRoot(strFile).Substring(0, 1));
+        if (driveindex > -1)
+        {
+          BassCd.BASS_CD_SetSpeed(driveindex, Convert.ToSingle(_driveSpeeds[driveindex]));
+
+          driveSpeedReduced = true;
+        }
+
         Starting = true;
 
         //stop radio
@@ -766,11 +871,11 @@ namespace MediaPortal.Player
         {
           GUIGraphicsContext.ShowBackground = true;
           OnStopped();
-            
+
           //SV 
           // If we're using the internal music player and cross-fading is enabled
           // we don't want a hard stop here as it will break cross-fading
-            
+
           //_player.Stop();
           //CachePlayer();
           //_player = null;
@@ -780,23 +885,17 @@ namespace MediaPortal.Player
 
           if (MediaPortal.Util.Utils.IsAudio(strFile))
           {
-              if (BassMusicPlayer.IsDefaultMusicPlayer && BassMusicPlayer.Player.Playing)
-                  doStop = !BassMusicPlayer.Player.CrossFadingEnabled;
+            if (BassMusicPlayer.IsDefaultMusicPlayer && BassMusicPlayer.Player.Playing)
+              doStop = !BassMusicPlayer.Player.CrossFadingEnabled;
           }
 
           if (doStop)
           {
-              //Console.WriteLine("--Stopping music player!");
-              _player.Stop();
+            _player.Stop();
 
-              CachePlayer();
-              _player = null;
-              GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect();
-          }
-
-          else
-          {
-              //Console.WriteLine("--NOT Stopping music player!");
+            CachePlayer();
+            _player = null;
+            GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect();
           }
         }
         if (!MediaPortal.Util.Utils.IsAVStream(strFile) && MediaPortal.Util.Utils.IsVideo(strFile))
@@ -804,7 +903,7 @@ namespace MediaPortal.Player
           // Free BASS to avoid problems with Digital Audio, when watching movies
           if (BassMusicPlayer.IsDefaultMusicPlayer)
           {
-              BassMusicPlayer.Player.FreeBass();
+            BassMusicPlayer.Player.FreeBass();
           }
 
           if (MediaPortal.Util.Utils.PlayMovie(strFile))

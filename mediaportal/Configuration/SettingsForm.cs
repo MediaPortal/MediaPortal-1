@@ -140,6 +140,7 @@ namespace MediaPortal.Configuration
       AddChildSection(general, new Sections.DaemonTools());
       AddChildSection(general, new FileMenu());
       AddChildSection(general, new Volume());
+      AddChildSection(general, new CDSpeed());
       
       Log.Info("add DVD section");
       SectionSettings dvd = new DVD();
