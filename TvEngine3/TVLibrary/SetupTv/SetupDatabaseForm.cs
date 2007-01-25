@@ -104,13 +104,15 @@ namespace SetupTv
       }
     }
 
-    string ComposeConnectionString(string server, string userid, string password, string database)
+    string ComposeConnectionString(string server, string userid, string password, string database, bool pooling)
     {
       switch (_provider)
       {
         case ProviderType.SqlServer:
           if (database == "") database = "master";
-          return String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};Pooling=false;", password, userid, server, database);
+          if (pooling==false)
+            return String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};Pooling=false;", password, userid, server, database);
+          return String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};", password, userid, server, database);
 
         case ProviderType.MySql:
           if (database == "") database = "mysql";
@@ -130,7 +132,7 @@ namespace SetupTv
       LoadConnectionDetailsFromConfig(true);
       try
       {
-        string connectionString = ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text, "");
+        string connectionString = ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text, "",false);
 
         switch (_provider)
         {
@@ -217,7 +219,7 @@ namespace SetupTv
             break;
         }
 
-        string connectionString = ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text, "");
+        string connectionString = ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text, "",true);
         switch (_provider)
         {
           case ProviderType.SqlServer:
@@ -291,7 +293,7 @@ namespace SetupTv
         _provider = ProviderType.SqlServer;
         try
         {
-          string connectionString = ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text, "");
+          string connectionString = ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text, "",false);
           using (SqlConnection connect = new SqlConnection(connectionString))
           {
             connect.Open();
@@ -310,7 +312,7 @@ namespace SetupTv
         _provider = ProviderType.MySql;
         try
         {
-          string connectionString = ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text,"");
+          string connectionString = ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text,"",false);
           using (MySqlConnection connect = new MySqlConnection(connectionString))
           {
             connect.Open();
@@ -330,7 +332,7 @@ namespace SetupTv
     {
       string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
 
-      string connectionString = ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text, "TvLibrary");
+      string connectionString = ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text, "TvLibrary",true);
       XmlDocument doc = new XmlDocument();
       doc.Load(fname);
       XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
@@ -365,7 +367,7 @@ namespace SetupTv
       LoadConnectionDetailsFromConfig(false);
       try
       {
-        string connectionString=ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text, "TvLibrary");
+        string connectionString=ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text, "TvLibrary",false);
         switch (_provider)
         {
           case ProviderType.SqlServer:
