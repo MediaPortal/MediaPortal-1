@@ -1,8 +1,8 @@
 #region Copyright (C) 2005-2007 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2007 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2005-2007 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -1222,7 +1222,18 @@ namespace MediaPortal.GUI.Library
         {
           if (message.Message == GUIMessage.MessageType.GUI_MSG_CLICKED)
           {
-            _offset = (_upDownControl.Value - 1) * _itemsPerPage;
+            int iPages = _listItems.Count / _itemsPerPage;
+            if ((_listItems.Count % _itemsPerPage) != 0) iPages++;
+            if (_upDownControl.Value == iPages)
+            {
+              // Moved to last page, make sure page is filled
+              _offset = _listItems.Count - _itemsPerPage;
+            }
+            else
+            {
+              _offset = (_upDownControl.Value - 1) * _itemsPerPage;
+            }
+
             while (_offset + _cursorX >= _listItems.Count) _cursorX--;
             OnSelectionChanged();
             _refresh = true;
@@ -1378,24 +1389,34 @@ namespace MediaPortal.GUI.Library
     /// <param name="SearchKey">SearchKey</param>
     void SelectItem(int item)
     {
-      if (item >= 0 && item < _listItems.Count)
+      int itemCount = _listItems.Count;
+      if (item >= 0 && item < itemCount)
       {
-        _offset = 0;
-        _cursorX = item;
-        while (_cursorX >= _itemsPerPage)
+        if (item >= itemCount - (itemCount % _itemsPerPage) && itemCount > _itemsPerPage)
         {
-          _offset += _itemsPerPage;
-          _cursorX -= _itemsPerPage;
+          // Special case, jump to last page, but fill entire page
+          _offset = itemCount - _itemsPerPage;
+          _cursorX = _itemsPerPage - (itemCount - item);
         }
-        if ((_cursorX < _scrollStartOffset) && (_offset >= _scrollStartOffset))
+        else
         {
-          _offset -= _scrollStartOffset;
-          _cursorX += _scrollStartOffset;
-        }
-        else if ((_cursorX > _itemsPerPage - _scrollStartOffset) && (_cursorX >= _scrollStartOffset))
-        {
-          _offset += _scrollStartOffset;
-          _cursorX -= _scrollStartOffset;
+          _offset = 0;
+          _cursorX = item;
+          while (_cursorX >= _itemsPerPage)
+          {
+            _offset += _itemsPerPage;
+            _cursorX -= _itemsPerPage;
+          }
+          if ((_cursorX < _scrollStartOffset) && (_offset >= _scrollStartOffset))
+          {
+            _offset -= _scrollStartOffset;
+            _cursorX += _scrollStartOffset;
+          }
+          else if ((_cursorX > _itemsPerPage - _scrollStartOffset) && (_cursorX >= _scrollStartOffset))
+          {
+            _offset += _scrollStartOffset;
+            _cursorX -= _scrollStartOffset;
+          }
         }
         _upDownControl.Value = ((_offset + _cursorX) / _itemsPerPage) + 1;
       }
@@ -1957,9 +1978,18 @@ namespace MediaPortal.GUI.Library
       int iPage = _upDownControl.Value;
       if (iPage > 1)
       {
+        int iPages = _listItems.Count / _itemsPerPage;
+        int itemsOnLastPage = _listItems.Count % _itemsPerPage;
+        if (itemsOnLastPage != 0) iPages++;
+
         iPage--;
         _upDownControl.Value = iPage;
         _offset = (_upDownControl.Value - 1) * _itemsPerPage;
+        if ((iPage + 1) == iPages && itemsOnLastPage != 0)
+        {
+          // Moving up from last page and last page has less then _itemsPerPage items
+          _cursorX -= _itemsPerPage - itemsOnLastPage;
+        }
       }
       else
       {
@@ -1976,14 +2006,28 @@ namespace MediaPortal.GUI.Library
     protected void OnPageDown()
     {
       int iPages = _listItems.Count / _itemsPerPage;
-      if ((_listItems.Count % _itemsPerPage) != 0) iPages++;
+      int itemsOnLastPage = _listItems.Count % _itemsPerPage;
+      if (itemsOnLastPage != 0) iPages++;
 
       int iPage = _upDownControl.Value;
       if (iPage + 1 <= iPages)
       {
         iPage++;
         _upDownControl.Value = iPage;
-        _offset = (_upDownControl.Value - 1) * _itemsPerPage;
+        if (iPage + 1 <= iPages)
+        {
+          _offset = (_upDownControl.Value - 1) * _itemsPerPage;
+        }
+        else
+        {
+          // Moving to last page, make sure list is filled
+          _offset = _listItems.Count - _itemsPerPage;
+          // Select correct item
+          if (itemsOnLastPage != 0)
+          {
+            _cursorX += _itemsPerPage - itemsOnLastPage;
+          }
+        }
       }
       else
       {
