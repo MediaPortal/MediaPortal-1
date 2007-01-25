@@ -188,6 +188,7 @@ namespace TvLibrary.Implementations.DVB
     {
       _conditionalAccess = new ConditionalAccess(null, null);
       _tunerDevice = device;
+      _name = _tunerDevice.Name;
       _ptrDisEqc = Marshal.AllocCoTaskMem(20);
       _disEqcMotor = new DiSEqCMotor(this);
       GetTunerCapabilities();
