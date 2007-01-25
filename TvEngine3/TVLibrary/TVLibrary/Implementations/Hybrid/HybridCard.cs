@@ -126,6 +126,17 @@ namespace TvLibrary.Implementations.Hybrid
     }
     #endregion
 
+    public ScanParameters Parameters
+    {
+      get
+      {
+        return _cards[_currentCardIndex].Parameters;
+      }
+      set
+      {
+        _cards[_currentCardIndex].Parameters = value;
+      }
+    }
     #region ITVCard Members
 
     /// <summary>

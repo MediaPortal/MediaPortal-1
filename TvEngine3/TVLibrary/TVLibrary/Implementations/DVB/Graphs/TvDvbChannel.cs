@@ -204,6 +204,7 @@ namespace TvLibrary.Implementations.DVB
     IFilterGraph2 _graphBuilder;
     bool _graphRunning;
     bool _isATSC;
+    ScanParameters _parameters;
     #endregion
     #endregion
 
@@ -237,6 +238,7 @@ namespace TvLibrary.Implementations.DVB
       _tsHelper = new TSHelperTools();
       _channelInfo = new ChannelInfo();
       _pmtPid = -1;
+      _parameters = new ScanParameters();
     }
 
     /// <summary>
@@ -285,6 +287,7 @@ namespace TvLibrary.Implementations.DVB
       tsfilter.AddChannel(out _interfaceTsChannel);
       _interfacePmtGrabber = (ITsPmtGrabber)_interfaceTsChannel;
       _interfaceCaGrabber = (ITsCaGrabber)_interfaceTsChannel;
+      _parameters = new ScanParameters();
     }
     #endregion
 
@@ -370,7 +373,7 @@ namespace TvLibrary.Implementations.DVB
               Log.Log.Write("wait for pmt");
               System.Threading.Thread.Sleep(20);
               TimeSpan ts = DateTime.Now - dtNow;
-              if (ts.TotalMilliseconds >= 10000) break;
+              if (ts.TotalMilliseconds >= (_parameters.TimeOutPMT*1000)) break;
             }
           }
           return;
@@ -409,7 +412,7 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Write("wait for pmt");
             System.Threading.Thread.Sleep(20);
             TimeSpan ts = DateTime.Now - dtNow;
-            if (ts.TotalMilliseconds >= 10000) break;
+            if (ts.TotalMilliseconds >= (_parameters.TimeOutPMT*1000)) break;
           }
         }
       }
@@ -758,6 +761,21 @@ namespace TvLibrary.Implementations.DVB
 
     #region general properties
 
+    /// <summary>
+    /// Gets or sets the parameters.
+    /// </summary>
+    /// <value>The parameters.</value>
+    public ScanParameters Parameters
+    {
+      get
+      {
+        return _parameters;
+      }
+      set
+      {
+        _parameters = value;
+      }
+    }
     /// <summary>
     /// Gets or sets the current channel.
     /// </summary>

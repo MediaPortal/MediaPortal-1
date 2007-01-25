@@ -139,6 +139,7 @@ namespace TvLibrary.Implementations.DVB
     protected TvDvbChannel _channelManager=null;
     protected int _subChannelId = 0;
     protected Dictionary<int, TvDvbChannel> _mapSubChannels;
+    ScanParameters _parameters;
     #endregion
 
     #endregion
@@ -152,8 +153,10 @@ namespace TvLibrary.Implementations.DVB
       _lastSignalUpdate = DateTime.MinValue;
       _channelManager = new TvDvbChannel();
       _mapSubChannels = new Dictionary<int, TvDvbChannel>();
+      _parameters = new ScanParameters();
     }
     #endregion
+
     #region subchannel management
     /// <summary>
     /// Allocates a new instance of TvDvbChannel which handles the new subchannel
@@ -603,6 +606,7 @@ namespace TvLibrary.Implementations.DVB
           AddTsWriterFilterToGraph();
           _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter);
           _channelManager = new TvDvbChannel(_graphBuilder, ref _conditionalAccess, _mdapiFilter, _filterTIF, _filterTsWriter);
+          _channelManager.Parameters = Parameters;
           return;
         }
         Release.ComObject("tuner pin out", pinOut);
@@ -614,6 +618,7 @@ namespace TvLibrary.Implementations.DVB
       AddTsWriterFilterToGraph();
       _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter);
       _channelManager = new TvDvbChannel(_graphBuilder, ref _conditionalAccess, _mdapiFilter, _filterTIF, _filterTsWriter);
+      _channelManager.Parameters = Parameters;
     }
 
 
@@ -1280,6 +1285,25 @@ namespace TvLibrary.Implementations.DVB
 
     #region properties
 
+    /// <summary>
+    /// Gets or sets the parameters.
+    /// </summary>
+    /// <value>The parameters.</value>
+    public ScanParameters Parameters
+    {
+      get
+      {
+        return _parameters;
+      }
+      set
+      {
+        _parameters = value;
+        if (_channelManager != null)
+        {
+          _channelManager.Parameters = value;
+        }
+      }
+    }
     /// <summary>
     /// Gets or sets the current channel.
     /// </summary>

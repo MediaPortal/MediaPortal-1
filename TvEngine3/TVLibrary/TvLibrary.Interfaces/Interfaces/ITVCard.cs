@@ -60,6 +60,12 @@ namespace TvLibrary.Interfaces
   {
     #region properties
     /// <summary>
+    /// Gets or sets the parameters.
+    /// </summary>
+    /// <value>The parameters.</value>
+    ScanParameters Parameters { get;set;}
+
+    /// <summary>
     /// Gets/sets the card name
     /// </summary>
     string Name { get;set;}

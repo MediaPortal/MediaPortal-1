@@ -61,6 +61,17 @@ namespace TvLibrary.Implementations.Analog
 
 
     #region properties
+
+    public ScanParameters Parameters 
+    {
+      get
+      {
+        return new ScanParameters();
+      }
+      set
+      {
+      }
+    }
     /// <summary>
     /// Gets/sets the card name
     /// </summary>

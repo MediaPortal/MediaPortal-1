@@ -1067,6 +1067,7 @@ namespace TvService
             return true;
           }
           _card.CamType = (CamType)_dbsCard.CamType;
+          SetParameters();
           bool result = _card.Tune(channel);
           TvCardContext context = (TvCardContext)_card.Context;
           context.IdChannel= idChannel;
@@ -1111,6 +1112,7 @@ namespace TvService
             }
           }
           _card.CamType = (CamType)_dbsCard.CamType;
+          SetParameters();
           bool result = _card.TuneScan(channel);
           TvCardContext context = (TvCardContext)_card.Context;
           context.IdChannel = idChannel;
@@ -1982,5 +1984,18 @@ namespace TvService
       }
     }
     #endregion
+    public void SetParameters()
+    {
+      if (_card == null) return;
+      ScanParameters settings = new ScanParameters();
+      TvBusinessLayer layer = new TvBusinessLayer();
+      settings.TimeOutTune = Int32.Parse(layer.GetSetting("timeoutTune", "2").Value);
+      settings.TimeOutPAT = Int32.Parse(layer.GetSetting("timeoutPAT", "5").Value);
+      settings.TimeOutCAT = Int32.Parse(layer.GetSetting("timeoutCAT", "5").Value);
+      settings.TimeOutPMT = Int32.Parse(layer.GetSetting("timeoutPMT", "10").Value);
+      settings.TimeOutSDT = Int32.Parse(layer.GetSetting("timeoutSDT", "20").Value);
+      _card.Parameters = settings;
+    }
+
   }
 }
