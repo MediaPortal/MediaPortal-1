@@ -243,6 +243,36 @@ namespace MediaPortal.Player
     }
 
 
+    /// <summary>
+    /// Changes the speed of a drive to the value set in configuration
+    /// </summary>
+    /// <param name="strFile"></param>
+    private static void ChangeDriveSpeed(string strFile)
+    {
+      try
+      {
+        // is the DVD inserted in a Drive for which we need to control the speed
+        if (!driveSpeedLoaded)
+          LoadDriveSpeed();
+
+        string rootPath = System.IO.Path.GetPathRoot(strFile);
+        if (rootPath != null)
+        {
+          if (rootPath.Length > 1)
+          {
+            int driveindex = _driveLetters.IndexOf(rootPath.Substring(0, 1));
+            if (driveindex > -1 && driveindex < _driveSpeeds.Length)
+            {
+              BassCd.BASS_CD_SetSpeed(driveindex, Convert.ToSingle(_driveSpeeds[driveindex]));
+
+              driveSpeedReduced = true;
+            }
+          }
+        }
+      }
+      catch (Exception)
+      { }
+    }
     #endregion
 
 
@@ -462,22 +492,13 @@ namespace MediaPortal.Player
     {
       try
       {
+        Starting = true;
+
         // Stop the BASS engine to avoid problems with Digital Audio
         BassMusicPlayer.Player.FreeBass();
 
-        // is the DVD inserted in a Drive for which we need to control the speed
-        if (!driveSpeedLoaded)
-          LoadDriveSpeed();
+        ChangeDriveSpeed(strPath);
 
-        int driveindex = _driveLetters.IndexOf(System.IO.Path.GetPathRoot(strPath).Substring(0, 1));
-        if (driveindex > -1)
-        {
-          BassCd.BASS_CD_SetSpeed(driveindex, Convert.ToSingle(_driveSpeeds[driveindex]));
-
-          driveSpeedReduced = true;
-        }
-
-        Starting = true;
         //stop playing radio
 
         GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO, 0, 0, 0, 0, 0, null);
@@ -708,26 +729,9 @@ namespace MediaPortal.Player
     {
       try
       {
-        // is the DVD inserted in a Drive for which we need to control the speed
-        if (!driveSpeedLoaded)
-          LoadDriveSpeed();
-
-        string rootPath = System.IO.Path.GetPathRoot(strFile);
-        if (rootPath != null)
-        {
-          if (rootPath.Length > 1)
-          {
-            int driveindex = _driveLetters.IndexOf(rootPath.Substring(0, 1));
-            if (driveindex > -1 && driveindex < _driveSpeeds.Length)
-            {
-              BassCd.BASS_CD_SetSpeed(driveindex, Convert.ToSingle(_driveSpeeds[driveindex]));
-
-              driveSpeedReduced = true;
-            }
-          }
-        }
-
         Starting = true;
+
+        ChangeDriveSpeed(strFile);
 
         //stop radio
         if (!MediaPortal.Util.Utils.IsLiveRadio(strFile))
@@ -835,27 +839,10 @@ namespace MediaPortal.Player
     public static bool Play(string strFile)
     {
       try
-      {
-        // is the DVD inserted in a Drive for which we need to control the speed
-        if (!driveSpeedLoaded)
-          LoadDriveSpeed();
-
-        string rootPath = System.IO.Path.GetPathRoot(strFile);
-        if (rootPath != null)
-        {
-          if (rootPath.Length > 1)
-          {
-            int driveindex = _driveLetters.IndexOf(rootPath.Substring(0, 1));
-            if (driveindex > -1 && driveindex < _driveSpeeds.Length)
-            {
-              BassCd.BASS_CD_SetSpeed(driveindex, Convert.ToSingle(_driveSpeeds[driveindex]));
-
-              driveSpeedReduced = true;
-            }
-          }
-        }
-        
+      {        
         Starting = true;
+
+        ChangeDriveSpeed(strFile);
 
         //stop radio
         if (!MediaPortal.Util.Utils.IsLiveRadio(strFile))
