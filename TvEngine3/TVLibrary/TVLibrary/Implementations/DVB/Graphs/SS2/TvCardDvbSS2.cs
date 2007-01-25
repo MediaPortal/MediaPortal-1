@@ -197,6 +197,19 @@ namespace TvLibrary.Implementations.DVB
 
 
     #region properties
+    /// <summary>
+    /// Gets/sets the card cardType
+    /// </summary>
+    public override int cardType
+    {
+      get
+      {
+        return (int)_cardType; 
+      }
+      set
+      {
+      }
+    }
 
     /// <summary>
     /// Gets/sets the card device

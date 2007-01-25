@@ -1646,7 +1646,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Gets/sets the card cardType
     /// </summary>
-    public int cardType
+    public virtual int cardType
     {
       get
       {
