@@ -2268,16 +2268,19 @@ namespace MediaPortal.Configuration.Sections
       string dvdLabel = string.Empty;
       if (GetValidatedDVDLabel(ref dvdLabel))
       {
-        if (!MediaPortal.Util.Utils.IsDVD(strPath))
+        if (dvdLabel.Length > 0)
         {
-          if (MessageBox.Show("The file list suggests that this movie is not on disc and thus the label will not be shown. Store it anyway?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
+          if (!MediaPortal.Util.Utils.IsDVD(strPath))
+          {
+            if (MessageBox.Show("The file list suggests that this movie is not on disc and thus the label will not be shown. Store it anyway?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
+            {
+              VideoDatabase.SetDVDLabel(details.ID, dvdLabel);
+            }
+          }
+          else
           {
             VideoDatabase.SetDVDLabel(details.ID, dvdLabel);
           }
-        }
-        else
-        {
-          VideoDatabase.SetDVDLabel(details.ID, dvdLabel);
         }
       }
       else
