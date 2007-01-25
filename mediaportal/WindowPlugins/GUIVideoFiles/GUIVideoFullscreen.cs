@@ -884,8 +884,9 @@ namespace MediaPortal.GUI.Video
             UpdateGUI();
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
             RenderVolume(false);
-            for (int i = (int)Control.PANEL1; i < (int)Control.PANEL2; ++i)
-              HideControl(GetID, i);
+            if (!screenState.Paused)
+              for (int i = (int)Control.PANEL1; i < (int)Control.PANEL2; ++i)
+                HideControl(GetID, i);
 
 
             return true;
@@ -1196,7 +1197,7 @@ namespace MediaPortal.GUI.Video
         HideControl(GetID, (int)Control.OSD_TIMEINFO);
         HideControl(GetID, (int)Control.OSD_VIDEOPROGRESS);
       }
-      if (g_Player.Paused)
+      if (g_Player.Paused && !_showStep && !_showStatus && !_isOsdVisible)
       {
         ShowControl(GetID, (int)Control.IMG_PAUSE);
       }
@@ -1280,6 +1281,7 @@ namespace MediaPortal.GUI.Video
         ShowControl(GetID, (int)Control.BLUE_BAR);
         ShowControl(GetID, (int)Control.LABEL_ROW1);
       }
+
       RenderVolume(_isVolumeVisible);
     }
     

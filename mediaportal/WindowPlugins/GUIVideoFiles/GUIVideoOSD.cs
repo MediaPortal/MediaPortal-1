@@ -273,6 +273,10 @@ namespace MediaPortal.GUI.Video
             QueueAnimation(AnimationType.WindowOpen);
             for (int i = (int)Controls.Panel1; i < (int)Controls.Panel2; i++)
               ShowControl(GetID, i);
+            if (g_Player.Paused)
+              ToggleButton((int)Controls.OSD_PLAY, true);		// make sure play button is down (so it shows the pause symbol)
+            else
+              ToggleButton((int)Controls.OSD_PLAY, false);		// make sure play button is up (so it shows the play symbol)
             return true;
           }
         case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
