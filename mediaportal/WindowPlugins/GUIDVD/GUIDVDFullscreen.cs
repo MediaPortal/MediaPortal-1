@@ -77,8 +77,9 @@ namespace MediaPortal.GUI.Video
 					GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
 				}
 				string dvdToPlay = selectDVDHandler.ShowSelectDVDDialog(GetID);
-				if (dvdToPlay == null || !OnPlayDVD(dvdToPlay))
+				if (dvdToPlay == null || !selectDVDHandler.OnPlayDVD(dvdToPlay, GetID))
 				{
+          Log.Info("DVDFullscreen: Returning from DVD screen");
 					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, this.GetID, 0, 0, GetID, 0, null);
 					return this.OnMessage(msg);	// Send a de-init msg
 				}
@@ -90,15 +91,6 @@ namespace MediaPortal.GUI.Video
     public override void Process()
     {
     }
-
-    protected bool OnPlayDVD(string dvd)
-    {
-      Log.Info("DVDFullscreen: Play DVD");
-      GUIVideoFiles videoFiles = (GUIVideoFiles)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEOS);
-      if (null == videoFiles)
-        return false;
-			return videoFiles.OnPlayDVD(dvd);
-		}
 
     #region ISetupForm Members
 

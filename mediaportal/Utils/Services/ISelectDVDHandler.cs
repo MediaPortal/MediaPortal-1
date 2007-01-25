@@ -35,5 +35,6 @@ namespace MediaPortal.Services
   public interface ISelectDVDHandler
   {
     string ShowSelectDVDDialog(int parentId);
+    bool OnPlayDVD(string drive, int parentId);
   }
 }

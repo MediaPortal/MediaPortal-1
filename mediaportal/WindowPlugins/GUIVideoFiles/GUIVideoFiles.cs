@@ -41,6 +41,7 @@ using MediaPortal.Video.Database;
 using MediaPortal.TV.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
+using MediaPortal.Services;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.View;
 using System.Runtime.Serialization;
@@ -1733,7 +1734,17 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 341: //Play dvd
-          OnPlayDVD(item.Path);
+          ISelectDVDHandler selectDVDHandler;
+          if (GlobalServiceProvider.IsRegistered<ISelectDVDHandler>())
+          {
+            selectDVDHandler = GlobalServiceProvider.Get<ISelectDVDHandler>();
+          }
+          else
+          {
+            selectDVDHandler = new SelectDVDHandler();
+            GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
+          }
+          selectDVDHandler.OnPlayDVD(item.Path, GetID);
           break;
 
         case 346: //Stack
