@@ -75,6 +75,7 @@ void  CPatParser::Reset(IChannelScanCallback* callback)
 	m_nitDecoder.Reset();
 	//UpdateHwPids();
   m_sdtParser.SetCallback(this);
+  m_sdtParser.SetTableId(0x42);
   m_sdtParserOther.SetCallback(this);
   m_sdtParserOther.SetTableId(0x46);
   m_vctParser.SetCallback(this);
@@ -85,10 +86,27 @@ void  CPatParser::Reset(IChannelScanCallback* callback)
 //*****************************************************************************
 BOOL CPatParser::IsReady()
 {
- DWORD timeSpan=GetTickCount()-m_tickCount;
- if (timeSpan < 1000) return FALSE;
+  DWORD timeSpan=GetTickCount()-m_tickCount;
+  if (timeSpan < 1000) return FALSE;
+	DWORD timeSpan1=GetTickCount()-m_tickCount;
+	//a1jatt if channels not ready in 30 seconds , it will never be ready, so dump them 
+	if (timeSpan1 > 25000) 
+	{
+		int t=0;
+		for (itChannels it1=m_mapChannels.begin(); it1 !=m_mapChannels.end();it1++)
+		{
+			CChannelInfo& info1=it1->second;
+			if (info1.PmtReceived == false || info1.SdtReceived == false) 
+			{
+					m_mapChannels.erase(t);
+			}
+				t++;
+		}
+		m_tickCount=GetTickCount();
+		return FALSE;
+	}
 
- if (m_vctParser.Count() > 0)
+  if (m_vctParser.Count() > 0)
   {
     return TRUE;
   }
@@ -221,6 +239,7 @@ void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
 			}
 		}
 	}
+	/*
   else
   {
     if (sdtInfo.OtherMux==false)
@@ -259,7 +278,7 @@ void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
 
       m_mapChannels[info.ServiceId]=info;
     }
-  }
+  }*/
   return;
   
 }

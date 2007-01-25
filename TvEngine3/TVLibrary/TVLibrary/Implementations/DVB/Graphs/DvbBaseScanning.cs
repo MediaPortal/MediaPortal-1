@@ -160,8 +160,9 @@ namespace TvLibrary.Implementations.DVB
     /// Scans the specified transponder.
     /// </summary>
     /// <param name="channel">The channel.</param>
+    /// <param name="settings">The settings.</param>
     /// <returns></returns>
-    public List<IChannel> Scan(IChannel channel)
+    public List<IChannel> Scan(IChannel channel,ScanParameters settings)
     {
       _card.IsScanning = true;
       _card.TuneScan(channel);
@@ -174,6 +175,11 @@ namespace TvLibrary.Implementations.DVB
       _card.IsScanning = false;
       DateTime startTime = DateTime.Now;
       ResetSignalUpdate();
+      if (_card.IsTunerLocked == false)
+      {
+        System.Threading.Thread.Sleep(settings.TimeOutTune * 1000);
+        ResetSignalUpdate();
+      }
       Log.Log.WriteFile("Scan: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel , _card.SignalQuality);
       if (_card.IsTunerLocked || _card.SignalLevel > 0 || _card.SignalQuality > 0)
       {
@@ -184,8 +190,7 @@ namespace TvLibrary.Implementations.DVB
           _analyzer.SetCallBack(this);
           _analyzer.Start();
           startTime = DateTime.Now;
-
-          _event.WaitOne(10000, true);
+          _event.WaitOne(settings.TimeOutSDT*1000, true);
 
           int networkId;
           int transportId;

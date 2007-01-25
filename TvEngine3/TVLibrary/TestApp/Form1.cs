@@ -212,7 +212,7 @@ namespace TestApp
       btnEPG.Enabled = false;
       ITVScanning scanner = _currentCard.ScanningInterface;
       scanner.Reset();
-      List<IChannel> channels = scanner.Scan(_currentCard.Channel);
+      List<IChannel> channels = scanner.Scan(_currentCard.Channel, new TvLibrary.ScanParameters());
       scanner.Dispose();
       listViewChannels.Items.Clear();
       foreach (IChannel channel in channels)

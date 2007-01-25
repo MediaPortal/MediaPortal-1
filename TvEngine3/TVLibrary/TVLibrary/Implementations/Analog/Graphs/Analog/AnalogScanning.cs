@@ -93,8 +93,9 @@ namespace TvLibrary.Implementations.Analog
     /// Tunes to the channel specified and will start scanning for any channel
     /// </summary>
     /// <param name="channel">channel to tune to</param>
+    /// <param name="settings"></param>
     /// <returns>list of channels found</returns>
-    public List<IChannel> Scan(IChannel channel)
+    public List<IChannel> Scan(IChannel channel,ScanParameters settings)
     {
       _card.IsScanning = true;
       AnalogChannel analogChannel = (AnalogChannel)channel;

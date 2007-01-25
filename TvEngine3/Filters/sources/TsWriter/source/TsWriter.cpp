@@ -355,6 +355,7 @@ CMpTs::~CMpTs()
 	delete m_pChannelScanner;
 	delete m_pEpgScanner;
   delete m_pTechnoTrend;
+  CAutoLock lock(&m_Lock);
   for (int i=0; i < (int)m_vecChannels.size();++i)
   {
     delete m_vecChannels[i];
@@ -496,30 +497,44 @@ void CMpTs::AnalyzeTsPacket(byte* tsPacket)
 STDMETHODIMP CMpTs::AddChannel( ITSChannel** instance)
 {
   CAutoLock lock(&m_Lock);
-  LogDebug("--AddChannel");
+	LogDebug("--AddChannel:%d",m_vecChannels.size());
   HRESULT hr;
 	
   CTsChannel* channel = new CTsChannel(GetOwner(), &hr);
   m_vecChannels.push_back(channel);
   *instance=(ITSChannel*)channel;
+	LogDebug("--  returns:%x (%x)", (*instance), channel);
   return S_OK;
 }
 
 STDMETHODIMP CMpTs::DeleteChannel( ITSChannel* instance)
 {
   CAutoLock lock(&m_Lock);
-  LogDebug("--DeleteChannel");
-  ivecChannels it = m_vecChannels.begin();
-  while (it != m_vecChannels.end())
-  {
-    if (*it == instance)
-    {
-      delete *it;
-      m_vecChannels.erase(it);
-      return S_OK;
-    }
-    ++it;
-  }
+	try
+	{
+		LogDebug("--DeleteChannel:%d (%x)",m_vecChannels.size(), instance);
+		ivecChannels it = m_vecChannels.begin();
+		while (it != m_vecChannels.end())
+		{
+			CTsChannel* channel=*it;
+			ITSChannel* ichan=(ITSChannel*)channel;
+			if (ichan == instance)
+			{
+				LogDebug("--  deleting");
+				delete channel;
+				LogDebug("--  erasing");
+				m_vecChannels.erase(it);
+				LogDebug("--  done");
+				return S_OK;
+			}
+			++it;
+		}
+		LogDebug("--  not found");
+	}
+	catch(...)
+	{
+	  LogDebug("exception in delete channel");
+	}
   return S_OK;
 }
 

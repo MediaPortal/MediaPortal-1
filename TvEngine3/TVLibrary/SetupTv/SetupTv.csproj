@@ -234,6 +234,12 @@
     <Compile Include="Sections\RadioEpgGrabber.Designer.cs">
       <DependentUpon>RadioEpgGrabber.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\ScanSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\ScanSettings.Designer.cs">
+      <DependentUpon>ScanSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\Servers.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -383,6 +389,10 @@
     <EmbeddedResource Include="Sections\FormPreview.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FormPreview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\ScanSettings.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ScanSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Servers.resx">
       <SubType>Designer</SubType>

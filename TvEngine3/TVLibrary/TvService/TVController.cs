@@ -984,7 +984,14 @@ namespace TvService
     /// <returns>list of channels found</returns>
     public IChannel[] Scan(int cardId, IChannel channel)
     {
-      return _cards[cardId].Scan(channel);
+      ScanParameters settings = new ScanParameters();
+      TvBusinessLayer layer = new TvBusinessLayer();
+      settings.TimeOutTune = Int32.Parse(layer.GetSetting("timeoutTune", "2").Value);
+      settings.TimeOutPAT = Int32.Parse(layer.GetSetting("timeoutPAT", "5").Value);
+      settings.TimeOutCAT = Int32.Parse(layer.GetSetting("timeoutCAT", "5").Value);
+      settings.TimeOutPMT = Int32.Parse(layer.GetSetting("timeoutPMT", "10").Value);
+      settings.TimeOutSDT = Int32.Parse(layer.GetSetting("timeoutSDT", "20").Value);
+      return _cards[cardId].Scan(channel, settings);
     }
 
     /// <summary>

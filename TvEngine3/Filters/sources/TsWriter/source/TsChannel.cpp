@@ -23,12 +23,43 @@ CTsChannel::CTsChannel(LPUNKNOWN pUnk, HRESULT *phr)
 
 CTsChannel::~CTsChannel(void)
 {
-	delete m_pVideoAnalyzer;
-	delete m_pPmtGrabber;
-	delete m_pRecorder;
-	delete m_pTimeShifting;
-	delete m_pTeletextGrabber;
-  delete m_pCaGrabber;
+	if (m_pVideoAnalyzer!=NULL)
+	{
+		LogDebug("del m_pVideoAnalyzer");
+		delete m_pVideoAnalyzer;
+		m_pVideoAnalyzer=NULL;
+	}
+	if (m_pPmtGrabber!=NULL)
+	{
+		LogDebug("del m_pPmtGrabber");
+		delete m_pPmtGrabber;
+		m_pPmtGrabber=NULL;
+	}
+	if (m_pRecorder!=NULL)
+	{
+		LogDebug("del m_pRecorder");
+		delete m_pRecorder;
+		m_pRecorder=NULL;
+	}
+	if (m_pTimeShifting!=NULL)
+	{
+		LogDebug("del m_pTimeShifting");
+		delete m_pTimeShifting;
+		m_pTimeShifting=NULL;
+	}
+	if (m_pTeletextGrabber!=NULL)
+	{
+		LogDebug("del m_pTeletextGrabber");
+		delete m_pTeletextGrabber;
+		m_pTeletextGrabber=NULL;
+	}
+	if (m_pCaGrabber!=NULL)
+	{
+		LogDebug("del m_pCaGrabber");
+		delete m_pCaGrabber;
+		m_pCaGrabber=NULL;
+	}
+	LogDebug("del done...");
 }
 
 

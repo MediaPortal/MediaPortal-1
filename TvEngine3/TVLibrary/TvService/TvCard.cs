@@ -1472,7 +1472,7 @@ namespace TvService
     /// <param name="cardId">id of the card.</param>
     /// <param name="cardId">IChannel containing the transponder tuning details.</param>
     /// <returns>list of channels found</returns>
-    public IChannel[] Scan(IChannel channel)
+    public IChannel[] Scan(IChannel channel, ScanParameters settings)
     {
       try
       {
@@ -1493,7 +1493,7 @@ namespace TvService
         ITVScanning scanner = _card.ScanningInterface;
         if (scanner == null) return null;
         scanner.Reset();
-        List<IChannel> channelsFound = scanner.Scan(channel);
+        List<IChannel> channelsFound = scanner.Scan(channel, settings);
         if (channelsFound == null) return null;
         return channelsFound.ToArray();
 

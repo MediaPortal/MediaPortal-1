@@ -71,7 +71,7 @@ namespace SetupTv
         // 
         linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://www.team-mediaportal.com/donate.html");
 
-        
+
         CheckForIllegalCrossThreadCalls = false;
         //
         // Set caption
@@ -105,7 +105,7 @@ namespace SetupTv
           MessageBox.Show("Unable to open:" + fname);
           Log.Write(ex);
         }
-        IList dbsServers=null;
+        IList dbsServers = null;
 
         try
         {
@@ -199,6 +199,7 @@ namespace SetupTv
           AddChildSection(radioChannels, new RadioChannelMapping());
           AddChildSection(radioChannels, new RadioEpgGrabber());
 
+          AddSection(new ScanSettings());
           AddSection(new TvRecording());
           AddSection(new TvSchedules());
           AddSection(new StreamingServer());
