@@ -199,6 +199,12 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPTextBox listViewTextBox;
     private MediaPortal.UserInterface.Controls.MPCheckBox _fuzzyMatchingCheckBox;
     bool _scanning = false;
+    bool useLocalImage = false;
+    private MediaPortal.UserInterface.Controls.MPTextBox tbDiscNr;
+    private Label label2;
+    private MediaPortal.UserInterface.Controls.MPButton btnBrowse;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
+    private MediaPortal.UserInterface.Controls.MPTextBox tbLocalImage;
     ArrayList conflictFiles = new ArrayList();
 
     public MovieDatabase()
@@ -310,6 +316,8 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl2 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.tbDiscNr = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label2 = new System.Windows.Forms.Label();
       this.buttonImport = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnDelete = new MediaPortal.UserInterface.Controls.MPButton();
       this.tbWritingCredits = new MediaPortal.UserInterface.Controls.MPTextBox();
@@ -376,6 +384,9 @@ namespace MediaPortal.Configuration.Sections
       this.label15 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxPictureURL = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
+      this.btnBrowse = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbLocalImage = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.groupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage8.SuspendLayout();
@@ -523,6 +534,7 @@ namespace MediaPortal.Configuration.Sections
       // mpComboBox1
       // 
       this.mpComboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpComboBox1.BorderColor = System.Drawing.Color.Empty;
       this.mpComboBox1.Location = new System.Drawing.Point(120, 193);
       this.mpComboBox1.Name = "mpComboBox1";
       this.mpComboBox1.Size = new System.Drawing.Size(122, 21);
@@ -602,6 +614,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.listViewTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewTextBox.BorderColor = System.Drawing.Color.Empty;
       this.listViewTextBox.Location = new System.Drawing.Point(136, 76);
       this.listViewTextBox.Name = "listViewTextBox";
       this.listViewTextBox.Size = new System.Drawing.Size(94, 20);
@@ -664,6 +677,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Controls.Add(this.tbDiscNr);
+      this.groupBox3.Controls.Add(this.label2);
       this.groupBox3.Controls.Add(this.buttonImport);
       this.groupBox3.Controls.Add(this.btnDelete);
       this.groupBox3.Controls.Add(this.tbWritingCredits);
@@ -700,6 +715,24 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.TabIndex = 0;
       this.groupBox3.TabStop = false;
       // 
+      // tbDiscNr
+      // 
+      this.tbDiscNr.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.tbDiscNr.BorderColor = System.Drawing.Color.Empty;
+      this.tbDiscNr.Location = new System.Drawing.Point(88, 309);
+      this.tbDiscNr.Name = "tbDiscNr";
+      this.tbDiscNr.Size = new System.Drawing.Size(96, 20);
+      this.tbDiscNr.TabIndex = 30;
+      // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(8, 312);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(41, 13);
+      this.label2.TabIndex = 29;
+      this.label2.Text = "Disc #:";
+      // 
       // buttonImport
       // 
       this.buttonImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -726,6 +759,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.tbWritingCredits.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbWritingCredits.BorderColor = System.Drawing.Color.Empty;
       this.tbWritingCredits.Location = new System.Drawing.Point(88, 140);
       this.tbWritingCredits.Name = "tbWritingCredits";
       this.tbWritingCredits.Size = new System.Drawing.Size(336, 20);
@@ -743,6 +777,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.tbPlotOutline.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbPlotOutline.BorderColor = System.Drawing.Color.Empty;
       this.tbPlotOutline.Location = new System.Drawing.Point(88, 68);
       this.tbPlotOutline.Name = "tbPlotOutline";
       this.tbPlotOutline.Size = new System.Drawing.Size(336, 20);
@@ -759,6 +794,7 @@ namespace MediaPortal.Configuration.Sections
       // tbVotes
       // 
       this.tbVotes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.tbVotes.BorderColor = System.Drawing.Color.Empty;
       this.tbVotes.Location = new System.Drawing.Point(88, 276);
       this.tbVotes.Name = "tbVotes";
       this.tbVotes.Size = new System.Drawing.Size(96, 20);
@@ -799,6 +835,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.tbTagline.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbTagline.BorderColor = System.Drawing.Color.Empty;
       this.tbTagline.Location = new System.Drawing.Point(88, 92);
       this.tbTagline.Name = "tbTagline";
       this.tbTagline.Size = new System.Drawing.Size(336, 20);
@@ -831,6 +868,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbDescription.BorderColor = System.Drawing.Color.Empty;
       this.tbDescription.Location = new System.Drawing.Point(88, 164);
       this.tbDescription.Multiline = true;
       this.tbDescription.Name = "tbDescription";
@@ -858,6 +896,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cbTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbTitle.BorderColor = System.Drawing.Color.Empty;
       this.cbTitle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbTitle.Location = new System.Drawing.Point(88, 19);
       this.cbTitle.Name = "cbTitle";
@@ -868,6 +907,7 @@ namespace MediaPortal.Configuration.Sections
       // tbMPAARating
       // 
       this.tbMPAARating.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbMPAARating.BorderColor = System.Drawing.Color.Empty;
       this.tbMPAARating.Location = new System.Drawing.Point(328, 252);
       this.tbMPAARating.Name = "tbMPAARating";
       this.tbMPAARating.Size = new System.Drawing.Size(96, 20);
@@ -894,6 +934,7 @@ namespace MediaPortal.Configuration.Sections
       // tbYear
       // 
       this.tbYear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.tbYear.BorderColor = System.Drawing.Color.Empty;
       this.tbYear.Location = new System.Drawing.Point(88, 228);
       this.tbYear.Name = "tbYear";
       this.tbYear.Size = new System.Drawing.Size(96, 20);
@@ -911,6 +952,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.tbDirector.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbDirector.BorderColor = System.Drawing.Color.Empty;
       this.tbDirector.Location = new System.Drawing.Point(88, 116);
       this.tbDirector.Name = "tbDirector";
       this.tbDirector.Size = new System.Drawing.Size(336, 20);
@@ -927,6 +969,7 @@ namespace MediaPortal.Configuration.Sections
       // tbDuration
       // 
       this.tbDuration.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.tbDuration.BorderColor = System.Drawing.Color.Empty;
       this.tbDuration.Location = new System.Drawing.Point(88, 252);
       this.tbDuration.Name = "tbDuration";
       this.tbDuration.Size = new System.Drawing.Size(96, 20);
@@ -952,6 +995,7 @@ namespace MediaPortal.Configuration.Sections
       // tbRating
       // 
       this.tbRating.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbRating.BorderColor = System.Drawing.Color.Empty;
       this.tbRating.Location = new System.Drawing.Point(328, 228);
       this.tbRating.Name = "tbRating";
       this.tbRating.Size = new System.Drawing.Size(96, 20);
@@ -961,6 +1005,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.tbTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbTitle.BorderColor = System.Drawing.Color.Empty;
       this.tbTitle.Location = new System.Drawing.Point(88, 44);
       this.tbTitle.Name = "tbTitle";
       this.tbTitle.Size = new System.Drawing.Size(256, 20);
@@ -1064,6 +1109,7 @@ namespace MediaPortal.Configuration.Sections
       // textBoxNewActor
       // 
       this.textBoxNewActor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.textBoxNewActor.BorderColor = System.Drawing.Color.Empty;
       this.textBoxNewActor.Location = new System.Drawing.Point(16, 270);
       this.textBoxNewActor.Name = "textBoxNewActor";
       this.textBoxNewActor.Size = new System.Drawing.Size(152, 20);
@@ -1189,6 +1235,7 @@ namespace MediaPortal.Configuration.Sections
       // textBoxNewGenre
       // 
       this.textBoxNewGenre.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.textBoxNewGenre.BorderColor = System.Drawing.Color.Empty;
       this.textBoxNewGenre.Location = new System.Drawing.Point(16, 270);
       this.textBoxNewGenre.Name = "textBoxNewGenre";
       this.textBoxNewGenre.Size = new System.Drawing.Size(152, 20);
@@ -1291,6 +1338,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox7.Controls.Add(this.btnBrowse);
+      this.groupBox7.Controls.Add(this.mpLabel2);
+      this.groupBox7.Controls.Add(this.tbLocalImage);
       this.groupBox7.Controls.Add(this.btnAmazon);
       this.groupBox7.Controls.Add(this.comboBoxPictures);
       this.groupBox7.Controls.Add(this.btnLookupImage);
@@ -1319,6 +1369,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.comboBoxPictures.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxPictures.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxPictures.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxPictures.Enabled = false;
       this.comboBoxPictures.Location = new System.Drawing.Point(136, 44);
@@ -1350,6 +1401,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.textBoxPictureURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxPictureURL.BorderColor = System.Drawing.Color.Empty;
       this.textBoxPictureURL.Location = new System.Drawing.Point(136, 20);
       this.textBoxPictureURL.Name = "textBoxPictureURL";
       this.textBoxPictureURL.Size = new System.Drawing.Size(208, 20);
@@ -1361,12 +1413,41 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-      this.pictureBox1.Location = new System.Drawing.Point(136, 80);
+      this.pictureBox1.Location = new System.Drawing.Point(136, 102);
       this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(170, 240);
+      this.pictureBox1.Size = new System.Drawing.Size(170, 218);
       this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
       this.pictureBox1.TabIndex = 33;
       this.pictureBox1.TabStop = false;
+      // 
+      // btnBrowse
+      // 
+      this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnBrowse.Location = new System.Drawing.Point(352, 70);
+      this.btnBrowse.Name = "btnBrowse";
+      this.btnBrowse.Size = new System.Drawing.Size(72, 22);
+      this.btnBrowse.TabIndex = 36;
+      this.btnBrowse.Text = "Browse...";
+      this.btnBrowse.UseVisualStyleBackColor = true;
+      this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
+      // 
+      // mpLabel2
+      // 
+      this.mpLabel2.Location = new System.Drawing.Point(16, 75);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(80, 16);
+      this.mpLabel2.TabIndex = 34;
+      this.mpLabel2.Text = "Local image:";
+      // 
+      // tbLocalImage
+      // 
+      this.tbLocalImage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbLocalImage.BorderColor = System.Drawing.Color.Empty;
+      this.tbLocalImage.Location = new System.Drawing.Point(136, 71);
+      this.tbLocalImage.Name = "tbLocalImage";
+      this.tbLocalImage.Size = new System.Drawing.Size(208, 20);
+      this.tbLocalImage.TabIndex = 35;
       // 
       // MovieDatabase
       // 
@@ -1729,6 +1810,7 @@ namespace MediaPortal.Configuration.Sections
 
     void UpdateEdit(IMDBMovie movie)
     {
+      tbDiscNr.Text = (movie.DVDLabel.Length > 4 ? Convert.ToString(Convert.ToInt16(movie.DVDLabel.Substring(4))) : string.Empty);
       tbTitle.Text = movie.Title;
       tbTagline.Text = movie.TagLine;
       tbYear.Text = movie.Year.ToString();
@@ -1737,7 +1819,18 @@ namespace MediaPortal.Configuration.Sections
       tbDirector.Text = movie.Director;
       tbWritingCredits.Text = movie.WritingCredits;
       tbDescription.Text = movie.Plot;
-      textBoxPictureURL.Text = movie.ThumbURL;
+      if (movie.ThumbURL.Length > 7 && movie.ThumbURL.Substring(0, 7).Equals("file://"))
+      {
+        useLocalImage = true;
+        tbLocalImage.Text = movie.ThumbURL.Substring(7);
+        textBoxPictureURL.Text = string.Empty;
+      }
+      else
+      {
+        useLocalImage = false;
+        textBoxPictureURL.Text = movie.ThumbURL;
+        tbLocalImage.Text = string.Empty;
+      }
       tbPlotOutline.Text = movie.PlotOutline;
       tbMPAARating.Text = movie.MPARating;
       tbDuration.Text = movie.RunTime.ToString();
@@ -2159,11 +2252,11 @@ namespace MediaPortal.Configuration.Sections
       }
 
       VideoDatabase.SetMovieInfoById(details.ID, ref details);
-
       //add files to movie
+      string strPath = string.Empty;
       foreach (ListViewItem item in listViewFiles.Items)
       {
-        string strPath, strFileName;
+        string strFileName;
 
         MediaPortal.Database.DatabaseUtility.Split(item.Text, out strPath, out strFileName);
         MediaPortal.Database.DatabaseUtility.RemoveInvalidChars(ref strPath);
@@ -2172,6 +2265,26 @@ namespace MediaPortal.Configuration.Sections
         int pathId = VideoDatabase.AddPath(strPath);
         VideoDatabase.AddFile(details.ID, pathId, strFileName);
       }
+      string dvdLabel = string.Empty;
+      if (GetValidatedDVDLabel(ref dvdLabel))
+      {
+        if (!MediaPortal.Util.Utils.IsDVD(strPath))
+        {
+          if (MessageBox.Show("The file list suggests that this movie is not on disc and thus the label will not be shown. Store it anyway?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
+          {
+            VideoDatabase.SetDVDLabel(details.ID, dvdLabel);
+          }
+        }
+        else
+        {
+          VideoDatabase.SetDVDLabel(details.ID, dvdLabel);
+        }
+      }
+      else
+      {
+        MessageBox.Show("Disc # is invalid and has not been stored. Enter an integer between 0 and 999", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+      }
+
       LoadMovies(details.ID);
     }
 
@@ -2204,6 +2317,9 @@ namespace MediaPortal.Configuration.Sections
           }
           pictureBox1.Image = result;
         }
+        VideoDatabase.SetThumbURL(CurrentMovie.ID, textBoxPictureURL.Text);
+        useLocalImage = false;
+        tbLocalImage.Text = "";
       }
     }
     private void btnAmazon_Click(object sender, System.EventArgs e)
@@ -2420,7 +2536,7 @@ namespace MediaPortal.Configuration.Sections
           movie.Rating = (float)Double.Parse(tbRating.Text);
           movie.TagLine = tbTagline.Text;
           movie.Year = Int32.Parse(tbYear.Text);
-          movie.ThumbURL = textBoxPictureURL.Text;
+          movie.ThumbURL = (useLocalImage ? "file://" + tbLocalImage.Text : textBoxPictureURL.Text);
           movie.Votes = tbVotes.Text;
           movie.PlotOutline = tbPlotOutline.Text;
         }
@@ -2729,6 +2845,102 @@ namespace MediaPortal.Configuration.Sections
       }
       _editItem = null;
       listViewTextBox.Visible = false;
+    }
+
+    private bool GetValidatedDVDLabel(ref string dvdLabel)
+    {
+      if (tbDiscNr.Text.Length == 0)
+      {
+        dvdLabel = string.Empty;
+        return true;
+      }
+
+      int discNr;
+      try
+      {
+        discNr = Convert.ToInt16(tbDiscNr.Text);
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+      if (discNr < 0 || discNr > 999)
+      {
+        return false;
+      }
+
+      // Note: Convert from string to int and then back to string is not totally uncalled for. 
+      // We don't want the user to enter e.g. 0043 and get away with it ;-)
+      if (discNr < 10)
+      {
+        dvdLabel = "DVD#00" + Convert.ToString(discNr);
+      }
+      else if (discNr < 100)
+      {
+        dvdLabel = "DVD#0" + Convert.ToString(discNr);
+      }
+      else
+      {
+        dvdLabel = "DVD#" + Convert.ToString(discNr); 
+      }
+      return true;
+    }
+
+    private void btnBrowse_Click(object sender, EventArgs e)
+    {
+      string curDir = Directory.GetCurrentDirectory();
+      OpenFileDialog dlg = new OpenFileDialog();
+      dlg.AddExtension = true;
+      dlg.Filter = "JPEG Image (*.jpg,*.jpeg)|*.jpg;*.jpeg|All files (*.*)|*.*";
+      // start in media folder
+      dlg.InitialDirectory = @"C:\\Documents and Settings\\efredah\\My Documents\\MyVideosBackup";    
+      // open dialog
+      if (dlg.ShowDialog(this) == DialogResult.OK)
+      {
+        tbLocalImage.Text = dlg.FileName;
+        if (tbLocalImage.Text == String.Empty || !System.IO.File.Exists(tbLocalImage.Text)) return;
+
+        // Clear previous
+        if (pictureBox1.Image != null)
+        {
+          pictureBox1.Image.Dispose();
+          pictureBox1.Image = null;
+        }
+        string strThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MovieTitle, tbTitle.Text);
+        string LargeThumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, tbTitle.Text);
+        MediaPortal.Util.Utils.FileDelete(strThumb);
+        MediaPortal.Util.Utils.FileDelete(LargeThumb);
+
+        try
+        {
+          MediaPortal.Util.Picture.CreateThumbnail(tbLocalImage.Text, strThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+          MediaPortal.Util.Picture.CreateThumbnail(tbLocalImage.Text, LargeThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+        }
+        catch (Exception)
+        {
+        }
+
+        string file = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, tbTitle.Text);
+        if (System.IO.File.Exists(file))
+        {
+          using (Image img = Image.FromFile(file))
+          {
+            Bitmap result = new Bitmap(img.Width, img.Height);
+            using (Graphics g = Graphics.FromImage(result))
+            {
+              g.CompositingQuality = Thumbs.Compositing;
+              g.InterpolationMode = Thumbs.Interpolation;
+              g.SmoothingMode = Thumbs.Smoothing;
+              g.DrawImage(img, new Rectangle(0, 0, img.Width, img.Height));
+            }
+            pictureBox1.Image = result;
+          }
+          useLocalImage = true;
+          textBoxPictureURL.Text = "";
+          VideoDatabase.SetThumbURL(CurrentMovie.ID, "file://" + tbLocalImage.Text);
+        }
+      }
+      Directory.SetCurrentDirectory(curDir);
     }
 
 

@@ -73,6 +73,7 @@ namespace MediaPortal.GUI.Video
     string folderForThumbs = string.Empty;
     string[] coverArtUrls = new string[1];
     string imdbCoverArtUrl = String.Empty;
+
     Thread imageSearchThread = null;
 
     public GUIVideoInfo()
@@ -354,7 +355,15 @@ namespace MediaPortal.GUI.Video
               temporaryFilename += imageExtension;
               MediaPortal.Util.Utils.FileDelete(temporaryFilename);
 
-              MediaPortal.Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
+              if (imageUrl.Length > 7 && imageUrl.Substring(0, 7).Equals("file://"))
+              {
+                // Local image, don't download, just copy
+                System.IO.File.Copy(imageUrl.Substring(7), temporaryFilename);
+              }
+              else
+              {
+                MediaPortal.Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
+              }
               if (System.IO.File.Exists(temporaryFilename))
               {
                 MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
