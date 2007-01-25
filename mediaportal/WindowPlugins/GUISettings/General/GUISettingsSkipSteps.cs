@@ -182,7 +182,7 @@ namespace WindowPlugins.GUISettings
             default: break; // Do nothing
           }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           Log.Error("Invalid skip step configuration in MediaPortal.xml");
         }
@@ -253,7 +253,7 @@ namespace WindowPlugins.GUISettings
           {
             RemoveStep(Convert.ToInt16(dlgSel.SelectedLabelText));
           }
-          catch (Exception ex)
+          catch (Exception)
           {
             // Should never happen
           }
@@ -322,7 +322,7 @@ namespace WindowPlugins.GUISettings
       {
         step = Convert.ToInt16(newStep);
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         return "Not a valid integer";
       }
@@ -374,7 +374,7 @@ namespace WindowPlugins.GUISettings
             return true;
           }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           // Should never happen
           return false;
@@ -432,7 +432,7 @@ namespace WindowPlugins.GUISettings
           newText += token;
           newText += ",";
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return;
         }
@@ -480,7 +480,7 @@ namespace WindowPlugins.GUISettings
             newText += ",";
           }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return;
         }
@@ -508,7 +508,7 @@ namespace WindowPlugins.GUISettings
           }
           count++;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return true;
         }
@@ -555,7 +555,7 @@ namespace WindowPlugins.GUISettings
             }
           }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return DEFAULT_SETTING;
         }

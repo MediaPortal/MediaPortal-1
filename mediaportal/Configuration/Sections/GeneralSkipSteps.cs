@@ -601,7 +601,7 @@ namespace MediaPortal.Configuration.Sections
             default: break; // Do nothing
           }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           SetError("Invalid value: " + token);
           errorfound = true;
@@ -644,7 +644,7 @@ namespace MediaPortal.Configuration.Sections
         {
           value = Convert.ToInt16(token);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           SetError("Invalid value: " + token);
           return false;
@@ -653,7 +653,7 @@ namespace MediaPortal.Configuration.Sections
         {
           _stepList.Add(value, value);
         }
-        catch (ArgumentException argEx)
+        catch (ArgumentException)
         {
           SetError("Value already exists: " + token);
           return false;
@@ -674,7 +674,7 @@ namespace MediaPortal.Configuration.Sections
         {
           value = Convert.ToInt16(token);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           SetError("Invalid value: " + token);
           return false;
@@ -733,7 +733,7 @@ namespace MediaPortal.Configuration.Sections
             newText += ",";
           }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return;
         }
@@ -764,7 +764,7 @@ namespace MediaPortal.Configuration.Sections
           newText += token;
           newText += ",";
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return;
         }
@@ -807,7 +807,7 @@ namespace MediaPortal.Configuration.Sections
           }
           count++;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return true;
         }
@@ -854,7 +854,7 @@ namespace MediaPortal.Configuration.Sections
             }
           }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           return DEFAULT_SETTING;
         }
