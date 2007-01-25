@@ -712,12 +712,19 @@ namespace MediaPortal.Player
         if (!driveSpeedLoaded)
           LoadDriveSpeed();
 
-        int driveindex = _driveLetters.IndexOf(System.IO.Path.GetPathRoot(strFile).Substring(0, 1));
-        if (driveindex > -1)
+        string rootPath = System.IO.Path.GetPathRoot(strFile);
+        if (rootPath != null)
         {
-          BassCd.BASS_CD_SetSpeed(driveindex, Convert.ToSingle(_driveSpeeds[driveindex]));
+          if (rootPath.Length > 1)
+          {
+            int driveindex = _driveLetters.IndexOf(rootPath.Substring(0, 1));
+            if (driveindex > -1 && driveindex < _driveSpeeds.Length)
+            {
+              BassCd.BASS_CD_SetSpeed(driveindex, Convert.ToSingle(_driveSpeeds[driveindex]));
 
-          driveSpeedReduced = true;
+              driveSpeedReduced = true;
+            }
+          }
         }
 
         Starting = true;
@@ -833,14 +840,21 @@ namespace MediaPortal.Player
         if (!driveSpeedLoaded)
           LoadDriveSpeed();
 
-        int driveindex = _driveLetters.IndexOf(System.IO.Path.GetPathRoot(strFile).Substring(0, 1));
-        if (driveindex > -1)
+        string rootPath = System.IO.Path.GetPathRoot(strFile);
+        if (rootPath != null)
         {
-          BassCd.BASS_CD_SetSpeed(driveindex, Convert.ToSingle(_driveSpeeds[driveindex]));
+          if (rootPath.Length > 1)
+          {
+            int driveindex = _driveLetters.IndexOf(rootPath.Substring(0, 1));
+            if (driveindex > -1 && driveindex < _driveSpeeds.Length)
+            {
+              BassCd.BASS_CD_SetSpeed(driveindex, Convert.ToSingle(_driveSpeeds[driveindex]));
 
-          driveSpeedReduced = true;
+              driveSpeedReduced = true;
+            }
+          }
         }
-
+        
         Starting = true;
 
         //stop radio
