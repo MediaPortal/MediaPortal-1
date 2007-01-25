@@ -531,7 +531,17 @@ namespace MediaPortal.GUI.Video
         itemlist = itemfiltered;
       }
 
-      SetIMDBThumbs(itemlist);
+      ISelectDVDHandler selectDVDHandler;
+      if (GlobalServiceProvider.IsRegistered<ISelectDVDHandler>())
+      {
+        selectDVDHandler = GlobalServiceProvider.Get<ISelectDVDHandler>();
+      }
+      else
+      {
+        selectDVDHandler = new SelectDVDHandler();
+        GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
+      }
+      selectDVDHandler.SetIMDBThumbs(itemlist, _markWatchedFiles);
 
       foreach (GUIListItem item in itemlist)
       {
@@ -981,76 +991,6 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-    private string GetFolderVideoFile(string path)
-    {
-      // IFind first movie file in folder
-      string strExtension = System.IO.Path.GetExtension(path).ToLower();
-      if (VirtualDirectory.IsImageFile(strExtension))
-      {
-        return path;
-      }
-      else
-      {
-        if (virtualDirectory.IsRemote(path))
-        {
-          return string.Empty;
-        }
-        if (!path.EndsWith(@"\"))
-        {
-          path = path + @"\";
-        }
-        string[] strDirs = null;
-        try
-        {
-          strDirs = System.IO.Directory.GetDirectories(path, "video_ts");
-        }
-        catch (Exception)
-        {
-        }
-        if (strDirs != null)
-        {
-          if (strDirs.Length == 1)
-          {
-            Log.Debug("GUIVideoFiles: DVD folder detected - {0}", strDirs[0]);
-            return String.Format(@"{0}\VIDEO_TS.IFO", strDirs[0]);
-          }
-        }
-        string[] strFiles = null;
-        try
-        {
-          strFiles = System.IO.Directory.GetFiles(path);
-        }
-        catch (Exception)
-        {
-        }
-        if (strFiles != null)
-        {
-          for (int i = 0; i < strFiles.Length; ++i)
-          {
-            string extensionension = System.IO.Path.GetExtension(strFiles[i]);
-            if (VirtualDirectory.IsImageFile(extensionension))
-            {
-              if (DaemonTools.IsEnabled)
-              {
-                return strFiles[i];
-              }
-              continue;
-            }
-            if (VirtualDirectory.IsValidExtension(strFiles[i], MediaPortal.Util.Utils.VideoExtensions, false))
-            {
-              // Skip hidden files
-              if ((File.GetAttributes(strFiles[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
-              {
-                continue;
-              }
-              return strFiles[i];
-            }
-          }
-        }
-      }
-      return string.Empty;
-    }
-
     protected override void OnInfo(int iItem)
     {
       currentSelectedItem = facadeView.SelectedListItemIndex;
@@ -1082,7 +1022,17 @@ namespace MediaPortal.GUI.Video
       else if ((pItem.IsFolder) && (!MediaPortal.Util.Utils.IsDVD(pItem.Path)))
       {
         if (pItem.Label == "..") return;
-        strFile = GetFolderVideoFile(pItem.Path);
+        ISelectDVDHandler selectDVDHandler;
+        if (GlobalServiceProvider.IsRegistered<ISelectDVDHandler>())
+        {
+          selectDVDHandler = GlobalServiceProvider.Get<ISelectDVDHandler>();
+        }
+        else
+        {
+          selectDVDHandler = new SelectDVDHandler();
+          GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
+        }
+        strFile = selectDVDHandler.GetFolderVideoFile(pItem.Path);
         if (strFile == string.Empty)
         {
           bFoundFile = false;
@@ -1144,107 +1094,6 @@ namespace MediaPortal.GUI.Video
         videoInfo.FolderForThumbs = string.Empty;
       }
       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_VIDEO_INFO);
-    }
-
-
-
-    public void SetIMDBThumbs(ArrayList items)
-    {
-      GUIListItem pItem;
-      IMDBMovie movieDetails = new IMDBMovie();
-      for (int x = 0; x < items.Count; x++)
-      {
-        string strThumb = string.Empty;
-        string strLargeThumb = string.Empty;
-        pItem = (GUIListItem)items[x];
-        string file = string.Empty;
-        bool isFolderPinProtected = (pItem.IsFolder && IsFolderPinProtected(pItem.Path));
-        if (pItem.ThumbnailImage != String.Empty)
-        {
-          if (isFolderPinProtected)
-          {
-            MediaPortal.Util.Utils.SetDefaultIcons(pItem);
-          }
-          continue;
-        }
-        if (pItem.IsFolder)
-        {
-          if (pItem.Label == "..") continue;
-          if (isFolderPinProtected)
-          {
-            MediaPortal.Util.Utils.SetDefaultIcons(pItem);
-            continue;
-          }
-          if (System.IO.File.Exists(pItem.Path + "\\folder.jpg"))
-          {
-            strThumb = pItem.Path + "\\folder.jpg";
-            strLargeThumb = strThumb;
-          }
-          else if (!isFolderPinProtected)
-          {
-            file = GetFolderVideoFile(pItem.Path);
-          }
-        } // of if (pItem.IsFolder)
-        else if (!pItem.IsFolder
-                  || (pItem.IsFolder && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(pItem.Path).ToLower())))
-        {
-          file = pItem.Path;
-        }
-        else
-        {
-          continue;
-        }
-        if (file != string.Empty)
-        {
-          byte[] resumeData = null;
-          int fileId = VideoDatabase.GetFileId(file);
-          int id = VideoDatabase.GetMovieInfo(file, ref movieDetails);
-          bool foundWatched = false;
-
-          if (id >= 0)
-          {
-            if (MediaPortal.Util.Utils.IsDVD(pItem.Path))
-            {
-              pItem.Label = String.Format("({0}:) {1}", pItem.Path.Substring(0, 1), movieDetails.Title);
-            }
-            strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title);
-            strLargeThumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, movieDetails.Title);
-
-            if (movieDetails.Watched > 0 && _markWatchedFiles)
-              foundWatched = true;
-          }
-          // do not double check
-          if (!foundWatched && _markWatchedFiles)
-          {
-            if (fileId >= 0)
-            {
-              if (VideoDatabase.GetMovieStopTime(fileId) > 0)
-                foundWatched = true;
-              else
-              {
-                int stops = VideoDatabase.GetMovieStopTimeAndResumeData(fileId, out resumeData);
-                if (resumeData != null || stops > 0)
-                  foundWatched = true;
-              }
-            }
-          }
-          if (!pItem.IsFolder)
-          {
-            pItem.IsPlayed = foundWatched;
-          }
-        }
-
-        if (System.IO.File.Exists(strThumb))
-        {
-          pItem.ThumbnailImage = strThumb;
-          pItem.IconImageBig = strThumb;
-          pItem.IconImage = strThumb;
-        }
-        if (System.IO.File.Exists(strLargeThumb))
-        {
-          pItem.IconImageBig = strLargeThumb;
-        }
-      } // of for (int x = 0; x < items.Count; ++x)
     }
 
     private void SetMovieUnwatched(string movieFileName)
@@ -2022,7 +1871,7 @@ namespace MediaPortal.GUI.Video
       return false;
     }
 
-    static public bool IsFolderPinProtected(string folder)
+    static private bool IsFolderPinProtected(string folder)
     {
       int pinCode = 0;
       return virtualDirectory.IsProtectedShare(folder, out pinCode);

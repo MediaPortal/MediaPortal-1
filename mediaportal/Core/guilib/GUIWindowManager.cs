@@ -929,6 +929,7 @@ namespace MediaPortal.GUI.Library
           return _listWindows[x];
         }
       }
+      Log.Info("GUIWindowManager: Could not find window {0}", dwID);
       return null;
     }
 

@@ -24,7 +24,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Text;
 
 namespace MediaPortal.Services
@@ -36,5 +36,7 @@ namespace MediaPortal.Services
   {
     string ShowSelectDVDDialog(int parentId);
     bool OnPlayDVD(string drive, int parentId);
+    void SetIMDBThumbs(ArrayList items, bool markWatchedFiles);
+    string GetFolderVideoFile(string path);
   }
 }
