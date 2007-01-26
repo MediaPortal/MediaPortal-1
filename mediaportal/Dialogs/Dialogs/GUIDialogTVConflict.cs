@@ -262,21 +262,29 @@ namespace MediaPortal.Dialogs
           GUIListItem item = new GUIListItem(conflict.Title);
           item.Label2 = GetRecordingDateTime(conflict);
           item.Label3 = conflict.Channel;
-          item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnListItemSelected);
-          string logo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, conflict.Channel);
-          if (!System.IO.File.Exists(logo))
-          {
-            logo = "defaultVideoBig.png";
-          }
-          item.ThumbnailImage = logo;
-          item.IconImageBig = logo;
-          item.IconImage = logo;
           item.TVTag = conflict;
-          list.Add(item);
+          AddConflictRecording(item);
         }
       }
     }
-       
+
+    public void AddConflictRecording(GUIListItem item)
+    {
+      string logo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, item.Label3);
+      if (!System.IO.File.Exists(logo))
+      {
+        logo = "defaultVideoBig.png";
+      }
+      item.ThumbnailImage = logo;
+      item.IconImageBig = logo;
+      item.IconImage = logo;
+      item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnListItemSelected);
+
+      GUIListControl list = (GUIListControl)GetControl((int)Controls.LIST);
+      if (list != null) list.Add(item);
+    }
+    
+
     #endregion
 
     #region Private Methods
@@ -300,6 +308,13 @@ namespace MediaPortal.Dialogs
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\DialogTVConflict.xml");
+    }
+
+    public override void Reset()
+    {
+      base.Reset();
+      GUIListControl list = (GUIListControl)GetControl((int)Controls.LIST);
+      if (list != null) list.Clear();
     }
 
     public override bool OnMessage(GUIMessage message)
