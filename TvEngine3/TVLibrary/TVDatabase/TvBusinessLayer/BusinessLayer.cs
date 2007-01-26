@@ -29,7 +29,7 @@ namespace TvDatabase
         card.IdServer = server.IdServer;
         return card;
       }
-      Card newCard = new Card(devicePath, name, 1, true, new DateTime(2000, 1, 1), "", server.IdServer, true, 0,"",0);
+      Card newCard = new Card(devicePath, name, 1, true, new DateTime(2000, 1, 1), "", server.IdServer, true, 0, "", 0);
       newCard.Persist();
       return newCard;
     }
@@ -69,15 +69,15 @@ namespace TvDatabase
 
     #region channels
 
-    public Channel AddChannel(string provider,string name)
+    public Channel AddChannel(string provider, string name)
     {
-      Channel channel = GetChannelByName(provider,name);
+      Channel channel = GetChannelByName(provider, name);
       if (channel != null)
       {
         channel.Name = name;
         return channel;
       }
-      Channel newChannel = new Channel(name, false, false, 0, new DateTime(2000, 1, 1), true, new DateTime(2000, 1, 1), -1, true, "",true);
+      Channel newChannel = new Channel(name, false, false, 0, new DateTime(2000, 1, 1), true, new DateTime(2000, 1, 1), -1, true, "", true);
 
       return newChannel;
     }
@@ -518,7 +518,7 @@ namespace TvDatabase
                               channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
                               networkId, transportId, serviceId, pmtPid, freeToAir,
                               modulation, polarisation, symbolRate, diseqc, switchFrequency,
-                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, tunerSource, videoPid, audioPid, band,satIndex,innerFecRate);
+                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, tunerSource, videoPid, audioPid, band, satIndex, innerFecRate);
       detail.Persist();
       return detail;
     }
@@ -659,12 +659,18 @@ namespace TvDatabase
     #endregion
 
     #region programs
+    public string GetDateTimeString()
+    {
+      string provider = Gentle.Framework.ProviderFactory.GetDefaultProvider().Name.ToLower();
+      if (provider=="mysql") return "yyyy-MM-dd HH:mm:ss";
+      return "yyyyMMdd HH:mm:ss";
+    }
     public void RemoveOldPrograms()
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Program));
       DateTime dtYesterday = DateTime.Now.AddDays(-1);
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
-      sb.AddConstraint(String.Format("endTime < '{0}'", dtYesterday.ToString("yyyy-MM-dd HH:mm:ss", mmddFormat)));
+      sb.AddConstraint(String.Format("endTime < '{0}'", dtYesterday.ToString(GetDateTimeString(), mmddFormat)));
       SqlStatement stmt = sb.GetStatement(true);
       ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
 
@@ -673,7 +679,7 @@ namespace TvDatabase
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
-      sb.AddConstraint(String.Format("startTime >= '{0}' and endTime <= '{1}'", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", mmddFormat), DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", mmddFormat)));
+      sb.AddConstraint(String.Format("startTime >= '{0}' and endTime <= '{1}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat), DateTime.Now.ToString(GetDateTimeString(), mmddFormat)));
       SqlStatement stmt = sb.GetStatement(true);
       IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
       return progs;
@@ -684,9 +690,9 @@ namespace TvDatabase
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
 
-      string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')", startTime.ToString("yyyy-MM-dd HH:mm:ss", mmddFormat), endTime.ToString("yyyy-MM-dd HH:mm:ss", mmddFormat));
-      string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')", startTime.ToString("yyyy-MM-dd HH:mm:ss", mmddFormat), endTime.ToString("yyyy-MM-dd HH:mm:ss", mmddFormat));
-      string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')", startTime.ToString("yyyy-MM-dd HH:mm:ss", mmddFormat), endTime.ToString("yyyy-MM-dd HH:mm:ss", mmddFormat));
+      string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
 
       sb.AddConstraint(Operator.Equals, "idChannel", channel.IdChannel);
       sb.AddConstraint(string.Format("({0} or {1} or {2}) ", sub1, sub2, sub3));
@@ -702,9 +708,9 @@ namespace TvDatabase
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
 
-      string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')", startTime.ToString("yyyy-MM-dd HH:mm:ss", mmddFormat), endTime.ToString("yyyy-MM-dd HH:mm:ss", mmddFormat));
-      string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')", startTime.ToString("yyyy-MM-dd HH:mm:ss", mmddFormat), endTime.ToString("yyyy-MM-dd HH:mm:ss", mmddFormat));
-      string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')", startTime.ToString("yyyy-MM-dd HH:mm:ss", mmddFormat), endTime.ToString("yyyy-MM-dd HH:mm:ss", mmddFormat));
+      string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
 
       sb.AddConstraint(string.Format(" ({0} or {1} or {2}) ", sub1, sub2, sub3));
       sb.AddOrderByField(true, "starttime");
@@ -736,7 +742,7 @@ namespace TvDatabase
     {
       List<string> genres = new List<string>();
       string connectString = Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
-      using (System.Data.OleDb.OleDbConnection connect = new System.Data.OleDb.OleDbConnection("Provider=SQLOLEDB;"+connectString))
+      using (System.Data.OleDb.OleDbConnection connect = new System.Data.OleDb.OleDbConnection("Provider=SQLOLEDB;" + connectString))
       {
         connect.Open();
         using (System.Data.OleDb.OleDbCommand cmd = connect.CreateCommand())
@@ -785,14 +791,14 @@ namespace TvDatabase
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       if (searchCriteria.Length > 0)
       {
-        sb.AddConstraint(String.Format("endTime > '{0}'", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", mmddFormat)));
+        sb.AddConstraint(String.Format("endTime > '{0}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat)));
         sb.AddConstraint(Operator.Like, "title", String.Format("{0}%", searchCriteria));
         sb.AddOrderByField("title");
         sb.AddOrderByField("starttime");
       }
       else
       {
-        sb.AddConstraint(String.Format("endTime > '{0}'", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", mmddFormat)));
+        sb.AddConstraint(String.Format("endTime > '{0}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat)));
         sb.AddOrderByField("title");
         sb.AddOrderByField("starttime");
       }
@@ -808,14 +814,14 @@ namespace TvDatabase
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       if (searchCriteria.Length > 0)
       {
-        sb.AddConstraint(String.Format("endTime > '{0}'", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", mmddFormat)));
+        sb.AddConstraint(String.Format("endTime > '{0}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat)));
         sb.AddConstraint(Operator.Like, "description", String.Format("{0}%", searchCriteria));
         sb.AddOrderByField("description");
         sb.AddOrderByField("starttime");
       }
       else
       {
-        sb.AddConstraint(String.Format("endTime > '{0}'", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", mmddFormat)));
+        sb.AddConstraint(String.Format("endTime > '{0}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat)));
         sb.AddOrderByField("description");
         sb.AddOrderByField("starttime");
       }
