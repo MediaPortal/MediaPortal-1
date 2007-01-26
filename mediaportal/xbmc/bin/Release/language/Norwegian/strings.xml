@@ -3494,6 +3494,19 @@
 		<id>1105</id>
 		<value>Importerer spor</value>
 	</string>
+  <!-- TV Conflict Dialog -->
+  <string>
+    <id>1110</id>
+    <value>Fjern det nye opptaket</value>
+  </string>
+  <string>
+    <id>1111</id>
+    <value>Fjern de(t) andre</value>
+  </string>
+  <string>
+    <id>1112</id>
+    <value>Behold konflikten</value>
+  </string>
 	<string>
 		<id>1190</id>
 		<value>Zoom 14:9</value>
@@ -6492,4 +6505,12 @@
 		<id>200038</id>
 		<value>På en PC delt med andre programmer</value>
 	</string>
+  <string>
+    <id>200039</id>
+	  <value>Legg til stegvis</value>
+  </string>
+  <string>
+	  <id>200040</id>
+	  <value>Fjern stegvis</value>
+  </string>    
 </strings>
