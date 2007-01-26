@@ -45,7 +45,7 @@ namespace ProcessPlugins.EpgGrabber
 
         /// <summary>
         /// Delegate for hooking into status update during import operations.
-        /// </summary>
+        /// </summary>x
         /// <param name="stats"></param>
         public delegate void ShowProgressHandler(object sender, ImportStats stats);
         public event ShowProgressHandler ShowProgress;
