@@ -521,7 +521,7 @@ STDMETHODIMP CMpTs::DeleteChannel( ITSChannel* instance)
 			if (ichan == instance)
 			{
 				LogDebug("--  deleting");
-				delete channel;
+//				delete channel;
 				LogDebug("--  erasing");
 				m_vecChannels.erase(it);
 				LogDebug("--  done");
