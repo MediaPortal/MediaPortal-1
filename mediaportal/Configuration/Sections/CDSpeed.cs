@@ -244,6 +244,7 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
+        ckEnableCDSpeed.Checked = reader.GetValueAsBool("cdspeed", "Enabled", false);
         _speedTable = reader.GetValueAsString("cdspeed", "drivespeed", String.Empty);
       }
 
@@ -289,10 +290,9 @@ namespace MediaPortal.Configuration.Sections
 
       using (MediaPortal.Profile.Settings writer = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
+        writer.SetValueAsBool("cdspeed", "enabled", ckEnableCDSpeed.Checked);
         writer.SetValue("cdspeed", "drivespeed", builder.ToString());
       }
     }
-
-
   }
 }

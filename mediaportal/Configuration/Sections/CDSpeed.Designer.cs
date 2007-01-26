@@ -29,7 +29,7 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.dataGrid1 = new System.Windows.Forms.DataGrid();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.ckEnableCDSpeed = new MediaPortal.UserInterface.Controls.MPCheckBox();
       ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).BeginInit();
       this.SuspendLayout();
       // 
@@ -41,35 +41,39 @@ namespace MediaPortal.Configuration.Sections
       this.dataGrid1.DataMember = "";
       this.dataGrid1.FlatMode = true;
       this.dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
-      this.dataGrid1.Location = new System.Drawing.Point(14, 54);
+      this.dataGrid1.Location = new System.Drawing.Point(14, 55);
       this.dataGrid1.Name = "dataGrid1";
       this.dataGrid1.Size = new System.Drawing.Size(440, 293);
       this.dataGrid1.TabIndex = 5;
       // 
-      // label1
+      // ckEnableCDSpeed
       // 
-      this.label1.Location = new System.Drawing.Point(11, 24);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(431, 16);
-      this.label1.TabIndex = 6;
-      this.label1.Text = "Set Maximum CD/DVD Speed, when playing  a DVD or Audio CD.";
+      this.ckEnableCDSpeed.AutoSize = true;
+      this.ckEnableCDSpeed.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.ckEnableCDSpeed.Location = new System.Drawing.Point(14, 25);
+      this.ckEnableCDSpeed.Name = "ckEnableCDSpeed";
+      this.ckEnableCDSpeed.Size = new System.Drawing.Size(336, 17);
+      this.ckEnableCDSpeed.TabIndex = 7;
+      this.ckEnableCDSpeed.Text = "Set Maximum CD/DVD Speed, when playing  a DVD or Audio CD.";
+      this.ckEnableCDSpeed.UseVisualStyleBackColor = true;
       // 
       // CDSpeed
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this.label1);
+      this.Controls.Add(this.ckEnableCDSpeed);
       this.Controls.Add(this.dataGrid1);
       this.Name = "CDSpeed";
       this.Size = new System.Drawing.Size(472, 408);
       ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).EndInit();
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
 
     #endregion
 
     private System.Windows.Forms.DataGrid dataGrid1;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPCheckBox ckEnableCDSpeed;
   }
 }
