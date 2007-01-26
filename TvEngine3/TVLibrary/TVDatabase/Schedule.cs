@@ -351,7 +351,6 @@ namespace TvDatabase
 
     #endregion
 
-
     #region Relations
 
     /// <summary>
@@ -428,6 +427,7 @@ namespace TvDatabase
       return Channel.Retrieve(IdChannel);
     }
     #endregion
+
     public bool IsSerieIsCanceled(DateTime startTime)
     {
       foreach (CanceledSchedule schedule in ReferringCanceledSchedule())
@@ -632,6 +632,24 @@ namespace TvDatabase
       schedule.idSchedule = idSchedule;
       schedule.isChanged = false;
       return schedule;
+    }
+
+    public bool IsOverlapping(Schedule schedule)
+    {
+      DateTime Start1, Start2, End1, End2;
+
+      Start1 = this.StartTime.AddMinutes(-this.preRecordInterval);
+      Start2 = schedule.StartTime.AddMinutes(-schedule.preRecordInterval);
+      End1 = this.EndTime.AddMinutes(-this.postRecordInterval);
+      End2 = schedule.EndTime.AddMinutes(-schedule.postRecordInterval);
+
+      // rec_1        s------------------------e
+      // rec_2    ---------s-----------------------------
+      // rec_2  ------------------e
+      if ((Start2 >= Start1 && Start2 < End1) ||
+          (Start2 <= Start1 && End2 >= End1) ||
+          (End2 > Start1 && End2 <= End1)) return true;
+      return false;
     }
   }
 }
