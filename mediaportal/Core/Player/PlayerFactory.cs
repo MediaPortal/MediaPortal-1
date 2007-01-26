@@ -246,7 +246,8 @@ namespace MediaPortal.Player
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
-          if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
+          bool useBass = xmlreader.GetValueAsBool("musicmisc", "playBackAudioCDwithBass", false);
+          if (String.Compare(strAudioPlayer, "BASS engine", true) == 0 && useBass)
           {
             if (BassMusicPlayer.BassFreed)
               BassMusicPlayer.Player.InitBass();
