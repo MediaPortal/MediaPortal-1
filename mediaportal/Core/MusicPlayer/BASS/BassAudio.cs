@@ -1521,6 +1521,10 @@ namespace MediaPortal.Player
             playbackStarted = Bass.BASS_ChannelPlay(_mixer, false);
           else if (_useASIO)
           {
+            // Get some information about the stream
+            BASS_CHANNELINFO info = new BASS_CHANNELINFO();
+            Bass.BASS_ChannelGetInfo(stream, info);
+
             // In order to provide data for visualisation we need to clone the stream
             _streamcopy = new DSP_StreamCopy();
             _streamcopy.ChannelHandle = stream;
@@ -1528,10 +1532,17 @@ namespace MediaPortal.Player
             _streamcopy.StreamFlags = BASSStream.BASS_STREAM_DECODE; // decode the channel, so that we have a Streamcopy
 
             // assign ASIO and assume the ASIO format, samplerate and number of channels from the BASS stream
-            _asioHandler = new BassAsioHandler(false, _asioDeviceNumber, 0, _asioNumberChannels, BASSASIOFormat.BASS_ASIO_FORMAT_FLOAT, -1);
-            _asioHandler.BassChannel = stream;
+            _asioHandler = new BassAsioHandler(0, 0, stream);
+            
+            // Set the Volume
             _asioHandler.Volume = (double)_StreamVolume / 100.00;
             _asioHandler.Pan = _asioBalance;
+
+            // Set the Sample Rate from the strea
+            _asioHandler.SampleRate = (double)info.freq;
+            // try to set the device rate too (saves resampling)
+            BassAsio.BASS_ASIO_SetRate((double)info.freq);
+
             BassAsio.BASS_ASIO_Stop();
             _streamcopy.Start();   // start the cloned stream
             playbackStarted = BassAsio.BASS_ASIO_Start(0);
