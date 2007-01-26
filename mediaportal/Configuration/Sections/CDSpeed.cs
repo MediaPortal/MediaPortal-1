@@ -244,7 +244,7 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        ckEnableCDSpeed.Checked = reader.GetValueAsBool("cdspeed", "Enabled", false);
+        ckEnableCDSpeed.Checked = reader.GetValueAsBool("cdspeed", "enabled", false);
         _speedTable = reader.GetValueAsString("cdspeed", "drivespeed", String.Empty);
       }
 
