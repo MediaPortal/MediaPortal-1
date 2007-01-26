@@ -1197,7 +1197,7 @@ namespace MediaPortal.GUI.Video
         HideControl(GetID, (int)Control.OSD_TIMEINFO);
         HideControl(GetID, (int)Control.OSD_VIDEOPROGRESS);
       }
-      if (g_Player.Paused && !_showStep && !_showStatus && !_isOsdVisible)
+      if (g_Player.Paused && !_showStep && !_showStatus && !_isOsdVisible && g_Player.Speed == 1)
       {
         ShowControl(GetID, (int)Control.IMG_PAUSE);
       }
