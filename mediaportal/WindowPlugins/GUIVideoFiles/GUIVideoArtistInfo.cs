@@ -147,6 +147,14 @@ namespace MediaPortal.GUI.Video
     }
     protected override void OnPageDestroy(int newWindowId)
     {
+      if (m_bRunning)
+      {
+        // User probably pressed H (SWITCH_HOME)
+        m_bRunning = false;
+        GUIWindowManager.UnRoute();
+        m_pParentWindow = null;
+      }
+
       base.OnPageDestroy(newWindowId);
       currentActor = null;
       GUIGraphicsContext.Overlay = m_bPrevOverlay;

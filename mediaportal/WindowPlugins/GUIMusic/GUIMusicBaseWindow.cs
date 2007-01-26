@@ -1058,7 +1058,7 @@ namespace MediaPortal.GUI.Music
     protected virtual void OnInfo(int iItem)
     {
       GUIListItem pItem = facadeView[iItem];
-
+      if (pItem == null) return;
       Song song = pItem.AlbumInfoTag as Song;
       if (song == null)
       {

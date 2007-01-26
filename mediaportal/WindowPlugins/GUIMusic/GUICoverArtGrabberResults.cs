@@ -244,6 +244,13 @@ namespace MediaPortal.GUI.Music
 
     protected override void OnPageDestroy(int newWindowId)
     {
+      if (m_bRunning)
+      {
+        // Probably user pressed H (SWITCH_HOME)
+        GUIWindowManager.UnRoute();
+        m_pParentWindow = null;
+        m_bRunning = false;
+      }
       base.OnPageDestroy(newWindowId);
 
       if (coverArtTexture != null)

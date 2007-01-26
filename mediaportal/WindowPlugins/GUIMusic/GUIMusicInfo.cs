@@ -150,8 +150,14 @@ namespace MediaPortal.GUI.Music
 
 
     protected override void OnPageDestroy(int newWindowId)
-    {  
-      base.OnPageDestroy(newWindowId);
+    {
+      if (m_bRunning)
+      {
+        // Probably user pressed H (SWITCH_HOME)
+        GUIWindowManager.UnRoute();
+        m_pParentWindow = null;
+        m_bRunning = false;
+      }
       albumInfo = null;
       if (coverArtTexture != null)
       {
@@ -159,6 +165,7 @@ namespace MediaPortal.GUI.Music
         coverArtTexture = null;
       }
       GUIGraphicsContext.Overlay = m_bOverlay;
+      base.OnPageDestroy(newWindowId);
     }
     protected override void OnPageLoad()
     {
