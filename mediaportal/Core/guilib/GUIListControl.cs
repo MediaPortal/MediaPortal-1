@@ -265,6 +265,18 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScalePosToScreenResolution(ref _imageWidth, ref _imageHeight);
     }
 
+    public override bool CanFocus()
+    {
+      if (_listItems == null || _listItems.Count == 0)
+      {
+        return false;
+      }
+      else
+      {
+        return base.CanFocus();
+      }
+    }
+
 
     protected void OnSelectionChanged()
     {

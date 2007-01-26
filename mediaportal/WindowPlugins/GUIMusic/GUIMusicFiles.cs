@@ -617,6 +617,10 @@ namespace MediaPortal.GUI.Music
           GUIControl.SelectItemControl(GetID, facadeView.GetID, m_iItemSelected);
         }
         GUIWaitCursor.Hide();
+        if (iTotalItems == 0)
+        {
+          btnPlaylistFolder.Focus = true;
+        }
       }
       catch (Exception ex)
       {
