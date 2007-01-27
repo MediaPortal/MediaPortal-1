@@ -1262,6 +1262,7 @@ namespace MediaPortal.Player
         if (dTime < 0) dTime = 0d;
         if (dTime > _player.Duration) dTime = _player.Duration - 5;
         _player.SeekAbsolute(dTime);
+        Speed = Speed;
         GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
         GUIGraphicsContext.SendMessage(msgUpdate);
       }

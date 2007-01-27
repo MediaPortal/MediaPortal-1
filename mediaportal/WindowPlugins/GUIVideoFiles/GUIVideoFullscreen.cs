@@ -1218,7 +1218,7 @@ namespace MediaPortal.GUI.Video
       HideControl(GetID, (int)Control.IMG_MIN16X);
       HideControl(GetID, (int)Control.IMG_MIN32X);
 
-      if (iSpeed != 1)
+      if (iSpeed != 1 && !_showStep)
       {
         if (iSpeed == 2)
         {
