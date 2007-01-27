@@ -262,9 +262,9 @@ namespace TvEngine
           {
             // checks if any schedule assigned to this cards overlaps current parsed schedule
             bool free = true;
-            foreach (Schedule assignedShedule in cardSchedules[card.IdCard])
+            foreach (Schedule assignedShedule in cardSchedules[cardno[card.IdCard]])
             {
-              if (IsOverlap(schedule, assignedShedule))
+              if (schedule.IsOverlapping(assignedShedule))
               {
                 free = false;
                 //_overlap = true;
@@ -275,7 +275,7 @@ namespace TvEngine
             }
             if (free)
             {
-              cardSchedules[card.IdCard].Add(schedule);
+              cardSchedules[cardno[card.IdCard]].Add(schedule);
               assigned = true;
               if (overlap)
               {

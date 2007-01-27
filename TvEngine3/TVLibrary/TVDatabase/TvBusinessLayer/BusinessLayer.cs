@@ -857,9 +857,6 @@ namespace TvDatabase
 
             if (newEpisode.IsOverlapping(otherEpisode))
             {
-              
-              
-              
               if (!AssignSchedulesToCard(otherEpisode, cardSchedules))
               {
                 conflicts.Add(otherEpisode);
@@ -875,13 +872,14 @@ namespace TvDatabase
     {
       IList cards = Card.ListAll();
       bool assigned = false;
+      int count = 0;
       foreach (Card card in cards)
       {
         if (card.canViewTvChannel(schedule.IdChannel))
         {
           // checks if any schedule assigned to this cards overlaps current parsed schedule
           bool free = true;
-          foreach (Schedule assignedShedule in cardSchedules[card.IdCard])
+          foreach (Schedule assignedShedule in cardSchedules[count])
           {
             if (schedule.IsOverlapping(assignedShedule))
             {
@@ -891,11 +889,12 @@ namespace TvDatabase
           }
           if (free)
           {
-            cardSchedules[card.IdCard].Add(schedule);
+            cardSchedules[count].Add(schedule);
             assigned = true;
             break;
           }
         }
+        count++;
       }
       if (!assigned) return false;
       
