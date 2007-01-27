@@ -272,22 +272,28 @@ namespace MediaPortal.Configuration.Sections
       BASS_CD_INFO cdinfo = new BASS_CD_INFO();
 
       int i = 0;
-      foreach (DataRow row in dt.Rows)
+      try
       {
-        if (builder.Length != 0)
-          builder.Append(",");
+        foreach (DataRow row in dt.Rows)
+        {
+          if (builder.Length != 0)
+            builder.Append(",");
 
-        BassCd.BASS_CD_GetInfo(i, cdinfo);
-        int selectedSpeed = Convert.ToInt32(row[2].ToString());
-        int maxspeed = (int)(cdinfo.maxspeed / 176.4);
+          BassCd.BASS_CD_GetInfo(i, cdinfo);
+          int selectedSpeed = int.Parse((row[3].ToString()));
+          int maxspeed = (int)(cdinfo.maxspeed / 176.4);
 
-        if (selectedSpeed > maxspeed)
-          selectedSpeed = maxspeed;
+          if (selectedSpeed > maxspeed)
+            selectedSpeed = maxspeed;
 
-        builder.Append(selectedSpeed.ToString());
-        i++;
+          builder.Append(selectedSpeed.ToString());
+          i++;
+        }
       }
+      catch (Exception ex)
+      {
 
+      }
       using (MediaPortal.Profile.Settings writer = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         writer.SetValueAsBool("cdspeed", "enabled", ckEnableCDSpeed.Checked);
