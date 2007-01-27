@@ -466,10 +466,13 @@ namespace TvPlugin
       else
       {
         //not recording this program
+        // check if this program is conflicting with any other already scheduled recording
         TvBusinessLayer layer = new TvBusinessLayer();
         Schedule rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
         rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
         rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+        if (SkipForConflictingRecording(rec)) return;
+
         rec.Persist();
         TvServer server = new TvServer();
         server.OnNewSchedule();
@@ -528,6 +531,8 @@ namespace TvPlugin
             rec.ScheduleType = (int)ScheduleRecordingType.Weekends;
             break;
         }
+        if (SkipForConflictingRecording(rec)) return;
+
         TvBusinessLayer layer = new TvBusinessLayer();
         rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
         rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
@@ -675,6 +680,54 @@ namespace TvPlugin
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
       UpdateProgramDescription(item.TVTag as Schedule, item.MusicTag as Program);
+    }
+
+    private bool SkipForConflictingRecording(Schedule rec)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      List<Schedule> conflicts = layer.GetConflictingSchedules(rec);
+      if (conflicts.Count > 0)
+      {
+        GUIDialogTVConflict dlg = (GUIDialogTVConflict)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TVCONFLICT);
+        if (dlg != null)
+        {
+          dlg.Reset();
+          dlg.SetHeading(GUILocalizeStrings.Get(879));   // "recording conflict"
+          foreach (Schedule conflict in conflicts)
+          {
+            GUIListItem item = new GUIListItem(conflict.ProgramName);
+            item.Label2 = GetRecordingDateTime(conflict);
+            item.Label3 = conflict.IdChannel.ToString();
+            item.TVTag = conflict;
+            dlg.AddConflictRecording(item);
+          }
+          dlg.DoModal(GetID);
+          switch (dlg.SelectedLabel)
+          {
+            case 0: return true;   // Skip new Recording
+            case 1:                // Don't record the already scheduled one(s)
+              {
+                foreach (Schedule conflict in conflicts)
+                {
+                  Program prog = new Program(conflict.IdChannel, conflict.StartTime, conflict.EndTime, conflict.ProgramName, "-", "-", false);
+                  OnRecordProgram(prog); 
+                }
+                break;
+              }
+            case 2: return false;   // No Skipping new Recording
+            default: return true;   // Skipping new Recording
+          }
+        }
+      }
+      return false;
+    }
+
+    private string GetRecordingDateTime(Schedule rec)
+    {
+      return String.Format("{0} {1} - {2}",
+                MediaPortal.Util.Utils.GetShortDayString(rec.StartTime),
+                rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
     }
   }
 }
