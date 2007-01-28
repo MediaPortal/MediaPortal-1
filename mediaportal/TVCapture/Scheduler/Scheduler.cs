@@ -574,19 +574,24 @@ namespace MediaPortal.TV.Recording
 
 
 
+      bool wasWatching = (handler.CurrentCardIndex == cardNo);
+      if (!wasWatching)
+        handler.CurrentCardIndex = cardNo;
+
       //finally start recording...
       handler.TuneExternalChannel(rec.Channel, false);
       card.Record(rec, currentProgram, iPreRecordInterval, iPostRecordInterval);
 
       //if the user was using this card to watch tv, then start watching it also
-      if (handler.CurrentCardIndex == cardNo)
+      if (wasWatching)
       {
         handler.TVChannelName = rec.Channel;
         TimeShiftTvCommand cmd = new TimeShiftTvCommand(rec.Channel);
         cmd.Execute(handler);
       }
       handler.LogTunerStatus();
-      return true;
+      return true;    
+
     }//bool Record(DateTime currentTime,TVRecording rec, TVProgram currentProgram,int iPreRecordInterval, int iPostRecordInterval)
 
     void StopRecording(CommandProcessor handler,TVRecording rec)
