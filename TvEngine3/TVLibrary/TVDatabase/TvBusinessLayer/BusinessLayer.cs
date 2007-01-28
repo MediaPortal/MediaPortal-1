@@ -841,7 +841,7 @@ namespace TvDatabase
       IList schedulesList = Schedule.ListAll();
       IList cards = Card.ListAll();
       if (cards.Count == 0) return conflicts;
-      Log.Info("GetConflictingSchedules: Cards.Count = {0}" + cards.Count);
+      Log.Info("GetConflictingSchedules: Cards.Count = {0}", cards.Count);
 
       List<Schedule>[] cardSchedules = new List<Schedule>[cards.Count];
       for (int i = 0; i < cards.Count; i++) cardSchedules[i] = new List<Schedule>();
@@ -861,7 +861,7 @@ namespace TvDatabase
 
             if (newEpisode.IsOverlapping(otherEpisode))
             {
-              Log.Info("GetConflictingSchedules: overlapping (" + newEpisode.ToString() + ", " + otherEpisode.ToString());
+              Log.Info("GetConflictingSchedules: overlapping -> " + newEpisode.ToString() + "   with   " + otherEpisode.ToString());
               if (!AssignSchedulesToCard(otherEpisode, cardSchedules))
               {
                 Log.Info("GetConflictingSchedules: conflicts.Add = " + otherEpisode.ToString());
@@ -876,6 +876,7 @@ namespace TvDatabase
 
     private bool AssignSchedulesToCard(Schedule schedule, List<Schedule>[] cardSchedules)
     {
+      Log.Info("AssignSchedulesToCard: schedule = " + schedule.ToString());
       IList cards = Card.ListAll();
       bool assigned = false;
       int count = 0;
@@ -885,16 +886,19 @@ namespace TvDatabase
         {
           // checks if any schedule assigned to this cards overlaps current parsed schedule
           bool free = true;
-          foreach (Schedule assignedShedule in cardSchedules[count])
+          foreach (Schedule assignedSchedule in cardSchedules[count])
           {
-            if (schedule.IsOverlapping(assignedShedule))
+            Log.Info("AssignSchedulesToCard: card {0}, ID = {1} has schedule = " + assignedSchedule.ToString(), count, card.IdCard);
+            if (schedule.IsOverlapping(assignedSchedule))
             {
+              Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule.ToString() + " on card {0}, ID = {1}", count, card.IdCard);
               free = false;
               break;
             }
           }
           if (free)
           {
+            Log.Info("AssignSchedulesToCard: free on card {0}, ID = {1}", count, card.IdCard);
             cardSchedules[count].Add(schedule);
             assigned = true;
             break;
