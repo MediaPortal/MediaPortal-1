@@ -49,16 +49,19 @@ DEFINE_GUID(IID_IDVBSubtitle,
 0xc19647d5, 0xa861, 0x4845, 0x97, 0xa6, 0xeb, 0xd0, 0xa1, 0x35, 0xd0, 0xbf);
 
 
-// structure used to communicate subtitles to MediaPortals managed code
-struct SUBTITLE{
-	LONG        bmType;
-    LONG        bmWidth;
-    LONG        bmHeight;
-    LONG        bmWidthBytes;
-    WORD        bmPlanes;
-    WORD        bmBitsPixel;
-    LPVOID      bmBits;
+// structure used to communicate subtitles to MediaPortal's managed code
+struct SUBTITLE
+{
+  // Subtitle bitmap
+  LONG        bmType;
+  LONG        bmWidth;
+  LONG        bmHeight;
+  LONG        bmWidthBytes;
+  WORD        bmPlanes;
+  WORD        bmBitsPixel;
+  LPVOID      bmBits;
 
+  int        firstScanLine;
 	unsigned __int64 timeOut;
 };
 
