@@ -4,6 +4,10 @@
    File: dvbsubs.c
 
    Copyright (C) Dave Chapman 2002,2004
+
+   Modifications & additional code: 
+   Copyright (C) 2006-2007 Team MediaPortal
+   http://www.team-mediaportal.com
   
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License
@@ -146,32 +150,29 @@ unsigned char CDVBSubDecoder::Next_nibble()
 */
 void CDVBSubDecoder::Set_clut( int CLUT_id,int CLUT_entry_id,int Y_value, int Cr_value, int Cb_value, int T_value ) 
 {
-	// No need for YUV -> RGB conversion
-	
-/*	int Y,Cr,Cb,R,G,B;
+	int Y,Cr,Cb,R,G,B;
 
 	Y = Y_value;
 	Cr = Cr_value;
 	Cb = Cb_value;
 
-	B = 1.164*(Y - 16)                    + 2.018*(Cb - 128);
-	G = 1.164*(Y - 16) - 0.813*(Cr - 128) - 0.391*(Cb - 128);
-	R = 1.164*(Y - 16) + 1.596*(Cr - 128);
-	if (B<0) B=0; if (B>255) B=255;
-	if (G<0) G=0; if (G>255) G=255;
-	if (R<0) R=0; if (R>255) R=255; */
+	B = (int)( 1.164 * ( Y - 16 )                        + 2.018 * ( Cb - 128 ) );
+	G = (int)( 1.164 * ( Y - 16 ) - 0.813 * ( Cr - 128 ) - 0.391 * ( Cb - 128 ) );
+	R = (int)( 1.164 * ( Y - 16 ) + 1.596 * ( Cr - 128 ) );
+	if ( B < 0 ) B = 0; if ( B > 255 ) B = 255;
+	if ( G < 0 ) G = 0; if ( G > 255 ) G = 255;
+	if ( R < 0 ) R = 0; if ( R > 255 ) R = 255; 
 
 //	LogDebug("DVBsubs: Setting colour for CLUT_id=%d, CLUT_entry_id=%d",CLUT_id,CLUT_entry_id);
-
 	if ((CLUT_id > 15) || (CLUT_entry_id > 15)) 
 	{
 		LogDebug("DVBsubs: ERROR: CLUT_id=%d, CLUT_entry_id=%d",CLUT_id,CLUT_entry_id);
 		exit(1);
 	}
 
-	colours[(CLUT_id*48)+(CLUT_entry_id*3)+0] = Y_value;	//R;
-	colours[(CLUT_id*48)+(CLUT_entry_id*3)+1] = Cr_value;	//G;
-	colours[(CLUT_id*48)+(CLUT_entry_id*3)+2] = Cb_value;	//B;
+	colours[(CLUT_id*48)+(CLUT_entry_id*3)+0] = R; //Y_value;
+	colours[(CLUT_id*48)+(CLUT_entry_id*3)+1] = G; //Cr_value;
+	colours[(CLUT_id*48)+(CLUT_entry_id*3)+2] = B; //Cb_value;
 	
 	if( Y_value == 0 ) 
 	{
@@ -605,7 +606,6 @@ void CDVBSubDecoder::Save_png(char* filename)
 		}
 	}
 	m_CurrentSubtitle->RenderBitmap( m_Buffer, filename, colours, trans, 256 );
-	
 
 	m_RenderedSubtitles.resize( m_RenderedSubtitles.size() + 1 );
 	m_RenderedSubtitles[m_RenderedSubtitles.size() - 1] = m_CurrentSubtitle;

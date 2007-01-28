@@ -19,28 +19,22 @@
  *
  */
 
-//#define _AFXDLL
 #include <stdlib.h>
 #include <string>
-//#include <afx.h>
-//#include <afxwin.h>
 #include "subtitle.h"
 
 extern void LogDebug(const char *fmt, ...);
 
 CSubtitle::CSubtitle( int width, int height )
 {
-	m_Data = new unsigned char[ height * width * 3 ];
+	m_Bitmap.bmType			  = 0;
+	m_Bitmap.bmBitsPixel	= 32;
+	m_Bitmap.bmWidth		  = width;
+	m_Bitmap.bmHeight		  = height;
+	m_Bitmap.bmPlanes		  = 1;
+	m_Bitmap.bmWidthBytes	= width * 4;
 
-	m_Bitmap.bmType			= 0;
-	m_Bitmap.bmBitsPixel	= 24;
-	m_Bitmap.bmWidth		= width;
-	m_Bitmap.bmHeight		= height;
-	m_Bitmap.bmPlanes		= 1;
-	m_Bitmap.bmWidthBytes	= width * 3; // I changed this from height * width because it is the stride and not the size (Ziphnor)
-	m_Bitmap.bmBits			= (LPVOID)m_Data;
-
-	ZeroMemory( m_Data, width * height * 3 );
+  m_Data = NULL;
 }
 
 CSubtitle::~CSubtitle()
@@ -75,24 +69,7 @@ int CSubtitle::RenderBitmap( unsigned char* buffer, char *file_name, unsigned ch
 	uint8_t colorData( 0 );
 	long position( 0 );
   m_FirstScanline = -1;
-/*	BITMAPINFOHEADER bmi;
-	BITMAPFILEHEADER bfi;
 
-	ZeroMemory(&bmi,sizeof(BITMAPINFOHEADER));
-	bmi.biSize			= sizeof(BITMAPINFOHEADER);
-	bmi.biHeight		= m_Bitmap.bmHeight;
-	bmi.biWidth			= m_Bitmap.bmWidth;
-	bmi.biSizeImage		= m_Bitmap.bmWidth*m_Bitmap.bmHeight*3;
-	bmi.biBitCount		= 24;
-	bmi.biCompression	= BI_RGB;
-	bmi.biPlanes		= 1;
-	
-	bfi.bfType			= ((WORD) ('M' << 8) | 'B');
-	bfi.bfSize			= sizeof(bfi)+bmi.biSizeImage;
-	bfi.bfReserved1		= 0;
-	bfi.bfReserved2		= 0;
-	bfi.bfOffBits		= (DWORD) (sizeof(bfi)+sizeof(bmi.biSize));
-*/	
 	for( int i = 0 ; i < m_Bitmap.bmHeight * m_Bitmap.bmWidth; i++ )
 	{
 		for( int j = 0 ; j < 3 ; j++ )
@@ -102,58 +79,35 @@ int CSubtitle::RenderBitmap( unsigned char* buffer, char *file_name, unsigned ch
         if( buffer[i] > 0 )
         {
           m_FirstScanline = i / m_Bitmap.bmWidth;
-          //LogDebug("Subtitle::RenderBitmap - First scanline that contains subtitle picture %d", m_FirstScanline );
+          m_Bitmap.bmHeight -= m_FirstScanline;
         }
       }
+    }
+  }
 
+  m_Data = new unsigned char[ m_Bitmap.bmHeight * m_Bitmap.bmWidth *4 ];
+  ZeroMemory( m_Data, m_Bitmap.bmHeight * m_Bitmap.bmWidth * 4 );
+
+  m_Bitmap.bmBits	= (LPVOID)m_Data;
+
+	for( int i =  m_Bitmap.bmWidth * m_FirstScanline ; i < ( m_Bitmap.bmHeight + m_FirstScanline ) * m_Bitmap.bmWidth; i++ )
+	{
+		for( int j = 0 ; j < 3 ; j++ )
+		{
       colorData = buffer[i];
 			
 			int value = my_palette[colorData * 3 + j];
+      m_Data[position] = value;
+  		position++;
 
-			// transparent color? Not handled properly yet!
-			/*if( my_trans[colorData] == 0 )
-			{
-				value = 0;			
-			}*/ 
-				
-			m_Data[ position ] = value;
-			position++;
+			// Add alpha channel 
+      if( j == 2 )
+      {      
+        m_Data[position] = my_trans[colorData];
+        position++;
+      }
 		}
 	}
-
-		
-	//char file_name_tmp[500];
-
-	//strcpy( file_name_tmp, "d:\\test_output\\" );
-	//strncat( file_name_tmp, file_name, 29 );
-
-	//FILE* file = fopen( file_name_tmp, "w+" );
-	//CFile file;
-	
-	//if (!file.Open(file_name_tmp,CFile::modeWrite|CFile::modeCreate))
-	//if(!file)
-	//	return 1;
-
-	//file.Write(&bfi, sizeof(bfi));
-	// Create debug PPM image file
-	//fprintf( file, "P3 %d %d %d\n", m_Bitmap.bmWidth, m_Bitmap.bmHeight, col_count - 1 );
-	
-	/*for( int k = 0 ; k < m_Bitmap.bmHeight * m_Bitmap.bmWidth * 3 ; k++ )
-	{
-		if( k != 0 && k % ( m_Bitmap.bmWidth * 3 ) == 0 )
-		{
-			fprintf( file, "\n" );
-		}
-
-		fprintf( file, "%d ", m_Data[k] );
-	}*/
-	//file.Write(&bmi, sizeof(bmi));
-	//file.Write(m_Data, bmi.biSizeImage);
-	//file.Close();
-/*
-	fprintf( file, "\n" );	
-	fclose(file);
-*/
 	return 0;
 }
 
@@ -174,7 +128,6 @@ uint64_t CSubtitle::PTS()
 
 void CSubtitle::SetPTS( uint64_t PTS )
 {
-	//LogDebug("Subtitle::SetPTS %lld", PTS );
 	m_PTS = PTS;
 }
 

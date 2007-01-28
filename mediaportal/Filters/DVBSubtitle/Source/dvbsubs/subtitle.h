@@ -32,41 +32,30 @@ class CSubtitle
 {
 public:
 
-	CSubtitle( int width, int height );
+  CSubtitle( int width, int height );
 	
-	~CSubtitle();
-	BITMAP m_Bitmap;
-	BITMAP* GetBitmap();
+  ~CSubtitle();
+  BITMAP m_Bitmap;
+  BITMAP* GetBitmap();
 
-	int RenderBitmap( unsigned char* buffer, char *file_name, 
-		unsigned char* my_palette, unsigned char* my_trans, int col_count );
+  int RenderBitmap( unsigned char* buffer, char *file_name, 
+	  unsigned char* my_palette, unsigned char* my_trans, int col_count );
 	
-	int Width();
-	
-	int Height();
-
-	uint64_t PTS();
-
-	void SetPTS( uint64_t PTS );
-
+  int Width();
+  int Height();
+  uint64_t PTS();
+  void SetPTS( uint64_t PTS );
   uint64_t Timeout();
-
   void SetTimeout( uint64_t timeout );
-  
   int FirstScanline();
-
-	unsigned char* GetData(); 
-
-	int CSubtitle::GetData( int pos );
-
-	unsigned char* m_Data;
-
-  int m_FirstScanline;
+  unsigned char* GetData(); 
+  int CSubtitle::GetData( int pos );
 
 private:
-	
-	uint64_t m_PTS;
 
+  unsigned char* m_Data;
+  int m_FirstScanline;
+  uint64_t m_PTS;
   uint64_t m_timeout;
 };
 #endif
