@@ -4,7 +4,6 @@ using System.Text;
 using MediaPortal.GUI.Library;
 using System.Drawing;
 using Microsoft.DirectX;
-using System;
 using System.Runtime.InteropServices;
 using Microsoft.DirectX.Direct3D;
 using System.Threading;
@@ -23,19 +22,15 @@ namespace MediaPortal.Player
   {
     // start of bitmap fields
     public Int32 bmType;
-
     public Int32 bmWidth;
-
     public Int32 bmHeight;
-
     public Int32 bmWidthBytes;
-
     public UInt16 bmPlanes;
-
     public UInt16 bmBitsPixel;
-
     public IntPtr bmBits;
     //end of bitmap fields
+
+    public Int32 firstScanLine;
 
     // how long to display subtitle
     public UInt64 timeOut;
@@ -148,9 +143,8 @@ namespace MediaPortal.Player
         lock (alert)
         {
           Monitor.Wait(alert);
-        try{
-            int srcbpp = sub.bmBitsPixel / 8;
-            int dstbpp = srcbpp + 1; // an extra byte for alpha channel
+          try
+          {
             int size = sub.bmWidthBytes * sub.bmHeight;
             // allocate a new image with an alpha channel
             Bitmap bitmap = new Bitmap(sub.bmWidth, sub.bmHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
@@ -159,55 +153,17 @@ namespace MediaPortal.Player
             BitmapData bmData = bitmap.LockBits(new Rectangle(0, 0, sub.bmWidth, sub.bmHeight), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
 
             int newSize = bmData.Stride * sub.bmHeight;
-            byte[] dstData = new byte[newSize];
-              // add alpha channel data
-              for (int x = 0; x < sub.bmWidth; x++)
-              {
-                for (int y = 0; y < sub.bmHeight; y++)
-                {
-                  int dstLineOffset = y * bmData.Stride;
-                  int srcLineOffset = y * sub.bmWidthBytes;
-
-                  byte Y = srcData[srcbpp * x + srcLineOffset];
-                  byte U = srcData[srcbpp * x + 1 + srcLineOffset];
-                  byte V = srcData[srcbpp * x + 2 + srcLineOffset];
-
-                  // convert YUV -> RGB
-                  byte R = (byte)(Y + 1.402 * (V - 128));
-                  byte G = (byte)(Y - 0.34414 * (U - 128) - 0.71414 * (V - 128));
-                  byte B = (byte)(Y + 1.772 * (U - 128));
-
-                  if ((Y | U | V) == 0)
-                  {
-                    dstData[dstbpp * x + 0 + dstLineOffset] = 0; // Blue
-                    dstData[dstbpp * x + 1 + dstLineOffset] = 0; // Green
-                    dstData[dstbpp * x + 2 + dstLineOffset] = 0; // Red
-                    dstData[dstbpp * x + 3 + dstLineOffset] = 0; // Alpha
-                  }
-                  else
-                  {
-                    dstData[dstbpp * x + 0 + dstLineOffset] = R;// B;
-                    dstData[dstbpp * x + 1 + dstLineOffset] = G; //G;
-                    dstData[dstbpp * x + 2 + dstLineOffset] = B; //R;
-                    dstData[dstbpp * x + 3 + dstLineOffset] = 255;
-                  }
-                }
-              }
-
-              // copy image data
-              Marshal.Copy(dstData, 0, bmData.Scan0, newSize);
-
+            Marshal.Copy(srcData, 0, bmData.Scan0, newSize);
             bitmap.UnlockBits(bmData);
 
-              //bitmap.Save("C:\\sub" + count + ".bmp");
-              //count++;
+            //bitmap.Save("d:\\test_output\\" + count + ".bmp");
+            //count++;
 
-              // replace the current subtitle with the new one
-             SetSubtitle(bitmap);
-          
+            // replace the current subtitle with the new one
+            SetSubtitle(bitmap);
+
             // the texture copies the bitmap, so get rid of it
-              bitmap.Dispose();
-
+            bitmap.Dispose();
           }
           catch (Exception e)
           {
@@ -219,7 +175,8 @@ namespace MediaPortal.Player
     /// <summary>
     /// Cleans up resources
     /// </summary>
-    public void Clear() {
+    public void Clear() 
+    {
       lock (subtitleLock)
       {
         // swap
@@ -231,7 +188,6 @@ namespace MediaPortal.Player
           {
             subFilter = null;
           }
-          
         }
       }
     }
@@ -321,7 +277,7 @@ namespace MediaPortal.Player
           subFilter = filter as IDVBSubtitle;
 
           subFilter.Test(600);
-       //   Monitor.Pulse(alert);
+          //Monitor.Pulse(alert);
           Log.Debug("CreateFilter success: " + (filter != null) + " & " + (subFilter != null));
        // }
       }
@@ -395,16 +351,20 @@ namespace MediaPortal.Player
         
         lock (subtitleLock)
         {
+          float rationW = GUIGraphicsContext.OverScanWidth / (float)720;
+          float rationH = GUIGraphicsContext.OverScanHeight / (float)576;
+
           // Get the location to render the subtitle to
-          int wx = GUIGraphicsContext.OverScanLeft;
-          int wy = GUIGraphicsContext.OverScanTop;
-          int wwidth = GUIGraphicsContext.OverScanWidth;
-          int wheight = GUIGraphicsContext.OverScanHeight;
+          int wx = GUIGraphicsContext.OverScanLeft +
+             (int)(((float)(GUIGraphicsContext.Width - sub.bmWidth * rationW ) ) / 2); 
+          int wy = GUIGraphicsContext.OverScanTop + (int)( rationH * (float)sub.firstScanLine );
+          int wwidth  = (int)( (float)sub.bmWidth  * rationW );
+          int wheight = (int)( (float)sub.bmHeight * rationH );
 
           // make sure the vertex buffer is ready and correct for the coordinates
           CreateVertexBuffer(wx, wy, wwidth, wheight);
 
-         // Log.Debug("Subtitle render target: wx = {0} wy = {1} ww = {2} wh = {3}", wx, wy, wwidth, wheight);
+          // Log.Debug("Subtitle render target: wx = {0} wy = {1} ww = {2} wh = {3}", wx, wy, wwidth, wheight);
 
           // enable alpha testing so that the subtitle is rendered with transparent background
           GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable, true);
