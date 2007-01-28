@@ -684,6 +684,8 @@ namespace TvPlugin
 
     private bool SkipForConflictingRecording(Schedule rec)
     {
+      Log.Info("SkipForConflictingRecording: Schedule = " + rec.ToString());
+
       TvBusinessLayer layer = new TvBusinessLayer();
       List<Schedule> conflicts = layer.GetConflictingSchedules(rec);
       if (conflicts.Count > 0)
@@ -695,6 +697,8 @@ namespace TvPlugin
           dlg.SetHeading(GUILocalizeStrings.Get(879));   // "recording conflict"
           foreach (Schedule conflict in conflicts)
           {
+            Log.Info("SkipForConflictingRecording: Conflicts = " + conflict.ToString());
+
             GUIListItem item = new GUIListItem(conflict.ProgramName);
             item.Label2 = GetRecordingDateTime(conflict);
             item.Label3 = conflict.IdChannel.ToString();

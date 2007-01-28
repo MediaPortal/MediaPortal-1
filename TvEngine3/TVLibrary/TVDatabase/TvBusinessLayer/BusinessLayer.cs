@@ -12,6 +12,7 @@ using Gentle.Framework;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations;
 using TvLibrary.Channels;
+using TvLibrary.Log;
 using TvLibrary;
 using DirectShowLib;
 using DirectShowLib.BDA;
@@ -835,17 +836,20 @@ namespace TvDatabase
     #region schedules
     public List<Schedule> GetConflictingSchedules(Schedule rec)
     {
+      Log.Info("GetConflictingSchedules: Schedule = " + rec.ToString());
       List<Schedule> conflicts = new List<Schedule>();
       IList schedulesList = Schedule.ListAll();
       IList cards = Card.ListAll();
       if (cards.Count == 0) return conflicts;
+      Log.Info("GetConflictingSchedules: Cards.Count = {0}" + cards.Count);
 
       List<Schedule>[] cardSchedules = new List<Schedule>[cards.Count];
       for (int i = 0; i < cards.Count; i++) cardSchedules[i] = new List<Schedule>();
-
+      
       List<Schedule> newEpisodes = GetRecordingTimes(rec);
       foreach (Schedule newEpisode in newEpisodes)
       {
+        Log.Info("GetConflictingSchedules: newEpisode = " + newEpisode.ToString());
         foreach (Schedule schedule in schedulesList)
         {
           List<Schedule> otherEpisodes = GetRecordingTimes(schedule);
@@ -857,8 +861,10 @@ namespace TvDatabase
 
             if (newEpisode.IsOverlapping(otherEpisode))
             {
+              Log.Info("GetConflictingSchedules: overlapping (" + newEpisode.ToString() + ", " + otherEpisode.ToString());
               if (!AssignSchedulesToCard(otherEpisode, cardSchedules))
               {
+                Log.Info("GetConflictingSchedules: conflicts.Add = " + otherEpisode.ToString());
                 conflicts.Add(otherEpisode);
               }
             }
