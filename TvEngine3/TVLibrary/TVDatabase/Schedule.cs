@@ -643,13 +643,18 @@ namespace TvDatabase
       End1 = this.EndTime.AddMinutes(-this.postRecordInterval);
       End2 = schedule.EndTime.AddMinutes(-schedule.postRecordInterval);
 
-      // rec_1        s------------------------e
-      // rec_2    ---------s-----------------------------
-      // rec_2  ------------------e
+      // sch_1        s------------------------e
+      // sch_2    ---------s-----------------------------
+      // sch_2    s--------------------------------e
+      // sch_2  ------------------e
       if ((Start2 >= Start1 && Start2 < End1) ||
           (Start2 <= Start1 && End2 >= End1) ||
           (End2 > Start1 && End2 <= End1)) return true;
       return false;
+    }
+    public override string ToString()
+    {
+      return String.Format("{0} on {1} {2} - {3}", ProgramName, IdChannel, StartTime, EndTime);
     }
   }
 }
