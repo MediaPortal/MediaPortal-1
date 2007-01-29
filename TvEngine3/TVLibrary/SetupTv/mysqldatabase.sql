@@ -406,3 +406,13 @@ INSERT INTO `version` VALUES  (1,20);
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+
+
+CREATE INDEX idProgramStart ON Program (startTime);
+#
+CREATE INDEX idxChannel ON Channel (isTv,sortOrder);
+#
+CREATE INDEX idProgramChannel ON Program (idChannel);
+#
+CREATE INDEX idProgramBeginEnd ON Program (idChannel,startTime,endTime);
+#
