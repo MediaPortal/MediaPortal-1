@@ -48,6 +48,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       BTN_START_STREAM = 10,
       BTN_CHOOSE_TAG = 20,
       BTN_CHOOSE_FRIEND = 30,
+      BTN_DISCOVERY_MODE = 40,
       LIST_TRACK_TAGS = 55,
       IMG_ARTIST_ART = 112,
     }
@@ -55,6 +56,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     [SkinControlAttribute((int)SkinControlIDs.BTN_START_STREAM)]    protected GUIButtonControl btnStartStream = null;
     [SkinControlAttribute((int)SkinControlIDs.BTN_CHOOSE_TAG)]      protected GUIButtonControl btnChooseTag = null;
     [SkinControlAttribute((int)SkinControlIDs.BTN_CHOOSE_FRIEND)]   protected GUIButtonControl btnChooseFriend = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_DISCOVERY_MODE)]  protected GUIToggleButtonControl btnDiscoveryMode = null;
     //[SkinControlAttribute((int)SkinControlIDs.LIST_TRACK_TAGS)]     protected GUIListControl facadeTrackTags = null;
     [SkinControlAttribute((int)SkinControlIDs.IMG_ARTIST_ART)]      protected GUIImage imgArtistArt = null;
 
@@ -117,7 +119,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
       UpdateUsersTags(LastFMStation.AccountUser);
       UpdateUsersFriends(LastFMStation.AccountUser);
       GUIWaitCursor.Hide();
-
+      
+      btnDiscoveryMode.Disabled = !LastFMStation.IsSubscriber;
+      btnDiscoveryMode.Visible = true;
       btnStartStream.Selected = true;
     }
 
@@ -132,6 +136,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       msgdlg.SetLine(1, GUILocalizeStrings.Get(34055)); // Streams might be temporarily unavailable
       msgdlg.DoModal(GetID);
 
+      btnDiscoveryMode.Disabled = true;
       btnStartStream.Selected = false;
     }
 
@@ -344,12 +349,11 @@ namespace MediaPortal.GUI.RADIOLASTFM
           OnPlaybackStopped();
           g_Player.Stop();
         }
-
-        // LastFMStation.CurrentTuneType = TuneIntoSelected;
+               
         switch (TuneIntoSelected)
         {
           case StreamType.Recommended:
-            LastFMStation.TuneIntoRecommendedRadio(LastFMStation.StreamsUser);
+            LastFMStation.TuneIntoRecommendedRadio(LastFMStation.StreamsUser);            
             break;
 
           case StreamType.Group:
@@ -424,6 +428,11 @@ namespace MediaPortal.GUI.RADIOLASTFM
           return;
         btnChooseFriend.Label = _usersFriends[dlg.SelectedId - 1];
         GUIPropertyManager.SetProperty("#selecteditem", btnChooseFriend.Label);
+      }
+
+      if (control == btnDiscoveryMode)
+      {
+        LastFMStation.DiscoveryMode = btnDiscoveryMode.Selected;
       }
 
       base.OnClicked(controlId, control, actionType);

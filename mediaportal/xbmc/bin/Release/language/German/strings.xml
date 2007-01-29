@@ -5694,7 +5694,7 @@
     </string>
     <string>
         <id>34013</id>
-        <value>Entdecker Modus</value>
+        <value>Nur ungehörte Titel</value>
     </string>
     <string>
         <id>34014</id>
@@ -6497,4 +6497,12 @@
         <id>200038</id>
         <value>Auf einem normalen PC mit weiteren Anwendungen</value>
     </string>
+    <string>
+	    <id>200039</id>
+	    <value>Skip Stufe hinzufügen</value>
+    </string>
+    <string>
+	    <id>200040</id>
+	    <value>Skip Stufe entfernen</value>
+    </string>    
 </strings>

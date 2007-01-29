@@ -31,8 +31,10 @@
     <control>
       <type>image</type>
       <id>1</id>
-      <posX>142</posX>
-      <posY>493</posY>
+      <posX>155</posX>
+      <posY>522</posY>
+      <width>217</width>
+      <height>213</height>
       <texture>hover_settings.png</texture>
     </control>
     <control>
@@ -40,10 +42,8 @@
       <type>button</type>
       <id>19</id>
       <label>200039</label>
-      <posX>253</posX>
+      <posX>113</posX>
       <posY>194</posY>
-      <width>140</width>
-      <height>33</height>
       <align>center</align>
       <textureFocus>button_small_settings_focus.png</textureFocus>
       <textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
@@ -57,10 +57,8 @@
       <type>button</type>
       <id>20</id>
       <label>200040</label>
-      <posX>253</posX>
+      <posX>113</posX>
       <posY>234</posY>
-      <width>140</width>
-      <height>33</height>
       <align>center</align>
       <textureFocus>button_small_settings_focus.png</textureFocus>
       <textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
@@ -74,10 +72,8 @@
       <type>button</type>
       <id>18</id>
       <label>886</label>
-      <posX>253</posX>
+      <posX>113</posX>
       <posY>274</posY>
-      <width>140</width>
-      <height>44</height>
       <align>center</align>
       <textureFocus>button_small_settings_focus.png</textureFocus>
       <textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>

@@ -98,7 +98,7 @@
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
-      <description>chose friend</description>
+      <description>choose friend</description>
       <type>button</type>
       <id>30</id>
       <posX>60</posX>
@@ -107,10 +107,25 @@
       <onleft>30</onleft>
       <onright>50</onright>
       <onup>20</onup>
-      <ondown>30</ondown>
+      <ondown>40</ondown>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
+    <control>
+      <description>toggle discovery mode</description>
+      <type>togglebutton</type>
+      <id>40</id>
+      <posX>60</posX>
+      <posY>246</posY>
+      <label>34013</label>
+      <onleft>40</onleft>
+      <onright>50</onright>
+      <onup>30</onup>
+      <ondown>40</ondown>
+      <visible>false</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>    
     <control>
       <type>fadelabel</type>
       <description>track label</description>
