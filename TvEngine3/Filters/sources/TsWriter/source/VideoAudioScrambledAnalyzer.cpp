@@ -115,6 +115,7 @@ void CVideoAudioScrambledAnalyzer::OnTsPacket(byte* tsPacket)
 
 void CVideoAudioScrambledAnalyzer::Dump(bool audio, bool video)
 {
+  return;
   if (audio)
   {
     switch (m_bAudioEncrypted)
