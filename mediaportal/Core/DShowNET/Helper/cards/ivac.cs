@@ -119,7 +119,7 @@ namespace DShowNET
 		{
 			get 
 			{
-        if (captureFilter == null) return false;
+                if (captureFilter == null) return false;
 				IKsPropertySet propertySet= captureFilter as IKsPropertySet;
 				if (propertySet==null) return false;
 				Guid propertyGuid=IVac.IvacGuid;

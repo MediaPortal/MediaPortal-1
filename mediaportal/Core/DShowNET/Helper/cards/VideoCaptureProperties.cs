@@ -67,31 +67,32 @@ namespace DShowNET.Helper
 
         public void SetAudioBitRate(int Kbps)
         {
-         
-          if (_hauppauge.IsHauppage)
-          {
-            _hauppauge.SetAudioBitRate(Kbps);
-            return;
-          }
+          
           if (_ivac.IsIVAC)
           {
             _ivac.SetAudioBitRate(Kbps);
             return;
 
           }
+          if (_hauppauge.IsHauppage)
+          {
+              _hauppauge.SetAudioBitRate(Kbps);
+              return;
+          }
 
         }
         public void SetVideoBitRate(int minKbps, int maxKbps, bool isVBR)
         {
 
-            if (_hauppauge.IsHauppage)
-            {
-                _hauppauge.SetVideoBitRate(minKbps, maxKbps, isVBR);
-                return;
-            }
             if (_ivac.IsIVAC)
             {
                 _ivac.SetVideoBitRate(minKbps, maxKbps, isVBR);
+                return;
+            }
+
+            if (_hauppauge.IsHauppage)
+            {
+                _hauppauge.SetVideoBitRate(minKbps, maxKbps, isVBR);
                 return;
             }
         }
