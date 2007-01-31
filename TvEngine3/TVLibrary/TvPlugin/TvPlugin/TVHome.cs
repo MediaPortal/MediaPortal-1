@@ -184,7 +184,8 @@ namespace TvPlugin
       {
         if (_card == null)
         {
-          _card = TvServer.CardByIndex(0);
+          User user = new User();
+          _card = TvServer.CardByIndex(user,0);
         }
         return _card;
       }
@@ -318,7 +319,8 @@ namespace TvPlugin
             TvServer server = new TvServer();
             for (int i = 0; i < server.Count; ++i)
             {
-              VirtualCard card = server.CardByIndex(i);
+              User user = new User();
+              VirtualCard card = server.CardByIndex(user,i);
               if (card.IsRecording)
               {
                 if (card.Channel.Name == channel)
@@ -806,12 +808,13 @@ namespace TvPlugin
         if (card.Enabled == false) continue;
         bool isRecording;
         bool isTimeShifting;
-        VirtualCard tvcard = new VirtualCard(card.IdCard,RemoteControl.HostName);
+        User user = new User();
+        user.CardId = card.IdCard;
+        VirtualCard tvcard = new VirtualCard(user,RemoteControl.HostName);
         isRecording = tvcard.IsRecording;
         isTimeShifting = tvcard.IsTimeShifting;
         if (isRecording || isTimeShifting)
         {
-          User user;
           int idChannel = tvcard.IdChannel;
           user = tvcard.User;
           Channel ch = Channel.Retrieve(idChannel);
@@ -1199,7 +1202,9 @@ namespace TvPlugin
       //Start timeshifting the new tv channel
       TvServer server = new TvServer();
       VirtualCard card;
-      succeeded = server.StartTimeShifting(channel.IdChannel, out card);
+
+      User user = new User();
+      succeeded = server.StartTimeShifting(ref user,channel.IdChannel, out card);
       TVHome.Card = card;
       MediaPortal.GUI.Library.Log.Info("succeeded:{0} ", succeeded);
       if (succeeded == TvResult.Succeeded)
@@ -1851,7 +1856,8 @@ namespace TvPlugin
         {
           for (int i = 0; i < server.Count; ++i)
           {
-            VirtualCard card = server.CardByIndex(i);
+            User user = new User();
+            VirtualCard card = server.CardByIndex(user,i);
             if (card.IsRecording)
             {
               id = card.IdChannel;
