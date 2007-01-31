@@ -59,20 +59,35 @@ namespace TvControl
     /// returns a virtual card for the specified index
     /// which can be used to control the card
     /// </summary>
+    /// <param name="user">The user.</param>
     /// <param name="index">index of card</param>
     /// <returns></returns>
-    public VirtualCard CardByIndex(int index)
+    public VirtualCard CardByIndex(User user,int index)
     {
       try
       {
         int id = RemoteControl.Instance.CardId(index);
-        return new VirtualCard(id, RemoteControl.HostName);
+        return new VirtualCard(user, RemoteControl.HostName);
       }
       catch (Exception ex)
       {
         HandleFailure(ex);
       }
       return null;
+    }
+
+    public bool IsRecording(string channelName, out VirtualCard card)
+    {
+      card = null;
+      try
+      {
+          return RemoteControl.Instance.IsRecording(channelName,out card);
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+      return false;
     }
 
     /// <summary>
@@ -83,11 +98,7 @@ namespace TvControl
     {
       try
       {
-        for (int i = 0; i < RemoteControl.Instance.Cards; ++i)
-        {
-          int id = RemoteControl.Instance.CardId(i);
-          if (RemoteControl.Instance.IsRecording(id)) return true;
-        }
+        if (RemoteControl.Instance.IsAnyCardRecording()) return true;
       }
       catch (Exception ex)
       {
@@ -100,15 +111,18 @@ namespace TvControl
     /// <summary>
     /// Start timeshifting on a specific channel
     /// </summary>
+    /// <param name="user">The user.</param>
     /// <param name="idChannel">id of the channel</param>
     /// <param name="card">returns on which card timeshifting is started</param>
-    /// <returns>TvResult indicating whether method succeeded</returns>
-    public TvResult StartTimeShifting(int idChannel, out VirtualCard card)
+    /// <returns>
+    /// TvResult indicating whether method succeeded
+    /// </returns>
+    public TvResult StartTimeShifting(ref User user,int idChannel, out VirtualCard card)
     {
       card = null;
       try
       {
-        TvResult result = RemoteControl.Instance.StartTimeShifting(idChannel, new User(), out card);
+        TvResult result = RemoteControl.Instance.StartTimeShifting(ref user,idChannel, out card);
         return result;
       }
       catch (Exception ex)
@@ -118,48 +132,7 @@ namespace TvControl
       return TvResult.UnknownError;
     }
 
-    /// <summary>
-    /// Start timeshifting on a specific channel
-    /// </summary>
-    /// <param name="channelName">Name of the channel</param>
-    /// <param name="card">returns on which card timeshifting is started</param>
-    /// <returns>TvResult indicating whether method succeeded</returns>
-    public TvResult StartTimeShifting(string channelName, out VirtualCard card)
-    {
-      card = null;
-      try
-      {
-        TvResult result = RemoteControl.Instance.StartTimeShifting(channelName, new User(), out card);
-        return result;
-      }
-      catch (Exception ex)
-      {
-        HandleFailure(ex);
-      }
-      return TvResult.UnknownError;
-    }
 
-    /// <summary>
-    /// Checks if the channel specified is being recorded and ifso
-    /// returns on which card
-    /// </summary>
-    /// <param name="channelName">Name of the channel</param>
-    /// <param name="card">returns card is recording the channel</param>
-    /// <returns>true if a card is recording the channel, otherwise false</returns>
-    public bool IsRecording(string channelName, out VirtualCard card)
-    {
-      card = null;
-      try
-      {
-        return RemoteControl.Instance.IsRecording(channelName, out  card);
-
-      }
-      catch (Exception ex)
-      {
-        HandleFailure(ex);
-      }
-      return false;
-    }
 
     /// <summary>
     /// Checks if the schedule specified is currently being recorded and ifso

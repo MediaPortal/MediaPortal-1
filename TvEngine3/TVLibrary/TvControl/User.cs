@@ -29,10 +29,13 @@ namespace TvControl
   /// Class holding user credentials
   /// </summary>
   [Serializable]
-  public class User
+  public class User : ICloneable
   {
     string _hostName;
     bool _isAdmin;
+    int _cardId;
+    int _subChannel;
+    int _idChannel;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class.
@@ -41,6 +44,9 @@ namespace TvControl
     {
       _hostName = Dns.GetHostName();
       _isAdmin = false;
+      _cardId = -1;
+      _idChannel = -1;
+      _subChannel=-1;
     }
 
     /// <summary>
@@ -52,6 +58,68 @@ namespace TvControl
     {
       _hostName = name;
       _isAdmin = isAdmin;
+      _cardId = -1;
+      _subChannel = -1;
+    }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="User"/> class.
+    /// </summary>
+    /// <param name="name">The name.</param>
+    /// <param name="isAdmin">if set to <c>true</c> [is admin].</param>
+    /// <param name="cardId">The card id.</param>
+    public User(string name, bool isAdmin, int cardId)
+    {
+      _hostName = name;
+      _isAdmin = isAdmin;
+      _cardId = cardId;
+      _subChannel = -1;
+    }
+
+    /// <summary>
+    /// Gets or sets the card id.
+    /// </summary>
+    /// <value>The card id.</value>
+    public int CardId
+    {
+      get
+      {
+        return _cardId;
+      }
+      set
+      {
+        _cardId = value;
+      }
+    }
+    /// <summary>
+    /// Gets or sets the database id channel.
+    /// </summary>
+    /// <value>The id channel.</value>
+    public int IdChannel
+    {
+      get
+      {
+        return _idChannel;
+      }
+      set
+      {
+        _idChannel = value;
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets the subchannel id.
+    /// </summary>
+    /// <value>The subchannel id.</value>
+    public int SubChannel
+    {
+      get
+      {
+        return _subChannel;
+      }
+      set
+      {
+        _subChannel = value;
+      }
     }
 
     /// <summary>
@@ -84,5 +152,26 @@ namespace TvControl
         _isAdmin = value;
       }
     }
+
+    #region ICloneable Members
+
+    /// <summary>
+    /// Creates a new object that is a copy of the current instance.
+    /// </summary>
+    /// <returns>
+    /// A new object that is a copy of this instance.
+    /// </returns>
+    public object Clone()
+    {
+      User user = new User();
+      user._hostName = _hostName;
+      user._isAdmin = _isAdmin;
+      user._cardId = _cardId;
+      user._subChannel = _subChannel;
+      user._idChannel = _idChannel;
+      return user;
+    }
+
+    #endregion
   }
 }
