@@ -41,7 +41,15 @@ namespace TvEngine.Events
     /// </summary>
     EndZapChannel,
     /// <summary>
-    /// Event indicating that the tvserver is going to start recording
+    /// Event indicating that the tvserver is going to start timeshifting
+    /// </summary>
+    StartTimeShifting,
+    /// <summary>
+    /// Event indicating that the tvserver is going to start timeshifting
+    /// </summary>
+    EndTimeShifting,
+    /// <summary>
+    /// Event indicating that the tvserver is going to stop timeshifting
     /// </summary>
     StartRecording,
     /// <summary>
