@@ -426,18 +426,19 @@ namespace TvLibrary.Implementations.DVB.Structures
             {
               int indicator = buf[pointer];
               x = buf[pointer + 1] + 2;
-              if (indicator == 9)
-              {
-                string tmp = "";
-                for (int teller = 0; teller < x; ++teller)
-                  tmp += String.Format("{0:x} ", buf[pointer + teller]);
-                Log.Log.Info("descr2 pid:{0:X} len:{1:X} {2}", pmtEs.ElementaryStreamPID, x, tmp);
-              }
+              
               //Log.Log.Write("  descriptor2:{0:X}", indicator);
               if (x + pointer < buf.Length) // parse descriptor data
               {
                 byte[] data = new byte[x];
                 System.Array.Copy(buf, pointer, data, 0, x);
+                if (indicator == 9)
+                {
+                  string tmp = "";
+                  for (int teller = 0; teller < x; ++teller)
+                    tmp += String.Format("{0:x} ", buf[pointer + teller]);
+                  Log.Log.Info("descr2 pid:{0:X} len:{1:X} {2}", pmtEs.ElementaryStreamPID, x, tmp);
+                }
                 switch (indicator)
                 {
                   case 0x02: // video

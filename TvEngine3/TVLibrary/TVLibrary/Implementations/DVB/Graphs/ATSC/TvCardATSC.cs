@@ -189,22 +189,12 @@ namespace TvLibrary.Implementations.DVB
 
     #region tuning & recording
     /// <summary>
-    /// tune the card to the channel specified by IChannel
-    /// </summary>
-    /// <param name="channel">channel to tune</param>
-    /// <returns></returns>
-    public bool TuneScan(IChannel channel)
-    {
-      bool result = Tune(channel);
-      RunGraph();
-      return result;
-    }
-    /// <summary>
     /// Tunes the specified channel.
     /// </summary>
+    /// <param name="subChannelId">The sub channel id.</param>
     /// <param name="channel">The channel.</param>
-    /// <returns></returns>
-    public bool Tune(IChannel channel)
+    /// <returns>true if succeeded else false</returns>
+    public ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
       Log.Log.WriteFile("atsc:Tune:{0}", channel);
       try
@@ -215,22 +205,23 @@ namespace TvLibrary.Implementations.DVB
         if (atscChannel == null)
         {
           Log.Log.WriteFile("atsc:Channel is not a ATSC channel!!! {0}", channel.GetType().ToString());
-          return false;
+          return null;
         }
         ATSCChannel oldChannel = CurrentChannel as ATSCChannel;
         if (CurrentChannel != null)
         {
           if (oldChannel.Equals(channel))
           {
-            Log.Log.WriteFile("atsc:Already tuned to channel!!! ");
-            return true;
+            //@FIX this fails for back-2-back recordings
+            //Log.Log.WriteFile("atsc:Already tuned to channel!!! ");
+            //return _mapSubChannels[0];
           }
         }
         if (_graphState == GraphState.Idle)
         {
           BuildGraph();
         }
-        if (!CheckThreadId()) return false;
+
         ILocator locator;
 
         _tuningSpace.get_DefaultLocator(out locator);
@@ -247,16 +238,16 @@ namespace TvLibrary.Implementations.DVB
         hr = _tuneRequest.put_Channel(atscChannel.MajorChannel);
         _tuneRequest.put_Locator(locator);
 
-        CurrentChannel = channel;
-        SubmitTuneRequest(_tuneRequest);
-//        SetupPmtGrabber(atscChannel.PmtPid);
+        ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest);
+        RunGraph(ch.SubChannelId);
+        return ch;
       }
       catch (Exception ex)
       {
         Log.Log.Write(ex);
         throw ex;
       }
-      return true;
+      return null;
     }
     #endregion
 

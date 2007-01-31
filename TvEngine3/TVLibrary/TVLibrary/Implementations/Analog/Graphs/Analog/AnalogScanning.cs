@@ -99,7 +99,7 @@ namespace TvLibrary.Implementations.Analog
     {
       _card.IsScanning = true;
       AnalogChannel analogChannel = (AnalogChannel)channel;
-      _card.Tune(channel);
+      _card.Tune(0,channel);
       if (channel.IsTv)
       {
         _card.GrabTeletext = true;

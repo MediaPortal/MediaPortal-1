@@ -34,7 +34,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     [PreserveSig]
     int AddChannel([Out] out ITsChannel instance);
     [PreserveSig]
-    int DeleteChannel([Out] out ITsChannel instance);
+    int DeleteChannel(ITsChannel instance);
     [PreserveSig]
     int GetChannel(ref short index, [Out] out ITsChannel instance);
     [PreserveSig]

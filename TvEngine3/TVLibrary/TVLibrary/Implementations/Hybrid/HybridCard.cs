@@ -140,6 +140,18 @@ namespace TvLibrary.Implementations.Hybrid
     #region ITVCard Members
 
     /// <summary>
+    /// Gets a value indicating whether card supports subchannels
+    /// </summary>
+    /// <value><c>true</c> if card supports sub channels; otherwise, <c>false</c>.</value>
+    public bool SupportsSubChannels
+    {
+      get
+      {
+        return _cards[_currentCardIndex].SupportsSubChannels;
+      }
+    }
+
+    /// <summary>
     /// Returns if the tuner belongs to a hybrid card
     /// </summary>
     public bool IsHybrid
@@ -181,43 +193,6 @@ namespace TvLibrary.Implementations.Hybrid
       }
     }
 
-    /// <summary>
-    /// gets the current filename used for timeshifting
-    /// </summary>
-    /// <value></value>
-    public string TimeShiftFileName
-    {
-      get
-      {
-        return _cards[_currentCardIndex].TimeShiftFileName;
-      }
-    }
-
-    /// <summary>
-    /// returns the date/time when timeshifting has been started for the card specified
-    /// </summary>
-    /// <value></value>
-    /// <returns>DateTime containg the date/time when timeshifting was started</returns>
-    public DateTime StartOfTimeShift
-    {
-      get
-      {
-        return _cards[_currentCardIndex].StartOfTimeShift;
-      }
-    }
-
-    /// <summary>
-    /// returns the date/time when recording has been started for the card specified
-    /// </summary>
-    /// <value></value>
-    /// <returns>DateTime containg the date/time when recording was started</returns>
-    public DateTime RecordingStarted
-    {
-      get
-      {
-        return _cards[_currentCardIndex].RecordingStarted;
-      }
-    }
 
     /// <summary>
     /// Method to check if card can tune to the channel specified
@@ -243,54 +218,6 @@ namespace TvLibrary.Implementations.Hybrid
       _cards[_currentCardIndex].StopGraph();
     }
 
-    /// <summary>
-    /// Returns true when unscrambled audio/video is received otherwise false
-    /// </summary>
-    /// <value></value>
-    /// <returns>true of false</returns>
-    public bool IsReceivingAudioVideo
-    {
-      get
-      {
-        return _cards[_currentCardIndex].IsReceivingAudioVideo;
-      }
-    }
-
-    /// <summary>
-    /// gets the current filename used for recording
-    /// </summary>
-    /// <value></value>
-    public string FileName
-    {
-      get
-      {
-        return _cards[_currentCardIndex].FileName;
-      }
-    }
-
-    /// <summary>
-    /// returns true if card is currently recording
-    /// </summary>
-    /// <value></value>
-    public bool IsRecording
-    {
-      get
-      {
-        return _cards[_currentCardIndex].IsRecording;
-      }
-    }
-
-    /// <summary>
-    /// returns true if card is currently timeshifting
-    /// </summary>
-    /// <value></value>
-    public bool IsTimeShifting
-    {
-      get
-      {
-        return _cards[_currentCardIndex].IsTimeShifting;
-      }
-    }
 
     /// <summary>
     /// returns true if card is currently grabbing the epg
@@ -324,17 +251,6 @@ namespace TvLibrary.Implementations.Hybrid
       }
     }
 
-    /// <summary>
-    /// returns the IChannel to which the card is currently tuned
-    /// </summary>
-    /// <value></value>
-    public IChannel Channel
-    {
-      get
-      {
-        return _cards[_currentCardIndex].Channel;
-      }
-    }
 
     /// <summary>
     /// returns the min. channel number for analog cards
@@ -360,31 +276,6 @@ namespace TvLibrary.Implementations.Hybrid
       }
     }
 
-    /// <summary>
-    /// returns true if we timeshift in transport stream mode
-    /// false we timeshift in program stream mode
-    /// </summary>
-    /// <value>true for transport stream, false for program stream.</value>
-    public bool IsTimeshiftingTransportStream
-    {
-      get
-      {
-        return _cards[_currentCardIndex].IsTimeshiftingTransportStream;
-      }
-    }
-
-    /// <summary>
-    /// returns true if we record in transport stream mode
-    /// false we record in program stream mode
-    /// </summary>
-    /// <value>true for transport stream, false for program stream.</value>
-    public bool IsRecordingTransportStream
-    {
-      get
-      {
-        return _cards[_currentCardIndex].IsRecordingTransportStream;
-      }
-    }
 
     /// <summary>
     /// Gets or sets the type of the cam.
@@ -459,93 +350,14 @@ namespace TvLibrary.Implementations.Hybrid
       }
     }
 
-    /// <summary>
-    /// Turn on/off teletext grabbing
-    /// </summary>
-    /// <value></value>
-    public bool GrabTeletext
-    {
-      get
-      {
-        return _cards[_currentCardIndex].GrabTeletext;
-      }
-      set
-      {
-        _cards[_currentCardIndex].GrabTeletext = value;
-      }
-    }
 
-    /// <summary>
-    /// returns the ITeletext interface used for retrieving the teletext pages
-    /// </summary>
-    /// <value></value>
-    public TvLibrary.Teletext.ITeletext TeletextDecoder
-    {
-      get
-      {
-        return _cards[_currentCardIndex].TeletextDecoder;
-      }
-    }
-
-    /// <summary>
-    /// Property which returns true when the current channel contains teletext
-    /// </summary>
-    /// <value></value>
-    public bool HasTeletext
-    {
-      get
-      {
-        return _cards[_currentCardIndex].HasTeletext;
-      }
-    }
-
-    /// <summary>
-    /// Gets or sets the teletext callback.
-    /// </summary>
-    /// <value>The teletext callback.</value>
-    public TvLibrary.Teletext.IVbiCallback TeletextCallback
-    {
-      get
-      {
-        return _cards[_currentCardIndex].TeletextCallback;
-      }
-      set
-      {
-        _cards[_currentCardIndex].TeletextCallback = value;
-      }
-    }
-
-    /// <summary>
-    /// tune the card to the channel specified by IChannel
-    /// </summary>
-    /// <param name="channel">channel to tune</param>
-    /// <returns>true if succeeded else false</returns>
-    public bool TuneScan(IChannel channel)
-    {
-      for (int i = 0; i < _cards.Count; ++i)
-      {
-        if (_cards[i].CanTune(channel))
-        {
-          _currentCardIndex = i;
-          for (int x = 0; x < _cards.Count; x++)
-          {
-            if (x != i)
-            {
-              _cards[x].Dispose();
-            }
-          }
-          return _cards[_currentCardIndex].TuneScan(channel);
-        }
-      }
-      return false;
-    }
 
     /// <summary>
     /// Tunes the specified channel.
     /// </summary>
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded else false</returns>
-    public bool Tune(IChannel channel)
+    public ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
       for (int i = 0; i < _cards.Count; ++i)
       {
@@ -559,78 +371,12 @@ namespace TvLibrary.Implementations.Hybrid
               _cards[x].Dispose();
             }
           }
-          return _cards[_currentCardIndex].Tune(channel);
+          return _cards[_currentCardIndex].Tune(subChannelId,channel);
         }
       }
-      return false;
+      return null;
     }
 
-    /// <summary>
-    /// Starts timeshifting. Note card has to be tuned first
-    /// </summary>
-    /// <param name="fileName">filename used for the timeshiftbuffer</param>
-    /// <returns>true if succeeded else false</returns>
-    public bool StartTimeShifting(string fileName)
-    {
-      return _cards[_currentCardIndex].StartTimeShifting(fileName);
-    }
-
-    /// <summary>
-    /// Stops timeshifting
-    /// </summary>
-    /// <returns>true if succeeded else false</returns>
-    public bool StopTimeShifting()
-    {
-      return _cards[_currentCardIndex].StopTimeShifting();
-    }
-
-    /// <summary>
-    /// Starts recording
-    /// </summary>
-    /// <param name="transportStream">if true, then record transport stream</param>
-    /// <param name="fileName">filename to which to recording should be saved</param>
-    /// <returns>true if succeeded else false</returns>
-    public bool StartRecording(bool transportStream, string fileName)
-    {
-      return _cards[_currentCardIndex].StartRecording(transportStream, fileName);
-    }
-
-    /// <summary>
-    /// Stop recording
-    /// </summary>
-    /// <returns>true if succeeded else false</returns>
-    public bool StopRecording()
-    {
-      return _cards[_currentCardIndex].StopRecording();
-    }
-
-    /// <summary>
-    /// returns the list of available audio streams
-    /// </summary>
-    /// <value></value>
-    public List<IAudioStream> AvailableAudioStreams
-    {
-      get
-      {
-        return _cards[_currentCardIndex].AvailableAudioStreams;
-      }
-    }
-
-    /// <summary>
-    /// get/set the current selected audio stream
-    /// </summary>
-    /// <value></value>
-    public IAudioStream CurrentAudioStream
-    {
-      get
-      {
-        return _cards[_currentCardIndex].CurrentAudioStream;
-      }
-      set
-      {
-        _cards[_currentCardIndex].CurrentAudioStream = value;
-      }
-    }
 
     /// <summary>
     /// Get/Set the quality
@@ -731,7 +477,34 @@ namespace TvLibrary.Implementations.Hybrid
     {
       _cards[_currentCardIndex].Dispose();
     }
-
+    /// <summary>
+    /// Gets the sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    /// <returns></returns>
+    public ITvSubChannel GetSubChannel(int id)
+    {
+      return _cards[_currentCardIndex].GetSubChannel(id);
+    }
+    /// <summary>
+    /// Gets the sub channels.
+    /// </summary>
+    /// <value>The sub channels.</value>
+    public ITvSubChannel[] SubChannels
+    {
+      get
+      {
+        return _cards[_currentCardIndex].SubChannels;
+      }
+    }
+    /// <summary>
+    /// Frees the sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    public void FreeSubChannel(int id)
+    {
+      _cards[_currentCardIndex].FreeSubChannel(id);
+    }
 
     #endregion
   }

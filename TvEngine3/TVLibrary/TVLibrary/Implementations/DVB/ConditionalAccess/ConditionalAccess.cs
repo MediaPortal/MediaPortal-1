@@ -28,6 +28,7 @@ using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Interfaces;
 
+
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
@@ -42,6 +43,7 @@ namespace TvLibrary.Implementations.DVB
     Twinhan _twinhan = null;
     Hauppauge _hauppauge = null;
     DiSEqCMotor _diSEqCMotor = null;
+    Dictionary<int, ConditionalAccessContext> _mapSubChannels;
     #endregion
 
     //ctor
@@ -54,6 +56,7 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
+        _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
         if (tunerFilter == null && analyzerFilter == null) return;
         Log.Log.WriteFile("Check for Digital Everywhere");
         _digitalEveryWhere = new DigitalEverywhere(tunerFilter, analyzerFilter);
@@ -100,11 +103,26 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    public void AddSubChannel(int id)
+    {
+      if (!_mapSubChannels.ContainsKey(id))
+      {
+        _mapSubChannels[id] = new ConditionalAccessContext();
+      }
+    }
+    public void FreeSubChannel(int id)
+    {
+      if (_mapSubChannels.ContainsKey(id))
+      {
+        _mapSubChannels.Remove(id);
+      }
+    }
+
     /// <summary>
     /// Gets the interface for controlling the DiSeQC motor.
     /// </summary>
     /// <value>IDiSEqCMotor.</value>
-    public IDiSEqCMotor DiSEqCMotor 
+    public IDiSEqCMotor DiSEqCMotor
     {
       get
       {
@@ -160,20 +178,30 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Sends the PMT to the CI module
     /// </summary>
+    /// <param name="subChannel">The sub channel.</param>
     /// <param name="camType">type of cam in use</param>
     /// <param name="channel">channel on which we are tuned</param>
     /// <param name="PMT">byte array containing the PMT</param>
     /// <param name="pmtLength">length of the pmt array</param>
     /// <param name="audioPid">pid of the current audio stream</param>
     /// <returns></returns>
-    public bool SendPMT(CamType camType, DVBBaseChannel channel, byte[] PMT, int pmtLength, int audioPid)
+    public bool SendPMT(int subChannel, CamType camType, DVBBaseChannel channel, byte[] PMT, int pmtLength, int audioPid)
     {
       try
       {
+        AddSubChannel(subChannel);
+        ConditionalAccessContext context = _mapSubChannels[subChannel];
+        context.CamType = camType;
+        context.Channel = channel;
+        context.PMT = PMT;
+        context.PMTLength = pmtLength;
+        context.AudioPid = audioPid;
+
         if (_digitalEveryWhere != null)
         {
-          return _digitalEveryWhere.SendPMTToFireDTV(PMT, pmtLength);
+          return _digitalEveryWhere.SendPMTToFireDTV(_mapSubChannels);
         }
+
         if (_twinhan != null)
         {
 

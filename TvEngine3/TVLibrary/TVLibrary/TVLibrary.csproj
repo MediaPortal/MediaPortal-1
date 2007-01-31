@@ -40,7 +40,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DeviceSorter.cs" />
+    <Compile Include="Implementations\Analog\Graphs\Analog\Cards\hauppauge.cs" />
+    <Compile Include="Implementations\Analog\Graphs\Analog\Cards\ivac.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\TvCardAnalogBase.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccessContext.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\HaupPauge\Hauppauge.cs" />
     <Compile Include="Implementations\DVB\DisEqC\DiSEqCMotor.cs" />
     <Compile Include="Implementations\DVB\DisEqC\IDiSEqCController.cs" />

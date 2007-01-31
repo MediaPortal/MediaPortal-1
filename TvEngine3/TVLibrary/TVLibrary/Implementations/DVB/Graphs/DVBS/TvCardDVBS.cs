@@ -198,22 +198,11 @@ namespace TvLibrary.Implementations.DVB
 
     #region tuning & recording
     /// <summary>
-    /// tune the card to the channel specified by IChannel
-    /// </summary>
-    /// <param name="channel">channel to tune</param>
-    /// <returns></returns>
-    public bool TuneScan(IChannel channel)
-    {
-      bool result = Tune(channel);
-      RunGraph();
-      return result;
-    }
-    /// <summary>
     /// Tunes the specified channel.
     /// </summary>
     /// <param name="channel">The channel.</param>
     /// <returns></returns>
-    public bool Tune(IChannel channel)
+    public ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
 
       DVBSChannel dvbsChannel = channel as DVBSChannel;
@@ -221,12 +210,13 @@ namespace TvLibrary.Implementations.DVB
       if (dvbsChannel == null)
       {
         Log.Log.WriteFile("Channel is not a DVBS channel!!! {0}", channel.GetType().ToString());
-        return false;
+        return null;
       }
       DVBSChannel oldChannel = CurrentChannel as DVBSChannel;
       if (CurrentChannel != null)
       {
-        if (oldChannel.Equals(channel)) return true;
+        //@FIX this fails for back-2-back recordings
+        //if (oldChannel.Equals(channel)) return _mapSubChannels[0];
       }
       if (dvbsChannel.SwitchingFrequency < 10)
       {
@@ -239,8 +229,7 @@ namespace TvLibrary.Implementations.DVB
       }
       //_pmtPid = -1;
       ILocator locator;
-
-      if (!CheckThreadId()) return false;
+ 
       int lowOsc = 9750;
       int hiOsc = 10600;
       switch (dvbsChannel.BandType)
@@ -292,9 +281,9 @@ namespace TvLibrary.Implementations.DVB
       {
         _conditionalAccess.SendDiseqcCommand(dvbsChannel);
       }
-      CurrentChannel = channel;
-      SubmitTuneRequest(_tuneRequest);
 
+      ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest);
+      RunGraph(ch.SubChannelId);
 
       if (_conditionalAccess != null)
       {
@@ -304,8 +293,7 @@ namespace TvLibrary.Implementations.DVB
         }
       }
 
-      //SetupPmtGrabber(dvbsChannel.PmtPid);
-      return true;
+      return ch;
     }
     #endregion
 

@@ -180,42 +180,31 @@ namespace TvLibrary.Implementations.DVB
 
     #region tuning & recording
     /// <summary>
-    /// tune the card to the channel specified by IChannel
-    /// </summary>
-    /// <param name="channel">channel to tune</param>
-    /// <returns></returns>
-    public bool TuneScan(IChannel channel)
-    {
-      bool result = Tune(channel);
-      RunGraph();
-      return result;
-    }
-    /// <summary>
     /// Tunes the specified channel.
     /// </summary>
     /// <param name="channel">The channel.</param>
     /// <returns></returns>
-    public bool Tune(IChannel channel)
+    public ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
       Log.Log.WriteFile("dvbc: Tune:{0}", channel);
-      
+
       DVBCChannel dvbcChannel = channel as DVBCChannel;
       if (dvbcChannel == null)
       {
         Log.Log.WriteFile("dvbc:Channel is not a DVBC channel!!! {0}", channel.GetType().ToString());
-        return false;
+        return null;
       }
       DVBCChannel oldChannel = CurrentChannel as DVBCChannel;
       if (CurrentChannel != null)
       {
-        if (oldChannel.Equals(channel)) return true;
+        //@FIX this fails for back-2-back recordings
+        //if (oldChannel.Equals(channel)) return _mapSubChannels[0];
       }
       if (_graphState == GraphState.Idle)
       {
         BuildGraph();
       }
-      //_pmtPid = -1;
-      if (!CheckThreadId()) return false;
+      //_pmtPid = -1; 
       ILocator locator;
       _tuningSpace.get_DefaultLocator(out locator);
       IDVBCLocator dvbcLocator = locator as IDVBCLocator;
@@ -234,11 +223,11 @@ namespace TvLibrary.Implementations.DVB
 
       _tuneRequest.put_Locator(locator);
 
-      CurrentChannel = channel;
-      SubmitTuneRequest(_tuneRequest);
-
+      ITvSubChannel ch = SubmitTuneRequest(subChannelId,channel, _tuneRequest);
+      RunGraph(ch.SubChannelId);
+      return ch;
       //SetupPmtGrabber(dvbcChannel.PmtPid);
-      return true;
+
     }
 
     #endregion

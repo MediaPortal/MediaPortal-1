@@ -226,23 +226,11 @@ namespace TvLibrary.Implementations.DVB
 
     #region tuning & recording
     /// <summary>
-    /// tune the card to the channel specified by IChannel
-    /// </summary>
-    /// <param name="channel">channel to tune</param>
-    /// <returns></returns>
-    public bool TuneScan(IChannel channel)
-    {
-      Log.Log.WriteFile("ss2:TuneScan({0})", channel);
-      bool result = Tune(channel);
-      RunGraph();
-      return result;
-    }
-    /// <summary>
     /// Tunes the specified channel.
     /// </summary>
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded else false</returns>
-    public bool Tune(IChannel channel)
+    public ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
       int frequency = 0;
       int symbolRate = 0;
@@ -275,15 +263,16 @@ namespace TvLibrary.Implementations.DVB
           if (dvbsChannel == null)
           {
             Log.Log.Error("Channel is not a DVBS channel!!! {0}", channel.GetType().ToString());
-            return false;
+            return null;
           }
           DVBSChannel oldChannels = CurrentChannel as DVBSChannel;
           if (CurrentChannel != null)
           {
             if (oldChannels.Equals(channel))
             {
-              Log.Log.WriteFile("ss2:already tuned on this channel");
-              return true;
+              //@FIX this fails for back-2-back recordings
+              //Log.Log.WriteFile("ss2:already tuned on this channel");
+              //return _mapSubChannels[0];
             }
           }
           frequency = (int)dvbsChannel.Frequency;
@@ -383,15 +372,16 @@ namespace TvLibrary.Implementations.DVB
           if (dvbtChannel == null)
           {
             Log.Log.Error("Channel is not a DVBT channel!!! {0}", channel.GetType().ToString());
-            return false;
+            return null;
           }
           DVBTChannel oldChannelt = CurrentChannel as DVBTChannel;
           if (CurrentChannel != null)
           {
             if (oldChannelt.Equals(channel))
             {
-              Log.Log.WriteFile("ss2:already tuned on this channel");
-              return true;
+              //@FIX this fails for back-2-back recordings
+              //Log.Log.WriteFile("ss2:already tuned on this channel");
+              //return _mapSubChannels[0];
             }
           }
           frequency = (int)dvbtChannel.Frequency;
@@ -403,15 +393,16 @@ namespace TvLibrary.Implementations.DVB
           if (dvbcChannel == null)
           {
             Log.Log.Error("Channel is not a DVBC channel!!! {0}", channel.GetType().ToString());
-            return false;
+            return null;
           }
           DVBCChannel oldChannelc = CurrentChannel as DVBCChannel;
           if (CurrentChannel != null)
           {
             if (oldChannelc.Equals(channel))
             {
-              Log.Log.WriteFile("ss2:already tuned on this channel");
-              return true;
+              //@FIX this fails for back-2-back recordings
+              //Log.Log.WriteFile("ss2:already tuned on this channel");
+              //return _mapSubChannels[0];
             }
           }
           frequency = (int)dvbcChannel.Frequency;
@@ -441,15 +432,16 @@ namespace TvLibrary.Implementations.DVB
           if (dvbaChannel == null)
           {
             Log.Log.Error("Channel is not a ATSC channel!!! {0}", channel.GetType().ToString());
-            return false;
+            return null;
           }
           ATSCChannel oldChannela = CurrentChannel as ATSCChannel;
           if (CurrentChannel != null)
           {
             if (oldChannela.Equals(channel))
             {
-              Log.Log.WriteFile("ss2:already tuned on this channel");
-              return true;
+              //@FIX this fails for back-2-back recordings
+              //Log.Log.WriteFile("ss2:already tuned on this channel");
+              //return _mapSubChannels[0];
             }
           }
           Log.Log.WriteFile("DVBGraphSkyStar2:  ATSC Channel:{0}", dvbaChannel.PhysicalChannel);
@@ -464,12 +456,20 @@ namespace TvLibrary.Implementations.DVB
           pmtPid = dvbaChannel.PmtPid;
           break;
       }
-      CurrentChannel = channel;
       if (_graphState == GraphState.Idle)
       {
         BuildGraph();
       }
-      _channelManager.OnBeforeTune();
+
+      //from submit tune request
+      if (_mapSubChannels.ContainsKey(subChannelId) == false)
+      {
+        subChannelId = GetNewSubChannel(channel);
+      }
+      _mapSubChannels[subChannelId].CurrentChannel = channel;
+      _mapSubChannels[subChannelId].OnBeforeTune();
+      //from submit tune request
+
       if (_interfaceEpgGrabber != null)
       {
         _interfaceEpgGrabber.Reset();
@@ -483,7 +483,7 @@ namespace TvLibrary.Implementations.DVB
       if (hr != 0)
       {
         Log.Log.Error("ss2:SetFrequencyKHz() failed:0x{0:X}", hr);
-        return false;
+        return null;
       }
 
       switch (_cardType)
@@ -494,14 +494,14 @@ namespace TvLibrary.Implementations.DVB
           if (hr != 0)
           {
             Log.Log.Error("ss2:SetSymbolRate() failed:0x{0:X}", hr);
-            return false;
+            return null;
           }
           Log.Log.WriteFile("ss2:  Modulation:{0}", ((eModulationTAG)modulation));
           hr = _interfaceB2C2TunerCtrl.SetModulation(modulation);
           if (hr != 0)
           {
             Log.Log.Error("ss2:SetModulation() failed:0x{0:X}", hr);
-            return false;
+            return null;
           }
           break;
         case CardType.DvbT:
@@ -510,7 +510,7 @@ namespace TvLibrary.Implementations.DVB
           if (hr != 0)
           {
             Log.Log.Error("ss2:SetGuardInterval() failed:0x{0:X}", hr);
-            return false;
+            return null;
           }
           Log.Log.WriteFile("ss2:  Bandwidth:{0} MHz", bandWidth);
           //hr = _interfaceB2C2TunerCtrl.SetBandwidth((int)dvbtChannel.BandWidth);
@@ -521,7 +521,7 @@ namespace TvLibrary.Implementations.DVB
           if (hr != 0)
           {
             Log.Log.Error("ss2:SetBandwidth() failed:0x{0:X}", hr);
-            return false;
+            return null;
           }
           break;
         case CardType.DvbS:
@@ -530,41 +530,41 @@ namespace TvLibrary.Implementations.DVB
           if (hr != 0)
           {
             Log.Log.Error("ss2:SetSymbolRate() failed:0x{0:X}", hr);
-            return false;
+            return null;
           }
           Log.Log.WriteFile("ss2:  Fec:{0} {1}", ((FecType)fec), fec);
           hr = _interfaceB2C2TunerCtrl.SetFec(fec);
           if (hr != 0)
           {
             Log.Log.Error("ss2:SetFec() failed:0x{0:X}", hr);
-            return false;
+            return null;
           }
           hr = _interfaceB2C2TunerCtrl.SetPolarity(polarity);
           if (hr != 0)
           {
             Log.Log.Error("ss2:SetPolarity() failed:0x{0:X}", hr);
-            return false;
+            return null;
           }
           Log.Log.WriteFile("ss2:  Lnb:{0}", lnbSelection);
           hr = _interfaceB2C2TunerCtrl.SetLnbKHz((int)lnbSelection);
           if (hr != 0)
           {
             Log.Log.Error("ss2:SetLnbKHz() failed:0x{0:X}", hr);
-            return false;
+            return null;
           }
           Log.Log.WriteFile("ss2:  Diseqc:{0} {1}", disType, disType);
           hr = _interfaceB2C2TunerCtrl.SetDiseqc((int)disType);
           if (hr != 0)
           {
             Log.Log.Error("ss2:SetDiseqc() failed:0x{0:X}", hr);
-            return false;
+            return null;
           }
           Log.Log.WriteFile("ss2:  LNBFrequency:{0} MHz", switchFreq);
           hr = _interfaceB2C2TunerCtrl.SetLnbFrequency(switchFreq);
           if (hr != 0)
           {
             Log.Log.Error("ss2:SetLnbFrequency() failed:0x{0:X}", hr);
-            return false;
+            return null;
           }
           if (satelliteIndex > 0)
           {
@@ -588,7 +588,7 @@ namespace TvLibrary.Implementations.DVB
         if (hr != 0)
         {
           Log.Log.Error("ss2:SetTunerStatus failed:0x{0:X}", hr);
-          return false;
+          return null;
         }
       }
       _interfaceB2C2TunerCtrl.CheckLock();
@@ -597,11 +597,14 @@ namespace TvLibrary.Implementations.DVB
       //from submittunerequest
       _lastSignalUpdate = DateTime.MinValue;
       SendHwPids(new ArrayList());
-      _channelManager.OnAfterTune();
+
       //from submittunerequest
-      //      SetupPmtGrabber(pmtPid);
+      _mapSubChannels[subChannelId].OnAfterTune();
+      //from submit tune request
+      RunGraph(subChannelId);
+
       Log.Log.WriteFile("ss2:tune done:{0:X}", pmtPid);
-      return true;
+      return _mapSubChannels[subChannelId];
     }
     #endregion
 
@@ -755,7 +758,6 @@ namespace TvLibrary.Implementations.DVB
 
       SendHwPids(new ArrayList());
       _graphState = GraphState.Created;
-      _channelManager = new TvDvbChannel(_graphBuilder, ref _conditionalAccess, _mdapiFilter, _filterTIF, _filterTsWriter);
     }
 
     /// <summary>
@@ -989,7 +991,7 @@ namespace TvLibrary.Implementations.DVB
       // Decompose the graph
       //hr = (_graphBuilder as IMediaControl).StopWhenReady();
       hr = (_graphBuilder as IMediaControl).Stop();
-      _channelManager.Decompose();
+      FreeAllSubChannels();
 
       FilterGraphTools.RemoveAllFilters(_graphBuilder);
 

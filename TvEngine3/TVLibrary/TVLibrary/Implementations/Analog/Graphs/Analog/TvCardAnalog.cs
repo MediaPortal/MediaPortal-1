@@ -39,7 +39,7 @@ namespace TvLibrary.Implementations.Analog
   /// <summary>
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles analog tv cards
   /// </summary>
-  public class TvCardAnalog : TvCardAnalogBase, IDisposable, ITVCard, ISampleGrabberCB
+  public class TvCardAnalog : TvCardAnalogBase, IDisposable, ITVCard, ISampleGrabberCB, ITvSubChannel
   {
     AnalogChannel _previousChannel;
     protected bool _isHybrid = false;
@@ -61,6 +61,49 @@ namespace TvLibrary.Implementations.Analog
 
 
     #region properties
+
+    /// <summary>
+    /// Frees the sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    public void FreeSubChannel(int id)
+    {
+    }
+    /// <summary>
+    /// Gets the sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    /// <returns></returns>
+    public ITvSubChannel GetSubChannel(int id)
+    {
+      return this;
+    }
+
+    /// <summary>
+    /// Gets the sub channel id.
+    /// </summary>
+    /// <value>The sub channel id.</value>
+    public int SubChannelId
+    {
+      get
+      {
+        return 0;
+      }
+    }
+
+    /// <summary>
+    /// Gets the sub channels.
+    /// </summary>
+    /// <value>The sub channels.</value>
+    public ITvSubChannel[] SubChannels
+    {
+      get
+      {
+        ITvSubChannel[] channels = new ITvSubChannel[1];
+        channels[0]=this;
+        return channels;
+      }
+    }
 
     public ScanParameters Parameters 
     {
@@ -90,7 +133,7 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// gets the current filename used for recording
     /// </summary>
-    public string FileName
+    public string RecordingFileName
     {
       get
       {
@@ -123,7 +166,7 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// returns the IChannel to which the card is currently tuned
     /// </summary>
-    public IChannel Channel
+    public IChannel CurrentChannel
     {
       get
       {
@@ -225,16 +268,6 @@ namespace TvLibrary.Implementations.Analog
 
     #region tuning & recording
     /// <summary>
-    /// tune the card to the channel specified by IChannel
-    /// </summary>
-    /// <param name="channel">channel to tune</param>
-    /// <returns></returns>
-    public bool TuneScan(IChannel channel)
-    {
-      bool result = Tune(channel);
-      return result;
-    }
-    /// <summary>
     /// Method to check if card can tune to the channel specified
     /// </summary>
     /// <returns>true if card can tune to the channel otherwise false</returns>
@@ -262,15 +295,14 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     /// <param name="channel">The channel.</param>
     /// <returns></returns>
-    public bool Tune(IChannel channel)
+    public ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
       Log.Log.WriteFile("analog:  Tune:{0}", channel);
       if (_graphState == GraphState.Idle)
       {
         BuildGraph();
-        RunGraph();
       }
-      if (!CheckThreadId()) return false;
+      RunGraph();
 
       AnalogChannel analogChannel = channel as AnalogChannel;
       if (analogChannel.IsTv)
@@ -359,7 +391,7 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("Analog: Tuned to video:{0} Hz audio:{1} Hz locked:{2}", videoFrequency, audioFrequency, IsTunerLocked);
       _lastSignalUpdate = DateTime.MinValue;
       _previousChannel = analogChannel;
-      return true;
+      return this;
     }
     /// <summary>
     /// Gets the video frequency.
@@ -502,6 +534,18 @@ namespace TvLibrary.Implementations.Analog
     #endregion
 
     #region properties
+    /// <summary>
+    /// Gets a value indicating whether card supports subchannels
+    /// </summary>
+    /// <value><c>true</c> if card supports sub channels; otherwise, <c>false</c>.</value>
+    public bool SupportsSubChannels 
+    {
+      get
+      {
+        return false;
+      }
+    }
+
     public bool IsHybrid
     {
       get

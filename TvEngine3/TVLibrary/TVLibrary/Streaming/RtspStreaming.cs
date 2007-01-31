@@ -131,7 +131,7 @@ namespace TvLibrary.Streaming
               description = stream.Recording;
             else
             {
-              description = stream.Card.Channel.Name;
+              description = stream.Card.SubChannels[0].CurrentChannel.Name;
             }
           }
           

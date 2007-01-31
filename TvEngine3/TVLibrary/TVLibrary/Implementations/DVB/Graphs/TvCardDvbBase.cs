@@ -136,7 +136,6 @@ namespace TvLibrary.Implementations.DVB
     protected bool _isATSC = false;
     protected ITsEpgScanner _interfaceEpgGrabber;
     protected ITsChannelScan _interfaceChannelScan;
-    protected TvDvbChannel _channelManager=null;
     protected int _subChannelId = 0;
     protected Dictionary<int, TvDvbChannel> _mapSubChannels;
     ScanParameters _parameters;
@@ -151,7 +150,6 @@ namespace TvLibrary.Implementations.DVB
     public TvCardDvbBase()
     {
       _lastSignalUpdate = DateTime.MinValue;
-      _channelManager = new TvDvbChannel();
       _mapSubChannels = new Dictionary<int, TvDvbChannel>();
       _parameters = new ScanParameters();
     }
@@ -162,10 +160,13 @@ namespace TvLibrary.Implementations.DVB
     /// Allocates a new instance of TvDvbChannel which handles the new subchannel
     /// </summary>
     /// <returns>handle for to the subchannel</returns>
-    int GetNewSubChannel()
+    protected int GetNewSubChannel(IChannel channel)
     {
       int id = _subChannelId++;
-      TvDvbChannel subChannel = new TvDvbChannel(_graphBuilder, ref _conditionalAccess, _mdapiFilter, _filterTIF, _filterTsWriter);
+      Log.Log.Info("dvb:GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
+      TvDvbChannel subChannel = new TvDvbChannel(_graphBuilder, ref _conditionalAccess, _mdapiFilter, _filterTIF, _filterTsWriter, id);
+      subChannel.Parameters = Parameters;
+      subChannel.CurrentChannel = channel;
       _mapSubChannels[id] = subChannel;
       return id;
     }
@@ -174,27 +175,66 @@ namespace TvLibrary.Implementations.DVB
     /// Frees the sub channel.
     /// </summary>
     /// <param name="id">Handle to the subchannel.</param>
-    void FreeSubChannel(int id)
+    public void FreeSubChannel(int id)
     {
+      Log.Log.Info("dvb:FreeSubChannel:{0} #{1}", _mapSubChannels.Count, id);
       if (_mapSubChannels.ContainsKey(id))
       {
         _mapSubChannels[id].Decompose();
         _mapSubChannels.Remove(id);
+      }
+      if (_mapSubChannels.Count == 0)
+      {
+        _subChannelId = 0;
+        StopGraph();
       }
     }
 
     /// <summary>
     /// Frees all sub channels.
     /// </summary>
-    void FreeAllSubChannels()
+    protected void FreeAllSubChannels()
     {
-      Dictionary<int, TvDvbChannel>.Enumerator en= _mapSubChannels.GetEnumerator();
+      Log.Log.Info("dvb:FreeAllSubChannels:");
+      Dictionary<int, TvDvbChannel>.Enumerator en = _mapSubChannels.GetEnumerator();
       while (en.MoveNext())
       {
         en.Current.Value.Decompose();
       }
       _mapSubChannels.Clear();
       _subChannelId = 0;
+    }
+    /// <summary>
+    /// Gets the sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    /// <returns></returns>
+    public ITvSubChannel GetSubChannel(int id)
+    {
+      if (_mapSubChannels.ContainsKey(id))
+      {
+        return _mapSubChannels[id];
+      }
+      return null;
+    }
+
+    /// <summary>
+    /// Gets the sub channels.
+    /// </summary>
+    /// <value>The sub channels.</value>
+    public ITvSubChannel[] SubChannels
+    {
+      get
+      {
+        int count = 0;
+        ITvSubChannel[] channels = new ITvSubChannel[_mapSubChannels.Count];
+        Dictionary<int, TvDvbChannel>.Enumerator en = _mapSubChannels.GetEnumerator();
+        while (en.MoveNext())
+        {
+          channels[count++] = en.Current.Value;
+        }
+        return channels;
+      }
     }
     #endregion
 
@@ -216,15 +256,27 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// submits a tune request to the card. 
+    /// submits a tune request to the card.
     /// throws an TvException if card cannot tune to the channel requested
     /// </summary>
+    /// <param name="subChannelId">The sub channel id.</param>
+    /// <param name="channel">The channel.</param>
     /// <param name="tuneRequest">tune requests</param>
-    protected void SubmitTuneRequest(ITuneRequest tuneRequest)
+    /// <returns></returns>
+    protected ITvSubChannel SubmitTuneRequest(int subChannelId, IChannel channel, ITuneRequest tuneRequest)
     {
-      _channelManager.OnBeforeTune();
+      if (_mapSubChannels.ContainsKey(subChannelId) == false)
+      {
+        subChannelId = GetNewSubChannel(channel);
+      }
+      else
+      {
+      }
+      Log.Log.Info("dvb:Submit tunerequest size:{0} new:{1}", _mapSubChannels.Count, subChannelId);
+      _mapSubChannels[subChannelId].CurrentChannel = channel;
 
-      //Log.Log.WriteFile("dvb:SubmitTuneRequest");
+      _mapSubChannels[subChannelId].OnBeforeTune();
+
       if (_interfaceEpgGrabber != null)
       {
         _interfaceEpgGrabber.Reset();
@@ -238,7 +290,9 @@ namespace TvLibrary.Implementations.DVB
         throw new TvException("Unable to tune to channel");
       }
       _lastSignalUpdate = DateTime.MinValue;
-      _channelManager.OnAfterTune();
+
+      _mapSubChannels[subChannelId].OnAfterTune();
+      return _mapSubChannels[subChannelId];
     }
 
 
@@ -320,9 +374,12 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Methods which starts the graph
     /// </summary>
-    protected void RunGraph()
+    protected void RunGraph(int subChannel)
     {
-      _channelManager.OnGraphStart();
+      if (_mapSubChannels.ContainsKey(subChannel))
+      {
+        _mapSubChannels[subChannel].OnGraphStart();
+      }
       FilterState state;
       (_graphBuilder as IMediaControl).GetState(10, out state);
       if (state == FilterState.Running) return;
@@ -336,7 +393,10 @@ namespace TvLibrary.Implementations.DVB
 
       _epgGrabbing = false;
       _graphRunning = true;
-      _channelManager.OnGraphStarted();
+      if (_mapSubChannels.ContainsKey(subChannel))
+      {
+        _mapSubChannels[subChannel].OnGraphStart();
+      }
     }
 
     /// <summary>
@@ -357,8 +417,8 @@ namespace TvLibrary.Implementations.DVB
       _graphRunning = false;
       _epgGrabbing = false;
       _isScanning = false;
-      _channelManager.OnGraphStop();
-
+      FreeAllSubChannels();
+      
       if (_graphBuilder == null) return;
       FilterState state;
       (_graphBuilder as IMediaControl).GetState(10, out state);
@@ -374,7 +434,6 @@ namespace TvLibrary.Implementations.DVB
       }
       _graphState = GraphState.Created;
 
-      _channelManager.OnGraphStopped();
     }
 
     /// <summary>
@@ -605,8 +664,6 @@ namespace TvLibrary.Implementations.DVB
           ConnectMpeg2DemuxToInfTee();
           AddTsWriterFilterToGraph();
           _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter);
-          _channelManager = new TvDvbChannel(_graphBuilder, ref _conditionalAccess, _mdapiFilter, _filterTIF, _filterTsWriter);
-          _channelManager.Parameters = Parameters;
           return;
         }
         Release.ComObject("tuner pin out", pinOut);
@@ -617,8 +674,6 @@ namespace TvLibrary.Implementations.DVB
       ConnectMpeg2DemuxToInfTee();
       AddTsWriterFilterToGraph();
       _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter);
-      _channelManager = new TvDvbChannel(_graphBuilder, ref _conditionalAccess, _mdapiFilter, _filterTIF, _filterTsWriter);
-      _channelManager.Parameters = Parameters;
     }
 
 
@@ -994,7 +1049,8 @@ namespace TvLibrary.Implementations.DVB
           _epgGrabberCallback.OnEpgCancelled();
         }
       }
-      _channelManager.Decompose();
+
+      FreeAllSubChannels();
       _graphRunning = false;
 
 
@@ -1286,6 +1342,18 @@ namespace TvLibrary.Implementations.DVB
     #region properties
 
     /// <summary>
+    /// Gets a value indicating whether card supports subchannels
+    /// </summary>
+    /// <value><c>true</c> if card supports sub channels; otherwise, <c>false</c>.</value>
+    public bool SupportsSubChannels
+    {
+      get
+      {
+        return true;
+      }
+    }
+
+    /// <summary>
     /// Gets or sets the parameters.
     /// </summary>
     /// <value>The parameters.</value>
@@ -1298,9 +1366,9 @@ namespace TvLibrary.Implementations.DVB
       set
       {
         _parameters = value;
-        if (_channelManager != null)
+        if (_mapSubChannels.Count > 0)
         {
-          _channelManager.Parameters = value;
+          _mapSubChannels[0].Parameters = value;
         }
       }
     }
@@ -1312,11 +1380,18 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return _channelManager.CurrentChannel;
+        if (_mapSubChannels.Count > 0)
+        {
+          return _mapSubChannels[0].CurrentChannel;
+        }
+        return null;
       }
       set
       {
-        _channelManager.CurrentChannel = value;
+        if (_mapSubChannels.Count > 0)
+        {
+          _mapSubChannels[0].CurrentChannel = value;
+        }
       }
     }
 
@@ -1359,11 +1434,18 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return _channelManager.GrabTeletext;
+        if (_mapSubChannels.Count > 0)
+        {
+          return _mapSubChannels[0].GrabTeletext;
+        }
+        return false;
       }
       set
       {
-        _channelManager.GrabTeletext = value;
+        if (_mapSubChannels.Count > 0)
+        {
+          _mapSubChannels[0].GrabTeletext = value;
+        }
       }
     }
 
@@ -1374,7 +1456,11 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return _channelManager.HasTeletext;
+        if (_mapSubChannels.Count > 0)
+        {
+          return _mapSubChannels[0].HasTeletext;
+        }
+        return false;
       }
     }
     /// <summary>
@@ -1385,7 +1471,11 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return _channelManager.TeletextDecoder;
+        if (_mapSubChannels.Count > 0)
+        {
+          return _mapSubChannels[0].TeletextDecoder;
+        }
+        return null;
       }
     }
 
@@ -1397,11 +1487,18 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return _channelManager.TeletextCallback;
+        if (_mapSubChannels.Count > 0)
+        {
+          return _mapSubChannels[0].TeletextCallback;
+        }
+        return null;
       }
       set
       {
-        _channelManager.TeletextCallback = value;
+        if (_mapSubChannels.Count > 0)
+        {
+          _mapSubChannels[0].TeletextCallback = value;
+        }
       }
     }
 
@@ -1460,7 +1557,11 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return _channelManager.CurrentChannel;
+        if (_mapSubChannels.Count > 0)
+        {
+          return _mapSubChannels[0].CurrentChannel;
+        }
+        return null;
       }
     }
 
@@ -1482,7 +1583,11 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return _channelManager.TimeShiftFileName;
+        if (_mapSubChannels.Count > 0)
+        {
+          return _mapSubChannels[0].TimeShiftFileName;
+        }
+        return "";
       }
     }
 
@@ -1549,7 +1654,11 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return _channelManager.StartOfTimeShift;
+        if (_mapSubChannels.Count > 0)
+        {
+          return _mapSubChannels[0].StartOfTimeShift;
+        }
+        return DateTime.MinValue;
       }
     }
     /// <summary>
@@ -1560,7 +1669,11 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return _channelManager.RecordingStarted;
+        if (_mapSubChannels.Count > 0)
+        {
+          return _mapSubChannels[0].RecordingStarted;
+        }
+        return DateTime.MinValue;
       }
     }
 
@@ -1586,8 +1699,11 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        if (_channelManager == null) return false;
-        return _channelManager.IsRecordingTransportStream;
+        if (_mapSubChannels.Count > 0)
+        {
+          return _mapSubChannels[0].IsRecordingTransportStream;
+        }
+        return false;
       }
     }
 
@@ -1628,8 +1744,11 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-
-        return _channelManager.IsReceivingAudioVideo;
+        if (_mapSubChannels.Count > 0)
+        {
+          return _mapSubChannels[0].IsReceivingAudioVideo;
+        }
+        return false;
       }
     }
 
@@ -1641,7 +1760,11 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return _channelManager.RecordingFileName;
+        if (_mapSubChannels.Count > 0)
+        {
+          return _mapSubChannels[0].RecordingFileName;
+        }
+        return "";
       }
     }
 
@@ -1738,7 +1861,10 @@ namespace TvLibrary.Implementations.DVB
 
         if (_graphState == GraphState.Created)
         {
-          _channelManager.SetTimeShiftFileName(fileName);
+          if (_mapSubChannels.Count > 0)
+          {
+            _mapSubChannels[0].SetTimeShiftFileName(fileName); ;
+          }
         }
         _graphState = GraphState.TimeShifting;
         return true;
@@ -1842,16 +1968,22 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="fileName">filename to which to recording should be saved</param>
     protected void StartRecord(bool transportStream, string fileName)
     {
-      _channelManager.StartRecord(transportStream, fileName);
+      if (_mapSubChannels.Count > 0)
+      {
+        _mapSubChannels[0].StartRecording(transportStream, fileName);
+      }
     }
-    
+
     /// <summary>
     /// Stop recording
     /// </summary>
     /// <returns></returns>
     protected void StopRecord()
     {
-      _channelManager.StopRecord();
+      if (_mapSubChannels.Count > 0)
+      {
+        _mapSubChannels[0].StopRecording();
+      }
     }
     #endregion
 
@@ -2117,7 +2249,11 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return _channelManager.AvailableAudioStreams;
+        if (_mapSubChannels.Count > 0)
+        {
+          return _mapSubChannels[0].AvailableAudioStreams;
+        }
+        return new List<IAudioStream>();
       }
     }
 
@@ -2128,11 +2264,18 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return _channelManager.CurrentAudioStream;
+        if (_mapSubChannels.Count > 0)
+        {
+          return _mapSubChannels[0].CurrentAudioStream;
+        }
+        return null;
       }
       set
       {
-        _channelManager.CurrentAudioStream = value;
+        if (_mapSubChannels.Count > 0)
+        {
+          _mapSubChannels[0].CurrentAudioStream = value;
+        }
       }
     }
     #endregion

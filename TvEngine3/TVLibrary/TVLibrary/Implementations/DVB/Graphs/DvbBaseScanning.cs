@@ -165,7 +165,7 @@ namespace TvLibrary.Implementations.DVB
     public List<IChannel> Scan(IChannel channel,ScanParameters settings)
     {
       _card.IsScanning = true;
-      _card.TuneScan(channel);
+      _card.Tune(0,channel);
       _analyzer = GetAnalyzer();
       if (_analyzer == null)
       {

@@ -20,6 +20,7 @@
  */
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
@@ -262,15 +263,18 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="PMT">Program Map Table received from digital transport stream</param>
     /// <param name="pmtLength">length in bytes of PMT</param>
+    /// <param name="current">The current channel index</param>
+    /// <param name="max">The max. channel index</param>
+    /// <returns></returns>
     /// <remarks>
     /// 1. first byte in PMT is 0x02=tableId for PMT
     /// 2. This function is vender specific. It will only work on the FireDTV devices
     /// </remarks>
     /// <preconditions>
-    /// 1. FireDTV device should be tuned to a digital DVB-C/S/T TV channel 
-    /// 2. PMT should have been received 
+    /// 1. FireDTV device should be tuned to a digital DVB-C/S/T TV channel
+    /// 2. PMT should have been received
     /// </preconditions>
-    public bool SendPMTToFireDTV(byte[] PMT, int pmtLength)
+    public bool SendPMTToFireDTV(byte[] PMT, int pmtLength, int current, int max)
     {
 
       //typedef struct _FIRESAT_CA_DATA{ 
@@ -315,14 +319,22 @@ namespace TvLibrary.Implementations.DVB
       byData[7] = 0;//padding    7
       byData[8] = (byte)(uLength % 256);		//ulength lo    8..9
       byData[9] = (byte)(uLength / 256);		//ulength hi
-      byData[10] = 3;     // 10     List Management = ONLY (only=3, first=1, more=0, last=2)
+      if (current == 0 && max == 1)
+        byData[10] = 3;     // 10     List Management = ONLY (only=3, first=1, more=0, last=2)
+      else if (current == 0 && max > 1)
+        byData[10] = 1;     // 10     List Management = ONLY (only=3, first=1, more=0, last=2)
+      else if (current > 0 && current < max - 1)
+        byData[10] = 0;     // 10     List Management = ONLY (only=3, first=1, more=0, last=2)
+      else if (current == max - 1)
+        byData[10] = 2;     // 10
+
       byData[11] = 1;     // 11     pmt_cmd = OK DESCRAMBLING		
       for (int i = 0; i < pmtLength; ++i)
       {
         byData[i + 12] = PMT[i];
       }
 
-      string log = String.Format("FireDTV: pmt data:");
+      string log = String.Format("FireDTV: #{0}/{1} pmt data:", current, max);
       for (int i = 0; i < 1036; ++i)
       {
         Marshal.WriteByte(_ptrDataInstance, i, byData[i]);
@@ -330,7 +342,7 @@ namespace TvLibrary.Implementations.DVB
         log += String.Format("0x{0:X} ", byData[i]);
       }
 
-     //       Log.Log.WriteFile(log);
+      Log.Log.WriteFile(log);
       hr = propertySet.Set(propertyGuid, propId, _ptrDataInstance, 1036, _ptrDataReturned, 1036);
 
       if (hr != 0)
@@ -402,6 +414,39 @@ namespace TvLibrary.Implementations.DVB
       return;
     }
 
+    /// <summary>
+    /// Sends the PMT of all subchannels to fire DTV.
+    /// </summary>
+    /// <param name="subChannels">The sub channels.</param>
+    /// <returns></returns>
+    public bool SendPMTToFireDTV(Dictionary<int, ConditionalAccessContext> subChannels)
+    {
+      List<ConditionalAccessContext> filteredChannels = new List<ConditionalAccessContext>();
+      bool succeeded = true;
+      Dictionary<int, ConditionalAccessContext>.Enumerator en = subChannels.GetEnumerator();
+      while (en.MoveNext())
+      {
+        bool exists = false;
+        ConditionalAccessContext context = en.Current.Value;
+        foreach (ConditionalAccessContext c in filteredChannels)
+        {
+          if (c.Channel.Equals(context.Channel)) exists = true;
+        }
+        if (!exists)
+        {
+          filteredChannels.Add(context);
+        }
+      }
+
+      int count = 0;
+      foreach (ConditionalAccessContext context in filteredChannels)
+      {
+        bool result = SendPMTToFireDTV(context.PMT, context.PMTLength, count, filteredChannels.Count);
+        count++;
+        if (!result) succeeded = false;
+      }
+      return succeeded;
+    }
     /// <summary>
     /// Sets the pids for hardware pid filtering.
     /// </summary>
@@ -862,7 +907,7 @@ namespace TvLibrary.Implementations.DVB
       for (int i = 0; i < diSEqC.Length; ++i)
         Marshal.WriteByte(_ptrDataInstance, 5 + i, diSEqC[i]);
 
-      
+
       Guid propertyGuid = KSPROPSETID_Firesat;
       int propId = KSPROPERTY_FIRESAT_LNB_CONTROL;
       DirectShowLib.IKsPropertySet propertySet = _filterTuner as DirectShowLib.IKsPropertySet;
@@ -880,7 +925,7 @@ namespace TvLibrary.Implementations.DVB
         return false;
       }
 
-      hr = propertySet.Set(propertyGuid, propId, _ptrDataInstance, 25, _ptrDataInstance, 25); 
+      hr = propertySet.Set(propertyGuid, propId, _ptrDataInstance, 25, _ptrDataInstance, 25);
       if (hr != 0)
       {
         Log.Log.WriteFile("FireDTV:SendDiseqcCommand() failed:{0:X}", hr);

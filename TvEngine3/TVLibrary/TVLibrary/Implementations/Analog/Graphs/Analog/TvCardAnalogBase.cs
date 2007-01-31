@@ -146,6 +146,8 @@ namespace TvLibrary.Implementations.Analog
     protected DateTime _dateRecordingStarted = DateTime.MinValue;
     protected object m_context = null;
     protected IChannel _currentChannel;
+    protected Hauppauge _haupPauge = null;
+    protected IVac _ivac = null;
     string _timeshiftFileName;
     protected IVbiCallback _teletextCallback = null;
     private IAMStreamConfig _interfaceStreamConfigVideoCapture = null;
@@ -329,6 +331,33 @@ namespace TvLibrary.Implementations.Analog
         AddMpeg2Demultiplexer();
 
         SetupCaptureFormat();
+        _haupPauge = new Hauppauge(_filterCapture);
+        if (_haupPauge.IsHauppage)
+        {
+          Log.Log.Info("Hauppauge card:{0}", _haupPauge.VersionInfo);
+          _haupPauge.SetVideoBitRate(4000, 12000, true);
+        }
+        else
+        {
+          _haupPauge = null;
+        }
+        _ivac = new IVac(_filterCapture);
+        if (_ivac.IsIVAC)
+        {
+          Log.Log.Info("ivac card:{0}", _ivac.VersionInfo);
+          int minKbps;
+          int maxKbps;
+          bool isVBR;
+          _ivac.GetVideoBitRate(out minKbps, out maxKbps, out isVBR);
+          if (minKbps < 4000) minKbps = 4000;
+          if (maxKbps < 12000) maxKbps = 12000;
+          _ivac.SetVideoBitRate(minKbps, maxKbps, true);
+
+        }
+        else
+        {
+          _ivac = null;
+        }
         //FilterGraphTools.SaveGraphFile(_graphBuilder, "hp.grf");
         Log.Log.WriteFile("analog: Graph is build");
         _graphState = GraphState.Created;
@@ -1218,10 +1247,10 @@ namespace TvLibrary.Implementations.Analog
         {
           SetFrameRate(25d);
           SetFrameSize(new Size(720, 576));
-          Size size=GetFrameSize();
+          Size size = GetFrameSize();
           if (size.Width != 720 || size.Height != 576)
           {
-            SetFrameSize(new Size(640,480));
+            SetFrameSize(new Size(640, 480));
           }
         }
       }
