@@ -59,8 +59,15 @@ namespace TvLibrary.Interfaces
   public interface ITVCard
   {
     #region properties
+
     /// <summary>
-    /// Gets or sets the parameters.
+    /// Gets a value indicating whether card supports subchannels
+    /// </summary>
+    /// <value><c>true</c> if card supports sub channels; otherwise, <c>false</c>.</value>
+    bool SupportsSubChannels { get;}
+
+    /// <summary>
+    /// Gets or sets the timeout parameters.
     /// </summary>
     /// <value>The parameters.</value>
     ScanParameters Parameters { get;set;}
@@ -76,24 +83,6 @@ namespace TvLibrary.Interfaces
     string DevicePath { get;}
 
     /// <summary>
-    /// gets the current filename used for timeshifting
-    /// </summary>
-    string TimeShiftFileName { get;}
-
-    /// <summary>
-    /// returns the date/time when timeshifting has been started for the card specified
-    /// </summary>
-    /// <returns>DateTime containg the date/time when timeshifting was started</returns>
-    DateTime StartOfTimeShift { get;}
-
-    /// <summary>
-    /// returns the date/time when recording has been started for the card specified
-    /// </summary>
-    /// <returns>DateTime containg the date/time when recording was started</returns>
-    DateTime RecordingStarted { get;}
-
-
-    /// <summary>
     /// Method to check if card can tune to the channel specified
     /// </summary>
     /// <returns>true if card can tune to the channel otherwise false</returns>
@@ -104,42 +93,6 @@ namespace TvLibrary.Interfaces
     /// </summary>
     /// <returns></returns>
     void StopGraph();
-
-    /// <summary>
-    /// Returns true when unscrambled audio/video is received otherwise false
-    /// </summary>
-    /// <returns>true of false</returns>
-    bool IsReceivingAudioVideo { get;}
-
-    /// <summary>
-    /// gets the current filename used for recording
-    /// </summary>
-    string FileName { get;}
-
-    /// <summary>
-    /// returns true if card is currently recording
-    /// </summary>
-    bool IsRecording { get;}
-
-    /// <summary>
-    /// returns true if card is currently timeshifting
-    /// </summary>
-    bool IsTimeShifting { get;}
-
-    /// <summary>
-    /// returns true if card is currently grabbing the epg
-    /// </summary>
-    bool IsEpgGrabbing { get;set;}
-
-    /// <summary>
-    /// returns true if card is currently scanning
-    /// </summary>
-    bool IsScanning { get;set;}
-
-    /// <summary>
-    /// returns the IChannel to which the card is currently tuned
-    /// </summary>
-    IChannel Channel { get;}
 
     /// <summary>
     /// returns the min. channel number for analog cards
@@ -153,24 +106,11 @@ namespace TvLibrary.Interfaces
     int MaxChannel { get;}
 
     /// <summary>
-    /// returns true if we timeshift in transport stream mode
-    /// false we timeshift in program stream mode
-    /// </summary>
-    /// <value>true for transport stream, false for program stream.</value>
-    bool IsTimeshiftingTransportStream { get;}
-      
-    /// <summary>
-    /// returns true if we record in transport stream mode
-    /// false we record in program stream mode
-    /// </summary>
-    /// <value>true for transport stream, false for program stream.</value>
-    bool IsRecordingTransportStream { get;}
-
-    /// <summary>
     /// Gets or sets the type of the cam.
     /// </summary>
     /// <value>The type of the cam.</value>
     CamType CamType {get;set;}
+
     /// <summary>
     /// Gets/sets the card type
     /// </summary>
@@ -205,78 +145,17 @@ namespace TvLibrary.Interfaces
 
     #endregion
 
-    #region teletext
-    /// <summary>
-    /// Turn on/off teletext grabbing
-    /// </summary>
-    bool GrabTeletext { get;set;}
-
-    /// <summary>
-    /// returns the ITeletext interface used for retrieving the teletext pages
-    /// </summary>
-    ITeletext TeletextDecoder { get;}
-
-    /// <summary>
-    /// Property which returns true when the current channel contains teletext
-    /// </summary>
-    bool HasTeletext { get;}
-
-    IVbiCallback TeletextCallback { get;set;}
-    #endregion
 
     #region tuning & recording
-    /// <summary>
-    /// tune the card to the channel specified by IChannel
-    /// </summary>
-    /// <param name="channel">channel to tune</param>
-    /// <returns>true if succeeded else false</returns>
-    bool TuneScan(IChannel channel);
 
     /// <summary>
     /// Tunes the specified channel.
     /// </summary>
+    /// <param name="subChannelId">The sub channel id.</param>
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded else false</returns>
-    bool Tune(IChannel channel);
+    ITvSubChannel Tune(int subChannelId,IChannel channel);
 
-    /// <summary>
-    /// Starts timeshifting. Note card has to be tuned first
-    /// </summary>
-    /// <param name="fileName">filename used for the timeshiftbuffer</param>
-    /// <returns>true if succeeded else false</returns>
-    bool StartTimeShifting(string fileName);
-
-    /// <summary>
-    /// Stops timeshifting
-    /// </summary>
-    /// <returns>true if succeeded else false</returns>
-    bool StopTimeShifting();
-
-    /// <summary>
-    /// Starts recording
-    /// </summary>
-    /// <param name="transportStream">if true, then record transport stream</param>
-    /// <param name="fileName">filename to which to recording should be saved</param>
-    /// <returns>true if succeeded else false</returns>
-    bool StartRecording(bool transportStream,  string fileName);
-
-    /// <summary>
-    /// Stop recording
-    /// </summary>
-    /// <returns>true if succeeded else false</returns>
-    bool StopRecording();
-    #endregion
-
-    #region audio streams
-    /// <summary>
-    /// returns the list of available audio streams
-    /// </summary>
-    List<IAudioStream> AvailableAudioStreams { get;}
-
-    /// <summary>
-    /// get/set the current selected audio stream
-    /// </summary>
-    IAudioStream CurrentAudioStream { get;set;}
     #endregion
 
     #region quality control
@@ -318,7 +197,27 @@ namespace TvLibrary.Interfaces
     /// </summary>
     void ResetSignalUpdate();
 
+    /// <summary>
+    /// Gets or sets the context.
+    /// </summary>
+    /// <value>The context.</value>
     object Context { get;set;}
+
+    /// <summary>
+    /// Gets or sets a value indicating whether this card is epg grabbing.
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this instance is epg grabbing; otherwise, <c>false</c>.
+    /// </value>
+    bool IsEpgGrabbing { get;set;}
+
+    /// <summary>
+    /// Gets or sets a value indicating whether this card is scanning for channels.
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this card is scanning; otherwise, <c>false</c>.
+    /// </value>
+    bool IsScanning { get;set;}
     #endregion
 
     #region idisposable
@@ -326,6 +225,25 @@ namespace TvLibrary.Interfaces
     /// Disposes this instance.
     /// </summary>
     void Dispose();
+    #endregion
+
+    #region sub channels
+    /// <summary>
+    /// Gets the sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    /// <returns></returns>
+    ITvSubChannel GetSubChannel(int id);
+    /// <summary>
+    /// Frees the sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    void FreeSubChannel(int id);
+    /// <summary>
+    /// Gets the sub channels.
+    /// </summary>
+    /// <value>The sub channels.</value>
+    ITvSubChannel[] SubChannels { get;}
     #endregion
   }
 }
