@@ -136,7 +136,6 @@ namespace MediaPortal.Dialogs
       while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         GUIWindowManager.Process();
-
       }
     }
     #endregion
@@ -173,6 +172,10 @@ namespace MediaPortal.Dialogs
               GUIListItem pItem = (GUIListItem)m_vecList[i];
               AddListItemControl(GetID, (int)Controls.CONTROL_LIST, pItem);
             }
+
+            // Have to set focus here, because when base window tried, no items had been added to the list and it failed
+            GUIMessage focusmsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, _defaultControlId, 0, 0, null);
+            base.OnMessage(focusmsg);
 
             string wszText = String.Format("{0} {1}", m_vecList.Count, GUILocalizeStrings.Get(127));
 
