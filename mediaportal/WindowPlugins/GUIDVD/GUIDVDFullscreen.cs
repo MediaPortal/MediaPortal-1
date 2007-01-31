@@ -57,7 +57,7 @@ namespace MediaPortal.GUI.Video
 
     public override bool Init()
     {
-      return true;
+      return true; ;
     }
 
 		public override bool OnMessage(GUIMessage message)
@@ -124,7 +124,7 @@ namespace MediaPortal.GUI.Video
       strButtonText = GUILocalizeStrings.Get(341);
       strButtonImage = String.Empty;
       strButtonImageFocus = String.Empty;
-      strPictureImage = "hover_my videos.png";
+      strPictureImage = "";
       return true;
     }
 
