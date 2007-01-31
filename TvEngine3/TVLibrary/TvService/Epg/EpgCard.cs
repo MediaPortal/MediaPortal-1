@@ -385,9 +385,10 @@ namespace TvService
     /// <returns>true if grabbing has started else false</returns>
     bool GrabEpgForChannel(Channel channel, IChannel tuning, Card card)
     {
+      //remove following check to enable multi-card epg grabbing (still beta)
       if (_tvController.AllCardsIdle == false)
       {
-        Log.Epg("Epg: card:{0} cards are not idle", card.IdCard);
+        //Log.Epg("Epg: card:{0} cards are not idle", card.IdCard);
         return false;
       }
       IList dbsCards = Card.ListAll();
