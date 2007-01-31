@@ -118,6 +118,7 @@ namespace TvService
       foreach (EpgCard epgCard in _epgCards)
       {
         epgCard.Stop();
+        epgCard.Dispose();
       }
     }
     #endregion

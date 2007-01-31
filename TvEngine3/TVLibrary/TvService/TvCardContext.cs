@@ -50,7 +50,8 @@ namespace TvService
   public class TvCardContext
   {
     #region variables
-    User _user;
+    List<User> _users;
+    User _owner;
     int _idChannel;
     #endregion
 
@@ -60,7 +61,8 @@ namespace TvService
     /// </summary>
     public TvCardContext()
     {
-      _user = null;
+      _users = new List<User>();
+      _owner = null;
       _idChannel = -1;
     }
     #endregion
@@ -70,9 +72,9 @@ namespace TvService
     /// Locks the card for the user specifies
     /// </summary>
     /// <param name="user">The user.</param>
-    public void Lock(User user)
+    public void Lock(User newUser)
     {
-      _user = user;
+      _owner = newUser;
     }
 
     /// <summary>
@@ -80,7 +82,7 @@ namespace TvService
     /// </summary>
     public void Unlock()
     {
-      _user = null;
+      _owner = null;
     }
 
     /// <summary>
@@ -92,24 +94,157 @@ namespace TvService
     /// </returns>
     public bool IsLocked(out User user)
     {
-      user = _user;
-      return (_user != null);
+      user = _owner;
+      return (user!=null);
     }
 
     /// <summary>
-    /// Gets or sets the database id of the tv/radio channel we are currently tuned on
+    /// Determines whether the specified user is owner.
     /// </summary>
-    /// <value>The id channel.</value>
-    public int IdChannel
+    /// <param name="user">The user.</param>
+    /// <returns>
+    /// 	<c>true</c> if the specified user is owner; otherwise, <c>false</c>.
+    /// </returns>
+    public bool IsOwner(User user)
+    {
+      if (_owner == null) return true;
+      if (_owner.Name == user.Name) return true;
+
+      //exception, always allow everyone to stop the epg grabber
+      if (_owner.Name == "epg") return true;
+      return false;
+    }
+
+    /// <summary>
+    /// Adds the specified user.
+    /// </summary>
+    /// <param name="user">The user.</param>
+    public void Add(User user)
+    {
+      Log.Info("user:{0} add", user.Name);
+      if (_owner == null) _owner = user;
+      for (int i=0; i < _users.Count;++i)
+      {
+        if (_users[i].Name == user.Name)
+        {
+          _users[i] = (User)user.Clone();
+          return;
+        }
+      }
+      _users.Add(user);
+    }
+
+    /// <summary>
+    /// Removes the specified user.
+    /// </summary>
+    /// <param name="user">The user.</param>
+    public void Remove(User user)
+    {
+      Log.Info("user:{0} remove", user.Name);
+      foreach (User existingUser in _users)
+      {
+        if (existingUser.Name == user.Name)
+        {
+          _users.Remove(existingUser);
+          break;
+        }
+      }
+      if (_owner == null) return;
+      if (_owner.Name == user.Name)
+        _owner = null;
+      if (_users.Count > 0)
+      {
+        _owner = _users[0];
+      }
+    }
+    /// <summary>
+    /// Gets the user.
+    /// </summary>
+    /// <param name="user">The user.</param>
+    public void GetUser(ref User user)
+    {
+      foreach (User existingUser in _users)
+      {
+        if (existingUser.Name == user.Name)
+        {
+          user = (User)existingUser.Clone();
+          return;
+        }
+      }
+    }
+    /// <summary>
+    /// Returns if the user exists or not
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <returns></returns>
+    public bool DoesExists(User user)
+    {
+      foreach (User existingUser in _users)
+      {
+        if (existingUser.Name == user.Name)
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Gets the user.
+    /// </summary>
+    /// <param name="subChannelId">The sub channel id.</param>
+    /// <param name="user">The user.</param>
+    public void GetUser(int subChannelId, out User user)
+    {
+      user = null;
+      foreach (User existingUser in _users)
+      {
+        if (existingUser.SubChannel == subChannelId)
+        {
+          user = (User)existingUser.Clone();
+          return;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Gets the users.
+    /// </summary>
+    /// <value>The users.</value>
+    public User[] Users
     {
       get
       {
-        return _idChannel;
+        return _users.ToArray();
       }
-      set
+    }
+
+    /// <summary>
+    /// Determines whether one or more users exist for the given subchannel
+    /// </summary>
+    /// <param name="subchannelId">The subchannel id.</param>
+    /// <returns>
+    /// 	<c>true</c> if users exists; otherwise, <c>false</c>.
+    /// </returns>
+    public bool ContainsUsersForSubchannel(int subchannelId)
+    {
+      foreach (User existingUser in _users)
       {
-        _idChannel = value;
+        if (existingUser.SubChannel == subchannelId)
+        {
+          return true;
+        }
       }
+      return false;
+    }
+
+    /// <summary>
+    /// Removes all users
+    /// </summary>
+    public void Clear()
+    {
+      _users.Clear();
+      _owner = null;
     }
     #endregion
 

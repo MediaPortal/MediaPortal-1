@@ -53,6 +53,7 @@ namespace TvService
     DateTime _scheduleCheckTimer;
     List<RecordingDetail> _recordingsInProgressList;
     IList _channels;
+    User _user;
     #endregion
 
     #region ctor
@@ -62,6 +63,7 @@ namespace TvService
     /// <param name="controller">instance of the TVController</param>
     public Scheduler(TVController controller)
     {
+      _user = new User("Scheduler", true);
       _tvController = controller;
     }
     #endregion
@@ -169,7 +171,7 @@ namespace TvService
         if (IsTimeToRecord(schedule, now, out newRecording))
         {
           //yes, then lets recording it
-          StartRecord(newRecording, GetUser());
+          StartRecord(newRecording);
         }
       }
     }
@@ -373,12 +375,17 @@ namespace TvService
     /// </summary>
     /// <param name="recording">Recording instance</param>
     /// <returns>true if recording is started, otherwise false</returns>
-    bool StartRecord(RecordingDetail recording, User user)
+    bool StartRecord(RecordingDetail recording)
     {
+      _user.Name = string.Format("scheduler{0}", recording.Schedule.IdSchedule);
+      _user.CardId = -1;
+      _user.SubChannel = -1;
       Log.Write("Scheduler : time to record {0} {1}-{2} {3}", recording.Channel, DateTime.Now, recording.EndTime, recording.Schedule.ProgramName);
       TvResult result;
-      List<CardDetail> freeCards = _tvController.GetFreeCardsForChannel(recording.Channel, user, out result);
-      if (freeCards.Count == 0) return false;
+      //get list of all cards we can use todo the recording
+      List<CardDetail> freeCards = _tvController.GetFreeCardsForChannel(recording.Channel, ref _user, out result);
+      if (freeCards.Count == 0) return false;//none available..
+
       CardDetail cardInfo = null;
 
       //first try to start recording using the recommended card
@@ -390,8 +397,13 @@ namespace TvService
 
           //when card is idle we can use it
           //when card is busy, but already tuned to the correct channel then we can use it also
+          //when card is busy, but already tuned to the correct transponder then we can use it also
           User byUser;
-          if ((_tvController.IsCardInUse(card.Id, out byUser) == false) || _tvController.CurrentDbChannel(card.Id) == recording.Channel.IdChannel)
+          User tmpUser = new User();
+          tmpUser.CardId = card.Id;
+          if ((_tvController.IsCardInUse(card.Id, out byUser) == false) ||
+               _tvController.CurrentDbChannel(ref tmpUser) == recording.Channel.IdChannel ||
+               _tvController.IsTunedToTransponder(card.Id, card.TuningDetail) )
           {
             // use the recommended card.
             cardInfo = card;
@@ -404,6 +416,20 @@ namespace TvService
           Log.Write("Scheduler : recommended card:{0} is not available", recording.Schedule.RecommendedCard);
         }
       }
+      if (cardInfo == null)
+      {
+        //first try, find a card which is already tuned to the correct transponder
+        foreach (CardDetail card in freeCards)
+        {
+          User byUser;
+          if (_tvController.IsTunedToTransponder(card.Id,card.TuningDetail))
+          {
+            cardInfo = card;
+            Log.Write("Scheduler : record on free card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
+            break;
+          }
+        }
+      }
 
       if (cardInfo == null)
       {
@@ -411,7 +437,7 @@ namespace TvService
         foreach (CardDetail card in freeCards)
         {
           User byUser;
-          if (_tvController.IsCardInUse(card.Id, out byUser) == false)
+          if ( (_tvController.IsCardInUse(card.Id, out byUser) == false) )
           {
             cardInfo = card;
             Log.Write("Scheduler : record on free card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
@@ -425,12 +451,14 @@ namespace TvService
         //all cards in use, check if a card is already tuned to the channel we want to record
         foreach (CardDetail card in freeCards)
         {
-          if (_tvController.CurrentDbChannel(card.Id) == recording.Channel.IdChannel)
+          User tmpUser = new User();
+          tmpUser.CardId = card.Id;
+          if (_tvController.CurrentDbChannel(ref tmpUser) == recording.Channel.IdChannel)
           {
-            if (_tvController.IsRecording(card.Id)==false)
+            if (_tvController.IsRecording(ref tmpUser) == false)
             {
               cardInfo = card;
-              Log.Write("Scheduler : record on card:{0} priority:{1} which is tuned to {2}", cardInfo.Id, cardInfo.Card.Priority, recording.Channel.Name) ;
+              Log.Write("Scheduler : record on card:{0} priority:{1} which is tuned to {2}", cardInfo.Id, cardInfo.Card.Priority, recording.Channel.Name);
               break;
             }
           }
@@ -440,8 +468,9 @@ namespace TvService
       if (cardInfo == null)
       {
         //all cards in use, no card tuned to the channel, use the first one.
-        
-        if (_tvController.IsRecording(freeCards[0].Id)==false)
+        User tmpUser = new User();
+        tmpUser.CardId = freeCards[0].Id;
+        if (_tvController.IsRecording(ref tmpUser) == false)
         {
           cardInfo = freeCards[0];
           Log.Write("Scheduler : no card is tuned to the correct channel. record on card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
@@ -452,17 +481,11 @@ namespace TvService
         }
       }
 
-      bool lockedCard = false;
       try
       {
-        if (_tvController.IsTimeShifting(cardInfo.Id) == false)
-        {
-          //if card is idle, then we lock it.
-          _tvController.LockCard(cardInfo.Id, user);
-          lockedCard = true;
-        }
+        _user.CardId = cardInfo.Id;
 
-        _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.StartRecording, new VirtualCard(cardInfo.Id), user, recording.Schedule, null));
+        _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.StartRecording, new VirtualCard(_user), _user, recording.Schedule, null));
 
         if (cardInfo.Card.RecordingFolder == String.Empty)
           cardInfo.Card.RecordingFolder = System.IO.Directory.GetCurrentDirectory();
@@ -470,32 +493,30 @@ namespace TvService
           cardInfo.Card.TimeShiftFolder = System.IO.Directory.GetCurrentDirectory();
 
         Log.Write("Scheduler : record, first tune to channel");
-        if (false == _controller.TuneScan(cardInfo.Id, cardInfo.TuningDetail, recording.Channel.IdChannel))
+        TvResult tuneResult = _controller.Tune(ref _user, cardInfo.TuningDetail, recording.Channel.IdChannel);
+        if (tuneResult != TvResult.Succeeded) 
         {
-          if (lockedCard) _tvController.UnlockCard(cardInfo.Id);
           return false;
         }
-        Log.Write("Scheduler : record, now start timeshift");
-        string timeshiftFileName = String.Format(@"{0}\live{1}.ts", cardInfo.Card.TimeShiftFolder, cardInfo.Id);
-        if (TvResult.Succeeded != _controller.StartTimeShifting(cardInfo.Id, timeshiftFileName))
-        {
-          if (lockedCard) _tvController.UnlockCard(cardInfo.Id);
-          return false;
-        }
+        //Log.Write("Scheduler : record, now start timeshift");
+        //string timeshiftFileName = String.Format(@"{0}\live{1}-{2}.ts", cardInfo.Card.TimeShiftFolder, cardInfo.Id,_user.SubChannel);
+        //if (TvResult.Succeeded != _controller.StartTimeShifting(ref _user, ref timeshiftFileName))
+        //{
+        //  return false;
+        //}
 
         recording.MakeFileName(cardInfo.Card.RecordingFolder);
         recording.CardInfo = cardInfo;
         Log.Write("Scheduler : record to {0}", recording.FileName);
         string fileName = recording.FileName;
-        if (false == _controller.StartRecording(cardInfo.Id, ref fileName, false, 0))
+        if (false == _controller.StartRecording(ref _user, ref fileName, false, 0))
         {
-          if (lockedCard) _tvController.UnlockCard(cardInfo.Id);
           return false;
         }
         recording.FileName = fileName;
         recording.RecordingStartDateTime = DateTime.Now;
         _recordingsInProgressList.Add(recording);
-        _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingStarted, new VirtualCard(cardInfo.Id), user, recording.Schedule, null));
+        _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingStarted, new VirtualCard(_user), _user, recording.Schedule, null));
         Log.Write("recList:count:{0} add scheduleid:{1} card:{2}", _recordingsInProgressList.Count, recording.Schedule.IdSchedule, recording.CardInfo.Card.Name);
       }
       catch (Exception ex)
@@ -513,28 +534,17 @@ namespace TvService
     {
       try
       {
+        _user.Name = string.Format("scheduler{0}", recording.Schedule.IdSchedule);
         Log.Write("Scheduler : stop record {0} {1}-{2} {3}", recording.Channel, recording.RecordingStartDateTime, recording.EndTime, recording.Schedule.ProgramName);
-        _controller.StopRecording(recording.CardInfo.Id);
+        _controller.StopRecording(ref _user);
 
-        bool stopTimeshifting = true;
-        User user;
-        _controller.IsCardInUse(recording.CardInfo.Id, out user);
-        if (user != null && user.Name != GetUser().Name)
-        {
-          stopTimeshifting = false;
-        }
-        if (stopTimeshifting)
-        {
-          Log.Write("Scheduler : stop timeshifting");
-          _controller.StopTimeShifting(recording.CardInfo.Id, GetUser());
-        }
 
         int idServer = recording.CardInfo.Card.IdServer;
         Recording newRec = new Recording(recording.Schedule.IdChannel, recording.RecordingStartDateTime, DateTime.Now, recording.Program.Title,
                             recording.Program.Description, recording.Program.Genre, recording.FileName, (int)recording.Schedule.KeepMethod,
                             recording.Schedule.KeepDate, 0, idServer);
         newRec.Persist();
-        _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingEnded, new VirtualCard(recording.CardInfo.Id), GetUser(), recording.Schedule, newRec));
+        _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingEnded, new VirtualCard(_user), _user, recording.Schedule, newRec));
 
 
         //DatabaseManager.Instance.SaveChanges();
@@ -544,7 +554,7 @@ namespace TvService
         if ((ScheduleRecordingType)recording.Schedule.ScheduleType == ScheduleRecordingType.Once)
         {
           recording.Schedule.Delete();
-          _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.ScheduleDeleted, new VirtualCard(recording.CardInfo.Id), GetUser(), recording.Schedule, null));
+          _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.ScheduleDeleted, new VirtualCard(_user), _user, recording.Schedule, null));
         }
         else
         {
@@ -639,10 +649,6 @@ namespace TvService
       }
     }
 
-    public User GetUser()
-    {
-      return new User("Scheduler", true);
-    }
     #endregion
   }
 }

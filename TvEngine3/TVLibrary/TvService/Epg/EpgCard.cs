@@ -32,13 +32,14 @@ using TvLibrary.Log;
 using TvLibrary.Interfaces;
 using TvLibrary.Channels;
 using TvLibrary.Epg;
+using TvEngine.Events;
 using System.Threading;
 
 namespace TvService
 {
   /// <summary>
   /// Class which will  grab the epg for for a specific card
-  public class EpgCard : BaseEpgGrabber
+  public class EpgCard : BaseEpgGrabber, IDisposable
   {
     #region const
     const int EpgGrabInterval = 60;//secs
@@ -64,14 +65,16 @@ namespace TvService
 
     bool _reEntrant = false;
     List<EpgChannel> _epg;
-    int _currentCardId = -1;
 
     DateTime _grabStartTime;
     bool _isRunning;
     TVController _tvController;
     List<Transponder> _transponders;
     int _currentTransponderIndex = -1;
+    TvServerEventHandler _eventHandler;
+    bool _disposed = false;
     Card _card;
+    User _user;
     #endregion
 
     #region ctor
@@ -82,16 +85,19 @@ namespace TvService
     public EpgCard(TVController controller, Card card)
     {
       _card = card;
+      _user = new User("epg", false, -1);
 
       _tvController = controller;
-      _currentCardId = -1;
       _lastEpgGrabTime = DateTime.MinValue;
       _grabStartTime = DateTime.MinValue;
       _state = EpgState.Idle;
-      _currentCardId = -1;
+
       _epgTimer.Interval = 30000;
       _epgTimer.Elapsed += new System.Timers.ElapsedEventHandler(_epgTimer_Elapsed);
+      _eventHandler = new TvServerEventHandler(controller_OnTvServerEvent);
+      controller.OnTvServerEvent += _eventHandler;
     }
+
     #endregion
 
     #region properties
@@ -147,8 +153,8 @@ namespace TvService
 
       if (_state == EpgState.Idle) return;
       _state = EpgState.Idle;
-      _tvController.StopGrabbingEpg(_currentCardId);
-      _currentCardId = -1;
+      _tvController.StopGrabbingEpg(_user);
+      _user.CardId = -1;
       return;
     }
 
@@ -166,24 +172,24 @@ namespace TvService
         //is epg grabbing in progress?
         if (_state == EpgState.Idle)
         {
-          Log.Epg("Epg: card:{0} OnEpgReceived while idle", _currentCardId);
+          Log.Epg("Epg: card:{0} OnEpgReceived while idle", _user.CardId);
           return 0;
         }
         //is epg grabber already updating the database?
 
         if (_state == EpgState.Updating)
         {
-          Log.Epg("Epg: card:{0} OnEpgReceived while updating", _currentCardId);
+          Log.Epg("Epg: card:{0} OnEpgReceived while updating", _user.CardId);
           return 0;
         }
 
         //is the card still idle?
-        if (IsCardIdle(_currentCardId) == false)
+        if (IsCardIdle(_user) == false)
         {
-          Log.Epg("Epg: card:{0} OnEpgReceived but card is not idle", _currentCardId);
+          Log.Epg("Epg: card:{0} OnEpgReceived but card is not idle", _user.CardId);
           _state = EpgState.Idle;
-          _tvController.StopGrabbingEpg(_currentCardId);
-          _currentCardId = -1;
+          _tvController.StopGrabbingEpg(_user);
+          _user.CardId = -1;
           if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
           {
             _transponders[_currentTransponderIndex].InUse = false;
@@ -192,7 +198,7 @@ namespace TvService
           return 0;
         }
 
-        List<EpgChannel> epg = _tvController.Epg(_currentCardId);
+        List<EpgChannel> epg = _tvController.Epg(_user.CardId);
         if (epg == null)
         {
           epg = new List<EpgChannel>();
@@ -201,7 +207,7 @@ namespace TvService
         if (epg.Count == 0)
         {
           //no epg found for this channel
-          Log.Epg("Epg: card:{0} no epg found", _currentCardId);
+          Log.Epg("Epg: card:{0} no epg found", _user.CardId);
           if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
           {
             Transponder transponder = _transponders[_currentTransponderIndex];
@@ -210,16 +216,16 @@ namespace TvService
             _currentTransponderIndex = -1;
           }
           _state = EpgState.Idle;
-          _tvController.StopGrabbingEpg(_currentCardId);
-          _tvController.StopCard(_currentCardId);
-          _currentCardId = -1;
+          _tvController.StopGrabbingEpg(_user);
+          _tvController.StopCard(_user);
+          _user.CardId = -1;
           return 0;
         }
 
         if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
         {
           //create worker thread to update the database
-          Log.Epg("Epg: card:{0} received epg for {1} channels", _currentCardId, epg.Count);
+          Log.Epg("Epg: card:{0} received epg for {1} channels", _user.CardId, epg.Count);
           _state = EpgState.Updating;
           _epg = epg;
           Thread workerThread = new Thread(new ThreadStart(UpdateDatabaseThread));
@@ -253,7 +259,7 @@ namespace TvService
       _isRunning = true;
       if (GrabEpgForChannel(channel, transponders[index].Tuning, _card))
       {
-        Log.Epg("Epg: card:{0} start grab {1}", _currentCardId, transponders[index].Tuning.ToString());
+        Log.Epg("Epg: card:{0} start grab {1}", _user.CardId, transponders[index].Tuning.ToString());
         transponders[index].InUse = true;
         //succeeded, then wait for epg to be received
         _state = EpgState.Grabbing;
@@ -263,7 +269,7 @@ namespace TvService
       }
       else
       {
-        //Log.Epg("unable to grab epg transponder: ch:{0} {1} started on {2}", index, channel.Name, _currentCardId);
+        //Log.Epg("unable to grab epg transponder: ch:{0} {1} started on {2}", index, channel.Name, _user.CardId);
         //Log.Epg("{0}", transponders[index].Tuning.ToString());
       }
     }
@@ -273,10 +279,10 @@ namespace TvService
     /// </summary>
     public void Stop()
     {
-      if (_state != EpgState.Idle && _currentCardId >= 0)
+      if (_state != EpgState.Idle && _user.CardId >= 0)
       {
-        Log.Epg("Epg: card:{0} stop grab", _currentCardId);
-        _tvController.StopGrabbingEpg(_currentCardId);
+        Log.Epg("Epg: card:{0} stop grab", _user.CardId);
+        _tvController.StopGrabbingEpg(_user);
       }
       if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
       {
@@ -314,13 +320,17 @@ namespace TvService
         else if (_state == EpgState.Grabbing)
         {
           //if we are grabbing epg, then check if card is still idle
-          if (_currentCardId >= 0)
+          if (_user.CardId >= 0)
           {
-            if (!IsCardIdle(_currentCardId))
+            if (!IsCardIdle(_user))
             {
               //not idle? then cancel epg grabbing
+              if (_state != EpgState.Idle)
+              {
+                Log.Epg("Canceled epg, card is not idle:{0}", _user.CardId);
+              }
               _state = EpgState.Idle;
-              _currentCardId = -1;
+              _user.CardId = -1;
               if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
               {
                 _transponders[_currentTransponderIndex].InUse = false;
@@ -336,7 +346,7 @@ namespace TvService
           {
             //epg grabber timed out. Update database
             //and go back to idle mode
-            Log.Epg("Epg: card:{0} timeout", _currentCardId, ts.TotalSeconds);
+            Log.Epg("Epg: card:{0} timeout", _user.CardId, ts.TotalSeconds);
             if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
             {
               Transponder transponder = _transponders[_currentTransponderIndex];
@@ -344,14 +354,14 @@ namespace TvService
               transponder.InUse = false;
               _currentTransponderIndex = -1;
             }
-            _tvController.StopGrabbingEpg(_currentCardId);
+            _tvController.StopGrabbingEpg(_user);
             //DatabaseManager.Instance.SaveChanges();
             //DatabaseManager.Instance.ClearQueryCache();
 
 
             _grabStartTime = DateTime.MinValue;
             _state = EpgState.Idle;
-            _currentCardId = -1;
+            _user.CardId = -1;
           }
         }
       }
@@ -377,7 +387,7 @@ namespace TvService
     {
       if (_tvController.AllCardsIdle == false)
       {
-        Log.Epg("Epg: card:{0} cards are not idle", _currentCardId);
+        Log.Epg("Epg: card:{0} cards are not idle", _user.CardId);
         return false;
       }
       IList dbsCards = Card.ListAll();
@@ -390,7 +400,7 @@ namespace TvService
         {
           if (IsCardIdle(card.IdCard) == false)
           {
-            Log.Epg("Epg: card:{0} atsc card is not idle", _currentCardId);
+            Log.Epg("Epg: card:{0} atsc card is not idle", _user.CardId);
             return false;//card is busy
           }
           try
@@ -398,14 +408,15 @@ namespace TvService
             User cardUser;
             if (_tvController.IsCardInUse(card.IdCard, out cardUser) == false)
             {
-              RemoteControl.Instance.TuneScan(card.IdCard, tuning,channel.IdChannel);
-              _currentCardId = card.IdCard;
+              _user.CardId = card.IdCard;
+              RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
               if (false == _tvController.GrabEpg(this, card.IdCard))
               {
-                _currentCardId = -1;
-                Log.Epg("Epg: card:{0} could not start atsc grabbing", _currentCardId);
+                _user.CardId = -1;
+                Log.Epg("Epg: card:{0} could not start atsc grabbing", _user.CardId);
                 return false;
               }
+              _user.CardId = card.IdCard;
             }
           }
           catch (Exception ex)
@@ -426,19 +437,20 @@ namespace TvService
         {
           if (IsCardIdle(card.IdCard) == false)
           {
-            Log.Epg("Epg: card:{0} dvbc card is not idle", _currentCardId);
+            Log.Epg("Epg: card:{0} dvbc card is not idle", _user.CardId);
             return false;//card is busy
           }
           try
           {
-            RemoteControl.Instance.TuneScan(card.IdCard, tuning,channel.IdChannel);
-            _currentCardId = card.IdCard;
+            _user.CardId = card.IdCard;
+            RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
             if (false == _tvController.GrabEpg(this, card.IdCard))
             {
-              _currentCardId = -1;
-              Log.Epg("Epg: card:{0} could not start dvbc grabbing", _currentCardId);
+              _user.CardId = -1;
+              Log.Epg("Epg: card:{0} could not start dvbc grabbing", _user.CardId);
               return false;
             }
+            _user.CardId = card.IdCard;
           }
           catch (Exception ex)
           {
@@ -457,19 +469,20 @@ namespace TvService
         {
           if (IsCardIdle(card.IdCard) == false)
           {
-            Log.Epg("Epg: card:{0} dvbs card is not idle", _currentCardId);
+            Log.Epg("Epg: card:{0} dvbs card is not idle", _user.CardId);
             return false;//card is busy
           }
           try
           {
-            RemoteControl.Instance.TuneScan(card.IdCard, tuning, channel.IdChannel);
-            _currentCardId = card.IdCard;
+            _user.CardId = card.IdCard;
+            RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
             if (false == _tvController.GrabEpg(this, card.IdCard))
             {
-              _currentCardId = -1;
-              Log.Epg("Epg: card:{0} could not start dvbc grabbing", _currentCardId);
+              _user.CardId = -1;
+              Log.Epg("Epg: card:{0} could not start dvbc grabbing", _user.CardId);
               return false;
             }
+            _user.CardId = card.IdCard;
           }
           catch (Exception ex)
           {
@@ -488,19 +501,20 @@ namespace TvService
         {
           if (IsCardIdle(card.IdCard) == false)
           {
-            Log.Epg("Epg: card:{0} dvbt card is not idle", _currentCardId);
+            Log.Epg("Epg: card:{0} dvbt card is not idle", _user.CardId);
             return false;//card is busy
           }
           try
           {
-            RemoteControl.Instance.TuneScan(card.IdCard, tuning, channel.IdChannel);
-            _currentCardId = card.IdCard;
+            _user.CardId = card.IdCard;
+            RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
             if (false == _tvController.GrabEpg(this, card.IdCard))
             {
-              _currentCardId = -1;
-              Log.Epg("Epg: card:{0} could not start dvbt grabbing", _currentCardId);
+              _user.CardId = -1;
+              Log.Epg("Epg: card:{0} could not start dvbt grabbing", _user.CardId);
               return false;
             }
+            _user.CardId = card.IdCard;
           }
           catch (Exception ex)
           {
@@ -522,7 +536,7 @@ namespace TvService
       System.Threading.Thread.CurrentThread.Priority = ThreadPriority.Lowest;
 
       //if card is not idle anymore we return
-      if (IsCardIdle(_currentCardId) == false)
+      if (IsCardIdle(_user) == false)
       {
         if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
         {
@@ -532,12 +546,12 @@ namespace TvService
         return;
       }
       //remove old programs from the epg
-      Log.Epg("Epg: card:{0} Remove old programs from database", _currentCardId);
+      Log.Epg("Epg: card:{0} Remove old programs from database", _user.CardId);
       TvBusinessLayer layer = new TvBusinessLayer();
       layer.RemoveOldPrograms();
       IList channels = TuningDetail.ListAll();
       bool timeOut = false;
-      Log.Epg("Epg: card:{0} Updating database with new programs", _currentCardId);
+      Log.Epg("Epg: card:{0} Updating database with new programs", _user.CardId);
       try
       {
         int channelNr = 0;
@@ -558,13 +572,13 @@ namespace TvService
               bool success = UpdateDatabaseChannel(channelNr, epgChannel, GetChannel(detail.IdChannel));
               if (_state != EpgState.Updating)
               {
-                Log.Epg("Epg: card:{0} stopped updating state changed", _currentCardId);
+                Log.Epg("Epg: card:{0} stopped updating state changed", _user.CardId);
                 timeOut = true;
                 return;
               }
-              if (IsCardIdle(_currentCardId) == false)
+              if (IsCardIdle(_user) == false)
               {
-                Log.Epg("Epg: card:{0} stopped updating card not idle", _currentCardId);
+                Log.Epg("Epg: card:{0} stopped updating card not idle", _user.CardId);
                 timeOut = true;
                 return;
               }
@@ -604,14 +618,13 @@ namespace TvService
             _currentTransponderIndex = -1;
           }
         }
-        if (_state != EpgState.Idle && _currentCardId >= 0)
+        if (_state != EpgState.Idle && _user.CardId >= 0)
         {
-          _tvController.StopGrabbingEpg(_currentCardId);
-          _tvController.StopCard(_currentCardId);
+          _tvController.StopGrabbingEpg(_user);
+          _tvController.StopCard(_user);
         }
-        _currentCardId = -1;
         _state = EpgState.Idle;
-        _currentCardId = -1;
+        _user.CardId = -1;
         Gentle.Common.CacheManager.Clear();
       }
     }
@@ -633,10 +646,10 @@ namespace TvService
       TimeSpan ts = DateTime.Now - channel.LastGrabTime;
       if (ts.TotalHours < EpgReGrabAfter)
       {
-        Log.Epg("Epg: card:{0} :{1} {2} not needed lastUpdate:{3}", _currentCardId, channelNr, channel.Name, channel.LastGrabTime);
+        Log.Epg("Epg: card:{0} :{1} {2} not needed lastUpdate:{3}", _user.CardId, channelNr, channel.Name, channel.LastGrabTime);
         return false;
       }
-      Log.Epg("Epg: card:{0} :{1} {2}  lastUpdate:{3}", _currentCardId, channelNr, channel.Name, channel.LastGrabTime);
+      Log.Epg("Epg: card:{0} :{1} {2}  lastUpdate:{3}", _user.CardId, channelNr, channel.Name, channel.LastGrabTime);
 
       //IList progs = channel.ReferringProgram();
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TvDatabase.Program));
@@ -657,12 +670,12 @@ namespace TvService
       {
         if (_state != EpgState.Updating)
         {
-          Log.Epg("Epg: card:{0} stopped updating state changed", _currentCardId);
+          Log.Epg("Epg: card:{0} stopped updating state changed", _user.CardId);
           return false;
         }
-        if (IsCardIdle(_currentCardId) == false)
+        if (IsCardIdle(_user) == false)
         {
-          Log.Epg("Epg: card:{0} updating card not idle", _currentCardId);
+          Log.Epg("Epg: card:{0} updating card not idle", _user.CardId);
           return false;
         }
         if (program.EndTime <= lastProgram) continue;
@@ -726,11 +739,46 @@ namespace TvService
     {
       if (_isRunning == false) return false;
       if (cardId < 0) return false;
-      if (RemoteControl.Instance.IsRecording(cardId)) return false;
-      if (RemoteControl.Instance.IsTimeShifting(cardId)) return false;
-      if (RemoteControl.Instance.IsScanning(cardId)) return false;
+      User user = new User();
+      user.CardId = cardId;
+      if (RemoteControl.Instance.IsRecording(ref user)) return false;
+      if (RemoteControl.Instance.IsTimeShifting(ref user)) return false;
+      if (RemoteControl.Instance.IsScanning(user.CardId)) return false;
       User cardUser;
       if (_tvController.IsCardInUse(cardId, out cardUser)) return false;
+      if (_tvController.IsCardInUse(user.CardId, out cardUser))
+      {
+        if (cardUser != null)
+        {
+          if (cardUser.Name != _user.Name) return false;
+          return true;
+        }
+        return false;
+      }
+      return true;
+    }
+    /// <summary>
+    /// Method which returns if the card is idle or not
+    /// </summary>
+    /// <param name="cardId">id of card</param>
+    /// <returns>true if card is idle, otherwise false</returns>
+    bool IsCardIdle(User user)
+    {
+      if (_isRunning == false) return false;
+      if (user.CardId < 0) return false;
+      if (RemoteControl.Instance.IsRecording(ref _user)) return false;
+      if (RemoteControl.Instance.IsTimeShifting(ref _user)) return false;
+      if (RemoteControl.Instance.IsScanning(user.CardId)) return false;
+      User cardUser;
+      if (_tvController.IsCardInUse(user.CardId, out cardUser))
+      {
+        if (cardUser != null)
+        {
+          if (cardUser.Name != _user.Name) return false;
+          return true;
+        }
+        return false;
+      }
       return true;
     }
 
@@ -751,6 +799,43 @@ namespace TvService
       return null;
     }
     #endregion
+    #endregion
+
+    #region IDisposable Members
+
+    public void Dispose()
+    {
+      if (!_disposed)
+      {
+        _tvController.OnTvServerEvent -= _eventHandler;
+        _disposed = true;
+      }
+    }
+
+    void controller_OnTvServerEvent(object sender, EventArgs eventArgs)
+    {
+      if (_state == EpgState.Idle) return;
+      TvServerEventArgs tvArgs = eventArgs as TvServerEventArgs;
+      if (eventArgs == null) return;
+      switch (tvArgs.EventType)
+      {
+        case TvServerEventType.StartTimeShifting:
+          Log.Epg("epg cancelled due to start timeshifting");
+          StopEpg();
+          break;
+
+        case TvServerEventType.StartRecording:
+          Log.Epg("epg cancelled due to start recording");
+          StopEpg();
+          break;
+      }
+    }
+
+    void StopEpg()
+    {
+      _tvController.StopGrabbingEpg(_user);
+    }
+
     #endregion
   }
 }
