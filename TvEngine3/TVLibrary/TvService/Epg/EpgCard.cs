@@ -387,11 +387,12 @@ namespace TvService
     {
       if (_tvController.AllCardsIdle == false)
       {
-        Log.Epg("Epg: card:{0} cards are not idle", _user.CardId);
+        Log.Epg("Epg: card:{0} cards are not idle", card.IdCard);
         return false;
       }
       IList dbsCards = Card.ListAll();
 
+      TvResult result;
       //handle ATSC
       ATSCChannel atscChannel = tuning as ATSCChannel;
       if (atscChannel != null)
@@ -409,14 +410,24 @@ namespace TvService
             if (_tvController.IsCardInUse(card.IdCard, out cardUser) == false)
             {
               _user.CardId = card.IdCard;
-              RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
-              if (false == _tvController.GrabEpg(this, card.IdCard))
+              result=RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
+              if (result== TvResult.Succeeded)
+              {
+                if (false == _tvController.GrabEpg(this, card.IdCard))
+                {
+                  _tvController.StopGrabbingEpg(_user);
+                  _user.CardId = -1;
+                  Log.Epg("Epg: card:{0} could not start atsc epg grabbing", _user.CardId);
+                  return false;
+                }
+                _user.CardId = card.IdCard;
+              }
+              else
               {
                 _user.CardId = -1;
-                Log.Epg("Epg: card:{0} could not start atsc grabbing", _user.CardId);
+                Log.Epg("Epg: card:{0} could not tune to channel:{1}", _user.CardId,result.ToString());
                 return false;
               }
-              _user.CardId = card.IdCard;
             }
           }
           catch (Exception ex)
@@ -443,14 +454,24 @@ namespace TvService
           try
           {
             _user.CardId = card.IdCard;
-            RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
-            if (false == _tvController.GrabEpg(this, card.IdCard))
+            result = RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
+            if (result == TvResult.Succeeded)
+            {
+              if (false == _tvController.GrabEpg(this, card.IdCard))
+              {
+                _tvController.StopGrabbingEpg(_user);
+                _user.CardId = -1;
+                Log.Epg("Epg: card:{0} could not start dvbc epg grabbing", _user.CardId);
+                return false;
+              }
+              _user.CardId = card.IdCard;
+            }
+            else
             {
               _user.CardId = -1;
-              Log.Epg("Epg: card:{0} could not start dvbc grabbing", _user.CardId);
+              Log.Epg("Epg: card:{0} could not tune to channel:{1}", _user.CardId, result.ToString());
               return false;
             }
-            _user.CardId = card.IdCard;
           }
           catch (Exception ex)
           {
@@ -475,14 +496,24 @@ namespace TvService
           try
           {
             _user.CardId = card.IdCard;
-            RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
-            if (false == _tvController.GrabEpg(this, card.IdCard))
+            result = RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
+            if (result == TvResult.Succeeded)
+            {
+              if (false == _tvController.GrabEpg(this, card.IdCard))
+              {
+                _tvController.StopGrabbingEpg(_user);
+                _user.CardId = -1;
+                Log.Epg("Epg: card:{0} could not start dvbs epg grabbing", _user.CardId);
+                return false;
+              }
+              _user.CardId = card.IdCard;
+            }
+            else
             {
               _user.CardId = -1;
-              Log.Epg("Epg: card:{0} could not start dvbc grabbing", _user.CardId);
+              Log.Epg("Epg: card:{0} could not tune to channel:{1}", _user.CardId, result.ToString());
               return false;
             }
-            _user.CardId = card.IdCard;
           }
           catch (Exception ex)
           {
@@ -507,14 +538,24 @@ namespace TvService
           try
           {
             _user.CardId = card.IdCard;
-            RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
-            if (false == _tvController.GrabEpg(this, card.IdCard))
+            result = RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
+            if (result == TvResult.Succeeded)
+            {
+              if (false == _tvController.GrabEpg(this, card.IdCard))
+              {
+                _tvController.StopGrabbingEpg(_user);
+                _user.CardId = -1;
+                Log.Epg("Epg: card:{0} could not start atsc grabbing", _user.CardId);
+                return false;
+              }
+              _user.CardId = card.IdCard;
+            }
+            else
             {
               _user.CardId = -1;
-              Log.Epg("Epg: card:{0} could not start dvbt grabbing", _user.CardId);
+              Log.Epg("Epg: card:{0} could not tune to channel:{1}", _user.CardId, result.ToString());
               return false;
             }
-            _user.CardId = card.IdCard;
           }
           catch (Exception ex)
           {
