@@ -80,8 +80,9 @@ namespace SetupTv.Sections
       mpLabelTunerLocked.Text = "No";
       if (RemoteControl.Instance.TunerLocked(_cardNumber))
         mpLabelTunerLocked.Text = "Yes";
-
-      AnalogChannel channel = RemoteControl.Instance.CurrentChannel(_cardNumber) as AnalogChannel;
+      User user = new User();
+      user.CardId = _cardNumber;
+      AnalogChannel channel = RemoteControl.Instance.CurrentChannel(ref user) as AnalogChannel;
       if (channel == null)
         mpLabelChannel.Text = "none";
       else
@@ -157,7 +158,9 @@ namespace SetupTv.Sections
         UpdateStatus();
         mpListView1.Items.Clear();
         CountryCollection countries = new CountryCollection();
-        RemoteControl.Instance.Tune(_cardNumber, new AnalogChannel(), -1);
+        User user = new User();
+        user.CardId = _cardNumber;
+        RemoteControl.Instance.Tune(ref user, new AnalogChannel(), -1);
         int minChannel = RemoteControl.Instance.MinChannel(_cardNumber);
         int maxChannel = RemoteControl.Instance.MaxChannel(_cardNumber);
         if (maxChannel < 0) maxChannel = 128;
@@ -208,6 +211,9 @@ namespace SetupTv.Sections
       }
       finally
       {
+        User user = new User();
+        user.CardId = _cardNumber;
+        RemoteControl.Instance.StopCard(user);
         RemoteControl.Instance.EpgGrabberEnabled = true;
         mpButtonScanTv.Text = buttonText;
         progressBar1.Value = 100;
@@ -309,8 +315,9 @@ namespace SetupTv.Sections
           channel.Frequency = freq;
           channel.IsTv = false;
           channel.IsRadio = true;
-
-          RemoteControl.Instance.TuneScan(_cardNumber, channel, -1);
+          User user = new User();
+          user.CardId = _cardNumber;
+          RemoteControl.Instance.Tune(ref user, channel, -1);
           UpdateStatus();
           System.Threading.Thread.Sleep(2000);
           if (SignalStrength(sensitivity) == 100)
@@ -341,6 +348,9 @@ namespace SetupTv.Sections
       }
       finally
       {
+        User user = new User();
+        user.CardId = _cardNumber;
+        RemoteControl.Instance.StopCard(user);
         RemoteControl.Instance.EpgGrabberEnabled = true;
         mpButtonScanRadio.Text = buttonText;
         progressBar1.Value = 100;

@@ -79,8 +79,9 @@ namespace SetupTv.Sections
         mpLabelTunerLocked.Text = "Yes";
       progressBarLevel.Value = Math.Min(100, RemoteControl.Instance.SignalLevel(_cardNumber));
       progressBarQuality.Value = Math.Min(100, RemoteControl.Instance.SignalQuality(_cardNumber));
-
-      ATSCChannel channel = RemoteControl.Instance.CurrentChannel(_cardNumber) as ATSCChannel;
+      User user = new User();
+      user.CardId = _cardNumber;
+      ATSCChannel channel = RemoteControl.Instance.CurrentChannel(ref user) as ATSCChannel;
       if (channel == null)
         mpLabelChannel.Text = "none";
       else
@@ -119,6 +120,8 @@ namespace SetupTv.Sections
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
 
+        User user = new User();
+        user.CardId = _cardNumber;
         for (int index = 2; index <= 69; ++index)
         {
           if (_stopScanning) return;
@@ -143,7 +146,7 @@ namespace SetupTv.Sections
           item.EnsureVisible();
           if (index == 2)
           {
-            RemoteControl.Instance.TuneScan(_cardNumber, tuneChannel, -1);
+            RemoteControl.Instance.Tune(ref user, tuneChannel, -1);
           }
           IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
           UpdateStatus();
@@ -294,6 +297,9 @@ namespace SetupTv.Sections
       }
       finally
       {
+        User user = new User();
+        user.CardId = _cardNumber;
+        RemoteControl.Instance.StopCard(user);
         RemoteControl.Instance.EpgGrabberEnabled = true;
         progressBar1.Value = 100;
         mpButtonScanTv.Text = buttonText;

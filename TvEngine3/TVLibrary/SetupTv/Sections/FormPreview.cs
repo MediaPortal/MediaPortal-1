@@ -43,12 +43,14 @@ namespace SetupTv.Sections
 
       TvServer server = new TvServer();
       TvResult result;
-      result = server.StartTimeShifting(_channel.Name, out _card);
+      User user = new User();
+      result = server.StartTimeShifting(ref user,_channel.IdChannel, out _card);
       if (result != TvResult.Succeeded)
       {
         MessageBox.Show("Preview failed:" + result.ToString());
         return;
       }
+      Log.Info("preview {0} user:{1} {2} {3} {4}", _channel.Name, user.CardId, user.SubChannel, user.Name, _card.TimeShiftFileName);
       _player = new Player();
       _player.Play(_card.TimeShiftFileName, this);
     }

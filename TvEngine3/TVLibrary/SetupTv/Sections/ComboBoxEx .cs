@@ -62,6 +62,7 @@ namespace SetupTv.Sections
   class ComboBoxExItem
   {
     private string _text;
+    private int _id;
     public string Text
     {
       get { return _text; }
@@ -81,16 +82,24 @@ namespace SetupTv.Sections
     }
 
     public ComboBoxExItem(string text)
-      : this(text, -1)
+      : this(text, -1,-1)
     {
     }
 
-    public ComboBoxExItem(string text, int imageIndex)
+    public ComboBoxExItem(string text, int imageIndex,int id)
     {
+      _id = id;
       _text = text;
       _imageIndex = imageIndex;
     }
 
+    public int Id
+    {
+      get
+      {
+        return _id;
+      }
+    }
     public override string ToString()
     {
       return _text;

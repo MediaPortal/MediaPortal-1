@@ -154,6 +154,8 @@ namespace SetupTv.Sections
       int frequencyOffset = 0;
 
       string buttonText = mpButtonScanTv.Text;
+      User user = new User();
+      user.CardId = _cardNumber;
       try
       {
         _isScanning = true;
@@ -222,7 +224,7 @@ namespace SetupTv.Sections
           item.EnsureVisible();
           if (index == 0)
           {
-            RemoteControl.Instance.Tune(_cardNumber, tuneChannel,-1);
+            RemoteControl.Instance.Tune(ref user, tuneChannel, -1);
           }
           IChannel[] channels;
           channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
@@ -393,6 +395,7 @@ namespace SetupTv.Sections
       }
       finally
       {
+        RemoteControl.Instance.StopCard(user);
         RemoteControl.Instance.EpgGrabberEnabled = true;
         progressBar1.Value = 100;
         mpComboBoxCountry.Enabled = true;

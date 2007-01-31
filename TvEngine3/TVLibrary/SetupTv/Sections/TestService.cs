@@ -37,6 +37,7 @@ namespace SetupTv.Sections
 {
   public partial class TestService : SectionSettings
   {
+    IList _cards = null;
     //Player _player;
     public TestService()
       : this("Manual Control")
@@ -53,6 +54,7 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
+      _cards = Card.ListAll();
       base.OnSectionActivated();
       mpGroupBox1.Visible = false;
       RemoteControl.Instance.EpgGrabberEnabled = true;
@@ -68,7 +70,8 @@ namespace SetupTv.Sections
         int imageIndex = 1;
         if (ch.FreeToAir == false)
           imageIndex = 2;
-        ComboBoxExItem item = new ComboBoxExItem(ch.Name, imageIndex);
+        ComboBoxExItem item = new ComboBoxExItem(ch.Name, imageIndex, ch.IdChannel);
+
         mpComboBoxChannels.Items.Add(item);
 
       }
@@ -77,43 +80,6 @@ namespace SetupTv.Sections
       timer1.Enabled = true;
 
       mpListView1.Items.Clear();
-      try
-      {
-        IList cards = Card.ListAll();
-        TvServer server = new TvServer();
-        foreach (Card dbsCard in cards)
-        {
-          VirtualCard vcard = new VirtualCard(dbsCard.IdCard, RemoteControl.HostName);
-          CardType type = vcard.Type;
-          string name = vcard.Name;
-          ListViewItem item = mpListView1.Items.Add((mpListView1.Items.Count + 1).ToString());
-          item.SubItems.Add(type.ToString());
-          string tmp = "idle";
-          if (vcard.IsTimeShifting) tmp = "Timeshifting";
-          if (vcard.IsRecording) tmp = "Recording";
-          item.SubItems.Add(tmp);
-          IChannel channel = vcard.Channel;
-          if (channel == null)
-            item.SubItems.Add("");
-          else
-            item.SubItems.Add(channel.Name);
-          item.SubItems.Add("");
-          User cardUser;
-          if (vcard.IsLocked(out cardUser))
-          {
-            item.SubItems.Add(cardUser.Name);
-          }
-          else
-            item.SubItems.Add("");
-          item.SubItems.Add(vcard.Name);
-          item.Tag = vcard;
-        }
-      }
-      catch (Exception)
-      {
-        MessageBox.Show(this, "Unable to access service. Is the TvService running??");
-        return;
-      }
     }
 
     public override void OnSectionDeActivated()
@@ -137,16 +103,20 @@ namespace SetupTv.Sections
       if (ServiceHelper.IsStopped) return;
       if (mpComboBoxChannels.SelectedItem == null) return;
       string channel = mpComboBoxChannels.SelectedItem.ToString();
+      int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
 
       TvServer server = new TvServer();
-      VirtualCard card = GetCardTimeShiftingChannel(channel);
+      VirtualCard card = GetCardTimeShiftingChannel(channel,id);
       if (card != null)
       {
         card.StopTimeShifting();
       }
       else
       {
-        TvResult result = server.StartTimeShifting(channel, out card);
+        User user = new User();
+        user.Name = "setuptv";
+        //user.Name = "setuptv" + id.ToString();
+        TvResult result = server.StartTimeShifting(ref user, id, out card);
         if (result != TvResult.Succeeded)
         {
           switch (result)
@@ -178,6 +148,12 @@ namespace SetupTv.Sections
             case TvResult.UnknownError:
               MessageBox.Show(this, "Unknown error occured");
               break;
+            case TvResult.ConnectionToSlaveFailed:
+              MessageBox.Show(this, "Cannot connect to slave server");
+              break;
+            case TvResult.NotTheOwner:
+              MessageBox.Show(this, "Failed since card is in use and we are not the owner");
+              break;
           }
         }
       }
@@ -188,15 +164,16 @@ namespace SetupTv.Sections
       if (ServiceHelper.IsStopped) return;
       if (mpComboBoxChannels.SelectedItem == null) return;
       string channel = mpComboBoxChannels.SelectedItem.ToString();
+      int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
       TvServer server = new TvServer();
-      VirtualCard card = GetCardRecordingChannel(channel);
+      VirtualCard card = GetCardRecordingChannel(channel,id);
       if (card != null)
       {
         card.StopRecording();
       }
       else
       {
-        card = GetCardTimeShiftingChannel(channel);
+        card = GetCardTimeShiftingChannel(channel,id);
         if (card != null)
         {
           string fileName;
@@ -221,7 +198,8 @@ namespace SetupTv.Sections
       {
         TvServer server = new TvServer();
         string channel = mpComboBoxChannels.SelectedItem.ToString();
-        VirtualCard card = GetCardTimeShiftingChannel(channel);
+        int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
+        VirtualCard card = GetCardTimeShiftingChannel(channel, id);
         if (card != null)
         {
           mpGroupBox1.Visible = true;
@@ -273,48 +251,119 @@ namespace SetupTv.Sections
     void UpdateCardStatus()
     {
       if (ServiceHelper.IsStopped) return;
+      if (_cards == null) return;
+      if (_cards.Count == 0) return;
       try
       {
         TvServer server = new TvServer();
-
-        for (int i = 0; i < mpListView1.Items.Count; ++i)
+        ListViewItem item;
+        int cardNo = 0;
+        int off = 0;
+        foreach (Card card in _cards)
         {
-          VirtualCard card = (VirtualCard)mpListView1.Items[i].Tag;
-          ListViewItem item = mpListView1.Items[i];
-          string tmp = "idle";
+          cardNo++;
+          User user = new User();
+          user.CardId = card.IdCard;
+          VirtualCard vcard = new VirtualCard(user);
+          if (off >= mpListView1.Items.Count)
+          {
+            item = mpListView1.Items.Add("");
+            item.SubItems.Add("");
+            item.SubItems.Add("");
+            item.SubItems.Add("");
+            item.SubItems.Add("");
+            item.SubItems.Add("");
+            item.SubItems.Add("");
+          }
+          else
+          {
+            item = mpListView1.Items[off];
+          }
+          item.SubItems[0].Text = cardNo.ToString();
+          item.SubItems[1].Text = vcard.Type.ToString();
+
           if (card.Enabled == false)
           {
             item.SubItems[2].Text = "disabled";
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
+            off++;
             continue;
           }
-          if (card.IsTimeShifting) tmp = "Timeshifting";
-          if (card.IsRecording) tmp = "Recording";
-          if (card.IsScanning) tmp = "Scanning";
-          if (card.IsGrabbingEpg) tmp = "Grabbing EPG";
-          item.SubItems[2].Text = tmp;
 
-
-          item.SubItems[1].Text = card.Type.ToString();
-          if (card.IsScrambled) tmp = "yes";
-          else tmp = "no";
-          item.SubItems[4].Text = tmp;
-
-          IChannel channel = card.Channel;
-          if (channel == null)
-            item.SubItems[3].Text = "";
-          else
-            item.SubItems[3].Text = channel.Name;
-          User cardUser;
-          if (card.IsLocked(out cardUser))
+          User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+          if (usersForCard == null)
           {
-            item.SubItems[5].Text = cardUser.Name;
-          }
-          else
+            string tmp = "idle";
+            if (vcard.IsScanning) tmp = "Scanning";
+            if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
+            item.SubItems[2].Text = tmp;
+            item.SubItems[3].Text = "";
+            item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
-          item.SubItems[6].Text = card.Name;
+            off++;
+            continue;
+          }
+          if (usersForCard.Length == 0)
+          {
+            string tmp = "idle";
+            if (vcard.IsScanning) tmp = "Scanning";
+            if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
+            item.SubItems[2].Text = tmp;
+            item.SubItems[3].Text = "";
+            item.SubItems[4].Text = "";
+            item.SubItems[5].Text = "";
+            off++;
+            continue;
+          }
+
+          for (int i = 0; i < usersForCard.Length; ++i)
+          {
+            string tmp = "idle";
+            vcard = new VirtualCard(usersForCard[i]);
+            item.SubItems[0].Text = cardNo.ToString();
+            item.SubItems[1].Text = vcard.Type.ToString();
+            if (vcard.IsTimeShifting) tmp = "Timeshifting";
+            if (vcard.IsRecording) tmp = "Recording";
+            if (vcard.IsScanning) tmp = "Scanning";
+            if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
+            item.SubItems[2].Text = tmp;
+            if (vcard.IsScrambled) tmp = "yes";
+            else tmp = "no";
+            item.SubItems[4].Text = tmp;
+            item.SubItems[3].Text = vcard.ChannelName;
+            item.SubItems[5].Text = usersForCard[i].Name;
+            item.SubItems[6].Text = card.Name;
+            off++;
+
+
+            if (off >= mpListView1.Items.Count)
+            {
+              item = mpListView1.Items.Add("");
+              item.SubItems.Add("");
+              item.SubItems.Add("");
+              item.SubItems.Add("");
+              item.SubItems.Add("");
+              item.SubItems.Add("");
+              item.SubItems.Add("");
+            }
+            else
+            {
+              item = mpListView1.Items[off];
+            }
+          }
+        }
+        for (int i = off; i < mpListView1.Items.Count; ++i)
+        {
+          item = mpListView1.Items[i];
+          item.SubItems[0].Text = "";
+          item.SubItems[1].Text = "";
+          item.SubItems[2].Text = "";
+          item.SubItems[3].Text = "";
+          item.SubItems[4].Text = "";
+          item.SubItems[5].Text = "";
+          item.SubItems[6].Text = "";
         }
       }
       catch (Exception)
@@ -372,16 +421,19 @@ namespace SetupTv.Sections
     /// </summary>
     /// <param name="channel">channel name</param>
     /// <returns>virtual card</returns>
-    public VirtualCard GetCardTimeShiftingChannel(string channelName)
+    public VirtualCard GetCardTimeShiftingChannel(string channelName, int channelId)
     {
       IList cards = Card.ListAll();
       foreach (Card card in cards)
       {
-        if (RemoteControl.Instance.IsTimeShifting(card.IdCard))
+        User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+        if (usersForCard == null) continue;
+        if (usersForCard.Length == 0) continue;
+        for (int i = 0; i < usersForCard.Length; ++i)
         {
-          if (RemoteControl.Instance.CurrentChannelName(card.IdCard) == channelName)
+          if (usersForCard[i].IdChannel == channelId)
           {
-            VirtualCard vcard = new VirtualCard(card.IdCard, RemoteControl.HostName);
+            VirtualCard vcard = new VirtualCard(usersForCard[i], RemoteControl.HostName);
             vcard.RecordingFolder = card.RecordingFolder;
             return vcard;
           }
@@ -395,18 +447,24 @@ namespace SetupTv.Sections
     /// </summary>
     /// <param name="channel">channel name</param>
     /// <returns>virtual card</returns>
-    public VirtualCard GetCardRecordingChannel(string channel)
+    public VirtualCard GetCardRecordingChannel(string channel, int channelId)
     {
       IList cards = Card.ListAll();
       foreach (Card card in cards)
       {
-        if (RemoteControl.Instance.IsRecording(card.IdCard))
+        User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+        if (usersForCard == null) continue;
+        if (usersForCard.Length == 0) continue;
+        for (int i = 0; i < usersForCard.Length; ++i)
         {
-          if (RemoteControl.Instance.CurrentChannelName(card.IdCard) == channel)
+          if (usersForCard[i].IdChannel == channelId)
           {
-            VirtualCard vcard = new VirtualCard(card.IdCard, RemoteControl.HostName);
-            vcard.RecordingFolder = card.RecordingFolder;
-            return vcard;
+            VirtualCard vcard = new VirtualCard(usersForCard[i], RemoteControl.HostName);
+            if (vcard.IsRecording)
+            {
+              vcard.RecordingFolder = card.RecordingFolder;
+              return vcard;
+            }
           }
         }
       }

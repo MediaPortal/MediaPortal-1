@@ -605,6 +605,9 @@ namespace SetupTv.Sections
       }
       finally
       {
+        User user = new User();
+        user.CardId = _cardNumber;
+        RemoteControl.Instance.StopCard(user);
         RemoteControl.Instance.EpgGrabberEnabled = true;
         mpTransponder1.Enabled = true;
         mpTransponder2.Enabled = true;
@@ -652,6 +655,8 @@ namespace SetupTv.Sections
         }
       }
 
+      User user = new User();
+      user.CardId = _cardNumber;
       for (int index = 0; index < _channelCount; ++index)
       {
         if (_stopScanning) return;
@@ -678,7 +683,7 @@ namespace SetupTv.Sections
 
         if (index == 0)
         {
-          RemoteControl.Instance.Tune(_cardNumber, tuneChannel, -1);
+          RemoteControl.Instance.Tune(ref user, tuneChannel, -1);
         }
         UpdateStatus(LNB);
 
@@ -1126,7 +1131,9 @@ namespace SetupTv.Sections
       tuneChannel.SymbolRate = transponder.SymbolRate;
       tuneChannel.BandType = BandType.Universal;
       tuneChannel.DisEqc = DisEqcType.None;
-      RemoteControl.Instance.TuneScan(_cardNumber, tuneChannel, -1);
+      User user = new User();
+      user.CardId = _cardNumber;
+      RemoteControl.Instance.Tune(ref user, tuneChannel, -1);
 
     }
 
