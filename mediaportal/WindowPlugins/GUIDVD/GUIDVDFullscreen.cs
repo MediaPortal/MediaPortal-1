@@ -57,7 +57,7 @@ namespace MediaPortal.GUI.Video
 
     public override bool Init()
     {
-      return true; ;
+      return true;
     }
 
 		public override bool OnMessage(GUIMessage message)
