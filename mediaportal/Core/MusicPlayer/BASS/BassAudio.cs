@@ -591,8 +591,11 @@ namespace MediaPortal.Player
         case Action.ActionType.ACTION_FORWARD:
         case Action.ActionType.ACTION_MUSIC_FORWARD:
           {
-            g_Player.SeekStep(true);
-            string strStatus = g_Player.GetStepDescription();
+            if (g_Player.IsMusic)
+            {
+              g_Player.SeekStep(true);
+              string strStatus = g_Player.GetStepDescription();
+            }
             //Console.WriteLine(strStatus);
             break;
           }
@@ -600,8 +603,11 @@ namespace MediaPortal.Player
         case Action.ActionType.ACTION_REWIND:
         case Action.ActionType.ACTION_MUSIC_REWIND:
           {
-            g_Player.SeekStep(false);
-            string strStatus = g_Player.GetStepDescription();
+            if (g_Player.IsMusic)
+            {
+              g_Player.SeekStep(false);
+              string strStatus = g_Player.GetStepDescription();
+            }
             //Console.WriteLine(strStatus);
             break;
           }

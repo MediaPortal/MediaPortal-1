@@ -58,9 +58,11 @@ namespace MediaPortal.GUI.Video
       public bool ContextMenuVisible = false;
       public bool ShowStatusLine = false;
       public bool ShowTime = false;
+      public bool ShowSkipBar = false;
       public bool wasVMRBitmapVisible = false;
       public bool NotifyDialogVisible = false;
       public bool volumeVisible = false;
+      public bool forbiddenVisible = false;
     }
 
     enum Control
@@ -89,11 +91,13 @@ namespace MediaPortal.GUI.Video
 
     [SkinControlAttribute(500)]     protected GUIImage imgVolumeMuteIcon;
     [SkinControlAttribute(501)]     protected GUIVolumeBar imgVolumeBar;
+    [SkinControlAttribute(502)]     protected GUIImage imgActionForbiddenIcon;
 
     bool _isOsdVisible = false;
     bool _showStep = false;
     bool _showStatus = false;
     bool _showTime = false;
+    bool _showSkipBar = false;
 
     DateTime m_dwTimeCodeTimeout;
     string _timeStamp = "";
@@ -109,6 +113,7 @@ namespace MediaPortal.GUI.Video
     bool _bMSNChatPopup = false;
     bool _needToClearScreen = false;
     bool _isVolumeVisible = false;
+    bool _isForbiddenVisible = false;
     GUIDialogMenu dlg;
     GUIVideoOSD _osdWindow = null;
     GUIVideoMSNOSD _msnWindow = null;
@@ -116,8 +121,10 @@ namespace MediaPortal.GUI.Video
     int _notifyTVTimeout = 15;
     bool _playNotifyBeep = true;
     DateTime _volumeTimer = DateTime.MinValue;
+    DateTime _forbiddenTimer = DateTime.MinValue;
     VMR9OSD _vmr9OSD = new VMR9OSD();
     PlayListPlayer playlistPlayer;
+    const int SKIPBAR_PADDING = 10;
 
     FullScreenState screenState = new FullScreenState();
 
@@ -290,13 +297,38 @@ namespace MediaPortal.GUI.Video
     {
       _needToClearScreen = true;
       //switch back to menu on right-click
-      if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK && action.MouseButton == MouseButtons.Right)
+      if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK)
       {
-        _isOsdVisible = false;
-        GUIWindowManager.IsOsdVisible = false;
-        GUIGraphicsContext.IsFullScreenVideo = false;
-        GUIWindowManager.ShowPreviousWindow();
-        return;
+        if (action.MouseButton == MouseButtons.Right)
+        {
+          _isOsdVisible = false;
+          GUIWindowManager.IsOsdVisible = false;
+          GUIGraphicsContext.IsFullScreenVideo = false;
+          GUIWindowManager.ShowPreviousWindow();
+          return;
+        }
+        else if (_showSkipBar && action.MouseButton == MouseButtons.Left)
+        {
+          GUIControl cntl = base.GetControl((int)Control.OSD_VIDEOPROGRESS);
+          if (cntl != null && cntl.Visible)
+          {
+            double percentage = GetPercentage(action.fAmount1, action.fAmount2, cntl);
+            if (percentage > 0 && g_Player.CanSeek)
+            {
+              if (g_Player.IsDVD && g_Player.Paused)
+              {
+                _forbiddenTimer = DateTime.Now;
+                RenderForbidden(true);
+                return; // Skipping during pause doesn't work so well for DVD's...
+              }
+              else
+              {
+                g_Player.SeekAbsolute(g_Player.Duration * percentage);
+              }
+            }
+          }
+          return;
+        }
       }
       if (action.wID == Action.ActionType.ACTION_SHOW_VOLUME)
       {
@@ -326,8 +358,19 @@ namespace MediaPortal.GUI.Video
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
           _osdWindow.OnMessage(msg);	// Send an init msg to the OSD
           _isOsdVisible = true;
+          _showSkipBar = false;
           GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_OSD;
         }
+        else if (y < 50)
+        {
+          _showSkipBar = true;
+          _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+        }
+        else
+        {
+          _showSkipBar = false;
+        }
+
       }
 
       if (g_Player.IsDVD)
@@ -530,13 +573,22 @@ namespace MediaPortal.GUI.Video
           {
             if (g_Player.CanSeek)
             {
-              _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
-              _showStep = true;
-              g_Player.SeekStep(false);
-              string statusLine = g_Player.GetStepDescription();
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
-              msg.Label = statusLine;
-              OnMessage(msg);
+              if (g_Player.IsDVD && g_Player.Paused)
+              {
+                // Don't skip in paused DVD's
+                _forbiddenTimer = DateTime.Now;
+                RenderForbidden(true);
+              }
+              else
+              {
+                _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+                _showStep = true;
+                g_Player.SeekStep(false);
+                string statusLine = g_Player.GetStepDescription();
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+                msg.Label = statusLine;
+                OnMessage(msg);
+              }
             }
           }
           break;
@@ -546,14 +598,22 @@ namespace MediaPortal.GUI.Video
           {
             if (g_Player.CanSeek)
             {
-              _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
-              _showStep = true;
-              g_Player.SeekStep(true);
-              string statusLine = g_Player.GetStepDescription();
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
-              msg.Label = statusLine;
-              OnMessage(msg);
-
+              if (g_Player.IsDVD && g_Player.Paused)
+              {
+                // Don't skip in paused DVD's
+                _forbiddenTimer = DateTime.Now;
+                RenderForbidden(true);
+              }
+              else
+              {
+                _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+                _showStep = true;
+                g_Player.SeekStep(true);
+                string statusLine = g_Player.GetStepDescription();
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+                msg.Label = statusLine;
+                OnMessage(msg);
+              }
             }
           }
           break;
@@ -561,13 +621,25 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_MOVE_DOWN:
         case Action.ActionType.ACTION_BIG_STEP_BACK:
           {
-            double currentpos = g_Player.CurrentPosition;
-            double duration = g_Player.Duration;
-            double percent = (currentpos / duration) * 100d;
-            percent -= 10d;
-            if (percent < 0)
-              percent = 0;
-            g_Player.SeekAsolutePercentage((int)percent);
+            if (g_Player.CanSeek)
+            {
+              if (g_Player.IsDVD && g_Player.Paused)
+              {
+                // Don't skip in paused DVD's
+                _forbiddenTimer = DateTime.Now;
+                RenderForbidden(true);
+              }
+              else
+              {
+                double currentpos = g_Player.CurrentPosition;
+                double duration = g_Player.Duration;
+                double percent = (currentpos / duration) * 100d;
+                percent -= 10d;
+                if (percent < 0)
+                  percent = 0;
+                g_Player.SeekAsolutePercentage((int)percent);
+              }
+            }
             return;
           }
         //break;
@@ -575,14 +647,25 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_MOVE_UP:
         case Action.ActionType.ACTION_BIG_STEP_FORWARD:
           {
-
-            double currentpos = g_Player.CurrentPosition;
-            double duration = g_Player.Duration;
-            double percent = (currentpos / duration) * 100d;
-            percent += 10d;
-            if (percent > 100d)
-              percent = 100d;
-            g_Player.SeekAsolutePercentage((int)percent);
+            if (g_Player.CanSeek)
+            {
+              if (g_Player.IsDVD && g_Player.Paused)
+              {
+                // Don't skip in paused DVD's
+                _forbiddenTimer = DateTime.Now;
+                RenderForbidden(true);
+              }
+              else
+              {
+                double currentpos = g_Player.CurrentPosition;
+                double duration = g_Player.Duration;
+                double percent = (currentpos / duration) * 100d;
+                percent += 10d;
+                if (percent > 100d)
+                  percent = 100d;
+                g_Player.SeekAsolutePercentage((int)percent);
+              }
+            }
             return;
           }
         //break;
@@ -691,6 +774,12 @@ namespace MediaPortal.GUI.Video
                   g_Player.SeekAbsolute(dPos - 0.25d);
                 }
               }
+              else
+              {
+                // Don't skip in paused DVD's
+                _forbiddenTimer = DateTime.Now;
+                RenderForbidden(true);
+              }
             }
             else
               g_Player.Speed = MediaPortal.Util.Utils.GetNextRewindSpeed(g_Player.Speed);
@@ -708,6 +797,12 @@ namespace MediaPortal.GUI.Video
                 {
                   g_Player.SeekAbsolute(dPos + 0.25d);
                 }
+              }
+              else
+              {
+                // Don't skip in paused DVD's
+                _forbiddenTimer = DateTime.Now;
+                RenderForbidden(true);
               }
             }
             else
@@ -858,6 +953,7 @@ namespace MediaPortal.GUI.Video
             _showStep = false;
             _showStatus = false;
             _showTime = false;
+            _showSkipBar = false;
 
             _timeStamp = "";
             _timeCodePosition = 0;
@@ -869,10 +965,12 @@ namespace MediaPortal.GUI.Video
             _bMSNChatPopup = false;
             _needToClearScreen = false;
             _isVolumeVisible = false;
+            _isForbiddenVisible = false;
             NotifyDialogVisible = false;
             _notifyTVTimeout = 15;
             _playNotifyBeep = true;
             _volumeTimer = DateTime.MinValue;
+            _forbiddenTimer = DateTime.MinValue;
             _vmr9OSD = new VMR9OSD();
 
             screenState = new FullScreenState();
@@ -884,6 +982,7 @@ namespace MediaPortal.GUI.Video
             UpdateGUI();
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
             RenderVolume(false);
+            RenderForbidden(false);
             if (!screenState.Paused)
               for (int i = (int)Control.PANEL1; i < (int)Control.PANEL2; ++i)
                 HideControl(GetID, i);
@@ -1153,6 +1252,11 @@ namespace MediaPortal.GUI.Video
         screenState.ShowStatusLine = _showStatus;
         updateGUI = true;
       }
+      if (_showSkipBar != screenState.ShowSkipBar)
+      {
+        screenState.ShowSkipBar = _showSkipBar;
+        updateGUI = true;
+      }
       if (_showTime != screenState.ShowTime)
       {
         screenState.ShowTime = _showTime;
@@ -1164,6 +1268,12 @@ namespace MediaPortal.GUI.Video
         updateGUI = true;
         _volumeTimer = DateTime.Now;
       }
+      if (_isForbiddenVisible != screenState.forbiddenVisible)
+      {
+        screenState.forbiddenVisible = _isForbiddenVisible;
+        updateGUI = true;
+        _forbiddenTimer = DateTime.Now;
+      }
       if (updateGUI)
       {
         _needToClearScreen = true;
@@ -1173,7 +1283,7 @@ namespace MediaPortal.GUI.Video
 
     void UpdateGUI()
     {
-      if ((_showStep || (!_isOsdVisible && g_Player.Speed != 1) || (!_isOsdVisible && g_Player.Paused)))
+      if ((_showStep || _showSkipBar || (!_isOsdVisible && g_Player.Speed != 1) || (!_isOsdVisible && g_Player.Paused)))
       {
         if (!_isOsdVisible)
         {
@@ -1276,6 +1386,10 @@ namespace MediaPortal.GUI.Video
         ShowControl(GetID, (int)Control.BLUE_BAR);
         ShowControl(GetID, (int)Control.LABEL_ROW1);
       }
+      if (_showSkipBar && !g_Player.Paused) // If paused, this will already be shown, including LABEL_ROW1
+      {
+        ShowControl(GetID, (int)Control.BLUE_BAR);
+      }
       if (_showTime)
       {
         ShowControl(GetID, (int)Control.BLUE_BAR);
@@ -1283,6 +1397,7 @@ namespace MediaPortal.GUI.Video
       }
 
       RenderVolume(_isVolumeVisible);
+      RenderForbidden(_isForbiddenVisible);
     }
     
     void CheckTimeOuts()
@@ -1296,13 +1411,20 @@ namespace MediaPortal.GUI.Video
         if (ts.TotalSeconds >= 3)
           RenderVolume(false);
       }
-      if (_showStatus || _showStep)
+      if (_isForbiddenVisible)
+      {
+        TimeSpan ts = DateTime.Now - _forbiddenTimer;
+        if (ts.TotalSeconds >= 1)
+          RenderForbidden(false);
+      }
+      if (_showStatus || _showStep || _showSkipBar)
       {
         long lTimeSpan = ((DateTime.Now.Ticks / 10000) - _timeStatusShowTime);
         if (lTimeSpan >= 3000)
         {
           _showStep = false;
           _showStatus = false;
+          _showSkipBar = false;
         }
       }
       if (_showTime)
@@ -1373,6 +1495,7 @@ namespace MediaPortal.GUI.Video
           screenState.OsdVisible ||
           screenState.Paused ||
           screenState.ShowStatusLine ||
+          screenState.ShowSkipBar ||
           screenState.ShowTime || _needToClearScreen ||
           g_Player.Speed != 1)
         {
@@ -1508,6 +1631,13 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    void RenderForbidden(bool show)
+    {
+      if (imgActionForbiddenIcon == null) return;
+      _isForbiddenVisible = show;
+      imgActionForbiddenIcon.Visible = show;
+    }
+
     #region helper functions
     void HideControl(int senderId, int controlId)
     {
@@ -1554,6 +1684,17 @@ namespace MediaPortal.GUI.Video
       }
 
       return base.GetControl(iControlId);
+    }
+    private double GetPercentage(float x, float y, GUIControl cntl)
+    {
+      if (y < (cntl.YPosition + cntl.Height) && y > cntl.YPosition)
+      {
+        if (x > (cntl.XPosition + SKIPBAR_PADDING) && x < (cntl.XPosition + cntl.Width - SKIPBAR_PADDING))
+        {
+          return (x - cntl.XPosition - SKIPBAR_PADDING) / (cntl.Width - 2 * SKIPBAR_PADDING);
+        }
+      }
+      return -1;
     }
     #endregion
 

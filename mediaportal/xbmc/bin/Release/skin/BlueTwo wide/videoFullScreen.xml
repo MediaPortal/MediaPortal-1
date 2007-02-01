@@ -263,4 +263,14 @@
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
   </controls>
+  <control>
+    <type>image</type>
+    <id>502</id>
+    <posX>1087</posX>
+    <posY>128</posY>
+    <texture>video.action.forbidden.png</texture>
+    <colordiffuse>White</colordiffuse>
+    <visible>no</visible>
+    <animation effect="fade" time="250">visiblechange</animation>
+  </control>  
 </window>
