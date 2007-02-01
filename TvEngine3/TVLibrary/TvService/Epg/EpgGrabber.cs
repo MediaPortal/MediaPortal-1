@@ -54,6 +54,7 @@ namespace TvService
     TVController _tvController;
     List<Transponder> _transponders;
     List<EpgCard> _epgCards;
+    int _transponderIndex = -1;
     #endregion
 
     #region ctor
@@ -92,6 +93,7 @@ namespace TvService
       if (_isRunning) return;
       GetTransponders();
       if (_transponders.Count == 0) return;
+      _transponderIndex = -1;
       Log.Epg("EPG: grabber initialized for {0} transponders..", _transponders.Count);
       _isRunning = true;
       _epgTimer.Enabled = true;
@@ -145,6 +147,7 @@ namespace TvService
         {
           //Log.Epg("card:{0} grabbing:{1}", card.Card.IdCard, card.IsGrabbing);
           if (card.IsGrabbing) continue;
+          if (_tvController.AllCardsIdle == false) return;
           GrabEpgOnCard(card);
         }
       }
@@ -167,12 +170,19 @@ namespace TvService
       CardType type = _tvController.Type(epgCard.Card.IdCard);
       //skip analog cards
       if (type == CardType.Analog) return;
-
+      if (_transponders.Count == 0) return;
       //for each transponder
-      int counter = -1;
-      foreach (Transponder transponder in _transponders)
+      
+      int tIdx = _transponderIndex;
+      int tIdxCount = 0;
+      while (true)
       {
-        counter++;
+        tIdxCount++;
+        tIdx++;
+        if (tIdx >= _transponders.Count) tIdx = 0;
+        if (tIdxCount > _transponders.Count) return;
+        Transponder transponder = _transponders[tIdx];
+        
         //skip transponders which are in use
         if (transponder.InUse) continue;
 
@@ -204,16 +214,18 @@ namespace TvService
           Channel ch = transponder.Channels[transponder.Index];
           if (epgCard.Card.canViewTvChannel(ch.IdChannel))
           {
-            Log.Epg("epg:Grab for transponder #{0} {1}", counter, transponder.ToString());
+            Log.Epg("epg:Grab for card:#{0} transponder #{1} index:{2}/{3} last:{4} {5}",
+                      epgCard.Card.IdCard, tIdx, transponder.Index, transponder.Channels.Count,
+                      transponder.Channels[transponder.Index].LastGrabTime, transponder.ToString());
             //start grabbing
-            epgCard.GrabEpg(_transponders, counter, transponder.Channels[transponder.Index]);
-
+            epgCard.GrabEpg(_transponders, tIdx, transponder.Channels[transponder.Index]);
+            _transponderIndex = tIdx;
             return;
           }
           else
           {
             //restore index...
-            transponder.Index=index;
+            transponder.Index = index;
           }
         }
       }

@@ -252,11 +252,27 @@ namespace TvService
     public void GrabEpg(List<Transponder> transponders, int index, Channel channel)
     {
 
-      //Log.Epg("grab epg transponder: ch:{0} {1} started on {2}", index, channel.Name, _card.Name);
+      if (index < 0 || index >= transponders.Count)
+      {
+        Log.Error("epg:invalid transponder index");
+        return;
+      }
+      if (channel == null)
+      {
+        Log.Error("epg:invalid channel");
+        return;
+      }
+      if (transponders[index].Tuning == null)
+      {
+        Log.Error("epg:invalid tuning");
+        return;
+      }
+      Log.Epg("grab epg card:#{0} transponder: #{1} ch:{2} ", _card.IdCard, index, channel.Name);
       _transponders = transponders;
       _currentTransponderIndex = index;
       _state = EpgState.Idle;
       _isRunning = true;
+      _user = new User("epg", false, -1);
       if (GrabEpgForChannel(channel, transponders[index].Tuning, _card))
       {
         Log.Epg("Epg: card:{0} start grab {1}", _user.CardId, transponders[index].Tuning.ToString());
@@ -269,8 +285,8 @@ namespace TvService
       }
       else
       {
-        //Log.Epg("unable to grab epg transponder: ch:{0} {1} started on {2}", index, channel.Name, _user.CardId);
-        //Log.Epg("{0}", transponders[index].Tuning.ToString());
+        Log.Epg("unable to grab epg transponder: ch:{0} {1} started on {2}", index, channel.Name, _user.CardId);
+        Log.Epg("{0}", transponders[index].Tuning.ToString());
       }
     }
 
@@ -385,10 +401,35 @@ namespace TvService
     /// <returns>true if grabbing has started else false</returns>
     bool GrabEpgForChannel(Channel channel, IChannel tuning, Card card)
     {
+      if (channel == null)
+      {
+        Log.Error("Epg: invalid channel");
+        return false;
+      }
+      if (tuning == null)
+      {
+        Log.Error("Epg: invalid tuning");
+        return false;
+      }
+      if (card == null)
+      {
+        Log.Error("Epg: invalid card");
+        return false;
+      }
+      if (_tvController == null)
+      {
+        Log.Error("Epg: invalid tvcontroller");
+        return false;
+      }
+      if (_user == null)
+      {
+        Log.Error("Epg: invalid user");
+        return false;
+      }
       //remove following check to enable multi-card epg grabbing (still beta)
       if (_tvController.AllCardsIdle == false)
       {
-        //Log.Epg("Epg: card:{0} cards are not idle", card.IdCard);
+        Log.Epg("Epg: card:{0} cards are not idle", card.IdCard);
         return false;
       }
       IList dbsCards = Card.ListAll();
@@ -402,7 +443,7 @@ namespace TvService
         {
           if (IsCardIdle(card.IdCard) == false)
           {
-            Log.Epg("Epg: card:{0} atsc card is not idle", _user.CardId);
+            Log.Epg("Epg: card:{0} atsc card is not idle", card.IdCard);
             return false;//card is busy
           }
           try
@@ -411,33 +452,38 @@ namespace TvService
             if (_tvController.IsCardInUse(card.IdCard, out cardUser) == false)
             {
               _user.CardId = card.IdCard;
-              result=RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
-              if (result== TvResult.Succeeded)
+              result = RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
+              if (result == TvResult.Succeeded)
               {
                 if (false == _tvController.GrabEpg(this, card.IdCard))
                 {
                   _tvController.StopGrabbingEpg(_user);
                   _user.CardId = -1;
-                  Log.Epg("Epg: card:{0} could not start atsc epg grabbing", _user.CardId);
+                  Log.Epg("Epg: card:{0} could not start atsc epg grabbing", card.IdCard);
                   return false;
                 }
                 _user.CardId = card.IdCard;
+                return true;
               }
               else
               {
                 _user.CardId = -1;
-                Log.Epg("Epg: card:{0} could not tune to channel:{1}", _user.CardId,result.ToString());
+                Log.Epg("Epg: card:{0} could not tune to channel:{1}", card.IdCard, result.ToString());
                 return false;
               }
             }
           }
           catch (Exception ex)
           {
+            Log.Write(ex);
             throw ex;
           }
-          return true;
+          return false;
         }
-
+        else
+        {
+          Log.Epg("Epg: card:{0} could not tune to atsc channel:{1}", card.IdCard, tuning.ToString());
+        }
         return false;
       }
 
@@ -449,7 +495,7 @@ namespace TvService
         {
           if (IsCardIdle(card.IdCard) == false)
           {
-            Log.Epg("Epg: card:{0} dvbc card is not idle", _user.CardId);
+            Log.Epg("Epg: card:{0} dvbc card is not idle", card.IdCard);
             return false;//card is busy
           }
           try
@@ -462,23 +508,29 @@ namespace TvService
               {
                 _tvController.StopGrabbingEpg(_user);
                 _user.CardId = -1;
-                Log.Epg("Epg: card:{0} could not start dvbc epg grabbing", _user.CardId);
+                Log.Epg("Epg: card:{0} could not start dvbc epg grabbing", card.IdCard);
                 return false;
               }
               _user.CardId = card.IdCard;
+              return true;
             }
             else
             {
               _user.CardId = -1;
-              Log.Epg("Epg: card:{0} could not tune to channel:{1}", _user.CardId, result.ToString());
+              Log.Epg("Epg: card:{0} could not tune to channel:{1}", card.IdCard, result.ToString());
               return false;
             }
           }
           catch (Exception ex)
           {
+            Log.Write(ex);
             throw ex;
           }
-          return true;
+          return false;
+        }
+        else
+        {
+          Log.Epg("Epg: card:{0} could not tune to dvbc channel:{1}", card.IdCard, tuning.ToString());
         }
         return false;
       }
@@ -491,7 +543,7 @@ namespace TvService
         {
           if (IsCardIdle(card.IdCard) == false)
           {
-            Log.Epg("Epg: card:{0} dvbs card is not idle", _user.CardId);
+            Log.Epg("Epg: card:{0} dvbs card is not idle", card.IdCard);
             return false;//card is busy
           }
           try
@@ -504,23 +556,29 @@ namespace TvService
               {
                 _tvController.StopGrabbingEpg(_user);
                 _user.CardId = -1;
-                Log.Epg("Epg: card:{0} could not start dvbs epg grabbing", _user.CardId);
+                Log.Epg("Epg: card:{0} could not start dvbs epg grabbing", card.IdCard);
                 return false;
               }
               _user.CardId = card.IdCard;
+              return true;
             }
             else
             {
               _user.CardId = -1;
-              Log.Epg("Epg: card:{0} could not tune to channel:{1}", _user.CardId, result.ToString());
+              Log.Epg("Epg: card:{0} could not tune to channel:{1}", card.IdCard, result.ToString());
               return false;
             }
           }
           catch (Exception ex)
           {
+            Log.Write(ex);
             throw ex;
           }
-          return true;
+          return false;
+        }
+        else
+        {
+          Log.Epg("Epg: card:{0} could not tune to dvbs channel:{1}", card.IdCard, tuning.ToString());
         }
         return false;
       }
@@ -533,7 +591,7 @@ namespace TvService
         {
           if (IsCardIdle(card.IdCard) == false)
           {
-            Log.Epg("Epg: card:{0} dvbt card is not idle", _user.CardId);
+            Log.Epg("Epg: card:{0} dvbt card is not idle", card.IdCard);
             return false;//card is busy
           }
           try
@@ -546,26 +604,33 @@ namespace TvService
               {
                 _tvController.StopGrabbingEpg(_user);
                 _user.CardId = -1;
-                Log.Epg("Epg: card:{0} could not start atsc grabbing", _user.CardId);
+                Log.Epg("Epg: card:{0} could not start atsc grabbing", card.IdCard);
                 return false;
               }
               _user.CardId = card.IdCard;
+              return true;
             }
             else
             {
               _user.CardId = -1;
-              Log.Epg("Epg: card:{0} could not tune to channel:{1}", _user.CardId, result.ToString());
+              Log.Epg("Epg: card:{0} could not tune to channel:{1}", card.IdCard, result.ToString());
               return false;
             }
           }
           catch (Exception ex)
           {
+            Log.Write(ex);
             throw ex;
           }
-          return true;
+          return false;
+        }
+        else
+        {
+          Log.Epg("Epg: card:{0} could not tune to dvbt channel:{1}", card.IdCard, tuning.ToString());
         }
         return false;
       }
+      Log.Epg("Epg: card:{0} could not tune to channel:{1}", card.IdCard, tuning.ToString());
       return false;
     }
 
