@@ -1494,15 +1494,7 @@ namespace TvPlugin
         {
           double duration = g_Player.Duration;
           double position = g_Player.CurrentPosition;
-          if (duration > 0 && position > 0)
-          {
-            if (Math.Abs(duration - position) >= 10)
-            {
-              MediaPortal.GUI.Library.Log.Info("tvhome:seektoend zap dur:{0} pos:{1}", duration, g_Player.CurrentPosition);
-              g_Player.SeekAbsolute(duration);
-              MediaPortal.GUI.Library.Log.Info("tvhome:seektoend zap done dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
-            }
-          }
+          g_Player.SeekAbsolute(duration);
         }
       }
     }

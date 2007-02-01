@@ -83,6 +83,13 @@ Boolean CRTSPClient::clientStartPlayingSession(Medium* client,MediaSession* sess
   if (client == NULL || session == NULL) return False;
   RTSPClient* rtspClient = (RTSPClient*)client;
 
+  long dur=m_duration/1000;
+  long diff=abs(dur-m_fStart);
+  if (diff <20)
+  {
+    m_fStart=dur+5;
+  }
+	Log("CRTSPClient::clientStartPlayingSession() play from %d / %d",(int)m_fStart,(int)m_duration);
   return rtspClient->playMediaSession(*session,m_fStart);
 
 }
@@ -254,6 +261,7 @@ bool CRTSPClient::OpenStream(char* url)
 			setPos++;
 		}
 	
+    Log("rangestart:%s rangeend:%s", rangeStart,rangeEnd);
 		if (strlen(rangeStart)>0)
 		{
 			long startOfFile =0;//atol(rangeStart);
@@ -262,6 +270,7 @@ bool CRTSPClient::OpenStream(char* url)
 			{
 				endOfFile=atol(rangeEnd);
 			}
+      Log("start:%d end:%d", (int)startOfFile,(int)endOfFile);
 			m_duration=(endOfFile-startOfFile)*1000;
 		}
 	}

@@ -249,7 +249,7 @@ HRESULT COutputPin::Run(REFERENCE_TIME tStart)
 }
 HRESULT COutputPin::GetDuration(LONGLONG *pDuration)
 {
-  Log("COutputPin::GetDuration(%d)",(m_rtDuration.Millisecs()/1000));
+  //Log("COutputPin::GetDuration(%d)",(m_rtDuration.Millisecs()/1000));
     CheckPointer(pDuration, E_POINTER);
 //    CAutoLock lock(m_pLock);
     *pDuration = m_rtDuration;
@@ -283,11 +283,16 @@ HRESULT COutputPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLON
 		{
 				m_bSeeking = true;
 
+        Log("COutputPin::SetPositions()#1");
 				if(m_pFilter->is_Active() && !m_DemuxLock)
 				  SetDemuxClock(NULL);
+        Log("COutputPin::SetPositions()#2");
 				DeliverBeginFlush();
+        Log("COutputPin::SetPositions()#3");
 				CSourceStream::Stop();
+        Log("COutputPin::SetPositions()#4");
 				SetAccuratePos(rtCurrent);
+        Log("COutputPin::SetPositions()#5");
 				if (CurrentFlags & AM_SEEKING_PositioningBitsMask)
 				{
 					CAutoLock lock(&m_SeekLock);
@@ -296,13 +301,17 @@ HRESULT COutputPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLON
 				//m_rtLastSeekStart = rtCurrent;
 				m_bSeeking = false;
 				DeliverEndFlush();
+        Log("COutputPin::SetPositions()#6");
 
 				CSourceStream::Run();
 				if (CurrentFlags & AM_SEEKING_ReturnTime)
 					*pCurrent  = rtCurrent;
 
 				CAutoLock lock(&m_SeekLock);
-				return CSourceSeeking::SetPositions(&rtCurrent, CurrentFlags, pStop, StopFlags);
+				HRESULT hr=CSourceSeeking::SetPositions(&rtCurrent, CurrentFlags, pStop, StopFlags);
+        
+        Log("COutputPin::SetPositions()#6");
+        return hr;
 //			}
 		}
 		if (CurrentFlags & AM_SEEKING_ReturnTime)
@@ -315,9 +324,11 @@ HRESULT COutputPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLON
 
 HRESULT COutputPin::SetAccuratePos(REFERENCE_TIME seektime)
 {
-	Log("COutputPin::SetAccuratePos()");
+  Log("COutputPin::SetAccuratePos()#1");
 	m_pFilter->ResetStreamTime();
+  Log("COutputPin::SetAccuratePos()#2");
 	m_pFilter->Seek(m_rtStart);
+  Log("COutputPin::SetAccuratePos()#3");
 	return S_OK;
 }
 HRESULT COutputPin::OnThreadStartPlay(void) 
