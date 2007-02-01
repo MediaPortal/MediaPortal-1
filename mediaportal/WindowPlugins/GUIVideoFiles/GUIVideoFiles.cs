@@ -1736,7 +1736,7 @@ namespace MediaPortal.GUI.Video
             if (null == dlgYesNo) return;
             dlgYesNo.SetHeading(GUILocalizeStrings.Get(925));
             dlgYesNo.SetLine(1, movieFileName);
-            dlgYesNo.SetLine(2, String.Format("Part:{0}", iPart++));
+            dlgYesNo.SetLine(2, String.Format("{0}: {1}", GUILocalizeStrings.Get(3021), iPart++));
             dlgYesNo.SetLine(3, String.Empty);
             dlgYesNo.DoModal(GetID);
 
