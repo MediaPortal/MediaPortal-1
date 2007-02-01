@@ -35,7 +35,7 @@ namespace ProcessPlugins.CallerId
   public class ISDNWatch
   {
     [StructLayout(LayoutKind.Sequential)]
-      struct capiRequest
+    struct capiRequest
     {
       public short Length;
       public short ApplicationId;
@@ -51,7 +51,7 @@ namespace ProcessPlugins.CallerId
     }
 
     [StructLayout(LayoutKind.Sequential)]
-      struct capiMessageHeader
+    struct capiMessageHeader
     {
       public ushort Length;
       public ushort ApplicationId;
@@ -61,16 +61,16 @@ namespace ProcessPlugins.CallerId
     }
 
     [StructLayout(LayoutKind.Sequential)]
-      struct capiConnectInd 
+    struct capiConnectInd
     {
       public uint PLCI;
       public ushort CIP;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst=100)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
       public byte[] buffer;
     }
 
     [DllImport("CAPI2032.DLL")]
-      static extern int CAPI_INSTALLED();
+    static extern int CAPI_INSTALLED();
 
     [DllImport("CAPI2032.DLL")]
     static extern int CAPI_REGISTER(
@@ -91,7 +91,7 @@ namespace ProcessPlugins.CallerId
     [DllImport("CAPI2032.DLL")]
     static extern int CAPI_PUT_MESSAGE(
       int ApplicationID,
-      [MarshalAs(UnmanagedType.AsAny)] object CAPIMessage );
+      [MarshalAs(UnmanagedType.AsAny)] object CAPIMessage);
 
     [DllImport("CAPI2032.DLL")]
     static extern int CAPI_GET_MESSAGE(
@@ -119,7 +119,7 @@ namespace ProcessPlugins.CallerId
 
     public delegate void EventHandler(string CallerId);
     static public event EventHandler CidReceiver = null;
-    
+
     bool stopThread = false;
     const int HeaderLength = 8;
     const int CAPI_CONNECT = 0x02;
@@ -204,7 +204,7 @@ namespace ProcessPlugins.CallerId
         else
         {
           Log.Info("ISDN: CAPI signaling activated");
-          
+
           while (!stopThread) // Waiting for signal and signal-processing
           {
             string callerId = null;
@@ -223,10 +223,10 @@ namespace ProcessPlugins.CallerId
               if ((messageHeader.Command == CAPI_CONNECT) && (messageHeader.SubCommand == CAPI_IND))
               {
                 capiConnectInd ConnectInd = new capiConnectInd();
-                RtlMoveMemory (ref ConnectInd, (IntPtr)(capiBufferPointer.ToInt32() + HeaderLength), (messageHeader.Length - HeaderLength));
-                
+                RtlMoveMemory(ref ConnectInd, (IntPtr)(capiBufferPointer.ToInt32() + HeaderLength), (messageHeader.Length - HeaderLength));
+
                 for (int i = 99; i >= 0; i--)
-                  if ((logBuffer.Length != 0) || (ConnectInd.buffer[i] !=0))
+                  if ((logBuffer.Length != 0) || (ConnectInd.buffer[i] != 0))
                   {
                     if ((ConnectInd.buffer[i] < 48) || (ConnectInd.buffer[i] > 57))
                       logBuffer = "(" + ConnectInd.buffer[i] + ")" + logBuffer;
@@ -244,10 +244,13 @@ namespace ProcessPlugins.CallerId
                 for (int i = (lengthCalledId + 4); i < (lengthCallerId + lengthCalledId + 2); i++)
                   callerId = callerId + (char)ConnectInd.buffer[i];
 
-                callerId = callerId.TrimStart('0');
-                Log.Info("ISDN: stripped {0} leading zeros", lengthCallerId - callerId.Length - 2);
+                if (callerId != null)
+                {
+                  callerId = callerId.TrimStart('0');
+                  Log.Info("ISDN: stripped {0} leading zeros", lengthCallerId - callerId.Length - 2);
+                }
 
-                if (ConnectInd.buffer[lengthCalledId+2] == 17)  // International call
+                if (ConnectInd.buffer[lengthCalledId + 2] == 17)  // International call
                   callerId = "+" + callerId;
 
                 Log.Info("ISDN: CalledID: {0}", calledId);
@@ -288,5 +291,6 @@ namespace ProcessPlugins.CallerId
 
       return locationInfo;
     }
+
   }
 }

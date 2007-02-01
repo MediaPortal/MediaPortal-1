@@ -49,10 +49,10 @@ namespace ProcessPlugins.CallerId
   /// </summary>
   public class CallerIdISDN : ISetupForm, IPlugin
   {
-    const string ERR_FAILED_TO_FIND_AREACODE_XML    = "ISDN: Area code XML file cannot be found";
-    const string SUCCESS_LOADED_AREACODE_XML        = "ISDN: Area code XML file loaded";
+    const string ERR_FAILED_TO_FIND_AREACODE_XML = "ISDN: Area code XML file cannot be found";
+    const string SUCCESS_LOADED_AREACODE_XML = "ISDN: Area code XML file loaded";
     const string ERR_FAILED_TO_FIND_COUNTRYCODE_XML = "ISDN: Country code XML file cannot be found";
-    const string SUCCESS_LOADED_COUNTRYCODE_XML     = "ISDN: Country code XML file loaded";
+    const string SUCCESS_LOADED_COUNTRYCODE_XML = "ISDN: Country code XML file loaded";
 
     static Hashtable areaCodeLookup;
     static Hashtable countryCodeLookup;
@@ -61,8 +61,8 @@ namespace ProcessPlugins.CallerId
     static string myAreaCode;
     bool useOutlook = true;
     bool ISDNdisabled = false;
-    bool stopMedia    = true;
-    bool autoResume   = false;
+    bool stopMedia = true;
+    bool autoResume = false;
     int resumeTimeOut = -1;
 
     ISDNWatch ISDNWatch;
@@ -79,16 +79,16 @@ namespace ProcessPlugins.CallerId
           Hashtable areaTable = new Hashtable();
           areaTable.Add("", Strings.Unknown);
 
-          if (File.Exists(areaCodeXMLFile)) 
+          if (File.Exists(areaCodeXMLFile))
           {
             XmlDocument source = new XmlDocument();
-            source.Load(areaCodeXMLFile); 
+            source.Load(areaCodeXMLFile);
             XmlNodeList areaCodeNodes = source.SelectNodes("/codes/area");
-						
+
             XmlNode areaCodeNode;
             areaTable.Add("000", SUCCESS_LOADED_AREACODE_XML);	// slot 000 reserved for hashtable status
 
-            for (int i=0; i<areaCodeNodes.Count; i++)  // Loop through, pulling areacode and location
+            for (int i = 0; i < areaCodeNodes.Count; i++)  // Loop through, pulling areacode and location
             {
               areaCodeNode = areaCodeNodes[i];
               if (areaCodeNode.Attributes["iso"].Value == (string)CountryCodeLookup[myCountryCode])
@@ -112,7 +112,7 @@ namespace ProcessPlugins.CallerId
 
 
           areaCodeLookup = areaTable;
-        } 
+        }
         return areaCodeLookup;
       }
     }
@@ -128,16 +128,16 @@ namespace ProcessPlugins.CallerId
           Hashtable countryTable = new Hashtable();
           countryTable.Add("+", Strings.Unknown);
 
-          if (File.Exists(countryCodeXMLFile)) 
+          if (File.Exists(countryCodeXMLFile))
           {
             XmlDocument source = new XmlDocument();
-            source.Load(countryCodeXMLFile); 
+            source.Load(countryCodeXMLFile);
             XmlNodeList countryCodeNodes = source.SelectNodes("/codes/country");
 
             XmlNode countryCodeNode;
             countryTable.Add("000", SUCCESS_LOADED_COUNTRYCODE_XML);  // slot 000 reserved for hashtable status
 
-            for (int i=0; i<countryCodeNodes.Count; i++)  // Loop through, pulling countrycode and country
+            for (int i = 0; i < countryCodeNodes.Count; i++)  // Loop through, pulling countrycode and country
             {
               countryCodeNode = countryCodeNodes[i];
               countryCode = countryCodeNode.Attributes["code"].Value;
@@ -156,7 +156,7 @@ namespace ProcessPlugins.CallerId
             Log.Error("ISDN: Cannot load country codes from " + countryCodeXMLFile, "error");
           }
           countryCodeLookup = countryTable;
-        } 
+        }
         return countryCodeLookup;
       }
     }
@@ -172,16 +172,16 @@ namespace ProcessPlugins.CallerId
           Hashtable translatorTable = new Hashtable();
           translatorTable.Add(Strings.Unknown, Strings.Unknown);
 
-          if (File.Exists(translatorXMLFile)) 
+          if (File.Exists(translatorXMLFile))
           {
             XmlDocument source = new XmlDocument();
-            source.Load(translatorXMLFile); 
+            source.Load(translatorXMLFile);
             XmlNodeList translatorNodes = source.SelectNodes("/codes/country");
-						
+
             XmlNode translatorNode;
             translatorTable.Add("000", SUCCESS_LOADED_COUNTRYCODE_XML);	// slot 000 reserved for hashtable status
 
-            for (int i=0; i<translatorNodes.Count; i++)  // Loop through, pulling areacode and location
+            for (int i = 0; i < translatorNodes.Count; i++)  // Loop through, pulling areacode and location
             {
               translatorNode = translatorNodes[i];
               countryShort = translatorNode.Attributes["iso"].Value;
@@ -200,7 +200,7 @@ namespace ProcessPlugins.CallerId
             Log.Error("ISDN: Cannot load translator codes from " + translatorXMLFile, "error");
           }
           countryTranslator = translatorTable;
-        } 
+        }
         return countryTranslator;
       }
     }
@@ -289,7 +289,7 @@ namespace ProcessPlugins.CallerId
 
         ISDNWatch = new ISDNWatch();
         ISDNWatch.Start();
-        ISDNWatch.CidReceiver  += new ISDNWatch.EventHandler(ProcessCallerId);
+        ISDNWatch.CidReceiver += new ISDNWatch.EventHandler(ProcessCallerId);
       }
       else
       {
@@ -299,10 +299,10 @@ namespace ProcessPlugins.CallerId
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        useOutlook    = xmlreader.GetValueAsBool("isdn", "useoutlook", false);
-        stopMedia     = xmlreader.GetValueAsBool("isdn", "stopmedia", true);
-        autoResume    = xmlreader.GetValueAsBool("isdn", "autoresume", false);
-        resumeTimeOut = xmlreader.GetValueAsInt ("isdn", "timeout", -1);
+        useOutlook = xmlreader.GetValueAsBool("isdn", "useoutlook", false);
+        stopMedia = xmlreader.GetValueAsBool("isdn", "stopmedia", true);
+        autoResume = xmlreader.GetValueAsBool("isdn", "autoresume", false);
+        resumeTimeOut = xmlreader.GetValueAsInt("isdn", "timeout", -1);
         if (resumeTimeOut == 0)
           resumeTimeOut = -1;
       }
@@ -318,6 +318,10 @@ namespace ProcessPlugins.CallerId
 
     void ProcessCallerId(string callerId)
     {
+      string notifyHeading = GUILocalizeStrings.Get(1023); // 1023 Incoming call
+      string notifyText = "";
+      string notifyImage = "";
+
       if (callerId != null)
       {
         string country;
@@ -372,46 +376,49 @@ namespace ProcessPlugins.CallerId
           Log.Info("ISDN: Incoming call ({0}, {1} / {2})", location, (string)CountryTranslator[country], outlookQuery);
 
 
-        // Notify window popup
-        GUIDialogNotify dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-        if (dialogNotify != null)
+        if (country != Strings.Unknown)
         {
-          string notifyHeading = "";
-          string notifyText = "";
-          string notifyImage = "";
-          notifyHeading = GUILocalizeStrings.Get(1023); // 1023 Incoming call
-          if (country != Strings.Unknown)
+          notifyHeading = notifyHeading + " " + GUILocalizeStrings.Get(1024) + " " + location + ", " + (string)CountryTranslator[country]; // 1024 from
+          if (caller.Name != null)
           {
-            notifyHeading = notifyHeading + " " + GUILocalizeStrings.Get(1024) + " " + location + ", " + (string)CountryTranslator[country]; // 1024 from
-            if (caller.Name != null)
-            {
-              notifyText = caller.Name + "\n\n(" + caller.Type + ")";
-              if (caller.HasPicture)
-                notifyImage = Thumbs.Yac + @"\ContactPicture.jpg";
-              else
-                notifyImage = Thumbs.Yac + @"\text-message.jpg";
-            }
+            notifyText = caller.Name + "\n\n(" + caller.Type + ")";
+            if (caller.HasPicture)
+              notifyImage = Thumbs.Yac + @"\ContactPicture.jpg";
             else
-              notifyText = outlookQuery;
+              notifyImage = Thumbs.Yac + @"\private-number.jpg";
           }
           else
-          {
-            notifyText = callerId + "\n\n" + GUILocalizeStrings.Get(1025) + "\n" + GUILocalizeStrings.Get(1026); // 1025 An error occurred. 1026 See the log files for details.
-          }
-
-          if (g_Player.Playing && !g_Player.Paused && stopMedia)
-            g_Player.Pause();
-
-          dialogNotify.SetHeading(notifyHeading);
-          dialogNotify.SetText(notifyText);
-          dialogNotify.SetImage(notifyImage);
-          dialogNotify.TimeOut = resumeTimeOut;
-          dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
-          
-          if (g_Player.Playing && g_Player.Paused && stopMedia)
-            g_Player.Pause();
+            notifyText = outlookQuery;
+        }
+        else
+        {
+          notifyText = callerId + "\n\n" + GUILocalizeStrings.Get(1025) + "\n" + GUILocalizeStrings.Get(1026); // 1025 An error occurred. 1026 See the log files for details.
         }
       }
+      else
+      {
+        notifyText = GUILocalizeStrings.Get(1053); // 1053 Unknown caller
+        notifyImage = Thumbs.Yac + @"\private-number.jpg";
+      }
+
+      // Notify window popup
+      GUIDialogNotify dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+      if (dialogNotify != null)
+      {
+        if (g_Player.Playing && !g_Player.Paused && stopMedia)
+          g_Player.Pause();
+
+        dialogNotify.SetHeading(notifyHeading);
+        dialogNotify.SetText(notifyText);
+        dialogNotify.SetImage(notifyImage);
+        dialogNotify.TimeOut = resumeTimeOut;
+        dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
+
+        if (g_Player.Playing && g_Player.Paused && stopMedia)
+          g_Player.Pause();
+      }
+      else
+        Log.Error("ISDN: Failed to create dialog");
     }
   }
 }
