@@ -8499,25 +8499,25 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		name="ATI TV Wonder Pro Tuner"			checkdevice="true"/>
-        <filter cat="tvaudio"		name="ATI TV Wonder Pro TV Audio"		checkdevice="true"/>
+        <filter cat="tvtuner"		  name="ATI TV Wonder Pro Tuner"			  checkdevice="true"/>
+        <filter cat="tvaudio"		  name="ATI TV Wonder Pro TV Audio"		  checkdevice="true"/>
         <filter cat="crossbar"		name="ATI TV Wonder Pro A/V Crossbar"	checkdevice="true"/>
-        <filter cat="capture"  		name="ATI TV Wonder Pro A/V Capture"  	checkdevice="true"/>
-		<filter cat="audcapture"	name="%soundcard%"						checkdevice="true"/>
+        <filter cat="capture"  		name="ATI TV Wonder Pro A/V Capture"  checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"						        checkdevice="true"/>
         <filter cat="videncoder"	name="ATI Media Center Video Encoder"	checkdevice="false"/>
-        <filter cat="audencoder"	name="ATI Media Center Audio Encoder" 	checkdevice="false"/>
+        <filter cat="audencoder"	name="ATI Media Center Audio Encoder" checkdevice="false"/>
         <filter cat="mux"      		name="ATI Media Center Multiplexer"		checkdevice="false"/>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-        <connection sourcefilter="tvtuner"      sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-        <connection sourcefilter="tvaudio"      sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvaudio%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvaudio%"/>
         <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
         <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
-        <connection sourcefilter="capture"      sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
         <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
@@ -18491,6 +18491,203 @@
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
         <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"    sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Freecom Hybrid USB Stick (DVB-T)" capturename="Freecom Digital TV Video" devid="vid_14aa&amp;pid_0620">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Freecom Digital TV Receiver"      checkdevice="true"/>
+        <filter cat="capture"         name="Freecom Digital TV Video"         checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0"  sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0"  sinkfilter="capture"      sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Buffalo PC-MV5L/PCI" capturename="BUFFALO PC-MV5L/PCI Video Capture" devid="ven_4444&amp;dev_0016&amp;subsys_c4391461&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="BUFFALO PC-MV5L/PCI Tuner"					checkdevice="true"/>
+        <filter cat="tvaudio"  name="BUFFALO PC-MV5L/PCI TvAudio"				checkdevice="true"/>
+        <filter cat="crossbar" name="BUFFALO PC-MV5L/PCI Crossbar"			checkdevice="true"/>
+        <filter cat="capture"  name="BUFFALO PC-MV5L/PCI Video Capture" checkdevice="true"/>
+        <filter cat="encoder"  name="BUFFALO PC-MV5L/PCI Encoder"				checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"	sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Terratec Cinergy HT PCMCIA (Digital)" capturename="Cinergy HT PCMCIA BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_1172153b&amp;rev_d1">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Cinergy HT PCMCIA BDA DVBT Tuner"       checkdevice="true"/>
+        <filter cat="capture"         name="Cinergy HT PCMCIA BDA Digital Capture"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"  sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"      sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Terratec Cinergy HT PCMCIA (Analogue)" capturename="Cinergy HT PCMCIA BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_1172153b&amp;rev_d1">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="Cinergy HT PCMCIA BDA Analog TV Tuner"  checkdevice="true"/>
+        <filter cat="tvaudio"     name="Cinergy HT PCMCIA BDA Analog TV Audio"  checkdevice="true"/>
+        <filter cat="crossbar"    name="Cinergy HT PCMCIA BDA Analog Xbar"      checkdevice="true"/>
+        <filter cat="capture"     name="Cinergy HT PCMCIA BDA Analog Capture"   checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"	                        checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"	                        checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"			                        checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"	  sourcepin="2" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"        sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="MSI Digital@nywhere-ATSC" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_86261462&amp;rev_f0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true" />
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5" />
+      <filters>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"  checkdevice="false" />
+        <filter cat="tunerdevice"     name="713x BDA ATSC Tuner"              checkdevice="true" />
+        <filter cat="capture"         name="713x BDA Digital Capture"         checkdevice="true" />
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"  sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0" />
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"      sinkpin="0" />
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Terratec Cinergy 800e PVR" capturename="Cinergy 800e PVR, Capture" devid="vid_0ccd&amp;pid_003a">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="Cinergy 800e PVR, TvTuner"  checkdevice="true"/>
+        <filter cat="tvaudio"  name="Cinergy 800e PVR, TvAudio"  checkdevice="true"/>
+        <filter cat="crossbar" name="Cinergy 800e PVR, Crossbar" checkdevice="true"/>
+        <filter cat="capture"  name="Cinergy 800e PVR, Capture"  checkdevice="true"/>
+        <filter cat="encoder"  name="Cinergy 800e PVR, Encoder"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"/>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="VistaView Saber 2020 DVB-T Tuner 1" capturename="7162 BDA Digital Capture0" devid="ven_1131&amp;dev_7162&amp;subsys_661119d3&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="7162 BDA DVBT Tuner0"             checkdevice="true"/>
+        <filter cat="capture"         name="7162 BDA Digital Capture0"        checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="VistaView Saber 2020 DVB-T Tuner 2" capturename="7162 BDA Digital Capture1" devid="ven_1131&amp;dev_7162&amp;subsys_661119d3&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="7162 BDA DVBT Tuner1"             checkdevice="true"/>
+        <filter cat="capture"         name="7162 BDA Digital Capture1"        checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="VistaView Saber 2020 Analogue Tuner 1" capturename="7162 BDA Analog Capture0" devid="ven_1131&amp;dev_7162&amp;subsys_661119d3&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="7162 BDA Analog Tv Tuner0"	checkdevice="true"/>
+        <filter cat="tvaudio"		  name="7162 BDA Analog TV Audio0"	checkdevice="true"/>
+        <filter cat="crossbar"		name="7162 BDA Analog Xbar0"			checkdevice="true"/>
+        <filter cat="capture"		  name="7162 BDA Analog Capture0"		checkdevice="true"/>
+        <filter cat="encoder"	    name="7162 BDA MPEG PS Encoder0"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="encoder"	  sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="4" sinkfilter="encoder"	  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="VistaView Saber 2020 Analogue Tuner 2" capturename="7162 BDA Analog Capture1" devid="ven_1131&amp;dev_7162&amp;subsys_661119d3&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="7162 BDA Analog Tv Tuner1"	checkdevice="true"/>
+        <filter cat="tvaudio"		  name="7162 BDA Analog TV Audio1"	checkdevice="true"/>
+        <filter cat="crossbar"		name="7162 BDA Analog Xbar1"			checkdevice="true"/>
+        <filter cat="capture"		  name="7162 BDA Analog Capture1"		checkdevice="true"/>
+        <filter cat="encoder"	    name="7162 BDA MPEG PS Encoder1"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="encoder"	  sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="4" sinkfilter="encoder"	  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
