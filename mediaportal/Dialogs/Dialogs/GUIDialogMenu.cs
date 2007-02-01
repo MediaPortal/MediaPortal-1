@@ -250,6 +250,10 @@ namespace MediaPortal.Dialogs
               listView.Add(pItem);
             }
 
+            // Have to set focus here, because when base window tried, no items had been added to the list and it failed
+            GUIMessage focusmsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, _defaultControlId, 0, 0, null);
+            base.OnMessage(focusmsg);
+
             if (selectedItemIndex >= 0)
             {
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID, selectedItemIndex, 0, null);
