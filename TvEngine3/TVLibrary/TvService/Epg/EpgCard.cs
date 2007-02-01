@@ -43,8 +43,8 @@ namespace TvService
   {
     #region const
     const int EpgGrabInterval = 60;//secs
-    const int EpgTimeOut = (10 * 60);// 10 mins
-    const int EpgReGrabAfter = 4;//hours
+    int _epgTimeOut = (10 * 60);// 10 mins
+    int _epgReGrabAfter = 240;//4 hours
     #endregion
 
     #region enums
@@ -267,6 +267,19 @@ namespace TvService
         Log.Error("epg:invalid tuning");
         return;
       }
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting s = layer.GetSetting("timeoutEPGRefresh", "240");
+      if (Int32.TryParse(s.Value, out _epgReGrabAfter) == false)
+      {
+        _epgReGrabAfter = 240;
+      }
+      s = layer.GetSetting("timeoutEPG", "10");
+      if (Int32.TryParse(s.Value, out _epgTimeOut) == false)
+      {
+        _epgTimeOut = 10;
+      }
+
       Log.Epg("grab epg card:#{0} transponder: #{1} ch:{2} ", _card.IdCard, index, channel.Name);
       _transponders = transponders;
       _currentTransponderIndex = index;
@@ -358,11 +371,11 @@ namespace TvService
 
           //wait until grabbing has finished
           TimeSpan ts = DateTime.Now - _grabStartTime;
-          if (ts.TotalSeconds > EpgTimeOut)
+          if (ts.TotalMinutes > _epgTimeOut)
           {
             //epg grabber timed out. Update database
             //and go back to idle mode
-            Log.Epg("Epg: card:{0} timeout", _user.CardId, ts.TotalSeconds);
+            Log.Epg("Epg: card:{0} timeout after {1} mins", _user.CardId, ts.TotalMinutes);
             if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
             {
               Transponder transponder = _transponders[_currentTransponderIndex];
@@ -751,7 +764,7 @@ namespace TvService
       string epgLanguages = setting.Value;
 
       TimeSpan ts = DateTime.Now - channel.LastGrabTime;
-      if (ts.TotalHours < EpgReGrabAfter)
+      if (ts.TotalMinutes < _epgReGrabAfter)
       {
         Log.Epg("Epg: card:{0} :{1} {2} not needed lastUpdate:{3}", _user.CardId, channelNr, channel.Name, channel.LastGrabTime);
         return false;

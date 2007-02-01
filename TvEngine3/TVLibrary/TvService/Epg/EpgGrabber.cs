@@ -46,7 +46,7 @@ namespace TvService
   public class EpgGrabber
   {
     #region variables
-    const int EpgReGrabAfter = 4;//hours
+    int _epgReGrabAfter = 4*60;//hours
     System.Timers.Timer _epgTimer = new System.Timers.Timer();
 
     bool _isRunning;
@@ -91,6 +91,13 @@ namespace TvService
     public void Start()
     {
       if (_isRunning) return;
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting s = layer.GetSetting("timeoutEPGRefresh", "240");
+      if (Int32.TryParse(s.Value, out _epgReGrabAfter) == false)
+      {
+        _epgReGrabAfter = 240;
+      }
       GetTransponders();
       if (_transponders.Count == 0) return;
       _transponderIndex = -1;
@@ -205,7 +212,7 @@ namespace TvService
           if (transponder.Index >= transponder.Channels.Count) return;
           //check if its time to grab the epg for this channel
           TimeSpan ts = DateTime.Now - transponder.Channels[transponder.Index].LastGrabTime;
-          if (ts.TotalHours < EpgReGrabAfter)
+          if (ts.TotalMinutes < _epgReGrabAfter)
           {
             if (allChecked >= transponder.Channels.Count) break;
             continue; // less then 2 hrs ago

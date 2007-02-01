@@ -58,6 +58,8 @@ namespace SetupTv.Sections
       textBoxCAT.Text = layer.GetSetting("timeoutCAT", "5").Value;
       textBoxPMT.Text = layer.GetSetting("timeoutPMT", "10").Value;
       textBoxSDT.Text = layer.GetSetting("timeoutSDT", "20").Value;
+      textBoxEpgTimeOut.Text = layer.GetSetting("timeoutEPG", "10").Value;
+      textBoxEPGRefresh.Text = layer.GetSetting("timeoutEPGRefresh", "240").Value;
     }
     public override void OnSectionDeActivated()
     {
@@ -82,6 +84,29 @@ namespace SetupTv.Sections
       s = layer.GetSetting("timeoutSDT", "20");
       s.Value = textBoxSDT.Text;
       s.Persist();
+
+      s = layer.GetSetting("timeoutEPG", "10");
+      s.Value = textBoxEpgTimeOut.Text;
+      s.Persist();
+
+      s = layer.GetSetting("timeoutEPGRefresh", "240");
+      s.Value = textBoxEPGRefresh.Text;
+      s.Persist();
+    }
+
+    private void groupBox1_Enter(object sender, EventArgs e)
+    {
+
+    }
+
+    private void ScanSettings_Load(object sender, EventArgs e)
+    {
+
+    }
+
+    private void textBox1_TextChanged(object sender, EventArgs e)
+    {
+
     }
   }
 }
