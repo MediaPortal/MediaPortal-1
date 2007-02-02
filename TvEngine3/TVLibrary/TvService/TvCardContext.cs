@@ -116,6 +116,23 @@ namespace TvService
     }
 
     /// <summary>
+    /// Sets the owner.
+    /// </summary>
+    /// <value>The owner.</value>
+    public User Owner
+    {
+      get
+      {
+        return _owner;
+      }
+      set
+      {
+        _owner = value;
+      }
+    }
+
+
+    /// <summary>
     /// Adds the specified user.
     /// </summary>
     /// <param name="user">The user.</param>

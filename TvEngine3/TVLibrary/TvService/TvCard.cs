@@ -1061,7 +1061,7 @@ namespace TvService
     {
       get
       {
-        User[] users=GetUsers();
+        User[] users = GetUsers();
         if (users == null) return false;
         if (users.Length == 0) return false;
         for (int i = 0; i < users.Length; ++i)
@@ -1724,7 +1724,12 @@ namespace TvService
           }
 
           Log.Write("card: StartRecording {0} {1}", _dbsCard.IdCard, fileName);
-          return subchannel.StartRecording((_dbsCard.RecordingFormat == 1), fileName);
+          bool result = subchannel.StartRecording((_dbsCard.RecordingFormat == 1), fileName);
+          if (result)
+          {
+            context.Owner = user;
+          }
+          return result;
 
         }
       }
@@ -1773,6 +1778,20 @@ namespace TvService
             if (subchannel.IsTimeShifting == false)
             {
               RemoveUser(user);
+            }
+          }
+
+          User[] users = context.Users;
+          for (int i = 0; i < users.Length; ++i)
+          {
+            ITvSubChannel subchannel = _card.GetSubChannel(users[i].SubChannel);
+            if (subchannel != null)
+            {
+              if (subchannel.IsRecording)
+              {
+                context.Owner = users[i];
+                break;
+              }
             }
           }
           return true;
@@ -2116,7 +2135,7 @@ namespace TvService
               }
               else
               {
-                Log.Info("card: user:{0} is not the card owner. Cannot switch transponder",user.Name);
+                Log.Info("card: user:{0} is not the card owner. Cannot switch transponder", user.Name);
                 return TvResult.NotTheOwner;
               }
             }
