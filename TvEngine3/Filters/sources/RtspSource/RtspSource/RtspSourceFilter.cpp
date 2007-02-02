@@ -153,13 +153,16 @@ void CRtspSourceFilter::ThreadProc()
 		long ticks=GetTickCount()-m_tickUpdateCount;
     if (ticks>1000 && IsClientRunning())
 	  {
-		  ticks=GetTickCount()-m_tickCount;
-			CRefTime duration= CRefTime(m_client.Duration());
-      CRefTime refAdd(ticks);
-      duration+=refAdd;
-			m_pOutputPin->SetDuration( duration);
-      NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
-      m_tickUpdateCount=GetTickCount();
+      if (m_State == State_Running)
+      {
+		    ticks=GetTickCount()-m_tickCount;
+			  CRefTime duration= CRefTime(m_client.Duration());
+        CRefTime refAdd(ticks);
+        duration+=refAdd;
+			  m_pOutputPin->SetDuration( duration);
+        //NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
+        m_tickUpdateCount=GetTickCount();
+      }
 	  }
 		Sleep(10);
 	}
@@ -272,8 +275,9 @@ HRESULT CRtspSourceFilter::OnConnect()
     return E_FAIL;
   }
 	
-	Log("Filter:setup demuxer...");
+	Log("Filter:setup pause client...");
   m_client.Pause();
+	Log("Filter:setup demuxer...");
   m_bPaused=true;
   m_pDemux->set_ClockMode(3);
   m_pDemux->set_Auto(TRUE);
@@ -414,7 +418,7 @@ STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *
 	if (wcsstr(m_fileName,L"rtsp://")==NULL)
 	{
 		Log("Filter:using defailt filename");
-		wcscpy(m_fileName,L"rtsp://192.168.1.58/stream5");
+		wcscpy(m_fileName,L"rtsp://192.168.1.102/stream1.0");
 	}
   if (wcsstr(m_fileName,L"stream")!=NULL)
   {
@@ -482,7 +486,10 @@ LONG CRtspSourceFilter::GetData(BYTE* pData, long size)
   DWORD bytesRead= m_buffer.ReadFromBuffer(pData, size);
   return bytesRead;
 }
-
+CMemoryBuffer& CRtspSourceFilter::Buffer()
+{
+  return m_buffer;
+}
 
 void CRtspSourceFilter::OnTsPacket(byte* tsPacket)
 {

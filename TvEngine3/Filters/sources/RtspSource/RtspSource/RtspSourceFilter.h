@@ -67,6 +67,7 @@ public:
 	void OnNewChannel(CChannelInfo& info);  
   BOOL IsClientRunning(void); 
 	void ThreadProc();
+  CMemoryBuffer& Buffer();
 private:
   Demux*          m_pDemux;
   PidInfo         m_pids;

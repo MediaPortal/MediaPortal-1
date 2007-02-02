@@ -245,7 +245,9 @@ HRESULT COutputPin::Run(REFERENCE_TIME tStart)
 		Demux::GetReferenceClock(m_pFilter, &pClock);
 		SetDemuxClock(pClock);
 	}
-	return CBaseOutputPin::Run(tStart);
+	HRESULT hr= CBaseOutputPin::Run(tStart);
+	Log("COutputPin::Run() done");
+  return hr;
 }
 HRESULT COutputPin::GetDuration(LONGLONG *pDuration)
 {
@@ -283,6 +285,7 @@ HRESULT COutputPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLON
 		{
 				m_bSeeking = true;
 
+        m_pFilter->Buffer().Run(false);
         Log("COutputPin::SetPositions()#1");
 				if(m_pFilter->is_Active() && !m_DemuxLock)
 				  SetDemuxClock(NULL);
@@ -310,6 +313,7 @@ HRESULT COutputPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLON
 				CAutoLock lock(&m_SeekLock);
 				HRESULT hr=CSourceSeeking::SetPositions(&rtCurrent, CurrentFlags, pStop, StopFlags);
         
+        m_pFilter->Buffer().Run(true);
         Log("COutputPin::SetPositions()#6");
         return hr;
 //			}

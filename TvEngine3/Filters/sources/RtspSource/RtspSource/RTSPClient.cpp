@@ -208,7 +208,7 @@ bool CRTSPClient::Initialize()
 	TaskScheduler* scheduler = BasicTaskScheduler::createNew();
   m_env = BasicUsageEnvironment::createNew(*scheduler);
 	
-  m_ourClient = createClient(*m_env, 0/*verbosityLevel*/, "TSFileSource");
+  m_ourClient = createClient(*m_env, 1/*verbosityLevel*/, "TSFileSource");
   if (m_ourClient == NULL) 
 	{
     Log("Failed to create %s %s" ,clientProtocolName,m_env->getResultMsg() );
