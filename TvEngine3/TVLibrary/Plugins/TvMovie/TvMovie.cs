@@ -86,17 +86,17 @@ namespace TvEngine
 
     public string Name
     {
-      get { return "TV Movie ClickFinder Import"; }
+      get { return "TV Movie EPG import"; }
     }
 
     public string Version
     {
-      get { return "0.2"; }
+      get { return "0.2.2.0"; }
     }
 
     public string Author
     {
-      get { return "mPod"; }
+      get { return "mPod/rtv"; }
     }
 
     public bool MasterOnly

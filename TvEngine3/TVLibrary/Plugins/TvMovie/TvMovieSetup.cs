@@ -267,18 +267,33 @@ namespace SetupTv.Sections
     private void SaveMapping()
     {
       IList mappingList = TvMovieMapping.ListAll();
-      foreach (TvMovieMapping mapping in mappingList)
-        mapping.Remove();
+
+      if (mappingList != null && mappingList.Count > 0)
+      {
+        foreach (TvMovieMapping mapping in mappingList)
+          mapping.Remove();
+      }
+      else
+        Log.Info("TvMovieSetup: SaveMapping - no mappingList items");
+
+      TvBusinessLayer layer = new TvBusinessLayer();
 
       foreach (TreeNode channel in treeViewChannels.Nodes)
       {
         foreach (TreeNode station in channel.Nodes)
         {
-          TvBusinessLayer layer = new TvBusinessLayer();
           ChannelInfo channelInfo = (ChannelInfo)station.Tag;
           TvMovieMapping mapping = new TvMovieMapping(layer.GetChannelByName(channel.Text).IdChannel,
             channelInfo.Name, channelInfo.Start, channelInfo.End);
-          mapping.Persist();
+          Log.Write("TvMovieSetup: SaveMapping - new mapping for {0}/{1}", channel.Text, channelInfo.Name);
+          try
+          {
+            mapping.Persist();
+          }
+          catch (Exception ex)
+          {
+            Log.Error("TvMovieSetup: Error on mapping.Persist() {0},{1}", ex.Message, ex.StackTrace);
+          }
         }
       }
     }
@@ -524,11 +539,6 @@ namespace SetupTv.Sections
       }
       else
         SaveMapping();
-    }
-
-    private void checkBoxUseDatabaseDate_CheckedChanged(object sender, EventArgs e)
-    {
-      labelBetaMode.Visible = checkBoxUseDatabaseDate.Checked;
     }
   }
 }
