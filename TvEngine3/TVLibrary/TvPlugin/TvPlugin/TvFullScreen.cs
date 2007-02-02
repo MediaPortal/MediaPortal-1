@@ -436,6 +436,7 @@ namespace TvPlugin
             {
               TvMiniGuide miniGuide = (TvMiniGuide)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MINI_GUIDE);
               _isDialogVisible = true;
+              miniGuide.AutoZap = true;
               miniGuide.DoModal(GetID);
               _isDialogVisible = false;
 

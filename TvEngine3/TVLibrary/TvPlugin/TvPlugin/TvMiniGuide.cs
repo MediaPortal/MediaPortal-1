@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
@@ -48,9 +49,12 @@ namespace TvPlugin
   public class TvMiniGuide : GUIWindow, IRenderLayer
   {
     // Member variables                                  
-    [SkinControlAttribute(34)]    protected GUIButtonControl cmdExit = null;
-    [SkinControlAttribute(35)]    protected GUIListControl lstChannels = null;
-    [SkinControlAttribute(36)]    protected GUISpinControl spinGroup = null;
+    [SkinControlAttribute(34)]
+    protected GUIButtonControl cmdExit = null;
+    [SkinControlAttribute(35)]
+    protected GUIListControl lstChannels = null;
+    [SkinControlAttribute(36)]
+    protected GUISpinControl spinGroup = null;
 
     bool m_bRunning = false;
     bool _altLayout = false;
@@ -58,6 +62,8 @@ namespace TvPlugin
     GUIWindow m_pParentWindow = null;
     List<Channel> tvChannelList = null;
     List<ChannelGroup> ChannelGroupList = null;
+    Channel _selectedChannel;
+    bool _zap=true;
 
     /// <summary>
     /// Constructor
@@ -81,11 +87,47 @@ namespace TvPlugin
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this instance is tv.
+    /// </summary>
+    /// <value><c>true</c> if this instance is tv; otherwise, <c>false</c>.</value>
     public override bool IsTv
     {
       get
       {
         return true;
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets the selected channel.
+    /// </summary>
+    /// <value>The selected channel.</value>
+    public Channel SelectedChannel
+    {
+      get
+      {
+        return _selectedChannel;
+      }
+      set
+      {
+        _selectedChannel = value;
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether [auto zap].
+    /// </summary>
+    /// <value><c>true</c> if [auto zap]; otherwise, <c>false</c>.</value>
+    public bool AutoZap
+    {
+      get
+      {
+        return _zap;
+      }
+      set
+      {
+        _zap = value;
       }
     }
 
@@ -150,11 +192,15 @@ namespace TvPlugin
               if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
               {
                 // switching logic
-                string selectedChan = (string)lstChannels.SelectedListItem.TVTag;                
-                if (TVHome.Navigator.CurrentChannel != selectedChan)
+                SelectedChannel = (Channel)lstChannels.SelectedListItem.MusicTag;
+                if (AutoZap)
                 {
-                  TVHome.Navigator.ZapToChannel(tvChannelList[lstChannels.SelectedListItemIndex], false);
-                  TVHome.Navigator.ZapNow();
+                  string selectedChan = (string)lstChannels.SelectedListItem.TVTag;
+                  if (TVHome.Navigator.CurrentChannel != selectedChan)
+                  {
+                    TVHome.Navigator.ZapToChannel(tvChannelList[lstChannels.SelectedListItemIndex], false);
+                    TVHome.Navigator.ZapNow();
+                  }
                 }
                 Close();
               }
@@ -261,6 +307,12 @@ namespace TvPlugin
     /// </summary>
     public void FillChannelList()
     {
+      Thread fillThread = new Thread(new ThreadStart(DoFillChannelList));
+      fillThread.Start();
+    }
+
+    void DoFillChannelList()
+    {
       tvChannelList = new List<Channel>();
       foreach (GroupMap map in TVHome.Navigator.CurrentGroup.ReferringGroupMap())
       {
@@ -286,12 +338,13 @@ namespace TvPlugin
           item = new GUIListItem("");
           // store here as it is not needed right now - please beat me later..
           item.TVTag = current.Name;
+          item.MusicTag = current;
           if (!_altLayout)
             item.Label2 = current.Name;
           logo = Utils.GetCoverArt(Thumbs.TVChannel, current.Name);
 
           // if we are watching this channel mark it
-          if (TVHome.Navigator.CurrentChannel.CompareTo(tvChannelList[i].Name) == 0)
+          if (TVHome.Navigator.Channel.IdChannel==tvChannelList[i].IdChannel)
           {
             item.IsRemote = true;
             selected = lstChannels.Count;
@@ -307,7 +360,8 @@ namespace TvPlugin
             item.IconImageBig = string.Empty;
             item.IconImage = string.Empty;
           }
-          prog = GetCurrentProgram(current);
+
+          prog = current.CurrentProgram;
 
           if (prog == null || prog.Title == String.Empty)
             item.Label2 = current.Name;
@@ -325,9 +379,9 @@ namespace TvPlugin
               item.Label2 = sb.ToString();
             }
             else
-            item.Label3 = prog.Title + ": " + CalculateProgress(prog).ToString() + "%";
+              item.Label3 = prog.Title + ": " + CalculateProgress(prog).ToString() + "%";
           }
-          prognext = GetNextProgram(current, prog);
+          prognext = current.NextProgram;
           if (prognext != null)
           {
             //                    item.Label = prognext.Title + " [" + prognext.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "-" + prognext.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "]";
@@ -361,34 +415,6 @@ namespace TvPlugin
       }
       else
         return 0;
-    }
-
-    /// <summary>
-    /// Get current tv program
-    /// </summary>
-    /// <param name="channel"></param>
-    /// <returns></returns>
-    private Program GetCurrentProgram(Channel channel)
-    {
-      //DateTime timeshiftStart = Recorder.TimeTimeshiftingStarted; 
-      //DateTime livePoint = timeshiftStart.AddSeconds(g_Player.CurrentPosition);
-      //livePoint = livePoint.AddSeconds(g_Player.ContentStart);
-      Program prog = channel.CurrentProgram;
-      return prog;
-    }
-
-    /// <summary>
-    /// Get next tv program
-    /// </summary>
-    /// <param name="channel"></param>
-    /// <param name="based"></param>
-    /// <returns></returns>
-    private Program GetNextProgram(Channel channel, Program based)
-    {
-      if (based == null)
-        return null;
-      Program prognext = channel.GetProgramAt(based.EndTime.AddMinutes(1));
-      return prognext;
     }
 
     /// <summary>

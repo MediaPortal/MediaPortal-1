@@ -572,37 +572,12 @@ namespace TvPlugin
 
     void OnSelectChannel()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
-      dlg.Reset();
-      dlg.SetHeading(891); // Select TV channel
-      int selected = 0;
-      IList groups = Navigator.CurrentGroup.ReferringGroupMap();
-      List<Channel> channels = new List<Channel>();
-      for (int i = 0; i < groups.Count; ++i)
-      {
-        GroupMap gm = (GroupMap)groups[i];
-        Channel channel = gm.ReferencedChannel();
-        if (channel.IsTv == false) continue;
-        if (channel.VisibleInGuide == false) continue;
-        dlg.Add(channel.Name);
-        channels.Add(channel);
-        if (Navigator.Channel != null)
-        {
-          if (channel.IdChannel == Navigator.Channel.IdChannel)
-          {
-            selected = i;
-          }
-        }
-      }
-      dlg.SelectedLabel = selected;
-      dlg.DoModal(this.GetID);
-      if (dlg.SelectedLabel < 0)
-      {
-        MediaPortal.GUI.Library.Log.Info("TVHome:nothing selected");
-        return;
-      }
-      ViewChannelAndCheck(channels[dlg.SelectedLabel]);
+      TvMiniGuide miniGuide = (TvMiniGuide)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MINI_GUIDE);
+      miniGuide.AutoZap = false;
+      miniGuide.SelectedChannel = Navigator.Channel;
+      miniGuide.DoModal(GetID);
+
+      ViewChannelAndCheck(miniGuide.SelectedChannel);
     }
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
