@@ -680,7 +680,7 @@ namespace TvService
         user.CardId = card.DataBaseCard.IdCard;
         if (card.IsAnySubChannelRecording)
         {
-            return true;
+          return true;
         }
       }
       return false;
@@ -694,21 +694,27 @@ namespace TvService
     /// <returns>
     /// 	<c>true</c> if the specified channel name is recording; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsRecording(string channelName, out VirtualCard vcard)
+    public bool IsRecording(string channelName, out VirtualCard card)
     {
-      vcard = null;
+      card = null;
       Dictionary<int, TvCard>.Enumerator en = _cards.GetEnumerator();
       while (en.MoveNext())
       {
-        TvCard card = en.Current.Value;
-        User user = new User();
-        user.CardId = card.DataBaseCard.IdCard;
-        if (card.IsRecording(ref user))
+        TvCard tvcard = en.Current.Value;
+        User[] users = tvcard.GetUsers();
+        if (users == null) continue;
+        if (users.Length == 0) continue;
+        for (int i = 0; i < users.Length; ++i)
         {
-          if (card.CurrentChannelName(ref user) == channelName)
+          User user = users[i];
+          if (tvcard.CurrentChannelName(ref user) == null) continue;
+          if (tvcard.CurrentChannelName(ref user) == channelName)
           {
-            vcard = GetVirtualCard(user);
-            return true;
+            if (tvcard.IsRecording(ref user))
+            {
+              card = GetVirtualCard(user);
+              return true;
+            }
           }
         }
       }
@@ -1700,7 +1706,7 @@ namespace TvService
             else
             {
               //different transponder, are we the owner of this card?
-              if (false == IsOwner(keyPair.Value.DataBaseCard.IdCard,user))
+              if (false == IsOwner(keyPair.Value.DataBaseCard.IdCard, user))
               {
                 //no
                 Log.Write("Controller:    card:{0} type:{1} is tuned to different transponder", keyPair.Value.DataBaseCard.IdCard, Type(keyPair.Value.DataBaseCard.IdCard));

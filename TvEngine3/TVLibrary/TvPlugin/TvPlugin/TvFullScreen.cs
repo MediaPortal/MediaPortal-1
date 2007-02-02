@@ -740,9 +740,7 @@ namespace TvPlugin
 
           if (!_dlgYesNo.IsConfirmed) return true;
 
-          int id = TVHome.Card.RecordingScheduleId;
-          if (id > 0)
-            TVHome.TvServer.StopRecordingSchedule(id);
+          card.StopRecording();
           GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
           if (dlgNotify == null) return true;
           string logo = Utils.GetCoverArt(Thumbs.TVChannel, channel);

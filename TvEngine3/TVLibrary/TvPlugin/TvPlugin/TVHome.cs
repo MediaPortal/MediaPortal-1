@@ -185,7 +185,7 @@ namespace TvPlugin
         if (_card == null)
         {
           User user = new User();
-          _card = TvServer.CardByIndex(user,0);
+          _card = TvServer.CardByIndex(user, 0);
         }
         return _card;
       }
@@ -310,84 +310,68 @@ namespace TvPlugin
           }
 
           MediaPortal.GUI.Library.Log.Info("TVHome:Record action");
-          if (TVHome.Card.IsTimeShifting)
+          TvServer server = new TvServer();
+          string channel = TVHome.Card.ChannelName;
+          VirtualCard card;
+          if (false == server.IsRecording(channel, out card))
           {
-            string channel = TVHome.Card.ChannelName;
-            //yes, are we recording this channel already ?
-            Program prog = Navigator.GetChannel(channel).CurrentProgram;
-            bool isRecording = false;
-            TvServer server = new TvServer();
-            for (int i = 0; i < server.Count; ++i)
-            {
-              User user = new User();
-              VirtualCard card = server.CardByIndex(user,i);
-              if (card.IsRecording)
-              {
-                if (card.Channel.Name == channel)
-                {
-                  isRecording = true;
-                  break;
-                }
-              }
-            }
             TvBusinessLayer layer = new TvBusinessLayer();
-            if (!isRecording)
+            Program prog = null;
+            if (Navigator.Channel != null)
+              prog = Navigator.Channel.CurrentProgram;
+            if (prog != null)
             {
-              if (prog != null)
+              GUIDialogMenuBottomRight pDlgOK = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
+              if (pDlgOK != null)
               {
-                GUIDialogMenuBottomRight pDlgOK = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
-                if (pDlgOK != null)
+                pDlgOK.Reset();
+                pDlgOK.SetHeading(605);//my tv
+                pDlgOK.AddLocalizedString(875); //current program
+                pDlgOK.AddLocalizedString(876); //till manual stop
+                pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+                switch (pDlgOK.SelectedId)
                 {
-                  pDlgOK.Reset();
-                  pDlgOK.SetHeading(605);//my tv
-                  pDlgOK.AddLocalizedString(875); //current program
-                  pDlgOK.AddLocalizedString(876); //till manual stop
-                  pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
-                  switch (pDlgOK.SelectedId)
-                  {
-                    case 875:
-                      {
-                        //record current program
-                        Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, Navigator.Channel.CurrentProgram.Title,
-                                                    Navigator.Channel.CurrentProgram.StartTime, Navigator.Channel.CurrentProgram.EndTime);
-                        newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-                        newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-                        newSchedule.Persist();
-                        server.OnNewSchedule();
-                      }
-                      break;
+                  case 875:
+                    {
+                      //record current program
+                      Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, Navigator.Channel.CurrentProgram.Title,
+                                                  Navigator.Channel.CurrentProgram.StartTime, Navigator.Channel.CurrentProgram.EndTime);
+                      newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+                      newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+                      newSchedule.Persist();
+                      server.OnNewSchedule();
+                    }
+                    break;
 
-                    case 876:
-                      {
-                        Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
-                                                    DateTime.Now, DateTime.Now.AddDays(1));
-                        newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-                        newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+                  case 876:
+                    {
+                      Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
+                                                  DateTime.Now, DateTime.Now.AddDays(1));
+                      newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+                      newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
 
-                        newSchedule.Persist();
-                        server.OnNewSchedule();
-                      }
-                      break;
-                  }
+                      newSchedule.Persist();
+                      server.OnNewSchedule();
+                    }
+                    break;
                 }
               }
-              else
-              {
-                Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
-                                                    DateTime.Now, DateTime.Now.AddDays(1));
-                newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-                newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-
-                newSchedule.Persist();
-                server.OnNewSchedule();
-              }
-            }
+            }//if (prog != null)
             else
             {
-              int id = TVHome.Card.RecordingScheduleId;
-              if (id > 0)
-                TVHome.TvServer.StopRecordingSchedule(id);
+              Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
+                                                  DateTime.Now, DateTime.Now.AddDays(1));
+              newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+              newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+
+              newSchedule.Persist();
+              server.OnNewSchedule();
+
             }
+          }//if (false == server.IsRecording(channel, out Card))
+          else
+          {
+            card.StopRecording();
           }
           break;
 
@@ -785,7 +769,7 @@ namespace TvPlugin
         bool isTimeShifting;
         User user = new User();
         user.CardId = card.IdCard;
-        VirtualCard tvcard = new VirtualCard(user,RemoteControl.HostName);
+        VirtualCard tvcard = new VirtualCard(user, RemoteControl.HostName);
         isRecording = tvcard.IsRecording;
         isTimeShifting = tvcard.IsTimeShifting;
         if (isRecording || isTimeShifting)
@@ -837,7 +821,9 @@ namespace TvPlugin
       //record now.
       //Are we recording this channel already?
       TvBusinessLayer layer = new TvBusinessLayer();
-      if (!TVHome.Card.IsRecording)
+      TvServer server = new TvServer();
+      VirtualCard card;
+      if (false == server.IsRecording(Navigator.Channel.Name, out card))
       {
         //no then start recording
         Program prog = Navigator.Channel.CurrentProgram;
@@ -860,7 +846,6 @@ namespace TvPlugin
                   newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
 
                   newSchedule.Persist();
-                  TvServer server = new TvServer();
                   server.OnNewSchedule();
                 }
                 break;
@@ -873,7 +858,6 @@ namespace TvPlugin
                   newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
 
                   newSchedule.Persist();
-                  TvServer server = new TvServer();
                   server.OnNewSchedule();
                 }
                 break;
@@ -889,27 +873,20 @@ namespace TvPlugin
           newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
 
           newSchedule.Persist();
-          TvServer server = new TvServer();
           server.OnNewSchedule();
         }
       }
       else
       {
-        if (TVHome.Card.IsRecording)
-        {
+        card.StopRecording();
           //yes then stop recording
           Navigator.UpdateCurrentChannel();
 
-
-          int id = TVHome.Card.RecordingScheduleId;
-          if (id > 0)
-            TVHome.TvServer.StopRecordingSchedule(id);
-
-          // and re-start viewing.... 
-          MediaPortal.GUI.Library.Log.Info("tv home stoprecording chan:{0}", Navigator.CurrentChannel);
-          ViewChannel(Navigator.Channel);
-          Navigator.UpdateCurrentChannel();
-        }
+        // and re-start viewing.... 
+        MediaPortal.GUI.Library.Log.Info("tv home stoprecording chan:{0}", Navigator.CurrentChannel);
+        ViewChannel(Navigator.Channel);
+        Navigator.UpdateCurrentChannel();
+        
       }
       UpdateStateOfButtons();
     }
@@ -933,18 +910,22 @@ namespace TvPlugin
         btnTeletext.IsVisible = hasTeletext;
       }
       //are we recording a tv program?
-      if (TVHome.Card.IsRecording)
+      VirtualCard card;
+      if (Navigator.Channel != null && TVHome.Card != null)
       {
-        //yes then disable the timeshifting on/off buttons
-        //and change the Record Now button into Stop Record
-        btnRecord.Label = GUILocalizeStrings.Get(629);//stop record
-      }
-      else
-      {
-        //nop. then change the Record Now button
-        //to Record Now
-        btnRecord.Label = GUILocalizeStrings.Get(601);// record
-
+        TvServer server = new TvServer();
+        if (server.IsRecording(Navigator.Channel.Name, out card))
+        {
+          //yes then disable the timeshifting on/off buttons
+          //and change the Record Now button into Stop Record
+          btnRecord.Label = GUILocalizeStrings.Get(629);//stop record
+        }
+        else
+        {
+          //nop. then change the Record Now button
+          //to Record Now
+          btnRecord.Label = GUILocalizeStrings.Get(601);// record
+        }
       }
     }
 
@@ -1179,7 +1160,7 @@ namespace TvPlugin
       VirtualCard card;
 
       User user = new User();
-      succeeded = server.StartTimeShifting(ref user,channel.IdChannel, out card);
+      succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
       TVHome.Card = card;
       MediaPortal.GUI.Library.Log.Info("succeeded:{0} ", succeeded);
       if (succeeded == TvResult.Succeeded)
@@ -1459,7 +1440,7 @@ namespace TvPlugin
               MediaPortal.GUI.Library.Log.Info("tvhome:seektoend  done dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
             }
           }*/
-          g_Player.SeekAbsolute(duration+10);
+          g_Player.SeekAbsolute(duration + 10);
         }
       }
       else
@@ -1566,8 +1547,8 @@ namespace TvPlugin
           XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
           XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
           XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
-          node.InnerText=connectionString;
-          nodeProvider.InnerText=provider;
+          node.InnerText = connectionString;
+          nodeProvider.InnerText = provider;
           doc.Save("gentle.config");
         }
         catch (Exception ex)
@@ -1824,7 +1805,7 @@ namespace TvPlugin
           for (int i = 0; i < server.Count; ++i)
           {
             User user = new User();
-            VirtualCard card = server.CardByIndex(user,i);
+            VirtualCard card = server.CardByIndex(user, i);
             if (card.IsRecording)
             {
               id = card.IdChannel;
