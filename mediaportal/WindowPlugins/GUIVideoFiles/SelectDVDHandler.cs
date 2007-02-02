@@ -184,6 +184,7 @@ namespace MediaPortal.GUI.Video
             }
             else
             {
+              Log.Debug("SelectDVDHandler.OnPlayDVD - skipping");
               g_Player.SeekAbsolute(timeMovieStopped);
             }
           }

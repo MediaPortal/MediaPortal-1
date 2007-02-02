@@ -780,7 +780,7 @@ namespace MediaPortal.GUI.Video
               ArrayList bookmarks = new ArrayList();
               VideoDatabase.GetBookMarksForMovie(strMovie, ref bookmarks);			// load the stored bookmarks
               if (bookmarks.Count <= 0) return;						// no bookmarks? leave if so ...
-
+              Log.Debug("GUIVideoOSD.BOOKMARKS_LIST - skipping");
               g_Player.SeekAbsolute((double)bookmarks[m_iCurrentBookmark]);	// set mplayers play position
             }
           }

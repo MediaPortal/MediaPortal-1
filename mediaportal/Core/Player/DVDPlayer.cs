@@ -1182,6 +1182,7 @@ namespace MediaPortal.Player
           if (newTime < 0.0d) newTime = 0.0d;
           if (newTime < Duration)
           {
+            Log.Debug("DVDPlayer.SeekRelative()");
             SeekAbsolute(newTime);
           }
         }
@@ -1249,6 +1250,7 @@ namespace MediaPortal.Player
           if (curPercent < 0.0d) curPercent = 0.0d;
           if (curPercent < Duration)
           {
+            Log.Debug("DVDPlayer.SeekRelativePercentage()");
             SeekAbsolute(curPercent);
           }
         }
@@ -1266,6 +1268,7 @@ namespace MediaPortal.Player
           if (percentage >= 100) percentage = 100;
           double percent = Duration / 100.0f;
           percent *= (double)percentage;
+          Log.Debug("DVDPlayer.SeekAbsolutePercentage()");
           SeekAbsolute(percent);
         }
       }

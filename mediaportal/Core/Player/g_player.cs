@@ -1261,6 +1261,7 @@ namespace MediaPortal.Player
         double dTime = (int)_currentStep + _player.CurrentPosition;
         if (dTime < 0) dTime = 0d;
         if (dTime > _player.Duration) dTime = _player.Duration - 5;
+        Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}:{2}", (int)(dTime / 3600d), (int)((dTime % 3600d) / 60d), (int)(dTime % 60d));
         _player.SeekAbsolute(dTime);
         Speed = Speed;
         GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
@@ -1395,6 +1396,7 @@ namespace MediaPortal.Player
     static public void SeekAbsolute(double dTime)
     {
       if (_player == null) return;
+      Log.Debug("g_Player.SeekAbsolute() - Preparing to seek to {0}:{1}:{2}", (int)(dTime / 3600d), (int)((dTime % 3600d) / 60d), (int)(dTime % 60d));
       _player.SeekAbsolute(dTime);
       GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
       GUIGraphicsContext.SendMessage(msgUpdate);

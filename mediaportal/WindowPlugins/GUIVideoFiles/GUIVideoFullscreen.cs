@@ -323,6 +323,7 @@ namespace MediaPortal.GUI.Video
               }
               else
               {
+                Log.Debug("GUIVideoFullscreen.Mouse_Click - skipping");
                 g_Player.SeekAbsolute(g_Player.Duration * percentage);
               }
             }
@@ -771,6 +772,7 @@ namespace MediaPortal.GUI.Video
                 double dPos = g_Player.CurrentPosition;
                 if (dPos > 1)
                 {
+                  Log.Debug("GUIVideoFullscreen.Rewind - skipping");
                   g_Player.SeekAbsolute(dPos - 0.25d);
                 }
               }
@@ -795,6 +797,7 @@ namespace MediaPortal.GUI.Video
                 double dPos = g_Player.CurrentPosition;
                 if (g_Player.Duration - dPos > 1)
                 {
+                  Log.Debug("GUIVideoFullscreen.Forward - skipping");
                   g_Player.SeekAbsolute(dPos + 0.25d);
                 }
               }
@@ -812,7 +815,25 @@ namespace MediaPortal.GUI.Video
 
         case Action.ActionType.ACTION_KEY_PRESSED:
           if ((action.m_key != null) && (!_IsMSNChatVisible))
-            ChangetheTimeCode((char)action.m_key.KeyChar);
+          {
+            char chKey = (char)action.m_key.KeyChar;
+            if (chKey >= '0' && chKey <= '9') //Make sure it's only for the remote
+            {
+              if (g_Player.CanSeek)
+              {
+                if (g_Player.IsDVD && g_Player.Paused)
+                {
+                  // Don't skip in paused DVD's
+                  _forbiddenTimer = DateTime.Now;
+                  RenderForbidden(true);
+                }
+                else
+                {
+                  ChangetheTimeCode(chKey);
+                }
+              }
+            }
+          }
           break;
 
         case Action.ActionType.ACTION_SMALL_STEP_BACK:
@@ -824,6 +845,7 @@ namespace MediaPortal.GUI.Video
               double dPos = g_Player.CurrentPosition;
               if (dPos > 5)
               {
+                Log.Debug("GUIVideoFullscreen.SMALL_STEP_BACK - skipping");
                 g_Player.SeekAbsolute(dPos - 5.0d);
               }
             }
@@ -1307,7 +1329,7 @@ namespace MediaPortal.GUI.Video
         HideControl(GetID, (int)Control.OSD_TIMEINFO);
         HideControl(GetID, (int)Control.OSD_VIDEOPROGRESS);
       }
-      if (g_Player.Paused && !_showStep && !_showStatus && !_isOsdVisible && g_Player.Speed == 1)
+      if (g_Player.Paused && !_showStep && !_showTime && !_showStatus && !_isOsdVisible && g_Player.Speed == 1)
       {
         ShowControl(GetID, (int)Control.IMG_PAUSE);
       }
@@ -1542,43 +1564,41 @@ namespace MediaPortal.GUI.Video
 
     void ChangetheTimeCode(char chKey)
     {
-      if (chKey >= '0' && chKey <= '9') //Make sure it's only for the remote
+      _showTime = true;
+      m_dwTimeCodeTimeout = DateTime.Now;
+      if (_timeCodePosition <= 4)
       {
-        _showTime = true;
-        m_dwTimeCodeTimeout = DateTime.Now;
-        if (_timeCodePosition <= 4)
+        //00:12
+        _timeStamp += chKey;
+        _timeCodePosition++;
+        if (_timeCodePosition == 2)
         {
-          //00:12
-          _timeStamp += chKey;
+          _timeStamp += ":";
           _timeCodePosition++;
-          if (_timeCodePosition == 2)
-          {
-            _timeStamp += ":";
-            _timeCodePosition++;
-          }
         }
-        if (_timeCodePosition > 4)
-        {
-          int itotal, ih, im, lis = 0;
-          ih = (_timeStamp[0] - (char)'0') * 10;
-          ih += (_timeStamp[1] - (char)'0');
-          im = (_timeStamp[3] - (char)'0') * 10;
-          im += (_timeStamp[4] - (char)'0');
-          im *= 60;
-          ih *= 3600;
-          itotal = ih + im + lis;
-          if (itotal < g_Player.Duration)
-          {
-            g_Player.SeekAbsolute((double)itotal);
-          }
-          _timeStamp = "";
-          _timeCodePosition = 0;
-          _showTime = false;
-        }
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
-        msg.Label = _timeStamp;
-        OnMessage(msg);
       }
+      if (_timeCodePosition > 4)
+      {
+        int itotal, ih, im, lis = 0;
+        ih = (_timeStamp[0] - (char)'0') * 10;
+        ih += (_timeStamp[1] - (char)'0');
+        im = (_timeStamp[3] - (char)'0') * 10;
+        im += (_timeStamp[4] - (char)'0');
+        im *= 60;
+        ih *= 3600;
+        itotal = ih + im + lis;
+        if (itotal < g_Player.Duration)
+        {
+          Log.Debug("GUIVideoFullscreen.ChangetheTimeCode - skipping");
+          g_Player.SeekAbsolute((double)itotal);
+        }
+        _timeStamp = "";
+        _timeCodePosition = 0;
+        _showTime = false;
+      }
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+      msg.Label = _timeStamp;
+      OnMessage(msg);
     }
 
     public void RenderForm(float timePassed)
