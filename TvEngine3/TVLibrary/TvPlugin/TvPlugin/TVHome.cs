@@ -879,14 +879,14 @@ namespace TvPlugin
       else
       {
         card.StopRecording();
-          //yes then stop recording
-          Navigator.UpdateCurrentChannel();
+        //yes then stop recording
+        Navigator.UpdateCurrentChannel();
 
         // and re-start viewing.... 
         MediaPortal.GUI.Library.Log.Info("tv home stoprecording chan:{0}", Navigator.CurrentChannel);
         ViewChannel(Navigator.Channel);
         Navigator.UpdateCurrentChannel();
-        
+
       }
       UpdateStateOfButtons();
     }
