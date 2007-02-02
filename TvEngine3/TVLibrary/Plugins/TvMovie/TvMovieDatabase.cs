@@ -624,18 +624,21 @@ namespace TvEngine
             maximum++;
             break;
           }
+
       if (OnStationsChanged != null)
         OnStationsChanged(1, maximum, string.Empty);
-      //Log.Debug("TVMovie: Calculating stations done");
+      Log.Debug("TVMovie: Calculating stations done");
 
       ArrayList channelList = new ArrayList();
       foreach (Mapping mapping in mappingList)
         if (channelList.IndexOf(mapping.Channel) == -1)
         {
           channelList.Add(mapping.Channel);
+          Log.Debug("TVMovie: adding channel {0} - ClearPrograms", mapping.Channel);
           ClearPrograms(mapping.Channel);
         }
 
+      Log.Debug("TVMovie: Mapped {0} stations for EPG import", Convert.ToString(maximum));
 
       int counter = 0;
 
@@ -654,15 +657,22 @@ namespace TvEngine
 
         if (channelNames.Count > 0)
         {
-          string display = string.Empty;
-          foreach (Mapping channelName in channelNames)
-            display += string.Format("{0}  /  ", channelName.Channel);
+          try
+          {
+            string display = string.Empty;
+            foreach (Mapping channelName in channelNames)
+              display += string.Format("{0}  /  ", channelName.Channel);
 
-          display = display.Substring(0, display.Length - 5);
-          if (OnStationsChanged != null)
-            OnStationsChanged(counter, maximum, display);
-          counter++;
-          _programsCounter += ImportStation(station, channelNames);
+            display = display.Substring(0, display.Length - 5);
+            if (OnStationsChanged != null)
+              OnStationsChanged(counter, maximum, display);
+            counter++;
+            _programsCounter += ImportStation(station, channelNames);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("TVMovie: Error importing EPG - {0},{1}", ex.Message, ex.StackTrace);
+          }
         }
       }
       if (OnStationsChanged != null)
