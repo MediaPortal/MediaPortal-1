@@ -160,7 +160,7 @@ void CRtspSourceFilter::ThreadProc()
         CRefTime refAdd(ticks);
         duration+=refAdd;
 			  m_pOutputPin->SetDuration( duration);
-        //NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
+        NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
         m_tickUpdateCount=GetTickCount();
       }
 	  }
