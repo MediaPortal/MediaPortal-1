@@ -872,9 +872,9 @@ namespace TvDatabase
           using (MySqlCommand cmd = connect.CreateCommand())
           {
             cmd.CommandText = "select idChannel,idProgram,starttime,endtime,title from	program";
-            cmd.CommandText += " where	 program.endtime >= getdate() and program.idProgram in ";
+            cmd.CommandText += " where	 program.endtime >= now() and program.idProgram in ";
             cmd.CommandText += " ( ";
-            cmd.CommandText += " select top 2 idProgram from program as p3 where p3.idchannel=program.idchannel and p3.endtime >= getdate() order by starttime";
+            cmd.CommandText += " select top 2 idProgram from program as p3 where p3.idchannel=program.idchannel and p3.endtime >= now() order by starttime";
             cmd.CommandText += " )";
             cmd.CommandType = System.Data.CommandType.Text;
             using (System.Data.IDataReader reader = cmd.ExecuteReader())
