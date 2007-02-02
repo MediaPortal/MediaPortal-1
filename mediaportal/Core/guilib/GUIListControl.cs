@@ -267,14 +267,7 @@ namespace MediaPortal.GUI.Library
 
     public override bool CanFocus()
     {
-      if (_listItems == null || _listItems.Count == 0)
-      {
-        return false;
-      }
-      else
-      {
-        return base.CanFocus();
-      }
+      return base.CanFocus();
     }
 
 
