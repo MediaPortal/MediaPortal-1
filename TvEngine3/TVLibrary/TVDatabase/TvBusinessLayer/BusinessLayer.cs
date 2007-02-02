@@ -831,6 +831,47 @@ namespace TvDatabase
       return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
     }
 
+    public Dictionary<int,NowAndNext> GetNowAndNext()
+    {
+      Dictionary<int, NowAndNext> nowNextList = new Dictionary<int, NowAndNext>();
+      string connectString = Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
+      using (System.Data.OleDb.OleDbConnection connect = new System.Data.OleDb.OleDbConnection("Provider=SQLOLEDB;" + connectString))
+      {
+        connect.Open();
+        using (System.Data.OleDb.OleDbCommand cmd = connect.CreateCommand())
+        {
+          cmd.CommandText =  "select idChannel,idProgram,starttime,endtime,title from	program";
+          cmd.CommandText +=  " where	 program.endtime >= getdate() and program.idProgram in ";
+		      cmd.CommandText +=  " ( ";
+		      cmd.CommandText +=  " select top 2 idProgram from program as p3 where p3.idchannel=program.idchannel and p3.endtime >= getdate() order by starttime";
+          cmd.CommandText +=  " )";
+          cmd.CommandType = System.Data.CommandType.Text;
+          using (System.Data.IDataReader reader = cmd.ExecuteReader())
+          {
+            while (reader.Read())
+            {
+              int idChannel = (int)reader["idChannel"];
+              int nowidProgram = (int)reader["idProgram"];
+              DateTime nowStart = (DateTime)reader["startTime"];
+              DateTime nowEnd = (DateTime)reader["endTime"];
+              string nowTitle = (string)reader["title"];
+              if (reader.Read())
+              {
+                int nextidProgram = (int)reader["idProgram"];
+                DateTime nextStart = (DateTime)reader["startTime"];
+                DateTime nextEnd = (DateTime)reader["endTime"];
+                string nextTitle = (string)reader["title"];
+                NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nextStart, nextEnd, nowTitle, nextTitle, nowidProgram, nextidProgram);
+                nowNextList[idChannel] = p;
+              }
+            }
+            reader.Close();
+          }
+        }
+        connect.Close();
+      }
+      return nowNextList;
+    }
     #endregion
 
     #region schedules
@@ -1074,6 +1115,8 @@ namespace TvDatabase
       }
       return recordings;
     }
+
+
 
     #endregion
   }

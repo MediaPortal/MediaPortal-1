@@ -63,7 +63,7 @@ namespace TvPlugin
     List<Channel> tvChannelList = null;
     List<ChannelGroup> ChannelGroupList = null;
     Channel _selectedChannel;
-    bool _zap=true;
+    bool _zap = true;
 
     /// <summary>
     /// Constructor
@@ -307,12 +307,7 @@ namespace TvPlugin
     /// </summary>
     public void FillChannelList()
     {
-      Thread fillThread = new Thread(new ThreadStart(DoFillChannelList));
-      fillThread.Start();
-    }
-
-    void DoFillChannelList()
-    {
+      Log.Info("FillChannelList#1");
       tvChannelList = new List<Channel>();
       foreach (GroupMap map in TVHome.Navigator.CurrentGroup.ReferringGroupMap())
       {
@@ -320,21 +315,32 @@ namespace TvPlugin
         if (ch.VisibleInGuide)
           tvChannelList.Add(ch);
       }
+      Log.Info("FillChannelList#2");
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Dictionary<int, NowAndNext> listNowNext = layer.GetNowAndNext();
+      Log.Info("FillChannelList#3");
       lstChannels.Clear();
       Channel current = null;
       GUIListItem item = null;
-      Program prog = null;
-      Program prognext = null;
       string logo = "";
       int selected = 0;
 
       for (int i = 0; i < tvChannelList.Count; i++)
       {
         current = tvChannelList[i];
-        StringBuilder sb = new StringBuilder();
-
         if (current.VisibleInGuide)
         {
+          NowAndNext prog;
+          if (listNowNext.ContainsKey(current.IdChannel) != false)
+          {
+            prog = listNowNext[current.IdChannel];
+          }
+          else
+          {
+            prog = new NowAndNext(current.IdChannel, DateTime.Now.AddHours(-1), DateTime.Now.AddHours(1), DateTime.Now.AddHours(2), DateTime.Now.AddHours(3), "no information", "no information", -1, -1);
+          }
+
+          StringBuilder sb = new StringBuilder();
           item = new GUIListItem("");
           // store here as it is not needed right now - please beat me later..
           item.TVTag = current.Name;
@@ -344,7 +350,7 @@ namespace TvPlugin
           logo = Utils.GetCoverArt(Thumbs.TVChannel, current.Name);
 
           // if we are watching this channel mark it
-          if (TVHome.Navigator.Channel.IdChannel==tvChannelList[i].IdChannel)
+          if (TVHome.Navigator.Channel.IdChannel == tvChannelList[i].IdChannel)
           {
             item.IsRemote = true;
             selected = lstChannels.Count;
@@ -361,39 +367,31 @@ namespace TvPlugin
             item.IconImage = string.Empty;
           }
 
-          prog = current.CurrentProgram;
-
-          if (prog == null || prog.Title == String.Empty)
-            item.Label2 = current.Name;
-
-          if (prog != null)
+          item.Label2 = prog.TitleNow;
+          //                    item.Label3 = prog.Title + " [" + prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "-" + prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "]";
+          if (_altLayout)
           {
-            //                    item.Label3 = prog.Title + " [" + prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "-" + prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "]";
-            if (_altLayout)
-            {
-              item.Label3 = GUILocalizeStrings.Get(789) + prog.Title;
-              sb.Append(current.Name);
-              sb.Append(" - ");
-              sb.Append(CalculateProgress(prog).ToString());
-              sb.Append("%");
-              item.Label2 = sb.ToString();
-            }
-            else
-              item.Label3 = prog.Title + ": " + CalculateProgress(prog).ToString() + "%";
+            item.Label3 = GUILocalizeStrings.Get(789) + prog.TitleNow;
+            sb.Append(current.Name);
+            sb.Append(" - ");
+            sb.Append(CalculateProgress(prog.NowStartTime, prog.NowEndTime).ToString());
+            sb.Append("%");
+            item.Label2 = sb.ToString();
           }
-          prognext = current.NextProgram;
-          if (prognext != null)
-          {
-            //                    item.Label = prognext.Title + " [" + prognext.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "-" + prognext.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "]";
-            if (!_altLayout)
-              item.Label = prognext.Title;
-            else
-              item.Label = GUILocalizeStrings.Get(790) + prognext.Title;
-          }
+          else
+            item.Label3 = prog.TitleNow + ": " + CalculateProgress(prog.NowStartTime, prog.NowEndTime).ToString() + "%";
+
+          
+          if (!_altLayout)
+            item.Label = prog.TitleNext;
+          else
+            item.Label = GUILocalizeStrings.Get(790) + prog.TitleNext;
+
           lstChannels.Add(item);
-          lstChannels.SelectedListItemIndex = selected;
         }
       }
+      Log.Info("FillChannelList#4");
+      lstChannels.SelectedListItemIndex = selected;
     }
 
     /// <summary>
@@ -401,10 +399,10 @@ namespace TvPlugin
     /// </summary>
     /// <param name="prog"></param>
     /// <returns></returns>
-    private double CalculateProgress(Program prog)
+    private double CalculateProgress(DateTime start, DateTime end)
     {
-      TimeSpan length = prog.EndTime - prog.StartTime;
-      TimeSpan passed = DateTime.Now - prog.StartTime;
+      TimeSpan length = end - start;
+      TimeSpan passed = DateTime.Now - start;
       if (length.TotalMinutes > 0)
       {
         double fprogress = (passed.TotalMinutes / length.TotalMinutes) * 100;
