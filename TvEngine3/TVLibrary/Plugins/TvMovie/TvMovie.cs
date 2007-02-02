@@ -70,15 +70,35 @@ namespace TvEngine
 
     private void StartImportThread(Object stateInfo)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      if (layer.GetSetting("TvMovieEnabled", "false").Value != "true")
-        return;
+      //TODO: check stateinfo
+      SpawnImportThread();
+    }
+
+    private void SpawnImportThread()
+    {
+      try
+      {
+        TvBusinessLayer layer = new TvBusinessLayer();
+        if (layer.GetSetting("TvMovieEnabled", "false").Value != "true")
+          return;
+      }
+      catch (Exception ex1)
+      {
+        Log.Error("TVMovie: Error checking enabled status - {0},{1}", ex1.Message, ex1.StackTrace);
+      }
 
       if (!_isImporting)
       {
-        Thread importThread = new Thread(new ThreadStart(ImportThread));
-        importThread.Priority = ThreadPriority.Lowest;
-        importThread.Start();
+        try
+        {
+          Thread importThread = new Thread(new ThreadStart(ImportThread));
+          importThread.Priority = ThreadPriority.Lowest;
+          importThread.Start();
+        }
+        catch (Exception ex2)
+        {
+          Log.Error("TVMovie: Error spawing import thread - {0},{1}", ex2.Message, ex2.StackTrace);
+        }
       }
     }
 
@@ -106,8 +126,9 @@ namespace TvEngine
 
     public void Start(IController controller)
     {
-      TimerCallback timerCallBack = new TimerCallback(StartImportThread);
-      _stateTimer = new System.Threading.Timer(timerCallBack, null, 10000, _timerIntervall);
+      //TimerCallback timerCallBack = new TimerCallback(StartImportThread);
+      //_stateTimer = new System.Threading.Timer(timerCallBack, null, 10000, _timerIntervall);
+      SpawnImportThread();
     }
 
     public void Stop()
