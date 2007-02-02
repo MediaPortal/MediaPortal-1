@@ -871,10 +871,10 @@ namespace TvDatabase
           connect.Open();
           using (MySqlCommand cmd = connect.CreateCommand())
           {
-            cmd.CommandText = "select idChannel,idProgram,starttime,endtime,title from	program";
-            cmd.CommandText += " where	 program.endtime >= now() and program.idProgram in ";
+            cmd.CommandText = "select idChannel,idProgram,starttime,endtime,title from program";
+            cmd.CommandText += " where program.endtime >= now() and EXISTS ";
             cmd.CommandText += " ( ";
-            cmd.CommandText += " select idProgram from program as p3 where p3.idchannel=program.idchannel and p3.endtime >= now() order by starttime LIMIT 2";
+            cmd.CommandText += " select idProgram from program as p3 where p3.idProgram=program.idProgram and p3.idchannel=program.idchannel and p3.endtime >= now() order by starttime LIMIT 2";
             cmd.CommandText += " )";
             cmd.CommandType = System.Data.CommandType.Text;
             using (System.Data.IDataReader reader = cmd.ExecuteReader())
