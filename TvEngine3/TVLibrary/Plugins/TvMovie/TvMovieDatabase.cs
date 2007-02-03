@@ -452,7 +452,7 @@ namespace TvEngine
 
         try
         {
-          Log.Debug("TVMovie: Importing data for station - {0}", stationName);
+          //Log.Debug("TVMovie: Importing data for station - {0}", stationName);
 
           string channel = stationName;                                     // idChannel (table channel) ==> Senderkennung match strChannel
           string classification = guideEntry["FSK"].ToString();             // strClassification ==> FSK
@@ -692,18 +692,25 @@ namespace TvEngine
 
       if (!_canceled)
       {
-        long lastUpdate = 0;
+        try
+        {
+          long lastUpdate = 0;
 
-        using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\TVUpdate"))
-          if (rkey != null)
-          {
-            string regLastUpdate = string.Format("{0}", rkey.GetValue("LetztesTVUpdate"));
-            lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
-          }
+          using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\TVUpdate"))
+            if (rkey != null)
+            {
+              string regLastUpdate = string.Format("{0}", rkey.GetValue("LetztesTVUpdate"));
+              lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
+            }
 
-        Setting setting = layer.GetSetting("TvMovieLastUpdate");
-        setting.Value = lastUpdate.ToString();
-        setting.Persist();
+          Setting setting = layer.GetSetting("TvMovieLastUpdate");
+          setting.Value = lastUpdate.ToString();
+          setting.Persist();
+        }
+        catch (Exception ex3)
+        {
+          Log.Error("TVMovie: Error updating the registry with last import date");
+        }
 
         //Log.Debug("TVMovie: Setting last update time stamp done");
 
