@@ -475,11 +475,6 @@ namespace TvLibrary.Implementations.Analog
       if (!CheckThreadId()) return false;
       Log.Log.WriteFile("Analog:StartRecording to {0}", fileName);
 
-      if (_graphState != GraphState.TimeShifting)
-      {
-        throw new TvException("Card must be timeshifting before starting recording");
-      }
-
       StartRecord(transportStream, fileName);
 
 
@@ -498,7 +493,14 @@ namespace TvLibrary.Implementations.Analog
       if (!CheckThreadId()) return false;
       Log.Log.WriteFile("Analog:StopRecording");
       StopRecord();
-      _graphState = GraphState.TimeShifting;
+      if (_timeshiftFileName != "")
+      {
+        _graphState = GraphState.TimeShifting;
+      }
+      else
+      {
+        _graphState = GraphState.Created;
+      }
       _recordingFileName = "";
       return true;
     }

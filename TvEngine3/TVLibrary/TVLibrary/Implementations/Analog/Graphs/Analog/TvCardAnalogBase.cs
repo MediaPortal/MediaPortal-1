@@ -136,7 +136,7 @@ namespace TvLibrary.Implementations.Analog
     protected IPin _pinAnalogAudio = null;
     protected IPin _pinAnalogVideo = null;
     protected DVBTeletext _teletextDecoder;
-    protected string _recordingFileName;
+    protected string _recordingFileName="";
     protected bool _grabTeletext = false;
     protected int _managedThreadId;
     protected DateTime _lastSignalUpdate;
@@ -148,7 +148,7 @@ namespace TvLibrary.Implementations.Analog
     protected IChannel _currentChannel;
     protected Hauppauge _haupPauge = null;
     protected IVac _ivac = null;
-    string _timeshiftFileName;
+    protected string _timeshiftFileName="";
     protected IVbiCallback _teletextCallback = null;
     private IAMStreamConfig _interfaceStreamConfigVideoCapture = null;
     #endregion
@@ -3092,6 +3092,7 @@ namespace TvLibrary.Implementations.Analog
         DevicesInUse.Instance.Remove(_multiplexerDevice);
         _multiplexerDevice = null;
       }
+      _timeshiftFileName = "";
       _graphState = GraphState.Idle;
     }
 
@@ -3396,6 +3397,7 @@ namespace TvLibrary.Implementations.Analog
         Release.ComObject("mpeg2 mux filter", _filterMpegMuxer); ;
         _filterMpegMuxer = null;
       }
+      _timeshiftFileName = "";
 
       //if (_filterDump1 != null)
       //{
