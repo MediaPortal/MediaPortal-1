@@ -863,7 +863,8 @@ namespace TvDatabase
       Dictionary<int, NowAndNext> nowNextList = new Dictionary<int, NowAndNext>();
 
       string provider = Gentle.Framework.ProviderFactory.GetDefaultProvider().Name.ToLower();
-      if (provider == "mysql")
+      // MSSQL doesn't like some ANSI SQL - e.g. the proprietary getdate() function
+      if (provider != "SQLServer")
       {
         string connectString = Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
         using (MySqlConnection connect = new MySqlConnection(connectString))
@@ -871,11 +872,12 @@ namespace TvDatabase
           connect.Open();
           using (MySqlCommand cmd = connect.CreateCommand())
           {
-            cmd.CommandText = "select idChannel,idProgram,starttime,endtime,title from program";
-            cmd.CommandText += " where program.endtime >= now() and EXISTS ";
-            cmd.CommandText += " ( ";
-            cmd.CommandText += " select idProgram from program as p3 where p3.idProgram=program.idProgram and p3.idchannel=program.idchannel and p3.endtime >= now() order by starttime LIMIT 2";
-            cmd.CommandText += " ) order by idchannel,starttime";
+            //cmd.CommandText = "select idChannel,idProgram,starttime,endtime,title from program";
+            //cmd.CommandText += " where program.endtime >= now() and EXISTS ";
+            //cmd.CommandText += " ( ";
+            //cmd.CommandText += " select idProgram from program as p3 where p3.idProgram=program.idProgram and p3.idchannel=program.idchannel and p3.endtime >= now() order by starttime LIMIT 2";
+            //cmd.CommandText += " ) order by idchannel,starttime";
+            cmd.CommandText = "select idChannel,idProgram,starttime,endtime,title from program where program.endtime >= now() and program.idProgram in (select idProgram from program as p3 where p3.idchannel=program.idchannel and p3.endtime >= now()) order by idchannel,starttime";
             cmd.CommandType = System.Data.CommandType.Text;
             using (System.Data.IDataReader reader = cmd.ExecuteReader())
             {
