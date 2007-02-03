@@ -382,16 +382,20 @@ namespace TvLibrary.Implementations.DVB
           _graphRunning = true;
           //_pmtVersion = -1;
           DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
+          ATSCChannel atscChannel = _currentChannel as ATSCChannel;
           if (channel != null)
           {
             SetupPmtGrabber(channel.PmtPid, channel.ServiceId);
-            dtNow = DateTime.Now;
-            while (_pmtVersion < 0 && channel.PmtPid > 0)
+            if (atscChannel == null)
             {
-              Log.Log.Write("subch:{0} wait for pmt{1:X}", _subChannelId, channel.PmtPid);
-              System.Threading.Thread.Sleep(20);
-              TimeSpan ts = DateTime.Now - dtNow;
-              if (ts.TotalMilliseconds >= (_parameters.TimeOutPMT * 1000)) break;
+              dtNow = DateTime.Now;
+              while (_pmtVersion < 0 && channel.PmtPid > 0)
+              {
+                Log.Log.Write("subch:{0} wait for pmt{1:X}", _subChannelId, channel.PmtPid);
+                System.Threading.Thread.Sleep(20);
+                TimeSpan ts = DateTime.Now - dtNow;
+                if (ts.TotalMilliseconds >= (_parameters.TimeOutPMT * 1000)) break;
+              }
             }
           }
           return;
@@ -415,12 +419,13 @@ namespace TvLibrary.Implementations.DVB
       _graphRunning = true;
       _dateTimeShiftStarted = DateTime.Now;
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
+      ATSCChannel atscChannel = _currentChannel as ATSCChannel;
       if (dvbChannel != null)
       {
         SetupPmtGrabber(dvbChannel.PmtPid, dvbChannel.ServiceId);
       }
       _pmtTimer.Enabled = true;
-      if (dvbChannel != null)
+      if (dvbChannel != null && atscChannel==null)
       {
         if (dvbChannel.PmtPid >= 0)
         {
@@ -979,6 +984,7 @@ namespace TvLibrary.Implementations.DVB
 
         Log.Log.Write("subch:{0}  video:{1:X} audio:{2:X} pcr:{3:X} pmt:{4:X}", _subChannelId, atscChannel.VideoPid, atscChannel.AudioPid, atscChannel.PcrPid, atscChannel.PmtPid);
         SetMpegPidMapping(_channelInfo);
+        _pmtVersion = 1;
       }
       else
       {
