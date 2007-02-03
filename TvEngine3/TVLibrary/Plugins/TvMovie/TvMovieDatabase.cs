@@ -54,7 +54,6 @@ namespace TvEngine
 
     static string _xmlFile;
 
-
     public delegate void ProgramsChanged(int value, int maximum, string text);
     public event ProgramsChanged OnProgramsChanged;
     public delegate void StationsChanged(int value, int maximum, string text);
@@ -68,7 +67,6 @@ namespace TvEngine
       private TimeSpan _start;
       private TimeSpan _end;
 
-
       public Mapping(string channel, string station, string start, string end)
       {
         _channel = channel;
@@ -77,30 +75,26 @@ namespace TvEngine
         _end = CleanInput(end);
       }
 
-
+      #region struct getter & setters
       public string Channel
       {
         get { return _channel; }
       }
-
 
       public string Station
       {
         get { return _station; }
       }
 
-
       public TimeSpan Start
       {
         get { return _start; }
       }
 
-
       public TimeSpan End
       {
         get { return _end; }
       }
-
 
       private static TimeSpan CleanInput(string input)
       {
@@ -121,14 +115,13 @@ namespace TvEngine
 
         return new TimeSpan(hours, minutes, 0);
       }
+      #endregion
     }
-
-
+    #region class get && set functions
     public ArrayList Stations
     {
       get { return _stations; }
     }
-
 
     public bool Canceled
     {
@@ -136,12 +129,10 @@ namespace TvEngine
       set { _canceled = value; }
     }
 
-
     public int Programs
     {
       get { return _programsCounter; }
     }
-
 
     public static string DatabasePath
     {
@@ -189,8 +180,9 @@ namespace TvEngine
         setting.Persist();
       }
     }
+    #endregion
 
-
+    #region public functions
     public ArrayList GetChannels()
     {
       ArrayList tvChannels = new ArrayList();
@@ -204,42 +196,40 @@ namespace TvEngine
     }
 
 
-    public static void ReorganizeTvMovie()
-    {
-      Process updateProcess = new Process();
+    //public static void ReorganizeTvMovie()
+    //{
+    //  Process updateProcess = new Process();
 
-      using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\Gemeinsames"))
-      {
-        if (rkey != null)
-        {
-          updateProcess.StartInfo.FileName = string.Format("{0}\\comptvdb.exe", rkey.GetValue("ProgrammPath"));
-          updateProcess.StartInfo.Arguments = DatabasePath;
-        }
-        else
-          return;
-      }
+    //  using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\Gemeinsames"))
+    //  {
+    //    if (rkey != null)
+    //    {
+    //      updateProcess.StartInfo.FileName = string.Format("{0}\\comptvdb.exe", rkey.GetValue("ProgrammPath"));
+    //      updateProcess.StartInfo.Arguments = DatabasePath;
+    //    }
+    //    else
+    //      return;
+    //  }
 
-      updateProcess.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
+    //  updateProcess.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
 
-      updateProcess.Start();
-      updateProcess.WaitForExit();
-    }
+    //  updateProcess.Start();
+    //  updateProcess.WaitForExit();
+    //}
 
+    //private void UpdateTvMovie()
+    //{
+    //  Process updateProcess = new Process();
 
-    private void UpdateTvMovie()
-    {
-      Process updateProcess = new Process();
+    //  using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\Gemeinsames"))
+    //    if (rkey != null)
+    //      updateProcess.StartInfo.FileName = string.Format("{0}\\tvupdate.exe", rkey.GetValue("ProgrammPath"));
+    //    else
+    //      return;
 
-      using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\Gemeinsames"))
-        if (rkey != null)
-          updateProcess.StartInfo.FileName = string.Format("{0}\\tvupdate.exe", rkey.GetValue("ProgrammPath"));
-        else
-          return;
-
-      updateProcess.Start();
-      updateProcess.WaitForExit();
-    }
-
+    //  updateProcess.Start();
+    //  updateProcess.WaitForExit();
+    //}
 
     public void Connect()
     {
@@ -293,102 +283,135 @@ namespace TvEngine
       _channelList = GetChannels();
     }
 
-
-    private ArrayList GetMappingList()
+    public void Import()
     {
-      IList mappingDb = TvMovieMapping.ListAll();
-      ArrayList mappingList = new ArrayList();
+      if (_canceled)
+        return;
 
-      foreach (TvMovieMapping mapping in mappingDb)
+      ArrayList mappingList = GetMappingList();
+
+      if (mappingList == null)
       {
-        string newStart = mapping.TimeSharingStart;
-        string newEnd = mapping.TimeSharingEnd;
-        string newChannel = Channel.Retrieve(mapping.IdChannel).Name;
-        string newStation = mapping.StationName;
-
-        mappingList.Add(new TvMovieDatabase.Mapping(newChannel, newStation, newStart, newEnd));
+        Log.Error("TVMovie: Cannot import from TV Movie database");
+        return;
       }
 
-      return mappingList;
+      Log.Debug("TVMovie: Importing database");
+
+      //Log.Debug("TVMovie: Removal of old EPG data");
+      TvBusinessLayer layer = new TvBusinessLayer();
+      //layer.RemoveOldPrograms();
+      //Log.Debug("TVMovie: Removal done");
+
+      if (_canceled)
+        return;
+
+      int maximum = 0;
+
+      //Log.Debug("TVMovie: Calculating stations");
+      foreach (string station in _stations)
+        foreach (Mapping mapping in mappingList)
+          if (mapping.Station == station)
+          {
+            maximum++;
+            break;
+          }
+
+      if (OnStationsChanged != null)
+        OnStationsChanged(1, maximum, string.Empty);
+      Log.Debug("TVMovie: Calculating stations done");
+
+      ArrayList channelList = new ArrayList();
+      foreach (Mapping mapping in mappingList)
+        if (channelList.IndexOf(mapping.Channel) == -1)
+        {
+          channelList.Add(mapping.Channel);
+          Log.Debug("TVMovie: adding channel {0} - ClearPrograms", mapping.Channel);
+          ClearPrograms(mapping.Channel);
+        }
+
+      Log.Debug("TVMovie: Mapped {0} stations for EPG import", Convert.ToString(maximum));
+
+      int counter = 0;
+
+      //Log.Debug("TVMovie: Importing stations");
+
+      foreach (string station in _stations)
+      {
+        if (_canceled)
+          return;
+
+        ArrayList channelNames = new ArrayList();
+
+        foreach (Mapping mapping in mappingList)
+          if (mapping.Station == station)
+            channelNames.Add(mapping);
+
+        if (channelNames.Count > 0)
+        {
+          try
+          {
+            string display = string.Empty;
+            foreach (Mapping channelName in channelNames)
+              display += string.Format("{0}  /  ", channelName.Channel);
+
+            display = display.Substring(0, display.Length - 5);
+            if (OnStationsChanged != null)
+              OnStationsChanged(counter, maximum, display);
+            counter++;
+            _programsCounter += ImportStation(station, channelNames);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("TVMovie: Error importing EPG - {0},{1}", ex.Message, ex.StackTrace);
+          }
+        }
+      }
+      if (OnStationsChanged != null)
+        OnStationsChanged(maximum, maximum, "Import done");
+
+      //Log.Debug("TVMovie: Importing stations done");
+
+      //Log.Debug("TVMovie: Setting last update time stamp");
+
+      if (!_canceled)
+      {
+        // OBSOLETE
+        try
+        {
+          long lastUpdate = 0;
+
+          using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\TVUpdate"))
+            if (rkey != null)
+            {
+              string regLastUpdate = string.Format("{0}", rkey.GetValue("LetztesTVUpdate"));
+              lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
+            }
+
+          Setting setting = layer.GetSetting("TvMovieLastUpdate");
+          setting.Value = lastUpdate.ToString();
+          setting.Persist();
+        }
+        catch (Exception)
+        {
+          Log.Error("TVMovie: Error updating the registry with last import date");
+        }
+
+        Log.Debug("TVMovie: Imported {0} database entries for {1} stations", _programsCounter, counter);
+      }
     }
 
-
-    private bool CheckChannel(string channelName)
+    public bool WasUpdated
     {
-      if (_channelList != null)
-        foreach (Channel channel in _channelList)
-          if (channel.Name == channelName)
-            return true;
+      get
+      {
+        TvBusinessLayer layer = new TvBusinessLayer();
+        if (Convert.ToInt64(layer.GetSetting("TvMovieLastUpdate", "0").Value) == LastUpdate)
+          return false;
 
-      return false;
+        return true;
+      }
     }
-
-
-    private bool CheckStation(string stationName)
-    {
-      if (_stations != null)
-        foreach (string station in _stations)
-          if (station == stationName)
-            return true;
-
-      return false;
-    }
-
-
-    bool CheckEntry(ref DateTime progStart, ref DateTime progEnd, TimeSpan timeSharingStart, TimeSpan timeSharingEnd)
-    {
-      if (timeSharingStart == timeSharingEnd)
-        return false;
-
-      DateTime stationStart = progStart.Date + timeSharingStart;
-      DateTime stationEnd = progStart.Date + timeSharingEnd;
-
-      if (stationStart > progStart && progEnd <= stationStart)
-        stationStart = stationStart.AddDays(-1);
-      else if (timeSharingEnd < timeSharingStart)
-        stationEnd = stationEnd.AddDays(1);
-
-      if (progStart >= stationStart && progStart < stationEnd && progEnd > stationEnd)
-        progEnd = stationEnd;
-
-      if (progStart <= stationStart && progEnd > stationStart && progEnd < stationEnd)
-        progStart = stationStart;
-
-      if ((progEnd <= stationEnd) && (progStart >= stationStart))
-        return false;
-
-      return true;
-    }
-
-
-    /// <summary>
-    /// passing the TV movie sound bool params this method returns the audio format as string
-    /// </summary>
-    /// <param name="audioDesc"></param>
-    /// <param name="dolbyDigital"></param>
-    /// <param name="dolbySuround"></param>
-    /// <param name="dolby"></param>
-    /// <param name="stereo"></param>
-    /// <param name="dualAudio"></param>
-    /// <returns></returns>
-    private string BuildAudioDescription(bool audioDesc, bool dolbyDigital, bool dolbySurround, bool dolby, bool stereo, bool dualAudio)
-    {
-      string audioFormat = String.Empty;
-
-      if (dolbyDigital)
-        audioFormat = "Dolby Digital";
-      if (dolbySurround)
-        audioFormat = "Dolby Surround";
-      if (dolby)
-        audioFormat = "Dolby 2.0";
-      if (stereo)
-        audioFormat = "Stereo";
-      if (dualAudio)
-        audioFormat = "Mehrkanal-Ton";
-
-      return audioFormat;
-    }
-
 
     private int ImportStation(string stationName, ArrayList channelNames)
     {
@@ -489,7 +512,6 @@ namespace TvEngine
 
           counter++;
 
-
           foreach (Mapping channelName in channelNames)
           {
             DateTime newStartDate = start;
@@ -558,18 +580,98 @@ namespace TvEngine
         OnProgramsChanged(programsCount + 1, programsCount + 1, string.Empty);
       return counter;
     }
+    #endregion
 
-
-    public bool WasUpdated
+    #region private functions
+    private ArrayList GetMappingList()
     {
-      get
-      {
-        TvBusinessLayer layer = new TvBusinessLayer();
-        if (Convert.ToInt64(layer.GetSetting("TvMovieLastUpdate", "0").Value) == LastUpdate)
-          return false;
+      IList mappingDb = TvMovieMapping.ListAll();
+      ArrayList mappingList = new ArrayList();
 
-        return true;
+      foreach (TvMovieMapping mapping in mappingDb)
+      {
+        string newStart = mapping.TimeSharingStart;
+        string newEnd = mapping.TimeSharingEnd;
+        string newChannel = Channel.Retrieve(mapping.IdChannel).Name;
+        string newStation = mapping.StationName;
+
+        mappingList.Add(new TvMovieDatabase.Mapping(newChannel, newStation, newStart, newEnd));
       }
+
+      return mappingList;
+    }
+
+    private bool CheckChannel(string channelName)
+    {
+      if (_channelList != null)
+        foreach (Channel channel in _channelList)
+          if (channel.Name == channelName)
+            return true;
+
+      return false;
+    }
+
+    private bool CheckStation(string stationName)
+    {
+      if (_stations != null)
+        foreach (string station in _stations)
+          if (station == stationName)
+            return true;
+
+      return false;
+    }
+
+    private bool CheckEntry(ref DateTime progStart, ref DateTime progEnd, TimeSpan timeSharingStart, TimeSpan timeSharingEnd)
+    {
+      if (timeSharingStart == timeSharingEnd)
+        return false;
+
+      DateTime stationStart = progStart.Date + timeSharingStart;
+      DateTime stationEnd = progStart.Date + timeSharingEnd;
+
+      if (stationStart > progStart && progEnd <= stationStart)
+        stationStart = stationStart.AddDays(-1);
+      else if (timeSharingEnd < timeSharingStart)
+        stationEnd = stationEnd.AddDays(1);
+
+      if (progStart >= stationStart && progStart < stationEnd && progEnd > stationEnd)
+        progEnd = stationEnd;
+
+      if (progStart <= stationStart && progEnd > stationStart && progEnd < stationEnd)
+        progStart = stationStart;
+
+      if ((progEnd <= stationEnd) && (progStart >= stationStart))
+        return false;
+
+      return true;
+    }
+
+    /// <summary>
+    /// passing the TV movie sound bool params this method returns the audio format as string
+    /// </summary>
+    /// <param name="audioDesc"></param>
+    /// <param name="dolbyDigital"></param>
+    /// <param name="dolbySuround"></param>
+    /// <param name="dolby"></param>
+    /// <param name="stereo"></param>
+    /// <param name="dualAudio"></param>
+    /// <returns>plain text audio format</returns>
+    private string BuildAudioDescription(bool audioDesc, bool dolbyDigital, bool dolbySurround, bool dolby, bool stereo, bool dualAudio)
+    {
+      string audioFormat = String.Empty;
+
+      if (dolbyDigital)
+        audioFormat = "Dolby Digital";
+      if (dolbySurround)
+        audioFormat = "Dolby Surround";
+      if (dolby)
+        audioFormat = "Dolby 2.0";
+      if (stereo)
+        audioFormat = "Stereo";
+      if (dualAudio)
+        audioFormat = "Mehrkanal-Ton";
+
+      return audioFormat;
     }
 
     private long LastUpdate
@@ -580,146 +682,26 @@ namespace TvEngine
 
         TvBusinessLayer layer = new TvBusinessLayer();
         if (layer.GetSetting("TvMovieUseDatabaseDate", "false").Value == "true")
-          {
-            FileInfo mpFi = new FileInfo(DatabasePath);
-            DateTime dbUpdate = mpFi.LastWriteTime;
-            lastUpdate = Convert.ToInt64(string.Format("{0:D4}{1:D2}{2:D2}{3:D2}{4:D2}{5:D2}", dbUpdate.Year, dbUpdate.Month, dbUpdate.Day, dbUpdate.Hour, dbUpdate.Minute, dbUpdate.Second));
-          }
-          else
-          {
-            using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\TVUpdate"))
-              if (rkey != null)
-              {
-                string regLastUpdate = string.Format("{0}", rkey.GetValue("LetztesTVUpdate"));
-                lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
-              }
-          }
-
-        return lastUpdate;
-      }
-    }
-
-    public void Import()
-    {
-      if (_canceled)
-        return;
-
-      ArrayList mappingList = GetMappingList();
-
-      if (mappingList == null)
-      {
-        Log.Error("TVMovie: Cannot import from TV Movie database");
-        return;
-      }
-
-      Log.Debug("TVMovie: Importing database");
-
-      //Log.Debug("TVMovie: Removal of old EPG data");
-      TvBusinessLayer layer = new TvBusinessLayer();
-      //layer.RemoveOldPrograms();
-      //Log.Debug("TVMovie: Removal done");
-
-      if (_canceled)
-        return;
-
-      int maximum = 0;
-
-      //Log.Debug("TVMovie: Calculating stations");
-      foreach (string station in _stations)
-        foreach (Mapping mapping in mappingList)
-          if (mapping.Station == station)
-          {
-            maximum++;
-            break;
-          }
-
-      if (OnStationsChanged != null)
-        OnStationsChanged(1, maximum, string.Empty);
-      Log.Debug("TVMovie: Calculating stations done");
-
-      ArrayList channelList = new ArrayList();
-      foreach (Mapping mapping in mappingList)
-        if (channelList.IndexOf(mapping.Channel) == -1)
         {
-          channelList.Add(mapping.Channel);
-          Log.Debug("TVMovie: adding channel {0} - ClearPrograms", mapping.Channel);
-          ClearPrograms(mapping.Channel);
+          FileInfo mpFi = new FileInfo(DatabasePath);
+          DateTime dbUpdate = mpFi.LastWriteTime;
+          lastUpdate = Convert.ToInt64(string.Format("{0:D4}{1:D2}{2:D2}{3:D2}{4:D2}{5:D2}", dbUpdate.Year, dbUpdate.Month, dbUpdate.Day, dbUpdate.Hour, dbUpdate.Minute, dbUpdate.Second));
         }
-
-      Log.Debug("TVMovie: Mapped {0} stations for EPG import", Convert.ToString(maximum));
-
-      int counter = 0;
-
-      //Log.Debug("TVMovie: Importing stations");
-
-      foreach (string station in _stations)
-      {
-        if (_canceled)
-          return;
-
-        ArrayList channelNames = new ArrayList();
-
-        foreach (Mapping mapping in mappingList)
-          if (mapping.Station == station)
-            channelNames.Add(mapping);
-
-        if (channelNames.Count > 0)
+        else
         {
-          try
-          {
-            string display = string.Empty;
-            foreach (Mapping channelName in channelNames)
-              display += string.Format("{0}  /  ", channelName.Channel);
-
-            display = display.Substring(0, display.Length - 5);
-            if (OnStationsChanged != null)
-              OnStationsChanged(counter, maximum, display);
-            counter++;
-            _programsCounter += ImportStation(station, channelNames);
-          }
-          catch (Exception ex)
-          {
-            Log.Error("TVMovie: Error importing EPG - {0},{1}", ex.Message, ex.StackTrace);
-          }
-        }
-      }
-      if (OnStationsChanged != null)
-        OnStationsChanged(maximum, maximum, "Import done");
-
-      //Log.Debug("TVMovie: Importing stations done");
-
-      //Log.Debug("TVMovie: Setting last update time stamp");
-
-      if (!_canceled)
-      {
-        try
-        {
-          long lastUpdate = 0;
-
           using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\TVUpdate"))
             if (rkey != null)
             {
               string regLastUpdate = string.Format("{0}", rkey.GetValue("LetztesTVUpdate"));
               lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
             }
-
-          Setting setting = layer.GetSetting("TvMovieLastUpdate");
-          setting.Value = lastUpdate.ToString();
-          setting.Persist();
-        }
-        catch (Exception ex3)
-        {
-          Log.Error("TVMovie: Error updating the registry with last import date");
         }
 
-        //Log.Debug("TVMovie: Setting last update time stamp done");
-
-        Log.Debug("TVMovie: Imported {0} database entries for {1} stations", _programsCounter, counter);
+        return lastUpdate;
       }
     }
 
-
-    public long datetolong(DateTime dt)
+    private long datetolong(DateTime dt)
     {
       try
       {
@@ -744,7 +726,7 @@ namespace TvEngine
       return 0;
     }
 
-    void ClearPrograms(string channel)
+    private void ClearPrograms(string channel)
     {
       Channel progChannel = null;
       IList allChannels = Channel.ListAll();
@@ -762,6 +744,7 @@ namespace TvEngine
       SqlStatement stmt = sb.GetStatement(true);
       ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
     }
-  }
+    #endregion
 
+  } // class
 }

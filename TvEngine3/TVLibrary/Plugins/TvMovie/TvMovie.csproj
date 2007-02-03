@@ -47,7 +47,6 @@
   <ItemGroup>
     <Compile Include="TvMovie.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TvMovieSql.cs" />
     <Compile Include="TvMovieDatabase.cs" />
     <Compile Include="TvMovieSetup.cs">
       <SubType>UserControl</SubType>
