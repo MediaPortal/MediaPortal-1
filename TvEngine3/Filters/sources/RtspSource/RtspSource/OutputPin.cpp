@@ -190,6 +190,8 @@ HRESULT COutputPin::FillBuffer(IMediaSample *pSample)
 	CAutoLock lock(&m_FillLock);
   if (!m_pFilter->IsClientRunning()) 
 	{
+    m_bDisContinuity=TRUE;
+    pSample->SetDiscontinuity(TRUE);
 		pSample->SetActualDataLength(0);
 		return S_OK;
 	}
@@ -201,6 +203,8 @@ HRESULT COutputPin::FillBuffer(IMediaSample *pSample)
 	if (bytesRead==0)
 	{
 		Sleep(10);
+    m_bDisContinuity=TRUE;
+    pSample->SetDiscontinuity(TRUE);
 		return S_OK;
 	}
   pSample->SetActualDataLength(bytesRead);

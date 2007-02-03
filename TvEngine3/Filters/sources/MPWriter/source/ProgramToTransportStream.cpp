@@ -43,6 +43,7 @@ void CProgramToTransportStream::Initialize(char* fileNameOut)
   
   // And, from this, a filter that converts to MPEG-2 Transport Stream frames:
   m_tsFrames  = MPEG2TransportStreamFromPESSource::createNew(*m_env, pesSource);
+
   m_outputSink = CMultiWriterFileSink::createNew(*m_env, fileNameOut);
   if (m_outputSink == NULL) 
   {
@@ -113,8 +114,14 @@ void CProgramToTransportStream::ThreadProc()
   
   LogDebug("CProgramToTransportStream::Thread started()");
     
-  m_outputSink->startPlaying(*m_tsFrames, afterPlaying, m_tsFrames);
-  LogDebug("CProgramToTransportStream::Thread playing()");
+  if (m_outputSink->startPlaying(*m_tsFrames, afterPlaying, m_tsFrames)==True)
+  {
+    LogDebug("CProgramToTransportStream::Thread playing()");
+  }
+  else
+  {
+    LogDebug("CProgramToTransportStream::Failed to start output sink");
+  }
 	while (m_env!=NULL && !ThreadIsStopping(0))
 	{
 		m_env->taskScheduler().doEventLoop(); 
