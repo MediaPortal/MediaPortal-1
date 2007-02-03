@@ -312,7 +312,7 @@ namespace TvPlugin
       foreach (GroupMap map in TVHome.Navigator.CurrentGroup.ReferringGroupMap())
       {
         Channel ch = map.ReferencedChannel();
-        if (ch.VisibleInGuide)
+        if (ch.VisibleInGuide && ch.IsTv)
           tvChannelList.Add(ch);
       }
       Log.Info("FillChannelList#2");
