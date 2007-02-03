@@ -864,7 +864,7 @@ namespace TvDatabase
 
       string provider = Gentle.Framework.ProviderFactory.GetDefaultProvider().Name.ToLower();
       // MSSQL doesn't like some ANSI SQL - e.g. the proprietary getdate() function
-      if (provider != "SQLServer")
+      if (provider == "mysql")
       {
         string connectString = Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
         using (MySqlConnection connect = new MySqlConnection(connectString))
@@ -877,25 +877,46 @@ namespace TvDatabase
             //cmd.CommandText += " ( ";
             //cmd.CommandText += " select idProgram from program as p3 where p3.idProgram=program.idProgram and p3.idchannel=program.idchannel and p3.endtime >= now() order by starttime LIMIT 2";
             //cmd.CommandText += " ) order by idchannel,starttime";
-            cmd.CommandText = "select idChannel,idProgram,starttime,endtime,title from program where program.endtime >= now() and program.idProgram in (select idProgram from program as p3 where p3.idchannel=program.idchannel and p3.endtime >= now()) order by idchannel,starttime";
+            cmd.CommandText = "select idChannel,idProgram,starttime,endtime,title from program where program.endtime >= now() and program.idProgram in (select idProgram from program as p3 where p3.idchannel=program.idchannel and p3.endtime >= now() order by starttime) order by idchannel,starttime";
             cmd.CommandType = System.Data.CommandType.Text;
             using (System.Data.IDataReader reader = cmd.ExecuteReader())
             {
+              int limitBreak = 0;
+              int currentID = 0;
+              List<int> lastChannelIDs = new List<int>();
               while (reader.Read())
               {
-                int idChannel = (int)reader["idChannel"];
-                int nowidProgram = (int)reader["idProgram"];
-                DateTime nowStart = (DateTime)reader["startTime"];
-                DateTime nowEnd = (DateTime)reader["endTime"];
-                string nowTitle = (string)reader["title"];
-                if (reader.Read())
+                int idChannel = (int)reader["idChannel"];                
+                if (!lastChannelIDs.Contains(idChannel))
                 {
-                  int nextidProgram = (int)reader["idProgram"];
-                  DateTime nextStart = (DateTime)reader["startTime"];
-                  DateTime nextEnd = (DateTime)reader["endTime"];
-                  string nextTitle = (string)reader["title"];
-                  NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nextStart, nextEnd, nowTitle, nextTitle, nowidProgram, nextidProgram);
-                  nowNextList[idChannel] = p;
+                  lastChannelIDs.Add(idChannel);
+                  currentID = idChannel;
+                  limitBreak = 0;
+                }
+                else
+                  limitBreak++;
+
+                // only get the top 2 results                  
+                if (limitBreak > 0)
+                  continue;
+                else
+                {
+                  int nowidProgram = (int)reader["idProgram"];
+                  DateTime nowStart = (DateTime)reader["startTime"];
+                  DateTime nowEnd = (DateTime)reader["endTime"];
+                  string nowTitle = (string)reader["title"];
+                  if (reader.Read())
+                  {
+                    if ((int)reader["idChannel"] == currentID)
+                    {
+                      int nextidProgram = (int)reader["idProgram"];
+                      DateTime nextStart = (DateTime)reader["startTime"];
+                      DateTime nextEnd = (DateTime)reader["endTime"];
+                      string nextTitle = (string)reader["title"];
+                      NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nextStart, nextEnd, nowTitle, nextTitle, nowidProgram, nextidProgram);
+                      nowNextList[idChannel] = p;
+                    }
+                  }
                 }
               }
               reader.Close();
