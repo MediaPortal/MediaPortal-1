@@ -241,11 +241,11 @@ void CPmtParser::OnNewSection(CSection& sections)
 		  len1 -= x;
 		  pointer += x;
 	  }
-	  //LogDebug("DecodePMT pid:0x%x pcrpid:0x%x videopid:0x%x audiopid:0x%x ac3pid:0x%x sid:%x",
-		//  pidInfo.PmtPid, pidInfo.PcrPid,pidInfo.VideoPid,pidInfo.AudioPid1,pidInfo.AC3Pid,pidInfo.ServiceId);
-    if (m_pmtCallback!=NULL)
-    {
-      m_pmtCallback->OnPidsReceived(pidInfo);
-    }
+  }
+  if (m_pmtCallback!=NULL)
+  {
+  //LogDebug("DecodePMT pid:0x%x pcrpid:0x%x videopid:0x%x audiopid:0x%x ac3pid:0x%x sid:%x",
+	//  pidInfo.PmtPid, pidInfo.PcrPid,pidInfo.VideoPid,pidInfo.AudioPid1,pidInfo.AC3Pid,pidInfo.ServiceId);
+    m_pmtCallback->OnPidsReceived(pidInfo);
   }
 }

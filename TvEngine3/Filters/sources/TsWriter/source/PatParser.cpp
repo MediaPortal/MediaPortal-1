@@ -187,13 +187,15 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
 //*****************************************************************************
 void CPatParser::OnChannel(const CChannelInfo& info)
 {
+  LogDebug("onch: %s %x %x", info.ServiceName,info.PidTable.VideoPid,info.PidTable.AC3Pid);
   CChannelInfo i=info;
   m_mapChannels[info.ServiceId]=i;
 }
 
 //*****************************************************************************
-void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
+void CPatParser::OnSdtReceived(const CChannelInfo& sdtInfo)
 {
+  if (m_vctParser.Count()!=0) return;
 	itChannels it=m_mapChannels.find(sdtInfo.ServiceId);
   if (it!=m_mapChannels.end())
   {
@@ -285,18 +287,21 @@ void CPatParser::OnSdtReceived(CChannelInfo sdtInfo)
 }
 
 //*****************************************************************************
-void CPatParser::OnPidsReceived(CPidTable pidTable)
+void CPatParser::OnPidsReceived(const CPidTable& pidTable)
 {
+  if (m_vctParser.Count()!=0) return;
   itChannels it=m_mapChannels.find(pidTable.ServiceId);
   if (it!=m_mapChannels.end())
   {
     CChannelInfo& info=it->second;
 		if (info.PmtReceived==false) 
 		{
+      //LogDebug("1OnPidsRecv %x %x %x= %x %x %x", pidTable.VideoPid,pidTable.AudioPid1,pidTable.AC3Pid,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AC3Pid);
       m_tickCount = GetTickCount();
 			//LogDebug("PMT: onid:%x tsid:%x nit:%x p:%s s:%s other:%d", info.NetworkId,info.TransportId,info.ServiceId, info.ProviderName,info.ServiceName, info.OtherMux);
 			info.PidTable=pidTable;
 			info.PmtReceived=true;
+      //LogDebug("2OnPidsRecv %x %x %x= %x %x %x", pidTable.VideoPid,pidTable.AudioPid1,pidTable.AC3Pid,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AC3Pid);
 			if (m_pCallback!=NULL)
 			{
 				if (IsReady() )

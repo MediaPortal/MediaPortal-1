@@ -45,7 +45,7 @@ class IPmtCallBack
 {
 public:
 	virtual void OnPmtReceived(int pmtPid)=0;
-  virtual void OnPidsReceived(CPidTable info)=0;
+  virtual void OnPidsReceived(const CPidTable& info)=0;
 };
 
 class CPmtParser: public  CSectionDecoder

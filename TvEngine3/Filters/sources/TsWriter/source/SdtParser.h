@@ -29,7 +29,7 @@ using namespace std;
 class ISdtCallBack
 {
 public:
-	virtual void OnSdtReceived(CChannelInfo sdtInfo)=0;
+	virtual void OnSdtReceived(const CChannelInfo& sdtInfo)=0;
 };
 
 #define PID_SDT 0x11

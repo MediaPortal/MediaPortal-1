@@ -56,8 +56,8 @@ public:
   void        Dump();
 	//void				SetConditionalAccess(CConditionalAccess* access);
 	void				OnPmtReceived(int pmtPid);
-  void        OnPidsReceived(CPidTable info);
-	void        OnSdtReceived(CChannelInfo sdtInfo);
+  void        OnPidsReceived(const CPidTable& info);
+	void        OnSdtReceived(const CChannelInfo& sdtInfo);
   void        OnChannel(const CChannelInfo& info);
 
 private:
