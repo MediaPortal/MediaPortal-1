@@ -289,6 +289,8 @@ namespace TvLibrary.Implementations.DVB
               strAudioLanguage4 = Marshal.PtrToStringAnsi(audioLanguage4);
               strAudioLanguage5 = Marshal.PtrToStringAnsi(audioLanguage5);
 
+              Log.Log.Info("v:{0:X} a1:{1:X} a2:{2:X} a3:{3:X} a4:{4:X} a5:{5:X} ac3:{6:X} ttx:{7:X} sub:{8:X} pmt:{9:X} pcr:{10:X} onid:{11:X} TSID:{12:X} SID:{13:X} maj:{14} min:{15} type:{16} name:{17}",
+                videoPid, audio1Pid, audio2Pid, audio3Pid, audio4Pid, audio5Pid, ac3Pid, teletextPid, subtitlePid, pmtPid, pcrPid, networkId, transportId, serviceId, majorChannel, minorChannel, serviceType, name);
               bool hasVideo = false;
               bool hasAudio = false;
               if (videoPid > 0)
