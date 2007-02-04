@@ -24,7 +24,7 @@
 
 CPidTable::CPidTable(const CPidTable& pids)
 {
-  *this=pids;
+  Copy(pids);
 }
 
 CPidTable::CPidTable(void)
@@ -68,7 +68,14 @@ void CPidTable::Reset()
 	videoServiceType=-1;
 }
 
-CPidTable CPidTable::operator = (const CPidTable &pids)
+CPidTable& CPidTable::operator = (const CPidTable &pids)
+{
+  if (&pids==this) return *this;
+  Copy(pids);
+  return *this;
+}
+
+void CPidTable::Copy(const CPidTable &pids)
 {
   PcrPid=pids.PcrPid;
   PmtPid=pids.PmtPid;
@@ -98,6 +105,4 @@ CPidTable CPidTable::operator = (const CPidTable &pids)
   SubtitlePid=pids.SubtitlePid;
   ServiceId=pids.ServiceId;
 	videoServiceType=pids.videoServiceType;
-
-  return *this;
 }

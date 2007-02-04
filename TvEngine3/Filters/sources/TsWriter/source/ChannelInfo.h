@@ -27,7 +27,8 @@ public:
   CChannelInfo(void);
   CChannelInfo(const CChannelInfo& info);
   virtual ~CChannelInfo(void);
-  CChannelInfo operator = (const CChannelInfo &info);
+  CChannelInfo& operator = (const CChannelInfo &info);
+  void Copy(const CChannelInfo &info);
   void Reset();
   long NetworkId;
   long TransportId;

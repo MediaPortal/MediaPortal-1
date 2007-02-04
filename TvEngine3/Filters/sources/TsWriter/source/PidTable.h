@@ -29,8 +29,8 @@ public:
   virtual ~CPidTable();
   void Reset();
   
-  CPidTable operator = (const CPidTable &pids);
-
+  CPidTable& operator = (const CPidTable &pids);
+  void Copy(const CPidTable &pids);
 	ULONG PcrPid;
 	ULONG PmtPid;
 	WORD VideoPid;

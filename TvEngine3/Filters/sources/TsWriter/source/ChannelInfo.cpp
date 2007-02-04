@@ -23,7 +23,7 @@
 
 CChannelInfo::CChannelInfo(const CChannelInfo& info)
 {
-  *this=info;
+  Copy(info);
 }
 CChannelInfo::CChannelInfo(void)
 {
@@ -55,7 +55,14 @@ void CChannelInfo::Reset()
 	PmtReceived=false;
 	SdtReceived=false;
 }
-CChannelInfo CChannelInfo::operator = (const CChannelInfo &info)
+CChannelInfo& CChannelInfo::operator = (const CChannelInfo &info)
+{
+  if (&info==this) return *this;
+  Copy(info);
+  return *this;
+}
+
+void CChannelInfo::Copy(const CChannelInfo &info)
 {
 	LCN=info.LCN;
   NetworkId=info.NetworkId;
@@ -76,5 +83,4 @@ CChannelInfo CChannelInfo::operator = (const CChannelInfo &info)
 	PmtReceived=info.PmtReceived;
 	SdtReceived=info.SdtReceived;
   PidTable=info.PidTable;
-  return *this;
 }
