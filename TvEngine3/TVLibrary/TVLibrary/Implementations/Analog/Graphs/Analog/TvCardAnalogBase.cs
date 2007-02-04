@@ -2415,7 +2415,7 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("analog: AddAudioCompressor {0}", FilterGraphTools.LogPinInfo(_pinAnalogAudio));
       DsDevice[] devices1 = DsDevice.GetDevicesOfCat(AudioCompressorCategory);
       DsDevice[] devices2 = DsDevice.GetDevicesOfCat(LegacyAmFilterCategory);
-      string[] audioEncoders = new string[] { "InterVideo Audio Encoder", "Ulead MPEG Audio Encoder", "MainConcept MPEG Audio Encoder", "MainConcept Demo MPEG Audio Encoder", "CyberLink Audio Encoder", "CyberLink Audio Encoder(Twinhan)", "Pinnacle MPEG Layer-2 Audio Encoder", "MainConcept (Hauppauge) MPEG Audio Encoder" };
+      string[] audioEncoders = new string[] { "InterVideo Audio Encoder", "Ulead MPEG Audio Encoder", "MainConcept MPEG Audio Encoder", "MainConcept Demo MPEG Audio Encoder", "CyberLink Audio Encoder", "CyberLink Audio Encoder(Twinhan)", "Pinnacle MPEG Layer-2 Audio Encoder", "MainConcept (Hauppauge) MPEG Audio Encoder", "NVIDIA Audio Encoder" };
       DsDevice[] audioDevices = new DsDevice[audioEncoders.Length];
       for (int x = 0; x < audioEncoders.Length; ++x)
       {
