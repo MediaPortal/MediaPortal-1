@@ -987,19 +987,19 @@ namespace TvDatabase
         if (DateTime.Now > newEpisode.EndTime) continue;
         if (newEpisode.Canceled != Schedule.MinSchedule) continue;
 
+        if (!AssignSchedulesToCard(newEpisode, cardSchedules))
+        {
+          Log.Info("GetConflictingSchedules: newEpisode can not be assigned to a card = " + newEpisode.ToString());
+          conflicts.Add(newEpisode);
+        }
+
         Log.Info("GetConflictingSchedules: newEpisode = " + newEpisode.ToString());
         foreach (Schedule schedule in schedulesList)
         {
           if (DateTime.Now > schedule.EndTime) continue;
           if (schedule.Canceled != Schedule.MinSchedule) continue;
           if (newEpisode.IdSchedule == schedule.IdSchedule) continue;
-
-          if (!AssignSchedulesToCard(schedule, cardSchedules))
-          {
-            Log.Info("GetConflictingSchedules: Schedule.conflicts.Add = " + schedule.ToString());
-            conflicts.Add(schedule);
-          }
-
+                    
           List<Schedule> otherEpisodes = GetRecordingTimes(schedule);
           foreach (Schedule otherEpisode in otherEpisodes)
           {
