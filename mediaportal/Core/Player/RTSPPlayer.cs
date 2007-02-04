@@ -435,13 +435,16 @@ namespace MediaPortal.Player
         videoWin = graphBuilder as IVideoWindow;
         if (videoWin != null)
           videoWin.put_Visible(OABool.False);
+
         if (Vmr9 != null)
         {
+          Log.Info("RTSPPlayer:cleanup vmr9");
           Vmr9.Enable(false);
         }
         if (_mediaCtrl != null)
         {
 
+          Log.Info("RTSPPlayer:stop graph");
           int counter = 0;
           while (GUIGraphicsContext.InVmr9Render)
           {
@@ -460,6 +463,7 @@ namespace MediaPortal.Player
 
         if (Vmr9 != null)
         {
+          Log.Info("RTSPPlayer:dispose vmr9");
           Vmr9.Dispose();
           Vmr9 = null;
         }
@@ -472,39 +476,46 @@ namespace MediaPortal.Player
 
         if (_mpegDemux != null)
         {
+          Log.Info("cleanup mpegdemux");
           while ((hr = Marshal.ReleaseComObject(_mpegDemux)) > 0)
             ;
           _mpegDemux = null;
         }
         if (_rtspSource != null)
         {
+          Log.Info("cleanup _rtspSource");
           while ((hr = Marshal.ReleaseComObject(_rtspSource)) > 0)
             ;
           _rtspSource = null;
         }
         if (videoCodecFilter != null)
         {
+          Log.Info("cleanup videoCodecFilter");
           while (Marshal.ReleaseComObject(videoCodecFilter) > 0) ;
           videoCodecFilter = null;
         }
         if (audioCodecFilter != null)
         {
+          Log.Info("cleanup audioCodecFilter");
           while (Marshal.ReleaseComObject(audioCodecFilter) > 0) ;
           audioCodecFilter = null;
         }
         if (_subtitleFilter != null)
         {
+          Log.Info("cleanup _subtitleFilter");
           while ((hr = Marshal.ReleaseComObject(_subtitleFilter)) > 0) ;
           _subtitleFilter = null;
         }
         if (audioRendererFilter != null)
         {
+          Log.Info("cleanup audioRendererFilter");
           while (Marshal.ReleaseComObject(audioRendererFilter) > 0) ;
           audioRendererFilter = null;
         }
         // FlipGer: release custom filters
         for (int i = 0; i < customFilters.Length; i++)
         {
+          Log.Info("cleanup custom filters");
           if (customFilters[i] != null)
           {
             while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0) ;
@@ -514,6 +525,7 @@ namespace MediaPortal.Player
 
         if (vobSub != null)
         {
+          Log.Info("cleanup vobSub");
           while ((hr = Marshal.ReleaseComObject(vobSub)) > 0) ;
           vobSub = null;
         }
@@ -527,6 +539,7 @@ namespace MediaPortal.Player
 
         if (graphBuilder != null)
         {
+          Log.Info("cleanup graphBuilder");
           while ((hr = Marshal.ReleaseComObject(graphBuilder)) > 0) ;
           graphBuilder = null;
         }
@@ -534,6 +547,7 @@ namespace MediaPortal.Player
         GUIGraphicsContext.form.Invalidate(true);
         _state = PlayState.Init;
         GC.Collect();
+        Log.Info("cleanup done");
       }
       catch (Exception ex)
       {
@@ -634,12 +648,12 @@ namespace MediaPortal.Player
         Log.Info("RTSPPlayer:Duration:{0}", _duration);
         if (_mediaType == g_Player.MediaType.TV)
         {
-          if (_duration < 1) _duration = 1;
-          SeekAbsolute(_duration - 1);
+          //if (_duration < 1) _duration = 1;
+          //SeekAbsolute(_duration - 1);
         }
         else
         {
-          SeekAbsolute(0);
+          //SeekAbsolute(0);
         }
 
         OnInitialized();
