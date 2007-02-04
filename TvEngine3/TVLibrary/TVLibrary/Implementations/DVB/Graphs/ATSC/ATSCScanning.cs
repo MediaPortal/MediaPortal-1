@@ -104,7 +104,12 @@ namespace TvLibrary.Implementations.DVB
       foreach (PidInfo pid in info.pids)
       {
         if (pid.isAC3Audio || pid.isAudio)
-          atscChannel.AudioPid = pid.pid;
+        {
+          if (pid.pid > 0)
+          {
+            atscChannel.AudioPid = pid.pid;
+          }
+        }
         if (pid.isVideo)
           atscChannel.VideoPid = pid.pid;
       }

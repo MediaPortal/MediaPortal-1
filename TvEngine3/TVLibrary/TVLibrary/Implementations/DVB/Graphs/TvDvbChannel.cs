@@ -425,7 +425,7 @@ namespace TvLibrary.Implementations.DVB
         SetupPmtGrabber(dvbChannel.PmtPid, dvbChannel.ServiceId);
       }
       _pmtTimer.Enabled = true;
-      if (dvbChannel != null && atscChannel==null)
+      if (dvbChannel != null && atscChannel == null)
       {
         if (dvbChannel.PmtPid >= 0)
         {
