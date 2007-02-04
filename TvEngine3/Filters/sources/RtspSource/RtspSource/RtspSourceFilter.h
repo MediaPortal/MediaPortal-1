@@ -80,5 +80,6 @@ private:
   CPatParser    m_patParser;
 	bool				  m_bReconfigureDemux;
 	bool					m_bPaused;
+  bool          m_bSeek;
 	DWORD         m_tickCount;
 };

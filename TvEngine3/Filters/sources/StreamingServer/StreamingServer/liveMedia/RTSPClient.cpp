@@ -1358,7 +1358,7 @@ Boolean RTSPClient::pauseMediaSession(MediaSession& session) {
       // Get the response from the server:
       unsigned bytesRead; unsigned responseCode;
       char* firstLine; char* nextLineStart;
-      if (!getResponse("PAUSE", bytesRead, responseCode, firstLine, nextLineStart)) break;
+      //if (!getResponse("PAUSE", bytesRead, responseCode, firstLine, nextLineStart)) break;
     }
 
     delete[] cmd;
@@ -2216,27 +2216,27 @@ unsigned RTSPClient::getResponse1(char*& responseBuffer,
   Boolean success = False;
   while (1) {
     unsigned char firstByte;
-    if (readSocket(envir(), fInputSocketNum, &firstByte, 1, fromAddress)
-	!= 1) break;
-    if (firstByte != '$') {
+    if (readSocket(envir(), fInputSocketNum, &firstByte, 1, fromAddress)	!= 1) break;
+    if (firstByte != '$') 
+    {
       // Normal case: This is the start of a regular response; use it:
       responseBuffer[0] = firstByte;
       success = True;
       break;
-    } else {
+    } 
+    else 
+    {
       // This is an interleaved packet; read and discard it:
       unsigned char streamChannelId;
-      if (readSocket(envir(), fInputSocketNum, &streamChannelId, 1, fromAddress)
-	  != 1) break;
+      if (readSocket(envir(), fInputSocketNum, &streamChannelId, 1, fromAddress) 	  != 1) break;
 
       unsigned short size;
-      if (readSocketExact(envir(), fInputSocketNum, (unsigned char*)&size, 2,
-		     fromAddress) != 2) break;
+      if (readSocketExact(envir(), fInputSocketNum, (unsigned char*)&size, 2,		     fromAddress) != 2) break;
       size = ntohs(size);
       if (fVerbosityLevel >= 1) {
-	envir() << "Discarding interleaved RTP or RTCP packet ("
-		<< size << " bytes, channel id "
-		<< streamChannelId << ")\n";
+	        envir() << "Discarding interleaved RTP or RTCP packet ("
+		        << size << " bytes, channel id "
+		        << streamChannelId << ")\n";
       }
 
       unsigned char* tmpBuffer = new unsigned char[size];
@@ -2247,9 +2247,9 @@ unsigned RTSPClient::getResponse1(char*& responseBuffer,
       while ((curBytesRead = readSocket(envir(), fInputSocketNum,
 					&tmpBuffer[bytesRead], bytesToRead,
 					fromAddress)) > 0) {
-	bytesRead += curBytesRead;
-	if (bytesRead >= size) break;
-	bytesToRead -= curBytesRead;
+	        bytesRead += curBytesRead;
+	        if (bytesRead >= size) break;
+	        bytesToRead -= curBytesRead;
       }
       delete[] tmpBuffer;
       if (bytesRead != size) break;

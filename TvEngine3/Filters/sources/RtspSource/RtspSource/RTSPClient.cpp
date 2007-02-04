@@ -208,7 +208,7 @@ bool CRTSPClient::Initialize()
 	TaskScheduler* scheduler = BasicTaskScheduler::createNew();
   m_env = BasicUsageEnvironment::createNew(*scheduler);
 	
-  m_ourClient = createClient(*m_env, 1/*verbosityLevel*/, "TSFileSource");
+  m_ourClient = createClient(*m_env, 0/*verbosityLevel*/, "TSFileSource");
   if (m_ourClient == NULL) 
 	{
     Log("Failed to create %s %s" ,clientProtocolName,m_env->getResultMsg() );
@@ -232,7 +232,7 @@ bool CRTSPClient::OpenStream(char* url)
     shutdown();
     return false;
   }
-  Log("Opened URL %s %s",url,sdpDescription);
+  //Log("Opened URL %s %s",url,sdpDescription);
 
 	char* range=strstr(sdpDescription,"a=range:npt=");
 	if (range!=NULL)
@@ -505,11 +505,14 @@ bool CRTSPClient::Pause()
 	Log("CRTSPClient::Pause()");
 	if (m_ourClient!=NULL && m_session!=NULL)
 	{
+	  Log("CRTSPClient::Pause() stopthread");
 		StopThread(100);
+	  Log("CRTSPClient::Pause() thread stopped");
 		RTSPClient* rtspClient=(RTSPClient*)m_ourClient;
 		rtspClient->pauseMediaSession(*m_session);
 		int x=1;
 	}
+	Log("CRTSPClient::Pause() done");
 	return true;
 }
 bool CRTSPClient::Play(float fStart)

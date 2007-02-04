@@ -3170,7 +3170,9 @@ HRESULT Demux::IsStopped()
 			if (state == State_Stopped)
 			{
 				if (hr == S_OK || hr == VFW_S_STATE_INTERMEDIATE || VFW_S_CANT_CUE)
+        {
 					return S_OK;
+        }
 			}
 		}
 		else
@@ -3188,7 +3190,9 @@ HRESULT Demux::IsStopped()
 		if (state == State_Stopped)
 		{
 			if (hr == S_OK || hr == VFW_S_STATE_INTERMEDIATE || VFW_S_CANT_CUE)
+      {
 				return S_OK;
+      }
 		}
 	} 
 	return S_FALSE;
@@ -3196,6 +3200,7 @@ HRESULT Demux::IsStopped()
 
 HRESULT Demux::IsPlaying()
 {
+	Log("Demux::IsPlaying");
 	HRESULT hr = S_FALSE;
 
 	FILTER_STATE state = State_Stopped;
@@ -3214,9 +3219,13 @@ HRESULT Demux::IsPlaying()
 			if (state == State_Running)
 			{
 				if (hr == S_OK || hr == VFW_S_STATE_INTERMEDIATE || VFW_S_CANT_CUE)
+        {
+	        Log("Demux::IsPlaying done");
 					return S_OK;
+        }
 			}
 
+	    Log("Demux::IsPlaying done");
 			return S_FALSE;
 		}
 		else
@@ -3234,9 +3243,13 @@ HRESULT Demux::IsPlaying()
 		if (state == State_Running)
 		{
 			if (hr == S_OK || hr == VFW_S_STATE_INTERMEDIATE || VFW_S_CANT_CUE)
+      {
+	      Log("Demux::IsPlaying done");
 				return S_OK;
+      }
 		}
 	}
+	Log("Demux::IsPlaying done");
 	return S_FALSE;
 }
 

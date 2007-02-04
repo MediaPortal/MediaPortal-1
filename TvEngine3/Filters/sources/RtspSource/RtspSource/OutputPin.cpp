@@ -317,8 +317,9 @@ HRESULT COutputPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLON
 				CAutoLock lock(&m_SeekLock);
 				HRESULT hr=CSourceSeeking::SetPositions(&rtCurrent, CurrentFlags, pStop, StopFlags);
         
-        m_pFilter->Buffer().Run(true);
         Log("COutputPin::SetPositions()#6");
+        m_pFilter->Buffer().Run(true);
+        Log("COutputPin::SetPositions()#7");
         return hr;
 //			}
 		}

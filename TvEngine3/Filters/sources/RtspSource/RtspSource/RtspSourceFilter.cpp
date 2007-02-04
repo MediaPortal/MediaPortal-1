@@ -81,6 +81,7 @@ CRtspSourceFilter::CRtspSourceFilter(IUnknown *pUnk, HRESULT *phr)
 	m_rtStartFrom=0;
 	m_bPaused=false;
 	m_bReconfigureDemux=false;
+  m_bSeek=false;
 	StartThread();
 }
 
@@ -169,7 +170,7 @@ void CRtspSourceFilter::ThreadProc()
 }
 void CRtspSourceFilter::OnNewChannel(CChannelInfo& info)
 {
-	Log("Filter::OnNewChannel()");
+	Log("Filter::  OnNewChannel()");
   CPidTable pids=info.PidTable;
 	if (  m_pids.aud==pids.AudioPid1 &&
 				m_pids.aud2==pids.AudioPid2 &&
@@ -193,19 +194,19 @@ void CRtspSourceFilter::OnNewChannel(CChannelInfo& info)
 	m_pids.sub=pids.SubtitlePid;
 	if ( pids.videoServiceType==0x1b)
 	{
-		Log("Filter:OnNewChannel, audio1:%x audio2:%x ac3:%x h264 video:%x pcr:%x pmt:%x sub:%x",
+		Log("Filter:  OnNewChannel, audio1:%x audio2:%x ac3:%x h264 video:%x pcr:%x pmt:%x sub:%x",
 			pids.AudioPid1,pids.AudioPid2,pids.AC3Pid,pids.VideoPid,pids.PcrPid,pids.PmtPid,pids.SubtitlePid);
 		m_pids.h264=pids.VideoPid;
 	}
 	else if (pids.videoServiceType==0x10)
 	{
-	  Log("Filter:OnNewChannel, audio1:%x audio2:%x ac3:%x mpeg4 video:%x pcr:%x pmt:%x sub:%x",
+	  Log("Filter:  OnNewChannel, audio1:%x audio2:%x ac3:%x mpeg4 video:%x pcr:%x pmt:%x sub:%x",
 				  pids.AudioPid1,pids.AudioPid2,pids.AC3Pid,pids.VideoPid,pids.PcrPid,pids.PmtPid,pids.SubtitlePid);
 		m_pids.mpeg4=pids.VideoPid;
 	}
 	else
 	{
-	  Log("Filter:OnNewChannel, audio1:%x audio2:%x ac3:%x mpeg2 video:%x pcr:%x pmt:%x",
+	  Log("Filter:  OnNewChannel, audio1:%x audio2:%x ac3:%x mpeg2 video:%x pcr:%x pmt:%x",
 				  pids.AudioPid1,pids.AudioPid2,pids.AC3Pid,pids.VideoPid,pids.PcrPid,pids.PmtPid);
 		m_pids.vid=pids.VideoPid;
 	}
@@ -215,7 +216,7 @@ void CRtspSourceFilter::OnNewChannel(CChannelInfo& info)
 HRESULT CRtspSourceFilter::OnConnect()
 {	
 	m_bReconfigureDemux=false;
-	Log("Filter:OnConnect, find pat/pmt...");
+	Log("Filter:  OnConnect, find pat/pmt...");
   m_buffer.SetCallback(this);
   m_buffer.Run(true);
   m_patParser.SkipPacketsAtStart(0);
@@ -225,7 +226,7 @@ HRESULT CRtspSourceFilter::OnConnect()
 
   if (m_client.Play(milliSecs))
   {
-		Log("Filter:OnConnect, wait for pat/pmt...");
+		Log("Filter:  OnConnect, wait for pat/pmt...");
     DWORD tickStart=GetTickCount();
     while (m_patParser.Count()==0)
     {
@@ -233,12 +234,12 @@ HRESULT CRtspSourceFilter::OnConnect()
       DWORD elapsed=GetTickCount()-tickStart;
       if (elapsed>10000)
       {
-		    Log("Filter:OnConnect, no pat/pmt received in 10 secs...");
+		    Log("Filter:  OnConnect, no pat/pmt received in 10 secs...");
         m_client.Stop();
         return E_FAIL;
       }
     }
-		Log("Filter:OnConnect, got pat/pmt...");
+		Log("Filter:  OnConnect, got pat/pmt...");
     CChannelInfo info;
     m_patParser.GetChannel(0,info);
 		
@@ -252,33 +253,34 @@ HRESULT CRtspSourceFilter::OnConnect()
 		m_pids.sub=pids.SubtitlePid;
 		if ( pids.videoServiceType==0x1b)
 		{
-			Log("Filter:OnConnect, audio1:%x audio2:%x ac3:%x h264 video:%x pcr:%x pmt:%x sub:%x",
+			Log("Filter:  OnConnect, audio1:%x audio2:%x ac3:%x h264 video:%x pcr:%x pmt:%x sub:%x",
 				pids.AudioPid1,pids.AudioPid2,pids.AC3Pid,pids.VideoPid,pids.PcrPid,pids.PmtPid,pids.SubtitlePid);
 			m_pids.h264=pids.VideoPid;
 		}
 		else if (pids.videoServiceType==0x10)
 		{
-		  Log("Filter:OnConnect, audio1:%x audio2:%x ac3:%x mpeg4 video:%x pcr:%x pmt:%x sub:%x",
+		  Log("Filter:  OnConnect, audio1:%x audio2:%x ac3:%x mpeg4 video:%x pcr:%x pmt:%x sub:%x",
 					  pids.AudioPid1,pids.AudioPid2,pids.AC3Pid,pids.VideoPid,pids.PcrPid,pids.PmtPid,pids.SubtitlePid);
 			m_pids.mpeg4=pids.VideoPid;
 		}
 		else
 		{
-		  Log("Filter:OnConnect, audio1:%x audio2:%x ac3:%x mpeg2 video:%x pcr:%x pmt:%x",
+		  Log("Filter:  OnConnect, audio1:%x audio2:%x ac3:%x mpeg2 video:%x pcr:%x pmt:%x",
 					  pids.AudioPid1,pids.AudioPid2,pids.AC3Pid,pids.VideoPid,pids.PcrPid,pids.PmtPid);
 			m_pids.vid=pids.VideoPid;
 		}
   }
   else
   {
-		Log("Filter:OnConnect, failed to play stream...");
+		Log("Filter:  OnConnect, failed to play stream...");
     return E_FAIL;
   }
 	
-	Log("Filter:setup pause client...");
-  m_client.Pause();
-	Log("Filter:setup demuxer...");
-  m_bPaused=true;
+	Log("Filter:  setup pause client...");
+  m_buffer.Run(false);
+  m_client.Stop();
+	Log("Filter:  setup demuxer...");
+  m_bPaused=false;
   m_pDemux->set_ClockMode(3);
   m_pDemux->set_Auto(TRUE);
   m_pDemux->set_FixedAspectRatio(TRUE);
@@ -289,22 +291,29 @@ HRESULT CRtspSourceFilter::OnConnect()
   m_pDemux->AOnConnect();
   m_pDemux->SetRefClock();
 	m_patParser.SetCallBack(this);
-	Log("Filter:connect done...");
+	Log("Filter:  connect done...");
   return S_OK;
 }
 
 STDMETHODIMP CRtspSourceFilter::Run(REFERENCE_TIME tStart)
 {
 	Log("Filter:run()");
+  if (m_bSeek)
+  {
+    m_bPaused=false;
+    m_buffer.Run(false);
+    m_client.Stop();
+    m_bSeek=false;
+  }
 	if (m_bPaused)
 	{
-		Log("Filter:client continue()");
+		Log("Filter:  client continue()");
 		m_client.Continue();
 		m_bPaused=false;
 		return CSource::Run(tStart);
 	}
 
-	Log("Filter:client start()");
+	Log("Filter:  client start()");
 	m_pDemux->SetRefClock();
 	if (m_bReconfigureDemux==false)
 	{
@@ -313,19 +322,19 @@ STDMETHODIMP CRtspSourceFilter::Run(REFERENCE_TIME tStart)
 
 		m_buffer.Clear();
 		m_buffer.Run(true);
-		Log("Filter:play stream() from %f",milliSecs);
+		Log("Filter:  play stream() from %f",milliSecs);
 		if (m_client.Play(milliSecs))
 		{
-			Log("Filter:buffer...");
+			Log("Filter:  buffer...");
 			CRefTime reftime(m_client.Duration());
 			m_pOutputPin->SetDuration(reftime);
 			m_tickCount=GetTickCount();
 			//m_client.FillBuffer( BUFFER_BEFORE_PLAY_SIZE);
-			Log("Filter:playing...");
+			Log("Filter:  playing...");
 		}
 		else 
 		{	
-			Log("Filter:failed to play stream()");
+			Log("Filter:  failed to play stream()");
 			m_buffer.Run(false);
 			return E_FAIL;
 		}
@@ -341,16 +350,16 @@ STDMETHODIMP CRtspSourceFilter::Stop()
 	if (m_bReconfigureDemux==false)
 	{
 		m_buffer.Run(false);
-		Log("Filter:stop client...");
+		Log("Filter:  stop client...");
 		m_client.Stop();
 	}
-	Log("Filter:stop playing...");
+	Log("Filter:  stop playing...");
 	HRESULT hr=CSource::Stop();
 	if (m_bReconfigureDemux==false)
 	{
-		Log("Filter:clear buffer...");
+		Log("Filter:  clear buffer...");
 		m_buffer.Clear();
-		Log("Filter:stop done...%x",hr);
+		Log("Filter:  stop done...%x",hr);
 	}
 	m_bPaused=false;
 	return hr;
@@ -358,25 +367,25 @@ STDMETHODIMP CRtspSourceFilter::Stop()
 
 STDMETHODIMP CRtspSourceFilter::Pause()
 {
-	Log("Filter:pause playing...%d %d %d", m_pDemux->IsPaused(), m_pDemux->IsPlaying(), m_pDemux->IsStopped());
+  
+	Log("Filter:pause playing...%d", m_State);
+  FILTER_STATE state=m_State;
 	HRESULT hr=CSource::Pause();
-	if (m_pDemux->IsPlaying())
+	Log("Filter:pause   source pause done");
+  if (m_State==State_Paused && state==State_Running)
 	{
-		if (m_client.IsRunning())
-		{
-			if (m_bPaused)
-			{
-				Log("Filter:client continue()");
-				m_client.Continue();
-			}
-			else
-			{
-				Log("Filter:client pause()");
-				m_client.Pause();
-				m_bPaused=true;
-			}
-		}
+    if (m_client.IsRunning())
+    {
+      if (!m_bPaused)
+      {
+		    Log("Filter:  client pause()");
+		    m_client.Pause();
+        Log("Filter:pause   client paused");
+		    m_bPaused=true;
+      }
+    }
 	}
+  Log("Filter:pause   playing.. done %d", m_State);
   return hr;
 }
 
@@ -399,6 +408,7 @@ void CRtspSourceFilter::Seek(CRefTime start)
 {
 	Log("CRtspSourceFilter::Seek()");
 	m_rtStartFrom=start;
+  m_bSeek=true;
 }
 
 STDMETHODIMP CRtspSourceFilter::GetDuration(REFERENCE_TIME *dur)
@@ -429,31 +439,31 @@ STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *
     m_pOutputPin->IsTimeShifting(false);
   }
 
-	Log("Filter:Initialize");
+	Log("Filter:  Initialize");
   if (m_client.Initialize())
   {
 	  char url[MAX_PATH];
 	  WideCharToMultiByte(CP_ACP,0,m_fileName,-1,url,MAX_PATH,0,0);
-		Log("Filter:open stream:%s",url);
+		Log("Filter:  open stream:%s",url);
     if (m_client.OpenStream(url))
     {
-			Log("Filter:stream length :%d msec",m_client.Duration());
+			Log("Filter:  stream length :%d msec",m_client.Duration());
 			CRefTime reftime(m_client.Duration());
 			m_pOutputPin->SetDuration(reftime);
 			m_tickCount=GetTickCount();
     }
 		else 
 		{
-			Log("Filter:failed to open stream");
+			Log("Filter:  failed to open stream");
 			return E_FAIL;
 		}
   }
 	else 
 	{
-		Log("Filter:failed to open initialize client");
+		Log("Filter:  failed to open initialize client");
 		return E_FAIL;
 	}
-	Log("Filter:load done");
+	Log("Filter:  load done");
 	return S_OK;
 }
 STDMETHODIMP CRtspSourceFilter::GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt)
