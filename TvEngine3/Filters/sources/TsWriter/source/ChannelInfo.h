@@ -25,7 +25,9 @@ class CChannelInfo
 {
 public:
   CChannelInfo(void);
+  CChannelInfo(const CChannelInfo& info);
   virtual ~CChannelInfo(void);
+  CChannelInfo operator = (const CChannelInfo &info);
   void Reset();
   long NetworkId;
   long TransportId;

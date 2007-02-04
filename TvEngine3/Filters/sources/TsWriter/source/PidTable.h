@@ -25,6 +25,7 @@ class CPidTable
 public:
 
   CPidTable();
+  CPidTable(const CPidTable& pids);
   virtual ~CPidTable();
   void Reset();
   

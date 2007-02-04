@@ -29,7 +29,7 @@ using namespace std;
 class IAtscCallback
 {
 public:
-	virtual void OnChannel(CChannelInfo info)=0;
+	virtual void OnChannel(const CChannelInfo& info)=0;
 };
 
 #define PID_VCT 0x1ffb

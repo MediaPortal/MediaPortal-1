@@ -58,7 +58,7 @@ public:
 	void				OnPmtReceived(int pmtPid);
   void        OnPidsReceived(CPidTable info);
 	void        OnSdtReceived(CChannelInfo sdtInfo);
-  void        OnChannel(CChannelInfo info);
+  void        OnChannel(const CChannelInfo& info);
 
 private:
 	void				               UpdateHwPids();

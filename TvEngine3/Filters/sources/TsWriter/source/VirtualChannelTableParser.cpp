@@ -254,7 +254,7 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
 		  len += (descriptor_len+2);
 	  }
 		start += descriptors_length;
-		
+    info.ServiceType=m_vecChannels.size()+1;
 		LogDebug("VCT:  #%d major:%d minor:%d freq:%d tsid:%x sid:%x servicetype:%x name:%s video:%x audio:%x audio:%x audio:%x ac3:%x", 
 				m_vecChannels.size(),
 				info.MajorChannel,info.MinorChannel,info.Frequency,

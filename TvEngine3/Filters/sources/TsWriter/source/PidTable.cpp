@@ -22,6 +22,11 @@
 #include <windows.h>
 #include "PidTable.h"
 
+CPidTable::CPidTable(const CPidTable& pids)
+{
+  *this=pids;
+}
+
 CPidTable::CPidTable(void)
 {
   Reset();

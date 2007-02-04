@@ -178,16 +178,17 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
     it++;
     index--;
   }
-	memcpy(&info, &(it->second), sizeof(CChannelInfo));
+  info = it->second;
 	info.LCN=m_nitDecoder.GetLogicialChannelNumber(info.NetworkId,info.TransportId,info.ServiceId);
 	return true;
 }
 
 
 //*****************************************************************************
-void CPatParser::OnChannel(CChannelInfo info)
+void CPatParser::OnChannel(const CChannelInfo& info)
 {
-  m_mapChannels[info.ServiceId]=info;
+  CChannelInfo i=info;
+  m_mapChannels[info.ServiceId]=i;
 }
 
 //*****************************************************************************

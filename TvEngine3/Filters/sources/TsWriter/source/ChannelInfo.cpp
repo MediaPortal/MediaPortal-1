@@ -21,6 +21,10 @@
 #include "StdAfx.h"
 #include "ChannelInfo.h"
 
+CChannelInfo::CChannelInfo(const CChannelInfo& info)
+{
+  *this=info;
+}
 CChannelInfo::CChannelInfo(void)
 {
   Reset();
@@ -50,4 +54,27 @@ void CChannelInfo::Reset()
 	OtherMux=false;
 	PmtReceived=false;
 	SdtReceived=false;
+}
+CChannelInfo CChannelInfo::operator = (const CChannelInfo &info)
+{
+	LCN=info.LCN;
+  NetworkId=info.NetworkId;
+  TransportId=info.TransportId;
+  ServiceId=info.ServiceId;
+  EIT_schedule_flag=info.EIT_schedule_flag;
+  EIT_present_following_flag=info.EIT_present_following_flag;
+  RunningStatus=info.RunningStatus;
+  FreeCAMode=info.FreeCAMode;
+  ServiceType=info.ServiceType;
+  MajorChannel=info.MajorChannel;
+  MinorChannel=info.MinorChannel;
+  Frequency=info.Frequency;
+  Modulation=info.Modulation;
+  strcpy(ProviderName,info.ProviderName);
+  strcpy(ServiceName,info.ServiceName);
+	OtherMux=info.OtherMux;
+	PmtReceived=info.PmtReceived;
+	SdtReceived=info.SdtReceived;
+  PidTable=info.PidTable;
+  return *this;
 }
