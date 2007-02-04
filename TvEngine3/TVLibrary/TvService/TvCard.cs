@@ -198,6 +198,19 @@ namespace TvService
     }
 
     /// <summary>
+    /// Gets a value indicating whether this card supports sub channels.
+    /// </summary>
+    /// <value><c>true</c> if card supports sub channels; otherwise, <c>false</c>.</value>
+    public bool SupportsSubChannels
+    {
+      get
+      {
+        if (Type == CardType.Analog) return false;
+        return true;
+      }
+    }
+
+    /// <summary>
     /// Gets or sets the reference the Card database record 
     /// </summary>
     /// <value>The card record from the database.</value>

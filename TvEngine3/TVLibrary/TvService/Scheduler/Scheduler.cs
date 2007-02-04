@@ -403,7 +403,7 @@ namespace TvService
           tmpUser.CardId = card.Id;
           if ((_tvController.IsCardInUse(card.Id, out byUser) == false) ||
                _tvController.CurrentDbChannel(ref tmpUser) == recording.Channel.IdChannel ||
-               _tvController.IsTunedToTransponder(card.Id, card.TuningDetail) )
+               (_tvController.IsTunedToTransponder(card.Id, card.TuningDetail) && _tvController.Type(card.Id) != CardType.Analog))
           {
             // use the recommended card.
             cardInfo = card;
@@ -421,8 +421,7 @@ namespace TvService
         //first try, find a card which is already tuned to the correct transponder
         foreach (CardDetail card in freeCards)
         {
-          User byUser;
-          if (_tvController.IsTunedToTransponder(card.Id,card.TuningDetail))
+          if (_tvController.IsTunedToTransponder(card.Id, card.TuningDetail) && _tvController.Type(card.Id) != CardType.Analog)
           {
             cardInfo = card;
             Log.Write("Scheduler : record on free card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
@@ -437,7 +436,7 @@ namespace TvService
         foreach (CardDetail card in freeCards)
         {
           User byUser;
-          if ( (_tvController.IsCardInUse(card.Id, out byUser) == false) )
+          if ((_tvController.IsCardInUse(card.Id, out byUser) == false))
           {
             cardInfo = card;
             Log.Write("Scheduler : record on free card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
@@ -494,7 +493,7 @@ namespace TvService
 
         Log.Write("Scheduler : record, first tune to channel");
         TvResult tuneResult = _controller.Tune(ref _user, cardInfo.TuningDetail, recording.Channel.IdChannel);
-        if (tuneResult != TvResult.Succeeded) 
+        if (tuneResult != TvResult.Succeeded)
         {
           return false;
         }

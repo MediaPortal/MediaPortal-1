@@ -1696,7 +1696,7 @@ namespace TvService
             //now we check if its free...
             cardsFound++;
             TvCard tvcard = _cards[keyPair.Value.DataBaseCard.IdCard];
-            if (tvcard.IsTunedToTransponder(tuningDetail))
+            if (tvcard.IsTunedToTransponder(tuningDetail) && tvcard.SupportsSubChannels)
             {
               //card is in use, but it is tuned to the same transponder.
               //meaning.. we can use it:-)
