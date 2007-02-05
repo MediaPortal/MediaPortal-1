@@ -219,6 +219,7 @@ namespace TvLibrary.Implementations.DVB
             {
               Log.Log.Info("Technotrend: CI opened");
               _hasCam = true;
+              bdaapiCIGetSlotStatus(_handle, 0);
             }
             return;
           }
@@ -488,12 +489,12 @@ namespace TvLibrary.Implementations.DVB
     {
       if ((nStatus == 2) || (nStatus == 3) || (nStatus == 4))
       {
-        Log.Log.Info("Technotrend: CAM initialized {0}", Context);
+        Log.Log.Info("Technotrend: CAM initialized: {0:X} status:{1}", Context, nStatus);
         _isCamInitializedTable[Context] = true;
       }
       else
       {
-        Log.Log.Info("Technotrend: CAM not initialized, Card;{0} status:{1}", Context, nStatus);
+        Log.Log.Info("Technotrend: CAM not initialized, Context:{0:X} status:{1}", Context, nStatus);
         _isCamInitializedTable[Context] = false;
       }
 
