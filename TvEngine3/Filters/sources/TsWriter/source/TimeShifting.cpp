@@ -32,33 +32,33 @@
 
 #define WRITE_BUFFER_SIZE 32900
 
-#define PID_PAT   0
-#define TABLE_ID_PAT 0
-#define TABLE_ID_SDT 0x42
+#define PID_PAT                               0     // PID for PAT table
+#define TABLE_ID_PAT                          0     // TABLE ID for PAT
+#define TABLE_ID_SDT                        0x42    // TABLE ID for SDT
 
-#define ADAPTION_FIELD_LENGTH_OFFSET        0x4
-#define PCR_FLAG_OFFSET                     0x5
-#define DISCONTINUITY_FLAG_BIT              0x80
-#define RANDOM_ACCESS_FLAG_BIT              0x40
-#define ES_PRIORITY_FLAG_BIT                0x20
-#define PCR_FLAG_BIT                        0x10
-#define OPCR_FLAG_BIT                       0x8
-#define SPLICING_FLAG_BIT                   0x4
-#define TRANSPORT_PRIVATE_DATA_FLAG_BIT     0x2
-#define ADAPTION_FIELD_EXTENSION_FLAG_BIT   0x1
+#define ADAPTION_FIELD_LENGTH_OFFSET        0x4     // offset in TS header to the adaption field length
+#define PCR_FLAG_OFFSET                     0x5     // offset in TS header to the PCR 
+#define DISCONTINUITY_FLAG_BIT              0x80    // bitmask for the DISCONTINUITY flag
+#define RANDOM_ACCESS_FLAG_BIT              0x40    // bitmask for the RANDOM_ACCESS_FLAG flag
+#define ES_PRIORITY_FLAG_BIT                0x20    // bitmask for the ES_PRIORITY_FLAG flag
+#define PCR_FLAG_BIT                        0x10    // bitmask for the PCR flag
+#define OPCR_FLAG_BIT                       0x8     // bitmask for the OPCR flag
+#define SPLICING_FLAG_BIT                   0x4     // bitmask for the SPLICING flag
+#define TRANSPORT_PRIVATE_DATA_FLAG_BIT     0x2     // bitmask for the TRANSPORT_PRIVATE_DATA flag
+#define ADAPTION_FIELD_EXTENSION_FLAG_BIT   0x1     // bitmask for the DAPTION_FIELD_EXTENSION flag
 
-int FAKE_NETWORK_ID   = 0x456;
-int FAKE_TRANSPORT_ID = 0x4;
-int FAKE_SERVICE_ID   = 0x89;
-int FAKE_PMT_PID      = 0x20;
-int FAKE_PCR_PID      = 0x30;//0x21;
-int FAKE_VIDEO_PID    = 0x30;
-int FAKE_AUDIO_PID    = 0x40;
-int FAKE_SUBTITLE_PID = 0x50;
+int FAKE_NETWORK_ID   = 0x456;                // network id we use in our PAT
+int FAKE_TRANSPORT_ID = 0x4;                  // transport id we use in our PAT
+int FAKE_SERVICE_ID   = 0x89;                 // service id we use in our PAT
+int FAKE_PMT_PID      = 0x20;                 // pid we use for our PMT
+int FAKE_PCR_PID      = 0x30;//0x21;          // pid we use for our PCR
+int FAKE_VIDEO_PID    = 0x30;                 // pid we use for the video stream
+int FAKE_AUDIO_PID    = 0x40;                 // pid we use for the audio strean
+int FAKE_SUBTITLE_PID = 0x50;                 // pid we use for subtitles
 
 extern void LogDebug(const char *fmt, ...) ;
 
-//FILE* fTsFile=NULL;
+/* CRC table for PSI sections */
 static DWORD crc_table[256] = {
 	0x00000000, 0x04c11db7, 0x09823b6e, 0x0d4326d9, 0x130476dc, 0x17c56b6b,
 	0x1a864db2, 0x1e475005, 0x2608edb8, 0x22c9f00f, 0x2f8ad6d6, 0x2b4bcb61,
@@ -104,6 +104,11 @@ static DWORD crc_table[256] = {
 	0x933eb0bb, 0x97ffad0c, 0xafb010b1, 0xab710d06, 0xa6322bdf, 0xa2f33668,
 	0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4};
 
+//*******************************************************************
+//* calculate crc for a data block
+//* data : block of data   
+//* len  : length of data
+//*******************************************************************
 DWORD crc32 (char *data, int len)
 {
 	register int i;
@@ -115,6 +120,9 @@ DWORD crc32 (char *data, int len)
 	return crc;
 }
 
+//*******************************************************************
+//* ctor
+//*******************************************************************
 CTimeShifting::CTimeShifting(LPUNKNOWN pUnk, HRESULT *phr) 
 :CUnknown( NAME ("MpTsTimeshifting"), pUnk)
 {
@@ -139,30 +147,53 @@ CTimeShifting::CTimeShifting(LPUNKNOWN pUnk, HRESULT *phr)
 	m_iPmtVersion=0;
   m_pWriteBuffer = new byte[WRITE_BUFFER_SIZE];
   m_iWriteBufferPos=0;
+  m_fDump=NULL;
 }
+//*******************************************************************
+//* dtor
+//*******************************************************************
 CTimeShifting::~CTimeShifting(void)
 {
   delete [] m_pWriteBuffer;
 }
 
+//*******************************************************************
+//* OnTsPacket gets called when a new mpeg-2 transport packet has been received
+//* Method will check if we are timeshifting and ifso write the packet to
+//* the timeshift file if pid is correct
+//*******************************************************************
 void CTimeShifting::OnTsPacket(byte* tsPacket)
 {
   if (m_bPaused) return;
 	if (m_bTimeShifting)
 	{
+    if (m_fDump!=NULL)
+    {
+      fwrite(m_pWriteBuffer,1,m_iWriteBufferPos,m_fDump);
+    }
 	  CEnterCriticalSection enter(m_section);
+    //* timeshifting to mpeg-2 program stream
     if (m_timeShiftMode==ProgramStream)
     {
+      //* then feed packet to multiplexer for transform transport stream into program stream
 		  m_multiPlexer.OnTsPacket(tsPacket);
     }
     else
     {
+      //* timeshifting to mpeg-2 transport stream. Just write packet to file
       WriteTs(tsPacket);
     }
 	}
 }
 
 
+//*******************************************************************
+//* Pause or continue timeshifting
+//* This method allows the client to pause and continue timeshifting
+//* Normally client pauses the timeshifting when updating the pids
+//* and continues timeshifting when all pids have been set
+//* onOff : 0 = continue, 1=pause
+//*******************************************************************
 STDMETHODIMP CTimeShifting::Pause( BYTE onOff) 
 {
   if (onOff!=0) 
@@ -180,6 +211,10 @@ STDMETHODIMP CTimeShifting::Pause( BYTE onOff)
   return S_OK;
 }
 
+//*******************************************************************
+//* Sets the pcr pid to timeshift
+//* pcrPid = the PCR pid
+//*******************************************************************
 STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 {
 	CEnterCriticalSection enter(m_section);
@@ -218,6 +253,10 @@ STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 	return S_OK;
 }
 
+//*******************************************************************
+//* Sets the PMT pid to timeshift
+//* pmtPid = the PMT pid
+//*******************************************************************
 STDMETHODIMP CTimeShifting::SetPmtPid(int pmtPid)
 {
   CEnterCriticalSection enter(m_section);
@@ -233,6 +272,11 @@ STDMETHODIMP CTimeShifting::SetPmtPid(int pmtPid)
 	return S_OK;
 }
 
+//*******************************************************************
+//* Sets the timeshifting mode
+//* This can be mpeg-2 program stream or mpeg-2 transport stream
+//* mode 0 = ProgramStream, 1= transport stream
+//*******************************************************************
 STDMETHODIMP CTimeShifting::SetMode(int mode) 
 {
   m_timeShiftMode=(TimeShiftingMode)mode;
@@ -243,6 +287,11 @@ STDMETHODIMP CTimeShifting::SetMode(int mode)
 	return S_OK;
 }
 
+//*******************************************************************
+//* Returns the timeshifting mode
+//* This can be mpeg-2 program stream or mpeg-2 transport stream
+//* mode 0 = ProgramStream, 1= transport stream
+//*******************************************************************
 STDMETHODIMP CTimeShifting::GetMode(int *mode) 
 {
   *mode=(int)m_timeShiftMode;
@@ -250,6 +299,12 @@ STDMETHODIMP CTimeShifting::GetMode(int *mode)
 }
 
 
+//*******************************************************************
+//* Adds an audio/video stream to the timeshift file
+//* pid         : pid to add
+//* serviceType : service type of pid. Indicates if its audio/video and which encoding is ued
+//* language    : The video/audio language
+//*******************************************************************
 STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
 {
   if (pid==0) return S_OK;
@@ -336,6 +391,10 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
 	return S_OK;
 }
 
+//*******************************************************************
+//* Removes a stream from the timeshift file
+//* pid         : pid to remove
+//*******************************************************************
 STDMETHODIMP CTimeShifting::RemoveStream(int pid)
 {
 	CEnterCriticalSection enter(m_section);
@@ -351,6 +410,10 @@ STDMETHODIMP CTimeShifting::RemoveStream(int pid)
 	return S_OK;
 }
 
+//*******************************************************************
+//* Sets the filename for the timeshift file
+//* pszFileName : full path and filename
+//*******************************************************************
 STDMETHODIMP CTimeShifting::SetTimeShiftingFileName(char* pszFileName)
 {
 	CEnterCriticalSection enter(m_section);
@@ -376,11 +439,21 @@ STDMETHODIMP CTimeShifting::SetTimeShiftingFileName(char* pszFileName)
 	return S_OK;
 }
 
+//*******************************************************************
+//* Starts timeshifting
+//*******************************************************************
 STDMETHODIMP CTimeShifting::Start()
 {
 	CEnterCriticalSection enter(m_section);
 	try
 	{
+    m_fDump=fopen("c:\\dump.txt","r");
+    if (m_fDump!=NULL)
+    {
+      fclose(m_fDump);
+      ::DeleteFile("c:\\dump.ts");
+      m_fDump = fopen("c:\\dump.ts","wb+");
+    }
 		if (strlen(m_szFileName)==0) return E_FAIL;
 		::DeleteFile((LPCTSTR) m_szFileName);
 		WCHAR wstrFileName[2048];
@@ -429,6 +502,10 @@ STDMETHODIMP CTimeShifting::Start()
 	}
 	return S_OK;
 }
+
+//*******************************************************************
+//* Resets the timeshifter
+//*******************************************************************
 STDMETHODIMP CTimeShifting::Reset()
 {
 	CEnterCriticalSection enter(m_section);
@@ -461,6 +538,10 @@ STDMETHODIMP CTimeShifting::Reset()
 	return S_OK;
 }
 
+
+//*******************************************************************
+//* Stops timeshifting
+//*******************************************************************
 STDMETHODIMP CTimeShifting::Stop()
 {
 	CEnterCriticalSection enter(m_section);
@@ -477,6 +558,11 @@ STDMETHODIMP CTimeShifting::Stop()
 			delete m_pTimeShiftFile;
 			m_pTimeShiftFile=NULL;
 		}
+    if (m_fDump!=NULL)
+    {
+      fclose(m_fDump);
+      m_fDump=NULL;
+    }
 		Reset();
 	}
 	catch(...)
@@ -487,6 +573,9 @@ STDMETHODIMP CTimeShifting::Stop()
 }
 
 
+//*******************************************************************
+//* Flush i/o buffer to timeshifting file
+//*******************************************************************
 void CTimeShifting::Flush()
 {
   try
@@ -505,6 +594,14 @@ void CTimeShifting::Flush()
 	  LogDebug("Timeshifter:Write exception");
   }
 }
+
+
+//*******************************************************************
+//* Write a datablock to i/o buffer
+//* When the i/o buffer is full, it is flushed to the timeshifting file
+//* buffer: block of data
+//* len   : length of buffer
+//*******************************************************************
 void CTimeShifting::Write(byte* buffer, int len)
 {
   if (!m_bTimeShifting) return;
@@ -519,6 +616,9 @@ void CTimeShifting::Write(byte* buffer, int len)
   m_iWriteBufferPos+=len;
 }
 
+//*******************************************************************
+//* returns the buffer size
+//*******************************************************************
 STDMETHODIMP CTimeShifting::GetBufferSize(long *size)
 {
 	CheckPointer(size, E_POINTER);
@@ -526,6 +626,9 @@ STDMETHODIMP CTimeShifting::GetBufferSize(long *size)
 	return S_OK;
 }
 
+//*******************************************************************
+//* returns the number of timeshifting files in use
+//*******************************************************************
 STDMETHODIMP CTimeShifting::GetNumbFilesAdded(WORD *numbAdd)
 {
     CheckPointer(numbAdd, E_POINTER);
@@ -533,6 +636,9 @@ STDMETHODIMP CTimeShifting::GetNumbFilesAdded(WORD *numbAdd)
     return NOERROR;
 }
 
+//*******************************************************************
+//* returns the number of timeshifting files removed since start
+//*******************************************************************
 STDMETHODIMP CTimeShifting::GetNumbFilesRemoved(WORD *numbRem)
 {
     CheckPointer(numbRem, E_POINTER);
@@ -540,6 +646,9 @@ STDMETHODIMP CTimeShifting::GetNumbFilesRemoved(WORD *numbRem)
     return NOERROR;
 }
 
+//*******************************************************************
+//* returns the current timeshifting file
+//*******************************************************************
 STDMETHODIMP CTimeShifting::GetCurrentFileId(WORD *fileID)
 {
     CheckPointer(fileID, E_POINTER);
@@ -547,6 +656,9 @@ STDMETHODIMP CTimeShifting::GetCurrentFileId(WORD *fileID)
     return NOERROR;
 }
 
+//*******************************************************************
+//* returns the minimum amount of timeshifting files
+//*******************************************************************
 STDMETHODIMP CTimeShifting::GetMinTSFiles(WORD *minFiles)
 {
     CheckPointer(minFiles, E_POINTER);
@@ -554,12 +666,18 @@ STDMETHODIMP CTimeShifting::GetMinTSFiles(WORD *minFiles)
     return NOERROR;
 }
 
+//*******************************************************************
+//* Sets the minimum amount of timeshifting files
+//*******************************************************************
 STDMETHODIMP CTimeShifting::SetMinTSFiles(WORD minFiles)
 {
 	m_params.minFiles=(long)minFiles;
     return NOERROR;
 }
 
+//*******************************************************************
+//* returns the maxmimum amount of timeshifting files
+//*******************************************************************
 STDMETHODIMP CTimeShifting::GetMaxTSFiles(WORD *maxFiles)
 {
     CheckPointer(maxFiles, E_POINTER);
@@ -567,12 +685,18 @@ STDMETHODIMP CTimeShifting::GetMaxTSFiles(WORD *maxFiles)
 	return NOERROR;
 }
 
+//*******************************************************************
+//* sets the maxmimum amount of timeshifting files
+//*******************************************************************
 STDMETHODIMP CTimeShifting::SetMaxTSFiles(WORD maxFiles)
 {
 	m_params.maxFiles=(long)maxFiles;
     return NOERROR;
 }
 
+//*******************************************************************
+//* returns the maxmimum filesize for a timeshifting file
+//*******************************************************************
 STDMETHODIMP CTimeShifting::GetMaxTSFileSize(__int64 *maxSize)
 {
     CheckPointer(maxSize, E_POINTER);
@@ -580,12 +704,18 @@ STDMETHODIMP CTimeShifting::GetMaxTSFileSize(__int64 *maxSize)
 	return NOERROR;
 }
 
+//*******************************************************************
+//* sets the maxmimum filesize for a timeshifting file
+//*******************************************************************
 STDMETHODIMP CTimeShifting::SetMaxTSFileSize(__int64 maxSize)
 {
 	m_params.maxSize=maxSize;
     return NOERROR;
 }
 
+//*******************************************************************
+//* returns the initial file length for a timeshifting file
+//*******************************************************************
 STDMETHODIMP CTimeShifting::GetChunkReserve(__int64 *chunkSize)
 {
   CheckPointer(chunkSize, E_POINTER);
@@ -593,12 +723,18 @@ STDMETHODIMP CTimeShifting::GetChunkReserve(__int64 *chunkSize)
 	return NOERROR;
 }
 
+//*******************************************************************
+//* sets the initial file length for a timeshifting file
+//*******************************************************************
 STDMETHODIMP CTimeShifting::SetChunkReserve(__int64 chunkSize)
 {
   m_params.chunkSize=chunkSize;
     return NOERROR;
 }
 
+//*******************************************************************
+//* returns the current filesize of all timeshift files
+//*******************************************************************
 STDMETHODIMP CTimeShifting::GetFileBufferSize(__int64 *lpllsize)
 {
     CheckPointer(lpllsize, E_POINTER);
@@ -606,6 +742,15 @@ STDMETHODIMP CTimeShifting::GetFileBufferSize(__int64 *lpllsize)
 	return NOERROR;
 }
 
+//*******************************************************************
+//* WriteTs()
+//* this method checks if the pid of the tspacket needs to be written to
+//* the timeshift file. Ifso.. the pid is written to the timeshifting file
+//* This method also inserts the pat/pmt packets in the stream
+//* and adjust the PCR/PTS timestamps
+//*
+//* tsPacket : mpeg-2 transport stream packet of 188 bytes
+//*******************************************************************
 void CTimeShifting::WriteTs(byte* tsPacket)
 {
 	if (m_pcrPid<0 || m_vecPids.size()==0|| m_pmtPid<0) return;
@@ -757,6 +902,11 @@ void CTimeShifting::WriteTs(byte* tsPacket)
   }
 }
 
+
+//*******************************************************************
+//* WriteFakePAT()
+//* Constructs a PAT table and writes it to the timeshifting file
+//*******************************************************************
 void CTimeShifting::WriteFakePAT()
 {
   int tableId=TABLE_ID_PAT;
@@ -803,6 +953,10 @@ void CTimeShifting::WriteFakePAT()
   Write(pat,188);
 }
 
+//*******************************************************************
+//* WriteFakePMT()
+//* Constructs a PMT table and writes it to the timeshifting file
+//*******************************************************************
 void CTimeShifting::WriteFakePMT()
 {
   int program_info_length=0;
@@ -907,6 +1061,13 @@ void CTimeShifting::WriteFakePMT()
   Write(pmt,188);
 }
 
+//*******************************************************************
+//* PatchPcr()
+//* Patches the PCR so the start of the timeshifting file always starts
+//* with a PCR of 0. 
+//* When zapping from channel A<-> channel B it will also make sure
+//* that the PCR is continuious
+//*******************************************************************
 void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 {
   m_adaptionField.Decode(header,tsPacket);
@@ -959,6 +1120,14 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
   tsPacket[11]= (byte)(pcrHi.PcrReferenceExtension&0xff);
 }
 
+//*******************************************************************
+//* PatchPtsDts()
+//* Patches the PTS/DTS timestamps in a audio/video transport packet
+//* so the start of the timeshifting file always starts
+//* with a PTS/DTS of 0. 
+//* When zapping from channel A<-> channel B it will also make sure
+//* that the PTS/TS is continuious
+//*******************************************************************
 void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 {
   if (false==header.PayloadUnitStart) return;

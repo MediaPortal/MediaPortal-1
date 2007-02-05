@@ -31,11 +31,14 @@
 using namespace std;
 using namespace Mediaportal;
 
+
+//* enum which specified the timeshifting mode 
 enum TimeShiftingMode
 {
     ProgramStream=0,
     TransportStream=1
 };
+//* enum which specified the pid type 
 enum PidType
 {
   Video=0,
@@ -77,6 +80,7 @@ DECLARE_INTERFACE_(ITsTimeshifting, IUnknown)
 	STDMETHOD(Pause) (THIS_ BYTE onOff) PURE;
 };
 
+//** timeshifting class
 class CTimeShifting: public CUnknown, public ITsTimeshifting, public IFileWriter
 {
 public:
@@ -159,4 +163,5 @@ private:
   int           m_iWriteBufferPos;
   CTsHeader     m_tsHeader;
   CAdaptionField m_adaptionField;
+  FILE*         m_fDump;
 };
