@@ -410,7 +410,13 @@ namespace MediaPortal.GUI.Video
       {
         GUIControl.SelectItemControl(GetID, facadeView.GetID, currentSelectedItem);
       }
+
       GUIWaitCursor.Hide();
+
+      if (itemCount == 0)
+      {
+        btnViews.Focus = true;
+      }
     }
 
 
