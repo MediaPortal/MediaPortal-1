@@ -147,7 +147,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_technoTrend != null)
         {
-          return _technoTrend.IsCamReady();
+          return true;
         }
       }
       catch (Exception ex)

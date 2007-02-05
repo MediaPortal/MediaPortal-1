@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="TsWriter"
 	ProjectGUID="{FCF30D16-2C9E-4429-B605-4ACA43023E71}"
 	RootNamespace="MPTSWriter"
@@ -81,7 +81,7 @@
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
 				UseLibraryDependencyInputs="false"
-				AdditionalDependencies="strmbase.lib winmm.lib strmiids.lib .\source\ttBdaDrvApi_Dll.lib "
+				AdditionalDependencies="strmbase.lib winmm.lib strmiids.lib "
 				ShowProgress="0"
 				OutputFile="Release/TsWriter.ax"
 				LinkIncremental="1"
@@ -265,10 +265,6 @@
 			</File>
 			<File
 				RelativePath=".\source\Recorder.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\Technotrend.cpp"
 				>
 			</File>
 			<File
