@@ -1,34 +1,39 @@
 using System;
+using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using MediaPortal.Util;
 using MediaPortal.Configuration;
 using System.Text;
 using TvControl;
-
+using TvDatabase;
+using Gentle.Common;
+using Gentle.Framework;
 namespace TvPlugin
 {
   public class TvSetup : GUIWindow
   {
     string _hostName;
-    [SkinControlAttribute(24)]    protected GUIButtonControl btnChange = null;
-    [SkinControlAttribute(30)]    protected GUILabelControl lblHostName = null;
-    
+    [SkinControlAttribute(24)]
+    protected GUIButtonControl btnChange = null;
+    [SkinControlAttribute(30)]
+    protected GUILabelControl lblHostName = null;
+
     public TvSetup()
-		{			
-			GetID=(int)GUIWindow.Window.WINDOW_SETTINGS_TVENGINE;
-		}
+    {
+      GetID = (int)GUIWindow.Window.WINDOW_SETTINGS_TVENGINE;
+    }
 
     void LoadSettings()
-		{
+    {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _hostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
       }
-		}
+    }
 
     void SaveSettings()
-		{
+    {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlreader.SetValue("tvservice", "hostname", _hostName);
@@ -62,11 +67,36 @@ namespace TvPlugin
           RemoteControl.HostName = _hostName;
           lblHostName.Label = _hostName;
 
+          bool tvServerOk = false;
+          bool databaseOk = false;
+
+          //check connection with tvserver
           try
           {
             int cards = RemoteControl.Instance.Cards;
+            tvServerOk = true;
             TVHome.Navigator.ReLoad();
-            GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+          }
+          catch (Exception)
+          {
+            RemoteControl.Clear();
+          }
+
+          //check connection with database
+          try
+          {
+            IList cards = Card.ListAll();
+            databaseOk = true;
+          }
+          catch (Exception)
+          {
+          }
+
+          //check connection with tvserver
+          GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+          if (tvServerOk && databaseOk)
+          {
+            TVHome.Navigator.ReLoad();
             if (pDlgOK != null)
             {
               pDlgOK.SetHeading(GUILocalizeStrings.Get(605));
@@ -74,23 +104,26 @@ namespace TvPlugin
               pDlgOK.SetLine(2, "");
               pDlgOK.SetLine(3, "");
               pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
-              return;
             }
             return;
           }
-          catch (Exception)
+          RemoteControl.Clear();
+          pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+          if (pDlgOK != null)
           {
-            RemoteControl.Clear();
-            GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-            if (pDlgOK != null)
-            {
-              pDlgOK.SetHeading(GUILocalizeStrings.Get(605));
+            pDlgOK.SetHeading(GUILocalizeStrings.Get(605));
+            if (tvServerOk)
+              pDlgOK.SetLine(1, "Connected to TvServer");
+            else
               pDlgOK.SetLine(1, "Unable to connect to the tvserver");
-              pDlgOK.SetLine(2, "");
-              pDlgOK.SetLine(3, "");
-              pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
-              return;
-            }
+
+            if (databaseOk)
+              pDlgOK.SetLine(2, "Connected to database");
+            else
+              pDlgOK.SetLine(2, "Unable to connect to database");
+            pDlgOK.SetLine(3, "");
+            pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+            return;
           }
         }
       }

@@ -443,16 +443,17 @@ namespace TvPlugin
         RemoteControl.Clear();
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SETTINGS_TVENGINE);
         return;
-        /*
-        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-        if (pDlgOK != null)
-        {
-          pDlgOK.SetHeading(605);//my tv
-          pDlgOK.SetLine(1, "The Tv Service is not running");
-          pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
-          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
-          return;
-        }*/
+      }
+
+      try
+      {
+        IList cards = TvDatabase.Card.ListAll(); ;
+      }
+      catch (Exception)
+      {
+        RemoteControl.Clear();
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SETTINGS_TVENGINE);
+        return;
       }
       LoadSettings();
       //stop the old recorder.
