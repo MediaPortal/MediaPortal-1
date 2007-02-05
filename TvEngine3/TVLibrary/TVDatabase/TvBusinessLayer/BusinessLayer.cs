@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Text;
 using System.Globalization;
-//using System.Data;
+
 //using System.Data.OleDb;
 using TvDatabase;
 using Gentle.Common;
@@ -15,8 +17,10 @@ using TvLibrary.Implementations;
 using TvLibrary.Channels;
 using TvLibrary.Log;
 using TvLibrary;
+
 using DirectShowLib;
 using DirectShowLib.BDA;
+
 namespace TvDatabase
 {
   public class TvBusinessLayer
@@ -86,7 +90,7 @@ namespace TvDatabase
 
     public void AddChannelToGroup(Channel channel, string groupName)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(ChannelGroup));
       sb.AddConstraint(Operator.Like, "groupName", groupName);
       SqlStatement stmt = sb.GetStatement(true);
       IList groups = ObjectFactory.GetCollection(typeof(ChannelGroup), stmt.Execute());
@@ -132,7 +136,7 @@ namespace TvDatabase
 
     public IList GetChannelsByName(string name)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
       sb.AddConstraint(Operator.Equals, "name", name);
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
@@ -142,7 +146,7 @@ namespace TvDatabase
     }
     public Channel GetChannelByName(string name)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
       sb.AddConstraint(Operator.Equals, "name", name);
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
@@ -153,7 +157,7 @@ namespace TvDatabase
 
     public Channel GetChannelByName(string provider, string name)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TuningDetail));
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(TuningDetail));
       sb.AddConstraint(Operator.Equals, "name", name);
       sb.AddConstraint(Operator.Equals, "provider", provider);
       SqlStatement stmt = sb.GetStatement(true);
@@ -170,7 +174,7 @@ namespace TvDatabase
       if (tagName == null) return null;
       if (tagName == "") return null;
 
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Setting));
+    SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Setting));
       sb.AddConstraint(Operator.Equals, "tag", tagName);
       SqlStatement stmt = sb.GetStatement(true);
       IList settingsFound = ObjectFactory.GetCollection(typeof(Setting), stmt.Execute());
@@ -184,7 +188,7 @@ namespace TvDatabase
     }
     public Setting GetSetting(string tagName)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Setting));
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Setting));
       sb.AddConstraint(Operator.Equals, "tag", tagName);
       SqlStatement stmt = sb.GetStatement(true);
       IList settingsFound = ObjectFactory.GetCollection(typeof(Setting), stmt.Execute());
@@ -669,7 +673,7 @@ namespace TvDatabase
     }
     public void RemoveOldPrograms()
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Delete, typeof(Program));
       DateTime dtYesterday = DateTime.Now.AddDays(-1);
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       sb.AddConstraint(String.Format("endTime < '{0}'", dtYesterday.ToString(GetDateTimeString(), mmddFormat)));
@@ -679,7 +683,7 @@ namespace TvDatabase
     }
     public IList GetOnairNow()
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       sb.AddConstraint(String.Format("startTime >= '{0}' and endTime <= '{1}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat), DateTime.Now.ToString(GetDateTimeString(), mmddFormat)));
       SqlStatement stmt = sb.GetStatement(true);
@@ -690,7 +694,7 @@ namespace TvDatabase
     public IList GetPrograms(Channel channel, DateTime startTime, DateTime endTime)
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
 
       string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
       string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
@@ -707,7 +711,7 @@ namespace TvDatabase
 
     public IList GetPrograms(DateTime startTime, DateTime endTime)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
 
       string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
@@ -793,7 +797,7 @@ namespace TvDatabase
 
     public IList SearchProgramsPerGenre(string currentGenre, string currentSearchCriteria)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
 
       if (currentSearchCriteria.Length == 0)
       {
@@ -815,7 +819,7 @@ namespace TvDatabase
 
     public IList SearchPrograms(string searchCriteria)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       if (searchCriteria.Length > 0)
       {
@@ -837,7 +841,7 @@ namespace TvDatabase
     }
     public IList SearchProgramsByDescription(string searchCriteria)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       if (searchCriteria.Length > 0)
       {
@@ -866,51 +870,62 @@ namespace TvDatabase
       if (provider == "mysql")
       {
         string connectString = Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
+
         using (MySqlConnection connect = new MySqlConnection(connectString))
         {
+          MySqlDataAdapter adapter = new MySqlDataAdapter();
+          adapter.TableMappings.Add("Table", "program");
+
           connect.Open();
           using (MySqlCommand cmd = connect.CreateCommand())
-          {
-            //cmd.CommandText = "select idChannel,idProgram,starttime,endtime,title from program";
-            //cmd.CommandText += " where program.endtime >= now() and EXISTS ";
-            //cmd.CommandText += " ( ";
-            //cmd.CommandText += " select idProgram from program as p3 where p3.idProgram=program.idProgram and p3.idchannel=program.idchannel and p3.endtime >= now() order by starttime LIMIT 2";
-            //cmd.CommandText += " ) order by idchannel,starttime";
-            
+          {            
             //cmd.CommandText = "select idChannel,idProgram,starttime,endtime,title from program where program.endtime >= now() and program.idProgram in (select idProgram from program as p3 where p3.idchannel=program.idchannel and p3.endtime >= now() order by starttime) order by idchannel,starttime desc";
 
             // Since MySQL5 doesn't support an "TOP 2" equivalent like "LIMIT" in subselects we only fetch info for 24 hours to lower the amount of data.
             cmd.CommandText = "SELECT idChannel,idProgram,starttime,endtime,title FROM program WHERE program.endtime >= NOW() AND program.endtime < DATE_ADD(SYSDATE(),INTERVAL 24 HOUR) ORDER BY idchannel,starttime";
             cmd.CommandType = System.Data.CommandType.Text;
-            using (System.Data.IDataReader reader = cmd.ExecuteReader())
-            {              
+
+            adapter.SelectCommand = cmd;
+            using (System.Data.DataSet dataSet = new DataSet("program"))
+            {
+              // ToDo: check if column fetching wastes performance
+              adapter.Fill(dataSet);
+
+              int resultCount = dataSet.Tables[0].Rows.Count;
               List<int> lastChannelIDs = new List<int>();
 
-              while (reader.Read())
+              // for-loops are faster than foreach-loops
+              for (int j = 0; j < resultCount; j++)
               {
-                int idChannel = (int)reader["idChannel"];
+                int idChannel = (int)dataSet.Tables[0].Rows[j]["idChannel"];
+                // Only get the Now-Next-Data _once_ per channel
                 if (!lastChannelIDs.Contains(idChannel))
                 {
                   lastChannelIDs.Add(idChannel);
 
-                  int nowidProgram = (int)reader["idProgram"];
-                  DateTime nowStart = (DateTime)reader["startTime"];
-                  DateTime nowEnd = (DateTime)reader["endTime"];
-                  string nowTitle = (string)reader["title"];
-                  if (reader.Read())
-                  {
-                    int nextidProgram = (int)reader["idProgram"];
-                    DateTime nextStart = (DateTime)reader["startTime"];
-                    DateTime nextEnd = (DateTime)reader["endTime"];
-                    string nextTitle = (string)reader["title"];
+                  int nowidProgram = (int)dataSet.Tables[0].Rows[j]["idProgram"];
+                  DateTime nowStart = (DateTime)dataSet.Tables[0].Rows[j]["startTime"];
+                  DateTime nowEnd = (DateTime)dataSet.Tables[0].Rows[j]["endTime"];
+                  string nowTitle = (string)dataSet.Tables[0].Rows[j]["title"];
 
-                    NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nextStart, nextEnd, nowTitle, nextTitle, nowidProgram, nextidProgram);
-                    nowNextList[idChannel] = p;
+                  if (j < resultCount - 1)
+                  {
+                    // get the the "Next" info if it belongs to the same channel.
+                    if (idChannel == (int)dataSet.Tables[0].Rows[j + 1]["idChannel"])
+                    {
+                      int nextidProgram = (int)dataSet.Tables[0].Rows[j + 1]["idProgram"];
+                      DateTime nextStart = (DateTime)dataSet.Tables[0].Rows[j + 1]["startTime"];
+                      DateTime nextEnd = (DateTime)dataSet.Tables[0].Rows[j + 1]["endTime"];
+                      string nextTitle = (string)dataSet.Tables[0].Rows[j + 1]["title"];
+
+                      NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nextStart, nextEnd, nowTitle, nextTitle, nowidProgram, nextidProgram);
+                      nowNextList[idChannel] = p;
+                    }
                   }
-                }      
+                }
               }
-              reader.Close();
             }
+
           }
           connect.Close();
         }
