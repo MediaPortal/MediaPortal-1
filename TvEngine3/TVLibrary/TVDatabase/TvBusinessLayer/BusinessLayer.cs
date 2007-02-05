@@ -837,7 +837,6 @@ namespace TvDatabase
     }
     public IList SearchProgramsByDescription(string searchCriteria)
     {
-
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       if (searchCriteria.Length > 0)
@@ -879,7 +878,9 @@ namespace TvDatabase
             //cmd.CommandText += " ) order by idchannel,starttime";
             
             //cmd.CommandText = "select idChannel,idProgram,starttime,endtime,title from program where program.endtime >= now() and program.idProgram in (select idProgram from program as p3 where p3.idchannel=program.idchannel and p3.endtime >= now() order by starttime) order by idchannel,starttime desc";
-            cmd.CommandText = "select idChannel,idProgram,starttime,endtime,title from program where program.endtime >= now() order by idchannel,starttime";
+
+            // Since MySQL5 doesn't support an "TOP 2" equivalent like "LIMIT" in subselects we only fetch info for 24 hours to lower the amount of data.
+            cmd.CommandText = "SELECT idChannel,idProgram,starttime,endtime,title FROM program WHERE program.endtime >= NOW() AND program.endtime < DATE_ADD(SYSDATE(),INTERVAL 24 HOUR) ORDER BY idchannel,starttime";
             cmd.CommandType = System.Data.CommandType.Text;
             using (System.Data.IDataReader reader = cmd.ExecuteReader())
             {              
