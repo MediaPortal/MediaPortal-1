@@ -190,9 +190,11 @@ HRESULT COutputPin::FillBuffer(IMediaSample *pSample)
 	CAutoLock lock(&m_FillLock);
   if (!m_pFilter->IsClientRunning()) 
 	{
-    m_bDisContinuity=TRUE;
+    Log("fillbuffer: client not running");
+    m_bDisContinuity=true;
     pSample->SetDiscontinuity(TRUE);
 		pSample->SetActualDataLength(0);
+		Sleep(50);
 		return S_OK;
 	}
 
@@ -202,8 +204,9 @@ HRESULT COutputPin::FillBuffer(IMediaSample *pSample)
   DWORD bytesRead=m_pFilter->GetData(pBuffer,lDataLength);
 	if (bytesRead==0)
 	{
-		Sleep(10);
-    m_bDisContinuity=TRUE;
+    Log("fillbuffer: 0 bytes read");
+		Sleep(50);
+    m_bDisContinuity=true;
     pSample->SetDiscontinuity(TRUE);
 		return S_OK;
 	}
@@ -245,9 +248,9 @@ HRESULT COutputPin::Run(REFERENCE_TIME tStart)
   m_bDisContinuity=true;
 	if (!m_bSeeking && !m_DemuxLock)
 	{	
-		CComPtr<IReferenceClock> pClock;
-		Demux::GetReferenceClock(m_pFilter, &pClock);
-		SetDemuxClock(pClock);
+//		CComPtr<IReferenceClock> pClock;
+//		Demux::GetReferenceClock(m_pFilter, &pClock);
+//		SetDemuxClock(pClock);
 	}
 	HRESULT hr= CBaseOutputPin::Run(tStart);
 	Log("COutputPin::Run() done");
@@ -291,8 +294,9 @@ HRESULT COutputPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLON
 
         m_pFilter->Buffer().Run(false);
         Log("COutputPin::SetPositions()#1");
-				if(m_pFilter->is_Active() && !m_DemuxLock)
-				  SetDemuxClock(NULL);
+//				if(m_pFilter->is_Active() && !m_DemuxLock)
+//				  SetDemuxClock(NULL);
+        m_bDisContinuity=true;
         Log("COutputPin::SetPositions()#2");
 				DeliverBeginFlush();
         Log("COutputPin::SetPositions()#3");
@@ -310,16 +314,23 @@ HRESULT COutputPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLON
 				DeliverEndFlush();
         Log("COutputPin::SetPositions()#6");
 
+        //takes 5 secs?
 				CSourceStream::Run();
+        Log("COutputPin::SetPositions()#7");
 				if (CurrentFlags & AM_SEEKING_ReturnTime)
 					*pCurrent  = rtCurrent;
 
+        Log("COutputPin::SetPositions()#8");
 				CAutoLock lock(&m_SeekLock);
+        Log("COutputPin::SetPositions()#9");
 				HRESULT hr=CSourceSeeking::SetPositions(&rtCurrent, CurrentFlags, pStop, StopFlags);
         
-        Log("COutputPin::SetPositions()#6");
+        Log("COutputPin::SetPositions()#10");
+        
+        //takes 5 secs?
         m_pFilter->Buffer().Run(true);
-        Log("COutputPin::SetPositions()#7");
+        m_bDisContinuity=true;
+        Log("COutputPin::SetPositions()#11");
         return hr;
 //			}
 		}
@@ -338,6 +349,7 @@ HRESULT COutputPin::SetAccuratePos(REFERENCE_TIME seektime)
   Log("COutputPin::SetAccuratePos()#2");
 	m_pFilter->Seek(m_rtStart);
   Log("COutputPin::SetAccuratePos()#3");
+  m_bDisContinuity=true;
 	return S_OK;
 }
 HRESULT COutputPin::OnThreadStartPlay(void) 

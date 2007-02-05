@@ -23,6 +23,7 @@ CMemoryBuffer::~CMemoryBuffer()
 
 void CMemoryBuffer::Clear()
 {
+  Log("memorybuffer: Clear() %d",m_Array.size());
 	CAutoLock BufferLock(&m_BufferLock);
 	std::vector<BUFFERITEM *>::iterator it = m_Array.begin();
 	for ( ; it != m_Array.end() ; it++ )
@@ -33,6 +34,7 @@ void CMemoryBuffer::Clear()
 	}
 	m_Array.clear();
   m_BytesInBuffer=0;
+	Log("memorybuffer: Clear() done");
 }
 
 DWORD CMemoryBuffer::Size()
@@ -41,11 +43,15 @@ DWORD CMemoryBuffer::Size()
 }
 void CMemoryBuffer::Run(bool onOff)
 {
-  m_bRunning=onOff;
-	if (m_bRunning==false) 
-	{
-		Clear();
-	}
+	Log("memorybuffer: run:%d %d", onOff, m_bRunning);
+  if (m_bRunning!=onOff)
+  {
+    m_bRunning=onOff;
+	  if (m_bRunning==false) 
+	  {
+		  Clear();
+	  }
+  }
 	Log("memorybuffer: running:%d", onOff);
 }
 
