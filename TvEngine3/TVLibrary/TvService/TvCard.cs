@@ -219,7 +219,7 @@ namespace TvService
             return false;
           }
         }
-        return _card.SupportsSubChannels ;
+        return _card.SupportsSubChannels;
       }
     }
 
@@ -1801,7 +1801,7 @@ namespace TvService
             ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
             if (subchannel == null) return false;
             subchannel.StopRecording();
-            if (subchannel.IsTimeShifting == false)
+            if (subchannel.IsTimeShifting == false || context.Users.Length <= 1)
             {
               RemoveUser(user);
             }
