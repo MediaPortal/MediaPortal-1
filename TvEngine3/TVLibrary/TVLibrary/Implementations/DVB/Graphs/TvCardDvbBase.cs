@@ -2200,12 +2200,24 @@ namespace TvLibrary.Implementations.DVB
                   for (int z = 0; z < languageCount; ++z)
                   {
                     _interfaceEpgGrabber.GetEPGLanguage((uint)x, (uint)i, (uint)z, out languageId, out ptrTitle, out ptrDesc);
-                    title = Marshal.PtrToStringAnsi(ptrTitle);
-                    description = Marshal.PtrToStringAnsi(ptrDesc);
+                    //title = Marshal.PtrToStringAnsi(ptrTitle);
+                    //description = Marshal.PtrToStringAnsi(ptrDesc);
                     string language = String.Empty;
                     language += (char)((languageId >> 16) & 0xff);
                     language += (char)((languageId >> 8) & 0xff);
                     language += (char)((languageId) & 0xff);
+
+                    //allows czech epg
+                    if (language.ToLower() == "cze" || language.ToLower() == "ces")
+                    {
+                      title = Iso6937ToUnicode.Convert( ptrTitle );
+                      description = Iso6937ToUnicode.Convert( ptrDesc );
+                    }
+                    else
+                    {
+                      title = Marshal.PtrToStringAnsi( ptrTitle );
+                      description = Marshal.PtrToStringAnsi( ptrDesc );
+                    }
 
                     if (title == null) title = "";
                     if (description == null) description = "";

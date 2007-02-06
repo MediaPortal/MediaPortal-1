@@ -70,6 +70,7 @@
     <Compile Include="Implementations\DVB\Graphs\DVBT\DVBTScanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBT\TvCardDVBT.cs" />
     <Compile Include="Implementations\DVB\Graphs\TvCardDvbBase.cs" />
+    <Compile Include="Implementations\DVB\Graphs\Iso6937ToUnicode.cs" />
     <Compile Include="Implementations\DVB\Structures\PidInfo.cs" />
     <Compile Include="Implementations\DVB\Structures\TSHelperTools.cs" />
     <Compile Include="Implementations\Helper\FileAccess.cs" />
