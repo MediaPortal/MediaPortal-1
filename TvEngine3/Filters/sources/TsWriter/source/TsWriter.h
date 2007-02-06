@@ -28,7 +28,7 @@
 #include "timeshifting.h"
 #include "teletextgrabber.h"
 #include "cagrabber.h"
-//#include "technotrend.h"
+#include "technotrend.h"
 #include "tschannel.h"
 
 #include <map>
@@ -139,7 +139,7 @@ private:
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
 		CChannelScan*   m_pChannelScanner;
 		CEpgScanner*		m_pEpgScanner;
-    //CTechnotrend*   m_pTechnoTrend;
+    CTechnotrend*   m_pTechnoTrend;
     vector<CTsChannel*> m_vecChannels;
     typedef vector<CTsChannel*>::iterator ivecChannels;
 };

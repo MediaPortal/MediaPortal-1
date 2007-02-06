@@ -12,7 +12,7 @@ DECLARE_INTERFACE_(ITechnoTrend, IUnknown)
 	STDMETHOD(IsCamReady)(THIS_ BOOL* yesNo)PURE;
 	STDMETHOD(SetAntennaPower)(THIS_ BOOL onOff)PURE;
 	STDMETHOD(SetDisEqc)(THIS_ int diseqcType, int hiband, int vertical)PURE;
-	STDMETHOD(DescrambleService)(THIS_ int serviceId,BOOL* succeeded)PURE;
+	STDMETHOD(DescrambleService)(THIS_ BYTE* PMT, int PMTLength,BOOL* succeeded)PURE;
 };
 
 class CTechnotrend: public CUnknown, public ITechnoTrend
@@ -27,7 +27,7 @@ public:
 	STDMETHODIMP IsCamReady( BOOL* yesNo);
 	STDMETHODIMP SetAntennaPower( BOOL onOff);
 	STDMETHODIMP SetDisEqc( int diseqcType, int hiband, int vertical);
-	STDMETHODIMP DescrambleService( int serviceId,BOOL* succeeded);
+	STDMETHODIMP DescrambleService( BYTE* PMT, int PMTLength,BOOL* succeeded);
 
   void OnCaChange(BYTE  nSlot,BYTE  nReplyTag,WORD  wStatus);
   void OnSlotChange(BYTE nSlot,BYTE nStatus,TYP_SLOT_INFO* csInfo);
@@ -37,5 +37,6 @@ private:
   int         m_slotStatus;
   DEVICE_CAT  m_deviceType;
   int         m_ciStatus;
+  HMODULE     m_dll;
   TS_CiCbFcnPointer m_technoTrendStructure;
 };

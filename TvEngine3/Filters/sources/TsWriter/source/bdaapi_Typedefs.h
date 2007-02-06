@@ -185,7 +185,7 @@ typedef struct _typ_ConnectionDesc
 /// \param Buf      Contains the remote code. If RC5 then the low word is
 ///                 used. If RC6 then the whole DWORD is used.
 /////////////////////////////////////////////////////////////////////////////
-typedef void (*PIRCBFCN) (PVOID  Context,
+typedef void (FAR PASCAL *PIRCBFCN) (PVOID  Context,
                           DWORD  *Buf);
 
 /////////////////////////////////////////////////////////////////////////////
@@ -200,7 +200,7 @@ typedef void (*PIRCBFCN) (PVOID  Context,
 ///                 bdaapi_CIMsg.h.
 /// \param csInfo   Detailed slot informations.
 /////////////////////////////////////////////////////////////////////////////
-typedef void ( *PCBFCN_CI_OnSlotStatus)(PVOID          Context,
+typedef void (FAR PASCAL *PCBFCN_CI_OnSlotStatus)(PVOID          Context,
                                         BYTE           nSlot,
                                         BYTE           nStatus,
                                         TYP_SLOT_INFO* csInfo);
@@ -215,7 +215,7 @@ typedef void ( *PCBFCN_CI_OnSlotStatus)(PVOID          Context,
 /// \param nReplyTag Reply tag.
 /// \param wStatus   Status.
 /////////////////////////////////////////////////////////////////////////////
-typedef void ( *PCBFCN_CI_OnCAStatus)(PVOID Context,
+typedef void (FAR PASCAL *PCBFCN_CI_OnCAStatus)(PVOID Context,
                                       BYTE  nSlot,
                                       BYTE  nReplyTag,
                                       WORD  wStatus);
@@ -228,7 +228,7 @@ typedef void ( *PCBFCN_CI_OnCAStatus)(PVOID Context,
 /// \param pString  String to display.
 /// \param wLength  Length of the string to display.
 /////////////////////////////////////////////////////////////////////////////
-typedef void ( *PCBFCN_CI_OnDisplayString)(PVOID Context,
+typedef void (FAR PASCAL *PCBFCN_CI_OnDisplayString)(PVOID Context,
                                                     BYTE  nSlot,
                                                     char* pString,
                                                     WORD  wLength);
@@ -242,7 +242,7 @@ typedef void ( *PCBFCN_CI_OnDisplayString)(PVOID Context,
 /// \param pStringArray Contains all strings of the menu.
 /// \param wLength      Length of the string array.
 /////////////////////////////////////////////////////////////////////////////
-typedef void ( *PCBFCN_CI_OnDisplayMenu)(PVOID Context,
+typedef void (FAR PASCAL *PCBFCN_CI_OnDisplayMenu)(PVOID Context,
                                                   BYTE  nSlot,
                                                   WORD  wItems,
                                                   char* pStringArray,
@@ -257,7 +257,7 @@ typedef void ( *PCBFCN_CI_OnDisplayMenu)(PVOID Context,
 /// \param pStringArray Contains all strings of the list.
 /// \param wLength      Length of the string array.
 /////////////////////////////////////////////////////////////////////////////
-typedef void ( *PCBFCN_CI_OnDisplayList)(PVOID Context,
+typedef void (FAR PASCAL *PCBFCN_CI_OnDisplayList)(PVOID Context,
                                                   BYTE  nSlot,
                                                   WORD  wItems,
                                                   char* pStringArray,
@@ -269,7 +269,7 @@ typedef void ( *PCBFCN_CI_OnDisplayList)(PVOID Context,
 ///                 application. This parameter can be NULL.
 /// \param nSlot    Is the Slot ID.
 /////////////////////////////////////////////////////////////////////////////
-typedef void ( *PCBFCN_CI_OnSwitchOsdOff)(PVOID Context,
+typedef void (FAR PASCAL *PCBFCN_CI_OnSwitchOsdOff)(PVOID Context,
                                                    BYTE  nSlot);
 /////////////////////////////////////////////////////////////////////////////
 /// \brief
@@ -281,7 +281,7 @@ typedef void ( *PCBFCN_CI_OnSwitchOsdOff)(PVOID Context,
 /// \param nExpectedLength Expected length.
 /// \param dwKeyMask       Key mask.
 /////////////////////////////////////////////////////////////////////////////
-typedef void ( *PCBFCN_CI_OnInputRequest)(PVOID Context,
+typedef void (FAR PASCAL *PCBFCN_CI_OnInputRequest)(PVOID Context,
                                                    BYTE  nSlot,
                                                    BOOL  bBlindAnswer,
                                                    BYTE  nExpectedLength, 
@@ -294,7 +294,7 @@ typedef void ( *PCBFCN_CI_OnInputRequest)(PVOID Context,
 /// \param nSlot        Is the Slot ID.
 /// \param pDescriptor  Detailed connection description.
 /////////////////////////////////////////////////////////////////////////////
-typedef void ( *PCBFCN_CI_OnLscSetDescriptor)(PVOID Context,
+typedef void (FAR PASCAL *PCBFCN_CI_OnLscSetDescriptor)(PVOID Context,
                                                        BYTE  nSlot,
                                                        TYPE_CONNECT_DESCR* pDescriptor);
 /////////////////////////////////////////////////////////////////////////////
@@ -304,7 +304,7 @@ typedef void ( *PCBFCN_CI_OnLscSetDescriptor)(PVOID Context,
 ///                 application. This parameter can be NULL.
 /// \param nSlot    Is the Slot ID.
 /////////////////////////////////////////////////////////////////////////////
-typedef void ( *PCBFCN_CI_OnLscConnect)(PVOID Context,
+typedef void (FAR PASCAL *PCBFCN_CI_OnLscConnect)(PVOID Context,
                                                  BYTE  nSlot);
 /////////////////////////////////////////////////////////////////////////////
 /// \brief
@@ -313,7 +313,7 @@ typedef void ( *PCBFCN_CI_OnLscConnect)(PVOID Context,
 ///                 application. This parameter can be NULL.
 /// \param nSlot    Is the Slot ID.
 /////////////////////////////////////////////////////////////////////////////
-typedef void ( *PCBFCN_CI_OnLscDisconnect)(PVOID Context,
+typedef void (FAR PASCAL *PCBFCN_CI_OnLscDisconnect)(PVOID Context,
                                                     BYTE  nSlot);
 /////////////////////////////////////////////////////////////////////////////
 /// \brief
@@ -324,7 +324,7 @@ typedef void ( *PCBFCN_CI_OnLscDisconnect)(PVOID Context,
 /// \param BufferSize   Size of the buffer in bytes.
 /// \param Timeout10Ms  Timeout in 10 ms steps.
 /////////////////////////////////////////////////////////////////////////////
-typedef void ( *PCBFCN_CI_OnLscSetParams)(PVOID Context,
+typedef void (FAR PASCAL *PCBFCN_CI_OnLscSetParams)(PVOID Context,
                                                    BYTE  nSlot,
                                                    BYTE  BufferSize,
                                                    BYTE  Timeout10Ms);
@@ -335,7 +335,7 @@ typedef void ( *PCBFCN_CI_OnLscSetParams)(PVOID Context,
 ///                 application. This parameter can be NULL.
 /// \param nSlot    Is the Slot ID.
 /////////////////////////////////////////////////////////////////////////////
-typedef void ( *PCBFCN_CI_OnLscEnquireStatus)(PVOID Context,
+typedef void (FAR PASCAL *PCBFCN_CI_OnLscEnquireStatus)(PVOID Context,
                                                        BYTE  nSlot);
 /////////////////////////////////////////////////////////////////////////////
 /// \brief
@@ -345,7 +345,7 @@ typedef void ( *PCBFCN_CI_OnLscEnquireStatus)(PVOID Context,
 /// \param nSlot    Is the Slot ID.
 /// \param PhaseID  Phase ID.
 /////////////////////////////////////////////////////////////////////////////
-typedef void ( *PCBFCN_CI_OnLscGetNextBuffer)(PVOID Context,
+typedef void (FAR PASCAL *PCBFCN_CI_OnLscGetNextBuffer)(PVOID Context,
                                                        BYTE  nSlot,
                                                        BYTE  PhaseID);
 /////////////////////////////////////////////////////////////////////////////
@@ -358,7 +358,7 @@ typedef void ( *PCBFCN_CI_OnLscGetNextBuffer)(PVOID Context,
 /// \param pData    Byte pointer to the data.
 /// \param nLength  Length of data in bytes.
 /////////////////////////////////////////////////////////////////////////////
-typedef void ( *PCBFCN_CI_OnLscTransmitBuffer)(PVOID Context,
+typedef void (FAR PASCAL *PCBFCN_CI_OnLscTransmitBuffer)(PVOID Context,
                                                         BYTE  nSlot,
                                                         BYTE  PhaseID,
                                                         BYTE* pData,

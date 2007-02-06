@@ -177,10 +177,6 @@ namespace TvLibrary.Implementations.DVB
 
     public bool OnRunGraph(int servicedId)
     {
-      if (_technoTrend != null)
-      {
-        return _technoTrend.SendPMT(servicedId);
-      }
       return true;
     }
     /// <summary>
@@ -229,7 +225,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_technoTrend != null)
         {
-          return _technoTrend.SendPMT(channel.ServiceId);
+          return _technoTrend.SendPMT(PMT, pmtLength);
         }
       }
       catch (Exception ex)

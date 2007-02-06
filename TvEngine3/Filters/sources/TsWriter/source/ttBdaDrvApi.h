@@ -73,15 +73,12 @@ TTBDADRVAPI TYPE_RET_VAL bdaapiOpenIR    (HANDLE      hOpen,
                                       PIRCBFCN    CallbackFcn = NULL,
                                       PVOID       Context = NULL);
 TTBDADRVAPI TYPE_RET_VAL bdaapiCloseIR   (HANDLE      hOpen);
-TTBDADRVAPI TYPE_RET_VAL bdaapiOpenCI(HANDLE            hOpen,
-                                      TS_CiCbFcnPointer CbFuncPointer);
+TTBDADRVAPI TYPE_RET_VAL bdaapiOpenCI(HANDLE            hOpen,TS_CiCbFcnPointer CbFuncPointer);
 TTBDADRVAPI TYPE_RET_VAL bdaapiOpenCISlim(HANDLE                hOpen,
                                           TS_CiCbFcnPointerSlim CbFuncPointer);
 TTBDADRVAPI TYPE_RET_VAL bdaapiOpenCIWithoutPointer(HANDLE hOpen);
 TTBDADRVAPI TYPE_RET_VAL bdaapiCloseCI   (HANDLE   hOpen);
-TTBDADRVAPI TYPE_RET_VAL bdaapiInstallDemuxReadEvent(HANDLE   hOpen,
-                                                 PIRCBFCN CallbackFcn = NULL,
-                                                 PVOID    Context = NULL);
+TTBDADRVAPI TYPE_RET_VAL bdaapiInstallDemuxReadEvent(HANDLE   hOpen,PIRCBFCN CallbackFcn = NULL,PVOID    Context = NULL);
 TTBDADRVAPI TYPE_RET_VAL bdaapiUninstallDemuxReadEvent(HANDLE   hOpen);
 //
 /////////////////////////////////////////////////////////////////////////////
@@ -98,8 +95,7 @@ TTBDADRVAPI TYPE_RET_VAL bdaapiSetDiSEqCMsg(HANDLE        hOpen,
                                         Polarisation  ePolarity);
 TTBDADRVAPI TYPE_RET_VAL bdaapiSetVideoport(HANDLE hOpen, BOOL bCIMode,
                                                       BOOL *bCIOut);
-TTBDADRVAPI TYPE_RET_VAL bdaapiSetDVBTAntPwr(HANDLE hOpen,
-                                             BOOL   bAntPwrOnOff);
+TTBDADRVAPI TYPE_RET_VAL bdaapiSetDVBTAntPwr(HANDLE hOpen,BOOL   bAntPwrOnOff);
 TTBDADRVAPI TYPE_RET_VAL bdaapiSetDrvDemuxFilter(HANDLE      hOpen,
                                                  TYPE_FILTER FilterType,
                                                  WORD        wPID,
@@ -115,8 +111,7 @@ TTBDADRVAPI TYPE_RET_VAL bdaapiDelDrvDemuxFilter(HANDLE hOpen,
 /////////////////////////////////////////////////////////////////////////////
 // functions to get something from the driver
 
-TTBDADRVAPI TYPE_RET_VAL bdaapiGetDrvVersion(HANDLE hOpen, BYTE *v1, BYTE *v2,
-                                                       BYTE *v3, BYTE *v4);
+TTBDADRVAPI TYPE_RET_VAL bdaapiGetDrvVersion(HANDLE hOpen, BYTE *v1, BYTE *v2,BYTE *v3, BYTE *v4);
 TTBDADRVAPI TYPE_RET_VAL bdaapiGetMAC(HANDLE hOpen, DWORD *dwHigh, DWORD *dwLow);
 TTBDADRVAPI TYPE_RET_VAL bdaapiGetDeviceIDs(HANDLE hOpen, WORD *wVendor,
                                                       WORD *wSubVendor,

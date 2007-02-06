@@ -42,6 +42,6 @@ namespace TvLibrary.Interfaces.Analyzer
     [PreserveSig]
     int SetDisEqc(short diseqcType, short hiband, short vertical);
     [PreserveSig]
-    int DescrambleService(short serviceId, ref bool succeeded);
+    int DescrambleService(IntPtr pmt, short pmtLen, ref bool succeeded);
   };
 }

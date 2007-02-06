@@ -30,7 +30,7 @@
 #include "Technotrend.h"
 #include "bdaapi_cimsg.h"
 
-
+// Technotrend device names
 #define LBDG2_NAME_C_TUNER           L"TechnoTrend BDA/DVB-C Tuner"
 #define LBDG2_NAME_S_TUNER           L"TechnoTrend BDA/DVB-S Tuner"
 #define LBDG2_NAME_T_TUNER           L"TechnoTrend BDA/DVB-T Tuner"
@@ -57,85 +57,201 @@
 
 extern void LogDebug(const char *fmt, ...) ;
 
+//*** type defs for GetProcAddress
+typedef TYPE_RET_VAL (FAR PASCAL *BDAAPIOPENCI)(HANDLE hOpen,TS_CiCbFcnPointer CbFuncPointer);
+typedef TYPE_RET_VAL (FAR PASCAL *BDAAPIGETDRVVERSION)(HANDLE hOpen, BYTE *v1, BYTE *v2,BYTE *v3, BYTE *v4);
+typedef TYPE_RET_VAL (FAR PASCAL *BDAAPICLOSECI)(HANDLE   hOpen);
+typedef void         (FAR PASCAL *BDAAPICLOSE)(HANDLE      hOpen);
+typedef TYPE_RET_VAL (FAR PASCAL *BDAAPISETDVBTANTPWR)(HANDLE hOpen,BOOL   bAntPwrOnOff);
+typedef TYPE_RET_VAL (FAR PASCAL *BDAAPISETDISEQCMSG)(HANDLE        hOpen,BYTE         *pData,BYTE          Bytes,BYTE          Repeat,BYTE          Toneburst,Polarisation  ePolarity);
+typedef TYPE_RET_VAL (FAR PASCAL *BDAAPICIGETSLOTSTATUS)(HANDLE hOpen, BYTE nSlot);
+typedef TYPE_RET_VAL (FAR PASCAL *BDAAPICIREADPSIFASTWITHPMT)(HANDLE hOpen,BYTE   *pPMT,WORD   wLength);
+typedef TYPE_RET_VAL (FAR PASCAL *BDAAPICIREADPSIFASTDRVDEMUX)(HANDLE hOpen,WORD   PNR);
+typedef HANDLE       (FAR PASCAL *BDAAPIOPENHWIDX) (DEVICE_CAT DevType,UINT        uiDevID);
+typedef TYPE_RET_VAL (FAR PASCAL *BDAAPICIMULTIDECODE)(HANDLE hOpen,WORD  *PNR,int    NrOfPnrs);
+
+//**************************************************************************************************
+//* ctor
+//**************************************************************************************************
 CTechnotrend::CTechnotrend(LPUNKNOWN pUnk, HRESULT *phr)
 :CUnknown( NAME ("MpTsTechnoTrend"), pUnk)
 {
   m_hBdaApi = INVALID_HANDLE_VALUE;
   m_deviceType=UNKNOWN;
   m_ciStatus=-1;
+  m_dll=NULL;
 }
+
+//**************************************************************************************************
+//* dtor
+//* close device
+//**************************************************************************************************
 CTechnotrend::~CTechnotrend(void)
 {
-  if (m_hBdaApi != INVALID_HANDLE_VALUE)
+  if (m_dll!=NULL && m_hBdaApi != INVALID_HANDLE_VALUE)
   {
-    bdaapiCloseCI(m_hBdaApi);
-    bdaapiClose(m_hBdaApi);
+    BDAAPICLOSECI closeCI=(BDAAPICLOSECI)GetProcAddress(m_dll,"_bdaapiCloseCI@4");
+    if (closeCI!=NULL)
+    {
+      closeCI(m_hBdaApi);
+    }
+    else
+    {
+       LogDebug("Technotrend: unable to get proc adress of bdaapiCloseCI");
+    }
+
+    BDAAPICLOSE closeapi=(BDAAPICLOSE)GetProcAddress(m_dll,"_bdaapiClose@4");
+    if (closeapi!=NULL)
+    {
+      closeapi(m_hBdaApi);
+    }
+    else
+    {
+       LogDebug("Technotrend: unable to get proc adress of bdaapiClose");
+    }
+  }
+  if (m_dll!=NULL)
+  {
+    FreeLibrary(m_dll);
+    m_dll=NULL;
   }
 }
 
 
-static void OnSlotStatusCallback(PVOID Context,BYTE nSlot,BYTE nStatus,TYP_SLOT_INFO* csInfo)
+//**************************************************************************************************
+//* callback from driver when the CI slot state changes
+//**************************************************************************************************
+static void __stdcall OnSlotStatusCallback(PVOID Context,BYTE nSlot,BYTE nStatus,TYP_SLOT_INFO* csInfo)
 {
   CTechnotrend* technoTrend=(CTechnotrend*)Context;
   technoTrend->OnSlotChange( nSlot, nStatus, csInfo);
 }
-static void OnCaStatusCallback(PVOID Context,BYTE  nSlot,BYTE  nReplyTag,WORD  wStatus)
+
+//**************************************************************************************************
+//* callback from driver when the CA state changes
+//**************************************************************************************************
+static void __stdcall OnCaStatusCallback(PVOID Context,BYTE  nSlot,BYTE  nReplyTag,WORD  wStatus)
 {
   CTechnotrend* technoTrend=(CTechnotrend*)Context;
   technoTrend->OnCaChange(nSlot,nReplyTag,wStatus);
 }
 
-static void OnDisplayString(PVOID Context,BYTE  nSlot,char* pString,WORD  wLength)
+//**************************************************************************************************
+//* callback from driver 
+//**************************************************************************************************
+static void __stdcall OnDisplayString(PVOID Context,BYTE  nSlot,char* pString,WORD  wLength)
 {
   LogDebug("TechnoTrend:OnDisplayString slot:%d %s", nSlot,pString);
 }
-static void OnDisplayMenu(PVOID Context,BYTE  nSlot,WORD  wItems,char* pStringArray,WORD  wLength)
+
+//**************************************************************************************************
+//* callback from driver to display the CI menu
+//**************************************************************************************************
+static void __stdcall OnDisplayMenu(PVOID Context,BYTE  nSlot,WORD  wItems,char* pStringArray,WORD  wLength)
 {
   LogDebug("TechnoTrend:OnDisplayMenu slot:%d", nSlot);
 }
-static void OnDisplayList(PVOID Context,BYTE  nSlot,WORD  wItems,char* pStringArray,WORD  wLength)
+
+//**************************************************************************************************
+//* callback from driver 
+//**************************************************************************************************
+static void __stdcall OnDisplayList(PVOID Context,BYTE  nSlot,WORD  wItems,char* pStringArray,WORD  wLength)
 {
   LogDebug("TechnoTrend:OnDisplayList slot:%d", nSlot);
 }
-static void OnSwitchOsdOff(PVOID Context,BYTE  nSlot)
+
+//**************************************************************************************************
+//* callback from driver 
+//**************************************************************************************************
+static void __stdcall OnSwitchOsdOff(PVOID Context,BYTE  nSlot)
 {
   LogDebug("TechnoTrend:CI_OnSwitchOsdOff slot:%d", nSlot);
 }
-static void OnInputRequest(PVOID Context,BYTE  nSlot,BOOL  bBlindAnswer,BYTE  nExpectedLength, DWORD dwKeyMask)
+
+//**************************************************************************************************
+//* callback from driver 
+//**************************************************************************************************
+static void __stdcall OnInputRequest(PVOID Context,BYTE  nSlot,BOOL  bBlindAnswer,BYTE  nExpectedLength, DWORD dwKeyMask)
 {
   LogDebug("TechnoTrend:CI_OnInputRequest slot:%d", nSlot);
 }
-static void OnLscSetDescriptor(PVOID Context,BYTE  nSlot,TYPE_CONNECT_DESCR* pDescriptor)
+
+//**************************************************************************************************
+//* callback from driver 
+//**************************************************************************************************
+static void __stdcall OnLscSetDescriptor(PVOID Context,BYTE  nSlot,TYPE_CONNECT_DESCR* pDescriptor)
 {
   LogDebug("TechnoTrend:OnLscSetDescriptor slot:%d", nSlot);
 }
-static void OnLscConnect(PVOID Context,BYTE  nSlot)
+
+//**************************************************************************************************
+//* callback from driver 
+//**************************************************************************************************
+static void __stdcall OnLscConnect(PVOID Context,BYTE  nSlot)
 {
   LogDebug("TechnoTrend:OnLscConnect slot:%d", nSlot);
 }
-static void OnLscDisconnect(PVOID Context,BYTE  nSlot)
+
+//**************************************************************************************************
+//* callback from driver 
+//**************************************************************************************************
+static void __stdcall OnLscDisconnect(PVOID Context,BYTE  nSlot)
 {
   LogDebug("TechnoTrend:OnLscDisconnect slot:%d", nSlot);
 }
-static void OnLscSetParams(PVOID Context,BYTE  nSlot,BYTE  BufferSize,BYTE  Timeout10Ms)
+
+//**************************************************************************************************
+//* callback from driver 
+//**************************************************************************************************
+static void __stdcall OnLscSetParams(PVOID Context,BYTE  nSlot,BYTE  BufferSize,BYTE  Timeout10Ms)
 {
   LogDebug("TechnoTrend:OnLscSetParams slot:%d", nSlot);
 }
-static void OnLscEnquireStatus(PVOID Context,BYTE  nSlot)
+
+//**************************************************************************************************
+//* callback from driver 
+//**************************************************************************************************
+static void __stdcall OnLscEnquireStatus(PVOID Context,BYTE  nSlot)
 {
   LogDebug("TechnoTrend:OnLscEnquireStatus slot:%d", nSlot);
 }
-static void OnLscGetNextBuffer(PVOID Context,BYTE  nSlot,BYTE  PhaseID)
+
+//**************************************************************************************************
+//* callback from driver 
+//**************************************************************************************************
+static void __stdcall OnLscGetNextBuffer(PVOID Context,BYTE  nSlot,BYTE  PhaseID)
 {
   LogDebug("TechnoTrend:OnLscGetNextBuffer slot:%d", nSlot);
 }
-static void OnLscTransmitBuffer(PVOID Context,BYTE  nSlot,BYTE  PhaseID,BYTE* pData,WORD  nLength)
+
+//**************************************************************************************************
+//* callback from driver 
+//**************************************************************************************************
+static void __stdcall OnLscTransmitBuffer(PVOID Context,BYTE  nSlot,BYTE  PhaseID,BYTE* pData,WORD  nLength)
 {
   LogDebug("TechnoTrend:OnLscTransmitBuffer slot:%d", nSlot);
 }
 
+//**************************************************************************************************
+//* SetTunerFilter()
+//* Called by application to set the tuner filter used
+//* method checks if this tuner filter is a techno-trend device
+//* and ifso opens the Technotrend driver and CI for further usage
+//**************************************************************************************************
 STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
 {
+  if (m_dll==NULL)
+  {
+    m_hBdaApi = INVALID_HANDLE_VALUE;
+    m_dll=LoadLibrary("ttBdaDrvApi_Dll.dll");
+    if (m_dll==NULL) 
+    {
+      LogDebug("TechnoTrend:unable to load ttBdaDrvApi_Dll.dll");
+      return S_OK;
+    }
+    LogDebug("TechnoTrend:loaded ttBdaDrvApi_Dll.dll");
+  }
+
   FILTER_INFO info;
   if (!SUCCEEDED(tunerFilter->QueryFilterInfo(&info))) return S_OK;
   if (wcscmp(info.achName,LBDG2_NAME_C_TUNER)==0) m_deviceType=BUDGET_2;
@@ -157,12 +273,23 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
     m_deviceType=UNKNOWN;  
     return S_OK;
   }
-  m_hBdaApi = bdaapiOpenHWIdx(m_deviceType, deviceId);
-  if (m_hBdaApi == INVALID_HANDLE_VALUE) 
+  BDAAPIOPENHWIDX openHwIdx= (BDAAPIOPENHWIDX)GetProcAddress(m_dll,"_bdaapiOpenHWIdx@8");
+  if (openHwIdx!=NULL)
   {
-    LogDebug("Technotrend: unable to open the device");
+    m_hBdaApi = openHwIdx(m_deviceType, deviceId);
+    if (m_hBdaApi == INVALID_HANDLE_VALUE) 
+    {
+      LogDebug("Technotrend: unable to open the device");
+      return S_OK;
+    }
+    LogDebug("Technotrend: OpenHWIdx succeeded");
+  }
+  else
+  {
+    LogDebug("Technotrend: unable to get proc adress of bdaapiOpenHWIdx");
     return S_OK;
   }
+
 
   memset(&m_technoTrendStructure,0,sizeof(m_technoTrendStructure));
   m_technoTrendStructure.p01Context=m_technoTrendStructure.p02Context=m_technoTrendStructure.p03Context=m_technoTrendStructure.p04Context=this;
@@ -184,26 +311,62 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
   m_technoTrendStructure.p13=OnLscGetNextBuffer;
   m_technoTrendStructure.p14=OnLscTransmitBuffer;
 
-  if (!SUCCEEDED(bdaapiOpenCI(m_hBdaApi, m_technoTrendStructure)))
+  BDAAPIOPENCI openCI;
+  TYPE_RET_VAL result;
+  openCI=(BDAAPIOPENCI)GetProcAddress(m_dll,"_bdaapiOpenCI@116");
+  if (openCI!=NULL)
   {
-      LogDebug("Technotrend: unable to open the CI");
+    result=openCI(m_hBdaApi, m_technoTrendStructure);
+    if (result != RET_SUCCESS)
+    {
+      LogDebug("Technotrend: unable to open the CI:%d",result);
       m_deviceType=UNKNOWN;  
       return S_OK;
+    }
+    LogDebug("Technotrend: bdaapiOpenCI succeeded");
+
+    BYTE v1,v2,v3,v4;
+    BDAAPIGETDRVVERSION getDrvVersion=(BDAAPIGETDRVVERSION)GetProcAddress(m_dll,"_bdaapiGetDrvVersion@20");
+    if (getDrvVersion!=NULL)
+    {
+      result=getDrvVersion(m_hBdaApi,&v1,&v2,&v3,&v4);
+      if (result != RET_SUCCESS)
+      {
+        LogDebug("Technotrend: bdaapiGetDrvVersion failed %d",result);
+      }
+      else
+      {
+        LogDebug("Technotrend: initalized id:%x, driver version:%d.%d.%d.%d",deviceId,v1,v2,v3,v4);
+      }
+    }
+    else
+    {
+      LogDebug("Technotrend: unable to get proc adress of bdaapiGetDrvVersion");
+    }
   }
-  BYTE v1,v2,v3,v4;
-  bdaapiGetDrvVersion(m_hBdaApi,&v1,&v2,&v3,&v4);
-  LogDebug("Technotrend: initalized id:%x, driver version:%d.%d.%d.%d",deviceId,v1,v2,v3,v4);
+  else
+  {
+    LogDebug("Technotrend: unable to get proc adress of bdaapiOpenCI");
+  }
 	
 
   return S_OK;
 }
 
+//**************************************************************************************************
+//* IsTechnoTrend()
+//* Returns whether the tuner is a technotrend device or not
+//**************************************************************************************************
 STDMETHODIMP CTechnotrend::IsTechnoTrend( BOOL* yesNo)
 {
   *yesNo= (m_hBdaApi != INVALID_HANDLE_VALUE);
   return S_OK;
 }
 
+//**************************************************************************************************
+//* IsCamReady()
+//* Returns whether the CAM is ready
+//**************************************************************************************************
 STDMETHODIMP CTechnotrend::IsCamReady( BOOL* yesNo)
 {
   *yesNo=FALSE;
@@ -214,16 +377,35 @@ STDMETHODIMP CTechnotrend::IsCamReady( BOOL* yesNo)
   return S_OK;
 }
 
+//**************************************************************************************************
+//* SetAntennaPower()
+//* Turn on/off the DVB-T antenna on USB devices
+//**************************************************************************************************
 STDMETHODIMP CTechnotrend::SetAntennaPower( BOOL onOff)
 {
   if (m_deviceType==USB_2_PINNACLE || m_deviceType==USB_2)
   {
-    HRESULT hr=bdaapiSetDVBTAntPwr(m_hBdaApi,onOff);
-    LogDebug("Technotrend: enable antenna power:%d %x",onOff,hr);
+    BDAAPISETDVBTANTPWR setPower=(BDAAPISETDVBTANTPWR)GetProcAddress(m_dll,"_bdaapiSetDVBTAntPwr@8");
+    if (setPower!=NULL)
+    {
+      HRESULT hr=setPower(m_hBdaApi,onOff);
+      LogDebug("Technotrend: enable antenna power:%d %x",onOff,hr);
+    }
+    else
+    {
+      LogDebug("Technotrend: unable to get proc adress of bdaapiSetDVBTAntPwr");
+    }
   }
   return S_OK;
 }
 
+//**************************************************************************************************
+//* SetDisEqc()
+//* Sends a DisEqc message to the LNB (DVB-S)
+//* diseqcType: specifies the diseqc type (simple A,B, level 1 A/A etc..)
+//* highband  : specifies if we are tuned to highband(1) or lowband(0)
+//* vertical  : specifies if we are using vertical (1) polarisation or horizontal(0)
+//**************************************************************************************************
 STDMETHODIMP CTechnotrend::SetDisEqc(int diseqcType, int hiband, int vertical)
 {
 	LogDebug("Technotrend: SetDisEqc antenna :%d hiband:%d vertical:%d",diseqcType,hiband, vertical);
@@ -282,42 +464,77 @@ STDMETHODIMP CTechnotrend::SetDisEqc(int diseqcType, int hiband, int vertical)
   data[2]=(BYTE)((diseqc >> 8) & 0xff);
   data[3]=(BYTE)((diseqc ) & 0xff);
 
-  HRESULT hr=bdaapiSetDiSEqCMsg(m_hBdaApi,&data[0],4,0,0,polarity);
-  LogDebug("TechnoTrend:SetDiseqc:%x %x", diseqc,hr);
-	bdaapiCIGetSlotStatus(m_hBdaApi,0);
+  BDAAPISETDISEQCMSG setDisEqc=(BDAAPISETDISEQCMSG)GetProcAddress(m_dll,"_bdaapiSetDiSEqCMsg@24");
+  if (setDisEqc!=NULL)
+  {
+    TYPE_RET_VAL result=setDisEqc(m_hBdaApi,&data[0],4,0,0,polarity);
+    LogDebug("TechnoTrend:SetDiseqc:%x %d", diseqc,result);
+  }
+  else
+  {
+    LogDebug("Technotrend: unable to get proc adress of bdaapiSetDiSEqCMsg");
+  }
 	
   return S_OK;
 }
-
-STDMETHODIMP CTechnotrend::DescrambleService( int serviceId,BOOL* succeeded)
+//**************************************************************************************************
+//* DescrambleService()
+//* Sends the PMT to the CAM so it can start decoding the channel
+//* PMT       : PMT table
+//* PMTLength : length of PMT table
+//* succeeded : on return specifies if decoding succeeded or not
+//**************************************************************************************************
+STDMETHODIMP CTechnotrend::DescrambleService( BYTE* pmt, int PMTLength,BOOL* succeeded)
 {
-  HRESULT hr;
+  TYPE_RET_VAL hr;
   *succeeded=FALSE;
   BOOL enabled=FALSE;
   m_ciStatus=-1;
-	bdaapiCIGetSlotStatus(m_hBdaApi,0);
-	LogDebug("TechnoTrend: DescrambleService:0x%x (%d) (%d)",serviceId,serviceId,m_slotStatus);
+	LogDebug("TechnoTrend: Get CI Slot State");
+  BDAAPICIGETSLOTSTATUS getSlotState=(BDAAPICIGETSLOTSTATUS)GetProcAddress(m_dll,"_bdaapiCIGetSlotStatus@8");
+  if (getSlotState!=NULL)
+  {
+	  hr=getSlotState(m_hBdaApi,0);
+    if (hr!=RET_SUCCESS)
+    {
+      LogDebug("Technotrend: bdaapiCIGetSlotStatus failed:%d", hr);
+    }
+  }
+  else
+  {
+    LogDebug("Technotrend: unable to get proc adress of bdaapiCIGetSlotStatus");
+  }
+	LogDebug("TechnoTrend: DescrambleService:(%d)",m_slotStatus);
 	if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK||m_slotStatus==CI_SLOT_DBG_MSG )
   {
-    hr = bdaapiCIReadPSIFastDrvDemux(m_hBdaApi, (WORD)serviceId);
-    if (hr==RET_SUCCESS)
+    BDAAPICIREADPSIFASTWITHPMT readPSI=(BDAAPICIREADPSIFASTWITHPMT)GetProcAddress(m_dll,"_bdaapiCIReadPSIFastWithPMT@12");
+    //BDAAPICIREADPSIFASTDRVDEMUX readPSI=(BDAAPICIREADPSIFASTDRVDEMUX)GetProcAddress(m_dll,"_bdaapiCIReadPSIFastDrvDemux@8");
+    if (readPSI!=NULL)
     {
-      if (m_ciStatus==1)
+      hr = readPSI(m_hBdaApi, pmt,PMTLength);
+      if (hr==RET_SUCCESS)
       {
-        *succeeded=TRUE;
-        LogDebug("TechnoTrend: service decoded:%x %d",hr,m_ciStatus);
-    
+        if (m_ciStatus==1)
+        {
+          *succeeded=TRUE;
+          LogDebug("TechnoTrend: service decoded:%x %d",hr,m_ciStatus);
+      
+        }
+        else
+        {
+          *succeeded=TRUE;
+          LogDebug("TechnoTrend: service decoded:%x %d",hr,m_ciStatus);
+        }
       }
       else
       {
-        *succeeded=TRUE;
-        LogDebug("TechnoTrend: service decoded:%x %d",hr,m_ciStatus);
-      }
+        LogDebug("TechnoTrend: service not decoded:%x",hr);
+      }    
     }
     else
     {
-      LogDebug("TechnoTrend: service not decoded:%x",hr);
-    }    
+      LogDebug("Technotrend: unable to get proc adress of bdaapiCIReadPSIFastDrvDemux");
+    }
   }
 	else if (m_slotStatus==CI_SLOT_UNKNOWN_STATE || m_slotStatus==CI_SLOT_EMPTY)
 	{
@@ -328,7 +545,11 @@ STDMETHODIMP CTechnotrend::DescrambleService( int serviceId,BOOL* succeeded)
   
   return S_OK;
 }
-
+//**************************************************************************************************
+//* GetDeviceID()
+//* Finds the technotrend device Id for the tuner filter
+//* returns true if device id is found otherwise false
+//**************************************************************************************************
 bool CTechnotrend::GetDeviceID(IBaseFilter* tunerFilter, UINT& deviceId)
 {
   bool success=false;
@@ -373,61 +594,80 @@ bool CTechnotrend::GetDeviceID(IBaseFilter* tunerFilter, UINT& deviceId)
 
 }
 
-
+//**************************************************************************************************
+//* OnCaChange() callback from driver when CA state changes
+//**************************************************************************************************
 void CTechnotrend::OnCaChange(BYTE  nSlot,BYTE  nReplyTag,WORD  wStatus)
 {
-	LogDebug("$ OnCaChange slot:%d reply:%d status:%d",nSlot,nReplyTag,wStatus);
-	switch(nReplyTag)	
-	{
-		case CI_PSI_COMPLETE:
-			LogDebug("$ CI: ### Number of programs : %04d",wStatus);
-		break;
+  try
+  {
+	  LogDebug("$ OnCaChange slot:%d reply:%d status:%d",nSlot,nReplyTag,wStatus);
+	  switch(nReplyTag)	
+	  {
+		  case CI_PSI_COMPLETE:
+			  LogDebug("$ CI: ### Number of programs : %04d",wStatus);
+		  break;
 
-		case CI_MODULE_READY:
-			LogDebug("$ CI: CI_MODULE_READY in OnCAStatus not supported");
-		break;
-		case CI_SWITCH_PRG_REPLY:
-		{
-			switch(wStatus)
-			{
-				case ERR_INVALID_DATA:
-					LogDebug("$ CI: ERROR::SetProgram failed !!! (invalid PNR)");
-				break;
-				case ERR_NO_CA_RESOURCE:
-					LogDebug("$ CI: ERROR::SetProgram failed !!! (no CA resource available)");
-				break;
-				case ERR_NONE:
-					LogDebug("$ CI:    SetProgram OK");
-					m_ciStatus=1;
-				break;
-				default:
-				break;
-			}
-		}
-		break;
-		default:
-		break;
-	}
+		  case CI_MODULE_READY:
+			  LogDebug("$ CI: CI_MODULE_READY in OnCAStatus not supported");
+		  break;
+		  case CI_SWITCH_PRG_REPLY:
+		  {
+			  switch(wStatus)
+			  {
+				  case ERR_INVALID_DATA:
+					  LogDebug("$ CI: ERROR::SetProgram failed !!! (invalid PNR)");
+				  break;
+				  case ERR_NO_CA_RESOURCE:
+					  LogDebug("$ CI: ERROR::SetProgram failed !!! (no CA resource available)");
+				  break;
+				  case ERR_NONE:
+					  LogDebug("$ CI:    SetProgram OK");
+					  m_ciStatus=1;
+				  break;
+				  default:
+				  break;
+			  }
+		  }
+		  break;
+		  default:
+		  break;
+	  }
+  }
+  catch(...)
+  {
+    LogDebug("Technotrend: OnCaChange() exception");  
+  }
 }
 
+//**************************************************************************************************
+//* OnSlotChange() callback from driver when CI state changes
+//**************************************************************************************************
 void CTechnotrend::OnSlotChange(BYTE nSlot,BYTE nStatus,TYP_SLOT_INFO* csInfo)
 {
-  if (nStatus==0) LogDebug("Technotrend: slot:%d empty",nSlot);  
-  else if (nStatus==1) LogDebug("Technotrend: slot:%d module inserted",nSlot);
-  else if (nStatus==2) LogDebug("Technotrend: slot:%d module ok",nSlot);
-  else if (nStatus==3) LogDebug("Technotrend: slot:%d ca ok",nSlot);
-  else if (nStatus==4) LogDebug("Technotrend: slot:%d dbg msg",nSlot);
-  else  LogDebug("Technotrend: slot:%d unknown state:%x",nSlot,nStatus);
-  m_slotStatus=nStatus;
-	
-  if (csInfo!=NULL)
+  try
   {
-    LogDebug("Technotrend:    CI status:%d ",csInfo->nStatus);
-    if (csInfo->pMenuTitleString!=NULL)
-      LogDebug("Technotrend:    CI text  :%s ",csInfo->pMenuTitleString);
-    for (int i=0; i < csInfo->wNoOfCaSystemIDs;++i)
+    if (nStatus==0) LogDebug("Technotrend: slot:%d empty",nSlot);  
+    else if (nStatus==1) LogDebug("Technotrend: slot:%d module inserted",nSlot);
+    else if (nStatus==2) LogDebug("Technotrend: slot:%d module ok",nSlot);
+    else if (nStatus==3) LogDebug("Technotrend: slot:%d ca ok",nSlot);
+    else if (nStatus==4) LogDebug("Technotrend: slot:%d dbg msg",nSlot);
+    else  LogDebug("Technotrend: slot:%d unknown state:%x",nSlot,nStatus);
+    m_slotStatus=nStatus;
+  	
+    if (csInfo!=NULL)
     {
-      LogDebug("Technotrend:      ca system id  :%x ",csInfo->pCaSystemIDs[i]);
+      LogDebug("Technotrend:    CI status:%d ",csInfo->nStatus);
+      if (csInfo->pMenuTitleString!=NULL)
+        LogDebug("Technotrend:    CI text  :%s ",csInfo->pMenuTitleString);
+      for (int i=0; i < csInfo->wNoOfCaSystemIDs;++i)
+      {
+        LogDebug("Technotrend:      ca system id  :%x ",csInfo->pCaSystemIDs[i]);
+      }
     }
+  }
+  catch(...)
+  {
+    LogDebug("Technotrend: OnSlotChange() exception");  
   }
 }
