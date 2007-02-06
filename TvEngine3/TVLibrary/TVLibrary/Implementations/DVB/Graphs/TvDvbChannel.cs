@@ -417,7 +417,7 @@ namespace TvLibrary.Implementations.DVB
     public void OnGraphStarted()
     {
       _graphRunning = true;
-      _dateTimeShiftStarted = DateTime.Now;
+      _dateTimeShiftStarted = DateTime.MinValue;
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
       ATSCChannel atscChannel = _currentChannel as ATSCChannel;
       if (dvbChannel != null)
@@ -581,7 +581,6 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.Error("subch:{0} StartRecord failed:{1:X}", _subChannelId, hr);
           }
-          _dateRecordingStarted = DateTime.Now;
           _graphState = GraphState.Recording;
         }
       }
@@ -1112,7 +1111,6 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.Error("subch:[0} StartRecord failed:{1:X}", _subChannelId, hr);
           }
-          _dateRecordingStarted = DateTime.Now;
           _graphState = GraphState.Recording;
         }
         else if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording)
@@ -1151,6 +1149,7 @@ namespace TvLibrary.Implementations.DVB
         }
       }
       timeshift.Pause(0);
+      _dateTimeShiftStarted = DateTime.Now;
     }
 
     /// <summary>
@@ -1219,6 +1218,7 @@ namespace TvLibrary.Implementations.DVB
         recorder.SetMode(TimeShiftingMode.ProgramStream);
         Log.Log.WriteFile("subch:{0} record program stream mode", _subChannelId);
       }
+      _dateRecordingStarted = DateTime.Now;
     }
 
     /// <summary>
