@@ -175,6 +175,14 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    public bool OnRunGraph(int servicedId)
+    {
+      if (_technoTrend != null)
+      {
+        return _technoTrend.SendPMT(servicedId);
+      }
+      return true;
+    }
     /// <summary>
     /// Sends the PMT to the CI module
     /// </summary>

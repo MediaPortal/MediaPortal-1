@@ -314,6 +314,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Info("Technotrend: service cannot be decoded because the CAM is not ready yet");
         return false;
       }
+
       int hr = bdaapiCIReadPSIFastDrvDemux(_handle, serviceId);
       if (hr == 0)
       {

@@ -988,6 +988,10 @@ namespace TvLibrary.Implementations.DVB
       }
       else
       {
+        if (_conditionalAccess != null)
+        {
+          _conditionalAccess.OnRunGraph(serviceId);
+        }
         Log.Log.Write("subch:{0} set pmt grabber pmt:{1:X}", _subChannelId, pmtPid);
         _interfacePmtGrabber.SetCallBack(this);
         _interfacePmtGrabber.SetPmtPid((short)pmtPid, serviceId);
