@@ -499,7 +499,7 @@ namespace TvService
         }
 
 
-        if (_controller.SupportsSubChannels(cardInfo.Card.IdCard))
+        if (_controller.SupportsSubChannels(cardInfo.Card.IdCard) == false)
         {
           Log.Write("Scheduler : record, now start timeshift");
           string timeshiftFileName = String.Format(@"{0}\live{1}-{2}.ts", cardInfo.Card.TimeShiftFolder, cardInfo.Id, _user.SubChannel);
