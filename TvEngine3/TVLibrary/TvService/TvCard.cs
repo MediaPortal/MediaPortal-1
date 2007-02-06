@@ -206,7 +206,20 @@ namespace TvService
       get
       {
         if (Type == CardType.Analog) return false;
-        return true;
+        if (IsLocal == false)
+        {
+          try
+          {
+            RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
+            return RemoteControl.Instance.SupportsSubChannels(_dbsCard.IdCard);
+          }
+          catch (Exception)
+          {
+            Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+            return false;
+          }
+        }
+        return _card.SupportsSubChannels ;
       }
     }
 

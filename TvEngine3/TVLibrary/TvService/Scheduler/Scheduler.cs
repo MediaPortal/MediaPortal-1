@@ -497,12 +497,17 @@ namespace TvService
         {
           return false;
         }
-        //Log.Write("Scheduler : record, now start timeshift");
-        //string timeshiftFileName = String.Format(@"{0}\live{1}-{2}.ts", cardInfo.Card.TimeShiftFolder, cardInfo.Id,_user.SubChannel);
-        //if (TvResult.Succeeded != _controller.StartTimeShifting(ref _user, ref timeshiftFileName))
-        //{
-        //  return false;
-        //}
+
+
+        if (_controller.SupportsSubChannels(cardInfo.Card.IdCard))
+        {
+          Log.Write("Scheduler : record, now start timeshift");
+          string timeshiftFileName = String.Format(@"{0}\live{1}-{2}.ts", cardInfo.Card.TimeShiftFolder, cardInfo.Id, _user.SubChannel);
+          if (TvResult.Succeeded != _controller.StartTimeShifting(ref _user, ref timeshiftFileName))
+          {
+            return false;
+          }
+        }
 
         recording.MakeFileName(cardInfo.Card.RecordingFolder);
         recording.CardInfo = cardInfo;

@@ -1771,6 +1771,12 @@ namespace TvService
       }
     }
 
+    public bool SupportsSubChannels(int cardId)
+    {
+      if (cardId < 0) return false;
+      return _cards[cardId].SupportsSubChannels;
+    }
+
     /// <summary>
     /// Tune the card to the specified channel
     /// </summary>

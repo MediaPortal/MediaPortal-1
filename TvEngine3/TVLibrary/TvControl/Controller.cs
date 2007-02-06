@@ -612,6 +612,8 @@ namespace TvControl
     /// <param name="cardId">The card id.</param>
     /// <param name="user">The user.</param>
     void RemoveUserFromOtherCards(int cardId, User user);
+
+    bool SupportsSubChannels(int cardId);
     #endregion
   }
 }
