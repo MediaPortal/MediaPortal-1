@@ -63,4 +63,5 @@ protected:
   bool m_biMpegDemux;
   bool m_bIsTimeShifting;
   bool m_bDisContinuity;
+  IBaseFilter* m_mpegDemuxerFilter;
 };

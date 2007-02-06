@@ -43,6 +43,7 @@ COutputPin::COutputPin(LPUNKNOWN pUnk, CRtspSourceFilter *pFilter, HRESULT *phr,
   m_DemuxLock=false;
   m_biMpegDemux=false;
   m_bIsTimeShifting=true;
+  m_mpegDemuxerFilter=NULL;
 }
 
 COutputPin::~COutputPin(void)
@@ -152,7 +153,8 @@ HRESULT COutputPin::CheckConnect(IPin *pReceivePin)
 				hr = muxInterface->CreateOutputPin(&pintype, L"MS" ,&pIPin);
 				if (SUCCEEDED(hr) && pIPin != NULL)
 				{
-					pInfo.pFilter->Release();
+          m_mpegDemuxerFilter=pInfo.pFilter;
+					//pInfo.pFilter->Release();
 					hr = muxInterface->DeleteOutputPin(L"MS");
 					if SUCCEEDED(hr)
 						m_biMpegDemux = true;
@@ -163,7 +165,8 @@ HRESULT COutputPin::CheckConnect(IPin *pReceivePin)
 			//Test for a filter with "MPEG-2" on input pin label
 			if (wcsstr(pInfo.achName, L"MPEG-2") != NULL)
 			{
-				pInfo.pFilter->Release();
+        m_mpegDemuxerFilter=pInfo.pFilter;
+				//pInfo.pFilter->Release();
 				m_biMpegDemux = true;
 				return S_OK;
 			}
@@ -291,7 +294,7 @@ HRESULT COutputPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLON
 		if (!(CurrentFlags & AM_SEEKING_NoFlush) && (CurrentFlags & AM_SEEKING_PositioningBitsMask))
 		{
 				m_bSeeking = true;
-
+        if (m_mpegDemuxerFilter!=NULL) m_mpegDemuxerFilter->SetSyncSource(NULL);
         m_pFilter->Buffer().Run(false);
         Log("COutputPin::SetPositions()#1");
 //				if(m_pFilter->is_Active() && !m_DemuxLock)
@@ -331,6 +334,13 @@ HRESULT COutputPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLON
         m_pFilter->Buffer().Run(true);
         m_bDisContinuity=true;
         Log("COutputPin::SetPositions()#11");
+
+        if (m_mpegDemuxerFilter!=NULL) 
+        {
+          CComPtr<IReferenceClock> pClock;
+          Demux::GetReferenceClock(m_pFilter, &pClock);
+          m_mpegDemuxerFilter->SetSyncSource(pClock);
+        }
         return hr;
 //			}
 		}
