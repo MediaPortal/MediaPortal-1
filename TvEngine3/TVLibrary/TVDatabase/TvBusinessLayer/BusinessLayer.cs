@@ -713,7 +713,7 @@ namespace TvDatabase
     {
       Dictionary<int, List<Program>> maps = new Dictionary<int, List<Program>>();
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
 
       string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
       string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
