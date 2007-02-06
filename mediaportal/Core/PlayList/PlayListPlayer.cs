@@ -102,7 +102,7 @@ namespace MediaPortal.Playlists
     #endregion
 
     int _entriesNotFound = 0;
-    int _currentSong = -1;
+    int _currentItem = -1;
     PlayListType _currentPlayList = PlayListType.PLAYLIST_NONE;
     PlayList _musicPlayList = new PlayList();
     PlayList _tempMusicPlayList = new PlayList();
@@ -247,17 +247,17 @@ namespace MediaPortal.Playlists
 
     public PlayListItem GetCurrentItem()
     {
-      if (_currentSong < 0) return null;
+      if (_currentItem < 0) return null;
 
       PlayList playlist = GetPlaylist(_currentPlayList);
       if (playlist == null) return null;
 
-      if (_currentSong < 0 || _currentSong >= playlist.Count)
-        _currentSong = 0;
+      if (_currentItem < 0 || _currentItem >= playlist.Count)
+        _currentItem = 0;
 
-      if (_currentSong >= playlist.Count) return null;
+      if (_currentItem >= playlist.Count) return null;
 
-      return playlist[_currentSong];
+      return playlist[_currentItem];
     }
 
     public PlayListItem GetNextItem()
@@ -266,7 +266,7 @@ namespace MediaPortal.Playlists
 
       PlayList playlist = GetPlaylist(_currentPlayList);
       if (playlist.Count <= 0) return null;
-      int iSong = _currentSong;
+      int iSong = _currentItem;
       iSong++;
 
       if (iSong >= playlist.Count)
@@ -300,7 +300,7 @@ namespace MediaPortal.Playlists
 
       PlayList playlist = GetPlaylist(_currentPlayList);
       if (playlist.Count <= 0) return;
-      int iSong = _currentSong;
+      int iSong = _currentItem;
       iSong++;
 
       if (iSong >= playlist.Count)
@@ -337,7 +337,7 @@ namespace MediaPortal.Playlists
 
       PlayList playlist = GetPlaylist(_currentPlayList);
       if (playlist.Count <= 0) return;
-      int iSong = _currentSong;
+      int iSong = _currentItem;
       iSong--;
       if (iSong < 0)
         iSong = playlist.Count - 1;
@@ -394,11 +394,11 @@ namespace MediaPortal.Playlists
             iSong = playlist.Count - 1;
         }
 
-        int iPreviousSong = _currentSong;
-        _currentSong = iSong;
-        PlayListItem item = playlist[_currentSong];
+        //int previousItem = _currentItem;
+        _currentItem = iSong;
+        PlayListItem item = playlist[_currentItem];
 
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, _currentSong, 0, null);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, _currentItem, 0, null);
         msg.Label = item.FileName;
         GUIGraphicsContext.SendMessage(msg);
 
@@ -423,7 +423,13 @@ namespace MediaPortal.Playlists
           //	that couldn't be played
           _entriesNotFound++;
           Log.Error("PlaylistPlayer: *** unable to play - {0} - skipping track!", item.FileName);
-          skipmissing = true;
+
+          // do not try to play the next movie in the list
+          if (MediaPortal.Util.Utils.IsVideo(item.FileName))
+            skipmissing = false;
+          else
+            skipmissing = true;
+
           iSong++;
         }
         else
@@ -446,11 +452,11 @@ namespace MediaPortal.Playlists
 
     public int CurrentSong
     {
-      get { return _currentSong; }
+      get { return _currentItem; }
       set
       {
         if (value >= -1 && value < GetPlaylist(CurrentPlaylistType).Count)
-          _currentSong = value;
+          _currentItem = value;
       }
     }
 
@@ -468,7 +474,7 @@ namespace MediaPortal.Playlists
       {
         return;
       }
-      if (_currentSong >= itemRemoved) _currentSong--;
+      if (_currentItem >= itemRemoved) _currentItem--;
     }
 
     public PlayListType CurrentPlaylistType
@@ -524,7 +530,7 @@ namespace MediaPortal.Playlists
 
     public void Reset()
     {
-      _currentSong = -1;
+      _currentItem = -1;
       _entriesNotFound = 0;
     }
 
