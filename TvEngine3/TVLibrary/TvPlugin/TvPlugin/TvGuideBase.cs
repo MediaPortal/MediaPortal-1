@@ -591,7 +591,8 @@ namespace TvPlugin
                 if (TVHome.Card.IsTimeShifting)
                 {
                   _currentChannel = TVHome.Card.ChannelName;
-                  GetChannels();
+                  GetChannels(true);
+                  LoadSchedules(true);
                   for (int i = 0; i < _channelList.Count; i++)
                   {
                     Channel chan = (Channel)_channelList[i];
@@ -964,7 +965,7 @@ namespace TvPlugin
         UpdateHorizontalScrollbar();
         UpdateVerticalScrollbar();
 
-        GetChannels();
+        GetChannels(false);
 
 
         string day;
@@ -997,7 +998,7 @@ namespace TvPlugin
         long iEnd = Int64.Parse(strEnd);
 
 
-        _recordingList = Schedule.ListAll();
+        LoadSchedules(false);
 
         if (_channelOffset > _channelList.Count)
         {
@@ -1029,6 +1030,9 @@ namespace TvPlugin
         }
         else
         {
+          TvBusinessLayer layer = new TvBusinessLayer();
+
+          Dictionary<int, List<Program>> programs = layer.GetProgramsForAllChannels(Utils.longtodate(iStart), Utils.longtodate(iEnd));
           // make sure the TV Guide heading is visiable and the single channel labels are not.
           setGuideHeadngVisibility(true);
           setSingleChannelLabelVisibility(false);
@@ -1038,7 +1042,7 @@ namespace TvPlugin
             if (chan < _channelList.Count)
             {
               Channel channel = (Channel)_channelList[chan];
-              RenderChannel(iChannel, channel, iStart, iEnd, selectCurrentShow);
+              RenderChannel(ref programs, iChannel, channel, iStart, iEnd, selectCurrentShow);
             }
             chan++;
             if (chan >= _channelList.Count)
@@ -1437,7 +1441,7 @@ namespace TvPlugin
       }
     }//void RenderSingleChannel(Channel channel)
 
-    void RenderChannel(int iChannel, Channel channel, long iStart, long iEnd, bool selectCurrentShow)
+    void RenderChannel(ref Dictionary<int, List<Program>> mapPrograms,int iChannel, Channel channel, long iStart, long iEnd, bool selectCurrentShow)
     {
       string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channel.Name);
       if (System.IO.File.Exists(strLogo))
@@ -1464,9 +1468,13 @@ namespace TvPlugin
       }
 
 
-      IList programs = new ArrayList();
-      TvBusinessLayer layer = new TvBusinessLayer();
-      programs = layer.GetPrograms(channel, Utils.longtodate(iStart), Utils.longtodate(iEnd));
+      List<Program> programs = new List<Program>();
+      if (mapPrograms.ContainsKey(channel.IdChannel))
+      {
+        programs = mapPrograms[channel.IdChannel];
+      }
+      //TvBusinessLayer layer = new TvBusinessLayer();
+      //programs = layer.GetPrograms(channel, Utils.longtodate(iStart), Utils.longtodate(iEnd));
 
       if (programs.Count == 0)
       {
@@ -2366,7 +2374,8 @@ namespace TvPlugin
             dlg.DoModal(GetID);
             if (dlg.SelectedLabel == -1) return;
             TVHome.Navigator.SetCurrentGroup(dlg.SelectedLabelText);
-            GetChannels();
+            
+            GetChannels(true);
             Update(false);
             SetFocus();
             break;
@@ -2731,32 +2740,49 @@ namespace TvPlugin
       }
     }
 
-    void GetChannels()
+    void LoadSchedules (bool refresh)
     {
-      _channelList = new List<Channel>();
-      try
+      if (refresh)
       {
-        if (TVHome.Navigator.CurrentGroup != null)
+        _recordingList = Schedule.ListAll();
+         return;
+      }
+    }
+
+    void GetChannels(bool refresh)
+    {
+      if (refresh)
+      {
+        _channelList = new List<Channel>();
+      }
+      if (_channelList==null)
+        _channelList = new List<Channel>();
+      if (_channelList.Count == 0)
+      {
+        try
         {
-          foreach (GroupMap chan in TVHome.Navigator.CurrentGroup.ReferringGroupMap())
+          if (TVHome.Navigator.CurrentGroup != null)
           {
-            Channel ch = chan.ReferencedChannel();
-            if (ch.VisibleInGuide && ch.IsTv)
+            foreach (GroupMap chan in TVHome.Navigator.CurrentGroup.ReferringGroupMap())
             {
-              _channelList.Add(ch);
+              Channel ch = chan.ReferencedChannel();
+              if (ch.VisibleInGuide && ch.IsTv)
+              {
+                _channelList.Add(ch);
+              }
             }
           }
         }
-      }
-      catch
-      {
-      }
+        catch
+        {
+        }
 
-      if (_channelList.Count == 0)
-      {
-        Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true, "", true);
-        for (int i = 0; i < 10; ++i)
-          _channelList.Add(newChannel);
+        if (_channelList.Count == 0)
+        {
+          Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true, "", true);
+          for (int i = 0; i < 10; ++i)
+            _channelList.Add(newChannel);
+        }
       }
     }
 

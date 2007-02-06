@@ -709,6 +709,32 @@ namespace TvDatabase
       return progs;
     }
 
+    public Dictionary<int, List<Program>> GetProgramsForAllChannels(DateTime startTime, DateTime endTime)
+    {
+      Dictionary<int, List<Program>> maps = new Dictionary<int, List<Program>>();
+      IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+
+      string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+
+      sb.AddConstraint(string.Format("({0} or {1} or {2}) ", sub1, sub2, sub3));
+      sb.AddOrderByField(true, "starttime");
+
+      SqlStatement stmt = sb.GetStatement(true);
+      IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      foreach (Program p in progs)
+      {
+        int idChannel = p.IdChannel;
+        if (!maps.ContainsKey(idChannel))
+        {
+          maps[idChannel] = new List<Program>();
+        }
+        maps[idChannel].Add(p);
+      }
+      return maps;
+    }
     public IList GetPrograms(DateTime startTime, DateTime endTime)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
