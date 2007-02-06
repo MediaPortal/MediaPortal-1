@@ -579,6 +579,8 @@ namespace TvPlugin
               _channelCount = (int)(((float)iHeight) / ((float)iItemHeight));
 
               UnFocus();
+              GetChannels(true);
+              LoadSchedules(true);
               _currentProgram = null;
               if (message.Param1 != (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO)
               {
@@ -591,8 +593,6 @@ namespace TvPlugin
                 if (TVHome.Card.IsTimeShifting)
                 {
                   _currentChannel = TVHome.Card.ChannelName;
-                  GetChannels(true);
-                  LoadSchedules(true);
                   for (int i = 0; i < _channelList.Count; i++)
                   {
                     Channel chan = (Channel)_channelList[i];
