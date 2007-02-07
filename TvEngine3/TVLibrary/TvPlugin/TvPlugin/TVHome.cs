@@ -1437,6 +1437,7 @@ namespace TvPlugin
         //streaming....
         if (zapping)
         {
+          System.Threading.Thread.Sleep(100);
           double duration = g_Player.Duration;
           double position = g_Player.CurrentPosition;
           g_Player.SeekAbsolute(duration);
