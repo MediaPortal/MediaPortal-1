@@ -681,7 +681,7 @@ namespace TvPlugin
       btnChannel.Disabled = false;
       btnGroup.Disabled = false;
       btnRecord.Disabled = true;
-      btnTeletext.Visible = false;
+      //btnTeletext.Visible = false;
 
       bool isTimeShifting = TVHome.Card.IsTimeShifting;
       if (btnTvOnOff.Selected != isTimeShifting)
@@ -698,22 +698,10 @@ namespace TvPlugin
             StartPlay();
           }
         }
+        if (btnTeletext.Visible)
+          btnTeletext.Visible = false;
         return;
       }
-      /*
-    else
-    {
-      if (g_Player.IsTV)
-      {
-
-        if (TVHome.Card.IsScrambled)
-        {
-          g_Player.Stop();
-          return;
-        }
-      }
-    }*/
-
 
       btnChannel.Disabled = false;
       btnGroup.Disabled = false;
