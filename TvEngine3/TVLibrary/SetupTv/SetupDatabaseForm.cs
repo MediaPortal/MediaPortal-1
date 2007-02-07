@@ -348,12 +348,12 @@ namespace SetupTv
 
     private void mpButtonSave_Click(object sender, EventArgs e)
     {
-      if (mpTextBoxServer.Text.ToLower().IndexOf("localhost") > 0)
+      if (mpTextBoxServer.Text.ToLower().IndexOf("localhost") >= 0)
       {
         MessageBox.Show(this, "Please specify the hostname or ipadress for the server. not Localhost");
         return;
       }
-      if (mpTextBoxServer.Text.ToLower().IndexOf("127.0.0.1") > 0)
+      if (mpTextBoxServer.Text.ToLower().IndexOf("127.0.0.1") >= 0)
       {
         MessageBox.Show(this, "Please specify the hostname or ipadress for the server. not 127.0.0.1");
         return;
