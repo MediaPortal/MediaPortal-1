@@ -575,7 +575,10 @@ __int64 MultiFileReader::getFilePointer()
 __int64 MultiFileReader::GetFileSize()
 {
   if (m_cachedFileSize==0)
+  {
+    RefreshTSBufferFile();
     RefreshFileSize();
+  }
   return m_cachedFileSize;
 }
 

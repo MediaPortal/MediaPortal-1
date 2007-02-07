@@ -19,7 +19,7 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
+			ConfigurationType="2"
 			CharacterSet="0"
 			>
 			<Tool
@@ -65,7 +65,7 @@
 				AdditionalDependencies="strmbasd.lib winmm.lib WSock32.Lib"
 				LinkIncremental="2"
 				GenerateManifest="true"
-				ModuleDefinitionFile=""
+				ModuleDefinitionFile="StreamingServer.def"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -143,7 +143,7 @@
 				AdditionalDependencies="strmbase.lib winmm.lib WSock32.Lib"
 				LinkIncremental="1"
 				ModuleDefinitionFile="StreamingServer.def"
-				GenerateDebugInformation="false"
+				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

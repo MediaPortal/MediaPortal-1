@@ -30,6 +30,7 @@ void StreamRemove(char* streamName);
 
 extern netAddressBits SendingInterfaceAddr ;
 extern netAddressBits ReceivingInterfaceAddr ;
+/*
 #if _DEBUG
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -46,6 +47,7 @@ int _tmain(int argc, _TCHAR* argv[])
 }
 
 #endif
+*/
 
 //**************************************************************************************
 void StreamGetClientCount(int* clients)
