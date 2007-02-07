@@ -124,6 +124,11 @@ namespace TvLibrary.Implementations.DVB
       ITuner tuner = (ITuner)_filterNetworkProvider;
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
       ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
+      if (container == null)
+      {
+        Log.Log.Error("CreateTuningSpace() Failed to get ITuningSpaceContainer");
+        return;
+      }
       IEnumTuningSpaces enumTuning;
       ITuningSpace[] spaces = new ITuningSpace[2];
       IDVBCLocator locator;
@@ -131,25 +136,35 @@ namespace TvLibrary.Implementations.DVB
       ITuneRequest request;
       int fetched;
       container.get_EnumTuningSpaces(out enumTuning);
-      while (true)
+      if (enumTuning != null)
       {
-        enumTuning.Next(1, spaces, out fetched);
-        if (fetched != 1) break;
-        string name;
-        spaces[0].get_UniqueName(out name);
-        //Log.Log.WriteFile("Found tuningspace {0}", name);
-        if (name == "DVBC TuningSpace")
+        while (true)
         {
-          Log.Log.WriteFile("dvbc:Found correct tuningspace {0}", name);
-          _tuningSpace = (IDVBTuningSpace)spaces[0];
-          tuner.put_TuningSpace(_tuningSpace);
-          _tuningSpace.CreateTuneRequest(out request);
-          _tuneRequest = (IDVBTuneRequest)request;
-          return;
+          if (enumTuning.Next(1, spaces, out fetched) != 0)
+          {
+            break;
+          }
+          if (fetched != 1) break;
+          if (spaces[0] == null) break;
+          string name;
+          spaces[0].get_UniqueName(out name);
+          if (name != null)
+          {
+            //Log.Log.WriteFile("Found tuningspace {0}", name);
+            if (name == "DVBC TuningSpace")
+            {
+              Log.Log.WriteFile("dvbc:Found correct tuningspace {0}", name);
+              _tuningSpace = (IDVBTuningSpace)spaces[0];
+              tuner.put_TuningSpace(_tuningSpace);
+              _tuningSpace.CreateTuneRequest(out request);
+              _tuneRequest = (IDVBTuneRequest)request;
+              return;
+            }
+          }
+          Release.ComObject("ITuningSpace", spaces[0]);
         }
-        Release.ComObject("ITuningSpace", spaces[0]);
+        Release.ComObject("IEnumTuningSpaces", enumTuning);
       }
-      Release.ComObject("IEnumTuningSpaces", enumTuning);
       //Log.Log.WriteFile("Create new tuningspace");
       _tuningSpace = (IDVBTuningSpace)new DVBTuningSpace();
       _tuningSpace.put_UniqueName("DVBC TuningSpace");
