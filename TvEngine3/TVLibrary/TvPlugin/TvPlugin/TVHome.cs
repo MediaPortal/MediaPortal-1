@@ -678,9 +678,15 @@ namespace TvPlugin
       if (ts.TotalMilliseconds < 1000)
         return;
       UpdateRecordingIndicator();
-      btnChannel.Disabled = false;
-      btnGroup.Disabled = false;
-      btnRecord.Disabled = true;
+
+      if (btnChannel.Disabled != false)
+        btnChannel.Disabled = false;
+
+      if (btnGroup.Disabled != false)
+        btnGroup.Disabled = false;
+
+      if (btnRecord.Disabled != false)
+        btnRecord.Disabled = false;
       //btnTeletext.Visible = false;
 
       bool isTimeShifting = TVHome.Card.IsTimeShifting;
@@ -703,9 +709,12 @@ namespace TvPlugin
         return;
       }
 
-      btnChannel.Disabled = false;
-      btnGroup.Disabled = false;
-      btnRecord.Disabled = false;
+      if (btnChannel.Disabled != false)
+        btnChannel.Disabled = false;
+      if (btnGroup.Disabled != false)
+        btnGroup.Disabled = false;
+      if (btnRecord.Disabled != false)
+        btnRecord.Disabled = false;
 
 
       bool hasTeletext = TVHome.Card.HasTeletext;
@@ -903,17 +912,22 @@ namespace TvPlugin
       if (Navigator.Channel != null && TVHome.Card != null)
       {
         TvServer server = new TvServer();
+        string label;
         if (server.IsRecording(Navigator.Channel.Name, out card))
         {
           //yes then disable the timeshifting on/off buttons
           //and change the Record Now button into Stop Record
-          btnRecord.Label = GUILocalizeStrings.Get(629);//stop record
+          label = GUILocalizeStrings.Get(629);//stop record
         }
         else
         {
           //nop. then change the Record Now button
           //to Record Now
-          btnRecord.Label = GUILocalizeStrings.Get(601);// record
+          label = GUILocalizeStrings.Get(601);// record
+        }
+        if (label != btnRecord.Label)
+        {
+          btnRecord.Label = label;
         }
       }
     }
