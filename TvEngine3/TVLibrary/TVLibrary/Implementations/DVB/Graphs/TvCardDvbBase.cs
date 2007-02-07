@@ -40,7 +40,7 @@ using TvLibrary.Epg;
 using TvLibrary.Teletext;
 using TvLibrary.Log;
 using TvLibrary.Helper;
-
+using MediaPortal.TV.Epg;
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>

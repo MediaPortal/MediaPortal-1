@@ -2890,7 +2890,6 @@ namespace TvLibrary.Implementations.Analog
 
       Log.Log.WriteFile("analog: StopGraph");
       _teletextDecoder.ClearBuffer();
-
       _isScanning = false;
       _recordingFileName = "";
       _timeshiftFileName = "";
@@ -2898,13 +2897,19 @@ namespace TvLibrary.Implementations.Analog
       _dateRecordingStarted = DateTime.MinValue;
       int hr = 0;
       //hr = (_graphBuilder as IMediaControl).StopWhenReady();
-      if (state == FilterState.Stopped) return;
+      if (state == FilterState.Stopped)
+      {
+        DeleteTimeShifting();
+        _graphState = GraphState.Created;
+        return;
+      }
       hr = (_graphBuilder as IMediaControl).Stop();
       if (hr < 0 || hr > 1)
       {
         Log.Log.WriteFile("analog: RunGraph returns:0x{0:X}", hr);
         throw new TvException("Unable to stop graph");
       }
+      DeleteTimeShifting();
     }
     #endregion
 
@@ -3382,35 +3387,26 @@ namespace TvLibrary.Implementations.Analog
     protected void DeleteTimeShifting()
     {
 
+      Log.Log.Info("analog: DeleteTimeShifting");
       if (_tsFileSink != null)
       {
+        Log.Log.Info("analog: remove tsfilesink");
         IMPRecord record = _tsFileSink as IMPRecord;
         record.StopTimeShifting();
         _graphBuilder.RemoveFilter((IBaseFilter)_tsFileSink);
-        Release.ComObject("tsfilesink filter", _tsFileSink); ;
+        while (Marshal.ReleaseComObject(_tsFileSink) > 0) ;
         _tsFileSink = null;
       }
 
       if (_filterMpegMuxer != null)
       {
+        Log.Log.Info("analog: mpeg muxer");
         _graphBuilder.RemoveFilter((IBaseFilter)_filterMpegMuxer);
-        Release.ComObject("mpeg2 mux filter", _filterMpegMuxer); ;
+        while (Marshal.ReleaseComObject(_filterMpegMuxer) > 0) ;
         _filterMpegMuxer = null;
       }
       _timeshiftFileName = "";
-
-      //if (_filterDump1 != null)
-      //{
-      //  _graphBuilder.RemoveFilter((IBaseFilter)_filterDump1);
-      //  Release.ComObject("dump1 filter", _filterDump1); ;
-      //  _filterDump1 = null;
-      //}
-      //if (_infTee != null)
-      //{
-      //  _graphBuilder.RemoveFilter((IBaseFilter)_infTee);
-      //  Release.ComObject("_infTee filter", _infTee); ;
-      //  _infTee = null;
-      //}
+      _graphState = GraphState.Created;
     }
 
     /// <summary>

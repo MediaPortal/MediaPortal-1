@@ -33,6 +33,8 @@ using TvLibrary.Teletext;
 using TvLibrary.Epg;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Helper;
+using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.Analog
 {
@@ -298,6 +300,11 @@ namespace TvLibrary.Implementations.Analog
     public ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
       Log.Log.WriteFile("analog:  Tune:{0}", channel);
+      if (_graphState == GraphState.TimeShifting)
+      {
+        IMPRecord timeshifter = _tsFileSink as IMPRecord;
+        timeshifter.PauseTimeShifting(1);
+      }
       if (_graphState == GraphState.Idle)
       {
         BuildGraph();
@@ -391,6 +398,11 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("Analog: Tuned to video:{0} Hz audio:{1} Hz locked:{2}", videoFrequency, audioFrequency, IsTunerLocked);
       _lastSignalUpdate = DateTime.MinValue;
       _previousChannel = analogChannel;
+      if (_graphState == GraphState.TimeShifting)
+      {
+        IMPRecord timeshifter = _tsFileSink as IMPRecord;
+        timeshifter.PauseTimeShifting(0);
+      }
       return this;
     }
     /// <summary>
@@ -443,7 +455,7 @@ namespace TvLibrary.Implementations.Analog
       RunGraph();
       _graphState = GraphState.TimeShifting;
       _lastSignalUpdate = DateTime.MinValue;
-      FileAccessHelper.GrantFullControll(fileName);
+      //FileAccessHelper.GrantFullControll(fileName);
       _tunerLocked = false;
       return true;
     }

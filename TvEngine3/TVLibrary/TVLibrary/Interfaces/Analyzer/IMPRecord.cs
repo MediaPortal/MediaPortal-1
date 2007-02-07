@@ -84,5 +84,11 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int StopTimeShifting();
+    /// <summary>
+    /// Pauses/Continues timeshifting.
+    /// </summary>
+    /// <returns></returns>
+    [PreserveSig]
+    int PauseTimeShifting(short onOff);
   }
 }

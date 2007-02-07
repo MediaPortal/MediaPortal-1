@@ -18,6 +18,7 @@ public:
 
 	void StartBufferThread();
 	void StopBufferThread();
+  void Flush();
 	virtual void ThreadProc();
   bool m_BufferThreadActive;
   
@@ -28,5 +29,6 @@ private:
   CMemoryStreamSource* m_inputSource;
   FramedSource* m_tsFrames;
   bool m_bRunning;
+  bool m_bStarting;
   int  m_iPacketsToSkip;
 };

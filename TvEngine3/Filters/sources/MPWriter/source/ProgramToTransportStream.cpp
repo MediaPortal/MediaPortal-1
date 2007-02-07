@@ -50,11 +50,18 @@ void CProgramToTransportStream::Initialize(char* fileNameOut)
     *m_env << "Unable to open file \"" << fileNameOut << "\" as a file sink\n";
     return;
   }
-  m_iPacketsToSkip=500;
-  StartBufferThread();
+  m_buffer.Clear();
+  m_iPacketsToSkip=100;
+  //StartBufferThread();
+  m_bStarting=true;
   m_bRunning=true;
 }
-
+void CProgramToTransportStream::Flush()
+{
+ // LogDebug("CProgramToTransportStream::Flush()");
+ // m_iPacketsToSkip=0;
+ // m_buffer.Clear();
+}
 void CProgramToTransportStream::ClearStreams()
 {
   LogDebug("CProgramToTransportStream::ClearStreams()");
@@ -67,9 +74,27 @@ void CProgramToTransportStream::Write(byte* data, int len)
     if (m_iPacketsToSkip>0) 
     {
       m_iPacketsToSkip--;
+     // LogDebug("skip:%d",m_iPacketsToSkip);
       return;
     }
     m_buffer.PutBuffer(data, len, 1);
+    if (m_bStarting && m_buffer.Size()>300000)
+    {
+      m_bStarting=false;
+		  m_BufferThreadActive = true;
+      if (m_outputSink->startPlaying(*m_tsFrames, afterPlaying, m_tsFrames)==True)
+      {
+        LogDebug("CProgramToTransportStream::Thread playing()");
+      }
+      else
+      {
+        LogDebug("CProgramToTransportStream::Failed to start output sink");
+      }
+    }
+    while (m_buffer.Size()>300000)
+    {
+		    m_env->taskScheduler().doEventLoop(); 
+    }
   }
 }
 
@@ -86,11 +111,22 @@ void CProgramToTransportStream::StartBufferThread()
 {
   LogDebug("CProgramToTransportStream::StartBufferThread()");
   m_buffer.Clear();
+/*
   if (!m_BufferThreadActive)
 	{
-		StartThread();
+		//StartThread();
 		m_BufferThreadActive = true;
-	}
+
+        
+    if (m_outputSink->startPlaying(*m_tsFrames, afterPlaying, m_tsFrames)==True)
+    {
+      LogDebug("CProgramToTransportStream::Thread playing()");
+    }
+    else
+    {
+      LogDebug("CProgramToTransportStream::Failed to start output sink");
+    }
+	}*/
 }
 
 void CProgramToTransportStream::StopBufferThread()
@@ -99,7 +135,15 @@ void CProgramToTransportStream::StopBufferThread()
 	if (!m_BufferThreadActive)
 		return;
 
-  StopThread(INFINITE);
+  //StopThread(INFINITE);
+
+	
+  Medium::close(m_outputSink);
+  Medium::close(m_inputSource);
+  Medium::close(m_tsFrames);
+  m_outputSink=NULL;
+  m_inputSource=NULL;
+  LogDebug("CProgramToTransportStream::Thread stopped()");
 
 	m_BufferThreadActive = false;
 }

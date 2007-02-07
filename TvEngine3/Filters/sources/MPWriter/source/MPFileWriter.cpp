@@ -503,6 +503,7 @@ STDMETHODIMP CDump::StartTimeShifting( )
   
   m_tsWriter.Initialize(m_strTimeShiftFileName);
   m_bIsTimeShifting=true;
+  m_bPaused=false;
 	WCHAR wstrFileName[2048];
 	MultiByteToWideChar(CP_ACP,0,m_strTimeShiftFileName,-1,wstrFileName,1+strlen(m_strTimeShiftFileName));
 	return S_OK;
@@ -519,6 +520,15 @@ STDMETHODIMP CDump::StopTimeShifting( )
 	return S_OK;
 }
 
+STDMETHODIMP CDump::PauseTimeShifting(int onOff)
+{
+	CAutoLock lock(&m_Lock);
+
+	LogDebug("Pause TimeShifting:%d",onOff);
+  m_bPaused=(onOff!=0);
+  m_tsWriter.Flush();
+	return S_OK;
+}
 
 
 STDMETHODIMP CDump::SetRecordingFileName(char* pszFileName)
@@ -585,7 +595,14 @@ HRESULT CDump::Write(PBYTE pbData, LONG lDataLength)
 	}
   if (m_bIsTimeShifting)
   {
-    m_tsWriter.Write(pbData,lDataLength);
+    if (!m_bPaused)
+    {
+      m_tsWriter.Write(pbData,lDataLength);
+    }
+    else
+    {
+      m_tsWriter.Flush();
+    }
   }
 	return S_OK;
 }

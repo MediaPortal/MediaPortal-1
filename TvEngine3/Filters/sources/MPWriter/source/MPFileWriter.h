@@ -30,6 +30,7 @@ DECLARE_INTERFACE_(IMPFileRecord, IUnknown)
     STDMETHOD(SetTimeShiftFileName)(THIS_ char* pszFileName)PURE;
     STDMETHOD(StartTimeShifting)(THIS_ )PURE;
     STDMETHOD(StopTimeShifting)(THIS_ )PURE;
+    STDMETHOD(PauseTimeShifting)(THIS_ int onOff)PURE;
 };
 // Main filter object
 
@@ -124,13 +125,15 @@ public:
     STDMETHODIMP SetTimeShiftFileName(char* pszFileName);
     STDMETHODIMP StartTimeShifting();
     STDMETHODIMP StopTimeShifting();
+    STDMETHODIMP PauseTimeShifting(int onOff);
 private:
 
     // Overriden to say what interfaces we support where
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
 
-	char	m_strRecordingFileName[1024];
-	char	m_strTimeShiftFileName[1024];
-  CProgramToTransportStream m_tsWriter;
+    char	m_strRecordingFileName[1024];
+    char	m_strTimeShiftFileName[1024];
+    CProgramToTransportStream m_tsWriter;
     bool m_bIsTimeShifting;
+    bool m_bPaused;
 };
