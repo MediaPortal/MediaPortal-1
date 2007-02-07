@@ -25,6 +25,7 @@
 
 using System;
 using System.Threading;
+using System.Timers;
 using System.IO;
 using TvControl;
 using TvDatabase;
@@ -35,7 +36,7 @@ namespace TvEngine
   public class TvMovie : ITvServerPlugin
   {
     private TvMovieDatabase _database;
-    private System.Threading.Timer _stateTimer;
+    private System.Timers.Timer _stateTimer;
     private bool _isImporting = false;
     private const long _timerIntervall = 1800000;
 
@@ -58,17 +59,13 @@ namespace TvEngine
 
       if (_database.NeedsImport)
       {
-        //TVDatabase.SupressEvents = true;
-
         _database.Import();
-
-        //TVDatabase.SupressEvents = false;
       }
 
       _isImporting = false;
     }
 
-    private void StartImportThread(Object stateInfo)
+    private void StartImportThread(object source, ElapsedEventArgs e)
     {
       //TODO: check stateinfo
       SpawnImportThread();
@@ -126,9 +123,17 @@ namespace TvEngine
 
     public void Start(IController controller)
     {
-      TimerCallback timerCallBack = new TimerCallback(StartImportThread);
-      _stateTimer = new System.Threading.Timer(timerCallBack, null, 5000, _timerIntervall);
-      //SpawnImportThread();
+      //TimerCallback timerCallBack = new TimerCallback(StartImportThread);
+      _stateTimer = new System.Timers.Timer(); //timerCallBack, null, 5000, _timerIntervall);
+      _stateTimer.Elapsed += new ElapsedEventHandler(StartImportThread);
+      _stateTimer.Interval = _timerIntervall;
+      _stateTimer.AutoReset = true;
+      _stateTimer.Start();
+      _stateTimer.Enabled = true;      
+
+      GC.KeepAlive(_stateTimer);
+      // launch initial import for testing REMOVE
+      SpawnImportThread();
     }
 
     public void Stop()
