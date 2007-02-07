@@ -1,6 +1,6 @@
-regsvr32.exe /s RTPSource.ax
 regsvr32.exe /s MPFileWriter.ax
 regsvr32.exe /s MpgMux.ax
-regsvr32.exe /s MPSA.ax
+regsvr32.exe /s PDMpgMux.ax
+regsvr32.exe /s RtspSource.ax
 regsvr32.exe /s TSFileSource.ax
-start RTPSource.reg
+regsvr32.exe /s TsWriter.ax
