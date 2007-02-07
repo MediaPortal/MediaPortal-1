@@ -72,6 +72,7 @@ public:
 protected:
 	int RefreshTSBufferFile();
 	int GetFileLength(char* pFilename, __int64 &length);
+  void RefreshFileSize();
 
 	FileReader m_TSBufferFile;
 	__int64 m_startPosition;
@@ -86,6 +87,7 @@ protected:
 	long	 m_TSFileId;
 	BOOL     m_bReadOnly;
 	BOOL     m_bDelay;
+  __int64  m_cachedFileSize;
 
 };
 

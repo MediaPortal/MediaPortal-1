@@ -26,6 +26,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #endif
 #include "FileReader.h"
 #include "MultiFileReader.h"
+#include "TsBuffer.h"
 
 class TsStreamFileSource: public FramedFileSource {
 public:
@@ -64,6 +65,7 @@ private:
   virtual void doGetNextFrame();
 
 private:
+  CTSBuffer m_buffer;
   unsigned fPreferredFrameSize;
   unsigned fPlayTimePerFrame;
   unsigned fLastPlayTime;

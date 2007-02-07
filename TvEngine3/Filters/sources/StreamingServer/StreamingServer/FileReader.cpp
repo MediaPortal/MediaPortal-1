@@ -114,7 +114,7 @@ int FileReader::OpenFile()
 		if (m_hFile == INVALID_HANDLE_VALUE)
 		{
 			DWORD dwErr = GetLastError();
-      Log("FileReader::OpenFile(%s) failed:%d",dwErr);
+      Log("FileReader::OpenFile(%s) failed:%d",(LPCSTR)m_fileName,dwErr);
 			return (int)dwErr;
 		}
 

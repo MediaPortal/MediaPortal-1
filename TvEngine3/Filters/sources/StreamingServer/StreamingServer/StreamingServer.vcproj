@@ -184,6 +184,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\CriticalSection.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EnterCriticalSection.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\main.cpp"
 				>
 			</File>
@@ -201,6 +209,14 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\CriticalSection.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EnterCriticalSection.h"
+				>
+			</File>
 			<File
 				RelativePath=".\FileReader.h"
 				>
@@ -793,6 +809,14 @@
 			</File>
 			<File
 				RelativePath=".\SampleBuffer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TSBuffer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TSBuffer.h"
 				>
 			</File>
 			<File

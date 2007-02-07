@@ -38,6 +38,7 @@ MultiFileReader::MultiFileReader()
 	m_bReadOnly = 1;
 	m_bDelay = 0;
   m_bDebugOutput=1;
+  m_cachedFileSize=0;
 }
 
 MultiFileReader::~MultiFileReader()
@@ -162,6 +163,7 @@ int MultiFileReader::Read(BYTE* pbData, ULONG lDataLength, ULONG *dwReadBytes)
 		return S_FALSE;
   }
 	RefreshTSBufferFile();
+  RefreshFileSize();
 
 	if (m_currentPosition < m_startPosition)
 		m_currentPosition = m_startPosition;
@@ -273,12 +275,20 @@ int MultiFileReader::RefreshTSBufferFile()
   }
 	m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
 	
+  //LAYOUT:
+  // 64bit    : current position
+  // long     : files added
+  // long     : files removed
 	__int64 currentPosition;
 	m_TSBufferFile.Read((BYTE*)&currentPosition, sizeof(currentPosition), &bytesRead);
+  if (bytesRead!=sizeof(currentPosition)) return FALSE;
 
 	long filesAdded, filesRemoved;
 	m_TSBufferFile.Read((BYTE*)&filesAdded, sizeof(filesAdded), &bytesRead);
+  if (bytesRead!=sizeof(filesAdded)) return FALSE;
+
 	m_TSBufferFile.Read((BYTE*)&filesRemoved, sizeof(filesRemoved), &bytesRead);
+  if (bytesRead!=sizeof(filesRemoved)) return FALSE;
 
   
   //printf("MultiFileReader::RefreshTSBufferFile files added:%d removed:%d", filesAdded,filesRemoved);
@@ -564,13 +574,19 @@ __int64 MultiFileReader::getFilePointer()
 
 __int64 MultiFileReader::GetFileSize()
 {
+  if (m_cachedFileSize==0)
+    RefreshFileSize();
+  return m_cachedFileSize;
+}
+
+void MultiFileReader::RefreshFileSize()
+{
 	__int64 fileLength=0;
-	RefreshTSBufferFile();
 	std::vector<MultiFileReaderFile *>::iterator it = m_tsFiles.begin();
 	for ( ; it < m_tsFiles.end() ; it++ )
 	{
 		MultiFileReaderFile *file =*it;
 		fileLength+=file->length;
 	}
-	return fileLength;
+	m_cachedFileSize= fileLength;
 }

@@ -35,7 +35,7 @@ extern netAddressBits ReceivingInterfaceAddr ;
 int _tmain(int argc, _TCHAR* argv[])
 {
   StreamSetup("192.168.1.58");
-  StreamAddTimeShiftFile("stream1", "C:\\media\\movies\\live1.ts.tsbuffer",false);
+  StreamAddTimeShiftFile("stream1", "C:\\media\\live1-0.ts.tsbuffer",false);
 
   while (true)
   {

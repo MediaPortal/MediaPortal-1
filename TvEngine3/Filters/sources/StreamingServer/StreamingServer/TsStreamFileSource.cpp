@@ -78,6 +78,7 @@ void TsStreamFileSource::seekToByteAbsolute(u_int64_t byteNumber)
   byteNumber/=188LL;
   byteNumber*=188LL;
   reader->SetFilePointer( (int64_t)byteNumber, FILE_BEGIN);
+  m_buffer.Clear();
 }
 
 void TsStreamFileSource::seekToByteRelative(int64_t offset) 
@@ -87,6 +88,7 @@ void TsStreamFileSource::seekToByteRelative(int64_t offset)
   offset/=188LL;
   offset*=188LL;
   reader->SetFilePointer((int64_t)offset, FILE_CURRENT);
+  m_buffer.Clear();
 }
 
 TsStreamFileSource::TsStreamFileSource(UsageEnvironment& env, FILE* fid,
@@ -98,6 +100,9 @@ TsStreamFileSource::TsStreamFileSource(UsageEnvironment& env, FILE* fid,
     fDeleteFidOnClose(deleteFidOnClose) 
 {
 	Log("ts:ctor");  
+  MultiFileReader* reader = (MultiFileReader*)fFid;
+  m_buffer.Clear();
+  m_buffer.SetFileReader(reader);
 }
 
 TsStreamFileSource::~TsStreamFileSource() 
@@ -109,6 +114,7 @@ TsStreamFileSource::~TsStreamFileSource()
     reader->CloseFile();
     delete reader;
     fFid=NULL;
+    m_buffer.Clear();
   }
 }
 
@@ -123,17 +129,24 @@ void TsStreamFileSource::doGetNextFrame() {
   if (fPreferredFrameSize > 0 && fPreferredFrameSize < fMaxSize) {
     fMaxSize = fPreferredFrameSize;
   }
-  
-  MultiFileReader* reader = (MultiFileReader*)fFid;
-  ULONG dwRead=0;
-  if (reader->Read(fTo,fMaxSize,&dwRead)==S_FALSE)
+  if (m_buffer.Require(fMaxSize)!=S_OK)
   {
 	  Log("ts:eof reached");  
     handleClosure(this);
     return;
   }
-  fFrameSize = dwRead;
+  else
+  {
+    if (m_buffer.DequeFromBuffer(fTo,fMaxSize)!=S_OK)
+    {
+	    Log("ts:eof reached");  
+      handleClosure(this);
+      return;
+    }
+    fFrameSize = fMaxSize;
+  }
 
+    MultiFileReader* reader = (MultiFileReader*)fFid;
   fFileSize = reader->GetFileSize();
   // Set the 'presentation time':
   if (fPlayTimePerFrame > 0 && fPreferredFrameSize > 0) {
