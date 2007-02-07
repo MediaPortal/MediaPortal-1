@@ -117,6 +117,7 @@ namespace TvEngine
       }
       #endregion
     }
+
     #region class get && set functions
     public ArrayList Stations
     {
@@ -298,10 +299,7 @@ namespace TvEngine
 
       Log.Debug("TVMovie: Importing database");
 
-      //Log.Debug("TVMovie: Removal of old EPG data");
       TvBusinessLayer layer = new TvBusinessLayer();
-      //layer.RemoveOldPrograms();
-      //Log.Debug("TVMovie: Removal done");
 
       if (_canceled)
         return;
@@ -333,8 +331,6 @@ namespace TvEngine
       Log.Debug("TVMovie: Mapped {0} stations for EPG import", Convert.ToString(maximum));
 
       int counter = 0;
-
-      //Log.Debug("TVMovie: Importing stations");
 
       foreach (string station in _stations)
       {
@@ -370,46 +366,51 @@ namespace TvEngine
       if (OnStationsChanged != null)
         OnStationsChanged(maximum, maximum, "Import done");
 
-      //Log.Debug("TVMovie: Importing stations done");
-
-      //Log.Debug("TVMovie: Setting last update time stamp");
-
       if (!_canceled)
       {
         // OBSOLETE
         try
-        {
-          long lastUpdate = 0;
-
-          using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\TVUpdate"))
-            if (rkey != null)
-            {
-              string regLastUpdate = string.Format("{0}", rkey.GetValue("LetztesTVUpdate"));
-              lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
-            }
+        { 
+          //using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\TVUpdate"))
+          //  if (rkey != null)
+          //  {
+          //    string regLastUpdate = string.Format("{0}", rkey.GetValue("LetztesTVUpdate"));
+          //    lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
+          //  }
 
           Setting setting = layer.GetSetting("TvMovieLastUpdate");
-          setting.Value = lastUpdate.ToString();
+          Log.Debug("TVMovie: Last import was done at {0} - setting to current time", LastUpdate.ToString());
+          setting.Value = DateTime.Now.ToString();
           setting.Persist();
         }
         catch (Exception)
         {
-          Log.Error("TVMovie: Error updating the registry with last import date");
+          Log.Error("TVMovie: Error updating the database with last import date");
         }
 
         Log.Debug("TVMovie: Imported {0} database entries for {1} stations", _programsCounter, counter);
       }
     }
 
-    public bool WasUpdated
+    public bool NeedsImport
     {
       get
       {
         TvBusinessLayer layer = new TvBusinessLayer();
-        if (Convert.ToInt64(layer.GetSetting("TvMovieLastUpdate", "0").Value) == LastUpdate)
+        // EPG need updates every 24 hours.
+        TimeSpan restTime = new TimeSpan(24, 0, 0);
+        DateTime lastUpdated = Convert.ToDateTime(layer.GetSetting("TvMovieLastUpdate", "0").Value);
+//        if (Convert.ToInt64(layer.GetSetting("TvMovieLastUpdate", "0").Value) == LastUpdate)
+        if (lastUpdated >= (DateTime.Now - restTime))
+        {
+          Log.Debug("TVMovie: Last update was at {0} - not importing yet again", Convert.ToString(lastUpdated));
           return false;
-
-        return true;
+        }
+        else
+        {
+          Log.Debug("TVMovie: Last update was at {0} - new import scheduled", Convert.ToString(lastUpdated));
+          return true;
+        }
       }
     }
 
@@ -674,28 +675,29 @@ namespace TvEngine
       return audioFormat;
     }
 
-    private long LastUpdate
+    private DateTime LastUpdate
     {
       get
       {
-        long lastUpdate = 0;
+        DateTime lastUpdate = DateTime.MinValue;
 
-        TvBusinessLayer layer = new TvBusinessLayer();
-        if (layer.GetSetting("TvMovieUseDatabaseDate", "false").Value == "true")
-        {
-          FileInfo mpFi = new FileInfo(DatabasePath);
-          DateTime dbUpdate = mpFi.LastWriteTime;
-          lastUpdate = Convert.ToInt64(string.Format("{0:D4}{1:D2}{2:D2}{3:D2}{4:D2}{5:D2}", dbUpdate.Year, dbUpdate.Month, dbUpdate.Day, dbUpdate.Hour, dbUpdate.Minute, dbUpdate.Second));
-        }
-        else
-        {
-          using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\TVUpdate"))
-            if (rkey != null)
-            {
-              string regLastUpdate = string.Format("{0}", rkey.GetValue("LetztesTVUpdate"));
-              lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
-            }
-        }
+        //TvBusinessLayer layer = new TvBusinessLayer();
+        //if (layer.GetSetting("TvMovieUseDatabaseDate", "true").Value == "true")
+        //{
+        FileInfo mpFi = new FileInfo(DatabasePath);
+        lastUpdate = mpFi.LastWriteTime;
+        //lastUpdate = Convert.ToInt64(string.Format("{0:D4}{1:D2}{2:D2}{3:D2}{4:D2}{5:D2}", dbUpdate.Year, dbUpdate.Month, dbUpdate.Day, dbUpdate.Hour, dbUpdate.Minute, dbUpdate.Second));
+        //}
+        //else
+        //{
+        //  // OBSOLETE
+        //  using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\TVUpdate"))
+        //    if (rkey != null)
+        //    {
+        //      string regLastUpdate = string.Format("{0}", rkey.GetValue("LetztesTVUpdate"));
+        //      lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
+        //    }
+        //}
 
         return lastUpdate;
       }

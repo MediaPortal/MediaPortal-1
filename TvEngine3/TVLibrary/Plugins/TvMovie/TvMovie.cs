@@ -35,9 +35,9 @@ namespace TvEngine
   public class TvMovie : ITvServerPlugin
   {
     private TvMovieDatabase _database;
-    //private System.Threading.Timer _stateTimer;
+    private System.Threading.Timer _stateTimer;
     private bool _isImporting = false;
-    //private const long _timerIntervall = 1800000;
+    private const long _timerIntervall = 1800000;
 
     private void ImportThread()
     {
@@ -54,9 +54,9 @@ namespace TvEngine
         return;
       }
 
-      Log.Debug("TVMovie: Checking database");
+      //Log.Debug("TVMovie: Checking database");
 
-      if (_database.WasUpdated)
+      if (_database.NeedsImport)
       {
         //TVDatabase.SupressEvents = true;
 
@@ -126,17 +126,17 @@ namespace TvEngine
 
     public void Start(IController controller)
     {
-      //TimerCallback timerCallBack = new TimerCallback(StartImportThread);
-      //_stateTimer = new System.Threading.Timer(timerCallBack, null, 10000, _timerIntervall);
-      SpawnImportThread();
+      TimerCallback timerCallBack = new TimerCallback(StartImportThread);
+      _stateTimer = new System.Threading.Timer(timerCallBack, null, 5000, _timerIntervall);
+      //SpawnImportThread();
     }
 
     public void Stop()
     {
       if (_database != null)
         _database.Canceled = true;
-      //if (_stateTimer != null)
-      //  _stateTimer.Dispose();
+      if (_stateTimer != null)
+        _stateTimer.Dispose();
     }
 
     public SetupTv.SectionSettings Setup
