@@ -1242,7 +1242,7 @@ namespace TvService
 
         //no card is timeshifting the channel, get a list of free channels
         TvResult result;
-        List<CardDetail> freeCards = GetFreeCardsForChannel(channel, ref user, out result);
+        List<CardDetail> freeCards = GetFreeCardsForChannel(channel, ref user, true, out result);
         if (freeCards.Count == 0)
         {
           //no free cards available
@@ -1604,7 +1604,7 @@ namespace TvService
     /// </summary>
     /// <param name="channelName">Name of the channel.</param>
     /// <returns>list containg all free cards which can receive the channel</returns>
-    public List<CardDetail> GetFreeCardsForChannel(Channel dbChannel, ref User user, out TvResult result)
+    public List<CardDetail> GetFreeCardsForChannel(Channel dbChannel, ref User user, bool checkTransponders, out TvResult result)
     {
       try
       {
@@ -1696,7 +1696,7 @@ namespace TvService
             //now we check if its free...
             cardsFound++;
             TvCard tvcard = _cards[keyPair.Value.DataBaseCard.IdCard];
-            if (tvcard.IsTunedToTransponder(tuningDetail) && tvcard.SupportsSubChannels)
+            if (tvcard.IsTunedToTransponder(tuningDetail) && (tvcard.SupportsSubChannels|| (checkTransponders==false)) )
             {
               //card is in use, but it is tuned to the same transponder.
               //meaning.. we can use it:-)
