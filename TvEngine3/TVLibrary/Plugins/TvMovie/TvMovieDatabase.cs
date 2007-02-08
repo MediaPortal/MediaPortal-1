@@ -399,16 +399,24 @@ namespace TvEngine
         TvBusinessLayer layer = new TvBusinessLayer();
         // EPG need updates every 24 hours.
         TimeSpan restTime = new TimeSpan(24, 0, 0);
-        DateTime lastUpdated = Convert.ToDateTime(layer.GetSetting("TvMovieLastUpdate", "0").Value);
-//        if (Convert.ToInt64(layer.GetSetting("TvMovieLastUpdate", "0").Value) == LastUpdate)
-        if (lastUpdated >= (DateTime.Now - restTime))
+        try
         {
-          Log.Debug("TVMovie: Last update was at {0} - not importing yet again", Convert.ToString(lastUpdated));
-          return false;
+
+          DateTime lastUpdated = Convert.ToDateTime(layer.GetSetting("TvMovieLastUpdate", "0").Value);
+          //        if (Convert.ToInt64(layer.GetSetting("TvMovieLastUpdate", "0").Value) == LastUpdate)
+          if (lastUpdated >= (DateTime.Now - restTime))
+          {
+            Log.Debug("TVMovie: Last update was at {0} - not importing yet again", Convert.ToString(lastUpdated));
+            return false;
+          }
+          else
+          {
+            Log.Debug("TVMovie: Last update was at {0} - new import scheduled", Convert.ToString(lastUpdated));
+            return true;
+          }
         }
-        else
+        catch (Exception )
         {
-          Log.Debug("TVMovie: Last update was at {0} - new import scheduled", Convert.ToString(lastUpdated));
           return true;
         }
       }

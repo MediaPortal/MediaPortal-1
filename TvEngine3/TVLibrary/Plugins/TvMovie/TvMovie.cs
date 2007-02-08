@@ -56,10 +56,17 @@ namespace TvEngine
       }
 
       //Log.Debug("TVMovie: Checking database");
-
-      if (_database.NeedsImport)
+      try
       {
-        _database.Import();
+        if (_database.NeedsImport)
+        {
+          _database.Import();
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("TvMovie plugin error:");
+        Log.Write(ex);
       }
 
       _isImporting = false;
