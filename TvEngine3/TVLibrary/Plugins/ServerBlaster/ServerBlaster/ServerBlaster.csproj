@@ -121,6 +121,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BlasterSetup.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="BlasterSetup.Designer.cs">
       <DependentUpon>BlasterSetup.cs</DependentUpon>

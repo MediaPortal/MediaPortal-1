@@ -694,16 +694,9 @@ namespace TvPlugin
       {
         btnTvOnOff.Selected = isTimeShifting;
       }
-
+     
       if (g_Player.Playing == false)
       {
-        if (TVHome.Card.IsTimeShifting)
-        {
-          if (!TVHome.Card.IsScrambled)
-          {
-            StartPlay();
-          }
-        }
         if (btnTeletext.Visible)
           btnTeletext.Visible = false;
         return;
@@ -760,41 +753,46 @@ namespace TvPlugin
       List<Channel> channels = new List<Channel>();
       int count = 0;
       TvServer server = new TvServer();
+      List<User> _users = new List<User>();
       foreach (Card card in cards)
       {
         if (card.Enabled == false) continue;
-        bool isRecording;
-        bool isTimeShifting;
-        User user = new User();
-        user.CardId = card.IdCard;
-        VirtualCard tvcard = new VirtualCard(user, RemoteControl.HostName);
-        isRecording = tvcard.IsRecording;
-        isTimeShifting = tvcard.IsTimeShifting;
-        if (isRecording || isTimeShifting)
+        User[] users = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+        for (int i = 0; i < users.Length; ++i)
         {
-          int idChannel = tvcard.IdChannel;
-          user = tvcard.User;
-          Channel ch = Channel.Retrieve(idChannel);
-          channels.Add(ch);
-          GUIListItem item = new GUIListItem();
-          item.Label = ch.Name;
-          item.Label2 = user.Name;
-          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.Name);
-          if (!System.IO.File.Exists(strLogo))
+          User user = users[i];
+          bool isRecording;
+          bool isTimeShifting;
+          VirtualCard tvcard = new VirtualCard(user, RemoteControl.HostName);
+          isRecording = tvcard.IsRecording;
+          isTimeShifting = tvcard.IsTimeShifting;
+          if (isRecording || isTimeShifting)
           {
-            strLogo = "defaultVideoBig.png";
+            int idChannel = tvcard.IdChannel;
+            user = tvcard.User;
+            Channel ch = Channel.Retrieve(idChannel);
+            channels.Add(ch);
+            GUIListItem item = new GUIListItem();
+            item.Label = ch.Name;
+            item.Label2 = user.Name;
+            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.Name);
+            if (!System.IO.File.Exists(strLogo))
+            {
+              strLogo = "defaultVideoBig.png";
+            }
+            item.IconImage = strLogo;
+            if (isRecording)
+              item.PinImage = Thumbs.TvRecordingIcon;
+            else
+              item.PinImage = "";
+            dlg.Add(item);
+            _users.Add(user);
+            if (TVHome.Card != null && TVHome.Card.IdChannel == idChannel)
+            {
+              selected = count;
+            }
+            count++;
           }
-          item.IconImage = strLogo;
-          if (isRecording)
-            item.PinImage = Thumbs.TvRecordingIcon;
-          else
-            item.PinImage = "";
-          dlg.Add(item);
-          if (TVHome.Card != null && TVHome.Card.IdChannel == idChannel)
-          {
-            selected = count;
-          }
-          count++;
         }
       }
       if (channels.Count == 0)
@@ -812,7 +810,10 @@ namespace TvPlugin
       dlg.SelectedLabel = selected;
       dlg.DoModal(this.GetID);
       if (dlg.SelectedLabel < 0) return;
-      ViewChannelAndCheck(channels[dlg.SelectedLabel]);
+      TVHome.Card = new VirtualCard(_users[dlg.SelectedLabel],RemoteControl.HostName);
+      g_Player.Stop();
+      StartPlay();
+      TVHome.Card.User.Name = new User().Name;
     }
     void OnRecord()
     {
@@ -1401,10 +1402,26 @@ namespace TvPlugin
 
     static void StartPlay()
     {
-      if (TVHome.Card.IsScrambled) return;
+      if (TVHome.Card == null)
+      {
+        MediaPortal.GUI.Library.Log.Info("tvhome:startplay card=null");
+        return;
+      }
+      if (TVHome.Card.IsScrambled)
+      {
+        MediaPortal.GUI.Library.Log.Info("tvhome:startplay scrambled");
+        return;
+      }
       MediaPortal.GUI.Library.Log.Info("tvhome:startplay");
       string timeshiftFileName = TVHome.Card.TimeShiftFileName;
+      MediaPortal.GUI.Library.Log.Info("tvhome:file:{0}", timeshiftFileName);
+
       IChannel channel = TVHome.Card.Channel;
+      if (channel == null)
+      {
+        MediaPortal.GUI.Library.Log.Info("tvhome:startplay channel=null");
+        return;
+      }
       g_Player.MediaType mediaType = g_Player.MediaType.TV;
       if (channel.IsRadio)
         mediaType = g_Player.MediaType.Radio;
