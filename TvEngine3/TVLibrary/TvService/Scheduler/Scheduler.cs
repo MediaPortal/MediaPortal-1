@@ -543,6 +543,11 @@ namespace TvService
         Log.Write("Scheduler : stop record {0} {1}-{2} {3}", recording.Channel, recording.RecordingStartDateTime, recording.EndTime, recording.Schedule.ProgramName);
         _controller.StopRecording(ref _user);
 
+        if (_controller.SupportsSubChannels(recording.CardInfo.Id) == false)
+        {
+          _controller.StopTimeShifting(ref _user);
+        }
+
 
         int idServer = recording.CardInfo.Card.IdServer;
         Recording newRec = new Recording(recording.Schedule.IdChannel, recording.RecordingStartDateTime, DateTime.Now, recording.Program.Title,
