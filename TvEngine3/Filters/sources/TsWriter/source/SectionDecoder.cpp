@@ -28,8 +28,13 @@
 extern DWORD crc32 (char *data, int len);
 
 void LogDebug(const char *fmt, ...) ;
+FILE* fout=NULL;
 CSectionDecoder::CSectionDecoder(void)
 {
+  if (fout==NULL)
+  {
+    fout=fopen("c:\\pmt.dat","wb+");
+  }
   m_pid=-1;
   m_tableId=-1;
   m_iContinuityCounter=0;
@@ -88,12 +93,14 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
   if (m_tableId < 0 || m_pid < 0) return;
   if (header.Pid != m_pid) return;
 
+ 
 	if (m_bLog)
-		LogDebug("pid:%03.3x table id:%03.3x payloadunit start:%x start:%d %x",m_pid,m_tableId,(int)header.PayloadUnitStart,header.PayLoadStart, tsPacket[header.PayLoadStart]);
+    LogDebug("pid:%03.3x table id:%03.3x payloadunit start:%x start:%d tableid:%x len:%d",m_pid,m_tableId,(int)header.PayloadUnitStart,header.PayLoadStart, tsPacket[header.PayLoadStart], 188-header.PayLoadStart);
  	if (header.PayloadUnitStart)
 	{
+    
 		int start=header.PayLoadStart;
-    if (m_section.BufferPos > 0 && m_section.SectionLength > 0 && start > 5)
+    if (m_section.BufferPos > 0 /*&& m_section.SectionLength > 0*/ && start > 5)
 		{
       int len=start-5;
 			if (m_section.BufferPos+len < MAX_SECTION_LENGTH)
@@ -101,12 +108,37 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
 				memcpy(&m_section.Data[m_section.BufferPos],&tsPacket[5],len);
 				m_section.BufferPos +=len;
 				m_section.SectionPos+=len;
+        int startSec=5;
+		    int section_syntax_indicator = (m_section.Data[startSec+1]>>7) & 1;
+		    int current_next_indicator = m_section.Data[startSec+5] & 1;
+		    int section_length = ((m_section.Data[startSec+1]& 0xF)<<8) + m_section.Data[startSec+2];
+		    int transport_stream_id = (m_section.Data[startSec+3]<<8)+m_section.Data[startSec+4];
+		    int version_number = ((m_section.Data[startSec+5]>>1)&0x1F);
+		    int section_number = m_section.Data[startSec+6];
+		    int last_section_number = m_section.Data[startSec+7];
+        unsigned int network_id= (m_section.Data[startSec+8]<<16)+(m_section.Data[startSec+9]);
+
+		    m_section.Length=section_length+startSec+3;
+        m_section.NetworkId=network_id;
+        m_section.TransportId=transport_stream_id;
+        m_section.Version=version_number;
+        m_section.SectionNumber=section_number;
+        m_section.SectionLength=section_length;
+		    m_section.LastSectionNumber=last_section_number;
 				if (m_bLog)
-					LogDebug("pid:%03.3x append %d %d %d",m_pid,m_section.BufferPos,m_section.SectionPos,m_section.SectionLength);
+          LogDebug("pid:%03.3x append buffer pos:%d sectionpos:%d section length:%d",m_pid,m_section.BufferPos,m_section.SectionPos,m_section.SectionLength);
 
         ProcessSection();
 			}
+      else
+      {
+				if (m_bLog) LogDebug("INVALID START: ERR2");
+      }
 		}
+    else
+    {
+			if (m_bLog) LogDebug("INVALID START: ERR1");
+    }
 
 		m_section.Reset();
 		while (tsPacket[start]==m_tableId && start+10 < 188 )
@@ -145,12 +177,29 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
       if (m_section.SectionPos >= m_section.SectionLength)
 		  {
 				if (m_bLog)
-					LogDebug("pid:%03.3x new %d %d %d",m_pid,m_section.BufferPos,m_section.SectionPos,m_section.SectionLength);
+          LogDebug("pid:%03.3x new bufferpos:%d sectionpos:%d section len:%d",m_pid,m_section.BufferPos,m_section.SectionPos,m_section.SectionLength);
         ProcessSection();
         start = start+section_length+3;
 				if (start+10 > 188) break;
 		  }
       else break;
+    }
+    
+    int len=188-start;
+    if (len>0)
+    {
+      if (tsPacket[start]==m_tableId)
+      {
+        memcpy(&m_section.Data[0], tsPacket, 5);
+      m_section.Data[4]=0;
+		    m_section.BufferPos= 5;
+		    m_section.SectionPos= 0;
+		    memcpy(&m_section.Data[m_section.BufferPos], &tsPacket[start], len);
+		    m_section.BufferPos += (len);
+        m_section.SectionPos+= (len);
+		    if (m_bLog)
+				    LogDebug("pid:%03.3x add %d %d %d",m_pid,m_section.BufferPos,m_section.SectionPos,m_section.SectionLength);
+      }
     }
 	}
 	else
@@ -204,7 +253,10 @@ void CSectionDecoder::ProcessSection()
       if (crc==0)
       {
 		    if (m_bLog)
-				    LogDebug("pid:%03.3x got %d %d %d",m_pid,m_section.BufferPos,m_section.SectionPos,m_section.SectionLength);
+        {
+          LogDebug("pid:%03.3x got bufferpos:%d sectionpos:%d section len:%d",m_pid,m_section.BufferPos,m_section.SectionPos,m_section.SectionLength);
+          LogDebug("");
+        }
 
 	      OnNewSection(m_section);
 	      if (m_pCallback!=NULL)
@@ -212,7 +264,25 @@ void CSectionDecoder::ProcessSection()
 		      m_pCallback->OnNewSection(m_pid, m_tableId, m_section);
 	      }
       }
+      else if (m_bLog)
+      {
+        LogDebug("INVALID CRC ERROR");
+        LogDebug("");
+        int x=123;
+      }
     }
+      else if (m_bLog)
+      {
+        LogDebug("INVALID SECTION LEN");
+        LogDebug("");
+        int x=123;
+      }
+  }
+  else
+  {
+		if (m_bLog)
+        LogDebug("INVALID TABLEID");
+    int x=123;
   }
 	m_section.Reset();
 }
