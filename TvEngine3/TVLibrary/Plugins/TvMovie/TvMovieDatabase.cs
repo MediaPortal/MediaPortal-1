@@ -328,6 +328,12 @@ namespace TvEngine
           ClearPrograms(mapping.Channel);
         }
 
+      // setting update time of epg import to avoid that the background thread triggers another import
+      // if the process lasts longer than the timer's update check interval
+      Setting setting = layer.GetSetting("TvMovieLastUpdate");
+      setting.Value = DateTime.Now.ToString();
+      setting.Persist();
+
       Log.Debug("TVMovie: Mapped {0} stations for EPG import", Convert.ToString(maximum));
 
       int counter = 0;
@@ -344,7 +350,7 @@ namespace TvEngine
             channelNames.Add(mapping);
 
         if (channelNames.Count > 0)
-        {
+        {          
           try
           {
             string display = string.Empty;
@@ -355,6 +361,7 @@ namespace TvEngine
             if (OnStationsChanged != null)
               OnStationsChanged(counter, maximum, display);
             counter++;
+            Log.Info("TVMovie: Retrieving data for station [{0}/{1}] - {2}", Convert.ToString(counter), Convert.ToString(_stations.Count), display);
             _programsCounter += ImportStation(station, channelNames);
           }
           catch (Exception ex)
@@ -378,7 +385,7 @@ namespace TvEngine
           //    lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
           //  }
 
-          Setting setting = layer.GetSetting("TvMovieLastUpdate");
+          setting = layer.GetSetting("TvMovieLastUpdate");
           Log.Debug("TVMovie: Last import was done at {0} - setting to current time", LastUpdate.ToString());
           setting.Value = DateTime.Now.ToString();
           setting.Persist();

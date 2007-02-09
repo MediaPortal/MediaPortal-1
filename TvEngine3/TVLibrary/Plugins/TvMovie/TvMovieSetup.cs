@@ -609,19 +609,22 @@ namespace SetupTv.Sections
       {
         Log.Error("TvMovie plugin error:");
         Log.Write(ex);
+        buttonImportNow.Enabled = true;
       }
     }
 
     void _database_OnStationsChanged(int value, int maximum, string text)
     {
       progressBarImportTotal.Maximum = maximum;
-      progressBarImportTotal.Value = value;
+      if (value <= maximum && value >= 0)
+        progressBarImportTotal.Value = value;      
     }
 
     void _database_OnProgramsChanged(int value, int maximum, string text)
     {
       progressBarImportItem.Maximum = maximum;
-      progressBarImportItem.Value = value;
+      if (value <= maximum && value >= 0)
+        progressBarImportItem.Value = value;
     }
   }
 }
