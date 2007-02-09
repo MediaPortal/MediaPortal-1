@@ -650,7 +650,8 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 
 		if (first_PTS == 0) 
 		{ 
-			first_PTS=PTS; 
+			first_PTS = PTS; 
+      m_pObserver->NotifyFirstPTS( first_PTS );
 		}
 
 		LogDebug("%s\r", Pts2hmsu(PTS-first_PTS,'.'));
@@ -740,7 +741,7 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 				
 				if( m_pObserver )
 				{
-					m_pObserver->Notify();
+					m_pObserver->NotifySubtitle();
 				}
 
 			}
@@ -877,7 +878,10 @@ CSubtitle* CDVBSubDecoder::GetLatestSubtitle()
 
 void CDVBSubDecoder::ReleaseOldestSubtitle()
 {
-	m_RenderedSubtitles.erase( m_RenderedSubtitles.begin() );		
+  if( m_RenderedSubtitles.size() > 0 )
+  {
+    m_RenderedSubtitles.erase( m_RenderedSubtitles.begin() );		
+  }
 }
 
 void CDVBSubDecoder::Reset()

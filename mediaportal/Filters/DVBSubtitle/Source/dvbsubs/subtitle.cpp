@@ -131,6 +131,16 @@ void CSubtitle::SetPTS( uint64_t PTS )
 	m_PTS = PTS;
 }
 
+uint64_t CSubtitle::Timestamp()
+{
+	return m_timestamp;
+}
+
+void CSubtitle::SetTimestamp( uint64_t timestamp )
+{
+	m_timestamp = timestamp;
+}
+
 uint64_t CSubtitle::Timeout()
 {
   return m_timeout;
