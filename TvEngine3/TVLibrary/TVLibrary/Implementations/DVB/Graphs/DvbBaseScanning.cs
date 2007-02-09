@@ -360,6 +360,10 @@ namespace TvLibrary.Implementations.DVB
                   info.serviceType == (int)ServiceType.Audio || info.serviceType == (int)ServiceType.H264Stream ||
                   info.serviceType == (int)ServiceType.Mpeg4OrH264Stream)
               {
+                if (info.service_name.Length == 0)
+                {
+                  info.service_name = String.Format("{0:X}", info.serviceID);
+                }
                 IChannel dvbChannel = CreateNewChannel(info);
                 if (dvbChannel != null)
                 {
@@ -373,6 +377,10 @@ namespace TvLibrary.Implementations.DVB
                   info.serviceType = (int)ServiceType.Video;
                 else
                   info.serviceType = (int)ServiceType.Audio;
+                if (info.service_name.Length == 0)
+                {
+                  info.service_name = String.Format("{0:X}", info.serviceID);
+                }
                 IChannel dvbChannel = CreateNewChannel(info);
                 if (dvbChannel != null)
                 {
