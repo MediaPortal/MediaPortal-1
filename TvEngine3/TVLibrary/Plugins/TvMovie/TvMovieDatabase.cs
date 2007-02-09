@@ -405,8 +405,8 @@ namespace TvEngine
           //        if (Convert.ToInt64(layer.GetSetting("TvMovieLastUpdate", "0").Value) == LastUpdate)
           if (lastUpdated >= (DateTime.Now - restTime))
           {
-            TimeSpan RemainingIdleTime = DateTime.Now - (lastUpdated + restTime);
-            Log.Debug("TVMovie: Last update was at {0} - waiting at least {1} hours until next import", Convert.ToString(lastUpdated), Convert.ToString(RemainingIdleTime.Hours));
+            DateTime NewImportTime = lastUpdated + restTime;
+            Log.Debug("TVMovie: Last update was at {0} - waiting at least until {1} for next import", Convert.ToString(lastUpdated), Convert.ToString(NewImportTime));
             return false;
           }
           else
