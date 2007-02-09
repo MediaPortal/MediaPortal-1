@@ -60,9 +60,10 @@ struct SUBTITLE
   WORD        bmPlanes;
   WORD        bmBitsPixel;
   LPVOID      bmBits;
+  int         firstScanLine;
 
-  int        firstScanLine;
-	unsigned __int64 timeOut;
+  unsigned    __int64 timestamp;
+  unsigned    __int64 timeOut;
 };
 
 DECLARE_INTERFACE_( IDVBSubtitle, IUnknown )
@@ -70,6 +71,7 @@ DECLARE_INTERFACE_( IDVBSubtitle, IUnknown )
   STDMETHOD(GetSubtitle) ( int place, SUBTITLE* pSubtitle ) PURE;
   STDMETHOD(GetSubtitleCount) ( int* count ) PURE;
   STDMETHOD(SetCallback) ( int (CALLBACK *pSubtitleObserver)() ) PURE;
+  STDMETHOD(SetTimestampResetCallback)( int (CALLBACK *pSubtitleObserver)() ) PURE;
   STDMETHOD(DiscardOldestSubtitle) () PURE;
   STDMETHOD(Test)(int status) PURE;
 };
@@ -95,6 +97,7 @@ public:
   // IDVBSubtitle
   virtual HRESULT STDMETHODCALLTYPE GetSubtitle( int place, SUBTITLE* pSubtitle );
   virtual HRESULT STDMETHODCALLTYPE SetCallback( int (CALLBACK *pSubtitleObserver)() );
+  virtual HRESULT STDMETHODCALLTYPE SetTimestampResetCallback( int (CALLBACK *pTimestampResetObserver)() );
   virtual HRESULT STDMETHODCALLTYPE GetSubtitleCount( int* count );
   virtual HRESULT STDMETHODCALLTYPE DiscardOldestSubtitle();
 
@@ -129,7 +132,8 @@ public:
   STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
 	
   // From MSubdecoderObserver
-	void Notify();
+	void NotifySubtitle();
+  void NotifyFirstPTS( ULONGLONG firstPTS );
 
   // From MPidObserver
   void SetPcrPid( LONG pid );
@@ -154,5 +158,6 @@ private:
 
   ULONGLONG           m_firstPTS;
 
-  int                (CALLBACK *m_pSubtitleObserver) (); 
+  int                 (CALLBACK *m_pSubtitleObserver) (); 
+  int                 (CALLBACK *m_pTimestampResetObserver) ();
 };
