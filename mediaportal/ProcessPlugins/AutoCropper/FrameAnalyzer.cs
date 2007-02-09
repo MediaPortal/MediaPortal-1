@@ -150,7 +150,7 @@ namespace ProcessPlugins.AutoCropper
 
       //frame.Save("C:\\analyzed_frame.bmp", ImageFormat.Bmp); // for debug purposes
 
-      if (!foundTop || !foundTop || bottomLine - topLine + 1 < frame.Height * 0.25f)
+      if (!foundTop || !foundBottom || bottomLine - topLine + 1 < frame.Height * 0.25f)
       {
         if (verboseLog) Log.Debug("Sanity check failed, analysis failed, returning null to skip frame");
         //DrawLine(frame.Height / 2, 0, frame.Width - 1, Color.White); // indicate give up
