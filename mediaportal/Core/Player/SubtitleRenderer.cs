@@ -32,6 +32,9 @@ namespace MediaPortal.Player
 
     public Int32 firstScanLine;
 
+    // subtitle timestmap
+    public UInt64 timestamp;
+
     // how long to display subtitle
     public UInt64 timeOut;
   }
@@ -48,12 +51,14 @@ namespace MediaPortal.Player
     void GetSubtitle(int place, ref SUBTITLE subtitle);
     void GetSubtitleCount(out int count);
     void SetCallback(IntPtr callBack);
+    void SetTimestampResetCallback(IntPtr callBack);
     void DiscardOldestSubtitle();
     void Test(int status);
   }
 
   [UnmanagedFunctionPointer(CallingConvention.StdCall)]
   public delegate int SubtitleCallback();
+  public delegate int ResetTimestampCallback();
 
   class SubtitleRenderer
   {
@@ -71,9 +76,11 @@ namespace MediaPortal.Player
     /// </summary>
     private VertexBuffer vertexBuffer = null;
 
-    // important, this delegate must NOT be garbage collected
-    // or horrible things will happen when the native code tries to call it!
+    // important, these delegates must NOT be garbage collected
+    // or horrible things will happen when the native code tries to call those!
     private SubtitleCallback callBack;
+    private ResetTimestampCallback resetTimeStampCallBack;
+
     private int count = 0;
 
     /// <summary>
@@ -99,6 +106,7 @@ namespace MediaPortal.Player
       if(instance == null){
         instance = new SubtitleRenderer();
         instance.callBack = new SubtitleCallback(instance.OnSubtitle);
+        instance.resetTimeStampCallBack = new ResetTimestampCallback(instance.OnTimeStampReset);
       }
       return instance;
     }
@@ -133,6 +141,16 @@ namespace MediaPortal.Player
         }
         
       }
+      return 0;
+    }
+
+    /// <summary>
+    /// Callback from subtitle filter, resets timestamp 
+    /// </summary>
+    /// <returns></returns>
+    public int OnTimeStampReset()
+    {
+      // reset timestmap
       return 0;
     }
 
@@ -258,6 +276,9 @@ namespace MediaPortal.Player
       CreateFilter(_graphBuilder);
       IntPtr pCallback = Marshal.GetFunctionPointerForDelegate(callBack);
       subFilter.SetCallback(pCallback);
+
+      IntPtr pResetTimeStampCallBack = Marshal.GetFunctionPointerForDelegate(resetTimeStampCallBack);
+      subFilter.SetTimestampResetCallback(pResetTimeStampCallBack);
 
       ThreadStart ts = new ThreadStart(WorkerThread);
       Thread t = new Thread(ts);
