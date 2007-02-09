@@ -35,10 +35,12 @@ namespace TvEngine
 {
   public class TvMovie : ITvServerPlugin
   {
+    #region Members
     private TvMovieDatabase _database;
     private System.Timers.Timer _stateTimer;
     private bool _isImporting = false;
     private const long _timerIntervall = 1800000;
+    #endregion
 
     private void ImportThread()
     {
@@ -106,6 +108,30 @@ namespace TvEngine
       }
     }
 
+    private void StartStopTimer(bool startNow)
+    {
+      if (startNow)
+      {
+        if (_stateTimer == null)
+        {
+          _stateTimer = new System.Timers.Timer();
+          _stateTimer.Elapsed += new ElapsedEventHandler(StartImportThread);
+          _stateTimer.Interval = _timerIntervall;
+          _stateTimer.AutoReset = true;
+
+          GC.KeepAlive(_stateTimer);
+        }
+        _stateTimer.Start();
+        _stateTimer.Enabled = true;
+      }
+      else
+      {
+        _stateTimer.Enabled = false;
+        _stateTimer.Stop();
+        Log.Debug("TVMovie: background import timer stopped");
+      }
+    }
+
     #region ITvServerPlugin Members
 
     public string Name
@@ -130,16 +156,7 @@ namespace TvEngine
 
     public void Start(IController controller)
     {
-      //TimerCallback timerCallBack = new TimerCallback(StartImportThread);
-      _stateTimer = new System.Timers.Timer(); //timerCallBack, null, 5000, _timerIntervall);
-      _stateTimer.Elapsed += new ElapsedEventHandler(StartImportThread);
-      _stateTimer.Interval = _timerIntervall;
-      _stateTimer.AutoReset = true;
-      _stateTimer.Start();
-      _stateTimer.Enabled = true;
-
-
-      GC.KeepAlive(_stateTimer);
+      StartStopTimer(true);
     }
 
     public void Stop()
@@ -147,7 +164,10 @@ namespace TvEngine
       if (_database != null)
         _database.Canceled = true;
       if (_stateTimer != null)
+      {
+        StartStopTimer(false);
         _stateTimer.Dispose();
+      }
     }
 
     public SetupTv.SectionSettings Setup

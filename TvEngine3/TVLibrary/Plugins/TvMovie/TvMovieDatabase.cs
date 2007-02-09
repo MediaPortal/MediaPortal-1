@@ -42,6 +42,7 @@ namespace TvEngine
 {
   class TvMovieDatabase
   {
+    #region Members
     private OleDbConnection _databaseConnection = null;
     private bool _canceled = false;
     private ArrayList _stations = null;
@@ -53,12 +54,14 @@ namespace TvEngine
     private bool _slowImport = false;
 
     static string _xmlFile;
+    #endregion
 
+    #region Events
     public delegate void ProgramsChanged(int value, int maximum, string text);
     public event ProgramsChanged OnProgramsChanged;
     public delegate void StationsChanged(int value, int maximum, string text);
     public event StationsChanged OnStationsChanged;
-
+    #endregion
 
     private struct Mapping
     {
@@ -297,6 +300,7 @@ namespace TvEngine
         return;
       }
 
+      DateTime ImportStartTime = DateTime.Now;
       Log.Debug("TVMovie: Importing database");
 
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -361,7 +365,7 @@ namespace TvEngine
             if (OnStationsChanged != null)
               OnStationsChanged(counter, maximum, display);
             counter++;
-            Log.Info("TVMovie: Retrieving data for station [{0}/{1}] - {2}", Convert.ToString(counter), Convert.ToString(_stations.Count), display);
+            Log.Info("TVMovie: Retrieving data for station [{0}/{1}] - {2}", Convert.ToString(counter), Convert.ToString(maximum), display);
             _programsCounter += ImportStation(station, channelNames);
           }
           catch (Exception ex)
@@ -389,13 +393,14 @@ namespace TvEngine
           Log.Debug("TVMovie: Last import was done at {0} - setting to current time", LastUpdate.ToString());
           setting.Value = DateTime.Now.ToString();
           setting.Persist();
+
+          TimeSpan ImportDuration = (DateTime.Now - ImportStartTime);
+          Log.Debug("TVMovie: Imported {0} database entries for {1} stations in {2} minutes", _programsCounter, counter, Convert.ToString(ImportDuration.Minutes));
         }
         catch (Exception)
         {
           Log.Error("TVMovie: Error updating the database with last import date");
-        }
-
-        Log.Debug("TVMovie: Imported {0} database entries for {1} stations", _programsCounter, counter);
+        }                
       }
     }
 
