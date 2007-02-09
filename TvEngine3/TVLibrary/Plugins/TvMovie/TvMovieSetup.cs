@@ -25,14 +25,16 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Drawing;
-using System.Xml;
-using System.Windows.Forms;
 using System.IO;
+using System.Threading;
+using System.Windows.Forms;
+using System.Xml;
+
 using TvDatabase;
 using TvEngine;
 using TvLibrary.Log;
-using System.Diagnostics;
 
 
 namespace SetupTv.Sections
@@ -116,11 +118,11 @@ namespace SetupTv.Sections
         setting.Value = "false";
       setting.Persist();
 
-      setting = layer.GetSetting("TvMovieUseDatabaseDate", "false");
-      if (checkBoxUseDatabaseDate.Checked)
+      setting = layer.GetSetting("TvMovieUseDatabaseDate", "true");
+//      if (checkBoxUseDatabaseDate.Checked)
         setting.Value = "true";
-      else
-        setting.Value = "false";
+      //else
+      //  setting.Value = "false";
       setting.Persist();
 
       setting = layer.GetSetting("TvMovieShortProgramDesc", "false");
@@ -144,11 +146,15 @@ namespace SetupTv.Sections
         setting.Value = "false";
       setting.Persist();
 
-      setting = layer.GetSetting("TvMovieSlowImport", "false");
+      setting = layer.GetSetting("TvMovieSlowImport", "true");
       if (checkBoxSlowImport.Checked)
         setting.Value = "true";
       else
         setting.Value = "false";
+      setting.Persist();
+
+      setting = layer.GetSetting("TvMovieRestPeriod", "24");
+      setting.Value = GetRestPeriod();
       setting.Persist();
 
       base.OnSectionDeActivated();
@@ -158,11 +164,12 @@ namespace SetupTv.Sections
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       checkBoxEnableImport.Checked = layer.GetSetting("TvMovieEnabled", "false").Value == "true";
-      checkBoxUseDatabaseDate.Checked = layer.GetSetting("TvMovieUseDatabaseDate", "true").Value == "true";
+      //checkBoxUseDatabaseDate.Checked = layer.GetSetting("TvMovieUseDatabaseDate", "true").Value == "true";
       checkBoxUseShortDesc.Checked = layer.GetSetting("TvMovieShortProgramDesc", "false").Value == "true";
       checkBoxAdditionalInfo.Checked = layer.GetSetting("TvMovieExtendDescription", "false").Value == "true";
       checkBoxShowAudioFormat.Checked = layer.GetSetting("TvMovieShowAudioFormat", "false").Value == "true";
       checkBoxSlowImport.Checked = layer.GetSetting("TvMovieSlowImport", "false").Value == "true";
+      SetRestPeriod(layer.GetSetting("TvMovieRestPeriod", "24").Value);
 
       base.OnSectionActivated();
     }
@@ -232,10 +239,10 @@ namespace SetupTv.Sections
       selectedChannel.Nodes.Add(selectedStation);
       selectedChannel.Expand();
 
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("TvMovieLastUpdate");
-      setting.Value = "0";
-      setting.Persist();
+      //TvBusinessLayer layer = new TvBusinessLayer();
+      //Setting setting = layer.GetSetting("TvMovieLastUpdate");
+      //setting.Value = "0";
+      //setting.Persist();
     }
 
 
@@ -285,7 +292,7 @@ namespace SetupTv.Sections
           ChannelInfo channelInfo = (ChannelInfo)station.Tag;
           TvMovieMapping mapping = new TvMovieMapping(layer.GetChannelByName(channel.Text).IdChannel,
             channelInfo.Name, channelInfo.Start, channelInfo.End);
-          Log.Write("TvMovieSetup: SaveMapping - new mapping for {0}/{1}", channel.Text, channelInfo.Name);
+          //Log.Write("TvMovieSetup: SaveMapping - new mapping for {0}/{1}", channel.Text, channelInfo.Name);
           try
           {
             mapping.Persist();
@@ -488,6 +495,35 @@ namespace SetupTv.Sections
       Process.Start("http://www.tvmovie.de/ClickFinder.57.0.html");
     }
 
+    private string GetRestPeriod()
+    {
+      if (radioButton6h.Checked)
+        return "6"; else
+      if (radioButton12h.Checked)
+        return "12"; else
+      if (radioButton24h.Checked)
+        return "24"; else
+      if (radioButton2d.Checked)
+        return "48"; else
+      if (radioButton7d.Checked)
+        return "168";
+
+      return "24";
+    }
+
+    private void SetRestPeriod(string RadioButtonSetting)
+    {
+      switch (RadioButtonSetting)
+      {
+        case "6":  radioButton6h.Checked = true;  break;
+        case "12": radioButton12h.Checked = true; break;
+        case "24": radioButton24h.Checked = true; break;
+        case "48": radioButton2d.Checked = true;  break;
+        case "168":radioButton7d.Checked = true;  break;
+        default:   radioButton24h.Checked = true; break;
+      }
+    }
+
     private void tabControlTvMovie_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (!checkBoxEnableImport.Checked)
@@ -498,7 +534,7 @@ namespace SetupTv.Sections
 
     private void checkBoxEnableImport_CheckedChanged(object sender, EventArgs e)
     {
-      checkBoxUseDatabaseDate.Enabled = groupBoxDescriptions.Enabled = groupBoxImport.Enabled = checkBoxEnableImport.Checked;
+      groupBoxDescriptions.Enabled = groupBoxImportTime.Enabled = checkBoxEnableImport.Checked;
 
       if (checkBoxEnableImport.Checked)
       {
@@ -539,6 +575,53 @@ namespace SetupTv.Sections
       }
       else
         SaveMapping();
+    }
+
+    private void buttonImportNow_Click(object sender, EventArgs e)
+    {
+      buttonImportNow.Enabled = false;
+      try
+      {
+        Thread manualThread = new Thread(new ThreadStart(ManualImportThread));
+        manualThread.Priority = ThreadPriority.Normal;
+        manualThread.IsBackground = false;
+        manualThread.Start();
+      }
+      catch (Exception ex2)
+      {
+        Log.Error("TVMovie: Error spawing import thread - {0},{1}", ex2.Message, ex2.StackTrace);
+        buttonImportNow.Enabled = true;
+      }
+    }
+
+    private void ManualImportThread()
+    {
+      TvMovieDatabase _database = new TvMovieDatabase();
+      try
+      {
+        _database.OnProgramsChanged += new TvMovieDatabase.ProgramsChanged(_database_OnProgramsChanged);
+        _database.OnStationsChanged += new TvMovieDatabase.StationsChanged(_database_OnStationsChanged);
+        _database.Connect();
+        _database.Import();
+        buttonImportNow.Enabled = true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("TvMovie plugin error:");
+        Log.Write(ex);
+      }
+    }
+
+    void _database_OnStationsChanged(int value, int maximum, string text)
+    {
+      progressBarImportTotal.Maximum = maximum;
+      progressBarImportTotal.Value = value;
+    }
+
+    void _database_OnProgramsChanged(int value, int maximum, string text)
+    {
+      progressBarImportItem.Maximum = maximum;
+      progressBarImportItem.Value = value;
     }
   }
 }

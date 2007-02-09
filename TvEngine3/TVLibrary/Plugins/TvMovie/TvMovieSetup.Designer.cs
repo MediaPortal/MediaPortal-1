@@ -56,18 +56,21 @@ namespace SetupTv.Sections
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
       this.tabControlTvMovie = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageSettings = new System.Windows.Forms.TabPage();
-      this.groupBoxEnableTvMovie = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.checkBoxEnableImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxUseDatabaseDate = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBoxInfos = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.linkLabelInfo = new System.Windows.Forms.LinkLabel();
-      this.labelInfo = new System.Windows.Forms.Label();
-      this.groupBoxImport = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.checkBoxSlowImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxDescriptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxAdditionalInfo = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxShowAudioFormat = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxUseShortDesc = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.groupBoxEnableTvMovie = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxImportTime = new System.Windows.Forms.GroupBox();
+      this.radioButton7d = new System.Windows.Forms.RadioButton();
+      this.radioButton2d = new System.Windows.Forms.RadioButton();
+      this.radioButton24h = new System.Windows.Forms.RadioButton();
+      this.radioButton12h = new System.Windows.Forms.RadioButton();
+      this.radioButton6h = new System.Windows.Forms.RadioButton();
+      this.checkBoxEnableImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.groupBoxInfos = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.linkLabelInfo = new System.Windows.Forms.LinkLabel();
+      this.labelInfo = new System.Windows.Forms.Label();
       this.tabPageMapChannels = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.labelNote = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBoxMapping = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -81,12 +84,16 @@ namespace SetupTv.Sections
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.listView2 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.buttonImportNow = new System.Windows.Forms.Button();
+      this.progressBarImportTotal = new System.Windows.Forms.ProgressBar();
+      this.progressBarImportItem = new System.Windows.Forms.ProgressBar();
+      this.checkBoxSlowImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControlTvMovie.SuspendLayout();
       this.tabPageSettings.SuspendLayout();
-      this.groupBoxEnableTvMovie.SuspendLayout();
-      this.groupBoxInfos.SuspendLayout();
-      this.groupBoxImport.SuspendLayout();
       this.groupBoxDescriptions.SuspendLayout();
+      this.groupBoxEnableTvMovie.SuspendLayout();
+      this.groupBoxImportTime.SuspendLayout();
+      this.groupBoxInfos.SuspendLayout();
       this.tabPageMapChannels.SuspendLayout();
       this.groupBoxMapping.SuspendLayout();
       this.panelTimeSpan.SuspendLayout();
@@ -115,10 +122,9 @@ namespace SetupTv.Sections
       // 
       // tabPageSettings
       // 
+      this.tabPageSettings.Controls.Add(this.groupBoxDescriptions);
       this.tabPageSettings.Controls.Add(this.groupBoxEnableTvMovie);
       this.tabPageSettings.Controls.Add(this.groupBoxInfos);
-      this.tabPageSettings.Controls.Add(this.groupBoxImport);
-      this.tabPageSettings.Controls.Add(this.groupBoxDescriptions);
       this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
       this.tabPageSettings.Name = "tabPageSettings";
       this.tabPageSettings.Padding = new System.Windows.Forms.Padding(3);
@@ -126,104 +132,6 @@ namespace SetupTv.Sections
       this.tabPageSettings.TabIndex = 1;
       this.tabPageSettings.Text = "Settings";
       this.tabPageSettings.UseVisualStyleBackColor = true;
-      // 
-      // groupBoxEnableTvMovie
-      // 
-      this.groupBoxEnableTvMovie.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxEnableTvMovie.Controls.Add(this.checkBoxEnableImport);
-      this.groupBoxEnableTvMovie.Controls.Add(this.checkBoxUseDatabaseDate);
-      this.groupBoxEnableTvMovie.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxEnableTvMovie.Location = new System.Drawing.Point(16, 8);
-      this.groupBoxEnableTvMovie.Name = "groupBoxEnableTvMovie";
-      this.groupBoxEnableTvMovie.Size = new System.Drawing.Size(424, 72);
-      this.groupBoxEnableTvMovie.TabIndex = 0;
-      this.groupBoxEnableTvMovie.TabStop = false;
-      // 
-      // checkBoxEnableImport
-      // 
-      this.checkBoxEnableImport.AutoSize = true;
-      this.checkBoxEnableImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEnableImport.Location = new System.Drawing.Point(16, 20);
-      this.checkBoxEnableImport.Name = "checkBoxEnableImport";
-      this.checkBoxEnableImport.Size = new System.Drawing.Size(192, 17);
-      this.checkBoxEnableImport.TabIndex = 0;
-      this.checkBoxEnableImport.Text = "Enable TV Movie ClickFinder import";
-      this.checkBoxEnableImport.UseVisualStyleBackColor = true;
-      this.checkBoxEnableImport.CheckedChanged += new System.EventHandler(this.checkBoxEnableImport_CheckedChanged);
-      // 
-      // checkBoxUseDatabaseDate
-      // 
-      this.checkBoxUseDatabaseDate.AutoSize = true;
-      this.checkBoxUseDatabaseDate.Checked = true;
-      this.checkBoxUseDatabaseDate.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxUseDatabaseDate.Enabled = false;
-      this.checkBoxUseDatabaseDate.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxUseDatabaseDate.Location = new System.Drawing.Point(32, 44);
-      this.checkBoxUseDatabaseDate.Name = "checkBoxUseDatabaseDate";
-      this.checkBoxUseDatabaseDate.Size = new System.Drawing.Size(141, 17);
-      this.checkBoxUseDatabaseDate.TabIndex = 11;
-      this.checkBoxUseDatabaseDate.Text = "Use ClickFinder 5.2";
-      this.checkBoxUseDatabaseDate.UseVisualStyleBackColor = true;
-      // 
-      // groupBoxInfos
-      // 
-      this.groupBoxInfos.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxInfos.Controls.Add(this.linkLabelInfo);
-      this.groupBoxInfos.Controls.Add(this.labelInfo);
-      this.groupBoxInfos.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxInfos.Location = new System.Drawing.Point(16, 264);
-      this.groupBoxInfos.Name = "groupBoxInfos";
-      this.groupBoxInfos.Size = new System.Drawing.Size(424, 76);
-      this.groupBoxInfos.TabIndex = 3;
-      this.groupBoxInfos.TabStop = false;
-      this.groupBoxInfos.Text = "Infos";
-      // 
-      // linkLabelInfo
-      // 
-      this.linkLabelInfo.AutoSize = true;
-      this.linkLabelInfo.Location = new System.Drawing.Point(16, 44);
-      this.linkLabelInfo.Name = "linkLabelInfo";
-      this.linkLabelInfo.Size = new System.Drawing.Size(119, 13);
-      this.linkLabelInfo.TabIndex = 1;
-      this.linkLabelInfo.TabStop = true;
-      this.linkLabelInfo.Text = "Click here to read more.";
-      this.linkLabelInfo.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelInfo_LinkClicked);
-      // 
-      // labelInfo
-      // 
-      this.labelInfo.AutoSize = true;
-      this.labelInfo.Location = new System.Drawing.Point(16, 24);
-      this.labelInfo.Name = "labelInfo";
-      this.labelInfo.Size = new System.Drawing.Size(333, 13);
-      this.labelInfo.TabIndex = 0;
-      this.labelInfo.Text = "TV Movie ClickFinder is an EPG application for German TV channels.";
-      // 
-      // groupBoxImport
-      // 
-      this.groupBoxImport.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxImport.Controls.Add(this.checkBoxSlowImport);
-      this.groupBoxImport.Enabled = false;
-      this.groupBoxImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxImport.Location = new System.Drawing.Point(16, 180);
-      this.groupBoxImport.Name = "groupBoxImport";
-      this.groupBoxImport.Size = new System.Drawing.Size(424, 56);
-      this.groupBoxImport.TabIndex = 2;
-      this.groupBoxImport.TabStop = false;
-      this.groupBoxImport.Text = "Import";
-      // 
-      // checkBoxSlowImport
-      // 
-      this.checkBoxSlowImport.AutoSize = true;
-      this.checkBoxSlowImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxSlowImport.Location = new System.Drawing.Point(16, 24);
-      this.checkBoxSlowImport.Name = "checkBoxSlowImport";
-      this.checkBoxSlowImport.Size = new System.Drawing.Size(381, 17);
-      this.checkBoxSlowImport.TabIndex = 0;
-      this.checkBoxSlowImport.Text = "Slower import (uses less processing power to solve possible video stuttering)";
-      this.checkBoxSlowImport.UseVisualStyleBackColor = true;
       // 
       // groupBoxDescriptions
       // 
@@ -234,10 +142,10 @@ namespace SetupTv.Sections
       this.groupBoxDescriptions.Controls.Add(this.checkBoxUseShortDesc);
       this.groupBoxDescriptions.Enabled = false;
       this.groupBoxDescriptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxDescriptions.Location = new System.Drawing.Point(16, 84);
+      this.groupBoxDescriptions.Location = new System.Drawing.Point(16, 187);
       this.groupBoxDescriptions.Name = "groupBoxDescriptions";
       this.groupBoxDescriptions.Size = new System.Drawing.Size(424, 91);
-      this.groupBoxDescriptions.TabIndex = 1;
+      this.groupBoxDescriptions.TabIndex = 4;
       this.groupBoxDescriptions.TabStop = false;
       this.groupBoxDescriptions.Text = "Descriptions";
       // 
@@ -247,11 +155,10 @@ namespace SetupTv.Sections
       this.checkBoxAdditionalInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAdditionalInfo.Location = new System.Drawing.Point(16, 44);
       this.checkBoxAdditionalInfo.Name = "checkBoxAdditionalInfo";
-      this.checkBoxAdditionalInfo.Size = new System.Drawing.Size(222, 17);
+      this.checkBoxAdditionalInfo.Size = new System.Drawing.Size(217, 17);
       this.checkBoxAdditionalInfo.TabIndex = 1;
-      this.checkBoxAdditionalInfo.Text = "Put additional info into the description field";
+      this.checkBoxAdditionalInfo.Text = "Display additional info like FSK, Year, etc";
       this.checkBoxAdditionalInfo.UseVisualStyleBackColor = true;
-      this.checkBoxAdditionalInfo.CheckedChanged += new System.EventHandler(this.checkBoxAdditionalInfo_CheckedChanged);
       // 
       // checkBoxShowAudioFormat
       // 
@@ -259,9 +166,9 @@ namespace SetupTv.Sections
       this.checkBoxShowAudioFormat.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxShowAudioFormat.Location = new System.Drawing.Point(16, 64);
       this.checkBoxShowAudioFormat.Name = "checkBoxShowAudioFormat";
-      this.checkBoxShowAudioFormat.Size = new System.Drawing.Size(112, 17);
+      this.checkBoxShowAudioFormat.Size = new System.Drawing.Size(171, 17);
       this.checkBoxShowAudioFormat.TabIndex = 2;
-      this.checkBoxShowAudioFormat.Text = "Show audio format";
+      this.checkBoxShowAudioFormat.Text = "Show audio format (if available)";
       this.checkBoxShowAudioFormat.UseVisualStyleBackColor = true;
       // 
       // checkBoxUseShortDesc
@@ -270,11 +177,142 @@ namespace SetupTv.Sections
       this.checkBoxUseShortDesc.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxUseShortDesc.Location = new System.Drawing.Point(16, 24);
       this.checkBoxUseShortDesc.Name = "checkBoxUseShortDesc";
-      this.checkBoxUseShortDesc.Size = new System.Drawing.Size(128, 17);
+      this.checkBoxUseShortDesc.Size = new System.Drawing.Size(204, 17);
       this.checkBoxUseShortDesc.TabIndex = 0;
-      this.checkBoxUseShortDesc.Text = "Use short descriptions";
+      this.checkBoxUseShortDesc.Text = "Use short program descriptions (faster)";
       this.checkBoxUseShortDesc.UseVisualStyleBackColor = true;
-      this.checkBoxUseShortDesc.CheckedChanged += new System.EventHandler(this.checkBoxUseShortDesc_CheckedChanged);
+      // 
+      // groupBoxEnableTvMovie
+      // 
+      this.groupBoxEnableTvMovie.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxEnableTvMovie.Controls.Add(this.progressBarImportItem);
+      this.groupBoxEnableTvMovie.Controls.Add(this.progressBarImportTotal);
+      this.groupBoxEnableTvMovie.Controls.Add(this.buttonImportNow);
+      this.groupBoxEnableTvMovie.Controls.Add(this.groupBoxImportTime);
+      this.groupBoxEnableTvMovie.Controls.Add(this.checkBoxEnableImport);
+      this.groupBoxEnableTvMovie.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxEnableTvMovie.Location = new System.Drawing.Point(16, 8);
+      this.groupBoxEnableTvMovie.Name = "groupBoxEnableTvMovie";
+      this.groupBoxEnableTvMovie.Size = new System.Drawing.Size(424, 173);
+      this.groupBoxEnableTvMovie.TabIndex = 0;
+      this.groupBoxEnableTvMovie.TabStop = false;
+      this.groupBoxEnableTvMovie.Text = "TV Movie ClickFinder EPG importer";
+      // 
+      // groupBoxImportTime
+      // 
+      this.groupBoxImportTime.Controls.Add(this.checkBoxSlowImport);
+      this.groupBoxImportTime.Controls.Add(this.radioButton7d);
+      this.groupBoxImportTime.Controls.Add(this.radioButton2d);
+      this.groupBoxImportTime.Controls.Add(this.radioButton24h);
+      this.groupBoxImportTime.Controls.Add(this.radioButton12h);
+      this.groupBoxImportTime.Controls.Add(this.radioButton6h);
+      this.groupBoxImportTime.Enabled = false;
+      this.groupBoxImportTime.Location = new System.Drawing.Point(16, 43);
+      this.groupBoxImportTime.Name = "groupBoxImportTime";
+      this.groupBoxImportTime.Size = new System.Drawing.Size(391, 69);
+      this.groupBoxImportTime.TabIndex = 2;
+      this.groupBoxImportTime.TabStop = false;
+      this.groupBoxImportTime.Text = "Import newer database after";
+      // 
+      // radioButton7d
+      // 
+      this.radioButton7d.AutoSize = true;
+      this.radioButton7d.Location = new System.Drawing.Point(299, 18);
+      this.radioButton7d.Name = "radioButton7d";
+      this.radioButton7d.Size = new System.Drawing.Size(56, 17);
+      this.radioButton7d.TabIndex = 4;
+      this.radioButton7d.Text = "7 days";
+      this.radioButton7d.UseVisualStyleBackColor = true;
+      // 
+      // radioButton2d
+      // 
+      this.radioButton2d.AutoSize = true;
+      this.radioButton2d.Location = new System.Drawing.Point(234, 18);
+      this.radioButton2d.Name = "radioButton2d";
+      this.radioButton2d.Size = new System.Drawing.Size(56, 17);
+      this.radioButton2d.TabIndex = 3;
+      this.radioButton2d.Text = "2 days";
+      this.radioButton2d.UseVisualStyleBackColor = true;
+      // 
+      // radioButton24h
+      // 
+      this.radioButton24h.AutoSize = true;
+      this.radioButton24h.Checked = true;
+      this.radioButton24h.Location = new System.Drawing.Point(159, 18);
+      this.radioButton24h.Name = "radioButton24h";
+      this.radioButton24h.Size = new System.Drawing.Size(66, 17);
+      this.radioButton24h.TabIndex = 2;
+      this.radioButton24h.TabStop = true;
+      this.radioButton24h.Text = "24 hours";
+      this.radioButton24h.UseVisualStyleBackColor = true;
+      // 
+      // radioButton12h
+      // 
+      this.radioButton12h.AutoSize = true;
+      this.radioButton12h.Location = new System.Drawing.Point(84, 18);
+      this.radioButton12h.Name = "radioButton12h";
+      this.radioButton12h.Size = new System.Drawing.Size(66, 17);
+      this.radioButton12h.TabIndex = 1;
+      this.radioButton12h.Text = "12 hours";
+      this.radioButton12h.UseVisualStyleBackColor = true;
+      // 
+      // radioButton6h
+      // 
+      this.radioButton6h.AutoSize = true;
+      this.radioButton6h.Location = new System.Drawing.Point(15, 18);
+      this.radioButton6h.Name = "radioButton6h";
+      this.radioButton6h.Size = new System.Drawing.Size(60, 17);
+      this.radioButton6h.TabIndex = 0;
+      this.radioButton6h.TabStop = true;
+      this.radioButton6h.Text = "6 hours";
+      this.radioButton6h.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxEnableImport
+      // 
+      this.checkBoxEnableImport.AutoSize = true;
+      this.checkBoxEnableImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxEnableImport.Location = new System.Drawing.Point(16, 20);
+      this.checkBoxEnableImport.Name = "checkBoxEnableImport";
+      this.checkBoxEnableImport.Size = new System.Drawing.Size(207, 17);
+      this.checkBoxEnableImport.TabIndex = 0;
+      this.checkBoxEnableImport.Text = "Enable import from TV Movie database";
+      this.checkBoxEnableImport.UseVisualStyleBackColor = true;
+      this.checkBoxEnableImport.CheckedChanged += new System.EventHandler(this.checkBoxEnableImport_CheckedChanged);
+      // 
+      // groupBoxInfos
+      // 
+      this.groupBoxInfos.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxInfos.Controls.Add(this.linkLabelInfo);
+      this.groupBoxInfos.Controls.Add(this.labelInfo);
+      this.groupBoxInfos.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxInfos.Location = new System.Drawing.Point(16, 284);
+      this.groupBoxInfos.Name = "groupBoxInfos";
+      this.groupBoxInfos.Size = new System.Drawing.Size(424, 65);
+      this.groupBoxInfos.TabIndex = 3;
+      this.groupBoxInfos.TabStop = false;
+      this.groupBoxInfos.Text = "Info";
+      // 
+      // linkLabelInfo
+      // 
+      this.linkLabelInfo.AutoSize = true;
+      this.linkLabelInfo.Location = new System.Drawing.Point(16, 41);
+      this.linkLabelInfo.Name = "linkLabelInfo";
+      this.linkLabelInfo.Size = new System.Drawing.Size(119, 13);
+      this.linkLabelInfo.TabIndex = 1;
+      this.linkLabelInfo.TabStop = true;
+      this.linkLabelInfo.Text = "Click here to read more.";
+      this.linkLabelInfo.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelInfo_LinkClicked);
+      // 
+      // labelInfo
+      // 
+      this.labelInfo.AutoSize = true;
+      this.labelInfo.Location = new System.Drawing.Point(16, 21);
+      this.labelInfo.Name = "labelInfo";
+      this.labelInfo.Size = new System.Drawing.Size(333, 13);
+      this.labelInfo.TabIndex = 0;
+      this.labelInfo.Text = "TV Movie ClickFinder is an EPG application for German TV channels.";
       // 
       // tabPageMapChannels
       // 
@@ -442,6 +480,43 @@ namespace SetupTv.Sections
       this.columnHeader2.Text = "TV Movie Stations";
       this.columnHeader2.Width = 179;
       // 
+      // buttonImportNow
+      // 
+      this.buttonImportNow.Location = new System.Drawing.Point(16, 131);
+      this.buttonImportNow.Name = "buttonImportNow";
+      this.buttonImportNow.Size = new System.Drawing.Size(75, 26);
+      this.buttonImportNow.TabIndex = 7;
+      this.buttonImportNow.Text = "Import now!";
+      this.buttonImportNow.UseVisualStyleBackColor = true;
+      this.buttonImportNow.Click += new System.EventHandler(this.buttonImportNow_Click);
+      // 
+      // progressBarImportTotal
+      // 
+      this.progressBarImportTotal.Location = new System.Drawing.Point(114, 131);
+      this.progressBarImportTotal.Name = "progressBarImportTotal";
+      this.progressBarImportTotal.Size = new System.Drawing.Size(293, 10);
+      this.progressBarImportTotal.TabIndex = 59;
+      // 
+      // progressBarImportItem
+      // 
+      this.progressBarImportItem.Location = new System.Drawing.Point(114, 147);
+      this.progressBarImportItem.Name = "progressBarImportItem";
+      this.progressBarImportItem.Size = new System.Drawing.Size(293, 10);
+      this.progressBarImportItem.TabIndex = 60;
+      // 
+      // checkBoxSlowImport
+      // 
+      this.checkBoxSlowImport.AutoSize = true;
+      this.checkBoxSlowImport.Checked = true;
+      this.checkBoxSlowImport.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxSlowImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxSlowImport.Location = new System.Drawing.Point(15, 43);
+      this.checkBoxSlowImport.Name = "checkBoxSlowImport";
+      this.checkBoxSlowImport.Size = new System.Drawing.Size(245, 17);
+      this.checkBoxSlowImport.TabIndex = 7;
+      this.checkBoxSlowImport.Text = "Slower import (less cpu - better while using MP)";
+      this.checkBoxSlowImport.UseVisualStyleBackColor = true;
+      // 
       // TvMovieSetup
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -451,14 +526,14 @@ namespace SetupTv.Sections
       this.Size = new System.Drawing.Size(467, 388);
       this.tabControlTvMovie.ResumeLayout(false);
       this.tabPageSettings.ResumeLayout(false);
-      this.groupBoxEnableTvMovie.ResumeLayout(false);
-      this.groupBoxEnableTvMovie.PerformLayout();
-      this.groupBoxInfos.ResumeLayout(false);
-      this.groupBoxInfos.PerformLayout();
-      this.groupBoxImport.ResumeLayout(false);
-      this.groupBoxImport.PerformLayout();
       this.groupBoxDescriptions.ResumeLayout(false);
       this.groupBoxDescriptions.PerformLayout();
+      this.groupBoxEnableTvMovie.ResumeLayout(false);
+      this.groupBoxEnableTvMovie.PerformLayout();
+      this.groupBoxImportTime.ResumeLayout(false);
+      this.groupBoxImportTime.PerformLayout();
+      this.groupBoxInfos.ResumeLayout(false);
+      this.groupBoxInfos.PerformLayout();
       this.tabPageMapChannels.ResumeLayout(false);
       this.tabPageMapChannels.PerformLayout();
       this.groupBoxMapping.ResumeLayout(false);
@@ -487,17 +562,24 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPListView listView2;
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private System.Windows.Forms.TabPage tabPageSettings;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxImport;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxSlowImport;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxDescriptions;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAdditionalInfo;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowAudioFormat;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseShortDesc;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableImport;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxInfos;
     private System.Windows.Forms.LinkLabel linkLabelInfo;
     private System.Windows.Forms.Label labelInfo;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxEnableTvMovie;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseDatabaseDate;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxDescriptions;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAdditionalInfo;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowAudioFormat;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseShortDesc;
+    private System.Windows.Forms.GroupBox groupBoxImportTime;
+    private System.Windows.Forms.RadioButton radioButton24h;
+    private System.Windows.Forms.RadioButton radioButton12h;
+    private System.Windows.Forms.RadioButton radioButton6h;
+    private System.Windows.Forms.RadioButton radioButton7d;
+    private System.Windows.Forms.RadioButton radioButton2d;
+    private System.Windows.Forms.Button buttonImportNow;
+    private System.Windows.Forms.ProgressBar progressBarImportItem;
+    private System.Windows.Forms.ProgressBar progressBarImportTotal;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxSlowImport;
   }
 }

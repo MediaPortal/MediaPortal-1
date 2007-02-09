@@ -51,7 +51,7 @@ namespace TvEngine
       }
       catch (Exception)
       {
-        Log.Error("TVMovie: Import enabled, but the ClickFinder database was not found.");
+        Log.Error("TVMovie: Import enabled but the ClickFinder database was not found.");
         return;
       }
 
@@ -136,11 +136,10 @@ namespace TvEngine
       _stateTimer.Interval = _timerIntervall;
       _stateTimer.AutoReset = true;
       _stateTimer.Start();
-      _stateTimer.Enabled = true;      
+      _stateTimer.Enabled = true;
+
 
       GC.KeepAlive(_stateTimer);
-      // launch initial import for testing REMOVE
-      SpawnImportThread();
     }
 
     public void Stop()

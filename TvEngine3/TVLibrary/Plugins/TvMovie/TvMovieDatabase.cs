@@ -397,16 +397,16 @@ namespace TvEngine
       get
       {
         TvBusinessLayer layer = new TvBusinessLayer();
-        // EPG need updates every 24 hours.
-        TimeSpan restTime = new TimeSpan(24, 0, 0);
+        
         try
         {
-
+          TimeSpan restTime = new TimeSpan(Convert.ToInt32(layer.GetSetting("TvMovieRestPeriod", "24").Value), 0, 0);          
           DateTime lastUpdated = Convert.ToDateTime(layer.GetSetting("TvMovieLastUpdate", "0").Value);
           //        if (Convert.ToInt64(layer.GetSetting("TvMovieLastUpdate", "0").Value) == LastUpdate)
           if (lastUpdated >= (DateTime.Now - restTime))
           {
-            Log.Debug("TVMovie: Last update was at {0} - not importing yet again", Convert.ToString(lastUpdated));
+            TimeSpan RemainingIdleTime = DateTime.Now - (lastUpdated + restTime);
+            Log.Debug("TVMovie: Last update was at {0} - waiting at least {1} hours until next import", Convert.ToString(lastUpdated), Convert.ToString(RemainingIdleTime.Hours));
             return false;
           }
           else
@@ -415,8 +415,10 @@ namespace TvEngine
             return true;
           }
         }
-        catch (Exception )
+        catch (Exception ex)
         {
+          Log.Error("TVMovie: An error occured checking the last import time {0}", ex.Message);
+          Log.Write(ex);
           return true;
         }
       }
@@ -688,25 +690,31 @@ namespace TvEngine
       get
       {
         DateTime lastUpdate = DateTime.MinValue;
-
-        //TvBusinessLayer layer = new TvBusinessLayer();
-        //if (layer.GetSetting("TvMovieUseDatabaseDate", "true").Value == "true")
-        //{
-        FileInfo mpFi = new FileInfo(DatabasePath);
-        lastUpdate = mpFi.LastWriteTime;
-        //lastUpdate = Convert.ToInt64(string.Format("{0:D4}{1:D2}{2:D2}{3:D2}{4:D2}{5:D2}", dbUpdate.Year, dbUpdate.Month, dbUpdate.Day, dbUpdate.Hour, dbUpdate.Minute, dbUpdate.Second));
-        //}
-        //else
-        //{
-        //  // OBSOLETE
-        //  using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\TVUpdate"))
-        //    if (rkey != null)
-        //    {
-        //      string regLastUpdate = string.Format("{0}", rkey.GetValue("LetztesTVUpdate"));
-        //      lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
-        //    }
-        //}
-
+        try
+        {
+          //TvBusinessLayer layer = new TvBusinessLayer();
+          //if (layer.GetSetting("TvMovieUseDatabaseDate", "true").Value == "true")
+          //{
+          FileInfo mpFi = new FileInfo(DatabasePath);
+          lastUpdate = mpFi.LastWriteTime;
+          //lastUpdate = Convert.ToInt64(string.Format("{0:D4}{1:D2}{2:D2}{3:D2}{4:D2}{5:D2}", dbUpdate.Year, dbUpdate.Month, dbUpdate.Day, dbUpdate.Hour, dbUpdate.Minute, dbUpdate.Second));
+          //}
+          //else
+          //{
+          //  // OBSOLETE
+          //  using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\TVUpdate"))
+          //    if (rkey != null)
+          //    {
+          //      string regLastUpdate = string.Format("{0}", rkey.GetValue("LetztesTVUpdate"));
+          //      lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
+          //    }
+          //}
+        }
+        catch (Exception ex)
+        {
+          Log.Error("TVMovie: Error getting database age {0}", ex.Message);
+          return lastUpdate;
+        }
         return lastUpdate;
       }
     }
