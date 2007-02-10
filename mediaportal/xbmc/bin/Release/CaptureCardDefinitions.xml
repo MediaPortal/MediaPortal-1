@@ -18780,4 +18780,50 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="NVIDIA DualTV MCE - Tuner 1" capturename="NVIDIA DualTV YUV Capture" devid="ven_1745&amp;dev_2010&amp;subsys_201310de&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="NVIDIA DualTV Tuner"     checkdevice="true"/>
+        <filter cat="tvaudio"  name="NVIDIA DualTV TVAudio"		checkdevice="true"/>
+        <filter cat="crossbar" name="NVIDIA DualTV CrossBar"	checkdevice="true"/>
+        <filter cat="capture"  name="NVIDIA DualTV Capture"   checkdevice="true"/>
+        <filter cat="encoder"  name="NVIDIA DualTV Encoder"		checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="1" sinkfilter="encoder"	sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="NVIDIA DualTV MCE - Tuner 2" capturename="NVIDIA DualTV YUV Capture 2" devid="ven_1745&amp;dev_2010&amp;subsys_201310de&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="NVIDIA DualTV Tuner 2"     checkdevice="true"/>
+        <filter cat="tvaudio"  name="NVIDIA DualTV TVAudio 2"		checkdevice="true"/>
+        <filter cat="crossbar" name="NVIDIA DualTV CrossBar 2"	checkdevice="true"/>
+        <filter cat="capture"  name="NVIDIA DualTV Capture 2"   checkdevice="true"/>
+        <filter cat="encoder"  name="NVIDIA DualTV Encoder 2"		checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="1" sinkfilter="encoder"	sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
