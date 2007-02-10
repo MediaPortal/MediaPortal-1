@@ -1,0 +1,58 @@
+<window>
+  <id>7002</id>
+  <allowoverlay>yes</allowoverlay>
+  <defaultcontrol>2</defaultcontrol>
+  <controls>
+    <control>
+      <description>current temperature label</description>
+      <type>fadelabel</type>
+      <id>7003</id>
+      <posX>110</posX>
+      <posY>620</posY>
+      <width>370</width>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>weather description label</description>
+      <type>fadelabel</type>
+      <id>7005</id>
+      <posX>110</posX>
+      <posY>640</posY>
+      <width>370</width>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>current location label</description>
+      <type>fadelabel</type>
+      <id>7004</id>
+      <posX>110</posX>
+      <posY>660</posY>
+      <width>363</width>
+      <align>left</align>
+      <font>font12</font>
+      <allowScrolling>true</allowScrolling>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <type>image</type>
+      <id>7006</id>
+      <texture>-</texture>
+      <posX>5</posX>
+      <posY>613</posY>
+      <width>96</width>
+      <height>96</height>
+    </control>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+  </controls>
+</window>
