@@ -1,0 +1,163 @@
+<window>
+	<id>501</id>
+	<defaultcontrol>2</defaultcontrol>
+	<allowoverlay>yes</allowoverlay>
+	<define>#header.label:134</define>
+	<controls>
+		<import>common.window.xml</import>
+		  <control>
+         <description>background image</description>
+
+         <type>image</type>
+
+         <id>1</id>
+
+         <posX>0</posX>
+
+         <posY>0</posY>
+
+         <width>720</width>
+
+         <height>576</height>
+
+         <texture>background3.png</texture>
+      </control>
+      <control>
+         <description>background image</description>
+
+         <type>image</type>
+
+         <id>1</id>
+
+         <posX>0</posX>
+
+         <posY>0</posY>
+
+         <width>720</width>
+
+         <height>107</height>
+
+         <texture>Back_music.png</texture>
+      </control>
+		<control>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="500" end="0,-300" >WindowClose</animation>
+      <description>group element</description>
+			<posX>5</posX>
+			<posY>125</posY>
+			<layout>StackLayout</layout>
+			<control>
+				<description>View-As button</description>
+				<type>button</type>
+				<id>2</id>
+				<label>100</label>
+				<onleft>2</onleft>
+				<onright>50</onright>
+				<onup>17</onup>
+				<ondown>3</ondown>
+				<textXOff>17</textXOff>
+				<alignY>center</alignY>
+			</control>
+			<control>
+				<type>sortbutton</type>
+				<id>3</id>
+				<label>103</label>
+				<onleft>3</onleft>
+				<onright>50</onright>
+				<onup>2</onup>
+				<ondown>6</ondown>
+				<textXOff>17</textXOff>
+				<alignY>center</alignY>
+			</control>
+			<control>
+				<description>Switch View</description>
+				<type>button</type>
+				<id>6</id>
+				<label>457</label>
+				<onleft>6</onleft>
+				<onright>50</onright>
+				<onup>3</onup>
+				<ondown>8</ondown>
+				<textXOff>17</textXOff>
+				<alignY>center</alignY>
+			</control>
+			<control>
+				<description>Search</description>
+				<type>button</type>
+				<id>12</id>
+				<label>137</label>
+				<onleft>12</onleft>
+				<onright>50</onright>
+				<onup>6</onup>
+				<ondown>8</ondown>
+				<textXOff>17</textXOff>
+			</control>
+			<control>
+				<description>Playlists button</description>
+				<type>button</type>
+				<id>8</id>
+				<label>4555</label>
+				<onleft>8</onleft>
+				<onright>50</onright>
+				<onup>6</onup>
+				<ondown>9</ondown>
+				<action>33</action>
+				<textXOff>17</textXOff>
+				<alignY>center</alignY>
+			</control>
+			<control>
+				<description>Play CD</description>
+				<type>button</type>
+				<id>9</id>
+				<label>890</label>
+				<onleft>9</onleft>
+				<onright>50</onright>
+				<onup>8</onup>
+				<ondown>11</ondown>
+				<textXOff>17</textXOff>
+				<alignY>center</alignY>
+			</control>
+			<control>
+				<description>Now playing button</description>
+				<type>button</type>
+				<id>11</id>
+				<label>4540</label>
+				<onleft>11</onleft>
+				<onright>50</onright>
+				<onup>9</onup>
+				<ondown>10</ondown>
+				<hyperlink>510</hyperlink>
+				<textXOff>17</textXOff>
+			</control>
+			<control>
+				<description>My Playlists</description>
+				<type>button</type>
+				<id>10</id>
+				<label>983</label>
+				<onleft>10</onleft>
+				<onright>50</onright>
+				<onup>11</onup>
+				<ondown>83</ondown>
+				<textXOff>17</textXOff>
+				<alignY>center</alignY>
+			</control>
+			<control>
+				<description>Radio Button</description>
+				<type>button</type>
+				<id>83</id>
+				<label>Radio</label>
+				<onleft>83</onleft>
+				<onright>50</onright>
+				<onup>10</onup>
+				<ondown>99</ondown>
+				<hyperlink>30</hyperlink>
+				<textXOff>17</textXOff>
+				<alignY>center</alignY>
+			</control>
+		</control>
+		<import>common.facade.xml</import>
+	</controls>
+</window>

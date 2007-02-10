@@ -1,0 +1,193 @@
+<window>
+  <id>9811</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:My TV Series</define>
+  <controls>
+    <import>common.window.xml</import>
+    <control>
+      <type>image</type>
+      <description>BG</description>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <texture>background_tvseries.png</texture>
+    </control>
+	  <control>
+         <description>BG</description>
+         <type>image</type>
+         <id>1</id>
+         <posX>0</posX>
+         <posY>0</posY>
+         <width>720</width>
+         <height>107</height>
+         <texture>Back_tvseries.png</texture>
+      </control>
+
+		<control>
+			<description>Import Animation</description>
+			<type>animation</type>
+    	<id>51</id>
+      <posX>20</posX>
+      <posY>530</posY>
+      <width>32</width>
+      <height>32</height>
+			<textures>common.waiting.1.png;common.waiting.2.png;common.waiting.3.png;common.waiting.4.png;common.waiting.5.png;common.waiting.6.png;common.waiting.7.png;common.waiting.8.png</textures>
+			<Duration>0:0:01</Duration>
+	  <keepaspectratio>yes</keepaspectratio>
+		</control>
+	  
+	  <!-- Standard Navigation -->
+	  <control>
+      <type>group</type>
+      <layout>StackLayout</layout>
+      <description>group element</description>
+      <animation>FlyInFromTop</animation>
+      <posX>5</posX>
+      <posY>125</posY>
+      <control>
+        <description>Back</description>
+        <type>button</type>
+        <id>2</id>
+        <onright>50</onright>
+        <onup>5</onup>
+        <ondown>3</ondown>
+        <label>Back</label>
+      </control>
+      <control>
+        <description>View-As button</description>
+        <type>button</type>
+        <id>3</id>
+        <onright>50</onright>
+        <onup>2</onup>
+        <ondown>4</ondown>
+        <label>100</label>
+      </control>
+    </control>
+
+    <!-- Shows Navigation -->
+    <control>
+      <type>group</type>
+      <description>group element list</description>
+      <id>28</id>
+      <animation>FlyInFromLeft</animation>
+      
+      <control>
+        <description>composite control consisting of a list control and a thumbnail panel</description>
+        <type>facadeview</type>
+        <id>50</id>
+        <control>
+          <description>text list</description>
+          <type>listcontrol</type>
+          <id>50</id>
+          <posX>5</posX>
+          <posY>125</posY>
+          <height>420</height>
+		  		<width>315</width>
+          <spaceBetweenItems>2</spaceBetweenItems>
+          <remoteColor>60A0A0A0</remoteColor>       <!-- watched color -->
+          <downloadColor>FFFFFFFF</downloadColor>   <!-- not watched color -->
+          <textcolor>60505050</textcolor>						<!-- local file not present color -->
+          <textcolor2>60505050</textcolor2>						<!-- local file not present color  column 2-->
+          <textcolor3>60505050</textcolor3>						<!-- local file not present color column 3-->
+        </control>
+        <control>
+	        <description>graphical list (series and seasons if set)</description>
+	        <type>listcontrol</type>
+	        <subtype>album</subtype>
+	        <id>50</id>
+	        <posX>5</posX>
+	        <posY>125</posY>
+	        <height>420</height>
+		  		<width>315</width>
+					<IconXOff>2</IconXOff>
+					<IconYOff>2</IconYOff>
+	        <spaceBetweenItems>2</spaceBetweenItems>
+		  		<textureFocus>tvguide_button_light_middle.png</textureFocus>
+		  		<textureNoFocus></textureNoFocus>
+	        <remoteColor>60A0A0A0</remoteColor>       <!-- watched color -->
+	        <downloadColor>FFFFFFFF</downloadColor>   <!-- not watched color -->
+	        <textcolor>60505050</textcolor>						<!-- local file not present color -->
+	        <textcolor2>60505050</textcolor2>						<!-- local file not present color  column 2-->
+	        <textcolor3>60505050</textcolor3>						<!-- local file not present color column 3-->
+	      </control>
+			</control>
+		</control>
+	  
+    <control>
+      <type>group</type>
+      <description>group element description</description>
+      <id>52</id>
+      <animation>FlyInFromRight</animation>
+	  
+		 <!-- TV.com Banner -->
+		  <control>
+	      <type>image</type>
+	      <description>Series Logo</description>
+	      <id>30</id>
+	      <posX>345</posX>
+	      <posY>120</posY>
+	      <width>345</width>
+	      <height>70</height>
+		  	<centered>yes</centered>
+		  	<keepaspectratio>yes</keepaspectratio>
+	      <texture></texture>
+	    </control>
+	
+		<!-- season image background -->
+		 <control>
+	      <type>image</type>
+	      <description>Season image</description>
+	      <id>46</id>
+	      <posX>490</posX>
+	      <posY>210</posY>
+	      <width>200</width>
+	      <height>300</height>
+		  	<centered>yes</centered>
+		  	<keepaspectratio>yes</keepaspectratio>
+		  	<colordiffuse>30FFFFFF</colordiffuse>
+	      <texture></texture>
+	    </control>
+	
+	 	
+		<control> 
+			<type>textboxscrollup</type> 
+			<description>Title</description> 
+			<id>40</id> 
+			<posX>345</posX> 
+			<posY>158</posY> 
+			<width>320</width> 
+			<textcolor>FFFFFFFF</textcolor> 
+			<font>font16</font> 
+		</control>
+
+	    <!-- Genre text below Banner -->
+	    <control>
+	      <type>textboxscrollup</type>
+	      <description>Subtitle</description>
+	      <id>33</id>
+	      <posX>345</posX>
+	      <posY>220</posY>
+	      <width>330</width>
+	      <height>40</height>
+	      <textcolor>FFA9D0F7</textcolor>
+	      <font>font10</font>
+	    </control>
+	    
+			<!-- Description -->
+			<control>
+	      <type>textboxscrollup</type>
+	      <description>Description</description>
+	      <id>31</id>
+	      <posX>345</posX>
+	      <posY>240</posY>
+	      <width>330</width>
+	      <height>270</height>
+	      <colordiffuse>ffffffff</colordiffuse>
+	      <textcolor>FFFFFFFF</textcolor>
+	      <font>font13</font>
+				<seperator>-----------------------------------------------------------------------------------------------------------------------</seperator>
+	    </control>
+    </control>
+  </controls>
+</window>

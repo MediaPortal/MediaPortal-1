@@ -1,0 +1,106 @@
+<window>
+	<id>0</id>
+	<defaultcontrol>2</defaultcontrol>
+	<allowoverlay>yes</allowoverlay>
+	<autohidetopbar>no</autohidetopbar>
+	<controls>
+		<control>
+			<description>background image</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>720</width>
+			<height>576</height>
+			<texture>Background_P.png</texture>
+		</control>
+		<control>
+			<type>label</type>
+			<description>e.g. Setup TV</description>
+			<id>1</id>
+			<posX>490</posX>
+			<posY>40</posY>
+			<label>913</label>
+			<font>font32</font>
+		</control>
+		<control>
+			<description>template for panel in which all buttons should b fitted</description>
+			<type>image</type>
+			<id>1002</id>
+			<posX>115</posX>
+			<posY>228</posY>
+			<width>215</width>
+			<height>170</height>
+			<texture>-</texture>
+		</control>
+		<control>
+			<description>template for hover image</description>
+			<type>image</type>
+			<id>1000</id>
+			<posX>313</posX>
+			<posY>108</posY>
+			<texture>-</texture>
+			<visible>yes</visible>
+		</control>
+		<control>
+			<description>template for button</description>
+			<type>button</type>
+			<id>1001</id>
+			<posX>115</posX>
+			<posY>228</posY>
+			<width>197</width>
+			<textXOff>30</textXOff>
+			<textYOff>2</textYOff>
+			<height>32</height>
+			<label>605</label>
+			<font>font16</font>
+			<textureFocus>hp_selectionbarhome.png</textureFocus>
+			<textureNoFocus>-</textureNoFocus>
+			<visible>no</visible>
+		</control>
+		<control>
+			<description>template label for small font</description>
+			<type>label</type>
+			<id>1003</id>
+			<posX>530</posX>
+			<posY>490</posY>
+			<label>-</label>
+			<align>left</align>
+			<font>font16</font>
+			<visible>no</visible>
+		</control>
+		<control>
+			<description>Date</description>
+			<type>label</type>
+			<id>200</id>
+			<posX>595</posX>
+			<posY>75</posY>
+			<label>#date</label>
+			<align>right</align>
+			<font>font13</font>
+			<textcolor>ffffffff</textcolor>
+		</control>
+		<control>
+			<description>suffix label</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>599</posX>
+			<posY>76</posY>
+			<label>|</label>
+			<align>left</align>
+			<font>FONT13</font>
+			<textcolor>7A7979</textcolor>
+		</control>
+		<control>
+			<description>Time</description>
+			<type>label</type>
+			<id>201</id>
+			<posX>605</posX>
+			<posY>75</posY>
+			<label>#time</label>
+			<align>left</align>
+			<font>font14</font>
+			<textcolor>7A7979</textcolor>
+		</control>
+	</controls>
+</window>
