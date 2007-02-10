@@ -328,6 +328,7 @@
     <Compile Include="GUIMyDreambox\GuiRecordings.cs" />
     <Compile Include="GUIMyDreambox\MyDreamboxRadio.cs" />
     <Compile Include="GUIVideoFiles\SelectDVDHandler.cs" />
+    <Compile Include="GUIWeatherOverlay\GUIWeatherOverlay.cs" />
     <Compile Include="Home\GUIHome.cs" />
     <Compile Include="Home\GUIHomeBaseWindow.cs" />
     <Compile Include="Home\GUIHomeSetupForm.cs">
