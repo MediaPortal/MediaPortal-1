@@ -204,7 +204,6 @@ namespace SetupTv.Sections
             }
             dbChannel.Persist();
 
-            
             if (currentDetail == null)
             {
               layer.AddTuningDetails(dbChannel, channel);
