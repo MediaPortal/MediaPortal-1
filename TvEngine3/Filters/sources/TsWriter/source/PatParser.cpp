@@ -180,6 +180,19 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
   }
   info = it->second;
 	info.LCN=m_nitDecoder.GetLogicialChannelNumber(info.NetworkId,info.TransportId,info.ServiceId);
+
+  if (info.NetworkId==0)
+  {
+      for (itChannels it2=m_mapChannels.begin();it2!=m_mapChannels.end();++it2)
+      {
+        if ( (it2->second).NetworkId!=0)
+        {
+          info.NetworkId=(it2->second).NetworkId;
+          break;
+        }
+    }
+  }
+
 	return true;
 }
 
@@ -196,6 +209,7 @@ void CPatParser::OnChannel(const CChannelInfo& info)
 void CPatParser::OnSdtReceived(const CChannelInfo& sdtInfo)
 {
   if (m_vctParser.Count()!=0) return;
+  
 	itChannels it=m_mapChannels.find(sdtInfo.ServiceId);
   if (it!=m_mapChannels.end())
   {
