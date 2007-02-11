@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info availableDays="0" timezone="" />
+  <Info availableDays="0" timezone="GMT Standard Time" />
   <Channels>
     <Channel id="abc1@disney.co.uk" siteId="abc1" />
     <Channel id="bbc1@bbc.co.uk" siteId="bbc1" />

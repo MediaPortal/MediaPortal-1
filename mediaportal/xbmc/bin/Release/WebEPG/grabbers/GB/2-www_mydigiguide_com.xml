@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="en" availableDays="14" timezone="" />
+  <Info language="en" availableDays="14" timezone="GMT Standard Time" />
   <Channels>
     <Channel id="abc1@disney.co.uk" siteId="50281" />
     <Channel id="a1@nationalgeographic.co.uk" siteId="601" />
