@@ -1,7 +1,6 @@
 When trying the create or edit a grabber.xml file.
 
-1. First read the comments in the commented.xml file.
-   This can be read easly in a web browser (IE, firefox, etc).
+1. First read: http://wiki.team-mediaportal.com/MediaPortal_Setup_Customising_WebEPG
 
 2. A web browser can be used to check that there are no errors in your new grabber.xml file.
    They will parse the file and display any errors.
