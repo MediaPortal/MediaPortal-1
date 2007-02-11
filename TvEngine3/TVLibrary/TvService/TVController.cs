@@ -1695,13 +1695,14 @@ namespace TvService
             //ok card could be used to tune to this channel
             //now we check if its free...
             cardsFound++;
+            bool sameTransponder = false;
             TvCard tvcard = _cards[keyPair.Value.DataBaseCard.IdCard];
-            if (tvcard.IsTunedToTransponder(tuningDetail) && (tvcard.SupportsSubChannels|| (checkTransponders==false)) )
+            if (tvcard.IsTunedToTransponder(tuningDetail) && (tvcard.SupportsSubChannels || (checkTransponders == false)))
             {
               //card is in use, but it is tuned to the same transponder.
               //meaning.. we can use it:-)
               Log.Write("Controller:    card:{0} type:{1} is tuned to same transponder", keyPair.Value.DataBaseCard.IdCard, Type(keyPair.Value.DataBaseCard.IdCard));
-
+              sameTransponder = true;
             }
             else
             {
@@ -1713,9 +1714,27 @@ namespace TvService
                 continue;
               }
             }
+            CardDetail cardInfo = new CardDetail(keyPair.Value.DataBaseCard.IdCard, channelMap.ReferencedCard(), tuningDetail);
+            //determine how many other users are using this card
+            int nrOfOtherUsers = 0;
+            User[] users = _cards[cardInfo.Id].GetUsers();
+            if (users != null)
+            {
+              for (int i = 0; i < users.Length; ++i)
+              {
+                if (users[i].Name != user.Name) nrOfOtherUsers++;
+              }
+            }
 
-            Log.Write("Controller:    card:{0} type:{1} is available priority:{2}", keyPair.Value.DataBaseCard.IdCard, Type(keyPair.Value.DataBaseCard.IdCard), channelMap.ReferencedCard().Priority);
-            cardsAvailable.Add(new CardDetail(keyPair.Value.DataBaseCard.IdCard, channelMap.ReferencedCard(), tuningDetail));
+            //if there are other users on this card and we want to switch to another transponder
+            //then set this cards priority as very low...
+            if (nrOfOtherUsers > 0 && !sameTransponder)
+            {
+              cardInfo.Priority += 100;
+            }
+            Log.Write("Controller:    card:{0} type:{1} is available priority:{2} #users:{3} same transponder:{4}",
+                          cardInfo.Id, Type(cardInfo.Id), cardInfo.Priority, nrOfOtherUsers, sameTransponder);
+            cardsAvailable.Add(cardInfo);
           }
         }
         //sort cards on priority

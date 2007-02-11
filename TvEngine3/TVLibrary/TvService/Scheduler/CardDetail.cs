@@ -40,6 +40,7 @@ namespace TvService
     int _cardId;
     Card _card;
     IChannel _detail;
+    int _priority;
 
     /// <summary>
     /// ctor
@@ -52,6 +53,7 @@ namespace TvService
       _cardId = id;
       _card = card;
       _detail = detail;
+      _priority = _card.Priority;
     }
 
     /// <summary>
@@ -62,6 +64,21 @@ namespace TvService
       get
       {
         return _cardId;
+      }
+    }
+    /// <summary>
+    /// gets/sets the priority
+    /// </summary>
+    /// <value>The priority.</value>
+    public int Priority
+    {
+      get
+      {
+        return _priority;
+      }
+      set
+      {
+        _priority = value;
       }
     }
 
@@ -90,8 +107,8 @@ namespace TvService
 
     public int CompareTo(CardDetail other)
     {
-      if (other.Card.Priority > _card.Priority) return -1;
-      if (other.Card.Priority < _card.Priority) return 1;
+      if (other.Priority > Priority) return -1;
+      if (other.Priority < Priority) return 1;
       return 0;
     }
 
