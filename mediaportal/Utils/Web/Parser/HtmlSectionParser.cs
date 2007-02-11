@@ -307,8 +307,10 @@ namespace MediaPortal.Utils.Web
             if (char.ToUpper(tag.TagName[0]) == 'Z')
             {
               isOptionalTag = true;
-              if (tag.IsClose)
-                isOptionalTag = false;
+              if (tag.IsClose && i + 2 < tags.Count && char.ToUpper(tags[i + 2].TagName[0]) != 'Z')
+              {
+                  isOptionalTag = false;
+              }
 
               start = tag.Index + tag.Length;
               i++;

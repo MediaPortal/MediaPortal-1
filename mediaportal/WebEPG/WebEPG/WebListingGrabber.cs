@@ -107,7 +107,7 @@ namespace MediaPortal.WebEPG
         TextReader r = new StreamReader(_strBaseDir + File);
         _grabber = (GrabberConfigFile)s.Deserialize(r);
       }
-      catch (ArgumentException ex)
+      catch (InvalidOperationException ex)
       {
         _log.Error(LogType.WebEPG, "WebEPG: Config Error {0}: {1}", File, ex.Message);
         return false;
