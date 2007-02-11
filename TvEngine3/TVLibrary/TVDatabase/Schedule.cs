@@ -652,6 +652,29 @@ namespace TvDatabase
           (End2 > Start1 && End2 <= End1)) return true;
       return false;
     }
+
+    /// <summary>
+    /// checks if 2 schedules have a common Transponder
+    /// depending on tuningdetails of their respective channels
+    /// </summary>
+    /// <param name="schedule"></param>
+    /// <returns>True if a common transponder exists</returns>
+    public bool isSameTransponder(Schedule schedule)
+    {
+      IList tuningList1 = this.ReferencedChannel().ReferringTuningDetail();
+      IList tuningList2 = schedule.ReferencedChannel().ReferringTuningDetail();
+      foreach (TuningDetail tun1 in tuningList1)
+      {
+        foreach (TuningDetail tun2 in tuningList2)
+        {
+          if (tun1.Frequency == tun2.Frequency) return true;
+        }
+      }
+      return false;
+      
+    }
+
+
     public override string ToString()
     {
       return String.Format("{0} on {1} {2} - {3}", ProgramName, IdChannel, StartTime, EndTime);
