@@ -166,7 +166,7 @@
       </Template>
       <Sublinks>
         <Sublink search="onclick" template="Details">
-          <Url url="http://telecineobs.nouvelobs.com/detailProgramme.php?idProgram=[1]" post="" external="false" encoding="" />
+          <Link url="http://telecineobs.nouvelobs.com/detailProgramme.php?idProgram=[1]" post="" external="false" encoding="" />
         </Sublink>
       </Sublinks>
     </Html>

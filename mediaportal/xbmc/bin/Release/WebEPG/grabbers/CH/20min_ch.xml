@@ -157,7 +157,7 @@
       </Template>
       <Sublinks>
         <Sublink search="show_program" template="Details">
-          <Url url="http://www.20min.ch/unterhaltung/tv-guide/" post="program_id=[1]&amp;cb-5=on&amp;dates=0-6&amp;time=all_day&amp;text=&amp;cat=all&amp;subcat=all" external="false" encoding="" />
+          <Link url="http://www.20min.ch/unterhaltung/tv-guide/" post="program_id=[1]&amp;cb-5=on&amp;dates=0-6&amp;time=all_day&amp;text=&amp;cat=all&amp;subcat=all" external="false" encoding="" />
         </Sublink>
       </Sublinks>
     </Html>

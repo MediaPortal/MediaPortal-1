@@ -84,7 +84,7 @@
       </Template>
       <Sublinks>
         <Sublink search="event" template="Details">
-          <Url url="http://au.tv.yahoo.com/[1]" post="" external="false" encoding="" />
+          <Link url="http://au.tv.yahoo.com/[1]" post="" external="false" encoding="" />
         </Sublink>
       </Sublinks>
     </Html>
