@@ -149,6 +149,21 @@ namespace TvDatabase
       if (channels.Count == 0) return null;
       return (TuningDetail)channels[0];
     }
+    public TuningDetail GetAtscChannel(ATSCChannel channel)
+    {
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(TuningDetail));
+      sb.AddConstraint(Operator.Equals, "name", channel.Name);
+      sb.AddConstraint(Operator.Equals, "provider", channel.Provider);
+      sb.AddConstraint(Operator.Equals, "networkId", channel.MajorChannel);
+      sb.AddConstraint(Operator.Equals, "transportId", channel.MinorChannel);
+      sb.AddConstraint(Operator.Equals, "serviceId", channel.ServiceId);
+
+      SqlStatement stmt = sb.GetStatement(true);
+      IList channels = ObjectFactory.GetCollection(typeof(TuningDetail), stmt.Execute());
+      if (channels == null) return null;
+      if (channels.Count == 0) return null;
+      return (TuningDetail)channels[0];
+    }
 
     public IList GetChannelsByName(string name)
     {
