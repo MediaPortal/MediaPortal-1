@@ -297,6 +297,7 @@ namespace MediaPortal.WebEPG
         if (_reqBuilder.HasDate()) // < here
         {
           _reqBuilder.AddDays(1);
+          _timeControl.NewDay();
         }
         else
         {
@@ -482,6 +483,7 @@ namespace MediaPortal.WebEPG
 
         _discarded = 0;
         programCount = 0;
+        _timeControl.SetProgramCount(listingCount);
         for (int i = 0; i < listingCount; i++)
         {
           TVProgram program = GetProgram(i);
