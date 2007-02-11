@@ -134,6 +134,19 @@ namespace MediaPortal.Utils.Web
     /// <returns>string found</returns>
     public string SearchRegex(int index, string regex, bool remove)
     {
+      return SearchRegex(index, regex, false, remove);
+    }
+
+    /// <summary>
+    /// Searches the regex.
+    /// </summary>
+    /// <param name="index">The index.</param>
+    /// <param name="regex">The regex.</param>
+    /// <param name="caseinsensitive">if set to <c>true</c> [caseinsensitive].</param>
+    /// <param name="remove">if set to <c>true</c> [remove].</param>
+    /// <returns>string found</returns>
+    public string SearchRegex(int index, string regex, bool caseinsensitive, bool remove)
+    {
       string sectionSource;
       if (_sectionSource != string.Empty)
       {
@@ -148,8 +161,16 @@ namespace MediaPortal.Utils.Web
       Match result = null;
       try
       {
-        Regex searchRegex = new Regex(regex);
-        result = searchRegex.Match(sectionSource);
+        if (caseinsensitive)
+        {
+          Regex searchRegex = new Regex(regex.ToLower());
+          result = searchRegex.Match(sectionSource.ToLower());
+        }
+        else
+        {
+          Regex searchRegex = new Regex(regex);
+          result = searchRegex.Match(sectionSource);
+        }
       }
       catch (System.ArgumentException)// ex)
       {
@@ -184,9 +205,9 @@ namespace MediaPortal.Utils.Web
     public bool GetHyperLink(int index, string match, ref HTTPRequest linkURL)
     {
 
-      string regex = "<a href=[^>]*" + match.ToLower() + "[^>]*>";
+      string regex = "<a [^>]*" + match + "[^>]*>"; //"<a .*? href=[^>]*" .ToLower()
 
-      string result = SearchRegex(index, regex, false);
+      string result = SearchRegex(index, regex, true, false);
 
       if (result == null)
         return false;
