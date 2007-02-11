@@ -69,29 +69,36 @@
       <Template name="default" start="Imprimir">
         <SectionTemplate tags="TA">
           <TemplateText>
-&lt;tr&gt;
-&lt;td&gt;&lt;#START&gt;&lt;/td&gt;&lt;td&gt;&lt;a &gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;/td&gt;
-&lt;/tr&gt;
-    </TemplateText>
+            &lt;tr&gt;
+            &lt;td&gt;&lt;#START&gt;&lt;/td&gt;&lt;td&gt;&lt;a &gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+          </TemplateText>
         </SectionTemplate>
       </Template>
       <Template name="Details" start="Menu Topo" end="//Menu Topo">
-        <SectionTemplate tags="TA">
+        <SectionTemplate tags="TS">
           <TemplateText>
-&lt;table&gt;
-&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/table&gt;
-   </TemplateText>
+            &lt;table&gt;
+            &lt;z(&gt;&lt;tr&gt;&lt;td&gt;&lt;*MATCH&gt;&lt;span id="_ctl0__ctl4_lblDirector"&gt;&lt;*VALUE&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/z)?&gt;
+            &lt;z(&gt;&lt;tr&gt;&lt;td&gt;&lt;*MATCH&gt;&lt;span id="_ctl0__ctl4_lblActor"&gt;&lt;*VALUE&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/z)?&gt;
+            &lt;tr&gt;&lt;td&gt;&lt;span&gt;&lt;#DESCRIPTION&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+            &lt;/table&gt;
+          </TemplateText>
+          <MatchList>
+            <Match field="#ACTORS" match="Com:" />
+            <Match field="#DIRECTOR" match="De:" />
+          </MatchList>
         </SectionTemplate>
       </Template>
       <Sublinks>
         <Sublink search="GetProgram" template="Details">
-          <Url url="http://www.tvcabo.pt/TV/ProgramacaoTv.aspx?programId=[1]&amp;channelSigla=[2]" post="" external="false" encoding="" />
+          <Link url="http://www.tvcabo.pt/TV/ProgramacaoTv.aspx?programId=[1]&amp;channelSigla=[2]" post="" external="false" encoding="" />
         </Sublink>
       </Sublinks>
+      <Searches>
+        <Search match="Ep [0-9]{1,3}" field="#EPISODE" remove="true" />
+        <Search match="\([0-9]{1,2}\)(,)" field="#SEASON" remove="true" />
+      </Searches>
     </Html>
   </Listing>
 </Grabber>
