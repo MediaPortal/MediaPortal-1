@@ -511,11 +511,14 @@ namespace TvDatabase
       Remove();
     }
 
-    public TuningDetail ContainsProvider(string providerName)
+    public TuningDetail ContainsProvider(string providerName, int serviceid)
     {
       foreach (TuningDetail detail in ReferringTuningDetail())
       {
-        if (String.Compare(detail.Provider, providerName, true) == 0) return detail;
+        if (serviceid == detail.ServiceId)
+        {
+          if (String.Compare(detail.Provider, providerName, true) == 0) return detail;
+        }
       }
       return null;
     }

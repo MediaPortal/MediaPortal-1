@@ -134,6 +134,22 @@ namespace TvDatabase
       channel.Remove();
     }
 
+    public TuningDetail GetChannel(DVBBaseChannel channel)
+    {
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(TuningDetail));
+      sb.AddConstraint(Operator.Equals, "name", channel.Name);
+      sb.AddConstraint(Operator.Equals, "provider", channel.Provider);
+      sb.AddConstraint(Operator.Equals, "networkId", channel.NetworkId);
+      sb.AddConstraint(Operator.Equals, "transportId", channel.TransportId);
+      sb.AddConstraint(Operator.Equals, "serviceId", channel.ServiceId);
+      
+      SqlStatement stmt = sb.GetStatement(true);
+      IList channels = ObjectFactory.GetCollection(typeof(TuningDetail), stmt.Execute());
+      if (channels == null) return null;
+      if (channels.Count == 0) return null;
+      return (TuningDetail)channels[0];
+    }
+
     public IList GetChannelsByName(string name)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
@@ -174,7 +190,7 @@ namespace TvDatabase
       if (tagName == null) return null;
       if (tagName == "") return null;
 
-    SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Setting));
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Setting));
       sb.AddConstraint(Operator.Equals, "tag", tagName);
       SqlStatement stmt = sb.GetStatement(true);
       IList settingsFound = ObjectFactory.GetCollection(typeof(Setting), stmt.Execute());
@@ -904,7 +920,7 @@ namespace TvDatabase
 
           connect.Open();
           using (MySqlCommand cmd = connect.CreateCommand())
-          {            
+          {
             //cmd.CommandText = "select idChannel,idProgram,starttime,endtime,title from program where program.endtime >= now() and program.idProgram in (select idProgram from program as p3 where p3.idchannel=program.idchannel and p3.endtime >= now() order by starttime) order by idchannel,starttime desc";
 
             // Since MySQL5 doesn't support an "TOP 2" equivalent like "LIMIT" in subselects we only fetch info for 24 hours to lower the amount of data.
@@ -1030,7 +1046,7 @@ namespace TvDatabase
           if (DateTime.Now > schedule.EndTime) continue;
           if (schedule.Canceled != Schedule.MinSchedule) continue;
           if (newEpisode.IdSchedule == schedule.IdSchedule) continue;
-                    
+
           List<Schedule> otherEpisodes = GetRecordingTimes(schedule);
           foreach (Schedule otherEpisode in otherEpisodes)
           {

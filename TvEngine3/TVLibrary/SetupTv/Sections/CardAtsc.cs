@@ -188,7 +188,7 @@ namespace SetupTv.Sections
               //one or more channel with name exists, check if provider exists also
               foreach (Channel ch in channelList)
               {
-                TuningDetail detail = ch.ContainsProvider(channel.Provider);
+                TuningDetail detail = ch.ContainsProvider(channel.Provider, channel.ServiceId);
                 if (detail != null)
                 {
                   dbChannel = ch;

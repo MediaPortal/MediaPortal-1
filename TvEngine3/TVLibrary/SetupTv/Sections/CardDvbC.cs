@@ -345,64 +345,27 @@ namespace SetupTv.Sections
 
           int newChannels = 0;
           int updatedChannels = 0;
+          bool exists;
           for (int i = 0; i < channels.Length; ++i)
           {
+            Channel dbChannel;
             DVBCChannel channel = (DVBCChannel)channels[i];
-            IList channelList = layer.GetChannelsByName(channel.Name);
-            Channel dbChannel = null;
-            TuningDetail currentDetail = null;
-            bool exists = false;
-            if (channelList == null)
+            TuningDetail currentDetail = layer.GetChannel(channel);
+            if (currentDetail == null)
             {
-              //channel does not exists. Add it
+              //add new channel
+              exists = false;
               dbChannel = layer.AddChannel(channel.Provider, channel.Name);
+              dbChannel.SortOrder = 10000;
+              if (channel.LogicalChannelNumber >= 1)
+              {
+                dbChannel.SortOrder = channel.LogicalChannelNumber;
+              }
             }
             else
             {
-              //one or more channel with name exists, check if provider exists also
-
-              foreach (Channel ch in channelList)
-              {
-                TuningDetail detail = ch.ContainsProvider(channel.Provider);
-                if (detail != null)
-                {
-                  dbChannel = ch;
-                  if (detail.ChannelType == 2)
-                  {
-                    //provider exists for this type of transmission
-                    currentDetail = detail;
-                    exists = true;
-                  }
-                }
-              }
-              if (currentDetail != null)
-              {
-                //update tuning information
-              }
-              else if (dbChannel != null)
-              {
-                //add tuning detail
-              }
-              else
-              {
-                //add new channel
-                bool channelTypeExists = false;
-                foreach (Channel ch in channelList)
-                {
-                  if (ch.ContainsChannelType(2))
-                  {
-                    channelTypeExists = true;
-                  }
-                }
-                if (channelTypeExists)
-                {
-                  dbChannel = layer.AddChannel(channel.Provider, channel.Name);
-                }
-                else
-                {
-                  dbChannel = (Channel)channelList[0];
-                }
-              }
+              exists = true;
+              dbChannel = currentDetail.ReferencedChannel();
             }
 
             dbChannel.IsTv = channel.IsTv;
@@ -411,11 +374,6 @@ namespace SetupTv.Sections
             if (dbChannel.IsRadio)
             {
               dbChannel.GrabEpg = false;
-            }
-            dbChannel.SortOrder = 10000;
-            if (channel.LogicalChannelNumber >= 1)
-            {
-              dbChannel.SortOrder = channel.LogicalChannelNumber;
             }
             dbChannel.Persist();
 
