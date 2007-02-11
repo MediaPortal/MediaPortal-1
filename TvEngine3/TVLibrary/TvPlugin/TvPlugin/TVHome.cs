@@ -766,7 +766,7 @@ namespace TvPlugin
           VirtualCard tvcard = new VirtualCard(user, RemoteControl.HostName);
           isRecording = tvcard.IsRecording;
           isTimeShifting = tvcard.IsTimeShifting;
-          if (isRecording || isTimeShifting)
+          if ( isTimeShifting)
           {
             int idChannel = tvcard.IdChannel;
             user = tvcard.User;
