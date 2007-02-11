@@ -50,7 +50,10 @@ namespace MediaPortal.WebEPG
     private DateTime _startTime;
     private Expect _expectedTime;
     private int _grabDay;
+    private int _addDays;
+    private bool _newDay;
     private bool _nextDay;
+    private int _programCount;
     #endregion
 
     #region Constructors/Destructors
@@ -60,6 +63,7 @@ namespace MediaPortal.WebEPG
       _nextDay = false;
       _lastTime = 0;
       _grabDay = 0;
+      _newDay = true;
     }
     #endregion
 
@@ -75,7 +79,7 @@ namespace MediaPortal.WebEPG
     {
       WorldDateTime guideStartTime = guideData.StartTime;
       WorldDateTime guideEndTime = guideData.EndTime;
-      int addDays = 1;
+      _addDays = 1;
 
       // Day
       if (guideStartTime.Day == 0)
@@ -103,10 +107,14 @@ namespace MediaPortal.WebEPG
       switch (_expectedTime)
       {
         case Expect.Start:
-          if (_grabDay == 0)
+          if (OnPerviousDay(guideStartTime.Hour))
+            return false;				// Guide starts on pervious day ignore these listings.
+
+          if (_newDay)
           {
-            if (guideStartTime.Hour < _startTime.Hour)
-              return false;
+            _newDay = false;
+            //if (guideStartTime.Hour < _startTime.Hour)
+            //  return false;
 
             if (guideStartTime.Hour <= 12)
             {
@@ -117,9 +125,6 @@ namespace MediaPortal.WebEPG
             _expectedTime = Expect.AfterMidday;
             goto case Expect.AfterMidday;
           }
-
-          if (guideStartTime.Hour >= 20)
-            return false;				// Guide starts on pervious day ignore these listings.
 
           _expectedTime = Expect.BeforeMidday;
           goto case Expect.BeforeMidday;      // Pass into BeforeMidday Code
@@ -144,15 +149,19 @@ namespace MediaPortal.WebEPG
           goto case Expect.AfterMidday;
 
         case Expect.AfterMidday:
+          bool adjusted = false;
           if (guideStartTime.Hour < 12)		// Site doesn't have correct time
-            guideStartTime.Hour += 12;     // starts again at 1:00 with "pm"
+          {
+            guideStartTime.Hour += 12;    // starts again at 1:00 without "pm"
+            adjusted = true;
+          }
 
           if (_lastTime > guideStartTime.Hour)
           {
-            guideStartTime.Hour -= 12;
+
             if (_nextDay)
             {
-              addDays++;
+              _addDays++;
               _grabDay++;
               _startTime = _startTime.AddDays(1);
               //_bNextDay = false;
@@ -161,7 +170,12 @@ namespace MediaPortal.WebEPG
             {
               _nextDay = true;
             }
-            _expectedTime = Expect.BeforeMidday;
+            if (adjusted)
+              guideStartTime.Hour -= 12;
+
+            if (guideStartTime.Hour < 12)
+              _expectedTime = Expect.BeforeMidday;
+
             break;
           }
 
@@ -196,20 +210,20 @@ namespace MediaPortal.WebEPG
         if (_nextDay)
         {
           if (guideStartTime.Hour > guideEndTime.Hour)
-            guideEndTime = guideEndTime.AddDays(addDays + 1);
+            guideEndTime = guideEndTime.AddDays(_addDays + 1);
           else
-            guideEndTime = guideEndTime.AddDays(addDays);
+            guideEndTime = guideEndTime.AddDays(_addDays);
         }
         else
         {
           if (guideStartTime.Hour > guideEndTime.Hour)
-            guideEndTime = guideEndTime.AddDays(addDays);
+            guideEndTime = guideEndTime.AddDays(_addDays);
         }
       }
 
 
       if (_nextDay)
-        guideStartTime = guideStartTime.AddDays(addDays);
+        guideStartTime = guideStartTime.AddDays(_addDays);
 
       //_log.Debug("WebEPG: Guide, Program Debug: [{0} {1}]", _GrabDay, _bNextDay);
 
@@ -217,6 +231,47 @@ namespace MediaPortal.WebEPG
       guideData.EndTime = guideEndTime;
 
       return true;
+    }
+
+    public void NewDay()
+    {
+      _newDay = true;
+      _expectedTime = Expect.Start;
+      _lastTime = 0;
+      if (!_nextDay)
+      {
+        //  _addDays++;
+        //  _grabDay++;
+        //  _startTime = _startTime.AddDays(1);
+        //  //_bNextDay = false;
+        //}
+        //else
+        //{
+        _nextDay = true;
+      }
+    }
+
+    public void SetProgramCount(int count)
+    {
+      _programCount = count;
+    }
+    #endregion
+
+    #region Private Methods
+    private bool OnPerviousDay(int programStartHour)
+    {
+      // program starts late on the day
+      if (programStartHour >= 20)
+      {
+        // program starts after grab time -> site filters programs based on current time
+        // and less then 1 program per hour 
+        if (_startTime.Hour >= 20 && _programCount <= 6)
+          return false;
+
+        return true;
+      }
+
+      return false;
     }
     #endregion
   }
