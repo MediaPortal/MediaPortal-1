@@ -79,22 +79,25 @@ namespace MediaPortal.Playlists
           {
             trimmedLine = line.Trim();
 
-            if (trimmedLine.StartsWith(M3U_INFO_MARKER))
+            if (trimmedLine != "")
             {
-              string songName = null;
-              int lDuration = 0;
-
-              if (ExtractM3uInfo(trimmedLine, ref songName, ref lDuration))
+              if (trimmedLine.StartsWith(M3U_INFO_MARKER))
               {
-                line = file.ReadLine();
-                if (!AddItem(songName, lDuration, line))
+                string songName = null;
+                int lDuration = 0;
+
+                if (ExtractM3uInfo(trimmedLine, ref songName, ref lDuration))
+                {
+                  line = file.ReadLine();
+                  if (!AddItem(songName, lDuration, line))
+                    break;
+                }
+              }
+              else
+              {
+                if (!AddItem("", 0, trimmedLine))
                   break;
               }
-            }
-            else
-            {
-              if (!AddItem("", 0, trimmedLine))
-                break;
             }
             line = file.ReadLine();
           }
