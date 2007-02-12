@@ -62,6 +62,7 @@ namespace TvPlugin
 
     void PerformRequest()
     {
+      return;
       //if (_creatingThumbNails)
       //  return;
       //try
@@ -73,7 +74,7 @@ namespace TvPlugin
         string thumbNail = Utils.GetCoverArtName(Thumbs.TVRecorded, Utils.SplitFilename(System.IO.Path.ChangeExtension(rec.FileName, Utils.GetThumbExtension())));
         if (!System.IO.File.Exists(thumbNail))
         {
-          Log.Debug("GUIRecordedTV: No thumbnail found at {0} for recording {1} - grabbing from file now", thumbNail, rec.FileName);
+          Log.Info("GUIRecordedTV: No thumbnail found at {0} for recording {1} - grabbing from file now", thumbNail, rec.FileName);
           if (!DvrMsImageGrabber.GrabFrame(rec.FileName, thumbNail))
             Log.Info("GUIRecordedTV: No thumbnail created for {0}", Utils.SplitFilename(rec.FileName));
         }
@@ -126,12 +127,18 @@ namespace TvPlugin
     //bool _creatingThumbNails = false;
     RecordingThumbCacher thumbworker = null;
 
-    [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(5)]    protected GUIButtonControl btnView = null;
-    [SkinControlAttribute(6)]    protected GUIButtonControl btnCleanup = null;
-    [SkinControlAttribute(10)]   protected GUIListControl listAlbums = null;
-    [SkinControlAttribute(11)]   protected GUIListControl listViews = null;
+    [SkinControlAttribute(2)]
+    protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]
+    protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(5)]
+    protected GUIButtonControl btnView = null;
+    [SkinControlAttribute(6)]
+    protected GUIButtonControl btnCleanup = null;
+    [SkinControlAttribute(10)]
+    protected GUIListControl listAlbums = null;
+    [SkinControlAttribute(11)]
+    protected GUIListControl listViews = null;
 
     #endregion
     public TvRecorded()
@@ -140,7 +147,7 @@ namespace TvPlugin
     }
     public override void OnAdded()
     {
-      Log.Debug("TvRecorded:OnAdded");
+      Log.Info("TvRecorded:OnAdded");
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_RECORDEDTV, this);
       Restore();
       PreInit();
@@ -340,7 +347,7 @@ namespace TvPlugin
           thumbworker = new RecordingThumbCacher();
       }
       else
-        Log.Debug("GUIRecordedTV: thumbworker already running - didn't start another one");
+        Log.Info("GUIRecordedTV: thumbworker already running - didn't start another one");
       //}
       //else
       //  Log.Info("GUIRecordedTV: threadpool busy - didn't start thumb creation");
@@ -455,18 +462,18 @@ namespace TvPlugin
       switch (dlg.SelectedId)
       {
         case 656: // delete
-            OnDeleteRecording(iItem);
-            break;
+          OnDeleteRecording(iItem);
+          break;
 
         case 655: // play
-            if (OnPlayRecording(iItem))
-              return;
-            break;
+          if (OnPlayRecording(iItem))
+            return;
+          break;
 
         case 1048: // Settings
-            TvRecordedInfo.CurrentProgram = rec;
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_RECORDED_INFO, true);
-            break;
+          TvRecordedInfo.CurrentProgram = rec;
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_RECORDED_INFO, true);
+          break;
 
         //case 830: // Reset watched status
         //  {
@@ -738,6 +745,7 @@ namespace TvPlugin
 
     bool OnPlayRecording(int iItem)
     {
+
       GUIListItem pItem = GetItem(iItem);
       if (pItem == null) return false;
       if (pItem.IsFolder)
@@ -750,64 +758,63 @@ namespace TvPlugin
         return false;
       }
 
+      
       Recording rec = (Recording)pItem.TVTag;
-      //if (System.IO.File.Exists(rec.FileName))
-      {
-        Log.Debug("TVRecording:play:{0}", rec.FileName);
-        g_Player.Stop();
+      g_Player.Stop();
+      if (TVHome.Card != null)
         TVHome.Card.StopTimeShifting();
 
-        rec.TimesWatched++;
-        rec.Persist();
-        ///@
-        int stoptime = 0;
-        /*
-                IMDBMovie movieDetails = new IMDBMovie();
-                VideoDatabase.GetMovieInfo(rec.FileName, ref movieDetails);
-                int idMovie = VideoDatabase.GetMovieId(rec.FileName);
-                int idFile = VideoDatabase.GetFileId(rec.FileName);
-                if (idMovie >= 0 && idFile >= 0 )
+      rec.TimesWatched++;
+      rec.Persist();
+      ///@
+      int stoptime = 0;
+      /*
+              IMDBMovie movieDetails = new IMDBMovie();
+              VideoDatabase.GetMovieInfo(rec.FileName, ref movieDetails);
+              int idMovie = VideoDatabase.GetMovieId(rec.FileName);
+              int idFile = VideoDatabase.GetFileId(rec.FileName);
+              if (idMovie >= 0 && idFile >= 0 )
+              {
+                Log.Info("play got movie id:{0} for {1}", idMovie, rec.FileName);
+                stoptime = VideoDatabase.GetMovieStopTime(idMovie);
+                if (stoptime > 0)
                 {
-                  Log.Debug("play got movie id:{0} for {1}", idMovie, rec.FileName);
-                  stoptime = VideoDatabase.GetMovieStopTime(idMovie);
-                  if (stoptime > 0)
-                  {
-                    string title = System.IO.Path.GetFileName(rec.FileName);
-                    if (movieDetails.Title != String.Empty) title = movieDetails.Title;
+                  string title = System.IO.Path.GetFileName(rec.FileName);
+                  if (movieDetails.Title != String.Empty) title = movieDetails.Title;
 
-                    GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-                    if (null == dlgYesNo) return false;
-                    dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
-                    dlgYesNo.SetLine(1, rec.Channel);
-                    dlgYesNo.SetLine(2, title);
-                    dlgYesNo.SetLine(3, GUILocalizeStrings.Get(936) + Utils.SecondsToHMSString(stoptime));
-                    dlgYesNo.SetDefaultToYes(true);
-                    dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+                  GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+                  if (null == dlgYesNo) return false;
+                  dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
+                  dlgYesNo.SetLine(1, rec.Channel);
+                  dlgYesNo.SetLine(2, title);
+                  dlgYesNo.SetLine(3, GUILocalizeStrings.Get(936) + Utils.SecondsToHMSString(stoptime));
+                  dlgYesNo.SetDefaultToYes(true);
+                  dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
 
-                    if (!dlgYesNo.IsConfirmed) stoptime = 0;
-                  }
+                  if (!dlgYesNo.IsConfirmed) stoptime = 0;
                 }
-        */
-        string fileName = rec.FileName;
-        if (!System.IO.File.Exists(fileName))
-        {
-          fileName = TVHome.TvServer.GetStreamUrlForFileName(rec.IdRecording);
-        }
-        Log.Debug("TvRecorded Play:{0}", fileName);
-        if (g_Player.Play(fileName, g_Player.MediaType.Recording))
-        {
-          if (Utils.IsVideo(fileName))
-          {
-            GUIGraphicsContext.IsFullScreenVideo = true;
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-          }
-          if (stoptime > 0)
-          {
-            // g_Player.SeekAbsolute(stoptime);
-          }
-          return true;
-        }
+              }
+      */
+      string fileName = rec.FileName;
+      if (!System.IO.File.Exists(fileName))
+      {
+        fileName = TVHome.TvServer.GetStreamUrlForFileName(rec.IdRecording);
       }
+      Log.Info("TvRecorded Play:{0}", fileName);
+      if (g_Player.Play(fileName, g_Player.MediaType.Recording))
+      {
+        if (Utils.IsVideo(fileName))
+        {
+          GUIGraphicsContext.IsFullScreenVideo = true;
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+        }
+        if (stoptime > 0)
+        {
+          // g_Player.SeekAbsolute(stoptime);
+        }
+        return true;
+      }
+
       return false;
     }
 
@@ -1107,9 +1114,9 @@ namespace TvPlugin
     #region playback events
     private void OnPlayRecordingBackStopped(MediaPortal.Player.g_Player.MediaType type, int stoptime, string filename)
     {
-      Log.Debug("TvRecorded:OnStopped {0} {1}", type, filename);
+      Log.Info("TvRecorded:OnStopped {0} {1}", type, filename);
       if (type != g_Player.MediaType.Recording) return;
- 
+
       if (GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
