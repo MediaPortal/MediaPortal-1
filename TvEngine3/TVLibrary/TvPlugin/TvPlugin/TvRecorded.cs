@@ -41,6 +41,7 @@ using Toub.MediaCenter.Dvrms.Metadata;
 ///@using MediaPortal.TV.DiskSpace;
 
 using TvDatabase;
+using TvControl;
 
 using Gentle.Common;
 using Gentle.Framework;
@@ -832,12 +833,9 @@ namespace TvPlugin
       {
         return;
       }
-      //@
-      //VideoDatabase.DeleteMovieInfo(rec.FileName);
-      //VideoDatabase.DeleteMovie(rec.FileName);
-      Utils.DeleteRecording(rec.FileName);
 
-      rec.Delete();
+      TvServer server = new TvServer();
+      server.DeleteRecording(rec.IdRecording);
 
       LoadDirectory();
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
@@ -863,13 +861,8 @@ namespace TvPlugin
       {
         if (rec.TimesWatched > 0)
         {
-          rec.Delete();
-          //@Recorder.DeleteRecording(rec);
-        }
-        else if (!System.IO.File.Exists(rec.FileName))
-        {
-          //@Recorder.DeleteRecording(rec);
-          rec.Delete();
+          TvServer server = new TvServer();
+          server.DeleteRecording(rec.IdRecording);
         }
       }
 
@@ -1116,15 +1109,7 @@ namespace TvPlugin
     {
       Log.Debug("TvRecorded:OnStopped {0} {1}", type, filename);
       if (type != g_Player.MediaType.Recording) return;
-      //@
-      /*
-      int movieid = VideoDatabase.GetMovieId(filename);
-      if (movieid < 0) return;
-      if (stoptime > 0)
-        VideoDatabase.SetMovieStopTime(movieid, stoptime);
-      else
-        VideoDatabase.DeleteMovieStopTime(movieid);
-       */
+ 
       if (GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
@@ -1150,7 +1135,8 @@ namespace TvPlugin
         {
           if (String.Compare(rec.FileName, filename, true) == 0)
           {
-            rec.Delete();
+            TvServer server = new TvServer();
+            server.DeleteRecording(rec.IdRecording);
             return;
           }
         }

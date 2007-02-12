@@ -56,6 +56,46 @@ namespace TvControl
     }
 
     /// <summary>
+    /// Gets the RTSP URL for a file located at the tvserver.
+    /// </summary>
+    /// <param name="fileName">Name of the file.</param>
+    /// <returns></returns>
+    public string GetRtspUrlForFile(string fileName)
+    {
+      try
+      {
+        try
+        {
+          if (System.IO.File.Exists(fileName)) return fileName;
+        }
+        catch (Exception)
+        {
+        }
+        return  RemoteControl.Instance.GetUrlForFile(fileName);
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+      return "";
+    }
+    /// <summary>
+    /// Deletes the recording at the tvserver
+    /// </summary>
+    /// <param name="idRecording">The id of the recording.</param>
+    public void DeleteRecording(int idRecording)
+    {
+      try
+      {
+        RemoteControl.Instance.DeleteRecording(idRecording);
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+    }
+
+    /// <summary>
     /// returns a virtual card for the specified index
     /// which can be used to control the card
     /// </summary>

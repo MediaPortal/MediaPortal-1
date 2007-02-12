@@ -28,6 +28,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include <string.h>
 
 #include "InputFile.hh"
+extern void Log(const char *fmt, ...) ;
 
 FILE* OpenInputFile(UsageEnvironment& env, char const* fileName) {
   FILE* fid;
@@ -40,7 +41,9 @@ FILE* OpenInputFile(UsageEnvironment& env, char const* fileName) {
 #endif
   } else { 
     fid = fopen(fileName, "rb");
-    if (fid == NULL) {
+    if (fid == NULL) 
+    {
+      Log("Unable to open:%s", fileName);
       env.setResultMsg("unable to open file \"",fileName, "\"");
     }
   }

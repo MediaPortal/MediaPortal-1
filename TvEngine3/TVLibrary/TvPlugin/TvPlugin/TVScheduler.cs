@@ -542,9 +542,14 @@ namespace TvPlugin
         dlg.AddLocalizedString(882);//Quality settings
       }
       dlg.AddLocalizedString(1048); // settings
-
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1) return;
+
+      string fileName = "";
+      if (server.IsRecordingSchedule(rec.IdSchedule, out card))
+      {
+        fileName = card.RecordingFileName;
+      }
       switch (dlg.SelectedId)
       {
         case 888:////Episodes management
@@ -629,30 +634,38 @@ namespace TvPlugin
           break;
 
         case 979: // Play recording from beginning
-          g_Player.Stop();
-          TVHome.ViewChannel(rec.ReferencedChannel());
-          if (TVHome.Card.IsTimeShifting)
           {
-            if (g_Player.Playing)
+            g_Player.Stop();
+            string url = server.GetRtspUrlForFile(fileName);
+            if (url.Length > 0)
             {
-              DateTime startTime = TVHome.Card.RecordingStarted;
-              TimeSpan seekBack = DateTime.Now - startTime;
-              double duration = g_Player.Duration;
-              duration -= seekBack.TotalSeconds;
-              if (duration < 0) duration = 0;
-              g_Player.SeekAbsolute(duration);
+              g_Player.Play(url);
+
+              if (g_Player.Playing)
+              {
+                g_Player.SeekAbsolute(0);
+                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                return;
+              }
             }
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
           }
           return;
 
         case 980: // Play recording from live point
-          g_Player.Stop();
-          TVHome.ViewChannel(rec.ReferencedChannel());
-          if (TVHome.Card.IsTimeShifting)
           {
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-            return;
+            g_Player.Stop();
+            string url = server.GetRtspUrlForFile(fileName);
+            if (url.Length > 0)
+            {
+              g_Player.Play(url);
+
+              if (g_Player.Playing)
+              {
+                g_Player.SeekAbsolute(g_Player.Duration);
+                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                return;
+              }
+            }
           }
           break;
       }

@@ -251,6 +251,20 @@ namespace TvControl
     /// <param name="idRecording">id of recording</param>
     /// <returns>URL containing the RTSP adress on which the recording can be found</returns>
     string GetRecordingUrl(int idRecording);
+    
+    
+    /// <summary>
+    /// Deletes the recording from database and disk
+    /// </summary>
+    /// <param name="idRecording">The id recording.</param>
+    void DeleteRecording(int idRecording);
+
+    /// <summary>
+    /// Gets the rtsp URL for file located on the tvserver.
+    /// </summary>
+    /// <param name="fileName">Name of the file.</param>
+    /// <returns>rtsp url</returns>
+    string GetUrlForFile(string fileName);
 
     /// <summary>
     /// Checks if the schedule specified is currently being recorded and ifso

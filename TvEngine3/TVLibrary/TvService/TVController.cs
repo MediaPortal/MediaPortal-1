@@ -1090,12 +1090,65 @@ namespace TvService
       if (cardId < 0) return false;
       return _cards[cardId].GrabEpg(grabber);
     }
+    /// <summary>
+    /// Epgs the specified card id.
+    /// </summary>
+    /// <param name="cardId">The card id.</param>
+    /// <returns></returns>
     public List<EpgChannel> Epg(int cardId)
     {
       if (cardId < 0) return new List<EpgChannel>();
       return _cards[cardId].Epg;
     }
 
+    /// <summary>
+    /// Deletes the recording from database and disk
+    /// </summary>
+    /// <param name="idRecording">The id recording.</param>
+    public void DeleteRecording(int idRecording)
+    {
+      try
+      {
+        Recording rec = Recording.Retrieve(idRecording);
+        if (rec == null) return;
+
+        if (!IsLocal(rec.ReferencedServer().HostName))
+        {
+          try
+          {
+            RemoteControl.HostName = rec.ReferencedServer().HostName;
+            RemoteControl.Instance.DeleteRecording(rec.IdRecording);
+          }
+          catch (Exception)
+          {
+            Log.Error("Controller: unable to connect to slave controller at:{0}", rec.ReferencedServer().HostName);
+          }
+          return;
+        }
+
+        if (System.IO.File.Exists(rec.FileName))
+        {
+          try
+          {
+            System.IO.File.Delete(rec.FileName);
+            rec.Delete();
+          }
+          catch (Exception)
+          {
+          }
+        }
+      }
+      catch (Exception)
+      {
+      }
+    }
+    /// <summary>
+    /// returns which schedule the card specified is currently recording
+    /// </summary>
+    /// <param name="cardId">card id</param>
+    /// <returns>
+    /// id of Schedule or -1 if  card not recording
+    /// </returns>
     public int GetRecordingSchedule(int cardId)
     {
       try
@@ -1199,6 +1252,25 @@ namespace TvService
       }
       catch (Exception)
       {
+      }
+      return "";
+    }
+    /// <summary>
+    /// Gets the rtsp URL for file located on the tvserver.
+    /// </summary>
+    /// <param name="fileName">Name of the file.</param>
+    /// <returns>rtsp url</returns>
+    public string GetUrlForFile(string fileName)
+    {
+      if (System.IO.File.Exists(fileName))
+      {
+        _streamer.Start();
+        string streamName = fileName.GetHashCode().ToString();
+        RtspStream stream = new RtspStream(streamName, fileName, streamName);
+        _streamer.AddStream(stream);
+        string url = String.Format("rtsp://{0}/{1}", _ourServer.HostName, streamName);
+        Log.WriteFile("Controller: streaming url:{0} file:{1}", url, fileName);
+        return url;
       }
       return "";
     }

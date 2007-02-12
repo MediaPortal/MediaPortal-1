@@ -1753,6 +1753,7 @@ namespace TvService
           bool result = subchannel.StartRecording((_dbsCard.RecordingFormat == 1), fileName);
           if (result)
           {
+            fileName = subchannel.RecordingFileName;
             context.Owner = user;
           }
           return result;
