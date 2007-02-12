@@ -47,7 +47,7 @@
     <Channel id="mtv.com" siteId="MTV" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.telepocket.be/fr/zender.asp?move=full&amp;channel=[ID]&amp;dag=[_M]/[_D]/[YYYY]" post="" external="false" encoding="" />
+    <Site url="http://www.telemoustique.be/epg/fr/zender.asp?move=full&amp;channel=[ID]&amp;dag=[_M]/[_D]/[YYYY]" post="" external="false" encoding="" />
     <Html>
       <Template name="default" start="Complet" end="&lt;/body&gt;">
         <SectionTemplate tags="T">
