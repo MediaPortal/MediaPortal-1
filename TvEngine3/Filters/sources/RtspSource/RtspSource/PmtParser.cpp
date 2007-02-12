@@ -18,11 +18,13 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma warning(disable : 4995)
 #include <windows.h>
 #include "PmtParser.h"
-#include "tsheader.h"
+#include "channelinfo.h"
 
-extern void Log(const char *fmt, ...) ;
+void Log(const char *fmt, ...) ; 
+
 CPmtParser::CPmtParser()
 {
 	m_pmtCallback=NULL;
@@ -33,29 +35,24 @@ CPmtParser::~CPmtParser(void)
 {
 }
 
-bool CPmtParser::Ready()
-{
-	return _isFound;
-}
-CPidTable& CPmtParser::GetPidInfo()
-{
-  return m_pidInfo;
-}
-	
 void CPmtParser::SetPmtCallBack(IPmtCallBack* callback)
 {
 	m_pmtCallback=callback;
 }
 
-
-void CPmtParser::OnNewSection(CSection& sections)
+bool CPmtParser::IsReady()
 {
+  return _isFound;
+}
+void CPmtParser::OnNewSection(CSection& sections)
+{ 
   byte* section=(&sections.Data)[0];
   int sectionLen=sections.SectionLength;
 
-  CTsHeader header(section);
-  int start=header.PayLoadStart+1;
+  m_tsHeader.Decode(section);
+  int start=m_tsHeader.PayLoadStart;
   int table_id = section[start+0];
+	if (table_id!=2) return;
   int section_syntax_indicator = (section[start+1]>>7) & 1;
   int section_length = ((section[start+1]& 0xF)<<8) + section[start+2];
   int program_number = (section[start+3]<<8)+section[start+4];
@@ -69,16 +66,16 @@ void CPmtParser::OnNewSection(CSection& sections)
   int pointer = 12;
   int len1 = section_length -( 9 + program_info_length +4);
   int x;
-
 	if (!_isFound)
 	{
-		//LogDebug("got pmt:%x service id:%x", GetPid(), program_number);
+		Log("got pmt:%x service id:%x", GetPid(), program_number);
 		_isFound=true;	
 		if (m_pmtCallback!=NULL)
 		{
 			m_pmtCallback->OnPmtReceived(GetPid());
 		}
 	}
+  
   // loop 1
   while (len2 > 0)
   {
@@ -103,8 +100,8 @@ void CPmtParser::OnNewSection(CSection& sections)
 	  stream_type = section[start+pointer];
 	  elementary_PID = ((section[start+pointer+1]&0x1F)<<8)+section[start+pointer+2];
 	  ES_info_length = ((section[start+pointer+3] & 0xF)<<8)+section[start+pointer+4];
-    //Log("pmt: pid:%x type:%x",elementary_PID, stream_type);
-	  if(stream_type==1 || stream_type==2)
+   // Log("pmt: pid:%x type:%x",elementary_PID, stream_type);
+		if(stream_type==SERVICE_TYPE_VIDEO_MPEG1 || stream_type==SERVICE_TYPE_VIDEO_MPEG2)
 	  {
 			//mpeg2 video
 		  if(m_pidInfo.VideoPid==0)
@@ -113,7 +110,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 				m_pidInfo.videoServiceType=stream_type;
 			}
 	  }
-		if(stream_type==0x10 || stream_type==0x1b)
+		if(stream_type==SERVICE_TYPE_VIDEO_MPEG4 || stream_type==SERVICE_TYPE_VIDEO_H264)
 	  {
 			//h.264/mpeg4 video
 		  if(m_pidInfo.VideoPid==0)
@@ -122,7 +119,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 				m_pidInfo.videoServiceType=stream_type;
 			}
 	  }
-	  if(stream_type==3 || stream_type==4)
+		if(stream_type==SERVICE_TYPE_AUDIO_MPEG1 || stream_type==SERVICE_TYPE_AUDIO_MPEG2)
 	  {
 			//mpeg 2 audio
 		  audioToSet=0;
@@ -138,19 +135,26 @@ void CPmtParser::OnNewSection(CSection& sections)
 				  audioToSet=2;
 				  m_pidInfo.AudioPid2=elementary_PID;
 			  }
-			  else
+			  else if(m_pidInfo.AudioPid3==0)
 			  {
-				  if(m_pidInfo.AudioPid3==0)
-				  {
-					  audioToSet=3;
-					  m_pidInfo.AudioPid3=elementary_PID;
-				  }
+				  audioToSet=3;
+				  m_pidInfo.AudioPid3=elementary_PID;
+			  }
+				else if(m_pidInfo.AudioPid4==0)
+			  {
+				  audioToSet=4;
+				  m_pidInfo.AudioPid4=elementary_PID;
+			  }
+				else if(m_pidInfo.AudioPid5==0)
+			  {
+				  audioToSet=5;
+				  m_pidInfo.AudioPid5=elementary_PID;
 			  }
 		  }
 	  }
 	  m_pidInfo.PcrPid=pcr_pid;
 
-	  if(stream_type==0x81)
+		if(stream_type==SERVICE_TYPE_AUDIO_AC3)
 	  {
 			//ac3 audio
 		  if(m_pidInfo.AC3Pid==0)
@@ -161,16 +165,25 @@ void CPmtParser::OnNewSection(CSection& sections)
 	  len2 = ES_info_length;
 	  while (len2 > 0)
 	  {
-		  if (pointer+1>=sectionLen) return ;
+		  if (pointer+1>=sectionLen) 
+			{
+				Log("pmt parser check1");
+				return ;
+			}
 		  x = 0;
 		  int indicator=section[start+pointer];
 		  x = section[start+pointer + 1] + 2;
-		  if(indicator==0x6A)
+		  if(indicator==DESCRIPTOR_DVB_AC3)
+			{
 			  m_pidInfo.AC3Pid=elementary_PID;
-		  if(indicator==0x0A)
-		  {
-				
-			  if (pointer+4>=sectionLen) return ;
+			}
+		  if(indicator==DESCRIPTOR_MPEG_ISO639_Lang)
+		  {	
+			  if (pointer+4>=sectionLen) 
+			{
+				Log("pmt parser check2");
+				return ;
+			}
 			  BYTE d[3];
 			  d[0]=section[start+pointer+2];
 			  d[1]=section[start+pointer+3];
@@ -193,14 +206,26 @@ void CPmtParser::OnNewSection(CSection& sections)
 				  m_pidInfo.Lang3_2=d[1];
 				  m_pidInfo.Lang3_3=d[2];
 			  }
+			  if(audioToSet==4)
+			  {
+				  m_pidInfo.Lang4_1=d[0];
+				  m_pidInfo.Lang4_2=d[1];
+				  m_pidInfo.Lang4_3=d[2];
+			  }
+			  if(audioToSet==5)
+			  {
+				  m_pidInfo.Lang5_1=d[0];
+				  m_pidInfo.Lang5_2=d[1];
+				  m_pidInfo.Lang5_3=d[2];
+			  }
 
 		  }
-		  if(indicator==0x56 && m_pidInfo.TeletextPid==0)
+		  if(indicator==DESCRIPTOR_DVB_TELETEXT && m_pidInfo.TeletextPid==0)
 			  m_pidInfo.TeletextPid=elementary_PID;
 
-			if(indicator==0x59 && m_pidInfo.SubtitlePid==0)
+			if(indicator==DESCRIPTOR_DVB_SUBTITLING && m_pidInfo.SubtitlePid==0)
 			{
-				if (stream_type==5||stream_type==6)
+				if (stream_type==SERVICE_TYPE_DVB_SUBTITLES2)
 				{
 					BYTE d[3];
 					d[0]=section[start+pointer+2];
@@ -215,9 +240,18 @@ void CPmtParser::OnNewSection(CSection& sections)
 		  len2 -= x;
 		  len1 -= x;
 		  pointer += x;
-
 	  }
-//	  LogDebug("DecodePMT pid:0x%x pcrpid:0x%x videopid:0x%x audiopid:0x%x ac3pid:0x%x sid:%x",
-//		  m_pidInfo.PmtPid, m_pidInfo.PcrPid,m_pidInfo.VideoPid,m_pidInfo.AudioPid1,m_pidInfo.AC3Pid,m_pidInfo.ServiceId);
   }
+  if (m_pmtCallback!=NULL)
+  {
+  //Log("DecodePMT pid:0x%x pcrpid:0x%x videopid:0x%x audiopid:0x%x ac3pid:0x%x sid:%x",
+	//  m_pidInfo.PmtPid, m_pidInfo.PcrPid,m_pidInfo.VideoPid,m_pidInfo.AudioPid1,m_pidInfo.AC3Pid,m_pidInfo.ServiceId);
+    m_pmtCallback->OnPidsReceived(m_pidInfo);
+  }
+}
+
+
+CPidTable& CPmtParser::GetPidInfo()
+{
+  return m_pidInfo;
 }

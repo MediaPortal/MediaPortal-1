@@ -241,7 +241,13 @@ HRESULT CRtspSourceFilter::OnConnect()
     }
 		Log("Filter:  OnConnect, got pat/pmt...");
     CChannelInfo info;
-    m_patParser.GetChannel(0,info);
+    for (int i=0; i < m_patParser.Count();++i)
+    {
+      if (m_patParser.GetChannel(i,info))
+      {
+        break;
+      }
+    }
 		
     CPidTable pids=info.PidTable;
     m_pids.Clear();
@@ -428,7 +434,7 @@ STDMETHODIMP CRtspSourceFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *
 	if (wcsstr(m_fileName,L"rtsp://")==NULL)
 	{
 		Log("Filter:using defailt filename");
-		wcscpy(m_fileName,L"rtsp://192.168.1.102/stream1.0");
+		wcscpy(m_fileName,L"rtsp://192.168.1.102/1653589429");
 	}
   if (wcsstr(m_fileName,L"stream")!=NULL)
   {

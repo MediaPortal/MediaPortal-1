@@ -18,8 +18,14 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma warning(disable : 4995)
 #include <windows.h>
 #include "PidTable.h"
+
+CPidTable::CPidTable(const CPidTable& pids)
+{
+  Copy(pids);
+}
 
 CPidTable::CPidTable(void)
 {
@@ -47,6 +53,14 @@ void CPidTable::Reset()
   Lang3_1=0;
   Lang3_2=0;
   Lang3_3=0;
+  AudioPid4=0;
+  Lang4_1=0;
+  Lang4_2=0;
+  Lang4_3=0;
+  AudioPid5=0;
+  Lang5_1=0;
+  Lang5_2=0;
+  Lang5_3=0;
   AC3Pid=0;
   TeletextPid=0;
   SubtitlePid=0;
@@ -54,7 +68,14 @@ void CPidTable::Reset()
 	videoServiceType=-1;
 }
 
-CPidTable CPidTable::operator = (const CPidTable &pids)
+CPidTable& CPidTable::operator = (const CPidTable &pids)
+{
+  if (&pids==this) return *this;
+  Copy(pids);
+  return *this;
+}
+
+void CPidTable::Copy(const CPidTable &pids)
 {
   PcrPid=pids.PcrPid;
   PmtPid=pids.PmtPid;
@@ -71,11 +92,17 @@ CPidTable CPidTable::operator = (const CPidTable &pids)
   Lang3_1=pids.Lang3_1;
   Lang3_2=pids.Lang3_2;
   Lang3_3=pids.Lang3_3;
+  AudioPid4=pids.AudioPid4;
+  Lang4_1=pids.Lang4_1;
+  Lang4_2=pids.Lang4_2;
+  Lang4_3=pids.Lang4_3;
+  AudioPid5=pids.AudioPid5;
+  Lang5_1=pids.Lang5_1;
+  Lang5_2=pids.Lang5_2;
+  Lang5_3=pids.Lang5_3;
   AC3Pid=pids.AC3Pid;
   TeletextPid=pids.TeletextPid;
   SubtitlePid=pids.SubtitlePid;
   ServiceId=pids.ServiceId;
 	videoServiceType=pids.videoServiceType;
-
-  return *this;
 }

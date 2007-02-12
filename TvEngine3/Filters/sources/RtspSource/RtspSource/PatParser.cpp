@@ -76,18 +76,16 @@ void  CPatParser::Reset()
 int CPatParser::Count()
 {
   int count= m_pmtParsers.size();
-  if (count>0)
+  if (count==0) return 0;
+  for (int i=0; i < (int)m_pmtParsers.size();++i)
   {
-    for (int i=0; i < (int)m_pmtParsers.size();++i)
+    CPmtParser* parser=m_pmtParsers[i];
+    if (true==parser->IsReady()) 
     {
-      CPmtParser* parser=m_pmtParsers[i];
-	    if (false==parser->Ready()) 
-	    {
-		    return 0;
-	    }
+	    return count;
     }
   }
-	return count;
+	return 0;
 }
 
 bool CPatParser::GetChannel(int index, CChannelInfo& info)
@@ -98,7 +96,7 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
 		return false;
 	}
   CPmtParser* parser=m_pmtParsers[index];
-	if (false==parser->Ready()) 
+	if (false==parser->IsReady()) 
 	{
 		return false;
 	}
@@ -128,13 +126,20 @@ void CPatParser::OnTsPacket(byte* tsPacket)
 	
 	if (m_iState==Parsing && m_pCallback!=NULL)
 	{
-		CChannelInfo info;
-		if (GetChannel(0, info))
-		{
-			m_iState=Idle;
-			m_pCallback->OnNewChannel(info);
-			return ;
-		}
+    for (int i=0; i < (int)m_pmtParsers.size();++i)
+    {
+      CPmtParser* parser=m_pmtParsers[i];
+      if (true==parser->IsReady()) 
+      {
+		    CChannelInfo info;
+		    if (GetChannel(i, info))
+		    {
+			    m_iState=Idle;
+			    m_pCallback->OnNewChannel(info);
+			    return ;
+		    }
+      }
+    }
 	}
 }
 
@@ -143,7 +148,7 @@ void CPatParser::OnNewSection(CSection& sections)
   byte* section=sections.Data;
 
   CTsHeader header(section);
-  int start=header.PayLoadStart+1;
+  int start=header.PayLoadStart;
   int table_id = section[start];
   if (table_id!=0) return ;
   int section_syntax_indicator = (section[start+1]>>7) & 1;

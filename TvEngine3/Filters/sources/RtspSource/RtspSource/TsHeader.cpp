@@ -18,15 +18,23 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma warning(disable : 4995)
 #include <windows.h>
 #include "TsHeader.h" 
 #include "packetsync.h"
 
 extern void Log(const char *fmt, ...) ;
 
+#define PAYLOADONLY             1
+#define ADAPTIONFIELDONLY       2
+#define ADAPTIONFIELDANDPAYLOAD 3
+
+
+CTsHeader::CTsHeader()
+{
+}
 CTsHeader::CTsHeader(byte* tsPacket)
 {
-	m_packet=tsPacket;
 	Decode(tsPacket);
 }
 
@@ -49,11 +57,12 @@ bool CTsHeader::AdaptionFieldAndPayLoad()
 	return (AdaptionControl==3);
 }
 
-
 void CTsHeader::Decode(byte *data)
 {
+	m_packet=data;
+  //47 40 d2 10
 	//															bits  byteNo		mask
-	//SyncByte											:	8			0				
+	//SyncByte											:	8			0				0xff  11111111
 	//TransportError								:	1			1				0x80  10000000
 	//PayloadUnitStart							: 1			1				0x40  01000000
 	//TransportPriority							: 1			1				0x20  00100000
@@ -69,6 +78,11 @@ void CTsHeader::Decode(byte *data)
   // 4. 00 - RESERVED for future use 									0x00
 
 	SyncByte=data[0];
+  if (SyncByte!=0x47)
+  {
+    TransportError=true;
+    return;
+  }
 	TransportError=(data[1] & 0x80)>0?true:false;
 	PayloadUnitStart=(data[1] & 0x40)>0?true:false;
 	TransportPriority=(data[1] & 0x20)>0?true:false;
@@ -78,11 +92,19 @@ void CTsHeader::Decode(byte *data)
 	ContinuityCounter=data[3] & 0x0F;
 	AdaptionFieldLength=0;
 	PayLoadStart=4;
-	if (AdaptionControl >=2 ) 
+	if (AdaptionControl >=ADAPTIONFIELDONLY ) 
 	{
 		AdaptionFieldLength=data[4];
 		PayLoadStart=5+AdaptionFieldLength;
 	}
+  if (AdaptionControl == PAYLOADONLY ) 
+  {
+    if (PayloadUnitStart)
+    {
+      if (data[4]==0&& data[5]==0 && data[6]==1) PayLoadStart=4;
+      else PayLoadStart=data[4]+5;
+    }
+  }
 }
 
 void CTsHeader::LogHeader()
