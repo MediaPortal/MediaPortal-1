@@ -1130,12 +1130,17 @@ namespace TvService
         {
           try
           {
+            _streamer.RemoveFile(rec.FileName);
             System.IO.File.Delete(rec.FileName);
             rec.Delete();
           }
           catch (Exception)
           {
           }
+        }
+        else
+        {
+          rec.Delete();
         }
       }
       catch (Exception)

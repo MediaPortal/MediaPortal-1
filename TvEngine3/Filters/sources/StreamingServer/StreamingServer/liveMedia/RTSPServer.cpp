@@ -33,6 +33,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 ////////// RTSPServer //////////
 
+extern void Log(const char *fmt, ...) ;
 RTSPServer*
 RTSPServer::createNew(UsageEnvironment& env, Port ourPort,
 		      UserAuthenticationDatabase* authDatabase,
@@ -88,9 +89,14 @@ void RTSPServer::removeServerMediaSession(ServerMediaSession* serverMediaSession
   if (serverMediaSession == NULL) return;
 
   fServerMediaSessions->Remove(serverMediaSession->streamName());
-  if (serverMediaSession->referenceCount() == 0) {
+  if (serverMediaSession->referenceCount() == 0) 
+  {
+    Log("RTSPServer::removeServerMediaSession reference count==0, remove session");
     Medium::close(serverMediaSession);
-  } else {
+  } 
+  else 
+  {
+    Log("RTSPServer::removeServerMediaSession reference count==%d, delete when idle",serverMediaSession->referenceCount());
     serverMediaSession->deleteWhenUnreferenced() = True;
   }
 }

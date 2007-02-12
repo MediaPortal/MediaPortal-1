@@ -28,6 +28,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "AC3AudioRTPSink.hh"
 #include "ByteStreamFileSource.hh"
 
+extern void Log(const char *fmt, ...) ;
 MPEG1or2DemuxedServerMediaSubsession* MPEG1or2DemuxedServerMediaSubsession
 ::createNew(MPEG1or2FileServerDemux& demux, u_int8_t streamIdTag,
 	    Boolean reuseFirstSource, Boolean iFramesOnly, double vshPeriod) {
@@ -42,10 +43,14 @@ MPEG1or2DemuxedServerMediaSubsession
 				       Boolean iFramesOnly, double vshPeriod)
   : OnDemandServerMediaSubsession(demux.envir(), reuseFirstSource),
     fOurDemux(demux), fStreamIdTag(streamIdTag),
-    fIFramesOnly(iFramesOnly), fVSHPeriod(vshPeriod) {
+    fIFramesOnly(iFramesOnly), fVSHPeriod(vshPeriod) 
+{
+  Log("MPEG1or2DemuxedServerMediaSubsession:ctor");
 }
 
-MPEG1or2DemuxedServerMediaSubsession::~MPEG1or2DemuxedServerMediaSubsession() {
+MPEG1or2DemuxedServerMediaSubsession::~MPEG1or2DemuxedServerMediaSubsession() 
+{
+  Log("MPEG1or2DemuxedServerMediaSubsession:dtor");
 }
 
 FramedSource* MPEG1or2DemuxedServerMediaSubsession

@@ -27,6 +27,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 ////////// ServerMediaSession //////////
 
+extern void Log(const char *fmt, ...) ;
 ServerMediaSession* ServerMediaSession
 ::createNew(UsageEnvironment& env,
 	    char const* streamName, char const* info,
@@ -70,9 +71,12 @@ ServerMediaSession::ServerMediaSession(UsageEnvironment& env,
   fMiscSDPLines = strDup(miscSDPLines == NULL ? "" : miscSDPLines);
 
   gettimeofday(&fCreationTime, NULL);
+  Log("ServerMediaSession ctor:%s",streamName);
 }
 
-ServerMediaSession::~ServerMediaSession() {
+ServerMediaSession::~ServerMediaSession() 
+{
+  Log("ServerMediaSession dtor:%s",fStreamName);
   Medium::close(fSubsessionsHead);
   delete[] fStreamName;
   delete[] fInfoSDPString;
@@ -319,9 +323,11 @@ ServerMediaSubsession::ServerMediaSubsession(UsageEnvironment& env)
   : Medium(env),
     fParentSession(NULL), fServerAddressForSDP(0), fPortNumForSDP(0),
     fNext(NULL), fTrackNumber(0), fTrackId(NULL) {
+      Log("ServerMediaSubsession:ctor");
 }
 
 ServerMediaSubsession::~ServerMediaSubsession() {
+  Log("ServerMediaSubsession:dtor");
   delete[] (char*)fTrackId;
   Medium::close(fNext);
 }

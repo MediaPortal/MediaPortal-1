@@ -23,6 +23,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "MPEG2TransportStreamFramer.hh"
 #include <GroupsockHelper.hh> // for "gettimeofday()"
 
+extern void Log(const char *fmt, ...) ;
+
 #define TRANSPORT_PACKET_SIZE 188
 #define NEW_DURATION_WEIGHT 0.5
   // How much weight to give to the latest duration measurement (must be <= 1)
@@ -58,16 +60,30 @@ MPEG2TransportStreamFramer* MPEG2TransportStreamFramer
 MPEG2TransportStreamFramer
 ::MPEG2TransportStreamFramer(UsageEnvironment& env, FramedSource* inputSource)
   : FramedFilter(env, inputSource),
-    fTSPacketCount(0), fTSPacketDurationEstimate(0.0) {
+    fTSPacketCount(0), fTSPacketDurationEstimate(0.0) 
+{
+  Log("MPEG2TransportStreamFramer:ctor");
+  m_pOnDelete=NULL;
   fPIDStatusTable = HashTable::create(ONE_WORD_HASH_KEYS);
 }
 
-MPEG2TransportStreamFramer::~MPEG2TransportStreamFramer() {
+void MPEG2TransportStreamFramer::SetOnDelete(IOnDelete* onDelete)
+{
+  m_pOnDelete=onDelete;
+}
+
+MPEG2TransportStreamFramer::~MPEG2TransportStreamFramer() 
+{
+  Log("MPEG2TransportStreamFramer:dtor");
   PIDStatus* pidStatus;
   while ((pidStatus = (PIDStatus*)fPIDStatusTable->RemoveNext()) != NULL) {
     delete pidStatus;
   }
   delete fPIDStatusTable;
+  if (m_pOnDelete!=NULL)
+  {
+    m_pOnDelete->OnDelete();
+  }
 }
 
 void MPEG2TransportStreamFramer::doGetNextFrame() {

@@ -30,6 +30,11 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #ifndef _HASH_TABLE_HH
 #include "HashTable.hh"
 #endif
+class IOnDelete
+{
+public: 
+  virtual void OnDelete()=0;
+};
 
 class MPEG2TransportStreamFramer: public FramedFilter {
 public:
@@ -37,7 +42,7 @@ public:
   createNew(UsageEnvironment& env, FramedSource* inputSource);
 
   unsigned long tsPacketCount() const { return fTSPacketCount; }
-
+  void SetOnDelete(IOnDelete* onDelete);
 protected:
   MPEG2TransportStreamFramer(UsageEnvironment& env, FramedSource* inputSource);
       // called only by createNew()
@@ -62,6 +67,7 @@ private:
   unsigned long fTSPacketCount;
   double fTSPacketDurationEstimate;
   HashTable* fPIDStatusTable;
+  IOnDelete* m_pOnDelete;
 };
 
 #endif

@@ -33,11 +33,12 @@ extern void Log(const char *fmt, ...) ;
 ByteStreamFileSource*
 ByteStreamFileSource::createNew(UsageEnvironment& env, char const* fileName,
 				unsigned preferredFrameSize,
-				unsigned playTimePerFrame) {
+				unsigned playTimePerFrame) 
+{
   FILE* fid = OpenInputFile(env, fileName);
   if (fid == NULL) return NULL;
 
-  Boolean deleteFidOnClose = fid == stdin ? False : True;
+  Boolean deleteFidOnClose =True;// fid == stdin ? False : True;
   ByteStreamFileSource* newSource
     = new ByteStreamFileSource(env, fid, deleteFidOnClose,
 			       preferredFrameSize, playTimePerFrame);
@@ -75,10 +76,14 @@ ByteStreamFileSource::ByteStreamFileSource(UsageEnvironment& env, FILE* fid,
 					   unsigned playTimePerFrame)
   : FramedFileSource(env, fid), fPreferredFrameSize(preferredFrameSize),
     fPlayTimePerFrame(playTimePerFrame), fLastPlayTime(0), fFileSize(0),
-    fDeleteFidOnClose(deleteFidOnClose), fHaveStartedReading(False) {
+    fDeleteFidOnClose(deleteFidOnClose), fHaveStartedReading(False) 
+{
+  Log("ByteStreamFileSource ctor");
 }
 
-ByteStreamFileSource::~ByteStreamFileSource() {
+ByteStreamFileSource::~ByteStreamFileSource() 
+{
+  Log("ByteStreamFileSource dtor");
   if (fFid == NULL) return;
 
 #ifndef READ_FROM_FILES_SYNCHRONOUSLY

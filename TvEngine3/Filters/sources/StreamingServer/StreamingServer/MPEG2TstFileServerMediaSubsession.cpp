@@ -20,12 +20,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 #include <streams.h>
 #include "MPEG2TstFileServerMediaSubsession.h"
-#include "SimpleRTPSink.hh"
-#include "ByteStreamFileSource.hh"
-#include "MPEG2TransportStreamFramer.hh"
-#include "MPEG1or2Demux.hh"
-#include "MPEG2TransportStreamFromPESSource.hh"
-#include "TsFileDuration.h"
+extern void Log(const char *fmt, ...) ;
+
 MPEG2TstFileServerMediaSubsession* MPEG2TstFileServerMediaSubsession::createNew(UsageEnvironment& env,char const* fileName,Boolean reuseFirstSource) 
 {
   return new MPEG2TstFileServerMediaSubsession(env, fileName, reuseFirstSource);
@@ -34,10 +30,49 @@ MPEG2TstFileServerMediaSubsession* MPEG2TstFileServerMediaSubsession::createNew(
 MPEG2TstFileServerMediaSubsession ::MPEG2TstFileServerMediaSubsession(UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource)
 : FileServerMediaSubsession(env, fileName, reuseFirstSource) 
 {
+  Log("MPEG2TstFileServerMediaSubsession::ctor");
+  m_fileSource=NULL;
+  m_baseDemultiplexor=NULL;
+  m_pesSource=NULL;
+  m_tsSource=NULL;
+}
+
+void MPEG2TstFileServerMediaSubsession::OnDelete()
+{
+  Log("MPEG2TstFileServerMediaSubsession::OnDelete");
+  if (m_fileSource!=NULL) 
+    Medium::close(m_fileSource);
+  m_fileSource=NULL;
+
+  if (m_baseDemultiplexor!=NULL)
+    Medium::close(m_baseDemultiplexor);
+  m_baseDemultiplexor=NULL;
+
+  if (m_pesSource!=NULL)
+    Medium::close(m_pesSource);
+  m_pesSource=NULL;
+
+  m_tsSource=NULL;
 }
 
 MPEG2TstFileServerMediaSubsession::~MPEG2TstFileServerMediaSubsession() 
 {
+  Log("MPEG2TstFileServerMediaSubsession::dtor");
+  if (m_fileSource!=NULL) 
+    Medium::close(m_fileSource);
+  m_fileSource=NULL;
+
+  if (m_baseDemultiplexor!=NULL)
+    Medium::close(m_baseDemultiplexor);
+  m_baseDemultiplexor=NULL;
+
+  if (m_pesSource!=NULL)
+    Medium::close(m_pesSource);
+  m_pesSource=NULL;
+
+  if (m_tsSource!=NULL)
+    Medium:close(m_tsSource);
+  m_tsSource=NULL;
 }
 
 #define TRANSPORT_PACKET_SIZE 188
@@ -46,6 +81,7 @@ MPEG2TstFileServerMediaSubsession::~MPEG2TstFileServerMediaSubsession()
 
 FramedSource* MPEG2TstFileServerMediaSubsession ::createNewStreamSource(unsigned /*clientSessionId*/, unsigned& estBitrate) 
 {
+  Log("MPEG2TstFileServerMediaSubsession:createNewStreamSource");
   estBitrate = 5000; // kbps, estimate
 
   CTsFileDuration duration;
@@ -57,21 +93,23 @@ FramedSource* MPEG2TstFileServerMediaSubsession ::createNewStreamSource(unsigned
 
   // Create the video source:
   unsigned const inputDataChunkSize = TRANSPORT_PACKETS_PER_NETWORK_PACKET*TRANSPORT_PACKET_SIZE;
-  ByteStreamFileSource* fileSource = ByteStreamFileSource::createNew(envir(), fFileName, inputDataChunkSize);
-  if (fileSource == NULL) return NULL;
-  fFileSize = fileSource->fileSize();
+  ByteStreamFileSource* m_fileSource = ByteStreamFileSource::createNew(envir(), fFileName, inputDataChunkSize);
+  if (m_fileSource == NULL) return NULL;
+  fFileSize = m_fileSource->fileSize();
 
   // Create a MPEG demultiplexor that reads from that source.
-  MPEG1or2Demux* baseDemultiplexor = MPEG1or2Demux::createNew(envir(), fileSource);
+  m_baseDemultiplexor = MPEG1or2Demux::createNew(envir(), m_fileSource);
 
   // Create, from this, a source that returns raw PES packets:
-  MPEG1or2DemuxedElementaryStream* pesSource = baseDemultiplexor->newRawPESStream();
+  m_pesSource = m_baseDemultiplexor->newRawPESStream();
   
   // And, from this, a filter that converts to MPEG-2 Transport Stream frames:
-  MPEG2TransportStreamFromPESSource* tsSource  = MPEG2TransportStreamFromPESSource::createNew(envir(), pesSource);
+  m_tsSource  = MPEG2TransportStreamFromPESSource::createNew(envir(), m_pesSource);
 
   // Create a framer for the Transport Stream:
-  return MPEG2TransportStreamFramer::createNew(envir(), tsSource);
+  MPEG2TransportStreamFramer* framer= MPEG2TransportStreamFramer::createNew(envir(), m_tsSource);
+  framer->SetOnDelete(this);
+  return framer;
 }
 
 RTPSink* MPEG2TstFileServerMediaSubsession ::createNewRTPSink(Groupsock* rtpGroupsock, unsigned char /*rtpPayloadTypeIfDynamic*/, FramedSource* /*inputSource*/) 

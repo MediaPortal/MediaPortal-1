@@ -213,6 +213,22 @@ namespace TvLibrary.Streaming
         _streams.Remove(streamName);
       }
     }
+    /// <summary>
+    /// Stops streaming the file
+    /// </summary>
+    /// <param name="fileName">Name of the file.</param>
+    public void RemoveFile(string fileName)
+    {
+      Dictionary<string, RtspStream>.Enumerator enumer = _streams.GetEnumerator();
+      while (enumer.MoveNext())
+      {
+        if (String.Compare(fileName, enumer.Current.Value.FileName, true) == 0)
+        {
+          Remove(enumer.Current.Key);
+          return;
+        }
+      }
+    }
     #endregion
 
     #region streaming thread

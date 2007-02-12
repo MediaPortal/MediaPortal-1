@@ -23,6 +23,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "StreamParser.hh"
 #include <stdlib.h>
 
+extern void Log(const char *fmt, ...) ;
 ////////// MPEGProgramStreamParser definition //////////
 
 // An enum representing the current state of the parser:
@@ -85,7 +86,9 @@ MPEG1or2Demux
     fInputSource(inputSource), fMPEGversion(0),
     fNextAudioStreamNumber(0), fNextVideoStreamNumber(0),
     fReclaimWhenLastESDies(reclaimWhenLastESDies), fNumOutstandingESs(0),
-    fNumPendingReads(0), fHaveUndeliveredData(False) {
+    fNumPendingReads(0), fHaveUndeliveredData(False) 
+{
+  Log("MPEG1or2Demux:ctor");
   fParser = new MPEGProgramStreamParser(this, inputSource);
   for (unsigned i = 0; i < 256; ++i) {
     memset(&fOutput[i],0,sizeof(OutputDescriptor_t));
@@ -96,7 +99,9 @@ MPEG1or2Demux
   } 
 }
 
-MPEG1or2Demux::~MPEG1or2Demux() {
+MPEG1or2Demux::~MPEG1or2Demux() 
+{
+  Log("MPEG1or2Demux:dtor");
   delete fParser;
   for (unsigned i = 0; i < 256; ++i) delete fOutput[i].savedDataHead;
   Medium::close(fInputSource);

@@ -22,11 +22,14 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 ////////// MPEG1or2DemuxedElementaryStream //////////
 
+extern void Log(const char *fmt, ...) ;
 MPEG1or2DemuxedElementaryStream::
 MPEG1or2DemuxedElementaryStream(UsageEnvironment& env, u_int8_t streamIdTag,
 			    MPEG1or2Demux& sourceDemux)
   : FramedSource(env),
-    fOurStreamIdTag(streamIdTag), fOurSourceDemux(sourceDemux), fMPEGversion(0) {
+    fOurStreamIdTag(streamIdTag), fOurSourceDemux(sourceDemux), fMPEGversion(0) 
+{
+  Log("MPEG1or2DemuxedElementaryStream:ctor");
   // Set our MIME type string for known media types:
   if ((streamIdTag&0xE0) == 0xC0) {
     fMIMEtype = "audio/MPEG";
@@ -37,7 +40,9 @@ MPEG1or2DemuxedElementaryStream(UsageEnvironment& env, u_int8_t streamIdTag,
   }
 }
 
-MPEG1or2DemuxedElementaryStream::~MPEG1or2DemuxedElementaryStream() {
+MPEG1or2DemuxedElementaryStream::~MPEG1or2DemuxedElementaryStream() 
+{
+  Log("MPEG1or2DemuxedElementaryStream:dtor");
   fOurSourceDemux.noteElementaryStreamDeletion(this);
 }
 

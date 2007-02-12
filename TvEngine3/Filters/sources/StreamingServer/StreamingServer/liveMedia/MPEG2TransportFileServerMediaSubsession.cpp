@@ -24,6 +24,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "ByteStreamFileSource.hh"
 #include "MPEG2TransportStreamFramer.hh"
 
+extern void Log(const char *fmt, ...) ;
+
 MPEG2TransportFileServerMediaSubsession*
 MPEG2TransportFileServerMediaSubsession::createNew(UsageEnvironment& env,
 						   char const* fileName,
@@ -34,11 +36,15 @@ MPEG2TransportFileServerMediaSubsession::createNew(UsageEnvironment& env,
 MPEG2TransportFileServerMediaSubsession
 ::MPEG2TransportFileServerMediaSubsession(UsageEnvironment& env,
                                       char const* fileName, Boolean reuseFirstSource)
-  : FileServerMediaSubsession(env, fileName, reuseFirstSource) {
+  : FileServerMediaSubsession(env, fileName, reuseFirstSource) 
+{
+  Log("MPEG2TransportFileServerMediaSubsession:ctor");
 }
 
 MPEG2TransportFileServerMediaSubsession
-::~MPEG2TransportFileServerMediaSubsession() {
+::~MPEG2TransportFileServerMediaSubsession() 
+{
+  Log("MPEG2TransportFileServerMediaSubsession:dtor");
 }
 
 #define TRANSPORT_PACKET_SIZE 188

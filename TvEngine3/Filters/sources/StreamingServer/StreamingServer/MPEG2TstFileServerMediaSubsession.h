@@ -7,10 +7,18 @@
 #include "FileServerMediaSubsession.hh"
 #endif
 
-class MPEG2TstFileServerMediaSubsession: public FileServerMediaSubsession{
+#include "SimpleRTPSink.hh"
+#include "ByteStreamFileSource.hh"
+#include "MPEG2TransportStreamFramer.hh"
+#include "MPEG1or2Demux.hh"
+#include "MPEG2TransportStreamFromPESSource.hh"
+#include "TsFileDuration.h"
+
+class MPEG2TstFileServerMediaSubsession: public FileServerMediaSubsession, public IOnDelete
+{
 public:
   static MPEG2TstFileServerMediaSubsession* createNew(UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource);
-
+  virtual void OnDelete();
 protected:
   MPEG2TstFileServerMediaSubsession(UsageEnvironment& env,char const* fileName,Boolean reuseFirstSource);
   // called only by createNew();
@@ -21,6 +29,10 @@ private: // redefined virtual functions
   virtual FramedSource* createNewStreamSource(unsigned clientSessionId,unsigned& estBitrate);
   virtual RTPSink* createNewRTPSink(Groupsock* rtpGroupsock,unsigned char rtpPayloadTypeIfDynamic,FramedSource* inputSource);
   float _duration;
+  ByteStreamFileSource* m_fileSource;
+  MPEG1or2Demux* m_baseDemultiplexor ;
+  MPEG1or2DemuxedElementaryStream* m_pesSource;
+  MPEG2TransportStreamFromPESSource* m_tsSource;
 };
 
 #endif

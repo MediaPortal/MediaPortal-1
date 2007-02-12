@@ -22,6 +22,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "MPEG1or2DemuxedServerMediaSubsession.hh"
 #include "ByteStreamFileSource.hh"
 
+extern void Log(const char *fmt, ...) ;
 MPEG1or2FileServerDemux*
 MPEG1or2FileServerDemux::createNew(UsageEnvironment& env, char const* fileName,
 				   Boolean reuseFirstSource) {
@@ -39,9 +40,11 @@ MPEG1or2FileServerDemux
     fSession0Demux(NULL), fLastCreatedDemux(NULL), fLastClientSessionId(~0) {
   fFileName = strDup(fileName);
   fFileDuration = MPEG1or2ProgramStreamFileDuration(env, fileName, fFileSize);
+  Log("MPEG1or2FileServerDemux:ctor");
 }
 
 MPEG1or2FileServerDemux::~MPEG1or2FileServerDemux() {
+  Log("MPEG1or2FileServerDemux:dtor");
   Medium::close(fSession0Demux);
   delete[] (char*)fFileName;
 }
