@@ -52,22 +52,111 @@
       <Template name="default" start="Complet" end="&lt;/body&gt;">
         <SectionTemplate tags="T">
           <TemplateText>
-	&lt;tr&gt;
-	&lt;td&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;#START&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;#END&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;/td&gt;
-	&lt;/tr&gt;
-	&lt;tr&gt;
-	&lt;td&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;/td&gt;
-	&lt;/tr&gt;</TemplateText>
+            &lt;tr&gt;
+            &lt;td&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;#START&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;#END&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+          </TemplateText>
         </SectionTemplate>
       </Template>
+      <Template name="Details">
+        <SectionTemplate tags="T">
+          <TemplateText>
+            &lt;tbody&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;/tbody&gt;
+          </TemplateText>
+          <MatchList>
+            <Match field="#GENRE" match="Le genre" />
+            <Match field="#ACTORS" match="Acteurs" />
+            <Match field="#SUBTITLE" match="Titre de l'&#233;pisode" />
+            <Match field="#DESCRIPTION" match="Info" />
+            <Match field="#DESCRIPTION" match="Contenu" />
+          </MatchList>
+        </SectionTemplate>
+      </Template>
+      <Sublinks>
+        <Sublink search="detail" template="Details" />
+      </Sublinks>
     </Html>
   </Listing>
 </Grabber>
