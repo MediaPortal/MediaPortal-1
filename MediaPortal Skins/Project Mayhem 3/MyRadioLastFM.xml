@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 	<id>7890</id>
 	<defaultcontrol>10</defaultcontrol>
@@ -8,8 +9,6 @@
 		<type>image</type>
 		<description>background image</description>
 		<id>0</id>
-		<posX>0</posX>
-		<posY>0</posY>
 		<texture>background4.png</texture>
 	</control>
 	<control>
@@ -81,7 +80,6 @@
 		<width>355</width>
 		<height>398</height>
 		<texture>nowplaying_background.png</texture>
-		<keepaspectratio>no</keepaspectratio>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>		
 	</control>
@@ -113,7 +111,7 @@
 	</control>			
 
 	<control>
-		<description>chose friend</description>
+		<description>choose friend</description>
 		<type>button</type>
 		<id>30</id>
         	<posX>60</posX>
@@ -122,7 +120,25 @@
 		<onleft>30</onleft>
 		<onright>50</onright>
 		<onup>20</onup>
-		<ondown>30</ondown>
+		ondown>40</ondown> 
+         <animation effect="fade" time="250">WindowOpen</animation> 
+         <animation effect="fade" time="500">WindowClose</animation> 
+       </control> 
+
+       <control> 
+         	<description>toggle discovery mode</description> 
+        	<type>togglebutton</type> 
+        	<id>40</id> 
+         	<posX>60</posX> 
+         	<posY>246</posY> 
+          	<label>34013</label> 
+          	<onleft>40</onleft> 
+          	<onright>50</onright> 
+          	<onup>30</onup> 
+          	<ondown>40</ondown> 
+          	<visible>false</visible> 
+	<animation effect="fade" time="250">WindowOpen</animation> 
+        <animation effect="fade" time="500">WindowClose</animation> 
 	</control>
 			
 	<control>
@@ -139,7 +155,7 @@
 		<disabledcolor>ff808080</disabledcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>		
-		</control>
+	</control>
 
 	<control>
 		<type>fadelabel</type>
@@ -168,9 +184,9 @@
   		<texture>-</texture>
 		<texture>#Play.Current.ArtistThumb</texture> 
  	  <!--  <texture>F:\\Quellen\\Mediaportal-trunk\\xbmc\\bin\\Debug\\skin\\BlueTwo\\media\\missing_coverart.png</texture>  --> 
-		<visible>yes</visible> 
   		<centered>yes</centered> 
-  		<keepaspectratio>no</keepaspectratio> 
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
   	</control>
 
 	<control>
