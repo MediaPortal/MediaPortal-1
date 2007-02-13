@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
 using System.Diagnostics;
@@ -32,9 +33,12 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Xml;
+
 using Microsoft.Win32;
+
 using TvDatabase;
 using TvLibrary.Log;
+
 using Gentle.Common;
 using Gentle.Framework;
 
@@ -347,7 +351,10 @@ namespace TvEngine
         if (_canceled)
           return;
 
-        ArrayList channelNames = new ArrayList();
+        // get all tv movie channels
+        List<Mapping> channelNames = new List<Mapping>();
+        // get all tv channels
+        IList allChannels = Channel.ListAll();
 
         foreach (Mapping mapping in mappingList)
           if (mapping.Station == station)
@@ -366,7 +373,7 @@ namespace TvEngine
               OnStationsChanged(counter, maximum, display);
             counter++;
             Log.Info("TVMovie: Retrieving data for station [{0}/{1}] - {2}", Convert.ToString(counter), Convert.ToString(maximum), display);
-            _programsCounter += ImportStation(station, channelNames);
+            _programsCounter += ImportStation(station, channelNames, allChannels);
           }
           catch (Exception ex)
           {
@@ -436,7 +443,7 @@ namespace TvEngine
       }
     }
 
-    private int ImportStation(string stationName, ArrayList channelNames)
+    private int ImportStation(string stationName, List<Mapping> channelNames, IList allChannels)
     {
       //Log.Debug("TVMovie: ImportStation({0})", stationName);
 
@@ -496,104 +503,108 @@ namespace TvEngine
         if (_canceled)
           break;
 
+        //Log.Debug("TVMovie: Importing data for station - {0}", stationName);
+
+        string channel = stationName;                                     // idChannel (table channel) ==> Senderkennung match strChannel
+        string classification = guideEntry["FSK"].ToString();             // strClassification ==> FSK
+        string date = guideEntry["Herstellungsjahr"].ToString();          // strDate ==> Herstellungsjahr
+        string description;
+        if (_useShortProgramDesc)
+          description = guideEntry["KurzBeschreibung"].ToString();
+        else
+          description = guideEntry["Beschreibung"].ToString();            // strDescription ==> Beschreibung
+
+        DateTime end = DateTime.MinValue;
+        DateTime start = DateTime.MinValue;
         try
         {
-          //Log.Debug("TVMovie: Importing data for station - {0}", stationName);
-
-          string channel = stationName;                                     // idChannel (table channel) ==> Senderkennung match strChannel
-          string classification = guideEntry["FSK"].ToString();             // strClassification ==> FSK
-          string date = guideEntry["Herstellungsjahr"].ToString();          // strDate ==> Herstellungsjahr
-          string description;
-          if (_useShortProgramDesc)
-            description = guideEntry["KurzBeschreibung"].ToString();
-          else
-            description = guideEntry["Beschreibung"].ToString();            // strDescription ==> Beschreibung
-          DateTime end = DateTime.Parse(guideEntry["Ende"].ToString());     // iEndTime ==> Ende  (15.06.2006 22:45:00 ==> 20060615224500)
-          string episode = guideEntry["Originaltitel"].ToString();          // strEpisodeName ==> Originaltitel
-          //string episodeNum;                                              // strEpisodeNum ==> "unknown"
-          //string episodePart;                                             // strEpisodePart ==> "unknown"
-          string genre = guideEntry["Genre"].ToString();                    // idGenre (table genre) Genre match strGenre
-          int repeat = Convert.ToInt16(guideEntry["Wiederholung"]);         // strRepeat ==> Wiederholung "Repeat" / "unknown"
-          //string seriesNum;                                               // strSeriesNum ==> "unknown"
-          int starRating = Convert.ToInt16(guideEntry["Interessant"]) - 1;  // strStarRating ==> Interessant + "/5"
-          DateTime start = DateTime.Parse(guideEntry["Beginn"].ToString()); // iStartTime ==> Beginn (15.06.2006 22:45:00 ==> 20060615224500)
-          string title = guideEntry["Sendung"].ToString();                  // strTitle ==> Sendung
-
-          if (_showAudioFormat)
-          {
-            bool audioDesc = Convert.ToBoolean(guideEntry["Audiodescription"]);     // strAudioDesc ==> Tonformat "Stereo"
-            bool dolbyDigital = Convert.ToBoolean(guideEntry["DolbyDigital"]);
-            bool dolbySuround = Convert.ToBoolean(guideEntry["DolbySuround"]);
-            bool dolby = Convert.ToBoolean(guideEntry["Dolby"]);
-            bool stereo = Convert.ToBoolean(guideEntry["Stereo"]);
-            bool dualAudio = Convert.ToBoolean(guideEntry["Zweikanalton"]);
-            audioFormat = BuildAudioDescription(audioDesc, dolbyDigital, dolbySuround, dolby, stereo, dualAudio);
-          }
-
-          if (OnProgramsChanged != null)
-            OnProgramsChanged(counter, programsCount + 1, title);
-
-          counter++;
-
-          foreach (Mapping channelName in channelNames)
-          {
-            DateTime newStartDate = start;
-            DateTime newEndDate = end;
-
-            if (!CheckEntry(ref newStartDate, ref newEndDate, channelName.Start, channelName.End))
-            {
-              Channel progChannel = null;
-              IList allChannels = Channel.ListAll();
-              foreach (Channel ch in allChannels)
-              {
-                if (ch.Name == channelName.Channel)
-                {
-                  progChannel = ch;
-                  break;
-                }
-              }
-              Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false);
-
-              if (audioFormat == String.Empty)
-                prog.Description = description.Replace("<br>", "\n");
-              else
-                prog.Description = "Ton: " + audioFormat + "\n" + description.Replace("<br>", "\n");
-
-              //prog.Classification = classification;
-              //prog.Date = date;
-              //prog.Episode = episode;
-              //if (repeat != 0)
-              //  prog.Repeat = "Repeat";
-              //if (starRating != -1)
-              //  prog.StarRating = string.Format("{0}/5", starRating);
-
-              if (_extendDescription)
-              {
-                StringBuilder sb = new StringBuilder();
-
-                if (episode != String.Empty)
-                  sb.Append("Folge: " + episode + "\n");
-                if (starRating != -1)
-                  sb.Append("Wertung: " + string.Format("{0}/5", starRating) + "\n");
-                sb.Append(prog.Description + "\n");
-                if (classification != String.Empty && classification != "0")
-                  sb.Append("FSK: " + classification + "\n");
-                if (date != String.Empty)
-                  sb.Append("Jahr: " + date + "\n");
-
-                prog.Description = sb.ToString();
-              }
-
-              //TVDatabase.SupressEvents = true;   // Bav - testing if this is root of powerscheduler problems
-              prog.Persist();
-              if (_slowImport)
-                Thread.Sleep(50);
-            }
-          }
+          end = DateTime.Parse(guideEntry["Ende"].ToString());     // iEndTime ==> Ende  (15.06.2006 22:45:00 ==> 20060615224500)
+          start = DateTime.Parse(guideEntry["Beginn"].ToString()); // iStartTime ==> Beginn (15.06.2006 22:45:00 ==> 20060615224500)
         }
         catch (Exception ex2)
         {
           Log.Error("TVMovie: Error storing EPG data - {0},{1}", ex2.Message, ex2.StackTrace);
+        }
+        string episode = guideEntry["Originaltitel"].ToString();          // strEpisodeName ==> Originaltitel
+        //string episodeNum;                                              // strEpisodeNum ==> "unknown"
+        //string episodePart;                                             // strEpisodePart ==> "unknown"
+        string genre = guideEntry["Genre"].ToString();                    // idGenre (table genre) Genre match strGenre
+        int repeat = Convert.ToInt16(guideEntry["Wiederholung"]);         // strRepeat ==> Wiederholung "Repeat" / "unknown"
+        //string seriesNum;                                               // strSeriesNum ==> "unknown"
+        int starRating = Convert.ToInt16(guideEntry["Interessant"]) - 1;  // strStarRating ==> Interessant + "/5"
+
+        string title = guideEntry["Sendung"].ToString();                  // strTitle ==> Sendung
+
+        if (_showAudioFormat)
+        {
+          bool audioDesc = Convert.ToBoolean(guideEntry["Audiodescription"]);     // strAudioDesc ==> Tonformat "Stereo"
+          bool dolbyDigital = Convert.ToBoolean(guideEntry["DolbyDigital"]);
+          bool dolbySuround = Convert.ToBoolean(guideEntry["DolbySuround"]);
+          bool dolby = Convert.ToBoolean(guideEntry["Dolby"]);
+          bool stereo = Convert.ToBoolean(guideEntry["Stereo"]);
+          bool dualAudio = Convert.ToBoolean(guideEntry["Zweikanalton"]);
+          audioFormat = BuildAudioDescription(audioDesc, dolbyDigital, dolbySuround, dolby, stereo, dualAudio);
+        }
+
+        if (OnProgramsChanged != null)
+          OnProgramsChanged(counter, programsCount + 1, title);
+
+        counter++;
+
+        foreach (Mapping channelName in channelNames)
+        {
+          DateTime newStartDate = start;
+          DateTime newEndDate = end;
+
+          if (!CheckEntry(ref newStartDate, ref newEndDate, channelName.Start, channelName.End))
+          {
+            Channel progChannel = null;
+            
+            foreach (Channel ch in allChannels)
+            {
+              if (ch.Name == channelName.Channel)
+              {
+                progChannel = ch;
+                break;
+              }
+            }
+            Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false);
+
+            if (audioFormat == String.Empty)
+              prog.Description = description.Replace("<br>", "\n");
+            else
+              prog.Description = "Ton: " + audioFormat + "\n" + description.Replace("<br>", "\n");
+
+            //prog.Classification = classification;
+            //prog.Date = date;
+            //prog.Episode = episode;
+            //if (repeat != 0)
+            //  prog.Repeat = "Repeat";
+            //if (starRating != -1)
+            //  prog.StarRating = string.Format("{0}/5", starRating);
+
+            if (_extendDescription)
+            {
+              StringBuilder sb = new StringBuilder();
+
+              if (episode != String.Empty)
+                sb.Append("Folge: " + episode + "\n");
+              if (starRating != -1)
+                sb.Append("Wertung: " + string.Format("{0}/5", starRating) + "\n");
+              sb.Append(prog.Description + "\n");
+              if (classification != String.Empty && classification != "0")
+                sb.Append("FSK: " + classification + "\n");
+              if (date != String.Empty)
+                sb.Append("Jahr: " + date + "\n");
+
+              prog.Description = sb.ToString();
+            }
+
+            //TVDatabase.SupressEvents = true;   // Bav - testing if this is root of powerscheduler problems
+            prog.Persist();
+            if (_slowImport)
+              Thread.Sleep(50);
+          }
         }
       }
 
