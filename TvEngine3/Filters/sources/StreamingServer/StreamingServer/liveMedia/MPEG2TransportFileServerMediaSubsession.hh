@@ -25,6 +25,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #ifndef _FILE_SERVER_MEDIA_SUBSESSION_HH
 #include "FileServerMediaSubsession.hh"
 #endif
+#include "../TsStreamFileSource.hh"
 
 class MPEG2TransportFileServerMediaSubsession: public FileServerMediaSubsession{
 public:
@@ -37,6 +38,7 @@ protected:
 					  Boolean reuseFirstSource);
       // called only by createNew();
   virtual ~MPEG2TransportFileServerMediaSubsession();
+  virtual float duration() const;
 
 private: // redefined virtual functions
   virtual FramedSource* createNewStreamSource(unsigned clientSessionId,
@@ -44,6 +46,8 @@ private: // redefined virtual functions
   virtual RTPSink* createNewRTPSink(Groupsock* rtpGroupsock,
                                     unsigned char rtpPayloadTypeIfDynamic,
 				    FramedSource* inputSource);
+	virtual void seekStreamSource(FramedSource* inputSource, float seekNPT);
+  char m_fileName[MAX_PATH];
 };
 
 #endif

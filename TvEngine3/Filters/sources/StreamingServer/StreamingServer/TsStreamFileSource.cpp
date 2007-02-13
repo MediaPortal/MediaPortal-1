@@ -99,7 +99,7 @@ TsStreamFileSource::TsStreamFileSource(UsageEnvironment& env, FILE* fid,
     fPlayTimePerFrame(playTimePerFrame), fLastPlayTime(0), fFileSize(0),
     fDeleteFidOnClose(deleteFidOnClose) 
 {
-	Log("ts:ctor");  
+  Log("ts:ctor:%x",this);  
   MultiFileReader* reader = (MultiFileReader*)fFid;
   m_buffer.Clear();
   m_buffer.SetFileReader(reader);
@@ -107,7 +107,7 @@ TsStreamFileSource::TsStreamFileSource(UsageEnvironment& env, FILE* fid,
 
 TsStreamFileSource::~TsStreamFileSource() 
 {
-	Log("ts:dtor");  
+  Log("ts:dtor:%x",this);  
   if (fDeleteFidOnClose && fFid != NULL) 
   {
     MultiFileReader* reader = (MultiFileReader*)fFid;

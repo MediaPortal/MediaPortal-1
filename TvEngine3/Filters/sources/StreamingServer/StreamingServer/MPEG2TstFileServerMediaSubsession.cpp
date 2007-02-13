@@ -30,7 +30,7 @@ MPEG2TstFileServerMediaSubsession* MPEG2TstFileServerMediaSubsession::createNew(
 MPEG2TstFileServerMediaSubsession ::MPEG2TstFileServerMediaSubsession(UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource)
 : FileServerMediaSubsession(env, fileName, reuseFirstSource) 
 {
-  Log("MPEG2TstFileServerMediaSubsession::ctor");
+  Log("MPEG2TstFileServerMediaSubsession::ctor:%x",this);
   m_fileSource=NULL;
   m_baseDemultiplexor=NULL;
   m_pesSource=NULL;
@@ -39,31 +39,31 @@ MPEG2TstFileServerMediaSubsession ::MPEG2TstFileServerMediaSubsession(UsageEnvir
 
 void MPEG2TstFileServerMediaSubsession::OnDelete()
 {
-  Log("MPEG2TstFileServerMediaSubsession::OnDelete");
-  if (m_fileSource!=NULL) 
+  Log("MPEG2TstFileServerMediaSubsession::OnDelete:%x",this);
+/*  if (m_fileSource!=NULL) 
     Medium::close(m_fileSource);
   m_fileSource=NULL;
-
-  if (m_baseDemultiplexor!=NULL)
-    Medium::close(m_baseDemultiplexor);
-  m_baseDemultiplexor=NULL;
-
+*/
+ // if (m_baseDemultiplexor!=NULL)
+ //   Medium::close(m_baseDemultiplexor);
+ // m_baseDemultiplexor=NULL;
+/*
   if (m_pesSource!=NULL)
     Medium::close(m_pesSource);
   m_pesSource=NULL;
 
-  m_tsSource=NULL;
+  m_tsSource=NULL;*/
 }
 
 MPEG2TstFileServerMediaSubsession::~MPEG2TstFileServerMediaSubsession() 
 {
-  Log("MPEG2TstFileServerMediaSubsession::dtor");
+  Log("MPEG2TstFileServerMediaSubsession::dtor:%x",this);
   if (m_fileSource!=NULL) 
     Medium::close(m_fileSource);
   m_fileSource=NULL;
 
   if (m_baseDemultiplexor!=NULL)
-    Medium::close(m_baseDemultiplexor);
+  Medium::close(m_baseDemultiplexor);
   m_baseDemultiplexor=NULL;
 
   if (m_pesSource!=NULL)
@@ -71,7 +71,7 @@ MPEG2TstFileServerMediaSubsession::~MPEG2TstFileServerMediaSubsession()
   m_pesSource=NULL;
 
   if (m_tsSource!=NULL)
-    Medium:close(m_tsSource);
+     Medium:close(m_tsSource);
   m_tsSource=NULL;
 }
 
@@ -81,21 +81,15 @@ MPEG2TstFileServerMediaSubsession::~MPEG2TstFileServerMediaSubsession()
 
 FramedSource* MPEG2TstFileServerMediaSubsession ::createNewStreamSource(unsigned /*clientSessionId*/, unsigned& estBitrate) 
 {
-  Log("MPEG2TstFileServerMediaSubsession:createNewStreamSource");
+  Log("MPEG2TstFileServerMediaSubsession:createNewStreamSource:%x",this);
   estBitrate = 5000; // kbps, estimate
-
-  CTsFileDuration duration;
-  duration.SetFileName((char*)fFileName);
-  duration.OpenFile();
-  duration.UpdateDuration();
-  duration.CloseFile();
-  _duration=duration.Duration();
 
   // Create the video source:
   unsigned const inputDataChunkSize = TRANSPORT_PACKETS_PER_NETWORK_PACKET*TRANSPORT_PACKET_SIZE;
-  ByteStreamFileSource* m_fileSource = ByteStreamFileSource::createNew(envir(), fFileName, inputDataChunkSize);
+  TsStreamFileSource* m_fileSource = TsStreamFileSource::createNew(envir(), fFileName, inputDataChunkSize);
   if (m_fileSource == NULL) return NULL;
   fFileSize = m_fileSource->fileSize();
+  strcpy(m_fileName,fFileName);
 
   // Create a MPEG demultiplexor that reads from that source.
   m_baseDemultiplexor = MPEG1or2Demux::createNew(envir(), m_fileSource);
@@ -119,7 +113,41 @@ RTPSink* MPEG2TstFileServerMediaSubsession ::createNewRTPSink(Groupsock* rtpGrou
 				  1, True, False /*no 'M' bit*/);
 }
 
+void MPEG2TstFileServerMediaSubsession::seekStreamSource(FramedSource* inputSource, float seekNPT)
+{
+  MPEG2TransportStreamFramer* framer=(MPEG2TransportStreamFramer*)inputSource;
+  MPEG2TransportStreamFromPESSource*  tsSource=(MPEG2TransportStreamFromPESSource*)framer->inputSource();
+  
+  MPEG1or2DemuxedElementaryStream* demuxStream= (MPEG1or2DemuxedElementaryStream*)tsSource->InputSource();
+  MPEG1or2Demux& demuxer= demuxStream->sourceDemux();
+  TsStreamFileSource* source=(TsStreamFileSource*)demuxer.inputSource();
+  if (seekNPT==0.0f)
+  {
+    source->seekToByteAbsolute(0LL);
+    return;
+  }
+  float fileDuration=duration();
+  if (seekNPT<0) seekNPT=0;
+  if (seekNPT>(fileDuration-0.5f)) seekNPT=(fileDuration-0.5f);
+  if (seekNPT <0) seekNPT=0;
+  float pos=seekNPT / fileDuration;
+  __int64 fileSize=source->fileSize();
+  pos*=fileSize;
+  pos/=188;
+  pos*=188;
+  __int64 newPos=(__int64) pos;
+
+  source->seekToByteAbsolute(newPos);
+	Log("ts seekStreamSource %f / %f ->%d", seekNPT,fileDuration, (DWORD)newPos);
+  
+}
 float MPEG2TstFileServerMediaSubsession::duration() const
 {
-  return _duration;
+  CTsFileDuration duration;
+  duration.SetFileName((char*)fFileName);
+  duration.OpenFile();
+  duration.UpdateDuration();
+  duration.CloseFile();
+  return duration.Duration();
+
 }

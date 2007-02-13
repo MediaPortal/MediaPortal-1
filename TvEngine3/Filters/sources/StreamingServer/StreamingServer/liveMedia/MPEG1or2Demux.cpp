@@ -88,7 +88,7 @@ MPEG1or2Demux
     fReclaimWhenLastESDies(reclaimWhenLastESDies), fNumOutstandingESs(0),
     fNumPendingReads(0), fHaveUndeliveredData(False) 
 {
-  Log("MPEG1or2Demux:ctor");
+  Log("MPEG1or2Demux:ctor:%x",this);
   fParser = new MPEGProgramStreamParser(this, inputSource);
   for (unsigned i = 0; i < 256; ++i) {
     memset(&fOutput[i],0,sizeof(OutputDescriptor_t));
@@ -101,7 +101,7 @@ MPEG1or2Demux
 
 MPEG1or2Demux::~MPEG1or2Demux() 
 {
-  Log("MPEG1or2Demux:dtor");
+  Log("MPEG1or2Demux:dtor:%x",this);
   delete fParser;
   for (unsigned i = 0; i < 256; ++i) delete fOutput[i].savedDataHead;
   Medium::close(fInputSource);

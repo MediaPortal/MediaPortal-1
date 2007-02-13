@@ -13,6 +13,8 @@
 #include "MPEG1or2Demux.hh"
 #include "MPEG2TransportStreamFromPESSource.hh"
 #include "TsFileDuration.h"
+#include "../TsStreamFileSource.hh"
+
 
 class MPEG2TstFileServerMediaSubsession: public FileServerMediaSubsession, public IOnDelete
 {
@@ -28,11 +30,12 @@ protected:
 private: // redefined virtual functions
   virtual FramedSource* createNewStreamSource(unsigned clientSessionId,unsigned& estBitrate);
   virtual RTPSink* createNewRTPSink(Groupsock* rtpGroupsock,unsigned char rtpPayloadTypeIfDynamic,FramedSource* inputSource);
-  float _duration;
-  ByteStreamFileSource* m_fileSource;
+	virtual void seekStreamSource(FramedSource* inputSource, float seekNPT);
+  TsStreamFileSource* m_fileSource;
   MPEG1or2Demux* m_baseDemultiplexor ;
   MPEG1or2DemuxedElementaryStream* m_pesSource;
   MPEG2TransportStreamFromPESSource* m_tsSource;
+  char m_fileName[MAX_PATH];
 };
 
 #endif

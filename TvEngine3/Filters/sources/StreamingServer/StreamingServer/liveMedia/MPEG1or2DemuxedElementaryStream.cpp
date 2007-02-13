@@ -29,7 +29,7 @@ MPEG1or2DemuxedElementaryStream(UsageEnvironment& env, u_int8_t streamIdTag,
   : FramedSource(env),
     fOurStreamIdTag(streamIdTag), fOurSourceDemux(sourceDemux), fMPEGversion(0) 
 {
-  Log("MPEG1or2DemuxedElementaryStream:ctor");
+  Log("MPEG1or2DemuxedElementaryStream:ctor:%x",this);
   // Set our MIME type string for known media types:
   if ((streamIdTag&0xE0) == 0xC0) {
     fMIMEtype = "audio/MPEG";
@@ -42,7 +42,7 @@ MPEG1or2DemuxedElementaryStream(UsageEnvironment& env, u_int8_t streamIdTag,
 
 MPEG1or2DemuxedElementaryStream::~MPEG1or2DemuxedElementaryStream() 
 {
-  Log("MPEG1or2DemuxedElementaryStream:dtor");
+  Log("MPEG1or2DemuxedElementaryStream:dtor:%x",this);
   fOurSourceDemux.noteElementaryStreamDeletion(this);
 }
 

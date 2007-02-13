@@ -30,24 +30,25 @@ void StreamRemove(char* streamName);
 
 extern netAddressBits SendingInterfaceAddr ;
 extern netAddressBits ReceivingInterfaceAddr ;
-/*
+
 #if _DEBUG
 
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
   StreamSetup("192.168.1.58");
-  StreamAddTimeShiftFile("stream1", "C:\\media\\live1-0.ts.tsbuffer",false);
-
+  //StreamAddTimeShiftFile("test", "C:\\media\\live1-0.ts.tsbuffer",false);
+  StreamAddMpegFile("test1", "C:\\media\\movies\\BBC WORLD_manual_200611271042p4219.mpg");
+  StreamAddMpegFile("test2", "C:\\media\\movies\\PREMIERE 420070201-1146.ts");
   while (true)
   {
     StreamRun();
   }
-  StreamRemove("stream1");
+  StreamRemove("test");
 	return 0;
 }
 
 #endif
-*/
+
 
 //**************************************************************************************
 void StreamGetClientCount(int* clients)

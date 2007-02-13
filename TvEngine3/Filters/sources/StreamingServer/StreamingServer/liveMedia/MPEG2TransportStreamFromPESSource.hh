@@ -33,6 +33,8 @@ public:
   static MPEG2TransportStreamFromPESSource*
   createNew(UsageEnvironment& env, MPEG1or2DemuxedElementaryStream* inputSource);
 
+
+  MPEG1or2DemuxedElementaryStream* InputSource() { return fInputSource;}
 protected:
   MPEG2TransportStreamFromPESSource(UsageEnvironment& env,
 				    MPEG1or2DemuxedElementaryStream* inputSource);

@@ -23,6 +23,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "SimpleRTPSink.hh"
 #include "ByteStreamFileSource.hh"
 #include "MPEG2TransportStreamFramer.hh"
+#include <streams.h>
+#include "../TsFileDuration.h"
 
 extern void Log(const char *fmt, ...) ;
 
@@ -58,11 +60,13 @@ FramedSource* MPEG2TransportFileServerMediaSubsession
   // Create the video source:
   unsigned const inputDataChunkSize
     = TRANSPORT_PACKETS_PER_NETWORK_PACKET*TRANSPORT_PACKET_SIZE;
-  ByteStreamFileSource* fileSource
-    = ByteStreamFileSource::createNew(envir(), fFileName, inputDataChunkSize);
+  //ByteStreamFileSource* fileSource
+  //  = ByteStreamFileSource::createNew(envir(), fFileName, inputDataChunkSize);
+  TsStreamFileSource* fileSource = TsStreamFileSource::createNew(envir(), fFileName, inputDataChunkSize);
   if (fileSource == NULL) return NULL;
   fFileSize = fileSource->fileSize();
 
+  strcpy(m_fileName,fFileName);
   // Create a framer for the Transport Stream:
   return MPEG2TransportStreamFramer::createNew(envir(), fileSource);
 }
@@ -74,4 +78,38 @@ RTPSink* MPEG2TransportFileServerMediaSubsession
   return SimpleRTPSink::createNew(envir(), rtpGroupsock,
 				  33, 90000, "video", "mp2t",
 				  1, True, False /*no 'M' bit*/);
+}
+
+float MPEG2TransportFileServerMediaSubsession::duration() const
+{
+  CTsFileDuration duration;
+  duration.SetFileName((char*)m_fileName);
+  duration.OpenFile();
+  duration.UpdateDuration();
+  duration.CloseFile();
+  return duration.Duration();
+}
+
+void MPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* inputSource, float seekNPT)
+{
+  MPEG2TransportStreamFramer* framer=(MPEG2TransportStreamFramer*)inputSource;
+  TsStreamFileSource* source=(TsStreamFileSource*)framer->inputSource();
+  if (seekNPT==0.0f)
+  {
+    source->seekToByteAbsolute(0LL);
+    return;
+  }
+  float fileDuration=duration();
+  if (seekNPT<0) seekNPT=0;
+  if (seekNPT>(fileDuration-0.5f)) seekNPT=(fileDuration-0.5f);
+  if (seekNPT <0) seekNPT=0;
+  float pos=seekNPT / fileDuration;
+  __int64 fileSize=source->fileSize();
+  pos*=fileSize;
+  pos/=188;
+  pos*=188;
+  __int64 newPos=(__int64) pos;
+
+  source->seekToByteAbsolute(newPos);
+	Log("ts seekStreamSource %f / %f ->%d", seekNPT,fileDuration, (DWORD)newPos);
 }

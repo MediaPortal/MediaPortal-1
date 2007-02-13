@@ -62,7 +62,7 @@ MPEG2TransportStreamFramer
   : FramedFilter(env, inputSource),
     fTSPacketCount(0), fTSPacketDurationEstimate(0.0) 
 {
-  Log("MPEG2TransportStreamFramer:ctor");
+  Log("MPEG2TransportStreamFramer:ctor:%x",this);
   m_pOnDelete=NULL;
   fPIDStatusTable = HashTable::create(ONE_WORD_HASH_KEYS);
 }
@@ -74,7 +74,7 @@ void MPEG2TransportStreamFramer::SetOnDelete(IOnDelete* onDelete)
 
 MPEG2TransportStreamFramer::~MPEG2TransportStreamFramer() 
 {
-  Log("MPEG2TransportStreamFramer:dtor");
+  Log("MPEG2TransportStreamFramer:dtor:%x",this);
   PIDStatus* pidStatus;
   while ((pidStatus = (PIDStatus*)fPIDStatusTable->RemoveNext()) != NULL) {
     delete pidStatus;
