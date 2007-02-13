@@ -408,7 +408,7 @@ namespace MediaPortal.Threading
         inUse = Interlocked.Increment(ref _inUseThreads);
       else
         inUse = Interlocked.Decrement(ref _inUseThreads);
-      LogDebug("ThreadPool.HandleInUseThreadCount() : in use threads: {0} max: {1} increment: {2}", inUse, _startInfo.MaximumThreads, increment);
+      //LogDebug("ThreadPool.HandleInUseThreadCount() : in use threads: {0} max: {1} increment: {2}", inUse, _startInfo.MaximumThreads, increment);
     }
 
     /// <summary>
