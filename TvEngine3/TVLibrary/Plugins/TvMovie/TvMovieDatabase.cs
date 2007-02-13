@@ -327,14 +327,14 @@ namespace TvEngine
         OnStationsChanged(1, maximum, string.Empty);
       Log.Debug("TVMovie: Calculating stations done");
 
-      ArrayList channelList = new ArrayList();
-      foreach (Mapping mapping in mappingList)
-        if (channelList.IndexOf(mapping.Channel) == -1)
-        {
-          channelList.Add(mapping.Channel);
-          Log.Debug("TVMovie: adding channel {0} - ClearPrograms", mapping.Channel);
-          ClearPrograms(mapping.Channel);
-        }
+      //ArrayList channelList = new ArrayList();
+      //foreach (Mapping mapping in mappingList)
+      //  if (channelList.IndexOf(mapping.Channel) == -1)
+      //  {
+      //    channelList.Add(mapping.Channel);
+      //    Log.Debug("TVMovie: adding channel {0} - ClearPrograms", mapping.Channel);
+      //    ClearPrograms(mapping.Channel);
+      //  }
 
       // setting update time of epg import to avoid that the background thread triggers another import
       // if the process lasts longer than the timer's update check interval
@@ -424,8 +424,8 @@ namespace TvEngine
           //        if (Convert.ToInt64(layer.GetSetting("TvMovieLastUpdate", "0").Value) == LastUpdate)
           if (lastUpdated >= (DateTime.Now - restTime))
           {
-            DateTime NewImportTime = lastUpdated + restTime;
-            Log.Debug("TVMovie: Last update was at {0} - waiting at least until {1} for next import", Convert.ToString(lastUpdated), Convert.ToString(NewImportTime));
+            //DateTime NewImportTime = lastUpdated + restTime;
+            //Log.Debug("TVMovie: Last update was at {0} - waiting at least until {1} for next import", Convert.ToString(lastUpdated), Convert.ToString(NewImportTime));
             return false;
           }
           else
@@ -470,6 +470,14 @@ namespace TvEngine
       OleDbDataAdapter databaseAdapter = new OleDbDataAdapter(databaseCommand);
 
       DataSet tvMovieTable = new DataSet();
+
+      foreach (Mapping map in channelNames)
+        if (map.Station == stationName)
+        {
+          ClearPrograms(map.Channel);
+          Log.Debug("TVMovie: Purged old programs for channel {0}", map.Channel);
+          break;
+        }
 
       //Log.Debug("TVMovie: Getting data for station");
 
