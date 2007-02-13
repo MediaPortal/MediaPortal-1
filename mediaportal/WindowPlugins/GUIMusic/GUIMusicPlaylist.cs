@@ -62,11 +62,6 @@ namespace MediaPortal.GUI.Music
       try
       {
         if (x.TimesPlayed == 0)
-          //if (y.TimesPlayed != null && y.TimesPlayed >= 0)
-          //{
-          //  return 1;
-          //}
-          //else
           return 0;
 
         if (y.TimesPlayed == 0)
@@ -115,16 +110,12 @@ namespace MediaPortal.GUI.Music
     int _maxScrobbledSongsPerArtist = 1;
     int _maxScrobbledArtistsForSongs = 4;
     int _preferCountForTracks = 2;
-    int _maxNumberOfPlaylistItems = 50;
     private bool ScrobblerOn = false;
-    private bool _enableScrobbling = false;
-    private bool _enablePlaylistLimit = false;
+    private bool _enableScrobbling = false;    
     private bool _useSimilarRandom = true;
     private bool _rememberStartTrack = true;
     private AudioscrobblerUtils ascrobbler = null;
     private ScrobblerUtilsRequest _lastRequest;
-    //private Thread ScrobbleThread;
-    //private Object ScrobbleLock;
     #endregion
 
     protected ScrobbleMode currentScrobbleMode = ScrobbleMode.Similar;
@@ -132,13 +123,12 @@ namespace MediaPortal.GUI.Music
 
     [SkinControlAttribute(20)]    protected GUIButtonControl btnShuffle = null;
     [SkinControlAttribute(21)]    protected GUIButtonControl btnSave = null;
-    [SkinControlAttribute(22)]    protected GUIButtonControl btnClear = null;
-    //[SkinControlAttribute(23)]    protected GUIButtonControl btnPlay = null;
+    [SkinControlAttribute(22)]    protected GUIButtonControl btnClear = null;    
     [SkinControlAttribute(26)]    protected GUIButtonControl btnNowPlaying = null;
     [SkinControlAttribute(27)]    protected GUIToggleButtonControl btnScrobble = null;
     [SkinControlAttribute(28)]    protected GUIButtonControl btnScrobbleMode = null;
     [SkinControlAttribute(29)]    protected GUIButtonControl btnScrobbleUser = null;
-
+    
 
     public GUIMusicPlayList()
     {
@@ -154,11 +144,9 @@ namespace MediaPortal.GUI.Music
       string currentUID = Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser));
       ScrobblerOn = (mdb.AddScrobbleUserSettings(currentUID, "iScrobbleDefault", -1) == 1) ? true : false;
       _maxScrobbledArtistsForSongs = mdb.AddScrobbleUserSettings(currentUID, "iAddArtists", -1);
-      _maxScrobbledSongsPerArtist = mdb.AddScrobbleUserSettings(currentUID, "iAddTracks", -1);
-      _enablePlaylistLimit = (mdb.AddScrobbleUserSettings(currentUID, "iPlaylistLimit", -1) == 1) ? true : false;
+      _maxScrobbledSongsPerArtist = mdb.AddScrobbleUserSettings(currentUID, "iAddTracks", -1);      
       _preferCountForTracks = mdb.AddScrobbleUserSettings(currentUID, "iPreferCount", -1);
       _rememberStartTrack = (mdb.AddScrobbleUserSettings(currentUID, "iRememberStartArtist", -1) == 1) ? true : false;
-
       _maxScrobbledArtistsForSongs = (_maxScrobbledArtistsForSongs > 0) ? _maxScrobbledArtistsForSongs : 3;
       _maxScrobbledSongsPerArtist = (_maxScrobbledSongsPerArtist > 0) ? _maxScrobbledSongsPerArtist : 1;
       int tmpRMode = mdb.AddScrobbleUserSettings(currentUID, "iOfflineMode", -1);
@@ -613,26 +601,6 @@ namespace MediaPortal.GUI.Music
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
-          if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
-          {
-            if (ScrobblerOn && _enablePlaylistLimit)
-            {
-              PlayList currentPlaylist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-              while (currentPlaylist.Count > _maxNumberOfPlaylistItems)
-              {
-                if (playlistPlayer.CurrentSong > 0)
-                  RemovePlayListItem(0);
-                else
-                  return;
-              }
-            }
-          }
-          break;
-
-        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING:
-          goto case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED;
-
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
           ClearScrobbleStartTrack();
           break;
@@ -647,8 +615,7 @@ namespace MediaPortal.GUI.Music
         // delaying internet lookups for smooth playback start
         case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC:
           if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC && ScrobblerOn == true) // && playlistPlayer.CurrentSong != 0)
-          {
-            //StartScrobbleThread();
+          {            
             DoScrobbleLookups();
           }
           break;
@@ -855,7 +822,6 @@ namespace MediaPortal.GUI.Music
 
     }
 
-
     void RemovePlayListItem(int iItem)
     {
       GUIListItem pItem = facadeView[iItem];
@@ -873,7 +839,6 @@ namespace MediaPortal.GUI.Music
 
     void ShufflePlayList()
     {
-
       ClearFileItems();
       PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
 
@@ -904,7 +869,6 @@ namespace MediaPortal.GUI.Music
       LoadDirectory(m_strDirectory);
       SelectCurrentPlayingSong();
     }
-
 
     void SavePlayList()
     {
@@ -1144,16 +1108,6 @@ namespace MediaPortal.GUI.Music
       UpdateButtonStates();
     }
 
-    //added by rtv
-    //private void StartScrobbleThread()
-    //{
-    //  ScrobbleThread = new Thread(new ThreadStart(ScrobbleLookupThread));
-    //  // allow windows to kill the thread if the main app was closed
-    //  ScrobbleThread.IsBackground = true;
-    //  ScrobbleThread.Priority = ThreadPriority.BelowNormal;
-    //  ScrobbleThread.Start();
-    //}
-
     void CheckScrobbleInstantStart()
     {
       if (ScrobblerOn)
@@ -1236,110 +1190,104 @@ namespace MediaPortal.GUI.Music
     void DoScrobbleLookups()
     {
       PlayList currentPlaylist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-      // ignore list count if setting is disabled
-      _maxNumberOfPlaylistItems = _enablePlaylistLimit ? _maxNumberOfPlaylistItems : Int16.MaxValue;
-      if (currentPlaylist.Count < (_maxNumberOfPlaylistItems + _maxScrobbledArtistsForSongs))
+
+      MusicDatabase dbs = new MusicDatabase();
+      Song current10SekSong = new Song();
+      List<Song> scrobbledArtists = new List<Song>();
+
+      ascrobbler.RemoveRequest(_lastRequest);
+      switch (currentScrobbleMode)
       {
-        MusicDatabase dbs = new MusicDatabase();
-        Song current10SekSong = new Song();
-        List<Song> scrobbledArtists = new List<Song>();
+        case ScrobbleMode.Similar:
+          if (_rememberStartTrack && _scrobbleStartTrack != null)
+            if (_totalScrobbledSongs > REINSERT_AFTER_THIS_MANY_SONGS)
+            {
+              _totalScrobbledSongs = 0;
+              Song tmpArtist = new Song();
+              tmpArtist = _scrobbleStartTrack;
+              scrobbledArtists.Add(tmpArtist);
+              break;
+            }
+          string strFile = String.Empty;
+          if (g_Player.Player.CurrentFile != null && g_Player.Player.CurrentFile != String.Empty && g_Player.IsMusic)
+          {
+            strFile = g_Player.Player.CurrentFile;
 
-        ascrobbler.RemoveRequest(_lastRequest);
-        switch (currentScrobbleMode)
-        {
-          case ScrobbleMode.Similar:
-            if (_rememberStartTrack && _scrobbleStartTrack != null)
-              if (_totalScrobbledSongs > REINSERT_AFTER_THIS_MANY_SONGS)
+            bool songFound = dbs.GetSongByFileName(strFile, ref current10SekSong);
+            if (songFound)
+            {
+              if (_scrobbleStartTrack == null || _scrobbleStartTrack.Artist == String.Empty)
+                _scrobbleStartTrack = current10SekSong.Clone();
+
+              try
               {
-                _totalScrobbledSongs = 0;
-                Song tmpArtist = new Song();
-                tmpArtist = _scrobbleStartTrack;
-                scrobbledArtists.Add(tmpArtist);
+                UpdateSimilarArtists(current10SekSong.Artist);
+                //scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.ToURLArtistString(), _useSimilarRandom);
+                return;
+              }
+              catch (Exception ex)
+              {
+                Log.Error("ScrobbleLookupThread: exception on lookup Similar - {0}", ex.Message);
+              }
+
+            }
+          }
+          break;
+
+        case ScrobbleMode.Neighbours:
+          //lock (ScrobbleLock)
+          //{
+          try
+          {
+            UpdateNeighboursArtists(true);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("ScrobbleLookupThread: exception on lookup Neighbours - {0}", ex.Message);
+          }
+          //}
+          break;
+
+        case ScrobbleMode.Friends:
+          //lock (ScrobbleLock)
+          //{
+          try
+          {
+            UpdateFriendsArtists(true);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("ScrobbleLookupThread: exception on lookup - Friends {0}", ex.Message);
+          }
+          //}
+          break;
+        case ScrobbleMode.Random:
+          try
+          {
+            switch (currentOfflineMode)
+            {
+              case offlineMode.random:
+                UpdateRandomTracks();
                 break;
-              }
-            string strFile = String.Empty;
-            if (g_Player.Player.CurrentFile != null && g_Player.Player.CurrentFile != String.Empty && g_Player.IsMusic)
-            {
-              strFile = g_Player.Player.CurrentFile;
-
-              bool songFound = dbs.GetSongByFileName(strFile, ref current10SekSong);
-              if (songFound)
-              {
-                if (_scrobbleStartTrack == null || _scrobbleStartTrack.Artist == String.Empty)
-                  _scrobbleStartTrack = current10SekSong.Clone();
-
-                try
-                {
-                  UpdateSimilarArtists(current10SekSong.Artist);
-                  //scrobbledArtists = ascrobbler.getSimilarArtists(current10SekSong.ToURLArtistString(), _useSimilarRandom);
-                  return;
-                }
-                catch (Exception ex)
-                {
-                  Log.Error("ScrobbleLookupThread: exception on lookup Similar - {0}", ex.Message);
-                }
-
-              }
+              case offlineMode.timesplayed:
+                UpdateUnheardTracks();
+                break;
+              case offlineMode.favorites:
+                UpdateFavoriteTracks();
+                break;
+              default:
+                UpdateRandomTracks();
+                break;
             }
-            break;
-
-          case ScrobbleMode.Neighbours:
-            //lock (ScrobbleLock)
-            //{
-            try
-            {
-              UpdateNeighboursArtists(true);
-            }
-            catch (Exception ex)
-            {
-              Log.Error("ScrobbleLookupThread: exception on lookup Neighbours - {0}", ex.Message);
-            }
-            //}
-            break;
-
-          case ScrobbleMode.Friends:
-            //lock (ScrobbleLock)
-            //{
-            try
-            {
-              UpdateFriendsArtists(true);
-            }
-            catch (Exception ex)
-            {
-              Log.Error("ScrobbleLookupThread: exception on lookup - Friends {0}", ex.Message);
-            }
-            //}
-            break;
-          case ScrobbleMode.Random:
-            try
-            {
-              switch (currentOfflineMode)
-              {
-                case offlineMode.random:
-                  UpdateRandomTracks();
-                  break;
-                case offlineMode.timesplayed:
-                  UpdateUnheardTracks();
-                  break;
-                case offlineMode.favorites:
-                  UpdateFavoriteTracks();
-                  break;
-                default:
-                  UpdateRandomTracks();
-                  break;
-              }
-            }
-            catch (Exception ex)
-            {
-              Log.Error("ScrobbleLookupThread: exception on lookup - Random {0}", ex.Message);
-            }
-            break;
-        }
-
-        OnScrobbleLookupsCompleted(scrobbledArtists);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("ScrobbleLookupThread: exception on lookup - Random {0}", ex.Message);
+          }
+          break;
       }
-      else
-        Log.Debug("ScrobbleLookupThread: too many items ({0}) in playlist - pausing...", Convert.ToString(currentPlaylist.Count));
+
+      OnScrobbleLookupsCompleted(scrobbledArtists);
     }
 
 
@@ -1552,7 +1500,6 @@ namespace MediaPortal.GUI.Music
       // _maxScrobbledSongsPerArtist are inserted      
       return true;
     }
-
 
     protected override void SetLabels()
     {
