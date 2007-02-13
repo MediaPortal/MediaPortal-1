@@ -6,7 +6,7 @@
 	<control>
 		<description>current temperature label</description> 
 		<type>fadelabel</type> 
-		<id>2/id> 
+		<id>2</id> 
 		<posX>80</posX> 
 		<posY>510</posY> 
 		<width>200</width>
