@@ -1786,7 +1786,7 @@ namespace TvService
             TvCard tvcard = _cards[keyPair.Value.DataBaseCard.IdCard];
             if (tvcard.IsTunedToTransponder(tuningDetail) && (tvcard.SupportsSubChannels || (checkTransponders == false)))
             {
-              if (tvcard.NumberOfChannelsDecrypting < keyPair.Value.DataBaseCard.DecryptLimit)
+              if (tvcard.NumberOfChannelsDecrypting < keyPair.Value.DataBaseCard.DecryptLimit || dbChannel.FreeToAir)
               {
                 //card is in use, but it is tuned to the same transponder.
                 //meaning.. we can use it:-)

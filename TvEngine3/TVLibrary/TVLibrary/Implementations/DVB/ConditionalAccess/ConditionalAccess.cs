@@ -247,6 +247,8 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
+        if (channel.FreeToAir) return true;//no need to descramble this one...
+
         AddSubChannel(subChannel);
         ConditionalAccessContext context = _mapSubChannels[subChannel];
         context.CamType = camType;
