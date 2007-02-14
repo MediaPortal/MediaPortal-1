@@ -1316,13 +1316,21 @@ namespace TvService
         while (enumerator.MoveNext())
         {
           KeyValuePair<int, TvCard> keyPair = enumerator.Current;
-          if (keyPair.Value.IsTimeShifting(ref user))
+          User[] users = keyPair.Value.GetUsers();
+          if (users != null)
           {
-            if (keyPair.Value.CurrentDbChannel(ref user) == channel.IdChannel)
+            for (int i = 0; i < users.Length; ++i)
             {
-              //yes, then map user to that card
-              card = GetVirtualCard(user);
-              return TvResult.Succeeded;
+              User tmpUser = users[i];
+              if (keyPair.Value.IsTimeShifting(ref tmpUser))
+              {
+                if (keyPair.Value.CurrentDbChannel(ref tmpUser) == channel.IdChannel)
+                {
+                  //yes, then map user to that card
+                  card = GetVirtualCard(tmpUser);
+                  return TvResult.Succeeded;
+                }
+              }
             }
           }
         }

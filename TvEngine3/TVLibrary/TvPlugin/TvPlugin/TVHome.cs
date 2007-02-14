@@ -124,6 +124,7 @@ namespace TvPlugin
         {
           if (!TVHome.Card.IsRecording)
           {
+            TVHome.Card.User.Name = new User().Name;
             TVHome.Card.StopTimeShifting();
           }
         }
@@ -200,6 +201,7 @@ namespace TvPlugin
           }
           if (stop)
           {
+            _card.User.Name = new User().Name;
             _card.StopTimeShifting();
           }
           _card = value;
@@ -289,6 +291,7 @@ namespace TvPlugin
       if (currentWindow.IsTv) return;
       if (TVHome.Card.IsTimeShifting == false) return;
       if (TVHome.Card.IsRecording == true) return;
+      TVHome.Card.User.Name = new User().Name;
       TVHome.Card.StopTimeShifting();
     }
 
@@ -579,6 +582,7 @@ namespace TvPlugin
           MediaPortal.GUI.Library.Log.Info("TVHome:turn tv off");
           SaveSettings();
           g_Player.Stop();
+          TVHome.Card.User.Name = new User().Name;
           TVHome.Card.StopTimeShifting();
           return;
         }
@@ -694,7 +698,7 @@ namespace TvPlugin
       {
         btnTvOnOff.Selected = isTimeShifting;
       }
-     
+
       if (g_Player.Playing == false)
       {
         if (btnTeletext.Visible)
@@ -766,7 +770,7 @@ namespace TvPlugin
           VirtualCard tvcard = new VirtualCard(user, RemoteControl.HostName);
           isRecording = tvcard.IsRecording;
           isTimeShifting = tvcard.IsTimeShifting;
-          if ( isTimeShifting)
+          if (isTimeShifting)
           {
             int idChannel = tvcard.IdChannel;
             user = tvcard.User;
@@ -810,7 +814,7 @@ namespace TvPlugin
       dlg.SelectedLabel = selected;
       dlg.DoModal(this.GetID);
       if (dlg.SelectedLabel < 0) return;
-      TVHome.Card = new VirtualCard(_users[dlg.SelectedLabel],RemoteControl.HostName);
+      TVHome.Card = new VirtualCard(_users[dlg.SelectedLabel], RemoteControl.HostName);
       g_Player.Stop();
       StartPlay();
       TVHome.Card.User.Name = new User().Name;
@@ -877,14 +881,7 @@ namespace TvPlugin
       }
       else
       {
-        card.StopRecording();
-        //yes then stop recording
-        Navigator.UpdateCurrentChannel();
-
-        // and re-start viewing.... 
-        MediaPortal.GUI.Library.Log.Info("tv home stoprecording chan:{0}", Navigator.CurrentChannel);
-        ViewChannel(Navigator.Channel);
-        Navigator.UpdateCurrentChannel();
+        server.StopRecordingSchedule(card.RecordingScheduleId);
 
       }
       UpdateStateOfButtons();
