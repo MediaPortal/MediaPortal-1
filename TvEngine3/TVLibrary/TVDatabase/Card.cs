@@ -211,6 +211,14 @@ namespace TvDatabase
       get { return camType; }
       set { isChanged |= camType != value; camType = value; }
     }
+
+    /// <summary>
+    /// Read Only property indicating if a card can record multiple stream from a same transponder 
+    /// </summary>
+    public bool supportSubChannels
+    {
+      get { return this.supportsSubChannels(); }
+    }
     #endregion
 
     #region Storage and Retrieval
@@ -275,6 +283,31 @@ namespace TvDatabase
       {
         if (_channelId == _cmap.IdChannel) return true;
       }
+      return false;
+    }
+
+    /// <summary>
+    /// Checks if a card can view multiple channels from a same transponder
+    /// </summary>
+    /// <param name="_card">Card object</param>
+    /// <param name="_channelId"></param>
+    /// <returns>true/false</returns>
+    public bool supportsSubChannels()
+    {
+      IList allChan = Channel.ListAll();
+      IList refChan = this.ReferringChannelMap();
+      
+      foreach (ChannelMap map in refChan)
+      {
+        foreach (Channel chan in allChan)
+        {
+          IList tuninfos = chan.ReferringTuningDetail();
+          foreach (TuningDetail tuninfo in tuninfos)
+          {
+            if (tuninfo.ChannelType != 0) return true; // then referring card must be Not Analog
+          }
+        }
+      }    
       return false;
     }
 
