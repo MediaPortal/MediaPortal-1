@@ -31,10 +31,11 @@ namespace SetupTv.Sections
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvCards));
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+      this.colEnabled = new System.Windows.Forms.ColumnHeader();
+      this.colPriority = new System.Windows.Forms.ColumnHeader();
+      this.colType = new System.Windows.Forms.ColumnHeader();
+      this.colCAMLimit = new System.Windows.Forms.ColumnHeader();
+      this.colName = new System.Windows.Forms.ColumnHeader();
       this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.placeInHybridCardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,6 +53,7 @@ namespace SetupTv.Sections
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
+      this.buttonEdit = new System.Windows.Forms.Button();
       this.contextMenuStrip2.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -65,10 +67,11 @@ namespace SetupTv.Sections
       this.mpListView1.AllowRowReorder = true;
       this.mpListView1.CheckBoxes = true;
       this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader3,
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader4});
+            this.colEnabled,
+            this.colPriority,
+            this.colType,
+            this.colCAMLimit,
+            this.colName});
       this.mpListView1.ContextMenuStrip = this.contextMenuStrip2;
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.LargeImageList = this.imageList1;
@@ -82,23 +85,27 @@ namespace SetupTv.Sections
       this.mpListView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.mpListView1_ItemChecked);
       this.mpListView1.SelectedIndexChanged += new System.EventHandler(this.mpListView1_SelectedIndexChanged);
       // 
-      // columnHeader3
+      // colEnabled
       // 
-      this.columnHeader3.Text = "Enabled";
-      this.columnHeader3.Width = 110;
+      this.colEnabled.Text = "Enabled";
+      this.colEnabled.Width = 110;
       // 
-      // columnHeader1
+      // colPriority
       // 
-      this.columnHeader1.Text = "Priority";
+      this.colPriority.Text = "Priority";
       // 
-      // columnHeader2
+      // colType
       // 
-      this.columnHeader2.Text = "Type";
+      this.colType.Text = "Type";
       // 
-      // columnHeader4
+      // colCAMLimit
       // 
-      this.columnHeader4.Text = "Name";
-      this.columnHeader4.Width = 200;
+      this.colCAMLimit.Text = "Cam Limit";
+      // 
+      // colName
+      // 
+      this.colName.Text = "Name";
+      this.colName.Width = 200;
       // 
       // contextMenuStrip2
       // 
@@ -161,6 +168,7 @@ namespace SetupTv.Sections
       // tabPage1
       // 
       this.tabPage1.Controls.Add(this.mpListView1);
+      this.tabPage1.Controls.Add(this.buttonEdit);
       this.tabPage1.Controls.Add(this.buttonUp);
       this.tabPage1.Controls.Add(this.buttonDown);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
@@ -233,6 +241,16 @@ namespace SetupTv.Sections
       this.columnHeader8.Text = "Name";
       this.columnHeader8.Width = 200;
       // 
+      // buttonEdit
+      // 
+      this.buttonEdit.Location = new System.Drawing.Point(209, 345);
+      this.buttonEdit.Name = "buttonEdit";
+      this.buttonEdit.Size = new System.Drawing.Size(75, 23);
+      this.buttonEdit.TabIndex = 2;
+      this.buttonEdit.Text = "Edit";
+      this.buttonEdit.UseVisualStyleBackColor = true;
+      this.buttonEdit.Click += new System.EventHandler(this.buttonEdit_Click);
+      // 
       // TvCards
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -252,12 +270,12 @@ namespace SetupTv.Sections
     #endregion
 
     private MediaPortal.UserInterface.Controls.MPListView mpListView1;
-    private System.Windows.Forms.ColumnHeader columnHeader1;
-    private System.Windows.Forms.ColumnHeader columnHeader2;
-    private System.Windows.Forms.ColumnHeader columnHeader4;
+    private System.Windows.Forms.ColumnHeader colPriority;
+    private System.Windows.Forms.ColumnHeader colType;
+    private System.Windows.Forms.ColumnHeader colName;
     private System.Windows.Forms.Button buttonDown;
     private System.Windows.Forms.Button buttonUp;
-    private System.Windows.Forms.ColumnHeader columnHeader3;
+    private System.Windows.Forms.ColumnHeader colEnabled;
     private System.Windows.Forms.ImageList imageList1;
     private System.Windows.Forms.TabControl tabControl1;
     private System.Windows.Forms.TabPage tabPage1;
@@ -273,5 +291,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
     private System.Windows.Forms.ToolStripMenuItem placeInHybridCardToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
+    private System.Windows.Forms.ColumnHeader colCAMLimit;
+    private System.Windows.Forms.Button buttonEdit;
   }
 }

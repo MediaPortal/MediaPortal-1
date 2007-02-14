@@ -122,6 +122,12 @@ namespace TvLibrary.Interfaces
     /// <value>Theinterface for controlling the diseqc motor.</value>
     IDiSEqCMotor DiSEqCMotor { get;}
 
+    /// <summary>
+    /// Gets the number of channels the card is currently decrypting.
+    /// </summary>
+    /// <value>The number of channels decrypting.</value>
+    int NumberOfChannelsDecrypting { get;}
+
     #endregion
 
     #region epg & scanning

@@ -60,6 +60,7 @@ CREATE TABLE `card` (
   `camType` int(11) NOT NULL,
   `timeshiftingFolder` varchar(256) NOT NULL,
   `recordingFormat` int(11) NOT NULL,
+  `decryptLimit` int(11) NOT NULL,
   PRIMARY KEY  (`idCard`),
   KEY `FK_Card_Server` (`idServer`)
 ) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
@@ -393,7 +394,7 @@ CREATE TABLE `version` (
 --
 
 /*!40000 ALTER TABLE `version` DISABLE KEYS */;
-INSERT INTO `version` VALUES  (1,20);
+INSERT INTO `version` VALUES  (1,21);
 /*!40000 ALTER TABLE `version` ENABLE KEYS */;
 #
 

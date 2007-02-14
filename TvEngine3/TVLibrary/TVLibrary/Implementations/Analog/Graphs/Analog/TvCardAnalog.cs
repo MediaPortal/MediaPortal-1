@@ -65,6 +65,18 @@ namespace TvLibrary.Implementations.Analog
     #region properties
 
     /// <summary>
+    /// Gets the number of channels the card is currently decrypting.
+    /// </summary>
+    /// <value>The number of channels decrypting.</value>
+    public int NumberOfChannelsDecrypting 
+    {
+      get
+      {
+        return 0;
+      }
+    }
+
+    /// <summary>
     /// Frees the sub channel.
     /// </summary>
     /// <param name="id">The id.</param>

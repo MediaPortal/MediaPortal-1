@@ -115,7 +115,7 @@ namespace SetupTv.Sections
       {
         User user = new User();
         user.Name = "setuptv";
-        //user.Name = "setuptv" + id.ToString();
+        user.Name = "setuptv" + id.ToString();
         TvResult result = server.StartTimeShifting(ref user, id, out card);
         if (result != TvResult.Succeeded)
         {

@@ -628,6 +628,14 @@ namespace TvControl
     void RemoveUserFromOtherCards(int cardId, User user);
 
     bool SupportsSubChannels(int cardId);
+
+    /// <summary>
+    /// Gets the number of channels decrypting.
+    /// </summary>
+    /// <param name="cardId">The card id.</param>
+    /// <returns></returns>
+    /// <value>The number of channels decrypting.</value>
+    int NumberOfChannelsDecrypting(int cardId);
     #endregion
   }
 }

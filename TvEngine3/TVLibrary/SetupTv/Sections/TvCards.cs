@@ -108,6 +108,10 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       _needRestart = false;
+      UpdateList();
+    }
+    void UpdateList()
+    {
       base.OnSectionActivated();
       mpListView1.Items.Clear();
       Dictionary<string, CardType> cardTypes = new Dictionary<string, CardType>();
@@ -153,6 +157,7 @@ namespace SetupTv.Sections
             item.Text = "No";
           }
           item.SubItems.Add(cardType);
+          item.SubItems.Add(card.DecryptLimit.ToString());
           item.SubItems.Add(card.Name);
           item.Tag = card;
         }
@@ -289,6 +294,19 @@ namespace SetupTv.Sections
       UpdateHybrids();
       RemoteControl.Instance.Restart();
 
+    }
+
+    private void buttonEdit_Click(object sender, EventArgs e)
+    {
+      ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
+      if (indexes.Count == 0) return;
+      ListViewItem item = mpListView1.Items[indexes[0]];
+      FormEditCard dlg = new FormEditCard();
+      dlg.Card =(Card) item.Tag;
+      dlg.ShowDialog();
+      dlg.Card.Persist();
+      _needRestart = true;
+      UpdateList();
     }
   }
 }

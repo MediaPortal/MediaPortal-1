@@ -203,6 +203,12 @@
     <Compile Include="Sections\ComboBoxEx .cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Sections\FormEditCard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sections\FormEditCard.Designer.cs">
+      <DependentUpon>FormEditCard.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\FormEditChannel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -377,6 +383,10 @@
     <EmbeddedResource Include="Sections\Combinations.resx">
       <DependentUpon>Combinations.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\FormEditCard.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FormEditCard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\FormEditChannel.resx">
       <SubType>Designer</SubType>

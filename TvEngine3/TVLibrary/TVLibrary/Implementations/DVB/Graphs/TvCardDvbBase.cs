@@ -1353,6 +1353,19 @@ namespace TvLibrary.Implementations.DVB
     #region properties
 
     /// <summary>
+    /// Gets the number of channels the card is currently decrypting.
+    /// </summary>
+    /// <value>The number of channels decrypting.</value>
+    public int NumberOfChannelsDecrypting
+    {
+      get
+      {
+        if (_conditionalAccess == null) return 0;
+        return _conditionalAccess.NumberOfChannelsDecrypting;
+      }
+    }
+
+    /// <summary>
     /// Gets a value indicating whether card supports subchannels
     /// </summary>
     /// <value><c>true</c> if card supports sub channels; otherwise, <c>false</c>.</value>

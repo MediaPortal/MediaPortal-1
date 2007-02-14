@@ -124,8 +124,22 @@ namespace TvLibrary.Implementations.Hybrid
         _cards[index] = value;
       }
     }
-    #endregion
+    /// <summary>
+    /// Gets the number of channels the card is currently decrypting.
+    /// </summary>
+    /// <value>The number of channels decrypting.</value>
+    public int NumberOfChannelsDecrypting
+    {
+      get
+      {
+        return _cards[_currentCardIndex].NumberOfChannelsDecrypting;
+      }
+    }
 
+    /// <summary>
+    /// Gets or sets the timeout parameters.
+    /// </summary>
+    /// <value>The parameters.</value>
     public ScanParameters Parameters
     {
       get
@@ -137,6 +151,7 @@ namespace TvLibrary.Implementations.Hybrid
         _cards[_currentCardIndex].Parameters = value;
       }
     }
+    #endregion
     #region ITVCard Members
 
     /// <summary>

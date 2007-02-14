@@ -204,6 +204,35 @@ namespace TvLibrary.Implementations.DVB
     {
       return true;
     }
+
+    /// <summary>
+    /// Gets the number of channels the card is currently decrypting.
+    /// </summary>
+    /// <value>The number of channels decrypting.</value>
+    public int NumberOfChannelsDecrypting
+    {
+      get
+      {
+        List<ConditionalAccessContext> filteredChannels = new List<ConditionalAccessContext>();
+        bool succeeded = true;
+        Dictionary<int, ConditionalAccessContext>.Enumerator en = _mapSubChannels.GetEnumerator();
+        while (en.MoveNext())
+        {
+          bool exists = false;
+          ConditionalAccessContext context = en.Current.Value;
+          foreach (ConditionalAccessContext c in filteredChannels)
+          {
+            if (c.Channel.Equals(context.Channel)) exists = true;
+          }
+          if (!exists)
+          {
+            filteredChannels.Add(context);
+          }
+        }
+        return filteredChannels.Count;
+      }
+    }
+
     /// <summary>
     /// Sends the PMT to the CI module
     /// </summary>

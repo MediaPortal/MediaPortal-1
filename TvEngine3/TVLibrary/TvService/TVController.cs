@@ -837,6 +837,16 @@ namespace TvService
     }
 
     /// <summary>
+    /// Gets the number of channels decrypting.
+    /// </summary>
+    /// <param name="cardId">The card id.</param>
+    /// <returns></returns>
+    /// <value>The number of channels decrypting.</value>
+    public int NumberOfChannelsDecrypting(int cardId)
+    {
+      return _cards[cardId].NumberOfChannelsDecrypting;
+    }
+    /// <summary>
     /// Tunes the the specified card to the channel.
     /// </summary>
     /// <param name="cardId">id of the card.</param>
@@ -1776,10 +1786,20 @@ namespace TvService
             TvCard tvcard = _cards[keyPair.Value.DataBaseCard.IdCard];
             if (tvcard.IsTunedToTransponder(tuningDetail) && (tvcard.SupportsSubChannels || (checkTransponders == false)))
             {
-              //card is in use, but it is tuned to the same transponder.
-              //meaning.. we can use it:-)
-              Log.Write("Controller:    card:{0} type:{1} is tuned to same transponder", keyPair.Value.DataBaseCard.IdCard, Type(keyPair.Value.DataBaseCard.IdCard));
-              sameTransponder = true;
+              if (tvcard.NumberOfChannelsDecrypting < keyPair.Value.DataBaseCard.DecryptLimit)
+              {
+                //card is in use, but it is tuned to the same transponder.
+                //meaning.. we can use it:-)
+                Log.Write("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
+                    keyPair.Value.DataBaseCard.IdCard, Type(keyPair.Value.DataBaseCard.IdCard), tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
+                sameTransponder = true;
+              }
+              else
+              {
+                Log.Write("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
+                       keyPair.Value.DataBaseCard.IdCard, Type(keyPair.Value.DataBaseCard.IdCard), tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
+                continue;
+              }
             }
             else
             {

@@ -269,6 +269,31 @@ namespace TvService
         return false;
       }
     }
+
+    /// <summary>
+    /// Returns the number of channels the card is currently decrypting
+    /// </summary>
+    /// <value>The number of channels decrypting.</value>
+    public int NumberOfChannelsDecrypting
+    {
+      get
+      {
+        if (IsLocal == false)
+        {
+          try
+          {
+            RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
+            return RemoteControl.Instance.NumberOfChannelsDecrypting(_dbsCard.IdCard);
+          }
+          catch (Exception)
+          {
+            Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+            return 0;
+          }
+        }
+        return _card.NumberOfChannelsDecrypting;
+      }
+    }
     #endregion
 
     #region methods

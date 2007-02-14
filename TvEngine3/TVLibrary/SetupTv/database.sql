@@ -110,6 +110,7 @@ CREATE TABLE Card(
 	camType int NOT NULL,
 	timeshiftingFolder varchar(256) NOT NULL,
 	recordingFormat int NOT NULL,
+	decryptLimit int NOT NULL,
  CONSTRAINT PK_Cards PRIMARY KEY  
 (
 	idCard ASC
@@ -541,5 +542,5 @@ GO
 GO
 delete from version
 GO
-insert into version(versionNumber) values(20)
+insert into version(versionNumber) values(21)
 GO

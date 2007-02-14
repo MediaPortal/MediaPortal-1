@@ -41,13 +41,15 @@ namespace TvDatabase
     private string timeshiftingFolder;
     [TableColumn("recordingFormat", NotNull = true)]
     private int recordingFormat;
+    [TableColumn("decryptLimit", NotNull = true)]
+    private int decryptLimit;
     #endregion
 
     #region Constructors
     /// <summary> 
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
-    public Card(string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab, string recordingFolder, int idServer, bool enabled, int camType, string timeshiftingFolder, int recordingFormat)
+    public Card(string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab, string recordingFolder, int idServer, bool enabled, int camType, string timeshiftingFolder, int recordingFormat, int decryptLimit)
     {
       isChanged = true;
       this.devicePath = devicePath;
@@ -61,13 +63,14 @@ namespace TvDatabase
       this.camType = camType;
       this.timeshiftingFolder = timeshiftingFolder;
       this.recordingFormat = recordingFormat;
+      this.decryptLimit = decryptLimit;
     }
 
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
     /// construct objects from retrieved rows. 
     /// </summary> 
-    public Card(int idCard, string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab, string recordingFolder, int idServer, bool enabled, int camType, string timeshiftingFolder, int recordingFormat)
+    public Card(int idCard, string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab, string recordingFolder, int idServer, bool enabled, int camType, string timeshiftingFolder, int recordingFormat, int decryptLimit)
     {
       this.idCard = idCard;
       this.devicePath = devicePath;
@@ -81,6 +84,7 @@ namespace TvDatabase
       this.camType = camType;
       this.timeshiftingFolder = timeshiftingFolder;
       this.recordingFormat = recordingFormat;
+      this.decryptLimit = decryptLimit;
     }
     #endregion
 
@@ -99,6 +103,16 @@ namespace TvDatabase
     public int IdCard
     {
       get { return idCard; }
+    }
+
+
+    /// <summary>
+    /// Property relating to database column idCard
+    /// </summary>
+    public int DecryptLimit
+    {
+      get { return decryptLimit; }
+      set { isChanged |= decryptLimit != value; decryptLimit = value; }
     }
 
     /// <summary>
