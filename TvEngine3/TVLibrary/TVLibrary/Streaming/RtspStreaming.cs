@@ -254,5 +254,12 @@ namespace TvLibrary.Streaming
       _running = false;
     }
     #endregion
+
+    #region properties
+    public int ActiveStreams
+    {
+      get { return _streams.Count; }
+    }
+    #endregion
   }
 }

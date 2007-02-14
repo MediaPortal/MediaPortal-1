@@ -627,6 +627,16 @@ namespace TvControl
     /// <param name="user">The user.</param>
     void RemoveUserFromOtherCards(int cardId, User user);
 
+    /// <summary>
+    /// Determines whether or not this is a master controller
+    /// </summary>
+    bool IsMaster { get; }
+
+    /// <summary>
+    /// Determines the number of active streams on the server
+    /// </summary>
+    int ActiveStreams { get; }
+
     bool SupportsSubChannels(int cardId);
 
     /// <summary>

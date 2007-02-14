@@ -1676,6 +1676,14 @@ namespace TvService
       return _cards[cardId].GetUsers();
     }
 
+    /// <summary>
+    /// Indicates if we're the master server or not
+    /// </summary>
+    public bool IsMaster
+    {
+      get { return _isMaster; }
+    }
+
     #endregion
 
     #region streaming
@@ -1686,6 +1694,10 @@ namespace TvService
         if (_streamer == null) return new List<RtspClient>();
         return _streamer.Clients;
       }
+    }
+    public int ActiveStreams
+    {
+      get { return _streamer.ActiveStreams; }
     }
     #endregion
 

@@ -43,13 +43,16 @@ using System.Runtime.Remoting.Channels.Tcp;
 
 using TvLibrary.Log;
 using TvControl;
+using TvEngine.Interfaces;
+using TvLibrary.Interfaces;
 
 namespace TvService
 {
-  public partial class Service1 : ServiceBase
+  public partial class Service1 : ServiceBase, IPowerEventHandler
   {
     #region variables
     TVController _controller;
+    List<PowerEventHandler> _powerEventHandlers;
     #endregion
 
     /// <summary>
@@ -61,6 +64,9 @@ namespace TvService
       applicationPath = System.IO.Path.GetFullPath(applicationPath);
       applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
       System.IO.Directory.SetCurrentDirectory(applicationPath);
+      _powerEventHandlers = new List<PowerEventHandler>();
+      GlobalServiceProvider.Instance.Add<IPowerEventHandler>(this);
+      AddPowerEventHandler(new PowerEventHandler(this.OnPowerEventHandler));
       InitializeComponent();
     }
 
@@ -117,6 +123,34 @@ namespace TvService
     /// When implemented in a derived class, the needs of your application determine what value to return. For example, if a QuerySuspend broadcast status is passed, you could cause your application to reject the query by returning false.
     /// </returns>
     protected override bool OnPowerEvent(PowerBroadcastStatus powerStatus)
+    {
+      bool accept = true;
+      bool result;
+      List<PowerEventHandler> powerEventPreventers = new List<PowerEventHandler>();
+      foreach (PowerEventHandler handler in _powerEventHandlers)
+      {
+        result = handler(powerStatus);
+        if (result == false)
+        {
+          accept = false;
+          powerEventPreventers.Add(handler);
+        }
+      }
+      result = base.OnPowerEvent(powerStatus);
+      if (result == false)
+        accept = false;
+      if (accept)
+        return true;
+      else
+      {
+        if (powerEventPreventers.Count > 0)
+          foreach (PowerEventHandler handler in powerEventPreventers)
+            Log.Debug("PowerStatus:{0} rejected by {1}", powerStatus, handler.Target.ToString());
+        return false;
+      }
+    }
+
+    private bool OnPowerEventHandler(PowerBroadcastStatus powerStatus)
     {
       switch (powerStatus)
       {
@@ -232,5 +266,16 @@ namespace TvService
       Log.WriteFile("Tvservice stopped due to a app domain exception {0}",e.ExceptionObject);
     }
 
+    #region IPowerEventHandler implementation
+    public void AddPowerEventHandler(PowerEventHandler handler)
+    {
+      _powerEventHandlers.Add(handler);
+    }
+    public void RemovePowerEventHandler(PowerEventHandler handler)
+    {
+      _powerEventHandlers.Remove(handler);
+    }
+    #endregion
+    
   }
 }
