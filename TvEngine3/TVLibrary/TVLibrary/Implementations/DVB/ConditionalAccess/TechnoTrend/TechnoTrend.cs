@@ -20,6 +20,7 @@
  */
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 using DirectShowLib;
@@ -102,6 +103,42 @@ namespace TvLibrary.Implementations.DVB
       }
 
       _technoTrendInterface.DescrambleService(ptrPmt, (short)PMTlength, ref succeeded);
+      return succeeded;
+    }
+
+
+    /// <summary>
+    /// Instructs the technotrend card to descramble all programs mentioned in subChannels.
+    /// </summary>
+    /// <param name="subChannels">The sub channels.</param>
+    /// <returns></returns>
+    public bool DescrambleMultiple(Dictionary<int, ConditionalAccessContext> subChannels)
+    {
+      if (_technoTrendInterface == null) return true;
+      List<ConditionalAccessContext> filteredChannels = new List<ConditionalAccessContext>();
+      bool succeeded = true;
+      Dictionary<int, ConditionalAccessContext>.Enumerator en = subChannels.GetEnumerator();
+      while (en.MoveNext())
+      {
+        bool exists = false;
+        ConditionalAccessContext context = en.Current.Value;
+        foreach (ConditionalAccessContext c in filteredChannels)
+        {
+          if (c.Channel.Equals(context.Channel)) exists = true;
+        }
+        if (!exists)
+        {
+          filteredChannels.Add(context);
+        }
+      }
+
+      
+      for (int i = 0; i < filteredChannels.Count; ++i)
+      {
+        ConditionalAccessContext context=filteredChannels[i];
+        Marshal.WriteInt16(ptrPmt,2*i, (short)context.ServiceId);
+      }
+      _technoTrendInterface.DescrambleMultiple(ptrPmt, (short)filteredChannels.Count, ref succeeded);
       return succeeded;
     }
 

@@ -13,6 +13,7 @@ DECLARE_INTERFACE_(ITechnoTrend, IUnknown)
 	STDMETHOD(SetAntennaPower)(THIS_ BOOL onOff)PURE;
 	STDMETHOD(SetDisEqc)(THIS_ int diseqcType, int hiband, int vertical)PURE;
 	STDMETHOD(DescrambleService)(THIS_ BYTE* PMT, int PMTLength,BOOL* succeeded)PURE;
+	STDMETHOD(DescrambleMultiple)(THIS_ WORD* pNrs, int NrOfOfPrograms,BOOL* succeeded)PURE;
 };
 
 class CTechnotrend: public CUnknown, public ITechnoTrend
@@ -28,6 +29,7 @@ public:
 	STDMETHODIMP SetAntennaPower( BOOL onOff);
 	STDMETHODIMP SetDisEqc( int diseqcType, int hiband, int vertical);
 	STDMETHODIMP DescrambleService( BYTE* PMT, int PMTLength,BOOL* succeeded);
+	STDMETHODIMP DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOOL* succeeded);
 
   void OnCaChange(BYTE  nSlot,BYTE  nReplyTag,WORD  wStatus);
   void OnSlotChange(BYTE nSlot,BYTE nStatus,TYP_SLOT_INFO* csInfo);

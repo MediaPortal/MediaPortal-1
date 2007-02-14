@@ -225,10 +225,17 @@ namespace TvLibrary.Implementations.DVB
         context.PMT = PMT;
         context.PMTLength = pmtLength;
         context.AudioPid = audioPid;
+        context.ServiceId = channel.ServiceId;
 
         if (_digitalEveryWhere != null)
         {
           return _digitalEveryWhere.SendPMTToFireDTV(_mapSubChannels);
+        }
+
+        if (_technoTrend != null)
+        {
+          return _technoTrend.DescrambleMultiple(_mapSubChannels);
+          // return _technoTrend.SendPMT(PMT, pmtLength);
         }
 
         if (_twinhan != null)
@@ -247,10 +254,6 @@ namespace TvLibrary.Implementations.DVB
           byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
           _twinhan.SendPMT(camType, (uint)videoPid, (uint)audioPid, caPmt, caPmtLen);
           return true;
-        }
-        if (_technoTrend != null)
-        {
-          return _technoTrend.SendPMT(PMT, pmtLength);
         }
       }
       catch (Exception ex)

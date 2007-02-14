@@ -154,10 +154,30 @@ static void __stdcall OnDisplayMenu(PVOID Context,BYTE  nSlot,WORD  wItems,char*
 
 //**************************************************************************************************
 //* callback from driver 
+/// \param Context      Can be used for a context pointer in the calling
+///                     application. This parameter can be NULL.
+/// \param nSlot        Is the Slot ID.
+/// \param wItems       Number of Items in the List
+/// \param pStringArray Contains all strings of the list.
+/// \param wLength      Length of the string array.
 //**************************************************************************************************
 static void __stdcall OnDisplayList(PVOID Context,BYTE  nSlot,WORD  wItems,char* pStringArray,WORD  wLength)
 {
-  LogDebug("TechnoTrend:OnDisplayList slot:%d", nSlot);
+  LogDebug("TechnoTrend:OnDisplayList slot:%d items:%d len:%d", nSlot, wItems, wLength);
+  char* szBuf = new char[wLength+1];
+  int c=0;
+  for (int i=0; i < wLength;++i)
+  {
+    szBuf[c++] = pStringArray[i];
+    if (pStringArray[i]==0)
+    {
+      szBuf[c++] =0;
+      LogDebug("technotrend  %s",szBuf);
+      c=0;
+    }
+  }
+  delete[] szBuf;
+
 }
 
 //**************************************************************************************************
@@ -475,6 +495,79 @@ STDMETHODIMP CTechnotrend::SetDisEqc(int diseqcType, int hiband, int vertical)
     LogDebug("Technotrend: unable to get proc adress of bdaapiSetDiSEqCMsg");
   }
 	
+  return S_OK;
+}
+
+//**************************************************************************************************
+//* DescrambleMultiple()
+//* Descrambles one or more programs
+//* pNrs           : array containing service ids
+//* NrOfOfPrograms : number of service ids in pNrs
+//* succeeded      : on return specifies if decoding succeeded or not
+//**************************************************************************************************
+STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOOL* succeeded)
+{
+  TYPE_RET_VAL hr;
+  *succeeded=FALSE;
+  BOOL enabled=FALSE;
+  m_ciStatus=-1;
+	LogDebug("TechnoTrend: Get CI Slot State");
+  BDAAPICIGETSLOTSTATUS getSlotState=(BDAAPICIGETSLOTSTATUS)GetProcAddress(m_dll,"_bdaapiCIGetSlotStatus@8");
+  if (getSlotState!=NULL)
+  {
+	  hr=getSlotState(m_hBdaApi,0);
+    if (hr!=RET_SUCCESS)
+    {
+      LogDebug("Technotrend: bdaapiCIGetSlotStatus failed:%d", hr);
+    }
+  }
+  else
+  {
+    LogDebug("Technotrend: unable to get proc adress of bdaapiCIGetSlotStatus");
+  }
+	LogDebug("TechnoTrend: DescrambleMultiple:(%d)",NrOfOfPrograms);
+  for (int i=0; i < NrOfOfPrograms;++i)
+  {
+    LogDebug("TechnoTrend: DescrambleMultiple: serviceId:%d", pNrs[i]);
+  }
+	if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK||m_slotStatus==CI_SLOT_DBG_MSG )
+  {
+    
+    BDAAPICIMULTIDECODE readPSI=(BDAAPICIMULTIDECODE)GetProcAddress(m_dll,"_bdaapiCIMultiDecode@12");
+    if (readPSI!=NULL)
+    {
+      hr = readPSI(m_hBdaApi, pNrs,NrOfOfPrograms);
+      if (hr==RET_SUCCESS)
+      {
+        if (m_ciStatus==1)
+        {
+          *succeeded=TRUE;
+          LogDebug("TechnoTrend: services decoded:%x %d",hr,m_ciStatus);
+      
+        }
+        else
+        {
+          *succeeded=TRUE;
+          LogDebug("TechnoTrend: services decoded:%x %d",hr,m_ciStatus);
+        }
+      }
+      else
+      {
+        LogDebug("TechnoTrend: services not decoded:%x",hr);
+      }    
+    }
+    else
+    {
+      LogDebug("Technotrend: unable to get proc adress of bdaapiCIMultiDecode");
+    }
+  }
+	else if (m_slotStatus==CI_SLOT_UNKNOWN_STATE || m_slotStatus==CI_SLOT_EMPTY)
+	{
+		//no CAM inserted
+      LogDebug("TechnoTrend: no cam detected:%d",m_slotStatus);
+    *succeeded=TRUE;
+	}
+  
   return S_OK;
 }
 //**************************************************************************************************

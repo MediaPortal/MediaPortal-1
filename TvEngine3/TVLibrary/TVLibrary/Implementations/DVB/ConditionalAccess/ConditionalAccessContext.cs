@@ -38,6 +38,7 @@ namespace TvLibrary.Implementations.DVB
     byte[] _PMT;
     int _pmtLength;
     int _audioPid;
+    int _serviceId;
 
     /// <summary>
     /// Gets or sets the type of the cam.
@@ -112,6 +113,21 @@ namespace TvLibrary.Implementations.DVB
       set
       {
         _audioPid = value;
+      }
+    }
+    /// <summary>
+    /// Gets or sets the service id.
+    /// </summary>
+    /// <value>The service id.</value>
+    public int ServiceId
+    {
+      get
+      {
+        return _serviceId;
+      }
+      set
+      {
+        _serviceId = value;
       }
     }
   }
