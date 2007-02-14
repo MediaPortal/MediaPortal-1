@@ -103,6 +103,10 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Adds the sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
     public void AddSubChannel(int id)
     {
       if (!_mapSubChannels.ContainsKey(id))
@@ -110,6 +114,10 @@ namespace TvLibrary.Implementations.DVB
         _mapSubChannels[id] = new ConditionalAccessContext();
       }
     }
+    /// <summary>
+    /// Frees the sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
     public void FreeSubChannel(int id)
     {
       if (_mapSubChannels.ContainsKey(id))
@@ -118,6 +126,23 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether we are allowed to stop the graph
+    /// Some devices like the technotrend cards have a very long start up time
+    /// Stopping/starting graphs would mean using these cards is not very userfriendly
+    /// </summary>
+    /// <value><c>true</c> if allowed to stop graph; otherwise, <c>false</c>.</value>
+    public bool AllowedToStopGraph
+    {
+      get
+      {
+        if (_technoTrend != null)
+        {
+          return false;
+        }
+        return true;
+      }
+    }
     /// <summary>
     /// Gets the interface for controlling the DiSeQC motor.
     /// </summary>

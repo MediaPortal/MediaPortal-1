@@ -52,6 +52,9 @@ namespace TvService
     TVController _controller;
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Service1"/> class.
+    /// </summary>
     public Service1()
     {
       string applicationPath = System.Windows.Forms.Application.ExecutablePath;
@@ -61,6 +64,10 @@ namespace TvService
       InitializeComponent();
     }
 
+    /// <summary>
+    /// When implemented in a derived class, executes when a Start command is sent to the service by the Service Control Manager (SCM) or when the operating system starts (for a service that starts automatically). Specifies actions to take when the service starts.
+    /// </summary>
+    /// <param name="args">Data passed by the start command.</param>
     protected override void OnStart(string[] args)
     {
       Log.WriteFile("TV service started");
@@ -81,6 +88,9 @@ namespace TvService
 
     }
 
+    /// <summary>
+    /// When implemented in a derived class, executes when a Stop command is sent to the service by the Service Control Manager (SCM). Specifies actions to take when a service stops running.
+    /// </summary>
     protected override void OnStop()
     {
       Log.WriteFile("TV service stopping");
@@ -99,6 +109,65 @@ namespace TvService
       Log.WriteFile("TV service stopped");
     }
 
+    /// <summary>
+    /// When implemented in a derived class, executes when the computer's power status has changed. This applies to laptop computers when they go into suspended mode, which is not the same as a system shutdown.
+    /// </summary>
+    /// <param name="powerStatus">A <see cref="T:System.ServiceProcess.PowerBroadcastStatus"></see> that indicates a notification from the system about its power status.</param>
+    /// <returns>
+    /// When implemented in a derived class, the needs of your application determine what value to return. For example, if a QuerySuspend broadcast status is passed, you could cause your application to reject the query by returning false.
+    /// </returns>
+    protected override bool OnPowerEvent(PowerBroadcastStatus powerStatus)
+    {
+      switch (powerStatus)
+      {
+        case PowerBroadcastStatus.BatteryLow:
+          return base.OnPowerEvent(powerStatus);
+
+        case PowerBroadcastStatus.OemEvent:
+          return base.OnPowerEvent(powerStatus);
+
+        case PowerBroadcastStatus.PowerStatusChange:
+          return base.OnPowerEvent(powerStatus);
+
+        case PowerBroadcastStatus.QuerySuspend:
+          if (_controller != null)
+          {
+            if (_controller.CanSuspend)
+            {
+              OnStop();
+              return true;
+            }
+            else
+            {
+              return false;
+            }
+          }
+          return base.OnPowerEvent(powerStatus);
+
+        case PowerBroadcastStatus.QuerySuspendFailed:
+          return base.OnPowerEvent(powerStatus);
+
+        case PowerBroadcastStatus.ResumeAutomatic:
+          OnStart(null);
+          return base.OnPowerEvent(powerStatus);
+
+        case PowerBroadcastStatus.ResumeCritical:
+          OnStart(null);
+          return base.OnPowerEvent(powerStatus);
+
+        case PowerBroadcastStatus.ResumeSuspend:
+          OnStart(null);
+          return base.OnPowerEvent(powerStatus);
+          
+        case PowerBroadcastStatus.Suspend:
+          return base.OnPowerEvent(powerStatus);
+      }
+      return base.OnPowerEvent(powerStatus);
+    }
+
+    /// <summary>
+    /// Starts the remoting interface
+    /// </summary>
     void StartRemoting()
     {
       try
@@ -128,6 +197,9 @@ namespace TvService
       }
     }
 
+    /// <summary>
+    /// Stops the remoting interface
+    /// </summary>
     void StopRemoting()
     {
       Log.WriteFile("TV service StopRemoting");
@@ -150,6 +222,11 @@ namespace TvService
       Log.Write(e.Exception);
     }
 
+    /// <summary>
+    /// Handles the UnhandledException event of the CurrentDomain control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.UnhandledExceptionEventArgs"/> instance containing the event data.</param>
     void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
       Log.WriteFile("Tvservice stopped due to a app domain exception {0}",e.ExceptionObject);

@@ -28,8 +28,12 @@ namespace TvService
     /// </summary>
     private void InitializeComponent()
     {
-      components = new System.ComponentModel.Container();
+      // 
+      // Service1
+      // 
+      this.CanHandlePowerEvent = true;
       this.ServiceName = "TV Server";
+
     }
 
     #endregion

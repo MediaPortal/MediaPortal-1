@@ -368,6 +368,14 @@ namespace TvLibrary.Implementations.DVB
 
       }//for (int i=0; i < nodeTypeCount;++i)
       //hr=Release.ComObject(topology);
+
+      if (_conditionalAccess != null)
+      {
+        if (_conditionalAccess.AllowedToStopGraph==false)
+        {
+          RunGraph(-1);
+        }
+      }
       return;
     }//IBDA_SignalStatistics GetTunerSignalStatistics()
 
@@ -420,17 +428,20 @@ namespace TvLibrary.Implementations.DVB
       FreeAllSubChannels();
       
       if (_graphBuilder == null) return;
-      FilterState state;
-      (_graphBuilder as IMediaControl).GetState(10, out state);
-      if (state == FilterState.Stopped) return;
-      Log.Log.WriteFile("dvb:StopGraph");
-      int hr = 0;
-      //hr = (_graphBuilder as IMediaControl).StopWhenReady();
-      hr = (_graphBuilder as IMediaControl).Stop();
-      if (hr < 0 || hr > 1)
+      if (_conditionalAccess.AllowedToStopGraph)
       {
-        Log.Log.Error("dvb:RunGraph returns:0x{0:X}", hr);
-        throw new TvException("Unable to stop graph");
+        FilterState state;
+        (_graphBuilder as IMediaControl).GetState(10, out state);
+        if (state == FilterState.Stopped) return;
+        Log.Log.WriteFile("dvb:StopGraph");
+        int hr = 0;
+        //hr = (_graphBuilder as IMediaControl).StopWhenReady();
+        hr = (_graphBuilder as IMediaControl).Stop();
+        if (hr < 0 || hr > 1)
+        {
+          Log.Log.Error("dvb:StopGraph returns:0x{0:X}", hr);
+          throw new TvException("Unable to stop graph");
+        }
       }
       _graphState = GraphState.Created;
 

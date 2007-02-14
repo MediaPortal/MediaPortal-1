@@ -1988,5 +1988,36 @@ namespace TvService
     }
     #endregion
 
+    /// <summary>
+    /// Gets a value indicating whether the PC can suspend.
+    /// When users are still timeshifting or recording we dont want windows to suspend the pc
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if the pc can suspend; otherwise, <c>false</c>.
+    /// </value>
+    public bool CanSuspend
+    {
+      get
+      {
+        Dictionary<int, TvCard>.Enumerator enumer = _cards.GetEnumerator();
+        while (enumer.MoveNext())
+        {
+          int cardId = enumer.Current.Key;
+          User[] users = _cards[cardId].GetUsers();
+          if (users != null)
+          {
+            for (int i = 0; i < users.Length; ++i)
+            {
+              if (_cards[cardId].IsRecording(ref users[i]) || _cards[cardId].IsTimeShifting(ref users[i]))
+              {
+                return false;
+              }
+            }
+          }
+        }
+        return true;
+      }
+    }
+
   }
 }
