@@ -644,6 +644,7 @@ namespace TvPlugin
               if (g_Player.Playing)
               {
                 g_Player.SeekAbsolute(0);
+                g_Player.SeekAbsolute(0);
                 GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
                 return;
               }
@@ -661,6 +662,7 @@ namespace TvPlugin
 
               if (g_Player.Playing)
               {
+                g_Player.SeekAbsolute(g_Player.Duration);
                 g_Player.SeekAbsolute(g_Player.Duration);
                 GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
                 return;
