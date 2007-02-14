@@ -184,8 +184,8 @@ namespace TvEngine
       foreach (Schedule schedule in scheduleEveryTimeThisChannelList) scheduleList.Add(schedule);
       // try to assign all schedules to existing cards
 
-      if (cmDebug) Log.Debug("Calling assignSchedulestoCards with {0} schedules", _schedules.Count);
-      List<Schedule>[] assignedList = AssignSchedulesToCards(_schedules);
+      if (cmDebug) Log.Debug("Calling assignSchedulestoCards with {0} schedules", scheduleList.Count);
+      List<Schedule>[] assignedList = AssignSchedulesToCards(scheduleList);
 
       //List<Conflict> _conflicts = new List<Conflict>();
     }
