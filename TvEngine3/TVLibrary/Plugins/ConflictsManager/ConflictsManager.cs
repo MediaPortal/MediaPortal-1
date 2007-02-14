@@ -266,6 +266,7 @@ namespace TvEngine
             {
               if (schedule.IsOverlapping(assignedShedule))
               {
+                if(!(schedule.isSameTransponder(assignedShedule) && card.supportSubChannels) )
                 free = false;
                 //_overlap = true;
                 lastOverlappingSchedule = assignedShedule;
