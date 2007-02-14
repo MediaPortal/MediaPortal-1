@@ -640,8 +640,8 @@ namespace TvDatabase
 
       Start1 = this.StartTime.AddMinutes(-this.preRecordInterval);
       Start2 = schedule.StartTime.AddMinutes(-schedule.preRecordInterval);
-      End1 = this.EndTime.AddMinutes(-this.postRecordInterval);
-      End2 = schedule.EndTime.AddMinutes(-schedule.postRecordInterval);
+      End1 = this.EndTime.AddMinutes(this.postRecordInterval);
+      End2 = schedule.EndTime.AddMinutes(schedule.postRecordInterval);
 
       // sch_1        s------------------------e
       // sch_2    ---------s-----------------------------
