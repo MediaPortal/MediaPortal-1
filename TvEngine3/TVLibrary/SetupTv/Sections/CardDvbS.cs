@@ -751,11 +751,14 @@ namespace SetupTv.Sections
           }
           if (currentDetail == null)
           {
+            channel.SatelliteIndex = context.Satelite.IdSatellite;
             layer.AddTuningDetails(dbChannel, channel);
           }
           else
           {
             //update tuning details...
+            channel.SatelliteIndex = context.Satelite.IdSatellite;
+            currentDetail.SatIndex = context.Satelite.IdSatellite;
             layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
           }
 

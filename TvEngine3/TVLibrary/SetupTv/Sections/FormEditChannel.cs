@@ -19,6 +19,7 @@
  *
  */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -245,6 +246,16 @@ namespace SetupTv.Sections
                             break;
                         }
                         dvbsChannel.DisEqc = (DisEqcType)comboBoxDisEqc.SelectedIndex;
+                        
+                        IList satellites = Satellite.ListAll();
+                        foreach (Satellite sat in satellites)
+                        {
+                          if (sat.SatelliteName == comboBoxSatellite.SelectedItem.ToString())
+                          {
+                            dvbsChannel.SatelliteIndex = sat.IdSatellite;
+                            break;
+                          }
+                        }
                         layer.AddTuningDetails(_channel, dvbsChannel);
                       }
                     }
@@ -303,7 +314,7 @@ namespace SetupTv.Sections
         if (detail.ChannelType == 0)
         {
           detail.ChannelNumber = Int32.Parse(textBoxChannel.Text);
-          detail.CountryId =  comboBoxCountry.SelectedIndex;
+          detail.CountryId = comboBoxCountry.SelectedIndex;
           if (comboBoxInput.SelectedIndex == 1)
             detail.TuningSource = (int)TunerInputType.Cable;
           else
@@ -349,7 +360,7 @@ namespace SetupTv.Sections
           if (comboBoxModulation.SelectedIndex == 1)
             detail.Modulation = (int)ModulationType.Mod8Vsb;
           else
-            detail.Modulation =(int) ModulationType.ModQpsk;
+            detail.Modulation = (int)ModulationType.ModQpsk;
           switch (comboBoxPol.SelectedIndex)
           {
             case 0:
@@ -366,6 +377,15 @@ namespace SetupTv.Sections
               break;
           }
 
+          IList satellites = Satellite.ListAll();
+          foreach (Satellite sat in satellites)
+          {
+            if (sat.SatelliteName == comboBoxSatellite.SelectedItem.ToString())
+            {
+              detail.SatIndex = sat.IdSatellite;
+              break;
+            }
+          }
           detail.Diseqc = comboBoxDisEqc.SelectedIndex;
           detail.Persist();
         }
@@ -401,7 +421,14 @@ namespace SetupTv.Sections
         comboBoxCountry.Items.Add(countries.Countries[i].Name);
       }
 
-
+      comboBoxSatellite.Items.Clear();
+      IList satellites = Satellite.ListAll();
+      foreach (Satellite sat in satellites)
+      {
+        comboBoxSatellite.Items.Add(sat.SatelliteName);
+      }
+      if (comboBoxSatellite.Items.Count > 0)
+        comboBoxSatellite.SelectedIndex = 0;
       comboBoxInput.SelectedIndex = 0;
       comboBoxCountry.SelectedIndex = 0;
       comboBoxDisEqc.SelectedIndex = 0;
@@ -492,9 +519,18 @@ namespace SetupTv.Sections
           }
           if (((ModulationType)detail.Modulation) == ModulationType.Mod8Vsb)
             comboBoxModulation.SelectedIndex = 1;
-          
-          comboBoxInnerFecRate.SelectedIndex = 1+detail.InnerFecRate;
+
+          comboBoxInnerFecRate.SelectedIndex = 1 + detail.InnerFecRate;
           comboBoxDisEqc.SelectedIndex = (int)detail.Diseqc;
+          Satellite sat=Satellite.Retrieve( detail.SatIndex);
+          for (int i = 0; i < comboBoxSatellite.Items.Count; ++i)
+          {
+            if (comboBoxSatellite.Items[i].ToString() == sat.SatelliteName)
+            {
+              comboBoxSatellite.SelectedIndex = i;
+              break;
+            }
+          }
         }
 
         //dvbt tab
@@ -595,5 +631,6 @@ namespace SetupTv.Sections
       freq /= 1000000f;
       return freq.ToString("f2");
     }
+
   }
 }
