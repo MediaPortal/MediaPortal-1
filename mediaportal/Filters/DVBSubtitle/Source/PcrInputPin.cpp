@@ -169,4 +169,6 @@ void CPcrInputPin::OnTsPacket( byte* tsPacket )
     k=tsPacket[9]; k<<=1LL;pcrBaseHigh+=k;
     k=((tsPacket[10]>>7)&0x1); pcrBaseHigh +=k;
     m_currentPTS = pcrBaseHigh;
+
+    m_pFilter->SetPcr( m_currentPTS );
 }

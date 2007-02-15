@@ -122,6 +122,8 @@ public:
 
 	void Reset();
 
+  void SetPcr( ULONGLONG pcr );
+
 private:
   CSubtitleInputPin*  m_pSubtitleInputPin;
   CSubtitleOutputPin* m_pSubtitleOutputPin;
@@ -135,7 +137,7 @@ private:
   CCritSec            m_Lock;				      // Main renderer critical section
   CCritSec            m_ReceiveLock;		  // Sublock for received samples
 
-  ULONGLONG           m_firstPTS;
+  LONGLONG            m_firstPTS;
 
   int                 (CALLBACK *m_pSubtitleObserver) (SUBTITLE* sub); 
   int                 (CALLBACK *m_pTimestampResetObserver) ();
