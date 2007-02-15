@@ -551,6 +551,14 @@ namespace SetupTv.Sections
       dlg.Channel = channel;
       dlg.ShowDialog(this);
       channel.Persist();
+      foreach (TuningDetail detail in channel.ReferringTuningDetail())
+      {
+        if (detail.Name != channel.Name)
+        {
+          detail.Name = channel.Name;
+          detail.Persist();
+        }
+      }
       OnSectionActivated();
     }
 

@@ -95,33 +95,33 @@ namespace SetupTv.Sections
             this.removeEntireGroupToolStripMenuItem,
             this.editChannelToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(186, 92);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(187, 92);
       // 
       // addToFavoritesToolStripMenuItem
       // 
       this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
-      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
       this.addToFavoritesToolStripMenuItem.Text = "Remove from Group";
       this.addToFavoritesToolStripMenuItem.Click += new System.EventHandler(this.addToFavoritesToolStripMenuItem_Click);
       // 
       // deleteThisChannelToolStripMenuItem
       // 
       this.deleteThisChannelToolStripMenuItem.Name = "deleteThisChannelToolStripMenuItem";
-      this.deleteThisChannelToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+      this.deleteThisChannelToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
       this.deleteThisChannelToolStripMenuItem.Text = "Delete this channel";
       this.deleteThisChannelToolStripMenuItem.Click += new System.EventHandler(this.deleteThisChannelToolStripMenuItem_Click);
       // 
       // removeEntireGroupToolStripMenuItem
       // 
       this.removeEntireGroupToolStripMenuItem.Name = "removeEntireGroupToolStripMenuItem";
-      this.removeEntireGroupToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+      this.removeEntireGroupToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
       this.removeEntireGroupToolStripMenuItem.Text = "Remove entire group";
       this.removeEntireGroupToolStripMenuItem.Click += new System.EventHandler(this.removeEntireGroupToolStripMenuItem_Click);
       // 
       // editChannelToolStripMenuItem
       // 
       this.editChannelToolStripMenuItem.Name = "editChannelToolStripMenuItem";
-      this.editChannelToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+      this.editChannelToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
       this.editChannelToolStripMenuItem.Text = "Edit channel";
       this.editChannelToolStripMenuItem.Click += new System.EventHandler(this.editChannelToolStripMenuItem_Click);
       // 
@@ -139,7 +139,7 @@ namespace SetupTv.Sections
       this.buttonDown.Location = new System.Drawing.Point(12, 343);
       this.buttonDown.Name = "buttonDown";
       this.buttonDown.Size = new System.Drawing.Size(44, 23);
-      this.buttonDown.TabIndex = 6;
+      this.buttonDown.TabIndex = 2;
       this.buttonDown.Text = "Down";
       this.buttonDown.UseVisualStyleBackColor = true;
       this.buttonDown.Click += new System.EventHandler(this.buttonDown_Click);
@@ -149,7 +149,7 @@ namespace SetupTv.Sections
       this.buttonUtp.Location = new System.Drawing.Point(12, 319);
       this.buttonUtp.Name = "buttonUtp";
       this.buttonUtp.Size = new System.Drawing.Size(44, 23);
-      this.buttonUtp.TabIndex = 5;
+      this.buttonUtp.TabIndex = 1;
       this.buttonUtp.Text = "Up";
       this.buttonUtp.UseVisualStyleBackColor = true;
       this.buttonUtp.Click += new System.EventHandler(this.buttonUtp_Click);
@@ -159,7 +159,7 @@ namespace SetupTv.Sections
       this.mpButtonDel.Location = new System.Drawing.Point(62, 319);
       this.mpButtonDel.Name = "mpButtonDel";
       this.mpButtonDel.Size = new System.Drawing.Size(116, 23);
-      this.mpButtonDel.TabIndex = 7;
+      this.mpButtonDel.TabIndex = 3;
       this.mpButtonDel.Text = "Remove from group";
       this.mpButtonDel.UseVisualStyleBackColor = true;
       this.mpButtonDel.Click += new System.EventHandler(this.mpButtonDel_Click);

@@ -68,7 +68,7 @@ namespace SetupTv.Sections
       this.textBoxDecryptLimit.Location = new System.Drawing.Point(141, 85);
       this.textBoxDecryptLimit.Name = "textBoxDecryptLimit";
       this.textBoxDecryptLimit.Size = new System.Drawing.Size(44, 20);
-      this.textBoxDecryptLimit.TabIndex = 3;
+      this.textBoxDecryptLimit.TabIndex = 0;
       this.textBoxDecryptLimit.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
       // 
       // label4
@@ -85,7 +85,7 @@ namespace SetupTv.Sections
       this.buttonSave.Location = new System.Drawing.Point(271, 131);
       this.buttonSave.Name = "buttonSave";
       this.buttonSave.Size = new System.Drawing.Size(75, 23);
-      this.buttonSave.TabIndex = 5;
+      this.buttonSave.TabIndex = 1;
       this.buttonSave.Text = "Save";
       this.buttonSave.UseVisualStyleBackColor = true;
       this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);

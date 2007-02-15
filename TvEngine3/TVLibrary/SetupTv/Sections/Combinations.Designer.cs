@@ -58,12 +58,12 @@ namespace SetupTv.Sections
       this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addToFavoritesToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(159, 26);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(164, 26);
       // 
       // addToFavoritesToolStripMenuItem
       // 
       this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
-      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
       this.addToFavoritesToolStripMenuItem.Text = "Add to favorites";
       // 
       // openFileDialog1
@@ -113,7 +113,7 @@ namespace SetupTv.Sections
       this.btnCombine.Location = new System.Drawing.Point(372, 345);
       this.btnCombine.Name = "btnCombine";
       this.btnCombine.Size = new System.Drawing.Size(75, 23);
-      this.btnCombine.TabIndex = 14;
+      this.btnCombine.TabIndex = 3;
       this.btnCombine.Text = "Combine";
       this.btnCombine.UseVisualStyleBackColor = true;
       this.btnCombine.Click += new System.EventHandler(this.btnCombine_Click);
@@ -139,7 +139,7 @@ namespace SetupTv.Sections
       this.mpListViewMapped.Name = "mpListViewMapped";
       this.mpListViewMapped.Size = new System.Drawing.Size(204, 274);
       this.mpListViewMapped.SmallImageList = this.imageList1;
-      this.mpListViewMapped.TabIndex = 12;
+      this.mpListViewMapped.TabIndex = 2;
       this.mpListViewMapped.UseCompatibleStateImageBehavior = false;
       this.mpListViewMapped.View = System.Windows.Forms.View.Details;
       this.mpListViewMapped.SelectedIndexChanged += new System.EventHandler(this.mpListViewMapped_SelectedIndexChanged);
@@ -183,7 +183,7 @@ namespace SetupTv.Sections
       this.mpListViewChannels.Name = "mpListViewChannels";
       this.mpListViewChannels.Size = new System.Drawing.Size(193, 274);
       this.mpListViewChannels.SmallImageList = this.imageList1;
-      this.mpListViewChannels.TabIndex = 10;
+      this.mpListViewChannels.TabIndex = 1;
       this.mpListViewChannels.UseCompatibleStateImageBehavior = false;
       this.mpListViewChannels.View = System.Windows.Forms.View.Details;
       this.mpListViewChannels.SelectedIndexChanged += new System.EventHandler(this.mpListViewChannels_SelectedIndexChanged);
@@ -200,7 +200,7 @@ namespace SetupTv.Sections
       this.mpComboBoxCard.Location = new System.Drawing.Point(89, 9);
       this.mpComboBoxCard.Name = "mpComboBoxCard";
       this.mpComboBoxCard.Size = new System.Drawing.Size(249, 21);
-      this.mpComboBoxCard.TabIndex = 8;
+      this.mpComboBoxCard.TabIndex = 0;
       this.mpComboBoxCard.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxCard_SelectedIndexChanged);
       // 
       // mpLabel1

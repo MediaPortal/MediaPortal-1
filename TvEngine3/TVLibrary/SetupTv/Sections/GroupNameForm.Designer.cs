@@ -47,7 +47,7 @@ namespace SetupTv.Sections
       this.mpTextBox1.Location = new System.Drawing.Point(26, 48);
       this.mpTextBox1.Name = "mpTextBox1";
       this.mpTextBox1.Size = new System.Drawing.Size(238, 20);
-      this.mpTextBox1.TabIndex = 1;
+      this.mpTextBox1.TabIndex = 0;
       this.mpTextBox1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.mpTextBox1_KeyUp);
       // 
       // mpButton1
@@ -55,7 +55,7 @@ namespace SetupTv.Sections
       this.mpButton1.Location = new System.Drawing.Point(189, 92);
       this.mpButton1.Name = "mpButton1";
       this.mpButton1.Size = new System.Drawing.Size(75, 23);
-      this.mpButton1.TabIndex = 2;
+      this.mpButton1.TabIndex = 1;
       this.mpButton1.Text = "Save";
       this.mpButton1.UseVisualStyleBackColor = true;
       this.mpButton1.Click += new System.EventHandler(this.mpButton1_Click);

@@ -145,7 +145,7 @@ namespace SetupTv.Sections
       this.mpButtonScanTv.Location = new System.Drawing.Point(302, 359);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(131, 23);
-      this.mpButtonScanTv.TabIndex = 50;
+      this.mpButtonScanTv.TabIndex = 1;
       this.mpButtonScanTv.Text = "Scan for channels";
       this.mpButtonScanTv.UseVisualStyleBackColor = true;
       this.mpButtonScanTv.Click += new System.EventHandler(this.mpButtonScanTv_Click);
@@ -157,7 +157,7 @@ namespace SetupTv.Sections
       this.mpDisEqc1.Location = new System.Drawing.Point(70, 29);
       this.mpDisEqc1.Name = "mpDisEqc1";
       this.mpDisEqc1.Size = new System.Drawing.Size(80, 21);
-      this.mpDisEqc1.TabIndex = 62;
+      this.mpDisEqc1.TabIndex = 1;
       // 
       // mpCheckBox1
       // 
@@ -177,7 +177,7 @@ namespace SetupTv.Sections
       this.mpLNB1.Location = new System.Drawing.Point(6, 30);
       this.mpLNB1.Name = "mpLNB1";
       this.mpLNB1.Size = new System.Drawing.Size(58, 17);
-      this.mpLNB1.TabIndex = 64;
+      this.mpLNB1.TabIndex = 0;
       this.mpLNB1.Text = "LNB#1";
       this.mpLNB1.UseVisualStyleBackColor = true;
       this.mpLNB1.CheckedChanged += new System.EventHandler(this.mpLNB1_CheckedChanged);
@@ -189,7 +189,7 @@ namespace SetupTv.Sections
       this.mpTransponder1.Location = new System.Drawing.Point(242, 29);
       this.mpTransponder1.Name = "mpTransponder1";
       this.mpTransponder1.Size = new System.Drawing.Size(185, 21);
-      this.mpTransponder1.TabIndex = 65;
+      this.mpTransponder1.TabIndex = 3;
       this.mpTransponder1.SelectedIndexChanged += new System.EventHandler(this.mpTransponder1_SelectedIndexChanged);
       // 
       // groupBox1
@@ -226,7 +226,7 @@ namespace SetupTv.Sections
       this.buttonUpdate.Location = new System.Drawing.Point(296, 137);
       this.buttonUpdate.Name = "buttonUpdate";
       this.buttonUpdate.Size = new System.Drawing.Size(131, 23);
-      this.buttonUpdate.TabIndex = 81;
+      this.buttonUpdate.TabIndex = 16;
       this.buttonUpdate.Text = "Update satellite list";
       this.buttonUpdate.UseVisualStyleBackColor = true;
       this.buttonUpdate.Click += new System.EventHandler(this.buttonUpdate_Click);
@@ -243,7 +243,7 @@ namespace SetupTv.Sections
       this.mpBand4.Location = new System.Drawing.Point(156, 110);
       this.mpBand4.Name = "mpBand4";
       this.mpBand4.Size = new System.Drawing.Size(80, 21);
-      this.mpBand4.TabIndex = 80;
+      this.mpBand4.TabIndex = 14;
       // 
       // mpBand3
       // 
@@ -257,7 +257,7 @@ namespace SetupTv.Sections
       this.mpBand3.Location = new System.Drawing.Point(156, 83);
       this.mpBand3.Name = "mpBand3";
       this.mpBand3.Size = new System.Drawing.Size(80, 21);
-      this.mpBand3.TabIndex = 79;
+      this.mpBand3.TabIndex = 10;
       this.mpBand3.SelectedIndexChanged += new System.EventHandler(this.mpComboBox1_SelectedIndexChanged_1);
       // 
       // mpBand2
@@ -272,7 +272,7 @@ namespace SetupTv.Sections
       this.mpBand2.Location = new System.Drawing.Point(156, 56);
       this.mpBand2.Name = "mpBand2";
       this.mpBand2.Size = new System.Drawing.Size(80, 21);
-      this.mpBand2.TabIndex = 78;
+      this.mpBand2.TabIndex = 6;
       this.mpBand2.SelectedIndexChanged += new System.EventHandler(this.mpComboBox1_SelectedIndexChanged);
       // 
       // mpBand1
@@ -287,7 +287,7 @@ namespace SetupTv.Sections
       this.mpBand1.Location = new System.Drawing.Point(156, 29);
       this.mpBand1.Name = "mpBand1";
       this.mpBand1.Size = new System.Drawing.Size(80, 21);
-      this.mpBand1.TabIndex = 77;
+      this.mpBand1.TabIndex = 2;
       this.mpBand1.SelectedIndexChanged += new System.EventHandler(this.mpBand1_SelectedIndexChanged);
       // 
       // mpLabel4
@@ -306,7 +306,7 @@ namespace SetupTv.Sections
       this.mpLNB4.Location = new System.Drawing.Point(6, 111);
       this.mpLNB4.Name = "mpLNB4";
       this.mpLNB4.Size = new System.Drawing.Size(58, 17);
-      this.mpLNB4.TabIndex = 74;
+      this.mpLNB4.TabIndex = 12;
       this.mpLNB4.Text = "LNB#4";
       this.mpLNB4.UseVisualStyleBackColor = true;
       this.mpLNB4.CheckedChanged += new System.EventHandler(this.mpLNB4_CheckedChanged);
@@ -318,7 +318,7 @@ namespace SetupTv.Sections
       this.mpTransponder4.Location = new System.Drawing.Point(242, 110);
       this.mpTransponder4.Name = "mpTransponder4";
       this.mpTransponder4.Size = new System.Drawing.Size(185, 21);
-      this.mpTransponder4.TabIndex = 75;
+      this.mpTransponder4.TabIndex = 15;
       this.mpTransponder4.SelectedIndexChanged += new System.EventHandler(this.mpTransponder4_SelectedIndexChanged);
       // 
       // mpDisEqc4
@@ -328,7 +328,7 @@ namespace SetupTv.Sections
       this.mpDisEqc4.Location = new System.Drawing.Point(70, 110);
       this.mpDisEqc4.Name = "mpDisEqc4";
       this.mpDisEqc4.Size = new System.Drawing.Size(80, 21);
-      this.mpDisEqc4.TabIndex = 73;
+      this.mpDisEqc4.TabIndex = 13;
       // 
       // mpLNB3
       // 
@@ -337,7 +337,7 @@ namespace SetupTv.Sections
       this.mpLNB3.Location = new System.Drawing.Point(6, 84);
       this.mpLNB3.Name = "mpLNB3";
       this.mpLNB3.Size = new System.Drawing.Size(58, 17);
-      this.mpLNB3.TabIndex = 71;
+      this.mpLNB3.TabIndex = 8;
       this.mpLNB3.Text = "LNB#3";
       this.mpLNB3.UseVisualStyleBackColor = true;
       this.mpLNB3.CheckedChanged += new System.EventHandler(this.mpLNB3_CheckedChanged);
@@ -349,7 +349,7 @@ namespace SetupTv.Sections
       this.mpTransponder3.Location = new System.Drawing.Point(242, 83);
       this.mpTransponder3.Name = "mpTransponder3";
       this.mpTransponder3.Size = new System.Drawing.Size(185, 21);
-      this.mpTransponder3.TabIndex = 72;
+      this.mpTransponder3.TabIndex = 11;
       this.mpTransponder3.SelectedIndexChanged += new System.EventHandler(this.mpTransponder3_SelectedIndexChanged);
       // 
       // mpDisEqc3
@@ -359,7 +359,7 @@ namespace SetupTv.Sections
       this.mpDisEqc3.Location = new System.Drawing.Point(70, 83);
       this.mpDisEqc3.Name = "mpDisEqc3";
       this.mpDisEqc3.Size = new System.Drawing.Size(80, 21);
-      this.mpDisEqc3.TabIndex = 70;
+      this.mpDisEqc3.TabIndex = 9;
       // 
       // mpLNB2
       // 
@@ -368,7 +368,7 @@ namespace SetupTv.Sections
       this.mpLNB2.Location = new System.Drawing.Point(6, 57);
       this.mpLNB2.Name = "mpLNB2";
       this.mpLNB2.Size = new System.Drawing.Size(58, 17);
-      this.mpLNB2.TabIndex = 68;
+      this.mpLNB2.TabIndex = 4;
       this.mpLNB2.Text = "LNB#2";
       this.mpLNB2.UseVisualStyleBackColor = true;
       this.mpLNB2.CheckedChanged += new System.EventHandler(this.mpLNB2_CheckedChanged);
@@ -380,7 +380,7 @@ namespace SetupTv.Sections
       this.mpTransponder2.Location = new System.Drawing.Point(242, 56);
       this.mpTransponder2.Name = "mpTransponder2";
       this.mpTransponder2.Size = new System.Drawing.Size(185, 21);
-      this.mpTransponder2.TabIndex = 69;
+      this.mpTransponder2.TabIndex = 7;
       this.mpTransponder2.SelectedIndexChanged += new System.EventHandler(this.mpTransponder2_SelectedIndexChanged);
       // 
       // mpDisEqc2
@@ -390,7 +390,7 @@ namespace SetupTv.Sections
       this.mpDisEqc2.Location = new System.Drawing.Point(70, 56);
       this.mpDisEqc2.Name = "mpDisEqc2";
       this.mpDisEqc2.Size = new System.Drawing.Size(80, 21);
-      this.mpDisEqc2.TabIndex = 67;
+      this.mpDisEqc2.TabIndex = 5;
       // 
       // mpLabel2
       // 
@@ -432,7 +432,7 @@ namespace SetupTv.Sections
       this.checkBoxCreateGroups.Location = new System.Drawing.Point(18, 363);
       this.checkBoxCreateGroups.Name = "checkBoxCreateGroups";
       this.checkBoxCreateGroups.Size = new System.Drawing.Size(175, 17);
-      this.checkBoxCreateGroups.TabIndex = 68;
+      this.checkBoxCreateGroups.TabIndex = 0;
       this.checkBoxCreateGroups.Text = "Create groups for each provider";
       this.checkBoxCreateGroups.UseVisualStyleBackColor = true;
       // 
@@ -523,7 +523,7 @@ namespace SetupTv.Sections
       this.labelCurrentPosition.Location = new System.Drawing.Point(100, 111);
       this.labelCurrentPosition.Name = "labelCurrentPosition";
       this.labelCurrentPosition.Size = new System.Drawing.Size(83, 13);
-      this.labelCurrentPosition.TabIndex = 49;
+      this.labelCurrentPosition.TabIndex = 5;
       this.labelCurrentPosition.Text = "Current position:";
       // 
       // label12
@@ -540,7 +540,7 @@ namespace SetupTv.Sections
       this.buttonReset.Location = new System.Drawing.Point(160, 257);
       this.buttonReset.Name = "buttonReset";
       this.buttonReset.Size = new System.Drawing.Size(66, 23);
-      this.buttonReset.TabIndex = 47;
+      this.buttonReset.TabIndex = 13;
       this.buttonReset.Text = "Reset";
       this.buttonReset.UseVisualStyleBackColor = true;
       this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
@@ -551,7 +551,7 @@ namespace SetupTv.Sections
       this.checkBox1.Location = new System.Drawing.Point(11, 6);
       this.checkBox1.Name = "checkBox1";
       this.checkBox1.Size = new System.Drawing.Size(134, 17);
-      this.checkBox1.TabIndex = 46;
+      this.checkBox1.TabIndex = 0;
       this.checkBox1.Text = "DiSEqC Motor enabled";
       this.checkBox1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
       this.checkBox1.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -574,7 +574,7 @@ namespace SetupTv.Sections
       this.comboBoxStepSize.Location = new System.Drawing.Point(100, 81);
       this.comboBoxStepSize.Name = "comboBoxStepSize";
       this.comboBoxStepSize.Size = new System.Drawing.Size(92, 21);
-      this.comboBoxStepSize.TabIndex = 44;
+      this.comboBoxStepSize.TabIndex = 4;
       this.comboBoxStepSize.SelectedIndexChanged += new System.EventHandler(this.comboBoxStepSize_SelectedIndexChanged);
       // 
       // buttonUp
@@ -582,7 +582,7 @@ namespace SetupTv.Sections
       this.buttonUp.Location = new System.Drawing.Point(195, 154);
       this.buttonUp.Name = "buttonUp";
       this.buttonUp.Size = new System.Drawing.Size(66, 23);
-      this.buttonUp.TabIndex = 43;
+      this.buttonUp.TabIndex = 8;
       this.buttonUp.Text = "Move Up";
       this.buttonUp.UseVisualStyleBackColor = true;
       this.buttonUp.Click += new System.EventHandler(this.buttonUp_Click);
@@ -592,7 +592,7 @@ namespace SetupTv.Sections
       this.buttonDown.Location = new System.Drawing.Point(195, 212);
       this.buttonDown.Name = "buttonDown";
       this.buttonDown.Size = new System.Drawing.Size(66, 23);
-      this.buttonDown.TabIndex = 42;
+      this.buttonDown.TabIndex = 10;
       this.buttonDown.Text = "Move Down";
       this.buttonDown.UseVisualStyleBackColor = true;
       this.buttonDown.Click += new System.EventHandler(this.buttonDown_Click);
@@ -602,7 +602,7 @@ namespace SetupTv.Sections
       this.buttonGotoStart.Location = new System.Drawing.Point(232, 257);
       this.buttonGotoStart.Name = "buttonGotoStart";
       this.buttonGotoStart.Size = new System.Drawing.Size(66, 23);
-      this.buttonGotoStart.TabIndex = 41;
+      this.buttonGotoStart.TabIndex = 14;
       this.buttonGotoStart.Text = "Goto start";
       this.buttonGotoStart.UseVisualStyleBackColor = true;
       this.buttonGotoStart.Click += new System.EventHandler(this.buttonGotoStart_Click);
@@ -612,7 +612,7 @@ namespace SetupTv.Sections
       this.buttonStop.Location = new System.Drawing.Point(195, 183);
       this.buttonStop.Name = "buttonStop";
       this.buttonStop.Size = new System.Drawing.Size(66, 23);
-      this.buttonStop.TabIndex = 40;
+      this.buttonStop.TabIndex = 9;
       this.buttonStop.Text = "STOP";
       this.buttonStop.UseVisualStyleBackColor = true;
       this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
@@ -656,7 +656,7 @@ namespace SetupTv.Sections
       this.comboBox1.Location = new System.Drawing.Point(100, 54);
       this.comboBox1.Name = "comboBox1";
       this.comboBox1.Size = new System.Drawing.Size(233, 21);
-      this.comboBox1.TabIndex = 35;
+      this.comboBox1.TabIndex = 3;
       this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
       // 
       // label4
@@ -717,7 +717,7 @@ namespace SetupTv.Sections
       this.buttonGoto.Location = new System.Drawing.Point(352, 29);
       this.buttonGoto.Name = "buttonGoto";
       this.buttonGoto.Size = new System.Drawing.Size(88, 23);
-      this.buttonGoto.TabIndex = 7;
+      this.buttonGoto.TabIndex = 2;
       this.buttonGoto.Text = "Goto";
       this.buttonGoto.UseVisualStyleBackColor = true;
       this.buttonGoto.Click += new System.EventHandler(this.button1_Click);
@@ -727,7 +727,7 @@ namespace SetupTv.Sections
       this.buttonStore.Location = new System.Drawing.Point(352, 257);
       this.buttonStore.Name = "buttonStore";
       this.buttonStore.Size = new System.Drawing.Size(88, 23);
-      this.buttonStore.TabIndex = 6;
+      this.buttonStore.TabIndex = 15;
       this.buttonStore.Text = "Store position";
       this.buttonStore.UseVisualStyleBackColor = true;
       this.buttonStore.Click += new System.EventHandler(this.buttonStore_Click);
@@ -748,7 +748,7 @@ namespace SetupTv.Sections
       this.comboBoxSat.Location = new System.Drawing.Point(100, 29);
       this.comboBoxSat.Name = "comboBoxSat";
       this.comboBoxSat.Size = new System.Drawing.Size(233, 21);
-      this.comboBoxSat.TabIndex = 4;
+      this.comboBoxSat.TabIndex = 1;
       this.comboBoxSat.SelectedIndexChanged += new System.EventHandler(this.comboBoxSat_SelectedIndexChanged);
       // 
       // buttonSetEastLimit
@@ -756,7 +756,7 @@ namespace SetupTv.Sections
       this.buttonSetEastLimit.Location = new System.Drawing.Point(352, 183);
       this.buttonSetEastLimit.Name = "buttonSetEastLimit";
       this.buttonSetEastLimit.Size = new System.Drawing.Size(88, 23);
-      this.buttonSetEastLimit.TabIndex = 3;
+      this.buttonSetEastLimit.TabIndex = 12;
       this.buttonSetEastLimit.Text = "| Set East Limit";
       this.buttonSetEastLimit.UseVisualStyleBackColor = true;
       this.buttonSetEastLimit.Click += new System.EventHandler(this.buttonSetEastLimit_Click);
@@ -766,7 +766,7 @@ namespace SetupTv.Sections
       this.buttonSetWestLimit.Location = new System.Drawing.Point(14, 183);
       this.buttonSetWestLimit.Name = "buttonSetWestLimit";
       this.buttonSetWestLimit.Size = new System.Drawing.Size(88, 23);
-      this.buttonSetWestLimit.TabIndex = 2;
+      this.buttonSetWestLimit.TabIndex = 6;
       this.buttonSetWestLimit.Text = "Set West Limit |";
       this.buttonSetWestLimit.UseVisualStyleBackColor = true;
       this.buttonSetWestLimit.Click += new System.EventHandler(this.buttonSetWestLimit_Click);
@@ -776,7 +776,7 @@ namespace SetupTv.Sections
       this.buttonMoveEast.Location = new System.Drawing.Point(267, 183);
       this.buttonMoveEast.Name = "buttonMoveEast";
       this.buttonMoveEast.Size = new System.Drawing.Size(66, 23);
-      this.buttonMoveEast.TabIndex = 1;
+      this.buttonMoveEast.TabIndex = 11;
       this.buttonMoveEast.Text = "Move East >>";
       this.buttonMoveEast.UseVisualStyleBackColor = true;
       this.buttonMoveEast.Click += new System.EventHandler(this.buttonMoveEast_Click);
@@ -786,7 +786,7 @@ namespace SetupTv.Sections
       this.buttonMoveWest.Location = new System.Drawing.Point(123, 183);
       this.buttonMoveWest.Name = "buttonMoveWest";
       this.buttonMoveWest.Size = new System.Drawing.Size(66, 23);
-      this.buttonMoveWest.TabIndex = 0;
+      this.buttonMoveWest.TabIndex = 7;
       this.buttonMoveWest.Text = "<< Move West";
       this.buttonMoveWest.UseVisualStyleBackColor = true;
       this.buttonMoveWest.Click += new System.EventHandler(this.buttonMoveWest_Click);

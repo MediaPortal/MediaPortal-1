@@ -55,7 +55,7 @@ namespace SetupTv.Sections
       this.mpButtonUnmap.Location = new System.Drawing.Point(226, 143);
       this.mpButtonUnmap.Name = "mpButtonUnmap";
       this.mpButtonUnmap.Size = new System.Drawing.Size(27, 23);
-      this.mpButtonUnmap.TabIndex = 15;
+      this.mpButtonUnmap.TabIndex = 4;
       this.mpButtonUnmap.Text = "<<";
       this.mpButtonUnmap.UseVisualStyleBackColor = true;
       this.mpButtonUnmap.Click += new System.EventHandler(this.mpButtonUnmap_Click_1);
@@ -65,7 +65,7 @@ namespace SetupTv.Sections
       this.mpButtonMap.Location = new System.Drawing.Point(226, 114);
       this.mpButtonMap.Name = "mpButtonMap";
       this.mpButtonMap.Size = new System.Drawing.Size(27, 23);
-      this.mpButtonMap.TabIndex = 14;
+      this.mpButtonMap.TabIndex = 3;
       this.mpButtonMap.Text = ">>";
       this.mpButtonMap.UseVisualStyleBackColor = true;
       this.mpButtonMap.Click += new System.EventHandler(this.mpButtonMap_Click_1);
@@ -90,7 +90,7 @@ namespace SetupTv.Sections
       this.mpListViewMapped.Name = "mpListViewMapped";
       this.mpListViewMapped.Size = new System.Drawing.Size(193, 297);
       this.mpListViewMapped.SmallImageList = this.imageList1;
-      this.mpListViewMapped.TabIndex = 12;
+      this.mpListViewMapped.TabIndex = 2;
       this.mpListViewMapped.UseCompatibleStateImageBehavior = false;
       this.mpListViewMapped.View = System.Windows.Forms.View.Details;
       // 
@@ -128,7 +128,7 @@ namespace SetupTv.Sections
       this.mpListViewChannels.Name = "mpListViewChannels";
       this.mpListViewChannels.Size = new System.Drawing.Size(193, 297);
       this.mpListViewChannels.SmallImageList = this.imageList1;
-      this.mpListViewChannels.TabIndex = 10;
+      this.mpListViewChannels.TabIndex = 1;
       this.mpListViewChannels.UseCompatibleStateImageBehavior = false;
       this.mpListViewChannels.View = System.Windows.Forms.View.Details;
       this.mpListViewChannels.SelectedIndexChanged += new System.EventHandler(this.mpListViewChannels_SelectedIndexChanged);
@@ -149,7 +149,7 @@ namespace SetupTv.Sections
       this.mpComboBoxCard.Location = new System.Drawing.Point(90, 17);
       this.mpComboBoxCard.Name = "mpComboBoxCard";
       this.mpComboBoxCard.Size = new System.Drawing.Size(249, 21);
-      this.mpComboBoxCard.TabIndex = 8;
+      this.mpComboBoxCard.TabIndex = 0;
       this.mpComboBoxCard.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxCard_SelectedIndexChanged_1);
       // 
       // pictureBox1

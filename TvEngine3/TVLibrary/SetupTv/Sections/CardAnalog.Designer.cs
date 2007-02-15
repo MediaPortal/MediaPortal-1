@@ -63,7 +63,7 @@ namespace SetupTv.Sections
       this.mpComboBoxCountry.Location = new System.Drawing.Point(74, 12);
       this.mpComboBoxCountry.Name = "mpComboBoxCountry";
       this.mpComboBoxCountry.Size = new System.Drawing.Size(175, 21);
-      this.mpComboBoxCountry.TabIndex = 1;
+      this.mpComboBoxCountry.TabIndex = 0;
       // 
       // mpLabel1
       // 
@@ -90,14 +90,14 @@ namespace SetupTv.Sections
       this.mpComboBoxSource.Location = new System.Drawing.Point(303, 12);
       this.mpComboBoxSource.Name = "mpComboBoxSource";
       this.mpComboBoxSource.Size = new System.Drawing.Size(121, 21);
-      this.mpComboBoxSource.TabIndex = 4;
+      this.mpComboBoxSource.TabIndex = 1;
       // 
       // mpButtonScanTv
       // 
       this.mpButtonScanTv.Location = new System.Drawing.Point(320, 319);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(131, 23);
-      this.mpButtonScanTv.TabIndex = 5;
+      this.mpButtonScanTv.TabIndex = 4;
       this.mpButtonScanTv.Text = "Scan for Tv Channels";
       this.mpButtonScanTv.UseVisualStyleBackColor = true;
       this.mpButtonScanTv.Click += new System.EventHandler(this.mpButtonScan_Click);
@@ -107,7 +107,7 @@ namespace SetupTv.Sections
       this.mpButtonScanRadio.Location = new System.Drawing.Point(319, 348);
       this.mpButtonScanRadio.Name = "mpButtonScanRadio";
       this.mpButtonScanRadio.Size = new System.Drawing.Size(132, 23);
-      this.mpButtonScanRadio.TabIndex = 6;
+      this.mpButtonScanRadio.TabIndex = 5;
       this.mpButtonScanRadio.Text = "Scan for Radio channels";
       this.mpButtonScanRadio.UseVisualStyleBackColor = true;
       this.mpButtonScanRadio.Click += new System.EventHandler(this.mpButtonScanRadio_Click);
@@ -197,14 +197,14 @@ namespace SetupTv.Sections
       this.mpComboBoxSensitivity.Location = new System.Drawing.Point(303, 43);
       this.mpComboBoxSensitivity.Name = "mpComboBoxSensitivity";
       this.mpComboBoxSensitivity.Size = new System.Drawing.Size(121, 21);
-      this.mpComboBoxSensitivity.TabIndex = 15;
+      this.mpComboBoxSensitivity.TabIndex = 2;
       // 
       // mpButton1
       // 
       this.mpButton1.Location = new System.Drawing.Point(148, 319);
       this.mpButton1.Name = "mpButton1";
       this.mpButton1.Size = new System.Drawing.Size(148, 23);
-      this.mpButton1.TabIndex = 16;
+      this.mpButton1.TabIndex = 3;
       this.mpButton1.Text = "Add SVHS/VHS channels";
       this.mpButton1.UseVisualStyleBackColor = true;
       this.mpButton1.Click += new System.EventHandler(this.mpButton1_Click);

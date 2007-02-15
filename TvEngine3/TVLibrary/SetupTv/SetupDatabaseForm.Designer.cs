@@ -38,8 +38,8 @@ namespace SetupTv
       this.mpButtonTest = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.radioButton1 = new System.Windows.Forms.RadioButton();
       this.radioButton2 = new System.Windows.Forms.RadioButton();
+      this.radioButton1 = new System.Windows.Forms.RadioButton();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -57,7 +57,7 @@ namespace SetupTv
       this.mpTextBoxServer.Location = new System.Drawing.Point(77, 80);
       this.mpTextBoxServer.Name = "mpTextBoxServer";
       this.mpTextBoxServer.Size = new System.Drawing.Size(174, 20);
-      this.mpTextBoxServer.TabIndex = 1;
+      this.mpTextBoxServer.TabIndex = 2;
       this.mpTextBoxServer.Text = "localhost\\SQLEXPRESS";
       // 
       // mpLabel2
@@ -84,7 +84,7 @@ namespace SetupTv
       this.mpTextBoxUserId.Location = new System.Drawing.Point(77, 116);
       this.mpTextBoxUserId.Name = "mpTextBoxUserId";
       this.mpTextBoxUserId.Size = new System.Drawing.Size(100, 20);
-      this.mpTextBoxUserId.TabIndex = 4;
+      this.mpTextBoxUserId.TabIndex = 3;
       this.mpTextBoxUserId.Text = "sa";
       // 
       // mpTextBoxPassword
@@ -92,14 +92,14 @@ namespace SetupTv
       this.mpTextBoxPassword.Location = new System.Drawing.Point(77, 143);
       this.mpTextBoxPassword.Name = "mpTextBoxPassword";
       this.mpTextBoxPassword.Size = new System.Drawing.Size(100, 20);
-      this.mpTextBoxPassword.TabIndex = 5;
+      this.mpTextBoxPassword.TabIndex = 4;
       // 
       // mpButtonSave
       // 
       this.mpButtonSave.Location = new System.Drawing.Point(208, 219);
       this.mpButtonSave.Name = "mpButtonSave";
       this.mpButtonSave.Size = new System.Drawing.Size(75, 23);
-      this.mpButtonSave.TabIndex = 6;
+      this.mpButtonSave.TabIndex = 1;
       this.mpButtonSave.Text = "Save";
       this.mpButtonSave.UseVisualStyleBackColor = true;
       this.mpButtonSave.Click += new System.EventHandler(this.mpButtonSave_Click);
@@ -109,7 +109,7 @@ namespace SetupTv
       this.mpButtonTest.Location = new System.Drawing.Point(127, 219);
       this.mpButtonTest.Name = "mpButtonTest";
       this.mpButtonTest.Size = new System.Drawing.Size(75, 23);
-      this.mpButtonTest.TabIndex = 7;
+      this.mpButtonTest.TabIndex = 0;
       this.mpButtonTest.Text = "Test";
       this.mpButtonTest.UseVisualStyleBackColor = true;
       this.mpButtonTest.Click += new System.EventHandler(this.mpButtonTest_Click);
@@ -141,29 +141,29 @@ namespace SetupTv
       this.groupBox1.Text = "Database Server settings";
       this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
       // 
-      // radioButton1
-      // 
-      this.radioButton1.AutoSize = true;
-      this.radioButton1.Location = new System.Drawing.Point(23, 22);
-      this.radioButton1.Name = "radioButton1";
-      this.radioButton1.Size = new System.Drawing.Size(153, 17);
-      this.radioButton1.TabIndex = 10;
-      this.radioButton1.TabStop = true;
-      this.radioButton1.Text = "Microsoft SQL Server 2005";
-      this.radioButton1.UseVisualStyleBackColor = true;
-      this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
-      // 
       // radioButton2
       // 
       this.radioButton2.AutoSize = true;
       this.radioButton2.Location = new System.Drawing.Point(23, 45);
       this.radioButton2.Name = "radioButton2";
       this.radioButton2.Size = new System.Drawing.Size(72, 17);
-      this.radioButton2.TabIndex = 11;
+      this.radioButton2.TabIndex = 1;
       this.radioButton2.TabStop = true;
       this.radioButton2.Text = "My SQL 5";
       this.radioButton2.UseVisualStyleBackColor = true;
       this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
+      // 
+      // radioButton1
+      // 
+      this.radioButton1.AutoSize = true;
+      this.radioButton1.Location = new System.Drawing.Point(23, 22);
+      this.radioButton1.Name = "radioButton1";
+      this.radioButton1.Size = new System.Drawing.Size(153, 17);
+      this.radioButton1.TabIndex = 0;
+      this.radioButton1.TabStop = true;
+      this.radioButton1.Text = "Microsoft SQL Server 2005";
+      this.radioButton1.UseVisualStyleBackColor = true;
+      this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
       // 
       // SetupDatabaseForm
       // 

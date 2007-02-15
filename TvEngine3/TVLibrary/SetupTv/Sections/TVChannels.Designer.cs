@@ -94,7 +94,6 @@ namespace SetupTv.Sections
       // hdrhekje
       // 
       this.hdrhekje.Text = "#";
-      this.hdrhekje.Width = 41;
       // 
       // hdrName
       // 

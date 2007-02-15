@@ -575,6 +575,15 @@ namespace SetupTv.Sections
     }
     long GetFrequency(string text)
     {
+      float tmp = 123.25f;
+      if (tmp.ToString("f2").IndexOf(',') > 0)
+      {
+        text = text.Replace('.', ',');
+      }
+      else
+      {
+        text = text.Replace(',', '.');
+      }
       float freq = float.Parse(text);
       freq *= 1000000f;
       return (long)freq;

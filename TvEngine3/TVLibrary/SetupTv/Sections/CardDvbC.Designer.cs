@@ -107,7 +107,7 @@ namespace SetupTv.Sections
       this.mpButtonScanTv.Location = new System.Drawing.Point(319, 354);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(131, 23);
-      this.mpButtonScanTv.TabIndex = 35;
+      this.mpButtonScanTv.TabIndex = 2;
       this.mpButtonScanTv.Text = "Scan for channels";
       this.mpButtonScanTv.UseVisualStyleBackColor = true;
       this.mpButtonScanTv.Click += new System.EventHandler(this.mpButtonScanTv_Click_1);
@@ -136,7 +136,7 @@ namespace SetupTv.Sections
       this.mpComboBoxCountry.Location = new System.Drawing.Point(80, 39);
       this.mpComboBoxCountry.Name = "mpComboBoxCountry";
       this.mpComboBoxCountry.Size = new System.Drawing.Size(175, 21);
-      this.mpComboBoxCountry.TabIndex = 33;
+      this.mpComboBoxCountry.TabIndex = 0;
       this.mpComboBoxCountry.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxCountry_SelectedIndexChanged);
       // 
       // listViewStatus
@@ -177,7 +177,7 @@ namespace SetupTv.Sections
       this.mpComboBox1Cam.Location = new System.Drawing.Point(319, 39);
       this.mpComboBox1Cam.Name = "mpComboBox1Cam";
       this.mpComboBox1Cam.Size = new System.Drawing.Size(103, 21);
-      this.mpComboBox1Cam.TabIndex = 69;
+      this.mpComboBox1Cam.TabIndex = 1;
       this.mpComboBox1Cam.SelectedIndexChanged += new System.EventHandler(this.mpComboBox1_SelectedIndexChanged);
       // 
       // checkBoxCreateGroups
