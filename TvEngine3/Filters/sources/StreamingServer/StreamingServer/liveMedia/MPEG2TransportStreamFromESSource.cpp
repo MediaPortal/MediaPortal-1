@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
 // A filter for converting one or more MPEG Elementary Streams
 // to a MPEG-2 Transport Stream
 // Implementation
@@ -197,7 +197,7 @@ Boolean InputESSourceRecord::deliverBufferToClient() {
 
   // Fill in the PES_packet_length field that we left unset before:
   unsigned PES_packet_length = fInputBufferBytesAvailable - 6;
-  if (PES_packet_length > 0xFFFFFFFF) {
+  if (PES_packet_length > 0xFFFF) {
     // Set the PES_packet_length field to 0.  This indicates an unbounded length (see ISO 13818-1, 2.4.3.7)
     PES_packet_length = 0;
   }

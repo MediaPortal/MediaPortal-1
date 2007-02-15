@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
 // RTP source for a common kind of payload format: Those that pack multiple,
 // complete codec frames (as many as possible) into each RTP packet.
 // Implementation
@@ -107,7 +107,6 @@ void MultiFramedRTPSource::doStopGettingFrames() {
   reset();
 }
 
-//static bool bInDoGetNextFrame1=false;
 void MultiFramedRTPSource::doGetNextFrame() {
   if (!fAreDoingNetworkReads) {
     // Turn on background read handling of incoming packets:
@@ -121,13 +120,10 @@ void MultiFramedRTPSource::doGetNextFrame() {
   fSavedMaxSize = fMaxSize;
   fFrameSize = 0; // for now
   fNeedDelivery = True;
-	doGetNextFrame1();
+  doGetNextFrame1();
 }
 
 void MultiFramedRTPSource::doGetNextFrame1() {
-	//if (bInDoGetNextFrame1) return;
-
-	//bInDoGetNextFrame1=true;
   while (fNeedDelivery) {
     // If we already have packet data available, then deliver it now.
     Boolean packetLossPrecededThis;
@@ -209,7 +205,6 @@ void MultiFramedRTPSource::doGetNextFrame1() {
       fNeedDelivery = True;
     }
   }
-//	bInDoGetNextFrame1=false;
 }
 
 void MultiFramedRTPSource

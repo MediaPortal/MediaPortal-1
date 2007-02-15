@@ -1,5 +1,5 @@
 /* RTCP code taken directly from the most recent RTP specification:
- *     draft-ietf-avt-rtp-new-11.txt
+ *     RFC 3550
  * Implementation
  */
 

@@ -14,20 +14,28 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
 // A file source that is a plain byte stream (rather than frames)
 // Implementation
 
 #if (defined(__WIN32__) || defined(_WIN32)) && !defined(_WIN32_WCE)
 #include <io.h>
 #include <fcntl.h>
+#define READ_FROM_FILES_SYNCHRONOUSLY 1
+    // Because Windows is a silly toy operating system that doesn't (reliably) treat
+    // open files as being readable sockets (which can be handled within the default
+    // "BasicTaskScheduler" event loop, using "select()"), we implement file reading
+    // in Windows using synchronous, rather than asynchronous, I/O.  This can severely
+    // limit the scalability of servers using this code that run on Windows.
+    // If this is a problem for you, then either use a better operating system,
+    // or else write your own Windows-specific event loop ("TaskScheduler" subclass)
+    // that can handle readable data in Windows open files as an event.
 #endif
 
 #include "ByteStreamFileSource.hh"
 #include "InputFile.hh"
 #include "GroupsockHelper.hh"
 extern void Log(const char *fmt, ...) ;
-#define READ_FROM_FILES_SYNCHRONOUSLY 1
 ////////// ByteStreamFileSource //////////
 
 ByteStreamFileSource*
@@ -119,7 +127,10 @@ void ByteStreamFileSource::doStopGettingFrames() {
 }
 
 void ByteStreamFileSource::fileReadableHandler(ByteStreamFileSource* source, int /*mask*/) {
-  if (!source->isCurrentlyAwaitingData()) return; // we're not ready for the data yet
+  if (!source->isCurrentlyAwaitingData()) {
+    source->doStopGettingFrames(); // we're not ready for the data yet
+    return;
+  }
   source->doReadFromFile();
 }
 

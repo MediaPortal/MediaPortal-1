@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "mTunnel" multicast access service
-// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
 // Helper routines to implement 'group sockets'
 // Implementation
 
@@ -74,6 +74,9 @@ int setupDatagramSocket(UsageEnvironment& env, Port port,
     return -1;
   }
   
+#if defined(__WIN32__) || defined(_WIN32)
+  // Windoze doesn't properly handle SO_REUSEPORT or IP_MULTICAST_LOOP
+#else
 #ifdef SO_REUSEPORT
   if (setsockopt(newSocket, SOL_SOCKET, SO_REUSEPORT,
 		 (const char*)&reuseFlag, sizeof reuseFlag) < 0) {
@@ -91,6 +94,7 @@ int setupDatagramSocket(UsageEnvironment& env, Port port,
     closeSocket(newSocket);
     return -1;
   }
+#endif
 #endif
   
   // Note: Windoze requires binding, even if the port number is 0
@@ -128,6 +132,19 @@ int setupDatagramSocket(UsageEnvironment& env, Port port,
   return newSocket;
 }
 
+Boolean makeSocketNonBlocking(int sock) {
+#if defined(__WIN32__) || defined(_WIN32) || defined(IMN_PIM)
+  unsigned long arg = 1;
+  return ioctlsocket(sock, FIONBIO, &arg) == 0;
+#elif defined(VXWORKS)
+  int arg = 1;
+  return ioctl(sock, FIONBIO, (int)&arg) == 0;
+#else
+  int curFlags = fcntl(sock, F_GETFL, 0);
+  return fcntl(sock, F_SETFL, curFlags|O_NONBLOCK) >= 0;
+#endif
+}
+
 int setupStreamSocket(UsageEnvironment& env,
                       Port port, Boolean makeNonBlocking) {
   if (!initializeWinsockIfNecessary()) {
@@ -152,6 +169,9 @@ int setupStreamSocket(UsageEnvironment& env,
   // normally don't set them.  However, if you really want to do this
   // #define REUSE_FOR_TCP
 #ifdef REUSE_FOR_TCP
+#if defined(__WIN32__) || defined(_WIN32)
+  // Windoze doesn't properly handle SO_REUSEPORT
+#else
 #ifdef SO_REUSEPORT
   if (setsockopt(newSocket, SOL_SOCKET, SO_REUSEPORT,
 		 (const char*)&reuseFlag, sizeof reuseFlag) < 0) {
@@ -159,6 +179,7 @@ int setupStreamSocket(UsageEnvironment& env,
     closeSocket(newSocket);
     return -1;
   }
+#endif
 #endif
 #endif
 
@@ -182,19 +203,7 @@ int setupStreamSocket(UsageEnvironment& env,
 #endif
 
   if (makeNonBlocking) {
-    // Make the socket non-blocking:
-#if defined(__WIN32__) || defined(_WIN32) || defined(IMN_PIM)
-    unsigned long arg = 1;
-    if (ioctlsocket(newSocket, FIONBIO, &arg) != 0) {
-
-#elif defined(VXWORKS)
-    int arg = 1;
-    if (ioctl(newSocket, FIONBIO, (int)&arg) != 0) {
-
-#else
-    int curFlags = fcntl(newSocket, F_GETFL, 0);
-    if (fcntl(newSocket, F_SETFL, curFlags|O_NONBLOCK) < 0) {
-#endif
+    if (!makeSocketNonBlocking(newSocket)) {
       socketErr(env, "failed to make non-blocking: ");
       closeSocket(newSocket);
       return -1;
@@ -453,7 +462,25 @@ Boolean socketLeaveGroup(UsageEnvironment&, int socket,
 // The source-specific join/leave operations require special setsockopt()
 // commands, and a special structure (ip_mreq_source).  If the include files
 // didn't define these, we do so here:
+#if !defined(IP_ADD_SOURCE_MEMBERSHIP) || defined(__CYGWIN32__)
+// NOTE TO CYGWIN DEVELOPERS:
+//    The "defined(__CYGWIN32__)" test was added above, because - as of January 2007 - the Cygwin header files
+//    define IP_ADD_SOURCE_MEMBERSHIP (and IP_DROP_SOURCE_MEMBERSHIP), but do not define ip_mreq_source.
+//    This has been acknowledged as a bug (see <http://cygwin.com/ml/cygwin/2007-01/msg00516.html>), but it's
+//    not clear when it is going to be fixed.  When the Cygwin header files finally define "ip_mreq_source",
+//    this code will no longer compile, due to "ip_mreq_source" being defined twice.  When this happens, please
+//    let us know, by sending email to the "live-devel" mailing list.
+//    (See <http://lists.live555.com/mailman/listinfo/live-devel/> to subscribe to that mailing list.)
+// END NOTE TO CYGWIN DEVELOPERS
+struct ip_mreq_source {
+  struct  in_addr imr_multiaddr;  /* IP multicast address of group */
+  struct  in_addr imr_sourceaddr; /* IP address of source */
+  struct  in_addr imr_interface;  /* local IP address of interface */
+};
+#endif
+
 #ifndef IP_ADD_SOURCE_MEMBERSHIP
+
 #ifdef LINUX
 #define IP_ADD_SOURCE_MEMBERSHIP   39
 #define IP_DROP_SOURCE_MEMBERSHIP 40
@@ -462,11 +489,6 @@ Boolean socketLeaveGroup(UsageEnvironment&, int socket,
 #define IP_DROP_SOURCE_MEMBERSHIP 26
 #endif
 
-struct ip_mreq_source {
-  struct  in_addr imr_multiaddr;  /* IP multicast address of group */
-  struct  in_addr imr_sourceaddr; /* IP address of source */
-  struct  in_addr imr_interface;  /* local IP address of interface */
-};
 #endif
 
 Boolean socketJoinGroupSSM(UsageEnvironment& env, int socket,

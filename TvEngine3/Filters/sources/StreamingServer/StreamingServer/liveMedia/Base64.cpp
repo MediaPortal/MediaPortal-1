@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
 // Base64 encoding and decoding
 // implementation
 
@@ -76,7 +76,8 @@ unsigned char* base64Decode(char* in, unsigned& resultSize,
 static const char base64Char[] =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-char* base64Encode(char const* orig, unsigned origLength) {
+char* base64Encode(char const* origSigned, unsigned origLength) {
+  unsigned char const* orig = (unsigned char const*)origSigned; // in case any input bytes have the MSB set
   if (orig == NULL) return NULL;
 
   unsigned const numOrig24BitValues = origLength/3;
@@ -97,10 +98,11 @@ char* base64Encode(char const* orig, unsigned origLength) {
   // Now, take padding into account.  (Note: i == numOrig24BitValues)
   if (havePadding) {
     result[4*i+0] = base64Char[(orig[3*i]>>2)&0x3F];
-    result[4*i+1] = base64Char[(((orig[3*i]&0x3)<<4) | (orig[3*i+1]>>4))&0x3F];
     if (havePadding2) {
+      result[4*i+1] = base64Char[(((orig[3*i]&0x3)<<4) | (orig[3*i+1]>>4))&0x3F];
       result[4*i+2] = base64Char[(orig[3*i+1]<<2)&0x3F];
     } else {
+      result[4*i+1] = base64Char[((orig[3*i]&0x3)<<4)&0x3F];
       result[4*i+2] = '=';
     }
     result[4*i+3] = '=';

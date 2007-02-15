@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
 // Any source that feeds into a "H264VideoRTPSink" must be of this class.
 // This is a virtual base class; subclasses must implement the
 // "currentNALUnitEndsAccessUnit()" virtual function.

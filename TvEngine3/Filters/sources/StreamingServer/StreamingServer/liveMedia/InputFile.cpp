@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2006 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2007 Live Networks, Inc.  All rights reserved.
 // Common routines for opening/closing named input files
 // Implementation
 
@@ -63,7 +63,7 @@ u_int64_t GetFileSize(char const* fileName, FILE* fid) {
 #if !defined(_WIN32_WCE)
     if (fileName == NULL) {
 #endif
-      if (SeekFile64(fid, 0, SEEK_END) >= 0) {
+      if (fid != NULL && SeekFile64(fid, 0, SEEK_END) >= 0) {
 	fileSize = TellFile64(fid);
 	if (fileSize == (u_int64_t)-1) fileSize = 0; // TellFile64() failed
 	SeekFile64(fid, 0, SEEK_SET);

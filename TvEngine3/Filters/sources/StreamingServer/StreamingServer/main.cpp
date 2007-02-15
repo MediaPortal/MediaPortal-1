@@ -165,7 +165,7 @@ void StreamAddMpegFile(char* streamName, char* fileName)
 		{
 			Log("Stream server: add mpeg-2 ts stream %s filename:%s", streamName,fileName);
 			ServerMediaSession* sms= ServerMediaSession::createNew(*m_env, streamName, streamName,STREAM_DESCRIPTION,false);
-			sms->addSubsession(MPEG2TransportFileServerMediaSubsession::createNew(*m_env, fileName, false));
+			sms->addSubsession(MPEG2TransportFileServerMediaSubsession::createNew(*m_env, fileName, NULL,false));
 			m_rtspServer->addServerMediaSession(sms);
 			announceStream(m_rtspServer, sms, streamName, fileName);
 		}

@@ -457,11 +457,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\liveMedia\H264VideoFileSink.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\liveMedia\H264VideoRTPSink.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\liveMedia\H264VideoRTPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\liveMedia\H264VideoStreamFramer.cpp"
 				>
 			</File>
 			<File
@@ -609,6 +617,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\liveMedia\MPEG2IndexFromTransportStream.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\liveMedia\MPEG2TransportFileServerMediaSubsession.cpp"
 				>
 			</File>
@@ -625,7 +637,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\liveMedia\MPEG2TransportStreamIndexFile.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\liveMedia\MPEG2TransportStreamMultiplexor.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\liveMedia\MPEG2TransportStreamTrickModeFilter.cpp"
 				>
 			</File>
 			<File
