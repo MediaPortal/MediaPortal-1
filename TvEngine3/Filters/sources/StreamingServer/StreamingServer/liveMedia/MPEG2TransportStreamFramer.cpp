@@ -28,13 +28,19 @@ extern void Log(const char *fmt, ...) ;
 #define TRANSPORT_PACKET_SIZE 188
 #define NEW_DURATION_WEIGHT 0.5
   // How much weight to give to the latest duration measurement (must be <= 1)
-#define TIME_ADJUSTMENT_FACTOR 0.8
+
+
+//#define TIME_ADJUSTMENT_FACTOR 0.8
+#define TIME_ADJUSTMENT_FACTOR 0.5    // this gives much less 'PTS OUT OF RANGE' in VLC
   // A factor by which to adjust the duration estimate to ensure that the overall
   // packet transmission times remains matched with the PCR times (which will be the
   // times that we expect receivers to play the incoming packets).
   // (must be <= 1)
+
+
 #define MAX_PLAYOUT_BUFFER_DURATION 0.1 // (seconds)
 
+//#define DEBUG_PCR 1
 ////////// PIDStatus //////////
 
 class PIDStatus {
@@ -181,7 +187,7 @@ void MPEG2TransportStreamFramer
       // there's no adaptation_field
 
   u_int8_t const adaptation_field_length = pkt[4];
-  if (adaptation_field_length == 0) return;
+  if (adaptation_field_length < 7 ) return;
 
   u_int8_t const discontinuity_indicator = pkt[5]&0x80;
   u_int8_t const pcrFlag = pkt[5]&0x10;
@@ -203,7 +209,7 @@ void MPEG2TransportStreamFramer
     pidStatus = new PIDStatus(clock, timeNow);
     fPIDStatusTable->Add((char*)pid, pidStatus);
 #ifdef DEBUG_PCR
-    fprintf(stderr, "PID 0x%x, FIRST PCR 0x%08x+%d:%03x == %f @ %f, pkt #%lu\n", pid, pcrBaseHigh, pkt[10]>>7, pcrExt, clock, timeNow, fTSPacketCount);
+    Log( "PID 0x%x, FIRST PCR 0x%08x+%d:%03x == %f @ %f, pkt #%lu", pid, pcrBaseHigh, pkt[10]>>7, pcrExt, clock, timeNow, fTSPacketCount);
 #endif
   } else {
     // We've seen this PID's PCR before; update our per-packet duration estimate:
@@ -232,7 +238,7 @@ void MPEG2TransportStreamFramer
       pidStatus->firstRealTime = timeNow;
     }
 #ifdef DEBUG_PCR
-    fprintf(stderr, "PID 0x%x, PCR 0x%08x+%d:%03x == %f @ %f (diffs %f @ %f), pkt #%lu, discon %d => this duration %f, new estimate %f\n", pid, pcrBaseHigh, pkt[10]>>7, pcrExt, clock, timeNow, clock - pidStatus->firstClock, timeNow - pidStatus->firstRealTime, fTSPacketCount, discontinuity_indicator != 0, durationPerPacket, fTSPacketDurationEstimate);
+    Log(  "PID 0x%x, PCR 0x%08x+%d:%03x == %f @ %f (diffs %f @ %f), pkt #%lu, discon %d => this duration %f, new estimate %f", pid, pcrBaseHigh, pkt[10]>>7, pcrExt, clock, timeNow, clock - pidStatus->firstClock, timeNow - pidStatus->firstRealTime, fTSPacketCount, discontinuity_indicator != 0, durationPerPacket, fTSPacketDurationEstimate);
 #endif
   }
 

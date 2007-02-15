@@ -36,9 +36,9 @@ extern netAddressBits ReceivingInterfaceAddr ;
 int main(int argc, char* argv[])
 {
   StreamSetup("192.168.1.58");
-  //StreamAddTimeShiftFile("test", "C:\\media\\live1-0.ts.tsbuffer",false);
-  StreamAddMpegFile("test1", "C:\\media\\movies\\BBC WORLD_manual_200611271042p4219.mpg");
-  StreamAddMpegFile("test2", "C:\\media\\movies\\PREMIERE 420070201-1146.ts");
+  StreamAddTimeShiftFile("test1", "C:\\media\\live2-0.ts.tsbuffer",false);
+  StreamAddMpegFile("test2", "C:\\media\\movies\\BBC WORLD_manual_200611271042p4219.mpg");
+  StreamAddMpegFile("test3", "C:\\media\\movies\\PREMIERE 420070201-1146.ts");
   while (true)
   {
     StreamRun();
