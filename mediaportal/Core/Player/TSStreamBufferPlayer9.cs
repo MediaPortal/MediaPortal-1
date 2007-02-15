@@ -273,6 +273,8 @@ namespace MediaPortal.Player
           try
           {
             _subtitleFilter = SubtitleRenderer.GetInstance().AddSubtitleFilter(_graphBuilder);
+            SubtitleRenderer.GetInstance().SetPlayer(this);
+            dvbSubRenderer = SubtitleRenderer.GetInstance();
           }
           catch (Exception e)
           {
@@ -726,6 +728,8 @@ namespace MediaPortal.Player
           while ((hr = Marshal.ReleaseComObject(_subtitleFilter)) > 0)
             ;
           _subtitleFilter = null;
+          if(this.dvbSubRenderer != null) this.dvbSubRenderer.SetPlayer(null);
+          this.dvbSubRenderer = null;
         }
 
         // FlipGer: release custom filters

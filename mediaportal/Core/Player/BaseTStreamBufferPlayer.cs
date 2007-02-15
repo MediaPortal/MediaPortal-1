@@ -101,6 +101,7 @@ namespace MediaPortal.Player
     protected IBaseFilter _audioCodecFilter = null;
     protected IBaseFilter _audioRendererFilter = null;
     protected IBaseFilter _subtitleFilter = null;
+    protected SubtitleRenderer dvbSubRenderer = null;
     protected IBaseFilter[] customFilters; // FlipGer: array for custom directshow filters
     /// <summary> control interface. </summary>
     protected IMediaControl _mediaCtrl = null;
@@ -933,6 +934,7 @@ namespace MediaPortal.Player
           }
         }
         UpdateCurrentPosition();
+        if (dvbSubRenderer != null) dvbSubRenderer.OnSeek(CurrentPosition);
         Log.Info("TSStreamBufferPlayer: current pos:{0}", CurrentPosition);
 
       }
