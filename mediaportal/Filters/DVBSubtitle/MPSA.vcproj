@@ -140,6 +140,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="_DEBUG"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\Microsoft SDKs\Windows\v6.0\Include&quot;"
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
@@ -148,8 +149,9 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/D &quot;_WIN32_WINNT=0x0501&quot; /D &quot;WINVER=0x0501&quot; /D &quot;NTDDI_VERSION=NTDDI_WINXPSP2&quot;"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\Microsoft Platform SDK\Samples\Multimedia\DirectShow\BaseClasses&quot;;&quot;C:\Program Files\Microsoft DirectX SDK (February 2006)\Include&quot;;&quot;C:\Program Files\Microsoft Platform SDK\Include&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\Microsoft DirectX SDK\Include&quot;;&quot;C:\Program Files\Microsoft SDKs\Windows\v6.0\Samples\Multimedia\DirectShow\BaseClasses&quot;;&quot;C:\Program Files\Microsoft SDKs\Windows\v6.0\VC\INCLUDE&quot;;&quot;C:\Program Files\Microsoft SDKs\Windows\v6.0\Include&quot;"
 				PreprocessorDefinitions="DBG=1;DEBUG;_DEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;_X86_=1;WINVER=0x0400"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -183,7 +185,7 @@
 				OutputFile="Debug/DVBSub.ax"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\Microsoft Platform SDK\Lib&quot;"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\Microsoft SDKs\Windows\v6.0\Samples\Multimedia\DirectShow\BaseClasses\Debug_MBCS&quot;;&quot;C:\Program Files\Microsoft SDKs\Windows\v6.0\Lib&quot;"
 				IgnoreAllDefaultLibraries="false"
 				ModuleDefinitionFile=".\source\DVBSub.def"
 				GenerateDebugInformation="true"

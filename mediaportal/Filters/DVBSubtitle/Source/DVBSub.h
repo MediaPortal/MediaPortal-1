@@ -60,19 +60,20 @@ struct SUBTITLE
   WORD        bmPlanes;
   WORD        bmBitsPixel;
   LPVOID      bmBits;
-  int         firstScanLine;
+
 
   unsigned    __int64 timestamp;
   unsigned    __int64 timeOut;
+  int         firstScanLine;
 };
 
 DECLARE_INTERFACE_( IDVBSubtitle, IUnknown )
 {
-  STDMETHOD(GetSubtitle) ( int place, SUBTITLE* pSubtitle ) PURE;
-  STDMETHOD(GetSubtitleCount) ( int* count ) PURE;
-  STDMETHOD(SetCallback) ( int (CALLBACK *pSubtitleObserver)() ) PURE;
+  //STDMETHOD(GetSubtitle) ( int place, SUBTITLE* pSubtitle ) PURE;
+  //STDMETHOD(GetSubtitleCount) ( int* count ) PURE;
+  STDMETHOD(SetCallback) ( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub) ) PURE;
   STDMETHOD(SetTimestampResetCallback)( int (CALLBACK *pSubtitleObserver)() ) PURE;
-  STDMETHOD(DiscardOldestSubtitle) () PURE;
+  //STDMETHOD(DiscardOldestSubtitle) () PURE;
   STDMETHOD(Test)(int status) PURE;
 };
 
@@ -94,40 +95,18 @@ public:
   CBasePin * GetPin( int n );
   int GetPinCount();
 
-  // IDVBSubtitle
   virtual HRESULT STDMETHODCALLTYPE GetSubtitle( int place, SUBTITLE* pSubtitle );
-  virtual HRESULT STDMETHODCALLTYPE SetCallback( int (CALLBACK *pSubtitleObserver)() );
-  virtual HRESULT STDMETHODCALLTYPE SetTimestampResetCallback( int (CALLBACK *pTimestampResetObserver)() );
-  virtual HRESULT STDMETHODCALLTYPE GetSubtitleCount( int* count );
   virtual HRESULT STDMETHODCALLTYPE DiscardOldestSubtitle();
+  virtual HRESULT STDMETHODCALLTYPE GetSubtitleCount( int* count );
+	
 
+  // IDVBSubtitle
+  virtual HRESULT STDMETHODCALLTYPE SetCallback( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub) );
+  virtual HRESULT STDMETHODCALLTYPE SetTimestampResetCallback( int (CALLBACK *pTimestampResetObserver)() );
   virtual HRESULT STDMETHODCALLTYPE Test(int status);
 
   // IUnknown
   DECLARE_IUNKNOWN;
-
-  /*
-      STDMETHODIMP QueryInterface(REFIID riid, void **ppv) {
-		  	if(riid == IID_IBaseFilter){
-		LogDebug("riid = Trying basefilter");
-	}
-	else if(riid == IID_IDVBSubtitle){
-		LogDebug("riid = IID_IDVBSubtitle");
-	}
-	else if(riid == IID_IUnknown){
-		LogDebug("riid = IID_IUnknown");
-	}
-
-        return GetOwner()->QueryInterface(riid,ppv);            
-    };                                                          
-    STDMETHODIMP_(ULONG) AddRef() {
-		//LogDebug("Before AddRef : %i", this->m_cRef);
-        return GetOwner()->AddRef();                            
-    };                                                          
-    STDMETHODIMP_(ULONG) Release() {       
-		//LogDebug("Before Release : %i", this->m_cRef);
-        return GetOwner()->Release();                           
-    };*/
 
   STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
 	
@@ -158,6 +137,6 @@ private:
 
   ULONGLONG           m_firstPTS;
 
-  int                 (CALLBACK *m_pSubtitleObserver) (); 
+  int                 (CALLBACK *m_pSubtitleObserver) (SUBTITLE* sub); 
   int                 (CALLBACK *m_pTimestampResetObserver) ();
 };
