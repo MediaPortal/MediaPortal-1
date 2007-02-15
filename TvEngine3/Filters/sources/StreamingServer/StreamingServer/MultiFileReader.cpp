@@ -142,7 +142,7 @@ DWORD MultiFileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMeth
 	if (m_currentPosition > m_endPosition)
 		m_currentPosition = m_endPosition;
 
-	RefreshTSBufferFile();
+	//RefreshTSBufferFile();
 	return S_OK;
 }
 

@@ -31,11 +31,12 @@
 #include "global.h"
 #include "entercriticalsection.h"
 
+extern void Log(const char *fmt, ...) ;
 CTSBuffer::CTSBuffer()
 {
 	m_pFileReader = NULL;
 	m_lItemOffset = 0;
-	m_lTSBufferItemSize = 56400;
+	m_lTSBufferItemSize = 128028;
 
 	//round to nearest byte boundary.
 
@@ -120,6 +121,7 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 //				int count = 220; // 2 second max delay
 				while (ulBytesRead < (ULONG)m_lTSBufferItemSize && m_loopCount) 
 				{
+          //Log("TSBuffer::Require() Waiting for file to grow:%d",bDelay);
 //					::OutputDebugString(TEXT("TSBuffer::Require() Waiting for file to grow.\n"));
 
 					WORD bDelay = 0;

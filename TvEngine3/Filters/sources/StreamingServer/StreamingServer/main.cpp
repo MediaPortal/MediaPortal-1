@@ -111,7 +111,8 @@ void StreamSetup(char* ipAdress)
 //**************************************************************************************
 void StreamRun()
 {
-	m_env->taskScheduler().doEventLoop(); 
+  for (int i=0; i < 10;++i)
+	    m_env->taskScheduler().doEventLoop(); 
 }
 
 //**************************************************************************************

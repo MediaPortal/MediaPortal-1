@@ -848,6 +848,14 @@
 				RelativePath=".\TsStreamFileSource.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\TSThread.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TSThread.h"
+				>
+			</File>
 			<Filter
 				Name="Transport"
 				>
