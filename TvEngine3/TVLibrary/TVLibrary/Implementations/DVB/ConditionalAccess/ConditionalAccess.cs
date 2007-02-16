@@ -214,6 +214,7 @@ namespace TvLibrary.Implementations.DVB
       get
       {
         if (_mapSubChannels == null) return 0;
+        if (_mapSubChannels.Count==0) return 0;
         List<ConditionalAccessContext> filteredChannels = new List<ConditionalAccessContext>();
         
         Dictionary<int, ConditionalAccessContext>.Enumerator en = _mapSubChannels.GetEnumerator();
