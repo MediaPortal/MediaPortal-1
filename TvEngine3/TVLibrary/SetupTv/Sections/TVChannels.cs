@@ -312,8 +312,8 @@ namespace SetupTv.Sections
               if (detail.VideoSource == (int)AnalogChannel.VideoInputType.Tuner)
               {
                 frequency = detail.Frequency;
-                frequency /= 1000.0f;
-                item.SubItems.Add(String.Format("{0} {1} MHz", detail.ChannelNumber, frequency.ToString("f2")));
+                frequency /= 1000000.0f;
+                item.SubItems.Add(String.Format("#{0} {1} MHz", detail.ChannelNumber, frequency.ToString("f2")));
               }
               else
               {

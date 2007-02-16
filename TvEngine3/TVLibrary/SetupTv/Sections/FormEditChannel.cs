@@ -87,7 +87,6 @@ namespace SetupTv.Sections
         comboBoxCountry.Items.Add(countries.Countries[i].Name);
       }
 
-      comboBoxBandWidth.SelectedIndex = 1;
 
       if (_newChannel)
       {
