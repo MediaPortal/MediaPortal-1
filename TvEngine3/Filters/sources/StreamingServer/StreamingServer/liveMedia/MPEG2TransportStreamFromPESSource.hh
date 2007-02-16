@@ -40,7 +40,6 @@ protected:
 				    MPEG1or2DemuxedElementaryStream* inputSource);
       // called only by createNew()
   virtual ~MPEG2TransportStreamFromPESSource();
-
 private:
   // Redefined virtual functions:
   virtual void doStopGettingFrames();

@@ -34,6 +34,7 @@ MPEG2TransportStreamFromPESSource
   : MPEG2TransportStreamMultiplexor(env),
     fInputSource(inputSource) {
   fInputBuffer = new unsigned char[MAX_PES_PACKET_SIZE];
+
   Log("MPEG2TransportStreamFromPESSource::ctor:%x",this);
 }
 
@@ -42,6 +43,8 @@ MPEG2TransportStreamFromPESSource::~MPEG2TransportStreamFromPESSource()
   Log("MPEG2TransportStreamFromPESSource::dtor:%x",this);
   Medium::close(fInputSource);
   delete[] fInputBuffer;
+  fInputBuffer=NULL;
+  fInputSource=NULL;
 }
 
 void MPEG2TransportStreamFromPESSource::doStopGettingFrames() {

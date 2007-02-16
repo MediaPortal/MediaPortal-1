@@ -79,11 +79,11 @@ public:
 
   void flushInput(); // should be called before any 'seek' on the underlying source
 
+  virtual ~MPEG1or2Demux();
 private:
   MPEG1or2Demux(UsageEnvironment& env,
 		FramedSource* inputSource, Boolean reclaimWhenLastESDies);
       // called only by createNew()
-  virtual ~MPEG1or2Demux();
 
   void registerReadInterest(u_int8_t streamIdTag,
 			    unsigned char* to, unsigned maxSize,

@@ -29,7 +29,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "MPEG1or2Demux.hh" // for SCR
 #endif
 
-#define PID_TABLE_SIZE 256
+#define PID_TABLE_SIZE 0x200 //@CHANGED
 
 class MPEG2TransportStreamMultiplexor: public FramedSource {
 protected:

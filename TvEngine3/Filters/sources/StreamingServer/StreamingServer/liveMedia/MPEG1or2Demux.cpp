@@ -105,6 +105,7 @@ MPEG1or2Demux::~MPEG1or2Demux()
   delete fParser;
   for (unsigned i = 0; i < 256; ++i) delete fOutput[i].savedDataHead;
   Medium::close(fInputSource);
+  fInputSource=NULL;
 }
 
 MPEG1or2Demux* MPEG1or2Demux

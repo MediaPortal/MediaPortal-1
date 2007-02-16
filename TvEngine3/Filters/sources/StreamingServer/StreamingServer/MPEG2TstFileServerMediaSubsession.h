@@ -16,7 +16,7 @@
 #include "../TsStreamFileSource.hh"
 
 
-class MPEG2TstFileServerMediaSubsession: public FileServerMediaSubsession, public IOnDelete
+class MPEG2TstFileServerMediaSubsession: public FileServerMediaSubsession
 {
 public:
   static MPEG2TstFileServerMediaSubsession* createNew(UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource);
@@ -31,10 +31,6 @@ private: // redefined virtual functions
   virtual FramedSource* createNewStreamSource(unsigned clientSessionId,unsigned& estBitrate);
   virtual RTPSink* createNewRTPSink(Groupsock* rtpGroupsock,unsigned char rtpPayloadTypeIfDynamic,FramedSource* inputSource);
 	virtual void seekStreamSource(FramedSource* inputSource, float seekNPT);
-  TsStreamFileSource* m_fileSource;
-  MPEG1or2Demux* m_baseDemultiplexor ;
-  MPEG1or2DemuxedElementaryStream* m_pesSource;
-  MPEG2TransportStreamFromPESSource* m_tsSource;
   char m_fileName[MAX_PATH];
 };
 

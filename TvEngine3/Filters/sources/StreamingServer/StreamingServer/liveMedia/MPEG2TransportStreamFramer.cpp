@@ -30,7 +30,7 @@ extern void Log(const char *fmt, ...) ;
   // How much weight to give to the latest duration measurement (must be <= 1)
 
 
-//#define TIME_ADJUSTMENT_FACTOR 0.8
+//#define TIME_ADJUSTMENT_FACTOR 0.8 //@CHANGED
 #define TIME_ADJUSTMENT_FACTOR 0.5    // this gives much less 'PTS OUT OF RANGE' in VLC
   // A factor by which to adjust the duration estimate to ensure that the overall
   // packet transmission times remains matched with the PCR times (which will be the
@@ -40,7 +40,6 @@ extern void Log(const char *fmt, ...) ;
 
 #define MAX_PLAYOUT_BUFFER_DURATION 0.1 // (seconds)
 
-//#define DEBUG_PCR 1
 ////////// PIDStatus //////////
 
 class PIDStatus {
@@ -69,13 +68,7 @@ MPEG2TransportStreamFramer
     fTSPacketCount(0), fTSPacketDurationEstimate(0.0) 
 {
   Log("MPEG2TransportStreamFramer:ctor:%x",this);
-  m_pOnDelete=NULL;
   fPIDStatusTable = HashTable::create(ONE_WORD_HASH_KEYS);
-}
-
-void MPEG2TransportStreamFramer::SetOnDelete(IOnDelete* onDelete)
-{
-  m_pOnDelete=onDelete;
 }
 
 MPEG2TransportStreamFramer::~MPEG2TransportStreamFramer() 
@@ -86,10 +79,6 @@ MPEG2TransportStreamFramer::~MPEG2TransportStreamFramer()
     delete pidStatus;
   }
   delete fPIDStatusTable;
-  if (m_pOnDelete!=NULL)
-  {
-    m_pOnDelete->OnDelete();
-  }
 }
 
 void MPEG2TransportStreamFramer::doGetNextFrame() {
@@ -187,8 +176,9 @@ void MPEG2TransportStreamFramer
       // there's no adaptation_field
 
   u_int8_t const adaptation_field_length = pkt[4];
+//@CHANGED
   if (adaptation_field_length < 7 ) return;
-
+//  if (adaptation_field_length ==0 ) return;
   u_int8_t const discontinuity_indicator = pkt[5]&0x80;
   u_int8_t const pcrFlag = pkt[5]&0x10;
   if (pcrFlag == 0) return; // no PCR

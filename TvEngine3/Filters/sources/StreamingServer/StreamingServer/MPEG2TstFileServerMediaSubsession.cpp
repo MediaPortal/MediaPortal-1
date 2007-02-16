@@ -31,48 +31,16 @@ MPEG2TstFileServerMediaSubsession ::MPEG2TstFileServerMediaSubsession(UsageEnvir
 : FileServerMediaSubsession(env, fileName, reuseFirstSource) 
 {
   Log("MPEG2TstFileServerMediaSubsession::ctor:%x",this);
-  m_fileSource=NULL;
-  m_baseDemultiplexor=NULL;
-  m_pesSource=NULL;
-  m_tsSource=NULL;
 }
 
 void MPEG2TstFileServerMediaSubsession::OnDelete()
 {
   Log("MPEG2TstFileServerMediaSubsession::OnDelete:%x",this);
-/*  if (m_fileSource!=NULL) 
-    Medium::close(m_fileSource);
-  m_fileSource=NULL;
-*/
- // if (m_baseDemultiplexor!=NULL)
- //   Medium::close(m_baseDemultiplexor);
- // m_baseDemultiplexor=NULL;
-/*
-  if (m_pesSource!=NULL)
-    Medium::close(m_pesSource);
-  m_pesSource=NULL;
-
-  m_tsSource=NULL;*/
 }
 
 MPEG2TstFileServerMediaSubsession::~MPEG2TstFileServerMediaSubsession() 
 {
   Log("MPEG2TstFileServerMediaSubsession::dtor:%x",this);
-  if (m_fileSource!=NULL) 
-    Medium::close(m_fileSource);
-  m_fileSource=NULL;
-
-  if (m_baseDemultiplexor!=NULL)
-  Medium::close(m_baseDemultiplexor);
-  m_baseDemultiplexor=NULL;
-
-  if (m_pesSource!=NULL)
-    Medium::close(m_pesSource);
-  m_pesSource=NULL;
-
-  if (m_tsSource!=NULL)
-     Medium:close(m_tsSource);
-  m_tsSource=NULL;
 }
 
 #define TRANSPORT_PACKET_SIZE 188
@@ -86,23 +54,22 @@ FramedSource* MPEG2TstFileServerMediaSubsession ::createNewStreamSource(unsigned
 
   // Create the video source:
   unsigned const inputDataChunkSize = TRANSPORT_PACKETS_PER_NETWORK_PACKET*TRANSPORT_PACKET_SIZE;
-  TsStreamFileSource* m_fileSource = TsStreamFileSource::createNew(envir(), fFileName, inputDataChunkSize);
-  if (m_fileSource == NULL) return NULL;
-  fFileSize = m_fileSource->fileSize();
+  TsStreamFileSource* fileSource = TsStreamFileSource::createNew(envir(), fFileName, inputDataChunkSize);
+  if (fileSource == NULL) return NULL;
+  fFileSize = fileSource->fileSize();
   strcpy(m_fileName,fFileName);
 
   // Create a MPEG demultiplexor that reads from that source.
-  m_baseDemultiplexor = MPEG1or2Demux::createNew(envir(), m_fileSource);
-
+  MPEG1or2Demux* demux = MPEG1or2Demux::createNew(envir(), fileSource,true);
   // Create, from this, a source that returns raw PES packets:
-  m_pesSource = m_baseDemultiplexor->newRawPESStream();
+  MPEG1or2DemuxedElementaryStream* pesSource = demux->newRawPESStream();
   
   // And, from this, a filter that converts to MPEG-2 Transport Stream frames:
-  m_tsSource  = MPEG2TransportStreamFromPESSource::createNew(envir(), m_pesSource);
+  MPEG2TransportStreamFromPESSource* tsSource= MPEG2TransportStreamFromPESSource::createNew(envir(), pesSource);
 
   // Create a framer for the Transport Stream:
-  MPEG2TransportStreamFramer* framer= MPEG2TransportStreamFramer::createNew(envir(), m_tsSource);
-  framer->SetOnDelete(this);
+  MPEG2TransportStreamFramer* framer= MPEG2TransportStreamFramer::createNew(envir(), tsSource);
+  
   return framer;
 }
 

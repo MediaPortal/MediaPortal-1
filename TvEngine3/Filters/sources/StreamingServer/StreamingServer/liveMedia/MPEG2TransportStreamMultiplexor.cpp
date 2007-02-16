@@ -26,7 +26,7 @@ extern void Log(const char *fmt, ...) ;
 #define PAT_FREQUENCY 100 // # of packets between Program Association Tables
 #define PMT_FREQUENCY 500 // # of packets between Program Map Tables
 
-#define PID_TABLE_SIZE 256
+#define PID_TABLE_SIZE 0x200 //@CHANGED
 
 MPEG2TransportStreamMultiplexor
 ::MPEG2TransportStreamMultiplexor(UsageEnvironment& env)
