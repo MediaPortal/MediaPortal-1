@@ -1327,8 +1327,11 @@ namespace TvService
                 if (keyPair.Value.CurrentDbChannel(ref tmpUser) == channel.IdChannel)
                 {
                   //yes, then map user to that card
-                  card = GetVirtualCard(tmpUser);
-                  return TvResult.Succeeded;
+                  if (keyPair.Value.SupportsSubChannels == false)
+                  {
+                    card = GetVirtualCard(tmpUser);
+                    return TvResult.Succeeded;
+                  }
                 }
               }
             }
