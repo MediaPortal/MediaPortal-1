@@ -1313,22 +1313,28 @@ namespace TvService
         // enumerate all cards and check if some card is already timeshifting the channel requested
         Dictionary<int, TvCard>.Enumerator enumerator = _cards.GetEnumerator();
 
+        //for each card
         while (enumerator.MoveNext())
         {
           KeyValuePair<int, TvCard> keyPair = enumerator.Current;
+          //get a list of all users for this card
           User[] users = keyPair.Value.GetUsers();
           if (users != null)
           {
+            //for each user
             for (int i = 0; i < users.Length; ++i)
             {
               User tmpUser = users[i];
+              //is user timeshifting?
               if (keyPair.Value.IsTimeShifting(ref tmpUser))
               {
+                //yes, is user timeshifting the correct channel
                 if (keyPair.Value.CurrentDbChannel(ref tmpUser) == channel.IdChannel)
                 {
-                  //yes, then map user to that card
+                  //yes, if card does not support subchannels (analog cards)
                   if (keyPair.Value.SupportsSubChannels == false)
                   {
+                    //then assign user to this card
                     card = GetVirtualCard(tmpUser);
                     return TvResult.Succeeded;
                   }
@@ -1809,16 +1815,37 @@ namespace TvService
             TvCard tvcard = _cards[keyPair.Value.DataBaseCard.IdCard];
             if (tvcard.IsTunedToTransponder(tuningDetail) && (tvcard.SupportsSubChannels || (checkTransponders == false)))
             {
-              if (tvcard.NumberOfChannelsDecrypting < keyPair.Value.DataBaseCard.DecryptLimit || dbChannel.FreeToAir)
+              //card is in use, but it is tuned to the same transponder.
+              //meaning.. we can use it.
+              //but we must check if cam can decode the extra channel as well
+
+              //first check if cam is already decrypting this channel
+              bool checkCam = true;
+              User[] currentUsers = tvcard.GetUsers();
+              if (currentUsers != null)
               {
-                //card is in use, but it is tuned to the same transponder.
-                //meaning.. we can use it:-)
+                for (int i = 0; i < currentUsers.Length; ++i)
+                {
+                  User tmpUser = currentUsers[i];
+                  if (tvcard.CurrentDbChannel(ref tmpUser) == dbChannel.IdChannel)
+                  {
+                    //yes, cam already is descrambling this channel
+                    checkCam = false;
+                    break;
+                  }
+                }
+              }
+              //check if cam is capable of descrambling an extra channel
+              if (tvcard.NumberOfChannelsDecrypting < keyPair.Value.DataBaseCard.DecryptLimit || dbChannel.FreeToAir || (checkCam == false))
+              {
+                //it is.. we can really use this card
                 Log.Write("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
                     keyPair.Value.DataBaseCard.IdCard, Type(keyPair.Value.DataBaseCard.IdCard), tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
                 sameTransponder = true;
               }
               else
               {
+                //it is not, skip this card
                 Log.Write("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
                        keyPair.Value.DataBaseCard.IdCard, Type(keyPair.Value.DataBaseCard.IdCard), tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
                 continue;
