@@ -213,20 +213,28 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
+        if (_mapSubChannels == null) return 0;
         List<ConditionalAccessContext> filteredChannels = new List<ConditionalAccessContext>();
-        bool succeeded = true;
+        
         Dictionary<int, ConditionalAccessContext>.Enumerator en = _mapSubChannels.GetEnumerator();
+        
         while (en.MoveNext())
         {
           bool exists = false;
           ConditionalAccessContext context = en.Current.Value;
-          foreach (ConditionalAccessContext c in filteredChannels)
+          if (context != null)
           {
-            if (c.Channel.Equals(context.Channel)) exists = true;
-          }
-          if (!exists)
-          {
-            filteredChannels.Add(context);
+            foreach (ConditionalAccessContext c in filteredChannels)
+            {
+              if (c.Channel != null && context.Channel != null)
+              {
+                if (c.Channel.Equals(context.Channel)) exists = true;
+              }
+            }
+            if (!exists)
+            {
+              filteredChannels.Add(context);
+            }
           }
         }
         return filteredChannels.Count;
