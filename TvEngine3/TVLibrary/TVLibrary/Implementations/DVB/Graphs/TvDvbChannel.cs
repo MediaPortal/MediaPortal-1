@@ -162,7 +162,7 @@ namespace TvLibrary.Implementations.DVB
     protected DateTime _dateTimeShiftStarted = DateTime.MinValue;
 
     protected bool _startRecording = false;
-    protected string _recordingFileName;
+    protected string _recordingFileName = "";
     protected DateTime _dateRecordingStarted = DateTime.MinValue;
     protected bool _recordTransportStream = false;
     protected bool _newPMT = false;
@@ -240,6 +240,8 @@ namespace TvLibrary.Implementations.DVB
       _pmtPid = -1;
       _parameters = new ScanParameters();
       _subChannelId = 0;
+      _timeshiftFileName = "";
+      _recordingFileName = "";
     }
 
     /// <summary>
@@ -292,6 +294,8 @@ namespace TvLibrary.Implementations.DVB
       _subChannelId = subChannelId;
 
       _conditionalAccess.AddSubChannel(_subChannelId);
+      _timeshiftFileName = "";
+      _recordingFileName = "";
     }
     #endregion
 
@@ -316,7 +320,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void OnBeforeTune()
     {
-      if (_graphState == GraphState.TimeShifting)
+      if (IsTimeShifting)
       {
         if (_interfaceTsChannel != null)
         {
@@ -492,11 +496,12 @@ namespace TvLibrary.Implementations.DVB
     public void Decompose()
     {
       Log.Log.Info("subch:{0} Decompose()", _subChannelId);
-      if (_graphState == GraphState.Recording)
+      if (IsRecording)
         StopRecording();
-      if (_graphState == GraphState.TimeShifting)
+      if (IsTimeShifting)
         StopTimeShifting();
-
+      _timeshiftFileName = "";
+      _recordingFileName = "";
       _pmtTimer.Enabled = false;
       _graphRunning = false;
       if (_teletextDecoder != null)
@@ -595,7 +600,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool StopRecording()
     {
-      if (_graphState == GraphState.Recording)
+      if (IsRecording)
       {
         Log.Log.WriteFile("subch:{0} StopRecord()", _subChannelId);
 
@@ -632,7 +637,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool StopTimeShifting()
     {
-      if (_graphState == GraphState.TimeShifting)
+      if (_timeshiftFileName != "")
       {
         Log.Log.WriteFile("subch:{0} StopTimeshifting()", _subChannelId);
         if (_filterTsWriter != null)
@@ -745,7 +750,7 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording) return true;
+        if (IsTimeShifting ) return true;
         return false;
       }
     }
@@ -805,7 +810,7 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return _graphState == GraphState.Recording;
+        return (_recordingFileName.Length > 0);
       }
     }
 
@@ -818,7 +823,7 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return (_graphState == GraphState.TimeShifting);
+        return (_timeshiftFileName.Length > 0);
       }
     }
     #endregion
@@ -1113,7 +1118,7 @@ namespace TvLibrary.Implementations.DVB
           }
           _graphState = GraphState.Recording;
         }
-        else if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording)
+        else if (IsTimeShifting)
         {
           SetTimeShiftPids();
         }

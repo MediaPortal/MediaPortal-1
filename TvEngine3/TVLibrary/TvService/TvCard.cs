@@ -1093,7 +1093,7 @@ namespace TvService
         context.GetUser(ref user);
         ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
         if (subchannel == null) return false;
-        return subchannel.IsTimeShifting || subchannel.IsRecording;
+        return subchannel.IsTimeShifting ;
       }
       catch (Exception ex)
       {

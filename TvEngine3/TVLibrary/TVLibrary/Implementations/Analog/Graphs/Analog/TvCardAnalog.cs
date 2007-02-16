@@ -173,7 +173,7 @@ namespace TvLibrary.Implementations.Analog
     {
       get
       {
-        return (_graphState == GraphState.TimeShifting);
+        return (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording);
       }
     }
 
