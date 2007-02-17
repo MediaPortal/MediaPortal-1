@@ -3470,7 +3470,11 @@
 		<id>1052</id>
 		<value>Sanger</value>
 	</string>
-	<string>
+  <string>
+    <id>1053</id>
+    <value>Ukjent innringer</value>
+   </string>
+   <string>
 		<id>1100</id>
 		<value>Importere CD</value>
 	</string>
