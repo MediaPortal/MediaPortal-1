@@ -235,20 +235,11 @@ namespace MediaPortal.WebEPG
 
     public void NewDay()
     {
+      _startTime = _startTime.AddDays(1);
       _newDay = true;
       _expectedTime = Expect.Start;
       _lastTime = 0;
-      if (!_nextDay)
-      {
-        //  _addDays++;
-        //  _grabDay++;
-        //  _startTime = _startTime.AddDays(1);
-        //  //_bNextDay = false;
-        //}
-        //else
-        //{
-        _nextDay = true;
-      }
+      _nextDay = false;
     }
 
     public void SetProgramCount(int count)
