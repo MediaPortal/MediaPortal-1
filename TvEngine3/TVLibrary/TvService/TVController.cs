@@ -1308,32 +1308,34 @@ namespace TvService
       Channel channel = Channel.Retrieve(idChannel);
       Log.Write("Controller: StartTimeShifting {0} {1}", channel.Name, channel.IdChannel);
       card = null;
+      TvResult result;
       try
       {
-        // enumerate all cards and check if some card is already timeshifting the channel requested
-        Dictionary<int, TvCard>.Enumerator enumerator = _cards.GetEnumerator();
-
-        //for each card
-        while (enumerator.MoveNext())
+        List<CardDetail> freeCards = GetFreeCardsForChannel(channel, ref user, true, out result);
+        if (freeCards.Count == 0)
         {
-          KeyValuePair<int, TvCard> keyPair = enumerator.Current;
-          //get a list of all users for this card
-          User[] users = keyPair.Value.GetUsers();
-          if (users != null)
+          // enumerate all cards and check if some card is already timeshifting the channel requested
+          Dictionary<int, TvCard>.Enumerator enumerator = _cards.GetEnumerator();
+
+          //for each card
+          while (enumerator.MoveNext())
           {
-            //for each user
-            for (int i = 0; i < users.Length; ++i)
+            KeyValuePair<int, TvCard> keyPair = enumerator.Current;
+            //get a list of all users for this card
+            User[] users = keyPair.Value.GetUsers();
+            if (users != null)
             {
-              User tmpUser = users[i];
-              //is user timeshifting?
-              if (keyPair.Value.IsTimeShifting(ref tmpUser))
+              //for each user
+              for (int i = 0; i < users.Length; ++i)
               {
-                //yes, is user timeshifting the correct channel
-                if (keyPair.Value.CurrentDbChannel(ref tmpUser) == channel.IdChannel)
+                User tmpUser = users[i];
+                //is user timeshifting?
+                if (keyPair.Value.IsTimeShifting(ref tmpUser))
                 {
-                  //yes, if card does not support subchannels (analog cards)
-                  if (keyPair.Value.SupportsSubChannels == false)
+                  //yes, is user timeshifting the correct channel
+                  if (keyPair.Value.CurrentDbChannel(ref tmpUser) == channel.IdChannel)
                   {
+                    //yes, if card does not support subchannels (analog cards)
                     //then assign user to this card
                     card = GetVirtualCard(tmpUser);
                     return TvResult.Succeeded;
@@ -1344,9 +1346,6 @@ namespace TvService
           }
         }
 
-        //no card is timeshifting the channel, get a list of free channels
-        TvResult result;
-        List<CardDetail> freeCards = GetFreeCardsForChannel(channel, ref user, true, out result);
         if (freeCards.Count == 0)
         {
           //no free cards available
