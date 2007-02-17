@@ -57,6 +57,10 @@ namespace MediaPortal.WebEPG
     #endregion
 
     #region Constructors/Destructors
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ListingTimeControl"/> class.
+    /// </summary>
+    /// <param name="startTime">The start time.</param>
     public ListingTimeControl(DateTime startTime)
     {
       _startTime = startTime;
@@ -68,6 +72,10 @@ namespace MediaPortal.WebEPG
     #endregion
 
     #region Properties
+    /// <summary>
+    /// Gets the current grab day.
+    /// </summary>
+    /// <value>The grab day.</value>
     public int GrabDay
     {
       get { return _grabDay; }
@@ -75,21 +83,28 @@ namespace MediaPortal.WebEPG
     #endregion
 
     #region Public Methods
+    /// <summary>
+    /// Checks and adjusts the start and end times for a program.
+    /// </summary>
+    /// <param name="guideData">The guide data.</param>
+    /// <returns>true if successfull otherwise false</returns>
     public bool CheckAdjustTime(ref ProgramData guideData)
     {
       WorldDateTime guideStartTime = guideData.StartTime;
       WorldDateTime guideEndTime = guideData.EndTime;
       _addDays = 1;
 
-      // Day
+      // Check if the start time day value is set
       if (guideStartTime.Day == 0)
       {
-        guideStartTime.Day = _startTime.Day;
+        guideStartTime.Day = _startTime.Day;    // Set program day to start day
       }
       else
       {
+        // program has day value
         if (guideStartTime.Day != _startTime.Day && _expectedTime != Expect.Start)
         {
+          // day value not the same as start time -> increase start time one day
           _grabDay++;
           _startTime = _startTime.AddDays(1);
           _nextDay = false;
@@ -98,14 +113,17 @@ namespace MediaPortal.WebEPG
         }
       }
 
+      // Check and set month and year
       if (guideStartTime.Year == 0)
         guideStartTime.Year = _startTime.Year;
       if (guideStartTime.Month == 0)
         guideStartTime.Month = _startTime.Month;
 
-      // Start Time
+
+      // State loop Start, BeforeMidday and AfterMidday
       switch (_expectedTime)
       {
+        // Start of a new day - need to work out if the listings start in the morning or afternoon
         case Expect.Start:
           if (OnPerviousDay(guideStartTime.Hour))
             return false;				// Guide starts on pervious day ignore these listings.
@@ -129,25 +147,23 @@ namespace MediaPortal.WebEPG
           _expectedTime = Expect.BeforeMidday;
           goto case Expect.BeforeMidday;      // Pass into BeforeMidday Code
 
+        // Before Midday
         case Expect.BeforeMidday:
           if (_lastTime > guideStartTime.Hour)
           {
+            // last time was before midday, new time is less -> site doesn't have 24 hours or AM/PM
             _expectedTime = Expect.AfterMidday;
-            //if (_bNextDay)
-            //{
-            //    _GrabDay++;
-            //}
           }
           else
           {
             if (guideStartTime.Hour <= 12)
-              break;						// Do nothing
+              break;						// Time is before midday -> Do nothing
           }
 
           // Pass into AfterMidday Code
-          //_LastStart = 0;
           goto case Expect.AfterMidday;
 
+        // After midday
         case Expect.AfterMidday:
           bool adjusted = false;
           if (guideStartTime.Hour < 12)		// Site doesn't have correct time
@@ -164,19 +180,17 @@ namespace MediaPortal.WebEPG
               _addDays++;
               _grabDay++;
               _startTime = _startTime.AddDays(1);
-              //_bNextDay = false;
             }
             else
             {
               _nextDay = true;
             }
+
             if (adjusted)
               guideStartTime.Hour -= 12;
 
             if (guideStartTime.Hour < 12)
               _expectedTime = Expect.BeforeMidday;
-
-            break;
           }
 
           break;
@@ -185,21 +199,13 @@ namespace MediaPortal.WebEPG
           break;
       }
 
-      ////Month
-      //int month;
-      //if (guideMonth == "")
-      //{
-      //  month = _startTime.Month;
-      //}
-      //else
-      //{
-      //  month = getMonth(guideMonth);
-      //}
-
+      // store current hour as last hour
       _lastTime = guideStartTime.Hour;
 
+      // Check if orogram has an end time
       if (guideEndTime != null)
       {
+        // set Day, Month and Year is not set
         if (guideEndTime.Year == 0)
           guideEndTime.Year = guideStartTime.Year;
         if (guideEndTime.Month == 0)
@@ -207,9 +213,11 @@ namespace MediaPortal.WebEPG
         if (guideEndTime.Day == 0)
           guideEndTime.Day = guideStartTime.Day;
 
+        // correct date if required
         if (_nextDay)
         {
           if (guideStartTime.Hour > guideEndTime.Hour)
+            // start before midnight end after
             guideEndTime = guideEndTime.AddDays(_addDays + 1);
           else
             guideEndTime = guideEndTime.AddDays(_addDays);
@@ -221,7 +229,7 @@ namespace MediaPortal.WebEPG
         }
       }
 
-
+      // if next day -> correct start date
       if (_nextDay)
         guideStartTime = guideStartTime.AddDays(_addDays);
 
@@ -233,6 +241,9 @@ namespace MediaPortal.WebEPG
       return true;
     }
 
+    /// <summary>
+    /// Sets the start time to the next day.
+    /// </summary>
     public void NewDay()
     {
       _startTime = _startTime.AddDays(1);
@@ -242,6 +253,10 @@ namespace MediaPortal.WebEPG
       _nextDay = false;
     }
 
+    /// <summary>
+    /// Sets the program count.
+    /// </summary>
+    /// <param name="count">The count.</param>
     public void SetProgramCount(int count)
     {
       _programCount = count;
@@ -249,14 +264,19 @@ namespace MediaPortal.WebEPG
     #endregion
 
     #region Private Methods
+    /// <summary>
+    /// Tests if program is on pervious day
+    /// </summary>
+    /// <param name="programStartHour">The program start hour.</param>
+    /// <returns>true if program starts on perious day otherwise false.</returns>
     private bool OnPerviousDay(int programStartHour)
     {
-      // program starts late on the day
-      if (programStartHour >= 20)
+      // check if program starts late on the pervious day
+      if (programStartHour >= 21)
       {
         // program starts after grab time -> site filters programs based on current time
         // and less then 1 program per hour 
-        if (_startTime.Hour >= 20 && _programCount <= 6)
+        if (_startTime.Hour >= 21 && _programCount <= 6)
           return false;
 
         return true;
