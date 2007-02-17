@@ -1392,7 +1392,10 @@ namespace TvLibrary.Implementations.DVB
         _parameters = value;
         if (_mapSubChannels.Count > 0)
         {
-          _mapSubChannels[0].Parameters = value;
+          if (_mapSubChannels.ContainsKey(0))
+          {
+            _mapSubChannels[0].Parameters = value;
+          }
         }
       }
     }

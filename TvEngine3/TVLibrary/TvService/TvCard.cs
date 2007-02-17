@@ -757,6 +757,7 @@ namespace TvService
 
     public void SetParameters()
     {
+      if (!IsLocal) return;
       if (_card == null) return;
       ScanParameters settings = new ScanParameters();
       TvBusinessLayer layer = new TvBusinessLayer();
