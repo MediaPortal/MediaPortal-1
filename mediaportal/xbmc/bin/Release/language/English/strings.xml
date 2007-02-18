@@ -6348,6 +6348,10 @@
         <value>Last.fm radio</value>
     </string>
     <string>
+        <id>108888</id>
+        <value>Music menu</value>
+    </string>    
+    <string>
         <id>200000</id>
         <value>Please select your EPG grabber. Note if your country is</value>
     </string>

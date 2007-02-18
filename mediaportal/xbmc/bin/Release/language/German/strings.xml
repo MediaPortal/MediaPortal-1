@@ -6346,6 +6346,10 @@
         <value>Last.fm Radio</value>
     </string>
     <string>
+        <id>108888</id>
+        <value>Musik-Menü</value>
+    </string>    
+    <string>
         <id>200000</id>
         <value>Bitte einen EPG-Grabber auswählen. Hinweis: Ist ihr Land nicht aufgeführt,</value>
     </string>

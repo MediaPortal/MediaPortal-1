@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2007 Team MediaPortal
+#region Copyright (C) 2007 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2007 Team MediaPortal
+ *	Copyright (C) 2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -24,27 +24,21 @@
 #endregion
 
 using System;
+using System.Text;
 using MediaPortal.GUI.Library;
-using System.Drawing;
 
-
-namespace WindowPlugins.home
+namespace WindowPlugins.GUIMusic
 {
-  /// <summary>
-  /// Summary description for GUIBasicHome.
-  /// </summary>
-  public class GUIBasicHome : GUIWindow
+  public class GUIMusicMenu : GUIWindow
   {
-    [SkinControlAttribute(99)]  protected GUIVideoControl _videoWindow = null;
-
-    public GUIBasicHome()
+    public GUIMusicMenu()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_SECOND_HOME;
+      GetID = (int)GUIWindow.Window.WINDOW_MUSIC_MENU; // 8888
     }
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\BasicHome.xml");
+      return Load(GUIGraphicsContext.Skin + @"\MusicMenu.xml");
     }
 
     protected override void OnPageLoad()
@@ -57,13 +51,6 @@ namespace WindowPlugins.home
         ctl.Focus = true;   // this will update the skin property #highlightedbutton
       }
       base.OnPageLoad();
-
-      //set video window position
-      if (_videoWindow != null)
-      {
-        GUIGraphicsContext.VideoWindow = new Rectangle(_videoWindow.XPosition, _videoWindow.YPosition, _videoWindow.Width, _videoWindow.Height);
-      }
     }
-
   }
 }

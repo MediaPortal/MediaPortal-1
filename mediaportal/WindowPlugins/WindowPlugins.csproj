@@ -323,6 +323,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="GUIDVD\GUIDVDFullscreen.cs" />
+    <Compile Include="GUIMusic\GUIMusicMenu.cs" />
     <Compile Include="GUIMyDreambox\Dreambox\EPG.cs" />
     <Compile Include="GUIMyDreambox\Dreambox\XML.cs" />
     <Compile Include="GUIMyDreambox\GuiRecordings.cs" />
