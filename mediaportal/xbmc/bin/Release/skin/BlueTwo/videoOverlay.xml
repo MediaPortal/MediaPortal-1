@@ -7,11 +7,11 @@
       <description>play time label</description>
       <type>label</type>
       <id>2</id>
-      <posX>190</posX>
+      <posX>240</posX>
       <posY>470</posY>
       <label>#currentplaytime</label>
       <align>left</align>
-      <font>font72</font>
+      <font>font60</font>
       <textcolor>20ffffff</textcolor>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
