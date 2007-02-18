@@ -46,7 +46,7 @@ namespace MediaPortal.Threading
     /// <summary>
     /// Minimum number of threads in the threadpool (default 0)
     /// </summary>
-    public int MinimumThreads = 0;
+    public int MinimumThreads = 1;
 
     /// <summary>
     /// Maximum number of threads in the threadpool (default 25)
@@ -133,8 +133,8 @@ namespace MediaPortal.Threading
     /// <param name="tpsi">ThreadPoolStartInfo to validate</param>
     public static void Validate(ThreadPoolStartInfo tpsi)
     {
-      if (tpsi.MinimumThreads < 0)
-        throw new ArgumentOutOfRangeException("MinimumThreads", tpsi.MinimumThreads, "cannot be less than zero");
+      if (tpsi.MinimumThreads < 1)
+        throw new ArgumentOutOfRangeException("MinimumThreads", tpsi.MinimumThreads, "cannot be less than one");
       if (tpsi.MaximumThreads < 1)
         throw new ArgumentOutOfRangeException("MaximumThreads", tpsi.MaximumThreads, "cannot be less than one");
       if (tpsi.MinimumThreads > tpsi.MaximumThreads)
