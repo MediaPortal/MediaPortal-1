@@ -153,6 +153,13 @@ namespace SetupTv.Sections
         setting.Value = "false";
       setting.Persist();
 
+      setting = layer.GetSetting("TvMovieShowRatings", "false");
+      if (checkBoxShowRatings.Checked)
+        setting.Value = "true";
+      else
+        setting.Value = "false";
+      setting.Persist();
+
       setting = layer.GetSetting("TvMovieRestPeriod", "24");
       setting.Value = GetRestPeriod();
       setting.Persist();
@@ -165,8 +172,9 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       checkBoxEnableImport.Checked = layer.GetSetting("TvMovieEnabled", "false").Value == "true";
       //checkBoxUseDatabaseDate.Checked = layer.GetSetting("TvMovieUseDatabaseDate", "true").Value == "true";
-      checkBoxUseShortDesc.Checked = layer.GetSetting("TvMovieShortProgramDesc", "false").Value == "true";
+      checkBoxUseShortDesc.Checked = layer.GetSetting("TvMovieShortProgramDesc", "true").Value == "true";
       checkBoxAdditionalInfo.Checked = layer.GetSetting("TvMovieExtendDescription", "false").Value == "true";
+      checkBoxShowRatings.Checked = layer.GetSetting("TvMovieShowRatings", "false").Value == "true";
       checkBoxShowAudioFormat.Checked = layer.GetSetting("TvMovieShowAudioFormat", "false").Value == "true";
       checkBoxSlowImport.Checked = layer.GetSetting("TvMovieSlowImport", "false").Value == "true";
       SetRestPeriod(layer.GetSetting("TvMovieRestPeriod", "24").Value);

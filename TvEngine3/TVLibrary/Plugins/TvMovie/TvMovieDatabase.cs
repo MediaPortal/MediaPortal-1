@@ -54,6 +54,7 @@ namespace TvEngine
     private int _programsCounter = 0;
     private bool _useShortProgramDesc = false;
     private bool _extendDescription = false;
+    private bool _showRatings = false;
     private bool _showAudioFormat = false;
     private bool _slowImport = false;
 
@@ -243,8 +244,9 @@ namespace TvEngine
     {
       TvBusinessLayer layer = new TvBusinessLayer();
 
-      _useShortProgramDesc = layer.GetSetting("TvMovieShortProgramDesc", "false").Value == "true";
+      _useShortProgramDesc = layer.GetSetting("TvMovieShortProgramDesc", "true").Value == "true";
       _extendDescription = layer.GetSetting("TvMovieExtendDescription", "false").Value == "true";
+      _showRatings = layer.GetSetting("TvMovieShowRatings", "false").Value == "true";
       _showAudioFormat = layer.GetSetting("TvMovieShowAudioFormat", "false").Value == "true";
       _slowImport = layer.GetSetting("TvMovieSlowImport", "false").Value == "true";
 
@@ -456,15 +458,15 @@ namespace TvEngine
       if (_useShortProgramDesc)
       {
         if (_showAudioFormat)
-          sqlSelect = string.Format("SELECT TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.KurzBeschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung, TVDaten.Audiodescription, TVDaten.DolbySuround, TVDaten.Stereo, TVDaten.DolbyDigital, TVDaten.Dolby, TVDaten.Zweikanalton FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
+          sqlSelect = string.Format("SELECT TVDaten.Bewertungen, TVDaten.Kurzkritik, TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.KurzBeschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung, TVDaten.Audiodescription, TVDaten.DolbySuround, TVDaten.Stereo, TVDaten.DolbyDigital, TVDaten.Dolby, TVDaten.Zweikanalton FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
         else
-          sqlSelect = string.Format("SELECT TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.KurzBeschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
+          sqlSelect = string.Format("SELECT TVDaten.Bewertungen, TVDaten.Kurzkritik, TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.KurzBeschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
       }
       else
         if (_showAudioFormat)
-          sqlSelect = string.Format("SELECT TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.Beschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung, TVDaten.Audiodescription, TVDaten.DolbySuround, TVDaten.Stereo, TVDaten.DolbyDigital, TVDaten.Dolby, TVDaten.Zweikanalton FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
+          sqlSelect = string.Format("SELECT TVDaten.Bewertungen, TVDaten.Kurzkritik, TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.Beschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung, TVDaten.Audiodescription, TVDaten.DolbySuround, TVDaten.Stereo, TVDaten.DolbyDigital, TVDaten.Dolby, TVDaten.Zweikanalton FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
         else
-          sqlSelect = string.Format("SELECT TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.Beschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
+          sqlSelect = string.Format("SELECT TVDaten.Bewertungen, TVDaten.Kurzkritik, TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.Beschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
 
       OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection);
       OleDbDataAdapter databaseAdapter = new OleDbDataAdapter(databaseCommand);
@@ -534,14 +536,12 @@ namespace TvEngine
           Log.Error("TVMovie: Error storing EPG data - {0},{1}", ex2.Message, ex2.StackTrace);
         }
         string episode = guideEntry["Originaltitel"].ToString();          // strEpisodeName ==> Originaltitel
-        //string episodeNum;                                              // strEpisodeNum ==> "unknown"
-        //string episodePart;                                             // strEpisodePart ==> "unknown"
         string genre = guideEntry["Genre"].ToString();                    // idGenre (table genre) Genre match strGenre
-        int repeat = Convert.ToInt16(guideEntry["Wiederholung"]);         // strRepeat ==> Wiederholung "Repeat" / "unknown"
-        //string seriesNum;                                               // strSeriesNum ==> "unknown"
+        int repeat = Convert.ToInt16(guideEntry["Wiederholung"]);         // strRepeat ==> Wiederholung "Repeat" / "unknown"        
         int starRating = Convert.ToInt16(guideEntry["Interessant"]) - 1;  // strStarRating ==> Interessant + "/5"
-
         string title = guideEntry["Sendung"].ToString();                  // strTitle ==> Sendung
+        string shortCritic = guideEntry["Kurzkritik"].ToString();
+        string detailedRating = guideEntry["Bewertungen"].ToString();
 
         if (_showAudioFormat)
         {
@@ -583,29 +583,40 @@ namespace TvEngine
             else
               prog.Description = "Ton: " + audioFormat + "\n" + description.Replace("<br>", "\n");
 
-            //prog.Classification = classification;
-            //prog.Date = date;
-            //prog.Episode = episode;
-            //if (repeat != 0)
-            //  prog.Repeat = "Repeat";
-            //if (starRating != -1)
-            //  prog.StarRating = string.Format("{0}/5", starRating);
-
             if (_extendDescription)
             {
               StringBuilder sb = new StringBuilder();
 
               if (episode != String.Empty)
                 sb.Append("Folge: " + episode + "\n");
-              if (starRating != -1)
-                sb.Append("Wertung: " + string.Format("{0}/5", starRating) + "\n");
+
+              if (starRating != -1 && _showRatings)
+              {
+                //sb.Append("Wertung: " + string.Format("{0}/5", starRating) + "\n");
+                sb.Append("Wertung: ");
+                if (shortCritic.Length > 1)
+                {
+                  sb.Append(shortCritic + " - ");
+                }
+                sb.Append(BuildRatingDescription(starRating));
+                if (detailedRating.Length > 0)
+                  sb.Append(BuildDetailedRatingDescription(detailedRating));
+              }
+
               sb.Append(prog.Description + "\n");
+
               if (classification != String.Empty && classification != "0")
                 sb.Append("FSK: " + classification + "\n");
               if (date != String.Empty)
                 sb.Append("Jahr: " + date + "\n");
 
               prog.Description = sb.ToString();
+            }
+            else
+            {
+              if (_showRatings)
+                if (shortCritic.Length > 1)
+                  prog.Description = shortCritic + "\n" + description;
             }
 
             //TVDatabase.SupressEvents = true;   // Bav - testing if this is root of powerscheduler problems
@@ -707,13 +718,117 @@ namespace TvEngine
       if (dolbySurround)
         audioFormat = "Dolby Surround";
       if (dolby)
-        audioFormat = "Dolby 2.0";
+        audioFormat = "Dolby";
       if (stereo)
         audioFormat = "Stereo";
       if (dualAudio)
         audioFormat = "Mehrkanal-Ton";
 
       return audioFormat;
+    }
+
+    private string BuildRatingDescription(int dbRating)
+    {
+      string TVMovieRating = String.Empty;
+
+      switch (dbRating)
+      {
+        case 0:
+          TVMovieRating = "uninteressant";
+          break;
+        case 1:
+          TVMovieRating = "durchschnittlich";
+          break;
+        case 2:
+          TVMovieRating = "empfehlenswert";
+          break;
+        case 3:
+          TVMovieRating = "Tages-Tipp!";
+          break;
+        case 4:
+          TVMovieRating = "4!!! report to rtv/mPod";
+          break;
+        case 5:
+          TVMovieRating = "Genre-Tipp";
+          break;
+        case 6:
+          TVMovieRating = "Genre-Highlight!";
+          break;
+        default:
+          TVMovieRating = "---";
+          break;
+      }
+
+      return TVMovieRating + "\n";
+    }
+
+    private string BuildDetailedRatingDescription(string dbDetailedRating)
+    {
+      // "Spaß=1;Action=3;Erotik=1;Spannung=3;Anspruch=0"
+      int posidx = 0;
+      string detailedRating = string.Empty;
+      StringBuilder strb = new StringBuilder();
+
+      if (dbDetailedRating != String.Empty)
+      {
+        posidx = dbDetailedRating.IndexOf(@"Spaß=");
+        if (posidx > 0)
+        {
+          if (dbDetailedRating[posidx + 5] != '0')
+          {
+            strb.Append(dbDetailedRating.Substring(posidx, 6));
+            strb.Append("\n");
+          }
+        }
+        posidx = dbDetailedRating.IndexOf(@"Action=");
+        if (posidx > 0)
+        {
+          if (dbDetailedRating[posidx + 7] != '0')
+          {
+            strb.Append(dbDetailedRating.Substring(posidx, 8));
+            strb.Append("\n");
+          }
+        }
+        posidx = dbDetailedRating.IndexOf(@"Erotik=");
+        if (posidx > 0)
+        {
+          if (dbDetailedRating[posidx + 7] != '0')
+          {
+            strb.Append(dbDetailedRating.Substring(posidx, 8));
+            strb.Append("\n");
+          }
+        }
+        posidx = dbDetailedRating.IndexOf(@"Spannung=");
+        if (posidx > 0)
+        {
+          if (dbDetailedRating[posidx + 9] != '0')
+          {
+            strb.Append(dbDetailedRating.Substring(posidx, 10));
+            strb.Append("\n");
+          }
+        }
+        posidx = dbDetailedRating.IndexOf(@"Anspruch=");
+        if (posidx > 0)
+        {
+          if (dbDetailedRating[posidx + 9] != '0')
+          {
+            strb.Append(dbDetailedRating.Substring(posidx, 10));
+            strb.Append("\n");
+          }
+        }
+        posidx = dbDetailedRating.IndexOf(@"Gefühl=");
+        if (posidx > 0)
+        {
+          if (dbDetailedRating[posidx + 7] != '0')
+          {
+            strb.Append(dbDetailedRating.Substring(posidx, 8));
+            strb.Append("\n");
+          }
+        }
+        detailedRating = strb.ToString();
+      }
+
+      return detailedRating;
     }
 
     private DateTime LastUpdate

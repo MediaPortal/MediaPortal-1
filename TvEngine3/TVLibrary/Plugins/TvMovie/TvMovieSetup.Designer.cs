@@ -61,7 +61,11 @@ namespace SetupTv.Sections
       this.checkBoxShowAudioFormat = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxUseShortDesc = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxEnableTvMovie = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.progressBarImportItem = new System.Windows.Forms.ProgressBar();
+      this.progressBarImportTotal = new System.Windows.Forms.ProgressBar();
+      this.buttonImportNow = new System.Windows.Forms.Button();
       this.groupBoxImportTime = new System.Windows.Forms.GroupBox();
+      this.checkBoxSlowImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.radioButton7d = new System.Windows.Forms.RadioButton();
       this.radioButton2d = new System.Windows.Forms.RadioButton();
       this.radioButton24h = new System.Windows.Forms.RadioButton();
@@ -84,10 +88,7 @@ namespace SetupTv.Sections
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.listView2 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.buttonImportNow = new System.Windows.Forms.Button();
-      this.progressBarImportTotal = new System.Windows.Forms.ProgressBar();
-      this.progressBarImportItem = new System.Windows.Forms.ProgressBar();
-      this.checkBoxSlowImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxShowRatings = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControlTvMovie.SuspendLayout();
       this.tabPageSettings.SuspendLayout();
       this.groupBoxDescriptions.SuspendLayout();
@@ -137,14 +138,15 @@ namespace SetupTv.Sections
       // 
       this.groupBoxDescriptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxDescriptions.Controls.Add(this.checkBoxShowRatings);
       this.groupBoxDescriptions.Controls.Add(this.checkBoxAdditionalInfo);
       this.groupBoxDescriptions.Controls.Add(this.checkBoxShowAudioFormat);
       this.groupBoxDescriptions.Controls.Add(this.checkBoxUseShortDesc);
       this.groupBoxDescriptions.Enabled = false;
       this.groupBoxDescriptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxDescriptions.Location = new System.Drawing.Point(16, 187);
+      this.groupBoxDescriptions.Location = new System.Drawing.Point(16, 175);
       this.groupBoxDescriptions.Name = "groupBoxDescriptions";
-      this.groupBoxDescriptions.Size = new System.Drawing.Size(424, 91);
+      this.groupBoxDescriptions.Size = new System.Drawing.Size(424, 103);
       this.groupBoxDescriptions.TabIndex = 4;
       this.groupBoxDescriptions.TabStop = false;
       this.groupBoxDescriptions.Text = "Descriptions";
@@ -153,18 +155,18 @@ namespace SetupTv.Sections
       // 
       this.checkBoxAdditionalInfo.AutoSize = true;
       this.checkBoxAdditionalInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxAdditionalInfo.Location = new System.Drawing.Point(16, 44);
+      this.checkBoxAdditionalInfo.Location = new System.Drawing.Point(16, 40);
       this.checkBoxAdditionalInfo.Name = "checkBoxAdditionalInfo";
-      this.checkBoxAdditionalInfo.Size = new System.Drawing.Size(217, 17);
+      this.checkBoxAdditionalInfo.Size = new System.Drawing.Size(261, 17);
       this.checkBoxAdditionalInfo.TabIndex = 1;
-      this.checkBoxAdditionalInfo.Text = "Display additional info like FSK, Year, etc";
+      this.checkBoxAdditionalInfo.Text = "Display additional info like Episode, FSK, Year, etc";
       this.checkBoxAdditionalInfo.UseVisualStyleBackColor = true;
       // 
       // checkBoxShowAudioFormat
       // 
       this.checkBoxShowAudioFormat.AutoSize = true;
       this.checkBoxShowAudioFormat.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxShowAudioFormat.Location = new System.Drawing.Point(16, 64);
+      this.checkBoxShowAudioFormat.Location = new System.Drawing.Point(16, 80);
       this.checkBoxShowAudioFormat.Name = "checkBoxShowAudioFormat";
       this.checkBoxShowAudioFormat.Size = new System.Drawing.Size(171, 17);
       this.checkBoxShowAudioFormat.TabIndex = 2;
@@ -174,8 +176,10 @@ namespace SetupTv.Sections
       // checkBoxUseShortDesc
       // 
       this.checkBoxUseShortDesc.AutoSize = true;
+      this.checkBoxUseShortDesc.Checked = true;
+      this.checkBoxUseShortDesc.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxUseShortDesc.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxUseShortDesc.Location = new System.Drawing.Point(16, 24);
+      this.checkBoxUseShortDesc.Location = new System.Drawing.Point(16, 20);
       this.checkBoxUseShortDesc.Name = "checkBoxUseShortDesc";
       this.checkBoxUseShortDesc.Size = new System.Drawing.Size(204, 17);
       this.checkBoxUseShortDesc.TabIndex = 0;
@@ -194,10 +198,34 @@ namespace SetupTv.Sections
       this.groupBoxEnableTvMovie.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxEnableTvMovie.Location = new System.Drawing.Point(16, 8);
       this.groupBoxEnableTvMovie.Name = "groupBoxEnableTvMovie";
-      this.groupBoxEnableTvMovie.Size = new System.Drawing.Size(424, 173);
+      this.groupBoxEnableTvMovie.Size = new System.Drawing.Size(424, 161);
       this.groupBoxEnableTvMovie.TabIndex = 0;
       this.groupBoxEnableTvMovie.TabStop = false;
       this.groupBoxEnableTvMovie.Text = "TV Movie ClickFinder EPG importer";
+      // 
+      // progressBarImportItem
+      // 
+      this.progressBarImportItem.Location = new System.Drawing.Point(114, 139);
+      this.progressBarImportItem.Name = "progressBarImportItem";
+      this.progressBarImportItem.Size = new System.Drawing.Size(293, 10);
+      this.progressBarImportItem.TabIndex = 60;
+      // 
+      // progressBarImportTotal
+      // 
+      this.progressBarImportTotal.Location = new System.Drawing.Point(114, 123);
+      this.progressBarImportTotal.Name = "progressBarImportTotal";
+      this.progressBarImportTotal.Size = new System.Drawing.Size(293, 10);
+      this.progressBarImportTotal.TabIndex = 59;
+      // 
+      // buttonImportNow
+      // 
+      this.buttonImportNow.Location = new System.Drawing.Point(16, 123);
+      this.buttonImportNow.Name = "buttonImportNow";
+      this.buttonImportNow.Size = new System.Drawing.Size(75, 26);
+      this.buttonImportNow.TabIndex = 7;
+      this.buttonImportNow.Text = "Import now!";
+      this.buttonImportNow.UseVisualStyleBackColor = true;
+      this.buttonImportNow.Click += new System.EventHandler(this.buttonImportNow_Click);
       // 
       // groupBoxImportTime
       // 
@@ -214,6 +242,19 @@ namespace SetupTv.Sections
       this.groupBoxImportTime.TabIndex = 2;
       this.groupBoxImportTime.TabStop = false;
       this.groupBoxImportTime.Text = "Import newer database after";
+      // 
+      // checkBoxSlowImport
+      // 
+      this.checkBoxSlowImport.AutoSize = true;
+      this.checkBoxSlowImport.Checked = true;
+      this.checkBoxSlowImport.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxSlowImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxSlowImport.Location = new System.Drawing.Point(15, 43);
+      this.checkBoxSlowImport.Name = "checkBoxSlowImport";
+      this.checkBoxSlowImport.Size = new System.Drawing.Size(245, 17);
+      this.checkBoxSlowImport.TabIndex = 7;
+      this.checkBoxSlowImport.Text = "Slower import (less cpu - better while using MP)";
+      this.checkBoxSlowImport.UseVisualStyleBackColor = true;
       // 
       // radioButton7d
       // 
@@ -353,7 +394,7 @@ namespace SetupTv.Sections
       this.groupBoxMapping.Size = new System.Drawing.Size(424, 312);
       this.groupBoxMapping.TabIndex = 0;
       this.groupBoxMapping.TabStop = false;
-      this.groupBoxMapping.Text = "Map Channels to TV Movie Stations";
+      this.groupBoxMapping.Text = "Map channels to TV Movie stations";
       // 
       // panelTimeSpan
       // 
@@ -480,42 +521,16 @@ namespace SetupTv.Sections
       this.columnHeader2.Text = "TV Movie Stations";
       this.columnHeader2.Width = 179;
       // 
-      // buttonImportNow
+      // checkBoxShowRatings
       // 
-      this.buttonImportNow.Location = new System.Drawing.Point(16, 131);
-      this.buttonImportNow.Name = "buttonImportNow";
-      this.buttonImportNow.Size = new System.Drawing.Size(75, 26);
-      this.buttonImportNow.TabIndex = 7;
-      this.buttonImportNow.Text = "Import now!";
-      this.buttonImportNow.UseVisualStyleBackColor = true;
-      this.buttonImportNow.Click += new System.EventHandler(this.buttonImportNow_Click);
-      // 
-      // progressBarImportTotal
-      // 
-      this.progressBarImportTotal.Location = new System.Drawing.Point(114, 131);
-      this.progressBarImportTotal.Name = "progressBarImportTotal";
-      this.progressBarImportTotal.Size = new System.Drawing.Size(293, 10);
-      this.progressBarImportTotal.TabIndex = 59;
-      // 
-      // progressBarImportItem
-      // 
-      this.progressBarImportItem.Location = new System.Drawing.Point(114, 147);
-      this.progressBarImportItem.Name = "progressBarImportItem";
-      this.progressBarImportItem.Size = new System.Drawing.Size(293, 10);
-      this.progressBarImportItem.TabIndex = 60;
-      // 
-      // checkBoxSlowImport
-      // 
-      this.checkBoxSlowImport.AutoSize = true;
-      this.checkBoxSlowImport.Checked = true;
-      this.checkBoxSlowImport.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxSlowImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxSlowImport.Location = new System.Drawing.Point(15, 43);
-      this.checkBoxSlowImport.Name = "checkBoxSlowImport";
-      this.checkBoxSlowImport.Size = new System.Drawing.Size(245, 17);
-      this.checkBoxSlowImport.TabIndex = 7;
-      this.checkBoxSlowImport.Text = "Slower import (less cpu - better while using MP)";
-      this.checkBoxSlowImport.UseVisualStyleBackColor = true;
+      this.checkBoxShowRatings.AutoSize = true;
+      this.checkBoxShowRatings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxShowRatings.Location = new System.Drawing.Point(16, 60);
+      this.checkBoxShowRatings.Name = "checkBoxShowRatings";
+      this.checkBoxShowRatings.Size = new System.Drawing.Size(126, 17);
+      this.checkBoxShowRatings.TabIndex = 3;
+      this.checkBoxShowRatings.Text = "Show program ratings";
+      this.checkBoxShowRatings.UseVisualStyleBackColor = true;
       // 
       // TvMovieSetup
       // 
@@ -581,5 +596,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ProgressBar progressBarImportItem;
     private System.Windows.Forms.ProgressBar progressBarImportTotal;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxSlowImport;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowRatings;
   }
 }
