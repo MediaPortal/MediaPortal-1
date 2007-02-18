@@ -6357,6 +6357,10 @@
 		<id>107890</id>
 		<value>Last.fm radio</value>
 	</string>
+  <string>
+      <id>108888</id>
+      <value>Musikk meny</value>
+  </string>
 	<string>
 		<id>200000</id>
 		<value>Vennligst velg din EPG-grabber. Husk at hvis ditt land</value>
