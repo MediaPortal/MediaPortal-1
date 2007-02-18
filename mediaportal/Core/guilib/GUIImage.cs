@@ -653,7 +653,13 @@ namespace MediaPortal.GUI.Library
 
         CachedTexture.Frame frame = _listTextures[_currentFrameNumber];
         if (frame == null)
-          return;
+        {
+          Cleanup();
+          AllocResources();
+          frame = _listTextures[_currentFrameNumber];
+          if (frame == null) 
+            return;
+        }
         Direct3D.Texture texture = frame.Image;
         frame = null;
         if (texture == null)
@@ -1145,8 +1151,12 @@ namespace MediaPortal.GUI.Library
           {
             Cleanup();
             AllocResources();
-            base.Render(timePassed);
-            return;
+            frame = _listTextures[_currentFrameNumber];
+            if (frame == null)
+            {
+              base.Render(timePassed);
+              return;
+            }
           }
           if (frame.Image == null)
           {
