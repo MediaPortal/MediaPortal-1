@@ -1150,6 +1150,7 @@ namespace TvService
           {
             _streamer.RemoveFile(rec.FileName);
             System.IO.File.Delete(rec.FileName);
+            CleanRecordingFolders(rec.FileName);
             rec.Delete();
           }
           catch (Exception)
@@ -2020,6 +2021,49 @@ namespace TvService
       catch (Exception ex)
       {
         Log.Write(ex);
+      }
+    }
+
+    void CleanRecordingFolders(string fileName)
+    {
+      try
+      {
+        Log.Debug("TVController: Clean orphan recording dirs for {0}", fileName);
+        string recfolder = System.IO.Path.GetDirectoryName(fileName);
+        List<string> recordingPaths = new List<string>();
+
+        for (int i = 0; i < _cards.Count; i++)
+          recordingPaths.Add(_cards[i].DataBaseCard.RecordingFolder);
+
+        foreach (string checkPath in recordingPaths)
+        {
+          // make sure we're only deleting directories which are "recording dirs" from a tv card
+          if (fileName.Contains(checkPath))
+          {
+            Log.Debug("TVController: Origin for recording {0} found: {1}", System.IO.Path.GetFileName(fileName), checkPath);
+            string deleteDir = recfolder;
+            while (deleteDir != checkPath)
+            {
+              string[] files = System.IO.Directory.GetFiles(deleteDir);
+              if (files.Length == 0)
+              {
+                System.IO.Directory.Delete(deleteDir);
+                Log.Info("TVController: Deleted empty recording dir - {0}", deleteDir);
+                DirectoryInfo di = System.IO.Directory.GetParent(deleteDir);
+                deleteDir = di.FullName;
+              }
+              else
+              {
+                Log.Debug("TVController: Found {0} file(s) in recording path - not cleaning {1}", Convert.ToString(files.Length), deleteDir);
+                return;
+              }
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("TVController: Error cleaning the recording folders - {0},{1}", ex.Message, ex.StackTrace);
       }
     }
 
