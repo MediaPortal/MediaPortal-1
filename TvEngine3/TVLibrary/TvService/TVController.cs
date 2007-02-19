@@ -2031,9 +2031,16 @@ namespace TvService
         Log.Debug("TVController: Clean orphan recording dirs for {0}", fileName);
         string recfolder = System.IO.Path.GetDirectoryName(fileName);
         List<string> recordingPaths = new List<string>();
+        Dictionary<int, TvCard>.Enumerator enumerator = _cards.GetEnumerator();
 
-        for (int i = 0; i < _cards.Count; i++)
-          recordingPaths.Add(_cards[i].DataBaseCard.RecordingFolder);
+        while (enumerator.MoveNext())
+        {
+          KeyValuePair<int, TvCard> keyPair = enumerator.Current;
+          string currentCardPath = _cards[keyPair.Value.DataBaseCard.IdCard].DataBaseCard.RecordingFolder;
+          if (!recfolder.Contains(currentCardPath))
+            recordingPaths.Add(currentCardPath);
+        }
+        Log.Debug("TVController: Checking {0} path(s) for cleanup", Convert.ToString(recordingPaths.Count));
 
         foreach (string checkPath in recordingPaths)
         {
