@@ -1996,6 +1996,9 @@ namespace MediaPortal.Player
             Bass.BASS_ChannelSetAttributes(stream, -1, 100, -101);
             Bass.BASS_Start();
           }
+
+          if (_useASIO)
+            BassAsio.BASS_ASIO_Start(0);
         }
 
         else
@@ -2016,6 +2019,9 @@ namespace MediaPortal.Player
 
           else
             Bass.BASS_Pause();
+
+          if (_useASIO)
+            BassAsio.BASS_ASIO_Stop();
         }
 
         if (oldPlayState != _State)
