@@ -2037,7 +2037,7 @@ namespace TvService
         {
           KeyValuePair<int, TvCard> keyPair = enumerator.Current;
           string currentCardPath = _cards[keyPair.Value.DataBaseCard.IdCard].DataBaseCard.RecordingFolder;
-          if (!recfolder.Contains(currentCardPath))
+          if (!recordingPaths.Contains(currentCardPath))
             recordingPaths.Add(currentCardPath);
         }
         Log.Debug("TVController: Checking {0} path(s) for cleanup", Convert.ToString(recordingPaths.Count));
