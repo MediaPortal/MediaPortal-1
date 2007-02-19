@@ -424,10 +424,6 @@ namespace TvService
     /// </summary>
     public void DeInit()
     {
-      if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
-      {
-        GlobalServiceProvider.Instance.Remove<ITvServerEvent>();
-      }
       if (_plugins != null)
       {
         foreach (ITvServerPlugin plugin in _plugins.Plugins)
@@ -480,6 +476,10 @@ namespace TvService
         }
       }
       Gentle.Common.CacheManager.Clear();
+      if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
+      {
+        GlobalServiceProvider.Instance.Remove<ITvServerEvent>();
+      }
     }
 
     #endregion
