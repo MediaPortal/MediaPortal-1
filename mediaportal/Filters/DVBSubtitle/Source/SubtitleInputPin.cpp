@@ -65,10 +65,10 @@ CSubtitleInputPin::~CSubtitleInputPin()
 
 HRESULT CSubtitleInputPin::CheckMediaType( const CMediaType *pmt )
 {
-  LogDebug("Subtitle: CSubtitleInputPin::CheckMediaType()");
   if( pmt->subtype == MEDIASUBTYPE_MPEG2_TRANSPORT )
 	{
-		return S_OK;
+    LogDebug("Subtitle: CSubtitleInputPin::CheckMediaType() - found MEDIASUBTYPE_MPEG2_TRANSPORT");
+    return S_OK; 
 	}
 	return S_FALSE;
 }

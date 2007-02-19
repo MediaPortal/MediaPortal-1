@@ -66,10 +66,10 @@ CPcrInputPin::~CPcrInputPin()
 //
 HRESULT CPcrInputPin::CheckMediaType( const CMediaType *pmt )
 {
-	LogDebug("Audio pin: CheckMediaType()");
 	if( pmt->subtype == MEDIASUBTYPE_MPEG2_TRANSPORT )
 	{
-		return S_OK;
+		LogDebug("PCR pin: CheckMediaType() - found MEDIASUBTYPE_MPEG2_TRANSPORT");
+    return S_OK;
 	}
 	return S_FALSE;
 }
@@ -126,7 +126,7 @@ void CPcrInputPin::Reset()
 
 void CPcrInputPin::SetPcrPid( LONG pPid )
 {
-	m_pcrPid = pPid;
+  m_pcrPid = pPid;
 
   if( m_pPin != NULL )
     MapPidToDemuxer( m_pcrPid, m_pPin, MEDIA_TRANSPORT_PACKET );
@@ -169,6 +169,8 @@ void CPcrInputPin::OnTsPacket( byte* tsPacket )
     k=tsPacket[9]; k<<=1LL;pcrBaseHigh+=k;
     k=((tsPacket[10]>>7)&0x1); pcrBaseHigh +=k;
     m_currentPTS = pcrBaseHigh;
+
+   // LogDebug( "  PCR %lld", pcrBaseHigh );
 
     m_pFilter->SetPcr( m_currentPTS );
 }
