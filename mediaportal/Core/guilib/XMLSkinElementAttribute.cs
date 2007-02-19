@@ -27,21 +27,44 @@ using System;
 
 namespace MediaPortal.GUI.Library
 {
-	/// <summary>
-	/// Indicates that a field can be initialized from XML skin data.
-	/// </summary>
-	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-	public class XMLSkinElementAttribute : Attribute
-	{
-		string m_xmlElementName;
-		public XMLSkinElementAttribute(string xmlElementName)
-		{
-			m_xmlElementName = xmlElementName;
-		}
+  /// <summary>
+  /// Indicates that a field can be initialized from XML skin data.
+  /// </summary>
+  [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+  public class XMLSkinElementAttribute : Attribute
+  {
+    string m_xmlElementName;
+    public XMLSkinElementAttribute(string xmlElementName)
+    {
+      m_xmlElementName = xmlElementName;
+    }
 
-		public string XmlElementName
-		{
-			get { return m_xmlElementName; }
-		}
-	}
+    public string XmlElementName
+    {
+      get { return m_xmlElementName; }
+    }
+  }
+  /// <summary>
+  /// Indicates that a field can be initialized from XML skin data.
+  /// </summary>
+  [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+  public class XMLSkinAttribute : Attribute
+  {
+    string _xmlElementName;
+    string _attributeName;
+    public XMLSkinAttribute(string xmlElementName, string attributeName)
+    {
+      _xmlElementName = xmlElementName;
+      _attributeName = attributeName;
+    }
+    public string XmlElementName
+    {
+      get { return _xmlElementName; }
+    }
+
+    public string XmlAttributeName
+    {
+      get { return _attributeName; }
+    }
+  }
 }

@@ -29,6 +29,7 @@ namespace MediaPortal.GUI.Library
 {
   public class TransformMatrix
   {
+    const float DEGREE_TO_RADIAN = 0.01745329f;
     private float[,] m = new float[2, 3];
     private float alpha;
     public TransformMatrix()
@@ -63,6 +64,16 @@ namespace MediaPortal.GUI.Library
       m[0, 0] = 1.0f; m[0, 1] = 0.0f; m[0, 2] = transX;
       m[1, 0] = 0.0f; m[1, 1] = 1.0f; m[1, 2] = transY;
       alpha = 1.0f;
+    }
+    public static TransformMatrix CreateRotationDegrees(float angle)
+    {
+      angle *= DEGREE_TO_RADIAN;
+      TransformMatrix rotation = new TransformMatrix();
+      rotation.m[0, 0] = (float)Math.Cos(angle);
+      rotation.m[1, 0] = (float)Math.Sin(angle);
+      rotation.m[0, 1] = -rotation.m[1, 0];
+      rotation.m[1, 1] = rotation.m[0, 0];
+      return rotation;
     }
     public static TransformMatrix CreateRotation(float angle)
     {

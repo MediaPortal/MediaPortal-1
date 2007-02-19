@@ -1185,6 +1185,10 @@ namespace MediaPortal.GUI.Library
       {
         return _finalTransform;
       }
+      set
+      {
+        _finalTransform = value;
+      }
     }
 
     static public void SetWindowTransform(TransformMatrix matrix)

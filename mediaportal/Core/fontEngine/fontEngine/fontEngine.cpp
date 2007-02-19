@@ -55,8 +55,18 @@ struct CUSTOMVERTEX
     FLOAT tu, tv;   // The texture coordinates
 };
 
+  struct CUSTOMVERTEX2 
+  {
+      FLOAT x, y, z;
+      FLOAT rhw;
+      DWORD color;
+      FLOAT tu, tv;   // Texture coordinates
+      FLOAT tu2, tv2;
+  };
+
 // Our custom FVF, which describes our custom vertex structure
 #define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1)
+#define D3DFVF_CUSTOMVERTEX2 (D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1|D3DFVF_TEX2)
 
 
 struct FONT_DATA_T
@@ -559,6 +569,143 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 	
 }
 
+
+//*******************************************************************************************************************
+void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, float m00, float m01, float m02, float m10, float m11, float m12, int textureNo2, float uoff2, float voff2, float umax2, float vmax2)
+{
+	if (textureNo1 < 0 || textureNo1>=MAX_TEXTURES) return;
+	if (textureNo2 < 0 || textureNo2>=MAX_TEXTURES) return;
+
+  float m[2][3];
+  m[0][0]=m00;m[0][1]=m01;m[0][2]=m02;
+  m[1][0]=m10;m[1][1]=m11;m[1][2]=m12;
+  TransformMatrix matrix(m);
+	FontEnginePresentTextures();
+
+	TEXTURE_DATA_T* texture1;
+	TEXTURE_DATA_T* texture2;
+	texture1=&textureData[textureNo1];
+	texture2=&textureData[textureNo2];
+
+
+ 
+	float xpos=x;
+	float xpos2=x+nw;
+	float ypos=y;
+	float ypos2=y+nh;
+	
+	float tx1=uoff;
+	float tx2=umax;
+	float ty1=voff;
+	float ty2=vmax;
+	
+	float tx1_2=uoff2;
+	float tx2_2=umax2;
+  float ty1_2=voff2;
+	float ty2_2=vmax2; 
+	xpos-=0.5f;
+	ypos-=0.5f;
+	xpos2-=0.5f;
+	ypos2-=0.5f;
+
+  //upper left
+  float x1=matrix.ScaleFinalXCoord(xpos,ypos);
+  float y1=matrix.ScaleFinalYCoord(xpos,ypos);
+
+  //bottom left
+  float x2=matrix.ScaleFinalXCoord(xpos,ypos+nh);
+  float y2=matrix.ScaleFinalYCoord(xpos,ypos+nh);
+
+  //bottom right
+  float x3=matrix.ScaleFinalXCoord(xpos+nw,ypos+nh);
+  float y3=matrix.ScaleFinalYCoord(xpos+nw,ypos+nh);
+
+  //upper right
+  float x4=matrix.ScaleFinalXCoord(xpos+nw,ypos);
+  float y4=matrix.ScaleFinalYCoord(xpos+nw,ypos);
+
+  
+  
+  CUSTOMVERTEX2 verts[4];
+//  CUSTOMVERTEX verts[4];
+  verts[0].x = x1; 
+  verts[0].y = y1; 
+  verts[0].z = 0.0f; 
+  verts[0].rhw = 1.0f;
+  verts[0].tu = tx1;//u1;   
+  verts[0].tv = ty1;//v1; 
+  verts[0].tu2 =tx1_2 ;//u1*m_diffuseScaleU; 
+  verts[0].tv2 =ty1_2 ;//v1*m_diffuseScaleV;
+  verts[0].color = color;
+
+  verts[1].x = x2; 
+  verts[1].y = y2; 
+  verts[1].z = 0.0f;
+  verts[1].rhw = 1.0f;
+  verts[1].tu = tx1;//u2;   
+  verts[1].tv = ty2;//v1; 
+  verts[1].tu2 = tx1_2;//u2*m_diffuseScaleU; 
+  verts[1].tv2 = ty2_2;//v1*m_diffuseScaleV;
+  verts[1].color = color;
+
+  verts[2].x = x3; 
+  verts[2].y = y3; 
+  verts[2].z = 0.0f; 
+  verts[2].rhw = 1.0f;
+  verts[2].tu = tx2;//u2;   
+  verts[2].tv = ty2;//v2; 
+  verts[2].tu2 = tx2_2;//u2*m_diffuseScaleU; 
+  verts[2].tv2 = ty2_2;//v2*m_diffuseScaleV;
+  verts[2].color = color;
+
+  verts[3].x = x4; 
+  verts[3].y = y4; 
+  verts[3].z = 0.0f; 
+  verts[3].rhw = 1.0f;
+  verts[3].tu = tx2;//u1;   
+  verts[3].tv = ty1;//v2; 
+  verts[3].tu2 = tx2_2;//u1*m_diffuseScaleU; 
+  verts[3].tv2 = ty1_2;//v2*m_diffuseScaleV;
+  verts[3].color = color;
+
+  m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE ,TRUE);
+  m_pDevice->SetRenderState( D3DRS_ALPHATESTENABLE, TRUE );
+  m_pDevice->SetRenderState( D3DRS_ALPHAREF, 0 );
+  m_pDevice->SetRenderState( D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL );
+  m_pDevice->SetRenderState( D3DRS_FOGENABLE, FALSE );
+  m_pDevice->SetRenderState( D3DRS_FOGTABLEMODE, D3DFOG_NONE );
+  m_pDevice->SetRenderState( D3DRS_FILLMODE, D3DFILL_SOLID );
+  m_pDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
+  m_pDevice->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
+  m_pDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
+  m_pDevice->SetRenderState( D3DRS_ZENABLE, FALSE );
+  m_pDevice->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE );
+  m_pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+
+  m_pDevice->SetTextureStageState( 0, D3DTSS_COLOROP, D3DTOP_MODULATE );
+  m_pDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+  m_pDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+  m_pDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP, D3DTOP_MODULATE );
+  m_pDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+  m_pDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+
+  m_pDevice->SetTextureStageState( 1, D3DTSS_COLOROP, D3DTOP_MODULATE);//MODULATE );
+  m_pDevice->SetTextureStageState( 1, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+  m_pDevice->SetTextureStageState( 1, D3DTSS_COLORARG2, D3DTA_CURRENT);
+  m_pDevice->SetTextureStageState( 1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+  m_pDevice->SetTextureStageState( 1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );//D3DTA_TEXTURE );
+  m_pDevice->SetTextureStageState( 1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+  
+	m_pDevice->SetTexture(0, texture1->pTexture);
+	m_pDevice->SetTexture(1, texture2->pTexture);
+
+  m_pDevice->SetFVF(D3DFVF_CUSTOMVERTEX2);
+  m_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(CUSTOMVERTEX2));
+
+	m_pDevice->SetTexture(0, NULL);
+	m_pDevice->SetTexture(1, NULL);
+}
+
 //*******************************************************************************************************************
 void FontEnginePresentTextures()
 {
@@ -587,6 +734,7 @@ void FontEnginePresentTextures()
         else
           FontEngineSetAlphaBlend(FALSE);
 
+        m_pDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
 				m_pDevice->SetTexture(0, texture->pTexture);
 				m_pDevice->SetStreamSource(0, texture->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
 				m_pDevice->SetIndices( texture->pIndexBuffer );
@@ -937,6 +1085,7 @@ void FontEnginePresent3D(int fontNumber)
 			m_pDevice->SetTexture(0, font->pTexture);
 			m_pDevice->SetStreamSource(0, font->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
 			m_pDevice->SetIndices( font->pIndexBuffer );
+        m_pDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
 			m_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 
 											0,					 //baseVertexIndex,
 											0,					 //minVertexIndex,

@@ -70,6 +70,12 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("horizontal")]                protected bool    _horizontal           = false;
     [XMLSkinElement("showAllHover")]              protected bool    _showAllHover         = false;
 
+    [XMLSkinAttribute("hover", "flipX")]
+    protected bool _flipX = false;
+    [XMLSkinAttribute("hover", "flipY")]
+    protected bool _flipY = false;
+    [XMLSkinAttribute("hover", "diffuse")]
+    protected string _diffuseFileName = "";
     #endregion
 
     #region Enums
@@ -750,6 +756,9 @@ namespace MediaPortal.GUI.Library
           if (fileName != null)
           {
             GUIAnimation hover = LoadAnimationControl(GetID, btn.GetID, _hoverPositionX, _hoverPositionY, _hoverWidth, _hoverHeight, fileName);
+            hover.FlipX = _flipX;
+            hover.FlipY = _flipY;
+            hover.DiffuseFileName = _diffuseFileName;
             hover.KeepAspectRatio = _hoverKeepAspectRatio;
             hover.RepeatBehavior = new RepeatBehavior(1);
             hover.AllocResources();

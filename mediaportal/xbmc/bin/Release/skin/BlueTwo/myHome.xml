@@ -54,6 +54,7 @@
       <scrollTime>120</scrollTime>
       <scrollTimeMin>60</scrollTimeMin>
       <textureBackground>background_glass_menu_area.png</textureBackground>
+      <hover flipY="true" diffuse="Thumb_Mask.png"/>
       <onright>13</onright>
       <onleft>10</onleft>
     </control>

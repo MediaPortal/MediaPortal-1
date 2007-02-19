@@ -39,6 +39,9 @@ namespace MediaPortal.GUI.Library
   public class GUIAnimation : GUIControl
   {
 
+    protected bool _flipX = false;
+    protected bool _flipY = false;
+    protected string _diffuseFileName = "";
     #region Constructors
 
     public GUIAnimation()
@@ -86,6 +89,21 @@ namespace MediaPortal.GUI.Library
 
     #endregion Constructors
 
+    public bool FlipY
+    {
+      get { return _flipY; }
+      set { _flipY = value; }
+    }
+    public bool FlipX
+    {
+      get { return _flipX; }
+      set { _flipX = value; }
+    }
+    public string DiffuseFileName
+    {
+      get { return _diffuseFileName; }
+      set { _diffuseFileName = value; }
+    }
     #region Methods
 
     protected void InitTriggerList()
@@ -144,9 +162,12 @@ namespace MediaPortal.GUI.Library
         _images[index].ParentControl = this;
         _images[index].ColourDiffuse = ColourDiffuse;
         _images[index].DimColor = DimColor;
-				_images[index].KeepAspectRatio = _keepAspectRatio;
+        _images[index].KeepAspectRatio = _keepAspectRatio;
         _images[index].Filtering = Filtering;
         _images[index].RepeatBehavior = _repeatBehavior;
+        _images[index].DiffuseFileName = _diffuseFileName;
+        _images[index].FlipY = _flipX;
+        _images[index].FlipY = _flipY;
         _images[index].AllocResources();
         //_images[index].ScaleToScreenResolution(); -> causes too big images in fullscreen
 

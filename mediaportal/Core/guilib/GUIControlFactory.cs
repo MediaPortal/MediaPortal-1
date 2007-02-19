@@ -166,6 +166,39 @@ namespace MediaPortal.GUI.Library
       m_reflectionCacheByControlType[guiControlType] = membersTable;
       return membersTable;
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="guiControlType">The type of control you wish to update.</param>
+    /// <returns>A hashtable which contains the MemberInfo objects for every
+    /// updatable field, indexed by their corresponding Xml Element name. </returns>
+    static Hashtable GetAttributesToUpdate(Type guiControlType)
+    {
+      // Lazy Initializiation...
+      if (m_reflectionCacheByControlTypeAttr.ContainsKey(guiControlType))
+        return (Hashtable)m_reflectionCacheByControlTypeAttr[guiControlType];
+
+      Hashtable membersTable = new Hashtable();
+
+      MemberInfo[] allMembers = guiControlType.GetMembers(
+        BindingFlags.Instance
+        | BindingFlags.NonPublic
+        | BindingFlags.FlattenHierarchy
+        | BindingFlags.Public);
+
+      foreach (MemberInfo member in allMembers)
+      {
+        if (member.IsDefined(typeof(XMLSkinAttribute), false))
+        {
+          XMLSkinAttribute atrb = (XMLSkinAttribute)
+            member.GetCustomAttributes(typeof(XMLSkinAttribute), false)[0];
+
+          membersTable[atrb] = member;
+        }
+      }
+      m_reflectionCacheByControlTypeAttr[guiControlType] = membersTable;
+      return membersTable;
+    }
 
     private static object ConvertXmlStringToObject(string valueName, string valueText, Type type)
     {
@@ -382,6 +415,74 @@ namespace MediaPortal.GUI.Library
     }
     private static void UpdateControlWithXmlData(GUIControl control, Type controlType, XmlNode pControlNode, IDictionary defines)
     {
+      Hashtable attributesThatCanBeUpdates = GetAttributesToUpdate(controlType);
+      if (attributesThatCanBeUpdates != null)
+      {
+        IDictionaryEnumerator en = attributesThatCanBeUpdates.GetEnumerator();
+        while (en.MoveNext())
+        {
+          XMLSkinAttribute xmlAttr = (XMLSkinAttribute)en.Key;
+          MemberInfo correspondingMemberAttr = en.Value as MemberInfo;
+          XmlNode elementNode=pControlNode.SelectSingleNode(xmlAttr.XmlElementName);
+          if (elementNode!=null)
+          {
+            XmlNode attribNode = elementNode.Attributes.GetNamedItem(xmlAttr.XmlAttributeName);
+            if (attribNode!=null)
+            {
+              if (correspondingMemberAttr != null)
+              {
+                
+                string text = attribNode.Value;
+
+                if (text.Length > 0 && text[0] == '#' && defines.Contains(text))
+                  text = (string)defines[text];
+
+                object newValue = null;
+
+                if (correspondingMemberAttr.MemberType == MemberTypes.Field)
+                  newValue = ConvertXmlStringToObject(xmlAttr.XmlAttributeName, text, ((FieldInfo)correspondingMemberAttr).FieldType);
+                else if (correspondingMemberAttr.MemberType == MemberTypes.Property)
+                  newValue = ConvertXmlStringToObject(xmlAttr.XmlAttributeName, text, ((PropertyInfo)correspondingMemberAttr).PropertyType);
+
+                try
+                {
+                  if (correspondingMemberAttr.MemberType == MemberTypes.Field)
+                    ((FieldInfo)correspondingMemberAttr).SetValue(control, newValue);
+                  else if (correspondingMemberAttr.MemberType == MemberTypes.Property)
+                    ((PropertyInfo)correspondingMemberAttr).SetValue(control, newValue, null);
+                }
+                catch (Exception e)
+                {
+                  Log.Info("Couldn't place {0}, which is {1} in {2}. Exception:{3}",
+                    newValue, newValue.GetType(), correspondingMemberAttr, e);
+                }
+              }
+              else
+              {
+                if (char.IsUpper(xmlAttr.XmlAttributeName[0]))
+                {
+                  PropertyInfo propertyInfo;
+
+                  if (xmlAttr.XmlAttributeName.IndexOf('.') != -1)
+                  {
+                    propertyInfo = controlType.GetProperty(xmlAttr.XmlAttributeName.Split('.')[1]);
+                  }
+                  else
+                  {
+                    propertyInfo = controlType.GetProperty(xmlAttr.XmlAttributeName);
+                  }
+
+                  if (propertyInfo == null)
+                  {
+                    Log.Info("GUIControlFactory.UpdateControlWithXmlData: '{0}' does not contain a definition for '{1}'", controlType, xmlAttr.XmlAttributeName);
+                    return;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
       Hashtable membersThatCanBeUpdated = GetMembersToUpdate(controlType);
       List<VisualEffect> animations = new List<VisualEffect>();
       XmlNodeList childNodes = pControlNode.ChildNodes;
@@ -716,6 +817,7 @@ namespace MediaPortal.GUI.Library
     /// A hashtable which contains the reflection results for every control.
     /// </summary>
     static Hashtable m_reflectionCacheByControlType = new Hashtable(20);
+    static Hashtable m_reflectionCacheByControlTypeAttr = new Hashtable(20);
 
     // same as above but for caching style nodes
     static Dictionary<string, XmlNode> _cachedStyleNodes;

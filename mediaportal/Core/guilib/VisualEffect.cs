@@ -95,7 +95,6 @@ namespace MediaPortal.GUI.Library
     {
       Reset();
     }
-
     public void Reset()
     {
       _type = AnimationType.None;
@@ -469,6 +468,10 @@ namespace MediaPortal.GUI.Library
       {
         return _currentProcess;
       }
+      set
+      {
+        _currentProcess = value;
+      }
     }
     public AnimationType AnimationType
     {
@@ -476,12 +479,20 @@ namespace MediaPortal.GUI.Library
       {
         return _type;
       }
-    }
+      set
+      {
+         _type=value;
+       }
+     }
     public AnimationState CurrentState
     {
       get
       {
         return _currentState;
+      }
+      set
+      {
+        _currentState = value;
       }
     }
     public int Condition
@@ -489,6 +500,83 @@ namespace MediaPortal.GUI.Library
       get
       {
         return _condition;
+      }
+    }
+    public EffectType Effect
+    {
+      get
+      {
+        return _effect;
+      }
+      set
+      {
+        _effect = value;
+      }
+    }
+    public float StartX
+    {
+      get
+      {
+        return _startX;
+      }
+      set
+      {
+        _startX = value;
+      }
+    }
+    public float EndX
+    {
+      get
+      {
+        return _endX;
+      }
+      set
+      {
+        _endX = value;
+      }
+    }
+    public float StartY
+    {
+      get
+      {
+        return _startY;
+      }
+      set
+      {
+        _startY = value;
+      }
+    }
+    public float EndY
+    {
+      get
+      {
+        return _endY;
+      }
+      set
+      {
+        _endY = value;
+      }
+    }
+    public float Acceleration
+    {
+      get
+      {
+        return _acceleration;
+      }
+      set
+      {
+        _acceleration = value;
+      }
+    }
+    public float Amount
+    {
+      get
+      {
+        return _amount;
+      }
+      set
+      {
+        _amount = value;
       }
     }
   }
