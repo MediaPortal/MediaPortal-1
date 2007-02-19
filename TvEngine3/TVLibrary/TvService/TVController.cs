@@ -92,6 +92,10 @@ namespace TvService
     /// </summary>
     public TVController()
     {
+      if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
+      {
+        GlobalServiceProvider.Instance.Remove<ITvServerEvent>();
+      }
       GlobalServiceProvider.Instance.Add<ITvServerEvent>(this);
       if (Init() == false)
       {
@@ -420,6 +424,10 @@ namespace TvService
     /// </summary>
     public void DeInit()
     {
+      if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
+      {
+        GlobalServiceProvider.Instance.Remove<ITvServerEvent>();
+      }
       if (_plugins != null)
       {
         foreach (ITvServerPlugin plugin in _plugins.Plugins)
