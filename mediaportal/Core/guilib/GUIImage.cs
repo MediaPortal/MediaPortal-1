@@ -1174,9 +1174,12 @@ namespace MediaPortal.GUI.Library
 
           if (_flipX)
           {
-            fx -= nw;
-            //u1 = m_fU - u1;
-            //u2 = m_fU - u2;
+            fx += nw;
+            uoff1 = _umax + _uoff;
+            umax1 = _uoff;
+
+            uoff = _diffusetexUmax + _diffusetexUoff;
+            umax = _diffusetexUoff;
           }
           if (_flipY)
           {
