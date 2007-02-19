@@ -157,9 +157,9 @@ namespace SetupTv.Sections
       this.checkBoxAdditionalInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAdditionalInfo.Location = new System.Drawing.Point(16, 40);
       this.checkBoxAdditionalInfo.Name = "checkBoxAdditionalInfo";
-      this.checkBoxAdditionalInfo.Size = new System.Drawing.Size(261, 17);
+      this.checkBoxAdditionalInfo.Size = new System.Drawing.Size(294, 17);
       this.checkBoxAdditionalInfo.TabIndex = 1;
-      this.checkBoxAdditionalInfo.Text = "Display additional info like Episode, FSK, Year, etc";
+      this.checkBoxAdditionalInfo.Text = "Display additional info like Episode, FSK, Year, Actors etc";
       this.checkBoxAdditionalInfo.UseVisualStyleBackColor = true;
       // 
       // checkBoxShowAudioFormat
