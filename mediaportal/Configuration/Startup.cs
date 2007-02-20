@@ -76,8 +76,10 @@ namespace MediaPortal.Configuration
     /// <param name="arguments"></param>
     public Startup(string[] arguments)
     {
+      GC.Collect();
       Thread.CurrentThread.Name = "Config Main";
       Thread.CurrentThread.Priority = ThreadPriority.Highest;
+  
       // Logger should write into Configuration.log
       Log.SetConfigurationMode();
       Log.BackupLogFile(LogType.Config);
@@ -111,6 +113,7 @@ namespace MediaPortal.Configuration
           }
         }
       }
+      GC.Collect(); 
     }
 
     /// <summary>
