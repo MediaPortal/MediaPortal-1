@@ -140,7 +140,6 @@ namespace MediaPortal.InputDevices
     private MediaPortal.UserInterface.Controls.MPComboBox comboBoxLayer;
     private MediaPortal.UserInterface.Controls.MPButton buttonUp;
     private MediaPortal.UserInterface.Controls.MPButton buttonDown;
-    private MediaPortal.UserInterface.Controls.MPButton buttonNew;
     private MediaPortal.UserInterface.Controls.MPButton buttonRemove;
     private MediaPortal.UserInterface.Controls.MPButton buttonDefault;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxLayer;
@@ -150,9 +149,9 @@ namespace MediaPortal.InputDevices
     private MediaPortal.UserInterface.Controls.MPTextBox textBoxKeyCode;
     private MediaPortal.UserInterface.Controls.MPLabel labelExpand;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxGainFocus;
-    private MediaPortal.UserInterface.Controls.MPButton buttonEdit;
 
     #endregion
+    private MediaPortal.UserInterface.Controls.MPButton buttonNew;
 
 
     /// <summary>
@@ -252,7 +251,6 @@ namespace MediaPortal.InputDevices
       this.labelExpand = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonDefault = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonRemove = new MediaPortal.UserInterface.Controls.MPButton();
-      this.buttonNew = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonDown = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonUp = new MediaPortal.UserInterface.Controls.MPButton();
       this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
@@ -282,7 +280,7 @@ namespace MediaPortal.InputDevices
       this.groupBoxLayer = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.comboBoxLayer = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.labelLayer = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.buttonEdit = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonNew = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBoxAction.SuspendLayout();
       this.groupBoxCondition.SuspendLayout();
       this.groupBoxLayer.SuspendLayout();
@@ -333,21 +331,10 @@ namespace MediaPortal.InputDevices
       this.buttonRemove.UseVisualStyleBackColor = true;
       this.buttonRemove.Click += new System.EventHandler(this.buttonRemove_Click);
       // 
-      // buttonNew
-      // 
-      this.buttonNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonNew.Location = new System.Drawing.Point(144, 397);
-      this.buttonNew.Name = "buttonNew";
-      this.buttonNew.Size = new System.Drawing.Size(56, 20);
-      this.buttonNew.TabIndex = 26;
-      this.buttonNew.Text = "New";
-      this.buttonNew.UseVisualStyleBackColor = true;
-      this.buttonNew.Click += new System.EventHandler(this.buttonNew_Click);
-      // 
       // buttonDown
       // 
       this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonDown.Location = new System.Drawing.Point(80, 397);
+      this.buttonDown.Location = new System.Drawing.Point(97, 397);
       this.buttonDown.Name = "buttonDown";
       this.buttonDown.Size = new System.Drawing.Size(56, 20);
       this.buttonDown.TabIndex = 24;
@@ -696,23 +683,22 @@ namespace MediaPortal.InputDevices
       this.labelLayer.TabIndex = 16;
       this.labelLayer.Text = "Layer:";
       // 
-      // buttonEdit
+      // buttonNew
       // 
-      this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonEdit.Location = new System.Drawing.Point(208, 397);
-      this.buttonEdit.Name = "buttonEdit";
-      this.buttonEdit.Size = new System.Drawing.Size(56, 20);
-      this.buttonEdit.TabIndex = 30;
-      this.buttonEdit.Text = "Edit";
-      this.buttonEdit.UseVisualStyleBackColor = true;
-      this.buttonEdit.Click += new System.EventHandler(this.buttonEdit_Click);
+      this.buttonNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonNew.Location = new System.Drawing.Point(189, 397);
+      this.buttonNew.Name = "buttonNew";
+      this.buttonNew.Size = new System.Drawing.Size(56, 20);
+      this.buttonNew.TabIndex = 26;
+      this.buttonNew.Text = "New";
+      this.buttonNew.UseVisualStyleBackColor = true;
+      this.buttonNew.Click += new System.EventHandler(this.buttonNew_Click);
       // 
       // InputMappingForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.AutoScroll = true;
       this.ClientSize = new System.Drawing.Size(590, 475);
-      this.Controls.Add(this.buttonEdit);
       this.Controls.Add(this.labelExpand);
       this.Controls.Add(this.treeMapping);
       this.Controls.Add(this.buttonDefault);
@@ -1580,30 +1566,7 @@ namespace MediaPortal.InputDevices
       }
     }
 
-    private void buttonEdit_Click(object sender, EventArgs e)
-    {
-      TreeNode node = treeMapping.SelectedNode;
-      Data data = (Data)node.Tag;
-
-      if (data.Type == "BUTTON")
-      {
-        NewButtonForm newButtonForm = new NewButtonForm();
-        newButtonForm.ButtonName = (string)data.Parameter;
-        newButtonForm.ButtonCode = (string)data.Value;
-       
-        newButtonForm.ShowDialog();
-        if (newButtonForm.Accepted)
-        {
-          ((Data)(node.Tag)).Parameter = newButtonForm.ButtonName;
-          ((Data)(node.Tag)).Value = newButtonForm.ButtonCode;
-          node.Text = newButtonForm.ButtonName;
-          Log.Info("Name: {0}", newButtonForm.ButtonName);
-          Log.Info("Code: {0}", newButtonForm.ButtonCode);
-          changedSettings = true;
-        }
-      }
-    }
-
+    
     private void buttonNew_Click(object sender, System.EventArgs e)
     {
       TreeNode node = treeMapping.SelectedNode;
