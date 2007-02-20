@@ -2055,28 +2055,41 @@ namespace TvService
 
         foreach (string checkPath in recordingPaths)
         {
-          // make sure we're only deleting directories which are "recording dirs" from a tv card
-          if (fileName.Contains(checkPath))
+          if (checkPath != string.Empty && checkPath != System.IO.Path.GetPathRoot(checkPath))
           {
-            Log.Debug("TVController: Origin for recording {0} found: {1}", System.IO.Path.GetFileName(fileName), checkPath);
-            string deleteDir = recfolder;
-            while (deleteDir != checkPath)
+            // make sure we're only deleting directories which are "recording dirs" from a tv card
+            if (fileName.Contains(checkPath))
             {
-              string[] files = System.IO.Directory.GetFiles(deleteDir);
-              if (files.Length == 0)
+              Log.Debug("TVController: Origin for recording {0} found: {1}", System.IO.Path.GetFileName(fileName), checkPath);
+              string deleteDir = recfolder;
+              // do not attempt to step higher than the recording base path
+              while (deleteDir != System.IO.Path.GetDirectoryName(checkPath) && deleteDir.Length > checkPath.Length)
               {
-                System.IO.Directory.Delete(deleteDir);
-                Log.Info("TVController: Deleted empty recording dir - {0}", deleteDir);
-                DirectoryInfo di = System.IO.Directory.GetParent(deleteDir);
-                deleteDir = di.FullName;
-              }
-              else
-              {
-                Log.Debug("TVController: Found {0} file(s) in recording path - not cleaning {1}", Convert.ToString(files.Length), deleteDir);
-                return;
+                try
+                {
+                  string[] files = System.IO.Directory.GetFiles(deleteDir);
+                  if (files.Length == 0)
+                  {
+                    System.IO.Directory.Delete(deleteDir);
+                    Log.Info("TVController: Deleted empty recording dir - {0}", deleteDir);
+                    DirectoryInfo di = System.IO.Directory.GetParent(deleteDir);
+                    deleteDir = di.FullName;
+                  }
+                  else
+                  {
+                    Log.Debug("TVController: Found {0} file(s) in recording path - not cleaning {1}", Convert.ToString(files.Length), deleteDir);
+                    return;
+                  }
+                }
+                catch (Exception ex1)
+                {
+                  Log.Info("TVController: Could not delete directory {0} - {1}", deleteDir, ex1.Message);
+                }
               }
             }
           }
+          else
+            Log.Debug("TVController: Path not valid for removal - {1}", checkPath);
         }
       }
       catch (Exception ex)
