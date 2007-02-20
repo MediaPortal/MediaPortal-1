@@ -65,7 +65,6 @@ namespace MediaPortal.Configuration.Sections
     private MPTabPage tabPageHcw;
     private MPLabel labelHcw1000msec;
     private MPLabel labelHcw20msec;
-    private MPButton buttonHcwMapping;
     private MPTabControl tabControlRemotes;
     private MPTabPage tabPageFireDtv;
     private PictureBox pictureBoxMceEurope;
@@ -85,7 +84,6 @@ namespace MediaPortal.Configuration.Sections
     private ToolTip toolTip;
     private MPTabPage tabPageX10;
     private MPGroupBox groupBoxX10General;
-    private MPButton buttonX10Mapping;
     private MPCheckBox checkBoxX10Enabled;
     private MPGroupBox groupBoxX10Settings;
     private MPCheckBox checkBoxX10ExtendedLogging;
@@ -141,6 +139,7 @@ namespace MediaPortal.Configuration.Sections
     } ;
 
     X10Remote X10Remote = null;
+    HcwRemote HCWRemote = null;
     string X10mapping = null;
 
     private const string errHcwNotInstalled =
@@ -165,6 +164,7 @@ namespace MediaPortal.Configuration.Sections
     private MPButton buttonFireDTVMapping;
     private MPLabel mpLabel1;
     private LinkLabel IRTransLink;
+    private Button HCWLearn;
     private MPLabel labelFireDTVModel;
 
     #endregion
@@ -273,6 +273,7 @@ namespace MediaPortal.Configuration.Sections
 
         if (!checkBoxHcwEnabled.Checked)
         {
+          
           groupBoxHcwSettings.Enabled = false;
           groupBoxHcwRepeatDelay.Enabled = false;
         }
@@ -288,6 +289,8 @@ namespace MediaPortal.Configuration.Sections
             labelHcwDriverStatus.ForeColor = Color.Red;
             labelHcwDriverStatus.Text = errHcwOutOfDate;
             linkLabelHcwDownload.Visible = true;
+
+            
           }
         }
         else
@@ -302,6 +305,13 @@ namespace MediaPortal.Configuration.Sections
         if (File.Exists(dllPath + "irremote.DLL"))
         {
           FileVersionInfo dllVersionInfo = FileVersionInfo.GetVersionInfo(dllPath + "irremote.DLL");
+          
+          //Initialize the remote for learning purposes
+          if (HCWRemote == null)
+            HCWRemote = new HcwRemote();
+          HCWRemote.Init();
+          //HCWRemote.StartHcw();
+
           if (dllVersionInfo.FileVersion.CompareTo(irremote.CurrentVersion) < 0)
           {
             labelHcwDriverStatus.ForeColor = Color.Red;
@@ -322,7 +332,7 @@ namespace MediaPortal.Configuration.Sections
             xmlwriter.SetValueAsBool("remote", "HCW", false);
           }
         }
-        buttonHcwMapping.Enabled = checkBoxHcwEnabled.Checked;
+        HCWLearn.Enabled = buttonHcwDefaults.Enabled = checkBoxHcwEnabled.Checked;
 
         toolTip.SetToolTip(hScrollBarHcwButtonRelease, string.Format("{0} msec.", hScrollBarHcwButtonRelease.Value));
         toolTip.SetToolTip(hScrollBarHcwRepeatFilter, hScrollBarHcwRepeatFilter.Value.ToString());
@@ -349,7 +359,7 @@ namespace MediaPortal.Configuration.Sections
           radioButtonX10Other.Enabled =
           radioButtonX10Firefly.Enabled =
            buttonX10LearnChannel.Enabled =
-          buttonX10Mapping.Enabled = groupBoxX10Settings.Enabled = checkBoxX10Enabled.Checked;
+           groupBoxX10Settings.Enabled = checkBoxX10Enabled.Checked;
 
         //See if the X10 driver is installed
         try
@@ -544,6 +554,13 @@ namespace MediaPortal.Configuration.Sections
     {
       if (disposing)
       {
+        if (HCWRemote != null)
+        {
+          HCWRemote.StopHcw();
+          HCWRemote.DeInit();
+          HCWRemote = null;
+        }
+
         if (components != null)
         {
           components.Dispose();
@@ -591,7 +608,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelHcwButtonRelease = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelHcw20msec = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBoxHcwGeneral = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.buttonHcwMapping = new MediaPortal.UserInterface.Controls.MPButton();
+      this.HCWLearn = new System.Windows.Forms.Button();
       this.buttonHcwDefaults = new MediaPortal.UserInterface.Controls.MPButton();
       this.checkBoxHcwEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxHcwStatus = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -609,7 +626,6 @@ namespace MediaPortal.Configuration.Sections
       this.labelX10Status = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBoxX10General = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.buttonX10LearnChannel = new MediaPortal.UserInterface.Controls.MPButton();
-      this.buttonX10Mapping = new MediaPortal.UserInterface.Controls.MPButton();
       this.radioButtonX10Firefly = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.radioButtonX10Other = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.radioButtonX10Ati = new MediaPortal.UserInterface.Controls.MPRadioButton();
@@ -632,6 +648,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxIrTransSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxIrTransExtendedLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxIrTransStatus = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.IRTransLink = new System.Windows.Forms.LinkLabel();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelIrTransStatus = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBoxIrTransServerSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.buttonIrTransTest = new MediaPortal.UserInterface.Controls.MPButton();
@@ -654,8 +672,6 @@ namespace MediaPortal.Configuration.Sections
       this.buttonFireDTVMapping = new MediaPortal.UserInterface.Controls.MPButton();
       this.checkBoxFireDTVEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.IRTransLink = new System.Windows.Forms.LinkLabel();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMceUsa)).BeginInit();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageMce.SuspendLayout();
@@ -1027,7 +1043,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBoxHcwGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxHcwGeneral.Controls.Add(this.buttonHcwMapping);
+      this.groupBoxHcwGeneral.Controls.Add(this.HCWLearn);
       this.groupBoxHcwGeneral.Controls.Add(this.buttonHcwDefaults);
       this.groupBoxHcwGeneral.Controls.Add(this.checkBoxHcwEnabled);
       this.groupBoxHcwGeneral.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -1037,16 +1053,15 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxHcwGeneral.TabIndex = 0;
       this.groupBoxHcwGeneral.TabStop = false;
       // 
-      // buttonHcwMapping
+      // HCWLearn
       // 
-      this.buttonHcwMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonHcwMapping.Location = new System.Drawing.Point(214, 19);
-      this.buttonHcwMapping.Name = "buttonHcwMapping";
-      this.buttonHcwMapping.Size = new System.Drawing.Size(72, 22);
-      this.buttonHcwMapping.TabIndex = 1;
-      this.buttonHcwMapping.Text = "Mapping";
-      this.buttonHcwMapping.UseVisualStyleBackColor = true;
-      this.buttonHcwMapping.Click += new System.EventHandler(this.buttonHcwMapping_Click);
+      this.HCWLearn.Location = new System.Drawing.Point(216, 19);
+      this.HCWLearn.Name = "HCWLearn";
+      this.HCWLearn.Size = new System.Drawing.Size(72, 22);
+      this.HCWLearn.TabIndex = 2;
+      this.HCWLearn.Text = "Learn";
+      this.HCWLearn.UseVisualStyleBackColor = true;
+      this.HCWLearn.Click += new System.EventHandler(this.HCWLearn_Click);
       // 
       // buttonHcwDefaults
       // 
@@ -1235,7 +1250,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxX10General.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxX10General.Controls.Add(this.buttonX10LearnChannel);
-      this.groupBoxX10General.Controls.Add(this.buttonX10Mapping);
       this.groupBoxX10General.Controls.Add(this.radioButtonX10Firefly);
       this.groupBoxX10General.Controls.Add(this.radioButtonX10Other);
       this.groupBoxX10General.Controls.Add(this.radioButtonX10Ati);
@@ -1251,24 +1265,13 @@ namespace MediaPortal.Configuration.Sections
       // buttonX10LearnChannel
       // 
       this.buttonX10LearnChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonX10LearnChannel.Location = new System.Drawing.Point(309, 24);
+      this.buttonX10LearnChannel.Location = new System.Drawing.Point(309, 46);
       this.buttonX10LearnChannel.Name = "buttonX10LearnChannel";
       this.buttonX10LearnChannel.Size = new System.Drawing.Size(72, 22);
       this.buttonX10LearnChannel.TabIndex = 2;
       this.buttonX10LearnChannel.Text = "&Learn";
       this.buttonX10LearnChannel.UseVisualStyleBackColor = true;
       this.buttonX10LearnChannel.Click += new System.EventHandler(this.buttonX10LearnChannel_Click);
-      // 
-      // buttonX10Mapping
-      // 
-      this.buttonX10Mapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonX10Mapping.Location = new System.Drawing.Point(309, 61);
-      this.buttonX10Mapping.Name = "buttonX10Mapping";
-      this.buttonX10Mapping.Size = new System.Drawing.Size(72, 22);
-      this.buttonX10Mapping.TabIndex = 5;
-      this.buttonX10Mapping.Text = "Mapping";
-      this.buttonX10Mapping.UseVisualStyleBackColor = true;
-      this.buttonX10Mapping.Click += new System.EventHandler(this.buttonX10Mapping_Click);
       // 
       // radioButtonX10Firefly
       // 
@@ -1529,6 +1532,26 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxIrTransStatus.TabStop = false;
       this.groupBoxIrTransStatus.Text = "Status";
       // 
+      // IRTransLink
+      // 
+      this.IRTransLink.AutoSize = true;
+      this.IRTransLink.Location = new System.Drawing.Point(16, 53);
+      this.IRTransLink.Name = "IRTransLink";
+      this.IRTransLink.Size = new System.Drawing.Size(100, 13);
+      this.IRTransLink.TabIndex = 10;
+      this.IRTransLink.TabStop = true;
+      this.IRTransLink.Text = "IRTrans Information";
+      this.IRTransLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.IRTransLink_LinkClicked);
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.AutoSize = true;
+      this.mpLabel1.Location = new System.Drawing.Point(16, 24);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(343, 13);
+      this.mpLabel1.TabIndex = 9;
+      this.mpLabel1.Text = "If you experience duplicate key presses, please see the following article";
+      // 
       // labelIrTransStatus
       // 
       this.labelIrTransStatus.Location = new System.Drawing.Point(16, 20);
@@ -1765,26 +1788,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.toolTip.ShowAlways = true;
       // 
-      // mpLabel1
-      // 
-      this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(16, 24);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(343, 13);
-      this.mpLabel1.TabIndex = 9;
-      this.mpLabel1.Text = "If you experience duplicate key presses, please see the following article";
-      // 
-      // IRTransLink
-      // 
-      this.IRTransLink.AutoSize = true;
-      this.IRTransLink.Location = new System.Drawing.Point(16, 53);
-      this.IRTransLink.Name = "IRTransLink";
-      this.IRTransLink.Size = new System.Drawing.Size(100, 13);
-      this.IRTransLink.TabIndex = 10;
-      this.IRTransLink.TabStop = true;
-      this.IRTransLink.Text = "IRTrans Information";
-      this.IRTransLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.IRTransLink_LinkClicked);
-      // 
       // Remote
       // 
       this.Controls.Add(this.tabControlRemotes);
@@ -1949,7 +1952,7 @@ namespace MediaPortal.Configuration.Sections
     {
       groupBoxHcwSettings.Enabled = checkBoxHcwEnabled.Checked;
       groupBoxHcwRepeatDelay.Enabled = checkBoxHcwEnabled.Checked;
-      buttonHcwDefaults.Enabled = buttonHcwMapping.Enabled = checkBoxHcwEnabled.Checked;
+      buttonHcwDefaults.Enabled = HCWLearn.Enabled = checkBoxHcwEnabled.Checked;
     }
 
     //
@@ -1997,27 +2000,6 @@ namespace MediaPortal.Configuration.Sections
 
     #region Form control commands X10
 
-    private void buttonX10Mapping_Click(object sender, EventArgs e)
-    {
-      InputMappingForm dlg;
-      if (radioButtonX10Medion.Checked)
-      {
-        dlg = new InputMappingForm("Medion X10");
-      }
-      else if (radioButtonX10Ati.Checked)
-      {
-        dlg = new InputMappingForm("ATI X10");
-      }
-      else if (radioButtonX10Firefly.Checked)
-      {
-        dlg = new InputMappingForm("Firefly X10");
-      }
-      else
-      {
-        dlg = new InputMappingForm("Other X10");
-      }
-      dlg.ShowDialog(this);
-    }
 
     private void buttonX10Defaults_Click(object sender, EventArgs e)
     {
@@ -2057,7 +2039,7 @@ namespace MediaPortal.Configuration.Sections
         radioButtonX10Ati.Enabled =
         radioButtonX10Firefly.Enabled =
         radioButtonX10Other.Enabled =
-        buttonX10Mapping.Enabled = buttonX10LearnChannel.Enabled = groupBoxX10Settings.Enabled = checkBoxX10Enabled.Checked;
+        buttonX10LearnChannel.Enabled = groupBoxX10Settings.Enabled = checkBoxX10Enabled.Checked;
      
     }
 
@@ -2081,19 +2063,19 @@ namespace MediaPortal.Configuration.Sections
      
       if (radioButtonX10Medion.Checked)
       {
-        TeachX10 = new RemoteLearn("Medion X10", X10Remote);
+        TeachX10 = new RemoteLearn("X10","Medion X10", X10Remote);
       }
       else if (radioButtonX10Ati.Checked)
       {
-        TeachX10 = new RemoteLearn("ATI X10", X10Remote);
+        TeachX10 = new RemoteLearn("X10","ATI X10", X10Remote);
       }
       else if (radioButtonX10Firefly.Checked)
       {
-        TeachX10 = new RemoteLearn("Firefly X10", X10Remote);
+        TeachX10 = new RemoteLearn("X10","Firefly X10", X10Remote);
       }
       else
       {
-        TeachX10 = new RemoteLearn("Other X10", X10Remote);
+        TeachX10 = new RemoteLearn("X10","Other X10", X10Remote);
       }
      
       TeachX10.ShowDialog(this);
@@ -2197,5 +2179,14 @@ namespace MediaPortal.Configuration.Sections
       Process.Start("http://wiki.team-mediaportal.com/MediaPortalSetup_Remote/IRTrans");
     }
     #endregion
+
+    private void HCWLearn_Click(object sender, EventArgs e)
+    {
+      RemoteLearn TeachHCW = new RemoteLearn("HCW", "Hauppauge HCW", HCWRemote); ;
+      if (TeachHCW != null)
+      {
+        TeachHCW.ShowDialog(this);
+      }
+    }
   }
 }

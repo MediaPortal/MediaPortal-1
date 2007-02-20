@@ -69,6 +69,14 @@ namespace MediaPortal.InputDevices
     const int PBT_APMRESUMECRITICAL = 0x0006;
 
 
+    #region Callback
+
+    //Sets up callback so that other forms can catch a key press
+    public delegate void HCWEvent(int keypress);
+    public event HCWEvent HCWKeyPressed;
+
+    #endregion
+
     /// <summary>
     /// HCW control enabled
     /// </summary>
@@ -240,7 +248,6 @@ namespace MediaPortal.InputDevices
     void OnReceive(string strReceive)
     {
       if (_logVerbose) Log.Info("HCW: received: {0}", strReceive);
-
       string msg = strReceive.Split('~')[0];
       if (_logVerbose) Log.Info("HCW: Accepted: {0}", msg);
       switch (msg.Split('|')[0])
@@ -250,7 +257,7 @@ namespace MediaPortal.InputDevices
             // Time of button press - Use this for repeat delay calculations
             DateTime sentTime = DateTime.FromBinary(Convert.ToInt64(msg.Split('|')[2]));
             int newCommand = Convert.ToInt16(msg.Split('|')[1]);
-
+            
             if (_logVerbose) Log.Info("HCW: elapsed time: {0}", ((TimeSpan)(sentTime - _lastTime)).Milliseconds);
             if (_logVerbose) Log.Info("HCW: sameCommandCount: {0}", _sameCommandCount.ToString());
 
@@ -276,7 +283,10 @@ namespace MediaPortal.InputDevices
 
             // new button / session
             if (_sameCommandCount == 0)
+            {
               executeKey = true;
+            //here
+            }
 
             //// we got the identical button often enough to accept it
             if (_sameCommandCount == _repeatFilter)
@@ -286,11 +296,14 @@ namespace MediaPortal.InputDevices
             if ((_sameCommandCount > _repeatFilter) && (_sameCommandCount > _lastExecutedCommandCount + _repeatSpeed))
               executeKey = true;
 
+            if (HCWKeyPressed != null)
+              _filterDoubleKlicks = true;
+
             // double click filter
             if (executeKey && _filterDoubleKlicks)
             {
               int keyCode = newCommand;
-
+              
               // strip remote type
               if (keyCode > 2000)
                 keyCode = keyCode - 2000;
@@ -309,23 +322,42 @@ namespace MediaPortal.InputDevices
               {
                 executeKey = false;
                 if (_logVerbose) Log.Info("HCW: doubleclick supressed: {0}", newCommand.ToString());
+                
+              }
+              else
+              {
+                //Send command for remote control learning
+                if (HCWKeyPressed != null)
+                  HCWKeyPressed(newCommand);
+            
               }
             }
 
             if (executeKey)
             {
+              
               _lastExecutedCommandCount = _sameCommandCount;
               _lastCommand = newCommand;
               //Send command to application...
-              if (!_inputHandler.MapAction(newCommand))
-                Log.Info("HCW: No mapping found");
-              else
-                if (_logVerbose) Log.Info("HCW: repeat filter accepted: {0}", newCommand.ToString());
+              if (_inputHandler != null)
+              {
+                if (!_inputHandler.MapAction(newCommand))
+                {
+                  Log.Info("HCW: No mapping found");
+                }
+                else
+                {
+                  if (_logVerbose) Log.Info("HCW: repeat filter accepted: {0}", newCommand.ToString());
+
+                }
+              }
+                
             }
             _lastTime = sentTime;
           }
           break;
         case "APP":
+          
           if (msg.Split('|')[1] == "STOP")
           {
             if (_logVerbose) Log.Info("HCW: received STOP from HcwHelper");

@@ -106,7 +106,8 @@ namespace MediaPortal.InputDevices.HcwHelper
     /// </summary>
     private void CheckThread()
     {
-      while (!cancelWait && ((Process.GetProcessesByName("MediaPortal").Length > 0) || (Process.GetProcessesByName("MediaPortal.vshost").Length > 0)))
+      while (!cancelWait && ((Process.GetProcessesByName("MediaPortal").Length > 0) || (Process.GetProcessesByName("MediaPortal.vshost").Length > 0) ||
+        Process.GetProcessesByName("Configuration").Length >0))
         Thread.Sleep(1000);
 
       if (logVerbose) Log.Info("HCWHelper: MediaPortal is not running");

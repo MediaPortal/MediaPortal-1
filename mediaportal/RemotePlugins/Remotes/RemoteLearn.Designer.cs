@@ -38,6 +38,9 @@ namespace MediaPortal.InputDevices
       this.mpListView = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeaderMPAction = new System.Windows.Forms.ColumnHeader();
       this.columnHeaderX10Key = new System.Windows.Forms.ColumnHeader();
+      this.InputMapperButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpRemotenumber = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.SuspendLayout();
       // 
       // ButtonStartLearn
@@ -62,7 +65,7 @@ namespace MediaPortal.InputDevices
       // 
       // mpCancel
       // 
-      this.mpCancel.Location = new System.Drawing.Point(338, 339);
+      this.mpCancel.Location = new System.Drawing.Point(334, 401);
       this.mpCancel.Name = "mpCancel";
       this.mpCancel.Size = new System.Drawing.Size(75, 23);
       this.mpCancel.TabIndex = 3;
@@ -72,7 +75,7 @@ namespace MediaPortal.InputDevices
       // 
       // buttonOK
       // 
-      this.buttonOK.Location = new System.Drawing.Point(150, 339);
+      this.buttonOK.Location = new System.Drawing.Point(148, 401);
       this.buttonOK.Name = "buttonOK";
       this.buttonOK.Size = new System.Drawing.Size(75, 23);
       this.buttonOK.TabIndex = 2;
@@ -82,7 +85,7 @@ namespace MediaPortal.InputDevices
       // 
       // mpBeveledLine1
       // 
-      this.mpBeveledLine1.Location = new System.Drawing.Point(8, 316);
+      this.mpBeveledLine1.Location = new System.Drawing.Point(5, 370);
       this.mpBeveledLine1.Name = "mpBeveledLine1";
       this.mpBeveledLine1.Size = new System.Drawing.Size(424, 2);
       this.mpBeveledLine1.TabIndex = 0;
@@ -90,7 +93,7 @@ namespace MediaPortal.InputDevices
       // 
       // mpApply
       // 
-      this.mpApply.Location = new System.Drawing.Point(245, 339);
+      this.mpApply.Location = new System.Drawing.Point(247, 401);
       this.mpApply.Name = "mpApply";
       this.mpApply.Size = new System.Drawing.Size(75, 23);
       this.mpApply.TabIndex = 1;
@@ -101,11 +104,13 @@ namespace MediaPortal.InputDevices
       // mpListView
       // 
       this.mpListView.AllowDrop = true;
-      this.mpListView.AllowRowReorder = true;
+      this.mpListView.AllowRowReorder = false;
       this.mpListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderMPAction,
             this.columnHeaderX10Key});
+      this.mpListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.mpListView.Location = new System.Drawing.Point(12, 22);
+      this.mpListView.MultiSelect = false;
       this.mpListView.Name = "mpListView";
       this.mpListView.Size = new System.Drawing.Size(283, 273);
       this.mpListView.TabIndex = 0;
@@ -120,13 +125,45 @@ namespace MediaPortal.InputDevices
       // columnHeaderX10Key
       // 
       this.columnHeaderX10Key.Text = "Current X10 Key";
-      this.columnHeaderX10Key.Width = 153;
+      this.columnHeaderX10Key.Width = 152;
       // 
-      // X10Learn
+      // InputMapperButton
+      // 
+      this.InputMapperButton.Location = new System.Drawing.Point(325, 194);
+      this.InputMapperButton.Name = "InputMapperButton";
+      this.InputMapperButton.Size = new System.Drawing.Size(84, 23);
+      this.InputMapperButton.TabIndex = 7;
+      this.InputMapperButton.Text = "Mapping";
+      this.InputMapperButton.UseVisualStyleBackColor = true;
+      this.InputMapperButton.Click += new System.EventHandler(this.InputMapperButton_Click);
+      // 
+      // mpRemotenumber
+      // 
+      this.mpRemotenumber.BorderColor = System.Drawing.Color.Empty;
+      this.mpRemotenumber.FormattingEnabled = true;
+      this.mpRemotenumber.Location = new System.Drawing.Point(12, 327);
+      this.mpRemotenumber.Name = "mpRemotenumber";
+      this.mpRemotenumber.Size = new System.Drawing.Size(283, 21);
+      this.mpRemotenumber.TabIndex = 8;
+      this.mpRemotenumber.SelectedIndexChanged += new System.EventHandler(this.mpRemotenumber_SelectedIndexChanged);
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.AutoSize = true;
+      this.mpLabel1.Location = new System.Drawing.Point(9, 311);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(107, 13);
+      this.mpLabel1.TabIndex = 9;
+      this.mpLabel1.Text = "Remote Control Type";
+      // 
+      // RemoteLearn
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(441, 374);
+      this.ClientSize = new System.Drawing.Size(441, 436);
+      this.Controls.Add(this.mpLabel1);
+      this.Controls.Add(this.mpRemotenumber);
+      this.Controls.Add(this.InputMapperButton);
       this.Controls.Add(this.ButtonStartLearn);
       this.Controls.Add(this.ButtonEndLearn);
       this.Controls.Add(this.mpCancel);
@@ -136,10 +173,12 @@ namespace MediaPortal.InputDevices
       this.Controls.Add(this.mpListView);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-      this.Name = "X10Learn";
+      this.Name = "RemoteLearn";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Teach X10 Remote Control";
+      this.Shown += new System.EventHandler(this.RemoteLearn_Shown);
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
 
@@ -154,5 +193,8 @@ namespace MediaPortal.InputDevices
     private MediaPortal.UserInterface.Controls.MPButton ButtonStartLearn;
     private System.Windows.Forms.ColumnHeader columnHeaderMPAction;
     private System.Windows.Forms.ColumnHeader columnHeaderX10Key;
+    private MediaPortal.UserInterface.Controls.MPButton InputMapperButton;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpRemotenumber;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
   }
 }

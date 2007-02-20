@@ -45,9 +45,10 @@ namespace MediaPortal.InputDevices.HcwHelper
       Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
       if ((Process.GetProcessesByName("HcwHelper").Length == 1) &&
-        ((Process.GetProcessesByName("MediaPortal").Length > 0) ||
+        ((Process.GetProcessesByName("MediaPortal").Length > 0) || Process.GetProcessesByName("Configuration").Length > 0 ||
         (Process.GetProcessesByName("MediaPortal.vshost").Length > 0)))
       {
+    
         System.Windows.Forms.Application.EnableVisualStyles();
         System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
         Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.RealTime;
