@@ -234,6 +234,12 @@
       <DependentUpon>GroupNameForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\player.cs" />
+    <Compile Include="Sections\Plugins.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\Plugins.Designer.cs">
+      <DependentUpon>Plugins.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\RadioEpgGrabber.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -399,6 +405,10 @@
     <EmbeddedResource Include="Sections\FormPreview.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FormPreview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\Plugins.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Plugins.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\ScanSettings.resx">
       <SubType>Designer</SubType>

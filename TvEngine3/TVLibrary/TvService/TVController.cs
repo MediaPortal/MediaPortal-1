@@ -388,7 +388,16 @@ namespace TvService
         {
           if (plugin.MasterOnly == false || _isMaster)
           {
-            plugin.Start(this);
+            Setting setting = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
+            if (setting.Value == "true")
+            {
+              Log.Info("Plugin:{0} started", plugin.Name);
+              plugin.Start(this);
+            }
+            else
+            {
+              Log.Info("Plugin:{0} disabled", plugin.Name);
+            }
           }
         }
       }

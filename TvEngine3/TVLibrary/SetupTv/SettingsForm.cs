@@ -206,10 +206,10 @@ namespace SetupTv
 
           AddSection(new TestService("Manual Control"));
 
-          SectionSettings pluginsRoot = new SectionSettings("Plugins");
+          _pluginLoader.Load();
+          Plugins pluginsRoot = new Plugins("Plugins",_pluginLoader);
           AddSection(pluginsRoot);
 
-          _pluginLoader.Load();
           foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
           {
             SectionSettings settings = plugin.Setup;

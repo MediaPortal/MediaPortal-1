@@ -6,7 +6,7 @@ using TvEngine;
 using TvLibrary.Log;
 namespace SetupTv
 {
-  class PluginLoader
+  public class PluginLoader
   {
     List<ITvServerPlugin> _plugins = new List<ITvServerPlugin>();
 
