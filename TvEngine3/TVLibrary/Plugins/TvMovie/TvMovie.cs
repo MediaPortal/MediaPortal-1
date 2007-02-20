@@ -141,12 +141,12 @@ namespace TvEngine
 
     public string Version
     {
-      get { return "0.2.2.0"; }
+      get { return "0.2.2.1"; }
     }
 
     public string Author
     {
-      get { return "mPod/rtv"; }
+      get { return "mPod / rtv"; }
     }
 
     public bool MasterOnly

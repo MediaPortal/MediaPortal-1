@@ -2068,12 +2068,21 @@ namespace TvService
                 try
                 {
                   string[] files = System.IO.Directory.GetFiles(deleteDir);
+                  string[] subdirs = System.IO.Directory.GetDirectories(deleteDir);
                   if (files.Length == 0)
                   {
-                    System.IO.Directory.Delete(deleteDir);
-                    Log.Info("TVController: Deleted empty recording dir - {0}", deleteDir);
-                    DirectoryInfo di = System.IO.Directory.GetParent(deleteDir);
-                    deleteDir = di.FullName;
+                    if (subdirs.Length == 0)
+                    {
+                      System.IO.Directory.Delete(deleteDir);
+                      Log.Info("TVController: Deleted empty recording dir - {0}", deleteDir);
+                      DirectoryInfo di = System.IO.Directory.GetParent(deleteDir);
+                      deleteDir = di.FullName;
+                    }
+                    else
+                    {
+                      Log.Debug("TVController: Found {0} sub-directory(s) in recording path - not cleaning {1}", Convert.ToString(subdirs.Length), deleteDir);
+                      return;
+                    }
                   }
                   else
                   {
@@ -2084,6 +2093,8 @@ namespace TvService
                 catch (Exception ex1)
                 {
                   Log.Info("TVController: Could not delete directory {0} - {1}", deleteDir, ex1.Message);
+                  // bail out to avoid i-loop
+                  return;
                 }
               }
             }
