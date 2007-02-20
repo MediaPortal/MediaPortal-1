@@ -1,47 +1,53 @@
 <window>
-  <id>7002</id> 
+  <id>7002</id>
   <allowoverlay>yes</allowoverlay>
   <defaultcontrol>2</defaultcontrol>
   <controls>
 	<control>
-		<description>current temperature label</description> 
-		<type>fadelabel</type> 
-		<id>2</id> 
-		<posX>80</posX> 
-		<posY>510</posY> 
+		<description>current temperature label</description>
+		<type>fadelabel</type>
+		<id>2</id>
+		<posX>80</posX>
+		<posY>510</posY>
 		<width>200</width>
-		<align>left</align> 
-		<font>font13</font> 
+		<align>left</align>
+		<font>font13</font>
 		<textcolor>ffffffff</textcolor>
+		<visible>!Player.HasMedia</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
             	<animation effect="fade" time="500">WindowClose</animation>
+            	<animation effect="fade" time="250">VisibleChange</animation>
 	</control>
 	<control>
-		<description>current location label</description> 
-		<type>fadelabel</type> 
-		<id>4</id> 
-		<posX>80</posX> 
-		<posY>530</posY> 
+		<description>current location label</description>
+		<type>fadelabel</type>
+		<id>4</id>
+		<posX>80</posX>
+		<posY>530</posY>
 		<width>200</width>
-		<align>left</align> 
-		<font>font10</font> 
+		<align>left</align>
+		<font>font10</font>
 		<allowScrolling>true</allowScrolling>
 		<textcolor>ffffffff</textcolor>
+		<visible>!Player.HasMedia</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
             	<animation effect="fade" time="500">WindowClose</animation>
+            	<animation effect="fade" time="250">VisibleChange</animation>
 	</control>
 	<control>
-		<description>weather description label</description> 
-		<type>fadelabel</type> 
-		<id>5</id> 
-		<posX>80</posX> 
-		<posY>545</posY> 
+		<description>weather description label</description>
+		<type>fadelabel</type>
+		<id>5</id>
+		<posX>80</posX>
+		<posY>545</posY>
 		<width>200</width>
-		<align>left</align> 
-		<font>font10</font> 
+		<align>left</align>
+		<font>font10</font>
 		<textcolor>ffffffff</textcolor>
+		<visible>!Player.HasMedia</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
             	<animation effect="fade" time="500">WindowClose</animation>
+            	<animation effect="fade" time="250">VisibleChange</animation>
 	</control>
 	<control>
 		<type>image</type>
@@ -51,8 +57,10 @@
 		<posY>503</posY>
 		<width>64</width>
 		<height>64</height>
+		<visible>!Player.HasMedia</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
             	<animation effect="fade" time="500">WindowClose</animation>
+            	<animation effect="fade" time="250">VisibleChange</animation>
 	</control>
     </controls>
 </window>
