@@ -148,7 +148,7 @@ namespace SetupTv.Sections
       strReturn += strName + ".mpg";
       return strReturn;
     }
-
+    bool _needRestart = false;
     public TvRecording()
       : this("Recording")
     {
@@ -283,7 +283,7 @@ namespace SetupTv.Sections
       textBoxPostInterval.Text = "5";
       TvBusinessLayer layer = new TvBusinessLayer();
       checkBoxAutoDelete.Checked = (layer.GetSetting("autodeletewatchedrecordings", "no").Value == "yes");
-      checkBoxAddToDatabase.Checked = (layer.GetSetting("addrecordingstomoviedbs", "no").Value == "yes"); 
+      checkBoxAddToDatabase.Checked = (layer.GetSetting("addrecordingstomoviedbs", "no").Value == "yes");
       formatString[0] = "";
       formatString[1] = "";
 
@@ -429,16 +429,16 @@ namespace SetupTv.Sections
         CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
         if (info.card.RecordingFolder != textBoxFolder.Text)
         {
+          _needRestart = true;
           info.card.RecordingFolder = textBoxFolder.Text;
           info.card.Persist();
-          RemoteControl.Instance.ClearCache();
-          RemoteControl.Instance.Restart();
         }
       }
     }
 
     public override void OnSectionActivated()
     {
+      _needRestart = false;
       comboBoxCards.Items.Clear();
       IList cards = Card.ListAll();
       foreach (Card card in cards)
@@ -452,6 +452,11 @@ namespace SetupTv.Sections
     public override void OnSectionDeActivated()
     {
       base.OnSectionDeActivated();
+      if (_needRestart)
+      {
+        RemoteControl.Instance.ClearCache();
+        RemoteControl.Instance.Restart();
+      }
     }
 
     private void checkBoxComSkipEnabled_CheckedChanged(object sender, EventArgs e)
@@ -484,8 +489,7 @@ namespace SetupTv.Sections
       {
         info.card.RecordingFolder = textBoxFolder.Text;
         info.card.Persist();
-        RemoteControl.Instance.ClearCache();
-        RemoteControl.Instance.Restart();
+        _needRestart = true;
       }
     }
 
@@ -509,8 +513,7 @@ namespace SetupTv.Sections
           info.card.RecordingFolder = textBoxFolder.Text;
           info.card.TimeShiftFolder = textBoxTimeShiftFolder.Text;
           info.card.Persist();
-          RemoteControl.Instance.ClearCache();
-          RemoteControl.Instance.Restart();
+          _needRestart = true;
         }
       }
     }
@@ -522,8 +525,7 @@ namespace SetupTv.Sections
       {
         info.card.TimeShiftFolder = textBoxTimeShiftFolder.Text;
         info.card.Persist();
-        RemoteControl.Instance.ClearCache();
-        RemoteControl.Instance.Restart();
+        _needRestart = true;
       }
     }
 
@@ -534,8 +536,7 @@ namespace SetupTv.Sections
       {
         info.card.RecordingFormat = comboBoxRecordingFormat.SelectedIndex;
         info.card.Persist();
-        RemoteControl.Instance.ClearCache();
-        RemoteControl.Instance.Restart();
+        _needRestart = true;
       }
     }
   }

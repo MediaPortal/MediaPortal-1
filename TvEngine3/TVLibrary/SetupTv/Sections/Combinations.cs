@@ -248,6 +248,7 @@ namespace SetupTv.Sections
       List<ListViewItem> items = new List<ListViewItem>();
       foreach (Channel channel in allChannels)
       {
+        if (channel.IsTv == false) continue;
         bool isMapped = false;
         IList list = channel.ReferringChannelMap();
         foreach (ChannelMap map in list)
