@@ -9,13 +9,25 @@
       <height>576</height>
     </control>
     <control>
+  	<type>multiimage</type>
+  	<id>1</id>
+  	<width>720</width>
+  	<height>576</height>
+  	<imagepath>back</imagepath>
+  	<timeperimage>120</timeperimage>
+  	<fadetime>20</fadetime>
+  	<loop>yes</loop>
+  	<randomize>true</randomize>
+  	<animation effect="fade" time="20">VisibleChange</animation>
+  	</control>
+    <control>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <type>image</type>
       <id>1</id>
       <posX>60</posX>
       <posY>20</posY>
-      <texture>#header.image</texture>
+      <texture flipY="true" diffuse="Thumb_Mask.png">#header.image</texture>
     </control>
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>

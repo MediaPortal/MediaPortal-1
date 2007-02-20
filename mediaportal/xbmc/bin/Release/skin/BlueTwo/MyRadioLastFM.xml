@@ -39,7 +39,7 @@
       <id>0</id>
       <posX>60</posX>
       <posY>20</posY>
-      <texture>radio_logo.png</texture>
+      <texture flipY="true" diffuse="Thumb_Mask.png">radio_logo.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -125,7 +125,7 @@
       <visible>false</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-    </control>    
+    </control>
     <control>
       <type>fadelabel</type>
       <description>track label</description>
@@ -248,7 +248,7 @@
          <posY>333</posY>
          <width>250</width>
          <height>100</height>
-	 <itemWidth>35</itemWidth>  
+	 <itemWidth>35</itemWidth>
 	 <itemHeight>15</itemHeight>
 	 <spaceBetweenItems>2</spaceBetweenItems>
 	 <textureHeight>14</textureHeight>

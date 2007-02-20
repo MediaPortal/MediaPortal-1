@@ -205,7 +205,7 @@
       <id>1</id>
       <posX>60</posX>
       <posY>20</posY>
-      <texture>basichome_logo.png</texture>
+       <texture flipY="true" diffuse="Thumb_Mask.png">basichome_logo.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
