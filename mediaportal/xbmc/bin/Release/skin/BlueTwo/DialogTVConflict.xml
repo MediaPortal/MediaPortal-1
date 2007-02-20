@@ -7,30 +7,11 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>black.bmp</texture>
-      <colordiffuse>60ffffff</colordiffuse>
-    </control>
-    <control>
-      <type>image</type>
-      <id>0</id>
       <posX>110</posX>
       <posY>78</posY>
       <width>500</width>
       <height>450</height>
-      <texture>dialog_background.png</texture>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
-    </control>
-    <control>
-      <type>image</type>
-      <id>6</id>
-      <posX>110</posX>
-      <posY>78</posY>
-      <width>500</width>
-      <height>450</height>
-      <texture>dialog_background.png</texture>
+      <texture>context_background.png</texture>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -39,7 +20,7 @@
       <type>label</type>
       <id>4</id>
       <posX>160</posX>
-      <posY>150</posY>
+      <posY>120</posY>
       <label></label>
       <font>font16</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -52,10 +33,9 @@
       <type>listcontrol</type>
       <id>3</id>
       <posX>160</posX>
-      <posY>203</posY>
+      <posY>165</posY>
       <width>400</width>
-      <height>160</height>
-      
+      <height>200</height>
       <textXOff>25</textXOff>
       <textYOff>2</textYOff>
       <textXOff2>380</textXOff2>
@@ -65,8 +45,8 @@
       <IconXOff>12</IconXOff>
       <PinIconXOff>45</PinIconXOff>
       <PinIconYOff>19</PinIconYOff>
-      <spinPosX>465</spinPosX>
-      <spinPosY>150</spinPosY>
+      <spinPosX>473</spinPosX>
+      <spinPosY>328</spinPosY>
       <itemWidth>35</itemWidth>
       <itemHeight>35</itemHeight>
       <textureFocus>recording_background_focus.png</textureFocus>
@@ -86,9 +66,9 @@
       <description>Skip new Recording</description>
       <type>button</type>
       <id>11</id>
-      <posX>260</posX>
-      <posY>345</posY>
-      <width>200</width>
+      <posX>170</posX>
+      <posY>358</posY>
+      <width>370</width>
       <label>1110</label>
       <onup>3</onup>
       <ondown>12</ondown>
@@ -98,9 +78,9 @@
       <description>Skip conflicting Recording</description>
       <type>button</type>
       <id>12</id>
-      <posX>260</posX>
-      <posY>385</posY>
-      <width>200</width>
+      <posX>170</posX>
+      <posY>398</posY>
+      <width>370</width>
       <label>1111</label>
       <onup>11</onup>
       <ondown>13</ondown>
@@ -110,9 +90,9 @@
       <description>Keep Conflict</description>
       <type>button</type>
       <id>13</id>
-      <posX>260</posX>
-      <posY>425</posY>
-      <width>200</width>
+      <posX>170</posX>
+      <posY>438</posY>
+      <width>370</width>
       <label>1112</label>
       <onup>12</onup>
       <ondown>3</ondown>
