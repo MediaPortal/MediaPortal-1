@@ -7,8 +7,8 @@
       <description>play time label</description>
       <type>label</type>
       <id>2</id>
-      <posX>170</posX>
-      <posY>470</posY>
+      <posX>220</posX>
+      <posY>490</posY>
       <label>#currentplaytime</label>
       <align>left</align>
       <font>font60</font>
@@ -20,8 +20,8 @@
       <description>music rectangle</description>
       <type>image</type>
       <id>0</id>
-      <posX>77</posX>
-      <posY>402</posY>
+      <posX>80</posX>
+      <posY>404</posY>
       <width>150</width>
       <height>153</height>
       <texture>playback_background.png</texture>
@@ -96,5 +96,20 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <id>5</id>
     </control>
+    <control>
+			<description>video preview window</description>
+			<type>videowindow</type>
+			<id>9</id>
+			<posX>90</posX>
+            <posY>416</posY>
+            <width>125</width>
+            <height>125</height>
+			<keepaspectratio>yes</keepaspectratio>
+			<centered>yes</centered>
+			 <action>18</action>
+			<textureFocus>tv_green_border.png</textureFocus>
+			<animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowOpen</animation>
+		</control>
   </controls>
 </window>
