@@ -1362,7 +1362,11 @@ namespace MediaPortal.GUI.Library
     }
     public virtual void SetAnimations(List<VisualEffect> animations)
     {
-      _animations = animations;
+      _animations = new List<VisualEffect>();
+      foreach (VisualEffect effect in animations)
+      {
+        _animations.Add((VisualEffect)effect.Clone());
+      }
     }
 
     public virtual void QueueAnimation(AnimationType animType)

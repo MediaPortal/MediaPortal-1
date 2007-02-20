@@ -45,37 +45,69 @@ namespace MediaPortal.GUI.Library
   public class GUIButton3PartControl : GUIControl
   {
     //TODO: make use of GUILabelControl to draw all text
-    protected GUIImage _imageFocusedLeft = null;
-    protected GUIImage _imageNonFocusedLeft = null;
-    protected GUIImage _imageFocusedMid = null;
+    [XMLSkinElement("textureFocusedLeft")]
+    protected string _textureFocusedLeft;
+    [XMLSkinElement("textureNonFocusedLeft")]
+    protected string _textureNonFocusedLeft;
+    [XMLSkinElement("textureFocusedMid")]
+    protected string _textureFocusedMid;
+    [XMLSkinElement("textureNonFocusedMid")]
+    protected string _textureNonFocusedMid;
+    [XMLSkinElement("textureFocusedRight")]
+    protected string _textureFocusedRight;
+    [XMLSkinElement("textureNonFocusedRight")]
+    protected string _textureNonFocusedRight;
+    [XMLSkinElement("textureIcon")]
+    protected string _textureIcon;
     protected GUIImage _imageNonFocusedMid = null;
     protected GUIImage _imageFocusedRight = null;
     protected GUIImage _imageNonFocusedRight = null;
+    protected GUIImage _imageFocusedLeft = null;
+    protected GUIImage _imageNonFocusedLeft = null;
+    protected GUIImage _imageFocusedMid = null;
     protected GUIImage _imageIcon = null;
+    [XMLSkinElement("label1")]
     protected string _tagLabel1 = "";
+    [XMLSkinElement("label2")]
     protected string _tagLabel2 = "";
+    [XMLSkinElement("font1")]
     protected string _fontName1 = String.Empty;
+    [XMLSkinElement("font2")]
     protected string _fontName2 = String.Empty;
+    [XMLSkinElement("textcolor1")]
     protected long _textColor1 = (long)0xFFFFFFFF;
+    [XMLSkinElement("textcolor2")]
     protected long _textColor2 = (long)0xFFFFFFFF;
+    [XMLSkinElement("disabledColor")]                  
     protected long _disabledColor = (long)0xFF606060;
     protected int _hyperLinkWindowId = -1;
     protected int _actionId = -1;
     protected string _scriptAction = "";
+    [XMLSkinElement("textOffsetX1")]
     protected int _textOffsetX1 = 10;
+    [XMLSkinElement("textOffsetY1")]
     protected int _textOffsetY1 = 2;
+    [XMLSkinElement("textOffsetX2")]
     protected int _textOffsetX2 = 10;
+    [XMLSkinElement("textOffsetY2")]
     protected int _textOffsetY2 = 2;
     protected string _cachedTextLabel1;
     protected string _cachedTextLabel2;
     protected string _application = "";
     protected string _arguments = "";
+    [XMLSkinElement("iconOffsetX")]
     protected int _iconOffsetX = -1;
+    [XMLSkinElement("iconOffsetY")]
     protected int _iconOffsetY = -1;
+    [XMLSkinElement("iconWidth")]
     protected int _iconWidth = -1;
+    [XMLSkinElement("iconHeight")]
     protected int _iconHeight = -1;
+    [XMLSkinElement("iconKeepAspectRatio")]
     protected bool _iconKeepAspectRatio = false;
+    [XMLSkinElement("iconCentered")]
     protected bool _iconCentered = false;
+    [XMLSkinElement("iconZoomed")]
     protected bool _iconZoomed = false;
     GUILabelControl _labelControl1 = null;
     GUILabelControl _labelControl2 = null;
@@ -87,6 +119,22 @@ namespace MediaPortal.GUI.Library
     bool _property1Changed = false;
     bool _property2Changed = false;
     bool _reCalculate = false;
+    
+    /// <summary>
+    /// empty constructor
+    /// </summary>
+    public GUIButton3PartControl()
+    {
+    }
+
+    /// <summary>
+    /// The basic constructur of the GUIControl class.
+    /// </summary>
+    public GUIButton3PartControl(int dwParentID)
+      : this()
+    {
+      _parentControlId = dwParentID;
+    }
 
     /// <summary>
     /// The constructor of the GUIButton3PartControl class.
@@ -109,6 +157,13 @@ namespace MediaPortal.GUI.Library
                                   string strTextureIcon)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
+      _textureFocusedLeft = strTextureFocusLeft;
+      _textureFocusedMid = strTextureFocusMid;
+      _textureFocusedRight = strTextureFocusRight;
+      _textureNonFocusedLeft = strTextureNoFocusLeft;
+      _textureNonFocusedMid = strTextureNoFocusMid;
+      _textureNonFocusedRight = strTextureNoFocusRight;
+      _textureIcon = strTextureIcon;
       _imageIcon = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, 0, 0, strTextureIcon, 0);
       _imageFocusedLeft = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTextureFocusLeft, 0);
       _imageFocusedMid = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTextureFocusMid, 0);
@@ -140,6 +195,44 @@ namespace MediaPortal.GUI.Library
       _labelControl2.DimColor = DimColor;
     }
 
+    /// <summary>
+    /// This method gets called when the control is created and all properties has been set
+    /// It allows the control todo any initialization
+    /// </summary>
+    public override void FinalizeConstruction()
+    {
+      base.FinalizeConstruction();
+
+      _imageIcon = new GUIImage(ParentID, GetID, _positionX, _positionY, 0, 0, _textureIcon, 0);
+      _imageFocusedLeft = new GUIImage(ParentID, GetID, _positionX, _positionY, Width, Height, _textureFocusedLeft, 0);
+      _imageFocusedMid = new GUIImage(ParentID, GetID, _positionX, _positionY, Width, Height, _textureFocusedMid, 0);
+      _imageFocusedRight = new GUIImage(ParentID, GetID, _positionX, _positionY, Width, Height, _textureFocusedRight, 0);
+      _imageNonFocusedLeft = new GUIImage(ParentID, GetID, _positionX, _positionY, Width, Height, _textureNonFocusedLeft, 0);
+      _imageNonFocusedMid = new GUIImage(ParentID, GetID, _positionX, _positionY, Width, Height, _textureNonFocusedMid, 0);
+      _imageNonFocusedRight = new GUIImage(ParentID, GetID, _positionX, _positionY, Width, Height, _textureNonFocusedRight, 0);
+      _isSelected = false;
+      _labelControl1 = new GUILabelControl(ParentID);
+      _labelControl2 = new GUILabelControl(ParentID);
+      _imageIcon.ParentControl = this;
+      _imageFocusedLeft.ParentControl = this;
+      _imageFocusedMid.ParentControl = this;
+      _imageFocusedRight.ParentControl = this;
+      _imageNonFocusedLeft.ParentControl = this;
+      _imageNonFocusedMid.ParentControl = this;
+      _imageNonFocusedRight.ParentControl = this;
+      _labelControl1.ParentControl = this;
+      _labelControl2.ParentControl = this;
+
+      _imageFocusedLeft.DimColor = DimColor;
+      _imageFocusedMid.DimColor = DimColor;
+      _imageFocusedRight.DimColor = DimColor;
+      _imageNonFocusedLeft.DimColor = DimColor;
+      _imageNonFocusedMid.DimColor = DimColor;
+      _imageNonFocusedRight.DimColor = DimColor;
+      _imageIcon.DimColor = DimColor;
+      _labelControl1.DimColor = DimColor;
+      _labelControl2.DimColor = DimColor;
+    }
     /// <summary>
     /// Renders the GUIButton3PartControl.
     /// </summary>

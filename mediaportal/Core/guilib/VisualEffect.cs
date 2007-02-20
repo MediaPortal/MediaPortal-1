@@ -61,7 +61,7 @@ namespace MediaPortal.GUI.Library
     StateApplied
   };
 
-  public class VisualEffect
+  public class VisualEffect : ICloneable
   {
     AnimationType _type;
     EffectType _effect;
@@ -202,7 +202,7 @@ namespace MediaPortal.GUI.Library
       }
 
       // acceleration of effect
-      float accel;
+      //float accel;
       nodeAttribute = node.Attributes.GetNamedItem("acceleration");
       if (nodeAttribute != null)
       {
@@ -579,5 +579,36 @@ namespace MediaPortal.GUI.Library
         _amount = value;
       }
     }
+
+    #region ICloneable Members
+
+    public object Clone()
+    {
+      VisualEffect effect = new VisualEffect();
+      effect._type = _type;
+      effect._effect = _effect;
+      effect._queuedProcess = _queuedProcess;
+      effect._currentState = _currentState;
+      effect._currentProcess = _currentProcess;
+      effect._condition = _condition;
+      effect._acceleration = _acceleration;
+      effect._startX = _startX;
+      effect._startY = _startY;
+      effect._endX = _endX;
+      effect._endY = _endY;
+      effect._centerX = _centerX;
+      effect._centerY = _centerY;
+      effect._startAlpha = _startAlpha;
+      effect._endAlpha = _endAlpha;
+      effect._amount = _amount;
+      effect._start = _start;
+      effect._length = _length;
+      effect._delay = _delay;
+      effect._isReversible = _isReversible;
+      effect._matrix = (TransformMatrix)_matrix.Clone();
+      return effect;
+    }
+
+    #endregion
   }
 }

@@ -27,7 +27,7 @@ using System;
 
 namespace MediaPortal.GUI.Library
 {
-  public class TransformMatrix
+  public class TransformMatrix : ICloneable
   {
     const float DEGREE_TO_RADIAN = 0.01745329f;
     private float[,] m = new float[2, 3];
@@ -174,5 +174,22 @@ namespace MediaPortal.GUI.Library
       m11 = m[1, 1];
       m12 = m[1, 2];
     }
+
+    #region ICloneable Members
+
+    public object Clone()
+    {
+      TransformMatrix matrix = new TransformMatrix();
+      matrix.m[0,0]=m[0,0];
+      matrix.m[0,0]=m[0,1];
+      matrix.m[0,0]=m[0,2];
+      matrix.m[0,0]=m[1,0];
+      matrix.m[0,0]=m[1,1];
+      matrix.m[0,0]=m[1,2];
+      matrix.alpha = alpha;
+      return matrix;
+    }
+
+    #endregion
   }
 }
