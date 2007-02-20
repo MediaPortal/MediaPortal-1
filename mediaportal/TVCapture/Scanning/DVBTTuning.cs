@@ -28,6 +28,7 @@ using System.Threading;
 using System.Collections;
 using System.Windows.Forms;
 using DShowNET;
+using MediaPortal.Configuration;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.GUI.Library;
@@ -83,7 +84,7 @@ namespace MediaPortal.TV.Scanning
 
       Log.Info("dvbt-scan:Opening dvbt.xml");
       XmlDocument doc = new XmlDocument();
-      doc.Load("Tuningparameters/dvbt.xml");
+      doc.Load(Config.GetFile(Config.Dir.Base,"Tuningparameters","dvbt.xml"));
       XPathNavigator nav = doc.CreateNavigator();
       // Ensure we are at the root node
       nav.MoveToRoot();
