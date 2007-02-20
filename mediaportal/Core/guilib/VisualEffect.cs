@@ -403,7 +403,7 @@ namespace MediaPortal.GUI.Library
       // window and control classes.
 
       // Now do the real animation
-      if (_currentProcess != AnimationProcess.None)
+      if ((_currentProcess != AnimationProcess.None) && (_currentState != AnimationState.Delayed))
       {
         float offset = _amount * (_acceleration * _amount + 1.0f - _acceleration);
         if (_effect == EffectType.Fade)
@@ -432,7 +432,7 @@ namespace MediaPortal.GUI.Library
       if (_currentState == AnimationState.StateApplied)
         _currentProcess = AnimationProcess.None;
 
-      if (_currentState != AnimationState.None)
+      if ((_currentState != AnimationState.None) && (_currentState != AnimationState.Delayed))
         matrix.multiplyAssign(_matrix);
     }
 
