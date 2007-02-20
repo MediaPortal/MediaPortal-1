@@ -1425,13 +1425,15 @@ namespace TvService
       card = null;
       try
       {
+        Log.Info("IsRecordingSchedule:{0} {1}", idSchedule, _isMaster);
         if (_isMaster == false) return false;
-        int cardId;
-        if (!_scheduler.IsRecordingSchedule(idSchedule, out cardId)) return false;
+        if (!_scheduler.IsRecordingSchedule(idSchedule, out card))
+        {
+          Log.Info("IsRecordingSchedule: scheduler is not recording schedule");
+          return false;
+        }
+        Log.Info("IsRecordingSchedule: scheduler is recording schedule on cardid:{0}", card.Id);
 
-        User user = new User();
-        user.CardId = cardId;
-        card = GetVirtualCard(user);
         return true;
       }
       catch (Exception ex)

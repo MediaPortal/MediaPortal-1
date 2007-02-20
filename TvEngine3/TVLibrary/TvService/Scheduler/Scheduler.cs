@@ -163,8 +163,8 @@ namespace TvService
         if (schedule.Canceled != Schedule.MinSchedule) continue;
 
         //if we are already recording this schedule then do nothing
-        int cardId;
-        if (IsRecordingSchedule(schedule.IdSchedule, out cardId)) continue;
+        VirtualCard card;
+        if (IsRecordingSchedule(schedule.IdSchedule, out card)) continue;
 
         //check if its time to record this schedule.
         RecordingDetail newRecording;
@@ -592,14 +592,17 @@ namespace TvService
     /// <param name="idSchedule">database id of the schedule</param>
     /// <param name="cardId">id of card currently recording the schedule or -1 if none is recording the schedule</param>
     /// <returns>if a card is recording the schedule, else false</returns>
-    public bool IsRecordingSchedule(int idSchedule, out int cardId)
+    public bool IsRecordingSchedule(int idSchedule, out VirtualCard card)
     {
-      cardId = -1;
+      card = null;
       foreach (RecordingDetail rec in _recordingsInProgressList)
       {
         if (rec.Schedule.IdSchedule == idSchedule)
         {
-          cardId = rec.CardInfo.Id;
+          User user = new User();
+          user.Name = string.Format("scheduler{0}", rec.Schedule.IdSchedule);
+          user.CardId = rec.CardInfo.Id;
+          card= new VirtualCard(user);
           return true;
         }
       }

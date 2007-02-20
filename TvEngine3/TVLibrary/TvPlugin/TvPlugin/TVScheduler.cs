@@ -550,6 +550,7 @@ namespace TvPlugin
       {
         fileName = card.RecordingFileName;
       }
+      Log.Info("recording fname:{0}", fileName);
       switch (dlg.SelectedId)
       {
         case 888:////Episodes management
@@ -636,17 +637,27 @@ namespace TvPlugin
         case 979: // Play recording from beginning
           {
             g_Player.Stop();
-            string url = server.GetRtspUrlForFile(fileName);
-            if (url.Length > 0)
+            if (System.IO.File.Exists(fileName))
             {
-              g_Player.Play(url);
-
-              if (g_Player.Playing)
+              g_Player.Play(fileName);
+              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+              return;
+            }
+            else
+            {
+              string url = server.GetRtspUrlForFile(fileName);
+              Log.Info("recording url:{0}", url);
+              if (url.Length > 0)
               {
-                g_Player.SeekAbsolute(0);
-                g_Player.SeekAbsolute(0);
-                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-                return;
+                g_Player.Play(url);
+
+                if (g_Player.Playing)
+                {
+                  g_Player.SeekAbsolute(0);
+                  g_Player.SeekAbsolute(0);
+                  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                  return;
+                }
               }
             }
           }
@@ -655,17 +666,28 @@ namespace TvPlugin
         case 980: // Play recording from live point
           {
             g_Player.Stop();
-            string url = server.GetRtspUrlForFile(fileName);
-            if (url.Length > 0)
+            if (System.IO.File.Exists(fileName))
             {
-              g_Player.Play(url);
-
-              if (g_Player.Playing)
+              g_Player.Play(fileName);
+              g_Player.SeekAbsolute(g_Player.Duration);
+              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+              return;
+            }
+            else
+            {
+              string url = server.GetRtspUrlForFile(fileName);
+              Log.Info("recording url:{0}", url);
+              if (url.Length > 0)
               {
-                g_Player.SeekAbsolute(g_Player.Duration);
-                g_Player.SeekAbsolute(g_Player.Duration);
-                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-                return;
+                g_Player.Play(url);
+
+                if (g_Player.Playing)
+                {
+                  g_Player.SeekAbsolute(g_Player.Duration);
+                  g_Player.SeekAbsolute(g_Player.Duration);
+                  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                  return;
+                }
               }
             }
           }
