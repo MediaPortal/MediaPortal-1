@@ -128,7 +128,8 @@ uint64_t CSubtitle::PTS()
 
 void CSubtitle::SetPTS( uint64_t PTS )
 {
-	m_PTS = PTS;
+  LogDebug( "  SetPTS %lld", PTS );
+  m_PTS = PTS;
 }
 
 uint64_t CSubtitle::Timestamp()
