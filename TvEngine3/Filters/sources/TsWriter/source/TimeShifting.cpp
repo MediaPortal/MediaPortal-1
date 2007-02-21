@@ -167,6 +167,9 @@ void CTimeShifting::OnTsPacket(byte* tsPacket)
   if (m_bPaused) return;
 	if (m_bTimeShifting)
 	{
+    CTsHeader header(tsPacket);
+    if (header.SyncByte!=0x47) return;
+    if (header.TransportError) return;
     if (m_fDump!=NULL)
     {
       fwrite(m_pWriteBuffer,1,m_iWriteBufferPos,m_fDump);
