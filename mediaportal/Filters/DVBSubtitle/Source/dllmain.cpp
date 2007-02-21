@@ -104,7 +104,24 @@ void LogDebug(const char *fmt, ...)
 };
 
 #else
-void LogDebug(const char *fmt, ...) 
-{
-}
+void LogDebug(const char *fmt, ...) {}
 #endif
+
+#ifdef DEBUG
+char pts_temp[500];
+void LogDebugPTS( const char *fmt, uint64_t pts ) 
+{
+  int h,m,s,u;
+
+	pts /= 90; // Convert to milliseconds
+	h = int( ( pts / ( 1000*60*60 ) ) );
+	m = int( ( pts / ( 1000*60 ) ) - ( h*60 ) );
+	s = int( ( pts/1000 ) - ( h*3600 ) - ( m*60 ) );
+	u = int( pts - ( h*1000*60*60 ) - ( m*1000*60 ) - ( s*1000 ) );
+
+  sprintf( pts_temp,"%s %d:%02d:%02d%c%03d",fmt,h,m,s,'.',u );
+	LogDebug( pts_temp );
+}
+#else
+void LogDebugPTS( const char *fmt, uint64_t pts  ){}
+#endif 
