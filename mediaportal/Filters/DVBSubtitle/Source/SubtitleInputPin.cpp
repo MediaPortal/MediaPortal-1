@@ -88,6 +88,7 @@ HRESULT CSubtitleInputPin::CompleteConnect( IPin *pPin )
     return hr;  // PID is mapped later when we have it 
 
   hr = MapPidToDemuxer( m_SubtitlePid, m_pPin, MEDIA_TRANSPORT_PACKET );
+//  hr = MapPidToDemuxer( m_SubtitlePid, m_pPin, MEDIA_ELEMENTARY_STREAM );  
 
   m_pesDecoder->SetPid( m_SubtitlePid );
 

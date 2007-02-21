@@ -45,7 +45,7 @@ public:
   STDMETHODIMP EndFlush( void );
 
   HRESULT CheckMediaType( const CMediaType * );
-  HRESULT CPcrInputPin::CompleteConnect( IPin *pPin );
+  HRESULT CompleteConnect( IPin *pPin );
 
   void SetPcrPid( LONG pPid );
 

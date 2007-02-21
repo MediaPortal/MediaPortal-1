@@ -30,6 +30,7 @@
 #include "dvbsubs\dvbsubdecoder.h"
 #include "SubdecoderObserver.h"
 #include "PidObserver.h"
+#include "ITSFileSource.h"
 
 class CSubtitleInputPin;
 class CSubtitleOutputPin;
@@ -48,6 +49,7 @@ DEFINE_GUID(CLSID_DVBSub,
 DEFINE_GUID(IID_IDVBSubtitle, 
 0xc19647d5, 0xa861, 0x4845, 0x97, 0xa6, 0xeb, 0xd0, 0xa1, 0x35, 0xd0, 0xbf);
 
+struct __declspec(uuid("559E6E81-FAC4-4EBC-9530-662DAA27EDC2")) ITSFileSource;
 
 // structure used to communicate subtitles to MediaPortal's managed code
 struct SUBTITLE
@@ -125,6 +127,11 @@ public:
   void SetPcr( ULONGLONG pcr );
 
 private:
+
+  HRESULT ConnectToTSFileSource();
+
+private: // data
+
   CSubtitleInputPin*  m_pSubtitleInputPin;
   CSubtitleOutputPin* m_pSubtitleOutputPin;
 	CPcrInputPin*		    m_pPcrPin;
@@ -138,7 +145,10 @@ private:
   CCritSec            m_ReceiveLock;		  // Sublock for received samples
 
   LONGLONG            m_firstPTS;
+  REFERENCE_TIME      m_startTimestamp;
 
   int                 (CALLBACK *m_pSubtitleObserver) (SUBTITLE* sub); 
   int                 (CALLBACK *m_pTimestampResetObserver) ();
+
+	CComQIPtr<ITSFileSource> m_pTSFileSource;
 };

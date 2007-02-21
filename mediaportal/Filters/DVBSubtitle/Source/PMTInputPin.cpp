@@ -147,7 +147,9 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
         {
           if( m_pcrPid == -1 && pidTable.PcrPid > 0)
           {
-			      m_pcrPid = pidTable.PcrPid;
+            m_pcrPid = pidTable.PcrPid;
+            //m_pcrPid = pidTable.AudioPid1;
+            //m_pcrPid = pidTable.VideoPid;
             m_pPidObserver->SetPcrPid( m_pcrPid  );
           }
           if( m_subtitlePid == -1 && pidTable.SubtitlePid > 0)
