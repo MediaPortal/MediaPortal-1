@@ -34,6 +34,7 @@ using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 
 namespace Wikipedia
 {
@@ -99,7 +100,7 @@ namespace Wikipedia
     // show the setup dialog
     public void ShowPlugin()
     {
-      MessageBox.Show("Nothing to configure yet...");
+      MessageBox.Show("Edit the wikipedia.xml file in MP's root directory to add new sites.");
     }
 
     // Indicates whether plugin can be enabled/disabled
@@ -146,14 +147,6 @@ namespace Wikipedia
       return true;
     }
     #endregion
-
-    //public override int GetID
-    //{
-    //  get
-    //  {
-    //    return 4711;
-    //  }
-    //}
 
     public override bool Init()
     {
@@ -212,9 +205,13 @@ namespace Wikipedia
           pDlgOK.SetHeading(GUILocalizeStrings.Get(2502)); //Select your local Wikipedia:
 
           // Add all the local sites we want to be displayed starting with int 0.
-          for (int i = 0; i <= 8; i++)
+          MediaPortal.Profile.Settings langreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "wikipedia.xml"));
+          String allsites = langreader.GetValueAsString("Allsites", "sitenames", "");
+          String[] siteArray = allsites.Split(',');
+          for (int i = 0; i < siteArray.Length; i++)
           {
-            pDlgOK.Add(GUILocalizeStrings.Get(2600 + i)); //English, German, French ...
+            int stringno = langreader.GetValueAsInt(siteArray[i], "string", 2006);
+            pDlgOK.Add(GUILocalizeStrings.Get(stringno)); //English, German, French ...
           }
 
           pDlgOK.DoModal(GetID);
@@ -311,36 +308,11 @@ namespace Wikipedia
     // Depending on which Entry was selected from the listbox we chose the language here.
     private void SelectLocalWikipedia(int labelnumber)
     {
-      switch (labelnumber)
-      {
-        case 0: //English
-          language = "English";
-          break;
-        case 1: //German
-          language = "German";
-          break;
-        case 2: //French
-          language = "French";
-          break;
-        case 3: //Dutch
-          language = "Dutch";
-          break;
-        case 4: //Norwegian
-          language = "Norwegian";
-          break;
-        case 5: //Swedish
-          language = "Swedish";
-          break;
-        case 6: //Italian
-          language = "Italian";
-          break;
-        case 7: //Spanish
-          language = "Spanish";
-          break;
-        case 8: //Portuguese
-          language = "Portuguese";
-          break;
-      }
+      MediaPortal.Profile.Settings langreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "wikipedia.xml"));
+      String allsites = langreader.GetValueAsString("Allsites", "sitenames", "");
+      String[] siteArray = allsites.Split(',');
+      language = siteArray[labelnumber];
+
       if (searchtermLabel.Label != string.Empty && searchtermLabel.Label != "Wikipedia")
       {
         Log.Info("Wikipedia: language changed to {0}. Display article {1} again.", language, searchtermLabel.Label);

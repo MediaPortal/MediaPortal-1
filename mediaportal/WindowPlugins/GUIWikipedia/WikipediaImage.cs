@@ -87,49 +87,10 @@ namespace Wikipedia
         MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
         language = xmlreader.GetValueAsString("skin", "language", "English");
       }
-      switch (language)
-      {
-        case "English":
-          this.WikipediaURL = "http://en.wikipedia.org/wiki/Image:";
-          Log.Info("Wikipedia: Language set to English");
-          break;
-        case "German":
-          this.WikipediaURL = "http://de.wikipedia.org/wiki/Bild:";
-          Log.Info("Wikipedia: Language set to German");
-          break;
-        case "French":
-          this.WikipediaURL = "http://fr.wikipedia.org/wiki/Image:";
-          Log.Info("Wikipedia: Language set to French");
-          break;
-        case "Dutch":
-          this.WikipediaURL = "http://nl.wikipedia.org/wiki/Afbeelding:";
-          Log.Info("Wikipedia: Language set to Dutch");
-          break;
-        case "Norwegian":
-          this.WikipediaURL = "http://no.wikipedia.org/wiki/Bilde:";
-          Log.Info("Wikipedia: Language set to Norwegian");
-          break;
-        case "Italian":
-          this.WikipediaURL = "http://it.wikipedia.org/wiki/Image:";
-          Log.Info("Wikipedia: Language set to Italian");
-          break;
-        case "Swedish":
-          this.WikipediaURL = "http://sv.wikipedia.org/wiki/Bild:";
-          Log.Info("Wikipedia: Language set to Swedish");
-          break;
-        case "Spanish":
-          this.WikipediaURL = "http://es.wikipedia.org/wiki/Imagen:";
-          Log.Info("Wikipedia: Language set to Spanish");
-          break;
-        case "Portuguese":
-          this.WikipediaURL = "http://pt.wikipedia.org/wiki/Imagem:";
-          Log.Info("Wikipedia: Language set to Portuguese");
-          break;
-        default:
-          this.WikipediaURL = "http://en.wikipedia.org/wiki/Image:";
-          Log.Info("Wikipedia: Language set to Default (English)");
-          break;
-      }
+
+      MediaPortal.Profile.Settings detailxmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "wikipedia.xml"));
+      this.WikipediaURL = detailxmlreader.GetValueAsString(language, "imageurl", "http://en.wikipedia.org/wiki/Image:");
+      Log.Info("Wikipedia: Image language set to " + language + ".");
     }
 
     /// <summary>Get the local filename of the downloaded image.</summary>

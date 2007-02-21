@@ -90,60 +90,13 @@ namespace Wikipedia
         MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
         language = xmlreader.GetValueAsString("skin", "language", "English");
       }
+
       this.language = language;
-      switch (language)
-      {
-        case "English":
-          this.WikipediaURL = "http://en.wikipedia.org/wiki/Special:Export/";
-          this.imagePattern = "Image";
-          Log.Info("Wikipedia: Language set to English");
-          break;
-        case "German":
-          this.WikipediaURL = "http://de.wikipedia.org/wiki/Spezial:Export/";
-          this.imagePattern = "Bild";
-          Log.Info("Wikipedia: Language set to German");
-          break;
-        case "French":
-          this.WikipediaURL = "http://fr.wikipedia.org/wiki/Special:Export/";
-          this.imagePattern = "Image";
-          Log.Info("Wikipedia: Language set to French");
-          break;
-        case "Dutch":
-          this.WikipediaURL = "http://nl.wikipedia.org/wiki/Speciaal:Export/";
-          this.imagePattern = "Afbeelding";
-          Log.Info("Wikipedia: Language set to Dutch");
-          break;
-        case "Norwegian":
-          this.WikipediaURL = "http://no.wikipedia.org/wiki/Spesial:Export/";
-          this.imagePattern = "Bilde";
-          Log.Info("Wikipedia: Language set to Norwegian");
-          break;
-        case "Italian":
-          this.WikipediaURL = "http://it.wikipedia.org/wiki/Speciale:Export/";
-          this.imagePattern = "Image";
-          Log.Info("Wikipedia: Language set to Italian");
-          break;
-        case "Swedish":
-          this.WikipediaURL = "http://sv.wikipedia.org/wiki/Special:Export/";
-          this.imagePattern = "Bild";
-          Log.Info("Wikipedia: Language set to Swedish");
-          break;
-        case "Spanish":
-          this.WikipediaURL = "http://es.wikipedia.org/wiki/Especial:Export/";
-          this.imagePattern = "Imagen";
-          Log.Info("Wikipedia: Language set to Spanish");
-          break;
-        case "Portuguese":
-          this.WikipediaURL = "http://pt.wikipedia.org/wiki/Especial:Export/";
-          this.imagePattern = "Imagem";
-          Log.Info("Wikipedia: Language set to Portuguese");
-          break;
-        default:
-          this.WikipediaURL = "http://en.wikipedia.org/wiki/Special:Export/";
-          this.imagePattern = "Image";
-          Log.Info("Wikipedia: Language set to Default (English)");
-          break;
-      }
+
+      MediaPortal.Profile.Settings detailxmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "wikipedia.xml"));
+      this.WikipediaURL = detailxmlreader.GetValueAsString(language, "url", "http://en.wikipedia.org/wiki/Special:Export/");
+      this.imagePattern = detailxmlreader.GetValueAsString(language, "imagepattern", "Image");
+      Log.Info("Wikipedia: Language set to " + language + ".");
     }
 
     /// <summary>Returns the parsed article text.</summary>
