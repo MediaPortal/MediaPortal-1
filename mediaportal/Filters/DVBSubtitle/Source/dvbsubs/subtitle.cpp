@@ -128,7 +128,6 @@ uint64_t CSubtitle::PTS()
 
 void CSubtitle::SetPTS( uint64_t PTS )
 {
-  LogDebug( "  SetPTS %lld", PTS );
   m_PTS = PTS;
 }
 
