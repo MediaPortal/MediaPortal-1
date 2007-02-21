@@ -62,12 +62,15 @@ namespace MediaPortal.Player
           using (BinaryReader reader = new BinaryReader(stream))
           {
             stream.Seek(0, SeekOrigin.Begin);
-            byte[] header = reader.ReadBytes(4);
+            byte[] header = reader.ReadBytes(5);
             if (header[0] != 0 || header[1] != 0 || header[2] != 1 || header[3] != 0xba) return false;
-            stream.Seek(0x800, SeekOrigin.Begin); header = reader.ReadBytes(4);
+            if ((header[4] & 0x40) == 0) return false;
+            stream.Seek(0x800, SeekOrigin.Begin); header = reader.ReadBytes(5);
             if (header[0] != 0 || header[1] != 0 || header[2] != 1 || header[3] != 0xba) return false;
-            stream.Seek(0x8000, SeekOrigin.Begin); header = reader.ReadBytes(4);
+            if ((header[4] & 0x40) == 0) return false;
+            stream.Seek(0x8000, SeekOrigin.Begin); header = reader.ReadBytes(5);
             if (header[0] != 0 || header[1] != 0 || header[2] != 1 || header[3] != 0xba) return false;
+            if ((header[4] & 0x40) == 0) return false;
             return true;
           }
         }
