@@ -28,7 +28,10 @@ extern void LogDebug( const char *fmt, ... );
 
 HRESULT CDemuxPinMapper::MapPidToDemuxer( LONG pid, IPin *pDemuxerPin, MEDIA_SAMPLE_CONTENT sampleContent )
 {
-	IMPEG2PIDMap	*pMap=NULL;
+	if( !pDemuxerPin )
+    return E_POINTER;
+  
+  IMPEG2PIDMap	*pMap=NULL;
 	IEnumPIDMap		*pPidEnum=NULL;
 	PID_MAP			  pm;
 	ULONG			    count;
