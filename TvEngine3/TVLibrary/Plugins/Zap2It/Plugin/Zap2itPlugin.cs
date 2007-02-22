@@ -103,8 +103,11 @@ namespace ProcessPlugins.EpgGrabber
         void ITvServerPlugin.Stop()
         {
             Log.WriteFile("{0}: stopping", Name);
-            timerThread.Dispose();
-            timerThread = null;
+            if (timerThread != null)
+            {
+              timerThread.Dispose();
+              timerThread = null;
+            }
         }
         #endregion
 
