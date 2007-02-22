@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-<!-- changed : 18-Februaray-2007 by Maschine				-->
+<!-- changed : 22-Februaray-2007 by Maschine				-->
 <!-- contains:									-->
 <!--   - Australia 									-->
 <!--   - Austria 									-->
@@ -1329,6 +1329,15 @@
 		<carrier frequency="770000" bandwidth="8" />
 		<carrier frequency="778000" bandwidth="8" />
 		<carrier frequency="826000" bandwidth="8" />
+	</country>
+	<country name="Germany - Hamburg/Lübeck" offset="125">
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="570000" bandwidth="8" />
+		<carrier frequency="626000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+		<carrier frequency="754000" bandwidth="8" />
 	</country>
 	<country name="Germany - Hannover/Braunschweig" offset="125">
 		<carrier frequency="198500" bandwidth="7" />
