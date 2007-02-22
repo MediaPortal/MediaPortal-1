@@ -646,6 +646,7 @@ namespace MediaPortal.GUI.Library
       _allocated = false;
       _packedTexture = null;
       _diffuseTexture = null;
+      _packedDiffuseTextureNo = -1;
     }
 
     /// <summary>
@@ -1081,6 +1082,15 @@ namespace MediaPortal.GUI.Library
       base.Render(timePassed);
     }
 
+    public override void GetCenter(ref float centerX, ref float centerY)
+    {
+      if (_reCalculate)
+      {
+        Calculate();
+      }
+      centerX = (float)(_fx + (_nw / 2));
+      centerY = (float)(_fy + (_nh / 2));
+    }
     /// <summary>
     /// Renders the Image
     /// </summary>
@@ -1156,52 +1166,60 @@ namespace MediaPortal.GUI.Library
         GUIGraphicsContext.GetScaling(out m00, out m01, out m02, out m10, out m11, out m12);
         FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color, m00, m01, m02, m10, m11, m12);
 
-        if (_flipX || _flipY)
+        if ((_flipX || _flipY) && _diffuseFileName.Length > 0)
         {
-          float fx, fy, nw, nh, uoff, voff, umax, vmax, uoff1, voff1, umax1, vmax1;
-          fx = _fx;
-          fy = _fy;
-          nw = _nw;
-          nh = _nh;
-          uoff = _diffusetexUoff;
-          voff = _diffusetexVoff;
-          umax = _diffusetexUmax + _diffusetexUoff;
-          vmax = _diffusetexVmax + _diffusetexVoff;
-          uoff1 = _uoff;
-          voff1 = _voff;
-          umax1 = _umax + _uoff;
-          vmax1 = _vmax + _voff;
-
-          if (_flipX)
+          if (_packedDiffuseTextureNo < 0)
           {
-            fx += nw;
-            uoff1 = _umax + _uoff;
-            umax1 = _uoff;
-
-            uoff = _diffusetexUmax + _diffusetexUoff;
-            umax = _diffusetexUoff;
+            if (GUITextureManager.GetPackedTexture(_diffuseFileName, out _diffusetexUoff, out _diffusetexVoff, out _diffusetexUmax, out _diffusetexVmax, out _diffuseTexWidth, out _diffuseTexHeight, out _diffuseTexture, out _packedDiffuseTextureNo))
+            {
+            }
           }
-          if (_flipY)
+          if (_packedDiffuseTextureNo >= 0)
           {
-            fy += nh;
-            //uoff1 = _umax + _uoff;
-            //umax1 = _uoff;
+            float fx, fy, nw, nh, uoff, voff, umax, vmax, uoff1, voff1, umax1, vmax1;
+            fx = _fx;
+            fy = _fy;
+            nw = _nw;
+            nh = _nh;
+            uoff = _diffusetexUoff;
+            voff = _diffusetexVoff;
+            umax = _diffusetexUmax + _diffusetexUoff;
+            vmax = _diffusetexVmax + _diffusetexVoff;
+            uoff1 = _uoff;
+            voff1 = _voff;
+            umax1 = _umax + _uoff;
+            vmax1 = _vmax + _voff;
 
-            voff1 = _vmax + _voff;
-            vmax1 = _voff;
+            if (_flipX)
+            {
+              fx += nw;
+              uoff1 = _umax + _uoff;
+              umax1 = _uoff;
+
+              uoff = _diffusetexUmax + _diffusetexUoff;
+              umax = _diffusetexUoff;
+            }
+            if (_flipY)
+            {
+              fy += nh;
+              //uoff1 = _umax + _uoff;
+              //umax1 = _uoff;
+
+              voff1 = _vmax + _voff;
+              vmax1 = _voff;
 
 
-            voff = _diffusetexVmax + _diffusetexVoff;
-            vmax = _diffusetexVoff;
+              voff = _diffusetexVmax + _diffusetexVoff;
+              vmax = _diffusetexVoff;
+            }
+
+
+            //FontEngineDrawTexture(_packedTextureNo, fx, fy, nw, nh, _uoff, _voff, _umax, _vmax, (int)color, m00, m01, m02, m10, m11, m12);
+            //FontEngineDrawTexture(_packedDiffuseTextureNo, fx, fy, nw, nh, uoff, voff, umax, vmax, (int)color, m00, m01, m02, m10, m11, m12);
+            FontEngineDrawTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color, m00, m01, m02, m10, m11, m12
+                                  , _packedDiffuseTextureNo, uoff, voff, umax, vmax);
+
           }
-
-
-          //FontEngineDrawTexture(_packedTextureNo, fx, fy, nw, nh, _uoff, _voff, _umax, _vmax, (int)color, m00, m01, m02, m10, m11, m12);
-          //FontEngineDrawTexture(_packedDiffuseTextureNo, fx, fy, nw, nh, uoff, voff, umax, vmax, (int)color, m00, m01, m02, m10, m11, m12);
-          FontEngineDrawTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color, m00, m01, m02, m10, m11, m12
-                                , _packedDiffuseTextureNo, uoff, voff, umax, vmax);
-
-          //GUIGraphicsContext.ControlTransform = matrixorg;
         }
 
         base.Render(timePassed);
@@ -1238,10 +1256,60 @@ namespace MediaPortal.GUI.Library
           color = GUIGraphicsContext.MergeAlpha(color);
           frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color);
 
-          //if (Dimmed)
-          //  frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)(_diffuseColor & DimColor));
-          //else
-          //  frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)_diffuseColor);
+
+          if ((_flipX || _flipY) && _diffuseFileName.Length > 0)
+          {
+            if (_packedDiffuseTextureNo < 0)
+            {
+              if (GUITextureManager.GetPackedTexture(_diffuseFileName, out _diffusetexUoff, out _diffusetexVoff, out _diffusetexUmax, out _diffusetexVmax, out _diffuseTexWidth, out _diffuseTexHeight, out _diffuseTexture, out _packedDiffuseTextureNo))
+              {
+              }
+            }
+            if (_packedDiffuseTextureNo >= 0)
+            {
+              float fx, fy, nw, nh, uoff, voff, umax, vmax, uoff1, voff1, umax1, vmax1;
+              fx = _fx;
+              fy = _fy;
+              nw = _nw;
+              nh = _nh;
+              uoff = _diffusetexUoff;
+              voff = _diffusetexVoff;
+              umax = _diffusetexUmax + _diffusetexUoff;
+              vmax = _diffusetexVmax + _diffusetexVoff;
+              uoff1 = _uoff;
+              voff1 = _voff;
+              umax1 = _umax + _uoff;
+              vmax1 = _vmax + _voff;
+
+              if (_flipX)
+              {
+                fx += nw;
+                uoff1 = _umax + _uoff;
+                umax1 = _uoff;
+
+                uoff = _diffusetexUmax + _diffusetexUoff;
+                umax = _diffusetexUoff;
+              }
+              if (_flipY)
+              {
+                fy += nh;
+                //uoff1 = _umax + _uoff;
+                //umax1 = _uoff;
+
+                voff1 = _vmax + _voff;
+                vmax1 = _voff;
+
+
+                voff = _diffusetexVmax + _diffusetexVoff;
+                vmax = _diffusetexVoff;
+              }
+
+              float m00, m01, m02, m10, m11, m12;
+              GUIGraphicsContext.GetScaling(out m00, out m01, out m02, out m10, out m11, out m12);
+              FontEngineDrawTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color, m00, m01, m02, m10, m11, m12
+                                    , _packedDiffuseTextureNo, uoff, voff, umax, vmax);
+            }
+          }
           frame = null;
           base.Render(timePassed);
         }
@@ -1467,7 +1535,12 @@ namespace MediaPortal.GUI.Library
     public string DiffuseFileName
     {
       get { return _diffuseFileName; }
-      set { _diffuseFileName = value; }
+      set
+      {
+        if (_diffuseFileName == value) return;
+        _diffuseFileName = value;
+
+      }
     }
     public RepeatBehavior RepeatBehavior
     {

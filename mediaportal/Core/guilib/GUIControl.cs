@@ -80,6 +80,7 @@ namespace MediaPortal.GUI.Library
     bool _allowHiddenFocus = false;
 
     List<VisualEffect> _animations = new List<VisualEffect>();
+    List<VisualEffect> _thumbAnimations = new List<VisualEffect>();
     //protected int DimColor = 0x60ffffff;
 
     /// <summary>
@@ -1360,12 +1361,27 @@ namespace MediaPortal.GUI.Library
         return _animations;
       }
     }
+    public List<VisualEffect> ThumbAnimations
+    {
+      get
+      {
+        return _thumbAnimations;
+      }
+    }
     public virtual void SetAnimations(List<VisualEffect> animations)
     {
       _animations = new List<VisualEffect>();
       foreach (VisualEffect effect in animations)
       {
         _animations.Add((VisualEffect)effect.Clone());
+      }
+    }
+    public virtual void SetThumbAnimations(List<VisualEffect> animations)
+    {
+      _thumbAnimations = new List<VisualEffect>();
+      foreach (VisualEffect effect in animations)
+      {
+        _thumbAnimations.Add((VisualEffect)effect.Clone());
       }
     }
 
@@ -1530,7 +1546,11 @@ namespace MediaPortal.GUI.Library
       //  if (visible != m_visible)
       //    CLog::DebugLog("UpdateControlState of control id %i - now %s (type=%d, process=%d, state=%d)", m_dwControlID, m_visible ? "visible" : "hidden", type, currentProcess, currentState);
     }
-
+    public virtual void GetCenter(ref float centerX, ref float centerY)
+    {
+      centerX = (float)(XPosition + (Width / 2));
+      centerY = (float)(YPosition + (Height / 2));
+    }
     protected void Animate(uint currentTime)
     {
       if (false == GUIGraphicsContext.Animations) return;
@@ -1542,12 +1562,16 @@ namespace MediaPortal.GUI.Library
         // Update the control states (such as visibility)
         UpdateStates(anim.AnimationType, anim.CurrentProcess, anim.CurrentState);
         // and render the animation effect
-        float centerX= (float)(XPosition + (Width / 2));
-        float centerY=(float)(YPosition + (Height / 2));
+        float centerXOrg = anim.CenterX;
+        float centerYOrg = anim.CenterY;
+        float centerX = 0, centerY = 0;
+        GetCenter(ref centerX, ref centerY);
         //GUIGraphicsContext.ScaleHorizontal(ref centerX);
         //GUIGraphicsContext.ScaleVertical(ref centerY);
         anim.SetCenter(centerX,centerY);
         anim.RenderAnimation(ref transform);
+        anim.CenterX = centerXOrg;
+        anim.CenterY = centerYOrg;
       }
       GUIGraphicsContext.SetControlTransform(transform);
     }

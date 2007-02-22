@@ -393,6 +393,7 @@ namespace MediaPortal.GUI.Library
               facade.ThumbnailView = subControl as GUIThumbnailPanel;
             if (subControl is GUIFilmstripControl)
               facade.FilmstripView = subControl as GUIFilmstripControl;
+            UpdateControlWithXmlData(subControl, subControl.GetType(), subControlNode, defines);
           }
         }
 
@@ -485,6 +486,7 @@ namespace MediaPortal.GUI.Library
       }
       Hashtable membersThatCanBeUpdated = GetMembersToUpdate(controlType);
       List<VisualEffect> animations = new List<VisualEffect>();
+      List<VisualEffect> thumbAnimations = new List<VisualEffect>();
       XmlNodeList childNodes = pControlNode.ChildNodes;
       foreach (XmlNode element in childNodes)
       {
@@ -511,6 +513,15 @@ namespace MediaPortal.GUI.Library
           if (effect.Create(element))
           {
             animations.Add(effect);
+            continue;
+          }
+        }
+        if (element.Name == "thumbAnimation")
+        {
+          VisualEffect effect = new VisualEffect();
+          if (effect.Create(element))
+          {
+            thumbAnimations.Add(effect);
             continue;
           }
         }
@@ -577,6 +588,8 @@ namespace MediaPortal.GUI.Library
       }
       if (animations.Count > 0)
         control.SetAnimations(animations);
+      if (thumbAnimations.Count > 0)
+        control.SetThumbAnimations(thumbAnimations);
     }
 
     private static void AddSubitemsToControl(XmlNode subItemsNode, GUIControl control)
