@@ -1326,8 +1326,10 @@ namespace MediaPortal.Player
       {
         if (filePath.ToLower().CompareTo(FilePath.ToLower()) == 0 && stream != 0)
         {
+          // Selected file is equal to current stream
           if (_State == PlayState.Paused)
           {
+            // Resume paused stream
             if (_SoftStop)
               Bass.BASS_ChannelSlideAttributes(stream, -1, 100, -101, 500);
 
@@ -1335,6 +1337,9 @@ namespace MediaPortal.Player
               Bass.BASS_ChannelSetAttributes(stream, -1, 100, -101);
 
             result = Bass.BASS_Start();
+
+            if (_useASIO)
+              result = BassAsio.BASS_ASIO_Start(0);
 
             if (result)
             {
@@ -1349,12 +1354,19 @@ namespace MediaPortal.Player
 
           else
           {
-            // When Upmixing has been selected start the playback on the Mixer Stream
-            if (_Mixing)
-              result = Bass.BASS_ChannelPlay(_mixer, true);
-            else
-              result = Bass.BASS_ChannelPlay(stream, true);
-            return result;
+            // Don't do anything with the stream, when ASIO is selected. Handle it as if started again
+            if (!_useASIO)
+            {
+              // Restart stream
+
+              // When Upmixing has been selected start the playback on the Mixer Stream
+              if (_Mixing)
+                result = Bass.BASS_ChannelPlay(_mixer, true);
+              else
+                result = Bass.BASS_ChannelPlay(stream, true);
+
+              return result;
+            }
           }
         }
 
