@@ -124,6 +124,7 @@ namespace TvEngine
         UpdateConflicts();
         Setting setting = cmLayer.GetSetting("CMLastUpdateTime", DateTime.Now.ToString());
         setting.Value = DateTime.Now.ToString();
+        setting.Persist();
         //TvController mycontrol;
       }
     }
