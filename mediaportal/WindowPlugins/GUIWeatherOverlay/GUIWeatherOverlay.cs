@@ -116,7 +116,7 @@ namespace MediaPortal.GUI.WeatherOverlay
       GUIControl.SetControlLabel(GetID, (int)SkinControls.CONTROL_LOCATION, _nowLocation);
       GUIControl.SetControlLabel(GetID, (int)SkinControls.CONTROL_WEATHER_DESCRIPTION, _nowCond);
       // GUIImage imgImage = (GUIImage)GetControl((int)SkinControls.CONTROL_CURRENT_IMAGE); !!!!
-      Log.Info("Weather - Now Icon: {0}", _nowIcon);
+      //Log.Info("Weather - Now Icon: {0}", _nowIcon);
       if (imgImage != null)
       {
         imgImage.FreeResources();
