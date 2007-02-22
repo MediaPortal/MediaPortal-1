@@ -513,6 +513,28 @@ namespace MediaPortal.GUI.Library
         _effect = value;
       }
     }
+    public float CenterX
+    {
+      get
+      {
+        return _centerX;
+      }
+      set
+      {
+        _centerX = value;
+      }
+    }
+    public float CenterY
+    {
+      get
+      {
+        return _centerY;
+      }
+      set
+      {
+        _centerY = value;
+      }
+    }
     public float StartX
     {
       get
