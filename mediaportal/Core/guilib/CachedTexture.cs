@@ -180,6 +180,13 @@ namespace MediaPortal.GUI.Library
 
       #endregion
 
+      public int TextureNumber
+      {
+        get
+        {
+          return _textureNumber;
+        }
+      }
       public void Draw(float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color)
       {
         //string logline=String.Format("draw:#{0} {1} {2} {3} {4}",_textureNumber,x,y,nw,nh);
