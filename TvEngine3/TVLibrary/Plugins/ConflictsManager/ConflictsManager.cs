@@ -30,6 +30,7 @@ using Gentle.Common;
 using Gentle.Framework;
 using TvEngine.Events;
 using TvLibrary.Interfaces;
+using TvEngine.Interfaces;
 
 namespace TvEngine
 {
@@ -119,7 +120,12 @@ namespace TvEngine
     {
       TvServerEventArgs tvEvent = (TvServerEventArgs)eventArgs;
       if (tvEvent.EventType == TvServerEventType.ScheduledAdded || tvEvent.EventType == TvServerEventType.ScheduleDeleted)
+      {
         UpdateConflicts();
+        Setting setting = cmLayer.GetSetting("CMLastUpdateTime", DateTime.Now.ToString());
+        setting.Value = DateTime.Now.ToString();
+        //TvController mycontrol;
+      }
     }
 
     /// <summary>
@@ -256,6 +262,7 @@ namespace TvEngine
         Schedule lastOverlappingSchedule = null;
         int lastBusyCard = 0;
         bool overlap = false;
+        
         foreach (Card card in cardsList)
         {
           if (card.canViewTvChannel(schedule.IdChannel))
@@ -547,6 +554,18 @@ namespace TvEngine
         }//for (int i = 0; i < 30; i++)
       }//foreach (Schedule _Schedule in schedulesList)
       return incomingSchedules;
+    }
+
+    /// <summary>
+    /// checks if the decryptLimit for a card, regarding to a list of assigned shedules
+    /// has been reached or not
+    /// </summary>
+    /// <param name="card">card we wanna use</param>
+    /// <param name="assignedSchedules">List of schedules assigned to this card</param>
+    /// <returns></returns>
+    private bool cardLimitReached(Card card, IList<Schedule> assignedSchedules)
+    {
+      return false;
     }
 
     /// <summary>
