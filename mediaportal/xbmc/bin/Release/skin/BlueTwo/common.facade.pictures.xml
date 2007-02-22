@@ -49,6 +49,17 @@
           <InfoImagey>117</InfoImagey>
           <InfoImagewidth>353</InfoImagewidth>
           <InfoImageheight>265</InfoImageheight>
+          <thumbs flipY="true" diffuse="Thumb_Mask.png"/>
+          <!--
+          <InfoImage flipY="true" diffuse="Thumb_Mask.png"/>
+          !-->
+          <showFrame>yes</showFrame>
+          <showFolder>yes</showFolder>
+          <showBackGround>yes</showBackGround>
+          <showInfoImage>yes</showInfoImage>
+          <enableFocusZoom>no</enableFocusZoom>
+          <thumbAnimation effect="zoom" start="100,100" end="150,150" time="300">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="150,150" end="100,100" time="300">unfocus</thumbAnimation>
         </control>
         <control>
           <description>playlist listcontrol</description>
