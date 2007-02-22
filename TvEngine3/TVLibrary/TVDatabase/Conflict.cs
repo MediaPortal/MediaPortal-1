@@ -166,5 +166,28 @@ namespace TvDatabase
 
 		#endregion
 
-	}
+    #region Relations
+
+    /// <summary>
+    /// Get the schedule referring to the current entity.
+    /// </summary>
+    public Schedule ReferringSchedule()
+    {
+      Key key = new Key(typeof(Schedule), true, "idSchedule", this.idSchedule);
+      return Broker.RetrieveInstance(typeof(Schedule), key ) as Schedule;
+    }
+
+    /// <summary>
+    /// Get the conflictingSchedule referring to the current entity.
+    /// </summary>
+    public Schedule ReferringConflictingSchedule()
+    {
+      Key key = new Key(typeof(Schedule), true, "idSchedule", this.IdConflictingSchedule);
+      return Broker.RetrieveInstance(typeof(Schedule), key) as Schedule;
+    }
+
+    #endregion
+
+
+  }
 }
