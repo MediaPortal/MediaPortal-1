@@ -1094,7 +1094,7 @@ namespace TvService
         context.GetUser(ref user);
         ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
         if (subchannel == null) return false;
-        return subchannel.IsTimeShifting ;
+        return subchannel.IsTimeShifting;
       }
       catch (Exception ex)
       {
@@ -1601,6 +1601,7 @@ namespace TvService
 
           if (subchannel.IsTimeShifting)
           {
+            context.OnZap(user);
             return TvResult.Succeeded;
           }
 
@@ -1629,6 +1630,7 @@ namespace TvService
             RemoveUser(user);
             return TvResult.NoVideoAudioDetected;
           }
+          context.OnZap(user);
           return TvResult.Succeeded;
         }
       }
@@ -2204,6 +2206,10 @@ namespace TvService
           context.Add(user);
           Log.Write("card: Tuner locked:{0} signal strength:{1} signal quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
           if (result == null) return TvResult.AllCardsBusy;
+          if (result.IsTimeShifting || result.IsRecording)
+          {
+            context.OnZap(user);
+          }
           return TvResult.Succeeded;
         }
       }

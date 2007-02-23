@@ -1839,6 +1839,7 @@ namespace TvService
               //but we must check if cam can decode the extra channel as well
 
               //first check if cam is already decrypting this channel
+              int camDecrypting=tvcard.NumberOfChannelsDecrypting;
               bool checkCam = true;
               User[] currentUsers = tvcard.GetUsers();
               if (currentUsers != null)
@@ -1854,8 +1855,25 @@ namespace TvService
                   }
                 }
               }
+
+              //if the user is already using this card
+              //and is watching a scrambled signal
+              //then we must the CAM will always be able to watch the requested channel
+              //since the users zaps
+              if (tvcard.IsTimeShifting(ref user))
+              {
+                Channel current = Channel.Retrieve(tvcard.CurrentDbChannel(ref user));
+                if (current != null)
+                {
+                  if (current.FreeToAir == false)
+                  {
+                    camDecrypting--;
+                  }
+                }
+              }
+              
               //check if cam is capable of descrambling an extra channel
-              if (tvcard.NumberOfChannelsDecrypting < keyPair.Value.DataBaseCard.DecryptLimit || dbChannel.FreeToAir || (checkCam == false))
+              if (camDecrypting < keyPair.Value.DataBaseCard.DecryptLimit || dbChannel.FreeToAir || (checkCam == false))
               {
                 //it is.. we can really use this card
                 Log.Write("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",

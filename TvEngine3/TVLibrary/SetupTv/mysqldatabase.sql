@@ -378,6 +378,23 @@ CREATE TABLE `TvMovieMapping`(
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
 #
 
+DROP TABLE IF EXISTS `History`;
+CREATE TABLE `History`(
+	`idHistory` int NOT NULL auto_increment,
+	`idChannel` int NOT NULL,
+	`startTime` datetime NOT NULL,
+	`endTime` datetime NOT NULL,
+	`title` varchar(1000) NOT NULL,
+	`description` varchar(1000) NOT NULL,
+	`genre` varchar(1000) NOT NULL,
+	`recorded` bit NOT NULL,
+	`watched` int NOT NULL,
+  PRIMARY KEY  (`idHistory`),
+  KEY `FK_History_Channel` (`idChannel`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+#
+
+
 --
 -- Definition of table `version`
 --
@@ -394,7 +411,7 @@ CREATE TABLE `version` (
 --
 
 /*!40000 ALTER TABLE `version` DISABLE KEYS */;
-INSERT INTO `version` VALUES  (1,21);
+INSERT INTO `version` VALUES  (1,22);
 /*!40000 ALTER TABLE `version` ENABLE KEYS */;
 #
 

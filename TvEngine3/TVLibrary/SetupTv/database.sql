@@ -252,6 +252,25 @@ CREATE TABLE TvMovieMapping(
 ) 
 GO
 
+CREATE TABLE History(
+	idHistory int IDENTITY(1,1) NOT NULL,
+	idChannel int NOT NULL,
+	startTime datetime NOT NULL,
+	endTime datetime NOT NULL,
+	title varchar(1000) NOT NULL,
+	description varchar(1000) NOT NULL,
+	genre varchar(1000) NOT NULL,
+	recorded bit NOT NULL,
+	watched int NOT NULL,
+ CONSTRAINT PK_History PRIMARY KEY  
+(
+	idHistory ASC
+)
+) 
+
+GO
+ALTER TABLE History  WITH CHECK ADD  CONSTRAINT FK_History_Channel FOREIGN KEY(idChannel)
+REFERENCES Channel (idChannel)
 GO
 ALTER TABLE Favorite  WITH CHECK ADD  CONSTRAINT FK_Favorites_Programs FOREIGN KEY(idProgram)
 REFERENCES Program (idProgram)
@@ -542,5 +561,5 @@ GO
 GO
 delete from version
 GO
-insert into version(versionNumber) values(21)
+insert into version(versionNumber) values(22)
 GO

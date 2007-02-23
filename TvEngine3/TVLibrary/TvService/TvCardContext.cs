@@ -52,7 +52,7 @@ namespace TvService
     #region variables
     List<User> _users;
     User _owner;
-    int _idChannel;
+    System.Timers.Timer _timer = new System.Timers.Timer();
     #endregion
 
     #region ctor
@@ -63,8 +63,11 @@ namespace TvService
     {
       _users = new List<User>();
       _owner = null;
-      _idChannel = -1;
+      _timer.Interval = 60000;
+      _timer.Enabled = true;
+      _timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Elapsed);
     }
+
     #endregion
 
     #region public methods
@@ -95,7 +98,7 @@ namespace TvService
     public bool IsLocked(out User user)
     {
       user = _owner;
-      return (user!=null);
+      return (user != null);
     }
 
     /// <summary>
@@ -140,7 +143,7 @@ namespace TvService
     {
       Log.Info("user:{0} add", user.Name);
       if (_owner == null) _owner = user;
-      for (int i=0; i < _users.Count;++i)
+      for (int i = 0; i < _users.Count; ++i)
       {
         if (_users[i].Name == user.Name)
         {
@@ -162,6 +165,7 @@ namespace TvService
       {
         if (existingUser.Name == user.Name)
         {
+          OnStopUser( existingUser);
           _users.Remove(existingUser);
           break;
         }
@@ -260,10 +264,77 @@ namespace TvService
     /// </summary>
     public void Clear()
     {
+      foreach (User user in _users)
+      {
+        OnStopUser( user);
+      }
       _users.Clear();
       _owner = null;
     }
+
+
+    public void OnStopUser( User user)
+    {
+      History history = user.History as History;
+      if (history != null)
+      {
+        history.Save();
+      }
+      user.History = null;
+    }
+
+    public void OnZap(User user)
+    {
+      foreach (User existingUser in _users)
+      {
+        if (existingUser.Name == user.Name)
+        {
+          Channel channel = Channel.Retrieve(user.IdChannel);
+          if (channel != null)
+          {
+            History history = existingUser.History as History;
+            if (history != null)
+            {
+              history.Save();
+            }
+            existingUser.History = null;
+            TvDatabase.Program p = channel.CurrentProgram;
+            if (p != null)
+            {
+              existingUser.History = new History(channel.IdChannel, p.StartTime, p.EndTime, p.Title, p.Description, p.Genre, false, 0);
+            }
+          }
+        }
+      }
+    }
     #endregion
 
+    void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    {
+      try
+      {
+        foreach (User existingUser in _users)
+        {
+          History history = existingUser.History as History;
+          if (history != null)
+          {
+            Channel channel = Channel.Retrieve(existingUser.IdChannel);
+            if (channel != null)
+            {
+              TvDatabase.Program p = channel.CurrentProgram;
+              if (p.StartTime != history.StartTime)
+              {
+                history.Save();
+                existingUser.History = new History(channel.IdChannel, p.StartTime, p.EndTime, p.Title, p.Description, p.Genre, false, 0);
+              }
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
+    }
   }
 }

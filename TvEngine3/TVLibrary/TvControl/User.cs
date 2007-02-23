@@ -36,6 +36,8 @@ namespace TvControl
     int _cardId;
     int _subChannel;
     int _idChannel;
+    [NonSerialized]
+    object _history;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class.
@@ -153,6 +155,22 @@ namespace TvControl
       }
     }
 
+    /// <summary>
+    /// Gets or sets the history.
+    /// </summary>
+    /// <value>The history.</value>
+    public object History
+    {
+      get
+      {
+        return _history;
+      }
+      set
+      {
+        _history = value;
+      }
+    }
+
     #region ICloneable Members
 
     /// <summary>
@@ -173,5 +191,7 @@ namespace TvControl
     }
 
     #endregion
+
+    
   }
 }
