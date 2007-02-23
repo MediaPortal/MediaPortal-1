@@ -112,7 +112,7 @@ private:
 	
 	void Process_object_data_segment();
 	
-	void Save_png( char* filename );
+	void Compose_subtitle();
 	
 	char* Pts2hmsu( uint64_t pts, char sep );
 	

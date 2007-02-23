@@ -38,8 +38,7 @@ public:
   BITMAP m_Bitmap;
   BITMAP* GetBitmap();
 
-  int RenderBitmap( unsigned char* buffer, char *file_name, 
-	  unsigned char* my_palette, unsigned char* my_trans, int col_count );
+  int RenderBitmap( unsigned char* buffer, unsigned char* my_palette, unsigned char* my_trans, int col_count );
 	
   int Width();
   int Height();

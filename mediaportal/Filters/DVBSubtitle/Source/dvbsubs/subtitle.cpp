@@ -63,8 +63,7 @@ int CSubtitle::GetData( int pos )
 	return (int)m_Data[pos];
 }
 
-int CSubtitle::RenderBitmap( unsigned char* buffer, char *file_name, unsigned char* my_palette, 
-	unsigned char* my_trans,int col_count )
+int CSubtitle::RenderBitmap( unsigned char* buffer, unsigned char* my_palette, unsigned char* my_trans,int col_count )
 {
 	uint8_t colorData( 0 );
 	long position( 0 );

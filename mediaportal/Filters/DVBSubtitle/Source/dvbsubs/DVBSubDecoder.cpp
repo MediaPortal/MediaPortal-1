@@ -571,7 +571,7 @@ void CDVBSubDecoder::Process_object_data_segment()
 	}
 }
 
-void CDVBSubDecoder::Save_png(char* filename) 
+void CDVBSubDecoder::Compose_subtitle() 
 {
 	int r;
 	int x, y, out_y;
@@ -587,11 +587,8 @@ void CDVBSubDecoder::Save_png(char* filename)
 		{
 			if (page.regions[r].is_visible) 
 			{
-				//LogDebug("DVBsubs: bitmap displaying region %d at %d,%d width=%d,height=%d\n",r,page.regions[r].x,page.regions[r].y,regions[r].width,regions[r].height);
 				count++;
-
 				out_y=page.regions[r].y*720;
-				
 				for ( y = 0 ; y < regions[r].height ; y++ ) 
 				{
 					for ( x = 0 ; x < regions[r].width ; x++ ) 
@@ -605,8 +602,8 @@ void CDVBSubDecoder::Save_png(char* filename)
 			}
 		}
 	}
-	m_CurrentSubtitle->RenderBitmap( m_Buffer, filename, colours, trans, 256 );
-
+	m_CurrentSubtitle->RenderBitmap( m_Buffer, colours, trans, 256 );
+  
 	m_RenderedSubtitles.resize( m_RenderedSubtitles.size() + 1 );
 	m_RenderedSubtitles[m_RenderedSubtitles.size() - 1] = m_CurrentSubtitle;
 	m_CurrentSubtitle = NULL; // ownership is transfered
@@ -624,7 +621,6 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 	
 	int n;
 	int vdrmode = 0;
-	char filename[20];
 	int page_id;
 	int new_i;
 
@@ -643,10 +639,12 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 	PES_packet_length = length;
 	memcpy(buf,data,PES_packet_length);
 
-	while (PES_packet_length >= 0) 
+	while( PES_packet_length >= 0 ) 
 	{
 		PTS = Get_pes_pts(buf);// / 90;
 		m_CurrentSubtitle->SetPTS( PTS );
+
+    LogDebug("Subtitle PTS %s\r", Pts2hmsu( PTS,'.' ) );
 
 		if (first_PTS == 0) 
 		{ 
@@ -735,10 +733,7 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 			
 			if( n )
 			{
-				sprintf(filename,"sub%05d.bmp",ext++);
-				LogDebug("spu start=\"%s\" image=\"%s\"", Pts2hmsu(PTS-first_PTS,'.'),filename);
-				Save_png( filename );
-				
+				Compose_subtitle();
 				if( m_pObserver )
 				{
 					m_pObserver->NotifySubtitle();
@@ -770,32 +765,17 @@ char* CDVBSubDecoder::Pts2hmsu( uint64_t pts, char sep )
 
 uint64_t CDVBSubDecoder::Get_pes_pts (unsigned char* buf) 
 {
-	UINT64 pts=0LL;
+  UINT64 k=0LL;
+  UINT64 pts=0LL;
 	UINT64 dts=0LL;
-	UINT64 k = 0LL;
-	//int PTS_DTS_flags;
-	//uint64_t p0,p1,p2,p3,p4;
 	bool PTS_available=false;
 	bool DTS_available=false;
 
 	if ( (buf[7]&0x80)!=0) PTS_available=true;
 	if ( (buf[7]&0x40)!=0) DTS_available=true;
-	//PTS_DTS_flags=(buf[7]&0xb0)>>6;
 	
-	//if ((PTS_DTS_flags&0x02)==0x02) 
 	if (PTS_available)
 	{
-		// PTS is in bytes 9,10,11,12,13
-		//p0=(buf[13]&0xfe)>>1|((buf[12]&1)<<7);
-		//p1=(buf[12]&0xfe)>>1|((buf[11]&2)<<6);
-		//p2=(buf[11]&0xfc)>>2|((buf[10]&3)<<6);
-		//p3=(buf[10]&0xfc)>>2|((buf[9]&6)<<5);
-		//p4=(buf[9]&0x08)>>3;
-
-		//PTS=p0|(p1<<8)|(p2<<16)|(p3<<24)|(p4<<32);
-
-		/* Hobbit code to replace earlier futile attempts to solve these numbers */
-
 		pts+= ((buf[13]>>1)&0x7f);				// 7bits	7
 		pts+=(buf[12]<<7);								// 8bits	15
 		pts+=((buf[11]>>1)<<15);					// 7bits	22
@@ -804,7 +784,7 @@ uint64_t CDVBSubDecoder::Get_pes_pts (unsigned char* buf)
 		k <<=30LL;
 		pts+=k;			// 3bits
 		pts &= 0x1FFFFFFFFLL;
-		
+
 	}
 	if (DTS_available) 
 	{
@@ -817,7 +797,6 @@ uint64_t CDVBSubDecoder::Get_pes_pts (unsigned char* buf)
 		dts+=k;			// 3bits
 		dts &= 0x1FFFFFFFFLL;
 	}
-	LogDebug("Decoder PTS: %lld, DTS: %lld",pts,dts);
 	return( pts );
 }
 
