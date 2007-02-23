@@ -750,7 +750,7 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        if (IsTimeShifting ) return true;
+        if (IsTimeShifting) return true;
         return false;
       }
     }
@@ -1193,6 +1193,10 @@ namespace TvLibrary.Implementations.DVB
               addPid = true;
               audioPidSet = true;
             }
+          }
+          if (info.isDVBSubtitle)
+          {
+            addPid = true;
           }
 
           if (addPid)

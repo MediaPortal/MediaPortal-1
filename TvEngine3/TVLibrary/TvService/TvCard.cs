@@ -2170,7 +2170,7 @@ namespace TvService
           {
             if (IsTunedToTransponder(channel) == false)
             {
-              if (context.IsOwner(user))
+              if (context.IsOwner(user) || user.IsAdmin)
               {
                 Log.Info("card: to different transponder");
 

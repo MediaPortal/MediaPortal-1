@@ -380,6 +380,7 @@ namespace TvService
       _user.Name = string.Format("scheduler{0}", recording.Schedule.IdSchedule);
       _user.CardId = -1;
       _user.SubChannel = -1;
+      _user.IsAdmin = true;
       Log.Write("Scheduler : time to record {0} {1}-{2} {3}", recording.Channel, DateTime.Now, recording.EndTime, recording.Schedule.ProgramName);
       TvResult result;
       //get list of all cards we can use todo the recording
@@ -483,7 +484,7 @@ namespace TvService
       try
       {
         _user.CardId = cardInfo.Id;
-
+        
         _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.StartRecording, new VirtualCard(_user), _user, recording.Schedule, null));
 
         if (cardInfo.Card.RecordingFolder == String.Empty)
@@ -540,6 +541,7 @@ namespace TvService
       {
         _user.CardId = recording.CardInfo.Id;
         _user.Name = string.Format("scheduler{0}", recording.Schedule.IdSchedule);
+        _user.IsAdmin = true;
         Log.Write("Scheduler : stop record {0} {1}-{2} {3}", recording.Channel, recording.RecordingStartDateTime, recording.EndTime, recording.Schedule.ProgramName);
         _controller.StopRecording(ref _user);
 

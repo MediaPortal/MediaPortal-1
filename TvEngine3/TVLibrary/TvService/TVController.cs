@@ -1867,7 +1867,16 @@ namespace TvService
                 //it is not, skip this card
                 Log.Write("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
                        keyPair.Value.DataBaseCard.IdCard, Type(keyPair.Value.DataBaseCard.IdCard), tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
-                continue;
+
+                //allow admin users like the scheduler to use this card anyway
+                if (user.IsAdmin)
+                {
+                  //allow admin users like the scheduler to use this card anyway
+                }
+                else
+                {
+                  continue;
+                }
               }
             }
             else
@@ -1877,7 +1886,14 @@ namespace TvService
               {
                 //no
                 Log.Write("Controller:    card:{0} type:{1} is tuned to different transponder", keyPair.Value.DataBaseCard.IdCard, Type(keyPair.Value.DataBaseCard.IdCard));
-                continue;
+                if (user.IsAdmin)
+                {
+                  //allow admin users like the scheduler to use this card anyway
+                }
+                else
+                {
+                  continue;
+                }
               }
             }
             CardDetail cardInfo = new CardDetail(keyPair.Value.DataBaseCard.IdCard, channelMap.ReferencedCard(), tuningDetail);
