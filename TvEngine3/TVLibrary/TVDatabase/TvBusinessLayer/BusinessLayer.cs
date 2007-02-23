@@ -35,7 +35,7 @@ namespace TvDatabase
         card.IdServer = server.IdServer;
         return card;
       }
-      Card newCard = new Card(devicePath, name, 1, true, new DateTime(2000, 1, 1), "", server.IdServer, true, 0, "", 0,1);
+      Card newCard = new Card(devicePath, name, 1, true, new DateTime(2000, 1, 1), "", server.IdServer, true, 0, "", 0, 1);
       newCard.Persist();
       return newCard;
     }
@@ -142,7 +142,7 @@ namespace TvDatabase
       sb.AddConstraint(Operator.Equals, "networkId", channel.NetworkId);
       sb.AddConstraint(Operator.Equals, "transportId", channel.TransportId);
       sb.AddConstraint(Operator.Equals, "serviceId", channel.ServiceId);
-      
+
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(TuningDetail), stmt.Execute());
       if (channels == null) return null;
@@ -782,21 +782,54 @@ namespace TvDatabase
       return progs;
     }
 
+
+    public IList GetProgramsByTitle(Channel channel, DateTime startTime, DateTime endTime, string title)
+    {
+      IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
+
+      string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+
+      sb.AddConstraint(Operator.Equals, "idChannel", channel.IdChannel);
+      sb.AddConstraint(string.Format("({0} or {1} or {2}) ", sub1, sub2, sub3));
+      sb.AddConstraint(Operator.Like, "title", title);
+      sb.AddOrderByField(true, "starttime");
+
+      SqlStatement stmt = sb.GetStatement(true);
+      IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      return progs;
+    }
+    public IList GetProgramsByTitle(DateTime startTime, DateTime endTime, string title)
+    {
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
+      IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
+
+      string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+
+      sb.AddConstraint(string.Format(" ({0} or {1} or {2}) ", sub1, sub2, sub3));
+      sb.AddConstraint(Operator.Like, "title", title);
+      sb.AddOrderByField(true, "starttime");
+      SqlStatement stmt = sb.GetStatement(true);
+      IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      return progs;
+    }
+
     public IList SearchMinimalPrograms(DateTime startTime, DateTime endTime, string programName, Channel channel)
     {
       IList programs;
       IList progsReturn = new List<Program>();
       if (channel != null)
-        programs = GetPrograms(channel, startTime, endTime);
+        programs = GetProgramsByTitle(channel, startTime, endTime, programName);
       else
-        programs = GetPrograms(startTime, endTime);
+        programs = GetProgramsByTitle(startTime, endTime, programName);
 
       foreach (Program prog in programs)
       {
-        if (prog.Title == programName)
-        {
-          progsReturn.Add(prog);
-        }
+        progsReturn.Add(prog);
       }
       return progsReturn;
     }

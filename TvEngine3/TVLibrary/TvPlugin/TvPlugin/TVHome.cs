@@ -432,6 +432,7 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       btnActiveStreams.Label = GUILocalizeStrings.Get(692);
+      
       try
       {
         int cards = RemoteControl.Instance.Cards;
@@ -447,7 +448,7 @@ namespace TvPlugin
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SETTINGS_TVENGINE);
         return;
       }
-
+      
       try
       {
         IList cards = TvDatabase.Card.ListAll(); ;

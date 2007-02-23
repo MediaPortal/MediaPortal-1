@@ -222,6 +222,7 @@ namespace TvPlugin
       TvBusinessLayer layer = new TvBusinessLayer();
       DateTime dtDay = DateTime.Now;
       IList episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), currentProgram.Title, null);
+
       foreach (Program episode in episodes)
       {
         GUIListItem item = new GUIListItem();
@@ -732,10 +733,6 @@ namespace TvPlugin
                 MediaPortal.Util.Utils.GetShortDayString(rec.StartTime),
                 rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                 rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-    }
-    public override void Process()
-    {
-      TVHome.UpdateProgressPercentageBar();
     }
   }
 }
