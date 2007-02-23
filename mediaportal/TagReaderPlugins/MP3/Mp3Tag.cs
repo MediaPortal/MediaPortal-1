@@ -120,7 +120,7 @@ namespace Tag.MP3
           return v2Album;
 
         if (HasId3Tag)
-          return new string(Id3Tag.ID3v1Tag.Album);
+          return CleanTag(Id3Tag.ID3v1Tag.Album);
 
         return string.Empty;
       }
@@ -146,7 +146,7 @@ namespace Tag.MP3
           return v2Artist;
 
         if (HasId3Tag)
-          return new string(Id3Tag.ID3v1Tag.Artist);
+          return CleanTag(Id3Tag.ID3v1Tag.Artist);
 
         else
           return string.Empty;
@@ -276,7 +276,7 @@ namespace Tag.MP3
           return comment;
 
         if (HasId3Tag)
-          return new string(Id3Tag.ID3v1Tag.Comment);
+          return CleanTag(Id3Tag.ID3v1Tag.Comment);
 
         else
           return string.Empty;
@@ -729,7 +729,7 @@ namespace Tag.MP3
           return v2Title;
 
         if (HasId3Tag)
-          return new string(Id3Tag.ID3v1Tag.Title);
+          return CleanTag(Id3Tag.ID3v1Tag.Title);
 
         else
           return string.Empty;
@@ -899,7 +899,7 @@ namespace Tag.MP3
             return 0;
 
           // Check if we have a year value in ID3V1
-          sYear = new string(Id3Tag.ID3v1Tag.Year);
+          sYear = CleanTag(Id3Tag.ID3v1Tag.Year);
           return Utils.GetYear(sYear);
         }
 
@@ -1176,6 +1176,23 @@ namespace Tag.MP3
           s = null;
         }
       }
+    }
+
+    /// <summary>
+    /// Don't return "\0" for ID3v1 Tags
+    /// </summary>
+    /// <param name="tag"></param>
+    /// <returns></returns>
+    private string CleanTag(char[] tag)
+    {
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < tag.Length; i++)
+      {
+        if (tag[i] == 0x00)
+          break;
+        sb.Append(tag[i]);
+      }
+      return sb.ToString();
     }
     #endregion
   }
