@@ -131,5 +131,9 @@ namespace TvPlugin
       setting.Value = spinPostRecord.Value.ToString();
       setting.Persist();
     }
+    public override void Process()
+    {
+      TVHome.UpdateProgressPercentageBar();
+    }
   }
 }

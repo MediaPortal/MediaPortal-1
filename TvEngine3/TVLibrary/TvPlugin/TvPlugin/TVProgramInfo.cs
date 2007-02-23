@@ -733,5 +733,9 @@ namespace TvPlugin
                 rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                 rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
     }
+    public override void Process()
+    {
+      TVHome.UpdateProgressPercentageBar();
+    }
   }
 }

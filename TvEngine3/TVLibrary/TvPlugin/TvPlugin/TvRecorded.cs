@@ -1186,5 +1186,9 @@ namespace TvPlugin
       m_bSortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
       OnSort();
     }
+    public override void Process()
+    {
+      TVHome.UpdateProgressPercentageBar();
+    }
   }
 }

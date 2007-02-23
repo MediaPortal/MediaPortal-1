@@ -869,5 +869,9 @@ namespace TvPlugin
       server.OnNewSchedule();
     }
     #endregion
+    public override void Process()
+    {
+      TVHome.UpdateProgressPercentageBar();
+    }
   }
 }

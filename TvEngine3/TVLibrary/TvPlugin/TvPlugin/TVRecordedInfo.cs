@@ -175,6 +175,10 @@ namespace TvPlugin
 					break;
 			}
       currentProgram.Persist();
-		}
+    }
+    public override void Process()
+    {
+      TVHome.UpdateProgressPercentageBar();
+    }
 	}
 }

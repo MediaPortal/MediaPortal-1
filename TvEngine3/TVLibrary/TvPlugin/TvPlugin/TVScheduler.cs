@@ -982,6 +982,7 @@ namespace TvPlugin
         needUpdate = false;
         LoadDirectory();
       }
+      TVHome.UpdateProgressPercentageBar();
     }
 
     void SortChanged(object sender, SortEventArgs e)

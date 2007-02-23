@@ -187,6 +187,7 @@ namespace TvPlugin
         Search();
         _refreshList = false;
       }
+      TVHome.UpdateProgressPercentageBar();
     }
     void Search()
     {

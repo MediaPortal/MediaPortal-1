@@ -370,5 +370,9 @@ namespace TvPlugin
       server.OnNewSchedule();
       GUIWindowManager.ShowPreviousWindow();
     }
+    public override void Process()
+    {
+      TVHome.UpdateProgressPercentageBar();
+    }
   }
 }

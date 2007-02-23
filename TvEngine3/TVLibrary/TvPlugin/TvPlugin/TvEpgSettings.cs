@@ -149,5 +149,9 @@ namespace TvPlugin
       }
       base.OnClicked(controlId, control, actionType);
     }
+    public override void Process()
+    {
+      TVHome.UpdateProgressPercentageBar();
+    }
   }
 }

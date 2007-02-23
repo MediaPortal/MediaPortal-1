@@ -1171,5 +1171,9 @@ namespace TvPlugin
       Update();
       GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
     }
+    public override void Process()
+    {
+      TVHome.UpdateProgressPercentageBar();
+    }
   }
 }

@@ -712,6 +712,7 @@ namespace TvPlugin
 
     public override void Process()
     {
+      TVHome.UpdateProgressPercentageBar();
       OnKeyTimeout();
       if (_needUpdate)
       {
