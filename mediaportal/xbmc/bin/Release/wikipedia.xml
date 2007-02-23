@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <profile>
   <section name="Allsites">
-	<entry name="sitenames">English,German,French,Dutch,Norwegian,Italian,Swedish,Spanish,Portuguese,Danish,Polish</entry>
+	<entry name="sitenames">English,German,French,Dutch,Norwegian,Swedish,Italian,Spanish,Portuguese,Danish,Polish</entry>
   </section>
   <section name="English">
 	<entry name="url">http://en.wikipedia.org/wiki/Special:Export/</entry>
@@ -33,17 +33,17 @@
 	<entry name="imageurl">http://no.wikipedia.org/wiki/Bilde:</entry>
 	<entry name="string">2604</entry>
   </section>
-  <section name="Italian">
-	<entry name="url">http://it.wikipedia.org/wiki/Speciale:Export/</entry>
-	<entry name="imagepattern">Bild</entry>
-	<entry name="imageurl">http://it.wikipedia.org/wiki/Image:</entry>
-	<entry name="string">2605</entry>
-  </section>
   <section name="Swedish">
 	<entry name="url">http://sv.wikipedia.org/wiki/Special:Export/</entry>
 	<entry name="imagepattern">Bild</entry>
 	<entry name="imageurl">http://sv.wikipedia.org/wiki/Bild:</entry>
 	<entry name="string">2606</entry>
+  </section>
+  <section name="Italian">
+	<entry name="url">http://it.wikipedia.org/wiki/Speciale:Export/</entry>
+	<entry name="imagepattern">Bild</entry>
+	<entry name="imageurl">http://it.wikipedia.org/wiki/Image:</entry>
+	<entry name="string">2605</entry>
   </section>
   <section name="Spanish">
 	<entry name="url">http://es.wikipedia.org/wiki/Especial:Export/</entry>

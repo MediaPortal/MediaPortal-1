@@ -207,6 +207,7 @@ namespace Wikipedia
           // Add all the local sites we want to be displayed starting with int 0.
           MediaPortal.Profile.Settings langreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "wikipedia.xml"));
           String allsites = langreader.GetValueAsString("Allsites", "sitenames", "");
+          Log.Info("Wikipedia: available sites: " + allsites);
           String[] siteArray = allsites.Split(',');
           for (int i = 0; i < siteArray.Length; i++)
           {
@@ -217,7 +218,7 @@ namespace Wikipedia
           pDlgOK.DoModal(GetID);
           if (pDlgOK.SelectedLabel >= 0)
           {
-            SelectLocalWikipedia(pDlgOK.SelectedLabel);
+            SelectLocalWikipedia(pDlgOK.SelectedLabel, siteArray);
           }
         }
       }
@@ -306,11 +307,9 @@ namespace Wikipedia
     }
 
     // Depending on which Entry was selected from the listbox we chose the language here.
-    private void SelectLocalWikipedia(int labelnumber)
+    private void SelectLocalWikipedia(int labelnumber, String[] siteArray)
     {
       MediaPortal.Profile.Settings langreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "wikipedia.xml"));
-      String allsites = langreader.GetValueAsString("Allsites", "sitenames", "");
-      String[] siteArray = allsites.Split(',');
       language = siteArray[labelnumber];
 
       if (searchtermLabel.Label != string.Empty && searchtermLabel.Label != "Wikipedia")

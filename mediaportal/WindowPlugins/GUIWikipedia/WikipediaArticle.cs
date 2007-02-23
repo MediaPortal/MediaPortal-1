@@ -526,13 +526,22 @@ namespace Wikipedia
 
       // surrounded by [ and ] are external Links. Need to be removed.
       Log.Debug("Wikipedia: Removing external links");
-      while ((iStart = tempParsedArticle.IndexOf("[")) >= 0)
+      iStart = -1;
+      try
       {
-        iEnd = tempParsedArticle.IndexOf("]") + 1;
+        while ((iStart = tempParsedArticle.IndexOf("[")) >= 0)
+        {
+          iEnd = tempParsedArticle.IndexOf("]") + 1;
 
-        StringBuilder builder = new StringBuilder(tempParsedArticle);
-        builder.Remove(iStart, iEnd - iStart);
-        tempParsedArticle = builder.ToString();
+          StringBuilder builder = new StringBuilder(tempParsedArticle);
+          builder.Remove(iStart, iEnd - iStart);
+          tempParsedArticle = builder.ToString();
+        }
+      }
+      catch(Exception e)
+      {
+        Log.Error("Wikipedia: {0}", e.ToString());
+        Log.Error("Parsing Error: " + tempParsedArticle + "\nSTART: " + iStart + "\nEND: " + iEnd);
       }
 
       Log.Info("Wikipedia: Finished parsing of links and images.");
