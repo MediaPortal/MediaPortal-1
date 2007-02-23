@@ -432,7 +432,6 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       btnActiveStreams.Label = GUILocalizeStrings.Get(692);
-      
       try
       {
         int cards = RemoteControl.Instance.Cards;

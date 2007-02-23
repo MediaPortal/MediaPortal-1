@@ -1033,11 +1033,24 @@ namespace TvPlugin
         {
           TvBusinessLayer layer = new TvBusinessLayer();
 
-          Dictionary<int, List<Program>> programs = layer.GetProgramsForAllChannels(Utils.longtodate(iStart), Utils.longtodate(iEnd));
+          List<Channel> visibleChannels = new List<Channel>();
+          
+          int chan = _channelOffset;
+          for (int iChannel = 0; iChannel < _channelCount; iChannel++)
+          {
+            if (chan < _channelList.Count)
+            {
+              visibleChannels.Add(_channelList[chan]);
+            }
+            chan++;
+            if (chan >= _channelList.Count)
+              chan = 0;
+          }
+          Dictionary<int, List<Program>> programs = layer.GetProgramsForAllChannels(Utils.longtodate(iStart), Utils.longtodate(iEnd), visibleChannels);
           // make sure the TV Guide heading is visiable and the single channel labels are not.
           setGuideHeadngVisibility(true);
           setSingleChannelLabelVisibility(false);
-          int chan = _channelOffset;
+          chan = _channelOffset;
           for (int iChannel = 0; iChannel < _channelCount; iChannel++)
           {
             if (chan < _channelList.Count)

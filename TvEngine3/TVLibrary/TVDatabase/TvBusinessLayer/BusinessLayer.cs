@@ -740,7 +740,7 @@ namespace TvDatabase
       return progs;
     }
 
-    public Dictionary<int, List<Program>> GetProgramsForAllChannels(DateTime startTime, DateTime endTime)
+    public Dictionary<int, List<Program>> GetProgramsForAllChannels(DateTime startTime, DateTime endTime, List<Channel> channelList)
     {
       Dictionary<int, List<Program>> maps = new Dictionary<int, List<Program>>();
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
@@ -751,6 +751,23 @@ namespace TvDatabase
       string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
 
       sb.AddConstraint(string.Format("({0} or {1} or {2}) ", sub1, sub2, sub3));
+      string channelConstraint = "";
+      foreach (Channel ch in channelList)
+      {
+        if (channelConstraint == "")
+        {
+          channelConstraint = String.Format("(idChannel={0}", ch.IdChannel);
+        }
+        else
+        {
+          channelConstraint += String.Format(" or idChannel={0}", ch.IdChannel);
+        }
+      }
+      if (channelConstraint.Length > 0)
+      {
+        channelConstraint += ")";
+        sb.AddConstraint(channelConstraint);
+      }
       sb.AddOrderByField(true, "starttime");
 
       SqlStatement stmt = sb.GetStatement(true);
