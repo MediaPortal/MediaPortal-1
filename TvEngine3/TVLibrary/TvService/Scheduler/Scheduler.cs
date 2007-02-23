@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 
 using TvLibrary.Log;
 using TvDatabase;
@@ -38,8 +39,23 @@ namespace TvService
   /// </summary>
   public class Scheduler
   {
+
     #region const
-    const int ScheduleInterval = 30;//secs
+    const int ScheduleInterval = 15;
+    #endregion
+    #region imports
+    [FlagsAttribute]
+    public enum EXECUTION_STATE : uint
+    {
+      ES_SYSTEM_REQUIRED = 0x00000001,
+      ES_DISPLAY_REQUIRED = 0x00000002,
+      // legacy flag should not be used
+      // ES_USER_PRESENT   = 0x00000004,
+      ES_CONTINUOUS = 0x80000000,
+    }
+    
+    [DllImport("Kernel32.DLL", CharSet = CharSet.Auto,SetLastError = true)]
+    private extern static EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE state);
     #endregion
 
     #region variables
@@ -97,6 +113,7 @@ namespace TvService
       _diskManagement = new DiskManagement();
       _recordingManagement = new RecordingManagement();
       _episodeManagement = new EpisodeManagement();
+      HandleSleepMode();
     }
 
     /// <summary>
@@ -110,6 +127,8 @@ namespace TvService
       _diskManagement = null;
       _recordingManagement = null;
       _episodeManagement = null;
+      _recordingsInProgressList = new List<RecordingDetail>();
+      HandleSleepMode();
 
     }
     #endregion
@@ -135,6 +154,7 @@ namespace TvService
 
         DoSchedule();
         HandleRecordingList();
+        HandleSleepMode();
         _scheduleCheckTimer = DateTime.Now;
       }
       catch (Exception ex)
@@ -198,6 +218,29 @@ namespace TvService
         {
           return;
         }
+      }
+    }
+    /// <summary>
+    /// Under vista we must disable the sleep timer when we're recording
+    /// Otherwise vista may simple shutdown or suspend
+    /// </summary>
+    void HandleSleepMode()
+    {
+      if (_recordingsInProgressList == null)
+      {
+        SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS);
+        return;
+      }
+
+      if (_recordingsInProgressList.Count > 0)
+      {
+        //disable the sleep timer
+        SetThreadExecutionState((EXECUTION_STATE)((uint)EXECUTION_STATE.ES_CONTINUOUS + (uint)EXECUTION_STATE.ES_SYSTEM_REQUIRED));
+      }
+      else
+      {
+        //enable the sleep timer
+        SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS);
       }
     }
 
