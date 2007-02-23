@@ -45,6 +45,7 @@
     <Compile Include="Implementations\Analog\Graphs\Analog\TvCardAnalogBase.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccessContext.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\HaupPauge\Hauppauge.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\KNC\KNC.cs" />
     <Compile Include="Implementations\DVB\DisEqC\DiSEqCMotor.cs" />
     <Compile Include="Implementations\DVB\DisEqC\IDiSEqCController.cs" />
     <Compile Include="Implementations\DVB\Graphs\DvbBaseScanning.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="Implementations\Helper\SidHelper.cs" />
     <Compile Include="Implementations\Hybrid\HybridCard.cs" />
     <Compile Include="Implementations\TvCardCollection.cs" />
+    <Compile Include="Interfaces\Analyzer\IKNC.cs" />
     <Compile Include="Interfaces\Analyzer\ITsCaGrabber.cs" />
     <Compile Include="Interfaces\Analyzer\IMPRecord.cs">
       <SubType>Code</SubType>

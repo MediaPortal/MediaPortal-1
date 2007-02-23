@@ -41,6 +41,7 @@ namespace TvLibrary.Implementations.DVB
     DigitalEverywhere _digitalEveryWhere = null;
     TechnoTrend _technoTrend = null;
     Twinhan _twinhan = null;
+    KNC _knc = null;
     Hauppauge _hauppauge = null;
     DiSEqCMotor _diSEqCMotor = null;
     Dictionary<int, ConditionalAccessContext> _mapSubChannels;
@@ -58,6 +59,16 @@ namespace TvLibrary.Implementations.DVB
       {
         _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
         if (tunerFilter == null && analyzerFilter == null) return;
+
+        Log.Log.WriteFile("Check for KNC");        
+        _knc = new KNC(tunerFilter, analyzerFilter);
+        if (_knc.IsKNC)
+        {
+          Log.Log.WriteFile("Knc card detected");
+          return;
+        }
+        _knc = null;
+
         Log.Log.WriteFile("Check for Digital Everywhere");
         _digitalEveryWhere = new DigitalEverywhere(tunerFilter, analyzerFilter);
         if (_digitalEveryWhere.IsDigitalEverywhere)
@@ -68,6 +79,7 @@ namespace TvLibrary.Implementations.DVB
           return;
         }
         _digitalEveryWhere = null;
+
 
         Log.Log.WriteFile("Check for Twinhan");
         _twinhan = new Twinhan(tunerFilter, analyzerFilter);
@@ -162,6 +174,10 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
+        if (_knc != null)
+        {
+          return _knc.IsCamReady();
+        }
         if (_digitalEveryWhere != null)
         {
           _digitalEveryWhere.IsCamReady();
@@ -214,11 +230,11 @@ namespace TvLibrary.Implementations.DVB
       get
       {
         if (_mapSubChannels == null) return 0;
-        if (_mapSubChannels.Count==0) return 0;
+        if (_mapSubChannels.Count == 0) return 0;
         List<ConditionalAccessContext> filteredChannels = new List<ConditionalAccessContext>();
-        
+
         Dictionary<int, ConditionalAccessContext>.Enumerator en = _mapSubChannels.GetEnumerator();
-        
+
         while (en.MoveNext())
         {
           bool exists = false;
@@ -267,6 +283,11 @@ namespace TvLibrary.Implementations.DVB
         context.AudioPid = audioPid;
         context.ServiceId = channel.ServiceId;
 
+        if (_knc != null)
+        {
+          return _knc.SendPMT(PMT, pmtLength);
+          // return _technoTrend.SendPMT(PMT, pmtLength);
+        }
         if (_digitalEveryWhere != null)
         {
           return _digitalEveryWhere.SendPMTToFireDTV(_mapSubChannels);
@@ -311,6 +332,11 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
+        if (_knc != null)
+        {
+          _knc.SendDiseqCommand(channel);
+          System.Threading.Thread.Sleep(100);
+        }
         if (_digitalEveryWhere != null)
         {
           _digitalEveryWhere.SendDiseqcCommand(channel);
