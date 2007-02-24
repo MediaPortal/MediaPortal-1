@@ -33,7 +33,6 @@
 #include "ITSFileSource.h"
 
 class CSubtitleInputPin;
-class CSubtitleOutputPin;
 class CPcrInputPin;
 class CPMTInputPin;
 
@@ -133,7 +132,6 @@ private:
 private: // data
 
   CSubtitleInputPin*  m_pSubtitleInputPin;
-  CSubtitleOutputPin* m_pSubtitleOutputPin;
 	CPcrInputPin*		    m_pPcrPin;
   CPMTInputPin*       m_pPMTPin;
 
@@ -144,7 +142,10 @@ private: // data
   CCritSec            m_Lock;				      // Main renderer critical section
   CCritSec            m_ReceiveLock;		  // Sublock for received samples
 
-  LONGLONG            m_firstPTS;
+  LONGLONG            m_basePCR;
+  LONGLONG            m_firstPCR;
+  LONGLONG            m_curPCR;
+  LONGLONG            m_fixPCR;           // diff between TSFileSouce first PCR and PCRInputPin PCR
   REFERENCE_TIME      m_startTimestamp;
 
   int                 (CALLBACK *m_pSubtitleObserver) (SUBTITLE* sub); 
