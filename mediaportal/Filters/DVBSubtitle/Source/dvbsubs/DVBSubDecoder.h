@@ -98,7 +98,7 @@ private:
 	
 	unsigned char Next_nibble();
 	
-	void Set_clut( int CLUT_id,int CLUT_entry_id,int Y_value, int Cr_value, int Cb_value, int T_value );
+	void Set_clut( int CLUT_id,int CLUT_entry_id,int Y, int Cr, int Cb, int T_value );
 	
 	void Decode_4bit_pixel_code_string( int r, int object_id, int ofs, int n );
 	

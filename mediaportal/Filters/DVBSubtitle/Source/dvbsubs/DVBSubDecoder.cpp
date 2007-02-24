@@ -60,9 +60,9 @@ int in_scanline=0;
 uint64_t video_pts,first_video_pts,audio_pts,first_audio_pts;
 int audio_pts_wrap=0;
 
-//struct timeval start_tv;
-
+// Logging
 extern void LogDebug(const char *fmt, ...);
+extern void LogDebugPTS( const char *fmt, uint64_t pts );
 
 CDVBSubDecoder::~CDVBSubDecoder()
 {
@@ -148,33 +148,29 @@ unsigned char CDVBSubDecoder::Next_nibble()
 /* function taken from "dvd2sub.c" in the svcdsubs packages in the
    vcdimager contribs directory.  Author unknown, but released under GPL2.
 */
-void CDVBSubDecoder::Set_clut( int CLUT_id,int CLUT_entry_id,int Y_value, int Cr_value, int Cb_value, int T_value ) 
+void CDVBSubDecoder::Set_clut( int CLUT_id,int CLUT_entry_id,int Y, int Cr, int Cb, int T_value ) 
 {
-	int Y,Cr,Cb,R,G,B;
-
-	Y = Y_value;
-	Cr = Cr_value;
-	Cb = Cb_value;
-
-	B = (int)( 1.164 * ( Y - 16 )                        + 2.018 * ( Cb - 128 ) );
-	G = (int)( 1.164 * ( Y - 16 ) - 0.813 * ( Cr - 128 ) - 0.391 * ( Cb - 128 ) );
-	R = (int)( 1.164 * ( Y - 16 ) + 1.596 * ( Cr - 128 ) );
+  // Convert the palette to use RGB colors instead of YUV as converting palette is
+  // much faster than converting the whole bitmap.
+	int B = (int)( 1.164 * ( Y - 16 )                        + 2.018 * ( Cb - 128 ) );
+	int G = (int)( 1.164 * ( Y - 16 ) - 0.813 * ( Cr - 128 ) - 0.391 * ( Cb - 128 ) );
+	int R = (int)( 1.164 * ( Y - 16 ) + 1.596 * ( Cr - 128 ) );
 	if ( B < 0 ) B = 0; if ( B > 255 ) B = 255;
 	if ( G < 0 ) G = 0; if ( G > 255 ) G = 255;
 	if ( R < 0 ) R = 0; if ( R > 255 ) R = 255; 
 
-//	LogDebug("DVBsubs: Setting colour for CLUT_id=%d, CLUT_entry_id=%d",CLUT_id,CLUT_entry_id);
+  //LogDebug("DVBsubs: Setting colour for CLUT_id=%d, CLUT_entry_id=%d",CLUT_id,CLUT_entry_id);
 	if ((CLUT_id > 15) || (CLUT_entry_id > 15)) 
 	{
 		LogDebug("DVBsubs: ERROR: CLUT_id=%d, CLUT_entry_id=%d",CLUT_id,CLUT_entry_id);
 		exit(1);
 	}
 
-	colours[(CLUT_id*48)+(CLUT_entry_id*3)+0] = R; //Y_value;
-	colours[(CLUT_id*48)+(CLUT_entry_id*3)+1] = G; //Cr_value;
-	colours[(CLUT_id*48)+(CLUT_entry_id*3)+2] = B; //Cb_value;
+	colours[(CLUT_id*48)+(CLUT_entry_id*3)+0] = R;
+	colours[(CLUT_id*48)+(CLUT_entry_id*3)+1] = G;
+	colours[(CLUT_id*48)+(CLUT_entry_id*3)+2] = B;
 	
-	if( Y_value == 0 ) 
+	if( Y == 0 ) 
 	{
 		trans[(CLUT_id*16)+CLUT_entry_id] = 0;
 	} 
@@ -207,7 +203,6 @@ void CDVBSubDecoder::Decode_4bit_pixel_code_string( int r, int object_id, int of
 	{
 		//LogDebug("DVBsubs: start of loop, i=%d, nibble-flag=%d", i, nibble_flag );
 		//LogDebug("DVBsubs: buf=%02x %02x %02x %02x", buf[i], buf[i+1], buf[i+2], buf[i+3] );
-
 		bits = 0;
 		pixel_code = 0;
 		next_bits = Next_nibble();
@@ -277,7 +272,6 @@ void CDVBSubDecoder::Decode_4bit_pixel_code_string( int r, int object_id, int of
 				}
 			}
 		}
-
 	}
 	
 	if ( nibble_flag == 1 ) 
@@ -641,18 +635,15 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 
 	while( PES_packet_length >= 0 ) 
 	{
-		PTS = Get_pes_pts(buf);// / 90;
+		PTS = Get_pes_pts(buf);
 		m_CurrentSubtitle->SetPTS( PTS );
-
-    LogDebug("Subtitle PTS %s\r", Pts2hmsu( PTS,'.' ) );
+    LogDebugPTS( "Subtitle PTS", PTS );
 
 		if (first_PTS == 0) 
 		{ 
 			first_PTS = PTS; 
       m_pObserver->NotifyFirstPTS( first_PTS );
 		}
-
-		LogDebug("%s\r", Pts2hmsu(PTS-first_PTS,'.'));
 
 		PES_header_data_length=buf[8];
 		i = 9 + PES_header_data_length;
@@ -713,8 +704,8 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 					LogDebug("DVBsubs: ERROR: Unknown segment %02x, length %d, data=%02x %02x %02x %02x",segment_type,segment_length,buf[i+4],buf[i+5],buf[i+6],buf[i+7]);
 					exit(1);
 			}
-		i = new_i;
-	}   
+		  i = new_i;
+	  }   
 
 		if (acquired) 
 		{
@@ -738,29 +729,12 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 				{
 					m_pObserver->NotifySubtitle();
 				}
-
 			}
 		}
 		LogDebug("DVBsubs: END OF INPUT PES DATA.");
 		return 0;
 	}
-
 	return 0;
-}
-
-char pts_text[30];
-char* CDVBSubDecoder::Pts2hmsu( uint64_t pts, char sep ) 
-{
-	int h,m,s,u;
-
-	pts /= 90; // Convert to milliseconds
-	h = int( ( pts / ( 1000*60*60 ) ) );
-	m = int( ( pts / ( 1000*60 ) ) - ( h*60 ) );
-	s = int( ( pts/1000 ) - ( h*3600 ) - ( m*60 ) );
-	u = int( pts - ( h*1000*60*60 ) - ( m*1000*60 ) - ( s*1000 ) );
-
-	sprintf( pts_text,"%d:%02d:%02d%c%03d",h,m,s,sep,u );
-	return( pts_text );
 }
 
 uint64_t CDVBSubDecoder::Get_pes_pts (unsigned char* buf) 
