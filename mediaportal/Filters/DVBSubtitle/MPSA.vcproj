@@ -253,10 +253,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\dvbsubs\pes.c"
-				>
-			</File>
-			<File
 				RelativePath=".\Source\PMTInputPin.cpp"
 				>
 			</File>
@@ -266,10 +262,6 @@
 			</File>
 			<File
 				RelativePath=".\source\SubtitleInputPin.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\SubtitleOutputPin.cpp"
 				>
 			</File>
 		</Filter>
@@ -290,10 +282,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\dvbsubs\pes.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Source\PMTInputPin.h"
 				>
 			</File>
@@ -307,10 +295,6 @@
 			</File>
 			<File
 				RelativePath=".\source\SubtitleInputPin.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\SubtitleOutputPin.h"
 				>
 			</File>
 			<File
