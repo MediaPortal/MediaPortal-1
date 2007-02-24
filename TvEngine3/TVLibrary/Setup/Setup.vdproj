@@ -423,12 +423,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_43C424DD208D444D85ED1BD2C326CC18"
-        "OwnerKey" = "8:_9CCD9023620943089B74B25C0BBF5D12"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_442C7241EC6D1C3FD1248802A3F04142"
         "OwnerKey" = "8:_EED89607AD511D2A2215029A6D1A9145"
         "MsmSig" = "8:_UNDEFINED"
@@ -605,12 +599,6 @@
         {
         "MsmKey" = "8:_5A7FAEF9CB1E4E0FAD9BFF305E1050F5"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_5BED2BBDA5CB446090CD42851FBF4A4C"
-        "OwnerKey" = "8:_554620AFFA98471AA9267BAF3078BB45"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1065,6 +1053,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_9AD080B2C7E24588B1B9CBD8CF1A4CFA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_9B4B0A175A2F5097F2817858AC513F6A"
         "OwnerKey" = "8:_75B3C930C91EDDC6A91E5F54B57F5280"
         "MsmSig" = "8:_UNDEFINED"
@@ -1311,6 +1305,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_A715B01502F041E1B8B078E25D8B04F7"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_A96518791A4D4DD188CF0E6B541B5313"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1331,6 +1331,12 @@
         {
         "MsmKey" = "8:_ABEC693197A14A9182F7B3B0B453011A"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AC8950D94467469489CB805200A24274"
+        "OwnerKey" = "8:_9CCD9023620943089B74B25C0BBF5D12"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1541,6 +1547,12 @@
         {
         "MsmKey" = "8:_CAF3AB6B08FE4DECBA5D5C17AE630891"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CE299496101A4BB0B9FD9F975D9453A0"
+        "OwnerKey" = "8:_554620AFFA98471AA9267BAF3078BB45"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -4853,6 +4865,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9AD080B2C7E24588B1B9CBD8CF1A4CFA"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\Finland-Järvenpää-Elisa.dvbc"
+            "TargetName" = "8:Finland-Järvenpää-Elisa.dvbc"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_9B4B0A175A2F5097F2817858AC513F6A"
             {
             "AssemblyRegister" = "3:1"
@@ -5130,6 +5162,26 @@
             "Register" = "3:1"
             "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A715B01502F041E1B8B078E25D8B04F7"
+            {
+            "SourcePath" = "8:..\\..\\Filters\\bin\\mfc80.dll"
+            "TargetName" = "8:mfc80.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A96518791A4D4DD188CF0E6B541B5313"
@@ -7407,20 +7459,6 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_43C424DD208D444D85ED1BD2C326CC18"
-            {
-            "UseDynamicProperties" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:policy_8_0_microsoft_vc80_atl_x86.msm"
-                "Properties"
-                {
-                }
-            "LanguageId" = "3:0"
-            "Exclude" = "11:FALSE"
-            "Folder" = "8:"
-            "Feature" = "8:"
-            "IsolateTo" = "8:"
-            }
             "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_554620AFFA98471AA9267BAF3078BB45"
             {
             "UseDynamicProperties" = "11:TRUE"
@@ -7435,11 +7473,11 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_5BED2BBDA5CB446090CD42851FBF4A4C"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_9CCD9023620943089B74B25C0BBF5D12"
             {
             "UseDynamicProperties" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:policy_8_0_microsoft_vc80_crt_x86.msm"
+            "IsDependency" = "11:FALSE"
+            "SourcePath" = "8:C:\\Program Files\\Common Files\\Merge Modules\\Microsoft_VC80_ATL_x86.msm"
                 "Properties"
                 {
                 }
@@ -7449,11 +7487,25 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_9CCD9023620943089B74B25C0BBF5D12"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_AC8950D94467469489CB805200A24274"
             {
             "UseDynamicProperties" = "11:TRUE"
-            "IsDependency" = "11:FALSE"
-            "SourcePath" = "8:C:\\Program Files\\Common Files\\Merge Modules\\Microsoft_VC80_ATL_x86.msm"
+            "IsDependency" = "11:TRUE"
+            "SourcePath" = "8:policy_8_0_microsoft_vc80_atl_x86.msm"
+                "Properties"
+                {
+                }
+            "LanguageId" = "3:0"
+            "Exclude" = "11:FALSE"
+            "Folder" = "8:"
+            "Feature" = "8:"
+            "IsolateTo" = "8:"
+            }
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_CE299496101A4BB0B9FD9F975D9453A0"
+            {
+            "UseDynamicProperties" = "11:TRUE"
+            "IsDependency" = "11:TRUE"
+            "SourcePath" = "8:policy_8_0_microsoft_vc80_crt_x86.msm"
                 "Properties"
                 {
                 }
