@@ -31,6 +31,7 @@ copy ..\..\..\MediaPortal.Base\TSFileSource.ax .
 copy ..\..\..\MediaPortal.Base\MPTSWriter.ax .
 copy ..\..\..\MediaPortal.Base\cdxareader.ax .
 copy ..\..\..\MediaPortal.Base\ttBdaDrvApi_Dll.dll .
+copy ..\..\..\MediaPortal.Base\hauppauge.dll.
 regsvr32 /s MPSA.ax
 regsvr32 /s TSFileSource.ax
 regsvr32 /s MPTSWriter.ax
