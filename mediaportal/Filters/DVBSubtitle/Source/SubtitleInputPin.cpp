@@ -25,7 +25,6 @@
 #include <ksuuids.h>
 #include <streams.h>
 #include <bdaiface.h>
-#include <commctrl.h>
 #include <initguid.h>
 
 #include "SubtitleInputPin.h"
@@ -33,6 +32,10 @@
 
 extern void LogDebug( const char *fmt, ... );
 
+
+//
+// Constructor
+//
 CSubtitleInputPin::CSubtitleInputPin( CDVBSub *pDVBSub,
 										LPUNKNOWN pUnk,
 										CBaseFilter *pFilter,
@@ -58,11 +61,19 @@ CSubtitleInputPin::CSubtitleInputPin( CDVBSub *pDVBSub,
 	LogDebug( "Subtitle: Input pin created" );
 }
 
+
+//
+// Destructor
+//
 CSubtitleInputPin::~CSubtitleInputPin()
 {
   delete m_pesDecoder;
 }
 
+
+//
+// CheckMediaType
+//
 HRESULT CSubtitleInputPin::CheckMediaType( const CMediaType *pmt )
 {
   if( pmt->subtype == MEDIASUBTYPE_MPEG2_TRANSPORT )
@@ -74,11 +85,18 @@ HRESULT CSubtitleInputPin::CheckMediaType( const CMediaType *pmt )
 }
 
 
+//
+// BreakConnect
+//
 HRESULT CSubtitleInputPin::BreakConnect()
 {
   return CRenderedInputPin::BreakConnect();
 }
 
+
+//
+// CompleteConnect
+//
 HRESULT CSubtitleInputPin::CompleteConnect( IPin *pPin )
 {
 	HRESULT hr = CBasePin::CompleteConnect( pPin );
@@ -88,20 +106,24 @@ HRESULT CSubtitleInputPin::CompleteConnect( IPin *pPin )
     return hr;  // PID is mapped later when we have it 
 
   hr = MapPidToDemuxer( m_SubtitlePid, m_pPin, MEDIA_TRANSPORT_PACKET );
-//  hr = MapPidToDemuxer( m_SubtitlePid, m_pPin, MEDIA_ELEMENTARY_STREAM );  
-
   m_pesDecoder->SetPid( m_SubtitlePid );
 
   return hr;
 }
 
 
+//
+// ReceiveCanBlock
+//
 STDMETHODIMP CSubtitleInputPin::ReceiveCanBlock()
 {
     return S_FALSE;
 }
 
 
+//
+// Receive
+//
 STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 {
 	CAutoLock lock(m_pReceiveLock);
@@ -135,11 +157,19 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
   return S_OK;
 }
 
+
+//
+// OnTsPacket
+//
 void CSubtitleInputPin::OnTsPacket( byte* tsPacket )
 {
   m_pesDecoder->OnTsPacket( tsPacket );
 }
 
+
+//
+// OnNewPesPacket
+//
 int CSubtitleInputPin::OnNewPesPacket( int streamid, byte* header, int headerlen, 
                                        byte* data, int len, bool isStart )
 {
@@ -157,17 +187,26 @@ int CSubtitleInputPin::OnNewPesPacket( int streamid, byte* header, int headerlen
   return 0;
 }
 
+
+//
+// Reset
+//
 void CSubtitleInputPin::Reset()
 {
 	m_bReset = true;
 }
 
+
+//
+// SetSubtitlePid
+//
 void CSubtitleInputPin::SetSubtitlePid( LONG pPid )
 {
 	m_SubtitlePid = pPid;
   MapPidToDemuxer( m_SubtitlePid, m_pPin, MEDIA_TRANSPORT_PACKET );
   m_pesDecoder->SetPid( m_SubtitlePid );
 }
+
 
 //
 // EndOfStream
@@ -177,13 +216,22 @@ STDMETHODIMP CSubtitleInputPin::EndOfStream( void )
     CAutoLock lock( m_pReceiveLock );
     return CRenderedInputPin::EndOfStream();
 
-} // EndOfStream
+} 
 
+
+//
+// BeginFlush
+//
 STDMETHODIMP CSubtitleInputPin::BeginFlush( void )
 {
 //	Reset();
 	return CRenderedInputPin::BeginFlush();
 }
+
+
+//
+// EndFlush
+//
 STDMETHODIMP CSubtitleInputPin::EndFlush( void )
 {
 //	Reset();
@@ -198,4 +246,4 @@ STDMETHODIMP CSubtitleInputPin::NewSegment( REFERENCE_TIME tStart,
 											double dRate )
 {
     return S_OK;
-} // NewSegment
+}

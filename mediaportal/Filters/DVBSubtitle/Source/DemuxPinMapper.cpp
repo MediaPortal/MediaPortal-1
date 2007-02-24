@@ -26,6 +26,10 @@
 
 extern void LogDebug( const char *fmt, ... );
 
+
+//
+// MapPidToDemuxer
+//
 HRESULT CDemuxPinMapper::MapPidToDemuxer( LONG pid, IPin *pDemuxerPin, MEDIA_SAMPLE_CONTENT sampleContent )
 {
 	if( !pDemuxerPin )
@@ -51,23 +55,16 @@ HRESULT CDemuxPinMapper::MapPidToDemuxer( LONG pid, IPin *pDemuxerPin, MEDIA_SAM
 				{
 					break;
 				}
-
-				/*umPid = pm.ulPID;
-				hr = pMap->UnmapPID( 1, &umPid );
-				if( FAILED(hr) )
-				{
-					break;
-				}*/
 			}
 			hr = pMap->MapPID( 1, (ULONG*)&pid, sampleContent );
-
 			pPidEnum->Release();
 		}
 		pMap->Release();
 	}
 
   if( hr != S_OK )
+  {
     LogDebug( "CDemuxPinMapper::MapDemuxerPid failed! - %d", hr );
-
+  }
   return hr;
 }

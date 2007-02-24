@@ -38,8 +38,11 @@
 extern void LogDebug( const char *fmt, ... );
 
 const int   TSPacketSize = 188;
-ULONG       PMT_PID = 0x0;
+const ULONG PMT_PID = 0x0;
 
+//
+// Constructor
+//
 CPMTInputPin::CPMTInputPin( CDVBSub *m_pFilter,
 								LPUNKNOWN pUnk,
 								CBaseFilter *pFilter,
@@ -67,10 +70,15 @@ CPMTInputPin::CPMTInputPin( CDVBSub *m_pFilter,
 }
 
 
+//
+// Destructor
+//
 CPMTInputPin::~CPMTInputPin()
 {
   delete m_pPatParser;
 }
+
+
 //
 // CheckMediaType
 //
@@ -83,6 +91,10 @@ HRESULT CPMTInputPin::CheckMediaType( const CMediaType *pmt )
 	return S_FALSE;
 }
 
+
+//
+// CompleteConnect
+//
 HRESULT CPMTInputPin::CompleteConnect( IPin *pPin )
 {
   m_pDemuxerPin = pPin;
@@ -98,6 +110,9 @@ HRESULT CPMTInputPin::CompleteConnect( IPin *pPin )
 }
 
 
+//
+// SetVideoPid
+//
 void CPMTInputPin::SetVideoPid( int videoPid )
 {
   m_streamVideoPid = videoPid;
@@ -148,8 +163,6 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
           if( m_pcrPid == -1 && pidTable.PcrPid > 0)
           {
             m_pcrPid = pidTable.PcrPid;
-            //m_pcrPid = pidTable.AudioPid1;
-            //m_pcrPid = pidTable.VideoPid;
             m_pPidObserver->SetPcrPid( m_pcrPid  );
           }
           if( m_subtitlePid == -1 && pidTable.SubtitlePid > 0)
@@ -164,6 +177,11 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
   }
   return hr;
 }
+
+
+//
+// FindVideoPID
+//
 HRESULT CPMTInputPin::FindVideoPID()
 {
   HRESULT hr;
@@ -231,6 +249,9 @@ HRESULT CPMTInputPin::FindVideoPID()
 }
 
 
+//
+// Process
+//
 HRESULT CPMTInputPin::Process( BYTE *pbData, long len )
 {
   OnRawData( pbData, len );
@@ -238,6 +259,9 @@ HRESULT CPMTInputPin::Process( BYTE *pbData, long len )
 }
 
 
+//
+// OnTsPacket
+//
 void CPMTInputPin::OnTsPacket( byte* tsPacket )
 {
   m_pPatParser->OnTsPacket( tsPacket );
@@ -273,6 +297,10 @@ void CPMTInputPin::OnTsPacket( byte* tsPacket )
   }
 }
 
+
+//
+// Reset
+//
 void CPMTInputPin::Reset()
 {
   m_subtitlePid = -1;
@@ -283,6 +311,9 @@ void CPMTInputPin::Reset()
 }
 
 
+//
+// BeginFlush
+//
 STDMETHODIMP CPMTInputPin::BeginFlush( void )
 {
 	Reset();
@@ -290,6 +321,9 @@ STDMETHODIMP CPMTInputPin::BeginFlush( void )
 }
 
 
+//
+// EndFlush
+//
 STDMETHODIMP CPMTInputPin::EndFlush( void )
 {
 	Reset();

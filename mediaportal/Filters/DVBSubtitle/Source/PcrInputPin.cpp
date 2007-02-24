@@ -35,6 +35,9 @@ extern void LogDebug( const char *fmt, ... );
 
 const int TSPacketSize = 188;
 
+//
+// Constructor
+//
 CPcrInputPin::CPcrInputPin( CDVBSub *m_pFilter,
 								LPUNKNOWN pUnk,
 								CBaseFilter *pFilter,
@@ -56,6 +59,10 @@ CPcrInputPin::CPcrInputPin( CDVBSub *m_pFilter,
 	LogDebug( "Pcr: Pin created" );
 }
 
+
+//
+// Destructor
+//
 CPcrInputPin::~CPcrInputPin()
 {
 }
@@ -75,6 +82,9 @@ HRESULT CPcrInputPin::CheckMediaType( const CMediaType *pmt )
 }
 
 
+//
+// CompleteConnect
+//
 HRESULT CPcrInputPin::CompleteConnect( IPin *pPin )
 {
 	HRESULT hr = CBasePin::CompleteConnect( pPin );
@@ -118,12 +128,19 @@ STDMETHODIMP CPcrInputPin::Receive( IMediaSample *pSample )
 }
 
 
+//
+// Reset
+//
 void CPcrInputPin::Reset()
 {
   m_currentPTS = 0;
   m_pcrPid = -1;
 }
 
+
+//
+// SetPcrPid
+//
 void CPcrInputPin::SetPcrPid( LONG pPid )
 {
   m_pcrPid = pPid;
@@ -133,6 +150,9 @@ void CPcrInputPin::SetPcrPid( LONG pPid )
 }
 
 
+//
+// SetPcrPid
+//
 STDMETHODIMP CPcrInputPin::BeginFlush(void)
 {
 	Reset();
@@ -140,6 +160,9 @@ STDMETHODIMP CPcrInputPin::BeginFlush(void)
 }
 
 
+//
+// EndFlush
+//
 STDMETHODIMP CPcrInputPin::EndFlush(void)
 {
 	Reset();
@@ -147,11 +170,18 @@ STDMETHODIMP CPcrInputPin::EndFlush(void)
 }
 
 
+//
+// GetCurrentPCR
+//
 ULONGLONG CPcrInputPin::GetCurrentPCR()
 {
 	return m_currentPTS;
 }
 
+
+//
+// OnTsPacket
+//
 void CPcrInputPin::OnTsPacket( byte* tsPacket )
 {
     if (m_pcrPid==-1) return;
@@ -169,8 +199,6 @@ void CPcrInputPin::OnTsPacket( byte* tsPacket )
     k=tsPacket[9]; k<<=1LL;pcrBaseHigh+=k;
     k=((tsPacket[10]>>7)&0x1); pcrBaseHigh +=k;
     m_currentPTS = pcrBaseHigh;
-
-   // LogDebug( "  PCR %lld", pcrBaseHigh );
 
     m_pFilter->SetPcr( m_currentPTS );
 }
