@@ -51,12 +51,12 @@ CKnc::~CKnc(void)
   {
     if (m_pKNC)
     {
-      m_pKNC->KNCBDA_CI_Disable();
+      //m_pKNC->KNCBDA_CI_Disable();
     }
   }
   if (m_pKNC!=NULL)
   {
-    delete m_pKNC;
+    //delete m_pKNC;
   }
   m_pKNC=NULL;
 }
@@ -71,7 +71,7 @@ STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
 {
   m_bIsKNC=false;
   LogDebug("KNCBDA_CI_Enable");
-  m_pKNC = new CKNCBDACI();
+  /*m_pKNC = new CKNCBDACI();
   if (m_pKNC->KNCBDA_CI_Enable(tunerFilter,this))
   {
     LogDebug("knc card detected");
@@ -81,7 +81,7 @@ STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
       LogDebug("knc card detected with CAM");
       m_pKNC->KNCBDA_CI_HW_Enable(TRUE);
     }
-  }
+  }*/
   return S_OK;
 }
 
@@ -104,7 +104,7 @@ STDMETHODIMP CKnc::IsCamReady( BOOL* yesNo)
   *yesNo=FALSE;
   if (m_bIsKNC)
   {
-    if (m_pKNC->KNCBDA_CI_IsAvailable() ==FALSE)
+    /*if (m_pKNC->KNCBDA_CI_IsAvailable() ==FALSE)
     {
       *yesNo=TRUE;
       return S_OK;
@@ -112,7 +112,7 @@ STDMETHODIMP CKnc::IsCamReady( BOOL* yesNo)
     if (m_pKNC->KNCBDA_CI_IsReady())
     {
       *yesNo=TRUE;
-    }
+    }*/
   }
   return S_OK;
 }
@@ -151,9 +151,10 @@ STDMETHODIMP CKnc::DescrambleService( BYTE* pmt, int PMTLength,BOOL* succeeded)
 {
   if (m_bIsKNC)
   {
-    BOOL result=m_pKNC->KNCBDA_CI_SendPMTCommand(pmt, PMTLength);
-    LogDebug("KNCBDA_CI_SendPMTCommand %d",result);
-    *succeeded = (result==TRUE);
+    //BOOL result=m_pKNC->KNCBDA_CI_SendPMTCommand(pmt, PMTLength);
+    //LogDebug("KNCBDA_CI_SendPMTCommand %d",result);
+    //*succeeded = (result==TRUE);
+    *succeeded=true;
   }
   else
   {
