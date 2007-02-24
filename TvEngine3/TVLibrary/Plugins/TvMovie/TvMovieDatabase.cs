@@ -785,7 +785,7 @@ namespace TvEngine
           TVMovieRating = "Tages-Tipp!";
           break;
         case 4:
-          TVMovieRating = "4!!! report to rtv/mPod";
+          TVMovieRating = "Blockbuster!";
           break;
         case 5:
           TVMovieRating = "Genre-Tipp";
