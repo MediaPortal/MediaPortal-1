@@ -18,7 +18,7 @@
       <description>Time</description>
       <type>label</type>
       <id>201</id>
-      <posX>686</posX>
+      <posX>705</posX>
       <posY>30</posY>
       <label>#time</label>
       <align>right</align>
