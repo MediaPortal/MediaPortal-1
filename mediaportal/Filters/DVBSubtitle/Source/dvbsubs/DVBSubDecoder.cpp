@@ -38,7 +38,6 @@
 #include <errno.h>
 #include "dvbsubdecoder.h"
 #include "subtitle.h"
-#include "pes.h"
 
 page_t page;
 region_t regions[MAX_REGIONS];

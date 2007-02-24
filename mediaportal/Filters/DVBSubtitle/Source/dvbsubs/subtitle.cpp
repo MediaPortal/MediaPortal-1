@@ -25,6 +25,9 @@
 
 extern void LogDebug(const char *fmt, ...);
 
+//
+// Constructor
+//
 CSubtitle::CSubtitle( int width, int height )
 {
 	m_Bitmap.bmType			  = 0;
@@ -37,6 +40,9 @@ CSubtitle::CSubtitle( int width, int height )
   m_Data = NULL;
 }
 
+//
+// Destructor
+//
 CSubtitle::~CSubtitle()
 {
 	if( m_Data )
@@ -45,24 +51,10 @@ CSubtitle::~CSubtitle()
 	}
 }
 
-BITMAP* CSubtitle::GetBitmap()
-{
-	if( &m_Bitmap )
-		return &m_Bitmap;
-	else
-		return NULL;
-}
 
-unsigned char*  CSubtitle::GetData()
-{
-	return m_Data;
-}
-
-int CSubtitle::GetData( int pos )
-{
-	return (int)m_Data[pos];
-}
-
+//
+// RenderBitmap
+//
 int CSubtitle::RenderBitmap( unsigned char* buffer, unsigned char* my_palette, unsigned char* my_trans,int col_count )
 {
 	uint8_t colorData( 0 );
@@ -110,46 +102,94 @@ int CSubtitle::RenderBitmap( unsigned char* buffer, unsigned char* my_palette, u
 	return 0;
 }
 
+
+//
+// GetBitmap
+//
+BITMAP* CSubtitle::GetBitmap()
+{
+	if( &m_Bitmap )
+		return &m_Bitmap;
+	else
+		return NULL;
+}
+
+
+//
+// Width
+//
 int CSubtitle::Width()
 {
 	return m_Bitmap.bmWidth;
 }
 
+
+//
+// Height
+//
 int CSubtitle::Height()
 {
 	return m_Bitmap.bmHeight;
 }
 
+
+//
+// PTS - presentation timestamp
+//
 uint64_t CSubtitle::PTS()
 {
 	return m_PTS;
 }
 
+
+//
+// SetPTS
+//
 void CSubtitle::SetPTS( uint64_t PTS )
 {
   m_PTS = PTS;
 }
 
+
+//
+// Timestamp
+//
 uint64_t CSubtitle::Timestamp()
 {
 	return m_timestamp;
 }
 
+
+//
+// SetTimestamp
+//
 void CSubtitle::SetTimestamp( uint64_t timestamp )
 {
 	m_timestamp = timestamp;
 }
 
+
+//
+// Timeout
+//
 uint64_t CSubtitle::Timeout()
 {
   return m_timeout;
 }
 
+
+//
+// SetTimeout
+//
 void CSubtitle::SetTimeout( uint64_t timeout )
 {
   m_timeout = timeout;
 }
 
+
+//
+// FirstScanline
+//
 int CSubtitle::FirstScanline()
 {
   return m_FirstScanline;

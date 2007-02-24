@@ -49,8 +49,6 @@ public:
   uint64_t Timeout();
   void SetTimeout( uint64_t timeout );
   int FirstScanline();
-  unsigned char* GetData(); 
-  int CSubtitle::GetData( int pos );
 
 private:
 
