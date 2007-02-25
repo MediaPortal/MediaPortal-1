@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-<!-- changed : 22-Februaray-2007 by Maschine				-->
-<!-- contains:									-->
-<!--   - Australia 									-->
-<!--   - Austria 									-->
-<!--   - Belgium   									-->
-<!--   - Croatia   									-->
-<!--   - Czech Republic   								-->
-<!--   - Danmmark  									-->
-<!--   - Europe 									-->
-<!--   - Finland 									-->
-<!--   - France									-->
-<!--   - Germany 									-->
-<!--   - Italy 										-->
-<!--   - Netherlands 								-->
-<!--   - New Zealand								-->
-<!--   - Norway 									-->
-<!--   - Singapore                							-->
-<!--   - Spain 									-->
-<!--   - Sweden 									-->
-<!--   - Taiwan 									-->
-<!--   - UK 										-->
+<!-- changed : 24-February-2007    -->
+<!-- contains:                     -->
+<!--   - Australia                 -->
+<!--   - Austria                   -->
+<!--   - Belgium                   -->
+<!--   - Croatia                   -->
+<!--   - Czech Republic            -->
+<!--   - Danmmark                  -->
+<!--   - Europe                    -->
+<!--   - Finland                   -->
+<!--   - France                    -->
+<!--   - Germany                   -->
+<!--   - Italy                     -->
+<!--   - Netherlands               -->
+<!--   - New Zealand               -->
+<!--   - Norway                    -->
+<!--   - Singapore                 -->
+<!--   - Spain                     -->
+<!--   - Sweden                    -->
+<!--   - Taiwan                    -->
+<!--   - UK                        -->
 <dvbt>
 	<country name="Australia - All Regions" offset="125">
 		<carrier frequency="177500" bandwidth="7" />
@@ -937,55 +937,55 @@
 		<carrier frequency="658000" bandwidth="8" />
 		<carrier frequency="690000" bandwidth="8" />
 	</country>
-	<country name="France - All Regions" offset="167"> 
-		<carrier frequency="474000"/> 
-		<carrier frequency="482000"/> 
-		<carrier frequency="490000"/> 
-		<carrier frequency="498000"/> 
-		<carrier frequency="506000"/> 
-		<carrier frequency="514000"/> 
-		<carrier frequency="522000"/> 
-		<carrier frequency="530000"/> 
-		<carrier frequency="538000"/> 
-		<carrier frequency="546000"/> 
-		<carrier frequency="554000"/> 
-		<carrier frequency="562000"/> 
-		<carrier frequency="570000"/> 
-		<carrier frequency="578000"/> 
-		<carrier frequency="586000"/> 
-		<carrier frequency="594000"/> 
-		<carrier frequency="602000"/> 
-		<carrier frequency="610000"/> 
-		<carrier frequency="618000"/> 
-		<carrier frequency="626000"/> 
-		<carrier frequency="634000"/> 
-		<carrier frequency="642000"/> 
-		<carrier frequency="650000"/> 
-		<carrier frequency="658000"/> 
-		<carrier frequency="666000"/> 
-		<carrier frequency="674000"/> 
-		<carrier frequency="682000"/> 
-		<carrier frequency="690000"/> 
-		<carrier frequency="698000"/> 
-		<carrier frequency="706000"/> 
-		<carrier frequency="714000"/> 
-		<carrier frequency="722000"/> 
-		<carrier frequency="730000"/> 
-		<carrier frequency="738000"/> 
-		<carrier frequency="746000"/> 
-		<carrier frequency="754000"/> 
-		<carrier frequency="762000"/> 
-		<carrier frequency="770000"/> 
-		<carrier frequency="778000"/> 
-		<carrier frequency="786000"/> 
-		<carrier frequency="794000"/> 
-		<carrier frequency="802000"/> 
-		<carrier frequency="810000"/> 
-		<carrier frequency="818000"/> 
-		<carrier frequency="826000"/> 
-		<carrier frequency="834000"/> 
-		<carrier frequency="842000"/> 
-		<carrier frequency="850000"/> 
+	<country name="France - All Regions" offset="167">
+		<carrier frequency="474000"/>
+		<carrier frequency="482000"/>
+		<carrier frequency="490000"/>
+		<carrier frequency="498000"/>
+		<carrier frequency="506000"/>
+		<carrier frequency="514000"/>
+		<carrier frequency="522000"/>
+		<carrier frequency="530000"/>
+		<carrier frequency="538000"/>
+		<carrier frequency="546000"/>
+		<carrier frequency="554000"/>
+		<carrier frequency="562000"/>
+		<carrier frequency="570000"/>
+		<carrier frequency="578000"/>
+		<carrier frequency="586000"/>
+		<carrier frequency="594000"/>
+		<carrier frequency="602000"/>
+		<carrier frequency="610000"/>
+		<carrier frequency="618000"/>
+		<carrier frequency="626000"/>
+		<carrier frequency="634000"/>
+		<carrier frequency="642000"/>
+		<carrier frequency="650000"/>
+		<carrier frequency="658000"/>
+		<carrier frequency="666000"/>
+		<carrier frequency="674000"/>
+		<carrier frequency="682000"/>
+		<carrier frequency="690000"/>
+		<carrier frequency="698000"/>
+		<carrier frequency="706000"/>
+		<carrier frequency="714000"/>
+		<carrier frequency="722000"/>
+		<carrier frequency="730000"/>
+		<carrier frequency="738000"/>
+		<carrier frequency="746000"/>
+		<carrier frequency="754000"/>
+		<carrier frequency="762000"/>
+		<carrier frequency="770000"/>
+		<carrier frequency="778000"/>
+		<carrier frequency="786000"/>
+		<carrier frequency="794000"/>
+		<carrier frequency="802000"/>
+		<carrier frequency="810000"/>
+		<carrier frequency="818000"/>
+		<carrier frequency="826000"/>
+		<carrier frequency="834000"/>
+		<carrier frequency="842000"/>
+		<carrier frequency="850000"/>
 	</country>
 	<country name="France - Ajaccio" offset="166">
 		<carrier frequency="538000" bandwidth="8" />
@@ -1289,7 +1289,7 @@
 		<carrier frequency="714000" bandwidth="8" />
 		<carrier frequency="754000" bandwidth="8" />
 		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="826000" bandwidth="8" />		
+		<carrier frequency="826000" bandwidth="8" />
 	</country>
 	<country name="Germany - Bremen/Unterweser" offset="125">
 		<carrier frequency="482000" bandwidth="8" />
@@ -1300,7 +1300,7 @@
 		<carrier frequency="698000" bandwidth="8" />
 		<carrier frequency="746000" bandwidth="8" />
 	</country>
-	
+
 	<country name="Germany - Bremerhaven/Cuxhaven" offset="125">
 		<carrier frequency="482000" bandwidth="8" />
 		<carrier frequency="498000" bandwidth="8" />
@@ -1312,16 +1312,16 @@
 		<carrier frequency="714000" bandwidth="8" />
 		<carrier frequency="746000" bandwidth="8" />
 	</country>
-	
+
 	<country name="Germany - Duesseldorf/Ruhrgebiet" offset="125">
-	   <carrier frequency="506000" bandwidth="8" />
-	   <carrier frequency="538000" bandwidth="8" />
-	   <carrier frequency="586000" bandwidth="8" />
-	   <carrier frequency="674000" bandwidth="8" />
-	   <carrier frequency="690000" bandwidth="8" />
-	   <carrier frequency="722000" bandwidth="8" />
-	   <carrier frequency="746000" bandwidth="8" />
-	   <carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="586000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="722000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
 	</country>
 	<country name="Germany - Göttingen" offset="125">
 		<carrier frequency="474000" bandwidth="8" />
@@ -1530,19 +1530,19 @@
 		<carrier frequency="850000" />
 		<carrier frequency="858000" />
 	</country>
-  <country name="New Zealand Auckland">
-    <carrier frequency="698000" bandwidth="8" />
-  </country>
+	<country name="New Zealand Auckland">
+		<carrier frequency="698000" bandwidth="8" />
+	</country>
 	<country name="Norway - Oslo (trials)" offset="0">
 		<carrier frequency="722000" bandwidth="8" />
 		<carrier frequency="770000" bandwidth="8" />
 	</country>
-  <country name="Singapore">
-    <carrier frequency="538000" bandwidth="8" />
-    <carrier frequency="602000" bandwidth="8" />
-    <carrier frequency="610000" bandwidth="8" />
-  </country>
-  <country name="Spain - Andalucia - Almeria">
+	<country name="Singapore">
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="602000" bandwidth="8" />
+		<carrier frequency="610000" bandwidth="8" />
+	</country>
+	<country name="Spain - Andalucia - Almeria">
 		<carrier frequency="778000" bandwidth="8" />
 		<carrier frequency="762000" bandwidth="8" />
 		<carrier frequency="834000" bandwidth="8" />
@@ -2419,56 +2419,388 @@
 		<carrier frequency="850000" bandwidth="8" />
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
-	<country name="UK - Caradon Hill" offset="167">
-		<carrier frequency="474000" bandwidth="8" />
-		<carrier frequency="497833" bandwidth="8" />
-		<carrier frequency="521833" bandwidth="8" />
-		<carrier frequency="553833" bandwidth="8" />
-		<carrier frequency="578000" bandwidth="8" />
-		<carrier frequency="690000" bandwidth="8" />
+	<country name="UK - Aberdare" offset="167">
+		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="570000" bandwidth="8" />
 	</country>
-	<country name="UK - Crystal Palace" offset="167">
+	<country name="UK - Angus" offset="167">
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="754000" bandwidth="8" />
+		<carrier frequency="826000" bandwidth="8" />
+	</country>
+	<country name="UK - Beacon Hill" offset="167">
+		<carrier frequency="722000" bandwidth="8" />
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="738000" bandwidth="8" />
+		<carrier frequency="754000" bandwidth="8" />
+		<carrier frequency="818000" bandwidth="8" />
+	</country>
+	<country name="UK - Belmont" offset="167">
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+	</country>
+	<country name="UK - Bilsdale West Moor" offset="167">
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="474000" bandwidth="8" />
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+	</country>
+	<country name="UK - Black Hill" offset="167">
+		<carrier frequency="634000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+		<carrier frequency="826000" bandwidth="8" />
+	</country>
+	<country name="UK - Blaen-Plwyf" offset="167">
+		<carrier frequency="530000" bandwidth="8" />
 		<carrier frequency="482000" bandwidth="8" />
 		<carrier frequency="506000" bandwidth="8" />
-		<carrier frequency="522000" bandwidth="8" />
-		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
 		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="570000" bandwidth="8" />
+	</country>
+	<country name="UK - Bluebell Hill" offset="167">
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="618000" bandwidth="8" />
+	</country>
+	<country name="UK - Bressay" offset="167">
+		<carrier frequency="474000" bandwidth="8" />
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
 		<carrier frequency="554000" bandwidth="8" />
-		<carrier frequency="556000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+	</country>
+	<country name="UK - Brierley Hill" offset="167">
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="826000" bandwidth="8" />
+		<carrier frequency="754000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="802000" bandwidth="8" />
+	</country>
+	<country name="UK - Brighton Whitehawk Hill" offset="167">
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="794000" bandwidth="8" />
+	</country>
+	<country name="UK - Bristol Ilchester Crescent" offset="167">
+		<carrier frequency="698000" bandwidth="8" />
+		<carrier frequency="618000" bandwidth="8" />
+		<carrier frequency="634000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+	</country>
+	<country name="UK - Bristol King's Weston Hill" offset="167">
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
 		<carrier frequency="578000" bandwidth="8" />
+	</country>
+	<country name="UK - Bromsgrove" offset="167">
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="570000" bandwidth="8" />
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+	</country>
+	<country name="UK - Brougher Mountain" offset="167">
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="570000" bandwidth="8" />
+	</country>
+	<country name="UK - Caldbeck" offset="167">
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="618000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+	</country>
+	<country name="UK - Caradon Hill" offset="167">
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="474000" bandwidth="8" />
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+	</country>
+	<country name="UK - Carmel" offset="167">
+		<carrier frequency="746000" bandwidth="8" />
+		<carrier frequency="826000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+	</country>
+	<country name="UK - Chatton" offset="167">
+		<carrier frequency="626000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+	</country>
+	<country name="UK - Chesterfield" offset="167">
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="626000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="722000" bandwidth="8" />
+	</country>
+	<country name="UK - Craigkelly" offset="167">
+		<carrier frequency="570000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="618000" bandwidth="8" />
+	</country>
+	<country name="UK - Crystal Palace" offset="167">
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+	</country>
+	<country name="UK - Darvel" offset="167">
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
+	</country>
+	<country name="UK - Divis" offset="167">
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="570000" bandwidth="8" />
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
+	</country>
+	<country name="UK - Dover B" offset="167">
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="618000" bandwidth="8" />
+	</country>
+	<country name="UK - Dover" offset="167">
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
 	</country>
 	<country name="UK - Durris" offset="167">
 		<carrier frequency="546000" bandwidth="8" />
 		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="722000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
 		<carrier frequency="634000" bandwidth="8" />
 		<carrier frequency="658000" bandwidth="8" />
-		<carrier frequency="714000" bandwidth="8" />
-		<carrier frequency="722000" bandwidth="8" />
 	</country>
-	<country name="UK - Emley Moor" offset="167">
-		<carrier frequency="626000" bandwidth="8" />
-		<carrier frequency="650000" bandwidth="8" />
-		<carrier frequency="674000" bandwidth="8" />
-		<carrier frequency="698000" bandwidth="8" />
-		<carrier frequency="706000" bandwidth="8" />
-		<carrier frequency="722000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-	</country>
-	<country name="UK - Fenham" offset="167">
+	<country name="UK - Eitshal" offset="167">
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
 		<carrier frequency="482000" bandwidth="8" />
 		<carrier frequency="506000" bandwidth="8" />
 		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+	</country>
+	<country name="UK - Emley Moor" offset="167">
+		<carrier frequency="722000" bandwidth="8" />
+		<carrier frequency="626000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="698000" bandwidth="8" />
+	</country>
+	<country name="UK - Fenham" offset="167">
 		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="530000" bandwidth="8" />
 		<carrier frequency="562000" bandwidth="8" />
 		<carrier frequency="762000" bandwidth="8" />
 	</country>
-	<country name="UK - Hannington" offset="167">
-		<carrier frequency="626000" bandwidth="8" />
-		<carrier frequency="634000" bandwidth="8" />
-		<carrier frequency="650000" bandwidth="8" />
+	<country name="UK - Fenton" offset="167">
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+	</country>
+	<country name="UK - Ferryside" offset="167">
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="490000" bandwidth="8" />
+	</country>
+	<country name="UK - Guildford" offset="167">
+		<carrier frequency="698000" bandwidth="8" />
 		<carrier frequency="658000" bandwidth="8" />
-		<carrier frequency="674000" bandwidth="8" />
+		<carrier frequency="634000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
+		<carrier frequency="738000" bandwidth="8" />
+	</country>
+	<country name="UK - Hannington" offset="167">
 		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
+		<carrier frequency="626000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="634000" bandwidth="8" />
+	</country>
+	<country name="UK - Hastings" offset="167">
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="474000" bandwidth="8" />
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+	</country>
+	<country name="UK - Heathfield North" offset="167">
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
+		<carrier frequency="738000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+	</country>
+	<country name="UK - Hemel Hempstead" offset="167">
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="826000" bandwidth="8" />
+	</country>
+	<country name="UK - Huntshaw Cross" offset="167">
+		<carrier frequency="738000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="818000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+	</country>
+	<country name="UK - Huntshaw Cross B" offset="167">
+		<carrier frequency="714000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
+	</country>
+	<country name="UK - Idle" offset="167">
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="754000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+	</country>
+	<country name="UK - Keelylang Hill" offset="167">
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="722000" bandwidth="8" />
+		<carrier frequency="634000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+	</country>
+	<country name="UK - Keighley" offset="167">
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
+	</country>
+	<country name="UK - Kilvey Hill" offset="167">
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="474000" bandwidth="8" />
+		<carrier frequency="554000" bandwidth="8" />
+	</country>
+	<country name="UK - Knock More" offset="167">
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="754000" bandwidth="8" />
+	</country>
+	<country name="UK - Lancaster" offset="167">
+		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+	</country>
+	<country name="UK - Lark Stoke" offset="167">
+		<carrier frequency="474000" bandwidth="8" />
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+	</country>
+	<country name="UK - Limavady" offset="167">
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+	</country>
+	<country name="UK - Llanddona" offset="167">
+		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="738000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="818000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+	</country>
+	<country name="UK - Malvern" offset="167">
+		<carrier frequency="722000" bandwidth="8" />
+		<carrier frequency="618000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+		<carrier frequency="634000" bandwidth="8" />
 	</country>
 	<country name="UK - Mendip" offset="167">
 		<carrier frequency="778000" bandwidth="8" />
@@ -2478,65 +2810,281 @@
 		<carrier frequency="754000" bandwidth="8" />
 		<carrier frequency="842000" bandwidth="8" />
 	</country>
-	<country name="UK - Pontop" offset="167">
-		<carrier frequency="690000" bandwidth="8" />
+	<country name="UK - Midhurst" offset="167">
+		<carrier frequency="754000" bandwidth="8" />
+		<carrier frequency="826000" bandwidth="8" />
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="818000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+	</country>
+	<country name="UK - Moel-y-Parc" offset="167">
+		<carrier frequency="738000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="818000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
+	</country>
+	<country name="UK - Nottingham" offset="167">
+		<carrier frequency="618000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
 		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+	</country>
+	<country name="UK - Oliver's Mount" offset="167">
+		<carrier frequency="698000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="738000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="818000" bandwidth="8" />
+	</country>
+	<country name="UK - Oxford" offset="167">
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+		<carrier frequency="722000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+	</country>
+	<country name="UK - Pendle Forest" offset="167">
+		<carrier frequency="474000" bandwidth="8" />
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
+	</country>
+	<country name="UK - Plympton" offset="167">
+		<carrier frequency="722000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="754000" bandwidth="8" />
+	</country>
+	<country name="UK - Pontop Pike" offset="167">
+		<carrier frequency="690000" bandwidth="8" />
 		<carrier frequency="746000" bandwidth="8" />
 		<carrier frequency="778000" bandwidth="8" />
 		<carrier frequency="802000" bandwidth="8" />
 		<carrier frequency="826000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+	</country>
+	<country name="UK - Pontypool" offset="167">
+		<carrier frequency="722000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="530000" bandwidth="8" />
+	</country>
+	<country name="UK - Presely" offset="167">
+		<carrier frequency="682000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+		<carrier frequency="618000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="698000" bandwidth="8" />
+	</country>
+	<country name="UK - Redruth" offset="167">
+		<carrier frequency="618000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="698000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+	</country>
+	<country name="UK - Reigate" offset="167">
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="474000" bandwidth="8" />
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="618000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+	</country>
+	<country name="UK - Ridge Hill" offset="167">
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+	</country>
+	<country name="UK - Rosemarkie" offset="167">
+		<carrier frequency="682000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+		<carrier frequency="634000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+	</country>
+	<country name="UK - Rosneath" offset="167">
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
 	</country>
 	<country name="UK - Rowridge" offset="167">
 		<carrier frequency="490000" bandwidth="8" />
-		<carrier frequency="514000" bandwidth="8" />
 		<carrier frequency="530000" bandwidth="8" />
 		<carrier frequency="546000" bandwidth="8" />
 		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="514000" bandwidth="8" />
 		<carrier frequency="570000" bandwidth="8" />
+	</country>
+	<country name="UK - Rumster Forest" offset="167">
+		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+	</country>
+	<country name="UK - Saddleworth" offset="167">
+		<carrier frequency="682000" bandwidth="8" />
+		<carrier frequency="634000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+		<carrier frequency="618000" bandwidth="8" />
+		<carrier frequency="738000" bandwidth="8" />
+	</country>
+	<country name="UK - Salisbury" offset="167">
+		<carrier frequency="746000" bandwidth="8" />
+		<carrier frequency="754000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="826000" bandwidth="8" />
+		<carrier frequency="722000" bandwidth="8" />
+	</country>
+	<country name="UK - Sandy Heath" offset="167">
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="626000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+	</country>
+	<country name="UK - Selkirk" offset="167">
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="754000" bandwidth="8" />
+	</country>
+	<country name="UK - Sheffield" offset="167">
+		<carrier frequency="618000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
 	</country>
 	<country name="UK - Stockland Hill" offset="167">
 		<carrier frequency="482000" bandwidth="8" />
-		<carrier frequency="506000" bandwidth="8" />
 		<carrier frequency="530000" bandwidth="8" />
-		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="506000" bandwidth="8" />
 		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
 		<carrier frequency="578000" bandwidth="8" />
 	</country>
+	<country name="UK - Storeton" offset="167">
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="570000" bandwidth="8" />
+	</country>
+	<country name="UK - Sudbury" offset="167">
+		<carrier frequency="698000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="618000" bandwidth="8" />
+		<carrier frequency="738000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+	</country>
+	<country name="UK - Sudbury B" offset="167">
+		<carrier frequency="754000" bandwidth="8" />
+	</country>
+	<country name="UK - Sutton Coldfield" offset="167">
+		<carrier frequency="634000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+		<carrier frequency="722000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+	</country>
 	<country name="UK - Tacolneston" offset="167">
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
 		<carrier frequency="730000" bandwidth="8" />
 		<carrier frequency="770000" bandwidth="8" />
-		<carrier frequency="786000" bandwidth="8" />
 		<carrier frequency="794000" bandwidth="8" />
-		<carrier frequency="810000" bandwidth="8" />
 		<carrier frequency="818000" bandwidth="8" />
+	</country>
+	<country name="UK - The Wrekin (E)" offset="167">
+		<carrier frequency="618000" bandwidth="8" />
+		<carrier frequency="698000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+	</country>
+	<country name="UK - The Wrekin (W)" offset="167">
+		<carrier frequency="474000" bandwidth="8" />
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+	</country>
+	<country name="UK - Torosay" offset="167">
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="570000" bandwidth="8" />
+		<carrier frequency="474000" bandwidth="8" />
+		<carrier frequency="554000" bandwidth="8" />
+	</country>
+	<country name="UK - Tunbridge Wells" offset="167">
+		<carrier frequency="746000" bandwidth="8" />
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="618000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+	</country>
+	<country name="UK - Waltham" offset="167">
+		<carrier frequency="698000" bandwidth="8" />
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="570000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
 	</country>
 	<country name="UK - Wenvoe" offset="167">
 		<carrier frequency="546000" bandwidth="8" />
 		<carrier frequency="578000" bandwidth="8" />
 		<carrier frequency="626000" bandwidth="8" />
-		<carrier frequency="650000" bandwidth="8" />
 		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
 		<carrier frequency="674000" bandwidth="8" />
 	</country>
-	<country name="UK - Whitehawk Hill (Brighton)" offset="167">
-		<carrier frequency="690000" bandwidth="8" />
-		<carrier frequency="706000" bandwidth="8" />
-		<carrier frequency="746000" bandwidth="8" />
-		<carrier frequency="770000" bandwidth="8" />
-		<carrier frequency="794000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-	</country>
-	<country name="UK - Winter Hill" offset="167">
+	<country name="UK - Winter Hill (E)" offset="167">
 		<carrier frequency="754000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
 		<carrier frequency="786000" bandwidth="8" />
 		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
 	</country>
-	<country name="UK - Winter Hill B" offset="167">
-		<carrier frequency="306000" bandwidth="8" />
-		<carrier frequency="626000" bandwidth="8" />
+	<country name="UK - Winter Hill (W)" offset="167">
 		<carrier frequency="650000" bandwidth="8" />
+		<carrier frequency="626000" bandwidth="8" />
 	</country>
 </dvbt>
