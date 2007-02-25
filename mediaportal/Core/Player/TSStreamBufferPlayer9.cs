@@ -829,8 +829,8 @@ namespace MediaPortal.Player
           }
         }
         UpdateCurrentPosition();
+        if (dvbSubRenderer != null) dvbSubRenderer.OnSeek(CurrentPosition);
         Log.Info("StreamBufferPlayer: current pos:{0} {1}", CurrentPosition,Duration);
-
       }
     }
 
