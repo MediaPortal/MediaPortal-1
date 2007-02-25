@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2007 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,80 +20,160 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
-using System.Drawing;
-using System.Collections;
-using System.Windows.Forms;
-using MediaPortal.GUI.Library;
-using System.Globalization;
-using System.IO;
-using System.Net;
-using System.Text;
-using System.Xml;
-using MediaPortal.Util;
-//using MediaPortal.Dialogs;
-using System.ComponentModel;
-using MediaPortal.Configuration;
-using System.Threading;
 
+#endregion
+
+using System;
+
+using MediaPortal.GUI.Library;
+using MediaPortal.Services;
+using MediaPortal.Configuration;
+using MediaPortal.Threading;
+using MediaPortal.Player;
 
 
 namespace MediaPortal.GUI.WeatherOverlay
 {
   /// <summary>
-  /// Summary for WeatherOverlay.
+  ///  Weather Overlay
   /// </summary>
-  public class MyWeatherOverlay : GUIOverlayWindow, IRenderLayer, ISetupForm
+  public class GUIWeatherOverlay : GUIOverlayWindow, IRenderLayer
   {
-    const char DEGREE_CHARACTER = (char)176;				//the degree 'o' character
+    #region Imports
+    #endregion
 
+    #region Enums
     enum SkinControls
     {
-      CONTROL_CURRENT_TEMP = 2,
-      CONTROL_CURRENT_IMAGE = 3,
-      CONTROL_LOCATION = 4,
-      CONTROL_WEATHER_DESCRIPTION = 5
+      TEMPERATURE = 2,
+      IMAGE       = 3,
+      LOCATION    = 4,
+      WEATHER_DESCRIPTION = 5
     }
+    #endregion
 
-    [SkinControlAttribute((int)SkinControls.CONTROL_CURRENT_IMAGE)]    protected GUIImage imgImage = null;
+    #region Delegates
+    #endregion
 
-    public MyWeatherOverlay()
+    #region Events
+    #endregion
+
+    #region <skin> Variables
+    [SkinControlAttribute(2)]    protected GUIFadeLabel _labelTemperature = null;
+    [SkinControlAttribute(4)]    protected GUIFadeLabel _labelLocation    = null;
+    [SkinControlAttribute(5)]    protected GUIFadeLabel _labelDescription = null;
+    [SkinControlAttribute(3)]    protected GUIImage     _imageIcon = null;
+    #endregion
+
+    #region Variables
+    // Private Variables
+    private bool _xmlFilePresent = false;
+    private bool _weatherOverlay = true;
+    private bool _didRenderLastTime = false;
+    private IntervalWork _weatherIntervalWork = null;
+    private string _locationCode = String.Empty;
+    private int _refreshInterval = 30;
+    // Protected Variables
+    protected string _currentLocation = String.Empty;
+    protected string _currentTemperature = String.Empty;
+    protected string _currentDescription = String.Empty;
+    protected string _currentImage = String.Empty;
+    // Public Variables
+    #endregion
+
+    #region Constructors/Destructors
+    public GUIWeatherOverlay()
     {
-      GetID = 7002;
-      //
-      // TODO: Add the constructor logic here.
-      //
+      GetID = (int)GUIWindow.Window.WINDOW_WEATHER_OVERLAY;
     }
+    #endregion
 
-    public override bool DoesPostRender()
+    #region Properties
+    // Public Properties
+    #endregion
+
+    #region Private Methods
+    void LoadSettings()
     {
-      if (GUIGraphicsContext.IsFullScreenVideo)
-        return false;
-      if (!GUIGraphicsContext.Overlay)
-        return false;
-      return true;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        _locationCode = xmlreader.GetValueAsString("weather", "location", String.Empty);
+        _refreshInterval = xmlreader.GetValueAsInt("weather", "refresh", 60);
+        _weatherOverlay = xmlreader.GetValueAsBool("weather", "overlayEnabled", true);
+      }
+    }
+    
+    void OnUpdateState(bool render)
+    {
+      if (_didRenderLastTime != render)
+      {
+        _didRenderLastTime = render;
+        if (render)
+        {
+          QueueAnimation(AnimationType.WindowOpen);
+        }
+        else
+        {
+          QueueAnimation(AnimationType.WindowClose);
+        }
+      }
     }
 
+    #region Threading
+    void StartWeatherThread()
+    {
+      _weatherIntervalWork = new IntervalWork(new DoWorkHandler(this.DownloadWeatherInfo), new TimeSpan(0,_refreshInterval,0));
+      _weatherIntervalWork.Description = "Download Weather Info";
+      GlobalServiceProvider.Get<IThreadPool>().AddIntervalWork(_weatherIntervalWork, true);
+      Log.Info("WeatherThread - started");
+    }
+
+    void StopWeatherThread()
+    {
+      if (_weatherIntervalWork != null)
+      {
+        GlobalServiceProvider.Get<IThreadPool>().RemoveIntervalWork(_weatherIntervalWork);
+        _weatherIntervalWork = null;
+        Log.Info("WeatherThread - stopped");
+      }
+    }
+
+    void DownloadWeatherInfo()
+    {
+      Log.Debug("WeatherOverlay: Download Weather Info - called");
+      string weatherFile = Config.GetFile(Config.Dir.Weather, "curWeather.xml");
+      LoadSettings();
+      WeatherForecast weather = new WeatherForecast(_locationCode);
+      if (weather.UpDate())
+      {
+        _currentLocation = weather.CurCondition.City;
+        _currentTemperature = weather.CurCondition.Temperature;
+        _currentDescription = weather.CurCondition.Condition;
+        _currentImage = weather.CurCondition.Icon;
+
+        Log.Debug("WeatherOverlay: Location    = " + _currentLocation);
+        Log.Debug("WeatherOverlay: Temperature = " + _currentTemperature);
+        Log.Debug("WeatherOverlay: Description = " + _currentDescription);
+        Log.Debug("WeatherOverlay: Icon = " + _currentImage);
+      }
+    }
+
+    #endregion
+
+    #endregion
+
+    #region <Base class> Overloads
     public override bool Init()
     {
-      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.WeatherOverlay);
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\weatherOverlay.xml");
-      GetID = 7002;
-
-      GUIFadeLabel lblCurrentTemp = (GUIFadeLabel)GetControl((int)SkinControls.CONTROL_CURRENT_TEMP);
-      GUIFadeLabel lblLocation = (GUIFadeLabel)GetControl((int)SkinControls.CONTROL_LOCATION);
-      GUIFadeLabel lblWeatherDescription = (GUIFadeLabel)GetControl((int)SkinControls.CONTROL_WEATHER_DESCRIPTION);
-      imgImage = (GUIImage)GetControl((int)SkinControls.CONTROL_CURRENT_IMAGE);
-      if (LoadWeather(Config.GetFile(Config.Dir.Weather, "curWeather.xml")))
+      _xmlFilePresent = false;
+      if (System.IO.File.Exists(GUIGraphicsContext.Skin + @"\weatherOverlay.xml"))
       {
-        GUIControl.SetControlLabel(GetID, (int)SkinControls.CONTROL_CURRENT_TEMP, _nowTemp);
-        GUIControl.SetControlLabel(GetID, (int)SkinControls.CONTROL_LOCATION, _nowLocation);
-        GUIControl.SetControlLabel(GetID, (int)SkinControls.CONTROL_WEATHER_DESCRIPTION, _nowCond);
-        //MessageBox.Show("INIT: read weather info: temp=" + _nowTemp + ",location=" + _nowLocation + ",condition=" + _nowCond);
+        _xmlFilePresent = Load(GUIGraphicsContext.Skin + @"\weatherOverlay.xml");
+        GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.WeatherOverlay);
       }
-      else
-        bResult = false;
-      return bResult;
+      GetID = (int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY;
+      StartWeatherThread();
+      return _xmlFilePresent;
     }
 
     public override bool SupportsDelayedLoad
@@ -103,400 +185,90 @@ namespace MediaPortal.GUI.WeatherOverlay
     {
       base.PreInit();
       AllocResources();
+      StartWeatherThread();
+    }
+
+    public override void DeInit()
+    {
+      base.DeInit();
+      StopWeatherThread();
+    }
+
+
+    public override void Render(float timePassed)
+    {
+      base.Render(timePassed);
+    }
+
+    public override bool DoesPostRender()
+    {
+      if (!_xmlFilePresent ||
+          !_weatherOverlay ||
+          GUIGraphicsContext.IsFullScreenVideo || 
+          GUIGraphicsContext.Calibrating ||
+          !GUIGraphicsContext.Overlay ||
+          g_Player.Playing
+        )
+      {
+        OnUpdateState(false);
+        return base.IsAnimating(AnimationType.WindowClose);
+      }
+            
+      OnUpdateState(true);
+      return true;
     }
 
     public override void PostRender(float timePassed, int iLayer)
     {
-      if (iLayer != 3)
-        return;
-      if (GUIGraphicsContext.Overlay == false)
-        return;
+      if (iLayer != 2) return;
 
-      GUIControl.SetControlLabel(GetID, (int)SkinControls.CONTROL_CURRENT_TEMP, _nowTemp);
-      GUIControl.SetControlLabel(GetID, (int)SkinControls.CONTROL_LOCATION, _nowLocation);
-      GUIControl.SetControlLabel(GetID, (int)SkinControls.CONTROL_WEATHER_DESCRIPTION, _nowCond);
-      // GUIImage imgImage = (GUIImage)GetControl((int)SkinControls.CONTROL_CURRENT_IMAGE); !!!!
-      //Log.Info("Weather - Now Icon: {0}", _nowIcon);
-      if (imgImage != null)
+      // Set current Current Location
+      if (_labelLocation != null)
       {
-        imgImage.FreeResources();
-        imgImage.SetFileName(_nowIcon);
-        imgImage.AllocResources();
+        _labelLocation.Label = _currentLocation;
+        _labelLocation.Render(timePassed);
       }
-      //Log.Info("Weather - SetControlLabel: CONTROL_CURRENT_IMAGE {0}", _nowIcon);
-      base.Render(timePassed);
-    }
+      
+      // Set current Temp 
+      if (_labelTemperature != null)
+      {
+        _labelTemperature.Label = _currentTemperature;
+        _labelTemperature.Render(timePassed);
+      }
 
+      // Set current Weather Description
+      if (_labelDescription != null)
+      {
+        _labelDescription.Label = _currentDescription;
+        _labelDescription.Render(timePassed);
+      }
+    
+      // Set Image
+      if (_imageIcon != null)
+      {
+        _imageIcon.FileName = _currentImage;
+        _imageIcon.Render(timePassed);
+      }
+    }
+    #endregion
+
+    #region <Interface> Implementations
+    // region for each interface
     #region IRenderLayer
     public bool ShouldRenderLayer()
     {
-      return true;
+      return DoesPostRender();
     }
-
     public void RenderLayer(float timePassed)
     {
-      PostRender(timePassed, 3);
+      PostRender(timePassed, 2);
     }
     #endregion
 
-    #region WeatherHelpers
-    // variables used to store weather information
-    string _nowLocation, _nowIcon, _nowCond, _nowTemp, _nowFeel, _nowHumd, _nowDewp;
-    // load weather from xml file
-    bool LoadWeather(string weatherFile)
-    {
-      int tempInteger = 0;
-      string tempString = String.Empty;
-      string unitTemperature = String.Empty;
-      string unitSpeed = String.Empty;
-      DateTime time = DateTime.Now;
-
-      // load the xml file
-      XmlDocument doc = new XmlDocument();
-      doc.Load(weatherFile);
-
-      if (doc.DocumentElement == null)
-        return false;
-
-      string root = doc.DocumentElement.Name;
-      XmlNode xmlElement = doc.DocumentElement;
-      if (root == "error")
-      {
-        //string szCheckError;
-
-        //GUIDialogOK dialogOk = (GUIDialogOK)GUIWindowManager.GetWindow(7002);
-
-        //GetString(xmlElement, "err", out szCheckError, "Unknown Error");	//grab the error string
-
-        //// show error dialog...
-        //dialogOk.SetHeading(412);	//"Unable to get weather data"
-        //dialogOk.SetLine(1, szCheckError);
-        //dialogOk.SetLine(2, _nowLocation);
-        //dialogOk.SetLine(3, String.Empty);
-        //dialogOk.DoModal(GetID);
-        return true;	//we got a message so do display a second in refreshme()
-      }
-
-      // units (C or F and mph or km/h or m/s) 
-      unitTemperature = "C";//_temperatureFarenheit;
-
-      //if (_windSpeed[0] == 'M')
-      //    unitSpeed = "mph";
-      //else if (_windSpeed[0] == 'K')
-      //    unitSpeed = "km/h";
-      //else
-      //    unitSpeed = "m/s";
-      unitSpeed = "km/h";
-
-      // location
-      XmlNode element = xmlElement.SelectSingleNode("loc");
-      if (null != element)
-      {
-        GetString(element, "dnam", out _nowLocation, String.Empty);
-      }
-
-      //current weather
-      element = xmlElement.SelectSingleNode("cc");
-      if (null != element)
-      {
-        GetInteger(element, "icon", out tempInteger);
-        _nowIcon = Config.GetFile(Config.Dir.Weather, String.Format(@"128x128\{0}.png", tempInteger));
-
-        GetString(element, "t", out _nowCond, String.Empty);			//current condition
-        _nowCond = LocalizeOverview(_nowCond);
-        SplitLongString(ref _nowCond, 8, 15);				//split to 2 lines if needed
-
-        GetInteger(element, "tmp", out tempInteger);				//current temp
-        _nowTemp = String.Format("{0}{1}{2}", tempInteger, DEGREE_CHARACTER, unitTemperature);
-        GetInteger(element, "flik", out tempInteger);				//current 'Feels Like'
-        _nowFeel = String.Format("{0}{1}{2}", tempInteger, DEGREE_CHARACTER, unitTemperature);
-
-        XmlNode pNestElement = element.SelectSingleNode("wind");	//current wind
-        //ParseAndBuildWindString(pNestElement, unitSpeed, out _nowWind);
-
-        GetInteger(element, "hmid", out tempInteger);				//current humidity
-        _nowHumd = String.Format("{0}%", tempInteger);
-
-        pNestElement = element.SelectSingleNode("uv");	//current UV index
-        if (null != pNestElement)
-        {
-          GetInteger(pNestElement, "i", out tempInteger);
-          GetString(pNestElement, "t", out  tempString, String.Empty);
-          //_nowUVId = String.Format("{0} {1}", tempInteger, LocalizeOverview(tempString));
-        }
-
-        GetInteger(element, "dewp", out tempInteger);				//current dew point
-        _nowDewp = String.Format("{0}{1}{2}", tempInteger, DEGREE_CHARACTER, unitTemperature);
-
-      }
-      return true;
-    }
-
-
-    void GetString(XmlNode xmlElement, string tagName, out string stringValue, string defaultValue)
-    {
-      stringValue = String.Empty;
-
-      XmlNode node = xmlElement.SelectSingleNode(tagName);
-      if (node != null)
-      {
-        if (node.InnerText != null)
-        {
-          if (node.InnerText != "-")
-            stringValue = node.InnerText;
-        }
-      }
-      if (stringValue.Length == 0)
-      {
-        stringValue = defaultValue;
-      }
-    }
-
-
-    void GetInteger(XmlNode xmlElement, string tagName, out int intValue)
-    {
-      intValue = 0;
-      XmlNode node = xmlElement.SelectSingleNode(tagName);
-      if (node != null)
-      {
-        if (node.InnerText != null)
-        {
-          try
-          {
-            intValue = Int32.Parse(node.InnerText);
-          }
-          catch (Exception)
-          {
-          }
-        }
-      }
-    }
-
-
-    string LocalizeOverview(string token)
-    {
-      string localizedLine = String.Empty;
-
-      foreach (string tokenSplit in token.Split(' '))
-      {
-        string localizedWord = String.Empty;
-
-        if (String.Compare(tokenSplit, "T-Storms", true) == 0 || String.Compare(tokenSplit, "T-Storm", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(370);
-        else if (String.Compare(tokenSplit, "Partly", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(371);
-        else if (String.Compare(tokenSplit, "Mostly", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(372);
-        else if (String.Compare(tokenSplit, "Sunny", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(373);
-        else if (String.Compare(tokenSplit, "Cloudy", true) == 0 || String.Compare(tokenSplit, "Clouds", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(374);
-        else if (String.Compare(tokenSplit, "Snow", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(375);
-        else if (String.Compare(tokenSplit, "Rain", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(376);
-        else if (String.Compare(tokenSplit, "Light", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(377);
-        else if (String.Compare(tokenSplit, "AM", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(378);
-        else if (String.Compare(tokenSplit, "PM", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(379);
-        else if (String.Compare(tokenSplit, "Showers", true) == 0 || String.Compare(tokenSplit, "Shower", true) == 0 || String.Compare(tokenSplit, "T-Showers", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(380);
-        else if (String.Compare(tokenSplit, "Few", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(381);
-        else if (String.Compare(tokenSplit, "Scattered", true) == 0 || String.Compare(tokenSplit, "Isolated", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(382);
-        else if (String.Compare(tokenSplit, "Wind", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(383);
-        else if (String.Compare(tokenSplit, "Strong", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(384);
-        else if (String.Compare(tokenSplit, "Fair", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(385);
-        else if (String.Compare(tokenSplit, "Clear", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(386);
-        else if (String.Compare(tokenSplit, "Early", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(387);
-        else if (String.Compare(tokenSplit, "and", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(388);
-        else if (String.Compare(tokenSplit, "Fog", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(389);
-        else if (String.Compare(tokenSplit, "Haze", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(390);
-        else if (String.Compare(tokenSplit, "Windy", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(391);
-        else if (String.Compare(tokenSplit, "Drizzle", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(392);
-        else if (String.Compare(tokenSplit, "Freezing", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(393);
-        else if (String.Compare(tokenSplit, "N/A", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(394);
-        else if (String.Compare(tokenSplit, "Mist", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(395);
-        else if (String.Compare(tokenSplit, "High", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(799);
-        else if (String.Compare(tokenSplit, "Low", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(798);
-        else if (String.Compare(tokenSplit, "Moderate", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(534);
-        else if (String.Compare(tokenSplit, "Late", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(553);
-        else if (String.Compare(tokenSplit, "Very", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(554);
-        // wind directions
-        else if (String.Compare(tokenSplit, "N", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(535);
-        else if (String.Compare(tokenSplit, "E", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(536);
-        else if (String.Compare(tokenSplit, "S", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(537);
-        else if (String.Compare(tokenSplit, "W", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(538);
-        else if (String.Compare(tokenSplit, "NE", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(539);
-        else if (String.Compare(tokenSplit, "SE", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(540);
-        else if (String.Compare(tokenSplit, "SW", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(541);
-        else if (String.Compare(tokenSplit, "NW", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(542);
-        else if (String.Compare(tokenSplit, "Thunder", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(543);
-        else if (String.Compare(tokenSplit, "NNE", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(544);
-        else if (String.Compare(tokenSplit, "ENE", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(545);
-        else if (String.Compare(tokenSplit, "ESE", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(546);
-        else if (String.Compare(tokenSplit, "SSE", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(547);
-        else if (String.Compare(tokenSplit, "SSW", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(548);
-        else if (String.Compare(tokenSplit, "WSW", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(549);
-        else if (String.Compare(tokenSplit, "WNW", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(551);
-        else if (String.Compare(tokenSplit, "NNW", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(552);
-        else if (String.Compare(tokenSplit, "VAR", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(556);
-        else if (String.Compare(tokenSplit, "CALM", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(557);
-        else if (String.Compare(tokenSplit, "Storm", true) == 0 || String.Compare(tokenSplit, "Gale", true) == 0 || String.Compare(tokenSplit, "Tempest", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(599);
-        else if (String.Compare(tokenSplit, "in the Vicinity", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(559);
-        else if (String.Compare(tokenSplit, "Clearing", true) == 0)
-          localizedWord = GUILocalizeStrings.Get(560);
-
-        if (localizedWord == String.Empty)
-          localizedWord = tokenSplit;	//if not found, let fallback
-
-        localizedLine = localizedLine + localizedWord;
-        localizedLine += " ";
-      }
-
-      return localizedLine;
-
-    }
-
-
-    //splitStart + End are the chars to search between for a space to replace with a \n
-    void SplitLongString(ref string lineString, int splitStart, int splitEnd)
-    {
-      //search chars 10 to 15 for a space
-      //if we find one, replace it with a newline
-      for (int i = splitStart; i < splitEnd && i < (int)lineString.Length; i++)
-      {
-        if (lineString[i] == ' ')
-        {
-          lineString = lineString.Substring(0, i) + "\n" + lineString.Substring(i + 1);
-          return;
-        }
-      }
-    }
-    #endregion
-
-    #region ISetupForm Members
-    // Returns the name of the plugin which is shown in the plugin menu
-    public string PluginName()
-    {
-      return "MyWeatherOverlay";
-    }
-
-    // Returns the description of the plugin is shown in the plugin menu
-    public string Description()
-    {
-      return "This adds a Weather Overlay for skins";
-    }
-
-    // Returns the author of the plugin which is shown in the plugin menu
-    public string Author()
-    {
-      return "oore.mofux.net";
-    }
-
-    // show the setup dialog
-    public void ShowPlugin()
-    {
-      MessageBox.Show("No Setup required. Skinners use screen ID: 7002");
-    }
-
-    // Indicates whether plugin can be enabled/disabled
-    public bool CanEnable()
-    {
-      return true;
-    }
-
-    // get ID of windowplugin belonging to this setup
-    public int GetWindowId()
-    {
-      return 7002;
-    }
-
-    // Indicates if plugin is enabled by default;
-    public bool DefaultEnabled()
-    {
-      return false; // Not all skins enable this feature.
-    }
-
-    // indicates if a plugin has its own setup screen
-    public bool HasSetup()
-    {
-      return false; //Not yet
-    }
-
-    /// <summary>
-    /// If the plugin should have its own button on the main menu of Media Portal then it
-    /// should return true to this method, otherwise if it should not be on home
-    /// it should return false
-    /// </summary>
-    /// <param name="strButtonText">text the button should have</param>
-    /// <param name="strButtonImage">image for the button, or empty for default</param>
-    /// <param name="strButtonImageFocus">image for the button, or empty for default</param>
-    /// <param name="strPictureImage">subpicture for the button or empty for none</param>
-    /// <returns>true : plugin needs its own button on home
-    /// false : plugin does not need its own button on home</returns>
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
-    {
-      strButtonText = "this should never be seen";
-      strButtonImage = "";
-      strButtonImageFocus = "";
-      strPictureImage = "";
-      return false;
-    }
-
-    public override int GetID
-    {
-      get
-      {
-        return 7002;
-      }
-
-      set
-      {
-      }
-    }
     #endregion
   }
+
+
+
+
 }
