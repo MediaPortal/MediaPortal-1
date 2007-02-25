@@ -5,46 +5,46 @@ using ProjectInfinity.Messaging;
 
 namespace ProjectInfinity.Plugins
 {
+  /// <summary>
+  /// Interface for plug-in managers
+  /// </summary>
+  /// <remarks>
+  /// A plug-in manager is responsible for enumerating, starting and stopping plugins</remarks>
+  public interface IPluginManager
+  {
     /// <summary>
-    /// Interface for plug-in managers
+    /// Gets an enumerable list of available plugins
     /// </summary>
-    /// <remarks>
-    /// A plug-in manager is responsible for enumerating, starting and stopping plugins</remarks>
-    public interface IPluginManager
-    {
-        /// <summary>
-        /// Gets an enumerable list of available plugins
-        /// </summary>
-        /// <returns>An <see cref="IEnumerable<IPlugin>"/> list.</returns>
-        /// <remarks>A configuration program can use this list to present the user a list of available plugins that he can (de)activate.</remarks>
-        IEnumerable<IPluginInfo> GetAvailablePlugins();
+    /// <returns>An <see cref="IEnumerable<IPlugin>"/> list.</returns>
+    /// <remarks>A configuration program can use this list to present the user a list of available plugins that he can (de)activate.</remarks>
+    IEnumerable<IPluginInfo> GetAvailablePlugins();
 
-        /// <summary>
-        /// Stops the given plug-in.
-        /// </summary>
-        /// <param name="pluginName">name of the plug-in to stop</param>
-        void Stop(string pluginName);
+    /// <summary>
+    /// Stops the given plug-in.
+    /// </summary>
+    /// <param name="pluginName">name of the plug-in to stop</param>
+    void Stop(string pluginName);
 
-        /// <summary>
-        /// Stops all plug-ins
-        /// </summary>
-        void StopAll();
+    /// <summary>
+    /// Stops all plug-ins
+    /// </summary>
+    void StopAll();
 
-        /// <summary>
-        /// Starts the given plug-in.
-        /// </summary>
-        /// <param name="pluginName">name of the plug-in to start</param>
-        void Start(string pluginName);
+    /// <summary>
+    /// Starts the given plug-in.
+    /// </summary>
+    /// <param name="pluginName">name of the plug-in to start</param>
+    void Start(string pluginName);
 
-        /// <summary>
-        /// Starts all plug-ins that are activated by the user.
-        /// </summary>
-        void StartAll();
+    /// <summary>
+    /// Starts all plug-ins that are activated by the user.
+    /// </summary>
+    void StartAll();
 
-        [MessagePublication(SystemMessages.PluginStart)]
-        event EventHandler<PluginStartStopEventArgs> PluginStarted;
+    [MessagePublication(typeof(ProjectInfinity.Messaging.PluginMessages.PluginStart))]
+    event EventHandler<PluginStartStopEventArgs> PluginStarted;
 
-        [MessagePublication(SystemMessages.PluginStop)]
-        event EventHandler<PluginStartStopEventArgs> PluginStopped;
-    }
+    [MessagePublication(typeof(ProjectInfinity.Messaging.PluginMessages.PluginStop))]
+    event EventHandler<PluginStartStopEventArgs> PluginStopped;
+  }
 }

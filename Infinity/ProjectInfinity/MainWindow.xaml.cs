@@ -42,7 +42,7 @@ namespace ProjectInfinity
       }
     }
 
-    [MessageSubscription(SystemMessages.MusicStart)]
+    [MessageSubscription(typeof(Messaging.MusicMessages.Start))]
     private void MusicStarted(object sender, MusicStartEventArgs args)
     {
       musicLabel.Content = string.Format("Playing {0} from {1}: track {2} from the album {3}", args.Title, args.Artist, args.TrackNo, args.Album);
@@ -59,7 +59,7 @@ namespace ProjectInfinity
       }
     }
 
-    [MessageSubscription(SystemMessages.MusicStop)]
+    [MessageSubscription(typeof(Messaging.MusicMessages.Stop))]
     private void MusicStopped(object sender, EventArgs args)
     {
       musicLabel.Content = null;

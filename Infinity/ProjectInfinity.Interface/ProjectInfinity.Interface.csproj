@@ -36,6 +36,9 @@
     <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Messaging\IMessage.cs" />
+    <Compile Include="MusicMessages.cs" />
+    <Compile Include="PluginMessages.cs" />
     <Compile Include="SystemMessages.cs" />
     <Compile Include="Music\IMusicPlayer.cs" />
     <Compile Include="Music\MusicStartEventArgs.cs" />

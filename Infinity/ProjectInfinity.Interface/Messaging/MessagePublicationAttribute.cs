@@ -7,9 +7,9 @@ namespace ProjectInfinity.Messaging
     {
         private string topic;
 
-        public MessagePublicationAttribute(string topic)
+        public MessagePublicationAttribute(Type topic)
         {
-            this.topic = topic;
+            this.topic = topic.FullName;
         }
 
         public string Topic
