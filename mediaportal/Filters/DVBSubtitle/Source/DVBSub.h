@@ -1,4 +1,4 @@
-/* 
+/*
  *	Copyright (C) 2006-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
@@ -6,15 +6,15 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
@@ -41,11 +41,11 @@ class CDVBSubDecoder;
 typedef __int64 int64_t;
 
 // {591AB987-9689-4c07-846D-0006D5DD2BFD}
-DEFINE_GUID(CLSID_DVBSub, 
+DEFINE_GUID(CLSID_DVBSub,
 	0x591ab987, 0x9689, 0x4c07, 0x84, 0x6d, 0x0, 0x6, 0xd5, 0xdd, 0x2b, 0xfd);
 
 // C19647D5-A861-4845-97A6-EBD0A135D0BF
-DEFINE_GUID(IID_IDVBSubtitle, 
+DEFINE_GUID(IID_IDVBSubtitle,
 0xc19647d5, 0xa861, 0x4845, 0x97, 0xa6, 0xeb, 0xd0, 0xa1, 0x35, 0xd0, 0xbf);
 
 struct __declspec(uuid("559E6E81-FAC4-4EBC-9530-662DAA27EDC2")) ITSFileSource;
@@ -88,7 +88,7 @@ public:
   CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock );
   ~CDVBSub();
 
-  // Methods from directshow base classes 
+  // Methods from directshow base classes
   HRESULT CheckConnect( PIN_DIRECTION dir, IPin *pPin );
   STDMETHODIMP Run( REFERENCE_TIME tStart );
 	STDMETHODIMP Pause();
@@ -99,7 +99,7 @@ public:
   virtual HRESULT STDMETHODCALLTYPE GetSubtitle( int place, SUBTITLE* pSubtitle );
   virtual HRESULT STDMETHODCALLTYPE DiscardOldestSubtitle();
   virtual HRESULT STDMETHODCALLTYPE GetSubtitleCount( int* count );
-	
+
 
   // IDVBSubtitle
   virtual HRESULT STDMETHODCALLTYPE SetCallback( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub) );
@@ -110,7 +110,7 @@ public:
   DECLARE_IUNKNOWN;
 
   STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
-	
+
   // From MSubdecoderObserver
 	void NotifySubtitle();
   void NotifyFirstPTS( ULONGLONG firstPTS );
@@ -135,7 +135,7 @@ private: // data
 	CPcrInputPin*		    m_pPcrPin;
   CPMTInputPin*       m_pPMTPin;
 
-  int m_VideoPid;     
+  int m_VideoPid;
 
   CDVBSubDecoder*     m_pSubDecoder;
 
@@ -148,7 +148,7 @@ private: // data
   LONGLONG            m_fixPCR;           // diff between TSFileSouce first PCR and PCRInputPin PCR
   REFERENCE_TIME      m_startTimestamp;
 
-  int                 (CALLBACK *m_pSubtitleObserver) (SUBTITLE* sub); 
+  int                 (CALLBACK *m_pSubtitleObserver) (SUBTITLE* sub);
   int                 (CALLBACK *m_pTimestampResetObserver) ();
 
 	CComQIPtr<ITSFileSource> m_pTSFileSource;
