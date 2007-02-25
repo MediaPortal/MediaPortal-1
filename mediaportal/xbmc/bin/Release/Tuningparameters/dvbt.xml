@@ -3075,16 +3075,16 @@
 		<carrier frequency="650000" bandwidth="8" />
 		<carrier frequency="674000" bandwidth="8" />
 	</country>
-	<country name="UK - Winter Hill (E)" offset="167">
+	<country name="UK - Winter Hill" offset="167">
 		<carrier frequency="754000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
 		<carrier frequency="786000" bandwidth="8" />
 		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
 	</country>
-	<country name="UK - Winter Hill (W)" offset="167">
-		<carrier frequency="650000" bandwidth="8" />
+	<country name="UK - Winter Hill B" offset="167">
 		<carrier frequency="626000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
 	</country>
 </dvbt>
