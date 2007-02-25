@@ -1349,7 +1349,7 @@ namespace MediaPortal.GUI.Weather
 
             GetString(pOneDayElement, "low", out  tempString, String.Empty);
             if (tempString == "N/A")
-              _forecast[i].High = String.Empty;
+              _forecast[i].Low = String.Empty;
             else
               _forecast[i].Low = String.Format("{0}{1}{2}", tempString, DEGREE_CHARACTER, unitTemperature);
 
