@@ -674,7 +674,13 @@ namespace SetupTv.Sections
         tuneChannel.SatelliteIndex = position;
         tuneChannel.ModulationType = _transponders[index].Modulation;
         tuneChannel.InnerFecRate = _transponders[index].InnerFecRate;
-
+        if (bandType == BandType.Circular)
+        {
+          if (tuneChannel.Polarisation == Polarisation.LinearH)
+            tuneChannel.Polarisation = Polarisation.CircularL;
+          else if (tuneChannel.Polarisation == Polarisation.LinearV)
+            tuneChannel.Polarisation = Polarisation.CircularR;
+        }
 
         tuneChannel.DisEqc = disEqc;
         string line = String.Format("lnb:{0} {1}tp- {2} {3} {4}", LNB, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate);
