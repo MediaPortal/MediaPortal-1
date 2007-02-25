@@ -89,7 +89,8 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_pTimestampResetObserver( NULL ),
   m_basePCR( -1 ),
   m_firstPCR( -1 ),
-  m_startTimestamp( -1 )
+  m_startTimestamp( -1 ),
+  m_seekDifPCR( -1 )
 {
 	// Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
@@ -240,9 +241,9 @@ HRESULT CDVBSub::CheckConnect( PIN_DIRECTION dir, IPin *pPin )
 //
 STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
 {
+  Reset();
   m_startTimestamp = tStart;
   CAutoLock cObjectLock( m_pLock );
-  Reset();
 	return CBaseFilter::Run( tStart );
 }
 
@@ -253,7 +254,6 @@ STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
 STDMETHODIMP CDVBSub::Pause()
 {
   CAutoLock cObjectLock( m_pLock );
-	//Reset();
 	return CBaseFilter::Pause();
 }
 
@@ -279,9 +279,10 @@ void CDVBSub::Reset()
 
 	m_pSubDecoder->Reset();
 	m_pSubtitleInputPin->Reset();
-
-  m_firstPCR = -1;
-  m_fixPCR = -1;
+  
+  m_seekDifPCR = -1;
+  //m_fixPCR = -1; // update this only in the beginning
+  //m_firstPCR = -1;
 
   if( m_pTSFileSource )
   {
@@ -321,8 +322,13 @@ void CDVBSub::NotifySubtitle()
   pSubtitle = m_pSubDecoder->GetLatestSubtitle();
   if( pSubtitle )
   {
-    ULONGLONG pts = pSubtitle->PTS() - m_firstPCR + m_fixPCR;
-    pSubtitle->SetTimestamp( pts / 90 );  // PTS to milliseconds ( 90khz )
+    // PTS to milliseconds ( 90khz )
+    ULONGLONG pts( 0 ); 
+    ULONGLONG subtitlePTS( pSubtitle->PTS() );
+      
+    // TODO: FIX SEEKING!
+    pts = ( subtitlePTS - m_basePCR - m_seekDifPCR ) / 90; 
+    pSubtitle->SetTimestamp( pts );  
   }
   if( m_pSubtitleObserver )
   {
@@ -394,12 +400,20 @@ void CDVBSub::SetPcr( ULONGLONG pcr )
       m_basePCR = ( posBase / 1000 ) * 9;
       LogDebugPTS( "TSFileSource base     PCR:", m_basePCR );
       LogDebugPTS( "TSFileSource starting PCR:", ( posStart / 1000 ) * 9 );
-      LogDebugPTS( "fixPCR: ", m_fixPCR );
     }
 	}
+  
   if ( m_fixPCR < 0 )
   {
+    // This is updated only on startup
     m_fixPCR = pcr - m_basePCR;
+    LogDebugPTS( "fixPCR: ", m_fixPCR );
+  }
+  if( m_seekDifPCR < 0 )
+  {
+    // updated on every seek (reset)
+    m_seekDifPCR = pcr - m_firstPCR;
+    LogDebugPTS( "fixDifPCR: ", m_fixPCR );
   }
 }
 

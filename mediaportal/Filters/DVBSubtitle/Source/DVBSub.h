@@ -146,6 +146,7 @@ private: // data
   LONGLONG            m_firstPCR;
   LONGLONG            m_curPCR;
   LONGLONG            m_fixPCR;           // diff between TSFileSouce first PCR and PCRInputPin PCR
+  LONGLONG            m_seekDifPCR;
   REFERENCE_TIME      m_startTimestamp;
 
   int                 (CALLBACK *m_pSubtitleObserver) (SUBTITLE* sub);
