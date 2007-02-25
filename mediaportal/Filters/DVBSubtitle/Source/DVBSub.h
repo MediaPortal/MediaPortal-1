@@ -26,6 +26,7 @@
 #include <xprtdefs.h>
 #include <streams.h>
 #include <initguid.h>
+#include <atlcomcli.h>
 
 #include "dvbsubs\dvbsubdecoder.h"
 #include "SubdecoderObserver.h"
