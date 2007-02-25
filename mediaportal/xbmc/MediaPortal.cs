@@ -896,7 +896,7 @@ public class MediaPortalApp : D3DApp, IRender
   /// </summary>
   protected override void OnStartup()
   {
-    Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
+    //Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
     // set window form styles
     // these styles enable double buffering, which results in no flickering
     Log.Info("Main: Starting up");
