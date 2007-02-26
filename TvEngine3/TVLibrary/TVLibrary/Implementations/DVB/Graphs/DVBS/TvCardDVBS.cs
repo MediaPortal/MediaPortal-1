@@ -247,6 +247,7 @@ namespace TvLibrary.Implementations.DVB
           case BandType.Circular:
             lowOsc = 11250;
             hiOsc = 11250;
+            lnbSwitch = 0;
             _tuningSpace.put_LNBSwitch(0);
             _tuningSpace.put_LowOscillator(lowOsc * 1000);
             _tuningSpace.put_HighOscillator(hiOsc * 1000);
@@ -254,6 +255,7 @@ namespace TvLibrary.Implementations.DVB
           case BandType.Linear:
             lowOsc = 10750;
             hiOsc = 10750;
+            lnbSwitch = 0;
             _tuningSpace.put_LNBSwitch(0);
             _tuningSpace.put_LowOscillator(lowOsc * 1000);
             _tuningSpace.put_HighOscillator(hiOsc * 1000);
@@ -261,6 +263,7 @@ namespace TvLibrary.Implementations.DVB
           case BandType.CBand:
             lowOsc = 5150;
             hiOsc = 5150;
+            lnbSwitch = 0;
             _tuningSpace.put_LNBSwitch(0);
             _tuningSpace.put_LowOscillator(lowOsc * 1000);
             _tuningSpace.put_HighOscillator(hiOsc * 1000);
@@ -277,6 +280,7 @@ namespace TvLibrary.Implementations.DVB
         _tuningSpace.put_LowOscillator(lowOsc * 1000);
         _tuningSpace.put_HighOscillator(hiOsc * 1000);
       }
+      Log.Log.Info("LNB low:{0} hi:{1} switch:{2}", lowOsc, hiOsc, lnbSwitch);
       _tuningSpace.get_DefaultLocator(out locator);
       IDVBSLocator dvbsLocator = (IDVBSLocator)locator;
       int hr = dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);

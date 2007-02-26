@@ -523,7 +523,7 @@ namespace SetupTv.Sections
       setting = layer.GetSetting("LnbSwitchFrequency", "0");
       setting.Value = textBoxLNBSwitch.Text;
       setting.Persist();
-
+      RemoteControl.Instance.ClearCache();
     }
 
     void UpdateStatus(int LNB)
