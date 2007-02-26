@@ -146,7 +146,7 @@ namespace MediaPortal.GUI.WeatherOverlay
       WeatherForecast weather = new WeatherForecast(_locationCode);
       if (weather.UpDate())
       {
-        _currentLocation = weather.CurCondition.City;
+        _currentLocation = weather.LocalInfo.City;
         _currentTemperature = weather.CurCondition.Temperature;
         _currentDescription = weather.CurCondition.Condition;
         _currentImage = weather.CurCondition.Icon;

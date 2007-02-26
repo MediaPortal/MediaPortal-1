@@ -233,7 +233,7 @@ namespace MediaPortal.GUI.WeatherOverlay
     {
       if (xmlElement == null) return false;
 
-     LocalInfo.CityCode = GetString(xmlElement, "loc", String.Empty);  // <loc id="GMXX0223">
+      LocalInfo.CityCode = GetString(xmlElement, "loc", String.Empty);  // <loc id="GMXX0223">
       LocalInfo.City = GetString(xmlElement, "dnam", String.Empty);     // <dnam>Regensburg, Germany</dnam>
       LocalInfo.Time = GetString(xmlElement, "tm", String.Empty);       // <tm>1:12 AM</tm>
       LocalInfo.Lat = GetString(xmlElement, "lat", String.Empty);       // <lat>49.02</lat>
