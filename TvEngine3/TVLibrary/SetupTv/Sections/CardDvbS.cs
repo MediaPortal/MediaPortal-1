@@ -481,7 +481,6 @@ namespace SetupTv.Sections
       setting.Value = mpDisEqc4.SelectedIndex.ToString();
       setting.Persist();
 
-
       setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "band1", "0");
       setting.Value = mpBand1.SelectedIndex.ToString();
       setting.Persist();
@@ -510,20 +509,31 @@ namespace SetupTv.Sections
       setting.Value = mpLNB4.Checked ? "true" : "false";
       setting.Persist();
 
+      bool restart = false;
       setting = layer.GetSetting("lnbDefault", "true");
+      if (setting.Value != (checkBox2.Checked ? "false" : "true")) restart = true;
       setting.Value = checkBox2.Checked ? "false" : "true";
       setting.Persist();
 
       setting = layer.GetSetting("LnbLowFrequency", "0");
+      if (setting.Value != textBoxLNBLo.Text) restart = true;
       setting.Value = textBoxLNBLo.Text;
       setting.Persist();
+      
       setting = layer.GetSetting("LnbHighFrequency", "0");
+      if (setting.Value != textBoxLNBHi.Text) restart = true;
       setting.Value = textBoxLNBHi.Text;
       setting.Persist();
+
       setting = layer.GetSetting("LnbSwitchFrequency", "0");
+      if (setting.Value != textBoxLNBSwitch.Text) restart = true;
       setting.Value = textBoxLNBSwitch.Text;
       setting.Persist();
-      RemoteControl.Instance.ClearCache();
+      if (restart)
+      {
+        RemoteControl.Instance.ClearCache();
+        RemoteControl.Instance.Restart();
+      }
     }
 
     void UpdateStatus(int LNB)
