@@ -31,7 +31,7 @@ using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.DVB
 {
-  public class TechnoTrend : IDisposable
+  public class TechnoTrend : IDisposable, IDiSEqCController
   {
     ITechnoTrend _technoTrendInterface = null;
     IntPtr ptrPmt;
@@ -281,5 +281,37 @@ namespace TvLibrary.Implementations.DVB
     {
       return true;
     }
+
+    #region IDiSEqCController Members
+
+    /// <summary>
+    /// Sends the DiSEqC command.
+    /// </summary>
+    /// <param name="diSEqC">The DiSEqC command.</param>
+    /// <returns>true if succeeded, otherwise false</returns>
+    public bool SendDiSEqCCommand(byte[] diSEqC)
+    {
+      if (_technoTrendInterface == null) return false;
+      for (int i = 0; i < diSEqC.Length; ++i)
+        Marshal.WriteByte(_ptrDataInstance, i, diSEqC[i]);
+      Polarisation pol = Polarisation.LinearV;
+      if (_previousChannel != null)
+        pol = _previousChannel.Polarisation;
+      _technoTrendInterface.SetDisEqc(_ptrDataInstance, (byte)diSEqC.Length, 1, 0, (short)pol);
+      return true;
+    }
+
+    /// <summary>
+    /// gets the diseqc reply
+    /// </summary>
+    /// <param name="reply">The reply.</param>
+    /// <returns>true if succeeded, otherwise false</returns>
+    public bool ReadDiSEqCCommand(out byte[] reply)
+    {
+      reply = null;
+      return false;
+    }
+
+    #endregion
   }
 }

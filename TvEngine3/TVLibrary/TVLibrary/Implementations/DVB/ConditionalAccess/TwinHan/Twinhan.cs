@@ -675,11 +675,10 @@ namespace TvLibrary.Implementations.DVB
     {
       int thbdaLen = 0x28;
       int disEqcLen = 16;
-      Marshal.WriteInt32(_ptrDiseqc, 0, (int)diSEqC.Length);//command len
-
       for (int i = 0; i < 12; ++i)
         Marshal.WriteByte(_ptrDiseqc, 4 + i, 0);
 
+      Marshal.WriteInt32(_ptrDiseqc, 0, (int)diSEqC.Length);//command len
       for (int i = 0; i < diSEqC.Length; ++i)
       {
         Marshal.WriteByte(_ptrDiseqc, 4 + i, diSEqC[i]);
