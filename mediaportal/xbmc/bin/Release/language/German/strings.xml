@@ -123,7 +123,7 @@
     </string>
     <string>
         <id>100</id>
-        <value>Ansicht: Symbole</value>
+        <value>Ansicht: Symbole klein</value>
     </string>
     <string>
         <id>101</id>
@@ -1375,7 +1375,7 @@
     </string>
     <string>
         <id>417</id>
-        <value>Ansicht: Kacheln</value>
+        <value>Ansicht: Symbole groﬂ</value>
     </string>
     <string Prefix="Meine ">
         <id>418</id>
