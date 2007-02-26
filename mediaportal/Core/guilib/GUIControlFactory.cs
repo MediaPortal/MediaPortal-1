@@ -393,7 +393,7 @@ namespace MediaPortal.GUI.Library
               facade.ThumbnailView = subControl as GUIThumbnailPanel;
             if (subControl is GUIFilmstripControl)
               facade.FilmstripView = subControl as GUIFilmstripControl;
-            UpdateControlWithXmlData(subControl, subControl.GetType(), subControlNode, defines);
+            //UpdateControlWithXmlData(subControl, subControl.GetType(), subControlNode, defines);
           }
         }
 
