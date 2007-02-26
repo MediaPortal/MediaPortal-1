@@ -296,18 +296,6 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DirecTV Serial Control\Command.cs" />
-    <Compile Include="DirecTV Serial Control\CommandSet.cs" />
-    <Compile Include="DirecTV Serial Control\DirecTVSettings.cs" />
-    <Compile Include="DirecTV Serial Control\KeyMap.cs" />
-    <Compile Include="DirecTV Serial Control\SerialInterface.cs" />
-    <Compile Include="DirecTV Serial Control\SetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DirecTV Serial Control\SetupForm.designer.cs">
-      <DependentUpon>SetupForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DirecTV Serial Control\TunerPlugin.cs" />
     <Compile Include="GUIAlarm\Alarm.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1174,10 +1162,6 @@
     <EmbeddedResource Include="GUIRSSFeed\rssicon.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DirecTV Serial Control\SetupForm.resx">
-      <DependentUpon>SetupForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="GUIRSSFeed\rssicon_disabled.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
