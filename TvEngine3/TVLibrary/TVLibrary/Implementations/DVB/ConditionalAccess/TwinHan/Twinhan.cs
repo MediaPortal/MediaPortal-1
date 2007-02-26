@@ -486,9 +486,17 @@ namespace TvLibrary.Implementations.DVB
       }
       else
       {
+        turnon22Khz = 1;
         LNBLOFLowBand = parameters.LnbLowFrequency;
         LNBLOFHighBand = parameters.LnbHighFrequency;
         LNBLOFHiLoSW = parameters.LnbSwitchFrequency;
+        if (parameters.LnbSwitchFrequency != 0)
+        {
+          if (channel.Frequency >= parameters.LnbSwitchFrequency * 1000)
+          {
+            turnon22Khz = 2;
+          }
+        }
       }
       SetLnbData(true, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW, turnon22Khz, disEqcPort);
     }
