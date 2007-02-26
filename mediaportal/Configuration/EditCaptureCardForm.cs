@@ -57,10 +57,7 @@ namespace MediaPortal.Configuration
     private MediaPortal.UserInterface.Controls.MPCheckBox useWatchingCheckBox;
     private MediaPortal.UserInterface.Controls.MPButton cancelButton;
     private MediaPortal.UserInterface.Controls.MPButton okButton;
-    /// <summary>
-    /// Required designer variable.
-    /// </summary>
-    private System.ComponentModel.Container components = null;
+    private IContainer components;
 
     //
     // Private members
@@ -141,6 +138,8 @@ namespace MediaPortal.Configuration
     private MediaPortal.UserInterface.Controls.MPNumericUpDown mpNumericUpDownRight;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private ComboBox comboBoxAudioQuality;
+    private CheckBox cbDisableDNR;
+    private ToolTip toolTip1;
     TVCaptureDevice prevDevice = null;
 
 
@@ -466,6 +465,7 @@ namespace MediaPortal.Configuration
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditCaptureCardForm));
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
@@ -514,6 +514,7 @@ namespace MediaPortal.Configuration
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.comboBoxAudioQuality = new System.Windows.Forms.ComboBox();
       this.groupBox7 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbDisableDNR = new System.Windows.Forms.CheckBox();
       this.cbHighVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tbHighMax = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.tbHighMin = new MediaPortal.UserInterface.Controls.MPTextBox();
@@ -543,6 +544,7 @@ namespace MediaPortal.Configuration
       this.label12 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabPageAutotune = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.tabPageAutotuneRadio = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.cropGroupBox.SuspendLayout();
@@ -1069,6 +1071,7 @@ namespace MediaPortal.Configuration
       // 
       // groupBox7
       // 
+      this.groupBox7.Controls.Add(this.cbDisableDNR);
       this.groupBox7.Controls.Add(this.cbHighVBR);
       this.groupBox7.Controls.Add(this.tbHighMax);
       this.groupBox7.Controls.Add(this.tbHighMin);
@@ -1095,6 +1098,17 @@ namespace MediaPortal.Configuration
       this.groupBox7.TabIndex = 11;
       this.groupBox7.TabStop = false;
       this.groupBox7.Text = "Quality settings:";
+      // 
+      // cbDisableDNR
+      // 
+      this.cbDisableDNR.AutoSize = true;
+      this.cbDisableDNR.Location = new System.Drawing.Point(21, 191);
+      this.cbDisableDNR.Name = "cbDisableDNR";
+      this.cbDisableDNR.Size = new System.Drawing.Size(187, 17);
+      this.cbDisableDNR.TabIndex = 19;
+      this.cbDisableDNR.Text = "Disable Dynamic Noise Reduction";
+      this.toolTip1.SetToolTip(this.cbDisableDNR, "If you have a clean input source, such as satellite, disable DNR");
+      this.cbDisableDNR.UseVisualStyleBackColor = true;
       // 
       // cbHighVBR
       // 
@@ -1245,7 +1259,8 @@ namespace MediaPortal.Configuration
       this.tbPortMax.Name = "tbPortMax";
       this.tbPortMax.Size = new System.Drawing.Size(64, 20);
       this.tbPortMax.TabIndex = 2;
-      this.tbPortMax.Text = "300";
+      this.tbPortMax.Text = "600";
+      this.tbPortMax.TextChanged += new System.EventHandler(this.tbPortMax_TextChanged);
       // 
       // tbPortMin
       // 
@@ -1254,7 +1269,8 @@ namespace MediaPortal.Configuration
       this.tbPortMin.Name = "tbPortMin";
       this.tbPortMin.Size = new System.Drawing.Size(64, 20);
       this.tbPortMin.TabIndex = 1;
-      this.tbPortMin.Text = "100";
+      this.tbPortMin.Text = "500";
+      this.tbPortMin.TextChanged += new System.EventHandler(this.tbPortMin_TextChanged);
       // 
       // label19
       // 
@@ -1540,6 +1556,9 @@ namespace MediaPortal.Configuration
 
             Log.Debug("*** HighVBR {0}", Convert.ToString(cbHighVBR.Checked));
             xmlwriter.SetValueAsBool("quality", "HighVBR", cbHighVBR.Checked);
+
+            Log.Debug("*** Disable DNR {0}", Convert.ToString(cbDisableDNR.Checked));
+            xmlwriter.SetValueAsBool("quality", "DNR", cbDisableDNR.Checked);
 
             Log.Debug("*** hwfiltering {0}", Convert.ToString(checkBoxHWPidFiltering.Checked));
             if (checkBoxHWPidFiltering.Visible)
@@ -2056,6 +2075,18 @@ namespace MediaPortal.Configuration
     private void checkBox5vAntennae_CheckedChanged(object sender, EventArgs e)
     {
     
+    }
+
+    private void tbPortMin_TextChanged(object sender, EventArgs e)
+    {
+      if (Convert.ToInt32(tbPortMin.Text) < 500)
+        tbPortMin.Text = "500";
+    }
+
+    private void tbPortMax_TextChanged(object sender, EventArgs e)
+    {
+      if (Convert.ToInt32(tbPortMax.Text) < 500)
+        tbPortMax.Text = "500";
     }
   }
   public class CaptureFormat

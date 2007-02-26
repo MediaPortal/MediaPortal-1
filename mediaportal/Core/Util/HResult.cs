@@ -164,7 +164,7 @@ namespace MediaPortal.Util
     /// Gets the DX error string.
     /// </summary>
     /// <value>The DX error string.</value>
-    public string DXErrorString
+    private string DXErrorString
     {
       get { return GetDXErrorString((int)_hresult); }
     }
@@ -173,7 +173,7 @@ namespace MediaPortal.Util
     /// Gets the DX error description.
     /// </summary>
     /// <value>The DX error description.</value>
-    public string DXErrorDescription
+    private string DXErrorDescription
     {
       get { return GetDXErrorDescription((int)_hresult); }
     }

@@ -1,7 +1,7 @@
 #region Copyright (C) 2005-2007 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2007 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal - diehard2
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -26,219 +26,204 @@
 using System;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
-
 using DirectShowLib;
+using MediaPortal.Util;
+
 namespace DShowNET
 {
 
-	public class Hauppauge : IksPropertyUtils
+	public class Hauppauge:IDisposable
 	{
-		static public readonly Guid HauppaugeGuid = new Guid( 0x432a0da4, 0x806a, 0x43a0, 0xb4, 0x26, 0x4f, 0x2a, 0x23, 0x4a, 0xa6, 0xb8 );
-		public enum PropertyId
-		{
-			StreamType				=   0, 
-			VideoClosedOpenGop= 101, //bool											
-			VideoBitRate			= 102,
-			VideoGopSize			= 103,
-			InverseTelecine		= 104,  //bool
-			AudioBitRate			= 200, 							
-			AudioSampleRate		= 201, 					
-			AudioOutput				= 202,
-			CardModel					= 400, 
-			DriverVersion			= 401
-		};
+    private bool disposed = false;
+    [DllImport("hauppauge.dll", EntryPoint = "Init", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public static extern int Init(IBaseFilter tuner);
+    [DllImport("hauppauge.dll", EntryPoint = "IsHauppauge", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public static extern bool IsHauppauge();
+    [DllImport("hauppauge.dll", EntryPoint = "SetVidBitRate", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public static extern int SetVidBitRate(int maxkbps, int minkbps, bool isVBR);
+    [DllImport("hauppauge.dll", EntryPoint = "DeInit", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public static extern int DeInit();
+    [DllImport("hauppauge.dll", EntryPoint = "GetVidBitRate", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public static extern int GetVidBitRate(out int maxkbps, out int minkbps, out bool isVBR);
+    [DllImport("hauppauge.dll", EntryPoint = "SetAudBitRate", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public static extern int SetAudBitRate(int bitrate);
+    [DllImport("hauppauge.dll", EntryPoint = "GetAudBitRate", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public static extern int GetAudBitrate(out int bitrate);
+    [DllImport("hauppauge.dll", EntryPoint = "SetStreamType", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public static extern int SetStreamType(int stream);
+    [DllImport("hauppauge.dll", EntryPoint = "GetStreamType", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public static extern int GetStreamType(out int stream);
+    [DllImport("hauppauge.dll", EntryPoint = "SetDNRFilter", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    public static extern int SetDNRFilter(bool onoff);
 
-		public enum StreamType
-		{
-				Program			= 100,
-				DVD					= 102,
-				Mediacenter	= 103,
-				SVCD				= 104,
-				MPEG1				= 201,
-				MPEG1_VCD		= 202,
-		};
-
-		[StructLayout(LayoutKind.Sequential,Pack=1), ComVisible(true)]
-			public struct VideoBitRate
-		{
-			public uint size;
-			public uint isnull;
-			public uint isvbr;
-			public uint bitrate; //kb/sec
-			public uint maxBitrate;// kb/sec
-		};
-
-		[StructLayout(LayoutKind.Sequential,Pack=1), ComVisible(true)]
-			public struct GopSize
-		{
-			public uint size;
-			public uint isnull;
-			public uint PictureCount;
-			public uint SpaceBetweenPandB;
-		};
-
-		public enum AudioBitRateEnum
-		{
-			Khz32		= 1,
-			Khz48		= 2,
-			Khz56		= 3,
-			Khz64		= 4,
-			Khz80		= 5,
-			Khz96		= 6,
-			Khz112	= 7,
-			Khz128	= 8,
-			Khz160	= 9,
-			Khz192	= 10,
-			Khz224	= 11,
-			Khz256	= 12,
-			Khz320	= 13,
-			Khz384	= 14,
-		}
-
-		[StructLayout(LayoutKind.Sequential,Pack=1), ComVisible(true)]
-			public struct AudioBitRate
-		{
-			public uint size;
-			public uint isnull;
-			public uint audiolayer;
-			public AudioBitRateEnum bitrate;
-		}
-
-		public enum AudioSampleRate
-		{
-			KHz_32   = 0,
-			Khz_44_1 = 1,
-			Khz_48   = 2
-		};
-
-		public enum AudioOutput
-		{
-			Stereo     =0,
-			JointStereo=1,
-			Dual			 =2,
-			Mono			 =3
-		};
-
-		[StructLayout(LayoutKind.Sequential,Pack=1), ComVisible(true)]
-		public struct driverVersion
-		{
-			public uint			size;			
-			public uint			isnull;
-			public uint			major;		
-			public uint			minor;		
-			public uint			revision;	
-			public uint			build;		
-		};
+    HResult hr; 
+    
+    //Initializes the Hauppauge interfaces
 
 		public Hauppauge(IBaseFilter filter)
-			:base(filter)
 		{
-		}
-		
-		
-		public bool IsHauppage
-		{
-			get
+      try
       {
-        if (captureFilter == null) return false;
-				IKsPropertySet propertySet= captureFilter as IKsPropertySet;
-				if (propertySet==null) return false;
-				Guid propertyGuid=HauppaugeGuid;
-				uint IsTypeSupported=0;
-				int hr=propertySet.QuerySupported( ref propertyGuid, (uint)PropertyId.DriverVersion, out IsTypeSupported);
-				if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Get)==0) 
-				{
-					return false;
-				}
-				return true;
-			}
+        hr = new HResult(Init(filter));
+        Log.Info("Hauppauge Quality Control Initializing " + hr.ToDXString());
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Hauppauge Init failed "+ ex.Message);
+      }
 		}
 
+    public bool SetDNR(bool onoff)
+    {
+      try
+      {
+        if (IsHauppauge())
+        {
+          SetDNRFilter(onoff);
+          return true;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Hauppauge SetDNR failed " + ex.Message);
+      }
+      return false;
+
+    }
+   
 		public bool GetVideoBitRate(out int minKbps, out int maxKbps,out bool isVBR)
 		{
-			VideoBitRate bitrate = new VideoBitRate();
-			bitrate.size=(uint)Marshal.SizeOf(bitrate);
-			object obj =GetStructure(HauppaugeGuid,(uint)PropertyId.VideoBitRate, typeof(VideoBitRate)) ;
-			try
-			{ 
-				bitrate = (VideoBitRate)obj ;
-			}
-			catch (Exception){}
-			isVBR = (bitrate.isvbr!=0);
-			minKbps=(int)bitrate.bitrate;
-			maxKbps=(int)bitrate.maxBitrate;
-			Log.Info("hauppauge: current videobitrate: min:{0} max:{1} vbr:{2}",minKbps,maxKbps,isVBR);
+      maxKbps = minKbps = -1;
+      isVBR = false;
+      try
+      {
+        if (IsHauppauge())
+        {
+          GetVidBitRate(out maxKbps, out minKbps, out isVBR);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Hauppauge Error GetBitrate " + ex.Message);
+      }
+
 			return true;
 		}
-		public void SetVideoBitRate(int minKbps, int maxKbps,bool isVBR)
+
+		public bool SetVideoBitRate(int minKbps, int maxKbps,bool isVBR)
 		{
-			Log.Info("hauppauge: setvideobitrate min:{0} max:{1} vbr:{2} {3}",minKbps,maxKbps,isVBR,Marshal.SizeOf(typeof(VideoBitRate)));
-			VideoBitRate bitrate=new VideoBitRate();
-			if (isVBR) bitrate.isvbr=1;
-			else bitrate.isvbr=0;
-
-			bitrate.size=(uint)Marshal.SizeOf(typeof(VideoBitRate));
-			bitrate.bitrate=(uint)minKbps;
-			bitrate.maxBitrate=(uint)maxKbps;
-			SetStructure(HauppaugeGuid,(uint)PropertyId.VideoBitRate, typeof(VideoBitRate), (object)bitrate) ;
-
-			GetVideoBitRate(out minKbps,out maxKbps,out isVBR);
-
+      try
+      {
+        if (IsHauppauge())
+        {
+          hr.Set(SetVidBitRate(maxKbps, minKbps, isVBR));
+          Log.Info("Hauppauge Set Bit Rate " + hr.ToDXString());
+          return true;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Hauppauge Set Vid Rate " + ex.Message);
+      }
+      return false;
 		}
 
     public bool GetAudioBitRate(out int Kbps)
     {
-      AudioBitRate bitrate = new AudioBitRate();
-      bitrate.size = (uint)Marshal.SizeOf(bitrate);
-      
+      Kbps = -1;
       try
       {
-        object obj = GetStructure(HauppaugeGuid, (uint)PropertyId.AudioBitRate, typeof(AudioBitRate));
-        bitrate = (AudioBitRate)obj;
-        Log.Info("SetBitRate");
+        if (IsHauppauge())
+        {
+          GetAudBitrate(out Kbps);
+          return true;
+        }
       }
       catch (Exception ex)
       {
-        Log.Info("Set audio bit rate failed");
+        Log.Error("Hauppauge Get Audio Bitrate " + ex.Message);
       }
-     
-      Kbps = (int)bitrate.bitrate;
-     
-      Log.Info("hauppauge: current audiobitrate: {0} ", Kbps);
-      return true;
+      return false;
     }
 
-    public void SetAudioBitRate(int Kbps)
+    public bool SetAudioBitRate(int Kbps)
     {
-      Log.Info("hauppauge: setaudiobitrate {0}", Kbps);
-      AudioBitRate bitrate = new AudioBitRate();
-
-      bitrate.size = (uint)Marshal.SizeOf(typeof(AudioBitRate));
-      //Allow explicit setting of this in the future
-      bitrate.bitrate = AudioBitRateEnum.Khz192;
-      
-      SetStructure(HauppaugeGuid, (uint)PropertyId.AudioBitRate, typeof(AudioBitRate), (object)bitrate);
-
-      GetAudioBitRate(out Kbps);
-
+      try
+      {
+        if (IsHauppauge())
+        {
+          SetAudBitRate(Kbps);
+          return true;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Hauppauge Set Audio Bit Rate " + ex.Message);
+      }
+      return false;
     }
 
-		public string VersionInfo
-		{
-			get
-			{
-				Log.Info("hauppauge: get version info {0}",Marshal.SizeOf(typeof(driverVersion) ));
-				driverVersion version = new driverVersion();
-				version.size=(uint)Marshal.SizeOf(typeof(driverVersion) );
-				object obj =GetStructure(HauppaugeGuid,(uint)PropertyId.DriverVersion, typeof(driverVersion)) ;
-				try
-				{ 
-					version = (driverVersion)obj ;
-				}
-				catch (Exception){}
-				
-				return String.Format("{0}.{1}.{2}.{3}",version.major,version.minor,version.revision,version.build);
-			}
-		}
-	}
+    public bool GetStream(out int stream)
+    {
+      stream = -1;
+      try
+      {
+        if (IsHauppauge())
+        {
+          GetStreamType(out stream);
+          return true;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Hauppauge Get Stream " + ex.Message);
+      }
+      return false;
+    }
+
+    public bool SetStream(int stream)
+    {
+      try
+      {
+        if (IsHauppauge())
+        {
+          SetStreamType(103);
+          return true;
+        }
+      }
+      catch(Exception ex)
+      {
+        Log.Error("Hauppauge Set Stream Type " + ex.Message);
+      }
+      return false;
+    }
+   
+    #region IDisposable Members
+
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (!this.disposed)
+      {
+        if (disposing)
+        {
+          // Dispose managed resources.
+        }
+        DeInit();
+        Log.Info("Hauppauge Disposed hcw.txt");
+      }
+      disposed = true;
+    }
+
+    ~Hauppauge()      
+   {
+      Dispose(false);
+   }
+    #endregion
+  }
 }

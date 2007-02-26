@@ -645,9 +645,6 @@
     <Compile Include="DShowNET\Helper\IksPropertyUtils.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\Helper\cards\ivac.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="DShowNET\IPersistMemory.cs" />
     <Compile Include="DShowNET\MediaSubTypeEx.cs" />
     <Compile Include="DShowNET\MetaData\AsfMetadataEditor.cs">

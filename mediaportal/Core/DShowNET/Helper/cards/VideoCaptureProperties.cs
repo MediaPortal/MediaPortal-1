@@ -41,102 +41,80 @@ namespace DShowNET.Helper
     public class VideoCaptureProperties : IDisposable
     {
         Twinhan _twinhan;
-        IVac _ivac;
         Hauppauge _hauppauge;
         DigitalEverywhere _digitalEverywhere;
         TechnoTrend _technoTrend;
         public VideoCaptureProperties(IBaseFilter tunerfilter)
         {
+          if (tunerfilter != null)
+          {
             _twinhan = new Twinhan(tunerfilter);
-            _ivac = new IVac(tunerfilter);
             _hauppauge = new Hauppauge(tunerfilter);
             _digitalEverywhere = new DigitalEverywhere(tunerfilter);
             _technoTrend = new TechnoTrend(tunerfilter);
-            /*
-            if (_hauppauge.IsHauppage) _log.Info("Hauppauge card properties supported");
-            if (_ivac.IsIVAC) _log.Info("IVAC card properties supported");
-            if (_digitalEverywhere.IsDigitalEverywhere) _log.Info("Digital Everywhere card properties supported");
-            if (_twinhan.IsTwinhan) _log.Info("Twinhan card properties supported");
-            */
-        }
+          }
+         }
 
-        public bool IsCAPMTNeeded
+        #region Hauppauge Properties
+
+        public void SetDNR(bool onoff)
         {
-            get { return _twinhan.IsTwinhan; }
+          _hauppauge.SetDNR(onoff);
         }
 
         public void SetAudioBitRate(int Kbps)
         {
-          
-          if (_ivac.IsIVAC)
-          {
-            _ivac.SetAudioBitRate(Kbps);
-            return;
-
-          }
-          if (_hauppauge.IsHauppage)
-          {
               _hauppauge.SetAudioBitRate(Kbps);
               return;
-          }
-
         }
+
         public void SetVideoBitRate(int minKbps, int maxKbps, bool isVBR)
         {
-
-            if (_ivac.IsIVAC)
-            {
-                _ivac.SetVideoBitRate(minKbps, maxKbps, isVBR);
-                return;
-            }
-
-            if (_hauppauge.IsHauppage)
-            {
                 _hauppauge.SetVideoBitRate(minKbps, maxKbps, isVBR);
                 return;
-            }
         }
+
         public bool GetVideoBitRate(out int minKbps, out int maxKbps, out bool isVBR)
         {
             minKbps = maxKbps = -1;
             isVBR = false;
-            if (_hauppauge.IsHauppage)
-            {
-                _hauppauge.GetVideoBitRate(out minKbps, out maxKbps, out isVBR);
-                return true;
-            }
-            if (_ivac.IsIVAC)
-            {
-                _ivac.GetVideoBitRate(out minKbps, out maxKbps, out isVBR);
-                return true;
-            }
-            return false;
+            _hauppauge.GetVideoBitRate(out minKbps, out maxKbps, out isVBR);
+            return true;
         }
 
-        public string VersionInfo
-        {
-            get
-            {
-                if (_hauppauge.IsHauppage)
-                {
-                    return _hauppauge.VersionInfo;
-                }
-                if (_ivac.IsIVAC)
-                {
-                    return _ivac.VersionInfo;
-                }
-                return String.Empty;
-            }
-        }
+      public bool GetAudioBitRate(out int audKbps)
+      {
+        audKbps = -1;
+        _hauppauge.GetAudioBitRate(out audKbps);
+        return true;
+      }
+
+      public void GetStreamType(out int stream)
+      {
+        _hauppauge.GetStream(out stream);
+      }
+
+      public void SetStreamType(int stream)
+      {
+        _hauppauge.SetStream(stream);
+      }
+
+     #endregion
+
+
+      public bool IsCAPMTNeeded
+      {
+        get { return _twinhan.IsTwinhan; }
+      }
         public bool SupportsCamSelection
-        {
-            get
-            {
-                if (_twinhan.IsTwinhan)
-                    return true;
-                return false;
-            }
-        }
+      {
+          get
+          {
+              if (_twinhan.IsTwinhan)
+                  return true;
+              return false;
+          }
+      }
         public bool SupportsHardwarePidFiltering
         {
             get
@@ -241,17 +219,13 @@ namespace DShowNET.Helper
             return false;
         }
 
-        public void SetTvFormat(AnalogVideoStandard standard)
-        {
-            if (_ivac.IsIVAC)
-            {
-                _ivac.SetTvFormat(standard);
-            }
-        }
+      
         public void Dispose()
         {
             _twinhan = null;
-            _ivac = null;
+            if(_hauppauge != null)
+              _hauppauge.Dispose();
+
             _hauppauge = null;
             _digitalEverywhere = null;
             if (_technoTrend != null)

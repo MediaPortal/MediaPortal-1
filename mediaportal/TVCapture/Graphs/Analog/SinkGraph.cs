@@ -1067,17 +1067,17 @@ namespace MediaPortal.TV.Recording
     /// <param name="standard">TVStandard</param>
     protected void SetVideoStandard( AnalogVideoStandard standard )
     {
-      VideoCaptureProperties props = new VideoCaptureProperties(_filterCapture);
-      props.SetTvFormat(standard);
+     
       if ( standard == AnalogVideoStandard.None )
         return;
 
-      if ( _analogVideoDecoderInterface == null )
-        return;
+      if (_analogVideoDecoderInterface == null)
+      {
+         return;
+      }
       AnalogVideoStandard currentStandard;
       int hr = _analogVideoDecoderInterface.get_TVFormat(out currentStandard);
-      //if (currentStandard==standard) return;
-
+     
       Log.Info("SinkGraph:Select tvformat:{0}", standard.ToString());
       if ( standard == AnalogVideoStandard.None )
         standard = AnalogVideoStandard.PAL_B;
@@ -1509,14 +1509,20 @@ namespace MediaPortal.TV.Recording
         bool enabled = xmlreader.GetValueAsBool("quality", "enabled", false);
         if ( !enabled )
           return;
+
+        //Turn on/off Dynamic Noise Reduction
+
+        bool DNR = xmlreader.GetValueAsBool("quality", "DNR", false);
+
+        //Set the selected audio quality
         int AudioQuality = xmlreader.GetValueAsInt("quality", "audioquality", 192);
         int defaultQuality = xmlreader.GetValueAsInt("quality", "default", 2);
         if ( Quality == 4 )
         {
           Quality = defaultQuality;
         }
-        int portableMinKbps = xmlreader.GetValueAsInt("quality", "portLow", 100);
-        int portableMaxKbps = xmlreader.GetValueAsInt("quality", "portMax", 300);
+        int portableMinKbps = xmlreader.GetValueAsInt("quality", "portLow", 500);
+        int portableMaxKbps = xmlreader.GetValueAsInt("quality", "portMax", 600);
         bool portableVBR = xmlreader.GetValueAsBool("quality", "portVBR", false);
 
         int lowMinKbps = xmlreader.GetValueAsInt("quality", "LowLow", 500);
@@ -1542,39 +1548,46 @@ namespace MediaPortal.TV.Recording
         VideoCaptureProperties props = new VideoCaptureProperties(_filterCapture);
         if ( Quality >= 0 )
         {
+          //103 is recommended for the stream buffer engine 
+          props.SetStreamType(103);
+          props.SetAudioBitRate(AudioQuality);
+          //Turns the analog filter on/off
+          props.SetDNR(DNR);
+
           switch ( Quality )
           {
             case 0://Portable
               Log.Info("SinkGraph:Set quality:portable");
               props.SetVideoBitRate(portableMinKbps, portableMaxKbps, portableVBR);
-              props.SetAudioBitRate(AudioQuality);
               break;
             case 1://low
               Log.Info("SinkGraph:Set quality:low");
               props.SetVideoBitRate(lowMinKbps, lowMaxKbps, lowVBR);
-              props.SetAudioBitRate(AudioQuality);
               break;
             case 2://medium
               Log.Info("SinkGraph:Set quality:medium");
               props.SetVideoBitRate(mediumMinKbps, mediumMaxKbps, mediumVBR);
-              props.SetAudioBitRate(AudioQuality);
               break;
             case 3://hi
               Log.Info("SinkGraph:Set quality:high");
               props.SetVideoBitRate(highMinKbps, highMaxKbps, highVBR);
-              props.SetAudioBitRate(AudioQuality);
               break;
 
             default://
               Log.Info("SinkGraph:Set quality to default (medium)");
               props.SetVideoBitRate(mediumMinKbps, mediumMaxKbps, mediumVBR);
-              props.SetAudioBitRate(AudioQuality);
               break;
           }
-          int minKbps, maxKbps;
+
+          int minKbps, maxKbps, audkbps, stream;
           bool isVBR;
           props.GetVideoBitRate(out minKbps, out maxKbps, out isVBR);
-          Log.Info(" driver version:{0} min:{1} peak:{2} vbr:{3}", props.VersionInfo, minKbps, maxKbps, isVBR);
+          props.GetAudioBitRate(out audkbps);
+          props.GetStreamType(out stream);
+         props.Dispose();
+         Log.Info("Hauppauge video bitrates:{0} avg:{1} peak:{2} vbr:{3}", 1, minKbps, maxKbps, isVBR);
+         Log.Info("Hauppauge audio bitrate {0}", audkbps);
+         Log.Info("Hauppauge stream type {0}", stream);
         }
       }//if (Quality>=0)
     }//protected void SetQuality(int Quality)
