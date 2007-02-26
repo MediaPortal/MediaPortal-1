@@ -206,8 +206,7 @@ namespace MediaPortal.GUI.WeatherOverlay
           !_weatherOverlay ||
           GUIGraphicsContext.IsFullScreenVideo || 
           GUIGraphicsContext.Calibrating ||
-          !GUIGraphicsContext.Overlay ||
-          g_Player.Playing
+          !GUIGraphicsContext.Overlay
         )
       {
         OnUpdateState(false);
