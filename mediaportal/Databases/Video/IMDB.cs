@@ -646,8 +646,8 @@ namespace MediaPortal.Video.Database
         string strBody = GetPage(strURL, "utf-8", out absoluteUri);
         string value = string.Empty;
         HTMLParser parser = new HTMLParser(strBody);
-        if ((parser.skipToEndOf("<strong class=\"title\">")) &&
-            (parser.extractTo("</strong>", ref value)))
+        if ((parser.skipToEndOf("<title>")) &&
+            (parser.extractTo("</title>", ref value)) && !value.Equals("IMDb Name  Search"))
         {
           value = new HTMLUtil().ConvertHTMLToAnsi(value);
           value = MediaPortal.Util.Utils.RemoveParenthesis(value).Trim();
@@ -656,7 +656,7 @@ namespace MediaPortal.Video.Database
           return;
         }
         parser.resetPosition();
-        while (parser.skipToEndOfNoCase("<a"))
+        while (parser.skipToEndOfNoCase("found the following results"))
         {
           string url = string.Empty;
           string name = string.Empty;
@@ -699,8 +699,8 @@ namespace MediaPortal.Video.Database
         string strThumb = string.Empty;
         string value = string.Empty;
         string value2 = string.Empty;
-        if ((parser.skipToEndOf("<strong class=\"title\">")) &&
-            (parser.extractTo("</strong>", ref value)))
+        if ((parser.skipToEndOf("<title>")) &&
+            (parser.extractTo("</title>", ref value)))
         {
           value = new HTMLUtil().ConvertHTMLToAnsi(value);
           value = MediaPortal.Util.Utils.RemoveParenthesis(value).Trim();
@@ -742,7 +742,7 @@ namespace MediaPortal.Video.Database
         //<dd><a href="/name/nm0000193/">Demi Moore</a> was born 1962 in Roswell, New Mexico. Her father left her mother... <a href="bio">(show more)</a></dd>
         //</dl>
         if ((parser.skipToEndOf("Mini biography")) &&
-            (parser.skipToEndOf("<dd>")) &&
+            (parser.skipToEndOf("</h5>")) &&
             (parser.extractTo("<a", ref value)) &&
             (parser.skipToEndOf("href=\"")) &&
             (parser.extractTo("\"", ref value2)))
@@ -767,7 +767,7 @@ namespace MediaPortal.Video.Database
           if (strBioBody != null && strBioBody.Length > 0)
           {
             HTMLParser parser1 = new HTMLParser(strBioBody);
-            if (parser1.skipToEndOf("<p class=\"biopar\">") &&
+            if (parser1.skipToEndOf("<h5>Mini biography</h5>") &&
                 parser1.extractTo("</p>", ref value))
             {
               //Log.Info("Actor Bio:{0}", value);
@@ -1112,9 +1112,9 @@ namespace MediaPortal.Video.Database
         int iDirectedBy = strBody.IndexOf("Directed by");
         int iCredits = strBody.IndexOf("Writing credits");
         int iGenre = strBody.IndexOf("Genre:");
-        int iTagLine = strBody.IndexOf("Tagline:</b>");
-        int iPlotOutline = strBody.IndexOf("Plot Outline:</b>");
-        int iPlotSummary = strBody.IndexOf("Plot Summary:</b>");
+        int iTagLine = strBody.IndexOf("Tagline:</h5>");
+        int iPlotOutline = strBody.IndexOf("Plot Outline:</h5>");
+        int iPlotSummary = strBody.IndexOf("Plot Summary:</h5>");
         int iPlot = strBody.IndexOf("<a href=\"plotsummary");
         int iImage = strBody.IndexOf("<img border=\"0\" alt=\"" + movieTitle + "\" title=\"" + movieTitle + "\" src=\"");
         if (iImage >= 0)
@@ -1122,8 +1122,8 @@ namespace MediaPortal.Video.Database
           iImage += ("<img border=\"0\" alt=\"" + movieTitle + "\" title=\"" + movieTitle + "\" src=\"").Length;
         }
         int iRating = strBody.IndexOf("User Rating:</b>");
-        int iCred = strBody.IndexOf("redited cast:"); // Complete credited cast or Credited cast
-        int iTop = strBody.IndexOf("top 250:");
+        int iCred = strBody.IndexOf("<table class=\"cast\">");
+        int iTop = strBody.IndexOf("Top 250:");
         int iYear = strBody.IndexOf("/Sections/Years/");
         if (iYear >= 0)
         {
@@ -1171,10 +1171,10 @@ namespace MediaPortal.Video.Database
               iStart = strBody.IndexOf("(", iEnd + 2);
               if (iStart > 0)
               {
-                iEnd = strBody.IndexOf(" votes)", iStart);
+                iEnd = strBody.IndexOf(" votes</a>)", iStart);
                 if (iEnd > 0)
                 {
-                  iStart++; // skip the parantese before votes
+                  iStart+="(<a href=\"ratings\">".Length; // skip the parantese and link before votes
                   movieDetails.Votes = strBody.Substring(iStart, iEnd - iStart).Trim();
                 }
               }
@@ -1191,7 +1191,7 @@ namespace MediaPortal.Video.Database
         }
         if (iTagLine >= 0)
         {
-          iTagLine += "Tagline:</b>".Length;
+          iTagLine += "Tagline:</h5>".Length;
           iEnd = strBody.IndexOf("<", iTagLine);
           movieDetails.TagLine = strBody.Substring(iTagLine, iEnd - iTagLine).Trim();
           movieDetails.TagLine = MediaPortal.Util.Utils.stripHTMLtags(movieDetails.TagLine);
@@ -1202,7 +1202,7 @@ namespace MediaPortal.Video.Database
         {
           if (iPlotSummary > 0)
           {
-            iPlotSummary += "Plot Summary:</b>".Length;
+            iPlotSummary += "Plot Summary:</h5>".Length;
             iEnd = strBody.IndexOf("<", iPlotSummary);
             movieDetails.PlotOutline = strBody.Substring(iPlotSummary, iEnd - iPlotSummary).Trim();
             movieDetails.PlotOutline = MediaPortal.Util.Utils.stripHTMLtags(movieDetails.PlotOutline);
@@ -1211,7 +1211,7 @@ namespace MediaPortal.Video.Database
         }
         else
         {
-          iPlotOutline += "Plot Outline:</b>".Length;
+          iPlotOutline += "Plot Outline:</h5>".Length;
           iEnd = strBody.IndexOf("<", iPlotOutline);
           movieDetails.PlotOutline = strBody.Substring(iPlotOutline, iEnd - iPlotOutline).Trim();
           movieDetails.PlotOutline = MediaPortal.Util.Utils.stripHTMLtags(movieDetails.PlotOutline);
@@ -1242,7 +1242,10 @@ namespace MediaPortal.Video.Database
               if (iPlotStart >= 0)
               {
                 iPlotStart += "<p class=\"plotpar\">".Length;
-                int iPlotEnd = strPlotHTML.IndexOf("</p>", iPlotStart);
+
+                int iPlotEnd = strPlotHTML.IndexOf("<i>", iPlotStart); // ends with <i> for person who wrote it or
+                if (iPlotEnd < 0) iPlotEnd = strPlotHTML.IndexOf("</p>", iPlotStart); // </p> for end of paragraph
+
                 if (iPlotEnd >= 0)
                 {
                   movieDetails.Plot = strPlotHTML.Substring(iPlotStart, iPlotEnd - iPlotStart);
@@ -1260,7 +1263,7 @@ namespace MediaPortal.Video.Database
 
         //cast
         string RegCastBlock = @"first\sbilled\sonly.*?more";
-        string RegActorAndRole = @"href=./name.*?>(?<actor>.*?)<.*?\.\.\.\..*?middle.>(?<role>.*?)<";
+        string RegActorAndRole = "td class=\"nm\"><a href=./name.*?>(?<actor>.*?)</a><.*?<td class=\"char\">(?<role>.*?)<";
 
         Match castBlock = Regex.Match(strBody, RegCastBlock);
         if (!castBlock.Success)
@@ -1295,6 +1298,7 @@ namespace MediaPortal.Video.Database
         int iRunTime = strBody.IndexOf("Runtime:");
         if (iRunTime > 0)
         {
+          iRunTime += "Runtime:</h5>".Length;
           string runtime = "";
           while (!Char.IsDigit(strBody[iRunTime]) && iRunTime + 1 < strBody.Length)
             iRunTime++;
@@ -1313,11 +1317,11 @@ namespace MediaPortal.Video.Database
           }
         }
 
-        int mpaa = strBody.IndexOf("MPAA</a>:</b>");
+        int mpaa = strBody.IndexOf("MPAA</a>:</h5>");
         if (mpaa > 0)
         {
-          mpaa += "MPAA</a>:</b>".Length;
-          int mpaaEnd = strBody.IndexOf("<br>", mpaa);
+          mpaa += "MPAA</a>:</h5>".Length;
+          int mpaaEnd = strBody.IndexOf("</div>", mpaa);
           if (mpaaEnd > 0)
           {
             movieDetails.MPARating = strBody.Substring(mpaa, mpaaEnd - mpaa);
@@ -1370,9 +1374,9 @@ namespace MediaPortal.Video.Database
       int iStart = 0;
       if (iSlash >= 0)
       {
-        int iRealEnd = strHRef.IndexOf("(more)");
+        int iRealEnd = strHRef.IndexOf(">more<");
         if (iRealEnd < 0)
-          iRealEnd = strHRef.IndexOf("<br><br>");
+          iRealEnd = strHRef.IndexOf("</div>");
         while (iSlash < iRealEnd)
         {
           iStart = iEnd + 2;
