@@ -60,7 +60,7 @@ namespace TvLibrary.Implementations.DVB
         _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
         if (tunerFilter == null && analyzerFilter == null) return;
 
-        Log.Log.WriteFile("Check for KNC");        
+        Log.Log.WriteFile("Check for KNC");
         _knc = new KNC(tunerFilter, analyzerFilter);
         if (_knc.IsKNC)
         {
@@ -327,34 +327,35 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// sends the diseqc command to the card
     /// </summary>
+    /// <param name="parameters">The parameters.</param>
     /// <param name="channel">The current tv/radio channel</param>
-    public void SendDiseqcCommand(DVBSChannel channel)
+    public void SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
     {
       try
       {
         if (_knc != null)
         {
-          _knc.SendDiseqCommand(channel);
+          _knc.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
         if (_digitalEveryWhere != null)
         {
-          _digitalEveryWhere.SendDiseqcCommand(channel);
+          _digitalEveryWhere.SendDiseqcCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
         if (_technoTrend != null)
         {
-          _technoTrend.SendDiseqCommand(channel);
+          _technoTrend.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
         if (_twinhan != null)
         {
-          _twinhan.SendDiseqCommand(channel);
+          _twinhan.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
         if (_hauppauge != null)
         {
-          _hauppauge.SendDiseqCommand(channel);
+          _hauppauge.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
       }

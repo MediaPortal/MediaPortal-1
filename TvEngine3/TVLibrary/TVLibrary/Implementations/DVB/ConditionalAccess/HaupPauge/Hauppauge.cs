@@ -90,7 +90,7 @@ namespace TvLibrary.Implementations.DVB
     Guid BdaTunerExtentionProperties = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0x00, 0xa0, 0xc9, 0xf2, 0x1f, 0xc7);
     bool _isHauppauge = false;
     IntPtr _ptrDiseqc = IntPtr.Zero;
-    DirectShowLib.IKsPropertySet _propertySet=null;
+    DirectShowLib.IKsPropertySet _propertySet = null;
     #endregion
 
     /// <summary>
@@ -134,25 +134,42 @@ namespace TvLibrary.Implementations.DVB
     /// Sends the diseq command.
     /// </summary>
     /// <param name="channel">The channel.</param>
-    public void SendDiseqCommand(DVBSChannel channel)
+    public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
     {
       if (_isHauppauge == false) return;
       int position = 0;
       int option = 0;
       bool hiBand = false;
 
-      switch (channel.BandType)
+      if (parameters.UseDefaultLnbFrequencies)
       {
-        case BandType.Universal:
-          if (channel.Frequency >= 11700000)
-          {
+        switch (channel.BandType)
+        {
+          case BandType.Universal:
+            if (channel.Frequency >= 11700000)
+            {
+              hiBand = true;
+            }
+            else
+            {
+              hiBand = false;
+            }
+            break;
+        }
+      }
+      else
+      {
+        if (parameters.LnbSwitchFrequency != 0)
+        {
+          if (channel.Frequency >= parameters.LnbSwitchFrequency * 1000)
             hiBand = true;
-          }
           else
-          {
             hiBand = false;
-          }
-          break;
+        }
+        else
+        {
+          hiBand = false;
+        }
       }
 
       switch (channel.DisEqc)
@@ -229,7 +246,7 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteByte(_ptrDiseqc, 180, (int)RxMode.RXMODE_NOREPLY);
       Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message
 
-      int hr=_propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc, len, _ptrDiseqc, len);
+      int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc, len, _ptrDiseqc, len);
       Log.Log.Info("hauppauge: setdiseqc returned:{0:X}", hr);
     }
 
@@ -243,7 +260,7 @@ namespace TvLibrary.Implementations.DVB
     public bool SendDiSEqCCommand(byte[] diSEqC)
     {
       int len = 188;//sizeof(DISEQC_MESSAGE_PARAMS);
-      for (int i=0; i < diSEqC.Length;++i)
+      for (int i = 0; i < diSEqC.Length; ++i)
         Marshal.WriteByte(_ptrDiseqc, i, diSEqC[i]);
       Marshal.WriteInt32(_ptrDiseqc, 160, (Int32)diSEqC.Length);//send_message_length
       Marshal.WriteInt32(_ptrDiseqc, 164, (Int32)0);//receive_message_length

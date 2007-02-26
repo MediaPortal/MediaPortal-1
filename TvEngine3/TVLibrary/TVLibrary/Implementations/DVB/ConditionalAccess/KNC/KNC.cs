@@ -146,23 +146,40 @@ namespace TvLibrary.Implementations.DVB
     /// Sends the diseq command.
     /// </summary>
     /// <param name="channel">The channel.</param>
-    public void SendDiseqCommand(DVBSChannel channel)
+    public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
     {
       if (_KNCInterface == null) return;
       short isHiBand = 0;
 
-      switch (channel.BandType)
+      if (parameters.UseDefaultLnbFrequencies)
       {
-        case BandType.Universal:
-          if (channel.Frequency >= 11700000)
-          {
+        switch (channel.BandType)
+        {
+          case BandType.Universal:
+            if (channel.Frequency >= 11700000)
+            {
+              isHiBand = 1;
+            }
+            else
+            {
+              isHiBand = 0;
+            }
+            break;
+        }
+      }
+      else
+      {
+        if (parameters.LnbSwitchFrequency != 0)
+        {
+          if (channel.Frequency >= parameters.LnbSwitchFrequency * 1000)
             isHiBand = 1;
-          }
           else
-          {
             isHiBand = 0;
-          }
-          break;
+        }
+        else
+        {
+          isHiBand = 0;
+        }
       }
       short isVertical = 0;
       if (channel.Polarisation == Polarisation.LinearV) isVertical = 1;

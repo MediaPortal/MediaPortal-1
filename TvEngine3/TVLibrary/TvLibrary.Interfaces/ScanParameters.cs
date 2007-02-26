@@ -34,6 +34,74 @@ namespace TvLibrary
     int _timeoutCAT = 5;
     int _timeoutPMT = 10;
     int _timeoutSDT = 20;
+    int _lnbLowFrequency = -1;
+    int _lnbHighFrequency = -1;
+    int _lnbSwitchFrequency = -1;
+    bool _useDefaultLnbFrequencies=true;
+
+
+    /// <summary>
+    /// Gets or sets the use default LNB frequencies.
+    /// </summary>
+    /// <value>The use default LNB frequencies.</value>
+    public bool UseDefaultLnbFrequencies
+    {
+      get
+      {
+        return _useDefaultLnbFrequencies;
+      }
+      set
+      {
+        _useDefaultLnbFrequencies = value;
+      }
+    }
+    /// <summary>
+    /// Gets or sets the LNB low frequency.
+    /// </summary>
+    /// <value>The LNB low frequency.</value>
+    public int LnbLowFrequency
+    {
+      get
+      {
+        return _lnbLowFrequency;
+      }
+      set
+      {
+        _lnbLowFrequency = value;
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets the LNB switch frequency.
+    /// </summary>
+    /// <value>The LNB switch frequency.</value>
+    public int LnbSwitchFrequency
+    {
+      get
+      {
+        return _lnbSwitchFrequency;
+      }
+      set
+      {
+        _lnbSwitchFrequency = value;
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets the LNB high frequency.
+    /// </summary>
+    /// <value>The LNB high frequency.</value>
+    public int LnbHighFrequency
+    {
+      get
+      {
+        return _lnbHighFrequency;
+      }
+      set
+      {
+        _lnbHighFrequency = value;
+      }
+    }
 
     /// <summary>
     /// Gets or sets the time out PAT.

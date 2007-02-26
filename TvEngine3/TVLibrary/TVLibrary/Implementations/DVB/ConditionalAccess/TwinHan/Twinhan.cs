@@ -421,7 +421,7 @@ namespace TvLibrary.Implementations.DVB
     /// Sends the diseq command.
     /// </summary>
     /// <param name="channel">The channel.</param>
-    public void SendDiseqCommand(DVBSChannel channel)
+    public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
     {
       byte disEqcPort = 0;
 
@@ -453,34 +453,42 @@ namespace TvLibrary.Implementations.DVB
       Int32 LNBLOFLowBand = 9750;
       Int32 LNBLOFHighBand = 10600;
       Int32 LNBLOFHiLoSW = 11700;
-
-      switch (channel.BandType)
+      if (parameters.UseDefaultLnbFrequencies)
       {
-        case BandType.Universal:
-          if (channel.Frequency >= 11700000)
-          {
-            turnon22Khz = 2;
-          }
-          else
-          {
-            turnon22Khz = 1;
-          }
-          break;
-        case BandType.Circular:
-          LNBLOFLowBand = 11250;
-          LNBLOFHighBand = 11250;
-          LNBLOFHiLoSW = 0;
-          break;
-        case BandType.Linear:
-          LNBLOFLowBand = 10750;
-          LNBLOFHighBand = 10750;
-          LNBLOFHiLoSW = 0;
-          break;
-        case BandType.CBand:
-          LNBLOFLowBand = 5150;
-          LNBLOFHighBand = 5150;
-          LNBLOFHiLoSW = 0;
-          break;
+        switch (channel.BandType)
+        {
+          case BandType.Universal:
+            if (channel.Frequency >= 11700000)
+            {
+              turnon22Khz = 2;
+            }
+            else
+            {
+              turnon22Khz = 1;
+            }
+            break;
+          case BandType.Circular:
+            LNBLOFLowBand = 11250;
+            LNBLOFHighBand = 11250;
+            LNBLOFHiLoSW = 0;
+            break;
+          case BandType.Linear:
+            LNBLOFLowBand = 10750;
+            LNBLOFHighBand = 10750;
+            LNBLOFHiLoSW = 0;
+            break;
+          case BandType.CBand:
+            LNBLOFLowBand = 5150;
+            LNBLOFHighBand = 5150;
+            LNBLOFHiLoSW = 0;
+            break;
+        }
+      }
+      else
+      {
+        LNBLOFLowBand = parameters.LnbLowFrequency;
+        LNBLOFHighBand = parameters.LnbHighFrequency;
+        LNBLOFHiLoSW = parameters.LnbSwitchFrequency;
       }
       SetLnbData(true, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW, turnon22Khz, disEqcPort);
     }
@@ -490,7 +498,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("Twinhan: SetLnb diseqc port:{0} 22khz:{1} low:{2} hi:{3} switch:{4} power:{5}", disEqcPort, turnon22Khz, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW, lnbPower);
       int thbdaLen = 0x28;
       int disEqcLen = 20;
-      Marshal.WriteByte(_ptrDiseqc, 0,(byte) (lnbPower ? 1 : 0));              // 0: LNB_POWER
+      Marshal.WriteByte(_ptrDiseqc, 0, (byte)(lnbPower ? 1 : 0));              // 0: LNB_POWER
       Marshal.WriteByte(_ptrDiseqc, 1, 0);              // 1: Tone_Data_Burst (Tone_Data_OFF:0 | Tone_Burst_ON:1 | Data_Burst_ON:2)
       Marshal.WriteByte(_ptrDiseqc, 2, 0);
       Marshal.WriteByte(_ptrDiseqc, 3, 0);

@@ -444,9 +444,13 @@ namespace SetupTv.Sections
     public override void OnSectionDeActivated()
     {
       timer1.Enabled = false;
-      TvBusinessLayer layer = new TvBusinessLayer();
       base.OnSectionDeActivated();
+
+    }
+    void SaveSettings()
+    {
       Setting setting;
+      TvBusinessLayer layer = new TvBusinessLayer();
       setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "creategroups", "false");
       setting.Value = checkBoxCreateGroups.Checked ? "true" : "false";
       setting.Persist();
@@ -505,6 +509,21 @@ namespace SetupTv.Sections
       setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB4", "false");
       setting.Value = mpLNB4.Checked ? "true" : "false";
       setting.Persist();
+
+      setting = layer.GetSetting("lnbDefault", "true");
+      setting.Value = checkBox2.Checked ? "true" : "false";
+      setting.Persist();
+
+      setting = layer.GetSetting("LnbLowFrequency", "0");
+      setting.Value = textBoxLNBLo.Text;
+      setting.Persist();
+      setting = layer.GetSetting("LnbHighFrequency", "0");
+      setting.Value = textBoxLNBHi.Text;
+      setting.Persist();
+      setting = layer.GetSetting("LnbSwitchFrequency", "0");
+      setting.Value = textBoxLNBSwitch.Text;
+      setting.Persist();
+
     }
 
     void UpdateStatus(int LNB)
@@ -523,6 +542,12 @@ namespace SetupTv.Sections
       UpdateStatus(1);
       labelCurrentPosition.Text = "";
       tabControl1_SelectedIndexChanged(null, null);
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+      checkBox2.Checked = (layer.GetSetting("lnbDefault", "true").Value == "true");
+      textBoxLNBLo.Text = layer.GetSetting("LnbLowFrequency", "0").Value;
+      textBoxLNBHi.Text = layer.GetSetting("LnbHighFrequency", "0").Value;
+      textBoxLNBSwitch.Text = layer.GetSetting("LnbSwitchFrequency", "0").Value;
     }
 
 
@@ -531,6 +556,7 @@ namespace SetupTv.Sections
     {
       if (_isScanning == false)
       {
+        SaveSettings();
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
         if (card.Enabled == false)
@@ -805,24 +831,6 @@ namespace SetupTv.Sections
 
     }
 
-    private void mpLNB2_CheckedChanged(object sender, EventArgs e)
-    {
-      mpTransponder2.Enabled = mpLNB2.Checked;
-      mpDisEqc2.Enabled = mpLNB2.Checked;
-    }
-
-    private void mpLNB3_CheckedChanged(object sender, EventArgs e)
-    {
-      mpTransponder3.Enabled = mpLNB3.Checked;
-      mpDisEqc3.Enabled = mpLNB3.Checked;
-    }
-
-    private void mpLNB4_CheckedChanged(object sender, EventArgs e)
-    {
-      mpTransponder4.Enabled = mpLNB4.Checked;
-      mpDisEqc4.Enabled = mpLNB4.Checked;
-    }
-
     private void CardDvbS_Load(object sender, EventArgs e)
     {
 
@@ -836,46 +844,6 @@ namespace SetupTv.Sections
       card.Persist();
     }
 
-    private void mpBand1_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
-    }
-
-    private void mpComboBox1_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
-    }
-
-    private void mpComboBox1_SelectedIndexChanged_1(object sender, EventArgs e)
-    {
-
-    }
-
-    private void mpTransponder4_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
-    }
-
-    private void mpTransponder3_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
-    }
-
-    private void mpTransponder2_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
-    }
-
-    private void mpTransponder1_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
-    }
-
-    private void mpLNB1_CheckedChanged(object sender, EventArgs e)
-    {
-      mpTransponder1.Enabled = mpLNB1.Checked;
-      mpDisEqc1.Enabled = mpLNB1.Checked;
-    }
     #endregion
 
     #region DiSEqC Motor tab
@@ -939,6 +907,7 @@ namespace SetupTv.Sections
     private void buttonMoveWest_Click(object sender, EventArgs e)
     {
       if (_enableEvents == false) return;
+      if (checkBox1.Checked == false) return;
       //move motor west
       RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.West, (byte)(1 + comboBoxStepSize.SelectedIndex));
     }
@@ -946,6 +915,7 @@ namespace SetupTv.Sections
     private void buttonSetWestLimit_Click(object sender, EventArgs e)
     {
       if (_enableEvents == false) return;
+      if (checkBox1.Checked == false) return;
       //set motor west limit
       RemoteControl.Instance.DiSEqCSetWestLimit(_cardNumber);
     }
@@ -960,6 +930,7 @@ namespace SetupTv.Sections
       if (_enableEvents == false) return;
       //goto selected sat
       if (comboBoxSat.SelectedIndex < 0) return;
+      if (checkBox1.Checked == false) return;
       TvBusinessLayer layer = new TvBusinessLayer();
       SatteliteContext sat = (SatteliteContext)comboBoxSat.Items[comboBoxSat.SelectedIndex];
 
@@ -981,6 +952,7 @@ namespace SetupTv.Sections
     private void buttonStore_Click(object sender, EventArgs e)
     {
       if (_enableEvents == false) return;
+      if (checkBox1.Checked == false) return;
       //store motor position..
       int index = -1;
       SatteliteContext sat = (SatteliteContext)comboBoxSat.SelectedItem;
@@ -1009,6 +981,7 @@ namespace SetupTv.Sections
     private void buttonMoveEast_Click(object sender, EventArgs e)
     {
       if (_enableEvents == false) return;
+      if (checkBox1.Checked == false) return;
       //move motor east
       RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.East, (byte)(1 + comboBoxStepSize.SelectedIndex));
     }
@@ -1016,6 +989,7 @@ namespace SetupTv.Sections
     private void buttonSetEastLimit_Click(object sender, EventArgs e)
     {
       if (_enableEvents == false) return;
+      if (checkBox1.Checked == false) return;
       //set motor east limit
       RemoteControl.Instance.DiSEqCSetEastLimit(_cardNumber);
     }
@@ -1023,6 +997,7 @@ namespace SetupTv.Sections
     private void comboBoxSat_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (_enableEvents == false) return;
+      if (checkBox1.Checked == false) return;
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "selectedMotorSat", "0");
       setting.Value = comboBoxSat.SelectedIndex.ToString();
@@ -1034,6 +1009,7 @@ namespace SetupTv.Sections
     private void checkBoxEnabled_CheckedChanged(object sender, EventArgs e)
     {
       if (_enableEvents == false) return;
+      if (checkBox1.Checked == false) return;
       TvBusinessLayer layer = new TvBusinessLayer();
       if (checkBoxEnabled.Checked)
       {
@@ -1091,6 +1067,7 @@ namespace SetupTv.Sections
     private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (_enableEvents == false) return;
+      if (checkBox1.Checked == false) return;
       Transponder transponder = (Transponder)comboBox1.SelectedItem;
       TvBusinessLayer layer = new TvBusinessLayer();
       DVBSChannel tuneChannel = new DVBSChannel();
@@ -1108,6 +1085,7 @@ namespace SetupTv.Sections
     private void buttonStop_Click(object sender, EventArgs e)
     {
       if (_enableEvents == false) return;
+      if (checkBox1.Checked == false) return;
       RemoteControl.Instance.DiSEqCStopMotor(_cardNumber);
       comboBox1_SelectedIndexChanged(null, null);
     }
@@ -1115,6 +1093,7 @@ namespace SetupTv.Sections
     private void buttonGotoStart_Click(object sender, EventArgs e)
     {
       if (_enableEvents == false) return;
+      if (checkBox1.Checked == false) return;
       RemoteControl.Instance.DiSEqCGotoReferencePosition(_cardNumber);
       comboBox1_SelectedIndexChanged(null, null);
 
@@ -1123,6 +1102,7 @@ namespace SetupTv.Sections
     private void buttonUp_Click(object sender, EventArgs e)
     {
       if (_enableEvents == false) return;
+      if (checkBox1.Checked == false) return;
       //move motor up
       RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.Up, (byte)(1 + comboBoxStepSize.SelectedIndex));
     }
@@ -1130,6 +1110,7 @@ namespace SetupTv.Sections
     private void buttonDown_Click(object sender, EventArgs e)
     {
       if (_enableEvents == false) return;
+      if (checkBox1.Checked == false) return;
       //move motor up
       RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.Down, (byte)(1 + comboBoxStepSize.SelectedIndex));
     }
@@ -1137,6 +1118,7 @@ namespace SetupTv.Sections
     private void comboBoxStepSize_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (_enableEvents == false) return;
+      if (checkBox1.Checked == false) return;
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "motorStepSize", "10");
       setting.Value = String.Format("{0}", (1 + comboBoxStepSize.SelectedIndex));
@@ -1160,6 +1142,7 @@ namespace SetupTv.Sections
       buttonStore.Enabled = checkBox1.Checked;
       buttonSetWestLimit.Enabled = checkBox1.Checked;
       buttonSetEastLimit.Enabled = checkBox1.Checked;
+      buttonReset.Enabled = checkBox1.Checked;
 
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "motorEnabled", "no");
@@ -1179,6 +1162,7 @@ namespace SetupTv.Sections
         TimeSpan ts = DateTime.Now - _signalTimer;
         if (ts.TotalMilliseconds > 500)
         {
+          if (checkBox1.Checked == false) return;
           RemoteControl.Instance.UpdateSignalSate(_cardNumber);
           _signalTimer = DateTime.Now;
           int satPos, stepsAzimuth, stepsElevation;
@@ -1220,13 +1204,14 @@ namespace SetupTv.Sections
         reentrant = false;
       }
     }
-    #endregion
 
     private void buttonReset_Click(object sender, EventArgs e)
     {
+      if (checkBox1.Checked == false) return;
       RemoteControl.Instance.DiSEqCReset(_cardNumber);
     }
 
+    #endregion
     private void buttonUpdate_Click(object sender, EventArgs e)
     {
       listViewStatus.Items.Clear();
@@ -1241,5 +1226,39 @@ namespace SetupTv.Sections
       itemLine = String.Format("Update finished");
       item = listViewStatus.Items.Add(new ListViewItem(itemLine));
     }
+
+    #region LNB selection tab
+    private void checkBox2_CheckedChanged(object sender, EventArgs e)
+    {
+      textBoxLNBLo.Enabled = checkBox2.Checked;
+      textBoxLNBHi.Enabled = checkBox2.Checked;
+      textBoxLNBSwitch.Enabled = checkBox2.Checked;
+    }
+
+
+    private void mpLNB1_CheckedChanged(object sender, EventArgs e)
+    {
+      mpTransponder1.Enabled = mpLNB1.Checked;
+      mpDisEqc1.Enabled = mpLNB1.Checked;
+    }
+    private void mpLNB2_CheckedChanged(object sender, EventArgs e)
+    {
+      mpTransponder2.Enabled = mpLNB2.Checked;
+      mpDisEqc2.Enabled = mpLNB2.Checked;
+    }
+
+    private void mpLNB3_CheckedChanged(object sender, EventArgs e)
+    {
+      mpTransponder3.Enabled = mpLNB3.Checked;
+      mpDisEqc3.Enabled = mpLNB3.Checked;
+    }
+
+    private void mpLNB4_CheckedChanged(object sender, EventArgs e)
+    {
+      mpTransponder4.Enabled = mpLNB4.Checked;
+      mpDisEqc4.Enabled = mpLNB4.Checked;
+    }
+
+    #endregion
   }
 }

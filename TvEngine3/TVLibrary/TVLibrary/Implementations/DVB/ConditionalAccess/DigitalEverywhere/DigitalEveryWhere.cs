@@ -762,7 +762,7 @@ namespace TvLibrary.Implementations.DVB
     /// Sends the diseqc command.
     /// </summary>
     /// <param name="channel">The channel.</param>
-    public void SendDiseqcCommand(DVBSChannel channel)
+    public void SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
     {
       if (_previousChannel != null)
       {
@@ -824,32 +824,56 @@ namespace TvLibrary.Implementations.DVB
       // 4        B         B
       int lnbFrequency = 10600000;
       bool hiBand = true;
-      switch (channel.BandType)
+      if (parameters.UseDefaultLnbFrequencies)
       {
-        case BandType.Universal:
-          if (channel.Frequency >= 11700000)
+        switch (channel.BandType)
+        {
+          case BandType.Universal:
+            if (channel.Frequency >= 11700000)
+            {
+              lnbFrequency = 10600000;
+              hiBand = true;
+            }
+            else
+            {
+              lnbFrequency = 9750000;
+              hiBand = false;
+            }
+            break;
+
+          case BandType.Circular:
+            hiBand = false;
+            break;
+
+          case BandType.Linear:
+            hiBand = false;
+            break;
+
+          case BandType.CBand:
+            hiBand = false;
+            break;
+        }
+      }
+      else
+      {
+        if (parameters.LnbSwitchFrequency != 0)
+        {
+          if (channel.Frequency >= parameters.LnbSwitchFrequency * 1000)
           {
-            lnbFrequency = 10600000;
+            lnbFrequency = parameters.LnbHighFrequency * 1000;
             hiBand = true;
           }
           else
           {
-            lnbFrequency = 9750000;
+            lnbFrequency = parameters.LnbLowFrequency * 1000;
             hiBand = false;
           }
-          break;
-
-        case BandType.Circular:
+        }
+        else
+        {
           hiBand = false;
-          break;
-
-        case BandType.Linear:
-          hiBand = false;
-          break;
-
-        case BandType.CBand:
-          hiBand = false;
-          break;
+          lnbFrequency = parameters.LnbLowFrequency * 1000;
+        }
       }
       Log.Log.WriteFile("FireDTV SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, lnb frequency:{3}, polarisation:{4} hiband:{5}",
               channel.DisEqc, antennaNr, channel.Frequency, lnbFrequency, channel.Polarisation, hiBand);

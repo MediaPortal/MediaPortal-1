@@ -138,7 +138,7 @@ namespace TvLibrary.Implementations.DVB
     protected ITsChannelScan _interfaceChannelScan;
     protected int _subChannelId = 0;
     protected Dictionary<int, TvDvbChannel> _mapSubChannels;
-    ScanParameters _parameters;
+    protected ScanParameters _parameters;
     #endregion
 
     #endregion
