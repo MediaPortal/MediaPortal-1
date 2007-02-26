@@ -1175,7 +1175,7 @@ namespace TvService
           {
             _streamer.RemoveFile(rec.FileName);
             // if a recording got interrupted there may be files like <recording name>_1.mpg, etc
-            string searchFile = rec.FileName + @"*";
+            string searchFile = System.IO.Path.GetFileNameWithoutExtension(rec.FileName) + @"*";
             string[] allRecordingFiles = System.IO.Directory.GetFiles(System.IO.Path.GetDirectoryName(rec.FileName), searchFile);
             Log.Debug("Controller: found {0} file(s) to delete for recording {1}", Convert.ToString(allRecordingFiles.Length), searchFile);
             foreach (string recPartPath in allRecordingFiles)
