@@ -511,7 +511,7 @@ namespace SetupTv.Sections
       setting.Persist();
 
       setting = layer.GetSetting("lnbDefault", "true");
-      setting.Value = checkBox2.Checked ? "true" : "false";
+      setting.Value = checkBox2.Checked ? "false" : "true";
       setting.Persist();
 
       setting = layer.GetSetting("LnbLowFrequency", "0");
@@ -544,7 +544,7 @@ namespace SetupTv.Sections
       tabControl1_SelectedIndexChanged(null, null);
 
       TvBusinessLayer layer = new TvBusinessLayer();
-      checkBox2.Checked = (layer.GetSetting("lnbDefault", "true").Value == "true");
+      checkBox2.Checked = (layer.GetSetting("lnbDefault", "true").Value != "true");
       textBoxLNBLo.Text = layer.GetSetting("LnbLowFrequency", "0").Value;
       textBoxLNBHi.Text = layer.GetSetting("LnbHighFrequency", "0").Value;
       textBoxLNBSwitch.Text = layer.GetSetting("LnbSwitchFrequency", "0").Value;
