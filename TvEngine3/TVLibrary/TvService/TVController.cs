@@ -1737,41 +1737,55 @@ namespace TvService
     }
 
     /// <summary>
+    /// Fetches all channels with backbuffer
+    /// </summary>
+    /// <param name="currentRecChannels"></param>
+    /// <param name="currentTSChannels"></param>
+    public void GetAllRecordingChannels(out List<int> currentRecChannels, out List<int> currentTSChannels)
+    {
+      currentRecChannels = new List<int>();
+      currentTSChannels = new List<int>();
+      Dictionary<int, TvCard>.Enumerator enumerator = _cards.GetEnumerator();
+
+      while (enumerator.MoveNext())
+      {
+        KeyValuePair<int, TvCard> keyPair = enumerator.Current;
+        TvCard tvcard = keyPair.Value;
+        User[] users = tvcard.GetUsers();
+        string tmpChannel = string.Empty;
+
+        if (users == null || users.Length == 0)
+          continue;
+
+        for (int i = 0; i < users.Length; ++i)
+        {
+          User user = users[i];
+          tmpChannel = tvcard.CurrentChannelName(ref user);
+          if (tmpChannel == null || tmpChannel == string.Empty)
+            continue;
+          else
+          {
+            if (tvcard.IsRecording(ref user))
+              currentRecChannels.Add(tvcard.CurrentDbChannel(ref user));
+            else
+              if (tvcard.IsTimeShifting(ref user))
+                currentTSChannels.Add(tvcard.CurrentDbChannel(ref user));
+          }
+        }
+      }
+    }
+
+    /// <summary>
     /// Checks if a channel is tunable/tuned or not...
     /// </summary>
     /// <param name="channelName">Name of the channel.</param>
     /// <returns>
-    ///         <c>channel state  recording|timeshifting|tunable|nottunable</c>.
+    ///         <c>channel state tunable|nottunable</c>.
     /// </returns>
     public ChannelState GetChannelState(int idChannel)
     {
       ChannelState chanState;
       Channel dbchannel = Channel.Retrieve(idChannel);
-      //Dictionary<int, TvCard>.Enumerator enumerator = _cards.GetEnumerator();
-
-      //while (enumerator.MoveNext())
-      //{
-      //  KeyValuePair<int, TvCard> keyPair = enumerator.Current;
-      //  TvCard tvcard = keyPair.Value;
-      //  User[] users = tvcard.GetUsers();
-
-      //  if (users == null || users.Length == 0)
-      //    continue;
-
-      //  for (int i = 0; i < users.Length; ++i)
-      //  {
-      //    User user = users[i];
-      //    if (tvcard.CurrentChannelName(ref user) == null)
-      //      continue;
-      //    if (tvcard.CurrentChannelName(ref user) == dbchannel.Name)
-      //    {
-      //      chanState = channelState.timeshifting;
-      //      if (tvcard.IsRecording(ref user))      
-      //        chanState = channelState.recording;
-      //      return chanState;      
-      //    }
-      //  }
-      //}
 
       User anyUser = new User();
       TvResult viewResult;

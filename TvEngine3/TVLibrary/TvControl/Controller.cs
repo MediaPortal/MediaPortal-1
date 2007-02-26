@@ -367,6 +367,13 @@ namespace TvControl
     ChannelState GetChannelState(int idChannel);
 
     /// <summary>
+    /// Fetches all channels with backbuffer
+    /// </summary>
+    /// <param name="currentRecChannels"></param>
+    /// <param name="currentTSChannels"></param>
+    void GetAllRecordingChannels(out List<int> currentRecChannels, out List<int> currentTSChannels);
+
+    /// <summary>
     /// Returns a list of all ip adresses on the server.
     /// </summary>
     /// <value>The server ip adresses.</value>

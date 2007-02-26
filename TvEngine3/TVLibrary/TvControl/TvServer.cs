@@ -331,6 +331,25 @@ namespace TvControl
       }
       return ChannelState.nottunable;
     }
+
+    /// <summary>
+    /// Fetches all channels with backbuffer
+    /// </summary>
+    /// <param name="currentRecChannels"></param>
+    /// <param name="currentTSChannels"></param>
+    public void GetAllRecordingChannels(out List<int> currentRecChannels, out List<int> currentTSChannels)
+    {
+      currentRecChannels = null;
+      currentTSChannels = null;
+      try
+      {
+        RemoteControl.Instance.GetAllRecordingChannels(out currentRecChannels, out currentTSChannels);
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+    }
     #endregion
   }
 }

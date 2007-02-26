@@ -319,24 +319,23 @@ namespace TvPlugin
       Channel currentChan = null;
       GUIListItem item = null;
       string logo = "";
+      List<int> recChannels = null;
+      List<int> tsChannels = null;
       int selected = 0;
       int currentChanState = 0;
-      bool checkChannelState = false;
+      bool checkChannelState = true;
       string pathIconNoTune = GUIGraphicsContext.Skin + @"\Media\remote_blue.png";
       string pathIconTimeshift = GUIGraphicsContext.Skin + @"\Media\remote_yellow.png";
       string pathIconRecord = GUIGraphicsContext.Skin + @"\Media\remote_red.png";
       Log.Debug("miniguide: FillChannelList - Init vars");
-
-      if (!TVHome.TvServer.IsAnyCardIdle())
-      {
-        // no free card - check if a user is recording
-        // TODO: add user check since an "owner" might be timeshifting and therefore preventing usage of a specific card
-        if (TVHome.TvServer.IsAnyCardRecording())
-          checkChannelState = true;
-      }
-      //checkChannelState = ;
+      
       if (!checkChannelState)
-        Log.Debug("miniguide: maybe usable card found - not checking channel state");
+        Log.Debug("miniguide: not checking channel state");
+      else
+      {
+        TVHome.TvServer.GetAllRecordingChannels(out recChannels, out tsChannels);
+        Log.Debug("miniguide: FillChannelList - channels currently timeshifting: {0}, recording: {1}", Convert.ToString(tsChannels.Count), Convert.ToString(recChannels.Count));
+      }
 
       for (int i = 0; i < _tvChannelList.Count; i++)
       {
@@ -384,6 +383,12 @@ namespace TvPlugin
 
           if (checkChannelState)
           {
+            if (recChannels.Contains(currentChan.IdChannel))
+              currentChanState = (int)ChannelState.recording;
+            else
+              if (tsChannels.Contains(currentChan.IdChannel))
+                currentChanState = (int)ChannelState.timeshifting;
+
             Log.Debug("miniguide: state of {0} is {1}", currentChan.Name, Convert.ToString(currentChanState));
             switch (currentChanState)
             {
