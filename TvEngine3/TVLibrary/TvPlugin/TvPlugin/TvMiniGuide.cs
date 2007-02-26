@@ -36,10 +36,11 @@ using MediaPortal.Player;
 using MediaPortal.Util;
 
 using TvDatabase;
-
+using TvControl;
 
 using Gentle.Common;
 using Gentle.Framework;
+
 namespace TvPlugin
 {
   /// <summary>
@@ -49,19 +50,15 @@ namespace TvPlugin
   public class TvMiniGuide : GUIWindow, IRenderLayer
   {
     // Member variables                                  
-    [SkinControlAttribute(34)]
-    protected GUIButtonControl cmdExit = null;
-    [SkinControlAttribute(35)]
-    protected GUIListControl lstChannels = null;
-    [SkinControlAttribute(36)]
-    protected GUISpinControl spinGroup = null;
+    [SkinControlAttribute(34)]    protected GUIButtonControl cmdExit = null;
+    [SkinControlAttribute(35)]    protected GUIListControl lstChannels = null;
+    [SkinControlAttribute(36)]    protected GUISpinControl spinGroup = null;
 
-    bool m_bRunning = false;
-    bool _altLayout = false;
-    int m_dwParentWindowID = 0;
-    GUIWindow m_pParentWindow = null;
-    List<Channel> tvChannelList = null;
-    List<ChannelGroup> ChannelGroupList = null;
+    bool _running = false;    
+    int _parentWindowID = 0;
+    GUIWindow _parentWindow = null;
+    List<Channel> _tvChannelList = null;
+    List<ChannelGroup> _channelGroupList = null;
     Channel _selectedChannel;
     bool _zap = true;
 
@@ -72,6 +69,7 @@ namespace TvPlugin
     {
       GetID = (int)GUIWindow.Window.WINDOW_MINI_GUIDE;
     }
+
     public override void OnAdded()
     {
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_MINI_GUIDE, this);
@@ -79,6 +77,7 @@ namespace TvPlugin
       PreInit();
       ResetAllControls();
     }
+
     public override bool SupportsDelayedLoad
     {
       get
@@ -137,10 +136,6 @@ namespace TvPlugin
     /// <returns></returns>
     public override bool Init()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        _altLayout = xmlreader.GetValueAsBool("mytv", "altminiguide", true);
-      }
       bool bResult = Load(GUIGraphicsContext.Skin + @"\TVMiniGuide.xml");
 
       GetID = (int)GUIWindow.Window.WINDOW_MINI_GUIDE;
@@ -163,7 +158,7 @@ namespace TvPlugin
     /// </summary>
     void Close()
     {
-      Log.Debug("miniguide:close()");
+      Log.Debug("miniguide: close()");
       GUIWindowManager.IsSwitchingToNewWindow = true;
       lock (this)
       {
@@ -171,7 +166,7 @@ namespace TvPlugin
         OnMessage(msg);
 
         GUIWindowManager.UnRoute();
-        m_bRunning = false;
+        _running = false;
       }
       GUIWindowManager.IsSwitchingToNewWindow = false;
     }
@@ -198,7 +193,7 @@ namespace TvPlugin
                   string selectedChan = (string)lstChannels.SelectedListItem.TVTag;
                   if (TVHome.Navigator.CurrentChannel != selectedChan)
                   {
-                    TVHome.Navigator.ZapToChannel(tvChannelList[lstChannels.SelectedListItemIndex], false);
+                    TVHome.Navigator.ZapToChannel(_tvChannelList[lstChannels.SelectedListItemIndex], false);
                     TVHome.Navigator.ZapNow();
                   }
                 }
@@ -231,11 +226,11 @@ namespace TvPlugin
       switch (action.wID)
       {
         case Action.ActionType.ACTION_CONTEXT_MENU:
-          //m_bRunning = false;
+          //_running = false;
           Close();
           return;
         case Action.ActionType.ACTION_PREVIOUS_MENU:
-          //m_bRunning = false;
+          //_running = false;
           Close();
           return;
         case Action.ActionType.ACTION_MOVE_LEFT:
@@ -260,9 +255,9 @@ namespace TvPlugin
     /// <param name="new_windowId"></param>
     protected override void OnPageDestroy(int new_windowId)
     {
-      Log.Debug("miniguide OnPageDestroy");
+      Log.Debug("miniguide: OnPageDestroy");
       base.OnPageDestroy(new_windowId);
-      m_bRunning = false;
+      _running = false;
     }
 
     /// <summary>
@@ -270,7 +265,7 @@ namespace TvPlugin
     /// </summary>
     protected override void OnPageLoad()
     {
-      Log.Debug("miniguide onpageload");
+      Log.Debug("miniguide: onpageload");
       // following line should stay. Problems with OSD not
       // appearing are already fixed elsewhere
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
@@ -287,14 +282,14 @@ namespace TvPlugin
     public void FillGroupList()
     {
       ChannelGroup current = null;
-      ChannelGroupList = TVHome.Navigator.Groups;
+      _channelGroupList = TVHome.Navigator.Groups;
       // empty list of channels currently in the 
       // spin control
       spinGroup.Reset();
       // start to fill them up again
-      for (int i = 0; i < ChannelGroupList.Count; i++)
+      for (int i = 0; i < _channelGroupList.Count; i++)
       {
-        current = ChannelGroupList[i];
+        current = _channelGroupList[i];
         spinGroup.AddLabel(current.GroupName, i);
         // set selected
         if (current.GroupName.CompareTo(TVHome.Navigator.CurrentGroup.GroupName) == 0)
@@ -307,50 +302,55 @@ namespace TvPlugin
     /// </summary>
     public void FillChannelList()
     {
-      Log.Info("FillChannelList#1");
-      tvChannelList = new List<Channel>();
+      Log.Debug("miniguide: FillChannelList - Entry");
+      _tvChannelList = new List<Channel>();
       foreach (GroupMap map in TVHome.Navigator.CurrentGroup.ReferringGroupMap())
       {
         Channel ch = map.ReferencedChannel();
         if (ch.VisibleInGuide && ch.IsTv)
-          tvChannelList.Add(ch);
+          _tvChannelList.Add(ch);
       }
-      Log.Info("FillChannelList#2");
-      TvBusinessLayer layer = new TvBusinessLayer();
+      Log.Debug("miniguide: FillChannelList - Got groups");
+      TvBusinessLayer layer = new TvBusinessLayer();      
       Dictionary<int, NowAndNext> listNowNext = layer.GetNowAndNext();
-      Log.Info("FillChannelList#3");
+      Log.Debug("miniguide: FillChannelList - Got NowNext channels");
+
       lstChannels.Clear();
-      Channel current = null;
+      Channel currentChan = null;
       GUIListItem item = null;
       string logo = "";
       int selected = 0;
+      int currentChanState = 0;
 
-      for (int i = 0; i < tvChannelList.Count; i++)
+      string pathIconNoTune = System.IO.Path.Combine(GUIGraphicsContext.Skin, @"\Media\remote_blue.png");
+      string pathIconTimeshift = System.IO.Path.Combine(GUIGraphicsContext.Skin, @"\Media\remote_yellow.png");
+      string pathIconRecord = System.IO.Path.Combine(GUIGraphicsContext.Skin, @"\Media\remote_red.png");
+      Log.Debug("miniguide: FillChannelList - Init vars");
+      for (int i = 0; i < _tvChannelList.Count; i++)
       {
-        current = tvChannelList[i];
-        if (current.VisibleInGuide)
+        currentChan = _tvChannelList[i];
+        if (currentChan.VisibleInGuide)
         {
           NowAndNext prog;
-          if (listNowNext.ContainsKey(current.IdChannel) != false)
+          if (listNowNext.ContainsKey(currentChan.IdChannel) != false)
           {
-            prog = listNowNext[current.IdChannel];
+            prog = listNowNext[currentChan.IdChannel];
           }
           else
           {
-            prog = new NowAndNext(current.IdChannel, DateTime.Now.AddHours(-1), DateTime.Now.AddHours(1), DateTime.Now.AddHours(2), DateTime.Now.AddHours(3), "no information", "no information", -1, -1);
+            prog = new NowAndNext(currentChan.IdChannel, DateTime.Now.AddHours(-1), DateTime.Now.AddHours(1), DateTime.Now.AddHours(2), DateTime.Now.AddHours(3), GUILocalizeStrings.Get(736), GUILocalizeStrings.Get(736), -1, -1);
           }
 
           StringBuilder sb = new StringBuilder();
           item = new GUIListItem("");
           // store here as it is not needed right now - please beat me later..
-          item.TVTag = current.Name;
-          item.MusicTag = current;
-          if (!_altLayout)
-            item.Label2 = current.Name;
-          logo = Utils.GetCoverArt(Thumbs.TVChannel, current.Name);
+          item.TVTag = currentChan.Name;
+          item.MusicTag = currentChan;
+
+          logo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, currentChan.Name);
 
           // if we are watching this channel mark it
-          if (TVHome.Navigator.Channel.IdChannel == tvChannelList[i].IdChannel)
+          if (TVHome.Navigator.Channel.IdChannel == currentChan.IdChannel)
           {
             item.IsRemote = true;
             selected = lstChannels.Count;
@@ -367,30 +367,42 @@ namespace TvPlugin
             item.IconImage = string.Empty;
           }
 
+          currentChanState = (int)TVHome.TvServer.GetChannelState(currentChan.IdChannel);
+          Log.Debug("miniguide: state of {0} is {1}", currentChan.Name, Convert.ToString(currentChanState));
+          switch (currentChanState)
+          {
+            case 0:
+              item.IconImageBig = pathIconNoTune;
+              item.IconImage = pathIconNoTune;
+              item.IsPlayed = true;
+              break;
+            case 2:
+              item.IconImageBig = pathIconTimeshift;
+              item.IconImage = pathIconTimeshift;
+              break;
+            case 3:
+              item.IconImageBig = pathIconRecord;
+              item.IconImage = pathIconRecord;
+              break;
+            default:
+              break;
+          }
+
           item.Label2 = prog.TitleNow;
           //                    item.Label3 = prog.Title + " [" + prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "-" + prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "]";
-          if (_altLayout)
-          {
-            item.Label3 = GUILocalizeStrings.Get(789) + prog.TitleNow;
-            sb.Append(current.Name);
-            sb.Append(" - ");
-            sb.Append(CalculateProgress(prog.NowStartTime, prog.NowEndTime).ToString());
-            sb.Append("%");
-            item.Label2 = sb.ToString();
-          }
-          else
-            item.Label3 = prog.TitleNow + ": " + CalculateProgress(prog.NowStartTime, prog.NowEndTime).ToString() + "%";
 
-          
-          if (!_altLayout)
-            item.Label = prog.TitleNext;
-          else
-            item.Label = GUILocalizeStrings.Get(790) + prog.TitleNext;
+          item.Label3 = GUILocalizeStrings.Get(789) + prog.TitleNow;
+          sb.Append(currentChan.Name);
+          sb.Append(" - ");
+          sb.Append(CalculateProgress(prog.NowStartTime, prog.NowEndTime).ToString());
+          sb.Append("%");
+          item.Label2 = sb.ToString();
+          item.Label = GUILocalizeStrings.Get(790) + prog.TitleNext;
 
           lstChannels.Add(item);
         }
       }
-      Log.Info("FillChannelList#4");
+      Log.Debug("miniguide: FillChannelList - Exit");
       lstChannels.SelectedListItemIndex = selected;
     }
 
@@ -421,13 +433,13 @@ namespace TvPlugin
     /// <param name="dwParentId"></param>
     public void DoModal(int dwParentId)
     {
-      Log.Debug("miniguide domodal");
-      m_dwParentWindowID = dwParentId;
-      m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
-      if (null == m_pParentWindow)
+      Log.Debug("miniguide: domodal");
+      _parentWindowID = dwParentId;
+      _parentWindow = GUIWindowManager.GetWindow(_parentWindowID);
+      if (null == _parentWindow)
       {
-        Log.Debug("parentwindow=0");
-        m_dwParentWindowID = 0;
+        Log.Debug("miniguide: parentwindow=0");
+        _parentWindowID = 0;
         return;
       }
 
@@ -439,9 +451,9 @@ namespace TvPlugin
       OnMessage(msg);
 
       GUIWindowManager.IsSwitchingToNewWindow = false;
-      m_bRunning = true;
+      _running = true;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
-      while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      while (_running && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         GUIWindowManager.Process();
         if (!GUIGraphicsContext.Vmr9Active)
@@ -449,7 +461,7 @@ namespace TvPlugin
       }
       GUILayerManager.UnRegisterLayer(this);
 
-      Log.Debug("miniguide closed");
+      Log.Debug("miniguide: closed");
     }
 
     // Overlay IRenderLayer members
@@ -461,7 +473,7 @@ namespace TvPlugin
 
     public void RenderLayer(float timePassed)
     {
-      if (m_bRunning)
+      if (_running)
         Render(timePassed);
     }
     #endregion

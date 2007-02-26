@@ -1712,6 +1712,54 @@ namespace TvService
       get { return _isMaster; }
     }
 
+    /// <summary>
+    /// Checks if a channel is tunable/tuned or not...
+    /// </summary>
+    /// <param name="channelName">Name of the channel.</param>
+    /// <returns>
+    ///         <c>channel state  recording|timeshifting|tunable|nottunable</c>.
+    /// </returns>
+    public ChannelState GetChannelState(int idChannel)
+    {
+      ChannelState chanState;
+      Channel dbchannel = Channel.Retrieve(idChannel);
+      //Dictionary<int, TvCard>.Enumerator enumerator = _cards.GetEnumerator();
+
+      //while (enumerator.MoveNext())
+      //{
+      //  KeyValuePair<int, TvCard> keyPair = enumerator.Current;
+      //  TvCard tvcard = keyPair.Value;
+      //  User[] users = tvcard.GetUsers();
+
+      //  if (users == null || users.Length == 0)
+      //    continue;
+
+      //  for (int i = 0; i < users.Length; ++i)
+      //  {
+      //    User user = users[i];
+      //    if (tvcard.CurrentChannelName(ref user) == null)
+      //      continue;
+      //    if (tvcard.CurrentChannelName(ref user) == dbchannel.Name)
+      //    {
+      //      chanState = channelState.timeshifting;
+      //      if (tvcard.IsRecording(ref user))      
+      //        chanState = channelState.recording;
+      //      return chanState;      
+      //    }
+      //  }
+      //}
+
+      User anyUser = new User();
+      TvResult viewResult;
+      List<CardDetail> freeCards = GetFreeCardsForChannel(dbchannel, ref anyUser, true, out viewResult);
+
+      if (viewResult == TvResult.Succeeded)
+        chanState = ChannelState.tunable;
+      else
+        chanState = ChannelState.nottunable;
+
+      return chanState;
+    }
     #endregion
 
     #region streaming
@@ -1732,7 +1780,6 @@ namespace TvService
     #endregion
 
     #region private members
-
     /// <summary>
     /// Gets a list of all free cards which can receive the channel specified
     /// List is sorted by priority

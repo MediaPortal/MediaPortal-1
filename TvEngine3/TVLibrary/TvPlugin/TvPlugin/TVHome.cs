@@ -1581,9 +1581,9 @@ namespace TvPlugin
         }
         catch (Exception ex)
         {
-          Log.Error("Unable to create/modify gentle.config");
-          Log.Write(ex);
+          Log.Error("Unable to create/modify gentle.config {0},{1}", ex.Message ,ex.StackTrace);
         }
+
         MediaPortal.GUI.Library.Log.Info("ChannelNavigator::Reload()");
         Gentle.Framework.ProviderFactory.ResetGentle(true);
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);

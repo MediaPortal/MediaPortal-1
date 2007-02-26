@@ -986,6 +986,26 @@ namespace TvControl
       }
       return new TimeSpan(0, 0, 0, 15);
     }
+
+    /// <summary>
+    /// Finds out whether a channel is currently tuneable or not
+    /// </summary>
+    /// <param name="idChannel">the channel id</param>
+    /// <returns>an enum indicating tunable/timeshifting/recording</returns>
+    public ChannelState GetChannelState(int idChannel)
+    {
+      try
+      {
+        if (User.CardId < 0) return ChannelState.nottunable;
+        RemoteControl.HostName = _server;
+        return RemoteControl.Instance.GetChannelState(idChannel);
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+      return ChannelState.nottunable;
+    }
     #endregion
 
   }

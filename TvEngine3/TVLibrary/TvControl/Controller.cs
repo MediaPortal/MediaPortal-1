@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Text;
 using TvLibrary.Interfaces;
 using TvLibrary.Streaming;
+
 namespace TvControl
 {
   /// <summary>
@@ -104,8 +105,29 @@ namespace TvControl
     /// Operation failed since we are not the owner of the card
     /// </summary>
     NotTheOwner
+  }
 
-
+  /// <summary>
+  /// current availability of a specific channel
+  /// </summary>
+  public enum ChannelState : int
+  {
+    /// <summary>
+    /// the channel cannot be tuned right now - maybe all cards are busy
+    /// </summary>
+    nottunable = 0,
+    /// <summary>
+    /// the channel can be zapped
+    /// </summary>
+    tunable = 1,
+    /// <summary>
+    /// this channel is currently timeshifted by one card
+    /// </summary>
+    timeshifting = 2,
+    /// <summary>
+    /// this channel is currently being recorded
+    /// </summary>
+    recording = 3,
   }
 
   /// <summary>
@@ -250,8 +272,7 @@ namespace TvControl
     /// </summary>
     /// <param name="idRecording">id of recording</param>
     /// <returns>URL containing the RTSP adress on which the recording can be found</returns>
-    string GetRecordingUrl(int idRecording);
-    
+    string GetRecordingUrl(int idRecording);    
     
     /// <summary>
     /// Deletes the recording from database and disk
@@ -329,6 +350,13 @@ namespace TvControl
     /// 	<c>true</c> if card is in use; otherwise, <c>false</c>.
     /// </returns>
     bool IsCardInUse(int cardId, out User user);
+
+    /// <summary>
+    /// Finds out whether a channel is currently tuneable or not
+    /// </summary>
+    /// <param name="idChannel">The channel id</param>
+    /// <returns>an enum indicating tunable/timeshifting/recording</returns>
+    ChannelState GetChannelState(int idChannel);
 
     /// <summary>
     /// Returns a list of all ip adresses on the server.
