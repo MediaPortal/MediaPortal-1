@@ -35,6 +35,8 @@ namespace TvLibrary.Implementations.DVB
   {
     ITechnoTrend _technoTrendInterface = null;
     IntPtr ptrPmt;
+    IntPtr _ptrDataInstance;
+    DVBSChannel _previousChannel = null;
     /// <summary>
     /// Initializes a new instance of the <see cref="TechnoTrend"/> class.
     /// </summary>
@@ -45,6 +47,7 @@ namespace TvLibrary.Implementations.DVB
       _technoTrendInterface = analyzerFilter as ITechnoTrend;
       _technoTrendInterface.SetTunerFilter(tunerFilter);
       ptrPmt = Marshal.AllocCoTaskMem(1024);
+      _ptrDataInstance = Marshal.AllocCoTaskMem(1024);
     }
 
     /// <summary>
@@ -54,6 +57,7 @@ namespace TvLibrary.Implementations.DVB
     {
       _technoTrendInterface = null;
       Marshal.FreeCoTaskMem(ptrPmt);
+      Marshal.FreeCoTaskMem(_ptrDataInstance);
     }
 
     /// <summary>
@@ -149,8 +153,61 @@ namespace TvLibrary.Implementations.DVB
     public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
     {
       if (_technoTrendInterface == null) return;
-      short isHiBand = 0;
 
+
+      if (_previousChannel != null)
+      {
+        if (_previousChannel.Frequency == channel.Frequency &&
+            _previousChannel.DisEqc == channel.DisEqc &&
+            _previousChannel.Polarisation == channel.Polarisation)
+        {
+          Log.Log.WriteFile("Technotrend: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}",
+              channel.DisEqc, channel.Frequency, channel.Polarisation);
+          return;
+        }
+      }
+      _previousChannel = channel;
+      int antennaNr = 1;
+      switch (channel.DisEqc)
+      {
+        case DisEqcType.None: // none
+          return;
+        case DisEqcType.SimpleA: // Simple A
+          antennaNr = 1;
+          break;
+        case DisEqcType.SimpleB: // Simple B
+          antennaNr = 2;
+          break;
+        case DisEqcType.Level1AA: // Level 1 A/A
+          antennaNr = 1;
+          break;
+        case DisEqcType.Level1AB: // Level 1 A/B
+          antennaNr = 2;
+          break;
+        case DisEqcType.Level1BA: // Level 1 B/A
+          antennaNr = 3;
+          break;
+        case DisEqcType.Level1BB: // Level 1 B/B
+          antennaNr = 4;
+          break;
+      }
+      //"01,02,03,04,05,06,07,08,09,0a,0b,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,"	
+      Marshal.WriteByte(_ptrDataInstance, 0, 0xE0);//diseqc command 1. uFraming=0xe0
+      Marshal.WriteByte(_ptrDataInstance, 1, 0x10);//diseqc command 1. uAddress=0x10
+      Marshal.WriteByte(_ptrDataInstance, 2, 0x38);//diseqc command 1. uCommand=0x38
+
+
+      //bit 0	(1)	: 0=low band, 1 = hi band
+      //bit 1 (2) : 0=vertical, 1 = horizontal
+      //bit 3 (4) : 0=satellite position A, 1=satellite position B
+      //bit 4 (8) : 0=switch option A, 1=switch option  B
+      // LNB    option  position
+      // 1        A         A
+      // 2        A         B
+      // 3        B         A
+      // 4        B         B
+      int lnbFrequency = 10600000;
+      bool hiBand = true;
       if (parameters.UseDefaultLnbFrequencies)
       {
         switch (channel.BandType)
@@ -158,12 +215,26 @@ namespace TvLibrary.Implementations.DVB
           case BandType.Universal:
             if (channel.Frequency >= 11700000)
             {
-              isHiBand = 1;
+              lnbFrequency = 10600000;
+              hiBand = true;
             }
             else
             {
-              isHiBand = 0;
+              lnbFrequency = 9750000;
+              hiBand = false;
             }
+            break;
+
+          case BandType.Circular:
+            hiBand = false;
+            break;
+
+          case BandType.Linear:
+            hiBand = false;
+            break;
+
+          case BandType.CBand:
+            hiBand = false;
             break;
         }
       }
@@ -172,19 +243,32 @@ namespace TvLibrary.Implementations.DVB
         if (parameters.LnbSwitchFrequency != 0)
         {
           if (channel.Frequency >= parameters.LnbSwitchFrequency * 1000)
-            isHiBand = 1;
+          {
+            lnbFrequency = parameters.LnbHighFrequency * 1000;
+            hiBand = true;
+          }
           else
-            isHiBand = 0;
+          {
+            lnbFrequency = parameters.LnbLowFrequency * 1000;
+            hiBand = false;
+          }
         }
         else
         {
-          isHiBand = 0;
+          hiBand = false;
+          lnbFrequency = parameters.LnbLowFrequency * 1000;
         }
       }
-      short isVertical = 0;
-      if (channel.Polarisation == Polarisation.LinearV) isVertical = 1;
-      if (channel.Polarisation == Polarisation.CircularR) isVertical = 1;
-      _technoTrendInterface.SetDisEqc((short)channel.DisEqc, isHiBand, isVertical);
+      Log.Log.WriteFile("FireDTV SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, lnb frequency:{3}, polarisation:{4} hiband:{5}",
+              channel.DisEqc, antennaNr, channel.Frequency, lnbFrequency, channel.Polarisation, hiBand);
+
+
+      byte cmd = 0xf0;
+      cmd |= (byte)(hiBand ? 1 : 0);
+      cmd |= (byte)((channel.Polarisation == Polarisation.LinearH) ? 2 : 0);
+      cmd |= (byte)((antennaNr - 1) << 2);
+      Marshal.WriteByte(_ptrDataInstance, 3, cmd);
+      _technoTrendInterface.SetDisEqc(_ptrDataInstance, 4, 1, 0, (short)channel.Polarisation);
     }
 
     /// <summary>

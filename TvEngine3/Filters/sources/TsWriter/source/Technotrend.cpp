@@ -426,68 +426,21 @@ STDMETHODIMP CTechnotrend::SetAntennaPower( BOOL onOff)
 //* highband  : specifies if we are tuned to highband(1) or lowband(0)
 //* vertical  : specifies if we are using vertical (1) polarisation or horizontal(0)
 //**************************************************************************************************
-STDMETHODIMP CTechnotrend::SetDisEqc(int diseqcType, int hiband, int vertical)
+STDMETHODIMP CTechnotrend::SetDisEqc(BYTE* diseqc, BYTE len, BYTE Repeat,BYTE Toneburst,int ePolarity)
 {
-	LogDebug("Technotrend: SetDisEqc antenna :%d hiband:%d vertical:%d",diseqcType,hiband, vertical);
-  int antennaNr=1;
-  int option=0;
-  switch (diseqcType)
+	char buffer[129];
+  strcpy(buffer,"");
+  for (int i=0; i < (int)len;++i)
   {
-    case 0:
-    case 1://simple A
-      antennaNr = 1;
-      break;
-    case 2://simple B
-      antennaNr = 2;
-      break;
-    case 3://Level 1 A/A
-      antennaNr = 1;
-      break;
-    case 4://Level 1 A/B
-      antennaNr = 2;
-      break;
-    case 5://Level 1 B/A
-      antennaNr = 3;
-      break;
-    case 6://Level 1 B/B
-      antennaNr = 4;
-      break;
+    char tmp[30];
+    sprintf(tmp,"0x%02.2x ", (int)diseqc[i]);
+    strcat(buffer,tmp);
   }
-  ULONG diseqc = 0xE01038F0;
-	//bit 0	(1)	: 0=low band, 1 = hi band
-	//bit 1 (2) : 0=vertical, 1 = horizontal
-	//bit 3 (4) : 0=satellite position A, 1=satellite position B
-	//bit 4 (8) : 0=switch option A, 1=switch option  B
-	// LNB    option  position
-	// 1        A         A
-	// 2        A         B
-	// 3        B         A
-	// 4        B         B
-
-  if (hiband!=0)              // high band
-    diseqc |= 0x00000001;
-
-  if (vertical==0)            // horizontal
-    diseqc |= 0x00000002;
-
-  diseqc |=  (byte)((antennaNr - 1) << 2);
-
-  Polarisation polarity;
-  if (vertical)
-    polarity = BDA_POLARISATION_LINEAR_V;
-  else
-    polarity = BDA_POLARISATION_LINEAR_H;
-
-  BYTE data[4];
-  data[0]=(BYTE)((diseqc >> 24) & 0xff);
-  data[1]=(BYTE)((diseqc >> 16) & 0xff);
-  data[2]=(BYTE)((diseqc >> 8) & 0xff);
-  data[3]=(BYTE)((diseqc ) & 0xff);
-
+  LogDebug("TechnoTrend:SetDiseqc:%s repeat:%d tone:%d pol:%d", buffer,Repeat,Toneburst,ePolarity);
   BDAAPISETDISEQCMSG setDisEqc=(BDAAPISETDISEQCMSG)GetProcAddress(m_dll,"_bdaapiSetDiSEqCMsg@24");
   if (setDisEqc!=NULL)
   {
-    TYPE_RET_VAL result=setDisEqc(m_hBdaApi,&data[0],4,0,0,polarity);
+    TYPE_RET_VAL result=setDisEqc(m_hBdaApi,diseqc,len,Repeat,Toneburst,(Polarisation)ePolarity);
     LogDebug("TechnoTrend:SetDiseqc:%x %d", diseqc,result);
   }
   else

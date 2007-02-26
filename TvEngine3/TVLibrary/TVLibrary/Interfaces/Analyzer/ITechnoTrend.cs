@@ -40,7 +40,7 @@ namespace TvLibrary.Interfaces.Analyzer
     [PreserveSig]
     int SetAntennaPower(bool onOff);
     [PreserveSig]
-    int SetDisEqc(short diseqcType, short hiband, short vertical);
+    int SetDisEqc(IntPtr diseqc, byte len, byte Repeat, byte Toneburst, short ePolarity);
     [PreserveSig]
     int DescrambleService(IntPtr pmt, short pmtLen, ref bool succeeded);
     [PreserveSig]

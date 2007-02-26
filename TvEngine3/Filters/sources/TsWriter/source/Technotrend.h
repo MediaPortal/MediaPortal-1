@@ -11,7 +11,7 @@ DECLARE_INTERFACE_(ITechnoTrend, IUnknown)
 	STDMETHOD(IsTechnoTrend)(THIS_ BOOL* yesNo)PURE;
 	STDMETHOD(IsCamReady)(THIS_ BOOL* yesNo)PURE;
 	STDMETHOD(SetAntennaPower)(THIS_ BOOL onOff)PURE;
-	STDMETHOD(SetDisEqc)(THIS_ int diseqcType, int hiband, int vertical)PURE;
+	STDMETHOD(SetDisEqc)(THIS_ BYTE* diseqc, BYTE len, BYTE Repeat,BYTE Toneburst,int ePolarity)PURE;
 	STDMETHOD(DescrambleService)(THIS_ BYTE* PMT, int PMTLength,BOOL* succeeded)PURE;
 	STDMETHOD(DescrambleMultiple)(THIS_ WORD* pNrs, int NrOfOfPrograms,BOOL* succeeded)PURE;
 };
@@ -27,7 +27,7 @@ public:
 	STDMETHODIMP IsTechnoTrend( BOOL* yesNo);
 	STDMETHODIMP IsCamReady( BOOL* yesNo);
 	STDMETHODIMP SetAntennaPower( BOOL onOff);
-	STDMETHODIMP SetDisEqc( int diseqcType, int hiband, int vertical);
+	STDMETHODIMP SetDisEqc( BYTE* diseqc, BYTE len, BYTE Repeat,BYTE Toneburst,int ePolarity);
 	STDMETHODIMP DescrambleService( BYTE* PMT, int PMTLength,BOOL* succeeded);
 	STDMETHODIMP DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOOL* succeeded);
 
