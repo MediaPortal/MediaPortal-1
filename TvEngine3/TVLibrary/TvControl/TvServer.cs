@@ -149,6 +149,24 @@ namespace TvControl
     }
 
     /// <summary>
+    /// Determines if any card is not locked by a user
+    /// </summary>
+    /// <returns>true if any card is idle, otherwise false</returns>
+    public bool IsAnyCardIdle()
+    {
+      try
+      {
+        if (RemoteControl.Instance.IsAnyCardIdle()) return true;
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+
+      return false;
+    }
+
+    /// <summary>
     /// Start timeshifting on a specific channel
     /// </summary>
     /// <param name="user">The user.</param>

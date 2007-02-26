@@ -321,14 +321,29 @@ namespace TvPlugin
       string logo = "";
       int selected = 0;
       int currentChanState = 0;
-
-      string pathIconNoTune = System.IO.Path.Combine(GUIGraphicsContext.Skin, @"\Media\remote_blue.png");
-      string pathIconTimeshift = System.IO.Path.Combine(GUIGraphicsContext.Skin, @"\Media\remote_yellow.png");
-      string pathIconRecord = System.IO.Path.Combine(GUIGraphicsContext.Skin, @"\Media\remote_red.png");
+      bool checkChannelState = false;
+      string pathIconNoTune = GUIGraphicsContext.Skin + @"\Media\remote_blue.png";
+      string pathIconTimeshift = GUIGraphicsContext.Skin + @"\Media\remote_yellow.png";
+      string pathIconRecord = GUIGraphicsContext.Skin + @"\Media\remote_red.png";
       Log.Debug("miniguide: FillChannelList - Init vars");
+
+      if (!TVHome.TvServer.IsAnyCardIdle())
+      {
+        // no free card - check if a user is recording
+        // TODO: add user check since an "owner" might be timeshifting and therefore preventing usage of a specific card
+        if (TVHome.TvServer.IsAnyCardRecording())
+          checkChannelState = true;
+      }
+      //checkChannelState = ;
+      if (!checkChannelState)
+        Log.Debug("miniguide: maybe usable card found - not checking channel state");
+
       for (int i = 0; i < _tvChannelList.Count; i++)
       {
         currentChan = _tvChannelList[i];
+        if (checkChannelState)
+          currentChanState = (int)TVHome.TvServer.GetChannelState(currentChan.IdChannel);
+
         if (currentChan.VisibleInGuide)
         {
           NowAndNext prog;
@@ -367,25 +382,28 @@ namespace TvPlugin
             item.IconImage = string.Empty;
           }
 
-          currentChanState = (int)TVHome.TvServer.GetChannelState(currentChan.IdChannel);
-          Log.Debug("miniguide: state of {0} is {1}", currentChan.Name, Convert.ToString(currentChanState));
-          switch (currentChanState)
+          if (checkChannelState)
           {
-            case 0:
-              item.IconImageBig = pathIconNoTune;
-              item.IconImage = pathIconNoTune;
-              item.IsPlayed = true;
-              break;
-            case 2:
-              item.IconImageBig = pathIconTimeshift;
-              item.IconImage = pathIconTimeshift;
-              break;
-            case 3:
-              item.IconImageBig = pathIconRecord;
-              item.IconImage = pathIconRecord;
-              break;
-            default:
-              break;
+            Log.Debug("miniguide: state of {0} is {1}", currentChan.Name, Convert.ToString(currentChanState));
+            switch (currentChanState)
+            {
+              case 0:
+                item.IconImageBig = pathIconNoTune;
+                item.IconImage = pathIconNoTune;
+                item.IsPlayed = true;
+                break;
+              case 2:
+                item.IconImageBig = pathIconTimeshift;
+                item.IconImage = pathIconTimeshift;
+                break;
+              case 3:
+                item.IconImageBig = pathIconRecord;
+                item.IconImage = pathIconRecord;
+                break;
+              default:
+                item.IsPlayed = false;
+                break;
+            }
           }
 
           item.Label2 = prog.TitleNow;

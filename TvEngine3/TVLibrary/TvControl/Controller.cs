@@ -306,6 +306,14 @@ namespace TvControl
     /// </returns>
     bool IsAnyCardRecording();
 
+        /// <summary>
+    /// Determines if any card is not locked by a user
+    /// </summary>
+    /// <returns>
+    /// 	<c>true</c> if a card is idle; otherwise, <c>false</c>.
+    /// </returns>
+    bool IsAnyCardIdle();
+
     /// <summary>
     /// Stops recording the Schedule specified
     /// </summary>

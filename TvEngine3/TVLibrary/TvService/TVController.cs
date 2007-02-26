@@ -153,6 +153,22 @@ namespace TvService
     }
 
     /// <summary>
+    /// Checks if there's a card which is not in use
+    /// </summary>
+    /// <returns>true if there is a card no user has locked</returns>
+    public bool IsAnyCardIdle()
+    {
+      Dictionary<int, TvCard>.Enumerator en = _cards.GetEnumerator();
+      while (en.MoveNext())
+      {
+        TvCard card = en.Current.Value;
+        if (card.IsIdle)
+          return true;
+      }
+      return false;
+    }
+
+    /// <summary>
     /// Determines whether the card is in use
     /// </summary>
     /// <param name="cardId">The card id.</param>
@@ -1699,6 +1715,7 @@ namespace TvService
     {
       Gentle.Common.CacheManager.Clear();
     }
+
     public User[] GetUsersForCard(int cardId)
     {
       return _cards[cardId].GetUsers();
