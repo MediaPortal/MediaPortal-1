@@ -1294,7 +1294,7 @@ namespace TvService
           if (System.IO.File.Exists(recording.FileName))
           {
             _streamer.Start();
-            string streamName = recording.FileName.GetHashCode().ToString();
+            string streamName = String.Format("{0:X}", recording.FileName.GetHashCode());
             RtspStream stream = new RtspStream(streamName, recording.FileName, recording.Title);
             _streamer.AddStream(stream);
             string url = String.Format("rtsp://{0}/{1}", _ourServer.HostName, streamName);
@@ -1321,7 +1321,7 @@ namespace TvService
       if (System.IO.File.Exists(fileName))
       {
         _streamer.Start();
-        string streamName = fileName.GetHashCode().ToString();
+        string streamName = String.Format("{0:X}", fileName.GetHashCode());
         RtspStream stream = new RtspStream(streamName, fileName, streamName);
         _streamer.AddStream(stream);
         string url = String.Format("rtsp://{0}/{1}", _ourServer.HostName, streamName);
@@ -1910,7 +1910,7 @@ namespace TvService
               //but we must check if cam can decode the extra channel as well
 
               //first check if cam is already decrypting this channel
-              int camDecrypting=tvcard.NumberOfChannelsDecrypting;
+              int camDecrypting = tvcard.NumberOfChannelsDecrypting;
               bool checkCam = true;
               User[] currentUsers = tvcard.GetUsers();
               if (currentUsers != null)
@@ -1942,7 +1942,7 @@ namespace TvService
                   }
                 }
               }
-              
+
               //check if cam is capable of descrambling an extra channel
               if (camDecrypting < keyPair.Value.DataBaseCard.DecryptLimit || dbChannel.FreeToAir || (checkCam == false))
               {
