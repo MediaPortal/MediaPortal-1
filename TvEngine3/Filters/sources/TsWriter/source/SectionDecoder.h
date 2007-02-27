@@ -39,12 +39,14 @@ public:
   void SetTableId(int tableId);
 	void Reset();
   void EnableLogging(bool onOff);
+  void EnableCrcCheck(bool onOff);
   int  GetTableId();
   virtual void OnNewSection(CSection& section);
 protected:
 private:
   void ProcessSection();
   bool        m_bLog;
+  bool        m_bCrcCheck;
   int			    m_pid;
   int			    m_tableId;
   CSection		m_section;

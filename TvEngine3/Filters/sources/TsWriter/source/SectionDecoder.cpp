@@ -28,19 +28,16 @@
 extern DWORD crc32 (char *data, int len);
 
 void LogDebug(const char *fmt, ...) ;
-FILE* fout=NULL;
+
 CSectionDecoder::CSectionDecoder(void)
 {
-  if (fout==NULL)
-  {
-    fout=fopen("c:\\pmt.dat","wb+");
-  }
   m_pid=-1;
   m_tableId=-1;
   m_iContinuityCounter=0;
   m_section.Reset();
 	m_pCallback=NULL;
   m_bLog=false;
+  m_bCrcCheck=true;
 }
 
 CSectionDecoder::~CSectionDecoder(void)
@@ -78,6 +75,11 @@ int CSectionDecoder::GetTableId()
 void CSectionDecoder::Reset()
 {
   m_section.Reset();
+}
+
+void CSectionDecoder::EnableCrcCheck(bool onOff)
+{
+  m_bCrcCheck=onOff;
 }
 void CSectionDecoder::OnTsPacket(byte* tsPacket)
 {
@@ -250,7 +252,7 @@ void CSectionDecoder::ProcessSection()
     if (section_length>0)
     {
       DWORD crc=crc32((char*)&m_section.Data[m_headerSection.PayLoadStart],section_length+3);
-      if (crc==0)
+      if (crc==0 || (m_bCrcCheck==false))
       {
 		    if (m_bLog)
         {

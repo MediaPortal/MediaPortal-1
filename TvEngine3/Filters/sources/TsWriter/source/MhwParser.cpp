@@ -36,6 +36,7 @@ CMhwParser::CMhwParser(void)
   pDecoder->SetPid(PID_MHW1);
   pDecoder->SetTableId(0x90);
 	pDecoder->SetCallBack(this);
+  pDecoder->EnableCrcCheck(false);
  // pDecoder->EnableLogging(true);
   m_vecDecoders.push_back(pDecoder);
 
@@ -45,6 +46,7 @@ CMhwParser::CMhwParser(void)
     pDecoder->SetPid(PID_MHW1);
     pDecoder->SetTableId(i);
 		pDecoder->SetCallBack(this);
+    pDecoder->EnableCrcCheck(false);
     m_vecDecoders.push_back(pDecoder);
   }
   for (int i=0x90; i <=0x92;++i)
@@ -53,6 +55,7 @@ CMhwParser::CMhwParser(void)
     pDecoder->SetPid(PID_MHW2);
     pDecoder->SetTableId(i);
 		pDecoder->SetCallBack(this);
+    pDecoder->EnableCrcCheck(false);
     m_vecDecoders.push_back(pDecoder);
   }
 }

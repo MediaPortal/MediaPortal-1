@@ -33,6 +33,7 @@ CEpgParser::CEpgParser(void)
     CSectionDecoder* pDecoder= new CSectionDecoder();
     pDecoder->SetPid(PID_EPG);
     pDecoder->SetTableId(i);
+    pDecoder->EnableCrcCheck(false);
     m_vecDecoders.push_back(pDecoder);
 		pDecoder->SetCallBack(this);
   }
