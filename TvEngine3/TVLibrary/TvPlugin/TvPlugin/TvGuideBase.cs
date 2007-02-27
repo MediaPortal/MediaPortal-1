@@ -44,6 +44,7 @@ using MediaPortal.Configuration;
 using TvDatabase;
 using Gentle.Common;
 using Gentle.Framework;
+using TvControl;
 
 #endregion
 
@@ -2481,6 +2482,13 @@ namespace TvPlugin
                 {
                   recMatchFound = true;
 
+                  string fileName = "";
+                  TvServer server = new TvServer();
+                  VirtualCard card;
+                  if (server.IsRecordingSchedule(rec.IdSchedule, out card))
+                  {
+                    fileName = card.RecordingFileName;
+                  }
                   Log.Info("TVGuide: clicked on a currently running recording");
                   GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
                   if (dlg == null)
@@ -2500,29 +2508,63 @@ namespace TvPlugin
                     switch (dlg.SelectedId)
                     {
                       case 979: // Play recording from beginning 
-                        g_Player.Stop();
-                        TVHome.ViewChannel(_currentProgram.ReferencedChannel());
-                        if (g_Player.Playing)
                         {
-                          DateTime startTime = TVHome.Card.RecordingStarted;
-                          TimeSpan seekBack = DateTime.Now - startTime;
-                          double duration = g_Player.Duration;
-                          duration -= seekBack.TotalSeconds;
-                          if (duration < 0) duration = 0;
-                          g_Player.SeekAbsolute(duration);
-                        }
-                        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                          g_Player.Stop();
+                          if (System.IO.File.Exists(fileName))
+                          {
+                            g_Player.Play(fileName, g_Player.MediaType.Recording);
+                            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                            return;
+                          }
+                          else
+                          {
+                            string url = server.GetRtspUrlForFile(fileName);
+                            Log.Info("recording url:{0}", url);
+                            if (url.Length > 0)
+                            {
+                              g_Player.Play(url, g_Player.MediaType.Recording);
 
-                        break;
+                              if (g_Player.Playing)
+                              {
+                                g_Player.SeekAbsolute(0);
+                                g_Player.SeekAbsolute(0);
+                                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                                return;
+                              }
+                            }
+                          }
+                        }
+
+                        return;
 
                       case 980: // Play recording from live point
-                        g_Player.Stop();
-                        TVHome.ViewChannel(_currentProgram.ReferencedChannel());
-                        if (g_Player.Playing)
                         {
-                          Log.Info("TVGuide: Show recording {0} at live point", _currentTitle);
+                          g_Player.Stop();
+                          if (System.IO.File.Exists(fileName))
+                          {
+                            g_Player.Play(fileName, g_Player.MediaType.Recording);
+                            g_Player.SeekAbsolute(g_Player.Duration);
+                            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                            return;
+                          }
+                          else
+                          {
+                            string url = server.GetRtspUrlForFile(fileName);
+                            Log.Info("recording url:{0}", url);
+                            if (url.Length > 0)
+                            {
+                              g_Player.Play(url, g_Player.MediaType.Recording);
+
+                              if (g_Player.Playing)
+                              {
+                                g_Player.SeekAbsolute(g_Player.Duration);
+                                g_Player.SeekAbsolute(g_Player.Duration);
+                                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                                return;
+                              }
+                            }
+                          }
                         }
-                        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
                         return;
                     }
                   }
