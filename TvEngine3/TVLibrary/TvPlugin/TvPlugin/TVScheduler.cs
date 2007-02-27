@@ -500,13 +500,15 @@ namespace TvPlugin
 
     void OnClick(int iItem)
     {
+      OnShowContextMenu(GetSelectedItemNo());
+      /*
       GUIListItem item = GetItem(iItem);
       if (item == null) return;
       TVProgramInfo.CurrentRecording = item.MusicTag as Schedule;
       if (TVProgramInfo.CurrentProgram != null)
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
       return;
-
+      */
     }
     void OnShowContextMenu(int iItem)
     {
@@ -559,8 +561,8 @@ namespace TvPlugin
 
         case 1048:////settings
           TVProgramInfo.CurrentRecording = item.MusicTag as Schedule;
-          if (TVProgramInfo.CurrentProgram != null)
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
+          //if (TVProgramInfo.CurrentProgram != null)
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
           return;
         case 882:////Quality settings
           //GUITVPriorities.OnSetQuality(rec);
