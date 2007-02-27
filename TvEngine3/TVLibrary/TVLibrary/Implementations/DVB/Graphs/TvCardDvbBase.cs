@@ -422,7 +422,6 @@ namespace TvLibrary.Implementations.DVB
           _epgGrabberCallback.OnEpgCancelled();
         }
       }
-      _graphRunning = false;
       _epgGrabbing = false;
       _isScanning = false;
       FreeAllSubChannels();
@@ -442,6 +441,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Error("dvb:StopGraph returns:0x{0:X}", hr);
           throw new TvException("Unable to stop graph");
         }
+        _graphRunning = false;
       }
       _graphState = GraphState.Created;
 

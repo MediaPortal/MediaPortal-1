@@ -441,7 +441,7 @@ STDMETHODIMP CTechnotrend::SetDisEqc(BYTE* diseqc, BYTE len, BYTE Repeat,BYTE To
   if (setDisEqc!=NULL)
   {
     TYPE_RET_VAL result=setDisEqc(m_hBdaApi,diseqc,len,Repeat,Toneburst,(Polarisation)ePolarity);
-    LogDebug("TechnoTrend:SetDiseqc:%x %d", diseqc,result);
+    LogDebug("TechnoTrend:SetDiseqc:%d", result);
   }
   else
   {
