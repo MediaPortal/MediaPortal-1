@@ -968,17 +968,17 @@ namespace MediaPortal.Video.Database
         int endOfTitleList = strBody.IndexOf("Suggestions For Improving Your Results");
         if (iStartOfMovieList < 0)
         {
-          int iMovieTitle = strBody.IndexOf("\"title\">");
+          int iMovieTitle = strBody.IndexOf("<title>");
           int iMovieDirector = strBody.IndexOf("Directed");
           int iMovieGenre = strBody.IndexOf("Genre:");
           int iMoviePlot = strBody.IndexOf("Plot");
 
           if (iMovieTitle >= 0 && iMovieDirector >= 0 && iMovieGenre >= 0 && iMoviePlot >= 0)
           {
-            int iEnd = strBody.IndexOf("<", iMovieTitle + 8);
+            int iEnd = strBody.IndexOf("<", iMovieTitle + 7);
             if (iEnd > 0)
             {
-              iMovieTitle += "\"title\">".Length;
+              iMovieTitle += "<title>".Length;
               strTitle = strBody.Substring(iMovieTitle, iEnd - iMovieTitle);
               strTitle = MediaPortal.Util.Utils.stripHTMLtags(strTitle);
               HTMLUtil htmlUtil = new HTMLUtil();
