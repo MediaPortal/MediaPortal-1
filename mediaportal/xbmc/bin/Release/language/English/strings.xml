@@ -3474,6 +3474,18 @@
         <value>Unknown caller</value>
     </string>
     <string>
+        <id>1054</id>
+        <value>(recording)</value>
+    </string>
+    <string>
+        <id>1055</id>
+        <value>(timeshifting)</value>
+    </string>
+    <string>
+        <id>1056</id>
+        <value>(unavailable)</value>
+    </string>            
+    <string>
         <id>1100</id>
         <value>Import CD</value>
     </string>

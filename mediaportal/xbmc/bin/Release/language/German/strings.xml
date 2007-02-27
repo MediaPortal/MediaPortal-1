@@ -3470,6 +3470,22 @@
         <value>Alle Titel</value>
     </string>
     <string>
+        <id>1053</id>
+        <value>Unbekannter Anrufer</value>
+    </string>
+    <string>
+        <id>1054</id>
+        <value>(aufnehmen)</value>
+    </string>
+    <string>
+        <id>1055</id>
+        <value>(puffern)</value>
+    </string>
+    <string>
+        <id>1056</id>
+        <value>(nicht verfügbar)</value>
+    </string>        
+    <string>
         <id>1100</id>
         <value>CD importieren</value>
     </string>
