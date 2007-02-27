@@ -301,8 +301,7 @@ namespace TvPlugin
     /// Fill the list with channels
     /// </summary>
     public void FillChannelList()
-    {
-      Log.Debug("miniguide: FillChannelList - Entry");
+    {      
       _tvChannelList = new List<Channel>();
       foreach (GroupMap map in TVHome.Navigator.CurrentGroup.ReferringGroupMap())
       {
@@ -316,64 +315,60 @@ namespace TvPlugin
       Log.Debug("miniguide: FillChannelList - Got NowNext channels");
 
       lstChannels.Clear();
-      Channel currentChan = null;
+      Channel CurrentChan = null;
       GUIListItem item = null;
-      string logo = "";
-      List<int> recChannels = null;
-      List<int> tsChannels = null;
-      int selected = 0;
-      int currentChanState = 0;
-      bool checkChannelState = true;
-      string pathIconNoTune = GUIGraphicsContext.Skin + @"\Media\remote_blue.png";
-      string pathIconTimeshift = GUIGraphicsContext.Skin + @"\Media\remote_yellow.png";
-      string pathIconRecord = GUIGraphicsContext.Skin + @"\Media\remote_red.png";
-      Log.Debug("miniguide: FillChannelList - Init vars");
+      string ChannelLogo = "";
+      List<int> RecChannels = null;
+      List<int> TSChannels = null;
+      int SelectedID = 0;
+      int CurrentChanState = 0;
+      bool CheckChannelState = true;
+      string PathIconNoTune = GUIGraphicsContext.Skin + @"\Media\remote_blue.png";
+      string PathIconTimeshift = GUIGraphicsContext.Skin + @"\Media\remote_yellow.png";
+      string PathIconRecord = GUIGraphicsContext.Skin + @"\Media\remote_red.png";      
       
-      if (!checkChannelState)
+      if (!CheckChannelState)
         Log.Debug("miniguide: not checking channel state");
       else
       {
-        TVHome.TvServer.GetAllRecordingChannels(out recChannels, out tsChannels);
-        Log.Debug("miniguide: FillChannelList - channels currently timeshifting: {0}, recording: {1}", Convert.ToString(tsChannels.Count), Convert.ToString(recChannels.Count));
+        TVHome.TvServer.GetAllRecordingChannels(out RecChannels, out TSChannels);
+        Log.Debug("miniguide: FillChannelList - channels currently timeshifting: {0}, recording: {1}", Convert.ToString(TSChannels.Count), Convert.ToString(RecChannels.Count));
       }
 
       for (int i = 0; i < _tvChannelList.Count; i++)
       {
-        currentChan = _tvChannelList[i];
-        if (checkChannelState)
-          currentChanState = (int)TVHome.TvServer.GetChannelState(currentChan.IdChannel);
+        CurrentChan = _tvChannelList[i];
+        if (CheckChannelState)
+          CurrentChanState = (int)TVHome.TvServer.GetChannelState(CurrentChan.IdChannel);
 
-        if (currentChan.VisibleInGuide)
+        if (CurrentChan.VisibleInGuide)
         {
           NowAndNext prog;
-          if (listNowNext.ContainsKey(currentChan.IdChannel) != false)
-          {
-            prog = listNowNext[currentChan.IdChannel];
-          }
+          if (listNowNext.ContainsKey(CurrentChan.IdChannel) != false)
+            prog = listNowNext[CurrentChan.IdChannel];
           else
-          {
-            prog = new NowAndNext(currentChan.IdChannel, DateTime.Now.AddHours(-1), DateTime.Now.AddHours(1), DateTime.Now.AddHours(2), DateTime.Now.AddHours(3), GUILocalizeStrings.Get(736), GUILocalizeStrings.Get(736), -1, -1);
-          }
+            prog = new NowAndNext(CurrentChan.IdChannel, DateTime.Now.AddHours(-1), DateTime.Now.AddHours(1), DateTime.Now.AddHours(2), DateTime.Now.AddHours(3), GUILocalizeStrings.Get(736), GUILocalizeStrings.Get(736), -1, -1);
 
           StringBuilder sb = new StringBuilder();
           item = new GUIListItem("");
           // store here as it is not needed right now - please beat me later..
-          item.TVTag = currentChan.Name;
-          item.MusicTag = currentChan;
+          item.TVTag = CurrentChan.Name;
+          item.MusicTag = CurrentChan;
 
-          logo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, currentChan.Name);
+          sb.Append(CurrentChan.Name);
+          ChannelLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, CurrentChan.Name);
 
           // if we are watching this channel mark it
-          if (TVHome.Navigator.Channel.IdChannel == currentChan.IdChannel)
+          if (TVHome.Navigator.Channel.IdChannel == CurrentChan.IdChannel)
           {
             item.IsRemote = true;
-            selected = lstChannels.Count;
+            SelectedID = lstChannels.Count;
           }
 
-          if (System.IO.File.Exists(logo))
+          if (System.IO.File.Exists(ChannelLogo))
           {
-            item.IconImageBig = logo;
-            item.IconImage = logo;
+            item.IconImageBig = ChannelLogo;
+            item.IconImage = ChannelLogo;
           }
           else
           {
@@ -381,29 +376,35 @@ namespace TvPlugin
             item.IconImage = string.Empty;
           }
 
-          if (checkChannelState)
+          if (CheckChannelState)
           {
-            if (recChannels.Contains(currentChan.IdChannel))
-              currentChanState = (int)ChannelState.recording;
+            if (RecChannels.Contains(CurrentChan.IdChannel))
+              CurrentChanState = (int)ChannelState.recording;
             else
-              if (tsChannels.Contains(currentChan.IdChannel))
-                currentChanState = (int)ChannelState.timeshifting;
+              if (TSChannels.Contains(CurrentChan.IdChannel))
+                CurrentChanState = (int)ChannelState.timeshifting;
 
-            Log.Debug("miniguide: state of {0} is {1}", currentChan.Name, Convert.ToString(currentChanState));
-            switch (currentChanState)
+            Log.Debug("miniguide: state of {0} is {1}", CurrentChan.Name, Convert.ToString(CurrentChanState));
+            switch (CurrentChanState)
             {
               case 0:
-                item.IconImageBig = pathIconNoTune;
-                item.IconImage = pathIconNoTune;
+                //item.IconImageBig = PathIconNoTune;
+                //item.IconImage = PathIconNoTune;
+                sb.Append(" ");
+                sb.Append(GUILocalizeStrings.Get(1056));
                 item.IsPlayed = true;
                 break;
               case 2:
-                item.IconImageBig = pathIconTimeshift;
-                item.IconImage = pathIconTimeshift;
+                //item.IconImageBig = PathIconTimeshift;
+                //item.IconImage = PathIconTimeshift;
+                sb.Append(" ");
+                sb.Append(GUILocalizeStrings.Get(1055));
                 break;
               case 3:
-                item.IconImageBig = pathIconRecord;
-                item.IconImage = pathIconRecord;
+                //item.IconImageBig = PathIconRecord;
+                //item.IconImage = PathIconRecord;
+                sb.Append(" ");
+                sb.Append(GUILocalizeStrings.Get(1054));
                 break;
               default:
                 item.IsPlayed = false;
@@ -415,7 +416,7 @@ namespace TvPlugin
           //                    item.Label3 = prog.Title + " [" + prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "-" + prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "]";
 
           item.Label3 = GUILocalizeStrings.Get(789) + prog.TitleNow;
-          sb.Append(currentChan.Name);
+          
           sb.Append(" - ");
           sb.Append(CalculateProgress(prog.NowStartTime, prog.NowEndTime).ToString());
           sb.Append("%");
@@ -426,7 +427,7 @@ namespace TvPlugin
         }
       }
       Log.Debug("miniguide: FillChannelList - Exit");
-      lstChannels.SelectedListItemIndex = selected;
+      lstChannels.SelectedListItemIndex = SelectedID;
     }
 
     /// <summary>
