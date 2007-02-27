@@ -102,7 +102,7 @@ namespace MediaPortal.Music.Database
     static bool _createMissingFolderThumbs = false;
 
     static DateTime _lastImport = DateTime.Parse("1900-01-01 00:00:00");
-    
+
     //bool AppendPrefixToSortableNameEnd = true;
 
     string[] ArtistNamePrefixes = new string[]
@@ -1422,6 +1422,11 @@ namespace MediaPortal.Music.Database
         if (null == m_db)
           return false;
 
+        // Get the id of "Various Artists"
+        string variousArtists = GUILocalizeStrings.Get(340);
+        if (variousArtists.Length == 0)
+          variousArtists = "Various Artists";
+
         string temp = "select distinct album.* from song,album,genre,artist,path where song.idPath=path.idPath";
         temp += " and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist";
         temp += " and song.idArtist='{0}'  order by strAlbum asc";
@@ -1438,6 +1443,9 @@ namespace MediaPortal.Music.Database
           {
             if (song.Album.Equals(album.Album))
             {
+              // When we have a Various Artist album, we need to keep the original Artist id, to find songs
+              if (album.Artist == variousArtists)
+                song.artistId = nArtistId;
               song.Artist = album.Artist;
               break;
             }
@@ -1470,6 +1478,7 @@ namespace MediaPortal.Music.Database
         temp += "and song.idArtist='{0}' and  album.idAlbum='{1}'  order by iTrack asc";
 
         string sql = string.Format(temp, nArtistId, nAlbumId);
+        ModifyAlbumQueryForVariousArtists(ref sql, nArtistId, nAlbumId);
         GetSongsByFilter(sql, out songs, true, true, true, true);
 
         return true;
@@ -1482,6 +1491,33 @@ namespace MediaPortal.Music.Database
       }
 
       return false;
+    }
+
+    // Handle "Various Artists" cases where the artist id is different for 
+    // many/most/all of the album tracks
+    private void ModifyAlbumQueryForVariousArtists(ref string sOrigSql, int artistId, int albumId)
+    {
+      try
+      {
+        // Replace occurances of multiple space chars with single space
+        System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex(@"\s+");
+        string temp = r.Replace(sOrigSql, " ");
+        sOrigSql = temp;
+
+        string variousArtists = GUILocalizeStrings.Get(340);
+
+        if (variousArtists.Length == 0)
+          variousArtists = "Various Artists";
+
+        long idVariousArtists = AddArtist(variousArtists);
+
+        if (artistId == idVariousArtists)
+        {
+          sOrigSql = sOrigSql.Replace("and song.idArtist=", "and album.idArtist=");
+        }
+      }
+
+      catch { }
     }
 
     public bool GetSongsByGenre(int nGenreId, ref List<Song> songs)
@@ -2956,7 +2992,7 @@ namespace MediaPortal.Music.Database
               }
             }
           }
-          
+
 
           // create the local folder thumb cache / and folder.jpg itself if not present
           if (_useFolderThumbs || _createMissingFolderThumbs)
