@@ -641,7 +641,7 @@ namespace TvPlugin
             g_Player.Stop();
             if (System.IO.File.Exists(fileName))
             {
-              g_Player.Play(fileName);
+              g_Player.Play(fileName, g_Player.MediaType.Recording);
               GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
               return;
             }
@@ -651,7 +651,7 @@ namespace TvPlugin
               Log.Info("recording url:{0}", url);
               if (url.Length > 0)
               {
-                g_Player.Play(url);
+                g_Player.Play(url, g_Player.MediaType.Recording);
 
                 if (g_Player.Playing)
                 {
@@ -670,7 +670,7 @@ namespace TvPlugin
             g_Player.Stop();
             if (System.IO.File.Exists(fileName))
             {
-              g_Player.Play(fileName);
+              g_Player.Play(fileName, g_Player.MediaType.Recording);
               g_Player.SeekAbsolute(g_Player.Duration);
               GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
               return;
@@ -681,7 +681,7 @@ namespace TvPlugin
               Log.Info("recording url:{0}", url);
               if (url.Length > 0)
               {
-                g_Player.Play(url);
+                g_Player.Play(url, g_Player.MediaType.Recording);
 
                 if (g_Player.Playing)
                 {

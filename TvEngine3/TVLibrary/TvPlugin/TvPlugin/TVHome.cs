@@ -447,7 +447,7 @@ namespace TvPlugin
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SETTINGS_TVENGINE);
         return;
       }
-      
+
       try
       {
         IList cards = TvDatabase.Card.ListAll(); ;
@@ -770,7 +770,7 @@ namespace TvPlugin
           VirtualCard tvcard = new VirtualCard(user, RemoteControl.HostName);
           isRecording = tvcard.IsRecording;
           isTimeShifting = tvcard.IsTimeShifting;
-          if (isTimeShifting)
+          if (isTimeShifting || (isRecording && !isTimeShifting))
           {
             int idChannel = tvcard.IdChannel;
             user = tvcard.User;
@@ -815,8 +815,38 @@ namespace TvPlugin
       dlg.DoModal(this.GetID);
       if (dlg.SelectedLabel < 0) return;
       TVHome.Card = new VirtualCard(_users[dlg.SelectedLabel], RemoteControl.HostName);
-      g_Player.Stop();
-      StartPlay();
+      if (TVHome.Card.IsRecording && !TVHome.Card.IsTimeShifting)
+      {
+        string fileName = TVHome.Card.RecordingFileName;
+        g_Player.Stop();
+        if (System.IO.File.Exists(fileName))
+        {
+          g_Player.Play(fileName, g_Player.MediaType.Recording);
+          g_Player.SeekAbsolute(g_Player.Duration);
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+        }
+        else
+        {
+          string url = server.GetRtspUrlForFile(fileName);
+          Log.Info("recording url:{0}", url);
+          if (url.Length > 0)
+          {
+            g_Player.Play(url,g_Player.MediaType.Recording);
+
+            if (g_Player.Playing)
+            {
+              g_Player.SeekAbsolute(g_Player.Duration);
+              g_Player.SeekAbsolute(g_Player.Duration);
+              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+            }
+          }
+        }
+      }
+      else
+      {
+        g_Player.Stop();
+        StartPlay();
+      }
       TVHome.Card.User.Name = new User().Name;
     }
     void OnRecord()
@@ -1581,7 +1611,7 @@ namespace TvPlugin
         }
         catch (Exception ex)
         {
-          Log.Error("Unable to create/modify gentle.config {0},{1}", ex.Message ,ex.StackTrace);
+          Log.Error("Unable to create/modify gentle.config {0},{1}", ex.Message, ex.StackTrace);
         }
 
         MediaPortal.GUI.Library.Log.Info("ChannelNavigator::Reload()");
