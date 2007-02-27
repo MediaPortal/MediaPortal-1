@@ -280,7 +280,7 @@ namespace MediaPortal.Configuration.Sections
             builder.Append(",");
 
           BassCd.BASS_CD_GetInfo(i, cdinfo);
-          int selectedSpeed = int.Parse((row[3].ToString()));
+          int selectedSpeed = int.Parse((row[2].ToString()));
           int maxspeed = (int)(cdinfo.maxspeed / 176.4);
 
           if (selectedSpeed > maxspeed)
