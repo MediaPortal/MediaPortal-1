@@ -745,7 +745,7 @@ namespace MediaPortal.Video.Database
     /// <summary>
     /// Download IMDB info for all movies in a collection of paths
     /// </summary>
-    public static bool ScanIMDB(IMDB.IProgress progress, ArrayList paths, bool fuzzyMatching)
+    public static bool ScanIMDB(IMDB.IProgress progress, ArrayList paths, bool fuzzyMatching, bool skipExisting)
     {
       bool success = true;
       ArrayList availableFiles = new ArrayList();
@@ -769,11 +769,14 @@ namespace MediaPortal.Video.Database
 
         IMDBMovie movieDetails = new IMDBMovie();
         int id = VideoDatabase.GetMovieInfo(file, ref movieDetails);
-        string path, filename;
-        MediaPortal.Util.Utils.Split(file, out path, out filename);
-        movieDetails.Path = path;
-        movieDetails.File = filename;
-        GetInfoFromIMDB(progress, ref movieDetails, fuzzyMatching);
+        if (!skipExisting || id == -1)
+        {
+          string path, filename;
+          MediaPortal.Util.Utils.Split(file, out path, out filename);
+          movieDetails.Path = path;
+          movieDetails.File = filename;
+          GetInfoFromIMDB(progress, ref movieDetails, fuzzyMatching);
+        }
         if ((progress != null) && (!progress.OnScanIterated(count++)))
         {
           success = false;

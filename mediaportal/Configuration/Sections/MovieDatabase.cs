@@ -205,6 +205,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPButton btnBrowse;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPTextBox tbLocalImage;
+    private CheckBox skipCheckBox;
     ArrayList conflictFiles = new ArrayList();
 
     public MovieDatabase()
@@ -378,15 +379,16 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.tabPage7 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox7 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.btnBrowse = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbLocalImage = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.btnAmazon = new MediaPortal.UserInterface.Controls.MPButton();
       this.comboBoxPictures = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.btnLookupImage = new MediaPortal.UserInterface.Controls.MPButton();
       this.label15 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxPictureURL = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
-      this.btnBrowse = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbLocalImage = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.skipCheckBox = new System.Windows.Forms.CheckBox();
       this.groupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage8.SuspendLayout();
@@ -412,6 +414,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.skipCheckBox);
       this.groupBox1.Controls.Add(this.mpButton2);
       this.groupBox1.Controls.Add(this.startButton);
       this.groupBox1.Controls.Add(this.sharesListBox);
@@ -426,7 +429,7 @@ namespace MediaPortal.Configuration.Sections
       // mpButton2
       // 
       this.mpButton2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButton2.Location = new System.Drawing.Point(328, 160);
+      this.mpButton2.Location = new System.Drawing.Point(328, 139);
       this.mpButton2.Name = "mpButton2";
       this.mpButton2.Size = new System.Drawing.Size(104, 22);
       this.mpButton2.TabIndex = 3;
@@ -437,7 +440,7 @@ namespace MediaPortal.Configuration.Sections
       // startButton
       // 
       this.startButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.startButton.Location = new System.Drawing.Point(106, 160);
+      this.startButton.Location = new System.Drawing.Point(106, 139);
       this.startButton.Name = "startButton";
       this.startButton.Size = new System.Drawing.Size(216, 22);
       this.startButton.TabIndex = 1;
@@ -1354,6 +1357,35 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox7.TabIndex = 0;
       this.groupBox7.TabStop = false;
       // 
+      // btnBrowse
+      // 
+      this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnBrowse.Location = new System.Drawing.Point(352, 70);
+      this.btnBrowse.Name = "btnBrowse";
+      this.btnBrowse.Size = new System.Drawing.Size(72, 22);
+      this.btnBrowse.TabIndex = 36;
+      this.btnBrowse.Text = "Browse...";
+      this.btnBrowse.UseVisualStyleBackColor = true;
+      this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
+      // 
+      // mpLabel2
+      // 
+      this.mpLabel2.Location = new System.Drawing.Point(16, 75);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(80, 16);
+      this.mpLabel2.TabIndex = 34;
+      this.mpLabel2.Text = "Local image:";
+      // 
+      // tbLocalImage
+      // 
+      this.tbLocalImage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbLocalImage.BorderColor = System.Drawing.Color.Empty;
+      this.tbLocalImage.Location = new System.Drawing.Point(136, 71);
+      this.tbLocalImage.Name = "tbLocalImage";
+      this.tbLocalImage.Size = new System.Drawing.Size(208, 20);
+      this.tbLocalImage.TabIndex = 35;
+      // 
       // btnAmazon
       // 
       this.btnAmazon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -1420,34 +1452,15 @@ namespace MediaPortal.Configuration.Sections
       this.pictureBox1.TabIndex = 33;
       this.pictureBox1.TabStop = false;
       // 
-      // btnBrowse
+      // skipCheckBox
       // 
-      this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnBrowse.Location = new System.Drawing.Point(352, 70);
-      this.btnBrowse.Name = "btnBrowse";
-      this.btnBrowse.Size = new System.Drawing.Size(72, 22);
-      this.btnBrowse.TabIndex = 36;
-      this.btnBrowse.Text = "Browse...";
-      this.btnBrowse.UseVisualStyleBackColor = true;
-      this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
-      // 
-      // mpLabel2
-      // 
-      this.mpLabel2.Location = new System.Drawing.Point(16, 75);
-      this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(80, 16);
-      this.mpLabel2.TabIndex = 34;
-      this.mpLabel2.Text = "Local image:";
-      // 
-      // tbLocalImage
-      // 
-      this.tbLocalImage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.tbLocalImage.BorderColor = System.Drawing.Color.Empty;
-      this.tbLocalImage.Location = new System.Drawing.Point(136, 71);
-      this.tbLocalImage.Name = "tbLocalImage";
-      this.tbLocalImage.Size = new System.Drawing.Size(208, 20);
-      this.tbLocalImage.TabIndex = 35;
+      this.skipCheckBox.AutoSize = true;
+      this.skipCheckBox.Location = new System.Drawing.Point(122, 167);
+      this.skipCheckBox.Name = "skipCheckBox";
+      this.skipCheckBox.Size = new System.Drawing.Size(163, 17);
+      this.skipCheckBox.TabIndex = 4;
+      this.skipCheckBox.Text = "Skip files already in database";
+      this.skipCheckBox.UseVisualStyleBackColor = true;
       // 
       // MovieDatabase
       // 
@@ -1455,6 +1468,7 @@ namespace MediaPortal.Configuration.Sections
       this.Name = "MovieDatabase";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
       this.tabControl1.ResumeLayout(false);
       this.tabPage8.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
@@ -1530,7 +1544,7 @@ namespace MediaPortal.Configuration.Sections
         availablePaths.Add(path);
       }
       conflictFiles = new ArrayList();
-      IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching);
+      IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, skipCheckBox.Checked);
     }
 
     private void clearButton_Click(object sender, System.EventArgs e)
@@ -2578,6 +2592,7 @@ namespace MediaPortal.Configuration.Sections
         _fuzzyMatchingCheckBox.Checked = _isFuzzyMatching;
         // Load settings for Database
         int iNumber = xmlreader.GetValueAsInt("moviedatabase", "number", 0);
+        skipCheckBox.Checked = xmlreader.GetValueAsBool("moviedatabase", "scanskipexisting", false);
         bool imdbFound = false;
         bool ofdbFound = false;
         bool frdbFound = false;
@@ -2645,6 +2660,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("movies", "fuzzyMatching", _isFuzzyMatching);
         // Database
         xmlwriter.SetValue("moviedatabase", "number", this.lvDatabase.Items.Count);
+        xmlwriter.SetValueAsBool("moviedatabase", "scanskipexisting", skipCheckBox.Checked);
         for (int i = 0; i < this.lvDatabase.Items.Count; i++)
         {
           xmlwriter.SetValue("moviedatabase", "database" + i.ToString(), this.lvDatabase.Items[i].SubItems[0].Text);

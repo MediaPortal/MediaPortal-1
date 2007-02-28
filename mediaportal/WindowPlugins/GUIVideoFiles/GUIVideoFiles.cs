@@ -117,6 +117,7 @@ namespace MediaPortal.GUI.Video
     int scanningFileNumber = 1;
     int scanningFileTotal = 1;
     bool _isFuzzyMatching = false;
+    bool _scanSkipExisting = false;
     bool _markWatchedFiles = true;
     ArrayList conflictFiles = new ArrayList();
 
@@ -190,6 +191,7 @@ namespace MediaPortal.GUI.Video
       base.LoadSettings();
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
+        _scanSkipExisting = xmlreader.GetValueAsBool("moviedatabase", "scanskipexisting", false);
         _markWatchedFiles = xmlreader.GetValueAsBool("movies", "markwatched", true);
         ShowTrailerButton = xmlreader.GetValueAsBool("plugins", "My Trailers", true);
         fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
@@ -1623,7 +1625,7 @@ namespace MediaPortal.GUI.Video
           }
           ArrayList availablePaths = new ArrayList();
           availablePaths.Add(item.Path);
-          IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching);
+          IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, _scanSkipExisting);
           LoadDirectory(_currentFolder);
           break;
 
