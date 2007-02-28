@@ -427,7 +427,7 @@ namespace TvService
       Log.Write("Scheduler : time to record {0} {1}-{2} {3}", recording.Channel, DateTime.Now, recording.EndTime, recording.Schedule.ProgramName);
       TvResult result;
       //get list of all cards we can use todo the recording
-      List<CardDetail> freeCards = _tvController.GetFreeCardsForChannel(recording.Channel, ref _user,false, out result);
+      List<CardDetail> freeCards = _tvController.GetFreeCardsForChannel(recording.Channel, ref _user, false, false, out result);
       if (freeCards.Count == 0) return false;//none available..
 
       CardDetail cardInfo = null;
