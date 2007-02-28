@@ -136,7 +136,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
 		{
       *phr = E_OUTOFMEMORY;
 		}
-      return;
+    return;
   }
 
 	// Create PMT input pin
@@ -154,10 +154,16 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
 		{
       *phr = E_OUTOFMEMORY;
 		}
-      return;
+    return;
   }
-
-	m_pSubDecoder->SetObserver( this );
+  if( m_pSubDecoder )
+  {
+    m_pSubDecoder->SetObserver( this );
+  }
+  else
+  {
+    LogDebug("No DVB subtitle decoder available!");
+  }
 }
 
 
@@ -334,15 +340,15 @@ void CDVBSub::NotifySubtitle()
   {
     // Notify the callback function
 	  SUBTITLE sub;
-	  this->GetSubtitle(0,&sub);
-	  LogDebug("Calling subtitle callback");
-    int retval = (*m_pSubtitleObserver)(&sub);
-	  LogDebug("subtitle Callback returned");
+	  this->GetSubtitle( 0, &sub );
+	  LogDebug( "Calling subtitle callback" );
+    int retval = (*m_pSubtitleObserver)( &sub );
+	  LogDebug( "subtitle Callback returned" );
 	  this->DiscardOldestSubtitle();
   }
   else
   {
-	  LogDebug("No callback set");
+	  LogDebug( "No callback set" );
   }
 }
 
@@ -392,14 +398,11 @@ void CDVBSub::SetPcr( ULONGLONG pcr )
 
     if( m_pTSFileSource )
     {
-      REFERENCE_TIME posStart( 0 );
       REFERENCE_TIME posBase( 0 );
-      m_pTSFileSource->GetStartPCRPosition( &posStart );
       m_pTSFileSource->GetBasePCRPosition( &posBase );
 
       m_basePCR = ( posBase / 1000 ) * 9;
       LogDebugPTS( "TSFileSource base     PCR:", m_basePCR );
-      LogDebugPTS( "TSFileSource starting PCR:", ( posStart / 1000 ) * 9 );
     }
 	}
   
@@ -412,7 +415,20 @@ void CDVBSub::SetPcr( ULONGLONG pcr )
   if( m_seekDifPCR < 0 )
   {
     // updated on every seek (reset)
-    m_seekDifPCR = pcr - m_firstPCR;
+	  LONGLONG pos( 0 );
+	  IFilterGraph *pGraph = GetFilterGraph();
+	  IMediaSeeking* pIMediaSeeking;
+	  pGraph->QueryInterface( &pIMediaSeeking );
+	  if( pIMediaSeeking )
+	  {
+      pIMediaSeeking->GetCurrentPosition( &pos );
+		  if( pos > 0 )
+		  {
+			  pos = ( ( pos / 1000 ) * 9 ); // PTS = 90Khz, REFERENCE_TIME one tick 100ns
+		    LogDebugPTS("Set PCR - MediaSeeking Pos : ", pos); 
+      }
+	  }    
+    m_seekDifPCR = pos;
     LogDebugPTS( "fixDifPCR: ", m_fixPCR );
   }
 }
