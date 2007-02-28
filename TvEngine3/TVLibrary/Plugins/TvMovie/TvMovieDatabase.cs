@@ -198,7 +198,7 @@ namespace TvEngine
       IList allChannels = Channel.ListAll();
       foreach (Channel channel in allChannels)
       {
-        if (channel.IsTv)
+        if (channel.IsTv && channel.VisibleInGuide)
           tvChannels.Add(channel);
       }
       return tvChannels;
