@@ -157,6 +157,27 @@ public class MediaPortalApp : D3DApp, IRender
   public static void Main(string[] args)
   {
     Thread.CurrentThread.Name = "MPMain";
+
+    using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+    {
+      string MPThreadPriority = xmlreader.GetValueAsString("MP", "ThreadPriority", "Normal");
+      if (MPThreadPriority == "AboveNormal")
+      {
+        Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
+        Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.AboveNormal;
+      }
+      else if (MPThreadPriority == "High")
+      {
+        Thread.CurrentThread.Priority = ThreadPriority.Highest;
+        Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
+      }
+      else if (MPThreadPriority == "BelowNormal")
+      {
+        Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
+        Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
+      }
+    }
+
     if (args.Length > 0)
     {
       foreach (string arg in args)
@@ -830,7 +851,7 @@ public class MediaPortalApp : D3DApp, IRender
   /// Process() gets called when a dialog is presented.
   /// It contains the message loop 
   /// </summary>
-  public void Process()
+  public void MPProcess()
   {
     if (_suspended)
     {
@@ -3088,7 +3109,7 @@ GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
 
 
     GUIWindowManager.Receivers += new SendMessageHandler(OnMessage);
-    GUIWindowManager.Callbacks += new GUIWindowManager.OnCallBackHandler(Process);
+    GUIWindowManager.Callbacks += new GUIWindowManager.OnCallBackHandler(MPProcess);
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STARTING;
     Utils.OnStartExternal += new Utils.UtilEventHandler(OnStartExternal);
     Utils.OnStopExternal += new Utils.UtilEventHandler(OnStopExternal);
