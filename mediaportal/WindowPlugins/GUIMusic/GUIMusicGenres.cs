@@ -961,13 +961,7 @@ namespace MediaPortal.GUI.Music
           if (MediaPortal.Util.Utils.IsAudio(strFile))
           {
             MusicDatabase dbs = new MusicDatabase();
-            if (!dbs.IncrTop100CounterByFileName(strFile))
-            {
-              if (g_Player.Playing)
-                Log.Debug("MyMusic: failed to increase Top100 counter for {0}, g_player: {1}", strFile, g_Player.CurrentFile);
-              else
-                Log.Debug("MyMusic: failed to increase Top100 counter for {0}", strFile);
-            }
+            dbs.IncrTop100CounterByFileName(strFile);
           }
           break;
       }
