@@ -34,8 +34,8 @@
      <description>home BM Radio</description>
       <type>button</type>
       <id>3</id>
-      <posX>504</posX>
-      <posY>238</posY>
+      <posX>0</posX>
+      <posY>0</posY>
       <width>135</width>
       <height>195</height>
       <textureFocus>-</textureFocus>
@@ -170,8 +170,8 @@
       <description>home BM LaftFm</description>
       <type>button</type>
       <id>4</id>
-      <posX>291</posX>
-      <posY>164</posY>
+      <posX>0</posX>
+      <posY>0</posY>
       <width>135</width>
       <height>195</height>
       <textureFocus>-</textureFocus>
@@ -307,8 +307,8 @@
       <description>home BM Music</description>
       <type>button</type>
       <id>5</id>
-      <posX>78</posX>
-      <posY>238</posY>
+      <posX>0</posX>
+      <posY>0</posY>
       <width>135</width>
       <height>195</height>
       <textureFocus>-</textureFocus>
@@ -441,8 +441,8 @@
       <description>home BM Musicvideo</description>
       <type>button</type>
       <id>6</id>
-      <posX>291</posX>
-      <posY>319</posY>
+      <posX>0</posX>
+      <posY>0</posY>
       <width>135</width>
       <height>195</height>
       <textureFocus>-</textureFocus>
