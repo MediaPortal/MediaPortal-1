@@ -193,8 +193,27 @@ namespace MediaPortal.InputDevices
       mpListView.Invalidate();
     }
 
-    #endregion
+    private void mpRemotenumber_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      mpListView.Items.Clear();
+      LoadMapping(m_sRemoteModel + ".xml", false);
+      mpListView.Select();
+      mpListView.Focus();
+      mpListView.Items[0].Selected = true;
 
+    }
+
+    private void RemoteLearn_Shown(object sender, EventArgs e)
+    {
+      if (m_bInitialized == false)
+      {
+        MessageBox.Show("Failed to get remote control interface");
+        this.Close();
+      }
+
+    }
+
+    #endregion
 
     #region Callback
 
@@ -357,25 +376,5 @@ namespace MediaPortal.InputDevices
 
     }
     #endregion
-
-    private void mpRemotenumber_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      mpListView.Items.Clear();
-      LoadMapping(m_sRemoteModel + ".xml", false);
-      mpListView.Select();
-      mpListView.Focus();
-      mpListView.Items[0].Selected = true;
-      
-    }
-
-    private void RemoteLearn_Shown(object sender, EventArgs e)
-    {
-      if (m_bInitialized == false)
-      {
-        MessageBox.Show("Failed to get remote control interface");
-        this.Close();
-      }
-
-    }
   }
 }
