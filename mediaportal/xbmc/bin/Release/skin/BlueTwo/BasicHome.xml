@@ -49,11 +49,37 @@
       <label>1</label>
       <textcolor>00ffffff</textcolor>
       <textcolorNoFocus>00ffffff</textcolorNoFocus>
-      <onleft>6</onleft>
+      <onleft>44</onleft>
       <onright>6</onright>
       <onup>21</onup>
       <ondown>66</ondown>
       <visible>Control.IsVisible(3)</visible>
+
+    </control>
+<control>
+      <description>home BM Video</description>
+      <type>button</type>
+      <id>33</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>135</width>
+      <height>195</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>2</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>1</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>44</onleft>
+      <onright>6</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+      <visible>Control.IsVisible(33)</visible>
 
     </control>
      <control>
@@ -80,7 +106,7 @@
       <onup>21</onup>
       <ondown>66</ondown>
       <visible>Control.HasFocus(6)</visible>
-       <animation effect="slide" start="0,0" end="-213,81" time="400" >visiblechange</animation>
+       <animation effect="slide" start="0,0" end="-213,81" time="400" acceleration="-0.4" >visiblechange</animation>
 	<animation effect="zoom" start="100,100" end="140,140" center="0,0" time="500">visiblechange</animation>
     </control>
    <control>
@@ -107,7 +133,7 @@
       <onup>21</onup>
       <ondown>66</ondown>
       <visible>Control.HasFocus(5)</visible>
-       <animation effect="slide" start="-213,81" end="-426,0" time="400" >visiblechange</animation>
+       <animation effect="slide" start="-213,81" end="-426,0" time="400" acceleration="-0.4" >visiblechange</animation>
 
     </control>
     <control>
@@ -134,7 +160,7 @@
       <onup>21</onup>
       <ondown>66</ondown>
        <visible>Control.HasFocus(4)</visible>
-       <animation effect="slide" start="-426,0" end="-213,-74" time="400" >visiblechange</animation>
+       <animation effect="slide" start="-426,0" end="-213,-74" time="400" acceleration="-0.4" >visiblechange</animation>
 
     </control>
     <control>
@@ -161,7 +187,7 @@
       <onup>21</onup>
       <ondown>66</ondown>
        <visible>Control.HasFocus(3)</visible>
-        <animation effect="slide" start="-213,-74" end="0,0" time="400" >visiblechange</animation>
+        <animation effect="slide" start="-213,-74" end="0,0" time="400" acceleration="-0.4" >visiblechange</animation>
 
 
     </control>
@@ -185,11 +211,37 @@
       <label>2</label>
       <textcolor>00ffffff</textcolor>
       <textcolorNoFocus>00ffffff</textcolorNoFocus>
-      <onleft>3</onleft>
+      <onleft>55</onleft>
       <onright>3</onright>
       <onup>21</onup>
       <ondown>66</ondown>
        <visible>Control.IsVisible(4)</visible>
+
+    </control>
+<control>
+      <description>home BM FFS</description>
+      <type>button</type>
+      <id>44</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>135</width>
+      <height>195</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>8888</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>2</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>55</onleft>
+      <onright>3</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+       <visible>Control.IsVisible(44)</visible>
 
     </control>
     <control>
@@ -216,7 +268,7 @@
       <onup>21</onup>
       <ondown>66</ondown>
       <visible>Control.HasFocus(6)</visible>
-      <animation effect="slide" start="0,0" end="213,74" time="400" >visiblechange</animation>
+      <animation effect="slide" start="0,0" end="213,74" time="400" acceleration="-0.4" >visiblechange</animation>
    </control>
     <control>
       <description>home BM FFS</description>
@@ -242,7 +294,7 @@
       <onup>21</onup>
       <ondown>66</ondown>
       <visible>Control.HasFocus(5)</visible>
-      <animation effect="slide" start="213,74" end="0,155" time="400" >visiblechange</animation>
+      <animation effect="slide" start="213,74" end="0,155" time="400" acceleration="-0.4" >visiblechange</animation>
 	<animation effect="zoom" start="100,100" end="140,140" center="0,0" time="500">visiblechange</animation>
     </control>
     <control>
@@ -269,7 +321,7 @@
       <onup>21</onup>
       <ondown>66</ondown>
       <visible>Control.HasFocus(4)</visible>
-      <animation effect="slide" start="0,155" end="-213,74" time="400" >visiblechange</animation>
+      <animation effect="slide" start="0,155" end="-213,74" time="400" acceleration="-0.4" >visiblechange</animation>
 
     </control>
     <control>
@@ -296,7 +348,7 @@
       <onup>21</onup>
       <ondown>66</ondown>
       <visible>Control.HasFocus(3)</visible>
-      <animation effect="slide" start="-213,74" end="0,0" time="400" >visiblechange</animation>
+      <animation effect="slide" start="-213,74" end="0,0" time="400" acceleration="-0.4" >visiblechange</animation>
 
     </control>
 
@@ -322,11 +374,37 @@
       <label>605</label>
       <textcolor>00ffffff</textcolor>
       <textcolorNoFocus>00ffffff</textcolorNoFocus>
-      <onleft>4</onleft>
+      <onleft>66</onleft>
       <onright>4</onright>
       <onup>21</onup>
       <ondown>66</ondown>
       <visible>Control.IsVisible(5)</visible>
+
+    </control>
+ <control>
+      <description>home BM Music</description>
+      <type>button</type>
+      <id>55</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>135</width>
+      <height>195</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>1</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>605</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>66</onleft>
+      <onright>4</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+      <visible>Control.IsVisible(55)</visible>
 
     </control>
     <control>
@@ -353,7 +431,7 @@
       <onup>21</onup>
       <ondown>66</ondown>
       <visible>Control.HasFocus(6)</visible>
-      <animation effect="slide" start="0,0" end="213,-74" time="400" >visiblechange</animation>
+      <animation effect="slide" start="0,0" end="213,-74" time="400" acceleration="-0.4" >visiblechange</animation>
     </control>
     <control>
       <description>home BM Music</description>
@@ -379,7 +457,7 @@
       <onup>21</onup>
       <ondown>66</ondown>
       <visible>Control.HasFocus(5)</visible>
-      <animation effect="slide" start="213,-74" end="426,0" time="400" >visiblechange</animation>
+      <animation effect="slide" start="213,-74" end="426,0" time="400" acceleration="-0.4" >visiblechange</animation>
 
     </control>
     <control>
@@ -406,7 +484,7 @@
       <onup>21</onup>
       <ondown>66</ondown>
       <visible>Control.HasFocus(4)</visible>
-       <animation effect="slide" start="426,0" end="213,81" time="400" >visiblechange</animation>
+       <animation effect="slide" start="426,0" end="213,81" time="400" acceleration="-0.4" >visiblechange</animation>
 	<animation effect="zoom" start="100,100" end="140,140" center="0,0" time="500">visiblechange</animation>
     </control>
     <control>
@@ -433,7 +511,7 @@
       <onup>21</onup>
       <ondown>66</ondown>
       <visible>Control.HasFocus(3)</visible>
-      <animation effect="slide" start="213,81" end="0,0" time="400" >visiblechange</animation>
+      <animation effect="slide" start="213,81" end="0,0" time="400" acceleration="-0.4" >visiblechange</animation>
 
     </control>
 
@@ -456,11 +534,37 @@
       <label>3</label>
       <textcolor>00ffffff</textcolor>
       <textcolorNoFocus>00ffffff</textcolorNoFocus>
-      <onleft>5</onleft>
+      <onleft>33</onleft>
       <onright>5</onright>
       <onup>21</onup>
       <ondown>66</ondown>
      <visible>Control.IsVisible(6)</visible>
+
+    </control>
+<control>
+      <description>home BM Pictures</description>
+      <type>button</type>
+      <id>66</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>135</width>
+      <height>195</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>6</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>3</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>33</onleft>
+      <onright>5</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+     <visible>Control.IsVisible(66)</visible>
 
     </control>
      <control>
@@ -487,7 +591,7 @@
       <onup>21</onup>
       <ondown>66</ondown>
      <visible>Control.HasFocus(6)</visible>
-      <animation effect="slide" start="0,0" end="-213,-81" time="400" >visiblechange</animation>
+      <animation effect="slide" start="0,0" end="-213,-81" time="400" acceleration="-0.4" >visiblechange</animation>
     </control>
      <control>
       <description>home BM Pictures</description>
@@ -513,7 +617,7 @@
       <onup>21</onup>
       <ondown>66</ondown>
      <visible>Control.HasFocus(5)</visible>
-     <animation effect="slide" start="-213,-81" end="0,-155" time="400" >visiblechange</animation>
+     <animation effect="slide" start="-213,-81" end="0,-155" time="400" acceleration="-0.4" >visiblechange</animation>
 
     </control>
      <control>
@@ -540,7 +644,7 @@
       <onup>21</onup>
       <ondown>66</ondown>
      <visible>Control.HasFocus(4)</visible>
-      <animation effect="slide" start="0,-155" end="213,-81" time="400" >visiblechange</animation>
+      <animation effect="slide" start="0,-155" end="213,-81" time="400" acceleration="-0.4" >visiblechange</animation>
 
 
     </control>
@@ -568,9 +672,448 @@
       <onup>21</onup>
       <ondown>66</ondown>
      <visible>Control.HasFocus(3)</visible>
-      <animation effect="slide" start="213,-81" end="0,0" time="400" >visiblechange</animation>
+      <animation effect="slide" start="213,-81" end="0,0" time="400" acceleration="-0.4" >visiblechange</animation>
 	<animation effect="zoom" start="100,100" end="140,140" center="0,0" time="500">visiblechange</animation>
     </control>
+
+!....................................................
+
+<control>
+      <description>home BM Video</description>
+      <type>button</type>
+      <id>33</id>
+      <posX>504</posX>
+      <posY>238</posY>
+      <width>135</width>
+      <height>195</height>
+      <textureFocus>Music0.png</textureFocus>
+      <textureNoFocus>Music0.png</textureNoFocus>
+      <hyperlink>2</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>1</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>6</onleft>
+      <onright>6</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+      <visible>Control.HasFocus(66)</visible>
+       <animation effect="slide" start="0,0" end="-213,-74" time="400" acceleration="-0.4" >visiblechange</animation>
+    </control>
+   <control>
+      <description>home BM Video</description>
+      <type>button</type>
+      <id>33</id>
+      <posX>504</posX>
+      <posY>238</posY>
+      <width>135</width>
+      <height>195</height>
+      <textureFocus>Music0.png</textureFocus>
+      <textureNoFocus>Music0.png</textureNoFocus>
+      <hyperlink>2</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>1</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>6</onleft>
+      <onright>6</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+      <visible>Control.HasFocus(33)</visible>
+       <animation effect="slide" start="-213,-74" end="-426,0" time="400" acceleration="-0.4" >visiblechange</animation>
+
+    </control>
+    <control>
+      <description>home BM Video</description>
+      <type>button</type>
+      <id>33</id>
+      <posX>504</posX>
+      <posY>238</posY>
+      <width>135</width>
+      <height>195</height>
+      <textureFocus>Music0.png</textureFocus>
+      <textureNoFocus>Music0.png</textureNoFocus>
+      <hyperlink>2</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>1</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>6</onleft>
+      <onright>6</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+       <visible>Control.HasFocus(44)</visible>
+       <animation effect="slide" start="-426,0" end="-213,81" time="400" acceleration="-0.4" >visiblechange</animation>
+       <animation effect="zoom" start="100,100" end="140,140" center="0,0" time="500">visiblechange</animation>
+
+    </control>
+    <control>
+      <description>home BM Video</description>
+      <type>button</type>
+      <id>33</id>
+      <posX>504</posX>
+      <posY>238</posY>
+      <width>135</width>
+      <height>195</height>
+      <textureFocus>Music0.png</textureFocus>
+      <textureNoFocus>Music0.png</textureNoFocus>
+      <hyperlink>2</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>1</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>6</onleft>
+      <onright>6</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+       <visible>Control.HasFocus(55)</visible>
+        <animation effect="slide" start="-213,81" end="0,0" time="400" acceleration="-0.4" >visiblechange</animation>
+
+
+    </control>
+ <control>
+      <description>home BM FFS</description>
+      <type>button</type>
+      <id>44</id>
+      <posX>291</posX>
+      <posY>164</posY>
+      <width>135</width>
+      <height>195</height>
+      <textureFocus>Pictures0.png</textureFocus>
+      <textureNoFocus>Pictures0.png</textureNoFocus>
+      <hyperlink>8888</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>2</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>3</onleft>
+      <onright>3</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+      <visible>Control.HasFocus(66)</visible>
+      <animation effect="slide" start="0,0" end="-213,74" time="400" acceleration="-0.4" >visiblechange</animation>
+   </control>
+    <control>
+      <description>home BM FFS</description>
+      <type>button</type>
+      <id>44</id>
+      <posX>291</posX>
+      <posY>164</posY>
+      <width>135</width>
+      <height>195</height>
+     <textureFocus>Pictures0.png</textureFocus>
+      <textureNoFocus>Pictures0.png</textureNoFocus>
+      <hyperlink>8888</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>2</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>3</onleft>
+      <onright>3</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+      <visible>Control.HasFocus(33)</visible>
+      <animation effect="slide" start="-213,74" end="0,155" time="400" acceleration="-0.4" >visiblechange</animation>
+	<animation effect="zoom" start="100,100" end="140,140" center="0,0" time="500">visiblechange</animation>
+    </control>
+    <control>
+      <description>home BM FFS</description>
+      <type>button</type>
+      <id>44</id>
+      <posX>291</posX>
+      <posY>164</posY>
+      <width>135</width>
+      <height>195</height>
+     <textureFocus>Pictures0.png</textureFocus>
+      <textureNoFocus>Pictures0.png</textureNoFocus>
+      <hyperlink>8888</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>2</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>3</onleft>
+      <onright>3</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+      <visible>Control.HasFocus(44)</visible>
+      <animation effect="slide" start="0,155" end="213,74" time="400" acceleration="-0.4" >visiblechange</animation>
+
+    </control>
+    <control>
+      <description>home BM FFS</description>
+      <type>button</type>
+      <id>44</id>
+      <posX>291</posX>
+      <posY>164</posY>
+      <width>135</width>
+      <height>195</height>
+     <textureFocus>Pictures0.png</textureFocus>
+      <textureNoFocus>Pictures0.png</textureNoFocus>
+      <hyperlink>8888</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>2</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>3</onleft>
+      <onright>3</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+      <visible>Control.HasFocus(55)</visible>
+      <animation effect="slide" start="213,74" end="0,0" time="400" acceleration="-0.4" >visiblechange</animation>
+
+    </control>
+
+<control>
+      <description>home BM Music</description>
+      <type>button</type>
+      <id>55</id>
+      <posX>78</posX>
+      <posY>238</posY>
+      <width>135</width>
+      <height>195</height>
+      <textureFocus>Video1.png</textureFocus>
+      <textureNoFocus>Video0.png</textureNoFocus>
+      <hyperlink>1</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>605</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>4</onleft>
+      <onright>4</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+      <visible>Control.HasFocus(66)</visible>
+      <animation effect="slide" start="0,0" end="213,81" time="400" acceleration="-0.4" >visiblechange</animation>
+      <animation effect="zoom" start="100,100" end="140,140" center="0,0" time="500">visiblechange</animation>
+    </control>
+    <control>
+      <description>home BM Music</description>
+      <type>button</type>
+      <id>55</id>
+      <posX>78</posX>
+      <posY>238</posY>
+      <width>135</width>
+      <height>195</height>
+      <textureFocus>Video1.png</textureFocus>
+      <textureNoFocus>Video0.png</textureNoFocus>
+      <hyperlink>1</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>605</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>4</onleft>
+      <onright>4</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+      <visible>Control.HasFocus(33)</visible>
+      <animation effect="slide" start="213,81" end="426,0" time="400" acceleration="-0.4" >visiblechange</animation>
+
+    </control>
+    <control>
+      <description>home BM Music</description>
+      <type>button</type>
+      <id>55</id>
+      <posX>78</posX>
+      <posY>238</posY>
+      <width>135</width>
+      <height>195</height>
+      <textureFocus>Video1.png</textureFocus>
+      <textureNoFocus>Video0.png</textureNoFocus>
+      <hyperlink>1</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>605</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>4</onleft>
+      <onright>4</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+      <visible>Control.HasFocus(44)</visible>
+       <animation effect="slide" start="426,0" end="213,-74" time="400" acceleration="-0.4" >visiblechange</animation>
+    </control>
+    <control>
+      <description>home BM Music</description>
+      <type>button</type>
+      <id>55</id>
+      <posX>78</posX>
+      <posY>238</posY>
+      <width>135</width>
+      <height>195</height>
+      <textureFocus>Video1.png</textureFocus>
+      <textureNoFocus>Video0.png</textureNoFocus>
+      <hyperlink>1</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>605</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>4</onleft>
+      <onright>4</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+      <visible>Control.HasFocus(55)</visible>
+      <animation effect="slide" start="213,-74" end="0,0" time="400" acceleration="-0.4" >visiblechange</animation>
+
+    </control>
+
+<control>
+      <description>home BM Pictures</description>
+      <type>button</type>
+      <id>66</id>
+      <posX>291</posX>
+      <posY>319</posY>
+      <width>135</width>
+      <height>195</height>
+      <textureFocus>TV0.png</textureFocus>
+      <textureNoFocus>TV0.png</textureNoFocus>
+      <hyperlink>6</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>3</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>5</onleft>
+      <onright>5</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+     <visible>Control.HasFocus(66)</visible>
+      <animation effect="slide" start="0,0" end="213,-81" time="400" acceleration="-0.4" >visiblechange</animation>
+    </control>
+     <control>
+      <description>home BM Pictures</description>
+      <type>button</type>
+      <id>66</id>
+      <posX>291</posX>
+      <posY>319</posY>
+      <width>135</width>
+      <height>195</height>
+      <textureFocus>TV0.png</textureFocus>
+      <textureNoFocus>TV0.png</textureNoFocus>
+      <hyperlink>6</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>3</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>5</onleft>
+      <onright>5</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+     <visible>Control.HasFocus(33)</visible>
+     <animation effect="slide" start="213,-81" end="0,-155" time="400" acceleration="-0.4" >visiblechange</animation>
+
+    </control>
+     <control>
+      <description>home BM Pictures</description>
+      <type>button</type>
+      <id>66</id>
+      <posX>291</posX>
+      <posY>319</posY>
+      <width>135</width>
+      <height>195</height>
+      <textureFocus>TV0.png</textureFocus>
+      <textureNoFocus>TV0.png</textureNoFocus>
+      <hyperlink>6</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>3</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>5</onleft>
+      <onright>5</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+     <visible>Control.HasFocus(44)</visible>
+      <animation effect="slide" start="0,-155" end="-213,-81" time="400" acceleration="-0.4" >visiblechange</animation>
+
+
+    </control>
+     <control>
+      <description>home BM Pictures</description>
+      <type>button</type>
+      <id>66</id>
+      <posX>291</posX>
+      <posY>319</posY>
+      <width>135</width>
+      <height>195</height>
+      <textureFocus>TV0.png</textureFocus>
+      <textureNoFocus>TV0.png</textureNoFocus>
+      <hyperlink>6</hyperlink>
+      <hover>-</hover>
+      <hoverX>502</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>272</hoverWidth>
+      <hoverHeight>306</hoverHeight>
+      <label>3</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>5</onleft>
+      <onright>5</onright>
+      <onup>21</onup>
+      <ondown>66</ondown>
+     <visible>Control.HasFocus(55)</visible>
+      <animation effect="slide" start="-213,-81" end="0,0" time="400" acceleration="-0.4" >visiblechange</animation>
+	<animation effect="zoom" start="100,100" end="140,140" center="0,0" time="500">visiblechange</animation>
+    </control>
+
+
+
     <control>
       <description>music rectangle</description>
       <type>image</type>
@@ -642,10 +1185,21 @@
     <control>
       <type>image</type>
       <id>1</id>
-      <posX>340</posX>
+      <posX>380</posX>
       <posY>224</posY>
      <texture flipY="true" diffuse="Thumb_Mask.png">logo_play.png</texture>
-     <visible>![Control.HasFocus(6)|Control.HasFocus(5)|Control.HasFocus(4)|Control.HasFocus(3)]</visible>
+     <visible>![Control.HasFocus(6)|Control.HasFocus(5)|Control.HasFocus(4)|Control.HasFocus(3)|Control.HasFocus(33)|Control.HasFocus(44)|Control.HasFocus(55)|Control.HasFocus(66)]</visible>
+     <animation effect="zoom" start="100,100" end="140,140" center="0,0" time="500">visiblechange</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+     <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>300</posX>
+      <posY>224</posY>
+     <texture flipY="true" diffuse="Thumb_Mask.png">Playleft.png</texture>
+    <visible>![Control.HasFocus(6)|Control.HasFocus(5)|Control.HasFocus(4)|Control.HasFocus(3)|Control.HasFocus(33)|Control.HasFocus(44)|Control.HasFocus(55)|Control.HasFocus(66)]</visible>
      <animation effect="zoom" start="100,100" end="140,140" center="0,0" time="500">visiblechange</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
