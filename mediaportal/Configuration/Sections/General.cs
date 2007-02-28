@@ -142,7 +142,9 @@ namespace MediaPortal.Configuration.Sections
         loglevel = xmlreader.GetValueAsString("general", "loglevel", "2");
         cbDebug.SelectedIndex = Convert.ToInt16(loglevel);
 
-        mpThreadPriority.SelectedText = xmlreader.GetValueAsString("MP", "ThreadPriority", "Normal");
+        string prio = xmlreader.GetValueAsString("MP", "ThreadPriority", "Normal");
+        // Set the selected index, otherwise the SelectedItem in SaveSettings will be null, if the box isn't checked
+        mpThreadPriority.SelectedIndex = mpThreadPriority.Items.IndexOf(prio);
 
         //numericUpDown1.Value=xmlreader.GetValueAsInt("vmr9OSDSkin","alphaValue",10);
 
