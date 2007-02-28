@@ -55,35 +55,42 @@
         <onleft>12</onleft>
         <onright>50</onright>
         <onup>6</onup>
+        <ondown>120</ondown>
+      </control>
+      <control>
+        <description>CD Menu</description>
+        <type>button</type>
+        <id>120</id>
+        <label>Music Menu</label>
+        <hyperlink>8888</hyperlink>
+        <onleft>120</onleft>
+        <onright>9</onright>
+        <onup>12</onup>
         <ondown>9</ondown>
       </control>
       <control>
         <description>Play CD</description>
         <type>button</type>
+	    <posX>400</posX>
+        <posY>295</posY>
         <id>9</id>
         <label>890</label>
-        <onleft>9</onleft>
-        <onright>50</onright>
-        <onup>12</onup>
-        <ondown>13</ondown>
+	    <onleft>120</onleft>
+	    <onright>50</onright>
+	    <ondown>13</ondown>    
       </control>
       <control>
-        <description>Eject Disc</description>
+      <description>Eject Disc</description>
         <type>button</type>
+        <posX>400</posX>
+        <posY>337</posY>
         <id>13</id>
         <label>654</label>
-        <onleft>13</onleft>
+        <onleft>120</onleft>
         <onright>50</onright>
         <onup>9</onup>
         <ondown>11</ondown>
-        <action>100</action>
-      </control>
-      <control>
-        <type>image</type>
-        <description>Divider image</description>
-        <id>999</id>
-        <texture>hbar1.png</texture>
-        <keepaspectratio>yes</keepaspectratio>
+        <action>100</action>   		
       </control>
       <control>
         <description>Now playing button</description>
@@ -118,6 +125,6 @@
         <ondown>99</ondown>
       </control>
     </control>
-    <import>common.facade.xml</import>
+    <import>common.facade.music.xml</import>
   </controls>
 </window>

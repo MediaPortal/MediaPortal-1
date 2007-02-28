@@ -55,35 +55,43 @@
         <onleft>9</onleft>
         <onright>50</onright>
         <onup>6</onup>
+        <ondown>120</ondown>
+      </control>
+       <control>
+        <description>CD Menu</description>
+        <type>button</type>
+        <id>120</id>
+        <label>Music Menu</label>
+        <hyperlink>8888</hyperlink>
+        <onleft>120</onleft>
+        <onright>120</onright>
+        <onup>9</onup>
         <ondown>12</ondown>
       </control>
       <control>
         <description>Play CD</description>
         <type>button</type>
+	    <posX>400</posX>
+        <posY>295</posY>
         <id>12</id>
         <label>890</label>
-        <onleft>12</onleft>
-        <onright>50</onright>
-        <onup>9</onup>
-        <ondown>10</ondown>
+	    <onleft>120</onleft>
+	    <onright>50</onright>
+	    <onup>120</onup>
+	    <ondown>10</ondown>    
       </control>
       <control>
         <description>Eject Disc</description>
         <type>button</type>
+        <posX>400</posX>
+        <posY>337</posY>
         <id>10</id>
         <label>654</label>
-        <onleft>10</onleft>
+        <onleft>120</onleft>
         <onright>50</onright>
         <onup>12</onup>
         <ondown>11</ondown>
-        <action>100</action>
-      </control>
-      <control>
-        <type>image</type>
-        <description>Divider image</description>
-        <id>999</id>
-        <texture>hbar1.png</texture>
-        <keepaspectratio>yes</keepaspectratio>
+        <action>100</action>  		
       </control>
       <control>
         <description>Now playing button</description>
@@ -167,6 +175,37 @@
           <onright>2</onright>
           <onup>2</onup>
           <ondown>2</ondown>
+          <itemWidth>80</itemWidth>
+    <itemHeight>76</itemHeight>
+    <textureWidth>73</textureWidth>
+    <textureHeight>69</textureHeight>
+    <thumbWidth>61</thumbWidth>
+    <thumbHeight>61</thumbHeight>
+    <thumbPosX>8</thumbPosX>
+    <thumbPosY>4</thumbPosY>
+    <imageFolder>icon_empty_nofocus_music.png</imageFolder>
+    <imageFolderFocus>icon_empty_focus_music.png</imageFolderFocus>
+    <frame>icon_empty_nofocus_music.png</frame>
+    <frameFocus>-</frameFocus>
+    <backgroundx>270</backgroundx>
+          <backgroundy>99</backgroundy>
+          <backgroundwidth>402</backgroundwidth>
+          <backgroundheight>315</backgroundheight>
+          <InfoImagex>359</InfoImagex>
+          <InfoImagey>77</InfoImagey>
+          <InfoImagewidth>200</InfoImagewidth>
+          <InfoImageheight>265</InfoImageheight>
+          <thumbs flipY="true" diffuse="Thumb_Mask.png"/>
+
+          <InfoImage flipY="true" diffuse="Thumb_Mask.png"/>
+          <showFrame>yes</showFrame>
+          <showFolder>yes</showFolder>
+          <showBackGround>no</showBackGround>
+          <showInfoImage>yes</showInfoImage>
+          <enableFocusZoom>no</enableFocusZoom>
+          <thumbAnimation effect="zoom" start="100,100" end="150,150" time="300">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="150,150" end="100,100" time="300">unfocus</thumbAnimation>
+          
         </control>
       </control>
     </control>
