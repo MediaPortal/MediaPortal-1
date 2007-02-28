@@ -3474,6 +3474,18 @@
     <id>1053</id>
     <value>Ukjent innringer</value>
    </string>
+    <string>
+        <id>1054</id>
+        <value>(opptak)</value>
+    </string>
+    <string>
+        <id>1055</id>
+        <value>(tidsskifting)</value>
+    </string>
+    <string>
+        <id>1056</id>
+        <value>(utilgjengelig)</value>
+    </string>          
    <string>
 		<id>1100</id>
 		<value>Importere CD</value>
@@ -4456,6 +4468,14 @@
 		<id>2608</id>
 		<value>Portugisisk</value>
 	</string>
+  <string>
+    <id>2609</id>
+    <value>Dansk</value>
+  </string>
+  <string>
+     <id>2610</id>
+     <value>Polsk</value>
+  </string>
 	<!-- End of Wikipedia Strings -->
 	<string>
 		<id>2997</id>
