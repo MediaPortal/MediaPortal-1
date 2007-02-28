@@ -71,33 +71,36 @@
     <Channel id="cnni-emea@cnn.com" siteId="CNN" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.fernsehen.ch/sender/senderprogramm.php3?sender=[ID]&amp;limit=[LIST_OFFSET]" post="" external="false" encoding="" />
-    <Search maxlistings="10" />
+    <Site url="http://www.fernsehen.ch/sender/[ID].html?next=[LIST_OFFSET]" post="" external="false" encoding="" />
+    <Search maxlistings="50" listStart="1"/>
     <Html>
-      <Template name="default" start="&lt;!-- Vorschlag Output DB start--&gt;" end="&lt;!-- Vorschlag Include output DB ende --&gt;">
-        <SectionTemplate tags="T">
+      <Template name="default">
+        <SectionTemplate tags="TA">
           <TemplateText>
-	&lt;tr&gt;
-	&lt;td&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;br&gt;&lt;#DAY&gt;. &lt;#MONTH&gt;&lt;br&gt;&lt;#START&gt; - &lt;#END&gt;&lt;br&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;#TITLE&gt;&lt;br&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
-	&lt;/tr&gt;
-    </TemplateText>
+            &lt;td&gt;&lt;b&gt;&lt;/b&gt;&lt;br /&gt;&lt;#DAY&gt;. &lt;#MONTH&gt;. &lt;#START&gt;-&lt;#END&gt;&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;&lt;img src /&gt;&lt;/td&gt;&lt;/tr&gt;
+            &lt;/table&gt;
+            &lt;/td&gt;
+            &lt;td&gt;&lt;a href&gt;&lt;b&gt;&lt;#TITLE&gt;&lt;/b&gt;&lt;/a&gt;
+            &lt;z(&gt;&lt;a href&gt;&lt;img src /&gt;&lt;/a&gt;&lt;/z)*&gt;
+            &lt;br/&gt;&lt;#SUBTITLE&gt;&lt;br /&gt;&lt;#DESCRIPTION&gt;&lt;br /&gt;
+            &lt;/td&gt;
+          </TemplateText>
         </SectionTemplate>
       </Template>
       <DateTime>
-        <Month>Januar</Month>
-        <Month>Februar</Month>
-        <Month>März</Month>
-        <Month>April</Month>
+        <Month>Jan</Month>
+        <Month>Feb</Month>
+        <Month>Mär</Month>
+        <Month>Apr</Month>
         <Month>Mai</Month>
-        <Month>Juni</Month>
-        <Month>Juli</Month>
-        <Month>August</Month>
-        <Month>September</Month>
-        <Month>Oktober</Month>
-        <Month>November</Month>
-        <Month>Dezember</Month>
+        <Month>Jun</Month>
+        <Month>Jul</Month>
+        <Month>Aug</Month>
+        <Month>Sep</Month>
+        <Month>Okt</Month>
+        <Month>Nov</Month>
+        <Month>Dez</Month>
       </DateTime>
     </Html>
   </Listing>
