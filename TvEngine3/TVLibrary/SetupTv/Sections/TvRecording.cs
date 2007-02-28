@@ -452,6 +452,7 @@ namespace SetupTv.Sections
     public override void OnSectionDeActivated()
     {
       base.OnSectionDeActivated();
+      SaveSettings();
       if (_needRestart)
       {
         RemoteControl.Instance.ClearCache();
