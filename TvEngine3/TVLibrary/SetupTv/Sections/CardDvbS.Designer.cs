@@ -905,6 +905,7 @@ namespace SetupTv.Sections
       this.button1.TabIndex = 68;
       this.button1.Text = "Update satellite list";
       this.button1.UseVisualStyleBackColor = true;
+      this.button1.Click += new System.EventHandler(this.buttonUpdate_Click);
       // 
       // timer1
       // 
