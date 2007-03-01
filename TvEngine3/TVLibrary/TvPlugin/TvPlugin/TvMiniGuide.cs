@@ -269,8 +269,11 @@ namespace TvPlugin
       // following line should stay. Problems with OSD not
       // appearing are already fixed elsewhere
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
+      Log.Debug("miniguide: layer registered");
       AllocResources();
+      Log.Debug("miniguide: ressources allocated");
       ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
+      Log.Debug("miniguide: all controls are reset");
       FillChannelList();
       FillGroupList();
       base.OnPageLoad();
