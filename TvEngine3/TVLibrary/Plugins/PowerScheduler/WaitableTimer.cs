@@ -1,3 +1,4 @@
+#region Copyright (C) 2005-2007 Team MediaPorta
 /* 
  *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,10 +19,13 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
 
+#region Usings
 using System;
 using System.Threading;
 using System.Runtime.InteropServices;
+#endregion
 
 using Microsoft.Win32.SafeHandles;
 

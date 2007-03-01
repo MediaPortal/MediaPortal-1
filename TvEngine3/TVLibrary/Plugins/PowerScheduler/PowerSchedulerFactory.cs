@@ -1,3 +1,4 @@
+#region Copyright (C) 2007 Team MediaPortal
 /* 
  *	Copyright (C) 2007 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
 
 #region Usings
 using System;
@@ -27,19 +29,33 @@ using System.Text;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
+using TvEngine.PowerScheduler.Interfaces;
 using TvEngine;
 #endregion
 
 namespace TvEngine.PowerScheduler
 {
+  /// <summary>
+  /// Factory for creating various IStandbyHandlers/IWakeupHandlers
+  /// </summary>
   public class PowerSchedulerFactory
   {
     #region Variables
+    /// <summary>
+    /// List of all standby handlers
+    /// </summary>
     List<IStandbyHandler> _standbyHandlers;
+    /// <summary>
+    /// List of all wakeup handlers
+    /// </summary>
     List<IWakeupHandler> _wakeupHandlers;
     #endregion
 
     #region Constructor
+    /// <summary>
+    /// Creates a new PowerSchedulerFactory
+    /// </summary>
+    /// <param name="controller">Reference to tvservice's TVController</param>
     public PowerSchedulerFactory(IController controller)
     {
       IStandbyHandler standbyHandler;
@@ -51,8 +67,8 @@ namespace TvEngine.PowerScheduler
       // Add handlers for preventing the system from entering standby
       standbyHandler = new ActiveStreamsHandler(controller);
       _standbyHandlers.Add(standbyHandler);
-      standbyHandler = new EpgGrabbingHandler(controller);
-      _standbyHandlers.Add(standbyHandler);
+      //standbyHandler = new EpgGrabbingHandler(controller);
+      //_standbyHandlers.Add(standbyHandler);
       standbyHandler = new SetupActiveHandler();
       _standbyHandlers.Add(standbyHandler);
 
@@ -65,6 +81,9 @@ namespace TvEngine.PowerScheduler
     #endregion
 
     #region Public methods
+    /// <summary>
+    /// Create/register the default set of standby/wakeup handlers
+    /// </summary>
     public void CreateDefaultSet()
     {
       IPowerScheduler powerScheduler = GlobalServiceProvider.Instance.Get<IPowerScheduler>();
@@ -74,6 +93,9 @@ namespace TvEngine.PowerScheduler
         powerScheduler.Register(handler);
     }
 
+    /// <summary>
+    /// Unregister the default set of standby/wakeup handlers
+    /// </summary>
     public void RemoveDefaultSet()
     {
       IPowerScheduler powerScheduler = GlobalServiceProvider.Instance.Get<IPowerScheduler>();
@@ -83,6 +105,7 @@ namespace TvEngine.PowerScheduler
         powerScheduler.Unregister(handler);
     }
     #endregion
+
   }
 
   #region IStandbyHandler implementations
@@ -148,6 +171,61 @@ namespace TvEngine.PowerScheduler
     }
   }
 
+  public class GenericStandbyHandler : IStandbyHandler
+  {
+    #region Variables
+    private int _timeout = 60;
+    private bool _disAllowShutdown = false;
+    private DateTime _lastUpdate = DateTime.MinValue;
+    private string _handlerName = "GenericStandbyHandler";
+    #endregion
+    #region Constructor
+    /// <summary>
+    /// Create a new instance of a generic standby handler
+    /// </summary>
+    /// <param name="standbyIdleTimeout">Configured standby idle timeout</param>
+    public GenericStandbyHandler() : this(5) { }
+    public GenericStandbyHandler(int standbyIdleTimeout)
+    {
+      SetIdleTimeout(standbyIdleTimeout);
+    }
+    #endregion
+    #region Public methods
+    public void SetIdleTimeout(int standbyIdleTimeout)
+    {
+      _timeout = standbyIdleTimeout;
+    }
+    #endregion
+    #region IStandbyHandler implementation
+    public bool DisAllowShutdown
+    {
+      get
+      {
+        // Check if last update + timeout was earlier than
+        // the current time; if so, ignore this handler!
+        if (_lastUpdate.AddMinutes(_timeout) < DateTime.Now)
+        {
+          return false;
+        }
+        else
+        {
+          return _disAllowShutdown;
+        }
+      }
+      set
+      {
+        _lastUpdate = DateTime.Now;
+        _disAllowShutdown = value;
+      }
+    }
+    public string HandlerName
+    {
+      get { return _handlerName; }
+      set { _handlerName = value; }
+    }
+    #endregion
+  }
+
   #endregion
 
   #region IWakeupHandler implementations
@@ -181,6 +259,31 @@ namespace TvEngine.PowerScheduler
     {
       get { return "TestWakeupHandler"; }
     }
+  }
+
+  public class GenericWakeupHandler : IWakeupHandler
+  {
+    #region Variables
+    private DateTime _nextWakeupTime = DateTime.MaxValue;
+    private string _handlerName = "GenericWakeupHandler";
+    #endregion
+    #region Public methods
+    public void Update(DateTime earliestWakeuptime, string handlerName)
+    {
+      _nextWakeupTime = earliestWakeuptime;
+      _handlerName = handlerName;
+    }
+    #endregion
+    #region IWakeupHandler implementation
+    public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
+    {
+      return _nextWakeupTime;
+    }
+    public string HandlerName
+    {
+      get { return _handlerName; }
+    }
+    #endregion
   }
 
   #endregion

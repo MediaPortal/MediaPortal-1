@@ -1811,7 +1811,18 @@ namespace TvService
     }
     public int ActiveStreams
     {
-      get { return _streamer.ActiveStreams; }
+      get
+      {
+        int activeCount = 0;
+        if (_streamer == null) return activeCount;
+        List<RtspClient> clients = _streamer.Clients;
+        foreach (RtspClient client in clients)
+        {
+          if (client.IsActive)
+            activeCount++;
+        }
+        return activeCount;
+      }
     }
     #endregion
 

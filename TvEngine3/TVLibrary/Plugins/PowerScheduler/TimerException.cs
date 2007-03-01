@@ -1,3 +1,4 @@
+#region Copyright (C) 2005-2007 Team MediaPortal
 /* 
  *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,8 +19,11 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
 
+#region Usings
 using System;
+#endregion
 
 namespace TvEngine.PowerScheduler
 {

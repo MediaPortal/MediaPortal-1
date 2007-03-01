@@ -1,3 +1,4 @@
+#region Copyright (C) 2007 Team MediaPortal
 /* 
  *	Copyright (C) 2007 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
 
 #region Usings
 using System;
@@ -25,7 +27,7 @@ using System.Collections.Generic;
 using System.Text;
 #endregion
 
-namespace TvEngine
+namespace TvEngine.PowerScheduler.Interfaces
 {
   public interface IStandbyHandler
   {

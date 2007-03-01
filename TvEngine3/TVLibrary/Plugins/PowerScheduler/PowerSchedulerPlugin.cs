@@ -1,3 +1,4 @@
+#region Copyright (C) 2007 Team MediaPortal
 /* 
  *	Copyright (C) 2007 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
 
 #region Usings
 using System;
@@ -32,11 +34,20 @@ namespace TvEngine.PowerScheduler
   public class PowerSchedulerPlugin : ITvServerPlugin
   {
     #region Variables
+    /// <summary>
+    /// PowerScheduler plugin instance
+    /// </summary>
     PowerScheduler _powerScheduler;
+    /// <summary>
+    /// Reference to the tvservice's TVcontroller
+    /// </summary>
     IController _controller;
     #endregion
 
     #region Constructor
+    /// <summary>
+    /// Creates a new PowerSchedulerPlugin
+    /// </summary>
     public PowerSchedulerPlugin()
     {
       _powerScheduler = new PowerScheduler();
@@ -44,28 +55,47 @@ namespace TvEngine.PowerScheduler
     #endregion
 
     #region ITvServerPlugin implementation
+    /// <summary>
+    /// Called by the tvservice PluginLoader to start the PowerScheduler plugin
+    /// </summary>
+    /// <param name="controller">Reference to the tvservice's TVController</param>
     public void Start(IController controller)
     {
       _controller = controller;
       _powerScheduler.Start(controller);
     }
 
+    /// <summary>
+    /// Called by the tvservice PluginLoader to stop the PowerScheduler plugin
+    /// </summary>
     public void Stop()
     {
       _powerScheduler.Stop();
     }
+    /// <summary>
+    /// Author of this plugin
+    /// </summary>
     public string Author
     {
       get { return "micheloe"; }
     }
+    /// <summary>
+    /// Should this plugin run only on a master tvserver?
+    /// </summary>
     public bool MasterOnly
     {
       get { return false; }
     }
+    /// <summary>
+    /// Name of this plugin
+    /// </summary>
     public string Name
     {
       get { return "Power Scheduler"; }
     }
+    /// <summary>
+    /// Returns the SectionSettings setup part of this plugin
+    /// </summary>
     public SectionSettings Setup
     {
 
@@ -79,6 +109,9 @@ namespace TvEngine.PowerScheduler
           return new PowerSchedulerMasterSetup();
       }
     }
+    /// <summary>
+    /// Plugin version
+    /// </summary>
     public string Version
     {
       get { return "0.1.0.0"; }

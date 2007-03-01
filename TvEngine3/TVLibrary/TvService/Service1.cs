@@ -51,6 +51,7 @@ namespace TvService
   public partial class Service1 : ServiceBase, IPowerEventHandler
   {
     #region variables
+    bool _started = false;
     TVController _controller;
     List<PowerEventHandler> _powerEventHandlers;
     #endregion
@@ -67,6 +68,17 @@ namespace TvService
       _powerEventHandlers = new List<PowerEventHandler>();
       GlobalServiceProvider.Instance.Add<IPowerEventHandler>(this);
       AddPowerEventHandler(new PowerEventHandler(this.OnPowerEventHandler));
+      // setup the remoting channels
+      try
+      {
+        string remotingFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+        // process the remoting configuration file
+        RemotingConfiguration.Configure(remotingFile, false);
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
       InitializeComponent();
     }
 
@@ -76,7 +88,9 @@ namespace TvService
     /// <param name="args">Data passed by the start command.</param>
     protected override void OnStart(string[] args)
     {
-      Log.WriteFile("TV service started");
+      if (_started)
+        return;
+      Log.WriteFile("TV service starting");
       Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
       AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
       Process currentProcess = Process.GetCurrentProcess();
@@ -90,8 +104,8 @@ namespace TvService
       {
       }
       StartRemoting();
-      
-
+      _started = true;
+      Log.WriteFile("TV service started");
     }
 
     /// <summary>
@@ -99,6 +113,8 @@ namespace TvService
     /// </summary>
     protected override void OnStop()
     {
+      if (!_started)
+        return;
       Log.WriteFile("TV service stopping");
       
       StopRemoting();
@@ -112,6 +128,7 @@ namespace TvService
       GC.Collect();
       GC.Collect();
       GC.Collect();
+      _started = false;
       Log.WriteFile("TV service stopped");
     }
 
@@ -154,15 +171,6 @@ namespace TvService
     {
       switch (powerStatus)
       {
-        case PowerBroadcastStatus.BatteryLow:
-          return base.OnPowerEvent(powerStatus);
-
-        case PowerBroadcastStatus.OemEvent:
-          return base.OnPowerEvent(powerStatus);
-
-        case PowerBroadcastStatus.PowerStatusChange:
-          return base.OnPowerEvent(powerStatus);
-
         case PowerBroadcastStatus.QuerySuspend:
           if (_controller != null)
           {
@@ -176,27 +184,15 @@ namespace TvService
               return false;
             }
           }
-          return base.OnPowerEvent(powerStatus);
-
-        case PowerBroadcastStatus.QuerySuspendFailed:
-          return base.OnPowerEvent(powerStatus);
+          return true;
 
         case PowerBroadcastStatus.ResumeAutomatic:
-          OnStart(null);
-          return base.OnPowerEvent(powerStatus);
-
         case PowerBroadcastStatus.ResumeCritical:
-          OnStart(null);
-          return base.OnPowerEvent(powerStatus);
-
         case PowerBroadcastStatus.ResumeSuspend:
           OnStart(null);
-          return base.OnPowerEvent(powerStatus);
-          
-        case PowerBroadcastStatus.Suspend:
-          return base.OnPowerEvent(powerStatus);
+          return true;
       }
-      return base.OnPowerEvent(powerStatus);
+      return true;
     }
 
     /// <summary>
@@ -206,20 +202,6 @@ namespace TvService
     {
       try
       {
-        // setup the remoting channels
-        try
-        {
-          string remotingFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
-          // process the remoting configuration file
-          RemotingConfiguration.Configure(remotingFile, false);
-          
-
-        }
-        catch (Exception ex)
-        {
-          Log.Write(ex);
-        }
-
         // create the object reference and make the singleton instance available
         ObjRef objref = RemotingServices.Marshal(_controller, "TvControl", typeof(TvControl.IController));
         RemoteControl.Clear();
