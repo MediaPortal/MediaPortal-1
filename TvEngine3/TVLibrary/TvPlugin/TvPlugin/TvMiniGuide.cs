@@ -304,14 +304,8 @@ namespace TvPlugin
     /// Fill the list with channels
     /// </summary>
     public void FillChannelList()
-    {      
-      _tvChannelList = new List<Channel>();
-      foreach (GroupMap map in TVHome.Navigator.CurrentGroup.ReferringGroupMap())
-      {
-        Channel ch = map.ReferencedChannel();
-        if (ch.VisibleInGuide && ch.IsTv)
-          _tvChannelList.Add(ch);
-      }
+    {
+      _tvChannelList = (List<Channel>)TVHome.Navigator.CurrentGroup.ReferringTvGuideChannels();
       Log.Debug("miniguide: FillChannelList - Got groups");
       TvBusinessLayer layer = new TvBusinessLayer();      
       Dictionary<int, NowAndNext> listNowNext = layer.GetNowAndNext();
