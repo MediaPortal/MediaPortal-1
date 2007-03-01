@@ -132,7 +132,7 @@ namespace MediaPortal.GUI.Library
     public void GetWindow(int arVideoWidth, int arVideoHeight, out System.Drawing.Rectangle rSource, out System.Drawing.Rectangle rDest)
     {
       CropSettings cropSettings = new CropSettings();
-      GetWindow(arVideoHeight, arVideoHeight, out rSource, out rDest, cropSettings);
+      GetWindow(arVideoWidth, arVideoHeight, out rSource, out rDest, cropSettings);
     }
     public void GetWindow( int arVideoWidth, int arVideoHeight, out System.Drawing.Rectangle rSource, out System.Drawing.Rectangle rDest, CropSettings cropSettings )
     {
