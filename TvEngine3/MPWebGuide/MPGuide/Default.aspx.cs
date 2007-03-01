@@ -18,6 +18,8 @@ using Gentle.Framework;
 public partial class _Default : System.Web.UI.Page
 {
   const int PIX_PER_MINUTE = 5;
+
+  IList _schedules;
   protected void Page_Load(object sender, EventArgs e)
   {
     if (!Page.IsPostBack)
@@ -25,8 +27,10 @@ public partial class _Default : System.Web.UI.Page
       UpdateGuide();
     }
   }
+
   void UpdateGuide()
   {
+    _schedules = Schedule.ListAll();
     SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
     sb.AddOrderByField(true, "sortOrder");
     SqlStatement stmt = sb.GetStatement(true);
@@ -58,6 +62,7 @@ public partial class _Default : System.Web.UI.Page
     now = now.AddMinutes(-now.Minute + min);
     now = now.AddSeconds(-now.Second);
     now = now.AddMilliseconds(-now.Millisecond);
+
 
 
     DateTime dt = new DateTime(2000, 1, 1, 0, 0, 0);
@@ -218,10 +223,20 @@ public partial class _Default : System.Web.UI.Page
       }
       else
       {
-        td2.InnerHtml = String.Format("<nobr>&nbsp;<A class=white>{0}</A></nobr>", title);
+        td2.InnerHtml = String.Format("<nobr>&nbsp;<A class=white style=\"CURSOR: pointer\" href=\"showProgram.apsx&id={1}\">{0}</A></nobr>", title, program.IdProgram);
       }
       subRow.Cells.Add(td1);
       subRow.Cells.Add(td2);
+      bool isSeries;
+      if (IsRecording(program, out isSeries))
+      {
+        HtmlTableCell tdRec = new HtmlTableCell();
+        if (isSeries)
+          tdRec.InnerHtml = String.Format("<img align=\"right\" src=\"images/icon_record_series.png\">");
+        else
+          tdRec.InnerHtml = String.Format("<img align=\"right\" src=\"images/icon_record_single.png\">");
+        subRow.Cells.Add(tdRec);
+      }
       if (program.EndTime > end)
       {
         HtmlTableCell td3 = new HtmlTableCell();
@@ -266,7 +281,7 @@ public partial class _Default : System.Web.UI.Page
     DateTime now = (DateTime)Session["currentTime"];
     now = now.AddHours(-now.Hour);
     now = now.AddMinutes(-now.Minute);
-    now=now.AddMinutes(dropDownTime.SelectedIndex * 30);
+    now = now.AddMinutes(dropDownTime.SelectedIndex * 30);
     Session["currentTime"] = now;
     UpdateGuide();
 
@@ -275,10 +290,23 @@ public partial class _Default : System.Web.UI.Page
   {
     DateTime now = (DateTime)Session["currentTime"];
     DateTime dateNow = DateTime.Now;
-    dateNow=dateNow.AddDays(dropDownDate.SelectedIndex);
+    dateNow = dateNow.AddDays(dropDownDate.SelectedIndex);
     now = new DateTime(dateNow.Year, dateNow.Month, dateNow.Day, now.Hour, now.Minute, 0);
     Session["currentTime"] = now;
     UpdateGuide();
 
+  }
+  bool IsRecording(Program program, out bool isSeries)
+  {
+    isSeries = false;
+    foreach (Schedule schedule in _schedules)
+    {
+      if (schedule.IsRecordingProgram(program, true))
+      {
+        if (schedule.ScheduleType != 0) isSeries = true;
+        return true;
+      }
+    }
+    return false;
   }
 }
