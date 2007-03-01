@@ -4,6 +4,7 @@
 //========================================================================
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Gentle.Common;
 using Gentle.Framework;
 
@@ -143,7 +144,45 @@ namespace TvDatabase
 			// TODO In the end, a GentleList should be returned instead of an arraylist
 			//return new GentleList( typeof(GroupMap), this );
 		}
-		#endregion
+
+    /// <summary>
+    /// Gets a filtered channels list referring to the current entity
+    /// Each channel returned fits those 2 conditions :
+    /// - Channel isTV
+    /// - Channel.visibleInTvGuide is true
+    /// </summary>
+    /// <returns></returns>
+    public IList ReferringTvGuideChannels()
+    {
+        IList resultingChannelList =new List<Channel>();
+        // first we get a pre filtered channel list
+        SqlBuilder sb1 = new SqlBuilder(StatementType.Select, typeof(Channel));
+        sb1.AddConstraint(Operator.Equals, "isTv", true);
+        sb1.AddConstraint(Operator.Equals, "VisibleInGuide", true);
+        sb1.AddOrderByField("SortOrder");
+        SqlStatement stmt1 = sb1.GetStatement(true);
+        IList chanList = ObjectFactory.GetCollection(typeof(Channel), stmt1.Execute());
+        // then we get a filtered groupmap
+        SqlBuilder sb2 = new SqlBuilder(StatementType.Select, typeof(GroupMap));
+        sb2.AddConstraint(Operator.Equals, "idGroup", this.idGroup);
+        SqlStatement stmt2 = sb2.GetStatement(true);
+        IList groupMapList = ObjectFactory.GetCollection(typeof(GroupMap), stmt2.Execute());
+        foreach (Channel channel in chanList)
+        {
+          foreach (GroupMap gmap in groupMapList)
+          {
+            if (gmap.IdChannel == channel.IdChannel)
+            {
+              resultingChannelList.Add(channel);
+              break;
+            }
+          }
+        }
+        return resultingChannelList;
+
+    }
+
+    #endregion
 
     public void Delete()
     {
