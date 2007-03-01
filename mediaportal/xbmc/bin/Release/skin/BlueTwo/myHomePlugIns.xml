@@ -24,6 +24,16 @@
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
+      <description>Logo</description>
+      <type>image</type>
+      <id>900</id>
+      <posX>130</posX>
+      <posY>20</posY>
+      <texture>animations\89.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
       <description>Menu</description>
       <type>menu</type>
       <animation effect="fade" time="250">WindowOpen</animation>
