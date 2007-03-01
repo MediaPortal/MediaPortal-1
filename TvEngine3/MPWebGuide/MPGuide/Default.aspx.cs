@@ -143,7 +143,7 @@ public partial class _Default : System.Web.UI.Page
     else
     {
       td1.InnerHtml = String.Format("<span class=\"grid_channel_num\"  style=\"cursor: pointer\">{0}</span>", nr);
-      td2.InnerHtml = String.Format("<nobr><A class=grid_channel style=\"CURSOR: pointer\" href=\"ShowEpg.aspx?id={0}\">{1}</A></nobr>", channel.IdChannel, channel.Name);
+      td2.InnerHtml = String.Format("<nobr><A class=grid_channel style=\"CURSOR: pointer\" href=\"ShowChannel.aspx?id={0}\">{1}</A></nobr>", channel.IdChannel, channel.Name);
     }
     subTableRow.Cells.Add(td1);
     subTableRow.Cells.Add(td2);
@@ -231,7 +231,7 @@ public partial class _Default : System.Web.UI.Page
       }
       else
       {
-        td2.InnerHtml = String.Format("<nobr>&nbsp;<A class=white style=\"CURSOR: pointer\" href=\"showProgram.apsx&id={1}\">{0}</A></nobr>", title, program.IdProgram);
+        td2.InnerHtml = String.Format("<nobr>&nbsp;<A class=white style=\"CURSOR: pointer\" href=\"showProgram.aspx?id={1}\">{0}</A></nobr>", title, program.IdProgram);
       }
       subRow.Cells.Add(td1);
       subRow.Cells.Add(td2);

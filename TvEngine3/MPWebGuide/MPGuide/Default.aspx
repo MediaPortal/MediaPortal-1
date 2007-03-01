@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>MediaPortal Webguide</title>
+    <title>MediaPortal Web guide</title>
     <link href="styles/Styles.css" type="text/css" rel="stylesheet" />
 </head>
 <body bgcolor="#085988" leftmargin="0" topmargin="0" rightmargin="0" style="background-image: url(images/bg.jpg); background-repeat: no-repeat" >
