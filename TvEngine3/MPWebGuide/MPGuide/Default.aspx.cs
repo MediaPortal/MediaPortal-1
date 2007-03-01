@@ -30,7 +30,15 @@ public partial class _Default : System.Web.UI.Page
 
   void UpdateGuide()
   {
-    _schedules = Schedule.ListAll();
+    try
+    {
+      _schedules = Schedule.ListAll();
+    }
+    catch (Exception)
+    {
+      Response.Redirect("install/default.aspx");
+      return;
+    }
     SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
     sb.AddOrderByField(true, "sortOrder");
     SqlStatement stmt = sb.GetStatement(true);
