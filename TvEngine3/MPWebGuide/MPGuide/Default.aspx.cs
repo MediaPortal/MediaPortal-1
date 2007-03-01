@@ -119,39 +119,33 @@ public partial class _Default : System.Web.UI.Page
   {
     HtmlTableRow row = new HtmlTableRow();
     AddChannelRow(nr, startTime, endTime, channel, row, programs);
-    tableGuide.Rows.Add(row);
+
   }
   void AddChannelRow(int nr, DateTime now, DateTime end, Channel channel, HtmlTableRow row, List<Program> programs)
   {
-    HtmlTableCell cellBase = new HtmlTableCell();
-    cellBase.Width = "167";
-    cellBase.BgColor = "#0d4798";
+    int posy = 26 + nr * 26;
+    HtmlGenericControl cellBase = new HtmlGenericControl();
+    cellBase.Style.Add("background-color", "#0d4798");
+    cellBase.Style.Add("position", "absolute");
+    cellBase.Style.Add("left", "25px");
+    cellBase.Style.Add("height", "25px");
+    cellBase.Style.Add("width", "175px");
+    cellBase.Style.Add("top", String.Format("{0}px", posy));
 
-    HtmlTable subTable = new HtmlTable();
-    subTable.Width = "100%";
-
-    HtmlTableRow subTableRow = new HtmlTableRow();
-    HtmlTableCell td1 = new HtmlTableCell();
-    HtmlTableCell td2 = new HtmlTableCell();
-    td1.Width = "30";
-    td2.Align = "left";
+    HtmlGenericControl subTable = new HtmlGenericControl();
     if (nr == 0)
     {
-      td1.InnerHtml = "&nbsp";
-      td2.InnerHtml = String.Format("<nobr><span class=\"guide_title_text\">{0}</span></nobr>", channel.Name);
+      subTable.InnerHtml = String.Format("<nobr><span class=\"guide_title_text\">{0}</span></nobr>", channel.Name);
     }
     else
     {
-      td1.InnerHtml = String.Format("<span class=\"grid_channel_num\"  style=\"cursor: pointer\">{0}</span>", nr);
-      td2.InnerHtml = String.Format("<nobr><A class=grid_channel style=\"CURSOR: pointer\" href=\"ShowChannel.aspx?id={0}\">{1}</A></nobr>", channel.IdChannel, channel.Name);
+      subTable.InnerHtml = String.Format("<span class=\"grid_channel_num\"  style=\"cursor: pointer\">{0}</span>", nr);
+      subTable.InnerHtml += String.Format("<nobr><A class=grid_channel style=\"CURSOR: pointer\" href=\"ShowChannel.aspx?id={0}\">{1}</A></nobr>", channel.IdChannel, channel.Name);
     }
-    subTableRow.Cells.Add(td1);
-    subTableRow.Cells.Add(td2);
-    subTable.Rows.Add(subTableRow);
 
     cellBase.Controls.Add(subTable);
+    divGuide.Controls.Add(cellBase);
 
-    row.Cells.Add(cellBase);
     AddPrograms(nr, now, end, row, programs);
   }
 
@@ -159,19 +153,14 @@ public partial class _Default : System.Web.UI.Page
   {
     //695 = 120min = 24x5min
     //
-    int span = 0;
-    TimeSpan left = new TimeSpan();
-    int count = 0;
     int cellCount = 0;
     foreach (Program program in programs)
     {
       DateTime startTime = program.StartTime;
       if (startTime < now) startTime = now;
       DateTime endTime = program.EndTime;
-      startTime = startTime - left;
       if (endTime > end) endTime = end;
-      TimeSpan ts = endTime - startTime;
-      HtmlTableCell cellBase = new HtmlTableCell();
+      HtmlGenericControl cellBase = new HtmlGenericControl();
       if (DateTime.Now >= program.StartTime && DateTime.Now <= program.EndTime && nr > 0)
       {
         cellBase.Attributes.Add("class", "grid_kids");
@@ -181,39 +170,48 @@ public partial class _Default : System.Web.UI.Page
         cellBase.Attributes.Add("class", "grid_default");
       }
       cellBase.Attributes.Add("title", String.Format("{0} {1}-{2}\r\n{3}", program.Title, program.StartTime.ToShortTimeString(), program.EndTime.ToShortTimeString(), program.Description));
-      cellBase.ColSpan = (int)((ts.TotalMinutes) / 5.0f);
-      if (count == programs.Count - 1)
-        cellBase.ColSpan = 24 - span;
-      left = ts;
-      left -= new TimeSpan(0, cellBase.ColSpan * 5, 0);
-      count++;
-      if (cellBase.ColSpan == 0) continue;
 
-      HtmlTable subTable = new HtmlTable();
-      subTable.CellSpacing = 0;
-      subTable.CellPadding = 0;
-      subTable.Width = "100%";
-      subTable.Border = 0;
-
-      HtmlTableRow subRow = new HtmlTableRow();
-      subRow.Style.Add("height", "22");
-      HtmlTableCell td1 = new HtmlTableCell();
-      HtmlTableCell td2 = new HtmlTableCell();
+      TimeSpan ts = endTime - startTime;
+      int width = (int)(ts.TotalMinutes * 6.5);
+      ts = startTime - now;
+      int posx = 200 + (int)(ts.TotalMinutes * 6.5);
+      int posy = 26 + nr * 26;
+      cellBase.Style.Add("position", "absolute");
+      cellBase.Style.Add("left", String.Format("{0}px", posx));
+      cellBase.Style.Add("top", String.Format("{0}px", posy));
+      cellBase.Style.Add("height", "25px");
+      cellBase.Style.Add("width", String.Format("{0}px", width));
+      cellBase.Style.Add("vertical-align", "middle");
+      //HtmlGenericControl subRow = new HtmlGenericControl();
+      //subRow.Style.Add("vertical-align", "middle");
+      //HtmlGenericControl td1 = new HtmlGenericControl();
+      //HtmlGenericControl td2 = new HtmlGenericControl();
+      string html = "";
       if (program.StartTime < now)
       {
-        td1.InnerHtml = "<img height=\"25\" src=\"images/leftcontinue.gif\" width=\"12\">";
+        //td1.InnerHtml = String.Format("<img height=\"25\" src=\"images/leftcontinue.gif\" width=\"12\">");
+        html += String.Format("<img align=\"middle\" height=\"25\" src=\"images/leftcontinue.gif\" width=\"12\">");
+        posx += 12;
       }
       else
       {
         if (cellCount == 0)
-          td1.InnerHtml = "<img height=\"25\" src=\"images/leftblock.gif\" width=\"12\">";
+        {
+          //td1.InnerHtml = String.Format("<img height=\"25\" src=\"images/leftblock.gif\" width=\"12\">");
+          html += String.Format("<img align=\"middle\" height=\"25\" src=\"images/leftblock.gif\" width=\"12\">");
+          posx += 12;
+        }
         else
-          td1.InnerHtml = "<img height=\"25\" src=\"images/leftblock.gif\" width=\"2\">";
+        {
+          //td1.InnerHtml = String.Format("<img height=\"25\" src=\"images/leftblock.gif\" width=\"2\">");
+          html += String.Format("<img align=\"middle\" height=\"25\" src=\"images/leftblock.gif\" width=\"2\">");
+          posx += 2;
+        }
       }
       cellCount++;
-      td2.VAlign = "center";
-      td2.Width = "100%";
-      int length = (int)(((float)cellBase.ColSpan) * 4f);
+      //td2.VAlign = "center";
+      //td2.Width = "100%";
+      int length = width / 8;
       if (length > program.Title.Length) length = program.Title.Length;
       string title = "";
       if (length > 3)
@@ -223,39 +221,50 @@ public partial class _Default : System.Web.UI.Page
         else
           title = program.Title.Substring(0, length);
       }
-      span += cellBase.ColSpan;
       //title = ".";
       if (nr == 0)
       {
-        td2.InnerHtml = String.Format("<nobr>&nbsp;<A class=guide_title_text>{0}</A></nobr>", title);
+        //td2.InnerHtml = String.Format("<A class=guide_title_text>{0}</A>", title);
+        html += String.Format("<A class=guide_title_text>{0}</A>", title); ;
       }
       else
       {
-        td2.InnerHtml = String.Format("<nobr>&nbsp;<A class=white style=\"CURSOR: pointer\" href=\"showProgram.aspx?id={1}\">{0}</A></nobr>", title, program.IdProgram);
+        //td2.InnerHtml = String.Format("<nobr>&nbsp;<A class=white style=\"CURSOR: pointer\" href=\"showProgram.aspx?id={1}\">{0}</A></nobr>", title, program.IdProgram);
+        html += String.Format("<A class=white style=\"CURSOR: pointer\" href=\"showProgram.aspx?id={1}\">{0}</A>", title, program.IdProgram); ;
       }
-      subRow.Cells.Add(td1);
-      subRow.Cells.Add(td2);
+      //subRow.Controls.Add(td1);
+      //subRow.Controls.Add(td2);
       bool isSeries;
       if (IsRecording(program, out isSeries))
       {
-        HtmlTableCell tdRec = new HtmlTableCell();
+        HtmlGenericControl tdRec = new HtmlGenericControl();
         if (isSeries)
-          tdRec.InnerHtml = String.Format("<img align=\"right\" src=\"images/icon_record_series.png\">");
+        {
+          //tdRec.InnerHtml = String.Format("<img align=\"right\" src=\"images/icon_record_series.png\">");
+          html += String.Format("<img align=\"middle\"  src=\"images/icon_record_series.png\">"); ;
+        }
         else
-          tdRec.InnerHtml = String.Format("<img align=\"right\" src=\"images/icon_record_single.png\">");
-        subRow.Cells.Add(tdRec);
+        {
+          //tdRec.InnerHtml = String.Format("<img align=\"right\" src=\"images/icon_record_single.png\">");
+          html += String.Format("<img align=\"middle\"  src=\"images/icon_record_single.png\">");
+        }
+        //subRow.Controls.Add(tdRec);
+
       }
+      cellBase.InnerHtml = html;
+      divGuide.Controls.Add(cellBase);
       if (program.EndTime > end)
       {
-        HtmlTableCell td3 = new HtmlTableCell();
-        td3.InnerHtml = "<img height=\"25\" src=\"images/rightcontinue.gif\" width=\"12\">";
-        subRow.Cells.Add(td3);
+        HtmlGenericControl divCtl = new HtmlGenericControl();
+        string style = String.Format("style=\"position:absolute;left:{0}px;top:{1}px;\"", posx + width - 12, posy);
+        //HtmlGenericControl td3 = new HtmlGenericControl();
+        //td3.InnerHtml = "<img height=\"25\" src=\"images/rightcontinue.gif\" width=\"12\">";
+        html = String.Format("<img {0} height=\"25\" src=\"images/rightcontinue.gif\" width=\"12\">", style);
+        divCtl.InnerHtml = html;
+        divGuide.Controls.Add(divCtl);
       }
 
-      subTable.Rows.Add(subRow);
 
-      cellBase.Controls.Add(subTable);
-      row.Cells.Add(cellBase);
     }
   }
   protected void idForward_Click(object sender, EventArgs e)

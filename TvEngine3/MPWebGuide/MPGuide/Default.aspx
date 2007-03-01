@@ -6,7 +6,8 @@
     <title>MediaPortal Web guide</title>
     <link href="styles/Styles.css" type="text/css" rel="stylesheet" />
 </head>
-<body bgcolor="#085988" leftmargin="0" topmargin="0" rightmargin="0" style="background-image: url(images/bg.jpg); background-repeat: no-repeat" >
+<body bgcolor="#085988" leftmargin="0" topmargin="0" rightmargin="0" style="background-image: url(images/bg.jpg);
+    background-repeat: no-repeat">
     <form id="form1" runat="server">
         <asp:ScriptManager ID="ScriptManager1" runat="server" />
         <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel1"
@@ -30,77 +31,56 @@
         <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="conditional">
             <ContentTemplate>
                 <div style="height: 100%">
-                    <table class="main_table" style="height: 100%" cellspacing="0" cellpadding="0" width="980" align="center" border="0">
-                            <tr style="height: 100%">
-                                <td valign="top">
-                                    <div style="height: 100%">
-                                        <table style="height: 98%" cellspacing="0" cellpadding="0" width="100%" border="0">
-                                            <tbody>
-                                                <tr height="1">
-                                                    <td>
-                                                        <table>
-                                                            <td width="167px" />
-                                                            <td>
-                                                                <asp:DropDownList ID="dropDownDate" runat="server" AutoPostBack="True" OnSelectedIndexChanged="dropDownDate_SelectedIndexChanged" />
-                                                            </td>
-                                                            <td>
-                                                                <asp:DropDownList ID="dropDownTime" runat="server" AutoPostBack="True" OnSelectedIndexChanged="dropDownTime_SelectedIndexChanged" />
-                                                            </td>
-                                                        </table>
-                                                    </td>
-                                                    <td colspan="2">
-                                                        <!-- show time  !-->
-                                                        <table width="880" align="center" border="0">
-                                                            <tbody>
-                                                                <tr valign="bottom">
-                                                                    <td width="100%">
-                                                                        &nbsp;&nbsp;<span id="spanClock" runat="server" style="font-weight: bold; font-size: large;
-                                                                            color: white; font-family: Trebuchet MS">9:06</span></td>
-                                                                    <td align="right">
-                                                                    </td>
-                                                                    <td>
-                                                                    </td>
-                                                                    <td align="right">
-                                                                    </td>
-                                                                    <td style="padding-top: 5px">
-                                                                    </td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                        <!-- show time  !-->
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td valign="top" colspan="2">
-                                                        <table style="height: 100%" cellspacing="0" cellpadding="0" width="880" align="center" border="0">
-                                                            <tbody>
-                                                                <!-- time header !-->
-                                                                <tr >
-                                                                    <td valign="top">
-                                                                        <table cellspacing="0" cellpadding="0" width="100%">
-                                                                            <tbody>
-                                                                                <tr>
-                                                                                    <td>
-                                                                                        <table id="tableGuide" cellspacing="1" cellpadding="0" width="100%" align="center"
-                                                                                            border="0" runat="server">
-                                                                                        </table>
-                                                                                    </td>
-                                                                                </tr>
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </td>
-                            </tr>
+                    <table class="main_table" style="height: 100%" cellspacing="0" cellpadding="0" width="980"
+                        align="center" border="0">
+                        <tr style="height: 100%">
+                            <td valign="top">
+                                <div style="height: 100%">
+                                    <table style="height: 98%" cellspacing="0" cellpadding="0" width="100%" border="0">
+                                        <tbody>
+                                            <tr height="1">
+                                                <td>
+                                                    <table>
+                                                        <td width="167px" />
+                                                        <td>
+                                                            <asp:DropDownList ID="dropDownDate" runat="server" AutoPostBack="True" OnSelectedIndexChanged="dropDownDate_SelectedIndexChanged" />
+                                                        </td>
+                                                        <td>
+                                                            <asp:DropDownList ID="dropDownTime" runat="server" AutoPostBack="True" OnSelectedIndexChanged="dropDownTime_SelectedIndexChanged" />
+                                                        </td>
+                                                    </table>
+                                                </td>
+                                                <td colspan="2">
+                                                    <!-- show time  !-->
+                                                    <table width="880" align="center" border="0">
+                                                        <tbody>
+                                                            <tr valign="bottom">
+                                                                <td width="100%">
+                                                                    &nbsp;&nbsp;<span id="spanClock" runat="server" style="font-weight: bold; font-size: large;
+                                                                        color: white; font-family: Trebuchet MS">9:06</span></td>
+                                                                <td align="right">
+                                                                </td>
+                                                                <td>
+                                                                </td>
+                                                                <td align="right">
+                                                                </td>
+                                                                <td style="padding-top: 5px">
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <!-- show time  !-->
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
                     </table>
                 </div>
+                <div id="divGuide" runat="server" />
             </ContentTemplate>
         </asp:UpdatePanel>
     </form>

@@ -5,7 +5,7 @@
 <head runat="server">
     <title>Channel info</title>
 </head>
-<body>
+<body bgcolor="#085988" leftmargin="0" topmargin="0" rightmargin="0" style="background-image: url(images/bg.jpg); background-repeat: no-repeat" >
     <form id="form1" runat="server">
         <div>
         </div>
