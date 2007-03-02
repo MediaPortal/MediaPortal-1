@@ -43,7 +43,7 @@
                                                                             <tr>
                                                                                 <td style="padding-left: 10px">
                                                                                     <a class="black_bodytext" id="ctl00_Header1_settings_link" href="Settings.aspx">
-                                                                                        Instellingen</a>
+                                                                                        Setup</a>
                                                                                 </td>
                                                                             </tr>
                                                                             <tr>
@@ -59,7 +59,7 @@
                                                                             <tr>
                                                                                 <td style="border-top: #aaaaaa 1px solid; padding-left: 10px; padding-top: 0px">
                                                                                     <a class="black_bodytext" id="ctl00_Header1_LoginStatus1" href="javascript:__doPostBack('ctl00$Header1$LoginStatus1$ctl00','')">
-                                                                                        Uitloggen</a>
+                                                                                        Log out</a>
                                                                                 </td>
                                                                             </tr>
                                                                         </tbody>
@@ -112,17 +112,17 @@
                                                             <td class="header_button_td" id="td_header_guide_button" onmouseover="handleButton('header_guide_button',true,'header_button')"
                                                                 onclick="showWait();document.location='tvguide.aspx'" onmouseout="handleButton('header_guide_button',false,'header_button')">
                                                                 <span class="header_button_text_off" id="text_header_guide_button" href="tvguide.aspx">
-                                                                    Gids </span>
+                                                                    TvGuide </span>
                                                                 <img id="over_image_header_guide_button" style="visibility: hidden" src="images/menu-over.gif"></td>
                                                             <td class="header_button_td" id="td_header_search_button" onmouseover="handleButton('header_search_button',true,'header_button')"
                                                                 onclick="showWait();document.location='search.aspx'" onmouseout="handleButton('header_search_button',false,'header_button')">
                                                                 <span class="header_button_text_off" id="text_header_search_button" href="search.aspx">
-                                                                    Zoeken </span>
+                                                                    Search </span>
                                                                 <img id="over_image_header_search_button" style="visibility: hidden" src="images/menu-over.gif"></td>
                                                             <td class="header_button_td" id="td_header_recordings_button" onmouseover="handleButton('header_recordings_button',true,'header_button')"
                                                                 onclick="showWait();document.location='recordings.aspx'" onmouseout="handleButton('header_recordings_button',false,'header_button')">
                                                                 <span class="header_button_text_off" id="text_header_recordings_button" href="recordings.aspx">
-                                                                    Opnamen </span>
+                                                                    Recordings </span>
                                                                 <img id="over_image_header_recordings_button" style="visibility: hidden" src="images/menu-over.gif"></td>
                                                             <!--
 <td id="td_Header_button4" class="header_button_td" onmouseover="handleButton('Header_button4',true,'header_button')"
@@ -184,7 +184,7 @@
                                                                     onclick="showWait();document.location='tvguide.aspx'" onmouseout="handleButton('guide_button',false,'main_button')">
                                                                     <a class="main_button_text_off" id="ctl00_cph_guide_button_hlink" style="width: 175px"
                                                                         onclick="" href="tvguide.aspx"><span class="main_button_text_off"
-                                                                            id="text_guide_button" style="cursor: pointer; position: relative">Gids</span></a>
+                                                                            id="text_guide_button" style="cursor: pointer; position: relative">Tv Guide</span></a>
                                                                     <img id="over_image_guide_button" style="visibility: hidden" src="images/main-button-over.gif"></td>
                                                             </tr>
                                                         </tbody>
@@ -196,7 +196,7 @@
                                                                     onclick="showWait();document.location='search.aspx'" onmouseout="handleButton('search_button',false,'main_button')">
                                                                     <a class="main_button_text_off" id="ctl00_cph_search_button_hlink" style="width: 175px"
                                                                         onclick="" href="search.aspx"><span class="main_button_text_off"
-                                                                            id="text_search_button" style="cursor: pointer; position: relative">Zoeken</span></a>
+                                                                            id="text_search_button" style="cursor: pointer; position: relative">Search</span></a>
                                                                     <img id="over_image_search_button" style="visibility: hidden" src="images/main-button-over.gif"></td>
                                                             </tr>
                                                         </tbody>
@@ -208,7 +208,7 @@
                                                                     onclick="showWait();document.location='recordings.aspx'" onmouseout="handleButton('recordings_button',false,'main_button')">
                                                                     <a class="main_button_text_off" id="ctl00_cph_recordings_button_hlink" style="width: 175px"
                                                                         onclick="" href="recordings.aspx"><span class="main_button_text_off"
-                                                                            id="text_recordings_button" style="cursor: pointer; position: relative">Opnamen</span></a>
+                                                                            id="text_recordings_button" style="cursor: pointer; position: relative">Recordings</span></a>
                                                                     <img id="over_image_recordings_button" style="visibility: hidden" src="images/main-button-over.gif"></td>
                                                             </tr>
                                                         </tbody>
@@ -224,7 +224,7 @@
                                                                     <td class="recording_list_top">
                                                                         <div style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px; width: 100%;
                                                                             padding-top: 4px">
-                                                                            <span class="info_box_title_text">Recent opgenomen </span>
+                                                                            <span class="info_box_title_text">Recent Recordings</span>
                                                                         </div>
                                                                     </td>
                                                                 </tr>
@@ -240,7 +240,7 @@
                                                                     <td class="recording_list_top">
                                                                         <div style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px; width: 100%;
                                                                             padding-top: 4px">
-                                                                            <span class="info_box_title_text">Geprogrammeerde opnamen </span>
+                                                                            <span class="info_box_title_text">Scheduled recordings</span>
                                                                         </div>
                                                                     </td>
                                                                 </tr>
