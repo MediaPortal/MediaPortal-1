@@ -41,9 +41,9 @@ public partial class install_Default : System.Web.UI.Page
         textBoxDatabaseResult.Text = "Unable to connect to SQL server";
       }
     }
-    catch (Exception)
+    catch (Exception ex)
     {
-      textBoxResult.Text = "Unable to connect to tv server";
+      textBoxResult.Text = "Unable to connect to tv server "+ex.ToString();
     }
   }
   protected void Button1_Click(object sender, EventArgs e)
