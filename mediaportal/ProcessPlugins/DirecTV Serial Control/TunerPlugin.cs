@@ -121,7 +121,7 @@ namespace ProcessPlugins.DirectTVTunerPlugin
 
 		public bool DefaultEnabled()
 		{
-			return true;
+			return false;
 		}
 
 		public int GetWindowId()
