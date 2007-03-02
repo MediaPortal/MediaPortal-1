@@ -176,7 +176,7 @@ namespace TvService
           {
             if (_controller.CanSuspend)
             {
-              OnStop();
+              //OnStop();
               return true;
             }
             else
@@ -189,7 +189,7 @@ namespace TvService
         case PowerBroadcastStatus.ResumeAutomatic:
         case PowerBroadcastStatus.ResumeCritical:
         case PowerBroadcastStatus.ResumeSuspend:
-          OnStart(null);
+          //OnStart(null);
           return true;
       }
       return true;
