@@ -182,7 +182,7 @@ namespace MediaPortal.Plugins.Process
         }
         _shutdownMethod = reader.GetValueAsString("psclientplugin", "shutdownmode", "suspend");
         _forceShutdown = reader.GetValueAsBool("psclientplugin", "forceshutdown", false);
-        _idleTimeout = reader.GetValueAsInt("psclientplugin", "idletimeout", 0);
+        _idleTimeout = reader.GetValueAsInt("psclientplugin", "idletimeout", 5);
         _preWakeupTime = reader.GetValueAsInt("psclientplugin", "prewakeup", 60);
         if (_refreshSettings)
           return true;

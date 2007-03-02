@@ -62,7 +62,7 @@ namespace MediaPortal.Plugins.Process
       // timeoutLabel
       // 
       this.timeoutLabel.AutoSize = true;
-      this.timeoutLabel.Location = new System.Drawing.Point(23, 47);
+      this.timeoutLabel.Location = new System.Drawing.Point(16, 47);
       this.timeoutLabel.Name = "timeoutLabel";
       this.timeoutLabel.Size = new System.Drawing.Size(164, 13);
       this.timeoutLabel.TabIndex = 7;
@@ -79,6 +79,11 @@ namespace MediaPortal.Plugins.Process
       this.idleNumericUpDown.Name = "idleNumericUpDown";
       this.idleNumericUpDown.Size = new System.Drawing.Size(46, 20);
       this.idleNumericUpDown.TabIndex = 8;
+      this.idleNumericUpDown.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
       // 
       // generalGroupBox
       // 
@@ -197,7 +202,7 @@ namespace MediaPortal.Plugins.Process
       // preWakeupLabel
       // 
       this.preWakeupLabel.AutoSize = true;
-      this.preWakeupLabel.Location = new System.Drawing.Point(43, 94);
+      this.preWakeupLabel.Location = new System.Drawing.Point(38, 94);
       this.preWakeupLabel.Name = "preWakeupLabel";
       this.preWakeupLabel.Size = new System.Drawing.Size(143, 13);
       this.preWakeupLabel.TabIndex = 10;

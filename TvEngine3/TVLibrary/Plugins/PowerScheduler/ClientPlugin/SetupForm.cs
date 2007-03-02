@@ -56,7 +56,7 @@ namespace MediaPortal.Plugins.Process
         extLogCheckBox.Checked = reader.GetValueAsBool("psclientplugin", "extensivelogging", false);
         checkNumericUpDown.Value = reader.GetValueAsInt("psclientplugin", "checkinterval", 25);
         shutModeComboBox.SelectedItem = reader.GetValueAsString("psclientplugin", "shutdownmode", "suspend");
-        idleNumericUpDown.Value = reader.GetValueAsInt("psclientplugin", "idletimeout", 0);
+        idleNumericUpDown.Value = reader.GetValueAsInt("psclientplugin", "idletimeout", 5);
         forceCheckBox.Checked = reader.GetValueAsBool("psclientplugin", "forceshutdown", false);
         wakeupNumericUpDown.Value = reader.GetValueAsInt("psclientplugin", "prewakeup", 60);
       }
