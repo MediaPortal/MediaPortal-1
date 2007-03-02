@@ -35,6 +35,7 @@ using MediaPortal.Services;
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
 using TvControl;
+using TvEngine.PowerScheduler;
 using TvEngine.PowerScheduler.Interfaces;
 
 #endregion
@@ -57,7 +58,8 @@ namespace MediaPortal.Plugins.Process
     #endregion
 
     #region Variables
-    System.Timers.Timer _timer;
+    private System.Timers.Timer _timer;
+    private WaitableTimer _wakeupTimer;
     private bool _refreshSettings = false;
     private DateTime _lastBusyTime = DateTime.Now;
     private const int _checkInterval = 1000;
@@ -96,6 +98,10 @@ namespace MediaPortal.Plugins.Process
       Register(this);
       GUIWindowManager.OnNewAction += new OnActionHandler(this.OnAction);
       _timer.Enabled = true;
+      // Create the timer that will wakeup the system after a specific amount of time after the
+      // system has been put into standby
+      _wakeupTimer = new WaitableTimer();
+      _wakeupTimer.OnTimerExpired += new WaitableTimer.TimerExpiredHandler(OnWakeupTimerExpired);
       if (!GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
         GlobalServiceProvider.Instance.Add<IPowerScheduler>(this);
       Log.Info("PowerScheduler client plugin started");
@@ -106,8 +112,12 @@ namespace MediaPortal.Plugins.Process
       if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
         GlobalServiceProvider.Instance.Remove<IPowerScheduler>();
       _timer.Enabled = false;
+      // disable the wakeup timer
+      _wakeupTimer.SecondsToWait = -1;
+      _wakeupTimer.Close();
       GUIWindowManager.OnNewAction -= new OnActionHandler(this.OnAction);
       Unregister(this);
+      _powerManager.AllowStandby();
       _powerManager = null;
       Log.Info("PowerScheduler client plugin stopped");
     }
@@ -348,17 +358,19 @@ namespace MediaPortal.Plugins.Process
     /// </summary>
     private void CheckWakeupHandlers()
     {
+      string handlerName = String.Empty;
       DateTime nextWakeupTime = DateTime.MaxValue;
       DateTime earliestWakeupTime = _lastBusyTime.AddMinutes(_idleTimeout);
-      LogDebug(String.Format("earliest wakeup time: {0}", earliestWakeupTime), false);
+      LogDebug(String.Format("PSClientPlugin: earliest wakeup time: {0}", earliestWakeupTime), false);
       // Inspect all registered IWakeupHandlers
       foreach (IWakeupHandler handler in _wakeupHandlers)
       {
         DateTime nextTime = handler.GetNextWakeupTime(earliestWakeupTime);
         if (nextTime < nextWakeupTime)
         {
-          LogDebug(String.Format("found next wakeup time {0} by {1}", nextTime, handler.HandlerName), false);
+          LogDebug(String.Format("PSClientPlugin: found next wakeup time {0} by {1}", nextTime, handler.HandlerName), false);
           nextWakeupTime = nextTime;
+          handlerName = handler.HandlerName;
         }
       }
       // Inspect all found IWakeable plugins from PluginManager
@@ -368,13 +380,35 @@ namespace MediaPortal.Plugins.Process
         DateTime nextTime = wakeable.GetNextEvent(earliestWakeupTime);
         if (nextTime < nextWakeupTime)
         {
-          LogDebug(String.Format("found next wakeup time {0} by {1}", nextTime, wakeable.PluginName()), false);
+          LogDebug(String.Format("PSClientPlugin: found next wakeup time {0} by {1}", nextTime, wakeable.PluginName()), false);
           nextWakeupTime = nextTime;
+          handlerName = wakeable.PluginName();
         }
       }
 
-      nextWakeupTime = nextWakeupTime.AddSeconds(-_preWakeupTime);
-      LogDebug(String.Format("PowerScheduler: next wakeup time: {0}", nextWakeupTime), false);
+      LogDebug(String.Format("PSClientPlugin: next wakeup time: {0}", nextWakeupTime), false);
+
+      if (_singleSeat)
+      {
+        // Pass earliest desired wakeup time to powerscheduler on tvserver
+        RemotePowerControl.Instance.SetNextWakeupTime(nextWakeupTime, HandlerName);
+      }
+      else
+      {
+        // Use a local WaitableTimer to wakeup the system
+        nextWakeupTime = nextWakeupTime.AddSeconds(-_preWakeupTime);
+        if (nextWakeupTime < DateTime.MaxValue.AddSeconds(-_preWakeupTime) && nextWakeupTime > DateTime.Now)
+        {
+          TimeSpan delta = nextWakeupTime.Subtract(DateTime.Now);
+          _wakeupTimer.SecondsToWait = delta.TotalSeconds;
+          Log.Debug("PSClientPlugin: Set wakeup timer to wakeup system in {0} minutes", delta.TotalMinutes);
+        }
+        else
+        {
+          Log.Debug("PSClientPlugin: No pending events found in the future which should wakeup the system");
+          _wakeupTimer.SecondsToWait = -1;
+        }
+      }
     }
 
     /// <summary>
@@ -425,6 +459,14 @@ namespace MediaPortal.Plugins.Process
       RemoteControl.Clear();
       LogDebug("resetting last busy time to " + DateTime.Now.ToString(), true);
       _lastBusyTime = DateTime.Now;
+    }
+
+    /// <summary>
+    /// Called when the wakeup timer is due (when system resumes from standby)
+    /// </summary>
+    private void OnWakeupTimerExpired()
+    {
+      Log.Debug("PSClientPlugin: OnResume");
     }
 
     #endregion

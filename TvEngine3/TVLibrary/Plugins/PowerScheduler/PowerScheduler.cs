@@ -119,6 +119,10 @@ namespace TvEngine.PowerScheduler
     /// the system into standby) the system will go into the configured standby mode (suspend/hibernate)
     /// </summary>
     int _idleTimeout = 5;
+    /// <summary>
+    /// Time in seconds to wakeup the system before the eariest wakeup time is due
+    /// </summary>
+    int _preWakeupTime = 60;
     #endregion
 
     #region Constructor
@@ -372,12 +376,10 @@ namespace TvEngine.PowerScheduler
         _timer.Interval = checkInterval;
 
       // Update idleTimeout
-      int idleTimeout = Int32.Parse(layer.GetSetting("PowerSchedulerIdleTimeout", "5").Value);
-      if (_idleTimeout != idleTimeout)
-      {
-        _idleTimeout = idleTimeout;
+      _idleTimeout = Int32.Parse(layer.GetSetting("PowerSchedulerIdleTimeout", "5").Value);
 
-      }
+      // Update preWakeupTime
+      _preWakeupTime = Int32.Parse(layer.GetSetting("PowerSchedulerPreWakeupTime", "60").Value);
     }
 
     /// <summary>
@@ -524,7 +526,7 @@ namespace TvEngine.PowerScheduler
       {
         // determine next wakeup time from IWakeupHandlers
         DateTime nextWakeup = NextWakeupTime;
-        if (nextWakeup < DateTime.MaxValue && nextWakeup > DateTime.Now)
+        if (nextWakeup < DateTime.MaxValue.AddSeconds(-_preWakeupTime) && nextWakeup > DateTime.Now)
         {
           TimeSpan delta = nextWakeup.Subtract(DateTime.Now);
           _wakeupTimer.SecondsToWait = delta.TotalSeconds;
@@ -573,10 +575,7 @@ namespace TvEngine.PowerScheduler
       get
       {
         DateTime nextWakeupTime = DateTime.MaxValue;
-        TvBusinessLayer layer = new TvBusinessLayer();
-        int idleTimeout = Int32.Parse(layer.GetSetting("PowerSchedulerIdleTimeout", "5").Value);
-        int preWakeupTime = Int32.Parse(layer.GetSetting("PowerSchedulerPreWakeupTime", "60").Value);
-        DateTime earliestWakeupTime = _lastIdleTime.AddMinutes(idleTimeout);
+        DateTime earliestWakeupTime = _lastIdleTime.AddMinutes(_idleTimeout);
         Log.Debug("PowerScheduler: earliest wakeup time: {0}", earliestWakeupTime);
         foreach (IWakeupHandler handler in _wakeupHandlers)
         {
@@ -587,7 +586,7 @@ namespace TvEngine.PowerScheduler
             nextWakeupTime = nextTime;
           }
         }
-        nextWakeupTime = nextWakeupTime.AddSeconds(-preWakeupTime);
+        nextWakeupTime = nextWakeupTime.AddSeconds(-_preWakeupTime);
         Log.Debug("PowerScheduler: next wakeup time: {0}", nextWakeupTime);
         return nextWakeupTime;
       }
