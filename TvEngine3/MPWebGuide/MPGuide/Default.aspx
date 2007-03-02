@@ -7,7 +7,7 @@
 
     <script src="Script/script.js" type="text/javascript"></script>
 
-    <link href="styles/Styles.css" type="text/css" rel="stylesheet">
+    <link href="styles/Styles.css" type="text/css" rel="stylesheet"/>
 </head>
 <body id="body" bottommargin="0" bgcolor="#085988" leftmargin="0" topmargin="0" rightmargin="0">
     <form id="form1" runat="server">
@@ -58,7 +58,7 @@
                             </td></tr>-->
                                                                             <tr>
                                                                                 <td style="border-top: #aaaaaa 1px solid; padding-left: 10px; padding-top: 0px">
-                                                                                    <a class="black_bodytext" id="ctl00_Header1_LoginStatus1" href="javascript:__doPostBack('ctl00$Header1$LoginStatus1$ctl00','')">
+                                                                                    <a class="black_bodytext" id="ctl00_Header1_LoginStatus1" href="logout.aspx">
                                                                                         Log out</a>
                                                                                 </td>
                                                                             </tr>
@@ -311,6 +311,7 @@
                     </tbody>
                 </table>
                 <div>
+
     </form>
 </body>
 </html>

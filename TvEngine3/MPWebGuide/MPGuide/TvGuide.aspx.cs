@@ -41,13 +41,14 @@ public partial class TvGuide : System.Web.UI.Page
     }
     SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
     sb.AddOrderByField(true, "sortOrder");
+    sb.AddConstraint(Operator.Equals,"istv", 1);
     SqlStatement stmt = sb.GetStatement(true);
     IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
     List<Channel> tvChannels = new List<Channel>();
 
     foreach (Channel channel in channels)
     {
-      if (channel.IsTv && channel.VisibleInGuide)
+      if (channel.IsTv )
       {
         tvChannels.Add(channel);
       }

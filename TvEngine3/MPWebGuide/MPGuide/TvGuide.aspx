@@ -1,13 +1,11 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="TvGuide.aspx.cs" Inherits="TvGuide" %>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/ xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>MediaPortal Web guide</title>
     <link href="styles/Styles.css" type="text/css" rel="stylesheet" />
 </head>
-<body bgcolor="#085988" leftmargin="0" topmargin="0" rightmargin="0" style="background-image: url(images/bg.jpg);
-    background-repeat: no-repeat">
+<body bgcolor="#085988" leftmargin="0" topmargin="0" rightmargin="0" >
     <form id="form1" runat="server">
         <asp:ScriptManager ID="ScriptManager1" runat="server" />
         <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel1"
@@ -31,6 +29,7 @@
         <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="conditional">
             <ContentTemplate>
                 <div style="height: 100%">
+                <img style="z-index: -1; width: 100%; position: absolute; height: 100%" height="100%" src="images/bg.jpg" width="100%">
                     <table class="main_table" style="height: 100%" cellspacing="0" cellpadding="0" width="980"
                         align="center" border="0">
                         <tr style="height: 100%">
@@ -79,8 +78,7 @@
                             </td>
                         </tr>
                     </table>
-                </div>
-                <div id="divGuide" runat="server" />
+                <div id="divGuide" style="position:absolute;top:50px;left:50px;height:800px;width:1024px;overflow:auto" runat="server" />
             </ContentTemplate>
         </asp:UpdatePanel>
     </form>
