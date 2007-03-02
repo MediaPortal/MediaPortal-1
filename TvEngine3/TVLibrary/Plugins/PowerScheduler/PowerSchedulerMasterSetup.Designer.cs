@@ -29,20 +29,23 @@ namespace TvEngine.PowerScheduler
     private void InitializeComponent()
     {
       this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.checkBox1 = new System.Windows.Forms.CheckBox();
-      this.checkBox2 = new System.Windows.Forms.CheckBox();
-      this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
       this.label1 = new System.Windows.Forms.Label();
+      this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+      this.checkBox2 = new System.Windows.Forms.CheckBox();
+      this.checkBox1 = new System.Windows.Forms.CheckBox();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
-      this.checkBox3 = new System.Windows.Forms.CheckBox();
-      this.comboBox1 = new System.Windows.Forms.ComboBox();
       this.label3 = new System.Windows.Forms.Label();
+      this.comboBox1 = new System.Windows.Forms.ComboBox();
+      this.checkBox3 = new System.Windows.Forms.CheckBox();
+      this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
+      this.label2 = new System.Windows.Forms.Label();
+      this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
+      this.label4 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
       this.groupBox2.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBox1
@@ -58,27 +61,14 @@ namespace TvEngine.PowerScheduler
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "General";
       // 
-      // checkBox1
+      // label1
       // 
-      this.checkBox1.AutoSize = true;
-      this.checkBox1.Location = new System.Drawing.Point(7, 20);
-      this.checkBox1.Name = "checkBox1";
-      this.checkBox1.Size = new System.Drawing.Size(178, 17);
-      this.checkBox1.TabIndex = 0;
-      this.checkBox1.Text = "Shutdown server after being idle";
-      this.checkBox1.UseVisualStyleBackColor = true;
-      this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-      // 
-      // checkBox2
-      // 
-      this.checkBox2.AutoSize = true;
-      this.checkBox2.Location = new System.Drawing.Point(7, 44);
-      this.checkBox2.Name = "checkBox2";
-      this.checkBox2.Size = new System.Drawing.Size(218, 17);
-      this.checkBox2.TabIndex = 1;
-      this.checkBox2.Text = "Wakeup server for scheduled recordings";
-      this.checkBox2.UseVisualStyleBackColor = true;
-      this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(222, 21);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(49, 13);
+      this.label1.TabIndex = 3;
+      this.label1.Text = "minute(s)";
       // 
       // numericUpDown1
       // 
@@ -93,17 +83,32 @@ namespace TvEngine.PowerScheduler
             0});
       this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
       // 
-      // label1
+      // checkBox2
       // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(222, 21);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(49, 13);
-      this.label1.TabIndex = 3;
-      this.label1.Text = "minute(s)";
+      this.checkBox2.AutoSize = true;
+      this.checkBox2.Location = new System.Drawing.Point(7, 44);
+      this.checkBox2.Name = "checkBox2";
+      this.checkBox2.Size = new System.Drawing.Size(227, 17);
+      this.checkBox2.TabIndex = 1;
+      this.checkBox2.Text = "Wakeup server for various wakeup events";
+      this.checkBox2.UseVisualStyleBackColor = true;
+      this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
+      // 
+      // checkBox1
+      // 
+      this.checkBox1.AutoSize = true;
+      this.checkBox1.Location = new System.Drawing.Point(7, 20);
+      this.checkBox1.Name = "checkBox1";
+      this.checkBox1.Size = new System.Drawing.Size(178, 17);
+      this.checkBox1.TabIndex = 0;
+      this.checkBox1.Text = "Shutdown server after being idle";
+      this.checkBox1.UseVisualStyleBackColor = true;
+      this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
       // 
       // groupBox2
       // 
+      this.groupBox2.Controls.Add(this.label4);
+      this.groupBox2.Controls.Add(this.numericUpDown3);
       this.groupBox2.Controls.Add(this.label3);
       this.groupBox2.Controls.Add(this.comboBox1);
       this.groupBox2.Controls.Add(this.checkBox3);
@@ -111,43 +116,19 @@ namespace TvEngine.PowerScheduler
       this.groupBox2.Controls.Add(this.label2);
       this.groupBox2.Location = new System.Drawing.Point(4, 85);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(460, 87);
+      this.groupBox2.Size = new System.Drawing.Size(460, 109);
       this.groupBox2.TabIndex = 1;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Advanced settings";
       // 
-      // label2
+      // label3
       // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(256, 49);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(140, 13);
-      this.label2.TabIndex = 0;
-      this.label2.Text = "Pre-wakeup time in seconds";
-      // 
-      // numericUpDown2
-      // 
-      this.numericUpDown2.Location = new System.Drawing.Point(399, 46);
-      this.numericUpDown2.Name = "numericUpDown2";
-      this.numericUpDown2.Size = new System.Drawing.Size(46, 20);
-      this.numericUpDown2.TabIndex = 1;
-      this.numericUpDown2.Value = new decimal(new int[] {
-            60,
-            0,
-            0,
-            0});
-      this.numericUpDown2.ValueChanged += new System.EventHandler(this.numericUpDown2_ValueChanged);
-      // 
-      // checkBox3
-      // 
-      this.checkBox3.AutoSize = true;
-      this.checkBox3.Location = new System.Drawing.Point(9, 20);
-      this.checkBox3.Name = "checkBox3";
-      this.checkBox3.Size = new System.Drawing.Size(363, 17);
-      this.checkBox3.TabIndex = 2;
-      this.checkBox3.Text = "Forced shutdown (shutdown even when prevented by another process)";
-      this.checkBox3.UseVisualStyleBackColor = true;
-      this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(7, 49);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(84, 13);
+      this.label3.TabIndex = 4;
+      this.label3.Text = "Shutdown mode";
       // 
       // comboBox1
       // 
@@ -162,14 +143,70 @@ namespace TvEngine.PowerScheduler
       this.comboBox1.TabIndex = 3;
       this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
       // 
-      // label3
+      // checkBox3
       // 
-      this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(7, 49);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(84, 13);
-      this.label3.TabIndex = 4;
-      this.label3.Text = "Shutdown mode";
+      this.checkBox3.AutoSize = true;
+      this.checkBox3.Location = new System.Drawing.Point(9, 20);
+      this.checkBox3.Name = "checkBox3";
+      this.checkBox3.Size = new System.Drawing.Size(363, 17);
+      this.checkBox3.TabIndex = 2;
+      this.checkBox3.Text = "Forced shutdown (shutdown even when prevented by another process)";
+      this.checkBox3.UseVisualStyleBackColor = true;
+      this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
+      // 
+      // numericUpDown2
+      // 
+      this.numericUpDown2.Location = new System.Drawing.Point(399, 46);
+      this.numericUpDown2.Name = "numericUpDown2";
+      this.numericUpDown2.Size = new System.Drawing.Size(46, 20);
+      this.numericUpDown2.TabIndex = 1;
+      this.numericUpDown2.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+      this.numericUpDown2.ValueChanged += new System.EventHandler(this.numericUpDown2_ValueChanged);
+      // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(256, 49);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(140, 13);
+      this.label2.TabIndex = 0;
+      this.label2.Text = "Pre-wakeup time in seconds";
+      // 
+      // numericUpDown3
+      // 
+      this.numericUpDown3.Location = new System.Drawing.Point(399, 73);
+      this.numericUpDown3.Maximum = new decimal(new int[] {
+            120,
+            0,
+            0,
+            0});
+      this.numericUpDown3.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+      this.numericUpDown3.Name = "numericUpDown3";
+      this.numericUpDown3.Size = new System.Drawing.Size(45, 20);
+      this.numericUpDown3.TabIndex = 5;
+      this.numericUpDown3.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+      this.numericUpDown3.ValueChanged += new System.EventHandler(this.numericUpDown3_ValueChanged);
+      // 
+      // label4
+      // 
+      this.label4.AutoSize = true;
+      this.label4.Location = new System.Drawing.Point(268, 76);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(129, 13);
+      this.label4.TabIndex = 6;
+      this.label4.Text = "Check interval in seconds";
       // 
       // PowerSchedulerMasterSetup
       // 
@@ -185,6 +222,7 @@ namespace TvEngine.PowerScheduler
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -202,5 +240,7 @@ namespace TvEngine.PowerScheduler
     private System.Windows.Forms.CheckBox checkBox3;
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.ComboBox comboBox1;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.NumericUpDown numericUpDown3;
   }
 }

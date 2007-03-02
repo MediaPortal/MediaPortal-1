@@ -50,17 +50,11 @@ namespace TvEngine.PowerScheduler
       setting = _layer.GetSetting("PowerSchedulerShutdownActive", "false");
       checkBox1.Checked = Convert.ToBoolean(setting.Value);
 
-      numericUpDown1.Enabled = checkBox1.Checked;
-      checkBox3.Enabled = checkBox1.Checked;
-      comboBox1.Enabled = checkBox1.Checked;
-
       setting = _layer.GetSetting("PowerSchedulerIdleTimeout", "5");
       numericUpDown1.Value = Convert.ToDecimal(setting.Value);
 
       setting = _layer.GetSetting("PowerSchedulerWakeupActive", "false");
       checkBox2.Checked = Convert.ToBoolean(setting.Value);
-
-      numericUpDown2.Enabled = checkBox2.Checked;
 
       setting = _layer.GetSetting("PowerSchedulerForceShutdown", "false");
       checkBox3.Checked = Convert.ToBoolean(setting.Value);
@@ -70,6 +64,9 @@ namespace TvEngine.PowerScheduler
 
       setting = _layer.GetSetting("PowerSchedulerPreWakeupTime", "60");
       numericUpDown2.Value = Convert.ToDecimal(setting.Value);
+
+      setting = _layer.GetSetting("PowerSchedulerCheckInterval", "60");
+      numericUpDown3.Value = Convert.ToDecimal(setting.Value);
     }
 
     private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -80,10 +77,6 @@ namespace TvEngine.PowerScheduler
       else
         setting.Value = "false";
       setting.Persist();
-
-      numericUpDown1.Enabled = checkBox1.Checked;
-      checkBox3.Enabled = checkBox1.Checked;
-      comboBox1.Enabled = checkBox1.Checked;
     }
 
     private void numericUpDown1_ValueChanged(object sender, EventArgs e)
@@ -101,8 +94,6 @@ namespace TvEngine.PowerScheduler
       else
         setting.Value = "false";
       setting.Persist();
-
-      numericUpDown2.Enabled = checkBox2.Checked;
     }
 
     private void checkBox3_CheckedChanged(object sender, EventArgs e)
@@ -125,6 +116,13 @@ namespace TvEngine.PowerScheduler
     private void numericUpDown2_ValueChanged(object sender, EventArgs e)
     {
       Setting setting = _layer.GetSetting("PowerSchedulerPreWakeupTime", "60");
+      setting.Value = numericUpDown2.Value.ToString();
+      setting.Persist();
+    }
+
+    private void numericUpDown3_ValueChanged(object sender, EventArgs e)
+    {
+      Setting setting = _layer.GetSetting("PowerSchedulerCheckInterval", "60");
       setting.Value = numericUpDown2.Value.ToString();
       setting.Persist();
     }
