@@ -191,7 +191,7 @@ public partial class TvGuide : System.Web.UI.Page
       {
         //td1.InnerHtml = String.Format("<img height=\"25\" src=\"images/leftcontinue.gif\" width=\"12\">");
         html += String.Format("<img align=\"middle\" height=\"25\" src=\"images/leftcontinue.gif\" width=\"12\">");
-        posx += 12;
+        
       }
       else
       {
@@ -199,13 +199,13 @@ public partial class TvGuide : System.Web.UI.Page
         {
           //td1.InnerHtml = String.Format("<img height=\"25\" src=\"images/leftblock.gif\" width=\"12\">");
           html += String.Format("<img align=\"middle\" height=\"25\" src=\"images/leftblock.gif\" width=\"12\">");
-          posx += 12;
+          
         }
         else
         {
           //td1.InnerHtml = String.Format("<img height=\"25\" src=\"images/leftblock.gif\" width=\"2\">");
           html += String.Format("<img align=\"middle\" height=\"25\" src=\"images/leftblock.gif\" width=\"2\">");
-          posx += 2;
+          
         }
       }
       cellCount++;
@@ -256,7 +256,8 @@ public partial class TvGuide : System.Web.UI.Page
       if (program.EndTime > end)
       {
         HtmlGenericControl divCtl = new HtmlGenericControl();
-        string style = String.Format("style=\"position:absolute;left:{0}px;top:{1}px;\"", posx + width - 12, posy);
+        
+        string style = String.Format("style=\"position:absolute;left:{0}px;top:{1}px;\"", posx + width , posy);
         //HtmlGenericControl td3 = new HtmlGenericControl();
         //td3.InnerHtml = "<img height=\"25\" src=\"images/rightcontinue.gif\" width=\"12\">";
         html = String.Format("<img {0} height=\"25\" src=\"images/rightcontinue.gif\" width=\"12\">", style);
