@@ -149,6 +149,7 @@ namespace TvDatabase
       if (channels.Count == 0) return null;
       return (TuningDetail)channels[0];
     }
+
     public TuningDetail GetAtscChannel(ATSCChannel channel)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(TuningDetail));
@@ -175,6 +176,7 @@ namespace TvDatabase
       if (channels.Count == 0) return null;
       return channels;
     }
+
     public Channel GetChannelByName(string name)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
@@ -217,6 +219,7 @@ namespace TvDatabase
       }
       return (Setting)settingsFound[0];
     }
+
     public Setting GetSetting(string tagName)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Setting));
@@ -330,6 +333,7 @@ namespace TvDatabase
       }
       return null;
     }
+
     public List<IChannel> GetTuningChannelByName(Channel channel)
     {
       List<IChannel> tvChannels = new List<IChannel>();
@@ -445,6 +449,27 @@ namespace TvDatabase
       ChannelMap newMap = new ChannelMap(channel.IdChannel, card.IdCard);
       newMap.Persist();
       return newMap;
+    }
+
+    /// <summary>
+    /// Gets a list of tv channels sorted by their group
+    /// </summary>
+    /// <returns>a list of TVDatabase Channels</returns>
+    public List<Channel> GetTVGuideChannelsForGroup(int groupID)
+    {
+      List<Channel> ResultingChannelList = new List<Channel>();
+
+      SqlBuilder sb1 = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
+      SqlStatement stmt1 = sb1.GetStatement(true);
+      SqlStatement ManualJoinSQL = new SqlStatement(stmt1.StatementType, stmt1.Command, String.Format("select c.* from Channel c join GroupMap g on c.idChannel=g.idChannel where visibleInGuide = '1' and isTV = '1' and idGroup = '{0}' order by g.idGroup, g.sortOrder", groupID), typeof(Channel));
+      IList ChanList = ObjectFactory.GetCollection(typeof(Channel), ManualJoinSQL.Execute());
+
+      foreach (Channel SingleChannel in ChanList)
+      {
+        ResultingChannelList.Add(SingleChannel);
+      }
+
+      return ResultingChannelList;
     }
     #endregion
 

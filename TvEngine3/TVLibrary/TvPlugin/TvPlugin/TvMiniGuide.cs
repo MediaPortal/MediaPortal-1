@@ -305,9 +305,10 @@ namespace TvPlugin
     /// </summary>
     public void FillChannelList()
     {
-      _tvChannelList = (List<Channel>)TVHome.Navigator.CurrentGroup.ReferringTvGuideChannels();
-      Log.Debug("miniguide: FillChannelList - Got groups");
-      TvBusinessLayer layer = new TvBusinessLayer();      
+      ///_tvChannelList = (List<Channel>)TVHome.Navigator.CurrentGroup.ReferringTvGuideChannels();      
+      TvBusinessLayer layer = new TvBusinessLayer();
+      _tvChannelList = layer.GetTVGuideChannelsForGroup(TVHome.Navigator.CurrentGroup.IdGroup);
+      Log.Debug("miniguide: FillChannelList - Got group channels");
       Dictionary<int, NowAndNext> listNowNext = layer.GetNowAndNext();
       Log.Debug("miniguide: FillChannelList - Got NowNext channels");
 
