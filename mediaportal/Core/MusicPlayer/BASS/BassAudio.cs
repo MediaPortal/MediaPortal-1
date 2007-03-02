@@ -673,6 +673,9 @@ namespace MediaPortal.Player
         BassAsio.BASS_ASIO_Stop();
         BassAsio.BASS_ASIO_Free();
       }
+      if (_mixer != 0)
+        Bass.BASS_ChannelStop(_mixer);
+
       Bass.BASS_Stop();
       Bass.BASS_Free();
 
@@ -739,6 +742,9 @@ namespace MediaPortal.Player
           BassAsio.BASS_ASIO_Stop();
           BassAsio.BASS_ASIO_Free();
         }
+        if (_mixer != 0)
+          Bass.BASS_ChannelStop(_mixer);
+
         Bass.BASS_Free();
         _BassFreed = true;
       }
@@ -798,6 +804,11 @@ namespace MediaPortal.Player
         }
         if (initOK)
         {
+          // Create an 8 Channel Mixer, which should be running until stopped.
+          // The streams to play are added to the active screen
+          if (_Mixing && _mixer == 0)
+            _mixer = BassMix.BASS_Mixer_StreamCreate(44100, 8, BASSStream.BASS_MIXER_NONSTOP | BASSStream.BASS_STREAM_AUTOFREE);
+
           Log.Info("BASS: Initialization done.");
           _Initialized = true;
           _BassFreed = false;
@@ -1385,14 +1396,7 @@ namespace MediaPortal.Player
             FadeOutStop(oldStream);
           }
           else
-          {
-            if (_Mixing)
-            {
-              Bass.BASS_ChannelStop(_mixer);
-            }
-            else
-              Bass.BASS_ChannelStop(oldStream);
-          }
+            Bass.BASS_ChannelStop(oldStream);
 
           doFade = true;
           stream = GetNextStream();
@@ -1453,8 +1457,6 @@ namespace MediaPortal.Player
           if (_Mixing && stream != 0)
           {
             // Do an upmix of the stereo according to the matrix. 
-            // Create an 8 Channel Mixer and assign it to the stream
-            _mixer = BassMix.BASS_Mixer_StreamCreate(44100, 8, BASSStream.BASS_MIXER_END | BASSStream.BASS_STREAM_AUTOFREE);
             // Now Plugin the stream to the mixer and set the mixing matrix
             BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream, BASSStream.BASS_MIXER_MATRIX);
             BassMix.BASS_Mixer_ChannelSetMatrix(stream, ref _MixingMatrix[0, 0]);
@@ -1536,7 +1538,12 @@ namespace MediaPortal.Player
 
           bool playbackStarted = false;
           if (_Mixing)
-            playbackStarted = Bass.BASS_ChannelPlay(_mixer, false);
+          {
+            if (Bass.BASS_ChannelIsActive(_mixer) == (int)BASSActive.BASS_ACTIVE_PLAYING)
+              playbackStarted = true;
+            else
+              playbackStarted = Bass.BASS_ChannelPlay(_mixer, false);
+          }
           else if (_useASIO)
           {
             // Get some information about the stream
@@ -1551,7 +1558,7 @@ namespace MediaPortal.Player
 
             // assign ASIO and assume the ASIO format, samplerate and number of channels from the BASS stream
             _asioHandler = new BassAsioHandler(0, 0, stream);
-            
+
             // Set the Volume
             _asioHandler.Volume = (double)_StreamVolume / 100.00;
             _asioHandler.Pan = _asioBalance;
@@ -2068,19 +2075,12 @@ namespace MediaPortal.Player
           while ((Bass.BASS_ChannelIsSliding(stream) & (int)BASSSlide.BASS_SLIDE_VOL) != 0)
             System.Threading.Thread.Sleep(20);
 
-          if (_Mixing)
-            Bass.BASS_ChannelStop(_mixer);
-          else
-            Bass.BASS_ChannelStop(stream);
+          Bass.BASS_ChannelStop(stream);
         }
 
         else
-        {
-          if (_Mixing)
-            Bass.BASS_ChannelStop(_mixer);
-          else
-            Bass.BASS_ChannelStop(stream);
-        }
+          Bass.BASS_ChannelStop(stream);
+
 
         if (_useASIO)
           BassAsio.BASS_ASIO_Stop();
