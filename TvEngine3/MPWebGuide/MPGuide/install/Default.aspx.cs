@@ -38,7 +38,7 @@ public partial class install_Default : System.Web.UI.Page
       }
       catch (Exception)
       {
-        textBoxDatabaseResult.Text = "Unable to connect to SQL server";
+        textBoxDatabaseResult.Text = "Unable to connect to SQL server" + ex.ToString();
       }
     }
     catch (Exception ex)
