@@ -1,88 +1,316 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>MediaPortal Web guide</title>
-    <link href="styles/Styles.css" type="text/css" rel="stylesheet" />
+    <title>Mediaportal Web guide</title>
+
+    <script src="Script/script.js" type="text/javascript"></script>
+
+    <link href="styles/Styles.css" type="text/css" rel="stylesheet">
 </head>
-<body bgcolor="#085988" leftmargin="0" topmargin="0" rightmargin="0" style="background-image: url(images/bg.jpg);
-    background-repeat: no-repeat">
+<body id="body" bottommargin="0" bgcolor="#085988" leftmargin="0" topmargin="0" rightmargin="0">
     <form id="form1" runat="server">
-        <asp:ScriptManager ID="ScriptManager1" runat="server" />
-        <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel1"
-            DisplayAfter="10">
-            <ProgressTemplate>
-                <span style="position: absolute; top: 50%; left: 50%; z-index: 2">
-                    <object id="FlashWait" height="90" width="90" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
-                        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0">
-                        <param name="Movie" value="images/wait.swf" />
-                        <param name="Src" value="images/wait.swf" />
-                        <param name="WMode" value="Transparent" />
-                        //Netscape code
-                        <embed type="application/x-shockwave-flash" src="images/wait.swf" quality="high"
-                            wmode="transparent" id="FlashWaitNs" pluginspage="http://www.macromedia.com/go/getflashplayer"
-                            movie="images/wait.swf" name="FlashWait" width="90" height="90">
-                 </embed>
-                    </object>
-                </span>
-            </ProgressTemplate>
-        </asp:UpdateProgress>
-        <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="conditional">
-            <ContentTemplate>
-                <div style="height: 100%">
-                    <table class="main_table" style="height: 100%" cellspacing="0" cellpadding="0" width="980"
-                        align="center" border="0">
+        <div>
+            <div style="height: 100%">
+                <input type="hidden" value="0" name="scrollPosition">
+                <input type="hidden" value="0" name="reload">
+                <img style="z-index: -1; width: 100%; position: absolute; height: 100%" height="100%" src="images/bg.jpg" width="100%">
+                <table class="main_table" style="height: 100%" cellspacing="0" cellpadding="0" width="980" align="center" border="0">
+                    <tbody>
+                        <tr height="1">
+                            <td>
+                                <table style="background-image: url(App_Themes/SkinFile/images/top-bar.gif); color: white;
+                                    height: 62px" cellspacing="0" cellpadding="0" width="100%" border="0">
+                                    <tbody>
+                                        <tr>
+                                            <td align="middle" width="85" rowspan="2">
+                                            <td valign="bottom" align="middle" width="130">
+                                                <a class="header_message" id="ctl00_Header1_notice"></a>
+                                            </td>
+                                            <td style="margin-right: 2px; padding-top: 0px" align="left" width="170">
+                                                <table style="width: 160px; text-align: left" cellspacing="4" cellpadding="0">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td valign="top" width="130">
+                                                                <div id="sub_menu" style="border-right: #aaaaaa 1px solid; border-top: #aaaaaa 1px solid;
+                                                                    display: none; z-index: 100; filter: progid:DXImageTransform.Microsoft.Alpha(opacity=94);
+                                                                    border-left: #aaaaaa 1px solid; width: 130px; border-bottom: #aaaaaa 1px solid;
+                                                                    position: absolute; background-color: #effcfa; opacity: .94">
+                                                                    <table style="border-right: white 1px solid; border-top: white 1px solid; border-left: white 1px solid;
+                                                                        border-bottom: white 1px solid" width="100%">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td style="padding-left: 10px">
+                                                                                    <a class="black_bodytext" id="ctl00_Header1_settings_link" href="Settings.aspx">
+                                                                                        Instellingen</a>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td style="padding-left: 10px">
+                                                                                    <a class="black_bodytext" id="ctl00_Header1_HyperLink1" href="about.aspx">
+                                                                                        Info</a>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <!--<tr>
+                            <td style="padding-left:10px">
+                                <a id="ctl00_Header1_HyperLink3" class="black_bodytext" href="help.aspx">Help</a>
+                            </td></tr>-->
+                                                                            <tr>
+                                                                                <td style="border-top: #aaaaaa 1px solid; padding-left: 10px; padding-top: 0px">
+                                                                                    <a class="black_bodytext" id="ctl00_Header1_LoginStatus1" href="javascript:__doPostBack('ctl00$Header1$LoginStatus1$ctl00','')">
+                                                                                        Uitloggen</a>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </td>
+                                                            <td title="...">
+
+                                                                <script language="javascript">
+<!--
+
+            function toggleMenu(){
+		           if(sub_menu.style.display=='block')
+		           {sub_menu.style.display='none'}
+		           else{sub_menu.style.display='block'}
+				 
+			}
+
+//-->
+                                                                </script>
+
+                                                                <table cellspacing="0" cellpadding="0" align="center">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td class="icon_button_td" id="td_channel_forward" onmouseover="handleButton('channel_forward',true,'icon_button')"
+                                                                                style="background-image: url(App_Themes/SkinFile/images/icon_button_blank.png);
+                                                                                width: 25px; height: 26px" onclick="handleButton('channel_forward',false,'icon_button');"
+                                                                                onmouseout="handleButton('channel_forward',false,'icon_button')" align="middle">
+                                                                                <a class="icon_button_text_off" id="ctl00_Header1_channel_forward_hlink" onclick="javascript:toggleMenu()"
+                                                                                    href="javascript:;"><span class="icon_button_text_off" id="text_channel_forward"
+                                                                                        style="cursor: pointer; position: relative">...</span></a>
+                                                                                <img id="over_image_channel_forward" style="visibility: hidden" src="images/icon_button_blank_over.png"></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                <span class="header_search_span" style="display: none">
+                                                    <input class="header_search_input" id="header_search_box" onkeydown="if(event.keyCode==13){document.location='search.aspx?keyword=' + header_search_box.value}"
+                                                        onblur="if (value == '') {value = 'Search...'};" onfocus="if (value == 'Search...') {value =''};"
+                                                        value="Search..."><span class="header_search_button" onclick="document.location='search.aspx?keyword=' + header_search_box.value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="bottom" align="middle" colspan="3">
+                                                <table cellspacing="0" cellpadding="0">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="header_button_td" id="td_header_guide_button" onmouseover="handleButton('header_guide_button',true,'header_button')"
+                                                                onclick="showWait();document.location='tvguide.aspx'" onmouseout="handleButton('header_guide_button',false,'header_button')">
+                                                                <span class="header_button_text_off" id="text_header_guide_button" href="tvguide.aspx">
+                                                                    Gids </span>
+                                                                <img id="over_image_header_guide_button" style="visibility: hidden" src="images/menu-over.gif"></td>
+                                                            <td class="header_button_td" id="td_header_search_button" onmouseover="handleButton('header_search_button',true,'header_button')"
+                                                                onclick="showWait();document.location='search.aspx'" onmouseout="handleButton('header_search_button',false,'header_button')">
+                                                                <span class="header_button_text_off" id="text_header_search_button" href="search.aspx">
+                                                                    Zoeken </span>
+                                                                <img id="over_image_header_search_button" style="visibility: hidden" src="images/menu-over.gif"></td>
+                                                            <td class="header_button_td" id="td_header_recordings_button" onmouseover="handleButton('header_recordings_button',true,'header_button')"
+                                                                onclick="showWait();document.location='recordings.aspx'" onmouseout="handleButton('header_recordings_button',false,'header_button')">
+                                                                <span class="header_button_text_off" id="text_header_recordings_button" href="recordings.aspx">
+                                                                    Opnamen </span>
+                                                                <img id="over_image_header_recordings_button" style="visibility: hidden" src="images/menu-over.gif"></td>
+                                                            <!--
+<td id="td_Header_button4" class="header_button_td" onmouseover="handleButton('Header_button4',true,'header_button')"
+    onmouseout="handleButton('Header_button4',false,'header_button')" onclick="showWait();document.location='recommend.aspx'">
+    <span id="text_Header_button4" class="header_button_text_off" href="recommend.aspx">
+        Recommend
+    </span>
+    <img id="over_image_Header_button4" style="visibility: hidden;" src="App_Themes/SkinFile/images/menu-over.gif" /></td>
+-->
+                                                            <td width="2">
+                                                                <img height="21" hspace="10" src="images/divider.gif" width="2"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td style="padding-right: 8px" valign="bottom" align="right" colspan="2">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
                         <tr style="height: 100%">
                             <td valign="top">
                                 <div style="height: 100%">
-                                    <table style="height: 98%" cellspacing="0" cellpadding="0" width="100%" border="0">
+
+                                    <script language="javascript">
+<!--
+
+            function reload_list(){
+		        //window.document.location.reload();
+		         try
+		        {
+		        
+				    __doPostBack('reload', document.all.reload.value);
+				 }
+				 catch(e){alert("reload_list:" & e.message);}
+			}
+
+//-->
+                                    </script>
+
+                                    <table height="100%" width="100%" border="0">
                                         <tbody>
-                                            <tr height="1">
-                                                <td>
-                                                    <table>
-                                                        <td width="167px" />
-                                                        <td>
-                                                            <asp:DropDownList ID="dropDownDate" runat="server" AutoPostBack="True" OnSelectedIndexChanged="dropDownDate_SelectedIndexChanged" />
-                                                        </td>
-                                                        <td>
-                                                            <asp:DropDownList ID="dropDownTime" runat="server" AutoPostBack="True" OnSelectedIndexChanged="dropDownTime_SelectedIndexChanged" />
-                                                        </td>
-                                                    </table>
-                                                </td>
-                                                <td colspan="2">
-                                                    <!-- show time  !-->
-                                                    <table width="880" align="center" border="0">
+                                            <tr>
+                                                <td style="padding-right: 20px" valign="top" align="middle" width="41%">
+                                                    <br>
+                                                    <br>
+                                                    <span style="width: 320px; text-align: center">
+                                                        <asp:label CssClass="main_date" id="labelDate" runat="server">woensdag 28 februari 2007</asp:label><br>
+                                                        <asp:label CssClass="main_time" id="labelTime" runat="server"/></span>
+                                                    <br>
+                                                    <br>
+                                                    <br>
+                                                    <table cellpadding="0" align="center">
                                                         <tbody>
-                                                            <tr valign="bottom">
-                                                                <td width="100%">
-                                                                    &nbsp;&nbsp;<span id="spanClock" runat="server" style="font-weight: bold; font-size: large;
-                                                                        color: white; font-family: Trebuchet MS">9:06</span></td>
-                                                                <td align="right">
-                                                                </td>
-                                                                <td>
-                                                                </td>
-                                                                <td align="right">
-                                                                </td>
-                                                                <td style="padding-top: 5px">
-                                                                </td>
+                                                            <tr>
+                                                                <td class="main_button_td" id="td_guide_button" onmouseover="handleButton('guide_button',true,'main_button')"
+                                                                    onclick="showWait();document.location='tvguide.aspx'" onmouseout="handleButton('guide_button',false,'main_button')">
+                                                                    <a class="main_button_text_off" id="ctl00_cph_guide_button_hlink" style="width: 175px"
+                                                                        onclick="" href="tvguide.aspx"><span class="main_button_text_off"
+                                                                            id="text_guide_button" style="cursor: pointer; position: relative">Gids</span></a>
+                                                                    <img id="over_image_guide_button" style="visibility: hidden" src="images/main-button-over.gif"></td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
-                                                    <!-- show time  !-->
+                                                    <table cellpadding="0" align="center">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td class="main_button_td" id="td_search_button" onmouseover="handleButton('search_button',true,'main_button')"
+                                                                    onclick="showWait();document.location='search.aspx'" onmouseout="handleButton('search_button',false,'main_button')">
+                                                                    <a class="main_button_text_off" id="ctl00_cph_search_button_hlink" style="width: 175px"
+                                                                        onclick="" href="search.aspx"><span class="main_button_text_off"
+                                                                            id="text_search_button" style="cursor: pointer; position: relative">Zoeken</span></a>
+                                                                    <img id="over_image_search_button" style="visibility: hidden" src="images/main-button-over.gif"></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <table cellpadding="0" align="center">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td class="main_button_td" id="td_recordings_button" onmouseover="handleButton('recordings_button',true,'main_button')"
+                                                                    onclick="showWait();document.location='recordings.aspx'" onmouseout="handleButton('recordings_button',false,'main_button')">
+                                                                    <a class="main_button_text_off" id="ctl00_cph_recordings_button_hlink" style="width: 175px"
+                                                                        onclick="" href="recordings.aspx"><span class="main_button_text_off"
+                                                                            id="text_recordings_button" style="cursor: pointer; position: relative">Opnamen</span></a>
+                                                                    <img id="over_image_recordings_button" style="visibility: hidden" src="images/main-button-over.gif"></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                                <td id="scrollHolder" valign="top">
+                                                    <div >
+                                                        <br>
+                                                        <br>
+                                                        <table cellspacing="0" cellpadding="0" width="526" border="0" id="tableRecordings" runat="server">
+                                                            <tbody>
+                                                                <tr id="ctl00_cph_Recording_list1_top_row">
+                                                                    <td class="recording_list_top">
+                                                                        <div style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px; width: 100%;
+                                                                            padding-top: 4px">
+                                                                            <span class="info_box_title_text">Recent opgenomen </span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr id="ctl00_cph_Recording_list1_bottom_row">
+                                                                    <td class="recording_list_bottom">
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                        <table cellspacing="0" cellpadding="0" width="526" border="0" id="tableSchedules" runat="server">
+                                                            <tbody>
+                                                                <tr id="ctl00_cph_Recording_list2_top_row">
+                                                                    <td class="recording_list_top">
+                                                                        <div style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px; width: 100%;
+                                                                            padding-top: 4px">
+                                                                            <span class="info_box_title_text">Geprogrammeerde opnamen </span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr id="ctl00_cph_Recording_list2_bottom_row">
+                                                                    <td class="recording_list_bottom">
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </td>
                                             </tr>
-                                            <tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </td>
                         </tr>
-                    </table>
-                </div>
-                <div id="divGuide" runat="server" />
-            </ContentTemplate>
-        </asp:UpdatePanel>
+                        <tr id="info_row" style="visibility: hidden; padding-top: 10px">
+                            <td style="padding-left: 48px">
+                                <table cellspacing="0" cellpadding="0" width="880">
+                                    <tbody>
+                                        <tr>
+                                            <td class="info_box_top">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="info_box_middle" style="padding-right: 7px">
+                                                <div style="width: 100%">
+                                                    <table cellspacing="0" cellpadding="0" width="100%" border="0">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <iframe id="info_frame" src="images/blank.htm" frameborder="0" width="100%" scrolling="no"
+                                                                        height="0" allowtransparency></iframe>
+                                                                </td>
+                                                                <td valign="top" width="20">
+                                                                    <div id="info_close_button" style="display: none">
+                                                                        <table cellspacing="0" cellpadding="0" align="center">
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td class="icon_button_td" id="td_info_close_image" onmouseover="handleButton('info_close_image',true,'icon_button')"
+                                                                                        style="background-image: url(App_Themes/SkinFile/images/icon_button_close.png);
+                                                                                        width: 25px; height: 26px" onclick="handleButton('info_close_image',false,'icon_button');"
+                                                                                        onmouseout="handleButton('info_close_image',false,'icon_button')" align="middle">
+                                                                                        <a class="icon_button_text_off" id="ctl00_Info_box1_info_close_image_hlink" onclick="javascript:window.parent.closeInfo();"
+                                                                                            href="javascript:;"><span class="icon_button_text_off" id="text_info_close_image"
+                                                                                                style="cursor: pointer; position: relative">&nbsp;&nbsp;&nbsp;</span></a>
+                                                                                        <img id="over_image_info_close_image" style="visibility: hidden" src="images/icon_button_close_over.png"></td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="info_box_bottom">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div>
     </form>
 </body>
 </html>
