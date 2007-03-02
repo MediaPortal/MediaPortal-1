@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Text;
 using TvControl;
 using TvDatabase;
+using TvService;
 using TvLibrary.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
 using TvEngine;
@@ -66,6 +67,8 @@ namespace TvEngine.PowerScheduler
 
       // Add handlers for preventing the system from entering standby
       standbyHandler = new ActiveStreamsHandler(controller);
+      _standbyHandlers.Add(standbyHandler);
+      standbyHandler = new ControllerActiveHandler(controller);
       _standbyHandlers.Add(standbyHandler);
       //standbyHandler = new EpgGrabbingHandler(controller);
       //_standbyHandlers.Add(standbyHandler);
@@ -171,6 +174,33 @@ namespace TvEngine.PowerScheduler
     }
   }
 
+  public class ControllerActiveHandler : IStandbyHandler
+  {
+    TVController _controller;
+    public ControllerActiveHandler(IController controller)
+    {
+      _controller = controller as TVController;
+    }
+    public TVController Controller
+    {
+      get { return _controller; }
+      set { _controller = value; }
+    }
+    public bool DisAllowShutdown
+    {
+      get
+      {
+        if (_controller.CanSuspend)
+          return false;
+        return true;
+      }
+    }
+    public string HandlerName
+    {
+      get { return "ControllerActiveHandler"; }
+    }
+  }
+
   public class GenericStandbyHandler : IStandbyHandler
   {
     #region Variables
@@ -234,12 +264,14 @@ namespace TvEngine.PowerScheduler
   {
     public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
     {
+      DateTime scheduleWakeupTime;
       DateTime nextWakeuptime = DateTime.MaxValue;
       foreach (Schedule schedule in Schedule.ListAll())
       {
         if (schedule.Canceled != Schedule.MinSchedule) continue;
-        if (schedule.StartTime < nextWakeuptime && schedule.StartTime >= earliestWakeupTime)
-          nextWakeuptime = schedule.StartTime;
+        scheduleWakeupTime = schedule.StartTime.AddMinutes(-schedule.PreRecordInterval);
+        if (scheduleWakeupTime < nextWakeuptime && scheduleWakeupTime >= earliestWakeupTime)
+          nextWakeuptime = scheduleWakeupTime;
       }
       return nextWakeuptime;
     }

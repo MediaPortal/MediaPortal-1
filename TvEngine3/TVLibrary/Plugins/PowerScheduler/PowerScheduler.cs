@@ -542,7 +542,7 @@ namespace TvEngine.PowerScheduler
     #region Private properties
 
     /// <summary>
-    /// Checks all ISTandbyHandlers if one of them wants to prevent standby;
+    /// Checks all IStandbyHandlers if one of them wants to prevent standby;
     /// returns false if one of them does; returns true of none of them does.
     /// </summary>
     private bool SystemIdle
