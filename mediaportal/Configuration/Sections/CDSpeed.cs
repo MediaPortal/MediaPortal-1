@@ -132,94 +132,102 @@ namespace MediaPortal.Configuration.Sections
 
     private void FillGrid()
     {
-      updating = true;
-      //Declare and initialize local variables used
-      DataColumn dtCol = null;                  //Data Column variable
-      string[] arrColumnNames = null;           //string array variable
-      SyncedComboBox cbSpeed;                   //combo box var         
-
-      //Create the String array object, initialize the array with the column
-      //names to be displayed
-      arrColumnNames = new string[3];
-      arrColumnNames[0] = "Drive";
-      arrColumnNames[1] = "Name";
-      arrColumnNames[2] = "Speed";
-
-      //Create the Data Table object which will then be used to hold
-      //columns and rows
-      datasetFilters = new DataTable("Drive");
-      //Add the string array of columns to the DataColumn object       
-      for (int i = 0; i < arrColumnNames.Length; i++)
+      try
       {
-        string str = arrColumnNames[i];
-        dtCol = new DataColumn(str);
-        dtCol.DataType = Type.GetType("System.String");
-        dtCol.DefaultValue = "";
-        datasetFilters.Columns.Add(dtCol);
-      }
+        updating = true;
+        //Declare and initialize local variables used
+        DataColumn dtCol = null;                  //Data Column variable
+        string[] arrColumnNames = null;           //string array variable
+        SyncedComboBox cbSpeed;                   //combo box var         
 
-      cbSpeed = new SyncedComboBox();
-      cbSpeed.Cursor = Cursors.Arrow;
-      cbSpeed.DropDownStyle = ComboBoxStyle.DropDownList;
-      cbSpeed.Dock = DockStyle.Fill;
-      cbSpeed.DisplayMember = "Speed";
-      cbSpeed.Grid = dataGrid1;
-      cbSpeed.Cell = 1;
-      cbSpeed.Items.AddRange(speeds);
+        //Create the String array object, initialize the array with the column
+        //names to be displayed
+        arrColumnNames = new string[3];
+        arrColumnNames[0] = "Drive";
+        arrColumnNames[1] = "Name";
+        arrColumnNames[2] = "Speed";
 
-      //Event that will be fired when selected index in the combo box is changed
-      cbSpeed.SelectionChangeCommitted += new EventHandler(cbSpeed_SelectionChangeCommitted);
+        //Create the Data Table object which will then be used to hold
+        //columns and rows
+        datasetFilters = new DataTable("Drive");
+        //Add the string array of columns to the DataColumn object       
+        for (int i = 0; i < arrColumnNames.Length; i++)
+        {
+          string str = arrColumnNames[i];
+          dtCol = new DataColumn(str);
+          dtCol.DataType = Type.GetType("System.String");
+          dtCol.DefaultValue = "";
+          datasetFilters.Columns.Add(dtCol);
+        }
+
+        cbSpeed = new SyncedComboBox();
+        cbSpeed.Cursor = Cursors.Arrow;
+        cbSpeed.DropDownStyle = ComboBoxStyle.DropDownList;
+        cbSpeed.Dock = DockStyle.Fill;
+        cbSpeed.DisplayMember = "Speed";
+        cbSpeed.Grid = dataGrid1;
+        cbSpeed.Cell = 1;
+        cbSpeed.Items.AddRange(speeds);
+
+        //Event that will be fired when selected index in the combo box is changed
+        cbSpeed.SelectionChangeCommitted += new EventHandler(cbSpeed_SelectionChangeCommitted);
 
 
-      //fill in all rows...
-      string[] drivespeed = _speedTable.Split(',');
-      for (int i = 0; i < _driveCount; ++i)
-      {
-        datasetFilters.Rows.Add(
-            new object[] {
+        //fill in all rows...
+        string[] drivespeed = _speedTable.Split(',');
+        for (int i = 0; i < _driveCount; ++i)
+        {
+          datasetFilters.Rows.Add(
+              new object[] {
                            BassCd.BASS_CD_GetDriveLetterChar(i), BassCd.BASS_CD_GetDriveDescription(i),
                            drivespeed[i]
 												 }
-                               );
+                                 );
+        }
+
+        //Set the Data Grid Source as the Data Table created above
+        dataGrid1.CaptionText = String.Empty;
+        dataGrid1.DataSource = datasetFilters;
+
+        //set style property when first time the grid loads, next time onwards it //will maintain its property
+        if (!dataGrid1.TableStyles.Contains("Drive"))
+        {
+          //Create a DataGridTableStyle object     
+          DataGridTableStyle dgdtblStyle = new DataGridTableStyle();
+          //Set its properties
+          dgdtblStyle.MappingName = datasetFilters.TableName; //its table name of dataset
+          dataGrid1.TableStyles.Add(dgdtblStyle);
+          dgdtblStyle.RowHeadersVisible = false;
+          dgdtblStyle.HeaderBackColor = Color.LightSteelBlue;
+          dgdtblStyle.AllowSorting = false;
+          dgdtblStyle.HeaderBackColor = Color.FromArgb(8, 36, 107);
+          dgdtblStyle.RowHeadersVisible = false;
+          dgdtblStyle.HeaderForeColor = Color.White;
+          dgdtblStyle.HeaderFont = new Font("Microsoft Sans Serif", 9F, FontStyle.Bold, GraphicsUnit.Point, ((Byte)(0)));
+          dgdtblStyle.GridLineColor = Color.DarkGray;
+          dgdtblStyle.PreferredRowHeight = 22;
+          dataGrid1.BackgroundColor = Color.White;
+
+          //Take the columns in a GridColumnStylesCollection object and set //the size of the
+          //individual columns   
+          GridColumnStylesCollection colStyle;
+          colStyle = dataGrid1.TableStyles[0].GridColumnStyles;
+          colStyle[0].Width = 60;
+          colStyle[0].ReadOnly = true;
+          colStyle[1].Width = 300;
+          colStyle[1].ReadOnly = true;
+          colStyle[2].Width = 60;
+        }
+        DataGridTextBoxColumn dgtb = (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[2];
+        //Add the combo box to the text box taken in the above step 
+        dgtb.TextBox.Controls.Add(cbSpeed);
+        updating = false;
       }
-
-      //Set the Data Grid Source as the Data Table created above
-      dataGrid1.CaptionText = String.Empty;
-      dataGrid1.DataSource = datasetFilters;
-
-      //set style property when first time the grid loads, next time onwards it //will maintain its property
-      if (!dataGrid1.TableStyles.Contains("Drive"))
+      catch (Exception ex)
       {
-        //Create a DataGridTableStyle object     
-        DataGridTableStyle dgdtblStyle = new DataGridTableStyle();
-        //Set its properties
-        dgdtblStyle.MappingName = datasetFilters.TableName; //its table name of dataset
-        dataGrid1.TableStyles.Add(dgdtblStyle);
-        dgdtblStyle.RowHeadersVisible = false;
-        dgdtblStyle.HeaderBackColor = Color.LightSteelBlue;
-        dgdtblStyle.AllowSorting = false;
-        dgdtblStyle.HeaderBackColor = Color.FromArgb(8, 36, 107);
-        dgdtblStyle.RowHeadersVisible = false;
-        dgdtblStyle.HeaderForeColor = Color.White;
-        dgdtblStyle.HeaderFont = new Font("Microsoft Sans Serif", 9F, FontStyle.Bold, GraphicsUnit.Point, ((Byte)(0)));
-        dgdtblStyle.GridLineColor = Color.DarkGray;
-        dgdtblStyle.PreferredRowHeight = 22;
-        dataGrid1.BackgroundColor = Color.White;
-
-        //Take the columns in a GridColumnStylesCollection object and set //the size of the
-        //individual columns   
-        GridColumnStylesCollection colStyle;
-        colStyle = dataGrid1.TableStyles[0].GridColumnStyles;
-        colStyle[0].Width = 60;
-        colStyle[0].ReadOnly = true;
-        colStyle[1].Width = 300;
-        colStyle[1].ReadOnly = true;
-        colStyle[2].Width = 60;
+        Log.Error("Exception in CDSpeed FillGrid");
+        Log.Error(ex);
       }
-      DataGridTextBoxColumn dgtb = (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[2];
-      //Add the combo box to the text box taken in the above step 
-      dgtb.TextBox.Controls.Add(cbSpeed);
-      updating = false;
     }
 
     private void cbSpeed_SelectionChangeCommitted(object sender, EventArgs e)
