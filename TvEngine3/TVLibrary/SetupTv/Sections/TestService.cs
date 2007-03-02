@@ -29,7 +29,7 @@ using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations;
-
+using TvLibrary.Log;
 
 using Gentle.Common;
 using Gentle.Framework;
@@ -366,9 +366,9 @@ namespace SetupTv.Sections
           item.SubItems[6].Text = "";
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        MessageBox.Show(this, "Unable to access service. Is the TvService running??");
+        Log.Write(ex);
       }
     }
 
