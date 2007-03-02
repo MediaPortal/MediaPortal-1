@@ -36,14 +36,14 @@ public partial class install_Default : System.Web.UI.Page
         textBoxDatabaseResult.Text = "Connected to SQL server";
         idSave.Visible = true;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         textBoxDatabaseResult.Text = "Unable to connect to SQL server" + ex.ToString();
       }
     }
     catch (Exception ex)
     {
-      textBoxResult.Text = "Unable to connect to tv server "+ex.ToString();
+      textBoxResult.Text = "Unable to connect to tv server " + ex.ToString();
     }
   }
   protected void Button1_Click(object sender, EventArgs e)
@@ -52,19 +52,35 @@ public partial class install_Default : System.Web.UI.Page
     try
     {
       string connectionString, provider;
-      RemoteControl.Instance.GetDatabaseConnectionString(out connectionString, out provider);
       XmlDocument doc = new XmlDocument();
-      doc.Load(Server.MapPath("../gentle.config"));
-      XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-      XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
-      XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
-      node.InnerText = connectionString;
-      nodeProvider.InnerText = provider;
-      doc.Save(Server.MapPath("../gentle.config"));
+      try
+      {
+        RemoteControl.Instance.GetDatabaseConnectionString(out connectionString, out provider);
+        doc.Load(Server.MapPath("../gentle.config"));
+      }
+      catch (Exception ex)
+      {
+        textBoxResult.Text = "Unable open gentle.config !!! " + ex.ToString();
+        return;
+      }
+      try
+      {
+        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
+        XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
+        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
+        node.InnerText = connectionString;
+        nodeProvider.InnerText = provider;
+        doc.Save(Server.MapPath("../gentle.config"));
+      }
+      catch (Exception ex)
+      {
+        textBoxResult.Text = "Unable to save gentle.config !!! " + ex.ToString();
+        return;
+      }
     }
-    catch (Exception)
+    catch (Exception ex)
     {
-      textBoxResult.Text = "Unable to create/modify gentle.config !!!";
+      textBoxResult.Text = "Unable to create/modify gentle.config !!! " + ex.ToString();
       return;
     }
     Response.Redirect("../default.aspx");
