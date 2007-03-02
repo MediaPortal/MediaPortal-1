@@ -46,6 +46,8 @@
     <Compile Include="Interfaces\IWakeupHandler.cs" />
     <Compile Include="PowerManager.cs" />
     <Compile Include="RemotePowerControl.cs" />
+    <Compile Include="TimerException.cs" />
+    <Compile Include="WaitableTimer.cs" />
     <Compile Include="WakeOnLanManager.cs" />
   </ItemGroup>
   <ItemGroup>
