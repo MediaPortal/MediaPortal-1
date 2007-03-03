@@ -25,11 +25,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -61,6 +63,7 @@ namespace TvPlugin
     List<ChannelGroup> _channelGroupList = null;
     Channel _selectedChannel;
     bool _zap = true;
+    Stopwatch benchClock = null;
 
     /// <summary>
     /// Constructor
@@ -113,7 +116,7 @@ namespace TvPlugin
         _selectedChannel = value;
       }
     }
-
+	
     /// <summary>
     /// Gets or sets a value indicating whether [auto zap].
     /// </summary>
@@ -202,9 +205,8 @@ namespace TvPlugin
             }
             else if (message.SenderControlId == 36) // spincontrol
             {
-              // switch group
-              TVHome.Navigator.SetCurrentGroup(spinGroup.GetLabel());
-              FillChannelList();
+              // switch group              
+              OnGroupChanged();
             }
             else if (message.SenderControlId == 34) // exit button
             {
@@ -236,14 +238,10 @@ namespace TvPlugin
         case Action.ActionType.ACTION_MOVE_LEFT:
           // switch group
           spinGroup.MoveUp();
-          TVHome.Navigator.SetCurrentGroup(spinGroup.GetLabel());
-          FillChannelList();
           return;
         case Action.ActionType.ACTION_MOVE_RIGHT:
           // switch group
           spinGroup.MoveDown();
-          TVHome.Navigator.SetCurrentGroup(spinGroup.GetLabel());
-          FillChannelList();
           return;
       }
       base.OnAction(action);
@@ -265,18 +263,25 @@ namespace TvPlugin
     /// </summary>
     protected override void OnPageLoad()
     {
+      benchClock = Stopwatch.StartNew();      
       Log.Debug("miniguide: onpageload");
       // following line should stay. Problems with OSD not
       // appearing are already fixed elsewhere
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
-      Log.Debug("miniguide: layer registered");
       AllocResources();
-      Log.Debug("miniguide: ressources allocated");
       ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
-      Log.Debug("miniguide: all controls are reset");
+      benchClock.Stop();
+      Log.Debug("miniguide: all controls are reset after {0} ticks", benchClock.ElapsedTicks.ToString());
       FillChannelList();
       FillGroupList();
       base.OnPageLoad();
+    }
+
+    private void OnGroupChanged()
+    {      
+      TVHome.Navigator.SetCurrentGroup(spinGroup.Value);
+      lstChannels.Clear();
+      FillChannelList();
     }
 
     /// <summary>
@@ -284,6 +289,8 @@ namespace TvPlugin
     /// </summary>
     public void FillGroupList()
     {
+      benchClock.Reset();
+      benchClock.Start();
       ChannelGroup current = null;
       _channelGroupList = TVHome.Navigator.Groups;
       // empty list of channels currently in the 
@@ -296,8 +303,12 @@ namespace TvPlugin
         spinGroup.AddLabel(current.GroupName, i);
         // set selected
         if (current.GroupName.CompareTo(TVHome.Navigator.CurrentGroup.GroupName) == 0)
-          spinGroup.Value = i;
+        {
+          spinGroup.Value = i;          
+        }
       }
+      benchClock.Stop();
+      Log.Debug("miniguide: FillGroupList finished after {0} ticks", benchClock.ElapsedTicks.ToString());
     }
 
     /// <summary>
@@ -305,14 +316,20 @@ namespace TvPlugin
     /// </summary>
     public void FillChannelList()
     {
+      lstChannels.Visible = false;
+      benchClock.Reset();
+      benchClock.Start();
       ///_tvChannelList = (List<Channel>)TVHome.Navigator.CurrentGroup.ReferringTvGuideChannels();      
       TvBusinessLayer layer = new TvBusinessLayer();
       _tvChannelList = layer.GetTVGuideChannelsForGroup(TVHome.Navigator.CurrentGroup.IdGroup);
-      Log.Debug("miniguide: FillChannelList - Got group channels");
+      benchClock.Stop();
+      Log.Debug("miniguide: FillChannelList - Got group channels after {0} ticks", benchClock.ElapsedTicks.ToString());
+      benchClock.Reset();
+      benchClock.Start();
       Dictionary<int, NowAndNext> listNowNext = layer.GetNowAndNext();
-      Log.Debug("miniguide: FillChannelList - Got NowNext channels");
-
-      lstChannels.Clear();
+      benchClock.Stop();
+      Log.Debug("miniguide: FillChannelList - Got NowNext channels after {0} ticks", benchClock.ElapsedTicks.ToString());
+      
       Channel CurrentChan = null;
       GUIListItem item = null;
       string ChannelLogo = "";
@@ -329,10 +346,15 @@ namespace TvPlugin
         Log.Debug("miniguide: not checking channel state");
       else
       {
+        benchClock.Reset();
+        benchClock.Start();
         TVHome.TvServer.GetAllRecordingChannels(out RecChannels, out TSChannels);
-        Log.Debug("miniguide: FillChannelList - channels currently timeshifting: {0}, recording: {1}", Convert.ToString(TSChannels.Count), Convert.ToString(RecChannels.Count));
+        benchClock.Stop();
+        Log.Debug("miniguide: FillChannelList after {2} ticks - channels currently timeshifting: {0}, recording: {1}", Convert.ToString(TSChannels.Count), Convert.ToString(RecChannels.Count), benchClock.ElapsedTicks.ToString());
       }
 
+      benchClock.Reset();
+      benchClock.Start();
       for (int i = 0; i < _tvChannelList.Count; i++)
       {
         CurrentChan = _tvChannelList[i];
@@ -424,8 +446,10 @@ namespace TvPlugin
           lstChannels.Add(item);
         }
       }
-      Log.Debug("miniguide: FillChannelList - Exit");
+      benchClock.Stop();
+      Log.Debug("miniguide: FillChannelList loop completed after {0} ticks - exiting", benchClock.ElapsedTicks.ToString());
       lstChannels.SelectedListItemIndex = SelectedID;
+      lstChannels.Visible = true;
     }
 
     /// <summary>

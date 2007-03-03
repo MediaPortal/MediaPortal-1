@@ -1840,6 +1840,15 @@ namespace TvPlugin
     }
 
     /// <summary>
+    /// Changes the current channel group.
+    /// </summary>
+    /// <param name="groupIndex">The id of the group to change to.</param>
+    public void SetCurrentGroup(int groupIndex)
+    {
+      m_currentgroup = groupIndex;
+    }
+
+    /// <summary>
     /// Ensures that the navigator has the correct current channel (retrieved from the Recorder).
     /// </summary>
     public void UpdateCurrentChannel()
@@ -2112,6 +2121,7 @@ namespace TvPlugin
       }
       return -1;
     }
+
     public Channel GetChannel(string channelName)
     {
       foreach (Channel chan in channels)
