@@ -121,6 +121,7 @@ namespace TvService
       RemoteControl.Clear();
       if (_controller != null)
       {
+        _controller.DeInit();
         _controller.Dispose();
         _controller = null;
       }
