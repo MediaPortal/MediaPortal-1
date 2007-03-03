@@ -219,7 +219,7 @@ namespace MediaPortal.GUI.WeatherOverlay
 
     public override void PostRender(float timePassed, int iLayer)
     {
-      if (iLayer != 2) return;
+      if (iLayer != 5) return;
 
       // Set current Current Location
       if (_labelLocation != null)
@@ -260,7 +260,7 @@ namespace MediaPortal.GUI.WeatherOverlay
     }
     public void RenderLayer(float timePassed)
     {
-      PostRender(timePassed, 2);
+      PostRender(timePassed, 5);
     }
     #endregion
 
