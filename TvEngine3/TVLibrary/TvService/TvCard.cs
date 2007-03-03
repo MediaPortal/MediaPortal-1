@@ -2330,7 +2330,7 @@ namespace TvService
       bool isRadio = channel.IsRadio;
       ulong minTimeShiftFile = 500 * 1024;//300Kb
       if (isRadio)
-        minTimeShiftFile = 200 * 1024;//100Kb
+        minTimeShiftFile = 1000 * 1024;//100Kb
 
       timeStart = DateTime.Now;
       try
@@ -2351,6 +2351,7 @@ namespace TvService
                   if (newfileSize != fileSize)
                   {
                     Log.Write("card: timeshifting fileSize:{0}", fileSize);
+                    timeStart = DateTime.Now;
                   }
                   fileSize = newfileSize;
                   if (fileSize >= minTimeShiftFile)
