@@ -38,6 +38,7 @@ namespace MediaPortal.ITunesPlayer
   public class ITunesPlugin : IExternalPlayer
   {
     iTunesLib.iTunesAppClass _iTunesApplication = null;
+    IITUserPlaylist _playList;
     bool _playerIsPaused;
     string _currentFile = String.Empty;
     bool _started;
@@ -155,6 +156,24 @@ namespace MediaPortal.ITunesPlayer
           _iTunesApplication.OnPlayerPlayEvent += new _IiTunesEvents_OnPlayerPlayEventEventHandler(_iTunesApplication_OnPlayerPlayEvent);
           _iTunesApplication.OnPlayerStopEvent += new _IiTunesEvents_OnPlayerStopEventEventHandler(_iTunesApplication_OnPlayerStopEvent);
           _iTunesApplication.OnPlayerPlayingTrackChangedEvent += new _IiTunesEvents_OnPlayerPlayingTrackChangedEventEventHandler(_iTunesApplication_OnPlayerPlayingTrackChangedEvent);
+          IITPlaylist playList = null;
+          foreach (IITPlaylist pl in _iTunesApplication.LibrarySource.Playlists)
+          {
+            if (pl.Name.Equals("MediaPortalTemporaryPlaylist"))
+            {
+              playList = pl;
+              break;
+            }
+          }
+          if (playList == null)
+          {
+            _playList = (IITUserPlaylist)_iTunesApplication.CreatePlaylist("MediaPortalTemporaryPlaylist");
+          }
+          else
+          {
+            _playList = (IITUserPlaylist)playList;
+          }
+          _playList.SongRepeat = ITPlaylistRepeatMode.ITPlaylistRepeatModeOff;
         }
 
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
@@ -163,7 +182,10 @@ namespace MediaPortal.ITunesPlayer
 
         _started = false;
         _ended = false;
-        _iTunesApplication.PlayFile(strFile);
+        foreach (IITTrack track in _playList.Tracks)
+          track.Delete();
+        _playList.AddFile(strFile);
+        _playList.PlayFirstTrack();
 
         _playerIsPaused = false;
         _currentFile = strFile;
@@ -176,8 +198,10 @@ namespace MediaPortal.ITunesPlayer
         _notifyPlaying = true;
         return true;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("ITunesPlugin.Play: Exception");
+        Log.Error(ex);
         _notifyPlaying = false;
         _iTunesApplication = null;
       }
@@ -194,6 +218,9 @@ namespace MediaPortal.ITunesPlayer
 
     void _iTunesApplication_OnPlayerStopEvent(object iTrack)
     {
+      // ignore event if we're pausing
+      if (_playerIsPaused)
+        return;
       iTunesLib.IITTrack track = iTrack as iTunesLib.IITTrack;
       Log.Info("ITunes:playback stopped track :{0} duration:{1}", track.Name, track.Duration);
 
@@ -251,18 +278,19 @@ namespace MediaPortal.ITunesPlayer
     {
       if (_iTunesApplication == null) return;
       UpdateStatus();
-      if (_started == false) return;
+      if (_started == false && !_playerIsPaused) return;
       try
       {
-        if (Paused)
+        if (Paused || !_started)
         {
-          _iTunesApplication.Play();
           _playerIsPaused = false;
+          _iTunesApplication.PlayPause();
         }
         else
         {
-          _iTunesApplication.Pause();
           _playerIsPaused = true;
+          _started = false;
+          _iTunesApplication.Pause();
         }
       }
       catch (Exception)
@@ -463,6 +491,7 @@ namespace MediaPortal.ITunesPlayer
     private void UpdateStatus()
     {
       if (_started == false) return;
+      if (_iTunesApplication == null) return;
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalSeconds >= 1 || _duration < 0 || _started == false)
       {
