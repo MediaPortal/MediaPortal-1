@@ -20,7 +20,7 @@
                     <tbody>
                         <tr height="1">
                             <td>
-                                <table style="background-image: url(App_Themes/SkinFile/images/top-bar.gif); color: white;
+                                <table style="background-image: url(images/top-bar.gif); color: white;
                                     height: 62px" cellspacing="0" cellpadding="0" width="100%" border="0">
                                     <tbody>
                                         <tr>
@@ -85,7 +85,7 @@
                                                                     <tbody>
                                                                         <tr>
                                                                             <td class="icon_button_td" id="td_channel_forward" onmouseover="handleButton('channel_forward',true,'icon_button')"
-                                                                                style="background-image: url(App_Themes/SkinFile/images/icon_button_blank.png);
+                                                                                style="background-image: url(images/icon_button_blank.png);
                                                                                 width: 25px; height: 26px" onclick="handleButton('channel_forward',false,'icon_button');"
                                                                                 onmouseout="handleButton('channel_forward',false,'icon_button')" align="middle">
                                                                                 <a class="icon_button_text_off" id="ctl00_Header1_channel_forward_hlink" onclick="javascript:toggleMenu()"
@@ -130,7 +130,7 @@
     <span id="text_Header_button4" class="header_button_text_off" href="recommend.aspx">
         Recommend
     </span>
-    <img id="over_image_Header_button4" style="visibility: hidden;" src="App_Themes/SkinFile/images/menu-over.gif" /></td>
+    <img id="over_image_Header_button4" style="visibility: hidden;" src="images/menu-over.gif" /></td>
 -->
                                                             <td width="2">
                                                                 <img height="21" hspace="10" src="images/divider.gif" width="2"></td>
@@ -282,7 +282,7 @@
                                                                             <tbody>
                                                                                 <tr>
                                                                                     <td class="icon_button_td" id="td_info_close_image" onmouseover="handleButton('info_close_image',true,'icon_button')"
-                                                                                        style="background-image: url(App_Themes/SkinFile/images/icon_button_close.png);
+                                                                                        style="background-image: url(images/icon_button_close.png);
                                                                                         width: 25px; height: 26px" onclick="handleButton('info_close_image',false,'icon_button');"
                                                                                         onmouseout="handleButton('info_close_image',false,'icon_button')" align="middle">
                                                                                         <a class="icon_button_text_off" id="ctl00_Info_box1_info_close_image_hlink" onclick="javascript:window.parent.closeInfo();"
