@@ -128,6 +128,9 @@ namespace MediaPortal.Audioscrobbler
         //if (g_Player.CurrentFile != _currentSong.FileName)
         OnStateChangedEvent();
       }
+      //else
+      //  Log.Debug("Audioscrobbler plugin: no music playing - ignore media type of {0}", filename);
+
     }
 
     // Make sure we get all of the ACTION_PLAY events (OnAction only receives the ACTION_PLAY event when 
@@ -153,8 +156,17 @@ namespace MediaPortal.Audioscrobbler
       queued = false;
       _alertTime = INFINITE_TIME;
 
-      if (!_doSubmit || currentSong == null)
+      if (currentSong == null)
+      {
+        Log.Error("Audioscrobbler plugin: currentSong == null - ignore state change");
         return;
+      }
+
+      if (!_doSubmit)
+      {
+        Log.Debug("Audioscrobbler plugin: submits disabled - ignore state change");
+        return;
+      }
 
       // Only submit if we have reasonable info about the song
       if (currentSong.Artist == "" || currentSong.Title == "")
@@ -167,6 +179,7 @@ namespace MediaPortal.Audioscrobbler
       if (Convert.ToInt32(g_Player.Player.CurrentPosition) <= (STARTED_LATE + _timerTickSecs))
       {
         _alertTime = GetAlertTime();
+        //Log.Debug("Audioscrobbler plugin: alert time for song - {0} seconds", _alertTime.ToString());
         currentSong.AudioScrobblerStatus = SongStatus.Loaded;
         return;
       }
@@ -193,6 +206,7 @@ namespace MediaPortal.Audioscrobbler
 
       if (songFound)
       {
+        //Log.Debug("Audioscrobbler plugin: found database track for: {0}", g_Player.CurrentFile);
         // playback couuuuld be stopped in theory - sometimes g_player's IsPlaying status isn't set in time (e.g. crossfading)
         if (g_Player.CurrentPosition > 0)
         {
@@ -200,6 +214,13 @@ namespace MediaPortal.Audioscrobbler
           _currentSong.DateTimePlayed = DateTime.UtcNow - TimeSpan.FromSeconds(g_Player.CurrentPosition);
           // avoid false skip detection            
           _lastPosition = Convert.ToInt32(g_Player.Player.CurrentPosition);
+          OnSongChangedEvent(_currentSong);
+        }
+        else
+        {
+          Log.Warn("Audioscrobbler plugin: g_Player.CurrentPosition equals 0! You might receive unexpected results");
+          _currentSong.DateTimePlayed = DateTime.UtcNow;
+          _lastPosition = 1;
           OnSongChangedEvent(_currentSong);
         }
       }
@@ -214,6 +235,10 @@ namespace MediaPortal.Audioscrobbler
             Log.Info("Audioscrobbler plugin: database does not contain track: {0}", g_Player.CurrentFile);
           //Log.Debug("g_player: filename of current song - {0}", g_Player.CurrentFile);
         }
+        //else
+        //{
+        //  Log.Debug("Audioscrobbler plugin: database does not contain details for: {0} - are you using Last.fm or play different content?", g_Player.CurrentFile);
+        //}
 
     }
 

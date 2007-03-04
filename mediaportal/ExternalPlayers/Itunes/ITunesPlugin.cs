@@ -479,7 +479,6 @@ namespace MediaPortal.ITunesPlayer
       }
     }
 
-
     public override void SeekAsolutePercentage(int iPercentage)
     {
       if (iPercentage < 0) iPercentage = 0;
@@ -488,11 +487,16 @@ namespace MediaPortal.ITunesPlayer
       fPercent *= (double)iPercentage;
       SeekAbsolute(fPercent);
     }
+
     private void UpdateStatus()
     {
-      if (_started == false) return;
-      if (_iTunesApplication == null) return;
+      if (_started == false)
+        return;
+      if (_iTunesApplication == null)
+        return;
+
       TimeSpan ts = DateTime.Now - _updateTimer;
+
       if (ts.TotalSeconds >= 1 || _duration < 0 || _started == false)
       {
         _playerState = _iTunesApplication.PlayerState;
