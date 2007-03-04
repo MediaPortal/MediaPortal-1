@@ -87,6 +87,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
 	m_pSubDecoder( NULL ),
   m_pSubtitleObserver( NULL ),
   m_pTimestampResetObserver( NULL ),
+  m_pIMediaSeeking( NULL ),
   m_basePCR( -1 ),
   m_firstPCR( -1 ),
   m_startTimestamp( -1 ),
@@ -247,6 +248,13 @@ HRESULT CDVBSub::CheckConnect( PIN_DIRECTION dir, IPin *pPin )
 //
 STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
 {
+  // Get media seeking interface if missing
+  if( !m_pIMediaSeeking )
+  {
+    IFilterGraph *pGraph = GetFilterGraph();
+	  pGraph->QueryInterface( &m_pIMediaSeeking );
+  }
+
   Reset();
   m_startTimestamp = tStart;
   CAutoLock cObjectLock( m_pLock );
@@ -411,7 +419,7 @@ void CDVBSub::SetPcr( ULONGLONG pcr )
 
   if( m_basePCR < 0 )
   {
-    LogDebugPTS( "SetPcr PCR after _demuxer  :", pcr );
+    LogDebugPTS( "SetPcr PCR :", pcr );
     ConnectToTSFileSource();
 
     if( m_pTSFileSource )
@@ -420,7 +428,7 @@ void CDVBSub::SetPcr( ULONGLONG pcr )
       m_pTSFileSource->GetBasePCRPosition( &posBase );
 
       m_basePCR = ( posBase / 1000 ) * 9;
-      LogDebugPTS( "TSFileSource base     PCR:", m_basePCR );
+      LogDebugPTS( "TSFileSource base PCR:", m_basePCR );
     }
 	}
   
@@ -434,12 +442,9 @@ void CDVBSub::SetPcr( ULONGLONG pcr )
   {
     // updated on every seek (reset)
 	  LONGLONG pos( 0 );
-	  IFilterGraph *pGraph = GetFilterGraph();
-	  IMediaSeeking* pIMediaSeeking;
-	  pGraph->QueryInterface( &pIMediaSeeking );
-	  if( pIMediaSeeking )
+	  if( m_pIMediaSeeking )
 	  {
-      pIMediaSeeking->GetCurrentPosition( &pos );
+      m_pIMediaSeeking->GetCurrentPosition( &pos );
 		  if( pos > 0 )
 		  {
 			  pos = ( ( pos / 1000 ) * 9 ); // PTS = 90Khz, REFERENCE_TIME one tick 100ns

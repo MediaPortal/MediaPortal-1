@@ -138,16 +138,17 @@ private: // data
 
   int m_VideoPid;
 
-  CDVBSubDecoder*     m_pSubDecoder;
+  CDVBSubDecoder*     m_pSubDecoder;      // Subtitle decoder
+	IMediaSeeking*      m_pIMediaSeeking;   // Media seeking interface
 
   CCritSec            m_Lock;				      // Main renderer critical section
   CCritSec            m_ReceiveLock;		  // Sublock for received samples
 
-  LONGLONG            m_basePCR;
+  LONGLONG            m_basePCR;          // Base PCR from TSFileSource
   LONGLONG            m_firstPCR;
-  LONGLONG            m_curPCR;
+  LONGLONG            m_curPCR;           // Current PCR from PCR InputPin
   LONGLONG            m_fixPCR;           // diff between TSFileSouce first PCR and PCRInputPin PCR
-  LONGLONG            m_seekDifPCR;
+  LONGLONG            m_seekDifPCR;       
   REFERENCE_TIME      m_startTimestamp;
 
   int                 (CALLBACK *m_pSubtitleObserver) (SUBTITLE* sub);
