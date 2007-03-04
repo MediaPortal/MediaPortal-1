@@ -280,7 +280,7 @@ STDMETHODIMP CDVBSub::Stop()
 //
 void CDVBSub::Reset()
 {
-	LogDebug("Reset()");
+	LogDebug( "Reset()" );
   CAutoLock cObjectLock( m_pLock );
 
 	m_pSubDecoder->Reset();
@@ -296,7 +296,7 @@ void CDVBSub::Reset()
     m_pTSFileSource->GetBasePCRPosition( &posBase );
 
     m_basePCR = ( posBase / 1000 ) * 9;
-    LogDebugPTS( "TSFileSource base     PCR:", m_basePCR );
+    LogDebugPTS( "TSFileSource base PCR:", m_basePCR );
   }
 
   // Notify reset observer
@@ -313,7 +313,7 @@ void CDVBSub::Reset()
 	  if( pos > 0 )
 	  {
 		  pos = ( ( pos / 1000 ) * 9 ); // PTS = 90Khz, REFERENCE_TIME one tick 100ns
-	    LogDebugPTS("Reset - MediaSeeking Pos : ", pos); 
+	    LogDebugPTS( "Reset - MediaSeeking Pos : ", pos ); 
     }
   } 
 }
@@ -443,7 +443,7 @@ void CDVBSub::SetPcr( ULONGLONG pcr )
 		  if( pos > 0 )
 		  {
 			  pos = ( ( pos / 1000 ) * 9 ); // PTS = 90Khz, REFERENCE_TIME one tick 100ns
-		    LogDebugPTS("Set PCR - MediaSeeking Pos : ", pos); 
+		    LogDebugPTS( "Set PCR - MediaSeeking Pos : ", pos ); 
       }
 	  }    
     m_seekDifPCR = pos;
@@ -536,7 +536,7 @@ STDMETHODIMP CDVBSub::GetSubtitle( int place, SUBTITLE* subtitle )
 	  subtitle->bmPlanes = bitmap->bmPlanes;
 	  subtitle->bmType = bitmap->bmType;
 	  subtitle->bmWidth = bitmap->bmWidth;
-	  LogDebug("Stride: %i" , bitmap->bmWidthBytes);
+	  //LogDebug("Stride: %i" , bitmap->bmWidthBytes);
 	  subtitle->bmWidthBytes = bitmap->bmWidthBytes;
     subtitle->timestamp = pCSubtitle->Timestamp();
     subtitle->firstScanLine = pCSubtitle->FirstScanline();
@@ -557,7 +557,7 @@ STDMETHODIMP CDVBSub::GetSubtitle( int place, SUBTITLE* subtitle )
 //
 STDMETHODIMP CDVBSub::SetCallback( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub) )
 {
-	LogDebug("SetCallback called");
+	LogDebug( "SetCallback called" );
   m_pSubtitleObserver = pSubtitleObserver;
   return S_OK;
 }
@@ -568,7 +568,7 @@ STDMETHODIMP CDVBSub::SetCallback( int (CALLBACK *pSubtitleObserver)(SUBTITLE* s
 //
 STDMETHODIMP CDVBSub::SetTimestampResetCallback( int (CALLBACK *pTimestampResetObserver)() )
 {
-	LogDebug("SetTimestampResetedCallback called");
+	LogDebug( "SetTimestampResetedCallback called" );
   m_pTimestampResetObserver = pTimestampResetObserver;
   return S_OK;
 }
@@ -579,7 +579,7 @@ STDMETHODIMP CDVBSub::SetTimestampResetCallback( int (CALLBACK *pTimestampResetO
 //
 STDMETHODIMP CDVBSub::GetSubtitleCount( int* pcount )
 {
-	LogDebug("GetSubtitleCount");
+	LogDebug( "GetSubtitleCount" );
   if( m_pSubDecoder )
   {
     *pcount = m_pSubDecoder->GetSubtitleCount();
@@ -594,7 +594,7 @@ STDMETHODIMP CDVBSub::GetSubtitleCount( int* pcount )
 //
 STDMETHODIMP CDVBSub::DiscardOldestSubtitle()
 {
-	LogDebug("DiscardOldestSubtitle");
+	LogDebug( "DiscardOldestSubtitle" );
   if( m_pSubDecoder )
   {
     m_pSubDecoder->ReleaseOldestSubtitle();
@@ -611,11 +611,11 @@ CUnknown * WINAPI CDVBSub::CreateInstance( LPUNKNOWN punk, HRESULT *phr )
 {
   ASSERT( phr );
 
-  LogDebug("CreateInstance");
+  LogDebug( "CreateInstance" );
   CDVBSub *pFilter = new CDVBSub( punk, phr, NULL );
   if( pFilter == NULL )
 	{
-    if (phr)
+    if ( phr )
 		{
       *phr = E_OUTOFMEMORY;
 		}
@@ -627,26 +627,29 @@ CUnknown * WINAPI CDVBSub::CreateInstance( LPUNKNOWN punk, HRESULT *phr )
 //
 // NonDelegatingQueryInterface
 //
-STDMETHODIMP CDVBSub::NonDelegatingQueryInterface(REFIID riid, void** ppv)
+STDMETHODIMP CDVBSub::NonDelegatingQueryInterface( REFIID riid, void** ppv )
 {
-
-	if (riid == IID_IDVBSubtitle){
-		//LogDebug("QueryInterface in DVBSub.CPP accepting");
-		return GetInterface((IDVBSubtitle *) this, ppv);
+	if ( riid == IID_IDVBSubtitle )
+  {
+		//LogDebug( "QueryInterface in DVBSub.CPP accepting" );
+		return GetInterface( (IDVBSubtitle *) this, ppv );
 	}
 	else
 	{
-		//LogDebug("Forwarding query interface call ... ");
-		HRESULT hr = CBaseFilter::NonDelegatingQueryInterface(riid,ppv);
+		//LogDebug( "Forwarding query interface call ... " );
+		HRESULT hr = CBaseFilter::NonDelegatingQueryInterface( riid, ppv );
 
-		if(SUCCEEDED(hr)){
+		if( SUCCEEDED(hr) )
+    {
 			//LogDebug("QI succeeded");
 		}
-		else if(hr == E_NOINTERFACE){
-			//LogDebug("QI -> E_NOINTERFACE");
+		else if( hr == E_NOINTERFACE )
+    {
+			//LogDebug( "QI -> E_NOINTERFACE" );
 		}
-		else{
-			//LogDebug("QI failed");
+		else
+    {
+			//LogDebug( "QI failed" );
 		}
 		return hr;
 	}
