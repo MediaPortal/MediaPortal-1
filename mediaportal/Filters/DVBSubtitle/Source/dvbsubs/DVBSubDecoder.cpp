@@ -658,28 +658,29 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 		
 		if( subtitle_stream_id != 0 ) 
 		{
-			LogDebug("DVBsubs: ERROR: subtitle_stream_id != 0 (%02x), aborting\n",subtitle_stream_id);
+			LogDebug( "DVBsubs: ERROR: subtitle_stream_id != 0 (%02x), aborting\n", subtitle_stream_id );
 			return 1;
 		}
 
-		while(i < (PES_packet_length-1)) 
+		while( i < ( PES_packet_length - 1 ) ) 
 		{
 			/* SUBTITLING SEGMENT */
 			if( buf[i] != 0x0f ) 
 			{ 
-				LogDebug("DVBsubs: ERROR: sync byte not present, skipping rest of PES packet - next PNG is sub%05d.png",fileno);
-				i=PES_packet_length;
-				continue;
+				LogDebug( "DVBsubs: ERROR: sync byte not present, skipping rest of PES packet" );
+				i = PES_packet_length;
+				//continue;
+        return 1;
 			}
 			
 			i++;
-			segment_type=buf[i++];
+			segment_type = buf[i++];
 			//LogDebug("Processing segment_type 0x%02x",segment_type);
 
-			page_id=(buf[i]<<8)|buf[i+1]; 
-			segment_length=(buf[i+2]<<8)|buf[i+3];
+			page_id = ( buf[i] << 8 ) | buf[i + 1]; 
+			segment_length = ( buf[i + 2] << 8 ) | buf[i + 3];
 
-			new_i=i+segment_length+4;
+			new_i = i + segment_length + 4;
 
 			/* SEGMENT_DATA_FIELD */
 			switch(segment_type) {
@@ -701,7 +702,8 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 					break;
 				default:
 					LogDebug("DVBsubs: ERROR: Unknown segment %02x, length %d, data=%02x %02x %02x %02x",segment_type,segment_length,buf[i+4],buf[i+5],buf[i+6],buf[i+7]);
-					exit(1);
+					//exit(1);
+          return 1;
 			}
 		  i = new_i;
 	  }   
