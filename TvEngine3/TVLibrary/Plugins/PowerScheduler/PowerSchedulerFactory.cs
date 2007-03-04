@@ -300,9 +300,9 @@ namespace TvEngine.PowerScheduler
     private string _handlerName = "GenericWakeupHandler";
     #endregion
     #region Public methods
-    public void Update(DateTime earliestWakeuptime, string handlerName)
+    public void Update(DateTime nextWakeuptime, string handlerName)
     {
-      _nextWakeupTime = earliestWakeuptime;
+      _nextWakeupTime = nextWakeuptime;
       _handlerName = handlerName;
     }
     #endregion

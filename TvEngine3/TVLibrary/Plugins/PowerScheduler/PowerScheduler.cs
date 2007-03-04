@@ -294,7 +294,7 @@ namespace TvEngine.PowerScheduler
     /// <param name="handlerName">Description of the handler preventing standby</param>
     public void SetStandbyAllowed(bool standbyAllowed, string handlerName)
     {
-      //Log.Debug("PowerScheduler.SetStandbyAllowed: {0} {1}", standbyAllowed, handlerName);
+      Log.Debug("PowerScheduler.SetStandbyAllowed: {0} {1}", standbyAllowed, handlerName);
       _clientStandbyHandler.DisAllowShutdown = !standbyAllowed;
       _clientStandbyHandler.HandlerName = handlerName;
     }
@@ -552,8 +552,11 @@ namespace TvEngine.PowerScheduler
       get
       {
         foreach (IStandbyHandler handler in _standbyHandlers)
+        {
+          Log.Debug("PowerScheduler.SystemIdle: inspecting handler {0}", handler.HandlerName);
           if (handler.DisAllowShutdown)
           {
+            Log.Debug("PowerScheduler.SystemIdle: handler {0} wants to prevents standby", handler.HandlerName);
             if (!_idle && !_lastStandbyPreventer.Equals(handler.HandlerName))
             {
               _lastStandbyPreventer = handler.HandlerName;
@@ -562,6 +565,7 @@ namespace TvEngine.PowerScheduler
             _standbyAllowed = !_powerManager.PreventStandby();
             return false;
           }
+        }
         _standbyAllowed = _powerManager.AllowStandby();
         return true;
       }
@@ -575,11 +579,12 @@ namespace TvEngine.PowerScheduler
       get
       {
         DateTime nextWakeupTime = DateTime.MaxValue;
-        DateTime earliestWakeupTime = _lastIdleTime.AddMinutes(_idleTimeout);
+        DateTime earliestWakeupTime = DateTime.Now.AddMinutes(_idleTimeout);
         Log.Debug("PowerScheduler: earliest wakeup time: {0}", earliestWakeupTime);
         foreach (IWakeupHandler handler in _wakeupHandlers)
         {
           DateTime nextTime = handler.GetNextWakeupTime(earliestWakeupTime);
+          Log.Debug("PowerScheduler.NextWakeupTime: inspecting handler:{0} time:{1}", handler.HandlerName, nextTime);
           if (nextTime < nextWakeupTime)
           {
             Log.Debug("PowerScheduler: found next wakeup time {0} by {1}", nextTime, handler.HandlerName);
