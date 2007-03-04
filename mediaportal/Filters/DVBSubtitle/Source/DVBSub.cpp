@@ -292,19 +292,30 @@ void CDVBSub::Reset()
 
   if( m_pTSFileSource )
   {
-    REFERENCE_TIME posStart( 0 );
     REFERENCE_TIME posBase( 0 );
-    m_pTSFileSource->GetStartPCRPosition( &posStart );
     m_pTSFileSource->GetBasePCRPosition( &posBase );
 
     m_basePCR = ( posBase / 1000 ) * 9;
     LogDebugPTS( "TSFileSource base     PCR:", m_basePCR );
-    LogDebugPTS( "TSFileSource starting PCR:", ( posStart / 1000 ) * 9 );
   }
 
   // Notify reset observer
   if( m_pTimestampResetObserver )
     (*m_pTimestampResetObserver)();
+
+  LONGLONG pos( 0 );
+  IFilterGraph *pGraph = GetFilterGraph();
+  IMediaSeeking* pIMediaSeeking;
+  pGraph->QueryInterface( &pIMediaSeeking );
+  if( pIMediaSeeking )
+  {
+    pIMediaSeeking->GetCurrentPosition( &pos );
+	  if( pos > 0 )
+	  {
+		  pos = ( ( pos / 1000 ) * 9 ); // PTS = 90Khz, REFERENCE_TIME one tick 100ns
+	    LogDebugPTS("Reset - MediaSeeking Pos : ", pos); 
+    }
+  } 
 }
 
 
@@ -329,12 +340,19 @@ void CDVBSub::NotifySubtitle()
   if( pSubtitle )
   {
     // PTS to milliseconds ( 90khz )
-    ULONGLONG pts( 0 ); 
-    ULONGLONG subtitlePTS( pSubtitle->PTS() );
+    LONGLONG pts( 0 ); 
+    LONGLONG subtitlePTS( pSubtitle->PTS() );
       
     // TODO: FIX SEEKING!
     pts = ( subtitlePTS - m_basePCR - m_seekDifPCR ) / 90; 
     pSubtitle->SetTimestamp( pts );  
+
+    if( pts <= 0 )
+    {
+      LogDebug( "Discarding subtitle, too old timestamp!" );
+      this->DiscardOldestSubtitle();
+      return;
+    }
   }
   if( m_pSubtitleObserver )
   {
