@@ -831,7 +831,7 @@ namespace TvPlugin
           Log.Info("recording url:{0}", url);
           if (url.Length > 0)
           {
-            g_Player.Play(url,g_Player.MediaType.Recording);
+            g_Player.Play(url, g_Player.MediaType.Recording);
 
             if (g_Player.Playing)
             {
@@ -1079,28 +1079,19 @@ namespace TvPlugin
 
         // caclulate total duration of the current program
         ts = (prog.EndTime - prog.StartTime);
-        int programDuration = (int)ts.TotalSeconds;
+        double programDuration = ts.TotalSeconds;
 
         //calculate where the program is at this time
         ts = (DateTime.Now - prog.StartTime);
-        int livePoint = (int)ts.TotalSeconds;
+        double livePoint = ts.TotalSeconds;
 
         //calculate when timeshifting was started
-        double timeShiftStartPoint = 0d;
-        // if timeshifting started after the beginning of the program
-        if (prog.StartTime < TVHome.Card.TimeShiftStarted)
-        {
-          ts = TVHome.Card.TimeShiftStarted - prog.StartTime;
-          timeShiftStartPoint = ts.TotalSeconds;
-        }
+        double timeShiftStartPoint = livePoint - g_Player.Duration;
+        if (timeShiftStartPoint < 0) timeShiftStartPoint = 0;
 
         //calculate where we the current playing point is
-        double playingPoint = g_Player.CurrentPosition + timeShiftStartPoint;
-        if (TVHome.Card.TimeShiftStarted < prog.StartTime)
-        {
-          ts = prog.StartTime - TVHome.Card.TimeShiftStarted;
-          playingPoint -= ts.TotalSeconds;
-        }
+        double playingPoint = g_Player.Duration - g_Player.CurrentPosition;
+        playingPoint = (livePoint - playingPoint);
 
         double timeShiftStartPointPercent = ((double)timeShiftStartPoint) / ((double)programDuration);
         timeShiftStartPointPercent *= 100.0d;
