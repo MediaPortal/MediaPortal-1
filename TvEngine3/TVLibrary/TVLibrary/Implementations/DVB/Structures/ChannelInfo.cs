@@ -449,26 +449,27 @@ namespace TvLibrary.Implementations.DVB.Structures
                     pmtEs.Descriptors.Add(data);
                     pmtEs.ElementaryStreamInfoLength += data.Length;
                     break;
-                  case 0x0A:
+                  case 0x0A: //MPEG_ISO639_Lang
                     pidInfo.language = DVB_GetMPEGISO639Lang(data);
                     break;
-                  case 0x6A:
+                  case 0x6A: //AC3
                     pidInfo.isAudio = false;
                     pidInfo.isVideo = false;
                     pidInfo.isTeletext = false;
-                    pidInfo.isDVBSubtitle = true;
+                    pidInfo.isDVBSubtitle = false;
                     pidInfo.isAC3Audio = true;
                     pidInfo.stream_type = 0x81;
                     break;
-                  case 0x56:
+                  case 0x56://teletext
                     pidInfo.isAC3Audio = false;
                     pidInfo.isAudio = false;
                     pidInfo.isVideo = false;
                     pidInfo.isTeletext = true;
+                    pidInfo.isDVBSubtitle = false;
                     pidInfo.teletextLANG = DVB_GetTeletextDescriptor(data);
                     break;
                   //case 0xc2:
-                  case 0x59:
+                  case 0x59: // DVB ssubtitle
                     if (pidInfo.stream_type == 0x05 || pidInfo.stream_type == 0x06)
                     {
                       pidInfo.isAC3Audio = false;
