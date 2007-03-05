@@ -1,5 +1,5 @@
 .main_table {
-	background-image: url(/MPGuide/images/bg.jpg); height:100%;
+	background-image: url(/MPGuide/images/bg.jpg); height:100%;width:100%;
 }
 .dropdown {
 	BORDER-RIGHT: #a9a9a9 1px solid; BORDER-TOP: #a9a9a9 1px solid; PADDING-LEFT: 5px; FONT-SIZE: 8.5pt; BORDER-LEFT: #a9a9a9 1px solid; COLOR: #5c5d61; BORDER-BOTTOM: #a9a9a9 1px solid; FONT-FAMILY: 'Trebuchet MS' , Verdana, Arial

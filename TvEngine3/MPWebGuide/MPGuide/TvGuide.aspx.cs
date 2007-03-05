@@ -18,6 +18,9 @@ using Gentle.Framework;
 public partial class TvGuide : System.Web.UI.Page
 {
   const int PIX_PER_MINUTE = 5;
+  const int OFFSET_Y = 60;
+  const int OFFSET_X = 200;
+  const int ROW_HEIGHT=26;
 
   IList _schedules;
   protected void Page_Load(object sender, EventArgs e)
@@ -124,7 +127,7 @@ public partial class TvGuide : System.Web.UI.Page
   }
   void AddChannelRow(int nr, DateTime now, DateTime end, Channel channel, HtmlTableRow row, List<Program> programs)
   {
-    int posy = 26 + nr * 26;
+    int posy = OFFSET_Y + nr * ROW_HEIGHT;
     HtmlGenericControl cellBase = new HtmlGenericControl();
     cellBase.Style.Add("background-color", "#0d4798");
     cellBase.Style.Add("position", "absolute");
@@ -175,8 +178,8 @@ public partial class TvGuide : System.Web.UI.Page
       TimeSpan ts = endTime - startTime;
       int width = (int)(ts.TotalMinutes * 6.5);
       ts = startTime - now;
-      int posx = 200 + (int)(ts.TotalMinutes * 6.5);
-      int posy = 26 + nr * 26;
+      int posx = OFFSET_X + (int)(ts.TotalMinutes * 6.5);
+      int posy = OFFSET_Y + nr * ROW_HEIGHT;
       cellBase.Style.Add("position", "absolute");
       cellBase.Style.Add("left", String.Format("{0}px", posx));
       cellBase.Style.Add("top", String.Format("{0}px", posy));
