@@ -13,8 +13,8 @@
     <form id="form1" runat="server">
         <div style="height: 100%">
             <img style="z-index: -1; width: 100%; position: absolute; height: 100%" height="100%"
-                src="images/bg.jpg" width="100%">
-            <table class="main_table" style="height: 100%" cellspacing="0" cellpadding="0" width="980" align="center" border="0">
+                src="images/bg.jpg" width="100%" height="100%">
+            <table style="height:100%;" cellspacing="0" cellpadding="0" width="980" align="center" border="0">
                 <tbody>
                     <tr height="1">
                         <td>
@@ -184,7 +184,7 @@
                                                     </tbody>
                                                 </table>
                                             </td>
-                                            <td valign="top">
+                                            <td valign="middle">
                                                 <div  style=" HEIGHT: 100%">
                                                     <table cellspacing="0" cellpadding="0" width="526" border="0" id="tableRecordings" runat="server">
                                                         <tbody>
