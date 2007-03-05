@@ -1147,7 +1147,7 @@ namespace TvPlugin
       {
         if (g_Player.IsTVRecording) return true;
         if (g_Player.IsVideo) return true;
-        if (g_Player.IsTV) return true;
+        //if (g_Player.IsTV) return true;
         if (g_Player.IsDVD) return true;
         if ((g_Player.IsMusic && g_Player.HasVideo)) return true;
       }
