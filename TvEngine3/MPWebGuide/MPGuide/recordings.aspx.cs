@@ -19,13 +19,21 @@ public partial class recordings : System.Web.UI.Page
 {
   protected void Page_Load(object sender, EventArgs e)
   {
+    if (!Page.IsPostBack)
+    {
+      radioTitle.Checked = true;
+    }
     UpdateRecordings();
   }
 
   void UpdateRecordings()
   {
     SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Recording));
-    sb.AddOrderByField(false, "title");
+    if (radioTitle.Checked)
+      sb.AddOrderByField(true, "title");
+    else
+      sb.AddOrderByField(true, "startTime");
+
     SqlStatement stmt = sb.GetStatement(true);
     IList recordings = ObjectFactory.GetCollection(typeof(Recording), stmt.Execute());
 
@@ -141,5 +149,13 @@ public partial class recordings : System.Web.UI.Page
     cellBase.Controls.Add(table);
     rowBase.Cells.Add(cellBase);
     tableList.Rows.Add(rowBase);
+  }
+  protected void radioTitle_CheckedChanged(object sender, EventArgs e)
+  {
+    radioDate.Checked = false;
+  }
+  protected void radioDate_CheckedChanged(object sender, EventArgs e)
+  {
+    radioTitle.Checked = false;
   }
 }

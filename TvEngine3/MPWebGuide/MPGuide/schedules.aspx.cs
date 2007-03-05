@@ -19,44 +19,46 @@ public partial class schedules : System.Web.UI.Page
 {
   protected void Page_Load(object sender, EventArgs e)
   {
+    if (!Page.IsPostBack)
+    {
+      radioTitle.Checked = true;
+    }
     UpdateSchedules();
   }
 
   void UpdateSchedules()
   {
     SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Schedule));
-    sb.AddOrderByField(false, "programName");
+    if (radioTitle.Checked)
+      sb.AddOrderByField(true, "programName");
+    else
+      sb.AddOrderByField(true, "startTime");
     SqlStatement stmt = sb.GetStatement(true);
-    IList Schedules = ObjectFactory.GetCollection(typeof(Schedule), stmt.Execute());
-
-    int i = 0;
-    while (i < Schedules.Count)
+    IList schedules = ObjectFactory.GetCollection(typeof(Schedule), stmt.Execute());
+    TvBusinessLayer layer = new TvBusinessLayer();
+    foreach (Schedule schedule in schedules)
     {
-      List<Schedule> recs = new List<Schedule>();
-      Schedule rec = Schedules[i] as Schedule;
-      recs.Add(rec);
-      int x = i + 1;
-      while (x < Schedules.Count)
-      {
-        Schedule rec2 = Schedules[x] as Schedule;
-        if (rec.ProgramName == rec2.ProgramName)
-        {
-          x++;
-          recs.Add(rec2);
-        }
-        else break;
-      }
-      AddSchedule(recs);
-      i = x;
+      AddSchedule(layer, schedule);
     }
   }
 
-  void AddSchedule(List<Schedule> recs)
+  void AddSchedule(TvBusinessLayer layer, Schedule schedule)
   {
-    AddHeader(recs[0]);
-    for (int i = 0; i < recs.Count; i++)
+    AddHeader(schedule);
+    List<Schedule> series = layer.GetRecordingTimes(schedule, 14);
+    for (int i = 0; i < series.Count; i++)
     {
-      AddRow(recs[i], i == recs.Count - 1);
+      string title = schedule.ProgramName;
+      IList programs = layer.GetPrograms(series[i].ReferencedChannel(), series[i].StartTime, series[i].EndTime);
+      if (programs.Count > 0)
+      {
+        Program p = (Program)programs[0];
+        if (p.Title == schedule.ProgramName)
+        {
+          AddRow(series[i], p, i == series.Count - 1);
+        }
+      }
+
     }
   }
 
@@ -66,12 +68,37 @@ public partial class schedules : System.Web.UI.Page
     HtmlTableCell cell = new HtmlTableCell();
     cell.Attributes.Add("class", "info_box_middle");
     cell.ColSpan = 2;
-    cell.InnerHtml = String.Format("<div style=\"padding-right: 4px; padding-left: 4px; padding-bottom: 4px; width: 100%; padding-top: 4px\"><span class=\"info_box_title_text\">{0} </span></div>", rec.ProgramName);
+    string title = "";
+    switch ((ScheduleRecordingType)rec.ScheduleType)
+    {
+      case ScheduleRecordingType.Once:
+        title = String.Format("{0}", rec.ProgramName);
+        break;
+      case ScheduleRecordingType.Daily:
+        title = String.Format("{0} daily", rec.ProgramName);
+        break;
+      case ScheduleRecordingType.Weekly:
+        title = String.Format("{0} weekly", rec.ProgramName);
+        break;
+      case ScheduleRecordingType.Weekends:
+        title = String.Format("{0} weekends", rec.ProgramName);
+        break;
+      case ScheduleRecordingType.WorkingDays:
+        title = String.Format("{0} mon-fri", rec.ProgramName);
+        break;
+      case ScheduleRecordingType.EveryTimeOnEveryChannel:
+        title = String.Format("{0} every time", rec.ProgramName);
+        break;
+      case ScheduleRecordingType.EveryTimeOnThisChannel:
+        title = String.Format("{0} every time on {1}", rec.ProgramName, rec.ReferencedChannel().Name);
+        break;
+    }
+    cell.InnerHtml = String.Format("<div style=\"padding-right: 4px; padding-left: 4px; padding-bottom: 4px; width: 100%; padding-top: 4px\"><span class=\"info_box_title_text\">{0} </span></div>", title);
     row.Cells.Add(cell);
     tableList.Rows.Add(row);
   }
 
-  void AddRow(Schedule rec, bool last)
+  void AddRow(Schedule rec,Program prog, bool last )
   {
     HtmlTableRow rowBase = new HtmlTableRow();
     HtmlTableCell cellBase = new HtmlTableCell();
@@ -116,7 +143,10 @@ public partial class schedules : System.Web.UI.Page
     td1.Style.Add("padding-top", "4px");
     td1.Style.Add("width", "85%");
     td1.Style.Add("border-bottom", "#304a66 1px solid%");
-    td1.InnerHtml = string.Format("<a class=\"recording_list_text\" href=\"javascript:loadInfo('recorded','1397')\">\"{0} - \"{1}</a>&nbsp;", rec.ProgramName, rec.ReferencedChannel().Name);
+
+
+
+    td1.InnerHtml = string.Format("<a class=\"recording_list_text\" href=\"javascript:loadInfo('recorded','1397')\">\"{0} - \"{1}</a>&nbsp;", rec.ProgramName, prog.Description);
 
 
     td2.Style.Add("width", "40px");
@@ -141,5 +171,15 @@ public partial class schedules : System.Web.UI.Page
     cellBase.Controls.Add(table);
     rowBase.Cells.Add(cellBase);
     tableList.Rows.Add(rowBase);
+  }
+  protected void radioTitle_CheckedChanged(object sender, EventArgs e)
+  {
+    radioDate.Checked = false;
+
+  }
+  protected void radioDate_CheckedChanged(object sender, EventArgs e)
+  {
+    radioTitle.Checked = false;
+
   }
 }

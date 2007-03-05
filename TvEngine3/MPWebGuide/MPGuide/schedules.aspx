@@ -11,9 +11,29 @@
 </head>
 <body>
   <form id="form1" runat="server">
-    <img style="z-index: -1; width: 100%; position: absolute; height: 100%" height="100%"
-      src="images/bg.jpg" width="100%" />
-    <table class="main_table" style="height: 100%" cellspacing="0" cellpadding="0" width="980"
+    <img style="z-index: -1; width: 100%; position: absolute; height: 100%" height="100%" src="images/bg.jpg" width="100%" />
+        <asp:ScriptManager ID="ScriptManager1" runat="server" />
+        <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel1"
+            DisplayAfter="10">
+            <ProgressTemplate>
+                <span style="position: absolute; top: 50%; left: 50%; z-index: 2">
+                    <object id="FlashWait" height="90" width="90" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
+                        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0">
+                        <param name="Movie" value="images/wait.swf" />
+                        <param name="Src" value="images/wait.swf" />
+                        <param name="WMode" value="Transparent" />
+                        //Netscape code
+                        <embed type="application/x-shockwave-flash" src="images/wait.swf" quality="high"
+                            wmode="transparent" id="FlashWaitNs" pluginspage="http://www.macromedia.com/go/getflashplayer"
+                            movie="images/wait.swf" name="FlashWait" width="90" height="90">
+                 </embed>
+                    </object>
+                </span>
+            </ProgressTemplate>
+        </asp:UpdateProgress>
+        <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="conditional">
+            <ContentTemplate>    
+    <table style="height: 100%" cellspacing="0" cellpadding="0" width="980"
       align="center" border="0">
       <tbody>
         <tr height="1">
@@ -45,7 +65,7 @@
                       <tbody>
                         <tr>
                           <td class="header_button_td" id="td_header_guide_button" onmouseover="handleButton('header_guide_button',true,'header_button')"
-                            onclick="showWait();document.location='guide.aspx'" onmouseout="handleButton('header_guide_button',false,'header_button')">
+                            onclick="showWait();document.location='tvguide.aspx'" onmouseout="handleButton('header_guide_button',false,'header_button')">
                             <span class="header_button_text_off" id="text_header_guide_button" href="tvguide.aspx">
                               TvGuide </span>
                             <img id="over_image_header_guide_button" style="visibility: hidden" src="images/menu-over.gif"></td>
@@ -83,22 +103,17 @@
                         <tbody>
                           <tr>
                             <td class="nav_bar_text" align="middle">
-                              Recording type: <span class="nav_bar_text" loc_string="recordings_recordings_button">
-                                <input id="ctl00_cph_recorded_radio" onclick="" type="radio" checked value="recorded_radio"
-                                  name="ctl00$cph$recording_type"><label for="ctl00_cph_recorded_radio">Recorded</label></span>&nbsp;<a
-                                    id="ctl00_cph_rss_link" href="http://82.148.207.59/rss.aspx?uid=NllEWXJBTVJqQzdqaEhjckVueG5LMGI0VVBldXVpaGZiTjRNT2JoRVF4TGhDSXp3d2pGSVp5QkNXTHRiSHM0SA2"
-                                    target="_blank"> </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="nav_bar_text"
-                                      loc_string="recordings_scheduled_button"><input id="ctl00_cph_scheduled_radio" onclick="showWait();setTimeout('__doPostBack(\'ctl00$cph$scheduled_radio\',\'\')', 0)"
-                                        type="radio" value="scheduled_radio" name="ctl00$cph$recording_type"><label for="ctl00_cph_scheduled_radio">Scheduled</label></span></td>
-                            <td>
-                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                            <td> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
                             <td class="nav_bar_text" align="middle">
-                              Group/Sort: <span class="nav_bar_text" loc_string="recordings_group_by_title">
-                                <input id="ctl00_cph_sort_by_title" onclick="" type="radio" checked value="sort_by_title"
-                                  name="ctl00$cph$sort_by"><label for="ctl00_cph_sort_by_title">Title</label></span>&nbsp;&nbsp;&nbsp;<span
-                                    class="nav_bar_text" loc_string="recordings_group_by_date"><input id="ctl00_cph_sort_by_date"
-                                      onclick="showWait();setTimeout('__doPostBack(\'ctl00$cph$sort_by_date\',\'\')', 0)"
-                                      type="radio" value="sort_by_date" name="ctl00$cph$sort_by"><label for="ctl00_cph_sort_by_date">Date/Time</label></span>
+                              Group/Sort: 
+                              <span class="nav_bar_text">
+                                <asp:RadioButton runat="server" ID="radioTitle"  AutoPostBack="True" OnCheckedChanged="radioTitle_CheckedChanged"/>
+                                <label>Title</label>
+                               </span>&nbsp;&nbsp;&nbsp;
+                               <span class="nav_bar_text">
+                                 <asp:RadioButton runat="server" type="radio" ID="radioDate" AutoPostBack="True" OnCheckedChanged="radioDate_CheckedChanged"  />
+                                 <label>Date/Time</label>
+                                </span>
                             </td>
                             <td>
                               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -123,7 +138,7 @@
                   </tr>
                   <tr>
                     <td id="scrollHolder" valign="top">
-                      <div id="scrollContent" style="margin-left: 48px; overflow: auto; height: 100%" onscroll="scrollWindow()">
+                      <div id="scrollContent" style="margin-left: 48px; overflow: auto; height: 700px">
                         <table cellspacing="0" cellpadding="0" width="880" border="0" runat="server" id="tableList">
                           <tbody>
                             <tr >
@@ -190,6 +205,8 @@
         </tr>
       </tbody>
     </table>
+            </ContentTemplate>
+        </asp:UpdatePanel>    
   </form>
 </body>
 </html>
