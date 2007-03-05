@@ -39,11 +39,13 @@ namespace MediaPortal.GUI.Library
 			SPIN_CONTROL_TYPE_INT,
 			SPIN_CONTROL_TYPE_FLOAT,
 			SPIN_CONTROL_TYPE_TEXT,
+      SPIN_CONTROL_TYPE_DISC_NUMBER,
 
 			// needed for XAML parser
 			Int = SPIN_CONTROL_TYPE_INT,
 			Float = SPIN_CONTROL_TYPE_FLOAT,
 			Text = SPIN_CONTROL_TYPE_TEXT,
+      Disc = SPIN_CONTROL_TYPE_DISC_NUMBER,
 		};
 
 		public enum SpinSelect
@@ -405,6 +407,23 @@ namespace MediaPortal.GUI.Library
             }  
               break;
 
+            case SpinType.SPIN_CONTROL_TYPE_DISC_NUMBER:
+              {
+                if (iValue < 0 || iValue >= _listLabels.Count)
+                {
+                  iValue = 0;
+                }
+
+                _intValue = iValue + 1;
+                if (_intValue >= 1 && _intValue < _listLabels.Count)
+                {
+                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
+                  msg.Label = (string)_listLabels[_intValue];
+                  GUIGraphicsContext.SendMessage(msg);
+                }
+              }
+              break;
+
           }
         }
           break;
@@ -556,7 +575,7 @@ namespace MediaPortal.GUI.Library
                   message.Param1= (int)Value ;
                   message.Param2=(int)_spinSelect;
 
-                  if (_spinType==SpinType.SPIN_CONTROL_TYPE_TEXT)
+                  if (_spinType==SpinType.SPIN_CONTROL_TYPE_TEXT || _spinType==SpinType.SPIN_CONTROL_TYPE_DISC_NUMBER)
                   {
                       if ( _intValue>= 0 && _intValue < _listLabels.Count )
                           message.Label=(string)_listLabels[_intValue];
@@ -730,6 +749,7 @@ namespace MediaPortal.GUI.Library
               break;          
     
             case SpinType.SPIN_CONTROL_TYPE_TEXT:
+            case SpinType.SPIN_CONTROL_TYPE_DISC_NUMBER:
               if (_intValue <0 || _intValue >= _listLabels.Count) _intValue = 0;
               break;
           
@@ -754,6 +774,7 @@ namespace MediaPortal.GUI.Library
           
     
         case SpinType.SPIN_CONTROL_TYPE_TEXT:
+        case SpinType.SPIN_CONTROL_TYPE_DISC_NUMBER:
           return (int)_listLabels.Count;
           
         case SpinType.SPIN_CONTROL_TYPE_FLOAT:
@@ -772,6 +793,7 @@ namespace MediaPortal.GUI.Library
           
     
         case SpinType.SPIN_CONTROL_TYPE_TEXT:
+        case SpinType.SPIN_CONTROL_TYPE_DISC_NUMBER:
           return 1;
           
         case SpinType.SPIN_CONTROL_TYPE_FLOAT:
@@ -852,6 +874,7 @@ namespace MediaPortal.GUI.Library
         }
 
         case SpinType.SPIN_CONTROL_TYPE_TEXT:
+        case SpinType.SPIN_CONTROL_TYPE_DISC_NUMBER:
         {
             if (_intValue-10 >= 0)
                 _intValue-=10;
@@ -875,6 +898,7 @@ namespace MediaPortal.GUI.Library
               return;
           }
           case SpinType.SPIN_CONTROL_TYPE_TEXT:
+          case SpinType.SPIN_CONTROL_TYPE_DISC_NUMBER:
           {
               if (_intValue+10 < (int)_listLabels.Count )
                   _intValue+=10;
@@ -905,6 +929,7 @@ namespace MediaPortal.GUI.Library
         }
 
         case SpinType.SPIN_CONTROL_TYPE_TEXT:
+        case SpinType.SPIN_CONTROL_TYPE_DISC_NUMBER:
         {
           if (_intValue+1 < (int)_listLabels.Count)
             return true;
@@ -934,6 +959,7 @@ namespace MediaPortal.GUI.Library
         }
          
         case SpinType.SPIN_CONTROL_TYPE_TEXT:
+        case SpinType.SPIN_CONTROL_TYPE_DISC_NUMBER:
         {
           if (_intValue-1 >= 0)
             return true;
@@ -967,6 +993,7 @@ namespace MediaPortal.GUI.Library
          
 
         case SpinType.SPIN_CONTROL_TYPE_TEXT:
+        case SpinType.SPIN_CONTROL_TYPE_DISC_NUMBER:
           {
               if (_intValue-1 >= 0)
                   _intValue--;
@@ -1007,6 +1034,7 @@ namespace MediaPortal.GUI.Library
           }
 
           case SpinType.SPIN_CONTROL_TYPE_TEXT:
+          case SpinType.SPIN_CONTROL_TYPE_DISC_NUMBER:
           {
               if (_intValue+1 < (int)_listLabels.Count)
                   _intValue++;
@@ -1108,7 +1136,7 @@ namespace MediaPortal.GUI.Library
         if (_startInt==_endInt) return false; 
       }
       
-      if (_spinType==SpinType.SPIN_CONTROL_TYPE_TEXT)
+      if (_spinType==SpinType.SPIN_CONTROL_TYPE_TEXT || _spinType==SpinType.SPIN_CONTROL_TYPE_DISC_NUMBER)
       {
         if (_listLabels.Count < 2) return false;
       }

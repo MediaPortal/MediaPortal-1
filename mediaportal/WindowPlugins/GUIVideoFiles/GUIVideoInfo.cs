@@ -114,7 +114,7 @@ namespace MediaPortal.GUI.Video
       //spinImages.UpDownType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
 
       ResetSpinControl();
-
+      spinDisc.UpDownType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_DISC_NUMBER;
       spinDisc.Reset();
       viewmode = ViewMode.Image;
       spinDisc.AddLabel("HD", 0);
