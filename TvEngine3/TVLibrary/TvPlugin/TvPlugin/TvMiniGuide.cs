@@ -328,7 +328,7 @@ namespace TvPlugin
       benchClock.Start();
       Dictionary<int, NowAndNext> listNowNext = layer.GetNowAndNext();
       benchClock.Stop();
-      Log.Debug("miniguide: FillChannelList - Got NowNext channels after {0} ticks", benchClock.ElapsedTicks.ToString());
+      Log.Debug("miniguide: FillChannelList - Got NowNext channels after {0} ticks ({1} ms)", benchClock.ElapsedTicks.ToString(), benchClock.ElapsedMilliseconds.ToString());
       
       Channel CurrentChan = null;
       GUIListItem item = null;
@@ -338,6 +338,7 @@ namespace TvPlugin
       int SelectedID = 0;
       int CurrentChanState = 0;
       bool CheckChannelState = true;
+      bool DisplayStatusInfo = true;
       string PathIconNoTune = GUIGraphicsContext.Skin + @"\Media\remote_blue.png";
       string PathIconTimeshift = GUIGraphicsContext.Skin + @"\Media\remote_yellow.png";
       string PathIconRecord = GUIGraphicsContext.Skin + @"\Media\remote_red.png";      
@@ -350,7 +351,24 @@ namespace TvPlugin
         benchClock.Start();
         TVHome.TvServer.GetAllRecordingChannels(out RecChannels, out TSChannels);
         benchClock.Stop();
-        Log.Debug("miniguide: FillChannelList after {2} ticks - channels currently timeshifting: {0}, recording: {1}", Convert.ToString(TSChannels.Count), Convert.ToString(RecChannels.Count), benchClock.ElapsedTicks.ToString());
+        Log.Debug("miniguide: FillChannelList - GetAllRecordingChannels after {2} ticks - channels currently timeshifting: {0}, recording: {1}", Convert.ToString(TSChannels.Count), Convert.ToString(RecChannels.Count), benchClock.ElapsedTicks.ToString());
+      }
+
+      if (RecChannels.Count == 0)
+      {
+        // not using cards at all - assume tuneability (why else should the user have this channel added..)
+        if (TSChannels.Count == 0)
+          CheckChannelState = false;
+        else
+        {
+          // note: it could be possible we're watching a stream another user is timeshifting...
+          // TODO: add user check
+          if (TSChannels.Count == 1 && g_Player.IsTV && g_Player.Playing)
+          {
+            CheckChannelState = false;
+            Log.Debug("miniguide: assume we're the only current timeshifting user - switching to fast channel check mode");
+          }
+        }
       }
 
       benchClock.Reset();
@@ -360,6 +378,8 @@ namespace TvPlugin
         CurrentChan = _tvChannelList[i];
         if (CheckChannelState)
           CurrentChanState = (int)TVHome.TvServer.GetChannelState(CurrentChan.IdChannel);
+        else
+          CurrentChanState = (int)ChannelState.tunable;
 
         if (CurrentChan.VisibleInGuide)
         {
@@ -396,7 +416,7 @@ namespace TvPlugin
             item.IconImage = string.Empty;
           }
 
-          if (CheckChannelState)
+          if (DisplayStatusInfo)
           {
             if (RecChannels.Contains(CurrentChan.IdChannel))
               CurrentChanState = (int)ChannelState.recording;
@@ -447,7 +467,7 @@ namespace TvPlugin
         }
       }
       benchClock.Stop();
-      Log.Debug("miniguide: FillChannelList loop completed after {0} ticks - exiting", benchClock.ElapsedTicks.ToString());
+      Log.Debug("miniguide: FillChannelList loop completed after {0} ticks ({1} ms) - exiting", benchClock.ElapsedTicks.ToString(), benchClock.ElapsedMilliseconds.ToString());
       lstChannels.SelectedListItemIndex = SelectedID;
       lstChannels.Visible = true;
     }

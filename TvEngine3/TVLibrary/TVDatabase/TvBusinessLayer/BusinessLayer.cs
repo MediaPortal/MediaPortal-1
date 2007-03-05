@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Text;
 using System.Globalization;
@@ -995,113 +996,155 @@ namespace TvDatabase
 
     public Dictionary<int, NowAndNext> GetNowAndNext()
     {
-      Dictionary<int, NowAndNext> nowNextList = new Dictionary<int, NowAndNext>();
-
+      Dictionary<int, NowAndNext> nowNextList = new Dictionary<int, NowAndNext>();      
       string provider = Gentle.Framework.ProviderFactory.GetDefaultProvider().Name.ToLower();
-      // MSSQL doesn't like some ANSI SQL - e.g. the proprietary getdate() function
-      if (provider == "mysql")
+      string connectString = Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
+      MySqlConnection MySQLConnect = null;
+      MySqlDataAdapter MySQLAdapter = null;
+      MySqlCommand MySQLCmd = null;
+      OleDbDataAdapter OleAdapter = null;
+      OleDbConnection MSSQLConnect = null;
+      OleDbCommand OleDbCmd = null;
+
+      try
       {
-        string connectString = Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
-
-        using (MySqlConnection connect = new MySqlConnection(connectString))
+        switch (provider)
         {
-          MySqlDataAdapter adapter = new MySqlDataAdapter();
-          adapter.TableMappings.Add("Table", "program");
-
-          connect.Open();
-          using (MySqlCommand cmd = connect.CreateCommand())
-          {
-            //cmd.CommandText = "select idChannel,idProgram,starttime,endtime,title from program where program.endtime >= now() and program.idProgram in (select idProgram from program as p3 where p3.idchannel=program.idchannel and p3.endtime >= now() order by starttime) order by idchannel,starttime desc";
-
-            // Since MySQL5 doesn't support an "TOP 2" equivalent like "LIMIT" in subselects we only fetch info for 24 hours to lower the amount of data.
-            cmd.CommandText = "SELECT idChannel,idProgram,starttime,endtime,title FROM program WHERE program.endtime >= NOW() AND program.endtime < DATE_ADD(SYSDATE(),INTERVAL 24 HOUR) ORDER BY idchannel,starttime";
-            cmd.CommandType = System.Data.CommandType.Text;
-
-            adapter.SelectCommand = cmd;
-            using (System.Data.DataSet dataSet = new DataSet("program"))
-            {
-              // ToDo: check if column fetching wastes performance
-              adapter.Fill(dataSet);
-
-              int resultCount = dataSet.Tables[0].Rows.Count;
-              List<int> lastChannelIDs = new List<int>();
-
-              // for-loops are faster than foreach-loops
-              for (int j = 0; j < resultCount; j++)
-              {
-                int idChannel = (int)dataSet.Tables[0].Rows[j]["idChannel"];
-                // Only get the Now-Next-Data _once_ per channel
-                if (!lastChannelIDs.Contains(idChannel))
-                {
-                  lastChannelIDs.Add(idChannel);
-
-                  int nowidProgram = (int)dataSet.Tables[0].Rows[j]["idProgram"];
-                  DateTime nowStart = (DateTime)dataSet.Tables[0].Rows[j]["startTime"];
-                  DateTime nowEnd = (DateTime)dataSet.Tables[0].Rows[j]["endTime"];
-                  string nowTitle = (string)dataSet.Tables[0].Rows[j]["title"];
-
-                  if (j < resultCount - 1)
-                  {
-                    // get the the "Next" info if it belongs to the same channel.
-                    if (idChannel == (int)dataSet.Tables[0].Rows[j + 1]["idChannel"])
-                    {
-                      int nextidProgram = (int)dataSet.Tables[0].Rows[j + 1]["idProgram"];
-                      DateTime nextStart = (DateTime)dataSet.Tables[0].Rows[j + 1]["startTime"];
-                      DateTime nextEnd = (DateTime)dataSet.Tables[0].Rows[j + 1]["endTime"];
-                      string nextTitle = (string)dataSet.Tables[0].Rows[j + 1]["title"];
-
-                      NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nextStart, nextEnd, nowTitle, nextTitle, nowidProgram, nextidProgram);
-                      nowNextList[idChannel] = p;
-                    }
-                  }
-                }
-              }
-            }
-
-          }
-          connect.Close();
+          case "mysql":
+            MySQLConnect = new MySqlConnection(connectString);
+            MySQLAdapter = new MySqlDataAdapter();
+            MySQLAdapter.TableMappings.Add("Table", "program");
+            MySQLConnect.Open();
+            MySQLCmd = MySQLConnect.CreateCommand();
+            MySQLCmd.CommandType = CommandType.Text;
+            MySQLCmd.CommandText = "SELECT idChannel,idProgram,starttime,endtime,title FROM program WHERE program.endtime >= NOW() AND program.endtime < DATE_ADD(SYSDATE(),INTERVAL 24 HOUR) ORDER BY idchannel,starttime";
+            MySQLAdapter.SelectCommand = MySQLCmd;
+            break;
+          case "sqlserver":
+            MSSQLConnect = new System.Data.OleDb.OleDbConnection("Provider=SQLOLEDB;" + connectString);
+            OleAdapter = new OleDbDataAdapter();
+            OleAdapter.TableMappings.Add("Table", "program");
+            MSSQLConnect.Open();
+            OleDbCmd = MSSQLConnect.CreateCommand();
+            OleDbCmd.CommandType = CommandType.Text;
+            // "select idChannel,idProgram,starttime,endtime,title from program where program.endtime >= now() and program.idProgram in (select idProgram from program as p3 where p3.idchannel=program.idchannel and p3.endtime >= now() order by starttime) order by idchannel,starttime desc";
+            OleDbCmd.CommandText = "SELECT idChannel,idProgram,starttime,endtime,title FROM program WHERE program.endtime >= getdate() AND program.endtime < DATEADD(day, 1, getdate()) ORDER BY idchannel,starttime";
+            OleAdapter.SelectCommand = OleDbCmd;
+            break;
+          default:
+            //MSSQLConnect = new System.Data.OleDb.OleDbConnection("Provider=SQLOLEDB;" + connectString);
+            OleAdapter = new OleDbDataAdapter();
+            OleAdapter.TableMappings.Add("Table", "program");
+            Log.Info("BusinessLayer: using slower default SQL to get NowNext info, no connect info for provider {0} - aborting", provider);
+            //SQLCommandText = "SELECT idChannel,idProgram,starttime,endtime,title FROM program WHERE program.endtime >= NOW() ORDER BY idchannel,starttime";
+            return nowNextList;
         }
-      }
-      else
-      {
-        string connectString = Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
-        using (System.Data.OleDb.OleDbConnection connect = new System.Data.OleDb.OleDbConnection("Provider=SQLOLEDB;" + connectString))
+
+        using (System.Data.DataSet dataSet = new DataSet("program"))
         {
-          connect.Open();
-          using (System.Data.OleDb.OleDbCommand cmd = connect.CreateCommand())
+          // ToDo: check if column fetching wastes performance
+          if (provider == "sqlserver")
+            OleAdapter.Fill(dataSet);
+          else
+            if (provider == "mysql")
+              MySQLAdapter.Fill(dataSet);
+
+          int resultCount = dataSet.Tables[0].Rows.Count;
+          List<int> lastChannelIDs = new List<int>();
+
+          // for-loops are faster than foreach-loops
+          for (int j = 0; j < resultCount; j++)
           {
-            cmd.CommandText = "select idChannel,idProgram,starttime,endtime,title from	program";
-            cmd.CommandText += " where	 program.endtime >= getdate() and program.idProgram in ";
-            cmd.CommandText += " ( ";
-            cmd.CommandText += " select top 2 idProgram from program as p3 where p3.idchannel=program.idchannel and p3.endtime >= getdate() order by starttime";
-            cmd.CommandText += " ) order by idchannel,starttime";
-            cmd.CommandType = System.Data.CommandType.Text;
-            using (System.Data.IDataReader reader = cmd.ExecuteReader())
+            int idChannel = (int)dataSet.Tables[0].Rows[j]["idChannel"];
+            // Only get the Now-Next-Data _once_ per channel
+            if (!lastChannelIDs.Contains(idChannel))
             {
-              while (reader.Read())
+              lastChannelIDs.Add(idChannel);
+
+              int nowidProgram = (int)dataSet.Tables[0].Rows[j]["idProgram"];
+              DateTime nowStart = (DateTime)dataSet.Tables[0].Rows[j]["startTime"];
+              DateTime nowEnd = (DateTime)dataSet.Tables[0].Rows[j]["endTime"];
+              string nowTitle = (string)dataSet.Tables[0].Rows[j]["title"];
+
+              if (j < resultCount - 1)
               {
-                int idChannel = (int)reader["idChannel"];
-                int nowidProgram = (int)reader["idProgram"];
-                DateTime nowStart = (DateTime)reader["startTime"];
-                DateTime nowEnd = (DateTime)reader["endTime"];
-                string nowTitle = (string)reader["title"];
-                if (reader.Read())
+                // get the the "Next" info if it belongs to the same channel.
+                if (idChannel == (int)dataSet.Tables[0].Rows[j + 1]["idChannel"])
                 {
-                  int nextidProgram = (int)reader["idProgram"];
-                  DateTime nextStart = (DateTime)reader["startTime"];
-                  DateTime nextEnd = (DateTime)reader["endTime"];
-                  string nextTitle = (string)reader["title"];
+                  int nextidProgram = (int)dataSet.Tables[0].Rows[j + 1]["idProgram"];
+                  DateTime nextStart = (DateTime)dataSet.Tables[0].Rows[j + 1]["startTime"];
+                  DateTime nextEnd = (DateTime)dataSet.Tables[0].Rows[j + 1]["endTime"];
+                  string nextTitle = (string)dataSet.Tables[0].Rows[j + 1]["title"];
+
                   NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nextStart, nextEnd, nowTitle, nextTitle, nowidProgram, nextidProgram);
                   nowNextList[idChannel] = p;
                 }
               }
-              reader.Close();
             }
           }
-          connect.Close();
+        }
+
+      }
+      finally
+      {
+        switch (provider)
+        {
+          case "mysql":
+            MySQLConnect.Close();
+            MySQLAdapter.Dispose();
+            MySQLCmd.Dispose();
+            MySQLConnect.Dispose();
+            break;
+          case "sqlserver":
+            MSSQLConnect.Close();
+            OleAdapter.Dispose();
+            OleDbCmd.Dispose();
+            MSSQLConnect.Dispose();
+            break;
         }
       }
+
       return nowNextList;
+
+      //else
+      //{
+      //  string connectString = Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
+      //  using (System.Data.OleDb.OleDbConnection connect = new System.Data.OleDb.OleDbConnection("Provider=SQLOLEDB;" + connectString))
+      //  {
+      //    connect.Open();
+      //    using (System.Data.OleDb.OleDbCommand cmd = connect.CreateCommand())
+      //    {
+      //      cmd.CommandText = "select idChannel,idProgram,starttime,endtime,title from	program";
+      //      cmd.CommandText += " where	 program.endtime >= getdate() and program.idProgram in ";
+      //      cmd.CommandText += " ( ";
+      //      cmd.CommandText += " select top 2 idProgram from program as p3 where p3.idchannel=program.idchannel and p3.endtime >= getdate() order by starttime";
+      //      cmd.CommandText += " ) order by idchannel,starttime";
+      //      cmd.CommandType = System.Data.CommandType.Text;
+      //      using (System.Data.IDataReader reader = cmd.ExecuteReader())
+      //      {
+      //        while (reader.Read())
+      //        {
+      //          int idChannel = (int)reader["idChannel"];
+      //          int nowidProgram = (int)reader["idProgram"];
+      //          DateTime nowStart = (DateTime)reader["startTime"];
+      //          DateTime nowEnd = (DateTime)reader["endTime"];
+      //          string nowTitle = (string)reader["title"];
+      //          if (reader.Read())
+      //          {
+      //            int nextidProgram = (int)reader["idProgram"];
+      //            DateTime nextStart = (DateTime)reader["startTime"];
+      //            DateTime nextEnd = (DateTime)reader["endTime"];
+      //            string nextTitle = (string)reader["title"];
+      //            NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nextStart, nextEnd, nowTitle, nextTitle, nowidProgram, nextidProgram);
+      //            nowNextList[idChannel] = p;
+      //          }
+      //        }
+      //        reader.Close();
+      //      }
+      //    }
+      //    connect.Close();
+      //  }
+      //}      
     }
     #endregion
 
