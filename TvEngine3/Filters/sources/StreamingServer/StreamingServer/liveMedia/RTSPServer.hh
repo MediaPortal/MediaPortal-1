@@ -159,6 +159,7 @@ public:
     struct sockaddr_in fClientAddr;
     Boolean fSessionIsActive;
     LONG startDateTime;
+    bool m_bPaused;
   private:
     TaskToken fLivenessCheckTask;
     unsigned char fRequestBuffer[RTSP_BUFFER_SIZE];

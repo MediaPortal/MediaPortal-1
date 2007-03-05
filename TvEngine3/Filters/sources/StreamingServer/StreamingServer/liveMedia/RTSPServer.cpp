@@ -254,6 +254,7 @@ RTSPServer::RTSPClientSession
      (TaskScheduler::BackgroundHandlerProc*)&incomingRequestHandler, this);
   noteLiveness();
   startDateTime=time(NULL);
+  m_bPaused=false;
   fOurServer.AddClient(this);
 }
 
@@ -929,6 +930,8 @@ void RTSPServer::RTSPClientSession
   char* rtspURL = fOurServer.rtspURL(fOurServerMediaSession);
   unsigned rtspURLSize = strlen(rtspURL);
 
+  Log( "server:Play from %s (%d) (%x)", our_inet_ntoa(fClientAddr.sin_addr),m_bPaused,this);
+  m_bPaused=false;
   //// Parse the client's "Scale:" header, if any: 
   float scale;
   Boolean sawScaleHeader = parseScaleHeader(fullRequestStr, scale);
@@ -1076,7 +1079,10 @@ void RTSPServer::RTSPClientSession
 }
 
 void RTSPServer::RTSPClientSession
-  ::handleCmd_PAUSE(ServerMediaSubsession* subsession, char const* cseq) {
+  ::handleCmd_PAUSE(ServerMediaSubsession* subsession, char const* cseq) 
+{
+  m_bPaused=true;
+  Log( "server:Pause from %s (%d) (%x)", our_inet_ntoa(fClientAddr.sin_addr),m_bPaused,this);
   for (unsigned i = 0; i < fNumStreamStates; ++i) {
     if (subsession == NULL /* means: aggregated operation */
 	|| subsession == fStreamStates[i].subsession) {
@@ -1087,6 +1093,7 @@ void RTSPServer::RTSPClientSession
   snprintf((char*)fResponseBuffer, sizeof fResponseBuffer,
 	   "RTSP/1.0 200 OK\r\nCSeq: %s\r\n%sSession: %d\r\n\r\n",
 	   cseq, dateHeader(), fOurSessionId);
+  
 }
 
 void RTSPServer::RTSPClientSession
@@ -1243,7 +1250,12 @@ void RTSPServer::RTSPClientSession
 }
 
 void RTSPServer::RTSPClientSession
-::livenessTimeoutTask(RTSPClientSession* clientSession) {
+::livenessTimeoutTask(RTSPClientSession* clientSession) 
+{
+  if (clientSession->m_bPaused) 
+  {
+    return;
+  }
   // If this gets called, the client session is assumed to have timed out,
   // so delete it:
 
@@ -1252,9 +1264,8 @@ void RTSPServer::RTSPClientSession
   // Also, the multicast stream itself would usually not be halted, in any case.
   if (clientSession->isMulticast()) return;
 
-#ifdef DEBUG
-  fprintf(stderr, "RTSP client session from %s has timed out (due to inactivity)\n", our_inet_ntoa(clientSession->fClientAddr.sin_addr));
-#endif
+  Log( "RTSP client session from %s has timed out (due to inactivity) (%d) (%x)\n", our_inet_ntoa(clientSession->fClientAddr.sin_addr),clientSession->m_bPaused,clientSession);
+
   delete clientSession;
 }
 
