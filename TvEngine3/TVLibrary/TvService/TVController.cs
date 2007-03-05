@@ -80,6 +80,7 @@ namespace TvService
     /// Plugins
     /// </summary>
     PluginLoader _plugins = null;
+    List<ITvServerPlugin> _pluginsStarted = new List<ITvServerPlugin>();
     #endregion
 
     #region events
@@ -408,7 +409,16 @@ namespace TvService
             if (setting.Value == "true")
             {
               Log.Info("Plugin:{0} started", plugin.Name);
-              plugin.Start(this);
+              try
+              {
+                plugin.Start(this);
+                _pluginsStarted.Add(plugin);
+              }
+              catch (Exception ex)
+              {
+                Log.Info("Plugin:{0} failed to start", plugin.Name);
+                Log.Write(ex);
+              }
             }
             else
             {
@@ -449,61 +459,74 @@ namespace TvService
     /// </summary>
     public void DeInit()
     {
-      if (_plugins != null)
+      try
       {
-        foreach (ITvServerPlugin plugin in _plugins.Plugins)
+        if (_pluginsStarted != null)
         {
-          if (plugin.MasterOnly == false || _isMaster)
+          foreach (ITvServerPlugin plugin in _pluginsStarted)
           {
-            plugin.Stop();
+            try
+            {
+              plugin.Stop();
+            }
+            catch (Exception ex)
+            {
+              Log.Error("Controller: plugin:{0} failed to stop...", plugin.Name);
+              Log.Write(ex);
+            }
+          }
+          _pluginsStarted = new List<ITvServerPlugin>();
+        }
+        //stop the RTSP streamer server
+        if (_streamer != null)
+        {
+          Log.WriteFile("Controller: stop streamer...");
+          _streamer.Stop();
+          _streamer = null;
+          Log.WriteFile("Controller: streamer stopped...");
+        }
+        //stop the recording scheduler
+        if (_scheduler != null)
+        {
+          Log.WriteFile("Controller: stop scheduler...");
+          _scheduler.Stop();
+          _scheduler = null;
+          Log.WriteFile("Controller: scheduler stopped...");
+        }
+        //stop the epg grabber
+        if (_epgGrabber != null)
+        {
+          Log.WriteFile("Controller: stop epg grabber...");
+          _epgGrabber.Stop();
+          _epgGrabber = null;
+          Log.WriteFile("Controller: epg stopped...");
+        }
+
+        //clean up the tv cards
+        Dictionary<int, TvCard>.Enumerator enumerator = _cards.GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+          KeyValuePair<int, TvCard> key = enumerator.Current;
+          Log.WriteFile("Controller:  dispose card:{0}", key.Value.CardName);
+          try
+          {
+            key.Value.Dispose();
+          }
+          catch (Exception ex)
+          {
+            Log.Write(ex);
           }
         }
-        _plugins = null;
-      }
-      //stop the RTSP streamer server
-      if (_streamer != null)
-      {
-        Log.WriteFile("Controller: stop streamer...");
-        _streamer.Stop();
-        _streamer = null;
-        Log.WriteFile("Controller: streamer stopped...");
-      }
-      //stop the recording scheduler
-      if (_scheduler != null)
-      {
-        Log.WriteFile("Controller: stop scheduler...");
-        _scheduler.Stop();
-        _scheduler = null;
-        Log.WriteFile("Controller: scheduler stopped...");
-      }
-      //stop the epg grabber
-      if (_epgGrabber != null)
-      {
-        Log.WriteFile("Controller: stop epg grabber...");
-        _epgGrabber.Stop();
-        _epgGrabber = null;
-        Log.WriteFile("Controller: epg stopped...");
-      }
-
-      //clean up the tv cards
-      Dictionary<int, TvCard>.Enumerator enumerator = _cards.GetEnumerator();
-      while (enumerator.MoveNext())
-      {
-        KeyValuePair<int, TvCard> key = enumerator.Current;
-        Log.WriteFile("Controller:  dispose card:{0}", key.Value.CardName);
-        try
+        Gentle.Common.CacheManager.Clear();
+        if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
         {
-          key.Value.Dispose();
-        }
-        catch (Exception ex)
-        {
-          Log.Write(ex);
+          GlobalServiceProvider.Instance.Remove<ITvServerEvent>();
         }
       }
-      Gentle.Common.CacheManager.Clear();
-      if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
+      catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Remove<ITvServerEvent>();
+        Log.Error("TvController:Deinit() failed");
+        Log.Write(ex);
       }
     }
 
@@ -1850,7 +1873,7 @@ namespace TvService
         List<IChannel> tuningDetails = layer.GetTuningChannelByName(dbChannel);
 
         if (!simpleMode)
-        {          
+        {
           if (tuningDetails == null)
           {
             //no tuning details??
@@ -1870,7 +1893,7 @@ namespace TvService
         }
 
         int cardsFound = 0;
-        int number = 0;        
+        int number = 0;
         //foreach tuning detail
         foreach (IChannel tuningDetail in tuningDetails)
         {
