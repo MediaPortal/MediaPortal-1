@@ -22,8 +22,8 @@ public partial class schedules : System.Web.UI.Page
     if (!Page.IsPostBack)
     {
       radioTitle.Checked = true;
+      UpdateSchedules();
     }
-    UpdateSchedules();
   }
 
   void UpdateSchedules()
@@ -175,11 +175,13 @@ public partial class schedules : System.Web.UI.Page
   protected void radioTitle_CheckedChanged(object sender, EventArgs e)
   {
     radioDate.Checked = false;
+    UpdateSchedules();
 
   }
   protected void radioDate_CheckedChanged(object sender, EventArgs e)
   {
     radioTitle.Checked = false;
+    UpdateSchedules();
 
   }
 }

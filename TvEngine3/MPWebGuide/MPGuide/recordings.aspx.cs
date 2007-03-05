@@ -22,8 +22,8 @@ public partial class recordings : System.Web.UI.Page
     if (!Page.IsPostBack)
     {
       radioTitle.Checked = true;
+      UpdateRecordings();
     }
-    UpdateRecordings();
   }
 
   void UpdateRecordings()
@@ -153,9 +153,11 @@ public partial class recordings : System.Web.UI.Page
   protected void radioTitle_CheckedChanged(object sender, EventArgs e)
   {
     radioDate.Checked = false;
+    UpdateRecordings();
   }
   protected void radioDate_CheckedChanged(object sender, EventArgs e)
   {
     radioTitle.Checked = false;
+    UpdateRecordings();
   }
 }
