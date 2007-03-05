@@ -493,7 +493,7 @@ namespace MediaPortal.Threading
 
           if (work == null)
           {
-            LogDebug("ThreadPool.ProcessQueue() : received NULL work");
+            // LogDebug("ThreadPool.ProcessQueue() : received NULL work");
             // Dequeue has returned null or we should shutdown
             if (_threads.Count > _startInfo.MinimumThreads)
             {
