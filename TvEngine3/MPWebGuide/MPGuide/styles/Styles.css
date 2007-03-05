@@ -40,8 +40,20 @@
 .nav_bar_text {
 	FONT-SIZE: 10pt; COLOR: #ffffff; FONT-FAMILY: 'Trebuchet MS', Verdana, Arial
 }
+.login_list_top {
+	PADDING-LEFT: 15px; background-image: url(/MPGuide/images/box-top.png); WIDTH: 700px; CURSOR: default; PADDING-TOP: 5px; HEIGHT: 33px
+}
+.login_list_bottom {
+	background-image: url(/MPGuide/images/box-bottom.png); WIDTH: 700px; HEIGHT: 12px
+}
+.login_list_middle {
+	PADDING-RIGHT: 12px; PADDING-LEFT: 12px; background-image: url(/MPGuide/images/box-middle.png); WIDTH: 700px; BACKGROUND-REPEAT: repeat-y
+}
+.login_list_top_text {
+	FONT-WEIGHT: bold; FONT-SIZE: 11pt; COLOR: #10397b; FONT-FAMILY: 'Trebuchet MS', Verdana, Arial
+}
 .recording_list_top {
-	PADDING-LEFT: 15px; background-image: url(/MPGuide/images/box-top.png); WIDTH: 526px; CURSOR: default; PADDING-TOP: 5px; HEIGHT: 33px
+	PADDING-LEFT: 15px; background-image: url(/MPGuide/images/box-top.png); WIDTH: 526px; CURSOR: default; PADDING-TOP: 0px; HEIGHT: 33px
 }
 .recording_list_top_text {
 	FONT-WEIGHT: bold; FONT-SIZE: 11pt; COLOR: #10397b; FONT-FAMILY: 'Trebuchet MS', Verdana, Arial

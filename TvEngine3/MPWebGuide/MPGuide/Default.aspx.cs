@@ -50,6 +50,11 @@ public partial class _Default : System.Web.UI.Page
     if (_recordings.Count>6)
       AddRow(tableRecordings,DateTime.MinValue, DateTime.MinValue, "", "More...", -1, "recordings");
 
+    HtmlTableRow row = new HtmlTableRow();
+    HtmlTableCell cell = new HtmlTableCell();
+    cell.Attributes.Add("class", "recording_list_bottom");
+    row.Cells.Add(cell);
+    tableRecordings.Rows.Add(row);
   }
 
   void AddRecording(Recording rec)
@@ -68,6 +73,12 @@ public partial class _Default : System.Web.UI.Page
     }
     if (schedules.Count>6)
       AddRow(tableSchedules, DateTime.MinValue, DateTime.MinValue, "", "More...", -1, "schedules");
+    HtmlTableRow row = new HtmlTableRow();
+    HtmlTableCell cell = new HtmlTableCell();
+    cell.Attributes.Add("class", "recording_list_bottom");
+    row.Cells.Add(cell);
+    tableSchedules.Rows.Add(row);
+
   }
 
   void AddSchedule(Schedule rec)

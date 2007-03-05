@@ -20,13 +20,13 @@
         <br />
         <table id="move_table" width="700" border="0" cellpadding="0" cellspacing="0" align="center">
             <tr>
-                <td id="top" class="recording_list_top">
-                    <span class="recording_list_top_text">Login</span>
+                <td id="top" class="login_list_top">
+                    <span class="login_list_top_text">Login</span>
                 </td>
             </tr>
             <tr>
-                <td class="recording_list_middle" align="center">
-                    <div style="width: 680px; border-right: white 1px solid; border-top: white 1px solid;
+                <td class="login_list_middle" align="center">
+                    <div style="width: 100%; border-right: white 1px solid; border-top: white 1px solid;
                         border-left: white 1px solid; border-bottom: white 1px solid;">
                         <table width="100%" style="background-color: #11397A; width: 100%; border-right: black 1px solid;
                             border-top: black 1px solid; border-left: black 1px solid; border-bottom: black 1px solid;">
@@ -43,7 +43,7 @@
                                             <td>
                                                 <table cellpadding="0" border="0">
                                                     <tr>
-                                                        <td class="white_bodytext" align="center" colspan="2">
+                                                        <td class="white_bodytext" align="center" colspan="3">
                                                             Please enter your user information:</td>
                                                     </tr>
                                                     <tr>
@@ -77,6 +77,7 @@
                                                     <tr>
                                                         <td align="right" colspan="2">
                                                             <asp:Button ID="button1" runat="server" Text="Sign in" OnClick="buttonSignIn_Click" /></td>
+                                                            <td></td>
                                                     </tr>
                                                 </table>
                                             </td>
@@ -86,6 +87,10 @@
                             </tr>
                         </table>
                     </div>
+                </td>
+            </tr>
+            <tr>
+                <td id="Td1" class="login_list_bottom">
                 </td>
             </tr>
         </table>

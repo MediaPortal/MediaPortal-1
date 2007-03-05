@@ -14,8 +14,7 @@
         <div style="height: 100%">
             <img style="z-index: -1; width: 100%; position: absolute; height: 100%" height="100%"
                 src="images/bg.jpg" width="100%">
-            <table class="main_table" style="height: 100%" cellspacing="0" cellpadding="0" width="980"
-                align="center" border="0">
+            <table class="main_table" style="height: 100%" cellspacing="0" cellpadding="0" width="980" align="center" border="0">
                 <tbody>
                     <tr height="1">
                         <td>
@@ -136,7 +135,7 @@
                     <tr style="height: 100%">
                         <td valign="top" style="height: 100%">
                             <div style="height: 100%">
-                                <table height="100%" width="100%" border="1">
+                                <table height="100%" width="100%" border="0" cellspacing="0" cellpadding="0">
                                     <tbody>
                                         <tr>
                                             <td style="padding-right: 20px" valign="top" align="middle" width="41%">
@@ -186,44 +185,28 @@
                                                 </table>
                                             </td>
                                             <td valign="top">
-                                                <div>
-                                                    <table cellspacing="0" cellpadding="0" width="526" border="0" id="tableRecordings"
-                                                        runat="server">
+                                                <div  style=" HEIGHT: 100%">
+                                                    <table cellspacing="0" cellpadding="0" width="526" border="0" id="tableRecordings" runat="server">
                                                         <tbody>
-                                                            <tr>
+                                                            <tr >
                                                                 <td class="recording_list_top">
-                                                                    <div style="padding-right: 4px; padding-left: 4px; padding-bottom: 14px; width: 100%;
-                                                                        padding-top: 4px">
+                                                                    <div style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px;  padding-top: 4px;width: 100%;">
                                                                         <span class="info_box_title_text">Recent Recordings</span>
                                                                     </div>
                                                                 </td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
-                                                    <table cellspacing="0" cellpadding="0" width="526" border="0">
-                                                        <tr id="Tr1">
-                                                            <td class="recording_list_bottom">
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                    <table cellspacing="0" cellpadding="0" width="526" border="0" id="tableSchedules"
-                                                        runat="server">
+                                                    <table cellspacing="0" cellpadding="0" width="526" border="0" id="tableSchedules" runat="server">
                                                         <tbody>
                                                             <tr>
                                                                 <td class="recording_list_top">
-                                                                    <div style="padding-right: 4px; padding-left: 4px; padding-bottom: 14px; width: 100%;
-                                                                        padding-top: 4px">
+                                                                    <div style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px;  padding-top: 4px;width: 100%;">
                                                                         <span class="info_box_title_text">Scheduled recordings</span>
                                                                     </div>
                                                                 </td>
                                                             </tr>
                                                         </tbody>
-                                                    </table>
-                                                    <table cellspacing="0" cellpadding="0" width="526" border="0" >
-                                                        <tr>
-                                                            <td class="recording_list_bottom">
-                                                            </td>
-                                                        </tr>
                                                     </table>
                                                 </div>
                                             </td>
