@@ -444,7 +444,7 @@ namespace TvService
           //when card is busy, but already tuned to the correct transponder then we can use it also
           User byUser;
           User tmpUser = new User();
-          tmpUser.CardId = card.Id;
+          tmpUser = _tvController.GetUserForCard(card.Id);//added by joboehl - Allows the CurrentDbChannel bellow to work when TVServer and client are on different machines
           if ((_tvController.IsCardInUse(card.Id, out byUser) == false) ||
                _tvController.CurrentDbChannel(ref tmpUser) == recording.Channel.IdChannel ||
                (_tvController.IsTunedToTransponder(card.Id, card.TuningDetail) && _tvController.Type(card.Id) != CardType.Analog))
@@ -495,7 +495,7 @@ namespace TvService
         foreach (CardDetail card in freeCards)
         {
           User tmpUser = new User();
-          tmpUser.CardId = card.Id;
+          tmpUser = _tvController.GetUserForCard(card.Id);//added by joboehl - Allows the CurrentDbChannel bellow to work when TVServer and client are on different machines
           if (_tvController.CurrentDbChannel(ref tmpUser) == recording.Channel.IdChannel)
           {
             if (_tvController.IsRecording(ref tmpUser) == false)

@@ -70,6 +70,8 @@ namespace TvPlugin
     DateTime _updateTimer = DateTime.Now;
     static DateTime _updateProgressTimer = DateTime.MinValue;
     bool _autoTurnOnTv = false;
+    static bool _autoswitchTVon = false;
+    int _lagtolerance = 10; //Added by joboehl
     bool _settingsLoaded = false;
     DateTime _dtlastTime = DateTime.Now;
     TvCropManager _cropManager = new TvCropManager();
@@ -217,6 +219,7 @@ namespace TvPlugin
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_navigator.LoadSettings(xmlreader);
+        _autoswitchTVon   = xmlreader.GetValueAsBool ("mytv", "autoswitchTVon", false ); //Added by joboehl
         _autoTurnOnTv = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
 
         string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
@@ -553,7 +556,6 @@ namespace TvPlugin
         if (Navigator.CurrentGroup.ReferringGroupMap().Count > 0)
         {
           GroupMap gm = (GroupMap)Navigator.CurrentGroup.ReferringGroupMap()[0];
-          ViewChannelAndCheck(gm.ReferencedChannel());
         }
       }
     }
@@ -877,6 +879,7 @@ namespace TvPlugin
                             Navigator.Channel.CurrentProgram.StartTime, Navigator.Channel.CurrentProgram.EndTime);
                   newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                   newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+                  newSchedule.RecommendedCard = Card.Id; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
 
                   newSchedule.Persist();
                   server.OnNewSchedule();
@@ -889,6 +892,7 @@ namespace TvPlugin
                                               DateTime.Now, DateTime.Now.AddDays(1));
                   newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                   newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+                  newSchedule.RecommendedCard = Card.Id; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
 
                   newSchedule.Persist();
                   server.OnNewSchedule();
@@ -1139,10 +1143,11 @@ namespace TvPlugin
         return false;
       }
       MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.Name);
-      if (g_Player.Playing)
+      if (g_Player.Playing && !_autoswitchTVon ) //- Changed by joboehl - Enable TV to autoturnon on channel selection. 
       {
         if (g_Player.IsTVRecording) return true;
         if (g_Player.IsVideo) return true;
+        if (g_Player.IsTV) return true;
         if (g_Player.IsDVD) return true;
         if ((g_Player.IsMusic && g_Player.HasVideo)) return true;
       }
@@ -1160,7 +1165,8 @@ namespace TvPlugin
       TvResult succeeded;
       if (TVHome.Card != null)
       {
-        if (g_Player.Playing)
+        //if (g_Player.Playing )
+        if (g_Player.Playing && g_Player.IsTV) //modified by joboehl. Avoids other video being played instead of TV. 
         {
           //if we're already watching this channel, then simply return
           if (TVHome.Card.IsTimeShifting == true && TVHome.Card.IdChannel == channel.IdChannel)
@@ -1190,10 +1196,13 @@ namespace TvPlugin
       //Start timeshifting the new tv channel
       TvServer server = new TvServer();
       VirtualCard card;
+      bool _return = false;
 
       User user = new User();
       succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
-      TVHome.Card = card;
+      if ( !wasPlaying || (succeeded == TvResult.Succeeded )) //added by joboehl - Doesn't destroy card info unless we might not needit to continue playing something
+          TVHome.Card = card; //Moved by joboehl - Only touch the card if it did not work. 
+           
       MediaPortal.GUI.Library.Log.Info("succeeded:{0} ", succeeded);
       if (succeeded == TvResult.Succeeded)
       {
@@ -1249,8 +1258,9 @@ namespace TvPlugin
       }
       else
       {
-        //timeshifting failed...
-        g_Player.Stop();
+        //timeshifting new channel failed. 
+          if (g_Player.Duration == 0 ) //Added by joboehl - Only stops if stream is empty. Otherwise, a message is displaying but everything stays as before.  
+          { g_Player.Stop(); };
       }
 
 
@@ -1466,6 +1476,7 @@ namespace TvPlugin
         timeshiftFileName = TVHome.Card.RTSPUrl;
         MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0}", timeshiftFileName);
         g_Player.Play(timeshiftFileName, mediaType);
+        SeekToEnd(true);
       }
     }
     static void SeekToEnd(bool zapping)
@@ -1499,7 +1510,8 @@ namespace TvPlugin
           System.Threading.Thread.Sleep(100);
           double duration = g_Player.Duration;
           double position = g_Player.CurrentPosition;
-          g_Player.SeekAbsolute(duration);
+          if (duration > 0 || position > 0)
+          g_Player.SeekAbsolute(duration - 10);
         }
       }
     }
