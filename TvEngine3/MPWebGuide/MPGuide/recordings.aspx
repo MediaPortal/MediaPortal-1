@@ -33,7 +33,7 @@
     </asp:UpdateProgress>
     <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="conditional">
       <ContentTemplate>
-        <img style="z-index: -1; width: 100%; position: absolute; height: 100%" height="100%" src="images/bg.jpg" width="100%" />
+        <img style="z-index: -1; width: 100%; position: absolute; height: 200%" height="100%" src="images/bg.jpg" width="100%" />
         <table cellspacing="0" cellpadding="0"  border="0">
           <tbody>
             <tr height="1">
@@ -118,7 +118,7 @@
                       </tr>
                       <tr>
                         <td id="scrollHolder" valign="top">
-                          <div id="scrollContent" style="margin-left: 48px; overflow: auto; height: 100%" onscroll="scrollWindow()">
+                          <div style="margin-left: 48px; overflow: auto; height: 510px;" >
                             <table cellspacing="0" cellpadding="0" width="880" border="0" runat="server" id="tableList">
                               <tbody>
                                 <tr>

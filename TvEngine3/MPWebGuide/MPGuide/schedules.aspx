@@ -11,7 +11,7 @@
 </head>
 <body>
   <form id="form1" runat="server">
-    <img style="z-index: -1; width: 100%; position: absolute; height: 100%" height="100%"
+    <img style="z-index: -1; width: 100%; position: absolute; height: 200%" height="100%"
       src="images/bg.jpg" width="100%" />
     <asp:ScriptManager ID="ScriptManager1" runat="server" />
     <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel1"
@@ -121,7 +121,7 @@
                       </tr>
                       <tr>
                         <td id="scrollHolder" valign="top">
-                          <div id="scrollContent" style="margin-left: 48px; overflow: auto; height: 700px">
+                          <div style="margin-left: 48px; overflow: auto; height: 510px;" >
                             <table cellspacing="0" cellpadding="0" width="880" border="0" runat="server" id="tableList">
                               <tbody>
                                 <tr>
