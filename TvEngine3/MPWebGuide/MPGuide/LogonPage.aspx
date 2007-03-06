@@ -67,7 +67,7 @@
                                                             </label>
                                                         </td>
                                                         <td>
-                                                            <asp:TextBox ID="textBox1" type="password" runat="server" />
+                                                            <asp:TextBox ID="textBox1"  TextMode="Password" runat="server" />
                                                         </td>
                                                         <td>
                                                             <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ControlToValidate="textBox1"
