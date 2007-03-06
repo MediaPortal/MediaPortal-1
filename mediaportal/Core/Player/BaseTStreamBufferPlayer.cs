@@ -1086,7 +1086,6 @@ namespace MediaPortal.Player
       _mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
       fCurrentPos = lStreamPos;
       fCurrentPos /= 10000000d;
-      _currentPos = fCurrentPos;
 
       long lContentStart, lContentEnd;
       double fContentStart, fContentEnd;
@@ -1095,9 +1094,13 @@ namespace MediaPortal.Player
       fContentEnd = lContentEnd;
       fContentStart /= 10000000d;
       fContentEnd /= 10000000d;
-     // Log.Info("{0} {1} {2}  ({3})", fCurrentPos, fContentStart, fContentEnd, _currentPos);
+      //Log.Info("{0} {1} {2}  ({3})", fCurrentPos, fContentStart, fContentEnd, _currentPos);
+
       fContentEnd -= fContentStart;
+      fCurrentPos -= fContentStart;
       _duration = fContentEnd;
+      _currentPos = fCurrentPos;
+
     }
     void UpdateDuration()
     {
