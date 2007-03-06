@@ -89,5 +89,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int SetMode(TimeShiftingMode mode);
+    [PreserveSig]
+    int SetPmtPid(short pmtPid);
   }
 }

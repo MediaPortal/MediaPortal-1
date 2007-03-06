@@ -1208,7 +1208,6 @@ namespace TvLibrary.Implementations.DVB
       }
       if (programStream == false || _recordTransportStream)
       {
-        recorder.AddStream((short)0x11, false, false);//sdt
         ATSCChannel atscChannel = dvbChannel as ATSCChannel;
         if (atscChannel != null)
         {
@@ -1217,7 +1216,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (dvbChannel.PmtPid > 0)
         {
-          recorder.AddStream((short)dvbChannel.PmtPid, false, false);
+          recorder.SetPmtPid((short)dvbChannel.PmtPid);
         }
         recorder.SetMode(TimeShiftingMode.TransportStream);
         Log.Log.WriteFile("subch:{0} record transport stream mode", _subChannelId);
