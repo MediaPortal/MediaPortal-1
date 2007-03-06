@@ -68,6 +68,7 @@ namespace MediaPortal.Utils.Web
       _getQuery = request._getQuery;
       _postQuery = request._postQuery;
       _externalBrowser = request._externalBrowser;
+      _encoding = request._encoding;
     }
 
     public HTTPRequest(Uri request)
