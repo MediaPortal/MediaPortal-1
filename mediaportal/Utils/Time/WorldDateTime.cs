@@ -308,15 +308,29 @@ namespace MediaPortal.Utils.Time
       return lDatetime;
     }
 
+    public long DaysSince(DateTime value)
+    {
+      TimeSpan ts = this.DateTime.Subtract(value);
+
+      return (long) ts.TotalDays;
+    }
+
+    public long SecondsSince(DateTime value)
+    {
+      TimeSpan ts = this.DateTime.Subtract(value);
+
+      return (long) ts.TotalSeconds;
+    }
+
     public long ToEpochTime()
     {
       DateTime dt = this.DateTime;
       DateTime dtEpochStartTime = Convert.ToDateTime("1/1/1970 8:00:00 AM");
       TimeSpan ts = dt.Subtract(dtEpochStartTime);
 
-      long epochtime = ((((((ts.Days * 24) + ts.Hours) * 60) + ts.Minutes) * 60) + ts.Seconds);
+      //long epochtime = ((((((ts.Days * 24) + ts.Hours) * 60) + ts.Minutes) * 60) + ts.Seconds);
 
-      return epochtime;
+      return (long) ts.TotalSeconds;
     }
 
     public long ToEpochDate()
