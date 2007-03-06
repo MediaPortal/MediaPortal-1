@@ -46,13 +46,12 @@ namespace DShowNET.Helper
         TechnoTrend _technoTrend;
         public VideoCaptureProperties(IBaseFilter tunerfilter)
         {
-          if (tunerfilter != null)
-          {
+          
             _twinhan = new Twinhan(tunerfilter);
             _hauppauge = new Hauppauge(tunerfilter);
             _digitalEverywhere = new DigitalEverywhere(tunerfilter);
             _technoTrend = new TechnoTrend(tunerfilter);
-          }
+        
          }
 
         #region Hauppauge Properties

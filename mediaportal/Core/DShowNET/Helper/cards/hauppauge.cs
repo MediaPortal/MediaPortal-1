@@ -64,6 +64,9 @@ namespace DShowNET
 		{
       try
       {
+        if (filter == null)
+          return;
+
         hr = new HResult(Init(filter));
         Log.Info("Hauppauge Quality Control Initializing " + hr.ToDXString());
       }
