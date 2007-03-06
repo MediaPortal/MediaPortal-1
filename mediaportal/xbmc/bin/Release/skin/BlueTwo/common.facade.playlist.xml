@@ -50,8 +50,6 @@
           <id>53</id>
           <onleft>2</onleft>
           <onright>53</onright>
-          <onup>2</onup>
-          <ondown>2</ondown>
           <textcolor>FFFFFFFF</textcolor>
         </control>
       </control>

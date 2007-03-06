@@ -64,7 +64,7 @@
         <label>Music Menu</label>
         <hyperlink>8888</hyperlink>
         <onleft>120</onleft>
-        <onright>9</onright>
+        <onright>50</onright>
         <onup>12</onup>
         <ondown>9</ondown>
       </control>
