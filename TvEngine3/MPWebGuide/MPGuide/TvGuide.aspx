@@ -104,7 +104,7 @@
               </td>
             </tr>
           </table>
-          <div id="divGuide" style="position: absolute; top: 50px; left: 50px; height: 800px;
+          <div id="divGuide" style="position: absolute; top: 50px; left: 50px; height: 590px;
             width: 1024px; overflow: auto" runat="server" />
       </ContentTemplate>
     </asp:UpdatePanel>
