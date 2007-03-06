@@ -58,7 +58,10 @@ public partial class schedules : System.Web.UI.Page
           AddRow(series[i], p, i == series.Count - 1);
         }
       }
-
+    }
+    if (series.Count == 0)
+    {
+      AddRow(schedule, null, true);
     }
   }
 
@@ -98,7 +101,7 @@ public partial class schedules : System.Web.UI.Page
     tableList.Rows.Add(row);
   }
 
-  void AddRow(Schedule rec,Program prog, bool last )
+  void AddRow(Schedule rec, Program prog, bool last)
   {
     HtmlTableRow rowBase = new HtmlTableRow();
     HtmlTableCell cellBase = new HtmlTableCell();
@@ -146,7 +149,10 @@ public partial class schedules : System.Web.UI.Page
 
 
 
-    td1.InnerHtml = string.Format("<a class=\"recording_list_text\" href=\"javascript:loadInfo('recorded','1397')\">\"{0} - \"{1}</a>&nbsp;", rec.ProgramName, prog.Description);
+    if (prog == null)
+      td1.InnerHtml = string.Format("<a class=\"recording_list_text\" href=\"javascript:loadInfo('recorded','1397')\">Nothing to record</a>&nbsp;");
+    else
+      td1.InnerHtml = string.Format("<a class=\"recording_list_text\" href=\"javascript:loadInfo('recorded','1397')\">\"{0} - \"{1}</a>&nbsp;", rec.ProgramName, prog.Description);
 
 
     td2.Style.Add("width", "40px");
