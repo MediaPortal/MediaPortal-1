@@ -59,6 +59,15 @@ namespace TvEngine.PowerScheduler
   {
     #region Variables
     /// <summary>
+    /// PowerScheduler single instance
+    /// </summary>
+    static PowerScheduler _powerScheduler;
+    /// <summary>
+    /// mutex lock object to ensure only one instance of the PowerScheduler object
+    /// is created.
+    /// </summary>
+    static readonly object _mutex = new object();
+    /// <summary>
     /// Reference to tvservice's TVController
     /// </summary>
     IController _controller;
@@ -133,7 +142,7 @@ namespace TvEngine.PowerScheduler
     /// <summary>
     /// Creates a new PowerScheduler plugin and performs the one-time initialization
     /// </summary>
-    public PowerScheduler()
+    PowerScheduler()
     {
       _standbyHandlers = new List<IStandbyHandler>();
       _wakeupHandlers = new List<IWakeupHandler>();
@@ -616,6 +625,26 @@ namespace TvEngine.PowerScheduler
       }
     }
 
+    #endregion
+
+    #region Public properties
+    public static PowerScheduler Instance
+    {
+      get
+      {
+        if (_powerScheduler == null)
+        {
+          lock (_mutex)
+          {
+            if (_powerScheduler == null)
+            {
+              _powerScheduler = new PowerScheduler();
+            }
+          }
+        }
+        return _powerScheduler;
+      }
+    }
     #endregion
   }
 }

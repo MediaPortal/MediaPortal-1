@@ -35,10 +35,6 @@ namespace TvEngine.PowerScheduler
   {
     #region Variables
     /// <summary>
-    /// PowerScheduler plugin instance
-    /// </summary>
-    PowerScheduler _powerScheduler;
-    /// <summary>
     /// Reference to the tvservice's TVcontroller
     /// </summary>
     IController _controller;
@@ -50,7 +46,6 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     public PowerSchedulerPlugin()
     {
-      _powerScheduler = new PowerScheduler();
     }
     #endregion
 
@@ -62,7 +57,7 @@ namespace TvEngine.PowerScheduler
     public void Start(IController controller)
     {
       _controller = controller;
-      _powerScheduler.Start(controller);
+      PowerScheduler.Instance.Start(controller);
     }
 
     /// <summary>
@@ -70,7 +65,7 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     public void Stop()
     {
-      _powerScheduler.Stop();
+      PowerScheduler.Instance.Stop();
     }
     /// <summary>
     /// Author of this plugin
