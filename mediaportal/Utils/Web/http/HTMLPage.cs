@@ -35,8 +35,12 @@ using MediaPortal.Services;
 
 namespace MediaPortal.Utils.Web
 {
+  /// <summary>
+  /// Gets HTML web Page.
+  /// </summary>
   public class HTMLPage
   {
+    #region Variables
     string _strPageHead = string.Empty;
     string _strPageSource = string.Empty;
     string _defaultEncode = "iso-8859-1";
@@ -44,40 +48,76 @@ namespace MediaPortal.Utils.Web
     string _encoding = string.Empty;
     string _error;
     IHtmlCache _cache;
+    SHDocVw.InternetExplorer _IE;
+    #endregion
 
+    #region Constructors/Destructors
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HTMLPage"/> class.
+    /// </summary>
     public HTMLPage()
     {
       _cache = GlobalServiceProvider.Get<IHtmlCache>();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HTMLPage"/> class.
+    /// </summary>
+    /// <param name="page">The page request.</param>
     public HTMLPage(HTTPRequest page)
     {
       _encoding = page.Encoding;
       LoadPage(page);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HTMLPage"/> class.
+    /// </summary>
+    /// <param name="page">The page request.</param>
+    /// <param name="encoding">The encoding.</param>
     public HTMLPage(HTTPRequest page, string encoding)
     {
       _encoding = encoding;
       LoadPage(page);
     }
+    #endregion
 
+    #region Properties
+    /// <summary>
+    /// Gets or sets the encoding.
+    /// </summary>
+    /// <value>The encoding.</value>
     public string Encoding
     {
       get { return _encoding; }
       set { _encoding = value; }
     }
 
+    /// <summary>
+    /// Gets the page encoding message.
+    /// </summary>
+    /// <value>The page encoding message.</value>
     public string PageEncodingMessage
     {
       get { return _pageEncodingMessage; }
     }
 
+    /// <summary>
+    /// Gets the error.
+    /// </summary>
+    /// <value>The error.</value>
     public string Error
     {
       get { return _error; }
     }
+    #endregion
 
+    #region Public Methods
+    /// <summary>
+    /// Loads the page.
+    /// </summary>
+    /// <param name="page">The page request.</param>
+    /// <returns>true if sucessful</returns>
     public bool LoadPage(HTTPRequest page)
     {
       if (_cache != null && _cache.Initialised)
@@ -110,56 +150,47 @@ namespace MediaPortal.Utils.Web
       return false;
     }
 
+    /// <summary>
+    /// Gets the page.
+    /// </summary>
+    /// <returns>page HTML source</returns>
     public string GetPage()
     {
       return _strPageSource;
     }
+    #endregion
 
-    //public string GetBody()
-    //{
-    //  //return _strPageSource.Substring(_startIndex, _endIndex - _startIndex);
-    //  //try
-    //  //{
-    //  //    XmlDocument xmlDoc = new XmlDocument();
-    //  //    xmlDoc.LoadXml(_strPageSource);
-    //  //    XmlNode bodyNode = xmlDoc.DocumentElement.SelectSingleNode("//body");
-    //  //    return bodyNode.InnerText;
-    //  //}
-    //  //catch (System.Xml.XmlException ex)
-    //  //{
-    //  //    _Error = "XML Error finding Body"; 
-    //  //}
-    //  int startIndex = _strPageSource.ToLower().IndexOf("<body", 0);
-    //  if (startIndex == -1)
-    //  {
-    //    // report Error
-    //    _error = "No body start found";
-    //    return null;
-    //  }
-
-    //  int endIndex = _strPageSource.ToLower().IndexOf("</body", startIndex);
-
-    //  if (endIndex == -1)
-    //  {
-    //    //report Error
-    //    _error = "No body end found";
-    //    endIndex = _strPageSource.Length;
-    //  }
-
-    //  return _strPageSource.Substring(startIndex, endIndex - startIndex);
-
-    //}
-
+    #region Private Methods
+    /// <summary>
+    /// Gets the page using external com browser IE.
+    /// </summary>
+    /// <param name="page">The page request.</param>
+    /// <returns>true if successful</returns>
     private bool GetExternal(HTTPRequest page)
     {
       // Use External Browser (IE) to get HTML page
       // IE downloads all linked graphics ads, etc
       // IE will run Javascript source if required to renderthe page
-      SHDocVw.InternetExplorer IE = new SHDocVw.InternetExplorer();
-      IWebBrowser2 webBrowser = (IWebBrowser2)IE;
+      if (_IE == null)
+        _IE = new SHDocVw.InternetExplorer();
+
+      IWebBrowser2 webBrowser = (IWebBrowser2)_IE;
 
       object empty = System.Reflection.Missing.Value;
-      webBrowser.Navigate(page.Url, ref empty, ref empty, ref empty, ref empty);
+
+      // check if request is POST or GET
+      if (page.PostQuery != null)
+      {
+        System.Text.ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
+        object postData = (object)encoding.GetBytes(page.PostQuery);
+        object header = (object)"Content-Type: application/x-www-form-urlencoded\n\r";
+        webBrowser.Navigate(page.Url, ref empty, ref empty, ref postData, ref header);
+      }
+      else
+      {
+        webBrowser.Navigate(page.Url, ref empty, ref empty, ref empty, ref empty);
+      }
+
       while (webBrowser.Busy == true) System.Threading.Thread.Sleep(500);
       HTMLDocumentClass doc = (HTMLDocumentClass)webBrowser.Document;
 
@@ -168,6 +199,11 @@ namespace MediaPortal.Utils.Web
       return true;
     }
 
+    /// <summary>
+    /// Gets the page using internal .NET
+    /// </summary>
+    /// <param name="page">The page request.</param>
+    /// <returns>true if sucessful</returns>
     private bool GetInternal(HTTPRequest page)
     {
       // Use internal code to get HTML page
@@ -230,5 +266,6 @@ namespace MediaPortal.Utils.Web
       _error = Page.GetError();
       return false;
     }
+    #endregion
   }
 }
