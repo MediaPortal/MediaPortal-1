@@ -241,7 +241,12 @@ namespace TvEngine.PowerScheduler
     {
       if (_remotingStarted)
         return;
-      ChannelServices.RegisterChannel(new HttpChannel(31457), false);
+      try
+      {
+        ChannelServices.RegisterChannel(new HttpChannel(31457), false);
+      }
+      catch (RemotingException) { }
+      catch (System.Net.Sockets.SocketException) { }
       // RemotingConfiguration.RegisterWellKnownServiceType(typeof(PowerScheduler), "PowerControl", WellKnownObjectMode.Singleton);
       ObjRef objref = RemotingServices.Marshal(this, "PowerControl", typeof(IPowerController));
       RemotePowerControl.Clear();
