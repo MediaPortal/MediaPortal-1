@@ -44,6 +44,7 @@ DECLARE_INTERFACE_(ITsRecorder, IUnknown)
   STDMETHOD(StopRecord)(THIS_ )PURE;
 	STDMETHOD(GetMode) (THIS_ int *mode) PURE;
 	STDMETHOD(SetMode) (THIS_ int mode) PURE;
+	STDMETHOD(SetPmtPid)(THIS_ int mtPid)PURE;
 };
 
 class CRecorder: public CUnknown, public ITsRecorder, public IFileWriter
@@ -54,6 +55,7 @@ public:
   DECLARE_IUNKNOWN
 	
 	STDMETHODIMP SetPcrPid(int pcrPid);
+	STDMETHODIMP SetPmtPid(int pmtPid);
 	STDMETHODIMP AddStream(int pid,bool isAudio,bool isVideo);
 	STDMETHODIMP RemoveStream(int pid);
 	STDMETHODIMP SetRecordingFileName(char* pszFileName);
@@ -77,4 +79,5 @@ private:
 	typedef vector<int>::iterator itvecPids;
   byte*            m_pWriteBuffer;
   int              m_iWriteBufferPos;
+  int              m_iPmtPid;
 };

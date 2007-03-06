@@ -42,6 +42,7 @@ CRecorder::CRecorder(LPUNKNOWN pUnk, HRESULT *phr)
   m_hFile=INVALID_HANDLE_VALUE;
   m_pWriteBuffer = new byte[RECORD_BUFFER_SIZE];
   m_iWriteBufferPos=0;
+  m_iPmtPid=-1;
 	m_multiPlexer.SetFileWriterCallBack(this);
   
 }
@@ -60,8 +61,8 @@ void CRecorder::OnTsPacket(byte* tsPacket)
 	if (m_bRecording)
 	{
 	  m_tsHeader.Decode(tsPacket);
-    if (m_tsHeader.SyncByte!=0x47) return;
-	  if (m_tsHeader.TransportError) return;
+    //if (m_tsHeader.SyncByte!=0x47) return;
+	  //if (m_tsHeader.TransportError) return;
 	  CEnterCriticalSection enter(m_section);
     if (m_timeShiftMode==ProgramStream)
     {
@@ -95,6 +96,14 @@ STDMETHODIMP CRecorder::SetPcrPid(int pcrPid)
 	CEnterCriticalSection enter(m_section);
 	LogDebug("Recorder:pcr pid:%x",pcrPid);
 	m_multiPlexer.SetPcrPid(pcrPid);
+	return S_OK;
+}
+
+STDMETHODIMP CRecorder::SetPmtPid(int pmtPid)
+{
+	CEnterCriticalSection enter(m_section);
+	m_iPmtPid=pmtPid;
+	LogDebug("Recorder:pmt pid:%x",m_iPmtPid);
 	return S_OK;
 }
 
@@ -191,6 +200,7 @@ STDMETHODIMP CRecorder::StopRecord()
 		CloseHandle(m_hFile);
 		m_hFile=INVALID_HANDLE_VALUE;
 	}
+  m_iPmtPid=-1;
 	return S_OK;
 }
 
@@ -224,18 +234,13 @@ void CRecorder::Write(byte* buffer, int len)
 void CRecorder::WriteTs(byte* tsPacket)
 {
 	if (!m_bRecording) return;
-  if (m_tsHeader.Pid==0)
+  if (m_tsHeader.Pid==0 ||m_tsHeader.Pid==0x11 || m_tsHeader.Pid==m_multiPlexer.GetPcrPid() || m_tsHeader.Pid==m_iPmtPid)
   {
-    //PAT
+    //PAT/PCR/PMT/SDT
     Write(tsPacket,188);
     return;
   }
-  if (m_tsHeader.Pid==m_multiPlexer.GetPcrPid())
-  {
-    //PCR
-    Write(tsPacket,188);
-      return;
-  }
+
   itvecPids it = m_vecPids.begin();
   while (it!=m_vecPids.end())
   {
