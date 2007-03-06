@@ -75,6 +75,7 @@ namespace MediaPortal.Plugins.Process
     List<IWakeupHandler> _wakeupHandlers;
     private bool _systemIdle = false;
     private bool _standbyAllowed = true;
+    private Action _lastAction;
     #endregion
 
     #region Constructor
@@ -214,6 +215,7 @@ namespace MediaPortal.Plugins.Process
     private void OnAction(Action action)
     {
       _lastBusyTime = DateTime.Now;
+      _lastAction = action;
     }
 
     /// <summary>
@@ -346,6 +348,10 @@ namespace MediaPortal.Plugins.Process
             LogDebug(
               String.Format("IdleTimeout not yet expired: timeout:{0}, last activity: {1}", _idleTimeout, _lastBusyTime),
               true);
+            if (_lastAction != null)
+              LogDebug(
+                String.Format("Last action: ID:{0} {1}", _lastAction.wID, _lastAction.ToString()),
+                true);
           }
         }
       }

@@ -123,6 +123,10 @@ namespace TvEngine.PowerScheduler
     /// Time in seconds to wakeup the system before the eariest wakeup time is due
     /// </summary>
     int _preWakeupTime = 60;
+    /// <summary>
+    /// Indicator if remoting has been setup
+    /// </summary>
+    bool _remotingStarted = false;
     #endregion
 
     #region Constructor
@@ -187,12 +191,8 @@ namespace TvEngine.PowerScheduler
       _timer.Elapsed += new System.Timers.ElapsedEventHandler(OnTimerElapsed);
       _timer.Enabled = true;
 
-      // Configure remoting for power control
-      ChannelServices.RegisterChannel(new HttpChannel(31457), false);
-      // RemotingConfiguration.RegisterWellKnownServiceType(typeof(PowerScheduler), "PowerControl", WellKnownObjectMode.Singleton);
-      ObjRef objref = RemotingServices.Marshal(this, "PowerControl", typeof(IPowerController));
-      RemotePowerControl.Clear();
-      Log.Debug("PowerScheduler: Registered PowerScheduler as \"PowerControl\" remoting service");
+      // Configure remoting if not already done
+      StartRemoting();
 
       Log.Info("Powerscheduler: started");
     }
@@ -202,8 +202,8 @@ namespace TvEngine.PowerScheduler
     public void Stop()
     {
       // Unconfigure remoting for power control
-      RemotingServices.Disconnect(this);
-      Log.Debug("PowerScheduler: Removed PowerScheduler from remoting service");
+      // RemotingServices.Disconnect(this);
+      // Log.Debug("PowerScheduler: Removed PowerScheduler from remoting service");
 
       // stop the global timer responsible for standby checking and refreshing settings
       _timer.Enabled = false;
@@ -233,6 +233,20 @@ namespace TvEngine.PowerScheduler
 
       Log.Info("Powerscheduler: stopped");
 
+    }
+    /// <summary>
+    /// Configure remoting for power control from MP
+    /// </summary>
+    private void StartRemoting()
+    {
+      if (_remotingStarted)
+        return;
+      ChannelServices.RegisterChannel(new HttpChannel(31457), false);
+      // RemotingConfiguration.RegisterWellKnownServiceType(typeof(PowerScheduler), "PowerControl", WellKnownObjectMode.Singleton);
+      ObjRef objref = RemotingServices.Marshal(this, "PowerControl", typeof(IPowerController));
+      RemotePowerControl.Clear();
+      Log.Debug("PowerScheduler: Registered PowerScheduler as \"PowerControl\" remoting service");
+      _remotingStarted = true;
     }
     #endregion
 
