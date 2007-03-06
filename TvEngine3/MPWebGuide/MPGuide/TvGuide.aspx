@@ -40,7 +40,8 @@
                   <tbody>
                     <tr>
                       <td align="middle" width="85" rowspan="2">
-                        <img hspace="15" src="images/mplogo_new.png" border="0"></td>
+                      <a href="Default.aspx">
+                        <img hspace="15" src="images/mplogo_new.png" border="0"></a></td>
                       <td valign="bottom" align="middle" width="15">
                       </td>
                       <td valign="bottom" align="middle" width="130">
