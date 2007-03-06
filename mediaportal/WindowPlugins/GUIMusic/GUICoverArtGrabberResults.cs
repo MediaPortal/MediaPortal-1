@@ -130,7 +130,7 @@ namespace MediaPortal.GUI.Music
 
     private string _ThumbPath = string.Empty;
     private Texture coverArtTexture = null;
-    private bool m_bOverlay = false;
+    private bool _prevOverlay = false;
 
     private string _Artist = string.Empty;
     private string _Album = string.Empty;
@@ -199,6 +199,7 @@ namespace MediaPortal.GUI.Music
       base.OnAction(action);
     }
 
+
     #region Base Dialog Members
     void Close()
     {
@@ -258,14 +259,11 @@ namespace MediaPortal.GUI.Music
         coverArtTexture.Dispose();
         coverArtTexture = null;
       }
-
-      GUIGraphicsContext.Overlay = m_bOverlay;
     }
 
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-      m_bOverlay = GUIGraphicsContext.Overlay;
       coverArtTexture = null;
       Reset();
 
@@ -336,8 +334,13 @@ namespace MediaPortal.GUI.Music
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
+          _prevOverlay = GUIGraphicsContext.Overlay;
           base.OnMessage(message);
           GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(4515));
+          return true;
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
+          base.OnMessage(message);
+          GUIGraphicsContext.Overlay = _prevOverlay;
           return true;
 
         default:

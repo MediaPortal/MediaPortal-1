@@ -81,7 +81,7 @@ namespace MediaPortal.GUI.Music
     MusicTag m_tag = null;
     int coverArtTextureWidth = 0;
     int coverArtTextureHeight = 0;
-    bool m_bOverlay = false;
+    bool _prevOverlay = false;
 
     public GUIMusicInfo()
     {
@@ -104,6 +104,23 @@ namespace MediaPortal.GUI.Music
       }
       base.OnAction(action);
     }
+
+    public override bool OnMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
+          _prevOverlay = GUIGraphicsContext.Overlay;
+          base.OnMessage(message);
+          return true;
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
+          base.OnMessage(message);
+          GUIGraphicsContext.Overlay = _prevOverlay;
+          return true;
+      }
+      return base.OnMessage(message);
+    }
+
     #region Base Dialog Members
     public void RenderDlg(float timePassed)
     {
@@ -164,13 +181,11 @@ namespace MediaPortal.GUI.Music
         coverArtTexture.Dispose();
         coverArtTexture = null;
       }
-      GUIGraphicsContext.Overlay = m_bOverlay;
       base.OnPageDestroy(newWindowId);
     }
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-      m_bOverlay = GUIGraphicsContext.Overlay;
       coverArtTexture = null;
       showReview = true;
       Refresh();

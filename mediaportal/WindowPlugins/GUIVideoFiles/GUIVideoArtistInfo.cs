@@ -68,7 +68,7 @@ namespace MediaPortal.GUI.Video
     ViewMode viewmode = ViewMode.Biography;
 
     IMDBActor currentActor = null;
-    bool m_bPrevOverlay = false;
+    bool _prevOverlay = false;
     string imdbCoverArtUrl = String.Empty;
 
     public GUIVideoArtistInfo()
@@ -92,6 +92,22 @@ namespace MediaPortal.GUI.Video
         return;
       }
       base.OnAction(action);
+    }
+
+    public override bool OnMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
+          _prevOverlay = GUIGraphicsContext.Overlay;
+          base.OnMessage(message);
+          return true;
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
+          base.OnMessage(message);
+          GUIGraphicsContext.Overlay = _prevOverlay;
+          return true;
+      }
+      return base.OnMessage(message);
     }
 
     #region Base Dialog Members 
@@ -157,7 +173,6 @@ namespace MediaPortal.GUI.Video
 
       base.OnPageDestroy(newWindowId);
       currentActor = null;
-      GUIGraphicsContext.Overlay = m_bPrevOverlay;
     }
 
 
@@ -176,21 +191,7 @@ namespace MediaPortal.GUI.Video
         Update();
       }
     }
-
-    public override bool OnMessage(GUIMessage message)
-    {
-      switch (message.Message)
-      {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-          {
-            m_bPrevOverlay = GUIGraphicsContext.Overlay;
-            base.OnMessage(message);
-            return true;
-          }
-      }
-      return base.OnMessage(message);
-    }
-
+    
     public IMDBActor Actor
     {
       get { return currentActor; }

@@ -198,11 +198,25 @@ namespace WindowPlugins.GUIPrograms
       return Load(GUIGraphicsContext.Skin + @"\DialogFileInfo.xml");
     }
 
+    public override bool OnMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
+          isOverlay = GUIGraphicsContext.Overlay;
+          base.OnMessage(message);
+          return true;
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
+          base.OnMessage(message);
+          GUIGraphicsContext.Overlay = isOverlay;
+          return true;
+      }
+      return base.OnMessage(message);
+    }
 
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-      isOverlay = GUIGraphicsContext.Overlay;
       curTexture = null;
 
       if (curApp != null)
@@ -229,7 +243,6 @@ namespace WindowPlugins.GUIPrograms
         curTexture.Dispose();
         curTexture = null;
       }
-      GUIGraphicsContext.Overlay = isOverlay;
       base.OnPageDestroy(newWindowId);
     }
 
