@@ -103,9 +103,6 @@ public partial class TvGuide : System.Web.UI.Page
       if (group2.GroupName == group.GroupName) selected = DropDownListGroup.Items.Count - 1;
     }
     DropDownListGroup.SelectedIndex = selected;
-  }
-  void UpdateGuide(List<Channel> tvChannels)
-  {
 
     DateTime now;
     if (Session["currentTime"] == null)
@@ -140,6 +137,27 @@ public partial class TvGuide : System.Web.UI.Page
       if (dt.Date == now.Date) dropDownDate.SelectedIndex = dropDownDate.Items.Count - 1;
       dateNow = dateNow.AddDays(1);
     }
+  }
+  void UpdateGuide(List<Channel> tvChannels)
+  {
+
+    DateTime now;
+    if (Session["currentTime"] == null)
+    {
+      now = DateTime.Now;
+      Session["currentTime"] = now;
+    }
+    now = (DateTime)Session["currentTime"];
+
+    int min = now.Minute;
+    if (min < 30) min = 0;
+    else min = 30;
+    now = now.AddMinutes(-now.Minute + min);
+    now = now.AddSeconds(-now.Second);
+    now = now.AddMilliseconds(-now.Millisecond);
+
+
+
     spanClock.InnerText = DateTime.Now.ToShortTimeString();
     TvBusinessLayer layer = new TvBusinessLayer();
 
@@ -348,6 +366,9 @@ public partial class TvGuide : System.Web.UI.Page
   protected void dropDownTime_SelectedIndexChanged(object sender, EventArgs e)
   {
     DateTime now = (DateTime)Session["currentTime"];
+    DateTime dateNow = DateTime.Now;
+    dateNow = dateNow.AddDays(dropDownDate.SelectedIndex);
+    now = new DateTime(dateNow.Year, dateNow.Month, dateNow.Day, now.Hour, now.Minute, 0);
     now = now.AddHours(-now.Hour);
     now = now.AddMinutes(-now.Minute);
     now = now.AddMinutes(dropDownTime.SelectedIndex * 30);
@@ -361,6 +382,9 @@ public partial class TvGuide : System.Web.UI.Page
     DateTime dateNow = DateTime.Now;
     dateNow = dateNow.AddDays(dropDownDate.SelectedIndex);
     now = new DateTime(dateNow.Year, dateNow.Month, dateNow.Day, now.Hour, now.Minute, 0);
+    now = now.AddHours(-now.Hour);
+    now = now.AddMinutes(-now.Minute);
+    now = now.AddMinutes(dropDownTime.SelectedIndex * 30);
     Session["currentTime"] = now;
     UpdateGuide();
 
