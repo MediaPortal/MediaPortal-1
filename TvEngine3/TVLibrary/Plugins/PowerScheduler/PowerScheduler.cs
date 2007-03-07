@@ -607,7 +607,7 @@ namespace TvEngine.PowerScheduler
       get
       {
         DateTime nextWakeupTime = DateTime.MaxValue;
-        DateTime earliestWakeupTime = DateTime.Now.AddMinutes(_idleTimeout);
+        DateTime earliestWakeupTime = _lastIdleTime.AddMinutes(_idleTimeout);
         Log.Debug("PowerScheduler: earliest wakeup time: {0}", earliestWakeupTime);
         foreach (IWakeupHandler handler in _wakeupHandlers)
         {
