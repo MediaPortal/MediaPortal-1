@@ -3471,6 +3471,22 @@
         <value>Chansons</value>
     </string>
     <string>
+        <id>1053</id>
+        <value>Appel inconnu</value>
+    </string>
+    <string>
+        <id>1054</id>
+        <value>(enregistre)</value>
+    </string>
+    <string>
+        <id>1055</id>
+        <value>(timeshifting)</value>
+    </string>
+    <string>
+        <id>1056</id>
+        <value>(indisponible)</value>
+    </string>            
+    <string>
         <id>1100</id>
         <value>Importer le CD</value>
     </string>
@@ -3494,6 +3510,19 @@
         <id>1105</id>
         <value>Importation des chansons</value>
     </string>
+    <!-- TV Conflict Dialog -->
+    <string>
+        <id>1110</id>
+        <value>Garder ancien rec.</value>
+    </string>
+    <string>
+        <id>1111</id>
+        <value>Utiliser nouveau</value>
+    </string>  
+    <string>
+        <id>1112</id>
+        <value>Laisser conflit</value>
+    </string>  
     <string>
         <id>1190</id>
         <value>Zoom 14:9</value>
@@ -4438,6 +4467,14 @@
     <string>
         <id>2608</id>
         <value>Portuguais</value>
+    </string>
+	<string>
+        <id>2609</id>
+        <value>Danois</value>
+    </string>
+	    <string>
+        <id>2610</id>
+        <value>Polonais</value>
     </string>
     <!-- End of Wikipedia Strings -->
     <string>
@@ -6331,6 +6368,10 @@
         <value>Last.fm radio</value>
     </string>
     <string>
+        <id>108888</id>
+        <value>Menu Musique</value>
+    </string>    
+    <string>
         <id>200000</id>
         <value>Sélectionnez le logiciel de récupération des programmes TV. Note : Si votre pays n'est</value>
     </string>
@@ -6482,6 +6523,14 @@
         <id>200038</id>
         <value>Sur un PC de bureau partagé avec d'autres applications</value>
     </string>
+    <string>
+	<id>200039</id>
+	<value>Ajoute étape</value>
+    </string>
+    <string>
+	<id>200040</id>
+	<value>Enlève étape</value>
+    </string>    
 </strings>	  	 
 
  	  	 
