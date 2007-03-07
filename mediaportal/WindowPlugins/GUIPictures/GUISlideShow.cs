@@ -669,9 +669,10 @@ namespace MediaPortal.GUI.Pictures
 
         case Action.ActionType.ACTION_ZOOM_OUT:
           _userZoomLevel -= 0.25f;
-          if (_userZoomLevel <= 1)
+          if (_userZoomLevel < 1.0f) // use < instead of <= to make it possible to reach 100% before "fit to screen" 
           {
             _userZoomLevel = 1.0f;
+            _isPictureZoomed = false; // make that it is possible to switch to the next or prev. image again
             if (LoadCurrentSlide() == null)
               Log.Debug("GUISlideShow: current slide unknown for zooming out");
             break;
@@ -681,7 +682,7 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case Action.ActionType.ACTION_ZOOM_IN:
-          _userZoomLevel += 0.25f;
+          if (_isPictureZoomed) _userZoomLevel += 0.25f; // the if _isPictureZoomed condition is used to make it possible to reach 100% (not directly 125%). 
           if (_userZoomLevel > 20.0f) _userZoomLevel = 20.0f;
           ZoomBackGround(_defaultZoomFactor * _userZoomLevel);
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
@@ -693,52 +694,55 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case Action.ActionType.ACTION_ZOOM_LEVEL_NORMAL:
+          //Fit current image to screen
+          _userZoomLevel = 1.0f;
+          _isPictureZoomed = false;
+          if (LoadCurrentSlide() == null)
+            Log.Debug("GUISlideShow: current slide unknown for zooming out");
+          _slideTime = (int)(DateTime.Now.Ticks / 10000);
+          break;
+        case Action.ActionType.ACTION_ZOOM_LEVEL_1:
           _userZoomLevel = 1.0f;
           ZoomBackGround(_defaultZoomFactor * _userZoomLevel);
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
           break;
-        case Action.ActionType.ACTION_ZOOM_LEVEL_1:
+        case Action.ActionType.ACTION_ZOOM_LEVEL_2:
           _userZoomLevel = 2.0f;
           ZoomBackGround(_defaultZoomFactor * _userZoomLevel);
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
           break;
-        case Action.ActionType.ACTION_ZOOM_LEVEL_2:
+        case Action.ActionType.ACTION_ZOOM_LEVEL_3:
           _userZoomLevel = 3.0f;
           ZoomBackGround(_defaultZoomFactor * _userZoomLevel);
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
           break;
-        case Action.ActionType.ACTION_ZOOM_LEVEL_3:
+        case Action.ActionType.ACTION_ZOOM_LEVEL_4:
           _userZoomLevel = 4.0f;
           ZoomBackGround(_defaultZoomFactor * _userZoomLevel);
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
           break;
-        case Action.ActionType.ACTION_ZOOM_LEVEL_4:
+        case Action.ActionType.ACTION_ZOOM_LEVEL_5:
           _userZoomLevel = 5.0f;
           ZoomBackGround(_defaultZoomFactor * _userZoomLevel);
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
           break;
-        case Action.ActionType.ACTION_ZOOM_LEVEL_5:
+        case Action.ActionType.ACTION_ZOOM_LEVEL_6:
           _userZoomLevel = 6.0f;
           ZoomBackGround(_defaultZoomFactor * _userZoomLevel);
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
           break;
-        case Action.ActionType.ACTION_ZOOM_LEVEL_6:
+        case Action.ActionType.ACTION_ZOOM_LEVEL_7:
           _userZoomLevel = 7.0f;
           ZoomBackGround(_defaultZoomFactor * _userZoomLevel);
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
           break;
-        case Action.ActionType.ACTION_ZOOM_LEVEL_7:
+        case Action.ActionType.ACTION_ZOOM_LEVEL_8:
           _userZoomLevel = 8.0f;
           ZoomBackGround(_defaultZoomFactor * _userZoomLevel);
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
           break;
-        case Action.ActionType.ACTION_ZOOM_LEVEL_8:
-          _userZoomLevel = 9.0f;
-          ZoomBackGround(_defaultZoomFactor * _userZoomLevel);
-          _slideTime = (int)(DateTime.Now.Ticks / 10000);
-          break;
         case Action.ActionType.ACTION_ZOOM_LEVEL_9:
-          _userZoomLevel = 10.0f;
+          _userZoomLevel = 9.0f;
           ZoomBackGround(_defaultZoomFactor * _userZoomLevel);
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
           break;
@@ -2269,7 +2273,10 @@ namespace MediaPortal.GUI.Pictures
       if (fZoom > MAX_ZOOM_FACTOR || fZoom < 0.0f)
         return;
 
-      _isPictureZoomed = (_userZoomLevel != 1.0f);
+      // to make it possibel to reach a 100% zoom level without changing the slideshow code, this condition are used
+      if (_isSlideShow) _isPictureZoomed = _userZoomLevel == 1.0f ? false : true;
+      else _isPictureZoomed = _userZoomLevel == _defaultZoomFactor ? false : true;
+            
       // Load raw picture when zooming
       if (!_backgroundSlide.TrueSizeTexture && _isPictureZoomed)
       {
