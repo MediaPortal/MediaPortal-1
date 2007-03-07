@@ -121,8 +121,10 @@
                           <table width="100%">
                             <tr>
                               <td class="nav_bar_text" align="middle">
+                                <asp:DropDownList ID="DropDownListGroup" runat="server" AutoPostBack="True" OnSelectedIndexChanged="DropDownListGroup_SelectedIndexChanged"  />
                                 <asp:DropDownList ID="dropDownDate" runat="server" AutoPostBack="True" OnSelectedIndexChanged="dropDownDate_SelectedIndexChanged" />
                                 <asp:DropDownList ID="dropDownTime" runat="server" AutoPostBack="True" OnSelectedIndexChanged="dropDownTime_SelectedIndexChanged" />
+                                
                                 <span id="spanClock" runat="server" style="padding-left: 50px; font-weight: bold;
                                   font-size: large; color: white; font-family: Trebuchet MS">9:06</span>
                               </td>

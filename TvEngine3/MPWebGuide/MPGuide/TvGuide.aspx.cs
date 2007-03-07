@@ -29,6 +29,7 @@ public partial class TvGuide : System.Web.UI.Page
     {
       UpdateGuide();
       divInfoBox.Visible = false;
+      FillCombo();
     }
   }
 
@@ -46,6 +47,7 @@ public partial class TvGuide : System.Web.UI.Page
 
   void UpdateGuide()
   {
+
     try
     {
       _schedules = Schedule.ListAll();
@@ -55,24 +57,56 @@ public partial class TvGuide : System.Web.UI.Page
       Response.Redirect("install/default.aspx");
       return;
     }
-    SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
-    sb.AddOrderByField(true, "sortOrder");
-    sb.AddConstraint(Operator.Equals, "istv", 1);
-    SqlStatement stmt = sb.GetStatement(true);
-    IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+    ChannelGroup group;
     List<Channel> tvChannels = new List<Channel>();
-
-    foreach (Channel channel in channels)
+    if (Session["idGroup"] != null)
     {
-      if (channel.IsTv)
+      int id = (int)Session["idGroup"] ;
+      group = ChannelGroup.Retrieve(id);
+    }
+    else
+    {
+      group = (ChannelGroup)ChannelGroup.ListAll()[0];
+      Session["idGroup"] = group.IdGroup;
+    }
+    foreach(GroupMap groupMap in group.ReferringGroupMap())
+    {
+      Channel ch = groupMap.ReferencedChannel();
+      if (ch.IsTv)
       {
-        tvChannels.Add(channel);
+        tvChannels.Add(ch);
       }
     }
+
     UpdateGuide(tvChannels);
+  }
+  
+  void FillCombo()
+  {
+    ChannelGroup group;
+    if (Session["idGroup"] != null)
+    {
+      int id = (int)Session["idGroup"] ;
+      group = ChannelGroup.Retrieve(id);
+    }
+    else
+    {
+      group = (ChannelGroup)ChannelGroup.ListAll()[0];
+      Session["idGroup"] = group.IdGroup;
+    }
+
+    IList groups = ChannelGroup.ListAll();
+    int selected = 0;
+    foreach (ChannelGroup group2 in groups)
+    {
+      DropDownListGroup.Items.Add(group2.GroupName);
+      if (group2.GroupName == group.GroupName) selected = DropDownListGroup.Items.Count - 1;
+    }
+    DropDownListGroup.SelectedIndex = selected;
   }
   void UpdateGuide(List<Channel> tvChannels)
   {
+
     DateTime now;
     if (Session["currentTime"] == null)
     {
@@ -494,5 +528,20 @@ public partial class TvGuide : System.Web.UI.Page
       return;
 
     }
+  }
+  protected void DropDownListGroup_SelectedIndexChanged(object sender, EventArgs e)
+  {
+    IList groups = ChannelGroup.ListAll();
+    foreach (ChannelGroup group in groups)
+    {
+      if (group.GroupName == DropDownListGroup.SelectedItem.ToString())
+      {
+        Session["idGroup"] = group.IdGroup;
+        UpdateGuide();
+        return;
+      }
+    }
+    Session["idGroup"] = ((ChannelGroup)groups[0]).IdGroup;
+    UpdateGuide();
   }
 }
