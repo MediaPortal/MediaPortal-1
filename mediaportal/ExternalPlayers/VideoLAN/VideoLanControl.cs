@@ -34,25 +34,24 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.VideoLanPlugin
 {
-    public sealed partial class VideoLanControl : UserControl
+  public sealed partial class VideoLanControl : UserControl
+  {
+    static readonly VideoLanControl instance = new VideoLanControl();
+
+    public VideoLanControl()
     {
-        static readonly VideoLanControl instance = new VideoLanControl();
-
-        public VideoLanControl()
-        {
-            InitializeComponent();
-        }
-
-        public AxAXVLC.AxVLCPlugin Player
-        {
-            get { return axVLCPlugin1; }
-        }
-
-        public static VideoLanControl Instance
-        {
-            get { return instance; }
-        }
-
-             
+      InitializeComponent();
     }
+
+    public AxAXVLC.AxVLCPlugin Player
+    {
+      get { return axVLCPlugin1; }
+    }
+
+    public static VideoLanControl Instance
+    {
+      get { return instance; }
+    }
+
+  }
 }

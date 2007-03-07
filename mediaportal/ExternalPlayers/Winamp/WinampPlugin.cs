@@ -24,15 +24,18 @@
 #endregion
 
 using System;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Util;
 
 namespace MediaPortal.WinampPlayer
 {
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
+  [PluginIcons("ExternalPlayers.Winamp.WinampLogo.png", "ExternalPlayers.Winamp.WinampLogoDisabled.png")]
   public class WinampPlugin : MediaPortal.Player.IExternalPlayer
   {
     private const string m_author = "int_20h";
@@ -170,6 +173,10 @@ namespace MediaPortal.WinampPlayer
       m_bStoppedManualy = false;
       if (m_winampController != null)
       {
+        // stop other media which might be active until now.
+        if (g_Player.Playing)        
+          g_Player.Stop();
+        
         m_strCurrentFile = strFile;
         m_winampController.ClearPlayList();
         m_winampController.Volume = m_volume;

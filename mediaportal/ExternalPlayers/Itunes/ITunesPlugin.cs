@@ -35,6 +35,7 @@ namespace MediaPortal.ITunesPlayer
   /// <summary>
   /// Summary description for ITunesPlugin.
   /// </summary>
+  [PluginIcons("ExternalPlayers.Itunes.iTunesLogo.png", "ExternalPlayers.Itunes.iTunesLogoDisabled.png")]
   public class ITunesPlugin : IExternalPlayer
   {
     iTunesLib.iTunesAppClass _iTunesApplication = null;
@@ -175,6 +176,10 @@ namespace MediaPortal.ITunesPlayer
           }
           _playList.SongRepeat = ITPlaylistRepeatMode.ITPlaylistRepeatModeOff;
         }
+
+        // stop other media which might be active until now.
+        if (g_Player.Playing)
+          g_Player.Stop();        
 
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
         msg.Label = strFile;

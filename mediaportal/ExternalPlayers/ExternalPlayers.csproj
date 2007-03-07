@@ -243,8 +243,32 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Winamp\ConfigurationForm.resx">
       <DependentUpon>ConfigurationForm.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
+    </EmbeddedResource>    
+  </ItemGroup> 
+    <ItemGroup>
+      <EmbeddedResource Include="Foobar\foobarlogo.png" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="Foobar\foobarlogodisabled.png" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="Winamp\WinampLogo.png" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="Winamp\WinampLogoDisabled.png" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="Itunes\iTunesLogo.png" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="Itunes\iTunesLogoDisabled.png" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="VideoLAN\VideoLANLogo.png" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="VideoLAN\VideoLANLogoDisabled.png" />
+    </ItemGroup>    
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

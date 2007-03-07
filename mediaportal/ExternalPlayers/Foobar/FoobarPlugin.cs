@@ -31,15 +31,18 @@ using System.Web;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Util;
 
 namespace MediaPortal.FoobarPlugin
 {
   /// <summary>
   /// Foobar plugin class
   /// </summary>
+  [PluginIcons("ExternalPlayers.Foobar.foobarlogo.png", "ExternalPlayers.Foobar.foobarlogodisabled.png")]
   public class FoobarPlugin : MediaPortal.Player.IExternalPlayer
   {
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
@@ -446,6 +449,11 @@ namespace MediaPortal.FoobarPlugin
     /// <returns></returns>
     public override bool Play(string strFile)
     {
+      // stop other media which might be active until now.
+      if (g_Player.Playing)      
+        g_Player.Stop();
+      
+
       _isCDA = false;
       if (strFile.IndexOf(".cda") >= 0)
       {
