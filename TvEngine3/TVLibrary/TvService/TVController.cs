@@ -1198,9 +1198,14 @@ namespace TvService
           {
             _streamer.RemoveFile(rec.FileName);
             // if a recording got interrupted there may be files like <recording name>_1.mpg, etc
-            string searchFile = System.IO.Path.GetFileNameWithoutExtension(rec.FileName) + @"*";
-            string[] allRecordingFiles = System.IO.Directory.GetFiles(System.IO.Path.GetDirectoryName(rec.FileName), searchFile);
-            Log.Debug("Controller: found {0} file(s) to delete for recording {1}", Convert.ToString(allRecordingFiles.Length), searchFile);
+            string SearchFile = System.IO.Path.GetFileNameWithoutExtension(rec.FileName) + @"*";
+            // check only the ending for underscores as a user might have a naming pattern including them between e.g. station and program title
+            int UnderScorePosition = SearchFile.Substring(SearchFile.Length - 3).LastIndexOf(@"_");
+            if (UnderScorePosition > 0)
+              // Length - 3 should be enough since there won't be thousands of files with the same name..
+              SearchFile = SearchFile.Substring(0, SearchFile.Length - 3) + @"*";
+            string[] allRecordingFiles = System.IO.Directory.GetFiles(System.IO.Path.GetDirectoryName(rec.FileName), SearchFile);
+            Log.Debug("Controller: found {0} file(s) to delete for recording {1}", Convert.ToString(allRecordingFiles.Length), SearchFile);
             foreach (string recPartPath in allRecordingFiles)
             {
               System.IO.File.Delete(recPartPath);
