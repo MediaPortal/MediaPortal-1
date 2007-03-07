@@ -30,10 +30,21 @@ using System.Text;
 namespace TvEngine.PowerScheduler.Interfaces
 {
   /// <summary>
+  /// EvenHandler delegate for PowerScheduler events
+  /// </summary>
+  /// <param name="args"></param>
+  public delegate void PowerSchedulerEventHandler(PowerSchedulerEventArgs args);
+
+  /// <summary>
   /// Interface to PowerScheduler
   /// </summary>
   public interface IPowerScheduler
   {
+    /// <summary>
+    /// Register to this event to receive status changes from the PowerScheduler
+    /// </summary>
+    event PowerSchedulerEventHandler OnPowerSchedulerEvent;
+
     /// <summary>
     /// Registers an IStandbyHandler implementation
     /// </summary>

@@ -46,6 +46,7 @@
     <Compile Include="Interfaces\IStandbyHandler.cs" />
     <Compile Include="Interfaces\IWakeupHandler.cs" />
     <Compile Include="PowerManager.cs" />
+    <Compile Include="PowerSchedulerEventArgs.cs" />
     <Compile Include="RemotePowerControl.cs" />
     <Compile Include="TimerException.cs" />
     <Compile Include="WaitableTimer.cs" />
