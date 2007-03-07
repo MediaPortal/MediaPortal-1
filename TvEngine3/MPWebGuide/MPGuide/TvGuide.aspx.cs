@@ -28,7 +28,20 @@ public partial class TvGuide : System.Web.UI.Page
     if (!Page.IsPostBack)
     {
       UpdateGuide();
+      divInfoBox.Visible = false;
     }
+  }
+
+  void ShowProgramInfo(int id)
+  {
+    Program prog = Program.Retrieve(id);
+    labelTitle.Text = prog.Title;
+    labelDescription.Text = prog.Description;
+    labelStartEnd.Text = String.Format("{0}-{1}", prog.StartTime.ToString("HH:mm"),prog.EndTime.ToString("HH:mm"));
+    labelChannel.Text = prog.ReferencedChannel().Name;
+    labelGenre.Text = prog.Genre;
+    imgLogo.Src = String.Format("logos/{0}.png", labelChannel.Text);
+    divInfoBox.Visible = true;
   }
 
   void UpdateGuide()
@@ -229,12 +242,12 @@ public partial class TvGuide : System.Web.UI.Page
       if (nr == 0)
       {
         //td2.InnerHtml = String.Format("<A class=guide_title_text>{0}</A>", title);
-        html += String.Format("<A class=guide_title_text>{0}</A>", title); ;
+        html += String.Format("<span class=guide_title_text>{0}</span>", title); ;
       }
       else
       {
         //td2.InnerHtml = String.Format("<nobr>&nbsp;<A class=white style=\"CURSOR: pointer\" href=\"showProgram.aspx?id={1}\">{0}</A></nobr>", title, program.IdProgram);
-        html += String.Format("<A class=white style=\"CURSOR: pointer\" href=\"showProgram.aspx?id={1}\">{0}</A>", title, program.IdProgram); ;
+        html += String.Format("<span class=white style=\"CURSOR: pointer\" onclick=\"onProgramClicked({1})\"\">{0}</span>", title, program.IdProgram); ;
       }
       //subRow.Controls.Add(td1);
       //subRow.Controls.Add(td2);
@@ -330,5 +343,18 @@ public partial class TvGuide : System.Web.UI.Page
       }
     }
     return false;
+  }
+  protected void showProgram_Click(object sender, EventArgs e)
+  {
+
+    if (idProgram.Value.Length > 0)
+    {
+      ShowProgramInfo(Int32.Parse(idProgram.Value));
+    }
+    else
+    {
+      divInfoBox.Visible = false;
+    }
+    UpdateGuide();
   }
 }

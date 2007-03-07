@@ -109,6 +109,8 @@
 .header_button_text_on {
 	FONT-SIZE: 10pt; VERTICAL-ALIGN: middle; WIDTH: 100px; COLOR: #dae2ee; PADDING-TOP: 3px; FONT-FAMILY: 'Trebuchet MS', Verdana, Arial; POSITION: absolute; HEIGHT: 26px; TEXT-ALIGN: center; TEXT-DECORATION: none
 }
+
+
 .small_button_td {
 	background-image: url(/MPWebGuide/images/small-button-off.gif); VERTICAL-ALIGN: middle; CURSOR: pointer
 }
