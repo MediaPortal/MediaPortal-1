@@ -344,7 +344,7 @@ namespace MediaPortal.Freedb
       System.Uri url = new System.Uri(m_serverURL + "?cmd=" + command +  m_idStr);
       
       WebRequest req = WebRequest.Create(url);
-      StreamReader urlRdr = new StreamReader(new StreamReader(req.GetResponse().GetResponseStream()).BaseStream, Encoding.UTF7);
+      StreamReader urlRdr = new StreamReader(new StreamReader(req.GetResponse().GetResponseStream()).BaseStream, Encoding.GetEncoding(0));
 
       return urlRdr;
     }
