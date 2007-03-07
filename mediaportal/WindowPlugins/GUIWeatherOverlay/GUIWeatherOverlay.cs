@@ -171,7 +171,6 @@ namespace MediaPortal.GUI.WeatherOverlay
         _xmlFilePresent = Load(GUIGraphicsContext.Skin + @"\weatherOverlay.xml");
         GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.WeatherOverlay);
       }
-      GetID = (int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY;
       StartWeatherThread();
       return _xmlFilePresent;
     }
