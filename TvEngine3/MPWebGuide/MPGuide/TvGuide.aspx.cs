@@ -14,13 +14,13 @@ using TvLibrary.Interfaces;
 using TvLibrary.Channels;
 using Gentle.Common;
 using Gentle.Framework;
-
+using TvControl;
 public partial class TvGuide : System.Web.UI.Page
 {
   const int PIX_PER_MINUTE = 5;
   const int OFFSET_Y = 60;
   const int OFFSET_X = 200;
-  const int ROW_HEIGHT=26;
+  const int ROW_HEIGHT = 26;
 
   IList _schedules;
   protected void Page_Load(object sender, EventArgs e)
@@ -37,7 +37,7 @@ public partial class TvGuide : System.Web.UI.Page
     Program prog = Program.Retrieve(id);
     labelTitle.Text = prog.Title;
     labelDescription.Text = prog.Description;
-    labelStartEnd.Text = String.Format("{0}-{1}", prog.StartTime.ToString("HH:mm"),prog.EndTime.ToString("HH:mm"));
+    labelStartEnd.Text = String.Format("{0}-{1}", prog.StartTime.ToString("HH:mm"), prog.EndTime.ToString("HH:mm"));
     labelChannel.Text = prog.ReferencedChannel().Name;
     labelGenre.Text = prog.Genre;
     imgLogo.Src = String.Format("logos/{0}.png", labelChannel.Text);
@@ -57,14 +57,14 @@ public partial class TvGuide : System.Web.UI.Page
     }
     SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
     sb.AddOrderByField(true, "sortOrder");
-    sb.AddConstraint(Operator.Equals,"istv", 1);
+    sb.AddConstraint(Operator.Equals, "istv", 1);
     SqlStatement stmt = sb.GetStatement(true);
     IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
     List<Channel> tvChannels = new List<Channel>();
 
     foreach (Channel channel in channels)
     {
-      if (channel.IsTv )
+      if (channel.IsTv)
       {
         tvChannels.Add(channel);
       }
@@ -208,7 +208,7 @@ public partial class TvGuide : System.Web.UI.Page
       {
         //td1.InnerHtml = String.Format("<img height=\"25\" src=\"images/leftcontinue.gif\" width=\"12\">");
         html += String.Format("<img align=\"middle\" height=\"25\" src=\"images/leftcontinue.gif\" width=\"12\">");
-        
+
       }
       else
       {
@@ -216,13 +216,13 @@ public partial class TvGuide : System.Web.UI.Page
         {
           //td1.InnerHtml = String.Format("<img height=\"25\" src=\"images/leftblock.gif\" width=\"12\">");
           html += String.Format("<img align=\"middle\" height=\"25\" src=\"images/leftblock.gif\" width=\"12\">");
-          
+
         }
         else
         {
           //td1.InnerHtml = String.Format("<img height=\"25\" src=\"images/leftblock.gif\" width=\"2\">");
           html += String.Format("<img align=\"middle\" height=\"25\" src=\"images/leftblock.gif\" width=\"2\">");
-          
+
         }
       }
       cellCount++;
@@ -273,8 +273,8 @@ public partial class TvGuide : System.Web.UI.Page
       if (program.EndTime > end)
       {
         HtmlGenericControl divCtl = new HtmlGenericControl();
-        
-        string style = String.Format("style=\"position:absolute;left:{0}px;top:{1}px;\"", posx + width , posy);
+
+        string style = String.Format("style=\"position:absolute;left:{0}px;top:{1}px;\"", posx + width, posy);
         //HtmlGenericControl td3 = new HtmlGenericControl();
         //td3.InnerHtml = "<img height=\"25\" src=\"images/rightcontinue.gif\" width=\"12\">";
         html = String.Format("<img {0} height=\"25\" src=\"images/rightcontinue.gif\" width=\"12\">", style);
@@ -356,5 +356,143 @@ public partial class TvGuide : System.Web.UI.Page
       divInfoBox.Visible = false;
     }
     UpdateGuide();
+  }
+  protected void buttonDontRecord_Click(object sender, EventArgs e)
+  {
+    Program prog = Program.Retrieve(Int32.Parse(idProgram.Value));
+
+    foreach (Schedule schedule in _schedules)
+    {
+      if (schedule.IsRecordingProgram(prog, true))
+      {
+        if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
+        {
+          schedule.Delete();
+          UpdateServer();
+          break;
+        }
+        else
+        {
+          CanceledSchedule canceledSchedule = new CanceledSchedule(schedule.IdSchedule, prog.StartTime);
+          canceledSchedule.Persist();
+          UpdateServer();
+          break;
+        }
+      }
+    }
+    UpdateGuide();
+  }
+
+  protected void buttonRecordOnce_Click(object sender, EventArgs e)
+  {
+    Program program = Program.Retrieve(Int32.Parse(idProgram.Value));
+    bool isSeries;
+    if (IsRecording(program, out isSeries) == false)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Schedule rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
+      rec.Persist();
+      UpdateServer();
+    }
+    UpdateGuide();
+  }
+
+  protected void buttonRecordDaily_Click(object sender, EventArgs e)
+  {
+    Program program = Program.Retrieve(Int32.Parse(idProgram.Value));
+    bool isSeries;
+    if (IsRecording(program, out isSeries) == false)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Schedule rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
+      rec.ScheduleType = (int)ScheduleRecordingType.Daily;
+      rec.Persist();
+      UpdateServer();
+    }
+    UpdateGuide();
+  }
+  protected void buttonRecordWeekly_Click(object sender, EventArgs e)
+  {
+    Program program = Program.Retrieve(Int32.Parse(idProgram.Value));
+    bool isSeries;
+    if (IsRecording(program, out isSeries) == false)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Schedule rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
+      rec.ScheduleType = (int)ScheduleRecordingType.Weekly;
+      rec.Persist();
+      UpdateServer();
+    }
+    UpdateGuide();
+  }
+  protected void buttonRecordMonFri_Click(object sender, EventArgs e)
+  {
+    Program program = Program.Retrieve(Int32.Parse(idProgram.Value));
+    bool isSeries;
+    if (IsRecording(program, out isSeries) == false)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Schedule rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
+      rec.ScheduleType = (int)ScheduleRecordingType.WorkingDays;
+      rec.Persist();
+      UpdateServer();
+    }
+    UpdateGuide();
+  }
+  protected void buttonRecordEveryThis_Click(object sender, EventArgs e)
+  {
+    Program program = Program.Retrieve(Int32.Parse(idProgram.Value));
+    bool isSeries;
+    if (IsRecording(program, out isSeries) == false)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Schedule rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
+      rec.ScheduleType = (int)ScheduleRecordingType.EveryTimeOnThisChannel;
+      rec.Persist();
+      UpdateServer();
+    }
+    UpdateGuide();
+  }
+  protected void buttonRecordEveryAll_Click(object sender, EventArgs e)
+  {
+    Program program = Program.Retrieve(Int32.Parse(idProgram.Value));
+    bool isSeries;
+    if (IsRecording(program, out isSeries) == false)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Schedule rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
+      rec.ScheduleType = (int)ScheduleRecordingType.EveryTimeOnEveryChannel;
+      rec.Persist();
+      UpdateServer();
+    }
+    UpdateGuide();
+  }
+  protected void buttonRecordWeekends_Click(object sender, EventArgs e)
+  {
+    Program program = Program.Retrieve(Int32.Parse(idProgram.Value));
+    bool isSeries;
+    if (IsRecording(program, out isSeries) == false)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Schedule rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
+      rec.ScheduleType = (int)ScheduleRecordingType.Weekends;
+      rec.Persist();
+      UpdateServer();
+    }
+    UpdateGuide();
+  }
+
+  void UpdateServer()
+  {
+    IList servers = TvDatabase.Server.ListAll();
+    foreach (TvDatabase.Server server in servers)
+    {
+      if (!server.IsMaster) continue;
+      RemoteControl.Clear();
+      RemoteControl.HostName = server.HostName;
+      RemoteControl.Instance.OnNewSchedule();
+      return;
+
+    }
   }
 }

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="TvGuide.aspx.cs" Inherits="TvGuide" %>
+﻿<%@ Page Language="C#" EnableEventValidation="false" AutoEventWireup="true" CodeFile="TvGuide.aspx.cs" Inherits="TvGuide" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/ xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -9,7 +9,7 @@
   <script src="Script/script.js" type="text/javascript"></script>
 
 </head>
-<body bgcolor="#085988" leftmargin="0" topmargin="0" rightmargin="0">
+<body bgcolor="#085988" leftmargin="0" topmargin="0" rightmargin="0" onload="SetSize()">
   <form id="form1" runat="server">
     <asp:ScriptManager ID="ScriptManager1" runat="server" />
     <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel1"
@@ -34,9 +34,27 @@
       src="images/bg.jpg" width="100%" />
     <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="conditional">
       <ContentTemplate>
-        <asp:Button ID="showProgram" runat="server" Text="clickme" OnClick="showProgram_Click" CssClass="visibility:hidden"/>
+        <asp:Button ID="showProgram" runat="server"  OnClick="showProgram_Click" Visible="false"/>
+        <asp:Button ID="buttonDontRecord" runat="server" OnClick="buttonDontRecord_Click" Visible="false"/>
+        <asp:Button ID="buttonRecordOnce" runat="server" OnClick="buttonRecordOnce_Click" Visible="false"/>
+        <asp:Button ID="buttonRecordDaily" runat="server" OnClick="buttonRecordDaily_Click" Visible="false"/>
+        <asp:Button ID="buttonRecordWeekly" runat="server" OnClick="buttonRecordWeekly_Click" Visible="false"/>
+        <asp:Button ID="buttonRecordMonFri" runat="server" OnClick="buttonRecordMonFri_Click" Visible="false"/>
+        <asp:Button ID="buttonRecordEveryThis" runat="server" OnClick="buttonRecordEveryThis_Click" Visible="false"/>
+        <asp:Button ID="buttonRecordWeekends" runat="server" OnClick="buttonRecordWeekends_Click" Visible="false"/>
+        <asp:Button ID="buttonRecordEveryAll" runat="server" OnClick="buttonRecordEveryAll_Click" Visible="false"/>
         <asp:HiddenField ID="idProgram" runat="server" />
       <script language="javascript">
+      function SetSize()
+      {
+        divGuide.style.width=document.documentElement.clientWidth-80 ;
+        divGuide.style.height=document.documentElement.clientHeight-80;
+        divBox.style.top=document.documentElement.clientHeight-350;
+      }
+      function buttonClicked(button)
+      {
+       setTimeout('__doPostBack(\''+button+'\',\'\')', 0);
+      }
       function onProgramClicked(id)
       {
         document.getElementById('idProgram').value=id;
@@ -120,8 +138,8 @@
           </table>
           <div id="divGuide" style="position: absolute; top: 50px; left: 50px; height: 590px;
             width: 1024px; overflow: auto" runat="server" />
-          <div id="divInfoBox" style="z-index: 2; position: absolute; top: 490px; left: 120px;
-            height: 200px; width: 900px; border-right: white 1px solid; border-top: white 1px solid;
+            <div id="divBox" style="z-index: 2; position: absolute; top: 490px; left: 120px;height: 300px; width: 900px;">
+          <div id="divInfoBox" style="border-right: white 1px solid; border-top: white 1px solid;
             border-left: white 1px solid; border-bottom: white 1px solid;" runat="server" visible="false">
             <table style="background-image: url(/MPWebGuide/images/bg.jpg); height: 100%; width: 100%;"
               cellspacing="0" cellpadding="0">
@@ -163,50 +181,57 @@
                     </tr>
                     <tr>
                       <td class="header_button_td" id="td_header_recorddont_button" onmouseover="handleButton('header_recorddont_button',true,'header_button')"
-                        onclick="showWait();document.location='recordings.aspx'" onmouseout="handleButton('header_recorddont_button',false,'header_button')">
-                        <span class="header_button_text_off" id="text_header_recorddont_button" href="recordings.aspx">
+                         onmouseout="handleButton('header_recorddont_button',false,'header_button')">
+                        <span class="header_button_text_off" id="text_header_recorddont_button" onclick="buttonClicked('buttonDontRecord')">
                           Dont record </span>
                         <img id="over_image_header_recorddont_button" style="visibility: hidden" src="images/menu-over.gif"></td>
                     </tr>
                     <tr>
                       <td class="header_button_td" id="td_header_record_button" onmouseover="handleButton('header_record_button',true,'header_button')"
-                        onclick="showWait();document.location='recordings.aspx'" onmouseout="handleButton('header_record_button',false,'header_button')">
-                        <span class="header_button_text_off" id="text_header_record_button" href="recordings.aspx">
+                         onmouseout="handleButton('header_record_button',false,'header_button')">
+                        <span class="header_button_text_off" id="text_header_record_button" onclick="buttonClicked('buttonRecordOnce')">
                           Once </span>
                         <img id="over_image_header_record_button" style="visibility: hidden" src="images/menu-over.gif"></td>
                     </tr>
                     <tr>
                       <td class="header_button_td" id="td_header_recorddaily_button" onmouseover="handleButton('header_recorddaily_button',true,'header_button')"
-                        onclick="showWait();document.location='recordings.aspx'" onmouseout="handleButton('header_recorddaily_button',false,'header_button')">
-                        <span class="header_button_text_off" id="text_header_recorddaily_button" href="recordings.aspx">
+                         onmouseout="handleButton('header_recorddaily_button',false,'header_button')">
+                        <span class="header_button_text_off" id="text_header_recorddaily_button" onclick="buttonClicked('buttonRecordDaily')">
                           Daily </span>
                         <img id="over_image_header_recorddaily_button" style="visibility: hidden" src="images/menu-over.gif"></td>
                     </tr>
                     <tr>
                       <td class="header_button_td" id="td_header_recordweekly_button" onmouseover="handleButton('header_recordweekly_button',true,'header_button')"
-                        onclick="showWait();document.location='recordings.aspx'" onmouseout="handleButton('header_recordweekly_button',false,'header_button')">
-                        <span class="header_button_text_off" id="text_header_recordweekly_button" href="recordings.aspx">
+                         onmouseout="handleButton('header_recordweekly_button',false,'header_button')">
+                        <span class="header_button_text_off" id="text_header_recordweekly_button" onclick="buttonClicked('buttonRecordWeekly')">
                           weekly </span>
                         <img id="over_image_header_recordweekly_button" style="visibility: hidden" src="images/menu-over.gif"></td>
                     </tr>
                     <tr>
                       <td class="header_button_td" id="td_header_recordworking_button" onmouseover="handleButton('header_recordworking_button',true,'header_button')"
-                        onclick="showWait();document.location='recordings.aspx'" onmouseout="handleButton('header_recordworking_button',false,'header_button')">
-                        <span class="header_button_text_off" id="text_header_recordworking_button" href="recordings.aspx">
+                        onmouseout="handleButton('header_recordworking_button',false,'header_button')">
+                        <span class="header_button_text_off" id="text_header_recordworking_button" onclick="buttonClicked('buttonRecordMonFri')">
                           mon-fri </span>
                         <img id="over_image_header_recordworking_button" style="visibility: hidden" src="images/menu-over.gif"></td>
                     </tr>
                     <tr>
+                      <td class="header_button_td" id="td_header_recordweekends_button" onmouseover="handleButton('header_recordweekends_button',true,'header_button')"
+                         onmouseout="handleButton('header_recordweekends_button',false,'header_button')">
+                        <span class="header_button_text_off" id="text_header_recordweekends_button" onclick="buttonClicked('buttonRecordWeekends')">
+                          Weekends</span>
+                        <img id="over_image_header_recordweekends_button" style="visibility: hidden" src="images/menu-over.gif"></td>
+                    </tr>
+                    <tr>
                       <td class="header_button_td" id="td_header_recordalways_button" onmouseover="handleButton('header_recordalways_button',true,'header_button')"
-                        onclick="showWait();document.location='recordings.aspx'" onmouseout="handleButton('header_recordalways_button',false,'header_button')">
-                        <span class="header_button_text_off" id="text_header_recordalways_button" href="recordings.aspx">
+                         onmouseout="handleButton('header_recordalways_button',false,'header_button')">
+                        <span class="header_button_text_off" id="text_header_recordalways_button" onclick="buttonClicked('buttonRecordEveryThis')">
                           this channel</span>
                         <img id="over_image_header_recordalways_button" style="visibility: hidden" src="images/menu-over.gif"></td>
                     </tr>
                     <tr>
                       <td class="header_button_td" id="td_header_recordalways2_button" onmouseover="handleButton('header_recordalways2_button',true,'header_button')"
-                        onclick="showWait();document.location='recordings.aspx'" onmouseout="handleButton('header_recordalways2_button',false,'header_button')">
-                        <span class="header_button_text_off" id="text_header_recordalways2_button" href="recordings.aspx">
+                         onmouseout="handleButton('header_recordalways2_button',false,'header_button')">
+                        <span class="header_button_text_off" id="text_header_recordalways2_button" onclick="buttonClicked('buttonRecordEveryAll')">
                           every channel </span>
                         <img id="over_image_header_recordalways2_button" style="visibility: hidden" src="images/menu-over.gif"></td>
                     </tr>
@@ -217,6 +242,7 @@
                 </td>
               </tr>
             </table>
+          </div>
           </div>
       </ContentTemplate>
     </asp:UpdatePanel>
