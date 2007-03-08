@@ -1,4 +1,5 @@
-﻿<%@ Page Language="C#" EnableEventValidation="false" AutoEventWireup="true" CodeFile="TvGuide.aspx.cs" Inherits="TvGuide" %>
+﻿<%@ Page Language="C#" EnableEventValidation="false" AutoEventWireup="true" CodeFile="TvGuide.aspx.cs"
+  Inherits="TvGuide" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/ xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -11,7 +12,14 @@
 </head>
 <body bgcolor="#085988" leftmargin="0" topmargin="0" rightmargin="0" onload="OnInit()">
   <form id="form1" runat="server">
-    <asp:ScriptManager ID="ScriptManager1" runat="server" />
+    <asp:ScriptManager ID="ScriptManager1" runat="server" >
+    <scripts>
+      <asp:ScriptReference Path="script/webservice.js" />
+     </scripts>
+    <services>
+    <asp:ServiceReference path="WebGuideService.asmx" />
+    </services>
+    </asp:ScriptManager>
     <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel1"
       DisplayAfter="10">
       <ProgressTemplate>
@@ -30,22 +38,11 @@
         </span>
       </ProgressTemplate>
     </asp:UpdateProgress>
-    
     <img style="z-index: -1; width: 100%; position: absolute; height: 100%" height="100%"
       src="images/bg.jpg" width="100%" />
     <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="conditional">
       <ContentTemplate>
-        <asp:Button ID="showProgram" runat="server"  OnClick="showProgram_Click" Visible="false"/>
-        <asp:Button ID="buttonDontRecord" runat="server" OnClick="buttonDontRecord_Click" Visible="false"/>
-        <asp:Button ID="buttonRecordOnce" runat="server" OnClick="buttonRecordOnce_Click" Visible="false"/>
-        <asp:Button ID="buttonRecordDaily" runat="server" OnClick="buttonRecordDaily_Click" Visible="false"/>
-        <asp:Button ID="buttonRecordWeekly" runat="server" OnClick="buttonRecordWeekly_Click" Visible="false"/>
-        <asp:Button ID="buttonRecordMonFri" runat="server" OnClick="buttonRecordMonFri_Click" Visible="false"/>
-        <asp:Button ID="buttonRecordEveryThis" runat="server" OnClick="buttonRecordEveryThis_Click" Visible="false"/>
-        <asp:Button ID="buttonRecordWeekends" runat="server" OnClick="buttonRecordWeekends_Click" Visible="false"/>
-        <asp:Button ID="buttonRecordEveryAll" runat="server" OnClick="buttonRecordEveryAll_Click" Visible="false"/>
-        <asp:HiddenField ID="idProgram" runat="server" />
-      <script language="javascript">
+        <script language="javascript">
       function OnInit()
       {
         SetSize();
@@ -64,11 +61,10 @@
       }
       function op(id)
       {
-        document.getElementById('idProgram').value=id;
-        
-       setTimeout('__doPostBack(\'showProgram\',\'\')', 0);
+        GetProgramInfo(id);
       }
-      </script>
+        </script>
+
         <div style="height: 100%">
           <table style="height: 100%" cellspacing="0" cellpadding="0" width="80%" align="left"
             border="0">
@@ -128,10 +124,9 @@
                           <table width="100%">
                             <tr>
                               <td class="nav_bar_text" align="middle">
-                                <asp:DropDownList ID="DropDownListGroup" runat="server" AutoPostBack="True" OnSelectedIndexChanged="DropDownListGroup_SelectedIndexChanged"  />
+                                <asp:DropDownList ID="DropDownListGroup" runat="server" AutoPostBack="True" OnSelectedIndexChanged="DropDownListGroup_SelectedIndexChanged" />
                                 <asp:DropDownList ID="dropDownDate" runat="server" AutoPostBack="True" OnSelectedIndexChanged="dropDownDate_SelectedIndexChanged" />
                                 <asp:DropDownList ID="dropDownTime" runat="server" AutoPostBack="True" OnSelectedIndexChanged="dropDownTime_SelectedIndexChanged" />
-                                
                                 <span id="spanClock" runat="server" style="padding-left: 50px; font-weight: bold;
                                   font-size: large; color: white; font-family: Trebuchet MS">9:06</span>
                               </td>
@@ -145,113 +140,115 @@
               </td>
             </tr>
           </table>
-          <div id="divGuide" style="position: absolute; top:110px; left: 50px; height: 590px;
-            width: 1024px; overflow: auto" runat="server" >
-            <table id="guideTable" runat="server" cellpadding="0" cellspacing="1" border=0 style="width:95%">
-            </table>
-            </div>
-            <div id="divBox" style="z-index: 2; position: absolute; top: 490px; left: 120px;height: 200px; width: 900px;">
-          <div id="divInfoBox" style="border-right: white 1px solid; border-top: white 1px solid;
-            border-left: white 1px solid; border-bottom: white 1px solid;" runat="server" visible="false">
-            <table style="background-image: url(/MPWebGuide/images/bg.jpg); height: 100%; width: 100%;"
-              cellspacing="0" cellpadding="0">
-              <tr>
-                <td style="width: 20%;" align="center">
-                  <img id="imgLogo" runat="server" src="logos/Nederland 1.png" /></td>
-                <td style="width: 70%; padding-left: 15px; padding-right: 15px;">
-                  <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                    <tr>
-                      <td colspan="2">
-                        <asp:Label CssClass="header_message" ID="labelTitle" runat="server">titel</asp:Label>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colspan="2">
-                        <asp:Label CssClass="recording_list_text" ID="labelDescription" runat="server">description</asp:Label>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <asp:Label CssClass="recording_list_text" ID="labelStartEnd" runat="server">10:00-11:00</asp:Label>
-                      </td>
-                      <td align="right">
-                        <asp:Label CssClass="recording_list_text" ID="labelChannel" runat="server">Net5</asp:Label>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colspan="2">
-                        <asp:Label CssClass="recording_list_text" ID="labelGenre" runat="server">genre</asp:Label>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-                <td align="right" style="width: 10%;">
-                  <table cellpadding="0" cellspacing="0">
-                    <tr>
-                      <td onclick="document.getElementById('divInfoBox').style.display='none';" style="cursor:pointer;">
-                        <img id="buttonClose" src="images/icon_button_close.png" /></td>
-                    </tr>
-                    <tr>
-                      <td class="small_button_td" id="td_header_recorddont_button" onmouseover="handleButton('header_recorddont_button',true,'small_button')"
-                         onmouseout="handleButton('header_recorddont_button',false,'small_button')">
-                        <span class="small_button_text_off" id="text_header_recorddont_button" onclick="buttonClicked('buttonDontRecord')">
-                          Dont record </span>
-                        <img id="over_image_header_recorddont_button" style="visibility: hidden" src="images/small-button-over.gif"></td>
-                    </tr>
-                    <tr>
-                      <td class="small_button_td" id="td_header_record_button" onmouseover="handleButton('header_record_button',true,'small_button')"
-                         onmouseout="handleButton('header_record_button',false,'small_button')">
-                        <span class="small_button_text_off" id="text_header_record_button" onclick="buttonClicked('buttonRecordOnce')">
-                          Once </span>
-                        <img id="over_image_header_record_button" style="visibility: hidden" src="images/small-button-over.gif"></td>
-                    </tr>
-                    <tr>
-                      <td class="small_button_td" id="td_header_recorddaily_button" onmouseover="handleButton('header_recorddaily_button',true,'small_button')"
-                         onmouseout="handleButton('header_recorddaily_button',false,'small_button')">
-                        <span class="small_button_text_off" id="text_header_recorddaily_button" onclick="buttonClicked('buttonRecordDaily')">
-                          Daily </span>
-                        <img id="over_image_header_recorddaily_button" style="visibility: hidden" src="images/small-button-over.gif"></td>
-                    </tr>
-                    <tr>
-                      <td class="small_button_td" id="td_header_recordweekly_button" onmouseover="handleButton('header_recordweekly_button',true,'small_button')"
-                         onmouseout="handleButton('header_recordweekly_button',false,'small_button')">
-                        <span class="small_button_text_off" id="text_header_recordweekly_button" onclick="buttonClicked('buttonRecordWeekly')">
-                          weekly </span>
-                        <img id="over_image_header_recordweekly_button" style="visibility: hidden" src="images/small-button-over.gif"></td>
-                    </tr>
-                    <tr>
-                      <td class="small_button_td" onmouseover="handleButton('recordworking_button',true,'small_button')"
-                        onmouseout="handleButton('recordworking_button',false,'small_button')">
-                        <span class="small_button_text_off" id="text_header_recordworking_button" onclick="buttonClicked('buttonRecordMonFri')">
-                          mon-fri </span>
-                        <img id="over_image_recordworking_button" style="visibility: hidden" src="images/small-button-over.gif"></td>
-                    </tr>
-                    <tr>
-                      <td class="small_button_td"  onmouseover="handleButton('recordweekends_button',true,'small_button')"
-                         onmouseout="handleButton('recordweekends_button',false,'small_button')">
-                        <span class="small_button_text_off" id="text_header_recordweekends_button" onclick="buttonClicked('buttonRecordWeekends')">
-                          Weekends</span>
-                        <img id="over_image_recordweekends_button" style="visibility: hidden" src="images/small-button-over.gif"></td>
-                    </tr>
-                    <tr>
-                      <td class="small_button_td"  onmouseover="handleButton('recordalways_button',true,'small_button')"
-                         onmouseout="handleButton('recordalways_button',false,'small_button')">
-                        <span class="small_button_text_off" id="text_header_recordalways_button" onclick="buttonClicked('buttonRecordEveryThis')">
-                          this channel</span>
-                        <img id="over_image_recordalways_button" style="visibility: hidden" src="images/small-button-over.gif"></td>
-                    </tr>
-                    <tr>
-                      <td class="small_button_td"  onmouseover="handleButton('recordalways2_button',true,'small_button')"
-                         onmouseout="handleButton('recordalways2_button',false,'small_button')">
-                        <span class="small_button_text_off" id="text_recordalways2_button" onclick="buttonClicked('buttonRecordEveryAll')">
-                          every channel </span>
-                        <img id="over_image_recordalways2_button" style="visibility: hidden" src="images/small-button-over.gif"></td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
+          <div id="divGuide" style="position: absolute; top: 110px; left: 50px; height: 590px;
+            width: 1024px; overflow: auto" runat="server">
+            <table id="guideTable" runat="server" cellpadding="0" cellspacing="1" border="0"
+              style="width: 95%">
             </table>
           </div>
+          <div id="divBox" style="z-index: 2; position: absolute; top: 490px; left: 120px;
+            height: 200px; width: 900px;">
+            <div id="divInfoBox" style="border-right: white 1px solid; border-top: white 1px solid;
+              border-left: white 1px solid; border-bottom: white 1px solid;visibility:hidden"  >
+              <table style="background-image: url(/MPWebGuide/images/bg.jpg); height: 100%; width: 100%;"
+                cellspacing="0" cellpadding="0">
+                <tr>
+                  <td style="width: 20%;" align="center">
+                    <img id="imgLogo" src="logos/Nederland 1.png" /></td>
+                  <td style="width: 70%; padding-left: 15px; padding-right: 15px;">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr>
+                        <td colspan="2">
+                          <div class="header_message" id="labelTitle"/>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">
+                          <div class="recording_list_text" id="labelDescription"/>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="recording_list_text" id="labelStartEnd"/>
+                        </td>
+                        <td align="right">
+                          <div class="recording_list_text" id="labelChannel"/>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">
+                          <div class="recording_list_text" id="labelGenre"/>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td align="right" style="width: 10%;">
+                    <table cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td onclick="document.getElementById('divInfoBox').style.visibility='hidden';" style="cursor: pointer;">
+                          <img id="buttonClose" src="images/icon_button_close.png" /></td>
+                      </tr>
+                      <tr>
+                        <td class="small_button_td" id="buttonDontRecord" onmouseover="handleButton('buttonDontRecord',true,'small_button')"
+                          onmouseout="handleButton('buttonDontRecord',false,'small_button')">
+                          <span class="small_button_text_off" id="text_buttonDontRecord" onclick="buttonClicked('buttonDontRecord')">
+                            Dont record </span>
+                          <img id="over_image_buttonDontRecord" style="visibility: hidden" src="images/small-button-over.gif"></td>
+                      </tr>
+                      <tr>
+                        <td class="small_button_td" id="buttonRecordOnce" onmouseover="handleButton('buttonRecordOnce',true,'small_button')"
+                          onmouseout="handleButton('buttonRecordOnce',false,'small_button')">
+                          <span class="small_button_text_off" id="text_buttonRecordOnce" onclick="buttonClicked('buttonRecordOnce')">
+                            Once </span>
+                          <img id="over_image_buttonRecordOnce" style="visibility: hidden" src="images/small-button-over.gif"></td>
+                      </tr>
+                      <tr>
+                        <td class="small_button_td" id="buttonRecordDaily" onmouseover="handleButton('buttonRecordDaily',true,'small_button')"
+                          onmouseout="handleButton('buttonRecordDaily',false,'small_button')">
+                          <span class="small_button_text_off" id="text_buttonRecordDaily" onclick="buttonClicked('buttonRecordDaily')">
+                            Daily </span>
+                          <img id="over_image_buttonRecordDaily" style="visibility: hidden" src="images/small-button-over.gif"></td>
+                      </tr>
+                      <tr>
+                        <td class="small_button_td" id="buttonRecordWeekly" onmouseover="handleButton('buttonRecordWeekly',true,'small_button')"
+                          onmouseout="handleButton('buttonRecordWeekly',false,'small_button')">
+                          <span class="small_button_text_off" id="text_buttonRecordWeekly" onclick="buttonClicked('buttonRecordWeekly')">
+                            weekly </span>
+                          <img id="over_image_buttonRecordWeekly" style="visibility: hidden" src="images/small-button-over.gif"></td>
+                      </tr>
+                      <tr>
+                        <td class="small_button_td" id="buttonRecordMonFri" onmouseover="handleButton('recordworking_button',true,'small_button')"
+                          onmouseout="handleButton('recordworking_button',false,'small_button')">
+                          <span class="small_button_text_off" id="text_header_recordworking_button" onclick="buttonClicked('buttonRecordMonFri')">
+                            mon-fri </span>
+                          <img id="over_image_recordworking_button" style="visibility: hidden" src="images/small-button-over.gif"></td>
+                      </tr>
+                      <tr>
+                        <td class="small_button_td" id="buttonRecordWeekends"onmouseover="handleButton('recordweekends_button',true,'small_button')"
+                          onmouseout="handleButton('recordweekends_button',false,'small_button')">
+                          <span class="small_button_text_off" id="text_header_recordweekends_button" onclick="buttonClicked('buttonRecordWeekends')">
+                            Weekends</span>
+                          <img id="over_image_recordweekends_button" style="visibility: hidden" src="images/small-button-over.gif"></td>
+                      </tr>
+                      <tr>
+                        <td class="small_button_td" id="buttonRecordThis" onmouseover="handleButton('recordalways_button',true,'small_button')"
+                          onmouseout="handleButton('recordalways_button',false,'small_button')">
+                          <span class="small_button_text_off" id="text_header_recordalways_button" onclick="buttonClicked('buttonRecordEveryThis')">
+                            this channel</span>
+                          <img id="over_image_recordalways_button" style="visibility: hidden" src="images/small-button-over.gif"></td>
+                      </tr>
+                      <tr>
+                        <td class="small_button_td" id="buttonRecordAll" onmouseover="handleButton('recordalways2_button',true,'small_button')"
+                          onmouseout="handleButton('recordalways2_button',false,'small_button')">
+                          <span class="small_button_text_off" id="text_recordalways2_button" onclick="buttonClicked('buttonRecordEveryAll')">
+                            every channel </span>
+                          <img id="over_image_recordalways2_button" style="visibility: hidden" src="images/small-button-over.gif"></td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </div>
           </div>
       </ContentTemplate>
     </asp:UpdatePanel>

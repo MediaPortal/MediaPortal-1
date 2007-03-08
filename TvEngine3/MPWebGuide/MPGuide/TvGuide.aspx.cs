@@ -28,22 +28,10 @@ public partial class TvGuide : System.Web.UI.Page
     if (!Page.IsPostBack)
     {
       UpdateGuide();
-      divInfoBox.Visible = false;
       FillCombo();
     }
   }
 
-  void ShowProgramInfo(int id)
-  {
-    Program prog = Program.Retrieve(id);
-    labelTitle.Text = prog.Title;
-    labelDescription.Text = prog.Description;
-    labelStartEnd.Text = String.Format("{0}-{1}", prog.StartTime.ToString("HH:mm"), prog.EndTime.ToString("HH:mm"));
-    labelChannel.Text = prog.ReferencedChannel().Name;
-    labelGenre.Text = prog.Genre;
-    imgLogo.Src = String.Format("logos/{0}.png", labelChannel.Text);
-    divInfoBox.Visible = true;
-  }
 
   void UpdateGuide()
   {
@@ -234,10 +222,6 @@ public partial class TvGuide : System.Web.UI.Page
 
   void AddPrograms(int nr, DateTime now, DateTime end, HtmlTableRow row, List<Program> programs)
   {
-    if (nr == 85)
-    {
-      int x = 1;
-    }
     int spanPos = 0;
     int cellCount = 0;
     bool addRightContinue = false;
@@ -464,7 +448,6 @@ public partial class TvGuide : System.Web.UI.Page
     now = now.AddMinutes(30);
     Session["currentTime"] = now;
     UpdateGuide();
-    divInfoBox.Visible = false;
   }
   protected void idBack_Click(object sender, EventArgs e)
   {
@@ -478,7 +461,6 @@ public partial class TvGuide : System.Web.UI.Page
     now = now.AddMinutes(-30);
     Session["currentTime"] = now;
     UpdateGuide();
-    divInfoBox.Visible = false;
   }
   protected void dropDownTime_SelectedIndexChanged(object sender, EventArgs e)
   {
@@ -490,7 +472,6 @@ public partial class TvGuide : System.Web.UI.Page
     now = now.AddMinutes(-now.Minute);
     now = now.AddMinutes(dropDownTime.SelectedIndex * 30);
     Session["currentTime"] = now;
-    divInfoBox.Visible = false;
     UpdateGuide();
 
   }
@@ -504,7 +485,6 @@ public partial class TvGuide : System.Web.UI.Page
     now = now.AddMinutes(-now.Minute);
     now = now.AddMinutes(dropDownTime.SelectedIndex * 30);
     Session["currentTime"] = now;
-    divInfoBox.Visible = false;
     UpdateGuide();
 
   }
@@ -521,19 +501,7 @@ public partial class TvGuide : System.Web.UI.Page
     }
     return false;
   }
-  protected void showProgram_Click(object sender, EventArgs e)
-  {
-
-    if (idProgram.Value.Length > 0)
-    {
-      ShowProgramInfo(Int32.Parse(idProgram.Value));
-    }
-    else
-    {
-      divInfoBox.Visible = false;
-    }
-    UpdateGuide();
-  }
+  /*
   protected void buttonDontRecord_Click(object sender, EventArgs e)
   {
     _schedules = Schedule.ListAll();
@@ -558,7 +526,6 @@ public partial class TvGuide : System.Web.UI.Page
         }
       }
     }
-    divInfoBox.Visible = false;
     UpdateGuide();
   }
 
@@ -590,7 +557,6 @@ public partial class TvGuide : System.Web.UI.Page
       rec.Persist();
       UpdateServer();
     }
-    divInfoBox.Visible = false;
     UpdateGuide();
   }
   protected void buttonRecordWeekly_Click(object sender, EventArgs e)
@@ -606,7 +572,6 @@ public partial class TvGuide : System.Web.UI.Page
       rec.Persist();
       UpdateServer();
     }
-    divInfoBox.Visible = false;
     UpdateGuide();
   }
   protected void buttonRecordMonFri_Click(object sender, EventArgs e)
@@ -622,7 +587,6 @@ public partial class TvGuide : System.Web.UI.Page
       rec.Persist();
       UpdateServer();
     }
-    divInfoBox.Visible = false;
     UpdateGuide();
   }
   protected void buttonRecordEveryThis_Click(object sender, EventArgs e)
@@ -638,7 +602,6 @@ public partial class TvGuide : System.Web.UI.Page
       rec.Persist();
       UpdateServer();
     }
-    divInfoBox.Visible = false;
     UpdateGuide();
   }
   protected void buttonRecordEveryAll_Click(object sender, EventArgs e)
@@ -654,7 +617,6 @@ public partial class TvGuide : System.Web.UI.Page
       rec.Persist();
       UpdateServer();
     }
-    divInfoBox.Visible = false;
     UpdateGuide();
   }
   protected void buttonRecordWeekends_Click(object sender, EventArgs e)
@@ -670,7 +632,6 @@ public partial class TvGuide : System.Web.UI.Page
       rec.Persist();
       UpdateServer();
     }
-    divInfoBox.Visible = false;
     UpdateGuide();
   }
 
@@ -686,7 +647,8 @@ public partial class TvGuide : System.Web.UI.Page
       return;
 
     }
-  }
+  }*/
+
   protected void DropDownListGroup_SelectedIndexChanged(object sender, EventArgs e)
   {
     IList groups = ChannelGroup.ListAll();
@@ -695,13 +657,11 @@ public partial class TvGuide : System.Web.UI.Page
       if (group.GroupName == DropDownListGroup.SelectedItem.ToString())
       {
         Session["idGroup"] = group.IdGroup;
-        divInfoBox.Visible = false;
         UpdateGuide();
         return;
       }
     }
     Session["idGroup"] = ((ChannelGroup)groups[0]).IdGroup;
-    divInfoBox.Visible = false;
     UpdateGuide();
   }
   #endregion
