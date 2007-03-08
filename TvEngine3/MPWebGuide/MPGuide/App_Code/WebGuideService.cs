@@ -50,7 +50,16 @@ namespace WebGuide
       info.Title = prog.Title;
       info.description = prog.Description;
       info.genre = prog.Genre;
-      info.logo = String.Format("logos/{0}.png", prog.ReferencedChannel().Name);
+      string logoName = prog.ReferencedChannel().Name;
+      logoName = logoName.Replace("/", "_");
+      logoName = logoName.Replace(@"\", "_");
+      logoName = logoName.Replace(@"?", "_");
+      logoName = logoName.Replace(@":", "_");
+      logoName = logoName.Replace(@"*", "_");
+      logoName = logoName.Replace(@"<", "_");
+      logoName = logoName.Replace(@">", "_");
+      logoName = logoName.Replace(@"|", "_");
+      info.logo = String.Format("logos/{0}.png", logoName);
       info.channel = prog.ReferencedChannel().Name;
       info.startTime = prog.StartTime.ToString("HH:mm");
       info.endTime = prog.EndTime.ToString("HH:mm");
@@ -86,7 +95,7 @@ namespace WebGuide
       Program program = Program.Retrieve(id);
       bool isSeries;
       Schedule schedule;
-      if (IsRecording(program, out schedule, out isSeries) )
+      if (IsRecording(program, out schedule, out isSeries))
       {
         TvBusinessLayer layer = new TvBusinessLayer();
         if (cancelEntire)
@@ -102,7 +111,7 @@ namespace WebGuide
       }
     }
 
-    bool IsRecording(Program program,out Schedule sched, out bool isSeries)
+    bool IsRecording(Program program, out Schedule sched, out bool isSeries)
     {
       sched = null;
       isSeries = false;
@@ -118,19 +127,20 @@ namespace WebGuide
       }
       return false;
     }
-  void UpdateTvServer()
-  {
-    IList servers = TvDatabase.Server.ListAll();
-    foreach (TvDatabase.Server server in servers)
+    void UpdateTvServer()
     {
-      if (!server.IsMaster) continue;
-      RemoteControl.Clear();
-      RemoteControl.HostName = server.HostName;
-      RemoteControl.Instance.OnNewSchedule();
       return;
+      IList servers = TvDatabase.Server.ListAll();
+      foreach (TvDatabase.Server server in servers)
+      {
+        if (!server.IsMaster) continue;
+        RemoteControl.Clear();
+        RemoteControl.HostName = server.HostName;
+        RemoteControl.Instance.OnNewSchedule();
+        return;
 
+      }
     }
-  }
   }
 
 }
