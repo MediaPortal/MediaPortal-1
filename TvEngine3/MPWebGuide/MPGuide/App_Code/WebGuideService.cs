@@ -64,6 +64,44 @@ namespace WebGuide
       return info;
     }
 
+    [WebMethod]
+    public void RecordProgram(int id, int scheduleType)
+    {
+      Program program = Program.Retrieve(id);
+      bool isSeries;
+      Schedule schedule;
+      if (IsRecording(program, out schedule, out isSeries) == false)
+      {
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Schedule rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
+        rec.ScheduleType = (int)scheduleType;
+        rec.Persist();
+        UpdateTvServer();
+      }
+    }
+
+    [WebMethod]
+    public void DontRecord(int id, bool cancelEntire)
+    {
+      Program program = Program.Retrieve(id);
+      bool isSeries;
+      Schedule schedule;
+      if (IsRecording(program, out schedule, out isSeries) )
+      {
+        TvBusinessLayer layer = new TvBusinessLayer();
+        if (cancelEntire)
+        {
+          schedule.Delete();
+        }
+        else
+        {
+          CanceledSchedule canceledSchedule = new CanceledSchedule(schedule.IdSchedule, program.StartTime);
+          canceledSchedule.Persist();
+        }
+        UpdateTvServer();
+      }
+    }
+
     bool IsRecording(Program program,out Schedule sched, out bool isSeries)
     {
       sched = null;
@@ -80,6 +118,19 @@ namespace WebGuide
       }
       return false;
     }
+  void UpdateTvServer()
+  {
+    IList servers = TvDatabase.Server.ListAll();
+    foreach (TvDatabase.Server server in servers)
+    {
+      if (!server.IsMaster) continue;
+      RemoteControl.Clear();
+      RemoteControl.HostName = server.HostName;
+      RemoteControl.Instance.OnNewSchedule();
+      return;
+
+    }
+  }
   }
 
 }

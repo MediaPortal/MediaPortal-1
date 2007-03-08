@@ -1,8 +1,24 @@
 ﻿// JScript File
+function DontRecord(id, entireSchedule)
+{
+    WebGuide.WebGuideService.DontRecord(id,entireSchedule,OnRecordProgramResult); 
+}
+
 function GetProgramInfo(id)
 {
     WebGuide.WebGuideService.GetProgramInfo(id,OnGotProgramInfo);   
 }
+
+function RecordProgram(id, recordingType)
+{
+    WebGuide.WebGuideService.RecordProgram(id,recordingType,OnRecordProgramResult);   
+}
+
+function OnRecordProgramResult(result)
+{
+  GetProgramInfo(document.getElementById("programId").value);
+}
+
 function OnGotProgramInfo(result)
 {
   document.getElementById("divInfoBox").style.visibility="visible";
