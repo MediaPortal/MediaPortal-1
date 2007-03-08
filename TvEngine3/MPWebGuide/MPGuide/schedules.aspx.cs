@@ -44,6 +44,13 @@ public partial class schedules : System.Web.UI.Page
 
   void AddSchedule(TvBusinessLayer layer, Schedule schedule)
   {
+    int id = -1;
+    if (Request["id"] != null)
+    {
+      id = Int32.Parse(Request["id"]);
+    }
+
+    if (id > 0 && id != schedule.IdSchedule) return;
     AddHeader(schedule);
     List<Schedule> series = layer.GetRecordingTimes(schedule, 14);
     for (int i = 0; i < series.Count; i++)

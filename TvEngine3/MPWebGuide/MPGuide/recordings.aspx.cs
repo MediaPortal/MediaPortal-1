@@ -61,6 +61,13 @@ public partial class recordings : System.Web.UI.Page
 
   void AddRecording(List<Recording> recs)
   {
+    int id=-1;
+    if (Request["id"] != null)
+    {
+       id = Int32.Parse(Request["id"]);
+    }
+    
+    if (id>0 && id!=recs[0].IdRecording) return;
     AddHeader(recs[0]);
     for (int i = 0; i < recs.Count; i++)
     {
