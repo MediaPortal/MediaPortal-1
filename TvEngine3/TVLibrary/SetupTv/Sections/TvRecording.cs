@@ -289,8 +289,8 @@ namespace SetupTv.Sections
 
       textBoxPreInterval.Text = layer.GetSetting("preRecordInterval", "5").Value;
       textBoxPostInterval.Text = layer.GetSetting("postRecordInterval", "5").Value;
-      formatString[0] = layer.GetSetting("moviesformat", @"%title%\%title%-%date%").Value;
-      formatString[1] = layer.GetSetting("seriesformat", @"%title%-%channel%\%title%-%date%").Value;
+      formatString[0] = layer.GetSetting("moviesformat", @"%title%-%channel%\%title%-%date%-%start%").Value;
+      formatString[1] = layer.GetSetting("seriesformat", @"%title%-%channel%\%title%-[%episode%-]%date%-%start%").Value;
 
       checkBoxComSkipEnabled.Checked = (layer.GetSetting("comskipEnabled", "no").Value == "yes");
       textBoxComSkip.Text = layer.GetSetting("comskipLocation", "").Value;
@@ -364,7 +364,7 @@ namespace SetupTv.Sections
       }
       setting.Persist();
 
-      setting = layer.GetSetting("addrecordingstomoviedbs", "no");
+      setting = layer.GetSetting("addrecordingstomoviedbs", "yes");
       if (checkBoxAddToDatabase.Checked)
       {
         setting.Value = "yes";

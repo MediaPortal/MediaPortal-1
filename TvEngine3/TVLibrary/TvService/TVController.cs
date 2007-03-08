@@ -1200,8 +1200,9 @@ namespace TvService
             // if a recording got interrupted there may be files like <recording name>_1.mpg, etc
             string SearchFile = System.IO.Path.GetFileNameWithoutExtension(rec.FileName) + @"*";
             // check only the ending for underscores as a user might have a naming pattern including them between e.g. station and program title
-            int UnderScorePosition = SearchFile.Substring(SearchFile.Length - 3).LastIndexOf(@"_");
-            if (UnderScorePosition > 0)
+            string SubSearch = SearchFile.Substring((SearchFile.Length - 3));
+            int UnderScorePosition = SubSearch.LastIndexOf(@"_");
+            if (UnderScorePosition != -1)
               // Length - 3 should be enough since there won't be thousands of files with the same name..
               SearchFile = SearchFile.Substring(0, SearchFile.Length - 3) + @"*";
             string[] allRecordingFiles = System.IO.Directory.GetFiles(System.IO.Path.GetDirectoryName(rec.FileName), SearchFile);
