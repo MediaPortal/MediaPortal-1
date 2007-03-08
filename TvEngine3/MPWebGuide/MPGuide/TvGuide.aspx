@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/ xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-  <title>MediaPortal Web guide</title>
+  <title id="titleLabel" runat="server">MediaPortal Web guide</title>
   <link href="styles/Styles.css" type="text/css" rel="stylesheet" />
 
   <script src="Script/script.js" type="text/javascript"></script>
@@ -30,6 +30,7 @@
         </span>
       </ProgressTemplate>
     </asp:UpdateProgress>
+    
     <img style="z-index: -1; width: 100%; position: absolute; height: 100%" height="100%"
       src="images/bg.jpg" width="100%" />
     <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="conditional">
@@ -60,7 +61,7 @@
       {
        setTimeout('__doPostBack(\''+button+'\',\'\')', 0);
       }
-      function onProgramClicked(id)
+      function op(id)
       {
         document.getElementById('idProgram').value=id;
         
@@ -143,8 +144,11 @@
               </td>
             </tr>
           </table>
-          <div id="divGuide" style="position: absolute; top: 50px; left: 50px; height: 590px;
-            width: 1024px; overflow: auto" runat="server" />
+          <div id="divGuide" style="position: absolute; top:110px; left: 50px; height: 590px;
+            width: 1024px; overflow: auto" runat="server" >
+            <table id="guideTable" runat="server" cellpadding="0" cellspacing="1" border=0 style="width:95%">
+            </table>
+            </div>
             <div id="divBox" style="z-index: 2; position: absolute; top: 490px; left: 120px;height: 300px; width: 900px;">
           <div id="divInfoBox" style="border-right: white 1px solid; border-top: white 1px solid;
             border-left: white 1px solid; border-bottom: white 1px solid;" runat="server" visible="false">

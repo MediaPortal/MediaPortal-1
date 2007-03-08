@@ -61,7 +61,7 @@ public partial class TvGuide : System.Web.UI.Page
     List<Channel> tvChannels = new List<Channel>();
     if (Session["idGroup"] != null)
     {
-      int id = (int)Session["idGroup"] ;
+      int id = (int)Session["idGroup"];
       group = ChannelGroup.Retrieve(id);
     }
     else
@@ -69,7 +69,7 @@ public partial class TvGuide : System.Web.UI.Page
       group = (ChannelGroup)ChannelGroup.ListAll()[0];
       Session["idGroup"] = group.IdGroup;
     }
-    foreach(GroupMap groupMap in group.ReferringGroupMap())
+    foreach (GroupMap groupMap in group.ReferringGroupMap())
     {
       Channel ch = groupMap.ReferencedChannel();
       if (ch.IsTv)
@@ -80,13 +80,13 @@ public partial class TvGuide : System.Web.UI.Page
 
     UpdateGuide(tvChannels);
   }
-  
+
   void FillCombo()
   {
     ChannelGroup group;
     if (Session["idGroup"] != null)
     {
-      int id = (int)Session["idGroup"] ;
+      int id = (int)Session["idGroup"];
       group = ChannelGroup.Retrieve(id);
     }
     else
@@ -140,7 +140,6 @@ public partial class TvGuide : System.Web.UI.Page
   }
   void UpdateGuide(List<Channel> tvChannels)
   {
-
     DateTime now;
     if (Session["currentTime"] == null)
     {
@@ -188,10 +187,25 @@ public partial class TvGuide : System.Web.UI.Page
   {
     HtmlTableRow row = new HtmlTableRow();
     AddChannelRow(nr, startTime, endTime, channel, row, programs);
-
+    guideTable.Rows.Add(row);
   }
   void AddChannelRow(int nr, DateTime now, DateTime end, Channel channel, HtmlTableRow row, List<Program> programs)
   {
+    HtmlTableCell cellBase = new HtmlTableCell();
+    cellBase.ColSpan = 1;
+    int posy = OFFSET_Y + nr * ROW_HEIGHT;
+    cellBase.Attributes.Add("class", "gc");
+    if (nr == 0)
+    {
+      cellBase.InnerHtml = String.Format("<nobr><span class=\"guide_title_text\">{0}</span></nobr>", channel.Name);
+    }
+    else
+    {
+      cellBase.InnerHtml = String.Format("<span class=\"gcn\">{0}</span>", nr);
+      cellBase.InnerHtml += String.Format("<nobr><A class=gca href=\"ShowChannel.aspx?id={0}\">{1}</A></nobr>", channel.IdChannel, channel.Name);
+    }
+    row.Cells.Add(cellBase);
+#if NOTDEF
     int posy = OFFSET_Y + nr * ROW_HEIGHT;
     HtmlGenericControl cellBase = new HtmlGenericControl();
     cellBase.Style.Add("background-color", "#0d4798");
@@ -214,12 +228,112 @@ public partial class TvGuide : System.Web.UI.Page
 
     cellBase.Controls.Add(subTable);
     divGuide.Controls.Add(cellBase);
-
+#endif
     AddPrograms(nr, now, end, row, programs);
   }
 
   void AddPrograms(int nr, DateTime now, DateTime end, HtmlTableRow row, List<Program> programs)
   {
+    if (nr == 85)
+    {
+      int x = 1;
+    }
+    int spanPos = 0;
+    int cellCount = 0;
+    bool addRightContinue = false;
+    string className="";
+    foreach (Program program in programs)
+    {
+      DateTime startTime = program.StartTime;
+      if (startTime < now) startTime = now;
+      DateTime endTime = program.EndTime;
+      if (endTime > end) endTime = end;
+      int min = startTime.Minute % 10;
+      if (min > 0 && min < 5) startTime = startTime.AddMinutes(-min);
+      else if (min > 5) startTime = startTime.AddMinutes((10 - min));
+      min = endTime.Minute % 10;
+      if (min > 0 && min < 5) endTime = endTime.AddMinutes(-min);
+      else if (min > 5) endTime = endTime.AddMinutes((10 - min));
+      TimeSpan ts = endTime - startTime;
+      int span = (int)((ts.TotalMinutes+0.5) / 5);
+      if (span <= 0) continue;
+      HtmlTableCell cellBase = new HtmlTableCell();
+      cellBase.ColSpan = span;
+      cellBase.InnerText = String.Format("{0} {1}",(spanPos),span);
+      //cellBase.VAlign = "middle";
+      spanPos += span;
+      if (DateTime.Now >= program.StartTime && DateTime.Now <= program.EndTime && nr > 0)
+      {
+        cellBase.Attributes.Add("class", "gn");
+        className = "gce";
+      }
+      else
+      {
+        cellBase.Attributes.Add("class", "gd");
+        className = "gde";
+      } 
+      //cellBase.Attributes.Add("title", String.Format("{0} {1}-{2}\r\n{3}", program.Title, program.StartTime.ToShortTimeString(), program.EndTime.ToShortTimeString(), program.Description));
+
+
+      string html = "";
+      if (program.StartTime < now)
+      {
+        html += "<img class=\"imgm\" src=\"images/lc.gif\">";
+
+      }
+      else
+      {
+          html += "<img class=\"imgm\" src=\"images/lb.gif\">";
+      }
+      int length = span*5;
+      if (length > program.Title.Length) length = program.Title.Length;
+      string title = "";
+      if (length > 3)
+      {
+        if (length != program.Title.Length)
+          title = program.Title.Substring(0, length - 3) + "...";
+        else
+          title = program.Title.Substring(0, length);
+      } 
+      if (nr == 0)
+      {
+        html += String.Format("<span class=guide_title_text>{0}</span>", title); ;
+      }
+      else
+      {
+        html += title; ;
+        cellBase.Attributes.Add("onclick", String.Format("op({0})", program.IdProgram));
+      }
+      if (program.EndTime > end)
+      {
+        addRightContinue = true;
+      }
+      bool isSeries;
+      if (IsRecording(program, out isSeries))
+      {
+        if (isSeries)
+        {
+          html += String.Format("<img align=\"middle\"  src=\"images/icon_record_series.png\">"); ;
+        }
+        else
+        {
+          html += String.Format("<img align=\"middle\"  src=\"images/icon_record_single.png\">");
+        }
+        //subRow.Controls.Add(tdRec);
+
+      }
+      cellCount++;
+      cellBase.InnerHtml = html;
+      row.Cells.Add(cellBase);
+    }
+    HtmlTableCell cellEnd = new HtmlTableCell();
+    cellEnd.Attributes.Add("class", className);
+    if (addRightContinue)
+    {
+      cellEnd.InnerHtml = "<img src=\"images/rc.gif\">";
+    }
+    row.Cells.Add(cellEnd);
+#if NOTDEF
     //695 = 120min = 24x5min
     //
     int cellCount = 0;
@@ -333,10 +447,11 @@ public partial class TvGuide : System.Web.UI.Page
         divCtl.InnerHtml = html;
         divGuide.Controls.Add(divCtl);
       }
-
-
     }
+#endif
   }
+
+  #region event handlers
   protected void idForward_Click(object sender, EventArgs e)
   {
     DateTime now;
@@ -580,6 +695,7 @@ public partial class TvGuide : System.Web.UI.Page
       if (group.GroupName == DropDownListGroup.SelectedItem.ToString())
       {
         Session["idGroup"] = group.IdGroup;
+        divInfoBox.Visible = false;
         UpdateGuide();
         return;
       }
@@ -588,4 +704,5 @@ public partial class TvGuide : System.Web.UI.Page
     divInfoBox.Visible = false;
     UpdateGuide();
   }
+  #endregion
 }

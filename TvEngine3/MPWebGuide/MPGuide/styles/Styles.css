@@ -148,7 +148,7 @@ A:hover {
 	PADDING-RIGHT: 2px; PADDING-LEFT: 2px; FONT-SIZE: 9.5pt; PADDING-BOTTOM: 2px; OVERFLOW: hidden; COLOR: #87ceeb; PADDING-TOP: 2px; FONT-FAMILY: Trebuchet MS, verdana, Arial
 }
 .grid_default {
-	OVERFLOW: hidden; COLOR: white; FONT-FAMILY: Trebuchet MS, verdana, Arial; TEXT-OVERFLOW: ellipsis; BACKGROUND-COLOR: #1155a6
+	FONT-SIZE: 9.5pt;CURSOR: pointer;TEXT-ALIGN: center;VERTICAL-ALIGN: middle;OVERFLOW: hidden; COLOR: white; FONT-FAMILY: Trebuchet MS, verdana, Arial; TEXT-OVERFLOW: ellipsis; BACKGROUND-COLOR: #1155a6
 }
 .grid_movie {
 	OVERFLOW: hidden; COLOR: white; FONT-FAMILY: Trebuchet MS, verdana, Arial; TEXT-OVERFLOW: ellipsis; BACKGROUND-COLOR: #0185ac
@@ -157,11 +157,40 @@ A:hover {
 	OVERFLOW: hidden; COLOR: white; FONT-FAMILY: Trebuchet MS, verdana, Arial; TEXT-OVERFLOW: ellipsis; BACKGROUND-COLOR: #01965e
 }
 .grid_kids {
-	OVERFLOW: hidden; COLOR: white; FONT-FAMILY: Trebuchet MS, verdana, Arial; TEXT-OVERFLOW: ellipsis; BACKGROUND-COLOR: #b6985b
+	FONT-SIZE: 9.5pt;CURSOR: pointer;TEXT-ALIGN: center;VERTICAL-ALIGN: middle;OVERFLOW: hidden; COLOR: white; FONT-FAMILY: Trebuchet MS, verdana, Arial; TEXT-OVERFLOW: ellipsis; BACKGROUND-COLOR: #b6985b
 }
 .grid_selected {
 	BORDER-RIGHT: #7cfc00 1px solid; BORDER-TOP: #7cfc00 1px solid; OVERFLOW: hidden; BORDER-LEFT: #7cfc00 1px solid; COLOR: white; BORDER-BOTTOM: #7cfc00 1px solid; FONT-FAMILY: Trebuchet MS, verdana, Arial; TEXT-OVERFLOW: ellipsis; BACKGROUND-COLOR: #395aad
 }
 .white {
 	FONT-SIZE: 9.5pt; COLOR: white
+}
+.gd{
+	FONT-SIZE: 9.5pt;CURSOR: pointer;VERTICAL-ALIGN: middle;OVERFLOW: hidden; COLOR: white; FONT-FAMILY: Trebuchet MS, verdana, Arial; TEXT-OVERFLOW: ellipsis; BACKGROUND-COLOR: #1155a6
+}
+
+.gn {
+	FONT-SIZE: 9.5pt;CURSOR: pointer;VERTICAL-ALIGN: middle;OVERFLOW: hidden; COLOR: white; FONT-FAMILY: Trebuchet MS, verdana, Arial; TEXT-OVERFLOW: ellipsis; BACKGROUND-COLOR: #b6985b
+}
+.gc
+{
+  background-color:#0d4798;height:25px;width:175px;cursor: pointer
+}
+.gca {
+	PADDING-RIGHT: 2px; PADDING-LEFT: 2px; FONT-SIZE: 9.5pt; PADDING-BOTTOM: 2px; OVERFLOW: hidden; COLOR: white; PADDING-TOP: 2px; FONT-FAMILY: Trebuchet MS, verdana, Arial
+}
+.gcn {
+	PADDING-RIGHT: 2px; PADDING-LEFT: 2px; FONT-SIZE: 9.5pt; PADDING-BOTTOM: 2px; OVERFLOW: hidden; COLOR: #87ceeb; PADDING-TOP: 2px; FONT-FAMILY: Trebuchet MS, verdana, Arial
+}
+.gde 
+{
+  background-color:#1155a6;width:12px;
+}
+.gce
+{
+  BACKGROUND-COLOR: #b6985b; width:12px;
+}
+.imgm
+{
+  VERTICAL-ALIGN: middle;
 }
