@@ -1,6 +1,7 @@
 using System;
 using System.Configuration;
 using System.Collections;
+using System.Collections.Generic;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
@@ -63,9 +64,21 @@ public partial class _Default : System.Web.UI.Page
   }
   void UpdateSchedule()
   {
-    int count = 0;
+    TvBusinessLayer layer = new TvBusinessLayer();
     IList schedules = Schedule.ListAll();
+    List<Schedule> allSchedules = new List<Schedule>();
     foreach (Schedule rec in schedules)
+    {
+      List<Schedule> series = layer.GetRecordingTimes(rec, 14);
+      for (int i = 0; i < series.Count; i++)
+      {
+        allSchedules.Add(series[i]);
+      }
+    }
+
+    allSchedules.Sort(new SortScheduleOnDateTime(true));
+    int count = 0;
+    foreach (Schedule rec in allSchedules)
     {
       AddSchedule(rec);
       count++;
