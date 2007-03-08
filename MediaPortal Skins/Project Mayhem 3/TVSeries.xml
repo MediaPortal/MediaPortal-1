@@ -2,9 +2,10 @@
   <id>9811</id>
   <defaultcontrol>50</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
-  <define>#header.label:My TV Series</define>
-  <controls>
-    <import>common.window.xml</import>
+  <define>#header.label:</define>
+    
+<controls>
+	<import>common.window.xml</import>
     <control>
       <type>image</type>
       <description>BG</description>
@@ -13,7 +14,7 @@
       <posY>0</posY>
       <texture>background_tvseries.png</texture>
     </control>
-	  <control>
+	 <control>
          <description>BG</description>
          <type>image</type>
          <id>1</id>
@@ -23,7 +24,6 @@
          <height>107</height>
          <texture>Back_tvseries.png</texture>
       </control>
-
 		<control>
 			<description>Import Animation</description>
 			<type>animation</type>
@@ -42,7 +42,6 @@
       <type>group</type>
       <layout>StackLayout</layout>
       <description>group element</description>
-      <animation>FlyInFromTop</animation>
       <posX>5</posX>
       <posY>125</posY>
       <control>
@@ -70,8 +69,7 @@
       <type>group</type>
       <description>group element list</description>
       <id>28</id>
-      <animation>FlyInFromLeft</animation>
-      
+     
       <control>
         <description>composite control consisting of a list control and a thumbnail panel</description>
         <type>facadeview</type>
@@ -118,56 +116,66 @@
       <type>group</type>
       <description>group element description</description>
       <id>52</id>
-      <animation>FlyInFromRight</animation>
 	  
-		 <!-- TV.com Banner -->
-		  <control>
+	  	 <!-- TV.com Banner -->
+		 <control>
 	      <type>image</type>
 	      <description>Series Logo</description>
 	      <id>30</id>
-	      <posX>345</posX>
-	      <posY>120</posY>
-	      <width>345</width>
-	      <height>70</height>
-		  	<centered>yes</centered>
-		  	<keepaspectratio>yes</keepaspectratio>
+	      <posX>0</posX>
+	      <posY>0</posY>
+	      <width>565</width>
+	      <height>107</height>
+		  	<centered>no</centered>
+		  	<keepaspectratio>no</keepaspectratio>
 	      <texture></texture>
 	    </control>
-	
+		
+		<!-- Image Overlay for Fade Effect -->
+		<control>
+	      <type>image</type>
+	      <description>BG</description>
+	      <id>1</id>
+	      <posX>0</posX>
+	      <posY>0</posY>
+	      <texture>Back_tvseries_seriesOverlay.png</texture>
+	    </control>
+		
+		<control>
+			<type>textboxscrollup</type>
+			<description>Title</description>
+			<id>40</id>
+			<posX>6000</posX>
+			<posY>2100</posY>
+			<width>1</width>
+			<textcolor>FFFFFFFF</textcolor>
+			<font>font16</font>
+		</control>
+	  
+
 		<!-- season image background -->
 		 <control>
 	      <type>image</type>
 	      <description>Season image</description>
 	      <id>46</id>
-	      <posX>490</posX>
-	      <posY>210</posY>
-	      <width>200</width>
-	      <height>300</height>
+	      <posX>0</posX>
+	      <posY>110</posY>
+	      <width>325</width>
+	      <height>460</height>
 		  	<centered>yes</centered>
 		  	<keepaspectratio>yes</keepaspectratio>
-		  	<colordiffuse>30FFFFFF</colordiffuse>
+		  	<colordiffuse>35FFFFFF</colordiffuse>
 	      <texture></texture>
 	    </control>
+				
 	
-	 	
-		<control> 
-			<type>textboxscrollup</type> 
-			<description>Title</description> 
-			<id>40</id> 
-			<posX>345</posX> 
-			<posY>158</posY> 
-			<width>320</width> 
-			<textcolor>FFFFFFFF</textcolor> 
-			<font>font16</font> 
-		</control>
-
 	    <!-- Genre text below Banner -->
 	    <control>
 	      <type>textboxscrollup</type>
 	      <description>Subtitle</description>
 	      <id>33</id>
 	      <posX>345</posX>
-	      <posY>220</posY>
+	      <posY>115</posY>
 	      <width>330</width>
 	      <height>40</height>
 	      <textcolor>FFA9D0F7</textcolor>
@@ -180,14 +188,14 @@
 	      <description>Description</description>
 	      <id>31</id>
 	      <posX>345</posX>
-	      <posY>240</posY>
+	      <posY>130</posY>
 	      <width>330</width>
-	      <height>270</height>
+	      <height>380</height>
 	      <colordiffuse>ffffffff</colordiffuse>
 	      <textcolor>FFFFFFFF</textcolor>
 	      <font>font13</font>
 				<seperator>-----------------------------------------------------------------------------------------------------------------------</seperator>
 	    </control>
-    </control>
+	</control>
   </controls>
 </window>

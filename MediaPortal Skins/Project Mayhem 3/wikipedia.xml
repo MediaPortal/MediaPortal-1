@@ -114,9 +114,9 @@
         <type>textbox</type>
         <id>20</id>
         <posX>264</posX>
-        <posY>72</posY>
+        <posY>120</posY>
         <width>440</width>
-        <height>466</height>
+        <height>420</height>
         <spinWidth>16</spinWidth>
         <spinColor>ffffffff</spinColor>
         <image>icon-folder.png</image>

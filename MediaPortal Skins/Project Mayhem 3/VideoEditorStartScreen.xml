@@ -9,18 +9,18 @@
          	<id>1</id>
          	<posX>0</posX>
          	<posY>0</posY>
-         	<texture>background.png</texture>
+         	<texture>background3.png</texture>
       	</control>
-      	<control>
-         	<type>image</type>
-         	<description>an Image</description>
-         	<id>11</id>
-         	<posX>40</posX>
-         	<posY>380</posY>
-		<width>220</width>
-		<height>150</height>
-         	<texture>hover_my videos.png</texture>
-      	</control>
+	<control>
+			<description>BG</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>720</width>
+			<height>107</height>
+			<texture>Back_videoeditor.png</texture>
+		</control>
 	<control>
 		<type>label</type>
 		<id>23</id>
@@ -33,13 +33,11 @@
       	<control>
          	<type>button</type>
          	<id>24</id>
-         	<posX>56</posX>
-         	<posY>96</posY>
+         	<posX>5</posX>
+         	<posY>125</posY>
          	<onup>104</onup>
          	<ondown>102</ondown>
          	<label>712</label>
-         	<posX>56</posX>
-         	<posY>96</posY>
 		<align>center</align>
       	</control>
 	<control>
@@ -47,19 +45,21 @@
 		<type>listcontrol</type>
 		<id>101</id>
 		<posX>270</posX>
-		<posY>97</posY>
+		<posY>120</posY>
 		<width>420</width>
-		<height>400</height>
+		<height>320</height>
 		<label>2094</label>
 		<onleft>24</onleft>
-    <onright>2</onright>
+    		<onright>2</onright>
+		<spinPosX>585</spinPosX>
+		<spinPosY>410</spinPosY>
 	</control>
       <control>
         <description>JoinSelect</description>
         <type>spincontrol</type>
         <id>102</id>
-        <posX>56</posX>
-        <posY>150</posY>
+        <posX>10</posX>
+        <posY>179</posY>
         <reverse>yes</reverse>
         <onup>24</onup>
         <ondown>104</ondown>
@@ -72,7 +72,7 @@
         <subitems>
           <subitem>2077</subitem>
           <subitem>2078</subitem>
-					<subitem>2071</subitem>
+	  <subitem>2071</subitem>
         </subitems>
       </control>
       <control>
@@ -93,19 +93,19 @@
       <control>
         <type>button</type>
         <id>104</id>
-        <posX>56</posX>
-        <posY>180</posY>
+        <posX>5</posX>
+        <posY>209</posY>
         <onup>102</onup>
         <ondown>24</ondown>
-				<onright>103</onright>
+	<onright>103</onright>
         <label>2079</label>
         <align>center</align>
       </control>
 			<control>
 				<type>progress</type>
 				<id>105</id>
-				<posX>56</posX>
-				<posY>230</posY>
+				<posX>30</posX>
+				<posY>530</posY>
 				<width>180</width>
 				<texturebg>progress_back.png</texturebg>
 				<midtexture>osd_progress_mid.png</midtexture>

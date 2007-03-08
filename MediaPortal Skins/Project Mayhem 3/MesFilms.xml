@@ -55,7 +55,10 @@
          		<id>1</id>
       	 		<posX>3</posX>
       	 		<posY>120</posY>
-         		<animation>FlyInFromLeft</animation>
+			<animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+			<animation effect="slide" time="400" end="0,-300" >WindowClose</animation>
+			<animation effect="fade" time="500">WindowClose</animation>
+			<animation effect="fade" time="250">WindowOpen</animation>         
 	 		<layout>StackLayout</layout>
          		<control>
             			<type>sortbutton</type>
@@ -63,13 +66,14 @@
             			<onleft>5</onleft>
             			<onright>1026</onright>
             			<onup>5</onup>
-            			<ondown>3</ondown>				<textureAscendingFocused>arrow_round_up_focus.png</textureAscendingFocused>
-            			<font>font13</font>
+            			<ondown>3</ondown>				
+				<font>font13</font>
             			<disabledcolor>60ffffff</disabledcolor>
             			<label>103</label>
             			<offsetSortButtonY>8</offsetSortButtonY>
             			<offsetSortButtonX>165</offsetSortButtonX>
             			<textcolor>White</textcolor>
+				<textureAscendingFocused>arrow_round_up_focus.png</textureAscendingFocused>
             			<textureAscending>arrow_round_up_nofocus.png</textureAscending>
             			<textureDescending>arrow_round_down_nofocus.png</textureDescending>
            			<textureDescendingFocused>arrow_round_down_focus.png</textureDescendingFocused>
@@ -111,7 +115,10 @@
 			<id>1000</id>
 			<posX>260</posX>
 			<posY>56</posY>
-			<animation>None</animation>
+			<animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+			<animation effect="slide" time="400" end="0,-300" >WindowClose</animation>
+			<animation effect="fade" time="500">WindowClose</animation>
+			<animation effect="fade" time="250">WindowOpen</animation>         
 			<mpe>
 				<layout>Grid</layout>
 				<spring>no</spring>

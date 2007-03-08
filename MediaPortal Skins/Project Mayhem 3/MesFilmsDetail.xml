@@ -25,8 +25,8 @@
 			<description>logo</description>
 			<type>image</type>
 			<id>1</id>
-			<posX>75</posX>
-			<posY>70</posY>
+			<posX>275</posX>
+			<posY>75</posY>
 	        	<height>40</height>
 		        <colordiffuse>9Fffffff</colordiffuse>
 			<keepaspectratio>yes</keepaspectratio>
@@ -68,7 +68,10 @@
 			<width>198</width>
 			<height>140</height>
 			<layout>StackLayout</layout>
-			<animation>FlyInFromLeft</animation>
+			<animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+			<animation effect="slide" time="400" end="0,-300" >WindowClose</animation>
+			<animation effect="fade" time="500">WindowClose</animation>
+			<animation effect="fade" time="250">WindowOpen</animation>         
 			<control>
 				<type>button</type>
             			<description>Play</description>
@@ -183,7 +186,7 @@
             		<type>fadelabel</type>
             		<id>2070</id>
             		<posX>690</posX>
-            		<posY>126</posY>
+            		<posY>155</posY>
             		<label>#support</label>
             		<font>font10</font>
             		<align>right</align>
@@ -194,7 +197,7 @@
             		<type>label</type>
             		<id>2068</id>
             		<posX>690</posX>
-            		<posY>150</posY>
+            		<posY>175</posY>
             		<label>#duree</label>
             		<font>font10</font>
             		<align>right</align>

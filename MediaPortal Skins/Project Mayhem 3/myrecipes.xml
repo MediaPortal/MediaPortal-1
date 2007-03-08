@@ -1,10 +1,8 @@
 <window>
    <id>750</id>
-
    <defaultcontrol>3</defaultcontrol>
-
+   <define>#header.hover:hover_my recipes.png</define>
    <allowoverlay>yes</allowoverlay>
-
    <controls>
       <control>
          <description>BG</description>
@@ -21,7 +19,7 @@
 
          <height>576</height>
 
-         <texture>background.png</texture>
+         <texture>background3.png</texture>
 
          <colorkey>0</colorkey>
 
@@ -29,16 +27,15 @@
       </control>
 
       <control>
-         <type>image</type>
-
-         <id>1</id>
-
-         <posX>75</posX>
-
-         <posY>370</posY>
-
-         <texture>hover_my recipies.png</texture>
-      </control>
+		<description>BG</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>0</posX>
+		<posY>0</posY>
+		<width>720</width>
+		<height>107</height>
+		<texture>Back_recipes.png</texture>
+	</control>
 
       <control>
          <type>image</type>
@@ -59,13 +56,13 @@
 
          <id>1</id>
 
-         <posX>250</posX>
+         <posX>60</posX>
 
-         <posY>70</posY>
+         <posY>50</posY>
 
          <label>10</label>
 
-         <font>font16</font>
+         <font>font18</font>
 
          <align>left</align>
 
@@ -97,9 +94,9 @@
 
          <id>1</id>
 
-         <posX>660</posX>
+         <posX>60</posX>
 
-         <posY>70</posY>
+         <posY>75</posY>
 
          <width>400</width>
 
@@ -107,9 +104,9 @@
 
          <font>font13</font>
 
-         <align>right</align>
+         <align>left</align>
 
-         <textcolor>ffffffff</textcolor>
+         <textcolor>cccccccc</textcolor>
       </control>
 
       <control>
@@ -121,7 +118,7 @@
 
          <posX>250</posX>
 
-         <posY>100</posY>
+         <posY>120</posY>
 
          <showrange>no</showrange>
 
@@ -158,9 +155,9 @@
 
             <id>2</id>
 
-            <posX>60</posX>
+            <posX>5</posX>
 
-            <posY>97</posY>
+            <posY>117</posY>
 
             <label>712</label>
 
@@ -180,9 +177,9 @@
 
             <id>3</id>
 
-            <posX>60</posX>
+            <posX>5</posX>
 
-            <posY>131</posY>
+            <posY>151</posY>
 
             <label>2051</label>
 
@@ -202,9 +199,9 @@
 
             <id>5</id>
 
-            <posX>60</posX>
+            <posX>5</posX>
 
-            <posY>165</posY>
+            <posY>185</posY>
 
             <label>137</label>
 
@@ -224,9 +221,9 @@
 
             <id>6</id>
 
-            <posX>60</posX>
+            <posX>5</posX>
 
-            <posY>199</posY>
+            <posY>219</posY>
 
             <label>2013</label>
 
@@ -246,9 +243,9 @@
 
             <id>7</id>
 
-            <posX>60</posX>
+            <posX>5</posX>
 
-            <posY>233</posY>
+            <posY>253</posY>
 
             <label>2005</label>
 
@@ -268,9 +265,9 @@
 
             <id>8</id>
 
-            <posX>60</posX>
+            <posX>5</posX>
 
-            <posY>267</posY>
+            <posY>287</posY>
 
             <label>2011</label>
 
@@ -319,7 +316,7 @@
 
          <label>-</label>
 
-         <posY>120</posY>
+         <posY>140</posY>
 
          <posX>260</posX>
 

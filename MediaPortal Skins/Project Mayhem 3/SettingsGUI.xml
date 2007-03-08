@@ -73,7 +73,7 @@
 
          <id>1</id>
 
-         <posX>250</posX>
+         <posX>185</posX>  <!--Changed From 250 -->
 
          <posY>179</posY>
 
@@ -115,7 +115,7 @@
 
          <id>1</id>
 
-         <posX>250</posX>
+         <posX>185</posX>  <!--Changed From 250 -->
 
          <posY>206</posY>
 
@@ -157,7 +157,7 @@
 
          <id>1</id>
 
-         <posX>250</posX>
+         <posX>185</posX>  <!--Changed From 250 -->
 
          <posY>233</posY>
 
@@ -199,7 +199,7 @@
 
          <id>1</id>
 
-         <posX>550</posX>
+         <posX>535</posX> <!--Changed from 550 -->
 
          <posY>233</posY>
 
@@ -217,7 +217,7 @@
 
          <id>0</id>
 
-         <posX>250</posX>
+         <posX>185</posX>  <!--Changed From 250 -->
 
          <posY>260</posY>
 
@@ -237,7 +237,7 @@
 
          <id>25</id>
 
-         <posX>250</posX>
+         <posX>185</posX>  <!--Changed From 250 -->
 
          <posY>280</posY>
 
@@ -257,7 +257,7 @@
 
          <id>26</id>
 
-         <posX>250</posX>
+         <posX>185</posX>  <!--Changed From 250 -->
 
          <posY>310</posY>
 
