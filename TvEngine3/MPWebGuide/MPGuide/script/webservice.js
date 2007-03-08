@@ -16,7 +16,7 @@ function RecordProgram(id, recordingType)
 
 function OnRecordProgramResult(result)
 {
-  GetProgramInfo(document.getElementById("programId").value);
+  updateTime( (new Date()).getTime() );
 }
 
 function OnGotProgramInfo(result)

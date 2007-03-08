@@ -25,11 +25,17 @@ public partial class TvGuide : System.Web.UI.Page
   IList _schedules;
   protected void Page_Load(object sender, EventArgs e)
   {
+    hidCurrentFileId.ValueChanged += new EventHandler(hidCurrentFileId_ValueChanged);
     if (!Page.IsPostBack)
     {
       UpdateGuide();
       FillCombo();
     }
+  }
+
+  void hidCurrentFileId_ValueChanged(object sender, EventArgs e)
+  {
+    UpdateGuide();
   }
 
 

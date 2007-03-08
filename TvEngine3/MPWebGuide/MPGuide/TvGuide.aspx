@@ -12,13 +12,15 @@
 </head>
 <body bgcolor="#085988" leftmargin="0" topmargin="0" rightmargin="0" onload="OnInit()">
   <form id="form1" runat="server">
-    <asp:ScriptManager ID="ScriptManager1" runat="server" >
-    <scripts>
-      <asp:ScriptReference Path="script/webservice.js" />
-     </scripts>
-    <services>
-    <asp:ServiceReference path="WebGuideService.asmx" />
-    </services>
+    <asp:HiddenField ID="hidCurrentFileId" runat="server" Value="" />
+
+    <asp:ScriptManager ID="ScriptManager1" runat="server">
+      <Scripts>
+        <asp:ScriptReference Path="script/webservice.js" />
+      </Scripts>
+      <Services>
+        <asp:ServiceReference Path="WebGuideService.asmx" />
+      </Services>
     </asp:ScriptManager>
     <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel1"
       DisplayAfter="10">
@@ -40,9 +42,19 @@
     </asp:UpdateProgress>
     <img style="z-index: -1; width: 100%; position: absolute; height: 100%" height="100%"
       src="images/bg.jpg" width="100%" />
-    <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="conditional">
+    <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="conditional" >
+        <Triggers>
+        <asp:AsyncPostBackTrigger ControlID="hidCurrentFileId" EventName="ValueChanged" />
+      </Triggers>
       <ContentTemplate>
+
         <script language="javascript">
+        function updateTime(param) {
+   var hiddenField = document.getElementById("<%=hidCurrentFileId.ClientID %>");
+   
+   hiddenField.value = param;
+   __doPostBack('<%=hidCurrentFileId.ClientID %>','');
+}
       function OnInit()
       {
         SetSize();
@@ -75,6 +87,7 @@
         GetProgramInfo(id);
       }
         </script>
+
         <input type="hidden" id="programId" />
         <div style="height: 100%">
           <table style="height: 100%" cellspacing="0" cellpadding="0" width="80%" align="left"
@@ -160,7 +173,7 @@
           <div id="divBox" style="z-index: 2; position: absolute; top: 490px; left: 120px;
             height: 200px; width: 900px;">
             <div id="divInfoBox" style="border-right: white 1px solid; border-top: white 1px solid;
-              border-left: white 1px solid; border-bottom: white 1px solid;visibility:hidden"  >
+              border-left: white 1px solid; border-bottom: white 1px solid; visibility: hidden">
               <table style="background-image: url(/MPWebGuide/images/bg.jpg); height: 100%; width: 100%;"
                 cellspacing="0" cellpadding="0">
                 <tr>
@@ -170,25 +183,25 @@
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
                       <tr>
                         <td colspan="2">
-                          <div class="header_message" id="labelTitle"/>
+                          <div class="header_message" id="labelTitle" />
                         </td>
                       </tr>
                       <tr>
                         <td colspan="2">
-                          <div class="recording_list_text" id="labelDescription"/>
+                          <div class="recording_list_text" id="labelDescription" />
                         </td>
                       </tr>
                       <tr>
                         <td>
-                          <div class="recording_list_text" id="labelStartEnd"/>
+                          <div class="recording_list_text" id="labelStartEnd" />
                         </td>
                         <td align="right">
-                          <div class="recording_list_text" id="labelChannel"/>
+                          <div class="recording_list_text" id="labelChannel" />
                         </td>
                       </tr>
                       <tr>
                         <td colspan="2">
-                          <div class="recording_list_text" id="labelGenre"/>
+                          <div class="recording_list_text" id="labelGenre" />
                         </td>
                       </tr>
                     </table>
@@ -235,7 +248,7 @@
                           <img id="over_image_recordworking_button" style="visibility: hidden" src="images/small-button-over.gif"></td>
                       </tr>
                       <tr>
-                        <td class="small_button_td" id="buttonRecordWeekends"onmouseover="handleButton('recordweekends_button',true,'small_button')"
+                        <td class="small_button_td" id="buttonRecordWeekends" onmouseover="handleButton('recordweekends_button',true,'small_button')"
                           onmouseout="handleButton('recordweekends_button',false,'small_button')">
                           <span class="small_button_text_off" id="text_header_recordweekends_button" onclick="DoRecordProgram(5)">
                             Weekends</span>
