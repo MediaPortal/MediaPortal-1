@@ -358,7 +358,8 @@ namespace MediaPortal.TV.Epg
       Log.WriteFile(LogType.EPG, "mhw-grab: received {0} programs", titleCount);
       for (int i = 0; i < titleCount; ++i)
       {
-        short id = 0, transportid = 0, networkid = 0, channelnr = 0, channelid = 0, programid = 0, themeid = 0, PPV = 0, duration = 0;
+        ushort id = 0, transportid = 0, networkid = 0, channelnr = 0, channelid = 0, PPV = 0, duration = 0;
+        short programid = 0, themeid = 0;
         byte summaries = 0;
         uint datestart = 0, timestart = 0;
         IntPtr ptrTitle, ptrProgramName;

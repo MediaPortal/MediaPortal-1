@@ -46,10 +46,10 @@ namespace DShowNET.MPSA
     int GetMHWTitleCount(out Int16 count);
 
     [PreserveSig]
-    int GetMHWTitle(Int16 program, ref Int16 id, ref Int16 transportId, ref Int16 networkId, ref Int16 channelId, ref Int16 programId, ref Int16 themeId, ref Int16 PPV, ref byte Summaries, ref Int16 duration, ref uint dateStart, ref uint timeStart, out IntPtr title, out IntPtr programName);
+    int GetMHWTitle(Int16 program, ref UInt16 id, ref UInt16 transportId, ref UInt16 networkId, ref UInt16 channelId, ref Int16 programId, ref Int16 themeId, ref UInt16 PPV, ref byte Summaries, ref UInt16 duration, ref UInt32 dateStart, ref UInt32 timeStart, out IntPtr title, out IntPtr programName);
 
     [PreserveSig]
-    int GetMHWChannel(Int16 channelNr, ref Int16 channelId, ref Int16 networkId, ref Int16 transportId, out IntPtr channelName);
+    int GetMHWChannel(UInt16 channelNr, ref UInt16 channelId, ref UInt16 networkId, ref UInt16 transportId, out IntPtr channelName);
 
     [PreserveSig]
     int GetMHWSummary(Int16 programId, out IntPtr summary);
