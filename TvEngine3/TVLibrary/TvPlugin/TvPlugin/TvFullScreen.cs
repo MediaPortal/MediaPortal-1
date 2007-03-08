@@ -182,6 +182,7 @@ namespace TvPlugin
       PreInit();
       ResetAllControls();
     }
+
     public override bool SupportsDelayedLoad
     {
       get
@@ -244,7 +245,6 @@ namespace TvPlugin
         if (strValue.Equals("zoom149"))
           GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
       }
-
     }
 
     //		public string ZapChannel
@@ -258,6 +258,7 @@ namespace TvPlugin
     //				return m_sZapChannel;
     //			}
     //		}
+
     void SaveSettings()
     {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -430,6 +431,7 @@ namespace TvPlugin
       switch (action.wID)
       {
         case Action.ActionType.ACTION_MOUSE_DOUBLECLICK:
+
         case Action.ActionType.ACTION_SELECT_ITEM:
           {
             if (_autoZapMode)
@@ -456,6 +458,7 @@ namespace TvPlugin
           break;
 
         case Action.ActionType.ACTION_SHOW_INFO:
+
         case Action.ActionType.ACTION_SHOW_CURRENT_TV_INFO:
           {
             if (action.fAmount1 != 0)
@@ -486,6 +489,7 @@ namespace TvPlugin
             }
           }
           break;
+
         case Action.ActionType.ACTION_SHOW_MSN_OSD:
           if (_isMsnChatPopup)
           {
@@ -499,43 +503,45 @@ namespace TvPlugin
             GUIWindowManager.IsOsdVisible = false;
           }
           break;
-      case Action.ActionType.ACTION_AUTOCROP:
+
+        case Action.ActionType.ACTION_AUTOCROP:
           {
-              Log.Debug("ACTION_AUTOCROP");
-              _statusVisible = true;
-              _statusTimeOutTimer = DateTime.Now;
+            Log.Debug("ACTION_AUTOCROP");
+            _statusVisible = true;
+            _statusTimeOutTimer = DateTime.Now;
 
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
-              IAutoCrop cropper = GUIGraphicsContext.autoCropper;
-              if (cropper != null)
-              {
-                  msg.Label = cropper.Crop();
-                  if (msg.Label == null) msg.Label = "N/A";
-              }
-              else
-              {
-                  msg.Label = "N/A";
-              }
-
-              OnMessage(msg);
-              break;
-          }
-      case Action.ActionType.ACTION_TOGGLE_AUTOCROP:
-          {
-              Log.Debug("ACTION_TOGGLE_AUTOCROP");
-              _statusVisible = true;
-              _statusTimeOutTimer = DateTime.Now;
-              IAutoCrop cropper = GUIGraphicsContext.autoCropper;
-
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+            IAutoCrop cropper = GUIGraphicsContext.autoCropper;
+            if (cropper != null)
+            {
+              msg.Label = cropper.Crop();
+              if (msg.Label == null) msg.Label = "N/A";
+            }
+            else
+            {
               msg.Label = "N/A";
+            }
 
-              if (cropper != null)
-              {
-                  msg.Label = cropper.ToggleMode();
-              }
-              OnMessage(msg);
-              break;
+            OnMessage(msg);
+            break;
+          }
+
+        case Action.ActionType.ACTION_TOGGLE_AUTOCROP:
+          {
+            Log.Debug("ACTION_TOGGLE_AUTOCROP");
+            _statusVisible = true;
+            _statusTimeOutTimer = DateTime.Now;
+            IAutoCrop cropper = GUIGraphicsContext.autoCropper;
+
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+            msg.Label = "N/A";
+
+            if (cropper != null)
+            {
+              msg.Label = cropper.ToggleMode();
+            }
+            OnMessage(msg);
+            break;
           }
 
 
@@ -681,6 +687,7 @@ namespace TvPlugin
           break;
 
         case Action.ActionType.ACTION_PREVIOUS_MENU:
+
         case Action.ActionType.ACTION_SHOW_GUI:
           Log.Debug("fullscreentv:show gui");
           //if(_vmr9OSD!=null)
@@ -703,6 +710,7 @@ namespace TvPlugin
           break;
 
         case Action.ActionType.ACTION_MOVE_LEFT:
+
         case Action.ActionType.ACTION_STEP_BACK:
           {
             if (g_Player.IsTimeShifting)
@@ -719,6 +727,7 @@ namespace TvPlugin
           break;
 
         case Action.ActionType.ACTION_MOVE_RIGHT:
+
         case Action.ActionType.ACTION_STEP_FORWARD:
           {
             if (g_Player.IsTimeShifting)
@@ -735,6 +744,7 @@ namespace TvPlugin
           break;
 
         case Action.ActionType.ACTION_MOVE_DOWN:
+
         case Action.ActionType.ACTION_BIG_STEP_BACK:
           {
             if (g_Player.IsTimeShifting)
@@ -747,6 +757,7 @@ namespace TvPlugin
           break;
 
         case Action.ActionType.ACTION_MOVE_UP:
+
         case Action.ActionType.ACTION_BIG_STEP_FORWARD:
           {
             if (g_Player.IsTimeShifting)
@@ -779,6 +790,7 @@ namespace TvPlugin
           break;
 
         case Action.ActionType.ACTION_PLAY:
+
         case Action.ActionType.ACTION_MUSIC_PLAY:
           if (g_Player.IsTimeShifting)
           {
@@ -799,6 +811,7 @@ namespace TvPlugin
 
       base.OnAction(action);
     }
+
     public override void SetObject(object obj)
     {
       base.SetObject(obj);
@@ -1329,7 +1342,6 @@ namespace TvPlugin
 
     void ShowContextMenu()
     {
-
       if (dlg == null)
         dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;
@@ -1379,6 +1391,7 @@ namespace TvPlugin
             _isDialogVisible = false;
             break;
           }
+
         case 10104: // MiniEPG
           {
 
@@ -1485,6 +1498,7 @@ namespace TvPlugin
           GUIGraphicsContext.IsFullScreenVideo = false;
           GUIWindowManager.ShowPreviousWindow();
           break;
+
         case 11000:
           TvCropSettings cropSettings = (TvCropSettings)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV_CROP_SETTINGS);
           _isDialogVisible = true;
@@ -1588,9 +1602,18 @@ namespace TvPlugin
 
     }
 
+    /// <summary>
+    /// check if we have a single seat environment
+    /// </summary>
+    /// <returns></returns>
+
+    bool IsSingleSeat()
+    {
+      return (RemoteControl.HostName == System.Environment.MachineName);
+    }
+
     void ShowAudioLanguageMenu()
     {
-
       if (dlg == null) return;
       dlg.Reset();
       dlg.SetHeading(492); // set audio language menu
@@ -1622,7 +1645,11 @@ namespace TvPlugin
       // Set new language			
       if ((dlg.SelectedLabel >= 0) && (dlg.SelectedLabel < streams.Length))
       {
-        TVHome.Card.AudioStream = streams[dlg.SelectedLabel];
+        // Check if we have a single seat installation in which case we have to use the g_player method to switch the audio streams
+        if (IsSingleSeat())
+          g_Player.CurrentAudioStream = dlg.SelectedLabel;
+        else
+          TVHome.Card.AudioStream = streams[dlg.SelectedLabel];
         if (g_Player.Paused == false)
         {
           g_Player.Pause();
@@ -1630,7 +1657,6 @@ namespace TvPlugin
         }
       }
     }
-
 
     public override void Process()
     {
@@ -1908,9 +1934,7 @@ namespace TvPlugin
       }
 
       RenderVolume(_isVolumeVisible);
-
     }
-
 
     void CheckTimeOuts()
     {
@@ -2103,7 +2127,6 @@ namespace TvPlugin
       }
     }
 
-
     public void RenderForm(float timePassed)
     {
       if (_needToClearScreen)
@@ -2138,6 +2161,7 @@ namespace TvPlugin
       }
       cntl = null;
     }
+
     void ShowControl(int idSender, int idControl)
     {
       GUIControl cntl = base.GetControl(idControl);
@@ -2162,6 +2186,7 @@ namespace TvPlugin
         _channelName = String.Empty;
       }
     }
+
     public void OnKeyCode(char chKey)
     {
       if (_isDialogVisible) return;
@@ -2305,7 +2330,6 @@ namespace TvPlugin
 
       UpdateOSD();
       _zapTimeOutTimer = DateTime.Now;
-
     }
 
     public void ZapPreviousChannel()
@@ -2332,7 +2356,6 @@ namespace TvPlugin
       {
         //_vmr9OSD.RenderChannelList(TVHome.Navigator.CurrentGroup,TVHome.Navigator.ZapChannel);
       }
-
     }
 
     public void StartAutoZap()
