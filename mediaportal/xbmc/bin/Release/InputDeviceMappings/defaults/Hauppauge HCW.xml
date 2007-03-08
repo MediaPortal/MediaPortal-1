@@ -215,6 +215,9 @@
 			<action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="122" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="19" sound="click.wav" />
 		</button>
+		<button name="RESTOREMP" code="100000">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="123" sound="cursor.wav" />
+		</button>
 	</remote>
 	<remote family="Hauppauge 34-button remote">
 		<button name="Power" code="1061">
@@ -386,6 +389,9 @@
 			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="28" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="14" sound="cursor.wav" />
 		</button>
+		<button name="RESTOREMP" code="100000">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="123" sound="cursor.wav" />
+		</button>
 	</remote>
 	<remote family="Hauppauge 21-button remote">
 		<button name="TV" code="15">
@@ -496,6 +502,9 @@
 		</button>
 		<button name="Minimize" code="38">
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav" />
+		</button>
+		<button name="RESTOREMP" code="100000">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="123" sound="cursor.wav" />
 		</button>
 	</remote>
 </mappings>

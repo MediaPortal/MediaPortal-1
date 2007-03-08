@@ -159,6 +159,7 @@ namespace MediaPortal.GUI.Library
       ACTION_SHOW_ACTIONMENU = 120,         // show the action menue for the current window
       ACTION_TOGGLE_SMS_INPUT = 121,        // Toggle SMS / alpha keyboard
       ACTION_AUTOZAP = 122,                 // Start autozapping in TV mode
+      ACTION_MPRESTORE = 123,
       ACTION_MOUSE_MOVE = 2000,
       ACTION_MOUSE_CLICK = 2001,
       ACTION_MOUSE_DOUBLECLICK = 2002,

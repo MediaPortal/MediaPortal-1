@@ -148,6 +148,9 @@
 			<action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="94" sound="cursor.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="6" sound="cursor.wav" />
 		</button>
+		<button name="RESTOREMP" code="74">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="123" sound="cursor.wav" />
+		</button>
 		<button name="SUBTITLE" code="7" />
 		<button name="TITLE" code="160" />
 		<button name="RETURN" code="14" />

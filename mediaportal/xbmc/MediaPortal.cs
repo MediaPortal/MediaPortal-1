@@ -1707,7 +1707,12 @@ public class MediaPortalApp : D3DApp, IRender
           }
           GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
           return;
-
+        case Action.ActionType.ACTION_MPRESTORE:
+          {
+            Log.Info("Main: Restore MP by action");
+            Restore();
+          }
+          return;
         //reboot pc
         case Action.ActionType.ACTION_REBOOT:
           {

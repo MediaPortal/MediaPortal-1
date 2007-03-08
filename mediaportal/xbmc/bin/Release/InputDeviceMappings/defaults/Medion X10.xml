@@ -235,5 +235,8 @@
 		<button name="DVD Audio" code="144">
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="26" sound="click.wav" />
 		</button>
+		<button name="RESTOREMP" code="100000">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="123" sound="cursor.wav" />
+		</button>
 	</remote>
 </mappings>
