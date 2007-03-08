@@ -417,6 +417,7 @@ public partial class TvGuide : System.Web.UI.Page
   }
   protected void buttonDontRecord_Click(object sender, EventArgs e)
   {
+    _schedules = Schedule.ListAll();
     Program prog = Program.Retrieve(Int32.Parse(idProgram.Value));
 
     foreach (Schedule schedule in _schedules)
@@ -443,6 +444,7 @@ public partial class TvGuide : System.Web.UI.Page
 
   protected void buttonRecordOnce_Click(object sender, EventArgs e)
   {
+    _schedules = Schedule.ListAll();
     Program program = Program.Retrieve(Int32.Parse(idProgram.Value));
     bool isSeries;
     if (IsRecording(program, out isSeries) == false)
@@ -457,6 +459,7 @@ public partial class TvGuide : System.Web.UI.Page
 
   protected void buttonRecordDaily_Click(object sender, EventArgs e)
   {
+    _schedules = Schedule.ListAll();
     Program program = Program.Retrieve(Int32.Parse(idProgram.Value));
     bool isSeries;
     if (IsRecording(program, out isSeries) == false)
@@ -471,6 +474,7 @@ public partial class TvGuide : System.Web.UI.Page
   }
   protected void buttonRecordWeekly_Click(object sender, EventArgs e)
   {
+    _schedules = Schedule.ListAll();
     Program program = Program.Retrieve(Int32.Parse(idProgram.Value));
     bool isSeries;
     if (IsRecording(program, out isSeries) == false)
@@ -485,6 +489,7 @@ public partial class TvGuide : System.Web.UI.Page
   }
   protected void buttonRecordMonFri_Click(object sender, EventArgs e)
   {
+    _schedules = Schedule.ListAll();
     Program program = Program.Retrieve(Int32.Parse(idProgram.Value));
     bool isSeries;
     if (IsRecording(program, out isSeries) == false)
@@ -499,6 +504,7 @@ public partial class TvGuide : System.Web.UI.Page
   }
   protected void buttonRecordEveryThis_Click(object sender, EventArgs e)
   {
+    _schedules = Schedule.ListAll();
     Program program = Program.Retrieve(Int32.Parse(idProgram.Value));
     bool isSeries;
     if (IsRecording(program, out isSeries) == false)
@@ -513,6 +519,7 @@ public partial class TvGuide : System.Web.UI.Page
   }
   protected void buttonRecordEveryAll_Click(object sender, EventArgs e)
   {
+    _schedules = Schedule.ListAll();
     Program program = Program.Retrieve(Int32.Parse(idProgram.Value));
     bool isSeries;
     if (IsRecording(program, out isSeries) == false)
@@ -527,6 +534,7 @@ public partial class TvGuide : System.Web.UI.Page
   }
   protected void buttonRecordWeekends_Click(object sender, EventArgs e)
   {
+    _schedules = Schedule.ListAll();
     Program program = Program.Retrieve(Int32.Parse(idProgram.Value));
     bool isSeries;
     if (IsRecording(program, out isSeries) == false)
