@@ -199,12 +199,17 @@ namespace MediaPortal.Player
       set
       {
         if (value > AudioStreams)
+        {
+          Log.Info("TSStreamBufferPlayer: Unable to set CurrentAudioStream -> value does not exist");
           return;
+        }
+
         if (_interfaceTsFileSource == null)
         {
           Log.Info("TSStreamBufferPlayer: Unable to set CurrentAudioStream -> TsFileSource not initialized");
           return;
         }
+
         IAMStreamSelect pStrm = _interfaceTsFileSource as IAMStreamSelect;
         if (pStrm != null)
         {
@@ -212,6 +217,9 @@ namespace MediaPortal.Player
           pStrm.Enable(value + 2, AMStreamSelectEnableFlags.Enable);
           _curAudioStream = value;
         }
+        else
+          Log.Info("TSStreamBufferPlayer: Unable to set CurrentAudioStream -> IAMStreamSelect == null");
+
         return;
       }
     }
@@ -225,11 +233,13 @@ namespace MediaPortal.Player
     {
       if (iStream > AudioStreams)
         return Strings.Unknown;
+
       if (_interfaceTsFileSource == null)
       {
         Log.Info("TSStreamBufferPlayer: Unable to get AudioLanguage -> TsFileSource not initialized");
         return Strings.Unknown;
       }
+
       IAMStreamSelect pStrm = _interfaceTsFileSource as IAMStreamSelect;
       if (pStrm != null)
       {
