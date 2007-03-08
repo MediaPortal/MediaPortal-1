@@ -2082,12 +2082,12 @@ namespace TvLibrary.Implementations.DVB
             _interfaceEpgGrabber.GetMHWTitleCount(out titleCount);
             for (int i = 0; i < titleCount; ++i)
             {
-              short id = 0, transportid = 0, networkid = 0, channelnr = 0, channelid = 0, programid = 0, themeid = 0, PPV = 0, duration = 0;
+              ushort id = 0, transportid = 0, networkid = 0, channelnr = 0, channelid = 0, programid = 0, themeid = 0, PPV = 0, duration = 0;
               byte summaries = 0;
               uint datestart = 0, timestart = 0;
               IntPtr ptrTitle, ptrProgramName;
               IntPtr ptrChannelName, ptrSummary, ptrTheme;
-              _interfaceEpgGrabber.GetMHWTitle((short)i, ref id, ref transportid, ref networkid, ref channelnr, ref programid, ref themeid, ref PPV, ref summaries, ref duration, ref datestart, ref timestart, out ptrTitle, out ptrProgramName);
+              _interfaceEpgGrabber.GetMHWTitle((ushort)i, ref id, ref transportid, ref networkid, ref channelnr, ref programid, ref themeid, ref PPV, ref summaries, ref duration, ref datestart, ref timestart, out ptrTitle, out ptrProgramName);
               _interfaceEpgGrabber.GetMHWChannel(channelnr, ref channelid, ref networkid, ref transportid, out ptrChannelName);
               _interfaceEpgGrabber.GetMHWSummary(programid, out ptrSummary);
               _interfaceEpgGrabber.GetMHWTheme(themeid, out ptrTheme);
