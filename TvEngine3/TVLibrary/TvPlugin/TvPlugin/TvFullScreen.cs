@@ -1609,7 +1609,8 @@ namespace TvPlugin
 
     bool IsSingleSeat()
     {
-      return (RemoteControl.HostName == System.Environment.MachineName);
+      Log.Debug("TvFullScreen: IsSingleSeat - RemoteControl.HostName = {0} / Environment.MachineName = {1}", RemoteControl.HostName, Environment.MachineName);
+      return (RemoteControl.HostName == Environment.MachineName);
     }
 
     void ShowAudioLanguageMenu()
@@ -1622,7 +1623,11 @@ namespace TvPlugin
 
       IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
       IAudioStream streamCurrent = TVHome.Card.AudioStream;
+
+      Log.Debug("TvFullScreen: ShowAudioLanguageMenu - got {0} audio streams", streams.Length);
+
       int selected = 0;
+
       for (int i = 0; i < streams.Length; i++)
       {
         if (streamCurrent == streams[i])
@@ -1633,6 +1638,7 @@ namespace TvPlugin
         item.Label = String.Format("{0}:{1}", streams[i].StreamType, streams[i].Language);
         dlg.Add(item);
       }
+
       dlg.SelectedLabel = selected;
 
       _isDialogVisible = true;
@@ -1647,15 +1653,21 @@ namespace TvPlugin
       {
         // Check if we have a single seat installation in which case we have to use the g_player method to switch the audio streams
         if (IsSingleSeat())
+        {
+          Log.Debug("TvFullScreen: ShowAudioLanguageMenu - single seat mode");
           g_Player.CurrentAudioStream = dlg.SelectedLabel;
+        }
         else
           TVHome.Card.AudioStream = streams[dlg.SelectedLabel];
+
+        // is this really needed?
         if (g_Player.Paused == false)
         {
           g_Player.Pause();
+          Thread.Sleep(50);
           g_Player.Pause();
         }
-      }
+      }        
     }
 
     public override void Process()

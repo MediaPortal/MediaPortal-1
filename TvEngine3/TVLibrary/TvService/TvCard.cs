@@ -1927,12 +1927,15 @@ namespace TvService
     /// <param name="stream">The stream.</param>
     public void SetCurrentAudioStream(User user, IAudioStream stream)
     {
-      if (_dbsCard.Enabled == false) return;
-      Log.WriteFile("card: setaudiostream:{0} {1}", _dbsCard.IdCard, stream);
+      if (_dbsCard.Enabled == false)
+        return;
+
+      Log.WriteFile("card: SetCurrentAudioStream: {0} - {1}", _dbsCard.IdCard, stream);
       if (IsLocal == false)
       {
         try
         {
+          Log.WriteFile("card: SetCurrentAudioStream: controlling remote instance {0}", RemoteControl.HostName);
           RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
           RemoteControl.Instance.SetCurrentAudioStream(user, stream);
           return;
@@ -1944,10 +1947,20 @@ namespace TvService
         }
       }
       TvCardContext context = _card.Context as TvCardContext;
-      if (context == null) return;
+      if (context == null)
+      {
+        Log.WriteFile("card: SetCurrentAudioStream: TvCardContext == null");
+        return;
+      }
+
       context.GetUser(ref user);
       ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
-      if (subchannel == null) return;
+      if (subchannel == null)
+      {
+        Log.WriteFile("card: SetCurrentAudioStream: ITvSubChannel == null");
+        return;
+      }
+
       subchannel.CurrentAudioStream = stream;
     }
 
