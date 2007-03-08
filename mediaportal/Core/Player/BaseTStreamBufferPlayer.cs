@@ -69,7 +69,7 @@ namespace MediaPortal.Player
     protected int iSpeed = 1;
     protected IBaseFilter _fileSource = null;
 
-
+    protected int _curAudioStream = 0;
     protected int _positionX = 0;
     protected int _positionY = 0;
     protected int _width = 200;
@@ -153,6 +153,97 @@ namespace MediaPortal.Player
 
     #region public members
 
+    /// <summary>
+    /// Implements the AudioStreams member which interfaces the TSFileSource filter to get the IAMStreamSelect interface for enumeration of available streams
+    /// </summary>
+    public override int AudioStreams
+    {
+      get
+      {
+        if (_interfaceTsFileSource == null)
+        {
+          Log.Info("TSStreamBufferPlayer: Unable to get AudioStreams -> TsFileSource not initialized");
+          return 0;
+        }
+
+        int streamCount = 0;
+        IAMStreamSelect pStrm = _interfaceTsFileSource as IAMStreamSelect;
+        if (pStrm != null)
+        {
+          int streamsTotal = 0;
+          pStrm.Count(out streamsTotal);
+          for (int i = 0; i < streamsTotal; i++)
+          {
+            AMMediaType sType; AMStreamSelectInfoFlags sFlag;
+            int sPDWGroup, sPLCid; string sName;
+            object pppunk, ppobject;
+            pStrm.Info(i, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
+            if ((sType.majorType == MediaType.Audio) || (sType.majorType == MediaType.AnalogAudio))
+              streamCount++;
+          }
+          pStrm = null;
+        }
+        return streamCount;
+      }
+    }
+
+    /// <summary>
+    /// Implements the CurrentAudioStream member which interfaces the TSFileSource filter to get the IAMStreamSelect interface for enumeration and switching of available audio streams
+    /// </summary>
+    public override int CurrentAudioStream
+    {
+      get
+      {
+        return _curAudioStream;
+      }
+      set
+      {
+        if (value > AudioStreams)
+          return;
+        if (_interfaceTsFileSource == null)
+        {
+          Log.Info("TSStreamBufferPlayer: Unable to set CurrentAudioStream -> TsFileSource not initialized");
+          return;
+        }
+        IAMStreamSelect pStrm = _interfaceTsFileSource as IAMStreamSelect;
+        if (pStrm != null)
+        {
+          // The offset +2 is necessary because the first 2 streams are always non-audio and the following are the audio streams
+          pStrm.Enable(value + 2, AMStreamSelectEnableFlags.Enable);
+          _curAudioStream = value;
+        }
+        return;
+      }
+    }
+
+    /// <summary>
+    /// Implements the AudioLanguage member which interfaces the TSFileSource filter to get the IAMStreamSelect interface for getting info about a stream
+    /// </summary>
+    /// <param name="iStream"></param>
+    /// <returns></returns>
+    public override string AudioLanguage(int iStream)
+    {
+      if (iStream > AudioStreams)
+        return Strings.Unknown;
+      if (_interfaceTsFileSource == null)
+      {
+        Log.Info("TSStreamBufferPlayer: Unable to get AudioLanguage -> TsFileSource not initialized");
+        return Strings.Unknown;
+      }
+      IAMStreamSelect pStrm = _interfaceTsFileSource as IAMStreamSelect;
+      if (pStrm != null)
+      {
+        AMMediaType sType; AMStreamSelectInfoFlags sFlag;
+        int sPDWGroup, sPLCid; string sName;
+        object pppunk, ppobject;
+        // The offset +2 is necessary because the first 2 streams are always non-audio and the following are the audio streams
+        pStrm.Info(iStream + 2, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
+        return sName.Trim();
+      }
+      else
+        return Strings.Unknown;
+    }
+
     public override bool SupportsReplay
     {
       get
@@ -160,6 +251,7 @@ namespace MediaPortal.Player
         return false;
       }
     }
+
     public override bool Play(string strFile)
     {
       _endOfFileDetected = false;
@@ -175,10 +267,8 @@ namespace MediaPortal.Player
         Log.Info("Streambufferplayer: live tv");
         _isLive = true;
       }
+
       VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
-
-
-
 
       _isVisible = false;
       _isWindowVisible = false;
@@ -271,14 +361,14 @@ namespace MediaPortal.Player
 
       _state = PlayState.Playing;
 
-      long dur=0;
+      long dur = 0;
       _mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
-      _mediaCtrl.Run(); 
+      _mediaCtrl.Run();
       _mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
       UpdateCurrentPosition();
       UpdateDuration();
       OnInitialized();
-      Log.Info("TsBaseStreamBuffer:running pos:{1} duration:{2} {3}", Duration, CurrentPosition,dur);
+      Log.Info("TsBaseStreamBuffer:running pos:{1} duration:{2} {3}", Duration, CurrentPosition, dur);
       return true;
     }
 
@@ -825,6 +915,8 @@ namespace MediaPortal.Player
 
     public override void Stop()
     {
+      // set the current audio stream to the first one
+      _curAudioStream = 0;
       if (SupportsReplay)
       {
         Log.Info("TSStreamBufferPlayer:stop");

@@ -43,7 +43,7 @@ using System.Collections.Generic;
 namespace MediaPortal.GUI.Video
 {
   /// <summary>
-  /// Summary description for Class1.
+  /// Summary description for GUIVideoFullscreen.
   /// </summary>
   public class GUIVideoFullscreen : GUIWindow, IRenderLayer
   {
@@ -156,15 +156,15 @@ namespace MediaPortal.GUI.Video
         m_iMaxTimeOSDOnscreen = 1000 * xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
         _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 10);
         _playNotifyBeep = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
-        
+
         string strValue = xmlreader.GetValueAsString(key, "defaultar", "normal");
-        if (strValue.Equals("zoom"))             GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
-        if (strValue.Equals("stretch"))          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
-        if (strValue.Equals("normal"))           GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Normal;
-        if (strValue.Equals("original"))         GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
-        if (strValue.Equals("letterbox"))        GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
-        if (strValue.Equals("panscan"))          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
-        if (strValue.Equals("zoom149"))          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
+        if (strValue.Equals("zoom")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
+        if (strValue.Equals("stretch")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
+        if (strValue.Equals("normal")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Normal;
+        if (strValue.Equals("original")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
+        if (strValue.Equals("letterbox")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
+        if (strValue.Equals("panscan")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
+        if (strValue.Equals("zoom149")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
       }
     }
 
@@ -435,43 +435,43 @@ namespace MediaPortal.GUI.Video
               _vmr9OSD.HideBitmap();
             return;
           }
-      case Action.ActionType.ACTION_AUTOCROP:
+        case Action.ActionType.ACTION_AUTOCROP:
           {
-              Log.Debug("ACTION_AUTOCROP");
-              _showStatus = true;
-              _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+            Log.Debug("ACTION_AUTOCROP");
+            _showStatus = true;
+            _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
 
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
-              IAutoCrop cropper = GUIGraphicsContext.autoCropper;
-              if (cropper != null)
-              {
-                  msg.Label = cropper.Crop();
-                  if (msg.Label == null) msg.Label = "N/A";
-              }
-              else
-              {
-                  msg.Label = "N/A";
-              }
-    
-              OnMessage(msg);
-              break;
-          }
-      case Action.ActionType.ACTION_TOGGLE_AUTOCROP:
-          {
-              Log.Debug("ACTION_TOGGLE_AUTOCROP");
-              _showStatus = true;
-              _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
-              IAutoCrop cropper = GUIGraphicsContext.autoCropper;
-
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+            IAutoCrop cropper = GUIGraphicsContext.autoCropper;
+            if (cropper != null)
+            {
+              msg.Label = cropper.Crop();
+              if (msg.Label == null) msg.Label = "N/A";
+            }
+            else
+            {
               msg.Label = "N/A";
+            }
 
-              if (cropper != null)
-              {
-                  msg.Label = cropper.ToggleMode();
-              }
-              OnMessage(msg);
-              break;
+            OnMessage(msg);
+            break;
+          }
+        case Action.ActionType.ACTION_TOGGLE_AUTOCROP:
+          {
+            Log.Debug("ACTION_TOGGLE_AUTOCROP");
+            _showStatus = true;
+            _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+            IAutoCrop cropper = GUIGraphicsContext.autoCropper;
+
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+            msg.Label = "N/A";
+
+            if (cropper != null)
+            {
+              msg.Label = cropper.ToggleMode();
+            }
+            OnMessage(msg);
+            break;
           }
         case Action.ActionType.ACTION_ASPECT_RATIO:
           {
@@ -1083,6 +1083,10 @@ namespace MediaPortal.GUI.Video
       dlg.SetHeading(924); // menu
 
       dlg.AddLocalizedString(941); // Change aspect ratio
+
+      // Add audio stream selection to be able to switch audio streams in .ts recordings
+      dlg.AddLocalizedString(492); // Audio stream selection
+
       if (PluginManager.IsPluginNameEnabled("MSN Messenger"))
       {
         dlg.AddLocalizedString(12902); // MSN Messenger
@@ -1105,6 +1109,10 @@ namespace MediaPortal.GUI.Video
         return;
       switch (dlg.SelectedId)
       {
+        // Add audio stream selection to be able to switch audio streams in .ts recordings
+        case 492:
+          ShowAudioStreamsMenu();
+          break;
         case 974: // DVD root menu
           Action actionMenu = new Action(Action.ActionType.ACTION_DVD_MENU, 0, 0);
           GUIGraphicsContext.OnAction(actionMenu);
@@ -1143,6 +1151,32 @@ namespace MediaPortal.GUI.Video
           GUIWindowManager.ShowPreviousWindow();
           break;
       }
+    }
+
+    // Add audio stream selection to be able to switch audio streams in .ts recordings
+    void ShowAudioStreamsMenu()
+    {
+      if (dlg == null)
+        return;
+      dlg.Reset();
+      dlg.SetHeading(492); // Audio Streams
+
+      int count = g_Player.AudioStreams;
+      for (int i = 0; i < count; i++)
+        dlg.Add(g_Player.AudioLanguage(i));
+
+      dlg.SelectedLabel = g_Player.CurrentAudioStream;
+      _IsDialogVisible = true;
+
+      dlg.DoModal(GetID);
+
+      _IsDialogVisible = false;
+
+      if (dlg.SelectedId == -1)
+        return;
+
+      if (dlg.SelectedLabel != g_Player.CurrentAudioStream)
+        g_Player.CurrentAudioStream = dlg.SelectedLabel;
     }
 
     void ShowAspectRatioMenu()
@@ -1421,7 +1455,7 @@ namespace MediaPortal.GUI.Video
       RenderVolume(_isVolumeVisible);
       RenderForbidden(_isForbiddenVisible);
     }
-    
+
     void CheckTimeOuts()
     {
       if (_vmr9OSD != null)
