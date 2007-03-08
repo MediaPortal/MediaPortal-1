@@ -272,7 +272,7 @@ public partial class TvGuide : System.Web.UI.Page
         cellBase.Attributes.Add("class", "gd");
         className = "gde";
       } 
-      //cellBase.Attributes.Add("title", String.Format("{0} {1}-{2}\r\n{3}", program.Title, program.StartTime.ToShortTimeString(), program.EndTime.ToShortTimeString(), program.Description));
+      cellBase.Attributes.Add("title", String.Format("{0} {1}-{2}\r\n{3}", program.Title, program.StartTime.ToShortTimeString(), program.EndTime.ToShortTimeString(), program.Description));
 
 
       string html = "";
