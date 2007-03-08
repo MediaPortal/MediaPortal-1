@@ -54,8 +54,9 @@
       function SetSize()
       {
         divGuide.style.width=document.documentElement.clientWidth-80 ;
-        divGuide.style.height=document.documentElement.clientHeight-80;
+        divGuide.style.height=document.documentElement.clientHeight-120;
         divBox.style.top=document.documentElement.clientHeight-350;
+        divBox.style.left=(document.documentElement.clientWidth-900)/2;
       }
       function buttonClicked(button)
       {
@@ -149,7 +150,7 @@
             <table id="guideTable" runat="server" cellpadding="0" cellspacing="1" border=0 style="width:95%">
             </table>
             </div>
-            <div id="divBox" style="z-index: 2; position: absolute; top: 490px; left: 120px;height: 300px; width: 900px;">
+            <div id="divBox" style="z-index: 2; position: absolute; top: 490px; left: 120px;height: 200px; width: 900px;">
           <div id="divInfoBox" style="border-right: white 1px solid; border-top: white 1px solid;
             border-left: white 1px solid; border-bottom: white 1px solid;" runat="server" visible="false">
             <table style="background-image: url(/MPWebGuide/images/bg.jpg); height: 100%; width: 100%;"
