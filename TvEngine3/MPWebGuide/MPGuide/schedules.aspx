@@ -9,7 +9,22 @@
 
   <link href="styles/Styles.css" type="text/css" rel="stylesheet" />
 </head>
-<body>
+
+<body onload="OnInit()">
+
+  <script language="javascript">
+        
+      function OnInit()
+      {
+        SetSize();
+        	window.onresize = SetSize;
+      }
+      function SetSize()
+      {
+        divMainTable.style.width=document.documentElement.clientWidth-80 ;
+        divMainTable.style.height=document.documentElement.clientHeight-160;
+      }
+  </script>
   <form id="form1" runat="server">
     <img style="z-index: -1; width: 100%; position: absolute; height: 200%" height="100%"
       src="images/bg.jpg" width="100%" />
@@ -122,7 +137,7 @@
                       </tr>
                       <tr>
                         <td id="scrollHolder" valign="top">
-                          <div style="margin-left: 48px; overflow: auto; height: 510px;" >
+                          <div style="margin-left: 48px; overflow: auto; height: 510px;" id="divMainTable" >
                             <table cellspacing="0" cellpadding="0" width="880" border="0" runat="server" id="tableList">
                               <tbody>
                                 <tr>

@@ -9,9 +9,23 @@
 
   <link href="styles/Styles.css" type="text/css" rel="stylesheet" />
 </head>
-<body>
+<body onload="OnInit()">
+
+  <script language="javascript">
+        
+      function OnInit()
+      {
+        SetSize();
+        	window.onresize = SetSize;
+      }
+      function SetSize()
+      {
+        divMainTable.style.width=document.documentElement.clientWidth-80 ;
+        divMainTable.style.height=document.documentElement.clientHeight-160;
+      }
+  </script>
+
   <form id="form1" runat="server">
-    
     <asp:ScriptManager ID="ScriptManager1" runat="server" />
     <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel1"
       DisplayAfter="10">
@@ -33,44 +47,45 @@
     </asp:UpdateProgress>
     <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="conditional">
       <ContentTemplate>
-        <img style="z-index: -1; width: 100%; position: absolute; height: 200%" height="100%" src="images/bg.jpg" width="100%" />
-        <table cellspacing="0" cellpadding="0"  border="0">
+        <img style="z-index: -1; width: 100%; position: absolute; height: 200%" height="100%"
+          src="images/bg.jpg" width="100%" />
+        <table cellspacing="0" cellpadding="0" border="0">
           <tbody>
             <tr height="1">
               <td>
-                <table style="background-image: url(images//top-bar.gif); color: white; height: 62px" cellspacing="0" cellpadding="0" width="100%" border="0">
+                <table style="background-image: url(images//top-bar.gif); color: white; height: 62px"
+                  cellspacing="0" cellpadding="0" width="100%" border="0">
                   <tbody>
                     <tr>
-                      <td  width="85" rowspan="2">
-                      <a href="Default.aspx">
-                        <img hspace="15" src="images/mplogo_new.png" border="0"></a>
+                      <td width="85" rowspan="2">
+                        <a href="Default.aspx">
+                          <img hspace="15" src="images/mplogo_new.png" border="0"></a>
                       </td>
-                    <tr>
-                      <td valign="bottom" align="middle" colspan="3">
-                        <table cellspacing="0" cellpadding="0">
-                          <tbody>
-                            <tr>
-                              <td class="header_button_td" id="td_header_guide_button" onmouseover="handleButton('header_guide_button',true,'header_button')"
-                                onclick="showWait();document.location='tvguide.aspx'" onmouseout="handleButton('header_guide_button',false,'header_button')">
-                                <span class="header_button_text_off" id="text_header_guide_button" href="tvguide.aspx">
-                                  TvGuide </span>
-                                <img id="over_image_header_guide_button" style="visibility: hidden" src="images/menu-over.gif"></td>
-                              <td class="header_button_td" id="td_header_search_button" onmouseover="handleButton('header_search_button',true,'header_button')"
-                                onclick="showWait();document.location='search.aspx'" onmouseout="handleButton('header_search_button',false,'header_button')">
-                                <span class="header_button_text_off" id="text_header_search_button" href="search.aspx">
-                                  Search </span>
-                                <img id="over_image_header_search_button" style="visibility: hidden" src="images/menu-over.gif"></td>
-                              <td class="header_button_td" id="td_header_recordings_button" onmouseover="handleButton('header_recordings_button',true,'header_button')"
-                                onclick="showWait();document.location='recordings.aspx'" onmouseout="handleButton('header_recordings_button',false,'header_button')">
-                                <span class="header_button_text_off" id="text_header_recordings_button" href="recordings.aspx">
-                                  Recordings </span>
-                                <img id="over_image_header_recordings_button" style="visibility: hidden" src="images/menu-over.gif"></td>
-                              
-                            </tr>
-                          </tbody>
-                        </table>
-                      </td>
-                    </tr>
+                      <tr>
+                        <td valign="bottom" align="middle" colspan="3">
+                          <table cellspacing="0" cellpadding="0">
+                            <tbody>
+                              <tr>
+                                <td class="header_button_td" id="td_header_guide_button" onmouseover="handleButton('header_guide_button',true,'header_button')"
+                                  onclick="showWait();document.location='tvguide.aspx'" onmouseout="handleButton('header_guide_button',false,'header_button')">
+                                  <span class="header_button_text_off" id="text_header_guide_button" href="tvguide.aspx">
+                                    TvGuide </span>
+                                  <img id="over_image_header_guide_button" style="visibility: hidden" src="images/menu-over.gif"></td>
+                                <td class="header_button_td" id="td_header_search_button" onmouseover="handleButton('header_search_button',true,'header_button')"
+                                  onclick="showWait();document.location='search.aspx'" onmouseout="handleButton('header_search_button',false,'header_button')">
+                                  <span class="header_button_text_off" id="text_header_search_button" href="search.aspx">
+                                    Search </span>
+                                  <img id="over_image_header_search_button" style="visibility: hidden" src="images/menu-over.gif"></td>
+                                <td class="header_button_td" id="td_header_recordings_button" onmouseover="handleButton('header_recordings_button',true,'header_button')"
+                                  onclick="showWait();document.location='recordings.aspx'" onmouseout="handleButton('header_recordings_button',false,'header_button')">
+                                  <span class="header_button_text_off" id="text_header_recordings_button" href="recordings.aspx">
+                                    Recordings </span>
+                                  <img id="over_image_header_recordings_button" style="visibility: hidden" src="images/menu-over.gif"></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
                   </tbody>
                 </table>
               </td>
@@ -99,19 +114,21 @@
                                         Date/Time</label>
                                     </span>
                                   </td>
-                                  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <td align="right">
-                                  <table cellpadding="0" align="center">
-                                    <tbody>
-                                      <tr>
-                                        <td class="small_button_td" onmouseover="handleButton('add_recording',true,'small_button')" onmouseout="handleButton('add_recording',false,'small_button')">
-                                          <a class="small_button_text_off" style="width: 130px">
-                                          <span class="small_button_text_off" id="text_add_recording" style="cursor: pointer; position: relative">Add</span></a>
-                                          <img id="over_image_add_recording" style="visibility: hidden" src="images/small-button-over.gif"></td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                </td>
+                                  <td>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                  <td align="right">
+                                    <table cellpadding="0" align="center">
+                                      <tbody>
+                                        <tr>
+                                          <td class="small_button_td" onmouseover="handleButton('add_recording',true,'small_button')"
+                                            onmouseout="handleButton('add_recording',false,'small_button')">
+                                            <a class="small_button_text_off" style="width: 130px"><span class="small_button_text_off"
+                                              id="text_add_recording" style="cursor: pointer; position: relative">Add</span></a>
+                                            <img id="over_image_add_recording" style="visibility: hidden" src="images/small-button-over.gif"></td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </td>
                               </tr>
                             </tbody>
                           </table>
@@ -119,7 +136,7 @@
                       </tr>
                       <tr>
                         <td id="scrollHolder" valign="top">
-                          <div style="margin-left: 48px; overflow: auto; height: 510px;" >
+                          <div style="margin-left: 48px; overflow: auto; height: 510px;" id="divMainTable">
                             <table cellspacing="0" cellpadding="0" width="880" border="0" runat="server" id="tableList">
                               <tbody>
                                 <tr>
