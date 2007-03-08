@@ -349,6 +349,7 @@ public partial class TvGuide : System.Web.UI.Page
     now = now.AddMinutes(30);
     Session["currentTime"] = now;
     UpdateGuide();
+    divInfoBox.Visible = false;
   }
   protected void idBack_Click(object sender, EventArgs e)
   {
@@ -362,6 +363,7 @@ public partial class TvGuide : System.Web.UI.Page
     now = now.AddMinutes(-30);
     Session["currentTime"] = now;
     UpdateGuide();
+    divInfoBox.Visible = false;
   }
   protected void dropDownTime_SelectedIndexChanged(object sender, EventArgs e)
   {
@@ -373,6 +375,7 @@ public partial class TvGuide : System.Web.UI.Page
     now = now.AddMinutes(-now.Minute);
     now = now.AddMinutes(dropDownTime.SelectedIndex * 30);
     Session["currentTime"] = now;
+    divInfoBox.Visible = false;
     UpdateGuide();
 
   }
@@ -386,6 +389,7 @@ public partial class TvGuide : System.Web.UI.Page
     now = now.AddMinutes(-now.Minute);
     now = now.AddMinutes(dropDownTime.SelectedIndex * 30);
     Session["currentTime"] = now;
+    divInfoBox.Visible = false;
     UpdateGuide();
 
   }
@@ -439,6 +443,7 @@ public partial class TvGuide : System.Web.UI.Page
         }
       }
     }
+    divInfoBox.Visible = false;
     UpdateGuide();
   }
 
@@ -470,6 +475,7 @@ public partial class TvGuide : System.Web.UI.Page
       rec.Persist();
       UpdateServer();
     }
+    divInfoBox.Visible = false;
     UpdateGuide();
   }
   protected void buttonRecordWeekly_Click(object sender, EventArgs e)
@@ -485,6 +491,7 @@ public partial class TvGuide : System.Web.UI.Page
       rec.Persist();
       UpdateServer();
     }
+    divInfoBox.Visible = false;
     UpdateGuide();
   }
   protected void buttonRecordMonFri_Click(object sender, EventArgs e)
@@ -500,6 +507,7 @@ public partial class TvGuide : System.Web.UI.Page
       rec.Persist();
       UpdateServer();
     }
+    divInfoBox.Visible = false;
     UpdateGuide();
   }
   protected void buttonRecordEveryThis_Click(object sender, EventArgs e)
@@ -515,6 +523,7 @@ public partial class TvGuide : System.Web.UI.Page
       rec.Persist();
       UpdateServer();
     }
+    divInfoBox.Visible = false;
     UpdateGuide();
   }
   protected void buttonRecordEveryAll_Click(object sender, EventArgs e)
@@ -530,6 +539,7 @@ public partial class TvGuide : System.Web.UI.Page
       rec.Persist();
       UpdateServer();
     }
+    divInfoBox.Visible = false;
     UpdateGuide();
   }
   protected void buttonRecordWeekends_Click(object sender, EventArgs e)
@@ -545,6 +555,7 @@ public partial class TvGuide : System.Web.UI.Page
       rec.Persist();
       UpdateServer();
     }
+    divInfoBox.Visible = false;
     UpdateGuide();
   }
 
@@ -574,6 +585,7 @@ public partial class TvGuide : System.Web.UI.Page
       }
     }
     Session["idGroup"] = ((ChannelGroup)groups[0]).IdGroup;
+    divInfoBox.Visible = false;
     UpdateGuide();
   }
 }
