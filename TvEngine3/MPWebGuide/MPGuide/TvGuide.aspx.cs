@@ -275,7 +275,7 @@ public partial class TvGuide : System.Web.UI.Page
       {
           html += "<img class=\"imgm\" src=\"images/lb.gif\">";
       }
-      int length = span*5;
+      int length = span*3;
       if (length > program.Title.Length) length = program.Title.Length;
       string title = "";
       if (length > 3)
