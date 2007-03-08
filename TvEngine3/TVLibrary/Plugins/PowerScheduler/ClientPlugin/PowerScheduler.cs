@@ -57,6 +57,14 @@ namespace MediaPortal.Plugins.Process
     private const int BROADCAST_QUERY_DENY = 0x424D5144;
     #endregion
 
+    #region Events
+    /// <summary>
+    /// Register to this event to receive status changes from the PowerScheduler
+    /// Not implemented yet
+    /// </summary>
+    public event PowerSchedulerEventHandler OnPowerSchedulerEvent;
+    #endregion
+
     #region Variables
     private System.Timers.Timer _timer;
     private WaitableTimer _wakeupTimer;
