@@ -186,7 +186,7 @@ namespace MediaPortal.Plugins.Process
         checkInterval *= 1000;
         if (checkInterval != _timer.Interval)
         {
-          LogDebug(String.Format("Check interval is set to {0} seconds", checkInterval), false);
+          LogDebug(String.Format("Check interval is set to {0} seconds", checkInterval/1000), false);
           _timer.Interval = checkInterval;
         }
         _shutdownMethod = reader.GetValueAsString("psclientplugin", "shutdownmode", "suspend");
@@ -201,7 +201,7 @@ namespace MediaPortal.Plugins.Process
           Log.Error("This setup is not using the tvservice! PowerScheduler client plugin will not be started!");
           return false;
         }
-        if (tvServerName == System.Net.Dns.GetHostName())
+        if (tvServerName == System.Net.Dns.GetHostName() || tvServerName.Equals("127.0.0.1"))
         {
           LogDebug("detected a singleseat setup - delegating suspend/hibernate requests to tvserver", false);
           _singleSeat = true;
