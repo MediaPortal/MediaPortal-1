@@ -9,7 +9,7 @@
   <script src="Script/script.js" type="text/javascript"></script>
 
 </head>
-<body bgcolor="#085988" leftmargin="0" topmargin="0" rightmargin="0" onload="SetSize()">
+<body bgcolor="#085988" leftmargin="0" topmargin="0" rightmargin="0" onload="OnInit()">
   <form id="form1" runat="server">
     <asp:ScriptManager ID="ScriptManager1" runat="server" />
     <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel1"
@@ -45,6 +45,11 @@
         <asp:Button ID="buttonRecordEveryAll" runat="server" OnClick="buttonRecordEveryAll_Click" Visible="false"/>
         <asp:HiddenField ID="idProgram" runat="server" />
       <script language="javascript">
+      function OnInit()
+      {
+        SetSize();
+        	window.onresize = SetSize;
+      }
       function SetSize()
       {
         divGuide.style.width=document.documentElement.clientWidth-80 ;
