@@ -370,6 +370,7 @@ namespace TvEngine.PowerScheduler
       {
         LoadSettings();
         CheckForStandby();
+        SendPowerSchedulerEvent(PowerSchedulerEventType.Elapsed);
       }
       // explicitly catch exceptions and log them otherwise they are ignored by the Timer object
       catch (Exception ex)

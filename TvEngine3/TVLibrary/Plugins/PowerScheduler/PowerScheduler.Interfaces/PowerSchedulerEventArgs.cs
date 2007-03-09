@@ -63,7 +63,12 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// <summary>
     /// Sent when PowerScheduler detects the system resumed from standby
     /// </summary>
-    ResumedFromStandby
+    ResumedFromStandby,
+    /// <summary>
+    /// Sent when PowerScheduler's check interval is due again
+    /// (so, sent every PowerSettings.CheckInterval seconds)
+    /// </summary>
+    Elapsed
   }
   #endregion
 
