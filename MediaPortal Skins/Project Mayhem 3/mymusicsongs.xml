@@ -5,47 +5,33 @@
 	<define>#header.label:134</define>
 	<controls>
 		<import>common.window.xml</import>
-		  <control>
-         <description>background image</description>
-
-         <type>image</type>
-
-         <id>1</id>
-
-         <posX>0</posX>
-
-         <posY>0</posY>
-
-         <width>720</width>
-
-         <height>576</height>
-
-         <texture>background3.png</texture>
-      </control>
-      <control>
-         <description>background image</description>
-
-         <type>image</type>
-
-         <id>1</id>
-
-         <posX>0</posX>
-
-         <posY>0</posY>
-
-         <width>720</width>
-
-         <height>107</height>
-
-         <texture>Back_music.png</texture>
-      </control>
 		<control>
-      <type>group</type>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="500" end="0,-300" >WindowClose</animation>
-      <description>group element</description>
+			<description>background image</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>720</width>
+			<height>576</height>
+			<texture>background3.png</texture>
+		</control>
+		<control>
+			<description>background image</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>720</width>
+			<height>107</height>
+			<texture>Back_music.png</texture>
+		</control>
+		<control>
+			<type>group</type>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="500">WindowClose</animation>
+			<animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
+			<animation effect="slide" time="500" end="0,-300">WindowClose</animation>
+			<description>group element</description>
 			<posX>5</posX>
 			<posY>125</posY>
 			<layout>StackLayout</layout>
@@ -158,6 +144,6 @@
 				<alignY>center</alignY>
 			</control>
 		</control>
-		<import>common.facade.xml</import>
+		<import>common.facade.music.xml</import>
 	</controls>
 </window>

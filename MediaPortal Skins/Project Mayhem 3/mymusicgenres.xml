@@ -1,381 +1,235 @@
 <window>
-   <id>504</id>
-
-   <defaultcontrol>2</defaultcontrol>
-
-   <allowoverlay>yes</allowoverlay>
-
-   <define>#header.label:#view</define>
-
-   <controls>
-      <import>common.window.xml</import>
-
-        <control>
-         <description>background image</description>
-
-         <type>image</type>
-
-         <id>1</id>
-
-         <posX>0</posX>
-
-         <posY>0</posY>
-
-         <width>720</width>
-
-         <height>576</height>
-
-         <texture>background3.png</texture>
-      </control>
-      <control>
-         <description>background image</description>
-
-         <type>image</type>
-
-         <id>1</id>
-
-         <posX>0</posX>
-
-         <posY>0</posY>
-
-         <width>720</width>
-
-         <height>107</height>
-
-         <texture>Back_music.png</texture>
-      </control>
-
-      <control>
-         <type>group</type>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="500" end="0,-300" >WindowClose</animation>         
-
-         <description>group element</description>
-
-
-
-         <posX>5</posX>
-
-         <posY>125</posY>
-
-         <layout>StackLayout</layout>
-
-         <control>
-            <description>View-As button</description>
-
-            <type>button</type>
-
-            <id>2</id>
-
-            <label>100</label>
-
-            <onleft>2</onleft>
-
-            <onright>50</onright>
-
-            <onup>17</onup>
-
-            <ondown>3</ondown>
-
-            <textXOff>17</textXOff>
-
-            <alignY>center</alignY>
-         </control>
-
-         <control>
-            <type>sortbutton</type>
-
-            <id>3</id>
-
-            <label>103</label>
-
-            <onleft>3</onleft>
-
-            <onright>50</onright>
-
-            <onup>2</onup>
-
-            <ondown>6</ondown>
-
-            <textXOff>17</textXOff>
-
-            <alignY>center</alignY>
-         </control>
-
-         <control>
-            <description>Albums/Artists/Songs/Genres button</description>
-
-            <type>button</type>
-
-            <id>6</id>
-
-            <label>457</label>
-
-            <onleft>7</onleft>
-
-            <onright>50</onright>
-
-            <onup>3</onup>
-
-            <ondown>8</ondown>
-
-            <textXOff>17</textXOff>
-
-            <alignY>center</alignY>
-         </control>
-
-         <control>
-            <description>Playlist button</description>
-
-            <type>button</type>
-
-            <id>8</id>
-
-            <label>4555</label>
-
-            <action>33</action>
-
-            <onleft>8</onleft>
-
-            <onright>50</onright>
-
-            <onup>6</onup>
-
-            <ondown>9</ondown>
-
-            <textXOff>17</textXOff>
-
-            <alignY>center</alignY>
-         </control>
-
-         <control>
-            <description>Search button</description>
-
-            <type>button</type>
-
-            <id>9</id>
-
-            <label>137</label>
-
-            <onleft>9</onleft>
-
-            <onright>50</onright>
-
-            <onup>8</onup>
-
-            <ondown>10</ondown>
-
-            <textXOff>17</textXOff>
-
-            <alignY>center</alignY>
-         </control>
-
-         <control>
-            <description>Eject Disc</description>
-
-            <type>button</type>
-
-            <id>10</id>
-
-            <label>654</label>
-
-            <onleft>10</onleft>
-
-            <onright>50</onright>
-
-            <onup>9</onup>
-
-            <ondown>11</ondown>
-
-            <action>100</action>
-
-            <textXOff>17</textXOff>
-
-            <alignY>center</alignY>
-         </control>
-          <control>
-        	<description>Now playing button</description>
-        	<type>button</type>
-        	<id>11</id>
-        	<label>4540</label>
-        	<onleft>11</onleft>
-        	<onright>50</onright>
-        	<onup>10</onup>
-        	<ondown>14</ondown>
-        	<hyperlink>510</hyperlink>
-      	  </control>
-      	  <control>
-        	<description>My Playlists</description>
-        	<type>button</type>
-        	<id>14</id>
-        	<label>983</label>
-        	<onleft>14</onleft>
-        	<onright>50</onright>
-        	<onup>11</onup>
-        	<ondown>85</ondown>
-     	 </control>
-         <control>
-            <description>Radio Button</description>
-
-            <type>button</type>
-
-            <id>85</id>
-
-            <label>Radio</label>
-
-            <onleft>85</onleft>
-
-            <onright>50</onright>
-
-            <onup>14</onup>
-
-            <ondown>99</ondown>
-
-            <hyperlink>30</hyperlink>
-
-            <textXOff>17</textXOff>
-
-            <alignY>center</alignY>
-         </control>
-      </control>
-
-      <control>
-         <type>group</type>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="500" end="0,-300" >WindowClose</animation>         
-
-         <description>group element</description>
-
-
-
-         <control>
-            <description>composite control consisting of a list control and a thumbnail panel</description>
-
-            <type>facadeview</type>
-
-            <id>50</id>
-
-            <control>
-               <description>listcontrol</description>
-
-               <type>listcontrol</type>
-
-               <id>50</id>
-
-               <onleft>2</onleft>
-
-               <onright>51</onright>
-
-               <onup>2</onup>
-
-               <ondown>2</ondown>
-
-               <textcolor>FFFFFFFF</textcolor>
-            </control>
-
-            <control>
-               <description>Thumbnail Panel</description>
-
-               <type>thumbnailpanel</type>
-
-               <id>51</id>
-
-               <onleft>2</onleft>
-
-               <onright>52</onright>
-
-               <onup>2</onup>
-
-               <ondown>2</ondown>
-            </control>
-
-            <control>
-               <description>album view listcontrol</description>
-
-               <type>listcontrol</type>
-
-               <subtype>album</subtype>
-
-               <id>52</id>
-
-               <width>470</width>
-
-               <height>430</height>
-
-               <spinwidth>16</spinwidth>
-
-               <spinheight>16</spinheight>
-
-               <spincolor>ffffffff</spincolor>
-
-               <spinfont>font10</spinfont>
-
-               <spinPosX>630</spinPosX>
-
-               <spinPosY>525</spinPosY>
-
-               <textureUp>scroll-up.png</textureUp>
-
-               <textureDown>scroll-down.png</textureDown>
-
-               <textureUpfocus>scroll-up-focus.gif</textureUpfocus>
-
-               <textureDownfocus>scroll-down-focus.gif</textureDownfocus>
-
-               <textureFocus>blue-rectangle.png</textureFocus>
-
-               <textureNofocus>black.png</textureNofocus>
-
-               <font2>font10</font2>
-
-               <selectedcolor>FFFFffff</selectedcolor>
-
-               <include>textcolorlightgrey</include>
-
-               <selectedcolor2>FFFFffff</selectedcolor2>
-
-               <textcolor2>d0ffffff</textcolor2>
-
-               <suffix>|</suffix>
-
-               <textXOff>10</textXOff>
-
-               <textYOff>10</textYOff>
-
-               <textXOff2>445</textXOff2>
-
-               <textYOff2>94</textYOff2>
-
-               <itemWidth>75</itemWidth>
-
-               <itemHeight>110</itemHeight>
-
-               <spaceBetweenItems>10</spaceBetweenItems>
-
-               <textureHeight>120</textureHeight>
-
-               <onleft>2</onleft>
-
-               <onright>53</onright>
-
-               <onup>2</onup>
-
-               <ondown>2</ondown>
-         </control>
-        <control>
-          <description>Filmstrip view</description>
-          <type>filmstrip</type>
-          <id>53</id>
-          <onleft>2</onleft>
-          <onright>2</onright>
-          <onup>2</onup>
-          <ondown>2</ondown>
-        </control>
-      </control>
-    </control>
-  </controls>
+	<id>504</id>
+	<defaultcontrol>2</defaultcontrol>
+	<allowoverlay>yes</allowoverlay>
+	<define>#header.label:#view</define>
+	<controls>
+		<import>common.window.xml</import>
+		<control>
+			<description>background image</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>720</width>
+			<height>576</height>
+			<texture>background3.png</texture>
+		</control>
+		<control>
+			<description>background image</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>720</width>
+			<height>107</height>
+			<texture>Back_music.png</texture>
+		</control>
+		<control>
+			<type>group</type>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="500">WindowClose</animation>
+			<animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
+			<animation effect="slide" time="500" end="0,-300">WindowClose</animation>
+			<description>group element</description>
+			<posX>5</posX>
+			<posY>125</posY>
+			<layout>StackLayout</layout>
+			<control>
+				<description>View-As button</description>
+				<type>button</type>
+				<id>2</id>
+				<label>100</label>
+				<onleft>2</onleft>
+				<onright>50</onright>
+				<onup>17</onup>
+				<ondown>3</ondown>
+				<textXOff>17</textXOff>
+				<alignY>center</alignY>
+			</control>
+			<control>
+				<type>sortbutton</type>
+				<id>3</id>
+				<label>103</label>
+				<onleft>3</onleft>
+				<onright>50</onright>
+				<onup>2</onup>
+				<ondown>6</ondown>
+				<textXOff>17</textXOff>
+				<alignY>center</alignY>
+			</control>
+			<control>
+				<description>Albums/Artists/Songs/Genres button</description>
+				<type>button</type>
+				<id>6</id>
+				<label>457</label>
+				<onleft>7</onleft>
+				<onright>50</onright>
+				<onup>3</onup>
+				<ondown>8</ondown>
+				<textXOff>17</textXOff>
+				<alignY>center</alignY>
+			</control>
+			<control>
+				<description>Playlist button</description>
+				<type>button</type>
+				<id>8</id>
+				<label>4555</label>
+				<action>33</action>
+				<onleft>8</onleft>
+				<onright>50</onright>
+				<onup>6</onup>
+				<ondown>9</ondown>
+				<textXOff>17</textXOff>
+				<alignY>center</alignY>
+			</control>
+			<control>
+				<description>Search button</description>
+				<type>button</type>
+				<id>9</id>
+				<label>137</label>
+				<onleft>9</onleft>
+				<onright>50</onright>
+				<onup>8</onup>
+				<ondown>10</ondown>
+				<textXOff>17</textXOff>
+				<alignY>center</alignY>
+			</control>
+			<control>
+				<description>Eject Disc</description>
+				<type>button</type>
+				<id>10</id>
+				<label>654</label>
+				<onleft>10</onleft>
+				<onright>50</onright>
+				<onup>9</onup>
+				<ondown>11</ondown>
+				<action>100</action>
+				<textXOff>17</textXOff>
+				<alignY>center</alignY>
+			</control>
+			<control>
+				<description>Now playing button</description>
+				<type>button</type>
+				<id>11</id>
+				<label>4540</label>
+				<onleft>11</onleft>
+				<onright>50</onright>
+				<onup>10</onup>
+				<ondown>14</ondown>
+				<hyperlink>510</hyperlink>
+			</control>
+			<control>
+				<description>My Playlists</description>
+				<type>button</type>
+				<id>14</id>
+				<label>983</label>
+				<onleft>14</onleft>
+				<onright>50</onright>
+				<onup>11</onup>
+				<ondown>85</ondown>
+			</control>
+			<control>
+				<description>Radio Button</description>
+				<type>button</type>
+				<id>85</id>
+				<label>Radio</label>
+				<onleft>85</onleft>
+				<onright>50</onright>
+				<onup>14</onup>
+				<ondown>99</ondown>
+				<hyperlink>30</hyperlink>
+				<textXOff>17</textXOff>
+				<alignY>center</alignY>
+			</control>
+		</control>
+		<control>
+			<type>group</type>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="500">WindowClose</animation>
+			<animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
+			<animation effect="slide" time="500" end="0,-300">WindowClose</animation>
+			<description>group element</description>
+			<control>
+				<description>composite control consisting of a list control and a thumbnail panel</description>
+				<type>facadeview</type>
+				<id>50</id>
+				<control>
+					<description>listcontrol</description>
+					<type>listcontrol</type>
+					<id>50</id>
+					<onleft>2</onleft>
+					<onright>51</onright>
+					<onup>2</onup>
+					<ondown>2</ondown>
+					<textcolor>FFFFFFFF</textcolor>
+				</control>
+				<control>
+					<description>Thumbnail Panel</description>
+					<type>thumbnailpanel</type>
+					<id>51</id>
+					<onleft>2</onleft>
+					<onright>52</onright>
+					<onup>2</onup>
+					<ondown>2</ondown>
+				</control>
+				<control>
+					<description>album view listcontrol</description>
+					<type>listcontrol</type>
+					<subtype>album</subtype>
+					<id>52</id>
+					<width>470</width>
+					<height>430</height>
+					<spinwidth>16</spinwidth>
+					<spinheight>16</spinheight>
+					<spincolor>ffffffff</spincolor>
+					<spinfont>font10</spinfont>
+					<spinPosX>630</spinPosX>
+					<spinPosY>525</spinPosY>
+					<textureUp>scroll-up.png</textureUp>
+					<textureDown>scroll-down.png</textureDown>
+					<textureUpfocus>scroll-up-focus.gif</textureUpfocus>
+					<textureDownfocus>scroll-down-focus.gif</textureDownfocus>
+					<textureFocus>blue-rectangle.png</textureFocus>
+					<textureNofocus>black.png</textureNofocus>
+					<font2>font10</font2>
+					<selectedcolor>FFFFffff</selectedcolor>
+					<include>textcolorlightgrey</include>
+					<selectedcolor2>FFFFffff</selectedcolor2>
+					<textcolor2>d0ffffff</textcolor2>
+					<suffix>|</suffix>
+					<textXOff>10</textXOff>
+					<textYOff>10</textYOff>
+					<textXOff2>445</textXOff2>
+					<textYOff2>94</textYOff2>
+					<itemWidth>75</itemWidth>
+					<itemHeight>110</itemHeight>
+					<spaceBetweenItems>10</spaceBetweenItems>
+					<textureHeight>120</textureHeight>
+					<onleft>2</onleft>
+					<onright>53</onright>
+					<onup>2</onup>
+					<ondown>2</ondown>
+				</control>
+				<control>
+					<description>Filmstrip view</description>
+					<type>filmstrip</type>
+					<id>53</id>
+					<onleft>2</onleft>
+					<onright>2</onright>
+					<onup>2</onup>
+					<ondown>2</ondown>
+					<thumbs flipY="true" diffuse="Thumb_Mask.png"/>
+					<InfoImage flipY="true" diffuse="Thumb_Mask.png"/>
+					<showFrame>yes</showFrame>
+					<showFolder>yes</showFolder>
+					<showBackGround>no</showBackGround>
+					<showInfoImage>yes</showInfoImage>
+					<enableFocusZoom>no</enableFocusZoom>
+					<thumbAnimation effect="zoom" start="100,100" end="110,110" time="300">focus</thumbAnimation>
+					<thumbAnimation effect="zoom" start="110,110" end="100,100" time="300">unfocus</thumbAnimation>
+				</control>
+			</control>
+		</control>
+	</controls>
 </window>
