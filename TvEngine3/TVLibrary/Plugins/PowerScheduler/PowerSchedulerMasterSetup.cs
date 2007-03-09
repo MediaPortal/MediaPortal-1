@@ -126,5 +126,15 @@ namespace TvEngine.PowerScheduler
       setting.Value = numericUpDown2.Value.ToString();
       setting.Persist();
     }
+
+    private void checkBox4_CheckedChanged(object sender, EventArgs e)
+    {
+      Setting setting = _layer.GetSetting("PowerSchedulerExtensiveLogging", "false");
+      if (checkBox3.Checked)
+        setting.Value = "true";
+      else
+        setting.Value = "false";
+      setting.Persist();
+    }
   }
 }

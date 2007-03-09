@@ -43,10 +43,12 @@
   <ItemGroup>
     <Compile Include="Interfaces\IPowerController.cs" />
     <Compile Include="Interfaces\IPowerScheduler.cs" />
+    <Compile Include="Interfaces\IPowerSettings.cs" />
     <Compile Include="Interfaces\IStandbyHandler.cs" />
     <Compile Include="Interfaces\IWakeupHandler.cs" />
     <Compile Include="PowerManager.cs" />
     <Compile Include="PowerSchedulerEventArgs.cs" />
+    <Compile Include="PowerSettings.cs" />
     <Compile Include="RemotePowerControl.cs" />
     <Compile Include="TimerException.cs" />
     <Compile Include="WaitableTimer.cs" />

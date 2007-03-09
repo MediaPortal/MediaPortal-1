@@ -73,7 +73,9 @@ namespace TvEngine.PowerScheduler
       _standbyHandlers.Add(standbyHandler);
       //standbyHandler = new EpgGrabbingHandler(controller);
       //_standbyHandlers.Add(standbyHandler);
-      standbyHandler = new SetupActiveHandler();
+      standbyHandler = new ProcessActiveHandler("SetupTv");
+      _standbyHandlers.Add(standbyHandler);
+      standbyHandler = new ProcessActiveHandler("Configuration");
       _standbyHandlers.Add(standbyHandler);
 
       // Add handlers for resuming from standby
@@ -157,8 +159,13 @@ namespace TvEngine.PowerScheduler
     }
   }
 
-  public class SetupActiveHandler : IStandbyHandler
+  public class ProcessActiveHandler : IStandbyHandler
   {
+    private string _processName = String.Empty;
+    public ProcessActiveHandler(string processName)
+    {
+      _processName = processName;
+    }
     public bool DisAllowShutdown
     {
       get
@@ -171,7 +178,7 @@ namespace TvEngine.PowerScheduler
     }
     public string HandlerName
     {
-      get { return "SetupActiveHandler"; }
+      get { return String.Format("ProcessActiveHandler:{0}", _processName); }
     }
   }
 
@@ -205,7 +212,7 @@ namespace TvEngine.PowerScheduler
   public class GenericStandbyHandler : IStandbyHandler
   {
     #region Variables
-    private int _timeout = 60;
+    private int _timeout = 5;
     private bool _disAllowShutdown = false;
     private DateTime _lastUpdate = DateTime.MinValue;
     private string _handlerName = "GenericStandbyHandler";
@@ -214,17 +221,26 @@ namespace TvEngine.PowerScheduler
     /// <summary>
     /// Create a new instance of a generic standby handler
     /// </summary>
-    /// <param name="standbyIdleTimeout">Configured standby idle timeout</param>
-    public GenericStandbyHandler() : this(5) { }
-    public GenericStandbyHandler(int standbyIdleTimeout)
+    public GenericStandbyHandler()
     {
-      SetIdleTimeout(standbyIdleTimeout);
+      if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
+        GlobalServiceProvider.Instance.Get<IPowerScheduler>().OnPowerSchedulerEvent += new PowerSchedulerEventHandler(GenericStandbyHandler_OnPowerSchedulerEvent);
     }
-    #endregion
-    #region Public methods
-    public void SetIdleTimeout(int standbyIdleTimeout)
+    /// <summary>
+    /// Handles PowerScheduler event messages.
+    /// Used to keep track of changes to the idle timeout
+    /// </summary>
+    /// <param name="args">PowerSchedulerEventArgs for a specific message</param>
+    void GenericStandbyHandler_OnPowerSchedulerEvent(PowerSchedulerEventArgs args)
     {
-      _timeout = standbyIdleTimeout;
+      switch (args.EventType)
+      {
+        case PowerSchedulerEventType.SettingsChanged:
+          PowerSettings settings = args.GetData<PowerSettings>();
+          if (settings != null)
+            _timeout = settings.IdleTimeout;
+          break;
+      }
     }
     #endregion
     #region IStandbyHandler implementation

@@ -75,5 +75,10 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// <param name="source">description of who wants to suspend the system</param>
     /// <param name="force">force the system to suspend (not recommended)</param>
     bool SuspendSystem(string source, bool force);
+
+    /// <summary>
+    /// Provides access to PowerScheduler's settings
+    /// </summary>
+    PowerSettings Settings { get; }
   }
 }

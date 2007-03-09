@@ -43,15 +43,6 @@ using TvLibrary.Interfaces;
 
 namespace TvEngine.PowerScheduler
 {
-  #region Enums
-  public enum ShutdownMode
-  {
-    Suspend = 0,
-    Hibernate = 1,
-    StayOn = 2
-  }
-  #endregion
-
   /// <summary>
   /// PowerScheduler: tvservice plugin which controls power management
   /// </summary>
@@ -117,22 +108,13 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     bool _idle = false;
     /// <summary>
-    /// Indicates if the PowerScheduler is configured to actively put the system into standby after idletimeout
+    /// All PowerScheduler related settings are stored here
     /// </summary>
-    bool _standbyEnabled = false;
+    PowerSettings _settings;
     /// <summary>
     /// Global indicator if system is allowed to enter standby
     /// </summary>
     bool _standbyAllowed = true;
-    /// <summary>
-    /// IdleTimeout in minutes; if system is idle this long (and PowerScheduler is configured to actively put
-    /// the system into standby) the system will go into the configured standby mode (suspend/hibernate)
-    /// </summary>
-    int _idleTimeout = 5;
-    /// <summary>
-    /// Time in seconds to wakeup the system before the eariest wakeup time is due
-    /// </summary>
-    int _preWakeupTime = 60;
     /// <summary>
     /// Indicator if remoting has been setup
     /// </summary>
@@ -147,7 +129,7 @@ namespace TvEngine.PowerScheduler
     {
       _standbyHandlers = new List<IStandbyHandler>();
       _wakeupHandlers = new List<IWakeupHandler>();
-      _clientStandbyHandler = new GenericStandbyHandler(_idleTimeout);
+      _clientStandbyHandler = new GenericStandbyHandler();
       _clientWakeupHandler = new GenericWakeupHandler();
       _lastIdleTime = DateTime.Now;
       _idle = false;
@@ -205,6 +187,7 @@ namespace TvEngine.PowerScheduler
       StartRemoting();
 
       SendPowerSchedulerEvent(PowerSchedulerEventType.Started);
+      LoadSettings();
 
       Log.Info("Powerscheduler: started");
     }
@@ -327,7 +310,7 @@ namespace TvEngine.PowerScheduler
     /// <param name="handlerName">Description of the handler preventing standby</param>
     public void SetStandbyAllowed(bool standbyAllowed, string handlerName)
     {
-      Log.Debug("PowerScheduler.SetStandbyAllowed: {0} {1}", standbyAllowed, handlerName);
+      LogVerbose("PowerScheduler.SetStandbyAllowed: {0} {1}", standbyAllowed, handlerName);
       _clientStandbyHandler.DisAllowShutdown = !standbyAllowed;
       _clientStandbyHandler.HandlerName = handlerName;
     }
@@ -338,7 +321,7 @@ namespace TvEngine.PowerScheduler
     /// <param name="handlerName">Description of the handler causing the system to wakeup</param>
     public void SetNextWakeupTime(DateTime nextWakeupTime, string handlerName)
     {
-      Log.Debug("PowerScheduler.SetNextWakeupTime: {0} {1}", nextWakeupTime, handlerName);
+      LogVerbose("PowerScheduler.SetNextWakeupTime: {0} {1}", nextWakeupTime, handlerName);
       _clientWakeupHandler.Update(nextWakeupTime, handlerName);
     }
     /// <summary>
@@ -347,6 +330,10 @@ namespace TvEngine.PowerScheduler
     public bool IsConnected
     {
       get { return true; }
+    }
+    public IPowerSettings PowerSettings
+    {
+      get { return _settings; }
     }
     #endregion
 
@@ -379,40 +366,101 @@ namespace TvEngine.PowerScheduler
     /// <param name="e"></param>
     private void OnTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
-      UpdateStandbySettings();
-      CheckForStandby();
+      try
+      {
+        LoadSettings();
+        CheckForStandby();
+      }
+      // explicitly catch exceptions and log them otherwise they are ignored by the Timer object
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
     }
 
     /// <summary>
     /// Refreshes the standby configuration
     /// </summary>
-    private void UpdateStandbySettings()
+    private void LoadSettings()
     {
+      int setting;
+      bool changed = false;
+
+      if (_settings == null)
+        _settings = new PowerSettings();
+
       TvBusinessLayer layer = new TvBusinessLayer();
-      // Check if PowerScheduler should actively put the system into standby
-      if (Convert.ToBoolean(layer.GetSetting("PowerSchedulerShutdownActive", "false").Value))
+
+      // Check if PowerScheduler should log verbose debug messages
+      if (_settings.ExtensiveLogging != Convert.ToBoolean(layer.GetSetting("PowerSchedulerExtensiveLogging", "false").Value))
       {
-        if (!_standbyEnabled)
-          Log.Debug("PowerScheduler: entering standby is enabled");
-        _standbyEnabled = true;
+        _settings.ExtensiveLogging = !_settings.ExtensiveLogging;
+        Log.Debug("PowerScheduler: extensive logging enabled: {0}", _settings.ExtensiveLogging);
+        changed = true;
       }
-      else
+      // Check if PowerScheduler should actively put the system into standby
+      if (_settings.ShutdownEnabled != Convert.ToBoolean(layer.GetSetting("PowerSchedulerShutdownActive", "false").Value))
       {
-        if (_standbyEnabled)
-          Log.Debug("PowerScheduler: standby timer is deactivated");
-        _standbyEnabled = false;
+        _settings.ShutdownEnabled = !_settings.ShutdownEnabled;
+        LogVerbose("PowerScheduler: entering standby is enabled: {0}", _settings.ShutdownEnabled);
+        changed = true;
+      }
+      // Check if PowerScheduler should wakeup the system automatically
+      if (_settings.WakeupEnabled != Convert.ToBoolean(layer.GetSetting("PowerSchedulerWakeupActive", "false").Value))
+      {
+        _settings.WakeupEnabled = !_settings.WakeupEnabled;
+        LogVerbose("PowerScheduler: automatic wakeup is enabled: {0}", _settings.WakeupEnabled);
+        changed = true;
+      }
+      // Check if PowerScheduler should force the system into suspend/hibernate
+      if (_settings.ForceShutdown != Convert.ToBoolean(layer.GetSetting("PowerSchedulerForceShutdown", "false").Value))
+      {
+        _settings.ForceShutdown = !_settings.ForceShutdown;
+        LogVerbose("PowerScheduler: force shutdown enabled: {0}", _settings.ForceShutdown);
+        changed = true;
+      }
+      // Check configured PowerScheduler idle timeout
+      setting = Int32.Parse(layer.GetSetting("PowerSchedulerIdleTimeout", "5").Value);
+      if (_settings.IdleTimeout != setting)
+      {
+        _settings.IdleTimeout = setting;
+        LogVerbose("PowerScheduler: idle timeout set to: {0} minutes", _settings.IdleTimeout);
+        changed = true;
+      }
+      // Check configured pre-wakeup time
+      setting = Int32.Parse(layer.GetSetting("PowerSchedulerPreWakeupTime", "60").Value);
+      if (_settings.PreWakeupTime != setting)
+      {
+        _settings.PreWakeupTime = setting;
+        LogVerbose("PowerScheduler: pre-wakeup time set to: {0} seconds", _settings.PreWakeupTime);
+        changed = true;
       }
       // Check if check interval needs to be updated
-      int checkInterval = Int32.Parse(layer.GetSetting("PowerSchedulerCheckInterval", "60").Value);
-      checkInterval *= 1000;
-      if (_timer.Interval != checkInterval)
-        _timer.Interval = checkInterval;
+      setting = Int32.Parse(layer.GetSetting("PowerSchedulerCheckInterval", "60").Value);
+      if (_settings.CheckInterval != setting)
+      {
+        _settings.CheckInterval = setting;
+        LogVerbose("Check interval set to {0} seconds", _settings.CheckInterval);
+        setting *= 1000;
+        _timer.Interval = setting;
+        changed = true;
+      }
+      // Check configured shutdown mode
+      setting = Int32.Parse(layer.GetSetting("PowerSchedulerShutdownMode", "2").Value);
+      if ((int)_settings.ShutdownMode != setting)
+      {
+        _settings.ShutdownMode = (ShutdownMode)setting;
+        LogVerbose("Shutdown mode set to {0}", _settings.ShutdownMode);
+        changed = true;
+      }
 
-      // Update idleTimeout
-      _idleTimeout = Int32.Parse(layer.GetSetting("PowerSchedulerIdleTimeout", "5").Value);
-
-      // Update preWakeupTime
-      _preWakeupTime = Int32.Parse(layer.GetSetting("PowerSchedulerPreWakeupTime", "60").Value);
+      // Send message in case any setting has changed
+      if (changed)
+      {
+        PowerSchedulerEventArgs args = new PowerSchedulerEventArgs(PowerSchedulerEventType.SettingsChanged);
+        args.SetData<PowerSettings>(_settings.Clone());
+        SendPowerSchedulerEvent(args);
+      }
     }
 
     /// <summary>
@@ -420,7 +468,7 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     private void CheckForStandby()
     {
-      if (!_standbyEnabled)
+      if (!_settings.ShutdownEnabled)
         return;
       if (SystemIdle)
       {
@@ -433,7 +481,7 @@ namespace TvEngine.PowerScheduler
         }
         else
         {
-          if (_lastIdleTime <= DateTime.Now.AddMinutes(-_idleTimeout))
+          if (_lastIdleTime <= DateTime.Now.AddMinutes(-_settings.IdleTimeout))
           {
             // Idle timeout expired - suspend/hibernate system
             Log.Info("PowerScheduler: System idle since {0} - initiate suspend/hibernate", _lastIdleTime);
@@ -510,9 +558,7 @@ namespace TvEngine.PowerScheduler
     /// <returns>bool indicating whether or not the request was honoured</returns>
     private bool EnterSuspendOrHibernate()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      bool force = bool.Parse(layer.GetSetting("PowerSchedulerForceShutdown", "false").Value);
-      return EnterSuspendOrHibernate(force);
+      return EnterSuspendOrHibernate(_settings.ForceShutdown);
     }
 
     /// <summary>
@@ -526,21 +572,19 @@ namespace TvEngine.PowerScheduler
         return false;
       // determine standby mode
       PowerState state = PowerState.Suspend;
-      TvBusinessLayer layer = new TvBusinessLayer();
-      int standbyMode = Int32.Parse(layer.GetSetting("PowerSchedulerShutdownMode", "2").Value);
-      switch (standbyMode)
+      switch (_settings.ShutdownMode)
       {
-        case (int)ShutdownMode.Suspend:
+        case ShutdownMode.Suspend:
           state = PowerState.Suspend;
           break;
-        case (int)ShutdownMode.Hibernate:
+        case ShutdownMode.Hibernate:
           state = PowerState.Hibernate;
           break;
-        case (int)ShutdownMode.StayOn:
+        case ShutdownMode.StayOn:
           Log.Debug("PowerScheduler: Standby requested but system is configured to stay on");
           return false;
         default:
-          Log.Error("PowerScheduler: unknown shutdown mode: {0}", standbyMode);
+          Log.Error("PowerScheduler: unknown shutdown mode: {0}", _settings.ShutdownMode);
           return false;
       }
 
@@ -557,12 +601,11 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     private void SetWakeupTimer()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      if (Convert.ToBoolean(layer.GetSetting("PowerSchedulerWakeupActive", "false").Value))
+      if (_settings.WakeupEnabled)
       {
         // determine next wakeup time from IWakeupHandlers
         DateTime nextWakeup = NextWakeupTime;
-        if (nextWakeup < DateTime.MaxValue.AddSeconds(-_preWakeupTime) && nextWakeup > DateTime.Now)
+        if (nextWakeup < DateTime.MaxValue.AddSeconds(-_settings.PreWakeupTime) && nextWakeup > DateTime.Now)
         {
           TimeSpan delta = nextWakeup.Subtract(DateTime.Now);
           _wakeupTimer.SecondsToWait = delta.TotalSeconds;
@@ -575,8 +618,8 @@ namespace TvEngine.PowerScheduler
         }
       }
     }
-    #endregion
 
+    #region Message handling
     /// <summary>
     /// Sends the given PowerScheduler event type to receivers 
     /// </summary>
@@ -628,6 +671,21 @@ namespace TvEngine.PowerScheduler
         }
       }
     }
+    #endregion
+
+    #region Logging wrapper methods
+    private void LogVerbose(string msg)
+    {
+      LogVerbose(msg, null);
+    }
+    private void LogVerbose(string format, params object[] args)
+    {
+      if (_settings.ExtensiveLogging)
+        Log.Debug(format, args);
+    }
+    #endregion
+
+    #endregion
 
     #region Private properties
 
@@ -641,10 +699,10 @@ namespace TvEngine.PowerScheduler
       {
         foreach (IStandbyHandler handler in _standbyHandlers)
         {
-          Log.Debug("PowerScheduler.SystemIdle: inspecting handler {0}", handler.HandlerName);
+          LogVerbose("PowerScheduler.SystemIdle: inspecting handler {0}", handler.HandlerName);
           if (handler.DisAllowShutdown)
           {
-            Log.Debug("PowerScheduler.SystemIdle: handler {0} wants to prevents standby", handler.HandlerName);
+            LogVerbose("PowerScheduler.SystemIdle: handler {0} wants to prevents standby", handler.HandlerName);
             if (!_idle && !_lastStandbyPreventer.Equals(handler.HandlerName))
             {
               _lastStandbyPreventer = handler.HandlerName;
@@ -667,19 +725,19 @@ namespace TvEngine.PowerScheduler
       get
       {
         DateTime nextWakeupTime = DateTime.MaxValue;
-        DateTime earliestWakeupTime = _lastIdleTime.AddMinutes(_idleTimeout);
+        DateTime earliestWakeupTime = _lastIdleTime.AddMinutes(_settings.IdleTimeout);
         Log.Debug("PowerScheduler: earliest wakeup time: {0}", earliestWakeupTime);
         foreach (IWakeupHandler handler in _wakeupHandlers)
         {
           DateTime nextTime = handler.GetNextWakeupTime(earliestWakeupTime);
-          Log.Debug("PowerScheduler.NextWakeupTime: inspecting handler:{0} time:{1}", handler.HandlerName, nextTime);
+          LogVerbose("PowerScheduler.NextWakeupTime: inspecting handler:{0} time:{1}", handler.HandlerName, nextTime);
           if (nextTime < nextWakeupTime)
           {
             Log.Debug("PowerScheduler: found next wakeup time {0} by {1}", nextTime, handler.HandlerName);
             nextWakeupTime = nextTime;
           }
         }
-        nextWakeupTime = nextWakeupTime.AddSeconds(-_preWakeupTime);
+        nextWakeupTime = nextWakeupTime.AddSeconds(-_settings.PreWakeupTime);
         Log.Debug("PowerScheduler: next wakeup time: {0}", nextWakeupTime);
         return nextWakeupTime;
       }
@@ -704,6 +762,10 @@ namespace TvEngine.PowerScheduler
         }
         return _powerScheduler;
       }
+    }
+    public PowerSettings Settings
+    {
+      get { return _settings; }
     }
     #endregion
   }

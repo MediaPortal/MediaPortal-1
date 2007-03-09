@@ -55,7 +55,7 @@ namespace MediaPortal.Plugins.Process
         homeOnlyCheckBox.Checked = reader.GetValueAsBool("psclientplugin", "homeonly", true);
         extLogCheckBox.Checked = reader.GetValueAsBool("psclientplugin", "extensivelogging", false);
         checkNumericUpDown.Value = reader.GetValueAsInt("psclientplugin", "checkinterval", 25);
-        shutModeComboBox.SelectedItem = reader.GetValueAsString("psclientplugin", "shutdownmode", "suspend");
+        shutModeComboBox.SelectedIndex = reader.GetValueAsInt("psclientplugin", "shutdownmode", 2);
         idleNumericUpDown.Value = reader.GetValueAsInt("psclientplugin", "idletimeout", 5);
         forceCheckBox.Checked = reader.GetValueAsBool("psclientplugin", "forceshutdown", false);
         wakeupNumericUpDown.Value = reader.GetValueAsInt("psclientplugin", "prewakeup", 60);
@@ -69,7 +69,7 @@ namespace MediaPortal.Plugins.Process
         writer.SetValueAsBool("psclientplugin", "homeonly", homeOnlyCheckBox.Checked);
         writer.SetValueAsBool("psclientplugin", "extensivelogging", extLogCheckBox.Checked);
         writer.SetValue("psclientplugin", "checkinterval", checkNumericUpDown.Value);
-        writer.SetValue("psclientplugin", "shutdownmode", shutModeComboBox.SelectedItem.ToString());
+        writer.SetValue("psclientplugin", "shutdownmode", shutModeComboBox.SelectedIndex.ToString());
         writer.SetValue("psclientplugin", "idletimeout", idleNumericUpDown.Value);
         writer.SetValueAsBool("psclientplugin", "forceshutdown", forceCheckBox.Checked);
         writer.SetValue("psclientplugin", "prewakeup", wakeupNumericUpDown.Value);

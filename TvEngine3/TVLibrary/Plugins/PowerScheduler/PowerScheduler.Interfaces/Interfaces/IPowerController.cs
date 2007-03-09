@@ -63,5 +63,10 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// Indicates whether or not we're connected to the PowerScheduler power control interfaces
     /// </summary>
     bool IsConnected { get; }
+
+    /// <summary>
+    /// Provides access to PowerScheduler's settings
+    /// </summary>
+    IPowerSettings PowerSettings { get; }
   }
 }
