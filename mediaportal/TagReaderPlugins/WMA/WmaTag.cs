@@ -575,7 +575,9 @@ namespace Tag.WMA
         WindowsMediaWrapper.CreateEditor(out WMMetaDataEditor);
         WMMetaDataEditor.Open(AudioFilePath);
         WMHeaderInfo = (IWMHeaderInfo3)WMMetaDataEditor;
-        WMMetaDataEditor.Close();
+        // HW: Removed cause it caused "NS_E_FILE_WRITE 0xC00D0018L Error writing to a file." Exceptions
+        //     The Flush() calls close the file without needing write access.
+        // WMMetaDataEditor.Close();
         WMHeaderInfo.GetAttributeCount(0xFFFF, out AtrributeCount);
 
         GetAttributes();
@@ -604,14 +606,18 @@ namespace Tag.WMA
         if (WMMetaDataEditor != null)
         {
           WMMetaDataEditor.Flush();
-          WMMetaDataEditor.Close();
+          // HW: Removed cause it caused "NS_E_FILE_WRITE 0xC00D0018L Error writing to a file." Exceptions
+          //     The Flush() calls close the file without needing write access.
+          //WMMetaDataEditor.Close();
           WMMetaDataEditor = null;
         }
 
         if (WMHeaderInfo != null)
         {
           ((IWMMetadataEditor2)WMHeaderInfo).Flush();
-          ((IWMMetadataEditor2)WMHeaderInfo).Close();
+          // HW: Removed cause it caused "NS_E_FILE_WRITE 0xC00D0018L Error writing to a file." Exceptions
+          //     The Flush() calls close the file without needing write access.
+          //((IWMMetadataEditor2)WMHeaderInfo).Close();
           WMHeaderInfo = null;
         }
       }
