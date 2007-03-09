@@ -223,6 +223,17 @@ public partial class TvGuide : System.Web.UI.Page
     cellBase.Controls.Add(subTable);
     divGuide.Controls.Add(cellBase);
 #endif
+    if (programs.Count == 0)
+    {
+      Program p = new Program(channel.IdChannel, now, end, "No epg available", "", "", false);
+      programs.Add(p);
+    }
+    Program last = programs[programs.Count - 1];
+    if (last.EndTime < end)
+    {
+      Program p = new Program(channel.IdChannel, last.EndTime, end, "No epg available", "", "", false);
+      programs.Add(p);
+    }
     AddPrograms(nr, now, end, row, programs);
   }
 
