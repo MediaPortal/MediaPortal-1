@@ -41,7 +41,7 @@ namespace TvLibrary.Implementations.DVB
     DigitalEverywhere _digitalEveryWhere = null;
     TechnoTrend _technoTrend = null;
     Twinhan _twinhan = null;
-    KNC _knc = null;
+//    KNC _knc = null;
     Hauppauge _hauppauge = null;
     DiSEqCMotor _diSEqCMotor = null;
     Dictionary<int, ConditionalAccessContext> _mapSubChannels;
@@ -59,7 +59,7 @@ namespace TvLibrary.Implementations.DVB
       {
         _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
         if (tunerFilter == null && analyzerFilter == null) return;
-
+        /*
         Log.Log.WriteFile("Check for KNC");
         _knc = new KNC(tunerFilter, analyzerFilter);
         if (_knc.IsKNC)
@@ -67,7 +67,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("Knc card detected");
           return;
         }
-        _knc = null;
+        _knc = null;*/
 
         Log.Log.WriteFile("Check for Digital Everywhere");
         _digitalEveryWhere = new DigitalEverywhere(tunerFilter, analyzerFilter);
@@ -174,10 +174,10 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
-        if (_knc != null)
+        /*if (_knc != null)
         {
           return _knc.IsCamReady();
-        }
+        }*/
         if (_digitalEveryWhere != null)
         {
           _digitalEveryWhere.IsCamReady();
@@ -282,12 +282,12 @@ namespace TvLibrary.Implementations.DVB
         context.PMTLength = pmtLength;
         context.AudioPid = audioPid;
         context.ServiceId = channel.ServiceId;
-
-        if (_knc != null)
-        {
-          return _knc.SendPMT(PMT, pmtLength);
-          // return _technoTrend.SendPMT(PMT, pmtLength);
-        }
+        /*
+                if (_knc != null)
+                {
+                  return _knc.SendPMT(PMT, pmtLength);
+                  // return _technoTrend.SendPMT(PMT, pmtLength);
+                }*/
         if (_digitalEveryWhere != null)
         {
           return _digitalEveryWhere.SendPMTToFireDTV(_mapSubChannels);
@@ -333,11 +333,12 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
+        /*
         if (_knc != null)
         {
           _knc.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
-        }
+        }*/
         if (_digitalEveryWhere != null)
         {
           _digitalEveryWhere.SendDiseqcCommand(parameters, channel);
