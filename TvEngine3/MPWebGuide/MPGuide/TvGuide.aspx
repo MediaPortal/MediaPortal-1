@@ -214,57 +214,57 @@
                       </tr>
                       <tr>
                         <td class="small_button_td" id="buttonDontRecord" onmouseover="handleButton('buttonDontRecord',true,'small_button')"
-                          onmouseout="handleButton('buttonDontRecord',false,'small_button')">
-                          <span class="small_button_text_off" id="text_buttonDontRecord" onclick="DoDontRecord(true)">
+                          onmouseout="handleButton('buttonDontRecord',false,'small_button')" onclick="DoDontRecord(true)">
+                          <span class="small_button_text_off" id="text_buttonDontRecord">
                             Dont record </span>
                           <img id="over_image_buttonDontRecord" style="visibility: hidden" src="images/small-button-over.gif"></td>
                       </tr>
                       <tr>
                         <td class="small_button_td" id="buttonRecordOnce" onmouseover="handleButton('buttonRecordOnce',true,'small_button')"
-                          onmouseout="handleButton('buttonRecordOnce',false,'small_button')">
-                          <span class="small_button_text_off" id="text_buttonRecordOnce" onclick="DoRecordProgram(0)">
+                          onmouseout="handleButton('buttonRecordOnce',false,'small_button')" onclick="DoRecordProgram(0)">
+                          <span class="small_button_text_off" id="text_buttonRecordOnce">
                             Once </span>
                           <img id="over_image_buttonRecordOnce" style="visibility: hidden" src="images/small-button-over.gif"></td>
                       </tr>
                       <tr>
                         <td class="small_button_td" id="buttonRecordDaily" onmouseover="handleButton('buttonRecordDaily',true,'small_button')"
-                          onmouseout="handleButton('buttonRecordDaily',false,'small_button')">
-                          <span class="small_button_text_off" id="text_buttonRecordDaily" onclick="DoRecordProgram(1)">
+                          onmouseout="handleButton('buttonRecordDaily',false,'small_button')" onclick="DoRecordProgram(1)">
+                          <span class="small_button_text_off" id="text_buttonRecordDaily">
                             Daily </span>
                           <img id="over_image_buttonRecordDaily" style="visibility: hidden" src="images/small-button-over.gif"></td>
                       </tr>
                       <tr>
                         <td class="small_button_td" id="buttonRecordWeekly" onmouseover="handleButton('buttonRecordWeekly',true,'small_button')"
-                          onmouseout="handleButton('buttonRecordWeekly',false,'small_button')">
-                          <span class="small_button_text_off" id="text_buttonRecordWeekly" onclick="DoRecordProgram(2)">
+                          onmouseout="handleButton('buttonRecordWeekly',false,'small_button')" onclick="DoRecordProgram(2)">
+                          <span class="small_button_text_off" id="text_buttonRecordWeekly">
                             weekly </span>
                           <img id="over_image_buttonRecordWeekly" style="visibility: hidden" src="images/small-button-over.gif"></td>
                       </tr>
                       <tr>
                         <td class="small_button_td" id="buttonRecordMonFri" onmouseover="handleButton('recordworking_button',true,'small_button')"
-                          onmouseout="handleButton('recordworking_button',false,'small_button')">
-                          <span class="small_button_text_off" id="text_header_recordworking_button" onclick="DoRecordProgram(6)">
+                          onmouseout="handleButton('recordworking_button',false,'small_button')" onclick="DoRecordProgram(6)">
+                          <span class="small_button_text_off" id="text_header_recordworking_button">
                             mon-fri </span>
                           <img id="over_image_recordworking_button" style="visibility: hidden" src="images/small-button-over.gif"></td>
                       </tr>
                       <tr>
                         <td class="small_button_td" id="buttonRecordWeekends" onmouseover="handleButton('recordweekends_button',true,'small_button')"
-                          onmouseout="handleButton('recordweekends_button',false,'small_button')">
-                          <span class="small_button_text_off" id="text_header_recordweekends_button" onclick="DoRecordProgram(5)">
+                          onmouseout="handleButton('recordweekends_button',false,'small_button')" onclick="DoRecordProgram(5)">
+                          <span class="small_button_text_off" id="text_header_recordweekends_button">
                             Weekends</span>
                           <img id="over_image_recordweekends_button" style="visibility: hidden" src="images/small-button-over.gif"></td>
                       </tr>
                       <tr>
                         <td class="small_button_td" id="buttonRecordThis" onmouseover="handleButton('recordalways_button',true,'small_button')"
-                          onmouseout="handleButton('recordalways_button',false,'small_button')">
-                          <span class="small_button_text_off" id="text_header_recordalways_button" onclick="DoRecordProgram(3)">
+                          onmouseout="handleButton('recordalways_button',false,'small_button')" onclick="DoRecordProgram(3)">
+                          <span class="small_button_text_off" id="text_header_recordalways_button" >
                             this channel</span>
                           <img id="over_image_recordalways_button" style="visibility: hidden" src="images/small-button-over.gif"></td>
                       </tr>
                       <tr>
                         <td class="small_button_td" id="buttonRecordAll" onmouseover="handleButton('recordalways2_button',true,'small_button')"
-                          onmouseout="handleButton('recordalways2_button',false,'small_button')">
-                          <span class="small_button_text_off" id="text_recordalways2_button" onclick="DoRecordProgram(4)">
+                          onmouseout="handleButton('recordalways2_button',false,'small_button')" onclick="DoRecordProgram(4)">
+                          <span class="small_button_text_off" id="text_recordalways2_button" >
                             every channel </span>
                           <img id="over_image_recordalways2_button" style="visibility: hidden" src="images/small-button-over.gif"></td>
                       </tr>
