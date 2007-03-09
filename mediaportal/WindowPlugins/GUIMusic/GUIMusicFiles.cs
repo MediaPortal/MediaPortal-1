@@ -1395,7 +1395,6 @@ namespace MediaPortal.GUI.Music
           list.Add(pItem);
           m_bScan = true;
           OnRetrieveMusicInfo(ref list);
-          m_database.CheckVariousArtistsAndCoverArt();
           m_bScan = false;
 
           PlayListItem playlistItem = new PlayListItem();
@@ -2179,28 +2178,15 @@ namespace MediaPortal.GUI.Music
       else
         AddItemToPlayList(pItem, ref playList);
 
+      // We might have added a lot of new songs to the DB, so the Various Artist count needs to be updated.
+      m_database.CheckVariousArtistsAndCoverArt();
+
       if (playList.Count > 0)
       {
-        //SV
-        //playlistPlayer.Reset();
-
         if (!g_Player.IsMusic || !UsingInternalMusicPlayer)
           playlistPlayer.Reset();
 
         playlistPlayer.Play(playStartIndex);
-
-        //if (PlayNowJumpToWindowID != -1)
-        //{
-        //    if (PlayNowJumpToWindowID == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
-        //    {
-        //        GUIMusicPlayingNow nowPlayingWnd = (GUIMusicPlayingNow)GUIWindowManager.GetWindow(PlayNowJumpToWindowID);
-
-        //        if (nowPlayingWnd != null)
-        //            nowPlayingWnd.MusicWindow = this;
-        //    }
-
-        //    GUIWindowManager.ActivateWindow(PlayNowJumpToWindowID);
-        //}
 
         if (!g_Player.Playing)
         {
