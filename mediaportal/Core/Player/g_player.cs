@@ -1082,7 +1082,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (_player == null) return 0;
+        if (_player == null) return -1;
         return _player.Volume;
       }
       set

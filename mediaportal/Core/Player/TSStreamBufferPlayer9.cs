@@ -603,7 +603,7 @@ namespace MediaPortal.Player
           hr = mp.SetSyncSource(null);
           hr = mp.SetSyncSource(clock);
           //Log.Info("TSStreamBufferPlayer9:set reference clock:{0:X}", hr);
-
+          _basicAudio = (IBasicAudio)_graphBuilder;
           //_mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
         }
 

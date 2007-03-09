@@ -98,6 +98,7 @@ public class MediaPortalApp : D3DApp, IRender
   private bool _suspended = false;
   private bool _onResumeRunning = false;
   protected string _dateFormat = String.Empty;
+  private int m_iVolume = -1;
 #if AUTOUPDATE
   string m_strNewVersion = "";
     bool m_bNewVersionAvailable = false;
@@ -1689,6 +1690,9 @@ public class MediaPortalApp : D3DApp, IRender
 
             Win32API.EnableStartBar(true);
             Win32API.ShowStartBar(true);
+            m_iVolume = g_Player.Volume;
+            if(g_Player.IsTV)
+              g_Player.Volume = 0;
             return;
           }
 
@@ -1711,6 +1715,7 @@ public class MediaPortalApp : D3DApp, IRender
           {
             Log.Info("Main: Restore MP by action");
             Restore();
+            g_Player.Volume = m_iVolume;
           }
           return;
         //reboot pc
@@ -2438,7 +2443,15 @@ public class MediaPortalApp : D3DApp, IRender
     }
   }
 
+  protected override void Restore_OnClick(Object sender, EventArgs e)
+  {
+    if (m_iVolume > 0 && g_Player.IsTV)
+      g_Player.Volume = m_iVolume;
+
+    Restore();
+  }
   #endregion
+  
 
 #if AUTOUPDATE
   private void MediaPortal_Closed(object sender, EventArgs e)
@@ -2687,6 +2700,9 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Info("Main: Setting focus");
         if (WindowState == FormWindowState.Minimized)
         {
+          if (m_iVolume > 0 && g_Player.IsTV)
+            g_Player.Volume = m_iVolume;
+
           Restore();
         }
         else

@@ -232,6 +232,9 @@ namespace MediaPortal.Player
           hr = mp.SetSyncSource(clock);
         }
 
+        // Set the IBasicAudioInterface
+
+        _basicAudio = (IBasicAudio)_graphBuilder;
 
         //        Log.Info("StreamBufferPlayer9:SetARMode");
         //        DirectShowUtil.SetARMode(_graphBuilder,AspectRatioMode.Stretched);

@@ -2388,7 +2388,7 @@ namespace MediaPortal
       contextMenu.MenuItems.Add("Exit", new EventHandler(this.Exit_OnClick));
     }
 
-    protected void Restore_OnClick(Object sender, EventArgs e)
+    protected virtual void Restore_OnClick(Object sender, EventArgs e)
     {
       Restore();
     }
