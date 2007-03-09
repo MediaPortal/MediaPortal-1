@@ -217,7 +217,7 @@ namespace MediaPortal.Plugins.Process
           }
           changed = true;
 
-          // From now on, only refresh the required settings on subsequent LoadSetings() calls
+          // From now on, only refresh the required settings on subsequent LoadSettings() calls
           _refreshSettings = true;
         }
 
@@ -254,7 +254,7 @@ namespace MediaPortal.Plugins.Process
           if (_settings.IdleTimeout != intSetting)
           {
             _settings.IdleTimeout = intSetting;
-            LogVerbose("idle timeout set to: {0} minutes", intSetting);
+            LogVerbose("idle timeout set to: {0} minutes by tvserver", intSetting);
             changed = true;
           }
         }
@@ -265,7 +265,7 @@ namespace MediaPortal.Plugins.Process
           if (_settings.IdleTimeout != intSetting)
           {
             _settings.IdleTimeout = intSetting;
-            LogVerbose("idle timeout set to: {0} minutes", intSetting);
+            LogVerbose("idle timeout locally set to: {0} minutes", intSetting);
             changed = true;
           }
         }
@@ -678,6 +678,7 @@ namespace MediaPortal.Plugins.Process
             SendPowerSchedulerEvent(PowerSchedulerEventType.ResumedFromStandby);
             break;
           case PBT_APMSUSPEND:
+            CheckWakeupHandlers();
             SendPowerSchedulerEvent(PowerSchedulerEventType.EnteringStandby, false);
             _timer.Enabled = false;
             Reset();
@@ -696,7 +697,7 @@ namespace MediaPortal.Plugins.Process
     private void LogVerbose(string format, params object[] args)
     {
       if (_settings.ExtensiveLogging)
-        Log.Debug(format, args);
+        Log.Debug("PSClientPlugin: " + format, args);
     }
     #endregion
   }

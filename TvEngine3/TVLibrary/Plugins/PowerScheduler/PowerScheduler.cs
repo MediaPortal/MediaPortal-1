@@ -513,9 +513,9 @@ namespace TvEngine.PowerScheduler
           Log.Debug("PowerScheduler: System wants to enter standby");
           bool idle = SystemIdle;
           Log.Debug("PowerScheduler: System idle: {0}", idle);
+          SetWakeupTimer();
           if (idle)
           {
-            SetWakeupTimer();
             SendPowerSchedulerEvent(PowerSchedulerEventType.EnteringStandby, false);
             _timer.Enabled = false;
           }
