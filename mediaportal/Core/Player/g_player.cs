@@ -1430,7 +1430,9 @@ namespace MediaPortal.Player
       get
       {
         if (_player == null) return false;
-        if (_currentMedia == MediaType.Video) return true;
+        if (_currentMedia == MediaType.Video) 
+          return true;
+        
         return false;
       }
     }

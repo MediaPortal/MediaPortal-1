@@ -1690,9 +1690,11 @@ public class MediaPortalApp : D3DApp, IRender
 
             Win32API.EnableStartBar(true);
             Win32API.ShowStartBar(true);
-            m_iVolume = g_Player.Volume;
-            if(g_Player.IsTV)
+            if(g_Player.IsVideo || g_Player.IsTV)
+            {
+              m_iVolume = g_Player.Volume;
               g_Player.Volume = 0;
+            }
             return;
           }
 
@@ -1715,7 +1717,9 @@ public class MediaPortalApp : D3DApp, IRender
           {
             Log.Info("Main: Restore MP by action");
             Restore();
-            g_Player.Volume = m_iVolume;
+
+            if((g_Player.IsVideo || g_Player.IsTV) && m_iVolume > 0)
+              g_Player.Volume = m_iVolume;
           }
           return;
         //reboot pc
@@ -2445,7 +2449,7 @@ public class MediaPortalApp : D3DApp, IRender
 
   protected override void Restore_OnClick(Object sender, EventArgs e)
   {
-    if (m_iVolume > 0 && g_Player.IsTV)
+    if (m_iVolume > 0 && (g_Player.IsVideo || g_Player.IsTV))
       g_Player.Volume = m_iVolume;
 
     Restore();
@@ -2700,7 +2704,7 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Info("Main: Setting focus");
         if (WindowState == FormWindowState.Minimized)
         {
-          if (m_iVolume > 0 && g_Player.IsTV)
+          if (m_iVolume > 0 &&(g_Player.IsVideo || g_Player.IsTV))
             g_Player.Volume = m_iVolume;
 
           Restore();

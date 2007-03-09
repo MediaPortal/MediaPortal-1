@@ -702,6 +702,7 @@ namespace MediaPortal.Player
       get { return m_iVolume; }
       set
       {
+        
         if (m_iVolume != value)
         {
           m_iVolume = value;
@@ -711,9 +712,11 @@ namespace MediaPortal.Player
             {
               // Divide by 100 to get equivalent decibel value. For example, –10,000 is –100 dB. 
               float fPercent = (float)m_iVolume / 100.0f;
-              int iVolume = (int)((DirectShowVolume.VOLUME_MAX - DirectShowVolume.VOLUME_MIN) * fPercent);
-              basicAudio.put_Volume((iVolume - DirectShowVolume.VOLUME_MIN));
+              int iVolume = (int)(5000.0f * fPercent);
+              basicAudio.put_Volume((iVolume - 5000));
             }
+         
+          
           }
         }
       }
@@ -816,6 +819,8 @@ namespace MediaPortal.Player
         return (_mediaType==g_Player.MediaType.TV||_mediaType==g_Player.MediaType.Recording||_mediaType==g_Player.MediaType.Video); 
       }
     }
+
+  
 
     public override bool Ended
     {
