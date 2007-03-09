@@ -1,8 +1,8 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="ServerStatus.aspx.cs" Inherits="ServerStatus" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
+<head id="Head1" runat="server">
   <title>Mediaportal Web guide</title>
 
   <script src="Script/script.js" type="text/javascript"></script>
@@ -13,7 +13,7 @@
   <form id="form1" runat="server">
     <div style="height: 100%">
       <img style="z-index: -1; width: 100%; position: absolute; height: 100%" height="100%"
-        src="images/bg.jpg" width="100%" height="100%">
+        src="images/bg.jpg" width="100%" >
       <table style="height: 100%;" cellspacing="0" cellpadding="0" width="980" align="center"
         border="0">
         <tbody>
@@ -120,11 +120,7 @@
                               <span class="header_button_text_off" id="text_header_recordings_button" href="recordings.aspx">
                                 Recordings </span>
                               <img id="over_image_header_recordings_button" style="visibility: hidden" src="images/menu-over.gif"></td>
-                            <td class="header_button_td" id="td_header_status_button" onmouseover="handleButton('header_status_button',true,'header_button')"
-                              onclick="showWait();document.location='ServerStatus.aspx'" onmouseout="handleButton('header_status_button',false,'header_button')">
-                              <span class="header_button_text_off" id="text_header_status_button" href="recordings.aspx">
-                                Status </span>
-                              <img id="over_image_header_status_button" style="visibility: hidden" src="images/menu-over.gif"></td>
+                            
                             <td width="2">
                               <img height="21" hspace="10" src="images/divider.gif" width="2"></td>
                           </tr>
@@ -187,40 +183,32 @@
                                     style="cursor: pointer; position: relative">Recordings</span></a>
                                 <img id="over_image_recordings_button" style="visibility: hidden" src="images/main-button-over.gif"></td>
                             </tr>
-                            <tr>
-                              <td class="main_button_td" id="td_status_button" onmouseover="handleButton('status_button',true,'main_button')"
-                                onclick="showWait();document.location='recordings.aspx'" onmouseout="handleButton('status_button',false,'main_button')">
-                                <a class="main_button_text_off" id="ctl00_cph_status_button_hlink" style="width: 175px"
-                                  onclick="" href="serverStatus.aspx"><span class="main_button_text_off" id="text_status_button"
-                                    style="cursor: pointer; position: relative">Status</span></a>
-                                <img id="over_image_status_button" style="visibility: hidden" src="images/main-button-over.gif"></td>
-                            </tr>
                           </tbody>
                         </table>
                       </td>
                       <td valign="middle">
                         <div style="height: 100%">
-                          <table cellspacing="0" cellpadding="0" width="526" border="0" id="tableRecordings"
+                          <table cellspacing="0" cellpadding="0" width="526" border="0" id="tableStatus"
                             runat="server">
                             <tbody>
                               <tr>
                                 <td class="recording_list_top">
                                   <div style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px; padding-top: 4px;
                                     width: 100%;">
-                                    <span class="info_box_title_text">Recent Recordings</span>
+                                    <span class="info_box_title_text">Server status</span>
                                   </div>
                                 </td>
                               </tr>
                             </tbody>
                           </table>
-                          <table cellspacing="0" cellpadding="0" width="526" border="0" id="tableSchedules"
+                          <table cellspacing="0" cellpadding="0" width="526" border="0" id="tableClients"
                             runat="server">
                             <tbody>
                               <tr>
                                 <td class="recording_list_top">
                                   <div style="padding-right: 4px; padding-left: 4px; padding-bottom: 4px; padding-top: 4px;
                                     width: 100%;">
-                                    <span class="info_box_title_text">Scheduled recordings</span>
+                                    <span class="info_box_title_text">Streaming clients</span>
                                   </div>
                                 </td>
                               </tr>

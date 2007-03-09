@@ -129,7 +129,6 @@ namespace WebGuide
     }
     void UpdateTvServer()
     {
-      return;
       IList servers = TvDatabase.Server.ListAll();
       foreach (TvDatabase.Server server in servers)
       {
