@@ -41,7 +41,7 @@ namespace TvService
         Log.WriteFile("postprocessor: cannot locate batchfile:{0}", batchFile);
         return;
       }
-      string strParams = String.Format("{0} {1}",recording.FileName, recording.Channel);
+      string strParams = String.Format("\"{0}\" \"{1}\"", recording.FileName, recording.Channel.Name);
       StartProcess(batchFile, strParams, false, true);
 
     }
