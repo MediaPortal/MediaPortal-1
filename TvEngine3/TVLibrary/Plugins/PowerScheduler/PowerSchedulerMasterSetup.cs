@@ -67,6 +67,9 @@ namespace TvEngine.PowerScheduler
 
       setting = _layer.GetSetting("PowerSchedulerCheckInterval", "60");
       numericUpDown3.Value = Convert.ToDecimal(setting.Value);
+
+      setting = _layer.GetSetting("PowerSchedulerExtensiveLogging", "false");
+      checkBox4.Checked = Convert.ToBoolean(setting.Value);
     }
 
     private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -123,14 +126,14 @@ namespace TvEngine.PowerScheduler
     private void numericUpDown3_ValueChanged(object sender, EventArgs e)
     {
       Setting setting = _layer.GetSetting("PowerSchedulerCheckInterval", "60");
-      setting.Value = numericUpDown2.Value.ToString();
+      setting.Value = numericUpDown3.Value.ToString();
       setting.Persist();
     }
 
     private void checkBox4_CheckedChanged(object sender, EventArgs e)
     {
       Setting setting = _layer.GetSetting("PowerSchedulerExtensiveLogging", "false");
-      if (checkBox3.Checked)
+      if (checkBox4.Checked)
         setting.Value = "true";
       else
         setting.Value = "false";
