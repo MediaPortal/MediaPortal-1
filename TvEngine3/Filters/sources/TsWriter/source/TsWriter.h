@@ -30,7 +30,6 @@
 #include "cagrabber.h"
 #include "technotrend.h"
 #include "tschannel.h"
-#include "knc.h"
 
 #include <map>
 #include <vector>
@@ -141,7 +140,6 @@ private:
 		CChannelScan*   m_pChannelScanner;
 		CEpgScanner*		m_pEpgScanner;
     CTechnotrend*   m_pTechnoTrend;
-    CKnc*   m_pKNC;
     vector<CTsChannel*> m_vecChannels;
     typedef vector<CTsChannel*>::iterator ivecChannels;
 };

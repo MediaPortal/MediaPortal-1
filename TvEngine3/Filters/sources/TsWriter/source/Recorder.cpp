@@ -61,8 +61,8 @@ void CRecorder::OnTsPacket(byte* tsPacket)
 	if (m_bRecording)
 	{
 	  m_tsHeader.Decode(tsPacket);
-    //if (m_tsHeader.SyncByte!=0x47) return;
-	  //if (m_tsHeader.TransportError) return;
+    if (m_tsHeader.SyncByte!=0x47) return;
+	  if (m_tsHeader.TransportError) return;
 	  CEnterCriticalSection enter(m_section);
     if (m_timeShiftMode==ProgramStream)
     {
