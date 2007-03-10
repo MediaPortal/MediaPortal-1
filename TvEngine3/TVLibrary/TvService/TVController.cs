@@ -93,11 +93,6 @@ namespace TvService
     /// </summary>
     public TVController()
     {
-      if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
-      {
-        GlobalServiceProvider.Instance.Remove<ITvServerEvent>();
-      }
-      GlobalServiceProvider.Instance.Add<ITvServerEvent>(this);
       if (Init() == false)
       {
         System.Threading.Thread.Sleep(5000);
@@ -222,6 +217,11 @@ namespace TvService
     /// </summary>
     bool Init()
     {
+      if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
+      {
+        GlobalServiceProvider.Instance.Remove<ITvServerEvent>();
+      }
+      GlobalServiceProvider.Instance.Add<ITvServerEvent>(this);
       try
       {
         //load the database connection string from the config file
