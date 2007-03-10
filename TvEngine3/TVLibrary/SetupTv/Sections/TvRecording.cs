@@ -470,7 +470,7 @@ namespace SetupTv.Sections
       openFileDialog1.CheckFileExists = true;
       openFileDialog1.CheckPathExists = true;
       openFileDialog1.DefaultExt = ".bat";
-      openFileDialog1.Filter = "*.bat";
+      openFileDialog1.Filter = "Batch files (*.bat)|*.bat";
       openFileDialog1.RestoreDirectory = true;
       openFileDialog1.Title = "Select batch file to run comskip/comclean";
       DialogResult result = openFileDialog1.ShowDialog(this);
