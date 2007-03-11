@@ -23,9 +23,6 @@
 
 #region Usings
 using System;
-using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,83 +32,12 @@ using TvService;
 using TvDatabase;
 using TvLibrary.Log;
 using TvLibrary.Interfaces;
+using TvEngine.PowerScheduler;
 using TvEngine.PowerScheduler.Interfaces;
 #endregion
 
 namespace TvEngine.PowerScheduler.Handlers
 {
-  #region Enums
-  public enum EPGGrabDays
-  {
-    Monday,
-    Tuesday,
-    Wednesday,
-    Thursday,
-    Friday,
-    Saturday,
-    Sunday
-  }
-  #endregion
-
-  #region EPG Wakeup config class
-  [Serializable]
-  public class EPGWakeupConfig
-  {
-    public DateTime LastRun = DateTime.MinValue;
-    public ArrayList Days = new ArrayList();
-    public int Hour;
-    public int Minutes;
-    public EPGWakeupConfig() { }
-    public EPGWakeupConfig(string serializedConfig)
-    {
-      EPGWakeupConfig cfg = new EPGWakeupConfig();
-      try
-      {
-        BinaryFormatter formatter = new BinaryFormatter();
-        byte[] buffer = Convert.FromBase64String(serializedConfig);
-        using (MemoryStream stream = new MemoryStream(buffer, 0, buffer.Length))
-        {
-          cfg = (EPGWakeupConfig)formatter.Deserialize(stream);
-        }
-      }
-      catch (SerializationException) { }
-      Hour = cfg.Hour;
-      Minutes = cfg.Minutes;
-      Days = cfg.Days;
-      LastRun = cfg.LastRun;
-    }
-    public string SerializeAsString()
-    {
-      BinaryFormatter formatter = new BinaryFormatter();
-      string result;
-      using (MemoryStream stream = new MemoryStream())
-      {
-        formatter.Serialize(stream, this);
-        stream.Flush();
-        stream.Seek(0, SeekOrigin.Begin);
-        byte[] buffer = new byte[stream.Length];
-        int bytesRead = stream.Read(buffer, 0, buffer.Length);
-        result = Convert.ToBase64String(buffer, 0, bytesRead);
-      }
-      return result;
-    }
-    public override bool Equals(object obj)
-    {
-      if (obj is EPGWakeupConfig)
-      {
-        EPGWakeupConfig cfg = (EPGWakeupConfig)obj;
-        if (cfg.Hour == Hour && cfg.Minutes == Minutes && cfg.Days.Equals(Days))
-          return true;
-      }
-      return false;
-    }
-    public override int GetHashCode()
-    {
-      return base.GetHashCode();
-    }
-  }
-  #endregion
-
   /// <summary>
   /// Handles standby/wakeup for EPG grabbing
   /// </summary>
@@ -185,6 +111,7 @@ namespace TvEngine.PowerScheduler.Handlers
           // Check if a wakeup time is set
           setting = ps.Settings.GetSetting("EPGWakeupConfig");
           EPGWakeupConfig config = new EPGWakeupConfig((layer.GetSetting("EPGWakeupConfig", String.Empty).Value));
+
           if (setting.Get<EPGWakeupConfig>() != config)
           {
             setting.Set<EPGWakeupConfig>(config);

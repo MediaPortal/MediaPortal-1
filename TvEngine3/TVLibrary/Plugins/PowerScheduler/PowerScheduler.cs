@@ -188,8 +188,9 @@ namespace TvEngine.PowerScheduler
       // Configure remoting if not already done
       StartRemoting();
 
-      SendPowerSchedulerEvent(PowerSchedulerEventType.Started);
       LoadSettings();
+
+      SendPowerSchedulerEvent(PowerSchedulerEventType.Started);
 
       Log.Info("Powerscheduler: started");
     }

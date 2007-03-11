@@ -41,6 +41,7 @@
   </Target>
   -->
   <ItemGroup>
+    <Compile Include="EPGWakeupConfig.cs" />
     <Compile Include="Interfaces\IPowerController.cs" />
     <Compile Include="Interfaces\IPowerScheduler.cs" />
     <Compile Include="Interfaces\IPowerSettings.cs" />

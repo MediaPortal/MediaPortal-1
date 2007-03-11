@@ -1,3 +1,4 @@
+#region Copyright (C) 2007 Team MediaPortal
 /* 
  *	Copyright (C) 2007 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
 
 #region Usings
 using System;
@@ -28,11 +30,10 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using TvEngine.PowerScheduler.Interfaces;
-using TvEngine.PowerScheduler.Handlers;
-#endregion
-
 using SetupTv;
 using TvDatabase;
+#endregion
+
 namespace TvEngine.PowerScheduler
 {
   public partial class PowerSchedulerMasterSetup : SectionSettings
