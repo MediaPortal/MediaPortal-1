@@ -27,6 +27,8 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using TvEngine.PowerScheduler.Interfaces;
+using TvEngine.PowerScheduler.Handlers;
 #endregion
 
 using SetupTv;
@@ -70,6 +72,52 @@ namespace TvEngine.PowerScheduler
 
       setting = _layer.GetSetting("PowerSchedulerExtensiveLogging", "false");
       checkBox4.Checked = Convert.ToBoolean(setting.Value);
+
+      setting = _layer.GetSetting("PreventStandbyWhenGrabbingEPG", "false");
+      checkBox5.Checked = Convert.ToBoolean(setting.Value);
+
+      setting = _layer.GetSetting("WakeupSystemForEPGGrabbing", "false");
+      checkBox6.Checked = Convert.ToBoolean(setting.Value);
+
+      EPGWakeupConfig config = new EPGWakeupConfig((_layer.GetSetting("EPGWakeupConfig", String.Empty).Value));
+      foreach (EPGGrabDays day in config.Days)
+      {
+        switch (day)
+        {
+          case EPGGrabDays.Monday:
+            checkBox7.Checked = true;
+            break;
+          case EPGGrabDays.Tuesday:
+            checkBox8.Checked = true;
+            break;
+          case EPGGrabDays.Wednesday:
+            checkBox9.Checked = true;
+            break;
+          case EPGGrabDays.Thursday:
+            checkBox10.Checked = true;
+            break;
+          case EPGGrabDays.Friday:
+            checkBox11.Checked = true;
+            break;
+          case EPGGrabDays.Saturday:
+            checkBox12.Checked = true;
+            break;
+          case EPGGrabDays.Sunday:
+            checkBox13.Checked = true;
+            break;
+        }
+      }
+      string hFormat, mFormat;
+      if (config.Hour < 10)
+        hFormat = "0{0}";
+      else
+        hFormat = "{0}";
+      if (config.Minutes < 10)
+        mFormat = "0{0}";
+      else
+        mFormat = "{0}";
+      maskedTextBox1.Text = String.Format(hFormat, config.Hour) + ":" + String.Format(mFormat, config.Minutes);
+
     }
 
     private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -139,5 +187,63 @@ namespace TvEngine.PowerScheduler
         setting.Value = "false";
       setting.Persist();
     }
+
+    public override void OnSectionDeActivated()
+    {
+      // EPG grabber settings are only stored when a section is deactivated
+      Setting setting;
+
+      setting = _layer.GetSetting("PreventStandbyWhenGrabbingEPG", "false");
+      if (checkBox5.Checked)
+        setting.Value = "true";
+      else
+        setting.Value = "false";
+      setting.Persist();
+
+      setting = _layer.GetSetting("WakeupSystemForEPGGrabbing", "false");
+      if (checkBox6.Checked)
+        setting.Value = "true";
+      else
+        setting.Value = "false";
+      setting.Persist();
+
+      setting = _layer.GetSetting("EPGWakeupConfig", String.Empty);
+      EPGWakeupConfig cfg = new EPGWakeupConfig(setting.Value);
+      EPGWakeupConfig newcfg = new EPGWakeupConfig();
+      newcfg.Hour = cfg.Hour;
+      newcfg.Minutes = cfg.Minutes;
+      newcfg.Days = cfg.Days;
+      newcfg.LastRun = cfg.LastRun;
+      string[] time = maskedTextBox1.Text.Split(':');
+      newcfg.Hour = Convert.ToInt32(time[0]);
+      newcfg.Minutes = Convert.ToInt32(time[1]);
+      CheckDay(newcfg, EPGGrabDays.Monday, checkBox7.Checked);
+      CheckDay(newcfg, EPGGrabDays.Tuesday, checkBox8.Checked);
+      CheckDay(newcfg, EPGGrabDays.Wednesday, checkBox9.Checked);
+      CheckDay(newcfg, EPGGrabDays.Thursday, checkBox10.Checked);
+      CheckDay(newcfg, EPGGrabDays.Friday, checkBox11.Checked);
+      CheckDay(newcfg, EPGGrabDays.Saturday, checkBox12.Checked);
+      CheckDay(newcfg, EPGGrabDays.Sunday, checkBox12.Checked);
+      if (!cfg.Equals(newcfg))
+      {
+        setting.Value = newcfg.SerializeAsString();
+        setting.Persist();
+      }
+    }
+
+    private void CheckDay(EPGWakeupConfig cfg, EPGGrabDays day, bool enabled)
+    {
+      if (enabled)
+      {
+        if (!cfg.Days.Contains(day))
+          cfg.Days.Add(day);
+      }
+      else
+      {
+        if (cfg.Days.Contains(day))
+          cfg.Days.Remove(day);
+      }
+    }
+
   }
 }

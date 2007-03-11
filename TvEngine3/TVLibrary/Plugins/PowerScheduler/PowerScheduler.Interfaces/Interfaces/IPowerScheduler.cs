@@ -70,6 +70,20 @@ namespace TvEngine.PowerScheduler.Interfaces
     void Unregister(IWakeupHandler handler);
 
     /// <summary>
+    /// Checks if the given IStandbyHandler is registered
+    /// </summary>
+    /// <param name="handler">IStandbyHandler to check</param>
+    /// <returns>is the given handler registered?</returns>
+    bool IsRegistered(IStandbyHandler handler);
+
+    /// <summary>
+    /// Checks if the given IWakeupHandler is registered
+    /// </summary>
+    /// <param name="handler">IWakeupHandler to check</param>
+    /// <returns>is the given handler registered?</returns>
+    bool IsRegistered(IWakeupHandler handler);
+
+    /// <summary>
     /// Requests suspension of the system
     /// </summary>
     /// <param name="source">description of who wants to suspend the system</param>

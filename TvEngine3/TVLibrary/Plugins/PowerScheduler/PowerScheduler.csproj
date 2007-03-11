@@ -8,7 +8,7 @@
     <ProjectGuid>{3F8F1617-A987-4516-BF37-E01D04D2686F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PowerScheduler</RootNamespace>
+    <RootNamespace>TvEngine.PowerScheduler</RootNamespace>
     <AssemblyName>PowerScheduler</AssemblyName>
     <StartupObject>
     </StartupObject>
@@ -41,6 +41,14 @@
   </Target>
   -->
   <ItemGroup>
+    <Compile Include="Handlers\ActiveSharesHandler.cs" />
+    <Compile Include="Handlers\ActiveStreamsHandler.cs" />
+    <Compile Include="Handlers\ControllerActiveHandler.cs" />
+    <Compile Include="Handlers\EpgGrabbingHandler.cs" />
+    <Compile Include="Handlers\GenericStandbyHandler.cs" />
+    <Compile Include="Handlers\GenericWakeupHandler.cs" />
+    <Compile Include="Handlers\ProcessActiveHandler.cs" />
+    <Compile Include="Handlers\ScheduledRecordingsHandler.cs" />
     <Compile Include="PowerScheduler.cs" />
     <Compile Include="PowerSchedulerFactory.cs" />
     <Compile Include="PowerSchedulerMasterSetup.cs">

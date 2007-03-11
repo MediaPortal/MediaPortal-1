@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Runtime.CompilerServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Http;
@@ -36,6 +37,7 @@ using TvControl;
 using TvDatabase;
 using TvEngine;
 using TvEngine.Interfaces;
+using TvEngine.PowerScheduler.Handlers;
 using TvEngine.PowerScheduler.Interfaces;
 using TvLibrary.Log;
 using TvLibrary.Interfaces;
@@ -257,6 +259,7 @@ namespace TvEngine.PowerScheduler
     /// Registers a new IStandbyHandler plugin which can prevent entering standby
     /// </summary>
     /// <param name="handler">handler to register</param>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Register(IStandbyHandler handler)
     {
       if (!_standbyHandlers.Contains(handler))
@@ -266,6 +269,7 @@ namespace TvEngine.PowerScheduler
     /// Registers a new IWakeupHandler plugin which can wakeup the system at a desired time
     /// </summary>
     /// <param name="handler">handler to register</param>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Register(IWakeupHandler handler)
     {
       if (!_wakeupHandlers.Contains(handler))
@@ -275,6 +279,7 @@ namespace TvEngine.PowerScheduler
     /// Unregisters a IStandbyHandler plugin
     /// </summary>
     /// <param name="handler">handler to unregister</param>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Unregister(IStandbyHandler handler)
     {
       if (_standbyHandlers.Contains(handler))
@@ -284,10 +289,31 @@ namespace TvEngine.PowerScheduler
     /// Unregisters a IWakeupHandler plugin
     /// </summary>
     /// <param name="handler">handler to register</param>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Unregister(IWakeupHandler handler)
     {
       if (_wakeupHandlers.Contains(handler))
         _wakeupHandlers.Remove(handler);
+    }
+    /// <summary>
+    /// Checks if the given IStandbyHandler is registered
+    /// </summary>
+    /// <param name="handler">IStandbyHandler to check</param>
+    /// <returns>is the given handler registered?</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public bool IsRegistered(IStandbyHandler handler)
+    {
+      return _standbyHandlers.Contains(handler);
+    }
+    /// <summary>
+    /// Checks if the given IWakeupHandler is registered
+    /// </summary>
+    /// <param name="handler">IWakeupHandler to check</param>
+    /// <returns>is the given handler registered?</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public bool IsRegistered(IWakeupHandler handler)
+    {
+      return _wakeupHandlers.Contains(handler);
     }
     /// <summary>
     /// Manually puts the system in Standby (Suspend/Hibernate depending on what is configured)
