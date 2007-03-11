@@ -459,12 +459,10 @@ namespace MediaPortal.WebEPG.Parser
         switch (tag)
         {
           case "#STARTXMLTV":
-            long startLong = long.Parse(element);
-            _startTime = new WorldDateTime(startLong);
+            _startTime = new WorldDateTime(element, false);
             break;
           case "#ENDXMLTV":
-            long endLong = long.Parse(element);
-            _endTime = new WorldDateTime(endLong);
+            _endTime = new WorldDateTime(element, false);
             break;
           case "#START":
             BasicTime startTime = GetTime(element);

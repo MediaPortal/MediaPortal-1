@@ -105,14 +105,25 @@ namespace MediaPortal.Utils.Time
     public WorldDateTime(string dateTimeGmt, bool useOffset)
     {
       dateTimeGmt = dateTimeGmt.Trim();
+      string longTime;
+      
 
       int timeEndPos = dateTimeGmt.IndexOf(' ');
-      if (timeEndPos == -1 && (timeEndPos != 12 || timeEndPos != 14))
-        throw new ArgumentOutOfRangeException();
+      if (timeEndPos == -1)
+      {
+        longTime = dateTimeGmt;
+        useOffset = false;
+      }
+      else
+      {
+        if (timeEndPos != 12 && timeEndPos != 14)
+          throw new ArgumentOutOfRangeException();
+        longTime = dateTimeGmt.Substring(0, timeEndPos);
+      }
 
       try
       {
-        long ldatetime = Int64.Parse(dateTimeGmt.Substring(0, timeEndPos));
+        long ldatetime = Int64.Parse(longTime);
         SetFromLong(ldatetime);
       }
       catch (Exception)
