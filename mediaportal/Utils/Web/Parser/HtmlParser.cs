@@ -205,7 +205,7 @@ namespace MediaPortal.Utils.Web
     public bool GetHyperLink(int index, string match, ref HTTPRequest linkURL)
     {
 
-      string regex = "<a [^>]*" + match + "[^>]*>"; //"<a .*? href=[^>]*" .ToLower()
+      string regex = "<(a |[^>]*onclick)[^>]*" + match + "[^>]*>"; //"<a .*? href=[^>]*" .ToLower()
 
       string result = SearchRegex(index, regex, true, false);
 
@@ -218,37 +218,56 @@ namespace MediaPortal.Utils.Web
       int start = -1;
       char delim = '>';
 
-      if ((start = result.IndexOf("=")) != -1)
+      if ((start = result.ToLower().IndexOf("href=")) != -1 || (start = result.ToLower().IndexOf("onclick=")) != -1)
       {
         for (int i = 0; i < result.Length - start; i++)
         {
           if (result[start + i] == '\"' || result[start + i] == '\'')
           {
             delim = result[start + i];
+            start = start + i;
             break;
           }
         }
       }
 
       int end = -1;
-      if (delim != '>')
-      {
-        start = -1;
-        start = result.IndexOf(delim);
-      }
+      //if (delim != '>')
+      //{
+      //  start = -1;
+      //  start = result.IndexOf(delim);
+      //}
       if (start != -1)
         end = result.IndexOf(delim, ++start);
+
       if (end != -1)
       {
         strLinkURL = result.Substring(start, end - start);
         linkFound = true;
       }
 
+      if ((start = strLinkURL.IndexOf("=")) != -1)
+      {
+        for (int i = 0; i < strLinkURL.Length - start; i++)
+        {
+          if (strLinkURL[start + i] == '\"' || strLinkURL[start + i] == '\'')
+          {
+            delim = strLinkURL[start + i];
+            start = start + i;
+            break;
+          }
+        }
 
-      //if(strLinkURL.ToLower().IndexOf("http") == -1)
-      //{
-      //if (strLinkURL.ToLower().IndexOf("javascript") != -1)
-      //{
+        end = -1;
+
+        if (start != -1)
+          end = strLinkURL.IndexOf(delim, ++start);
+
+        if (end != -1)
+          strLinkURL = strLinkURL.Substring(start, end - start);
+    
+      }
+
       string[] param = GetJavaSubLinkParams(result); //strLinkURL);
       if (param != null)
       {

@@ -44,12 +44,16 @@ namespace MediaPortal.WebEPG.Config.Grabber
     public string WeekDay = "dddd";
     [XmlAttribute("maxlistings")]
     public int MaxListingCount = 0;
+    [XmlAttribute("listStart")]
+    public int ListStart = 0;
     [XmlAttribute("startPage")]
     public int PageStart;
     [XmlAttribute("endPage")]
     public int PageEnd;
     [XmlAttribute("language")]
     public string SearchLang = "en-US";
+    [XmlAttribute("baseDate")]
+    public string BaseDate;
     [XmlArray("DayNames")]
     [XmlArrayItem("Day")]
     public string[] DayNames;

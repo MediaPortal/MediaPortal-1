@@ -85,6 +85,12 @@ namespace MediaPortal.WebEPG
       if (_data.DayNames != null)
         request.ReplaceTag("[DAY_NAME]", _data.DayNames[_dayOffset]);
 
+      if (_data.BaseDate != null)
+      {
+        DateTime basedt = DateTime.Parse(_data.BaseDate);
+        request.ReplaceTag("[DAYS_SINCE]", _requestTime.DaysSince(basedt).ToString());
+      }
+
       request.ReplaceTag("[ID]", _data.ChannelId);
 
       request.ReplaceTag("[DAY_OFFSET]", (_dayOffset + _data.OffsetStart).ToString());
@@ -100,7 +106,7 @@ namespace MediaPortal.WebEPG
       request.ReplaceTag("[WEEKDAY]", _requestTime.DateTime.ToString(_data.WeekDay, culture));
       request.ReplaceTag("[DAY_OF_WEEK]", ((int)_requestTime.DateTime.DayOfWeek).ToString());
 
-      request.ReplaceTag("[LIST_OFFSET]", (_offset * _data.MaxListingCount).ToString());
+      request.ReplaceTag("[LIST_OFFSET]", ((_offset * _data.MaxListingCount)+_data.ListStart).ToString());
       request.ReplaceTag("[PAGE_OFFSET]", (_offset + _data.PageStart).ToString());
 
       return request;
@@ -108,19 +114,21 @@ namespace MediaPortal.WebEPG
 
     public bool HasDate()
     {
-      if (_baseRequest.HasTag("[DAY_NAME]") ||
+      if (
+      _baseRequest.HasTag("[DD]") ||
+      _baseRequest.HasTag("[_D]") ||
+      _baseRequest.HasTag("[MM]") ||
+      _baseRequest.HasTag("[_M]") ||
+      _baseRequest.HasTag("[YYYY]") ||
+      _baseRequest.HasTag("[MONTH]") ||
+      _baseRequest.HasTag("[DAY_OF_WEEK]") ||
+      _baseRequest.HasTag("[WEEKDAY]") ||
+      _baseRequest.HasTag("[DAY_NAME]") ||
       _baseRequest.HasTag("[DAY_OFFSET]") ||
       _baseRequest.HasTag("[EPOCH_TIME]") ||
       _baseRequest.HasTag("[EPOCH_DATE]") ||
-      _baseRequest.HasTag("[DAYOFYEAR]") ||
-      _baseRequest.HasTag("[YYYY]") ||
-      _baseRequest.HasTag("[MM]") ||
-      _baseRequest.HasTag("[_M]") ||
-      _baseRequest.HasTag("[MONTH]") ||
-      _baseRequest.HasTag("[DD]") ||
-      _baseRequest.HasTag("[_D]") ||
-      _baseRequest.HasTag("[DAY_OF_WEEK]") ||
-      _baseRequest.HasTag("[WEEKDAY]"))
+      _baseRequest.HasTag("[DAYS_SINCE]") ||
+      _baseRequest.HasTag("[DAYOFYEAR]"))
         return true;
 
       return false;

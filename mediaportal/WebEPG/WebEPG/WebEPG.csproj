@@ -143,6 +143,11 @@
     </Compile>
     <Compile Include="config\Grabber\ListingInfo.cs" />
     <Compile Include="config\Grabber\ModifyInfo.cs" />
+    <Compile Include="config\WebEPG\ChannelConfig.cs" />
+    <Compile Include="config\WebEPG\MergedGroup.cs" />
+    <Compile Include="config\WebEPG\MergedChannel.cs" />
+    <Compile Include="config\WebEPG\LoginConfig.cs" />
+    <Compile Include="config\WebEPG\WebepgConfig.cs" />
     <Compile Include="ListingTimeControl.cs" />
     <Compile Include="MPCode\TVProgram.cs">
       <SubType>Code</SubType>
