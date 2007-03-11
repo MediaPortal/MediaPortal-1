@@ -64,7 +64,7 @@
     <Channel id="vivir-tv-pt" siteId="VIV" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.tvcabo.pt/TV/ProgramacaoTv.aspx?programId=1&amp;channelSigla=[ID]&amp;SelectedDay=[DAY_OFFSET]" post="" external="false" encoding="" />
+    <Site url="http://wwwnew2.tvcabo.pt/TV/ProgramacaoTv.aspx?programId=1&amp;channelSigla=[ID]&amp;SelectedDay=[DAY_OFFSET]" post="" external="false" encoding="" />
     <Html>
       <Template name="default" start="Imprimir">
         <SectionTemplate tags="TA">
