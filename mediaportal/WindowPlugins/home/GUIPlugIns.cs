@@ -91,7 +91,8 @@ namespace MediaPortal.GUI.Home
             nonFocusTexture = GetNonFocusTextureFileName(nonFocusTexture);
             nonFocusHover = GetNonFocusHoverFileName(hover);
             hover = GetHoverFileName(hover);
-            menuMain.ButtonInfos.Add(new MenuButtonInfo(plugInText, setup.GetWindowId(), focusTexture, nonFocusTexture, hover, nonFocusHover));
+            int index = xmlreader.GetValueAsInt("pluginSorting", "my Plugins", Int32.MaxValue);
+            menuMain.ButtonInfos.Add(new MenuButtonInfo(plugInText, setup.GetWindowId(), focusTexture, nonFocusTexture, hover, nonFocusHover, index));
           }
         }
       }

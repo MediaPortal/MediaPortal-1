@@ -108,6 +108,7 @@ namespace MediaPortal.GUI.Home
         menuMain.EnableAnimation = _enableAnimation;
       }
       LoadButtonNames();
+      menuMain.ButtonInfos.Sort(menuMain.Compare);
 		}
 
     protected override void OnPageLoad()

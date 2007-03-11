@@ -64,7 +64,7 @@ namespace MediaPortal.GUI.Home
 			int myPluginsCount = 0;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-				foreach (ISetupForm setup in plugins)
+        foreach (ISetupForm setup in plugins)
         {
           string plugInText;
           string focusTexture;
@@ -81,21 +81,22 @@ namespace MediaPortal.GUI.Home
               if ((showInHome == null) || (showInHome.Length < 1))
               {
                 if (showPlugin == null) continue;
-								if (showPlugin.ShowDefaultHome() == false) 
-								{
-									myPluginsCount++;
-									continue;      
-								}
+                if (showPlugin.ShowDefaultHome() == false)
+                {
+                  myPluginsCount++;
+                  continue;
+                }
               }
               else
               {
-								if (showInHome.ToLower().Equals("no"))
-								{
-									myPluginsCount++;
-									continue;
-								}
+                if (showInHome.ToLower().Equals("no"))
+                {
+                  myPluginsCount++;
+                  continue;
+                }
               }
             }
+            int index = xmlreader.GetValueAsInt("pluginSorting", setup.PluginName(), Int32.MaxValue);
             if ((focusTexture == null) || (focusTexture.Length < 1)) focusTexture = setup.PluginName();
             if ((nonFocusTexture == null) || (nonFocusTexture.Length < 1)) nonFocusTexture = setup.PluginName();
             if ((hover == null) || (hover.Length < 1)) hover = setup.PluginName();
@@ -103,17 +104,19 @@ namespace MediaPortal.GUI.Home
             nonFocusTexture = GetNonFocusTextureFileName(nonFocusTexture);
             nonFocusHover = GetNonFocusHoverFileName(hover);
             hover = GetHoverFileName(hover);
-            menuMain.ButtonInfos.Add(new MenuButtonInfo(plugInText, setup.GetWindowId(), focusTexture, nonFocusTexture, hover, nonFocusHover));
+            menuMain.ButtonInfos.Add(new MenuButtonInfo(plugInText, setup.GetWindowId(), focusTexture, nonFocusTexture, hover, nonFocusHover, index));
           }
         }
-      }
-			if ((_useMyPlugins) && (myPluginsCount > 0))
-      {
-        string focusTexture    = GetFocusTextureFileName("my plugins");
-        string nonFocusTexture = GetNonFocusTextureFileName("my plugins");
-        string hover           = GetHoverFileName("my plugins");
-        string nonFocusHover   = GetNonFocusHoverFileName("my plugins");
-        menuMain.ButtonInfos.Add(new MenuButtonInfo(GUILocalizeStrings.Get(913), (int)GUIWindow.Window.WINDOW_MYPLUGINS, focusTexture, nonFocusTexture, hover, nonFocusHover));
+
+        if ((_useMyPlugins) && (myPluginsCount > 0))
+        {
+          string focusTexture = GetFocusTextureFileName("my plugins");
+          string nonFocusTexture = GetNonFocusTextureFileName("my plugins");
+          string hover = GetHoverFileName("my plugins");
+          string nonFocusHover = GetNonFocusHoverFileName("my plugins");
+          int index = xmlreader.GetValueAsInt("pluginSorting", "my Plugins", Int32.MaxValue);
+          menuMain.ButtonInfos.Add(new MenuButtonInfo(GUILocalizeStrings.Get(913), (int)GUIWindow.Window.WINDOW_MYPLUGINS, focusTexture, nonFocusTexture, hover, nonFocusHover, index));
+        }
       }
 		}
  

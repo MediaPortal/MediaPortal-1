@@ -39,7 +39,7 @@ using Direct3D = Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.GUI.Library
 {
-  public class GUIMenuControl : GUIControl
+  public class GUIMenuControl : GUIControl, IComparer<MenuButtonInfo>
   {
     #region Properties (Skin)    
     [XMLSkinElement("spaceBetweenButtons")]       protected int     _spaceBetweenButtons  = 8;
@@ -1058,6 +1058,14 @@ namespace MediaPortal.GUI.Library
     #endregion
 
     #endregion
+
+    #region IComparer
+    public int Compare(MenuButtonInfo x, MenuButtonInfo y)
+    {
+      return (x.Index - y.Index);
+    }
+    #endregion
+
   }
 
   #region MenuButtonInfo
@@ -1070,10 +1078,11 @@ namespace MediaPortal.GUI.Library
     protected string _nonFocusedTextureName;
     protected string _hoverName;
     protected string _nonFocusHoverName;
+    protected int _index;
     #endregion
 
     #region Constructors/Destructors
-    public MenuButtonInfo(string Text, int PlugInID, string FocusTextureName, string NonFocusName, string HoverName, string NonFocusHoverName)
+    public MenuButtonInfo(string Text, int PlugInID, string FocusTextureName, string NonFocusName, string HoverName, string NonFocusHoverName, int Index)
     {
       _text = Text;
       _pluginID = PlugInID;
@@ -1081,9 +1090,10 @@ namespace MediaPortal.GUI.Library
       _nonFocusedTextureName = NonFocusName;
       _hoverName = HoverName;
       _nonFocusHoverName = NonFocusHoverName;
+      _index = Index;
     }
 
-    public MenuButtonInfo(string Text, int PlugInID, string FocusTextureName, string NonFocusName, string HoverName)
+    public MenuButtonInfo(string Text, int PlugInID, string FocusTextureName, string NonFocusName, string HoverName, int index)
     {
       _text = Text;
       _pluginID = PlugInID;
@@ -1091,6 +1101,7 @@ namespace MediaPortal.GUI.Library
       _nonFocusedTextureName = NonFocusName;
       _hoverName = HoverName;
       _nonFocusHoverName = NonFocusName;
+      _index = Index;
     }
     #endregion
 
@@ -1112,6 +1123,12 @@ namespace MediaPortal.GUI.Library
 
     public string NonFocusHoverName
     { get { return _nonFocusHoverName; } }
+
+    public int Index
+    {
+      get { return _index; }
+      set { _index = value; }
+    }
     #endregion
   }
 

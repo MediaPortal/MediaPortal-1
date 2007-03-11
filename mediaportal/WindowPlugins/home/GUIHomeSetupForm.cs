@@ -25,10 +25,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
+using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -36,7 +39,7 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Home
 {
-  public partial class GUIHomeSetupForm : System.Windows.Forms.Form , ISetupForm
+  public partial class GUIHomeSetupForm : System.Windows.Forms.Form , ISetupForm, IComparer
   {
     public GUIHomeSetupForm()
     {
@@ -69,8 +72,28 @@ namespace MediaPortal.GUI.Home
         xmlWriter.SetValueAsBool("home", "enableanimation", chkBoxAnimation.Checked);
         xmlWriter.SetValue("home", "dateformat", cboxFormat.Text);
       }
+      SaveMenuSorting();
     }
 
+    private void SaveMenuSorting()
+    {
+      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        foreach (TreeNode node in tvMenu.Nodes)
+        {
+          xmlWriter.SetValue("pluginSorting", node.Text, node.Index);
+          if (node.Nodes != null)
+          {
+            foreach (TreeNode subNode in node.Nodes)
+            {
+              xmlWriter.SetValue("pluginSorting", subNode.Text, subNode.Index);
+            }
+          }
+        }
+      }
+    }
+
+    #region Tab: Settings
     private void btnOK_Click(object sender, EventArgs e)
     {
       SaveSettings();
@@ -180,6 +203,197 @@ namespace MediaPortal.GUI.Home
     {
       UpdateTestBox();
     }
+    #endregion
+
+
+    #region Tab: Menu SetUp
+
+
+
+    private void LoadPlugins()
+    {
+      tvMenu.Nodes.Clear();
+      string directory = Config.GetSubFolder(Config.Dir.Plugins, "windows");
+      if (!Directory.Exists(directory)) return;
+
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        TreeNode tnMyPlugIns = null;
+        bool useMyPlugins = xmlreader.GetValueAsBool("home", "usemyplugins", true);
+        if (useMyPlugins)
+        {
+          tnMyPlugIns = new TreeNode("my Plugins");
+          tnMyPlugIns.Tag = new PluginInfo("my Plugins");
+          tvMenu.Nodes.Add(tnMyPlugIns);
+
+        }
+
+        string[] files = Directory.GetFiles(directory, "*.dll");
+        foreach (string pluginFile in files)
+        {
+          try
+          {
+            Assembly pluginAssembly = Assembly.LoadFrom(pluginFile);
+
+            if (pluginAssembly != null)
+            {
+              Type[] exportedTypes = pluginAssembly.GetExportedTypes();
+              foreach (Type type in exportedTypes)
+              {
+                // an abstract class cannot be instanciated
+                if (type.IsAbstract) continue;
+                // Try to locate the interface we're interested in
+                if (type.GetInterface("MediaPortal.GUI.Library.ISetupForm") != null)
+                {
+                  try
+                  {
+                    // Create instance of the current type
+                    object pluginObject = Activator.CreateInstance(type);
+                    ISetupForm pluginForm = pluginObject as ISetupForm;
+
+                    if (pluginForm != null)
+                    {
+                      if (pluginForm.PluginName().Equals("Home")) continue;
+                      if (pluginForm.PluginName().Equals("my Plugins"))
+                      {
+                        if (tnMyPlugIns != null)
+                        {
+                          tnMyPlugIns.Tag = new PluginInfo(pluginForm);
+                          tvMenu.Nodes.Add(tnMyPlugIns);
+                        }
+                        continue;
+                      }
+                      string enabled = xmlreader.GetValue("plugins", pluginForm.PluginName());
+                      if (enabled.CompareTo("yes") != 0) continue;
+
+                      string showInHome = xmlreader.GetValue("home", pluginForm.PluginName());
+
+                      TreeNode node = null;
+                      if ((useMyPlugins) && (showInHome.CompareTo("no") == 0)) node = tnMyPlugIns.Nodes.Add(pluginForm.PluginName());
+                      else node = tvMenu.Nodes.Add(pluginForm.PluginName());
+
+                      if (node != null) node.Tag = new PluginInfo(pluginForm);
+                    }
+                  }
+                  catch (Exception setupFormException)
+                  {
+                    Log.Info("Exception in plugin SetupForm loading :{0}", setupFormException.Message);
+                    Log.Info("Current class is :{0}", type.FullName);
+                    Log.Info(setupFormException.StackTrace);
+                  }
+                }
+              }
+            }
+          }
+          catch (Exception unknownException)
+          {
+            Log.Info("Exception in plugin loading :{0}", unknownException.Message);
+            Log.Info(unknownException.StackTrace);
+          }
+        }
+      }
+
+      ValidateIndex();
+
+      tvMenu.TreeViewNodeSorter = this;
+      tvMenu.Sort();
+    }
+
+    private void ValidateIndex()
+    {
+      bool updated = false;
+      foreach (TreeNode node in tvMenu.Nodes)
+      {
+        if (((PluginInfo)node.Tag).Index == Int32.MaxValue)
+        {
+          ((PluginInfo)node.Tag).Index = node.Index;
+          updated = true;
+        }
+        if (node.Nodes != null)
+        {
+          foreach (TreeNode subNode in node.Nodes)
+          {
+            if (((PluginInfo)subNode.Tag).Index == Int32.MaxValue)
+            {
+              ((PluginInfo)subNode.Tag).Index = subNode.Index;
+              updated = true;
+            }
+          }
+        }
+      }
+      if (updated) SaveMenuSorting();
+    }
+
+    private void tvMenu_AfterSelect(object sender, TreeViewEventArgs e)
+    {
+      TreeNode tnSelected = tvMenu.SelectedNode;
+      laName.Text = "Name: ";
+      if (tnSelected != null)
+      {
+        laName.Text += tnSelected.Text;
+      }
+    }
+
+    private void buUp_Click(object sender, EventArgs e)
+    {
+      TreeNode tnSelected = tvMenu.SelectedNode;
+      if (tnSelected == null) return;
+
+      tvMenu.BeginUpdate();
+      if (((PluginInfo)tnSelected.Tag).Index > 0)
+      {
+        ((PluginInfo)tnSelected.Tag).Index--;
+        ((PluginInfo)tnSelected.PrevNode.Tag).Index++;
+        tvMenu.Sort();
+        tvMenu.SelectedNode = tnSelected;
+      }
+      /*
+      TreeNodeCollection nodeColl = tvMenu.Nodes;
+      if (tnSelected.Parent != null) nodeColl = tnSelected.Parent.Nodes;  
+      if (nodeIndex > 0)
+      {
+        nodeColl.RemoveAt(nodeIndex);
+        nodeIndex--;
+        nodeColl.Insert(nodeIndex, tnSelected);
+        tvMenu.SelectedNode = tnSelected;
+      }
+      */
+      tvMenu.EndUpdate();
+    }
+
+    private void buDown_Click(object sender, EventArgs e)
+    {
+      TreeNode tnSelected = tvMenu.SelectedNode;
+      if (tnSelected == null) return;
+
+      tvMenu.BeginUpdate();
+      TreeNodeCollection nodeColl = tvMenu.Nodes;
+      if (tnSelected.Parent != null) nodeColl = tnSelected.Parent.Nodes;  
+      
+      if (((PluginInfo)tnSelected.Tag).Index+1 < nodeColl.Count)
+      {
+        ((PluginInfo)tnSelected.Tag).Index++;
+        ((PluginInfo)tnSelected.NextNode.Tag).Index--;
+        tvMenu.Sort();
+
+        tvMenu.SelectedNode = tnSelected;
+      }
+
+      /*int nodeIndex = tnSelected.Index;
+      if (nodeIndex+1 < nodeColl.Count)
+      {
+        nodeColl.RemoveAt(nodeIndex);
+        nodeIndex++;
+        nodeColl.Insert(nodeIndex, tnSelected);
+        tvMenu.SelectedNode = tnSelected;
+      }
+       */
+      tvMenu.EndUpdate();
+    }
+
+
+    #endregion
+
 
     #region ISetupForm members
     public string PluginName()
@@ -233,7 +447,80 @@ namespace MediaPortal.GUI.Home
 
     #endregion
 
+    #region IComparer<TreeNode>
+    public int Compare(object x, object y)
+    {
+      TreeNode tx = x as TreeNode;
+      TreeNode ty = y as TreeNode;
+      return ((PluginInfo)tx.Tag).Index - ((PluginInfo)ty.Tag).Index;    
+    }
+    #endregion
 
+    private void GUIHomeSetupForm_Load(object sender, EventArgs e)
+    {
+      LoadPlugins();
+    }
+  }
+
+  public class PluginInfo
+  {
+    protected ISetupForm _setup = null;
+    protected string _name = String.Empty;
+    protected int _index = -1;
+    protected string _text = String.Empty;
+    protected string _btnImage = String.Empty;
+    protected string _focus = String.Empty;
+    protected string _picImage = String.Empty;
+
+    public PluginInfo(string Name)
+    {
+      _name = Name;
+      LoadData();
+    }
+
+    public PluginInfo(ISetupForm setup)
+    {
+      _setup = setup;
+      LoadData();
+    }
+
+    public string Name
+    {
+      get { return _name; }
+    }
+
+    public int Index
+    {
+      get { return _index; }
+      set { _index = value; }
+    }
+
+    public string Text
+    {
+      get { return _text; }
+    }
+
+
+    private void LoadData()
+    {
+      if (_setup != null)
+      {
+        _name = _setup.PluginName();
+        _setup.GetHome(out _text, out _btnImage, out _focus, out _picImage);
+      }
+
+      if (_name != String.Empty)
+      {
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        {
+          _index = xmlreader.GetValueAsInt("pluginSorting", _name, Int32.MaxValue);
+        }
+      }
+    }
 
   }
+
+
+
+
 }

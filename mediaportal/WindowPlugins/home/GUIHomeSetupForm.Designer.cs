@@ -53,9 +53,10 @@ namespace MediaPortal.GUI.Home
     /// </summary>
     private void InitializeComponent()
     {
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.chkBoxUseMyPlugins = new System.Windows.Forms.CheckBox();
-      this.chkboxFixScrollbar = new System.Windows.Forms.CheckBox();
+      this.btnOK = new System.Windows.Forms.Button();
+      this.btnCancel = new System.Windows.Forms.Button();
+      this.tabControl1 = new System.Windows.Forms.TabControl();
+      this.tabSettings = new System.Windows.Forms.TabPage();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.tboxTest = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
@@ -68,45 +69,68 @@ namespace MediaPortal.GUI.Home
       this.btnDayText = new System.Windows.Forms.Button();
       this.cboxFormat = new System.Windows.Forms.ComboBox();
       this.label1 = new System.Windows.Forms.Label();
-      this.btnOK = new System.Windows.Forms.Button();
-      this.btnCancel = new System.Windows.Forms.Button();
+      this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.chkBoxAnimation = new System.Windows.Forms.CheckBox();
-      this.groupBox1.SuspendLayout();
+      this.chkBoxUseMyPlugins = new System.Windows.Forms.CheckBox();
+      this.chkboxFixScrollbar = new System.Windows.Forms.CheckBox();
+      this.tabMenuSort = new System.Windows.Forms.TabPage();
+      this.tvMenu = new System.Windows.Forms.TreeView();
+      this.buDown = new System.Windows.Forms.Button();
+      this.groupBox4 = new System.Windows.Forms.GroupBox();
+      this.buUp = new System.Windows.Forms.Button();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
+      this.laName = new System.Windows.Forms.Label();
+      this.tabControl1.SuspendLayout();
+      this.tabSettings.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
+      this.groupBox1.SuspendLayout();
+      this.tabMenuSort.SuspendLayout();
+      this.groupBox4.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.SuspendLayout();
       // 
-      // groupBox1
+      // btnOK
       // 
-      this.groupBox1.Controls.Add(this.chkBoxAnimation);
-      this.groupBox1.Controls.Add(this.chkBoxUseMyPlugins);
-      this.groupBox1.Controls.Add(this.chkboxFixScrollbar);
-      this.groupBox1.Location = new System.Drawing.Point(15, 20);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(389, 87);
-      this.groupBox1.TabIndex = 0;
-      this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Home Settings";
+      this.btnOK.Location = new System.Drawing.Point(84, 433);
+      this.btnOK.Name = "btnOK";
+      this.btnOK.Size = new System.Drawing.Size(75, 23);
+      this.btnOK.TabIndex = 2;
+      this.btnOK.Text = "OK";
+      this.btnOK.UseVisualStyleBackColor = true;
+      this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
       // 
-      // chkBoxUseMyPlugins
+      // btnCancel
       // 
-      this.chkBoxUseMyPlugins.AutoSize = true;
-      this.chkBoxUseMyPlugins.Location = new System.Drawing.Point(22, 54);
-      this.chkBoxUseMyPlugins.Name = "chkBoxUseMyPlugins";
-      this.chkBoxUseMyPlugins.Size = new System.Drawing.Size(108, 17);
-      this.chkBoxUseMyPlugins.TabIndex = 1;
-      this.chkBoxUseMyPlugins.Text = "Show My PlugIns";
-      this.chkBoxUseMyPlugins.UseVisualStyleBackColor = true;
+      this.btnCancel.Location = new System.Drawing.Point(280, 433);
+      this.btnCancel.Name = "btnCancel";
+      this.btnCancel.Size = new System.Drawing.Size(75, 23);
+      this.btnCancel.TabIndex = 3;
+      this.btnCancel.Text = "Cancel";
+      this.btnCancel.UseVisualStyleBackColor = true;
+      this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
       // 
-      // chkboxFixScrollbar
+      // tabControl1
       // 
-      this.chkboxFixScrollbar.AutoSize = true;
-      this.chkboxFixScrollbar.Location = new System.Drawing.Point(22, 31);
-      this.chkboxFixScrollbar.Name = "chkboxFixScrollbar";
-      this.chkboxFixScrollbar.Size = new System.Drawing.Size(87, 17);
-      this.chkboxFixScrollbar.TabIndex = 0;
-      this.chkboxFixScrollbar.Text = "Fix Scroll Bar";
-      this.chkboxFixScrollbar.UseVisualStyleBackColor = true;
+      this.tabControl1.Controls.Add(this.tabSettings);
+      this.tabControl1.Controls.Add(this.tabMenuSort);
+      this.tabControl1.Location = new System.Drawing.Point(12, 0);
+      this.tabControl1.Name = "tabControl1";
+      this.tabControl1.SelectedIndex = 0;
+      this.tabControl1.Size = new System.Drawing.Size(424, 413);
+      this.tabControl1.TabIndex = 4;
+      // 
+      // tabSettings
+      // 
+      this.tabSettings.Controls.Add(this.groupBox2);
+      this.tabSettings.Controls.Add(this.groupBox1);
+      this.tabSettings.Location = new System.Drawing.Point(4, 22);
+      this.tabSettings.Name = "tabSettings";
+      this.tabSettings.Padding = new System.Windows.Forms.Padding(3);
+      this.tabSettings.Size = new System.Drawing.Size(416, 387);
+      this.tabSettings.TabIndex = 0;
+      this.tabSettings.Text = "Settings";
+      this.tabSettings.UseVisualStyleBackColor = true;
       // 
       // groupBox2
       // 
@@ -115,10 +139,10 @@ namespace MediaPortal.GUI.Home
       this.groupBox2.Controls.Add(this.groupBox3);
       this.groupBox2.Controls.Add(this.cboxFormat);
       this.groupBox2.Controls.Add(this.label1);
-      this.groupBox2.Location = new System.Drawing.Point(18, 126);
+      this.groupBox2.Location = new System.Drawing.Point(15, 111);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(386, 264);
-      this.groupBox2.TabIndex = 1;
+      this.groupBox2.TabIndex = 3;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Date + Time Settings";
       // 
@@ -168,7 +192,6 @@ namespace MediaPortal.GUI.Home
       this.btnYearNumber.Text = "<YY>  year as short number";
       this.btnYearNumber.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       this.btnYearNumber.UseVisualStyleBackColor = true;
-      this.btnYearNumber.Click += new System.EventHandler(this.btnYearNumber_Click);
       // 
       // btnYearText
       // 
@@ -181,7 +204,6 @@ namespace MediaPortal.GUI.Home
       this.btnYearText.Text = "<Year> year as long number";
       this.btnYearText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       this.btnYearText.UseVisualStyleBackColor = true;
-      this.btnYearText.Click += new System.EventHandler(this.btnYearText_Click);
       // 
       // btnMonthNumber
       // 
@@ -194,7 +216,6 @@ namespace MediaPortal.GUI.Home
       this.btnMonthNumber.Text = "<MM>  month as number";
       this.btnMonthNumber.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       this.btnMonthNumber.UseVisualStyleBackColor = true;
-      this.btnMonthNumber.Click += new System.EventHandler(this.btnMonthNumber_Click);
       // 
       // btnMonthText
       // 
@@ -207,7 +228,6 @@ namespace MediaPortal.GUI.Home
       this.btnMonthText.Text = "<Month>  month as text";
       this.btnMonthText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       this.btnMonthText.UseVisualStyleBackColor = true;
-      this.btnMonthText.Click += new System.EventHandler(this.btnMonthText_Click);
       // 
       // btnDayNumber
       // 
@@ -220,7 +240,6 @@ namespace MediaPortal.GUI.Home
       this.btnDayNumber.Text = "<DD>  day as number";
       this.btnDayNumber.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       this.btnDayNumber.UseVisualStyleBackColor = true;
-      this.btnDayNumber.Click += new System.EventHandler(this.btnDayNumber_Click);
       // 
       // btnDayText
       // 
@@ -233,7 +252,6 @@ namespace MediaPortal.GUI.Home
       this.btnDayText.Text = "<Day>     day as text";
       this.btnDayText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       this.btnDayText.UseVisualStyleBackColor = true;
-      this.btnDayText.Click += new System.EventHandler(this.btnDayText_Click);
       // 
       // cboxFormat
       // 
@@ -242,9 +260,6 @@ namespace MediaPortal.GUI.Home
       this.cboxFormat.Name = "cboxFormat";
       this.cboxFormat.Size = new System.Drawing.Size(300, 21);
       this.cboxFormat.TabIndex = 1;
-      this.cboxFormat.SelectedIndexChanged += new System.EventHandler(this.cboxFormat_SelectedIndexChanged);
-      this.cboxFormat.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.cboxFormat_KeyPress);
-      this.cboxFormat.TextUpdate += new System.EventHandler(this.cboxFormat_TextUpdate);
       // 
       // label1
       // 
@@ -255,25 +270,17 @@ namespace MediaPortal.GUI.Home
       this.label1.TabIndex = 0;
       this.label1.Text = "Format";
       // 
-      // btnOK
+      // groupBox1
       // 
-      this.btnOK.Location = new System.Drawing.Point(65, 413);
-      this.btnOK.Name = "btnOK";
-      this.btnOK.Size = new System.Drawing.Size(75, 23);
-      this.btnOK.TabIndex = 2;
-      this.btnOK.Text = "OK";
-      this.btnOK.UseVisualStyleBackColor = true;
-      this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
-      // 
-      // btnCancel
-      // 
-      this.btnCancel.Location = new System.Drawing.Point(261, 413);
-      this.btnCancel.Name = "btnCancel";
-      this.btnCancel.Size = new System.Drawing.Size(75, 23);
-      this.btnCancel.TabIndex = 3;
-      this.btnCancel.Text = "Cancel";
-      this.btnCancel.UseVisualStyleBackColor = true;
-      this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+      this.groupBox1.Controls.Add(this.chkBoxAnimation);
+      this.groupBox1.Controls.Add(this.chkBoxUseMyPlugins);
+      this.groupBox1.Controls.Add(this.chkboxFixScrollbar);
+      this.groupBox1.Location = new System.Drawing.Point(12, 12);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(389, 87);
+      this.groupBox1.TabIndex = 2;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "Home Settings";
       // 
       // chkBoxAnimation
       // 
@@ -285,45 +292,152 @@ namespace MediaPortal.GUI.Home
       this.chkBoxAnimation.Text = "Enable Animations";
       this.chkBoxAnimation.UseVisualStyleBackColor = true;
       // 
+      // chkBoxUseMyPlugins
+      // 
+      this.chkBoxUseMyPlugins.AutoSize = true;
+      this.chkBoxUseMyPlugins.Location = new System.Drawing.Point(22, 54);
+      this.chkBoxUseMyPlugins.Name = "chkBoxUseMyPlugins";
+      this.chkBoxUseMyPlugins.Size = new System.Drawing.Size(108, 17);
+      this.chkBoxUseMyPlugins.TabIndex = 1;
+      this.chkBoxUseMyPlugins.Text = "Show My PlugIns";
+      this.chkBoxUseMyPlugins.UseVisualStyleBackColor = true;
+      // 
+      // chkboxFixScrollbar
+      // 
+      this.chkboxFixScrollbar.AutoSize = true;
+      this.chkboxFixScrollbar.Location = new System.Drawing.Point(22, 31);
+      this.chkboxFixScrollbar.Name = "chkboxFixScrollbar";
+      this.chkboxFixScrollbar.Size = new System.Drawing.Size(87, 17);
+      this.chkboxFixScrollbar.TabIndex = 0;
+      this.chkboxFixScrollbar.Text = "Fix Scroll Bar";
+      this.chkboxFixScrollbar.UseVisualStyleBackColor = true;
+      // 
+      // tabMenuSort
+      // 
+      this.tabMenuSort.Controls.Add(this.tvMenu);
+      this.tabMenuSort.Controls.Add(this.buDown);
+      this.tabMenuSort.Controls.Add(this.groupBox4);
+      this.tabMenuSort.Controls.Add(this.buUp);
+      this.tabMenuSort.Location = new System.Drawing.Point(4, 22);
+      this.tabMenuSort.Name = "tabMenuSort";
+      this.tabMenuSort.Padding = new System.Windows.Forms.Padding(3);
+      this.tabMenuSort.Size = new System.Drawing.Size(416, 387);
+      this.tabMenuSort.TabIndex = 1;
+      this.tabMenuSort.Text = "Menu Setup";
+      this.tabMenuSort.UseVisualStyleBackColor = true;
+      // 
+      // tvMenu
+      // 
+      this.tvMenu.FullRowSelect = true;
+      this.tvMenu.HideSelection = false;
+      this.tvMenu.Location = new System.Drawing.Point(49, 6);
+      this.tvMenu.Name = "tvMenu";
+      this.tvMenu.Size = new System.Drawing.Size(235, 254);
+      this.tvMenu.TabIndex = 7;
+      this.tvMenu.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvMenu_AfterSelect);
+      // 
+      // buDown
+      // 
+      this.buDown.Location = new System.Drawing.Point(327, 84);
+      this.buDown.Name = "buDown";
+      this.buDown.Size = new System.Drawing.Size(54, 23);
+      this.buDown.TabIndex = 4;
+      this.buDown.Text = "Down";
+      this.buDown.UseVisualStyleBackColor = true;
+      this.buDown.Click += new System.EventHandler(this.buDown_Click);
+      // 
+      // groupBox4
+      // 
+      this.groupBox4.Controls.Add(this.laName);
+      this.groupBox4.Controls.Add(this.pictureBox1);
+      this.groupBox4.Location = new System.Drawing.Point(18, 266);
+      this.groupBox4.Name = "groupBox4";
+      this.groupBox4.Size = new System.Drawing.Size(382, 115);
+      this.groupBox4.TabIndex = 2;
+      this.groupBox4.TabStop = false;
+      this.groupBox4.Text = "Edit Menu Item";
+      // 
+      // buUp
+      // 
+      this.buUp.Location = new System.Drawing.Point(327, 39);
+      this.buUp.Name = "buUp";
+      this.buUp.Size = new System.Drawing.Size(53, 23);
+      this.buUp.TabIndex = 3;
+      this.buUp.Text = "Up";
+      this.buUp.UseVisualStyleBackColor = true;
+      this.buUp.Click += new System.EventHandler(this.buUp_Click);
+      // 
+      // pictureBox1
+      // 
+      this.pictureBox1.Location = new System.Drawing.Point(276, 10);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(100, 99);
+      this.pictureBox1.TabIndex = 0;
+      this.pictureBox1.TabStop = false;
+      // 
+      // laName
+      // 
+      this.laName.AutoSize = true;
+      this.laName.Location = new System.Drawing.Point(14, 30);
+      this.laName.Name = "laName";
+      this.laName.Size = new System.Drawing.Size(35, 13);
+      this.laName.TabIndex = 1;
+      this.laName.Text = "Name";
+      // 
       // GUIHomeSetupForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(419, 453);
+      this.ClientSize = new System.Drawing.Size(448, 472);
+      this.Controls.Add(this.tabControl1);
       this.Controls.Add(this.btnCancel);
       this.Controls.Add(this.btnOK);
-      this.Controls.Add(this.groupBox2);
-      this.Controls.Add(this.groupBox1);
       this.Name = "GUIHomeSetupForm";
       this.Text = " Home Setup";
-      this.groupBox1.ResumeLayout(false);
-      this.groupBox1.PerformLayout();
+      this.Load += new System.EventHandler(this.GUIHomeSetupForm_Load);
+      this.tabControl1.ResumeLayout(false);
+      this.tabSettings.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
       this.groupBox3.ResumeLayout(false);
+      this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
+      this.tabMenuSort.ResumeLayout(false);
+      this.groupBox4.ResumeLayout(false);
+      this.groupBox4.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.ResumeLayout(false);
 
     }
 
     #endregion
 
-    private System.Windows.Forms.GroupBox groupBox1;
+    private System.Windows.Forms.Button btnOK;
+    private System.Windows.Forms.Button btnCancel;
+    private System.Windows.Forms.TabControl tabControl1;
+    private System.Windows.Forms.TabPage tabSettings;
     private System.Windows.Forms.GroupBox groupBox2;
-    private System.Windows.Forms.CheckBox chkboxFixScrollbar;
+    private System.Windows.Forms.TextBox tboxTest;
+    private System.Windows.Forms.Label label2;
     private System.Windows.Forms.GroupBox groupBox3;
-    private System.Windows.Forms.Button btnDayText;
-    private System.Windows.Forms.ComboBox cboxFormat;
-    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Button btnYearNumber;
+    private System.Windows.Forms.Button btnYearText;
     private System.Windows.Forms.Button btnMonthNumber;
     private System.Windows.Forms.Button btnMonthText;
     private System.Windows.Forms.Button btnDayNumber;
-    private System.Windows.Forms.Button btnYearNumber;
-    private System.Windows.Forms.Button btnYearText;
-    private System.Windows.Forms.TextBox tboxTest;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.CheckBox chkBoxUseMyPlugins;
-    private System.Windows.Forms.Button btnOK;
-    private System.Windows.Forms.Button btnCancel;
+    private System.Windows.Forms.Button btnDayText;
+    private System.Windows.Forms.ComboBox cboxFormat;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.CheckBox chkBoxAnimation;
+    private System.Windows.Forms.CheckBox chkBoxUseMyPlugins;
+    private System.Windows.Forms.CheckBox chkboxFixScrollbar;
+    private System.Windows.Forms.TabPage tabMenuSort;
+    private System.Windows.Forms.GroupBox groupBox4;
+    private System.Windows.Forms.Button buDown;
+    private System.Windows.Forms.Button buUp;
+    private System.Windows.Forms.TreeView tvMenu;
+    private System.Windows.Forms.PictureBox pictureBox1;
+    private System.Windows.Forms.Label laName;
   }
 }
