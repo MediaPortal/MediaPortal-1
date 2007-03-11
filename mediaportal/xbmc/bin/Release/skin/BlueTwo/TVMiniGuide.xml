@@ -59,7 +59,10 @@
       <font>font10</font>
       <font2>font10</font2>
       <font3>font12</font3>
-      <remoteColor>ffffffff</remoteColor>
+      <textcolor>FFB2D4F5</textcolor>
+      <textcolor2>FFFFFFFF</textcolor2>
+      <textcolor3>FFFFFFFF</textcolor3>
+      <remoteColor>FFFFFFFF</remoteColor>
       <!-- used for selected channel -->
       <onleft>36</onleft>
       <onright>34</onright>
