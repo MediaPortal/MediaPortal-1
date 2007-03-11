@@ -1172,7 +1172,7 @@ namespace TvLibrary.Implementations.DVB
       ITsRecorder recorder = _interfaceTsChannel as ITsRecorder;
       recorder.SetPcrPid((short)dvbChannel.PcrPid);
       bool programStream = true;
-      bool audioPidSet = false;
+      //bool audioPidSet = false;
       foreach (PidInfo info in _channelInfo.pids)
       {
         if (info.isAC3Audio || info.isAudio || info.isVideo)
@@ -1188,11 +1188,11 @@ namespace TvLibrary.Implementations.DVB
           }
           if (info.isAudio || info.isAC3Audio)
           {
-            if (audioPidSet == false)
-            {
+            //if (audioPidSet == false)
+            //{
               addPid = true;
-              audioPidSet = true;
-            }
+              //audioPidSet = true;
+            //}
           }
           if (info.isDVBSubtitle)
           {
