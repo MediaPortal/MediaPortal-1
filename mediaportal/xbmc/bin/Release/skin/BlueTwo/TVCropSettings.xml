@@ -18,8 +18,8 @@
       <description>exit button</description>
       <type>button</type>
       <id>2</id>
-      <posX>488</posX>
-      <posY>160</posY>
+      <posX>494</posX>
+      <posY>154</posY>
       <width>36</width>
       <height>36</height>
       <textureFocus>dialogue_shutdown_focus.png</textureFocus>
@@ -32,8 +32,8 @@
       <description>Heading text label</description>
       <type>label</type>
       <id>4</id>
-      <posX>245</posX>
-      <posY>154</posY>
+      <posX>284</posX>
+      <posY>150</posY>
       <width>240</width>
       <label>11000</label>
       <font>font13</font>
@@ -44,7 +44,7 @@
       <type>label</type>
       <id>5</id>
       <posX>245</posX>
-      <posY>175</posY>
+      <posY>178</posY>
       <width>240</width>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -53,8 +53,8 @@
       <description>Crop label top</description>
       <type>label</type>
       <id>6</id>
-      <posX>270</posX>
-      <posY>200</posY>
+      <posX>290</posX>
+      <posY>206</posY>
       <label>11001</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -63,8 +63,8 @@
       <description>Cropselect top</description>
       <type>spincontrol</type>
       <id>8</id>
-      <posX>360</posX>
-      <posY>203</posY>
+      <posX>438</posX>
+      <posY>209</posY>
       <onup>20</onup>
       <ondown>12</ondown>
       <onleft>2</onleft>
@@ -76,8 +76,8 @@
       <description>Crop label bottom</description>
       <type>label</type>
       <id>10</id>
-      <posX>270</posX>
-      <posY>226</posY>
+      <posX>290</posX>
+      <posY>232</posY>
       <label>11002</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -86,8 +86,8 @@
       <description>Cropselect bottom</description>
       <type>spincontrol</type>
       <id>12</id>
-      <posX>360</posX>
-      <posY>230</posY>
+      <posX>438</posX>
+      <posY>236</posY>
       <onup>8</onup>
       <ondown>16</ondown>
       <onleft>2</onleft>
@@ -99,8 +99,8 @@
       <description>Crop label left</description>
       <type>label</type>
       <id>14</id>
-      <posX>270</posX>
-      <posY>253</posY>
+      <posX>290</posX>
+      <posY>259</posY>
       <label>11003</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -109,8 +109,8 @@
       <description>Cropselect left</description>
       <type>spincontrol</type>
       <id>16</id>
-      <posX>360</posX>
-      <posY>257</posY>
+      <posX>438</posX>
+      <posY>263</posY>
       <onup>12</onup>
       <ondown>20</ondown>
       <onleft>2</onleft>
@@ -122,8 +122,8 @@
       <description>Crop label right</description>
       <type>label</type>
       <id>18</id>
-      <posX>270</posX>
-      <posY>280</posY>
+      <posX>290</posX>
+      <posY>286</posY>
       <label>11004</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -132,8 +132,8 @@
       <description>Cropselect right</description>
       <type>spincontrol</type>
       <id>20</id>
-      <posX>360</posX>
-      <posY>284</posY>
+      <posX>438</posX>
+      <posY>290</posY>
       <onup>16</onup>
       <ondown>8</ondown>
       <onleft>2</onleft>

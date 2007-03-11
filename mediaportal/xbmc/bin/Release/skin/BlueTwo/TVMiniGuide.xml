@@ -18,8 +18,8 @@
       <description>exit button</description>
       <type>button</type>
       <id>34</id>
-      <posX>560</posX>
-      <posY>135</posY>
+      <posX>565</posX>
+      <posY>124</posY>
       <width>44</width>
       <height>44</height>
       <textureFocus>dialogue_shutdown_focus.png</textureFocus>
@@ -65,14 +65,25 @@
       <onright>34</onright>
     </control>
     <control>
+      <description>Heading text label</description>
+      <type>label</type>
+      <id>4</id>
+      <posX>144</posX>
+      <posY>124</posY>
+      <width>240</width>
+      <label>10104</label>
+      <font>font14</font>
+      <textcolor>Black</textcolor>
+    </control>
+    <control>
       <description>groups spin control</description>
       <type>spincontrol</type>
       <id>36</id>
-      <posX>150</posX>
-      <posY>137</posY>
+      <posX>238</posX>
+      <posY>128</posY>
       <showrange>no</showrange>
       <orientation>horizontal</orientation>
-      <font>font13</font>
+      <font>font14</font>
       <textureUp>arrow_round_right_nofocus.png</textureUp>
       <textureDown>arrow_round_left_nofocus.png</textureDown>
       <textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
@@ -87,9 +98,9 @@
       <id>0</id>
       <type>label</type>
       <posX>530</posX>
-      <posY>135</posY>
+      <posY>126</posY>
       <align>right</align>
-      <font>font13</font>
+      <font>font14</font>
       <textcolor>ffa9d0f7</textcolor>
       <label>#time</label>
     </control>

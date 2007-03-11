@@ -26,11 +26,22 @@
     <control>
       <description>Heading text label</description>
       <type>label</type>
+      <id>0</id>
+      <posX>164</posX>
+      <posY>88</posY>
+      <width>240</width>
+      <label>924</label>
+      <font>font14</font>
+      <textcolor>Black</textcolor>
+    </control>
+    <control>
+      <description>Heading text label</description>
+      <type>label</type>
       <id>4</id>
-      <posX>200</posX>
-      <posY>100</posY>
+      <posX>252</posX>
+      <posY>88</posY>
       <label>181</label>
-      <font>font13</font>
+      <font>font14</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -39,8 +50,8 @@
       <description>Exit button</description>
       <type>button</type>
       <id>2</id>
-      <posX>570</posX>
-      <posY>100</posY>
+      <posX>578</posX>
+      <posY>96</posY>
       <width>44</width>
       <height>44</height>
       <textureFocus>dialogue_shutdown_focus.png</textureFocus>

@@ -1398,7 +1398,7 @@ namespace MediaPortal.GUI.TV
       if (dlg == null)
         return;
       dlg.Reset();
-      dlg.SetHeading(924); // menu
+      dlg.SetHeading(699); // TV Main
 
       if (GUIGraphicsContext.DBLClickAsRightClick)
         dlg.AddLocalizedString(10104); // TV MiniEPG

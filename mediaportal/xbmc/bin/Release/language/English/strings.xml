@@ -2294,6 +2294,10 @@
         <value>TV-Streams</value>
     </string>
     <string>
+        <id>699</id>
+        <value>TV Main</value>
+    </string>
+    <string>
         <id>700</id>
         <value>Discography (eps, singles)</value>
     </string>
@@ -5174,7 +5178,7 @@
     </string>
     <string>
         <id>10104</id>
-        <value>Mini EPG</value>
+        <value>On Now</value>
     </string>
     <string>
         <id>11000</id>
