@@ -2294,6 +2294,10 @@
         <value>TV-Streams</value>
     </string>
     <string>
+        <id>699</id>
+        <value>TV-Menü</value>
+    </string>    
+    <string>
         <id>700</id>
         <value>Diskografie (EPs, Singles)</value>
     </string>
@@ -5177,6 +5181,10 @@
         <id>10104</id>
         <value>Kanal-Vorschau</value>
     </string>
+    <string>
+        <id>10105</id>
+        <value>Aktuell</value>
+    </string>    
     <string>
         <id>11000</id>
         <value>Bildbereich zuschneiden</value>
