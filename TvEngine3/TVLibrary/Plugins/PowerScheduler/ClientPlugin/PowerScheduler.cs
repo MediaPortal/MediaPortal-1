@@ -28,6 +28,7 @@ using System;
 using System.Net;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using MediaPortal.Player;
@@ -131,25 +132,39 @@ namespace MediaPortal.Plugins.Process
     #region Public methods
 
     #region IPowerScheduler implementation
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Register(IStandbyHandler handler)
     {
       if (!_standbyHandlers.Contains(handler))
         _standbyHandlers.Add(handler);
     }
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Register(IWakeupHandler handler)
     {
       if (!_wakeupHandlers.Contains(handler))
         _wakeupHandlers.Add(handler);
     }
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Unregister(IStandbyHandler handler)
     {
       if (_standbyHandlers.Contains(handler))
         _standbyHandlers.Remove(handler);
     }
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Unregister(IWakeupHandler handler)
     {
       if (_wakeupHandlers.Contains(handler))
         _wakeupHandlers.Remove(handler);
+    }
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public bool IsRegistered(IStandbyHandler handler)
+    {
+      return _standbyHandlers.Contains(handler);
+    }
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public bool IsRegistered(IWakeupHandler handler)
+    {
+      return _wakeupHandlers.Contains(handler);
     }
     public bool SuspendSystem(string source, bool force)
     {
