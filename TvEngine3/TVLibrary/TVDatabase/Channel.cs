@@ -403,6 +403,26 @@ namespace TvDatabase
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(TuningDetail), this );
+    } /// <summary>
+    /// Get a list of TuningDetail referring to the current entity.
+    /// </summary>
+    public IList ReferringHistory()
+    {
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(History));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
+
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      return ObjectFactory.GetCollection(typeof(History), stmt.Execute());
+
+      // TODO In the end, a GentleList should be returned instead of an arraylist
+      //return new GentleList( typeof(TuningDetail), this );
     }
     #endregion
 
@@ -481,7 +501,11 @@ namespace TvDatabase
 
     public void Delete()
     {
-      IList list = ReferringConflicts();
+      IList list = ReferringHistory();
+      foreach (History his in list)
+        his.Remove();
+
+      list = ReferringConflicts();
       foreach (Conflict conflict in list)
         conflict.Remove();
 
