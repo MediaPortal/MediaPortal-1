@@ -319,6 +319,8 @@ STDMETHODIMP CMpTsFilterPin::NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tSt
 CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr) 
 :CUnknown(NAME("CMpTs"), pUnk),m_pFilter(NULL),m_pPin(NULL)
 {
+		m_id=0;
+
 		LogDebug("CMpTs::ctor()");
 		DeleteFile("TsWriter.log");
 
@@ -421,16 +423,7 @@ STDMETHODIMP CMpTs::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
 		//LogDebug("CMpTs:NonDelegatingQueryInterface other");
       return m_pFilter->NonDelegatingQueryInterface(riid, ppv);
   } 
-	if (riid == IID_TSChannel)
-	{
-		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_TSChannel");
-	}
-	else
-	{
-		//LogDebug("CMpTs:NonDelegatingQueryInterface unknown %04.4x-%04.4x-%04.4x-%02.2x-%02.2x-%02.2x-%02.2x-%02.2x-%02.2x-%02.2x-%02.2x",
-		//	riid.Data1,riid.Data2,riid.Data3,
-		//	riid.Data4[0],riid.Data4[1],riid.Data4[2],riid.Data4[3],riid.Data4[4],riid.Data4[5],riid.Data4[6],riid.Data4[7]);
-	}
+ 
   return CUnknown::NonDelegatingQueryInterface(riid, ppv);
 
 } // NonDelegatingQueryInterface
@@ -482,7 +475,7 @@ void CMpTs::AnalyzeTsPacket(byte* tsPacket)
     CAutoLock lock(&m_Lock);
     for (int i=0; i < (int)m_vecChannels.size();++i)
     {
-        m_vecChannels[i]->OnTsPacket(tsPacket);
+      m_vecChannels[i]->OnTsPacket(tsPacket);
     }
 		m_pChannelScanner->OnTsPacket(tsPacket);
 		m_pEpgScanner->OnTsPacket(tsPacket);
@@ -494,42 +487,33 @@ void CMpTs::AnalyzeTsPacket(byte* tsPacket)
 }
 
 
-STDMETHODIMP CMpTs::AddChannel( ITSChannel** instance)
+STDMETHODIMP CMpTs::AddChannel( int* handle)
 {
   CAutoLock lock(&m_Lock);
-	LogDebug("--AddChannel:%d",m_vecChannels.size());
-  HRESULT hr;
-	
-  CTsChannel* channel = new CTsChannel(GetOwner(), &hr);
+	HRESULT hr;
+  CTsChannel* channel = new CTsChannel(GetOwner(), &hr,m_id); 
+	*handle=m_id;
+	m_id++;
   m_vecChannels.push_back(channel);
-  *instance=(ITSChannel*)channel;
-	LogDebug("--  returns:%x (%x)", (*instance), channel);
   return S_OK;
 }
 
-STDMETHODIMP CMpTs::DeleteChannel( ITSChannel* instance)
+STDMETHODIMP CMpTs::DeleteChannel( int handle)
 {
   CAutoLock lock(&m_Lock);
 	try
 	{
-		LogDebug("--DeleteChannel:%d (%x)",m_vecChannels.size(), instance);
 		ivecChannels it = m_vecChannels.begin();
 		while (it != m_vecChannels.end())
 		{
-			CTsChannel* channel=*it;
-			ITSChannel* ichan=(ITSChannel*)channel;
-			if (ichan == instance)
+			if ((*it)->Handle()==handle)
 			{
-				LogDebug("--  deleting");
-//				delete channel;
-				LogDebug("--  erasing");
+				delete *it;
 				m_vecChannels.erase(it);
-				LogDebug("--  done");
 				return S_OK;
 			}
 			++it;
 		}
-		LogDebug("--  not found");
 	}
 	catch(...)
 	{
@@ -538,18 +522,20 @@ STDMETHODIMP CMpTs::DeleteChannel( ITSChannel* instance)
   return S_OK;
 }
 
-STDMETHODIMP CMpTs::GetChannel( int index, ITSChannel** instance)
+CTsChannel* CMpTs::GetTsChannel(int handle)
 {
+	
   CAutoLock lock(&m_Lock);
-  *instance=(ITSChannel*)m_vecChannels[index];
-  return S_OK;
-}
-
-STDMETHODIMP CMpTs::GetChannelCount( int* count)
-{
-  CAutoLock lock(&m_Lock);
-  *count = m_vecChannels.size();
-  return S_OK;
+	ivecChannels it = m_vecChannels.begin();
+	while (it != m_vecChannels.end())
+	{
+		if ((*it)->Handle()==handle)
+		{
+			return *it;
+		}
+		++it;
+	}
+	return NULL;
 }
 
 STDMETHODIMP CMpTs::DeleteAllChannels()
@@ -561,5 +547,153 @@ STDMETHODIMP CMpTs::DeleteAllChannels()
     delete m_vecChannels[i];
   }
   m_vecChannels.clear();
+	m_id=0;
   return S_OK;
+}
+STDMETHODIMP CMpTs::AnalyzerSetVideoPid(int handle, int videoPid)
+{
+	return GetTsChannel(handle)->m_pVideoAnalyzer->SetVideoPid(  videoPid);
+}
+STDMETHODIMP CMpTs::AnalyzerGetVideoPid(int handle,  int* videoPid)
+{
+	return GetTsChannel(handle)->m_pVideoAnalyzer->GetVideoPid(  videoPid);
+}
+STDMETHODIMP CMpTs::AnalyzerSetAudioPid(int handle,  int audioPid)
+{
+	return GetTsChannel(handle)->m_pVideoAnalyzer->SetAudioPid(  audioPid);
+}
+STDMETHODIMP CMpTs::AnalyzerGetAudioPid(int handle,  int* audioPid)
+{
+	return GetTsChannel(handle)->m_pVideoAnalyzer->GetAudioPid(  audioPid);
+}
+STDMETHODIMP CMpTs::AnalyzerIsVideoEncrypted(int handle,  int* yesNo)
+{
+	return GetTsChannel(handle)->m_pVideoAnalyzer->IsVideoEncrypted(  yesNo);
+}
+STDMETHODIMP CMpTs::AnalyzerIsAudioEncrypted(int handle,  int* yesNo)
+{
+	return GetTsChannel(handle)->m_pVideoAnalyzer->IsAudioEncrypted(  yesNo);
+}
+STDMETHODIMP CMpTs::AnalyzerReset(int handle )
+{
+	return GetTsChannel(handle)->m_pVideoAnalyzer->Reset(  );
+}
+
+
+STDMETHODIMP CMpTs::PmtSetPmtPid(int handle,int pmtPid, long serviceId)
+{
+	return GetTsChannel(handle)->m_pPmtGrabber->SetPmtPid(pmtPid,serviceId  );
+}
+STDMETHODIMP CMpTs::PmtSetCallBack(int handle,IPMTCallback* callback)
+{
+	return GetTsChannel(handle)->m_pPmtGrabber->SetCallBack(callback);
+}
+STDMETHODIMP CMpTs::PmtGetPMTData (int handle,BYTE *pmtData)
+{
+	return GetTsChannel(handle)->m_pPmtGrabber->GetPMTData (pmtData);
+}
+
+
+STDMETHODIMP CMpTs::RecordSetPcrPid( int handle,int pcrPid)
+{
+	return GetTsChannel(handle)->m_pRecorder->SetPcrPid( pcrPid);
+}
+STDMETHODIMP CMpTs::RecordAddStream( int handle,int pid,bool isAudio,bool isVideo)
+{
+	return GetTsChannel(handle)->m_pRecorder->AddStream( pid,isAudio,isVideo);
+}
+STDMETHODIMP CMpTs::RecordRemoveStream( int handle,int pid)
+{
+	return GetTsChannel(handle)->m_pRecorder->RemoveStream(  pid);
+}
+STDMETHODIMP CMpTs::RecordSetRecordingFileName( int handle,char* pszFileName)
+{
+	return GetTsChannel(handle)->m_pRecorder->SetRecordingFileName( pszFileName);
+}
+STDMETHODIMP CMpTs::RecordStartRecord( int handle)
+{
+	return GetTsChannel(handle)->m_pRecorder->StartRecord(  );
+}
+STDMETHODIMP CMpTs::RecordStopRecord( int handle)
+{
+	return GetTsChannel(handle)->m_pRecorder->StopRecord(  );
+}
+STDMETHODIMP CMpTs::RecordGetMode( int handle,int *mode) 
+{
+	return GetTsChannel(handle)->m_pRecorder->GetMode( mode) ;
+}
+STDMETHODIMP CMpTs::RecordSetMode( int handle,int mode) 
+{
+	return GetTsChannel(handle)->m_pRecorder->SetMode(  mode) ;
+}
+STDMETHODIMP CMpTs::RecordSetPmtPid(int handle,int mtPid)
+{
+	return GetTsChannel(handle)->m_pRecorder->SetPmtPid( mtPid);
+}
+
+
+STDMETHODIMP CMpTs:: TimeShiftSetPcrPid( int handle, int pcrPid)
+{
+	return GetTsChannel(handle)->m_pTimeShifting->SetPcrPid( pcrPid);
+}
+STDMETHODIMP CMpTs:: TimeShiftAddStream( int handle, int pid, int serviceType, char* language)
+{
+	return GetTsChannel(handle)->m_pTimeShifting->AddStream( pid,  serviceType, language);
+}
+STDMETHODIMP CMpTs:: TimeShiftRemoveStream( int handle, int pid)
+{
+	return GetTsChannel(handle)->m_pTimeShifting->RemoveStream( pid);
+}
+STDMETHODIMP CMpTs:: TimeShiftSetTimeShiftingFileName( int handle, char* pszFileName)
+{
+	return GetTsChannel(handle)->m_pTimeShifting->SetTimeShiftingFileName( pszFileName);
+}
+STDMETHODIMP CMpTs:: TimeShiftStart( int handle )
+{
+	return GetTsChannel(handle)->m_pTimeShifting->Start( );
+}
+STDMETHODIMP CMpTs:: TimeShiftStop( int handle )
+{
+	return GetTsChannel(handle)->m_pTimeShifting->Stop( );
+}
+STDMETHODIMP CMpTs:: TimeShiftReset( int handle )
+{
+	return GetTsChannel(handle)->m_pTimeShifting->Reset( );
+}
+STDMETHODIMP CMpTs:: TimeShiftGetBufferSize( int handle, long * size) 
+{
+	return GetTsChannel(handle)->m_pTimeShifting->GetBufferSize( size);
+}
+STDMETHODIMP CMpTs:: TimeShiftSetMode( int handle, int mode) 
+{
+	return GetTsChannel(handle)->m_pTimeShifting->SetMode( mode);
+}
+STDMETHODIMP CMpTs:: TimeShiftGetMode( int handle, int *mode) 
+{
+	return GetTsChannel(handle)->m_pTimeShifting->GetMode( mode);
+}
+STDMETHODIMP CMpTs:: TimeShiftSetPmtPid( int handle, int pmtPid) 
+{
+	return GetTsChannel(handle)->m_pTimeShifting->SetPmtPid( pmtPid);
+}
+STDMETHODIMP CMpTs:: TimeShiftPause( int handle, BYTE onOff) 
+{
+	return GetTsChannel(handle)->m_pTimeShifting->Pause( onOff);
+}
+
+STDMETHODIMP CMpTs::TTxStart( int handle)
+{
+	return GetTsChannel(handle)->m_pTeletextGrabber->Start( );
+}
+STDMETHODIMP CMpTs::TTxStop( int handle )
+{
+	return GetTsChannel(handle)->m_pTeletextGrabber->Stop( );
+}
+STDMETHODIMP CMpTs::TTxSetTeletextPid( int handle,int teletextPid)
+{
+	return GetTsChannel(handle)->m_pTeletextGrabber->SetTeletextPid(teletextPid );
+}
+STDMETHODIMP CMpTs::TTxSetCallBack( int handle,ITeletextCallBack* callback)
+{
+	return GetTsChannel(handle)->m_pTeletextGrabber->SetCallBack(callback );
 }

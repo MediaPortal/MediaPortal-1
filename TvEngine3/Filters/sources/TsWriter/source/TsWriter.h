@@ -46,11 +46,52 @@ DEFINE_GUID(IID_TSFilter, 0x5eb9f392, 0xe7fd, 0x4071, 0x8e, 0x44, 0x35, 0x90, 0x
 
 DECLARE_INTERFACE_(ITSFilter, IUnknown)
 {
-  STDMETHOD(AddChannel)(THIS_ ITSChannel** instance)PURE;
-  STDMETHOD(DeleteChannel)(THIS_ ITSChannel* instance)PURE;
-  STDMETHOD(GetChannel)(THIS_ int index, ITSChannel** instance)PURE;
-  STDMETHOD(GetChannelCount)(THIS_ int* count)PURE;
+	STDMETHOD(AddChannel)(THIS_ int* handle)PURE;
+  STDMETHOD(DeleteChannel)(THIS_ int handle)PURE;
   STDMETHOD(DeleteAllChannels)()PURE;
+
+	STDMETHOD(AnalyzerSetVideoPid)(THIS_ int handle, int videoPid)PURE;
+	STDMETHOD(AnalyzerGetVideoPid)(THIS_ int handle,  int* videoPid)PURE;
+	STDMETHOD(AnalyzerSetAudioPid)(THIS_ int handle,  int audioPid)PURE;
+	STDMETHOD(AnalyzerGetAudioPid)(THIS_ int handle,  int* audioPid)PURE;
+	STDMETHOD(AnalyzerIsVideoEncrypted)(THIS_ int handle,  int* yesNo)PURE;
+	STDMETHOD(AnalyzerIsAudioEncrypted)(THIS_ int handle,  int* yesNo)PURE;
+	STDMETHOD(AnalyzerReset)(THIS_ int handle )PURE;
+
+	
+	STDMETHOD(PmtSetPmtPid)(THIS_ int handle,  int pmtPid, long serviceId);
+	STDMETHOD(PmtSetCallBack)(THIS_ int handle,   IPMTCallback* callback);
+	STDMETHOD(PmtGetPMTData) (THIS_ int handle,   BYTE *pmtData);
+
+	
+	STDMETHOD(RecordSetPcrPid)(THIS_ int handle,int pcrPid)PURE;
+	STDMETHOD(RecordAddStream)(THIS_ int handle,int pid,bool isAudio,bool isVideo)PURE;
+	STDMETHOD(RecordRemoveStream)(THIS_ int handle,int pid)PURE;
+  STDMETHOD(RecordSetRecordingFileName)(THIS_ int handle,char* pszFileName)PURE;
+  STDMETHOD(RecordStartRecord)(THIS_ int handle)PURE;
+  STDMETHOD(RecordStopRecord)(THIS_ int handle)PURE;
+	STDMETHOD(RecordGetMode) (THIS_ int handle,int *mode) PURE;
+	STDMETHOD(RecordSetMode) (THIS_ int handle,int mode) PURE;
+	STDMETHOD(RecordSetPmtPid)(THIS_ int handle,int mtPid)PURE;
+
+
+	STDMETHOD(TimeShiftSetPcrPid)(THIS_ int handle, int pcrPid)PURE;
+	STDMETHOD(TimeShiftAddStream)(THIS_ int handle, int pid, int serviceType, char* language)PURE;
+	STDMETHOD(TimeShiftRemoveStream)(THIS_ int handle, int pid)PURE;
+	STDMETHOD(TimeShiftSetTimeShiftingFileName)(THIS_ int handle, char* pszFileName)PURE;
+	STDMETHOD(TimeShiftStart)(THIS_ int handle )PURE;
+	STDMETHOD(TimeShiftStop)(THIS_ int handle )PURE;
+	STDMETHOD(TimeShiftReset)(THIS_ int handle )PURE;
+	STDMETHOD(TimeShiftGetBufferSize) (THIS_ int handle, long * size) PURE;
+	STDMETHOD(TimeShiftSetMode) (THIS_ int handle, int mode) PURE;
+	STDMETHOD(TimeShiftGetMode) (THIS_ int handle, int *mode) PURE;
+	STDMETHOD(TimeShiftSetPmtPid) (THIS_ int handle, int pmtPid) PURE;
+	STDMETHOD(TimeShiftPause) (THIS_ int handle, BYTE onOff) PURE;
+
+	STDMETHOD(TTxStart)(THIS_ int handle)PURE;
+	STDMETHOD(TTxStop)(THIS_ int handle )PURE;
+	STDMETHOD(TTxSetTeletextPid)(THIS_ int handle,int teletextPid)PURE;
+	STDMETHOD(TTxSetCallBack)(THIS_ int handle,ITeletextCallBack* callback)PURE;
 };
 
 // Main filter object
@@ -123,11 +164,53 @@ class CMpTs : public CUnknown, public ITSFilter
 public:
     DECLARE_IUNKNOWN
 
-    STDMETHODIMP AddChannel( ITSChannel** instance);
-    STDMETHODIMP DeleteChannel( ITSChannel* instance);
-    STDMETHODIMP GetChannel( int index, ITSChannel** instance);
-    STDMETHODIMP GetChannelCount( int* count);
+		STDMETHODIMP AddChannel( int* handle);
+    STDMETHODIMP DeleteChannel( int handle);
     STDMETHODIMP DeleteAllChannels();
+
+		STDMETHODIMP AnalyzerSetVideoPid(int handle, int videoPid);
+		STDMETHODIMP AnalyzerGetVideoPid(int handle,  int* videoPid);
+		STDMETHODIMP AnalyzerSetAudioPid(int handle,  int audioPid);
+		STDMETHODIMP AnalyzerGetAudioPid(int handle,  int* audioPid);
+		STDMETHODIMP AnalyzerIsVideoEncrypted(int handle,  int* yesNo);
+		STDMETHODIMP AnalyzerIsAudioEncrypted(int handle,  int* yesNo);
+		STDMETHODIMP AnalyzerReset(int handle );
+
+		STDMETHODIMP PmtSetPmtPid(int handle,int pmtPid, long serviceId);
+		STDMETHODIMP PmtSetCallBack(int handle,IPMTCallback* callback);
+		STDMETHODIMP PmtGetPMTData (int handle,BYTE *pmtData);
+
+		
+		STDMETHODIMP RecordSetPcrPid( int handle,int pcrPid);
+		STDMETHODIMP RecordAddStream( int handle,int pid,bool isAudio,bool isVideo);
+		STDMETHODIMP RecordRemoveStream( int handle,int pid);
+		STDMETHODIMP RecordSetRecordingFileName( int handle,char* pszFileName);
+		STDMETHODIMP RecordStartRecord( int handle);
+		STDMETHODIMP RecordStopRecord( int handle);
+		STDMETHODIMP RecordGetMode( int handle,int *mode) ;
+		STDMETHODIMP RecordSetMode( int handle,int mode) ;
+		STDMETHODIMP RecordSetPmtPid(int handle,int mtPid);
+
+
+		STDMETHODIMP TimeShiftSetPcrPid( int handle, int pcrPid);
+		STDMETHODIMP TimeShiftAddStream( int handle, int pid, int serviceType, char* language);
+		STDMETHODIMP TimeShiftRemoveStream( int handle, int pid);
+		STDMETHODIMP TimeShiftSetTimeShiftingFileName( int handle, char* pszFileName);
+		STDMETHODIMP TimeShiftStart( int handle );
+		STDMETHODIMP TimeShiftStop( int handle );
+		STDMETHODIMP TimeShiftReset( int handle );
+		STDMETHODIMP TimeShiftGetBufferSize( int handle, long * size) ;
+		STDMETHODIMP TimeShiftSetMode( int handle, int mode) ;
+		STDMETHODIMP TimeShiftGetMode( int handle, int *mode) ;
+		STDMETHODIMP TimeShiftSetPmtPid( int handle, int pmtPid) ;
+		STDMETHODIMP TimeShiftPause( int handle, BYTE onOff) ;
+
+
+		STDMETHODIMP TTxStart( int handle);
+		STDMETHODIMP TTxStop( int handle );
+		STDMETHODIMP TTxSetTeletextPid( int handle,int teletextPid);
+		STDMETHODIMP TTxSetCallBack( int handle,ITeletextCallBack* callback);
+
 
     CMpTs(LPUNKNOWN pUnk, HRESULT *phr);
     ~CMpTs();
@@ -136,10 +219,12 @@ public:
 
 private:
     // Overriden to say what interfaces we support where
+		CTsChannel* GetTsChannel(int handle);	
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
 		CChannelScan*   m_pChannelScanner;
 		CEpgScanner*		m_pEpgScanner;
     CTechnotrend*   m_pTechnoTrend;
-    vector<CTsChannel*> m_vecChannels;
+		vector<CTsChannel*> m_vecChannels;
     typedef vector<CTsChannel*>::iterator ivecChannels;
+		int m_id;
 };

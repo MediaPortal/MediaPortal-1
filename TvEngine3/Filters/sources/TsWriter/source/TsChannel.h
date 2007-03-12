@@ -31,35 +31,20 @@
 #include "cagrabber.h"
 
 // {C564CEB9-FC77-4776-8CB8-96DD87624161}
-DEFINE_GUID(IID_TSChannel, 0xc564ceb9, 0xfc77, 0x4776, 0x8c, 0xb8, 0x96, 0xdd, 0x87, 0x62, 0x41, 0x61);
 
-DECLARE_INTERFACE_(ITSChannel, IUnknown)
-{
-  STDMETHOD(Test)()PURE;
-};
-
-class CTsChannel: public CUnknown, public ITSChannel
+class CTsChannel
 {
 public:
-	CTsChannel(LPUNKNOWN pUnk, HRESULT *phr);
-	~CTsChannel(void);
-  STDMETHODIMP QueryInterface(REFIID riid, void **ppv);        
-  STDMETHODIMP_(ULONG) AddRef() {                             \
-      return GetOwner()->AddRef();                            \
-  };                                                          \
-  STDMETHODIMP_(ULONG) Release() {                            \
-      return GetOwner()->Release();                           \
-  };
-
-	STDMETHODIMP Test();
+	CTsChannel(LPUNKNOWN pUnk, HRESULT *phr, int id);
+	virtual ~CTsChannel(void);
   void OnTsPacket(byte* tsPacket);
+	int Handle() { return m_id;}
 
-private:
-  STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
 	CVideoAnalyzer* m_pVideoAnalyzer;
 	CPmtGrabber*		m_pPmtGrabber;
 	CRecorder*			m_pRecorder;
 	CTimeShifting*	m_pTimeShifting;
 	CTeletextGrabber*	m_pTeletextGrabber;
   CCaGrabber*     m_pCaGrabber;
+	int m_id;
 };
