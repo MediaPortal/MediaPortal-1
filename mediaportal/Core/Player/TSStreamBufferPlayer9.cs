@@ -801,7 +801,7 @@ namespace MediaPortal.Player
     public override void SeekAbsolute(double dTimeInSecs)
     {
 
-      Log.Info("SeekAbsolute:seekabs:{0} duration:{1}", dTimeInSecs, Duration);
+      Log.Info("SeekAbsolute:seekabs:{0} duration:{1} pos:{2}", dTimeInSecs, Duration, CurrentPosition);
       if (_state != PlayState.Init)
       {
         if (_mediaCtrl != null && _mediaSeeking != null)
@@ -830,7 +830,7 @@ namespace MediaPortal.Player
         }
         UpdateCurrentPosition();
         if (dvbSubRenderer != null) dvbSubRenderer.OnSeek(CurrentPosition);
-        Log.Info("StreamBufferPlayer: current pos:{0} {1}", CurrentPosition,Duration);
+        Log.Info("StreamBufferPlayer: current pos:{0} dur:{1}", CurrentPosition,Duration);
       }
     }
 
