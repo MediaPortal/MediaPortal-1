@@ -1537,6 +1537,7 @@ namespace MediaPortal.TV.Recording
         int highMaxKbps = xmlreader.GetValueAsInt("quality", "HighMax", 12000);
         bool highVBR = xmlreader.GetValueAsBool("quality", "HighVBR", true);
 
+        string comName = this._card.Graph.CommercialName;
         if ( comName.IndexOf("usb") >= 0 )
         {
           highMinKbps = xmlreader.GetValueAsInt("quality", "HighLow", 768);
