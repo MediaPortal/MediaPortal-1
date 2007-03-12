@@ -1537,7 +1537,6 @@ namespace MediaPortal.TV.Recording
         int highMaxKbps = xmlreader.GetValueAsInt("quality", "HighMax", 12000);
         bool highVBR = xmlreader.GetValueAsBool("quality", "HighVBR", true);
 
-        string comName = this._card.Graph.CommercialName;
         if ( comName.IndexOf("usb") >= 0 )
         {
           highMinKbps = xmlreader.GetValueAsInt("quality", "HighLow", 768);
@@ -1545,7 +1544,7 @@ namespace MediaPortal.TV.Recording
         }
 
 
-        VideoCaptureProperties props = new VideoCaptureProperties(_filterCapture, comName);
+        VideoCaptureProperties props = new VideoCaptureProperties(_filterCapture, "hauppauge");
         if ( Quality >= 0 )
         {
           //103 is recommended for the stream buffer engine 
