@@ -112,7 +112,7 @@ namespace TvEngine.PowerScheduler.Handlers
           setting = ps.Settings.GetSetting("EPGWakeupConfig");
           EPGWakeupConfig config = new EPGWakeupConfig((layer.GetSetting("EPGWakeupConfig", String.Empty).Value));
 
-          if (setting.Get<EPGWakeupConfig>() != config)
+          if (!config.Equals(setting.Get<EPGWakeupConfig>()))
           {
             setting.Set<EPGWakeupConfig>(config);
             Log.Debug("PowerScheduler: wakeup system for EPG at time: {0}:{1}", config.Hour, config.Minutes);
@@ -154,38 +154,24 @@ namespace TvEngine.PowerScheduler.Handlers
       }
     }
 
-    private bool ShouldRun(EPGWakeupConfig config, DayOfWeek dow)
+    private bool ShouldRun(EPGWakeupConfig cfg, DayOfWeek dow)
     {
       switch (dow)
       {
         case DayOfWeek.Monday:
-          if (config.Days.Contains(EPGGrabDays.Monday))
-            return true;
-          return false;
+          return (cfg.Days.Contains(EPGGrabDays.Monday));
         case DayOfWeek.Tuesday:
-          if (config.Days.Contains(EPGGrabDays.Tuesday))
-            return true;
-          return false;
+          return (cfg.Days.Contains(EPGGrabDays.Tuesday));
         case DayOfWeek.Wednesday:
-          if (config.Days.Contains(EPGGrabDays.Wednesday))
-            return true;
-          return false;
+          return (cfg.Days.Contains(EPGGrabDays.Wednesday));
         case DayOfWeek.Thursday:
-          if (config.Days.Contains(EPGGrabDays.Thursday))
-            return true;
-          return false;
+          return (cfg.Days.Contains(EPGGrabDays.Thursday));
         case DayOfWeek.Friday:
-          if (config.Days.Contains(EPGGrabDays.Friday))
-            return true;
-          return false;
+          return (cfg.Days.Contains(EPGGrabDays.Friday));
         case DayOfWeek.Saturday:
-          if (config.Days.Contains(EPGGrabDays.Saturday))
-            return true;
-          return false;
+          return (cfg.Days.Contains(EPGGrabDays.Saturday));
         case DayOfWeek.Sunday:
-          if (config.Days.Contains(EPGGrabDays.Sunday))
-            return true;
-          return false;
+          return (cfg.Days.Contains(EPGGrabDays.Sunday));
         default:
           return false;
       }

@@ -119,6 +119,9 @@ namespace TvEngine.PowerScheduler
         mFormat = "{0}";
       maskedTextBox1.Text = String.Format(hFormat, config.Hour) + ":" + String.Format(mFormat, config.Minutes);
 
+      setting = _layer.GetSetting("PowerSchedulerProcesses", "SetupTv, Configuration");
+      textBox1.Text = setting.Value;
+
     }
 
     private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -191,7 +194,7 @@ namespace TvEngine.PowerScheduler
 
     public override void OnSectionDeActivated()
     {
-      // EPG grabber settings are only stored when a section is deactivated
+      // EPG grabber settings are only stored when the section is deactivated
       Setting setting;
 
       setting = _layer.GetSetting("PreventStandbyWhenGrabbingEPG", "false");
@@ -230,6 +233,11 @@ namespace TvEngine.PowerScheduler
         setting.Value = newcfg.SerializeAsString();
         setting.Persist();
       }
+
+      // Process settings are only stored when the section is deactivated
+      setting = _layer.GetSetting("PowerSchedulerProcesses", "SetupTv, Configuration");
+      setting.Value = textBox1.Text;
+      setting.Persist();
     }
 
     private void CheckDay(EPGWakeupConfig cfg, EPGGrabDays day, bool enabled)
@@ -246,5 +254,27 @@ namespace TvEngine.PowerScheduler
       }
     }
 
+    private void button1_Click(object sender, EventArgs e)
+    {
+      SelectProcessForm spf = new SelectProcessForm();
+      Form f = spf as Form;
+      DialogResult dr = f.ShowDialog();
+      if (DialogResult.OK == dr)
+      {
+        if (!spf.SelectedProcess.Equals(String.Empty))
+        {
+          if (textBox1.Text.Equals(String.Empty))
+          {
+            textBox1.Text = spf.SelectedProcess;
+          }
+          else
+          {
+            textBox1.Text = String.Format("{0}, {1}", textBox1.Text, spf.SelectedProcess);
+          }
+        }
+      }
+    }
+
   }
+
 }

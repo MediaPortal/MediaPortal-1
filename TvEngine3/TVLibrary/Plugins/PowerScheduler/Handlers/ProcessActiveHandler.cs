@@ -26,6 +26,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
+using TvDatabase;
+using TvLibrary.Interfaces;
+using TvLibrary.Log;
 using TvEngine.PowerScheduler.Interfaces;
 #endregion
 
@@ -37,13 +40,58 @@ namespace TvEngine.PowerScheduler.Handlers
   public class ProcessActiveHandler : IStandbyHandler
   {
     #region Variables
-    private string _processName = String.Empty;
+    private List<string> _processes = new List<string>();
+    private List<string> _preventers = new List<string>();
     #endregion
 
     #region Constructor
-    public ProcessActiveHandler(string processName)
+    public ProcessActiveHandler()
     {
-      _processName = processName;
+      if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
+        GlobalServiceProvider.Instance.Get<IPowerScheduler>().OnPowerSchedulerEvent += new PowerSchedulerEventHandler(ProcessActiveHandler_OnPowerSchedulerEvent);
+    }
+    #endregion
+
+    #region Private methods
+    void ProcessActiveHandler_OnPowerSchedulerEvent(PowerSchedulerEventArgs args)
+    {
+      switch (args.EventType)
+      {
+        case PowerSchedulerEventType.Started:
+        case PowerSchedulerEventType.Elapsed:
+          IPowerScheduler ps = GlobalServiceProvider.Instance.Get<IPowerScheduler>();
+          if (ps == null)
+            return;
+          PowerSetting setting = ps.Settings.GetSetting("Processes");
+          TvBusinessLayer layer = new TvBusinessLayer();
+          string processString = layer.GetSetting("PowerSchedulerProcesses").Value;
+          List<string> processes = new List<string>();
+          foreach (string process in processString.Split(','))
+            processes.Add(process.Trim());
+          if (!IsEqual(processes, setting.Get<List<string>>()))
+          {
+            setting.Set<List<string>>(processes);
+            _processes = processes;
+            foreach (string process in processes)
+              Log.Debug("PowerScheduler: preventing standby for process: {0}", process);
+          }
+          break;
+      }
+    }
+
+    private bool IsEqual(List<string> oldConfig, List<string> newConfig)
+    {
+      if (oldConfig != null && newConfig == null)
+        return false;
+      if (oldConfig == null && newConfig != null)
+        return false;
+      foreach (string s in oldConfig)
+        if (!newConfig.Contains(s))
+          return false;
+      foreach (string s in newConfig)
+        if (!oldConfig.Contains(s))
+          return false;
+      return true;
     }
     #endregion
 
@@ -52,13 +100,25 @@ namespace TvEngine.PowerScheduler.Handlers
     {
       get
       {
-        Process[] processes = Process.GetProcessesByName("SetupTv");
-        return (processes.Length > 0);
+        _preventers.Clear();
+        foreach (string process in _processes)
+        {
+          Process[] processes = Process.GetProcessesByName(process);
+          if (processes.Length > 0)
+            _preventers.Add(process);
+        }
+        return (_preventers.Count > 0);
       }
     }
     public string HandlerName
     {
-      get { return String.Format("ProcessActiveHandler:{0}", _processName); }
+      get
+      {
+        string preventers = String.Empty;
+        foreach (string preventer in _preventers)
+          preventers += String.Format(" {0}", preventer);
+        return String.Format("ProcessActiveHandler:{0}", preventers);
+      }
     }
     #endregion
   }

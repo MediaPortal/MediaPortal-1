@@ -165,7 +165,8 @@ namespace TvEngine.PowerScheduler
       Log.Debug("PowerScheduler: Registered PowerScheduler service to GlobalServiceProvider");
 
       // Create the default set of standby/resume handlers
-      _factory = new PowerSchedulerFactory(controller);
+      if (_factory == null)
+        _factory = new PowerSchedulerFactory(controller);
       _factory.CreateDefaultSet();
       Register(_clientStandbyHandler);
       Register(_clientWakeupHandler);
@@ -205,6 +206,7 @@ namespace TvEngine.PowerScheduler
 
       // stop the global timer responsible for standby checking and refreshing settings
       _timer.Enabled = false;
+      _timer.Elapsed -= new System.Timers.ElapsedEventHandler(OnTimerElapsed);
       _timer.Dispose();
       Log.Debug("PowerScheduler: Disabled standby timer");
 

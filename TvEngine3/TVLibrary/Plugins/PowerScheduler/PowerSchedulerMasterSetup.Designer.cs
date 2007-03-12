@@ -28,6 +28,7 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.label1 = new System.Windows.Forms.Label();
       this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
@@ -43,23 +44,28 @@ namespace TvEngine.PowerScheduler
       this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
       this.label2 = new System.Windows.Forms.Label();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
-      this.checkBox5 = new System.Windows.Forms.CheckBox();
-      this.checkBox6 = new System.Windows.Forms.CheckBox();
-      this.checkBox7 = new System.Windows.Forms.CheckBox();
-      this.checkBox8 = new System.Windows.Forms.CheckBox();
-      this.checkBox9 = new System.Windows.Forms.CheckBox();
-      this.checkBox10 = new System.Windows.Forms.CheckBox();
-      this.checkBox11 = new System.Windows.Forms.CheckBox();
-      this.checkBox12 = new System.Windows.Forms.CheckBox();
-      this.checkBox13 = new System.Windows.Forms.CheckBox();
-      this.label5 = new System.Windows.Forms.Label();
       this.maskedTextBox1 = new System.Windows.Forms.MaskedTextBox();
+      this.label5 = new System.Windows.Forms.Label();
+      this.checkBox13 = new System.Windows.Forms.CheckBox();
+      this.checkBox12 = new System.Windows.Forms.CheckBox();
+      this.checkBox11 = new System.Windows.Forms.CheckBox();
+      this.checkBox10 = new System.Windows.Forms.CheckBox();
+      this.checkBox9 = new System.Windows.Forms.CheckBox();
+      this.checkBox8 = new System.Windows.Forms.CheckBox();
+      this.checkBox7 = new System.Windows.Forms.CheckBox();
+      this.checkBox6 = new System.Windows.Forms.CheckBox();
+      this.checkBox5 = new System.Windows.Forms.CheckBox();
+      this.groupBox4 = new System.Windows.Forms.GroupBox();
+      this.button1 = new System.Windows.Forms.Button();
+      this.textBox1 = new System.Windows.Forms.TextBox();
+      this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
       this.groupBox2.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
       this.groupBox3.SuspendLayout();
+      this.groupBox4.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
@@ -252,106 +258,7 @@ namespace TvEngine.PowerScheduler
       this.groupBox3.Size = new System.Drawing.Size(460, 86);
       this.groupBox3.TabIndex = 2;
       this.groupBox3.TabStop = false;
-      this.groupBox3.Text = "EPG grabber settings";
-      // 
-      // checkBox5
-      // 
-      this.checkBox5.AutoSize = true;
-      this.checkBox5.Location = new System.Drawing.Point(238, 19);
-      this.checkBox5.Name = "checkBox5";
-      this.checkBox5.Size = new System.Drawing.Size(201, 17);
-      this.checkBox5.TabIndex = 0;
-      this.checkBox5.Text = "Prevent standby when grabbing EPG";
-      this.checkBox5.UseVisualStyleBackColor = true;
-      // 
-      // checkBox6
-      // 
-      this.checkBox6.AutoSize = true;
-      this.checkBox6.Location = new System.Drawing.Point(7, 19);
-      this.checkBox6.Name = "checkBox6";
-      this.checkBox6.Size = new System.Drawing.Size(204, 17);
-      this.checkBox6.TabIndex = 1;
-      this.checkBox6.Text = "Wakeup system for EPG grabbing on:";
-      this.checkBox6.UseVisualStyleBackColor = true;
-      // 
-      // checkBox7
-      // 
-      this.checkBox7.AutoSize = true;
-      this.checkBox7.Location = new System.Drawing.Point(7, 40);
-      this.checkBox7.Name = "checkBox7";
-      this.checkBox7.Size = new System.Drawing.Size(64, 17);
-      this.checkBox7.TabIndex = 2;
-      this.checkBox7.Text = "Monday";
-      this.checkBox7.UseVisualStyleBackColor = true;
-      // 
-      // checkBox8
-      // 
-      this.checkBox8.AutoSize = true;
-      this.checkBox8.Location = new System.Drawing.Point(7, 59);
-      this.checkBox8.Name = "checkBox8";
-      this.checkBox8.Size = new System.Drawing.Size(67, 17);
-      this.checkBox8.TabIndex = 3;
-      this.checkBox8.Text = "Tuesday";
-      this.checkBox8.UseVisualStyleBackColor = true;
-      // 
-      // checkBox9
-      // 
-      this.checkBox9.AutoSize = true;
-      this.checkBox9.Location = new System.Drawing.Point(77, 40);
-      this.checkBox9.Name = "checkBox9";
-      this.checkBox9.Size = new System.Drawing.Size(83, 17);
-      this.checkBox9.TabIndex = 4;
-      this.checkBox9.Text = "Wednesday";
-      this.checkBox9.UseVisualStyleBackColor = true;
-      // 
-      // checkBox10
-      // 
-      this.checkBox10.AutoSize = true;
-      this.checkBox10.Location = new System.Drawing.Point(77, 59);
-      this.checkBox10.Name = "checkBox10";
-      this.checkBox10.Size = new System.Drawing.Size(70, 17);
-      this.checkBox10.TabIndex = 5;
-      this.checkBox10.Text = "Thursday";
-      this.checkBox10.UseVisualStyleBackColor = true;
-      // 
-      // checkBox11
-      // 
-      this.checkBox11.AutoSize = true;
-      this.checkBox11.Location = new System.Drawing.Point(164, 40);
-      this.checkBox11.Name = "checkBox11";
-      this.checkBox11.Size = new System.Drawing.Size(54, 17);
-      this.checkBox11.TabIndex = 6;
-      this.checkBox11.Text = "Friday";
-      this.checkBox11.UseVisualStyleBackColor = true;
-      // 
-      // checkBox12
-      // 
-      this.checkBox12.AutoSize = true;
-      this.checkBox12.Location = new System.Drawing.Point(164, 59);
-      this.checkBox12.Name = "checkBox12";
-      this.checkBox12.Size = new System.Drawing.Size(68, 17);
-      this.checkBox12.TabIndex = 7;
-      this.checkBox12.Text = "Saturday";
-      this.checkBox12.UseVisualStyleBackColor = true;
-      // 
-      // checkBox13
-      // 
-      this.checkBox13.AutoSize = true;
-      this.checkBox13.Location = new System.Drawing.Point(238, 59);
-      this.checkBox13.Name = "checkBox13";
-      this.checkBox13.Size = new System.Drawing.Size(62, 17);
-      this.checkBox13.TabIndex = 8;
-      this.checkBox13.Text = "Sunday";
-      this.checkBox13.UseVisualStyleBackColor = true;
-      // 
-      // label5
-      // 
-      this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(333, 60);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(73, 13);
-      this.label5.TabIndex = 9;
-      this.label5.Text = "Wakeup time:";
+      this.groupBox3.Text = "DVB EPG grabber settings";
       // 
       // maskedTextBox1
       // 
@@ -363,10 +270,143 @@ namespace TvEngine.PowerScheduler
       this.maskedTextBox1.Text = "0000";
       this.maskedTextBox1.ValidatingType = typeof(System.DateTime);
       // 
+      // label5
+      // 
+      this.label5.AutoSize = true;
+      this.label5.Location = new System.Drawing.Point(333, 60);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(73, 13);
+      this.label5.TabIndex = 9;
+      this.label5.Text = "Wakeup time:";
+      // 
+      // checkBox13
+      // 
+      this.checkBox13.AutoSize = true;
+      this.checkBox13.Location = new System.Drawing.Point(238, 59);
+      this.checkBox13.Name = "checkBox13";
+      this.checkBox13.Size = new System.Drawing.Size(62, 17);
+      this.checkBox13.TabIndex = 8;
+      this.checkBox13.Text = "Sunday";
+      this.checkBox13.UseVisualStyleBackColor = true;
+      // 
+      // checkBox12
+      // 
+      this.checkBox12.AutoSize = true;
+      this.checkBox12.Location = new System.Drawing.Point(164, 59);
+      this.checkBox12.Name = "checkBox12";
+      this.checkBox12.Size = new System.Drawing.Size(68, 17);
+      this.checkBox12.TabIndex = 7;
+      this.checkBox12.Text = "Saturday";
+      this.checkBox12.UseVisualStyleBackColor = true;
+      // 
+      // checkBox11
+      // 
+      this.checkBox11.AutoSize = true;
+      this.checkBox11.Location = new System.Drawing.Point(164, 40);
+      this.checkBox11.Name = "checkBox11";
+      this.checkBox11.Size = new System.Drawing.Size(54, 17);
+      this.checkBox11.TabIndex = 6;
+      this.checkBox11.Text = "Friday";
+      this.checkBox11.UseVisualStyleBackColor = true;
+      // 
+      // checkBox10
+      // 
+      this.checkBox10.AutoSize = true;
+      this.checkBox10.Location = new System.Drawing.Point(77, 59);
+      this.checkBox10.Name = "checkBox10";
+      this.checkBox10.Size = new System.Drawing.Size(70, 17);
+      this.checkBox10.TabIndex = 5;
+      this.checkBox10.Text = "Thursday";
+      this.checkBox10.UseVisualStyleBackColor = true;
+      // 
+      // checkBox9
+      // 
+      this.checkBox9.AutoSize = true;
+      this.checkBox9.Location = new System.Drawing.Point(77, 40);
+      this.checkBox9.Name = "checkBox9";
+      this.checkBox9.Size = new System.Drawing.Size(83, 17);
+      this.checkBox9.TabIndex = 4;
+      this.checkBox9.Text = "Wednesday";
+      this.checkBox9.UseVisualStyleBackColor = true;
+      // 
+      // checkBox8
+      // 
+      this.checkBox8.AutoSize = true;
+      this.checkBox8.Location = new System.Drawing.Point(7, 59);
+      this.checkBox8.Name = "checkBox8";
+      this.checkBox8.Size = new System.Drawing.Size(67, 17);
+      this.checkBox8.TabIndex = 3;
+      this.checkBox8.Text = "Tuesday";
+      this.checkBox8.UseVisualStyleBackColor = true;
+      // 
+      // checkBox7
+      // 
+      this.checkBox7.AutoSize = true;
+      this.checkBox7.Location = new System.Drawing.Point(7, 40);
+      this.checkBox7.Name = "checkBox7";
+      this.checkBox7.Size = new System.Drawing.Size(64, 17);
+      this.checkBox7.TabIndex = 2;
+      this.checkBox7.Text = "Monday";
+      this.checkBox7.UseVisualStyleBackColor = true;
+      // 
+      // checkBox6
+      // 
+      this.checkBox6.AutoSize = true;
+      this.checkBox6.Location = new System.Drawing.Point(7, 19);
+      this.checkBox6.Name = "checkBox6";
+      this.checkBox6.Size = new System.Drawing.Size(204, 17);
+      this.checkBox6.TabIndex = 1;
+      this.checkBox6.Text = "Wakeup system for EPG grabbing on:";
+      this.checkBox6.UseVisualStyleBackColor = true;
+      // 
+      // checkBox5
+      // 
+      this.checkBox5.AutoSize = true;
+      this.checkBox5.Location = new System.Drawing.Point(238, 19);
+      this.checkBox5.Name = "checkBox5";
+      this.checkBox5.Size = new System.Drawing.Size(201, 17);
+      this.checkBox5.TabIndex = 0;
+      this.checkBox5.Text = "Prevent standby when grabbing EPG";
+      this.checkBox5.UseVisualStyleBackColor = true;
+      // 
+      // groupBox4
+      // 
+      this.groupBox4.Controls.Add(this.button1);
+      this.groupBox4.Controls.Add(this.textBox1);
+      this.groupBox4.Location = new System.Drawing.Point(4, 288);
+      this.groupBox4.Name = "groupBox4";
+      this.groupBox4.Size = new System.Drawing.Size(460, 46);
+      this.groupBox4.TabIndex = 3;
+      this.groupBox4.TabStop = false;
+      this.groupBox4.Text = "Prevent standby when these processes are active:";
+      // 
+      // button1
+      // 
+      this.button1.Location = new System.Drawing.Point(343, 16);
+      this.button1.Name = "button1";
+      this.button1.Size = new System.Drawing.Size(102, 23);
+      this.button1.TabIndex = 1;
+      this.button1.Text = "Select process...";
+      this.button1.UseVisualStyleBackColor = true;
+      this.button1.Click += new System.EventHandler(this.button1_Click);
+      // 
+      // textBox1
+      // 
+      this.textBox1.Location = new System.Drawing.Point(12, 18);
+      this.textBox1.Name = "textBox1";
+      this.textBox1.Size = new System.Drawing.Size(320, 20);
+      this.textBox1.TabIndex = 0;
+      this.textBox1.Text = "SetupTv, Configuration";
+      // 
+      // toolTip1
+      // 
+      this.toolTip1.ToolTipTitle = "comma-separated list of process which prevent standby when they are active";
+      // 
       // PowerSchedulerMasterSetup
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.groupBox4);
       this.Controls.Add(this.groupBox3);
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
@@ -381,6 +421,8 @@ namespace TvEngine.PowerScheduler
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
+      this.groupBox4.ResumeLayout(false);
+      this.groupBox4.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -413,5 +455,9 @@ namespace TvEngine.PowerScheduler
     private System.Windows.Forms.CheckBox checkBox6;
     private System.Windows.Forms.MaskedTextBox maskedTextBox1;
     private System.Windows.Forms.Label label5;
+    private System.Windows.Forms.GroupBox groupBox4;
+    private System.Windows.Forms.Button button1;
+    private System.Windows.Forms.TextBox textBox1;
+    private System.Windows.Forms.ToolTip toolTip1;
   }
 }

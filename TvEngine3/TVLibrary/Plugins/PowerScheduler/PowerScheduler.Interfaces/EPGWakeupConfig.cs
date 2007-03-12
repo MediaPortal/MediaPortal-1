@@ -50,7 +50,7 @@ namespace TvEngine.PowerScheduler
   public class EPGWakeupConfig
   {
     public DateTime LastRun = DateTime.MinValue;
-    public ArrayList Days = new ArrayList();
+    public List<EPGGrabDays> Days = new List<EPGGrabDays>();
     public int Hour;
     public int Minutes;
     public EPGWakeupConfig() { }
@@ -92,8 +92,16 @@ namespace TvEngine.PowerScheduler
       if (obj is EPGWakeupConfig)
       {
         EPGWakeupConfig cfg = (EPGWakeupConfig)obj;
-        if (cfg.Hour == Hour && cfg.Minutes == Minutes && cfg.Days.Equals(Days))
+        if (cfg.Hour == Hour && cfg.Minutes == Minutes)
+        {
+          foreach (EPGGrabDays day in cfg.Days)
+            if (!Days.Contains(day))
+              return false;
+          foreach (EPGGrabDays day in Days)
+            if (!cfg.Days.Contains(day))
+              return false;
           return true;
+        }
       }
       return false;
     }

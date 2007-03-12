@@ -77,9 +77,7 @@ namespace TvEngine.PowerScheduler
       _standbyHandlers.Add(standbyHandler);
       standbyHandler = new ControllerActiveHandler(controller);
       _standbyHandlers.Add(standbyHandler);
-      standbyHandler = new ProcessActiveHandler("SetupTv");
-      _standbyHandlers.Add(standbyHandler);
-      standbyHandler = new ProcessActiveHandler("Configuration");
+      standbyHandler = new ProcessActiveHandler();
       _standbyHandlers.Add(standbyHandler);
 
       // Add handlers for resuming from standby
