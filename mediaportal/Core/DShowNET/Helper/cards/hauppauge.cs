@@ -35,26 +35,39 @@ namespace DShowNET
 	public class Hauppauge:IDisposable
 	{
     private bool disposed = false;
-    [DllImport("hauppauge.dll", EntryPoint = "Init", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public static extern int Init(IBaseFilter tuner);
-    [DllImport("hauppauge.dll", EntryPoint = "IsHauppauge", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public static extern bool IsHauppauge();
-    [DllImport("hauppauge.dll", EntryPoint = "SetVidBitRate", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public static extern int SetVidBitRate(int maxkbps, int minkbps, bool isVBR);
-    [DllImport("hauppauge.dll", EntryPoint = "DeInit", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public static extern int DeInit();
-    [DllImport("hauppauge.dll", EntryPoint = "GetVidBitRate", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public static extern int GetVidBitRate(out int maxkbps, out int minkbps, out bool isVBR);
-    [DllImport("hauppauge.dll", EntryPoint = "SetAudBitRate", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public static extern int SetAudBitRate(int bitrate);
-    [DllImport("hauppauge.dll", EntryPoint = "GetAudBitRate", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public static extern int GetAudBitrate(out int bitrate);
-    [DllImport("hauppauge.dll", EntryPoint = "SetStreamType", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public static extern int SetStreamType(int stream);
-    [DllImport("hauppauge.dll", EntryPoint = "GetStreamType", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public static extern int GetStreamType(out int stream);
-    [DllImport("hauppauge.dll", EntryPoint = "SetDNRFilter", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public static extern int SetDNRFilter(bool onoff);
+
+    [DllImport("kernel32.dll")]
+    internal static extern IntPtr LoadLibrary(String dllname);
+
+    [DllImport("kernel32.dll")]
+    internal static extern IntPtr GetProcAddress(IntPtr hModule, String procname);
+
+    [DllImport("kernel32.dll")]
+    internal static extern bool FreeLibrary(IntPtr hModule);
+
+    IntPtr hauppaugelib = IntPtr.Zero;
+
+    delegate int Init(IBaseFilter tuner);
+    delegate int DeInit();
+    delegate bool IsHauppauge();
+    delegate int SetVidBitRate(int maxkbps, int minkbps, bool isVBR);
+    delegate int GetVidBitRate(out int maxkbps, out int minkbps, out bool isVBR);
+    delegate int SetAudBitRate(int bitrate);
+    delegate int GetAudBitRate(out int bitrate);
+    delegate int SetStreamType(int stream);
+    delegate int GetStreamType(out int stream);
+    delegate int SetDNRFilter(bool onoff);
+
+    Init _Init = null;
+    DeInit _DeInit = null;
+    IsHauppauge _IsHauppauge = null;
+    SetVidBitRate _SetVidBitRate = null;
+    GetVidBitRate _GetVidBitRate = null;
+    SetAudBitRate _SetAudBitRate = null;
+    GetAudBitRate _GetAudBitRate = null;
+    SetStreamType _SetStreamType = null;
+    GetStreamType _GetStreamType = null;
+    SetDNRFilter _SetDNRFilter = null;
 
     HResult hr; 
     
@@ -64,10 +77,49 @@ namespace DShowNET
 		{
       try
       {
-        if (filter == null)
-          return;
+        //Don't create the class is we don't have any filter;
 
-        hr = new HResult(Init(filter));
+        if (filter == null)
+        {
+          return;
+        }
+
+        //Load Library
+        hauppaugelib = LoadLibrary("hauppauge.dll");
+        
+        //Get Proc addresses, and set the delegates
+        IntPtr procaddr = GetProcAddress(hauppaugelib, "Init");
+        _Init = (Init)Marshal.GetDelegateForFunctionPointer(procaddr, typeof(Init));
+
+        procaddr = GetProcAddress(hauppaugelib, "DeInit");
+        _DeInit = (DeInit)Marshal.GetDelegateForFunctionPointer(procaddr, typeof(DeInit));
+
+        procaddr = GetProcAddress(hauppaugelib, "IsHauppauge");
+        _IsHauppauge = (IsHauppauge)Marshal.GetDelegateForFunctionPointer(procaddr, typeof(IsHauppauge));
+
+        procaddr = GetProcAddress(hauppaugelib, "SetVidBitRate");
+        _SetVidBitRate = (SetVidBitRate)Marshal.GetDelegateForFunctionPointer(procaddr, typeof(SetVidBitRate));
+
+        procaddr = GetProcAddress(hauppaugelib, "GetVidBitRate");
+        _GetVidBitRate = (GetVidBitRate)Marshal.GetDelegateForFunctionPointer(procaddr, typeof(GetVidBitRate));
+
+        procaddr = GetProcAddress(hauppaugelib, "SetAudBitRate");
+        _SetAudBitRate = (SetAudBitRate)Marshal.GetDelegateForFunctionPointer(procaddr, typeof(SetAudBitRate));
+
+        procaddr = GetProcAddress(hauppaugelib, "GetAudBitRate");
+        _GetAudBitRate = (GetAudBitRate)Marshal.GetDelegateForFunctionPointer(procaddr, typeof(GetAudBitRate));
+
+        procaddr = GetProcAddress(hauppaugelib, "SetStreamType");
+        _SetStreamType = (SetStreamType)Marshal.GetDelegateForFunctionPointer(procaddr, typeof(SetStreamType));
+
+        procaddr = GetProcAddress(hauppaugelib, "GetStreamType");
+        _GetStreamType = (GetStreamType)Marshal.GetDelegateForFunctionPointer(procaddr, typeof(GetStreamType));
+
+        procaddr = GetProcAddress(hauppaugelib, "SetDNRFilter");
+        _SetDNRFilter = (SetDNRFilter)Marshal.GetDelegateForFunctionPointer(procaddr, typeof(SetDNRFilter));
+
+
+        hr = new HResult(_Init(filter));
         Log.Info("Hauppauge Quality Control Initializing " + hr.ToDXString());
       }
       catch (Exception ex)
@@ -80,10 +132,13 @@ namespace DShowNET
     {
       try
       {
-        if (IsHauppauge())
+        if (hauppaugelib != IntPtr.Zero)
         {
-          SetDNRFilter(onoff);
-          return true;
+          if (_IsHauppauge())
+          {
+            _SetDNRFilter(onoff);
+            return true;
+          }
         }
       }
       catch (Exception ex)
@@ -100,9 +155,12 @@ namespace DShowNET
       isVBR = false;
       try
       {
-        if (IsHauppauge())
+        if (hauppaugelib != IntPtr.Zero)
         {
-          GetVidBitRate(out maxKbps, out minKbps, out isVBR);
+          if (_IsHauppauge())
+          {
+            _GetVidBitRate(out maxKbps, out minKbps, out isVBR);
+          }
         }
       }
       catch (Exception ex)
@@ -117,11 +175,14 @@ namespace DShowNET
 		{
       try
       {
-        if (IsHauppauge())
+        if (hauppaugelib != IntPtr.Zero)
         {
-          hr.Set(SetVidBitRate(maxKbps, minKbps, isVBR));
-          Log.Info("Hauppauge Set Bit Rate " + hr.ToDXString());
-          return true;
+          if (_IsHauppauge())
+          {
+            hr.Set(_SetVidBitRate(maxKbps, minKbps, isVBR));
+            Log.Info("Hauppauge Set Bit Rate " + hr.ToDXString());
+            return true;
+          }
         }
       }
       catch (Exception ex)
@@ -136,10 +197,13 @@ namespace DShowNET
       Kbps = -1;
       try
       {
-        if (IsHauppauge())
+        if (hauppaugelib != IntPtr.Zero)
         {
-          GetAudBitrate(out Kbps);
-          return true;
+          if (_IsHauppauge())
+          {
+            _GetAudBitRate(out Kbps);
+            return true;
+          }
         }
       }
       catch (Exception ex)
@@ -153,10 +217,13 @@ namespace DShowNET
     {
       try
       {
-        if (IsHauppauge())
+        if (hauppaugelib != IntPtr.Zero)
         {
-          SetAudBitRate(Kbps);
-          return true;
+          if (_IsHauppauge())
+          {
+            _SetAudBitRate(Kbps);
+            return true;
+          }
         }
       }
       catch (Exception ex)
@@ -171,10 +238,13 @@ namespace DShowNET
       stream = -1;
       try
       {
-        if (IsHauppauge())
+        if (hauppaugelib != IntPtr.Zero)
         {
-          GetStreamType(out stream);
-          return true;
+          if (_IsHauppauge())
+          {
+            _GetStreamType(out stream);
+            return true;
+          }
         }
       }
       catch (Exception ex)
@@ -188,10 +258,13 @@ namespace DShowNET
     {
       try
       {
-        if (IsHauppauge())
+        if (hauppaugelib != IntPtr.Zero)
         {
-          SetStreamType(103);
-          return true;
+          if (_IsHauppauge())
+          {
+            _SetStreamType(103);
+            return true;
+          }
         }
       }
       catch(Exception ex)
@@ -215,10 +288,24 @@ namespace DShowNET
       {
         if (disposing)
         {
-          // Dispose managed resources.
+          // Dispose managed resources if any
         }
-        DeInit();
-        Log.Info("Hauppauge Disposed hcw.txt");
+        try
+        {
+          if (hauppaugelib != IntPtr.Zero)
+          {
+              if (_IsHauppauge())
+                _DeInit();
+          
+             FreeLibrary(hauppaugelib);
+             hauppaugelib = IntPtr.Zero;
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Info("Hauppauge exception " + ex.Message);
+          Log.Info("Hauppauge Disposed hcw.txt");
+        }
       }
       disposed = true;
     }

@@ -1848,7 +1848,7 @@ namespace MediaPortal.Configuration
                 }
               }
               cbHighVBR.Checked = xmlreader.GetValueAsBool("quality", "HighVBR", true);
-
+              cbDisableDNR.Checked = xmlreader.GetValueAsBool("quality", "DNR", false);
 
               checkBoxHWPidFiltering.Checked = xmlreader.GetValueAsBool("general", "hwfiltering", false);
               checkBox5vAntennae.Checked = xmlreader.GetValueAsBool("general", "Antennae5v", false);

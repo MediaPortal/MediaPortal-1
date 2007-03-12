@@ -162,7 +162,7 @@ namespace MediaPortal.Topbar
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        textTimeOut.Text = xmlreader.GetValueAsString("TopBar", "autohidetimeout", "15");
+        textTimeOut.Text = xmlreader.GetValueAsString("TopBar", "autohidetimeout", "3");
 
         chkAutoHide.Checked = false;
         if (xmlreader.GetValueAsInt("TopBar", "autohide", 0) == 1) chkAutoHide.Checked = true;

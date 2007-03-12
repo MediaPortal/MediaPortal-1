@@ -933,7 +933,7 @@ namespace MediaPortal.TV.Recording
         _epgGrabber.ATSCInterface = _atscGrabberInterface;
         _epgGrabber.AnalyzerInterface = _analyzerInterface;
         _epgGrabber.Network = Network();
-        _cardProperties = new VideoCaptureProperties(_filterTunerDevice);
+        _cardProperties = new VideoCaptureProperties(_filterTunerDevice, string.Empty);
         return true;
       }
       catch (Exception ex)

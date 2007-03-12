@@ -1692,8 +1692,13 @@ public class MediaPortalApp : D3DApp, IRender
             Win32API.ShowStartBar(true);
             if(g_Player.IsVideo || g_Player.IsTV)
             {
-              m_iVolume = g_Player.Volume;
-              g_Player.Volume = 0;
+              if (g_Player.Volume > 0)
+              {
+                m_iVolume = g_Player.Volume;
+                g_Player.Volume = 0;
+              }
+              if(g_Player.Paused == false)
+                g_Player.Pause();
             }
             return;
           }
@@ -1718,8 +1723,15 @@ public class MediaPortalApp : D3DApp, IRender
             Log.Info("Main: Restore MP by action");
             Restore();
 
-            if((g_Player.IsVideo || g_Player.IsTV) && m_iVolume > 0)
+            if ((g_Player.IsVideo || g_Player.IsTV) && m_iVolume > 0)
+            {
               g_Player.Volume = m_iVolume;
+              g_Player.ContinueGraph();
+
+              if (g_Player.Paused)
+                g_Player.Pause();
+            }
+             
           }
           return;
         //reboot pc
@@ -2450,7 +2462,11 @@ public class MediaPortalApp : D3DApp, IRender
   protected override void Restore_OnClick(Object sender, EventArgs e)
   {
     if (m_iVolume > 0 && (g_Player.IsVideo || g_Player.IsTV))
+    {
       g_Player.Volume = m_iVolume;
+      if (g_Player.Paused)
+        g_Player.Pause();
+    }
 
     Restore();
   }
@@ -2704,8 +2720,12 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Info("Main: Setting focus");
         if (WindowState == FormWindowState.Minimized)
         {
-          if (m_iVolume > 0 &&(g_Player.IsVideo || g_Player.IsTV))
+          if (m_iVolume > 0 && (g_Player.IsVideo || g_Player.IsTV))
+          {
             g_Player.Volume = m_iVolume;
+            if(g_Player.Paused)
+              g_Player.Pause();
+          }
 
           Restore();
         }

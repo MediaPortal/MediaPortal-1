@@ -406,7 +406,8 @@ namespace MediaPortal.TV.Recording
         _graphState = State.Created;
         Log.Info("SinkGraphEx:CreateGraph() OUT");
 
-        SetQuality(3);
+        //TV quality set to default
+        SetQuality(4);
 
         SetupTeletext();
         return true;

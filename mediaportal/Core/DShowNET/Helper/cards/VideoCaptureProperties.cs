@@ -40,198 +40,249 @@ namespace DShowNET.Helper
     /// </summary>
     public class VideoCaptureProperties : IDisposable
     {
+        private bool disposed = false;
         Twinhan _twinhan;
         Hauppauge _hauppauge;
         DigitalEverywhere _digitalEverywhere;
         TechnoTrend _technoTrend;
-        public VideoCaptureProperties(IBaseFilter tunerfilter)
+
+        #region ctor/dtor
+
+        public VideoCaptureProperties(IBaseFilter tunerfilter, string card)
         {
-          
-            _twinhan = new Twinhan(tunerfilter);
+
+          _twinhan = new Twinhan(tunerfilter);
+          if(card == "hauppauge")
             _hauppauge = new Hauppauge(tunerfilter);
-            _digitalEverywhere = new DigitalEverywhere(tunerfilter);
-            _technoTrend = new TechnoTrend(tunerfilter);
-        
-         }
+          _digitalEverywhere = new DigitalEverywhere(tunerfilter);
+          _technoTrend = new TechnoTrend(tunerfilter);
+
+        }
+
+        ~VideoCaptureProperties()
+        {
+          Dispose(false);
+        } 
+        #endregion
 
         #region Hauppauge Properties
 
         public void SetDNR(bool onoff)
         {
-          _hauppauge.SetDNR(onoff);
+          if(_hauppauge != null)
+            _hauppauge.SetDNR(onoff);
         }
 
         public void SetAudioBitRate(int Kbps)
         {
+          if (_hauppauge != null)
               _hauppauge.SetAudioBitRate(Kbps);
-              return;
+           return;
         }
 
         public void SetVideoBitRate(int minKbps, int maxKbps, bool isVBR)
         {
+          if (_hauppauge != null)
                 _hauppauge.SetVideoBitRate(minKbps, maxKbps, isVBR);
-                return;
+          return;
         }
 
         public bool GetVideoBitRate(out int minKbps, out int maxKbps, out bool isVBR)
         {
             minKbps = maxKbps = -1;
             isVBR = false;
-            _hauppauge.GetVideoBitRate(out minKbps, out maxKbps, out isVBR);
+            if (_hauppauge != null)
+              _hauppauge.GetVideoBitRate(out minKbps, out maxKbps, out isVBR);
             return true;
         }
 
       public bool GetAudioBitRate(out int audKbps)
       {
         audKbps = -1;
-        _hauppauge.GetAudioBitRate(out audKbps);
+        if (_hauppauge != null)
+          _hauppauge.GetAudioBitRate(out audKbps);
         return true;
       }
 
       public void GetStreamType(out int stream)
       {
-        _hauppauge.GetStream(out stream);
+        if (_hauppauge != null)
+          _hauppauge.GetStream(out stream);
+        else
+          stream = -1;
       }
 
       public void SetStreamType(int stream)
       {
-        _hauppauge.SetStream(stream);
+        if (_hauppauge != null)
+          _hauppauge.SetStream(stream);
       }
 
      #endregion
 
 
+      #region Other card properties
+
       public bool IsCAPMTNeeded
       {
         get { return _twinhan.IsTwinhan; }
       }
-        public bool SupportsCamSelection
+      public bool SupportsCamSelection
       {
-          get
-          {
-              if (_twinhan.IsTwinhan)
-                  return true;
-              return false;
-          }
+        get
+        {
+          if (_twinhan.IsTwinhan)
+            return true;
+          return false;
+        }
       }
-        public bool SupportsHardwarePidFiltering
+      public bool SupportsHardwarePidFiltering
+      {
+        get
         {
-            get
-            {
-                if (_digitalEverywhere.IsDigitalEverywhere)
-                    return true;
-                return false;
-            }
+          if (_digitalEverywhere.IsDigitalEverywhere)
+            return true;
+          return false;
+        }
+      }
+
+      public bool Supports5vAntennae
+      {
+        get
+        {
+          if (_technoTrend.IsTechnoTrendUSBDVBT)
+            return true;
+          return false;
+        }
+      }
+
+      public void EnableAntenna(bool onOff)
+      {
+        if (_technoTrend.IsTechnoTrendUSBDVBT)
+        {
+          _technoTrend.EnableAntenna(onOff);
+        }
+      }
+
+      public bool SendPMT(string camType, int serviceId, int videoPid, int audioPid, byte[] PMT, int pmtLength, byte[] caPmt, int caPmtLen)
+      {
+        if (_digitalEverywhere.IsDigitalEverywhere)
+        {
+          return _digitalEverywhere.SendPMTToFireDTV(PMT, pmtLength);
+        }
+        if (_twinhan.IsTwinhan)
+        {
+          _twinhan.SendPMT(camType, (uint)videoPid, (uint)audioPid, caPmt, caPmtLen);
+          return true;
+        }
+        if (_technoTrend.IsTechnoTrend)
+        {
+          return _technoTrend.SendPMT(serviceId);
+        }
+        return false;
+      }
+
+      public bool SetHardwarePidFiltering(bool isDvbc, bool isDvbT, bool isDvbS, bool isAtsc, ArrayList pids)
+      {
+        if (_digitalEverywhere.IsDigitalEverywhere)
+        {
+          return _digitalEverywhere.SetHardwarePidFiltering(isDvbc, isDvbT, isDvbS, isAtsc, pids);
+        }
+        return false;
+      }
+
+      public bool SupportsDiseqCommand()
+      {
+        if (_digitalEverywhere.IsDigitalEverywhere)
+          return true;
+        if (_technoTrend.IsTechnoTrend)
+          return true;
+        return false;
+      }
+
+      public void SendDiseqCommand(int antennaNr, int frequency, int switchingFrequency, int polarisation, int diseqcType)
+      {
+        if (_digitalEverywhere.IsDigitalEverywhere)
+        {
+          _digitalEverywhere.SendDiseqCommand(antennaNr, frequency, switchingFrequency, polarisation);
+          return;
+        }
+        if (_technoTrend.IsTechnoTrend)
+        {
+          _technoTrend.SendDiseqCommand(antennaNr, frequency, switchingFrequency, polarisation, diseqcType);
+          return;
+        }
+      }
+
+      public bool IsCISupported()
+      {
+        if (_digitalEverywhere.IsDigitalEverywhere)
+        {
+          if (_digitalEverywhere.IsCamPresent())
+          {
+            return true;
+          }
+          return false;
         }
 
-        public bool Supports5vAntennae
+        if (_twinhan.IsTwinhan)
         {
-            get
-            {
-                if (_technoTrend.IsTechnoTrendUSBDVBT)
-                    return true;
-                return false;
-            }
+          if (_twinhan.IsCamPresent())
+          {
+            return true;
+          }
         }
 
-        public void EnableAntenna(bool onOff)
+        if (_technoTrend.IsTechnoTrend)
         {
-            if (_technoTrend.IsTechnoTrendUSBDVBT)
-            {
-                _technoTrend.EnableAntenna(onOff);
-            }
+          return _technoTrend.IsCamPresent();
         }
+        return false;
+      } 
+      #endregion
 
-        public bool SendPMT(string camType, int serviceId, int videoPid, int audioPid, byte[] PMT, int pmtLength, byte[] caPmt, int caPmtLen)
-        {
-            if (_digitalEverywhere.IsDigitalEverywhere)
-            {
-                return _digitalEverywhere.SendPMTToFireDTV(PMT, pmtLength);
-            }
-            if (_twinhan.IsTwinhan)
-            {
-                _twinhan.SendPMT(camType, (uint)videoPid, (uint)audioPid, caPmt, caPmtLen);
-                return true;
-            }
-            if (_technoTrend.IsTechnoTrend)
-            {
-                return _technoTrend.SendPMT(serviceId);
-            }
-            return false;
-        }
 
-        public bool SetHardwarePidFiltering(bool isDvbc, bool isDvbT, bool isDvbS, bool isAtsc, ArrayList pids)
-        {
-            if (_digitalEverywhere.IsDigitalEverywhere)
-            {
-                return _digitalEverywhere.SetHardwarePidFiltering(isDvbc, isDvbT, isDvbS, isAtsc, pids);
-            }
-            return false;
-        }
+        #region IDisposable Members
 
-        public bool SupportsDiseqCommand()
-        {
-            if (_digitalEverywhere.IsDigitalEverywhere)
-                return true;
-            if (_technoTrend.IsTechnoTrend)
-                return true;
-            return false;
-        }
-
-        public void SendDiseqCommand(int antennaNr, int frequency, int switchingFrequency, int polarisation, int diseqcType)
-        {
-            if (_digitalEverywhere.IsDigitalEverywhere)
-            {
-                _digitalEverywhere.SendDiseqCommand(antennaNr, frequency, switchingFrequency, polarisation);
-                return;
-            }
-            if (_technoTrend.IsTechnoTrend)
-            {
-                _technoTrend.SendDiseqCommand(antennaNr, frequency, switchingFrequency, polarisation, diseqcType);
-                return;
-            }
-        }
-
-        public bool IsCISupported()
-        {
-            if (_digitalEverywhere.IsDigitalEverywhere)
-            {
-                if (_digitalEverywhere.IsCamPresent())
-                {
-                    return true;
-                }
-                return false;
-            }
-
-            if (_twinhan.IsTwinhan)
-            {
-                if (_twinhan.IsCamPresent())
-                {
-                    return true;
-                }
-            }
-
-            if (_technoTrend.IsTechnoTrend)
-            {
-                return _technoTrend.IsCamPresent();
-            }
-            return false;
-        }
-
-      
         public void Dispose()
         {
-            _twinhan = null;
-            if(_hauppauge != null)
-              _hauppauge.Dispose();
+          Dispose(true);
+          GC.SuppressFinalize(this);
+          GC.Collect();
+        }
 
-            _hauppauge = null;
-            _digitalEverywhere = null;
-            if (_technoTrend != null)
+        protected virtual void Dispose(bool disposing)
+        {
+          if (!this.disposed)
+          {
+            if (disposing)
             {
+              // Dispose managed resources.
+            }
+            try
+            {
+              _twinhan = null;
+              if (_hauppauge != null)
+                _hauppauge.Dispose();
+
+              _hauppauge = null;
+              _digitalEverywhere = null;
+              if (_technoTrend != null)
+              {
                 _technoTrend.Dispose();
                 _technoTrend = null;
+              }
             }
+            catch (Exception ex)
+            {
+
+              Log.Info("Hauppauge exception " + ex.Message);
+              Log.Info("Hauppauge Disposed hcw.txt");
+            }
+          }
+          disposed = true;
         }
-    }//public class VideoCaptureProperties
+        #endregion
+
+      }//public class VideoCaptureProperties
 }//namespace DShowNET
