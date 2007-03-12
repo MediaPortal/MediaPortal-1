@@ -4303,8 +4303,8 @@
         <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"/>
       </filters>
       <connections>
-		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
-		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
@@ -19131,6 +19131,38 @@
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
         <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+  
+  <capturecard commercialname="Genius Videowonder DVB-T PCI" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_03011489&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"              checkdevice="true"/>
+        <filter cat="capture"         name="713x BDA Digital Capture"         checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture" sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Dvico FusionHDTV5 RT Gold ATSC" capturename="FusionHDTV, Transport Stream Capture1" devid="ven_14f1&amp;dev_8802&amp;subsys_d50018ac&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        checkdevice="false"/>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner1"					        checkdevice="true"/>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture1"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
