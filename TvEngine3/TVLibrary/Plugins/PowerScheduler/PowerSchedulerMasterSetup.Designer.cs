@@ -156,7 +156,7 @@ namespace TvEngine.PowerScheduler
       // label4
       // 
       this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(268, 76);
+      this.label4.Location = new System.Drawing.Point(267, 76);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(129, 13);
       this.label4.TabIndex = 6;
@@ -378,7 +378,7 @@ namespace TvEngine.PowerScheduler
       this.groupBox4.Size = new System.Drawing.Size(460, 46);
       this.groupBox4.TabIndex = 3;
       this.groupBox4.TabStop = false;
-      this.groupBox4.Text = "Prevent standby when these processes are active:";
+      this.groupBox4.Text = "Process settings";
       // 
       // button1
       // 
@@ -397,10 +397,12 @@ namespace TvEngine.PowerScheduler
       this.textBox1.Size = new System.Drawing.Size(320, 20);
       this.textBox1.TabIndex = 0;
       this.textBox1.Text = "SetupTv, Configuration";
+      this.toolTip1.SetToolTip(this.textBox1, "comma-separated list of process which prevent standby when they are active");
       // 
       // toolTip1
       // 
-      this.toolTip1.ToolTipTitle = "comma-separated list of process which prevent standby when they are active";
+      this.toolTip1.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+      this.toolTip1.ToolTipTitle = "Prevent standby when these processes are active";
       // 
       // PowerSchedulerMasterSetup
       // 
