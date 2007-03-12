@@ -127,6 +127,11 @@ namespace MediaPortal.Tests.Core.Playlists
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
+    public bool PlayVideoStream(string strURL, string streamName)
+    {
+      hasPlayBeenCalled = true;
+      return true;
+    }
     #endregion
   }
 }
