@@ -1545,7 +1545,7 @@ namespace MediaPortal.TV.Recording
         }
 
 
-        VideoCaptureProperties props = new VideoCaptureProperties(_filterCapture);
+        VideoCaptureProperties props = new VideoCaptureProperties(_filterCapture, comName);
         if ( Quality >= 0 )
         {
           //103 is recommended for the stream buffer engine 
