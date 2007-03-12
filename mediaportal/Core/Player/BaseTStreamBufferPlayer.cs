@@ -1196,7 +1196,7 @@ namespace MediaPortal.Player
       fContentEnd = lContentEnd;
       fContentStart /= 10000000d;
       fContentEnd /= 10000000d;
-      //Log.Info("{0} {1} {2}  ({3})", fCurrentPos, fContentStart, fContentEnd, _currentPos);
+      //Log.Info("pos:{0} start:{1} end:{2}  pos:{3} dur:{4}", fCurrentPos, fContentStart, fContentEnd, _currentPos, _duration);
 
       fContentEnd -= fContentStart;
       fCurrentPos -= fContentStart;
