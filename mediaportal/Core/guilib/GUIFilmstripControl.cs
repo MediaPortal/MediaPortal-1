@@ -416,237 +416,236 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwPosX">x-coordinate of the item</param>
     /// <param name="dwPosY">y-coordinate of the item</param>
     /// <param name="pItem">item itself</param>
-    void RenderItem(int itemNumber, float timePassed, bool bFocus, int dwPosX, int dwPosY, GUIListItem pItem)
-    {
-      if (_font == null) return;
-      if (pItem == null) return;
-      if (dwPosY < 0) return;
+		void RenderItem(int itemNumber, float timePassed, bool bFocus, int dwPosX, int dwPosY, GUIListItem pItem)
+		{
+			if (_font == null) return;
+			if (pItem == null) return;
+			if (dwPosY < 0) return;
 
-      float fTextHeight = 0, fTextWidth = 0;
-      _font.GetTextExtent("W", ref fTextWidth, ref fTextHeight);
+			float fTextHeight = 0, fTextWidth = 0;
+			_font.GetTextExtent("W", ref fTextWidth, ref fTextHeight);
 
-      float fTextPosY = (float)dwPosY + (float)_textureHeight;
+			float fTextPosY = (float)dwPosY + (float)_textureHeight;
 
-      long dwColor = _textColor;
-      if (pItem.Selected) dwColor = _selectedColor;
-      if (pItem.IsPlayed) dwColor = _playedColor;
-      if (!bFocus && Focus) dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-      if (pItem.IsRemote)
-      {
-        dwColor = _remoteColor;
-        if (pItem.IsDownloading) dwColor = _downloadColor;
-      }
-      if (!Focus) dwColor &= DimColor;
+			long dwColor = _textColor;
+			if (pItem.Selected) dwColor = _selectedColor;
+			if (pItem.IsPlayed) dwColor = _playedColor;
+			if (!bFocus && Focus) dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+			if (pItem.IsRemote)
+			{
+				dwColor = _remoteColor;
+				if (pItem.IsDownloading) dwColor = _downloadColor;
+			}
+			if (!Focus) dwColor &= DimColor;
 
-      uint currentTime = (uint)(DXUtil.Timer(DirectXTimer.GetAbsoluteTime) * 1000.0);
-      if (bFocus == true && Focus && _listType == GUIListControl.ListType.CONTROL_LIST)
-      {
-        TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
-        GUIGraphicsContext.ControlTransform = new TransformMatrix();
-        if (_showFolder)
-        {
-          _imageFolder[itemNumber].Focus = true;
-          _imageFolderFocus[itemNumber].Focus = true;
-          _imageFolderFocus[itemNumber].SetPosition(dwPosX, dwPosY);
-          if (true == _showTexture)
-          {
-            _imageFolderFocus[itemNumber].UpdateEffectState(currentTime);
-            _imageFolderFocus[itemNumber].Render(timePassed);
-          }
-          for (int i = 0; i < _imageFolderFocus.Count; ++i)
-          {
-            if (i != itemNumber)
-            {
-              _imageFolder[i].Focus = false;
-              _imageFolderFocus[i].Focus = false;
-            }
-          }
-        }
+			uint currentTime = (uint)(DXUtil.Timer(DirectXTimer.GetAbsoluteTime) * 1000.0);
+			// Set oversized value
+			int iOverSized = 0;
 
-        RenderText((float)dwPosX, fTextPosY, dwColor, pItem.Label, true);
-        GUIGraphicsContext.ControlTransform = matrix;
-      }
-      else
-      {
-        TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
-        GUIGraphicsContext.ControlTransform = new TransformMatrix();
-        if (_showFolder)
-        {
-          _imageFolder[itemNumber].Focus = false;
-          _imageFolderFocus[itemNumber].Focus = false;
-          _imageFolder[itemNumber].SetPosition(dwPosX, dwPosY);
-          if (true == _showTexture)
-          {
-            _imageFolder[itemNumber].UpdateEffectState(currentTime);
-            _imageFolder[itemNumber].Render(timePassed);
-          }
-        }
-        RenderText((float)dwPosX, fTextPosY, dwColor, pItem.Label, false);
-        GUIGraphicsContext.ControlTransform = matrix;
+			if (bFocus && Focus && _enableFocusZoom)
+			{
+				iOverSized = (_thumbNailWidth + _thumbNailHeight) / THUMBNAIL_OVERSIZED_DIVIDER;
+			}
 
-      }
+			if (pItem.HasThumbnail)
+			{
+				GUIImage pImage = pItem.Thumbnail;
+				if (null == pImage && _sleeper == 0 && !IsAnimating)
+				{
+					pImage = new GUIImage(0, 0, _thumbNailPositionX - iOverSized + dwPosX, _thumbNailPositionY - iOverSized + dwPosY, _thumbNailWidth + 2 * iOverSized, _thumbNailHeight + 2 * iOverSized, pItem.ThumbnailImage, 0x0);
+					pImage.ParentControl = this;
+					pImage.KeepAspectRatio = true;
+					pImage.ZoomFromTop = !pItem.IsFolder;
+					pImage.FlipX = _flipX;
+					pImage.FlipY = _flipY;
+					pImage.DiffuseFileName = _diffuseFileName;
+					pImage.SetAnimations(ThumbAnimations);
+					pImage.AllocResources();
 
-      // Set oversized value
-      int iOverSized = 0;
+					pItem.Thumbnail = pImage;
+					int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
+					int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
+					pImage.SetPosition(_thumbNailPositionX - iOverSized + dwPosX + xOff, _thumbNailPositionY - iOverSized + dwPosY + yOff);
+					pImage.DimColor = DimColor;
+					_sleeper += SLEEP_FRAME_COUNT;
+				}
+				if (null != pImage)
+				{
+					if (pImage.TextureHeight == 0 && pImage.TextureWidth == 0)
+					{
+						pImage.FreeResources();
+						pImage.AllocResources();
+					}
+					pImage.ZoomFromTop = !pItem.IsFolder;
+					pImage.Width = _thumbNailWidth + 2 * iOverSized;
+					pImage.Height = _thumbNailHeight + 2 * iOverSized;
+					int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
+					int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
+					pImage.SetPosition(_thumbNailPositionX + dwPosX - iOverSized + xOff, _thumbNailPositionY - iOverSized + dwPosY + yOff);
+					pImage.DimColor = DimColor;
+					if (bFocus || !Focus)
+					{
+						pImage.ColourDiffuse = 0xffffffff;
+						pImage.Focus = Focus;
+					}
+					else
+					{
+						pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+						pImage.Focus = false;
+					}
+					TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
+					GUIGraphicsContext.ControlTransform = new TransformMatrix();
+					pImage.UpdateEffectState(currentTime);
+					pImage.Render(timePassed);
+					GUIGraphicsContext.ControlTransform = matrix;
+				}
 
-      if (bFocus && Focus && _enableFocusZoom)
-      {
-        iOverSized = (_thumbNailWidth + _thumbNailHeight) / THUMBNAIL_OVERSIZED_DIVIDER;
-      }
+				if (_showFrame)
+				{
+					if (bFocus == true && Focus && _listType == GUIListControl.ListType.CONTROL_LIST)
+					{
+						if (_frameFocusControl != null)
+						{
+							_frameFocusControl.SetPosition(dwPosX, dwPosY);
+							_frameFocusControl.Render(timePassed);
+						}
+					}
+					else if (_frameControl != null)
+					{
+						_frameControl.SetPosition(dwPosX, dwPosY);
+						_frameControl.Render(timePassed);
+					}
+				}
 
-      if (pItem.HasThumbnail)
-      {
-        GUIImage pImage = pItem.Thumbnail;
-        if (null == pImage && _sleeper == 0 && !IsAnimating)
-        {
-          pImage = new GUIImage(0, 0, _thumbNailPositionX - iOverSized + dwPosX, _thumbNailPositionY - iOverSized + dwPosY, _thumbNailWidth + 2 * iOverSized, _thumbNailHeight + 2 * iOverSized, pItem.ThumbnailImage, 0x0);
-          pImage.ParentControl = this;
-          pImage.KeepAspectRatio = true;
-          pImage.ZoomFromTop = !pItem.IsFolder;
-          pImage.FlipX = _flipX;
-          pImage.FlipY = _flipY;
-          pImage.DiffuseFileName = _diffuseFileName;
-          pImage.SetAnimations(ThumbAnimations);
-          pImage.AllocResources();
+			}
+			else
+			{
+				if (pItem.HasIconBig)
+				{
+					GUIImage pImage = pItem.IconBig;
+					if (null == pImage && _sleeper == 0 && !IsAnimating)
+					{
+						pImage = new GUIImage(0, 0, _thumbNailPositionX - iOverSized + dwPosX, _thumbNailPositionY - iOverSized + dwPosY, _thumbNailWidth + 2 * iOverSized, _thumbNailHeight + 2 * iOverSized, pItem.IconImageBig, 0x0);
+						pImage.ParentControl = this;
+						pImage.KeepAspectRatio = true;
+						pImage.ZoomFromTop = !pItem.IsFolder;
+						pImage.AllocResources();
+						pImage.FlipX = _flipX;
+						pImage.FlipY = _flipY;
+						pImage.DiffuseFileName = _diffuseFileName;
+						pImage.SetAnimations(ThumbAnimations);
+						pItem.IconBig = pImage;
+						int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
+						int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
+						pImage.SetPosition(_thumbNailPositionX + dwPosX - iOverSized + xOff, _thumbNailPositionY - iOverSized + dwPosY + yOff);
+						pImage.DimColor = DimColor;
 
-          pItem.Thumbnail = pImage;
-          int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
-          int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
-          pImage.SetPosition(_thumbNailPositionX - iOverSized + dwPosX + xOff, _thumbNailPositionY - iOverSized + dwPosY + yOff);
-          pImage.DimColor = DimColor;
-          _sleeper += SLEEP_FRAME_COUNT;
-        }
-        if (null != pImage)
-        {
-          if (pImage.TextureHeight == 0 && pImage.TextureWidth == 0)
-          {
-            pImage.FreeResources();
-            pImage.AllocResources();
-          }
-          pImage.ZoomFromTop = !pItem.IsFolder;
-          pImage.Width = _thumbNailWidth + 2 * iOverSized;
-          pImage.Height = _thumbNailHeight + 2 * iOverSized;
-          int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
-          int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
-          pImage.SetPosition(_thumbNailPositionX + dwPosX - iOverSized + xOff, _thumbNailPositionY - iOverSized + dwPosY + yOff);
-          pImage.DimColor = DimColor;
-          if (bFocus || !Focus)
-          {
-            pImage.ColourDiffuse = 0xffffffff;
-            pImage.Focus = Focus;
-          }
-          else
-          {
-            pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
-            pImage.Focus = false;
-          }
-          TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
-          GUIGraphicsContext.ControlTransform = new TransformMatrix();
-          pImage.UpdateEffectState(currentTime);
-          pImage.Render(timePassed);
-          GUIGraphicsContext.ControlTransform = matrix;
-        }
+						if (bFocus || !Focus)
+						{
+							pImage.ColourDiffuse = 0xffffffff;
+							pImage.Focus = Focus;
+						}
+						else
+						{
+							pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+							pImage.Focus = false;
+						}
+						_sleeper += SLEEP_FRAME_COUNT;
+					}
+					if (null != pImage)
+					{
+						pImage.ZoomFromTop = !pItem.IsFolder;
+						pImage.Width = _thumbNailWidth + 2 * iOverSized;
+						pImage.Height = _thumbNailHeight + 2 * iOverSized;
+						int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
+						int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
+						pImage.SetPosition(_thumbNailPositionX - iOverSized + dwPosX + xOff, _thumbNailPositionY - iOverSized + dwPosY + yOff);
+						pImage.DimColor = DimColor;
 
-        if (_showFrame)
-        {
-          if (bFocus == true && Focus && _listType == GUIListControl.ListType.CONTROL_LIST)
-          {
-            if (_frameFocusControl != null)
-            {
-              _frameFocusControl.SetPosition(dwPosX, dwPosY);
-              _frameFocusControl.Render(timePassed);
-            }
-          }
-          else if (_frameControl != null)
-          {
-            _frameControl.SetPosition(dwPosX, dwPosY);
-            _frameControl.Render(timePassed);
-          }
-        }
+						if (bFocus || !Focus)
+						{
+							pImage.ColourDiffuse = 0xffffffff;
+							pImage.Focus = Focus;
+						}
+						else
+						{
+							pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+							pImage.Focus = false;
+						}
 
-      }
-      else
-      {
-        if (pItem.HasIconBig)
-        {
-          GUIImage pImage = pItem.IconBig;
-          if (null == pImage && _sleeper == 0 && !IsAnimating)
-          {
-            pImage = new GUIImage(0, 0, _thumbNailPositionX - iOverSized + dwPosX, _thumbNailPositionY - iOverSized + dwPosY, _thumbNailWidth + 2 * iOverSized, _thumbNailHeight + 2 * iOverSized, pItem.IconImageBig, 0x0);
-            pImage.ParentControl = this;
-            pImage.KeepAspectRatio = true;
-            pImage.ZoomFromTop = !pItem.IsFolder;
-            pImage.AllocResources();
-            pImage.FlipX = _flipX;
-            pImage.FlipY = _flipY;
-            pImage.DiffuseFileName = _diffuseFileName;
-            pImage.SetAnimations(ThumbAnimations);
-            pItem.IconBig = pImage;
-            int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
-            int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
-            pImage.SetPosition(_thumbNailPositionX + dwPosX - iOverSized + xOff, _thumbNailPositionY - iOverSized + dwPosY + yOff);
-            pImage.DimColor = DimColor;
+						TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
+						GUIGraphicsContext.ControlTransform = new TransformMatrix();
+						pImage.UpdateEffectState(currentTime);
+						pImage.Render(timePassed);
+						GUIGraphicsContext.ControlTransform = matrix;
 
-            if (bFocus || !Focus)
-            {
-              pImage.ColourDiffuse = 0xffffffff;
-              pImage.Focus = Focus;
-            }
-            else
-            {
-              pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
-              pImage.Focus = false;
-            }
-            _sleeper += SLEEP_FRAME_COUNT;
-          }
-          if (null != pImage)
-          {
-            pImage.ZoomFromTop = !pItem.IsFolder;
-            pImage.Width = _thumbNailWidth + 2 * iOverSized;
-            pImage.Height = _thumbNailHeight + 2 * iOverSized;
-            int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
-            int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
-            pImage.SetPosition(_thumbNailPositionX - iOverSized + dwPosX + xOff, _thumbNailPositionY - iOverSized + dwPosY + yOff);
-            pImage.DimColor = DimColor;
+					}
+					if (_showFrame)
+					{
+						if (bFocus == true && Focus && _listType == GUIListControl.ListType.CONTROL_LIST)
+						{
+							if (_frameFocusControl != null)
+							{
+								_frameFocusControl.SetPosition(dwPosX, dwPosY);
+								_frameFocusControl.Render(timePassed);
+							}
+						}
+						else if (_frameControl != null)
+						{
+							_frameControl.SetPosition(dwPosX, dwPosY);
+							_frameControl.Render(timePassed);
+						}
+					}
+				}
+			}
 
-            if (bFocus || !Focus)
-            {
-              pImage.ColourDiffuse = 0xffffffff;
-              pImage.Focus = Focus;
-            }
-            else
-            {
-              pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
-              pImage.Focus = false;
-            }
+			if (bFocus == true && Focus && _listType == GUIListControl.ListType.CONTROL_LIST)
+			{
+				TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
+				GUIGraphicsContext.ControlTransform = new TransformMatrix();
+				if (_showFolder)
+				{
+					_imageFolder[itemNumber].Focus = true;
+					_imageFolderFocus[itemNumber].Focus = true;
+					_imageFolderFocus[itemNumber].SetPosition(dwPosX, dwPosY);
+					if (true == _showTexture)
+					{
+						_imageFolderFocus[itemNumber].UpdateEffectState(currentTime);
+						_imageFolderFocus[itemNumber].Render(timePassed);
+					}
+					for (int i = 0; i < _imageFolderFocus.Count; ++i)
+					{
+						if (i != itemNumber)
+						{
+							_imageFolder[i].Focus = false;
+							_imageFolderFocus[i].Focus = false;
+						}
+					}
+				}
 
-            TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
-            GUIGraphicsContext.ControlTransform = new TransformMatrix();
-            pImage.UpdateEffectState(currentTime);
-            pImage.Render(timePassed);
-            GUIGraphicsContext.ControlTransform = matrix;
-
-          }
-          if (_showFrame)
-          {
-            if (bFocus == true && Focus && _listType == GUIListControl.ListType.CONTROL_LIST)
-            {
-              if (_frameFocusControl != null)
-              {
-                _frameFocusControl.SetPosition(dwPosX, dwPosY);
-                _frameFocusControl.Render(timePassed);
-              }
-            }
-            else if (_frameControl != null)
-            {
-              _frameControl.SetPosition(dwPosX, dwPosY);
-              _frameControl.Render(timePassed);
-            }
-          }
-        }
-      }
-
-    }
+				RenderText((float)dwPosX, fTextPosY, dwColor, pItem.Label, true);
+				GUIGraphicsContext.ControlTransform = matrix;
+			}
+			else
+			{
+				TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
+				GUIGraphicsContext.ControlTransform = new TransformMatrix();
+				if (_showFolder)
+				{
+					_imageFolder[itemNumber].Focus = false;
+					_imageFolderFocus[itemNumber].Focus = false;
+					_imageFolder[itemNumber].SetPosition(dwPosX, dwPosY);
+					if (true == _showTexture)
+					{
+						_imageFolder[itemNumber].UpdateEffectState(currentTime);
+						_imageFolder[itemNumber].Render(timePassed);
+					}
+				}
+				RenderText((float)dwPosX, fTextPosY, dwColor, pItem.Label, false);
+				GUIGraphicsContext.ControlTransform = matrix;
+			}
+		}
+    
 
     /// <summary>
     /// The render method. 
