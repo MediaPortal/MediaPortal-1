@@ -1365,17 +1365,10 @@ namespace MediaPortal.Player
 
           else
           {
-            // Don't do anything with the stream, when ASIO is selected. Handle it as if started again
-            if (!_useASIO)
+            // Don't do anything with the stream, when ASIO or Mixing is selected. Handle it as if started again
+            if (!_useASIO && !_Mixing)
             {
-              // Restart stream
-
-              // When Upmixing has been selected start the playback on the Mixer Stream
-              if (_Mixing)
-                result = Bass.BASS_ChannelPlay(_mixer, true);
-              else
-                result = Bass.BASS_ChannelPlay(stream, true);
-
+              result = Bass.BASS_ChannelPlay(stream, true);
               return result;
             }
           }
@@ -2067,6 +2060,7 @@ namespace MediaPortal.Player
       Log.Debug("BASS: Stop of stream {0}", stream);
       try
       {
+        
         if (_SoftStop)
         {
           Bass.BASS_ChannelSlideAttributes(stream, -1, 0, -101, 500);
@@ -2074,10 +2068,12 @@ namespace MediaPortal.Player
           // Wait until the slide is done
           while ((Bass.BASS_ChannelIsSliding(stream) & (int)BASSSlide.BASS_SLIDE_VOL) != 0)
             System.Threading.Thread.Sleep(20);
-
-          Bass.BASS_ChannelStop(stream);
         }
-
+        if (_Mixing)
+        {
+          Bass.BASS_ChannelStop(stream);
+          BassMix.BASS_Mixer_ChannelRemove(stream);
+        }
         else
           Bass.BASS_ChannelStop(stream);
 
@@ -2153,7 +2149,7 @@ namespace MediaPortal.Player
           pos = BassMix.BASS_Mixer_ChannelGetPosition(_mixer);
         else
           pos = Bass.BASS_ChannelGetPosition(stream);
-
+        
         float timePos = Bass.BASS_ChannelBytes2Seconds(stream, pos);
         float offsetSecs = (float)ms / 1000f;
 
