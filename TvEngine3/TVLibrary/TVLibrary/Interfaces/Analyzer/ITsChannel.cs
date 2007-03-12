@@ -26,12 +26,7 @@ using DirectShowLib;
 
 namespace TvLibrary.Interfaces.Analyzer
 {
-  [ComVisible(true), ComImport,
-  Guid("C564CEB9-FC77-4776-8CB8-96DD87624161"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface ITsChannel
-  {
-    [PreserveSig]
-    int Test();
-  }
+
+  [ComImport, Guid("C564CEB9-FC77-4776-8CB8-96DD87624161")]
+  public class ITsChannel { }
 }

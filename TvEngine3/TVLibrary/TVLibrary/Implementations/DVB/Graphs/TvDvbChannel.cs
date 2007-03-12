@@ -172,9 +172,9 @@ namespace TvLibrary.Implementations.DVB
     protected ChannelInfo _channelInfo;
     protected IChannel _currentChannel;
     protected DVBTeletext _teletextDecoder;
-    protected ITsPmtGrabber _interfacePmtGrabber;
-    protected ITsCaGrabber _interfaceCaGrabber;
-    protected ITsChannel _interfaceTsChannel;
+
+    protected ITsFilter _tsFilterInterface = null;
+    protected int _subChannelIndex = -1;
     protected DVBAudioStream _currentAudioStream;
     protected IVbiCallback _teletextCallback = null;
     protected IChangeChannel _changeChannel = null;
@@ -285,11 +285,9 @@ namespace TvLibrary.Implementations.DVB
       _pmtPid = -1;
       _changeChannel = (IChangeChannel)_mdapiFilter;
 
-      _interfaceTsChannel = null;
-      ITsFilter tsfilter = (ITsFilter)_filterTsWriter;
-      tsfilter.AddChannel(out _interfaceTsChannel);
-      _interfacePmtGrabber = (ITsPmtGrabber)_interfaceTsChannel;
-      _interfaceCaGrabber = (ITsCaGrabber)_interfaceTsChannel;
+      _subChannelIndex = -1;
+      _tsFilterInterface = (ITsFilter)_filterTsWriter;
+      _tsFilterInterface.AddChannel(ref _subChannelIndex);
       _parameters = new ScanParameters();
       _subChannelId = subChannelId;
 
@@ -322,13 +320,9 @@ namespace TvLibrary.Implementations.DVB
     {
       if (IsTimeShifting)
       {
-        if (_interfaceTsChannel != null)
+        if (_subChannelIndex >= 0)
         {
-          ITsTimeShift timeshift = _interfaceTsChannel as ITsTimeShift;
-          if (timeshift != null)
-          {
-            timeshift.Pause(1);
-          }
+          _tsFilterInterface.TimeShiftPause(_subChannelIndex, 1);
         }
       }
       Log.Log.WriteFile("subch:{0} OnBeforeTune", _subChannelId);
@@ -465,12 +459,10 @@ namespace TvLibrary.Implementations.DVB
       _currentChannel = null;
       _recordTransportStream = false;
 
-      if (_filterTsWriter != null)
+      if (_tsFilterInterface != null)
       {
-        ITsRecorder recorder = _interfaceTsChannel as ITsRecorder;
-        recorder.StopRecord();
-        ITsTimeShift timeshift = _interfaceTsChannel as ITsTimeShift;
-        timeshift.Stop();
+        _tsFilterInterface.RecordStopRecord(_subChannelIndex);
+        _tsFilterInterface.TimeShiftStop(_subChannelIndex);
         _graphState = GraphState.Created;
       }
       if (_teletextDecoder != null)
@@ -508,15 +500,11 @@ namespace TvLibrary.Implementations.DVB
       {
         _teletextDecoder.ClearBuffer();
       }
-      if (_filterTsWriter != null && _interfaceTsChannel != null)
+      if (_tsFilterInterface != null && _subChannelIndex >= 0)
       {
-        ITsFilter tsfilter = (ITsFilter)_filterTsWriter;
-        tsfilter.DeleteChannel(_interfaceTsChannel);
-        Marshal.ReleaseComObject(_interfaceTsChannel);
-        _interfaceTsChannel = null;
+        _tsFilterInterface.DeleteChannel(_subChannelIndex);
+        _subChannelIndex = -1;
       }
-      _interfacePmtGrabber = null;
-      _interfaceCaGrabber = null;
       _conditionalAccess.FreeSubChannel(_subChannelId);
     }
 
@@ -529,11 +517,10 @@ namespace TvLibrary.Implementations.DVB
       _timeshiftFileName = fileName;
       Log.Log.WriteFile("subch:{0} SetTimeShiftFileName:{1}", _subChannelId, fileName);
       //int hr;
-      if (_filterTsWriter != null)
+      if (_tsFilterInterface != null)
       {
-        ITsTimeShift timeshift = _interfaceTsChannel as ITsTimeShift;
-        timeshift.SetTimeShiftingFileName(fileName);
-        timeshift.SetMode(TimeShiftingMode.TransportStream);
+        _tsFilterInterface.TimeShiftSetTimeShiftingFileName(_subChannelIndex, fileName);
+        _tsFilterInterface.TimeShiftSetMode(_subChannelIndex, TimeShiftingMode.TransportStream);
         if (_channelInfo.pids.Count == 0)
         {
           Log.Log.WriteFile("subch:{0} SetTimeShiftFileName no pmt received yet", _subChannelId);
@@ -544,7 +531,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("subch:{0} SetTimeShiftFileName fill in pids", _subChannelId);
           _startTimeShifting = false;
           SetTimeShiftPids();
-          timeshift.Start();
+          _tsFilterInterface.TimeShiftStart(_subChannelIndex);
           _graphState = GraphState.TimeShifting;
         }
       }
@@ -564,10 +551,9 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("subch:{0} StartRecord({1})", _subChannelId, fileName);
       _recordTransportStream = transportStream;
       int hr;
-      if (_filterTsWriter != null)
+      if (_tsFilterInterface != null)
       {
-        ITsRecorder record = _interfaceTsChannel as ITsRecorder;
-        hr = record.SetRecordingFileName(fileName);
+        hr = _tsFilterInterface.RecordSetRecordingFileName(_subChannelIndex, fileName);
         if (hr != 0)
         {
           Log.Log.Error("subch:{0} SetRecordingFileName failed:{1:X}", _subChannelId, hr);
@@ -581,7 +567,7 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.WriteFile("subch:{0} StartRecording...", _subChannelId);
           SetRecorderPids();
-          hr = record.StartRecord();
+          hr = _tsFilterInterface.RecordStartRecord(_subChannelIndex);
           if (hr != 0)
           {
             Log.Log.Error("subch:{0} StartRecord failed:{1:X}", _subChannelId, hr);
@@ -604,10 +590,9 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.WriteFile("subch:{0} StopRecord()", _subChannelId);
 
-        if (_filterTsWriter != null)
+        if (_tsFilterInterface != null)
         {
-          ITsRecorder record = _interfaceTsChannel as ITsRecorder;
-          record.StopRecord();
+          _tsFilterInterface.RecordStopRecord(_subChannelIndex);
           if (_timeshiftFileName != "")
             _graphState = GraphState.TimeShifting;
           else
@@ -640,10 +625,9 @@ namespace TvLibrary.Implementations.DVB
       if (_timeshiftFileName != "")
       {
         Log.Log.WriteFile("subch:{0} StopTimeshifting()", _subChannelId);
-        if (_filterTsWriter != null)
+        if (_tsFilterInterface != null)
         {
-          ITsTimeShift timeshift = _interfaceTsChannel as ITsTimeShift;
-          timeshift.Stop();
+          _tsFilterInterface.TimeShiftStop(_subChannelIndex);
         }
         _graphState = GraphState.Created;
       }
@@ -703,10 +687,9 @@ namespace TvLibrary.Implementations.DVB
 
         List<IAudioStream> streams = AvailableAudioStreams;
         DVBAudioStream audioStream = (DVBAudioStream)value;
-        if (_filterTsWriter != null)
+        if (_tsFilterInterface != null)
         {
-          ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_interfaceTsChannel;
-          writer.SetAudioPid((short)audioStream.Pid);
+          _tsFilterInterface.AnalyzerSetAudioPid(_subChannelIndex, audioStream.Pid);
         }
         _currentAudioStream = audioStream;
         _pmtVersion = -1;
@@ -871,15 +854,15 @@ namespace TvLibrary.Implementations.DVB
       get
       {
         if (_graphRunning == false) return false;
-        if (_filterTsWriter == null) return false;
+        if (_tsFilterInterface == null) return false;
         if (_currentChannel == null) return false;
-        ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_interfaceTsChannel;
-        short audioEncrypted = 0;
-        short videoEncrypted = 0;
-        writer.IsAudioEncrypted(out audioEncrypted);
+
+        int audioEncrypted = 0;
+        int videoEncrypted = 0;
+        _tsFilterInterface.AnalyzerIsAudioEncrypted(_subChannelIndex, out audioEncrypted);
         if (_currentChannel.IsTv)
         {
-          writer.IsVideoEncrypted(out videoEncrypted);
+          _tsFilterInterface.AnalyzerIsVideoEncrypted(_subChannelIndex, out videoEncrypted);
         }
         return ((audioEncrypted == 0) && (videoEncrypted == 0));
       }
@@ -899,7 +882,6 @@ namespace TvLibrary.Implementations.DVB
       set
       {
         _grabTeletext = value;
-        ITsTeletextGrabber grabber = (ITsTeletextGrabber)_interfaceTsChannel;
         if (_grabTeletext)
         {
           int teletextPid = -1;
@@ -915,19 +897,19 @@ namespace TvLibrary.Implementations.DVB
           if (teletextPid == -1)
           {
             Log.Log.Info("subch: stop grabbing teletext");
-            grabber.Stop();
+            _tsFilterInterface.TTxStop(_subChannelIndex);
             _grabTeletext = false;
             return;
           }
           Log.Log.Info("subch: start grabbing teletext");
-          grabber.SetCallBack(this);
-          grabber.SetTeletextPid((short)teletextPid);
-          grabber.Start();
+          _tsFilterInterface.TTxSetCallBack(_subChannelIndex, this);
+          _tsFilterInterface.TTxSetTeletextPid(_subChannelIndex, teletextPid);
+          _tsFilterInterface.TTxStart(_subChannelIndex);
         }
         else
         {
           Log.Log.Info("subch: stop grabbing teletext");
-          grabber.Stop();
+          _tsFilterInterface.TTxStop(_subChannelIndex);
         }
       }
     }
@@ -997,13 +979,13 @@ namespace TvLibrary.Implementations.DVB
           _conditionalAccess.OnRunGraph(serviceId);
         }
         Log.Log.Write("subch:{0} set pmt grabber pmt:{1:X}", _subChannelId, pmtPid);
-        _interfacePmtGrabber.SetCallBack(this);
-        _interfacePmtGrabber.SetPmtPid((short)pmtPid, serviceId);
+        _tsFilterInterface.PmtSetCallBack(_subChannelIndex,this);
+        _tsFilterInterface.PmtSetPmtPid(_subChannelIndex, pmtPid, serviceId);
         if (_mdapiFilter != null)
         {
           Log.Log.Write("subch:{0} set ca grabber ", _subChannelId);
-          _interfaceCaGrabber.SetCallBack(this);
-          _interfaceCaGrabber.Reset();
+          //_interfaceCaGrabber.SetCallBack(this);
+          //_interfaceCaGrabber.Reset();
         }
       }
     }
@@ -1019,7 +1001,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.WriteFile("subch:{0} SetMpegPidMapping", _subChannelId);
 
-        ITsVideoAnalyzer writer = (ITsVideoAnalyzer)_interfaceTsChannel;
+        
         ArrayList hwPids = new ArrayList();
         hwPids.Add((ushort)0x0);//PAT
         hwPids.Add((ushort)0x1);//CAT
@@ -1049,8 +1031,7 @@ namespace TvLibrary.Implementations.DVB
               Log.Log.WriteFile("subch:{0}    map {1}", _subChannelId, pidInfo);
               if (GrabTeletext)
               {
-                ITsTeletextGrabber grabber = (ITsTeletextGrabber)_interfaceTsChannel;
-                grabber.SetTeletextPid((short)pidInfo.pid);
+                _tsFilterInterface.TTxSetTeletextPid(_subChannelIndex, pidInfo.pid);
               }
               hwPids.Add((ushort)pidInfo.pid);
               _hasTeletext = true;
@@ -1073,7 +1054,7 @@ namespace TvLibrary.Implementations.DVB
               if (_currentAudioStream.Pid == pidInfo.pid)
               {
                 Log.Log.WriteFile("subch:{0}    map {1}", _subChannelId, pidInfo);
-                writer.SetAudioPid((short)pidInfo.pid);
+                _tsFilterInterface.AnalyzerSetAudioPid(_subChannelIndex,pidInfo.pid);
               }
               hwPids.Add((ushort)pidInfo.pid);
             }
@@ -1082,7 +1063,7 @@ namespace TvLibrary.Implementations.DVB
             {
               Log.Log.WriteFile("subch:{0}    map {1}", _subChannelId, pidInfo);
               hwPids.Add((ushort)pidInfo.pid);
-              writer.SetVideoPid((short)pidInfo.pid);
+              _tsFilterInterface.AnalyzerSetVideoPid(_subChannelIndex,pidInfo.pid);
               if (info.pcr_pid > 0 && info.pcr_pid != pidInfo.pid)
               {
                 hwPids.Add((ushort)info.pcr_pid);
@@ -1099,10 +1080,9 @@ namespace TvLibrary.Implementations.DVB
         if (_startTimeShifting)
         {
           _startTimeShifting = false;
-          ITsTimeShift timeshift = _interfaceTsChannel as ITsTimeShift;
-          timeshift.Reset();
+          _tsFilterInterface.TimeShiftReset(_subChannelIndex);
           SetTimeShiftPids();
-          timeshift.Start();
+          _tsFilterInterface.TimeShiftStart(_subChannelIndex);
           _graphState = GraphState.TimeShifting;
         }
         if (_startRecording)
@@ -1110,8 +1090,7 @@ namespace TvLibrary.Implementations.DVB
           _startRecording = false;
           SetRecorderPids();
 
-          ITsRecorder record = _interfaceTsChannel as ITsRecorder;
-          int hr = record.StartRecord();
+          int hr = _tsFilterInterface.RecordStartRecord(_subChannelIndex);
           if (hr != 0)
           {
             Log.Log.Error("subch:[0} StartRecord failed:{1:X}", _subChannelId, hr);
@@ -1141,19 +1120,19 @@ namespace TvLibrary.Implementations.DVB
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
       if (dvbChannel == null) return;
 
-      ITsTimeShift timeshift = _interfaceTsChannel as ITsTimeShift;
-      timeshift.Pause(1);
-      timeshift.SetPcrPid((short)dvbChannel.PcrPid);
-      timeshift.SetPmtPid((short)dvbChannel.PmtPid);
+
+      _tsFilterInterface.TimeShiftPause(_subChannelIndex, 1);
+      _tsFilterInterface.TimeShiftSetPcrPid(_subChannelIndex, dvbChannel.PcrPid);
+      _tsFilterInterface.TimeShiftSetPmtPid(_subChannelIndex, dvbChannel.PmtPid);
       foreach (PidInfo info in _channelInfo.pids)
       {
         if (info.isAC3Audio || info.isAudio || info.isVideo || info.isDVBSubtitle)
         {
           Log.Log.WriteFile("subch:{0} set timeshift {1}:{2}", _subChannelId, info.stream_type, info);
-          timeshift.AddStream((short)info.pid, (short)info.stream_type, info.language);
+          _tsFilterInterface.TimeShiftAddStream(_subChannelIndex,info.pid, info.stream_type, info.language);
         }
       }
-      timeshift.Pause(0);
+      _tsFilterInterface.TimeShiftPause(_subChannelIndex, 0);
       _dateTimeShiftStarted = DateTime.Now;
     }
 
@@ -1169,8 +1148,8 @@ namespace TvLibrary.Implementations.DVB
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
       if (dvbChannel == null) return;
 
-      ITsRecorder recorder = _interfaceTsChannel as ITsRecorder;
-      recorder.SetPcrPid((short)dvbChannel.PcrPid);
+
+      _tsFilterInterface.RecordSetPcrPid(_subChannelIndex,dvbChannel.PcrPid);
       bool programStream = true;
       //bool audioPidSet = false;
       foreach (PidInfo info in _channelInfo.pids)
@@ -1190,8 +1169,8 @@ namespace TvLibrary.Implementations.DVB
           {
             //if (audioPidSet == false)
             //{
-              addPid = true;
-              //audioPidSet = true;
+            addPid = true;
+            //audioPidSet = true;
             //}
           }
           if (info.isDVBSubtitle)
@@ -1202,7 +1181,7 @@ namespace TvLibrary.Implementations.DVB
           if (addPid)
           {
             Log.Log.WriteFile("subch:{0} set record {1}", _subChannelId, info);
-            recorder.AddStream((short)info.pid, (info.isAC3Audio || info.isAudio), info.isVideo);
+            _tsFilterInterface.RecordAddStream(_subChannelIndex,info.pid, (info.isAC3Audio || info.isAudio), info.isVideo);
           }
         }
       }
@@ -1212,18 +1191,18 @@ namespace TvLibrary.Implementations.DVB
         if (atscChannel != null)
         {
           //VCT
-          recorder.AddStream((short)0x1ffb, false, false);
+          _tsFilterInterface.RecordAddStream(_subChannelIndex, 0x1ffb, false, false);
         }
         if (dvbChannel.PmtPid > 0)
         {
-          recorder.SetPmtPid((short)dvbChannel.PmtPid);
+          _tsFilterInterface.RecordSetPmtPid(_subChannelIndex, dvbChannel.PmtPid);
         }
-        recorder.SetMode(TimeShiftingMode.TransportStream);
+        _tsFilterInterface.RecordSetMode(_subChannelIndex,TimeShiftingMode.TransportStream);
         Log.Log.WriteFile("subch:{0} record transport stream mode", _subChannelId);
       }
       else
       {
-        recorder.SetMode(TimeShiftingMode.ProgramStream);
+        _tsFilterInterface.RecordSetMode(_subChannelIndex, TimeShiftingMode.ProgramStream);
         Log.Log.WriteFile("subch:{0} record program stream mode", _subChannelId);
       }
       _dateRecordingStarted = DateTime.Now;
@@ -1260,7 +1239,7 @@ namespace TvLibrary.Implementations.DVB
         IntPtr catMem = Marshal.AllocCoTaskMem(4096);// max. size for cat
         try
         {
-          int pmtLength = _interfacePmtGrabber.GetPMTData(pmtMem);
+          int pmtLength = _tsFilterInterface.PmtGetPMTData(_subChannelIndex,pmtMem);
           if (pmtLength > 6)
           {
             byte[] pmt = new byte[pmtLength];
@@ -1277,7 +1256,7 @@ namespace TvLibrary.Implementations.DVB
                 _channelInfo.DecodePmt(pmt);
                 _channelInfo.network_pmt_PID = channel.PmtPid;
                 _channelInfo.pcr_pid = channel.PcrPid;
-
+                /*
                 if (_mdapiFilter != null)
                 {
                   int catLength = _interfaceCaGrabber.GetCaData(catMem);
@@ -1288,7 +1267,7 @@ namespace TvLibrary.Implementations.DVB
                     _channelInfo.DecodeCat(cat, catLength);
                   }
                 }
-
+                */
                 updatePids = true;
                 Log.Log.WriteFile("subch:{0} SendPMT version:{1} len:{2} {3}", _subChannelId, version, pmtLength, _channelInfo.caPMT.ProgramNumber);
                 if (_conditionalAccess != null)
