@@ -88,15 +88,6 @@ namespace MediaPortal.GUI.MusicVideos
       {
         FavoriteList.Items.Add(lsFav);
       }
-      if (loSettings.mbUseVMR9)
-      {
-        VMR9CheckBox.Checked = true;
-      }
-      else
-      {
-        VMR9CheckBox.Checked = false;
-      }
-
     }
 
     private void DoneBtn_Click(object sender, EventArgs e)
@@ -126,7 +117,6 @@ namespace MediaPortal.GUI.MusicVideos
       String lsSelCountry = Convert.ToString(countryList.SelectedItem);
 
       loSettings.msDefaultCountryName = lsSelCountry;
-      loSettings.mbUseVMR9 = VMR9CheckBox.Checked;
       loSettings.saveSettings();
       this.Close();
     }

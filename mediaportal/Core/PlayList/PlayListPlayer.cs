@@ -42,6 +42,7 @@ namespace MediaPortal.Playlists
       bool Playing { get; }
       void Release();
       bool Play(string strFile);
+      bool PlayVideoStream(string strURL, string streamName);
       void Stop();
       void SeekAsolutePercentage(int iPercentage);
       double Duration { get; }
@@ -65,6 +66,11 @@ namespace MediaPortal.Playlists
       bool IPlayer.Play(string strFile)
       {
         return MediaPortal.Player.g_Player.Play(strFile);
+      }
+      
+      bool IPlayer.PlayVideoStream(string strURL,string streamName)
+      {
+        return MediaPortal.Player.g_Player.PlayVideoStream(strURL,streamName);
       }
 
       public void Stop()
@@ -367,7 +373,7 @@ namespace MediaPortal.Playlists
         }
       }
     }
-
+    
     public bool Play(int iSong)
     {
       // if play returns false PlayNext is called but this does not help against selecting an invalid track
@@ -416,8 +422,13 @@ namespace MediaPortal.Playlists
           item.Played = true;
           return true;
         }
-
-        if (!g_Player.Play(item.FileName))
+        
+        bool playResult=false;
+        if (_currentPlayList==PlayListType.PLAYLIST_MUSIC_VIDEO)
+            playResult = g_Player.PlayVideoStream(item.FileName, item.Description);
+        else
+            playResult = g_Player.Play(item.FileName);
+        if (!playResult)
         {
           //	Count entries in current playlist
           //	that couldn't be played

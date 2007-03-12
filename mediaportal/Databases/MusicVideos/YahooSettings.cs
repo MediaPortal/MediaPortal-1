@@ -67,7 +67,7 @@ namespace MediaPortal.MusicVideos.Database
         msDefaultCountryName = xmlreader.GetValueAsString("musicvideo", "country", "USA");
         msDefaultBitRate = xmlreader.GetValueAsString("musicvideo", "bitrate", "512");
         //mbUseVMR9 = xmlreader.GetValueAsBool("musicvideo", "useVMR9",true);                
-        mbUseVMR9 = xmlreader.GetValueAsBool("musicvideo", "useVMR9", false);
+        mbUseVMR9 = xmlreader.GetValueAsBool("general", "usevrm9forwebstreams", true);
       }
       XmlTextReader loXmlreader = null;
       try
@@ -135,7 +135,7 @@ namespace MediaPortal.MusicVideos.Database
       using (MediaPortal.Profile.Settings loXmlSettings = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         loXmlSettings.SetValue("musicvideo", "bitrate", msDefaultBitRate);
-        loXmlSettings.SetValueAsBool("musicvideo", "useVMR9", mbUseVMR9);
+        //loXmlSettings.SetValueAsBool("musicvideo", "useVMR9", mbUseVMR9);
         loXmlSettings.SetValue("musicvideo", "country", msDefaultCountryName);
       }
     }

@@ -101,6 +101,7 @@ namespace MediaPortal.GUI.Video
     public static string bitrate = string.Empty;
     bool Show_GT = false;
     bool Show_TSR = false;
+    public static bool useVMR9 = true;
     public static string TSRbitrate = string.Empty;
     public static string TSRnmbOfResults = string.Empty;
 
@@ -250,6 +251,19 @@ namespace MediaPortal.GUI.Video
       label8.Visible = false;
       label6.Visible = true;
     }
+    private string GetSelectedListViewItemText()
+    {
+        string strLabel1 = "", strLabel2 = "", strThumb = "";
+        listview.GetSelectedItem(ref strLabel1, ref strLabel2, ref strThumb);
+        if (strLabel1 != "")
+        {
+            if (strLabel1[0] == '[')
+                strLabel1 = strLabel1.Remove(0, 1);
+            if (strLabel1[strLabel1.Length - 1] == ']')
+                strLabel1 = strLabel1.Remove(strLabel1.Length-1, 1);
+        }
+        return strLabel1;
+    }
     private void OnClick(int itemindex) // // When something is pressed in the listview
     {
       // Trailer, Clips, Movie listview
@@ -339,7 +353,7 @@ namespace MediaPortal.GUI.Video
         else
         {
           Prev_SelectedItem = listview.SelectedListItemIndex;
-          PlayTrailer(YahooTrailers.TrailersUrl[itemindex - 1]);
+          PlayTrailer(YahooTrailers.TrailersUrl[itemindex - 1], GetSelectedListViewItemText());
         }
       }
       // Clipsview
@@ -357,7 +371,7 @@ namespace MediaPortal.GUI.Video
         else
         {
           Prev_SelectedItem = listview.SelectedListItemIndex;
-          PlayTrailer(YahooTrailers.ClipsUrl[itemindex - 1]);
+          PlayTrailer(YahooTrailers.ClipsUrl[itemindex - 1], GetSelectedListViewItemText());
         }
 
       }
@@ -376,7 +390,7 @@ namespace MediaPortal.GUI.Video
         else
         {
           Prev_SelectedItem = listview.SelectedListItemIndex;
-          PlayTrailer(YahooTrailers.MoreUrl[itemindex - 1]);
+          PlayTrailer(YahooTrailers.MoreUrl[itemindex - 1],GetSelectedListViewItemText());
         }
       }
       // RSSView
@@ -766,15 +780,28 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-    public static void PlayTrailer(string url)
+    public static void PlayTrailer(string url, string videoName)
     {
       GetGUIProperties();
       GetMMSURL(url);
-      if (g_Player.Play(MMSUrl))
+      bool playOk = false;
+      if (useVMR9)
+          playOk = g_Player.PlayVideoStream(MMSUrl,videoName);
+      else
+          playOk = g_Player.PlayAudioStream(MMSUrl);
+      if (playOk)
       {
         GUIGraphicsContext.IsFullScreenVideo = true;
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
         g_Player.FullScreen = true;
+      }
+      else
+      {
+          Log.Info("GUITrailers: Unable to play {0}", MMSUrl);
+          GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+          dlg.SetHeading("ERROR");
+          dlg.SetText("Unable to play the selected video trailer. Please try again later.");
+          dlg.DoModal(GUIWindowManager.ActiveWindow);
       }
     }
 
@@ -884,6 +911,7 @@ namespace MediaPortal.GUI.Video
         Show_TSR = xmlreader.GetValueAsBool("mytrailers", "Show tsr vod", false);
         TSRbitrate = xmlreader.GetValue("mytrailers", "TSR speed");
         TSRnmbOfResults = xmlreader.GetValue("mytrailers", "TSR nmbOfResults");
+        useVMR9 = xmlreader.GetValueAsBool("general", "usevrm9forwebstreams", true);
         if (TSRnmbOfResults != "-1")
           TSRnmbOfResults = "&nmbOfResults=" + TSRnmbOfResults;
         YahooTrailers.server = xmlreader.GetValue("mytrailers", "YahooServer");

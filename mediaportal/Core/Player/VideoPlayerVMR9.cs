@@ -218,7 +218,8 @@ namespace MediaPortal.Player
           //VMR9 is not supported, switch to overlay
           mediaCtrl = null;
           Cleanup();
-          return base.GetInterfaces();
+          // return base.GetInterfaces();
+          return false;
         }
         Vmr9.SetDeinterlaceMode();
 

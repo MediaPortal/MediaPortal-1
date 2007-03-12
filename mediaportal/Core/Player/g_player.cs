@@ -639,6 +639,11 @@ namespace MediaPortal.Player
     //Added by juvinious 19/02/2005
     public static bool PlayVideoStream(string strURL)
     {
+        return PlayVideoStream(strURL, "");
+    }
+    
+    public static bool PlayVideoStream(string strURL, string streamName)
+    {
       try
       {
         Starting = true;
@@ -676,7 +681,14 @@ namespace MediaPortal.Player
         _player = new Player.VideoPlayerVMR9();
 
         _player = CachePreviousPlayer(_player);
-        bool isPlaybackPossible = _player.Play(strURL);
+        bool isPlaybackPossible;
+        if (streamName!=null)
+            if (streamName != "")
+                isPlaybackPossible=_player.PlayStream(strURL, streamName);
+            else
+                isPlaybackPossible=_player.Play(strURL);
+        else
+            isPlaybackPossible = _player.Play(strURL);	
         if (!isPlaybackPossible)
         {
           Log.Info("player:ended");
@@ -1472,6 +1484,8 @@ namespace MediaPortal.Player
       }
       if (_player == null) return;
       _player.Process();
+      if (_player.Initializing)
+          return;	 	
       if (!_player.Playing)
       {
         Log.Info("g_Player.Process() player stopped...");

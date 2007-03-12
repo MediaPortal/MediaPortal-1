@@ -115,6 +115,7 @@ namespace MediaPortal.Configuration.Sections
       new string[] { "general", "autosize", "false" },
       // new string[] { "general", "userenderthread", "true" }
       //new string[] { "general", "allowfocus", "false" }
+      new string[] { "general","usevrm9forwebstreams","true" }
       };
 
     // PLEASE NOTE: when adding items, adjust the box so it doesn't get scrollbars
@@ -331,7 +332,8 @@ namespace MediaPortal.Configuration.Sections
             "Start with basic home screen",
             "Turn monitor/tv on when resuming from standby",
             "Allow S3 standby although wake up devices are present",
-            "Autosize window mode to skin"});
+            "Autosize window mode to skin",
+            "Use VRM9 for playback of web streams"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
       this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 304);

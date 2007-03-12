@@ -178,7 +178,7 @@ namespace MediaPortal.GUI.Video
 
 			Match m = Regex.Match(TempHTML, @"wmv-300-.\.(?<trailernumber>\d*)??,");
 			string Url = "http://playlist.yahoo.com/makeplaylist.dll?id=" + m.Groups["trailernumber"].Value + "&ru=y&b=8kd6ji91f1vde434d527d";
-			GUITrailers.PlayTrailer(Url);
+			GUITrailers.PlayTrailer(Url,"");
 //			Play(PlayUrl);
 		}
 

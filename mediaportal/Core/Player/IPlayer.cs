@@ -73,6 +73,20 @@ namespace MediaPortal.Player
       return false;
     }
 
+    /// <summary>
+    /// Nearly the same as Play(), but usefull for web streams to give the real name of the stream and not url
+    /// </summary>
+    /// <param name="strFile">file to play</param>
+    /// <param name="streamName">real name of the stream</param>
+    /// <returns>
+    /// true: file is playing
+    /// false: unable to play file
+    /// </returns>
+    public virtual bool PlayStream(string strFile,string streamName)
+    {
+        return false;
+    }
+
     public virtual bool SupportsReplay
     {
       get
@@ -298,6 +312,14 @@ namespace MediaPortal.Player
     public virtual bool Stopped
     {
       get { return false; }
+    }
+
+    /// <summary>
+    /// Property which indicates if the graph is initializing
+    /// </summary>
+    public virtual bool Initializing
+    {
+        get { return false; }
     }
 
     /// <summary>

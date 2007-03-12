@@ -280,6 +280,16 @@ namespace MediaPortal.Player
       return true;
     }
 
+    public override bool PlayStream(string strFile, string streamName)
+    {
+        bool isPlaybackPossible = Play(strFile);
+        if (isPlaybackPossible)
+            if (streamName != null)
+                if (streamName != "")
+                    m_strCurrentFile = streamName;
+        return isPlaybackPossible;
+    }
+
     public override void SetVideoWindow()
     {
       if (GUIGraphicsContext.Vmr9Active)
@@ -611,6 +621,15 @@ namespace MediaPortal.Player
         return (m_state == PlayState.Init);
       }
     }
+
+    public override bool Initializing
+    {
+      get
+      {
+        return (m_state == PlayState.Init);
+      }
+    }
+
 
     public override string CurrentFile
     {

@@ -869,6 +869,7 @@ namespace MediaPortal.GUI.MusicVideos
       {
         loItem = new MVPlayListItem();
         loItem.YahooVideo = loVideo;
+        loItem.Description = loVideo.artistName + "-" + loVideo.songName;
         loPlaylist.Add(loItem);
       }
       Log.Info("current playlist type:{0}", loPlaylistPlayer.CurrentPlaylistType);
@@ -1147,7 +1148,7 @@ namespace MediaPortal.GUI.MusicVideos
       lsVideoLink = loUtil.getVideoMMSUrl(video, moSettings.msDefaultBitRate);
       lsVideoLink = lsVideoLink.Substring(0, lsVideoLink.Length - 2) + "&txe=.wmv";
       if (moSettings.mbUseVMR9)
-        g_Player.PlayVideoStream(lsVideoLink);
+          g_Player.PlayVideoStream(lsVideoLink, video.artistName + " - " + video.songName);
       else
         g_Player.PlayAudioStream(lsVideoLink);
 
@@ -1161,6 +1162,10 @@ namespace MediaPortal.GUI.MusicVideos
       else
       {
         Log.Info("GUIMusicVideo: Unable to play {0}", lsVideoLink);
+        GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+        dlg.SetHeading("ERROR");
+        dlg.SetText("Unable to play the selected music video. Please try again later.");
+        dlg.DoModal(GUIWindowManager.ActiveWindow);
       }
     }
 
