@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <mappings version="3">
 	<remote family="Microsoft MCE remote">
 		<button name="Power TV" code="power">
@@ -33,12 +33,14 @@
 			<action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="92" sound="cursor.wav" />
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="6" sound="cursor.wav" />
 			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
+			<action layer="0" condition="PLAYER" conproperty="MEDIA" command="ACTION" cmdproperty="92" sound="click.wav" />			
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="15" sound="cursor.wav" />
 		</button>
 		<button name="Skip" code="next">
 			<action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="91" sound="cursor.wav" />
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="5" sound="cursor.wav" />
 			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="28" sound="click.wav" />
+			<action layer="0" condition="PLAYER" conproperty="MEDIA" command="ACTION" cmdproperty="91" sound="click.wav" />			
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="14" sound="cursor.wav" />
 		</button>
 		<button name="Back" code="back">
