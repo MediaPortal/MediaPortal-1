@@ -58,6 +58,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.ColumnHeader columnHeader7;
     private System.Windows.Forms.ColumnHeader columnHeader8;
     private CheckBox cbWeatherOverlay;
+    private CheckBox cbWeatherOnPlay;
 
     private System.ComponentModel.IContainer components = null;
 
@@ -104,6 +105,7 @@ namespace MediaPortal.Configuration.Sections
 
         intervalTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("weather", "refresh", 120));
         cbWeatherOverlay.Checked = xmlreader.GetValueAsBool("weather", "overlayEnabled", true);
+        cbWeatherOnPlay.Checked = xmlreader.GetValueAsBool("weather", "playEnabled", true);
 
         for (int index = 0; index < MaximumCities; index++)
         {
@@ -157,6 +159,7 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValue("weather", "refresh", intervalTextBox.Text);
         xmlwriter.SetValueAsBool("weather", "overlayEnabled", cbWeatherOverlay.Checked);
+        xmlwriter.SetValueAsBool("weather", "playEnabled", cbWeatherOnPlay.Checked);
 
         for (int index = 0; index < MaximumCities; index++)
         {
@@ -225,6 +228,7 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbWeatherOverlay = new System.Windows.Forms.CheckBox();
       this.intervalTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.windSpeedComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -244,7 +248,7 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
-      this.cbWeatherOverlay = new System.Windows.Forms.CheckBox();
+      this.cbWeatherOnPlay = new System.Windows.Forms.CheckBox();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
@@ -253,6 +257,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.cbWeatherOnPlay);
       this.groupBox1.Controls.Add(this.cbWeatherOverlay);
       this.groupBox1.Controls.Add(this.intervalTextBox);
       this.groupBox1.Controls.Add(this.label3);
@@ -267,6 +272,19 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
+      // 
+      // cbWeatherOverlay
+      // 
+      this.cbWeatherOverlay.AutoSize = true;
+      this.cbWeatherOverlay.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.cbWeatherOverlay.Checked = true;
+      this.cbWeatherOverlay.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbWeatherOverlay.Location = new System.Drawing.Point(15, 95);
+      this.cbWeatherOverlay.Name = "cbWeatherOverlay";
+      this.cbWeatherOverlay.Size = new System.Drawing.Size(169, 17);
+      this.cbWeatherOverlay.TabIndex = 7;
+      this.cbWeatherOverlay.Text = "Enable Weather Overlay:        ";
+      this.cbWeatherOverlay.UseVisualStyleBackColor = true;
       // 
       // intervalTextBox
       // 
@@ -441,18 +459,18 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader8.Text = "Precipitation image";
       this.columnHeader8.Width = 101;
       // 
-      // cbWeatherOverlay
+      // cbWeatherOnPlay
       // 
-      this.cbWeatherOverlay.AutoSize = true;
-      this.cbWeatherOverlay.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-      this.cbWeatherOverlay.Checked = true;
-      this.cbWeatherOverlay.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.cbWeatherOverlay.Location = new System.Drawing.Point(15, 95);
-      this.cbWeatherOverlay.Name = "cbWeatherOverlay";
-      this.cbWeatherOverlay.Size = new System.Drawing.Size(169, 17);
-      this.cbWeatherOverlay.TabIndex = 7;
-      this.cbWeatherOverlay.Text = "Enable Weather Overlay:        ";
-      this.cbWeatherOverlay.UseVisualStyleBackColor = true;
+      this.cbWeatherOnPlay.AutoSize = true;
+      this.cbWeatherOnPlay.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.cbWeatherOnPlay.Checked = true;
+      this.cbWeatherOnPlay.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbWeatherOnPlay.Location = new System.Drawing.Point(197, 94);
+      this.cbWeatherOnPlay.Name = "cbWeatherOnPlay";
+      this.cbWeatherOnPlay.Size = new System.Drawing.Size(259, 17);
+      this.cbWeatherOnPlay.TabIndex = 8;
+      this.cbWeatherOnPlay.Text = "Show Weather Overlay when playing media:        ";
+      this.cbWeatherOnPlay.UseVisualStyleBackColor = true;
       // 
       // Weather
       // 

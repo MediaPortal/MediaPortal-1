@@ -13,7 +13,6 @@
 		<align>left</align> 
 		<font>font13</font> 
 		<textcolor>ffffffff</textcolor>
-		<visible>!Player.HasMedia</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
     <animation effect="fade" time="500">WindowClose</animation>
 	</control>

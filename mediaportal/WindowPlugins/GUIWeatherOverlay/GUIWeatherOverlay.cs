@@ -69,6 +69,7 @@ namespace MediaPortal.GUI.WeatherOverlay
     // Private Variables
     private bool _xmlFilePresent = false;
     private bool _weatherOverlay = true;
+    private bool _weatherOnPlay = true;
     private bool _didRenderLastTime = false;
     private IntervalWork _weatherIntervalWork = null;
     private string _locationCode = String.Empty;
@@ -100,6 +101,7 @@ namespace MediaPortal.GUI.WeatherOverlay
         _locationCode = xmlreader.GetValueAsString("weather", "location", String.Empty);
         _refreshInterval = xmlreader.GetValueAsInt("weather", "refresh", 60);
         _weatherOverlay = xmlreader.GetValueAsBool("weather", "overlayEnabled", true);
+        _weatherOnPlay = xmlreader.GetValueAsBool("weather", "playEnabled", true);
       }
     }
     
@@ -203,6 +205,7 @@ namespace MediaPortal.GUI.WeatherOverlay
     {
       if (!_xmlFilePresent ||
           !_weatherOverlay ||
+          !_weatherOnPlay && g_Player.Playing ||
           GUIGraphicsContext.IsFullScreenVideo || 
           GUIGraphicsContext.Calibrating ||
           !GUIGraphicsContext.Overlay
@@ -265,8 +268,4 @@ namespace MediaPortal.GUI.WeatherOverlay
 
     #endregion
   }
-
-
-
-
 }
