@@ -101,7 +101,6 @@ namespace TvEngine.PowerScheduler
             0,
             0,
             0});
-      this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
       // 
       // checkBox2
       // 
@@ -112,7 +111,6 @@ namespace TvEngine.PowerScheduler
       this.checkBox2.TabIndex = 1;
       this.checkBox2.Text = "Wakeup server for various wakeup events";
       this.checkBox2.UseVisualStyleBackColor = true;
-      this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
       // 
       // checkBox1
       // 
@@ -123,7 +121,6 @@ namespace TvEngine.PowerScheduler
       this.checkBox1.TabIndex = 0;
       this.checkBox1.Text = "Shutdown server after being idle";
       this.checkBox1.UseVisualStyleBackColor = true;
-      this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
       // 
       // groupBox2
       // 
@@ -151,7 +148,6 @@ namespace TvEngine.PowerScheduler
       this.checkBox4.TabIndex = 7;
       this.checkBox4.Text = "Enable extensive logging";
       this.checkBox4.UseVisualStyleBackColor = true;
-      this.checkBox4.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
       // 
       // label4
       // 
@@ -183,7 +179,6 @@ namespace TvEngine.PowerScheduler
             0,
             0,
             0});
-      this.numericUpDown3.ValueChanged += new System.EventHandler(this.numericUpDown3_ValueChanged);
       // 
       // label3
       // 
@@ -205,7 +200,6 @@ namespace TvEngine.PowerScheduler
       this.comboBox1.Name = "comboBox1";
       this.comboBox1.Size = new System.Drawing.Size(121, 21);
       this.comboBox1.TabIndex = 3;
-      this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
       // 
       // checkBox3
       // 
@@ -216,7 +210,6 @@ namespace TvEngine.PowerScheduler
       this.checkBox3.TabIndex = 2;
       this.checkBox3.Text = "Forced shutdown (shutdown even when prevented by another process)";
       this.checkBox3.UseVisualStyleBackColor = true;
-      this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
       // 
       // numericUpDown2
       // 
@@ -229,7 +222,6 @@ namespace TvEngine.PowerScheduler
             0,
             0,
             0});
-      this.numericUpDown2.ValueChanged += new System.EventHandler(this.numericUpDown2_ValueChanged);
       // 
       // label2
       // 

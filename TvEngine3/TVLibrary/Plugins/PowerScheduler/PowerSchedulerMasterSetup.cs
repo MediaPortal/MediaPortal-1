@@ -80,7 +80,7 @@ namespace TvEngine.PowerScheduler
       setting = _layer.GetSetting("WakeupSystemForEPGGrabbing", "false");
       checkBox6.Checked = Convert.ToBoolean(setting.Value);
 
-      EPGWakeupConfig config = new EPGWakeupConfig((_layer.GetSetting("EPGWakeupConfig", String.Empty).Value));
+      EPGWakeupConfig config = new EPGWakeupConfig(_layer.GetSetting("EPGWakeupConfig", String.Empty).Value);
       foreach (EPGGrabDays day in config.Days)
       {
         switch (day)
@@ -124,91 +124,48 @@ namespace TvEngine.PowerScheduler
 
     }
 
-    private void checkBox1_CheckedChanged(object sender, EventArgs e)
+    public override void SaveSettings()
     {
-      Setting setting = _layer.GetSetting("PowerSchedulerShutdownActive", "false");
-      if (checkBox1.Checked)
-        setting.Value = "true";
-      else
-        setting.Value = "false";
-      setting.Persist();
-    }
-
-    private void numericUpDown1_ValueChanged(object sender, EventArgs e)
-    {
-      Setting setting = _layer.GetSetting("PowerSchedulerIdleTimeout", "5");
-      setting.Value = numericUpDown1.Value.ToString();
-      setting.Persist();
-    }
-
-    private void checkBox2_CheckedChanged(object sender, EventArgs e)
-    {
-      Setting setting = _layer.GetSetting("PowerSchedulerWakeupActive", "false");
-      if (checkBox2.Checked)
-        setting.Value = "true";
-      else
-        setting.Value = "false";
-      setting.Persist();
-    }
-
-    private void checkBox3_CheckedChanged(object sender, EventArgs e)
-    {
-      Setting setting = _layer.GetSetting("PowerSchedulerForceShutdown", "false");
-      if (checkBox3.Checked)
-        setting.Value = "true";
-      else
-        setting.Value = "false";
-      setting.Persist();
-    }
-
-    private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      Setting setting = _layer.GetSetting("PowerSchedulerShutdownMode", "2");
-      setting.Value = comboBox1.SelectedIndex.ToString();
-      setting.Persist();
-    }
-
-    private void numericUpDown2_ValueChanged(object sender, EventArgs e)
-    {
-      Setting setting = _layer.GetSetting("PowerSchedulerPreWakeupTime", "60");
-      setting.Value = numericUpDown2.Value.ToString();
-      setting.Persist();
-    }
-
-    private void numericUpDown3_ValueChanged(object sender, EventArgs e)
-    {
-      Setting setting = _layer.GetSetting("PowerSchedulerCheckInterval", "60");
-      setting.Value = numericUpDown3.Value.ToString();
-      setting.Persist();
-    }
-
-    private void checkBox4_CheckedChanged(object sender, EventArgs e)
-    {
-      Setting setting = _layer.GetSetting("PowerSchedulerExtensiveLogging", "false");
-      if (checkBox4.Checked)
-        setting.Value = "true";
-      else
-        setting.Value = "false";
-      setting.Persist();
-    }
-
-    public override void OnSectionDeActivated()
-    {
-      // EPG grabber settings are only stored when the section is deactivated
       Setting setting;
 
+      setting = _layer.GetSetting("PowerSchedulerShutdownActive", "false");
+      setting.Value = checkBox1.Checked.ToString();
+      setting.Persist();
+
+      setting = _layer.GetSetting("PowerSchedulerIdleTimeout", "5");
+      setting.Value = numericUpDown1.Value.ToString();
+      setting.Persist();
+
+      setting = _layer.GetSetting("PowerSchedulerWakeupActive", "false");
+      setting.Value = checkBox2.Checked.ToString();
+      setting.Persist();
+
+      setting = _layer.GetSetting("PowerSchedulerForceShutdown", "false");
+      setting.Value = checkBox3.Checked.ToString();
+      setting.Persist();
+
+      setting = _layer.GetSetting("PowerSchedulerShutdownMode", "2");
+      setting.Value = comboBox1.SelectedIndex.ToString();
+      setting.Persist();
+
+      setting = _layer.GetSetting("PowerSchedulerPreWakeupTime", "60");
+      setting.Value = numericUpDown2.Value.ToString();
+      setting.Persist();
+
+      setting = _layer.GetSetting("PowerSchedulerCheckInterval", "60");
+      setting.Value = numericUpDown3.Value.ToString();
+      setting.Persist();
+
+      setting = _layer.GetSetting("PowerSchedulerExtensiveLogging", "false");
+      setting.Value = checkBox4.Checked.ToString();
+      setting.Persist();
+
       setting = _layer.GetSetting("PreventStandbyWhenGrabbingEPG", "false");
-      if (checkBox5.Checked)
-        setting.Value = "true";
-      else
-        setting.Value = "false";
+      setting.Value = checkBox5.Checked.ToString();
       setting.Persist();
 
       setting = _layer.GetSetting("WakeupSystemForEPGGrabbing", "false");
-      if (checkBox6.Checked)
-        setting.Value = "true";
-      else
-        setting.Value = "false";
+      setting.Value = checkBox6.Checked.ToString();
       setting.Persist();
 
       setting = _layer.GetSetting("EPGWakeupConfig", String.Empty);
@@ -234,7 +191,6 @@ namespace TvEngine.PowerScheduler
         setting.Persist();
       }
 
-      // Process settings are only stored when the section is deactivated
       setting = _layer.GetSetting("PowerSchedulerProcesses", "SetupTv, Configuration");
       setting.Value = textBox1.Text;
       setting.Persist();
