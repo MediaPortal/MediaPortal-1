@@ -2294,6 +2294,10 @@
 		<id>692</id>
 		<value>TV-Streams</value>
 	</string>
+    <string>
+        <id>699</id>
+        <value>TV Hoved</value>
+    </string>
 	<string>
 		<id>700</id>
 		<value>Diskografi (ep'er, singler)</value>
@@ -5178,6 +5182,10 @@
 		<id>10104</id>
 		<value>Mini EPG</value>
 	</string>
+    <string>
+        <id>10105</id>
+        <value>På TV</value>
+    </string>
 	<string>
 		<id>11000</id>
 		<value>Oppsett for Beskjæring</value>
