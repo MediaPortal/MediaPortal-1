@@ -807,7 +807,11 @@ namespace MediaPortal.Player
           // Create an 8 Channel Mixer, which should be running until stopped.
           // The streams to play are added to the active screen
           if (_Mixing && _mixer == 0)
+          {
             _mixer = BassMix.BASS_Mixer_StreamCreate(44100, 8, BASSStream.BASS_MIXER_NONSTOP | BASSStream.BASS_STREAM_AUTOFREE);
+            // In case of mixing use a Buffer of 500ms only, because the Mixer plays the complete bufer, before for example skipping
+            Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, 500);
+          }
 
           Log.Info("BASS: Initialization done.");
           _Initialized = true;
@@ -2146,7 +2150,7 @@ namespace MediaPortal.Player
 
         long pos = 0;                                                  // position in bytes
         if (_Mixing)
-          pos = BassMix.BASS_Mixer_ChannelGetPosition(_mixer);
+          pos = BassMix.BASS_Mixer_ChannelGetPosition(stream);
         else
           pos = Bass.BASS_ChannelGetPosition(stream);
         
@@ -2195,7 +2199,7 @@ namespace MediaPortal.Player
 
         long pos = 0;                                                  // position in bytes
         if (_Mixing)
-          pos = BassMix.BASS_Mixer_ChannelGetPosition(_mixer);
+          pos = BassMix.BASS_Mixer_ChannelGetPosition(stream);
         else
           pos = Bass.BASS_ChannelGetPosition(stream);
 
@@ -2233,14 +2237,14 @@ namespace MediaPortal.Player
 
       try
       {
-        int streamIndex = Streams[CurrentStreamIndex];
+        int stream = GetCurrentStream();
 
-        if (StreamIsPlaying(streamIndex))
+        if (StreamIsPlaying(stream))
         {
           if (_Mixing)
-            BassMix.BASS_Mixer_ChannelSetPosition(streamIndex, Bass.BASS_ChannelSeconds2Bytes(streamIndex, position));
+            BassMix.BASS_Mixer_ChannelSetPosition(stream, Bass.BASS_ChannelSeconds2Bytes(stream, position));
           else
-            Bass.BASS_ChannelSetPosition(streamIndex, (float)position);
+            Bass.BASS_ChannelSetPosition(stream, (float)position);
         }
       }
 
