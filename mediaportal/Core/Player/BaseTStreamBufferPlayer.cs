@@ -844,7 +844,7 @@ namespace MediaPortal.Player
 
     public override double ContentStart
     {
-      get { return _contentStart; }
+      get { return 0.0; }
     }
     public override bool FullScreen
     {
@@ -1020,7 +1020,7 @@ namespace MediaPortal.Player
           fContentStart = lContentStart;
           fContentEnd = lContentEnd;
 
-          dTimeInSecs += fContentStart;
+           dTimeInSecs += fContentStart;
           long lTime = (long)dTimeInSecs;
           Log.Info("set positions");
           if (VMR9Util.g_vmr9 != null)
@@ -1196,7 +1196,7 @@ namespace MediaPortal.Player
       fContentEnd = lContentEnd;
       fContentStart /= 10000000d;
       fContentEnd /= 10000000d;
-      //Log.Info("pos:{0} start:{1} end:{2}  pos:{3} dur:{4}", fCurrentPos, fContentStart, fContentEnd, _currentPos, _duration);
+     // Log.Info("pos:{0} start:{1} end:{2}  pos:{3} dur:{4}", fCurrentPos, fContentStart, fContentEnd, (fCurrentPos - fContentStart), (fContentEnd - fContentStart));
 
       fContentEnd -= fContentStart;
       fCurrentPos -= fContentStart;
