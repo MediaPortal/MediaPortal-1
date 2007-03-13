@@ -519,6 +519,7 @@ namespace TvLibrary.Implementations.DVB
       //int hr;
       if (_tsFilterInterface != null)
       {
+        _tsFilterInterface.TimeShiftSetParams(_subChannelIndex,_parameters.MinimumFiles, _parameters.MaximumFiles, _parameters.MaximumFileSize);
         _tsFilterInterface.TimeShiftSetTimeShiftingFileName(_subChannelIndex, fileName);
         _tsFilterInterface.TimeShiftSetMode(_subChannelIndex, TimeShiftingMode.TransportStream);
         if (_channelInfo.pids.Count == 0)

@@ -38,7 +38,56 @@ namespace TvLibrary
     int _lnbHighFrequency = -1;
     int _lnbSwitchFrequency = -1;
     bool _useDefaultLnbFrequencies=true;
+    int _minFiles = 6;
+    int _maxFiles = 20;
+    UInt32 _maxFileSize = (256 * 1000 * 1000);
 
+    /// <summary>
+    /// Gets or sets the minimium number of timeshifting files.
+    /// </summary>
+    /// <value>The minimium files.</value>
+    public int MinimumFiles
+    {
+      get
+      {
+        return _minFiles;
+      }
+      set
+      {
+        _minFiles = value;
+      }
+    }
+    /// <summary>
+    /// Gets or sets the maximum number of timeshifting files.
+    /// </summary>
+    /// <value>The maximum files.</value>
+    public int MaximumFiles
+    {
+      get
+      {
+        return _maxFiles;
+      }
+      set
+      {
+        _maxFiles = value;
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets the maximum filesize for each timeshifting file.
+    /// </summary>
+    /// <value>The maximum filesize.</value>
+    public UInt32 MaximumFileSize
+    {
+      get
+      {
+        return _maxFileSize;
+      }
+      set
+      {
+        _maxFileSize = value;
+      }
+    }
 
     /// <summary>
     /// Gets or sets the use default LNB frequencies.

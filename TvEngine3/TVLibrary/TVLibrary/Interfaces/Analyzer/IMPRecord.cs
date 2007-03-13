@@ -90,5 +90,9 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int PauseTimeShifting(short onOff);
+
+    
+    [PreserveSig]
+    int SetTimeShiftParams(int minFiles, int maxFiles, UInt32 maxFileSize);
   }
 }

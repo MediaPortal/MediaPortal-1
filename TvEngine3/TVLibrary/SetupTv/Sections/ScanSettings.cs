@@ -41,7 +41,7 @@ namespace SetupTv.Sections
   public partial class ScanSettings : SectionSettings
   {
     public ScanSettings()
-      : this("Timeout settings")
+      : this("General settings")
     {
     }
     public ScanSettings(string name)
@@ -60,6 +60,11 @@ namespace SetupTv.Sections
       textBoxSDT.Text = layer.GetSetting("timeoutSDT", "20").Value;
       textBoxEpgTimeOut.Text = layer.GetSetting("timeoutEPG", "10").Value;
       textBoxEPGRefresh.Text = layer.GetSetting("timeoutEPGRefresh", "240").Value;
+
+
+      textBoxMinfiles.Text = layer.GetSetting("timeshiftMinFiles", "6").Value;
+      textBoxMaxFiles.Text = layer.GetSetting("timeshiftMaxFiles", "20").Value;
+      textBoxMaxFileSize.Text = layer.GetSetting("timeshiftMaxFileSize", "256").Value;
     }
     public override void OnSectionDeActivated()
     {
@@ -92,6 +97,18 @@ namespace SetupTv.Sections
       s = layer.GetSetting("timeoutEPGRefresh", "240");
       s.Value = textBoxEPGRefresh.Text;
       s.Persist();
+
+      s = layer.GetSetting("timeshiftMinFiles", "6");
+      s.Value = textBoxMinfiles.Text;
+      s.Persist();
+
+      s = layer.GetSetting("timeshiftMaxFiles", "20");
+      s.Value = textBoxMaxFiles.Text;
+      s.Persist();
+
+      s = layer.GetSetting("timeshiftMaxFileSize", "256");
+      s.Value = textBoxMaxFileSize.Text;
+      s.Persist();
     }
 
     private void groupBox1_Enter(object sender, EventArgs e)
@@ -105,6 +122,16 @@ namespace SetupTv.Sections
     }
 
     private void textBox1_TextChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label2_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label16_Click(object sender, EventArgs e)
     {
 
     }

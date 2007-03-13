@@ -31,6 +31,7 @@ DECLARE_INTERFACE_(IMPFileRecord, IUnknown)
     STDMETHOD(StartTimeShifting)(THIS_ )PURE;
     STDMETHOD(StopTimeShifting)(THIS_ )PURE;
     STDMETHOD(PauseTimeShifting)(THIS_ int onOff)PURE;
+    STDMETHOD(SetTimeShiftParams)(THIS_ int minFiles, int maxFiles, ULONG maxFileSize)PURE;
 };
 // Main filter object
 
@@ -126,6 +127,7 @@ public:
     STDMETHODIMP StartTimeShifting();
     STDMETHODIMP StopTimeShifting();
     STDMETHODIMP PauseTimeShifting(int onOff);
+    STDMETHODIMP SetTimeShiftParams( int minFiles, int maxFiles, ULONG maxFileSize);
 private:
 
     // Overriden to say what interfaces we support where

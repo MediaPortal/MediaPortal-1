@@ -13,7 +13,7 @@
 class CMultiWriterFileSink: public MediaSink,public CPacketSync 
 {
 public:
-  static CMultiWriterFileSink* createNew(UsageEnvironment& env, char const* fileName,unsigned bufferSize = 20000,Boolean oneFilePerFrame = False);
+  static CMultiWriterFileSink* createNew(UsageEnvironment& env, char const* fileName,int minFiles, int maxFiles, ULONG maxFileSize,unsigned bufferSize = 20000,Boolean oneFilePerFrame = False);
   // "bufferSize" should be at least as large as the largest expected
   //   input frame.
   // "oneFilePerFrame" - if True - specifies that each input frame will

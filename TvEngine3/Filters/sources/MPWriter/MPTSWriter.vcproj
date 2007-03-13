@@ -223,6 +223,30 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
+				RelativePath=".\source\CriticalSection.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\CriticalSection.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\EnterCriticalSection.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\EnterCriticalSection.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\FileReader.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\FileReader.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\FileWriter.cpp"
 				>
 			</File>
@@ -247,6 +271,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\MultiFileReader.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\MultiFileReader.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\MultiFileWriter.cpp"
 				>
 			</File>
@@ -259,11 +291,59 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\PidInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\PidInfo.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\PidParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\PidParser.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\ProgramToTransportStream.cpp"
 				>
 			</File>
 			<File
+				RelativePath=".\source\SampleBuffer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\samplebuffer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TSBuffer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TSBuffer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TsFileDuration.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TsFileDuration.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\TsHeader.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TsStreamFileSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TsStreamFileSource.hh"
 				>
 			</File>
 			<File
@@ -684,7 +764,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG2TransportStreamIndexFile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG2TransportStreamIndexFile.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG2TransportStreamMultiplexor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG2TransportStreamTrickModeFilter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG2TransportStreamTrickModeFilter.hh"
 				>
 			</File>
 			<File

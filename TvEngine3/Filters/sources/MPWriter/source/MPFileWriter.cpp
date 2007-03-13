@@ -492,6 +492,12 @@ STDMETHODIMP CDump::SetTimeShiftFileName(char* pszFileName)
 	strcat(m_strTimeShiftFileName,".tsbuffer");
 	return S_OK;
 }
+
+STDMETHODIMP CDump::SetTimeShiftParams( int minFiles, int maxFiles, ULONG maxFileSize)
+{
+  m_tsWriter.SetTimeShiftParams(  minFiles,  maxFiles,  maxFileSize);
+	return S_OK;
+}
 STDMETHODIMP CDump::StartTimeShifting( )
 {
 	CAutoLock lock(&m_Lock);

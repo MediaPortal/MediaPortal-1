@@ -30,7 +30,6 @@ namespace SetupTv.Sections
     {
       this.label1 = new System.Windows.Forms.Label();
       this.textBoxTune = new System.Windows.Forms.TextBox();
-      this.label2 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
       this.label4 = new System.Windows.Forms.Label();
       this.label5 = new System.Windows.Forms.Label();
@@ -40,20 +39,31 @@ namespace SetupTv.Sections
       this.textBoxCAT = new System.Windows.Forms.TextBox();
       this.textBoxPAT = new System.Windows.Forms.TextBox();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.label13 = new System.Windows.Forms.Label();
+      this.label12 = new System.Windows.Forms.Label();
+      this.label11 = new System.Windows.Forms.Label();
+      this.label10 = new System.Windows.Forms.Label();
+      this.label9 = new System.Windows.Forms.Label();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.label15 = new System.Windows.Forms.Label();
+      this.textBoxEPGRefresh = new System.Windows.Forms.TextBox();
+      this.label14 = new System.Windows.Forms.Label();
+      this.label8 = new System.Windows.Forms.Label();
       this.label7 = new System.Windows.Forms.Label();
       this.textBoxEpgTimeOut = new System.Windows.Forms.TextBox();
-      this.label8 = new System.Windows.Forms.Label();
-      this.label9 = new System.Windows.Forms.Label();
-      this.label10 = new System.Windows.Forms.Label();
-      this.label11 = new System.Windows.Forms.Label();
-      this.label12 = new System.Windows.Forms.Label();
-      this.label13 = new System.Windows.Forms.Label();
-      this.label14 = new System.Windows.Forms.Label();
-      this.textBoxEPGRefresh = new System.Windows.Forms.TextBox();
-      this.label15 = new System.Windows.Forms.Label();
+      this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.label2 = new System.Windows.Forms.Label();
+      this.label16 = new System.Windows.Forms.Label();
+      this.label17 = new System.Windows.Forms.Label();
+      this.textBoxMaxFiles = new System.Windows.Forms.TextBox();
+      this.textBoxMinfiles = new System.Windows.Forms.TextBox();
+      this.label18 = new System.Windows.Forms.Label();
+      this.textBoxMaxFileSize = new System.Windows.Forms.TextBox();
+      this.label19 = new System.Windows.Forms.Label();
+      this.label20 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
+      this.groupBox3.SuspendLayout();
       this.SuspendLayout();
       // 
       // label1
@@ -71,15 +81,6 @@ namespace SetupTv.Sections
       this.textBoxTune.Name = "textBoxTune";
       this.textBoxTune.Size = new System.Drawing.Size(100, 20);
       this.textBoxTune.TabIndex = 1;
-      // 
-      // label2
-      // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(19, 17);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(176, 13);
-      this.label2.TabIndex = 2;
-      this.label2.Text = "Advanced Wait time Setting (in sec)";
       // 
       // label3
       // 
@@ -162,13 +163,58 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.textBoxSDT);
       this.groupBox1.Controls.Add(this.label5);
       this.groupBox1.Controls.Add(this.label6);
-      this.groupBox1.Location = new System.Drawing.Point(22, 33);
+      this.groupBox1.Location = new System.Drawing.Point(22, 15);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(325, 161);
       this.groupBox1.TabIndex = 11;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Scanning";
       this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+      // 
+      // label13
+      // 
+      this.label13.AutoSize = true;
+      this.label13.Location = new System.Drawing.Point(195, 130);
+      this.label13.Name = "label13";
+      this.label13.Size = new System.Drawing.Size(29, 13);
+      this.label13.TabIndex = 14;
+      this.label13.Text = "secs";
+      // 
+      // label12
+      // 
+      this.label12.AutoSize = true;
+      this.label12.Location = new System.Drawing.Point(195, 104);
+      this.label12.Name = "label12";
+      this.label12.Size = new System.Drawing.Size(29, 13);
+      this.label12.TabIndex = 13;
+      this.label12.Text = "secs";
+      // 
+      // label11
+      // 
+      this.label11.AutoSize = true;
+      this.label11.Location = new System.Drawing.Point(195, 78);
+      this.label11.Name = "label11";
+      this.label11.Size = new System.Drawing.Size(29, 13);
+      this.label11.TabIndex = 12;
+      this.label11.Text = "secs";
+      // 
+      // label10
+      // 
+      this.label10.AutoSize = true;
+      this.label10.Location = new System.Drawing.Point(195, 52);
+      this.label10.Name = "label10";
+      this.label10.Size = new System.Drawing.Size(29, 13);
+      this.label10.TabIndex = 11;
+      this.label10.Text = "secs";
+      // 
+      // label9
+      // 
+      this.label9.AutoSize = true;
+      this.label9.Location = new System.Drawing.Point(195, 26);
+      this.label9.Name = "label9";
+      this.label9.Size = new System.Drawing.Size(29, 13);
+      this.label9.TabIndex = 5;
+      this.label9.Text = "secs";
       // 
       // groupBox2
       // 
@@ -178,12 +224,47 @@ namespace SetupTv.Sections
       this.groupBox2.Controls.Add(this.label8);
       this.groupBox2.Controls.Add(this.label7);
       this.groupBox2.Controls.Add(this.textBoxEpgTimeOut);
-      this.groupBox2.Location = new System.Drawing.Point(22, 213);
+      this.groupBox2.Location = new System.Drawing.Point(22, 183);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(325, 162);
+      this.groupBox2.Size = new System.Drawing.Size(325, 90);
       this.groupBox2.TabIndex = 12;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "EPG Grabber";
+      // 
+      // label15
+      // 
+      this.label15.AutoSize = true;
+      this.label15.Location = new System.Drawing.Point(196, 56);
+      this.label15.Name = "label15";
+      this.label15.Size = new System.Drawing.Size(28, 13);
+      this.label15.TabIndex = 7;
+      this.label15.Text = "mins";
+      // 
+      // textBoxEPGRefresh
+      // 
+      this.textBoxEPGRefresh.Location = new System.Drawing.Point(89, 49);
+      this.textBoxEPGRefresh.Name = "textBoxEPGRefresh";
+      this.textBoxEPGRefresh.Size = new System.Drawing.Size(100, 20);
+      this.textBoxEPGRefresh.TabIndex = 6;
+      this.textBoxEPGRefresh.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+      // 
+      // label14
+      // 
+      this.label14.AutoSize = true;
+      this.label14.Location = new System.Drawing.Point(14, 52);
+      this.label14.Name = "label14";
+      this.label14.Size = new System.Drawing.Size(73, 13);
+      this.label14.TabIndex = 5;
+      this.label14.Text = "Refresh every";
+      // 
+      // label8
+      // 
+      this.label8.AutoSize = true;
+      this.label8.Location = new System.Drawing.Point(195, 26);
+      this.label8.Name = "label8";
+      this.label8.Size = new System.Drawing.Size(28, 13);
+      this.label8.TabIndex = 4;
+      this.label8.Text = "mins";
       // 
       // label7
       // 
@@ -201,93 +282,107 @@ namespace SetupTv.Sections
       this.textBoxEpgTimeOut.Size = new System.Drawing.Size(100, 20);
       this.textBoxEpgTimeOut.TabIndex = 3;
       // 
-      // label8
+      // groupBox3
       // 
-      this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(195, 26);
-      this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(28, 13);
-      this.label8.TabIndex = 4;
-      this.label8.Text = "mins";
+      this.groupBox3.Controls.Add(this.label2);
+      this.groupBox3.Controls.Add(this.textBoxMaxFiles);
+      this.groupBox3.Controls.Add(this.label16);
+      this.groupBox3.Controls.Add(this.label20);
+      this.groupBox3.Controls.Add(this.label17);
+      this.groupBox3.Controls.Add(this.label19);
+      this.groupBox3.Controls.Add(this.textBoxMaxFileSize);
+      this.groupBox3.Controls.Add(this.textBoxMinfiles);
+      this.groupBox3.Controls.Add(this.label18);
+      this.groupBox3.Location = new System.Drawing.Point(22, 279);
+      this.groupBox3.Name = "groupBox3";
+      this.groupBox3.Size = new System.Drawing.Size(325, 100);
+      this.groupBox3.TabIndex = 13;
+      this.groupBox3.TabStop = false;
+      this.groupBox3.Text = "Timeshifting";
       // 
-      // label9
+      // label2
       // 
-      this.label9.AutoSize = true;
-      this.label9.Location = new System.Drawing.Point(195, 26);
-      this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(29, 13);
-      this.label9.TabIndex = 5;
-      this.label9.Text = "secs";
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(195, 73);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(55, 13);
+      this.label2.TabIndex = 23;
+      this.label2.Text = "MByte/file";
       // 
-      // label10
+      // label16
       // 
-      this.label10.AutoSize = true;
-      this.label10.Location = new System.Drawing.Point(195, 52);
-      this.label10.Name = "label10";
-      this.label10.Size = new System.Drawing.Size(29, 13);
-      this.label10.TabIndex = 11;
-      this.label10.Text = "secs";
+      this.label16.AutoSize = true;
+      this.label16.Location = new System.Drawing.Point(195, 49);
+      this.label16.Name = "label16";
+      this.label16.Size = new System.Drawing.Size(25, 13);
+      this.label16.TabIndex = 22;
+      this.label16.Text = "files";
+      this.label16.Click += new System.EventHandler(this.label16_Click);
       // 
-      // label11
+      // label17
       // 
-      this.label11.AutoSize = true;
-      this.label11.Location = new System.Drawing.Point(195, 78);
-      this.label11.Name = "label11";
-      this.label11.Size = new System.Drawing.Size(29, 13);
-      this.label11.TabIndex = 12;
-      this.label11.Text = "secs";
+      this.label17.AutoSize = true;
+      this.label17.Location = new System.Drawing.Point(195, 23);
+      this.label17.Name = "label17";
+      this.label17.Size = new System.Drawing.Size(25, 13);
+      this.label17.TabIndex = 21;
+      this.label17.Text = "files";
       // 
-      // label12
+      // textBoxMaxFiles
       // 
-      this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(195, 104);
-      this.label12.Name = "label12";
-      this.label12.Size = new System.Drawing.Size(29, 13);
-      this.label12.TabIndex = 13;
-      this.label12.Text = "secs";
+      this.textBoxMaxFiles.Location = new System.Drawing.Point(89, 42);
+      this.textBoxMaxFiles.Name = "textBoxMaxFiles";
+      this.textBoxMaxFiles.Size = new System.Drawing.Size(100, 20);
+      this.textBoxMaxFiles.TabIndex = 19;
       // 
-      // label13
+      // textBoxMinfiles
       // 
-      this.label13.AutoSize = true;
-      this.label13.Location = new System.Drawing.Point(195, 130);
-      this.label13.Name = "label13";
-      this.label13.Size = new System.Drawing.Size(29, 13);
-      this.label13.TabIndex = 14;
-      this.label13.Text = "secs";
+      this.textBoxMinfiles.Location = new System.Drawing.Point(89, 16);
+      this.textBoxMinfiles.Name = "textBoxMinfiles";
+      this.textBoxMinfiles.Size = new System.Drawing.Size(100, 20);
+      this.textBoxMinfiles.TabIndex = 20;
       // 
-      // label14
+      // label18
       // 
-      this.label14.AutoSize = true;
-      this.label14.Location = new System.Drawing.Point(14, 52);
-      this.label14.Name = "label14";
-      this.label14.Size = new System.Drawing.Size(73, 13);
-      this.label14.TabIndex = 5;
-      this.label14.Text = "Refresh every";
+      this.label18.AutoSize = true;
+      this.label18.Location = new System.Drawing.Point(14, 19);
+      this.label18.Name = "label18";
+      this.label18.Size = new System.Drawing.Size(48, 13);
+      this.label18.TabIndex = 15;
+      this.label18.Text = "Minimum";
       // 
-      // textBoxEPGRefresh
+      // textBoxMaxFileSize
       // 
-      this.textBoxEPGRefresh.Location = new System.Drawing.Point(89, 49);
-      this.textBoxEPGRefresh.Name = "textBoxEPGRefresh";
-      this.textBoxEPGRefresh.Size = new System.Drawing.Size(100, 20);
-      this.textBoxEPGRefresh.TabIndex = 6;
-      this.textBoxEPGRefresh.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+      this.textBoxMaxFileSize.Location = new System.Drawing.Point(89, 68);
+      this.textBoxMaxFileSize.Name = "textBoxMaxFileSize";
+      this.textBoxMaxFileSize.Size = new System.Drawing.Size(100, 20);
+      this.textBoxMaxFileSize.TabIndex = 18;
       // 
-      // label15
+      // label19
       // 
-      this.label15.AutoSize = true;
-      this.label15.Location = new System.Drawing.Point(196, 56);
-      this.label15.Name = "label15";
-      this.label15.Size = new System.Drawing.Size(28, 13);
-      this.label15.TabIndex = 7;
-      this.label15.Text = "mins";
+      this.label19.AutoSize = true;
+      this.label19.Location = new System.Drawing.Point(14, 45);
+      this.label19.Name = "label19";
+      this.label19.Size = new System.Drawing.Size(51, 13);
+      this.label19.TabIndex = 16;
+      this.label19.Text = "Maximum";
+      // 
+      // label20
+      // 
+      this.label20.AutoSize = true;
+      this.label20.Location = new System.Drawing.Point(14, 71);
+      this.label20.Name = "label20";
+      this.label20.Size = new System.Drawing.Size(41, 13);
+      this.label20.TabIndex = 17;
+      this.label20.Text = "Filesize";
       // 
       // ScanSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.groupBox3);
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
-      this.Controls.Add(this.label2);
       this.Name = "ScanSettings";
       this.Size = new System.Drawing.Size(462, 417);
       this.Load += new System.EventHandler(this.ScanSettings_Load);
@@ -295,8 +390,9 @@ namespace SetupTv.Sections
       this.groupBox1.PerformLayout();
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
+      this.groupBox3.ResumeLayout(false);
+      this.groupBox3.PerformLayout();
       this.ResumeLayout(false);
-      this.PerformLayout();
 
     }
 
@@ -304,7 +400,6 @@ namespace SetupTv.Sections
 
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.TextBox textBoxTune;
-    private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.Label label5;
@@ -326,5 +421,15 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label15;
     private System.Windows.Forms.TextBox textBoxEPGRefresh;
     private System.Windows.Forms.Label label14;
+    private System.Windows.Forms.GroupBox groupBox3;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.TextBox textBoxMaxFiles;
+    private System.Windows.Forms.Label label16;
+    private System.Windows.Forms.Label label20;
+    private System.Windows.Forms.Label label17;
+    private System.Windows.Forms.Label label19;
+    private System.Windows.Forms.TextBox textBoxMaxFileSize;
+    private System.Windows.Forms.TextBox textBoxMinfiles;
+    private System.Windows.Forms.Label label18;
   }
 }

@@ -31,12 +31,16 @@ CMultiWriterFileSink::~CMultiWriterFileSink()
   }
 }
 
-CMultiWriterFileSink* CMultiWriterFileSink::createNew(UsageEnvironment& env, char const* fileName,unsigned bufferSize, Boolean oneFilePerFrame) 
+CMultiWriterFileSink* CMultiWriterFileSink::createNew(UsageEnvironment& env, char const* fileName,int minFiles, int maxFiles, ULONG maxFileSize,unsigned bufferSize, Boolean oneFilePerFrame) 
 {
   do 
   {
     LogDebug("CMultiWriterFileSink::create file:%s",fileName);
     MultiFileWriter* fid = new MultiFileWriter();
+    fid->setMinTSFiles(minFiles);
+    fid->setMaxTSFiles(maxFiles);
+    fid->setChunkReserve(maxFileSize);
+    fid->setMaxTSFileSize(maxFileSize);
 	  WCHAR wstrFileName[2048];
 	  MultiByteToWideChar(CP_ACP,0,fileName,-1,wstrFileName,1+strlen(fileName));
     if (FAILED(fid->OpenFile(wstrFileName)))

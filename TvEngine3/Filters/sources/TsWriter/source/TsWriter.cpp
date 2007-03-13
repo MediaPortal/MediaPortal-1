@@ -747,6 +747,16 @@ STDMETHODIMP CMpTs:: TimeShiftPause( int handle, BYTE onOff)
 	return pChannel->m_pTimeShifting->Pause( onOff);
 }
 
+STDMETHODIMP CMpTs::TimeShiftSetParams(int handle, int minFiles, int maxFiles, ULONG chunkSize) 
+{
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+  pChannel->m_pTimeShifting->SetMinTSFiles(minFiles);
+  pChannel->m_pTimeShifting->SetMaxTSFiles(maxFiles);
+  pChannel->m_pTimeShifting->SetMaxTSFileSize(chunkSize);
+  pChannel->m_pTimeShifting->SetChunkReserve(chunkSize);
+  return S_OK;
+}
 STDMETHODIMP CMpTs::TTxStart( int handle)
 {
   CTsChannel* pChannel=GetTsChannel(handle);

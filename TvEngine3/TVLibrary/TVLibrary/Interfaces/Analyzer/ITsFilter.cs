@@ -71,6 +71,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     [PreserveSig] int TimeShiftGetMode(int handle, out TimeShiftingMode mode);
     [PreserveSig] int TimeShiftSetPmtPid(int handle, int pmtPid);
     [PreserveSig] int TimeShiftPause(int handle, byte onOff);
+    [PreserveSig] int TimeShiftSetParams(int handle, int minFiles, int maxFiles, UInt32 chunkSize);
 
 
     [PreserveSig] int TTxStart(int handle);

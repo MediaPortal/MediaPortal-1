@@ -87,6 +87,7 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
 	STDMETHOD(TimeShiftGetMode) (THIS_ int handle, int *mode) PURE;
 	STDMETHOD(TimeShiftSetPmtPid) (THIS_ int handle, int pmtPid) PURE;
 	STDMETHOD(TimeShiftPause) (THIS_ int handle, BYTE onOff) PURE;
+	STDMETHOD(TimeShiftSetParams) (THIS_ int handle, int minFiles, int maxFiles, ULONG chunkSize) PURE;
 
 	STDMETHOD(TTxStart)(THIS_ int handle)PURE;
 	STDMETHOD(TTxStop)(THIS_ int handle )PURE;
@@ -204,6 +205,7 @@ public:
 		STDMETHODIMP TimeShiftGetMode( int handle, int *mode) ;
 		STDMETHODIMP TimeShiftSetPmtPid( int handle, int pmtPid) ;
 		STDMETHODIMP TimeShiftPause( int handle, BYTE onOff) ;
+	  STDMETHODIMP TimeShiftSetParams(int handle, int minFiles, int maxFiles, ULONG chunkSize) ;
 
 
 		STDMETHODIMP TTxStart( int handle);

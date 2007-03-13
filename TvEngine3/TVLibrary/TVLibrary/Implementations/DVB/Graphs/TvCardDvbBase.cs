@@ -1390,12 +1390,10 @@ namespace TvLibrary.Implementations.DVB
       set
       {
         _parameters = value;
-        if (_mapSubChannels.Count > 0)
+        Dictionary<int,TvDvbChannel>.Enumerator en= _mapSubChannels.GetEnumerator();
+        while (en.MoveNext())
         {
-          if (_mapSubChannels.ContainsKey(0))
-          {
-            _mapSubChannels[0].Parameters = value;
-          }
+          en.Current.Value.Parameters = value; ;
         }
       }
     }

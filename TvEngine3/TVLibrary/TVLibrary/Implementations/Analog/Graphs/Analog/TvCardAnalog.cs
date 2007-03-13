@@ -119,16 +119,6 @@ namespace TvLibrary.Implementations.Analog
       }
     }
 
-    public ScanParameters Parameters 
-    {
-      get
-      {
-        return new ScanParameters();
-      }
-      set
-      {
-      }
-    }
     /// <summary>
     /// Gets/sets the card name
     /// </summary>

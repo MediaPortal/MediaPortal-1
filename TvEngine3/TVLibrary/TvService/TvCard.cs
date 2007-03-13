@@ -770,6 +770,11 @@ namespace TvService
       settings.LnbLowFrequency = Int32.Parse(layer.GetSetting("LnbLowFrequency", "0").Value);
       settings.LnbHighFrequency = Int32.Parse(layer.GetSetting("LnbHighFrequency", "0").Value);
       settings.LnbSwitchFrequency = Int32.Parse(layer.GetSetting("LnbSwitchFrequency", "0").Value);
+      settings.MinimumFiles = Int32.Parse(layer.GetSetting("timeshiftMinFiles", "6").Value);
+      settings.MaximumFiles = Int32.Parse(layer.GetSetting("timeshiftMaxFiles", "20").Value);
+      settings.MaximumFileSize = UInt32.Parse(layer.GetSetting("timeshiftMaxFileSize", "256").Value) ;
+      settings.MaximumFileSize *= 1000;
+      settings.MaximumFileSize *= 1000;
       _card.Parameters = settings;
     }
 

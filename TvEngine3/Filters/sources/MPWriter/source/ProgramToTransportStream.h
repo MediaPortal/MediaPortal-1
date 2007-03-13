@@ -12,6 +12,7 @@ public:
   CProgramToTransportStream(void);
   virtual ~CProgramToTransportStream(void);
   void Initialize(char* fileNameOut);
+  void SetTimeShiftParams( int minFiles, int maxFiles, ULONG maxFileSize);
   void ClearStreams();
   void Close();
   void Write(byte* data, int len);
@@ -31,4 +32,8 @@ private:
   bool m_bRunning;
   bool m_bStarting;
   int  m_iPacketsToSkip;
+  
+  int m_minFiles;
+  int m_maxFiles;
+  ULONG m_maxFileSize;
 };

@@ -76,22 +76,30 @@ namespace WebGuide
     [WebMethod]
     public void RecordProgram(int id, int scheduleType)
     {
+      UpdateTvServer();
       Program program = Program.Retrieve(id);
       bool isSeries;
       Schedule schedule;
       if (IsRecording(program, out schedule, out isSeries) == false)
       {
+
         TvBusinessLayer layer = new TvBusinessLayer();
+
+        int preInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+        int postInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
         Schedule rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
         rec.ScheduleType = (int)scheduleType;
+        rec.PreRecordInterval = preInterval;
+        rec.PostRecordInterval = postInterval;
         rec.Persist();
-        UpdateTvServer();
+        RemoteControl.Instance.OnNewSchedule();
       }
     }
 
     [WebMethod]
     public void DontRecord(int id, bool cancelEntire)
     {
+        UpdateTvServer();
       Program program = Program.Retrieve(id);
       bool isSeries;
       Schedule schedule;
@@ -100,6 +108,7 @@ namespace WebGuide
         TvBusinessLayer layer = new TvBusinessLayer();
         if (cancelEntire)
         {
+          RemoteControl.Instance.StopRecordingSchedule(schedule.IdSchedule);
           schedule.Delete();
         }
         else
@@ -107,7 +116,7 @@ namespace WebGuide
           CanceledSchedule canceledSchedule = new CanceledSchedule(schedule.IdSchedule, program.StartTime);
           canceledSchedule.Persist();
         }
-        UpdateTvServer();
+        RemoteControl.Instance.OnNewSchedule();
       }
     }
 
@@ -135,7 +144,6 @@ namespace WebGuide
         if (!server.IsMaster) continue;
         RemoteControl.Clear();
         RemoteControl.HostName = server.HostName;
-        RemoteControl.Instance.OnNewSchedule();
         return;
 
       }

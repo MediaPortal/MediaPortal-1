@@ -151,6 +151,7 @@ namespace TvLibrary.Implementations.Analog
     protected string _timeshiftFileName="";
     protected IVbiCallback _teletextCallback = null;
     private IAMStreamConfig _interfaceStreamConfigVideoCapture = null;
+    protected ScanParameters _parameters;
     #endregion
 
     #region ctor
@@ -171,9 +172,21 @@ namespace TvLibrary.Implementations.Analog
       _name = device.Name;
       _graphState = GraphState.Idle;
       _teletextDecoder = new DVBTeletext();
+      _parameters = new ScanParameters();
     }
     #endregion
 
+    public ScanParameters Parameters
+    {
+      get
+      {
+        return _parameters;
+      }
+      set
+      {
+        _parameters = value;
+      }
+    }
     /// <summary>
     /// Checks the thread id.
     /// </summary>
@@ -2726,6 +2739,7 @@ namespace TvLibrary.Implementations.Analog
       {
         Log.Log.WriteFile("analog:SetTimeShiftFileName: uses .ts");
         IMPRecord record = _tsFileSink as IMPRecord;
+        record.SetTimeShiftParams(_parameters.MinimumFiles, _parameters.MaximumFiles, _parameters.MaximumFileSize);
         record.SetTimeShiftFileName(fileName);
         record.StartTimeShifting();
       }

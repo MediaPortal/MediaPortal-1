@@ -684,6 +684,7 @@ __int64 MultiFileWriter::getMaxTSFileSize(void)
 void MultiFileWriter::setMaxTSFileSize(__int64 maxSize)
 {
 	m_maxTSFileSize = maxSize;
+	m_pCurrentTSFile->SetChunkReserve(TRUE, m_chunkReserve, m_maxTSFileSize);
 }
 
 __int64 MultiFileWriter::getChunkReserve(void)
@@ -694,4 +695,5 @@ __int64 MultiFileWriter::getChunkReserve(void)
 void MultiFileWriter::setChunkReserve(__int64 chunkSize)
 {
 	m_chunkReserve = chunkSize;
+	m_pCurrentTSFile->SetChunkReserve(TRUE, m_chunkReserve, m_maxTSFileSize);
 }

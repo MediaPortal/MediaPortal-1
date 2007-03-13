@@ -44,7 +44,7 @@ void CProgramToTransportStream::Initialize(char* fileNameOut)
   // And, from this, a filter that converts to MPEG-2 Transport Stream frames:
   m_tsFrames  = MPEG2TransportStreamFromPESSource::createNew(*m_env, pesSource);
 
-  m_outputSink = CMultiWriterFileSink::createNew(*m_env, fileNameOut);
+  m_outputSink = CMultiWriterFileSink::createNew(*m_env, fileNameOut,m_minFiles,m_maxFiles,m_maxFileSize);
   if (m_outputSink == NULL) 
   {
     *m_env << "Unable to open file \"" << fileNameOut << "\" as a file sink\n";
@@ -61,6 +61,12 @@ void CProgramToTransportStream::Flush()
  // LogDebug("CProgramToTransportStream::Flush()");
  // m_iPacketsToSkip=0;
  // m_buffer.Clear();
+}
+void CProgramToTransportStream::SetTimeShiftParams( int minFiles, int maxFiles, ULONG maxFileSize)
+{
+  m_minFiles=minFiles;
+  m_maxFiles=maxFiles;
+  m_maxFileSize=maxFileSize;
 }
 void CProgramToTransportStream::ClearStreams()
 {
