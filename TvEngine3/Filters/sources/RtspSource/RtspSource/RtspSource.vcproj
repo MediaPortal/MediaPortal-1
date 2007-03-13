@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="RtspSource"
 	ProjectGUID="{5DDBC183-7264-46B2-8987-214F7089EC60}"
 	RootNamespace="RtspSource"
@@ -230,7 +230,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\CriticalSection.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Demux.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EnterCriticalSection.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FileReader.cpp"
 				>
 			</File>
 			<File
@@ -242,11 +254,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MultiFileReader.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\OutputPin.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\PidInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PidParser.cpp"
 				>
 			</File>
 			<File
@@ -277,6 +297,22 @@
 			</File>
 			<File
 				RelativePath=".\RtspSourceFilter.def"
+				>
+			</File>
+			<File
+				RelativePath=".\SampleBuffer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TSBuffer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TsFileDuration.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TsStreamFileSource.cpp"
 				>
 			</File>
 			<File
@@ -692,7 +728,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\StreamingServer\StreamingServer\liveMedia\MPEG2TransportStreamIndexFile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\StreamingServer\StreamingServer\liveMedia\MPEG2TransportStreamIndexFile.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\StreamingServer\StreamingServer\liveMedia\MPEG2TransportStreamMultiplexor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\StreamingServer\StreamingServer\liveMedia\MPEG2TransportStreamTrickModeFilter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\StreamingServer\StreamingServer\liveMedia\MPEG2TransportStreamTrickModeFilter.hh"
 				>
 			</File>
 			<File
