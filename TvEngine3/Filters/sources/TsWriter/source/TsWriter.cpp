@@ -510,6 +510,10 @@ STDMETHODIMP CMpTs::DeleteChannel( int handle)
 			{
 				delete *it;
 				m_vecChannels.erase(it);
+        if (m_vecChannels.size()==0)
+        {
+          m_id=0;
+        }
 				return S_OK;
 			}
 			++it;
@@ -552,148 +556,218 @@ STDMETHODIMP CMpTs::DeleteAllChannels()
 }
 STDMETHODIMP CMpTs::AnalyzerSetVideoPid(int handle, int videoPid)
 {
-	return GetTsChannel(handle)->m_pVideoAnalyzer->SetVideoPid(  videoPid);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pVideoAnalyzer->SetVideoPid(  videoPid);
 }
 STDMETHODIMP CMpTs::AnalyzerGetVideoPid(int handle,  int* videoPid)
 {
-	return GetTsChannel(handle)->m_pVideoAnalyzer->GetVideoPid(  videoPid);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pVideoAnalyzer->GetVideoPid(  videoPid);
 }
 STDMETHODIMP CMpTs::AnalyzerSetAudioPid(int handle,  int audioPid)
 {
-	return GetTsChannel(handle)->m_pVideoAnalyzer->SetAudioPid(  audioPid);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pVideoAnalyzer->SetAudioPid(  audioPid);
 }
 STDMETHODIMP CMpTs::AnalyzerGetAudioPid(int handle,  int* audioPid)
 {
-	return GetTsChannel(handle)->m_pVideoAnalyzer->GetAudioPid(  audioPid);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pVideoAnalyzer->GetAudioPid(  audioPid);
 }
 STDMETHODIMP CMpTs::AnalyzerIsVideoEncrypted(int handle,  int* yesNo)
 {
-	return GetTsChannel(handle)->m_pVideoAnalyzer->IsVideoEncrypted(  yesNo);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pVideoAnalyzer->IsVideoEncrypted(  yesNo);
 }
 STDMETHODIMP CMpTs::AnalyzerIsAudioEncrypted(int handle,  int* yesNo)
 {
-	return GetTsChannel(handle)->m_pVideoAnalyzer->IsAudioEncrypted(  yesNo);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pVideoAnalyzer->IsAudioEncrypted(  yesNo);
 }
 STDMETHODIMP CMpTs::AnalyzerReset(int handle )
 {
-	return GetTsChannel(handle)->m_pVideoAnalyzer->Reset(  );
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pVideoAnalyzer->Reset(  );
 }
 
 
 STDMETHODIMP CMpTs::PmtSetPmtPid(int handle,int pmtPid, long serviceId)
 {
-	return GetTsChannel(handle)->m_pPmtGrabber->SetPmtPid(pmtPid,serviceId  );
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pPmtGrabber->SetPmtPid(pmtPid,serviceId  );
 }
 STDMETHODIMP CMpTs::PmtSetCallBack(int handle,IPMTCallback* callback)
 {
-	return GetTsChannel(handle)->m_pPmtGrabber->SetCallBack(callback);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pPmtGrabber->SetCallBack(callback);
 }
 STDMETHODIMP CMpTs::PmtGetPMTData (int handle,BYTE *pmtData)
 {
-	return GetTsChannel(handle)->m_pPmtGrabber->GetPMTData (pmtData);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pPmtGrabber->GetPMTData (pmtData);
 }
 
 
 STDMETHODIMP CMpTs::RecordSetPcrPid( int handle,int pcrPid)
 {
-	return GetTsChannel(handle)->m_pRecorder->SetPcrPid( pcrPid);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pRecorder->SetPcrPid( pcrPid);
 }
 STDMETHODIMP CMpTs::RecordAddStream( int handle,int pid,bool isAudio,bool isVideo)
 {
-	return GetTsChannel(handle)->m_pRecorder->AddStream( pid,isAudio,isVideo);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pRecorder->AddStream( pid,isAudio,isVideo);
 }
 STDMETHODIMP CMpTs::RecordRemoveStream( int handle,int pid)
 {
-	return GetTsChannel(handle)->m_pRecorder->RemoveStream(  pid);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pRecorder->RemoveStream(  pid);
 }
 STDMETHODIMP CMpTs::RecordSetRecordingFileName( int handle,char* pszFileName)
 {
-	return GetTsChannel(handle)->m_pRecorder->SetRecordingFileName( pszFileName);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pRecorder->SetRecordingFileName( pszFileName);
 }
 STDMETHODIMP CMpTs::RecordStartRecord( int handle)
 {
-	return GetTsChannel(handle)->m_pRecorder->StartRecord(  );
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pRecorder->StartRecord(  );
 }
 STDMETHODIMP CMpTs::RecordStopRecord( int handle)
 {
-	return GetTsChannel(handle)->m_pRecorder->StopRecord(  );
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pRecorder->StopRecord(  );
 }
 STDMETHODIMP CMpTs::RecordGetMode( int handle,int *mode) 
 {
-	return GetTsChannel(handle)->m_pRecorder->GetMode( mode) ;
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pRecorder->GetMode( mode) ;
 }
 STDMETHODIMP CMpTs::RecordSetMode( int handle,int mode) 
 {
-	return GetTsChannel(handle)->m_pRecorder->SetMode(  mode) ;
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pRecorder->SetMode(  mode) ;
 }
 STDMETHODIMP CMpTs::RecordSetPmtPid(int handle,int mtPid)
 {
-	return GetTsChannel(handle)->m_pRecorder->SetPmtPid( mtPid);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pRecorder->SetPmtPid( mtPid);
 }
 
 
 STDMETHODIMP CMpTs:: TimeShiftSetPcrPid( int handle, int pcrPid)
 {
-	return GetTsChannel(handle)->m_pTimeShifting->SetPcrPid( pcrPid);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pTimeShifting->SetPcrPid( pcrPid);
 }
 STDMETHODIMP CMpTs:: TimeShiftAddStream( int handle, int pid, int serviceType, char* language)
 {
-	return GetTsChannel(handle)->m_pTimeShifting->AddStream( pid,  serviceType, language);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pTimeShifting->AddStream( pid,  serviceType, language);
 }
 STDMETHODIMP CMpTs:: TimeShiftRemoveStream( int handle, int pid)
 {
-	return GetTsChannel(handle)->m_pTimeShifting->RemoveStream( pid);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pTimeShifting->RemoveStream( pid);
 }
 STDMETHODIMP CMpTs:: TimeShiftSetTimeShiftingFileName( int handle, char* pszFileName)
 {
-	return GetTsChannel(handle)->m_pTimeShifting->SetTimeShiftingFileName( pszFileName);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pTimeShifting->SetTimeShiftingFileName( pszFileName);
 }
 STDMETHODIMP CMpTs:: TimeShiftStart( int handle )
 {
-	return GetTsChannel(handle)->m_pTimeShifting->Start( );
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pTimeShifting->Start( );
 }
 STDMETHODIMP CMpTs:: TimeShiftStop( int handle )
 {
-	return GetTsChannel(handle)->m_pTimeShifting->Stop( );
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pTimeShifting->Stop( );
 }
 STDMETHODIMP CMpTs:: TimeShiftReset( int handle )
 {
-	return GetTsChannel(handle)->m_pTimeShifting->Reset( );
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pTimeShifting->Reset( );
 }
 STDMETHODIMP CMpTs:: TimeShiftGetBufferSize( int handle, long * size) 
 {
-	return GetTsChannel(handle)->m_pTimeShifting->GetBufferSize( size);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pTimeShifting->GetBufferSize( size);
 }
 STDMETHODIMP CMpTs:: TimeShiftSetMode( int handle, int mode) 
 {
-	return GetTsChannel(handle)->m_pTimeShifting->SetMode( mode);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pTimeShifting->SetMode( mode);
 }
 STDMETHODIMP CMpTs:: TimeShiftGetMode( int handle, int *mode) 
 {
-	return GetTsChannel(handle)->m_pTimeShifting->GetMode( mode);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pTimeShifting->GetMode( mode);
 }
 STDMETHODIMP CMpTs:: TimeShiftSetPmtPid( int handle, int pmtPid) 
 {
-	return GetTsChannel(handle)->m_pTimeShifting->SetPmtPid( pmtPid);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pTimeShifting->SetPmtPid( pmtPid);
 }
 STDMETHODIMP CMpTs:: TimeShiftPause( int handle, BYTE onOff) 
 {
-	return GetTsChannel(handle)->m_pTimeShifting->Pause( onOff);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pTimeShifting->Pause( onOff);
 }
 
 STDMETHODIMP CMpTs::TTxStart( int handle)
 {
-	return GetTsChannel(handle)->m_pTeletextGrabber->Start( );
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pTeletextGrabber->Start( );
 }
 STDMETHODIMP CMpTs::TTxStop( int handle )
 {
-	return GetTsChannel(handle)->m_pTeletextGrabber->Stop( );
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pTeletextGrabber->Stop( );
 }
 STDMETHODIMP CMpTs::TTxSetTeletextPid( int handle,int teletextPid)
 {
-	return GetTsChannel(handle)->m_pTeletextGrabber->SetTeletextPid(teletextPid );
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pTeletextGrabber->SetTeletextPid(teletextPid );
 }
 STDMETHODIMP CMpTs::TTxSetCallBack( int handle,ITeletextCallBack* callback)
 {
-	return GetTsChannel(handle)->m_pTeletextGrabber->SetCallBack(callback );
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pTeletextGrabber->SetCallBack(callback );
 }
