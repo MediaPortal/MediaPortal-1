@@ -119,9 +119,9 @@ namespace TvEngine.PowerScheduler.Handlers
             if (config.Days != null)
             {
               foreach (EPGGrabDays day in config.Days)
-                Log.Debug("PowerScheduler: wakeup on day {0}", day);
+                Log.Debug("PowerScheduler: EPG wakeup on day {0}", day);
             }
-            Log.Debug("PowerScheduler: last run: {0}", config.LastRun);
+            Log.Debug("PowerScheduler: EPG last run: {0}", config.LastRun);
           }
 
           // check if schedule is due
@@ -129,7 +129,7 @@ namespace TvEngine.PowerScheduler.Handlers
           if (config.LastRun.Day != DateTime.Now.Day)
           {
             // check if we should run today
-            if (ShouldRun(config, DateTime.Now.DayOfWeek))
+            if (ShouldRun(config.Days, DateTime.Now.DayOfWeek))
             {
               // check if schedule is due
               if (DateTime.Now.Hour >= config.Hour)
@@ -154,24 +154,24 @@ namespace TvEngine.PowerScheduler.Handlers
       }
     }
 
-    private bool ShouldRun(EPGWakeupConfig cfg, DayOfWeek dow)
+    private bool ShouldRun(List<EPGGrabDays> days, DayOfWeek dow)
     {
       switch (dow)
       {
         case DayOfWeek.Monday:
-          return (cfg.Days.Contains(EPGGrabDays.Monday));
+          return (days.Contains(EPGGrabDays.Monday));
         case DayOfWeek.Tuesday:
-          return (cfg.Days.Contains(EPGGrabDays.Tuesday));
+          return (days.Contains(EPGGrabDays.Tuesday));
         case DayOfWeek.Wednesday:
-          return (cfg.Days.Contains(EPGGrabDays.Wednesday));
+          return (days.Contains(EPGGrabDays.Wednesday));
         case DayOfWeek.Thursday:
-          return (cfg.Days.Contains(EPGGrabDays.Thursday));
+          return (days.Contains(EPGGrabDays.Thursday));
         case DayOfWeek.Friday:
-          return (cfg.Days.Contains(EPGGrabDays.Friday));
+          return (days.Contains(EPGGrabDays.Friday));
         case DayOfWeek.Saturday:
-          return (cfg.Days.Contains(EPGGrabDays.Saturday));
+          return (days.Contains(EPGGrabDays.Saturday));
         case DayOfWeek.Sunday:
-          return (cfg.Days.Contains(EPGGrabDays.Sunday));
+          return (days.Contains(EPGGrabDays.Sunday));
         default:
           return false;
       }
@@ -183,13 +183,7 @@ namespace TvEngine.PowerScheduler.Handlers
     {
       get
       {
-        for (int i = 0; i < _controller.Cards; i++)
-        {
-          int cardId = _controller.CardId(i);
-          if (_controller.IsGrabbingEpg(cardId))
-            return true;
-        }
-        return false;
+        return _controller.EpgGrabberEnabled;
       }
     }
     public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
@@ -202,9 +196,9 @@ namespace TvEngine.PowerScheduler.Handlers
       if (cfg.LastRun.Day == DateTime.Now.Day)
       {
         // determine first next day to run EPG grabber
-        for (int i = 0; i < 8; i++)
+        for (int i = 1; i < 8; i++)
         {
-          if (ShouldRun(cfg, nextRun.AddDays(i).DayOfWeek))
+          if (ShouldRun(cfg.Days, nextRun.AddDays(i).DayOfWeek))
           {
             nextRun = nextRun.AddDays(i);
             break;

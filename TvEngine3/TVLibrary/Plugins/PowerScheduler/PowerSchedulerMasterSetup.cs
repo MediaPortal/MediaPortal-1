@@ -173,7 +173,7 @@ namespace TvEngine.PowerScheduler
       EPGWakeupConfig newcfg = new EPGWakeupConfig();
       newcfg.Hour = cfg.Hour;
       newcfg.Minutes = cfg.Minutes;
-      newcfg.Days = cfg.Days;
+      // newcfg.Days = cfg.Days;
       newcfg.LastRun = cfg.LastRun;
       string[] time = maskedTextBox1.Text.Split(':');
       newcfg.Hour = Convert.ToInt32(time[0]);
@@ -199,22 +199,13 @@ namespace TvEngine.PowerScheduler
     private void CheckDay(EPGWakeupConfig cfg, EPGGrabDays day, bool enabled)
     {
       if (enabled)
-      {
-        if (!cfg.Days.Contains(day))
-          cfg.Days.Add(day);
-      }
-      else
-      {
-        if (cfg.Days.Contains(day))
-          cfg.Days.Remove(day);
-      }
+        cfg.Days.Add(day);
     }
 
     private void button1_Click(object sender, EventArgs e)
     {
       SelectProcessForm spf = new SelectProcessForm();
-      Form f = spf as Form;
-      DialogResult dr = f.ShowDialog();
+      DialogResult dr = spf.ShowDialog();
       if (DialogResult.OK == dr)
       {
         if (!spf.SelectedProcess.Equals(String.Empty))
