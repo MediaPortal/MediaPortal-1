@@ -932,7 +932,8 @@ namespace MediaPortal.Player
         CloseInterfaces();
         _state = PlayState.Init;
         GUIGraphicsContext.IsPlaying = false;
-
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_SERVER_TIMESHIFTING, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendMessage(msg);
       }
     }
 

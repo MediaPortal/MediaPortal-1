@@ -272,19 +272,25 @@ namespace TvPlugin
       GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
       return bResult;
     }
+      
     static public void OnGlobalMessage(GUIMessage message)
     {
-      switch (message.Message)
-      {
-        case GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO:
-          {
-            TvBusinessLayer layer = new TvBusinessLayer();
-            Channel channel = layer.GetChannelByName(message.Label);
-            if (channel != null)
-              TVHome.ViewChannelAndCheck(channel);
-            break;
-          }
-      }
+        switch (message.Message)
+        {
+            case GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO:
+                {
+                    TvBusinessLayer layer = new TvBusinessLayer();
+                    Channel channel = layer.GetChannelByName(message.Label);
+                    if (channel != null)
+                        TVHome.ViewChannelAndCheck(channel);
+                    break;
+                }
+            case GUIMessage.MessageType.GUI_MSG_STOP_SERVER_TIMESHIFTING:
+                {
+                    TVHome.Card.StopTimeShifting();
+                    break;
+                }
+        }
     }
 
     void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
