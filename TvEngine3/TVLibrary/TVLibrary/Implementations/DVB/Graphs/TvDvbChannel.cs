@@ -389,7 +389,7 @@ namespace TvLibrary.Implementations.DVB
               dtNow = DateTime.Now;
               while (_pmtVersion < 0 && channel.PmtPid > 0)
               {
-                Log.Log.Write("subch:{0} wait for pmt{1:X}", _subChannelId, channel.PmtPid);
+                Log.Log.Write("subch:{0} wait for pmt {1:X}", _subChannelId, channel.PmtPid);
                 System.Threading.Thread.Sleep(20);
                 TimeSpan ts = DateTime.Now - dtNow;
                 if (ts.TotalMilliseconds >= (_parameters.TimeOutPMT * 1000)) break;
@@ -950,7 +950,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="serviceId">The service id.</param>
     protected void SetupPmtGrabber(int pmtPid, int serviceId)
     {
-      Log.Log.Info("subch:{0} SetupPmtGrabber:{1:X} {2:X}", _subChannelId, _pmtPid, pmtPid);
+      Log.Log.Info("subch:{0} SetupPmtGrabber:pid {1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
       if (pmtPid < 0) return;
       if (pmtPid == _pmtPid) return;
       _pmtVersion = -1;
@@ -979,7 +979,7 @@ namespace TvLibrary.Implementations.DVB
         {
           _conditionalAccess.OnRunGraph(serviceId);
         }
-        Log.Log.Write("subch:{0} set pmt grabber pmt:{1:X}", _subChannelId, pmtPid);
+        Log.Log.Write("subch:{0} set pmt grabber pmt:{1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
         _tsFilterInterface.PmtSetCallBack(_subChannelIndex,this);
         _tsFilterInterface.PmtSetPmtPid(_subChannelIndex, pmtPid, serviceId);
         if (_mdapiFilter != null)

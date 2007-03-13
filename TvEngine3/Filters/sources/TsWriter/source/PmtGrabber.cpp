@@ -51,7 +51,7 @@ STDMETHODIMP CPmtGrabber::SetPmtPid( int pmtPid, long serviceId)
 	try
 	{
 		CEnterCriticalSection enter(m_section);
-		LogDebug("pmtgrabber: grab pmt:%x", pmtPid);
+    LogDebug("pmtgrabber: grab pmt:%x sid:%x", pmtPid,serviceId);
 		CSectionDecoder::Reset();
 		CSectionDecoder::SetPid(pmtPid);
 		CSectionDecoder::SetTableId(2);
@@ -97,10 +97,14 @@ void CPmtGrabber::OnNewSection(CSection& section)
 		int start=m_tsHeader.PayLoadStart;
     int table_id = section.Data[start];
 	  if (table_id!=2) return;
-    if (section.SectionLength<0 || section.SectionLength>=MAX_SECTION_LENGTH) return;
+    //if (section.SectionLength<0 || section.SectionLength>=MAX_SECTION_LENGTH) return;
 
     long serviceId = (section.Data[start+3] << 8) + section.Data[start+4];
-		if (serviceId!=m_iServiceId) return;
+    if (m_iPmtVersion<0)
+    {
+		  LogDebug("pmtgrabber: got pmt %x sid:%x",m_tsHeader.Pid, serviceId);
+    }
+		if (serviceId != m_iServiceId) return;
 
 		LogDebug("pmtgrabber: got pmt version:%d %d", section.Version,m_iPmtVersion);
 		m_iPmtVersion=section.Version;
