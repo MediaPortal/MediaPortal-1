@@ -27,6 +27,8 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Collections;
+using System.Globalization;
+using System.IO;
 using System.Text;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -63,6 +65,7 @@ namespace MediaPortal.Player
     static bool driveSpeedLoaded = false;
     static bool driveSpeedReduced = false;
     static bool driveSpeedControlEnabled = false;
+    static double[] _chapters = null;
     #endregion
 
     #region events
@@ -394,6 +397,8 @@ namespace MediaPortal.Player
         GUIGraphicsContext.IsPlaying = false;
         GUIGraphicsContext.IsPlayingVideo = false;
         CachePlayer();
+
+        _chapters = null;
       }
     }
 
@@ -430,6 +435,20 @@ namespace MediaPortal.Player
     {
       if (_player != null)
       {
+        if (!_player.IsDVD && _chapters != null)
+        {
+          switch (action.wID)
+          {
+            case Action.ActionType.ACTION_NEXT_CHAPTER:
+              JumpToNextChapter();
+              return true;
+
+            case Action.ActionType.ACTION_PREV_CHAPTER:
+              JumpToPrevChapter();
+              return true;
+          }
+        }
+
         return _player.OnAction(action);
       }
       return false;
@@ -459,6 +478,16 @@ namespace MediaPortal.Player
       {
         if (_player == null) return false;
         return _player.IsDVDMenu;
+      }
+    }
+
+    public static bool HasChapters
+    {
+      get
+      {
+        if (_player == null) return false;
+        if (_chapters == null) return false;
+        return true;
       }
     }
 
@@ -834,6 +863,8 @@ namespace MediaPortal.Player
         _player = _factory.Create(strFile, type);
         if (_player != null)
         {
+          LoadChapters(strFile);
+
           _player = CachePreviousPlayer(_player);
           bool bResult = _player.Play(strFile);
           if (!bResult)
@@ -973,6 +1004,8 @@ namespace MediaPortal.Player
         _player = _factory.Create(strFile);
         if (_player != null)
         {
+          LoadChapters(strFile);
+
           _player = CachePreviousPlayer(_player);
           bool bResult = _player.Play(strFile);
           if (!bResult)
@@ -1736,6 +1769,124 @@ namespace MediaPortal.Player
         CurrentSubtitleStream = 0;
         EnableSubtitle = true;
       }
+    }
+
+    static bool LoadChapters(string videoFile)
+    {
+      _chapters = null;
+
+      try
+      {
+        string chapterFile = Path.ChangeExtension(videoFile, ".txt");
+
+        if (!File.Exists(chapterFile))
+          return false;
+
+        Log.Debug("g_Player.LoadChapters() - Chapter file found for video \"{0}\"", videoFile);
+
+        ArrayList chapters = new ArrayList();
+        StreamReader file = new StreamReader(chapterFile);
+
+        string line = file.ReadLine();
+
+        int fps;
+        if (!int.TryParse(line.Substring(line.LastIndexOf(' ') + 1), out fps))
+        {
+          Log.Warn("g_Player.LoadChapters() - Invalid chapter file \"{0}\"", chapterFile);
+          return false;
+        }
+        double framesPerSecond = fps / 100.0;
+
+        char[] splitChar = new char[] { '\t' };
+
+        string[] tokens;
+        int time;
+
+        while (!file.EndOfStream)
+        {
+          line = file.ReadLine();
+          if (String.IsNullOrEmpty(line))
+            continue;
+
+          tokens = line.Split(splitChar);
+
+          if (tokens.Length != 2)
+            continue;
+
+          if (int.TryParse(tokens[1], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out time))
+            chapters.Add(time / framesPerSecond);
+        }
+
+        file.Close();
+
+        if (chapters.Count == 0)
+        {
+          Log.Warn("g_Player.LoadChapters() - No chapters found in file \"{0}\"", chapterFile);
+          return false;
+        }
+
+        _chapters = new double[chapters.Count];
+        chapters.CopyTo(_chapters);
+      }
+      catch (Exception ex)
+      {
+        Log.Error(ex);
+        return false;
+      }
+
+      return true;
+    }
+
+    static double NextChapterTime(double currentPos)
+    {
+      if (_chapters != null)
+        for (int index = 0; index < _chapters.Length; index++)
+          if (currentPos < _chapters[index])
+            return _chapters[index];
+
+      return -1;  // no skip
+    }
+    static double PreviousChapterTime(double currentPos)
+    {
+      if (_chapters != null)
+        for (int index = _chapters.Length - 1; index >= 0; index--)
+          if (_chapters[index] < currentPos - 5.0)
+            return _chapters[index];
+
+      return 0;
+    }
+
+    static public bool JumpToNextChapter()
+    {
+      if (!Playing)
+        return false;
+
+      double nextChapter = NextChapterTime(_player.CurrentPosition);
+      Log.Debug("g_Player.JumpNextChapter() - Current Position: {0}, Next Chapter: {1}", _player.CurrentPosition, nextChapter);
+
+      if (nextChapter > 0 && nextChapter < _player.Duration)
+      {
+        SeekAbsolute(nextChapter);
+        return true;
+      }
+
+      return false;
+    }
+    static public bool JumpToPrevChapter()
+    {
+      if (!Playing)
+        return false;
+
+      double prevChapter = PreviousChapterTime(_player.CurrentPosition);
+      Log.Debug("g_Player.JumpPrevChapter() - Current Position: {0}, Previous Chapter: {1}", _player.CurrentPosition, prevChapter);
+
+      if (prevChapter >= 0 && prevChapter < _player.Duration)
+      {
+        SeekAbsolute(prevChapter);
+        return true;
+      }
+
+      return false;
     }
 
     #endregion

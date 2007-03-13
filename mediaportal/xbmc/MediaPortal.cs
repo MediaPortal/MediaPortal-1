@@ -1540,7 +1540,7 @@ public class MediaPortalApp : D3DApp, IRender
 
         //DVD: goto next chapter
         case Action.ActionType.ACTION_NEXT_CHAPTER:
-          if (g_Player.IsDVD && g_Player.Playing)
+          if (g_Player.Playing && (g_Player.IsDVD || g_Player.HasChapters))
           {
             g_Player.OnAction(action);
             return;
@@ -1549,7 +1549,7 @@ public class MediaPortalApp : D3DApp, IRender
 
         //DVD: goto previous chapter
         case Action.ActionType.ACTION_PREV_CHAPTER:
-          if (g_Player.IsDVD && g_Player.Playing)
+          if (g_Player.Playing && (g_Player.IsDVD || g_Player.HasChapters))
           {
             g_Player.OnAction(action);
             return;

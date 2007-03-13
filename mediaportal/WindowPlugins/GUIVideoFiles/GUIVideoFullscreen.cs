@@ -1099,6 +1099,11 @@ namespace MediaPortal.GUI.Video
         dlg.AddLocalizedString(975); // Previous chapter
         dlg.AddLocalizedString(976); // Next chapter
       }
+      else if (g_Player.HasChapters) // For video files with chapters
+      {
+        dlg.AddLocalizedString(976); // Next chapter
+        dlg.AddLocalizedString(975); // Previous chapter
+      }
 
       _IsDialogVisible = true;
 
