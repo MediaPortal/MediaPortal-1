@@ -1390,8 +1390,35 @@ namespace TvDatabase
       return recordings;
     }
 
-
-
+    // Add schedules for importing from xml
+    public Schedule AddSchedule(int idChannel, string programName, DateTime startTime, DateTime endTime, int scheduleType)
+    {
+        Schedule schedule = GetSchedule(idChannel,programName,startTime,endTime,scheduleType);
+        if (schedule != null)
+            return schedule;
+        else
+        {
+            Schedule newSchedule = new Schedule(idChannel, programName, startTime, endTime);
+            return newSchedule;
+        }
+    }
+    
+    // Get schedules to import from xml
+    public Schedule GetSchedule(int idChannel, string programName, DateTime startTime, DateTime endTime, int scheduleType)
+    {
+        SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Schedule));
+        sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
+        sb.AddConstraint(Operator.Equals, "programName", programName);
+        sb.AddConstraint(Operator.Equals, "startTime", startTime);
+        sb.AddConstraint(Operator.Equals, "endTime", endTime);
+        sb.AddConstraint(Operator.Equals, "scheduleType", scheduleType);
+        SqlStatement stmt = sb.GetStatement(true);
+        Log.Info(stmt.Sql);
+        IList schedules = ObjectFactory.GetCollection(typeof(Schedule), stmt.Execute());
+        if (schedules == null) return null;
+        if (schedules.Count == 0) return null;
+        return (Schedule)schedules[0];
+    }
     #endregion
   }
 }

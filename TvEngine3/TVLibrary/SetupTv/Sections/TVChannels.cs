@@ -594,10 +594,18 @@ namespace SetupTv.Sections
       attr.InnerText = tagValue;
       node.Attributes.Append(attr);
     }
+    
     void AddAttribute(XmlNode node, string tagName, int tagValue)
     {
       AddAttribute(node, tagName, tagValue.ToString());
     }
+    
+    // store DateTime Values as strings. Improves readability
+    void AddAttribute(XmlNode node,string tagName, DateTime tagValue)
+    {
+        AddAttribute(node,tagName,String.Format("{0}-{1}-{2} {3}:{4}:{5}", tagValue.Year, tagValue.Month, tagValue.Day, tagValue.Hour, tagValue.Minute, tagValue.Second));
+    }
+    
     void AddAttribute(XmlNode node, string tagName, bool tagValue)
     {
       AddAttribute(node, tagName, tagValue.ToString());
@@ -627,8 +635,8 @@ namespace SetupTv.Sections
           AddAttribute(nodeCard, "DevicePath", card.DevicePath);
           AddAttribute(nodeCard, "Enabled", card.Enabled);
           AddAttribute(nodeCard, "CamType", card.CamType);
-          AddAttribute(nodeCard, "GrabEPG", card.GrabEPG);
-          AddAttribute(nodeCard, "LastEpgGrab", String.Format("{0}-{1}-{2} {3}:{4}:{5}", card.LastEpgGrab.Year, card.LastEpgGrab.Month, card.LastEpgGrab.Day, card.LastEpgGrab.Hour, card.LastEpgGrab.Minute, card.LastEpgGrab.Second));
+          AddAttribute(nodeCard, "GrabEPG", card.GrabEPG);          
+          AddAttribute(nodeCard, "LastEpgGrab", card.LastEpgGrab);
           AddAttribute(nodeCard, "Name", card.Name);
           AddAttribute(nodeCard, "Priority", card.Priority);
           AddAttribute(nodeCard, "RecordingFolder", card.RecordingFolder);
@@ -648,11 +656,11 @@ namespace SetupTv.Sections
         AddAttribute(nodechannel, "GrabEpg", channel.GrabEpg);
         AddAttribute(nodechannel, "IdChannel", channel.IdChannel);
         AddAttribute(nodechannel, "IsRadio", channel.IsRadio);
-        AddAttribute(nodechannel, "IsTv", channel.IsTv);
-        AddAttribute(nodechannel, "LastGrabTime", String.Format("{0}-{1}-{2} {3}:{4}:{5}", channel.LastGrabTime.Year, channel.LastGrabTime.Month, channel.LastGrabTime.Day, channel.LastGrabTime.Hour, channel.LastGrabTime.Minute, channel.LastGrabTime.Second));
+        AddAttribute(nodechannel, "IsTv", channel.IsTv);        
+        AddAttribute(nodechannel, "LastGrabTime", channel.LastGrabTime);
         AddAttribute(nodechannel, "SortOrder", channel.SortOrder);
-        AddAttribute(nodechannel, "TimesWatched", channel.TimesWatched);
-        AddAttribute(nodechannel, "TotalTimeWatched", String.Format("{0}-{1}-{2} {3}:{4}:{5}", channel.TotalTimeWatched.Year, channel.TotalTimeWatched.Month, channel.TotalTimeWatched.Day, channel.TotalTimeWatched.Hour, channel.TotalTimeWatched.Minute, channel.TotalTimeWatched.Second));
+        AddAttribute(nodechannel, "TimesWatched", channel.TimesWatched);        
+        AddAttribute(nodechannel, "TotalTimeWatched", channel.TotalTimeWatched);
         AddAttribute(nodechannel, "VisibleInGuide", channel.VisibleInGuide);
         AddAttribute(nodechannel, "FreeToAir", channel.FreeToAir);
 
@@ -707,9 +715,33 @@ namespace SetupTv.Sections
         nodechannels.AppendChild(nodechannel);
       }
       rootElement.AppendChild(nodechannels);
+      // exporting the schedules
+      XmlNode nodeSchedules = xmlDoc.CreateElement("schedules");
+      IList schedules = Schedule.ListAll();
+      foreach (Schedule schedule in schedules)
+      {
+          XmlNode nodeSchedule = xmlDoc.CreateElement("schedule");
+          AddAttribute(nodeSchedule,"IdChannel",schedule.IdChannel);
+          AddAttribute(nodeSchedule, "ProgramName", schedule.ProgramName);
+          AddAttribute(nodeSchedule, "StartTime", schedule.StartTime);
+          AddAttribute(nodeSchedule, "EndTime", schedule.EndTime);
+          AddAttribute(nodeSchedule, "KeepDate", schedule.KeepDate);
+          AddAttribute(nodeSchedule, "PreRecordInterval", schedule.PreRecordInterval);
+          AddAttribute(nodeSchedule, "PostRecordInterval", schedule.PostRecordInterval);
+          AddAttribute(nodeSchedule, "Priority", schedule.Priority);
+          AddAttribute(nodeSchedule, "Quality", schedule.Quality);
+          AddAttribute(nodeSchedule, "Directory", schedule.Directory);
+          AddAttribute(nodeSchedule, "KeepMethod", schedule.KeepMethod);
+          AddAttribute(nodeSchedule, "MaxAirings", schedule.MaxAirings);
+          AddAttribute(nodeSchedule, "RecommendedCard", schedule.RecommendedCard);
+          AddAttribute(nodeSchedule, "ScheduleType", schedule.ScheduleType);
+          AddAttribute(nodeSchedule, "Series", schedule.Series);
+          nodeSchedules.AppendChild(nodeSchedule);
+      }
+      rootElement.AppendChild(nodeSchedules);
       xmlDoc.AppendChild(rootElement);
       xmlDoc.Save("export.xml");
-      MessageBox.Show(this, "Channels exported to 'export.xml'");
+      MessageBox.Show(this, "Channels and schedules exported to 'export.xml'");
     }
 
     private void mpButtonExpert_Click(object sender, EventArgs e)
@@ -722,7 +754,7 @@ namespace SetupTv.Sections
       openFileDialog1.CheckFileExists = true;
       openFileDialog1.DefaultExt = "xml";
       openFileDialog1.RestoreDirectory = true;
-      openFileDialog1.Title = "Load channels";
+      openFileDialog1.Title = "Load channels and schedules";
       openFileDialog1.FileName = "export.xml";
       openFileDialog1.AddExtension = true;
       openFileDialog1.Multiselect = false;
@@ -730,12 +762,14 @@ namespace SetupTv.Sections
       CountryCollection collection = new CountryCollection();
       TvBusinessLayer layer = new TvBusinessLayer();
       int channelCount = 0;
+      int scheduleCount = 0;
       try
       {
         XmlDocument doc = new XmlDocument();
         doc.Load(openFileDialog1.FileName);
         XmlNodeList serverList = doc.SelectNodes("/tvserver/servers/servers");
         XmlNodeList channelList = doc.SelectNodes("/tvserver/channels/channel");
+        XmlNodeList scheduleList = doc.SelectNodes("/tvserver/schedules/schedule");
         XmlNodeList cardList = doc.SelectNodes("/tvserver/servers/servers/cards/card");
         foreach (XmlNode nodeChannel in channelList)
         {
@@ -899,7 +933,32 @@ namespace SetupTv.Sections
             }
           }
         }
-        MessageBox.Show(String.Format("Imported {0} channels", channelCount));
+        // Import schedules
+        foreach (XmlNode nodeSchedule in scheduleList)
+        {
+            scheduleCount++;
+            int idChannel = Int32.Parse(nodeSchedule.Attributes["IdChannel"].Value);
+            string programName = nodeSchedule.Attributes["ProgramName"].Value;
+            DateTime startTime = DateTime.ParseExact(nodeSchedule.Attributes["StartTime"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+            DateTime endTime = DateTime.ParseExact(nodeSchedule.Attributes["EndTime"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+            int scheduleType =Int32.Parse(nodeSchedule.Attributes["ScheduleType"].Value);
+            Schedule schedule = layer.AddSchedule(idChannel, programName, startTime, endTime, scheduleType);
+
+            schedule.ScheduleType = scheduleType;
+            schedule.KeepDate = DateTime.ParseExact(nodeSchedule.Attributes["KeepDate"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+            schedule.PreRecordInterval = Int32.Parse(nodeSchedule.Attributes["PreRecordInterval"].Value);
+            schedule.PostRecordInterval = Int32.Parse(nodeSchedule.Attributes["PostRecordInterval"].Value);
+            schedule.Priority = Int32.Parse(nodeSchedule.Attributes["Priority"].Value);
+            schedule.Quality = Int32.Parse(nodeSchedule.Attributes["Quality"].Value);
+            schedule.Directory = nodeSchedule.Attributes["Directory"].Value;
+            schedule.KeepMethod = Int32.Parse(nodeSchedule.Attributes["KeepMethod"].Value);
+            schedule.MaxAirings = Int32.Parse(nodeSchedule.Attributes["MaxAirings"].Value);
+            schedule.RecommendedCard = Int32.Parse(nodeSchedule.Attributes["RecommendedCard"].Value);
+            schedule.ScheduleType = Int32.Parse(nodeSchedule.Attributes["ScheduleType"].Value);
+            schedule.Series = (nodeSchedule.Attributes["Series"].Value == "True");
+            schedule.Persist();
+        }
+        MessageBox.Show(String.Format("Imported {0} channels and {1} schedules", channelCount, scheduleCount));
       }
       catch (Exception)
       {
