@@ -130,9 +130,26 @@ namespace TvLibrary.Implementations.DVB
       ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
       IEnumTuningSpaces enumTuning;
       ITuningSpace[] spaces = new ITuningSpace[2];
-
+	  
       int lowOsc = 9750;
       int hiOsc = 10600;
+
+/// GagReflex
+      int lnbSwitch = 11700;
+      if (_parameters.UseDefaultLnbFrequencies)
+      {
+      lowOsc = 9750;
+      hiOsc = 10600;
+      lnbSwitch = 11700;
+      }
+      else
+      {
+        lowOsc = _parameters.LnbLowFrequency;
+        hiOsc = _parameters.LnbHighFrequency;
+        lnbSwitch = _parameters.LnbSwitchFrequency;
+      }
+//end GagReflex
+
       ITuneRequest request;
       int fetched;
       container.get_EnumTuningSpaces(out enumTuning);
@@ -147,8 +164,10 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.WriteFile("Found correct tuningspace {0}", name);
           _tuningSpace = (IDVBSTuningSpace)spaces[0];
-
-          _tuningSpace.put_LNBSwitch(11700000);
+/// GagReflex
+         /// _tuningSpace.put_LNBSwitch(11700000);
+		  _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
+/// End GagReflex
           _tuningSpace.put_SpectralInversion(SpectralInversion.Automatic);
           _tuningSpace.put_LowOscillator(lowOsc * 1000);
           _tuningSpace.put_HighOscillator(hiOsc * 1000);
@@ -170,7 +189,10 @@ namespace TvLibrary.Implementations.DVB
       _tuningSpace.put_SystemType(DVBSystemType.Satellite);
 
       _tuningSpace.put_SpectralInversion(SpectralInversion.Automatic);
-      _tuningSpace.put_LNBSwitch(11700000);
+/// GagReflex
+      /// _tuningSpace.put_LNBSwitch(11700000);
+        _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
+/// End GagReflex
       _tuningSpace.put_LowOscillator(lowOsc * 1000);
       _tuningSpace.put_HighOscillator(hiOsc * 1000);
 
