@@ -563,8 +563,13 @@ namespace TvService
         }
         recording.FileName = fileName;
         recording.RecordingStartDateTime = DateTime.Now;
+        int idServer = recording.CardInfo.Card.IdServer;
+        recording.Recording = new Recording(recording.Schedule.IdChannel, recording.RecordingStartDateTime, DateTime.Now, recording.Program.Title,
+                            recording.Program.Description, recording.Program.Genre, recording.FileName, (int)recording.Schedule.KeepMethod,
+                            recording.Schedule.KeepDate, 0, idServer);
+        recording.Recording.Persist();
         _recordingsInProgressList.Add(recording);
-        _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingStarted, new VirtualCard(_user), _user, recording.Schedule, null));
+        _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingStarted, new VirtualCard(_user), _user, recording.Schedule, recording.Recording));
         Log.Write("recList:count:{0} add scheduleid:{1} card:{2}", _recordingsInProgressList.Count, recording.Schedule.IdSchedule, recording.CardInfo.Card.Name);
       }
       catch (Exception ex)
@@ -594,12 +599,9 @@ namespace TvService
         }
 
 
-        int idServer = recording.CardInfo.Card.IdServer;
-        Recording newRec = new Recording(recording.Schedule.IdChannel, recording.RecordingStartDateTime, DateTime.Now, recording.Program.Title,
-                            recording.Program.Description, recording.Program.Genre, recording.FileName, (int)recording.Schedule.KeepMethod,
-                            recording.Schedule.KeepDate, 0, idServer);
-        newRec.Persist();
-        _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingEnded, new VirtualCard(_user), _user, recording.Schedule, newRec));
+        recording.Recording.EndTime = DateTime.Now;
+        recording.Recording.Persist();
+        _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingEnded, new VirtualCard(_user), _user, recording.Schedule, recording.Recording));
 
 
         //DatabaseManager.Instance.SaveChanges();

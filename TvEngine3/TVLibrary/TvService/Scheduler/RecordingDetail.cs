@@ -42,6 +42,7 @@ namespace TvService
     TvDatabase.Program _program;
     CardDetail _cardInfo;
     DateTime _dateTimeRecordingStarted;
+    Recording _recording;
     #endregion
 
     #region ctor
@@ -82,6 +83,17 @@ namespace TvService
     #endregion
 
     #region properties
+    public Recording Recording
+    {
+      get
+      {
+        return _recording;
+      }
+      set
+      {
+        _recording = value;
+      }
+    }
     /// <summary>
     /// get/sets the CardInfo for this recording
     /// </summary>
