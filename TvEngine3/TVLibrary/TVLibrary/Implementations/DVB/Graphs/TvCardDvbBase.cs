@@ -371,7 +371,7 @@ namespace TvLibrary.Implementations.DVB
 
       if (_conditionalAccess != null)
       {
-        if (_conditionalAccess.AllowedToStopGraph==false)
+        if (_conditionalAccess.AllowedToStopGraph == false)
         {
           RunGraph(-1);
         }
@@ -425,7 +425,7 @@ namespace TvLibrary.Implementations.DVB
       _epgGrabbing = false;
       _isScanning = false;
       FreeAllSubChannels();
-      
+
       if (_graphBuilder == null) return;
       if (_conditionalAccess.AllowedToStopGraph)
       {
@@ -892,7 +892,7 @@ namespace TvLibrary.Implementations.DVB
       devices = DsDevice.GetDevicesOfCat(FilterCategory.BDATransportInformationRenderersCategory);
       for (int i = 0; i < devices.Length; i++)
       {
-        if (devices[i].Name.Equals("BDA MPEG2 Transport Information Filter"))
+        if (String.Compare(devices[i].Name, "BDA MPEG2 Transport Information Filter", true) == 0)
         {
           Log.Log.Write("    add BDA MPEG2 Transport Information Filter filter");
           try
@@ -901,6 +901,7 @@ namespace TvLibrary.Implementations.DVB
             if (hr != 0)
             {
               Log.Log.Error("    unable to add BDA MPEG2 Transport Information Filter filter:0x{0:X}", hr);
+              return;
             }
           }
           catch (Exception)
@@ -909,27 +910,24 @@ namespace TvLibrary.Implementations.DVB
           }
           continue;
         }
-        /*
-        if (devices[i].Name.Equals("MPEG-2 Sections and Tables"))
-        {
-          Log.Log.Write("    add MPEG-2 Sections and Tables filter");
-          try
-          {
-            hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out _filterSectionsAndTables);
-            if (hr != 0)
-            {
-              Log.Log.Error("    unable to add MPEG-2 Sections and Tables filter:0x{0:X}", hr);
-            }
-          }
-          catch (Exception)
-          {
-            Log.Log.Error("    unable to add MPEG-2 Sections and Tables filter");
-          }
-          continue;
-        }*/
       }
 
+      if (_filterTIF == null)
+      {
+        Log.Log.Error("BDA MPEG2 Transport Information Filter not found");
+        return;
+      }
       IPin pinInTif = DsFindPin.ByDirection(_filterTIF, PinDirection.Input, 0);
+      if (pinInTif == null)
+      {
+        Log.Log.Error("    unable to find input pin of TIF");
+        return;
+      }
+      if (_filterMpeg2DemuxTif == null)
+      {
+        Log.Log.Error("   _filterMpeg2DemuxTif==null");
+        return;
+      }
       //IPin pinInSec = DsFindPin.ByDirection(_filterSectionsAndTables, PinDirection.Input, 0);
       Log.Log.WriteFile("    pinTif:{0}", FilterGraphTools.LogPinInfo(pinInTif));
       //Log.Log.WriteFile("    pinSec:{0}", FilterGraphTools.LogPinInfo(pinInSec));
@@ -937,8 +935,13 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("    Connect tif and mpeg2 sections and tables");
       IEnumPins enumPins;
       _filterMpeg2DemuxTif.EnumPins(out enumPins);
+      if (enumPins == null)
+      {
+        Log.Log.Error("   _filterMpeg2DemuxTif.enumpins returned null");
+        return;
+      }
       bool tifConnected = false;
-      bool mpeg2SectionsConnected = false;
+      //bool mpeg2SectionsConnected = false;
       int pinNr = 0;
       while (true)
       {
@@ -949,6 +952,7 @@ namespace TvLibrary.Implementations.DVB
         int fetched;
         enumPins.Next(1, pins, out fetched);
         if (fetched != 1) break;
+        if (pins[0] == null) break;
         pins[0].QueryDirection(out pinDir);
         if (pinDir == PinDirection.Input)
         {
@@ -957,46 +961,44 @@ namespace TvLibrary.Implementations.DVB
         }
         IEnumMediaTypes enumMedia;
         pins[0].EnumMediaTypes(out enumMedia);
-        enumMedia.Next(1, mediaTypes, out fetched);
-        Release.ComObject("IEnumMedia", enumMedia);
-        if (mediaTypes[0].majorType == MediaType.Audio || mediaTypes[0].majorType == MediaType.Video)
+        if (enumMedia != null)
         {
+          enumMedia.Next(1, mediaTypes, out fetched);
+          Release.ComObject("IEnumMedia", enumMedia);
+          if (fetched == 1 && mediaTypes[0] != null)
+          {
+            if (mediaTypes[0].majorType == MediaType.Audio || mediaTypes[0].majorType == MediaType.Video)
+            {
+              //skip audio/video pins
+              DsUtils.FreeAMMediaType(mediaTypes[0]);
+              Release.ComObject("mpeg2 demux pin" + pinNr.ToString(), pins[0]);
+              continue;
+            }
+          }
           DsUtils.FreeAMMediaType(mediaTypes[0]);
-          Release.ComObject("mpeg2 demux pin" + pinNr.ToString(), pins[0]);
-          continue;
         }
-        DsUtils.FreeAMMediaType(mediaTypes[0]);
         if (tifConnected == false)
         {
-          Log.Log.WriteFile("dvb:try tif:{0}", FilterGraphTools.LogPinInfo(pins[0]));
-          hr = _graphBuilder.Connect(pins[0], pinInTif);
-          if (hr == 0)
+          try
           {
-            Log.Log.WriteFile("    tif connected");
-            tifConnected = true;
-            Release.ComObject("mpeg2 demux pin" + pinNr.ToString(), pins[0]);
-            continue;
+            Log.Log.WriteFile("dvb:try tif:{0}", FilterGraphTools.LogPinInfo(pins[0]));
+            hr = _graphBuilder.Connect(pins[0], pinInTif);
+            if (hr == 0)
+            {
+              Log.Log.WriteFile("    tif connected");
+              tifConnected = true;
+              Release.ComObject("mpeg2 demux pin" + pinNr.ToString(), pins[0]);
+              continue;
+            }
+            else
+            {
+              Log.Log.WriteFile("    tif not connected:0x{0:X}", hr);
+            }
           }
-          else
+          catch (Exception)
           {
-            Log.Log.WriteFile("    tif not connected:0x{0:X}", hr);
           }
         }
-        /*
-        if (mpeg2SectionsConnected == false)
-        {
-          Log.Log.WriteFile("    try sections&tables:{0}", FilterGraphTools.LogPinInfo(pins[0]));
-          hr = _graphBuilder.Connect(pins[0], pinInSec);
-          if (hr == 0)
-          {
-            Log.Log.WriteFile("    mpeg 2 sections and tables connected");
-            mpeg2SectionsConnected = true;
-          }
-          else
-          {
-            Log.Log.WriteFile("    dvb:mpeg 2 sections and tables not connected:0x{0:X}", hr);
-          }
-        }*/
         Release.ComObject("mpeg2 demux pin" + pinNr.ToString(), pins[0]);
       }
       Release.ComObject("IEnumMedia", enumPins);
@@ -1390,7 +1392,7 @@ namespace TvLibrary.Implementations.DVB
       set
       {
         _parameters = value;
-        Dictionary<int,TvDvbChannel>.Enumerator en= _mapSubChannels.GetEnumerator();
+        Dictionary<int, TvDvbChannel>.Enumerator en = _mapSubChannels.GetEnumerator();
         while (en.MoveNext())
         {
           en.Current.Value.Parameters = value; ;
@@ -2082,10 +2084,10 @@ namespace TvLibrary.Implementations.DVB
             {
               uint id = 0;
               UInt32 programid = 0;
-              uint  transportid = 0, networkid = 0, channelnr = 0, channelid = 0,  themeid = 0, PPV = 0, duration = 0;
+              uint transportid = 0, networkid = 0, channelnr = 0, channelid = 0, themeid = 0, PPV = 0, duration = 0;
               byte summaries = 0;
               uint datestart = 0, timestart = 0;
-              uint tmp1=0, tmp2=0;
+              uint tmp1 = 0, tmp2 = 0;
               IntPtr ptrTitle, ptrProgramName;
               IntPtr ptrChannelName, ptrSummary, ptrTheme;
               _interfaceEpgGrabber.GetMHWTitle((ushort)i, ref id, ref tmp1, ref tmp2, ref channelnr, ref programid, ref themeid, ref PPV, ref summaries, ref duration, ref datestart, ref timestart, out ptrTitle, out ptrProgramName);
@@ -2243,13 +2245,13 @@ namespace TvLibrary.Implementations.DVB
                     //allows czech epg
                     if (language.ToLower() == "cze" || language.ToLower() == "ces")
                     {
-                      title = Iso6937ToUnicode.Convert( ptrTitle );
-                      description = Iso6937ToUnicode.Convert( ptrDesc );
+                      title = Iso6937ToUnicode.Convert(ptrTitle);
+                      description = Iso6937ToUnicode.Convert(ptrDesc);
                     }
                     else
                     {
-                      title = Marshal.PtrToStringAnsi( ptrTitle );
-                      description = Marshal.PtrToStringAnsi( ptrDesc );
+                      title = Marshal.PtrToStringAnsi(ptrTitle);
+                      description = Marshal.PtrToStringAnsi(ptrDesc);
                     }
 
                     if (title == null) title = "";
