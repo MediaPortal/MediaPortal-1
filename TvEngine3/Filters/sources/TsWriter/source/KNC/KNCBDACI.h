@@ -31,41 +31,28 @@
 #define KNC_BDA_CI_STATE_CLOSE_DISPLAY			13
 #define KNC_BDA_CI_STATE_NONE					99
 
-//CI MENU CALLBACK CLASS
-class __declspec(dllimport)  CKNCBDACICallback
+//CI MENU CALLBACK STRUCT
+typedef struct TKNCBDACICallback
 {
-public:
-	virtual void OnKncCiState(UCHAR slot,int State, LPCTSTR lpszMessage) = 0;
-	virtual void OnKncCiOpenDisplay(UCHAR slot) = 0;
-	virtual void OnKncCiMenu(UCHAR slot,LPCTSTR lpszTitle, LPCTSTR lpszSubTitle, LPCTSTR lpszBottom, UINT nNumChoices) = 0;
-	virtual void OnKncCiMenuChoice(UCHAR slot,UINT nChoice, LPCTSTR lpszText) = 0;
-	virtual void OnKncCiRequest(UCHAR slot,BOOL bBlind, UINT nAnswerLength, LPCTSTR lpszText) = 0;
-	virtual void OnKncCiCloseDisplay(UCHAR slot,UINT nDelay) = 0;
-};
+	PVOID pParam;
+	void (*OnKncCiState)(UCHAR slot,int State,LPCTSTR lpszMessage,PVOID pParam);
+	void (*OnKncCiOpenDisplay)(UCHAR slot,PVOID pParam);
+	void (*OnKncCiMenu)(UCHAR slot,LPCTSTR lpszTitle,LPCTSTR lpszSubTitle,LPCTSTR lpszBottom,UINT nNumChoices,PVOID pParam);
+	void (*OnKncCiMenuChoice)(UCHAR slot,UINT nChoice,LPCTSTR lpszText,PVOID pParam);
+	void (*OnKncCiRequest)(UCHAR slot,BOOL bBlind,UINT nAnswerLength,LPCTSTR lpszText,PVOID pParam);
+	void (*OnKncCiCloseDisplay)(UCHAR slot,UINT nDelay,PVOID pParam);	
+}TKNCBDACICallback, *PKNCBDACICallback;
 
-//CI MAIN CONTROL
-class __declspec(dllimport) CKNCBDACI
-{
-public:
-	CKNCBDACI(void);
-	~CKNCBDACI(void);
+//FUNCTION TEMPLATES
+typedef BOOL __stdcall TKNCBDA_CI_Enable(IUnknown*,PVOID);
+typedef BOOL __stdcall TKNCBDA_CI_Disable();
+typedef BOOL __stdcall TKNCBDA_CI_IsAvailable();
+typedef BOOL __stdcall TKNCBDA_CI_IsReady();
+typedef BOOL __stdcall TKNCBDA_CI_HW_Enable(BOOL);
+typedef BOOL __stdcall TKNCBDA_CI_GetName(LPTSTR,UINT);
+typedef BOOL __stdcall TKNCBDA_CI_SendPMTCommand(PBYTE,int);
+typedef BOOL __stdcall TKNCBDA_CI_EnterMenu(UCHAR);
+typedef BOOL __stdcall TKNCBDA_CI_SelectMenu(UCHAR,UCHAR);
+typedef BOOL __stdcall TKNCBDA_CI_CloseMenu(UCHAR);
+typedef BOOL __stdcall TKNCBDA_CI_SendMenuAnswer(UCHAR,BOOL,LPCTSTR);
 
-	//SHOULD BE CALLED FIRST (USE BDA TUNER FILTER)
-	BOOL	KNCBDA_CI_Enable(IBaseFilter *pTunFilt,CKNCBDACICallback *pCallback);
-
-	//SHOULD BE CALLED AT RELEASE
-	BOOL    KNCBDA_CI_Disable();
-
-	BOOL	KNCBDA_CI_IsAvailable();
-	BOOL	KNCBDA_CI_IsReady();
-
-	BOOL	KNCBDA_CI_HW_Enable(BOOL bDoIt);
-	BOOL	KNCBDA_CI_GetName(LPTSTR lpszName, UINT cchMax);
-
-	BOOL	KNCBDA_CI_SendPMTCommand(PBYTE pPmt, int nLen);
-
-	BOOL	KNCBDA_CI_EnterMenu(UCHAR slot);
-	BOOL	KNCBDA_CI_SelectMenu(UCHAR slot, UCHAR nSelection);
-	BOOL	KNCBDA_CI_CloseMenu(UCHAR slot);
-	BOOL	KNCBDA_CI_SendMenuAnswer(UCHAR slot, BOOL bCancel, LPCTSTR lpszText);
-};

@@ -249,6 +249,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\Knc.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\Knc.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\KNC\KNCBDACI.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\Pcr.cpp"
 				>
 			</File>

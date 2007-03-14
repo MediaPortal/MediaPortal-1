@@ -1009,11 +1009,6 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Error("    unable to connect transport information filter");
         //throw new TvException("unable to connect transport information filter");
       }
-      // if (mpeg2SectionsConnected == false)
-      // {
-      // Log.Log.Error("    unable to connect mpeg 2 sections and tables filter");
-      //throw new TvException("unable to connect mpeg 2 sections and tables filter");
-      //}
     }
 
 

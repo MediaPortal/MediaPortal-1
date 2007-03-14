@@ -14,7 +14,7 @@ DECLARE_INTERFACE_(IKNC, IUnknown)
 	STDMETHOD(DescrambleMultiple)(THIS_ WORD* pNrs, int NrOfOfPrograms,BOOL* succeeded)PURE;
 };
 
-class CKnc: public CUnknown, public IKNC, public CKNCBDACICallback
+class CKnc: public CUnknown, public IKNC
 {
 public:
   CKnc(LPUNKNOWN pUnk, HRESULT *phr);
@@ -28,14 +28,19 @@ public:
 	STDMETHODIMP DescrambleService( BYTE* PMT, int PMTLength,BOOL* succeeded);
 	STDMETHODIMP DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOOL* succeeded);
 
-public:
-	virtual void OnKncCiState(UCHAR slot,int State, LPCTSTR lpszMessage) ;
-	virtual void OnKncCiOpenDisplay(UCHAR slot) ;
-	virtual void OnKncCiMenu(UCHAR slot,LPCTSTR lpszTitle, LPCTSTR lpszSubTitle, LPCTSTR lpszBottom, UINT nNumChoices) ;
-	virtual void OnKncCiMenuChoice(UCHAR slot,UINT nChoice, LPCTSTR lpszText) ;
-	virtual void OnKncCiRequest(UCHAR slot,BOOL bBlind, UINT nAnswerLength, LPCTSTR lpszText) ;
-	virtual void OnKncCiCloseDisplay(UCHAR slot,UINT nDelay) ;
-private:
-  CKNCBDACI* m_pKNC;
+private: 
+	TKNCBDA_CI_Enable			*KNCBDA_CI_Enable;
+	TKNCBDA_CI_Disable			*KNCBDA_CI_Disable;
+	TKNCBDA_CI_IsAvailable		*KNCBDA_CI_IsAvailable;
+	TKNCBDA_CI_IsReady			*KNCBDA_CI_IsReady;
+	TKNCBDA_CI_HW_Enable		*KNCBDA_CI_HW_Enable;
+	TKNCBDA_CI_GetName			*KNCBDA_CI_GetName;
+	TKNCBDA_CI_SendPMTCommand	*KNCBDA_CI_SendPMTCommand;
+	TKNCBDA_CI_EnterMenu		*KNCBDA_CI_EnterMenu;
+	TKNCBDA_CI_SelectMenu		*KNCBDA_CI_SelectMenu;
+	TKNCBDA_CI_CloseMenu		*KNCBDA_CI_CloseMenu;
+	TKNCBDA_CI_SendMenuAnswer	*KNCBDA_CI_SendMenuAnswer;
+  TKNCBDACICallback m_callback;
   bool m_bIsKNC;
+  HINSTANCE m_hMod;
 };
