@@ -29,6 +29,7 @@
 #include "teletextgrabber.h"
 #include "cagrabber.h"
 #include "technotrend.h"
+#include "knc.h"
 #include "tschannel.h"
 
 #include <map>
@@ -226,6 +227,7 @@ private:
 		CChannelScan*   m_pChannelScanner;
 		CEpgScanner*		m_pEpgScanner;
     CTechnotrend*   m_pTechnoTrend;
+		CKnc* m_pKNC;
 		vector<CTsChannel*> m_vecChannels;
     typedef vector<CTsChannel*>::iterator ivecChannels;
 		int m_id;

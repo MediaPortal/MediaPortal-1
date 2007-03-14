@@ -343,6 +343,7 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr)
 		m_pChannelScanner= new CChannelScan(GetOwner(),phr,m_pFilter);
 		m_pEpgScanner = new CEpgScanner(GetOwner(),phr);
     m_pTechnoTrend= new CTechnotrend(GetOwner(),phr);
+		m_pKNC= new CKnc(GetOwner(),phr);
 }
 
 
@@ -357,6 +358,7 @@ CMpTs::~CMpTs()
 	delete m_pChannelScanner;
 	delete m_pEpgScanner;
   delete m_pTechnoTrend;
+	delete m_pKNC;
   CAutoLock lock(&m_Lock);
   for (int i=0; i < (int)m_vecChannels.size();++i)
   {
@@ -417,6 +419,11 @@ STDMETHODIMP CMpTs::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
 	{
 		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITechnoTrend");
 		return GetInterface((ITechnoTrend*)m_pTechnoTrend, ppv);
+	}
+	else if (riid == IID_IKNC)
+	{
+		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITechnoTrend");
+		return GetInterface((IKNC*)m_pKNC, ppv);
 	}
   else if (riid == IID_IBaseFilter || riid == IID_IMediaFilter || riid == IID_IPersist) 
 	{
