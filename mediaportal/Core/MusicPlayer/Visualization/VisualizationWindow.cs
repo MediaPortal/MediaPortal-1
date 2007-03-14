@@ -104,7 +104,7 @@ namespace MediaPortal.Visualization
       StopIcon = 12,
       CrossfadeIcon = 13,
       GapIcon = 14,
-      GaplessIcon =15,
+      GaplessIcon = 15,
     };
 
     private enum PlayBackType
@@ -338,6 +338,7 @@ namespace MediaPortal.Visualization
     private bool VizWindowNeedsResize = false;
     private bool OutputContextNeedsUpdating = false;
     private bool DialogWindowIsActive = false;
+    private bool _autoHideMouse = false;
 
     private System.Threading.Thread VizRenderThread;
     private int VisualizationRenderInterval = 50;
@@ -454,7 +455,8 @@ namespace MediaPortal.Visualization
 
     public int SelectedPlaybackType
     {
-      set { 
+      set
+      {
         _playBackType = value;
         PlayBackTypeChanged = true;
       }
@@ -482,6 +484,10 @@ namespace MediaPortal.Visualization
       TextStringFormat.FormatFlags = StringFormatFlags.NoWrap | StringFormatFlags.NoClip | StringFormatFlags.FitBlackBox;
 
       LoadSettings();
+
+      // Soundspectrum Graphics always show the cursor, so let's hide it here
+      if (GUIGraphicsContext.Fullscreen && _autoHideMouse)
+        Cursor.Hide();
     }
 
     void OnNewAction(Action action)
@@ -595,6 +601,7 @@ namespace MediaPortal.Visualization
         {
           _EnableStatusOverlays = xmlreader.GetValueAsBool("musicvisualization", "enableStatusOverlays", false);
           ShowTrackOverlay = xmlreader.GetValueAsBool("musicvisualization", "showTrackInfo", true);
+          _autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", false);
         }
 
         // No need to load the skin file if we're not going to be showing the 
@@ -1830,7 +1837,7 @@ namespace MediaPortal.Visualization
 
             catch (Exception ex)
             {
-              Console.WriteLine("Exception!: {0}", ex);
+              Log.Error("Exception Rendering the Vizualisation: {0}", ex);
             }
           }
 
@@ -2360,8 +2367,8 @@ namespace MediaPortal.Visualization
           else
             DoPlayStateIconFading(g, opacity, RewImage, RewImageX, RewImageY, RewImageWidth, RewImageHeight);
         }
-        
-        
+
+
         else if (PlayBackTypeChanged)
         {
           Image img = null;
