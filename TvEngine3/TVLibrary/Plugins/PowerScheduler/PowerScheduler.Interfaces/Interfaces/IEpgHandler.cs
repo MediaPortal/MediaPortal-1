@@ -29,22 +29,28 @@ using System.Text;
 
 namespace TvEngine.PowerScheduler.Interfaces
 {
+  public delegate void EPGScheduleHandler();
+
+  /// <summary>
+  /// Provides access to PowerScheduler's EPG interface for
+  /// EPG plugins.
+  /// </summary>
   public interface IEpgHandler
   {
     /// <summary>
     /// Allows an external EPG source to prevent standby when it's
     /// grabbing EPG
     /// </summary>
-    /// <param name="source">Description of the source preventing standby</param>
+    /// <param name="source">the source preventing standby</param>
     /// <param name="allowed">is standby allowed?</param>
-    void SetStandbyAllowed(string source, bool allowed);
+    void SetStandbyAllowed(object source, bool allowed);
 
     /// <summary>
     /// Allows an external EPG source to set a preferred next wakeup time
     /// </summary>
-    /// <param name="source">Description of the source that wants to wakeup the system for EPG grabbing</param>
+    /// <param name="source">the source that wants to wakeup the system for EPG grabbing</param>
     /// <param name="time">the desired time to wakeup the system</param>
-    void SetNextEPGWakeupTime(string source, DateTime time);
+    void SetNextEPGWakeupTime(object source, DateTime time);
 
     /// <summary>
     /// Allows an external EPG source to retrieve the next wakeup time
@@ -53,5 +59,10 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// </summary>
     /// <returns>next EPG grab wakeup time</returns>
     DateTime GetNextEPGWakeupTime();
+
+    /// <summary>
+    /// Event which gets fired when the configured EPG wakeup schedule is due.
+    /// </summary>
+    event EPGScheduleHandler EPGScheduleDue;
   }
 }

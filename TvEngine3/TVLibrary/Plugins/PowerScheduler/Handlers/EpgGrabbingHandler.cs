@@ -41,18 +41,66 @@ namespace TvEngine.PowerScheduler.Handlers
   /// <summary>
   /// Handles standby/wakeup for EPG grabbing
   /// </summary>
-  public class EpgGrabbingHandler : IStandbyHandler, IWakeupHandler
+  public class EpgGrabbingHandler : IStandbyHandler, IWakeupHandler, IEpgHandler
   {
+    #region Structs
+    struct GrabberSource
+    {
+      string _name;
+      bool _standbyAllowed;
+      DateTime _lastUpdate;
+      DateTime _nextWakeupTime;
+      public GrabberSource(string name, bool standbyAllowed)
+      {
+        _name = name;
+        _standbyAllowed = standbyAllowed;
+        _lastUpdate = DateTime.Now;
+        _nextWakeupTime = DateTime.MaxValue;
+      }
+      public string Name
+      {
+        get { return _name; }
+      }
+      public bool StandbyAllowed
+      {
+        get { return _standbyAllowed; }
+        set
+        {
+          _standbyAllowed = value;
+          _lastUpdate = DateTime.Now;
+        }
+      }
+      public DateTime LastUpdate
+      {
+        get { return _lastUpdate; }
+      }
+      public DateTime NextWakeupTime
+      {
+        get { return _nextWakeupTime; }
+        set
+        {
+          _nextWakeupTime = value;
+          _lastUpdate = DateTime.Now;
+        }
+      }
+    }
+    #endregion
+
     #region Variables
     IController _controller;
+    Dictionary<object, GrabberSource> _extGrabbers;
     #endregion
 
     #region Constructor
     public EpgGrabbingHandler(IController controller)
     {
       _controller = controller;
+      _extGrabbers = new Dictionary<object, GrabberSource>();
       if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
         GlobalServiceProvider.Instance.Get<IPowerScheduler>().OnPowerSchedulerEvent += new PowerSchedulerEventHandler(EpgGrabbingHandler_OnPowerSchedulerEvent);
+      if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
+        GlobalServiceProvider.Instance.Remove<IEpgHandler>();
+      GlobalServiceProvider.Instance.Add<IEpgHandler>(this);
     }
     #endregion
 
@@ -141,10 +189,23 @@ namespace TvEngine.PowerScheduler.Handlers
                   // try a forced start of EPG grabber if not already started 
                   if (!_controller.EpgGrabberEnabled)
                     _controller.EpgGrabberEnabled = true;
+
+                  // Fire the EPGScheduleDue event for EPG grabber plugins
+                  if (EPGScheduleDue != null)
+                  {
+                    lock (EPGScheduleDue)
+                    {
+                      if (EPGScheduleDue != null)
+                        EPGScheduleDue();
+                    }
+                  }
+
+                  // Update last schedule run status
                   config.LastRun = DateTime.Now;
                   Setting s = layer.GetSetting("EPGWakeupConfig", String.Empty);
                   s.Value = config.SerializeAsString();
                   s.Persist();
+
                 }
               }
             }
@@ -176,17 +237,8 @@ namespace TvEngine.PowerScheduler.Handlers
           return false;
       }
     }
-    #endregion
 
-    #region IStandbyHandler/IWakeupHandler implementation
-    public bool DisAllowShutdown
-    {
-      get
-      {
-        return _controller.EpgGrabberEnabled;
-      }
-    }
-    public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
+    private DateTime GetNextWakeupSchedule(DateTime earliestWakeupTime)
     {
       IPowerScheduler ps = GlobalServiceProvider.Instance.Get<IPowerScheduler>();
       EPGWakeupConfig cfg = ps.Settings.GetSetting("EPGWakeupConfig").Get<EPGWakeupConfig>();
@@ -212,10 +264,98 @@ namespace TvEngine.PowerScheduler.Handlers
       }
       return nextRun;
     }
+    #endregion
+
+    #region IStandbyHandler/IWakeupHandler implementation
+    public bool DisAllowShutdown
+    {
+      get
+      {
+        // check if DVB EPG grabber is running
+        if (_controller.EpgGrabberEnabled)
+          return true;
+        // check if any external EPG source wants to prevent standby
+        foreach (GrabberSource source in _extGrabbers.Values)
+          if (!source.StandbyAllowed)
+            return true;
+        return false;
+      }
+    }
+    public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
+    {
+      bool isExternal = false;
+      string externalName = String.Empty;
+      DateTime nextRun = GetNextWakeupSchedule(earliestWakeupTime);
+      // check if any external EPG source wants to wakeup the system
+      foreach (GrabberSource source in _extGrabbers.Values)
+      {
+        // check if source has set a valid preferred wakeup time
+        if (source.NextWakeupTime != DateTime.MaxValue)
+        {
+          // check if wakeup time is in the future and past idle timeout
+          if (source.NextWakeupTime > earliestWakeupTime)
+          {
+            if (source.NextWakeupTime < nextRun)
+            {
+              isExternal = true;
+              externalName = source.Name;
+              break;
+            }
+          }
+        }
+      }
+      if (isExternal)
+        Log.Debug("PowerScheduler: next EPG wakeup set by external EPG source {0}", externalName);
+      return nextRun;
+    }
     public string HandlerName
     {
       get { return "EpgGrabbingHandler"; }
     }
+    #endregion
+
+    #region IEpgHandler implementation
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public void SetStandbyAllowed(object source, bool allowed)
+    {
+      if (!_extGrabbers.ContainsKey(source))
+      {
+        _extGrabbers.Add(source, new GrabberSource(source.ToString(), allowed));
+      }
+      else
+      {
+        GrabberSource gSource = _extGrabbers[source];
+        gSource.StandbyAllowed = allowed;
+      }
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public void SetNextEPGWakeupTime(object source, DateTime time)
+    {
+      if (!_extGrabbers.ContainsKey(source))
+      {
+        GrabberSource gSource = new GrabberSource(source.ToString(), false);
+        gSource.NextWakeupTime = time;
+        _extGrabbers.Add(source, gSource);
+      }
+      else
+      {
+        GrabberSource gSource = new GrabberSource(source.ToString(), false);
+        gSource.NextWakeupTime = time;
+      }
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public DateTime GetNextEPGWakeupTime()
+    {
+      return GetNextWakeupSchedule(DateTime.Now);
+    }
+
+    #region Events
+    public event EPGScheduleHandler EPGScheduleDue;
+    #endregion
+
     #endregion
   }
 }
