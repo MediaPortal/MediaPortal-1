@@ -717,8 +717,8 @@ namespace TvService
           if (!found)
           {
             DVBBaseChannel dvbChannel = epgChannel.Channel as DVBBaseChannel;
-            // Log.Epg("EPG: no channel found for networkid:{0} transportid:{1} serviceid:{2}",
-            //         dvbChannel.NetworkId, dvbChannel.TransportId, dvbChannel.ServiceId);
+            Log.Epg("EPG: no channel found for networkid:{0} transportid:{1} serviceid:{2}",
+                     dvbChannel.NetworkId, dvbChannel.TransportId, dvbChannel.ServiceId);
           }
         }
       }
@@ -758,7 +758,11 @@ namespace TvService
     /// <returns>true if succeeded otherwise false</returns>
     bool UpdateDatabaseChannel(int channelNr, EpgChannel epgChannel, Channel channel)
     {
-      if (channel == null) return false;
+      if (channel == null)
+      {
+        Log.Epg("Epg: card:{0} channel:{1} not selected for epg updates", _user.CardId, epgChannel.Channel.Name);
+        return false;
+      }
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("epgLanguages");
       string epgLanguages = setting.Value;
