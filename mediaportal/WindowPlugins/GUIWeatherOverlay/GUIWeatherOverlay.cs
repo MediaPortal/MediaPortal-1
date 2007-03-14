@@ -101,7 +101,10 @@ namespace MediaPortal.GUI.WeatherOverlay
         _locationCode = xmlreader.GetValueAsString("weather", "location", String.Empty);
         _refreshInterval = xmlreader.GetValueAsInt("weather", "refresh", 60);
         _weatherOverlay = xmlreader.GetValueAsBool("weather", "overlayEnabled", true);
-        _weatherOnPlay = xmlreader.GetValueAsBool("weather", "playEnabled", true);
+        if(((float)GUIGraphicsContext.Width/(float)GUIGraphicsContext.Height)> 1.6)
+          _weatherOnPlay = xmlreader.GetValueAsBool("weather", "playEnabled", true);
+        else
+          _weatherOnPlay = xmlreader.GetValueAsBool("weather", "playEnabled", false);
       }
     }
     
