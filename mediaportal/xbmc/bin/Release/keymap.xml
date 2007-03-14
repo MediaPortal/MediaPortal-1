@@ -248,6 +248,12 @@
       <sound>back.wav</sound>
       <description>TGB - Switch home</description>
     </action>
+    <action>
+      <id>9886</id>
+      <key>G</key>
+      <sound />
+      <description>Toggle Gap / Crossfade (BASS Player only)</description>
+    </action>
   </global>
   <window>
     <id>603</id>
@@ -1139,16 +1145,6 @@
       <key>F8</key>
       <sound />
       <description>Skip Next</description>
-    </action>
-  </window>
-  <window>
-    <id>511</id>
-    <description>MyMusic FullScreen</description>
-    <action>
-      <id>9886</id>
-      <key>G</key>
-      <sound />
-      <description>Toggle Gap</description>
     </action>
   </window>
 </keymap>

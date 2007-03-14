@@ -83,6 +83,42 @@
       <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
+      <description>Gap / Normal Icon</description>
+      <type>image</type>
+      <id>10</id>
+      <posX>40</posX>
+      <posY>597</posY>
+      <width>36</width>
+      <height>36</height>
+      <texture>logo_gap.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>Gapless Icon</description>
+      <type>image</type>
+      <id>11</id>
+      <posX>40</posX>
+      <posY>597</posY>
+      <width>36</width>
+      <height>36</height>
+      <texture>logo_gapless.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>Crossfade Icon</description>
+      <type>image</type>
+      <id>12</id>
+      <posX>40</posX>
+      <posY>597</posY>
+      <width>36</width>
+      <height>36</height>
+      <texture>logo_crossfade.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
       <description>album/artist/genre etc info label</description>
       <type>fadelabel</type>
       <width>180</width>

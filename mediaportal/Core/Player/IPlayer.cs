@@ -305,6 +305,14 @@ namespace MediaPortal.Player
       get { return false; }
     }
 
+    /// <summary>
+    /// Property which returns the PlaybackType (implemented in BASS)
+    /// <remarks>0 = Normal, 1 = Gapless, 2 = Crossfade</remarks>
+    /// </summary>
+    public virtual int PlaybackType
+    {
+      get { return -1; }
+    }
 
     /// <summary>
     /// Property which indicates if we stopped playing a file

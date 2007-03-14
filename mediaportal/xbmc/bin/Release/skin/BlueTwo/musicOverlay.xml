@@ -83,6 +83,42 @@
       <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
+      <description>Gap / Normal Icon</description>
+      <type>image</type>
+      <id>10</id>
+      <posX>25</posX>
+      <posY>465</posY>
+      <width>36</width>
+      <height>36</height>
+      <texture>logo_gap.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>Gapless Icon</description>
+      <type>image</type>
+      <id>11</id>
+      <posX>25</posX>
+      <posY>465</posY>
+      <width>36</width>
+      <height>36</height>
+      <texture>logo_gapless.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>Crossfade Icon</description>
+      <type>image</type>
+      <id>12</id>
+      <posX>25</posX>
+      <posY>465</posY>
+      <width>36</width>
+      <height>36</height>
+      <texture>logo_crossfade.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
       <description>album/artist/genre etc info label</description>
       <type>fadelabel</type>
       <width>140</width>
@@ -97,19 +133,19 @@
       <id>5</id>
     </control>
     <control>
-			<description>video preview window</description>
-			<type>videowindow</type>
-			<id>9</id>
-			<posX>90</posX>
-            <posY>416</posY>
-            <width>125</width>
-            <height>125</height>
-			<keepaspectratio>yes</keepaspectratio>
-			<centered>yes</centered>
-			 <action>18</action>
-			<textureFocus>tv_green_border.png</textureFocus>
-			<animation effect="fade" time="500">WindowClose</animation>
-            <animation effect="fade" time="250">WindowOpen</animation>
-		</control>
+      <description>video preview window</description>
+      <type>videowindow</type>
+      <id>9</id>
+      <posX>90</posX>
+      <posY>416</posY>
+      <width>125</width>
+      <height>125</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
   </controls>
 </window>

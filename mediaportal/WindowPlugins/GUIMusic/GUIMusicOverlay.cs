@@ -46,6 +46,16 @@ namespace MediaPortal.GUI.Music
   /// </summary>
   public class GUIMusicOverlay : GUIOverlayWindow, IRenderLayer
   {
+    #region Enums
+    private enum PlayBackType : int
+    {
+      NORMAL = 0,
+      GAPLESS = 1,
+      CROSSFADE = 2
+    }
+    #endregion
+
+    #region <skin> Variables
     [SkinControlAttribute(0)]    protected GUIImage        _videoRectangle = null;
     [SkinControlAttribute(1)]    protected GUIImage        _thumbImage = null;
     [SkinControlAttribute(2)]    protected GUILabelControl _labelPlayTime = null;
@@ -56,7 +66,12 @@ namespace MediaPortal.GUI.Music
     [SkinControlAttribute(7)]    protected GUIImage        _imageFastForward = null;
     [SkinControlAttribute(8)]    protected GUIImage        _imageRewind = null;
     [SkinControlAttribute(9)]    protected GUIVideoControl _videoWindow = null;
+    [SkinControlAttribute(10)]   protected GUIImage        _imageNormal = null;
+    [SkinControlAttribute(11)]   protected GUIImage        _imageGapless = null;
+    [SkinControlAttribute(12)]   protected GUIImage        _imageCrossfade = null;
+    #endregion
 
+    #region Variables
     bool _isFocused = false;
     string _fileName           = String.Empty;
     string _thumbLogo          = String.Empty;
@@ -65,8 +80,9 @@ namespace MediaPortal.GUI.Music
     bool _visualisationEnabled = true;
     bool _useID3               = false;
     PlayListPlayer playlistPlayer;
+    #endregion
 
-
+    #region Constructors/Destructors
     public GUIMusicOverlay()
     {
       GetID = (int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY;
@@ -78,6 +94,7 @@ namespace MediaPortal.GUI.Music
         _useID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
       }
     }
+    #endregion
 
     public override bool Init()
     {
@@ -206,7 +223,16 @@ namespace MediaPortal.GUI.Music
         if (_imageRewind != null)
           _imageRewind.Visible = (g_Player.Speed < 0);
 
-         if (_videoRectangle != null)
+        if (_imageNormal != null)
+          _imageNormal.Visible = (g_Player.PlaybackType == (int)PlayBackType.NORMAL);
+
+        if (_imageGapless != null)
+          _imageGapless.Visible = (g_Player.PlaybackType == (int)PlayBackType.GAPLESS);
+
+        if (_imageCrossfade != null)
+          _imageCrossfade.Visible = (g_Player.PlaybackType == (int)PlayBackType.CROSSFADE);
+
+        if (_videoRectangle != null)
           _videoRectangle.Visible = GUIGraphicsContext.ShowBackground;
 
         if (_videoWindow != null && _visualisationEnabled)

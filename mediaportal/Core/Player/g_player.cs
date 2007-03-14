@@ -1077,6 +1077,15 @@ namespace MediaPortal.Player
       }
     }
 
+    public static int PlaybackType
+    {
+      get
+      {
+        if (_player == null) return -1;
+        return _player.PlaybackType;
+      }
+    }
+
     public static bool Paused
     {
       get
