@@ -2636,6 +2636,44 @@ namespace MediaPortal.Music.Database
       _albumCache.Clear();
     }
 
+    /// <summary>
+    /// Checks if songs of a given Album ID have different artists.
+    /// Used by MusicShareWatcher
+    /// </summary>
+    /// <param name="albumId"></param>
+    public void CheckVariousArtists(string strAlbum)
+    {
+      int lNewArtistId = 0;
+      int lAlbumId = 0;
+      bool bVarious = false;
+      ArrayList songs = new ArrayList();
+      GetSongsByAlbum(strAlbum, ref songs);
+      if (songs.Count > 1)
+      {
+        //	Are the artists of this album all the same
+        for (int i = 0; i < (int)songs.Count - 1; i++)
+        {
+          Song song = (Song)songs[i];
+          Song song1 = (Song)songs[i + 1];
+          if (song.Artist != song1.Artist)
+          {
+            string strVariousArtists = GUILocalizeStrings.Get(340);
+            lNewArtistId = AddArtist(strVariousArtists);
+            lAlbumId = song.albumId;
+            bVarious = true;
+            break;
+          }
+        }
+
+        if (bVarious)
+        {
+          string strSQL;
+          strSQL = String.Format("update album set idArtist={0} where idAlbum={1}", lNewArtistId, lAlbumId);
+          m_db.Execute(strSQL);
+        }
+      }
+    }
+
     public void BeginTransaction()
     {
       try

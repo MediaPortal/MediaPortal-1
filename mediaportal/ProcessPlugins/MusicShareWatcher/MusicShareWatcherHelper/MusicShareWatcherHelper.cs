@@ -48,7 +48,6 @@ namespace MediaPortal.MusicShareWatcher
     static public MusicDatabase musicDB = null;
     ArrayList m_Shares = new ArrayList();
     ArrayList m_Watchers = new ArrayList();
-    static Thread m_CheckForVariousArtistsThread;
 
     // Lock order is _enterThread, _events.SyncRoot
     private object m_EnterThread = new object(); // Only one timer event is processed at any given moment
@@ -65,8 +64,6 @@ namespace MediaPortal.MusicShareWatcher
       Log.BackupLogFile(LogType.MusicShareWatcher);
 
       musicDB = new MusicDatabase();
-      m_CheckForVariousArtistsThread = new Thread(new ThreadStart(CheckForVariousArtists));
-      m_CheckForVariousArtistsThread.Name = "Check for Various Artists";
     }
     #endregion
 
@@ -180,17 +177,6 @@ namespace MediaPortal.MusicShareWatcher
     {
       Log.Debug(LogType.MusicShareWatcher, "Add Song Fired: {0}", e.FullPath);
       m_Events.Add(new MusicShareWatcherEvent(MusicShareWatcherEvent.EventType.Create, e.FullPath));
-    }
-
-    /// <summary>
-    /// Scan the Album cache for multiple artists
-    /// Scanning is however delayed, in order to make sure that complete albums may get copied and 
-    /// not checked several times.
-    /// </summary>
-    private static void CheckForVariousArtists()
-    {
-      Thread.Sleep(20000);
-      musicDB.UpdateAlbumArtistsCounts(0, 0);
     }
 
     // Event handler for Change of a file
@@ -320,19 +306,8 @@ namespace MediaPortal.MusicShareWatcher
         song.Duration = tag.Duration;
         musicDB.AddSong(song, true);
         Log.Info(LogType.MusicShareWatcher, "Added Song: {0}", strFileName);
-        /// Whenever a new song is added it might happen that multiple artists are there for the same album. 
-        /// Scan all albums in cache
-        if (m_CheckForVariousArtistsThread.ThreadState == ThreadState.Stopped || m_CheckForVariousArtistsThread.ThreadState == ThreadState.Unstarted)
-        {
-          try
-          {
-            m_CheckForVariousArtistsThread = new Thread(new ThreadStart(CheckForVariousArtists));
-            m_CheckForVariousArtistsThread.Name = "Check for Various Artists";
-            m_CheckForVariousArtistsThread.Start();
-          }
-          catch (ThreadStateException)
-          { }
-        }
+        // Check for Various Artists
+        musicDB.CheckVariousArtists(song.Album);
       }
     }
 
@@ -343,6 +318,8 @@ namespace MediaPortal.MusicShareWatcher
       {
         if (musicDB.UpdateSong(strFilename, song.songId))
           Log.Info(LogType.MusicShareWatcher, "Updated Song: {0}", strFilename);
+        // Change of the song may have resulted in the Album to become a Various Artist Album
+        musicDB.CheckVariousArtists(song.Album);
       }
       else
       {
