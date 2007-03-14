@@ -413,6 +413,7 @@ namespace SetupTv.Sections
       }
 
       RemoteControl.Instance.EpgGrabberEnabled = true;
+      MessageBox.Show("EPG grabber will restart in a few seconds..");
     }
 
 

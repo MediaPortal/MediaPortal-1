@@ -103,7 +103,6 @@ namespace TvService
       _transponderIndex = -1;
       Log.Epg("EPG: grabber initialized for {0} transponders..", _transponders.Count);
       _isRunning = true;
-      _epgTimer.Enabled = true;
       IList cards = Card.ListAll();
       _epgCards = new List<EpgCard>();
       foreach (Card card in cards)
@@ -112,6 +111,8 @@ namespace TvService
         EpgCard epgCard = new EpgCard(_tvController, card);
         _epgCards.Add(epgCard);
       }
+      _epgTimer.Interval = 1000;
+      _epgTimer.Enabled = true;
       //_epgTimer_Elapsed(null, null);
     }
 
@@ -145,7 +146,8 @@ namespace TvService
     {
       //security check, dont allow re-entrancy here
       if (_reEntrant) return;
-
+      if (_epgTimer.Interval==1000)
+        _epgTimer.Interval = 30000;
       try
       {
         _reEntrant = true;

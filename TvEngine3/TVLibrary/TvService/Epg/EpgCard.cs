@@ -718,7 +718,7 @@ namespace TvService
           if (!found)
           {
             DVBBaseChannel dvbChannel = epgChannel.Channel as DVBBaseChannel;
-            Log.Epg("EPG: no channel found for networkid:{0} transportid:{1} serviceid:{2}",
+            Log.Epg("EPG: no channel found for networkid:0x{0:X} transportid:0x{1:X} serviceid:0x{2:X}",
                      dvbChannel.NetworkId, dvbChannel.TransportId, dvbChannel.ServiceId);
           }
         }
