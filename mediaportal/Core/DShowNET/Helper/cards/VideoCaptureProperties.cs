@@ -42,18 +42,15 @@ namespace DShowNET.Helper
     {
         private bool disposed = false;
         Twinhan _twinhan;
-        Hauppauge _hauppauge;
         DigitalEverywhere _digitalEverywhere;
         TechnoTrend _technoTrend;
 
         #region ctor/dtor
 
-        public VideoCaptureProperties(IBaseFilter tunerfilter, string card)
+        public VideoCaptureProperties(IBaseFilter tunerfilter)
         {
 
           _twinhan = new Twinhan(tunerfilter);
-          if(card == "hauppauge")
-            _hauppauge = new Hauppauge(tunerfilter);
           _digitalEverywhere = new DigitalEverywhere(tunerfilter);
           _technoTrend = new TechnoTrend(tunerfilter);
 
@@ -64,61 +61,6 @@ namespace DShowNET.Helper
           Dispose(false);
         } 
         #endregion
-
-        #region Hauppauge Properties
-
-        public void SetDNR(bool onoff)
-        {
-          if(_hauppauge != null)
-            _hauppauge.SetDNR(onoff);
-        }
-
-        public void SetAudioBitRate(int Kbps)
-        {
-          if (_hauppauge != null)
-              _hauppauge.SetAudioBitRate(Kbps);
-           return;
-        }
-
-        public void SetVideoBitRate(int minKbps, int maxKbps, bool isVBR)
-        {
-          if (_hauppauge != null)
-                _hauppauge.SetVideoBitRate(minKbps, maxKbps, isVBR);
-          return;
-        }
-
-        public bool GetVideoBitRate(out int minKbps, out int maxKbps, out bool isVBR)
-        {
-            minKbps = maxKbps = -1;
-            isVBR = false;
-            if (_hauppauge != null)
-              _hauppauge.GetVideoBitRate(out minKbps, out maxKbps, out isVBR);
-            return true;
-        }
-
-      public bool GetAudioBitRate(out int audKbps)
-      {
-        audKbps = -1;
-        if (_hauppauge != null)
-          _hauppauge.GetAudioBitRate(out audKbps);
-        return true;
-      }
-
-      public void GetStreamType(out int stream)
-      {
-        if (_hauppauge != null)
-          _hauppauge.GetStream(out stream);
-        else
-          stream = -1;
-      }
-
-      public void SetStreamType(int stream)
-      {
-        if (_hauppauge != null)
-          _hauppauge.SetStream(stream);
-      }
-
-     #endregion
 
 
       #region Other card properties
@@ -262,10 +204,6 @@ namespace DShowNET.Helper
             try
             {
               _twinhan = null;
-              if (_hauppauge != null)
-                _hauppauge.Dispose();
-
-              _hauppauge = null;
               _digitalEverywhere = null;
               if (_technoTrend != null)
               {

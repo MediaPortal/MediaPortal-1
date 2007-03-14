@@ -90,7 +90,7 @@ namespace MediaPortal
     protected bool isUsingMenus = true; // Should we use the default windows
     private float lastTime = 0.0f; // The last time
     protected int frames = 0; // Number of frames since our last update
-
+    protected int m_iVolume = -1;
     private long startFrame = 0;  // fps-limiting stuff
     private long endFrame = 0;
 
@@ -98,7 +98,7 @@ namespace MediaPortal
     protected D3DSettings graphicsSettings = new D3DSettings();
     protected bool isMaximized = false; // Are we maximized?
     private bool isHandlingSizeChanges = true; // Are we handling size changes?
-    private bool isClosing = false; // Are we closing?
+    protected bool isClosing = false; // Are we closing?
     private bool isChangingFormStyle = false; // Are we changing the forms style?
     private bool isWindowActive = true; // Are we waiting for got focus?
     protected bool _showCursor = false;
@@ -270,7 +270,7 @@ namespace MediaPortal
     private string _tvChannel = string.Empty;
     private bool _tvTimeshift = false;
     private int m_iSleepingTime = 50;
-    private bool autoHideTaskbar = true;
+    protected bool autoHideTaskbar = true;
     private bool alwaysOnTop = false;
     private bool useExclusiveDirectXMode;
 
@@ -2007,6 +2007,18 @@ namespace MediaPortal
         {
           notifyIcon.Visible = true;
           this.Hide();
+
+          if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
+          {
+            if (g_Player.Volume > 0)
+            {
+              m_iVolume = g_Player.Volume;
+              g_Player.Volume = 0;
+            }
+            if (g_Player.Paused == false)
+              g_Player.Pause();
+          }
+
           return;
         }
         else if (notifyIcon.Visible == true && this.WindowState != FormWindowState.Minimized)
@@ -2058,9 +2070,21 @@ namespace MediaPortal
           Log.Info("D3D: Minimizing to tray on GUI exit");
 
         isClosing = false;
-        this.WindowState = FormWindowState.Minimized;
-        this.Hide();
+        WindowState = FormWindowState.Minimized;
+        Hide();
         e.Cancel = true;
+
+        if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
+        {
+          if (g_Player.Volume > 0)
+          {
+            m_iVolume = g_Player.Volume;
+            g_Player.Volume = 0;
+          }
+          if (g_Player.Paused == false)
+            g_Player.Pause();
+        }
+
         return;
       }
 

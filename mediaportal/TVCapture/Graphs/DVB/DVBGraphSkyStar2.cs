@@ -184,7 +184,7 @@ namespace MediaPortal.TV.Recording
       }
       GetTunerCapabilities();
       _streamDemuxer.SetCardType((int)DVBEPG.EPGCard.TechnisatStarCards, _networkType);
-      _cardProperties = new VideoCaptureProperties(null, string.Empty);
+      _cardProperties = new VideoCaptureProperties(null);
     }
     public override bool CreateGraph(int Quality)
     {

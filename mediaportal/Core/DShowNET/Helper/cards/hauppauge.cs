@@ -28,6 +28,7 @@ using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using DirectShowLib;
 using MediaPortal.Util;
+using System.Text;
 
 namespace DShowNET
 {
@@ -47,7 +48,7 @@ namespace DShowNET
 
     IntPtr hauppaugelib = IntPtr.Zero;
 
-    delegate int Init(IBaseFilter tuner);
+    delegate int Init(IBaseFilter capture, [MarshalAs(UnmanagedType.LPStr)] string tuner);
     delegate int DeInit();
     delegate bool IsHauppauge();
     delegate int SetVidBitRate(int maxkbps, int minkbps, bool isVBR);
@@ -73,7 +74,7 @@ namespace DShowNET
     
     //Initializes the Hauppauge interfaces
 
-		public Hauppauge(IBaseFilter filter)
+		public Hauppauge(IBaseFilter filter, string tuner)
 		{
       try
       {
@@ -83,7 +84,8 @@ namespace DShowNET
         {
           return;
         }
-
+        StringBuilder temp = new StringBuilder(tuner);
+        
         //Load Library
         hauppaugelib = LoadLibrary("hauppauge.dll");
         
@@ -118,8 +120,12 @@ namespace DShowNET
         procaddr = GetProcAddress(hauppaugelib, "SetDNRFilter");
         _SetDNRFilter = (SetDNRFilter)Marshal.GetDelegateForFunctionPointer(procaddr, typeof(SetDNRFilter));
 
+        //The following is strangely necessary when using delegates instead of P/Invoke
 
-        hr = new HResult(_Init(filter));
+         byte[] encodedstring = Encoding.UTF32.GetBytes(tuner);
+         string card = Encoding.Unicode.GetString(encodedstring);
+
+        hr = new HResult(_Init(filter, card));
         Log.Info("Hauppauge Quality Control Initializing " + hr.ToDXString());
       }
       catch (Exception ex)

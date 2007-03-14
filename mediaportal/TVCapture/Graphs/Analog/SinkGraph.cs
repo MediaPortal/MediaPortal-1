@@ -41,6 +41,7 @@ using MediaPortal.Radio.Database;
 using Toub.MediaCenter.Dvrms.Metadata;
 using MediaPortal.TV.Teletext;
 using MediaPortal.Configuration;
+using System.Text;
 
 namespace MediaPortal.TV.Recording
 {
@@ -95,6 +96,7 @@ namespace MediaPortal.TV.Recording
     protected bool _grabTeletext = false;
     protected bool _hasTeletext = false;
     bool _isTuning = false;
+    protected string _TVTunerMoniker = string.Empty;
     protected string _lastError = String.Empty;
 
     /// <summary>
@@ -399,7 +401,7 @@ namespace MediaPortal.TV.Recording
       else
       {
         //use default quality
-        SetQuality(4);
+        SetQuality(5);
       }
       SetFrameRateAndSize();
       _mpeg2DemuxHelper.Record(attribtutes, strFileName, bContentRecording, timeProgStart, _startTime);
@@ -423,6 +425,7 @@ namespace MediaPortal.TV.Recording
       if ( _mpeg2DemuxHelper != null )
         _mpeg2DemuxHelper.StopRecording();
       _graphState = State.TimeShifting;
+      SetQuality(4);
     }
 
 
@@ -1517,7 +1520,7 @@ namespace MediaPortal.TV.Recording
         //Set the selected audio quality
         int AudioQuality = xmlreader.GetValueAsInt("quality", "audioquality", 192);
         int defaultQuality = xmlreader.GetValueAsInt("quality", "default", 2);
-        if ( Quality == 4 )
+        if ( Quality == 5 )
         {
           Quality = defaultQuality;
         }
@@ -1537,19 +1540,23 @@ namespace MediaPortal.TV.Recording
         int highMaxKbps = xmlreader.GetValueAsInt("quality", "HighMax", 12000);
         bool highVBR = xmlreader.GetValueAsBool("quality", "HighVBR", true);
 
-        string comName = this._card.Graph.CommercialName;
+       int defaultMinTVKbps = xmlreader.GetValueAsInt("quality", "TVLow", 11000);
+       int defaultMaxTVKbps = xmlreader.GetValueAsInt("quality", "TVHigh", 13000);
+       bool defaultTVVBR = xmlreader.GetValueAsBool("quality", "TVVBR", true);
+ 
+        string comName = this._card.Graph.CommercialName; 
+        
         if ( comName.IndexOf("usb") >= 0 )
         {
           highMinKbps = xmlreader.GetValueAsInt("quality", "HighLow", 768);
           highMaxKbps = xmlreader.GetValueAsInt("quality", "HighMax", 4000);
         }
 
-
-        VideoCaptureProperties props = new VideoCaptureProperties(_filterCapture, "hauppauge");
+        Hauppauge props = new Hauppauge(_filterCapture, _card.DeviceId);
         if ( Quality >= 0 )
         {
           //103 is recommended for the stream buffer engine 
-          props.SetStreamType(103);
+          props.SetStream(103);
           props.SetAudioBitRate(AudioQuality);
           //Turns the analog filter on/off
           props.SetDNR(DNR);
@@ -1572,7 +1579,10 @@ namespace MediaPortal.TV.Recording
               Log.Info("SinkGraph:Set quality:high");
               props.SetVideoBitRate(highMinKbps, highMaxKbps, highVBR);
               break;
-
+            case 4://TV default
+              Log.Info("SinkGraph:Set quality:TVdefault");
+              props.SetVideoBitRate(defaultMinTVKbps, defaultMaxTVKbps, defaultTVVBR);
+              break;
             default://
               Log.Info("SinkGraph:Set quality to default (medium)");
               props.SetVideoBitRate(mediumMinKbps, mediumMaxKbps, mediumVBR);
@@ -1583,7 +1593,7 @@ namespace MediaPortal.TV.Recording
           bool isVBR;
           props.GetVideoBitRate(out minKbps, out maxKbps, out isVBR);
           props.GetAudioBitRate(out audkbps);
-          props.GetStreamType(out stream);
+          props.GetStream(out stream);
          props.Dispose();
          Log.Info("Hauppauge video bitrates:{0} avg:{1} peak:{2} vbr:{3}", 1, minKbps, maxKbps, isVBR);
          Log.Info("Hauppauge audio bitrate {0}", audkbps);

@@ -98,7 +98,7 @@ public class MediaPortalApp : D3DApp, IRender
   private bool _suspended = false;
   private bool _onResumeRunning = false;
   protected string _dateFormat = String.Empty;
-  private int m_iVolume = -1;
+ 
 #if AUTOUPDATE
   string m_strNewVersion = "";
     bool m_bNewVersionAvailable = false;
@@ -1690,7 +1690,7 @@ public class MediaPortalApp : D3DApp, IRender
 
             Win32API.EnableStartBar(true);
             Win32API.ShowStartBar(true);
-            if(g_Player.IsVideo || g_Player.IsTV)
+            if(g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
             {
               if (g_Player.Volume > 0)
               {
@@ -1723,7 +1723,7 @@ public class MediaPortalApp : D3DApp, IRender
             Log.Info("Main: Restore MP by action");
             Restore();
 
-            if ((g_Player.IsVideo || g_Player.IsTV) && m_iVolume > 0)
+            if ((g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD) && m_iVolume > 0)
             {
               g_Player.Volume = m_iVolume;
               g_Player.ContinueGraph();
@@ -2470,6 +2470,8 @@ public class MediaPortalApp : D3DApp, IRender
 
     Restore();
   }
+
+ 
   #endregion
   
 

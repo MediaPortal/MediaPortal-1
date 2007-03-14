@@ -787,6 +787,11 @@ namespace MediaPortal.GUI.Library
           control.SetInitialVisibility();
       }
     }
+    protected virtual void PreLoadPage()
+    {
+
+
+    }
     protected virtual void OnPageLoad()
     {
       if (_isSkinLoaded && (_lastSkin != GUIGraphicsContext.Skin))

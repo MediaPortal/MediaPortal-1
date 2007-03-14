@@ -140,6 +140,10 @@ namespace MediaPortal.Configuration
     private ComboBox comboBoxAudioQuality;
     private CheckBox cbDisableDNR;
     private ToolTip toolTip1;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbTVVBR;
+    private MediaPortal.UserInterface.Controls.MPTextBox tbTVHigh;
+    private MediaPortal.UserInterface.Controls.MPTextBox tbTVMin;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
     TVCaptureDevice prevDevice = null;
 
 
@@ -545,6 +549,10 @@ namespace MediaPortal.Configuration
       this.tabPageAutotune = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.tabPageAutotuneRadio = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+      this.cbTVVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.tbTVHigh = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.tbTVMin = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.cropGroupBox.SuspendLayout();
@@ -1050,7 +1058,7 @@ namespace MediaPortal.Configuration
       // 
       // mpLabel2
       // 
-      this.mpLabel2.Location = new System.Drawing.Point(42, 83);
+      this.mpLabel2.Location = new System.Drawing.Point(42, 71);
       this.mpLabel2.Name = "mpLabel2";
       this.mpLabel2.Size = new System.Drawing.Size(80, 16);
       this.mpLabel2.TabIndex = 13;
@@ -1064,13 +1072,17 @@ namespace MediaPortal.Configuration
             "224 Kbps",
             "256 Kbps",
             "384 Kbps"});
-      this.comboBoxAudioQuality.Location = new System.Drawing.Point(128, 83);
+      this.comboBoxAudioQuality.Location = new System.Drawing.Point(128, 71);
       this.comboBoxAudioQuality.Name = "comboBoxAudioQuality";
       this.comboBoxAudioQuality.Size = new System.Drawing.Size(128, 21);
       this.comboBoxAudioQuality.TabIndex = 12;
       // 
       // groupBox7
       // 
+      this.groupBox7.Controls.Add(this.cbTVVBR);
+      this.groupBox7.Controls.Add(this.tbTVHigh);
+      this.groupBox7.Controls.Add(this.tbTVMin);
+      this.groupBox7.Controls.Add(this.mpLabel3);
       this.groupBox7.Controls.Add(this.cbDisableDNR);
       this.groupBox7.Controls.Add(this.cbHighVBR);
       this.groupBox7.Controls.Add(this.tbHighMax);
@@ -1092,9 +1104,9 @@ namespace MediaPortal.Configuration
       this.groupBox7.Controls.Add(this.tbPortMin);
       this.groupBox7.Controls.Add(this.label19);
       this.groupBox7.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox7.Location = new System.Drawing.Point(24, 182);
+      this.groupBox7.Location = new System.Drawing.Point(24, 159);
       this.groupBox7.Name = "groupBox7";
-      this.groupBox7.Size = new System.Drawing.Size(456, 224);
+      this.groupBox7.Size = new System.Drawing.Size(456, 247);
       this.groupBox7.TabIndex = 11;
       this.groupBox7.TabStop = false;
       this.groupBox7.Text = "Quality settings:";
@@ -1102,7 +1114,7 @@ namespace MediaPortal.Configuration
       // cbDisableDNR
       // 
       this.cbDisableDNR.AutoSize = true;
-      this.cbDisableDNR.Location = new System.Drawing.Point(21, 191);
+      this.cbDisableDNR.Location = new System.Drawing.Point(19, 224);
       this.cbDisableDNR.Name = "cbDisableDNR";
       this.cbDisableDNR.Size = new System.Drawing.Size(187, 17);
       this.cbDisableDNR.TabIndex = 19;
@@ -1282,7 +1294,7 @@ namespace MediaPortal.Configuration
       // 
       // label18
       // 
-      this.label18.Location = new System.Drawing.Point(21, 114);
+      this.label18.Location = new System.Drawing.Point(21, 102);
       this.label18.Name = "label18";
       this.label18.Size = new System.Drawing.Size(408, 60);
       this.label18.TabIndex = 10;
@@ -1290,7 +1302,7 @@ namespace MediaPortal.Configuration
       // 
       // label25
       // 
-      this.label25.Location = new System.Drawing.Point(40, 48);
+      this.label25.Location = new System.Drawing.Point(40, 38);
       this.label25.Name = "label25";
       this.label25.Size = new System.Drawing.Size(80, 16);
       this.label25.TabIndex = 9;
@@ -1304,7 +1316,7 @@ namespace MediaPortal.Configuration
             "Low",
             "Medium",
             "High"});
-      this.comboBoxQuality.Location = new System.Drawing.Point(128, 48);
+      this.comboBoxQuality.Location = new System.Drawing.Point(128, 38);
       this.comboBoxQuality.Name = "comboBoxQuality";
       this.comboBoxQuality.Size = new System.Drawing.Size(240, 21);
       this.comboBoxQuality.TabIndex = 8;
@@ -1313,7 +1325,7 @@ namespace MediaPortal.Configuration
       // 
       this.checkBoxHiQuality.AutoSize = true;
       this.checkBoxHiQuality.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxHiQuality.Location = new System.Drawing.Point(24, 24);
+      this.checkBoxHiQuality.Location = new System.Drawing.Point(24, 11);
       this.checkBoxHiQuality.Name = "checkBoxHiQuality";
       this.checkBoxHiQuality.Size = new System.Drawing.Size(113, 17);
       this.checkBoxHiQuality.TabIndex = 7;
@@ -1376,6 +1388,42 @@ namespace MediaPortal.Configuration
       this.tabPageAutotuneRadio.Text = "Autotune Radio";
       this.tabPageAutotuneRadio.UseVisualStyleBackColor = true;
       this.tabPageAutotuneRadio.Enter += new System.EventHandler(this.tabPageAutotuneRadio_Enter);
+      // 
+      // cbTVVBR
+      // 
+      this.cbTVVBR.AutoSize = true;
+      this.cbTVVBR.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbTVVBR.Location = new System.Drawing.Point(248, 183);
+      this.cbTVVBR.Name = "cbTVVBR";
+      this.cbTVVBR.Size = new System.Drawing.Size(13, 12);
+      this.cbTVVBR.TabIndex = 23;
+      this.cbTVVBR.UseVisualStyleBackColor = true;
+      // 
+      // tbTVHigh
+      // 
+      this.tbTVHigh.BorderColor = System.Drawing.Color.Empty;
+      this.tbTVHigh.Location = new System.Drawing.Point(168, 183);
+      this.tbTVHigh.Name = "tbTVHigh";
+      this.tbTVHigh.Size = new System.Drawing.Size(64, 20);
+      this.tbTVHigh.TabIndex = 22;
+      this.tbTVHigh.Text = "300";
+      // 
+      // tbTVMin
+      // 
+      this.tbTVMin.BorderColor = System.Drawing.Color.Empty;
+      this.tbTVMin.Location = new System.Drawing.Point(80, 183);
+      this.tbTVMin.Name = "tbTVMin";
+      this.tbTVMin.Size = new System.Drawing.Size(64, 20);
+      this.tbTVMin.TabIndex = 21;
+      this.tbTVMin.Text = "100";
+      // 
+      // mpLabel3
+      // 
+      this.mpLabel3.Location = new System.Drawing.Point(16, 183);
+      this.mpLabel3.Name = "mpLabel3";
+      this.mpLabel3.Size = new System.Drawing.Size(64, 16);
+      this.mpLabel3.TabIndex = 20;
+      this.mpLabel3.Text = "Live TV";
       // 
       // EditCaptureCardForm
       // 
@@ -1556,6 +1604,15 @@ namespace MediaPortal.Configuration
 
             Log.Debug("*** HighVBR {0}", Convert.ToString(cbHighVBR.Checked));
             xmlwriter.SetValueAsBool("quality", "HighVBR", cbHighVBR.Checked);
+
+            Log.Debug("*** TVLow {0}", tbTVMin.Text);
+            xmlwriter.SetValue("quality", "TVLow", tbTVMin.Text);
+
+            Log.Debug("*** TVHigh {0}", tbTVHigh.Text);
+            xmlwriter.SetValue("quality", "TVHigh", tbTVHigh.Text);
+
+            Log.Debug("*** TVVBR {0}", Convert.ToString(cbTVVBR.Checked));
+            xmlwriter.SetValueAsBool("quality", "TVVBR", cbTVVBR.Checked);
 
             Log.Debug("*** Disable DNR {0}", Convert.ToString(cbDisableDNR.Checked));
             xmlwriter.SetValueAsBool("quality", "DNR", cbDisableDNR.Checked);
@@ -1848,6 +1905,11 @@ namespace MediaPortal.Configuration
                 }
               }
               cbHighVBR.Checked = xmlreader.GetValueAsBool("quality", "HighVBR", true);
+
+              tbTVMin.Text = xmlreader.GetValueAsInt("quality", "TVLow", 11000).ToString();
+              tbTVHigh.Text = xmlreader.GetValueAsInt("quality", "TVHigh", 13000).ToString();
+              cbTVVBR.Checked = xmlreader.GetValueAsBool("quality", "TVVBR", true);
+              
               cbDisableDNR.Checked = xmlreader.GetValueAsBool("quality", "DNR", false);
 
               checkBoxHWPidFiltering.Checked = xmlreader.GetValueAsBool("general", "hwfiltering", false);
