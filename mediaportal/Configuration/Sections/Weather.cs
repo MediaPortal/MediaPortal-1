@@ -57,8 +57,6 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.ColumnHeader columnHeader6;
     private System.Windows.Forms.ColumnHeader columnHeader7;
     private System.Windows.Forms.ColumnHeader columnHeader8;
-    private CheckBox cbWeatherOverlay;
-    private CheckBox cbWeatherOnPlay;
 
     private System.ComponentModel.IContainer components = null;
 
@@ -104,8 +102,6 @@ namespace MediaPortal.Configuration.Sections
           temperatureComboBox.Text = "Fahrenheit";
 
         intervalTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("weather", "refresh", 120));
-        cbWeatherOverlay.Checked = xmlreader.GetValueAsBool("weather", "overlayEnabled", true);
-        cbWeatherOnPlay.Checked = xmlreader.GetValueAsBool("weather", "playEnabled", true);
 
         for (int index = 0; index < MaximumCities; index++)
         {
@@ -158,8 +154,6 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("weather", "temperature", temperature);
 
         xmlwriter.SetValue("weather", "refresh", intervalTextBox.Text);
-        xmlwriter.SetValueAsBool("weather", "overlayEnabled", cbWeatherOverlay.Checked);
-        xmlwriter.SetValueAsBool("weather", "playEnabled", cbWeatherOnPlay.Checked);
 
         for (int index = 0; index < MaximumCities; index++)
         {
@@ -228,7 +222,6 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.cbWeatherOverlay = new System.Windows.Forms.CheckBox();
       this.intervalTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.windSpeedComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -248,7 +241,6 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
-      this.cbWeatherOnPlay = new System.Windows.Forms.CheckBox();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
@@ -256,49 +248,33 @@ namespace MediaPortal.Configuration.Sections
       // groupBox1
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.Controls.Add(this.cbWeatherOnPlay);
-      this.groupBox1.Controls.Add(this.cbWeatherOverlay);
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.intervalTextBox);
       this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.windSpeedComboBox);
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.temperatureComboBox);
       this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 119);
+      this.groupBox1.Size = new System.Drawing.Size(472, 104);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
       // 
-      // cbWeatherOverlay
-      // 
-      this.cbWeatherOverlay.AutoSize = true;
-      this.cbWeatherOverlay.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-      this.cbWeatherOverlay.Checked = true;
-      this.cbWeatherOverlay.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.cbWeatherOverlay.Location = new System.Drawing.Point(15, 95);
-      this.cbWeatherOverlay.Name = "cbWeatherOverlay";
-      this.cbWeatherOverlay.Size = new System.Drawing.Size(169, 17);
-      this.cbWeatherOverlay.TabIndex = 7;
-      this.cbWeatherOverlay.Text = "Enable Weather Overlay:        ";
-      this.cbWeatherOverlay.UseVisualStyleBackColor = true;
-      // 
       // intervalTextBox
       // 
       this.intervalTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.intervalTextBox.BorderColor = System.Drawing.Color.Empty;
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.intervalTextBox.Location = new System.Drawing.Point(168, 68);
       this.intervalTextBox.Name = "intervalTextBox";
       this.intervalTextBox.Size = new System.Drawing.Size(288, 20);
       this.intervalTextBox.TabIndex = 5;
+      this.intervalTextBox.Text = "";
       // 
       // label3
       // 
-      this.label3.Location = new System.Drawing.Point(15, 72);
+      this.label3.Location = new System.Drawing.Point(16, 72);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(150, 16);
       this.label3.TabIndex = 4;
@@ -307,8 +283,7 @@ namespace MediaPortal.Configuration.Sections
       // windSpeedComboBox
       // 
       this.windSpeedComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.windSpeedComboBox.BorderColor = System.Drawing.Color.Empty;
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.windSpeedComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.windSpeedComboBox.Location = new System.Drawing.Point(168, 44);
       this.windSpeedComboBox.Name = "windSpeedComboBox";
@@ -317,7 +292,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(15, 48);
+      this.label2.Location = new System.Drawing.Point(16, 48);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(120, 16);
       this.label2.TabIndex = 2;
@@ -326,8 +301,7 @@ namespace MediaPortal.Configuration.Sections
       // temperatureComboBox
       // 
       this.temperatureComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.temperatureComboBox.BorderColor = System.Drawing.Color.Empty;
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.temperatureComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.temperatureComboBox.Location = new System.Drawing.Point(168, 20);
       this.temperatureComboBox.Name = "temperatureComboBox";
@@ -336,7 +310,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(15, 24);
+      this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(120, 16);
       this.label1.TabIndex = 0;
@@ -345,16 +319,15 @@ namespace MediaPortal.Configuration.Sections
       // mpGroupBox1
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+        | System.Windows.Forms.AnchorStyles.Left)
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.editButton);
       this.mpGroupBox1.Controls.Add(this.searchButton);
       this.mpGroupBox1.Controls.Add(this.removeButton);
       this.mpGroupBox1.Controls.Add(this.citiesListView);
-      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(0, 133);
+      this.mpGroupBox1.Location = new System.Drawing.Point(0, 112);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(472, 248);
+      this.mpGroupBox1.Size = new System.Drawing.Size(472, 240);
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Cities";
@@ -363,59 +336,53 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.editButton.Enabled = false;
-      this.editButton.Location = new System.Drawing.Point(384, 216);
+      this.editButton.Location = new System.Drawing.Point(384, 208);
       this.editButton.Name = "editButton";
       this.editButton.Size = new System.Drawing.Size(72, 22);
       this.editButton.TabIndex = 3;
       this.editButton.Text = "Edit";
-      this.editButton.UseVisualStyleBackColor = true;
       this.editButton.Click += new System.EventHandler(this.editButton_Click);
       // 
       // searchButton
       // 
       this.searchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.searchButton.Location = new System.Drawing.Point(224, 216);
+      this.searchButton.Location = new System.Drawing.Point(224, 208);
       this.searchButton.Name = "searchButton";
       this.searchButton.Size = new System.Drawing.Size(72, 22);
       this.searchButton.TabIndex = 1;
       this.searchButton.Text = "Add";
-      this.searchButton.UseVisualStyleBackColor = true;
       this.searchButton.Click += new System.EventHandler(this.searchButton_Click);
       // 
       // removeButton
       // 
       this.removeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.removeButton.Enabled = false;
-      this.removeButton.Location = new System.Drawing.Point(304, 216);
+      this.removeButton.Location = new System.Drawing.Point(304, 208);
       this.removeButton.Name = "removeButton";
       this.removeButton.Size = new System.Drawing.Size(72, 22);
       this.removeButton.TabIndex = 2;
       this.removeButton.Text = "Remove";
-      this.removeButton.UseVisualStyleBackColor = true;
       this.removeButton.Click += new System.EventHandler(this.removeButton_Click);
       // 
       // citiesListView
       // 
-      this.citiesListView.AllowDrop = true;
-      this.citiesListView.AllowRowReorder = true;
       this.citiesListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+        | System.Windows.Forms.AnchorStyles.Left)
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.citiesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4,
-            this.columnHeader5,
-            this.columnHeader6,
-            this.columnHeader7,
-            this.columnHeader8});
+                                                                                     this.columnHeader1,
+                                                                                     this.columnHeader2,
+                                                                                     this.columnHeader3,
+                                                                                     this.columnHeader4,
+                                                                                     this.columnHeader5,
+                                                                                     this.columnHeader6,
+                                                                                     this.columnHeader7,
+                                                                                     this.columnHeader8});
       this.citiesListView.FullRowSelect = true;
       this.citiesListView.Location = new System.Drawing.Point(16, 24);
       this.citiesListView.Name = "citiesListView";
-      this.citiesListView.Size = new System.Drawing.Size(440, 184);
+      this.citiesListView.Size = new System.Drawing.Size(440, 176);
       this.citiesListView.TabIndex = 0;
-      this.citiesListView.UseCompatibleStateImageBehavior = false;
       this.citiesListView.View = System.Windows.Forms.View.Details;
       this.citiesListView.SelectedIndexChanged += new System.EventHandler(this.citiesListView_SelectedIndexChanged);
       // 
@@ -459,27 +426,13 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader8.Text = "Precipitation image";
       this.columnHeader8.Width = 101;
       // 
-      // cbWeatherOnPlay
-      // 
-      this.cbWeatherOnPlay.AutoSize = true;
-      this.cbWeatherOnPlay.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-      this.cbWeatherOnPlay.Checked = true;
-      this.cbWeatherOnPlay.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.cbWeatherOnPlay.Location = new System.Drawing.Point(197, 94);
-      this.cbWeatherOnPlay.Name = "cbWeatherOnPlay";
-      this.cbWeatherOnPlay.Size = new System.Drawing.Size(259, 17);
-      this.cbWeatherOnPlay.TabIndex = 8;
-      this.cbWeatherOnPlay.Text = "Show Weather Overlay when playing media:        ";
-      this.cbWeatherOnPlay.UseVisualStyleBackColor = true;
-      // 
       // Weather
       // 
       this.Controls.Add(this.mpGroupBox1);
       this.Controls.Add(this.groupBox1);
       this.Name = "Weather";
-      this.Size = new System.Drawing.Size(472, 437);
+      this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
-      this.groupBox1.PerformLayout();
       this.mpGroupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
 
@@ -574,4 +527,3 @@ namespace MediaPortal.Configuration.Sections
     }
   }
 }
-
