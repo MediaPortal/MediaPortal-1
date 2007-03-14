@@ -386,6 +386,7 @@ namespace SetupTv.Sections
 
     private void mpButtonClear_Click(object sender, EventArgs e)
     {
+      Gentle.Framework.Broker.Execute("delete from history");
       Gentle.Framework.Broker.Execute("delete from tuningdetail");
       Gentle.Framework.Broker.Execute("delete from GroupMap");
       Gentle.Framework.Broker.Execute("delete from Channelmap");
