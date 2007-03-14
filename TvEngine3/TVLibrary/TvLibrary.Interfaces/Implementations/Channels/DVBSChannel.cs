@@ -35,6 +35,12 @@ namespace TvLibrary.Channels
     Linear = 1,
     Circular = 2,
     CBand = 3,
+    NaBandStackedDpKuHi = 4,
+    NaBandStackedDpKuLo = 5,
+    NaBandStackedKuHi = 6,
+    NaBandStackedKuLo = 7,
+    NaBandStackedC = 8,
+    NaLegacy = 9,
   }
   /// <summary>
   /// enum describing the different DisEqc type
