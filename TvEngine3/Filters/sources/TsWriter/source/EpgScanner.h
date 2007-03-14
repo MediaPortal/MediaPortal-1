@@ -55,9 +55,9 @@ DECLARE_INTERFACE_(ITsEpgScanner, IUnknown)
 	STDMETHOD(GrabMHW)()PURE;
 	STDMETHOD(IsMHWReady) (THIS_ BOOL* yesNo)PURE;
 	STDMETHOD(GetMHWTitleCount)(THIS_ WORD* count)PURE;
-	STDMETHOD(GetMHWTitle)(THIS_ WORD program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)PURE;
+	STDMETHOD(GetMHWTitle)(THIS_ WORD program, UINT* id, WORD* transportId, WORD* networkId, WORD* channelId, UINT* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)PURE;
 	STDMETHOD(GetMHWChannel)(THIS_ WORD channelNr, WORD* channelId, WORD* networkId, WORD* transportId, char** channelName)PURE;
-	STDMETHOD(GetMHWSummary)(THIS_ WORD programId, char** summary)PURE;
+	STDMETHOD(GetMHWSummary)(THIS_ UINT programId, char** summary)PURE;
 	STDMETHOD(GetMHWTheme)(THIS_ WORD themeId, char** theme)PURE;
 	STDMETHOD(Reset)(THIS_)PURE;
   
@@ -84,9 +84,9 @@ public:
 	STDMETHODIMP IsMHWReady(BOOL* yesNo);
 
 	STDMETHODIMP GetMHWTitleCount(WORD* count);
-	STDMETHODIMP GetMHWTitle(WORD program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName);
+	STDMETHODIMP GetMHWTitle(WORD program, UINT* id, WORD* transportId, WORD* networkId, WORD* channelId, UINT* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName);
 	STDMETHODIMP GetMHWChannel(WORD channelNr, WORD* channelId, WORD* networkId, WORD* transportId, char** channelName);
-	STDMETHODIMP GetMHWSummary(WORD programId, char** summary);
+	STDMETHODIMP GetMHWSummary(UINT programId, char** summary);
 	STDMETHODIMP GetMHWTheme(WORD themeId, char** theme);
 	STDMETHODIMP Reset();
 	STDMETHODIMP SetCallBack(IEpgCallback* callback);

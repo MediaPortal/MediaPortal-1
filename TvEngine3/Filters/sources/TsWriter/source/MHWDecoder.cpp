@@ -240,7 +240,7 @@ int CMhwDecoder::GetTitleCount()
 	return (int)m_vecTitles.size();
 }
 
-void CMhwDecoder::GetTitle(int program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
+void CMhwDecoder::GetTitle(int program, UINT* id, WORD* transportId, WORD* networkId, WORD* channelId, UINT* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
 {
 	CEnterCriticalSection lock (m_critSection);
 	*id = 0;
@@ -263,11 +263,11 @@ void CMhwDecoder::GetTitle(int program, WORD* id, WORD* transportId, WORD* netwo
 		return;
 	}
 	MHWProgramm& prog=m_vecTitles[program];
-	*id = (WORD)prog.ID;
+	*id = (UINT)prog.ID;
 	*transportId=prog.TransportStreamID;
 	*networkId=prog.NetworkID;
 	*channelId=prog.ChannelID;
-	*programId=(WORD)prog.ID;
+	*programId=(UINT)prog.ID;
 	*themeId=prog.ThemeID;
 	*PPV=(WORD)prog.PPV;
 	*Summaries=prog.Summaries;
@@ -302,7 +302,7 @@ void CMhwDecoder::GetChannel(WORD channelNr, WORD* channelId, WORD* networkId, W
 	return;
 }
 
-void CMhwDecoder::GetSummary(WORD programId, char** summary)
+void CMhwDecoder::GetSummary(UINT programId, char** summary)
 {
 	CEnterCriticalSection lock (m_critSection);
 	*summary="";

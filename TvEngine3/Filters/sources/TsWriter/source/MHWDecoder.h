@@ -51,9 +51,9 @@ public:
 	bool ParseThemes(byte* data, int dataLen);
 
 	int GetTitleCount();
-	void GetTitle(int program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName);
+	void GetTitle(int program, UINT* id, WORD* transportId, WORD* networkId, WORD* channelId, UINT* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName);
 	void GetChannel(WORD channelNr, WORD* channelId,  WORD* networkId, WORD* transportId, char** channelName);
-	void GetSummary(WORD programId, char** summary);
+	void GetSummary(UINT programId, char** summary);
 	void GetTheme(WORD themeId, char** theme);
 
 private:

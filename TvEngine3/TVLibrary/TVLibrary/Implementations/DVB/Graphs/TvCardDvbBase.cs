@@ -2080,7 +2080,8 @@ namespace TvLibrary.Implementations.DVB
             _interfaceEpgGrabber.GetMHWTitleCount(out titleCount);
             for (int i = 0; i < titleCount; ++i)
             {
-              ushort id = 0, transportid = 0, networkid = 0, channelnr = 0, channelid = 0, programid = 0, themeid = 0, PPV = 0, duration = 0;
+              uint id = 0, programid = 0;
+              ushort  transportid = 0, networkid = 0, channelnr = 0, channelid = 0,  themeid = 0, PPV = 0, duration = 0;
               byte summaries = 0;
               uint datestart = 0, timestart = 0;
               IntPtr ptrTitle, ptrProgramName;

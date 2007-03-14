@@ -206,7 +206,7 @@ void CMhwParser::GetTitleCount(WORD* count)
 	*count=m_mhwDecoder.GetTitleCount();
 	LogDebug("CMhwParser:GetTitleCount:%d", (*count));
 }
-void CMhwParser::GetTitle(WORD program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
+void CMhwParser::GetTitle(WORD program, UINT* id, WORD* transportId, WORD* networkId, WORD* channelId, UINT* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
 {
 	CEnterCriticalSection enter(m_section);
 	m_mhwDecoder.GetTitle(program, id, transportId, networkId, channelId, programId, themeId, PPV, Summaries, duration, dateStart, timeStart,title,programName);
@@ -216,7 +216,7 @@ void CMhwParser::GetChannel(WORD channelNr, WORD* channelId, WORD* networkId, WO
 	CEnterCriticalSection enter(m_section);
 	m_mhwDecoder.GetChannel(channelNr, channelId,  networkId, transportId, channelName);
 }
-void CMhwParser::GetSummary(WORD programId, char** summary)
+void CMhwParser::GetSummary(UINT programId, char** summary)
 {
 	CEnterCriticalSection enter(m_section);
 	m_mhwDecoder.GetSummary(programId, summary);

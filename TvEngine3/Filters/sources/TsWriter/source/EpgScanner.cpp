@@ -205,7 +205,7 @@ STDMETHODIMP CEpgScanner::GetMHWTitleCount(WORD* count)
 	}
 	return S_OK;
 }
-STDMETHODIMP CEpgScanner::GetMHWTitle(WORD program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
+STDMETHODIMP CEpgScanner::GetMHWTitle(WORD program, UINT* id, WORD* transportId, WORD* networkId, WORD* channelId, UINT* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
 {	
 	CEnterCriticalSection enter(m_section);
 	try
@@ -233,7 +233,7 @@ STDMETHODIMP CEpgScanner::GetMHWChannel(WORD channelNr, WORD* channelId,WORD* ne
 	}
 	return S_OK;
 }
-STDMETHODIMP CEpgScanner::GetMHWSummary(WORD programId, char** summary)
+STDMETHODIMP CEpgScanner::GetMHWSummary(UINT programId, char** summary)
 {
 	CEnterCriticalSection enter(m_section);
 	try

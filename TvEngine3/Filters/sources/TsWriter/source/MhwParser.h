@@ -40,9 +40,9 @@ public:
 	bool  isGrabbing();
 	bool  IsEPGReady();
 	void GetTitleCount(WORD* count);
-	void GetTitle(WORD program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName);
+	void GetTitle(WORD program, UINT* id, WORD* transportId, WORD* networkId, WORD* channelId, UINT* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName);
 	void GetChannel(WORD channelNr, WORD* channelId, WORD* networkId, WORD* transportId, char** channelName);
-	void GetSummary(WORD programId, char** summary);
+	void GetSummary(UINT programId, char** summary);
 	void GetTheme(WORD themeId, char** theme);
 
 	void	OnTsPacket(CTsHeader& header,byte* tsPacket);

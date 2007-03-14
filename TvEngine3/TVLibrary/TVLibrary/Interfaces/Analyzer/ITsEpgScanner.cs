@@ -148,7 +148,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="programName">Name of the program.</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetMHWTitle(UInt16 program, ref UInt16 id, ref UInt16 transportId, ref UInt16 networkId, ref UInt16 channelId, ref UInt16 programId, ref UInt16 themeId, ref UInt16 PPV, ref byte Summaries, ref UInt16 duration, ref uint dateStart, ref uint timeStart, out IntPtr title, out IntPtr programName);
+    int GetMHWTitle(UInt16 program, ref uint id, ref UInt16 transportId, ref UInt16 networkId, ref UInt16 channelId, ref uint programId, ref UInt16 themeId, ref UInt16 PPV, ref byte Summaries, ref UInt16 duration, ref uint dateStart, ref uint timeStart, out IntPtr title, out IntPtr programName);
 
     /// <summary>
     /// Gets the details for a MHW channel.
@@ -169,7 +169,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="summary">The summary.</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetMHWSummary(UInt16 programId, out IntPtr summary);
+    int GetMHWSummary(uint programId, out IntPtr summary);
 
     /// <summary>
     /// Gets the MHW theme.
