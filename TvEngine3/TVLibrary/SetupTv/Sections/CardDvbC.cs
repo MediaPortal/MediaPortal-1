@@ -231,11 +231,14 @@ namespace SetupTv.Sections
       base.OnSectionActivated();
       UpdateStatus();
       TvBusinessLayer layer = new TvBusinessLayer();
-      mpComboBoxCountry.SelectedIndex = Int32.Parse(layer.GetSetting("dvbc" + _cardNumber.ToString() + "Country", "0").Value);
+      int index=Int32.Parse(layer.GetSetting("dvbc" + _cardNumber.ToString() + "Country", "0").Value);
+      if (index < mpComboBoxCountry.Items.Count)
+        mpComboBoxCountry.SelectedIndex = index;
 
 
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      mpComboBox1Cam.SelectedIndex = card.CamType;
+      if (card.CamType < mpComboBox1Cam.Items.Count)
+        mpComboBox1Cam.SelectedIndex = card.CamType;
       checkBoxCreateGroups.Checked = (layer.GetSetting("dvbc" + _cardNumber.ToString() + "creategroups", "false").Value == "true");
 
 
