@@ -689,6 +689,7 @@ namespace TvService
                 detail.ServiceId == dvbChannel.ServiceId)
             {
               found = true;
+
               bool success = UpdateDatabaseChannel(channelNr, epgChannel, GetChannel(detail.IdChannel));
               if (_state != EpgState.Updating)
               {
@@ -760,7 +761,6 @@ namespace TvService
     {
       if (channel == null)
       {
-        Log.Epg("Epg: card:{0} channel:{1} not selected for epg updates", _user.CardId, epgChannel.Channel.Name);
         return false;
       }
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -920,7 +920,7 @@ namespace TvService
           if (ch.IdChannel == idChannel) return ch;
         }
       }
-      return null;
+      return Channel.Retrieve(idChannel);
     }
     #endregion
     #endregion
