@@ -271,7 +271,7 @@ namespace TvPlugin
       AllocResources();
       ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
       benchClock.Stop();
-      Log.Debug("miniguide: all controls are reset after {0} ticks", benchClock.ElapsedTicks.ToString());
+      Log.Debug("miniguide: all controls are reset after {0}ms", benchClock.ElapsedMilliseconds.ToString());
       FillChannelList();
       FillGroupList();
       base.OnPageLoad();
@@ -308,7 +308,7 @@ namespace TvPlugin
         }
       }
       benchClock.Stop();
-      Log.Debug("miniguide: FillGroupList finished after {0} ticks", benchClock.ElapsedTicks.ToString());
+      Log.Debug("miniguide: FillGroupList finished after {0}ms", benchClock.ElapsedMilliseconds.ToString());
     }
 
     /// <summary>
@@ -323,13 +323,12 @@ namespace TvPlugin
       TvBusinessLayer layer = new TvBusinessLayer();
       _tvChannelList = layer.GetTVGuideChannelsForGroup(TVHome.Navigator.CurrentGroup.IdGroup);
       benchClock.Stop();
-      Log.Debug("miniguide: FillChannelList - Got group channels after {0} ticks", benchClock.ElapsedTicks.ToString());
+      string BenchGroupChannels = benchClock.ElapsedMilliseconds.ToString();      
       benchClock.Reset();
       benchClock.Start();
       Dictionary<int, NowAndNext> listNowNext = layer.GetNowAndNext();
       benchClock.Stop();
-      Log.Debug("miniguide: FillChannelList - Got NowNext channels after {0} ticks ({1} ms)", benchClock.ElapsedTicks.ToString(), benchClock.ElapsedMilliseconds.ToString());
-      
+      string BenchNowNext = benchClock.ElapsedMilliseconds.ToString();
       Channel CurrentChan = null;
       GUIListItem item = null;
       string ChannelLogo = "";
@@ -351,7 +350,7 @@ namespace TvPlugin
         benchClock.Start();
         TVHome.TvServer.GetAllRecordingChannels(out RecChannels, out TSChannels);
         benchClock.Stop();
-        Log.Debug("miniguide: FillChannelList - GetAllRecordingChannels after {2} ticks - channels currently timeshifting: {0}, recording: {1}", Convert.ToString(TSChannels.Count), Convert.ToString(RecChannels.Count), benchClock.ElapsedTicks.ToString());
+        Log.Debug("miniguide: FillChannelList - currently ts: {0}, rec: {1} / GetChans: {2}ms, NowNextSQL: {3}ms, GetAllRecs: {4}ms", Convert.ToString(TSChannels.Count), Convert.ToString(RecChannels.Count), BenchGroupChannels, BenchNowNext, benchClock.ElapsedMilliseconds.ToString());
       }
 
       if (RecChannels.Count == 0)
@@ -424,7 +423,7 @@ namespace TvPlugin
               if (TSChannels.Contains(CurrentChan.IdChannel))
                 CurrentChanState = (int)ChannelState.timeshifting;
 
-            Log.Debug("miniguide: state of {0} is {1}", CurrentChan.Name, Convert.ToString(CurrentChanState));
+            // Log.Debug("miniguide: state of {0} is {1}", CurrentChan.Name, Convert.ToString(CurrentChanState));
             switch (CurrentChanState)
             {
               case 0:
@@ -467,7 +466,7 @@ namespace TvPlugin
         }
       }
       benchClock.Stop();
-      Log.Debug("miniguide: FillChannelList loop completed after {0} ticks ({1} ms) - exiting", benchClock.ElapsedTicks.ToString(), benchClock.ElapsedMilliseconds.ToString());
+      Log.Debug("miniguide: state check + filling completed after {0}ms", benchClock.ElapsedMilliseconds.ToString());
       lstChannels.SelectedListItemIndex = SelectedID;
       lstChannels.Visible = true;
     }
