@@ -195,10 +195,10 @@ namespace MediaPortal.GUI.Music
         }
 
         if (_imagePlayLogo != null)
-          _imagePlayLogo.Visible = ((g_Player.Paused == false) && (g_Player.Speed == 0));
+          _imagePlayLogo.Visible = ((g_Player.Paused == false) && (g_Player.Playing));
 
         if (_imagePauseLogo != null)
-          _imagePauseLogo.Visible = ((g_Player.Paused == true) && (g_Player.Speed == 0));
+          _imagePauseLogo.Visible = (g_Player.Paused == true);
 
         if (_imageFastForward != null)
           _imageFastForward.Visible = (g_Player.Speed > 1);
@@ -206,7 +206,7 @@ namespace MediaPortal.GUI.Music
         if (_imageRewind != null)
           _imageRewind.Visible = (g_Player.Speed < 0);
 
-        if (_videoRectangle != null)
+         if (_videoRectangle != null)
           _videoRectangle.Visible = GUIGraphicsContext.ShowBackground;
 
         if (_videoWindow != null && _visualisationEnabled)
