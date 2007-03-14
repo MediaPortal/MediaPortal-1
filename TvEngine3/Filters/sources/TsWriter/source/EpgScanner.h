@@ -54,11 +54,11 @@ DECLARE_INTERFACE_(ITsEpgScanner, IUnknown)
 	//mhw
 	STDMETHOD(GrabMHW)()PURE;
 	STDMETHOD(IsMHWReady) (THIS_ BOOL* yesNo)PURE;
-	STDMETHOD(GetMHWTitleCount)(THIS_ WORD* count)PURE;
-	STDMETHOD(GetMHWTitle)(THIS_ WORD program, UINT* id, WORD* transportId, WORD* networkId, WORD* channelId, UINT* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)PURE;
-	STDMETHOD(GetMHWChannel)(THIS_ WORD channelNr, WORD* channelId, WORD* networkId, WORD* transportId, char** channelName)PURE;
-	STDMETHOD(GetMHWSummary)(THIS_ UINT programId, char** summary)PURE;
-	STDMETHOD(GetMHWTheme)(THIS_ WORD themeId, char** theme)PURE;
+	STDMETHOD(GetMHWTitleCount)(THIS_ UINT* count)PURE;
+	STDMETHOD(GetMHWTitle)(THIS_ UINT program, UINT* id, UINT* transportId, UINT* networkId, UINT* channelId, ULONG* programId, UINT* themeId, UINT* PPV, BYTE* Summaries, UINT* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)PURE;
+	STDMETHOD(GetMHWChannel)(THIS_ UINT channelNr, UINT* channelId, UINT* networkId, UINT* transportId, char** channelName)PURE;
+	STDMETHOD(GetMHWSummary)(THIS_ ULONG programId, char** summary)PURE;
+	STDMETHOD(GetMHWTheme)(THIS_ UINT themeId, char** theme)PURE;
 	STDMETHOD(Reset)(THIS_)PURE;
   
 	STDMETHOD(SetCallBack)(THIS_ IEpgCallback* callback)PURE;
@@ -83,11 +83,11 @@ public:
 	STDMETHODIMP GrabMHW();
 	STDMETHODIMP IsMHWReady(BOOL* yesNo);
 
-	STDMETHODIMP GetMHWTitleCount(WORD* count);
-	STDMETHODIMP GetMHWTitle(WORD program, UINT* id, WORD* transportId, WORD* networkId, WORD* channelId, UINT* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName);
-	STDMETHODIMP GetMHWChannel(WORD channelNr, WORD* channelId, WORD* networkId, WORD* transportId, char** channelName);
-	STDMETHODIMP GetMHWSummary(UINT programId, char** summary);
-	STDMETHODIMP GetMHWTheme(WORD themeId, char** theme);
+	STDMETHODIMP GetMHWTitleCount(UINT* count);
+	STDMETHODIMP GetMHWTitle(UINT program, UINT* id, UINT* transportId, UINT* networkId, UINT* channelId, ULONG* programId, UINT* themeId, UINT* PPV, BYTE* Summaries, UINT* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName);
+	STDMETHODIMP GetMHWChannel(UINT channelNr, UINT* channelId, UINT* networkId, UINT* transportId, char** channelName);
+	STDMETHODIMP GetMHWSummary(ULONG programId, char** summary);
+	STDMETHODIMP GetMHWTheme(UINT themeId, char** theme);
 	STDMETHODIMP Reset();
 	STDMETHODIMP SetCallBack(IEpgCallback* callback);
 

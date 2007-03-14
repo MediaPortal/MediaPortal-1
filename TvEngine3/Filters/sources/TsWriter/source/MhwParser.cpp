@@ -200,28 +200,28 @@ bool	CMhwParser::IsEPGReady()
 }
 
 
-void CMhwParser::GetTitleCount(WORD* count)
+void CMhwParser::GetTitleCount(UINT* count)
 {
 	CEnterCriticalSection enter(m_section);
 	*count=m_mhwDecoder.GetTitleCount();
 	LogDebug("CMhwParser:GetTitleCount:%d", (*count));
 }
-void CMhwParser::GetTitle(WORD program, UINT* id, WORD* transportId, WORD* networkId, WORD* channelId, UINT* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
+void CMhwParser::GetTitle(UINT program, UINT* id, UINT* transportId, UINT* networkId, UINT* channelId, ULONG* programId, UINT* themeId, UINT* PPV, BYTE* Summaries, UINT* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
 {
 	CEnterCriticalSection enter(m_section);
 	m_mhwDecoder.GetTitle(program, id, transportId, networkId, channelId, programId, themeId, PPV, Summaries, duration, dateStart, timeStart,title,programName);
 }
-void CMhwParser::GetChannel(WORD channelNr, WORD* channelId, WORD* networkId, WORD* transportId, char** channelName)
+void CMhwParser::GetChannel(UINT channelNr, UINT* channelId, UINT* networkId, UINT* transportId, char** channelName)
 {
 	CEnterCriticalSection enter(m_section);
 	m_mhwDecoder.GetChannel(channelNr, channelId,  networkId, transportId, channelName);
 }
-void CMhwParser::GetSummary(UINT programId, char** summary)
+void CMhwParser::GetSummary(ULONG programId, char** summary)
 {
 	CEnterCriticalSection enter(m_section);
 	m_mhwDecoder.GetSummary(programId, summary);
 }
-void CMhwParser::GetTheme(WORD themeId, char** theme)
+void CMhwParser::GetTheme(UINT themeId, char** theme)
 {
 	CEnterCriticalSection enter(m_section);
 	m_mhwDecoder.GetTheme(themeId, theme);

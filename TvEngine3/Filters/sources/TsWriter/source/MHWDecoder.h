@@ -11,35 +11,35 @@ class CMhwDecoder
 
 	struct MHWChannel
 	{
-		int		NetworkID;
-		int		TransponderID;
-		int		ChannelID;
+		long		NetworkID;
+		long		TransponderID;
+		long		ChannelID;
 		string	ChannelName;
 	};
 	
 	struct MHWSummary
 	{
-		ULONG		ProgramID;// its the programm-id of epg, not an channel id
+		UINT64		ProgramID;// its the programm-id of epg, not an channel id
 		string	Description;
 	};
 	struct MHWTheme
 	{
-		int ThemeIndex;
+		long ThemeIndex;
 		string ThemeText;
 	};
 	struct MHWProgramm 
 	{
-		ULONG		ID;
-		int		ChannelID;
-		int		ThemeID;
+		UINT64		ID;
+		long		ChannelID;
+		long		ThemeID;
 		ULONG		PPV;
 		ULONG   dateStart;
 		ULONG   timeStart;
 		bool	Summaries;
 		int		Duration;
 		string	Title;
-		int		TransportStreamID;
-		int		NetworkID;
+		//long		TransportStreamID;
+		//long		NetworkID;
 	};
 public:
 	CMhwDecoder(void);
@@ -51,24 +51,24 @@ public:
 	bool ParseThemes(byte* data, int dataLen);
 
 	int GetTitleCount();
-	void GetTitle(int program, UINT* id, WORD* transportId, WORD* networkId, WORD* channelId, UINT* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName);
-	void GetChannel(WORD channelNr, WORD* channelId,  WORD* networkId, WORD* transportId, char** channelName);
-	void GetSummary(UINT programId, char** summary);
-	void GetTheme(WORD themeId, char** theme);
+	void GetTitle(int program, UINT* id, UINT* transportId, UINT* networkId, UINT* channelId, ULONG* programId, UINT* themeId, UINT* PPV, BYTE* Summaries, UINT* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName);
+	void GetChannel(UINT channelNr, UINT* channelId,  UINT* networkId, UINT* transportId, char** channelName);
+	void GetSummary(ULONG programId, char** summary);
+	void GetTheme(UINT themeId, char** theme);
 
 private:
 	CCriticalSection m_critSection;
 	vector<MHWChannel> m_vecChannels;
 	typedef vector<MHWChannel>::iterator imapChannels;
 
-	map<ULONG,MHWSummary> m_mapSummaries;
-	typedef map<ULONG,MHWSummary> ::iterator imapSummaries;
+	map<UINT64,MHWSummary> m_mapSummaries;
+	typedef map<UINT64,MHWSummary> ::iterator imapSummaries;
 
 	vector<MHWProgramm> m_vecTitles;
 	typedef vector<MHWProgramm> ::iterator ivecTitles;
 
-	map<ULONG,int> m_mapTitles;
-	typedef map<ULONG,int> ::iterator imapTitles;
+	map<UINT64,int> m_mapTitles;
+	typedef map<UINT64,int> ::iterator imapTitles;
 
 	vector<MHWTheme> m_vecThemes;
 	typedef vector<MHWTheme> ::iterator ivecThemes;

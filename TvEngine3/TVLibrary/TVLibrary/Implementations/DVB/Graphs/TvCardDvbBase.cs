@@ -2060,7 +2060,7 @@ namespace TvLibrary.Implementations.DVB
           _interfaceEpgGrabber.IsMHWReady(out mhwReady);
           if (dvbReady == false || mhwReady == false) return null;
 
-          short titleCount;
+          uint titleCount;
           uint channelCount = 0;
           _interfaceEpgGrabber.GetMHWTitleCount(out titleCount);
           if (titleCount > 0)
@@ -2080,13 +2080,15 @@ namespace TvLibrary.Implementations.DVB
             _interfaceEpgGrabber.GetMHWTitleCount(out titleCount);
             for (int i = 0; i < titleCount; ++i)
             {
-              uint id = 0, programid = 0;
-              ushort  transportid = 0, networkid = 0, channelnr = 0, channelid = 0,  themeid = 0, PPV = 0, duration = 0;
+              uint id = 0;
+              UInt32 programid = 0;
+              uint  transportid = 0, networkid = 0, channelnr = 0, channelid = 0,  themeid = 0, PPV = 0, duration = 0;
               byte summaries = 0;
               uint datestart = 0, timestart = 0;
+              uint tmp1=0, tmp2=0;
               IntPtr ptrTitle, ptrProgramName;
               IntPtr ptrChannelName, ptrSummary, ptrTheme;
-              _interfaceEpgGrabber.GetMHWTitle((ushort)i, ref id, ref transportid, ref networkid, ref channelnr, ref programid, ref themeid, ref PPV, ref summaries, ref duration, ref datestart, ref timestart, out ptrTitle, out ptrProgramName);
+              _interfaceEpgGrabber.GetMHWTitle((ushort)i, ref id, ref tmp1, ref tmp2, ref channelnr, ref programid, ref themeid, ref PPV, ref summaries, ref duration, ref datestart, ref timestart, out ptrTitle, out ptrProgramName);
               _interfaceEpgGrabber.GetMHWChannel(channelnr, ref channelid, ref networkid, ref transportid, out ptrChannelName);
               _interfaceEpgGrabber.GetMHWSummary(programid, out ptrSummary);
               _interfaceEpgGrabber.GetMHWTheme(themeid, out ptrTheme);
@@ -2107,6 +2109,11 @@ namespace TvLibrary.Implementations.DVB
               programName = programName.Trim();
               summary = summary.Trim();
               theme = theme.Trim();
+              if (channelName.Length == 0)
+              {
+                int x = 1;
+              }
+
 
               EpgChannel epgChannel = null;
               foreach (EpgChannel chan in epgChannels)
@@ -2121,9 +2128,9 @@ namespace TvLibrary.Implementations.DVB
               if (epgChannel == null)
               {
                 DVBBaseChannel dvbChan = new DVBBaseChannel();
-                dvbChan.NetworkId = networkid;
-                dvbChan.TransportId = transportid;
-                dvbChan.ServiceId = channelid;
+                dvbChan.NetworkId = (int)networkid;
+                dvbChan.TransportId = (int)transportid;
+                dvbChan.ServiceId = (int)channelid;
                 dvbChan.Name = channelName;
                 epgChannel = new EpgChannel();
                 epgChannel.Channel = dvbChan;

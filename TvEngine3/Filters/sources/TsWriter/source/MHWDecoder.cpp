@@ -73,57 +73,55 @@ bool CMhwDecoder::ParseSummaries(byte* data, int maxLen)
 {
 	if (data==NULL) return false;
 
-	if (maxLen < 12 /*|| data[7] != 0xFF || data[8] != 0xFF || data[9] !=0xFF || data[10] >= 10*/) 
+	if (maxLen < 12)
 		return false;	/* Invalid Data */
 
+	if (data[0] !=0x90)
+		return false;
 				
-//	LogDebug("ParseSummaries1");
 	CEnterCriticalSection lock (m_critSection);
 	int dataLen=((data[1]-0x70)<<8)+data[2];
+	if (dataLen<12)
+		return false;
 	int n=0;
 	
-//	LogDebug("ParseSummaries2:%d",dataLen);
+	if (data[n+3]==0xff && data[n+4]==0xff && data[n+5]==0xff && data[n+6]==0xff)
+		return false;
 	MHWSummary sum;
-	sum.ProgramID=(data[n+3]<<24)+(data[n+4]<<16)+(data[n+5]<<8)+data[n+6];
+	UINT64 tmp; 
+	tmp=data[n+3]; tmp<<=24; sum.ProgramID=tmp;
+	tmp=data[n+4]; tmp<<=16; sum.ProgramID+=tmp;
+	tmp=data[n+5]; tmp<<=8; sum.ProgramID+=tmp;
+	tmp=data[n+6]; tmp; sum.ProgramID+=tmp;
+	
 	sum.Description="";
 	n+=11+(data[n+10]*7);
+	if (n >=maxLen)
+		return false;
+	if (n > dataLen)
+		return false;
 
-//	LogDebug("ParseSummaries3:%d",n);
-	if (n< 0 || n >= 4096 ) 
-	{
-//			LogDebug("ParseSummaries end1");
-		return false;
-	}
 	int nlen=(maxLen-n);
-	if (nlen< 0 || nlen >= 4096 ) 
-	{
-//			LogDebug("ParseSummaries end2");
+	if (nlen<=0)
 		return false;
-	}
-//	LogDebug("ParseSummaries4:%d",nlen);
+
 	char* buffer=new char[nlen+10];
 	strncpy(buffer,(const char*)&data[n],nlen);
 	buffer[nlen]=0;
 	sum.Description=buffer;
-//	LogDebug("ParseSummaries5:%d",nlen);
 	delete[] buffer;
 
-	
-//	LogDebug("ParseSummaries6");
-	if(sum.ProgramID!=-1)
+	imapSummaries it=m_mapSummaries.find(sum.ProgramID);
+	if (it==m_mapSummaries.end())
 	{
-		imapSummaries it=m_mapSummaries.find(sum.ProgramID);
+		m_mapSummaries[sum.ProgramID]=sum;
+		it=m_mapSummaries.find(sum.ProgramID);
 		if (it==m_mapSummaries.end())
 		{
-			
-			//LogDebug("ParseSummaries7");
-			//LogDebug("mhw-epg: added progid:%x ",sum.ProgramID);
-			m_mapSummaries[sum.ProgramID]=sum;
-//			LogDebug("ParseSummaries8");
-			return true;
+			int x=1;
 		}
-	}//if(m_summaryBuffer.Contains(sum)==false)
-//			LogDebug("ParseSummaries9");
+		return true;
+	}
 	return false;
 }
 
@@ -133,16 +131,31 @@ bool CMhwDecoder::ParseTitles(byte* data, int dataLen)
 		return false;
 	if (dataLen<42) 
 		return false;
-	
+	if (data[0]!=0x90) 
+		return false;	
 	CEnterCriticalSection lock (m_critSection);
-//	if(data[3]==0xff) 
-//		return;
+	int sectionLen=( ( (data[1]-0x70) <<8)+data[2]);
+	if (sectionLen < 42) 
+		return false;
 
-	ULONG progId=(data[38]<<24)+(data[39]<<16)+(data[40]<<8)+data[41];
+	if (data[38]==0xff && data[39]==0xff && data[40]==0xff && data[41]==0xff)
+		return false;
+	if (data[3]==0xff)
+		return false;
+	if (data[4]==0xff)
+		return false;
+	UINT64 progId;
+	UINT64 tmp;
+	tmp=data[38];tmp<<=24;progId=tmp;
+	tmp=data[39];tmp<<=16;progId+=tmp;
+	tmp=data[40];tmp<<=8;progId+=tmp;
+	tmp=data[41];tmp;progId+=tmp;
+	//ULONG progId=(data[38]<<24)+(data[39]<<16)+(data[40]<<8)+data[41];
 	
 	imapTitles it = m_mapTitles.find(progId);
 	if (it!=m_mapTitles.end()) return false;
 	m_mapTitles[progId]=1;
+
 
 	char buffer[30];
 	MHWProgramm prg;
@@ -175,22 +188,7 @@ bool CMhwDecoder::ParseTitles(byte* data, int dataLen)
 	prg.timeStart=(h1<<16)+(m);
 	prg.dateStart=(d1);
 
-	//prg.Time=new DateTime(System.DateTime.Now.Ticks);
-	//DateTime dayStart=new DateTime(System.DateTime.Now.Ticks);
-	//dayStart=dayStart.Subtract(new TimeSpan(1,dayStart.Hour,dayStart.Minute,dayStart.Second,dayStart.Millisecond));
-	//int day=(int)dayStart.DayOfWeek;
-	
-	//prg.Time=dayStart;
-	//int minVal=(d1-day)*86400+h1*3600+m*60;
-	//if(minVal<21600)
-	//	minVal+=604800;
 
-	//prg.Time=prg.Time.AddSeconds(minVal);
-
-	//LogDebug("mhw-epg: added title %s id:%x chan:%d theme:%i sum:%d date:%x time:%02.2d:%02.2d:00 duration:%02.2d:%02.2d",
-//		prg.Title.c_str(),prg.ID,prg.ChannelID,prg.ThemeID,prg.Summaries,prg.dateStart,
-//		h1,m,
-//		(prg.Duration/60),(prg.Duration%60));
 	m_vecTitles.push_back(prg);
 	//LogDebug("mhw-epg: titles:%d", m_vecTitles.size());
 	//LogDebug("mhw-epg: added title progid %x ppv:%x themeid:%x chanid:%x",progId,prg.PPV,prg.ThemeID,prg.ChannelID);
@@ -240,7 +238,7 @@ int CMhwDecoder::GetTitleCount()
 	return (int)m_vecTitles.size();
 }
 
-void CMhwDecoder::GetTitle(int program, UINT* id, WORD* transportId, WORD* networkId, WORD* channelId, UINT* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
+void CMhwDecoder::GetTitle(int program, UINT* id, UINT* transportId, UINT* networkId, UINT* channelId, ULONG* programId, UINT* themeId, UINT* PPV, BYTE* Summaries, UINT* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
 {
 	CEnterCriticalSection lock (m_critSection);
 	*id = 0;
@@ -264,26 +262,40 @@ void CMhwDecoder::GetTitle(int program, UINT* id, WORD* transportId, WORD* netwo
 	}
 	MHWProgramm& prog=m_vecTitles[program];
 	*id = (UINT)prog.ID;
-	*transportId=prog.TransportStreamID;
-	*networkId=prog.NetworkID;
+//	*transportId=prog.TransportStreamID;
+//	*networkId=prog.NetworkID;
 	*channelId=prog.ChannelID;
-	*programId=(UINT)prog.ID;
+	*programId=(ULONG)prog.ID;
 	*themeId=prog.ThemeID;
-	*PPV=(WORD)prog.PPV;
+	*PPV=(UINT)prog.PPV;
 	*Summaries=prog.Summaries;
 	*duration=prog.Duration;
 	*dateStart=prog.dateStart;
 	*timeStart=prog.timeStart;
 	*title=(char*)prog.Title.c_str();
+	char tmp[128];
+	sprintf(tmp,"got:prog.id:%lu\n",prog.ID);OutputDebugString(tmp);
 	//LogDebug("mhw-epg: GetTitle(%d) size:%d chan:%d progid:%x '%s'", 
 	//	program,m_vecTitles.size(),
 	//	*channelId, *programId, *title);
+	imapSummaries it=m_mapSummaries.find(prog.ID);
+	if (it==m_mapSummaries.end())
+	{
+		int x=1;
+	}
+	if (prog.ChannelID>=m_vecChannels.size()) 
+	{
+		int x=1;
+	}
 }
 
-void CMhwDecoder::GetChannel(WORD channelNr, WORD* channelId, WORD* networkId, WORD* transportId, char** channelName)
+void CMhwDecoder::GetChannel(UINT channelNr, UINT* channelId, UINT* networkId, UINT* transportId, char** channelName)
 {
 	CEnterCriticalSection lock (m_critSection);
 	*channelName="";
+	*networkId=0;
+	*transportId=0;
+	*channelId=0;
 	
 	if (channelNr>=m_vecChannels.size()) 
 	{
@@ -302,20 +314,26 @@ void CMhwDecoder::GetChannel(WORD channelNr, WORD* channelId, WORD* networkId, W
 	return;
 }
 
-void CMhwDecoder::GetSummary(UINT programId, char** summary)
+void CMhwDecoder::GetSummary(ULONG programId, char** summary)
 {
+	char tmp[128];
+	sprintf(tmp,"get:prog.id:%lu\n",programId);OutputDebugString(tmp);
 	CEnterCriticalSection lock (m_critSection);
 	*summary="";
-	imapSummaries it=m_mapSummaries.find((ULONG)programId);
+	imapSummaries it=m_mapSummaries.find(programId);
 	if (it!=m_mapSummaries.end())
 	{
 		*summary=(char*)it->second.Description.c_str();		
 		//LogDebug("mhw-epg: GetSummary(%x) size:%d found ", programId,m_mapSummaries.size());
 	}
+	else  
+	{
+		int x=1;
+	}
 	//else
 		//LogDebug("mhw-epg: GetSummary(%x) size:%d not found", programId,m_mapSummaries.size());
 }
-void CMhwDecoder::GetTheme(WORD themeId, char** theme)
+void CMhwDecoder::GetTheme(UINT themeId, char** theme)
 {
 	CEnterCriticalSection lock (m_critSection);
 	*theme="";
@@ -329,5 +347,6 @@ void CMhwDecoder::GetTheme(WORD themeId, char** theme)
 		}
 		++it;
 	}
+	int x=1;
 	//LogDebug("mhw-epg: GetTheme(%x) size:%d not found", themeId,m_vecThemes.size());
 }

@@ -39,11 +39,11 @@ public:
 	void  GrabEPG();
 	bool  isGrabbing();
 	bool  IsEPGReady();
-	void GetTitleCount(WORD* count);
-	void GetTitle(WORD program, UINT* id, WORD* transportId, WORD* networkId, WORD* channelId, UINT* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName);
-	void GetChannel(WORD channelNr, WORD* channelId, WORD* networkId, WORD* transportId, char** channelName);
-	void GetSummary(UINT programId, char** summary);
-	void GetTheme(WORD themeId, char** theme);
+	void GetTitleCount(UINT* count);
+	void GetTitle(UINT program, UINT* id, UINT* transportId, UINT* networkId, UINT* channelId, ULONG* programId, UINT* themeId, UINT* PPV, BYTE* Summaries, UINT* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName);
+	void GetChannel(UINT channelNr, UINT* channelId, UINT* networkId, UINT* transportId, char** channelName);
+	void GetSummary(ULONG programId, char** summary);
+	void GetTheme(UINT themeId, char** theme);
 
 	void	OnTsPacket(CTsHeader& header,byte* tsPacket);
 	void  OnNewSection(int pid, int tableId, CSection& section);
