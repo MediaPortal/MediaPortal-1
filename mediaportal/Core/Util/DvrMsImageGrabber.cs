@@ -57,9 +57,17 @@ namespace MediaPortal.Util
       {
         if (!System.IO.File.Exists(fileName))
         {
+        
           Log.Warn("DvrMsImageGrabber: failed to create thumbnail for {0} because the file was not found! (bogus DB entry?)", fileName);
           return false;
         }
+
+        System.IO.FileInfo file = new System.IO.FileInfo(fileName);
+       if(file.Length < 1000000)
+       {
+         Log.Info("DVRMSImageGrabber, file is too small to grab - {0} bytes. Skipping", file.Length);
+         return false;
+       }
 
         Utils.FileDelete("temp.bmp");
         Log.Info("DvrMsImageGrabber: create thumbnails for recorded tv - {0}", fileName);
