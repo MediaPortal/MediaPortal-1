@@ -266,6 +266,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpThreadPriority
       // 
+      this.mpThreadPriority.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
       this.mpThreadPriority.BorderColor = System.Drawing.Color.Empty;
       this.mpThreadPriority.FormattingEnabled = true;
       this.mpThreadPriority.Items.AddRange(new object[] {
@@ -291,9 +293,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbDebug
       // 
-      this.cbDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbDebug.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
       this.cbDebug.BorderColor = System.Drawing.Color.Empty;
       this.cbDebug.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbDebug.FormattingEnabled = true;
