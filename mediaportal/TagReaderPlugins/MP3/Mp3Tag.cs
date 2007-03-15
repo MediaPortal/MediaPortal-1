@@ -117,10 +117,10 @@ namespace Tag.MP3
         string v2Album = GetFrameValueString(FrameNames.TALB, FrameNamesV2.TAL);
 
         if (v2Album.Length != 0)
-          return v2Album;
+          return CleanTag(v2Album);
 
         if (HasId3Tag)
-          return CleanTag(Id3Tag.ID3v1Tag.Album);
+          return CleanTag(new string(Id3Tag.ID3v1Tag.Album));
 
         return string.Empty;
       }
@@ -143,10 +143,10 @@ namespace Tag.MP3
         string v2Artist = GetFrameValueString(FrameNames.TPE1, FrameNamesV2.TP1);
 
         if (v2Artist.Length != 0)
-          return v2Artist;
+          return CleanTag(v2Artist);
 
         if (HasId3Tag)
-          return CleanTag(Id3Tag.ID3v1Tag.Artist);
+          return CleanTag(new string(Id3Tag.ID3v1Tag.Artist));
 
         else
           return string.Empty;
@@ -273,10 +273,10 @@ namespace Tag.MP3
         string comment = GetFrameValueString(FrameNames.COMM, FrameNamesV2.COM);
 
         if (comment.Length != 0)
-          return comment;
+          return CleanTag(comment);
 
         if (HasId3Tag)
-          return CleanTag(Id3Tag.ID3v1Tag.Comment);
+          return CleanTag(new string(Id3Tag.ID3v1Tag.Comment));
 
         else
           return string.Empty;
@@ -726,10 +726,10 @@ namespace Tag.MP3
         string v2Title = this.GetFrameValueString(FrameNames.TIT2, FrameNamesV2.TT2);
 
         if (v2Title.Length != 0)
-          return v2Title;
+          return CleanTag(v2Title);
 
         if (HasId3Tag)
-          return CleanTag(Id3Tag.ID3v1Tag.Title);
+          return CleanTag(new string(Id3Tag.ID3v1Tag.Title));
 
         else
           return string.Empty;
@@ -899,7 +899,7 @@ namespace Tag.MP3
             return 0;
 
           // Check if we have a year value in ID3V1
-          sYear = CleanTag(Id3Tag.ID3v1Tag.Year);
+          sYear = CleanTag(new string(Id3Tag.ID3v1Tag.Year));
           return Utils.GetYear(sYear);
         }
 
@@ -1179,11 +1179,11 @@ namespace Tag.MP3
     }
 
     /// <summary>
-    /// Don't return "\0" for ID3v1 Tags
+    /// Remove "\0" from Tags
     /// </summary>
     /// <param name="tag"></param>
     /// <returns></returns>
-    private string CleanTag(char[] tag)
+    private string CleanTag(string tag)
     {
       StringBuilder sb = new StringBuilder();
       for (int i = 0; i < tag.Length; i++)
