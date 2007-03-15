@@ -60,7 +60,7 @@ copy ..\..\..\MediaPortal.Base\msvcr71.dll .
 rem copy ..\..\..\MediaPortal.Base\AxInterop.MOZILLACONTROLLib.dll .
 rem copy ..\..\..\MediaPortal.Base\Interop.MOZILLACONTROLLib.dll .
 copy ..\..\..\MediaPortal.Base\Microsoft.ApplicationBlocks*.dll .
-copy ..\..\..\MediaPortal.Base\d3dx9_26.dll .
+copy ..\..\..\MediaPortal.Base\d3dx9_32.dll .
 copy ..\..\..\MediaPortal.Base\Microsoft.DirectX.Direct3D.dll .
 copy ..\..\..\MediaPortal.Base\Microsoft.DirectX.Direct3DX.dll .
 copy ..\..\..\MediaPortal.Base\Microsoft.DirectX.DirectDraw.dll .
