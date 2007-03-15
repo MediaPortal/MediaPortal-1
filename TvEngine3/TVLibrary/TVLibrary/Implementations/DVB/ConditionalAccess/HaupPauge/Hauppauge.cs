@@ -137,69 +137,9 @@ namespace TvLibrary.Implementations.DVB
     public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
     {
       if (_isHauppauge == false) return;
-      int position = 0;
-      int option = 0;
-      bool hiBand = false;
+      bool hiBand = BandTypeConverter.IsHiBand(channel,parameters);
+      int antennaNr = BandTypeConverter.GetAntennaNr(channel);
 
-      if (parameters.UseDefaultLnbFrequencies)
-      {
-        switch (channel.BandType)
-        {
-          case BandType.Universal:
-            if (channel.Frequency >= 11700000)
-            {
-              hiBand = true;
-            }
-            else
-            {
-              hiBand = false;
-            }
-            break;
-        }
-      }
-      else
-      {
-        if (parameters.LnbSwitchFrequency != 0)
-        {
-          if (channel.Frequency >= parameters.LnbSwitchFrequency * 1000)
-            hiBand = true;
-          else
-            hiBand = false;
-        }
-        else
-        {
-          hiBand = false;
-        }
-      }
-
-      switch (channel.DisEqc)
-      {
-        case DisEqcType.None:
-        case DisEqcType.SimpleA://simple A
-          position = 0;
-          option = 0;
-          break;
-        case DisEqcType.SimpleB://simple B
-          position = 0;
-          option = 0;
-          break;
-        case DisEqcType.Level1AA://Level 1 A/A
-          position = 0;
-          option = 0;
-          break;
-        case DisEqcType.Level1AB://Level 1 A/B
-          position = 1;
-          option = 0;
-          break;
-        case DisEqcType.Level1BA://Level 1 B/A
-          position = 0;
-          option = 1;
-          break;
-        case DisEqcType.Level1BB://Level 1 B/B
-          position = 1;
-          option = 1;
-          break;
-      }
       //bit 0	(1)	: 0=low band, 1 = hi band
       //bit 1 (2) : 0=vertical, 1 = horizontal
       //bit 3 (4) : 0=satellite position A, 1=satellite position B
@@ -209,30 +149,16 @@ namespace TvLibrary.Implementations.DVB
       // 2        A         B
       // 3        B         A
       // 4        B         B
-      bool vertical = (channel.Polarisation == Polarisation.LinearV);
-      uint diseqc = 0xE01038F0;
-      if (hiBand)                 // high band
-        diseqc |= 0x00000001;
-      else                        // low band
-        diseqc &= 0xFFFFFFFE;
 
-      if (vertical)             // vertikal
-        diseqc &= 0xFFFFFFFD;
-      else                        // horizontal
-        diseqc |= 0x00000002;
-
-      if (position != 0)             // Sat B
-        diseqc |= 0x00000004;
-      else                        // Sat A
-        diseqc &= 0xFFFFFFFB;
-
-      if (option != 0)               // option B
-        diseqc |= 0x00000008;
-      else                        // option A
-        diseqc &= 0xFFFFFFF7;
-
+      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) || (channel.Polarisation == Polarisation.CircularL));
+      byte cmd = 0xf0;
+      cmd |= (byte)(hiBand ? 1 : 0);
+      cmd |= (byte)((isHorizontal) ? 2 : 0);
+      cmd |= (byte)((antennaNr - 1) << 2);
 
       int len = 188;//sizeof(DISEQC_MESSAGE_PARAMS);
+      ulong diseqc = 0xE0103800;
+      diseqc += cmd;
 
       Marshal.WriteByte(_ptrDiseqc, 0, (byte)((diseqc >> 24) & 0xff));
       Marshal.WriteByte(_ptrDiseqc, 1, (byte)((diseqc >> 16) & 0xff));

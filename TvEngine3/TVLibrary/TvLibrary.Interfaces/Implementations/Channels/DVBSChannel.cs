@@ -32,15 +32,115 @@ namespace TvLibrary.Channels
   public enum BandType
   {
     Universal = 0,
-    Linear = 1,
-    Circular = 2,
-    CBand = 3,
-    NaBandStackedDpKuHi = 4,
-    NaBandStackedDpKuLo = 5,
-    NaBandStackedKuHi = 6,
-    NaBandStackedKuLo = 7,
-    NaBandStackedC = 8,
-    NaLegacy = 9,
+    Circular = 1,
+    CBand = 2,
+    NaBandStackedDpKuHi = 3,
+    NaBandStackedDpKuLo = 4,
+    NaBandStackedKuHi = 5,
+    NaBandStackedKuLo = 6,
+    NaBandStackedC = 7,
+    NaLegacy = 8,
+  }
+  public class BandTypeConverter
+  {
+    static public int GetAntennaNr(DVBSChannel channel)
+    {
+      byte disEqcPort = 0;
+
+      switch (channel.DisEqc)
+      {
+        case DisEqcType.None:
+          disEqcPort = 0;//no diseqc
+          break;
+        case DisEqcType.SimpleA://simple A
+          disEqcPort = 1;
+          break;
+        case DisEqcType.SimpleB://simple B
+          disEqcPort = 2;
+          break;
+        case DisEqcType.Level1AA://Level 1 A/A
+          disEqcPort = 1;
+          break;
+        case DisEqcType.Level1AB://Level 1 A/B
+          disEqcPort = 2;
+          break;
+        case DisEqcType.Level1BA://Level 1 B/A
+          disEqcPort = 3;
+          break;
+        case DisEqcType.Level1BB://Level 1 B/B
+          disEqcPort = 4;
+          break;
+      }
+      return disEqcPort;
+    }
+    static public bool IsHiBand(DVBSChannel channel, ScanParameters parameters)
+    {
+      int lof1, lof2, sw;
+      BandTypeConverter.GetDefaultLnbSetup(parameters,channel.BandType, out  lof1, out  lof2, out  sw);
+
+      if (sw == 0) return false;
+      if (channel.Frequency >= (sw * 1000)) return true;
+      return false;
+    }
+    static public void GetDefaultLnbSetup(ScanParameters parameters, BandType band, out int lof1, out int lof2, out int sw)
+    {
+      lof1 = lof2 = sw = 0;
+      if (parameters.UseDefaultLnbFrequencies == false)
+      {
+        lof1 = parameters.LnbLowFrequency;
+        lof2 = parameters.LnbHighFrequency;
+        sw = parameters.LnbSwitchFrequency;
+        return;
+      }
+      switch (band)
+      {
+        case BandType.Universal:
+          lof1 = 9750;
+          lof2 = 10600;
+          sw = 11700;
+          break;
+        case BandType.Circular:
+          lof1 = 10750;
+          lof2 = 0;
+          sw = 0;
+          break;
+        case BandType.CBand:
+          lof1 = 5150;
+          lof2 = 0;
+          sw = 0;
+          break;
+        case BandType.NaBandStackedDpKuHi:
+          lof1 = 11250;
+          lof2 = 14350;
+          sw = 0;
+          break;
+        case BandType.NaBandStackedDpKuLo:
+          lof1 = 10750;
+          lof2 = 13850;
+          sw = 0;
+          break;
+        case BandType.NaBandStackedKuHi:
+          lof1 = 11250;
+          lof2 = 10675;
+          sw = 0;
+          break;
+        case BandType.NaBandStackedKuLo:
+          lof1 = 10750;
+          lof2 = 10175;
+          sw = 0;
+          break;
+        case BandType.NaBandStackedC:
+          lof1 = 5150;
+          lof2 = 0;
+          sw = 0;
+          break;
+        case BandType.NaLegacy:
+          lof1 = 11250;
+          lof2 = 0;
+          sw = 0;
+          break;
+      }
+    }
   }
   /// <summary>
   /// enum describing the different DisEqc type

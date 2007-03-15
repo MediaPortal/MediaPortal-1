@@ -346,6 +346,7 @@ namespace SetupTv.Sections
     #region DVB-S scanning tab
     void Init()
     {
+      _enableEvents = false;
       mpTransponder1.Items.Clear();
       mpTransponder2.Items.Clear();
       mpTransponder3.Items.Clear();
@@ -434,13 +435,20 @@ namespace SetupTv.Sections
       mpLNB3_CheckedChanged(null, null); ;
       mpLNB4_CheckedChanged(null, null); ;
 
+      checkBox2.Checked = (layer.GetSetting("lnbDefault", "true").Value != "true");
+      textBoxLNBLo.Text = layer.GetSetting("LnbLowFrequency", "0").Value;
+      textBoxLNBHi.Text = layer.GetSetting("LnbHighFrequency", "0").Value;
+      textBoxLNBSwitch.Text = layer.GetSetting("LnbSwitchFrequency", "0").Value;
 
       checkBoxCreateGroups.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "creategroups", "false").Value == "true");
 
 
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      //      mpComboBoxCam.SelectedIndex = card.CamType;
+
+      _enableEvents = true;
+      mpLNB1_CheckedChanged(null, null); ;
     }
+
     public override void OnSectionDeActivated()
     {
       timer1.Enabled = false;
@@ -519,7 +527,7 @@ namespace SetupTv.Sections
       if (setting.Value != textBoxLNBLo.Text) restart = true;
       setting.Value = textBoxLNBLo.Text;
       setting.Persist();
-      
+
       setting = layer.GetSetting("LnbHighFrequency", "0");
       if (setting.Value != textBoxLNBHi.Text) restart = true;
       setting.Value = textBoxLNBHi.Text;
@@ -553,11 +561,6 @@ namespace SetupTv.Sections
       labelCurrentPosition.Text = "";
       tabControl1_SelectedIndexChanged(null, null);
 
-      TvBusinessLayer layer = new TvBusinessLayer();
-      checkBox2.Checked = (layer.GetSetting("lnbDefault", "true").Value != "true");
-      textBoxLNBLo.Text = layer.GetSetting("LnbLowFrequency", "0").Value;
-      textBoxLNBHi.Text = layer.GetSetting("LnbHighFrequency", "0").Value;
-      textBoxLNBSwitch.Text = layer.GetSetting("LnbSwitchFrequency", "0").Value;
     }
 
 
@@ -1269,6 +1272,35 @@ namespace SetupTv.Sections
       mpDisEqc4.Enabled = mpLNB4.Checked;
     }
 
+
+    private void mpBand1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (_enableEvents == false) return;
+      if (checkBox2.Checked) return;
+      int lof1 = 0, lof2 = 0, sw = 0;
+      ScanParameters p = new ScanParameters();
+      BandTypeConverter.GetDefaultLnbSetup(p,(BandType)mpBand1.SelectedIndex, out lof1, out lof2, out sw);
+
+      textBoxLNBLo.Text = lof1.ToString();
+      textBoxLNBHi.Text = lof2.ToString();
+      textBoxLNBSwitch.Text = sw.ToString();
+
+    }
+
+    private void mpBand2_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      mpBand1_SelectedIndexChanged(sender, e);
+    }
+
+    private void mpBand3_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      mpBand1_SelectedIndexChanged(sender, e);
+    }
+
+    private void mpBand4_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      mpBand1_SelectedIndexChanged(sender, e);
+    }
     #endregion
   }
 }

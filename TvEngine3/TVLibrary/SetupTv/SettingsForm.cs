@@ -403,7 +403,7 @@ namespace SetupTv
       this.headerLabel.Location = new System.Drawing.Point(216, 16);
       this.headerLabel.Name = "headerLabel";
       this.headerLabel.PaddingLeft = 2;
-      this.headerLabel.Size = new System.Drawing.Size(472, 24);
+      this.headerLabel.Size = new System.Drawing.Size(522, 24);
       this.headerLabel.TabIndex = 4;
       this.headerLabel.TabStop = false;
       this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
@@ -418,7 +418,7 @@ namespace SetupTv
       this.holderPanel.BackColor = System.Drawing.SystemColors.Control;
       this.holderPanel.Location = new System.Drawing.Point(216, 48);
       this.holderPanel.Name = "holderPanel";
-      this.holderPanel.Size = new System.Drawing.Size(472, 428);
+      this.holderPanel.Size = new System.Drawing.Size(522, 428);
       this.holderPanel.TabIndex = 5;
       // 
       // beveledLine1
@@ -461,7 +461,7 @@ namespace SetupTv
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.AutoScroll = true;
       this.CancelButton = this.cancelButton;
-      this.ClientSize = new System.Drawing.Size(704, 530);
+      this.ClientSize = new System.Drawing.Size(754, 530);
       this.Controls.Add(this.buttonViewLog);
       this.Controls.Add(this.applyButton);
       this.Controls.Add(this.beveledLine1);

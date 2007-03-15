@@ -204,7 +204,7 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return (int)_cardType; 
+        return (int)_cardType;
       }
       set
       {
@@ -278,37 +278,14 @@ namespace TvLibrary.Implementations.DVB
           frequency = (int)dvbsChannel.Frequency;
           symbolRate = dvbsChannel.SymbolRate;
           satelliteIndex = dvbsChannel.SatelliteIndex;
-          switch (dvbsChannel.BandType)
-          {
-            case BandType.Universal:
-              if (dvbsChannel.Frequency >= 11700000)
-              {
-                lnbFrequency = 10600000;
-                hiBand = true;
-              }
-              else
-              {
-                lnbFrequency = 9750000;
-                hiBand = false;
-              }
-              if (lnbFrequency >= frequency)
-              {
-                Log.Log.Error("ss2:  Error: LNB Frequency must be less than Transponder frequency");
-              }
-              break;
-            case BandType.Circular:
-              hiBand = false;
-              lnbFrequency = 11250000;
-              break;
-            case BandType.Linear:
-              hiBand = false;
-              lnbFrequency = 10750000;
-              break;
-            case BandType.CBand:
-              hiBand = false;
-              lnbFrequency = 5150000;
-              break;
-          }
+          hiBand = BandTypeConverter.IsHiBand(dvbsChannel, Parameters);
+          int lof1, lof2, sw;
+          BandTypeConverter.GetDefaultLnbSetup(Parameters, dvbsChannel.BandType, out lof1, out lof2, out sw);
+          if (sw == 0) sw = 18000;
+          if (BandTypeConverter.IsHiBand(dvbsChannel,Parameters))
+            lnbFrequency = lof2 * 1000;
+          else
+            lnbFrequency = lof1 * 1000;
 
           //0=horizontal or left, 1=vertical or right
           polarity = 0;

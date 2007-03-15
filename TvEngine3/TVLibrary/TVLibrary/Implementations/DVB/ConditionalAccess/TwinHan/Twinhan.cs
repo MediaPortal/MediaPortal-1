@@ -424,81 +424,25 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">The channel.</param>
     public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
     {
-      byte disEqcPort = 0;
+      byte disEqcPort = (byte)BandTypeConverter.GetAntennaNr(channel);
 
-      switch (channel.DisEqc)
-      {
-        case DisEqcType.None:
-          disEqcPort = 0;//no diseqc
-          break;
-        case DisEqcType.SimpleA://simple A
-          disEqcPort = 1;
-          break;
-        case DisEqcType.SimpleB://simple B
-          disEqcPort = 2;
-          break;
-        case DisEqcType.Level1AA://Level 1 A/A
-          disEqcPort = 1;
-          break;
-        case DisEqcType.Level1AB://Level 1 A/B
-          disEqcPort = 2;
-          break;
-        case DisEqcType.Level1BA://Level 1 B/A
-          disEqcPort = 3;
-          break;
-        case DisEqcType.Level1BB://Level 1 B/B
-          disEqcPort = 4;
-          break;
-      }
-      byte turnon22Khz = 1;
+      byte turnon22Khz = 0;
       Int32 LNBLOFLowBand = 9750;
       Int32 LNBLOFHighBand = 10600;
       Int32 LNBLOFHiLoSW = 11700;
-      if (parameters.UseDefaultLnbFrequencies)
+
+      BandTypeConverter.GetDefaultLnbSetup(parameters, channel.BandType, out LNBLOFLowBand, out LNBLOFHighBand, out LNBLOFHiLoSW);
+      if (LNBLOFHiLoSW == 0) LNBLOFHiLoSW = 18000; // dont use lo/hi switch...
+
+      if (BandTypeConverter.IsHiBand(channel, parameters))
       {
-        switch (channel.BandType)
-        {
-          case BandType.Universal:
-            if (channel.Frequency >= 11700000)
-            {
-              turnon22Khz = 2;
-            }
-            else
-            {
-              turnon22Khz = 1;
-            }
-            break;
-          case BandType.Circular:
-            LNBLOFLowBand = 11250;
-            LNBLOFHighBand = 11250;
-            LNBLOFHiLoSW = 0;
-            break;
-          case BandType.Linear:
-            LNBLOFLowBand = 10750;
-            LNBLOFHighBand = 10750;
-            LNBLOFHiLoSW = 0;
-            break;
-          case BandType.CBand:
-            LNBLOFLowBand = 5150;
-            LNBLOFHighBand = 5150;
-            LNBLOFHiLoSW = 0;
-            break;
-        }
+        turnon22Khz = 2;
       }
       else
       {
         turnon22Khz = 1;
-        LNBLOFLowBand = parameters.LnbLowFrequency;
-        LNBLOFHighBand = parameters.LnbHighFrequency;
-        LNBLOFHiLoSW = parameters.LnbSwitchFrequency;
-        if (parameters.LnbSwitchFrequency != 0)
-        {
-          if (channel.Frequency >= parameters.LnbSwitchFrequency * 1000)
-          {
-            turnon22Khz = 2;
-          }
-        }
       }
+
       SetLnbData(true, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW, turnon22Khz, disEqcPort);
       SendDiseqcCommandTest(parameters, channel);
     }
@@ -563,30 +507,7 @@ namespace TvLibrary.Implementations.DVB
 
     public void SendDiseqcCommandTest(ScanParameters parameters, DVBSChannel channel)
     {
-      int antennaNr = 1;
-      switch (channel.DisEqc)
-      {
-        case DisEqcType.None: // none
-          return;
-        case DisEqcType.SimpleA: // Simple A
-          antennaNr = 1;
-          break;
-        case DisEqcType.SimpleB: // Simple B
-          antennaNr = 2;
-          break;
-        case DisEqcType.Level1AA: // Level 1 A/A
-          antennaNr = 1;
-          break;
-        case DisEqcType.Level1AB: // Level 1 A/B
-          antennaNr = 2;
-          break;
-        case DisEqcType.Level1BA: // Level 1 B/A
-          antennaNr = 3;
-          break;
-        case DisEqcType.Level1BB: // Level 1 B/B
-          antennaNr = 4;
-          break;
-      }
+      int antennaNr = BandTypeConverter.GetAntennaNr(channel);
       //"01,02,03,04,05,06,07,08,09,0a,0b,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,"	
 
 
@@ -599,63 +520,12 @@ namespace TvLibrary.Implementations.DVB
       // 2        A         B
       // 3        B         A
       // 4        B         B
-      int lnbFrequency = 10600000;
-      bool hiBand = true;
-      if (parameters.UseDefaultLnbFrequencies)
-      {
-        switch (channel.BandType)
-        {
-          case BandType.Universal:
-            if (channel.Frequency >= 11700000)
-            {
-              lnbFrequency = 10600000;
-              hiBand = true;
-            }
-            else
-            {
-              lnbFrequency = 9750000;
-              hiBand = false;
-            }
-            break;
+      bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
 
-          case BandType.Circular:
-            hiBand = false;
-            break;
-
-          case BandType.Linear:
-            hiBand = false;
-            break;
-
-          case BandType.CBand:
-            hiBand = false;
-            break;
-        }
-      }
-      else
-      {
-        if (parameters.LnbSwitchFrequency != 0)
-        {
-          if (channel.Frequency >= parameters.LnbSwitchFrequency * 1000)
-          {
-            lnbFrequency = parameters.LnbHighFrequency * 1000;
-            hiBand = true;
-          }
-          else
-          {
-            lnbFrequency = parameters.LnbLowFrequency * 1000;
-            hiBand = false;
-          }
-        }
-        else
-        {
-          hiBand = false;
-          lnbFrequency = parameters.LnbLowFrequency * 1000;
-        }
-      }
-
+      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) || (channel.Polarisation == Polarisation.CircularL));
       byte cmd = 0xf0;
       cmd |= (byte)(hiBand ? 1 : 0);
-      cmd |= (byte)((channel.Polarisation == Polarisation.LinearH) ? 2 : 0);
+      cmd |= (byte)((isHorizontal) ? 2 : 0);
       cmd |= (byte)((antennaNr - 1) << 2);
 
       byte[] diseqc = new byte[4];

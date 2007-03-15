@@ -212,7 +212,7 @@ namespace SetupTv.Sections
       this.tabControl1.Location = new System.Drawing.Point(3, 3);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(462, 417);
+      this.tabControl1.Size = new System.Drawing.Size(493, 417);
       this.tabControl1.TabIndex = 69;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
@@ -221,7 +221,7 @@ namespace SetupTv.Sections
       this.tabPage3.Controls.Add(this.groupBox1);
       this.tabPage3.Location = new System.Drawing.Point(4, 22);
       this.tabPage3.Name = "tabPage3";
-      this.tabPage3.Size = new System.Drawing.Size(454, 391);
+      this.tabPage3.Size = new System.Drawing.Size(485, 391);
       this.tabPage3.TabIndex = 2;
       this.tabPage3.Text = "LNB Setup";
       this.tabPage3.UseVisualStyleBackColor = true;
@@ -259,7 +259,7 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.mpDisEqc1);
       this.groupBox1.Location = new System.Drawing.Point(3, 11);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(440, 367);
+      this.groupBox1.Size = new System.Drawing.Size(479, 367);
       this.groupBox1.TabIndex = 67;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "LNB Setup";
@@ -267,7 +267,7 @@ namespace SetupTv.Sections
       // label17
       // 
       this.label17.AutoSize = true;
-      this.label17.Location = new System.Drawing.Point(292, 259);
+      this.label17.Location = new System.Drawing.Point(323, 259);
       this.label17.Name = "label17";
       this.label17.Size = new System.Drawing.Size(32, 13);
       this.label17.TabIndex = 86;
@@ -276,7 +276,7 @@ namespace SetupTv.Sections
       // label16
       // 
       this.label16.AutoSize = true;
-      this.label16.Location = new System.Drawing.Point(292, 232);
+      this.label16.Location = new System.Drawing.Point(323, 232);
       this.label16.Name = "label16";
       this.label16.Size = new System.Drawing.Size(32, 13);
       this.label16.TabIndex = 85;
@@ -285,7 +285,7 @@ namespace SetupTv.Sections
       // label15
       // 
       this.label15.AutoSize = true;
-      this.label15.Location = new System.Drawing.Point(292, 206);
+      this.label15.Location = new System.Drawing.Point(323, 206);
       this.label15.Name = "label15";
       this.label15.Size = new System.Drawing.Size(32, 13);
       this.label15.TabIndex = 84;
@@ -293,21 +293,21 @@ namespace SetupTv.Sections
       // 
       // textBoxLNBSwitch
       // 
-      this.textBoxLNBSwitch.Location = new System.Drawing.Point(170, 256);
+      this.textBoxLNBSwitch.Location = new System.Drawing.Point(201, 256);
       this.textBoxLNBSwitch.Name = "textBoxLNBSwitch";
       this.textBoxLNBSwitch.Size = new System.Drawing.Size(116, 20);
       this.textBoxLNBSwitch.TabIndex = 83;
       // 
       // textBoxLNBHi
       // 
-      this.textBoxLNBHi.Location = new System.Drawing.Point(170, 229);
+      this.textBoxLNBHi.Location = new System.Drawing.Point(201, 229);
       this.textBoxLNBHi.Name = "textBoxLNBHi";
       this.textBoxLNBHi.Size = new System.Drawing.Size(116, 20);
       this.textBoxLNBHi.TabIndex = 82;
       // 
       // textBoxLNBLo
       // 
-      this.textBoxLNBLo.Location = new System.Drawing.Point(170, 203);
+      this.textBoxLNBLo.Location = new System.Drawing.Point(201, 203);
       this.textBoxLNBLo.Name = "textBoxLNBLo";
       this.textBoxLNBLo.Size = new System.Drawing.Size(116, 20);
       this.textBoxLNBLo.TabIndex = 81;
@@ -328,88 +328,112 @@ namespace SetupTv.Sections
       this.label14.AutoSize = true;
       this.label14.Location = new System.Drawing.Point(27, 259);
       this.label14.Name = "label14";
-      this.label14.Size = new System.Drawing.Size(116, 13);
+      this.label14.Size = new System.Drawing.Size(164, 13);
       this.label14.TabIndex = 79;
-      this.label14.Text = "LNB Switch frequency:";
+      this.label14.Text = "LNB Switch frequency (LNBSW):";
       // 
       // label13
       // 
       this.label13.AutoSize = true;
       this.label13.Location = new System.Drawing.Point(26, 232);
       this.label13.Name = "label13";
-      this.label13.Size = new System.Drawing.Size(103, 13);
+      this.label13.Size = new System.Drawing.Size(141, 13);
       this.label13.TabIndex = 78;
-      this.label13.Text = "LNB High frequency";
+      this.label13.Text = "LNB High frequency (LOF2):";
       // 
       // label10
       // 
       this.label10.AutoSize = true;
       this.label10.Location = new System.Drawing.Point(26, 206);
       this.label10.Name = "label10";
-      this.label10.Size = new System.Drawing.Size(104, 13);
+      this.label10.Size = new System.Drawing.Size(139, 13);
       this.label10.TabIndex = 77;
-      this.label10.Text = "LNB Low frequency:";
+      this.label10.Text = "LNB Low frequency (LOF1):";
       // 
       // mpBand4
       // 
       this.mpBand4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpBand4.FormattingEnabled = true;
       this.mpBand4.Items.AddRange(new object[] {
-            "Universal",
-            "Linear",
-            "Circular",
-            "C-Band"});
-      this.mpBand4.Location = new System.Drawing.Point(156, 110);
+            "Ku-Linear (Universal)",
+            "Ku-Circular",
+            "C-Band",
+            "NA Bandstacked DP Ku-Hi (DBS)",
+            "NA Bandstacked DP Ku-Lo (FSS)",
+            "NA Bandstacked Ku-Hi (DBS)",
+            "NA Bandstacked Ku-Lo (FSS)",
+            "NA Bandstacked C",
+            "NA Legacy"});
+      this.mpBand4.Location = new System.Drawing.Point(143, 110);
       this.mpBand4.Name = "mpBand4";
-      this.mpBand4.Size = new System.Drawing.Size(80, 21);
+      this.mpBand4.Size = new System.Drawing.Size(152, 21);
       this.mpBand4.TabIndex = 14;
+      this.mpBand4.SelectedIndexChanged += new System.EventHandler(this.mpBand4_SelectedIndexChanged);
       // 
       // mpBand3
       // 
       this.mpBand3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpBand3.FormattingEnabled = true;
       this.mpBand3.Items.AddRange(new object[] {
-            "Universal",
-            "Linear",
-            "Circular",
-            "C-Band"});
-      this.mpBand3.Location = new System.Drawing.Point(156, 83);
+            "Ku-Linear (Universal)",
+            "Ku-Circular",
+            "C-Band",
+            "NA Bandstacked DP Ku-Hi (DBS)",
+            "NA Bandstacked DP Ku-Lo (FSS)",
+            "NA Bandstacked Ku-Hi (DBS)",
+            "NA Bandstacked Ku-Lo (FSS)",
+            "NA Bandstacked C",
+            "NA Legacy"});
+      this.mpBand3.Location = new System.Drawing.Point(143, 83);
       this.mpBand3.Name = "mpBand3";
-      this.mpBand3.Size = new System.Drawing.Size(80, 21);
+      this.mpBand3.Size = new System.Drawing.Size(152, 21);
       this.mpBand3.TabIndex = 10;
+      this.mpBand3.SelectedIndexChanged += new System.EventHandler(this.mpBand3_SelectedIndexChanged);
       // 
       // mpBand2
       // 
       this.mpBand2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpBand2.FormattingEnabled = true;
       this.mpBand2.Items.AddRange(new object[] {
-            "Universal",
-            "Linear",
-            "Circular",
-            "C-Band"});
-      this.mpBand2.Location = new System.Drawing.Point(156, 56);
+            "Ku-Linear (Universal)",
+            "Ku-Circular",
+            "C-Band",
+            "NA Bandstacked DP Ku-Hi (DBS)",
+            "NA Bandstacked DP Ku-Lo (FSS)",
+            "NA Bandstacked Ku-Hi (DBS)",
+            "NA Bandstacked Ku-Lo (FSS)",
+            "NA Bandstacked C",
+            "NA Legacy"});
+      this.mpBand2.Location = new System.Drawing.Point(143, 56);
       this.mpBand2.Name = "mpBand2";
-      this.mpBand2.Size = new System.Drawing.Size(80, 21);
+      this.mpBand2.Size = new System.Drawing.Size(152, 21);
       this.mpBand2.TabIndex = 6;
+      this.mpBand2.SelectedIndexChanged += new System.EventHandler(this.mpBand2_SelectedIndexChanged);
       // 
       // mpBand1
       // 
       this.mpBand1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpBand1.FormattingEnabled = true;
       this.mpBand1.Items.AddRange(new object[] {
-            "Universal",
-            "Linear",
-            "Circular",
-            "C-Band"});
-      this.mpBand1.Location = new System.Drawing.Point(156, 29);
+            "Ku-Linear (Universal)",
+            "Ku-Circular",
+            "C-Band",
+            "NA Bandstacked DP Ku-Hi (DBS)",
+            "NA Bandstacked DP Ku-Lo (FSS)",
+            "NA Bandstacked Ku-Hi (DBS)",
+            "NA Bandstacked Ku-Lo (FSS)",
+            "NA Bandstacked C",
+            "NA Legacy"});
+      this.mpBand1.Location = new System.Drawing.Point(143, 29);
       this.mpBand1.Name = "mpBand1";
-      this.mpBand1.Size = new System.Drawing.Size(80, 21);
+      this.mpBand1.Size = new System.Drawing.Size(152, 21);
       this.mpBand1.TabIndex = 2;
+      this.mpBand1.SelectedIndexChanged += new System.EventHandler(this.mpBand1_SelectedIndexChanged);
       // 
       // mpLabel3
       // 
       this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(154, 10);
+      this.mpLabel3.Location = new System.Drawing.Point(140, 10);
       this.mpLabel3.Name = "mpLabel3";
       this.mpLabel3.Size = new System.Drawing.Size(35, 13);
       this.mpLabel3.TabIndex = 76;
@@ -431,9 +455,9 @@ namespace SetupTv.Sections
       // 
       this.mpTransponder4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpTransponder4.FormattingEnabled = true;
-      this.mpTransponder4.Location = new System.Drawing.Point(242, 110);
+      this.mpTransponder4.Location = new System.Drawing.Point(301, 110);
       this.mpTransponder4.Name = "mpTransponder4";
-      this.mpTransponder4.Size = new System.Drawing.Size(185, 21);
+      this.mpTransponder4.Size = new System.Drawing.Size(172, 21);
       this.mpTransponder4.TabIndex = 15;
       // 
       // mpDisEqc4
@@ -442,7 +466,7 @@ namespace SetupTv.Sections
       this.mpDisEqc4.FormattingEnabled = true;
       this.mpDisEqc4.Location = new System.Drawing.Point(70, 110);
       this.mpDisEqc4.Name = "mpDisEqc4";
-      this.mpDisEqc4.Size = new System.Drawing.Size(80, 21);
+      this.mpDisEqc4.Size = new System.Drawing.Size(67, 21);
       this.mpDisEqc4.TabIndex = 13;
       // 
       // mpLNB3
@@ -461,9 +485,9 @@ namespace SetupTv.Sections
       // 
       this.mpTransponder3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpTransponder3.FormattingEnabled = true;
-      this.mpTransponder3.Location = new System.Drawing.Point(242, 83);
+      this.mpTransponder3.Location = new System.Drawing.Point(301, 83);
       this.mpTransponder3.Name = "mpTransponder3";
-      this.mpTransponder3.Size = new System.Drawing.Size(185, 21);
+      this.mpTransponder3.Size = new System.Drawing.Size(172, 21);
       this.mpTransponder3.TabIndex = 11;
       // 
       // mpDisEqc3
@@ -472,7 +496,7 @@ namespace SetupTv.Sections
       this.mpDisEqc3.FormattingEnabled = true;
       this.mpDisEqc3.Location = new System.Drawing.Point(70, 83);
       this.mpDisEqc3.Name = "mpDisEqc3";
-      this.mpDisEqc3.Size = new System.Drawing.Size(80, 21);
+      this.mpDisEqc3.Size = new System.Drawing.Size(67, 21);
       this.mpDisEqc3.TabIndex = 9;
       // 
       // mpLNB2
@@ -491,9 +515,9 @@ namespace SetupTv.Sections
       // 
       this.mpTransponder2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpTransponder2.FormattingEnabled = true;
-      this.mpTransponder2.Location = new System.Drawing.Point(242, 56);
+      this.mpTransponder2.Location = new System.Drawing.Point(301, 56);
       this.mpTransponder2.Name = "mpTransponder2";
-      this.mpTransponder2.Size = new System.Drawing.Size(185, 21);
+      this.mpTransponder2.Size = new System.Drawing.Size(172, 21);
       this.mpTransponder2.TabIndex = 7;
       // 
       // mpDisEqc2
@@ -502,13 +526,13 @@ namespace SetupTv.Sections
       this.mpDisEqc2.FormattingEnabled = true;
       this.mpDisEqc2.Location = new System.Drawing.Point(70, 56);
       this.mpDisEqc2.Name = "mpDisEqc2";
-      this.mpDisEqc2.Size = new System.Drawing.Size(80, 21);
+      this.mpDisEqc2.Size = new System.Drawing.Size(67, 21);
       this.mpDisEqc2.TabIndex = 5;
       // 
       // mpLabel5
       // 
       this.mpLabel5.AutoSize = true;
-      this.mpLabel5.Location = new System.Drawing.Point(239, 10);
+      this.mpLabel5.Location = new System.Drawing.Point(298, 10);
       this.mpLabel5.Name = "mpLabel5";
       this.mpLabel5.Size = new System.Drawing.Size(47, 13);
       this.mpLabel5.TabIndex = 66;
@@ -539,9 +563,9 @@ namespace SetupTv.Sections
       // 
       this.mpTransponder1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpTransponder1.FormattingEnabled = true;
-      this.mpTransponder1.Location = new System.Drawing.Point(242, 29);
+      this.mpTransponder1.Location = new System.Drawing.Point(301, 29);
       this.mpTransponder1.Name = "mpTransponder1";
-      this.mpTransponder1.Size = new System.Drawing.Size(185, 21);
+      this.mpTransponder1.Size = new System.Drawing.Size(172, 21);
       this.mpTransponder1.TabIndex = 3;
       // 
       // mpDisEqc1
@@ -550,7 +574,7 @@ namespace SetupTv.Sections
       this.mpDisEqc1.FormattingEnabled = true;
       this.mpDisEqc1.Location = new System.Drawing.Point(70, 29);
       this.mpDisEqc1.Name = "mpDisEqc1";
-      this.mpDisEqc1.Size = new System.Drawing.Size(80, 21);
+      this.mpDisEqc1.Size = new System.Drawing.Size(67, 21);
       this.mpDisEqc1.TabIndex = 1;
       // 
       // tabPage2
@@ -955,7 +979,7 @@ namespace SetupTv.Sections
       this.Controls.Add(this.tabControl1);
       this.Controls.Add(this.mpCheckBox1);
       this.Name = "CardDvbS";
-      this.Size = new System.Drawing.Size(468, 420);
+      this.Size = new System.Drawing.Size(499, 420);
       this.Load += new System.EventHandler(this.CardDvbS_Load);
       this.tabControl1.ResumeLayout(false);
       this.tabPage3.ResumeLayout(false);

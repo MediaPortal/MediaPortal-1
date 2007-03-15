@@ -130,17 +130,17 @@ namespace TvLibrary.Implementations.DVB
       ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
       IEnumTuningSpaces enumTuning;
       ITuningSpace[] spaces = new ITuningSpace[2];
-	  
+
+
+
       int lowOsc = 9750;
       int hiOsc = 10600;
-
-/// GagReflex
       int lnbSwitch = 11700;
       if (_parameters.UseDefaultLnbFrequencies)
       {
-      lowOsc = 9750;
-      hiOsc = 10600;
-      lnbSwitch = 11700;
+        lowOsc = 9750;
+        hiOsc = 10600;
+        lnbSwitch = 11700;
       }
       else
       {
@@ -148,7 +148,6 @@ namespace TvLibrary.Implementations.DVB
         hiOsc = _parameters.LnbHighFrequency;
         lnbSwitch = _parameters.LnbSwitchFrequency;
       }
-//end GagReflex
 
       ITuneRequest request;
       int fetched;
@@ -164,10 +163,10 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.WriteFile("Found correct tuningspace {0}", name);
           _tuningSpace = (IDVBSTuningSpace)spaces[0];
-/// GagReflex
-         /// _tuningSpace.put_LNBSwitch(11700000);
-		  _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
-/// End GagReflex
+          /// GagReflex
+          /// _tuningSpace.put_LNBSwitch(11700000);
+          _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
+          /// End GagReflex
           _tuningSpace.put_SpectralInversion(SpectralInversion.Automatic);
           _tuningSpace.put_LowOscillator(lowOsc * 1000);
           _tuningSpace.put_HighOscillator(hiOsc * 1000);
@@ -189,10 +188,10 @@ namespace TvLibrary.Implementations.DVB
       _tuningSpace.put_SystemType(DVBSystemType.Satellite);
 
       _tuningSpace.put_SpectralInversion(SpectralInversion.Automatic);
-/// GagReflex
+      /// GagReflex
       /// _tuningSpace.put_LNBSwitch(11700000);
-        _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
-/// End GagReflex
+      _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
+      /// End GagReflex
       _tuningSpace.put_LowOscillator(lowOsc * 1000);
       _tuningSpace.put_HighOscillator(hiOsc * 1000);
 
@@ -255,60 +254,24 @@ namespace TvLibrary.Implementations.DVB
       int lowOsc = 9750;
       int hiOsc = 10600;
       int lnbSwitch = 11700;
-      if (_parameters.UseDefaultLnbFrequencies)
-      {
-        switch (dvbsChannel.BandType)
-        {
-          case BandType.Universal:
-            lowOsc = 9750;
-            hiOsc = 10600;
-            _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
-            _tuningSpace.put_LowOscillator(lowOsc * 1000);
-            _tuningSpace.put_HighOscillator(hiOsc * 1000);
-            break;
-          case BandType.Circular:
-            lowOsc = 11250;
-            hiOsc = 11250;
-            lnbSwitch = 0;
-            _tuningSpace.put_LNBSwitch(0);
-            _tuningSpace.put_LowOscillator(lowOsc * 1000);
-            _tuningSpace.put_HighOscillator(hiOsc * 1000);
-            break;
-          case BandType.Linear:
-            lowOsc = 10750;
-            hiOsc = 10750;
-            lnbSwitch = 0;
-            _tuningSpace.put_LNBSwitch(0);
-            _tuningSpace.put_LowOscillator(lowOsc * 1000);
-            _tuningSpace.put_HighOscillator(hiOsc * 1000);
-            break;
-          case BandType.CBand:
-            lowOsc = 5150;
-            hiOsc = 5150;
-            lnbSwitch = 0;
-            _tuningSpace.put_LNBSwitch(0);
-            _tuningSpace.put_LowOscillator(lowOsc * 1000);
-            _tuningSpace.put_HighOscillator(hiOsc * 1000);
-            break;
-        }
-      }
-      else
-      {
-        lowOsc = _parameters.LnbLowFrequency;
-        hiOsc = _parameters.LnbHighFrequency;
-        lnbSwitch = _parameters.LnbSwitchFrequency;
-
-        _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
-        _tuningSpace.put_LowOscillator(lowOsc * 1000);
-        _tuningSpace.put_HighOscillator(hiOsc * 1000);
-      }
+      BandTypeConverter.GetDefaultLnbSetup(Parameters, dvbsChannel.BandType, out lowOsc, out hiOsc, out lnbSwitch);
       Log.Log.Info("LNB low:{0} hi:{1} switch:{2}", lowOsc, hiOsc, lnbSwitch);
+      if (lnbSwitch == 0)
+        lnbSwitch = 18000;
+      _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
+      _tuningSpace.put_LowOscillator(lowOsc * 1000);
+      _tuningSpace.put_HighOscillator(hiOsc * 1000);
+      ITuneRequest request;
+      _tuningSpace.CreateTuneRequest(out request);
+      _tuneRequest = (IDVBTuneRequest)request;
+
       _tuningSpace.get_DefaultLocator(out locator);
       IDVBSLocator dvbsLocator = (IDVBSLocator)locator;
       int hr = dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
       hr = dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
       dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
       dvbsLocator.put_Modulation(dvbsChannel.ModulationType);
+
       hr = _tuneRequest.put_ONID(dvbsChannel.NetworkId);
       hr = _tuneRequest.put_SID(dvbsChannel.ServiceId);
       hr = _tuneRequest.put_TSID(dvbsChannel.TransportId);

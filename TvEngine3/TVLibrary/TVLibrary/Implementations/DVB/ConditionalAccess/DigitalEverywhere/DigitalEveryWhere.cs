@@ -776,30 +776,8 @@ namespace TvLibrary.Implementations.DVB
         }
       }
       _previousChannel = channel;
-      int antennaNr = 1;
-      switch (channel.DisEqc)
-      {
-        case DisEqcType.None: // none
-          return;
-        case DisEqcType.SimpleA: // Simple A
-          antennaNr = 1;
-          break;
-        case DisEqcType.SimpleB: // Simple B
-          antennaNr = 2;
-          break;
-        case DisEqcType.Level1AA: // Level 1 A/A
-          antennaNr = 1;
-          break;
-        case DisEqcType.Level1AB: // Level 1 A/B
-          antennaNr = 2;
-          break;
-        case DisEqcType.Level1BA: // Level 1 B/A
-          antennaNr = 3;
-          break;
-        case DisEqcType.Level1BB: // Level 1 B/B
-          antennaNr = 4;
-          break;
-      }
+      int antennaNr = BandTypeConverter.GetAntennaNr(channel);
+
       //"01,02,03,04,05,06,07,08,09,0a,0b,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,"	
 
       Marshal.WriteByte(_ptrDataInstance, 0, 0xFF);//Voltage;
@@ -822,66 +800,14 @@ namespace TvLibrary.Implementations.DVB
       // 2        A         B
       // 3        B         A
       // 4        B         B
-      int lnbFrequency = 10600000;
-      bool hiBand = true;
-      if (parameters.UseDefaultLnbFrequencies)
-      {
-        switch (channel.BandType)
-        {
-          case BandType.Universal:
-            if (channel.Frequency >= 11700000)
-            {
-              lnbFrequency = 10600000;
-              hiBand = true;
-            }
-            else
-            {
-              lnbFrequency = 9750000;
-              hiBand = false;
-            }
-            break;
+      bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
+      Log.Log.WriteFile("FireDTV SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2},  polarisation:{3} hiband:{4}",
+              channel.DisEqc, antennaNr, channel.Frequency, channel.Polarisation, hiBand);
 
-          case BandType.Circular:
-            hiBand = false;
-            break;
-
-          case BandType.Linear:
-            hiBand = false;
-            break;
-
-          case BandType.CBand:
-            hiBand = false;
-            break;
-        }
-      }
-      else
-      {
-        if (parameters.LnbSwitchFrequency != 0)
-        {
-          if (channel.Frequency >= parameters.LnbSwitchFrequency * 1000)
-          {
-            lnbFrequency = parameters.LnbHighFrequency * 1000;
-            hiBand = true;
-          }
-          else
-          {
-            lnbFrequency = parameters.LnbLowFrequency * 1000;
-            hiBand = false;
-          }
-        }
-        else
-        {
-          hiBand = false;
-          lnbFrequency = parameters.LnbLowFrequency * 1000;
-        }
-      }
-      Log.Log.WriteFile("FireDTV SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, lnb frequency:{3}, polarisation:{4} hiband:{5}",
-              channel.DisEqc, antennaNr, channel.Frequency, lnbFrequency, channel.Polarisation, hiBand);
-
-
+      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) || (channel.Polarisation == Polarisation.CircularL));
       byte cmd = 0xf0;
       cmd |= (byte)(hiBand ? 1 : 0);
-      cmd |= (byte)((channel.Polarisation == Polarisation.LinearH) ? 2 : 0);
+      cmd |= (byte)((isHorizontal) ? 2 : 0);
       cmd |= (byte)((antennaNr - 1) << 2);
       Marshal.WriteByte(_ptrDataInstance, 8, cmd);
 

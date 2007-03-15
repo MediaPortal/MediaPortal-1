@@ -62,6 +62,12 @@ CKnc::~CKnc(void)
   {
     KNCBDA_CI_Disable();
   }
+  if (m_hMod!=NULL)
+  {
+    FreeLibrary(m_hMod);
+  }
+  m_hMod=NULL;
+  m_bIsKNC=false;
 }
 
 //**************************************************************************************************
@@ -183,7 +189,7 @@ STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
 {
   m_bIsKNC=false;
 	m_hMod=LoadLibrary("KNCBDACTRL.dll");
-  if (m_hMod!=INVALID_HANDLE_VALUE)
+  if (m_hMod!=NULL)
   {
     KNCBDA_CI_Enable=(TKNCBDA_CI_Enable*)GetProcAddress(m_hMod,"KNCBDA_CI_Enable");
 		if(KNCBDA_CI_Enable==NULL)
