@@ -1037,6 +1037,7 @@ namespace MediaPortal.Player
         }
         UpdateCurrentPosition();
         if (dvbSubRenderer != null) dvbSubRenderer.OnSeek(CurrentPosition);
+        _state = PlayState.Playing;
         Log.Info("TSStreamBufferPlayer: current pos:{0}", CurrentPosition);
 
       }
