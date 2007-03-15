@@ -383,25 +383,28 @@ namespace MediaPortal.TV.Recording
 
 
       Log.Info("SinkGraph:StartRecording({0} {1} {2})", strFileName, bContentRecording, recording.Quality);
-      if ( recording.Quality != TVRecording.QualityType.NotSet )
+      if (bContentRecording == true)
       {
+        if (recording.Quality != TVRecording.QualityType.NotSet)
+        {
 
-        if ( recording.Quality == TVRecording.QualityType.Portable )
-          SetQuality(0);
+          if (recording.Quality == TVRecording.QualityType.Portable)
+            SetQuality(0);
 
-        if ( recording.Quality == TVRecording.QualityType.Low )
-          SetQuality(1);
+          if (recording.Quality == TVRecording.QualityType.Low)
+            SetQuality(1);
 
-        if ( recording.Quality == TVRecording.QualityType.Medium )
-          SetQuality(2);
+          if (recording.Quality == TVRecording.QualityType.Medium)
+            SetQuality(2);
 
-        if ( recording.Quality == TVRecording.QualityType.High )
-          SetQuality(3);
-      }
-      else
-      {
-        //use default quality
-        SetQuality(5);
+          if (recording.Quality == TVRecording.QualityType.High)
+            SetQuality(3);
+        }
+        else
+        {
+          //use default quality
+          SetQuality(5);
+        }
       }
       SetFrameRateAndSize();
       _mpeg2DemuxHelper.Record(attribtutes, strFileName, bContentRecording, timeProgStart, _startTime);
