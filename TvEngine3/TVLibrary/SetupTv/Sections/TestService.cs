@@ -225,7 +225,10 @@ namespace SetupTv.Sections
           {
             mpButtonRec.Text = "Record";
           }
-          mpButtonTimeShift.Text = "Stop TimeShift";
+          if (mpCheckBoxTimeShift.Checked)
+            mpButtonTimeShift.Text = "Stop TimeShift";
+          else
+            mpButtonTimeShift.Text = "Start TimeShift";
           return;
         }
         else
@@ -434,9 +437,13 @@ namespace SetupTv.Sections
         {
           if (usersForCard[i].IdChannel == channelId)
           {
+
             VirtualCard vcard = new VirtualCard(usersForCard[i], RemoteControl.HostName);
-            vcard.RecordingFolder = card.RecordingFolder;
-            return vcard;
+            if (vcard.IsTimeShifting )
+            {
+              vcard.RecordingFolder = card.RecordingFolder;
+              return vcard;
+            }
           }
         }
       }
