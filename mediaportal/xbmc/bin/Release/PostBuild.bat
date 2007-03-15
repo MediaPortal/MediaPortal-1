@@ -59,7 +59,7 @@ copy ..\..\..\MediaPortal.Base\mfc71.dll .
 copy ..\..\..\MediaPortal.Base\msvcp71.dll .
 copy ..\..\..\MediaPortal.Base\msvcr71.dll .
 copy ..\..\..\MediaPortal.Base\Microsoft.ApplicationBlocks*.dll .
-copy ..\..\..\MediaPortal.Base\d3dx9_26.dll .
+copy ..\..\..\MediaPortal.Base\d3dx9_32.dll .
 copy ..\..\..\MediaPortal.Base\Microsoft.DirectX.Direct3D.dll .
 copy ..\..\..\MediaPortal.Base\Microsoft.DirectX.Direct3DX.dll .
 copy ..\..\..\MediaPortal.Base\Microsoft.DirectX.DirectDraw.dll .
