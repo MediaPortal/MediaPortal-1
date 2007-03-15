@@ -278,9 +278,9 @@ STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
     m_callback.OnKncCiCloseDisplay=&OnKncCiCloseDisplay;
     if ( KNCBDA_CI_Enable(tunerFilter,&m_callback))
     {
-      m_bIsKNC=true;
       if (KNCBDA_CI_IsReady())
       {
+				m_bIsKNC=true;
         LogDebug("knc card detected with CAM");
         KNCBDA_CI_HW_Enable(TRUE);
       }
