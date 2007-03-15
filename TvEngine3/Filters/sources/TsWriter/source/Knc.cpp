@@ -65,6 +65,7 @@ CKnc::~CKnc(void)
   if (m_hMod!=NULL)
   {
     FreeLibrary(m_hMod);
+    m_hMod=NULL;
   }
   m_hMod=NULL;
   m_bIsKNC=false;
@@ -283,11 +284,18 @@ STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
         LogDebug("knc card detected with CAM");
         KNCBDA_CI_HW_Enable(TRUE);
       }
+      else
+      {
+        LogDebug("knc card detected without CAM");
+      }
     }
   }
   else
   {
-    LogDebug("knc unable to load KNCBDACTRL.dll");
+    char buffer[2048];
+    GetCurrentDirectory(sizeof(buffer),buffer);
+    LogDebug("knc unable to load KNCBDACTRL.dll:%d",GetLastError());
+    //LogDebug("%s",buffer);
   }
   return S_OK;
 }

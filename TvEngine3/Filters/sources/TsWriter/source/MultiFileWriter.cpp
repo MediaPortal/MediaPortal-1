@@ -83,8 +83,10 @@ HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
 	CheckPointer(pszFileName,E_POINTER);
 
 	if(wcslen(pszFileName) > MAX_PATH)
+  {
+    LogDebug("MultiFileWriter: filename too long");
 		return ERROR_FILENAME_EXCED_RANGE;
-
+  }
 	// Take a copy of the filename
 	if (m_pTSBufferFileName)
 	{
@@ -99,8 +101,10 @@ HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
 	//check disk space first
 	__int64 llDiskSpaceAvailable = 0;
 	if (SUCCEEDED(GetAvailableDiskSpace(&llDiskSpaceAvailable)) && (__int64)llDiskSpaceAvailable < (__int64)(m_maxTSFileSize*2))
+  {
+    LogDebug("MultiFileWriter: not enough free diskspace");
 		return E_FAIL;
-
+  }
 	TCHAR *pFileName = NULL;
 
 	// Try to open the file
@@ -114,6 +118,7 @@ HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
 
 	if (m_hTSBufferFile == INVALID_HANDLE_VALUE)
 	{
+        LogDebug("MultiFileWriter: fail to create buffer file");
         DWORD dwErr = GetLastError();
         return HRESULT_FROM_WIN32(dwErr);
 	}
@@ -355,6 +360,7 @@ HRESULT MultiFileWriter::ReuseTSFile()
 
 	if FAILED(hr = m_pCurrentTSFile->OpenFile())
 	{
+    LogDebug("MultiFileWriter: failed to create file");
 		return hr;
 	}
 

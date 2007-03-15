@@ -168,12 +168,10 @@ void CTimeShifting::OnTsPacket(byte* tsPacket)
 	if (m_bTimeShifting)
 	{
     CTsHeader header(tsPacket);
+    if (header.Pid==0x1fff) return;
+    
     if (header.SyncByte!=0x47) return;
     if (header.TransportError) return;
-    if (m_fDump!=NULL)
-    {
-      fwrite(m_pWriteBuffer,1,m_iWriteBufferPos,m_fDump);
-    }
 	  CEnterCriticalSection enter(m_section);
     //* timeshifting to mpeg-2 program stream
     if (m_timeShiftMode==ProgramStream)
@@ -450,13 +448,13 @@ STDMETHODIMP CTimeShifting::Start()
 	CEnterCriticalSection enter(m_section);
 	try
 	{
-    m_fDump=fopen("c:\\dump.txt","r");
+    /*m_fDump=fopen("c:\\dump.txt","r");
     if (m_fDump!=NULL)
     {
       fclose(m_fDump);
       ::DeleteFile("c:\\dump.ts");
       m_fDump = fopen("c:\\dump.ts","wb+");
-    }
+    }*/
 		if (strlen(m_szFileName)==0) return E_FAIL;
 		::DeleteFile((LPCTSTR) m_szFileName);
 		WCHAR wstrFileName[2048];
@@ -784,6 +782,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 		{
 			if (info.serviceType==SERVICE_TYPE_VIDEO_MPEG1 || info.serviceType==SERVICE_TYPE_VIDEO_MPEG2||info.serviceType==SERVICE_TYPE_VIDEO_MPEG4||info.serviceType==SERVICE_TYPE_VIDEO_H264)
 			{
+//        PatchPcr(tsPacket,m_tsHeader);
 				//video
 				if (!info.seenStart) 
 				{
@@ -800,7 +799,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				int pid=info.fakePid;
 				pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 				pkt[2]=(pid&0xff);
-				if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
+				if (m_tsHeader.Pid==m_pcrPid)  PatchPcr(pkt,m_tsHeader);
 				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				{
 				  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);
@@ -1073,6 +1072,10 @@ void CTimeShifting::WriteFakePMT()
 //*******************************************************************
 void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 {
+  //LogDebug("pcr pid:%x  head:%02.2x %02.2x %02.2x %02.2x %02.2x %02.2x",header.Pid, tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5]);
+  if (header.PayLoadOnly()) return;
+  //LogDebug(" pcrflag:%x", (tsPacket[5]&0x10));
+  //LogDebug(" opcrflag:%x", (tsPacket[5]&0x8));
   m_adaptionField.Decode(header,tsPacket);
   if (m_adaptionField.PcrFlag==false) return;
   CPcr pcrNew=m_adaptionField.Pcr;

@@ -266,7 +266,7 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
     m_dll=LoadLibrary("ttBdaDrvApi_Dll.dll");
     if (m_dll==NULL) 
     {
-      LogDebug("TechnoTrend:unable to load ttBdaDrvApi_Dll.dll");
+      LogDebug("TechnoTrend:unable to load ttBdaDrvApi_Dll.dll:%d",GetLastError());
       return S_OK;
     }
     LogDebug("TechnoTrend:loaded ttBdaDrvApi_Dll.dll");
