@@ -226,8 +226,8 @@ namespace MediaPortal.GUI.Library
     protected int _currentFrame = 0;
     protected double _timeElapsed = 0.0f;
     protected bool _scrollContinuosly = false;
-    protected GUIAnimation _frameControl = null;
-    protected GUIAnimation _frameFocusControl = null;
+    protected List<GUIAnimation> _frameControl = new List<GUIAnimation>();
+    protected List<GUIAnimation> _frameFocusControl = new List<GUIAnimation>();
 
     List<GUIAnimation> _imageFolder = new List<GUIAnimation>();
     List<GUIAnimation> _imageFolderFocus = new List<GUIAnimation>();
@@ -293,17 +293,25 @@ namespace MediaPortal.GUI.Library
         anim.DiffuseFileName = _diffuseFileName;
         anim.SetAnimations(ThumbAnimations);
         _imageFolderFocus.Add(anim);
+
+				anim = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight, _frameName);
+				anim.ParentControl = this;
+				anim.DimColor = DimColor;
+				anim.FlipX = _flipX;
+				anim.FlipY = _flipY;
+				anim.DiffuseFileName = _diffuseFileName;
+				anim.SetAnimations(ThumbAnimations);
+				_frameControl.Add(anim);
+
+				anim = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight, _frameFocusName);
+				anim.ParentControl = this;
+				anim.DimColor = DimColor; 
+				anim.FlipX = _flipX;
+				anim.FlipY = _flipY;
+				anim.DiffuseFileName = _diffuseFileName;
+				anim.SetAnimations(ThumbAnimations);
+				_frameFocusControl.Add(anim);
       }
-
-      _frameControl = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight, _frameName);
-      _frameControl.ParentControl = this;
-      _frameControl.DimColor = DimColor;
-
-      _frameFocusControl = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight, _frameFocusName);
-      _frameFocusControl.ParentControl = this;
-      _frameFocusControl.DimColor = DimColor;
-      _frameFocusControl.SetAnimations(ThumbAnimations);
-
 
       _upDownControl = new GUISpinControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _spinControlWidth, _spinControlHeight, _upTextureName, _downTextureName, _upTextureNameFocus, _downTextureNameFocus, _fontName, _colorSpinColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, GUIControl.Alignment.ALIGN_LEFT);
       _upDownControl.ParentControl = this;
@@ -500,7 +508,7 @@ namespace MediaPortal.GUI.Library
 					GUIGraphicsContext.ControlTransform = matrix;
 				}
 
-				if (_showFrame)
+			/*	if (_showFrame)
 				{
 					if (bFocus == true && Focus && _listType == GUIListControl.ListType.CONTROL_LIST)
 					{
@@ -516,7 +524,7 @@ namespace MediaPortal.GUI.Library
 						_frameControl.Render(timePassed);
 					}
 				}
-
+*/
 			}
 			else
 			{
@@ -580,7 +588,7 @@ namespace MediaPortal.GUI.Library
 						GUIGraphicsContext.ControlTransform = matrix;
 
 					}
-					if (_showFrame)
+					/*if (_showFrame)
 					{
 						if (bFocus == true && Focus && _listType == GUIListControl.ListType.CONTROL_LIST)
 						{
@@ -596,6 +604,7 @@ namespace MediaPortal.GUI.Library
 							_frameControl.Render(timePassed);
 						}
 					}
+					*/
 				}
 			}
 
@@ -623,6 +632,24 @@ namespace MediaPortal.GUI.Library
 					}
 				}
 
+				if (_showFrame)
+				{
+					_frameControl[itemNumber].Focus = true;
+					_frameFocusControl[itemNumber].Focus = true;
+					_frameFocusControl[itemNumber].SetPosition(dwPosX, dwPosY);
+					_frameFocusControl[itemNumber].UpdateEffectState(currentTime);
+					_frameFocusControl[itemNumber].Render(timePassed);
+					for (int i = 0; i < _frameFocusControl.Count; ++i)
+					{
+						if (i != itemNumber)
+						{
+							_frameControl[i].Focus = false;
+							_frameFocusControl[i].Focus = false;
+						}
+					}
+				}
+
+							
 				RenderText((float)dwPosX, fTextPosY, dwColor, pItem.Label, true);
 				GUIGraphicsContext.ControlTransform = matrix;
 			}
@@ -641,6 +668,17 @@ namespace MediaPortal.GUI.Library
 						_imageFolder[itemNumber].Render(timePassed);
 					}
 				}
+				
+				if (_showFrame)
+				{
+					_frameControl[itemNumber].Focus = false;
+					_frameFocusControl[itemNumber].Focus = false;
+					_frameControl[itemNumber].SetPosition(dwPosX, dwPosY);
+					_frameControl[itemNumber].UpdateEffectState(currentTime);
+					_frameControl[itemNumber].Render(timePassed);
+				}
+
+
 				RenderText((float)dwPosX, fTextPosY, dwColor, pItem.Label, false);
 				GUIGraphicsContext.ControlTransform = matrix;
 			}
@@ -1436,9 +1474,9 @@ namespace MediaPortal.GUI.Library
       {
         _imageFolder[i].PreAllocResources();
         _imageFolderFocus[i].PreAllocResources();
+				_frameControl[i].PreAllocResources();
+				_frameFocusControl[i].PreAllocResources();
       }
-      if (_frameControl != null) _frameControl.PreAllocResources();
-      if (_frameFocusControl != null) _frameFocusControl.PreAllocResources();
       if (_horizontalScrollbar != null) _horizontalScrollbar.PreAllocResources();
       if (_imageBackground != null) _imageBackground.PreAllocResources();
       if (_imageInfo != null) _imageInfo.PreAllocResources();
@@ -1460,16 +1498,16 @@ namespace MediaPortal.GUI.Library
         _imageFolderFocus[i].Height = _textureHeight;
       }
 
-      if (_frameControl != null)
+			for (int i = 0; i < _frameControl.Count; ++i) 
       {
-        _frameControl.Width = _textureWidth;
-        _frameControl.Height = _textureHeight;
+        _frameControl[i].Width = _textureWidth;
+				_frameControl[i].Height = _textureHeight;
       }
 
-      if (_frameFocusControl != null)
+			for (int i = 0; i < _frameFocusControl.Count; ++i) 
       {
-        _frameFocusControl.Width = _textureWidth;
-        _frameFocusControl.Height = _textureHeight;
+				_frameFocusControl[i].Width = _textureWidth;
+				_frameFocusControl[i].Height = _textureHeight;
       }
 
       float fWidth = 0, fHeight = 0;
@@ -1507,10 +1545,10 @@ namespace MediaPortal.GUI.Library
       {
         _imageFolder[i].AllocResources();
         _imageFolderFocus[i].AllocResources();
+				_frameControl[i].AllocResources();
+				_frameFocusControl[i].AllocResources();
       }
-      if (_frameControl != null) _frameControl.AllocResources();
-      if (_frameFocusControl != null) _frameFocusControl.AllocResources();
-      if (_horizontalScrollbar != null) _horizontalScrollbar.AllocResources();
+			if (_horizontalScrollbar != null) _horizontalScrollbar.AllocResources();
       Calculate();
 
       _upDownControl.ParentID = GetID;
@@ -1531,9 +1569,9 @@ namespace MediaPortal.GUI.Library
       {
         _imageFolder[i].FreeResources();
         _imageFolderFocus[i].FreeResources();
+				_frameControl[i].FreeResources();
+				_frameFocusControl[i].FreeResources();
       }
-      if (_frameControl != null) _frameControl.FreeResources();
-      if (_frameFocusControl != null) _frameFocusControl.FreeResources();
       if (_horizontalScrollbar != null) _horizontalScrollbar.FreeResources();
     }
 
@@ -1896,21 +1934,14 @@ namespace MediaPortal.GUI.Library
         _imageFolder[i].Width = _textureWidth;
         _imageFolderFocus[i].Height = _textureHeight;
         _imageFolderFocus[i].Width = _textureWidth;
+				_frameControl[i].Width = _textureWidth;
+				_frameControl[i].Height = _textureHeight;
+				_frameControl[i].Width = _textureWidth;
+				_frameControl[i].Height = _textureHeight;
+				_frameControl[i].Refresh();
+				_frameControl[i].Refresh();
         _imageFolder[i].Refresh();
         _imageFolderFocus[i].Refresh();
-      }
-
-      if (_frameControl != null)
-      {
-        _frameControl.Width = _textureWidth;
-        _frameControl.Height = _textureHeight;
-        _frameControl.Refresh();
-      }
-      if (_frameFocusControl != null)
-      {
-        _frameFocusControl.Width = _textureWidth;
-        _frameFocusControl.Height = _textureHeight;
-        _frameFocusControl.Refresh();
       }
     }
 
@@ -2557,9 +2588,9 @@ namespace MediaPortal.GUI.Library
       {
         _imageFolder[i].StorePosition();
         _imageFolderFocus[i].StorePosition();
+				_frameControl[i].StorePosition();
+				_frameFocusControl[i].StorePosition();
       }
-      if (_frameControl != null) _frameControl.StorePosition();
-      if (_frameFocusControl != null) _frameFocusControl.StorePosition();
       if (_horizontalScrollbar != null) _horizontalScrollbar.StorePosition();
 
       base.StorePosition();
@@ -2578,9 +2609,9 @@ namespace MediaPortal.GUI.Library
       {
         _imageFolder[i].ReStorePosition();
         _imageFolderFocus[i].ReStorePosition();
+				_frameControl[i].ReStorePosition();
+				_frameFocusControl[i].ReStorePosition();
       }
-      if (_frameControl != null) _frameControl.ReStorePosition();
-      if (_frameFocusControl != null) _frameFocusControl.ReStorePosition();
       if (_horizontalScrollbar != null) _horizontalScrollbar.ReStorePosition();
 
       if (_imageInfo != null) _imageInfo.GetRect(out _infoImagePositionX, out _infoImagePositionY, out _infoImageWidth, out _infoImageHeight);
@@ -2682,9 +2713,9 @@ namespace MediaPortal.GUI.Library
         {
           _imageFolder[i].DimColor = value;
           _imageFolderFocus[i].DimColor = value;
+					_frameControl[i].DimColor = value;
+					_frameFocusControl[i].DimColor = value;
         }
-        if (_frameControl != null) _frameControl.DimColor = value;
-        if (_frameFocusControl != null) _frameFocusControl.DimColor = value;
         if (_horizontalScrollbar != null) _horizontalScrollbar.DimColor = value;
         foreach (GUIListItem item in _listItems) item.DimColor = value;
       }
