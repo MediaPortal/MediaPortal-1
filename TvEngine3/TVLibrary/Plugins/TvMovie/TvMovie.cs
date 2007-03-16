@@ -30,6 +30,8 @@ using System.IO;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Log;
+using TvLibrary.Interfaces;
+using TvEngine.PowerScheduler.Interfaces;
 
 namespace TvEngine
 {
@@ -39,11 +41,14 @@ namespace TvEngine
     private TvMovieDatabase _database;
     private System.Timers.Timer _stateTimer;
     private bool _isImporting = false;
+    private bool _registeredWithPS = false;
     private const long _timerIntervall = 1800000;
     #endregion
 
     private void ImportThread()
     {
+      SetStandbyAllowed(false);
+
       _isImporting = true;
 
       try
@@ -72,12 +77,44 @@ namespace TvEngine
       }
 
       _isImporting = false;
+
+      SetStandbyAllowed(true);
     }
 
     private void StartImportThread(object source, ElapsedEventArgs e)
     {
       //TODO: check stateinfo
+      RegisterForEPGSchedule();
       SpawnImportThread();
+    }
+
+    private void RegisterForEPGSchedule()
+    {
+      // Register with the EPGScheduleDue event so we are informed when
+      // the EPG wakeup schedule is due.
+      if (!_registeredWithPS)
+      {
+        if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
+        {
+          GlobalServiceProvider.Instance.Get<IEpgHandler>().EPGScheduleDue += new EPGScheduleHandler(EPGScheduleDue);
+          _registeredWithPS = true;
+          Log.Debug("TVMovie: registered with PowerScheduler EPG handler");
+        }
+      }
+    }
+
+    private void EPGScheduleDue()
+    {
+      SpawnImportThread();
+    }
+
+    private void SetStandbyAllowed(bool allowed)
+    {
+      if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
+      {
+        GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed);
+        Log.Debug("TVMovie: Telling PowerScheduler standby is allowed: {0}", allowed);
+      }
     }
 
     private void SpawnImportThread()
@@ -123,6 +160,7 @@ namespace TvEngine
         }
         _stateTimer.Start();
         _stateTimer.Enabled = true;
+        RegisterForEPGSchedule();
       }
       else
       {

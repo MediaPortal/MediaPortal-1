@@ -91,6 +91,10 @@
       <Name>PluginBase</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\PowerScheduler\PowerScheduler.Interfaces\PowerScheduler.Interfaces.csproj">
+      <Project>{7701AA79-18D4-4A18-BB52-16774FB7943D}</Project>
+      <Name>PowerScheduler.Interfaces</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TvMovieSetup.resx">

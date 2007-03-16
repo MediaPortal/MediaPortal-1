@@ -86,6 +86,10 @@ namespace TvEngine.PowerScheduler.Handlers
     }
     #endregion
 
+    #region Events
+    private event EPGScheduleHandler _epgScheduleDue;
+    #endregion
+
     #region Variables
     IController _controller;
     Dictionary<object, GrabberSource> _extGrabbers;
@@ -191,12 +195,12 @@ namespace TvEngine.PowerScheduler.Handlers
                     _controller.EpgGrabberEnabled = true;
 
                   // Fire the EPGScheduleDue event for EPG grabber plugins
-                  if (EPGScheduleDue != null)
+                  if (_epgScheduleDue != null)
                   {
-                    lock (EPGScheduleDue)
+                    lock (_epgScheduleDue)
                     {
-                      if (EPGScheduleDue != null)
-                        EPGScheduleDue();
+                      if (_epgScheduleDue != null)
+                        _epgScheduleDue();
                     }
                   }
 
@@ -209,6 +213,14 @@ namespace TvEngine.PowerScheduler.Handlers
                 }
               }
             }
+          }
+
+          // Cleanup of expired grabber sources
+          foreach (object o in _extGrabbers.Keys)
+          {
+            GrabberSource s = _extGrabbers[o];
+            if (s.LastUpdate < DateTime.Now.AddMinutes(-ps.Settings.IdleTimeout))
+              _extGrabbers.Remove(o);
           }
 
           break;
@@ -353,7 +365,32 @@ namespace TvEngine.PowerScheduler.Handlers
     }
 
     #region Events
-    public event EPGScheduleHandler EPGScheduleDue;
+    public event EPGScheduleHandler EPGScheduleDue
+    {
+      add
+      {
+        lock (this)
+        {
+          // prevent multiple instances from the same object type to be registered
+          // with this event
+          foreach (Delegate del in _epgScheduleDue.GetInvocationList())
+          {
+            EPGScheduleHandler handler = value;
+            Type t = handler.Target.GetType();
+            if (del.Target.GetType().Equals(t))
+              _epgScheduleDue -= del as EPGScheduleHandler;
+            _epgScheduleDue += handler;
+          }
+        }
+      }
+      remove
+      {
+        lock (this)
+        {
+          _epgScheduleDue -= value;
+        }
+      }
+    }
     #endregion
 
     #endregion

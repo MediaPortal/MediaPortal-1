@@ -178,6 +178,7 @@ namespace TvService
             if (_controller.CanSuspend)
             {
               //OnStop();
+              _controller.EpgGrabberEnabled = false;
               return true;
             }
             else
@@ -186,10 +187,14 @@ namespace TvService
             }
           }
           return true;
-
+        case PowerBroadcastStatus.QuerySuspendFailed:
+          if (!_controller.EpgGrabberEnabled)
+            _controller.EpgGrabberEnabled = true;
+          return true;
         case PowerBroadcastStatus.ResumeAutomatic:
         case PowerBroadcastStatus.ResumeCritical:
         case PowerBroadcastStatus.ResumeSuspend:
+          _controller.EpgGrabberEnabled = true;
           //OnStart(null);
           return true;
       }
