@@ -27,6 +27,8 @@ using SetupTv;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Log;
+using TvLibrary.Interfaces;
+using TvEngine.PowerScheduler.Interfaces;
 
 namespace TvEngine
 {
@@ -186,6 +188,8 @@ namespace TvEngine
 
     void ThreadFunctionImportTVGuide()
     {
+      SetStandbyAllowed(false);
+
       TvBusinessLayer layer = new TvBusinessLayer();
       string folder = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
       string fileName = folder + @"\tvguide.xml";
@@ -238,6 +242,17 @@ namespace TvEngine
       }
       _workerThreadRunning = false;
       Log.WriteFile(@"plugin:xmltv import done");
+
+      SetStandbyAllowed(true);
+    }
+
+    private void SetStandbyAllowed(bool allowed)
+    {
+      if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
+      {
+        GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed);
+        Log.Debug("plugin:xmltv: Telling PowerScheduler standby is allowed: {0}", allowed);
+      }
     }
     #endregion
   }

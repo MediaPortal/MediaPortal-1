@@ -250,7 +250,9 @@ namespace TvEngine.PowerScheduler
       this.groupBox3.Size = new System.Drawing.Size(460, 86);
       this.groupBox3.TabIndex = 2;
       this.groupBox3.TabStop = false;
-      this.groupBox3.Text = "DVB EPG grabber settings";
+      this.groupBox3.Text = "EPG grabber settings";
+      this.toolTip1.SetToolTip(this.groupBox3, "Power management settings for the DVB EPG grabber and other EPG plugins supportin" +
+              "g PowerScheduler");
       // 
       // maskedTextBox1
       // 
