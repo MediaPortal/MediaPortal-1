@@ -688,7 +688,7 @@ namespace TvPlugin
       Log.Info("SkipForConflictingRecording: Schedule = " + rec.ToString());
 
       TvBusinessLayer layer = new TvBusinessLayer();
-      List<Schedule> conflicts = layer.GetConflictingSchedules(rec);
+      IList conflicts = rec.ConflictingSchedules();
       if (conflicts.Count > 0)
       {
         GUIDialogTVConflict dlg = (GUIDialogTVConflict)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TVCONFLICT);
