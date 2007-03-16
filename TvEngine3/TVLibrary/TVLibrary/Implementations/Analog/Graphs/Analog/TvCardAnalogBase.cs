@@ -357,7 +357,7 @@ namespace TvLibrary.Implementations.Analog
             _haupPauge = null;
             int min, max;
             bool vbr;
-            _haupPauge.GetVideoBitRate(min, max, vbr);
+            _haupPauge.GetVideoBitRate(out min, out max, out vbr);
             Log.Log.Write("Hauppauge set video parameters - Max kbps: {0}, Min kbps: {1}, VBR {2}", max, min, vbr);
           }
         }
