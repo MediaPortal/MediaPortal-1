@@ -41,7 +41,6 @@
   <ItemGroup>
     <Compile Include="DeviceSorter.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\Cards\hauppauge.cs" />
-    <Compile Include="Implementations\Analog\Graphs\Analog\Cards\ivac.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\TvCardAnalogBase.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccessContext.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\HaupPauge\Hauppauge.cs" />
@@ -76,6 +75,7 @@
     <Compile Include="Implementations\DVB\Structures\TSHelperTools.cs" />
     <Compile Include="Implementations\Helper\FileAccess.cs" />
     <Compile Include="Implementations\Helper\FilterGraphTools.cs" />
+    <Compile Include="Implementations\Helper\HResult.cs" />
     <Compile Include="Implementations\Helper\Release.cs" />
     <Compile Include="Implementations\Helper\SidHelper.cs" />
     <Compile Include="Implementations\Hybrid\HybridCard.cs" />

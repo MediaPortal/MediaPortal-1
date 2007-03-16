@@ -147,7 +147,6 @@ namespace TvLibrary.Implementations.Analog
     protected object m_context = null;
     protected IChannel _currentChannel;
     protected Hauppauge _haupPauge = null;
-    protected IVac _ivac = null;
     protected string _timeshiftFileName="";
     protected IVbiCallback _teletextCallback = null;
     private IAMStreamConfig _interfaceStreamConfigVideoCapture = null;
@@ -344,33 +343,25 @@ namespace TvLibrary.Implementations.Analog
         AddMpeg2Demultiplexer();
 
         SetupCaptureFormat();
-        _haupPauge = new Hauppauge(_filterCapture);
-        if (_haupPauge.IsHauppage)
+        
+        //If a hauppauge analog card, set bitrate to default
+        //As the graph is stopped, we don't need to pass in the deviceID
+        //However, if we wish to change quality for a live graph, the deviceID must be passed in
+        if (_tunerDevice != null && _captureDevice != null) 
         {
-          Log.Log.Info("Hauppauge card:{0}", _haupPauge.VersionInfo);
-          _haupPauge.SetVideoBitRate(4000, 12000, true);
+          if (_captureDevice.Name.Contains("Hauppauge"))
+          {
+            _haupPauge = new Hauppauge(_filterCapture, " ");
+            _haupPauge.SetVideoBitRate(11000, 13000, true);
+            _haupPauge.Dispose();
+            _haupPauge = null;
+            int min, max;
+            bool vbr;
+            _haupPauge.GetVideoBitRate(min, max, vbr);
+            Log.Log.Write("Hauppauge set video parameters - Max kbps: {0}, Min kbps: {1}, VBR {2}", max, min, vbr);
+          }
         }
-        else
-        {
-          _haupPauge = null;
-        }
-        _ivac = new IVac(_filterCapture);
-        if (_ivac.IsIVAC)
-        {
-          Log.Log.Info("ivac card:{0}", _ivac.VersionInfo);
-          int minKbps;
-          int maxKbps;
-          bool isVBR;
-          _ivac.GetVideoBitRate(out minKbps, out maxKbps, out isVBR);
-          if (minKbps < 4000) minKbps = 4000;
-          if (maxKbps < 12000) maxKbps = 12000;
-          _ivac.SetVideoBitRate(minKbps, maxKbps, true);
 
-        }
-        else
-        {
-          _ivac = null;
-        }
         //FilterGraphTools.SaveGraphFile(_graphBuilder, "hp.grf");
         Log.Log.WriteFile("analog: Graph is build");
         _graphState = GraphState.Created;
