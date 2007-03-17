@@ -353,12 +353,15 @@ namespace TvLibrary.Implementations.Analog
           {
             _haupPauge = new Hauppauge(_filterCapture, " ");
             _haupPauge.SetVideoBitRate(11000, 13000, true);
-            _haupPauge.Dispose();
-            _haupPauge = null;
+            
             int min, max;
             bool vbr;
             _haupPauge.GetVideoBitRate(out min, out max, out vbr);
+            
             Log.Log.Write("Hauppauge set video parameters - Max kbps: {0}, Min kbps: {1}, VBR {2}", max, min, vbr);
+            
+            _haupPauge.Dispose();
+            _haupPauge = null;
           }
         }
 
