@@ -985,8 +985,9 @@ namespace TvLibrary.Implementations.DVB
         if (_mdapiFilter != null)
         {
           Log.Log.Write("subch:{0} set ca grabber ", _subChannelId);
-          //_interfaceCaGrabber.SetCallBack(this);
-          //_interfaceCaGrabber.Reset();
+          _tsFilterInterface.CaSetCallBack(this);
+          _tsFilterInterface.CaReset();
+
         }
       }
     }
@@ -1257,10 +1258,10 @@ namespace TvLibrary.Implementations.DVB
                 _channelInfo.DecodePmt(pmt);
                 _channelInfo.network_pmt_PID = channel.PmtPid;
                 _channelInfo.pcr_pid = channel.PcrPid;
-                /*
+                
                 if (_mdapiFilter != null)
                 {
-                  int catLength = _interfaceCaGrabber.GetCaData(catMem);
+                  int catLength = _tsFilterInterface.CaGetCaData(catMem);
                   if (catLength > 0)
                   {
                     byte[] cat = new byte[catLength];
@@ -1268,7 +1269,7 @@ namespace TvLibrary.Implementations.DVB
                     _channelInfo.DecodeCat(cat, catLength);
                   }
                 }
-                */
+                
                 updatePids = true;
                 Log.Log.WriteFile("subch:{0} SendPMT version:{1} len:{2} {3}", _subChannelId, version, pmtLength, _channelInfo.caPMT.ProgramNumber);
                 if (_conditionalAccess != null)

@@ -788,3 +788,24 @@ STDMETHODIMP CMpTs::TTxSetCallBack( int handle,ITeletextCallBack* callback)
   if (pChannel==NULL) return S_OK;
 	return pChannel->m_pTeletextGrabber->SetCallBack(callback );
 }
+
+STDMETHODIMP CMpTs::CaSetCallBack(int handle,ICACallback* callback)
+{
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pCaGrabber->SetCallBack(callback );
+}
+
+STDMETHODIMP CMpTs::CaGetCaData(int handle,BYTE *caData)
+{
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pCaGrabber->GetCaData(caData );
+}
+
+STDMETHODIMP CMpTs::CaReset(int handle)
+{
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	return pChannel->m_pCaGrabber->Reset( );
+}

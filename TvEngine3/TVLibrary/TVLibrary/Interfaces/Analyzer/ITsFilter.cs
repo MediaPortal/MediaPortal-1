@@ -78,6 +78,12 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     [PreserveSig] int TTxStop(int handle);
     [PreserveSig] int TTxSetTeletextPid(int handle, int teletextPid);
     [PreserveSig] int TTxSetCallBack(int handle, ITeletextCallBack callback);
+    [PreserveSig]
+    int CaSetCallBack(ICACallback callback);
+    [PreserveSig]
+    int CaGetCaData(IntPtr caData);
+    [PreserveSig]
+    int CaReset();
 
   }
 }

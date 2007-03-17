@@ -94,6 +94,10 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
 	STDMETHOD(TTxStop)(THIS_ int handle )PURE;
 	STDMETHOD(TTxSetTeletextPid)(THIS_ int handle,int teletextPid)PURE;
 	STDMETHOD(TTxSetCallBack)(THIS_ int handle,ITeletextCallBack* callback)PURE;
+
+  STDMETHOD(CaSetCallBack)(THIS_ int handle,ICACallback* callback)PURE;
+	STDMETHOD(CaGetCaData) (THIS_ int handle,BYTE *caData)PURE;
+	STDMETHOD(CaReset)(THIS_ int handle)PURE;
 };
 
 // Main filter object
@@ -214,7 +218,9 @@ public:
 		STDMETHODIMP TTxSetTeletextPid( int handle,int teletextPid);
 		STDMETHODIMP TTxSetCallBack( int handle,ITeletextCallBack* callback);
 
-
+    STDMETHODIMP CaSetCallBack(int handle,ICACallback* callback);
+	  STDMETHODIMP CaGetCaData(int handle,BYTE *caData);
+	  STDMETHODIMP CaReset(int handle);
     CMpTs(LPUNKNOWN pUnk, HRESULT *phr);
     ~CMpTs();
     static CUnknown * WINAPI CreateInstance(LPUNKNOWN punk, HRESULT *phr);
