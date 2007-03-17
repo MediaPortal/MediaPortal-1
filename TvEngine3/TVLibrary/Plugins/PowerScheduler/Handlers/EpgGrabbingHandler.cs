@@ -216,12 +216,16 @@ namespace TvEngine.PowerScheduler.Handlers
           }
 
           // Cleanup of expired grabber sources
+          List<object> expired = new List<object>();
           foreach (object o in _extGrabbers.Keys)
           {
             GrabberSource s = _extGrabbers[o];
             if (s.LastUpdate < DateTime.Now.AddMinutes(-ps.Settings.IdleTimeout))
-              _extGrabbers.Remove(o);
+              expired.Add(o);
           }
+          foreach (object o in expired)
+            _extGrabbers.Remove(o);
+          expired = null;
 
           break;
       }
