@@ -992,9 +992,7 @@ namespace MediaPortal.GUI.Music
           GUIPropertyManager.SetProperty("#Play.Current.Artist", CurrentTrackTag.Artist);
           GUIPropertyManager.SetProperty("#Play.Current.Genre", CurrentTrackTag.Genre);
           GUIPropertyManager.SetProperty("#Play.Current.Year", strYear);
-
-          if (g_Player.Playing)
-            GUIPropertyManager.SetProperty("#duration", Convert.ToString(g_Player.Duration));
+          GUIPropertyManager.SetProperty("#duration", MediaPortal.Util.Utils.SecondsToHMSString(CurrentTrackTag.Duration));
 
           //if (ImgListNextRating != null)
           //{
