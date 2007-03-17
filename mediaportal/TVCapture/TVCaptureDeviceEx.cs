@@ -976,12 +976,13 @@ namespace MediaPortal.TV.Recording
       // back to timeshifting state
       _currentGraphState = State.Timeshifting;
 
-      _recordedTvObject = null;
-
       if (OnTvRecordingEnded != null)
       {
         OnTvRecordingEnded(RecordingFileName, _currentTvRecording, _currentTvProgramRecording);
       }
+
+      _recordedTvObject = null;
+
       //Log.Info("TVCapture.StopRecording():_currentTvProgramRecording=null");
       // cleanup...
       _currentTvProgramRecording = null;
