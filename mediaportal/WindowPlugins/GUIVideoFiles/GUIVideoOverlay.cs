@@ -197,7 +197,6 @@ namespace MediaPortal.GUI.Video
 
     private void OnVideoChanged()
     {
-      Log.Info("Steve: In here");
       if (GUIGraphicsContext.Overlay == false)
         _videoWindow.Visible = false;
       else
