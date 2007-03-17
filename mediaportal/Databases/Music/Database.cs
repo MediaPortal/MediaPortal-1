@@ -171,9 +171,11 @@ namespace MediaPortal.Music.Database
 
         // no database V7 - copy and update V6
         if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV7.db3")))
-          //Adds a reset to _lastImport so if you delete the music database after using MediaPortal previously the database never got updated for older files.
-          _lastImport = DateTime.Parse("1900-01-01 00:00:00");
         {
+          //Adds a reset to _lastImport so if you delete the music database after using MediaPortal previously the database never got updated for older files.
+          DateTimeFormatInfo dtfi = new DateTimeFormatInfo();
+          dtfi.FullDateTimePattern = "yyyy-mm-dd HH:mm:ss";
+          _lastImport = DateTime.Parse("1900-01-01 00:00:00", dtfi);
           if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV6.db3")))
           {
             if (File.Exists(Config.GetFile(Config.Dir.Database, "musicdatabase5.db3")))
