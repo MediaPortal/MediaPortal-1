@@ -302,6 +302,7 @@ namespace MediaPortal
       catch (Exception)
       {
         UseMillisecondTiming = false;
+        Log.Info("Exception");
       }
       active = false;
       ready = false;
@@ -343,19 +344,12 @@ namespace MediaPortal
 #endif
       InitializeComponent();
       if (!GUIGraphicsContext.UseSeparateRenderThread)
-        this.timer.Tick += new System.EventHandler(this.timer_Tick);
       if (debugChangeDeviceHack)
       {
-        this.menuItemFile.MenuItems.Clear();
-        this.menuItemExit.Index = 2;
-        this.menuItemFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItemChangeDevice,
-            this.menuBreakFile,
-            this.menuItemExit});
       }
-      this.TopMost = alwaysOnTop;
 
-      playlistPlayer = PlayListPlayer.SingletonPlayer;
+      GUIGraphicsContext.IsVMR9Exclusive = useExclusiveDirectXMode;
+     playlistPlayer = PlayListPlayer.SingletonPlayer;
     }
 
     protected void SetupCamera2D()
