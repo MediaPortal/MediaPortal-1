@@ -1147,51 +1147,42 @@ namespace MediaPortal.Music.Database
     {
       lock (ParseLock)
       {
-        int index = 0;
-        int lastIndex = -1;
-        string outString = String.Empty;
+        string outString = string.Empty;
         string urlString = System.Web.HttpUtility.UrlEncode(lastFMString);
 
         try
         {
           outString = removeInvalidChars(lastFMString);
 
-          if (outString != String.Empty)
+          if (outString != string.Empty)
             urlString = System.Web.HttpUtility.UrlEncode(removeEndingChars(outString));
 
           outString = urlString;
 
+          // add chars here which need to be followed by "+" to be recognized correctly by last.fm
+          // consider some special cases like R.E.M. / D.D.E. / P.O.D etc
           List<Char> invalidSingleChars = new List<Char>();
-          invalidSingleChars.Add('.');
+          //invalidSingleChars.Add('.');
           invalidSingleChars.Add(',');
 
-          // bail out if I missed a race condition
-          int failSafe = 0;
           foreach (Char singleChar in invalidSingleChars)
           {
-            do
+            // do not loop unless needed
+            if (urlString.IndexOf(singleChar) != -1)
             {
-              failSafe++;
-              index = urlString.IndexOf(singleChar);
-              if (index > 0)
-                if (index > lastIndex)
-                {
-                  if (index < urlString.Length)
-                  {
-                    lastIndex = index;
-                    outString = urlString.Insert(index + 1, "+");
-                    urlString = outString;
-                  }
-                }
-                else
-                  break;
-              if (failSafe > 500)
+              // check each letter of the string
+              for (int s = 0; s < urlString.Length; s++)
               {
-                Log.Error("*****AudioscrobblerBase: Possible race condition cleaning string - {0}", urlString);
-                return String.Empty;
+                // the evil char has been detected
+                if (urlString[s] == singleChar)
+                {
+                  outString = urlString.Insert(s + 1, "+");
+                  urlString = outString;
+                  // skip checking the just inserted position
+                  s++;
+                }
               }
             }
-            while (index > 0);
           }
           outString = outString.Replace("++", "+");
           // build a clean end
