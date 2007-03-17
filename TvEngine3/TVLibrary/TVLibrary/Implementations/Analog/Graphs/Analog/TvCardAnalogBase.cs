@@ -352,7 +352,7 @@ namespace TvLibrary.Implementations.Analog
           if (_captureDevice.Name.Contains("Hauppauge"))
           {
             _haupPauge = new Hauppauge(_filterCapture, " ");
-            _haupPauge.SetVideoBitRate(11000, 13000, true);
+            _haupPauge.SetVideoBitRate(4000, 6000, true);
             
             int min, max;
             bool vbr;
