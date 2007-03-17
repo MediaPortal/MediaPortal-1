@@ -1044,6 +1044,9 @@ public class MediaPortalApp : D3DApp, IRender
 
     // tell window manager that application is closing
     // this gives the windows the chance to do some cleanup
+    if (Recorder.IsAnyCardRecording())
+      Recorder.StopRecording();
+
     Recorder.Stop();
 
     InputDevices.Stop();
@@ -1619,7 +1622,7 @@ public class MediaPortalApp : D3DApp, IRender
             if (GUIGraphicsContext.Vmr9Active)
             {
               GUIGraphicsContext.ShowBackground = false;
-              GUIGraphicsContext.ARType = Geometry.Type.Stretch;
+              GUIGraphicsContext.Overlay = false;
             }
             else
             {
@@ -1628,7 +1631,7 @@ public class MediaPortalApp : D3DApp, IRender
                   new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING, 0, 0, 0, 0, 0, 0);
               msg.Param1 = 727; //Live tv in background
               msg.Param2 = 728; //No Video/TV playing
-              msg.Param3 = 729; //Make sure you use VMR9 and that something is playing
+              msg.Param3 = 729; //Make sure that something is playing
               GUIWindowManager.SendMessage(msg);
               return;
             }
@@ -1697,8 +1700,10 @@ public class MediaPortalApp : D3DApp, IRender
                 m_iVolume = g_Player.Volume;
                 g_Player.Volume = 0;
               }
-              if(g_Player.Paused == false)
+              if (g_Player.Paused == false && !GUIGraphicsContext.IsVMR9Exclusive)
                 g_Player.Pause();
+              else if (GUIGraphicsContext.IsVMR9Exclusive)
+                Recorder.StopViewing();
             }
             return;
           }
@@ -1728,8 +1733,10 @@ public class MediaPortalApp : D3DApp, IRender
               g_Player.Volume = m_iVolume;
               g_Player.ContinueGraph();
 
-              if (g_Player.Paused)
+              if (g_Player.Paused && !GUIGraphicsContext.IsVMR9Exclusive)
                 g_Player.Pause();
+             
+
             }
              
           }

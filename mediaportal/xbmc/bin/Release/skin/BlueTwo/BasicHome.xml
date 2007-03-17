@@ -1124,6 +1124,7 @@
       <height>133</height>
       <texture>playback_background.png</texture>
       <visible>Player.HasMedia</visible>
+     <visible>!Player.hasvideo</visible>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
     </control>
@@ -1151,6 +1152,7 @@
       <font>font12</font>
       <label>#Play.Current.Title\r#Play.Current.Artist\r#Play.Current.Album\r#Play.Current.Duration</label>
       <textcolor>EFFFFFFF</textcolor>
+     <visible>!Player.hasvideo</visible>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <id>5</id>
