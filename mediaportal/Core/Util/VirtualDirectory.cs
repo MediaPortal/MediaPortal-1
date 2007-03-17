@@ -1400,6 +1400,12 @@ namespace MediaPortal.Util
 
       List<GUIListItem> items = new List<GUIListItem>();
 
+      if (strDir.Length > 254)
+      {
+        Log.Warn("VirtualDirectory: GetDirectoryExt received a path which contains too many chars");
+        return items;
+      }
+
       //get the parent folder
       string strParent = "";
       if (IsRemote(strDir))
@@ -1726,7 +1732,6 @@ namespace MediaPortal.Util
         {
           for (int i = 0; i < strFiles.Length; ++i)
           {
-
             //<OKAY_AWRIGHT-310506>
             string extension;
             if (!doesContainRedBookData)
@@ -1754,6 +1759,13 @@ namespace MediaPortal.Util
             }
             if (IsValidExtension(strFiles[i]))
             {
+              // Skip too long path
+              if (strFiles[i].Length > 254)
+              {
+                Log.Warn("VirtualDirectory: GetDirectoryExt - a path contains too many chars: {0}", strFiles[i]);
+                continue;
+              }
+
               // Skip hidden files
               //<OKAY_AWRIGHT-310506>
               if (!doesContainRedBookData && (File.GetAttributes(strFiles[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
