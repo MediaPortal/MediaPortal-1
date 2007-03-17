@@ -72,6 +72,7 @@ namespace MediaPortal.GUI.Video
       bool result = Load(GUIGraphicsContext.Skin + @"\videoOverlay.xml");
       GetID = (int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.VideoOverlay);
+      GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(OnVideoChanged);
       return result;
     }
 
@@ -194,7 +195,14 @@ namespace MediaPortal.GUI.Video
     }
 
 
-
+    private void OnVideoChanged()
+    {
+      Log.Info("Steve: In here");
+      if (GUIGraphicsContext.Overlay == false)
+        _videoWindow.Visible = false;
+      else
+        _videoWindow.Visible = true;
+    }
 
     /// <summary>
     /// Examines the current playing movie and fills in all the #tags for the skin.

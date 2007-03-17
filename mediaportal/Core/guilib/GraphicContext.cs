@@ -720,7 +720,6 @@ namespace MediaPortal.GUI.Library
       set
       {
         m_bOverlay = value;
-        if (!m_bOverlay) { m_RectVideo.Width = 1; m_RectVideo.Height = 1; }
         if (!ShowBackground) m_bOverlay = false;
         if (OnVideoWindowChanged != null) OnVideoWindowChanged();
       }
