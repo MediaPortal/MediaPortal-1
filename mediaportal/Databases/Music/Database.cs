@@ -101,7 +101,7 @@ namespace MediaPortal.Music.Database
     static bool _useFolderArtForArtistGenre = false;
     static bool _createMissingFolderThumbs = false;
 
-    static DateTime _lastImport = DateTime.Parse("1900-01-01 00:00:00");
+    static DateTime _lastImport = new DateTime(1900, 1, 1, 0, 0, 0);
 
     //bool AppendPrefixToSortableNameEnd = true;
 
@@ -150,7 +150,9 @@ namespace MediaPortal.Music.Database
         _useFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
         _createMissingFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", false);
         _useFolderArtForArtistGenre = xmlreader.GetValueAsBool("musicfiles", "createartistgenrethumbs", false);
-        _lastImport = DateTime.Parse(xmlreader.GetValueAsString("musicfiles", "lastImport", "1900-01-01 00:00:00"));
+        DateTimeFormatInfo dtfi = new DateTimeFormatInfo();
+        dtfi.FullDateTimePattern = "yyyy-mm-dd HH:mm:ss"; 
+        _lastImport = DateTime.Parse(xmlreader.GetValueAsString("musicfiles", "lastImport", "1900-01-01 00:00:00"), dtfi);
       }
       Open();
     }
@@ -2874,7 +2876,9 @@ namespace MediaPortal.Music.Database
         // Save the time of the reorg, to be able to skip the files not updated / added the next time
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          xmlreader.SetValue("musicfiles", "lastImport", startTime.ToString());
+          DateTimeFormatInfo dtfi = new DateTimeFormatInfo();
+          dtfi.FullDateTimePattern = "yyyy-mm-dd HH:mm:ss"; 
+          xmlreader.SetValue("musicfiles", "lastImport", startTime.ToString(dtfi));
         }
       }
       return (int)Errors.ERROR_OK;
