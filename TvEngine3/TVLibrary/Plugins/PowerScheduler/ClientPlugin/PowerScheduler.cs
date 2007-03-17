@@ -427,7 +427,7 @@ namespace MediaPortal.Plugins.Process
     private void CheckStandbyHandlers()
     {
       bool standbyAllowed = true;
-      string handlerName = String.Empty;
+      string handlerName = "PowerSchedulerClientPlugin";
       // Check all registered ISTandbyHandlers
       foreach (IStandbyHandler handler in _standbyHandlers)
       {

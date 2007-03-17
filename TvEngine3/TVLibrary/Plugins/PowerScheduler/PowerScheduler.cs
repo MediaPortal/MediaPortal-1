@@ -470,7 +470,7 @@ namespace TvEngine.PowerScheduler
       if (_settings.CheckInterval != setting)
       {
         _settings.CheckInterval = setting;
-        LogVerbose("Check interval set to {0} seconds", _settings.CheckInterval);
+        LogVerbose("PowerScheduler: Check interval set to {0} seconds", _settings.CheckInterval);
         setting *= 1000;
         _timer.Interval = setting;
         changed = true;
@@ -480,7 +480,7 @@ namespace TvEngine.PowerScheduler
       if ((int)_settings.ShutdownMode != setting)
       {
         _settings.ShutdownMode = (ShutdownMode)setting;
-        LogVerbose("Shutdown mode set to {0}", _settings.ShutdownMode);
+        LogVerbose("PowerScheduler: Shutdown mode set to {0}", _settings.ShutdownMode);
         changed = true;
       }
 
@@ -761,7 +761,7 @@ namespace TvEngine.PowerScheduler
         {
           DateTime nextTime = handler.GetNextWakeupTime(earliestWakeupTime);
           LogVerbose("PowerScheduler.NextWakeupTime: inspecting handler:{0} time:{1}", handler.HandlerName, nextTime);
-          if (nextTime < nextWakeupTime)
+          if (nextTime < nextWakeupTime && nextTime >= earliestWakeupTime)
           {
             Log.Debug("PowerScheduler: found next wakeup time {0} by {1}", nextTime, handler.HandlerName);
             nextWakeupTime = nextTime;

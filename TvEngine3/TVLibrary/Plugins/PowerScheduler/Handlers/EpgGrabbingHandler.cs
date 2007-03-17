@@ -256,8 +256,8 @@ namespace TvEngine.PowerScheduler.Handlers
       EPGWakeupConfig cfg = ps.Settings.GetSetting("EPGWakeupConfig").Get<EPGWakeupConfig>();
       // Start by thinking we should run today
       DateTime nextRun = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, cfg.Hour, cfg.Minutes, 0);
-      // check if we've already run today
-      if (cfg.LastRun.Day == DateTime.Now.Day)
+      // check if we should run today or some other day in the future
+      if (cfg.LastRun.Day == DateTime.Now.Day || nextRun < earliestWakeupTime)
       {
         // determine first next day to run EPG grabber
         for (int i = 1; i < 8; i++)
