@@ -126,6 +126,7 @@ namespace MediaPortal.GUI.Library
     static bool m_bAnimations = true;						//boolean indicating animiations are turned on or off
     static IRender m_renderFrame = null;
     static bool vmr9Active = false;
+    static bool m_bisvmr9Exclusive = false;
     static int m_iMaxFPS = 20;
     static long m_iDesiredFrameTime = 100;
     static float m_fCurrentFPS = 0;
@@ -145,7 +146,6 @@ namespace MediaPortal.GUI.Library
     const int MONITOR_ON = -1;
     const int MONITOR_OFF = 2;
     static bool _useSeparateRenderThread = false;
-
     [DllImport("user32.dll")]
     static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, IntPtr lParam);
 
@@ -578,11 +578,8 @@ namespace MediaPortal.GUI.Library
       get { return m_ARType; }
       set
       {
-        if (value != m_ARType)
-        {
           m_ARType = value;
           if (OnVideoWindowChanged != null) OnVideoWindowChanged();
-        }
       }
     }
 
@@ -1101,6 +1098,19 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
+    static public bool IsVMR9Exclusive
+    {
+      get
+      {
+        return m_bisvmr9Exclusive;
+      }
+      set
+      {
+        m_bisvmr9Exclusive = value;
+      }
+    }
+   
     static public float TimePassed
     {
       get
