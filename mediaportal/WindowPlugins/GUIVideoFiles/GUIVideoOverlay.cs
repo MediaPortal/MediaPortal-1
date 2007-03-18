@@ -65,6 +65,11 @@ namespace MediaPortal.GUI.Video
     public GUIVideoOverlay()
     {
       GetID = (int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY;
+      GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(OnVideoChanged);
+    }
+    ~GUIVideoOverlay()
+    {
+     GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(OnVideoChanged);
     }
 
     public override bool Init()
@@ -72,7 +77,6 @@ namespace MediaPortal.GUI.Video
       bool result = Load(GUIGraphicsContext.Skin + @"\videoOverlay.xml");
       GetID = (int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.VideoOverlay);
-      GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(OnVideoChanged);
       return result;
     }
 
@@ -197,10 +201,21 @@ namespace MediaPortal.GUI.Video
 
     private void OnVideoChanged()
     {
-      if (GUIGraphicsContext.Overlay == false)
-        _videoWindow.Visible = false;
-      else
-        _videoWindow.Visible = true;
+      if (_videoWindow == null)
+        return;
+
+      if (GUIGraphicsContext.Overlay == true && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsPlaying)//&& GUIGraphicsContext.IsPlayingVideo && !GUIGraphicsContext.IsFullScreenVideo && !g_Player.FullScreen)
+      {
+        if (_videoWindow.Visible == false)
+          _videoWindow.Visible = true;
+        return;
+      }
+      if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsPlaying)// && GUIGraphicsContext.IsPlayingVideo && !GUIGraphicsContext.IsFullScreenVideo && !g_Player.FullScreen)
+      {
+        if (_videoWindow.Visible == true)
+          _videoWindow.Visible = false;
+        return;
+      }
     }
 
     /// <summary>
