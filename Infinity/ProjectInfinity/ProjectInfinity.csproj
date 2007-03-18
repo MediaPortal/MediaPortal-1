@@ -45,6 +45,7 @@
       <HintPath>..\..\..\..\..\Program Files\Microsoft Visual Studio 8\Common7\IDE\Cider\PresentationDesignDeveloper.DLL</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -62,7 +63,8 @@
       <SubType>Code</SubType>
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PILauncher.cs" />
+    <Compile Include="ProjectInfinity.cs" />
+    <Compile Include="ProjectInfinityCommandLine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -97,6 +99,10 @@
     <ProjectReference Include="..\ProjectInfinity.Services\ProjectInfinity.Implementation.csproj">
       <Project>{4C45C46E-2ED2-4801-B3C3-FC2560E9FFE0}</Project>
       <Name>ProjectInfinity.Implementation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ProjectInfinity.Utilities\ProjectInfinity.Utilities.csproj">
+      <Project>{4FE7B8AE-1330-424A-91A1-C68D7ABF9CB8}</Project>
+      <Name>ProjectInfinity.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

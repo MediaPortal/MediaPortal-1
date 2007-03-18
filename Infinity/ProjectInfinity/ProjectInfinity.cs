@@ -4,10 +4,11 @@ using ProjectInfinity.Logging;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Plugins;
 using ProjectInfinity.Windows;
+using ProjectInfinity.Utilities.CommandLine;
 
 namespace ProjectInfinity
 {
-  public class PILauncher
+  public class ProjectInfinity
   {
     // Entry point method
     [STAThread]
@@ -26,8 +27,21 @@ namespace ProjectInfinity
         ServiceScope.Add<IMainWindow>(new MainWindow()); //Our main window
         ServiceScope.Add<IPluginManager>(new ReflectionPluginManager());
         //A pluginmanager that uses reflection to enumerate available plugins
+
+        ICommandLineOptions piArgs = new ProjectInfinityCommandLine();
+
+        try
+        {
+          CommandLine.Parse(args, ref piArgs);
+        }
+        catch (ArgumentException)
+        {
+          piArgs.DisplayOptions();
+          return;
+        }
+
         //Start the Core
-        ProjectInfinity.Start(args);
+        ProjectInfinityCore.Start();
         //When we return here, the core has quit
         logger.Critical("ProjectInfinity has stopped...");
       }

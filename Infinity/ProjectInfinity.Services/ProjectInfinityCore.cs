@@ -10,7 +10,7 @@ namespace ProjectInfinity
     /// <summary>
     /// This is the main ProjectInfinity aplication
     /// </summary>
-    public class ProjectInfinity : Application
+    public class ProjectInfinityCore : Application
     {
         #region Messages
 
@@ -62,7 +62,7 @@ namespace ProjectInfinity
 
         #endregion
 
-        public ProjectInfinity()
+        public ProjectInfinityCore()
         {
             //Get the messagebroker and register ourselfs to it.
             //The messagebroker will inspect all our public events an look for the
@@ -72,13 +72,13 @@ namespace ProjectInfinity
             msgBroker.Register(this);
         }
 
-        public static void Start(string[] args)
+        public static void Start()
         {
-            ProjectInfinity projectInfinity = new ProjectInfinity();
-            projectInfinity.Run(args);
+            ProjectInfinityCore projectInfinity = new ProjectInfinityCore();
+            projectInfinity.Run();
         }
 
-        private void Run(string[] args)
+        private void Run()
         {
             //notify our own subscribers (through the message broker)
             OnStartup(new EventArgs());

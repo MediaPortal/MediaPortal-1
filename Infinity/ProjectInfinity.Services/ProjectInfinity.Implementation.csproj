@@ -40,7 +40,7 @@
     <Compile Include="Music\WMPMusicPlayer.cs" />
     <Compile Include="Plugins\PluginInfo.cs" />
     <Compile Include="Plugins\ReflectionPluginManager.cs" />
-    <Compile Include="ProjectInfinity.cs" />
+    <Compile Include="ProjectInfinityCore.cs" />
     <Compile Include="Messaging\MessageBroker.cs" />
     <Compile Include="Messaging\MessageEventArgs.cs" />
     <Compile Include="Messaging\MessageTopic.cs" />
