@@ -51,18 +51,18 @@
     <Compile Include="Handlers\ScheduledRecordingsHandler.cs" />
     <Compile Include="PowerScheduler.cs" />
     <Compile Include="PowerSchedulerFactory.cs" />
-    <Compile Include="PowerSchedulerMasterSetup.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PowerSchedulerMasterSetup.Designer.cs">
-      <DependentUpon>PowerSchedulerMasterSetup.cs</DependentUpon>
-    </Compile>
     <Compile Include="PowerSchedulerPlugin.cs" />
     <Compile Include="SelectProcessForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SelectProcessForm.designer.cs">
       <DependentUpon>SelectProcessForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PowerSchedulerMasterSetup.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PowerSchedulerMasterSetup.Designer.cs">
+      <DependentUpon>PowerSchedulerMasterSetup.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -131,12 +131,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="PowerSchedulerMasterSetup.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>PowerSchedulerMasterSetup.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="SelectProcessForm.resx">
       <DependentUpon>SelectProcessForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PowerSchedulerMasterSetup.resx">
+      <DependentUpon>PowerSchedulerMasterSetup.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

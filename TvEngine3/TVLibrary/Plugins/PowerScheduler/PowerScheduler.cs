@@ -121,6 +121,11 @@ namespace TvEngine.PowerScheduler
     /// Indicator if remoting has been setup
     /// </summary>
     bool _remotingStarted = false;
+    /// <summary>
+    /// Indicator if the TVController should be reinitialized
+    /// (or if this has already been done)
+    /// </summary>
+    bool _reinitializeController = false;
     #endregion
 
     #region Constructor
@@ -449,6 +454,17 @@ namespace TvEngine.PowerScheduler
         LogVerbose("PowerScheduler: force shutdown enabled: {0}", _settings.ForceShutdown);
         changed = true;
       }
+      // Check if PowerScheduler should reinitialize the TVController after wakeup
+      PowerSetting pSetting = _settings.GetSetting("ReinitializeController");
+      bool bSetting = Convert.ToBoolean(layer.GetSetting("PowerSchedulerReinitializeController", "false").Value);
+      if (pSetting.Get<bool>() != bSetting)
+      {
+        pSetting.Set<bool>(bSetting);
+        _settings.ForceShutdown = !_settings.ForceShutdown;
+        LogVerbose("PowerScheduler: Reinitialize tvservice controller on wakeup: {0}", bSetting);
+        changed = true;
+      }
+
       // Check configured PowerScheduler idle timeout
       setting = Int32.Parse(layer.GetSetting("PowerSchedulerIdleTimeout", "5").Value);
       if (_settings.IdleTimeout != setting)
@@ -541,6 +557,7 @@ namespace TvEngine.PowerScheduler
       {
         case System.ServiceProcess.PowerBroadcastStatus.QuerySuspend:
           Log.Debug("PowerScheduler: System wants to enter standby");
+          _reinitializeController = true;
           bool idle = SystemIdle;
           Log.Debug("PowerScheduler: System idle: {0}", idle);
           SetWakeupTimer();
@@ -552,6 +569,7 @@ namespace TvEngine.PowerScheduler
           return idle;
         case System.ServiceProcess.PowerBroadcastStatus.QuerySuspendFailed:
           Log.Debug("PowerScheduler: Entering standby was disallowed (blocked)");
+          _reinitializeController = false;
           ResetAndEnableTimer(); 
           return true;
         case System.ServiceProcess.PowerBroadcastStatus.ResumeAutomatic:
@@ -564,6 +582,11 @@ namespace TvEngine.PowerScheduler
           return true;
         case System.ServiceProcess.PowerBroadcastStatus.ResumeSuspend:
           Log.Debug("PowerScheduler: System has resumed from standby");
+          lock (this)
+          {
+            // reinitialize TVController if system is configured to do so and not already done
+            ReinitializeController();
+          }
           ResetAndEnableTimer();
           SendPowerSchedulerEvent(PowerSchedulerEventType.ResumedFromStandby);
           return true;
@@ -714,6 +737,21 @@ namespace TvEngine.PowerScheduler
         Log.Debug(format, args);
     }
     #endregion
+
+    private void ReinitializeController()
+    {
+      // only reinitialize controller if enabled in settings
+      if (_settings.GetSetting("ReinitializeController").Get<bool>())
+      {
+        TvService.TVController controller = _controller as TvService.TVController;
+        if (controller != null && _reinitializeController)
+        {
+          Log.Debug("PowerScheduler: reinitializing the tvservice TVController");
+          controller.Restart();
+          _reinitializeController = false;
+        }
+      }
+    }
 
     #endregion
 

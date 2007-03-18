@@ -41,12 +41,11 @@ namespace TvEngine.PowerScheduler
 
     TvBusinessLayer _layer;
 
-    public PowerSchedulerMasterSetup() : base("PowerSchedulerPlugin")
+    public PowerSchedulerMasterSetup()
     {
       InitializeComponent();
       _layer = new TvBusinessLayer();
     }
-
     public override void LoadSettings()
     {
       Setting setting;
@@ -59,11 +58,14 @@ namespace TvEngine.PowerScheduler
       setting = _layer.GetSetting("PowerSchedulerWakeupActive", "false");
       checkBox2.Checked = Convert.ToBoolean(setting.Value);
 
+      setting = _layer.GetSetting("PowerSchedulerShutdownMode", "2");
+      comboBox1.SelectedIndex = Convert.ToInt32(setting.Value);
+
       setting = _layer.GetSetting("PowerSchedulerForceShutdown", "false");
       checkBox3.Checked = Convert.ToBoolean(setting.Value);
 
-      setting = _layer.GetSetting("PowerSchedulerShutdownMode", "2");
-      comboBox1.SelectedIndex = Convert.ToInt32(setting.Value);
+      setting = _layer.GetSetting("PowerSchedulerExtensiveLogging", "false");
+      checkBox4.Checked = Convert.ToBoolean(setting.Value);
 
       setting = _layer.GetSetting("PowerSchedulerPreWakeupTime", "60");
       numericUpDown2.Value = Convert.ToDecimal(setting.Value);
@@ -71,14 +73,14 @@ namespace TvEngine.PowerScheduler
       setting = _layer.GetSetting("PowerSchedulerCheckInterval", "60");
       numericUpDown3.Value = Convert.ToDecimal(setting.Value);
 
-      setting = _layer.GetSetting("PowerSchedulerExtensiveLogging", "false");
-      checkBox4.Checked = Convert.ToBoolean(setting.Value);
-
-      setting = _layer.GetSetting("PreventStandbyWhenGrabbingEPG", "false");
+      setting = _layer.GetSetting("PowerSchedulerReinitializeController", "false");
       checkBox5.Checked = Convert.ToBoolean(setting.Value);
 
-      setting = _layer.GetSetting("WakeupSystemForEPGGrabbing", "false");
+      setting = _layer.GetSetting("PreventStandbyWhenGrabbingEPG", "false");
       checkBox6.Checked = Convert.ToBoolean(setting.Value);
+
+      setting = _layer.GetSetting("WakeupSystemForEPGGrabbing", "false");
+      checkBox7.Checked = Convert.ToBoolean(setting.Value);
 
       EPGWakeupConfig config = new EPGWakeupConfig(_layer.GetSetting("EPGWakeupConfig", String.Empty).Value);
       foreach (EPGGrabDays day in config.Days)
@@ -86,25 +88,25 @@ namespace TvEngine.PowerScheduler
         switch (day)
         {
           case EPGGrabDays.Monday:
-            checkBox7.Checked = true;
-            break;
-          case EPGGrabDays.Tuesday:
             checkBox8.Checked = true;
             break;
-          case EPGGrabDays.Wednesday:
+          case EPGGrabDays.Tuesday:
             checkBox9.Checked = true;
             break;
-          case EPGGrabDays.Thursday:
+          case EPGGrabDays.Wednesday:
             checkBox10.Checked = true;
             break;
-          case EPGGrabDays.Friday:
+          case EPGGrabDays.Thursday:
             checkBox11.Checked = true;
             break;
-          case EPGGrabDays.Saturday:
+          case EPGGrabDays.Friday:
             checkBox12.Checked = true;
             break;
-          case EPGGrabDays.Sunday:
+          case EPGGrabDays.Saturday:
             checkBox13.Checked = true;
+            break;
+          case EPGGrabDays.Sunday:
+            checkBox14.Checked = true;
             break;
         }
       }
@@ -140,12 +142,16 @@ namespace TvEngine.PowerScheduler
       setting.Value = checkBox2.Checked.ToString();
       setting.Persist();
 
+      setting = _layer.GetSetting("PowerSchedulerShutdownMode", "2");
+      setting.Value = comboBox1.SelectedIndex.ToString();
+      setting.Persist();
+
       setting = _layer.GetSetting("PowerSchedulerForceShutdown", "false");
       setting.Value = checkBox3.Checked.ToString();
       setting.Persist();
 
-      setting = _layer.GetSetting("PowerSchedulerShutdownMode", "2");
-      setting.Value = comboBox1.SelectedIndex.ToString();
+      setting = _layer.GetSetting("PowerSchedulerExtensiveLogging", "false");
+      setting.Value = checkBox4.Checked.ToString();
       setting.Persist();
 
       setting = _layer.GetSetting("PowerSchedulerPreWakeupTime", "60");
@@ -156,16 +162,16 @@ namespace TvEngine.PowerScheduler
       setting.Value = numericUpDown3.Value.ToString();
       setting.Persist();
 
-      setting = _layer.GetSetting("PowerSchedulerExtensiveLogging", "false");
-      setting.Value = checkBox4.Checked.ToString();
-      setting.Persist();
-
-      setting = _layer.GetSetting("PreventStandbyWhenGrabbingEPG", "false");
+      setting = _layer.GetSetting("PowerSchedulerReinitializeController", "60");
       setting.Value = checkBox5.Checked.ToString();
       setting.Persist();
 
-      setting = _layer.GetSetting("WakeupSystemForEPGGrabbing", "false");
+      setting = _layer.GetSetting("PreventStandbyWhenGrabbingEPG", "false");
       setting.Value = checkBox6.Checked.ToString();
+      setting.Persist();
+
+      setting = _layer.GetSetting("WakeupSystemForEPGGrabbing", "false");
+      setting.Value = checkBox7.Checked.ToString();
       setting.Persist();
 
       setting = _layer.GetSetting("EPGWakeupConfig", String.Empty);
@@ -178,13 +184,13 @@ namespace TvEngine.PowerScheduler
       string[] time = maskedTextBox1.Text.Split(':');
       newcfg.Hour = Convert.ToInt32(time[0]);
       newcfg.Minutes = Convert.ToInt32(time[1]);
-      CheckDay(newcfg, EPGGrabDays.Monday, checkBox7.Checked);
-      CheckDay(newcfg, EPGGrabDays.Tuesday, checkBox8.Checked);
-      CheckDay(newcfg, EPGGrabDays.Wednesday, checkBox9.Checked);
-      CheckDay(newcfg, EPGGrabDays.Thursday, checkBox10.Checked);
-      CheckDay(newcfg, EPGGrabDays.Friday, checkBox11.Checked);
-      CheckDay(newcfg, EPGGrabDays.Saturday, checkBox12.Checked);
-      CheckDay(newcfg, EPGGrabDays.Sunday, checkBox12.Checked);
+      CheckDay(newcfg, EPGGrabDays.Monday, checkBox8.Checked);
+      CheckDay(newcfg, EPGGrabDays.Tuesday, checkBox9.Checked);
+      CheckDay(newcfg, EPGGrabDays.Wednesday, checkBox10.Checked);
+      CheckDay(newcfg, EPGGrabDays.Thursday, checkBox11.Checked);
+      CheckDay(newcfg, EPGGrabDays.Friday, checkBox12.Checked);
+      CheckDay(newcfg, EPGGrabDays.Saturday, checkBox13.Checked);
+      CheckDay(newcfg, EPGGrabDays.Sunday, checkBox14.Checked);
       if (!cfg.Equals(newcfg))
       {
         setting.Value = newcfg.SerializeAsString();
@@ -223,5 +229,4 @@ namespace TvEngine.PowerScheduler
     }
 
   }
-
 }
