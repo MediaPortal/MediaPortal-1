@@ -732,7 +732,7 @@ namespace TvEngine.PowerScheduler
           LogVerbose("PowerScheduler.SystemIdle: inspecting handler {0}", handler.HandlerName);
           if (handler.DisAllowShutdown)
           {
-            LogVerbose("PowerScheduler.SystemIdle: handler {0} wants to prevents standby", handler.HandlerName);
+            LogVerbose("PowerScheduler.SystemIdle: handler {0} wants to prevent standby", handler.HandlerName);
             if (!_idle && !_lastStandbyPreventer.Equals(handler.HandlerName))
             {
               _lastStandbyPreventer = handler.HandlerName;

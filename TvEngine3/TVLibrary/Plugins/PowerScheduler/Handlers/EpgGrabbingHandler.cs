@@ -287,9 +287,13 @@ namespace TvEngine.PowerScheduler.Handlers
     {
       get
       {
-        // check if DVB EPG grabber is running
-        if (_controller.EpgGrabberEnabled)
-          return true;
+        // check if any card is grabbing EPG
+        for (int i = 0; i < _controller.Cards; i++)
+        {
+          int cardId = _controller.CardId(i);
+          if (_controller.IsGrabbingEpg(cardId))
+            return true;
+        }
         // check if any external EPG source wants to prevent standby
         foreach (GrabberSource source in _extGrabbers.Values)
           if (!source.StandbyAllowed)
