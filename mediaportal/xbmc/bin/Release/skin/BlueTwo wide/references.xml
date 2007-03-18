@@ -403,8 +403,8 @@
         <thumbHeight>85</thumbHeight>
         <thumbPosX>13</thumbPosX>
         <thumbPosY>13</thumbPosY>
-        <imageFolder>icon_empty_nofocus.png</imageFolder>
-        <imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
+        <imageFolder>icon_empty_nofocus_music.png</imageFolder>
+        <imageFolderFocus>icon_empty_focus_music.png</imageFolderFocus>
         <font>font13</font>
         <selectedColor>ffffffff</selectedColor>
         <textcolor>ffffffff</textcolor>
