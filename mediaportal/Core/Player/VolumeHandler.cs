@@ -153,6 +153,12 @@ namespace MediaPortal.Player
 				if(_mixer.IsMuted)
 					_mixer.IsMuted = false;
 
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_AUDIOVOLUME_CHANGED, 0, 0, 0, 0, 0, 0);
+                msg.Label = VolumeHandler.Instance.Step.ToString();
+                msg.Label2 = VolumeHandler.Instance.StepMax.ToString();
+                msg.Label3 = VolumeHandler.Instance.IsMuted.ToString();
+                GUIGraphicsContext.SendMessage(msg);
+
 				if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
 					GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
 				{
@@ -171,6 +177,14 @@ namespace MediaPortal.Player
 			try
 			{
 				_mixer.IsMuted = isMuted;
+
+
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_AUDIOVOLUME_CHANGED, 0, 0, 0, 0, 0, 0);
+                msg.Label = VolumeHandler.Instance.Step.ToString();
+                msg.Label2 = VolumeHandler.Instance.StepMax.ToString();
+                msg.Label3 = VolumeHandler.Instance.IsMuted.ToString();
+                GUIGraphicsContext.SendMessage(msg);
+
 
 				if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
 					GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
