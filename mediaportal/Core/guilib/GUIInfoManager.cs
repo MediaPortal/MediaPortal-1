@@ -1138,8 +1138,7 @@ namespace MediaPortal.GUI.Library
             bReturn = false;
             break;
           case VIDEOPLAYER_USING_OVERLAYS:
-            //bReturn = (g_guiSettings.GetInt("videoplayer.rendermethod") == RENDER_OVERLAYS);
-            bReturn = false;
+            bReturn = GUIGraphicsContext.Overlay;
             break;
           case VIDEOPLAYER_ISFULLSCREEN:
             bReturn = GUIGraphicsContext.IsFullScreenVideo;
