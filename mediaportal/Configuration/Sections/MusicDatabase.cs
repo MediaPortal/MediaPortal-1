@@ -151,7 +151,7 @@ namespace MediaPortal.Configuration.Sections
         scanForVariousArtistsCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "scanForVariousArtists", true);
         monitorSharesCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "monitorShares", false);
         checkBoxUpdateSinceLastImport.Checked = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", true);
-        checkBoxUpdateSinceLastImport.Text = String.Format("Only update files added / changed after last import at {0}", xmlreader.GetValueAsString("musicfiles", "lastImport", "1900-01-01 00:00:00"));
+        checkBoxUpdateSinceLastImport.Text = String.Format("Only update files added / changed after last import at {0}", xmlreader.GetValueAsString("musicfiles", "lastImport", DateTime.MinValue.ToString()));
       }
     }
 

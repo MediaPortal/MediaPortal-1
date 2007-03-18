@@ -101,7 +101,7 @@ namespace MediaPortal.Music.Database
     static bool _useFolderArtForArtistGenre = false;
     static bool _createMissingFolderThumbs = false;
 
-    static DateTime _lastImport = new DateTime(1900, 1, 1, 0, 0, 0);
+    static DateTime _lastImport = DateTime.MinValue;
 
     //bool AppendPrefixToSortableNameEnd = true;
 
@@ -150,9 +150,14 @@ namespace MediaPortal.Music.Database
         _useFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
         _createMissingFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", false);
         _useFolderArtForArtistGenre = xmlreader.GetValueAsBool("musicfiles", "createartistgenrethumbs", false);
-        DateTimeFormatInfo dtfi = new DateTimeFormatInfo();
-        dtfi.FullDateTimePattern = "yyyy-mm-dd HH:mm:ss"; 
-        _lastImport = DateTime.Parse(xmlreader.GetValueAsString("musicfiles", "lastImport", "1900-01-01 00:00:00"), dtfi);
+        try
+        {
+        _lastImport = DateTime.Parse(xmlreader.GetValueAsString("musicfiles", "lastImport", DateTime.MinValue.ToString()));
+        }
+        catch (FormatException)
+        {
+          _lastImport = DateTime.MinValue;
+        }
       }
       Open();
     }
@@ -173,9 +178,7 @@ namespace MediaPortal.Music.Database
         if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV7.db3")))
         {
           //Adds a reset to _lastImport so if you delete the music database after using MediaPortal previously the database never got updated for older files.
-          DateTimeFormatInfo dtfi = new DateTimeFormatInfo();
-          dtfi.FullDateTimePattern = "yyyy-mm-dd HH:mm:ss";
-          _lastImport = DateTime.Parse("1900-01-01 00:00:00", dtfi);
+          _lastImport = DateTime.MinValue;
           if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV6.db3")))
           {
             if (File.Exists(Config.GetFile(Config.Dir.Database, "musicdatabase5.db3")))
@@ -2742,7 +2745,7 @@ namespace MediaPortal.Music.Database
       _scanForVariousArtists = scanForVariousArtists;
 
       if (!updateSinceLastImport)
-        _lastImport = DateTime.Parse("1900-01-01 00:00:00");
+        _lastImport = DateTime.MinValue;
 
       if (shares == null)
       {
@@ -2878,9 +2881,7 @@ namespace MediaPortal.Music.Database
         // Save the time of the reorg, to be able to skip the files not updated / added the next time
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          DateTimeFormatInfo dtfi = new DateTimeFormatInfo();
-          dtfi.FullDateTimePattern = "yyyy-mm-dd HH:mm:ss"; 
-          xmlreader.SetValue("musicfiles", "lastImport", startTime.ToString(dtfi));
+          xmlreader.SetValue("musicfiles", "lastImport", startTime.ToString());
         }
       }
       return (int)Errors.ERROR_OK;
