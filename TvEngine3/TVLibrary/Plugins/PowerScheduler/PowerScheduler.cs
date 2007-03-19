@@ -126,6 +126,10 @@ namespace TvEngine.PowerScheduler
     /// (or if this has already been done)
     /// </summary>
     bool _reinitializeController = false;
+    /// <summary>
+    /// Indicator if the cards have been stopped
+    /// </summary>
+    bool _cardsStopped = false;
     #endregion
 
     #region Constructor
@@ -556,19 +560,22 @@ namespace TvEngine.PowerScheduler
       {
         case System.ServiceProcess.PowerBroadcastStatus.QuerySuspend:
           Log.Debug("PowerScheduler: System wants to enter standby");
-          _reinitializeController = true;
           bool idle = SystemIdle;
           Log.Debug("PowerScheduler: System idle: {0}", idle);
           SetWakeupTimer();
           if (idle)
           {
+            FreeTVCards();
             SendPowerSchedulerEvent(PowerSchedulerEventType.EnteringStandby, false);
             _timer.Enabled = false;
           }
           return idle;
         case System.ServiceProcess.PowerBroadcastStatus.QuerySuspendFailed:
           Log.Debug("PowerScheduler: Entering standby was disallowed (blocked)");
-          _reinitializeController = false;
+          lock (this)
+          {
+            ReinitializeController();
+          }
           ResetAndEnableTimer(); 
           return true;
         case System.ServiceProcess.PowerBroadcastStatus.ResumeAutomatic:
@@ -737,8 +744,34 @@ namespace TvEngine.PowerScheduler
     }
     #endregion
 
+    /// <summary>
+    /// Frees the tv tuners before entering standby
+    /// </summary>
+    private void FreeTVCards()
+    {
+      if (_cardsStopped)
+        return;
+      // only free tuner cards if reinitialization is enabled in settings
+      if (_settings.GetSetting("ReinitializeController").Get<bool>())
+      {
+        TvService.TVController controller = _controller as TvService.TVController;
+        if (controller != null)
+        {
+          Log.Debug("PowerScheduler: Stopping TV cards");
+          controller.FreeCards();
+          _cardsStopped = true;
+          _reinitializeController = true;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Restarts the TVController when resumed from standby
+    /// </summary>
     private void ReinitializeController()
     {
+      if (!_reinitializeController)
+        return;
       // only reinitialize controller if enabled in settings
       if (_settings.GetSetting("ReinitializeController").Get<bool>())
       {
@@ -748,6 +781,7 @@ namespace TvEngine.PowerScheduler
           Log.Debug("PowerScheduler: reinitializing the tvservice TVController");
           controller.Restart();
           _reinitializeController = false;
+          _cardsStopped = false;
         }
       }
     }

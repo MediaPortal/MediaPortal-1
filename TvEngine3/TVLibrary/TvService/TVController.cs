@@ -503,20 +503,8 @@ namespace TvService
         }
 
         //clean up the tv cards
-        Dictionary<int, TvCard>.Enumerator enumerator = _cards.GetEnumerator();
-        while (enumerator.MoveNext())
-        {
-          KeyValuePair<int, TvCard> key = enumerator.Current;
-          Log.WriteFile("Controller:  dispose card:{0}", key.Value.CardName);
-          try
-          {
-            key.Value.Dispose();
-          }
-          catch (Exception ex)
-          {
-            Log.Write(ex);
-          }
-        }
+        FreeCards();
+
         Gentle.Common.CacheManager.Clear();
         if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
         {
@@ -1364,6 +1352,27 @@ namespace TvService
     #endregion
 
     #region public interface
+    /// <summary>
+    /// Frees all resources occupied by the TV cards
+    /// </summary>
+    public void FreeCards()
+    {
+      Dictionary<int, TvCard>.Enumerator enumerator = _cards.GetEnumerator();
+      while (enumerator.MoveNext())
+      {
+        KeyValuePair<int, TvCard> key = enumerator.Current;
+        Log.WriteFile("Controller:  dispose card:{0}", key.Value.CardName);
+        try
+        {
+          key.Value.Dispose();
+        }
+        catch (Exception ex)
+        {
+          Log.Write(ex);
+        }
+      }
+    }
+
     /// <summary>
     /// Start timeshifting on a specific channel
     /// </summary>
