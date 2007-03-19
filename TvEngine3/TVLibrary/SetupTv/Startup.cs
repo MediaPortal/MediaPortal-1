@@ -111,6 +111,11 @@ namespace SetupTv
       if (dlg.ShouldDoUpgrade())
       {
         Log.Info("---- update/create database ----");
+        if (MessageBox.Show("The database has to be updated and will therefore get deleted and recreated.\n\nDo you want to proceed?", "SetupTV", MessageBoxButtons.YesNo) != DialogResult.Yes)
+        {
+            dlg.Close();
+            return;
+        }
         dlg.CreateDatabase();
 
       }
