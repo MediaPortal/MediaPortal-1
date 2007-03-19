@@ -64,6 +64,7 @@ namespace MediaPortal.Util
     static public readonly string TvRecordingIcon = "tvguide_record_button.png";
     static public readonly string TvRecordingSeriesIcon = "tvguide_recordserie_button.png";
     static public readonly string TvConflictRecordingIcon = "tvguide_recordconflict_button.png";
+    static public readonly string TvConflictRecordingSeriesIcon = "tvguide_recordserie_conflict_button.png";
 
     static public readonly string MusicFolder = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Folder");
     static public readonly string MusicAlbum = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Albums");
