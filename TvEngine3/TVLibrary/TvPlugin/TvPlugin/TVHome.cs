@@ -388,7 +388,7 @@ namespace TvPlugin
           }//if (false == server.IsRecording(channel, out Card))
           else
           {
-            card.StopRecording();
+            server.StopRecordingSchedule(card.RecordingScheduleId);
           }
           break;
 
