@@ -350,6 +350,9 @@ namespace TvPlugin
                                                   Navigator.Channel.CurrentProgram.StartTime, Navigator.Channel.CurrentProgram.EndTime);
                       newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                       newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+                      
+                      newSchedule.RecommendedCard = TVHome.Card.Id;
+
                       newSchedule.Persist();
                       server.OnNewSchedule();
                     }
@@ -361,6 +364,7 @@ namespace TvPlugin
                                                   DateTime.Now, DateTime.Now.AddDays(1));
                       newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                       newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+                      newSchedule.RecommendedCard = TVHome.Card.Id;
 
                       newSchedule.Persist();
                       server.OnNewSchedule();
@@ -375,6 +379,7 @@ namespace TvPlugin
                                                   DateTime.Now, DateTime.Now.AddDays(1));
               newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
               newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+              newSchedule.RecommendedCard = TVHome.Card.Id;
 
               newSchedule.Persist();
               server.OnNewSchedule();
@@ -885,7 +890,7 @@ namespace TvPlugin
                             Navigator.Channel.CurrentProgram.StartTime, Navigator.Channel.CurrentProgram.EndTime);
                   newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                   newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-                  newSchedule.RecommendedCard = Card.Id; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
+                  newSchedule.RecommendedCard = TVHome.Card.Id; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
 
                   newSchedule.Persist();
                   server.OnNewSchedule();
@@ -898,7 +903,7 @@ namespace TvPlugin
                                               DateTime.Now, DateTime.Now.AddDays(1));
                   newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                   newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-                  newSchedule.RecommendedCard = Card.Id; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
+                  newSchedule.RecommendedCard = TVHome.Card.Id ; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
 
                   newSchedule.Persist();
                   server.OnNewSchedule();
@@ -914,6 +919,7 @@ namespace TvPlugin
                                       DateTime.Now, DateTime.Now.AddDays(1));
           newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
           newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+          newSchedule.RecommendedCard = TVHome.Card.Id;
 
           newSchedule.Persist();
           server.OnNewSchedule();

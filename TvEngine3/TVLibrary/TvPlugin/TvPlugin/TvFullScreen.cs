@@ -901,6 +901,7 @@ namespace TvPlugin
                   rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
                   rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                   rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+                  rec.RecommendedCard = TVHome.Card.Id;  
 
                   rec.Persist();
                   server.OnNewSchedule();
@@ -913,6 +914,8 @@ namespace TvPlugin
                   rec = new Schedule(TVHome.Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + TVHome.Navigator.Channel.Name + ")", DateTime.Now, DateTime.Now.AddDays(1));
                   rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                   rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+                  rec.RecommendedCard = TVHome.Card.Id;  
+
                   rec.Persist();
                   server.OnNewSchedule();
                   break;
@@ -928,6 +931,7 @@ namespace TvPlugin
             Schedule rec = new Schedule(TVHome.Navigator.Channel.IdChannel, (int)ScheduleRecordingType.Once, GUILocalizeStrings.Get(413) + " (" + TVHome.Navigator.Channel.Name + ")", DateTime.Now, DateTime.Now.AddDays(1), 1, 1, "", 1, 1, Schedule.MinSchedule, 5, 5, Schedule.MinSchedule);
             rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
             rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+            rec.RecommendedCard = TVHome.Card.Id;  
 
             rec.Persist();
             server.OnNewSchedule();
