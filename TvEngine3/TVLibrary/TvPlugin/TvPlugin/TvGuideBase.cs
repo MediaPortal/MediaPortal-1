@@ -1184,8 +1184,8 @@ namespace TvPlugin
 
           if (bConflict)
           {
-            if(bSeries)img.SetFileName(Thumbs.TvConflictRecordingIcon);
-            else img.SetFileName(Thumbs.TvConflictRecordingSeriesIcon);
+            if (bSeries) img.SetFileName(Thumbs.TvConflictRecordingSeriesIcon);
+            else img.SetFileName(Thumbs.TvConflictRecordingIcon);
           }
           else if (bSeries)
             img.SetFileName(Thumbs.TvRecordingSeriesIcon);
