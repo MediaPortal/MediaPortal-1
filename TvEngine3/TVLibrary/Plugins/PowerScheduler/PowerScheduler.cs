@@ -460,7 +460,6 @@ namespace TvEngine.PowerScheduler
       if (pSetting.Get<bool>() != bSetting)
       {
         pSetting.Set<bool>(bSetting);
-        _settings.ForceShutdown = !_settings.ForceShutdown;
         LogVerbose("PowerScheduler: Reinitialize tvservice controller on wakeup: {0}", bSetting);
         changed = true;
       }
