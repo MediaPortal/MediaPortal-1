@@ -380,6 +380,7 @@ namespace MediaPortal.GUI.Music
       {
         GUIMusicFiles musicFilesWnd = (GUIMusicFiles)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_FILES);
         musicFilesWnd.PlayCD();
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
       }
 
       base.OnClicked(controlId, control, actionType);
