@@ -1124,7 +1124,7 @@ namespace TvLibrary.Implementations.DVB
 
 
       _tsFilterInterface.TimeShiftPause(_subChannelIndex, 1);
-      _tsFilterInterface.TimeShiftSetPcrPid(_subChannelIndex, dvbChannel.PcrPid);
+      _tsFilterInterface.TimeShiftSetPcrPid(_subChannelIndex, _channelInfo.pcr_pid);
       _tsFilterInterface.TimeShiftSetPmtPid(_subChannelIndex, dvbChannel.PmtPid);
       foreach (PidInfo info in _channelInfo.pids)
       {
@@ -1151,7 +1151,7 @@ namespace TvLibrary.Implementations.DVB
       if (dvbChannel == null) return;
 
 
-      _tsFilterInterface.RecordSetPcrPid(_subChannelIndex,dvbChannel.PcrPid);
+      _tsFilterInterface.RecordSetPcrPid(_subChannelIndex,_channelInfo.pcr_pid);
       bool programStream = true;
       //bool audioPidSet = false;
       foreach (PidInfo info in _channelInfo.pids)
@@ -1257,7 +1257,12 @@ namespace TvLibrary.Implementations.DVB
                 _channelInfo = new ChannelInfo();
                 _channelInfo.DecodePmt(pmt);
                 _channelInfo.network_pmt_PID = channel.PmtPid;
+                if (channel.PcrPid <= 0)
+                {
+                  channel.PcrPid = _channelInfo.pcr_pid;
+                }
                 _channelInfo.pcr_pid = channel.PcrPid;
+
                 
                 if (_mdapiFilter != null)
                 {
