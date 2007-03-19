@@ -664,16 +664,7 @@ namespace MediaPortal.GUI.Music
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_PLAY_AUDIO_CD:
-          if (message.Label2 == "Ask")
-          {
-            Log.Debug("GUIMusicFiles: OnPlayCD (false), asking now..");
-            OnPlayCD(message.Label, false);
-          }
-          else
-          {
-            Log.Info("GUIMusicFiles: OnPlayCD (true), do not ask");
-            OnPlayCD(message.Label, true);
-          }
+          OnPlayCD(message.Label, false);
           break;
 
         case GUIMessage.MessageType.GUI_MSG_CD_REMOVED:
