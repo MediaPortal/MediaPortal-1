@@ -400,6 +400,7 @@ namespace MediaPortal.Freedb
             retval = buff.ToString();
           }
         }
+        cddrive.Close();
       }
       return retval;
     }
@@ -417,6 +418,7 @@ namespace MediaPortal.Freedb
 						retval = cddrive.GetFreeDBDiscID();
 					}
 				}
+        cddrive.Close();
 			}
 			return retval;
 		}
