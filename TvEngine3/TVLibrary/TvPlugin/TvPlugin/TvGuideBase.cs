@@ -1183,7 +1183,10 @@ namespace TvPlugin
           GUIImage img = (GUIImage)GetControl((int)Controls.IMG_REC_PIN);
 
           if (bConflict)
-            img.SetFileName(Thumbs.TvConflictRecordingIcon);
+          {
+            if(bSeries)img.SetFileName(Thumbs.TvConflictRecordingIcon);
+            else img.SetFileName(Thumbs.TvConflictRecordingSeriesIcon);
+          }
           else if (bSeries)
             img.SetFileName(Thumbs.TvRecordingSeriesIcon);
           else
