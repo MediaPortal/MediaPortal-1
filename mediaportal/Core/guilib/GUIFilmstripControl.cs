@@ -297,8 +297,8 @@ namespace MediaPortal.GUI.Library
 				anim = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight, _frameName);
 				anim.ParentControl = this;
 				anim.DimColor = DimColor;
-				anim.FlipX = _flipX;
-				anim.FlipY = _flipY;
+				//anim.FlipX = _flipX;
+				//anim.FlipY = _flipY;
 				anim.DiffuseFileName = _diffuseFileName;
 				anim.SetAnimations(ThumbAnimations);
 				_frameControl.Add(anim);
@@ -306,8 +306,8 @@ namespace MediaPortal.GUI.Library
 				anim = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight, _frameFocusName);
 				anim.ParentControl = this;
 				anim.DimColor = DimColor; 
-				anim.FlipX = _flipX;
-				anim.FlipY = _flipY;
+				//anim.FlipX = _flipX;
+				//anim.FlipY = _flipY;
 				anim.DiffuseFileName = _diffuseFileName;
 				anim.SetAnimations(ThumbAnimations);
 				_frameFocusControl.Add(anim);
