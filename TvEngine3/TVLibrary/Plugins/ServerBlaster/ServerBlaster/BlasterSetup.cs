@@ -33,7 +33,9 @@ namespace SetupTv.Sections
             setting = layer.GetSetting("SrvBlaster2Card");
             setting.Value = comboBox4.SelectedIndex.ToString();
             setting.Persist();
-
+            setting = layer.GetSetting("SrvBlasterLog");
+            setting.Value = Convert.ToString(checkBox1.Checked == true);
+            setting.Persist();
 
             base.OnSectionDeActivated();
         }
@@ -41,10 +43,12 @@ namespace SetupTv.Sections
         public override void OnSectionActivated()
         {
 
-            
+
             TvBusinessLayer layer = new TvBusinessLayer();
-            comboBox1.SelectedIndex = Convert.ToInt16 ( layer.GetSetting("SrvBlasterType", "0").Value );
-            comboBox2.SelectedIndex = Convert.ToInt16 ( layer.GetSetting("SrvBlasterSpeed", "0").Value.ToString());
+            comboBox1.SelectedIndex = Convert.ToInt16(layer.GetSetting("SrvBlasterType", "0").Value);
+            comboBox2.SelectedIndex = Convert.ToInt16(layer.GetSetting("SrvBlasterSpeed", "0").Value.ToString());
+            comboBox3.Items.Clear();
+            comboBox4.Items.Clear();
             comboBox3.Items.Add("None");
             comboBox4.Items.Add("None");
             for (int i = 0; i < layer.Cards.Count; ++i)
@@ -56,6 +60,7 @@ namespace SetupTv.Sections
             Log.WriteFile("CB1Size {0}, CB2Size {1}, BT1 {2}, BT2 {3}", comboBox3.Items.Count, comboBox3.Items.Count, Convert.ToInt16(layer.GetSetting("SrvBlaster1Card", "0").Value), Convert.ToInt16(layer.GetSetting("SrvBlaster2Card", "0").Value));
             comboBox3.SelectedIndex = Convert.ToInt16(layer.GetSetting("SrvBlaster1Card", "0").Value);
             comboBox4.SelectedIndex = Convert.ToInt16(layer.GetSetting("SrvBlaster2Card", "0").Value);
+            checkBox1.Checked = (layer.GetSetting("SrvBlasterLog").Value == "True");
         }
 
         private void label1_Click(object sender, EventArgs e)

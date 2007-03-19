@@ -11,7 +11,7 @@ namespace SetupTv.Sections
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected  void Dispose(bool disposing)
+        protected void Dispose(bool disposing)
         {
             if (disposing && (components != null))
             {
@@ -38,6 +38,7 @@ namespace SetupTv.Sections
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
@@ -54,6 +55,7 @@ namespace SetupTv.Sections
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.checkBox1);
             this.tabPage1.Controls.Add(this.comboBox4);
             this.tabPage1.Controls.Add(this.comboBox3);
             this.tabPage1.Controls.Add(this.comboBox2);
@@ -145,6 +147,16 @@ namespace SetupTv.Sections
             this.comboBox1.Size = new System.Drawing.Size(236, 21);
             this.comboBox1.TabIndex = 8;
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(20, 172);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(129, 17);
+            this.checkBox1.TabIndex = 18;
+            this.checkBox1.Text = "Use extended logging";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
             // BlasterSetup
             // 
             this.Controls.Add(this.tabControl1);
@@ -169,6 +181,7 @@ namespace SetupTv.Sections
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.ComboBox comboBox3;
         private System.Windows.Forms.ComboBox comboBox4;
+        private System.Windows.Forms.CheckBox checkBox1;
 
     }
 }

@@ -20,9 +20,9 @@ namespace TvEngine
 {
 
     public class ServerBlaster : ITvServerPlugin
-	{
+    {
 
-    #region properties
+        #region properties
 
         /// <summary>
         /// returns the name of the plugin
@@ -67,29 +67,29 @@ namespace TvEngine
         }
         #endregion
 
-    #region public methods
+        #region public methods
 
-    public void Start(IController controller)
-	{
-        Log.WriteFile("ServerBlaster.Start: Starting");
-       ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
-       events.OnTvServerEvent += new TvServerEventHandler(events_OnTvServerEvent);
+        public void Start(IController controller)
+        {
+            Log.WriteFile("ServerBlaster.Start: Starting");
+            ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
+            events.OnTvServerEvent += new TvServerEventHandler(events_OnTvServerEvent);
 
-       Blaster.DeviceArrival += new DeviceEventHandler(OnDeviceArrival);
-       Blaster.DeviceRemoval += new DeviceEventHandler(OnDeviceRemoval);
-       LoadRemoteCodes();
+            Blaster.DeviceArrival += new DeviceEventHandler(OnDeviceArrival);
+            Blaster.DeviceRemoval += new DeviceEventHandler(OnDeviceRemoval);
+            LoadRemoteCodes();
 
 
-       Log.WriteFile("ServerBlaster.Start: Started");
-	 }
+            Log.WriteFile("ServerBlaster.Start: Started");
+        }
 
-	public void Stop()
-	{
-	   Log.WriteFile("ServerBlaster.Stop: Stopping");
-       ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
-       events.OnTvServerEvent -= new TvServerEventHandler(events_OnTvServerEvent);
-	   Log.WriteFile("ServerBlaster.Stop: Stopped");
-	}
+        public void Stop()
+        {
+            Log.WriteFile("ServerBlaster.Stop: Stopping");
+            ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
+            events.OnTvServerEvent -= new TvServerEventHandler(events_OnTvServerEvent);
+            Log.WriteFile("ServerBlaster.Stop: Stopped");
+        }
 
         public SetupTv.SectionSettings Setup
         {
@@ -98,23 +98,23 @@ namespace TvEngine
                 return new SetupTv.Sections.BlasterSetup();
             }
         }
-	#endregion public implementation
+        #endregion public implementation
 
-    #region Implementation
+        #region Implementation
 
         void events_OnTvServerEvent(object sender, EventArgs eventArgs)
         {
 
-         TvServerEventArgs tvEvent = (TvServerEventArgs)eventArgs;
-         AnalogChannel analogChannel = tvEvent.channel as AnalogChannel;
-         if (analogChannel == null) return;
-         if(tvEvent.EventType == TvServerEventType.StartZapChannel )
-         {
-             Log.WriteFile("ServerBlaster - CardId: {0}, Channel: {1} - Channel:{2}", tvEvent.Card.Id,  analogChannel.ChannelNumber, analogChannel.Name );
-             Send( analogChannel.ChannelNumber, tvEvent.Card.Id );
+            TvServerEventArgs tvEvent = (TvServerEventArgs)eventArgs;
+            AnalogChannel analogChannel = tvEvent.channel as AnalogChannel;
+            if (analogChannel == null) return;
+            if (tvEvent.EventType == TvServerEventType.StartZapChannel)
+            {
+                Log.WriteFile("ServerBlaster - CardId: {0}, Channel: {1} - Channel:{2}", tvEvent.Card.Id, analogChannel.ChannelNumber, analogChannel.Name);
+                Send(analogChannel.ChannelNumber, tvEvent.Card.Id);
 
-		 }
-	    }
+            }
+        }
 
         void OnDeviceArrival()
         {
@@ -130,7 +130,7 @@ namespace TvEngine
         {
             try
             {
-                using (FileStream fs = new FileStream(String.Format(@"{0}\MediaPortal TV Server\ServerBlaster.dat",Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)), FileMode.Open, FileAccess.Read))
+                using (FileStream fs = new FileStream(String.Format(@"{0}\MediaPortal TV Server\ServerBlaster.dat", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)), FileMode.Open, FileAccess.Read))
                 {
                     BinaryFormatter bf = new BinaryFormatter();
                     _packetCollection = bf.Deserialize(fs) as Hashtable;
@@ -149,6 +149,7 @@ namespace TvEngine
                 _blaster2Card = Convert.ToInt16(layer.GetSetting("SrvBlaster2Card", "0").Value);
                 _deviceType = Convert.ToInt16(layer.GetSetting("SrvBlasterType", "0").Value);
                 _deviceSpeed = Convert.ToInt16(layer.GetSetting("SrvBlasterSpeed", "0").Value);
+                _advandeLogging = (layer.GetSetting("SrvBlasterLog", "False").ToString() == "True");
                 _sendPort = Math.Max(1, Math.Min(2, _sendPort));
 
                 Log.WriteFile("ServerBlaster.LoadRemoteCodes: Default port {0}", _sendPort);
@@ -172,28 +173,29 @@ namespace TvEngine
             else if (_blaster2Card == card) _sendPort = 2;
             else if (_blaster1Card == _blaster2Card) _sendPort = 0;
 
-            //Log.WriteFile("ServerBlaster.Send: C {0} - B1{1} - B2{2}. Channel is {3}", card, _blaster1Card, _blaster2Card, externalChannel );
+            if (_advandeLogging) Log.WriteFile("ServerBlaster.Send: C {0} - B1{1} - B2{2}. Channel is {3}", card, _blaster1Card, _blaster2Card, externalChannel);
 
             try
             {
                 foreach (char ch in externalChannel.ToString())
                 {
                     if (char.IsDigit(ch) == false) continue;
-                    //Log.WriteFile("ServerBlaster.Sending {0} on blaster {1}", ch, _sendPort );
+                    if (_advandeLogging) Log.WriteFile("ServerBlaster.Sending {0} on blaster {1}", ch, _sendPort);
 
                     byte[] packet = _packetCollection[ch.ToString()] as byte[];
 
                     if (packet == null) Log.WriteFile("ServerBlaster.Send: Missing packet for '{0}'", ch);
-                    if (packet != null) Blaster.Send(_sendPort, packet, _deviceType, _deviceSpeed);
+                    if (packet != null) Blaster.Send(_sendPort, packet, _deviceType, _deviceSpeed, _advandeLogging);
                     if (packet != null && _sleepTime != 0) Thread.Sleep(_sleepTime);
-                    //Log.WriteFile("ServerBlaster.Send logic is done");
+                    if (_advandeLogging) Log.WriteFile("ServerBlaster.Send logic is done");
                 }
 
                 if (_sendSelect)
                 {
                     //byte[] packet = _packetCollection["Select"] as byte[];
+                    if (_advandeLogging) Log.Write("ServerBlaster.Send: Sending Select");
                     byte[] packet = _packetCollection["Select"] as byte[];
-                    if (packet != null) Blaster.Send(_sendPort, packet, _deviceType, _deviceSpeed);
+                    if (packet != null) Blaster.Send(_sendPort, packet, _deviceType, _deviceSpeed, _advandeLogging);
 
                 }
             }
@@ -203,9 +205,9 @@ namespace TvEngine
             }
         }
 
-    #endregion Implementation
+        #endregion Implementation
 
-    #region Members
+        #region Members
 
         Hashtable _packetCollection;
         int _sendPort = 1;
@@ -213,6 +215,7 @@ namespace TvEngine
         bool _sendSelect;
         int _blaster1Card = -1;
         int _blaster2Card = 1;
+        bool _advandeLogging = false;
         int _deviceType = 1;
         int _deviceSpeed = 0;
 
