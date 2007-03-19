@@ -747,6 +747,7 @@ namespace TvService
         _state = EpgState.Idle;
         _user.CardId = -1;
         Gentle.Common.CacheManager.Clear();
+				_tvController.Fire(this, new TvServerEventArgs(TvServerEventType.ProgramUpdated));
       }
     }
 

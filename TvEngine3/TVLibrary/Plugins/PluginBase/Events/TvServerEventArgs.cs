@@ -76,6 +76,10 @@ namespace TvEngine.Events
     /// Event indicating that a  conflict has been deleted
     /// </summary>
     ConflictDeleted,
+		/// <summary>
+		/// Event indicating that the program db was updated
+		/// </summary>
+		ProgramUpdated,
   };
 
   public class TvServerEventArgs : EventArgs
