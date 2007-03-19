@@ -67,6 +67,8 @@ namespace MediaPortal.Player
 
         //mixerControlledComponent = reader.GetValueAsString("volume", "controlledMixer", "Wave");
 				isDigital = reader.GetValueAsBool("volume", "digital", false);
+
+                _showVolumeOSD = reader.GetValueAsBool ("volume","defaultVolumeOSD", true);
 			}
 
 			_mixer = new Mixer.Mixer();
@@ -160,7 +162,7 @@ namespace MediaPortal.Player
                 GUIGraphicsContext.SendMessage(msg);
 
 				if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
-					GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
+					GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && _showVolumeOSD)
 				{
 					Action showVolume=new Action(Action.ActionType.ACTION_SHOW_VOLUME,0,0);
 					GUIWindowManager.OnAction(showVolume);
@@ -187,7 +189,7 @@ namespace MediaPortal.Player
 
 
 				if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
-					GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
+					GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && _showVolumeOSD )
 				{
 					Action showVolume=new Action(Action.ActionType.ACTION_SHOW_VOLUME,0,0);
 					GUIWindowManager.OnAction(showVolume);
@@ -279,6 +281,7 @@ namespace MediaPortal.Player
 									};
 		int[]						_volumeTable;
 		int							_startupVolume;
+        bool                        _showVolumeOSD;
 
 		#endregion Fields
 	}
