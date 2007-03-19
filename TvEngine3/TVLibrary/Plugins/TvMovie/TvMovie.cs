@@ -96,9 +96,13 @@ namespace TvEngine
       {
         if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
         {
-          GlobalServiceProvider.Instance.Get<IEpgHandler>().EPGScheduleDue += new EPGScheduleHandler(EPGScheduleDue);
-          _registeredWithPS = true;
-          Log.Debug("TVMovie: registered with PowerScheduler EPG handler");
+          IEpgHandler handler = GlobalServiceProvider.Instance.Get<IEpgHandler>();
+          if (handler != null)
+          {
+            handler.EPGScheduleDue += new EPGScheduleHandler(EPGScheduleDue);
+            _registeredWithPS = true;
+            Log.Debug("TVMovie: registered with PowerScheduler EPG handler");
+          }
         }
       }
     }
