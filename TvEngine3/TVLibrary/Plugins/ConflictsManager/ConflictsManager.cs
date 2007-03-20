@@ -153,10 +153,7 @@ namespace TvEngine
       IList scheduleList = Schedule.ListAll();
       // parses all schedules and add the calculated incoming schedules 
       IList scheduleOnceList = getRecordOnceSchedules(scheduleList);
-      IList scheduleDailyList = getDailySchedules(scheduleList);
-      IList scheduleWeeklyList = getWeeklySchedules(scheduleList);
-      IList scheduleWeekendsList = getWeekendsSchedules(scheduleList);
-      IList scheduleWorkingDaysList = getWorkingDaysSchedules(scheduleList);
+      IList scheduleRepeatingList = getRepeatingSchedules(scheduleList);
       IList scheduleEveryTimeEveryChannelList = getEveryTimeOnEveryChannelSchedules(scheduleList);
       IList scheduleEveryTimeThisChannelList = getEveryTimeOnThisChannelSchedules(scheduleList);
       // test section
@@ -166,27 +163,18 @@ namespace TvEngine
       {
         foreach (Schedule schedule in scheduleOnceList) Log.Debug("Record Once schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
         Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleDailyList) Log.Debug("Daily schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        foreach (Schedule schedule in scheduleRepeatingList) Log.Debug("Repeating schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
         Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleWeeklyList) Log.Debug("Weekly schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        foreach (Schedule schedule in scheduleEveryTimeEveryChannelList) Log.Debug("Every time on every chan. schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
         Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleWeekendsList) Log.Debug("Weekend schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
-        Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleWorkingDaysList) Log.Debug("Working days schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
-        Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleEveryTimeEveryChannelList) Log.Debug("Evry time on evry chan. schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
-        Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleEveryTimeThisChannelList) Log.Debug("Evry time on this chan. schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        foreach (Schedule schedule in scheduleEveryTimeThisChannelList) Log.Debug("Every time on this chan. schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
         Log.Debug("------------------------------------------------");
       }
       #endregion
       // Rebuilds a list with all schedules to parse
       scheduleList.Clear();
       foreach (Schedule schedule in scheduleOnceList) scheduleList.Add(schedule);
-      foreach (Schedule schedule in scheduleDailyList) scheduleList.Add(schedule);
-      foreach (Schedule schedule in scheduleWeeklyList) scheduleList.Add(schedule);
-      foreach (Schedule schedule in scheduleWeekendsList) scheduleList.Add(schedule);
-      foreach (Schedule schedule in scheduleWorkingDaysList) scheduleList.Add(schedule);
+      foreach (Schedule schedule in scheduleRepeatingList) scheduleList.Add(schedule);
       foreach (Schedule schedule in scheduleEveryTimeEveryChannelList) scheduleList.Add(schedule);
       foreach (Schedule schedule in scheduleEveryTimeThisChannelList) scheduleList.Add(schedule);
       // try to assign all schedules to existing cards
@@ -382,178 +370,75 @@ namespace TvEngine
     }
 
     /// <summary>
-    /// gets Daily Schedules in a given list of schedules
+    /// gets Repeating Schedules (Daily, Weekly,..) in a given list of schedules
     /// canceled Schedules are ignored
     /// </summary>
     /// <param name="schedulesList">a IList contaning the schedules to parse</param>
     /// <returns>a collection containing the Daily schedules</returns>
-    private IList getDailySchedules(IList schedulesList)
+    private IList getRepeatingSchedules(IList schedulesList)
     {
+      TvBusinessLayer layer = new TvBusinessLayer();
       IList incomingSchedules = new List<Schedule>();
       foreach (Schedule schedule in schedulesList)
       {
         ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
         if (schedule.Canceled != Schedule.MinSchedule) continue;
-        if (scheduleType != ScheduleRecordingType.Daily) continue;
-        // create a temporay base schedule with today's date
-        // (will be used to calculate incoming schedules)
-        // and adjusts Endtime for schedules that overlap 2 days (eg : 23:00 - 00:30)
-        Schedule baseSchedule = schedule.Clone();
-        if (baseSchedule.StartTime.Day != baseSchedule.EndTime.Day)
+        if (scheduleType != ScheduleRecordingType.Daily
+            && scheduleType != ScheduleRecordingType.WorkingDays
+            && scheduleType != ScheduleRecordingType.Weekends
+            && scheduleType != ScheduleRecordingType.Weekly)
         {
-          baseSchedule.StartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, baseSchedule.StartTime.Hour, baseSchedule.StartTime.Minute, baseSchedule.StartTime.Second);
-          baseSchedule.EndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, baseSchedule.EndTime.Hour, baseSchedule.EndTime.Minute, baseSchedule.EndTime.Second);
-          baseSchedule.EndTime = baseSchedule.EndTime.AddDays(1);
+          continue;
+        }
+
+        Channel channel = schedule.ReferencedChannel();
+        if (layer.GetPrograms(channel, DateTime.Now, DateTime.Now.AddDays(1)).Count > 0)
+        {
+          // This channel has a guide, so let's find the scheduled programs there.
+          IList programsList = layer.SearchMinimalPrograms(DateTime.Now, DateTime.Now.AddYears(1), schedule.ProgramName, channel);
+          if (programsList != null)
+          {
+            foreach (Program program in programsList)
+            {
+              if (schedule.IsRecordingProgram(program, true) && program.EndTime >= DateTime.Now)
+              {
+                Schedule incomingSchedule = schedule.Clone();
+                incomingSchedule.IdChannel = program.IdChannel;
+                incomingSchedule.ProgramName = program.Title;
+                incomingSchedule.StartTime = program.StartTime;
+                incomingSchedule.EndTime = program.EndTime;
+
+                incomingSchedule.PreRecordInterval = schedule.PreRecordInterval;
+                incomingSchedule.PostRecordInterval = schedule.PostRecordInterval;
+                incomingSchedules.Add(incomingSchedule);
+              }
+            }
+          }//foreach (Program _program in _programsList)
         }
         else
         {
-          baseSchedule.StartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, baseSchedule.StartTime.Hour, baseSchedule.StartTime.Minute, baseSchedule.StartTime.Second);
-          baseSchedule.EndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, baseSchedule.EndTime.Hour, baseSchedule.EndTime.Minute, baseSchedule.EndTime.Second);
+          // This channel does not seem to have a guide, so use a simple calculation.
+          DateTime todayStartTime = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, 0);
+
+          // generate the daily schedules for the next 30 days
+          for (int i = 0; i <= 30; i++)
+          {
+            DateTime tempTime = todayStartTime.AddDays(i);
+            if (tempTime.Date >= schedule.StartTime.Date)
+            {
+              DateTime recStartTime;
+              DateTime recEndTime;
+              if (schedule.GetTimesNearestTo(tempTime, out recStartTime, out recEndTime))
+              {
+                Schedule incomingSchedule = schedule.Clone();
+                incomingSchedule.StartTime = recStartTime;
+                incomingSchedule.EndTime = recEndTime;
+                incomingSchedules.Add(incomingSchedule);
+              }
+            }//if (_tempDate>=_Schedule.StartTime)
+          }//for (int i = 0; i <= 30; i++)
         }
-
-        // generate the daily schedules for the next 30 days
-        DateTime tempDate;
-        for (int i = 0; i <= 30; i++)
-        {
-          tempDate = DateTime.Now.AddDays(i);
-          if (tempDate.Date >= schedule.StartTime.Date)
-          {
-            Schedule incomingSchedule = baseSchedule.Clone();
-            incomingSchedule.StartTime = incomingSchedule.StartTime.AddDays(i);
-            incomingSchedule.EndTime = incomingSchedule.EndTime.AddDays(i);
-            incomingSchedules.Add(incomingSchedule);
-          }//if (_tempDate>=_Schedule.StartTime)
-        }//for (int i = 0; i <= 30; i++)
       }
-      return incomingSchedules;
-    }
-
-    /// <summary>
-    /// gets Weekly Schedules in a given list of schedules for the next 30 days 
-    /// canceled Schedules are ignored
-    /// </summary>
-    /// <param name="schedulesList">a IList contaning the schedules to parse</param>
-    /// <returns>a collection containing the Weekly schedules</returns>
-    private IList getWeeklySchedules(IList schedulesList)
-    {
-      IList incomingSchedules = new List<Schedule>();
-      foreach (Schedule schedule in schedulesList)
-      {
-        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
-        if (schedule.Canceled != Schedule.MinSchedule) continue;
-        if (scheduleType != ScheduleRecordingType.Weekly) continue;
-        DateTime tempDate;
-        //  generate the weekly schedules for the next 30 days
-        for (int i = 0; i <= 30; i++)
-        {
-          tempDate = DateTime.Now.AddDays(i);
-          if ((tempDate.DayOfWeek == schedule.StartTime.DayOfWeek) && (tempDate.Date >= schedule.StartTime.Date))
-          {
-            Schedule tempSchedule = schedule.Clone();
-            #region Set Schedule Time & Date
-            // adjusts Endtime for schedules that overlap 2 days (eg : 23:00 - 00:30)
-            if (tempSchedule.StartTime.Day != tempSchedule.EndTime.Day)
-            {
-              tempSchedule.StartTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.StartTime.Hour, tempSchedule.StartTime.Minute, tempSchedule.StartTime.Second);
-              tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour, tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
-              tempSchedule.EndTime = tempSchedule.EndTime.AddDays(1);
-            }
-            else
-            {
-              tempSchedule.StartTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.StartTime.Hour, tempSchedule.StartTime.Minute, tempSchedule.StartTime.Second);
-              tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour, tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
-            }
-            #endregion
-            incomingSchedules.Add(tempSchedule);
-          }//if (_tempDate.DayOfWeek == _Schedule.StartTime.DayOfWeek && _tempDate >= _Schedule.StartTime)
-        }//for (int i = 0; i < 30; i++)
-      }//foreach (Schedule _Schedule in schedulesList)
-      return incomingSchedules;
-    }
-
-    /// <summary>
-    /// gets Weekends Schedules in a given list of schedules for the next 30 days 
-    /// canceled Schedules are ignored
-    /// </summary>
-    /// <param name="schedulesList">a IList contaning the schedules to parse</param>
-    /// <returns>a collection containing the Weekends schedules</returns>
-    private IList getWeekendsSchedules(IList schedulesList)
-    {
-      IList incomingSchedules = new List<Schedule>();
-      foreach (Schedule schedule in schedulesList)
-      {
-        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
-        if (schedule.Canceled != Schedule.MinSchedule) continue;
-        if (scheduleType != ScheduleRecordingType.Weekends) continue;
-        DateTime tempDate;
-        //  generate the weekly schedules for the next 30 days
-        for (int i = 0; i <= 30; i++)
-        {
-          tempDate = DateTime.Now.AddDays(i);
-          if ((tempDate.DayOfWeek == DayOfWeek.Saturday) || (tempDate.DayOfWeek == DayOfWeek.Sunday) && (tempDate.Date >= schedule.StartTime.Date))
-          {
-            Schedule tempSchedule = schedule.Clone();
-            #region Set Schedule Time & Date
-            // adjusts Endtime for schedules that overlap 2 days (eg : 23:00 - 00:30)
-            if (tempSchedule.StartTime.Day != tempSchedule.EndTime.Day)
-            {
-              tempSchedule.StartTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.StartTime.Hour, tempSchedule.StartTime.Minute, tempSchedule.StartTime.Second);
-              tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour, tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
-              tempSchedule.EndTime = tempSchedule.EndTime.AddDays(1);
-            }
-            else
-            {
-              tempSchedule.StartTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.StartTime.Hour, tempSchedule.StartTime.Minute, tempSchedule.StartTime.Second);
-              tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour, tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
-            }
-            #endregion
-            incomingSchedules.Add(tempSchedule);
-          }//if (_tempDate.DayOfWeek == _Schedule.StartTime.DayOfWeek && _tempDate >= _Schedule.StartTime)
-        }//for (int i = 0; i < 30; i++)
-      }//foreach (Schedule _Schedule in schedulesList)
-      return incomingSchedules;
-    }
-
-    /// <summary>
-    /// gets WorkingDays Schedules in a given list of schedules for the next 30 days 
-    /// canceled Schedules are ignored
-    /// </summary>
-    /// <param name="schedulesList">a IList contaning the schedules to parse</param>
-    /// <returns>a collection containing the WorkingDays schedules</returns>
-    private IList getWorkingDaysSchedules(IList schedulesList)
-    {
-      IList incomingSchedules = new List<Schedule>();
-      foreach (Schedule schedule in schedulesList)
-      {
-        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
-        if (schedule.Canceled != Schedule.MinSchedule) continue;
-        if (scheduleType != ScheduleRecordingType.WorkingDays) continue;
-        DateTime tempDate;
-        //  generate the weekly schedules for the next 30 days
-        for (int i = 0; i <= 30; i++)
-        {
-          tempDate = DateTime.Now.AddDays(i);
-          if ((tempDate.DayOfWeek != DayOfWeek.Saturday) && (tempDate.DayOfWeek != DayOfWeek.Sunday) && (tempDate.Date >= schedule.StartTime.Date))
-          {
-            Schedule tempSchedule = schedule.Clone();
-            #region Set Schedule Time & Date
-            // adjusts Endtime for schedules that overlap 2 days (eg : 23:00 - 00:30)
-            if (tempSchedule.StartTime.Day != tempSchedule.EndTime.Day)
-            {
-              tempSchedule.StartTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.StartTime.Hour, tempSchedule.StartTime.Minute, tempSchedule.StartTime.Second);
-              tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour, tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
-              tempSchedule.EndTime = tempSchedule.EndTime.AddDays(1);
-            }
-            else
-            {
-              tempSchedule.StartTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.StartTime.Hour, tempSchedule.StartTime.Minute, tempSchedule.StartTime.Second);
-              tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour, tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
-            }
-            #endregion
-            incomingSchedules.Add(tempSchedule);
-          }//if (_tempDate.DayOfWeek == _Schedule.StartTime.DayOfWeek && _tempDate >= _Schedule.StartTime)
-        }//for (int i = 0; i < 30; i++)
-      }//foreach (Schedule _Schedule in schedulesList)
       return incomingSchedules;
     }
 

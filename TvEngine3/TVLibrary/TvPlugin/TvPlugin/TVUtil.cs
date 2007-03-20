@@ -68,120 +68,16 @@ namespace TvPlugin
         return recordings;
       }
 
-      if (rec.ScheduleType == (int)ScheduleRecordingType.Daily)
-      {
-        for (int i = 0; i < _days; ++i)
-        {
-          Schedule recNew = rec.Clone();
-          recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-          recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0);
-          if (rec.EndTime.Day > rec.StartTime.Day)
-            dtDay = dtDay.AddDays(1);
-          recNew.EndTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0);
-          if (rec.EndTime.Day > rec.StartTime.Day)
-            dtDay = dtDay.AddDays(-1);
-          recNew.Series = true;
-          if (recNew.StartTime >= DateTime.Now)
-          {
-            if (rec.IsSerieIsCanceled(recNew.StartTime))
-              recNew.Canceled = recNew.StartTime;
-            recordings.Add(recNew);
-          }
-          dtDay = dtDay.AddDays(1);
-        }
-        return recordings;
-      }
-
-      if (rec.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
-      {
-        for (int i = 0; i < _days; ++i)
-        {
-          if (dtDay.DayOfWeek != DayOfWeek.Saturday && dtDay.DayOfWeek != DayOfWeek.Sunday)
-          {
-            Schedule recNew = rec.Clone();
-            recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-            recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0);
-            if (rec.EndTime.Day > rec.StartTime.Day)
-              dtDay = dtDay.AddDays(1);
-            recNew.EndTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0);
-            if (rec.EndTime.Day > rec.StartTime.Day)
-              dtDay = dtDay.AddDays(-1);
-            recNew.Series = true;
-            if (rec.IsSerieIsCanceled(recNew.StartTime))
-              recNew.Canceled = recNew.StartTime;
-            if (recNew.StartTime >= DateTime.Now)
-            {
-              recordings.Add(recNew);
-            }
-          }
-          dtDay = dtDay.AddDays(1);
-        }
-        return recordings;
-      }
-
-      if (rec.ScheduleType == (int)ScheduleRecordingType.Weekends)
-      {
-        IList progList;
-        progList = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, rec.ReferencedChannel());
-
-        foreach (Program prog in progList)
-        {
-          if ((rec.IsRecordingProgram(prog, false)) &&
-                      (prog.StartTime.DayOfWeek == DayOfWeek.Saturday || prog.StartTime.DayOfWeek == DayOfWeek.Sunday))
-          {
-            Schedule recNew = rec.Clone();
-            recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-            recNew.StartTime = prog.StartTime;
-            recNew.EndTime = prog.EndTime;
-            recNew.Series = true;
-
-            if (rec.IsSerieIsCanceled(recNew.StartTime))
-              recNew.Canceled = recNew.StartTime;
-            recordings.Add(recNew);
-          }
-
-        }
-        return recordings;
-      }
-      if (rec.ScheduleType == (int)ScheduleRecordingType.Weekly)
-      {
-        for (int i = 0; i < _days; ++i)
-        {
-          if (dtDay.DayOfWeek == rec.StartTime.DayOfWeek)
-          {
-            Schedule recNew = rec.Clone();
-            recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-            recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0);
-            if (rec.EndTime.Day > rec.StartTime.Day)
-              dtDay = dtDay.AddDays(1);
-            recNew.EndTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0);
-            if (rec.EndTime.Day > rec.StartTime.Day)
-              dtDay = dtDay.AddDays(-1);
-            recNew.Series = true;
-            if (rec.IsSerieIsCanceled(recNew.StartTime))
-              recNew.Canceled = recNew.StartTime;
-            if (recNew.StartTime >= DateTime.Now)
-            {
-              recordings.Add(recNew);
-            }
-          }
-          dtDay = dtDay.AddDays(1);
-        }
-        return recordings;
-      }
-
-
       IList programs;
-      if (rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel)
+      if (rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnEveryChannel)
       {
-        Log.Debug("get {0} {1} EveryTimeOnThisChannel", rec.ProgramName, rec.ReferencedChannel().Name);
-        programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, rec.ReferencedChannel());
+        Log.Debug("get {0} EveryTimeOnEveryChannel", rec.ProgramName);
+        programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, null);
       }
       else
       {
-        Log.Debug("get {0} EveryTimeOnAllChannels", rec.ProgramName );
-
-        programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, null);
+        Log.Debug("get {0} {1} {2}", rec.ProgramName, rec.ReferencedChannel().Name, ((ScheduleRecordingType)rec.ScheduleType).ToString());
+        programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, rec.ReferencedChannel());
       }
       foreach (Program prog in programs)
       {

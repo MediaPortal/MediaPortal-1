@@ -260,84 +260,64 @@ namespace TvService
         if (currentTime >= schedule.StartTime.AddMinutes(-schedule.PreRecordInterval) &&
             currentTime <= schedule.EndTime.AddMinutes(schedule.PostRecordInterval))
         {
-
           newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), schedule.StartTime, schedule.EndTime);
           return true;
         }
         return false;
       }
 
-      if (type == ScheduleRecordingType.Daily)
+      if (type == ScheduleRecordingType.Daily
+        || type == ScheduleRecordingType.Weekends
+        || type == ScheduleRecordingType.WorkingDays
+        || type == ScheduleRecordingType.Weekly)
       {
-        DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
-        DateTime end = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
-        if (currentTime >= start.AddMinutes(-schedule.PreRecordInterval) &&
-            currentTime <= end.AddMinutes(schedule.PostRecordInterval))
+        // Get the current and next programs and check if either of them is supposed to be recording (using
+        // the fuzzy algorithm to detect a schedule's timeslot).
+        TvDatabase.Program current = schedule.ReferencedChannel().CurrentProgram;
+        TvDatabase.Program next = schedule.ReferencedChannel().NextProgram;
+        if (current != null)
         {
-          if (!schedule.IsSerieIsCanceled(start))
+          if (currentTime >= current.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= current.EndTime.AddMinutes(schedule.PostRecordInterval))
           {
-            newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end);
-            return true;
-          }
-        }
-        return false;
-      }
-
-      if (type == ScheduleRecordingType.Weekends)
-      {
-        if (currentTime.DayOfWeek == DayOfWeek.Saturday || currentTime.DayOfWeek == DayOfWeek.Sunday)
-        {
-          DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
-          DateTime end = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
-          if (currentTime >= start.AddMinutes(-schedule.PreRecordInterval) &&
-              currentTime <= end.AddMinutes(schedule.PostRecordInterval))
-          {
-
-            if (!schedule.IsSerieIsCanceled(start))
+            if (schedule.IsInFuzzyTimeSlot(current.IdChannel, current.Title, current.StartTime))
             {
-              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end);
-              return true;
+              if (!schedule.IsSerieIsCanceled(current.StartTime))
+              {
+                newRecording = new RecordingDetail(schedule, current.ReferencedChannel(), current.StartTime, current.EndTime);
+                return true;
+              }
             }
           }
         }
-        return false;
-      }
-      if (type == ScheduleRecordingType.WorkingDays)
-      {
-        if (currentTime.DayOfWeek != DayOfWeek.Saturday && currentTime.DayOfWeek != DayOfWeek.Sunday)
+        if (next != null)
         {
-          DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
-          DateTime end = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
-          if (currentTime >= start.AddMinutes(-schedule.PreRecordInterval) &&
-              currentTime <= end.AddMinutes(schedule.PostRecordInterval))
+          if (currentTime >= next.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= next.EndTime.AddMinutes(schedule.PostRecordInterval))
           {
-            if (!schedule.IsSerieIsCanceled(start))
+            if (schedule.IsInFuzzyTimeSlot(next.IdChannel, next.Title, current.StartTime))
             {
-              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end);
-              return true;
+              if (!schedule.IsSerieIsCanceled(next.StartTime))
+              {
+                newRecording = new RecordingDetail(schedule, next.ReferencedChannel(), next.StartTime, next.EndTime);
+                return true;
+              }
             }
           }
         }
-        return false;
-      }
-
-      if (type == ScheduleRecordingType.Weekly)
-      {
-        if (currentTime.DayOfWeek == schedule.StartTime.DayOfWeek)
+        if (current == null)
         {
-          DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
-          DateTime end = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
-          if (currentTime >= start.AddMinutes(-schedule.PreRecordInterval) &&
-              currentTime <= end.AddMinutes(schedule.PostRecordInterval))
+          // If there is no guide information available, simply check the schedule's set time.
+          DateTime recStartTime;
+          DateTime recEndTime;
+          if (schedule.GetTimesNearestTo(currentTime, out recStartTime, out recEndTime))
           {
-            if (!schedule.IsSerieIsCanceled(start))
+            if (currentTime >= recStartTime.AddMinutes(-schedule.PreRecordInterval) &&
+                currentTime <= recEndTime.AddMinutes(schedule.PostRecordInterval))
             {
-              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end);
-              return true;
+                newRecording = new RecordingDetail(schedule, next.ReferencedChannel(), recStartTime, recEndTime);
+                return true;
             }
           }
         }
-        return false;
       }
 
       if (type == ScheduleRecordingType.EveryTimeOnThisChannel)
