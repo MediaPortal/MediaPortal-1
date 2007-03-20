@@ -124,7 +124,9 @@ DROP TABLE IF EXISTS `channelgroup`;
 CREATE TABLE `channelgroup` (
   `idGroup` int(11) NOT NULL auto_increment,
   `groupName` varchar(200) NOT NULL,
-  PRIMARY KEY  (`idGroup`)
+  `sortOrder` int(11) NOT NULL,
+  PRIMARY KEY  (`idGroup`),
+  KEY `IDX_ChannelGroup` (`sortOrder`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 #
 
@@ -411,7 +413,7 @@ CREATE TABLE `version` (
 --
 
 /*!40000 ALTER TABLE `version` DISABLE KEYS */;
-INSERT INTO `version` VALUES  (1,22);
+INSERT INTO `version` VALUES  (1,23);
 /*!40000 ALTER TABLE `version` ENABLE KEYS */;
 #
 

@@ -108,16 +108,31 @@ namespace SetupTv
       }
 
       Log.Info("---- check if database needs to be updated/created ----");
-      if (dlg.ShouldDoUpgrade())
+      bool isPreviousVersion;
+      if (dlg.ShouldDoUpgrade(out isPreviousVersion))
       {
         Log.Info("---- update/create database ----");
-        if (MessageBox.Show("The database has to be updated and will therefore get deleted and recreated.\n\nDo you want to proceed?", "SetupTV", MessageBoxButtons.YesNo) != DialogResult.Yes)
+        if (isPreviousVersion)
         {
+          if (!dlg.ExecuteSQLScript("upgrade"))
+          {
+            if (MessageBox.Show("The database has to be updated and will therefore get deleted and recreated.\n\nDo you want to proceed?", "SetupTV", MessageBoxButtons.YesNo) != DialogResult.Yes)
+            {
+              dlg.Close();
+              return;
+            }
+            dlg.ExecuteSQLScript("create");
+          }
+        }
+        else
+        {
+          if (MessageBox.Show("The database has to be updated and will therefore get deleted and recreated.\n\nDo you want to proceed?", "SetupTV", MessageBoxButtons.YesNo) != DialogResult.Yes)
+          {
             dlg.Close();
             return;
+          }
+          dlg.ExecuteSQLScript("create");
         }
-        dlg.CreateDatabase();
-
       }
 
       Log.Info("---- check if tvservice is running ----");

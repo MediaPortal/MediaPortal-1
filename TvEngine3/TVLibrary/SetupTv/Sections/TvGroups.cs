@@ -294,7 +294,8 @@ namespace SetupTv.Sections
 
     private void mpListViewGroups_ColumnClick(object sender, ColumnClickEventArgs e)
     {
-      if (e.Column == lvwColumnSorter.SortColumn)
+        // Real sorting is now done via the up/down buttons
+      /*if (e.Column == lvwColumnSorter.SortColumn)
       {
         // Reverse the current sort direction for this column.
         if (lvwColumnSorter.Order == SortOrder.Ascending)
@@ -314,7 +315,7 @@ namespace SetupTv.Sections
       }
 
       // Perform the sort with these new sort options.
-      this.mpListViewGroups.Sort();
+      this.mpListViewGroups.Sort();*/
     }
 
     private void mpListViewMapped_DragDrop(object sender, DragEventArgs e)
@@ -329,9 +330,9 @@ namespace SetupTv.Sections
 
     private void mpListViewMapped_ItemDrag(object sender, ItemDragEventArgs e)
     {
-      ReOrder();
+      ReOrderMap();
     }
-    void ReOrder()
+    void ReOrderMap()
     {
       for (int i = 0; i < mpListViewMapped.Items.Count; ++i)
       {
@@ -340,6 +341,54 @@ namespace SetupTv.Sections
         map.Persist();
       }
     }
+    void ReOrderGroups()
+    {
+        for (int i = 0; i < mpListViewGroups.Items.Count; ++i)
+        {
+            ChannelGroup group = (ChannelGroup)mpListViewGroups.Items[i].Tag;
+
+            group.SortOrder = i;
+            group.Persist();
+        }
+    }
+
+      private void buttonUtp_Click(object sender, EventArgs e)
+      {
+        mpListViewGroups.BeginUpdate();
+        ListView.SelectedIndexCollection indexes = mpListViewGroups.SelectedIndices;
+        if (indexes.Count == 0) return;
+        for (int i = 0; i < indexes.Count; ++i)
+        {
+            int index = indexes[i];
+            if (index > 0)
+            {
+                ListViewItem item = mpListViewGroups.Items[index];
+                mpListViewGroups.Items.RemoveAt(index);
+                mpListViewGroups.Items.Insert(index - 1, item);
+            }
+        }
+        ReOrderGroups();
+        mpListViewGroups.EndUpdate();
+      }
+
+      private void buttonDown_Click(object sender, EventArgs e)
+      {
+        mpListViewGroups.BeginUpdate();
+        ListView.SelectedIndexCollection indexes = mpListViewGroups.SelectedIndices;
+        if (indexes.Count == 0) return;
+        for (int i = indexes.Count - 1; i >= 0; i--)
+        {
+          int index = indexes[i];
+          if (index > 0 && index + 1 < mpListViewGroups.Items.Count)
+          {
+            ListViewItem item = mpListViewGroups.Items[index];
+            mpListViewGroups.Items.RemoveAt(index);
+            mpListViewGroups.Items.Insert(index + 1, item);
+          }
+        }
+        ReOrderGroups();
+        mpListViewGroups.EndUpdate();
+      }
 
   }
 }

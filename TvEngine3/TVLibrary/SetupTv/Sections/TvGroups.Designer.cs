@@ -32,6 +32,8 @@ namespace SetupTv.Sections
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvGroups));
       this.mpTabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.buttonDown = new System.Windows.Forms.Button();
+      this.buttonUtp = new System.Windows.Forms.Button();
       this.mpButtonAddGroup = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonDeleteGroup = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpListViewGroups = new MediaPortal.UserInterface.Controls.MPListView();
@@ -67,6 +69,8 @@ namespace SetupTv.Sections
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.buttonDown);
+      this.tabPage1.Controls.Add(this.buttonUtp);
       this.tabPage1.Controls.Add(this.mpButtonAddGroup);
       this.tabPage1.Controls.Add(this.mpButtonDeleteGroup);
       this.tabPage1.Controls.Add(this.mpListViewGroups);
@@ -77,6 +81,26 @@ namespace SetupTv.Sections
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Groups";
       this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // buttonDown
+      // 
+      this.buttonDown.Location = new System.Drawing.Point(17, 328);
+      this.buttonDown.Name = "buttonDown";
+      this.buttonDown.Size = new System.Drawing.Size(55, 23);
+      this.buttonDown.TabIndex = 6;
+      this.buttonDown.Text = "Down";
+      this.buttonDown.UseVisualStyleBackColor = true;
+      this.buttonDown.Click += new System.EventHandler(this.buttonDown_Click);
+      // 
+      // buttonUtp
+      // 
+      this.buttonUtp.Location = new System.Drawing.Point(17, 304);
+      this.buttonUtp.Name = "buttonUtp";
+      this.buttonUtp.Size = new System.Drawing.Size(55, 23);
+      this.buttonUtp.TabIndex = 5;
+      this.buttonUtp.Text = "Up";
+      this.buttonUtp.UseVisualStyleBackColor = true;
+      this.buttonUtp.Click += new System.EventHandler(this.buttonUtp_Click);
       // 
       // mpButtonAddGroup
       // 
@@ -100,11 +124,12 @@ namespace SetupTv.Sections
       // 
       // mpListViewGroups
       // 
-      this.mpListViewGroups.AllowDrop = true;
-      this.mpListViewGroups.AllowRowReorder = true;
+      this.mpListViewGroups.Activation = System.Windows.Forms.ItemActivation.OneClick;
+      this.mpListViewGroups.AllowRowReorder = false;
       this.mpListViewGroups.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
       this.mpListViewGroups.FullRowSelect = true;
+      this.mpListViewGroups.HideSelection = false;
       this.mpListViewGroups.Location = new System.Drawing.Point(17, 6);
       this.mpListViewGroups.Name = "mpListViewGroups";
       this.mpListViewGroups.Size = new System.Drawing.Size(417, 292);
@@ -280,5 +305,7 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.ImageList imageList1;
+      private System.Windows.Forms.Button buttonDown;
+      private System.Windows.Forms.Button buttonUtp;
   }
 }

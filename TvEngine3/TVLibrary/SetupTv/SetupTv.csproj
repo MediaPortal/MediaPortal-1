@@ -147,11 +147,12 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="App.config" />
-    <EmbeddedResource Include="mysqldatabase.sql" />
+    <EmbeddedResource Include="createmysqldatabase.sql" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="upgrademysqldatabase.sql" />
     <EmbeddedResource Include="SetupTv.exe.manifest" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -371,7 +372,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="database.sql" />
+    <EmbeddedResource Include="createdatabase.sql" />
     <EmbeddedResource Include="Sections\RadioEpgGrabber.resx">
       <SubType>Designer</SubType>
       <DependentUpon>RadioEpgGrabber.cs</DependentUpon>
@@ -430,7 +431,7 @@
       <DependentUpon>SettingsForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="upgrade.sql" />
+    <EmbeddedResource Include="upgradedatabase.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

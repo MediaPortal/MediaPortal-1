@@ -22,6 +22,8 @@ namespace TvDatabase
     private int idGroup;
     [TableColumn("groupName", NotNull = true)]
     private string groupName;
+    [TableColumn("sortOrder", NotNull = true)]
+    private int sortOrder;
     #endregion
 
     #region Constructors
@@ -42,6 +44,15 @@ namespace TvDatabase
     {
       this.idGroup = idGroup;
       this.groupName = groupName;
+    }
+    
+    /// <summary>
+    /// Property relating to database column sortOrder
+    /// </summary>
+    public int SortOrder
+    {
+        get { return sortOrder; }
+        set { isChanged |= sortOrder != value; sortOrder = value; }
     }
     #endregion
 

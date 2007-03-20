@@ -36,6 +36,8 @@ namespace SetupTv
 {
   public partial class SetupDatabaseForm : Form
   {
+    int _currentSchemaVersion = 23;
+
     enum ProviderType
     {
       SqlServer,
@@ -170,8 +172,9 @@ namespace SetupTv
       return true;
     }
 
-    public void CreateDatabase()
+    public bool ExecuteSQLScript(string prefix)
     {
+      bool succeeded = true;
       try
       {
         Assembly assm = Assembly.GetExecutingAssembly();
@@ -180,10 +183,10 @@ namespace SetupTv
         switch (_provider)
         {
           case ProviderType.SqlServer:
-            stream = assm.GetManifestResourceStream("SetupTv.database.sql");
+            stream = assm.GetManifestResourceStream("SetupTv."+prefix+"database.sql");
             break;
           case ProviderType.MySql:
-            stream = assm.GetManifestResourceStream("SetupTv.mysqldatabase.sql");
+            stream = assm.GetManifestResourceStream("SetupTv."+prefix+"mysqldatabase.sql");
             break;
         }
         StreamReader reader = new StreamReader(stream);
@@ -243,6 +246,7 @@ namespace SetupTv
                   {
                     TvLibrary.Log.Log.Error("failed:sql:{0}", cmds[i]);
                     TvLibrary.Log.Log.Error("reason:{0}",ex.ToString());
+                    succeeded = false;
                   }
                 }
               }
@@ -271,6 +275,7 @@ namespace SetupTv
                     {
                       TvLibrary.Log.Log.Error("failed:sql:{0}", cmds[i]);
                       TvLibrary.Log.Log.Error("reason:{0}", ex.ToString());
+                      succeeded = false;
                     }
                   }
                 }
@@ -281,9 +286,11 @@ namespace SetupTv
       }
       catch (Exception ex)
       {
-        MessageBox.Show(this, "Unable to create database:" + ex.Message);
+        MessageBox.Show(this, "Unable to "+prefix+" database:" + ex.Message);
+        succeeded = false;
       }
       SqlConnection.ClearAllPools();
+      return succeeded;
     }
 
     private void mpButtonTest_Click(object sender, EventArgs e)
@@ -362,8 +369,9 @@ namespace SetupTv
       Close();
     }
 
-    public bool ShouldDoUpgrade()
+    public bool ShouldDoUpgrade(out bool isPreviousVersion)
     {
+      isPreviousVersion = false;
       LoadConnectionDetailsFromConfig(false);
       try
       {
@@ -386,8 +394,9 @@ namespace SetupTv
                       int version = (int)reader["versionNumber"];
                       reader.Close();
                       connect.Close();
-                      if (version != 22)
+                      if (version != _currentSchemaVersion)
                       {
+                        isPreviousVersion = (_currentSchemaVersion -1 == version);
                         return true;
                       }
                       return false;
@@ -414,8 +423,9 @@ namespace SetupTv
                       int version = (int)reader["versionNumber"];
                       reader.Close();
                       connect.Close();
-                      if (version != 22)
+                      if (version != _currentSchemaVersion)
                       {
+                        isPreviousVersion = (_currentSchemaVersion == version + 1);
                         return true;
                       }
                       return false;
