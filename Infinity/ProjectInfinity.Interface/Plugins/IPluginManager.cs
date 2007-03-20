@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using ProjectInfinity.Messaging;
+using ProjectInfinity.Messaging.PluginMessages;
 
 namespace ProjectInfinity.Plugins
 {
@@ -41,10 +42,10 @@ namespace ProjectInfinity.Plugins
     /// </summary>
     void StartAll();
 
-    [MessagePublication(typeof(ProjectInfinity.Messaging.PluginMessages.PluginStart))]
+    [MessagePublication(typeof (PluginStart))]
     event EventHandler<PluginStartStopEventArgs> PluginStarted;
 
-    [MessagePublication(typeof(ProjectInfinity.Messaging.PluginMessages.PluginStop))]
+    [MessagePublication(typeof (PluginStop))]
     event EventHandler<PluginStartStopEventArgs> PluginStopped;
   }
 }

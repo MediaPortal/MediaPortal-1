@@ -1,5 +1,6 @@
 using System;
 using ProjectInfinity.Messaging;
+using ProjectInfinity.Messaging.MusicMessages;
 using ProjectInfinity.Plugins;
 
 namespace ProjectInfinity.Music
@@ -23,13 +24,13 @@ namespace ProjectInfinity.Music
     /// <summary>
     /// Message to broadcast when playback has started
     /// </summary>
-    [MessagePublication(typeof(ProjectInfinity.Messaging.MusicMessages.Start))]
-    event EventHandler<MusicStartEventArgs> MusicStart;
+    [MessagePublication(typeof (MusicStartMessage))]
+    event EventHandler<MusicStartMessage> MusicStart;
 
     /// <summary>
     /// Message to broadcast when playback has stopped
     /// </summary>
-    [MessagePublication(typeof(ProjectInfinity.Messaging.MusicMessages.Stop))]
+    [MessagePublication(typeof (Stop))]
     event EventHandler MusicStop;
   }
 }

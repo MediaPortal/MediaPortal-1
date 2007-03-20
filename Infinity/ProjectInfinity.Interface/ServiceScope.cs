@@ -58,8 +58,7 @@ namespace ProjectInfinity
     /// <b>ServiceContect.Current = passedContect</b> to override the current context
     /// with the passed one.
     /// </remarks>
-    [ThreadStatic]
-    private static ServiceScope current;
+    [ThreadStatic] private static ServiceScope current;
 
     /// <summary>
     /// Pointer to the previous <see cref="ServiceScope"/>.  We need this pointer 
@@ -154,20 +153,20 @@ namespace ProjectInfinity
 
     private void AddService<T>(T service)
     {
-      services.Add(typeof(T), service);
+      services.Add(typeof (T), service);
     }
 
     private void RemoveService<T>()
     {
-      services.Remove(typeof(T));
+      services.Remove(typeof (T));
     }
 
     private T GetService<T>(bool throwIfNotFound)
     {
-      Type type = typeof(T);
+      Type type = typeof (T);
       if (services.ContainsKey(type))
       {
-        return (T)services[type];
+        return (T) services[type];
       }
       if (oldInstance == null)
       {
@@ -176,7 +175,7 @@ namespace ProjectInfinity
           throw new ServiceNotFoundException(type);
         }
         object o = null;
-        return (T)(o);
+        return (T) (o);
       }
       return oldInstance.GetService<T>(throwIfNotFound);
     }

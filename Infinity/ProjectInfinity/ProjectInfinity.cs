@@ -3,8 +3,8 @@ using System.Threading;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Plugins;
-using ProjectInfinity.Windows;
 using ProjectInfinity.Utilities.CommandLine;
+using ProjectInfinity.Windows;
 
 namespace ProjectInfinity
 {

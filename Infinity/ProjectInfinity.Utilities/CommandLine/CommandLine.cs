@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace ProjectInfinity.Utilities.CommandLine
@@ -17,13 +16,12 @@ namespace ProjectInfinity.Utilities.CommandLine
     public static void Parse(string[] commandLineArgs, ref ICommandLineOptions options)
     {
       Regex Spliter = new Regex(@"^-{1,2}|^/|=|:",
-          RegexOptions.IgnoreCase | RegexOptions.Compiled);
+                                RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
       Regex Remover = new Regex(@"^['""]?(.*?)['""]?$",
-          RegexOptions.IgnoreCase | RegexOptions.Compiled);
+                                RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
       string parameter = null;
-      string[] parts;
 
       // Valid parameters forms:
       // {-,/,--}param{ ,=,:}((",')value(",'))
@@ -34,12 +32,12 @@ namespace ProjectInfinity.Utilities.CommandLine
       {
         // Look for new parameters (-,/ or --) and a
         // possible enclosed value (=,:)
-        parts = Spliter.Split(txt, 3);
+        string[] parts = Spliter.Split(txt, 3);
 
         switch (parts.Length)
         {
-          // Found a value (for the last parameter 
-          // found (space separator))
+            // Found a value (for the last parameter 
+            // found (space separator))
           case 1:
             if (parameter != null)
             {
@@ -53,22 +51,26 @@ namespace ProjectInfinity.Utilities.CommandLine
             }
             break;
 
-          // Found just a parameter
+            // Found just a parameter
           case 2:
             // The last parameter is still waiting. 
             // With no value, set it to null.
             if (parameter != null)
+            {
               options.SetOption(parameter, null);
+            }
 
             parameter = parts[1];
             break;
 
-          // Parameter with enclosed value
+            // Parameter with enclosed value
           case 3:
             // The last parameter is still waiting. 
             // With no value, set it to null
             if (parameter != null)
+            {
               options.SetOption(parameter, null);
+            }
 
             // Set Option
             options.SetOption(parts[1], Remover.Replace(parts[2], "$1"));

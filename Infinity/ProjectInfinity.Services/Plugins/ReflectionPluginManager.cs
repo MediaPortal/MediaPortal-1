@@ -78,7 +78,7 @@ namespace ProjectInfinity.Plugins
       {
         throw new ArgumentException(string.Format("{0} Plug-in does not exist", pluginName), "pluginName");
       }
-      IPlugin plugin = (IPlugin)Activator.CreateInstance(pluginTypes[pluginName]);
+      IPlugin plugin = (IPlugin) Activator.CreateInstance(pluginTypes[pluginName]);
       plugin.Initialize();
       runningPlugins.Add(pluginName, plugin);
       OnPluginStarted(new PluginStartStopEventArgs(pluginName));
@@ -147,7 +147,7 @@ namespace ProjectInfinity.Plugins
           {
             continue;
           }
-          PluginAttribute[] attributes = (PluginAttribute[])type.GetCustomAttributes(typeof(PluginAttribute), false);
+          PluginAttribute[] attributes = (PluginAttribute[]) type.GetCustomAttributes(typeof (PluginAttribute), false);
           if (attributes.Length == 0)
           {
             continue;

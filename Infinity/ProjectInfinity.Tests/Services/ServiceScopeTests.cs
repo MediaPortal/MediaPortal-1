@@ -1,5 +1,5 @@
-using ProjectInfinity.Tests.Services.Mocks;
 using NUnit.Framework;
+using ProjectInfinity.Tests.Services.Mocks;
 
 namespace ProjectInfinity.Tests.Services
 {
@@ -22,7 +22,8 @@ namespace ProjectInfinity.Tests.Services
     /// Tests whether an exception is thrown when a requested service does not exist.
     /// </summary>
     [Test]
-    [ExpectedException(typeof(ServiceNotFoundException), "Could not find the ProjectInfinity.Tests.Services.Mocks.IDummy service")]
+    [ExpectedException(typeof (ServiceNotFoundException),
+      "Could not find the ProjectInfinity.Tests.Services.Mocks.IDummy service")]
     public void NoServiceTest()
     {
       ServiceScope.Get<IDummy>();
@@ -37,14 +38,15 @@ namespace ProjectInfinity.Tests.Services
       ServiceScope.Add<IDummy>(new Service1());
       object o = ServiceScope.Get<IDummy>();
       Assert.IsNotNull(o, "expected service not found");
-      Assert.IsInstanceOfType(typeof(Service1), o, "service is not of the correct type");
+      Assert.IsInstanceOfType(typeof (Service1), o, "service is not of the correct type");
     }
 
     /// <summary>
     /// Tests whether a service is no longer available when the <see cref="ServiceScope"/> is disposed.
     /// </summary>
     [Test]
-    [ExpectedException(typeof(ServiceNotFoundException), "Could not find the ProjectInfinity.Tests.Services.Mocks.IDummy service")]
+    [ExpectedException(typeof (ServiceNotFoundException),
+      "Could not find the ProjectInfinity.Tests.Services.Mocks.IDummy service")]
     public void ServiceOutOfScopeTest()
     {
       using (new ServiceScope())
@@ -65,7 +67,7 @@ namespace ProjectInfinity.Tests.Services
       ServiceScope.Add<IDummy>(new Service1());
       using (new ServiceScope())
       {
-        Assert.IsInstanceOfType(typeof(Service1), ServiceScope.Get<IDummy>(), "service is not of the correct type");
+        Assert.IsInstanceOfType(typeof (Service1), ServiceScope.Get<IDummy>(), "service is not of the correct type");
       }
     }
 
@@ -79,21 +81,21 @@ namespace ProjectInfinity.Tests.Services
       using (new ServiceScope())
       {
         //IDummy is now of type Service1
-        Assert.IsInstanceOfType(typeof(Service1), ServiceScope.Get<IDummy>(), "service is not of the correct type");
+        Assert.IsInstanceOfType(typeof (Service1), ServiceScope.Get<IDummy>(), "service is not of the correct type");
         ServiceScope.Add<IDummy>(new Service2());
         //IDummy is now of type Service2
-        Assert.IsInstanceOfType(typeof(Service2), ServiceScope.Get<IDummy>(), "service is not of the correct type");
+        Assert.IsInstanceOfType(typeof (Service2), ServiceScope.Get<IDummy>(), "service is not of the correct type");
         using (new ServiceScope())
         {
           ServiceScope.Add<IDummy>(new Service3());
           //IDummy is now of type Service3
-          Assert.IsInstanceOfType(typeof(Service3), ServiceScope.Get<IDummy>(), "service is not of the correct type");
+          Assert.IsInstanceOfType(typeof (Service3), ServiceScope.Get<IDummy>(), "service is not of the correct type");
         }
         //IDummy is now again of type Service2
-        Assert.IsInstanceOfType(typeof(Service2), ServiceScope.Get<IDummy>(), "service is not of the correct type");
+        Assert.IsInstanceOfType(typeof (Service2), ServiceScope.Get<IDummy>(), "service is not of the correct type");
       }
       //IDummy is now again of type Service1
-      Assert.IsInstanceOfType(typeof(Service1), ServiceScope.Get<IDummy>(), "service is not of the correct type");
+      Assert.IsInstanceOfType(typeof (Service1), ServiceScope.Get<IDummy>(), "service is not of the correct type");
     }
   }
 }

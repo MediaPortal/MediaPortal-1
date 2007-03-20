@@ -28,7 +28,7 @@ namespace ProjectInfinity.Music
       mediaPlayer = new MediaPlayer();
       mediaPlayer.Open(new Uri(file, UriKind.Relative));
       mediaPlayer.Play();
-      MusicStartEventArgs e = new MusicStartEventArgs();
+      MusicStartMessage e = new MusicStartMessage();
       e.Artist = "The Infinity Project";
       e.Album = "Mystical Experiences";
       e.TrackNo = 8;
@@ -51,7 +51,7 @@ namespace ProjectInfinity.Music
     /// <summary>
     /// Message to broadcast when playback has started
     /// </summary>
-    public event EventHandler<MusicStartEventArgs> MusicStart;
+    public event EventHandler<MusicStartMessage> MusicStart;
 
     /// <summary>
     /// Message to broadcast when playback has stopped
@@ -87,7 +87,7 @@ namespace ProjectInfinity.Music
     /// Triggers sending of the MusicStart message
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void OnMusicStart(MusicStartEventArgs e)
+    protected virtual void OnMusicStart(MusicStartMessage e)
     {
       if (MusicStart != null)
       {

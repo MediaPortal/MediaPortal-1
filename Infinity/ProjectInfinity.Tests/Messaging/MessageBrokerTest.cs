@@ -1,8 +1,9 @@
+using System;
+using NUnit.Framework;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Tests.Messaging.Mocks;
 using ProjectInfinity.Tests.Mocks;
-using NUnit.Framework;
 
 namespace ProjectInfinity.Tests.Messaging
 {
@@ -118,6 +119,25 @@ namespace ProjectInfinity.Tests.Messaging
       messageBroker.Register(publisher);
       publisher.DoPublish();
       Assert.IsTrue(subscriber.Received);
+    }
+
+
+    [Test]
+    [ExpectedException(typeof (ArgumentException))]
+    public void TestInvalidReceiverMethod()
+    {
+      MessageBroker messageBroker = new MessageBroker();
+      InvalidReceiver invalidReceiver = new InvalidReceiver();
+      messageBroker.Register(invalidReceiver);
+    }
+
+    [Test]
+    [ExpectedException(typeof (ArgumentException))]
+    public void TestInvalidPublisherEvent()
+    {
+      MessageBroker messageBroker = new MessageBroker();
+      InvalidPublisher invalidPublisher = new InvalidPublisher();
+      messageBroker.Register(invalidPublisher);
     }
   }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 using ProjectInfinity.Messaging;
+using ProjectInfinity.Messaging.MusicMessages;
 using ProjectInfinity.Music;
 using ProjectInfinity.Windows;
 
@@ -42,16 +43,18 @@ namespace ProjectInfinity
       }
     }
 
-    [MessageSubscription(typeof(Messaging.MusicMessages.Start))]
-    private void MusicStarted(object sender, MusicStartEventArgs args)
+    [MessageSubscription(typeof (MusicStartMessage))]
+    private void MusicStarted(object sender, MusicStartMessage args)
     {
-      musicLabel.Content = string.Format("Playing {0} from {1}: track {2} from the album {3}", args.Title, args.Artist, args.TrackNo, args.Album);
+      musicLabel.Content =
+        string.Format("Playing {0} from {1}: track {2} from the album {3}", args.Title, args.Artist, args.TrackNo,
+                      args.Album);
       //Check if the message was sent by the ExtendedPlayer.  We know that it passes an 
       //ExtendedMusicStartEventArgs instance (which inherits from MusicStartEventArgs)
-      ExtendedMusicStartEventArgs extendedArgs = args as ExtendedMusicStartEventArgs;
-      if (extendedArgs != null)
+      ExtendedMusicStartMessage extended = args as ExtendedMusicStartMessage;
+      if (extended != null)
       {
-        ratingLabel.Content = "Rating = " + extendedArgs.Rating;
+        ratingLabel.Content = "Rating = " + extended.Rating;
       }
       else
       {
@@ -59,7 +62,7 @@ namespace ProjectInfinity
       }
     }
 
-    [MessageSubscription(typeof(Messaging.MusicMessages.Stop))]
+    [MessageSubscription(typeof (Stop))]
     private void MusicStopped(object sender, EventArgs args)
     {
       musicLabel.Content = null;

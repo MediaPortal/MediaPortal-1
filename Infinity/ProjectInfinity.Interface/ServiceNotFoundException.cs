@@ -12,15 +12,18 @@ namespace ProjectInfinity
     private Type serviceType;
 
     public ServiceNotFoundException()
-    { }
+    {
+    }
 
     public ServiceNotFoundException(string message)
       : base(message)
-    { }
+    {
+    }
 
     public ServiceNotFoundException(string message, Exception innerException)
       : base(message, innerException)
-    { }
+    {
+    }
 
     /// <summary>
     /// Creates a new <see cref="ServiceNotFoundException"/> instance, and initializes it with the given type.

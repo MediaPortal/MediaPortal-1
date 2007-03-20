@@ -35,6 +35,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Messaging\MessageBrokerTest.cs" />
+    <Compile Include="Messaging\Mocks\InvalidPublisher.cs" />
+    <Compile Include="Messaging\Mocks\InvalidReceiver.cs" />
     <Compile Include="Messaging\Mocks\MockMessages.cs" />
     <Compile Include="Messaging\Mocks\Publisher.cs" />
     <Compile Include="Messaging\Mocks\Subscriber.cs" />

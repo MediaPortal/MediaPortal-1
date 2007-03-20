@@ -26,7 +26,8 @@ namespace ProjectInfinity.Logging
       if (level > LogLevel.None)
       {
         using (new StreamWriter(fileName, false))
-        { }
+        {
+        }
       }
     }
 

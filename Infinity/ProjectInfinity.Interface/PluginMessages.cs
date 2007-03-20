@@ -1,10 +1,10 @@
 namespace ProjectInfinity.Messaging.PluginMessages
 {
-  public class PluginStart : IMessage
+  public class PluginStart : Message
   {
   }
 
-  public class PluginStop : IMessage
+  public class PluginStop : Message
   {
   }
 }

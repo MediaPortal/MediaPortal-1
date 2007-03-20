@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ProjectInfinity.Utilities.CommandLine;
 
 namespace ProjectInfinity
@@ -22,7 +21,7 @@ namespace ProjectInfinity
 
     public void SetOption(string option, string argument)
     {
-      _options.Add((Option) Enum.Parse(typeof(Option), option, true), argument);
+      _options.Add((Option) Enum.Parse(typeof (Option), option, true), argument);
     }
 
     public void DisplayOptions()

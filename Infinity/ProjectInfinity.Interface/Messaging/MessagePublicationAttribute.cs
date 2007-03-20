@@ -2,19 +2,28 @@ using System;
 
 namespace ProjectInfinity.Messaging
 {
-    [AttributeUsage(AttributeTargets.Event, AllowMultiple = true)]
-    public sealed class MessagePublicationAttribute : Attribute
+  [AttributeUsage(AttributeTargets.Event, AllowMultiple = true)]
+  public sealed class MessagePublicationAttribute : Attribute
+  {
+    private Type topic;
+
+    public MessagePublicationAttribute(Type topic)
     {
-        private string topic;
-
-        public MessagePublicationAttribute(Type topic)
-        {
-            this.topic = topic.FullName;
-        }
-
-        public string Topic
-        {
-            get { return topic; }
-        }
+      if (!typeof (Message).IsAssignableFrom(topic))
+      {
+        throw new ArgumentException();
+      }
+      this.topic = topic;
     }
+
+    public string Topic
+    {
+      get { return topic.FullName; }
+    }
+
+    public Type GetTopic()
+    {
+      return topic;
+    }
+  }
 }

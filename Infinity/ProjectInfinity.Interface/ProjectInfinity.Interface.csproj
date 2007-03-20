@@ -36,18 +36,19 @@
     <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Messaging\IMessage.cs" />
+    <Compile Include="Messaging\Message.cs" />
     <Compile Include="MusicMessages.cs" />
     <Compile Include="PluginMessages.cs" />
     <Compile Include="SystemMessages.cs" />
     <Compile Include="Music\IMusicPlayer.cs" />
-    <Compile Include="Music\MusicStartEventArgs.cs" />
+    <Compile Include="Music\MusicStartMessage.cs" />
     <Compile Include="Plugins\IPlugin.cs" />
     <Compile Include="Plugins\IPluginManager.cs" />
     <Compile Include="Plugins\IPluginInfo.cs" />
     <Compile Include="Plugins\PluginAttribute.cs" />
     <Compile Include="Plugins\PluginStartStopEventArgs.cs" />
     <Compile Include="ServiceNotFoundException.cs" />
+    <Compile Include="Themes\IThemeManager.cs" />
     <Compile Include="Windows\IMainWindow.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\LogLevel.cs" />

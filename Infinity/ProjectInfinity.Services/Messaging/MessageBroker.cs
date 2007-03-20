@@ -53,7 +53,8 @@ namespace ProjectInfinity.Messaging
     {
       foreach (MethodInfo info in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
       {
-        MessageSubscriptionAttribute[] attributes = (MessageSubscriptionAttribute[])info.GetCustomAttributes(typeof(MessageSubscriptionAttribute), true);
+        MessageSubscriptionAttribute[] attributes =
+          (MessageSubscriptionAttribute[]) info.GetCustomAttributes(typeof (MessageSubscriptionAttribute), true);
         foreach (MessageSubscriptionAttribute attr in attributes)
         {
           HandleSubscriber(item, register, info, attr);
@@ -66,7 +67,8 @@ namespace ProjectInfinity.Messaging
       //Process MessagePublication attributes on the type
       foreach (EventInfo info in type.GetEvents())
       {
-        MessagePublicationAttribute[] attributes = (MessagePublicationAttribute[])info.GetCustomAttributes(typeof(MessagePublicationAttribute), true);
+        MessagePublicationAttribute[] attributes =
+          (MessagePublicationAttribute[]) info.GetCustomAttributes(typeof (MessagePublicationAttribute), true);
 
         foreach (MessagePublicationAttribute attr in attributes)
         {
@@ -78,7 +80,8 @@ namespace ProjectInfinity.Messaging
       {
         foreach (EventInfo info in interfaceType.GetEvents())
         {
-          MessagePublicationAttribute[] attributes = (MessagePublicationAttribute[])info.GetCustomAttributes(typeof(MessagePublicationAttribute), true);
+          MessagePublicationAttribute[] attributes =
+            (MessagePublicationAttribute[]) info.GetCustomAttributes(typeof (MessagePublicationAttribute), true);
 
           foreach (MessagePublicationAttribute attr in attributes)
           {
@@ -93,6 +96,14 @@ namespace ProjectInfinity.Messaging
       MessageTopic topic = topics[attr.Topic];
       if (register)
       {
+        Type eventHandlerType = info.EventHandlerType;
+        Type messageType = attr.GetTopic();
+        //TODO: check event type
+        //if (!messageType.IsAssignableFrom(eventHandlerType))
+        //  throw new ArgumentException(
+        //    string.Format("The arguments with type {0} of event {1} are incompatible with message type {2}",
+        //                  eventHandlerType, info.DeclaringType.FullName, attr.GetTopic().FullName));
+
         topic.AddPublisher(item, info);
       }
       else
@@ -106,6 +117,21 @@ namespace ProjectInfinity.Messaging
       MessageTopic topic = topics[attr.Topic];
       if (register)
       {
+        ParameterInfo[] parameters = info.GetParameters();
+        if (parameters.Length != 2)
+        {
+          throw new ArgumentException(
+            string.Format("Incorrect number of parameters for message handler method {0}", info.Name));
+        }
+        ParameterInfo parameter = parameters[1];
+        if (!parameter.ParameterType.IsAssignableFrom(attr.GetTopic()))
+        {
+          throw new ArgumentException(
+            string.Format("Parameter {0} with type {1} of method {2} is not compatible with type {3} from message",
+                          parameter.Name, parameter.ParameterType, info.DeclaringType.FullName + "." + info.Name,
+                          attr.GetTopic().FullName
+              ));
+        }
         topic.AddSubscriber(item, info);
       }
       else

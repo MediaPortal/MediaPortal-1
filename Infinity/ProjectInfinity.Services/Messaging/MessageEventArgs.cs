@@ -1,8 +1,6 @@
-using System;
-
 namespace ProjectInfinity.Messaging
 {
-  public class MessageEventArgs<T> : EventArgs
+  public class MessageEventArgs<T> : Message
   {
     private T argument;
 

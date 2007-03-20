@@ -1,34 +1,34 @@
 namespace ProjectInfinity.Messaging.SystemMessages
 {
-  public class Startup : IMessage
+  public class Startup : Message
   {
   }
 
-  public class StartupComplete : IMessage
+  public class StartupComplete : Message
   {
   }
 
-  public class SessionEnding : IMessage
+  public class SessionEnding : Message
   {
   }
 
-  public class BeforeShutdown : IMessage
+  public class BeforeShutdown : Message
   {
   }
 
-  public class Shutdown : IMessage
+  public class Shutdown : Message
   {
   }
 
-  public class ShutdownComplete : IMessage
+  public class ShutdownComplete : Message
   {
   }
 
-  public class Activated : IMessage
+  public class Activated : Message
   {
   }
 
-  public class Deactivated : IMessage
+  public class Deactivated : Message
   {
   }
 }

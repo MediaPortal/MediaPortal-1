@@ -10,7 +10,8 @@ namespace ProjectInfinity.Messaging
     private string id;
     private List<KeyValuePair<object, MethodInfo>> handlers = new List<KeyValuePair<object, MethodInfo>>();
 
-    private static MethodInfo raiseMethodInfo = typeof(MessageTopic).GetMethod("DoRaise", BindingFlags.Instance | BindingFlags.NonPublic);
+    private static MethodInfo raiseMethodInfo =
+      typeof (MessageTopic).GetMethod("DoRaise", BindingFlags.Instance | BindingFlags.NonPublic);
 
     public string Id
     {
@@ -43,7 +44,7 @@ namespace ProjectInfinity.Messaging
       ServiceScope.Get<ILogger>().Debug("MessageBroker: sending {0}({1}) message", id, e);
       foreach (KeyValuePair<object, MethodInfo> pair in handlers)
       {
-        pair.Value.Invoke(pair.Key, new object[] { sender, e });
+        pair.Value.Invoke(pair.Key, new object[] {sender, e});
       }
     }
 

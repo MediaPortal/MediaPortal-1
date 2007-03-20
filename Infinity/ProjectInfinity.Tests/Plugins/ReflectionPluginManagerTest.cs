@@ -1,10 +1,10 @@
 using System.Collections.Generic;
+using NUnit.Framework;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Plugins;
 using ProjectInfinity.Tests.Mocks;
 using ProjectInfinity.Tests.Plugins.Mocks;
-using NUnit.Framework;
 
 namespace ProjectInfinity.Tests.Plugins
 {
