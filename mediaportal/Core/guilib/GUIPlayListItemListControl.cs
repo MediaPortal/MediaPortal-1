@@ -773,7 +773,7 @@ namespace MediaPortal.GUI.Library
 
     protected override void RenderLabel(float timePassed, int buttonNr, int dwPosX, int dwPosY, bool gotFocus)
     {
-      if (buttonNr + _offset < 0 || buttonNr + _offset >= _listButtons.Count) return;
+     // if (buttonNr + _offset < 0 || buttonNr + _offset >= _listButtons.Count) return;
       if (buttonNr  < 0 || buttonNr  >= _listButtons.Count) return;
       GUIListItem pItem = _listItems[buttonNr + _offset];
       long dwColor = _textColor;
