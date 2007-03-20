@@ -352,6 +352,8 @@ namespace TvLibrary.Implementations.Analog
           if (_captureDevice.Name.Contains("Hauppauge"))
           {
             _haupPauge = new Hauppauge(_filterCapture, string.Empty);
+            _haupPauge.SetStream(103);
+            _haupPauge.SetAudioBitRate(192);
             _haupPauge.SetVideoBitRate(4000, 6000, true);
             
             int min, max;
@@ -366,7 +368,7 @@ namespace TvLibrary.Implementations.Analog
         }
 
         //FilterGraphTools.SaveGraphFile(_graphBuilder, "hp.grf");
-        Log.Log.WriteFile("analog: Graph is build");
+        Log.Log.WriteFile("analog: Graph is built");
         _graphState = GraphState.Created;
       }
       catch (Exception ex)
