@@ -618,7 +618,10 @@ namespace TvLibrary.Implementations.DVB
       }
       finally
       {
-        Marshal.ReleaseComObject(enumFilters);
+        if (enumFilters != null)
+        {
+          Marshal.ReleaseComObject(enumFilters);
+        }
       }
 
       foreach (IBaseFilter filter in filtersArray)

@@ -9,8 +9,11 @@ namespace TvLibrary
   {
     static public void ComObject(string line,object o)
     {
-      int hr=Marshal.ReleaseComObject(o);
-     // Log.Log.WriteFile("  Release {0} returns {1}", line, hr);
+      if (o != null)
+      {
+        int hr = Marshal.ReleaseComObject(o);
+        // Log.Log.WriteFile("  Release {0} returns {1}", line, hr);
+      }
     }
   }
 }
