@@ -767,7 +767,19 @@ namespace TvPlugin
       rec.TimesWatched++;
       rec.Persist();
       ///@
-      int stoptime = 0;
+      int stoptime = rec.StopTime;
+      if (stoptime > 0)
+      {
+        GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+        if (null == dlgYesNo) return false;
+        dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
+        dlgYesNo.SetLine(1, rec.ReferencedChannel().Name);
+        dlgYesNo.SetLine(2, rec.Title);
+        dlgYesNo.SetLine(3, GUILocalizeStrings.Get(936) + Utils.SecondsToHMSString(rec.StopTime));
+        dlgYesNo.SetDefaultToYes(true);
+        dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+        if (!dlgYesNo.IsConfirmed) stoptime = 0;
+      }
       /*
               IMDBMovie movieDetails = new IMDBMovie();
               VideoDatabase.GetMovieInfo(rec.FileName, ref movieDetails);
@@ -810,7 +822,7 @@ namespace TvPlugin
         }
         if (stoptime > 0)
         {
-          // g_Player.SeekAbsolute(stoptime);
+          g_Player.SeekAbsolute(stoptime);
         }
         return true;
       }
@@ -1116,7 +1128,13 @@ namespace TvPlugin
     {
       Log.Info("TvRecorded:OnStopped {0} {1}", type, filename);
       if (type != g_Player.MediaType.Recording) return;
-
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Recording rec = layer.GetRecordingByFileName(filename);
+      if (rec != null)
+      {
+        rec.StopTime = stoptime;
+        rec.Persist();
+      }
       if (GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
@@ -1128,26 +1146,30 @@ namespace TvPlugin
     private void OnPlayRecordingBackEnded(MediaPortal.Player.g_Player.MediaType type, string filename)
     {
       if (type != g_Player.MediaType.Recording) return;
+
+      g_Player.Stop();
+      
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Recording rec = layer.GetRecordingByFileName(filename);
+      if (rec != null)
+      {
+        if (_deleteWatchedShows || rec.KeepUntil == (int)KeepMethodType.UntilWatched)
+        {
+          TvServer server = new TvServer();
+          server.DeleteRecording(rec.IdRecording);
+        }
+        else
+        {
+          rec.StopTime = 0;
+          rec.Persist();
+        }
+      }
+      
       //@int movieid = VideoDatabase.GetMovieId(filename);
       //@if (movieid < 0) return;
 
       //@VideoDatabase.DeleteMovieStopTime(movieid);
-
-      g_Player.Stop();
-
-      IList itemlist = Recording.ListAll();
-      foreach (Recording rec in itemlist)
-      {
-        if (_deleteWatchedShows || rec.KeepUntil == (int)KeepMethodType.UntilWatched)
-        {
-          if (String.Compare(rec.FileName, filename, true) == 0)
-          {
-            TvServer server = new TvServer();
-            server.DeleteRecording(rec.IdRecording);
-            return;
-          }
-        }
-      }
+    
       //@IMDBMovie details = new IMDBMovie();
       //@VideoDatabase.GetMovieInfoById(movieid, ref details);
       //@details.Watched++;

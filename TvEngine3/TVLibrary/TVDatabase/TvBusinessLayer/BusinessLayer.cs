@@ -1420,5 +1420,19 @@ namespace TvDatabase
         return (Schedule)schedules[0];
     }
     #endregion
+
+    #region recordings
+    public Recording GetRecordingByFileName(string fileName)
+    {
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Recording));
+      sb.AddConstraint(Operator.Equals, "fileName", fileName);
+      sb.SetRowLimit(1);
+      SqlStatement stmt = sb.GetStatement(true);
+      IList recordings = ObjectFactory.GetCollection(typeof(Recording), stmt.Execute());
+      if (recordings.Count == 0)
+        return null;
+      return (Recording)recordings[0];
+    }
+    #endregion
   }
 }

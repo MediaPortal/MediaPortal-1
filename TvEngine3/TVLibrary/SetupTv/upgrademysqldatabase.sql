@@ -1,8 +1,6 @@
 USE TvLibrary;
 #
-ALTER TABLE `channelgroup` ADD COLUMN `sortOrder` INTEGER NOT NULL DEFAULT 0 AFTER `groupName`;
+ALTER TABLE `recording` ADD COLUMN `stopTime` INTEGER NOT NULL DEFAULT 0;
 #
-CREATE INDEX IDX_SortOrder ON ChannelGroup (sortOrder);
-#
-UPDATE `version` SET `versionNumber`=23;
+UPDATE `version` SET `versionNumber`=24;
 #

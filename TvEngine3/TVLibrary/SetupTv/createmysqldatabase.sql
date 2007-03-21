@@ -250,6 +250,7 @@ CREATE TABLE `recording` (
   `keepUntilDate` datetime NOT NULL,
   `timesWatched` int(11) NOT NULL,
   `idServer` int(11) NOT NULL,
+  `stopTime` int(11) NOT NULL,
   PRIMARY KEY  (`idRecording`),
   KEY `FK_Recording_Server` (`idServer`),
   KEY `FK_Recordings_Channels` (`idChannel`)
@@ -413,7 +414,7 @@ CREATE TABLE `version` (
 --
 
 /*!40000 ALTER TABLE `version` DISABLE KEYS */;
-INSERT INTO `version` VALUES  (1,23);
+INSERT INTO `version` VALUES  (1,24);
 /*!40000 ALTER TABLE `version` ENABLE KEYS */;
 #
 

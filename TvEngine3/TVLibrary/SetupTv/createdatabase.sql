@@ -131,6 +131,7 @@ CREATE TABLE Recording(
 	keepUntilDate datetime NOT NULL,
 	timesWatched int NOT NULL,
 	idServer int NOT NULL,
+	stopTime int NOT NULL,
  CONSTRAINT PK_Recordings PRIMARY KEY  
 (
 	idRecording ASC
@@ -572,5 +573,5 @@ GO
 delete from version
 GO
 
-insert into version(versionNumber) values(23)
+insert into version(versionNumber) values(24)
 GO

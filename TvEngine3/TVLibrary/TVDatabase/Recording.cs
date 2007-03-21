@@ -41,6 +41,9 @@ namespace TvDatabase
     private int timesWatched;
     [TableColumn("idServer", NotNull = true), ForeignKey("Server", "idServer")]
     private int idServer;
+    // stores the last position - to make resume possible
+    [TableColumn("stopTime", NotNull = true)]
+    private int stopTime;
     #endregion
 
     #region Constructors
@@ -61,13 +64,14 @@ namespace TvDatabase
       this.keepUntilDate = keepUntilDate;
       this.timesWatched = timesWatched;
       this.idServer = idServer;
+      this.stopTime = 0;
     }
 
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
     /// construct objects from retrieved rows. 
     /// </summary> 
-    public Recording(int idRecording, int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre, string fileName, int keepUntil, DateTime keepUntilDate, int timesWatched, int idServer)
+    public Recording(int idRecording, int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre, string fileName, int keepUntil, DateTime keepUntilDate, int timesWatched, int idServer, int stopTime)
     {
       this.idRecording = idRecording;
       this.idChannel = idChannel;
@@ -81,6 +85,7 @@ namespace TvDatabase
       this.keepUntilDate = keepUntilDate;
       this.timesWatched = timesWatched;
       this.idServer = idServer;
+      this.stopTime = stopTime;
     }
     #endregion
 
@@ -198,6 +203,14 @@ namespace TvDatabase
     {
       get { return idServer; }
       set { isChanged |= idServer != value; idServer = value; }
+    }
+    /// <summary>
+    /// Property relating to database column stopTime
+    /// </summary>
+    public int StopTime
+    {
+      get { return stopTime; }
+      set { isChanged |= stopTime != value; stopTime = value; }
     }
     #endregion
 
