@@ -37,6 +37,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using System.Runtime.CompilerServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
@@ -144,21 +145,19 @@ namespace TvService
     /// <returns>
     /// When implemented in a derived class, the needs of your application determine what value to return. For example, if a QuerySuspend broadcast status is passed, you could cause your application to reject the query by returning false.
     /// </returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     protected override bool OnPowerEvent(PowerBroadcastStatus powerStatus)
     {
       bool accept = true;
       bool result;
       List<PowerEventHandler> powerEventPreventers = new List<PowerEventHandler>();
-      lock (_powerEventHandlers)
+      foreach (PowerEventHandler handler in _powerEventHandlers)
       {
-        foreach (PowerEventHandler handler in _powerEventHandlers)
+        result = handler(powerStatus);
+        if (result == false)
         {
-          result = handler(powerStatus);
-          if (result == false)
-          {
-            accept = false;
-            powerEventPreventers.Add(handler);
-          }
+          accept = false;
+          powerEventPreventers.Add(handler);
         }
       }
       result = base.OnPowerEvent(powerStatus);
@@ -262,11 +261,12 @@ namespace TvService
     }
 
     #region IPowerEventHandler implementation
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void AddPowerEventHandler(PowerEventHandler handler)
     {
-      lock (_powerEventHandlers)
-        _powerEventHandlers.Add(handler);
+      _powerEventHandlers.Add(handler);
     }
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void RemovePowerEventHandler(PowerEventHandler handler)
     {
       lock (_powerEventHandlers)
