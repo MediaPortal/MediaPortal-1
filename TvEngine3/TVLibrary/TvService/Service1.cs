@@ -149,13 +149,16 @@ namespace TvService
       bool accept = true;
       bool result;
       List<PowerEventHandler> powerEventPreventers = new List<PowerEventHandler>();
-      foreach (PowerEventHandler handler in _powerEventHandlers)
+      lock (_powerEventHandlers)
       {
-        result = handler(powerStatus);
-        if (result == false)
+        foreach (PowerEventHandler handler in _powerEventHandlers)
         {
-          accept = false;
-          powerEventPreventers.Add(handler);
+          result = handler(powerStatus);
+          if (result == false)
+          {
+            accept = false;
+            powerEventPreventers.Add(handler);
+          }
         }
       }
       result = base.OnPowerEvent(powerStatus);
@@ -261,11 +264,13 @@ namespace TvService
     #region IPowerEventHandler implementation
     public void AddPowerEventHandler(PowerEventHandler handler)
     {
-      _powerEventHandlers.Add(handler);
+      lock (_powerEventHandlers)
+        _powerEventHandlers.Add(handler);
     }
     public void RemovePowerEventHandler(PowerEventHandler handler)
     {
-      _powerEventHandlers.Remove(handler);
+      lock (_powerEventHandlers)
+        _powerEventHandlers.Remove(handler);
     }
     #endregion
     
