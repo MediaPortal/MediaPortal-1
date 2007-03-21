@@ -780,7 +780,7 @@ namespace TvEngine.PowerScheduler
         {
           // Wait a bit for buggy cards which might take a while before they become
           // known again after resume from standby...
-          System.Threading.Thread.Sleep(1500);
+          System.Threading.Thread.Sleep(10000);
           Log.Debug("PowerScheduler: reinitializing the tvservice TVController");
           controller.Restart();
           _reinitializeController = false;
