@@ -743,7 +743,7 @@ namespace TvLibrary.Implementations.DVB
     {
       //multi demux
       int hr;
-      if (System.IO.Directory.Exists("MDPLUGINS") && true==false)
+      if (System.IO.Directory.Exists("MDPLUGINS"))
       {
         Log.Log.WriteFile("dvb:add 2nd Inf Tee filter");
         _infTeeSecond = (IBaseFilter)new InfTee();

@@ -985,8 +985,8 @@ namespace TvLibrary.Implementations.DVB
         if (_mdapiFilter != null)
         {
           Log.Log.Write("subch:{0} set ca grabber ", _subChannelId);
-          _tsFilterInterface.CaSetCallBack(this);
-          _tsFilterInterface.CaReset();
+          _tsFilterInterface.CaSetCallBack(_subChannelIndex, this);
+          _tsFilterInterface.CaReset(_subChannelIndex);
 
         }
       }
@@ -1220,10 +1220,18 @@ namespace TvLibrary.Implementations.DVB
         updatePids = false;
         if (_mdapiFilter != null)
         {
-          if (_newCA == false)
+          // speeds up channel changing for FTA channels
+          DVBBaseChannel chan = _currentChannel as DVBBaseChannel;
+          if (chan != null)
           {
-            Log.Log.Info("subch:{0} SendPmt:wait for ca", _subChannelId);
-            return false;//cat not received yet
+            if (!chan.FreeToAir)
+            {
+              if (_newCA == false)
+              {
+                Log.Log.Info("subch:{0} SendPmt:wait for ca", _subChannelId);
+                return false;//cat not received yet
+              }
+            }
           }
         }
         if ((_currentChannel as ATSCChannel) != null)
@@ -1266,7 +1274,7 @@ namespace TvLibrary.Implementations.DVB
                 
                 if (_mdapiFilter != null)
                 {
-                  int catLength = _tsFilterInterface.CaGetCaData(catMem);
+                  int catLength = _tsFilterInterface.CaGetCaData(_subChannelIndex, catMem);
                   if (catLength > 0)
                   {
                     byte[] cat = new byte[catLength];
