@@ -18,9 +18,12 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ServiceProcess;
 using System.Text;
+using System.Configuration.Install;
 
 namespace TvService
 {
@@ -29,8 +32,50 @@ namespace TvService
     /// <summary>
     /// The main entry point for the application.
     /// </summary>
-    static void Main()
+    static void Main(string[] args)
     {
+      string opt = null;
+      if (args.Length >= 1)
+      {
+        opt = args[0];
+      }
+
+      if (opt != null && opt.ToLower() == "/install")
+      {
+        TransactedInstaller ti = new TransactedInstaller();
+        ProjectInstaller mi = new ProjectInstaller();
+        ti.Installers.Add(mi);
+        String path = String.Format("/assemblypath={0}",
+          System.Reflection.Assembly.GetExecutingAssembly().Location);
+        String[] cmdline = { path };
+        InstallContext ctx = new InstallContext("", cmdline);
+        ti.Context = ctx;
+        ti.Install(new Hashtable());
+        return;
+      }
+      else if (opt != null && opt.ToLower() == "/uninstall")
+      {
+        TransactedInstaller ti = new TransactedInstaller();
+        ProjectInstaller mi = new ProjectInstaller();
+        ti.Installers.Add(mi);
+        String path = String.Format("/assemblypath={0}",
+        System.Reflection.Assembly.GetExecutingAssembly().Location);
+        String[] cmdline = { path };
+        InstallContext ctx = new InstallContext("", cmdline);
+        ti.Context = ctx;
+        ti.Uninstall(null);
+        return;
+      }
+      else if (opt != null && opt.ToLower() == "/debug")
+      {
+        Service1 s = new Service1();
+        s.DoStart(null);
+        while (true)
+        {
+          System.Threading.Thread.Sleep(10000);
+        }
+      }
+
       ServiceBase[] ServicesToRun;
 
       // More than one user Service may run within the same process. To add

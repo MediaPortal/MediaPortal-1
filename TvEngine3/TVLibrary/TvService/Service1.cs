@@ -82,6 +82,10 @@ namespace TvService
       InitializeComponent();
     }
 
+    public void DoStart(string[] args)
+    {
+      OnStart(args);
+    }
     /// <summary>
     /// When implemented in a derived class, executes when a Start command is sent to the service by the Service Control Manager (SCM) or when the operating system starts (for a service that starts automatically). Specifies actions to take when the service starts.
     /// </summary>
