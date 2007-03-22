@@ -32,6 +32,8 @@ using System.Threading;
 using System.Diagnostics;
 using Microsoft.Win32.SafeHandles;
 using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
+using System.Xml;
 
 namespace MediaPortal.Hardware
 {
@@ -76,6 +78,8 @@ namespace MediaPortal.Hardware
 
     protected string FindDevice(Guid classGuid)
     {
+      LoadDeviceXml();
+
       IntPtr handle = SetupDiGetClassDevs(ref classGuid, 0, 0, 0x12);
 
       string devicePath = null;
@@ -132,21 +136,54 @@ namespace MediaPortal.Hardware
           Log.Info("MCE: Found: {0}", deviceInterfaceDetailData.DevicePath);
         }
 
-        if ((deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0471&pid_0815") != -1) || // Microsoft/Philips 2005
-        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_045e&pid_006d") != -1) ||     // Microsoft/Philips 2004
-        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_1460&pid_9150") != -1) ||     // HP
-        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_107b&pid_3009") != -1) ||     // FIC Spectra/Mycom Mediacenter
-        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0609&pid_031d") != -1) ||     // Toshiba/Hauppauge SMK MCE remote
-        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_03ee&pid_2501") != -1) ||     // Mitsumi MCE remote
-        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_1509&pid_9242") != -1) ||     // Fujitsu Scaleo-E
-        (deviceInterfaceDetailData.DevicePath.StartsWith(@"\\?\hid#irdevice&col01#2")))   // Microsoft/Philips 2005 (Vista)
-        {
-          SetupDiDestroyDeviceInfoList(handle);
-          devicePath = deviceInterfaceDetailData.DevicePath;
+        foreach (string deviceId in _eHomeTransceivers)
+          if ((deviceInterfaceDetailData.DevicePath.IndexOf(deviceId) != -1) || // eHome Infrared Transceiver List XP
+          (deviceInterfaceDetailData.DevicePath.StartsWith(@"\\?\hid#irdevice&col01#2")))   // Microsoft/Philips 2005 (Vista)
+          {
+            SetupDiDestroyDeviceInfoList(handle);
+            devicePath = deviceInterfaceDetailData.DevicePath;
+          }
+        if (devicePath != null)
           break;
-        }
+
       }
       return devicePath;
+    }
+
+    protected void LoadDeviceXml()
+    {
+      if (_eHomeTransceivers == null)
+      {
+        _eHomeTransceivers = new ArrayList();
+
+        string deviceXmlFile = Config.GetFile(Config.Dir.Config, "eHome Infrared Transceiver List XP.xml");
+
+        if (File.Exists(deviceXmlFile))
+        {
+          try
+          {
+            XmlDocument source = new XmlDocument();
+            source.Load(deviceXmlFile);
+            XmlNodeList transceiverNodes = source.SelectNodes("/ehomelist/transceiver");
+
+            foreach (XmlNode transceiverNode in transceiverNodes)
+            {
+              XmlAttribute att = transceiverNode.Attributes["deviceid"];
+              _eHomeTransceivers.Add(att.Value);
+            }
+          }
+          catch (System.Xml.XmlException)
+          {
+            Log.Error("MCE: Error in XML file " + deviceXmlFile, "error");
+            _eHomeTransceivers = null;
+            return;
+          }
+        }
+        else
+        {
+          Log.Error("MCE: Cannot load transceiver list file " + deviceXmlFile, "error");
+        }
+      }
     }
 
     #endregion Implementation
@@ -231,6 +268,7 @@ namespace MediaPortal.Hardware
     protected byte[] _deviceBuffer;
     internal DeviceWatcher _deviceWatcher;
     static bool _logVerbose;
+    internal ArrayList _eHomeTransceivers;
 
     #endregion Members
 
