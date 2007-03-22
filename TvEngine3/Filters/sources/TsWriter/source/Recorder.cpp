@@ -226,20 +226,29 @@ void CRecorder::Write(byte* buffer, int len)
           //On fat16/fat32 we can only create files of max. 2gb/4gb
           if (ERROR_FILE_TOO_LARGE == GetLastError())
           {
-            //close the file...
+            LogDebug("Recorder:Maximum filesize reached for file:'%s' %d",m_szFileName);
+              //close the file...
 		        CloseHandle(m_hFile);
 
             //create a new file
             char ext[6];
             char fileName[MAX_PATH];
             char part[100];
-            strcpy(ext, &m_szFileName[strlen(m_szFileName)-4]);
-            strncpy(fileName, m_szFileName, strlen(m_szFileName)-4);
-            fileName[strlen(m_szFileName)-4]=0;
+						int len=strlen(m_szFileName)-1;
+						int pos=len-1;
+						while (pos>0)
+						{
+							if (m_szFileName[pos]=='.') break;
+							pos--;
+						}
+            strcpy(ext, &m_szFileName[pos]);
+            strncpy(fileName, m_szFileName, pos);
+            fileName[pos]=0;
             sprintf(part,"_p%d",m_iPart);
             char newFileName[MAX_PATH];
             sprintf(newFileName,"%s%s%s",fileName,part,ext);
 
+						LogDebug("Recorder:Create new  file:'%s' %d",newFileName);
 	          m_hFile = CreateFile(newFileName,      // The filename
 						           (DWORD) GENERIC_WRITE,         // File access
 						           (DWORD) FILE_SHARE_READ,       // Share access
@@ -257,6 +266,10 @@ void CRecorder::Write(byte* buffer, int len)
             WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL);
           }
         }
+				else
+				{
+					LogDebug("Recorder:unable to write file:'%s' %d",m_szFileName, GetLastError());
+				}
         m_iWriteBufferPos=0;
 		  }
 	  }
