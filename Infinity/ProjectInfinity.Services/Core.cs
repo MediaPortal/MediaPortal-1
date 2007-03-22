@@ -1,9 +1,11 @@
 using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Messaging.SystemMessages;
 using ProjectInfinity.Plugins;
+using ProjectInfinity.Themes;
 using ProjectInfinity.Windows;
 
 namespace ProjectInfinity
@@ -11,7 +13,7 @@ namespace ProjectInfinity
   /// <summary>
   /// This is the main ProjectInfinity aplication
   /// </summary>
-  public class ProjectInfinityCore : Application
+  public class Core : Application
   {
     #region Messages
 
@@ -63,7 +65,7 @@ namespace ProjectInfinity
 
     #endregion
 
-    public ProjectInfinityCore()
+    public Core()
     {
       //Get the messagebroker and register ourselfs to it.
       //The messagebroker will inspect all our public events an look for the
@@ -75,11 +77,11 @@ namespace ProjectInfinity
 
     public static void Start()
     {
-      ProjectInfinityCore projectInfinity = new ProjectInfinityCore();
-      projectInfinity.Run();
+      Core infinity = new Core();
+      infinity.Run();
     }
 
-    private new void Run()
+    private void Run()
     {
       //notify our own subscribers (through the message broker)
       OnStartup(new EventArgs());
@@ -102,6 +104,7 @@ namespace ProjectInfinity
       try
       {
         OnStartupComplete(EventArgs.Empty);
+        ServiceScope.Get<IThemeManager>().SetDefaultTheme();
         Run(mainWindow);
         OnShutdown(EventArgs.Empty);
       }
@@ -192,5 +195,10 @@ namespace ProjectInfinity
 
     #endregion
 
+    public void InitializeComponent()
+    {
+      System.Uri resourceLocater = new System.Uri("/ProjectInfinity;component/app.xaml", System.UriKind.Relative);
+      System.Windows.Application.LoadComponent(this, resourceLocater);
+    }
   }
 }

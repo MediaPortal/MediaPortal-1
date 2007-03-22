@@ -1,18 +1,28 @@
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Messaging.MusicMessages;
 using ProjectInfinity.Music;
-using ProjectInfinity.Windows;
 
 namespace ProjectInfinity
 {
   /// <summary>
-  /// Interaction logic for MainWindow.xaml
+  /// Interaction logic for MainPage.xaml
   /// </summary>
-  public partial class MainWindow : Window, IMainWindow
+
+  public partial class MainPage : System.Windows.Controls.Page
   {
-    public MainWindow()
+    public MainPage()
     {
       InitializeComponent();
       playButton.Click += PlayClicked;
@@ -43,7 +53,7 @@ namespace ProjectInfinity
       }
     }
 
-    [MessageSubscription(typeof (MusicStartMessage))]
+    [MessageSubscription(typeof(MusicStartMessage))]
     private void MusicStarted(object sender, MusicStartMessage args)
     {
       musicLabel.Content =
@@ -62,11 +72,12 @@ namespace ProjectInfinity
       }
     }
 
-    [MessageSubscription(typeof (Stop))]
+    [MessageSubscription(typeof(Stop))]
     private void MusicStopped(object sender, EventArgs args)
     {
       musicLabel.Content = null;
       ratingLabel.Content = null;
     }
+
   }
 }
