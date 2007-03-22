@@ -768,7 +768,7 @@ namespace SetupTv.Sections
           {
             //add new channel
             exists = false;
-            dbChannel = layer.AddChannel(channel.Provider, channel.Name);
+            dbChannel = layer.AddNewChannel(channel.Name);
             dbChannel.SortOrder = 10000;
             if (channel.LogicalChannelNumber >= 1)
             {

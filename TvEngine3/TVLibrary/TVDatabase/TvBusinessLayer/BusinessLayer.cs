@@ -88,6 +88,11 @@ namespace TvDatabase
 
       return newChannel;
     }
+    public Channel AddNewChannel(string name)
+    {
+      Channel newChannel = new Channel(name, false, false, 0, new DateTime(2000, 1, 1), true, new DateTime(2000, 1, 1), -1, true, "", true);
+      return newChannel;
+    }
 
     public void AddChannelToGroup(Channel channel, string groupName)
     {
