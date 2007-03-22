@@ -124,6 +124,11 @@ namespace MediaPortal.TVGuideScheduler
 					m_intDays = 7;
 					m_intOffset = 0;
 					break;
+				case "tv_grab_hr":
+					m_strConfigFile = "tv_grab_hr.conf";
+					m_intDays = 7;
+					m_intOffset = 0;
+				break;
 				case "tv_grab_huro":
 					m_strConfigFile = "tv_grab_huro.conf";
 					m_intDays = 8;
