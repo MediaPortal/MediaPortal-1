@@ -35,6 +35,7 @@ using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Teletext;
 using TvLibrary.Helper;
+using TvDatabase;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -162,6 +163,8 @@ namespace TvLibrary.Implementations.DVB
     IntPtr _ptrDisEqc;
     DiSEqCMotor _disEqcMotor;
 
+    bool _useDISEqCMotor;
+
     #endregion
 
     #region imports
@@ -186,6 +189,15 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="device">The device.</param>
     public TvCardDvbSS2(DsDevice device)
     {
+      _useDISEqCMotor = false;
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Card card = layer.GetCardByDevicePath(device.DevicePath);
+      if (card != null)
+      {
+        Setting setting=layer.GetSetting("dvbs"+card.IdCard.ToString()+"motorEnabled", "no");
+        if (setting.Value == "yes")
+          _useDISEqCMotor = true;
+      }
       _conditionalAccess = new ConditionalAccess(null, null);
       _tunerDevice = device;
       _name = _tunerDevice.Name;
@@ -543,9 +555,12 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Error("ss2:SetLnbFrequency() failed:0x{0:X}", hr);
             return null;
           }
-          if (satelliteIndex > 0)
+          if (_useDISEqCMotor)
           {
-            DisEqcGotoPosition((byte)satelliteIndex);
+            if (satelliteIndex > 0)
+            {
+              DisEqcGotoPosition((byte)satelliteIndex);
+            }
           }
           break;
       }
