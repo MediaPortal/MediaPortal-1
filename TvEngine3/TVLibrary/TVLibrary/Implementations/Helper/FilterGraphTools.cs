@@ -1057,9 +1057,45 @@ namespace TvLibrary.Implementations.DVB
       for (int i = 0; i <= 10; ++i)
       {
         IPin pinOut = DsFindPin.ByDirection(sourceFilter, PinDirection.Output, i);
-        if (pinOut == null) return false;
-        Log.Log.WriteFile("analog:  pinSource {0}:{1}", i, LogPinInfo(pinIn));
+        Log.Log.WriteFile("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
         int hr = graphBuilder.Connect(pinOut, pinIn);
+        if (hr == 0)
+        {
+          Log.Log.WriteFile("analog:  pins connected");
+          Release.ComObject("pinIn", pinIn);
+          Release.ComObject("pinOut", pinOut);
+          return true;
+        }
+        Release.ComObject("pinOut", pinOut);
+      }
+      Release.ComObject("pinIn", pinIn);
+      return false;
+    }
+
+    static public bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IBaseFilter destinationFilter, string deviceName)
+    {
+      Log.Log.WriteFile("analog: ConnectFilter()");
+      IPin pinIn = DsFindPin.ByDirection(destinationFilter, PinDirection.Input, 0);
+      Log.Log.WriteFile("analog:  PinDest:{0}", LogPinInfo(pinIn));
+      for (int i = 0; i <= 10; ++i)
+      {
+        IPin pinOut = DsFindPin.ByDirection(sourceFilter, PinDirection.Output, i);
+        if (pinOut == null) return false;
+        Log.Log.WriteFile("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
+
+        //Hauppauge hack - sorry, i attempted to do this right, but hauppauge drivers report incorrect values
+        //and it takes a very long time to reject the audio to video connection - diehard2
+
+        int hr = -1;
+
+        if (deviceName.Contains("Hauppauge") && (LogPinInfo(pinOut).Contains("Audio") || LogPinInfo(pinIn).Contains("Audio")))
+        {
+          if (LogPinInfo(pinOut).Contains("Audio") && LogPinInfo(pinIn).Contains("Audio"))
+            hr = graphBuilder.Connect(pinOut, pinIn);
+        }
+        else
+          hr = graphBuilder.Connect(pinOut, pinIn);
+
         if (hr == 0)
         {
           Log.Log.WriteFile("analog:  pins connected");

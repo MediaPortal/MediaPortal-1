@@ -477,8 +477,9 @@ namespace TvLibrary.Implementations.Analog
           }
           continue;
         }
+       
         // try connecting the tv tuner-> tv audio tuner
-        if (FilterGraphTools.ConnectFilter(_graphBuilder, _filterTvTuner, tmp))
+        if (FilterGraphTools.ConnectFilter(_graphBuilder, _filterTvTuner, tmp, devices[i].Name))
         {
           // Got it !
           // Connect tv audio tuner to the crossbar
