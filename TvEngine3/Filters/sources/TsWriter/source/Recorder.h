@@ -80,4 +80,5 @@ private:
   byte*            m_pWriteBuffer;
   int              m_iWriteBufferPos;
   int              m_iPmtPid;
+  int              m_iPart;
 };

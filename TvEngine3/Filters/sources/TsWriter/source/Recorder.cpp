@@ -27,8 +27,9 @@
 #include <streams.h>
 #include <initguid.h>
 
-#include "recorder.h"
 
+#include "recorder.h"
+#define ERROR_FILE_TOO_LARGE 223
 #define RECORD_BUFFER_SIZE 256000
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -155,7 +156,7 @@ STDMETHODIMP CRecorder::StartRecord()
 	CEnterCriticalSection enter(m_section);
 	if (strlen(m_szFileName)==0) return E_FAIL;
 	::DeleteFile((LPCTSTR) m_szFileName);
-
+  m_iPart=2;
 	if (m_hFile!=INVALID_HANDLE_VALUE)
 	{
     CloseHandle(m_hFile);
@@ -196,6 +197,8 @@ STDMETHODIMP CRecorder::StopRecord()
 	    DWORD written = 0;
 	    WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL);
       m_iWriteBufferPos=0;
+      
+
     }
 		CloseHandle(m_hFile);
 		m_hFile=INVALID_HANDLE_VALUE;
@@ -218,7 +221,42 @@ void CRecorder::Write(byte* buffer, int len)
 		  if (m_hFile!=INVALID_HANDLE_VALUE)
 		  {
 	      DWORD written = 0;
-	      WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL);
+	      if (FALSE==WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL))
+        {
+          //On fat16/fat32 we can only create files of max. 2gb/4gb
+          if (ERROR_FILE_TOO_LARGE == GetLastError())
+          {
+            //close the file...
+		        CloseHandle(m_hFile);
+
+            //create a new file
+            char ext[6];
+            char fileName[MAX_PATH];
+            char part[100];
+            strcpy(ext, &m_szFileName[strlen(m_szFileName)-4]);
+            strncpy(fileName, m_szFileName, strlen(m_szFileName)-4);
+            fileName[strlen(m_szFileName)-4]=0;
+            sprintf(part,"_p%d",m_iPart);
+            char newFileName[MAX_PATH];
+            sprintf(newFileName,"%s%s%s",fileName,part,ext);
+
+	          m_hFile = CreateFile(newFileName,      // The filename
+						           (DWORD) GENERIC_WRITE,         // File access
+						           (DWORD) FILE_SHARE_READ,       // Share access
+						           NULL,                  // Security
+						           (DWORD) OPEN_ALWAYS,           // Open flags
+						           (DWORD) 0,             // More flags
+						           NULL);                 // Template
+	          if (m_hFile == INVALID_HANDLE_VALUE)
+	          {
+              LogDebug("Recorder:unable to create file:'%s' %d",newFileName, GetLastError());
+              m_iWriteBufferPos=0;
+		          return ;
+	          }
+            m_iPart++;
+            WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL);
+          }
+        }
         m_iWriteBufferPos=0;
 		  }
 	  }
