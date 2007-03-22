@@ -57,7 +57,7 @@ namespace MediaPortal.Player
       try
       {
         if (!System.IO.File.Exists(fileName)) return false;
-        using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.ReadWrite))
+        using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
         {
           using (BinaryReader reader = new BinaryReader(stream))
           {
@@ -75,8 +75,13 @@ namespace MediaPortal.Player
           }
         }
       }
-      catch (Exception)
+      catch (Exception e)
       {
+        // If an IOException is raised, the file may be in use/being recorded so we assume that it is a correct mpeg file
+        // This fixes replaying mpeg files while being recorded
+        if (e.GetType().ToString() == "System.IO.IOException")
+          return true;
+        Log.Info("Exception in CheckMpgFile with message: {0}", e.Message);
       }
       return false;
     }
