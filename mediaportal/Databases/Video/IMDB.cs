@@ -1262,17 +1262,24 @@ namespace MediaPortal.Video.Database
         }
 
         //cast
-        string RegCastBlock = @"first\sbilled\sonly.*?more";
+        string RegCastBlock = "<table class=\"cast\">.*?</table>";
         string RegActorAndRole = "td class=\"nm\"><a href=./name.*?>(?<actor>.*?)</a><.*?<td class=\"char\">(?<role>.*?)<";
 
         Match castBlock = Regex.Match(strBody, RegCastBlock);
+
+        // These are some fallback methods to find the block with the cast, in case something changes on IMDB, these may work reasonably well anyway...
         if (!castBlock.Success)
-          castBlock = Regex.Match(strBody, @"Credited\scast.*?more");
+          castBlock = Regex.Match(strBody, @"redited\scast.*?</table>");
+        if (!castBlock.Success)
+          castBlock = Regex.Match(strBody, @"first\sbilled\sonly.*?</table>");
+        if (!castBlock.Success)
+          castBlock = Regex.Match(strBody, @"redited\scast.*?more");
+        if (!castBlock.Success)
+          castBlock = Regex.Match(strBody, @"first\sbilled\sonly.*?more");
 
         string strCastBlock = castBlock.Value;
 
         MatchCollection mc = Regex.Matches(strCastBlock, RegActorAndRole);
-
         string strActor = string.Empty;
         string strRole = string.Empty;
 
