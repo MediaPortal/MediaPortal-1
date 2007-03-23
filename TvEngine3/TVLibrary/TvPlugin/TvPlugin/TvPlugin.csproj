@@ -111,6 +111,7 @@
     <Compile Include="teletext\TvTeletext.cs" />
     <Compile Include="TvRecordingSettings.cs" />
     <Compile Include="TvSetup.cs" />
+	<Compile Include="TVTuningDetails.cs" />
     <Compile Include="TVUtil.cs" />
     <Compile Include="TVZapOSD.cs" />
   </ItemGroup>

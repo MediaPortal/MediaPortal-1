@@ -89,6 +89,8 @@ namespace TvPlugin
     protected GUIToggleButtonControl btnTvOnOff = null;
     [SkinControlAttribute(13)]
     protected GUIButtonControl btnTeletext = null;
+    [SkinControlAttribute(14)]
+    protected GUIButtonControl btnTuningDetails = null;
     [SkinControlAttribute(24)]
     protected GUIImage imgRecordingIcon = null;
     [SkinControlAttribute(99)]
@@ -634,6 +636,10 @@ namespace TvPlugin
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TELETEXT);
         return;
       }
+      if (control == btnTuningDetails)
+      {
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_TUNING_DETAILS);
+      }
 
       if (control == btnRecord)
       {
@@ -714,10 +720,15 @@ namespace TvPlugin
 
       if (g_Player.Playing == false)
       {
+        if (btnTuningDetails!=null)
+          btnTuningDetails.Visible = false;
         if (btnTeletext.Visible)
           btnTeletext.Visible = false;
         return;
       }
+      else
+        if (btnTuningDetails!=null)
+          btnTuningDetails.Visible = true;
 
       if (btnChannel.Disabled != false)
         btnChannel.Disabled = false;

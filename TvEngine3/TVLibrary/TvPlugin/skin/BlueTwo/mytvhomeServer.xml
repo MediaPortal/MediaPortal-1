@@ -124,6 +124,15 @@
         <id>13</id>
         <label>1441</label>
         <onup>12</onup>
+        <ondown>14</ondown>
+        <onright>99</onright>
+      </control>
+      <control>
+        <description>TuningDetails</description>
+        <type>button</type>
+        <id>14</id>
+        <label>200041</label>
+        <onup>13</onup>
         <ondown>2</ondown>
         <onright>99</onright>
       </control>
