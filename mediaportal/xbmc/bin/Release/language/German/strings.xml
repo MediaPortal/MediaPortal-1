@@ -6541,4 +6541,8 @@
 	    <id>200040</id>
 	    <value>Skip Stufe entfernen</value>
     </string>    
+	<string>
+	    <id>200041</id>
+		<value>Empfangs Details</value>
+	</string>
 </strings>

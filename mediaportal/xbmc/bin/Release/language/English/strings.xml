@@ -6539,4 +6539,8 @@
 	    <id>200040</id>
 	    <value>Remove skip step</value>
     </string>    
+	<string>
+	    <id>200041</id>
+		<value>Tuning details</value>
+	</string>	
 </strings>
