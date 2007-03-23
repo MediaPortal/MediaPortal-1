@@ -88,11 +88,6 @@ namespace TvDatabase
 
       return newChannel;
     }
-    public Channel AddNewChannel(string name)
-    {
-      Channel newChannel = new Channel(name, false, false, 0, new DateTime(2000, 1, 1), true, new DateTime(2000, 1, 1), -1, true, "", true);
-      return newChannel;
-    }
 
     public void AddChannelToGroup(Channel channel, string groupName)
     {
@@ -1262,120 +1257,17 @@ namespace TvDatabase
         return recordings;
       }
 
-      if (rec.ScheduleType == (int)ScheduleRecordingType.Daily)
-      {
-        for (int i = 0; i < days; ++i)
-        {
-          Schedule recNew = rec.Clone();
-          recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-          recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0);
-          if (rec.EndTime.Day > rec.StartTime.Day)
-            dtDay = dtDay.AddDays(1);
-          recNew.EndTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0);
-          if (rec.EndTime.Day > rec.StartTime.Day)
-            dtDay = dtDay.AddDays(-1);
-          recNew.Series = true;
-          if (recNew.StartTime >= DateTime.Now)
-          {
-            if (rec.IsSerieIsCanceled(recNew.StartTime))
-              recNew.Canceled = recNew.StartTime;
-            recordings.Add(recNew);
-          }
-          dtDay = dtDay.AddDays(1);
-        }
-        return recordings;
-      }
-
-      if (rec.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
-      {
-        for (int i = 0; i < days; ++i)
-        {
-          if (dtDay.DayOfWeek != DayOfWeek.Saturday && dtDay.DayOfWeek != DayOfWeek.Sunday)
-          {
-            Schedule recNew = rec.Clone();
-            recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-            recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0);
-            if (rec.EndTime.Day > rec.StartTime.Day)
-              dtDay = dtDay.AddDays(1);
-            recNew.EndTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0);
-            if (rec.EndTime.Day > rec.StartTime.Day)
-              dtDay = dtDay.AddDays(-1);
-            recNew.Series = true;
-            if (rec.IsSerieIsCanceled(recNew.StartTime))
-              recNew.Canceled = recNew.StartTime;
-            if (recNew.StartTime >= DateTime.Now)
-            {
-              recordings.Add(recNew);
-            }
-          }
-          dtDay = dtDay.AddDays(1);
-        }
-        return recordings;
-      }
-
-      if (rec.ScheduleType == (int)ScheduleRecordingType.Weekends)
-      {
-        IList progList;
-        progList = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, rec.ReferencedChannel());
-
-        foreach (Program prog in progList)
-        {
-          if ((rec.IsRecordingProgram(prog, false)) &&
-                      (prog.StartTime.DayOfWeek == DayOfWeek.Saturday || prog.StartTime.DayOfWeek == DayOfWeek.Sunday))
-          {
-            Schedule recNew = rec.Clone();
-            recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-            recNew.StartTime = prog.StartTime;
-            recNew.EndTime = prog.EndTime;
-            recNew.Series = true;
-
-            if (rec.IsSerieIsCanceled(recNew.StartTime))
-              recNew.Canceled = recNew.StartTime;
-            recordings.Add(recNew);
-          }
-
-        }
-        return recordings;
-      }
-      if (rec.ScheduleType == (int)ScheduleRecordingType.Weekly)
-      {
-        for (int i = 0; i < days; ++i)
-        {
-          if (dtDay.DayOfWeek == rec.StartTime.DayOfWeek)
-          {
-            Schedule recNew = rec.Clone();
-            recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-            recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0);
-            if (rec.EndTime.Day > rec.StartTime.Day)
-              dtDay = dtDay.AddDays(1);
-            recNew.EndTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0);
-            if (rec.EndTime.Day > rec.StartTime.Day)
-              dtDay = dtDay.AddDays(-1);
-            recNew.Series = true;
-            if (rec.IsSerieIsCanceled(recNew.StartTime))
-              recNew.Canceled = recNew.StartTime;
-            if (recNew.StartTime >= DateTime.Now)
-            {
-              recordings.Add(recNew);
-            }
-          }
-          dtDay = dtDay.AddDays(1);
-        }
-        return recordings;
-      }
-
-
       IList programs;
-      if (rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel)
-      {
-        //Log.Debug("get {0} {1} EveryTimeOnThisChannel", rec.ProgramName, rec.ReferencedChannel().Name);
-        programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, rec.ReferencedChannel());
-      }
-      else
+      if (rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnEveryChannel)
       {
         //Log.Debug("get {0} EveryTimeOnAllChannels", rec.ProgramName);
 
         programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, null);
+      }
+      else
+      {
+        //Log.Debug("get {0} {1} {2}", rec.ProgramName, rec.ReferencedChannel().Name, ((ScheduleRecordingType)rec.ScheduleType).ToString());
+        programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, rec.ReferencedChannel());
       }
       foreach (Program prog in programs)
       {
@@ -1423,20 +1315,6 @@ namespace TvDatabase
         if (schedules == null) return null;
         if (schedules.Count == 0) return null;
         return (Schedule)schedules[0];
-    }
-    #endregion
-
-    #region recordings
-    public Recording GetRecordingByFileName(string fileName)
-    {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Recording));
-      sb.AddConstraint(Operator.Equals, "fileName", fileName);
-      sb.SetRowLimit(1);
-      SqlStatement stmt = sb.GetStatement(true);
-      IList recordings = ObjectFactory.GetCollection(typeof(Recording), stmt.Execute());
-      if (recordings.Count == 0)
-        return null;
-      return (Recording)recordings[0];
     }
     #endregion
   }
