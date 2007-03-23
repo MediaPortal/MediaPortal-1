@@ -1605,6 +1605,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_2476CAEDA0AD433A9D1ABBB6EFFB5C36"
+        "OwnerKey" = "8:_416D221129EA4472920D97B19D66A6A4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_2489A4A34BBD4F26BEEFA6215F27DFB8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2789,12 +2795,6 @@
         {
         "MsmKey" = "8:_3E1A6107D00C44A48719A2FD85F7583E"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3E3CD8E8A14B4326AC7421CAB194A4A9"
-        "OwnerKey" = "8:_416D221129EA4472920D97B19D66A6A4"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -13692,7 +13692,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ExternalPlayers, Version=1.0.2638.17547, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:ExternalPlayers, Version=1.0.2638.20035, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_0958D570D5B1495E9228DF67C6CABF16"
@@ -16751,7 +16751,7 @@
             "TargetName" = "8:MpaDecFilter.ax"
             "Tag" = "8:"
             "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:"
+            "Condition" = "8:CHECKBOXMPEG2DEC"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -17389,7 +17389,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Core, Version=1.0.2638.17541, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:Core, Version=1.0.2638.20031, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_2443B05EC4204498D11A2DE6EE0884B0"
@@ -19682,7 +19682,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:DirectShowLib, Version=1.4.0.17538, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:DirectShowLib, Version=1.4.0.20029, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_3662730C7161874076D6F3DC53195D24"
@@ -19993,7 +19993,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:RemotePlugins, Version=1.0.2638.17546, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:RemotePlugins, Version=1.0.2638.20034, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_37C805856FA365C612ECE74D60404E46"
@@ -20055,7 +20055,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:WebEPG-xmltv, Version=1.0.2638.17549, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:WebEPG-xmltv, Version=1.0.2638.20038, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_37F953F66CCF47E385CB11D28B11EBFF"
@@ -27872,7 +27872,7 @@
             "TargetName" = "8:Mpeg2DecFilter.ax"
             "Tag" = "8:"
             "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:"
+            "Condition" = "8:CHECKBOXMPEG2DEC"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -28561,7 +28561,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TVCapture, Version=1.0.2638.17544, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:TVCapture, Version=1.0.2638.20033, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_6E839FD63FC316F3F4A202E46C11B35F"
@@ -28672,7 +28672,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:WebEPG, Version=2.4.2638.17544, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:WebEPG, Version=2.4.2638.20034, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_6F14DD6A4CF7DBAFBD9697933A941AA9"
@@ -32858,7 +32858,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:WindowPlugins, Version=1.0.2638.17554, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:WindowPlugins, Version=1.0.2638.20045, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_894D541DFBC64BF8B85970D80D840D18"
@@ -33709,7 +33709,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Configuration, Version=1.0.2638.17559, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:Configuration, Version=1.0.2638.20042, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_8E4E5CF6FB5B4D9B86434402B55C1010"
@@ -34400,7 +34400,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:SubtitlePlugins, Version=1.0.2638.17550, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:SubtitlePlugins, Version=1.0.2638.20039, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_921D520796DA402E9BB49B790F745D59"
@@ -34893,7 +34893,7 @@
             "TargetName" = "8:MpegVideo.dll"
             "Tag" = "8:"
             "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:"
+            "Condition" = "8:CHECKBOXDSCALER"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -43376,7 +43376,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ProcessPlugins, Version=1.0.2638.17548, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:ProcessPlugins, Version=1.0.2638.20037, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_CE5A0520AB4148528826DEE5FFA22725"
@@ -43587,7 +43587,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Utils, Version=2.1.2638.17539, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:Utils, Version=2.1.2638.20029, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_CF2C1760B3DDC1704F709B991CD73E6D"
@@ -43718,7 +43718,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:WebEPG-conf, Version=1.0.2638.17549, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:WebEPG-conf, Version=1.0.2638.20038, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_D04F024288844EC48816A1BE83D6FB15"
@@ -44562,7 +44562,7 @@
             "TargetName" = "8:MpegAudio.dll"
             "Tag" = "8:"
             "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:"
+            "Condition" = "8:CHECKBOXDSCALER"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -47502,7 +47502,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Databases, Version=1.0.2638.17543, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:Databases, Version=1.0.2638.20032, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_E7B9417D92873775228EF0493A9AFCC2"
@@ -54085,7 +54085,7 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_3E3CD8E8A14B4326AC7421CAB194A4A9"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_2476CAEDA0AD433A9D1ABBB6EFFB5C36"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
