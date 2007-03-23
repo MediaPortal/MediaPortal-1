@@ -46,7 +46,7 @@ copy ..\..\..\MediaPortal.Support\bin\debug\MediaPortal.Support.pdb .
 copy ..\..\..\MediaPortal.Support\bin\debug\ICSharpCode.SharpZipLib.dll .
 copy ..\..\..\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\debug\HCWHelper.exe .
 copy ..\..\..\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\debug\HCWHelper.pdb .
-copy ..\..\..\RemotePlugins\Remotes\X10Remote\AxInterop.X10.dll .
+rem copy ..\..\..\RemotePlugins\Remotes\X10Remote\AxInterop.X10.dll .
 copy ..\..\..\RemotePlugins\Remotes\X10Remote\Interop.X10.dll .
 
 copy ..\..\..\core\directshowhelper\directshowhelper\release\dshowhelper.dll .
@@ -124,7 +124,7 @@ copy ..\..\..\Utils\bin\debug\Utils.dll .
 
 copy ..\..\..\WebEPG\WebEPG-xmltv\bin\debug\WebEPG-xmltv.exe WebEPG.exe
 copy ..\..\..\WebEPG\WebEPG-conf\bin\debug\WebEPG-conf.exe .
-copy ..\..\..\WebEPG\WebEPG-channels\bin\debug\WebEPG-channels.exe .
+rem copy ..\..\..\WebEPG\WebEPG-channels\bin\debug\WebEPG-channels.exe .
 rem ---------------------
 rem Begin ExternalDisplay
 rem ---------------------

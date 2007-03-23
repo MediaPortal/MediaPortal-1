@@ -1,4 +1,4 @@
-cd bin\Debug
+rem cd bin\Debug
 if not exist plugins mkdir plugins
 if not exist plugins\TagReaders mkdir plugins\TagReaders
 

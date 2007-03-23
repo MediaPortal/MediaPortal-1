@@ -21,7 +21,7 @@ del *.ax
 copy ..\..\..\MediaPortal.Support\bin\Release\MediaPortal.Support.dll .
 copy ..\..\..\MediaPortal.Support\bin\Release\ICSharpCode.SharpZipLib.dll .
 copy ..\..\..\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\Release\HCWHelper.exe .
-copy ..\..\..\RemotePlugins\Remotes\X10Remote\AxInterop.X10.dll .
+rem copy ..\..\..\RemotePlugins\Remotes\X10Remote\AxInterop.X10.dll .
 copy ..\..\..\RemotePlugins\Remotes\X10Remote\Interop.X10.dll .
 copy ..\..\..\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\Release\MusicShareWatcherHelper.dll .
 copy ..\..\..\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\Release\MusicShareWatcher.exe .
