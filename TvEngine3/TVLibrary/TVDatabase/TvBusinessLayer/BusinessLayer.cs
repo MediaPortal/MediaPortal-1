@@ -75,7 +75,12 @@ namespace TvDatabase
     #endregion
 
     #region channels
-
+    // This is really needed
+    public Channel AddNewChannel(string name)
+    {
+      Channel newChannel = new Channel(name, false, false, 0, new DateTime(2000, 1, 1), true, new DateTime(2000, 1, 1), -1, true, "", true);
+      return newChannel;
+    }
     public Channel AddChannel(string provider, string name)
     {
       Channel channel = GetChannelByName(provider, name);
@@ -1315,6 +1320,21 @@ namespace TvDatabase
         if (schedules == null) return null;
         if (schedules.Count == 0) return null;
         return (Schedule)schedules[0];
+    }
+    #endregion
+
+    #region recordings
+    // This is needed by the TvPlugin in TvRecorded.cs
+    public Recording GetRecordingByFileName(string fileName)
+    {
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Recording));
+      sb.AddConstraint(Operator.Equals, "fileName", fileName);
+      sb.SetRowLimit(1);
+      SqlStatement stmt = sb.GetStatement(true);
+      IList recordings = ObjectFactory.GetCollection(typeof(Recording), stmt.Execute());
+      if (recordings.Count == 0)
+        return null;
+      return (Recording)recordings[0];
     }
     #endregion
   }
