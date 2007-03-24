@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Grabber>
+  <Info language="da" availableDays="7" timezone="W. Europe Standard Time" />
+
+  <!-- Channel section lists all the Channels available from this website. -->
+
+  <Channels>
+
+    <Channel id="dr1@dr.dk" siteId="dr1" />
+    <!-- DR1 -->
+    <Channel id="dr2@dr.dk" siteId="dr2" />
+    <!-- DR2 -->
+    <Channel id="tv2@tv2.dk" siteId="tv+2" />
+    <!-- TV2 -->
+    <Channel id="tv3@tv3.dk" siteId="tv3" />
+    <!-- tv3 -->
+    <Channel id="tv3+@tv3.dk" siteId="tv3%2B" />
+    <!-- tv3+ -->
+    <Channel id="sbs.net" siteId="SBS+Net"/>
+    <!-- SBS.NET -->
+    <Channel id="sv1@svt.se" siteId="svt1" />
+    <!-- TV1 Sverige -->
+    <Channel id="sv2@svt.se" siteId="svt2" />
+    <!-- TV2 Sverige -->
+    <Channel id="sv4@svt.se" siteId="TV4+Sverige" />
+    <!-- TV4 Sverige -->
+    <Channel id="kk@kanalkobenhavn.dk" siteId="Kanal+København" />
+    <!-- Kanal Kobenhavn -->
+
+
+  </Channels>
+
+  <!-- Formating of Listing -->
+  <Listing type="Html">
+    <Site url="http://www.ahot.dk/tv/kanal.asp?kanal=[ID]&amp;Dato=[DD]-[MM]-[YYYY]" post="" external="false" encoding="" delay="500" />
+    <Search maxlistings="250" listStart="1" />
+    <Html>
+      <Template name="default">
+        <SectionTemplate tags="T">
+
+          <!-- Template of the Listing information -->
+          <TemplateText>
+            &lt;tr&gt;&lt;td valign="top" width="50"&gt;&lt;#START&gt;&lt;/td&gt;&lt;td&gt;&lt;b&gt;&lt;#TITLE&gt;&lt;/b&gt;&lt;br&gt;&lt;#SUBTITLE&gt;&lt;br&gt; &lt;/td&gt;&lt;/tr&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Template name="details">
+        <SectionTemplate tags="TPB">
+          <TemplateText>
+            &lt;td&gt; - &lt;#END&gt; &lt;#VALUE&gt; Kategori:&lt;#GENRE&gt; Episode (&lt;#EPISODE&gt;)&lt;p&gt;&lt;#DESCRIPTION&gt;&lt;p&gt;Medvirkende: &lt;#ACTORS&gt;&lt;/td&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Sublinks>
+        <Sublink search="visprogram" template="details">
+          <Link url="http://www.ahot.dk/tv/[1]" post="" external="false" encoding="" />
+        </Sublink>
+      </Sublinks>
+    </Html>
+  </Listing>
+</Grabber>
