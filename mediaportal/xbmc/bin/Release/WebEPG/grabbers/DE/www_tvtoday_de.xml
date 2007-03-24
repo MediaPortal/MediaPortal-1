@@ -78,84 +78,57 @@
     <Channel id="cnni-emea@cnn.com" siteId="CNN" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.tvtoday.de/tv/programm/programm.php?ztag=[DAY_OFFSET]&amp;sparte=alle&amp;uhrzeit=05%3A00%3A00&amp;sender=[ID]&amp;von=[LIST_OFFSET]" post="" external="false" encoding="" />
-    <Search maxlistings="12" />
+    <Site url="http://www.tvtoday.de/program2007?format=genre&amp;date=[DD].[MM].[YYYY]&amp;slotIndex=all&amp;genre=&amp;channel=[ID]" post="" external="false" encoding="" />
     <Html>
-      <Template name="default" start="&lt;!--LISTING ANFANG--&gt;" end="&lt;!--INHALT ENDE--&gt;">
-        <SectionTemplate tags="TI">
+      <Template name="default">
+        <SectionTemplate tags="TA">
           <TemplateText>
-&lt;table&gt;
-&lt;tr&gt;
-&lt;td &gt;&lt;img&gt;&lt;/td&gt;
-&lt;td&gt;&lt;span&gt;&lt;#START&gt;&lt;/span&gt;&lt;/td&gt;
-&lt;td&gt;&lt;span&gt;&lt;#TITLE&gt;(&lt;/span&gt;&lt;span&gt;&lt;i&gt;bis&lt;#END&gt;&lt;/i&gt;&lt;br&gt;&lt;/span&gt;
-&lt;span&gt;&lt;#GENRE&gt;-&lt;#DESCRIPTION&gt;&lt;br&gt; &lt;/span&gt;&lt;br&gt;&lt;/td&gt;
-&lt;/tr&gt;&lt;/table&gt;
-    </TemplateText>
+            &lt;tr valign="top"&gt;
+            &lt;td width="45" style="border-right: 2px solid white; border-bottom: 2px solid white; border-left: 2px solid white;"&gt;
+            &lt;span class="tv-sendung-uhrzeit"&gt;&lt;#START&gt;&lt;/span&gt;
+            &lt;/td&gt;
+            &lt;td width="50" align="center" style="border-right: 2px solid white; border-bottom: 2px solid white;"&gt;
+            &lt;img src="http://www.tvtoday.de/img/program/logos/zdf.gif" id="channel_logo_zdf" alt="zdf" class="channel_logo" /&gt;
+            &lt;script language="Javascript"&gt;
+            &lt;/script&gt;
+            &lt;/td&gt;
+            &lt;td style="border-bottom: 2px solid white;"&gt;&lt;a href="javascript: detailPopup('10435331');" class="tv-sendung-titel"&gt;&lt;#TITLE&gt;&lt;/a&gt;
+            &lt;br/&gt;
+            &lt;span class="tv-sendung-info"&gt;(&lt;a href&gt;&lt;b&gt;ZDF&lt;/b&gt;&lt;/a&gt;bis&lt;#END&gt;Showview&lt;#SHOWVIEW&gt;&lt;br&gt;&lt;#GENRE&gt;&lt;/span&gt;
+            &lt;/td&gt;
+            &lt;td&gt;
+            &lt;a href="javascript: addToMyTv('mytv_10435331');"&gt;&lt;img src="http://www.tvtoday.de/img/program/zu_my_tv.gif" width="24" height="24" vspace="5" border="0" class="icon_mytv" id="mytv_10435331" /&gt;&lt;/a&gt;&lt;br/&gt;
+            &lt;/td&gt;
+            &lt;/tr&gt;
+          </TemplateText>
         </SectionTemplate>
       </Template>
       <Template name="Details" start="FILMBESCHREIBUNG">
-        <SectionTemplate tags="TS">
+        <SectionTemplate tags="T">
           <TemplateText>
-&lt;tr&gt;
-&lt;td&gt;&lt;img&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;img&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;img&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;span&gt;ShowView:&lt;/span&gt;&lt;br&gt;&lt;span class="text"&gt;4-478-750&lt;/span&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;img&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;span&gt;Genre:&lt;/span&gt;&lt;br&gt;&lt;span&gt;&lt;#GENRE&gt;&lt;/span&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;img&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;span&gt;Regie:&lt;/span&gt;&lt;br&gt;&lt;span class="text"&gt;Jill Hayworth&lt;/span&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;img&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;span&gt;Darsteller:&lt;/span&gt;&lt;br&gt;&lt;span&gt;Duggan Hayes, Duggan Hayes ( = Daniel Anderson), Hal Hutton, Jay Stewart, Jesse Coleman, Justin Carroll (= Hal Hutton), Kim Dawson, Kira Reed, Regina Russell, Robert Donovan, Shauna O‘Brien, Steve Curtis&lt;/span&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;img&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/table&gt;
-&lt;/td&gt;
-&lt;td&gt;&lt;img&gt;&lt;/td&gt;
-&lt;td&gt;
-&lt;table&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;img&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;img&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;&lt;span&gt;&lt;br&gt;&lt;/span&gt;
-&lt;span&gt;&lt;#TITLE&gt;&lt;br&gt;&lt;br&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;
-&lt;span&gt;&lt;#DESCRIPTION&gt;&lt;/span&gt;&lt;br&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-   </TemplateText>
+            &lt;tr&gt;
+            &lt;td align="left" class="tv-sendung-info"&gt;&lt;#DESCRIPTION&gt;&lt;br/&gt;
+            &lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+            &lt;td align="left"&gt;&lt;img src="http://www.tvtoday.de/img/program/popup/linie.gif" width="280" height="1"&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+            &lt;td align="left" class="tv-sendung-info"&gt;
+            &lt;span class="tv-credits"&gt;O:&lt;/span&gt; Two Shades of Blue, USA 2000;
+            &lt;span class="tv-credits"&gt;R:&lt;/span&gt; James D. Deck;		&lt;span class="tv-credits"&gt;D:&lt;/span&gt; Gary Busey (Jack Reynolds); Rachel Hunter (Susan Price); Robert Knott (Detective Alvarez); Marlee Matlin (Beth McDaniels); Anthony Natale (Todd); Patsy Pease (Gwen); Eric Roberts (I) (Calvin Stasi)		&lt;/td&gt;
+            &lt;/tr&gt;
+          </TemplateText>
         </SectionTemplate>
       </Template>
       <DataPreference>
-        <Preference template="default" title="1" subtitle="0" genre="1" description="1" />
-        <Preference template="Details" title="0" subtitle="0" genre="2" description="2" />
+        <Preference template="default" title="1" subtitle="0" genre="1" description="0" />
+        <Preference template="Details" title="0" subtitle="0" genre="2" description="1" />
       </DataPreference>
       <Sublinks>
-        <Sublink search="program" template="Details" />
+        <Sublink search="detailPopup" template="Details">
+          <Link url="http://www.tvtoday.de/program2007?format=detail&amp;sid=[1]" post="" external="false" encoding="" />
+        </Sublink>
       </Sublinks>
     </Html>
   </Listing>
