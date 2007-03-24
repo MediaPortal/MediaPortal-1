@@ -295,7 +295,7 @@ namespace MediaPortal.Tests.WebEPG
     public void StartTimePervious3()
     {
       ProgramData program = new ProgramData();
-      DateTime start = new DateTime(2006, 07, 16, 20, 15, 0);
+      DateTime start = new DateTime(2006, 07, 16, 21, 15, 0);
       ListingTimeControl control = new ListingTimeControl(start);
 
       control.SetProgramCount(6);
