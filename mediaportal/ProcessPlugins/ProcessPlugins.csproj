@@ -274,6 +274,13 @@
     <Compile Include="CallerId\YAC\CallerIdPlugin.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ComSkipLauncher\ComSkipLauncher.cs" />
+    <Compile Include="ComSkipLauncher\Configuration.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ComSkipLauncher\Configuration.Designer.cs">
+      <DependentUpon>Configuration.cs</DependentUpon>
+    </Compile>
     <Compile Include="DirecTV Serial Control\Command.cs" />
     <Compile Include="DirecTV Serial Control\CommandSet.cs" />
     <Compile Include="DirecTV Serial Control\DirecTVSettings.cs" />
@@ -545,6 +552,10 @@
   <ItemGroup>
     <EmbeddedResource Include="AutoCropper\AutoCropperSetup.resx">
       <DependentUpon>AutoCropperSetup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ComSkipLauncher\Configuration.resx">
+      <DependentUpon>Configuration.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="DirecTV Serial Control\SetupForm.resx">
