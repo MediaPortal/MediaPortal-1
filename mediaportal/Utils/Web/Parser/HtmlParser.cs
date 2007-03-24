@@ -265,7 +265,6 @@ namespace MediaPortal.Utils.Web
 
         if (end != -1)
           strLinkURL = strLinkURL.Substring(start, end - start);
-    
       }
 
       string[] param = GetJavaSubLinkParams(result); //strLinkURL);
@@ -273,17 +272,17 @@ namespace MediaPortal.Utils.Web
       {
         if (!linkURL.HasTag("[1]"))
         {
-          linkURL = linkURL.Add(param[0]);
+          linkURL = linkURL.Add(HtmlString.ToAscii(param[0]));
         }
         else
         {
           for (int i = 0; i < param.Length; i++)
-            linkURL.ReplaceTag("[" + (i + 1).ToString() + "]", param[i]);
+            linkURL.ReplaceTag("[" + (i + 1).ToString() + "]", HtmlString.ToAscii(param[i]));
         }
       }
       else
       {
-        linkURL = linkURL.Add(strLinkURL.Trim());
+        linkURL = linkURL.Add(HtmlString.ToAscii(strLinkURL.Trim()));
       }
       //}
 
