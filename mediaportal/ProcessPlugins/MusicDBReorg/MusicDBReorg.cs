@@ -79,8 +79,6 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
       }
 
       mDB = new MusicDatabase();
-      Log.Info("MusicDBReorg: schedule: {0}:{1}", _runHours, _runMinutes);
-      Log.Info("MusicDBReorg: run on: monday:{0}, tuesday:{1}, wednesday:{2}, thursday:{3}, friday:{4}, saturday:{5}, sunday:{6}", _runMondays, _runTuesdays, _runWednesdays, _runThursdays, _runFridays, _runSaturdays, _runSundays);
     }
 
     #endregion
@@ -92,6 +90,9 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
     /// </summary>
     public void Start()
     {
+      Log.Info("MusicDBReorg: schedule: {0}:{1}", _runHours, _runMinutes);
+      Log.Info("MusicDBReorg: run on: monday:{0}, tuesday:{1}, wednesday:{2}, thursday:{3}, friday:{4}, saturday:{5}, sunday:{6}", _runMondays, _runTuesdays, _runWednesdays, _runThursdays, _runFridays, _runSaturdays, _runSundays);
+
       // Establish Handler to catch reorg events, when the reorg is from within the Settings GUI
       MusicDatabase.DatabaseReorgChanged += new MusicDBReorgEventHandler(ReorgStatusChange);
 
@@ -201,9 +202,9 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
       }
 
       // check if the schedule is due
-      if (DateTime.Now.Hour >= _runHours)
+      if (DateTime.Now.Hour == _runHours)
       {
-        if (DateTime.Now.Minute >= _runMinutes)
+        if (DateTime.Now.Minute == _runMinutes)
         {
           Log.Info("MusicDBReorg.ShouldRunSchedule: schedule {0}:{1} is due: {2}:{3}", _runHours, _runMinutes, DateTime.Now.Hour, DateTime.Now.Minute);
           return true;
