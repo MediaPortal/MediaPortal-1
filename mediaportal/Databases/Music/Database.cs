@@ -114,7 +114,7 @@ namespace MediaPortal.Music.Database
 
     // An event that clients can use to be notified whenever the
     // elements of the list change.
-    public event MusicDBReorgEventHandler DatabaseReorgChanged;
+    static public event MusicDBReorgEventHandler DatabaseReorgChanged;
 
     // Invoke the Changed event; called whenever list changes
     protected virtual void OnDatabaseReorgChanged(DatabaseReorgEventArgs e)

@@ -383,7 +383,7 @@ namespace MediaPortal.Configuration.Sections
       timer1.Enabled = false;
       progressBar1.Value = 0;
       MediaPortal.Music.Database.MusicDatabase m_dbs = new MediaPortal.Music.Database.MusicDatabase();
-      m_dbs.DatabaseReorgChanged += new MusicDBReorgEventHandler(SetPercentDonebyEvent);
+      MediaPortal.Music.Database.MusicDatabase.DatabaseReorgChanged += new MusicDBReorgEventHandler(SetPercentDonebyEvent);
       int appel = m_dbs.MusicDatabaseReorg(null);
     }
 

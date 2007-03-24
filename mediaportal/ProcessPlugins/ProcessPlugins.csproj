@@ -432,6 +432,13 @@
     <Compile Include="MPExTuneCmd\MPExTunerCmdForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="MusicDBReorg\MusicDBReorg.cs" />
+    <Compile Include="MusicDBReorg\MusicDBReorgSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MusicDBReorg\MusicDBReorgSettings.Designer.cs">
+      <DependentUpon>MusicDBReorgSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="MusicShareWatcher\MusicShareWatcherPlugin.cs" />
     <Compile Include="PowerScheduler\PowerException.cs" />
     <Compile Include="PowerScheduler\PowerManager.cs" />
@@ -560,6 +567,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DirecTV Serial Control\SetupForm.resx">
       <DependentUpon>SetupForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MusicDBReorg\MusicDBReorgSettings.resx">
+      <DependentUpon>MusicDBReorgSettings.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="TvMovie\tvmovie_inactive.gif" />

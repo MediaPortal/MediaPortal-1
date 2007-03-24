@@ -455,7 +455,7 @@ namespace MediaPortal.Configuration.Sections
           shares.Add(path);
         }
       }
-      m_dbs.DatabaseReorgChanged += new MusicDBReorgEventHandler(SetPercentDonebyEvent);
+      MediaPortal.Music.Database.MusicDatabase.DatabaseReorgChanged += new MusicDBReorgEventHandler(SetPercentDonebyEvent);
       groupBox1.Enabled = false;
       groupBox2.Enabled = true;
 
