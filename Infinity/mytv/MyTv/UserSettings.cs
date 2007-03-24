@@ -23,6 +23,19 @@ namespace MyTv
       }
     }
 
+    static public int GetInt(string topic, string tag)
+    {
+      XmlNode node = AddTagNode(topic, tag);
+      int result;
+      Int32.TryParse(node.InnerText, out result);
+      return result;
+    }
+    static public void SetInt(string topic, string tag, int tagValue)
+    {
+      XmlNode nodeTag = AddTagNode(topic, tag);
+      nodeTag.InnerText = tagValue.ToString();
+      SaveSettings();
+    }
     static public string GetString(string topic, string tag)
     {
       XmlNode node = AddTagNode(topic, tag);

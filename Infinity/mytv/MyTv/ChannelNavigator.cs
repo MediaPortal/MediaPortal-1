@@ -76,6 +76,8 @@ namespace MyTv
         _groups.Add(group);
       }
 
+      int channelId = UserSettings.GetInt("tv", "channel");
+      SelectedChannel = Channel.Retrieve(channelId);
     }
     /// <summary>
     /// Gets the currently active channel group.
@@ -92,6 +94,10 @@ namespace MyTv
       }
       set
       {
+        if (value != _selectedChannel && value!=null)
+        {
+          UserSettings.SetInt("tv", "channel", value.IdChannel);
+        }
         _selectedChannel = value;
       }
 
