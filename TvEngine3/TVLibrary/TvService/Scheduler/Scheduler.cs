@@ -251,146 +251,22 @@ namespace TvService
     /// <param name="currentTime">current Date/Time</param>
     /// <param name="newRecording">Recording detail which is used to further process the recording</param>
     /// <returns>true if schedule should be recorded now, else false</returns>
-    bool IsTimeToRecord(Schedule schedule, DateTime currentTime, out RecordingDetail newRecording)
+    public bool IsTimeToRecord(Schedule schedule, DateTime currentTime, out RecordingDetail newRecording)
     {
       newRecording = null;
-      ScheduleRecordingType type = (ScheduleRecordingType)schedule.ScheduleType;
-      if (type == ScheduleRecordingType.Once)
-      {
-        if (currentTime >= schedule.StartTime.AddMinutes(-schedule.PreRecordInterval) &&
-            currentTime <= schedule.EndTime.AddMinutes(schedule.PostRecordInterval))
-        {
-          newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), schedule.StartTime, schedule.EndTime);
-          return true;
-        }
+      Channel channel = schedule.ReferencedChannel();
+      DateTime startTime = DateTime.MinValue;
+      DateTime endTime = DateTime.MinValue;
+      bool isDue = false;
+
+      schedule.GetRecordingDetails(currentTime, out channel, out startTime, out endTime, out isDue);
+
+      if (!isDue)
         return false;
-      }
 
-      if (type == ScheduleRecordingType.Daily
-        || type == ScheduleRecordingType.Weekends
-        || type == ScheduleRecordingType.WorkingDays
-        || type == ScheduleRecordingType.Weekly)
-      {
-        // Get the current and next programs and check if either of them is supposed to be recording (using
-        // the fuzzy algorithm to detect a schedule's timeslot).
-        TvDatabase.Program current = schedule.ReferencedChannel().CurrentProgram;
-        TvDatabase.Program next = schedule.ReferencedChannel().NextProgram;
-        if (current != null)
-        {
-          if (currentTime >= current.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= current.EndTime.AddMinutes(schedule.PostRecordInterval))
-          {
-            if (schedule.IsInFuzzyTimeSlot(current.IdChannel, current.Title, current.StartTime))
-            {
-              if (!schedule.IsSerieIsCanceled(current.StartTime))
-              {
-                newRecording = new RecordingDetail(schedule, current.ReferencedChannel(), current.StartTime, current.EndTime);
-                return true;
-              }
-            }
-          }
-        }
-        if (next != null)
-        {
-          if (currentTime >= next.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= next.EndTime.AddMinutes(schedule.PostRecordInterval))
-          {
-            if (schedule.IsInFuzzyTimeSlot(next.IdChannel, next.Title, current.StartTime))
-            {
-              if (!schedule.IsSerieIsCanceled(next.StartTime))
-              {
-                newRecording = new RecordingDetail(schedule, next.ReferencedChannel(), next.StartTime, next.EndTime);
-                return true;
-              }
-            }
-          }
-        }
-        if (current == null)
-        {
-          // If there is no guide information available, simply check the schedule's set time.
-          DateTime recStartTime;
-          DateTime recEndTime;
-          if (schedule.GetTimesNearestTo(currentTime, out recStartTime, out recEndTime))
-          {
-            if (currentTime >= recStartTime.AddMinutes(-schedule.PreRecordInterval) &&
-                currentTime <= recEndTime.AddMinutes(schedule.PostRecordInterval))
-            {
-                newRecording = new RecordingDetail(schedule, next.ReferencedChannel(), recStartTime, recEndTime);
-                return true;
-            }
-          }
-        }
-      }
+      newRecording = new RecordingDetail(schedule, channel, startTime, endTime);
 
-      if (type == ScheduleRecordingType.EveryTimeOnThisChannel)
-      {
-        TvDatabase.Program current = schedule.ReferencedChannel().CurrentProgram;
-        TvDatabase.Program next = schedule.ReferencedChannel().NextProgram;
-        if (current != null)
-        {
-          if (currentTime >= current.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= current.EndTime.AddMinutes(schedule.PostRecordInterval))
-          {
-            if (String.Compare(current.Title, schedule.ProgramName, true) == 0)
-            {
-              if (!schedule.IsSerieIsCanceled(current.StartTime))
-              {
-                newRecording = new RecordingDetail(schedule, current.ReferencedChannel(), current.StartTime, current.EndTime);
-                return true;
-              }
-            }
-          }
-        }
-        if (next != null)
-        {
-          if (currentTime >= next.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= next.EndTime.AddMinutes(schedule.PostRecordInterval))
-          {
-            if (String.Compare(next.Title, schedule.ProgramName, true) == 0)
-            {
-              if (!schedule.IsSerieIsCanceled(next.StartTime))
-              {
-                newRecording = new RecordingDetail(schedule, next.ReferencedChannel(), next.StartTime, next.EndTime);
-                return true;
-              }
-            }
-          }
-        }
-      }
-
-      if (type == ScheduleRecordingType.EveryTimeOnEveryChannel)
-      {
-        foreach (Channel channel in _channels)
-        {
-          TvDatabase.Program current = channel.CurrentProgram;
-          TvDatabase.Program next = channel.NextProgram;
-          if (current != null)
-          {
-            if (currentTime >= current.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= current.EndTime.AddMinutes(schedule.PostRecordInterval))
-            {
-              if (String.Compare(current.Title, schedule.ProgramName, true) == 0)
-              {
-                if (!schedule.IsSerieIsCanceled(current.StartTime))
-                {
-                  newRecording = new RecordingDetail(schedule, current.ReferencedChannel(), current.StartTime, current.EndTime);
-                  return true;
-                }
-              }
-            }
-          }
-          if (next != null)
-          {
-            if (currentTime >= next.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= next.EndTime.AddMinutes(schedule.PostRecordInterval))
-            {
-              if (String.Compare(next.Title, schedule.ProgramName, true) == 0)
-              {
-                if (!schedule.IsSerieIsCanceled(next.StartTime))
-                {
-                  newRecording = new RecordingDetail(schedule, next.ReferencedChannel(), next.StartTime, next.EndTime);
-                  return true;
-                }
-              }
-            }
-          }
-        }
-      }
-      return false;
+      return isDue;
     }
 
     /// <summary>
