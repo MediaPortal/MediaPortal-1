@@ -722,7 +722,7 @@ namespace SetupTv.Sections
       foreach (Schedule schedule in schedules)
       {
           XmlNode nodeSchedule = xmlDoc.CreateElement("schedule");
-          AddAttribute(nodeSchedule,"IdChannel",schedule.IdChannel);
+          AddAttribute(nodeSchedule,"ChannelName",schedule.ReferencedChannel().Name);
           AddAttribute(nodeSchedule, "ProgramName", schedule.ProgramName);
           AddAttribute(nodeSchedule, "StartTime", schedule.StartTime);
           AddAttribute(nodeSchedule, "EndTime", schedule.EndTime);
@@ -938,8 +938,10 @@ namespace SetupTv.Sections
         foreach (XmlNode nodeSchedule in scheduleList)
         {
             scheduleCount++;
-            int idChannel = Int32.Parse(nodeSchedule.Attributes["IdChannel"].Value);
             string programName = nodeSchedule.Attributes["ProgramName"].Value;
+            string channel = nodeSchedule.Attributes["ChannelName"].Value;
+            int idChannel = layer.GetChannelByName(channel).IdChannel;
+
             DateTime startTime = DateTime.ParseExact(nodeSchedule.Attributes["StartTime"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
             DateTime endTime = DateTime.ParseExact(nodeSchedule.Attributes["EndTime"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
             int scheduleType =Int32.Parse(nodeSchedule.Attributes["ScheduleType"].Value);
@@ -961,9 +963,9 @@ namespace SetupTv.Sections
         }
         MessageBox.Show(String.Format("Imported {0} channels and {1} schedules", channelCount, scheduleCount));
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        MessageBox.Show(this, "Not a valid channel list");
+        MessageBox.Show(this, "Error while importing:\n\n" + ex.ToString() + " " + ex.StackTrace);
       }
       OnSectionActivated();
     }
