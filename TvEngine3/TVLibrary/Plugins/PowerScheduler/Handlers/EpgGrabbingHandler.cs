@@ -381,14 +381,18 @@ namespace TvEngine.PowerScheduler.Handlers
         {
           // prevent multiple instances from the same object type to be registered
           // with this event
-          foreach (Delegate del in _epgScheduleDue.GetInvocationList())
+          EPGScheduleHandler handler = value;
+          try
           {
-            EPGScheduleHandler handler = value;
-            Type t = handler.Target.GetType();
-            if (del.Target.GetType().Equals(t))
-              _epgScheduleDue -= del as EPGScheduleHandler;
-            _epgScheduleDue += handler;
+            foreach (Delegate del in _epgScheduleDue.GetInvocationList())
+            {
+              Type t = handler.Target.GetType();
+              if (del.Target.GetType().Equals(t))
+                _epgScheduleDue -= del as EPGScheduleHandler;
+            }
           }
+          catch (Exception) { }
+          _epgScheduleDue += handler;
         }
       }
       remove

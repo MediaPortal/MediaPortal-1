@@ -1596,7 +1596,15 @@ namespace TvService
       try
       {
         DeInit();
-        Init();
+        if (Init() == false)
+        {
+          System.Threading.Thread.Sleep(5000);
+          if (Init() == false)
+          {
+            System.Threading.Thread.Sleep(5000);
+            Init();
+          }
+        }
       }
       catch (Exception ex)
       {

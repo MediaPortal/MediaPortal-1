@@ -100,6 +100,10 @@ namespace TvEngine.PowerScheduler
       this.button1 = new System.Windows.Forms.Button();
       this.textBox1 = new System.Windows.Forms.TextBox();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+      this.label5 = new System.Windows.Forms.Label();
+      this.textBox2 = new System.Windows.Forms.TextBox();
+      this.button2 = new System.Windows.Forms.Button();
+      this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -243,13 +247,16 @@ namespace TvEngine.PowerScheduler
       // 
       // groupBox2
       // 
+      this.groupBox2.Controls.Add(this.button2);
+      this.groupBox2.Controls.Add(this.textBox2);
+      this.groupBox2.Controls.Add(this.label5);
       this.groupBox2.Controls.Add(this.checkBox5);
       this.groupBox2.Controls.Add(this.splitContainer1);
       this.groupBox2.Controls.Add(this.checkBox4);
       this.groupBox2.Controls.Add(this.checkBox3);
       this.groupBox2.Location = new System.Drawing.Point(7, 7);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(439, 192);
+      this.groupBox2.Size = new System.Drawing.Size(439, 248);
       this.groupBox2.TabIndex = 0;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Advanced settings";
@@ -519,6 +526,38 @@ namespace TvEngine.PowerScheduler
       this.toolTip1.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
       this.toolTip1.ToolTipTitle = "Help";
       // 
+      // label5
+      // 
+      this.label5.AutoSize = true;
+      this.label5.Location = new System.Drawing.Point(38, 187);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(225, 13);
+      this.label5.TabIndex = 4;
+      this.label5.Text = "Run command before standby / after wakeup:";
+      // 
+      // textBox2
+      // 
+      this.textBox2.Location = new System.Drawing.Point(41, 205);
+      this.textBox2.Name = "textBox2";
+      this.textBox2.Size = new System.Drawing.Size(329, 20);
+      this.textBox2.TabIndex = 5;
+      this.toolTip1.SetToolTip(this.textBox2, "Command will have \"standby\" and \"wakeup\" as argument for the appropriate action");
+      // 
+      // button2
+      // 
+      this.button2.Location = new System.Drawing.Point(376, 203);
+      this.button2.Name = "button2";
+      this.button2.Size = new System.Drawing.Size(25, 23);
+      this.button2.TabIndex = 6;
+      this.button2.Text = "...";
+      this.button2.UseVisualStyleBackColor = true;
+      this.button2.Click += new System.EventHandler(this.button2_Click);
+      // 
+      // openFileDialog1
+      // 
+      this.openFileDialog1.FileName = "openFileDialog1";
+      this.openFileDialog1.Title = "Choose command";
+      // 
       // PowerSchedulerMasterSetup
       // 
       this.Controls.Add(this.tabControl1);
@@ -551,5 +590,10 @@ namespace TvEngine.PowerScheduler
 
     }
     #endregion
+
+    private System.Windows.Forms.Button button2;
+    private System.Windows.Forms.TextBox textBox2;
+    private System.Windows.Forms.Label label5;
+    private System.Windows.Forms.OpenFileDialog openFileDialog1;
   }
 }

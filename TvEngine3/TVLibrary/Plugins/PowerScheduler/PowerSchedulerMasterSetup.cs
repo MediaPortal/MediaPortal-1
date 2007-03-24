@@ -76,6 +76,9 @@ namespace TvEngine.PowerScheduler
       setting = _layer.GetSetting("PowerSchedulerReinitializeController", "false");
       checkBox5.Checked = Convert.ToBoolean(setting.Value);
 
+      setting = _layer.GetSetting("PowerSchedulerCommand", String.Empty);
+      textBox2.Text = setting.Value;
+
       setting = _layer.GetSetting("PreventStandbyWhenGrabbingEPG", "false");
       checkBox6.Checked = Convert.ToBoolean(setting.Value);
 
@@ -166,6 +169,10 @@ namespace TvEngine.PowerScheduler
       setting.Value = checkBox5.Checked.ToString();
       setting.Persist();
 
+      setting = _layer.GetSetting("PowerSchedulerCommand", String.Empty);
+      setting.Value = textBox2.Text;
+      setting.Persist();
+
       setting = _layer.GetSetting("PreventStandbyWhenGrabbingEPG", "false");
       setting.Value = checkBox6.Checked.ToString();
       setting.Persist();
@@ -225,6 +232,15 @@ namespace TvEngine.PowerScheduler
             textBox1.Text = String.Format("{0}, {1}", textBox1.Text, spf.SelectedProcess);
           }
         }
+      }
+    }
+
+    private void button2_Click(object sender, EventArgs e)
+    {
+      DialogResult r = openFileDialog1.ShowDialog();
+      if (r == DialogResult.OK)
+      {
+        textBox2.Text = openFileDialog1.FileName;
       }
     }
 

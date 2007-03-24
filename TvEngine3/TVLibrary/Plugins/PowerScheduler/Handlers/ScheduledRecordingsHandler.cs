@@ -39,12 +39,18 @@ namespace TvEngine.PowerScheduler.Handlers
     #region IWakeupHandler implementation
     public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
     {
+      Channel channel = null;
+      DateTime startTime = DateTime.MinValue;
+      DateTime endTime = DateTime.MinValue;
+      bool isDue = false;
+
       DateTime scheduleWakeupTime;
       DateTime nextWakeuptime = DateTime.MaxValue;
       foreach (Schedule schedule in Schedule.ListAll())
       {
         if (schedule.Canceled != Schedule.MinSchedule) continue;
-        scheduleWakeupTime = schedule.StartTime.AddMinutes(-schedule.PreRecordInterval);
+        schedule.GetRecordingDetails(DateTime.Now, out channel, out startTime, out endTime, out isDue);
+        scheduleWakeupTime = startTime.AddMinutes(-schedule.PreRecordInterval);
         if (scheduleWakeupTime < nextWakeuptime && scheduleWakeupTime >= earliestWakeupTime)
           nextWakeuptime = scheduleWakeupTime;
       }
