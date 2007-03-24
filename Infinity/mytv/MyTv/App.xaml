@@ -41,10 +41,26 @@
                 <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="ellipse" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
                   <SplineColorKeyFrame KeyTime="00:00:00" Value="#FF92F6A5"/>
                 </ColorAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="ellipse" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                  <SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+                  <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1.1"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="ellipse" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                  <SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+                  <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1.1"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="ellipse" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                  <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+                  <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.5"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="ellipse" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                  <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+                  <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="-0.5"/>
+                </DoubleAnimationUsingKeyFrames>
               </Storyboard>
             </ControlTemplate.Resources>
-            <Grid>
-              <Ellipse StrokeThickness="2" HorizontalAlignment="Right" VerticalAlignment="Top" Width="43" Height="43" x:Name="ellipse">
+            <Grid x:Name="grid">
+              <Ellipse StrokeThickness="2" HorizontalAlignment="Right" VerticalAlignment="Top" Width="43" Height="43" x:Name="ellipse" RenderTransformOrigin="0.5,0.5">
                 <Ellipse.Fill>
                   <RadialGradientBrush GradientOrigin="0.496,0.675">
                     <RadialGradientBrush.RelativeTransform>
@@ -73,6 +89,14 @@
                     <GradientStop Color="#FFFFFFFF" Offset="1"/>
                   </RadialGradientBrush>
                 </Ellipse.Stroke>
+                <Ellipse.RenderTransform>
+                  <TransformGroup>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                    <SkewTransform AngleX="0" AngleY="0"/>
+                    <RotateTransform Angle="0"/>
+                    <TranslateTransform X="0" Y="0"/>
+                  </TransformGroup>
+                </Ellipse.RenderTransform>
               </Ellipse>
               <Path Stretch="Fill" Stroke="#FF000000" StrokeThickness="4" HorizontalAlignment="Right" Margin="0,12.202,12.625,0" VerticalAlignment="Top" Width="16.5" Height="17.5" Data="M530,102.75 L550,83"/>
               <Path Fill="#FFFFFFFF" Stretch="Fill" Stroke="#FF000000" StrokeThickness="4" HorizontalAlignment="Right" Margin="0,12.452,11.375,0" VerticalAlignment="Top" Width="18.25" Height="17.25" Data="M532.875,87 L546.625,99.75"/>
