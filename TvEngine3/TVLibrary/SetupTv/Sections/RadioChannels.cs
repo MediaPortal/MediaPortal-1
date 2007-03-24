@@ -361,5 +361,16 @@ namespace SetupTv.Sections
       this.mpListView1.Sort();
       ReOrder();
     }
+
+    private void mpButtonClear_Click(object sender, EventArgs e)
+    {
+      IList channels = Channel.ListAll();
+      foreach (Channel channel in channels)
+      {
+        if (channel.IsTv)
+          channel.Delete();
+      }
+      OnSectionActivated();
+    }
   }
 }

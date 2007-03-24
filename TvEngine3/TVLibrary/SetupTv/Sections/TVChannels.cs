@@ -386,7 +386,14 @@ namespace SetupTv.Sections
 
     private void mpButtonClear_Click(object sender, EventArgs e)
     {
-      Gentle.Framework.Broker.Execute("delete from history");
+      IList channels = Channel.ListAll();
+      foreach (Channel channel in channels)
+      {
+        if (channel.IsTv)
+          channel.Delete();
+      }
+
+      /*Gentle.Framework.Broker.Execute("delete from history");
       Gentle.Framework.Broker.Execute("delete from tuningdetail");
       Gentle.Framework.Broker.Execute("delete from GroupMap");
       Gentle.Framework.Broker.Execute("delete from Channelmap");
@@ -395,7 +402,7 @@ namespace SetupTv.Sections
       Gentle.Framework.Broker.Execute("delete from Schedule");
       Gentle.Framework.Broker.Execute("delete from Program");
       Gentle.Framework.Broker.Execute("delete from Channel");
-      mpListView1.BeginUpdate();
+      mpListView1.BeginUpdate();*/
       /*
       IList details = TuningDetail.ListAll();
       foreach (TuningDetail detail in details) detail.Remove();

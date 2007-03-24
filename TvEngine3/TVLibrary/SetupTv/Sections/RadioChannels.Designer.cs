@@ -46,6 +46,7 @@ namespace SetupTv.Sections
       this.buttonDown = new System.Windows.Forms.Button();
       this.buttonUtp = new System.Windows.Forms.Button();
       this.mpButtonDeleteEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonClear = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
       // columnHeader4
@@ -181,10 +182,21 @@ namespace SetupTv.Sections
       this.mpButtonDeleteEncrypted.UseVisualStyleBackColor = true;
       this.mpButtonDeleteEncrypted.Click += new System.EventHandler(this.mpButtonDeleteEncrypted_Click);
       // 
+      // mpButtonClear
+      // 
+      this.mpButtonClear.Location = new System.Drawing.Point(212, 362);
+      this.mpButtonClear.Name = "mpButtonClear";
+      this.mpButtonClear.Size = new System.Drawing.Size(55, 23);
+      this.mpButtonClear.TabIndex = 16;
+      this.mpButtonClear.Text = "Clear";
+      this.mpButtonClear.UseVisualStyleBackColor = true;
+      this.mpButtonClear.Click += new System.EventHandler(this.mpButtonClear_Click);
+      // 
       // RadioChannels
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.mpButtonClear);
       this.Controls.Add(this.mpButtonDeleteEncrypted);
       this.Controls.Add(this.mpButtonAdd);
       this.Controls.Add(this.mpButtonDel);
@@ -217,5 +229,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Button buttonUtp;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonDeleteEncrypted;
     private System.Windows.Forms.ColumnHeader hdrHekje;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonClear;
   }
 }
