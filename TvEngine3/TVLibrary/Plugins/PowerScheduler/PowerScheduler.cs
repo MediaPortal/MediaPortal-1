@@ -814,7 +814,6 @@ namespace TvEngine.PowerScheduler
         TvService.TVController controller = _controller as TvService.TVController;
         if (controller != null && _reinitializeController)
         {
-          System.Threading.Thread.Sleep(10000);
           Log.Debug("PowerScheduler: reinitializing the tvservice TVController");
           controller.Restart();
           _reinitializeController = false;
