@@ -234,11 +234,12 @@ namespace MediaPortal.WebEPG.Parser
         if (data._channelId != string.Empty && this._channelId == string.Empty)
           this._channelId = data._channelId;
 
-        if (data._startTime != null && this._startTime == null)
-          this._startTime = data._startTime;
+        // Do not merge Date/Time ... causes
+        //if (data._startTime != null && this._startTime == null)
+        //  this._startTime = data._startTime;
 
-        if (data._endTime != null && this._endTime == null)
-          this._endTime = data._endTime;
+        //if (data._endTime != null && this._endTime == null)
+        //  this._endTime = data._endTime;
       }
     }
 
