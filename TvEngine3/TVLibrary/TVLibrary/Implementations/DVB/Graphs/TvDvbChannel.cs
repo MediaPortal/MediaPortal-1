@@ -1624,8 +1624,8 @@ namespace TvLibrary.Implementations.DVB
 
       //did we already receive the pmt?
       if (_channelInfo == null) return; //nop, then return
-      DVBSChannel dvbChannel = _currentChannel as DVBSChannel;
-      if (dvbChannel == null) //not a DVB-S channel??
+      DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
+      if (dvbChannel == null) //not a DVB channel??
         return;
 
       if (_mDPlugTProg82.SID_pid == (ushort)dvbChannel.ServiceId)
@@ -1668,8 +1668,8 @@ namespace TvLibrary.Implementations.DVB
       _mDPlugTProg82.Freq = (uint)dvbChannel.Frequency;
       //public byte PType = (byte);
       _mDPlugTProg82.Afc = (byte)68;
-      _mDPlugTProg82.DiSEqC = (byte)dvbChannel.DisEqc;
-      _mDPlugTProg82.Symbolrate = (uint)dvbChannel.SymbolRate;
+      //_mDPlugTProg82.DiSEqC = (byte)dvbChannel.DisEqc;
+      //_mDPlugTProg82.Symbolrate = (uint)dvbChannel.SymbolRate;
       //public byte Qam;
 
       _mDPlugTProg82.Fec = 0;
