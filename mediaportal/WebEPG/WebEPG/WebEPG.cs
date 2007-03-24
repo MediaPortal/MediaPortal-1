@@ -97,9 +97,10 @@ namespace MediaPortal.EPG
       // get logging service
       _log = GlobalServiceProvider.Get<ILog>();
 
+
       _log.Info(LogType.WebEPG, "Version: 2.4.5.0 Assemblies:");
-      _log.Info(LogType.WebEPG, this.GetType().Assembly.GetName().ToString());
-      _log.Info(LogType.WebEPG, _log.GetType().Assembly.GetName().ToString());
+      _log.Info(LogType.WebEPG, this.GetType().Assembly.FullName);
+      _log.Info(LogType.WebEPG, _log.GetType().Assembly.FullName);
       // set config directories and files.
       _configFile = configFile; 
       _xmltvDirectory = xmltvDirectory;
