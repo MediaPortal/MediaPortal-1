@@ -11,12 +11,11 @@
     <Channel id="la7.it" siteId="7" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.adnkronos.com/Pages/GuidaTv/index.php?codCanale=[ID]&amp;codDay=[DAY_OFFSET]" post="" external="false" encoding="" />
+    <Site url="http://www.adnkronos.com/Pages/GuidaTv/index_new1.php?codCanale=[ID]&amp;codDay=[DAY_OFFSET]" post="" external="false" encoding="" />
     <Html>
       <Template name="default">
         <SectionTemplate tags="TD">
           <TemplateText>
-
 		&lt;TR&gt;
 		&lt;TD&gt;
 		&lt;DIV&gt;&lt;#START&gt;&lt;/DIV&gt;
@@ -24,7 +23,6 @@
 		&lt;/TD&gt;
 		&lt;TD&gt;&lt;DIV&gt;&lt;#TITLE&gt;&lt;/DIV&gt;&lt;DIV&gt;&lt;#DESCRIPTION&gt;&lt;/DIV&gt;&lt;/TD&gt;
 		&lt;/TR&gt;
-
 	</TemplateText>
         </SectionTemplate>
       </Template>
