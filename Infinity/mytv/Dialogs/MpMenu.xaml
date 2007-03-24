@@ -2,7 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" BorderThickness ="0" Width="530" Height="370" WindowStyle="None" Loaded="OnLoaded" Background="Transparent">
   <Grid FocusManager.IsFocusScope="True" >
-    <Canvas Margin="0,0,0,0">
+    <Canvas Margin="0,0,-1,-1">
       <Rectangle Stroke="#C0FFFFFF" StrokeThickness="10" RadiusX="5" RadiusY="5" x:Name="background" Width="533" Height="345">
         <Rectangle.Fill>
           <LinearGradientBrush EndPoint="0.493,-0.003" StartPoint="0.491,0.987">
@@ -11,7 +11,7 @@
           </LinearGradientBrush>
         </Rectangle.Fill>
       </Rectangle>
-      <Rectangle Stroke="#C0FFFFFF" StrokeThickness="0" RadiusX="0" RadiusY="0" Width="151.448" Height="63.48" x:Name="header" Canvas.Left="10.5" Canvas.Top="10.074">
+      <Rectangle Stroke="#C0FFFFFF" StrokeThickness="0" RadiusX="0" RadiusY="0" Width="151.448" Height="38.534" x:Name="header" Canvas.Left="10.5" Canvas.Top="10.074">
         <Rectangle.Fill>
           <LinearGradientBrush EndPoint="0.493,-0.003" StartPoint="0.491,0.987">
             <GradientStop Color="#FF508BCE" Offset="0"/>
@@ -19,8 +19,8 @@
           </LinearGradientBrush>
         </Rectangle.Fill>
       </Rectangle>
-      <Label Width="141.137" Height="49.946" Content="On Now" FontFamily="Segoe" FontSize="28" FontWeight="Normal" x:Name="labelHeader" Canvas.Left="18.311" Canvas.Top="15.608"/>
-      <Rectangle StrokeThickness="0" RadiusX="0" RadiusY="0" x:Name="horizontalStrike" Height="2" Width="319.821" Canvas.Left="10.5" Canvas.Top="73.554">
+      <Label Width="141.137" Height="49.946" Content="On Now" FontFamily="Segoe" FontSize="24" FontWeight="Normal" x:Name="labelHeader" Canvas.Left="18.311" Canvas.Top="9.608"/>
+      <Rectangle StrokeThickness="0" RadiusX="0" RadiusY="0" x:Name="horizontalStrike" Height="2" Width="319.821" Canvas.Left="10.5" Canvas.Top="48.554">
         <Rectangle.Fill>
           <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
             <GradientStop Color="#FF6397D3" Offset="0"/>
@@ -28,10 +28,10 @@
           </LinearGradientBrush>
         </Rectangle.Fill>
       </Rectangle>
-      <Label x:Name="labellTime" Width="78" Height="38.898" Content="18:09" FontFamily="Segoe Media Center" FontSize="24" FontWeight="Bold" Foreground="#FF5995D7" Canvas.Left="372" Canvas.Top="19.528"/>
-      <Button x:Name="buttonClose" Style="{DynamicResource MpCloseButton}" Width="45" Height="43" Canvas.Left="466" Canvas.Top="15.608" Click="OnCloseClicked" MouseEnter="subItemMouseEnter"  KeyDown="OnScrollKeyDown"/>
-      <ScrollViewer VerticalScrollBarVisibility="Hidden" Width="472" Height="223" Canvas.Left="28" Canvas.Top="92">
-        <Grid x:Name="gridContent" KeyDown="OnScrollKeyDown"/>
+      <Label x:Name="labellTime" Width="78" Height="38.898" Content="18:09" FontFamily="Segoe Media Center" FontSize="24" FontWeight="Bold" Foreground="#FF5995D7" Canvas.Left="372" Canvas.Top="6.855"/>
+      <Button x:Name="buttonClose" Style="{DynamicResource MpCloseButton}" Width="45" Height="43" Canvas.Left="470.669" Canvas.Top="13.607" Click="OnCloseClicked" MouseEnter="subItemMouseEnter" KeyDown="OnScrollKeyDown" />
+      <ScrollViewer VerticalScrollBarVisibility="Hidden" Width="472" Height="251.446" Canvas.Left="28" Canvas.Top="63.554" KeyDown="OnScrollKeyDown" >
+        <Grid x:Name="gridContent" KeyDown="OnScrollKeyDown" />
       </ScrollViewer>
     </Canvas>
   </Grid>
