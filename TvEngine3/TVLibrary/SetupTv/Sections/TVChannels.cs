@@ -429,7 +429,7 @@ namespace SetupTv.Sections
       foreach (Channel channel in channels) channel.Remove();
       */
 
-      mpListView1.EndUpdate();
+      //mpListView1.EndUpdate();
       OnSectionActivated();
     }
 
