@@ -1,0 +1,201 @@
+﻿<Window
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2006" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+	x:Class="Homescreen.Window1"
+	x:Name="Homescreen"
+	Title="MediaPortal Homescreen"
+	Width="640" Height="480" Background="{x:Null}" Foreground="{x:Null}">
+
+	<Window.Resources>
+		<Storyboard x:Key="TVActive"/>
+		<Storyboard x:Key="VideoActive"/>
+		<Storyboard x:Key="HooverTV">
+			<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Hoover_TV" Storyboard.TargetProperty="(UIElement.Opacity)">
+				<SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+				<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1"/>
+			</DoubleAnimationUsingKeyFrames>
+		</Storyboard>
+		<Storyboard x:Key="HooverMusic">
+			<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Hoover_Music" Storyboard.TargetProperty="(UIElement.Opacity)">
+				<SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+				<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1"/>
+			</DoubleAnimationUsingKeyFrames>
+		</Storyboard>
+		<Storyboard x:Key="HooverImages">
+			<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Hoover_Images" Storyboard.TargetProperty="(UIElement.Opacity)">
+				<SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+				<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1"/>
+			</DoubleAnimationUsingKeyFrames>
+		</Storyboard>
+		<Storyboard x:Key="HooverPlugin">
+			<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Hoover_Plugin" Storyboard.TargetProperty="(UIElement.Opacity)">
+				<SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+				<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1"/>
+			</DoubleAnimationUsingKeyFrames>
+		</Storyboard>
+		<Storyboard x:Key="HooverTVSeries">
+			<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Hoover_TVSeries" Storyboard.TargetProperty="(UIElement.Opacity)">
+				<SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+				<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1"/>
+			</DoubleAnimationUsingKeyFrames>
+		</Storyboard>
+		<Storyboard x:Key="HooverVideos">
+			<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Hoover_Videos" Storyboard.TargetProperty="(UIElement.Opacity)">
+				<SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+				<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1"/>
+			</DoubleAnimationUsingKeyFrames>
+		</Storyboard>
+		<Storyboard x:Key="HooverSettings">
+			<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Hoover_Settings" Storyboard.TargetProperty="(UIElement.Opacity)">
+				<SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+				<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1"/>
+			</DoubleAnimationUsingKeyFrames>
+		</Storyboard>
+		<Storyboard x:Key="HooverDVD">
+			<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Hoover_DVD" Storyboard.TargetProperty="(UIElement.Opacity)">
+				<SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+				<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1"/>
+			</DoubleAnimationUsingKeyFrames>
+		</Storyboard>
+		<Storyboard x:Key="OnLoaded1">
+			<PointAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Listbox" Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)">
+				<SplinePointKeyFrame KeyTime="00:00:00" Value="-0.174,0.492"/>
+				<SplinePointKeyFrame KeyTime="00:00:00.5000000" Value="-0.174,0.492"/>
+			</PointAnimationUsingKeyFrames>
+			<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Listbox" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+				<SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+				<SplineDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1"/>
+			</DoubleAnimationUsingKeyFrames>
+			<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Listbox" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+				<SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+				<SplineDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1"/>
+			</DoubleAnimationUsingKeyFrames>
+			<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Listbox" Storyboard.TargetProperty="(UIElement.Opacity)">
+				<SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+				<SplineDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1"/>
+			</DoubleAnimationUsingKeyFrames>
+		</Storyboard>
+	</Window.Resources>
+	<Window.Triggers>
+		<EventTrigger RoutedEvent="Mouse.MouseEnter" SourceName="ButtonTV">
+			<BeginStoryboard x:Name="HooverTV_BeginStoryboard" Storyboard="{StaticResource HooverTV}"/>
+			<BeginStoryboard Storyboard="{StaticResource TVActive}" x:Name="TVActive_BeginStoryboard"/>
+			<BeginStoryboard Storyboard="{StaticResource TVActive}" x:Name="TVActive_BeginStoryboard1"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="Mouse.MouseEnter" SourceName="ButtonMusic">
+			<BeginStoryboard x:Name="HooverMusic_BeginStoryboard" Storyboard="{StaticResource HooverMusic}"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="Mouse.MouseLeave" SourceName="ButtonMusic">
+			<StopStoryboard BeginStoryboardName="HooverMusic_BeginStoryboard"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="Mouse.MouseLeave" SourceName="ButtonTV">
+			<StopStoryboard BeginStoryboardName="HooverTV_BeginStoryboard"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="Mouse.MouseEnter" SourceName="ButtonImages">
+			<BeginStoryboard x:Name="HooverImages_BeginStoryboard" Storyboard="{StaticResource HooverImages}"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="Mouse.MouseLeave" SourceName="ButtonImages">
+			<StopStoryboard BeginStoryboardName="HooverImages_BeginStoryboard"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="Mouse.MouseEnter" SourceName="ButtonPlugin">
+			<BeginStoryboard x:Name="HooverPlugin_BeginStoryboard" Storyboard="{StaticResource HooverPlugin}"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="Mouse.MouseLeave" SourceName="ButtonPlugin">
+			<StopStoryboard BeginStoryboardName="HooverPlugin_BeginStoryboard"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="Mouse.MouseEnter" SourceName="ButtonTVServies">
+			<BeginStoryboard x:Name="HooverTVSeries_BeginStoryboard" Storyboard="{StaticResource HooverTVSeries}"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="Mouse.MouseLeave" SourceName="ButtonTVServies">
+			<StopStoryboard BeginStoryboardName="HooverTVSeries_BeginStoryboard"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="Mouse.MouseEnter" SourceName="ButtonVideos">
+			<BeginStoryboard x:Name="HooverVideos_BeginStoryboard" Storyboard="{StaticResource HooverVideos}"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="Mouse.MouseLeave" SourceName="ButtonVideos">
+			<StopStoryboard BeginStoryboardName="HooverVideos_BeginStoryboard"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="Mouse.MouseEnter" SourceName="ButtonSettings">
+			<BeginStoryboard x:Name="HooverSettings_BeginStoryboard" Storyboard="{StaticResource HooverSettings}"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="Mouse.MouseLeave" SourceName="ButtonSettings">
+			<StopStoryboard BeginStoryboardName="HooverSettings_BeginStoryboard"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="Mouse.MouseEnter" SourceName="ButtonDVD">
+			<BeginStoryboard x:Name="HooverDVD_BeginStoryboard" Storyboard="{StaticResource HooverDVD}"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="Mouse.MouseLeave" SourceName="ButtonDVD">
+			<StopStoryboard BeginStoryboardName="HooverDVD_BeginStoryboard"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="FrameworkElement.Loaded">
+			<BeginStoryboard x:Name="OnLoaded1_BeginStoryboard" Storyboard="{StaticResource OnLoaded1}"/>
+		</EventTrigger>
+	</Window.Triggers>
+
+	<Grid x:Name="LayoutRoot" RenderTransformOrigin="0.5,0.5">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RenderTransform>
+			<TransformGroup>
+				<ScaleTransform ScaleX="1" ScaleY="1"/>
+				<SkewTransform AngleX="0" AngleY="0"/>
+				<RotateTransform Angle="0"/>
+				<TranslateTransform X="0" Y="0"/>
+			</TransformGroup>
+		</Grid.RenderTransform>
+		<Image x:Name="Background" Source="media/background.png" Stretch="Fill"/>
+		<Image HorizontalAlignment="Left" Margin="28,21,0,0" x:Name="MP_Logo" VerticalAlignment="Top" Width="222.098" Height="54.002" Source="media/MP-Logo.png" Stretch="Fill"/>
+		<Grid HorizontalAlignment="Right" Margin="0,112,78,88" x:Name="Listbox" Width="201" RenderTransformOrigin="0.5,0.5">
+			<Grid.RenderTransform>
+				<TransformGroup>
+					<ScaleTransform ScaleX="1" ScaleY="1"/>
+					<SkewTransform AngleX="0" AngleY="0"/>
+					<RotateTransform Angle="0"/>
+					<TranslateTransform X="0" Y="0"/>
+				</TransformGroup>
+			</Grid.RenderTransform>
+			<Rectangle StrokeThickness="5" RadiusX="16.5" RadiusY="16.5" Margin="1,0,0,0" x:Name="background">
+				<Rectangle.Fill>
+					<LinearGradientBrush EndPoint="0.855,0.386" StartPoint="0.215,1.277">
+						<GradientStop Color="#33FFFFFF" Offset="0"/>
+						<GradientStop Color="#3300B2FF" Offset="1"/>
+					</LinearGradientBrush>
+				</Rectangle.Fill>
+				<Rectangle.Stroke>
+					<RadialGradientBrush>
+						<GradientStop Color="#FFFFFFFF" Offset="0"/>
+						<GradientStop Color="#81FFFFFF" Offset="1"/>
+					</RadialGradientBrush>
+				</Rectangle.Stroke>
+			</Rectangle>
+			<ListBox BorderThickness="6,6,6,6" Foreground="{x:Null}" IsSynchronizedWithCurrentItem="True" Background="{x:Null}" MinHeight="0" MinWidth="0" BorderBrush="{x:Null}" HorizontalContentAlignment="Center" Padding="0,-3,0,0" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden" Margin="0,16,1,13">
+				<Button Style="{DynamicResource HomescreenListboxButton}" Width="153.629" Height="32.987" Content="TV Series" FontSize="16" Foreground="#FFFFFFFF" Margin="0,0,0,10" x:Name="ButtonTVServies"/>
+				<Button Style="{DynamicResource HomescreenListboxButton}" Width="153.629" Height="32.987" Content="DVD" FontSize="16" Foreground="#FFFFFFFF" Margin="0,0,0,10" x:Name="ButtonDVD"/>
+				<Button Style="{DynamicResource HomescreenListboxButton}" Width="153.629" Height="32.987" FontSize="16" Foreground="#FFFFFFFF" Content="Television" Margin="0,0,0,10" BorderThickness="0,0,0,0" x:Name="ButtonTV"/>
+				<Button Style="{DynamicResource HomescreenListboxButton}" Width="152.686" Height="32.987" Content="Music" FontSize="16" Foreground="#FFFFFFFF" Margin="0,0,0,10" x:Name="ButtonMusic"/>
+				<Button Style="{DynamicResource HomescreenListboxButton}" Width="153.629" Height="32.987" Content="Videos" FontSize="16" Foreground="#FFFFFFFF" Margin="0,0,0,10" x:Name="ButtonVideos"/>
+				<Button Style="{DynamicResource HomescreenListboxButton}" Width="153.629" Height="32.987" Content="Images" FontSize="16" Foreground="#FFFFFFFF" Margin="0,0,0,10" x:Name="ButtonImages"/>
+				<Button Style="{DynamicResource HomescreenListboxButton}" Width="153.629" Height="32.987" Content="Setting" FontSize="16" Foreground="#FFFFFFFF" Margin="0,0,0,10" x:Name="ButtonSettings"/>
+				<Button Style="{DynamicResource HomescreenListboxButton}" Width="153.629" Height="32.987" Content="Plugin" FontSize="16" Foreground="#FFFFFFFF" Margin="0,0,0,10" x:Name="ButtonPlugin"/>
+			</ListBox>
+		</Grid>
+		<Grid HorizontalAlignment="Right" Margin="0,22,78,0" x:Name="TopButtons" VerticalAlignment="Top" Width="89.602" Height="45">
+			<Button x:Name="___Button___Close_" Style="{DynamicResource CloseButton}" Content="Button" Margin="44.602,0,0,0"/>
+			<Button x:Name="___Button___Power_" Style="{DynamicResource PowerButton}" Width="35.05" HorizontalAlignment="Left" Margin="0,4.776,0,4.998"/>
+		</Grid>
+		<Grid Margin="92,133,310,88" x:Name="HooverImages">
+			<Image Opacity="0" x:Name="Hoover_TV" Source="media/hover_my tv.png" Stretch="Fill"/>
+			<Image x:Name="Hoover_Music" Source="media/hover_my music.png" Stretch="Fill" Opacity="0"/>
+			<Image x:Name="Hoover_Images" Source="media/hover_my pictures.png" Stretch="Fill" Opacity="0"/>
+			<Image Source="media/hover_my plugins.png" Stretch="Fill" Opacity="0" x:Name="Hoover_Plugin"/>
+			<Image Source="media/hover_my tv series.png" Stretch="Fill" x:Name="Hoover_TVSeries" Opacity="0"/>
+			<Image Source="media/hover_my videos.png" Stretch="Fill" Opacity="0" x:Name="Hoover_Videos"/>
+			<Image Source="media/hover_settings.png" Stretch="Fill" Opacity="0" x:Name="Hoover_Settings"/>
+			<Image Opacity="0" x:Name="Hoover_DVD" Source="media/hover_dvd.png" Stretch="Fill"/>
+		</Grid>
+		<TextBox HorizontalAlignment="Left" Margin="55,112,0,0" x:Name="Date" VerticalAlignment="Top" Width="141" Height="21" Background="{x:Null}" BorderBrush="{x:Null}" FontSize="14" Foreground="#FFB6B9FF" Text="Monday 15 February" TextWrapping="Wrap"/>
+		<TextBox x:Name="Time" Height="21" Background="{x:Null}" BorderBrush="{x:Null}" FontSize="14" Foreground="#FFFFFFFF" Text="08:32 PM" TextWrapping="Wrap" Margin="205,112,286,0" VerticalAlignment="Top"/>
+	</Grid>
+</Window>

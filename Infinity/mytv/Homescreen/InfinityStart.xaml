@@ -1,0 +1,155 @@
+﻿<Window
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	x:Class="MediaPortal.InfinityStart"
+	x:Name="Window"
+	Title="InfinityStart"
+	Width="640" Height="480" Foreground="{x:Null}">
+
+	<Window.Resources>
+		<Storyboard x:Key="OnLoaded1">
+			<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="label" Storyboard.TargetProperty="(UIElement.Opacity)">
+				<SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+				<SplineDoubleKeyFrame KeyTime="00:00:01" Value="0"/>
+				<SplineDoubleKeyFrame KeyTime="00:00:02" Value="1"/>
+			</DoubleAnimationUsingKeyFrames>
+			<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="label" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+				<SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+				<SplineDoubleKeyFrame KeyTime="00:00:01" Value="4"/>
+				<SplineDoubleKeyFrame KeyTime="00:00:02" Value="1"/>
+			</DoubleAnimationUsingKeyFrames>
+			<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="label" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+				<SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+				<SplineDoubleKeyFrame KeyTime="00:00:01" Value="4"/>
+				<SplineDoubleKeyFrame KeyTime="00:00:02" Value="1"/>
+			</DoubleAnimationUsingKeyFrames>
+			<ObjectAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="label" Storyboard.TargetProperty="(FrameworkElement.HorizontalAlignment)">
+				<DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static HorizontalAlignment.Center}"/>
+				<DiscreteObjectKeyFrame KeyTime="00:00:01" Value="{x:Static HorizontalAlignment.Center}"/>
+				<DiscreteObjectKeyFrame KeyTime="00:00:02" Value="{x:Static HorizontalAlignment.Center}"/>
+			</ObjectAnimationUsingKeyFrames>
+		</Storyboard>
+		<Storyboard x:Key="OnMouseOverMPStartButton"/>
+		<Style x:Key="MPStartButton" BasedOn="{x:Null}" TargetType="{x:Type Button}">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type Button}">
+						<ControlTemplate.Resources>
+							<Storyboard x:Key="OnMouseOver">
+								<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="rectangle" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+									<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF969696"/>
+									<SplineColorKeyFrame KeyTime="00:00:00.5000000" Value="#FF00A7FF"/>
+								</ColorAnimationUsingKeyFrames>
+								<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="rectangle1" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+									<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF969696"/>
+									<SplineColorKeyFrame KeyTime="00:00:00.5000000" Value="#FF00A7FF"/>
+								</ColorAnimationUsingKeyFrames>
+							</Storyboard>
+						</ControlTemplate.Resources>
+						<Grid>
+							<Canvas RenderTransformOrigin="0.5,0.5" x:Name="MP">
+								<Canvas.RenderTransform>
+									<TransformGroup>
+										<ScaleTransform ScaleX="1" ScaleY="1"/>
+										<SkewTransform AngleX="0" AngleY="0"/>
+										<RotateTransform Angle="0"/>
+										<TranslateTransform X="0" Y="0"/>
+									</TransformGroup>
+								</Canvas.RenderTransform>
+								<Rectangle Fill="#FF969696" StrokeThickness="2" RadiusX="8.75" RadiusY="8.75" Width="17" Height="46" RenderTransformOrigin="0.5,0.5" x:Name="rectangle" Canvas.Left="92.5" Canvas.Top="50">
+									<Rectangle.Stroke>
+										<RadialGradientBrush>
+											<GradientStop Color="#FFACACAC" Offset="0"/>
+											<GradientStop Color="#D80F0F0F" Offset="1"/>
+											<GradientStop Color="#FF484848" Offset="0.779"/>
+										</RadialGradientBrush>
+									</Rectangle.Stroke>
+									<Rectangle.RenderTransform>
+										<TransformGroup>
+											<ScaleTransform ScaleX="3" ScaleY="3"/>
+											<SkewTransform AngleX="0" AngleY="0"/>
+											<RotateTransform Angle="0"/>
+											<TranslateTransform X="0" Y="0"/>
+										</TransformGroup>
+									</Rectangle.RenderTransform>
+								</Rectangle>
+								<Ellipse RenderTransformOrigin="0.5,0.5" Fill="#FFFFFFFF" StrokeThickness="2" Width="18" Height="18" Canvas.Left="162.5" Canvas.Top="22">
+									<Ellipse.RenderTransform>
+										<TransformGroup>
+											<ScaleTransform ScaleX="3" ScaleY="3"/>
+											<SkewTransform AngleX="0" AngleY="0"/>
+											<RotateTransform Angle="0"/>
+											<TranslateTransform X="0" Y="0"/>
+										</TransformGroup>
+									</Ellipse.RenderTransform>
+									<Ellipse.Stroke>
+										<RadialGradientBrush>
+											<GradientStop Color="#FFACACAC" Offset="0"/>
+											<GradientStop Color="#D80F0F0F" Offset="1"/>
+											<GradientStop Color="#FF484848" Offset="0.779"/>
+										</RadialGradientBrush>
+									</Ellipse.Stroke>
+								</Ellipse>
+								<Rectangle Fill="#FF969696" StrokeThickness="2" RadiusX="8.75" RadiusY="8.75" Width="17" Height="46" RenderTransformOrigin="0.5,0.5" x:Name="rectangle1" Canvas.Left="20" Canvas.Top="50">
+									<Rectangle.Stroke>
+										<RadialGradientBrush>
+											<GradientStop Color="#FFACACAC" Offset="0"/>
+											<GradientStop Color="#D80F0F0F" Offset="1"/>
+											<GradientStop Color="#FF484848" Offset="0.779"/>
+										</RadialGradientBrush>
+									</Rectangle.Stroke>
+									<Rectangle.RenderTransform>
+										<TransformGroup>
+											<ScaleTransform ScaleX="3" ScaleY="3"/>
+											<SkewTransform AngleX="0" AngleY="0"/>
+											<RotateTransform Angle="0"/>
+											<TranslateTransform X="0" Y="0"/>
+										</TransformGroup>
+									</Rectangle.RenderTransform>
+								</Rectangle>
+							</Canvas>
+						</Grid>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsFocused" Value="True"/>
+							<Trigger Property="IsDefaulted" Value="True"/>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Trigger.EnterActions>
+									<BeginStoryboard x:Name="OnMouseOver_BeginStoryboard" Storyboard="{StaticResource OnMouseOver}"/>
+								</Trigger.EnterActions>
+								<Trigger.ExitActions>
+									<StopStoryboard BeginStoryboardName="OnMouseOver_BeginStoryboard"/>
+								</Trigger.ExitActions>
+							</Trigger>
+							<Trigger Property="IsPressed" Value="True">
+								<Trigger.EnterActions>
+									<BeginStoryboard Storyboard="{StaticResource OnMouseOver}"/>
+								</Trigger.EnterActions>
+							</Trigger>
+							<Trigger Property="IsEnabled" Value="False"/>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</Window.Resources>
+	<Window.Triggers>
+		<EventTrigger RoutedEvent="FrameworkElement.Loaded">
+			<BeginStoryboard x:Name="OnLoaded1_BeginStoryboard" Storyboard="{StaticResource OnLoaded1}"/>
+			<BeginStoryboard Storyboard="{StaticResource OnMouseOverMPStartButton}"/>
+		</EventTrigger>
+	</Window.Triggers>
+
+	<Grid x:Name="LayoutRoot">
+		<Label RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Center" Margin="220.25,0,213.25,128" x:Name="label" VerticalAlignment="Bottom" Height="77.25" Content="Infinity" FontSize="48">
+			<Label.RenderTransform>
+				<TransformGroup>
+					<ScaleTransform ScaleX="1" ScaleY="1"/>
+					<SkewTransform AngleX="0" AngleY="0"/>
+					<RotateTransform Angle="0"/>
+					<TranslateTransform X="0" Y="0"/>
+				</TransformGroup>
+			</Label.RenderTransform>
+		</Label>
+		<Button Margin="229,93.75,202,209.25" x:Name="ButtonMPStart" Style="{DynamicResource MPStartButton}" Content="Button"/>
+	</Grid>
+</Window>
