@@ -48,7 +48,7 @@ namespace MediaPortal.Games.Tetris
 
     public MyTetris()
     {
-      GetID = 19000;
+      GetID = (int)Window.WINDOW_TETRIS;
     }
 
     ~MyTetris()
