@@ -27,6 +27,7 @@ using System;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.Services;
 using MediaPortal.Util;
 
 namespace MediaPortal.MusicShareWatcher
@@ -35,23 +36,32 @@ namespace MediaPortal.MusicShareWatcher
   /// This is a Process Plugin for the Music Share Watcher
   /// </summary>
   [PluginIcons("ProcessPlugins.MusicShareWatcher.MusicShareWatcher.gif", "ProcessPlugins.MusicShareWatcher.MusicShareWatcher_deactivated.gif")]
-  public class MusicShareWatcherPlugin : IPlugin, ISetupForm
+  public class MusicShareWatcherPlugin : IPluginReceiver, ISetupForm
   {
     private const string _version = "0.3";
     private bool _monitor = false;
     private static MusicShareWatcherHelper watcher = null;
 
+    private const int WM_POWERBROADCAST = 0x0218;
+    private const int PBT_APMSUSPEND = 0x0004;
+    private const int PBT_APMRESUMECRITICAL = 0x0006;
+    private const int PBT_APMRESUMESUSPEND = 0x0007;
+    private const int PBT_APMRESUMESTANDBY = 0x0008;
+    private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
+
+    private bool _suspended = false;
+
     public MusicShareWatcherPlugin()
     {
     }
 
+    #region Interface IPluginReceiver
     public void Start()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _monitor = xmlreader.GetValueAsBool("musicfiles", "monitorShares", false);
       }
-
       if (_monitor)
       {
         Log.Info("MusicShareWatcher Plugin {0} starting.", _version);
@@ -68,6 +78,58 @@ namespace MediaPortal.MusicShareWatcher
         Log.Info("MusicShareWatcher Plugin {0} stopping.", _version);
       return;
     }
+
+    public bool WndProc(ref System.Windows.Forms.Message msg)
+    {
+      try
+      {
+        if (msg.Msg == WM_POWERBROADCAST)
+        {
+          switch (msg.WParam.ToInt32())
+          {
+            case PBT_APMSUSPEND:
+              _suspended = true;
+              break;
+
+            case PBT_APMRESUMECRITICAL:
+            case PBT_APMRESUMESUSPEND:
+            case PBT_APMRESUMESTANDBY:
+            case PBT_APMRESUMEAUTOMATIC:
+              OnResume();
+              break;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error(ex);
+      }
+      return false; // false = all other processes will handle the msg
+    }
+    #endregion
+
+    #region Private Methods
+    //called when windows wakes up again
+    static object syncResume = new object();
+    private void OnResume()
+    {
+      lock (syncResume)
+      {
+        if (!_suspended)
+        {
+          return;
+        }
+
+        if (watcher != null)
+        {
+          Log.Info(LogType.MusicShareWatcher, "Windows has resumed from standby/hibernate mode: Reenabling FilesystemWatcher");
+          watcher.StartMonitor();
+        }
+
+        _suspended = false;
+      }
+    }
+    #endregion
 
     #region ISetupForm Members
 

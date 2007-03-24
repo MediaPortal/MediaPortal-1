@@ -64,6 +64,8 @@ namespace MediaPortal.MusicShareWatcher
       Log.BackupLogFile(LogType.MusicShareWatcher);
 
       musicDB = new MusicDatabase();
+      LoadShares();
+      Log.Info(LogType.MusicShareWatcher, "MusicShareWatcher starting up!");
     }
     #endregion
 
@@ -113,10 +115,16 @@ namespace MediaPortal.MusicShareWatcher
 
     private void WatchShares()
     {
-      Log.Info(LogType.MusicShareWatcher, "MusicShareWatcher starting up!");
-      LoadShares();
       Log.Info(LogType.MusicShareWatcher, "Monitoring active for following shares:");
       Log.Info(LogType.MusicShareWatcher, "---------------------------------------");
+
+      // Release existing FSW Objects first
+      foreach (DelayedFileSystemWatcher watcher in m_Watchers)
+      {
+        watcher.EnableRaisingEvents = false;
+        watcher.Dispose();
+      }
+      m_Watchers.Clear();
       foreach (String sharename in m_Shares)
       {
         try
