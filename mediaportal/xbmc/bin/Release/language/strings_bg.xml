@@ -1,1640 +1,414 @@
-<?xml version="1.0" encoding="iso-8859-5"?>
-<strings>
-	<characters></characters>
-	<string>
-		<id>0</id>
-		<value>Програми</value>
-	</string>
-	<string>
-		<id>1</id>
-		<value>Снимки</value>
-	</string>
-	<string>
-		<id>2</id>
-		<value>Музика</value>
-	</string>
-	<string>
-		<id>3</id>
-		<value>Видео</value>
-	</string>
-	<string>
-		<id>4</id>
-		<value>Телевизия</value>
-	</string>
-	<string>
-		<id>5</id>
-		<value>Настройки</value>
-	</string>
-	<string>
-		<id>7</id>
-		<value>Файлове</value>
-	</string>
-	<string>
-		<id>8</id>
-		<value>Времето</value>
-	</string>
-	<string>
-		<id>9</id>
-		<value>Новини</value>
-	</string>
-	<string>
-		<id>10</id>
-		<value>Рецепти</value>
-	</string>
-	<string>
-		<id>11</id>
-		<value>Понеделник</value>
-	</string>
-	<string>
-		<id>12</id>
-		<value>Вторник</value>
-	</string>
-	<string>
-		<id>13</id>
-		<value>Сряда</value>
-	</string>
-	<string>
-		<id>14</id>
-		<value>Четвъртък</value>
-	</string>
-	<string>
-		<id>15</id>
-		<value>Петък</value>
-	</string>
-	<string>
-		<id>16</id>
-		<value>Събота</value>
-	</string>
-	<string>
-		<id>17</id>
-		<value>Неделя</value>
-	</string>
-	<string>
-		<id>21</id>
-		<value>Януари</value>
-	</string>
-	<string>
-		<id>22</id>
-		<value>Февруари</value>
-	</string>
-	<string>
-		<id>23</id>
-		<value>Март</value>
-	</string>
-	<string>
-		<id>24</id>
-		<value>Април</value>
-	</string>
-	<string>
-		<id>25</id>
-		<value>Май</value>
-	</string>
-	<string>
-		<id>26</id>
-		<value>Юни</value>
-	</string>
-	<string>
-		<id>27</id>
-		<value>Юли</value>
-	</string>
-	<string>
-		<id>28</id>
-		<value>Август</value>
-	</string>
-	<string>
-		<id>29</id>
-		<value>Септември</value>
-	</string>
-	<string>
-		<id>30</id>
-		<value>Октомври</value>
-	</string>
-	<string>
-		<id>31</id>
-		<value>Ноември</value>
-	</string>
-	<string>
-		<id>32</id>
-		<value>Декември</value>
-	</string>
-	<string>
-		<id>50</id>
-		<value>ДВД</value>
-	</string>
-	<string>
-		<id>100</id>
-		<value>Икони</value>
-	</string>
-	<string>
-		<id>101</id>
-		<value>Списък</value>
-	</string>
-	<string>
-		<id>102</id>
-		<value>Сканиране</value>
-	</string>
-	<string>
-		<id>103</id>
-		<value>Подреди по: Име</value>
-	</string>
-	<string>
-		<id>104</id>
-		<value>Подреди по: Дата</value>
-	</string>
-	<string>
-		<id>105</id>
-		<value>Подреди по: Размер</value>
-	</string>
-	<string>
-		<id>106</id>
-		<value>Не</value>
-	</string>
-	<string>
-		<id>107</id>
-		<value>Да</value>
-	</string>
-	<string>
-		<id>108</id>
-		<value>Презентация</value>
-	</string>
-	<string>
-		<id>109</id>
-		<value>Създай указател</value>
-	</string>
-	<string>
-		<id>110</id>
-		<value>Създай указатели</value>
-	</string>
-	<string>
-		<id>111</id>
-		<value>Горещи клавиши</value>
-	</string>
-	<string>
-		<id>112</id>
-		<value>ПАУЗА</value>
-	</string>
-	<string>
-		<id>113</id>
-		<value>Файлове: Източник</value>
-	</string>
-	<string>
-		<id>114</id>
-		<value>Файлове: Направление</value>
-	</string>
-	<string>
-		<id>115</id>
-		<value>Копирай</value>
-	</string>
-	<string>
-		<id>116</id>
-		<value>Премести</value>
-	</string>
-	<string>
-		<id>117</id>
-		<value>Изтрий</value>
-	</string>
-	<string>
-		<id>118</id>
-		<value>Преименувай</value>
-	</string>
-	<string>
-		<id>119</id>
-		<value>Нова папка</value>
-	</string>
-	<string>
-		<id>120</id>
-		<value>Потвърди копиране</value>
-	</string>
-	<string>
-		<id>121</id>
-		<value>Потвърди преместване</value>
-	</string>
-	<string>
-		<id>122</id>
-		<value>Потвърди изтриване</value>
-	</string>
-	<string>
-		<id>123</id>
-		<value>Да копирам ли тези файлове?</value>
-	</string>
-	<string>
-		<id>124</id>
-		<value>Да преместя ли тези файлове?</value>
-	</string>
-	<string>
-		<id>125</id>
-		<value>Да изтрия ли тези файлове?</value>
-	</string>
-	<string>
-		<id>126</id>
-		<value>Статус</value>
-	</string>
-	<string>
-		<id>127</id>
-		<value>Обекти</value>
-	</string>
-	<string>
-		<id>128</id>
-		<value>Общи</value>
-	</string>
-	<string>
-		<id>129</id>
-		<value>Презентация</value>
-	</string>
-	<string>
-		<id>130</id>
-		<value>Системна информация</value>
-	</string>
-	<string>
-		<id>131</id>
-		<value>Екран</value>
-	</string>
-	<string>
-		<id>132</id>
-		<value>Албуми</value>
-	</string>
-	<string>
-		<id>133</id>
-		<value>Артисти</value>
-	</string>
-	<string>
-		<id>134</id>
-		<value>Споделени</value>
-	</string>
-	<string>
-		<id>135</id>
-		<value>Жанрове</value>
-	</string>
-	<string>
-		<id>136</id>
-		<value>Плейлист</value>
-	</string>
-	<string>
-		<id>137</id>
-		<value>Търсене</value>
-	</string>
-	<string>
-		<id>138</id>
-		<value>СИСТЕМНА ИНФОРМАЦИЯ</value>
-	</string>
-	<string>
-		<id>139</id>
-		<value>Температури:</value>
-	</string>
-	<string>
-		<id>140</id>
-		<value>Процесор:</value>
-	</string>
-	<string>
-		<id>141</id>
-		<value>GPU:</value>
-	</string>
-	<string>
-		<id>142</id>
-		<value>Време:</value>
-	</string>
-	<string>
-		<id>143</id>
-		<value>В момента:</value>
-	</string>
-	<string>
-		<id>144</id>
-		<value>Създаден:</value>
-	</string>
-	<string>
-		<id>145</id>
-		<value>Мрежа:</value>
-	</string>
-	<string>
-		<id>146</id>
-		<value>Тип:</value>
-	</string>
-	<string>
-		<id>147</id>
-		<value>Постоянен</value>
-	</string>
-	<string>
-		<id>148</id>
-		<value>DHCP</value>
-	</string>
-	<string>
-		<id>149</id>
-		<value>MAC</value>
-	</string>
-	<string>
-		<id>150</id>
-		<value>IP:</value>
-	</string>
-	<string>
-		<id>151</id>
-		<value>Препратка:</value>
-	</string>
-	<string>
-		<id>152</id>
-		<value>Полу-дуплекс</value>
-	</string>
-	<string>
-		<id>153</id>
-		<value>Пълен-дуплекс</value>
-	</string>
-	<string>
-		<id>154</id>
-		<value>Капацитет</value>
-	</string>
-	<string>
-		<id>155</id>
-		<value>Диск</value>
-	</string>
-	<string>
-		<id>156</id>
-		<value>Свободни</value>
-	</string>
-	<string>
-		<id>157</id>
-		<value>Видео</value>
-	</string>
-	<string>
-		<id>158</id>
-		<value>Свободна памет</value>
-	</string>
-	<string>
-		<id>159</id>
-		<value>Няма препратка</value>
-	</string>
-	<string>
-		<id>160</id>
-		<value>Свободни</value>
-	</string>
-	<string>
-		<id>161</id>
-		<value>Недостъпен</value>
-	</string>
-	<string>
-		<id>163</id>
-		<value>Четене</value>
-	</string>
-	<string>
-		<id>164</id>
-		<value>Няма диск</value>
-	</string>
-	<string>
-		<id>165</id>
-		<value>Диск в наличност</value>
-	</string>
-	<string>
-		<id>166</id>
-		<value>Облик:</value>
-	</string>
-	<string>
-		<id>167</id>
-		<value>FTP сървър:</value>
-	</string>
-	<string>
-		<id>168</id>
-		<value>Синхронизиране на времето:</value>
-	</string>
-	<string>
-		<id>169</id>
-		<value>Резолюция:</value>
-	</string>
-	<string>
-		<id>170</id>
-		<value>Албум:</value>
-	</string>
-	<string>
-		<id>171</id>
-		<value>Артист:</value>
-	</string>
-	<string>
-		<id>172</id>
-		<value>Дата на издаване:</value>
-	</string>
-	<string>
-		<id>173</id>
-		<value>Рейтинг:</value>
-	</string>
-	<string>
-		<id>174</id>
-		<value>Жанр:</value>
-	</string>
-	<string>
-		<id>176</id>
-		<value>Стилове:</value>
-	</string>
-	<string>
-		<id>177</id>
-		<value>Преглед:</value>
-	</string>
-	<string>
-		<id>178</id>
-		<value>Песни:</value>
-	</string>
-	<string>
-		<id>179</id>
-		<value>Песен</value>
-	</string>
-	<string>
-		<id>180</id>
-		<value>Продължителност</value>
-	</string>
-	<string>
-		<id>181</id>
-		<value>Избери албум</value>
-	</string>
-	<string>
-		<id>182</id>
-		<value>Песни</value>
-	</string>
-	<string>
-		<id>183</id>
-		<value>Преглед</value>
-	</string>
-	<string>
-		<id>184</id>
-		<value>Опресни</value>
-	</string>
-	<string>
-		<id>185</id>
-		<value>Търсене на аблум</value>
-	</string>
-	<string>
-		<id>187</id>
-		<value>Няма намерени албум(и)</value>
-	</string>
-	<string>
-		<id>188</id>
-		<value>Избери всичко</value>
-	</string>
-	<string>
-		<id>189</id>
-		<value>Търсене на медийна информация</value>
-	</string>
-	<string>
-		<id>190</id>
-		<value>Запази</value>
-	</string>
-	<string>
-		<id>191</id>
-		<value>Ръзбъркан ред</value>
-	</string>
-	<string>
-		<id>192</id>
-		<value>Изчисти</value>
-	</string>
-	<string>
-		<id>193</id>
-		<value>Сканиране</value>
-	</string>
-	<string>
-		<id>194</id>
-		<value>Търсене...</value>
-	</string>
-	<string>
-		<id>195</id>
-		<value>Няма информация от IMDB</value>
-	</string>
-	<string>
-		<id>196</id>
-		<value>Избери филм:</value>
-	</string>
-	<string>
-		<id>197</id>
-		<value>Запитване за информация от IMDB</value>
-	</string>
-	<string>
-		<id>198</id>
-		<value>Детайли за сваляне на филма</value>
-	</string>
-	<string>
-		<id>199</id>
-		<value>Режисьор:</value>
-	</string>
-	<string>
-		<id>200</id>
-		<value>Автор:</value>
-	</string>
-	<string>
-		<id>201</id>
-		<value>Година:</value>
-	</string>
-	<string>
-		<id>203</id>
-		<value>Сюжет обобщено</value>
-	</string>
-	<string>
-		<id>204</id>
-		<value>Рейтинг:</value>
-	</string>
-	<string>
-		<id>205</id>
-		<value>Гласове:</value>
-	</string>
-	<string>
-		<id>206</id>
-		<value>Актьорски състав</value>
-	</string>
-	<string>
-		<id>207</id>
-		<value>Сюжет</value>
-	</string>
-	<string>
-		<id>208</id>
-		<value>Пусни</value>
-	</string>
-	<string>
-		<id>209</id>
-		<value>Следващ</value>
-	</string>
-	<string>
-		<id>210</id>
-		<value>Предишен</value>
-	</string>
-	<string>
-		<id>211</id>
-		<value>Търсене за програми</value>
-	</string>
-	<string>
-		<id>212</id>
-		<value>програмата намерена</value>
-	</string>
-	<string>
-		<id>214</id>
-		<value>Калибровка на екрана</value>
-	</string>
-	<string>
-		<id>217</id>
-		<value>Разтегли</value>
-	</string>
-	<string>
-		<id>219</id>
-		<value>Моля, поставете диск</value>
-	</string>
-	<string>
-		<id>221</id>
-		<value>Не е свързан към мрежата</value>
-	</string>
-	<string>
-		<id>222</id>
-		<value>Прекъсни</value>
-	</string>
-	<string>
-		<id>223</id>
-		<value>Автоматино превключване в широкоекранен режим</value>
-	</string>
-	<string>
-		<id>224</id>
-		<value>Скорост</value>
-	</string>
-	<string>
-		<id>226</id>
-		<value>Разреши PAL60</value>
-	</string>
-	<string>
-		<id>227</id>
-		<value>Разреши CDDB</value>
-	</string>
-	<string>
-		<id>228</id>
-		<value>Разбъркай плейлистата при стартиране</value>
-	</string>
-	<string>
-		<id>230</id>
-		<value>Филтри</value>
-	</string>
-	<string>
-		<id>231</id>
-		<value>Няма</value>
-	</string>
-	<string>
-		<id>241</id>
-		<value>Автоматично стартиране на VCD/SVCD</value>
-	</string>
-	<string>
-		<id>242</id>
-		<value>Автоматично стартиране на Audio-CD</value>
-	</string>
-	<string>
-		<id>243</id>
-		<value>Автоматично стартиране на XBOX игри</value>
-	</string>
-	<string>
-		<id>244</id>
-		<value>Автоматично стартиране на Видео</value>
-	</string>
-	<string>
-		<id>245</id>
-		<value>Автоматично стартиране на Музика</value>
-	</string>
-	<string>
-		<id>246</id>
-		<value>Автоматично стартиране на Снимки</value>
-	</string>
-	<string>
-		<id>247</id>
-		<value>Скриптове</value>
-	</string>
-	<string>
-		<id>248</id>
-		<value>Език</value>
-	</string>
-	<string>
-		<id>249</id>
-		<value>Музика</value>
-	</string>
-	<string>
-		<id>250</id>
-		<value>Визуализации</value>
-	</string>
-	<string>
-		<id>252</id>
-		<value>Изход към всички говорители</value>
-	</string>
-	<string>
-		<id>253</id>
-		<value>Брой канали</value>
-	</string>
-	<string>
-		<id>257</id>
-		<value>Грешка</value>
-	</string>
-	<string>
-		<id>258</id>
-		<value>Разреши ID3 тагове</value>
-	</string>
-	<string>
-		<id>259</id>
-		<value>Отварям</value>
-	</string>
-	<string>
-		<id>261</id>
-		<value>В очакване за стартиране...</value>
-	</string>
-	<string>
-		<id>263</id>
-		<value>HTTP сървър:</value>
-	</string>
-	<string>
-		<id>264</id>
-		<value>Запис</value>
-	</string>
-	<string>
-		<id>265</id>
-		<value>Спри Запис</value>
-	</string>
-	<string>
-		<id>266</id>
-		<value>Подреди по: Песен</value>
-	</string>
-	<string>
-		<id>267</id>
-		<value>Подреди по: Време</value>
-	</string>
-	<string>
-		<id>268</id>
-		<value>Подреди по: Заглавие</value>
-	</string>
-	<string>
-		<id>269</id>
-		<value>Подреди по: Изпълнител</value>
-	</string>
-	<string>
-		<id>270</id>
-		<value>Подреди по: Албум</value>
-	</string>
-	<string>
-		<id>271</id>
-		<value>Топ 100</value>
-	</string>
-	<string>
-		<id>274</id>
-		<value>Позиция на субтитрите</value>
-	</string>
-	<string>
-		<id>279</id>
-		<value>Не мога да заредя настройките</value>
-	</string>
-	<string>
-		<id>281</id>
-		<value>Моля, проверете .xml файловете</value>
-	</string>
-	<string>
-		<id>282</id>
-		<value>намерени %i</value>
-	</string>
-	<string>
-		<id>283</id>
-		<value>Резултати от търсенето</value>
-	</string>
-	<string>
-		<id>284</id>
-		<value>Няма намерени съвпадения</value>
-	</string>
-	<string>
-		<id>287</id>
-		<value>Субтитри</value>
-	</string>
-	<string>
-		<id>288</id>
-		<value>Големина</value>
-	</string>
-	<string>
-		<id>289</id>
-		<value>Размер</value>
-	</string>
-	<string>
-		<id>291</id>
-		<value>Видео</value>
-	</string>
-	<string>
-		<id>292</id>
-		<value>Звук</value>
-	</string>
-	<string>
-		<id>293</id>
-		<value>Субтитри</value>
-	</string>
-	<string>
-		<id>294</id>
-		<value>Създай отметка</value>
-	</string>
-	<string>
-		<id>295</id>
-		<value>Виж отметки</value>
-	</string>
-	<string>
-		<id>296</id>
-		<value>Изчисти отметки</value>
-	</string>
-	<string>
-		<id>299</id>
-		<value>Общо време:</value>
-	</string>
-	<string>
-		<id>300</id>
-		<value>1. Език</value>
-	</string>
-	<string>
-		<id>301</id>
-		<value>2. Звук</value>
-	</string>
-	<string>
-		<id>302</id>
-		<value>3. Поток</value>
-	</string>
-	<string>
-		<id>303</id>
-		<value>Закъснение</value>
-	</string>
-	<string>
-		<id>304</id>
-		<value>Език</value>
-	</string>
-	<string>
-		<id>305</id>
-		<value>Разрешено</value>
-	</string>
-	<string>
-		<id>312</id>
-		<value>(0=автоматично)</value>
-	</string>
-	<string>
-		<id>314</id>
-		<value>Подготовка....</value>
-	</string>
-	<string>
-		<id>315</id>
-		<value>Грешка в базата данни</value>
-	</string>
-	<string>
-		<id>316</id>
-		<value>Търся песни...</value>
-	</string>
-	<string>
-		<id>317</id>
-		<value>Реорганизацията успешна</value>
-	</string>
-	<string>
-		<id>318</id>
-		<value>Отбелязване на изтритите песни</value>
-	</string>
-	<string>
-		<id>319</id>
-		<value>Грешка при реорганизация на песните</value>
-	</string>
-	<string>
-		<id>320</id>
-		<value>Търся артисти...</value>
-	</string>
-	<string>
-		<id>321</id>
-		<value>Грешка при реорганизация на артистите</value>
-	</string>
-	<string>
-		<id>322</id>
-		<value>Търся жанрове...</value>
-	</string>
-	<string>
-		<id>323</id>
-		<value>Грешка при реорганизация на жанровете</value>
-	</string>
-	<string>
-		<id>324</id>
-		<value>Търся път...</value>
-	</string>
-	<string>
-		<id>326</id>
-		<value>Търся албуми...</value>
-	</string>
-	<string>
-		<id>327</id>
-		<value>Грешка при реорганизация на албумите</value>
-	</string>
-	<string>
-		<id>328</id>
-		<value>Записване на промените....</value>
-	</string>
-	<string>
-		<id>329</id>
-		<value>Грешка при записване на промените</value>
-	</string>
-	<string>
-		<id>330</id>
-		<value>Това може да отнеме известно време....</value>
-	</string>
-	<string>
-		<id>331</id>
-		<value>Компресиране на базата данни...</value>
-	</string>
-	<string>
-		<id>332</id>
-		<value>Грешка при компресиране на базата данни...</value>
-	</string>
-	<string>
-		<id>333</id>
-		<value>Искаш ли да пренаредиш музикалната база данни?</value>
-	</string>
-	<string>
-		<id>334</id>
-		<value>Пренареди музикалната база данни</value>
-	</string>
-	<string>
-		<id>335</id>
-		<value>Начало</value>
-	</string>
-	<string>
-		<id>338</id>
-		<value>Аналогово</value>
-	</string>
-	<string>
-		<id>339</id>
-		<value>Дигитално</value>
-	</string>
-	<string>
-		<id>341</id>
-		<value>Пусни DVD</value>
-	</string>
-	<string>
-		<id>342</id>
-		<value>Филми</value>
-	</string>
-	<string>
-		<id>344</id>
-		<value>Актьори</value>
-	</string>
-	<string>
-		<id>345</id>
-		<value>Година</value>
-	</string>
-	<string>
-		<id>350</id>
-		<value>Програми</value>
-	</string>
-	<string>
-		<id>351</id>
-		<value>Изключено</value>
-	</string>
-	<string>
-		<id>353</id>
-		<value>Черно</value>
-	</string>
-	<string>
-		<id>355</id>
-		<value>Време за изчакване на Screensaver</value>
-	</string>
-	<string>
-		<id>356</id>
-		<value>Тип Screensaver</value>
-	</string>
-	<string>
-		<id>357</id>
-		<value>Автоматично изключване</value>
-	</string>
-	<string>
-		<id>358</id>
-		<value>Всички албуми</value>
-	</string>
-	<string>
-		<id>359</id>
-		<value>Последни албуми</value>
-	</string>
-	<string>
-		<id>363</id>
-		<value>Подреди по: Файл</value>
-	</string>
-	<string>
-		<id>365</id>
-		<value>Подреди по: Име</value>
-	</string>
-	<string>
-		<id>366</id>
-		<value>Подреди по: Година</value>
-	</string>
-	<string>
-		<id>367</id>
-		<value>Подреди по: Рейтинг</value>
-	</string>
-	<string>
-		<id>369</id>
-		<value>Заглавие</value>
-	</string>
-	<string>
-		<id>373</id>
-		<value>Слънчево</value>
-	</string>
-	<string>
-		<id>374</id>
-		<value>Облачно</value>
-	</string>
-	<string>
-		<id>375</id>
-		<value>Сняг</value>
-	</string>
-	<string>
-		<id>376</id>
-		<value>Дъжд</value>
-	</string>
-	<string>
-		<id>383</id>
-		<value>Вятър</value>
-	</string>
-	<string>
-		<id>388</id>
-		<value>и</value>
-	</string>
-	<string>
-		<id>389</id>
-		<value>Мъгла</value>
-	</string>
-	<string>
-		<id>396</id>
-		<value>Изберете местоположение</value>
-	</string>
-	<string>
-		<id>397</id>
-		<value>Време за опресняване</value>
-	</string>
-	<string>
-		<id>398</id>
-		<value>Скала на температурата</value>
-	</string>
-	<string>
-		<id>399</id>
-		<value>Скала за скорост</value>
-	</string>
-	<string>
-		<id>400</id>
-		<value>Времето</value>
-	</string>
-	<string>
-		<id>401</id>
-		<value>Температура</value>
-	</string>
-	<string>
-		<id>403</id>
-		<value>UV Индекс</value>
-	</string>
-	<string>
-		<id>404</id>
-		<value>Вятър</value>
-	</string>
-	<string>
-		<id>406</id>
-		<value>Влажност</value>
-	</string>
-	<string>
-		<id>410</id>
-		<value>Свърване с Weather.com</value>
-	</string>
-	<string>
-		<id>411</id>
-		<value>Получавам прогнозата за:</value>
-	</string>
-	<string>
-		<id>412</id>
-		<value>Не мога да взема прогнозата</value>
-	</string>
-	<string>
-		<id>414</id>
-		<value>Няма рецензия за този албум</value>
-	</string>
-	<string>
-		<id>417</id>
-		<value>Виж: Големи икони</value>
-	</string>
-	<string>
-		<id>418</id>
-		<value>Видео/Жанрове</value>
-	</string>
-	<string>
-		<id>419</id>
-		<value>Видео/Актьори</value>
-	</string>
-	<string>
-		<id>420</id>
-		<value>Видео/Години</value>
-	</string>
-	<string>
-		<id>421</id>
-		<value>Видео/Заглавие</value>
-	</string>
-	<string>
-		<id>424</id>
-		<value>Избери</value>
-	</string>
-	<string>
-		<id>425</id>
-		<value>Няма намерени данни за албума.</value>
-	</string>
-	<string>
-		<id>427</id>
-		<value>Диск:</value>
-	</string>
-	<string>
-		<id>428</id>
-		<value>Поставете коректно CD/DVD</value>
-	</string>
-	<string>
-		<id>429</id>
-		<value>Моля, поставете това CD/DVD</value>
-	</string>
-	<string>
-		<id>430</id>
-		<value>Подреди по: DVD#</value>
-	</string>
-	<string>
-		<id>432</id>
-		<value>Изтрий филма от базата данни</value>
-	</string>
-	<string>
-		<id>433</id>
-		<value>Сигурен ли, че искате да премахнете</value>
-	</string>
-	<string>
-		<id>434</id>
-		<value>филмът?</value>
-	</string>
-	<string>
-		<id>435</id>
-		<value>Песен</value>
-	</string>
-	<string>
-		<id>436</id>
-		<value>Година:</value>
-	</string>
-	<string>
-		<id>437</id>
-		<value>Продължителност:</value>
-	</string>
-	<string>
-		<id>443</id>
-		<value>Интернет</value>
-	</string>
-	<string>
-		<id>444</id>
-		<value>видео</value>
-	</string>
-	<string>
-		<id>445</id>
-		<value>аудио</value>
-	</string>
-	<string>
-		<id>446</id>
-		<value>DVD</value>
-	</string>
-	<string>
-		<id>447</id>
-		<value>Автоматично стартиране</value>
-	</string>
-	<string>
-		<id>449</id>
-		<value>Разрешено</value>
-	</string>
-	<string>
-		<id>450</id>
-		<value>Колони</value>
-	</string>
-	<string>
-		<id>451</id>
-		<value>Адрес (1):</value>
-	</string>
-	<string>
-		<id>452</id>
-		<value>Адрес (2):</value>
-	</string>
-	<string>
-		<id>453</id>
-		<value>Адрес (3):</value>
-	</string>
-	<string>
-		<id>454</id>
-		<value>Адрес (4):</value>
-	</string>
-	<string>
-		<id>455</id>
-		<value>Редове</value>
-	</string>
-	<string>
-		<id>456</id>
-		<value>Вид:</value>
-	</string>
-	<string>
-		<id>457</id>
-		<value>Смени изглед</value>
-	</string>
-	<string>
-		<id>459</id>
-		<value>Субтитри</value>
-	</string>
-	<string>
-		<id>460</id>
-		<value>Звуков поток</value>
-	</string>
-	<string>
-		<id>461</id>
-		<value>[активно]</value>
-	</string>
-	<string>
-		<id>462</id>
-		<value>Субтитри</value>
-	</string>
-	<string>
-		<id>464</id>
-		<value>Яркост</value>
-	</string>
-	<string>
-		<id>465</id>
-		<value>Контраст</value>
-	</string>
-	<string>
-		<id>466</id>
-		<value>Гама</value>
-	</string>
-	<string>
-		<id>467</id>
-		<value>Тип</value>
-	</string>
-	<string>
-		<id>474</id>
-		<value>Изключено</value>
-	</string>
-	<string>
-		<id>475</id>
-		<value>Само Музика</value>
-	</string>
-	<string>
-		<id>476</id>
-		<value>Музика&amp;Видео</value>
-	</string>
-	<string>
-		<id>477</id>
-		<value>Не мога да заредя плейлиста</value>
-	</string>
-	<string>
-		<id>479</id>
-		<value>Облик и език</value>
-	</string>
-	<string>
-		<id>480</id>
-		<value>Потребителски интерфейс</value>
-	</string>
-	<string>
-		<id>481</id>
-		<value>Опции: Аудио</value>
-	</string>
-	<string>
-		<id>483</id>
-		<value>Албум</value>
-	</string>
-	<string>
-		<id>484</id>
-		<value>Артист</value>
-	</string>
-	<string>
-		<id>485</id>
-		<value>Изтрий албум</value>
-	</string>
-	<string>
-		<id>486</id>
-		<value>Повтори</value>
-	</string>
-	<string>
-		<id>487</id>
-		<value>Повтори една</value>
-	</string>
-	<string>
-		<id>488</id>
-		<value>Повтори плейлиста папки</value>
-	</string>
-	<string>
-		<id>491</id>
-		<value>Използвай големи икони</value>
-	</string>
-	<string>
-		<id>493</id>
-		<value>Актьор:</value>
-	</string>
-	<string>
-		<id>502</id>
-		<value>Не мога да завърша това действие</value>
-	</string>
-	<string>
-		<id>503</id>
-		<value>Изтрий тази папка</value>
-	</string>
-	<string>
-		<id>505</id>
-		<value>Калкулиране</value>
-	</string>
-	<string>
-		<id>506</id>
-		<value>Сигурни ли сте?</value>
-	</string>
-	<string>
-		<id>508</id>
-		<value>Към</value>
-	</string>
-	<string>
-		<id>509</id>
-		<value>Файла съществува. Презаписване ?</value>
-	</string>
-	<string>
-		<id>510</id>
-		<value>Прекъсни</value>
-	</string>
-	<string>
-		<id>511</id>
-		<value>Винаги</value>
-	</string>
-	<string>
-		<id>512</id>
-		<value>Никога</value>
-	</string>
-	<string>
-		<id>513</id>
-		<value>Файла е защитен, действието е прекъснато</value>
-	</string>
-	<string>
-		<id>514</id>
-		<value>Грешка при създаването на папка, действието е прекъснато</value>
-	</string>
-	<string>
-		<id>515</id>
-		<value>Грешка при изтриването на папка, действието е прекъснато</value>
-	</string>
-	<string>
-		<id>516</id>
-		<value>Грешка при изтриването на файла, действието е прекъснато</value>
-	</string>
-	<string>
-		<id>517</id>
-		<value>Грешка, действието е прекъснато</value>
-	</string>
-	<string>
-		<id>518</id>
-		<value>Изтрий тази песен</value>
-	</string>
-	<string>
-		<id>555</id>
-		<value>От {0} на {1} {2}</value>
-	</string>
-	<string>
-		<id>601</id>
-		<value>Запиши</value>
-	</string>
-	<string>
-		<id>602</id>
-		<value>Канал:</value>
-	</string>
-	<string>
-		<id>605</id>
-		<value>ТВ</value>
-	</string>
-	<string>
-		<id>606</id>
-		<value>Зареждане на новата програма</value>
-	</string>
-	<string>
-		<id>607</id>
-		<value>Зареди</value>
-	</string>
-	<string>
-		<id>610</id>
-		<value>НЕ записвай</value>
-	</string>
-	<string>
-		<id>611</id>
-		<value>Запиши веднъж</value>
-	</string>
-	<string>
-		<id>612</id>
-		<value>Записвай всеки път на този канал</value>
-	</string>
-	<string>
-		<id>613</id>
-		<value>Записвай всеки път на всеки канал</value>
-	</string>
-	<string>
-		<id>614</id>
-		<value>Записвай всяка седмица по това време</value>
-	</string>
-	<string>
-		<id>615</id>
-		<value>Записвай всеки ден по това време</value>
-	</string>
-	<string>
-		<id>616</id>
-		<value>Изберете тип запис</value>
-	</string>
-	<string>
-		<id>617</id>
-		<value>Нов</value>
-	</string>
-	<string>
-		<id>618</id>
-		<value>Изтрий</value>
-	</string>
-	<string>
-		<id>619</id>
-		<value>Редактирай Дата/Време</value>
-	</string>
-	<string>
-		<id>620</id>
-		<value>Сортирай: Канал</value>
-	</string>
-	<string>
-		<id>621</id>
-		<value>Сортирай: Дата</value>
-	</string>
-	<string>
-		<id>622</id>
-		<value>Сортирай: Име</value>
-	</string>
-	<string>
-		<id>623</id>
-		<value>Сортирай: Тип</value>
-	</string>
-	<string>
-		<id>624</id>
-		<value>Изчисти</value>
-	</string>
-	<string>
-		<id>626</id>
-		<value>Промени тип:</value>
-	</string>
-	<string>
-		<id>627</id>
-		<value>Канали:</value>
-	</string>
-	<string>
-		<id>628</id>
-		<value>Програми:</value>
-	</string>
-	<string>
-		<id>629</id>
-		<value>Спри запис</value>
-	</string>
-	<string>
-		<id>630</id>
-		<value>Искаш ли да рестартираш?</value>
-	</string>
-	<string>
-		<id>631</id>
-		<value>Искаш ли да изключиш компютъра?</value>
-	</string>
-	<string>
-		<id>632</id>
-		<value>Обекти</value>
-	</string>
-	<string>
-		<id>633</id>
-		<value>Начало Дата/Време</value>
-	</string>
-	<string>
-		<id>634</id>
-		<value>Край Дата/Време</value>
-	</string>
-	<string>
-		<id>635</id>
-		<value>Време</value>
-	</string>
-	<string>
-		<id>636</id>
-		<value>Дата</value>
-	</string>
-	<string>
-		<id>639</id>
-		<value>Албуми от</value>
-	</string>
-	<string>
-		<id>647</id>
-		<value>Еднократно</value>
-	</string>
-	<string>
-		<id>648</id>
-		<value>Дневно</value>
-	</string>
-	<string>
-		<id>649</id>
-		<value>Всеки</value>
-	</string>
-	<string>
-		<id>650</id>
-		<value>Всеки път на този канал</value>
-	</string>
-	<string>
-		<id>651</id>
-		<value>Всеки път на който и да е канал</value>
-	</string>
-	<string>
-		<id>653</id>
-		<value>Изтрий този запис?</value>
-	</string>
-	<string>
-		<id>654</id>
-		<value>Извади</value>
-	</string>
-	<string>
-		<id>657</id>
-		<value>Пон</value>
-	</string>
-	<string>
-		<id>658</id>
-		<value>Вто</value>
-	</string>
-	<string>
-		<id>659</id>
-		<value>Сря</value>
-	</string>
-	<string>
-		<id>660</id>
-		<value>Чет</value>
-	</string>
-	<string>
-		<id>661</id>
-		<value>Пет</value>
-	</string>
-	<string>
-		<id>662</id>
-		<value>Съб</value>
-	</string>
-	<string>
-		<id>663</id>
-		<value>Нед</value>
-	</string>
-	<string>
-		<id>664</id>
-		<value>Изтрий тази снимка?</value>
-	</string>
-	<string>
-		<id>665</id>
-		<value>Радио</value>
-	</string>
-	<string>
-		<id>666</id>
-		<value>Станции</value>
-	</string>
-	<string>
-		<id>720</id>
-		<value>Покажи: Продължителност</value>
-	</string>
-	<string>
-		<id>721</id>
-		<value>Покажи: Пъти показвано</value>
-	</string>
-	<string>
-		<id>722</id>
-		<value>Не мога да пусна диска</value>
-	</string>
-	<string>
-		<id>723</id>
-		<value>Поставихте ли диск?</value>
-	</string>
-	<string>
-		<id>724</id>
-		<value>Търсене ТВ Програма</value>
-	</string>
-	<string>
-		<id>725</id>
-		<value>Жанрове</value>
-	</string>
-	<string>
-		<id>726</id>
-		<value>Заглавие</value>
-	</string>
-	<string>
-		<id>200004</id>
-		<value>Ръчно предоставено tvguide.xml</value>
-	</string>
-	<string>
-		<id>200005</id>
-		<value>Моля, изберете типа дистанционно, което използвате:</value>
-	</string>
-	<string>
-		<id>200006</id>
-		<value>Натисни бутона Продължи за продължение</value>
-	</string>
-	<string>
-		<id>200007</id>
-		<value>Върни&gt;</value>
-	</string>
-	<string>
-		<id>200008</id>
-		<value>Настройки - Дистанционно</value>
-	</string>
-	<string>
-		<id>200009</id>
-		<value>Продължи&gt;</value>
-	</string>
-	<string>
-		<id>200015</id>
-		<value>Натисни бутона Продължи за начало</value>
-	</string>
-	<string>
-		<id>200017</id>
-		<value>Добре дошли в MediaPortal.</value>
-	</string>
-	<string>
-		<id>200018</id>
-		<value>Поздравления. MediaPortal е настроен и готов за използване.</value>
-	</string>
-	<string>
-		<id>200024</id>
-		<value>Настройка TВ</value>
-	</string>
-	<string>
-		<id>200025</id>
-		<value>Език</value>
-	</string>
-	<string>
-		<id>200026</id>
-		<value>Страна</value>
-	</string>
-	<string>
-		<id>200027</id>
-		<value>Настройки - Общи</value>
-	</string>
-	<string>
-		<id>200028</id>
-		<value>Този компютър притежава ли достъп до Интернет?</value>
-	</string>
-	<string>
-		<id>200030</id>
-		<value>Стартирай автоматично Media Portal, когато се стартира компютърът</value>
-	</string>
-	<string>
-		<id>200031</id>
-		<value>Да</value>
-	</string>
-	<string>
-		<id>200032</id>
-		<value>Не</value>
-	</string>
-	<string>
-		<id>200034</id>
-		<value>Моля, изберете вашият град от списъка по-долу.</value>
-	</string>
-	<string>
-		<id>200035</id>
-		<value>Ако вашият град не е в списъка, тогава ще се наложи да направите ръчна настройка.</value>
-	</string>
-	<string>
-		<id>200036</id>
-		<value>Ръчна настойка</value>
-	</string>
-	<string>
-		<id>200037</id>
-		<value>Пропусни&gt;</value>
-	</string>
-	<string>
-		<id>4000</id>
-		<value>Уеб Броузер</value>
-	</string>
-	<string>
-		<id>4001</id>
-		<value>Любими</value>
-	</string>
-	<string>
-		<id>4002</id>
-		<value>Не мога да заредя този адрес</value>
-	</string>
-</strings>
+<?xml version="1.0" encoding="utf-8"?>
+<Language name="Bulgarian" characters="255">
+  <Section name="unmapped">
+    <String id="0">абаОаГбаАаМаИ</String>
+    <String id="1">аЁаНаИаМаКаИ</String>
+    <String id="2">абаЗаИаКаА</String>
+    <String id="3">ааИаДаЕаО</String>
+    <String id="4">аЂаЕаЛаЕаВаИаЗаИб</String>
+    <String id="5">ааАбббаОаЙаКаИ</String>
+    <String id="7">аЄаАаЙаЛаОаВаЕ</String>
+    <String id="8">абаЕаМаЕбаО</String>
+    <String id="9">ааОаВаИаНаИ</String>
+    <String id="10">а аЕбаЕаПбаИ</String>
+    <String id="11">ааОаНаЕаДаЕаЛаНаИаК</String>
+    <String id="12">абаОбаНаИаК</String>
+    <String id="13">аЁббаДаА</String>
+    <String id="14">аЇаЕбаВббббаК</String>
+    <String id="15">ааЕббаК</String>
+    <String id="16">аЁбаБаОбаА</String>
+    <String id="17">ааЕаДаЕаЛб</String>
+    <String id="21">аЏаНбаАбаИ</String>
+    <String id="22">аЄаЕаВббаАбаИ</String>
+    <String id="23">ааАбб</String>
+    <String id="24">ааПбаИаЛ</String>
+    <String id="25">ааАаЙ</String>
+    <String id="26">аЎаНаИ</String>
+    <String id="27">аЎаЛаИ</String>
+    <String id="28">ааВаГббб</String>
+    <String id="29">аЁаЕаПбаЕаМаВбаИ</String>
+    <String id="30">ааКбаОаМаВбаИ</String>
+    <String id="31">ааОаЕаМаВбаИ</String>
+    <String id="32">ааЕаКаЕаМаВбаИ</String>
+    <String id="50">ааа</String>
+    <String id="100">ааКаОаНаИ</String>
+    <String id="101">аЁаПаИббаК</String>
+    <String id="102">аЁаКаАаНаИбаАаНаЕ</String>
+    <String id="103">ааОаДбаЕаДаИ аПаО: ааМаЕ</String>
+    <String id="104">ааОаДбаЕаДаИ аПаО: ааАбаА</String>
+    <String id="105">ааОаДбаЕаДаИ аПаО: а аАаЗаМаЕб</String>
+    <String id="106">ааЕ</String>
+    <String id="107">ааА</String>
+    <String id="108">абаЕаЗаЕаНбаАбаИб</String>
+    <String id="109">аЁбаЗаДаАаЙ баКаАаЗаАбаЕаЛ</String>
+    <String id="110">аЁбаЗаДаАаЙ баКаАаЗаАбаЕаЛаИ</String>
+    <String id="111">ааОбаЕбаИ аКаЛаАаВаИбаИ</String>
+    <String id="112">аааЃаа</String>
+    <String id="113">аЄаАаЙаЛаОаВаЕ: ааЗбаОбаНаИаК</String>
+    <String id="114">аЄаАаЙаЛаОаВаЕ: ааАаПбаАаВаЛаЕаНаИаЕ</String>
+    <String id="115">ааОаПаИбаАаЙ</String>
+    <String id="116">абаЕаМаЕббаИ</String>
+    <String id="117">ааЗббаИаЙ</String>
+    <String id="118">абаЕаИаМаЕаНбаВаАаЙ</String>
+    <String id="119">ааОаВаА аПаАаПаКаА</String>
+    <String id="120">ааОбаВббаДаИ аКаОаПаИбаАаНаЕ</String>
+    <String id="121">ааОбаВббаДаИ аПбаЕаМаЕббаВаАаНаЕ</String>
+    <String id="122">ааОбаВббаДаИ аИаЗббаИаВаАаНаЕ</String>
+    <String id="123">ааА аКаОаПаИбаАаМ аЛаИ баЕаЗаИ баАаЙаЛаОаВаЕ?</String>
+    <String id="124">ааА аПбаЕаМаЕббб аЛаИ баЕаЗаИ баАаЙаЛаОаВаЕ?</String>
+    <String id="125">ааА аИаЗббаИб аЛаИ баЕаЗаИ баАаЙаЛаОаВаЕ?</String>
+    <String id="126">аЁбаАббб</String>
+    <String id="127">ааБаЕаКбаИ</String>
+    <String id="128">ааБбаИ</String>
+    <String id="129">абаЕаЗаЕаНбаАбаИб</String>
+    <String id="130">аЁаИббаЕаМаНаА аИаНбаОбаМаАбаИб</String>
+    <String id="131">ааКбаАаН</String>
+    <String id="132">ааЛаБбаМаИ</String>
+    <String id="133">аббаИббаИ</String>
+    <String id="134">аЁаПаОаДаЕаЛаЕаНаИ</String>
+    <String id="135">ааАаНбаОаВаЕ</String>
+    <String id="136">ааЛаЕаЙаЛаИбб</String>
+    <String id="137">аЂбббаЕаНаЕ</String>
+    <String id="138">аЁааЁаЂаааа аааЄаа аааІааЏ</String>
+    <String id="139">аЂаЕаМаПаЕбаАбббаИ:</String>
+    <String id="140">абаОбаЕбаОб:</String>
+    <String id="141">GPU:</String>
+    <String id="142">абаЕаМаЕ:</String>
+    <String id="143">а аМаОаМаЕаНбаА:</String>
+    <String id="144">аЁбаЗаДаАаДаЕаН:</String>
+    <String id="145">абаЕаЖаА:</String>
+    <String id="146">аЂаИаП:</String>
+    <String id="147">ааОббаОбаНаЕаН</String>
+    <String id="148">DHCP</String>
+    <String id="149">MAC</String>
+    <String id="150">IP:</String>
+    <String id="151">абаЕаПбаАбаКаА:</String>
+    <String id="152">ааОаЛб-аДбаПаЛаЕаКб</String>
+    <String id="153">абаЛаЕаН-аДбаПаЛаЕаКб</String>
+    <String id="154">ааАаПаАбаИбаЕб</String>
+    <String id="155">ааИбаК</String>
+    <String id="156">аЁаВаОаБаОаДаНаИ</String>
+    <String id="157">ааИаДаЕаО</String>
+    <String id="158">аЁаВаОаБаОаДаНаА аПаАаМаЕб</String>
+    <String id="159">абаМаА аПбаЕаПбаАбаКаА</String>
+    <String id="160">аЁаВаОаБаОаДаНаИ</String>
+    <String id="161">ааЕаДаОбббаПаЕаН</String>
+    <String id="163">аЇаЕбаЕаНаЕ</String>
+    <String id="164">абаМаА аДаИбаК</String>
+    <String id="165">ааИбаК аВ аНаАаЛаИбаНаОбб</String>
+    <String id="166">ааБаЛаИаК:</String>
+    <String id="167">FTP бббаВбб:</String>
+    <String id="168">аЁаИаНббаОаНаИаЗаИбаАаНаЕ аНаА аВбаЕаМаЕбаО:</String>
+    <String id="169">а аЕаЗаОаЛббаИб:</String>
+    <String id="170">ааЛаБбаМ:</String>
+    <String id="171">аббаИбб:</String>
+    <String id="172">ааАбаА аНаА аИаЗаДаАаВаАаНаЕ:</String>
+    <String id="173">а аЕаЙбаИаНаГ:</String>
+    <String id="174">ааАаНб:</String>
+    <String id="176">аЁбаИаЛаОаВаЕ:</String>
+    <String id="177">абаЕаГаЛаЕаД:</String>
+    <String id="178">ааЕбаНаИ:</String>
+    <String id="179">ааЕбаЕаН</String>
+    <String id="180">абаОаДбаЛаЖаИбаЕаЛаНаОбб</String>
+    <String id="181">ааЗаБаЕбаИ аАаЛаБбаМ</String>
+    <String id="182">ааЕбаНаИ</String>
+    <String id="183">абаЕаГаЛаЕаД</String>
+    <String id="184">ааПбаЕбаНаИ</String>
+    <String id="185">аЂбббаЕаНаЕ аНаА аАаБаЛбаМ</String>
+    <String id="187">абаМаА аНаАаМаЕбаЕаНаИ аАаЛаБбаМ(аИ)</String>
+    <String id="188">ааЗаБаЕбаИ аВбаИбаКаО</String>
+    <String id="189">аЂбббаЕаНаЕ аНаА аМаЕаДаИаЙаНаА аИаНбаОбаМаАбаИб</String>
+    <String id="190">ааАаПаАаЗаИ</String>
+    <String id="191">а баЗаБббаКаАаН баЕаД</String>
+    <String id="192">ааЗбаИббаИ</String>
+    <String id="193">аЁаКаАаНаИбаАаНаЕ</String>
+    <String id="194">аЂбббаЕаНаЕ...</String>
+    <String id="195">абаМаА аИаНбаОбаМаАбаИб аОб IMDB</String>
+    <String id="196">ааЗаБаЕбаИ баИаЛаМ:</String>
+    <String id="197">ааАаПаИбаВаАаНаЕ аЗаА аИаНбаОбаМаАбаИб аОб IMDB</String>
+    <String id="198">ааЕбаАаЙаЛаИ аЗаА баВаАаЛбаНаЕ аНаА баИаЛаМаА</String>
+    <String id="199">а аЕаЖаИббаОб:</String>
+    <String id="200">ааВбаОб:</String>
+    <String id="201">ааОаДаИаНаА:</String>
+    <String id="203">аЁбаЖаЕб аОаБаОаБбаЕаНаО</String>
+    <String id="204">а аЕаЙбаИаНаГ:</String>
+    <String id="205">ааЛаАбаОаВаЕ:</String>
+    <String id="206">ааКббаОббаКаИ ббббаАаВ</String>
+    <String id="207">аЁбаЖаЕб</String>
+    <String id="208">аббаНаИ</String>
+    <String id="209">аЁаЛаЕаДаВаАб</String>
+    <String id="210">абаЕаДаИбаЕаН</String>
+    <String id="211">аЂбббаЕаНаЕ аЗаА аПбаОаГбаАаМаИ</String>
+    <String id="212">аПбаОаГбаАаМаАбаА аНаАаМаЕбаЕаНаА</String>
+    <String id="214">ааАаЛаИаБбаОаВаКаА аНаА аЕаКбаАаНаА</String>
+    <String id="217">а аАаЗбаЕаГаЛаИ</String>
+    <String id="219">ааОаЛб, аПаОббаАаВаЕбаЕ аДаИбаК</String>
+    <String id="221">ааЕ аЕ баВббаЗаАаН аКбаМ аМбаЕаЖаАбаА</String>
+    <String id="222">абаЕаКббаНаИ</String>
+    <String id="223">ааВбаОаМаАбаИаНаО аПбаЕаВаКаЛббаВаАаНаЕ аВ баИбаОаКаОаЕаКбаАаНаЕаН баЕаЖаИаМ</String>
+    <String id="224">аЁаКаОбаОбб</String>
+    <String id="226">а аАаЗбаЕбаИ PAL60</String>
+    <String id="227">а аАаЗбаЕбаИ CDDB</String>
+    <String id="228">а аАаЗаБббаКаАаЙ аПаЛаЕаЙаЛаИббаАбаА аПбаИ ббаАббаИбаАаНаЕ</String>
+    <String id="230">аЄаИаЛббаИ</String>
+    <String id="231">абаМаА</String>
+    <String id="241">ааВбаОаМаАбаИбаНаО ббаАббаИбаАаНаЕ аНаА VCD/SVCD</String>
+    <String id="242">ааВбаОаМаАбаИбаНаО ббаАббаИбаАаНаЕ аНаА Audio-CD</String>
+    <String id="243">ааВбаОаМаАбаИбаНаО ббаАббаИбаАаНаЕ аНаА XBOX аИаГбаИ</String>
+    <String id="244">ааВбаОаМаАбаИбаНаО ббаАббаИбаАаНаЕ аНаА ааИаДаЕаО</String>
+    <String id="245">ааВбаОаМаАбаИбаНаО ббаАббаИбаАаНаЕ аНаА абаЗаИаКаА</String>
+    <String id="246">ааВбаОаМаАбаИбаНаО ббаАббаИбаАаНаЕ аНаА аЁаНаИаМаКаИ</String>
+    <String id="247">аЁаКбаИаПбаОаВаЕ</String>
+    <String id="248">ааЗаИаК</String>
+    <String id="249">абаЗаИаКаА</String>
+    <String id="250">ааИаЗбаАаЛаИаЗаАбаИаИ</String>
+    <String id="252">ааЗбаОаД аКбаМ аВбаИбаКаИ аГаОаВаОбаИбаЕаЛаИ</String>
+    <String id="253">абаОаЙ аКаАаНаАаЛаИ</String>
+    <String id="257">абаЕбаКаА</String>
+    <String id="258">а аАаЗбаЕбаИ ID3 баАаГаОаВаЕ</String>
+    <String id="259">абаВаАббаМ</String>
+    <String id="261">а аОбаАаКаВаАаНаЕ аЗаА ббаАббаИбаАаНаЕ...</String>
+    <String id="263">HTTP бббаВбб:</String>
+    <String id="264">ааАаПаИб</String>
+    <String id="265">аЁаПбаИ ааАаПаИб</String>
+    <String id="266">ааОаДбаЕаДаИ аПаО: ааЕбаЕаН</String>
+    <String id="267">ааОаДбаЕаДаИ аПаО: абаЕаМаЕ</String>
+    <String id="268">ааОаДбаЕаДаИ аПаО: ааАаГаЛаАаВаИаЕ</String>
+    <String id="269">ааОаДбаЕаДаИ аПаО: ааЗаПбаЛаНаИбаЕаЛ</String>
+    <String id="270">ааОаДбаЕаДаИ аПаО: ааЛаБбаМ</String>
+    <String id="271">аЂаОаП 100</String>
+    <String id="274">ааОаЗаИбаИб аНаА ббаБбаИббаИбаЕ</String>
+    <String id="279">ааЕ аМаОаГаА аДаА аЗаАбаЕаДб аНаАбббаОаЙаКаИбаЕ</String>
+    <String id="281">ааОаЛб, аПбаОаВаЕбаЕбаЕ .xml баАаЙаЛаОаВаЕбаЕ</String>
+    <String id="282">аНаАаМаЕбаЕаНаИ %i</String>
+    <String id="283">а аЕаЗбаЛбаАбаИ аОб ббббаЕаНаЕбаО</String>
+    <String id="284">абаМаА аНаАаМаЕбаЕаНаИ ббаВаПаАаДаЕаНаИб</String>
+    <String id="287">аЁбаБбаИббаИ</String>
+    <String id="288">ааОаЛаЕаМаИаНаА</String>
+    <String id="289">а аАаЗаМаЕб</String>
+    <String id="291">ааИаДаЕаО</String>
+    <String id="292">ааВбаК</String>
+    <String id="293">аЁбаБбаИббаИ</String>
+    <String id="294">аЁбаЗаДаАаЙ аОбаМаЕбаКаА</String>
+    <String id="295">ааИаЖ аОбаМаЕбаКаИ</String>
+    <String id="296">ааЗбаИббаИ аОбаМаЕбаКаИ</String>
+    <String id="299">ааБбаО аВбаЕаМаЕ:</String>
+    <String id="300">1. ааЗаИаК</String>
+    <String id="301">2. ааВбаК</String>
+    <String id="302">3. ааОбаОаК</String>
+    <String id="303">ааАаКббаНаЕаНаИаЕ</String>
+    <String id="304">ааЗаИаК</String>
+    <String id="305">а аАаЗбаЕбаЕаНаО</String>
+    <String id="312">(0=аАаВбаОаМаАбаИбаНаО)</String>
+    <String id="314">ааОаДаГаОбаОаВаКаА....</String>
+    <String id="315">абаЕбаКаА аВ аБаАаЗаАбаА аДаАаНаНаИ</String>
+    <String id="316">аЂбббб аПаЕбаНаИ...</String>
+    <String id="317">а аЕаОбаГаАаНаИаЗаАбаИббаА ббаПаЕбаНаА</String>
+    <String id="318">абаБаЕаЛбаЗаВаАаНаЕ аНаА аИаЗббаИбаИбаЕ аПаЕбаНаИ</String>
+    <String id="319">абаЕбаКаА аПбаИ баЕаОбаГаАаНаИаЗаАбаИб аНаА аПаЕбаНаИбаЕ</String>
+    <String id="320">аЂбббб аАббаИббаИ...</String>
+    <String id="321">абаЕбаКаА аПбаИ баЕаОбаГаАаНаИаЗаАбаИб аНаА аАббаИббаИбаЕ</String>
+    <String id="322">аЂбббб аЖаАаНбаОаВаЕ...</String>
+    <String id="323">абаЕбаКаА аПбаИ баЕаОбаГаАаНаИаЗаАбаИб аНаА аЖаАаНбаОаВаЕбаЕ</String>
+    <String id="324">аЂбббб аПбб...</String>
+    <String id="326">аЂбббб аАаЛаБбаМаИ...</String>
+    <String id="327">абаЕбаКаА аПбаИ баЕаОбаГаАаНаИаЗаАбаИб аНаА аАаЛаБбаМаИбаЕ</String>
+    <String id="328">ааАаПаИбаВаАаНаЕ аНаА аПбаОаМаЕаНаИбаЕ....</String>
+    <String id="329">абаЕбаКаА аПбаИ аЗаАаПаИбаВаАаНаЕ аНаА аПбаОаМаЕаНаИбаЕ</String>
+    <String id="330">аЂаОаВаА аМаОаЖаЕ аДаА аОбаНаЕаМаЕ аИаЗаВаЕббаНаО аВбаЕаМаЕ....</String>
+    <String id="331">ааОаМаПбаЕбаИбаАаНаЕ аНаА аБаАаЗаАбаА аДаАаНаНаИ...</String>
+    <String id="332">абаЕбаКаА аПбаИ аКаОаМаПбаЕбаИбаАаНаЕ аНаА аБаАаЗаАбаА аДаАаНаНаИ...</String>
+    <String id="333">абаКаАб аЛаИ аДаА аПбаЕаНаАбаЕаДаИб аМбаЗаИаКаАаЛаНаАбаА аБаАаЗаА аДаАаНаНаИ?</String>
+    <String id="334">абаЕаНаАбаЕаДаИ аМбаЗаИаКаАаЛаНаАбаА аБаАаЗаА аДаАаНаНаИ</String>
+    <String id="335">ааАбаАаЛаО</String>
+    <String id="338">ааНаАаЛаОаГаОаВаО</String>
+    <String id="339">ааИаГаИбаАаЛаНаО</String>
+    <String id="341">аббаНаИ DVD</String>
+    <String id="342">аЄаИаЛаМаИ</String>
+    <String id="344">ааКббаОбаИ</String>
+    <String id="345">ааОаДаИаНаА</String>
+    <String id="350">абаОаГбаАаМаИ</String>
+    <String id="351">ааЗаКаЛббаЕаНаО</String>
+    <String id="353">аЇаЕбаНаО</String>
+    <String id="355">абаЕаМаЕ аЗаА аИаЗбаАаКаВаАаНаЕ аНаА Screensaver</String>
+    <String id="356">аЂаИаП Screensaver</String>
+    <String id="357">ааВбаОаМаАбаИбаНаО аИаЗаКаЛббаВаАаНаЕ</String>
+    <String id="358">абаИбаКаИ аАаЛаБбаМаИ</String>
+    <String id="359">ааОбаЛаЕаДаНаИ аАаЛаБбаМаИ</String>
+    <String id="363">ааОаДбаЕаДаИ аПаО: аЄаАаЙаЛ</String>
+    <String id="365">ааОаДбаЕаДаИ аПаО: ааМаЕ</String>
+    <String id="366">ааОаДбаЕаДаИ аПаО: ааОаДаИаНаА</String>
+    <String id="367">ааОаДбаЕаДаИ аПаО: а аЕаЙбаИаНаГ</String>
+    <String id="369">ааАаГаЛаАаВаИаЕ</String>
+    <String id="373">аЁаЛбаНбаЕаВаО</String>
+    <String id="374">ааБаЛаАбаНаО</String>
+    <String id="375">аЁаНбаГ</String>
+    <String id="376">абаЖаД</String>
+    <String id="383">абббб</String>
+    <String id="388">аИ</String>
+    <String id="389">абаГаЛаА</String>
+    <String id="396">ааЗаБаЕбаЕбаЕ аМаЕббаОаПаОаЛаОаЖаЕаНаИаЕ</String>
+    <String id="397">абаЕаМаЕ аЗаА аОаПбаЕбаНбаВаАаНаЕ</String>
+    <String id="398">аЁаКаАаЛаА аНаА баЕаМаПаЕбаАбббаАбаА</String>
+    <String id="399">аЁаКаАаЛаА аЗаА баКаОбаОбб</String>
+    <String id="400">абаЕаМаЕбаО</String>
+    <String id="401">аЂаЕаМаПаЕбаАбббаА</String>
+    <String id="403">UV ааНаДаЕаКб</String>
+    <String id="404">абббб</String>
+    <String id="406">ааЛаАаЖаНаОбб</String>
+    <String id="410">аЁаВббаВаАаНаЕ б Weather.com</String>
+    <String id="411">ааОаЛббаАаВаАаМ аПбаОаГаНаОаЗаАбаА аЗаА:</String>
+    <String id="412">ааЕ аМаОаГаА аДаА аВаЗаЕаМаА аПбаОаГаНаОаЗаАбаА</String>
+    <String id="414">абаМаА баЕбаЕаНаЗаИб аЗаА баОаЗаИ аАаЛаБбаМ</String>
+    <String id="417">ааИаЖ: ааОаЛаЕаМаИ аИаКаОаНаИ</String>
+    <String id="418">ааИаДаЕаО/ааАаНбаОаВаЕ</String>
+    <String id="419">ааИаДаЕаО/ааКббаОбаИ</String>
+    <String id="420">ааИаДаЕаО/ааОаДаИаНаИ</String>
+    <String id="421">ааИаДаЕаО/ааАаГаЛаАаВаИаЕ</String>
+    <String id="424">ааЗаБаЕбаИ</String>
+    <String id="425">абаМаА аНаАаМаЕбаЕаНаИ аДаАаНаНаИ аЗаА аАаЛаБбаМаА.</String>
+    <String id="427">ааИбаК:</String>
+    <String id="428">ааОббаАаВаЕбаЕ аКаОбаЕаКбаНаО CD/DVD</String>
+    <String id="429">ааОаЛб, аПаОббаАаВаЕбаЕ баОаВаА CD/DVD</String>
+    <String id="430">ааОаДбаЕаДаИ аПаО: DVD#</String>
+    <String id="432">ааЗббаИаЙ баИаЛаМаА аОб аБаАаЗаАбаА аДаАаНаНаИ</String>
+    <String id="433">аЁаИаГббаЕаН аЛаИ, баЕ аИбаКаАбаЕ аДаА аПбаЕаМаАбаНаЕбаЕ</String>
+    <String id="434">баИаЛаМбб?</String>
+    <String id="435">ааЕбаЕаН</String>
+    <String id="436">ааОаДаИаНаА:</String>
+    <String id="437">абаОаДбаЛаЖаИбаЕаЛаНаОбб:</String>
+    <String id="443">ааНбаЕбаНаЕб</String>
+    <String id="444">аВаИаДаЕаО</String>
+    <String id="445">аАбаДаИаО</String>
+    <String id="446">DVD</String>
+    <String id="447">ааВбаОаМаАбаИбаНаО ббаАббаИбаАаНаЕ</String>
+    <String id="449">а аАаЗбаЕбаЕаНаО</String>
+    <String id="450">ааОаЛаОаНаИ</String>
+    <String id="451">ааДбаЕб (1):</String>
+    <String id="452">ааДбаЕб (2):</String>
+    <String id="453">ааДбаЕб (3):</String>
+    <String id="454">ааДбаЕб (4):</String>
+    <String id="455">а аЕаДаОаВаЕ</String>
+    <String id="456">ааИаД:</String>
+    <String id="457">аЁаМаЕаНаИ аИаЗаГаЛаЕаД</String>
+    <String id="459">аЁбаБбаИббаИ</String>
+    <String id="460">ааВбаКаОаВ аПаОбаОаК</String>
+    <String id="461">[аАаКбаИаВаНаО]</String>
+    <String id="462">аЁбаБбаИббаИ</String>
+    <String id="464">аЏбаКаОбб</String>
+    <String id="465">ааОаНббаАбб</String>
+    <String id="466">ааАаМаА</String>
+    <String id="467">аЂаИаП</String>
+    <String id="474">ааЗаКаЛббаЕаНаО</String>
+    <String id="475">аЁаАаМаО абаЗаИаКаА</String>
+    <String id="476">абаЗаИаКаА&amp;ааИаДаЕаО</String>
+    <String id="477">ааЕ аМаОаГаА аДаА аЗаАбаЕаДб аПаЛаЕаЙаЛаИббаА</String>
+    <String id="479">ааБаЛаИаК аИ аЕаЗаИаК</String>
+    <String id="480">ааОббаЕаБаИбаЕаЛбаКаИ аИаНбаЕббаЕаЙб</String>
+    <String id="481">ааПбаИаИ: абаДаИаО</String>
+    <String id="483">ааЛаБбаМ</String>
+    <String id="484">аббаИбб</String>
+    <String id="485">ааЗббаИаЙ аАаЛаБбаМ</String>
+    <String id="486">ааОаВбаОбаИ</String>
+    <String id="487">ааОаВбаОбаИ аЕаДаНаА</String>
+    <String id="488">ааОаВбаОбаИ аПаЛаЕаЙаЛаИббаА аПаАаПаКаИ</String>
+    <String id="491">ааЗаПаОаЛаЗаВаАаЙ аГаОаЛаЕаМаИ аИаКаОаНаИ</String>
+    <String id="493">ааКббаОб:</String>
+    <String id="502">ааЕ аМаОаГаА аДаА аЗаАаВбббаА баОаВаА аДаЕаЙббаВаИаЕ</String>
+    <String id="503">ааЗббаИаЙ баАаЗаИ аПаАаПаКаА</String>
+    <String id="505">ааАаЛаКбаЛаИбаАаНаЕ</String>
+    <String id="506">аЁаИаГббаНаИ аЛаИ ббаЕ?</String>
+    <String id="508">абаМ</String>
+    <String id="509">аЄаАаЙаЛаА бббаЕббаВбаВаА. абаЕаЗаАаПаИбаВаАаНаЕ ?</String>
+    <String id="510">абаЕаКббаНаИ</String>
+    <String id="511">ааИаНаАаГаИ</String>
+    <String id="512">ааИаКаОаГаА</String>
+    <String id="513">аЄаАаЙаЛаА аЕ аЗаАбаИбаЕаН, аДаЕаЙббаВаИаЕбаО аЕ аПбаЕаКббаНаАбаО</String>
+    <String id="514">абаЕбаКаА аПбаИ ббаЗаДаАаВаАаНаЕбаО аНаА аПаАаПаКаА, аДаЕаЙббаВаИаЕбаО аЕ аПбаЕаКббаНаАбаО</String>
+    <String id="515">абаЕбаКаА аПбаИ аИаЗббаИаВаАаНаЕбаО аНаА аПаАаПаКаА, аДаЕаЙббаВаИаЕбаО аЕ аПбаЕаКббаНаАбаО</String>
+    <String id="516">абаЕбаКаА аПбаИ аИаЗббаИаВаАаНаЕбаО аНаА баАаЙаЛаА, аДаЕаЙббаВаИаЕбаО аЕ аПбаЕаКббаНаАбаО</String>
+    <String id="517">абаЕбаКаА, аДаЕаЙббаВаИаЕбаО аЕ аПбаЕаКббаНаАбаО</String>
+    <String id="518">ааЗббаИаЙ баАаЗаИ аПаЕбаЕаН</String>
+    <String id="555">аб {0} аНаА {1} {2}</String>
+    <String id="601">ааАаПаИбаИ</String>
+    <String id="602">ааАаНаАаЛ:</String>
+    <String id="605">аЂа</String>
+    <String id="606">ааАбаЕаЖаДаАаНаЕ аНаА аНаОаВаАбаА аПбаОаГбаАаМаА</String>
+    <String id="607">ааАбаЕаДаИ</String>
+    <String id="610">аа аЗаАаПаИбаВаАаЙ</String>
+    <String id="611">ааАаПаИбаИ аВаЕаДаНбаЖ</String>
+    <String id="612">ааАаПаИбаВаАаЙ аВбаЕаКаИ аПбб аНаА баОаЗаИ аКаАаНаАаЛ</String>
+    <String id="613">ааАаПаИбаВаАаЙ аВбаЕаКаИ аПбб аНаА аВбаЕаКаИ аКаАаНаАаЛ</String>
+    <String id="614">ааАаПаИбаВаАаЙ аВббаКаА баЕаДаМаИбаА аПаО баОаВаА аВбаЕаМаЕ</String>
+    <String id="615">ааАаПаИбаВаАаЙ аВбаЕаКаИ аДаЕаН аПаО баОаВаА аВбаЕаМаЕ</String>
+    <String id="616">ааЗаБаЕбаЕбаЕ баИаП аЗаАаПаИб</String>
+    <String id="617">ааОаВ</String>
+    <String id="618">ааЗббаИаЙ</String>
+    <String id="619">а аЕаДаАаКбаИбаАаЙ ааАбаА/абаЕаМаЕ</String>
+    <String id="620">аЁаОббаИбаАаЙ: ааАаНаАаЛ</String>
+    <String id="621">аЁаОббаИбаАаЙ: ааАбаА</String>
+    <String id="622">аЁаОббаИбаАаЙ: ааМаЕ</String>
+    <String id="623">аЁаОббаИбаАаЙ: аЂаИаП</String>
+    <String id="624">ааЗбаИббаИ</String>
+    <String id="626">абаОаМаЕаНаИ баИаП:</String>
+    <String id="627">ааАаНаАаЛаИ:</String>
+    <String id="628">абаОаГбаАаМаИ:</String>
+    <String id="629">аЁаПбаИ аЗаАаПаИб</String>
+    <String id="630">абаКаАб аЛаИ аДаА баЕббаАббаИбаАб?</String>
+    <String id="631">абаКаАб аЛаИ аДаА аИаЗаКаЛббаИб аКаОаМаПббббаА?</String>
+    <String id="632">ааБаЕаКбаИ</String>
+    <String id="633">ааАбаАаЛаО ааАбаА/абаЕаМаЕ</String>
+    <String id="634">абаАаЙ ааАбаА/абаЕаМаЕ</String>
+    <String id="635">абаЕаМаЕ</String>
+    <String id="636">ааАбаА</String>
+    <String id="639">ааЛаБбаМаИ аОб</String>
+    <String id="647">ааДаНаОаКбаАбаНаО</String>
+    <String id="648">ааНаЕаВаНаО</String>
+    <String id="649">абаЕаКаИ</String>
+    <String id="650">абаЕаКаИ аПбб аНаА баОаЗаИ аКаАаНаАаЛ</String>
+    <String id="651">абаЕаКаИ аПбб аНаА аКаОаЙбаО аИ аДаА аЕ аКаАаНаАаЛ</String>
+    <String id="653">ааЗббаИаЙ баОаЗаИ аЗаАаПаИб?</String>
+    <String id="654">ааЗаВаАаДаИ</String>
+    <String id="657">ааОаН</String>
+    <String id="658">абаО</String>
+    <String id="659">аЁбб</String>
+    <String id="660">аЇаЕб</String>
+    <String id="661">ааЕб</String>
+    <String id="662">аЁбаБ</String>
+    <String id="663">ааЕаД</String>
+    <String id="664">ааЗббаИаЙ баАаЗаИ баНаИаМаКаА?</String>
+    <String id="665">а аАаДаИаО</String>
+    <String id="666">аЁбаАаНбаИаИ</String>
+    <String id="720">ааОаКаАаЖаИ: абаОаДбаЛаЖаИбаЕаЛаНаОбб</String>
+    <String id="721">ааОаКаАаЖаИ: аббаИ аПаОаКаАаЗаВаАаНаО</String>
+    <String id="722">ааЕ аМаОаГаА аДаА аПббаНаА аДаИбаКаА</String>
+    <String id="723">ааОббаАаВаИббаЕ аЛаИ аДаИбаК?</String>
+    <String id="724">аЂбббаЕаНаЕ аЂа абаОаГбаАаМаА</String>
+    <String id="725">ааАаНбаОаВаЕ</String>
+    <String id="726">ааАаГаЛаАаВаИаЕ</String>
+    <String id="200004">а ббаНаО аПбаЕаДаОббаАаВаЕаНаО tvguide.xml</String>
+    <String id="200005">ааОаЛб, аИаЗаБаЕбаЕбаЕ баИаПаА аДаИббаАаНбаИаОаНаНаО, аКаОаЕбаО аИаЗаПаОаЛаЗаВаАбаЕ:</String>
+    <String id="200006">ааАбаИбаНаИ аБббаОаНаА абаОаДбаЛаЖаИ аЗаА аПбаОаДбаЛаЖаЕаНаИаЕ</String>
+    <String id="200007">аббаНаИ&gt;</String>
+    <String id="200008">ааАбббаОаЙаКаИ - ааИббаАаНбаИаОаНаНаО</String>
+    <String id="200009">абаОаДбаЛаЖаИ&gt;</String>
+    <String id="200015">ааАбаИбаНаИ аБббаОаНаА абаОаДбаЛаЖаИ аЗаА аНаАбаАаЛаО</String>
+    <String id="200017">ааОаБбаЕ аДаОбаЛаИ аВ MediaPortal.</String>
+    <String id="200018">ааОаЗаДбаАаВаЛаЕаНаИб. MediaPortal аЕ аНаАбббаОаЕаН аИ аГаОбаОаВ аЗаА аИаЗаПаОаЛаЗаВаАаНаЕ.</String>
+    <String id="200024">ааАбббаОаЙаКаА Tа</String>
+    <String id="200025">ааЗаИаК</String>
+    <String id="200026">аЁббаАаНаА</String>
+    <String id="200027">ааАбббаОаЙаКаИ - ааБбаИ</String>
+    <String id="200028">аЂаОаЗаИ аКаОаМаПбббб аПбаИбаЕаЖаАаВаА аЛаИ аДаОбббаП аДаО ааНбаЕбаНаЕб?</String>
+    <String id="200030">аЁбаАббаИбаАаЙ аАаВбаОаМаАбаИбаНаО Media Portal, аКаОаГаАбаО баЕ ббаАббаИбаА аКаОаМаПбббббб</String>
+    <String id="200031">ааА</String>
+    <String id="200032">ааЕ</String>
+    <String id="200034">ааОаЛб, аИаЗаБаЕбаЕбаЕ аВаАбаИбб аГбаАаД аОб баПаИббаКаА аПаО-аДаОаЛб.</String>
+    <String id="200035">ааКаО аВаАбаИбб аГбаАаД аНаЕ аЕ аВ баПаИббаКаА, баОаГаАаВаА баЕ баЕ аНаАаЛаОаЖаИ аДаА аНаАаПбаАаВаИбаЕ бббаНаА аНаАбббаОаЙаКаА.</String>
+    <String id="200036">а ббаНаА аНаАббаОаЙаКаА</String>
+    <String id="200037">абаОаПббаНаИ&gt;</String>
+    <String id="4000">аЃаЕаБ абаОбаЗаЕб</String>
+    <String id="4001">абаБаИаМаИ</String>
+    <String id="4002">ааЕ аМаОаГаА аДаА аЗаАбаЕаДб баОаЗаИ аАаДбаЕб</String>
+  </Section>
+</Language>

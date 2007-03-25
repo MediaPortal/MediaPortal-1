@@ -1,364 +1,95 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<strings>
-	<characters></characters>
-	<string>
-		<id>0</id>
-		<value>Forrit</value>
-	</string>
-	<string>
-		<id>1</id>
-		<value>Myndir</value>
-	</string>
-	<string>
-		<id>2</id>
-		<value>Tónleikur</value>
-	</string>
-	<string>
-		<id>3</id>
-		<value>Filmar</value>
-	</string>
-	<string>
-		<id>4</id>
-		<value>Sjóvapsskrá</value>
-	</string>
-	<string>
-		<id>5</id>
-		<value>Uppsetan</value>
-	</string>
-	<string>
-		<id>7</id>
-		<value>Fílir</value>
-	</string>
-	<string>
-		<id>8</id>
-		<value>Veðrið</value>
-	</string>
-	<string>
-		<id>9</id>
-		<value>Tíðindi</value>
-	</string>
-	<string>
-		<id>10</id>
-		<value>Uppskriftir</value>
-	</string>
-	<string>
-		<id>11</id>
-		<value>Mánadagur</value>
-	</string>
-	<string>
-		<id>12</id>
-		<value>Týsdagur</value>
-	</string>
-	<string>
-		<id>13</id>
-		<value>Mikudagur</value>
-	</string>
-	<string>
-		<id>14</id>
-		<value>Hósdagur</value>
-	</string>
-	<string>
-		<id>15</id>
-		<value>Fríggjadagur</value>
-	</string>
-	<string>
-		<id>16</id>
-		<value>Leygardagur</value>
-	</string>
-	<string>
-		<id>17</id>
-		<value>Sunnudagur</value>
-	</string>
-	<string>
-		<id>21</id>
-		<value>Januar</value>
-	</string>
-	<string>
-		<id>22</id>
-		<value>Februar</value>
-	</string>
-	<string>
-		<id>23</id>
-		<value>Mars</value>
-	</string>
-	<string>
-		<id>24</id>
-		<value>Apríl</value>
-	</string>
-	<string>
-		<id>25</id>
-		<value>Mai</value>
-	</string>
-	<string>
-		<id>26</id>
-		<value>Juni</value>
-	</string>
-	<string>
-		<id>27</id>
-		<value>Juli</value>
-	</string>
-	<string>
-		<id>28</id>
-		<value>August</value>
-	</string>
-	<string>
-		<id>29</id>
-		<value>September</value>
-	</string>
-	<string>
-		<id>30</id>
-		<value>Oktober</value>
-	</string>
-	<string>
-		<id>31</id>
-		<value>November</value>
-	</string>
-	<string>
-		<id>32</id>
-		<value>Desember</value>
-	</string>
-	<string>
-		<id>50</id>
-		<value>DVD&apos;ir</value>
-	</string>
-	<string>
-		<id>100</id>
-		<value>Sjá: Ímyndir</value>
-	</string>
-	<string>
-		<id>101</id>
-		<value>Sjá: Lista</value>
-	</string>
-	<string>
-		<id>103</id>
-		<value>Sortera eftir: Navni</value>
-	</string>
-	<string>
-		<id>104</id>
-		<value>Sortera eftir: Dato</value>
-	</string>
-	<string>
-		<id>105</id>
-		<value>Sortera eftir: Stødd</value>
-	</string>
-	<string>
-		<id>106</id>
-		<value>Nei</value>
-	</string>
-	<string>
-		<id>107</id>
-		<value>Ja</value>
-	</string>
-	<string>
-		<id>108</id>
-		<value>Myndarøð</value>
-	</string>
-	<string>
-		<id>112</id>
-		<value>STEÐGA</value>
-	</string>
-	<string>
-		<id>113</id>
-		<value>Fíla: Kjelda</value>
-	</string>
-	<string>
-		<id>114</id>
-		<value>Fíla: Til-stað</value>
-	</string>
-	<string>
-		<id>115</id>
-		<value>Margfalda</value>
-	</string>
-	<string>
-		<id>116</id>
-		<value>Flyta</value>
-	</string>
-	<string>
-		<id>117</id>
-		<value>Sletta</value>
-	</string>
-	<string>
-		<id>118</id>
-		<value>Umdoypa</value>
-	</string>
-	<string>
-		<id>119</id>
-		<value>Nýggjan faldara</value>
-	</string>
-	<string>
-		<id>120</id>
-		<value>Vátta fíla margfaldan</value>
-	</string>
-	<string>
-		<id>121</id>
-		<value>Vátta fíla flyting</value>
-	</string>
-	<string>
-		<id>122</id>
-		<value>Vátta fíla sletting</value>
-	</string>
-	<string>
-		<id>123</id>
-		<value>Margfalda hesar fílur</value>
-	</string>
-	<string>
-		<id>124</id>
-		<value>Flyt hesar fílur?</value>
-	</string>
-	<string>
-		<id>125</id>
-		<value>Sletta hesa fílur?</value>
-	</string>
-	<string>
-		<id>137</id>
-		<value>Leita</value>
-	</string>
-	<string>
-		<id>139</id>
-		<value>Hitastig</value>
-	</string>
-	<string>
-		<id>142</id>
-		<value>Tíð:</value>
-	</string>
-	<string>
-		<id>188</id>
-		<value>Vel alt</value>
-	</string>
-	<string>
-		<id>190</id>
-		<value>Goym</value>
-	</string>
-	<string>
-		<id>191</id>
-		<value>Blanda</value>
-	</string>
-	<string>
-		<id>194</id>
-		<value>Leitar...</value>
-	</string>
-	<string>
-		<id>201</id>
-		<value>Ár</value>
-	</string>
-	<string>
-		<id>248</id>
-		<value>Mál</value>
-	</string>
-	<string>
-		<id>249</id>
-		<value>Tónleik</value>
-	</string>
-	<string>
-		<id>257</id>
-		<value>Feil</value>
-	</string>
-	<string>
-		<id>259</id>
-		<value>Opnar</value>
-	</string>
-	<string>
-		<id>283</id>
-		<value>Leitingar úrslit</value>
-	</string>
-	<string>
-		<id>284</id>
-		<value>Einki funnið</value>
-	</string>
-	<string>
-		<id>289</id>
-		<value>Stødd</value>
-	</string>
-	<string>
-		<id>292</id>
-		<value>Ljóð</value>
-	</string>
-	<string>
-		<id>304</id>
-		<value>Mál</value>
-	</string>
-	<string>
-		<id>314</id>
-		<value>Fyrireikar...</value>
-	</string>
-	<string>
-		<id>316</id>
-		<value>Leitar í songum</value>
-	</string>
-	<string>
-		<id>328</id>
-		<value>Goymir broytingar</value>
-	</string>
-	<string>
-		<id>335</id>
-		<value>Byrja</value>
-	</string>
-	<string>
-		<id>344</id>
-		<value>Leikarar</value>
-	</string>
-	<string>
-		<id>345</id>
-		<value>Ár</value>
-	</string>
-	<string>
-		<id>351</id>
-		<value>Sløkk</value>
-	</string>
-	<string>
-		<id>353</id>
-		<value>Svart</value>
-	</string>
-	<string>
-		<id>363</id>
-		<value>Sortera eftir: Fílir</value>
-	</string>
-	<string>
-		<id>365</id>
-		<value>Sortera eftir: Navn</value>
-	</string>
-	<string>
-		<id>366</id>
-		<value>Sortera eftir: Ár</value>
-	</string>
-	<string>
-		<id>374</id>
-		<value>Skýggja</value>
-	</string>
-	<string>
-		<id>375</id>
-		<value>Kavi</value>
-	</string>
-	<string>
-		<id>376</id>
-		<value>Regn</value>
-	</string>
-	<string>
-		<id>380</id>
-		<value>Ælaveður</value>
-	</string>
-	<string>
-		<id>383</id>
-		<value>Vindur</value>
-	</string>
-	<string>
-		<id>388</id>
-		<value>og</value>
-	</string>
-	<string>
-		<id>389</id>
-		<value>Mjørki</value>
-	</string>
-	<string>
-		<id>392</id>
-		<value>Sirm</value>
-	</string>
-	<string>
-		<id>4513</id>
-		<value>Ymisk</value>
-	</string>
-	<string>
-		<id>10102</id>
-		<value>Skjótasta tíð</value>
-	</string>
-</strings>
+<?xml version="1.0" encoding="utf-8"?>
+<Language name="Faroese" characters="255">
+  <Section name="unmapped">
+    <String id="0">Forrit</String>
+    <String id="1">Myndir</String>
+    <String id="2">TÃ³nleikur</String>
+    <String id="3">Filmar</String>
+    <String id="4">SjÃ³vapsskrÃ¡</String>
+    <String id="5">Uppsetan</String>
+    <String id="7">FÃ­lir</String>
+    <String id="8">VeÃ°riÃ°</String>
+    <String id="9">TÃ­Ã°indi</String>
+    <String id="10">Uppskriftir</String>
+    <String id="11">MÃ¡nadagur</String>
+    <String id="12">TÃ½sdagur</String>
+    <String id="13">Mikudagur</String>
+    <String id="14">HÃ³sdagur</String>
+    <String id="15">FrÃ­ggjadagur</String>
+    <String id="16">Leygardagur</String>
+    <String id="17">Sunnudagur</String>
+    <String id="21">Januar</String>
+    <String id="22">Februar</String>
+    <String id="23">Mars</String>
+    <String id="24">AprÃ­l</String>
+    <String id="25">Mai</String>
+    <String id="26">Juni</String>
+    <String id="27">Juli</String>
+    <String id="28">August</String>
+    <String id="29">September</String>
+    <String id="30">Oktober</String>
+    <String id="31">November</String>
+    <String id="32">Desember</String>
+    <String id="50">DVD'ir</String>
+    <String id="100">SjÃ¡: Ãmyndir</String>
+    <String id="101">SjÃ¡: Lista</String>
+    <String id="103">Sortera eftir: Navni</String>
+    <String id="104">Sortera eftir: Dato</String>
+    <String id="105">Sortera eftir: StÃ¸dd</String>
+    <String id="106">Nei</String>
+    <String id="107">Ja</String>
+    <String id="108">MyndarÃ¸Ã°</String>
+    <String id="112">STEÃGA</String>
+    <String id="113">FÃ­la: Kjelda</String>
+    <String id="114">FÃ­la: Til-staÃ°</String>
+    <String id="115">Margfalda</String>
+    <String id="116">Flyta</String>
+    <String id="117">Sletta</String>
+    <String id="118">Umdoypa</String>
+    <String id="119">NÃ½ggjan faldara</String>
+    <String id="120">VÃ¡tta fÃ­la margfaldan</String>
+    <String id="121">VÃ¡tta fÃ­la flyting</String>
+    <String id="122">VÃ¡tta fÃ­la sletting</String>
+    <String id="123">Margfalda hesar fÃ­lur</String>
+    <String id="124">Flyt hesar fÃ­lur?</String>
+    <String id="125">Sletta hesa fÃ­lur?</String>
+    <String id="137">Leita</String>
+    <String id="139">Hitastig</String>
+    <String id="142">TÃ­Ã°:</String>
+    <String id="188">Vel alt</String>
+    <String id="190">Goym</String>
+    <String id="191">Blanda</String>
+    <String id="194">Leitar...</String>
+    <String id="201">Ãr</String>
+    <String id="248">MÃ¡l</String>
+    <String id="249">TÃ³nleik</String>
+    <String id="257">Feil</String>
+    <String id="259">Opnar</String>
+    <String id="283">Leitingar Ãºrslit</String>
+    <String id="284">Einki funniÃ°</String>
+    <String id="289">StÃ¸dd</String>
+    <String id="292">LjÃ³Ã°</String>
+    <String id="304">MÃ¡l</String>
+    <String id="314">Fyrireikar...</String>
+    <String id="316">Leitar Ã­ songum</String>
+    <String id="328">Goymir broytingar</String>
+    <String id="335">Byrja</String>
+    <String id="344">Leikarar</String>
+    <String id="345">Ãr</String>
+    <String id="351">SlÃ¸kk</String>
+    <String id="353">Svart</String>
+    <String id="363">Sortera eftir: FÃ­lir</String>
+    <String id="365">Sortera eftir: Navn</String>
+    <String id="366">Sortera eftir: Ãr</String>
+    <String id="374">SkÃ½ggja</String>
+    <String id="375">Kavi</String>
+    <String id="376">Regn</String>
+    <String id="380">Ã†laveÃ°ur</String>
+    <String id="383">Vindur</String>
+    <String id="388">og</String>
+    <String id="389">MjÃ¸rki</String>
+    <String id="392">Sirm</String>
+    <String id="4513">Ymisk</String>
+    <String id="10102">SkjÃ³tasta tÃ­Ã°</String>
+  </Section>
+</Language>
