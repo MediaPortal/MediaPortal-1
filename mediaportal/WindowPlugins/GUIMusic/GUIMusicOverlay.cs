@@ -240,20 +240,22 @@ namespace MediaPortal.GUI.Music
           SetVideoWindow(new Rectangle(_videoWindow.XPosition, _videoWindow.YPosition, _videoWindow.Width, _videoWindow.Height));
         }
         else
-          if (_videoRectangle != null && _visualisationEnabled)  // to be compatible to the old version
-        {
-          SetVideoWindow(new Rectangle(_videoRectangle.XPosition, _videoRectangle.YPosition, _videoRectangle.Width, _videoRectangle.Height));
-        }
-        else
-        {
-          SetVideoWindow(new Rectangle());
-        }
+					if (_videoRectangle != null && _visualisationEnabled)  // to be compatible to the old version
+					{
+						SetVideoWindow(new Rectangle(_videoRectangle.XPosition, _videoRectangle.YPosition, _videoRectangle.Width, _videoRectangle.Height));
+					}
+					else
+					{
+						SetVideoWindow(new Rectangle());
+						_videoWindow.SetVideoWindow = false;  // avoid flickering if visualization is turned off
+					}
       }
       base.Render(timePassed);
     }
 
     void SetVideoWindow(Rectangle newRect)
     {
+			_videoWindow.SetVideoWindow = true;
       if (!newRect.Equals(GUIGraphicsContext.VideoWindow))
         GUIGraphicsContext.VideoWindow = newRect;
     }

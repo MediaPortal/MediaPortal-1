@@ -48,6 +48,7 @@ namespace MediaPortal.GUI.Library
     protected GUIImage thumbImage;
     protected GUIAnimation _imageFocusRectangle=null;
 		protected Rectangle[] _videoWindows= new Rectangle[1];
+		protected bool _setVideoWindow = true;
        
 
     public GUIVideoControl(int dwParentID) : base(dwParentID)
@@ -59,6 +60,13 @@ namespace MediaPortal.GUI.Library
 			_focusedTextureName = texturename;
 			FinalizeConstruction();
 		}
+
+		public bool SetVideoWindow
+		{
+			get { return _setVideoWindow; }
+			set { _setVideoWindow = value; }
+		}
+
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction ();
@@ -116,7 +124,7 @@ namespace MediaPortal.GUI.Library
       _videoWindows[0].Height=base.Height;
       if (!GUIGraphicsContext.Calibrating )
       {
-        GUIGraphicsContext.VideoWindow=_videoWindows[0];
+        if (_setVideoWindow) GUIGraphicsContext.VideoWindow=_videoWindows[0];
 				if (GUIGraphicsContext.ShowBackground)
 				{
           if (Focus)
