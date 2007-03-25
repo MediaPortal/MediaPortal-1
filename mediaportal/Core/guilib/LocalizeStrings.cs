@@ -32,6 +32,7 @@ using System.Text;
 using System.Xml;
 using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.Localisation;
 
 namespace MediaPortal.GUI.Library
 {
@@ -42,104 +43,26 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUILocalizeStrings
   {
-    private static string[] m_Languages = null;
-    static string LanguageDirectory; 
-    static System.Collections.Generic.Dictionary<int, string> m_mapStrings = new System.Collections.Generic.Dictionary<int, string>();
+    #region Variables
+    static LocalisationProvider _stringProvider;
+    static Dictionary<string, string> _cultures;
+    static string[] _languages;
+    #endregion
 
+    #region Constructors/Destructors
     // singleton. Dont allow any instance of this class
     private GUILocalizeStrings()
     {
     }
 
-    /// <summary>
-    /// Clean up.
-    /// just delete all text
-    /// </summary>
     static public void Dispose()
     {
-      m_mapStrings.Clear();
+      if(_stringProvider != null)
+        _stringProvider.Dispose();
     }
+    #endregion
 
-    /// <summary>
-    /// Load the text from the strings.xml file
-    /// </summary>
-    /// <param name="strFileName">filename to string.xml for current language</param>
-    /// <param name="map">on return this map will contain all texts loaded</param>
-    /// <param name="bDetermineNumberOfChars">
-    /// when true this function will determine the total number of characters needed for this language.
-    /// This is later on used by the font classes to cache those characters
-    /// when false this function wont determine the total number of characters needed for this language.
-    /// </param>
-    /// <returns></returns>
-    static bool LoadMap(string strFileName, ref System.Collections.Generic.Dictionary<int, string> map, bool bDetermineNumberOfChars)
-    {
-      bool isPrefixEnabled = true;
-
-      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-        isPrefixEnabled = reader.GetValueAsBool("general", "myprefix", true);
-
-      if (strFileName == null) return false;
-      if (strFileName == String.Empty) return false;
-      if (map == null) return false;
-      map.Clear();
-      try
-      {
-        XmlDocument doc = new XmlDocument();
-        doc.Load(strFileName);
-        if (doc.DocumentElement == null) return false;
-        string strRoot = doc.DocumentElement.Name;
-        if (strRoot != "strings") return false;
-        if (bDetermineNumberOfChars == true)
-        {
-          int iChars = 255;
-          XmlNode nodeChars = doc.DocumentElement.SelectSingleNode("/strings/characters");
-          if (nodeChars != null)
-          {
-            if (nodeChars.InnerText != null && nodeChars.InnerText.Length > 0)
-            {
-              try
-              {
-                iChars = Convert.ToInt32(nodeChars.InnerText);
-                if (iChars < 255) iChars = 255;
-              }
-              catch (Exception)
-              {
-                iChars = 255;
-              }
-              GUIGraphicsContext.CharsInCharacterSet = iChars;
-            }
-          }
-        }
-        XmlNodeList list = doc.DocumentElement.SelectNodes("/strings/string");
-        foreach (XmlNode node in list)
-        {
-          StringBuilder builder = new StringBuilder();
-
-          int iCode = (int)System.Int32.Parse(node.SelectSingleNode("id").InnerText);
-
-          XmlAttribute prefix = node.Attributes["Prefix"];
-
-          if (isPrefixEnabled && prefix != null)
-            builder.Append(prefix.Value);
-
-          builder.Append(node.SelectSingleNode("value").InnerText);
-
-          XmlAttribute suffix = node.Attributes["Suffix"];
-
-          if (isPrefixEnabled && suffix != null)
-            builder.Append(suffix.Value);
-
-          map[iCode] = builder.ToString();
-        }
-        return true;
-      }
-      catch (Exception ex)
-      {
-        Log.Info("exception loading language {0} err:{1} stack:{2}", strFileName, ex.Message, ex.StackTrace);
-        return false;
-      }
-    }
-
+    #region Public Methods
     /// <summary>
     /// Public method to load the text from a strings/xml file into memory
     /// </summary>
@@ -148,36 +71,42 @@ namespace MediaPortal.GUI.Library
     /// true when text is loaded
     /// false when it was unable to load the text
     /// </returns>
-    static public bool Load(string strFileName)
+    //[Obsolete("This method has changed", true)]
+    static public bool Load(string language)
     {
-      if (strFileName == null) return false;
-      if (strFileName == String.Empty) return false;
-      System.Collections.Generic.Dictionary<int, string> mapEnglish = new System.Collections.Generic.Dictionary<int, string>();
-      m_mapStrings.Clear();
-      LanguageDirectory = Config.GetFolder(Config.Dir.Language);
+      bool isPrefixEnabled = true;
 
-      Log.Info("  load localized strings from:{0}", strFileName);
-      // load the text for the current language
-      LoadMap(strFileName, ref m_mapStrings, true);
-      //load the text for the english language
-      LoadMap(Config.GetFile(Config.Dir.Language, @"English\strings.xml"), ref mapEnglish, false);
+      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        isPrefixEnabled = reader.GetValueAsBool("general", "myprefix", true);
 
-      // check if current language contains an entry for each textline found
-      // in the english version
+      string directory = Config.GetFolder(Config.Dir.Language);
+      string cultureName = null;
+      if (language != null)
+        cultureName = GetCultureName(language);
 
-      Dictionary<int, string>.KeyCollection keyColl = mapEnglish.Keys;
-      foreach (int key in keyColl)
-      {
-        if (!m_mapStrings.ContainsKey(key))
-        {
-          //if current language does not contain a translation for this text
-          //then use the english variant
-          m_mapStrings[key] = mapEnglish[key];
-          Log.Info("language file:{0} is missing entry for id:{1} text:{2}", strFileName, key, (string)mapEnglish[key]);
-        }
-      }
-      mapEnglish = null;
+      Log.Info("  Loading localised Strings - Path: {0} Culture: {1}  Langauge: {2} Prefix: {3}", directory, cultureName, language, isPrefixEnabled);
+
+      _stringProvider = new LocalisationProvider(directory, cultureName, isPrefixEnabled);
+
+      GUIGraphicsContext.CharsInCharacterSet = _stringProvider.Characters;
+
       return true;
+    }
+
+    static public string CurrentLanguage()
+    {
+      if (_stringProvider == null)
+        Load(null);
+
+      return _stringProvider.CurrentLanguage.EnglishName;
+    }
+
+    static public void ChangeLanguage(string language)
+    {
+      if (_stringProvider == null)
+        Load(language);
+      else
+        _stringProvider.ChangeLanguage(GetCultureName(language));
     }
 
     /// <summary>
@@ -189,11 +118,15 @@ namespace MediaPortal.GUI.Library
     /// <returns>
     /// string containing the translated text
     /// </returns>
-    static public string Get(int dwCode,object[] parameters)
+    static public string Get(int dwCode, object[] parameters)
     {
-      string translation = Get(dwCode);
+      if (_stringProvider == null)
+        Load(null);
+
+      string translation = _stringProvider.Get("unmapped", dwCode);
       // if parameters or the translation is null, return the translation.
-      if((translation == null) || (parameters == null)) {
+      if ((translation == null) || (parameters == null))
+      {
         return translation;
       }
       // return the formatted string. If formatting fails, log the error
@@ -202,7 +135,8 @@ namespace MediaPortal.GUI.Library
       {
         return String.Format(translation, parameters);
       }
-      catch(System.FormatException e) {
+      catch (System.FormatException e)
+      {
         Log.Error("Error formatting translation with id {0}", dwCode);
         Log.Error("Unformatted translation: {0}", translation);
         Log.Error(e);
@@ -219,15 +153,25 @@ namespace MediaPortal.GUI.Library
     /// </returns>
     static public string Get(int dwCode)
     {
-      if (m_mapStrings.ContainsKey(dwCode))
+      if (_stringProvider == null)
+        Load(null);
+
+      string translation = _stringProvider.Get("unmapped", dwCode);
+
+      if (translation == null)
       {
-        return (string)m_mapStrings[dwCode];
+        Log.Error("No translation found for id {0}", dwCode);
+        return String.Empty;
       }
-      return "";
+
+      return translation;
     }
 
     static public void LocalizeLabel(ref string strLabel)
     {
+      if (_stringProvider == null)
+        Load(null);
+
       if (strLabel == null) strLabel = String.Empty;
       if (strLabel == "-") strLabel = "";
       if (strLabel == "") return;
@@ -238,96 +182,66 @@ namespace MediaPortal.GUI.Library
       try
       {
         int dwLabelID = System.Int32.Parse(strLabel);
-        strLabel = GUILocalizeStrings.Get(dwLabelID);
+        strLabel = _stringProvider.Get("unmapped", dwLabelID);
       }
       catch (FormatException)
       {
       }
     }
 
-    public static void Clear()
-    {
-      m_mapStrings.Clear();
-    }
-
     public static string LocalSupported()
     {
-      if (m_Languages == null)
-      {
-        LoadLanguages();
-      }
+      if (_stringProvider == null)
+        Load(null);
 
-      int numb = LanguageNumb(CultureInfo.CurrentCulture.EnglishName);
+      CultureInfo culture = _stringProvider.GetBestLanguage();
 
-      if (numb == -1 && CultureInfo.CurrentCulture.Parent.EnglishName != null)
-      {
-        numb = LanguageNumb(CultureInfo.CurrentCulture.Parent.EnglishName);
-      }
-
-      if (numb >= 0)
-        return m_Languages[numb];
-      else
-        return "English";
-
-    }
-
-    private static int LanguageNumb(string Language)
-    {
-
-      for (int i = 0; i < m_Languages.Length; i++)
-      {
-        if (m_Languages[i].ToLower() == Language.ToLower())
-          return i;
-      }
-
-      return -1;
+      return culture.EnglishName;
     }
 
     public static string[] SupportedLanguages()
     {
-      if (m_Languages == null)
+      if (_languages == null)
       {
-        //// Get system language
-        //string strLongLanguage = CultureInfo.CurrentCulture.EnglishName;
-        //int iTrimIndex = strLongLanguage.IndexOf(" ", 0, strLongLanguage.Length);
-        //string strShortLanguage = strLongLanguage.Substring(0, iTrimIndex);
-        //bool bExactLanguageFound = false;
-        LoadLanguages();
-      }
+        if (_stringProvider == null)
+          Load(null);
 
-      return m_Languages;
-    }
+        CultureInfo[] cultures = _stringProvider.AvailableLanguages();
 
-    private static void LoadLanguages()
-    {
-      if (Directory.Exists(LanguageDirectory))
-      {
-        string[] folders = Directory.GetDirectories(LanguageDirectory, "*.*");
+        SortedList sortedLanguages = new SortedList();
+        foreach (CultureInfo culture in cultures)
+          sortedLanguages.Add(culture.EnglishName, culture.EnglishName);
 
-        ArrayList tempList = new ArrayList();
-
-        foreach (string folder in folders)
+        _languages = new string[sortedLanguages.Count];
+        
+        for (int i = 0; i < sortedLanguages.Count; i++)
         {
-          string fileName = folder.Substring(folder.LastIndexOf(@"\") + 1);
-
-          //
-          // Exclude cvs folder
-          //
-          if (fileName.ToLower() != "cvs")
-          {
-            if (fileName.Length > 0)
-            {
-              fileName = fileName.Substring(0, 1).ToUpper() + fileName.Substring(1);
-              tempList.Add(fileName);
-            }
-          }
+          _languages[i] = (string) sortedLanguages.GetByIndex(i);
         }
-
-        m_Languages = new string[tempList.Count];
-
-        for (int i = 0; i < tempList.Count; i++)
-          m_Languages[i] = (string)tempList[i];
       }
+
+      return _languages;
     }
+
+    static public string GetCultureName(string language)
+    {
+      if (_cultures == null)
+      {
+        _cultures = new Dictionary<string, string>();
+
+        CultureInfo[] cultureList = CultureInfo.GetCultures(CultureTypes.AllCultures);
+
+        for (int i = 0; i < cultureList.Length; i++)
+        {
+          _cultures.Add(cultureList[i].EnglishName, cultureList[i].Name);
+        }
+      }
+
+      if (_cultures.ContainsKey(language))
+        return _cultures[language];
+
+      return null;
+    }
+    #endregion
   }
 }

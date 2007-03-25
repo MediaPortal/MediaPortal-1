@@ -155,33 +155,20 @@ namespace WindowPlugins.GUISettings
       }
       string LanguageDirectory = Config.GetFolder(Config.Dir.Language);
       int lang = 0;
-      if (Directory.Exists(LanguageDirectory))
+
+      string[] languages = GUILocalizeStrings.SupportedLanguages();
+
+      foreach (string language in languages)
       {
-        string[] folders = Directory.GetDirectories(LanguageDirectory, "*.*");
+        GUIControl.AddItemLabelControl(GetID, btnLanguage.GetID, language);
 
-        foreach (string folder in folders)
+        if (language.ToLower() == currentLanguage.ToLower())
         {
-          string fileName = folder.Substring(folder.LastIndexOf(@"\") + 1);
-
-          //
-          // Exclude cvs folder
-          //
-          if ((fileName.ToLower() != "cvs") && (fileName.ToLower() != ".svn"))
-          {
-            if (fileName.Length > 0)
-            {
-              fileName = fileName.Substring(0, 1).ToUpper() + fileName.Substring(1);
-              GUIControl.AddItemLabelControl(GetID, btnLanguage.GetID, fileName);
-
-              if (fileName.ToLower() == currentLanguage.ToLower())
-              {
-                GUIControl.SelectItemControl(GetID, btnLanguage.GetID, lang);
-              }
-              lang++;
-            }
-          }
+          GUIControl.SelectItemControl(GetID, btnLanguage.GetID, lang);
         }
+        lang++;
       }
+
     }
 
     void SetSkins()
@@ -268,7 +255,7 @@ namespace WindowPlugins.GUISettings
       GUIWindowManager.OnResize();
       GUIWindowManager.ActivateWindow(GetID);
       GUIControl.FocusControl(GetID, btnSkin.GetID);
-      
+
       // Apply the selected buttons again, since they are cleared when we reload
       RestoreButtons();
     }
@@ -278,8 +265,9 @@ namespace WindowPlugins.GUISettings
       // Backup the buttons, needed later
       BackupButtons();
       SaveSettings();
-      GUILocalizeStrings.Clear();
-      GUILocalizeStrings.Load(Config.GetFile(Config.Dir.Language, btnLanguage.SelectedLabel + @"\strings.xml"));
+      GUILocalizeStrings.ChangeLanguage(btnLanguage.SelectedLabel);
+      //GUILocalizeStrings.Clear();
+      //GUILocalizeStrings.Load(btnLanguage.SelectedLabel); //Config.GetFile(Config.Dir.Language, btnLanguage.SelectedLabel + @"\strings.xml"));
       GUIWindowManager.OnResize();
       GUIWindowManager.ActivateWindow(GetID); // without this you cannot change skins / lang any more..
       GUIControl.FocusControl(GetID, btnLanguage.GetID);

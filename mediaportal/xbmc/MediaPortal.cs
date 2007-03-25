@@ -98,7 +98,7 @@ public class MediaPortalApp : D3DApp, IRender
   private bool _suspended = false;
   private bool _onResumeRunning = false;
   protected string _dateFormat = String.Empty;
- 
+
 #if AUTOUPDATE
   string m_strNewVersion = "";
     bool m_bNewVersionAvailable = false;
@@ -342,41 +342,41 @@ public class MediaPortalApp : D3DApp, IRender
       try
       {
 #endif
-        if (splashScreen != null)
-        {
-          splashScreen.SetInformation("Initializing DirectX...");
-        }
-        MediaPortalApp app = new MediaPortalApp();
-        Log.Info("Main: Initializing DirectX");
-        if (app.CreateGraphicsSample())
-        {
-          IMessageFilter filter = new ThreadMessageFilter(app);
-          Application.AddMessageFilter(filter);
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Initializing DirectX...");
+      }
+      MediaPortalApp app = new MediaPortalApp();
+      Log.Info("Main: Initializing DirectX");
+      if (app.CreateGraphicsSample())
+      {
+        IMessageFilter filter = new ThreadMessageFilter(app);
+        Application.AddMessageFilter(filter);
 
-          // Initialize Input Devices
-          InputDevices.Init();
+        // Initialize Input Devices
+        InputDevices.Init();
 
-          try
-          {
-            //app.PreRun();
-            Log.Info("Main: Running");
-            GUIGraphicsContext.BlankScreen = false;
-            Application.Run(app);
-            Debug.WriteLine("after Application.Run");
-          }
-          //#if !DEBUG
-          catch (Exception ex)
-          {
-            Log.Error(ex);
-            Log.Error("MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
-          }
-          //#endif
-          finally
-          {
-            Application.RemoveMessageFilter(filter);
-          }
-          app.OnExit();
+        try
+        {
+          //app.PreRun();
+          Log.Info("Main: Running");
+          GUIGraphicsContext.BlankScreen = false;
+          Application.Run(app);
+          Debug.WriteLine("after Application.Run");
         }
+        //#if !DEBUG
+        catch (Exception ex)
+        {
+          Log.Error(ex);
+          Log.Error("MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        }
+        //#endif
+        finally
+        {
+          Application.RemoveMessageFilter(filter);
+        }
+        app.OnExit();
+      }
 #if !DEBUG
       }
       catch (Exception ex)
@@ -531,7 +531,7 @@ public class MediaPortalApp : D3DApp, IRender
     catch (Exception)
     {
       m_strSkin = "BlueTwo";
-      m_strLanguage = "english";
+      m_strLanguage = "English";
     }
     SetStyle(ControlStyles.Opaque, true);
     SetStyle(ControlStyles.UserPaint, true);
@@ -864,12 +864,12 @@ public class MediaPortalApp : D3DApp, IRender
       HandleMessage();
       FrameMove();
       if (GUIGraphicsContext.UseSeparateRenderThread)
-      {        
+      {
         // the part of FullRender() [ from Render3DEnvironment(); ] which is needed on Resume...
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
         {
           RecoverDevice();
-        }        
+        }
       }
       else
       {
@@ -1100,7 +1100,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     GUIGraphicsContext.Skin = m_strSkin;
     GUIGraphicsContext.ActiveForm = Handle;
-    GUILocalizeStrings.Load(Config.GetFile(Config.Dir.Language, m_strLanguage, "strings.xml"));
+    GUILocalizeStrings.Load(m_strLanguage); //Config.GetFile(Config.Dir.Language, m_strLanguage, "strings.xml"));
 
     if (splashScreen != null)
       splashScreen.SetInformation("Initialize texture manager...");
@@ -1108,23 +1108,23 @@ public class MediaPortalApp : D3DApp, IRender
     GUITextureManager.Init();
     if (splashScreen != null)
       splashScreen.SetInformation("Loading fonts...");
-    
+
     GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
 
     if (splashScreen != null)
       splashScreen.SetInformation("Initializing fonts...");
-    
+
     GUIFontManager.InitializeDeviceObjects();
 
     if (splashScreen != null)
       splashScreen.SetInformation("Loading skin...");
-    
+
     Log.Info("Main: Loading {0} skin", m_strSkin);
     GUIWindowManager.Initialize();
 
     if (splashScreen != null)
       splashScreen.SetInformation("Loading window plugins...");
-    
+
     PluginManager.LoadWindowPlugins();
 
     Log.Info("Main: Loading windowmanager");
@@ -1148,7 +1148,7 @@ public class MediaPortalApp : D3DApp, IRender
         GUIGraphicsContext.Load();
         GUIWindowManager.OnResize();
       }
-    }    
+    }
 
     Log.Info("Main: Initializing windowmanager");
     GUIWindowManager.PreInit();
@@ -1162,10 +1162,10 @@ public class MediaPortalApp : D3DApp, IRender
     }
 
     if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml")))
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);    
-    else    
+      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+    else
       GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
-    
+
     Log.Info("Main: Initialized skin");
 
     if (GUIGraphicsContext.DX9Device != null)
@@ -1693,7 +1693,7 @@ public class MediaPortalApp : D3DApp, IRender
 
             Win32API.EnableStartBar(true);
             Win32API.ShowStartBar(true);
-            if(g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
+            if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
             {
               if (g_Player.Volume > 0)
               {
@@ -1735,10 +1735,10 @@ public class MediaPortalApp : D3DApp, IRender
 
               if (g_Player.Paused && !GUIGraphicsContext.IsVMR9Exclusive)
                 g_Player.Pause();
-             
+
 
             }
-             
+
           }
           return;
         //reboot pc
@@ -2478,9 +2478,9 @@ public class MediaPortalApp : D3DApp, IRender
     Restore();
   }
 
- 
+
   #endregion
-  
+
 
 #if AUTOUPDATE
   private void MediaPortal_Closed(object sender, EventArgs e)
@@ -2732,7 +2732,7 @@ public class MediaPortalApp : D3DApp, IRender
           if (m_iVolume > 0 && (g_Player.IsVideo || g_Player.IsTV))
           {
             g_Player.Volume = m_iVolume;
-            if(g_Player.Paused)
+            if (g_Player.Paused)
               g_Player.Pause();
           }
 

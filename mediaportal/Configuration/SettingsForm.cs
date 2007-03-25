@@ -117,7 +117,9 @@ namespace MediaPortal.Configuration
       {
         strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
       }
-      GUILocalizeStrings.Load(Config.GetFile(Config.Dir.Language,  strLanguage , "strings.xml"));
+      // GUILocalizeStrings.Load(Config.GetFile(Config.Dir.Language,  strLanguage , "strings.xml"));
+      GUILocalizeStrings.Load(strLanguage);
+
 
       // Register Bass.Net
       BassRegistration.BassRegistration.Register();

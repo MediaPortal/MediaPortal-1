@@ -119,6 +119,11 @@
     <Compile Include="Configuration\PluginIconsAttribute.cs" />
     <Compile Include="Configuration\Settings.cs" />
     <Compile Include="Configuration\XmlSettingsProvider.cs" />
+    <Compile Include="Localisation\LocalisationProvider.cs" />
+    <Compile Include="Localisation\ILocalisaton.cs" />
+    <Compile Include="Localisation\StringsFile\StringLocalised.cs" />
+    <Compile Include="Localisation\StringsFile\StringSection.cs" />
+    <Compile Include="Localisation\StringsFile\StringFile.cs" />
     <Compile Include="ServiceImplementations\Log.cs" />
     <Compile Include="ServiceImplementations\LogImpl.cs" />
     <Compile Include="Services\GlobalServiceProvider.cs" />
