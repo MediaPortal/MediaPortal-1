@@ -984,6 +984,9 @@
     <String id="2052">Rezept durchsuchen</String>
     <String id="2053">Kategorie</String>
     <String id="2054">Kein Eintrag!</String>
+		<string id="2062">schlecht</string>
+		<string id="2063">mittel</string>
+		<string id="2064">gut</string>
     <String id="2065">Welche mpeg Datei soll nach divx konvertiert werden:</String>
     <String id="2066">Mpeg nach divx</String>
     <String id="2067">Welche dvr-ms Datei soll nach divx konvertiert werden:</String>
