@@ -32,6 +32,7 @@ namespace MediaPortal.Localisation.LanguageStrings
   public class StringLocalised
   {
     #region Variables
+    public string language;
     [XmlAttribute("id")]
     public int id;
     [XmlAttribute("prefix")]

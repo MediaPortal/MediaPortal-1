@@ -47,6 +47,7 @@ namespace MediaPortal.GUI.Library
     static LocalisationProvider _stringProvider;
     static Dictionary<string, string> _cultures;
     static string[] _languages;
+    static bool _prefix;
     #endregion
 
     #region Constructors/Destructors
@@ -84,7 +85,7 @@ namespace MediaPortal.GUI.Library
       if (language != null)
         cultureName = GetCultureName(language);
 
-      Log.Info("  Loading localised Strings - Path: {0} Culture: {1}  Langauge: {2} Prefix: {3}", directory, cultureName, language, isPrefixEnabled);
+      Log.Info("  Loading localised Strings - Path: {0} Culture: {1}  Language: {2} Prefix: {3}", directory, cultureName, language, isPrefixEnabled);
 
       _stringProvider = new LocalisationProvider(directory, cultureName, isPrefixEnabled);
 
@@ -123,7 +124,7 @@ namespace MediaPortal.GUI.Library
       if (_stringProvider == null)
         Load(null);
 
-      string translation = _stringProvider.Get("unmapped", dwCode);
+      string translation = _stringProvider.GetString("unmapped", dwCode);
       // if parameters or the translation is null, return the translation.
       if ((translation == null) || (parameters == null))
       {
@@ -156,7 +157,7 @@ namespace MediaPortal.GUI.Library
       if (_stringProvider == null)
         Load(null);
 
-      string translation = _stringProvider.Get("unmapped", dwCode);
+      string translation = _stringProvider.GetString("unmapped", dwCode);
 
       if (translation == null)
       {
@@ -179,13 +180,25 @@ namespace MediaPortal.GUI.Library
       // This check will save us from catching unnecessary exceptions.
       if (!char.IsNumber(strLabel, 0))
         return;
+
+      int dwLabelID;
+
       try
       {
-        int dwLabelID = System.Int32.Parse(strLabel);
-        strLabel = _stringProvider.Get("unmapped", dwLabelID);
+        dwLabelID = System.Int32.Parse(strLabel);
       }
-      catch (FormatException)
+      catch (FormatException e)
       {
+        Log.Error(e);
+        strLabel = String.Empty;
+        return;
+      }
+
+      strLabel = _stringProvider.GetString("unmapped", dwLabelID);
+      if (strLabel == null)
+      {
+        Log.Error("No translation found for id {0}", dwLabelID);
+        strLabel = String.Empty;
       }
     }
 

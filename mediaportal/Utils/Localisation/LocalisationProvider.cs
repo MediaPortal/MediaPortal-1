@@ -6,11 +6,12 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
 using System.Globalization;
+using MediaPortal.Services;
 using MediaPortal.Localisation.LanguageStrings;
 
 namespace MediaPortal.Localisation
 {
-  public class LocalisationProvider : ILocalisation
+  public class LocalisationProvider
   {
     #region Variables
     Dictionary<string, Dictionary<int, StringLocalised>> _languageStrings;
@@ -101,7 +102,17 @@ namespace MediaPortal.Localisation
       ReloadAll();
     }
 
-    public string Get(string section, int id)
+    public StringLocalised Get(string section, int id)
+    {
+      if (_languageStrings.ContainsKey(section.ToLower()) && _languageStrings[section].ContainsKey(id))
+      {
+        return _languageStrings[section.ToLower()][id];
+      }
+
+      return null;
+    }
+
+    public string GetString(string section, int id)
     {
       if (_languageStrings.ContainsKey(section.ToLower()) && _languageStrings[section].ContainsKey(id))
       {
@@ -115,9 +126,9 @@ namespace MediaPortal.Localisation
       return null;
     }
 
-    public string Get(string section, int id, object[] parameters)
+    public string GetString(string section, int id, object[] parameters)
     {
-      string translation = Get(section, id);
+      string translation = GetString(section, id);
       // if parameters or the translation is null, return the translation.
       if ((translation == null) || (parameters == null))
       {
@@ -186,20 +197,21 @@ namespace MediaPortal.Localisation
     {
       // Load User Custom strings
       if (_userLanguage)
-        GetStrings(_userDirectory, "strings_user.xml");
+        LoadStrings(_userDirectory, "user", false);
     }
 
     private void LoadStrings(string directory)
     {
       // Local Language
-      GetStrings(directory, "strings_" + _currentLanguage.Name + ".xml");
+      LoadStrings(directory, _currentLanguage.Name, false);
 
       // Parent Language
       if (!_currentLanguage.IsNeutralCulture)
-        GetStrings(directory, "strings_" + _currentLanguage.Parent.Name + ".xml");
+        LoadStrings(directory, _currentLanguage.Parent.Name, false);
 
       // Default to English
-      GetStrings(directory, "strings_en.xml");
+      if (_currentLanguage.Name != "en")
+        LoadStrings(directory, "en", true);
     }
 
     private void ReloadAll()
@@ -253,8 +265,11 @@ namespace MediaPortal.Localisation
       }
     }
 
-    private void GetStrings(string directory, string filename)
+    private void LoadStrings(string directory, string language, bool log)
     {
+      string filename = "strings_" + language + ".xml";
+      GlobalServiceProvider.Get<ILog>().Info("    Loading strings file: {0}", filename);
+
       string path = Path.Combine(directory, filename);
       if (File.Exists(path))
       {
@@ -292,7 +307,12 @@ namespace MediaPortal.Localisation
           foreach (StringLocalised languageString in section.localisedStrings)
           {
             if (!newSection.ContainsKey(languageString.id))
+            {
+              languageString.language = language;
               newSection.Add(languageString.id, languageString);
+              if (log)
+                GlobalServiceProvider.Get<ILog>().Info("    String not found, using English: {0}", languageString.ToString());
+            }
           }
 
           if (newSection.Count > 0)
