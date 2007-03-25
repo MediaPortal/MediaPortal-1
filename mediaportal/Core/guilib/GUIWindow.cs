@@ -172,8 +172,8 @@ namespace MediaPortal.GUI.Library
       WINDOW_MY_BURNER = 760,
       WINDOW_DIALOG_TVGUIDE = 761,
       WINDOW_RADIO_GUIDE = 762,
-      WINDOW_VIRTUAL_KEYBOARD = 10002,
-      WINDOW_VIRTUAL_WEB_KEYBOARD = 10003, // by Devo
+      WINDOW_VIRTUAL_KEYBOARD = 1002,
+      WINDOW_VIRTUAL_WEB_KEYBOARD = 1003, // by Devo
       WINDOW_DIALOG_SELECT = 2000,
       WINDOW_MUSIC_INFO = 2001,
       WINDOW_DIALOG_OK = 2002,
@@ -222,6 +222,8 @@ namespace MediaPortal.GUI.Library
       WINDOW_RADIO_LASTFM = 7890,
       WINDOW_MUSIC_MENU = 8888, // for harley
       
+
+      // Please use IDs up to 9999 only. Let everything above be reserved for external Plugin developers without SVN access.
 
       // IMPORTANT!!! WHEN ADDING NEW WINDOW IDs,
       // ADD DIALOGS TO InputMappingForm.cs BLACKLIST!!!
