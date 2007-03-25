@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-  <id>19000</id>
+  <id>7776</id>
   <defaultcontrol>10</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <define>#header.label:19001</define>
+  <define>#header.label:7776</define>
   <define>#header.image:tetris\logo.png</define>
   <define>#header.hover:</define>
   <controls>
