@@ -447,6 +447,28 @@ namespace MyTv
       LoadChannels();
       RenderTvGuide();
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
+
+      if (ChannelNavigator.Card != null)
+      {
+        if (ChannelNavigator.Card.IsTimeShifting)
+        {
+          Uri uri = new Uri(ChannelNavigator.Card.TimeShiftFileName, UriKind.Absolute);
+          for (int i = 0; i < TvPlayerCollection.Instance.Count; ++i)
+          {
+            if (TvPlayerCollection.Instance[i].Source == uri)
+            {
+              MediaPlayer player = TvPlayerCollection.Instance[i];
+              VideoDrawing videoDrawing = new VideoDrawing();
+              videoDrawing.Player = player;
+              videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
+              DrawingBrush videoBrush = new DrawingBrush();
+              videoBrush.Drawing = videoDrawing;
+              videoWindow.Fill = videoBrush;
+              break;
+            }
+          }
+        }
+      }
     }
 
     void TvGuide_SizeChanged(object sender, SizeChangedEventArgs e)

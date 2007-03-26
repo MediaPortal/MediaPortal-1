@@ -31,14 +31,7 @@ namespace MyTv
 
   public partial class TvHome : System.Windows.Controls.Page//System.Windows.Window
   {
-    [DllImport("Ole32.Dll")]
-    public static extern int CreateBindCtx(int reserved, out IBindCtx bindCtx);
-    [DllImport("ole32.dll", ExactSpelling = true)]
-    private static extern int GetRunningObjectTable(int r, out IRunningObjectTable pprot);
-    [DllImport("ole32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
-    private static extern int CreateItemMoniker(string delim, string item, out IMoniker ppmk);
-
-    MediaPlayer _mediaPlayer;
+    TvMediaPlayer _mediaPlayer;
     public TvHome()
     {
       this.ShowsNavigationUI = false;
@@ -76,6 +69,27 @@ namespace MyTv
         this.NavigationService.Navigate(new Uri("TvSetup.xaml", UriKind.Relative));
       }
       UpdateInfoBox();
+      if (ChannelNavigator.Card != null)
+      {
+        if (ChannelNavigator.Card.IsTimeShifting)
+        {
+          Uri uri = new Uri(ChannelNavigator.Card.TimeShiftFileName, UriKind.Absolute);
+          for (int i = 0; i < TvPlayerCollection.Instance.Count; ++i)
+          {
+            if (TvPlayerCollection.Instance[i].Source == uri)
+            {
+              _mediaPlayer = TvPlayerCollection.Instance[i];
+              VideoDrawing videoDrawing = new VideoDrawing();
+              videoDrawing.Player = _mediaPlayer;
+              videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
+              DrawingBrush videoBrush = new DrawingBrush();
+              videoBrush.Drawing = videoDrawing;
+              videoWindow.Fill = videoBrush;
+              break;
+            }
+          }
+        }
+      }
     }
 
 
@@ -117,16 +131,8 @@ namespace MyTv
       if (_mediaPlayer != null)
       {
         videoWindow.Fill = new SolidColorBrush(Color.FromArgb(0xff, 0, 0, 0));
-        _mediaPlayer.Stop();
-        _mediaPlayer.Close();
+        _mediaPlayer.Dispose();
         _mediaPlayer = null;
-        if (ChannelNavigator.Card != null)
-        {
-          if (ChannelNavigator.Card.IsTimeShifting)
-          {
-            ChannelNavigator.Card.StopTimeShifting();
-          }
-        }
       }
       else
       {
@@ -139,17 +145,6 @@ namespace MyTv
 
     void OnChannelClicked(object sender, EventArgs args)
     {
-      if (_mediaPlayer != null)
-      {
-        string duration = "-";
-        if (_mediaPlayer.NaturalDuration != null)
-          duration = _mediaPlayer.NaturalDuration.TimeSpan.ToString();
-
-        labelDate.Content = String.Format("{0} {1} {2} {3} {4}",
-          _mediaPlayer.HasVideo, _mediaPlayer.HasAudio, _mediaPlayer.IsBuffering, _mediaPlayer.Position.ToString(), duration);
-        _mediaPlayer.Position = new TimeSpan(0, 0, 0, 0);
-        return;
-      }
       MpMenu dlgMenu = new MpMenu();
       Window w = Window.GetWindow(this);
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -171,7 +166,7 @@ namespace MyTv
     void OnScheduledClicked(object sender, EventArgs args)
     {
       if (_mediaPlayer == null) return;
-      _mediaPlayer.Position = new TimeSpan(0,0,0);
+      _mediaPlayer.Position = new TimeSpan(0, 0, 0);
     }
 
     void ViewChannel(Channel channel)
@@ -187,16 +182,19 @@ namespace MyTv
         ChannelNavigator.Card = card;
         if (_mediaPlayer == null)
         {
-          
-          _mediaPlayer = new MediaPlayer();
-          _mediaPlayer.Open(new Uri(card.TimeShiftFileName, UriKind.Absolute));
+          _mediaPlayer = TvPlayerCollection.Instance.Get(card, new Uri(card.TimeShiftFileName, UriKind.Absolute));
           VideoDrawing videoDrawing = new VideoDrawing();
           videoDrawing.Player = _mediaPlayer;
-          videoDrawing.Rect = new Rect(0, 0, 720, 576);
+          videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
           DrawingBrush videoBrush = new DrawingBrush();
           videoBrush.Drawing = videoDrawing;
           videoWindow.Fill = videoBrush;
           videoDrawing.Player.Play();
+        }
+        else
+        {
+          if (_mediaPlayer.NaturalDuration.HasTimeSpan)
+            _mediaPlayer.Position = _mediaPlayer.NaturalDuration.TimeSpan;
         }
         buttonTvOnOff.IsChecked = true;
         UpdateInfoBox();

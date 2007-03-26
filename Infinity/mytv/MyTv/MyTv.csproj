@@ -143,6 +143,8 @@
       <SubType>Code</SubType>
       <DependentUpon>TvGuide.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TvMediaPlayer.cs" />
+    <Compile Include="TvPlayerCollection.cs" />
     <Compile Include="TvSetup.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>TvSetup.xaml</DependentUpon>
