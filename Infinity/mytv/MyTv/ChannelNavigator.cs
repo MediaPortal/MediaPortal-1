@@ -11,6 +11,7 @@ namespace MyTv
 {
   class ChannelNavigator
   {
+    static VirtualCard _card;
     static Channel _selectedChannel;
     static int _currentgroup = 0;
     static List<ChannelGroup> _groups = new List<ChannelGroup>();
@@ -103,5 +104,16 @@ namespace MyTv
 
     }
 
+    static public VirtualCard Card
+    {
+      get
+      {
+        return _card;
+      }
+      set
+      {
+        _card = value;
+      }
+    }
   }
 }

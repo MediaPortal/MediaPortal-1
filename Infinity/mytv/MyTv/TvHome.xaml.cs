@@ -120,6 +120,13 @@ namespace MyTv
         _mediaPlayer.Stop();
         _mediaPlayer.Close();
         _mediaPlayer = null;
+        if (ChannelNavigator.Card != null)
+        {
+          if (ChannelNavigator.Card.IsTimeShifting)
+          {
+            ChannelNavigator.Card.StopTimeShifting();
+          }
+        }
       }
       else
       {
@@ -164,26 +171,7 @@ namespace MyTv
     void OnScheduledClicked(object sender, EventArgs args)
     {
       if (_mediaPlayer == null) return;
-      IRunningObjectTable rot = null;
-      IMoniker mk = null;
-      int hr = GetRunningObjectTable(0, out rot);
-      CreateItemMoniker("!", "TsFileSource", out mk);
-      object tsFileSourceObj;
-      rot.GetObject(mk, out tsFileSourceObj);
-      if (tsFileSourceObj != null)
-      {
-        IFilterGraph graph = tsFileSourceObj as IFilterGraph;
-        if (graph != null)
-        {
-          IMediaSeeking seekingInterface = graph as IMediaSeeking;
-          if (seekingInterface != null)
-          {
-            long lTime = (long)0;
-            long pStop = 0;
-            hr = seekingInterface.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-          }
-        }
-      }
+      _mediaPlayer.Position = new TimeSpan(0,0,0);
     }
 
     void ViewChannel(Channel channel)
@@ -193,21 +181,15 @@ namespace MyTv
 
       User user = new User();
       TvResult succeeded = TvResult.Succeeded;
-      //succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
+      succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
       if (succeeded == TvResult.Succeeded)
       {
+        ChannelNavigator.Card = card;
         if (_mediaPlayer == null)
         {
-#if NOTUSED
-          //_mediaPlayer = new MediaElement();
-          //_mediaPlayer.Source=new Uri(@"C:\media\live2-1.ts.tsbuffer", UriKind.Absolute);
-          //VisualBrush brush = new VisualBrush(_mediaPlayer);
-          //videoWindow.Fill = brush;
-          //_mediaPlayer.Open(new Uri(@"C:\media\live2-1.ts.tsbuffer", UriKind.Absolute));
-
+          
           _mediaPlayer = new MediaPlayer();
-          //_mediaPlayer.Open(new Uri(card.TimeShiftFileName, UriKind.Absolute));
-          _mediaPlayer.Open(new Uri(@"C:\media\live2-1.ts.tsbuffer", UriKind.Absolute));
+          _mediaPlayer.Open(new Uri(card.TimeShiftFileName, UriKind.Absolute));
           VideoDrawing videoDrawing = new VideoDrawing();
           videoDrawing.Player = _mediaPlayer;
           videoDrawing.Rect = new Rect(0, 0, 720, 576);
@@ -215,10 +197,9 @@ namespace MyTv
           videoBrush.Drawing = videoDrawing;
           videoWindow.Fill = videoBrush;
           videoDrawing.Player.Play();
-          buttonTvOnOff.IsChecked = true;
-#endif
-          UpdateInfoBox();
         }
+        buttonTvOnOff.IsChecked = true;
+        UpdateInfoBox();
       }
       else
       {
