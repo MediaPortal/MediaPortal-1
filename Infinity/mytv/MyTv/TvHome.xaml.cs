@@ -31,14 +31,28 @@ namespace MyTv
 
   public partial class TvHome : System.Windows.Controls.Page//System.Windows.Window
   {
+    #region variables
     TvMediaPlayer _mediaPlayer;
+    #endregion
+
+    #region ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvHome"/> class.
+    /// </summary>
     public TvHome()
     {
       this.ShowsNavigationUI = false;
       WindowTaskbar.Show();
       InitializeComponent();
     }
+    #endregion
 
+
+    /// <summary>
+    /// Called when screen is loaded
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
       // Sets keyboard focus on the first Button in the sample.
@@ -93,6 +107,11 @@ namespace MyTv
     }
 
 
+    /// <summary>
+    /// Called when mouse enters a button
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.Input.MouseEventArgs"/> instance containing the event data.</param>
     void OnMouseEnter(object sender, MouseEventArgs e)
     {
       IInputElement b = sender as IInputElement;
@@ -102,11 +121,21 @@ namespace MyTv
       }
     }
 
+    /// <summary>
+    /// Called when tv guide button is clicked.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     void OnTvGuideClicked(object sender, EventArgs args)
     {
       this.NavigationService.Navigate(new Uri("TvGuide.xaml", UriKind.Relative));
     }
 
+    /// <summary>
+    /// Called when recordnow button gets clicked
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     void OnRecordClicked(object sender, EventArgs args)
     {
       Window window = (Window)this.Parent;
@@ -126,6 +155,12 @@ namespace MyTv
       }
     }
 
+    /// <summary>
+    /// Called when tv on/off button gets clicked
+    /// 
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     void OnTvOnOff(object sender, EventArgs args)
     {
       if (_mediaPlayer != null)
@@ -143,8 +178,14 @@ namespace MyTv
       }
     }
 
+    /// <summary>
+    /// Called when Channel button gets clicked.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     void OnChannelClicked(object sender, EventArgs args)
     {
+      //show dialog menu showing all channels of current tvgroup
       MpMenu dlgMenu = new MpMenu();
       Window w = Window.GetWindow(this);
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -157,20 +198,34 @@ namespace MyTv
       }
 
       dlgMenu.ShowDialog();
-      if (dlgMenu.SelectedIndex < 0) return;
+      if (dlgMenu.SelectedIndex < 0) return;//nothing selected
+
+      //get the selected tv channel
       GroupMap selectedMap = groups[dlgMenu.SelectedIndex] as GroupMap;
       ChannelNavigator.Instance.SelectedChannel = selectedMap.ReferencedChannel();
+
+      //and view it
       ViewChannel(ChannelNavigator.Instance.SelectedChannel);
     }
 
+    /// <summary>
+    /// Called when scheduled button gets clicked].
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     void OnScheduledClicked(object sender, EventArgs args)
     {
       if (_mediaPlayer == null) return;
       _mediaPlayer.Position = new TimeSpan(0, 0, 0);
     }
 
+    /// <summary>
+    /// Start viewing the tv channel
+    /// </summary>
+    /// <param name="channel">The channel.</param>
     void ViewChannel(Channel channel)
     {
+      //tell server to start timeshifting the channel
       TvServer server = new TvServer();
       VirtualCard card;
 
@@ -179,10 +234,15 @@ namespace MyTv
       succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
       if (succeeded == TvResult.Succeeded)
       {
+        //timeshifting worked, now view the channel
         ChannelNavigator.Instance.Card = card;
+        //do we already have a media player ?
         if (_mediaPlayer == null)
         {
+          //no then create a new media player 
           _mediaPlayer = TvPlayerCollection.Instance.Get(card, new Uri(card.TimeShiftFileName, UriKind.Absolute));
+
+          //create video drawing which draws the video in the video window
           VideoDrawing videoDrawing = new VideoDrawing();
           videoDrawing.Player = _mediaPlayer;
           videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
@@ -193,15 +253,28 @@ namespace MyTv
         }
         else
         {
+          //we already have a media player, seek to end of file
           if (_mediaPlayer.NaturalDuration.HasTimeSpan)
             _mediaPlayer.Position = _mediaPlayer.NaturalDuration.TimeSpan;
         }
+        //set tv button on
         buttonTvOnOff.IsChecked = true;
+
+        //update screen
         UpdateInfoBox();
       }
       else
       {
+        //close media player
+        if (_mediaPlayer != null)
+        {
+          _mediaPlayer.Dispose();
+          _mediaPlayer = null;
+        }
+        //tun tv button off
         buttonTvOnOff.IsChecked = false;
+
+        //show error to user
         MpDialogOk dlg = new MpDialogOk();
         Window w = Window.GetWindow(this);
         dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -248,6 +321,9 @@ namespace MyTv
       }
     }
 
+    /// <summary>
+    /// Updates the info like program title,description,time start/end and progress bar on screen.
+    /// </summary>
     void UpdateInfoBox()
     {
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");

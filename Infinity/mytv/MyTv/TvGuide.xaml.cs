@@ -71,10 +71,13 @@ namespace MyTv
 
     #region tvguide render methods
 
+    /// <summary>
+    /// Loads the channels of the current selected group 
+    /// and updates the date/time onscreen
+    /// </summary>
     void LoadChannels()
     {
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
-
       _groupMaps = ChannelNavigator.Instance.CurrentGroup.ReferringGroupMap();
     }
 
@@ -118,6 +121,7 @@ namespace MyTv
         RenderMultiMode(now, end, tvChannels);
     }
 
+    #region single-tv channel mode rendering
     /// <summary>
     /// Renders the tvguide in single channel mode.
     /// </summary>
@@ -185,7 +189,9 @@ namespace MyTv
         Keyboard.Focus(_grid.Rows[0].Colums[0]);
       }
     }
+    #endregion
 
+    #region multi-channel mode rendering
     /// <summary>
     /// Renders the tvguide in multi channel mode.
     /// </summary>
@@ -256,6 +262,16 @@ namespace MyTv
       Keyboard.Focus(buttonToSelect);
     }
 
+    /// <summary>
+    /// Renders a tv channel row for multi-channel mode.
+    /// </summary>
+    /// <param name="rowNr">The row nr.</param>
+    /// <param name="startTime">The start time.</param>
+    /// <param name="endTime">The end time.</param>
+    /// <param name="channel">The channel.</param>
+    /// <param name="programs">The programs.</param>
+    /// <param name="isBottom">if set to <c>true</c> [is bottom].</param>
+    /// <returns></returns>
     Button RenderMultiChannelRow(int rowNr, DateTime startTime, DateTime endTime, Channel channel, List<Program> programs, bool isBottom)
     {
       Button buttonToSelect = null;
@@ -291,7 +307,16 @@ namespace MyTv
       return buttonToSelect;
     }
 
-
+    /// <summary>
+    /// Renders the cells of a row in multi-channel mode.
+    /// </summary>
+    /// <param name="rowNr">The row nr.</param>
+    /// <param name="now">The now.</param>
+    /// <param name="end">The end.</param>
+    /// <param name="channel">The channel.</param>
+    /// <param name="programs">The programs.</param>
+    /// <param name="isBottom">if set to <c>true</c> [is bottom].</param>
+    /// <returns></returns>
     Button RenderMultiChannelCells(int rowNr, DateTime now, DateTime end, Channel channel, List<Program> programs, bool isBottom)
     {
       Button buttonToSelect = null;
@@ -413,7 +438,11 @@ namespace MyTv
       }
       return buttonToSelect;
     }
+    #endregion
 
+    /// <summary>
+    /// Updates the title/description/start-end times and genre onscreen.
+    /// </summary>
     void UpdateInfoBox()
     {
       if (_selectedItem == null)
@@ -440,6 +469,12 @@ namespace MyTv
     #endregion
 
     #region event handlers
+    /// <summary>
+    /// Called when windows is loaded
+    /// Refreshes & redraws the entire tvguide screen
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
       _maxChannels = (int)((this.ActualHeight - 300) / 34);
@@ -471,6 +506,11 @@ namespace MyTv
       }
     }
 
+    /// <summary>
+    /// Handles the SizeChanged event of the TvGuide control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.Windows.SizeChangedEventArgs"/> instance containing the event data.</param>
     void TvGuide_SizeChanged(object sender, SizeChangedEventArgs e)
     {
       _maxChannels = (int)((this.ActualHeight - 300) / 34);
@@ -478,6 +518,11 @@ namespace MyTv
       RenderTvGuide();
     }
 
+    /// <summary>
+    /// handles the key down event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>
     protected void onKeyDown(object sender, KeyEventArgs e)
     {
       if (_selectedItem == null) return;
@@ -507,7 +552,7 @@ namespace MyTv
         if (e.Key == Key.PageUp)
         {
           _singleRowOffset -= _maxChannels;
-          if (_singleRowOffset < 0) _singleRowOffset = 0 ;
+          if (_singleRowOffset < 0) _singleRowOffset = 0;
           RenderTvGuide();
           e.Handled = true;
         }
@@ -663,6 +708,11 @@ namespace MyTv
 
     }
 
+    /// <summary>
+    /// Called when user clicks on a tv channel
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     void OnClickChannel(object sender, RoutedEventArgs e)
     {
       if (_singleMode)
@@ -686,6 +736,11 @@ namespace MyTv
       }
     }
 
+    /// <summary>
+    /// Called when a button receives focus
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.Input.KeyboardFocusChangedEventArgs"/> instance containing the event data.</param>
     void OnButtonGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
     {
       Button b = sender as Button;
@@ -695,6 +750,11 @@ namespace MyTv
       UpdateInfoBox();
     }
 
+    /// <summary>
+    /// Called when the mouse enters a button.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.Input.MouseEventArgs"/> instance containing the event data.</param>
     void OnMouseEnter(object sender, MouseEventArgs e)
     {
       if (!_reactOnMouseEvents)
