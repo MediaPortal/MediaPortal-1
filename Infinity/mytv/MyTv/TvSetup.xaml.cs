@@ -90,7 +90,7 @@ namespace MyTv
           node.InnerText = connectionString;
           nodeProvider.InnerText = provider;
           doc.Save("gentle.config");
-          ChannelNavigator.Reload();
+          ChannelNavigator.Instance.Initialize();
           UserSettings.SetString("tv", "serverHostName", RemoteControl.HostName);
 
         }

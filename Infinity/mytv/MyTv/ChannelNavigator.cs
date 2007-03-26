@@ -11,11 +11,31 @@ namespace MyTv
 {
   class ChannelNavigator
   {
-    static VirtualCard _card;
-    static Channel _selectedChannel;
-    static int _currentgroup = 0;
-    static List<ChannelGroup> _groups = new List<ChannelGroup>();
-    static public void Reload()
+    #region variables
+    static ChannelNavigator _instance = null;
+    VirtualCard _card;
+    Channel _selectedChannel;
+    int _currentgroup = 0;
+    List<ChannelGroup> _groups = new List<ChannelGroup>();
+    #endregion
+
+    /// <summary>
+    /// Gets the ChannelNavigator instance.
+    /// </summary>
+    /// <value>The instance.</value>
+    static public ChannelNavigator Instance
+    {
+      get
+      {
+        if (_instance == null)
+          _instance = new ChannelNavigator();
+        return _instance;
+      }
+    }
+    /// <summary>
+    /// Loads the tvgroups/channels from the database.
+    /// </summary>
+    public void Initialize()
     {
       _groups.Clear();
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
@@ -83,11 +103,15 @@ namespace MyTv
     /// <summary>
     /// Gets the currently active channel group.
     /// </summary>
-    static public ChannelGroup CurrentGroup
+    public ChannelGroup CurrentGroup
     {
       get { return (ChannelGroup)_groups[_currentgroup]; }
     }
-    static public Channel SelectedChannel
+    /// <summary>
+    /// Gets or sets the selected channel.
+    /// </summary>
+    /// <value>The selected channel.</value>
+    public Channel SelectedChannel
     {
       get
       {
@@ -95,7 +119,7 @@ namespace MyTv
       }
       set
       {
-        if (value != _selectedChannel && value!=null)
+        if (value != _selectedChannel && value != null)
         {
           UserSettings.SetInt("tv", "channel", value.IdChannel);
         }
@@ -104,7 +128,11 @@ namespace MyTv
 
     }
 
-    static public VirtualCard Card
+    /// <summary>
+    /// Gets or sets the card.
+    /// </summary>
+    /// <value>The card.</value>
+    public VirtualCard Card
     {
       get
       {

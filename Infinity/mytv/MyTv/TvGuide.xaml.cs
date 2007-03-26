@@ -75,7 +75,7 @@ namespace MyTv
     {
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
 
-      _groupMaps = ChannelNavigator.CurrentGroup.ReferringGroupMap();
+      _groupMaps = ChannelNavigator.Instance.CurrentGroup.ReferringGroupMap();
     }
 
     /// <summary>
@@ -448,11 +448,11 @@ namespace MyTv
       RenderTvGuide();
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
 
-      if (ChannelNavigator.Card != null)
+      if (ChannelNavigator.Instance.Card != null)
       {
-        if (ChannelNavigator.Card.IsTimeShifting)
+        if (ChannelNavigator.Instance.Card.IsTimeShifting)
         {
-          Uri uri = new Uri(ChannelNavigator.Card.TimeShiftFileName, UriKind.Absolute);
+          Uri uri = new Uri(ChannelNavigator.Instance.Card.TimeShiftFileName, UriKind.Absolute);
           for (int i = 0; i < TvPlayerCollection.Instance.Count; ++i)
           {
             if (TvPlayerCollection.Instance[i].Source == uri)

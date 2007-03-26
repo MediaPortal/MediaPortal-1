@@ -59,7 +59,7 @@ namespace MyTv
         node.InnerText = connectionString;
         nodeProvider.InnerText = provider;
         doc.Save("gentle.config");
-        ChannelNavigator.Reload();
+        ChannelNavigator.Instance.Initialize();
 
         int cards = RemoteControl.Instance.Cards;
         IList channels = Channel.ListAll();
@@ -69,11 +69,11 @@ namespace MyTv
         this.NavigationService.Navigate(new Uri("TvSetup.xaml", UriKind.Relative));
       }
       UpdateInfoBox();
-      if (ChannelNavigator.Card != null)
+      if (ChannelNavigator.Instance.Card != null)
       {
-        if (ChannelNavigator.Card.IsTimeShifting)
+        if (ChannelNavigator.Instance.Card.IsTimeShifting)
         {
-          Uri uri = new Uri(ChannelNavigator.Card.TimeShiftFileName, UriKind.Absolute);
+          Uri uri = new Uri(ChannelNavigator.Instance.Card.TimeShiftFileName, UriKind.Absolute);
           for (int i = 0; i < TvPlayerCollection.Instance.Count; ++i)
           {
             if (TvPlayerCollection.Instance[i].Source == uri)
@@ -136,9 +136,9 @@ namespace MyTv
       }
       else
       {
-        if (ChannelNavigator.SelectedChannel != null)
+        if (ChannelNavigator.Instance.SelectedChannel != null)
         {
-          ViewChannel(ChannelNavigator.SelectedChannel);
+          ViewChannel(ChannelNavigator.Instance.SelectedChannel);
         }
       }
     }
@@ -150,7 +150,7 @@ namespace MyTv
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
       dlgMenu.Items.Clear();
-      IList groups = ChannelNavigator.CurrentGroup.ReferringGroupMap();
+      IList groups = ChannelNavigator.Instance.CurrentGroup.ReferringGroupMap();
       foreach (GroupMap map in groups)
       {
         dlgMenu.Items.Add(new DialogMenuItem(map.ReferencedChannel().Name));
@@ -159,8 +159,8 @@ namespace MyTv
       dlgMenu.ShowDialog();
       if (dlgMenu.SelectedIndex < 0) return;
       GroupMap selectedMap = groups[dlgMenu.SelectedIndex] as GroupMap;
-      ChannelNavigator.SelectedChannel = selectedMap.ReferencedChannel();
-      ViewChannel(ChannelNavigator.SelectedChannel);
+      ChannelNavigator.Instance.SelectedChannel = selectedMap.ReferencedChannel();
+      ViewChannel(ChannelNavigator.Instance.SelectedChannel);
     }
 
     void OnScheduledClicked(object sender, EventArgs args)
@@ -179,7 +179,7 @@ namespace MyTv
       succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
       if (succeeded == TvResult.Succeeded)
       {
-        ChannelNavigator.Card = card;
+        ChannelNavigator.Instance.Card = card;
         if (_mediaPlayer == null)
         {
           _mediaPlayer = TvPlayerCollection.Instance.Get(card, new Uri(card.TimeShiftFileName, UriKind.Absolute));
@@ -251,7 +251,7 @@ namespace MyTv
     void UpdateInfoBox()
     {
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
-      if (ChannelNavigator.SelectedChannel == null)
+      if (ChannelNavigator.Instance.SelectedChannel == null)
       {
         labelStart.Content = "";
         labelTitle.Content = "";
@@ -260,7 +260,7 @@ namespace MyTv
         progressBar.Value = 0;
         return;
       }
-      Program program = ChannelNavigator.SelectedChannel.CurrentProgram;
+      Program program = ChannelNavigator.Instance.SelectedChannel.CurrentProgram;
       if (program == null)
       {
         labelStart.Content = "";
@@ -272,7 +272,7 @@ namespace MyTv
       }
       labelStart.Content = String.Format("{0}-{1}", program.StartTime.ToString("HH:mm"), program.EndTime.ToString("HH:mm"));
       labelTitle.Content = program.Title;
-      labelChannel.Content = ChannelNavigator.SelectedChannel.Name;
+      labelChannel.Content = ChannelNavigator.Instance.SelectedChannel.Name;
       labelDescription.Text = program.Description;
 
       TimeSpan duration = program.EndTime - program.StartTime;

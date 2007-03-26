@@ -7,6 +7,7 @@ namespace MyTv
 {
   public class WindowTaskbar
   {
+    #region imports
     [DllImport("user32.dll", SetLastError = true)]
     static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
     [DllImport("user32.dll")]
@@ -15,10 +16,16 @@ namespace MyTv
     static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
     [DllImportAttribute("user32", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
     public static extern int EnableWindow(IntPtr hwnd, int fEnable);
+    #endregion
 
+    #region constants
     static int SW_HIDE = 0;
     static int SW_SHOW = 5;
+    #endregion
 
+    /// <summary>
+    /// Hides the windows taskbar.
+    /// </summary>
     static public void Hide()
     {
       IntPtr TaskBarWnd;
@@ -30,6 +37,9 @@ namespace MyTv
       }
     }
 
+    /// <summary>
+    /// Shows the windows taskbar.
+    /// </summary>
     static public void Show()
     {
       IntPtr TaskBarWnd;
