@@ -19166,4 +19166,20 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Terratec Cinergy 1200 DVB-C" capturename="Cinergy 1200 DVB-C Capture (BDA)" devid="ven_1131&amp;dev_7146&amp;subsys_1176153b&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBC Network Provider"	checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Cinergy 1200 DVB-C Tuner (BDA)"		checkdevice="true"/>
+        <filter cat="capture"         name="Cinergy 1200 DVB-C Capture (BDA)"	checkdevice="true"/>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
