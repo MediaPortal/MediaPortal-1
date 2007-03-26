@@ -159,7 +159,7 @@ namespace SetupTv.Sections
     {
       mpComboBoxGroup.Items.Clear();
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
-      sb.AddOrderByField(true, "groupName");
+      sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
       IList groups = ObjectFactory.GetCollection(typeof(ChannelGroup), stmt.Execute());
       foreach (ChannelGroup group in groups)
@@ -389,6 +389,28 @@ namespace SetupTv.Sections
         ReOrderGroups();
         mpListViewGroups.EndUpdate();
       }
+    private void RenameGroup()
+    {
+      ListView.SelectedListViewItemCollection items = mpListViewGroups.SelectedItems;
+      if (items.Count != 1) return;
+      ChannelGroup group = (ChannelGroup)items[0].Tag;
+      GroupNameForm dlg = new GroupNameForm(group.GroupName);
+      dlg.ShowDialog(this);
+      if (dlg.GroupName.Length == 0) return;
+      group.GroupName = dlg.GroupName;
+      group.Persist();
+      Init();
+    }
+
+    private void mpButtonRenameGroup_Click(object sender, EventArgs e)
+    {
+      RenameGroup();
+    }
+
+    private void mpListViewGroups_MouseDoubleClick(object sender, MouseEventArgs e)
+    {
+      RenameGroup();
+    }
 
   }
 }

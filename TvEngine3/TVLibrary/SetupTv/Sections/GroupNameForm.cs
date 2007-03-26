@@ -35,6 +35,15 @@ namespace SetupTv.Sections
     public GroupNameForm()
     {
       InitializeComponent();
+      this.Text = "Enter name for new group";
+      mpLabel1.Text = "Please enter the name for the new group";
+    }
+    public GroupNameForm(string groupName)
+    {
+      InitializeComponent();
+      _groupName = groupName;
+      this.Text = "Change name for group";
+      mpLabel1.Text = "Please enter the new name for the group";
     }
 
     private void GroupName_Load(object sender, EventArgs e)
