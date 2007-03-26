@@ -32,6 +32,7 @@
 #define OUTPUT_PACKET_LENGTH 0x6000
 #define BUFFER_LENGTH        0x1000
 extern void LogDebug(const char *fmt, ...) ;
+extern byte* MPEG1AudioFormat;
 
 CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
 :m_duration(duration)
@@ -143,6 +144,35 @@ int CDeMultiplexer::GetAudioStreamCount()
   return streamCount;
 }
 
+void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
+{
+  if (stream <= 7)
+  {
+	    pmt.InitMediaType();
+	    pmt.SetType      (& MEDIATYPE_Audio);
+	    pmt.SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
+	    pmt.SetSampleSize(1);
+	    pmt.SetTemporalCompression(FALSE);
+	    pmt.SetVariableSize();
+      pmt.SetFormatType(&FORMAT_WaveFormatEx);
+      int i=sizeof(MPEG1AudioFormat);
+	    pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
+      
+  }
+  else
+  {
+	    pmt.InitMediaType();
+	    pmt.SetType      (& MEDIATYPE_Audio);
+	    pmt.SetSubtype   (& MEDIASUBTYPE_DOLBY_AC3);
+	    pmt.SetSampleSize(1);
+	    pmt.SetTemporalCompression(FALSE);
+	    pmt.SetVariableSize();
+      pmt.SetFormatType(&FORMAT_WaveFormatEx);
+      int i=sizeof(MPEG1AudioFormat);
+	    pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
+  }
+}
+
 void CDeMultiplexer::Flush()
 {
   LogDebug("demux:flushing");
@@ -240,6 +270,22 @@ CBuffer* CDeMultiplexer::GetAudio()
     return audiobuffer;
   }
   return NULL;
+}
+
+void CDeMultiplexer:: Start()
+{
+  DWORD dwBytesProcessed=0;
+  while (ReadFromFile())
+  {
+    if (dwBytesProcessed>1000000 || GetAudioStreamCount()>0)
+    {
+      m_reader->SetFilePointer(0,FILE_BEGIN);
+      Flush();
+      m_streamPcr=m_duration.StartPcr();
+      return;
+    }
+    dwBytesProcessed+=32712;
+  }
 }
 
 bool CDeMultiplexer::ReadFromFile()

@@ -39,21 +39,23 @@ public:
   CDeMultiplexer( CTsDuration& duration,CTsReaderFilter& filter);
 	virtual ~CDeMultiplexer(void);
 
-  void Flush();
-  CBuffer* GetVideo();
-  CBuffer* GetAudio();
-  CBuffer* GetSubtitle();
-	void OnTsPacket(byte* tsPacket);
-	void OnNewChannel(CChannelInfo& info);
-  void SetFileReader(FileReader* reader);
-  void FillSubtitle(CTsHeader& header, byte* tsPacket);
-  void FillAudio(CTsHeader& header, byte* tsPacket);
-  void FillVideo(CTsHeader& header, byte* tsPacket);
-  CPidTable GetPidTable();
-  void  SetAudioStream(int stream);
-  int   GetAudioStream();
-  void  GetAudioStreamInfo(int stream,char* szName);
-  int   GetAudioStreamCount();
+  void       Start();
+  void       Flush();
+  CBuffer*   GetVideo();
+  CBuffer*   GetAudio();
+  CBuffer*   GetSubtitle();
+	void       OnTsPacket(byte* tsPacket);
+	void       OnNewChannel(CChannelInfo& info);
+  void       SetFileReader(FileReader* reader);
+  void       FillSubtitle(CTsHeader& header, byte* tsPacket);
+  void       FillAudio(CTsHeader& header, byte* tsPacket);
+  void       FillVideo(CTsHeader& header, byte* tsPacket);
+  CPidTable  GetPidTable();
+  void       SetAudioStream(int stream);
+  int        GetAudioStream();
+  void       GetAudioStreamInfo(int stream,char* szName);
+  void       GetAudioStreamType(int stream,CMediaType&  pmt);
+  int        GetAudioStreamCount();
 private:
   bool ReadFromFile();
   CCritSec m_section;

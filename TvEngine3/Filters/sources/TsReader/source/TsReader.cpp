@@ -283,6 +283,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   m_fileDuration->SetFileName(url);
 	m_fileDuration->OpenFile();
   m_demultiplexer.SetFileReader(m_fileReader);
+  m_demultiplexer.Start();
 
   m_duration.SetFileReader(m_fileDuration);
   m_duration.UpdateDuration();
@@ -452,7 +453,14 @@ STDMETHODIMP CTsReaderFilter::Info( long lIndex,AM_MEDIA_TYPE **ppmt,DWORD *pdwF
   }
   if (ppmt)
   {
-    *ppmt=NULL;
+    CMediaType mediaType;
+    m_demultiplexer.GetAudioStreamType((int)lIndex,mediaType);
+    AM_MEDIA_TYPE* mType=(AM_MEDIA_TYPE*)(&mediaType);
+    *ppmt=(AM_MEDIA_TYPE*)CoTaskMemAlloc(sizeof(AM_MEDIA_TYPE));
+    memcpy(*ppmt, mType,sizeof(AM_MEDIA_TYPE));
+
+    (*ppmt)->pbFormat=(BYTE*)CoTaskMemAlloc(mediaType.FormatLength());
+    memcpy((*ppmt)->pbFormat,mType->pbFormat,mediaType.FormatLength());
   }
   return S_OK;
 }
