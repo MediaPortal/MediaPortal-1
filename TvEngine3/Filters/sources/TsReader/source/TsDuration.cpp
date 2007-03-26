@@ -37,6 +37,11 @@ void CTsDuration::SetFileReader(FileReader* reader)
   m_reader=reader;
 }
 
+void CTsDuration::Set(CPcr& startPcr, CPcr& endPcr)
+{
+  m_startPcr=startPcr;
+  m_endPcr=endPcr;
+}
 void CTsDuration::UpdateDuration()
 {
   m_bSearchStart=true;

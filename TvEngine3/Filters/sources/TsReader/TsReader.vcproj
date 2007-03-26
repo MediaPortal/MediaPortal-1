@@ -348,6 +348,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\TSThread.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TSThread.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\VideoPin.cpp"
 				>
 			</File>

@@ -15,6 +15,7 @@ public:
   CRefTime Duration();
   CPcr     StartPcr();
   CPcr     EndPcr();
+  void     Set(CPcr& startPcr, CPcr& endPcr);
 private:
 	FileReader* m_reader;
   CPcr     m_startPcr;

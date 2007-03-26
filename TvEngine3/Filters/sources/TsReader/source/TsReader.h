@@ -24,6 +24,7 @@
 #include "pcrdecoder.h"
 #include "demultiplexer.h"
 #include "TsDuration.h"
+#include "TSThread.h"
 #include <map>
 using namespace std;
 
@@ -35,7 +36,7 @@ class CTsReaderFilter;
 DEFINE_GUID(CLSID_TSReader, 0xb9559486, 0xe1bb, 0x45d3, 0xa2, 0xa2, 0x9a, 0x7a, 0xfe, 0x49, 0xb2, 0x3f);
 
 
-class CTsReaderFilter : public CSource,public IFileSourceFilter, public IAMFilterMiscFlags
+class CTsReaderFilter : public CSource,public TSThread,public IFileSourceFilter, public IAMFilterMiscFlags
 {
 public:
 		DECLARE_IUNKNOWN
@@ -71,6 +72,9 @@ public:
 	double          UpdateDuration();
   CAudioPin*      GetAudioPin();
   CVideoPin*      GetVideoPin();
+
+protected:
+  void ThreadProc();
 private:
 	CAudioPin*	    m_pAudioPin;;
 	CVideoPin*	    m_pVideoPin;

@@ -202,6 +202,7 @@ int CTsReaderFilter::GetPinCount()
 
 STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
 {
+  StartThread();
 	CRefTime runTime=tStart;
 	double msec=(double)runTime.Millisecs();
 	msec/=1000.0;
@@ -217,15 +218,17 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
 
 STDMETHODIMP CTsReaderFilter::Stop()
 {
-		CAutoLock cObjectLock(m_pLock);
+  StopThread();
+	CAutoLock cObjectLock(m_pLock);
 
-		LogDebug("CTsReaderFilter::Stop()");
-		HRESULT hr=CSource::Stop();
-		return hr;
+	LogDebug("CTsReaderFilter::Stop()");
+	HRESULT hr=CSource::Stop();
+	return hr;
 }
 
 STDMETHODIMP CTsReaderFilter::Pause()
 {
+  StopThread();
 	LogDebug("CTsReaderFilter::Pause()");
   CAutoLock cObjectLock(m_pLock);
 
@@ -356,6 +359,18 @@ CAudioPin* CTsReaderFilter::GetAudioPin()
 CVideoPin* CTsReaderFilter::GetVideoPin()
 {
   return m_pVideoPin;
+}
+
+void CTsReaderFilter::ThreadProc()
+{
+  while (!ThreadIsStopping(100))
+	{
+    CTsDuration duration;
+    duration.SetFileReader(m_fileDuration);
+    duration.UpdateDuration();
+    m_duration.Set(duration.StartPcr(), duration.EndPcr());
+    Sleep(1000);
+  }
 }
 ////////////////////////////////////////////////////////////////////////
 //
