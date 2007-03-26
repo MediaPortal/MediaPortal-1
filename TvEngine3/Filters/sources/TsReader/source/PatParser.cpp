@@ -18,6 +18,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma warning(disable:4996)
+#pragma warning(disable:4995)
 #include <windows.h>
 #include <commdlg.h>
 #include <bdatypes.h>
@@ -64,7 +66,7 @@ void CPatParser::CleanUp()
 void  CPatParser::Reset()
 {
 //	Dump();
-	LogDebug("PatParser:Reset()");
+	//LogDebug("PatParser:Reset()");
 	CSectionDecoder::Reset();
   CleanUp();
   m_packetsReceived=0;
@@ -136,6 +138,7 @@ void CPatParser::OnTsPacket(byte* tsPacket)
 		    {
 			    m_iState=Idle;
 			    m_pCallback->OnNewChannel(info);
+	        m_iState=Parsing;
 			    return ;
 		    }
       }
@@ -161,7 +164,7 @@ void CPatParser::OnNewSection(CSection& sections)
 
 	if (version_number!=m_iPatTableVersion)
 	{
-		LogDebug("PatParser: new pat table %d->%d", m_iPatTableVersion,version_number);
+		//LogDebug("PatParser: new pat table %d->%d", m_iPatTableVersion,version_number);
 		CleanUp();
 		m_iPatTableVersion=version_number;
 		m_iState=Parsing;	
@@ -199,7 +202,7 @@ void CPatParser::OnNewSection(CSection& sections)
 		  pmtParser->SetPid(pmtPid);
 			//pmtParser->SetPmtCallBack(this);
 		  m_pmtParsers.push_back( pmtParser );
-			LogDebug("PatParser:  add pmt# %d pid: %x",m_pmtParsers.size(), pmtPid);
+			//LogDebug("PatParser:  add pmt# %d pid: %x",m_pmtParsers.size(), pmtPid);
 			newPmtsAdded=true;
 	  }
   }

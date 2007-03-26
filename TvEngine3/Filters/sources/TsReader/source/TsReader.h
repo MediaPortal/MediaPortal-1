@@ -28,6 +28,7 @@
 #include <map>
 using namespace std;
 
+class CSubtitlePin;
 class CAudioPin;
 class CVideoPin;
 class CTsReader;
@@ -72,12 +73,16 @@ public:
 	double          UpdateDuration();
   CAudioPin*      GetAudioPin();
   CVideoPin*      GetVideoPin();
+  CSubtitlePin*   GetSubtitlePin();
 
 protected:
   void ThreadProc();
 private:
+  HRESULT AddGraphToRot(IUnknown *pUnkGraph) ;
+  void    RemoveGraphFromRot();
 	CAudioPin*	    m_pAudioPin;;
 	CVideoPin*	    m_pVideoPin;
+	CSubtitlePin*	  m_pSubtitlePin;
 	WCHAR           m_fileName[1024];
 	CCritSec        m_section;
 	CCritSec        m_CritSecDuration;
@@ -87,5 +92,6 @@ private:
   CBaseReferenceClock* m_referenceClock;
 	CDeMultiplexer  m_demultiplexer;
   bool            m_bSeeking;
+  DWORD           m_dwGraphRegister;
 };
 

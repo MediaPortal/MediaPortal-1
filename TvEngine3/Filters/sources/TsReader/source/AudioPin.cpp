@@ -19,10 +19,11 @@
  *
  */
 
+#pragma warning(disable:4996)
+#pragma warning(disable:4995)
 #include <streams.h>
 #include "tsreader.h"
 #include "audiopin.h"
-
 byte MPEG1AudioFormat[] = 
 {
   0x50, 0x00,				//wFormatTag
@@ -179,7 +180,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       pSample->SetSyncPoint(TRUE);
       float fTime=(float)cRefTime.Millisecs();
       fTime/=1000.0f;
-      LogDebug("aud:%f", fTime);
+     // LogDebug("aud:%f", fTime);
     }
 	  pSample->SetActualDataLength(buffer->Length());
     pSample->GetPointer(&pSampleBuffer);
@@ -191,6 +192,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   {
     LogDebug("aud:no buffer");
 	  pSample->SetActualDataLength(0);
+    pSample->SetTime(NULL,NULL);  
   }
   return NOERROR;
 }
@@ -298,7 +300,7 @@ void CAudioPin::UpdateFromSeek()
 {
   while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
     CRefTime rtSeek=m_rtStart;
-    float seekTime=rtSeek.Millisecs();
+    float seekTime=(float)rtSeek.Millisecs();
     seekTime/=1000.0f;
     LogDebug("aud seek to %f", seekTime);
     if (ThreadExists()) 

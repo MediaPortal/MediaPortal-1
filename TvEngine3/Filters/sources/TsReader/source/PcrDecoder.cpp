@@ -19,6 +19,8 @@
  *
  */
 
+#pragma warning(disable:4996)
+#pragma warning(disable:4995)
 #include <streams.h>
 #include "pcrDecoder.h"
 
@@ -50,7 +52,7 @@ double CPcrDecoder::GetPcr(bool fromEnd)
 	}
 	else
 	{
-		for (int i=0; i < bytesRead-4;++i)
+		for (int i=0; i < (int)(bytesRead-4);++i)
 		{
 			if (buffer[i]==0 && buffer[i+1]==0 && buffer[i+2]==1 && buffer[i+3]==0xba)
 			{

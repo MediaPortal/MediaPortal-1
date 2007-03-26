@@ -19,6 +19,8 @@
  *
  */
 
+#pragma warning(disable:4996)
+#pragma warning(disable:4995)
 #include <windows.h>
 #include <commdlg.h>
 #include <bdatypes.h>
@@ -28,6 +30,7 @@
 #include "tsreader.h"
 #include "audiopin.h"
 #include "videopin.h"
+#include "subtitlepin.h"
 #include "tsfileSeek.h"
 
 void LogDebug(const char *fmt, ...) 
@@ -67,23 +70,30 @@ void LogDebug(const char *fmt, ...)
 const AMOVIESETUP_MEDIATYPE acceptAudioPinTypes =
 {
 	&MEDIATYPE_Audio,                  // major type
-	&MEDIASUBTYPE_MPEG2_AUDIO      // minor type
+  &MEDIASUBTYPE_MPEG1Audio      // minor type
 };
 const AMOVIESETUP_MEDIATYPE acceptVideoPinTypes =
 {
-	&MEDIATYPE_Audio,                  // major type
+	&MEDIATYPE_Video,                  // major type
 	&MEDIASUBTYPE_MPEG2_VIDEO      // minor type
+};
+
+const AMOVIESETUP_MEDIATYPE acceptSubtitlePinTypes =
+{
+  &MEDIATYPE_Stream,           // major type
+	&MEDIASUBTYPE_MPEG2DATA      // minor type
 };
 
 const AMOVIESETUP_PIN audioVideoPin[] =
 {
 	{L"Audio",FALSE,TRUE,FALSE,FALSE,&CLSID_NULL,NULL,1,&acceptAudioPinTypes},
-	{L"Video",FALSE,TRUE,FALSE,FALSE,&CLSID_NULL,NULL,1,&acceptVideoPinTypes}
+	{L"Video",FALSE,TRUE,FALSE,FALSE,&CLSID_NULL,NULL,1,&acceptVideoPinTypes},
+	{L"Subtitle",FALSE,TRUE,FALSE,FALSE,&CLSID_NULL,NULL,1,&acceptSubtitlePinTypes}
 };
 
 const AMOVIESETUP_FILTER TSReader =
 {
-  &CLSID_TSReader,L"MediaPortal File Reader",MERIT_NORMAL+1000,2,audioVideoPin
+  &CLSID_TSReader,L"MediaPortal File Reader",MERIT_NORMAL+1000,3,audioVideoPin
 };
 
 CFactoryTemplate g_Templates[] =
@@ -123,6 +133,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 	LogDebug("CTsReaderFilter::ctor");
 	m_pAudioPin = new CAudioPin(GetOwner(), this, phr,&m_section);
 	m_pVideoPin = new CVideoPin(GetOwner(), this, phr,&m_section);
+  m_pSubtitlePin = new CSubtitlePin(GetOwner(), this, phr,&m_section);
   m_referenceClock= new CBaseReferenceClock("refClock",GetOwner(), phr);
   m_bSeeking=false;
 
@@ -132,6 +143,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 		return;
 	}
 	wcscpy(m_fileName,L"");
+  m_dwGraphRegister=0;
 }
 
 CTsReaderFilter::~CTsReaderFilter()
@@ -142,6 +154,9 @@ CTsReaderFilter::~CTsReaderFilter()
 
 	hr=m_pVideoPin->Disconnect();
 	delete m_pVideoPin;
+  
+	hr=m_pSubtitlePin->Disconnect();
+	delete m_pSubtitlePin;
   if (m_fileReader!=NULL)
     delete m_fileReader;
   if (m_fileDuration!=NULL)
@@ -187,7 +202,11 @@ CBasePin * CTsReaderFilter::GetPin(int n)
 		else  if (n==1)
 		{
         return m_pVideoPin;
-    } 
+    }
+		else  if (n==2)
+		{
+        return m_pSubtitlePin;
+    }  
 		else 
 		{
         return NULL;
@@ -197,7 +216,7 @@ CBasePin * CTsReaderFilter::GetPin(int n)
 
 int CTsReaderFilter::GetPinCount()
 {
-    return 2;
+    return 3;
 }
 
 STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
@@ -280,6 +299,9 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   m_duration.UpdateDuration();
 
 	m_fileReader->SetFilePointer(0LL,FILE_BEGIN);
+
+  AddGraphToRot(GetFilterGraph());
+
 	return S_OK;
 }
 
@@ -360,9 +382,15 @@ CVideoPin* CTsReaderFilter::GetVideoPin()
 {
   return m_pVideoPin;
 }
+CSubtitlePin* CTsReaderFilter::GetSubtitlePin()
+{
+  return m_pSubtitlePin;
+}
+
 
 void CTsReaderFilter::ThreadProc()
 {
+  ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_BELOW_NORMAL);
   while (!ThreadIsStopping(100))
 	{
     CTsDuration duration;
@@ -372,6 +400,38 @@ void CTsReaderFilter::ThreadProc()
     Sleep(1000);
   }
 }
+HRESULT CTsReaderFilter::AddGraphToRot(IUnknown *pUnkGraph) 
+{
+  CComPtr <IMoniker>              pMoniker;
+  CComPtr <IRunningObjectTable>   pROT;
+  WCHAR wsz[128];
+  HRESULT hr;
+
+  if (m_dwGraphRegister!=0) return S_OK;
+  if (FAILED(GetRunningObjectTable(0, &pROT)))
+      return E_FAIL;
+
+  swprintf(wsz, L"FilterGraph %08x pid %08x\0", (DWORD_PTR) pUnkGraph, GetCurrentProcessId());
+  hr = CreateItemMoniker(L"!", wsz, &pMoniker);
+  if (SUCCEEDED(hr))
+  {
+    hr = pROT->Register(ROTFLAGS_REGISTRATIONKEEPSALIVE, pUnkGraph, pMoniker, &m_dwGraphRegister);
+  }
+  return hr;
+}
+        
+
+// Removes a filter graph from the Running Object Table
+void CTsReaderFilter::RemoveGraphFromRot()
+{
+  
+  if (m_dwGraphRegister==0) return;
+  CComPtr <IRunningObjectTable> pROT;
+
+  if (SUCCEEDED(GetRunningObjectTable(0, &pROT))) 
+      pROT->Revoke(m_dwGraphRegister);
+}
+
 ////////////////////////////////////////////////////////////////////////
 //
 // Exported entry points for registration and unregistration 
@@ -412,3 +472,4 @@ BOOL APIENTRY DllMain(HANDLE hModule,
 {
 	return DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
 }
+

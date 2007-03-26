@@ -54,6 +54,14 @@ public:
 	BYTE Lang5_1;
 	BYTE Lang5_2;
 	BYTE Lang5_3;
+  WORD AudioPid6;
+	BYTE Lang6_1;
+	BYTE Lang6_2;
+	BYTE Lang6_3;
+  WORD AudioPid7;
+	BYTE Lang7_1;
+	BYTE Lang7_2;
+	BYTE Lang7_3;
 	WORD AC3Pid;
 	WORD TeletextPid;
 	WORD SubtitlePid;

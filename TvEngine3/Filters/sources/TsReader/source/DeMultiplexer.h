@@ -42,6 +42,7 @@ public:
   void Flush();
   CBuffer* GetVideo();
   CBuffer* GetAudio();
+  CBuffer* GetSubtitle();
 	void OnTsPacket(byte* tsPacket);
 	void OnNewChannel(CChannelInfo& info);
   void SetFileReader(FileReader* reader);
@@ -51,10 +52,12 @@ private:
 	FileReader* m_reader;
   CPatParser m_patParser;
   CPidTable m_pids;
+  vector<CBuffer*> m_vecSubtitleBuffers;
   vector<CBuffer*> m_vecVideoBuffers;
   vector<CBuffer*> m_vecAudioBuffers;
   typedef vector<CBuffer*>::iterator ivecBuffers;
 
+  CBuffer* m_pCurrentSubtitleBuffer;
   CBuffer* m_pCurrentVideoBuffer;
   CBuffer* m_pCurrentAudioBuffer;
   CPcr     m_streamPcr;

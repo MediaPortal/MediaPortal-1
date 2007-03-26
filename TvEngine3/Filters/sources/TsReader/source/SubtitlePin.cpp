@@ -23,91 +23,17 @@
 #pragma warning(disable:4995)
 #include <streams.h>
 #include "tsreader.h"
+#include "Subtitlepin.h"
 #include "AudioPin.h"
 #include "Videopin.h"
 
-BYTE g_Mpeg2ProgramVideo[]= {
-      0x00, 0x00, 0x00, 0x00,							//  .hdr.rcSource.left
-      0x00, 0x00, 0x00, 0x00,							//  .hdr.rcSource.top
-      0xd0, 0x02, 0x00, 0x00,							//  .hdr.rcSource.right
-      0x40, 0x02, 0x00, 0x00,							//  .hdr.rcSource.bottom
-      0x00, 0x00, 0x00, 0x00,							//  .hdr.rcTarget.left
-      0x00, 0x00, 0x00, 0x00,							//  .hdr.rcTarget.top
-      0x00, 0x00, 0x00, 0x00,							//  .hdr.rcTarget.right
-      0x00, 0x00, 0x00, 0x00,							//  .hdr.rcTarget.bottom
-      0xc0, 0xe1, 0xe4, 0x00,							//  .hdr.dwBitRate
-      0x00, 0x00, 0x00, 0x00,							//  .hdr.dwBitErrorRate
-      0x80, 0x1a, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, //  .hdr.AvgTimePerFrame
-      0x00, 0x00, 0x00, 0x00,							//  .hdr.dwInterlaceFlags
-      0x00, 0x00, 0x00, 0x00,							//  .hdr.dwCopyProtectFlags
-      0x00, 0x00, 0x00, 0x00,							//  .hdr.dwPictAspectRatioX
-      0x00, 0x00, 0x00, 0x00,							//  .hdr.dwPictAspectRatioY
-      0x00, 0x00, 0x00, 0x00,							//  .hdr.dwReserved1
-      0x00, 0x00, 0x00, 0x00,							//  .hdr.dwReserved2
-      0x28, 0x00, 0x00, 0x00,							//  .hdr.bmiHeader.biSize
-      0xd0, 0x02, 0x00, 0x00,							//  .hdr.bmiHeader.biWidth
-      0x40, 0x02, 0x00, 0x00,							//  .hdr.bmiHeader.biHeight
-      0x00, 0x00,										//  .hdr.bmiHeader.biPlanes
-      0x00, 0x00,										//  .hdr.bmiHeader.biBitCount
-      0x00, 0x00, 0x00, 0x00,							//  .hdr.bmiHeader.biCompression
-      0x00, 0x00, 0x00, 0x00,							//  .hdr.bmiHeader.biSizeImage
-      0xd0, 0x07, 0x00, 0x00,							//  .hdr.bmiHeader.biXPelsPerMeter
-      0x42, 0xd8, 0x00, 0x00,							//  .hdr.bmiHeader.biYPelsPerMeter
-      0x00, 0x00, 0x00, 0x00,							//  .hdr.bmiHeader.biClrUsed
-      0x00, 0x00, 0x00, 0x00,							//  .hdr.bmiHeader.biClrImportant
-      0x00, 0x00, 0x00, 0x00,							//  .dwStartTimeCode
-      0x4c, 0x00, 0x00, 0x00,							//  .cbSequenceHeader
-      0x00, 0x00, 0x00, 0x00,							//  .dwProfile
-      0x00, 0x00, 0x00, 0x00,							//  .dwLevel
-      0x00, 0x00, 0x00, 0x00,							//  .Flags
-			                        //  .dwSequenceHeader [1]
-      0x00, 0x00, 0x01, 0xb3, 0x2d, 0x02, 0x40, 0x33, 
-      0x24, 0x9f, 0x23, 0x81, 0x10, 0x11, 0x11, 0x12, 
-      0x12, 0x12, 0x13, 0x13, 0x13, 0x13, 0x14, 0x14, 
-      0x14, 0x14, 0x14, 0x15, 0x15, 0x15, 0x15, 0x15, 
-      0x15, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 
-      0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 
-      0x18, 0x18, 0x18, 0x19, 0x18, 0x18, 0x18, 0x19, 
-      0x1a, 0x1a, 0x1a, 0x1a, 0x19, 0x1b, 0x1b, 0x1b, 
-      0x1b, 0x1b, 0x1c, 0x1c, 0x1c, 0x1c, 0x1e, 0x1e, 
-      0x1e, 0x1f, 0x1f, 0x21, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-};
-
 extern void LogDebug(const char *fmt, ...) ;
 
-CVideoPin::CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCritSec* section) :
-	CSourceStream(NAME("pinVideo"), phr, pFilter, L"Video"),
+CSubtitlePin::CSubtitlePin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCritSec* section) :
+	CSourceStream(NAME("pinSubtitle"), phr, pFilter, L"Subtitle"),
 	m_pTsReaderFilter(pFilter),
 	m_section(section),
-  CSourceSeeking(NAME("pinVideo"),pUnk,phr,section)
+  CSourceSeeking(NAME("pinSubtitle"),pUnk,phr,section)
 {
 	m_rtStart=0;
   m_bConnected=false;
@@ -120,16 +46,16 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
 	//AM_SEEKING_Source;
 }
 
-CVideoPin::~CVideoPin()
+CSubtitlePin::~CSubtitlePin()
 {
 	LogDebug("pin:dtor()");
 }
 
-bool CVideoPin::IsConnected()
+bool CSubtitlePin::IsConnected()
 {
   return m_bConnected;
 }
-STDMETHODIMP CVideoPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
+STDMETHODIMP CSubtitlePin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 {
   if (riid == IID_IMediaSeeking)
   {
@@ -142,22 +68,22 @@ STDMETHODIMP CVideoPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
   return CSourceStream::NonDelegatingQueryInterface(riid, ppv);
 }
 
-HRESULT CVideoPin::GetMediaType(CMediaType *pmt)
+HRESULT CSubtitlePin::GetMediaType(CMediaType *pmt)
 {
 
 	pmt->InitMediaType();
-	pmt->SetType      (& MEDIATYPE_Video);
-	pmt->SetSubtype   (& MEDIASUBTYPE_MPEG2_VIDEO);
-	pmt->SetFormatType(&FORMAT_MPEG2Video);
+	pmt->SetType      (& MEDIATYPE_Stream);
+	pmt->SetSubtype   (& MEDIASUBTYPE_MPEG2DATA);
+  pmt->SetFormatType(&FORMAT_None);
 	pmt->SetSampleSize(1);
 	pmt->SetTemporalCompression(FALSE);
 	pmt->SetVariableSize();
-	pmt->SetFormat(g_Mpeg2ProgramVideo,sizeof(g_Mpeg2ProgramVideo));
+	pmt->SetFormat(NULL,0);
 
 	return S_OK;
 }
 
-HRESULT CVideoPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest)
+HRESULT CSubtitlePin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest)
 {
 	HRESULT hr;
 
@@ -188,7 +114,7 @@ HRESULT CVideoPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
 	return S_OK;
 }
 
-HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
+HRESULT CSubtitlePin::CompleteConnect(IPin *pReceivePin)
 {
 	LogDebug("pin:CompleteConnect()");
 	HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
@@ -209,15 +135,15 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
 }
 
 
-HRESULT CVideoPin::BreakConnect()
+HRESULT CSubtitlePin::BreakConnect()
 {
   m_bConnected=false;
   return CSourceStream::BreakConnect();
 }
 
-HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
+HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
 {
-//	::OutputDebugStringA("CVideoPin::FillBuffer()\n");
+//	::OutputDebugStringA("CSubtitlePin::FillBuffer()\n");
 
   if (m_pTsReaderFilter->IsSeeking())
 	{
@@ -227,10 +153,10 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 		return NOERROR;
 	}
 	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
-  CBuffer* buffer=demux.GetVideo();
+  CBuffer* buffer=demux.GetSubtitle();
   if (m_bDiscontinuity)
   {
-    LogDebug("vid:set discontinuity");
+    LogDebug("sub:set discontinuity");
     pSample->SetDiscontinuity(TRUE);
     m_bDiscontinuity=FALSE;
   }
@@ -246,7 +172,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       pSample->SetSyncPoint(TRUE);
       float fTime=(float)cRefTime.Millisecs();
       fTime/=1000.0f;
-   //   LogDebug("vid:%f", fTime);
+   //   LogDebug("sub:%f", fTime);
     }
     else
     {
@@ -260,7 +186,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
   }
   else
   {
-    LogDebug("vid:no buffer");
+    LogDebug("sub:no buffer");
 	  pSample->SetActualDataLength(0);
 	  pSample->SetActualDataLength(0);
     pSample->SetTime(NULL,NULL);  
@@ -271,34 +197,34 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
 
 
-HRESULT CVideoPin::OnThreadStartPlay()
+HRESULT CSubtitlePin::OnThreadStartPlay()
 {    
   m_bDiscontinuity=TRUE;
   float fStart=(float)m_rtStart.Millisecs();
   fStart/=1000.0f;
-  LogDebug("vid:OnThreadStartPlay(%f)", fStart);
+  LogDebug("sub:OnThreadStartPlay(%f)", fStart);
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
 	return CSourceStream::OnThreadStartPlay( );
 }
 
 
 	// CSourceSeeking
-HRESULT CVideoPin::ChangeStart()
+HRESULT CSubtitlePin::ChangeStart()
 {
     UpdateFromSeek();
   return S_OK;
 }
-HRESULT CVideoPin::ChangeStop()
+HRESULT CSubtitlePin::ChangeStop()
 {
     UpdateFromSeek();
   return S_OK;
 }
-HRESULT CVideoPin::ChangeRate()
+HRESULT CSubtitlePin::ChangeRate()
 {
   return S_OK;
 }
 
-STDMETHODIMP CVideoPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags)
+STDMETHODIMP CSubtitlePin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags)
 {/*
 	REFERENCE_TIME rtStop = *pStop;
 	REFERENCE_TIME rtCurrent = *pCurrent;
@@ -362,7 +288,7 @@ STDMETHODIMP CVideoPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LON
   return CSourceSeeking::SetPositions(pCurrent, CurrentFlags, pStop,  StopFlags);
 }
 
-void CVideoPin::UpdateFromSeek()
+void CSubtitlePin::UpdateFromSeek()
 {
   //The solution is to designate one of the pins to control seeking and to ignore seek commands received by the other pin.
   //After the seek command, however, both pins should flush data. To complicate matters further,
@@ -373,7 +299,7 @@ void CVideoPin::UpdateFromSeek()
     CRefTime rtSeek=m_rtStart;
     float seekTime=(float)rtSeek.Millisecs();
     seekTime/=1000.0f;
-    LogDebug("vid seek to %f", seekTime);
+    LogDebug("sub seek to %f", seekTime);
     if (ThreadExists()) 
     {
         // next time around the loop, the worker thread will
@@ -381,23 +307,23 @@ void CVideoPin::UpdateFromSeek()
         // We need to flush all the existing data - we must do that here
         // as our thread will probably be blocked in GetBuffer otherwise
         
-        if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
+        if (!m_pTsReaderFilter->GetAudioPin()->IsConnected() && m_pTsReaderFilter->GetVideoPin()->IsConnected() )
         {
           m_pTsReaderFilter->SeekStart();
         }
         HRESULT hr=DeliverBeginFlush();
-        LogDebug("vid:beginflush:%x",hr);
+        LogDebug("sub:beginflush:%x",hr);
         // make sure we have stopped pushing
         Stop();
-        if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
+        if (!m_pTsReaderFilter->GetAudioPin()->IsConnected() && m_pTsReaderFilter->GetVideoPin()->IsConnected() )
         {
           m_pTsReaderFilter->Seek(CRefTime(m_rtStart));
         }
         // complete the flush
         hr=DeliverEndFlush();
-        LogDebug("vid:endflush:%x",hr);
+        LogDebug("sub:endflush:%x",hr);
         
-        if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
+        if (!m_pTsReaderFilter->GetAudioPin()->IsConnected() && m_pTsReaderFilter->GetVideoPin()->IsConnected() )
         {
           m_pTsReaderFilter->SeekDone();
         }

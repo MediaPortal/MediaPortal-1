@@ -18,7 +18,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#pragma warning(disable : 4995)
+#pragma warning(disable:4996)
+#pragma warning(disable:4995)
 #include <windows.h>
 #include "PmtParser.h"
 #include "channelinfo.h"
@@ -68,7 +69,7 @@ void CPmtParser::OnNewSection(CSection& sections)
   int x;
 	if (!_isFound)
 	{
-		LogDebug("got pmt:%x service id:%x", GetPid(), program_number);
+		//LogDebug("got pmt:%x service id:%x", GetPid(), program_number);
 		_isFound=true;	
 		if (m_pmtCallback!=NULL)
 		{
@@ -150,6 +151,16 @@ void CPmtParser::OnNewSection(CSection& sections)
 				  audioToSet=5;
 				  m_pidInfo.AudioPid5=elementary_PID;
 			  }
+				else if(m_pidInfo.AudioPid6==0)
+			  {
+				  audioToSet=6;
+				  m_pidInfo.AudioPid6=elementary_PID;
+			  }
+				else if(m_pidInfo.AudioPid7==0)
+			  {
+				  audioToSet=7;
+				  m_pidInfo.AudioPid7=elementary_PID;
+			  }
 		  }
 	  }
 	  m_pidInfo.PcrPid=pcr_pid;
@@ -217,6 +228,18 @@ void CPmtParser::OnNewSection(CSection& sections)
 				  m_pidInfo.Lang5_1=d[0];
 				  m_pidInfo.Lang5_2=d[1];
 				  m_pidInfo.Lang5_3=d[2];
+			  }
+			  if(audioToSet==6)
+			  {
+				  m_pidInfo.Lang6_1=d[0];
+				  m_pidInfo.Lang6_2=d[1];
+				  m_pidInfo.Lang6_3=d[2];
+			  }
+			  if(audioToSet==7)
+			  {
+				  m_pidInfo.Lang7_1=d[0];
+				  m_pidInfo.Lang7_2=d[1];
+				  m_pidInfo.Lang7_3=d[2];
 			  }
 
 		  }
