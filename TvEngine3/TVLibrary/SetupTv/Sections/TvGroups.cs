@@ -117,7 +117,7 @@ namespace SetupTv.Sections
     {
       mpListViewGroups.Items.Clear();
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
-      sb.AddOrderByField(true, "groupName");
+      sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
       IList groups = ObjectFactory.GetCollection(typeof(ChannelGroup), stmt.Execute());
       foreach (ChannelGroup group in groups)
