@@ -29,7 +29,8 @@
 #include "videoPin.h"
 #include "subtitlePin.h"
 
-#define OUTPUT_PACKET_LENGTH 0x6000
+#define MAX_BUF_SIZE 300
+#define OUTPUT_PACKET_LENGTH 0x6000e
 #define BUFFER_LENGTH        0x1000
 extern void LogDebug(const char *fmt, ...) ;
 extern byte* MPEG1AudioFormat;
@@ -67,6 +68,15 @@ CPidTable CDeMultiplexer::GetPidTable()
 void CDeMultiplexer::SetAudioStream(int stream)
 {
   m_iAudioStream=stream;
+  if (m_iAudioStream==0 && m_pids.AudioPid1==0) m_iAudioStream=7;
+  if (m_iAudioStream==1 && m_pids.AudioPid2==0) m_iAudioStream=7;
+  if (m_iAudioStream==2 && m_pids.AudioPid3==0) m_iAudioStream=7;
+  if (m_iAudioStream==3 && m_pids.AudioPid4==0) m_iAudioStream=7;
+  if (m_iAudioStream==4 && m_pids.AudioPid5==0) m_iAudioStream=7;
+  if (m_iAudioStream==5 && m_pids.AudioPid6==0) m_iAudioStream=7;
+  if (m_iAudioStream==6 && m_pids.AudioPid7==0) m_iAudioStream=7;
+  if (m_iAudioStream==7 && m_pids.AC3Pid==0) m_iAudioStream=0;
+  
 }
 
 int CDeMultiplexer::GetAudioStream()
@@ -338,14 +348,14 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
 void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 {
   bool streamOk=false;
-  if (header.Pid==m_pids.AC3Pid && m_iAudioStream==0) streamOk=true;
-  else if (header.Pid==m_pids.AudioPid1 && m_iAudioStream==1) streamOk=true;
-  else if (header.Pid==m_pids.AudioPid2 && m_iAudioStream==2) streamOk=true;
-  else if (header.Pid==m_pids.AudioPid3 && m_iAudioStream==3) streamOk=true;
-  else if (header.Pid==m_pids.AudioPid4 && m_iAudioStream==4) streamOk=true;
-  else if (header.Pid==m_pids.AudioPid5 && m_iAudioStream==5) streamOk=true;
-  else if (header.Pid==m_pids.AudioPid6 && m_iAudioStream==6) streamOk=true;
-  else if (header.Pid==m_pids.AudioPid7 && m_iAudioStream==7) streamOk=true;
+  if (header.Pid==m_pids.AudioPid1 && m_iAudioStream==0) streamOk=true;
+  else if (header.Pid==m_pids.AudioPid2 && m_iAudioStream==1) streamOk=true;
+  else if (header.Pid==m_pids.AudioPid3 && m_iAudioStream==2) streamOk=true;
+  else if (header.Pid==m_pids.AudioPid4 && m_iAudioStream==3) streamOk=true;
+  else if (header.Pid==m_pids.AudioPid5 && m_iAudioStream==4) streamOk=true;
+  else if (header.Pid==m_pids.AudioPid6 && m_iAudioStream==5) streamOk=true;
+  else if (header.Pid==m_pids.AudioPid7 && m_iAudioStream==6) streamOk=true;
+  else if (header.Pid==m_pids.AC3Pid && m_iAudioStream==7) streamOk=true;
   if (!streamOk) return;
 
   if (m_filter.GetAudioPin()->IsConnected())
@@ -356,6 +366,8 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
       {
         if (m_pCurrentAudioBuffer->Length()>0)
         {
+          if (m_vecAudioBuffers.size()>MAX_BUF_SIZE) 
+            m_vecAudioBuffers.erase(m_vecAudioBuffers.begin());
           m_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
           m_pCurrentAudioBuffer = new CBuffer();
         }
@@ -382,6 +394,9 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
           int copyLen=0x2000-m_pCurrentAudioBuffer->Length();
           m_pCurrentAudioBuffer->Add(&tsPacket[pos],copyLen);
           pos+=copyLen;
+          
+          if (m_vecAudioBuffers.size()>MAX_BUF_SIZE) 
+            m_vecAudioBuffers.erase(m_vecAudioBuffers.begin());
           m_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
           m_pCurrentAudioBuffer = new CBuffer();
         }
@@ -403,6 +418,8 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
         {
           if (m_pCurrentVideoBuffer->Length()>0)
           {
+            if (m_vecVideoBuffers.size()>MAX_BUF_SIZE) 
+              m_vecVideoBuffers.erase(m_vecVideoBuffers.begin());
             m_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
             m_pCurrentVideoBuffer = new CBuffer();
           }
@@ -429,6 +446,9 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
             int copyLen=0x2000-m_pCurrentVideoBuffer->Length();
             m_pCurrentVideoBuffer->Add(&tsPacket[pos],copyLen);
             pos+=copyLen;
+
+            if (m_vecVideoBuffers.size()>MAX_BUF_SIZE) 
+              m_vecVideoBuffers.erase(m_vecVideoBuffers.begin());
             m_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
             m_pCurrentVideoBuffer = new CBuffer();
           }
@@ -450,6 +470,8 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
         {
           if (m_pCurrentSubtitleBuffer->Length()>0)
           {
+            if (m_vecSubtitleBuffers.size()>MAX_BUF_SIZE) 
+              m_vecSubtitleBuffers.erase(m_vecSubtitleBuffers.begin());
             m_vecSubtitleBuffers.push_back(m_pCurrentSubtitleBuffer);
             m_pCurrentSubtitleBuffer = new CBuffer();
           }
@@ -471,6 +493,8 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
           if (m_pCurrentSubtitleBuffer->Length()+(188)>=0x2000)
           {
             m_pCurrentSubtitleBuffer->Add(tsPacket,188);
+            if (m_vecSubtitleBuffers.size()>MAX_BUF_SIZE) 
+              m_vecSubtitleBuffers.erase(m_vecSubtitleBuffers.begin());
             m_vecSubtitleBuffers.push_back(m_pCurrentSubtitleBuffer);
             m_pCurrentSubtitleBuffer = new CBuffer();
           }

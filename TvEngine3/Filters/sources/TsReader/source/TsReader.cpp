@@ -93,7 +93,7 @@ const AMOVIESETUP_PIN audioVideoPin[] =
 
 const AMOVIESETUP_FILTER TSReader =
 {
-  &CLSID_TSReader,L"MediaPortal File Reader",MERIT_NORMAL+1000,3,audioVideoPin
+  &CLSID_TSReader,L"MediaPortal File Reader",MERIT_NORMAL+1000,2,audioVideoPin
 };
 
 CFactoryTemplate g_Templates[] =
@@ -192,10 +192,10 @@ CBasePin * CTsReaderFilter::GetPin(int n)
 		{
         return m_pVideoPin;
     }
-		else  if (n==2)
-		{
-        return m_pSubtitlePin;
-    }  
+		//else  if (n==2)
+		//{
+    //    return m_pSubtitlePin;
+    //}  
 		else 
 		{
         return NULL;
@@ -205,7 +205,7 @@ CBasePin * CTsReaderFilter::GetPin(int n)
 
 int CTsReaderFilter::GetPinCount()
 {
-    return 3;
+    return 2;
 }
 
 STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
