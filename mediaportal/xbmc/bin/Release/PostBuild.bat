@@ -19,7 +19,7 @@ del *.dll
 del *.ax
 
 copy ..\..\..\MediaPortal.Support\bin\Release\MediaPortal.Support.dll .
-copy ..\..\..\MediaPortal.Support\bin\Release\ICSharpCode.SharpZipLib.dll .
+copy ..\..\..\MediaPortal.Base\ICSharpCode.SharpZipLib.dll .
 copy ..\..\..\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\Release\HCWHelper.exe .
 rem copy ..\..\..\RemotePlugins\Remotes\X10Remote\AxInterop.X10.dll .
 copy ..\..\..\RemotePlugins\Remotes\X10Remote\Interop.X10.dll .
@@ -118,7 +118,7 @@ copy ..\..\..\Utils\bin\Release\Utils.dll .
 
 copy ..\..\..\WebEPG\WebEPG-xmltv\bin\Release\WebEPG-xmltv.exe WebEPG.exe
 copy ..\..\..\WebEPG\WebEPG-conf\bin\Release\WebEPG-conf.exe .
-copy ..\..\..\WebEPG\WebEPG-channels\bin\Release\WebEPG-channels.exe .
+rem copy ..\..\..\WebEPG\WebEPG-channels\bin\Release\WebEPG-channels.exe .
 
 rem Begin BASS Music Engine dependancies
 copy ..\..\..\MediaPortal.Base\bass.dll .
