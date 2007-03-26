@@ -386,7 +386,14 @@ void CTsReaderFilter::ThreadProc()
     CTsDuration duration;
     duration.SetFileReader(m_fileDuration);
     duration.UpdateDuration();
-    m_duration.Set(duration.StartPcr(), duration.EndPcr());
+    if (duration.Duration() != m_duration.Duration())
+    {
+      m_duration.Set(duration.StartPcr(), duration.EndPcr());
+      if (m_State == State_Running)
+      {
+        NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
+      }
+    }
     Sleep(1000);
   }
 }
