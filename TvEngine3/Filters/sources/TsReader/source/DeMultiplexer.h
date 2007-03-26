@@ -46,6 +46,14 @@ public:
 	void OnTsPacket(byte* tsPacket);
 	void OnNewChannel(CChannelInfo& info);
   void SetFileReader(FileReader* reader);
+  void FillSubtitle(CTsHeader& header, byte* tsPacket);
+  void FillAudio(CTsHeader& header, byte* tsPacket);
+  void FillVideo(CTsHeader& header, byte* tsPacket);
+  CPidTable GetPidTable();
+  void  SetAudioStream(int stream);
+  int   GetAudioStream();
+  void  GetAudioStreamInfo(int stream,char* szName);
+  int   GetAudioStreamCount();
 private:
   bool ReadFromFile();
   CCritSec m_section;
@@ -63,4 +71,5 @@ private:
   CPcr     m_streamPcr;
   CTsDuration& m_duration;
   CTsReaderFilter& m_filter;
+  int m_iAudioStream;
 };

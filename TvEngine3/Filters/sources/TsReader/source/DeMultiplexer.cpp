@@ -41,7 +41,9 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_pCurrentVideoBuffer = new CBuffer();
   m_pCurrentAudioBuffer = new CBuffer();
   m_pCurrentSubtitleBuffer = new CBuffer();
+  m_iAudioStream=1;
 }
+
 CDeMultiplexer::~CDeMultiplexer()
 {
   Flush();
@@ -54,6 +56,91 @@ CDeMultiplexer::~CDeMultiplexer()
 void CDeMultiplexer::SetFileReader(FileReader* reader)
 {
   m_reader=reader;
+}
+
+CPidTable CDeMultiplexer::GetPidTable()
+{
+  return m_pids;
+}
+
+void CDeMultiplexer::SetAudioStream(int stream)
+{
+  m_iAudioStream=stream;
+}
+
+int CDeMultiplexer::GetAudioStream()
+{
+  return m_iAudioStream;
+}
+
+void CDeMultiplexer::GetAudioStreamInfo(int stream,char* szName)
+{
+  if (stream==0)
+  {
+    szName[0]=m_pids.Lang1_1;
+    szName[1]=m_pids.Lang1_2;
+    szName[2]=m_pids.Lang1_3;
+    szName[3]=0;
+  }
+  if (stream==1)
+  {
+    szName[0]=m_pids.Lang2_1;
+    szName[1]=m_pids.Lang2_2;
+    szName[2]=m_pids.Lang3_3;
+    szName[3]=0;
+  }
+  if (stream==2)
+  {
+    szName[0]=m_pids.Lang3_1;
+    szName[1]=m_pids.Lang3_2;
+    szName[2]=m_pids.Lang3_3;
+    szName[3]=0;
+  }
+  if (stream==3)
+  {
+    szName[0]=m_pids.Lang4_1;
+    szName[1]=m_pids.Lang4_2;
+    szName[2]=m_pids.Lang4_3;
+    szName[3]=0;
+  }
+  if (stream==4)
+  {
+    szName[0]=m_pids.Lang5_1;
+    szName[1]=m_pids.Lang5_2;
+    szName[2]=m_pids.Lang5_3;
+    szName[3]=0;
+  }
+  if (stream==5)
+  {
+    szName[0]=m_pids.Lang6_1;
+    szName[1]=m_pids.Lang6_2;
+    szName[2]=m_pids.Lang6_3;
+    szName[3]=0;
+  }
+  if (stream==6)
+  {
+    szName[0]=m_pids.Lang7_1;
+    szName[1]=m_pids.Lang7_2;
+    szName[2]=m_pids.Lang7_3;
+    szName[3]=0;
+  }
+  if (stream==7)
+  {
+    strcpy(szName,"AC3");
+  }
+}
+int CDeMultiplexer::GetAudioStreamCount()
+{
+  int streamCount=0;
+  if (m_pids.AudioPid1!=0) streamCount++;
+  if (m_pids.AudioPid2!=0) streamCount++;
+  if (m_pids.AudioPid3!=0) streamCount++;
+  if (m_pids.AudioPid4!=0) streamCount++;
+  if (m_pids.AudioPid5!=0) streamCount++;
+  if (m_pids.AudioPid6!=0) streamCount++;
+  if (m_pids.AudioPid7!=0) streamCount++;
+  if (m_pids.AC3Pid!=0) streamCount++;
+  return streamCount;
 }
 
 void CDeMultiplexer::Flush()
@@ -197,57 +284,69 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   {
     return;
   }
-  if (header.Pid==m_pids.AudioPid1)
+  FillSubtitle(header,tsPacket);
+  FillAudio(header,tsPacket);
+  FillVideo(header,tsPacket);
+  
+}
+void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
+{
+  bool streamOk=false;
+  if (header.Pid==m_pids.AC3Pid && m_iAudioStream==0) streamOk=true;
+  else if (header.Pid==m_pids.AudioPid1 && m_iAudioStream==1) streamOk=true;
+  else if (header.Pid==m_pids.AudioPid2 && m_iAudioStream==2) streamOk=true;
+  else if (header.Pid==m_pids.AudioPid3 && m_iAudioStream==3) streamOk=true;
+  else if (header.Pid==m_pids.AudioPid4 && m_iAudioStream==4) streamOk=true;
+  else if (header.Pid==m_pids.AudioPid5 && m_iAudioStream==5) streamOk=true;
+  else if (header.Pid==m_pids.AudioPid6 && m_iAudioStream==6) streamOk=true;
+  else if (header.Pid==m_pids.AudioPid7 && m_iAudioStream==7) streamOk=true;
+  if (!streamOk) return;
+
+  if (m_filter.GetAudioPin()->IsConnected())
   {
-    if (m_filter.GetAudioPin()->IsConnected())
+    if ( false==header.AdaptionFieldOnly() ) 
     {
-	    if ( false==header.AdaptionFieldOnly() ) 
-	    {
-        if ( header.PayloadUnitStart)
+      if ( header.PayloadUnitStart)
+      {
+        if (m_pCurrentAudioBuffer->Length()>0)
         {
-          if (m_pCurrentAudioBuffer->Length()>0)
-          {
-            m_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
-            m_pCurrentAudioBuffer = new CBuffer();
-          }
-          int pos=header.PayLoadStart;
-          if (tsPacket[pos]==0&&tsPacket[pos+1]==0&&tsPacket[pos+2]==1)
-          {
-	          CPcr pts;
-	          CPcr dts;
-            if (CPcr::DecodeFromPesHeader(&tsPacket[pos],pts,dts))
-            {
-              m_pCurrentAudioBuffer->SetPts(pts);
-            }
-            int headerLen=9+tsPacket[pos+8];
-            pos+=headerLen;
-          }
-          m_pCurrentAudioBuffer->SetPcr(m_streamPcr,m_duration.StartPcr());
-          m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos);
+          m_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
+          m_pCurrentAudioBuffer = new CBuffer();
         }
-        else if (m_pCurrentAudioBuffer->Length()>0)
+        int pos=header.PayLoadStart;
+        if (tsPacket[pos]==0&&tsPacket[pos+1]==0&&tsPacket[pos+2]==1)
         {
-          int pos=header.PayLoadStart;
-          if (m_pCurrentAudioBuffer->Length()+(188-pos)>=0x2000)
+          CPcr pts;
+          CPcr dts;
+          if (CPcr::DecodeFromPesHeader(&tsPacket[pos],pts,dts))
           {
-            int copyLen=0x2000-m_pCurrentAudioBuffer->Length();
-            m_pCurrentAudioBuffer->Add(&tsPacket[pos],copyLen);
-            pos+=copyLen;
-            m_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
-            m_pCurrentAudioBuffer = new CBuffer();
+            m_pCurrentAudioBuffer->SetPts(pts);
           }
-          m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos); 
+          int headerLen=9+tsPacket[pos+8];
+          pos+=headerLen;
         }
+        m_pCurrentAudioBuffer->SetPcr(m_streamPcr,m_duration.StartPcr());
+        m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos);
+      }
+      else if (m_pCurrentAudioBuffer->Length()>0)
+      {
+        int pos=header.PayLoadStart;
+        if (m_pCurrentAudioBuffer->Length()+(188-pos)>=0x2000)
+        {
+          int copyLen=0x2000-m_pCurrentAudioBuffer->Length();
+          m_pCurrentAudioBuffer->Add(&tsPacket[pos],copyLen);
+          pos+=copyLen;
+          m_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
+          m_pCurrentAudioBuffer = new CBuffer();
+        }
+        m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos); 
       }
     }
- 
   }
-  if (header.Pid==m_pids.AudioPid2)
-  {
-  }
-  if (header.Pid==m_pids.AC3Pid)
-  {
-  }
+}
+
+void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
+{
   if (header.Pid==m_pids.VideoPid)
   {
     if (m_filter.GetVideoPin()->IsConnected())
@@ -292,7 +391,10 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
       }
     }
   }
-  if (header.Pid==m_pids.SubtitlePid)
+}
+void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
+{
+  if (header.Pid==m_pids.SubtitlePid || header.Pid==m_pids.PcrPid|| header.Pid==m_pids.PmtPid|| header.Pid==0)
   {
     if (m_filter.GetSubtitlePin()->IsConnected())
     {

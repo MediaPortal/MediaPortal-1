@@ -173,21 +173,10 @@ STDMETHODIMP CTsReaderFilter::NonDelegatingQueryInterface(REFIID riid, void ** p
 	{
 		return GetInterface((IFileSourceFilter*)this, ppv);
 	}
-	/*if ((riid == IID_IMediaPosition || riid == IID_IMediaSeeking))
+  if (riid == IID_IAMStreamSelect)
 	{
-    if (m_pAudioPin->IsConnected())
-    {
-		  return m_pAudioPin->NonDelegatingQueryInterface(riid, ppv);
-    }
-    else
-    {
-		  return m_pVideoPin->NonDelegatingQueryInterface(riid, ppv);
-    }
+		return GetInterface((IAMStreamSelect*)this, ppv);
 	}
-  if (riid == IID_IReferenceClock || riid == IID_IReferenceClock2)
-	{
-    return m_referenceClock->NonDelegatingQueryInterface(riid, ppv);
-	}*/
 
 	return CSource::NonDelegatingQueryInterface(riid, ppv);
 
@@ -430,6 +419,42 @@ void CTsReaderFilter::RemoveGraphFromRot()
 
   if (SUCCEEDED(GetRunningObjectTable(0, &pROT))) 
       pROT->Revoke(m_dwGraphRegister);
+}
+STDMETHODIMP CTsReaderFilter::Count(DWORD* streamCount)
+{
+  *streamCount=m_demultiplexer.GetAudioStreamCount();
+  return S_OK;
+}
+STDMETHODIMP CTsReaderFilter::Enable(long index, DWORD flags)
+{
+  m_demultiplexer.SetAudioStream((int)index);
+  return S_OK;
+}
+STDMETHODIMP CTsReaderFilter::Info( long lIndex,AM_MEDIA_TYPE **ppmt,DWORD *pdwFlags, LCID *plcid, DWORD *pdwGroup, WCHAR **ppszName, IUnknown **ppObject, IUnknown **ppUnk)
+{
+  if (pdwFlags) 
+  {
+    if (m_demultiplexer.GetAudioStream()==(int)lIndex)
+      *pdwFlags=AMSTREAMSELECTINFO_EXCLUSIVE;
+    else
+      *pdwFlags=0;
+  }
+  if (plcid) *plcid=0;
+  if (pdwGroup) *pdwGroup=0;
+  if (ppObject) *ppObject=NULL;
+  if (ppUnk) *ppUnk=NULL;
+  if (ppszName)
+  {
+    char szName[20];
+    m_demultiplexer.GetAudioStreamInfo((int)lIndex,szName);
+    *ppszName = (WCHAR *)CoTaskMemAlloc(20);
+    MultiByteToWideChar(CP_ACP,0,szName,-1,*ppszName,20);
+  }
+  if (ppmt)
+  {
+    *ppmt=NULL;
+  }
+  return S_OK;
 }
 
 ////////////////////////////////////////////////////////////////////////
