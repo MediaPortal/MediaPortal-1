@@ -10,6 +10,7 @@ namespace MyTv
   {
     #region variables
     VirtualCard _card;
+    Exception _exception;
     #endregion
 
     #region ctor
@@ -20,8 +21,30 @@ namespace MyTv
     public TvMediaPlayer(VirtualCard card)
     {
       _card = card;
+      _exception = null;
+      MediaFailed += new EventHandler<ExceptionEventArgs>(TvMediaPlayer_MediaFailed);
+    }
+
+    void TvMediaPlayer_MediaFailed(object sender, ExceptionEventArgs e)
+    {
+      _exception = e.ErrorException;
     }
     #endregion
+    public string ErrorMessage
+    {
+      get
+      {
+        if (_exception == null) return "";
+        return _exception.Message;
+      }
+    }
+    public bool HasError
+    {
+      get
+      {
+        return (_exception != null);
+      }
+    }
 
     #region IDisposable
     /// <summary>

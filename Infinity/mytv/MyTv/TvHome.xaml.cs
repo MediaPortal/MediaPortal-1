@@ -33,6 +33,8 @@ namespace MyTv
   {
     #region variables
     TvMediaPlayer _mediaPlayer;
+    private delegate void StartTimeShiftingDelegate(Channel channel);
+    private delegate void EndTimeShiftingDelegate(TvResult result, VirtualCard card);
     #endregion
 
     #region ctor
@@ -220,28 +222,62 @@ namespace MyTv
     }
 
     /// <summary>
-    /// Start viewing the tv channel
+    /// Start viewing the tv channel 
     /// </summary>
     /// <param name="channel">The channel.</param>
     void ViewChannel(Channel channel)
     {
       //tell server to start timeshifting the channel
+      //we do this in the background so GUI stays responsive...
+      StartTimeShiftingDelegate starter = new StartTimeShiftingDelegate(this.StartTimeShiftingBackGroundWorker);
+      starter.BeginInvoke(channel, null, null);
+    }
+
+    /// <summary>
+    /// Starts the timeshifting 
+    /// this is done in the background so the GUI stays responsive
+    /// </summary>
+    /// <param name="channel">The channel.</param>
+    private void StartTimeShiftingBackGroundWorker(Channel channel)
+    {
       TvServer server = new TvServer();
       VirtualCard card;
 
       User user = new User();
       TvResult succeeded = TvResult.Succeeded;
       succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
+
+      // Schedule the update function in the UI thread.
+      buttonTvGuide.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new EndTimeShiftingDelegate(OnStartTimeShiftingResult), succeeded, card);
+    }
+
+    /// <summary>
+    /// Called from dispatcher when StartTimeShiftingBackGroundWorker() has a result for us
+    /// we check the result and if needed start a new media player to playback the tv timeshifting file
+    /// </summary>
+    /// <param name="succeeded">The result.</param>
+    /// <param name="card">The card.</param>
+    private void OnStartTimeShiftingResult(TvResult succeeded, VirtualCard card)
+    {
       if (succeeded == TvResult.Succeeded)
       {
         //timeshifting worked, now view the channel
         ChannelNavigator.Instance.Card = card;
         //do we already have a media player ?
+        Uri uri = new Uri(card.TimeShiftFileName, UriKind.Absolute);
+        if (_mediaPlayer != null && _mediaPlayer.Source != uri)
+        {
+          //yes, but filename is different. so we close the current media player and open a new one
+          _mediaPlayer.Dispose();
+          _mediaPlayer = null;
+        }
+
+
+        //do we already have a media player ?
         if (_mediaPlayer == null)
         {
           //no then create a new media player 
-          _mediaPlayer = TvPlayerCollection.Instance.Get(card, new Uri(card.TimeShiftFileName, UriKind.Absolute));
-
+          _mediaPlayer = TvPlayerCollection.Instance.Get(card, uri);
           //create video drawing which draws the video in the video window
           VideoDrawing videoDrawing = new VideoDrawing();
           videoDrawing.Player = _mediaPlayer;
@@ -250,10 +286,26 @@ namespace MyTv
           videoBrush.Drawing = videoDrawing;
           videoWindow.Fill = videoBrush;
           videoDrawing.Player.Play();
+          if (_mediaPlayer.HasError)
+          {
+            card.StopTimeShifting();
+            MpDialogOk dlgError = new MpDialogOk();
+            Window w = Window.GetWindow(this);
+            dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            dlgError.Owner = w;
+            dlgError.Title = "Cannot open file";
+            dlgError.Header = "Error";
+            dlgError.Content = "Unable to open the timeshifting file " + _mediaPlayer.ErrorMessage;
+            dlgError.ShowDialog();
+            _mediaPlayer.Dispose();
+            _mediaPlayer = null;
+            return;
+
+          }
         }
         else
         {
-          //we already have a media player, seek to end of file
+          //we already have a media player, seek to end of file (livepoint)
           if (_mediaPlayer.NaturalDuration.HasTimeSpan)
             _mediaPlayer.Position = _mediaPlayer.NaturalDuration.TimeSpan;
         }

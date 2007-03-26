@@ -526,6 +526,12 @@ namespace MyTv
     protected void onKeyDown(object sender, KeyEventArgs e)
     {
       if (_selectedItem == null) return;
+      if (e.Key == Key.Escape)
+      {
+        //return to previous screen
+        this.NavigationService.GoBack();
+        return;
+      }
       if (_singleMode)
       {
         if (e.Key == Key.Enter)

@@ -38,20 +38,11 @@ namespace MyTv
     public TvMediaPlayer Get(VirtualCard card, Uri uri)
     {
       TvMediaPlayer player = new TvMediaPlayer(card);
-      player.MediaFailed += new EventHandler<System.Windows.Media.ExceptionEventArgs>(player_MediaFailed);
       player.Open(uri);
       _players.Add(player);
       return player;
     }
 
-    /// <summary>
-    /// Handles the MediaFailed event of the player control.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="System.Windows.Media.ExceptionEventArgs"/> instance containing the event data.</param>
-    void player_MediaFailed(object sender, System.Windows.Media.ExceptionEventArgs e)
-    {
-    }
 
     /// <summary>
     /// Releases the specified player.
