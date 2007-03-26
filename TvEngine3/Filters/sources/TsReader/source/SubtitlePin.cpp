@@ -73,12 +73,7 @@ HRESULT CSubtitlePin::GetMediaType(CMediaType *pmt)
 
 	pmt->InitMediaType();
 	pmt->SetType      (& MEDIATYPE_Stream);
-	pmt->SetSubtype   (& MEDIASUBTYPE_MPEG2DATA);
-  pmt->SetFormatType(&FORMAT_None);
-	pmt->SetSampleSize(1);
-	pmt->SetTemporalCompression(FALSE);
-	pmt->SetVariableSize();
-	pmt->SetFormat(NULL,0);
+	pmt->SetSubtype   (& MEDIASUBTYPE_MPEG2_TRANSPORT);
 
 	return S_OK;
 }
@@ -112,6 +107,22 @@ HRESULT CSubtitlePin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTI
 	}
 
 	return S_OK;
+}
+HRESULT CSubtitlePin::CheckConnect(IPin *pReceivePin)
+{
+  HRESULT hr;
+  PIN_INFO pinInfo;
+  FILTER_INFO filterInfo;
+  hr=pReceivePin->QueryPinInfo(&pinInfo);
+  if (!SUCCEEDED(hr)) return E_FAIL;
+  if (pinInfo.pFilter==NULL) return E_FAIL;
+  hr=pinInfo.pFilter->QueryFilterInfo(&filterInfo);
+  if (!SUCCEEDED(hr)) return E_FAIL;
+  if (wcscmp(filterInfo.achName,L"MediaPortal DVBSub")!=0)
+  {
+    return E_FAIL;
+  }
+  return CBaseOutputPin::CheckConnect(pReceivePin);
 }
 
 HRESULT CSubtitlePin::CompleteConnect(IPin *pReceivePin)

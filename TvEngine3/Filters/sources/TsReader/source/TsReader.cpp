@@ -81,7 +81,7 @@ const AMOVIESETUP_MEDIATYPE acceptVideoPinTypes =
 const AMOVIESETUP_MEDIATYPE acceptSubtitlePinTypes =
 {
   &MEDIATYPE_Stream,           // major type
-	&MEDIASUBTYPE_MPEG2DATA      // minor type
+	&MEDIASUBTYPE_MPEG2_TRANSPORT      // minor type
 };
 
 const AMOVIESETUP_PIN audioVideoPin[] =

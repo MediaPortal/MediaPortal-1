@@ -13,6 +13,7 @@ public:
 	HRESULT GetMediaType(CMediaType *pMediaType);
 	HRESULT DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest);
 	HRESULT CompleteConnect(IPin *pReceivePin);
+	HRESULT CheckConnect(IPin *pReceivePin);
 	HRESULT FillBuffer(IMediaSample *pSample);
   HRESULT BreakConnect();
   STDMETHODIMP SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags);

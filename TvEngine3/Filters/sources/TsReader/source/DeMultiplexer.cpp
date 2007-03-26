@@ -314,24 +314,22 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
             {
               m_pCurrentSubtitleBuffer->SetPts(pts);
             }
-            int headerLen=9+tsPacket[pos+8];
-            pos+=headerLen;
           }
           m_pCurrentSubtitleBuffer->SetPcr(m_streamPcr,m_duration.StartPcr());
-          m_pCurrentSubtitleBuffer->Add(&tsPacket[pos],188-pos);
+          m_pCurrentSubtitleBuffer->Add(tsPacket,188);
         }
         else if (m_pCurrentSubtitleBuffer->Length()>0)
         {
-          int pos=header.PayLoadStart;
-          if (m_pCurrentSubtitleBuffer->Length()+(188-pos)>=0x2000)
+          if (m_pCurrentSubtitleBuffer->Length()+(188)>=0x2000)
           {
-            int copyLen=0x2000-m_pCurrentSubtitleBuffer->Length();
-            m_pCurrentSubtitleBuffer->Add(&tsPacket[pos],copyLen);
-            pos+=copyLen;
+            m_pCurrentSubtitleBuffer->Add(tsPacket,188);
             m_vecSubtitleBuffers.push_back(m_pCurrentSubtitleBuffer);
             m_pCurrentSubtitleBuffer = new CBuffer();
           }
-          m_pCurrentSubtitleBuffer->Add(&tsPacket[pos],188-pos); 
+          else
+          {
+            m_pCurrentSubtitleBuffer->Add(tsPacket,188); 
+          }
         }
       }
     }
