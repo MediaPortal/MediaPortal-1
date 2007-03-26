@@ -42,6 +42,10 @@
       <!-- The Path were the Custom Inputdevice Mappings are located. -->
   <Dir id = "CustomInputDevice">
     <Path>InputDeviceMappings\custom</Path>
+  </dir>
+  <!-- The Path were the Default Inputdevice Mappings are located. -->
+  <Dir id = "CustomInputDefault">
+    <Path>InputDeviceMappings\defaults</Path>
   </Dir>
   <!-- The Path were the skins are located -->
   <Dir id = "Skin">

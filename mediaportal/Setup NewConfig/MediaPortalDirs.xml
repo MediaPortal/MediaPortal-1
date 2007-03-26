@@ -70,5 +70,9 @@
   <!-- A Path holding cached information. Like Picture thumbs, modified skin files (packedgfx), etc. Files in there can be removed by the user -->
   <Dir id = "Cache">
     <Path>%APPDATA%\Team MediaPortal\MediaPortal\cache\</Path>
+  </dir>
+  <!-- The path to CYGWIN files needed for the burner plugin -->
+  <Dir id = "BurnerSupport">
+    <Path>Burner\</Path>
   </Dir>
 </Config>
