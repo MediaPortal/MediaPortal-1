@@ -21,19 +21,32 @@ namespace MyTv
   /// <summary>
   /// Interaction logic for TvSetup.xaml
   /// </summary>
-
+  /// 
   public partial class TvSetup : System.Windows.Controls.Page
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvSetup"/> class.
+    /// </summary>
     public TvSetup()
     {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Called when page gets loaded
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
       // Sets keyboard focus on the first Button in the sample.
       Keyboard.Focus(textboxServer);
     }
+    /// <summary>
+    /// Called when mouse enters a button
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.Input.MouseEventArgs"/> instance containing the event data.</param>
     void OnMouseEnter(object sender, MouseEventArgs e)
     {
       IInputElement b = sender as IInputElement;
@@ -42,6 +55,18 @@ namespace MyTv
         Keyboard.Focus(b);
       }
     }
+    /// <summary>
+    /// Called when Save button is pressed
+    /// tries to connect to the tvserver/database 
+    /// if succeeded 
+    ///   - stores the settings
+    ///   - goes back to previous screen
+    /// if not succeeded
+    ///   - a dialog box is shown 
+    ///   - user can retry
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     void OnTest(object sender, EventArgs args)
     {
       RemoteControl.Clear();
@@ -112,7 +137,6 @@ namespace MyTv
         result1.Content = "Failed to connect to tvserver";
         Keyboard.Focus(textboxServer);
       }
-
     }
   }
 }
