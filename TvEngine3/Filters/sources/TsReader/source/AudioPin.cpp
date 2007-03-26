@@ -192,6 +192,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
     LogDebug("aud:no buffer");
 	  pSample->SetActualDataLength(0);
   }
+  return NOERROR;
 }
 
 

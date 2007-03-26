@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="TsReader"
 	ProjectGUID="{FCF30D16-2C9E-4429-B605-4ACA43023E71}"
 	RootNamespace="MPTSWriter"
@@ -224,6 +224,14 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
+				RelativePath=".\source\AdaptionField.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\AdaptionField.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\AudioPin.cpp"
 				>
 			</File>
@@ -232,7 +240,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\ChannelInfo.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\DeMultiplexer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\DvbUtil.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\DvbUtil.h"
 				>
 			</File>
 			<File
@@ -248,7 +268,75 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\PacketSync.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\PacketSync.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\PatParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\PatParser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\Pcr.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\Pcr.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\PcrDecoder.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\PidTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\PmtParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\PmtParser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\Section.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\Section.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\SectionDecoder.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\SectionDecoder.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TsDuration.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TsFileSeek.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TsHeader.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TsHeader.h"
 				>
 			</File>
 			<File
@@ -294,6 +382,14 @@
 			</File>
 			<File
 				RelativePath=".\source\PcrDecoder.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TsDuration.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TsFileSeek.h"
 				>
 			</File>
 			<File
