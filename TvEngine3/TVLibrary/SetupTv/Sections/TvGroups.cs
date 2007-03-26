@@ -143,7 +143,7 @@ namespace SetupTv.Sections
       GroupNameForm dlg = new GroupNameForm();
       dlg.ShowDialog(this);
       if (dlg.GroupName.Length == 0) return;
-      ChannelGroup newGroup = new ChannelGroup(dlg.GroupName);
+      ChannelGroup newGroup = new ChannelGroup(dlg.GroupName,9999);
       newGroup.Persist();
       Init();
     }

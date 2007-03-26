@@ -364,7 +364,7 @@ namespace SetupTv.Sections
         {
           return;
         }
-        group = new ChannelGroup(dlg.GroupName);
+        group = new ChannelGroup(dlg.GroupName,9999);
         group.Persist();
         UpdateMenu();
       }
@@ -390,7 +390,10 @@ namespace SetupTv.Sections
       foreach (Channel channel in channels)
       {
         if (channel.IsTv)
+        {
+          Gentle.Framework.Broker.Execute("delete from TvMovieMapping WHERE idChannel=" + channel.IdChannel.ToString());
           channel.Delete();
+        }
       }
 
       /*Gentle.Framework.Broker.Execute("delete from history");
@@ -747,9 +750,30 @@ namespace SetupTv.Sections
           nodeSchedules.AppendChild(nodeSchedule);
       }
       rootElement.AppendChild(nodeSchedules);
+      //exporting channel groups
+      XmlNode nodeChannelGroups = xmlDoc.CreateElement("channelgroups");
+      IList channelgroups = ChannelGroup.ListAll();
+      foreach (ChannelGroup group in channelgroups)
+      {
+        XmlNode nodeChannelGroup =xmlDoc.CreateElement("channelgroup");
+        AddAttribute(nodeChannelGroup,"GroupName",group.GroupName);
+        AddAttribute(nodeChannelGroup, "SortOrder", group.SortOrder.ToString());
+        XmlNode nodeGroupMap = xmlDoc.CreateElement("mappings");
+        IList maps = group.ReferringGroupMap();
+        foreach (GroupMap map in maps)
+        {
+          XmlNode nodeMap = xmlDoc.CreateElement("map");
+          AddAttribute(nodeMap, "ChannelName", map.ReferencedChannel().Name);
+          AddAttribute(nodeMap, "SortOrder", map.SortOrder.ToString());
+          nodeGroupMap.AppendChild(nodeMap);
+        }
+        nodeChannelGroup.AppendChild(nodeGroupMap);
+        nodeChannelGroups.AppendChild(nodeChannelGroup);
+      }
+      rootElement.AppendChild(nodeChannelGroups);
       xmlDoc.AppendChild(rootElement);
       xmlDoc.Save("export.xml");
-      MessageBox.Show(this, "Channels and schedules exported to 'export.xml'");
+      MessageBox.Show(this, "Channels, channel groups and schedules exported to 'export.xml'");
     }
 
     private void mpButtonExpert_Click(object sender, EventArgs e)
@@ -762,7 +786,7 @@ namespace SetupTv.Sections
       openFileDialog1.CheckFileExists = true;
       openFileDialog1.DefaultExt = "xml";
       openFileDialog1.RestoreDirectory = true;
-      openFileDialog1.Title = "Load channels and schedules";
+      openFileDialog1.Title = "Load channels, channel groups and schedules";
       openFileDialog1.FileName = "export.xml";
       openFileDialog1.AddExtension = true;
       openFileDialog1.Multiselect = false;
@@ -771,6 +795,7 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       int channelCount = 0;
       int scheduleCount = 0;
+      int channelGroupCount = 0;
       try
       {
         XmlDocument doc = new XmlDocument();
@@ -778,6 +803,7 @@ namespace SetupTv.Sections
         XmlNodeList serverList = doc.SelectNodes("/tvserver/servers/servers");
         XmlNodeList channelList = doc.SelectNodes("/tvserver/channels/channel");
         XmlNodeList scheduleList = doc.SelectNodes("/tvserver/schedules/schedule");
+        XmlNodeList channelGroupList = doc.SelectNodes("/tvserver/channelgroups/channelgroup");
         XmlNodeList cardList = doc.SelectNodes("/tvserver/servers/servers/cards/card");
         foreach (XmlNode nodeChannel in channelList)
         {
@@ -968,7 +994,28 @@ namespace SetupTv.Sections
             schedule.Series = (nodeSchedule.Attributes["Series"].Value == "True");
             schedule.Persist();
         }
-        MessageBox.Show(String.Format("Imported {0} channels and {1} schedules", channelCount, scheduleCount));
+        // Import channel groups
+        foreach (XmlNode nodeChannelGroup in channelGroupList)
+        {
+          channelGroupCount++;
+          string groupName = nodeChannelGroup.Attributes["GroupName"].Value;
+          int groupSortOrder = Int32.Parse(nodeChannelGroup.Attributes["SortOrder"].Value);
+          ChannelGroup group = new ChannelGroup(groupName,groupSortOrder);
+          group.Persist();
+          XmlNodeList mappingList = nodeChannelGroup.SelectNodes("mappings/map");
+          foreach (XmlNode nodeMap in mappingList)
+          {
+            Channel channel = layer.GetChannelByName(nodeMap.Attributes["ChannelName"].Value);
+            int sortOrder=Int32.Parse(nodeMap.Attributes["SortOrder"].Value);
+            if (channel != null)
+            {
+              GroupMap map = new GroupMap(group.IdGroup, channel.IdChannel, sortOrder);
+              map.Persist();
+            }
+          }
+
+        }
+        MessageBox.Show(String.Format("Imported {0} channels, {1} channel groups and {2} schedules", channelCount, channelGroupCount, scheduleCount));
       }
       catch (Exception ex)
       {

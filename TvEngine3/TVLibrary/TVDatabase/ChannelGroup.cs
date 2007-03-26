@@ -30,10 +30,11 @@ namespace TvDatabase
     /// <summary> 
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
-    public ChannelGroup(string groupName)
+    public ChannelGroup(string groupName, int sortOrder)
     {
       isChanged = true;
       this.groupName = groupName;
+      this.sortOrder = sortOrder;
     }
 
     /// <summary> 

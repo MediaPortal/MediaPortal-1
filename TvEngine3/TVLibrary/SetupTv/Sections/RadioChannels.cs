@@ -367,8 +367,11 @@ namespace SetupTv.Sections
       IList channels = Channel.ListAll();
       foreach (Channel channel in channels)
       {
-        if (channel.IsTv)
+        if (channel.IsRadio)
+        {
+          Gentle.Framework.Broker.Execute("delete from TvMovieMapping WHERE idChannel=" + channel.IdChannel.ToString());
           channel.Delete();
+        }
       }
       OnSectionActivated();
     }

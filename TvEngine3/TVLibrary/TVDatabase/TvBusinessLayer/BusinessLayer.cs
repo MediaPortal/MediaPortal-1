@@ -103,7 +103,7 @@ namespace TvDatabase
       ChannelGroup group;
       if (groups.Count == 0)
       {
-        group = new ChannelGroup(groupName);
+        group = new ChannelGroup(groupName,9999);
         group.Persist();
       }
       else
