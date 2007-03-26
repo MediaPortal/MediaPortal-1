@@ -30,9 +30,8 @@
 #define BUFFER_LENGTH        0x1000
 extern void LogDebug(const char *fmt, ...) ;
 
-CDeMultiplexer::CDeMultiplexer(MultiFileReader& reader,CTsDuration& duration,CTsReaderFilter& filter)
-:m_reader(reader)
-,m_duration(duration)
+CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
+:m_duration(duration)
 ,m_filter(filter)
 {
   m_patParser.SetCallBack(this);
@@ -47,6 +46,10 @@ CDeMultiplexer::~CDeMultiplexer()
 
 }
 
+void CDeMultiplexer::SetFileReader(FileReader* reader)
+{
+  m_reader=reader;
+}
 
 void CDeMultiplexer::Flush()
 {
@@ -115,7 +118,7 @@ bool CDeMultiplexer::ReadFromFile()
   while (true)
   {
     DWORD dwReadBytes;
-    m_reader.Read(buffer,sizeof(buffer), &dwReadBytes);
+    m_reader->Read(buffer,sizeof(buffer), &dwReadBytes);
     if (dwReadBytes > 0)
     {
       OnRawData(buffer,(int)dwReadBytes);

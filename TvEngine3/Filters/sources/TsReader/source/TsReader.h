@@ -77,8 +77,8 @@ private:
 	WCHAR           m_fileName[1024];
 	CCritSec        m_section;
 	CCritSec        m_CritSecDuration;
-	MultiFileReader m_fileReader;
-	MultiFileReader m_fileDuration;
+	FileReader*     m_fileReader;
+	FileReader*     m_fileDuration;
   CTsDuration     m_duration;
   CBaseReferenceClock* m_referenceClock;
 	CDeMultiplexer  m_demultiplexer;

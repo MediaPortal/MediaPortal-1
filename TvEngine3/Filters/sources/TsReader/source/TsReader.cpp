@@ -115,9 +115,10 @@ CUnknown * WINAPI CTsReaderFilter::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 	CSource(NAME("CTsReaderFilter"), pUnk, CLSID_TSReader),
 	m_pAudioPin(NULL),
-  m_demultiplexer(m_fileReader, m_duration, *this),
-  m_duration(m_fileDuration)
+  m_demultiplexer( m_duration, *this)
 {
+  m_fileReader=NULL;
+  m_fileDuration=NULL;
 
 	LogDebug("CTsReaderFilter::ctor");
 	m_pAudioPin = new CAudioPin(GetOwner(), this, phr,&m_section);
@@ -141,6 +142,10 @@ CTsReaderFilter::~CTsReaderFilter()
 
 	hr=m_pVideoPin->Disconnect();
 	delete m_pVideoPin;
+  if (m_fileReader!=NULL)
+    delete m_fileReader;
+  if (m_fileDuration!=NULL)
+    delete m_fileDuration;
 }
 
 STDMETHODIMP CTsReaderFilter::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
@@ -240,19 +245,38 @@ STDMETHODIMP CTsReaderFilter::GetDuration(REFERENCE_TIME *dur)
 }
 STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 {
+  if (m_fileReader!=NULL)
+    delete m_fileReader;
+  if (m_fileDuration!=NULL)
+    delete m_fileDuration;
+
 	LogDebug("CTsReaderFilter::Load()");
   m_bSeeking=false;
 	wcscpy(m_fileName,pszFileName);
   char url[MAX_PATH];
   WideCharToMultiByte(CP_ACP,0,m_fileName,-1,url,MAX_PATH,0,0);
-	m_fileReader.SetFileName(url);
-	m_fileReader.OpenFile();
+  int length=strlen(url);	
+  if ((length < 9) || (_strcmpi(&url[length-9], ".tsbuffer") != 0))
+  {
+    m_fileReader = new FileReader();
+    m_fileDuration = new FileReader();
+  }
+  else
+  {
+    m_fileReader = new MultiFileReader();
+    m_fileDuration = new MultiFileReader();
+  }
+	m_fileReader->SetFileName(url);
+	m_fileReader->OpenFile();
 
-  m_fileDuration.SetFileName(url);
-	m_fileDuration.OpenFile();
+  m_fileDuration->SetFileName(url);
+	m_fileDuration->OpenFile();
+  m_demultiplexer.SetFileReader(m_fileReader);
+
+  m_duration.SetFileReader(m_fileDuration);
   m_duration.UpdateDuration();
 
-	m_fileReader.SetFilePointer(0LL,FILE_BEGIN);
+	m_fileReader->SetFilePointer(0LL,FILE_BEGIN);
 	return S_OK;
 }
 
@@ -304,7 +328,8 @@ double CTsReaderFilter::GetStartTime()
 void CTsReaderFilter::Seek(CRefTime& seekTime)
 {
   m_bSeeking=true;
-  CTsFileSeek seek(m_fileReader,m_duration);
+  CTsFileSeek seek(m_duration);
+  seek.SetFileReader(m_fileReader);
   seek.Seek(seekTime);
 
 }

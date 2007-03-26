@@ -23,8 +23,7 @@
 #include "AdaptionField.h"
 extern void LogDebug(const char *fmt, ...) ;
 
-CTsDuration::CTsDuration(MultiFileReader& reader)
-:m_reader(reader)
+CTsDuration::CTsDuration()
 {
 }
 
@@ -33,16 +32,21 @@ CTsDuration::~CTsDuration(void)
 }
 
 
+void CTsDuration::SetFileReader(FileReader* reader)
+{
+  m_reader=reader;
+}
+
 void CTsDuration::UpdateDuration()
 {
   m_bSearchStart=true;
   m_startPcr.Reset();
-  m_reader.SetFilePointer(0,FILE_BEGIN);
+  m_reader->SetFilePointer(0,FILE_BEGIN);
   byte buffer[32712];
   while (!m_startPcr.IsValid)
   {
     DWORD dwBytesRead;
-    if (!SUCCEEDED(m_reader.Read(buffer,sizeof(buffer),&dwBytesRead)))
+    if (!SUCCEEDED(m_reader->Read(buffer,sizeof(buffer),&dwBytesRead)))
     {
       return;
     }
@@ -58,8 +62,8 @@ void CTsDuration::UpdateDuration()
   while (!m_endPcr.IsValid)
   {
     DWORD dwBytesRead;
-    m_reader.SetFilePointer(-offset,FILE_END);
-    if (!SUCCEEDED(m_reader.Read(buffer,sizeof(buffer),&dwBytesRead)))
+    m_reader->SetFilePointer(-offset,FILE_END);
+    if (!SUCCEEDED(m_reader->Read(buffer,sizeof(buffer),&dwBytesRead)))
     {
       return;
     }

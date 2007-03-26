@@ -36,7 +36,7 @@ class CTsReaderFilter;
 class CDeMultiplexer : public CPacketSync, public IPatParserCallback
 {
 public:
-  CDeMultiplexer(MultiFileReader& reader, CTsDuration& duration,CTsReaderFilter& filter);
+  CDeMultiplexer( CTsDuration& duration,CTsReaderFilter& filter);
 	virtual ~CDeMultiplexer(void);
 
   void Flush();
@@ -44,10 +44,11 @@ public:
   CBuffer* GetAudio();
 	void OnTsPacket(byte* tsPacket);
 	void OnNewChannel(CChannelInfo& info);
+  void SetFileReader(FileReader* reader);
 private:
   bool ReadFromFile();
   CCritSec m_section;
-	MultiFileReader& m_reader;
+	FileReader* m_reader;
   CPatParser m_patParser;
   CPidTable m_pids;
   vector<CBuffer*> m_vecVideoBuffers;

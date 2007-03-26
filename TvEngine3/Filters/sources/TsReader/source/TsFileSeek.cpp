@@ -3,9 +3,8 @@
 #include "adaptionfield.h"
 
 extern void LogDebug(const char *fmt, ...) ;
-CTsFileSeek::CTsFileSeek(MultiFileReader& reader, CTsDuration& duration)
-:m_reader(reader)
-,m_duration(duration)
+CTsFileSeek::CTsFileSeek( CTsDuration& duration)
+:m_duration(duration)
 {
 }
 
@@ -13,12 +12,17 @@ CTsFileSeek::~CTsFileSeek(void)
 {
 }
 
+void CTsFileSeek::SetFileReader(FileReader* reader)
+{
+  m_reader=reader;
+}
+
 void CTsFileSeek::Seek(CRefTime refTime)
 {
   float duration=(float)m_duration.Duration().Millisecs();
   float seekPos=(float)refTime.Millisecs();
   float percent=seekPos/duration;
-  __int64 filePos=m_reader.GetFileSize()*percent;
+  __int64 filePos=m_reader->GetFileSize()*percent;
   seekPos/=1000.0f;
   LogDebug("seek to %f", seekPos);
 
@@ -26,9 +30,9 @@ void CTsFileSeek::Seek(CRefTime refTime)
   int state=0;
   while (true)
   {
-    m_reader.SetFilePointer(filePos,FILE_BEGIN);
+    m_reader->SetFilePointer(filePos,FILE_BEGIN);
     DWORD dwBytesRead;
-    if (!SUCCEEDED(m_reader.Read(buffer,sizeof(buffer),&dwBytesRead)))
+    if (!SUCCEEDED(m_reader->Read(buffer,sizeof(buffer),&dwBytesRead)))
     {
       return;
     }
