@@ -2841,12 +2841,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_40D3011B245F4244B795FC76EE857F7A"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_411C46303BF646EA8567E672D7809CC2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -4593,12 +4587,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_666E1907BE29BF87840006016C125DF1"
-        "OwnerKey" = "8:_05C5732A8E99258A6A051472BBF9AD25"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_668B9321EDC94F19B64CCF432C4A18D2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -5621,12 +5609,6 @@
         {
         "MsmKey" = "8:_7DD798B67D8B4DE8A297D7F5EB9A6D50"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7E82F62F02C54E2AA1AE67408C09834D"
-        "OwnerKey" = "8:_416D221129EA4472920D97B19D66A6A4"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -7005,6 +6987,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_992C1861D2DA4626AC9A20945DC1D9B0"
+        "OwnerKey" = "8:_416D221129EA4472920D97B19D66A6A4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_9990FD6187CA4EA7BD063302232CFF22"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -8050,6 +8038,18 @@
         "Entry"
         {
         "MsmKey" = "8:_B0608F0324035DCD4CCF05C8AF513B82"
+        "OwnerKey" = "8:_149F2A675D5B435C9105A3F6F372B97E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B0608F0324035DCD4CCF05C8AF513B82"
+        "OwnerKey" = "8:_0958D570D5B1495E9228DF67C6CABF16"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B0608F0324035DCD4CCF05C8AF513B82"
         "OwnerKey" = "8:_EEBB0FF9CB1142E89AD3401CCAFA229A"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -8140,6 +8140,12 @@
         "Entry"
         {
         "MsmKey" = "8:_B13373809CF14DC7AC66B7CC9F9AF9FE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B1AF1C332C5A42108D814D215847040C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -8303,6 +8309,12 @@
         {
         "MsmKey" = "8:_B60E062647B946D2808ADB2397D54969"
         "OwnerKey" = "8:_149F2A675D5B435C9105A3F6F372B97E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B60E062647B946D2808ADB2397D54969"
+        "OwnerKey" = "8:_0958D570D5B1495E9228DF67C6CABF16"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -9395,6 +9407,12 @@
         {
         "MsmKey" = "8:_CBEE3957502212794CC4447D02F31B91"
         "OwnerKey" = "8:_8E4E5CF6FB5B4D9B86434402B55C1010"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CBEE3957502212794CC4447D02F31B91"
+        "OwnerKey" = "8:_149F2A675D5B435C9105A3F6F372B97E"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -11998,6 +12016,24 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B60E062647B946D2808ADB2397D54969"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B0608F0324035DCD4CCF05C8AF513B82"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_149F2A675D5B435C9105A3F6F372B97E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_EEBB0FF9CB1142E89AD3401CCAFA229A"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -12305,12 +12341,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_0507EA15CE03478CB5CDF3C7ED4A84CD"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_149F2A675D5B435C9105A3F6F372B97E"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -21573,26 +21603,6 @@
             "TargetName" = "8:wfactory_net.xml"
             "Tag" = "8:"
             "Folder" = "8:_1848BF3F26644D8F88F5DB08766EAD45"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_40D3011B245F4244B795FC76EE857F7A"
-            {
-            "SourcePath" = "8:..\\Setup Vista\\MediaPortalDirs.xml"
-            "TargetName" = "8:MediaPortalDirs.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -38816,6 +38826,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B1AF1C332C5A42108D814D215847040C"
+            {
+            "SourcePath" = "8:MediaPortalDirs.xml"
+            "TargetName" = "8:MediaPortalDirs.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B1AF2590C17148ED8355B257BFD4310F"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\logo_crossfade.png"
@@ -53653,7 +53683,7 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_7E82F62F02C54E2AA1AE67408C09834D"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_992C1861D2DA4626AC9A20945DC1D9B0"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"

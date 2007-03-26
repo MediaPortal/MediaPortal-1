@@ -2163,12 +2163,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_32132EDDD4A241BC98DC4DB588221A80"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_328440FDC1D34CD3A6C62DAB471FF72D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -4595,12 +4589,6 @@
         {
         "MsmKey" = "8:_666E1907BE29BF87840006016C125DF1"
         "OwnerKey" = "8:_CCE4C2BB2D6D444FAB7A4628EDEFB0E5"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_666E1907BE29BF87840006016C125DF1"
-        "OwnerKey" = "8:_05C5732A8E99258A6A051472BBF9AD25"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -8056,6 +8044,18 @@
         "Entry"
         {
         "MsmKey" = "8:_B0608F0324035DCD4CCF05C8AF513B82"
+        "OwnerKey" = "8:_149F2A675D5B435C9105A3F6F372B97E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B0608F0324035DCD4CCF05C8AF513B82"
+        "OwnerKey" = "8:_0958D570D5B1495E9228DF67C6CABF16"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B0608F0324035DCD4CCF05C8AF513B82"
         "OwnerKey" = "8:_EEBB0FF9CB1142E89AD3401CCAFA229A"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -8309,6 +8309,12 @@
         {
         "MsmKey" = "8:_B60E062647B946D2808ADB2397D54969"
         "OwnerKey" = "8:_149F2A675D5B435C9105A3F6F372B97E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B60E062647B946D2808ADB2397D54969"
+        "OwnerKey" = "8:_0958D570D5B1495E9228DF67C6CABF16"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -9401,6 +9407,12 @@
         {
         "MsmKey" = "8:_CBEE3957502212794CC4447D02F31B91"
         "OwnerKey" = "8:_8E4E5CF6FB5B4D9B86434402B55C1010"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CBEE3957502212794CC4447D02F31B91"
+        "OwnerKey" = "8:_149F2A675D5B435C9105A3F6F372B97E"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -12004,6 +12016,24 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B60E062647B946D2808ADB2397D54969"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B0608F0324035DCD4CCF05C8AF513B82"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_149F2A675D5B435C9105A3F6F372B97E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_EEBB0FF9CB1142E89AD3401CCAFA229A"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -12311,12 +12341,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_0507EA15CE03478CB5CDF3C7ED4A84CD"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_149F2A675D5B435C9105A3F6F372B97E"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -19264,26 +19288,6 @@
             "TargetName" = "8:icon_numberplace_overlay_3.png"
             "Tag" = "8:"
             "Folder" = "8:_D95A9A75A195450EAA8CD66DD0FB0CC7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_32132EDDD4A241BC98DC4DB588221A80"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\osdskin.xml"
-            "TargetName" = "8:osdskin.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
