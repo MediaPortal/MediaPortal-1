@@ -45,7 +45,7 @@
   </Dir>
   <!-- The Path were the Default Inputdevice Mappings are located. -->
   <Dir id = "CustomInputDefault">
-    <Path>%APPDATA%\Team MediaPortal\MediaPortal\InputDeviceMappings\defaults</Path>
+    <Path>InputDeviceMappings\defaults\</Path>
   </Dir>
   <!-- The Path were the skins are located -->
   <Dir id = "Skin">
