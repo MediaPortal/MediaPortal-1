@@ -23,7 +23,7 @@
 #include "tsreader.h"
 #include "mediaseeking.h"
 
-class CAudioPin : public CSourceStream, public CMediaSeeking
+class CAudioPin : public CSourceStream, public CSourceSeeking
 {
 public:
 	CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCritSec* section);
@@ -36,20 +36,23 @@ public:
 	HRESULT DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest);
 	HRESULT CompleteConnect(IPin *pReceivePin);
 	HRESULT FillBuffer(IMediaSample *pSample);
+  HRESULT BreakConnect();
 	
 
 	// CSourceSeeking
 	HRESULT ChangeStart();
 	HRESULT ChangeStop();
 	HRESULT ChangeRate();
+  STDMETHODIMP SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags);
 
 	HRESULT OnThreadStartPlay();
 	void SetStart(CRefTime rtStartTime);
 
-	void SetDuration();
-	void FlushStart();
-	void FlushStop();
+  bool IsConnected();
+
 protected:
+  void UpdateFromSeek();
+  bool m_bConnected;
 	CRefTime	m_refStartTime;
 	BOOL m_bDiscontinuity;
 	CTsReaderFilter *	const m_pTsReaderFilter;

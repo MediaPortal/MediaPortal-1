@@ -23,13 +23,12 @@
 *    http://forums.dvbowners.com/
 */
 
-#include <streams.h>
+//#include <streams.h>
 #include "FileReader.h"
-//#include "global.h"
-
+#include <stdio.h>
+extern void LogDebug(const char *fmt, ...) ;
 FileReader::FileReader() :
 	m_hFile(INVALID_HANDLE_VALUE),
-	m_pFileName(0),
 	m_bReadOnly(FALSE),
 	m_fileSize(0),
 	m_infoFileSize(0),
@@ -42,10 +41,8 @@ FileReader::FileReader() :
 
 FileReader::~FileReader()
 {
-//	FlushFile();
 	CloseFile();
-	if (m_pFileName)
-		delete m_pFileName;
+	
 }
 
 FileReader* FileReader::CreateFileReader()
@@ -53,32 +50,18 @@ FileReader* FileReader::CreateFileReader()
 	return new FileReader();
 }
 
-HRESULT FileReader::GetFileName(LPOLESTR *lpszFileName)
+int FileReader::GetFileName(char *lpszFileName)
 {
-	*lpszFileName = m_pFileName;
+  strcpy(lpszFileName,m_fileName);
 	return S_OK;
 }
 
-HRESULT FileReader::SetFileName(LPCOLESTR pszFileName)
+int FileReader::SetFileName(char* pszFileName)
 {
 	// Is this a valid filename supplied
-	CheckPointer(pszFileName,E_POINTER);
+	//CheckPointer(pszFileName,E_POINTER);
 
-	if(wcslen(pszFileName) > MAX_PATH)
-		return ERROR_FILENAME_EXCED_RANGE;
-
-	// Take a copy of the filename
-
-	if (m_pFileName)
-	{
-		delete[] m_pFileName;
-		m_pFileName = NULL;
-	}
-	m_pFileName = new WCHAR[1+lstrlenW(pszFileName)];
-	if (m_pFileName == NULL)
-		return E_OUTOFMEMORY;
-
-	wcscpy(m_pFileName, pszFileName);
+	strcpy(m_fileName,pszFileName);
 
 	return S_OK;
 }
@@ -88,40 +71,23 @@ HRESULT FileReader::SetFileName(LPCOLESTR pszFileName)
 //
 // Opens the file ready for streaming
 //
-HRESULT FileReader::OpenFile()
+int FileReader::OpenFile()
 {
-	TCHAR *pFileName = NULL;
 
+    //printf("FileReader::OpenFile(%s)\n",m_fileName);
 	// Is the file already opened
-	if (m_hFile != INVALID_HANDLE_VALUE) {
-
+	if (m_hFile != INVALID_HANDLE_VALUE) 
+  {
+    LogDebug("FileReader::OpenFile() already opened");
 		return NOERROR;
 	}
 
-	// Has a filename been set yet
-	if (m_pFileName == NULL) {
-		return ERROR_INVALID_NAME;
-	}
 
-//	BoostThread Boost;
-
-	// Convert the UNICODE filename if necessary
-
-#if defined(WIN32) && !defined(UNICODE)
-	char convert[MAX_PATH];
-
-	if(!WideCharToMultiByte(CP_ACP,0,m_pFileName,-1,convert,MAX_PATH,0,0))
-		return ERROR_INVALID_NAME;
-
-	pFileName = convert;
-#else
-	pFileName = m_pFileName;
-#endif
 
 	m_bReadOnly = FALSE;
 
 	// Try to open the file
-	m_hFile = CreateFile((LPCTSTR) pFileName,   // The filename
+  m_hFile = CreateFileA((LPCSTR)m_fileName,   // The filename
 						 GENERIC_READ,          // File access
 						 FILE_SHARE_READ,       // Share access
 						 NULL,                  // Security
@@ -129,17 +95,17 @@ HRESULT FileReader::OpenFile()
 						 (DWORD) 0,             // More flags
 						 NULL);                 // Template
 
-	if (m_hFile == INVALID_HANDLE_VALUE) {
+	if (m_hFile == INVALID_HANDLE_VALUE) 
+  {
 
 		//Test incase file is being recorded to
-		m_hFile = CreateFile((LPCTSTR) pFileName,		// The filename
+		m_hFile = CreateFileA((LPCSTR)m_fileName,		// The filename
 							GENERIC_READ,				// File access
 							FILE_SHARE_READ |
 							FILE_SHARE_WRITE,   // Share access
 							NULL,						// Security
 							OPEN_EXISTING,				// Open flags
-//							(DWORD) 0,
-							(DWORD) FILE_ATTRIBUTE_NORMAL,		// More flags
+							FILE_ATTRIBUTE_NORMAL,		// More flags
 //							FILE_ATTRIBUTE_NORMAL |
 //							FILE_FLAG_RANDOM_ACCESS,	// More flags
 //							FILE_FLAG_SEQUENTIAL_SCAN,	// More flags
@@ -148,29 +114,30 @@ HRESULT FileReader::OpenFile()
 		if (m_hFile == INVALID_HANDLE_VALUE)
 		{
 			DWORD dwErr = GetLastError();
-			return HRESULT_FROM_WIN32(dwErr);
+      LogDebug("FileReader::OpenFile(%s) failed:%d",(LPCSTR)m_fileName,dwErr);
+			return (int)dwErr;
 		}
 
 		m_bReadOnly = TRUE;
+    //printf("FileReader::OpenFile() succeeded\n");
 	}
-
-	TCHAR infoName[512];
-	strcpy(infoName, pFileName);
+/*
+	char infoName[512];
+	strcpy(infoName, m_fileName);
 	strcat(infoName, ".info");
 
-	m_hInfoFile = CreateFile((LPCTSTR) infoName, // The filename
+	m_hInfoFile = CreateFile(m_fileName, // The filename
 			GENERIC_READ,    // File access
 			FILE_SHARE_READ |
 			FILE_SHARE_WRITE,   // Share access
 			NULL,      // Security
 			OPEN_EXISTING,    // Open flags
-//			(DWORD) 0,
-			(DWORD) FILE_ATTRIBUTE_NORMAL, // More flags
+			FILE_ATTRIBUTE_NORMAL, // More flags
 //			FILE_FLAG_SEQUENTIAL_SCAN,	// More flags
 //			FILE_ATTRIBUTE_NORMAL |
 //			FILE_FLAG_RANDOM_ACCESS,	// More flags
 			NULL);
-
+*/
 	SetFilePointer(0, FILE_BEGIN);
 
 	return S_OK;
@@ -182,18 +149,17 @@ HRESULT FileReader::OpenFile()
 //
 // Closes any dump file we have opened
 //
-HRESULT FileReader::CloseFile()
+int FileReader::CloseFile()
 {
 	// Must lock this section to prevent problems related to
 	// closing the file while still receiving data in Receive()
 
+
+//    printf("FileReader::CloseFile()\n");
 	if (m_hFile == INVALID_HANDLE_VALUE) {
 
 		return S_OK;
 	}
-
-//	BoostThread Boost;
-//	FlushFile();
 
 	CloseHandle(m_hFile);
 	m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
@@ -207,42 +173,23 @@ HRESULT FileReader::CloseFile()
 
 } // CloseFile
 
-HRESULT FileReader::FlushFile()
-{
-	if (m_hFile == INVALID_HANDLE_VALUE) {
-
-		return S_OK;
-	}
-
-//	BoostThread Boost;
-
-	FlushFileBuffers(m_hFile);
-	::SetFilePointer(m_hFile, 0, NULL, FILE_END);
-
-	if (m_hInfoFile == INVALID_HANDLE_VALUE) {
-
-		return S_OK;
-	}
-
-	FlushFileBuffers(m_hInfoFile);
-	::SetFilePointer(m_hInfoFile, 0, NULL, FILE_END);
-
-	return NOERROR;
-
-} // FlushFile
-
 BOOL FileReader::IsFileInvalid()
 {
 	return (m_hFile == INVALID_HANDLE_VALUE);
 }
 
-HRESULT FileReader::GetFileSize(__int64 *pStartPosition, __int64 *pLength)
+__int64 FileReader::GetFileSize()
 {
-	CheckPointer(pStartPosition,E_POINTER);
-	CheckPointer(pLength,E_POINTER);
+  __int64 pStartPosition =0;
+  __int64 pLength=0;
+  GetFileSize(&pStartPosition, &pLength);
+  return pLength;
+}
+int FileReader::GetFileSize(__int64 *pStartPosition, __int64 *pLength)
+{
+//	CheckPointer(pStartPosition,E_POINTER);
+//	CheckPointer(pLength,E_POINTER);
 	
-//	BoostThread Boost;
-
 	GetStartPosition(pStartPosition);
 
 	//Do not get file size if static file or first time 
@@ -272,6 +219,7 @@ HRESULT FileReader::GetFileSize(__int64 *pStartPosition, __int64 *pLength)
 		dwSizeLow = ::GetFileSize(m_hFile, &dwSizeHigh);
 		if ((dwSizeLow == 0xFFFFFFFF) && (GetLastError() != NO_ERROR ))
 		{
+      LogDebug("FileReader::GetFileSize() failed()");
 			return E_FAIL;
 		}
 
@@ -280,19 +228,18 @@ HRESULT FileReader::GetFileSize(__int64 *pStartPosition, __int64 *pLength)
 		li.HighPart = dwSizeHigh;
 		m_fileSize = li.QuadPart;
 	}
+  //printf("FileReader::GetFileSize() :%d\n",(int)m_fileSize );
 	*pLength = m_fileSize;
 	return S_OK;
 }
 
-HRESULT FileReader::GetInfoFileSize(__int64 *lpllsize)
+int FileReader::GetInfoFileSize(__int64 *lpllsize)
 {
 	//Do not get file size if static file or first time 
 	if (m_bReadOnly || !m_infoFileSize) {
 		
 		DWORD dwSizeLow;
 		DWORD dwSizeHigh;
-
-//		BoostThread Boost;
 
 		dwSizeLow = ::GetFileSize(m_hInfoFile, &dwSizeHigh);
 		if ((dwSizeLow == 0xFFFFFFFF) && (GetLastError() != NO_ERROR ))
@@ -310,15 +257,13 @@ HRESULT FileReader::GetInfoFileSize(__int64 *lpllsize)
 		return S_OK;
 }
 
-HRESULT FileReader::GetStartPosition(__int64 *lpllpos)
+int FileReader::GetStartPosition(__int64 *lpllpos)
 {
 	//Do not get file size if static file unless first time 
 	if (m_bReadOnly || !m_fileStartPos) {
 		
 		if (m_hInfoFile != INVALID_HANDLE_VALUE)
 		{
-//			BoostThread Boost;
-	
 			__int64 size = 0;
 			GetInfoFileSize(&size);
 			//Check if timeshift info file
@@ -348,8 +293,6 @@ HRESULT FileReader::GetStartPosition(__int64 *lpllpos)
 
 DWORD FileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod)
 {
-//	BoostThread Boost;
-
 	LARGE_INTEGER li;
 
 	if (dwMoveMethod == FILE_END && m_hInfoFile != INVALID_HANDLE_VALUE)
@@ -411,8 +354,6 @@ DWORD FileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod)
 
 __int64 FileReader::GetFilePointer()
 {
-//	BoostThread Boost;
-
 	LARGE_INTEGER li;
 	li.QuadPart = 0;
 	li.LowPart = ::SetFilePointer(m_hFile, 0, &li.HighPart, FILE_CURRENT);
@@ -435,15 +376,13 @@ __int64 FileReader::GetFilePointer()
 	return li.QuadPart;
 }
 
-HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
+int FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 {
-	HRESULT hr;
-
+	int hr;
+  //printf("FileReader::Read:%d\n", (int)lDataLength);
 	// If the file has already been closed, don't continue
 	if (m_hFile == INVALID_HANDLE_VALUE)
 		return S_FALSE;
-
-//	BoostThread Boost;
 
 	//Get File Position
 	LARGE_INTEGER li;
@@ -467,8 +406,10 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 
 				hr = ReadFile(m_hFile, (PVOID)pbData, (DWORD)(length - m_filecurrent), dwReadBytes, NULL);
 				if (FAILED(hr))
+        {
+          //printf(" read failed:%d",hr);
 					return hr;
-
+        }
 				LARGE_INTEGER li;
 				li.QuadPart = 0;
 				::SetFilePointer(m_hFile, li.LowPart, &li.HighPart, FILE_BEGIN);
@@ -490,11 +431,17 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 			else
 				hr = ReadFile(m_hFile, (PVOID)pbData, (DWORD)lDataLength, dwReadBytes, NULL);
 
-			if (FAILED(hr))
-				return hr;
 
-			if (*dwReadBytes < (ULONG)lDataLength)
-				return S_FALSE;
+	    if (FAILED(hr))
+      {
+        //printf(" read failed:%d",hr);
+		    return hr;
+      }
+	    if (*dwReadBytes < (ULONG)lDataLength)
+      {
+        //printf(" read failed not enough data :%d/%d",(int)(*dwReadBytes), (int)lDataLength);
+		    return S_FALSE;
+      }
 
 			return S_OK;
 		}
@@ -511,17 +458,20 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 		hr = ReadFile(m_hFile, (PVOID)pbData, (DWORD)lDataLength, dwReadBytes, NULL);//Read file data into buffer
 
 	if (FAILED(hr))
+  {
+    //printf(" read failed:%d",hr);
 		return hr;
+  }
 	if (*dwReadBytes < (ULONG)lDataLength)
+  {
+    //printf(" read failed not enough data :%d/%d",(int)(*dwReadBytes), (int)lDataLength);
 		return S_FALSE;
-
+  }
 	return S_OK;
 }
 
-HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod)
+int FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod)
 {
-//	BoostThread Boost;
-
 	//If end method then we want llDistanceToMove to be the end of the buffer that we read.
 	if (dwMoveMethod == FILE_END)
 		llDistanceToMove = 0 - llDistanceToMove - lDataLength;
@@ -531,25 +481,25 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __
 	return Read(pbData, lDataLength, dwReadBytes);
 }
 
-HRESULT FileReader::get_ReadOnly(WORD *ReadOnly)
+int FileReader::get_ReadOnly(WORD *ReadOnly)
 {
 	*ReadOnly = m_bReadOnly;
 	return S_OK;
 }
 
-HRESULT FileReader::get_DelayMode(WORD *DelayMode)
+int FileReader::get_DelayMode(WORD *DelayMode)
 {
 	*DelayMode = m_bDelay;
 	return S_OK;
 }
 
-HRESULT FileReader::set_DelayMode(WORD DelayMode)
+int FileReader::set_DelayMode(WORD DelayMode)
 {
 	m_bDelay = DelayMode;
 	return S_OK;
 }
 
-HRESULT FileReader::get_ReaderMode(WORD *ReaderMode)
+int FileReader::get_ReaderMode(WORD *ReaderMode)
 {
 	*ReaderMode = FALSE;
 	return S_OK;

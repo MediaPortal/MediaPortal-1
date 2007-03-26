@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,26 +19,21 @@
  *
  */
 #pragma once
-#include "pcr.h"
-#define MAX_BUFFER_SIZE 0x10000
-class CBuffer
+
+#define TS_PACKET_SYNC 0x47
+#define TS_PACKET_LEN  188
+
+class CPacketSync
 {
 public:
-	CBuffer(void);
-	~CBuffer(void);
-	int		 Length();
-	byte*  Data();
-	void   Add(CBuffer* pBuffer);    
-  void   Add(byte* data, int len);
-  void   SetPcr(CPcr& pcr,CPcr& startpcr);
-  void   SetPts(CPcr& pts);
-  void   SetLength(int len);
-  CPcr&  Pcr();
-  bool   MediaTime(CRefTime &reftime);
+	CPacketSync(void);
+
+public:
+	virtual ~CPacketSync(void);
+	void OnRawData(byte* pData, int nDataLen);
+	virtual void OnTsPacket(byte* tsPacket);
+
 private:
-	CPcr  m_pcr;
-	CPcr  m_pts;
-	CPcr  m_startPcr;
-	byte* m_pBuffer;
-	int   m_iLength;
+	byte	m_tempBuffer[200];
+	int  	m_tempBufferPos;
 };

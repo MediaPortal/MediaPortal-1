@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,26 +19,29 @@
  *
  */
 #pragma once
-#include "pcr.h"
-#define MAX_BUFFER_SIZE 0x10000
-class CBuffer
+#include "pidtable.h" 
+
+class CChannelInfo
 {
 public:
-	CBuffer(void);
-	~CBuffer(void);
-	int		 Length();
-	byte*  Data();
-	void   Add(CBuffer* pBuffer);    
-  void   Add(byte* data, int len);
-  void   SetPcr(CPcr& pcr,CPcr& startpcr);
-  void   SetPts(CPcr& pts);
-  void   SetLength(int len);
-  CPcr&  Pcr();
-  bool   MediaTime(CRefTime &reftime);
-private:
-	CPcr  m_pcr;
-	CPcr  m_pts;
-	CPcr  m_startPcr;
-	byte* m_pBuffer;
-	int   m_iLength;
+  CChannelInfo(void);
+  virtual ~CChannelInfo(void);
+  void Reset();
+  int NetworkId;
+  int TransportId;
+  int ServiceId;
+  int MajorChannel;
+  int MinorChannel;
+  int Frequency;
+  int EIT_schedule_flag;
+  int EIT_present_following_flag;
+  int RunningStatus;
+  int FreeCAMode;
+  int ServiceType;
+  int Modulation;
+	int LCN;
+  char ProviderName[255];
+  char ServiceName[255];
+
+  CPidTable PidTable;
 };

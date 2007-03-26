@@ -44,13 +44,21 @@ extern void LogDebug(const char *fmt, ...) ;
 CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCritSec* section) :
 	CSourceStream(NAME("pinAudio"), phr, pFilter, L"Audio"),
 	m_pTsReaderFilter(pFilter),
-  CMediaSeeking(NAME("pinAudio"),pUnk,phr,section),
+  CSourceSeeking(NAME("pinAudio"),pUnk,phr,section),
 	m_section(section)
 {
 	m_refStartTime=m_rtStart;
 	m_bDropPackets=false;
   m_bDropSeek=false;
+  m_bConnected=false;
 	m_rtStart=0;
+	m_dwSeekingCaps =
+    AM_SEEKING_CanSeekAbsolute	|
+	AM_SEEKING_CanSeekForwards	|
+	AM_SEEKING_CanSeekBackwards	|
+	AM_SEEKING_CanGetStopPos	|
+	AM_SEEKING_CanGetDuration	;//|
+	//AM_SEEKING_Source;
 }
 
 CAudioPin::~CAudioPin()
@@ -65,11 +73,11 @@ STDMETHODIMP CAudioPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 	}
   if (riid == IID_IMediaSeeking)
   {
-      return CMediaSeeking::NonDelegatingQueryInterface( riid, ppv );
+    return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
   }
   if (riid == IID_IMediaPosition)
   {
-		return CMediaSeeking::NonDelegatingQueryInterface( riid, ppv );
+		return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
   }
   return CSourceStream::NonDelegatingQueryInterface(riid, ppv);
 }
@@ -126,134 +134,80 @@ HRESULT CAudioPin::CompleteConnect(IPin *pReceivePin)
 	if (SUCCEEDED(hr))
 	{
 		LogDebug("pin:CompleteConnect() done");
+    m_bConnected=true;
 	}
 	else
 	{
 		LogDebug("pin:CompleteConnect() failed:%x",hr);
 	}
+  REFERENCE_TIME refTime;
+  m_pTsReaderFilter->GetDuration(&refTime);
+  m_rtDuration=CRefTime(refTime);
 	return hr;
+}
+
+HRESULT CAudioPin::BreakConnect()
+{
+  m_bConnected=false;
+  return CSourceStream::BreakConnect();
 }
 
 HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 {
-  m_pTsReaderFilter->UpdateDuration();
-
-//	::OutputDebugStringA("CAudioPin::FillBuffer()\n");
-	pSample->SetActualDataLength(0);
-	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
-	CBuffer* buffer;
-	byte* pSampleBuffer;
-	HRESULT hr = pSample->GetPointer(&pSampleBuffer);
-	if (FAILED(hr))
-	{
-		::OutputDebugStringA("CVideoPin::FillBuffer() invalid ptr\n");
-		return hr;
-	}
-	CRefTime streamTime;
-	m_pTsReaderFilter->StreamTime(streamTime);
-	double dStreamTime=streamTime.Millisecs();
-	double dStartTime= m_rtStart.Millisecs();
-
   if (m_pTsReaderFilter->IsSeeking())
-  {
-    LogDebug("audio:fillbuffer");
-	  pSample->SetActualDataLength(0);
-	  pSample->SetDiscontinuity(TRUE);
-    return NOERROR;
-  }
-	while (demux.AudioPacketCount()>2)
 	{
-		buffer=demux.GetAudio();
-		delete buffer;
-		LogDebug("A:drop...\n");
-		m_bDiscontinuity=TRUE;
-	}
-	buffer=demux.GetAudio();
-	if (buffer==NULL)
-	{
-	  pSample->SetDiscontinuity(TRUE);
-	  pSample->SetActualDataLength(0);
-		//::OutputDebugStringA("CVideoPin::FillBuffer() no audio\n");
+		Sleep(1);
 		return NOERROR;
 	}
-
-
-	if (buffer->Pts()!=0)
-	{
-		long presentationTime=(long)(buffer->Pts() - m_pTsReaderFilter->GetStartTime());
-		CRefTime referenceTime(presentationTime);
-		CRefTime timeStamp=referenceTime - m_rtStart; 
-    //if (timeStamp.Millisecs()<0)
-    //{
-    //  m_bDropPackets=true;
-    //}
-    //else
-    //{
-    //  m_bDropPackets=false;
-    
-		  REFERENCE_TIME refTimeStamp=(REFERENCE_TIME)timeStamp;
-		  pSample->SetTime(&refTimeStamp,NULL);
-#ifdef DEBUG
-		  char buf[100];
-      sprintf(buf,"  A: ST:%05.2f CT:%05.2f FT:%05.2f TS:%05.2f v:%d a:%d (%d)\n",
-					  (dStartTime/1000.0),
-					  (dStreamTime/1000.0), 
-					  (referenceTime.Millisecs()/1000.0),
-					  (timeStamp.Millisecs()/1000.0),
-					  demux.VideoPacketCount(), demux.AudioPacketCount(),m_bDropPackets);
-		  ::OutputDebugString(buf);
-   // }
-#endif		
-	}
-
-  if (m_bDropPackets)
+	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
+  CBuffer* buffer=demux.GetAudio();
+  if (m_bDiscontinuity)
   {
-	  pSample->SetActualDataLength(0);
-	  pSample->SetDiscontinuity(TRUE);
+    LogDebug("aud:set discontinuity");
+    pSample->SetDiscontinuity(TRUE);
+    m_bDiscontinuity=FALSE;
+  }
+  if (buffer!=NULL)
+  {
+    BYTE* pSampleBuffer;
+    CRefTime cRefTime;
+    if (buffer->MediaTime(cRefTime))
+    {
+      cRefTime-=m_rtStart;
+      REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
+      pSample->SetTime(&refTime,NULL);  
+      pSample->SetSyncPoint(TRUE);
+      float fTime=(float)cRefTime.Millisecs();
+      fTime/=1000.0f;
+      LogDebug("aud:%f", fTime);
+    }
+	  pSample->SetActualDataLength(buffer->Length());
+    pSample->GetPointer(&pSampleBuffer);
+    memcpy(pSampleBuffer,buffer->Data(),buffer->Length());
+    delete buffer;
+    return NOERROR;
   }
   else
   {
-	  pSample->SetActualDataLength(buffer->Length());
-	  memcpy(pSampleBuffer, buffer->Data(), buffer->Length());
-	  pSample->SetDiscontinuity(m_bDiscontinuity);
+    LogDebug("aud:no buffer");
+	  pSample->SetActualDataLength(0);
   }
-	delete buffer;
-
-	m_bDiscontinuity=FALSE;
-	//::OutputDebugStringA("CAudioPin::FillBuffer() done\n");
-  return NOERROR;
 }
 
+
+bool CAudioPin::IsConnected()
+{
+  return m_bConnected;
+}
 // CMediaSeeking
 HRESULT CAudioPin::ChangeStart()
 {
-	LogDebug("seek start");
-	if (m_refStartTime==m_rtStart) 
-	{
-    if (m_bDropSeek)
-    {
-      m_bDropSeek=false;
-		  LogDebug("--skip seek");
-		  return S_OK;
-    }
-	}
-
-  m_bDropSeek=true;
-	m_refStartTime=m_rtStart;
-	double startTime=m_rtStart/UNITS;
-	LogDebug("-- get lock");
-	//char buf[100];
-	//sprintf(buf,"CAudioPin::ChangeStart %x %05.2f\n",(DWORD)m_rtStart,startTime);
-	//::OutputDebugString(buf);
-	LogDebug("-- do seek");
-	m_pTsReaderFilter->Seek(m_rtStart);
-	LogDebug("seek done");
-	//::OutputDebugStringA("CAudioPin::ChangeStart done()\n");
-	m_pTsReaderFilter->SeekDone();
+    UpdateFromSeek();
 	return S_OK;
 }
 HRESULT CAudioPin::ChangeStop()
 {
+    UpdateFromSeek();
 	return S_OK;
 }
 HRESULT CAudioPin::ChangeRate()
@@ -261,47 +215,110 @@ HRESULT CAudioPin::ChangeRate()
 	return S_OK;
 }
 
-void CAudioPin::SetDuration()
-{
-	REFERENCE_TIME refTime;
-	m_pTsReaderFilter->GetDuration(&refTime);
-	m_rtDuration=refTime;
-	m_rtStop=refTime;
-}
 
 HRESULT CAudioPin::OnThreadStartPlay()
 {    
-	//::OutputDebugString("CAudioPin::OnThreadStartPlay()\n");
-	m_bDiscontinuity = TRUE;
-	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
-	demux.Reset();
-  return DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
-}
-void CAudioPin::FlushStart()
-{
-	if (ThreadExists()) 
-  {
-    LogDebug("-- audio:DeliverBeginFlush()");
-    DeliverBeginFlush();
-		LogDebug("-- audio:stop()");
-    Stop();
-  }
-}
-void CAudioPin::FlushStop()
-{
-		LogDebug("-- audio:DeliverEndFlush()");
-    DeliverEndFlush();
-		LogDebug("-- audio:Pause()");
-    Pause();
-		LogDebug("-- audio:FlushOutput done");
+  m_bDiscontinuity=TRUE;
+  float fStart=(float)m_rtStart.Millisecs();
+  fStart/=1000.0f;
+  LogDebug("aud:OnThreadStartPlay(%f)", fStart);
+  DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
+	return CSourceStream::OnThreadStartPlay( );
 }
 
 void CAudioPin::SetStart(CRefTime rtStartTime)
 {
-	if (m_rtStart==rtStartTime) return;
-	m_rtStart=rtStartTime;
-	double startTime=m_rtStart/UNITS;
-	//char buf[100];
-	//sprintf(buf,"CAudioPin::SetStart %x %05.2f\n",(DWORD)m_rtStart,startTime);
-	//::OutputDebugString(buf);
+}
+STDMETHODIMP CAudioPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags)
+{/*
+	REFERENCE_TIME rtStop = *pStop;
+	REFERENCE_TIME rtCurrent = *pCurrent;
+	if (CurrentFlags & AM_SEEKING_RelativePositioning)
+	{
+		rtCurrent += m_rtStart;
+		CurrentFlags -= AM_SEEKING_RelativePositioning; //Remove relative flag
+		CurrentFlags += AM_SEEKING_AbsolutePositioning; //Replace with absoulute flag
+	}
+	if (CurrentFlags & AM_SEEKING_PositioningBitsMask)
+	{
+		m_rtStart = rtCurrent;
+	}
+  
+	if (StopFlags & AM_SEEKING_RelativePositioning)
+	{
+		rtStop += m_rtStop;
+		StopFlags -= AM_SEEKING_RelativePositioning; //Remove relative flag
+		StopFlags += AM_SEEKING_AbsolutePositioning; //Replace with absoulute flag
+	}
+	if (!(CurrentFlags & AM_SEEKING_NoFlush) && (CurrentFlags & AM_SEEKING_PositioningBitsMask))
+  {
+    m_pTsReaderFilter->SeekStart();
+    CRefTime rtSeek=rtCurrent;
+    float seekTime=rtSeek.Millisecs();
+    seekTime/=1000.0f;
+    LogDebug("seek to %f", seekTime);
+  				
+    m_rtStart = rtCurrent;
+    
+	  if (m_pTsReaderFilter->IsActive())
+	  {
+		  DeliverBeginFlush();
+	  }
+
+	  CSourceStream::Stop();
+
+    m_pTsReaderFilter->Seek(CRefTime(rtCurrent));
+    
+		if (CurrentFlags & AM_SEEKING_PositioningBitsMask)
+		{
+			m_rtStart = rtCurrent;
+		}
+	  if (m_pTsReaderFilter->IsActive())
+	  {
+		  DeliverEndFlush();
+	  }
+    m_pTsReaderFilter->SeekDone();
+
+    m_bDiscontinuity=TRUE;
+    CSourceStream::Run();
+
+	  if (CurrentFlags & AM_SEEKING_ReturnTime)
+    {
+      *pCurrent=rtCurrent;
+    }
+			
+    return CSourceSeeking::SetPositions(&rtCurrent, CurrentFlags, pStop, StopFlags);
+
+  }*/
+  return CSourceSeeking::SetPositions(pCurrent, CurrentFlags, pStop,  StopFlags);
+}
+
+void CAudioPin::UpdateFromSeek()
+{
+  while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
+    CRefTime rtSeek=m_rtStart;
+    float seekTime=rtSeek.Millisecs();
+    seekTime/=1000.0f;
+    LogDebug("aud seek to %f", seekTime);
+    if (ThreadExists()) 
+    {
+        // next time around the loop, the worker thread will
+        // pick up the position change.
+        // We need to flush all the existing data - we must do that here
+        // as our thread will probably be blocked in GetBuffer otherwise
+        
+        m_pTsReaderFilter->SeekStart();
+        DeliverBeginFlush();
+        // make sure we have stopped pushing
+        Stop();
+        m_pTsReaderFilter->Seek(CRefTime(m_rtStart));
+
+        // complete the flush
+        DeliverEndFlush();
+        m_pTsReaderFilter->SeekDone();
+  
+        // restart
+        m_rtStart=rtSeek;
+        Run();
+    }
 }

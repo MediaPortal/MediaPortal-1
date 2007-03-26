@@ -32,7 +32,7 @@
 class MultiFileReaderFile
 {
 public:
-	LPWSTR filename;
+	char filename[1024];
 	__int64 startPosition;
 	__int64 length;
 	long filePositionId;
@@ -47,30 +47,32 @@ public:
 
 	virtual FileReader* CreateFileReader();
 
-	virtual HRESULT GetFileName(LPOLESTR *lpszFileName);
-	virtual HRESULT SetFileName(LPCOLESTR pszFileName);
-	virtual HRESULT OpenFile();
-	virtual HRESULT CloseFile();
-	virtual HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes);
-	virtual HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod);
-	virtual HRESULT get_ReadOnly(WORD *ReadOnly);
-	virtual HRESULT set_DelayMode(WORD DelayMode);
-	virtual HRESULT get_DelayMode(WORD *DelayMode);
-	virtual HRESULT get_ReaderMode(WORD *ReaderMode);
+	virtual int GetFileName(char *lpszFileName);
+	virtual int SetFileName(char *pszFileName);
+	virtual int OpenFile();
+	virtual int CloseFile();
+	virtual int Read(BYTE* pbData, ULONG lDataLength, ULONG *dwReadBytes);
+	virtual int Read(BYTE* pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod);
+	virtual int get_ReadOnly(WORD *ReadOnly);
+	virtual int set_DelayMode(WORD DelayMode);
+	virtual int get_DelayMode(WORD *DelayMode);
+	virtual int get_ReaderMode(WORD *ReaderMode);
 	virtual DWORD setFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
 	virtual __int64 getFilePointer();
 
 	//TODO: GetFileSize should go since get_FileSize should do the same thing.
-	virtual HRESULT GetFileSize(__int64 *pStartPosition, __int64 *pLength);
+	virtual int GetFileSize(__int64 *pStartPosition, __int64 *pLength);
 
 	virtual BOOL IsFileInvalid();
 
 	virtual DWORD SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
 	virtual __int64 GetFilePointer();
+	virtual __int64 GetFileSize();
 
 protected:
-	HRESULT RefreshTSBufferFile();
-	HRESULT GetFileLength(LPWSTR pFilename, __int64 &length);
+	int RefreshTSBufferFile();
+	int GetFileLength(char* pFilename, __int64 &length);
+  void RefreshFileSize();
 
 	FileReader m_TSBufferFile;
 	__int64 m_startPosition;
@@ -85,6 +87,7 @@ protected:
 	long	 m_TSFileId;
 	BOOL     m_bReadOnly;
 	BOOL     m_bDelay;
+  __int64  m_cachedFileSize;
 
 };
 

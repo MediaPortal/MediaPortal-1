@@ -21,30 +21,44 @@
 #include <streams.h>
 #include "buffer.h"
 
+static DWORD bufferCount=0;
+extern void LogDebug(const char *fmt, ...) ;
 
 CBuffer::CBuffer()
 {
-	m_pcrTime=0;
-	m_ptsTime=0;
-	m_dtsTime=0;
+  bufferCount++;
+  m_pcr.Reset();
 	m_iLength=0;
 	m_pBuffer = new byte[MAX_BUFFER_SIZE];
+ // LogDebug("buffers:%d",bufferCount);
 }
 
 CBuffer::~CBuffer()
 {
-	if (m_pBuffer==NULL)
-	{
-		int x=1;
-	}
+  
+  bufferCount--;
 	delete [] m_pBuffer;
 	m_pBuffer=NULL;
-	m_pcrTime=0;
-	m_ptsTime=0;
-	m_dtsTime=0;
 	m_iLength=0;
 }
 
+bool CBuffer::MediaTime(CRefTime &reftime)
+{
+  if (!m_pts.IsValid) return false;
+
+  if (m_startPcr>m_pts )
+  {
+    return false;
+  }
+  CPcr pts=m_pts;
+  double d1=m_startPcr.ToClock();
+  double d2=m_pts.ToClock();
+  d2-=d1;
+  d2*=1000.0f;
+  CRefTime mediaTime((LONG)d2);
+  reftime=mediaTime;
+  return true;
+}
 void CBuffer::SetLength(int len)
 {
   m_iLength=len;
@@ -65,28 +79,31 @@ byte* CBuffer::Data()
 
 }
 
-void CBuffer::Set(double pcrTime, double ptsTime, double dtsTime)
+void CBuffer::SetPts(CPcr& pts)
 {
-	m_pcrTime=pcrTime;
-	m_ptsTime=ptsTime;
-	m_dtsTime=dtsTime;
+  m_pts=pts;
 }
 
-double CBuffer::Pcr()
+
+void CBuffer::SetPcr(CPcr& pcr,CPcr& startPcr)
 {
-	return m_pcrTime;
+  m_pcr=pcr;
+  m_startPcr=startPcr;
 }
-double CBuffer::Pts()
+
+CPcr& CBuffer::Pcr()
 {
-	return m_ptsTime;
-}
-double CBuffer::Dts()
-{
-	return m_dtsTime;
+	return m_pcr;
 }
 
 void CBuffer::Add(CBuffer* pBuffer)
 {
 	memcpy(&m_pBuffer[m_iLength], pBuffer->Data(), pBuffer->Length());
 	m_iLength+=pBuffer->Length();
+}
+
+void CBuffer::Add(byte* data, int len)
+{
+	memcpy(&m_pBuffer[m_iLength], data, len);
+	m_iLength+=len;
 }

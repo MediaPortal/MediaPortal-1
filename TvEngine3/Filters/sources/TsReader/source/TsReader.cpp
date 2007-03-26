@@ -28,10 +28,11 @@
 #include "tsreader.h"
 #include "audiopin.h"
 #include "videopin.h"
+#include "tsfileSeek.h"
 
 void LogDebug(const char *fmt, ...) 
 {
-#ifndef DEBUG
+#ifdef DEBUG
 	va_list ap;
 	va_start(ap,fmt);
 
@@ -82,7 +83,7 @@ const AMOVIESETUP_PIN audioVideoPin[] =
 
 const AMOVIESETUP_FILTER TSReader =
 {
-	&CLSID_TSReader,L"MediaPortal File Reader",MERIT_DO_NOT_USE,2,audioVideoPin
+  &CLSID_TSReader,L"MediaPortal File Reader",MERIT_NORMAL+1000,2,audioVideoPin
 };
 
 CFactoryTemplate g_Templates[] =
@@ -114,15 +115,15 @@ CUnknown * WINAPI CTsReaderFilter::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 	CSource(NAME("CTsReaderFilter"), pUnk, CLSID_TSReader),
 	m_pAudioPin(NULL),
-	m_pcrDecoder(m_fileDuration),
-	m_demultiplexer(m_fileReader)
+  m_demultiplexer(m_fileReader, m_duration, *this),
+  m_duration(m_fileDuration)
 {
 
 	LogDebug("CTsReaderFilter::ctor");
-  m_seeking=false;
-  m_dwTickCount=0;
 	m_pAudioPin = new CAudioPin(GetOwner(), this, phr,&m_section);
 	m_pVideoPin = new CVideoPin(GetOwner(), this, phr,&m_section);
+  m_referenceClock= new CBaseReferenceClock("refClock",GetOwner(), phr);
+  m_bSeeking=false;
 
 	if (m_pAudioPin == NULL) 
 	{
@@ -140,7 +141,6 @@ CTsReaderFilter::~CTsReaderFilter()
 
 	hr=m_pVideoPin->Disconnect();
 	delete m_pVideoPin;
-	m_demultiplexer.Reset();
 }
 
 STDMETHODIMP CTsReaderFilter::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
@@ -153,10 +153,21 @@ STDMETHODIMP CTsReaderFilter::NonDelegatingQueryInterface(REFIID riid, void ** p
 	{
 		return GetInterface((IFileSourceFilter*)this, ppv);
 	}
-	if ((riid == IID_IMediaPosition || riid == IID_IMediaSeeking))
+	/*if ((riid == IID_IMediaPosition || riid == IID_IMediaSeeking))
 	{
-		return m_pAudioPin->NonDelegatingQueryInterface(riid, ppv);
+    if (m_pAudioPin->IsConnected())
+    {
+		  return m_pAudioPin->NonDelegatingQueryInterface(riid, ppv);
+    }
+    else
+    {
+		  return m_pVideoPin->NonDelegatingQueryInterface(riid, ppv);
+    }
 	}
+  if (riid == IID_IReferenceClock || riid == IID_IReferenceClock2)
+	{
+    return m_referenceClock->NonDelegatingQueryInterface(riid, ppv);
+	}*/
 
 	return CSource::NonDelegatingQueryInterface(riid, ppv);
 
@@ -191,7 +202,12 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
 	msec/=1000.0;
 	LogDebug("CTsReaderFilter::Run(%05.2f)",msec);
   CAutoLock cObjectLock(m_pLock);
-	return CSource::Run(tStart);
+		
+  //Set our StreamTime Reference offset to zero
+	HRESULT hr= CSource::Run(tStart);
+
+  LogDebug("CTsReaderFilter::Run(%05.2f) done",msec);
+  return hr;
 }
 
 STDMETHODIMP CTsReaderFilter::Stop()
@@ -218,36 +234,24 @@ STDMETHODIMP CTsReaderFilter::GetDuration(REFERENCE_TIME *dur)
 		return E_INVALIDARG;
 
 	CAutoLock lock (&m_CritSecDuration);
-	double dmilliSeconds=m_endTime-m_startTime;
-	__int64 milliSeconds=(__int64)dmilliSeconds;
-	*dur = MILLISECONDS_TO_100NS_UNITS(milliSeconds);
+  *dur = (REFERENCE_TIME)m_duration.Duration();
 
 	return NOERROR;
 }
 STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 {
 	LogDebug("CTsReaderFilter::Load()");
+  m_bSeeking=false;
 	wcscpy(m_fileName,pszFileName);
-	m_fileReader.SetFileName(m_fileName);
+  char url[MAX_PATH];
+  WideCharToMultiByte(CP_ACP,0,m_fileName,-1,url,MAX_PATH,0,0);
+	m_fileReader.SetFileName(url);
 	m_fileReader.OpenFile();
 
-  m_fileDuration.SetFileName(m_fileName);
+  m_fileDuration.SetFileName(url);
 	m_fileDuration.OpenFile();
+  m_duration.UpdateDuration();
 
-	double dTime=0;
-	int maxCount=0;
-	do
-	{
-		m_dwTickCount=0;
-		dTime=UpdateDuration()/1000.0;
-		if (dTime<1) Sleep(50);
-		maxCount++;
-		if (maxCount>50)
-		{
-			break;
-		}
-	} while (dTime<1.0);
-	LogDebug("CTsReaderFilter::Load() duration=%f",dTime);
 	m_fileReader.SetFilePointer(0LL,FILE_BEGIN);
 	return S_OK;
 }
@@ -275,22 +279,7 @@ STDMETHODIMP CTsReaderFilter::GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *
 
 double CTsReaderFilter::UpdateDuration()
 {
-	{
-		CAutoLock lock (&m_CritSecDuration);
-		if (m_seeking) return (m_endTime- m_startTime);
-		DWORD dwTicks=GetTickCount()-m_dwTickCount;
-		if (dwTicks<1000) return (m_endTime- m_startTime);
-		// determine first PCR...
-		m_fileDuration.SetFilePointer(0LL,FILE_BEGIN);
-		m_startTime=m_pcrDecoder.GetPcr();
-
-		//determine last pcr
-		m_fileDuration.SetFilePointer(-8192LL,FILE_END);
-		m_endTime=m_pcrDecoder.GetPcr(true);
-	}
-	m_pAudioPin->SetDuration();
-  m_dwTickCount=GetTickCount();
-	return (m_endTime- m_startTime);
+	return 0;
 }
 
 // IAMFilterMiscFlags
@@ -309,74 +298,39 @@ CDeMultiplexer& CTsReaderFilter::GetDemultiplexer()
 double CTsReaderFilter::GetStartTime()
 {
 	CAutoLock lock (&m_CritSecDuration);
-	return m_startTime;
+	return 0;
 }
 
 void CTsReaderFilter::Seek(CRefTime& seekTime)
 {
-  if (m_seeking)
-  {
-    ASSERT(0);
-  }
-  m_seeking=true;
-	LogDebug("-- CTsReaderFilter::Seek(%d)", seekTime.Millisecs());
-  CAutoLock lock(&m_section);
-  m_pAudioPin->FlushStart();
-  m_pVideoPin->FlushStart();
+  m_bSeeking=true;
+  CTsFileSeek seek(m_fileReader,m_duration);
+  seek.Seek(seekTime);
 
-  m_pVideoPin->SetStart(seekTime);
-	//::OutputDebugStringA("CTsReaderFilter::Seek()\n");
-	double duration=(m_endTime-m_startTime);
-	double seektime=(double)seekTime.Millisecs();
-	double percent=seektime/duration;
-	__int64 start;
-	__int64 end;
-	m_fileReader.GetFileSize(&start,&end);
-	__int64 fileDuration=end-start;
-	percent *= ((double)fileDuration);
-  __int64 filePos=(__int64)percent;
-  if (filePos<0 || filePos>end)
-  {
-    ASSERT(0);
-  }
-	do
-	{
-		m_fileReader.setFilePointer(filePos,FILE_BEGIN);
-		m_fileDuration.setFilePointer(filePos,FILE_BEGIN);
-		double dtimeSeeked=m_pcrDecoder.GetPcr()-m_startTime;
-		LogDebug("-- seekmin %05.2f ->%05.2f", seektime/1000.0,dtimeSeeked/1000.0);
-		if (dtimeSeeked < seektime) break;
-		if (filePos< 0x50000) break;
-		filePos-=0x50000;
-	} while (true);
-	do
-	{
-		m_fileReader.setFilePointer(filePos,FILE_BEGIN);
-		m_fileDuration.setFilePointer(filePos,FILE_BEGIN);
-		double dtimeSeeked=m_pcrDecoder.GetPcr()-m_startTime;
-		LogDebug("-- seekmax %05.2f ->%05.2f", seektime/1000.0,dtimeSeeked/1000.0);
-		if (dtimeSeeked>=seektime) break;
-		filePos+=0x50000;
-	} while (true);
+}
 
-	LogDebug("-- CTsReaderFilter::seek done");
+
+bool CTsReaderFilter::IsSeeking()
+{
+  return m_bSeeking;
+}
+void CTsReaderFilter::SeekDone()
+{
+  m_demultiplexer.Flush();
+  m_bSeeking=false;
+}
+void CTsReaderFilter::SeekStart()
+{
+  m_bSeeking=true;
 }
 
 CAudioPin* CTsReaderFilter::GetAudioPin()
 {
-	return m_pAudioPin;
+  return m_pAudioPin;
 }
-
-bool CTsReaderFilter::IsSeeking()
+CVideoPin* CTsReaderFilter::GetVideoPin()
 {
-  return m_seeking;
-}
-void CTsReaderFilter::SeekDone()
-{
-  m_seeking=false;
-  m_pAudioPin->FlushStop();
-  m_pVideoPin->FlushStop();
-	LogDebug("-- CTsReaderFilter::SeekDone");
+  return m_pVideoPin;
 }
 ////////////////////////////////////////////////////////////////////////
 //

@@ -1,3 +1,4 @@
+
 /* 
  *	Copyright (C) 2005 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -22,6 +23,7 @@
 #include "multifilereader.h"
 #include "pcrdecoder.h"
 #include "demultiplexer.h"
+#include "TsDuration.h"
 #include <map>
 using namespace std;
 
@@ -61,12 +63,14 @@ public:
 	STDMETHODIMP    GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);
 	STDMETHODIMP    GetDuration(REFERENCE_TIME *dur);
 	double		      GetStartTime();
-	CAudioPin*      GetAudioPin();
 	bool            IsSeeking();
 	CDeMultiplexer& GetDemultiplexer();
 	void            Seek(CRefTime& seekTime);
   void            SeekDone();
+  void            SeekStart();
 	double          UpdateDuration();
+  CAudioPin*      GetAudioPin();
+  CVideoPin*      GetVideoPin();
 private:
 	CAudioPin*	    m_pAudioPin;;
 	CVideoPin*	    m_pVideoPin;
@@ -75,11 +79,9 @@ private:
 	CCritSec        m_CritSecDuration;
 	MultiFileReader m_fileReader;
 	MultiFileReader m_fileDuration;
-	CPcrDecoder     m_pcrDecoder;
+  CTsDuration     m_duration;
+  CBaseReferenceClock* m_referenceClock;
 	CDeMultiplexer  m_demultiplexer;
-  DWORD m_dwTickCount;
-  bool  m_seeking;
-	double m_endTime;
-	double m_startTime;
+  bool            m_bSeeking;
 };
 

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,27 +18,33 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#pragma once
-#include "pcr.h"
-#define MAX_BUFFER_SIZE 0x10000
-class CBuffer
+
+#include "ChannelInfo.h"
+
+CChannelInfo::CChannelInfo(void)
 {
-public:
-	CBuffer(void);
-	~CBuffer(void);
-	int		 Length();
-	byte*  Data();
-	void   Add(CBuffer* pBuffer);    
-  void   Add(byte* data, int len);
-  void   SetPcr(CPcr& pcr,CPcr& startpcr);
-  void   SetPts(CPcr& pts);
-  void   SetLength(int len);
-  CPcr&  Pcr();
-  bool   MediaTime(CRefTime &reftime);
-private:
-	CPcr  m_pcr;
-	CPcr  m_pts;
-	CPcr  m_startPcr;
-	byte* m_pBuffer;
-	int   m_iLength;
-};
+  Reset();
+}
+
+CChannelInfo::~CChannelInfo(void)
+{
+}
+
+void CChannelInfo::Reset()
+{
+	LCN=10000;
+  NetworkId=0;
+  TransportId=0;
+  ServiceId=0;
+  EIT_schedule_flag=0;
+  EIT_present_following_flag=0;
+  RunningStatus=0;
+  FreeCAMode=0;
+  ServiceType=0;
+  MajorChannel=0;
+  MinorChannel=0;
+  Frequency=0;
+  Modulation=0;
+  strcpy(ProviderName,"");
+  strcpy(ServiceName,"");
+}

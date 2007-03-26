@@ -23,7 +23,7 @@
 #define __VideoPin_H
 #include "tsreader.h"
 
-class CVideoPin : public CSourceStream, public IMediaSeeking
+class CVideoPin : public CSourceStream, public CSourceSeeking
 {
 public:
 	CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCritSec* section);
@@ -36,40 +36,27 @@ public:
 	HRESULT DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest);
 	HRESULT CompleteConnect(IPin *pReceivePin);
 	HRESULT FillBuffer(IMediaSample *pSample);
+  HRESULT BreakConnect();
+  STDMETHODIMP SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags);
 	
 
-	// IMediaSeeking
-	DECLARE_IUNKNOWN
-  HRESULT STDMETHODCALLTYPE GetCapabilities(DWORD *pCapabilities) ;
-  HRESULT STDMETHODCALLTYPE CheckCapabilities(DWORD *pCapabilities) ;
-  HRESULT STDMETHODCALLTYPE IsFormatSupported(const GUID *pFormat) ;
-  HRESULT STDMETHODCALLTYPE QueryPreferredFormat(GUID *pFormat) ;
-  HRESULT STDMETHODCALLTYPE GetTimeFormat(GUID *pFormat) ;
-  HRESULT STDMETHODCALLTYPE IsUsingTimeFormat(const GUID *pFormat) ;
-  HRESULT STDMETHODCALLTYPE SetTimeFormat(const GUID *pFormat) ;
-  HRESULT STDMETHODCALLTYPE GetDuration(LONGLONG *pDuration) ;
-  HRESULT STDMETHODCALLTYPE GetStopPosition(LONGLONG *pStop) ;
-  HRESULT STDMETHODCALLTYPE GetCurrentPosition(LONGLONG *pCurrent) ;
-  HRESULT STDMETHODCALLTYPE ConvertTimeFormat(LONGLONG *pTarget,const GUID *pTargetFormat,LONGLONG Source,const GUID *pSourceFormat) ;
-  HRESULT STDMETHODCALLTYPE SetPositions( /* [out][in] */ LONGLONG *pCurrent,DWORD dwCurrentFlags,/* [out][in] */ LONGLONG *pStop,DWORD dwStopFlags) ;
-  HRESULT STDMETHODCALLTYPE GetPositions(LONGLONG *pCurrent,LONGLONG *pStop) ;
-  HRESULT STDMETHODCALLTYPE GetAvailable(LONGLONG *pEarliest,LONGLONG *pLatest) ;
-  HRESULT STDMETHODCALLTYPE SetRate( double dRate) ;
-  HRESULT STDMETHODCALLTYPE GetRate(double *pdRate) ;
-  HRESULT STDMETHODCALLTYPE GetPreroll(LONGLONG *pllPreroll) ;
-
+	// CSourceSeeking
+	HRESULT ChangeStart();
+	HRESULT ChangeStop();
+	HRESULT ChangeRate();
 
 	HRESULT OnThreadStartPlay();
 	void SetStart(CRefTime rtStartTime);
 	void FlushStart();
 	void FlushStop();
+  bool IsConnected();
 
 protected:
+  void UpdateFromSeek();
+  bool m_bConnected;
 	BOOL m_bDiscontinuity;
 	CTsReaderFilter *	const m_pTsReaderFilter;
 	CCritSec* m_section;
-	CRefTime m_rtStart;
-  bool m_bDropPackets;
 };
 
 #endif

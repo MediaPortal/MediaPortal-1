@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,26 +19,29 @@
  *
  */
 #pragma once
-#include "pcr.h"
-#define MAX_BUFFER_SIZE 0x10000
-class CBuffer
+
+class CTsHeader
 {
 public:
-	CBuffer(void);
-	~CBuffer(void);
-	int		 Length();
-	byte*  Data();
-	void   Add(CBuffer* pBuffer);    
-  void   Add(byte* data, int len);
-  void   SetPcr(CPcr& pcr,CPcr& startpcr);
-  void   SetPts(CPcr& pts);
-  void   SetLength(int len);
-  CPcr&  Pcr();
-  bool   MediaTime(CRefTime &reftime);
+	CTsHeader();
+	CTsHeader(byte* tsPacket);
+	virtual ~CTsHeader(void);
+	void Decode(byte *data);
+	void LogHeader();
+	bool PayLoadOnly();
+	bool AdaptionFieldOnly();
+	bool AdaptionFieldAndPayLoad();
+
+	BYTE SyncByte			;
+	bool TransportError		;
+	bool PayloadUnitStart	;
+	bool TransportPriority	;
+	unsigned short Pid		;
+	BYTE TScrambling		;
+	BYTE AdaptionControl	;
+	BYTE ContinuityCounter	;
+	BYTE AdaptionFieldLength;
+	BYTE PayLoadStart;
 private:
-	CPcr  m_pcr;
-	CPcr  m_pts;
-	CPcr  m_startPcr;
-	byte* m_pBuffer;
-	int   m_iLength;
+	byte* m_packet;
 };

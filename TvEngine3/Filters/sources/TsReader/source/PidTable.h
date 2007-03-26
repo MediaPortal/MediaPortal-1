@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,26 +19,47 @@
  *
  */
 #pragma once
-#include "pcr.h"
-#define MAX_BUFFER_SIZE 0x10000
-class CBuffer
+#include <windows.h>
+class CPidTable
 {
 public:
-	CBuffer(void);
-	~CBuffer(void);
-	int		 Length();
-	byte*  Data();
-	void   Add(CBuffer* pBuffer);    
-  void   Add(byte* data, int len);
-  void   SetPcr(CPcr& pcr,CPcr& startpcr);
-  void   SetPts(CPcr& pts);
-  void   SetLength(int len);
-  CPcr&  Pcr();
-  bool   MediaTime(CRefTime &reftime);
-private:
-	CPcr  m_pcr;
-	CPcr  m_pts;
-	CPcr  m_startPcr;
-	byte* m_pBuffer;
-	int   m_iLength;
+
+  CPidTable();
+  CPidTable(const CPidTable& pids);
+  virtual ~CPidTable();
+  void Reset();
+  
+  CPidTable& operator = (const CPidTable &pids);
+  void Copy(const CPidTable &pids);
+	ULONG PcrPid;
+	ULONG PmtPid;
+	WORD VideoPid;
+	WORD AudioPid1;
+	BYTE Lang1_1;
+	BYTE Lang1_2;
+	BYTE Lang1_3;
+	WORD AudioPid2;
+	BYTE Lang2_1;
+	BYTE Lang2_2;
+	BYTE Lang2_3;
+  WORD AudioPid3;
+	BYTE Lang3_1;
+	BYTE Lang3_2;
+	BYTE Lang3_3;
+  WORD AudioPid4;
+	BYTE Lang4_1;
+	BYTE Lang4_2;
+	BYTE Lang4_3;
+  WORD AudioPid5;
+	BYTE Lang5_1;
+	BYTE Lang5_2;
+	BYTE Lang5_3;
+	WORD AC3Pid;
+	WORD TeletextPid;
+	WORD SubtitlePid;
+  int  ServiceId;
+	BYTE SubLang1_1;
+	BYTE SubLang1_2;
+	BYTE SubLang1_3;
+	int  videoServiceType;
 };

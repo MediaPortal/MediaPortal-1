@@ -27,6 +27,7 @@
 #define FILEREADER
 
 //#include "PidInfo.h"
+#include <windows.h>
 
 class FileReader
 {
@@ -38,20 +39,20 @@ public:
 	virtual FileReader* CreateFileReader();
 
 	// Open and write to the file
-	virtual HRESULT GetFileName(LPOLESTR *lpszFileName);
-	virtual HRESULT SetFileName(LPCOLESTR pszFileName);
-	virtual HRESULT OpenFile();
-	virtual HRESULT CloseFile();
-	virtual HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes);
-	virtual HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod);
-	virtual HRESULT get_ReadOnly(WORD *ReadOnly);
-	virtual HRESULT get_DelayMode(WORD *DelayMode);
-	virtual HRESULT set_DelayMode(WORD DelayMode);
-	virtual HRESULT get_ReaderMode(WORD *ReaderMode);
-	virtual HRESULT GetFileSize(__int64 *pStartPosition, __int64 *pLength);
-	HRESULT GetInfoFileSize(__int64 *lpllsize);
-	HRESULT GetStartPosition(__int64 *lpllpos);
-	HRESULT FlushFile();
+	virtual int GetFileName(char *lpszFileName);
+	virtual int SetFileName(char* pszFileName);
+	virtual int OpenFile();
+	virtual int CloseFile();
+	virtual int Read(BYTE* pbData, ULONG lDataLength, ULONG *dwReadBytes);
+	virtual int Read(BYTE* pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod);
+	virtual int get_ReadOnly(WORD *ReadOnly);
+	virtual int get_DelayMode(WORD *DelayMode);
+	virtual int set_DelayMode(WORD DelayMode);
+	virtual int get_ReaderMode(WORD *ReaderMode);
+	virtual __int64 GetFileSize();
+	virtual int GetFileSize(__int64 *pStartPosition, __int64 *pLength);
+	int GetInfoFileSize(__int64 *lpllsize);
+	int GetStartPosition(__int64 *lpllpos);
 	virtual BOOL IsFileInvalid();
 	virtual DWORD SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
 	virtual __int64 GetFilePointer();
@@ -63,7 +64,7 @@ public:
 protected:
 	HANDLE   m_hFile; 				// Handle to file for streaming
 	HANDLE   m_hInfoFile;           // Handle to Infofile for filesize from FileWriter
-	LPOLESTR m_pFileName;           // The filename where we stream
+	char    m_fileName[1024];           // The filename where we stream
 	BOOL     m_bReadOnly;
 	BOOL     m_bDelay;
 	__int64 m_fileSize;

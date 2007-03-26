@@ -104,25 +104,38 @@ extern void LogDebug(const char *fmt, ...) ;
 CVideoPin::CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCritSec* section) :
 	CSourceStream(NAME("pinVideo"), phr, pFilter, L"Video"),
 	m_pTsReaderFilter(pFilter),
-	m_section(section)
+	m_section(section),
+  CSourceSeeking(NAME("pinVideo"),pUnk,phr,section)
 {
 	m_rtStart=0;
-  m_bDropPackets=false;
+  m_bConnected=false;
+	m_dwSeekingCaps =
+    AM_SEEKING_CanSeekAbsolute	|
+	AM_SEEKING_CanSeekForwards	|
+	AM_SEEKING_CanSeekBackwards	|
+	AM_SEEKING_CanGetStopPos	|
+	AM_SEEKING_CanGetDuration	;//|
+	//AM_SEEKING_Source;
 }
 
 CVideoPin::~CVideoPin()
 {
 	LogDebug("pin:dtor()");
 }
+
+bool CVideoPin::IsConnected()
+{
+  return m_bConnected;
+}
 STDMETHODIMP CVideoPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 {
-	if (riid == IID_IAsyncReader)
-  {
-		int x=1;
-	}
   if (riid == IID_IMediaSeeking)
   {
-		return GetInterface((IMediaSeeking*)this, ppv);
+      return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
+  }
+  if (riid == IID_IMediaPosition)
+  {
+      return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
   }
   return CSourceStream::NonDelegatingQueryInterface(riid, ppv);
 }
@@ -180,86 +193,75 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
 	if (SUCCEEDED(hr))
 	{
 		LogDebug("pin:CompleteConnect() done");
+    m_bConnected=true;
 	}
 	else
 	{
 		LogDebug("pin:CompleteConnect() failed:%x",hr);
 	}
+  REFERENCE_TIME refTime;
+  m_pTsReaderFilter->GetDuration(&refTime);
+  m_rtDuration=CRefTime(refTime);
+  
 	return hr;
+}
+
+
+HRESULT CVideoPin::BreakConnect()
+{
+  m_bConnected=false;
+  return CSourceStream::BreakConnect();
 }
 
 HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 {
 //	::OutputDebugStringA("CVideoPin::FillBuffer()\n");
-  
-	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
-  if (m_pTsReaderFilter->IsSeeking())
-  {
-    LogDebug("video:fillbuffer");
-	  pSample->SetActualDataLength(0);
-	  pSample->SetDiscontinuity(TRUE);
-    return NOERROR;
-  }
 
-	CBuffer* buffer=demux.GetVideo();
-	if (buffer==NULL)
+  if (m_pTsReaderFilter->IsSeeking())
 	{
-	  pSample->SetDiscontinuity(TRUE);
-		pSample->SetActualDataLength(0);
-		//::OutputDebugStringA("CVideoPin::FillBuffer() no video\n");
+		Sleep(1);
+    pSample->SetTime(NULL,NULL); 
+	  pSample->SetActualDataLength(0);
 		return NOERROR;
 	}
-	byte* pSampleBuffer;
-	HRESULT hr = pSample->GetPointer(&pSampleBuffer);
-	if (FAILED(hr))
-	{
-		//::OutputDebugStringA("CVideoPin::FillBuffer() invalid ptr\n");
-		return hr;
-	}
-
-
-	CRefTime streamTime;
-	m_pTsReaderFilter->StreamTime(streamTime);
-	double dStreamTime=streamTime.Millisecs();
-	double dStartTime= m_rtStart.Millisecs();
-
-	if (buffer->Pts()!=0)
-	{
-		long presentationTime=(long)(buffer->Pts() - m_pTsReaderFilter->GetStartTime());
-		CRefTime referenceTime(presentationTime);
-		CRefTime timeStamp=referenceTime - m_rtStart; 
-    //if (timeStamp.Millisecs()<0) 
-    //  m_bDropPackets=true;
-    //else
-    //  m_bDropPackets=false;
-		REFERENCE_TIME refTimeStamp=(REFERENCE_TIME)timeStamp;
-		pSample->SetTime(&refTimeStamp,NULL);
-#ifdef DEBUG
-		char buf[100];
-		sprintf(buf,"  A: ST:%05.2f CT:%05.2f FT:%05.2f TS:%05.2f v:%d a:%d (%d)\n",
-					(dStartTime/1000.0),
-					(dStreamTime/1000.0), 
-					(referenceTime.Millisecs()/1000.0),
-					(timeStamp.Millisecs()/1000.0),
-					demux.VideoPacketCount(), demux.AudioPacketCount());
-		::OutputDebugString(buf);
-#endif
-	}
-  if (m_bDropPackets)
+	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
+  CBuffer* buffer=demux.GetVideo();
+  if (m_bDiscontinuity)
   {
-    pSample->SetActualDataLength(0);
+    LogDebug("vid:set discontinuity");
     pSample->SetDiscontinuity(TRUE);
+    m_bDiscontinuity=FALSE;
+  }
+  if (buffer!=NULL)
+  {
+    BYTE* pSampleBuffer;
+    CRefTime cRefTime;
+    if (buffer->MediaTime(cRefTime))
+    {
+      cRefTime-=m_rtStart;
+      REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
+      pSample->SetTime(&refTime,NULL); 
+      pSample->SetSyncPoint(TRUE);
+      float fTime=(float)cRefTime.Millisecs();
+      fTime/=1000.0f;
+     // LogDebug("vid:%f", fTime);
+    }
+    else
+    {
+      pSample->SetTime(NULL,NULL);  
+    }
+	  pSample->SetActualDataLength(buffer->Length());
+    pSample->GetPointer(&pSampleBuffer);
+    memcpy(pSampleBuffer,buffer->Data(),buffer->Length());
+    delete buffer;
+    return NOERROR;
   }
   else
   {
-	  pSample->SetActualDataLength(buffer->Length());
-	  memcpy(pSampleBuffer, buffer->Data(), buffer->Length());
-	  pSample->SetDiscontinuity(m_bDiscontinuity);
+    LogDebug("vid:no buffer");
+	  pSample->SetActualDataLength(0);
   }
-	delete buffer;
 
-	m_bDiscontinuity=FALSE;
-//	::OutputDebugStringA("CVideoPin::FillBuffer() done\n");
   return NOERROR;
 }
 
@@ -267,106 +269,136 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
 HRESULT CVideoPin::OnThreadStartPlay()
 {    
-	//::OutputDebugString("CVideoPin::OnThreadStartPlay()\n");
-	REFERENCE_TIME pStop;
-	double dRate;
-	m_bDiscontinuity = TRUE;
-	m_pTsReaderFilter->GetAudioPin()->GetStopPosition(&pStop);
-	m_pTsReaderFilter->GetAudioPin()->GetRate(&dRate);
-  return DeliverNewSegment(m_rtStart, pStop, dRate);
+  m_bDiscontinuity=TRUE;
+  float fStart=(float)m_rtStart.Millisecs();
+  fStart/=1000.0f;
+  LogDebug("vid:OnThreadStartPlay(%f)", fStart);
+  DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
+	return CSourceStream::OnThreadStartPlay( );
 }
 
-void CVideoPin::FlushStart()
+
+	// CSourceSeeking
+HRESULT CVideoPin::ChangeStart()
 {
-	if (ThreadExists()) 
+    UpdateFromSeek();
+  return S_OK;
+}
+HRESULT CVideoPin::ChangeStop()
+{
+    UpdateFromSeek();
+  return S_OK;
+}
+HRESULT CVideoPin::ChangeRate()
+{
+  return S_OK;
+}
+
+STDMETHODIMP CVideoPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags)
+{/*
+	REFERENCE_TIME rtStop = *pStop;
+	REFERENCE_TIME rtCurrent = *pCurrent;
+	if (CurrentFlags & AM_SEEKING_RelativePositioning)
+	{
+		rtCurrent += m_rtStart;
+		CurrentFlags -= AM_SEEKING_RelativePositioning; //Remove relative flag
+		CurrentFlags += AM_SEEKING_AbsolutePositioning; //Replace with absoulute flag
+	}
+	if (CurrentFlags & AM_SEEKING_PositioningBitsMask)
+	{
+		m_rtStart = rtCurrent;
+	}
+  
+	if (StopFlags & AM_SEEKING_RelativePositioning)
+	{
+		rtStop += m_rtStop;
+		StopFlags -= AM_SEEKING_RelativePositioning; //Remove relative flag
+		StopFlags += AM_SEEKING_AbsolutePositioning; //Replace with absoulute flag
+	}
+	if (!(CurrentFlags & AM_SEEKING_NoFlush) && (CurrentFlags & AM_SEEKING_PositioningBitsMask))
   {
-    LogDebug("-- video:DeliverBeginFlush()");
-    DeliverBeginFlush();
-		LogDebug("-- video:stop()");
-    Stop();
-  }
-}
-void CVideoPin::FlushStop()
-{
-		LogDebug("-- video:DeliverEndFlush()");
-    DeliverEndFlush();
-		LogDebug("-- video:Pause()");
-    Pause();
-		LogDebug("-- video:FlushOutput done");
-}
-void CVideoPin::SetStart(CRefTime rtStartTime)
-{
-	LogDebug("-- video:SetStart");
-	m_rtStart=rtStartTime;
-	double startTime=m_rtStart/UNITS;
-	LogDebug("-- video:SetStart done");
+    m_pTsReaderFilter->SeekStart();
+    CRefTime rtSeek=rtCurrent;
+    float seekTime=rtSeek.Millisecs();
+    seekTime/=1000.0f;
+    LogDebug("seek to %f", seekTime);
+  				
+    m_rtStart = rtCurrent;
+    
+	  if (m_pTsReaderFilter->IsActive())
+	  {
+		  DeliverBeginFlush();
+	  }
+
+	  CSourceStream::Stop();
+
+    m_pTsReaderFilter->Seek(CRefTime(rtCurrent));
+    
+		if (CurrentFlags & AM_SEEKING_PositioningBitsMask)
+		{
+			m_rtStart = rtCurrent;
+		}
+	  if (m_pTsReaderFilter->IsActive())
+	  {
+		  DeliverEndFlush();
+	  }
+    m_pTsReaderFilter->SeekDone();
+
+    m_bDiscontinuity=TRUE;
+    CSourceStream::Run();
+
+	  if (CurrentFlags & AM_SEEKING_ReturnTime)
+    {
+      *pCurrent=rtCurrent;
+    }
+			
+    return CSourceSeeking::SetPositions(&rtCurrent, CurrentFlags, pStop, StopFlags);
+
+  }*/
+  return CSourceSeeking::SetPositions(pCurrent, CurrentFlags, pStop,  StopFlags);
 }
 
-HRESULT CVideoPin::GetCapabilities(DWORD *pCapabilities)
+void CVideoPin::UpdateFromSeek()
 {
-	return m_pTsReaderFilter->GetAudioPin()->GetCapabilities(pCapabilities);
-}
-HRESULT CVideoPin::CheckCapabilities(DWORD *pCapabilities)
-{
-	return m_pTsReaderFilter->GetAudioPin()->CheckCapabilities(pCapabilities);
-}
-HRESULT CVideoPin::IsFormatSupported(const GUID *pFormat)
-{
-	return m_pTsReaderFilter->GetAudioPin()->IsFormatSupported(pFormat);
-}
-HRESULT CVideoPin::QueryPreferredFormat(GUID *pFormat)
-{
-	return m_pTsReaderFilter->GetAudioPin()->QueryPreferredFormat(pFormat);
-}
-HRESULT CVideoPin::GetTimeFormat(GUID *pFormat)
-{
-	return m_pTsReaderFilter->GetAudioPin()->GetTimeFormat(pFormat);
-}
-HRESULT CVideoPin::IsUsingTimeFormat(const GUID *pFormat)
-{
-	return m_pTsReaderFilter->GetAudioPin()->IsUsingTimeFormat(pFormat);
-}
-HRESULT CVideoPin::SetTimeFormat(const GUID *pFormat)
-{
-	return m_pTsReaderFilter->GetAudioPin()->SetTimeFormat(pFormat);
-}
-HRESULT CVideoPin::GetDuration(LONGLONG *pDuration)
-{
-	return m_pTsReaderFilter->GetAudioPin()->GetDuration(pDuration);
-}
-HRESULT CVideoPin::GetStopPosition(LONGLONG *pStop)
-{
-	return m_pTsReaderFilter->GetAudioPin()->GetStopPosition(pStop);
-}
-HRESULT CVideoPin::GetCurrentPosition(LONGLONG *pCurrent)
-{
-	return m_pTsReaderFilter->GetAudioPin()->GetCurrentPosition(pCurrent);
-}
-HRESULT CVideoPin::ConvertTimeFormat(LONGLONG *pTarget,const GUID *pTargetFormat,LONGLONG Source,const GUID *pSourceFormat)
-{
-	return m_pTsReaderFilter->GetAudioPin()->ConvertTimeFormat(pTarget,pTargetFormat,Source,pSourceFormat);
-}
-HRESULT CVideoPin::SetPositions( /* [out][in] */ LONGLONG *pCurrent,DWORD dwCurrentFlags,/* [out][in] */ LONGLONG *pStop,DWORD dwStopFlags)
-{
-	return S_OK;
-}
-HRESULT CVideoPin::GetPositions(LONGLONG *pCurrent,LONGLONG *pStop)
-{
-	return m_pTsReaderFilter->GetAudioPin()->GetPositions(pCurrent,pStop);
-}
-HRESULT CVideoPin::GetAvailable(LONGLONG *pEarliest,LONGLONG *pLatest)
-{
-	return m_pTsReaderFilter->GetAudioPin()->GetAvailable(pEarliest,pLatest);
-}
-HRESULT CVideoPin::SetRate( double dRate)
-{
-	return S_OK;
-}
-HRESULT CVideoPin::GetRate(double *pdRate)
-{
-	return m_pTsReaderFilter->GetAudioPin()->GetRate(pdRate);
-}
-HRESULT CVideoPin::GetPreroll(LONGLONG *pllPreroll)
-{
-	return m_pTsReaderFilter->GetAudioPin()->GetPreroll(pllPreroll);
+  //The solution is to designate one of the pins to control seeking and to ignore seek commands received by the other pin.
+  //After the seek command, however, both pins should flush data. To complicate matters further,
+  //the seek command happens on the application thread, not the streaming thread. Therefore, you 
+  //must make certain that neither pin is blocked and waiting for a Receive call to return, 
+  //or it might cause a deadlock.
+  while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
+    CRefTime rtSeek=m_rtStart;
+    float seekTime=rtSeek.Millisecs();
+    seekTime/=1000.0f;
+    LogDebug("vid seek to %f", seekTime);
+    if (ThreadExists()) 
+    {
+        // next time around the loop, the worker thread will
+        // pick up the position change.
+        // We need to flush all the existing data - we must do that here
+        // as our thread will probably be blocked in GetBuffer otherwise
+        
+        if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
+        {
+          m_pTsReaderFilter->SeekStart();
+        }
+        HRESULT hr=DeliverBeginFlush();
+        LogDebug("vid:beginflush:%x",hr);
+        // make sure we have stopped pushing
+        Stop();
+        if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
+        {
+          m_pTsReaderFilter->Seek(CRefTime(m_rtStart));
+        }
+        // complete the flush
+        hr=DeliverEndFlush();
+        LogDebug("vid:endflush:%x",hr);
+        
+        if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
+        {
+          m_pTsReaderFilter->SeekDone();
+        }
+        // restart
+        m_rtStart=rtSeek;
+        Run();
+    }
 }

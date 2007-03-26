@@ -21,42 +21,42 @@
 #pragma once
 #include "buffer.h"
 #include "MultiFileReader.h"
+#include "tsDuration.h"
 #include "pcrdecoder.h"
+#include "packetSync.h"
+#include "pidtable.h"
+#include "tsheader.h"
+#include "patparser.h"
+#include "channelInfo.h"
+#include "PidTable.h"
+#include "Pcr.h"
 #include <vector>
 using namespace std;
-
-class CDeMultiplexer
+class CTsReaderFilter;
+class CDeMultiplexer : public CPacketSync, public IPatParserCallback
 {
 public:
-	CDeMultiplexer(MultiFileReader& reader);
+  CDeMultiplexer(MultiFileReader& reader, CTsDuration& duration,CTsReaderFilter& filter);
 	virtual ~CDeMultiplexer(void);
 
-	CBuffer* GetAudio();
-	CBuffer* GetVideo();
-	int VideoPacketCount();
-	int AudioPacketCount();
-	void Require();
-	bool Parse();
-	void Reset();
+  void Flush();
+  CBuffer* GetVideo();
+  CBuffer* GetAudio();
+	void OnTsPacket(byte* tsPacket);
+	void OnNewChannel(CChannelInfo& info);
 private:
+  bool ReadFromFile();
   CCritSec m_section;
-	vector<CBuffer*> m_vecAudioBuffers;
-	vector<CBuffer*> m_vecVideoBuffers;
-	typedef vector<CBuffer*>::iterator ivecBuffer;
 	MultiFileReader& m_reader;
-	byte		 Next(int len);
-	void		 Advance(int len);
-	int      BufferLength();
-	void		 Copy(int len, byte* destination);
-	double	 m_pcrTime;
-	double	 m_ptsTime;
-	double	 m_dtsTime;
-	byte*		 m_pBuffer;
-	int			 m_iBufferPosWrite;
-	int			 m_iBufferPosRead;
-	int			 m_iBytesInBuffer;
-	int      m_streamId;
-	CPcrDecoder m_pcrDecoder;
-  CBuffer* m_pVideoBuffer;
-  CBuffer* m_pAudioBuffer;
+  CPatParser m_patParser;
+  CPidTable m_pids;
+  vector<CBuffer*> m_vecVideoBuffers;
+  vector<CBuffer*> m_vecAudioBuffers;
+  typedef vector<CBuffer*>::iterator ivecBuffers;
+
+  CBuffer* m_pCurrentVideoBuffer;
+  CBuffer* m_pCurrentAudioBuffer;
+  CPcr     m_streamPcr;
+  CTsDuration& m_duration;
+  CTsReaderFilter& m_filter;
 };

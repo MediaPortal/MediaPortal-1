@@ -21,499 +21,249 @@
 #include <streams.h>
 #include "demultiplexer.h"
 #include "buffer.h"
+#include "adaptionfield.h"
+#include "tsreader.h"
+#include "audioPin.h"
+#include "videoPin.h"
 
 #define OUTPUT_PACKET_LENGTH 0x6000
 #define BUFFER_LENGTH        0x1000
 extern void LogDebug(const char *fmt, ...) ;
 
-CDeMultiplexer::CDeMultiplexer(MultiFileReader& reader)
+CDeMultiplexer::CDeMultiplexer(MultiFileReader& reader,CTsDuration& duration,CTsReaderFilter& filter)
 :m_reader(reader)
-,m_pcrDecoder(reader)
+,m_duration(duration)
+,m_filter(filter)
 {
-	m_pBuffer = new byte[BUFFER_LENGTH];
-  m_pVideoBuffer = new CBuffer();
-  m_pAudioBuffer = new CBuffer();
-	m_iBufferPosWrite=0;
-	m_iBufferPosRead=0;
-	m_iBytesInBuffer=0;
-	m_ptsTime=0;
-	m_dtsTime=0;
-	m_pcrTime=0;
+  m_patParser.SetCallBack(this);
+  m_pCurrentVideoBuffer = new CBuffer();
+  m_pCurrentAudioBuffer = new CBuffer();
 }
 CDeMultiplexer::~CDeMultiplexer()
 {
-	delete[] m_pBuffer;
-  delete m_pVideoBuffer;
-  delete m_pAudioBuffer;
+  Flush();
+  delete m_pCurrentVideoBuffer;
+  delete m_pCurrentAudioBuffer;
+
 }
 
-void CDeMultiplexer::Reset()
-{
-	//::OutputDebugStringA("CDeMultiplexer::Reset()\n");
-	CAutoLock lock(&m_section);
-	
-  delete m_pAudioBuffer;
-  delete m_pVideoBuffer;
-  m_pVideoBuffer = new CBuffer();
-  m_pAudioBuffer = new CBuffer();
-	m_iBufferPosWrite=0;
-	m_iBufferPosRead=0;
-	m_iBytesInBuffer=0;
-	m_ptsTime=0;
-	m_dtsTime=0;
-	m_pcrTime=0;
 
-	ivecBuffer i=m_vecAudioBuffers.begin();
-	while (i != m_vecAudioBuffers.end())
-	{
-		CBuffer* buffer= *i;
-		delete buffer;
-		i=m_vecAudioBuffers.erase(i);
-	}
-	i=m_vecVideoBuffers.begin();
-	while (i != m_vecVideoBuffers.end())
-	{
-		CBuffer* buffer= *i;
-		delete buffer;
-		i=m_vecVideoBuffers.erase(i);
-	}
-	m_vecAudioBuffers.clear();
-	m_vecVideoBuffers.clear();
-}
-
-int CDeMultiplexer::VideoPacketCount()
+void CDeMultiplexer::Flush()
 {
-	return m_vecVideoBuffers.size();
-}
-int CDeMultiplexer::AudioPacketCount()
-{
-	return m_vecAudioBuffers.size();
-}
-CBuffer* CDeMultiplexer::GetAudio()
-{
-	CAutoLock lock(&m_section);
-   if (m_iBytesInBuffer<0)
+  LogDebug("demux:flushing");
+  delete m_pCurrentVideoBuffer;
+  delete m_pCurrentAudioBuffer;
+  
+  ivecBuffers it =m_vecVideoBuffers.begin();
+  while (it != m_vecVideoBuffers.end())
   {
-    ASSERT(0);
+    CBuffer* videoBuffer=*it;
+    delete videoBuffer;
+    it=m_vecVideoBuffers.erase(it);
   }
-  if (m_iBytesInBuffer > BUFFER_LENGTH)
+  it =m_vecAudioBuffers.begin();
+  while (it != m_vecAudioBuffers.end())
   {
-    ASSERT(0);
+    CBuffer* AudioBuffer=*it;
+    delete AudioBuffer;
+    it=m_vecAudioBuffers.erase(it);
   }
-	while (m_vecAudioBuffers.size() < 1) 
-	{
-		if (Parse()==false) return NULL;
-	}
-	if (m_vecAudioBuffers.size() > 0) 
-	{
-		ivecBuffer i = m_vecAudioBuffers.begin();
-		CBuffer* buffer= *i;
-		m_vecAudioBuffers.erase(i);
-    
-    if (m_iBytesInBuffer<0)
-    {
-      ASSERT(0);
-    }
-    if (m_iBytesInBuffer > BUFFER_LENGTH)
-    {
-      ASSERT(0);
-    }
-		return buffer;
-	}
-   if (m_iBytesInBuffer<0)
-  {
-    ASSERT(0);
-  }
-  if (m_iBytesInBuffer > BUFFER_LENGTH)
-  {
-    ASSERT(0);
-  }
-	return NULL;
+  m_pCurrentVideoBuffer = new CBuffer();
+  m_pCurrentAudioBuffer = new CBuffer();
 }
 
 CBuffer* CDeMultiplexer::GetVideo()
-{ 
-	CAutoLock lock(&m_section);
-  if (m_iBytesInBuffer<0)
+{
+  
+	CAutoLock lock (&m_section);
+  while (m_vecVideoBuffers.size()==0) 
   {
-    ASSERT(0);
+    ReadFromFile() ;
   }
-  if (m_iBytesInBuffer > BUFFER_LENGTH)
+  
+  if (m_vecVideoBuffers.size()!=0)
   {
-    ASSERT(0);
+    ivecBuffers it =m_vecVideoBuffers.begin();
+    CBuffer* videoBuffer=*it;
+    m_vecVideoBuffers.erase(it);
+    return videoBuffer;
   }
-	while (m_vecVideoBuffers.size() < 1) 
-	{
-		if (Parse()==false) return NULL;
-	}
-	if (m_vecVideoBuffers.size() > 0) 
-	{
-		ivecBuffer i = m_vecVideoBuffers.begin();
-		CBuffer* buffer= *i;
-		m_vecVideoBuffers.erase(i);
-    if (m_iBytesInBuffer<0)
-    {
-      ASSERT(0);
-    }
-    if (m_iBytesInBuffer > BUFFER_LENGTH)
-    {
-      ASSERT(0);
-    }
-		return buffer;
-	}
-  if (m_iBytesInBuffer<0)
-  {
-    ASSERT(0);
-  }
-  if (m_iBytesInBuffer > BUFFER_LENGTH)
-  {
-    ASSERT(0);
-  }
-	return NULL;
+  return NULL;
 }
 
-
-void CDeMultiplexer::Require()
+CBuffer* CDeMultiplexer::GetAudio()
 {
-	int len;
-	if (m_iBufferPosRead <= m_iBufferPosWrite )
-	{
-		//------R-----------W--------------L
-		len=BUFFER_LENGTH - m_iBufferPosWrite;
-	}
-	else
-	{
-		//----W-------------R-------------L
-		len=(m_iBufferPosRead - m_iBufferPosWrite)-1;
-	}
-
-
-  if (len+m_iBytesInBuffer > BUFFER_LENGTH)
+	CAutoLock lock (&m_section);
+  while (m_vecAudioBuffers.size()==0) 
   {
-    ASSERT(0);
+    ReadFromFile() ;
   }
-  if (len+m_iBufferPosWrite > BUFFER_LENGTH)
+  if (m_vecAudioBuffers.size()!=0)
   {
-    ASSERT(0);
+    ivecBuffers it =m_vecAudioBuffers.begin();
+    CBuffer* audiobuffer=*it;
+    m_vecAudioBuffers.erase(it);
+    return audiobuffer;
   }
+  return NULL;
+}
 
-  int prevPosWrite=m_iBufferPosWrite;
-  int prevBytesInBuffer=m_iBytesInBuffer;
-	ULONG bytesRead=0;
-	if (len>0)
-	{
-		if (SUCCEEDED(m_reader.Read(&m_pBuffer[m_iBufferPosWrite],len,&bytesRead)))
+bool CDeMultiplexer::ReadFromFile()
+{
+  DWORD dwTick=GetTickCount();
+    byte buffer[32712];
+  while (true)
+  {
+    DWORD dwReadBytes;
+    m_reader.Read(buffer,sizeof(buffer), &dwReadBytes);
+    if (dwReadBytes > 0)
     {
-      if (bytesRead>0)
-      {
-        if (bytesRead!=len)
+      OnRawData(buffer,(int)dwReadBytes);
+      return true;
+    }
+    else 
+    {
+      Sleep(20);
+      if (GetTickCount() - dwTick >5000) break;
+    }
+  }
+  return false;
+}
+void CDeMultiplexer::OnTsPacket(byte* tsPacket)
+{
+  CTsHeader header(tsPacket);
+  m_patParser.OnTsPacket(tsPacket);
+  if (m_pids.PcrPid==0) return;
+  if (header.Pid==0) return;
+  if (header.TransportError) return;
+
+  if (header.Pid==m_pids.PcrPid)
+  {
+    CAdaptionField field;
+    field.Decode(header,tsPacket);
+    if (field.Pcr.IsValid)
+    {
+      m_streamPcr=field.Pcr;
+    }
+  }
+  if (m_streamPcr.IsValid==false)
+  {
+    return;
+  }
+  if (header.Pid==m_pids.AudioPid1)
+  {
+    if (m_filter.GetAudioPin()->IsConnected())
+    {
+	    if ( false==header.AdaptionFieldOnly() ) 
+	    {
+        if ( header.PayloadUnitStart)
         {
-            Sleep(50);
+          if (m_pCurrentAudioBuffer->Length()>0)
+          {
+            m_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
+            m_pCurrentAudioBuffer = new CBuffer();
+          }
+          int pos=header.PayLoadStart;
+          if (tsPacket[pos]==0&&tsPacket[pos+1]==0&&tsPacket[pos+2]==1)
+          {
+	          CPcr pts;
+	          CPcr dts;
+            if (CPcr::DecodeFromPesHeader(&tsPacket[pos],pts,dts))
+            {
+              m_pCurrentAudioBuffer->SetPts(pts);
+            }
+            int headerLen=9+tsPacket[pos+8];
+            pos+=headerLen;
+          }
+          m_pCurrentAudioBuffer->SetPcr(m_streamPcr,m_duration.StartPcr());
+          m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos);
         }
-		    m_iBytesInBuffer+=bytesRead;
-		    m_iBufferPosWrite+=bytesRead;
-		    if (m_iBufferPosWrite>=BUFFER_LENGTH) 
-		    {
-			    m_iBufferPosWrite=0;
-		    }
-      }
-      else
-      { 
-        Sleep(50);
+        else if (m_pCurrentAudioBuffer->Length()>0)
+        {
+          int pos=header.PayLoadStart;
+          if (m_pCurrentAudioBuffer->Length()+(188-pos)>=0x2000)
+          {
+            int copyLen=0x2000-m_pCurrentAudioBuffer->Length();
+            m_pCurrentAudioBuffer->Add(&tsPacket[pos],copyLen);
+            pos+=copyLen;
+            m_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
+            m_pCurrentAudioBuffer = new CBuffer();
+          }
+          m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos); 
+        }
       }
     }
-    else
+ 
+  }
+  if (header.Pid==m_pids.AudioPid2)
+  {
+  }
+  if (header.Pid==m_pids.AC3Pid)
+  {
+  }
+  if (header.Pid==m_pids.VideoPid)
+  {
+    if (m_filter.GetVideoPin()->IsConnected())
     {
-      Sleep(50);
+	    if ( false==header.AdaptionFieldOnly() ) 
+	    {
+        if ( header.PayloadUnitStart)
+        {
+          if (m_pCurrentVideoBuffer->Length()>0)
+          {
+            m_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
+            m_pCurrentVideoBuffer = new CBuffer();
+          }
+          int pos=header.PayLoadStart;
+          if (tsPacket[pos]==0&&tsPacket[pos+1]==0&&tsPacket[pos+2]==1)
+          {
+	          CPcr pts;
+	          CPcr dts;
+            if (CPcr::DecodeFromPesHeader(&tsPacket[pos],pts,dts))
+            {
+              m_pCurrentVideoBuffer->SetPts(pts);
+            }
+            int headerLen=9+tsPacket[pos+8];
+            pos+=headerLen;
+          }
+          m_pCurrentVideoBuffer->SetPcr(m_streamPcr,m_duration.StartPcr());
+          m_pCurrentVideoBuffer->Add(&tsPacket[pos],188-pos);
+        }
+        else if (m_pCurrentVideoBuffer->Length()>0)
+        {
+          int pos=header.PayLoadStart;
+          if (m_pCurrentVideoBuffer->Length()+(188-pos)>=0x2000)
+          {
+            int copyLen=0x2000-m_pCurrentVideoBuffer->Length();
+            m_pCurrentVideoBuffer->Add(&tsPacket[pos],copyLen);
+            pos+=copyLen;
+            m_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
+            m_pCurrentVideoBuffer = new CBuffer();
+          }
+          m_pCurrentVideoBuffer->Add(&tsPacket[pos],188-pos); 
+        }
+      }
     }
-	}
-  if (m_iBytesInBuffer< 0)
-  {
-        ASSERT(0);
   }
-  if (m_iBytesInBuffer>BUFFER_LENGTH)
+  if (header.Pid==m_pids.SubtitlePid)
   {
-        ASSERT(0);
   }
+}
 	
-}
-
-byte CDeMultiplexer::Next(int len)
+void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
 {
-  if (m_iBytesInBuffer<=0)
-  {
-    ASSERT(0);
-  }
-  if (m_iBytesInBuffer > BUFFER_LENGTH)
-  {
-    ASSERT(0);
-  }
-
-	if (len >m_iBytesInBuffer)
+  CPidTable pids=info.PidTable;
+  if (  m_pids.AudioPid1==pids.AudioPid1 &&
+				m_pids.AudioPid2==pids.AudioPid2 &&
+				m_pids.AC3Pid==pids.AC3Pid &&
+				m_pids.PcrPid==pids.PcrPid &&
+				m_pids.PmtPid==pids.PmtPid &&
+				m_pids.SubtitlePid==pids.SubtitlePid)
 	{
-		ASSERT(0);
-	}
-	int pos=m_iBufferPosRead+len;
-	if (pos >= BUFFER_LENGTH)
-		pos-=BUFFER_LENGTH;
-	return m_pBuffer[pos];
-}
-
-void CDeMultiplexer::Advance(int len)
-{
-  if (m_iBytesInBuffer<=0)
-  {
-    ASSERT(0);
-  }
-  if (m_iBytesInBuffer > BUFFER_LENGTH)
-  {
-    ASSERT(0);
-  }
-	if (len >m_iBytesInBuffer)
-	{
-		ASSERT(0);
-	}
-	int pos=m_iBufferPosRead+len;
-	if (pos >= BUFFER_LENGTH)
-		pos-=BUFFER_LENGTH;
-	m_iBufferPosRead=pos;
-  if (m_iBytesInBuffer<len)
-  {
-    ASSERT(0);
-  }
-	m_iBytesInBuffer-=len;
-}
-
-int CDeMultiplexer::BufferLength()
-{
-  if (m_iBytesInBuffer > BUFFER_LENGTH)
-  {
-    ASSERT(0);
-  }
-	return m_iBytesInBuffer;
-}
-
-void CDeMultiplexer::Copy(int len, byte* destination)
-{
-  if (len < 0 || len >=MAX_BUFFER_SIZE)
-  {
-    ASSERT(0);
-  }
-	if (BufferLength() < len)
-	{
-		Require();
-	}
-	if (BufferLength() < len)
-	{
-		ASSERT(0);
-	}
-	if (m_iBufferPosRead+len <= BUFFER_LENGTH)
-	{
-		memcpy(destination,&m_pBuffer[m_iBufferPosRead],len);
-	}
-	else
-	{
-		int len1=BUFFER_LENGTH-m_iBufferPosRead;
-    
-  
-		memcpy(destination,&m_pBuffer[m_iBufferPosRead],len1);
-		memcpy(&destination[len1],&m_pBuffer[0],len-len1);
-	}
-	
-}
-
-bool CDeMultiplexer::Parse()
-{
-	byte header[1200];
-	if (BufferLength() < 0x100)
-	{
-		Require();
-    if (BufferLength()==0) return false;
-	}
-  
-  if (m_iBytesInBuffer<=0)
-  {
-    ASSERT(0);
-  }
-  if (m_iBytesInBuffer > BUFFER_LENGTH)
-  {
-    ASSERT(0);
-  }
-	while (m_vecAudioBuffers.size()>=2)
-	{
-		LogDebug("demuxer:drop audio:%d", m_vecAudioBuffers.size());
-		ivecBuffer it=m_vecAudioBuffers.begin();
-		CBuffer* pBuf=*it;
-		delete pBuf;
-		m_vecAudioBuffers.erase(it);
-	}
-  
-  if (m_iBytesInBuffer<=0)
-  {
-    ASSERT(0);
-  }
-  if (m_iBytesInBuffer > BUFFER_LENGTH)
-  {
-    ASSERT(0);
-  }
-	while (m_vecVideoBuffers.size()>=500)
-	{
-		LogDebug("demuxer:drop video:%d", m_vecVideoBuffers.size());
-		ivecBuffer it=m_vecVideoBuffers.begin();
-		CBuffer* pBuf=*it;
-		delete pBuf;
-		m_vecVideoBuffers.erase(it);
+		if ( pids.videoServiceType==0x1b && m_pids.VideoPid==pids.VideoPid) return;
+		if ( pids.videoServiceType==0x10 && m_pids.VideoPid==pids.VideoPid) return;
+		if ( m_pids.VideoPid==pids.VideoPid) return;
 	}
 
-  if (m_iBytesInBuffer<=0)
-  {
-    ASSERT(0);
-  }
-  if (m_iBytesInBuffer > BUFFER_LENGTH)
-  {
-    ASSERT(0);
-  }
-	while (BufferLength() >= 50)
-	{
-		if (Next(0)==0 && Next(1)==0 && Next(2)==1)
-		{
-			switch (Next(3))
-			{
-				//pack header
-				case 0xba:
-					//decode the pcr
-					byte buffer[14];
-					Copy(14, buffer);
-					m_pcrTime=m_pcrDecoder.GetPcr(buffer);
-					Advance(14);
-				break;
-
-				//audio
-				case 0xc0:
-				{
-					m_streamId=0xc0;
-					int len=(Next(4)<<8) + Next(5);
-					if (BufferLength()<len+10)
-					{
-						Require();
-					}
-					int headerLen=Next(8);
-					Copy(headerLen+9,header);
-					Advance(9);
-					int byteKar=Next(0);
-					Advance(headerLen);
-					byteKar=Next(0);
-					len -=headerLen;
-					len -=3;
-
-					double pts=0,dts=0;
-					if (headerLen>0)
-					{
-						m_pcrDecoder.GetPtsDts(header,pts,dts);
-					}
-          
-          bool newAudioPacket=false;
-          if (pts!=0)
-          {
-            if (m_pAudioBuffer->Length()>0)
-            {
-					    m_vecAudioBuffers.push_back(m_pAudioBuffer);
-              m_pAudioBuffer = new CBuffer();
-              newAudioPacket=true;
-            }
-					  m_pAudioBuffer->Set(m_pcrTime,pts,dts);
-          }
-          if (m_pAudioBuffer->Length()>OUTPUT_PACKET_LENGTH)
-          {
-					    m_vecAudioBuffers.push_back(m_pAudioBuffer);
-              m_pAudioBuffer = new CBuffer();
-					    m_pAudioBuffer->Set(m_pcrTime,pts,dts);
-              newAudioPacket=true;
-          }
-          byte* pData=m_pAudioBuffer->Data();
-          int bufLen=m_pAudioBuffer->Length();
-					Copy(len, &pData[bufLen] );
-          m_pAudioBuffer->SetLength(len+bufLen);
-
-					Advance(len);
-          if (newAudioPacket) return true;
-				}
-				break;
-				
-				//video
-				case 0xe0:
-				case 0xe1:
-				case 0xe2:
-				case 0xe3:
-				case 0xe4:
-				case 0xe5:
-				case 0xe6:
-				case 0xe7:
-				case 0xe8:
-				case 0xe9:
-				case 0xea:
-				case 0xeb:
-				case 0xec:
-				case 0xed:
-				case 0xee:
-				case 0xef:
-				{
-					m_streamId=0xe0;
-					int len=(Next(4)<<8) + Next(5);
-					if (BufferLength()<len+10)
-					{
-						Require();
-					}
-					int headerLen=Next(8);
-					Copy(headerLen+9,header);
-					Advance(9);
-					int byteKar=Next(0);
-					Advance(headerLen);
-					 byteKar=Next(0);
-					len -=headerLen;
-					len -=3;
-					double pts=0,dts=0;
-					if (headerLen>0)
-					{
-						m_pcrDecoder.GetPtsDts(header,pts,dts);
-					}
-          bool newVideoPacket=false;
-          if (pts!=0)
-          {
-            if (m_pVideoBuffer->Length()>0)
-            {
-					    m_vecVideoBuffers.push_back(m_pVideoBuffer);
-              m_pVideoBuffer = new CBuffer();
-              newVideoPacket=true;
-            }
-					  m_pVideoBuffer->Set(m_pcrTime,pts,dts);
-          }
-          if (m_pVideoBuffer->Length()>OUTPUT_PACKET_LENGTH)
-          {
-					    m_vecVideoBuffers.push_back(m_pVideoBuffer);
-              m_pVideoBuffer = new CBuffer();
-					    m_pVideoBuffer->Set(m_pcrTime,pts,dts);
-              newVideoPacket=true;
-          }
-          byte* pData=m_pVideoBuffer->Data();
-          int bufLen=m_pVideoBuffer->Length();
-					Copy(len, &pData[bufLen] );
-          m_pVideoBuffer->SetLength(len+bufLen);
-
-					Advance(len);
-          if (newVideoPacket) return true;
-				}
-				break;
-
-				default:
-					Advance(1);
-				break;
-			}
-		}
-		else 
-		{	
-			Advance(1);
-		}
-	}
-  return true;
+  m_pids=pids;
 }
