@@ -102,6 +102,9 @@
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
+    <None Include="MpStylesAndTemplates.xaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Page Include="TvGuide.xaml" />
     <Page Include="TvHome.xaml" />
     <Page Include="TvSetup.xaml" />
