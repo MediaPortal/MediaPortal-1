@@ -47,6 +47,7 @@ namespace MyTv
     #endregion
 
     #region variables
+    IList _recordingList = new ArrayList();
     bool _reactOnMouseEvents = true;
     DateTime _currentTime = DateTime.Now;
     int _currentChannelOffset = 0;
@@ -78,6 +79,7 @@ namespace MyTv
     void LoadChannels()
     {
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
+      _recordingList = Schedule.ListAll();
       _groupMaps = ChannelNavigator.Instance.CurrentGroup.ReferringGroupMap();
     }
 
@@ -358,6 +360,25 @@ namespace MyTv
         int span = (int)((ts.TotalMinutes + 0.5) / 5);
         //if (span <= 0) continue;
 
+        bool bRecording = false;
+        bool bSeries = false;
+        bool bConflict = false;
+        if (_recordingList != null)
+        {
+          foreach (Schedule record in _recordingList)
+          {
+            if (record.IsRecordingProgram(program, true))
+            {
+              if (record.ReferringConflicts().Count != 0)
+                bConflict = true;
+              if ((ScheduleRecordingType)record.ScheduleType != ScheduleRecordingType.Once)
+                bSeries = true;
+              bRecording = true;
+              break;
+            }
+          }
+        }
+
         Button b = new Button();
         bool isNow = false;
         //------start--------------end
@@ -388,8 +409,42 @@ namespace MyTv
             b.Template = (ControlTemplate)Application.Current.Resources["MpButton"];
 
         }
+        if (bRecording)
+        {
+          Uri uri;
+          if (bConflict)
+          {
+            if (bSeries)
+              uri = new Uri(Thumbs.TvConflictRecordingSeriesIcon, UriKind.Relative);
+            else
+              uri = new Uri(Thumbs.TvConflictRecordingIcon, UriKind.Relative);
+          }
+          else if (bSeries)
+            uri = new Uri(Thumbs.TvRecordingSeriesIcon, UriKind.Relative);
+          else
+            uri = new Uri(Thumbs.TvRecordingIcon, UriKind.Relative);
 
-        b.Content = program.Title;
+          StackPanel panel = new StackPanel();
+          panel.Orientation = Orientation.Horizontal;
+          Image image = new Image();
+          PngBitmapDecoder decoder = new PngBitmapDecoder(uri, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
+          image.Source = decoder.Frames[0];
+          image.Width = image.Height = 20;
+          image.VerticalAlignment = VerticalAlignment.Center;
+         // image.Margin = new Thickness(0, 0, 30, 0);
+
+          Label label = new Label();
+          label.Content = program.Title;
+          label.VerticalAlignment = VerticalAlignment.Center;
+          label.Style = (Style)Application.Current.Resources["Label20Style"];
+          panel.Children.Add(image);
+          panel.Children.Add(label);
+          b.Content = panel;
+        }
+        else
+        {
+          b.Content = program.Title;
+        }
         b.MouseEnter += new MouseEventHandler(OnMouseEnter);
         GuideTag tag = new GuideTag();
         tag.Program = program;

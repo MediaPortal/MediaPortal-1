@@ -139,6 +139,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Thumbs.cs" />
     <Compile Include="TvGuide.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>TvGuide.xaml</DependentUpon>
