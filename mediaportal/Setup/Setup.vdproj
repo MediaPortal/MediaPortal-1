@@ -3,7 +3,7 @@
 "VSVersion" = "3:800"
 "ProjectType" = "8:{978C614F-708E-4E1A-B201-565925725DBA}"
 "IsWebType" = "8:FALSE"
-"ProjectName" = "8:Setup OldConfig"
+"ProjectName" = "8:Setup"
 "LanguageId" = "3:1033"
 "CodePage" = "3:1252"
 "UILanguageId" = "3:1033"
@@ -16,6 +16,12 @@
         "Entry"
         {
         "MsmKey" = "8:_00360B8596D74B17AD843C7A3AC86596"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_0060B9513F12432896FB4C5A461FA3F7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -177,7 +183,19 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_0479059583344FC8B16BCACA31F19D0D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_0491CEF1B0F64DC1A43ABA7C32C8856F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_04D829180ED344BFBFA0E894A27697BC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -543,6 +561,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_0C30EBA39E3D467D989AEF547990B9BC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_0C41061B310646B9833E82A0BAA8ECD4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -586,6 +610,12 @@
         "Entry"
         {
         "MsmKey" = "8:_0D65F7895E594D43ADE56E6C6A878E54"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_0D6F41075439449782E468AA043BC31E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -819,6 +849,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_12DEF957364045FFAD185F497FF273D6"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_1331371F588C4CC2BC4B15238DAE39C0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -886,6 +922,12 @@
         "Entry"
         {
         "MsmKey" = "8:_151128E35B65426DAFCE95E54C7776FE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_15231BD46CF24F82B1866DACAB03803E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1065,6 +1107,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_17FFB080B8D94456BBA5C8AFB078AB4A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_182B711808834777944399D8539D571B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1162,6 +1210,12 @@
         "Entry"
         {
         "MsmKey" = "8:_1AE59789F580459F8D02B96B8098B000"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1B499BC3CA2B499385B1F785DCC7D9DB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1437,6 +1491,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_21CA99CD45E64B278087A0296BA946FB"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_21E1D9029F5FFC725DE7AC5D9BDD14A7"
         "OwnerKey" = "8:_12BB9A655A83A4B5E8378277F0C1E402"
         "MsmSig" = "8:_UNDEFINED"
@@ -1696,6 +1756,12 @@
         "Entry"
         {
         "MsmKey" = "8:_27117F32FEED4B78BBB3F0CFF3C5126B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_271D1F679C2747BC8F7DFD972C09A88C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1966,6 +2032,12 @@
         "Entry"
         {
         "MsmKey" = "8:_2DB036B7F8F14563813648CED17552D7"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2DD7A1FB411541AA9380CD4E103B27D8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2685,6 +2757,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_3C593340850A423D99518BD7ECC659F1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_3C5D15D418794D5191FC09B7A3925701"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2829,7 +2907,19 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_404951C6121E42E5ACBAC7554E975961"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_407BBF79FA824C8E9DE99ECAC2EA5079"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_40BAA52DCC454E31A789E483EABD2039"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2908,6 +2998,12 @@
         "Entry"
         {
         "MsmKey" = "8:_426DE24EBDDA4490B55188A75821C02B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4276B53DD2C74067AE769E95A99409D5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3135,6 +3231,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_480E59958F2A4B029F00C7F8F9C6FDBE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_4825FBC3DA8A4AA6B45A6BD07E3035CA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -3214,6 +3316,12 @@
         "Entry"
         {
         "MsmKey" = "8:_4A5BC131EAED4BD88D2B78B00995C013"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4A684E537544407A8928B77C717625F2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -4041,12 +4149,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_5C39CAEF68BB4610A15939B86FEF95EF"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_5CA7BF89B75E42E9A9628580F50263ED"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -4252,6 +4354,12 @@
         "Entry"
         {
         "MsmKey" = "8:_60247FC0832A4EEC8885837B295139B5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_602C18BB1823496C87A0FE0BF7357E2E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -4815,6 +4923,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_6B34C1543A954686BC19F32259386A07"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_6B3E38480E3D4966A8EA91438C98C1FB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -5110,6 +5224,12 @@
         "Entry"
         {
         "MsmKey" = "8:_72045FE4D35D46D8834384E5CC1D14B0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_72171031C1294398857FFF4FE9261885"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -6057,6 +6177,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_853663DA90BD462A8C7ACD3AAB76251D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_857B0735E0B44232B7D54CC8658D49A2"
+        "OwnerKey" = "8:_416D221129EA4472920D97B19D66A6A4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_85C714E42DFC40B797845687328B13C2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -6201,6 +6333,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_8837F9620C3B49C4B6F5DE53BE7141F6"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_884D1774ACFB467B84C0604279CDA13F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -6220,6 +6358,12 @@
         "Entry"
         {
         "MsmKey" = "8:_889866F7A98F4075824D013A58D2F50F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_88A3A94E4F3340CBBB229E936E4ED50D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -6292,6 +6436,12 @@
         "Entry"
         {
         "MsmKey" = "8:_8A0F50725F9B4E3DB609345C2BB3B4EA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8A1F0EF05B6B4CC09A34213AE19783AD"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -6465,6 +6615,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_8D56B38D54BE42B49AAC018355C52FE3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_8D56B8C933664FB48264DA15DD163416"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -6556,6 +6712,12 @@
         "Entry"
         {
         "MsmKey" = "8:_8F7BF44DDC8641EAAD7EC2EFE92AACCC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8F9A0E09C2844BE39565CE5A086679DC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -6886,6 +7048,12 @@
         "Entry"
         {
         "MsmKey" = "8:_95E06C51368043AD8166761E5820B642"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_95EB51C8691F4D5FBAA8358613EBF79C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -7263,6 +7431,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_9EEBC2B490B646A5BC031E7FE8106C13"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_9EFD9B2BB3DE485B8AA6012BCF35FB4F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -7419,6 +7593,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_A2B78F9F7F52495E9418E12D4DC909CE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_A2D92DC781A04F9DAD73FF518FDFDB03"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -7449,12 +7629,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_A356D185314045E0A57A01210E72E880"
-        "OwnerKey" = "8:_416D221129EA4472920D97B19D66A6A4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_A36CE2EB571345D086EA67E800D10354"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -7480,6 +7654,12 @@
         "Entry"
         {
         "MsmKey" = "8:_A4476358F2104A328C2DCB498A67E69B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A46650A266B44B608526409E870BEC67"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -7540,6 +7720,12 @@
         "Entry"
         {
         "MsmKey" = "8:_A585F011D5204D0BAD362438EBE1FD12"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A5D7D037E5774DAABE783B5B2B2F95AD"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -8139,6 +8325,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_B0BE08C6E786498EBBE73EB0999B1BC6"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_B10445B2A75A4515AA5F2BEDB4B2BAC2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -8224,6 +8416,12 @@
         "Entry"
         {
         "MsmKey" = "8:_B379891FD75641458B309474894F08E4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B380454D0DC548FFAEC6DC8BA74C89DA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -8829,6 +9027,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_BF4D68C72EDB41F28826DBE51ED7A60C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_BF72D65D70EB4912AD5AD89DA54E2DEF"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -8974,6 +9178,12 @@
         "Entry"
         {
         "MsmKey" = "8:_C332E8EA72C7403A909A3A587C374F99"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C36C01331B3646C18E6EA0DC8BC2D815"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -9675,6 +9885,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D1049CC4AAE5406FAC5B6C4D897D1188"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_D114EB7E5F124B22BF3027EC782501BD"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -9712,6 +9928,12 @@
         "Entry"
         {
         "MsmKey" = "8:_D1C4C86C0EC64E94AACBB779BDF144F0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D1D0B83C31AD489CA70FB69ACB52CFAD"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -10006,6 +10228,12 @@
         "Entry"
         {
         "MsmKey" = "8:_D844C995B03344539F1D9D20C8E8E26A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D849D09136D241028E289DAF1780E56B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -10521,6 +10749,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_E28EA4B99C214B65A1A82ADA1D98E3B1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_E28EF12B31A443F0B0B2FE90120A1F23"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -10600,6 +10834,12 @@
         "Entry"
         {
         "MsmKey" = "8:_E409ACB423904C6DAE68178B5EEE1BBF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E455283616994E7DA4341C72D3B387C4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -10767,6 +11007,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_E75C389CC320474AA45BDEBF5046C6E8"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_E775D3A00FFE45A6935AC5B63979F3A6"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -10786,6 +11032,12 @@
         "Entry"
         {
         "MsmKey" = "8:_E7D388FBE81240E3A6BF08A8951088FE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E7E29FD1C1D64EE1AAB772DC23076CA7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -11241,6 +11493,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_F0AB622D44DA4F7588CBF4B41307407C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_F0AFD698E1F147B195932F325FE0F8D7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -11391,7 +11649,19 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_F2FDD2B31C594C849496A4D47192AD8E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_F31769208D6C4CB693E5F5D1FDF18394"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F34C835A9EDC4819B614043A5353AF49"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -11572,6 +11842,12 @@
         "Entry"
         {
         "MsmKey" = "8:_F5E7D32880924DE08811FB3044C5E63E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F65A194846B44B8988BEC159489288BB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -12459,6 +12735,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0060B9513F12432896FB4C5A461FA3F7"
+            {
+            "SourcePath" = "8:..\\MediaPortal.Base\\CLDump.ax"
+            "TargetName" = "8:CLDump.ax"
+            "Tag" = "8:"
+            "Folder" = "8:_9BA030607D23497BABEC4C6F63245B90"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:4"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0097F4C9153C4F13860C83B1058FE417"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo wide\\Media\\Tetris\\block_orange.png"
@@ -12864,8 +13160,8 @@
             "SourcePath" = "8:..\\MediaPortal.Base\\shoutcastsource.ax"
             "TargetName" = "8:shoutcastsource.ax"
             "Tag" = "8:"
-            "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -12979,6 +13275,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0479059583344FC8B16BCACA31F19D0D"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\MediaPortalDirs.xml"
+            "TargetName" = "8:MediaPortalDirs.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0491CEF1B0F64DC1A43ABA7C32C8856F"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\osd_settings_subs_nofocus.png"
@@ -12986,6 +13302,26 @@
             "Tag" = "8:"
             "Folder" = "8:_D95A9A75A195450EAA8CD66DD0FB0CC7"
             "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_04D829180ED344BFBFA0E894A27697BC"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\ProgramSettingProfiles.xml"
+            "TargetName" = "8:ProgramSettingProfiles.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -13646,8 +13982,8 @@
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\FileDetailContents.xml"
             "TargetName" = "8:FileDetailContents.xml"
             "Tag" = "8:"
-            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
-            "Condition" = "8:"
+            "Folder" = "8:_3502C505645E49E3A2352AC135DB6C0C"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -13667,7 +14003,7 @@
             "TargetName" = "8:MPLogo160x128BW.bmp"
             "Tag" = "8:"
             "Folder" = "8:_43A50BC555BB4118A620C090B7A5A35A"
-            "Condition" = "8:"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -14172,6 +14508,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0C30EBA39E3D467D989AEF547990B9BC"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\musicViews.xml"
+            "TargetName" = "8:musicViews.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0C41061B310646B9833E82A0BAA8ECD4"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\animations\\73.png"
@@ -14319,6 +14675,26 @@
             "Tag" = "8:"
             "Folder" = "8:_ACF31979169F467BA4027796744FCBA0"
             "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0D6F41075439449782E468AA043BC31E"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\yac\\text-message.jpg"
+            "TargetName" = "8:text-message.jpg"
+            "Tag" = "8:"
+            "Folder" = "8:_8555D6DB6311475AB2881D39B5D5BF8E"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -14598,7 +14974,7 @@
             "TargetName" = "8:text-message.jpg"
             "Tag" = "8:"
             "Folder" = "8:_5BCD45BC34E7483F8CA0D6DE082D592C"
-            "Condition" = "8:"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -15003,6 +15379,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_12DEF957364045FFAD185F497FF273D6"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\ExternalDisplay\\MPLogo160x128BW.bmp"
+            "TargetName" = "8:MPLogo160x128BW.bmp"
+            "Tag" = "8:"
+            "Folder" = "8:_3BED07A7A8094880B7EFBD459E8CD36D"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1331371F588C4CC2BC4B15238DAE39C0"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo wide\\settings_recording.xml"
@@ -15254,6 +15650,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_15231BD46CF24F82B1866DACAB03803E"
+            {
+            "SourcePath" = "8:..\\MediaPortal.Base\\MpgMux.ax"
+            "TargetName" = "8:MpgMux.ax"
+            "Tag" = "8:"
+            "Folder" = "8:_9BA030607D23497BABEC4C6F63245B90"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:4"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_154EF0E97D7747A388669DAD4DC93136"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Sounds\\MyTetris.Knock.wav"
@@ -15420,7 +15836,7 @@
             "TargetName" = "8:Plugin160x80BW.bmp"
             "Tag" = "8:"
             "Folder" = "8:_43A50BC555BB4118A620C090B7A5A35A"
-            "Condition" = "8:"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -15834,6 +16250,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_17FFB080B8D94456BBA5C8AFB078AB4A"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\FileDetailContents.xml"
+            "TargetName" = "8:FileDetailContents.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_182B711808834777944399D8539D571B"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\plugins_logo.png"
@@ -16070,8 +16506,8 @@
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\ProgramSettingProfiles.xml"
             "TargetName" = "8:ProgramSettingProfiles.xml"
             "Tag" = "8:"
-            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
-            "Condition" = "8:"
+            "Folder" = "8:_3502C505645E49E3A2352AC135DB6C0C"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -16171,7 +16607,27 @@
             "TargetName" = "8:private-number.jpg"
             "Tag" = "8:"
             "Folder" = "8:_5BCD45BC34E7483F8CA0D6DE082D592C"
-            "Condition" = "8:"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1B499BC3CA2B499385B1F785DCC7D9DB"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\ExternalDisplay\\MpIdle160x80BW.bmp"
+            "TargetName" = "8:MpIdle160x80BW.bmp"
+            "Tag" = "8:"
+            "Folder" = "8:_3BED07A7A8094880B7EFBD459E8CD36D"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -16781,8 +17237,8 @@
             "SourcePath" = "8:..\\MediaPortal.Base\\MpaDecFilter.ax"
             "TargetName" = "8:MpaDecFilter.ax"
             "Tag" = "8:"
-            "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:CHECKBOXMPEG2DEC"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:CHECKBOXMPEG2DEC AND (VersionNT>=600 OR VersionNT64>=600)"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -17092,6 +17548,26 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_21CA99CD45E64B278087A0296BA946FB"
+            {
+            "SourcePath" = "8:..\\MediaPortal.Base\\MPSA.ax"
+            "TargetName" = "8:MPSA.ax"
+            "Tag" = "8:"
+            "Folder" = "8:_9BA030607D23497BABEC4C6F63245B90"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:4"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
@@ -17898,6 +18374,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_271D1F679C2747BC8F7DFD972C09A88C"
+            {
+            "SourcePath" = "8:..\\MediaPortal.Base\\MpegVideo.dll"
+            "TargetName" = "8:MpegVideo.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_9BA030607D23497BABEC4C6F63245B90"
+            "Condition" = "8:CHECKBOXDSCALER AND (NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600))"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:4"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2723E2C37FDC40FBBE04C6494363D13E"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\fontEngine.dll"
@@ -18585,8 +19081,8 @@
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\MFC71.dll"
             "TargetName" = "8:MFC71.dll"
             "Tag" = "8:"
-            "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -18636,6 +19132,26 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2DD7A1FB411541AA9380CD4E103B27D8"
+            {
+            "SourcePath" = "8:..\\MediaPortal.Base\\MPTSWriter.ax"
+            "TargetName" = "8:MPTSWriter.ax"
+            "Tag" = "8:"
+            "Folder" = "8:_9BA030607D23497BABEC4C6F63245B90"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:4"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
@@ -21086,6 +21602,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3C593340850A423D99518BD7ECC659F1"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\videoViews.xml"
+            "TargetName" = "8:videoViews.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3C5D15D418794D5191FC09B7A3925701"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\Tetris\\block_O.png"
@@ -21577,6 +22113,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_404951C6121E42E5ACBAC7554E975961"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\eHome Infrared Transceiver List XP.xml"
+            "TargetName" = "8:eHome Infrared Transceiver List XP.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_407BBF79FA824C8E9DE99ECAC2EA5079"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo wide\\wizard_tvcard_analog_country.xml"
@@ -21584,6 +22140,26 @@
             "Tag" = "8:"
             "Folder" = "8:_FF5D4A7395C74C0698BDE5331C9FE0F5"
             "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_40BAA52DCC454E31A789E483EABD2039"
+            {
+            "SourcePath" = "8:MediaPortalDirs.xml"
+            "TargetName" = "8:MediaPortalDirs.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -21703,7 +22279,7 @@
             "TargetName" = "8:Music160x80BW.bmp"
             "Tag" = "8:"
             "Folder" = "8:_43A50BC555BB4118A620C090B7A5A35A"
-            "Condition" = "8:"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -21837,6 +22413,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4276B53DD2C74067AE769E95A99409D5"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\ISDNCodes.xml"
+            "TargetName" = "8:ISDNCodes.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_429EBADA0AC14F4E828901EA1E305FF2"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo wide\\Media\\animations\\63.png"
@@ -21862,8 +22458,8 @@
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\xmltv\\ReadMe.txt"
             "TargetName" = "8:ReadMe.txt"
             "Tag" = "8:"
-            "Folder" = "8:_83BAC66FE1CE4D09987A80BE7A17BAEF"
-            "Condition" = "8:"
+            "Folder" = "8:_BA151F8D060F40248F9F9092B2EC678E"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -22577,6 +23173,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_480E59958F2A4B029F00C7F8F9C6FDBE"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\keymap.xml"
+            "TargetName" = "8:keymap.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4825FBC3DA8A4AA6B45A6BD07E3035CA"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo wide\\Media\\animations\\20.png"
@@ -22782,8 +23398,8 @@
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\msvcp71.dll"
             "TargetName" = "8:msvcp71.dll"
             "Tag" = "8:"
-            "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -22844,6 +23460,26 @@
             "Tag" = "8:"
             "Folder" = "8:_4497DD1CD40F4CB4A6BA0DDD0C1756DE"
             "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4A684E537544407A8928B77C717625F2"
+            {
+            "SourcePath" = "8:..\\MediaPortal.Base\\msvcp71.dll"
+            "TargetName" = "8:msvcp71.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_9BA030607D23497BABEC4C6F63245B90"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -25570,26 +26206,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5C39CAEF68BB4610A15939B86FEF95EF"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\MediaPortalDirs.xml"
-            "TargetName" = "8:MediaPortalDirs.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5CA7BF89B75E42E9A9628580F50263ED"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\defaultNetworkBig.png"
@@ -26281,6 +26897,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_602C18BB1823496C87A0FE0BF7357E2E"
+            {
+            "SourcePath" = "8:..\\MediaPortal.Base\\MPTS.ax"
+            "TargetName" = "8:MPTS.ax"
+            "Tag" = "8:"
+            "Folder" = "8:_9BA030607D23497BABEC4C6F63245B90"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:4"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6030939FFC084795A8D5DED6EE7CD35C"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo wide\\Media\\video-32x.png"
@@ -26437,8 +27073,8 @@
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\keymap.xml"
             "TargetName" = "8:keymap.xml"
             "Tag" = "8:"
-            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
-            "Condition" = "8:"
+            "Folder" = "8:_3502C505645E49E3A2352AC135DB6C0C"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -27919,8 +28555,8 @@
             "SourcePath" = "8:..\\MediaPortal.Base\\Mpeg2DecFilter.ax"
             "TargetName" = "8:Mpeg2DecFilter.ax"
             "Tag" = "8:"
-            "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:CHECKBOXMPEG2DEC"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:CHECKBOXMPEG2DEC AND (VersionNT>=600 OR VersionNT64>=600)"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -28001,6 +28637,26 @@
             "Tag" = "8:"
             "Folder" = "8:_D95A9A75A195450EAA8CD66DD0FB0CC7"
             "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6B34C1543A954686BC19F32259386A07"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\tv\\logos\\Composite.PNG"
+            "TargetName" = "8:Composite.PNG"
+            "Tag" = "8:"
+            "Folder" = "8:_3CA8A844BCA247E0975CB05D041E6BDC"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -28320,7 +28976,7 @@
             "TargetName" = "8:DVD160x80BW.bmp"
             "Tag" = "8:"
             "Folder" = "8:_43A50BC555BB4118A620C090B7A5A35A"
-            "Condition" = "8:"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -28490,8 +29146,8 @@
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\yac-area-codes.xml"
             "TargetName" = "8:yac-area-codes.xml"
             "Tag" = "8:"
-            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
-            "Condition" = "8:"
+            "Folder" = "8:_3502C505645E49E3A2352AC135DB6C0C"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -29021,6 +29677,26 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_72171031C1294398857FFF4FE9261885"
+            {
+            "SourcePath" = "8:..\\MediaPortal.Base\\cdxareader.ax"
+            "TargetName" = "8:cdxareader.ax"
+            "Tag" = "8:"
+            "Folder" = "8:_9BA030607D23497BABEC4C6F63245B90"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:4"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
@@ -30433,7 +31109,7 @@
             "TargetName" = "8:MpIdle160x80BW.bmp"
             "Tag" = "8:"
             "Folder" = "8:_43A50BC555BB4118A620C090B7A5A35A"
-            "Condition" = "8:"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -30712,8 +31388,8 @@
             "SourcePath" = "8:..\\MediaPortal.Base\\MPSA.ax"
             "TargetName" = "8:MPSA.ax"
             "Tag" = "8:"
-            "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -31103,8 +31779,8 @@
             "SourcePath" = "8:..\\MediaPortal.Base\\cdxareader.ax"
             "TargetName" = "8:cdxareader.ax"
             "Tag" = "8:"
-            "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -31203,8 +31879,8 @@
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\wikipedia.xml"
             "TargetName" = "8:wikipedia.xml"
             "Tag" = "8:"
-            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
-            "Condition" = "8:"
+            "Folder" = "8:_3502C505645E49E3A2352AC135DB6C0C"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -31324,7 +32000,7 @@
             "TargetName" = "8:Composite.PNG"
             "Tag" = "8:"
             "Folder" = "8:_106CBE148A2648F9A77D6EC14A2B71EE"
-            "Condition" = "8:"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -31383,8 +32059,8 @@
             "SourcePath" = "8:..\\MediaPortal.Base\\MPReader.ax"
             "TargetName" = "8:MPReader.ax"
             "Tag" = "8:"
-            "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -32094,8 +32770,8 @@
             "SourcePath" = "8:..\\MediaPortal.Base\\MPTS.ax"
             "TargetName" = "8:MPTS.ax"
             "Tag" = "8:"
-            "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -32156,6 +32832,26 @@
             "Tag" = "8:"
             "Folder" = "8:_D95A9A75A195450EAA8CD66DD0FB0CC7"
             "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_853663DA90BD462A8C7ACD3AAB76251D"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\MusicVideoSettings.xml"
+            "TargetName" = "8:MusicVideoSettings.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -32649,6 +33345,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8837F9620C3B49C4B6F5DE53BE7141F6"
+            {
+            "SourcePath" = "8:..\\MediaPortal.Base\\shoutcastsource.ax"
+            "TargetName" = "8:shoutcastsource.ax"
+            "Tag" = "8:"
+            "Folder" = "8:_9BA030607D23497BABEC4C6F63245B90"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:4"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_884D1774ACFB467B84C0604279CDA13F"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\hover_my pictures.png"
@@ -32729,13 +33445,33 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_88A3A94E4F3340CBBB229E936E4ED50D"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\ExternalDisplay\\Video160x80BW.bmp"
+            "TargetName" = "8:Video160x80BW.bmp"
+            "Tag" = "8:"
+            "Folder" = "8:_3BED07A7A8094880B7EFBD459E8CD36D"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_88A4C4A427F5495BAE157EDDDEC1F6DC"
             {
             "SourcePath" = "8:..\\MediaPortal.Base\\MPTSWriter.ax"
             "TargetName" = "8:MPTSWriter.ax"
             "Tag" = "8:"
-            "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -32967,6 +33703,26 @@
             "Tag" = "8:"
             "Folder" = "8:_D95A9A75A195450EAA8CD66DD0FB0CC7"
             "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8A1F0EF05B6B4CC09A34213AE19783AD"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\ExternalDisplay\\MPMusic160x128BW.bmp"
+            "TargetName" = "8:MPMusic160x128BW.bmp"
+            "Tag" = "8:"
+            "Folder" = "8:_3BED07A7A8094880B7EFBD459E8CD36D"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -33540,6 +34296,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8D56B38D54BE42B49AAC018355C52FE3"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\tv\\logos\\SVHS.PNG"
+            "TargetName" = "8:SVHS.PNG"
+            "Tag" = "8:"
+            "Folder" = "8:_3CA8A844BCA247E0975CB05D041E6BDC"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8D56B8C933664FB48264DA15DD163416"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\Tuningparameters\\dvbt.xml"
@@ -33871,6 +34647,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8F9A0E09C2844BE39565CE5A086679DC"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\xmltv\\xmltv.dtd"
+            "TargetName" = "8:xmltv.dtd"
+            "Tag" = "8:"
+            "Folder" = "8:_CDFE262D78FA4342BF378BC2C0C83C34"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8FAAA9ECA4DF49F9AA575D421259739A"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\hover_my recipes.png"
@@ -34097,7 +34893,7 @@
             "TargetName" = "8:MPLogoText160x128BW.bmp"
             "Tag" = "8:"
             "Folder" = "8:_43A50BC555BB4118A620C090B7A5A35A"
-            "Condition" = "8:"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -34807,8 +35603,8 @@
             "SourcePath" = "8:..\\MediaPortal.Base\\MpegVideo.dll"
             "TargetName" = "8:MpegVideo.dll"
             "Tag" = "8:"
-            "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:CHECKBOXDSCALER"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:CHECKBOXDSCALER AND (VersionNT>=600 OR VersionNT64>=600)"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -34968,7 +35764,27 @@
             "TargetName" = "8:MPMusic160x128BW.bmp"
             "Tag" = "8:"
             "Folder" = "8:_43A50BC555BB4118A620C090B7A5A35A"
-            "Condition" = "8:"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_95EB51C8691F4D5FBAA8358613EBF79C"
+            {
+            "SourcePath" = "8:..\\MediaPortal.Base\\MFC71.dll"
+            "TargetName" = "8:MFC71.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_9BA030607D23497BABEC4C6F63245B90"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -36173,6 +36989,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9EEBC2B490B646A5BC031E7FE8106C13"
+            {
+            "SourcePath" = "8:..\\MediaPortal.Base\\MPReader.ax"
+            "TargetName" = "8:MPReader.ax"
+            "Tag" = "8:"
+            "Folder" = "8:_9BA030607D23497BABEC4C6F63245B90"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:4"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9EFD9B2BB3DE485B8AA6012BCF35FB4F"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\progress_mid.png"
@@ -36693,6 +37529,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A2B78F9F7F52495E9418E12D4DC909CE"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\ExternalDisplay\\Music160x80BW.bmp"
+            "TargetName" = "8:Music160x80BW.bmp"
+            "Tag" = "8:"
+            "Folder" = "8:_3BED07A7A8094880B7EFBD459E8CD36D"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A2D92DC781A04F9DAD73FF518FDFDB03"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo wide\\Media\\Tetris\\block_S.png"
@@ -36880,6 +37736,26 @@
             "Tag" = "8:"
             "Folder" = "8:_D95A9A75A195450EAA8CD66DD0FB0CC7"
             "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A46650A266B44B608526409E870BEC67"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\ExternalDisplay\\Radio160x80BW.bmp"
+            "TargetName" = "8:Radio160x80BW.bmp"
+            "Tag" = "8:"
+            "Folder" = "8:_3BED07A7A8094880B7EFBD459E8CD36D"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -37091,6 +37967,26 @@
             "Tag" = "8:"
             "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
             "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A5D7D037E5774DAABE783B5B2B2F95AD"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\wikipedia.xml"
+            "TargetName" = "8:wikipedia.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -38380,8 +39276,8 @@
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\msvcr71.dll"
             "TargetName" = "8:msvcr71.dll"
             "Tag" = "8:"
-            "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -38660,8 +39556,8 @@
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\videoViews.xml"
             "TargetName" = "8:videoViews.xml"
             "Tag" = "8:"
-            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
-            "Condition" = "8:"
+            "Folder" = "8:_3502C505645E49E3A2352AC135DB6C0C"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -38802,6 +39698,26 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B0BE08C6E786498EBBE73EB0999B1BC6"
+            {
+            "SourcePath" = "8:..\\MediaPortal.Base\\TSFileSource.ax"
+            "TargetName" = "8:TSFileSource.ax"
+            "Tag" = "8:"
+            "Folder" = "8:_9BA030607D23497BABEC4C6F63245B90"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:4"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
@@ -39106,6 +40022,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B380454D0DC548FFAEC6DC8BA74C89DA"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\ExternalDisplay\\DVD160x80BW.bmp"
+            "TargetName" = "8:DVD160x80BW.bmp"
+            "Tag" = "8:"
+            "Folder" = "8:_3BED07A7A8094880B7EFBD459E8CD36D"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B398FFB923E8475A9BB0F7AF0B5AF4DD"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\WebEPG\\grabbers\\DK\\www_dr_dk.xml"
@@ -39151,8 +40087,8 @@
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\ISDNCodes.xml"
             "TargetName" = "8:ISDNCodes.xml"
             "Tag" = "8:"
-            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
-            "Condition" = "8:"
+            "Folder" = "8:_3502C505645E49E3A2352AC135DB6C0C"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -40808,6 +41744,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BF4D68C72EDB41F28826DBE51ED7A60C"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\yac\\private-number.jpg"
+            "TargetName" = "8:private-number.jpg"
+            "Tag" = "8:"
+            "Folder" = "8:_8555D6DB6311475AB2881D39B5D5BF8E"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BF72D65D70EB4912AD5AD89DA54E2DEF"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\WebFavorites.xml"
@@ -41339,6 +42295,26 @@
             "Tag" = "8:"
             "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
             "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C36C01331B3646C18E6EA0DC8BC2D815"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\yac\\out-of-area.jpg"
+            "TargetName" = "8:out-of-area.jpg"
+            "Tag" = "8:"
+            "Folder" = "8:_8555D6DB6311475AB2881D39B5D5BF8E"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -43272,8 +44248,8 @@
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\xmltv\\xmltv.dtd"
             "TargetName" = "8:xmltv.dtd"
             "Tag" = "8:"
-            "Folder" = "8:_83BAC66FE1CE4D09987A80BE7A17BAEF"
-            "Condition" = "8:"
+            "Folder" = "8:_BA151F8D060F40248F9F9092B2EC678E"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -43689,6 +44665,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D1049CC4AAE5406FAC5B6C4D897D1188"
+            {
+            "SourcePath" = "8:..\\MediaPortal.Base\\MpegAudio.dll"
+            "TargetName" = "8:MpegAudio.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_9BA030607D23497BABEC4C6F63245B90"
+            "Condition" = "8:CHECKBOXDSCALER AND (NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600))"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:4"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D114EB7E5F124B22BF3027EC782501BD"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo wide\\Media\\animations\\day.png"
@@ -43816,6 +44812,26 @@
             "Tag" = "8:"
             "Folder" = "8:_F197EB8DEA5B4DBBA364C20BBA681BB4"
             "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D1D0B83C31AD489CA70FB69ACB52CFAD"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\yac\\wireless-caller.jpg"
+            "TargetName" = "8:wireless-caller.jpg"
+            "Tag" = "8:"
+            "Folder" = "8:_8555D6DB6311475AB2881D39B5D5BF8E"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -44485,8 +45501,8 @@
             "SourcePath" = "8:..\\MediaPortal.Base\\MpegAudio.dll"
             "TargetName" = "8:MpegAudio.dll"
             "Tag" = "8:"
-            "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:CHECKBOXDSCALER"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:CHECKBOXDSCALER AND (VersionNT>=600 OR VersionNT64>=600)"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -44816,6 +45832,26 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D849D09136D241028E289DAF1780E56B"
+            {
+            "SourcePath" = "8:..\\MediaPortal.Base\\MpaDecFilter.ax"
+            "TargetName" = "8:MpaDecFilter.ax"
+            "Tag" = "8:"
+            "Folder" = "8:_9BA030607D23497BABEC4C6F63245B90"
+            "Condition" = "8:CHECKBOXMPEG2DEC AND (NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600))"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:4"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
@@ -45625,8 +46661,8 @@
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\musicViews.xml"
             "TargetName" = "8:musicViews.xml"
             "Tag" = "8:"
-            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
-            "Condition" = "8:"
+            "Folder" = "8:_3502C505645E49E3A2352AC135DB6C0C"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -45706,7 +46742,7 @@
             "TargetName" = "8:Television160x80BW.bmp"
             "Tag" = "8:"
             "Folder" = "8:_43A50BC555BB4118A620C090B7A5A35A"
-            "Condition" = "8:"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -46387,8 +47423,8 @@
             "SourcePath" = "8:..\\MediaPortal.Base\\CLDump.ax"
             "TargetName" = "8:CLDump.ax"
             "Tag" = "8:"
-            "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -46542,6 +47578,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E28EA4B99C214B65A1A82ADA1D98E3B1"
+            {
+            "SourcePath" = "8:..\\MediaPortal.Base\\MFC71u.dll"
+            "TargetName" = "8:MFC71u.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_9BA030607D23497BABEC4C6F63245B90"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E28EF12B31A443F0B0B2FE90120A1F23"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\animations\\9.png"
@@ -46588,7 +47644,7 @@
             "TargetName" = "8:Video160x80BW.bmp"
             "Tag" = "8:"
             "Folder" = "8:_43A50BC555BB4118A620C090B7A5A35A"
-            "Condition" = "8:"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -46809,6 +47865,26 @@
             "Tag" = "8:"
             "Folder" = "8:_ACF31979169F467BA4027796744FCBA0"
             "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E455283616994E7DA4341C72D3B387C4"
+            {
+            "SourcePath" = "8:..\\MediaPortal.Base\\msvcr71.dll"
+            "TargetName" = "8:msvcr71.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_9BA030607D23497BABEC4C6F63245B90"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -47362,13 +48438,33 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E75C389CC320474AA45BDEBF5046C6E8"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\ExternalDisplay\\Television160x80BW.bmp"
+            "TargetName" = "8:Television160x80BW.bmp"
+            "Tag" = "8:"
+            "Folder" = "8:_3BED07A7A8094880B7EFBD459E8CD36D"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E775D3A00FFE45A6935AC5B63979F3A6"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\tv\\logos\\SVHS.PNG"
             "TargetName" = "8:SVHS.PNG"
             "Tag" = "8:"
             "Folder" = "8:_106CBE148A2648F9A77D6EC14A2B71EE"
-            "Condition" = "8:"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -47442,6 +48538,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E7E29FD1C1D64EE1AAB772DC23076CA7"
+            {
+            "SourcePath" = "8:..\\MediaPortal.Base\\Mpeg2DecFilter.ax"
+            "TargetName" = "8:Mpeg2DecFilter.ax"
+            "Tag" = "8:"
+            "Folder" = "8:_9BA030607D23497BABEC4C6F63245B90"
+            "Condition" = "8:CHECKBOXMPEG2DEC AND (NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600))"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:4"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E7EBF113B47344A69202D3A7405B3349"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo wide\\Media\\statusbar_mid.png"
@@ -47508,7 +48624,7 @@
             "TargetName" = "8:Radio160x80BW.bmp"
             "Tag" = "8:"
             "Folder" = "8:_43A50BC555BB4118A620C090B7A5A35A"
-            "Condition" = "8:"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -48048,7 +49164,7 @@
             "TargetName" = "8:out-of-area.jpg"
             "Tag" = "8:"
             "Folder" = "8:_5BCD45BC34E7483F8CA0D6DE082D592C"
-            "Condition" = "8:"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -48407,8 +49523,8 @@
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\eHome Infrared Transceiver List XP.xml"
             "TargetName" = "8:eHome Infrared Transceiver List XP.xml"
             "Tag" = "8:"
-            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
-            "Condition" = "8:"
+            "Folder" = "8:_3502C505645E49E3A2352AC135DB6C0C"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -48953,6 +50069,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F0AB622D44DA4F7588CBF4B41307407C"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\ExternalDisplay\\MPLogoText160x128BW.bmp"
+            "TargetName" = "8:MPLogoText160x128BW.bmp"
+            "Tag" = "8:"
+            "Folder" = "8:_3BED07A7A8094880B7EFBD459E8CD36D"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F0AFD698E1F147B195932F325FE0F8D7"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\settingsUICalibration.png"
@@ -49038,8 +50174,8 @@
             "SourcePath" = "8:..\\MediaPortal.Base\\TSFileSource.ax"
             "TargetName" = "8:TSFileSource.ax"
             "Tag" = "8:"
-            "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -49444,6 +50580,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F2FDD2B31C594C849496A4D47192AD8E"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\xmltv\\ReadMe.txt"
+            "TargetName" = "8:ReadMe.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_CDFE262D78FA4342BF378BC2C0C83C34"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F31769208D6C4CB693E5F5D1FDF18394"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\animations\\69.png"
@@ -49451,6 +50607,26 @@
             "Tag" = "8:"
             "Folder" = "8:_ACF31979169F467BA4027796744FCBA0"
             "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F34C835A9EDC4819B614043A5353AF49"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\yac-area-codes.xml"
+            "TargetName" = "8:yac-area-codes.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -49909,8 +51085,8 @@
             "SourcePath" = "8:..\\MediaPortal.Base\\MFC71u.dll"
             "TargetName" = "8:MFC71u.dll"
             "Tag" = "8:"
-            "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -50051,6 +51227,26 @@
             "Tag" = "8:"
             "Folder" = "8:_F197EB8DEA5B4DBBA364C20BBA681BB4"
             "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F65A194846B44B8988BEC159489288BB"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\ExternalDisplay\\Plugin160x80BW.bmp"
+            "TargetName" = "8:Plugin160x80BW.bmp"
+            "Tag" = "8:"
+            "Folder" = "8:_3BED07A7A8094880B7EFBD459E8CD36D"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -50929,8 +52125,8 @@
             "SourcePath" = "8:..\\MediaPortal.Base\\MpgMux.ax"
             "TargetName" = "8:MpgMux.ax"
             "Tag" = "8:"
-            "Folder" = "8:_C67AEA631A97469F8BC0AF2E6B635A4A"
-            "Condition" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -51229,8 +52425,8 @@
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\MusicVideoSettings.xml"
             "TargetName" = "8:MusicVideoSettings.xml"
             "Tag" = "8:"
-            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
-            "Condition" = "8:"
+            "Folder" = "8:_3502C505645E49E3A2352AC135DB6C0C"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -51450,7 +52646,7 @@
             "TargetName" = "8:wireless-caller.jpg"
             "Tag" = "8:"
             "Folder" = "8:_5BCD45BC34E7483F8CA0D6DE082D592C"
-            "Condition" = "8:"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
@@ -51512,7 +52708,7 @@
         {
             "{3C67513D-01DD-4637-8A68-80971EB9504F}:_6A291DBA77BA49F7993B1420AD183252"
             {
-            "DefaultLocation" = "8:[ProgramFilesFolder][Manufacturer]\\[ProductName]"
+            "DefaultLocation" = "8:[ProgramFilesFolder][Manufacturer]\\MediaPortal"
             "Name" = "8:#1925"
             "AlwaysCreate" = "11:FALSE"
             "Condition" = "8:"
@@ -51861,6 +53057,28 @@
                         {
                         }
                     }
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_24F1B42D0C2C46DEBFFC18A97195C2F1"
+                    {
+                    "Name" = "8:InputDeviceMappings"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_092D35EEC9DB4A509E889764AEE0D7A2"
+                        "Folders"
+                        {
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_6D55CF3348A740B1918A5F49C6FF3E09"
+                            {
+                            "Name" = "8:defaults"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_9A35092DBC5A4401B23D950A2E8952FF"
+                                "Folders"
+                                {
+                                }
+                            }
+                        }
+                    }
                     "{9EF0B969-E518-4E46-987F-47570745A589}:_255DA0FF5B274E2BB2D84BF4C0D0D547"
                     {
                     "Name" = "8:Weather"
@@ -51949,7 +53167,7 @@
                             }
                         }
                     }
-                    "{9EF0B969-E518-4E46-987F-47570745A589}:_46CF0B6CE88440E8AA3EF2195A676CA7"
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_2B262EFDEEA64452833DF7703B21056E"
                     {
                     "Name" = "8:Skin"
                     "AlwaysCreate" = "11:FALSE"
@@ -52202,17 +53420,6 @@
                             }
                         }
                     }
-                    "{9EF0B969-E518-4E46-987F-47570745A589}:_83BAC66FE1CE4D09987A80BE7A17BAEF"
-                    {
-                    "Name" = "8:XMLTV"
-                    "AlwaysCreate" = "11:FALSE"
-                    "Condition" = "8:"
-                    "Transitive" = "11:FALSE"
-                    "Property" = "8:_DBFEFD547A4C4AED8D174B12414E2435"
-                        "Folders"
-                        {
-                        }
-                    }
                     "{9EF0B969-E518-4E46-987F-47570745A589}:_90FAE76C2525465B8263CC971EC52929"
                     {
                     "Name" = "8:TuningParameters"
@@ -52235,88 +53442,66 @@
                         {
                         }
                     }
-                    "{9EF0B969-E518-4E46-987F-47570745A589}:_99024F24714E4316B580486E128A5987"
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_CDFE262D78FA4342BF378BC2C0C83C34"
                     {
-                    "Name" = "8:Thumbs"
-                    "AlwaysCreate" = "11:FALSE"
-                    "Condition" = "8:"
+                    "Name" = "8:XMLTV"
+                    "AlwaysCreate" = "11:TRUE"
+                    "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
                     "Transitive" = "11:FALSE"
-                    "Property" = "8:_34ABED3D11DC494FAD6585A99C4F0A41"
+                    "Property" = "8:_4E2480E7FB84472DB34AE85A7E6038EC"
                         "Folders"
                         {
-                            "{9EF0B969-E518-4E46-987F-47570745A589}:_43A50BC555BB4118A620C090B7A5A35A"
+                        }
+                    }
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_DBBA25D405DD45208E023F5AB92316C2"
+                    {
+                    "Name" = "8:Thumbs"
+                    "AlwaysCreate" = "11:TRUE"
+                    "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_795746D7FF844A8C905E25AF934344AC"
+                        "Folders"
+                        {
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_3BED07A7A8094880B7EFBD459E8CD36D"
                             {
                             "Name" = "8:ExternalDisplay"
-                            "AlwaysCreate" = "11:FALSE"
-                            "Condition" = "8:"
+                            "AlwaysCreate" = "11:TRUE"
+                            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
                             "Transitive" = "11:FALSE"
-                            "Property" = "8:_90C3F8E1AA40467B8F814F59484546B0"
+                            "Property" = "8:_AEE4BC53CB344387839FD45C2231E749"
                                 "Folders"
                                 {
                                 }
                             }
-                            "{9EF0B969-E518-4E46-987F-47570745A589}:_5BCD45BC34E7483F8CA0D6DE082D592C"
-                            {
-                            "Name" = "8:YAC"
-                            "AlwaysCreate" = "11:FALSE"
-                            "Condition" = "8:"
-                            "Transitive" = "11:FALSE"
-                            "Property" = "8:_D55150FD9AF541A196FE25CD9AECD800"
-                                "Folders"
-                                {
-                                }
-                            }
-                            "{9EF0B969-E518-4E46-987F-47570745A589}:_C390BA181EBE411A960BA23CECE80512"
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_6D3713BE3713412E8343EE407D432612"
                             {
                             "Name" = "8:TV"
-                            "AlwaysCreate" = "11:FALSE"
-                            "Condition" = "8:"
+                            "AlwaysCreate" = "11:TRUE"
+                            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
                             "Transitive" = "11:FALSE"
-                            "Property" = "8:_2E69D4DFE5A647C2A90FE3032DB15255"
+                            "Property" = "8:_9E370764F46D4D7E82A561777FE1597F"
                                 "Folders"
                                 {
-                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_106CBE148A2648F9A77D6EC14A2B71EE"
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_3CA8A844BCA247E0975CB05D041E6BDC"
                                     {
                                     "Name" = "8:Logos"
-                                    "AlwaysCreate" = "11:FALSE"
-                                    "Condition" = "8:"
+                                    "AlwaysCreate" = "11:TRUE"
+                                    "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
                                     "Transitive" = "11:FALSE"
-                                    "Property" = "8:_A32ECA18F9D1486DB0416362FF4BE00D"
+                                    "Property" = "8:_E64798C8726447C0A47C77D7FE8D02E8"
                                         "Folders"
                                         {
                                         }
                                     }
                                 }
                             }
-                        }
-                    }
-                    "{9EF0B969-E518-4E46-987F-47570745A589}:_C6E33A20372943C3A08A1CD4A439330C"
-                    {
-                    "Name" = "8:Database"
-                    "AlwaysCreate" = "11:FALSE"
-                    "Condition" = "8:"
-                    "Transitive" = "11:FALSE"
-                    "Property" = "8:_F6CF40BDA9934CB5911D776049652FC1"
-                        "Folders"
-                        {
-                        }
-                    }
-                    "{9EF0B969-E518-4E46-987F-47570745A589}:_D0F4FAD973C94542A6D46CEE3AE37EE1"
-                    {
-                    "Name" = "8:InputDeviceMappings"
-                    "AlwaysCreate" = "11:FALSE"
-                    "Condition" = "8:"
-                    "Transitive" = "11:FALSE"
-                    "Property" = "8:_092D35EEC9DB4A509E889764AEE0D7A2"
-                        "Folders"
-                        {
-                            "{9EF0B969-E518-4E46-987F-47570745A589}:_6D55CF3348A740B1918A5F49C6FF3E09"
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_8555D6DB6311475AB2881D39B5D5BF8E"
                             {
-                            "Name" = "8:defaults"
-                            "AlwaysCreate" = "11:FALSE"
-                            "Condition" = "8:"
+                            "Name" = "8:YAC"
+                            "AlwaysCreate" = "11:TRUE"
+                            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
                             "Transitive" = "11:FALSE"
-                            "Property" = "8:_9A35092DBC5A4401B23D950A2E8952FF"
+                            "Property" = "8:_0EAB5CB7A594408994E0A2B900DC6645"
                                 "Folders"
                                 {
                                 }
@@ -52369,37 +53554,115 @@
                 {
                 }
             }
-            "{1525181F-901A-416C-8A58-119130FE478E}:_A704CAA44EF24570A2B532ABB08913BF"
-            {
-            "Name" = "8:#1911"
-            "AlwaysCreate" = "11:FALSE"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Property" = "8:FontsFolder"
-                "Folders"
-                {
-                }
-            }
-            "{1525181F-901A-416C-8A58-119130FE478E}:_C67AEA631A97469F8BC0AF2E6B635A4A"
+            "{1525181F-901A-416C-8A58-119130FE478E}:_9BA030607D23497BABEC4C6F63245B90"
             {
             "Name" = "8:#1914"
             "AlwaysCreate" = "11:FALSE"
-            "Condition" = "8:"
+            "Condition" = "8:NOT (VersionNT >= 600) AND NOT (VersionNT64 >= 600)"
             "Transitive" = "11:FALSE"
             "Property" = "8:SystemFolder"
                 "Folders"
                 {
                 }
             }
-            "{C7E34266-2C30-44B9-A9A3-4E394ABD6E18}:_EE321DE9BCD44C89A117CDB256C93F26"
+            "{994432C3-9487-495D-8656-3E829A8DBDDE}:_CCEA577ACAAB4AB4A692BC0A147D36E9"
             {
-            "Name" = "8:#1927"
+            "DefaultLocation" = "8:[CommonAppDataFolder]"
+            "Name" = "8:Data Files Vista"
             "AlwaysCreate" = "11:FALSE"
-            "Condition" = "8:"
+            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
             "Transitive" = "11:FALSE"
-            "Property" = "8:GAC"
+            "Property" = "8:COMMONAPPDATAFOLDER"
                 "Folders"
                 {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_535B4A5013E4430C8ECD6BED5D92F45E"
+                    {
+                    "Name" = "8:Team MediaPortal"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_3085954082654AC49A8D1189F8332907"
+                        "Folders"
+                        {
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_3502C505645E49E3A2352AC135DB6C0C"
+                            {
+                            "Name" = "8:MediaPortal"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_4125E7D350844298A7BAFA6C67EC6A5C"
+                                "Folders"
+                                {
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_15DAF6A89FD84039A9E6E21A76F6C3B0"
+                                    {
+                                    "Name" = "8:Thumbs"
+                                    "AlwaysCreate" = "11:TRUE"
+                                    "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_34ABED3D11DC494FAD6585A99C4F0A41"
+                                        "Folders"
+                                        {
+                                            "{9EF0B969-E518-4E46-987F-47570745A589}:_43A50BC555BB4118A620C090B7A5A35A"
+                                            {
+                                            "Name" = "8:ExternalDisplay"
+                                            "AlwaysCreate" = "11:TRUE"
+                                            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
+                                            "Transitive" = "11:FALSE"
+                                            "Property" = "8:_90C3F8E1AA40467B8F814F59484546B0"
+                                                "Folders"
+                                                {
+                                                }
+                                            }
+                                            "{9EF0B969-E518-4E46-987F-47570745A589}:_5BCD45BC34E7483F8CA0D6DE082D592C"
+                                            {
+                                            "Name" = "8:YAC"
+                                            "AlwaysCreate" = "11:TRUE"
+                                            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
+                                            "Transitive" = "11:FALSE"
+                                            "Property" = "8:_D55150FD9AF541A196FE25CD9AECD800"
+                                                "Folders"
+                                                {
+                                                }
+                                            }
+                                            "{9EF0B969-E518-4E46-987F-47570745A589}:_C390BA181EBE411A960BA23CECE80512"
+                                            {
+                                            "Name" = "8:TV"
+                                            "AlwaysCreate" = "11:TRUE"
+                                            "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
+                                            "Transitive" = "11:FALSE"
+                                            "Property" = "8:_2E69D4DFE5A647C2A90FE3032DB15255"
+                                                "Folders"
+                                                {
+                                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_106CBE148A2648F9A77D6EC14A2B71EE"
+                                                    {
+                                                    "Name" = "8:Logos"
+                                                    "AlwaysCreate" = "11:TRUE"
+                                                    "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
+                                                    "Transitive" = "11:FALSE"
+                                                    "Property" = "8:_A32ECA18F9D1486DB0416362FF4BE00D"
+                                                        "Folders"
+                                                        {
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_BA151F8D060F40248F9F9092B2EC678E"
+                                    {
+                                    "Name" = "8:XMLTV"
+                                    "AlwaysCreate" = "11:TRUE"
+                                    "Condition" = "8:VersionNT>=600 OR VersionNT64>=600"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_DBFEFD547A4C4AED8D174B12414E2435"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -52416,9 +53679,9 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:MediaPortal"
+        "ProductName" = "8:MediaPortal 0.2.3.0"
         "ProductCode" = "8:{87819CFA-1786-484D-B0DE-10B5FBF2625D}"
-        "PackageCode" = "8:{DE34021D-2949-4EB3-B8DF-5D888374D432}"
+        "PackageCode" = "8:{50459122-C983-40E3-AC28-94D9F4A16549}"
         "UpgradeCode" = "8:{D194CC39-ABB8-4BC5-8C2D-4D4383088C67}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
@@ -52467,6 +53730,36 @@
                             "Transitive" = "11:FALSE"
                                 "Keys"
                                 {
+                                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_04282A8DADFA4D8E81FDB1CCE450D34C"
+                                    {
+                                    "Name" = "8:MediaPortal"
+                                    "Condition" = "8:"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "DeleteAtUninstall" = "11:FALSE"
+                                    "Transitive" = "11:FALSE"
+                                        "Keys"
+                                        {
+                                        }
+                                        "Values"
+                                        {
+                                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_46387A395BB84E188D9207E5D0A84AF0"
+                                            {
+                                            "Name" = "8:ApplicationDir"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "ValueTypes" = "3:1"
+                                            "Value" = "8:[TARGETDIR]"
+                                            }
+                                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_DA15554FE24546938B619412D8DBF960"
+                                            {
+                                            "Name" = "8:ConfigDir"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "ValueTypes" = "3:1"
+                                            "Value" = "8:[AppDataFolder]"
+                                            }
+                                        }
+                                    }
                                 }
                                 "Values"
                                 {
@@ -52893,6 +54186,20 @@
             "Icon" = "8:_8E4E5CF6FB5B4D9B86434402B55C1010"
             "Feature" = "8:"
             }
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_AE444303860043D4875AFAB23293CF19"
+            {
+            "Name" = "8:License"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_7D6724131F6849F6BD7A571EA5C62E75"
+            "Folder" = "8:_3C785A2ADFBD4D74B8DE5C13C2CEB3A9"
+            "WorkingFolder" = "8:_6C315C96DB0E461CA03C0F35479EC599"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_BCE9AA55E164480DB417A128F205D8F5"
             {
             "Name" = "8:MediaPortal Setup"
@@ -53223,7 +54530,7 @@
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
                             "Setting" = "3:2"
-                            "Value" = "8:[ProductName] is a free open source mediacenter. Get more info at http://www.team-mediaportal.com."
+                            "Value" = "8:MediaPortal is a free open source media center. Get more info at http://www.team-mediaportal.com."
                             "DefaultValue" = "8:#1203"
                             "UsePlugInResources" = "11:TRUE"
                             }
@@ -53660,7 +54967,7 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_A356D185314045E0A57A01210E72E880"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_857B0735E0B44232B7D54CC8658D49A2"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
