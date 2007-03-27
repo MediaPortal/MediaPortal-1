@@ -105,7 +105,7 @@ CRefTime CTsDuration::Duration()
   double duration= m_endPcr.ToClock() - m_startPcr.ToClock();
   CPcr pcr;
   pcr.FromClock(duration);
-  LogDebug("Duration:%f %s", duration, pcr.ToString());
+  //LogDebug("Duration:%f %s", duration, pcr.ToString());
   CRefTime refTime((LONG)(duration*1000.0f));
   return refTime;
 }

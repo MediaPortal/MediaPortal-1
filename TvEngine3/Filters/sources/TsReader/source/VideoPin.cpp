@@ -116,8 +116,8 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
 	AM_SEEKING_CanSeekForwards	|
 	AM_SEEKING_CanSeekBackwards	|
 	AM_SEEKING_CanGetStopPos	|
-	AM_SEEKING_CanGetDuration	;//|
-	//AM_SEEKING_Source;
+	AM_SEEKING_CanGetDuration |
+	AM_SEEKING_Source;
 }
 
 CVideoPin::~CVideoPin()
@@ -409,4 +409,16 @@ void CVideoPin::UpdateFromSeek()
         m_rtStart=rtSeek;
         Run();
     }
+}
+
+STDMETHODIMP CVideoPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
+{
+//  LogDebug("vid:GetAvailable");
+  return CSourceSeeking::GetAvailable( pEarliest, pLatest );
+}
+
+STDMETHODIMP CVideoPin::GetDuration(LONGLONG *pDuration)
+{
+//  LogDebug("vid:GetDuration");
+  return CSourceSeeking::GetDuration(pDuration);
 }

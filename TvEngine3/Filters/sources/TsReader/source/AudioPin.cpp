@@ -58,8 +58,8 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
 	AM_SEEKING_CanSeekForwards	|
 	AM_SEEKING_CanSeekBackwards	|
 	AM_SEEKING_CanGetStopPos	|
-	AM_SEEKING_CanGetDuration	;//|
-	//AM_SEEKING_Source;
+	AM_SEEKING_CanGetDuration	|
+	AM_SEEKING_Source;
 }
 
 CAudioPin::~CAudioPin()
@@ -329,4 +329,17 @@ void CAudioPin::UpdateFromSeek()
         m_rtStart=rtSeek;
         Run();
     }
+}
+
+
+STDMETHODIMP CAudioPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
+{
+//  LogDebug("aud:GetAvailable");
+  return CSourceSeeking::GetAvailable( pEarliest, pLatest );
+}
+
+STDMETHODIMP CAudioPin::GetDuration(LONGLONG *pDuration)
+{
+  //LogDebug("aud:GetDuration");
+  return CSourceSeeking::GetDuration(pDuration);
 }

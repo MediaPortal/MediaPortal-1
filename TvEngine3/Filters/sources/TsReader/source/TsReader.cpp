@@ -35,7 +35,7 @@
 
 void LogDebug(const char *fmt, ...) 
 {
-#ifdef DEBUG
+#ifndef DEBUG
 	va_list ap;
 	va_start(ap,fmt);
 
@@ -45,7 +45,7 @@ void LogDebug(const char *fmt, ...)
 	tmp=vsprintf(buffer, fmt, ap);
 	va_end(ap); 
 
-	FILE* fp = fopen("tsreader.log","a+");
+  FILE* fp = fopen("c:\\tsreader.log","a+");
 	if (fp!=NULL)
 	{
 		SYSTEMTIME systemTime;

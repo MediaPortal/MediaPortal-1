@@ -44,6 +44,8 @@ public:
 	HRESULT ChangeStart();
 	HRESULT ChangeStop();
 	HRESULT ChangeRate();
+  STDMETHODIMP GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest );
+  STDMETHODIMP GetDuration(LONGLONG *pDuration);
 
 	HRESULT OnThreadStartPlay();
 	void SetStart(CRefTime rtStartTime);
