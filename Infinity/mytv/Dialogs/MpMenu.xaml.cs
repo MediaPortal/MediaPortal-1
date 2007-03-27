@@ -40,7 +40,6 @@ namespace Dialogs
     
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-      
       gridContent.RowDefinitions.Clear();
       gridContent.ColumnDefinitions.Clear();
       gridContent.Children.Clear();

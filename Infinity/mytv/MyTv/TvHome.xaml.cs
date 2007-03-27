@@ -60,6 +60,7 @@ namespace MyTv
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+      
       // Sets keyboard focus on the first Button in the sample.
       Keyboard.Focus(buttonTvGuide);
 
@@ -308,6 +309,7 @@ namespace MyTv
     /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     void OnSearchClicked(object sender, EventArgs args)
     {
+      this.Opacity = 0;
     }
 
     /// <summary>

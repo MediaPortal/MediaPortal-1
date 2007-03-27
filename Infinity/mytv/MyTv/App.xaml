@@ -4,6 +4,7 @@
     StartupUri="TvHome.xaml"
     >
   <Application.Resources>
+    
     <RadialGradientBrush x:Key="backGroundBrush" GradientOrigin="0.186,0.311">
       <RadialGradientBrush.RelativeTransform>
         <TransformGroup>

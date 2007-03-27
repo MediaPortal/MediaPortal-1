@@ -4,8 +4,7 @@
     xmlns:ns="clr-namespace:Dialogs;assembly=dialogs"
     Title="MyTv" Loaded="OnLoaded" Background="{StaticResource backGroundBrush}" WindowWidth="800" WindowHeight="600"
     >
-
-  <Grid>
+  <Grid >
     <DockPanel >
       <StackPanel DockPanel.Dock="Top" Height="100">
         <DockPanel>

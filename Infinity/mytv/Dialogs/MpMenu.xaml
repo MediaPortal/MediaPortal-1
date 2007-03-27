@@ -1,7 +1,20 @@
 <Window x:Class="Dialogs.MpMenu"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" BorderThickness ="0" Width="530" Height="370" WindowStyle="None" Loaded="OnLoaded" Background="Transparent">
-  <Grid FocusManager.IsFocusScope="True" >
+
+  <Window.Resources>
+    <Storyboard x:Key="fadeIn">
+      <DoubleAnimation From="0" To="1" Duration="0:0:1" Storyboard.TargetName="gridMain" Storyboard.TargetProperty="(UIElement.Opacity)"/>
+    </Storyboard>
+  </Window.Resources>
+  <Window.Triggers>
+    <EventTrigger RoutedEvent="FrameworkElement.Loaded" SourceName="gridMain">
+      <BeginStoryboard Storyboard="{StaticResource fadeIn}"/>
+    </EventTrigger>
+  </Window.Triggers>
+
+  <Grid x:Name="gridMain" FocusManager.IsFocusScope="True" >
+
     <Canvas Margin="0,0,-1,-1">
       <Rectangle Stroke="#C0FFFFFF" StrokeThickness="10" RadiusX="5" RadiusY="5" x:Name="background" Width="533" Height="345">
         <Rectangle.Fill>
@@ -35,4 +48,5 @@
       </ScrollViewer>
     </Canvas>
   </Grid>
+
 </Window>
