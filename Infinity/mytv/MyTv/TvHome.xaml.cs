@@ -110,7 +110,7 @@ namespace MyTv
     /// </summary>
     void OnFailedToConnectToServer()
     {
-      this.NavigationService.Navigate(new Uri("TvSetup.xaml", UriKind.Relative));
+        this.NavigationService.Navigate(new Uri("TvSetup.xaml", UriKind.Relative));
     }
 
     /// <summary>
@@ -164,7 +164,10 @@ namespace MyTv
     /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     void OnTvGuideClicked(object sender, EventArgs args)
     {
-      this.NavigationService.Navigate(new Uri("TvGuide.xaml", UriKind.Relative));
+      if (ChannelNavigator.Instance.CurrentGroup != null)
+      {
+        this.NavigationService.Navigate(new Uri("TvGuide.xaml", UriKind.Relative));
+      }
     }
 
     /// <summary>

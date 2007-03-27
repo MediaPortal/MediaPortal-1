@@ -425,6 +425,7 @@ namespace MyTv
             uri = new Uri(Thumbs.TvRecordingIcon, UriKind.Relative);
 
           Grid panel = new Grid();
+          panel.Margin = new Thickness(0.0d);
           Image image = new Image();
           PngBitmapDecoder decoder = new PngBitmapDecoder(uri, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
           image.Source = decoder.Frames[0];
@@ -432,21 +433,27 @@ namespace MyTv
           image.VerticalAlignment = VerticalAlignment.Center;
 
           Label label = new Label();
+          label.Margin = new Thickness(0.0d);
           label.Content = program.Title;
           label.VerticalAlignment = VerticalAlignment.Center;
           label.Style = (Style)Application.Current.Resources["Label20Style"];
-          label.OpacityMask = (Brush)Application.Current.Resources["fadeOpacityBrush"];
           panel.Children.Add(label);
           panel.Children.Add(image);
+          panel.OpacityMask = (Brush)Application.Current.Resources["fadeOpacityBrush"];
+          panel.Loaded += new RoutedEventHandler(panel_Loaded);
           b.Content = panel;
         }
         else
         {
+          Grid panel = new Grid();
+          panel.ShowGridLines = true;
           Label label = new Label();
           label.Content = program.Title;
           label.Style = (Style)Application.Current.Resources["Label20Style"];
-          label.OpacityMask = (Brush)Application.Current.Resources["fadeOpacityBrush"];
-          b.Content = label;
+          panel.Children.Add(label);
+          panel.OpacityMask = (Brush)Application.Current.Resources["fadeOpacityBrush"];
+          panel.Loaded += new RoutedEventHandler(panel_Loaded);
+          b.Content = panel;
         }
         b.MouseEnter += new MouseEventHandler(OnMouseEnter);
         GuideTag tag = new GuideTag();
@@ -495,6 +502,13 @@ namespace MyTv
         }
       }
       return buttonToSelect;
+    }
+
+    void panel_Loaded(object sender, RoutedEventArgs e)
+    {
+      Grid g = sender as Grid;
+      if (g == null) return;
+      g.Width = ((Button)(g.Parent)).ActualWidth;
     }
     #endregion
 
