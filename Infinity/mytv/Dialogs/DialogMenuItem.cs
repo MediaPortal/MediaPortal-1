@@ -20,6 +20,57 @@ namespace Dialogs
     /// <summary>
     /// Initializes a new instance of the <see cref="DialogMenuItem"/> class.
     /// </summary>
+    /// <param name="label1">The label1.</param>
+    /// <param name="label2">The label2.</param>
+    /// <param name="label3">The label3.</param>
+    public DialogMenuItem(string label1, string label2, string label3)
+    {
+      Button button = new Button();
+      button.Template = (ControlTemplate)Application.Current.Resources["MpButton"];
+      Grid grid = new Grid();
+      grid.ColumnDefinitions.Add(new ColumnDefinition());
+      grid.ColumnDefinitions.Add(new ColumnDefinition());
+      grid.RowDefinitions.Add(new RowDefinition());
+      grid.RowDefinitions.Add(new RowDefinition());
+
+      Label label = new Label();
+      label.Content = label1;
+      label.Style = (Style)Application.Current.Resources["LabelNormalStyleWhite"];
+      Grid.SetColumn(label, 0);
+      Grid.SetRow(label, 0);
+      Grid.SetColumnSpan(label, 2);
+      grid.Children.Add(label);
+
+      label = new Label();
+      label.Content = label2;
+      label.Style = (Style)Application.Current.Resources["LabelSmallStyleWhite"];
+      Grid.SetColumn(label, 0);
+      Grid.SetRow(label, 1);
+      grid.Children.Add(label);
+
+      label = new Label();
+      label.Content = label3;
+      label.Style = (Style)Application.Current.Resources["LabelSmallStyleWhite"];
+      label.HorizontalAlignment = HorizontalAlignment.Right;
+      label.Margin = new Thickness(0, 0, 20, 0);
+      Grid.SetColumn(label, 1);
+      Grid.SetRow(label, 1);
+      grid.Children.Add(label);
+      grid.Loaded += new RoutedEventHandler(grid_Loaded);
+      button.Content = grid;
+      
+      _subItems.Add(button);
+    }
+
+    void grid_Loaded(object sender, RoutedEventArgs e)
+    {
+      Grid g = sender as Grid;
+      if (g == null) return;
+      g.Width = ((Button)(g.Parent)).ActualWidth;
+    }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DialogMenuItem"/> class.
+    /// </summary>
     /// <param name="buttonName">Name of the button.</param>
     public DialogMenuItem(string buttonName)
     {

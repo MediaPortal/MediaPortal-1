@@ -62,7 +62,7 @@ namespace MyTv
     {
       // Sets keyboard focus on the first Button in the sample.
       Keyboard.Focus(buttonTvGuide);
-      
+
       //try to connect to server in background...
       ConnectToServerDelegate starter = new ConnectToServerDelegate(this.ConnectToServer);
       starter.BeginInvoke(null, null);
@@ -214,6 +214,26 @@ namespace MyTv
     }
 
     /// <summary>
+    /// Get current tv program
+    /// </summary>
+    /// <param name="prog"></param>
+    /// <returns></returns>
+    private double CalculateProgress(DateTime start, DateTime end)
+    {
+      TimeSpan length = end - start;
+      TimeSpan passed = DateTime.Now - start;
+      if (length.TotalMinutes > 0)
+      {
+        double fprogress = (passed.TotalMinutes / length.TotalMinutes) * 100;
+        fprogress = Math.Floor(fprogress);
+        if (fprogress > 100.0f)
+          return 100.0f;
+        return fprogress;
+      }
+      else
+        return 0;
+    }
+    /// <summary>
     /// Called when Channel button gets clicked.
     /// </summary>
     /// <param name="sender">The sender.</param>
@@ -226,18 +246,40 @@ namespace MyTv
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
       dlgMenu.Items.Clear();
+      TvBusinessLayer layer = new TvBusinessLayer();
       IList groups = ChannelNavigator.Instance.CurrentGroup.ReferringGroupMap();
+      List<Channel> _tvChannelList = new List<Channel>();
       foreach (GroupMap map in groups)
       {
-        dlgMenu.Items.Add(new DialogMenuItem(map.ReferencedChannel().Name));
+        Channel ch = map.ReferencedChannel();
+        if (ch.VisibleInGuide)
+        {
+          _tvChannelList.Add(ch);
+        }
+      }
+      Dictionary<int, NowAndNext> listNowNext = layer.GetNowAndNext();
+
+      for (int i = 0; i < _tvChannelList.Count; i++)
+      {
+        Channel currentChannel = _tvChannelList[i];
+        NowAndNext prog;
+        if (listNowNext.ContainsKey(currentChannel.IdChannel) != false)
+          prog = listNowNext[currentChannel.IdChannel];
+        else
+          prog = new NowAndNext(currentChannel.IdChannel, DateTime.Now.AddHours(-1), DateTime.Now.AddHours(1), DateTime.Now.AddHours(2), DateTime.Now.AddHours(3), "No data available", "No data available", -1, -1);
+
+        string percent = String.Format("{0}-{1}%", currentChannel.Name, CalculateProgress(prog.NowStartTime, prog.NowEndTime).ToString());
+        string now = String.Format("Now:{0}", prog.TitleNow);
+        string next = String.Format("Next:{0}", prog.TitleNext);
+
+        dlgMenu.Items.Add(new DialogMenuItem(now,next,percent));
       }
 
       dlgMenu.ShowDialog();
       if (dlgMenu.SelectedIndex < 0) return;//nothing selected
 
       //get the selected tv channel
-      GroupMap selectedMap = groups[dlgMenu.SelectedIndex] as GroupMap;
-      ChannelNavigator.Instance.SelectedChannel = selectedMap.ReferencedChannel();
+      ChannelNavigator.Instance.SelectedChannel = _tvChannelList[dlgMenu.SelectedIndex];
 
       //and view it
       ViewChannel(ChannelNavigator.Instance.SelectedChannel);

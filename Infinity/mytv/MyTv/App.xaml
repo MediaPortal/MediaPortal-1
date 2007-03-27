@@ -151,6 +151,21 @@
       <Setter Property="FontSize" Value="16"/>
       <Setter Property="Foreground" Value="#80FFFFFF"/>
     </Style>
+    <Style x:Key="LabelSmallStyle"  TargetType="{x:Type Label}">
+      <Setter Property="FontFamily" Value="Segoe Media Center Semibold"/>
+      <Setter Property="FontSize" Value="10"/>
+      <Setter Property="Foreground" Value="#80FFFFFF"/>
+    </Style>
+    <Style x:Key="LabelNormalStyleWhite"  TargetType="{x:Type Label}">
+      <Setter Property="FontFamily" Value="Segoe Media Center Semibold"/>
+      <Setter Property="FontSize" Value="16"/>
+      <Setter Property="Foreground" Value="#FFFFFFFF"/>
+    </Style>
+    <Style x:Key="LabelSmallStyleWhite"  TargetType="{x:Type Label}">
+      <Setter Property="FontFamily" Value="Segoe Media Center Semibold"/>
+      <Setter Property="FontSize" Value="10"/>
+      <Setter Property="Foreground" Value="#FFFFFFFF"/>
+    </Style>
     <Style x:Key="LabelHeaderStyle"  TargetType="{x:Type Label}">
       <Setter Property="FontFamily" Value="Segoe Media Center Semibold"/>
       <Setter Property="FontSize" Value="100"/>
