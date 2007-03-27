@@ -40,6 +40,7 @@ namespace Dialogs
     
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+      labelDate.Content = DateTime.Now.ToString("HH:mm");
       gridContent.RowDefinitions.Clear();
       gridContent.ColumnDefinitions.Clear();
       gridContent.Children.Clear();

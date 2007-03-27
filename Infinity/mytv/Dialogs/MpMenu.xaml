@@ -41,7 +41,7 @@
           </LinearGradientBrush>
         </Rectangle.Fill>
       </Rectangle>
-      <Label x:Name="labellTime" Width="78" Height="38.898" Content="18:09" FontFamily="Segoe Media Center" FontSize="24" FontWeight="Bold" Foreground="#FF5995D7" Canvas.Left="372" Canvas.Top="6.855"/>
+      <Label x:Name="labelDate" Width="78" Height="38.898" Content="18:09" FontFamily="Segoe Media Center" FontSize="24" FontWeight="Bold" Foreground="#FF5995D7" Canvas.Left="372" Canvas.Top="6.855"/>
       <Button x:Name="buttonClose" Style="{DynamicResource MpCloseButton}" Width="45" Height="43" Canvas.Left="470.669" Canvas.Top="13.607" Click="OnCloseClicked" MouseEnter="subItemMouseEnter" KeyDown="OnScrollKeyDown" />
       <ScrollViewer VerticalScrollBarVisibility="Hidden" Width="472" Height="251.446" Canvas.Left="28" Canvas.Top="63.554" KeyDown="OnScrollKeyDown" >
         <Grid x:Name="gridContent" KeyDown="OnScrollKeyDown" />
