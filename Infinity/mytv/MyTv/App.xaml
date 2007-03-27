@@ -4,7 +4,7 @@
     StartupUri="TvHome.xaml"
     >
   <Application.Resources>
-    
+
     <RadialGradientBrush x:Key="backGroundBrush" GradientOrigin="0.186,0.311">
       <RadialGradientBrush.RelativeTransform>
         <TransformGroup>
@@ -121,13 +121,13 @@
         </Setter.Value>
       </Setter>
     </Style>
-    <Style x:Key="ProgressBarStyle"  TargetType="{x:Type ProgressBar}">
-      <Setter Property="Background" Value="#FF8DA7CD"/>
-      <Setter Property="BorderThickness" Value="5"/>
-      <Setter Property="Minimum" Value="0"/>
-      <Setter Property="Maximum" Value="100"/>
-      <Setter Property="BorderBrush" Value="#FF1253A3"/>
-    </Style>
+    <ControlTemplate x:Key="MpProgressBar"  TargetType="{x:Type ProgressBar}">
+      <Grid>
+        <Rectangle Name="PART_Track" Height="20" Width="300" Fill="#FF8DA7CD" />
+        <Rectangle HorizontalAlignment="Left"  Name="PART_Indicator" Height="20" Fill="#FF19A05D" />
+      </Grid>
+    </ControlTemplate>
+    
     <Style x:Key="TextBlockLargeStyle"  TargetType="{x:Type TextBlock}">
       <Setter Property="FontFamily" Value="Segoe Media Center Semibold"/>
       <Setter Property="FontSize" Value="20"/>

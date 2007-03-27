@@ -66,7 +66,7 @@
           <RowDefinition/>
         </Grid.RowDefinitions>
         <Rectangle Grid.Column="0" Grid.Row="0" Grid.RowSpan="12" Grid.ColumnSpan="6" x:Name="videoWindow" RadiusX="4" RadiusY="4" Fill="Black" StrokeThickness="14" Stroke="#FF1253A3"  ></Rectangle>
-        <ProgressBar Grid.Column="0" Grid.Row="12" Grid.ColumnSpan="6" x:Name="progressBar" Style="{StaticResource ProgressBarStyle}" Width="400" Height="30" Value="30"></ProgressBar>
+        <ProgressBar Template="{StaticResource MpProgressBar}" Grid.Column="0" Grid.Row="12" Grid.ColumnSpan="6" x:Name="progressBar" Width="400" Height="30"  ></ProgressBar>
 
         <Label Grid.Column="0" Grid.Row="13" Grid.ColumnSpan="9"  x:Name="labelTitle" Style="{StaticResource LabelNormalStyle}">
           CSI Miami
