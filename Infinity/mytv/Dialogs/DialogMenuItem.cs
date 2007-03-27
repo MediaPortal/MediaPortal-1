@@ -17,6 +17,63 @@ namespace Dialogs
   {
     List<UIElement> _subItems = new List<UIElement>();
 
+    public DialogMenuItem(string logo, string label1, string label2, string label3)
+    {
+      Button button = new Button();
+      button.Template = (ControlTemplate)Application.Current.Resources["MpButton"];
+      Grid grid = new Grid();
+      grid.ColumnDefinitions.Add(new ColumnDefinition());
+      grid.ColumnDefinitions.Add(new ColumnDefinition());
+      grid.ColumnDefinitions.Add(new ColumnDefinition());
+      grid.ColumnDefinitions.Add(new ColumnDefinition());
+      grid.ColumnDefinitions.Add(new ColumnDefinition());
+      grid.ColumnDefinitions.Add(new ColumnDefinition());
+      grid.ColumnDefinitions.Add(new ColumnDefinition());
+      grid.ColumnDefinitions.Add(new ColumnDefinition());
+      grid.ColumnDefinitions.Add(new ColumnDefinition());
+      grid.RowDefinitions.Add(new RowDefinition());
+      grid.RowDefinitions.Add(new RowDefinition());
+      if (logo.Length > 0)
+      {
+        Image image = new Image();
+        PngBitmapDecoder decoder = new PngBitmapDecoder(new Uri(logo, UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
+
+        image.Source = decoder.Frames[0];
+        Grid.SetColumn(image, 0);
+        Grid.SetRow(image, 0);
+        Grid.SetRowSpan(image, 2);
+        grid.Children.Add(image);
+      }
+      Label label = new Label();
+      label.Content = label1;
+      label.Style = (Style)Application.Current.Resources["LabelNormalStyleWhite"];
+      Grid.SetColumn(label, 1);
+      Grid.SetRow(label, 0);
+      Grid.SetColumnSpan(label, 8);
+      grid.Children.Add(label);
+
+      label = new Label();
+      label.Content = label2;
+      label.Style = (Style)Application.Current.Resources["LabelSmallStyleWhite"];
+      Grid.SetColumn(label, 1);
+      Grid.SetColumnSpan(label, 6);
+      Grid.SetRow(label, 1);
+      grid.Children.Add(label);
+
+      label = new Label();
+      label.Content = label3;
+      label.Style = (Style)Application.Current.Resources["LabelSmallStyleWhite"];
+      label.HorizontalAlignment = HorizontalAlignment.Right;
+      label.Margin = new Thickness(0, 0, 20, 0);
+      Grid.SetColumn(label, 7);
+      Grid.SetColumnSpan(label, 2);
+      Grid.SetRow(label, 1);
+      grid.Children.Add(label);
+      grid.Loaded += new RoutedEventHandler(grid_Loaded);
+      button.Content = grid;
+
+      _subItems.Add(button);
+    }
     /// <summary>
     /// Initializes a new instance of the <see cref="DialogMenuItem"/> class.
     /// </summary>

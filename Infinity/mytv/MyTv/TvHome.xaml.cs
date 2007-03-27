@@ -60,7 +60,7 @@ namespace MyTv
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-      
+
       // Sets keyboard focus on the first Button in the sample.
       Keyboard.Focus(buttonTvGuide);
 
@@ -261,9 +261,44 @@ namespace MyTv
       }
       Dictionary<int, NowAndNext> listNowNext = layer.GetNowAndNext();
 
+      bool checkChannelState = true;
+      List<int> channelsRecording = null;
+      List<int> channelsTimeshifting = null;
+      TvServer server = new TvServer();
+      server.GetAllRecordingChannels(out channelsRecording, out channelsTimeshifting);
+
+      if (channelsRecording.Count == 0)
+      {
+        // not using cards at all - assume tuneability (why else should the user have this channel added..)
+        if (channelsTimeshifting.Count == 0)
+          checkChannelState = false;
+        else
+        {
+          // note: it could be possible we're watching a stream another user is timeshifting...
+          // TODO: add user check
+          if (channelsTimeshifting.Count == 1 && _mediaPlayer != null)
+          {
+            checkChannelState = false;
+          }
+        }
+      }
+      int selected = 0;
+      ChannelState currentChannelState = ChannelState.tunable;
       for (int i = 0; i < _tvChannelList.Count; i++)
       {
         Channel currentChannel = _tvChannelList[i];
+        if (checkChannelState)
+          currentChannelState = (ChannelState)server.GetChannelState(currentChannel.IdChannel);
+        else
+          currentChannelState = ChannelState.tunable;
+
+        if (channelsRecording.Contains(currentChannel.IdChannel))
+          currentChannelState = ChannelState.recording;
+        else
+          if (channelsTimeshifting.Contains(currentChannel.IdChannel))
+            currentChannelState = ChannelState.timeshifting;
+
+        if (currentChannel == ChannelNavigator.Instance.SelectedChannel) selected = i;
         NowAndNext prog;
         if (listNowNext.ContainsKey(currentChannel.IdChannel) != false)
           prog = listNowNext[currentChannel.IdChannel];
@@ -274,9 +309,39 @@ namespace MyTv
         string now = String.Format("Now:{0}", prog.TitleNow);
         string next = String.Format("Next:{0}", prog.TitleNext);
 
-        dlgMenu.Items.Add(new DialogMenuItem(now,next,percent));
+
+        switch (currentChannelState)
+        {
+          case ChannelState.nottunable:
+            percent = "(unavailable) " + percent;
+            break;
+          case ChannelState.timeshifting:
+            percent = "(timeshifting) " + percent;
+            break;
+          case ChannelState.recording:
+            percent = "(recording) " + percent;
+            break;
+        }
+        string channelLogoFileName = currentChannel.Name;
+        channelLogoFileName = channelLogoFileName.Replace(@"\", "_");
+        channelLogoFileName = channelLogoFileName.Replace("/", "_");
+        channelLogoFileName = channelLogoFileName.Replace("*", "_");
+        channelLogoFileName = channelLogoFileName.Replace(":", "_");
+        channelLogoFileName = channelLogoFileName.Replace("\"", "_");
+        channelLogoFileName = channelLogoFileName.Replace("<", "_");
+        channelLogoFileName = channelLogoFileName.Replace(">", "_");
+        channelLogoFileName=String.Format(@"thumbs\{0}.png",channelLogoFileName);
+        if (System.IO.File.Exists(channelLogoFileName))
+        {
+          dlgMenu.Items.Add(new DialogMenuItem(channelLogoFileName,now, next, percent));
+        }
+        else
+        {
+          dlgMenu.Items.Add(new DialogMenuItem("", now, next, percent));
+        }
       }
 
+      dlgMenu.SelectedIndex = selected;
       dlgMenu.ShowDialog();
       if (dlgMenu.SelectedIndex < 0) return;//nothing selected
 
