@@ -241,6 +241,7 @@ namespace MyTv
     /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     void OnChannelClicked(object sender, EventArgs args)
     {
+      if (ChannelNavigator.Instance.CurrentGroup == null) return;
       //show dialog menu showing all channels of current tvgroup
       MpMenu dlgMenu = new MpMenu();
       Window w = Window.GetWindow(this);

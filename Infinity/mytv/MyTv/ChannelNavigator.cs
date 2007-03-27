@@ -105,7 +105,12 @@ namespace MyTv
     /// </summary>
     public ChannelGroup CurrentGroup
     {
-      get { return (ChannelGroup)_groups[_currentgroup]; }
+      
+      get {
+        if (_groups == null) return null;
+        if (_currentgroup < 0 || _currentgroup>=_groups.Count ) return null;
+        return (ChannelGroup)_groups[_currentgroup]; 
+      }
     }
     /// <summary>
     /// Gets or sets the selected channel.
