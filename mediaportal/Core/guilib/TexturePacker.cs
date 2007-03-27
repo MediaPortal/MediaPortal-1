@@ -181,16 +181,17 @@ namespace MediaPortal.GUI.Library
     {
     }
     #endregion
-    
+
     static public void Cleanup()
     {
       // Check if mediaportal is new than packedgfx, then delete packedgfx (will be recreated at next run)
       // purpose is to have fresh packedgfx containing _all_ media.
-      string file1 = GUIGraphicsContext.Skin + @"\packedgfx2.bxml";
+      string file1 = string.Format(@"{0}\packedgfx2.bxml", GUIGraphicsContext.SkinCacheFolder);
+
       string file2 = Config.GetFile(Config.Dir.Base, "MediaPortal.exe");
       DateTime dt1 = System.IO.File.GetLastWriteTime(file1);
       DateTime dt2 = System.IO.File.GetLastWriteTime(file2);
-      if ( dt1 > dt2)
+      if (dt1 > dt2)
         return;
 
       MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
@@ -200,10 +201,11 @@ namespace MediaPortal.GUI.Library
         return;
       Log.Info("TexturePacker: Removing packed skin");
 
-      System.IO.File.Delete(GUIGraphicsContext.Skin + @"\packedgfx2.bxml");
-      for(int i =0;i<10;i++)
+      System.IO.File.Delete(file1);
+      for (int i = 0; i < 10; i++)
       {
-        string fileName = String.Format(@"{0}\packedgfx2{1}.png", GUIGraphicsContext.Skin,i);
+        string fileName = string.Format(@"{0}\packedgfx{1}.png", GUIGraphicsContext.SkinCacheFolder, i);
+
         System.IO.File.Delete(fileName);
       }
     }
@@ -224,7 +226,8 @@ namespace MediaPortal.GUI.Library
 
     void SavePackedSkin(string skinName)
     {
-      string packedXml = String.Format(@"{0}\packedgfx2.bxml", skinName);
+      string packedXml = string.Format(@"{0}\packedgfx2.bxml", GUIGraphicsContext.SkinCacheFolder);
+
       using (FileStream fileStream = new FileStream(packedXml, FileMode.Create, FileAccess.Write, FileShare.Read))
       {
         ArrayList packedTextures = new ArrayList();
@@ -240,7 +243,8 @@ namespace MediaPortal.GUI.Library
 
     bool LoadPackedSkin(string skinName)
     {
-      string packedXml = String.Format(@"{0}\packedgfx2.bxml", skinName);
+      string packedXml = string.Format(@"{0}\packedgfx2.bxml", GUIGraphicsContext.SkinCacheFolder);
+
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         if (xmlreader.GetValueAsBool("debug", "skincaching", true) && File.Exists(packedXml))
@@ -325,7 +329,7 @@ namespace MediaPortal.GUI.Library
               continue;
             }
             bool dontAdd;
-              
+
 
             if (AddBitmap(bigOne.root, rootImage, files[i], out dontAdd))
             {
@@ -338,7 +342,11 @@ namespace MediaPortal.GUI.Library
             }
           }
         }
-        string fileName = String.Format(@"{0}\packedgfx2{1}.png", GUIGraphicsContext.Skin, _packedTextures.Count);
+
+        if (!Directory.Exists(GUIGraphicsContext.SkinCacheFolder))
+          Directory.CreateDirectory(GUIGraphicsContext.SkinCacheFolder);
+        string fileName = String.Format(@"{0}\packedgfx2{1}.png", GUIGraphicsContext.SkinCacheFolder, _packedTextures.Count);
+
         rootImage.Save(fileName, System.Drawing.Imaging.ImageFormat.Png);
         rootImage.Dispose();
         _packedTextures.Add(bigOne);
@@ -358,7 +366,8 @@ namespace MediaPortal.GUI.Library
       {
         bigOne.textureNo = -1;
 
-        string fileName = String.Format(@"{0}\packedgfx2{1}.png", GUIGraphicsContext.Skin, index);
+        string fileName = String.Format(@"{0}\packedgfx2{1}.png", GUIGraphicsContext.SkinCacheFolder, index);
+
         ImageInformation info2 = new ImageInformation();
         Texture tex = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
           fileName,
@@ -407,25 +416,26 @@ namespace MediaPortal.GUI.Library
       bool result = false;
       dontAdd = false;
       using (Image bmp = Image.FromFile(file))
+      {
+        if (bmp.Width >= GUIGraphicsContext.Width ||
+          bmp.Height >= GUIGraphicsContext.Height)
         {
-          if (bmp.Width >= GUIGraphicsContext.Width ||
-            bmp.Height >= GUIGraphicsContext.Height)
-          {
-            //dontAdd=true;
-            //return false;
-          }
-          int pos;
-          string skinName = String.Format(@"{0}\media", GUIGraphicsContext.Skin).ToLower();
-          pos = file.IndexOf(skinName);
-          if (pos >= 0)
-          {
-            file = file.Remove(pos, skinName.Length);
-          }
-          if (file.StartsWith(@"\"))
-          {
-            file = file.Remove(0, 1);
-          }
-          result = Add(root, bmp, rootImage, file);
+          //dontAdd=true;
+          //return false;
+        }
+        int pos;
+        string skinName = String.Format(@"{0}\media", GUIGraphicsContext.SkinCacheFolder).ToLower();
+
+        pos = file.IndexOf(skinName);
+        if (pos >= 0)
+        {
+          file = file.Remove(pos, skinName.Length);
+        }
+        if (file.StartsWith(@"\"))
+        {
+          file = file.Remove(0, 1);
+        }
+        result = Add(root, bmp, rootImage, file);
       }
       return result;
     }
@@ -523,5 +533,6 @@ namespace MediaPortal.GUI.Library
       }
       return false;
     }
+
   }
 }

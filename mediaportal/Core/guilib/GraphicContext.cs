@@ -170,7 +170,7 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        return _useSeparateRenderThread ;
+        return _useSeparateRenderThread;
       }
       set
       {
@@ -578,8 +578,8 @@ namespace MediaPortal.GUI.Library
       get { return m_ARType; }
       set
       {
-          m_ARType = value;
-          if (OnVideoWindowChanged != null) OnVideoWindowChanged();
+        m_ARType = value;
+        if (OnVideoWindowChanged != null) OnVideoWindowChanged();
       }
     }
 
@@ -590,6 +590,18 @@ namespace MediaPortal.GUI.Library
     {
       set { m_strSkin = Config.GetSubFolder(Config.Dir.Skin, value); }
       get { return m_strSkin; }
+    }
+
+    /// <summary>
+    /// Gets the current skin cache folder
+    /// </summary>
+    static public string SkinCacheFolder
+    {
+      get
+      {
+        string skinName = m_strSkin.Substring(m_strSkin.LastIndexOf(@"\"));
+        return string.Format("{0}{1}", Config.GetFolder(Config.Dir.Cache), skinName);
+      }
     }
 
     /// <summary>
@@ -1111,7 +1123,7 @@ namespace MediaPortal.GUI.Library
         m_bisvmr9Exclusive = value;
       }
     }
-   
+
     static public float TimePassed
     {
       get

@@ -239,8 +239,12 @@ private Config()
                 {
                   
                   string strPath = path.InnerText;
+                  string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                  strPath = strPath.Replace("%APPDATA%", appData);
+                  strPath = strPath.Replace("%AppData%", appData);
                   string commonData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-                  strPath=strPath.Replace("%APPDATA%",commonData);
+                  strPath = strPath.Replace("%PROGRAMDATA%", commonData);
+                  strPath = strPath.Replace("%ProgramData%", commonData);
                   // Check to see, if the location was specified with an absolute or relative path.
                   // In case of relative path, prefix it with the startuppath   
                   if (!Path.IsPathRooted(strPath))

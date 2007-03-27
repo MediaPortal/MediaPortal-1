@@ -33,43 +33,43 @@
   </Dir>
   <!-- The Path were all the Plugins are located. Don't modify -->
   <Dir id = "Plugins">
-    <Path>plugins\</Path>
+    <Path>Plugins\</Path>
   </Dir>
   <!-- The Path were the log files should be written to -->
   <Dir id = "Log">
-    <Path>log\</Path>
+    <Path>Log\</Path>
   </Dir>
       <!-- The Path were the Custom Inputdevice Mappings are located. -->
   <Dir id = "CustomInputDevice">
     <Path>InputDeviceMappings\custom</Path>
-  </dir>
+  </Dir>
   <!-- The Path were the Default Inputdevice Mappings are located. -->
   <Dir id = "CustomInputDefault">
     <Path>InputDeviceMappings\defaults</Path>
   </Dir>
   <!-- The Path were the skins are located -->
   <Dir id = "Skin">
-    <Path>skin\</Path>
+    <Path>Skin\</Path>
   </Dir>
     <!-- The Path were the Language files are located -->
   <Dir id = "Language">
-    <Path>language\</Path>
+    <Path>Language\</Path>
   </Dir>
   <!-- The Path for the databases -->
   <Dir id = "Database">
-    <Path>database\</Path>
+    <Path>Database\</Path>
   </Dir>
   <!-- The Path for the Thumbs, like Music Cover Art, TV Logos, etc. -->
   <Dir id = "Thumbs">
-    <Path>thumbs\</Path>
+    <Path>Thumbs\</Path>
   </Dir>
   <!-- The Path were all the Weather related files are located. -->
   <Dir id = "Weather">
-    <Path>weather\</Path>
+    <Path>Weather\</Path>
   </Dir>
   <!-- A Path holding cached information. Like Picture thumbs, modified skin files (packedgfx), etc. Files in there can be removed by the user -->
   <Dir id = "Cache">
-    <Path>cache\</Path>
+    <Path>Cache\</Path>
   </Dir>
   <!-- The path to CYGWIN files needed for the burner plugin -->
   <Dir id = "BurnerSupport">
