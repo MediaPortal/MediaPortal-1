@@ -424,26 +424,29 @@ namespace MyTv
           else
             uri = new Uri(Thumbs.TvRecordingIcon, UriKind.Relative);
 
-          StackPanel panel = new StackPanel();
-          panel.Orientation = Orientation.Horizontal;
+          Grid panel = new Grid();
           Image image = new Image();
           PngBitmapDecoder decoder = new PngBitmapDecoder(uri, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
           image.Source = decoder.Frames[0];
           image.Width = image.Height = 20;
           image.VerticalAlignment = VerticalAlignment.Center;
-         // image.Margin = new Thickness(0, 0, 30, 0);
 
           Label label = new Label();
           label.Content = program.Title;
           label.VerticalAlignment = VerticalAlignment.Center;
           label.Style = (Style)Application.Current.Resources["Label20Style"];
-          panel.Children.Add(image);
+          label.OpacityMask = (Brush)Application.Current.Resources["fadeOpacityBrush"];
           panel.Children.Add(label);
+          panel.Children.Add(image);
           b.Content = panel;
         }
         else
         {
-          b.Content = program.Title;
+          Label label = new Label();
+          label.Content = program.Title;
+          label.Style = (Style)Application.Current.Resources["Label20Style"];
+          label.OpacityMask = (Brush)Application.Current.Resources["fadeOpacityBrush"];
+          b.Content = label;
         }
         b.MouseEnter += new MouseEventHandler(OnMouseEnter);
         GuideTag tag = new GuideTag();
