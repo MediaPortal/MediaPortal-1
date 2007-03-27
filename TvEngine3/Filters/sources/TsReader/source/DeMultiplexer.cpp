@@ -43,7 +43,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_pCurrentVideoBuffer = new CBuffer();
   m_pCurrentAudioBuffer = new CBuffer();
   m_pCurrentSubtitleBuffer = new CBuffer();
-  m_iAudioStream=1;
+  m_iAudioStream=0;
 }
 
 CDeMultiplexer::~CDeMultiplexer()
