@@ -27,8 +27,8 @@
         <Button Template="{StaticResource MpButton}" Height="32" Click="OnChannelClicked" MouseEnter="OnMouseEnter"  >Channel</Button>
         <CheckBox x:Name="buttonTvOnOff" Template="{StaticResource MpRadioButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnTvOnOff" >Tv On</CheckBox>
         <Button Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnScheduledClicked" >Scheduled</Button>
-        <Button Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter"  >Recorded</Button>
-        <Button Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter"  >Search</Button>
+        <Button Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnRecordedClicked">Recorded</Button>
+        <Button Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnSearchClicked"  >Search</Button>
         <Button Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter"  >Teletext</Button>
       </StackPanel>
 

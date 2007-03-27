@@ -35,6 +35,9 @@ namespace MyTv
     TvMediaPlayer _mediaPlayer;
     private delegate void StartTimeShiftingDelegate(Channel channel);
     private delegate void EndTimeShiftingDelegate(TvResult result, VirtualCard card);
+    private delegate void SeekToEndDelegate();
+    private delegate void MediaPlayerErrorDelegate();
+    private delegate void ConnectToServerDelegate();
     #endregion
 
     #region ctor
@@ -59,7 +62,19 @@ namespace MyTv
     {
       // Sets keyboard focus on the first Button in the sample.
       Keyboard.Focus(buttonTvGuide);
+      
+      //try to connect to server in background...
+      ConnectToServerDelegate starter = new ConnectToServerDelegate(this.ConnectToServer);
+      starter.BeginInvoke(null, null);
+    }
 
+    /// <summary>
+    /// background worker. Connects to server.
+    /// on success call OnSucceededToConnectToServer() via dispatcher
+    /// if failed call OnFailedToConnectToServer() via dispatcher
+    /// </summary>
+    void ConnectToServer()
+    {
       try
       {
         RemoteControl.HostName = UserSettings.GetString("tv", "serverHostName");
@@ -82,8 +97,27 @@ namespace MyTv
       }
       catch (Exception)
       {
-        this.NavigationService.Navigate(new Uri("TvSetup.xaml", UriKind.Relative));
+        buttonTvGuide.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new ConnectToServerDelegate(OnFailedToConnectToServer));
+        return;
       }
+      buttonTvGuide.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new ConnectToServerDelegate(OnSucceededToConnectToServer));
+    }
+
+    /// <summary>
+    /// Called when we failed to connect to server.
+    /// navigate to tv-setup window
+    /// </summary>
+    void OnFailedToConnectToServer()
+    {
+      this.NavigationService.Navigate(new Uri("TvSetup.xaml", UriKind.Relative));
+    }
+
+    /// <summary>
+    /// Called when we succeeded in connecting to the tvserver
+    /// update infobox and show video
+    /// </summary>
+    void OnSucceededToConnectToServer()
+    {
       UpdateInfoBox();
       if (ChannelNavigator.Instance.Card != null)
       {
@@ -107,7 +141,6 @@ namespace MyTv
         }
       }
     }
-
 
     /// <summary>
     /// Called when mouse enters a button
@@ -168,7 +201,7 @@ namespace MyTv
       if (_mediaPlayer != null)
       {
         videoWindow.Fill = new SolidColorBrush(Color.FromArgb(0xff, 0, 0, 0));
-        _mediaPlayer.Dispose();
+        _mediaPlayer.Dispose(true);
         _mediaPlayer = null;
       }
       else
@@ -217,8 +250,22 @@ namespace MyTv
     /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     void OnScheduledClicked(object sender, EventArgs args)
     {
-      if (_mediaPlayer == null) return;
-      _mediaPlayer.Position = new TimeSpan(0, 0, 0);
+    }
+    /// <summary>
+    /// Called when recorded button gets clicked
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+    void OnRecordedClicked(object sender, EventArgs args)
+    {
+    }
+    /// <summary>
+    /// Called when search button gets clicked
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+    void OnSearchClicked(object sender, EventArgs args)
+    {
     }
 
     /// <summary>
@@ -250,7 +297,6 @@ namespace MyTv
       // Schedule the update function in the UI thread.
       buttonTvGuide.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new EndTimeShiftingDelegate(OnStartTimeShiftingResult), succeeded, card);
     }
-
     /// <summary>
     /// Called from dispatcher when StartTimeShiftingBackGroundWorker() has a result for us
     /// we check the result and if needed start a new media player to playback the tv timeshifting file
@@ -265,62 +311,34 @@ namespace MyTv
         ChannelNavigator.Instance.Card = card;
         //do we already have a media player ?
         Uri uri = new Uri(card.TimeShiftFileName, UriKind.Absolute);
-        if (_mediaPlayer != null && _mediaPlayer.Source != uri)
+        videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+        if (_mediaPlayer != null)
         {
-          //yes, but filename is different. so we close the current media player and open a new one
-          _mediaPlayer.Dispose();
+          _mediaPlayer.Dispose(false);
           _mediaPlayer = null;
         }
 
+        //create a new media player 
+        _mediaPlayer = TvPlayerCollection.Instance.Get(card, uri);
+        _mediaPlayer.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
+        _mediaPlayer.MediaOpened += new EventHandler(_mediaPlayer_MediaOpened);
 
-        //do we already have a media player ?
-        if (_mediaPlayer == null)
-        {
-          //no then create a new media player 
-          _mediaPlayer = TvPlayerCollection.Instance.Get(card, uri);
-          //create video drawing which draws the video in the video window
-          VideoDrawing videoDrawing = new VideoDrawing();
-          videoDrawing.Player = _mediaPlayer;
-          videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
-          DrawingBrush videoBrush = new DrawingBrush();
-          videoBrush.Drawing = videoDrawing;
-          videoWindow.Fill = videoBrush;
-          videoDrawing.Player.Play();
-          if (_mediaPlayer.HasError)
-          {
-            card.StopTimeShifting();
-            MpDialogOk dlgError = new MpDialogOk();
-            Window w = Window.GetWindow(this);
-            dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            dlgError.Owner = w;
-            dlgError.Title = "Cannot open file";
-            dlgError.Header = "Error";
-            dlgError.Content = "Unable to open the timeshifting file " + _mediaPlayer.ErrorMessage;
-            dlgError.ShowDialog();
-            _mediaPlayer.Dispose();
-            _mediaPlayer = null;
-            return;
+        //create video drawing which draws the video in the video window
+        VideoDrawing videoDrawing = new VideoDrawing();
+        videoDrawing.Player = _mediaPlayer;
+        videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
+        DrawingBrush videoBrush = new DrawingBrush();
+        videoBrush.Drawing = videoDrawing;
+        videoWindow.Fill = videoBrush;
+        videoDrawing.Player.Play();
 
-          }
-        }
-        else
-        {
-          //we already have a media player, seek to end of file (livepoint)
-          if (_mediaPlayer.NaturalDuration.HasTimeSpan)
-            _mediaPlayer.Position = _mediaPlayer.NaturalDuration.TimeSpan;
-        }
-        //set tv button on
-        buttonTvOnOff.IsChecked = true;
-
-        //update screen
-        UpdateInfoBox();
       }
       else
       {
         //close media player
         if (_mediaPlayer != null)
         {
-          _mediaPlayer.Dispose();
+          _mediaPlayer.Dispose(true);
           _mediaPlayer = null;
         }
         //tun tv button off
@@ -372,6 +390,73 @@ namespace MyTv
         dlg.ShowDialog();
       }
     }
+
+    #region media player events & dispatcher methods
+    void OnSeekToEnd()
+    {
+      if (_mediaPlayer.NaturalDuration.HasTimeSpan)
+      {
+        TimeSpan duration = _mediaPlayer.NaturalDuration.TimeSpan;
+        _mediaPlayer.Position = duration;
+      }
+      //set tv button on
+      buttonTvOnOff.IsChecked = true;
+
+      //update screen
+      UpdateInfoBox();
+    }
+
+    /// <summary>
+    /// Called when media player has an error condition
+    /// show messagebox to user and close media playback
+    /// </summary>
+    void OnMediaPlayerError()
+    {
+      videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+      if (_mediaPlayer.HasError)
+      {
+        MpDialogOk dlgError = new MpDialogOk();
+        Window w = Window.GetWindow(this);
+        dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgError.Owner = w;
+        dlgError.Title = "Cannot open file";
+        dlgError.Header = "Error";
+        dlgError.Content = "Unable to open the timeshifting file " + _mediaPlayer.ErrorMessage;
+        dlgError.ShowDialog();
+      }
+      _mediaPlayer.Dispose(true);
+      _mediaPlayer = null;
+
+      //set tv button on
+      buttonTvOnOff.IsChecked = false;
+
+      //update screen
+      UpdateInfoBox();
+    }
+    /// <summary>
+    /// Handles the MediaOpened event of the _mediaPlayer control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+    void _mediaPlayer_MediaOpened(object sender, EventArgs e)
+    {
+      //media is opened, seek to end (via dispatcher)
+      buttonTvGuide.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new SeekToEndDelegate(OnSeekToEnd));
+    }
+
+    /// <summary>
+    /// Handles the MediaFailed event of the _mediaPlayer control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.Windows.Media.ExceptionEventArgs"/> instance containing the event data.</param>
+    void _mediaPlayer_MediaFailed(object sender, ExceptionEventArgs e)
+    {
+      // media player failed to open file
+      // show error dialog (via dispatcher)
+      buttonTvGuide.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
+    }
+
+    #endregion
 
     /// <summary>
     /// Updates the info like program title,description,time start/end and progress bar on screen.

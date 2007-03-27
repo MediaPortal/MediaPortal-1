@@ -8,6 +8,9 @@ namespace MyTv
 {
   public class TvMediaPlayer : MediaPlayer
   {
+    #region delegates
+    private delegate void StopTimeshiftingDelegate(VirtualCard card);
+    #endregion
     #region variables
     VirtualCard _card;
     Exception _exception;
@@ -50,18 +53,27 @@ namespace MyTv
     /// <summary>
     /// Disposes this instance.
     /// </summary>
-    public void Dispose()
+    public void Dispose(bool stopTimeShifting)
     {
       base.Stop();
       base.Close();
-      if (_card != null)
+      if (_card != null && stopTimeShifting)
       {
-        if (_card.IsTimeShifting)
-        {
-          _card.StopTimeShifting();
-        }
+        StopTimeshiftingDelegate starter = new StopTimeshiftingDelegate(this.DoStopTimeshifting);
+        starter.BeginInvoke(_card,null, null);
       }
       TvPlayerCollection.Instance.Release(this);
+    }
+
+    void DoStopTimeshifting(VirtualCard card)
+    {
+      if (card != null)
+      {
+        if (card.IsTimeShifting)
+        {
+          card.StopTimeShifting();
+        }
+      }
     }
     #endregion
   }
