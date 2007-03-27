@@ -219,6 +219,10 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 {
 //	::OutputDebugStringA("CVideoPin::FillBuffer()\n");
 
+  
+  REFERENCE_TIME durTime;
+  m_pTsReaderFilter->GetDuration(&durTime);
+  m_rtDuration=CRefTime(durTime);
   if (m_pTsReaderFilter->IsSeeking())
 	{
 		Sleep(1);

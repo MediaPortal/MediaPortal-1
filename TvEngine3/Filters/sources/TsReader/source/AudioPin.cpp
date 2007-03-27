@@ -160,6 +160,11 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 		Sleep(1);
 		return NOERROR;
 	}
+  
+  REFERENCE_TIME durTime;
+  m_pTsReaderFilter->GetDuration(&durTime);
+  m_rtDuration=CRefTime(durTime);
+
 	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   CBuffer* buffer=demux.GetAudio();
   if (m_bDiscontinuity)

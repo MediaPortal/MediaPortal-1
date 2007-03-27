@@ -155,6 +155,10 @@ HRESULT CSubtitlePin::BreakConnect()
 HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
 {
 //	::OutputDebugStringA("CSubtitlePin::FillBuffer()\n");
+  
+  REFERENCE_TIME durTime;
+  m_pTsReaderFilter->GetDuration(&durTime);
+  m_rtDuration=CRefTime(durTime);
 
   if (m_pTsReaderFilter->IsSeeking())
 	{
