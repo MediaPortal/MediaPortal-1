@@ -35,9 +35,9 @@ public:
 	HRESULT GetMediaType(CMediaType *pMediaType);
 	HRESULT DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest);
 	HRESULT CompleteConnect(IPin *pReceivePin);
+  HRESULT CheckConnect(IPin *pReceivePin);
 	HRESULT FillBuffer(IMediaSample *pSample);
   HRESULT BreakConnect();
-  STDMETHODIMP SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags);
 	
 
 	// CSourceSeeking
@@ -45,7 +45,9 @@ public:
 	HRESULT ChangeStop();
 	HRESULT ChangeRate();
   STDMETHODIMP GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest );
+  STDMETHODIMP SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags);
   STDMETHODIMP GetDuration(LONGLONG *pDuration);
+  STDMETHODIMP GetCurrentPosition(LONGLONG *pCurrent);
 
 	HRESULT OnThreadStartPlay();
 	void SetStart(CRefTime rtStartTime);

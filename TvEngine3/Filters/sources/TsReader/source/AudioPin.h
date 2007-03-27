@@ -46,6 +46,7 @@ public:
   STDMETHODIMP SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags);
   STDMETHODIMP GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest );
   STDMETHODIMP GetDuration(LONGLONG *pDuration);
+  STDMETHODIMP GetCurrentPosition(LONGLONG *pCurrent);
 
 	HRESULT OnThreadStartPlay();
 	void SetStart(CRefTime rtStartTime);

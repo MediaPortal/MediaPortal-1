@@ -74,4 +74,5 @@ private:
   CTsDuration& m_duration;
   CTsReaderFilter& m_filter;
   int m_iAudioStream;
+  int m_audioPid;
 };

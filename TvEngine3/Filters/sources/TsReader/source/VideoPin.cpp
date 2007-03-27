@@ -22,6 +22,7 @@
 #pragma warning(disable:4996)
 #pragma warning(disable:4995)
 #include <streams.h>
+#include <sbe.h>
 #include "tsreader.h"
 #include "AudioPin.h"
 #include "Videopin.h"
@@ -117,6 +118,7 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
 	AM_SEEKING_CanSeekBackwards	|
 	AM_SEEKING_CanGetStopPos	|
 	AM_SEEKING_CanGetDuration |
+  AM_SEEKING_CanGetCurrentPos |
 	AM_SEEKING_Source;
 }
 
@@ -131,6 +133,27 @@ bool CVideoPin::IsConnected()
 }
 STDMETHODIMP CVideoPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 {
+  if (riid == IID_IStreamBufferConfigure)
+  {
+	    LogDebug("vid:IID_IStreamBufferConfigure()");
+  }
+  if (riid == IID_IStreamBufferInitialize)
+  {
+  
+	    LogDebug("vid:IID_IStreamBufferInitialize()");
+  }
+  if (riid == IID_IStreamBufferMediaSeeking||riid == IID_IStreamBufferMediaSeeking2)
+  {
+	    LogDebug("vid:IID_IStreamBufferMediaSeeking()");
+  }
+  if (riid == IID_IStreamBufferSource)
+  {
+	    LogDebug("vid:IID_IStreamBufferSource()");
+  }
+  if (riid == IID_IStreamBufferDataCounters)
+  {
+	    LogDebug("vid:IID_IStreamBufferDataCounters()");
+  }
   if (riid == IID_IMediaSeeking)
   {
       return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
@@ -188,6 +211,22 @@ HRESULT CVideoPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
 	return S_OK;
 }
 
+HRESULT CVideoPin::CheckConnect(IPin *pReceivePin)
+{
+  HRESULT hr;
+  PIN_INFO pinInfo;
+  FILTER_INFO filterInfo;
+  hr=pReceivePin->QueryPinInfo(&pinInfo);
+  if (!SUCCEEDED(hr)) return E_FAIL;
+  if (pinInfo.pFilter==NULL) return E_FAIL;
+  hr=pinInfo.pFilter->QueryFilterInfo(&filterInfo);
+  if (!SUCCEEDED(hr)) return E_FAIL;
+  if (wcscmp(filterInfo.achName,L"MPV Decoder Filter")==0)
+  {
+    return E_FAIL;
+  }
+  return CBaseOutputPin::CheckConnect(pReceivePin);
+}
 HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
 {
 	LogDebug("pin:CompleteConnect()");
@@ -413,12 +452,18 @@ void CVideoPin::UpdateFromSeek()
 
 STDMETHODIMP CVideoPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
 {
-//  LogDebug("vid:GetAvailable");
+  LogDebug("vid:GetAvailable");
   return CSourceSeeking::GetAvailable( pEarliest, pLatest );
 }
 
 STDMETHODIMP CVideoPin::GetDuration(LONGLONG *pDuration)
 {
-//  LogDebug("vid:GetDuration");
+  LogDebug("vid:GetDuration");
   return CSourceSeeking::GetDuration(pDuration);
+}
+
+STDMETHODIMP CVideoPin::GetCurrentPosition(LONGLONG *pCurrent)
+{
+  LogDebug("vid:GetCurrentPosition");
+  return CSourceSeeking::GetCurrentPosition(pCurrent);
 }

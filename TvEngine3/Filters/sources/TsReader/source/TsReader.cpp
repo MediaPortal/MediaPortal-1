@@ -24,6 +24,7 @@
 #include <windows.h>
 #include <commdlg.h>
 #include <bdatypes.h>
+#include <sbe.h>
 #include <time.h>
 #include <streams.h>
 #include <initguid.h>
@@ -35,7 +36,7 @@
 
 void LogDebug(const char *fmt, ...) 
 {
-#ifndef DEBUG
+#ifdef DEBUG
 	va_list ap;
 	va_start(ap,fmt);
 
@@ -127,6 +128,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 	m_pAudioPin(NULL),
   m_demultiplexer( m_duration, *this)
 {
+  ::DeleteFile("c:\\tsreader.log");
   m_fileReader=NULL;
   m_fileDuration=NULL;
 
@@ -165,6 +167,38 @@ CTsReaderFilter::~CTsReaderFilter()
 
 STDMETHODIMP CTsReaderFilter::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
 {
+  if (riid == IID_IStreamBufferConfigure)
+  {
+  
+	    LogDebug("filt:IID_IStreamBufferConfigure()");
+  }
+  if (riid == IID_IStreamBufferInitialize)
+  {
+  
+	    LogDebug("filt:IID_IStreamBufferInitialize()");
+  }
+  if (riid == IID_IStreamBufferMediaSeeking||riid == IID_IStreamBufferMediaSeeking2)
+  {
+  
+	    LogDebug("filt:IID_IStreamBufferMediaSeeking()");
+  }
+  if (riid == IID_IStreamBufferSource)
+  {
+	    LogDebug("filt:IID_IStreamBufferSource()");
+  }
+  if (riid == IID_IStreamBufferDataCounters)
+  {
+	    LogDebug("filt:IID_IStreamBufferDataCounters()");
+  }
+  if (riid == IID_IMediaSeeking)
+  {
+	    LogDebug("filt:IID_IMediaSeeking()");
+    if (m_pAudioPin->IsConnected())
+      return m_pAudioPin->NonDelegatingQueryInterface(riid, ppv);
+    
+    if (m_pVideoPin->IsConnected())
+      return m_pVideoPin->NonDelegatingQueryInterface(riid, ppv);
+  }
 	if (riid == IID_IAMFilterMiscFlags)
 	{
 		return GetInterface((IAMFilterMiscFlags*)this, ppv);
@@ -391,6 +425,9 @@ void CTsReaderFilter::ThreadProc()
       m_duration.Set(duration.StartPcr(), duration.EndPcr());
       if (m_State == State_Running)
       {
+        float secs=(float)duration.Duration().Millisecs();
+        secs/=1000.0f;
+        LogDebug("notify length change:%f",secs);
         NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
       }
     }

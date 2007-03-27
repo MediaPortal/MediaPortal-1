@@ -22,6 +22,7 @@
 #pragma warning(disable:4996)
 #pragma warning(disable:4995)
 #include <streams.h>
+#include <sbe.h>
 #include "tsreader.h"
 #include "audiopin.h"
 byte MPEG1AudioFormat[] = 
@@ -59,6 +60,7 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
 	AM_SEEKING_CanSeekBackwards	|
 	AM_SEEKING_CanGetStopPos	|
 	AM_SEEKING_CanGetDuration	|
+  AM_SEEKING_CanGetCurrentPos |
 	AM_SEEKING_Source;
 }
 
@@ -68,10 +70,29 @@ CAudioPin::~CAudioPin()
 }
 STDMETHODIMP CAudioPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 {
-	if (riid == IID_IAsyncReader)
+  if (riid == IID_IStreamBufferConfigure)
   {
-		int x=1;
-	}
+  
+	    LogDebug("aud:IID_IStreamBufferConfigure()");
+  }
+  if (riid == IID_IStreamBufferInitialize)
+  {
+  
+	    LogDebug("aud:IID_IStreamBufferInitialize()");
+  }
+  if (riid == IID_IStreamBufferMediaSeeking||riid == IID_IStreamBufferMediaSeeking2)
+  {
+  
+	    LogDebug("aud:IID_IStreamBufferMediaSeeking()");
+  }
+  if (riid == IID_IStreamBufferSource)
+  {
+	    LogDebug("aud:IID_IStreamBufferSource()");
+  }
+  if (riid == IID_IStreamBufferDataCounters)
+  {
+	    LogDebug("aud:IID_IStreamBufferDataCounters()");
+  }
   if (riid == IID_IMediaSeeking)
   {
     return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
@@ -334,12 +355,18 @@ void CAudioPin::UpdateFromSeek()
 
 STDMETHODIMP CAudioPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
 {
-//  LogDebug("aud:GetAvailable");
+  LogDebug("aud:GetAvailable");
   return CSourceSeeking::GetAvailable( pEarliest, pLatest );
 }
 
 STDMETHODIMP CAudioPin::GetDuration(LONGLONG *pDuration)
 {
-  //LogDebug("aud:GetDuration");
+  LogDebug("aud:GetDuration");
   return CSourceSeeking::GetDuration(pDuration);
+}
+
+STDMETHODIMP CAudioPin::GetCurrentPosition(LONGLONG *pCurrent)
+{
+  LogDebug("aud:GetCurrentPosition");
+  return CSourceSeeking::GetCurrentPosition(pCurrent);
 }

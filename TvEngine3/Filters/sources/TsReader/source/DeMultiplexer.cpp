@@ -44,6 +44,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_pCurrentAudioBuffer = new CBuffer();
   m_pCurrentSubtitleBuffer = new CBuffer();
   m_iAudioStream=0;
+  m_audioPid=0;
 }
 
 CDeMultiplexer::~CDeMultiplexer()
@@ -67,16 +68,7 @@ CPidTable CDeMultiplexer::GetPidTable()
 
 void CDeMultiplexer::SetAudioStream(int stream)
 {
-  m_iAudioStream=stream;
-  if (m_iAudioStream==0 && m_pids.AudioPid1==0) m_iAudioStream=7;
-  if (m_iAudioStream==1 && m_pids.AudioPid2==0) m_iAudioStream=7;
-  if (m_iAudioStream==2 && m_pids.AudioPid3==0) m_iAudioStream=7;
-  if (m_iAudioStream==3 && m_pids.AudioPid4==0) m_iAudioStream=7;
-  if (m_iAudioStream==4 && m_pids.AudioPid5==0) m_iAudioStream=7;
-  if (m_iAudioStream==5 && m_pids.AudioPid6==0) m_iAudioStream=7;
-  if (m_iAudioStream==6 && m_pids.AudioPid7==0) m_iAudioStream=7;
-  if (m_iAudioStream==7 && m_pids.AC3Pid==0) m_iAudioStream=0;
-  
+  m_iAudioStream=stream;   
 }
 
 int CDeMultiplexer::GetAudioStream()
@@ -263,7 +255,7 @@ CBuffer* CDeMultiplexer::GetVideo()
 CBuffer* CDeMultiplexer::GetAudio()
 {
 	CAutoLock lock (&m_section);
-  if (m_pids.AudioPid1==0)
+  if (  m_audioPid==0)
   {
     ReadFromFile();
     return NULL;
@@ -347,16 +339,15 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
 }
 void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 {
-  bool streamOk=false;
-  if (header.Pid==m_pids.AudioPid1 && m_iAudioStream==0) streamOk=true;
-  else if (header.Pid==m_pids.AudioPid2 && m_iAudioStream==1) streamOk=true;
-  else if (header.Pid==m_pids.AudioPid3 && m_iAudioStream==2) streamOk=true;
-  else if (header.Pid==m_pids.AudioPid4 && m_iAudioStream==3) streamOk=true;
-  else if (header.Pid==m_pids.AudioPid5 && m_iAudioStream==4) streamOk=true;
-  else if (header.Pid==m_pids.AudioPid6 && m_iAudioStream==5) streamOk=true;
-  else if (header.Pid==m_pids.AudioPid7 && m_iAudioStream==6) streamOk=true;
-  else if (header.Pid==m_pids.AC3Pid && m_iAudioStream==7) streamOk=true;
-  if (!streamOk) return;
+  if (m_iAudioStream==0) m_audioPid=m_pids.AudioPid1;
+  else if (m_iAudioStream==1) m_audioPid=m_pids.AudioPid2;
+  else if (m_iAudioStream==2) m_audioPid=m_pids.AudioPid3;
+  else if (m_iAudioStream==3) m_audioPid=m_pids.AudioPid4;
+  else if (m_iAudioStream==4) m_audioPid=m_pids.AudioPid5;
+  else if (m_iAudioStream==5) m_audioPid=m_pids.AudioPid6;
+  else if (m_iAudioStream==6) m_audioPid=m_pids.AudioPid7;
+  else if (m_iAudioStream==7) m_audioPid=m_pids.AC3Pid;
+  if (m_audioPid==0 || m_audioPid != header.Pid) return;
 
   if (m_filter.GetAudioPin()->IsConnected())
   {
