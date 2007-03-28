@@ -48,7 +48,7 @@
         <Button Name="buttonView" Template="{StaticResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnViewClicked">View</Button>
         <Button Name="buttonSort" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnSortClicked" >Sort</Button>
         <Button Name="buttonSwitch" Template="{StaticResource MpButton}" Height="32"  MouseEnter="OnMouseEnter"  >Switch</Button>
-        <Button Name="buttonCleanup" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter"  >Cleanup</Button>
+        <Button Name="buttonCleanup" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnCleanupClicked" >Cleanup</Button>
         <Button Name="buttonCompress" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter"  >Compress</Button>
       </StackPanel>
       <Grid x:Name="gridList" Margin="0,0,30,0">

@@ -108,7 +108,8 @@
     <Page Include="TvGuide.xaml" />
     <Page Include="TvHome.xaml" />
     <Page Include="TvRecorded.xaml">
-      <SubType>Designer</SubType>
+      <SubType>
+      </SubType>
     </Page>
     <Page Include="TvSetup.xaml" />
     <Compile Include="App.xaml.cs">
@@ -145,6 +146,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ThumbnailGenerator.cs" />
     <Compile Include="Thumbs.cs" />
     <Compile Include="TvGuide.xaml.cs">
       <SubType>Code</SubType>

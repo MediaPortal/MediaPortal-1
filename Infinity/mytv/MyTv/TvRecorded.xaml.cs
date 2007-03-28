@@ -11,10 +11,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading;
 using TvDatabase;
 using Gentle.Common;
 using Gentle.Framework;
 using Dialogs;
+using TvControl;
 
 namespace MyTv
 {
@@ -42,6 +44,9 @@ namespace MyTv
     SortMode _sortMode = SortMode.Date;
     private delegate void MediaPlayerErrorDelegate();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvRecorded"/> class.
+    /// </summary>
     public TvRecorded()
     {
       InitializeComponent();
@@ -68,6 +73,7 @@ namespace MyTv
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
       // Sets keyboard focus on the first Button in the sample.
+      Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       Keyboard.Focus(buttonView);
 
       if (ChannelNavigator.Instance.Card != null)
@@ -93,6 +99,10 @@ namespace MyTv
       }
 
       LoadRecordings();
+      Thread thumbNailThread = new Thread(new ThreadStart(CreateThumbnailsThread));
+      thumbNailThread.Priority = ThreadPriority.Lowest;
+      thumbNailThread.Start();
+
     }
     /// <summary>
     /// Gets the content for right label of each recording.
@@ -188,7 +198,7 @@ namespace MyTv
               gridSub.ColumnDefinitions.Add(new ColumnDefinition());
               gridSub.ColumnDefinitions.Add(new ColumnDefinition());
               gridSub.RowDefinitions.Add(new RowDefinition());
-              string logo = Thumbs.GetLogoFileName(recording.ReferencedChannel().Name);
+              string logo = System.IO.Path.ChangeExtension(recording.FileName, ".png");
               if (System.IO.File.Exists(logo))
               {
                 Image image = new Image();
@@ -238,7 +248,7 @@ namespace MyTv
               gridSub.ColumnDefinitions.Add(new ColumnDefinition());
               gridSub.RowDefinitions.Add(new RowDefinition());
               gridSub.RowDefinitions.Add(new RowDefinition());
-              string logo = Thumbs.GetLogoFileName(recording.ReferencedChannel().Name);
+              string logo = System.IO.Path.ChangeExtension(recording.FileName, ".png");
               if (System.IO.File.Exists(logo))
               {
                 Image image = new Image();
@@ -436,6 +446,52 @@ namespace MyTv
       LoadRecordings();
     }
 
+    /// <summary>
+    /// Called when cleanup button is clicked
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+    void OnCleanupClicked(object sender, RoutedEventArgs e)
+    {
+      MpDialogYesNo dlgMenu = new MpDialogYesNo();
+      Window w = Window.GetWindow(this);
+      dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+      dlgMenu.Owner = w;
+      dlgMenu.Header = "Menu";
+      dlgMenu.Content = "This will delete all recordings you have watched. Are you sure?";
+      dlgMenu.ShowDialog();
+      if (dlgMenu.DialogResult == DialogResult.No) return;
+      IList itemlist = Recording.ListAll();
+      foreach (Recording rec in itemlist)
+      {
+        if (rec.TimesWatched > 0)
+        {
+          TvServer server = new TvServer();
+          server.DeleteRecording(rec.IdRecording);
+        }
+      }
+    }
+    protected void onKeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.Key == System.Windows.Input.Key.Escape)
+      {
+        //return to previous screen
+        this.NavigationService.GoBack();
+        return;
+      }
+    }
+    /// <summary>
+    /// background thread which creates thumbnails for all recordings.
+    /// </summary>
+    void CreateThumbnailsThread()
+    {
+      IList recordings = Recording.ListAll();
+      foreach (Recording rec in recordings)
+      {
+        ThumbnailGenerator generator = new ThumbnailGenerator();
+        generator.GenerateThumbnail(rec.FileName);
+      }
+    }
     #region IComparer<Recording> Members
 
     /// <summary>

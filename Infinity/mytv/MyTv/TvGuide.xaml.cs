@@ -622,13 +622,13 @@ namespace MyTv
     /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>
     protected void onKeyDown(object sender, KeyEventArgs e)
     {
-      if (_selectedItem == null) return;
       if (e.Key == Key.Escape)
       {
         //return to previous screen
         this.NavigationService.GoBack();
         return;
       }
+      if (_selectedItem == null) return;
       if (_singleMode)
       {
         if (e.Key == Key.Enter)
