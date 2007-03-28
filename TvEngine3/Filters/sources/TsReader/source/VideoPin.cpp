@@ -225,6 +225,10 @@ HRESULT CVideoPin::CheckConnect(IPin *pReceivePin)
   {
     return E_FAIL;
   }
+  if (wcscmp(filterInfo.achName,L"DScaler Mpeg2 Video Decoder")==0)
+  {
+    return E_FAIL;
+  }
   return CBaseOutputPin::CheckConnect(pReceivePin);
 }
 HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
