@@ -1,9 +1,12 @@
 using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Navigation;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Messaging.SystemMessages;
 using ProjectInfinity.Plugins;
+using ProjectInfinity.Themes;
 using ProjectInfinity.Windows;
 
 namespace ProjectInfinity
@@ -73,41 +76,27 @@ namespace ProjectInfinity
       msgBroker.Register(this);
     }
 
-    public static void Start()
-    {
-      ProjectInfinityCore projectInfinity = new ProjectInfinityCore();
-      projectInfinity.Run();
-    }
-
-    private new void Run()
+    private new void Run(Uri startupUri)
     {
       //notify our own subscribers (through the message broker)
       OnStartup(new EventArgs());
 
       //Start the plugins
       ServiceScope.Get<IPluginManager>().StartAll();
+      ServiceScope.Get<IThemeManager>().SetDefaultTheme();
 
-      //Get the main window and start it
-      IMainWindow window = ServiceScope.Get<IMainWindow>();
-      if (window == null)
-      {
-        throw new ArgumentNullException("Service is not available", "IMainWindow");
-      }
-      Window mainWindow = window as Window;
-      if (mainWindow == null)
-      {
-        throw new ArgumentException("Window does not inherit from System.Windows.Window", "IMainWindow");
-      }
-      mainWindow.Closing += new CancelEventHandler(mainWindow_Closing);
+      //mainWindow.Closing += new CancelEventHandler(mainWindow_Closing);
       try
       {
         OnStartupComplete(EventArgs.Empty);
-        Run(mainWindow);
+        NavigationWindow wnd = new NavigationWindow();
+        wnd.Navigate( startupUri);
+        Run(wnd);
         OnShutdown(EventArgs.Empty);
       }
       finally
       {
-        mainWindow.Closing -= new CancelEventHandler(mainWindow_Closing);
+       // mainWindow.Closing -= new CancelEventHandler(mainWindow_Closing);
       }
       OnShutdownComplete(EventArgs.Empty);
     }
@@ -192,5 +181,10 @@ namespace ProjectInfinity
 
     #endregion
 
+    public static void Start(Uri startupUri)
+    {
+      ProjectInfinityCore projectInfinity = new ProjectInfinityCore();
+      projectInfinity.Run(startupUri);
+    }
   }
 }

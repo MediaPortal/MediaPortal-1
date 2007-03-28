@@ -7,6 +7,6 @@ namespace ProjectInfinity.Windows
   /// </summary>
   public interface IMainWindow
   {
-    event CancelEventHandler Closing;
+   // event CancelEventHandler Closing;
   }
 }

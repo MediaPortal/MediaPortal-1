@@ -5,6 +5,12 @@ namespace ProjectInfinity.Plugins
     private string _name;
     private string _description;
 
+    public PluginInfo(string name, string description)
+    {
+      _name = name;
+      _description = description;
+    }
+
     internal PluginInfo(PluginAttribute attribute)
     {
       _name = attribute.Name;

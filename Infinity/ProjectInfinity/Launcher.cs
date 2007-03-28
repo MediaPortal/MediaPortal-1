@@ -1,9 +1,8 @@
 using System;
-using System.Windows;
-using System.Data;
-using System.Xml;
-using System.Configuration;
+using System.Collections.Generic;
+using System.Text;
 using ProjectInfinity.Logging;
+using ProjectInfinity.Menu;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Plugins;
 using ProjectInfinity.Themes;
@@ -12,47 +11,34 @@ using ProjectInfinity.Windows;
 
 namespace ProjectInfinity
 {
-  /// <summary>
-  /// Interaction logic for App.xaml
-  /// </summary>
-
-  public partial class App : System.Windows.Application
+  public class Launcher
   {
-    private ILogger logger = null;
-
-    protected override void OnStartup(StartupEventArgs e)
+    [STAThread]
+    public static void Main(params string[] args)
     {
-      base.OnStartup(e);
-      logger = new FileLogger("ProjectInfinity.log", LogLevel.Debug);
+      ILogger logger = new FileLogger("ProjectInfinity.log", LogLevel.Debug);
       ServiceScope.Add(logger);
       logger.Critical("ProjectInfinity is starting...");
       //register service implementations
       ServiceScope.Add<IMessageBroker>(new MessageBroker()); //Our messagebroker
       ServiceScope.Add<IPluginManager>(new ReflectionPluginManager());
       ServiceScope.Add<IThemeManager>(new ThemeManager());
+      ServiceScope.Add<IMenuManager>(new MenuManager());
       //A pluginmanager that uses reflection to enumerate available plugins
 
       ICommandLineOptions piArgs = new ProjectInfinityCommandLine();
 
       try
       {
-        CommandLine.Parse(e.Args, ref piArgs);
+        CommandLine.Parse(args, ref piArgs);
       }
       catch (ArgumentException)
       {
         piArgs.DisplayOptions();
         return;
       }
-      //Start the plugins
-      ServiceScope.Get<IPluginManager>().StartAll();
-ServiceScope.Get<IThemeManager>().SetDefaultTheme();
-    }
+      ProjectInfinityCore.Start(new Uri("/ProjectInfinity;component/mainpage.xaml", UriKind.Relative));
 
-    protected override void OnExit(ExitEventArgs e)
-    {
-      //When we return here, the core has quit
-      logger.Critical("ProjectInfinity has stopped...");
     }
-
   }
 }

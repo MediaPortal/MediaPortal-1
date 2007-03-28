@@ -10,9 +10,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ProjectInfinity.Menu;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Messaging.MusicMessages;
 using ProjectInfinity.Music;
+using ProjectInfinity.Plugins;
+using ProjectInfinity.Windows;
 
 namespace ProjectInfinity
 {
@@ -20,7 +23,7 @@ namespace ProjectInfinity
   /// Interaction logic for MainPage.xaml
   /// </summary>
 
-  public partial class MainPage : System.Windows.Controls.Page
+  public partial class MainPage : System.Windows.Controls.Page, IMainWindow
   {
     public MainPage()
     {
@@ -29,6 +32,9 @@ namespace ProjectInfinity
       stopButton.Click += StopClicked;
 
       ServiceScope.Get<IMessageBroker>().Register(this);
+      IMenuManager mgr = ServiceScope.Get<IMenuManager>();
+      trvMenu.ItemsSource = mgr.GetMenu();
+
     }
 
     private static void PlayClicked(object sender, RoutedEventArgs e)

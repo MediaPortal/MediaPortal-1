@@ -33,10 +33,14 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationProvider, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Logging\FileLogger.cs" />
+    <Compile Include="Menu\Menu.cs" />
+    <Compile Include="Menu\MenuManager.cs" />
+    <Compile Include="Menu\PluginItem.cs" />
     <Compile Include="Music\WMPMusicPlayer.cs" />
     <Compile Include="Plugins\PluginInfo.cs" />
     <Compile Include="Plugins\ReflectionPluginManager.cs" />
