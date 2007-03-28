@@ -42,6 +42,7 @@
     <Compile Include="Menu\IPluginItem.cs" />
     <Compile Include="Messaging\Message.cs" />
     <Compile Include="MusicMessages.cs" />
+    <Compile Include="Navigation\INavigationService.cs" />
     <Compile Include="PluginMessages.cs" />
     <Compile Include="SystemMessages.cs" />
     <Compile Include="Music\IMusicPlayer.cs" />

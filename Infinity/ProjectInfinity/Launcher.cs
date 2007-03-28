@@ -4,6 +4,7 @@ using System.Text;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Menu;
 using ProjectInfinity.Messaging;
+using ProjectInfinity.Navigation;
 using ProjectInfinity.Plugins;
 using ProjectInfinity.Themes;
 using ProjectInfinity.Utilities.CommandLine;
@@ -24,6 +25,7 @@ namespace ProjectInfinity
       ServiceScope.Add<IPluginManager>(new ReflectionPluginManager());
       ServiceScope.Add<IThemeManager>(new ThemeManager());
       ServiceScope.Add<IMenuManager>(new MenuManager());
+      ServiceScope.Add<INavigationService>(new NavigationService());
       //A pluginmanager that uses reflection to enumerate available plugins
 
       ICommandLineOptions piArgs = new ProjectInfinityCommandLine();
@@ -37,7 +39,7 @@ namespace ProjectInfinity
         piArgs.DisplayOptions();
         return;
       }
-      ProjectInfinityCore.Start(new Uri("/ProjectInfinity;component/mainpage.xaml", UriKind.Relative));
+      ProjectInfinityCore.Start();
 
     }
   }

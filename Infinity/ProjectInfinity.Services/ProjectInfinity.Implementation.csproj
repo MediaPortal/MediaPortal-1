@@ -42,6 +42,7 @@
     <Compile Include="Menu\MenuManager.cs" />
     <Compile Include="Menu\PluginItem.cs" />
     <Compile Include="Music\WMPMusicPlayer.cs" />
+    <Compile Include="Navigation\NavigationService.cs" />
     <Compile Include="Plugins\PluginInfo.cs" />
     <Compile Include="Plugins\ReflectionPluginManager.cs" />
     <Compile Include="ProjectInfinityCore.cs" />

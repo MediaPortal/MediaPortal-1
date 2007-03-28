@@ -92,6 +92,7 @@ namespace ProjectInfinity.Plugins
     {
       foreach (IPluginInfo info in GetAvailablePlugins())
       {
+        if (info.AutoStart)
         Start(info.Name);
       }
     }

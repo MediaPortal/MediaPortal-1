@@ -2,27 +2,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DCCB83B5-A95B-4DF9-A734-92DC7566F207}</ProjectGuid>
+    <ProjectGuid>{284F0FD8-F1AC-4E30-80F2-BDB9293D050C}</ProjectGuid>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <RootNamespace>ProjectInfinity</RootNamespace>
-    <AssemblyName>ProjectInfinity</AssemblyName>
+    <RootNamespace>ProjectInfinity.Menu</RootNamespace>
+    <AssemblyName>ProjectInfinity.Menu</AssemblyName>
     <WarningLevel>4</WarningLevel>
-    <OutputType>winexe</OutputType>
-    <MinFrameworkVersionRequired>3.0</MinFrameworkVersionRequired>
-    <Install>true</Install>
-    <InstallFrom>Web</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>false</MapFileExtensions>
+    <OutputType>library</OutputType>
     <ApplicationVersion>1.0.0.*</ApplicationVersion>
-    <IsWebBootstrapper>true</IsWebBootstrapper>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <PublishUrl>Publish\</PublishUrl>
-    <StartupObject>ProjectInfinity.Launcher</StartupObject>
+    <!-- Most people will use Publish dialog in Visual Studio to increment this -->
+    <MinFrameworkVersionRequired>3.0</MinFrameworkVersionRequired>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -58,11 +46,10 @@
     <Reference Include="System.IdentityModel" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Themes\Test.xaml" />
+    <Page Include="MenuPage.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Launcher.cs" />
-    <Compile Include="ProjectInfinityCommandLine.cs" />
+    <Compile Include="MenuPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -83,13 +70,13 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="MenuPage.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>MenuPage.xaml</DependentUpon>
+    </Compile>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ExtendedMusicPlayer\ExtendedMusicPlayer.csproj">
-      <Project>{7D7C667F-2839-429D-B45A-EA4CF0A244F2}</Project>
-      <Name>ExtendedMusicPlayer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ProjectInfinity.Interface\ProjectInfinity.Interface.csproj">
       <Project>{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}</Project>
       <Name>ProjectInfinity.Interface</Name>
@@ -98,14 +85,10 @@
       <Project>{4C45C46E-2ED2-4801-B3C3-FC2560E9FFE0}</Project>
       <Name>ProjectInfinity.Implementation</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ProjectInfinity.Utilities\ProjectInfinity.Utilities.csproj">
-      <Project>{4FE7B8AE-1330-424A-91A1-C68D7ABF9CB8}</Project>
-      <Name>ProjectInfinity.Utilities</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="The Infinity Project-Mystical Experiences-8-Blue Aura.mp3" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetPath) $(SolutionDir)\ProjectInfinity\bin\$(ConfigurationName)</PostBuildEvent>
+  </PropertyGroup>
 </Project>

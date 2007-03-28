@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Navigation;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Messaging.SystemMessages;
+using ProjectInfinity.Navigation;
 using ProjectInfinity.Plugins;
 using ProjectInfinity.Themes;
 using ProjectInfinity.Windows;
@@ -76,7 +77,7 @@ namespace ProjectInfinity
       msgBroker.Register(this);
     }
 
-    private new void Run(Uri startupUri)
+    private new void Run()
     {
       //notify our own subscribers (through the message broker)
       OnStartup(new EventArgs());
@@ -89,9 +90,10 @@ namespace ProjectInfinity
       try
       {
         OnStartupComplete(EventArgs.Empty);
-        NavigationWindow wnd = new NavigationWindow();
-        wnd.Navigate( startupUri);
-        Run(wnd);
+        INavigationService navigation = ServiceScope.Get<INavigationService>();
+
+        //navigation.Navigate(startupUri);
+        Run(navigation.GetWindow());
         OnShutdown(EventArgs.Empty);
       }
       finally
@@ -181,10 +183,10 @@ namespace ProjectInfinity
 
     #endregion
 
-    public static void Start(Uri startupUri)
+    public static void Start()
     {
       ProjectInfinityCore projectInfinity = new ProjectInfinityCore();
-      projectInfinity.Run(startupUri);
+      projectInfinity.Run();
     }
   }
 }

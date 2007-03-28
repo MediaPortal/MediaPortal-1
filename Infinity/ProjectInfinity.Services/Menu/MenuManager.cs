@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ProjectInfinity.Plugins;
 
 namespace ProjectInfinity.Menu
@@ -11,12 +9,15 @@ namespace ProjectInfinity.Menu
 
     public IList<IMenuItem> GetMenu()
     {
-      //TODO: call pluginmanager and configuration to build up menu tree
+      //TODO: call configuration to build up menu tree
       IList<IMenuItem> menus = new List<IMenuItem>();
-      menus.Add(new PluginItem(new PluginInfo("Music", "Plays music")));
-      Menu subMenu = new Menu("Settings");
-      subMenu.Items.Add(new PluginItem(new PluginInfo("Obscure", "some obscure settings")));
-      menus.Add(subMenu);
+      foreach (IPluginInfo info in ServiceScope.Get<IPluginManager>().GetAvailablePlugins())
+      {
+        if (info.ListInMenu)
+        {
+          menus.Add(new PluginItem(info));
+        }
+      }
       return menus;
     }
 

@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectInfinity.Utilities",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectInfinity", "ProjectInfinity\ProjectInfinity.csproj", "{DCCB83B5-A95B-4DF9-A734-92DC7566F207}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPlugin", "TestPlugin\TestPlugin.csproj", "{EA5E414F-E7C5-40E0-B8DF-C73640637DBA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectInfinity.Menu", "ProjectInfinity.Menu\ProjectInfinity.Menu.csproj", "{284F0FD8-F1AC-4E30-80F2-BDB9293D050C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +47,14 @@ Global
 		{DCCB83B5-A95B-4DF9-A734-92DC7566F207}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCCB83B5-A95B-4DF9-A734-92DC7566F207}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DCCB83B5-A95B-4DF9-A734-92DC7566F207}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA5E414F-E7C5-40E0-B8DF-C73640637DBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA5E414F-E7C5-40E0-B8DF-C73640637DBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA5E414F-E7C5-40E0-B8DF-C73640637DBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA5E414F-E7C5-40E0-B8DF-C73640637DBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{284F0FD8-F1AC-4E30-80F2-BDB9293D050C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{284F0FD8-F1AC-4E30-80F2-BDB9293D050C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{284F0FD8-F1AC-4E30-80F2-BDB9293D050C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{284F0FD8-F1AC-4E30-80F2-BDB9293D050C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

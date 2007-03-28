@@ -4,6 +4,8 @@ namespace ProjectInfinity.Plugins
   {
     private string _name;
     private string _description;
+    private bool _autoStart = false;
+    private bool _listInMenu = false;
 
     public PluginInfo(string name, string description)
     {
@@ -15,6 +17,8 @@ namespace ProjectInfinity.Plugins
     {
       _name = attribute.Name;
       _description = attribute.Description;
+      _autoStart = attribute.AutoStart;
+      _listInMenu = attribute.ListInMenu;
     }
 
     public string Name
@@ -26,5 +30,19 @@ namespace ProjectInfinity.Plugins
     {
       get { return _description; }
     }
+
+    #region IPluginInfo Members
+
+    public bool AutoStart
+    {
+      get { return _autoStart; }
+    }
+
+    public bool ListInMenu
+    {
+      get { return _listInMenu; }
+    }
+
+    #endregion
   }
 }

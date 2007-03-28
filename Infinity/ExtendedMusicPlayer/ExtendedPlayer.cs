@@ -10,7 +10,7 @@ namespace ProjectInfinity.Music
   /// <summary>
   /// Demo of an external service implementation that extends the 
   /// </summary>
-  [Plugin("ExtendedPlayer", "Test for extending plugin interface")]
+  [Plugin("ExtendedPlayer", "Test for extending plugin interface",AutoStart = true)]
   public class ExtendedPlayer : IMusicPlayer
   {
     private MediaPlayer mediaPlayer;
