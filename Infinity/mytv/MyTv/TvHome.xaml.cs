@@ -325,15 +325,7 @@ namespace MyTv
             percent = "(recording) " + percent;
             break;
         }
-        string channelLogoFileName = currentChannel.Name;
-        channelLogoFileName = channelLogoFileName.Replace(@"\", "_");
-        channelLogoFileName = channelLogoFileName.Replace("/", "_");
-        channelLogoFileName = channelLogoFileName.Replace("*", "_");
-        channelLogoFileName = channelLogoFileName.Replace(":", "_");
-        channelLogoFileName = channelLogoFileName.Replace("\"", "_");
-        channelLogoFileName = channelLogoFileName.Replace("<", "_");
-        channelLogoFileName = channelLogoFileName.Replace(">", "_");
-        channelLogoFileName=String.Format(@"thumbs\{0}.png",channelLogoFileName);
+        string channelLogoFileName = Thumbs.GetLogoFileName(currentChannel.Name);
         if (System.IO.File.Exists(channelLogoFileName))
         {
           dlgMenu.Items.Add(new DialogMenuItem(channelLogoFileName,now, next, percent));

@@ -284,7 +284,32 @@ namespace MyTv
       Button b = new Button();
       b.Tag = tag;
       b.Template = (ControlTemplate)Application.Current.Resources["MpButton"];
-      b.Content = channel.Name;
+      Grid grid = new Grid();
+      grid.ColumnDefinitions.Add(new ColumnDefinition());
+      grid.ColumnDefinitions.Add(new ColumnDefinition());
+      grid.ColumnDefinitions.Add(new ColumnDefinition());
+      grid.ColumnDefinitions.Add(new ColumnDefinition());
+      grid.RowDefinitions.Add(new RowDefinition());
+      string channelLogoFileName = Thumbs.GetLogoFileName(channel.Name);
+      if (System.IO.File.Exists(channelLogoFileName))
+      {
+        Image image = new Image();
+        PngBitmapDecoder decoder = new PngBitmapDecoder(new Uri(channelLogoFileName, UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
+
+        image.Source = decoder.Frames[0];
+        Grid.SetColumn(image, 0);
+        Grid.SetRow(image, 0);
+        grid.Children.Add(image);
+      }
+      Label label = new Label();
+      label.Content = channel.Name;
+      label.Style = (Style)Application.Current.Resources["LabelNormalStyleWhite"];
+      Grid.SetColumn(label, 1);
+      Grid.SetRow(label, 0);
+      Grid.SetColumnSpan(label, 3);
+      grid.Children.Add(label);
+
+      b.Content = grid;
       b.MouseEnter += new MouseEventHandler(OnMouseEnter);
       b.GotKeyboardFocus += new KeyboardFocusChangedEventHandler(OnButtonGotKeyboardFocus);
       b.Click += new RoutedEventHandler(OnClickChannel);
