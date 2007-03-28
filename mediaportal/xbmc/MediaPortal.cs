@@ -159,6 +159,23 @@ public class MediaPortalApp : D3DApp, IRender
   {
     Thread.CurrentThread.Name = "MPMain";
 
+    try
+    {
+      using (RegistryKey hklm = Registry.LocalMachine)
+      {
+        SetREGSZRegKey(hklm, @"SOFTWARE\Team MediaPortal\MediaPortal", "ApplicationDir", Config.GetFolder(Config.Dir.Base));
+        SetREGSZRegKey(hklm, @"SOFTWARE\Team MediaPortal\MediaPortal", "ConfigDir", Config.GetFolder(Config.Dir.Config));
+      }
+    }
+    catch (SecurityException)
+    {
+      Log.Error("Not enough permissions to set registry keys for SVN installer");
+    }
+    catch (UnauthorizedAccessException)
+    {
+      Log.Error("No write permissions to set registry keys for SVN installer");
+    }
+
     using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
     {
       string MPThreadPriority = xmlreader.GetValueAsString("MP", "ThreadPriority", "Normal");
@@ -3102,11 +3119,33 @@ GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
     }
     catch (SecurityException)
     {
-      Log.Info(@"User does not have sufficient rights to modify registry key HKLM\{0}", Key);
+      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0}", Key);
     }
     catch (UnauthorizedAccessException)
     {
-      Log.Info(@"User does not have sufficient rights to modify registry key HKLM\{0}", Key);
+      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0}", Key);
+    }
+  }
+
+  public static void SetREGSZRegKey(RegistryKey hklm, string Key, string Name, string Value)
+  {
+    try
+    {
+      using (RegistryKey subkey = hklm.CreateSubKey(Key))
+      {
+        if (subkey != null)
+        {
+          subkey.SetValue(Name, Value);
+        }
+      }
+    }
+    catch (SecurityException)
+    {
+      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0}", Key);
+    }
+    catch (UnauthorizedAccessException)
+    {
+      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0}", Key);
     }
   }
 
@@ -3133,11 +3172,11 @@ GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
     }
     catch (SecurityException)
     {
-      Log.Info("Not enough permissions to set registry keys for Hauppauge codecs");
+      Log.Error("Not enough permissions to set registry keys for Hauppauge codecs");
     }
     catch (UnauthorizedAccessException)
     {
-      Log.Info("No write permissions to set registry keys for Hauppauge codecs");
+      Log.Error("No write permissions to set registry keys for Hauppauge codecs");
     }
 
     // Set Cyberlink H.264 decoder to use dxva - great for Nvidia Geforce 6 & 7 cards 
@@ -3150,11 +3189,11 @@ GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
     }
     catch (SecurityException)
     {
-      Log.Info("Not enough permissions to set Cyberlink H.264 decoder to use dxva");
+      Log.Error("Not enough permissions to set Cyberlink H.264 decoder to use dxva");
     }
     catch (UnauthorizedAccessException)
     {
-      Log.Info("No write permissions to set Cyberlink H.264 decoder to use dxva");
+      Log.Error("No write permissions to set Cyberlink H.264 decoder to use dxva");
     }
 
     EnableS3Trick();
