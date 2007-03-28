@@ -107,6 +107,7 @@
     </None>
     <Page Include="TvGuide.xaml" />
     <Page Include="TvHome.xaml" />
+    <Page Include="TvRecorded.xaml" />
     <Page Include="TvSetup.xaml" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -149,6 +150,10 @@
     </Compile>
     <Compile Include="TvMediaPlayer.cs" />
     <Compile Include="TvPlayerCollection.cs" />
+    <Compile Include="TvRecorded.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>TvRecorded.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TvSetup.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>TvSetup.xaml</DependentUpon>

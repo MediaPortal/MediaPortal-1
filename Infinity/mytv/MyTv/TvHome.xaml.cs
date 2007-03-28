@@ -336,6 +336,8 @@ namespace MyTv
         }
       }
 
+      dlgMenu.Header = "On Now";
+      dlgMenu.SubTitle =DateTime.Now.ToString("HH:mm");
       dlgMenu.SelectedIndex = selected;
       dlgMenu.ShowDialog();
       if (dlgMenu.SelectedIndex < 0) return;//nothing selected
@@ -362,6 +364,7 @@ namespace MyTv
     /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     void OnRecordedClicked(object sender, EventArgs args)
     {
+      this.NavigationService.Navigate(new Uri("TvRecorded.xaml", UriKind.Relative));
     }
     /// <summary>
     /// Called when search button gets clicked

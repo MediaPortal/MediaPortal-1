@@ -33,33 +33,53 @@ namespace Dialogs
       this.AllowsTransparency = true;
       InitializeComponent();
     }
+    public string SubTitle
+    {
+      get
+      {
+        return labelDate.Content.ToString();
+      }
+      set
+      {
+         labelDate.Content = value;
+      }
+    }
 
+    public string Header
+    {
+      get
+      {
+        return labelHeader.Content.ToString();
+      }
+      set
+      {
+         labelHeader.Content = value;
+      }
+    }
     /// <summary>
     /// Shows this instance.
     /// </summary>
-    
+
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-      labelDate.Content = DateTime.Now.ToString("HH:mm");
-      gridContent.RowDefinitions.Clear();
-      gridContent.ColumnDefinitions.Clear();
       gridContent.Children.Clear();
       this.Visibility = Visibility.Visible;
       int maxColumns = 0;
+      Grid grid = new Grid();
       for (int row = 0; row < _menuItems.Count; ++row)
       {
         DialogMenuItem item = _menuItems[row];
-        gridContent.RowDefinitions.Add(new RowDefinition());
+        grid.RowDefinitions.Add(new RowDefinition());
         for (int i = 0; i < item.SubItems.Count; ++i)
         {
           if (i >= maxColumns)
           {
-            gridContent.ColumnDefinitions.Add(new ColumnDefinition());
+            grid.ColumnDefinitions.Add(new ColumnDefinition());
             maxColumns = i + 1;
           }
           Grid.SetColumn(item.SubItems[i], i);
           Grid.SetRow(item.SubItems[i], row);
-          gridContent.Children.Add(item.SubItems[i]);
+          grid.Children.Add(item.SubItems[i]);
           if ((item.SubItems[i] as Button) != null)
           {
             Button element = (Button)item.SubItems[i];
@@ -68,6 +88,7 @@ namespace Dialogs
           item.SubItems[i].MouseEnter += new MouseEventHandler(subItemMouseEnter);
         }
       }
+      gridContent.Children.Add(grid);
       if (_selectedIndex >= 0 && _selectedIndex < _menuItems.Count)
       {
         Keyboard.Focus(_menuItems[SelectedIndex].SubItems[0]);
@@ -199,6 +220,6 @@ namespace Dialogs
       SelectedIndex = -1;
       this.Visibility = Visibility.Hidden;
     }
-    
+
   }
 }
