@@ -134,6 +134,7 @@ namespace Dialogs
       Button b = new Button();
       b.Content = buttonName;
       b.Template = (ControlTemplate)Application.Current.Resources["MpButton"];
+      b.Height = 32;
       _subItems.Add(b);
     }
 

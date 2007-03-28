@@ -15,7 +15,7 @@ namespace MyTv
     /// Generates a thumbnail for a video file.
     /// </summary>
     /// <param name="mediaFileName">Name of the media file.</param>
-    public void GenerateThumbnail(string mediaFileName)
+    public bool GenerateThumbnail(string mediaFileName)
     {
       string thumbNail=System.IO.Path.ChangeExtension(mediaFileName,".png");
       if (!System.IO.File.Exists(thumbNail))
@@ -43,12 +43,14 @@ namespace MyTv
             }
             player.Stop();
             player.Close();
+            return true;
           }
           catch (Exception)
           {
           }
         }
       }
+      return false;
     }
   }
 }

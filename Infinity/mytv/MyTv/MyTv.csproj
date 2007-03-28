@@ -107,6 +107,7 @@
       <SubType>
       </SubType>
     </Page>
+    <Page Include="TvRecordedInfo.xaml" />
     <Page Include="TvSetup.xaml" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -153,6 +154,10 @@
     <Compile Include="TvRecorded.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>TvRecorded.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TvRecordedInfo.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>TvRecordedInfo.xaml</DependentUpon>
     </Compile>
     <Compile Include="TvSetup.xaml.cs">
       <SubType>Code</SubType>

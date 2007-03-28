@@ -43,6 +43,7 @@ namespace MyTv
     ViewMode _viewMode = ViewMode.List;
     SortMode _sortMode = SortMode.Date;
     private delegate void MediaPlayerErrorDelegate();
+    private delegate void UpdateListDelegate();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TvRecorded"/> class.
@@ -90,7 +91,6 @@ namespace MyTv
 
       LoadRecordings();
       Thread thumbNailThread = new Thread(new ThreadStart(CreateThumbnailsThread));
-      thumbNailThread.Priority = ThreadPriority.Lowest;
       thumbNailThread.Start();
 
     }
@@ -307,6 +307,51 @@ namespace MyTv
       if (b == null) return;
       Recording recording = b.Tag as Recording;
       if (recording == null) return;
+      MpMenu dlgMenu = new MpMenu();
+      Window w = Window.GetWindow(this);
+      dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+      dlgMenu.Owner = w;
+      dlgMenu.Items.Clear();
+      dlgMenu.Header = "Menu";
+      dlgMenu.SubTitle = "";
+      dlgMenu.Items.Add(new DialogMenuItem("Play recording"));
+      dlgMenu.Items.Add(new DialogMenuItem("Delete recording"));
+      dlgMenu.Items.Add(new DialogMenuItem("Settings"));
+      dlgMenu.ShowDialog();
+      if (dlgMenu.SelectedIndex < 0) return;//nothing selected
+      switch (dlgMenu.SelectedIndex)
+      {
+        case 0:
+          PlayRecording(recording);
+          break;
+        case 1:
+          DeleteRecording(recording);
+          break;
+        case 2:
+          {
+            TvRecordedInfo infopage = new TvRecordedInfo(recording);
+          this.NavigationService.Navigate(infopage);
+          }
+          break;
+      }
+    }
+    void DeleteRecording(Recording recording)
+    {
+      MpDialogYesNo dlgMenu = new MpDialogYesNo();
+      Window w = Window.GetWindow(this);
+      dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+      dlgMenu.Owner = w;
+      dlgMenu.Header = "Menu";
+      dlgMenu.Content = "Are you sure to delete this recording ?";
+      dlgMenu.ShowDialog();
+      if (dlgMenu.DialogResult == DialogResult.No) return;
+
+      TvServer server = new TvServer();
+      server.DeleteRecording(recording.IdRecording);
+      LoadRecordings();
+    }
+    void PlayRecording(Recording recording)
+    {
       if (!System.IO.File.Exists(recording.FileName))
       {
         MpDialogOk dlgError = new MpDialogOk();
@@ -475,11 +520,15 @@ namespace MyTv
     /// </summary>
     void CreateThumbnailsThread()
     {
+      System.Threading.Thread.CurrentThread.Priority = ThreadPriority.Lowest;
       IList recordings = Recording.ListAll();
       foreach (Recording rec in recordings)
       {
         ThumbnailGenerator generator = new ThumbnailGenerator();
-        generator.GenerateThumbnail(rec.FileName);
+        if (generator.GenerateThumbnail(rec.FileName))
+        {
+          buttonView.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new UpdateListDelegate(LoadRecordings));
+        }
       }
     }
     #region IComparer<Recording> Members
