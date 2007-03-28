@@ -118,6 +118,34 @@ namespace MyTv
     /// </summary>
     void OnSucceededToConnectToServer()
     {
+      WindowMediaPlayerCheck check = new WindowMediaPlayerCheck();
+      if (!check.IsInstalled)
+      {
+        MpDialogOk dlg = new MpDialogOk();
+        Window w = Window.GetWindow(this);
+        dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlg.Owner = w;
+        dlg.Title = "";
+        dlg.Header = "Error";
+        dlg.Content="Infinity needs Windows Media Player 10 or higher to playback video!";
+        dlg.ShowDialog();
+        return;
+      }
+      TsReaderCheck checkReader = new TsReaderCheck();
+      {
+        if (!checkReader.IsInstalled)
+        {
+          MpDialogOk dlg = new MpDialogOk();
+          Window w = Window.GetWindow(this);
+          dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+          dlg.Owner = w;
+          dlg.Title = "";
+          dlg.Header = "Error";
+          dlg.Content="Infinity needs TsReader.ax to be registered!";
+          dlg.ShowDialog();
+          return;
+        }
+      }
       UpdateInfoBox();
 
       if (TvPlayerCollection.Instance.Count > 0)

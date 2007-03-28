@@ -145,6 +145,7 @@
     </Compile>
     <Compile Include="ThumbnailGenerator.cs" />
     <Compile Include="Thumbs.cs" />
+    <Compile Include="TsReaderCheck.cs" />
     <Compile Include="TvGuide.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>TvGuide.xaml</DependentUpon>
@@ -164,6 +165,7 @@
       <DependentUpon>TvSetup.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserSettings.cs" />
+    <Compile Include="WindowMediaPlayerCheck.cs" />
     <Compile Include="WindowTaskbar.cs" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>
