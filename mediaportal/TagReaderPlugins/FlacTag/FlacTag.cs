@@ -46,7 +46,8 @@ namespace Tag.FLAC
       SeekTable = 3,
       VorbisComment = 4,
       CueSheet = 5,
-      //6-126 : reserved 
+      Picture = 6,
+      //7-126 : reserved 
       Invalid = 127,
     } ;
 
@@ -137,6 +138,15 @@ namespace Tag.FLAC
       public bool LastMetadataBlock;
       public int MetadataLength;
     }
+
+    private struct PictureInfoBlock
+    {
+      public long StreamPosition;
+      public bool LastMetadataBlock;
+      public int MetadataLength;
+      public int ImageType;
+      public byte[] CoverArt;
+    }
     #endregion
 
     #region Constants
@@ -156,6 +166,7 @@ namespace Tag.FLAC
     private SeekTableInfoBlock SeekTableBlock = new SeekTableInfoBlock();
     private VorbisCommentInfoBlock VorbisCommentsInfo = new VorbisCommentInfoBlock();
     private CueSheetInfoBlock CueSheetInfo = new CueSheetInfoBlock();
+    private PictureInfoBlock PictureInfo = new PictureInfoBlock();
 
     #endregion
 
@@ -255,7 +266,14 @@ namespace Tag.FLAC
 
     public override byte[] CoverArtImageBytes
     {
-      get { return GetBase64StringCommentValue("COVERART"); }
+      get { 
+        // Did we get the Coverart in a Vorbis comment
+        byte[] pic = GetBase64StringCommentValue("COVERART");
+        if (pic == null)
+          pic = PictureInfo.CoverArt;
+
+        return pic;
+      }
     }
 
     public override string FileURL
@@ -606,6 +624,22 @@ namespace Tag.FLAC
         return true;
       }
 
+      else if (blockType == (byte) BlockType.Picture)
+      {
+        // Have we already read the Picture block?  We only use the Front Cover (Type = 3 as default)
+        if (PictureInfo.ImageType == 3)
+        {
+          // Skip over it
+          AudioFileStream.Seek(metadataLength, SeekOrigin.Current);
+          metadataBlocksRead++;
+          return true;
+        }
+
+        ReadPictureBlock(metadataLength, isLastMetadataBlock);
+        metadataBlocksRead++;
+        return true;
+      }
+
       else if (blockType == (byte) BlockType.Invalid)
       {
         AudioFileStream.Seek(-4, SeekOrigin.Current);
@@ -759,6 +793,57 @@ namespace Tag.FLAC
 
       // Don't care about the cuesheet ATM so skip over it;
       AudioFileStream.Seek(blockLength, SeekOrigin.Current);
+    }
+
+    private void ReadPictureBlock(int blockLength, bool isLastMetadataBlock)
+    {
+      PictureInfo.StreamPosition = AudioFileStream.Position;
+      PictureInfo.LastMetadataBlock = isLastMetadataBlock;
+      PictureInfo.MetadataLength = blockLength;
+
+      byte[] buffer = new byte[4];
+      AudioFileStream.Read(buffer, 0, 4);
+      PictureInfo.ImageType = Utils.ReadSynchronizedData(buffer, 0, 4);
+
+      buffer = new byte[4];
+      AudioFileStream.Read(buffer, 0, 4);
+      int mimetypelength = Utils.ReadSynchronizedData(buffer, 0, 4);
+
+      buffer = new byte[mimetypelength];
+      AudioFileStream.Read(buffer, 0, mimetypelength);
+      string mimetype = Encoding.UTF8.GetString(buffer);
+
+      buffer = new byte[4];
+      AudioFileStream.Read(buffer, 0, 4);
+      int desclength = Utils.ReadSynchronizedData(buffer, 0, 4);
+
+      buffer = new byte[desclength];
+      AudioFileStream.Read(buffer, 0, desclength);
+      string picdesc = Encoding.UTF8.GetString(buffer);
+
+      buffer = new byte[4];
+      AudioFileStream.Read(buffer, 0, 4);
+      int width = Utils.ReadSynchronizedData(buffer, 0, 4);
+
+      buffer = new byte[4];
+      AudioFileStream.Read(buffer, 0, 4);
+      int height = Utils.ReadSynchronizedData(buffer, 0, 4);
+
+      buffer = new byte[4];
+      AudioFileStream.Read(buffer, 0, 4);
+      int colordepth = Utils.ReadSynchronizedData(buffer, 0, 4);
+
+      buffer = new byte[4];
+      AudioFileStream.Read(buffer, 0, 4);
+      int numcols = Utils.ReadSynchronizedData(buffer, 0, 4);
+
+      buffer = new byte[4];
+      AudioFileStream.Read(buffer, 0, 4);
+      int piclength = Utils.ReadSynchronizedData(buffer, 0, 4);
+
+      buffer = new byte[piclength];
+      AudioFileStream.Read(buffer, 0, piclength);
+      PictureInfo.CoverArt = buffer;
     }
 
     private byte[] GetBinaryCommentValue(string commentName)
