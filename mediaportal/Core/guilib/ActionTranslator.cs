@@ -32,15 +32,15 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Library
 {
-	// TODO: Change the variable name nodeGamepad to nodekey
-	
-	/// <summary>
-	/// The class that is responsible for translating the keys into actions.
-	/// </summary>
+  // TODO: Change the variable name nodeGamepad to nodekey
+
+  /// <summary>
+  /// The class that is responsible for translating the keys into actions.
+  /// </summary>
   public class ActionTranslator
   {
-    static ArrayList mapWindows=new ArrayList ();
-		
+    static ArrayList mapWindows = new ArrayList();
+
     /// <summary>
     /// Datastructure containing key/actiontype mapping.
     /// </summary>
@@ -49,7 +49,7 @@ namespace MediaPortal.GUI.Library
       public int eKeyChar;
       public int eKeyCode;
       public Action.ActionType eAction;
-      public string m_strSoundFile="";  
+      public string m_strSoundFile = "";
     };
 
     /// <summary>
@@ -58,9 +58,9 @@ namespace MediaPortal.GUI.Library
     public class WindowMap
     {
       public int iWindow;
-      public ArrayList mapButtons=new ArrayList(); 
-    };		
-		
+      public ArrayList mapButtons = new ArrayList();
+    };
+
     // singleton. Dont allow any instance of this class
     private ActionTranslator()
     {
@@ -82,52 +82,107 @@ namespace MediaPortal.GUI.Library
         XmlDocument doc = new XmlDocument();
         doc.Load(strFilename);
         // Check if it is a keymap
-        if (doc.DocumentElement==null) return false;
-        string strRoot=doc.DocumentElement.Name;
-        if (strRoot!="keymap") return false;
+        if (doc.DocumentElement == null) return false;
+        string strRoot = doc.DocumentElement.Name;
+        if (strRoot != "keymap") return false;
         // Create a new windowmap and fill it with the global actions
-        WindowMap map=new WindowMap();
-        map.iWindow=-1;
-        XmlNodeList list=doc.DocumentElement.SelectNodes("/keymap/global/action");
+        WindowMap map = new WindowMap();
+        map.iWindow = -1;
+        XmlNodeList list = doc.DocumentElement.SelectNodes("/keymap/global/action");
         foreach (XmlNode node in list)
         {
-          XmlNode nodeId=node.SelectSingleNode("id");
-          XmlNode nodeGamepad=node.SelectSingleNode("key");
-          XmlNode nodeSound=node.SelectSingleNode("sound");
-          MapAction(ref map,nodeId,nodeGamepad,nodeSound);
+          XmlNode nodeId = node.SelectSingleNode("id");
+          XmlNode nodeGamepad = node.SelectSingleNode("key");
+          XmlNode nodeSound = node.SelectSingleNode("sound");
+          MapAction(ref map, nodeId, nodeGamepad, nodeSound);
         }
-        if (map.mapButtons.Count>0)
+        if (map.mapButtons.Count > 0)
         {
           mapWindows.Add(map);
         }
         // For each window
-        XmlNodeList listWindows=doc.DocumentElement.SelectNodes("/keymap/window");
+        XmlNodeList listWindows = doc.DocumentElement.SelectNodes("/keymap/window");
         foreach (XmlNode nodeWindow in listWindows)
         {
-          XmlNode nodeWindowId=nodeWindow.SelectSingleNode("id");
-          if (null!=nodeWindowId)
+          XmlNode nodeWindowId = nodeWindow.SelectSingleNode("id");
+          if (null != nodeWindowId)
           {
-            map=new WindowMap();
-            map.iWindow=System.Int32.Parse(nodeWindowId.InnerText);
-            XmlNodeList listNodes=nodeWindow.SelectNodes("action");
+            map = new WindowMap();
+            map.iWindow = System.Int32.Parse(nodeWindowId.InnerText);
+            XmlNodeList listNodes = nodeWindow.SelectNodes("action");
             // Create a list of key/actiontype mappings
             foreach (XmlNode node in listNodes)
             {
-              XmlNode nodeId=node.SelectSingleNode("id");
-              XmlNode nodeGamepad=node.SelectSingleNode("key");
-              XmlNode nodeSound=node.SelectSingleNode("sound");
-              MapAction(ref map,nodeId,nodeGamepad,nodeSound);
+              XmlNode nodeId = node.SelectSingleNode("id");
+              XmlNode nodeGamepad = node.SelectSingleNode("key");
+              XmlNode nodeSound = node.SelectSingleNode("sound");
+              MapAction(ref map, nodeId, nodeGamepad, nodeSound);
             }
-            if (map.mapButtons.Count>0)
+            if (map.mapButtons.Count > 0)
             {
               mapWindows.Add(map);
             }
           }
         }
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
-        Log.Warn("exception loading keymap {0} err:{1} stack:{2}", strFilename, ex.Message,ex.StackTrace);
+        Log.Warn("exception loading keymap {0} err:{1} stack:{2}", strFilename, ex.Message, ex.StackTrace);
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Loads a supplementary keymap file and adds it to the map previously built from keymap.xml
+    /// </summary>
+    /// <returns>True if the load was successfull, false if it failed.</returns>
+    static public bool Load(string strFilename)
+    {
+
+      //mapWindows.Clear();
+      //string strFilename = Config.GetFile(Config.Dir.Config, "keymap.xml");
+      Log.Info("  Load supplementary key mapping from {0}", strFilename);
+      try
+      {
+        // Load the XML file
+        XmlDocument doc = new XmlDocument();
+        doc.Load(strFilename);
+        // Check if it is a keymap
+        if (doc.DocumentElement == null) return false;
+        string strRoot = doc.DocumentElement.Name;
+        if (strRoot != "keymap") return false;
+
+        // Create a new windowmap 
+        WindowMap map;
+
+        // For each window
+        XmlNodeList listWindows = doc.DocumentElement.SelectNodes("/keymap/window");
+        foreach (XmlNode nodeWindow in listWindows)
+        {
+          XmlNode nodeWindowId = nodeWindow.SelectSingleNode("id");
+          if (null != nodeWindowId)
+          {
+            map = new WindowMap();
+            map.iWindow = System.Int32.Parse(nodeWindowId.InnerText);
+            XmlNodeList listNodes = nodeWindow.SelectNodes("action");
+            // Create a list of key/actiontype mappings
+            foreach (XmlNode node in listNodes)
+            {
+              XmlNode nodeId = node.SelectSingleNode("id");
+              XmlNode nodeGamepad = node.SelectSingleNode("key");
+              XmlNode nodeSound = node.SelectSingleNode("sound");
+              MapAction(ref map, nodeId, nodeGamepad, nodeSound);
+            }
+            if (map.mapButtons.Count > 0)
+            {
+              mapWindows.Add(map);
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Warn("exception loading supplementary keymap {0} err:{1} stack:{2}", strFilename, ex.Message, ex.StackTrace);
       }
       return false;
     }
@@ -138,63 +193,63 @@ namespace MediaPortal.GUI.Library
     /// <param name="map">The windowmap that needs to be filled in.</param>
     /// <param name="nodeId">The id of the action</param>
     /// <param name="nodeGamepad">The key corresponding to the mapping.</param>
-    static void MapAction(ref WindowMap map, XmlNode nodeId,XmlNode nodeGamepad,XmlNode nodeSound)
+    static void MapAction(ref WindowMap map, XmlNode nodeId, XmlNode nodeGamepad, XmlNode nodeSound)
     {
-      if (null==nodeId) return;
-      button but=new button();
-      but.eAction=(Action.ActionType)System.Int32.Parse(nodeId.InnerText);
-      but.m_strSoundFile="";
-      
-      if (nodeSound!=null && nodeSound.InnerText!=null)
+      if (null == nodeId) return;
+      button but = new button();
+      but.eAction = (Action.ActionType)System.Int32.Parse(nodeId.InnerText);
+      but.m_strSoundFile = "";
+
+      if (nodeSound != null && nodeSound.InnerText != null)
       {
-        but.m_strSoundFile=nodeSound.InnerText;
+        but.m_strSoundFile = nodeSound.InnerText;
       }
 
-      if (nodeGamepad!=null)
+      if (nodeGamepad != null)
       {
-        string strButton=nodeGamepad.InnerText.ToLower();
-        if (strButton.Length==1)
+        string strButton = nodeGamepad.InnerText.ToLower();
+        if (strButton.Length == 1)
         {
           but.eKeyChar = (int)strButton[0];
-          but.eKeyCode=0;
+          but.eKeyCode = 0;
         }
         else
         {
-          but.eKeyChar=0;
-          strButton=strButton.ToUpper();
-          if (strButton=="F1") but.eKeyCode=  (int)Keys.F1;
-          if (strButton=="F2") but.eKeyCode=  (int)Keys.F2;
-          if (strButton=="F3") but.eKeyCode=  (int)Keys.F3;
-          if (strButton=="F4") but.eKeyCode=  (int)Keys.F4;
-          if (strButton=="F5") but.eKeyCode=  (int)Keys.F5;
-          if (strButton=="F6") but.eKeyCode=  (int)Keys.F6;
-          if (strButton=="F7") but.eKeyCode=  (int)Keys.F7;
-          if (strButton=="F8") but.eKeyCode=  (int)Keys.F8;
-          if (strButton=="F9") but.eKeyCode=  (int)Keys.F9;
-          if (strButton=="F10") but.eKeyCode=  (int)Keys.F10;
-          if (strButton=="F11") but.eKeyCode=  (int)Keys.F11;
-          if (strButton=="F12") but.eKeyCode=  (int)Keys.F12;
-          if (strButton=="BACKSPACE") but.eKeyCode=  (int)Keys.Back;
-          if (strButton=="TAB") but.eKeyCode=  (int)Keys.Tab;
-          if (strButton=="END") but.eKeyCode=  (int)Keys.End;
-          if (strButton=="INSERT") but.eKeyCode=  (int)Keys.Insert;
-          if (strButton=="HOME") but.eKeyCode=  (int)Keys.Home;
-          if (strButton=="PAGEUP") but.eKeyCode=  (int)Keys.PageUp;
-          if (strButton=="PAGEDOWN") but.eKeyCode=  (int)Keys.PageDown;
-          if (strButton=="LEFT") but.eKeyCode=  (int)Keys.Left;
-          if (strButton=="RIGHT") but.eKeyCode=  (int)Keys.Right;
-          if (strButton=="UP") but.eKeyCode=  (int)Keys.Up;
-          if (strButton=="DOWN") but.eKeyCode=  (int)Keys.Down;
-          if (strButton=="ENTER") but.eKeyCode=  (int)Keys.Enter;
-          if (strButton=="DELETE") but.eKeyCode=  (int)Keys.Delete;
-          if (strButton=="PAUSE") but.eKeyCode=  (int)Keys.Pause;
-          if (strButton=="PRINTSCREEN") but.eKeyCode=  (int)Keys.PrintScreen;
-          if (strButton=="ESCAPE") but.eKeyCode=  (int)Keys.Escape;
-          if (strButton=="ESC") but.eKeyCode=  (int)Keys.Escape;
-          if (strButton=="SPACE") 
+          but.eKeyChar = 0;
+          strButton = strButton.ToUpper();
+          if (strButton == "F1") but.eKeyCode = (int)Keys.F1;
+          if (strButton == "F2") but.eKeyCode = (int)Keys.F2;
+          if (strButton == "F3") but.eKeyCode = (int)Keys.F3;
+          if (strButton == "F4") but.eKeyCode = (int)Keys.F4;
+          if (strButton == "F5") but.eKeyCode = (int)Keys.F5;
+          if (strButton == "F6") but.eKeyCode = (int)Keys.F6;
+          if (strButton == "F7") but.eKeyCode = (int)Keys.F7;
+          if (strButton == "F8") but.eKeyCode = (int)Keys.F8;
+          if (strButton == "F9") but.eKeyCode = (int)Keys.F9;
+          if (strButton == "F10") but.eKeyCode = (int)Keys.F10;
+          if (strButton == "F11") but.eKeyCode = (int)Keys.F11;
+          if (strButton == "F12") but.eKeyCode = (int)Keys.F12;
+          if (strButton == "BACKSPACE") but.eKeyCode = (int)Keys.Back;
+          if (strButton == "TAB") but.eKeyCode = (int)Keys.Tab;
+          if (strButton == "END") but.eKeyCode = (int)Keys.End;
+          if (strButton == "INSERT") but.eKeyCode = (int)Keys.Insert;
+          if (strButton == "HOME") but.eKeyCode = (int)Keys.Home;
+          if (strButton == "PAGEUP") but.eKeyCode = (int)Keys.PageUp;
+          if (strButton == "PAGEDOWN") but.eKeyCode = (int)Keys.PageDown;
+          if (strButton == "LEFT") but.eKeyCode = (int)Keys.Left;
+          if (strButton == "RIGHT") but.eKeyCode = (int)Keys.Right;
+          if (strButton == "UP") but.eKeyCode = (int)Keys.Up;
+          if (strButton == "DOWN") but.eKeyCode = (int)Keys.Down;
+          if (strButton == "ENTER") but.eKeyCode = (int)Keys.Enter;
+          if (strButton == "DELETE") but.eKeyCode = (int)Keys.Delete;
+          if (strButton == "PAUSE") but.eKeyCode = (int)Keys.Pause;
+          if (strButton == "PRINTSCREEN") but.eKeyCode = (int)Keys.PrintScreen;
+          if (strButton == "ESCAPE") but.eKeyCode = (int)Keys.Escape;
+          if (strButton == "ESC") but.eKeyCode = (int)Keys.Escape;
+          if (strButton == "SPACE")
           {
-            but.eKeyCode=  0;
-            but.eKeyChar= 32;
+            but.eKeyCode = 0;
+            but.eKeyChar = 32;
           }
         }
       }
@@ -212,17 +267,17 @@ namespace MediaPortal.GUI.Library
     static public bool GetAction(int iWindow, Key key, ref Action action)
     {
       // try to get the action from the current window
-      if (key==null) return false;
+      if (key == null) return false;
       string strSoundFile;
       int wAction = GetActionCode(iWindow, key, out strSoundFile);
       // if it's invalid, try to get it from the global map
       if (wAction == 0)
-        wAction = GetActionCode(-1, key,out strSoundFile);
-      if (wAction==0) return false;
+        wAction = GetActionCode(-1, key, out strSoundFile);
+      if (wAction == 0) return false;
       // Now fill our action structure
       action.wID = (Action.ActionType)wAction;
-      action.m_key    = key;
-      action.m_SoundFileName=strSoundFile;
+      action.m_key = key;
+      action.m_SoundFileName = strSoundFile;
       return true;
     }
 
@@ -232,27 +287,27 @@ namespace MediaPortal.GUI.Library
     /// <param name="wWindow">The window id.</param>
     /// <param name="key">The key.</param>
     /// <returns>The action if it is found in the map, 0 if not.</returns>
-    static int GetActionCode(int wWindow,  Key key,out string strSoundFile)
+    static int GetActionCode(int wWindow, Key key, out string strSoundFile)
     {
-      strSoundFile="";
-      if (key==null) return 0;
-      for (int iw=0; iw < mapWindows.Count;++iw)
+      strSoundFile = "";
+      if (key == null) return 0;
+      for (int iw = 0; iw < mapWindows.Count; ++iw)
       {
-        WindowMap window =(WindowMap )mapWindows[iw];
+        WindowMap window = (WindowMap)mapWindows[iw];
         if (window.iWindow == wWindow)
         {
-          for (int ib=0; ib < window.mapButtons.Count;ib++)
+          for (int ib = 0; ib < window.mapButtons.Count; ib++)
           {
-            button but =(button)window.mapButtons[ib];
-          
-            if (but.eKeyChar==key.KeyChar && key.KeyChar>0)
+            button but = (button)window.mapButtons[ib];
+
+            if (but.eKeyChar == key.KeyChar && key.KeyChar > 0)
             {
-              strSoundFile=but.m_strSoundFile;
+              strSoundFile = but.m_strSoundFile;
               return (int)but.eAction;
             }
-            if (but.eKeyCode==key.KeyCode&& key.KeyCode>0)
+            if (but.eKeyCode == key.KeyCode && key.KeyCode > 0)
             {
-              strSoundFile=but.m_strSoundFile;
+              strSoundFile = but.m_strSoundFile;
               return (int)but.eAction;
             }
           }
@@ -271,15 +326,15 @@ namespace MediaPortal.GUI.Library
     static public bool GetActionDetail(int wWindow, Action action)
     {
       if (action.wID == 0) return false;
-      for (int iw=0; iw < mapWindows.Count;++iw)
+      for (int iw = 0; iw < mapWindows.Count; ++iw)
       {
-        WindowMap window =(WindowMap )mapWindows[iw];
+        WindowMap window = (WindowMap)mapWindows[iw];
         if (window.iWindow == wWindow)
         {
-          for (int ib=0; ib < window.mapButtons.Count;ib++)
+          for (int ib = 0; ib < window.mapButtons.Count; ib++)
           {
-            button but =(button)window.mapButtons[ib];
-          
+            button but = (button)window.mapButtons[ib];
+
             if (but.eAction == (Action.ActionType)action.wID)
             {
               action.SoundFileName = but.m_strSoundFile;
@@ -290,12 +345,14 @@ namespace MediaPortal.GUI.Library
       }
       return false;
     }
-    static public bool HasKeyMapped (int iWindow, Key key)
+    static public bool HasKeyMapped(int iWindow, Key key)
     {
       string strSoundFile;
       int wAction = GetActionCode(iWindow, key, out strSoundFile);
-      if (wAction==0) return false;
+      if (wAction == 0) return false;
       return true;
     }
   }
 }
+
+ 	  	 
