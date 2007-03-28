@@ -1520,10 +1520,6 @@ namespace TvPlugin
       case 601: // RecordNow
          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORD, GUIWindowManager.ActiveWindow, 0, 0, 0, 0, null);
          this.OnMessage(msg);
-         // msg.SendToTargetWindow = true;
-         // msg.TargetWindowId = (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN;
-         // GUIGraphicsContext.SendMessage(msg);
-         // return;
           break;
 
       }
