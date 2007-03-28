@@ -32,7 +32,6 @@ namespace MyTv
   public partial class TvHome : System.Windows.Controls.Page//System.Windows.Window
   {
     #region variables
-    TvMediaPlayer _mediaPlayer;
     private delegate void StartTimeShiftingDelegate(Channel channel);
     private delegate void EndTimeShiftingDelegate(TvResult result, VirtualCard card);
     private delegate void SeekToEndDelegate();
@@ -120,26 +119,16 @@ namespace MyTv
     void OnSucceededToConnectToServer()
     {
       UpdateInfoBox();
-      if (ChannelNavigator.Instance.Card != null)
+
+      if (TvPlayerCollection.Instance.Count > 0)
       {
-        if (ChannelNavigator.Instance.Card.IsTimeShifting)
-        {
-          Uri uri = new Uri(ChannelNavigator.Instance.Card.TimeShiftFileName, UriKind.Absolute);
-          for (int i = 0; i < TvPlayerCollection.Instance.Count; ++i)
-          {
-            if (TvPlayerCollection.Instance[i].Source == uri)
-            {
-              _mediaPlayer = TvPlayerCollection.Instance[i];
-              VideoDrawing videoDrawing = new VideoDrawing();
-              videoDrawing.Player = _mediaPlayer;
-              videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
-              DrawingBrush videoBrush = new DrawingBrush();
-              videoBrush.Drawing = videoDrawing;
-              videoWindow.Fill = videoBrush;
-              break;
-            }
-          }
-        }
+        MediaPlayer player = TvPlayerCollection.Instance[0];
+        VideoDrawing videoDrawing = new VideoDrawing();
+        videoDrawing.Player = player;
+        videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
+        DrawingBrush videoBrush = new DrawingBrush();
+        videoBrush.Drawing = videoDrawing;
+        videoWindow.Fill = videoBrush;
       }
     }
 
@@ -202,11 +191,10 @@ namespace MyTv
     /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     void OnTvOnOff(object sender, EventArgs args)
     {
-      if (_mediaPlayer != null)
+      if (TvPlayerCollection.Instance.Count!=0)
       {
         videoWindow.Fill = new SolidColorBrush(Color.FromArgb(0xff, 0, 0, 0));
-        _mediaPlayer.Dispose(true);
-        _mediaPlayer = null;
+        TvPlayerCollection.Instance.DisposeAll();
       }
       else
       {
@@ -279,7 +267,7 @@ namespace MyTv
         {
           // note: it could be possible we're watching a stream another user is timeshifting...
           // TODO: add user check
-          if (channelsTimeshifting.Count == 1 && _mediaPlayer != null)
+          if (channelsTimeshifting.Count == 1 && TvPlayerCollection.Instance.Count !=0)
           {
             checkChannelState = false;
           }
@@ -413,27 +401,26 @@ namespace MyTv
     /// <param name="card">The card.</param>
     private void OnStartTimeShiftingResult(TvResult succeeded, VirtualCard card)
     {
+      videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
       if (succeeded == TvResult.Succeeded)
       {
         //timeshifting worked, now view the channel
         ChannelNavigator.Instance.Card = card;
         //do we already have a media player ?
         Uri uri = new Uri(card.TimeShiftFileName, UriKind.Absolute);
-        videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-        if (_mediaPlayer != null)
+        if (TvPlayerCollection.Instance.Count != 0)
         {
-          _mediaPlayer.Dispose(false);
-          _mediaPlayer = null;
+          TvPlayerCollection.Instance.DisposeAll();
         }
 
         //create a new media player 
-        _mediaPlayer = TvPlayerCollection.Instance.Get(card, uri);
-        _mediaPlayer.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
-        _mediaPlayer.MediaOpened += new EventHandler(_mediaPlayer_MediaOpened);
+        MediaPlayer player = TvPlayerCollection.Instance.Get(card, uri);
+        player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
+        player.MediaOpened += new EventHandler(_mediaPlayer_MediaOpened);
 
         //create video drawing which draws the video in the video window
         VideoDrawing videoDrawing = new VideoDrawing();
-        videoDrawing.Player = _mediaPlayer;
+        videoDrawing.Player = player;
         videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
         DrawingBrush videoBrush = new DrawingBrush();
         videoBrush.Drawing = videoDrawing;
@@ -444,10 +431,9 @@ namespace MyTv
       else
       {
         //close media player
-        if (_mediaPlayer != null)
+        if (TvPlayerCollection.Instance.Count != 0)
         {
-          _mediaPlayer.Dispose(true);
-          _mediaPlayer = null;
+          TvPlayerCollection.Instance.DisposeAll();
         }
         //tun tv button off
         buttonTvOnOff.IsChecked = false;
@@ -502,16 +488,20 @@ namespace MyTv
     #region media player events & dispatcher methods
     void OnSeekToEnd()
     {
-      if (_mediaPlayer.NaturalDuration.HasTimeSpan)
+      if (TvPlayerCollection.Instance.Count != 0)
       {
-        TimeSpan duration = _mediaPlayer.NaturalDuration.TimeSpan;
-        _mediaPlayer.Position = duration;
-      }
-      //set tv button on
-      buttonTvOnOff.IsChecked = true;
+        MediaPlayer player = TvPlayerCollection.Instance[0];
+        if (player.NaturalDuration.HasTimeSpan)
+        {
+          TimeSpan duration = player.NaturalDuration.TimeSpan;
+          player.Position = duration;
+        }
+        //set tv button on
+        buttonTvOnOff.IsChecked = true;
 
-      //update screen
-      UpdateInfoBox();
+        //update screen
+        UpdateInfoBox();
+      }
     }
 
     /// <summary>
@@ -520,8 +510,11 @@ namespace MyTv
     /// </summary>
     void OnMediaPlayerError()
     {
+
+      if (TvPlayerCollection.Instance.Count == 0) return;
+      TvMediaPlayer player = TvPlayerCollection.Instance[0];
       videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-      if (_mediaPlayer.HasError)
+      if (player.HasError)
       {
         MpDialogOk dlgError = new MpDialogOk();
         Window w = Window.GetWindow(this);
@@ -529,11 +522,10 @@ namespace MyTv
         dlgError.Owner = w;
         dlgError.Title = "Cannot open file";
         dlgError.Header = "Error";
-        dlgError.Content = "Unable to open the timeshifting file " + _mediaPlayer.ErrorMessage;
+        dlgError.Content = "Unable to open the timeshifting file " + player.ErrorMessage;
         dlgError.ShowDialog();
       }
-      _mediaPlayer.Dispose(true);
-      _mediaPlayer = null;
+      TvPlayerCollection.Instance.DisposeAll();
 
       //set tv button on
       buttonTvOnOff.IsChecked = false;

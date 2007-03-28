@@ -76,26 +76,16 @@ namespace MyTv
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       Keyboard.Focus(buttonView);
 
-      if (ChannelNavigator.Instance.Card != null)
+
+      if (TvPlayerCollection.Instance.Count > 0)
       {
-        if (ChannelNavigator.Instance.Card.IsTimeShifting)
-        {
-          Uri uri = new Uri(ChannelNavigator.Instance.Card.TimeShiftFileName, UriKind.Absolute);
-          for (int i = 0; i < TvPlayerCollection.Instance.Count; ++i)
-          {
-            if (TvPlayerCollection.Instance[i].Source == uri)
-            {
-              MediaPlayer player = TvPlayerCollection.Instance[i];
-              VideoDrawing videoDrawing = new VideoDrawing();
-              videoDrawing.Player = player;
-              videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
-              DrawingBrush videoBrush = new DrawingBrush();
-              videoBrush.Drawing = videoDrawing;
-              videoWindow.Fill = videoBrush;
-              break;
-            }
-          }
-        }
+        MediaPlayer player = TvPlayerCollection.Instance[0];
+        VideoDrawing videoDrawing = new VideoDrawing();
+        videoDrawing.Player = player;
+        videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
+        DrawingBrush videoBrush = new DrawingBrush();
+        videoBrush.Drawing = videoDrawing;
+        videoWindow.Fill = videoBrush;
       }
 
       LoadRecordings();
