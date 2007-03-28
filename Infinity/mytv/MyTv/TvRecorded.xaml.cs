@@ -40,6 +40,7 @@ namespace MyTv
     };
     ViewMode _viewMode = ViewMode.List;
     SortMode _sortMode = SortMode.Date;
+    private delegate void MediaPlayerErrorDelegate();
 
     public TvRecorded()
     {
@@ -93,6 +94,12 @@ namespace MyTv
 
       LoadRecordings();
     }
+    /// <summary>
+    /// Gets the content for right label of each recording.
+    /// This depends on the current sort mode
+    /// </summary>
+    /// <param name="recording">The recording.</param>
+    /// <returns></returns>
     string GetContentForRightLabel(Recording recording)
     {
       switch (_sortMode)
@@ -124,8 +131,32 @@ namespace MyTv
       }
       return "";
     }
+    /// <summary>
+    /// Loads the recordings and shows them onscreen.
+    /// </summary>
     void LoadRecordings()
     {
+      switch (_sortMode)
+      {
+        case SortMode.Channel:
+          buttonSort.Content = "Sort:Channel";
+          break;
+        case SortMode.Date:
+          buttonSort.Content = "Sort:Date";
+          break;
+        case SortMode.Duration:
+          buttonSort.Content = "Sort:Duration";
+          break;
+        case SortMode.Genre:
+          buttonSort.Content = "Sort:Genre";
+          break;
+        case SortMode.Title:
+          buttonSort.Content = "Sort:Title";
+          break;
+        case SortMode.Watched:
+          buttonSort.Content = "Sort:Watched";
+          break;
+      }
       Grid grid = new Grid();
       gridList.Children.Clear();
       IList recordings = Recording.ListAll();
@@ -254,6 +285,7 @@ namespace MyTv
         button.Tag = recording;
         button.GotFocus += new RoutedEventHandler(button_GotFocus);
         button.MouseEnter += new MouseEventHandler(OnMouseEnter);
+        button.Click += new RoutedEventHandler(OnRecordingClicked);
         //label.Style = (Style)Application.Current.Resources["LabelNormalStyleWhite"];
         Grid.SetColumn(button, 0);
         Grid.SetRow(button, row);
@@ -264,6 +296,79 @@ namespace MyTv
       gridList.VerticalAlignment = VerticalAlignment.Top;
     }
 
+    /// <summary>
+    /// Called when user has clicked on a recording
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+    void OnRecordingClicked(object sender, RoutedEventArgs e)
+    {
+      Button b = sender as Button;
+      if (b == null) return;
+      Recording recording = b.Tag as Recording;
+      if (recording == null) return;
+      if (!System.IO.File.Exists(recording.FileName))
+      {
+        MpDialogOk dlgError = new MpDialogOk();
+        Window w = Window.GetWindow(this);
+        dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgError.Owner = w;
+        dlgError.Title = "Cannot open file";
+        dlgError.Header = "Error";
+        dlgError.Content = "File not found " + recording.FileName;
+        dlgError.ShowDialog();
+        return;
+      }
+      videoWindow.Fill = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+      TvPlayerCollection.Instance.DisposeAll();
+      Uri uri = new Uri(recording.FileName, UriKind.Absolute);
+      TvMediaPlayer player = TvPlayerCollection.Instance.Get(null, uri);
+      player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
+
+      //create video drawing which draws the video in the video window
+      VideoDrawing videoDrawing = new VideoDrawing();
+      videoDrawing.Player = player;
+      videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
+      DrawingBrush videoBrush = new DrawingBrush();
+      videoBrush.Drawing = videoDrawing;
+      videoWindow.Fill = videoBrush;
+      videoDrawing.Player.Play();
+    }
+    /// <summary>
+    /// Handles the MediaFailed event of the _mediaPlayer control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.Windows.Media.ExceptionEventArgs"/> instance containing the event data.</param>
+    void _mediaPlayer_MediaFailed(object sender, ExceptionEventArgs e)
+    {
+      // media player failed to open file
+      // show error dialog (via dispatcher)
+      buttonView.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
+    }
+
+    /// <summary>
+    /// Called when media player has an error condition
+    /// show messagebox to user and close media playback
+    /// </summary>
+    void OnMediaPlayerError()
+    {
+      videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+      if (TvPlayerCollection.Instance.Count > 0)
+      {
+        if (TvPlayerCollection.Instance[0].HasError)
+        {
+          MpDialogOk dlgError = new MpDialogOk();
+          Window w = Window.GetWindow(this);
+          dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+          dlgError.Owner = w;
+          dlgError.Title = "Cannot open file";
+          dlgError.Header = "Error";
+          dlgError.Content = "Unable to open the file " + TvPlayerCollection.Instance[0].ErrorMessage;
+          dlgError.ShowDialog();
+        }
+      }
+      TvPlayerCollection.Instance.DisposeAll();
+    }
     void button_GotFocus(object sender, RoutedEventArgs e)
     {
       Button b = sender as Button;
@@ -284,6 +389,11 @@ namespace MyTv
       g.Width = ((Button)(g.Parent)).ActualWidth;
     }
 
+    /// <summary>
+    /// Called when view button gets clicked
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     void OnViewClicked(object sender, RoutedEventArgs e)
     {
       switch (_viewMode)
@@ -298,6 +408,12 @@ namespace MyTv
       LoadRecordings();
     }
 
+    /// <summary>
+    /// Called when sort button is clicked
+    /// show sort dialog-menu
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     void OnSortClicked(object sender, RoutedEventArgs e)
     {
       MpMenu dlgMenu = new MpMenu();
@@ -322,6 +438,14 @@ namespace MyTv
 
     #region IComparer<Recording> Members
 
+    /// <summary>
+    /// Compares two objects and returns a value indicating whether one is less than, equal to, or greater than the other.
+    /// </summary>
+    /// <param name="x">The first object to compare.</param>
+    /// <param name="y">The second object to compare.</param>
+    /// <returns>
+    /// Value Condition Less than zerox is less than y.Zerox equals y.Greater than zerox is greater than y.
+    /// </returns>
     public int Compare(Recording x, Recording y)
     {
       switch (_sortMode)

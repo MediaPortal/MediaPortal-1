@@ -83,6 +83,23 @@ namespace MyTv
         return _players.Count;
       }
     }
+    /// <summary>
+    /// Disposes all players
+    /// </summary>
+    public void DisposeAll()
+    {
+      List<TvMediaPlayer> players = new List<TvMediaPlayer>();
+      foreach (TvMediaPlayer player in _players)
+      {
+        players.Add(player);
+      }
+
+      foreach (TvMediaPlayer player in players)
+      {
+        player.Dispose(true);
+      }
+      _players.Clear();
+    }
     #endregion
   }
 }

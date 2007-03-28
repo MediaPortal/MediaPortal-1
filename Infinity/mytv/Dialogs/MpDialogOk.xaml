@@ -43,7 +43,7 @@
       <Label x:Name="labelTitle" Width="78" Height="38.898" Content="18:09" FontFamily="Segoe Media Center" FontSize="24" FontWeight="Bold" Foreground="#FF5995D7" Canvas.Left="372" Canvas.Top="6.855"/>
 
       <Button x:Name="buttonClose" Style="{DynamicResource MpCloseButton}" Width="45" Height="43" Canvas.Left="466" Canvas.Top="15.608" Click="OnCloseClicked" MouseEnter="subItemMouseEnter"  />
-      <TextBlock x:Name="textBox"  Width="472" Height="250" Canvas.Left="28" Canvas.Top="63" FontFamily="Segoe" FontSize="28" FontWeight="Normal" >asdsa</TextBlock>
+      <TextBlock x:Name="textBox"  Width="472" Height="250" Canvas.Left="28" Canvas.Top="63" FontFamily="Segoe" FontSize="28" FontWeight="Normal" Foreground="White" >asdsa</TextBlock>
     </Canvas>
   </Grid>
 </Window>

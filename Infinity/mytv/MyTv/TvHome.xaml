@@ -68,18 +68,10 @@
         <Rectangle Grid.Column="0" Grid.Row="0" Grid.RowSpan="12" Grid.ColumnSpan="6" x:Name="videoWindow" RadiusX="4" RadiusY="4" Fill="Black" StrokeThickness="14" Stroke="#FF1253A3"  ></Rectangle>
         <ProgressBar Template="{StaticResource MpProgressBar}" Grid.Column="0" Grid.Row="12" Grid.ColumnSpan="6" x:Name="progressBar" Width="400" Height="30"  ></ProgressBar>
 
-        <Label Grid.Column="0" Grid.Row="13" Grid.ColumnSpan="9"  x:Name="labelTitle" Style="{StaticResource LabelNormalStyle}">
-          CSI Miami
-        </Label>
-        <Label Grid.Column="0" Grid.Row="14" Grid.ColumnSpan="6" x:Name="labelStart" Style="{StaticResource LabelNormalStyle}">
-          20:30-21:00
-        </Label>
-        <Label Grid.Column="6" Grid.Row="14" Grid.ColumnSpan="3" x:Name="labelChannel" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Right" Margin="0,0,50,0">
-          Nederland 2
-        </Label>
-        <TextBlock Grid.Column="0" Grid.Row="15" Grid.RowSpan="4" Grid.ColumnSpan="9" x:Name="labelDescription" Style="{StaticResource TextBlockNormalStyle}" >
-          Een team van forensische detectives zorgt ervoor dat geen moord onopgelost blijft onder de tropische zon van Miami. In een verlaten woning wordt het lichaam gevonden van een politicus. Hij had zich weinig geliefd gemaakt omdat hij een plan steunde voor grondonteigening.
-        </TextBlock>
+        <Label Grid.Column="0" Grid.Row="13" Grid.ColumnSpan="9"  x:Name="labelTitle" Style="{StaticResource LabelNormalStyle}"/>
+        <Label Grid.Column="0" Grid.Row="14" Grid.ColumnSpan="6" x:Name="labelStart" Style="{StaticResource LabelNormalStyle}"/>
+        <Label Grid.Column="6" Grid.Row="14" Grid.ColumnSpan="3" x:Name="labelChannel" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Right" Margin="0,0,50,0"/>
+        <TextBlock Grid.Column="0" Grid.Row="15" Grid.RowSpan="4" Grid.ColumnSpan="9" x:Name="labelDescription" Style="{StaticResource TextBlockNormalStyle}" />
       </Grid>
     </DockPanel>
   </Grid>

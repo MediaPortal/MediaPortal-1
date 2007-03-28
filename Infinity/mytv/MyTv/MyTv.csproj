@@ -107,7 +107,9 @@
     </None>
     <Page Include="TvGuide.xaml" />
     <Page Include="TvHome.xaml" />
-    <Page Include="TvRecorded.xaml" />
+    <Page Include="TvRecorded.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="TvSetup.xaml" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>

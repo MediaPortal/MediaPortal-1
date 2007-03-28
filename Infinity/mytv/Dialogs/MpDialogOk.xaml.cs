@@ -40,6 +40,7 @@ namespace Dialogs
       labelTitle.Content = Title;
       textBox.Text = Content;
       textBox.TextWrapping = TextWrapping.WrapWithOverflow;
+      Keyboard.Focus(buttonClose);
     }
     void subItemMouseEnter(object sender, MouseEventArgs e)
     {
