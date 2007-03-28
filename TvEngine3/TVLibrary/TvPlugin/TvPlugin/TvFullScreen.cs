@@ -1375,6 +1375,8 @@ namespace TvPlugin
         dlg.AddLocalizedString(492); // Audio language menu
       }
       dlg.AddLocalizedString(11000); // Crop settings
+      dlg.AddLocalizedString(100748);// Program Information
+      dlg.AddLocalizedString(601); //Record Now
       dlg.AddLocalizedString(970); // Previous window
 
       _isDialogVisible = true;
@@ -1509,7 +1511,33 @@ namespace TvPlugin
           cropSettings.DoModal(GetID);
           _isDialogVisible = false;
           break;
+
+      case 100748: // Show Program Info
+          ShowProgramInfo();
+          break;
+
+          
+      case 601: // RecordNow
+         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORD, GUIWindowManager.ActiveWindow, 0, 0, 0, 0, null);
+         this.OnMessage(msg);
+         // msg.SendToTargetWindow = true;
+         // msg.TargetWindowId = (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN;
+         // GUIGraphicsContext.SendMessage(msg);
+         // return;
+          break;
+
       }
+    }
+
+    void ShowProgramInfo()
+    {
+        Program currentProgram = TVHome.Navigator.GetChannel(TVHome.Card.ChannelName).CurrentProgram;
+        
+        if (currentProgram == null)
+            return;
+
+        TVProgramInfo.CurrentProgram = currentProgram;
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
     }
 
     void ShowAspectRatioMenu()
