@@ -112,6 +112,7 @@ namespace MediaPortal.GUI.Music
 
     #endregion
 
+    #region Skin controls
     [SkinControlAttribute((int)ControlIDs.LBL_CAPTION)]             protected GUILabelControl LblCaption = null;
     [SkinControlAttribute((int)ControlIDs.IMG_COVERART)]            protected GUIImage ImgCoverArt = null;
     [SkinControlAttribute((int)ControlIDs.PROG_TRACK)]              protected GUIProgressControl ProgTrack = null;
@@ -133,6 +134,7 @@ namespace MediaPortal.GUI.Music
     [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK1)]   protected GUIImageList ImgListFamousTrack1 = null;
     [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK2)]   protected GUIImageList ImgListFamousTrack2 = null;
     [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK3)]   protected GUIImageList ImgListFamousTrack3 = null;
+    #endregion
 
     private const int DISPLAY_LISTITEM_COUNT = 3;
 
@@ -220,10 +222,17 @@ namespace MediaPortal.GUI.Music
       if (GUIWindowManager.ActiveWindow == GetID)
       {
         Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackEnded for {0}", filename);
-        Action action = new Action();
-        action.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
-        GUIGraphicsContext.OnAction(action);
-      }      
+
+        //PlayList currentPlaylist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+        //if (currentPlaylist.AllPlayed())
+        if (!g_Player.Playing && NextTrackTag == null)
+        {
+          //Log.Debug("GUIMusicPlayingNow: All playlist items played - returning to previous window");
+          Action action = new Action();
+          action.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
+          GUIGraphicsContext.OnAction(action);
+        }
+      }
     }
 
     void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
