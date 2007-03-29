@@ -91,5 +91,14 @@
       <posY>230</posY>
       <width>180</width>
     </control>
+		<control>
+			<type>label</type>
+			<id>106</id>
+			<posX>56</posX>
+			<posY>250</posY>
+			<align>left</align>
+			<font>font14</font>
+			<label></label>
+		</control>
   </controls>
 </window>
