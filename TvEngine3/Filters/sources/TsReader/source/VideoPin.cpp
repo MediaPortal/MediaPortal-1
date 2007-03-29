@@ -120,6 +120,7 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
 	AM_SEEKING_CanGetDuration |
   AM_SEEKING_CanGetCurrentPos |
 	AM_SEEKING_Source;
+  m_bSeeking=false;
 }
 
 CVideoPin::~CVideoPin()
@@ -214,6 +215,7 @@ HRESULT CVideoPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
 HRESULT CVideoPin::CheckConnect(IPin *pReceivePin)
 {
   HRESULT hr;
+#ifndef DEBUG
   PIN_INFO pinInfo;
   FILTER_INFO filterInfo;
   hr=pReceivePin->QueryPinInfo(&pinInfo);
@@ -229,6 +231,7 @@ HRESULT CVideoPin::CheckConnect(IPin *pReceivePin)
   {
     return E_FAIL;
   }
+#endif
   return CBaseOutputPin::CheckConnect(pReceivePin);
 }
 HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
@@ -266,13 +269,14 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
   REFERENCE_TIME durTime;
   m_pTsReaderFilter->GetDuration(&durTime);
   m_rtDuration=CRefTime(durTime);
-  if (m_pTsReaderFilter->IsSeeking())
+  if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
 	{
 		Sleep(1);
     pSample->SetTime(NULL,NULL); 
 	  pSample->SetActualDataLength(0);
 		return NOERROR;
 	}
+  CAutoLock lock(&m_bufferLock);
 	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   CBuffer* buffer=demux.GetVideo();
   if (m_bDiscontinuity)
@@ -293,7 +297,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       pSample->SetSyncPoint(TRUE);
       float fTime=(float)cRefTime.Millisecs();
       fTime/=1000.0f;
-   //   LogDebug("vid:%f", fTime);
+      //LogDebug("vid:%f", fTime);
     }
     else
     {
@@ -308,7 +312,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
   else
   {
     LogDebug("vid:no buffer");
-	  pSample->SetActualDataLength(0);
+    pSample->SetDiscontinuity(TRUE);
 	  pSample->SetActualDataLength(0);
     pSample->SetTime(NULL,NULL);  
   }
@@ -411,47 +415,46 @@ STDMETHODIMP CVideoPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LON
 
 void CVideoPin::UpdateFromSeek()
 {
-  //The solution is to designate one of the pins to control seeking and to ignore seek commands received by the other pin.
-  //After the seek command, however, both pins should flush data. To complicate matters further,
-  //the seek command happens on the application thread, not the streaming thread. Therefore, you 
-  //must make certain that neither pin is blocked and waiting for a Receive call to return, 
-  //or it might cause a deadlock.
+
+  CRefTime rtSeek=m_rtStart;
+  float seekTime=(float)rtSeek.Millisecs();
+  seekTime/=1000.0f;
+  LogDebug("vid seek to %f", seekTime);
+  m_bSeeking=true;
   while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
-    CRefTime rtSeek=m_rtStart;
-    float seekTime=(float)rtSeek.Millisecs();
-    seekTime/=1000.0f;
-    LogDebug("vid seek to %f", seekTime);
-    if (ThreadExists()) 
-    {
-        // next time around the loop, the worker thread will
-        // pick up the position change.
-        // We need to flush all the existing data - we must do that here
-        // as our thread will probably be blocked in GetBuffer otherwise
-        
-        if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
-        {
-          m_pTsReaderFilter->SeekStart();
-        }
-        HRESULT hr=DeliverBeginFlush();
-        LogDebug("vid:beginflush:%x",hr);
-        // make sure we have stopped pushing
-        Stop();
-        if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
-        {
-          m_pTsReaderFilter->Seek(CRefTime(m_rtStart));
-        }
-        // complete the flush
-        hr=DeliverEndFlush();
-        LogDebug("vid:endflush:%x",hr);
-        
-        if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
-        {
-          m_pTsReaderFilter->SeekDone();
-        }
-        // restart
-        m_rtStart=rtSeek;
-        Run();
-    }
+  CAutoLock lock(&m_bufferLock);
+  if (ThreadExists()) 
+  {
+      // next time around the loop, the worker thread will
+      // pick up the position change.
+      // We need to flush all the existing data - we must do that here
+      // as our thread will probably be blocked in GetBuffer otherwise
+      
+      if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
+      {
+        m_pTsReaderFilter->SeekStart();
+      }
+      HRESULT hr=DeliverBeginFlush();
+      LogDebug("vid:beginflush:%x",hr);
+      // make sure we have stopped pushing
+      Stop();
+      if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
+      {
+        m_pTsReaderFilter->Seek(CRefTime(m_rtStart));
+      }
+      // complete the flush
+      hr=DeliverEndFlush();
+      LogDebug("vid:endflush:%x",hr);
+      
+      if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
+      {
+        m_pTsReaderFilter->SeekDone();
+      }
+      // restart
+      m_rtStart=rtSeek;
+      Run();
+  }
+  m_bSeeking=false;
 }
 
 STDMETHODIMP CVideoPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
@@ -462,12 +465,15 @@ STDMETHODIMP CVideoPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
 
 STDMETHODIMP CVideoPin::GetDuration(LONGLONG *pDuration)
 {
-  LogDebug("vid:GetDuration");
+  //LogDebug("vid:GetDuration");
+  REFERENCE_TIME refTime;
+  m_pTsReaderFilter->GetDuration(&refTime);
+  m_rtDuration=CRefTime(refTime);
   return CSourceSeeking::GetDuration(pDuration);
 }
 
 STDMETHODIMP CVideoPin::GetCurrentPosition(LONGLONG *pCurrent)
 {
-  LogDebug("vid:GetCurrentPosition");
+ // LogDebug("vid:GetCurrentPosition");
   return CSourceSeeking::GetCurrentPosition(pCurrent);
 }

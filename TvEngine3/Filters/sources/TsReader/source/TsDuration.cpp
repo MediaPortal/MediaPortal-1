@@ -41,6 +41,7 @@ void CTsDuration::Set(CPcr& startPcr, CPcr& endPcr)
 {
   m_startPcr=startPcr;
   m_endPcr=endPcr;
+
 }
 void CTsDuration::UpdateDuration()
 {

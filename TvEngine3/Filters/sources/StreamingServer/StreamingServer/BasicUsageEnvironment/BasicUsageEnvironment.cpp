@@ -25,7 +25,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 ////////// BasicUsageEnvironment //////////
 
 void Log(const char *fmt, ...) 
-{
+{/*
 	va_list ap;
 	va_start(ap,fmt);
 
@@ -60,7 +60,7 @@ void Log(const char *fmt, ...)
 		systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
 		buffer);
   ::OutputDebugString(buf);
-	
+	*/
 }
 #if defined(__WIN32__) || defined(_WIN32)
 extern "C" int initializeWinsockIfNecessary();

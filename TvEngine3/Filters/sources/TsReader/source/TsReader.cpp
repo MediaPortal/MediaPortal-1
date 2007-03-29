@@ -33,7 +33,7 @@
 #include "videopin.h"
 #include "subtitlepin.h"
 #include "tsfileSeek.h"
-
+#include "memoryreader.h"
 void LogDebug(const char *fmt, ...) 
 {
 #ifdef DEBUG
@@ -126,7 +126,8 @@ CUnknown * WINAPI CTsReaderFilter::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 	CSource(NAME("CTsReaderFilter"), pUnk, CLSID_TSReader),
 	m_pAudioPin(NULL),
-  m_demultiplexer( m_duration, *this)
+  m_demultiplexer( m_duration, *this),
+  m_rtspClient(m_buffer)
 {
   ::DeleteFile("c:\\tsreader.log");
   m_fileReader=NULL;
@@ -146,6 +147,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 	}
 	wcscpy(m_fileName,L"");
   m_dwGraphRegister=0;
+  m_rtspClient.Initialize();
 }
 
 CTsReaderFilter::~CTsReaderFilter()
@@ -244,13 +246,22 @@ int CTsReaderFilter::GetPinCount()
 
 STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
 {
-  StartThread();
 	CRefTime runTime=tStart;
 	double msec=(double)runTime.Millisecs();
 	msec/=1000.0;
 	LogDebug("CTsReaderFilter::Run(%05.2f)",msec);
   CAutoLock cObjectLock(m_pLock);
-		
+		 
+  if (m_fileDuration==NULL)
+  {
+    if (m_rtspClient.IsPaused())
+    {
+	    LogDebug(" CTsReaderFilter::Run()-->continue rtsp");
+      m_buffer.Clear();
+      m_buffer.Run(true);
+      m_rtspClient.Continue();
+    }
+  }
   //Set our StreamTime Reference offset to zero
 	HRESULT hr= CSource::Run(tStart);
 
@@ -260,11 +271,19 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
 
 STDMETHODIMP CTsReaderFilter::Stop()
 {
+	LogDebug("CTsReaderFilter::Stop()");
   StopThread();
 	CAutoLock cObjectLock(m_pLock);
 
-	LogDebug("CTsReaderFilter::Stop()");
 	HRESULT hr=CSource::Stop();
+  
+  if (m_fileDuration==NULL)
+  {
+    m_buffer.Run(false);
+    m_rtspClient.Stop();
+  }
+  m_bNeedSeeking=false;
+  
 	return hr;
 }
 
@@ -274,8 +293,42 @@ STDMETHODIMP CTsReaderFilter::Pause()
 	LogDebug("CTsReaderFilter::Pause()");
   CAutoLock cObjectLock(m_pLock);
 
+  HRESULT hr= CSource::Pause();
+  if (m_fileDuration==NULL)
+  {
+    if (!m_bSeeking)
+    {
+      if (!m_rtspClient.IsRunning())
+      {
+        double startTime=m_seekTime.Millisecs();
+        m_demultiplexer.Flush();
+        LogDebug("  CTsReaderFilter::Pause()->start client from %f",startTime);
+        m_buffer.Clear();
+        m_buffer.Run(true);
+        m_rtspClient.Play(startTime);
 
-  return CSource::Pause();
+        double duration=m_rtspClient.Duration()/1000.0f;
+        CPcr pcrstart,pcrEnd;
+        pcrstart=m_duration.StartPcr();
+        duration+=pcrstart.ToClock();
+        pcrEnd.FromClock(duration);
+        m_duration.Set( pcrstart, pcrEnd);
+      }
+      else
+      {
+        LogDebug("  CTsReaderFilter::Pause()->pause client");
+        m_buffer.Run(false);
+        m_rtspClient.Pause();
+      }
+      
+      if (!IsThreadRunning())
+      {
+        //LogDebug("  CTsReaderFilter::Pause()->start duration thread");
+        StartThread();
+      }
+    }
+  }
+  return hr;
 }
 
 STDMETHODIMP CTsReaderFilter::GetDuration(REFERENCE_TIME *dur)
@@ -295,34 +348,66 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   if (m_fileDuration!=NULL)
     delete m_fileDuration;
 
+  m_seekTime=CRefTime(0L);
 	LogDebug("CTsReaderFilter::Load()");
   m_bSeeking=false;
+  m_bNeedSeeking=false;
 	wcscpy(m_fileName,pszFileName);
   char url[MAX_PATH];
   WideCharToMultiByte(CP_ACP,0,m_fileName,-1,url,MAX_PATH,0,0);
   int length=strlen(url);	
-  if ((length < 9) || (_strcmpi(&url[length-9], ".tsbuffer") != 0))
+  if ((length > 5) && (_strcmpi(&url[length-4], ".tsp") == 0))
   {
-    m_fileReader = new FileReader();
-    m_fileDuration = new FileReader();
+    FILE* fd=fopen(url,"rb");
+    if (fd==NULL) return E_FAIL;
+    fread(url,1,100,fd);
+    int bytesRead=fread(url,1,sizeof(url),fd);
+    if (bytesRead>=0) url[bytesRead]=0;
+    fclose(fd);
+    if ( !m_rtspClient.OpenStream(url)) return E_FAIL;
+    
+    m_buffer.Clear();
+    m_buffer.Run(true);
+    m_rtspClient.Play(0.0f);
+    m_tickCount=GetTickCount();
+    m_fileReader = new CMemoryReader(m_buffer);
+    m_demultiplexer.SetFileReader(m_fileReader);
+    m_demultiplexer.Start();
+    m_buffer.Run(false);
+    m_rtspClient.Stop();
+    double duration=m_rtspClient.Duration()/1000.0f;
+    CPcr pcrstart,pcrEnd;
+    pcrstart=m_duration.StartPcr();
+    duration+=pcrstart.ToClock();
+    pcrEnd.FromClock(duration);
+    m_duration.Set( pcrstart, pcrEnd);
   }
   else
   {
-    m_fileReader = new MultiFileReader();
-    m_fileDuration = new MultiFileReader();
+    if ((length < 9) || (_strcmpi(&url[length-9], ".tsbuffer") != 0))
+    {
+      m_fileReader = new FileReader();
+      m_fileDuration = new FileReader();
+    }
+    else
+    {
+      m_fileReader = new MultiFileReader();
+      m_fileDuration = new MultiFileReader();
+    }
+	  m_fileReader->SetFileName(url);
+	  m_fileReader->OpenFile();
+
+    m_fileDuration->SetFileName(url);
+	  m_fileDuration->OpenFile();
+    m_demultiplexer.SetFileReader(m_fileReader);
+    m_demultiplexer.Start();
+
+    m_duration.SetFileReader(m_fileDuration);
+    m_duration.UpdateDuration();
+
+	  m_fileReader->SetFilePointer(0LL,FILE_BEGIN);
+
   }
-	m_fileReader->SetFileName(url);
-	m_fileReader->OpenFile();
-
-  m_fileDuration->SetFileName(url);
-	m_fileDuration->OpenFile();
-  m_demultiplexer.SetFileReader(m_fileReader);
-  m_demultiplexer.Start();
-
-  m_duration.SetFileReader(m_fileDuration);
-  m_duration.UpdateDuration();
-
-	m_fileReader->SetFilePointer(0LL,FILE_BEGIN);
 
   AddGraphToRot(GetFilterGraph());
 
@@ -376,25 +461,55 @@ double CTsReaderFilter::GetStartTime()
 
 void CTsReaderFilter::Seek(CRefTime& seekTime)
 {
+  LogDebug("--Seek--");
+  m_seekTime=seekTime;
   m_bSeeking=true;
-  CTsFileSeek seek(m_duration);
-  seek.SetFileReader(m_fileReader);
-  seek.Seek(seekTime);
+  if (m_fileDuration!=NULL)
+  {
+    CTsFileSeek seek(m_duration);
+    seek.SetFileReader(m_fileReader);
+    seek.Seek(seekTime);
+  }
+  else
+  {
+    m_rtspClient.Stop();
+    double startTime=m_seekTime.Millisecs();
+    startTime/=1000.0f;
+    m_demultiplexer.Flush();
+    LogDebug("  SeekDone->start client from %f",startTime);
+    m_buffer.Clear();
+    m_buffer.Run(true);
+    m_rtspClient.Play(startTime);
 
+    double duration=m_rtspClient.Duration()/1000.0f;
+    CPcr pcrstart,pcrEnd;
+    pcrstart=m_duration.StartPcr();
+    duration+=pcrstart.ToClock();
+    pcrEnd.FromClock(duration);
+    m_duration.Set( pcrstart, pcrEnd);
+  }
 }
-
-
+bool CTsReaderFilter::IsFilterRunning()
+{
+  if (m_fileDuration!=NULL) return true;
+  return m_buffer.IsRunning();
+}
 bool CTsReaderFilter::IsSeeking()
 {
   return m_bSeeking;
 }
 void CTsReaderFilter::SeekDone()
 {
+  LogDebug("CTsReaderFilter::SeekDone()");
   m_demultiplexer.Flush();
+  m_bNeedSeeking=NULL;
   m_bSeeking=false;
+  
+  LogDebug("--Seek done--");
 }
 void CTsReaderFilter::SeekStart()
 {
+  LogDebug("--SeekStart()--");
   m_bSeeking=true;
 }
 
@@ -417,19 +532,34 @@ void CTsReaderFilter::ThreadProc()
   ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_BELOW_NORMAL);
   while (!ThreadIsStopping(100))
 	{
-    CTsDuration duration;
-    duration.SetFileReader(m_fileDuration);
-    duration.UpdateDuration();
-    if (duration.Duration() != m_duration.Duration())
+    if (m_fileDuration!=NULL)
     {
-      m_duration.Set(duration.StartPcr(), duration.EndPcr());
-      if (m_State == State_Running)
+      CTsDuration duration;
+      duration.SetFileReader(m_fileDuration);
+      duration.UpdateDuration();
+      if (duration.Duration() != m_duration.Duration())
       {
-        float secs=(float)duration.Duration().Millisecs();
-        secs/=1000.0f;
-        LogDebug("notify length change:%f",secs);
-        NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
+        m_duration.Set(duration.StartPcr(), duration.EndPcr());
+        if (m_State == State_Running)
+        {
+          float secs=(float)duration.Duration().Millisecs();
+          secs/=1000.0f;
+          LogDebug("notify length change:%f",secs);
+          NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
+        }
       }
+    }
+    else if (m_rtspClient.IsRunning())
+    {
+	    DWORD ticks=GetTickCount()-m_tickCount;
+      double duration=m_rtspClient.Duration()/1000.0f;
+      duration+=ticks;
+      CPcr pcrstart,pcrEnd;
+      pcrstart=m_duration.StartPcr();
+      duration+=pcrstart.ToClock();
+      pcrEnd.FromClock(duration);
+      m_duration.Set( pcrstart, pcrEnd);
+      NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
     }
     Sleep(1000);
   }

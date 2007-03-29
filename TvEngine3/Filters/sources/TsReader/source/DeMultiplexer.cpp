@@ -239,7 +239,9 @@ CBuffer* CDeMultiplexer::GetVideo()
   }
   while (m_vecVideoBuffers.size()==0) 
   {
+    if (!m_filter.IsFilterRunning()) return NULL;
     ReadFromFile() ;
+    
   }
   
   if (m_vecVideoBuffers.size()!=0)
@@ -262,7 +264,9 @@ CBuffer* CDeMultiplexer::GetAudio()
   }
   while (m_vecAudioBuffers.size()==0) 
   {
+    if (!m_filter.IsFilterRunning()) return NULL;
     ReadFromFile() ;
+    
   }
   if (m_vecAudioBuffers.size()!=0)
   {
@@ -319,6 +323,22 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   if (header.Pid==0) return;
   if (header.TransportError) return;
 
+  //CAdaptionField field;
+  //field.Decode(header,tsPacket);
+  //if (field.Pcr.IsValid)
+  //{
+  //  LogDebug("pcr:%f", field.Pcr.ToClock());
+  //}
+
+  if (!m_duration.StartPcr().IsValid)
+  {
+    CAdaptionField field;
+    field.Decode(header,tsPacket);
+    if (field.Pcr.IsValid)
+    {
+      m_duration.Set(field.Pcr,field.Pcr);
+    }
+  }
   if (header.Pid==m_pids.PcrPid)
   {
     CAdaptionField field;

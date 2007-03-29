@@ -49,7 +49,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="C:\DXSDK\Samples\C++\DirectShow\BaseClasses,C:\DXSDK\Include"
+				AdditionalIncludeDirectories="&quot;C:\DXSDK\Samples\C++\DirectShow\BaseClasses&quot;;C:\DXSDK\Include;..\StreamingServer\StreamingServer\BasicUsageEnvironment;..\StreamingServer\StreamingServer\groupsock;..\StreamingServer\StreamingServer\liveMedia;..\StreamingServer\StreamingServer\UsageEnvironment"
 				PreprocessorDefinitions="NDEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;_X86_=1;WINVER=0x0400;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -77,7 +77,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="strmbase.lib quartz.lib winmm.lib msvcrt.lib"
+				AdditionalDependencies="strmbase.lib quartz.lib winmm.lib msvcrt.lib  ws2_32.lib"
 				OutputFile="Release/TsReader.ax"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -148,7 +148,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\DXSDK\Samples\C++\DirectShow\BaseClasses,C:\DXSDK\Include"
+				AdditionalIncludeDirectories="&quot;C:\DXSDK\Samples\C++\DirectShow\BaseClasses&quot;;C:\DXSDK\Include;..\StreamingServer\StreamingServer\BasicUsageEnvironment;..\StreamingServer\StreamingServer\groupsock;..\StreamingServer\StreamingServer\liveMedia;..\StreamingServer\StreamingServer\UsageEnvironment"
 				PreprocessorDefinitions="DBG=1;DEBUG;_DEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;_X86_=1;WINVER=0x0400;_CRT_SECURE_NO_DEPRECATE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -175,7 +175,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="strmbasd.lib quartz.lib winmm.lib msvcrtd.lib"
+				AdditionalDependencies="strmbasd.lib quartz.lib winmm.lib msvcrtd.lib ws2_32.lib"
 				OutputFile="Debug/TsReader.ax"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -256,6 +256,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\MemoryBuffer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\MemoryReader.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\MemorySink.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\MultiFileReader.cpp"
 				>
 			</File>
@@ -281,6 +293,10 @@
 			</File>
 			<File
 				RelativePath=".\source\PmtParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\RTSPClient.cpp"
 				>
 			</File>
 			<File
@@ -323,6 +339,10 @@
 				RelativePath=".\source\VideoPin.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\source\WaitEvent.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -357,6 +377,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\MemoryBuffer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\MemoryReader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\MemorySink.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\MultiFileReader.h"
 				>
 			</File>
@@ -378,6 +410,18 @@
 			</File>
 			<File
 				RelativePath=".\source\PmtParser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\RTSPClient.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\RTSPFileDurationReader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\RTSPFileReader.h"
 				>
 			</File>
 			<File
@@ -414,6 +458,576 @@
 			</File>
 			<File
 				RelativePath=".\source\VideoPin.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\WaitEvent.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="LiveMedia"
+			>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\AC3AudioRTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\AC3AudioRTPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\AC3AudioStreamFramer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\ADTSAudioFileServerMediaSubsession.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\ADTSAudioFileSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\AMRAudioFileServerMediaSubsession.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\AMRAudioFileSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\AMRAudioFileSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\AMRAudioRTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\AMRAudioRTPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\AMRAudioSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\AudioInputDevice.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\AudioRTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\AVIFileSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\Base64.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\BasicUsageEnvironment\BasicHashTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\BasicUsageEnvironment\BasicTaskScheduler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\BasicUsageEnvironment\BasicTaskScheduler0.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\BasicUDPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\BasicUDPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\BasicUsageEnvironment\BasicUsageEnvironment.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\BasicUsageEnvironment\BasicUsageEnvironment0.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\BitVector.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\ByteStreamFileSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\ByteStreamMultiFileSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\DarwinInjector.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\BasicUsageEnvironment\DelayQueue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\DeviceSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\DigestAuthentication.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\FileServerMediaSubsession.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\FileSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\FramedFileSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\FramedFilter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\FramedSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\groupsock\GroupEId.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\groupsock\Groupsock.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\groupsock\GroupsockHelper.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\GSMAudioRTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\H261VideoRTPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\H263plusVideoFileServerMediaSubsession.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\H263plusVideoRTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\H263plusVideoRTPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\H263plusVideoStreamFramer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\H263plusVideoStreamParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\H264VideoFileSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\H264VideoRTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\H264VideoRTPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\H264VideoStreamFramer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\UsageEnvironment\HashTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\HTTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\groupsock\inet.c"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\InputFile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\groupsock\IOHandlers.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\JPEGVideoRTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\JPEGVideoRTPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\JPEGVideoSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\Media.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MediaSession.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MediaSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MediaSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MP3ADU.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MP3ADUdescriptor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MP3ADUinterleaving.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MP3ADURTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MP3ADURTPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MP3ADUTranscoder.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MP3AudioFileServerMediaSubsession.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MP3FileSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MP3HTTPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MP3Internals.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MP3InternalsHuffman.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MP3InternalsHuffmanTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MP3StreamState.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MP3Transcoder.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG1or2AudioRTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG1or2AudioRTPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG1or2AudioStreamFramer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG1or2Demux.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG1or2DemuxedElementaryStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG1or2DemuxedServerMediaSubsession.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG1or2FileServerDemux.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG1or2VideoFileServerMediaSubsession.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG1or2VideoHTTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG1or2VideoRTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG1or2VideoRTPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG1or2VideoStreamDiscreteFramer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG1or2VideoStreamFramer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG2IndexFromTransportStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG2TransportStreamFramer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG2TransportStreamFromESSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG2TransportStreamFromPESSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG2TransportStreamIndexFile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG2TransportStreamMultiplexor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG2TransportStreamTrickModeFilter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG4ESVideoRTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG4ESVideoRTPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG4GenericRTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG4GenericRTPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG4LATMAudioRTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG4LATMAudioRTPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG4VideoFileServerMediaSubsession.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG4VideoStreamDiscreteFramer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG4VideoStreamFramer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEGVideoStreamFramer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEGVideoStreamParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MultiFramedRTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MultiFramedRTPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\groupsock\NetAddress.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\groupsock\NetInterface.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\OnDemandServerMediaSubsession.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\our_md5.c"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\our_md5hl.c"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\OutputFile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\PassiveServerMediaSubsession.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\QCELPAudioRTPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\QuickTimeFileSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\QuickTimeGenericRTPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\RTCP.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\rtcp_from_spec.c"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\RTPInterface.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\RTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\RTPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\RTSPClient.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\RTSPCommon.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\RTSPServer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\ServerMediaSession.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\SimpleRTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\SimpleRTPSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\SIPClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\UsageEnvironment\strDup.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\StreamParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\uLawAudioFilter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\UsageEnvironment\UsageEnvironment.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\VideoRTPSink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\WAVAudioFileServerMediaSubsession.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\WAVAudioFileSource.cpp"
 				>
 			</File>
 		</Filter>

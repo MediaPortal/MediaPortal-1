@@ -61,6 +61,8 @@ protected:
 	BOOL m_bDiscontinuity;
 	CTsReaderFilter *	const m_pTsReaderFilter;
 	CCritSec* m_section;
+  CCritSec m_bufferLock;
+  bool     m_bSeeking;
 };
 
 #endif

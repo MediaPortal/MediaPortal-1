@@ -44,6 +44,7 @@ TSThread::TSThread()
 	m_hStopEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
 	m_hDoneEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
 	m_threadHandle = INVALID_HANDLE_VALUE;
+  m_bThreadRunning=FALSE;
 }
 
 TSThread::~TSThread()
@@ -51,6 +52,12 @@ TSThread::~TSThread()
 	StopThread();
 	CloseHandle(m_hStopEvent);
 	CloseHandle(m_hDoneEvent);
+}
+
+
+BOOL TSThread::IsThreadRunning()
+{
+  return m_bThreadRunning;
 }
 
 HRESULT TSThread::StartThread()
@@ -96,6 +103,7 @@ BOOL TSThread::ThreadIsStopping(DWORD dwTimeoutMilliseconds)
 void TSThread::InternalThreadProc()
 {
 	ResetEvent(m_hDoneEvent);
+  m_bThreadRunning=TRUE;
 	try
 	{
 		ThreadProc();
@@ -105,6 +113,7 @@ void TSThread::InternalThreadProc()
 		pStr = NULL;
 	}
 	SetEvent(m_hDoneEvent);
+  m_bThreadRunning=FALSE;
 }
 
 void TSThread::thread_function(void* p)

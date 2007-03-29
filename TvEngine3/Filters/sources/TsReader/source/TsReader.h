@@ -25,6 +25,8 @@
 #include "demultiplexer.h"
 #include "TsDuration.h"
 #include "TSThread.h"
+#include "rtspclient.h"
+#include "memorybuffer.h"
 #include <map>
 using namespace std;
 
@@ -70,6 +72,7 @@ public:
 	STDMETHODIMP    GetDuration(REFERENCE_TIME *dur);
 	double		      GetStartTime();
 	bool            IsSeeking();
+  bool            IsFilterRunning();
 	CDeMultiplexer& GetDemultiplexer();
 	void            Seek(CRefTime& seekTime);
   void            SeekDone();
@@ -97,5 +100,11 @@ private:
 	CDeMultiplexer  m_demultiplexer;
   bool            m_bSeeking;
   DWORD           m_dwGraphRegister;
+
+  CRTSPClient     m_rtspClient;
+  CMemoryBuffer   m_buffer;
+  DWORD           m_tickCount;
+  CRefTime        m_seekTime;
+  bool            m_bNeedSeeking;
 };
 

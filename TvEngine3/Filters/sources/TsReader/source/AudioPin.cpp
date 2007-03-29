@@ -62,6 +62,7 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
 	AM_SEEKING_CanGetDuration	|
   AM_SEEKING_CanGetCurrentPos |
 	AM_SEEKING_Source;
+  m_bSeeking=false;
 }
 
 CAudioPin::~CAudioPin()
@@ -176,15 +177,18 @@ HRESULT CAudioPin::BreakConnect()
 
 HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 {
-  if (m_pTsReaderFilter->IsSeeking())
-	{
-		Sleep(1);
-		return NOERROR;
-	}
-  
   REFERENCE_TIME durTime;
   m_pTsReaderFilter->GetDuration(&durTime);
   m_rtDuration=CRefTime(durTime);
+  if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
+	{
+		Sleep(1);
+    pSample->SetTime(NULL,NULL); 
+	  pSample->SetActualDataLength(0);
+		return NOERROR;
+	}
+  
+  CAutoLock lock(&m_bufferLock);
 
 	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   CBuffer* buffer=demux.GetAudio();
@@ -206,7 +210,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       pSample->SetSyncPoint(TRUE);
       float fTime=(float)cRefTime.Millisecs();
       fTime/=1000.0f;
-     // LogDebug("aud:%f", fTime);
+     //LogDebug("aud:%f", fTime);
     }
 	  pSample->SetActualDataLength(buffer->Length());
     pSample->GetPointer(&pSampleBuffer);
@@ -217,6 +221,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   else
   {
     LogDebug("aud:no buffer");
+    pSample->SetDiscontinuity(TRUE);
 	  pSample->SetActualDataLength(0);
     pSample->SetTime(NULL,NULL);  
   }
@@ -324,32 +329,37 @@ STDMETHODIMP CAudioPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LON
 
 void CAudioPin::UpdateFromSeek()
 {
+  CRefTime rtSeek=m_rtStart;
+  float seekTime=(float)rtSeek.Millisecs();
+  seekTime/=1000.0f;
+  float duration=(float)m_rtDuration.Millisecs();
+  duration /=1000.0f;
+  LogDebug("aud seek to %f/%f", seekTime, duration);
+  m_bSeeking=true;
   while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
-    CRefTime rtSeek=m_rtStart;
-    float seekTime=(float)rtSeek.Millisecs();
-    seekTime/=1000.0f;
-    LogDebug("aud seek to %f", seekTime);
-    if (ThreadExists()) 
-    {
-        // next time around the loop, the worker thread will
-        // pick up the position change.
-        // We need to flush all the existing data - we must do that here
-        // as our thread will probably be blocked in GetBuffer otherwise
-        
-        m_pTsReaderFilter->SeekStart();
-        DeliverBeginFlush();
-        // make sure we have stopped pushing
-        Stop();
-        m_pTsReaderFilter->Seek(CRefTime(m_rtStart));
+  CAutoLock lock(&m_bufferLock);
+  if (ThreadExists()) 
+  {
+      // next time around the loop, the worker thread will
+      // pick up the position change.
+      // We need to flush all the existing data - we must do that here
+      // as our thread will probably be blocked in GetBuffer otherwise
+      
+      m_pTsReaderFilter->SeekStart();
+      DeliverBeginFlush();
+      // make sure we have stopped pushing
+      Stop();
+      m_pTsReaderFilter->Seek(CRefTime(m_rtStart));
 
-        // complete the flush
-        DeliverEndFlush();
-        m_pTsReaderFilter->SeekDone();
-  
-        // restart
-        m_rtStart=rtSeek;
-        Run();
-    }
+      // complete the flush
+      DeliverEndFlush();
+      m_pTsReaderFilter->SeekDone();
+
+      // restart
+      m_rtStart=rtSeek;
+      Run();
+  }
+  m_bSeeking=false;
 }
 
 
@@ -361,12 +371,15 @@ STDMETHODIMP CAudioPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
 
 STDMETHODIMP CAudioPin::GetDuration(LONGLONG *pDuration)
 {
-  LogDebug("aud:GetDuration");
+ // LogDebug("aud:GetDuration");
+  REFERENCE_TIME refTime;
+  m_pTsReaderFilter->GetDuration(&refTime);
+  m_rtDuration=CRefTime(refTime);
   return CSourceSeeking::GetDuration(pDuration);
 }
 
 STDMETHODIMP CAudioPin::GetCurrentPosition(LONGLONG *pCurrent)
 {
-  LogDebug("aud:GetCurrentPosition");
+ // LogDebug("aud:GetCurrentPosition");
   return CSourceSeeking::GetCurrentPosition(pCurrent);
 }
