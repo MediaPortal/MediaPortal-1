@@ -9,6 +9,9 @@ using namespace std;
 #include "criticalsection.h"
 using namespace Mediaportal;
 
+//This is the language code for english. We need this for DISH Network EPG because it doesn't contain one
+#define langENG	6647399
+
 typedef  struct stEPGLanguage
 {
 	DWORD language;
@@ -74,6 +77,8 @@ private:
 	void DecodeShortEventDescriptor(byte* buf,EPGEvent& event);
 	void DecodeContentDescription(byte* buf,EPGEvent& event);
 	void DecodeExtendedEvent(byte* buf, EPGEvent& event);
+	void DecodeDishShortDescription(byte* data, EPGEvent& epgEvent, int tnum);
+	void DecodeDishLongDescription(byte* data, EPGEvent& epgEvent, int tnum);
   void Sort();	
 
 	map<unsigned long,EPGChannel> m_mapEPG;

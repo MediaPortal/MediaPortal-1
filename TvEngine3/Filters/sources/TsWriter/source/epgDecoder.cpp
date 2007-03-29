@@ -7,6 +7,7 @@
 //#include "crc.h"
 #include "autostring.h"
 #include "entercriticalsection.h"
+#include "DN_EIT_Helper.h"
 
 extern DWORD crc32 (char *data, int len);
 extern void LogDebug(const char *fmt, ...) ;
@@ -48,8 +49,10 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
       return E_FAIL;
 
 		int tableid = buf[0];
-		if((tableid < 0x50 || tableid > 0x6f) && tableid != 0x4e && tableid != 0x4f) 
-      return E_FAIL;
+		//Dish Network also uses table ids from 0x80 to 0xfe. We don't need to check this here either because 
+		//of the filter being set in EpgParser.cpp
+		//if((tableid < 0x50 || tableid > 0x6f) && tableid != 0x4e && tableid != 0x4f) 
+        //     return E_FAIL;
 		int section_length = ((buf[1]& 0xF)<<8) + buf[2];
 		int service_id = (buf[3]<<8)+buf[4];
 		int version_number = (buf[5]>>1) & 0x1f;
@@ -154,6 +157,18 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 					{
 						//					LogDebug("epg:     private data descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
 					}
+					else if (descriptor_tag ==0x91)
+					{
+						//					LogDebug("epg:     dish network short description descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
+						int tnum=(tableid>0x80 ? 2 : 1);
+						DecodeDishShortDescription( &buf[start+off],epgEvent,tnum);
+					}
+					else if (descriptor_tag ==0x92)
+					{
+						//					LogDebug("epg:     dish network long description descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
+						int tnum=(tableid>0x80 ? 2 : 1);
+						DecodeDishLongDescription( &buf[start+off],epgEvent,tnum);
+					}
 					else
 					{
 						//					LogDebug("epg:     descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
@@ -171,6 +186,68 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 		LogDebug("mpsaa: unhandled exception in Sections::DecodeEPG()");
 	}	
 	return S_OK;
+}
+
+void CEpgDecoder::DecodeDishShortDescription(byte* data, EPGEvent& epgEvent, int tnum)
+{
+	try
+	{
+		unsigned char *decompressed=DishDecode::decompress(&data[3], data[1]-1,tnum);
+		EPGEvent::ivecLanguages it = epgEvent.vecLanguages.begin();
+		for (it = epgEvent.vecLanguages.begin(); it != epgEvent.vecLanguages.end();++it)
+		{
+			EPGLanguage& lang=*it;
+			if (lang.language==langENG)
+			{
+				lang.event=(char*)decompressed;
+				free(decompressed);
+				return;
+			}
+		}
+		EPGLanguage lang;
+		lang.event=(char*)decompressed;
+		free(decompressed);
+		// simulated lang id for "eng"
+		lang.language=6647399;
+		epgEvent.vecLanguages.push_back(lang);
+		//LogDebug("DISH EPG ShortDescription=%s",text.c_str());
+	}
+	catch(...)
+	{
+		LogDebug("mpsaa: unhandled exception in DecodeDishShortDescription()");
+	}	
+}
+
+void CEpgDecoder::DecodeDishLongDescription(byte* data, EPGEvent& epgEvent, int tnum)
+{
+	try
+	{
+		unsigned char* decompressed=NULL;
+		if((data[3]&0xf8) == 0x80)
+			decompressed=DishDecode::decompress(&data[4], data[1]-2,tnum);
+		else
+		    decompressed=DishDecode::decompress(&data[3], data[1]-1,tnum);
+		EPGEvent::ivecLanguages it = epgEvent.vecLanguages.begin();
+		for (it = epgEvent.vecLanguages.begin(); it != epgEvent.vecLanguages.end();++it)
+		{
+			EPGLanguage& lang=*it;
+			if (lang.language==langENG)
+			{
+				lang.text=(char*)decompressed;
+				free(decompressed);
+				return;
+			}
+		}
+		EPGLanguage lang;
+		lang.text=(char*)decompressed;
+		free(decompressed);
+		lang.language=6647399;
+		epgEvent.vecLanguages.push_back(lang);
+	}
+	catch(...)
+	{
+		LogDebug("mpsaa: unhandled exception in Sections::DecodeDishLongDescription()");
+	}	
 }
 
 void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)

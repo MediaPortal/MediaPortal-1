@@ -35,7 +35,17 @@ CEpgParser::CEpgParser(void)
     pDecoder->SetTableId(i);
     pDecoder->EnableCrcCheck(false);
     m_vecDecoders.push_back(pDecoder);
-		pDecoder->SetCallBack(this);
+	pDecoder->SetCallBack(this);
+  }
+  // we need to set the filter to allow grabbing the 9 day DISH Network epg too
+  for (int i=0x80; i <=0xfe;++i)
+  {
+    CSectionDecoder* pDecoder= new CSectionDecoder();
+    pDecoder->SetPid(PID_DISH_EPG);
+    pDecoder->SetTableId(i);
+    pDecoder->EnableCrcCheck(false);
+    m_vecDecoders.push_back(pDecoder);
+	pDecoder->SetCallBack(this);
   }
 }
 

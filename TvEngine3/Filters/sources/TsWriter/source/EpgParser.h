@@ -28,7 +28,8 @@
 #include <vector>
 using namespace std;
 
-#define PID_EPG 0x12
+#define PID_EPG			0x12
+#define PID_DISH_EPG	0x300 // DISH Network 9-day epg
 
 class CEpgParser :  public ISectionCallback
 {

@@ -286,11 +286,11 @@ void CEpgScanner::OnTsPacket(byte* tsPacket)
 		if (m_bGrabbing)
 		{
       int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
-      if (pid!=PID_EPG && pid!=PID_MHW1 && pid != PID_MHW2) return;
+      if (pid!=PID_EPG && pid!=PID_DISH_EPG && pid!=PID_MHW1 && pid != PID_MHW2) return;
       {
         m_header.Decode(tsPacket);
 			  CEnterCriticalSection enter(m_section);
-        if (pid==PID_EPG)
+        if (pid==PID_EPG || pid==PID_DISH_EPG)
 			    m_epgParser.OnTsPacket(m_header,tsPacket);
         else
 			    m_mhwParser.OnTsPacket(m_header,tsPacket);
