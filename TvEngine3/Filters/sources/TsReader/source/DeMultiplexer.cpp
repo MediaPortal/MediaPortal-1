@@ -177,7 +177,7 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
 
 void CDeMultiplexer::Flush()
 {
-  LogDebug("demux:flushing");
+//  LogDebug("demux:flushing");
   delete m_pCurrentVideoBuffer;
   delete m_pCurrentAudioBuffer;
   delete m_pCurrentSubtitleBuffer;

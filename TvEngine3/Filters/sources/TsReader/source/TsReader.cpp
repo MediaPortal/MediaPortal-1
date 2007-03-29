@@ -129,7 +129,9 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
   m_demultiplexer( m_duration, *this),
   m_rtspClient(m_buffer)
 {
+#if DEBUG
   ::DeleteFile("c:\\tsreader.log");
+#endif
   m_fileReader=NULL;
   m_fileDuration=NULL;
 
@@ -279,6 +281,8 @@ STDMETHODIMP CTsReaderFilter::Stop()
   
   if (m_fileDuration==NULL)
   {
+    
+	  LogDebug(" -- stop rtsp");
     m_buffer.Run(false);
     m_rtspClient.Stop();
   }
@@ -302,10 +306,11 @@ STDMETHODIMP CTsReaderFilter::Pause()
       {
         double startTime=m_seekTime.Millisecs();
         m_demultiplexer.Flush();
-        LogDebug("  CTsReaderFilter::Pause()->start client from %f",startTime);
+        LogDebug("  -- Pause()->start client from %f",startTime);
         m_buffer.Clear();
         m_buffer.Run(true);
         m_rtspClient.Play(startTime);
+        LogDebug("  -- Pause()->client started");
 
         double duration=m_rtspClient.Duration()/1000.0f;
         CPcr pcrstart,pcrEnd;
@@ -316,7 +321,7 @@ STDMETHODIMP CTsReaderFilter::Pause()
       }
       else
       {
-        LogDebug("  CTsReaderFilter::Pause()->pause client");
+        LogDebug("  -- Pause()->pause client");
         m_buffer.Run(false);
         m_rtspClient.Pause();
       }
@@ -364,6 +369,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     int bytesRead=fread(url,1,sizeof(url),fd);
     if (bytesRead>=0) url[bytesRead]=0;
     fclose(fd);
+    LogDebug("open rtsp:%s", url);
     if ( !m_rtspClient.OpenStream(url)) return E_FAIL;
     
     m_buffer.Clear();
@@ -374,6 +380,8 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     m_demultiplexer.SetFileReader(m_fileReader);
     m_demultiplexer.Start();
     m_buffer.Run(false);
+    
+    LogDebug("close rtsp:%s", url);
     m_rtspClient.Stop();
     double duration=m_rtspClient.Duration()/1000.0f;
     CPcr pcrstart,pcrEnd;
@@ -461,6 +469,7 @@ double CTsReaderFilter::GetStartTime()
 
 void CTsReaderFilter::Seek(CRefTime& seekTime)
 {
+  if (m_seekTime==seekTime) return;
   LogDebug("--Seek--");
   m_seekTime=seekTime;
   m_bSeeking=true;
@@ -472,11 +481,13 @@ void CTsReaderFilter::Seek(CRefTime& seekTime)
   }
   else
   {
+    
+    LogDebug("  Seek->stop rtsp");
     m_rtspClient.Stop();
     double startTime=m_seekTime.Millisecs();
     startTime/=1000.0f;
     m_demultiplexer.Flush();
-    LogDebug("  SeekDone->start client from %f",startTime);
+    LogDebug("  Seek->start client from %f",startTime);
     m_buffer.Clear();
     m_buffer.Run(true);
     m_rtspClient.Play(startTime);
@@ -500,12 +511,11 @@ bool CTsReaderFilter::IsSeeking()
 }
 void CTsReaderFilter::SeekDone()
 {
-  LogDebug("CTsReaderFilter::SeekDone()");
+  LogDebug("--SeekDone()");
   m_demultiplexer.Flush();
   m_bNeedSeeking=NULL;
   m_bSeeking=false;
   
-  LogDebug("--Seek done--");
 }
 void CTsReaderFilter::SeekStart()
 {

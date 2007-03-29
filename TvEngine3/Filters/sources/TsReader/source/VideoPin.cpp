@@ -311,7 +311,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
   }
   else
   {
-    LogDebug("vid:no buffer");
+    //LogDebug("vid:no buffer");
     pSample->SetDiscontinuity(TRUE);
 	  pSample->SetActualDataLength(0);
     pSample->SetTime(NULL,NULL);  
@@ -435,7 +435,7 @@ void CVideoPin::UpdateFromSeek()
         m_pTsReaderFilter->SeekStart();
       }
       HRESULT hr=DeliverBeginFlush();
-      LogDebug("vid:beginflush:%x",hr);
+     // LogDebug("vid:beginflush:%x",hr);
       // make sure we have stopped pushing
       Stop();
       if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
@@ -444,7 +444,7 @@ void CVideoPin::UpdateFromSeek()
       }
       // complete the flush
       hr=DeliverEndFlush();
-      LogDebug("vid:endflush:%x",hr);
+     // LogDebug("vid:endflush:%x",hr);
       
       if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
       {

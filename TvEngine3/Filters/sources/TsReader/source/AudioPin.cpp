@@ -220,7 +220,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   }
   else
   {
-    LogDebug("aud:no buffer");
+    //LogDebug("aud:no buffer");
     pSample->SetDiscontinuity(TRUE);
 	  pSample->SetActualDataLength(0);
     pSample->SetTime(NULL,NULL);  
