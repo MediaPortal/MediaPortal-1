@@ -109,7 +109,7 @@ namespace MyTv
     /// </summary>
     void OnFailedToConnectToServer()
     {
-        this.NavigationService.Navigate(new Uri("TvSetup.xaml", UriKind.Relative));
+      this.NavigationService.Navigate(new Uri("TvSetup.xaml", UriKind.Relative));
     }
 
     /// <summary>
@@ -127,7 +127,7 @@ namespace MyTv
         dlg.Owner = w;
         dlg.Title = "";
         dlg.Header = "Error";
-        dlg.Content="Infinity needs Windows Media Player 10 or higher to playback video!";
+        dlg.Content = "Infinity needs Windows Media Player 10 or higher to playback video!";
         dlg.ShowDialog();
         return;
       }
@@ -141,7 +141,7 @@ namespace MyTv
           dlg.Owner = w;
           dlg.Title = "";
           dlg.Header = "Error";
-          dlg.Content="Infinity needs TsReader.ax to be registered!";
+          dlg.Content = "Infinity needs TsReader.ax to be registered!";
           dlg.ShowDialog();
           return;
         }
@@ -194,20 +194,89 @@ namespace MyTv
     /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     void OnRecordClicked(object sender, EventArgs args)
     {
-      Window window = (Window)this.Parent;
-      if (window.WindowState == System.Windows.WindowState.Maximized)
+      /*  Window window = (Window)this.Parent;
+        if (window.WindowState == System.Windows.WindowState.Maximized)
+        {
+          window.ShowInTaskbar = true;
+          WindowTaskbar.Show(); ;
+          window.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
+          window.WindowState = System.Windows.WindowState.Normal;
+        }
+        else
+        {
+          window.ShowInTaskbar = false;
+          window.WindowStyle = System.Windows.WindowStyle.None;
+          WindowTaskbar.Hide(); ;
+          window.WindowState = System.Windows.WindowState.Maximized;
+        }*/
+
+      //record now.
+      //Are we recording this channel already?
+      TvBusinessLayer layer = new TvBusinessLayer();
+      TvServer server = new TvServer();
+      VirtualCard card;
+      Channel channel = ChannelNavigator.Instance.SelectedChannel;
+      if (channel == null) return;
+      if (false == server.IsRecording(channel.Name, out card))
       {
-        window.ShowInTaskbar = true;
-        WindowTaskbar.Show(); ;
-        window.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
-        window.WindowState = System.Windows.WindowState.Normal;
+        //no then start recording
+        Program prog = channel.CurrentProgram;
+        if (prog != null)
+        {
+          MpMenu dlgMenu = new MpMenu();
+          Window w = Window.GetWindow(this);
+          dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+          dlgMenu.Owner = w;
+          dlgMenu.Items.Clear();
+          dlgMenu.Header = "Record";
+          dlgMenu.Items.Add(new DialogMenuItem("current program"));
+          dlgMenu.Items.Add(new DialogMenuItem("until manual stopped"));
+          dlgMenu.ShowDialog();
+          switch (dlgMenu.SelectedIndex)
+          {
+            case 0:
+              {
+                Schedule newSchedule = new Schedule(channel.IdChannel, channel.CurrentProgram.Title,
+                          channel.CurrentProgram.StartTime, channel.CurrentProgram.EndTime);
+                newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+                newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+                newSchedule.RecommendedCard = ChannelNavigator.Instance.Card.Id; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
+
+                newSchedule.Persist();
+                server.OnNewSchedule();
+              }
+              break;
+
+            case 1:
+              {
+                Schedule newSchedule = new Schedule(channel.IdChannel, "Manual (" + channel.Name + ")",
+                                            DateTime.Now, DateTime.Now.AddDays(1));
+                newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+                newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+                newSchedule.RecommendedCard = ChannelNavigator.Instance.Card.Id; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
+
+                newSchedule.Persist();
+                server.OnNewSchedule();
+              }
+              break;
+          }
+        }
+        else
+        {
+          //manual record
+          Schedule newSchedule = new Schedule(channel.IdChannel, "Manual (" + channel.Name + ")",
+                                      DateTime.Now, DateTime.Now.AddDays(1));
+          newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+          newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+          newSchedule.RecommendedCard = ChannelNavigator.Instance.Card.Id;
+
+          newSchedule.Persist();
+          server.OnNewSchedule();
+        }
       }
       else
       {
-        window.ShowInTaskbar = false;
-        window.WindowStyle = System.Windows.WindowStyle.None;
-        WindowTaskbar.Hide(); ;
-        window.WindowState = System.Windows.WindowState.Maximized;
+        server.StopRecordingSchedule(ChannelNavigator.Instance.Card.RecordingScheduleId);
       }
     }
 
@@ -219,7 +288,7 @@ namespace MyTv
     /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     void OnTvOnOff(object sender, EventArgs args)
     {
-      if (TvPlayerCollection.Instance.Count!=0)
+      if (TvPlayerCollection.Instance.Count != 0)
       {
         videoWindow.Fill = new SolidColorBrush(Color.FromArgb(0xff, 0, 0, 0));
         TvPlayerCollection.Instance.DisposeAll();
@@ -295,7 +364,7 @@ namespace MyTv
         {
           // note: it could be possible we're watching a stream another user is timeshifting...
           // TODO: add user check
-          if (channelsTimeshifting.Count == 1 && TvPlayerCollection.Instance.Count !=0)
+          if (channelsTimeshifting.Count == 1 && TvPlayerCollection.Instance.Count != 0)
           {
             checkChannelState = false;
           }
@@ -344,7 +413,7 @@ namespace MyTv
         string channelLogoFileName = Thumbs.GetLogoFileName(currentChannel.Name);
         if (System.IO.File.Exists(channelLogoFileName))
         {
-          dlgMenu.Items.Add(new DialogMenuItem(channelLogoFileName,now, next, percent));
+          dlgMenu.Items.Add(new DialogMenuItem(channelLogoFileName, now, next, percent));
         }
         else
         {
@@ -353,7 +422,7 @@ namespace MyTv
       }
 
       dlgMenu.Header = "On Now";
-      dlgMenu.SubTitle =DateTime.Now.ToString("HH:mm");
+      dlgMenu.SubTitle = DateTime.Now.ToString("HH:mm");
       dlgMenu.SelectedIndex = selected;
       dlgMenu.ShowDialog();
       if (dlgMenu.SelectedIndex < 0) return;//nothing selected
@@ -511,6 +580,104 @@ namespace MyTv
         }
         dlg.ShowDialog();
       }
+    }
+    void OnTvStreamsClicked(object sender, EventArgs args)
+    {
+      int selected = 0;
+      MpMenu dlgMenu = new MpMenu();
+      Window w = Window.GetWindow(this);
+      dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+      dlgMenu.Owner = w;
+      dlgMenu.Items.Clear();
+      dlgMenu.Header = "Streams";
+      IList cards = TvDatabase.Card.ListAll();
+      List<Channel> channels = new List<Channel>();
+      int count = 0;
+      TvServer server = new TvServer();
+      List<User> _users = new List<User>();
+      foreach (Card card in cards)
+      {
+        if (card.Enabled == false) continue;
+        User[] users = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+        for (int i = 0; i < users.Length; ++i)
+        {
+          User user = users[i];
+          bool isRecording;
+          bool isTimeShifting;
+          VirtualCard tvcard = new VirtualCard(user, RemoteControl.HostName);
+          isRecording = tvcard.IsRecording;
+          isTimeShifting = tvcard.IsTimeShifting;
+          if (isTimeShifting || (isRecording && !isTimeShifting))
+          {
+            int idChannel = tvcard.IdChannel;
+            user = tvcard.User;
+            Channel ch = Channel.Retrieve(idChannel);
+            channels.Add(ch);
+            string logo = Thumbs.GetLogoFileName(ch.Name);
+            if (!System.IO.File.Exists(logo))
+            {
+              logo = "";
+            }
+            dlgMenu.Items.Add(new DialogMenuItem(logo, ch.Name, user.Name));
+            //item.IconImage = strLogo;
+            //if (isRecording)
+            //  item.PinImage = Thumbs.TvRecordingIcon;
+            //else
+            //  item.PinImage = "";
+
+            _users.Add(user);
+            if (ChannelNavigator.Instance.Card != null && ChannelNavigator.Instance.Card.IdChannel == idChannel)
+            {
+              selected = count;
+            }
+            count++;
+          }
+        }
+      }
+      if (channels.Count == 0)
+      {
+        MpDialogOk dlgError = new MpDialogOk();
+        Window win = Window.GetWindow(this);
+        dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgError.Owner = win;
+        dlgError.Title = "";
+        dlgError.Header = "Streams";
+        dlgError.Content = "No active streams";
+        dlgError.ShowDialog();
+        return;
+      }
+      dlgMenu.SelectedIndex = selected;
+      dlgMenu.ShowDialog();
+      if (dlgMenu.SelectedIndex < 0) return;
+      ChannelNavigator.Instance.Card = new VirtualCard(_users[dlgMenu.SelectedIndex], RemoteControl.HostName);
+      if (ChannelNavigator.Instance.Card.IsRecording && !ChannelNavigator.Instance.Card.IsTimeShifting)
+      {
+        videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+        string fileName = ChannelNavigator.Instance.Card.RecordingFileName;
+        Uri uri = new Uri(ChannelNavigator.Instance.Card.TimeShiftFileName, UriKind.Absolute);
+        TvPlayerCollection.Instance.DisposeAll();
+
+        //create a new media player 
+        MediaPlayer player = TvPlayerCollection.Instance.Get(ChannelNavigator.Instance.Card, uri);
+        player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
+        player.MediaOpened += new EventHandler(_mediaPlayer_MediaOpened);
+
+        //create video drawing which draws the video in the video window
+        VideoDrawing videoDrawing = new VideoDrawing();
+        videoDrawing.Player = player;
+        videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
+        DrawingBrush videoBrush = new DrawingBrush();
+        videoBrush.Drawing = videoDrawing;
+        videoWindow.Fill = videoBrush;
+        videoDrawing.Player.Play();
+
+      }
+      else
+      {
+        videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+        TvPlayerCollection.Instance.DisposeAll();
+      }
+      ChannelNavigator.Instance.Card.User.Name = new User().Name;
     }
 
     #region media player events & dispatcher methods

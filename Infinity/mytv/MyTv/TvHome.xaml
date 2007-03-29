@@ -24,6 +24,7 @@
         <Button Name="buttonTvGuide" Template="{StaticResource MpButton}" Height="32"  Click="OnTvGuideClicked"  MouseEnter="OnMouseEnter" >TvGuide</Button>
         <Button Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnRecordClicked" >Record now</Button>
         <Button Template="{StaticResource MpButton}" Height="32" Click="OnChannelClicked" MouseEnter="OnMouseEnter"  >Channel</Button>
+        <Button Template="{StaticResource MpButton}" Height="32" Click="OnTvStreamsClicked" MouseEnter="OnMouseEnter"  >Tv Streams</Button>
         <CheckBox x:Name="buttonTvOnOff" Template="{StaticResource MpRadioButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnTvOnOff" >Tv On</CheckBox>
         <Button Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnScheduledClicked" >Scheduled</Button>
         <Button Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnRecordedClicked">Recorded</Button>
