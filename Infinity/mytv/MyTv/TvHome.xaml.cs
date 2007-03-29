@@ -29,7 +29,7 @@ namespace MyTv
   /// Interaction logic for Window1.xaml
   /// </summary>
 
-  public partial class TvHome : System.Windows.Controls.Page//System.Windows.Window
+  public partial class TvHome : System.Windows.Controls.Page
   {
     #region variables
     private delegate void StartTimeShiftingDelegate(Channel channel);
@@ -47,6 +47,7 @@ namespace MyTv
     {
       this.ShowsNavigationUI = false;
       WindowTaskbar.Show();
+
       InitializeComponent();
     }
     #endregion
@@ -109,7 +110,7 @@ namespace MyTv
     /// </summary>
     void OnFailedToConnectToServer()
     {
-      this.NavigationService.Navigate(new Uri("TvSetup.xaml", UriKind.Relative));
+      this.NavigationService.Navigate(new Uri("/MyTv;component/TvSetup.xaml", UriKind.Relative));
     }
 
     /// <summary>
@@ -183,7 +184,7 @@ namespace MyTv
     {
       if (ChannelNavigator.Instance.CurrentGroup != null)
       {
-        this.NavigationService.Navigate(new Uri("TvGuide.xaml", UriKind.Relative));
+        this.NavigationService.Navigate(new Uri("/MyTv;component/TvGuide.xaml", UriKind.Relative));
       }
     }
 
@@ -449,7 +450,7 @@ namespace MyTv
     /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     void OnRecordedClicked(object sender, EventArgs args)
     {
-      this.NavigationService.Navigate(new Uri("TvRecorded.xaml", UriKind.Relative));
+      this.NavigationService.Navigate(new Uri("/MyTv;component/TvRecorded.xaml", UriKind.Relative));
     }
     /// <summary>
     /// Called when search button gets clicked
