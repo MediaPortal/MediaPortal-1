@@ -52,6 +52,7 @@
     <Compile Include="ComSkipLauncher.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="PluginSetup.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PluginSetup.Designer.cs">
       <DependentUpon>PluginSetup.cs</DependentUpon>
