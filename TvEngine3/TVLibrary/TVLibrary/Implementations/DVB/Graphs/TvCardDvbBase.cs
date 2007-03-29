@@ -743,7 +743,27 @@ namespace TvLibrary.Implementations.DVB
     {
       //multi demux
       int hr;
-      if (System.IO.Directory.Exists("MDPLUGINS"))
+      bool useMDAPI=false;
+      
+      if (System.IO.File.Exists(System.IO.Path.GetDirectoryName(this.GetType().Assembly.CodeBase)+"\\MDPLUGINS\\config.xml"))
+      {
+        try
+        {
+          System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
+          doc.Load("MDPLUGINS\\config.xml");
+          System.Xml.XmlNodeList nodes = doc.SelectNodes("/settings/cards/card");
+          foreach (System.Xml.XmlNode node in nodes)
+          {
+            if (node.Attributes["DevicePath"].Value == _devicePath)
+            {
+              useMDAPI = (node.Attributes["Enable"].Value == "yes");
+              break;
+            }
+          }
+        }
+        catch (Exception) { }
+      }
+      if (useMDAPI)
       {
         Log.Log.WriteFile("dvb:add 2nd Inf Tee filter");
         _infTeeSecond = (IBaseFilter)new InfTee();
