@@ -181,6 +181,7 @@ namespace MyTv
         b.Content = program.Title;
         b.MouseEnter += new MouseEventHandler(OnMouseEnter);
         b.GotKeyboardFocus += new KeyboardFocusChangedEventHandler(OnButtonGotKeyboardFocus);
+        b.Click += new RoutedEventHandler(OnProgramClicked);
         Grid.SetRow(b, rowNr);
         Grid.SetColumn(b, 5);
         Grid.SetColumnSpan(b, 24);
@@ -488,6 +489,7 @@ namespace MyTv
           b.Content = panel;
         }
         b.MouseEnter += new MouseEventHandler(OnMouseEnter);
+        b.Click += new RoutedEventHandler(OnProgramClicked);
         GuideTag tag = new GuideTag();
         tag.Program = program;
         tag.Channel = channel;
@@ -535,6 +537,7 @@ namespace MyTv
       }
       return buttonToSelect;
     }
+
 
     void panel_Loaded(object sender, RoutedEventArgs e)
     {
@@ -872,6 +875,11 @@ namespace MyTv
         _focusedRow = _selectedItem.RowNr - 1;
         Keyboard.Focus(b);
       }
+    }
+
+    void OnProgramClicked(object sender, RoutedEventArgs e)
+    {
+
     }
     #endregion
   }
