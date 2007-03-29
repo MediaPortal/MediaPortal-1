@@ -76,7 +76,7 @@ namespace WindowPlugins.VideoEditor
 
     public bool HasSetup()
     {
-      return false;
+      return true;
     }
 
     public string PluginName()

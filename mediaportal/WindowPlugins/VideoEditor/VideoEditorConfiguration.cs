@@ -41,11 +41,35 @@ namespace WindowPlugins.VideoEditor
 		public VideoEditorConfiguration()
 		{
 			InitializeComponent();
-			codecList = DShowNET.Helper.FilterHelper.GetFilters(MediaType.Video, MediaSubType.YV12);
-			for (int i = 0; i < codecList.Count; i++)
+		}
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+			OpenFileDialog diag = new OpenFileDialog();
+			diag.Filter = "exe-File (*.exe)|*.exe";
+			if(diag.ShowDialog() == DialogResult.OK)
 			{
-				listBox1.Items.Add(codecList[i]);
+				if(System.IO.File.Exists(diag.FileName))
+				{
+					mencoderPath.Text = diag.FileName;
+				}
 			}
+		}
+
+		private void okButton_Click(object sender, EventArgs e)
+		{
+			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
+			{
+				xmlwriter.SetValue("VideoEditor", "mencoder", mencoderPath.Text);
+			}
+			this.DialogResult = DialogResult.OK;
+			this.Close();
+		}
+
+		private void cancelButton_Click(object sender, EventArgs e)
+		{
+			DialogResult = DialogResult.Cancel;
+			this.Close();
 		}
 	}
 }
