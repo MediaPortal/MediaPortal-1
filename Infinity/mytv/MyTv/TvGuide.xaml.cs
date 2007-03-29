@@ -879,7 +879,16 @@ namespace MyTv
 
     void OnProgramClicked(object sender, RoutedEventArgs e)
     {
-
+      Button b = sender as Button;
+      if (b != null)
+      {
+        _selectedItem = b.Tag as GuideTag;
+        if (_selectedItem.Program != null)
+        {
+          TvProgramInfo info = new TvProgramInfo(_selectedItem.Program);
+          NavigationService.Navigate(info);
+        }
+      }
     }
     #endregion
   }

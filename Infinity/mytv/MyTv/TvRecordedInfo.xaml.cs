@@ -51,6 +51,7 @@ namespace MyTv
       // Sets keyboard focus on the first Button in the sample.
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       Keyboard.Focus(buttonKeepUntil);
+      labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
 
 
       if (TvPlayerCollection.Instance.Count > 0)
