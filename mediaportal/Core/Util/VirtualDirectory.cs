@@ -203,8 +203,10 @@ namespace MediaPortal.Util
     public void SetExtensions(ArrayList extensions)
     {
       if (extensions == null) return;
-      if (m_extensions == null)
-        m_extensions = new List<string>();
+			if (m_extensions == null)
+				m_extensions = new List<string>();
+			else
+				m_extensions.Clear();
 
       foreach (string ext in extensions)
       {
