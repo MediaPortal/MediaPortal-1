@@ -136,9 +136,16 @@ namespace MyTv
       IList programs = layer.GetPrograms(_selectedChannel, now, end);
       _maxSingleRows = programs.Count;
       int rowNr = 0;
-      for (int i = _singleRowOffset; i < _maxSingleRows; ++i)
+      for (int i = _singleRowOffset; i < _maxChannels; ++i)
       {
-        Program program = (Program)programs[i];
+        Program program ;
+        if (i < programs.Count)
+          program = (Program)programs[i];
+        else
+        {
+          program = new Program(_selectedChannel.IdChannel, now, now.AddMinutes(30), "No information", "", "", false);
+          now = now.AddMinutes(30);
+        }
         GuideTag tag = new GuideTag();
         tag.Channel = _selectedChannel;
         tag.Program = program;
