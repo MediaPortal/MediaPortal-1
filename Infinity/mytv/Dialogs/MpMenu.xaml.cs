@@ -62,6 +62,7 @@ namespace Dialogs
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+      Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       gridContent.Children.Clear();
       this.Visibility = Visibility.Visible;
       int maxColumns = 0;
@@ -220,6 +221,16 @@ namespace Dialogs
     {
       SelectedIndex = -1;
       this.Visibility = Visibility.Hidden;
+    }
+    protected void onKeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.Key == System.Windows.Input.Key.Escape)
+      {
+        //return to previous screen
+        SelectedIndex = -1;
+        this.Visibility = Visibility.Hidden;
+        return;
+      }
     }
 
   }
