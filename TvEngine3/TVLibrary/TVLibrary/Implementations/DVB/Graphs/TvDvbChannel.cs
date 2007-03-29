@@ -1156,7 +1156,7 @@ namespace TvLibrary.Implementations.DVB
       //bool audioPidSet = false;
       foreach (PidInfo info in _channelInfo.pids)
       {
-        if (info.isAC3Audio || info.isAudio || info.isVideo)
+        if (info.isAC3Audio || info.isAudio || info.isVideo ||info.isDVBSubtitle)
         {
           bool addPid = false;
           if (info.isVideo)
