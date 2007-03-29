@@ -354,6 +354,10 @@ namespace TvLibrary.Implementations.DVB
                 pidInfo.SubtitlePid(subtitlePid);
                 info.AddPid(pidInfo);
               }
+              // This is needed to have the transponder for the 9 day dish epg guide discovered by the scan and to add the channel 
+              // as TV Channel so that we can grab EPG from it
+              if (info.serviceType == 141)
+                hasVideo = true;
               startTime = DateTime.Now;
               bool isTvRadioChannel = false;
               if (info.serviceType == (int)ServiceType.Video || info.serviceType == (int)ServiceType.Mpeg4Stream ||
