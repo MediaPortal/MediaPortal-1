@@ -38,24 +38,27 @@
             <RowDefinition/>
           </Grid.RowDefinitions>
           <Rectangle x:Name="videoWindow" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"  Grid.RowSpan="3" Width="160" Height="120" RadiusX="4" RadiusY="4" Fill="Black" StrokeThickness="2" Stroke="#FF1253A3"  ></Rectangle>
-          <TextBlock Name="labelTitle" Grid.Column="2" Grid.ColumnSpan="5" Grid.Row="0" Style="{StaticResource TextBlockLargeStyle}"/>
-          <TextBlock Name="labelDescription" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="5" Style="{StaticResource TextBlockNormalStyle}" />
           <TextBlock Name="labelStartEnd" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="5" Style="{StaticResource TextBlockNormalStyle}" HorizontalAlignment="Left"/>
           <TextBlock Name="labelGenre" Grid.Column="6" Grid.Row="2" Grid.ColumnSpan="4" Style="{StaticResource TextBlockNormalStyle}" HorizontalAlignment="Right" Margin="0,0,20,0"/>
         </Grid>
       </StackPanel>
       <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" >
-        <Button Name="buttonRecord" Template="{StaticResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" >Record</Button>
-        <Button Name="buttonAdvancedRecord" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" >Advanced Record</Button>
-        <Button Name="buttonKeepUntil" Template="{StaticResource MpButton}" Height="32"  MouseEnter="OnMouseEnter"  >Keep until</Button>
-        <Button Name="buttonAlertMe" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" >Alert me</Button>
+        <Button Name="buttonRecord" Template="{StaticResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnRecordClicked">Record</Button>
+        <Button Name="buttonAdvancedRecord" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnAdvancedRecordClicked">Advanced Record</Button>
+        <Button Name="buttonKeepUntil" Template="{StaticResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnKeepUntil" >Keep until</Button>
+        <CheckBox  Name="buttonAlertMe" Template="{StaticResource MpRadioButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnNotify">Alert me</CheckBox >
         <Button Name="buttonQuality" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter"  >Quality setting</Button>
-        <Button Name="buttonEpisodes" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter"  >Episodes management</Button>
-        <Button Name="buttonPreRecord" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter"  >Pre-record</Button>
-        <Button Name="buttonPostRecord" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter"  >Post-record</Button>
+        <Button Name="buttonEpisodes" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnSetEpisodes" >Episodes management</Button>
+        <Button Name="buttonPreRecord" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnPreRecordInterval" >Pre-record</Button>
+        <Button Name="buttonPostRecord" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnPostRecordInterval"  >Post-record</Button>
       </StackPanel>
-      <Grid x:Name="gridList" Margin="0,0,30,0">
-      </Grid>
+
+      <StackPanel Margin="0,0,30,0">
+        <TextBlock Name="labelTitle" Style="{StaticResource TextBlockLargeStyle}"/>
+        <TextBlock Name="labelDescription"  Style="{StaticResource TextBlockNormalStyle}" />
+        <Grid x:Name="gridList" Margin="0,0,30,0">
+        </Grid>
+      </StackPanel>
     </DockPanel >
   </Grid>
 </Page>

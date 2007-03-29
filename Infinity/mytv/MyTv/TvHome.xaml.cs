@@ -504,14 +504,13 @@ namespace MyTv
         //timeshifting worked, now view the channel
         ChannelNavigator.Instance.Card = card;
         //do we already have a media player ?
-        Uri uri = new Uri(card.TimeShiftFileName, UriKind.Absolute);
         if (TvPlayerCollection.Instance.Count != 0)
         {
           TvPlayerCollection.Instance.DisposeAll();
         }
 
         //create a new media player 
-        MediaPlayer player = TvPlayerCollection.Instance.Get(card, uri);
+        MediaPlayer player = TvPlayerCollection.Instance.Get(card, card.TimeShiftFileName);
         player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
         player.MediaOpened += new EventHandler(_mediaPlayer_MediaOpened);
 
@@ -650,33 +649,32 @@ namespace MyTv
       dlgMenu.ShowDialog();
       if (dlgMenu.SelectedIndex < 0) return;
       ChannelNavigator.Instance.Card = new VirtualCard(_users[dlgMenu.SelectedIndex], RemoteControl.HostName);
-      if (ChannelNavigator.Instance.Card.IsRecording && !ChannelNavigator.Instance.Card.IsTimeShifting)
+      videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+      string fileName = "";
+      TvPlayerCollection.Instance.DisposeAll();
+      if (ChannelNavigator.Instance.Card.IsRecording )
       {
-        videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-        string fileName = ChannelNavigator.Instance.Card.RecordingFileName;
-        Uri uri = new Uri(ChannelNavigator.Instance.Card.TimeShiftFileName, UriKind.Absolute);
-        TvPlayerCollection.Instance.DisposeAll();
-
-        //create a new media player 
-        MediaPlayer player = TvPlayerCollection.Instance.Get(ChannelNavigator.Instance.Card, uri);
-        player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
-        player.MediaOpened += new EventHandler(_mediaPlayer_MediaOpened);
-
-        //create video drawing which draws the video in the video window
-        VideoDrawing videoDrawing = new VideoDrawing();
-        videoDrawing.Player = player;
-        videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
-        DrawingBrush videoBrush = new DrawingBrush();
-        videoBrush.Drawing = videoDrawing;
-        videoWindow.Fill = videoBrush;
-        videoDrawing.Player.Play();
-
+        fileName = ChannelNavigator.Instance.Card.RecordingFileName; 
       }
       else
       {
-        videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-        TvPlayerCollection.Instance.DisposeAll();
+        fileName = ChannelNavigator.Instance.Card.TimeShiftFileName; 
       }
+
+      //create a new media player 
+      MediaPlayer player = TvPlayerCollection.Instance.Get(ChannelNavigator.Instance.Card, ChannelNavigator.Instance.Card.TimeShiftFileName);
+      player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
+      player.MediaOpened += new EventHandler(_mediaPlayer_MediaOpened);
+
+      //create video drawing which draws the video in the video window
+      VideoDrawing videoDrawing = new VideoDrawing();
+      videoDrawing.Player = player;
+      videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
+      DrawingBrush videoBrush = new DrawingBrush();
+      videoBrush.Drawing = videoDrawing;
+      videoWindow.Fill = videoBrush;
+      videoDrawing.Player.Play();
+
       ChannelNavigator.Instance.Card.User.Name = new User().Name;
     }
 

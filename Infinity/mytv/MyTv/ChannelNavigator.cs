@@ -98,7 +98,13 @@ namespace MyTv
       }
 
       int channelId = UserSettings.GetInt("tv", "channel");
-      SelectedChannel = Channel.Retrieve(channelId);
+      try
+      {
+        SelectedChannel = Channel.Retrieve(channelId);
+      }
+      catch (Exception)
+      {
+      }
     }
     /// <summary>
     /// Gets the currently active channel group.

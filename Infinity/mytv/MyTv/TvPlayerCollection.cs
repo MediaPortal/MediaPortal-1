@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using TvControl;
@@ -35,8 +36,35 @@ namespace MyTv
     /// <param name="card">The card.</param>
     /// <param name="uri">The URI.</param>
     /// <returns></returns>
-    public TvMediaPlayer Get(VirtualCard card, Uri uri)
+    public TvMediaPlayer Get(VirtualCard card, string fileName)
     {
+      if (!File.Exists(fileName))
+      {
+        TvServer server = new TvServer();
+        if (fileName == card.TimeShiftFileName)
+          fileName = card.RTSPUrl;
+        else
+          fileName = server.GetRtspUrlForFile(fileName);
+      }
+      string fname = fileName;
+      if (fileName.StartsWith("rtsp://"))
+      {
+        fname = String.Format(@"{0}\1.tsp", Directory.GetCurrentDirectory());
+        if (File.Exists(fname))
+        {
+          File.Delete(fname);
+        }
+        using (FileStream stream = new FileStream(fname, FileMode.OpenOrCreate))
+        {
+          using (BinaryWriter writer = new BinaryWriter(stream))
+          {
+            byte k=0x12;
+            for (int i = 0; i < 99; ++i) writer.Write(k);
+            writer.Write(fileName);
+          }
+        }
+      }
+      Uri uri = new Uri(fname, UriKind.Absolute);
       TvMediaPlayer player = new TvMediaPlayer(card);
       player.Open(uri);
       _players.Add(player);

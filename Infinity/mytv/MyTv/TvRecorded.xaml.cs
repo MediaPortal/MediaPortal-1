@@ -367,8 +367,7 @@ namespace MyTv
       }
       videoWindow.Fill = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
       TvPlayerCollection.Instance.DisposeAll();
-      Uri uri = new Uri(recording.FileName, UriKind.Absolute);
-      TvMediaPlayer player = TvPlayerCollection.Instance.Get(null, uri);
+      TvMediaPlayer player = TvPlayerCollection.Instance.Get(null, recording.FileName);
       player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
 
       //create video drawing which draws the video in the video window

@@ -18,6 +18,7 @@ namespace MyTv
             SetExtension(".ts", "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}");
             SetExtension(".tp", "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}");
             SetExtension(".tsbuffer", "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}");
+            SetExtension(".tsp", "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}");
             return true;
           }
         }
