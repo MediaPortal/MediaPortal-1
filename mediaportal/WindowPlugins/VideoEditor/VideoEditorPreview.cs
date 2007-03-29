@@ -139,8 +139,13 @@ namespace WindowPlugins.VideoEditor
       {
         if (filepath != String.Empty)
         {
-          inFilename = new FileInfo(filepath);
-          GetFiletype();
+					if (System.IO.File.Exists(filepath))
+					{
+						inFilename = new FileInfo(filepath);
+						GetFiletype();
+					}
+					else
+						throw new Exception();
         }
         GetID = windowID;
       }
@@ -183,7 +188,6 @@ namespace WindowPlugins.VideoEditor
         {
           GUIGraphicsContext.VideoWindow =
             new Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
-          //Log.Info("Test " +videoWindow.XPosition  + " " + videoWindow.Width + " " + videoWindow.Height);
         }
         g_Player.FullScreen = false;
         g_Player.Play(inFilename.FullName);
@@ -191,11 +195,7 @@ namespace WindowPlugins.VideoEditor
         durationOld = g_Player.Duration;
         oldLenghtLbl.Label = Utils.SecondsToHMSString((int) durationOld);
         newLenghtLbl.Label = Utils.SecondsToHMSString((int) durationNew);
-        //postitionSld.Percentage = 100;
-        //postitionSld.SpinType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT;
-        //positionSld.SetFloatRange(0, (float)durationOld);
-        // positionSld.FloatInterval = (float)0.5;
-        // positionSld.SpinType = GUISpinControl.SpinType.Float;
+   
         positionSld.Percentage = 0;
         progressBar.Percentage = 0;
         progressBar.IsVisible = false;
@@ -214,6 +214,7 @@ namespace WindowPlugins.VideoEditor
         editCutPoint = false;
         editCutPointsIndex = 0;
         addBtn.IsEnabled = true;
+				GetComSkipCutPoints();
       }
       catch (Exception ex)
       {
@@ -281,53 +282,7 @@ namespace WindowPlugins.VideoEditor
       inFilename = null;
       base.OnPageDestroy(new_windowId);
     }
-
-    //public override void OnAction(Action action)
-    //{
-    //  //code provided by Davide
-    //  /* switch (action.wID)
-    //  {
-    //    case Action.ActionType.ACTION_STOP:
-    //      g_Player.Stop();
-    //      break;
-    //    case Action.ActionType.ACTION_PAUSE:
-    //      g_Player.Pause();
-    //      break;
-    //    case Action.ActionType.ACTION_PLAY:
-    //      GUIGraphicsContext.VMR9Allowed = true;
-    //      GUIGraphicsContext.IsFullScreenVideo = false;
-    //      GUIWindowManager.ActiveWindow = (int)GUIWindow.Window.WINDOW_TV;
-    //      if (videoWindow != null)
-    //      {
-    //        GUIGraphicsContext.VideoWindow = new System.Drawing.Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
-    //        //Log.Info("Test " +videoWindow.XPosition  + " " + videoWindow.Width + " " + videoWindow.Height);
-    //      }
-    //      g_Player.FullScreen = false;
-    //      g_Player.Play(inFilename.FullName);
-    //      break;
-    //    case Action.ActionType.ACTION_REWIND:
-    //      g_Player.SeekAbsolute((double)(g_Player.CurrentPosition - 5.0));
-    //      break;
-    //    case Action.ActionType.ACTION_STEP_BACK:
-    //      g_Player.SeekAbsolute((double)(g_Player.CurrentPosition - 30.0));
-    //      break;
-    //    case Action.ActionType.ACTION_PREV_ITEM:
-    //      g_Player.SeekAbsolute((double)(g_Player.CurrentPosition - 2.0));
-    //      break;
-    //    case Action.ActionType.ACTION_FORWARD:
-    //      g_Player.SeekAbsolute((double)(g_Player.CurrentPosition + 5.0));
-    //      break;
-    //    case Action.ActionType.ACTION_STEP_FORWARD:
-    //      g_Player.SeekAbsolute((double)(g_Player.CurrentPosition + 30.0));
-    //      break;
-    //    case Action.ActionType.ACTION_NEXT_ITEM:
-    //      g_Player.SeekAbsolute((double)(g_Player.CurrentPosition + 2.0));
-    //      break;
-    //  }*/
-
-    //  base.OnAction(action);
-    //}
-
+    
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == cutBtn)
@@ -358,14 +313,6 @@ namespace WindowPlugins.VideoEditor
       }
       if (control == addBtn)
       {
-        /*if (addBtn.Label == GUILocalizeStrings.Get(510)) //cancel
-				{
-					editCutPointsLbl.IsVisible = false;
-					editCutPoint = false;
-					addBtn.Label = GUILocalizeStrings.Get(2093);
-				}
-				else
-				{*/
         if (startCut < endCut)
         {
           // cutList.Add((startCut.ToString() + ":" + endCut.ToString()));
@@ -519,6 +466,89 @@ namespace WindowPlugins.VideoEditor
 
     #endregion
 
+		private void GetComSkipCutPoints()
+		{
+			string comskipFilePath = inFilename.FullName.Replace(inFilename.Extension, ".txt");
+			try
+			{
+				if (System.IO.File.Exists(comskipFilePath))
+				{
+					GUIDialogYesNo yesnoDialog = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+					if (yesnoDialog == null)
+					{
+						return;
+					}
+					
+					yesnoDialog.SetHeading("Video Editor");
+					yesnoDialog.SetLine(1, 2059); //Comskip file found, 
+					yesnoDialog.SetLine(2, 2060);//would you like to use it?
+					yesnoDialog.DoModal(GetID);
+					if (yesnoDialog.IsConfirmed)
+					{
+						System.IO.StreamReader comSkipFile = new StreamReader(comskipFilePath);
+						string line = comSkipFile.ReadLine();
+						string[] lineParts = line.Split(new char[] { '\t', ' ' });
+						if (lineParts.Length < 1)
+						{
+							MessageBox(GUILocalizeStrings.Get(2061), "Video Editor"); //The Comskip file is incompatible
+							return;
+						}
+						int framesPerSec = 25;
+						double curPos = 0;
+						if (System.Web.UI.WebControls.BaseCompareValidator.CanConvert(lineParts[lineParts.Length - 1], System.Web.UI.WebControls.ValidationDataType.Integer))
+						{
+							framesPerSec = System.Convert.ToInt32(lineParts[lineParts.Length - 1]) / 100;
+						}
+						comSkipFile.ReadLine();
+						while (!comSkipFile.EndOfStream)
+						{
+							line = comSkipFile.ReadLine();
+							lineParts = line.Split(new char[] { '\t', ' ' });
+							int cutPoint1, cutPoint2;
+							double startPoint = 0, endPoint = 0;
+							if (System.Web.UI.WebControls.BaseCompareValidator.CanConvert(lineParts[0], System.Web.UI.WebControls.ValidationDataType.Integer))
+							{
+								cutPoint1 = System.Convert.ToInt32(lineParts[0].Trim());
+								endPoint = cutPoint1 / framesPerSec;
+							}
+							else
+							{
+								MessageBox(GUILocalizeStrings.Get(2061), "Video Editor"); //The Comskip file is incompatible
+								return;
+							}
+
+							if (System.Web.UI.WebControls.BaseCompareValidator.CanConvert(lineParts[1], System.Web.UI.WebControls.ValidationDataType.Integer))
+							{
+								cutPoint2 = System.Convert.ToInt32(lineParts[1].Trim());
+								startPoint = cutPoint2 / framesPerSec;
+							}
+							else
+							{
+								MessageBox(GUILocalizeStrings.Get(2061), "Video Editor"); //The Comskip file is incompatible
+								return;
+							}
+							cutListCtrl.Add(
+									new GUIListItem(Utils.SecondsToHMSString((int)curPos) + " - " + Utils.SecondsToHMSString((int)endPoint)));
+							durationNew += (endPoint - curPos);
+							newLenghtLbl.Label = Utils.SecondsToHMSString((int)durationNew);
+							cutPointsList.Add(new TimeDomain(curPos, endPoint));
+							curPos = startPoint;
+						}
+						cutListCtrl.Add(
+									new GUIListItem(Utils.SecondsToHMSString((int)curPos) + " - " + Utils.SecondsToHMSString((int)durationOld)));
+						durationNew += (durationOld - curPos);
+						newLenghtLbl.Label = Utils.SecondsToHMSString((int)durationNew);
+						cutPointsList.Add(new TimeDomain(curPos, durationOld));
+						cutBtn.IsEnabled = true;
+					}
+				}
+			}
+			catch
+			{
+				MessageBox(GUILocalizeStrings.Get(2061), "Video Editor"); //The Comskip file is incompatible
+				return;
+			}
+		}
     private enum FileTypes
     {
       Unknown,
@@ -573,13 +603,6 @@ namespace WindowPlugins.VideoEditor
       switch (cutType)
       {
         case FileTypes.Dvrms:
-          //dvrMod.CutPoints = cutPointsList;
-          //dvrMod.InFilename = inFilename;
-          // cutThread = new Thread(new ThreadStart(dvrMod.CutDvr));//CutDvrms));
-          //cutThread.SetApartmentState(ApartmentState.STA);
-          //cutThread.IsBackground = true;
-          //cutThread.Priority = ThreadPriority.BelowNormal;
-
           progressBar.Percentage = 0;
           progressBar.IsVisible = true;
           progressLbl.IsVisible = true;
@@ -615,57 +638,6 @@ namespace WindowPlugins.VideoEditor
       }
     }
 
-    /*private void CutDvrms()
-    {
-      try
-      {
-        recCompcut = (IStreamBufferRecComp)DShowNET.Helper.ClassId.CoCreateInstance(DShowNET.Helper.ClassId.RecComp);
-        if (recCompcut != null)
-        {
-          CutProgressTime();
-          string outPath = inFilename.FullName;
-          //rename the source file ------------later this could be configurable to delete it
-          //TODO behavior if the renamed sourcefile (_original) exists
-          inFilename.MoveTo(inFilename.FullName.Replace(".dvr-ms", "_original.dvr-ms"));
-          //to not to change the database the outputfile has the same name 
-          outFilename = new FileInfo(outPath);
-         
-
-          if (outFilename.Exists)
-          {
-            outFilename.Delete();
-          }
-          recCompcut.Initialize(outFilename.FullName, inFilename.FullName);
-          for (int i = 0; i < cutList.Count; i++)
-          {
-            string[] split = cutList[i].ToString().Split(new char[] { ':' });
-            startCut = System.Convert.ToDouble(split[0]);
-            endCut = System.Convert.ToDouble(split[1]);
-            recCompcut.AppendEx(inFilename.FullName, (long)(startCut * 10000000), (long)(endCut * 10000000));
-          }
-          recCompcut.Close();
-          Marshal.ReleaseComObject((object)recCompcut);
-          cutFinished = true;
-          progressLbl.Label = "100";
-          progressBar.Percentage = 100;
-          MessageBox(GUILocalizeStrings.Get(2083), GUILocalizeStrings.Get(2111)); //Dvrms:Finished to cut the video file , Finished !
-          progressBar.IsVisible = false;
-          progressLbl.IsVisible = false;
-
-        }
-      }
-      catch (Exception e)
-      {
-        Log.Error("VideoEditor: (CutDvrms) " + e.StackTrace);
-        if (cutProgressTime != null)
-        {
-          cutProgressTime.Stop();
-          progressBar.IsVisible = false;
-          progressLbl.IsVisible = false;
-        }
-      }
-    }*/
-
     private void CutMpeg()
     {
       outFilename = new FileInfo(inFilename.FullName);
@@ -675,125 +647,10 @@ namespace WindowPlugins.VideoEditor
       Mpeg2Splitter cMpeg2Splitter = new Mpeg2Splitter();
       cMpeg2Splitter.OnProgress += new Mpeg2Splitter.Progress(dvrMod_OnProgress);
       cMpeg2Splitter.OnFinished += new Mpeg2Splitter.Finished(dvrMod_OnFinished);
-
-      //CutProgressTime();
       cMpeg2Splitter.Scene(inFilename.FullName, outFilename.FullName, ref tStamp, cutPointsList.Count);
-      //cutFinished = true;
       progressLbl.Label = "100";
       progressBar.Percentage = 100;
-     // MessageBox(GUILocalizeStrings.Get(2082), GUILocalizeStrings.Get(2111));
-      // progressBar.IsVisible = false;
-      //progressLbl.IsVisible = false;
-      //cutBtn.IsEnabled = true;
     }
-
-    /*  private void CutProgressTime()
-    {
-      cutFinished = false;
-      cutProgressTime = new System.Timers.Timer(1000);
-      cutProgressTime.Elapsed += new System.Timers.ElapsedEventHandler(cutProgressTime_Elapsed);
-      progressBar.Percentage = 0;
-      progressBar.IsVisible = true;
-      progressLbl.IsVisible = true;
-      cutProgressTime.Start();
-    }
-
-    void cutProgressTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-    {
-      if (!cutFinished)
-      {
-        int progress;
-        recCompcut.GetCurrentLength(out progress);
-        int percent = System.Convert.ToInt32((progress * 100) / durationNew);
-        progressBar.Percentage = percent;
-        progressLbl.Label = percent.ToString();
-        
-      }
-      else
-        cutProgressTime.Stop();
-    }*/
-
     #endregion
-
-    //#region obsolete
-
-    ///// <summary>
-    ///// Converts the time in sec to hh:mm:ss format
-    ///// </summary>
-    ///// <remarks>now using: MediaPortal.Util.Utils.SecondsToHMSString()</remarks>
-    ///// <param name="timeSec">time in sec</param>
-    ///// <returns>time in hh:mm:ss</returns>
-    //private string TimeCalc(double timeSec)
-    //{
-    //  int hr, min, sec;
-    //  string hr_ = "", min_ = "", sec_ = "";
-    //  //calc min
-    //  min = (int) timeSec/60;
-    //  //only sec
-    //  if (min < 1)
-    //  {
-    //    sec = (int) timeSec;
-    //    hr_ = "00";
-    //    min_ = "00";
-    //    if (sec < 10)
-    //    {
-    //      sec_ = "0" + Convert.ToInt32(sec).ToString();
-    //    }
-    //    else
-    //    {
-    //      sec_ = Convert.ToInt32(sec).ToString();
-    //    }
-    //  }
-    //  //less than one hour
-    //  if (min >= 1 && min < 60)
-    //  {
-    //    sec = (int) timeSec%60;
-    //    hr_ = "00";
-    //    if (min < 10)
-    //    {
-    //      min_ = "0" + Convert.ToInt32(min).ToString();
-    //    }
-    //    else
-    //    {
-    //      min_ = Convert.ToInt32(min).ToString();
-    //    }
-    //    if (sec < 10)
-    //    {
-    //      sec_ = "0" + Convert.ToInt32(sec).ToString();
-    //    }
-    //    else
-    //    {
-    //      sec_ = Convert.ToInt32(sec).ToString();
-    //    }
-    //  }
-    //  //more than one hour
-    //  if (min >= 60)
-    //  {
-    //    sec = (int) timeSec%60;
-    //    hr = (int) min/60;
-    //    min = (int) min%60;
-    //    if (min < 10)
-    //    {
-    //      min_ = "0" + Convert.ToInt32(min).ToString();
-    //    }
-    //    else
-    //    {
-    //      min_ = Convert.ToInt32(min).ToString();
-    //    }
-    //    if (sec < 10)
-    //    {
-    //      sec_ = "0" + Convert.ToInt32(sec).ToString();
-    //    }
-    //    else
-    //    {
-    //      sec_ = Convert.ToInt32(sec).ToString();
-    //    }
-    //    hr_ = Convert.ToInt32(hr).ToString();
-    //  }
-
-    //  return hr_ + ":" + min_ + ":" + sec_;
-    //}
-
-    //#endregion
   }
 }
