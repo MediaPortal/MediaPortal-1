@@ -978,7 +978,7 @@ namespace MediaPortal.TV.Recording
 
       if (OnTvRecordingEnded != null)
       {
-        OnTvRecordingEnded(RecordingFileName, _currentTvRecording, _currentTvProgramRecording);
+        OnTvRecordingEnded(_recordedTvObject.FileName, _currentTvRecording, _currentTvProgramRecording);
       }
 
       _recordedTvObject = null;

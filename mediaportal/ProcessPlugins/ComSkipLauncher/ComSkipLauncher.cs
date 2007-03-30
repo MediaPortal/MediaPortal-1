@@ -21,7 +21,7 @@ namespace ProcessPlugins.ComSkipLauncher
 
     public static readonly string MPConfigFile = Config.GetFolder(Config.Dir.Config) + "\\MediaPortal.xml";
 
-    public static readonly string DefaultProgram = "\\Program Files\\ComSkip\\ComSkip.exe";
+    public static readonly string DefaultProgram = "ComSkip.exe";
     public static readonly string DefaultParameters = "--playnice \"{0}\"";
 
     #endregion Constants
