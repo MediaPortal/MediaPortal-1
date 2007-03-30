@@ -77,7 +77,7 @@ namespace MediaPortal.GUI.Library
 			}
 		}
 
-		private bool OnPostRenderAction(Action action, GUIMessage msg, bool focus)
+		private int OnPostRenderAction(Action action, GUIMessage msg, bool focus)
 		{
 			if (msg!=null)
 			{
@@ -88,7 +88,7 @@ namespace MediaPortal.GUI.Library
 						if (DoesPostRender())
 						{
 							OnMessage(msg);
-							return Focused;
+							return (int) (Focused ? GUIWindowManager.FocusState.FOCUSED : GUIWindowManager.FocusState.NOT_FOCUSED);
 						}
 					}
 				}
@@ -106,8 +106,9 @@ namespace MediaPortal.GUI.Library
 					{
 						if (DoesPostRender())
 						{
+              bool foc = Focused;
 							OnAction(action);
-							return Focused;
+							return (int) (Focused ? GUIWindowManager.FocusState.FOCUSED : (foc == Focused ? GUIWindowManager.FocusState.NOT_FOCUSED : GUIWindowManager.FocusState.JUST_LOST_FOCUS));
 						}
 					}
 				}
@@ -126,12 +127,12 @@ namespace MediaPortal.GUI.Library
 					if (ShouldFocus(action))
 					{
 						Focused=true;
-						return true;
+						return (int) GUIWindowManager.FocusState.FOCUSED;
 					}
 				}
 				Focused=false;
 			}
-			return false;
+			return (int) GUIWindowManager.FocusState.NOT_FOCUSED;
 		}
 		protected virtual bool ShouldFocus(Action action)
 		{

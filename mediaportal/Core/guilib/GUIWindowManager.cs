@@ -44,11 +44,18 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIWindowManager
   {
+    public enum FocusState
+    {
+      NOT_FOCUSED = 0,
+      FOCUSED = 1,
+      JUST_LOST_FOCUS = 2
+    };
+  
     #region delegates and events
     public delegate void ThreadMessageHandler(object sender, GUIMessage message);
     public delegate void OnCallBackHandler();
     public delegate void PostRendererHandler(int level, float timePassed);
-    public delegate bool PostRenderActionHandler(Action action, GUIMessage msg, bool focus);
+    public delegate int PostRenderActionHandler(Action action, GUIMessage msg, bool focus);
     public delegate void WindowActivationHandler(int windowId);
     static public event SendMessageHandler Receivers;
     static public event OnActionHandler OnNewAction;
@@ -105,7 +112,7 @@ namespace MediaPortal.GUI.Library
           System.Delegate[] delegates = OnPostRenderAction.GetInvocationList();
           for (int i = 0; i < delegates.Length; ++i)
           {
-            if ((bool)delegates[i].DynamicInvoke(new object[] { null, message, false }))
+            if ((FocusState)delegates[i].DynamicInvoke(new object[] { null, message, false }) == FocusState.FOCUSED)
               return;
           }
           delegates = null;
@@ -232,6 +239,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="action">new action for current active window</param>
     static public void OnAction(Action action)
     {
+      bool foundOverlayRecentlyLostFocus = false;
       if (action == null) return;
       if (action.wID == Action.ActionType.ACTION_INVALID) return;
       if (action.wID == Action.ActionType.ACTION_MOVE_LEFT ||
@@ -246,9 +254,11 @@ namespace MediaPortal.GUI.Library
           for (int i = 0; i < delegates.Length; ++i)
           {
             int iActiveWindow = ActiveWindow;
-            bool focused = (bool)delegates[i].DynamicInvoke(new object[] { action, null, false });
-            if (focused || iActiveWindow != ActiveWindow)
+            FocusState focusState = (FocusState)delegates[i].DynamicInvoke(new object[] { action, null, false });
+            if (focusState == FocusState.FOCUSED || iActiveWindow != ActiveWindow)
               return;
+            else if (focusState == FocusState.JUST_LOST_FOCUS)
+              foundOverlayRecentlyLostFocus = true;
           }
           delegates = null;
           if (!GUIGraphicsContext.IsFullScreenVideo && _activeWindowIndex >= 0 && _activeWindowIndex < _windowCount)
@@ -297,23 +307,24 @@ namespace MediaPortal.GUI.Library
       GUIWindow pWindow = _listWindows[_activeWindowIndex];
       if (null != pWindow)
       {
-        pWindow.OnAction(action);
+        if (!foundOverlayRecentlyLostFocus) // Don't send it to window if overlay has just lost focus. Correct control already focused!
+          pWindow.OnAction(action);
 
         if (action.wID == Action.ActionType.ACTION_MOVE_UP)
         {
           if (pWindow.GetFocusControlId() < 0)
           {
-            bool focused = false;
+            FocusState focusState = FocusState.NOT_FOCUSED;
             System.Delegate[] delegates = OnPostRenderAction.GetInvocationList();
             for (int i = 0; i < delegates.Length; ++i)
             {
               int iActiveWindow = ActiveWindow;
-              focused = (bool)delegates[i].DynamicInvoke(new object[] { action, null, true });
-              if (focused || iActiveWindow != ActiveWindow)
+              focusState = (FocusState)delegates[i].DynamicInvoke(new object[] { action, null, true });
+              if (focusState == FocusState.FOCUSED || iActiveWindow != ActiveWindow)
                 break;
             }
             delegates = null;
-            if (!focused)
+            if (focusState != FocusState.FOCUSED)
             {
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, pWindow.GetID, 0, pWindow.PreviousFocusedId, 0, 0, null);
               pWindow.OnMessage(msg);
@@ -326,17 +337,17 @@ namespace MediaPortal.GUI.Library
           {
             if (OnPostRenderAction != null)
             {
-              bool focused = false;
+              FocusState focusState = FocusState.NOT_FOCUSED;
               System.Delegate[] delegates = OnPostRenderAction.GetInvocationList();
               for (int i = 0; i < delegates.Length; ++i)
               {
                 int iActiveWindow = ActiveWindow;
-                focused = (bool)delegates[i].DynamicInvoke(new object[] { action, null, true });
-                if (focused || iActiveWindow != ActiveWindow)
+                focusState = (FocusState)delegates[i].DynamicInvoke(new object[] { action, null, true });
+                if (focusState == FocusState.FOCUSED || iActiveWindow != ActiveWindow)
                   break;
               }
               delegates = null;
-              if (!focused)
+              if (focusState != FocusState.FOCUSED)
               {
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, pWindow.GetID, 0, pWindow.PreviousFocusedId, 0, 0, null);
                 pWindow.OnMessage(msg);
