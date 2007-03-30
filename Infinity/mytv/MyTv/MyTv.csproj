@@ -102,6 +102,7 @@
     <None Include="MpStylesAndTemplates.xaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Include="TvFullscreen.xaml" />
     <Page Include="TvGuide.xaml" />
     <Page Include="TvHome.xaml" />
     <Page Include="TvNewSchedule.xaml" />
@@ -148,6 +149,10 @@
     <Compile Include="ThumbnailGenerator.cs" />
     <Compile Include="Thumbs.cs" />
     <Compile Include="TsReaderCheck.cs" />
+    <Compile Include="TvFullscreen.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>TvFullscreen.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TvGuide.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>TvGuide.xaml</DependentUpon>

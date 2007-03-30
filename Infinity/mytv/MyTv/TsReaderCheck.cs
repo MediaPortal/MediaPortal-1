@@ -19,10 +19,10 @@ namespace MyTv
             SetExtension(".tp", "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}");
             SetExtension(".tsbuffer", "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}");
             SetExtension(".tsp", "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}");
-            SetPermission(".ts");
-            SetPermission(".tp");
-            SetPermission(".tsbuffer");
-            SetPermission(".tsp");
+            //SetPermission(".ts");
+            //SetPermission(".tp");
+            //SetPermission(".tsbuffer");
+            //SetPermission(".tsp");
             return true;
           }
         }

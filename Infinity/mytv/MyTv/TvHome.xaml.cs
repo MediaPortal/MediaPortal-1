@@ -61,6 +61,7 @@ namespace MyTv
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
 
+      Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       // Sets keyboard focus on the first Button in the sample.
       Keyboard.Focus(buttonTvGuide);
 
@@ -69,6 +70,25 @@ namespace MyTv
       starter.BeginInvoke(null, null);
     }
 
+    protected void onKeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.Key == System.Windows.Input.Key.Escape)
+      {
+        //return to previous screen
+        e.Handled = true;
+        this.NavigationService.GoBack();
+        return;
+      }
+      if (e.Key == System.Windows.Input.Key.X)
+      {
+        if (TvPlayerCollection.Instance.Count > 0)
+        {
+          e.Handled = true;
+          this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
+          return;
+        }
+      }
+    }
     /// <summary>
     /// background worker. Connects to server.
     /// on success call OnSucceededToConnectToServer() via dispatcher
@@ -500,7 +520,6 @@ namespace MyTv
     /// <param name="card">The card.</param>
     private void OnStartTimeShiftingResult(TvResult succeeded, VirtualCard card)
     {
-      videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
       if (succeeded == TvResult.Succeeded)
       {
         //timeshifting worked, now view the channel
@@ -508,9 +527,16 @@ namespace MyTv
         //do we already have a media player ?
         if (TvPlayerCollection.Instance.Count != 0)
         {
-          TvPlayerCollection.Instance.DisposeAll();
+          if (TvPlayerCollection.Instance[0].FileName != card.TimeShiftFileName)
+          {
+            videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+            TvPlayerCollection.Instance.DisposeAll();
+          }
         }
-
+        if (TvPlayerCollection.Instance.Count != 0)
+        {
+          return;
+        }
         //create a new media player 
         MediaPlayer player = TvPlayerCollection.Instance.Get(card, card.TimeShiftFileName);
         player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
@@ -685,11 +711,11 @@ namespace MyTv
     {
       if (TvPlayerCollection.Instance.Count != 0)
       {
-        MediaPlayer player = TvPlayerCollection.Instance[0];
+        TvMediaPlayer player = TvPlayerCollection.Instance[0];
         if (player.NaturalDuration.HasTimeSpan)
         {
-          TimeSpan duration = player.NaturalDuration.TimeSpan;
-          player.Position = duration;
+          TimeSpan duration = player.Duration;
+          player.Position = duration.Add(new TimeSpan(0,0,-1));
         }
         //set tv button on
         buttonTvOnOff.IsChecked = true;

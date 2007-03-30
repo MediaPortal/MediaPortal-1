@@ -14,6 +14,8 @@ namespace MyTv
     #region variables
     VirtualCard _card;
     Exception _exception;
+    bool _paused=false;
+    string _fileName;
     #endregion
 
     #region ctor
@@ -21,8 +23,10 @@ namespace MyTv
     /// Initializes a new instance of the <see cref="TvMediaPlayer"/> class.
     /// </summary>
     /// <param name="card">The card.</param>
-    public TvMediaPlayer(VirtualCard card)
+    public TvMediaPlayer(VirtualCard card,string fileName)
     {
+      //ScrubbingEnabled = true;
+      _fileName = fileName;
       _card = card;
       _exception = null;
       MediaFailed += new EventHandler<ExceptionEventArgs>(TvMediaPlayer_MediaFailed);
@@ -48,6 +52,61 @@ namespace MyTv
         return (_exception != null);
       }
     }
+    public new void Pause()
+    {
+      _paused = !_paused;
+      if (_paused)
+      {
+        base.Pause();
+      }
+      else
+      {
+        base.Play();
+      }
+    }
+    public bool IsPaused
+    {
+      get
+      {
+        return _paused;
+      }
+    }
+    public TimeSpan Duration
+    {
+      get
+      {
+        if (_card != null)
+        {
+          if (_card.IsTimeShifting)
+          {
+            TimeSpan ts = DateTime.Now - _card.TimeShiftStarted;
+            return ts;
+          }
+          if (_card.IsRecording)
+          {
+            TimeSpan ts = DateTime.Now - _card.RecordingStarted;
+            return ts;
+          }
+        }
+        if (NaturalDuration.HasTimeSpan) return NaturalDuration.TimeSpan;
+        return  new TimeSpan(0, 0, 0, 0);
+      }
+    }
+    public string FileName
+    {
+      get
+      {
+        return _fileName;
+      }
+    }
+    public VirtualCard Card
+    {
+      get
+      {
+        return _card;
+      }
+    }
+
 
     #region IDisposable
     /// <summary>

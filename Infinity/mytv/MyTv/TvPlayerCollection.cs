@@ -38,6 +38,7 @@ namespace MyTv
     /// <returns></returns>
     public TvMediaPlayer Get(VirtualCard card, string fileName)
     {
+      string orgFileName = fileName;
       if (!File.Exists(fileName))
       {
         TvServer server = new TvServer();
@@ -58,14 +59,14 @@ namespace MyTv
         {
           using (BinaryWriter writer = new BinaryWriter(stream))
           {
-            byte k=0x12;
+            byte k = 0x12;
             for (int i = 0; i < 99; ++i) writer.Write(k);
             writer.Write(fileName);
           }
         }
       }
       Uri uri = new Uri(fname, UriKind.Absolute);
-      TvMediaPlayer player = new TvMediaPlayer(card);
+      TvMediaPlayer player = new TvMediaPlayer(card, orgFileName);
       player.Open(uri);
       _players.Add(player);
       return player;

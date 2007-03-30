@@ -294,6 +294,14 @@ namespace MyTv
         this.NavigationService.GoBack();
         return;
       }
+      if (e.Key == System.Windows.Input.Key.X)
+      {
+        if (TvPlayerCollection.Instance.Count > 0)
+        {
+          this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
+          return;
+        }
+      }
     }
 
 
