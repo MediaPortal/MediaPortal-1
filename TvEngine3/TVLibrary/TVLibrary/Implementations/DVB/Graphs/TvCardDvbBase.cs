@@ -27,6 +27,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Xml;
 using Microsoft.Win32;
 using DirectShowLib;
 using DirectShowLib.BDA;
@@ -743,26 +744,69 @@ namespace TvLibrary.Implementations.DVB
     {
       //multi demux
       int hr;
-      bool useMDAPI=false;
-      
-      if (System.IO.File.Exists(System.IO.Path.GetDirectoryName(this.GetType().Assembly.CodeBase)+"\\MDPLUGINS\\config.xml"))
+      #region Check MDAPI
+      bool useMDAPI = false;
+      if (System.IO.Directory.Exists("MDPLUGINS"))
       {
         try
         {
-          System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
-          doc.Load("MDPLUGINS\\config.xml");
-          System.Xml.XmlNodeList nodes = doc.SelectNodes("/settings/cards/card");
-          foreach (System.Xml.XmlNode node in nodes)
+          string xmlFile = AppDomain.CurrentDomain.BaseDirectory + "MDPLUGINS\\MDAPICards.xml";
+          if (!System.IO.File.Exists(xmlFile))
           {
-            if (node.Attributes["DevicePath"].Value == _devicePath)
+            XmlDocument doc = new XmlDocument();
+            XmlNode rootNode = doc.CreateElement("cards");
+            XmlNode nodeCard = doc.CreateElement("card");
+            XmlAttribute attr = doc.CreateAttribute("DevicePath");
+            attr.InnerText = _captureDevice.DevicePath;
+            nodeCard.Attributes.Append(attr);
+            attr = doc.CreateAttribute("Name");
+            attr.InnerText = _captureDevice.Name;
+            nodeCard.Attributes.Append(attr);
+            attr = doc.CreateAttribute("EnableMdapi");
+            attr.InnerText = "yes";
+            nodeCard.Attributes.Append(attr);
+            rootNode.AppendChild(nodeCard);
+            doc.AppendChild(rootNode);
+            doc.Save(xmlFile);
+            useMDAPI = true;
+          }
+          else
+          {
+            bool cardFound = false;
+            XmlDocument doc = new XmlDocument();
+            doc.Load(xmlFile);
+            XmlNodeList cardList = doc.SelectNodes("/cards/card");
+            foreach (XmlNode nodeCard in cardList)
             {
-              useMDAPI = (node.Attributes["Enable"].Value == "yes");
-              break;
+              if (nodeCard.Attributes["DevicePath"].Value == _captureDevice.DevicePath)
+              {
+                useMDAPI = (nodeCard.Attributes["EnableMdapi"].Value == "yes");
+                cardFound = true;
+                break;
+              }
+            }
+            if (!cardFound)
+            {
+              XmlNode nodeNewCard = doc.CreateElement("card");
+              XmlAttribute attr = doc.CreateAttribute("DevicePath");
+              attr.InnerText = _captureDevice.DevicePath;
+              nodeNewCard.Attributes.Append(attr);
+              attr = doc.CreateAttribute("Name");
+              attr.InnerText = _captureDevice.Name;
+              nodeNewCard.Attributes.Append(attr);
+              attr = doc.CreateAttribute("EnableMdapi");
+              attr.InnerText = "yes";
+              nodeNewCard.Attributes.Append(attr);
+              XmlNode rootNode = doc.SelectSingleNode("/cards");
+              rootNode.AppendChild(nodeNewCard);
+              doc.Save(xmlFile);
+              useMDAPI = true;
             }
           }
         }
-        catch (Exception) { }
+        catch (Exception) {}
       }
+      #endregion
       if (useMDAPI)
       {
         Log.Log.WriteFile("dvb:add 2nd Inf Tee filter");
