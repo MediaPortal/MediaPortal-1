@@ -73,7 +73,7 @@ bool CMhwDecoder::ParseSummaries(byte* data, int maxLen)
 {
 	if (data==NULL) return false;
 
-	if (maxLen < 12)
+	if (maxLen < 12|| maxLen>4096) 
 		return false;	/* Invalid Data */
 
 	if (data[0] !=0x90)
@@ -135,7 +135,7 @@ bool CMhwDecoder::ParseTitles(byte* data, int dataLen)
 		return false;	
 	CEnterCriticalSection lock (m_critSection);
 	int sectionLen=( ( (data[1]-0x70) <<8)+data[2]);
-	if (sectionLen < 42) 
+	if (sectionLen < 42 || sectionLen>4096) 
 		return false;
 
 	if (data[38]==0xff && data[39]==0xff && data[40]==0xff && data[41]==0xff)

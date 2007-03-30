@@ -142,7 +142,7 @@ void CMhwParser::OnNewSection(int pid, int tableId, CSection& sections)
 //				LogDebug("mhw ParseChannels %d",sectionLength);
 				if (m_mhwDecoder.ParseChannels(section,sectionLength))
 				{
-					m_TimeOutTimer=time(NULL);
+					//m_TimeOutTimer=time(NULL);
 				}
 //				LogDebug("mhw ParseChannels done");
 			}
@@ -151,7 +151,7 @@ void CMhwParser::OnNewSection(int pid, int tableId, CSection& sections)
 //				LogDebug("mhw ParseThemes %d",sectionLength);
 				if (m_mhwDecoder.ParseThemes(section,sectionLength))
 				{
-					m_TimeOutTimer=time(NULL);
+					//m_TimeOutTimer=time(NULL);
 				}
 //				LogDebug("mhw ParseThemes done");
 			}
@@ -190,7 +190,7 @@ bool	CMhwParser::IsEPGReady()
 {
 	CEnterCriticalSection enter(m_section);
 	int passed=(int)(time(NULL)-m_TimeOutTimer);
-  if (passed>60)
+  if (passed>=30)
   {
     LogDebug("mhw grabber ended");
 	  m_bDone=true;
