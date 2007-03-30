@@ -129,7 +129,7 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        Log.Error("ComSkipLauncher: {0}", ex.Message);
+        Log.Error("ComSkipLauncher - Config Test: {0}", ex.Message);
       }
     }
     private void buttonFindTestFile_Click(object sender, EventArgs e)

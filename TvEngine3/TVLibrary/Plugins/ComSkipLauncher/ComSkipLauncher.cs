@@ -104,16 +104,19 @@ namespace TvEngine
       try
       {
         TvServerEventArgs tvEvent = (TvServerEventArgs)eventArgs;
-        string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, tvEvent.channel.Name);
 
         if (tvEvent.EventType == TvServerEventType.RecordingStarted && _runAtStart)
         {
+          string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, tvEvent.channel.Name);
+
           Log.Info("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...", tvEvent.Recording.FileName, tvEvent.channel.Name, _program, parameters);
 
           LaunchProcess(_program, parameters, Path.GetDirectoryName(tvEvent.Recording.FileName), ProcessWindowStyle.Hidden);
         }
         else if (tvEvent.EventType == TvServerEventType.RecordingEnded && !_runAtStart)
         {
+          string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, tvEvent.channel.Name);
+
           Log.Info("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...", tvEvent.Recording.FileName, tvEvent.channel.Name, _program, parameters);
 
           LaunchProcess(_program, parameters, Path.GetDirectoryName(tvEvent.Recording.FileName), ProcessWindowStyle.Hidden);
