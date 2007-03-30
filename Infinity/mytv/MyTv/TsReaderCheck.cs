@@ -19,6 +19,10 @@ namespace MyTv
             SetExtension(".tp", "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}");
             SetExtension(".tsbuffer", "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}");
             SetExtension(".tsp", "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}");
+            SetPermission(".ts");
+            SetPermission(".tp");
+            SetPermission(".tsbuffer");
+            SetPermission(".tsp");
             return true;
           }
         }
@@ -35,6 +39,22 @@ namespace MyTv
           subkey=key.CreateSubKey(extension);
         }
         subkey.SetValue("Source Filter", clsid);
+        subkey.Close();
+      }
+    }
+    void SetPermission(string extension)
+    {
+      using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\MultiMedia\WMPlayer\Extensions", true))
+      {
+        RegistryKey subkey = key.OpenSubKey(extension, true);
+        if (subkey == null)
+        {
+          subkey = key.CreateSubKey(extension);
+        }
+        UInt32 permission = 0xf;
+        UInt32 runtime = 0x7;
+        subkey.SetValue("Permission", permission);
+        subkey.SetValue("Runtime", runtime);
         subkey.Close();
       }
     }

@@ -104,12 +104,16 @@
     </None>
     <Page Include="TvGuide.xaml" />
     <Page Include="TvHome.xaml" />
+    <Page Include="TvNewSchedule.xaml" />
     <Page Include="TvProgramInfo.xaml" />
     <Page Include="TvRecorded.xaml">
       <SubType>
       </SubType>
     </Page>
     <Page Include="TvRecordedInfo.xaml" />
+    <Page Include="TvScheduled.xaml" />
+    <Page Include="TvScheduleInfo.xaml" />
+    <Page Include="TvSearch.xaml" />
     <Page Include="TvSetup.xaml" />
     <Compile Include="TvHome.xaml.cs">
       <DependentUpon>TvHome.xaml</DependentUpon>
@@ -149,6 +153,10 @@
       <DependentUpon>TvGuide.xaml</DependentUpon>
     </Compile>
     <Compile Include="TvMediaPlayer.cs" />
+    <Compile Include="TvNewSchedule.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>TvNewSchedule.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TvPlayerCollection.cs" />
     <Compile Include="TvPlugin.cs" />
     <Compile Include="TvProgramInfo.xaml.cs">
@@ -162,6 +170,18 @@
     <Compile Include="TvRecordedInfo.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>TvRecordedInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TvScheduled.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>TvScheduled.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TvScheduleInfo.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>TvScheduleInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TvSearch.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>TvSearch.xaml</DependentUpon>
     </Compile>
     <Compile Include="TvSetup.xaml.cs">
       <SubType>Code</SubType>

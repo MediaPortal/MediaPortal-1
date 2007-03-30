@@ -331,7 +331,7 @@ namespace MyTv
         case 2:
           {
             TvRecordedInfo infopage = new TvRecordedInfo(recording);
-          this.NavigationService.Navigate(infopage);
+            this.NavigationService.Navigate(infopage);
           }
           break;
       }

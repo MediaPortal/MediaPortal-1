@@ -11,22 +11,25 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Dialogs;
 using TvDatabase;
 using TvControl;
+using Gentle.Common;
+using Gentle.Framework;
+using Dialogs;
 
 namespace MyTv
 {
   /// <summary>
-  /// Interaction logic for TvProgramInfo.xaml
+  /// Interaction logic for TvScheduleInfo.xaml
   /// </summary>
 
-  public partial class TvProgramInfo : System.Windows.Controls.Page
+  public partial class TvScheduleInfo : System.Windows.Controls.Page
   {
-    Program _program;
-    public TvProgramInfo(Program program)
+    Schedule _schedule ;
+    bool _isRecording=true;
+    public TvScheduleInfo(Schedule schedule)
     {
-      _program = program;
+      _schedule = schedule;
       InitializeComponent();
     }
 
@@ -49,33 +52,17 @@ namespace MyTv
       gridList.Children.Clear();
       Grid grid = new Grid();
       //set program description
-      string strTime = String.Format("{0} {1} - {2}", _program.StartTime.ToString("dd-MM"), _program.StartTime.ToString("HH:mm"), _program.EndTime.ToString("HH:mm"));
+      string strTime = String.Format("{0} {1} - {2}", _schedule.StartTime.ToString("dd-MM"), _schedule.StartTime.ToString("HH:mm"), _schedule.EndTime.ToString("HH:mm"));
 
-      labelGenre.Text = _program.Genre;
+//      labelGenre.Text = _schedule.Genre;
       labelStartEnd.Text = strTime;
-      labelDescription.Text = _program.Description;
-      labelTitle.Text = _program.Title;
+      //      labelDescription.Text = _schedule.Description;
+      labelTitle.Text = _schedule.ProgramName;
 
       //check if we are recording this program
-      IList schedules = Schedule.ListAll();
-      bool isRecording = false;
-      bool isSeries = false;
-      foreach (Schedule schedule in schedules)
-      {
-        if (schedule.Canceled != Schedule.MinSchedule) continue;
-        if (schedule.IsRecordingProgram(_program, true))
-        {
-          if (!schedule.IsSerieIsCanceled(_program.StartTime))
-          {
-            if ((ScheduleRecordingType)schedule.ScheduleType != ScheduleRecordingType.Once)
-              isSeries = true;
-            isRecording = true;
-            break;
-          }
-        }
-      }
+      bool isSeries = ((ScheduleRecordingType)_schedule.ScheduleType != ScheduleRecordingType.Once);
 
-      if (isRecording)
+      if (_isRecording)
       {
         buttonRecord.Content = "Dont record";
         buttonAdvancedRecord.IsEnabled = false;
@@ -95,13 +82,12 @@ namespace MyTv
         buttonPreRecord.IsEnabled = false;
         buttonPostRecord.IsEnabled = false;
       }
-      buttonAlertMe.IsChecked = _program.Notify;
-
+      
       //find upcoming episodes
 
       TvBusinessLayer layer = new TvBusinessLayer();
       DateTime dtDay = DateTime.Now;
-      IList episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), _program.Title, null);
+      IList episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), _schedule.ProgramName, null);
       int row = 0;
       foreach (Program episode in episodes)
       {
@@ -279,10 +265,10 @@ namespace MyTv
         videoBrush.Drawing = videoDrawing;
         videoWindow.Fill = videoBrush;
       }
-      labelTitle.Text = _program.Title;
-      labelDescription.Text = _program.Description;
-      labelStartEnd.Text = String.Format("{0}-{1}", _program.StartTime.ToString("HH:mm"), _program.EndTime.ToString("HH:mm"));
-      labelGenre.Text = _program.Genre;
+      labelTitle.Text = _schedule.ProgramName;
+      //labelDescription.Text = _schedule.Description;
+      labelStartEnd.Text = String.Format("{0}-{1}", _schedule.StartTime.ToString("HH:mm"), _schedule.EndTime.ToString("HH:mm"));
+      //labelGenre.Text = _schedule.Genre;
 
 
     }
@@ -305,10 +291,12 @@ namespace MyTv
       if (p == null) return;
       OnRecordProgram(p);
     }
+    
     void OnRecordClicked(object sender, EventArgs e)
     {
-      OnRecordProgram(_program);
+      //OnRecordProgram(_schedule);
     }
+
     void OnRecordProgram(Program program)
     {
       Schedule recordingSchedule;
@@ -451,7 +439,7 @@ namespace MyTv
     }
     void OnAdvancedRecordClicked(object sender, EventArgs e)
     {
-      if (_program == null)
+      if (_schedule == null)
         return;
       MpMenu dlgMenu = new MpMenu();
       Window w = Window.GetWindow(this);
@@ -472,7 +460,7 @@ namespace MyTv
 
       if (dlgMenu.SelectedIndex < 1) return;
 
-      Schedule rec = new Schedule(_program.IdChannel, _program.Title, _program.StartTime, _program.EndTime);
+      Schedule rec = new Schedule(_schedule.IdChannel, _schedule.ProgramName, _schedule.StartTime, _schedule.EndTime);
       switch (dlgMenu.SelectedIndex)
       {
         case 1://once
@@ -530,7 +518,7 @@ namespace MyTv
             dlgYesNo.ShowDialog();
             if (dlgYesNo.DialogResult == DialogResult.Yes)
             {
-              rec = new Schedule(_program.IdChannel, _program.Title, nextNext.StartTime, nextNext.EndTime);
+              rec = new Schedule(_schedule.IdChannel, _schedule.ProgramName, nextNext.StartTime, nextNext.EndTime);
 
               rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
               rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
@@ -543,17 +531,9 @@ namespace MyTv
       ShowUpcomingEpisodes();
     }
 
-    void OnNotify(object sender, EventArgs args)
-    {
-      _program.Notify = !_program.Notify;
-      _program.Persist();
-      ShowUpcomingEpisodes();
-    }
 
     void OnKeepUntil(object sender, EventArgs args)
     {
-      Schedule rec;
-      if (false == IsRecordingProgram(_program, out  rec, false)) return;
 
       MpMenu dlgMenu = new MpMenu();
       Window w = Window.GetWindow(this);
@@ -566,11 +546,11 @@ namespace MyTv
       dlgMenu.Items.Add(new DialogMenuItem("Until watched"));
       dlgMenu.Items.Add(new DialogMenuItem("Until Date"));
       dlgMenu.Items.Add(new DialogMenuItem("Always"));
-      dlgMenu.SelectedIndex = (int)rec.KeepMethod;
+      dlgMenu.SelectedIndex = (int)_schedule.KeepMethod;
       dlgMenu.ShowDialog();
       if (dlgMenu.SelectedIndex < 0) return;//nothing selected
-      rec.KeepMethod = dlgMenu.SelectedIndex;
-      rec.Persist();
+      _schedule.KeepMethod = dlgMenu.SelectedIndex;
+      _schedule.Persist();
       if (dlgMenu.SelectedIndex == 2)
       {
         dlgMenu = new MpMenu();
@@ -584,19 +564,17 @@ namespace MyTv
         {
           DateTime dt = DateTime.Now.AddDays(days);
           dlgMenu.Items.Add(new DialogMenuItem(dt.ToLongDateString()));
-          if (dt.Date == rec.KeepDate) selected = days - 1;
+          if (dt.Date == _schedule.KeepDate) selected = days - 1;
         }
         dlgMenu.ShowDialog();
         if (dlgMenu.SelectedIndex < 0) return;//nothing selected
         int daysChoosen = dlgMenu.SelectedIndex + 1;
-        rec.KeepDate = DateTime.Now.AddDays(daysChoosen);
-        rec.Persist();
+        _schedule.KeepDate = DateTime.Now.AddDays(daysChoosen);
+        _schedule.Persist();
       }
     }
     void OnPreRecordInterval(object sender, EventArgs args)
     {
-      Schedule rec;
-      if (false == IsRecordingProgram(_program, out  rec, false)) return;
       MpMenu dlgMenu = new MpMenu();
       Window w = Window.GetWindow(this);
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -609,20 +587,18 @@ namespace MyTv
       {
         dlgMenu.Items.Add(new DialogMenuItem(String.Format("{0} mins", minute)));
       }
-      if (rec.PreRecordInterval < 0) dlgMenu.SelectedIndex = 0;
-      else dlgMenu.SelectedIndex = rec.PreRecordInterval + 1;
+      if (_schedule.PreRecordInterval < 0) dlgMenu.SelectedIndex = 0;
+      else dlgMenu.SelectedIndex = _schedule.PreRecordInterval + 1;
       dlgMenu.ShowDialog();
       if (dlgMenu.SelectedIndex < 0) return;
-      rec.PreRecordInterval = dlgMenu.SelectedIndex - 1;
-      rec.Persist();
+      _schedule.PreRecordInterval = dlgMenu.SelectedIndex - 1;
+      _schedule.Persist();
       TvServer server = new TvServer();
       server.OnNewSchedule();
       ShowUpcomingEpisodes();
     }
     void OnPostRecordInterval(object sender, EventArgs args)
     {
-      Schedule rec;
-      if (false == IsRecordingProgram(_program, out  rec, false)) return;
       MpMenu dlgMenu = new MpMenu();
       Window w = Window.GetWindow(this);
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -635,12 +611,12 @@ namespace MyTv
       {
         dlgMenu.Items.Add(new DialogMenuItem(String.Format("{0} mins", minute)));
       }
-      if (rec.PostRecordInterval < 0) dlgMenu.SelectedIndex = 0;
-      else dlgMenu.SelectedIndex = rec.PostRecordInterval + 1;
+      if (_schedule.PostRecordInterval < 0) dlgMenu.SelectedIndex = 0;
+      else dlgMenu.SelectedIndex = _schedule.PostRecordInterval + 1;
       dlgMenu.ShowDialog();
       if (dlgMenu.SelectedIndex < 0) return;
-      rec.PostRecordInterval = dlgMenu.SelectedIndex - 1;
-      rec.Persist();
+      _schedule.PostRecordInterval = dlgMenu.SelectedIndex - 1;
+      _schedule.Persist();
       TvServer server = new TvServer();
       server.OnNewSchedule();
       ShowUpcomingEpisodes();
@@ -648,8 +624,6 @@ namespace MyTv
 
     void OnSetEpisodes(object sender, EventArgs args)
     {
-      Schedule schedule;
-      if (false == IsRecordingProgram(_program, out  schedule, false)) return;
       MpMenu dlgMenu = new MpMenu();
       Window w = Window.GetWindow(this);
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -660,17 +634,17 @@ namespace MyTv
       dlgMenu.Items.Add(new DialogMenuItem("All"));
       for (int i = 1; i < 40; ++i)
         dlgMenu.Items.Add(new DialogMenuItem(i.ToString() + " episodes"));
-      if (schedule.MaxAirings == Int32.MaxValue)
+      if (_schedule.MaxAirings == Int32.MaxValue)
         dlgMenu.SelectedIndex = 0;
       else
-        dlgMenu.SelectedIndex = schedule.MaxAirings;
+        dlgMenu.SelectedIndex = _schedule.MaxAirings;
 
       dlgMenu.ShowDialog();
       if (dlgMenu.SelectedIndex == -1) return;
 
-      if (dlgMenu.SelectedIndex == 0) schedule.MaxAirings = Int32.MaxValue;
-      else schedule.MaxAirings = dlgMenu.SelectedIndex;
-      schedule.Persist();
+      if (dlgMenu.SelectedIndex == 0) _schedule.MaxAirings = Int32.MaxValue;
+      else _schedule.MaxAirings = dlgMenu.SelectedIndex;
+      _schedule.Persist();
       TvServer server = new TvServer();
       server.OnNewSchedule();
       ShowUpcomingEpisodes();

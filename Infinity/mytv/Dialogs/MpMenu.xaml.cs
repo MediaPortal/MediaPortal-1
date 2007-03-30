@@ -68,6 +68,7 @@ namespace Dialogs
       int maxColumns = 0;
       Grid grid = new Grid();
       grid.VerticalAlignment = VerticalAlignment.Top;
+      
       for (int row = 0; row < _menuItems.Count; ++row)
       {
         DialogMenuItem item = _menuItems[row];

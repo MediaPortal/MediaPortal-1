@@ -442,6 +442,7 @@ namespace MyTv
     /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     void OnScheduledClicked(object sender, EventArgs args)
     {
+      this.NavigationService.Navigate(new Uri("/MyTv;component/TvScheduled.xaml", UriKind.Relative));
     }
     /// <summary>
     /// Called when recorded button gets clicked
@@ -459,7 +460,7 @@ namespace MyTv
     /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     void OnSearchClicked(object sender, EventArgs args)
     {
-      this.Opacity = 0;
+      this.NavigationService.Navigate(new Uri("/MyTv;component/TvSearch.xaml", UriKind.Relative));
     }
 
     /// <summary>
