@@ -96,10 +96,10 @@ namespace ProcessPlugins.ComSkipLauncher
 
     void Recorder_OnTvRecordingStarted(string recordingFilename, TVRecording recording, TVProgram program)
     {
-      Log.Debug("ComSkipLauncher plugin: Recorder_OnTvRecordingStarted {0}", recordingFilename);
-
       if (!_runAtStart)
         return;
+
+      Log.Debug("ComSkipLauncher plugin - Recorder_OnTvRecordingStarted(): \"{0}\"", recordingFilename);
 
       try
       {
@@ -117,15 +117,15 @@ namespace ProcessPlugins.ComSkipLauncher
       }
       catch (Exception ex)
       {
-        Log.Error("ComSkipLauncher plugin: {0}", ex.Message);
+        Log.Error("ComSkipLauncher plugin - Recorder_OnTvRecordingStarted(): {0}", ex.Message);
       }
     }
     void Recorder_OnTvRecordingEnded(string recordingFilename, TVRecording recording, TVProgram program)
     {
-      Log.Debug("ComSkipLauncher plugin: Recorder_OnTvRecordingEnded {0}", recordingFilename);
-
       if (_runAtStart)
         return;
+
+      Log.Debug("ComSkipLauncher plugin - Recorder_OnTvRecordingEnded(): \"{0}\"", recordingFilename);
 
       try
       {
@@ -143,7 +143,7 @@ namespace ProcessPlugins.ComSkipLauncher
       }
       catch (Exception ex)
       {
-        Log.Error("ComSkipLauncher plugin: {0}", ex.Message);
+        Log.Error("ComSkipLauncher plugin - Recorder_OnTvRecordingEnded(): {0}", ex.Message);
       }
     }
 
@@ -164,7 +164,7 @@ namespace ProcessPlugins.ComSkipLauncher
         _program    = DefaultProgram;
         _parameters = DefaultParameters;
 
-        Log.Error("ComSkipLauncher plugin: {0}", ex.Message);
+        Log.Error("ComSkipLauncher plugin - LoadSettings(): {0}", ex.Message);
       }
     }
     void SaveSettings()
@@ -180,7 +180,7 @@ namespace ProcessPlugins.ComSkipLauncher
       }
       catch (Exception ex)
       {
-        Log.Error("ComSkipLauncher plugin: {0}", ex.Message);
+        Log.Error("ComSkipLauncher plugin - SaveSettings(): {0}", ex.Message);
       }
     }
 
@@ -203,21 +203,28 @@ namespace ProcessPlugins.ComSkipLauncher
       }
       catch (Exception ex)
       {
-        Log.Error("ComSkipLauncher plugin: {0}", ex.Message);
+        Log.Error("ComSkipLauncher plugin - ProcessParameters(): {0}", ex.Message);
       }
 
       return output;
     }
     internal static void LaunchProcess(string program, string parameters, string workingFolder, ProcessWindowStyle windowStyle)
     {
-      Process process = new Process();
-      process.StartInfo = new ProcessStartInfo();
-      process.StartInfo.Arguments = parameters;
-      process.StartInfo.FileName = program;
-      process.StartInfo.WindowStyle = windowStyle;
-      process.StartInfo.WorkingDirectory = workingFolder;
+      try
+      {
+        Process process = new Process();
+        process.StartInfo = new ProcessStartInfo();
+        process.StartInfo.Arguments = parameters;
+        process.StartInfo.FileName = program;
+        process.StartInfo.WindowStyle = windowStyle;
+        process.StartInfo.WorkingDirectory = workingFolder;
 
-      process.Start();
+        process.Start();
+      }
+      catch (Exception ex)
+      {
+        Log.Error("ComSkipLauncher plugin - LaunchProcess(): {0}", ex.Message);
+      }
     }
 
     #endregion Implementation
