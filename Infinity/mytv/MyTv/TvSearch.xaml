@@ -51,7 +51,7 @@
       </StackPanel>
       <StackPanel>
         <Button Name="buttonSort" Template="{StaticResource MpButton}" Height="32" Width="180"  MouseEnter="OnMouseEnter" Click="OnSortClicked" HorizontalAlignment="Left" Margin="30,0,0,0">Sort</Button>
-        <Button Name="buttonSearch" Template="{StaticResource MpButton}" Height="32" Width="180"  MouseEnter="OnMouseEnter" Click="OnTypeClicked" HorizontalAlignment="Left" Margin="30,0,0,0">Type</Button>
+        <Button Name="buttonType" Template="{StaticResource MpButton}" Height="32" Width="180"  MouseEnter="OnMouseEnter" Click="OnTypeClicked" HorizontalAlignment="Left" Margin="30,0,0,0">Type</Button>
         <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden" >
           <Grid x:Name="gridList" Margin="30,0,30,0" VerticalAlignment="Top" KeyDown="OnScrollKeyDown">
             <Grid.ColumnDefinitions>

@@ -111,7 +111,7 @@ namespace MyTv
         {
           if (_selectedProgram.IdProgram == _firstProgram.IdProgram)
           {
-            Keyboard.Focus(buttonSort);
+            Keyboard.Focus(buttonType);
             e.Handled = true;
           }
         }
