@@ -475,6 +475,8 @@ void CTsReaderFilter::Seek(CRefTime& seekTime)
   m_bSeeking=true;
   if (m_fileDuration!=NULL)
   {
+    if (seekTime >= m_duration.Duration())
+      seekTime=m_duration.Duration();
     CTsFileSeek seek(m_duration);
     seek.SetFileReader(m_fileReader);
     seek.Seek(seekTime);
@@ -509,8 +511,13 @@ bool CTsReaderFilter::IsSeeking()
 {
   return m_bSeeking;
 }
-void CTsReaderFilter::SeekDone()
+void CTsReaderFilter::SeekDone(CRefTime& rtSeek)
 {
+  if (m_fileDuration!=NULL)
+  {
+    if (rtSeek >= m_duration.Duration())
+      rtSeek=m_duration.Duration();
+  }
   LogDebug("--SeekDone()");
   m_demultiplexer.Flush();
   m_bNeedSeeking=NULL;

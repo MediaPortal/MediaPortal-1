@@ -309,7 +309,7 @@ bool CDeMultiplexer::ReadFromFile()
     }
     else 
     {
-      Sleep(20);
+      Sleep(100);
       if (GetTickCount() - dwTick >5000) break;
     }
   }

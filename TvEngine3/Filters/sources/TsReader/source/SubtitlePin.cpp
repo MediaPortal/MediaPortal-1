@@ -340,7 +340,7 @@ void CSubtitlePin::UpdateFromSeek()
         
         if (!m_pTsReaderFilter->GetAudioPin()->IsConnected() && m_pTsReaderFilter->GetVideoPin()->IsConnected() )
         {
-          m_pTsReaderFilter->SeekDone();
+          m_pTsReaderFilter->SeekDone(rtSeek);
         }
         // restart
         m_rtStart=rtSeek;

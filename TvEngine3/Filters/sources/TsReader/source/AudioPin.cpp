@@ -353,7 +353,7 @@ void CAudioPin::UpdateFromSeek()
 
       // complete the flush
       DeliverEndFlush();
-      m_pTsReaderFilter->SeekDone();
+      m_pTsReaderFilter->SeekDone(rtSeek);
 
       // restart
       m_rtStart=rtSeek;

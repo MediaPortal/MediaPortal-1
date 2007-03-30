@@ -448,9 +448,10 @@ void CVideoPin::UpdateFromSeek()
       
       if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
       {
-        m_pTsReaderFilter->SeekDone();
+        m_pTsReaderFilter->SeekDone(rtSeek);
       }
       // restart
+      
       m_rtStart=rtSeek;
       Run();
   }

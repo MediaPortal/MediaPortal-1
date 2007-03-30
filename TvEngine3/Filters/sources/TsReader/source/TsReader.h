@@ -75,7 +75,7 @@ public:
   bool            IsFilterRunning();
 	CDeMultiplexer& GetDemultiplexer();
 	void            Seek(CRefTime& seekTime);
-  void            SeekDone();
+  void            SeekDone(CRefTime& refTime);
   void            SeekStart();
 	double          UpdateDuration();
   CAudioPin*      GetAudioPin();
