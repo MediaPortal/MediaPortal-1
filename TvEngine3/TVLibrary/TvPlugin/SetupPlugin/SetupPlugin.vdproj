@@ -406,12 +406,6 @@
         "Entry"
         {
         "MsmKey" = "8:_EBA0D1BAA13C3280D501F2A5001B8C0B"
-        "OwnerKey" = "8:_91C69A1D9319483292529A8986F4215B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_EBA0D1BAA13C3280D501F2A5001B8C0B"
         "OwnerKey" = "8:_247BEFCF7E9FC5377AA681C8678CB28A"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1220,7 +1214,7 @@
             "SourcePath" = "8:PowerScheduler.Interfaces.DLL"
             "TargetName" = "8:"
             "Tag" = "8:"
-            "Folder" = "8:_1A52649B22F6497E96B343026758EDCB"
+            "Folder" = "8:_C2F0F37686774BEB8C7DCDEAD47B6909"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
