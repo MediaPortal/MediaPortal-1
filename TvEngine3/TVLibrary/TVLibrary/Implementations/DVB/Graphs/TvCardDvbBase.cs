@@ -2224,6 +2224,8 @@ namespace TvLibrary.Implementations.DVB
             {
               epgChannels[i].Sort();
             }
+            // free the epg infos in TsWriter so that the mem used gets released 
+            _interfaceEpgGrabber.Reset();
             return epgChannels;
           }
 
@@ -2336,6 +2338,8 @@ namespace TvLibrary.Implementations.DVB
               epgChannels.Add(epgChannel);
             }//for (uint x = 0; x < channelCount; ++x)
           }
+          // free the epg infos in TsWriter so that the mem used gets released 
+          _interfaceEpgGrabber.Reset();
           return epgChannels;
         }
         catch (Exception ex)
