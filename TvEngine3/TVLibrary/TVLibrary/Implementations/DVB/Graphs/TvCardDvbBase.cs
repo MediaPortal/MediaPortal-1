@@ -757,10 +757,10 @@ namespace TvLibrary.Implementations.DVB
             XmlNode rootNode = doc.CreateElement("cards");
             XmlNode nodeCard = doc.CreateElement("card");
             XmlAttribute attr = doc.CreateAttribute("DevicePath");
-            attr.InnerText = _captureDevice.DevicePath;
+            attr.InnerText = DevicePath;
             nodeCard.Attributes.Append(attr);
             attr = doc.CreateAttribute("Name");
-            attr.InnerText = _captureDevice.Name;
+            attr.InnerText = Name;
             nodeCard.Attributes.Append(attr);
             attr = doc.CreateAttribute("EnableMdapi");
             attr.InnerText = "yes";
@@ -778,7 +778,7 @@ namespace TvLibrary.Implementations.DVB
             XmlNodeList cardList = doc.SelectNodes("/cards/card");
             foreach (XmlNode nodeCard in cardList)
             {
-              if (nodeCard.Attributes["DevicePath"].Value == _captureDevice.DevicePath)
+              if (nodeCard.Attributes["DevicePath"].Value == DevicePath)
               {
                 useMDAPI = (nodeCard.Attributes["EnableMdapi"].Value == "yes");
                 cardFound = true;
@@ -789,10 +789,10 @@ namespace TvLibrary.Implementations.DVB
             {
               XmlNode nodeNewCard = doc.CreateElement("card");
               XmlAttribute attr = doc.CreateAttribute("DevicePath");
-              attr.InnerText = _captureDevice.DevicePath;
+              attr.InnerText = DevicePath;
               nodeNewCard.Attributes.Append(attr);
               attr = doc.CreateAttribute("Name");
-              attr.InnerText = _captureDevice.Name;
+              attr.InnerText = Name;
               nodeNewCard.Attributes.Append(attr);
               attr = doc.CreateAttribute("EnableMdapi");
               attr.InnerText = "yes";
